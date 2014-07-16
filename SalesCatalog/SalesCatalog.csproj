@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{90BF2234-7252-4CD5-B2A4-17501B19279B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SalesCatalog</RootNamespace>
+    <AssemblyName>SalesCatalog</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework, Version=2.6.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Configuration\CatalogProviderConfigurationElement.cs" />
+    <Compile Include="Configuration\CatalogProvidersConfigurationSection.cs" />
+    <Compile Include="Configuration\CatalogProvidersConfigurationCollection.cs" />
+    <Compile Include="CatalogManager.cs" />
+    <Compile Include="Model\CheckBox.cs" />
+    <Compile Include="Model\Currency.cs" />
+    <Compile Include="Model\Euro.cs" />
+    <Compile Include="Model\FilesInput.cs" />
+    <Compile Include="Model\FormElement.cs" />
+    <Compile Include="Model\FormInput.cs" />
+    <Compile Include="Model\Label.cs" />
+    <Compile Include="Model\Link.cs" />
+    <Compile Include="Model\Price.cs" />
+    <Compile Include="Model\ProductCategory.cs" />
+    <Compile Include="Model\RadioButton.cs" />
+    <Compile Include="Model\SelectInput.cs" />
+    <Compile Include="Model\TextInput.cs" />
+    <Compile Include="Model\Unit.cs" />
+    <Compile Include="Model\Brand.cs" />
+    <Compile Include="CatalogProvider.cs" />
+    <Compile Include="XmlImplementation\XmlCatalog.cs" />
+    <Compile Include="CatalogHelper.cs" />
+    <Compile Include="Tests\TestCatalogInit.cs" />
+    <Compile Include="Model\Product.cs" />
+    <Compile Include="Model\Period.cs" />
+    <Compile Include="Model\Service.cs" />
+    <Compile Include="Model\PhysicalProduct.cs" />
+    <Compile Include="Model\Catalog.cs" />
+    <Compile Include="XmlImplementation\XmlCatalogProvider.cs" />
+    <Compile Include="Model\Text.cs" />
+    <Compile Include="Model\SelectItem.cs" />
+    <Compile Include="Model\StockStatus.cs" />
+    <Compile Include="Model\Scalar.cs" />
+    <Compile Include="Tests\TestBrands.cs" />
+    <Compile Include="Model\SaleForm.cs" />
+    <Compile Include="Model\ProductImage.cs" />
+    <Compile Include="Model\Option.cs" />
+    <Compile Include="Model\Note.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <None Include="catalog.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\" />
+    <Folder Include="XmlImplementation\" />
+    <Folder Include="Tests\" />
+  </ItemGroup>
+</Project>

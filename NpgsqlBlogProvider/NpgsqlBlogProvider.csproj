@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C6E9E91B-97D3-48D9-8AA7-05356929E162}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Npgsql.Web.Blog</RootNamespace>
+    <AssemblyName>NpgsqlBlogProvider</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="Configuration\BlogProviderConfigurationElement.cs" />
+    <Compile Include="Configuration\BlogProvidersConfigurationCollection.cs" />
+    <Compile Include="Configuration\BlogProvidersConfigurationSection.cs" />
+    <Compile Include="DataModel\BlogEntry.cs" />
+    <Compile Include="DataModel\BlogEntryCollection.cs" />
+    <Compile Include="BlogHelper.cs" />
+    <Compile Include="BlogManager.cs" />
+    <Compile Include="BlogProvider.cs" />
+    <Compile Include="NpgsqlBlogProvider.cs" />
+    <Compile Include="DataModel\FindBlogEntryFlags.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="DataModel\Blog.cs" />
+    <Compile Include="DataModel\Comment.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataModel\" />
+    <Folder Include="Sql\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="Npgsql" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <None Include="Sql\BlogTable.sql" />
+  </ItemGroup>
+</Project>

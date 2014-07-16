@@ -1,0 +1,9 @@
+
+Votre compte <%SiteName%> a été créé, votre nom d'utilisateur
+est <%UserName%>.
+
+Pour l'activer, veuillez suivre le lien suivant :
+
+<%UserActivatonUrl%>
+
+Merci d'avoir créé un compte utilisateur.

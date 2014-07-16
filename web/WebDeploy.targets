@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="TransformXml" AssemblyFile="WebTasks.dll" />
+  <Target Name="Deploy" Condition="'$(DeployDir)' != '' And !$(SkipCopyUnchangedFiles)" DependsOnTargets="Build">
+    <Copy SourceFiles="@(FileWrites)" DestinationFolder="$(DeployDir)\%(RelativeDir)" />
+    <Copy SourceFiles="@(Content)" DestinationFolder="$(DeployDir)\%(RelativeDir)" />
+    <TransformXml Source="Web.config" Transform="Web.$(Configuration).config" Destination="$(DeployDir)\Web.config" Condition="Exists('Web.$(Configuration).config')"/>
+  </Target>
+</Project>
+

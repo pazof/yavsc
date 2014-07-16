@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{77044C92-D2F1-45BD-80DD-AA25B311B027}</ProjectGuid>
+    <ProjectTypeGuids>{349C5851-65DF-11DA-9384-00065B846F21};{603C0E0B-DB56-11DC-BE95-000D561079B0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Yavsc</RootNamespace>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin</OutputPath>
+    <DefineConstants>DEBUG;TEST</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AspNet>
+      <AspNet DisableCodeBehindGeneration="True" />
+    </AspNet>
+    <AssemblyName>Yavsc</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AssemblyName>Yavsc</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'MVC2|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin</OutputPath>
+    <DefineConstants>DEBUG,TEST,WEBAPI</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <AssemblyName>maeweb</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="Mono.Security" />
+    <Reference Include="Npgsql" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Security" />
+    <Reference Include="nunit.framework, Version=2.6.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="CodeKicker.BBCode">
+      <HintPath>lib\CodeKicker.BBCode.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Posix" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.ServiceModel.Routing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=c7439020c8fedf87">
+      <Private>False</Private>
+      <Package>monodevelop</Package>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost">
+      <HintPath>..\..\..\..\..\usr\lib\mono\4.5\System.Web.Http.WebHost.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Scripts\" />
+    <Folder Include="Views\Account\" />
+    <Folder Include="Resources\" />
+    <Folder Include="images\" />
+    <Folder Include="Thanks\" />
+    <Folder Include="Views\Blogs\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Views\FrontOffice\" />
+    <Folder Include="avatars\" />
+    <Folder Include="Admin\" />
+    <Folder Include="Views\BackOffice\" />
+    <Folder Include="backup\" />
+    <Folder Include="errors\" />
+    <Folder Include="Views\FileSystem\" />
+    <Folder Include="CatExts\" />
+    <Folder Include="Views\WorkFlow\" />
+    <Folder Include="Basket\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Thanks\ThanksConfigurationSection.cs" />
+    <Compile Include="Thanks\ThanksConfigurationCollection.cs" />
+    <Compile Include="Thanks\ThanksConfigurationElement.cs" />
+    <Compile Include="Thanks\ThanksHelper.cs" />
+    <Compile Include="Controllers\BlogsController.cs" />
+    <Compile Include="Views\RegisterPage.cs" />
+    <Compile Include="Tests.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Helpers\BBCodeHelper.cs" />
+    <Compile Include="Test\TestByteA.cs" />
+    <Compile Include="Controllers\FrontOfficeController.cs" />
+    <Compile Include="Controllers\BackOfficeController.cs" />
+    <Compile Include="Admin\Export.cs" />
+    <Compile Include="Admin\DataManager.cs" />
+    <Compile Include="Admin\TaskOutput.cs" />
+    <Compile Include="Controllers\T.cs" />
+    <Compile Include="Controllers\FileSystemController.cs" />
+    <Compile Include="CatExts\WebCatalogExtensions.cs" />
+    <Compile Include="Controllers\WorkFlowController.cs" />
+    <Compile Include="Controllers\FrontOfficeApiController.cs" />
+    <Compile Include="Controllers\Commande.cs" />
+    <Compile Include="Helpers\YavscHelpers.cs" />
+    <Compile Include="Controllers\BasketController.cs" />
+    <Compile Include="Basket\Basket.cs" />
+    <Compile Include="FileInfoCollection.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\Home\Index.aspx" />
+    <Content Include="Web.config" />
+    <Content Include="Global.asax" />
+    <Content Include="style.css" />
+    <Content Include="Models\App.master" />
+    <Content Include="Views\Account\Register.aspx" />
+    <Content Include="Views\Account\ChangePassword.aspx" />
+    <Content Include="Views\Account\ChangePasswordSuccess.aspx" />
+    <Content Include="Views\Account\Index.aspx" />
+    <Content Include="Views\Account\UserList.aspx" />
+    <Content Include="Views\Account\Login.aspx" />
+    <Content Include="Views\Account\RoleList.aspx" />
+    <Content Include="Views\Account\Admin.aspx" />
+    <Content Include="images\Banner.png" />
+    <Content Include="images\noavatar.png" />
+    <Content Include="images\apache_pbw.png" />
+    <Content Include="images\debian-logo.png" />
+    <Content Include="images\Mono-powered.png" />
+    <Content Include="Views\Blogs\Index.aspx" />
+    <Content Include="Views\Blogs\Post.aspx" />
+    <Content Include="Views\Blogs\UserPosts.aspx" />
+    <Content Include="Views\Blogs\UserPost.aspx" />
+    <Content Include="Views\Blogs\Edit.aspx" />
+    <Content Include="Views\Account\RemoveUserQuery.aspx" />
+    <Content Include="Views\Account\RemoveRoleQuery.aspx" />
+    <Content Include="Views\Account\AddRole.aspx" />
+    <Content Include="Views\Blogs\Error.aspx" />
+    <Content Include="Views\Account\RegistrationPending.aspx" />
+    <Content Include="Views\Account\Validate.aspx" />
+    <Content Include="Views\FrontOffice\Catalog.aspx" />
+    <Content Include="Views\Account\Profile.aspx" />
+    <Content Include="Views\Blogs\TitleNotFound.aspx" />
+    <Content Include="Views\FrontOffice\ProductCategory.aspx" />
+    <Content Include="Views\FrontOffice\Product.aspx" />
+    <Content Include="Views\BackOffice\BackupCreated.aspx" />
+    <Content Include="Views\BackOffice\Index.aspx" />
+    <Content Include="Views\BackOffice\Restore.aspx" />
+    <Content Include="Views\Home\AOEMail.aspx" />
+    <Content Include="errors\GeneralError.aspx" />
+    <Content Include="errors\PageNotFound.aspx" />
+    <Content Include="Views\BackOffice\Restored.aspx" />
+    <Content Include="Views\BackOffice\Backups.aspx" />
+    <Content Include="Views\BackOffice\CreateBackup.aspx" />
+    <Content Include="Views\FrontOffice\Service.aspx" />
+    <Content Include="Views\FrontOffice\ReferenceNotFound.aspx" />
+    <Content Include="Views\FileSystem\Delete.aspx" />
+    <Content Include="Views\FileSystem\Index.aspx" />
+    <Content Include="Views\FileSystem\Create.aspx" />
+    <Content Include="Views\FileSystem\Details.aspx" />
+    <Content Include="Views\FileSystem\Edit.aspx" />
+    <Content Include="Views\FrontOffice\Brand.aspx" />
+    <Content Include="Views\FrontOffice\Command.aspx" />
+    <Content Include="Views\WorkFlow\NewProject.aspx" />
+    <Content Include="Views\WorkFlow\Index.aspx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <Import Project="WebDeploy.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties VerifyCodeBehindFields="True" VerifyCodeBehindEvents="True">
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+        <XspParameters Port="8080" Address="127.0.0.1" SslMode="None" SslProtocol="Default" KeyType="None" CertFile="" KeyFile="" PasswordOptions="None" Password="" Verbose="True" />
+        <WebDeployTargets>
+          <Target Name="">
+            <FileCopier Handler="MonoDevelop.Deployment.LocalFileCopyHandler" TargetDirectory="/srv/www/yavsc" ctype="LocalFileCopyConfiguration" />
+          </Target>
+        </WebDeployTargets>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <None Include="README" />
+    <None Include="uninstdb.sql" />
+    <None Include="uninstdbws.sql" />
+    <None Include="instdbws.sql" />
+    <None Include="RegistrationMail.txt" />
+    <None Include="Catalog.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">
+      <Project>{BBA7175D-7F92-4278-96FC-84C495A2B5A6}</Project>
+      <Name>NpgsqlMRPProviders</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NpgsqlBlogProvider\NpgsqlBlogProvider.csproj">
+      <Project>{C6E9E91B-97D3-48D9-8AA7-05356929E162}</Project>
+      <Name>NpgsqlBlogProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SalesCatalog\SalesCatalog.csproj">
+      <Project>{90BF2234-7252-4CD5-B2A4-17501B19279B}</Project>
+      <Name>SalesCatalog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WorkFlowProvider\WorkFlowProvider.csproj">
+      <Project>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</Project>
+      <Name>WorkFlowProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\yavscModel\yavscModel.csproj">
+      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
+      <Name>yavscModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebControls\WebControls.csproj">
+      <Project>{59E1DF7B-FFA0-4DEB-B5F3-76EBD98D5356}</Project>
+      <Name>WebControls</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

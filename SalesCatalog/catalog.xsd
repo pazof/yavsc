@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Catalog" nillable="true" type="Catalog" />
+  <xs:complexType name="Catalog">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Brands" type="ArrayOfBrand" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfBrand">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Brand" nillable="true" type="Brand" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Brand">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Slogan" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Url" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Categories" type="ArrayOfProductCategory" />
+      <xs:element minOccurs="0" maxOccurs="1" name="DefaultForm" type="ArrayOfFormElement" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfProductCategory">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProductCategory" nillable="true" type="ProductCategory" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ProductCategory">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Products" type="ArrayOfProduct" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfProduct">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Product" nillable="true" type="Product" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Product" />
+  <xs:complexType name="ArrayOfFormElement">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="FormElement" nillable="true" type="FormElement" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="FormElement" />
+  <xs:element name="Brand" nillable="true" type="Brand" />
+  <xs:element name="Product" nillable="true" type="Product" />
+  <xs:element name="Currency" nillable="true" type="Currency" />
+  <xs:complexType name="Currency">
+    <xs:complexContent mixed="false">
+      <xs:extension base="Unit" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Unit" />
+  <xs:element name="ArrayOfFormElement" nillable="true" type="ArrayOfFormElement" />
+  <xs:element name="FormInput" nillable="true" type="FormInput" />
+  <xs:complexType name="FormInput">
+    <xs:complexContent mixed="false">
+      <xs:extension base="FormElement">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Value" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TextInput" nillable="true" type="TextInput" />
+  <xs:complexType name="TextInput">
+    <xs:complexContent mixed="false">
+      <xs:extension base="FormElement" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="SelectInput" nillable="true" type="SelectInput" />
+  <xs:complexType name="SelectInput">
+    <xs:complexContent mixed="false">
+      <xs:extension base="FormElement" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Label" nillable="true" type="Label" />
+  <xs:complexType name="Label">
+    <xs:complexContent mixed="false">
+      <xs:extension base="FormElement" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Comment" nillable="true" type="Comment" />
+  <xs:complexType name="Comment">
+    <xs:complexContent mixed="false">
+      <xs:extension base="FormElement" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="CheckBox" nillable="true" type="CheckBox" />
+  <xs:complexType name="CheckBox">
+    <xs:complexContent mixed="false">
+      <xs:extension base="FormInput" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="RadioButton" nillable="true" type="RadioButton" />
+  <xs:complexType name="RadioButton">
+    <xs:complexContent mixed="false">
+      <xs:extension base="FormInput">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Choice" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Link" nillable="true" type="Link" />
+  <xs:complexType name="Link">
+    <xs:complexContent mixed="false">
+      <xs:extension base="FormElement" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="FilesInput" nillable="true" type="FilesInput" />
+  <xs:complexType name="FilesInput">
+    <xs:complexContent mixed="false">
+      <xs:extension base="FormInput" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="FormElement" nillable="true" type="FormElement" />
+  <xs:element name="Unit" nillable="true" type="Unit" />
+  <xs:element name="Value" nillable="true" type="Value" />
+  <xs:complexType name="Value">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Quantity" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Unit" type="Unit" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Image" nillable="true" type="Image" />
+  <xs:complexType name="Image">
+    <xs:complexContent mixed="false">
+      <xs:extension base="FormElement">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Src" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Alt" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ProductCategory" nillable="true" type="ProductCategory" />
+  <xs:element name="Price" nillable="true" type="Price" />
+  <xs:complexType name="Price">
+    <xs:complexContent mixed="false">
+      <xs:extension base="Value" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Euro" nillable="true" type="Euro" />
+  <xs:complexType name="Euro">
+    <xs:complexContent mixed="false">
+      <xs:extension base="Currency" />
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>
