@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</ProjectGuid>
+    <ProjectGuid>{9D7D892E-9B77-4713-892D-C26E1E944119}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>WorkFlowProvider</RootNamespace>
-    <AssemblyName>WorkFlowProvider</AssemblyName>
+    <RootNamespace>ITContentProvider</RootNamespace>
+    <AssemblyName>ITContentProvider</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,19 +31,19 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Npgsql" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="NpgsqlContentProvider.cs" />
-    <Compile Include="WFManager.cs" />
+    <Compile Include="ProjectInfo.cs" />
+    <Compile Include="ITCPNpgsqlProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\WorkFlowProvider\WorkFlowProvider.csproj">
+      <Project>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</Project>
+      <Name>WorkFlowProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\yavscModel\yavscModel.csproj">
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
       <Name>yavscModel</Name>

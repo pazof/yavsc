@@ -4,6 +4,7 @@ using System.ComponentModel;
 
 namespace yavscModel.WorkFlow
 {
+	[Obsolete("This should be define in an IT specific module")]
 	public class NewProjectModel
 	{
 		[DisplayName("Nom du projet")] 

@@ -56,8 +56,9 @@
     <Compile Include="WorkFlow\WFOrder.cs" />
     <Compile Include="WorkFlow\IContent.cs" />
     <Compile Include="WorkFlow\IContentProvider.cs" />
-    <Compile Include="WorkFlow\IWFCommand.cs" />
     <Compile Include="WorkFlow\IWFModule.cs" />
+    <Compile Include="WorkFlow\IWFOrder.cs" />
+    <Compile Include="WorkFlow\OrderStatusChangedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -81,7 +82,7 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="Flat" ResourceNamePolicy="FileFormatDefault" />
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="FileFormatDefault" />
         </Policies>
       </Properties>
     </MonoDevelop>

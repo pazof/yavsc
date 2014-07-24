@@ -6,9 +6,11 @@ using System.Web;
 using System.Web.Http;
 using WorkFlowProvider;
 using yavscModel.WorkFlow;
+using System.Web.Http.Controllers;
 
 namespace Yavsc.ApiControllers
 {
+	[HttpControllerConfiguration(ActionValueBinder=typeof(Basic.MvcActionValueBinder))]
 	public class WorkFlowController : ApiController
     {
 		[HttpGet]
@@ -17,7 +19,13 @@ namespace Yavsc.ApiControllers
 			return new { test="Hello World" }; 
         }
 	
+		[HttpGet]
+		public object Order (BasketImpact bi)
+		{
+			return new { c="lmk,", message="Panier impacté", impactRef=bi.ProductRef, count=bi.count};
+		}
 
+		/*
 	public object Details(int id)
         {
 			throw new NotImplementedException ();
@@ -27,6 +35,7 @@ namespace Yavsc.ApiControllers
         {
 			throw new NotImplementedException ();
         } 
+
 		public object Edit(int id)
         {
 			throw new NotImplementedException ();
@@ -46,6 +55,6 @@ namespace Yavsc.ApiControllers
 			}
 		}
 
-
+*/
     }
 }

@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vscadm", "vscadm\vscadm.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITContent", "ITContent\ITContent.csproj", "{88D83FC9-4158-4435-98A6-1F8F7F448B8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITContentProvider", "ITContentProvider\ITContentProvider.csproj", "{9D7D892E-9B77-4713-892D-C26E1E944119}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{90BF2234-7252-4CD5-B2A4-17501B19279B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90BF2234-7252-4CD5-B2A4-17501B19279B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90BF2234-7252-4CD5-B2A4-17501B19279B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D7D892E-9B77-4713-892D-C26E1E944119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D7D892E-9B77-4713-892D-C26E1E944119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D7D892E-9B77-4713-892D-C26E1E944119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D7D892E-9B77-4713-892D-C26E1E944119}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BBA7175D-7F92-4278-96FC-84C495A2B5A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BBA7175D-7F92-4278-96FC-84C495A2B5A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBA7175D-7F92-4278-96FC-84C495A2B5A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
