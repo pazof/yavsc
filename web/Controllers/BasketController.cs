@@ -7,6 +7,7 @@ using System.Web.Security;
 
 namespace Yavsc.Controllers
 {
+	// TODO should mostly be an API Controller
     public class BasketController : Controller
     {
         public ActionResult Index()
@@ -21,11 +22,12 @@ namespace Yavsc.Controllers
 
         public ActionResult Create()
         {
-			var user = Membership.GetUser ();
-			var username = (user != null)?user.UserName:Request.AnonymousID;
+			throw new NotImplementedException();
+			// var user = Membership.GetUser ();
+			// var username = (user != null)?user.UserName:Request.AnonymousID;
 			// get an existing basket 
 		
-			return View ();
+			//return View ();
         } 
 
         [HttpPost]

@@ -42,8 +42,8 @@ namespace Yavsc
 
 			GlobalConfiguration.Configuration.Routes.MapHttpRoute(
 						name: "DefaultApi",
-				routeTemplate: "api/{controller}/{action}/{*path}",
-				defaults: new { controller = "WorkFlow", action="Index", path = "" }
+				routeTemplate: "api/{controller}/{action}/{*id}",
+				defaults: new { controller = "WorkFlow", action="Index", id=0 }
 					);
 
 			RegisterRoutes (RouteTable.Routes);

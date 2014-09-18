@@ -14,8 +14,10 @@ namespace Yavsc.ApiControllers
 	public class WorkFlowController : ApiController
     {
 		[HttpGet]
+		[Authorize]
 		public object Index()
         {
+			
 			return new { test="Hello World" }; 
         }
 	
@@ -23,6 +25,14 @@ namespace Yavsc.ApiControllers
 		public object Order (BasketImpact bi)
 		{
 			return new { c="lmk,", message="Panier impacté", impactRef=bi.ProductRef, count=bi.count};
+		}
+
+		[HttpGet]
+		[Authorize]
+		public long Write (long estid, string desc, decimal ucost, int count, long productid=0) {
+			// TODO ensure estid owner matches the current one
+
+			return WFManager.Write(estid, desc, ucost, count, productid);
 		}
 
 		/*

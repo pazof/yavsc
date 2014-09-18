@@ -251,5 +251,13 @@
       <Project>{59E1DF7B-FFA0-4DEB-B5F3-76EBD98D5356}</Project>
       <Name>WebControls</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ITContentProvider\ITContentProvider.csproj">
+      <Project>{9D7D892E-9B77-4713-892D-C26E1E944119}</Project>
+      <Name>ITContentProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ITContent\ITContent.csproj">
+      <Project>{88D83FC9-4158-4435-98A6-1F8F7F448B8F}</Project>
+      <Name>ITContent</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

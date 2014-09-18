@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -33,9 +33,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="nunit.framework" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -59,6 +57,7 @@
     <Compile Include="WorkFlow\IWFModule.cs" />
     <Compile Include="WorkFlow\IWFOrder.cs" />
     <Compile Include="WorkFlow\OrderStatusChangedEventArgs.cs" />
+    <Compile Include="IProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

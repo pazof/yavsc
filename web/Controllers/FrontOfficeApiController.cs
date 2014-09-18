@@ -11,6 +11,8 @@ using System.Web;
 using System.Linq;
 using System.IO;
 using System.Net;
+using WorkFlowProvider;
+using System.Web.Security;
 
 namespace Yavsc.ApiControllers
 {
@@ -30,12 +32,11 @@ namespace Yavsc.ApiControllers
 			;
 		}
 
-		[AcceptVerbs("POST")]
+		[AcceptVerbs("GET","POST")]
 		public string Command()
 		{
-			return null;
+			throw new NotImplementedException();
 		}
-
 
 		public HttpResponseMessage Post()
 		{
@@ -80,6 +81,21 @@ namespace Yavsc.ApiControllers
 			return "/path/to/image.png";
 		}
 
+		[HttpGet]
+		[Authorize]
+		public long CreateEstimate (string title)
+		{
+			return WFManager.CreateEstimate (
+				Membership.GetUser().UserName,title);
+		}
+		[HttpGet]
+		[Authorize]
+		public long AddToBasket (string title)
+		{
+			//TODO find the basket for Membership.GetUser().UserName
+			//return WFManager.Write(estid << from the basket, desc, ucost, count, productid);
+			throw new NotImplementedException ();
+		}
 	}
 }
 

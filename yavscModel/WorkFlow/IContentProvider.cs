@@ -4,19 +4,21 @@ using System.Web.Mvc;
 
 namespace yavscModel.WorkFlow
 {
-	public interface IContentProvider: IDisposable
+	public interface IContentProvider : IProvider, IDisposable
 	{
-		IWFOrder CreateOrder ();
-		IWFOrder ImapctOrder (string orderid, FormCollection col);
-		IContent GetBlob (string orderId);
-		int GetStatus (string orderId);
+		int GetStatus (string estimId);
 		/// <summary>
 		/// Gets the status labels.
 		/// 0 is the starting status 
 		/// </summary>
 		/// <value>The status labels.</value>
-		bool [] IsFinalStatus { get; }
 		string [] StatusLabels {get;}
+		bool [] FinalStatuses { get; }
+		long CreateEstimate (string client, string title);
+		void SetTitle (long estid,  string newTitle);
+		long Write (long estid, string desc, decimal ucost, int count, long productid);
+		void SetDesc (long writid, string newDesc);
+		Estimate GetEstimate (long estimid);
 	}
 }
 
