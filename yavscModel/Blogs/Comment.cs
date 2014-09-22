@@ -3,7 +3,7 @@ using System.Configuration;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Npgsql.Web.Blog.DataModel
+namespace yavscModel.Blogs
 {
 	public class Comment
 	{

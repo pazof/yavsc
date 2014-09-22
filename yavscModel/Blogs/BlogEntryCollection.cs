@@ -1,9 +1,9 @@
 using System;
 using System.Configuration;
-using System.Configuration.Provider;
 using System.Collections.Generic;
+using yavscModel.Blogs;
 
-namespace Npgsql.Web.Blog.DataModel
+namespace yavscModel.Blogs
 {
 	public class BlogEntryCollection : List<BlogEntry>
 	{

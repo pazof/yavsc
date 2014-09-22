@@ -1,4 +1,4 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<Npgsql.Web.Blog.DataModel.BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
+<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="head" ID="head" runat="server">
 	<%= "<title>Les dernières parutions - " + Html.Encode(YavscHelpers.SiteName) + "</title>" %>
@@ -8,7 +8,7 @@
 </asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
-<% foreach (Npgsql.Web.Blog.DataModel.BlogEntry e in this.Model) { %>
+<% foreach (BlogEntry e in this.Model) { %>
 <div class="blogpost">
 <h3 class="blogtitle">
 <%= Html.ActionLink(e.Title,"UserPost", new { user=e.UserName, title = e.Title }) %>

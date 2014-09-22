@@ -1,9 +1,8 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Npgsql.Web.Blog.DataModel;
 
-namespace yavscModel
+namespace yavscModel.Blogs
 {
 	public class BlogEditCommentModel:Comment
 	{

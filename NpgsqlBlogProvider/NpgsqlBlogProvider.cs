@@ -2,8 +2,8 @@ using System;
 using System.Configuration;
 using System.Configuration.Provider;
 using Npgsql;
-using Npgsql.Web.Blog.DataModel;
 using System.Collections.Generic;
+using yavscModel.Blogs;
 
 namespace Npgsql.Web.Blog
 {

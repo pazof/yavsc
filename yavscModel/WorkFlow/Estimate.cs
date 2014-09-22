@@ -7,7 +7,9 @@ namespace yavscModel.WorkFlow
 		public Estimate ()
 		{
 		}
-		public string Description { get; set; }
+		public string Title { get; set; }
+		public string Owner { get; set; }
+
 		public decimal Ciffer {
 			get {
 				decimal total = 0;

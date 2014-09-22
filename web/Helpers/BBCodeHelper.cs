@@ -153,7 +153,9 @@ namespace Yavsc.Helpers
 
 		static string DocPageContentTransformer (string instr)
 		{
-			return TocContentTransformer(instr)+instr;
+			string toc = TocContentTransformer(instr);
+			Init ();
+			return toc+instr;
 		}
 
 		static string TagContentTransformer (string instr)
@@ -286,7 +288,7 @@ namespace Yavsc.Helpers
 						new BBAttribute ("title", "title", TitleContentTransformer),
 						new BBAttribute ("para", "para", L1ContentTransformer));
 					BBTag bbdp=new BBTag ("docpage",
-						"<div class=docpage>${content}</div>", "",
+						"<div class=docpage>${content}", "</div>",
 						false,
 						false,
 						DocPageContentTransformer);
@@ -296,14 +298,14 @@ namespace Yavsc.Helpers
 						new BBTag ("i", "<span style=\"font-style:italic;\">", "</span>"), 
 						new BBTag ("u", "<span style=\"text-decoration:underline;\">", "</span>"), 
 						new BBTag ("code", "<span class=\"code\">", "</span>"), 
-						new BBTag ("img", "<img src=\"${content}\" style=\"${style}\"/>", "", false, true, new BBAttribute ("style", "style")), 
+						new BBTag ("img", "<img src=\"${content}\" style=\"${style}\"/>", "", true, false, new BBAttribute ("style", "style")), 
 						new BBTag ("quote", "<blockquote>", "</blockquote>"), 
 						new BBTag ("div", "<div style=\"${style}\">", "</div>", new BBAttribute("style","style")), 
 						new BBTag ("p", "<p>", "</p>"), 
 						new BBTag ("h", "<h2>", "</h2>"), 
 						bblist, 
 						new BBTag ("*", "<li>", "</li>", true, false), 
-						new BBTag ("url", "<a href=\"${href}\">", "</a>", new BBAttribute ("href", ""), new BBAttribute ("href", "href")), 
+						new BBTag ("url", "<a href=\"${href}\">", "</a>", true, false, new BBAttribute ("href", ""), new BBAttribute ("href", "href")), 
 						new BBTag ("br", "<br/>", "", true, false),
 						new BBTag ("video", "<video style=\"${style}\" controls>" +
 							"<source src=\"${mp4}\" type=\"video/mp4\"/>" +

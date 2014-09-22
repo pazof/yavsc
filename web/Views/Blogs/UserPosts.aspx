@@ -1,4 +1,4 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<Npgsql.Web.Blog.DataModel.BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
+<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="titleContent" ID="titleContent" runat="server"><%=Html.Encode(ViewData["BlogTitle"])%></asp:Content>
 <asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">

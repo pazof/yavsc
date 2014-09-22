@@ -13,9 +13,9 @@ using System.Web.Profile;
 using System.Web.Security;
 using CodeKicker.BBCode;
 using Npgsql.Web.Blog;
-using Npgsql.Web.Blog.DataModel;
 using Yavsc;
 using yavscModel;
+using yavscModel.Blogs;
 
 namespace Yavsc.Controllers
 {
@@ -206,6 +206,8 @@ namespace Yavsc.Controllers
 		{
 			return string.Format ("{0}'s blog", user);
 		}
+
+		[Authorize]
 		public ActionResult Comment (BlogEditCommentModel model) {
 			string username = Membership.GetUser ().UserName;
 			ViewData ["SiteName"] = sitename;
@@ -231,30 +233,22 @@ namespace Yavsc.Controllers
 			return File (fia.OpenRead (), defaultAvatarMimetype);
 		}
 
+		/// <summary>
+		/// Remove the specified blog entry, by its author and title, 
+		/// using returnUrl as the URL to return to,
+		/// and confirm as a proof you really know what you do.
+		/// </summary>
+		/// <param name="user">User.</param>
+		/// <param name="title">Title.</param>
+		/// <param name="returnUrl">Return URL.</param>
+		/// <param name="confirm">If set to <c>true</c> confirm.</param>
 		[Authorize]
-		public ActionResult Remove (string user, string title, string returnUrl)
+		public ActionResult RemovePost (string user, string title, string returnUrl, bool confirm=false)
 		{
-			if (!Roles.IsUserInRole ("Admin")) {
-				string rguser = Membership.GetUser ().UserName;
-				if (rguser != user) {
-					ModelState.AddModelError (
-						"Title", string.Format (
-						"Vous n'avez pas de droits sur le Blog de {0}",
-						user));
-					return Return (returnUrl);
-				}
-			}
-			BlogEntry e = BlogManager.GetPost (user, title);
-			if (e == null) {
-				ModelState.AddModelError (
-					"Title",
-					string.Format (
-						"Aucun post portant le titre \"{0}\" pour l'utilisateur {1}",
-						title, user));
-				return Return (returnUrl);
-			}
-			BlogManager.RemovePost (user, title);
-			return Return (returnUrl);
+			if (!confirm)
+				return View ("RemovePost");
+			HttpStatusCodeResult res = BlogsApiController.RemovePost (user,title);
+			return (res.StatusCode==200? Return(returnUrl):res);
 		}
 
 		private ActionResult Return (string returnUrl)

@@ -58,6 +58,11 @@
     <Compile Include="WorkFlow\IWFOrder.cs" />
     <Compile Include="WorkFlow\OrderStatusChangedEventArgs.cs" />
     <Compile Include="IProvider.cs" />
+    <Compile Include="Blogs\BlogEntry.cs" />
+    <Compile Include="Blogs\Blog.cs" />
+    <Compile Include="Blogs\BlogEntryCollection.cs" />
+    <Compile Include="Blogs\Comment.cs" />
+    <Compile Include="Blogs\FindBlogEntryFlags.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -68,10 +73,6 @@
     <Folder Include="FileSystem\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NpgsqlBlogProvider\NpgsqlBlogProvider.csproj">
-      <Project>{C6E9E91B-97D3-48D9-8AA7-05356929E162}</Project>
-      <Name>NpgsqlBlogProvider</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SalesCatalog\SalesCatalog.csproj">
       <Project>{90BF2234-7252-4CD5-B2A4-17501B19279B}</Project>
       <Name>SalesCatalog</Name>

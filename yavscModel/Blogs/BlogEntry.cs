@@ -1,13 +1,11 @@
 using System;
 using System.Configuration;
-using System.Configuration.Provider;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Npgsql.Web.Blog.DataModel
+namespace yavscModel.Blogs
 {
-	public class BlogEntry
-	{
+	public class BlogEntry	{
 		long id;
 		[DisplayName("Identifiant numérique de billet")]
 		public long Id {
@@ -21,7 +19,6 @@ namespace Npgsql.Web.Blog.DataModel
 
 		string title;
 
-		[StringValidator(MaxLength=512)]
 		[DisplayName("Titre du billet")]
 		[StringLength(512)]
 		[RegularExpression("^[^:%&?]*$",ErrorMessage = "Les caratères suivants sont invalides pour un titre: :%&?")]
@@ -50,7 +47,7 @@ namespace Npgsql.Web.Blog.DataModel
 
 		string userName;
 
-		[StringValidator(MaxLength=255)]
+		[StringLength(255)]
 		[DisplayName("Nom de l'auteur")]
 		public string UserName {
 			get {

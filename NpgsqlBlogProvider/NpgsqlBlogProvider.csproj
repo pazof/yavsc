@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C6E9E91B-97D3-48D9-8AA7-05356929E162}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -33,19 +33,13 @@
     <Compile Include="Configuration\BlogProviderConfigurationElement.cs" />
     <Compile Include="Configuration\BlogProvidersConfigurationCollection.cs" />
     <Compile Include="Configuration\BlogProvidersConfigurationSection.cs" />
-    <Compile Include="DataModel\BlogEntry.cs" />
-    <Compile Include="DataModel\BlogEntryCollection.cs" />
     <Compile Include="BlogHelper.cs" />
     <Compile Include="BlogManager.cs" />
     <Compile Include="BlogProvider.cs" />
     <Compile Include="NpgsqlBlogProvider.cs" />
-    <Compile Include="DataModel\FindBlogEntryFlags.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="DataModel\Blog.cs" />
-    <Compile Include="DataModel\Comment.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataModel\" />
     <Folder Include="Sql\" />
   </ItemGroup>
   <ItemGroup>
@@ -66,5 +60,11 @@
   </ProjectExtensions>
   <ItemGroup>
     <None Include="Sql\BlogTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\yavscModel\yavscModel.csproj">
+      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
+      <Name>yavscModel</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

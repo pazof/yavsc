@@ -2,9 +2,8 @@ using System;
 using System.Configuration;
 using System.Configuration.Provider;
 using System.Collections.Generic;
-using Npgsql.Web.Blog.DataModel;
 
-namespace Npgsql.Web.Blog
+namespace yavscModel.Blogs
 {
 	public abstract class BlogProvider: ProviderBase
 	{

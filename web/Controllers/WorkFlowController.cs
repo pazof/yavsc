@@ -35,6 +35,17 @@ namespace Yavsc.ApiControllers
 			return WFManager.Write(estid, desc, ucost, count, productid);
 		}
 
+		[Authorize]
+		[HttpGet]
+		/// <summary>
+		/// Gets the estimate.
+		/// </summary>
+		/// <returns>The estimate.</returns>
+		/// <param name="estid">Estid.</param>
+		public Estimate GetEstimate (long estid)
+		{
+			return WFManager.ContentProvider.GetEstimate (estid);
+		}
 		/*
 	public object Details(int id)
         {

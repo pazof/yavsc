@@ -1,5 +1,6 @@
 using System;
-using Npgsql.Web.Blog.DataModel;
+using yavscModel.Blogs;
+
 
 namespace Npgsql.Web.Blog
 {

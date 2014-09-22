@@ -3,13 +3,13 @@ using System.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace Npgsql.Web.Blog.DataModel
+namespace yavscModel.Blogs
 {
 	public class Blog
 	{
 		string title;
 
-		[StringValidator(MaxLength=512)]
+		[StringLength(512)]
 		[Required]
 		[DisplayName("Titre")]
 		public string Title {

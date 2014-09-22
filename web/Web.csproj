@@ -62,7 +62,9 @@
     <Reference Include="Npgsql" />
     <Reference Include="System.Data" />
     <Reference Include="System.Security" />
-    <Reference Include="nunit.framework, Version=2.6.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
+    <Reference Include="nunit.framework, Version=2.6.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Package>nunit</Package>
+    </Reference>
     <Reference Include="CodeKicker.BBCode">
       <HintPath>lib\CodeKicker.BBCode.dll</HintPath>
     </Reference>
@@ -142,6 +144,7 @@
     <Compile Include="FileInfoCollection.cs" />
     <Compile Include="Controllers\BasketImpact.cs" />
     <Compile Include="MvcActionValueBinder.cs" />
+    <Compile Include="Controllers\BlogsApiController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -199,6 +202,7 @@
     <Content Include="Views\FrontOffice\Command.aspx" />
     <Content Include="Views\WorkFlow\NewProject.aspx" />
     <Content Include="Views\WorkFlow\Index.aspx" />
+    <Content Include="Views\Blogs\RemovePost.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -213,6 +217,9 @@
         <WebDeployTargets>
           <Target Name="">
             <FileCopier Handler="MonoDevelop.Deployment.LocalFileCopyHandler" TargetDirectory="/srv/www/yavsc" ctype="LocalFileCopyConfiguration" />
+          </Target>
+          <Target Name="">
+            <FileCopier Handler="MonoDevelop.Deployment.LocalFileCopyHandler" TargetDirectory="/srv/www/lua" ctype="LocalFileCopyConfiguration" />
           </Target>
         </WebDeployTargets>
       </Properties>

@@ -1,4 +1,4 @@
-<%@ Page Title="Billet" Language="C#" Inherits="System.Web.Mvc.ViewPage<Npgsql.Web.Blog.DataModel.BlogEntry>" MasterPageFile="~/Models/App.master"%>
+<%@ Page Title="Billet" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master"%>
 <asp:Content ContentPlaceHolderID="titleContent" ID="titleContent" runat="server"><%=Html.Encode(Model.Title)%> - <%=Html.Encode(ViewData["BlogTitle"])%></asp:Content>
 <asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
 <h1 class="blogtitle"><%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %> - 

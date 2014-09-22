@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Reflection;
 using System.Collections.Specialized;
 using Npgsql.Web.Blog.Configuration;
+using yavscModel.Blogs;
 
 namespace Npgsql.Web.Blog
 {

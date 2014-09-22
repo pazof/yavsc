@@ -163,7 +163,7 @@ namespace Yavsc.Controllers
 
 				// ChangePassword will throw an exception rather
 				// than return false in certain failure scenarios.
-				bool changePasswordSucceeded;
+				bool changePasswordSucceeded=false;
 				try {
 					var users = Membership.FindUsersByName (model.Username);
 
@@ -172,9 +172,10 @@ namespace Yavsc.Controllers
 						changePasswordSucceeded = user.ChangePassword (model.OldPassword, model.NewPassword);
 					} else {
 						changePasswordSucceeded = false;
+						ModelState.AddModelError ("Username", "The user name not found.");
 					}
-				} catch (Exception) {
-					changePasswordSucceeded = false;
+				} catch (Exception ex) {
+					ViewData ["Error"] = ex.ToString ();
 				}
 
 				if (changePasswordSucceeded) {

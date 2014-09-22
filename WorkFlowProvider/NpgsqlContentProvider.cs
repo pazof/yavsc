@@ -11,11 +11,67 @@ namespace WorkFlowProvider
 {
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
-		public Estimate GetEstimate (long estimid)
+		public bool[] FinalStatuses {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public string Order (IWFOrder c)
 		{
 			throw new NotImplementedException ();
 		}
 
+		public IContent GetBlob (string orderId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public int GetStatus (string orderId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public string[] StatusLabels {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		#region IDisposable implementation
+		public void Dispose ()
+		{
+
+		}
+		#endregion
+
+		public Estimate GetEstimate (long estimid)
+		{
+			using (NpgsqlConnection cnx = CreateConnection ()) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = 
+						"select title,username from estimate where _id = @estid";
+
+					cmd.Parameters.Add ("@estid", estimid);
+					cnx.Open ();
+					Estimate est = null;
+					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
+						if (!rdr.Read ()) {
+							throw new Exception (
+								string.Format("Estimate not found : {0}", estimid));
+						}
+						est = new Estimate ();
+						est.Title = rdr.GetString(
+							rdr.GetOrdinal("title"));
+						est.Owner = rdr.GetString(
+							rdr.GetOrdinal("username")); 
+					}
+					cnx.Close ();
+					return est;
+				}
+			}
+		}
+	
 		public void SetTitle (long estid, string newTitle)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -66,39 +122,6 @@ namespace WorkFlowProvider
 			} 
 		}
 
-		public bool[] FinalStatuses {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public string Order (IWFOrder c)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public IContent GetBlob (string orderId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public int GetStatus (string orderId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public string[] StatusLabels {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		#region IDisposable implementation
-		public void Dispose ()
-		{
-
-		}
-		#endregion
 
 		public long CreateEstimate (string client, string title)
 		{
