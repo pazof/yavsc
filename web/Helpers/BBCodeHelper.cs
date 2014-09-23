@@ -298,7 +298,7 @@ namespace Yavsc.Helpers
 						new BBTag ("i", "<span style=\"font-style:italic;\">", "</span>"), 
 						new BBTag ("u", "<span style=\"text-decoration:underline;\">", "</span>"), 
 						new BBTag ("code", "<span class=\"code\">", "</span>"), 
-						new BBTag ("img", "<img src=\"${content}\" style=\"${style}\"/>", "", true, false, new BBAttribute ("style", "style")), 
+						new BBTag ("img", "<img src=\"${content}\" alt=\"${alt}\" style=\"${style}\" />", "", false, true, new BBAttribute ("alt", ""), new BBAttribute("alt","alt"), new BBAttribute ("style", "style")), 
 						new BBTag ("quote", "<blockquote>", "</blockquote>"), 
 						new BBTag ("div", "<div style=\"${style}\">", "</div>", new BBAttribute("style","style")), 
 						new BBTag ("p", "<p>", "</p>"), 
