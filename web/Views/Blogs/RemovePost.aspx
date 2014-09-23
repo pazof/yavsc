@@ -9,20 +9,22 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<form runat="server">
+
 <%= Html.ValidationSummary() %>
-<% using (Html.BeginForm("Remove","Blogs")) { %>
- suivant : 
-<%= Html.LabelFor(model => model.Title) %>:<br/>
+<% using (Html.BeginForm("RemovePost","Blogs")) { %>
+
+<%= Html.LabelFor(model => model.Title) %> :
 <%= Html.TextBox( "Title" ) %>
-<%= Html.ValidationMessage("Title", "*") %>
+<%= Html.ValidationMessage("Title", "*") %><br/>
+
 <label for="confirm">supprimer le billet</label>
-<input type="checkbox" name="confirm" />
+<%= Html.CheckBox( "confirm" ) %>
 <%= Html.ValidationMessage("AgreeToRemove", "*") %>
 
+<%= Html.Hidden("returnUrl") %>
  <input type="submit"/>
  <% } %>
- </form>
+
 </asp:Content>
 
 

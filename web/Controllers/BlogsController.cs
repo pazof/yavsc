@@ -245,6 +245,10 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult RemovePost (string user, string title, string returnUrl, bool confirm=false)
 		{
+			if (returnUrl == null)
+			if (Request.UrlReferrer!=null)
+				returnUrl = Request.UrlReferrer.AbsoluteUri;
+			ViewData["returnUrl"]=returnUrl;
 			if (!confirm)
 				return View ("RemovePost");
 			HttpStatusCodeResult res = BlogsApiController.RemovePost (user,title);
