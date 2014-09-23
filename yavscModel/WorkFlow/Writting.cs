@@ -6,7 +6,7 @@ namespace yavscModel.WorkFlow
 	{
 		public decimal UnitaryCost { get; set; }
 		public int Count { get; set; }
-		public string ProductReference { get; set; }
+		public long ProductReference { get; set; }
 		public string Description { get; set; } 
 	}
 }

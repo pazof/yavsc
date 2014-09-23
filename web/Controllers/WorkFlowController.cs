@@ -7,12 +7,21 @@ using System.Web.Http;
 using WorkFlowProvider;
 using yavscModel.WorkFlow;
 using System.Web.Http.Controllers;
+using System.Web.Security;
 
 namespace Yavsc.ApiControllers
 {
 	[HttpControllerConfiguration(ActionValueBinder=typeof(Basic.MvcActionValueBinder))]
 	public class WorkFlowController : ApiController
     {
+		[HttpGet]
+		[Authorize]
+		public long CreateEstimate (string title)
+		{
+			return WFManager.CreateEstimate (
+				Membership.GetUser().UserName,title);
+		}
+
 		[HttpGet]
 		[Authorize]
 		public object Index()
@@ -44,7 +53,8 @@ namespace Yavsc.ApiControllers
 		/// <param name="estid">Estid.</param>
 		public Estimate GetEstimate (long estid)
 		{
-			return WFManager.ContentProvider.GetEstimate (estid);
+			Estimate est = WFManager.ContentProvider.GetEstimate (estid);
+			return est;
 		}
 		/*
 	public object Details(int id)

@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using yavscModel.WorkFlow;
 using System.Web.Mvc;
 using System.Configuration.Provider;
+using System.Collections.Generic;
 
 namespace WorkFlowProvider
 {
@@ -64,7 +65,32 @@ namespace WorkFlowProvider
 						est.Title = rdr.GetString(
 							rdr.GetOrdinal("title"));
 						est.Owner = rdr.GetString(
-							rdr.GetOrdinal("username")); 
+							rdr.GetOrdinal("username"));
+						using (NpgsqlCommand cmdw = new NpgsqlCommand ("select _id, productid, ucost, count, description from writtings where _id = @estid", cnx)) {
+							cmdw.Parameters.Add("@estid", estimid);
+							using (NpgsqlDataReader rdrw = cmdw.ExecuteReader ()) {
+								List<Writting> lw = new List<Writting> ();
+								while (rdrw.Read ()) {
+									Writting w = new Writting ();
+									w.Description = rdrw.GetString (
+										rdrw.GetOrdinal ("description"));
+									int opi = rdrw.GetOrdinal ("productid");
+									if (!rdrw.IsDBNull(opi))				
+										w.ProductReference = rdrw.GetInt64(opi);
+									int oco = rdrw.GetOrdinal ("count");
+									if (!rdrw.IsDBNull(oco))
+										w.Count = rdrw.GetInt32 (oco);
+									int ouc = rdrw.GetOrdinal ("ucost");
+									if (!rdrw.IsDBNull(ouc))
+										w.UnitaryCost = rdrw.GetDecimal (ouc);
+									// TODO get w.id
+									lw.Add (w);
+								}
+								est.Lines = lw.ToArray ();
+							}
+						}
+						// TODO est.Ciffer = somme des ecritures
+						// TODO read into est.Lines 
 					}
 					cnx.Close ();
 					return est;

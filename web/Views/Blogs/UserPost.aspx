@@ -27,7 +27,7 @@
 
 <% foreach (var c in (Comment[])ViewData["Comments"]) {  %> 
 	
-<div class="comment" style="min-height:32px;"> <img style="clear:left;float:left;max-width:32px;max-height:32px;" src="/Blogs/Avatar/<%=c.From%>" alt="<%=c.From%>"/>
+<div class="comment" style="min-height:32px;"> <img style="clear:left;float:left;max-width:32px;max-height:32px;margin:.3em;" src="/Blogs/Avatar/<%=c.From%>" alt="<%=c.From%>"/>
 <%= BBCodeHelper.Parser.ToHtml(c.CommentText) %>
 	<% if ( username == Model.UserName || c.From == username ) { %>
 	<%= Html.ActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } )%>
