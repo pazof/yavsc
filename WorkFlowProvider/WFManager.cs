@@ -8,6 +8,14 @@ namespace WorkFlowProvider
 {
 	public static class WFManager
 	{
+		public static void DropWritting (long wrid)
+		{
+			ContentProvider.DropWritting (wrid);
+		}
+		public static void DropEstimate (long estid)
+		{
+			ContentProvider.DropEstimate(estid);
+		}
 		static IContentProvider contentProvider;
 
 		public static IContentProvider ContentProvider {
@@ -60,6 +68,7 @@ namespace WorkFlowProvider
 		{
 			return ContentProvider.CreateEstimate (client, title);
 		}
+
 
 		public static long Write(long estid, string desc, decimal ucost, int count, long productid)
 		{

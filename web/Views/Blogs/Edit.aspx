@@ -1,28 +1,25 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEditEntryModel>" MasterPageFile="~/Models/App.master"%>
-<asp:Content ContentPlaceHolderID="head" ID="head" runat="server">
-	<title><%= Html.Encode(ViewData["BlogTitle"]) %>  edition 
-	- <%=Html.Encode(YavscHelpers.SiteName) %>
-	</title>
+<asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
+<% Title = Model.Title+" (édition) - "+ViewData["BlogTitle"]; %>
 </asp:Content>
-<asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
-
-<h1 class="blogtitle"> 
-	<a href="/Blog/<%=ViewData["UserName"]%>">
- <img class="avatar" src="/Blogs/Avatar?user=<%=ViewData["UserName"]%>" alt="from <%=ViewData["UserName"]%>"/>
- <%= Html.Encode(ViewData["BlogTitle"]) %> </a> - 
-	<%= Html.Encode(Model.Title) %> - 
-	 &Eacute;dition </h1>
-
+<asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
+<h1 class="blogtitle"><%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %> (édition) - 
+<a href="/Blog/<%=Model.UserName%>"><img class="avatar" src="/Blogs/Avatar?user=<%=Model.UserName%>" alt=""/> <%=ViewData["BlogTitle"]%></a>
+ <asp:Literal runat="server" Text=" - " />
+   <a href="/"> <%= YavscHelpers.SiteName %> </a> </h1>
  
- 
-<div class="message">
-	<%= Html.Encode(ViewData["Message"]) %>
-</div>
+<div class="metablog">(Id:<a href="/Blogs/UserPost/<%=Model.Id%>"><i><%=Model.Id%></i></a>, <%= Model.Posted.ToString("yyyy/MM/dd") %>
+	 - <%= Model.Modified.ToString("yyyy/MM/dd") %> <%= Model.Visible? "":", Invisible!" %>)
+<%  if (Membership.GetUser()!=null)
+	if (Membership.GetUser().UserName==Model.UserName)
+	 {  %>
+	 <%= Html.ActionLink("Editer","Edit", new { user=Model.UserName, title = Model.Title }, new { @class="actionlink" }) %>
+	 <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.UserName, title = Model.Title }, new { @class="actionlink" } ) %>
+	 <% } %>
+	 </div>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-
-
-<% if (Model != null ) if (Model.Content != null )  {
+	 <% if (Model != null ) if (Model.Content != null )  {
 	 BBCodeHelper.Init (); %>
 	 <%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %>
 <div class="blogpost">

@@ -21,13 +21,27 @@ namespace Yavsc.ApiControllers
 			return WFManager.CreateEstimate (
 				Membership.GetUser().UserName,title);
 		}
+		[HttpGet]
+		[Authorize]
+		public void DropWritting(long wrid)
+		{
+			WFManager.DropWritting (wrid);
+		}
 
+
+		[HttpGet]
+		[Authorize]
+		public void DropEstimate(long estid)
+		{
+			WFManager.DropEstimate (estid);
+		}
 		[HttpGet]
 		[Authorize]
 		public object Index()
         {
-			
-			return new { test="Hello World" }; 
+			// TODO inform user on its roles and alerts
+			string username = Membership.GetUser ().UserName;
+			return new { test=string.Format("Hello {0}!",username) }; 
         }
 	
 		[HttpGet]

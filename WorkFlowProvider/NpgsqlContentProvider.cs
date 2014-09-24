@@ -12,9 +12,14 @@ namespace WorkFlowProvider
 {
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
+		public void TagWritting (long wrid, string tag)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public bool[] FinalStatuses {
 			get {
-				throw new NotImplementedException ();
+				return new bool[] { false, true, true };
 			}
 		}
 
@@ -35,23 +40,45 @@ namespace WorkFlowProvider
 
 		public string[] StatusLabels {
 			get {
-				throw new NotImplementedException ();
+				return new string[] { "Created", "Success", "Error" };
 			}
 		}
 
-		#region IDisposable implementation
-		public void Dispose ()
+		public void DropWritting (long wrid)
 		{
 
+			using (NpgsqlConnection cnx = CreateConnection ()) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = 
+						"delete from writtings where _id = @wrid";
+
+					cmd.Parameters.Add ("@wrid", wrid);
+					cnx.Open ();
+					cmd.ExecuteNonQuery ();
+				}
+			}
 		}
-		#endregion
+
+		public void DropEstimate (long estid)
+		{
+			using (NpgsqlConnection cnx = CreateConnection ()) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = 
+						"delete from estimate where _id = @estid";
+
+					cmd.Parameters.Add ("@estid", estid);
+					cnx.Open ();
+					cmd.ExecuteNonQuery ();
+				}
+			}
+		}
 
 		public Estimate GetEstimate (long estimid)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"select title,username from estimate where _id = @estid";
+						"select _id,title,username from estimate where _id = @estid";
 
 					cmd.Parameters.Add ("@estid", estimid);
 					cnx.Open ();
@@ -66,6 +93,7 @@ namespace WorkFlowProvider
 							rdr.GetOrdinal("title"));
 						est.Owner = rdr.GetString(
 							rdr.GetOrdinal("username"));
+
 						using (NpgsqlCommand cmdw = new NpgsqlCommand ("select _id, productid, ucost, count, description from writtings where _id = @estid", cnx)) {
 							cmdw.Parameters.Add("@estid", estimid);
 							using (NpgsqlDataReader rdrw = cmdw.ExecuteReader ()) {
@@ -83,7 +111,7 @@ namespace WorkFlowProvider
 									int ouc = rdrw.GetOrdinal ("ucost");
 									if (!rdrw.IsDBNull(ouc))
 										w.UnitaryCost = rdrw.GetDecimal (ouc);
-									// TODO get w.id
+									w.Id = rdrw.GetInt64 (rdrw.GetOrdinal("_id"));
 									lw.Add (w);
 								}
 								est.Lines = lw.ToArray ();
@@ -193,6 +221,13 @@ namespace WorkFlowProvider
 		{
 			return new NpgsqlConnection (cnxstr);
 		}
+		#region IDisposable implementation
+		public void Dispose ()
+		{
+
+		}
+		#endregion
+
 	}
 }
 

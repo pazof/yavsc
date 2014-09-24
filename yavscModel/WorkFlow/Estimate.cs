@@ -9,7 +9,7 @@ namespace yavscModel.WorkFlow
 		}
 		public string Title { get; set; }
 		public string Owner { get; set; }
-
+		public long Id { get; set; }
 		public decimal Ciffer {
 			get {
 				decimal total = 0;

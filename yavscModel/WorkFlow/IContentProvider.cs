@@ -6,6 +6,9 @@ namespace yavscModel.WorkFlow
 {
 	public interface IContentProvider : IProvider, IDisposable
 	{
+		void DropWritting (long wrid);
+		void DropEstimate (long estid);
+		void TagWritting (long wrid,string tag);
 		int GetStatus (string estimId);
 		/// <summary>
 		/// Gets the status labels.
