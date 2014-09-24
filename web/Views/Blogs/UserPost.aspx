@@ -1,8 +1,12 @@
 <%@ Page Title="Billet" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master"%>
-<asp:Content ContentPlaceHolderID="titleContent" ID="titleContent" runat="server"><%=Html.Encode(Model.Title)%> - <%=Html.Encode(ViewData["BlogTitle"])%></asp:Content>
-<asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
+<asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
+<% Title = Model.Title+" - "+ViewData["BlogTitle"]; %>
+</asp:Content>
+<asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
 <h1 class="blogtitle"><%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %> - 
-<a href="/Blog/<%=Model.UserName%>"><img class="avatar" src="/Blogs/Avatar?user=<%=Model.UserName%>" alt=""/> <%=ViewData["BlogTitle"]%></a> </h1>
+<a href="/Blog/<%=Model.UserName%>"><img class="avatar" src="/Blogs/Avatar?user=<%=Model.UserName%>" alt=""/> <%=ViewData["BlogTitle"]%></a>
+ <asp:Literal runat="server" Text=" - " />
+   <a href="/"> <%= YavscHelpers.SiteName %> </a> </h1>
  
 <div class="metablog">(Id:<a href="/Blogs/UserPost/<%=Model.Id%>"><i><%=Model.Id%></i></a>, <%= Model.Posted.ToString("yyyy/MM/dd") %>
 	 - <%= Model.Modified.ToString("yyyy/MM/dd") %> <%= Model.Visible? "":", Invisible!" %>)

@@ -1,7 +1,4 @@
 ﻿<%@ Page Title="Register" Language="C#" Inherits="Yavsc.RegisterPage" MasterPageFile="~/Models/App.master" %>
-<asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">	
-
-</asp:Content>
 <asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">	
 <h2> Créez votre compte utilisateur <%= Html.Encode(YavscHelpers.SiteName) %> </h2>
 </asp:Content>

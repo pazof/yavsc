@@ -1,11 +1,5 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
+<%@ Page Title="Blogs - Les dernières parutions" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
-<asp:Content ContentPlaceHolderID="head" ID="head" runat="server">
-	<%= "<title>Les dernières parutions - " + Html.Encode(YavscHelpers.SiteName) + "</title>" %>
-</asp:Content>
-<asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">	
-<h2>Les dernières parutions</h2>
-</asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
 <% foreach (BlogEntry e in this.Model) { %>
