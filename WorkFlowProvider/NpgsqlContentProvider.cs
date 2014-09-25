@@ -12,6 +12,36 @@ namespace WorkFlowProvider
 {
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
+		public StatusChange[] GetWrittingStatuses (long wrid)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public StatusChange[] GetEstimateStatuses (long estid)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void DropTagWritting (long wrid, string tag)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void UpdateWritting (Writting wr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void SetWrittingStatus (long wrtid, int status, string username)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void SetEstimateStatus (long estid, int status, string username)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public void TagWritting (long wrid, string tag)
 		{
 			throw new NotImplementedException ();

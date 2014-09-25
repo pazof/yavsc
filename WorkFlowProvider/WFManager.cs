@@ -8,6 +8,11 @@ namespace WorkFlowProvider
 {
 	public static class WFManager
 	{
+		public static void UpdateWritting (Writting wr)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static void DropWritting (long wrid)
 		{
 			ContentProvider.DropWritting (wrid);
@@ -75,7 +80,10 @@ namespace WorkFlowProvider
 			return ContentProvider.Write(estid, desc, ucost, count, productid);
 		}
 
-
+		public static void SetEstimateStatus(long estid, int status, string username)
+		{
+			ContentProvider.SetEstimateStatus (estid, status, username);
+		}
 
 	}
 }

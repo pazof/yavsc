@@ -27,7 +27,12 @@ namespace Yavsc.ApiControllers
 		{
 			WFManager.DropWritting (wrid);
 		}
-
+		[HttpGet]
+		[Authorize]
+		public void UpdateWritting(Writting wr)
+		{
+			WFManager.UpdateWritting (wr);
+		}
 
 		[HttpGet]
 		[Authorize]
