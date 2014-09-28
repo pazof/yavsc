@@ -1,13 +1,14 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
+<%@ Page Title="Billets utilisateurs" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
-<asp:Content ContentPlaceHolderID="titleContent" ID="titleContent" runat="server"><%=Html.Encode(ViewData["BlogTitle"])%></asp:Content>
-<asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
-	<h1><a href="/Blog/<%=ViewData["BlogUser"]%>">
-	<img class="avatar" src="/Blogs/Avatar?user=<%=ViewData["BlogUser"]%>" alt=""/>
-	<%=ViewData["BlogTitle"]%></a></h1>
-		<div class="message"><%= Html.Encode(ViewData["Message"])%></div>
+<asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
+<% Title = (string) ViewData["BlogTitle"] ; %>
 </asp:Content>
+		<asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
+			<h1 class="blogtitle"><a href="/Blog/<%=ViewData["BlogUser"]%>">
+	<img class="avatar" src="/Blogs/Avatar?user=<%=ViewData["BlogUser"]%>" alt="ViewData["BlogUser"]"/>
+	<%=ViewData["BlogTitle"]%></a> - <a href="/"> <%= YavscHelpers.SiteName %> </a> </h1>
 
+</asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <%  
 	foreach (BlogEntry e in this.Model) { %>

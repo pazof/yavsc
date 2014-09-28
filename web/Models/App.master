@@ -49,12 +49,12 @@
 
 
 <% if (ViewData["Error"]!=null) { %>
-<div class="Error">
+<div class="error">
 <%= Html.Encode(ViewData["Error"]) %>
 </div>
 <% } %>
 <% if (ViewData["Message"]!=null) { %>
-<div class="Message">
+<div class="message">
 <%= Html.Encode(ViewData["Message"]) %>
 </div>
 <% } %>

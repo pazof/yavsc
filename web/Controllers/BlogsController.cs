@@ -43,7 +43,6 @@ namespace Yavsc.Controllers
 		public ActionResult Index (string user = null, string title = null, int pageIndex=0, int pageSize=10)
 		{
 			if (string.IsNullOrEmpty (user)) {
-				ViewData ["Message"] = "Blogs";
 				return BlogList (pageIndex, pageSize);
 			} else {
 				MembershipUser u = Membership.GetUser (user, false);

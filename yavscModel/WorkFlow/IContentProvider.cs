@@ -4,7 +4,6 @@ using System.Web.Mvc;
 
 namespace yavscModel.WorkFlow
 {
-	public interface StatusChange { int Status {get;} DateTime date {get;} }
 
 	public interface IContentProvider : IProvider, IDisposable
 	{

@@ -47,11 +47,7 @@ namespace WorkFlowProvider
 			throw new NotImplementedException ();
 		}
 
-		public bool[] FinalStatuses {
-			get {
-				return new bool[] { false, true, true };
-			}
-		}
+
 
 		public string Order (IWFOrder c)
 		{
@@ -70,7 +66,12 @@ namespace WorkFlowProvider
 
 		public string[] StatusLabels {
 			get {
-				return new string[] { "Created", "Success", "Error" };
+				return new string[] { "Created", "Validated", "Success", "Error" };
+			}
+		}
+		public bool[] FinalStatuses {
+			get {
+				return new bool[] { false, false, true, true };
 			}
 		}
 
