@@ -4,6 +4,16 @@ namespace SalesCatalog.Model
 {
 	public class RadioButton:FormInput
 	{
+		#region implemented abstract members of FormInput
+
+		public override string Type {
+			get {
+				return "radio";
+			}
+		}
+
+		#endregion
+
 		public RadioButton ()
 		{
 		}

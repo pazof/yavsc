@@ -8,9 +8,14 @@ namespace WorkFlowProvider
 {
 	public static class WFManager
 	{
+		public static Estimate GetEstimate (long estid)
+		{
+			return ContentProvider.GetEstimate (estid);
+		}
+
 		public static void UpdateWritting (Writting wr)
 		{
-			throw new NotImplementedException ();
+			ContentProvider.UpdateWritting (wr);
 		}
 
 		public static void DropWritting (long wrid)

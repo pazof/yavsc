@@ -8,11 +8,18 @@ using System.Text.RegularExpressions;
 using System.IO;
 using Yavsc.Controllers;
 using System.Collections.Generic;
+using yavscModel.WorkFlow;
+using WorkFlowProvider;
 
 namespace Yavsc.Controllers
 {
 	public class FrontOfficeController : Controller
 	{
+		[HttpGet]
+		public Estimate GetEstimate(long estid) {
+			return WFManager.GetEstimate (estid);
+		}
+
 		[AcceptVerbs("GET")]
 		public ActionResult Catalog ()
 		{

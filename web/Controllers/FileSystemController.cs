@@ -12,7 +12,7 @@ namespace Yavsc.Controllers
 {
     public class FileSystemController : Controller
     {
-		private static string usersDir ="users";
+		private static string usersDir ="~/users";
 
 		public static string UsersDir {
 			get {
@@ -25,9 +25,10 @@ namespace Yavsc.Controllers
         {
 			string user = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = user;
+
 			DirectoryInfo di = new DirectoryInfo (
 				Path.Combine(
-					UsersDir,
+					Server.MapPath(UsersDir),
 					user));
 			if (!di.Exists)
 				di.Create ();

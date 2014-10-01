@@ -4,9 +4,18 @@ namespace SalesCatalog.Model
 {
 	public class TextInput:FormInput
 	{
+		#region implemented abstract members of FormInput
+		public override string Type {
+			get {
+				return "text";
+			}
+		}
+		#endregion
+
 		public TextInput ()
 		{
 		}
+
 		public TextInput (string txt)
 		{
 			text = txt;

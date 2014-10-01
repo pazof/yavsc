@@ -7,18 +7,14 @@
 <link rel="stylesheet" href="/style.css"/>
 <link rel="icon" type="image/png" href="/favicon.png" />
 <link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'/>
-<asp:ContentPlaceHolder id="init" runat="server"></asp:ContentPlaceHolder>
-<asp:ContentPlaceHolder ID="title" runat="server">
-  <title>
- <%= Page.Title %>
-    <asp:Literal runat="server" Text=" - " /><%= YavscHelpers.SiteName %>
-  </title>
+<asp:ContentPlaceHolder id="init" runat="server">
 </asp:ContentPlaceHolder>
-<asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
 </head>
 <body>
 <header>
 <div id="login">
+<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ) %>
+
 	<% if (Membership.GetUser()==null) { %>
 
 <%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, null ) %>
@@ -31,7 +27,7 @@
 	<%=  Html.ActionLink( "Profile", "Profile", "Account" ) %>
 
 <% } %>
-	<%=  Html.ActionLink( "Accueil", "Index", "Home" ) %>
+
 
 
 	</div>
@@ -41,10 +37,9 @@
 
 	<h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>">
 	<%= Page.Title %>
-	</a>
-    <asp:Literal runat="server" Text=" - " />
-   <a href="/"> <%= YavscHelpers.SiteName %> </a>
-	</h1>
+	</a></h1>
+
+
 </asp:ContentPlaceHolder>
 
 

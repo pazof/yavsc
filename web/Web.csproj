@@ -221,6 +221,9 @@
           <Target Name="">
             <FileCopier Handler="MonoDevelop.Deployment.LocalFileCopyHandler" TargetDirectory="/srv/www/lua" ctype="LocalFileCopyConfiguration" />
           </Target>
+          <Target Name="">
+            <FileCopier Handler="MonoDevelop.Deployment.SshFuseFileCopyHandler" TargetDirectory="root@192.168.0.45:/srv/httpd/lua" ExtraMountArguments="" ctype="SshFuseFileCopyConfiguration" />
+          </Target>
         </WebDeployTargets>
       </Properties>
     </MonoDevelop>

@@ -6,6 +6,16 @@ namespace SalesCatalog.Model
 {
 	public class SelectInput: FormInput
 	{
+		#region implemented abstract members of FormInput
+
+		public override string Type {
+			get {
+				return "select";
+			}
+		}
+
+		#endregion
+
 		public Option[] Items;
 		public int SelectedIndex;
 		public override string ToHtml ()

@@ -11,7 +11,7 @@
 </asp:Content>
 
 	 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-	<div>
+	
 <div class="blogpost">
 	 <% BBCodeHelper.Init(); %>
 <%= BBCodeHelper.Parser.ToHtml(Model.Content) %>
@@ -39,5 +39,5 @@
 	 <input type="submit" value="Poster un commentaire"/>
 	 <% } %>
 	  </div>
-</div>
+
 </asp:Content>

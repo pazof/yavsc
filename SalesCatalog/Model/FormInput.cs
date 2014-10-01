@@ -13,6 +13,7 @@ namespace SalesCatalog.Model
 
 		public string Id { get; set; }
 		private string name=null;
+		public abstract string Type { get; }
 		public string Name { get { return name == null ? Id : name; } set { name = value; } }
 	}
 }

@@ -66,10 +66,12 @@ namespace Yavsc.ApiControllers
 			return result;
 		}
 
-
+		/// <summary>
+		/// Adds to basket, a product from the catalog, in the user's session.
+		/// </summary>
+		/// <returns>The to basket.</returns>
 		[HttpGet]
-		[Authorize]
-		public long AddToBasket (string title)
+		public long AddToBasket (string prodref,int count, object prodparams=null)
 		{
 			//TODO find the basket for Membership.GetUser().UserName
 			//return WFManager.Write(estid << from the basket, desc, ucost, count, productid);
