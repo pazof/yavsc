@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{88D83FC9-4158-4435-98A6-1F8F7F448B8F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -41,9 +41,9 @@
       <Project>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</Project>
       <Name>WorkFlowProvider</Name>
     </ProjectReference>
-    <ProjectReference Include="..\yavscModel\yavscModel.csproj">
+    <ProjectReference Include="..\yavscModel\YavscModel.csproj">
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
-      <Name>yavscModel</Name>
+      <Name>YavscModel</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

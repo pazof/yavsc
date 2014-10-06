@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Collections.Specialized;
 
-namespace yavscModel
+namespace Yavsc.Model
 {
 	public interface IModule
 	{

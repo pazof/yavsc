@@ -1,5 +1,5 @@
 using System;
-using yavscModel.WorkFlow;
+using Yavsc.Model.WorkFlow;
 using System.Configuration;
 using WorkFlowProvider.Configuration;
 using System.Collections.Specialized;

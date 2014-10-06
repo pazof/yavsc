@@ -1,6 +1,6 @@
 using System;
 using WorkFlowProvider;
-using yavscModel.WorkFlow;
+using Yavsc.Model.WorkFlow;
 
 namespace ITContent
 {

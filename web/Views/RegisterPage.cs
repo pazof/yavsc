@@ -1,6 +1,6 @@
 using System;
 using System.Web.UI.WebControls;
-using yavscModel.RolesAndMembers;
+using Yavsc.Model.RolesAndMembers;
 
 
 namespace Yavsc

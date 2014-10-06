@@ -1,6 +1,6 @@
 using System;
 
-namespace yavscModel.WorkFlow
+namespace Yavsc.Model.WorkFlow
 {
 	public class Writting
 	{

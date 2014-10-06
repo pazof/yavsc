@@ -65,6 +65,8 @@
     <Compile Include="Blogs\FindBlogEntryFlags.cs" />
     <Compile Include="WorkFlow\StatusChange.cs" />
     <Compile Include="IModule.cs" />
+    <Compile Include="WorkFlow\BasketImpact.cs" />
+    <Compile Include="WorkFlow\Commande.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

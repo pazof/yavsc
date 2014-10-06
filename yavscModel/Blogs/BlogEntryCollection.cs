@@ -1,9 +1,9 @@
 using System;
 using System.Configuration;
 using System.Collections.Generic;
-using yavscModel.Blogs;
+using Yavsc.Model.Blogs;
 
-namespace yavscModel.Blogs
+namespace Yavsc.Model.Blogs
 {
 	public class BlogEntryCollection : List<BlogEntry>
 	{

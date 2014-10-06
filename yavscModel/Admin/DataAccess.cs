@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace yavscModel.Admin
+namespace Yavsc.Model.Admin
 {
 	public class DataAccess {
 		private  string host = "localhost";

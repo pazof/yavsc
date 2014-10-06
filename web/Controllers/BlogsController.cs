@@ -14,8 +14,9 @@ using System.Web.Security;
 using CodeKicker.BBCode;
 using Npgsql.Web.Blog;
 using Yavsc;
-using yavscModel;
-using yavscModel.Blogs;
+using Yavsc.Model;
+using Yavsc.Model.Blogs;
+using Yavsc.ApiControllers;
 
 namespace Yavsc.Controllers
 {
@@ -250,8 +251,10 @@ namespace Yavsc.Controllers
 			ViewData["returnUrl"]=returnUrl;
 			if (!confirm)
 				return View ("RemovePost");
-			HttpStatusCodeResult res = BlogsApiController.RemovePost (user,title);
-			return (res.StatusCode==200? Return(returnUrl):res);
+			BlogsApiController.RemovePost (user,title);
+			if (returnUrl == null)
+				RedirectToAction ("Index",new { user = user });
+			return Redirect (returnUrl);
 		}
 
 		private ActionResult Return (string returnUrl)

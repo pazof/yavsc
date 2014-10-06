@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace yavscModel.WorkFlow
+namespace Yavsc.Model.WorkFlow
 {
 	public interface IWFOrder
 	{

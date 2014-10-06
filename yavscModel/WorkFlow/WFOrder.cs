@@ -1,8 +1,7 @@
 using System;
 using SalesCatalog.Model;
-using yavscModel.WorkFlow;
 
-namespace yavscModel.WorkFlow
+namespace Yavsc.Model.WorkFlow
 {
 	public class WFOrder : IWFOrder
 	{

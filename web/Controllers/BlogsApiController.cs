@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
-using System.Web.Mvc.Ajax;
 using System.Web.Security;
+using System.Web.Http;
 using Npgsql.Web.Blog;
-using yavscModel.Blogs;
+using Yavsc.Model.Blogs;
 
-namespace Yavsc.Controllers
+namespace Yavsc.ApiControllers
 {
-	public class BlogsApiController : Controller
+	public class BlogsApiController : ApiController
 	{
 		private const string adminRoleName = "Admin";
-		protected override void Initialize (System.Web.Routing.RequestContext requestContext)
+
+		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
 		{
-			base.Initialize (requestContext);
+			base.Initialize (controllerContext);
 			if (!Roles.RoleExists (adminRoleName)) {
 				Roles.CreateRole (adminRoleName);
 			}
@@ -35,7 +35,7 @@ namespace Yavsc.Controllers
 			return BlogManager.Tag (postid, tag);
 		}
 
-		public static HttpStatusCodeResult RemovePost(string user, string title) {
+		public static void RemovePost(string user, string title) {
 			if (!Roles.IsUserInRole ("Admin")) {
 				string rguser = Membership.GetUser ().UserName;
 				if (rguser != user) {
@@ -47,12 +47,11 @@ namespace Yavsc.Controllers
 			}
 			BlogEntry e = BlogManager.GetPost (user, title);
 			if (e == null) {
-				return new HttpNotFoundResult (
+				throw new KeyNotFoundException (
 					string.Format("Aucun post portant le titre \"{0}\" pour l'utilisateur {1}",
 						title, user));
 			}
 			BlogManager.RemovePost (user, title);
-			return new HttpStatusCodeResult (200);
 		}
 
 		public void RemoveTag(long tagid) {

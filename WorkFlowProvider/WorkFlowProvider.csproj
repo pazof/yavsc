@@ -45,9 +45,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\yavscModel\yavscModel.csproj">
+    <ProjectReference Include="..\yavscModel\YavscModel.csproj">
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
-      <Name>yavscModel</Name>
+      <Name>YavscModel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

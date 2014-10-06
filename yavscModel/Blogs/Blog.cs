@@ -3,7 +3,7 @@ using System.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace yavscModel.Blogs
+namespace Yavsc.Model.Blogs
 {
 	public class Blog
 	{

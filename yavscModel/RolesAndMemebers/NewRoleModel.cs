@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace yavscModel.RolesAndMembers
+namespace Yavsc.Model.RolesAndMembers
 {
 	public class NewRoleModel
 	{

@@ -13,7 +13,7 @@ using System.IO;
 using System.Net;
 using WorkFlowProvider;
 using System.Web.Security;
-using yavscModel.WorkFlow;
+using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.ApiControllers
 {
@@ -33,12 +33,7 @@ namespace Yavsc.ApiControllers
 			return CatalogManager.GetCatalog ().GetBrand (brandName).GetProductCategory (prodCategorie)
 			;
 		}
-
-		[AcceptVerbs("GET","POST")]
-		public string Command()
-		{
-			throw new NotImplementedException();
-		}
+		/*
 
 		public HttpResponseMessage Post()
 		{
@@ -66,7 +61,7 @@ namespace Yavsc.ApiControllers
 
 			return result;
 		}
-
+*/
 
 
 		[Authorize]

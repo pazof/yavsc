@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace yavscModel.WorkFlow
+namespace Yavsc.Model.WorkFlow
 {
 	[Obsolete("This should be define in an IT specific module")]
 	public class NewProjectModel

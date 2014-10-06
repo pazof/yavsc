@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace yavscModel.WorkFlow
+namespace Yavsc.Model.WorkFlow
 {
 	public class StatusChange { 
 		public int Status { get; set;} 

@@ -62,9 +62,7 @@
     <Reference Include="Npgsql" />
     <Reference Include="System.Data" />
     <Reference Include="System.Security" />
-    <Reference Include="nunit.framework, Version=2.6.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <Package>nunit</Package>
-    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.0.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
     <Reference Include="CodeKicker.BBCode">
       <HintPath>lib\CodeKicker.BBCode.dll</HintPath>
     </Reference>
@@ -109,7 +107,6 @@
     <Folder Include="Views\FileSystem\" />
     <Folder Include="CatExts\" />
     <Folder Include="Views\WorkFlow\" />
-    <Folder Include="Basket\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -137,12 +134,9 @@
     <Compile Include="CatExts\WebCatalogExtensions.cs" />
     <Compile Include="Controllers\WorkFlowController.cs" />
     <Compile Include="Controllers\FrontOfficeApiController.cs" />
-    <Compile Include="Controllers\Commande.cs" />
     <Compile Include="Helpers\YavscHelpers.cs" />
     <Compile Include="Controllers\BasketController.cs" />
-    <Compile Include="Basket\Basket.cs" />
     <Compile Include="FileInfoCollection.cs" />
-    <Compile Include="Controllers\BasketImpact.cs" />
     <Compile Include="MvcActionValueBinder.cs" />
     <Compile Include="Controllers\BlogsApiController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
@@ -254,10 +248,6 @@
       <Project>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</Project>
       <Name>WorkFlowProvider</Name>
     </ProjectReference>
-    <ProjectReference Include="..\yavscModel\yavscModel.csproj">
-      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
-      <Name>yavscModel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WebControls\WebControls.csproj">
       <Project>{59E1DF7B-FFA0-4DEB-B5F3-76EBD98D5356}</Project>
       <Name>WebControls</Name>
@@ -269,6 +259,10 @@
     <ProjectReference Include="..\ITContent\ITContent.csproj">
       <Project>{88D83FC9-4158-4435-98A6-1F8F7F448B8F}</Project>
       <Name>ITContent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\yavscModel\YavscModel.csproj">
+      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
+      <Name>YavscModel</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

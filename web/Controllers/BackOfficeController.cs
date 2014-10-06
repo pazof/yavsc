@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Yavsc.Admin;
-using yavscModel.Admin;
+using Yavsc.Model.Admin;
 
 
 namespace Yavsc.Controllers
@@ -66,5 +66,7 @@ namespace Yavsc.Controllers
 			return View (datac);
 		}
 
+		/*[Authorize(Roles="Admin")]
+		public ActionResult Estimate*/
     }
 }

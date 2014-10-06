@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace yavscModel.Blogs
+namespace Yavsc.Model.Blogs
 {
 	public class BlogEditCommentModel:Comment
 	{

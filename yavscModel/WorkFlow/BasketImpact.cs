@@ -3,13 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-using System.Web.Http;
-using WorkFlowProvider;
-using yavscModel.WorkFlow;
-using System.Web.Http.Controllers;
-using System.Web.Http.ModelBinding;
-
-namespace Yavsc.ApiControllers
+namespace Yavsc.Model.WorkFlow
 {
 
 	public class BasketImpact 

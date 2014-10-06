@@ -5,7 +5,7 @@ using System.Web;
 
 using System.Web.Http;
 using WorkFlowProvider;
-using yavscModel.WorkFlow;
+using Yavsc.Model.WorkFlow;
 using System.Web.Http.Controllers;
 using System.Web.Security;
 
@@ -18,6 +18,7 @@ namespace Yavsc.ApiControllers
 
 		protected override void Initialize (HttpControllerContext controllerContext)
 		{
+			// TODO move it in a module initialization
 			base.Initialize (controllerContext);
 			if (!Roles.RoleExists (adminRoleName)) {
 				Roles.CreateRole (adminRoleName);

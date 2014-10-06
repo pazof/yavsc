@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace FileSystem
+namespace Yavsc.Model.FileSystem
 {
 	public class FileInfoCollection: List<FileInfo>
 	{

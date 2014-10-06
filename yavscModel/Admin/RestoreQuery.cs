@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace yavscModel.Admin
+namespace Yavsc.Model.Admin
 {
 	public class RestoreQuery: DataAccess
 	{

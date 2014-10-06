@@ -2,7 +2,7 @@ using System;
 using System.Configuration;
 using System.Collections.Generic;
 
-namespace yavscModel.Blogs
+namespace Yavsc.Model.Blogs
 {
 
 	public enum FindBlogEntryFlags : byte {

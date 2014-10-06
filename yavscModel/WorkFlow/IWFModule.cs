@@ -1,8 +1,8 @@
 using System;
-using yavscModel.WorkFlow;
+using Yavsc.Model.WorkFlow;
 using System.Web.Mvc;
 
-namespace yavscModel.WorkFlow
+namespace Yavsc.Model.WorkFlow
 {
 	public interface IWFModule
 	{

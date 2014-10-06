@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace yavscModel.RolesAndMembers
+namespace Yavsc.Model.RolesAndMembers
 {
 	public class NewAdminModel
 	{

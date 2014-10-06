@@ -10,7 +10,7 @@ using System.Web.Mvc.Ajax;
 using System.Web.Profile;
 using System.Web.Security;
 using Yavsc;
-using yavscModel.RolesAndMembers;
+using Yavsc.Model.RolesAndMembers;
 using Yavsc.Helpers;
 
 namespace Yavsc.Controllers

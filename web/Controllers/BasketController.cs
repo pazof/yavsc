@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.Http;
-using yavscModel.WorkFlow;
+using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.ApiControllers
 {

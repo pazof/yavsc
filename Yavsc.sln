@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpgsqlBlogProvider", "Npgsq
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesCatalog", "SalesCatalog\SalesCatalog.csproj", "{90BF2234-7252-4CD5-B2A4-17501B19279B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yavscModel", "yavscModel\yavscModel.csproj", "{68F5B80A-616E-4C3C-91A0-828AA40000BD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YavscModel", "yavscModel\YavscModel.csproj", "{68F5B80A-616E-4C3C-91A0-828AA40000BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkFlowProvider", "WorkFlowProvider\WorkFlowProvider.csproj", "{821FF72D-9F4B-4A2C-B95C-7B965291F119}"
 EndProject

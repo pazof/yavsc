@@ -1,5 +1,5 @@
 using System;
-using yavscModel.Blogs;
+using Yavsc.Model.Blogs;
 
 
 namespace Npgsql.Web.Blog

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Profile;
 
-namespace yavscModel.RolesAndMembers
+namespace Yavsc.Model.RolesAndMembers
 {
 	public class Profile
 	{

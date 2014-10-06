@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 using System.Web.Security;
-using yavscModel.RolesAndMembers;
+using Yavsc.Model.RolesAndMembers;
 
-namespace Yavsc.Controllers.Controllers
+namespace Yavsc.Controllers
 {
 	public class AdminController : Controller
 	{

@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using yavscModel.Admin;
+using Yavsc.Model.Admin;
 using Npgsql.Web.Blog;
 
 namespace Yavsc.Admin

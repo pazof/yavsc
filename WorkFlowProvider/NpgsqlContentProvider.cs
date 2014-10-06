@@ -3,7 +3,7 @@ using Npgsql;
 using NpgsqlTypes;
 using System.Configuration;
 using System.Collections.Specialized;
-using yavscModel.WorkFlow;
+using Yavsc.Model.WorkFlow;
 using System.Web.Mvc;
 using System.Configuration.Provider;
 using System.Collections.Generic;
