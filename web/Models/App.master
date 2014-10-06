@@ -13,18 +13,18 @@
 <body>
 <header>
 <div id="login">
-<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ) %>
+
 
 	<% if (Membership.GetUser()==null) { %>
-
+	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ) %> 
 <%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, null ) %>
 
 <% } else { %>
-<%= HttpContext.Current.User.Identity.Name %>
+<%= HttpContext.Current.User.Identity.Name %> @ <%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ) %>
 
-<%= Html.ActionLink( "Logout", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, null) %>
 	<%=  Html.ActionLink( "Poster", "Post", "Blogs" ) %>
 	<%=  Html.ActionLink( "Profile", "Profile", "Account" ) %>
+	<%= Html.ActionLink( "Logout", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, null) %>
 
 <% } %>
 
