@@ -1,8 +1,5 @@
 <%@ Page Title="Catalog" Language="C#"  Inherits="System.Web.Mvc.ViewPage<ProductCategory>" MasterPageFile="~/Models/App.master" %>
-<asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
-</asp:Content>
-<asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
-</asp:Content>
+
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <% foreach (Product p in Model.Products ) { %>
 

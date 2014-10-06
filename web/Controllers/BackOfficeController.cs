@@ -47,6 +47,10 @@ namespace Yavsc.Controllers
 			throw new NotImplementedException();
 		}
 
+		[Authorize(Roles="Admin")]
+		public ActionResult Upgrade(DataAccess datac) {
+			throw new NotImplementedException();
+		}
 
 		[Authorize(Roles="Admin")]
 		public ActionResult Restore(DataAccess datac,string backupName,bool dataOnly=true)

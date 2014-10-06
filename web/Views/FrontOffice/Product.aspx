@@ -1,10 +1,12 @@
 <%@ Page Title="Catalog" Language="C#"  Inherits="System.Web.Mvc.ViewPage<PhysicalProduct>" MasterPageFile="~/Models/App.master" %>
-<asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
-<title><%= Html.Encode(Model.Name) %></title>
+
+<asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
+<% Title = Model.Name; %>
 </asp:Content>
+
 <asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
-<h1><%= Html.Encode(Model.Name) %></h1>
 <i><%= Html.Encode(Model.Reference) %></i></asp:Content>
+
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <div class="product">
 <p><%= Html.Encode(Model.Description) %></p>

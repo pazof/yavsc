@@ -12,7 +12,16 @@ namespace Yavsc.Controllers
 {
 	public class BlogsApiController : Controller
 	{
-		public void Tag (long postid,string tag) {
+		private const string adminRoleName = "Admin";
+		protected override void Initialize (System.Web.Routing.RequestContext requestContext)
+		{
+			base.Initialize (requestContext);
+			if (!Roles.RoleExists (adminRoleName)) {
+				Roles.CreateRole (adminRoleName);
+			}
+		}
+
+		public long Tag (long postid,string tag) {
 			BlogEntry e = BlogManager.GetPost (postid);
 			if (!Roles.IsUserInRole ("Admin")) {
 				string rguser = Membership.GetUser ().UserName;
@@ -23,6 +32,7 @@ namespace Yavsc.Controllers
 							e.UserName));
 				}
 			}
+			return BlogManager.Tag (postid, tag);
 		}
 
 		public static HttpStatusCodeResult RemovePost(string user, string title) {
@@ -43,6 +53,10 @@ namespace Yavsc.Controllers
 			}
 			BlogManager.RemovePost (user, title);
 			return new HttpStatusCodeResult (200);
+		}
+
+		public void RemoveTag(long tagid) {
+			throw new NotImplementedException ();
 		}
 	}
 }

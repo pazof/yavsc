@@ -1,9 +1,4 @@
-<%@ Page Title="Role list" Language="C#" Inherits="System.Web.Mvc.ViewPage" MasterPageFile="~/Models/App.master" %>
-<asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
-</asp:Content>
-<asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">	
-<h2>Liste des rôles</h2>
-</asp:Content>
+<%@ Page Title="Liste des rôles" Language="C#" Inherits="System.Web.Mvc.ViewPage" MasterPageFile="~/Models/App.master" %>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 Roles:
  <ul>

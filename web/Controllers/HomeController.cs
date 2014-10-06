@@ -60,12 +60,12 @@ namespace Yavsc.Controllers
 
 		public ActionResult Index ()
 		{
-			InitCatalog ();
+			InitCulture ();
 			ViewData ["Message"] = string.Format(T.GetString("Welcome")+"({0})",GetType ().Assembly.FullName);
 				return View ();
 		}
 
-		public void InitCatalog() { 
+		public void InitCulture() { 
 			CultureInfo culture = null;
 			string defaultCulture = "fr";
 

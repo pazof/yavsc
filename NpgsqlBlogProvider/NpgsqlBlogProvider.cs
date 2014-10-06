@@ -14,6 +14,26 @@ namespace Npgsql.Web.Blog
 
 		#region implemented abstract members of BlogProvider
 
+		public override long Tag (long postid, string tag)
+		{
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = "insert into bltag (blid,tag) values (@postid,@tag) returning _id";
+				cmd.Parameters.Add("@tag",tag);
+				cmd.Parameters.Add("@postid",postid);
+				return (long) cmd.ExecuteScalar ();
+			}
+		}
+
+		public override void RemoveTag (long tagid)
+		{
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = "delete from bltag where _id = @tagid";
+				cmd.Parameters.Add("@tagid",tagid);
+				cmd.ExecuteNonQuery ();	
+			}
+		}
 		public override long GetPostId (string username, string title)
 		{
 			throw new NotImplementedException ();
@@ -199,6 +219,18 @@ namespace Npgsql.Web.Blog
 						be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 						be.Visible = rdr.GetBoolean (rdr.GetOrdinal ("visible"));
 						be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
+						using (NpgsqlCommand cmdtags = cnx.CreateCommand()) {
+							List<string> tags = new List<string> ();
+							cmd.CommandText = "select tag from bltags where blid = @pid";
+							cmd.Parameters.Add ("@pid", be.Id);
+							using (NpgsqlDataReader rdrt = cmd.ExecuteReader ()) {
+
+								while (rdrt.Read ()) {
+									tags.Add (rdrt.GetString (0));
+								}
+							}
+							be.Tags = tags.ToArray ();
+						}
 					}
 				}
 			}

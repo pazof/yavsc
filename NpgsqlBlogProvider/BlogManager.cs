@@ -57,6 +57,15 @@ namespace Npgsql.Web.Blog
 		{
 			return Provider.GetComments (postid,getHidden);
 		}
+		/// <summary>
+		/// Tag the specified post by postid.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <returns>The tag identifier</returns>
+		public static long Tag(long postid, string tag) {
+			return Provider.Tag (postid, tag);
+		}
+
 	}
 }
 

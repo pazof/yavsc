@@ -12,7 +12,10 @@ namespace WorkFlowProvider
 		{
 			return ContentProvider.GetEstimate (estid);
 		}
-
+		public static Estimate [] GetEstimates (string client)
+		{
+			return ContentProvider.GetEstimates (client);
+		}
 		public static void UpdateWritting (Writting wr)
 		{
 			ContentProvider.UpdateWritting (wr);
@@ -78,6 +81,7 @@ namespace WorkFlowProvider
 		{
 			return ContentProvider.CreateEstimate (client, title);
 		}
+
 
 
 		public static long Write(long estid, string desc, decimal ucost, int count, long productid)

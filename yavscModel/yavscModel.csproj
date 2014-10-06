@@ -34,6 +34,7 @@
     <Reference Include="nunit.framework" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,13 +58,13 @@
     <Compile Include="WorkFlow\IWFModule.cs" />
     <Compile Include="WorkFlow\IWFOrder.cs" />
     <Compile Include="WorkFlow\OrderStatusChangedEventArgs.cs" />
-    <Compile Include="IProvider.cs" />
     <Compile Include="Blogs\BlogEntry.cs" />
     <Compile Include="Blogs\Blog.cs" />
     <Compile Include="Blogs\BlogEntryCollection.cs" />
     <Compile Include="Blogs\Comment.cs" />
     <Compile Include="Blogs\FindBlogEntryFlags.cs" />
     <Compile Include="WorkFlow\StatusChange.cs" />
+    <Compile Include="IModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

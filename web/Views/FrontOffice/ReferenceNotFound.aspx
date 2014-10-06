@@ -1,7 +1,5 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage" %>
-<asp:Content ID="headContent" ContentPlaceHolderID="head" runat="server">
-</asp:Content>
-<asp:Content ID="headerContent" ContentPlaceHolderID="header" runat="server">
-</asp:Content>
+﻿<%@ Page Title="Référence absente au catalogue" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage" %>
+
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
+<!-- TODO more details -->
 </asp:Content>

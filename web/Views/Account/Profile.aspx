@@ -1,13 +1,18 @@
 ﻿<%@ Page Title="Profile" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<yavscModel.RolesAndMembers.Profile>" %>
-<asp:Content ID="headContent" ContentPlaceHolderID="head" runat="server">
-<title><%=ViewData["UserName"]%> : Profile - <%=YavscHelpers.SiteName%></title>
+
+<asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
+<% Title = ViewData["UserName"]+"'s profile" %>
 </asp:Content>
+
 <asp:Content ID="headerContent" ContentPlaceHolderID="header" runat="server">
-<h1><%=ViewData["UserName"]%> : Profile - <a href="/"><%=YavscHelpers.SiteName%></a></h1>
-<p><%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account")%></p>
+<h1><%=ViewData["UserName"]%>'s profile - <a href="/"><%=YavscHelpers.SiteName%></a></h1>
+<p></p>
 </asp:Content>
+
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
-<%= Html.ValidationSummary() %>
+   <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account")%>
+
+   <%= Html.ValidationSummary() %>
 <% using(Html.BeginForm("UpdateProfile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
 <% { %>
 

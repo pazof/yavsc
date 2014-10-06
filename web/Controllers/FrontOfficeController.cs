@@ -10,14 +10,25 @@ using Yavsc.Controllers;
 using System.Collections.Generic;
 using yavscModel.WorkFlow;
 using WorkFlowProvider;
+using System.Web.Security;
 
 namespace Yavsc.Controllers
 {
 	public class FrontOfficeController : Controller
 	{
 		[HttpGet]
-		public Estimate GetEstimate(long estid) {
-			return WFManager.GetEstimate (estid);
+		[HttpPost]
+		public ActionResult Estimate(Estimate e) 
+		{
+			if (ModelState.IsValid) {
+				if (e.Id > 0) {
+					Estimate f = WFManager.GetEstimate (e.Id);
+					if (e.Owner != f.Owner)
+					if (!Roles.IsUserInRole ("FrontOffice"))
+						throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
+				}
+			}
+			return View (e);
 		}
 
 		[AcceptVerbs("GET")]

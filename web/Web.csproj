@@ -145,6 +145,7 @@
     <Compile Include="Controllers\BasketImpact.cs" />
     <Compile Include="MvcActionValueBinder.cs" />
     <Compile Include="Controllers\BlogsApiController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

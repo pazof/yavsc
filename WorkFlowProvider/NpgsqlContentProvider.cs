@@ -12,6 +12,35 @@ namespace WorkFlowProvider
 {
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
+		public Estimate[] GetEstimates (string client)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Install ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Uninstall ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public ConfigurationSection DefaultConfig (string appName, string cnxStr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool Active {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
 		public StatusChange[] GetWrittingStatuses (long wrid)
 		{
 			throw new NotImplementedException ();
@@ -246,6 +275,9 @@ namespace WorkFlowProvider
 
 			cnxstr = ConfigurationManager.ConnectionStrings [config ["connectionStringName"]].ConnectionString;
 			applicationName = config["applicationName"] ?? "/";
+
+
+
 		}
 
 		protected NpgsqlConnection CreateConnection ()

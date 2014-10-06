@@ -1,13 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
 
-
-<asp:Content ContentPlaceHolderID="titleContent" ID="titleContentContent" runat="server">
-</asp:Content>
-<asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
-</asp:Content>
-<asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
-</asp:Content>
-
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
 <%= Html.ValidationSummary() %>

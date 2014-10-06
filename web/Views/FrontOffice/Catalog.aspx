@@ -1,9 +1,5 @@
 ﻿<%@ Page Title="Catalog" Language="C#" Inherits="System.Web.Mvc.ViewPage<Catalog>" MasterPageFile="~/Models/App.master" %>
 
-<asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
-</asp:Content>
-<asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
-</asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <% foreach (Brand b in Model.Brands ) { %><div>
  	 <h1>	<%= Html.ActionLink( b.Name, "Brand", new { id = b.Name }, new { @class="actionlink" } ) %> </h1>

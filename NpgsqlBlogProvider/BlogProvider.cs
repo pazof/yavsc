@@ -25,6 +25,8 @@ namespace yavscModel.Blogs
 		public abstract bool AutoValidateComment { get; set; }
 		public abstract void ValidateComment (long cmtid);
 		public abstract void UpdateComment (long cmtid, string content, bool visible);
+		public abstract long Tag (long postid,string tag);
+		public abstract void RemoveTag (long tagid);
 	}
 
 }

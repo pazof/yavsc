@@ -1,6 +1,5 @@
 <%@ Page Title="Catalog" Language="C#"  Inherits="System.Web.Mvc.ViewPage<Brand>" MasterPageFile="~/Models/App.master" %>
-<asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
-</asp:Content>
+
 <asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
   <h1><% if (Model.Logo!=null) { %>
   <img src="<%=Model.Logo.Src%>" alt="<%=Model.Logo.Alt%>"/>

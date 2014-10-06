@@ -14,6 +14,16 @@ namespace Yavsc.ApiControllers
 	[HttpControllerConfiguration(ActionValueBinder=typeof(Basic.MvcActionValueBinder))]
 	public class WorkFlowController : ApiController
     {
+		string adminRoleName="Admin";
+
+		protected override void Initialize (HttpControllerContext controllerContext)
+		{
+			base.Initialize (controllerContext);
+			if (!Roles.RoleExists (adminRoleName)) {
+				Roles.CreateRole (adminRoleName);
+			} 
+		}
+
 		[HttpGet]
 		[Authorize]
 		public long CreateEstimate (string title)
@@ -21,6 +31,7 @@ namespace Yavsc.ApiControllers
 			return WFManager.CreateEstimate (
 				Membership.GetUser().UserName,title);
 		}
+
 		[HttpGet]
 		[Authorize]
 		public void DropWritting(long wrid)
@@ -49,11 +60,7 @@ namespace Yavsc.ApiControllers
 			return new { test=string.Format("Hello {0}!",username) }; 
         }
 	
-		[HttpGet]
-		public object Order (BasketImpact bi)
-		{
-			return new { c="lmk,", message="Panier impacté", impactRef=bi.ProductRef, count=bi.count};
-		}
+
 
 		[HttpGet]
 		[Authorize]
@@ -63,18 +70,7 @@ namespace Yavsc.ApiControllers
 			return WFManager.Write(estid, desc, ucost, count, productid);
 		}
 
-		[Authorize]
-		[HttpGet]
-		/// <summary>
-		/// Gets the estimate.
-		/// </summary>
-		/// <returns>The estimate.</returns>
-		/// <param name="estid">Estid.</param>
-		public Estimate GetEstimate (long estid)
-		{
-			Estimate est = WFManager.ContentProvider.GetEstimate (estid);
-			return est;
-		}
+
 		/*
 	public object Details(int id)
         {

@@ -5,7 +5,7 @@ using System.Web.Mvc;
 namespace yavscModel.WorkFlow
 {
 
-	public interface IContentProvider : IProvider, IDisposable
+	public interface IContentProvider : IModule, IDisposable
 	{
 
 		/// <summary>
@@ -18,6 +18,7 @@ namespace yavscModel.WorkFlow
 		StatusChange[] GetWrittingStatuses (long wrid);
 		StatusChange[] GetEstimateStatuses (long estid);
 		long CreateEstimate (string client, string title);
+		Estimate [] GetEstimates(string client);
 		Estimate GetEstimate (long estimid);
 		long Write (long estid, string desc, decimal ucost, int count, long productid);
 		void DropWritting (long wrid);

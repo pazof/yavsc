@@ -2,72 +2,54 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
 using System.Web.Security;
+using System.Web.Http;
+using yavscModel.WorkFlow;
 
-namespace Yavsc.Controllers
+namespace Yavsc.ApiControllers
 {
 	// TODO should mostly be an API Controller
-    public class BasketController : Controller
+	public class BasketController : ApiController
     {
-        public ActionResult Index()
-        {
-            return View ();
-        }
+		/// <summary>
+		/// Validates the order.
+		/// 
+		/// </summary>
+		/// <returns><c>true</c>, if order was validated, <c>false</c> otherwise.</returns>
+		/// <param name="orderid">Orderid.</param>
+		bool ValidateOrder(long orderid) {
+			throw new NotImplementedException ();
+		}
 
-        public ActionResult Details(int id)
-        {
-            return View ();
-        }
+		long CreateOrder(string title,string mesg)
+		{
+			throw new NotImplementedException ();
+		}
 
-        public ActionResult Create()
-        {
-			throw new NotImplementedException();
-			// var user = Membership.GetUser ();
-			// var username = (user != null)?user.UserName:Request.AnonymousID;
-			// get an existing basket 
-		
-			//return View ();
-        } 
+		/// <summary>
+		/// Adds to basket, a product from the catalog, in the user's session.
+		/// </summary>
+		/// <returns>The to basket.</returns>
+		[HttpGet]
+		public long AddToOrder (long orderid, string prodref,int count, object prodparams=null)
+		{
+			//TODO find the basket for Membership.GetUser().UserName
+			//return WFManager.Write(estid << from the basket, desc, ucost, count, productid);
+			throw new NotImplementedException ();
+		}
 
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try {
-                return RedirectToAction ("Index");
-            } catch {
-                return View ();
-            }
-        }
-        
-        public ActionResult Edit(int id)
-        {
-            return View ();
-        }
+		[HttpGet]
+		[Authorize]
+		public Estimate[] YourEstimates()
+		{
+			return WorkFlowProvider.WFManager.GetEstimates (
+				Membership.GetUser().UserName);
+		}
 
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try {
-                return RedirectToAction ("Index");
-            } catch {
-                return View ();
-            }
-        }
-
-        public ActionResult Delete(int id)
-        {
-            return View ();
-        }
-
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try {
-                return RedirectToAction ("Index");
-            } catch {
-                return View ();
-            }
-        }
+		[HttpGet]
+		public object Order (BasketImpact bi)
+		{
+			return new { c="lmk,", message="Panier impacté", impactRef=bi.ProductRef, count=bi.Count};
+		}
     }
 }

@@ -15,7 +15,8 @@ namespace Yavsc.ApiControllers
 	public class BasketImpact 
 	{
 		public string ProductRef { get; set; }
-		public int count { get; set; }
+		public int Count { get; set; }
+		public string Message { get; set; }
 	}
 
 }

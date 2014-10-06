@@ -13,6 +13,7 @@ using System.IO;
 using System.Net;
 using WorkFlowProvider;
 using System.Web.Security;
+using yavscModel.WorkFlow;
 
 namespace Yavsc.ApiControllers
 {
@@ -66,17 +67,21 @@ namespace Yavsc.ApiControllers
 			return result;
 		}
 
-		/// <summary>
-		/// Adds to basket, a product from the catalog, in the user's session.
-		/// </summary>
-		/// <returns>The to basket.</returns>
+
+
+		[Authorize]
 		[HttpGet]
-		public long AddToBasket (string prodref,int count, object prodparams=null)
+		/// <summary>
+		/// Gets the estimate.
+		/// </summary>
+		/// <returns>The estimate.</returns>
+		/// <param name="estid">Estid.</param>
+		public Estimate GetEstimate (long estid)
 		{
-			//TODO find the basket for Membership.GetUser().UserName
-			//return WFManager.Write(estid << from the basket, desc, ucost, count, productid);
-			throw new NotImplementedException ();
+			Estimate est = WFManager.ContentProvider.GetEstimate (estid);
+			return est;
 		}
+
 	}
 }
 

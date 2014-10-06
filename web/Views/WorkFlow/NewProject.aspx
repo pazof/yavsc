@@ -1,6 +1,4 @@
 ﻿<%@ Page Title="Nouveau projet" Language="C#" Inherits="System.Web.Mvc.ViewPage<WorkFlow.NewProjectModel>" MasterPageFile="~/Models/App.master" %>
-<asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
-</asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <div>
 <%= Html.ValidationSummary("Nouveau projet") %>

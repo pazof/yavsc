@@ -32,16 +32,12 @@
 
 	</div>
 
-
-	<asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
-
-	<h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>">
+<!-- Use taking care of keeping the title to be the same in the head and h1 sections -->
+<asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
+<h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>">
 	<%= Page.Title %>
 	</a></h1>
-
-
 </asp:ContentPlaceHolder>
-
 
 <% if (ViewData["Error"]!=null) { %>
 <div class="error">
@@ -53,7 +49,7 @@
 <%= Html.Encode(ViewData["Message"]) %>
 </div>
 <% } %>
-
+	<!-- a place to add some meta information, under the title -->
 	<asp:ContentPlaceHolder ID="header" runat="server">
 	</asp:ContentPlaceHolder>
 	</header>

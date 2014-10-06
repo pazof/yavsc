@@ -17,6 +17,5 @@ namespace Yavsc
 		{
 			return Mono.Unix.Catalog.GetString (msgid);
 		}
-
 	}
 }

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<FileUpload>" %>
+﻿<%@ Page Title="File posting" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<FileUpload>" %>
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 <% using(Html.BeginForm("Create", "FileSystem", FormMethod.Post, new { enctype = "multipart/form-data" })) { %>
