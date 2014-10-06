@@ -6,8 +6,6 @@
 <h1 class="blogtitle"><%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %> - 
 <a href="/Blog/<%=Model.UserName%>">
 <img class="avatar" src="/Blogs/Avatar?user=<%=Model.UserName%>" alt="<%=Model.UserName%>"/> <%=ViewData["BlogTitle"]%></a>
- <asp:Literal runat="server" Text=" - " />
-   <a href="/"> <%= YavscHelpers.SiteName %> </a> </h1>
 </asp:Content>
 
 	 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
