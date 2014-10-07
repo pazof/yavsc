@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Profile" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<yavscModel.RolesAndMembers.Profile>" %>
+﻿<%@ Page Title="Profile" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<Profile>" %>
 
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
 <% Title = ViewData["UserName"]+" at "+ YavscHelpers.SiteName +" - profile edition" ; %>

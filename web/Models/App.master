@@ -59,6 +59,11 @@
 
 		</asp:ContentPlaceHolder>
    </main>
+   <aside>
+   <asp:ContentPlaceHolder ID="MASContent" runat="server">
+		</asp:ContentPlaceHolder>
+	</aside>
+
    <footer>
    <hr/>
      <%= string.Join("\n",Yavsc.ThanksHelper.Links()) %>

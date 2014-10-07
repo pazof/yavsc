@@ -39,3 +39,12 @@
 	  </div>
 
 </asp:Content>
+	  <asp:Content ContentPlaceHolderID="MASContent" ID="mas1" runat="server">
+	  <% if (Membership.GetUser()!=null)
+	if (Membership.GetUser().UserName==Model.UserName)
+	 { %>
+	 <%= Html.ActionLink("Editer","Edit", new { user = Model.UserName, title = Model.Title }, new { @class="actionlink" }) %>
+	 <%= Html.ActionLink("Supprimer","RemovePost", new { user = Model.UserName, title = Model.Title }, new { @class="actionlink" } ) %>
+	 <% } %>
+
+	 </asp:Content>

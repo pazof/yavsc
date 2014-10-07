@@ -18,12 +18,7 @@
 <div class="metablog">(<%= e.Posted.ToString("yyyy/MM/dd") %>
 	 - <%= e.Modified.ToString("yyyy/MM/dd") %> <%= e.Visible? "":", Invisible!" %>)
 </div>
-<% if (Membership.GetUser()!=null)
-	if (Membership.GetUser().UserName==e.UserName)
-	 { %>
-	 <%= Html.ActionLink("Editer","Edit", new { user = e.UserName, title = e.Title }, new { @class="actionlink" }) %>
-	 <%= Html.ActionLink("Supprimer","RemovePost", new { user = e.UserName, title = e.Title }, new { @class="actionlink" } ) %>
-	 <% } %>
+
 </div>
 <% } %>
 	

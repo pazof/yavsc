@@ -30,8 +30,8 @@ namespace Yavsc
 
 			routes.MapRoute (
 				"Default",
-				"{controller}/{action}/{id}",
-				new { controller = "Home", action = "Index", id = "" }
+				"{controller}/{action}/{user}",
+				new { controller = "Home", action = "Index", user="" }
 			);
 
 		}

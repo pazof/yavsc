@@ -1,3 +1,4 @@
+#if TEST
 using NUnit.Framework;
 using System;
 using System.Configuration;
@@ -85,3 +86,4 @@ namespace Yavsc
 	}
 }
 
+#endif

@@ -68,7 +68,9 @@ namespace Yavsc.Controllers
 		public void InitCulture() { 
 			CultureInfo culture = null;
 			string defaultCulture = "fr";
-
+			if (Request.UserLanguages==null)
+				culture = CultureInfo.CreateSpecificCulture(defaultCulture);
+			else
 			if (Request.UserLanguages.Length > 0) {
 				try {
 				culture = new CultureInfo (Request.UserLanguages [0]);

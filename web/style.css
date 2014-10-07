@@ -8,6 +8,7 @@ body {
 	padding:1em;
 	font-family: 'Arial', cursive;
 }
+	aside { float: right; }
 
 video,img {
 	max-width:100%;
@@ -108,6 +109,7 @@ padding-left: 20px;
    padding: 4px;
 	border-radius:25px;
    background-color:rgba(0,0,64,0.7);
+   font-size:x-small;
 }
 
 .code {
