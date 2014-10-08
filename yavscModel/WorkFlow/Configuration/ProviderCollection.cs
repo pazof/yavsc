@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace WorkFlowProvider.Configuration
+namespace Yavsc.Model.WorkFlow.Configuration
 {
 	public class WFProviderCollection : ConfigurationElementCollection
 	{

@@ -2,7 +2,7 @@ using System;
 using System.Configuration;
 using System.ComponentModel;
 
-namespace Npgsql.Web.Blog.Configuration
+namespace Yavsc.Model.Blogs.Configuration
 {
 	public class BlogProvidersConfigurationCollection : ConfigurationElementCollection
 	{

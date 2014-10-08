@@ -29,7 +29,7 @@ namespace Yavsc.ApiControllers
 		[Authorize]
 		public long CreateEstimate (string title)
 		{
-			return WFManager.CreateEstimate (
+			return WorkFlowManager.CreateEstimate (
 				Membership.GetUser().UserName,title);
 		}
 
@@ -37,20 +37,20 @@ namespace Yavsc.ApiControllers
 		[Authorize]
 		public void DropWritting(long wrid)
 		{
-			WFManager.DropWritting (wrid);
+			WorkFlowManager.DropWritting (wrid);
 		}
 		[HttpGet]
 		[Authorize]
 		public void UpdateWritting(Writting wr)
 		{
-			WFManager.UpdateWritting (wr);
+			WorkFlowManager.UpdateWritting (wr);
 		}
 
 		[HttpGet]
 		[Authorize]
 		public void DropEstimate(long estid)
 		{
-			WFManager.DropEstimate (estid);
+			WorkFlowManager.DropEstimate (estid);
 		}
 		[HttpGet]
 		[Authorize]
@@ -68,7 +68,7 @@ namespace Yavsc.ApiControllers
 		public long Write (long estid, string desc, decimal ucost, int count, long productid=0) {
 			// TODO ensure estid owner matches the current one
 
-			return WFManager.Write(estid, desc, ucost, count, productid);
+			return WorkFlowManager.Write(estid, desc, ucost, count, productid);
 		}
 
 

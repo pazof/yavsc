@@ -22,7 +22,7 @@ namespace Yavsc.Controllers
 		{
 			if (ModelState.IsValid) {
 				if (e.Id > 0) {
-					Estimate f = WFManager.GetEstimate (e.Id);
+					Estimate f = WorkFlowManager.GetEstimate (e.Id);
 					if (e.Owner != f.Owner)
 					if (!Roles.IsUserInRole ("FrontOffice"))
 						throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");

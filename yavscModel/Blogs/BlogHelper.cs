@@ -2,10 +2,9 @@ using System;
 using System.Configuration;
 using System.Reflection;
 using System.Collections.Specialized;
-using Npgsql.Web.Blog.Configuration;
-using Yavsc.Model.Blogs;
+using Yavsc.Model.Blogs.Configuration;
 
-namespace Npgsql.Web.Blog
+namespace Yavsc.Model.Blogs
 {
 	public static class BlogHelper
 	{

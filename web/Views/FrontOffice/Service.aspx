@@ -1,6 +1,6 @@
 <%@ Page Title="Catalog" Language="C#"  Inherits="System.Web.Mvc.ViewPage<Service>" MasterPageFile="~/Models/App.master" %>
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
-<%= Title = ViewData ["BrandName"] + " " + Model.Name; %>
+<% Title = ViewData ["BrandName"] + " " + Model.Name; %>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
 <h2> <%=ViewData ["ProdCatName"]%> - <%= Html.ActionLink( Model.Name, "Product", new { id = ViewData ["BrandName"],  pc = ViewData ["ProdCatRef"] , pref = Model.Reference } ) %></h2>

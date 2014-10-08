@@ -8,7 +8,7 @@
     <ProjectGuid>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>yavscModel</RootNamespace>
-    <AssemblyName>yavscModel</AssemblyName>
+    <AssemblyName>YavscModel</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -67,6 +67,16 @@
     <Compile Include="IModule.cs" />
     <Compile Include="WorkFlow\BasketImpact.cs" />
     <Compile Include="WorkFlow\Commande.cs" />
+    <Compile Include="Blogs\BlogManager.cs" />
+    <Compile Include="Blogs\BlogProvider.cs" />
+    <Compile Include="WorkFlow\WorkFlowManager.cs" />
+    <Compile Include="WorkFlow\Configuration\Provider.cs" />
+    <Compile Include="WorkFlow\Configuration\ProviderCollection.cs" />
+    <Compile Include="WorkFlow\Configuration\WorkflowConfiguration.cs" />
+    <Compile Include="Blogs\BlogHelper.cs" />
+    <Compile Include="Blogs\Configuration\BlogProviderConfigurationElement.cs" />
+    <Compile Include="Blogs\Configuration\BlogProvidersConfigurationCollection.cs" />
+    <Compile Include="Blogs\Configuration\BlogProvidersConfigurationSection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -38,10 +38,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NpgsqlContentProvider.cs" />
-    <Compile Include="WFManager.cs" />
-    <Compile Include="Configuration\WorkflowConfiguration.cs" />
-    <Compile Include="Configuration\ProviderCollection.cs" />
-    <Compile Include="Configuration\Provider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -49,8 +45,5 @@
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
       <Name>YavscModel</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Configuration\" />
   </ItemGroup>
 </Project>

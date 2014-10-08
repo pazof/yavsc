@@ -2,7 +2,7 @@ using System;
 using Yavsc.Model.Blogs;
 
 
-namespace Npgsql.Web.Blog
+namespace Yavsc.Model.Blogs
 {
 	public static class BlogManager
 	{

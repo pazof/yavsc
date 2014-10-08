@@ -2,7 +2,7 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
 <%= Html.ValidationSummary() %>
-<% using(Html.BeginForm("DoAddRole", "Account")) %>
+<% using(Html.BeginForm("DoAddRole")) %>
 <% { %>
 Nom du rôle : 
 <%= Html.TextBox( "RoleName" ) %>

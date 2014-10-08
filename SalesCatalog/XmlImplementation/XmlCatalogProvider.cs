@@ -15,13 +15,16 @@ namespace SalesCatalog.XmlImplementation
 		{
 			// Assert fileName != null
 			FileInfo fi = new FileInfo (fileName);
+			if (!fi.Exists)
+				throw new ConfigurationErrorsException(
+					string.Format("No catalog found ({0})",fileName));
 			if (fi.LastWriteTime > lastModification) 
 				LoadCatalog ();
 			return catInstance;
 		}
 
 		protected XmlCatalog catInstance = null;
-		protected DateTime lastModification;
+		protected DateTime lastModification = new DateTime(0);
 		protected string fileName = null;
 		#endregion
 
@@ -32,8 +35,9 @@ namespace SalesCatalog.XmlImplementation
 		}
 		private void LoadCatalog ()
 		{
+			try {
 			FileInfo fi = new FileInfo (fileName);
-			if (!fi.Exists)
+			if (!fi.Exists) 
 				throw new Exception (
 					string.Format ("Le fichier Xml decrivant le catalogue n'existe pas ({0})", fi.FullName));
 			XmlSerializer xsr = new XmlSerializer (typeof(XmlCatalog),new Type[]{
@@ -49,6 +53,11 @@ namespace SalesCatalog.XmlImplementation
 			}
 			fileName = fi.FullName;	
 			lastModification = fi.LastWriteTime;
+			}
+			catch (Exception e) {
+				lastModification = new DateTime (0);
+				throw e; 
+			}
 		}
 	}
 }

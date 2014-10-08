@@ -1,21 +1,30 @@
 using System;
 using Yavsc.Model.WorkFlow;
 using System.Configuration;
-using WorkFlowProvider.Configuration;
+using Yavsc.Model.WorkFlow.Configuration;
 using System.Collections.Specialized;
 
-namespace WorkFlowProvider
+namespace Yavsc.Model.WorkFlow
 {
-	public static class WFManager
+	/// <summary>
+	/// Work flow manager.
+	/// It takes orders store them and raise some events for modules
+	/// It publishes estimates and invoices
+	/// </summary>
+	public static class WorkFlowManager
 	{
+		public static event EventHandler NewOrder;
+
 		public static Estimate GetEstimate (long estid)
 		{
 			return ContentProvider.GetEstimate (estid);
 		}
+
 		public static Estimate [] GetEstimates (string client)
 		{
 			return ContentProvider.GetEstimates (client);
 		}
+
 		public static void UpdateWritting (Writting wr)
 		{
 			ContentProvider.UpdateWritting (wr);

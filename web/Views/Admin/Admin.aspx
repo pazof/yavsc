@@ -17,7 +17,7 @@
 </h2>
 <p><%= Html.ValidationSummary() %> </p>
 
-<% using ( Html.BeginForm("Admin", "Account") ) {  %>
+<% using ( Html.BeginForm("Admin", "Admin") ) {  %>
 
 <%= Html.LabelFor(model => model.UserName) %> : 
 <%= Html.DropDownListFor(model => model.UserName, (List<SelectListItem>)ViewData["useritems"] ) %>

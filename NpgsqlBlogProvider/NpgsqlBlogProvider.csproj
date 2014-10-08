@@ -30,12 +30,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Configuration\BlogProviderConfigurationElement.cs" />
-    <Compile Include="Configuration\BlogProvidersConfigurationCollection.cs" />
-    <Compile Include="Configuration\BlogProvidersConfigurationSection.cs" />
-    <Compile Include="BlogHelper.cs" />
-    <Compile Include="BlogManager.cs" />
-    <Compile Include="BlogProvider.cs" />
     <Compile Include="NpgsqlBlogProvider.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>

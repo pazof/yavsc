@@ -42,7 +42,7 @@ namespace Yavsc.ApiControllers
 		[Authorize]
 		public Estimate[] YourEstimates()
 		{
-			return WorkFlowProvider.WFManager.GetEstimates (
+			return WorkFlowManager.GetEstimates (
 				Membership.GetUser().UserName);
 		}
 
