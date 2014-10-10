@@ -38,11 +38,16 @@ namespace Yavsc.Controllers
 			return View ();
 		}
 
+		public static Profile GetProfile (string user)
+		{
+			return new Profile (ProfileBase.Create (user));
+		}
+
 		[Authorize]
 		public ActionResult Profile(Profile model)
 		{
 			ViewData ["UserName"] = Membership.GetUser ().UserName;
-			model.FromProfileBase(HttpContext.Profile);
+			model = GetProfile ((string)ViewData ["UserName"]);
 			return View (model);
 		}
 		// TODO [ValidateAntiForgeryToken]

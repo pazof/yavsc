@@ -11,7 +11,7 @@ namespace SalesCatalog
 	{
 		public static Catalog GetCatalog ()
 		{
-			CatalogProvider p = CatalogHelper.GetProvider ();
+			CatalogProvider p = CatalogHelper.GetDefaultProvider ();
 			return p.GetCatalog ();
 		}
 	}

@@ -10,12 +10,10 @@ namespace Yavsc.Controllers
 {
     public class BackOfficeController : Controller
     {
-		public ActionResult Estimate()
+		[Authorize(Roles="Admin,Providers")]
+		public ActionResult Index()
 		{
-		}
-
-		public ActionResult Index ()
-		{
+			return View ();
 		}
     }
 }

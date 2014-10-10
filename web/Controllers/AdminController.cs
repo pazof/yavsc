@@ -7,9 +7,15 @@ using System.Web.Mvc.Ajax;
 using System.Web.Security;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.Admin;
+using Yavsc.Admin;
+
 
 namespace Yavsc.Controllers
 {
+	/// <summary>
+	/// Admin controller.
+	/// Only Admin members should be allowed to use it.
+	/// </summary>
 	public class AdminController : Controller
 	{
 		[Authorize(Roles="Admin")]

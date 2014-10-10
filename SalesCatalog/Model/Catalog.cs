@@ -7,6 +7,13 @@ namespace SalesCatalog.Model
 	/// Catalog.
 	/// </summary>
 	public class Catalog {
+
+		/// <summary>
+		/// Gets or sets the catalog unique identifier in the system.
+		/// </summary>
+		/// <value>The unique identifier.</value>
+		string UID { get; set; }
+
 		/// <summary>
 		/// Gets or sets the brands.
 		/// </summary>

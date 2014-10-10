@@ -78,7 +78,7 @@ label {
 	font-size: small;
 }
 .blogpost {
-	background-color: rgba(32,32,32,0.3);
+		background-color: rgba(0,0,0,0.5);
 }
 .editblog {
 	width: 95%;

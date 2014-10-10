@@ -14,6 +14,10 @@ using System.Web.Security;
 
 namespace Yavsc.Controllers
 {
+	/// <summary>
+	/// Front office controller.
+	/// Access granted to all
+	/// </summary>
 	public class FrontOfficeController : Controller
 	{
 		[HttpGet]
@@ -133,7 +137,7 @@ namespace Yavsc.Controllers
 					Session["Basket"]=new List<Commande>();
 				List<Commande> basket = Session["Basket"] as List<Commande>;
 				// Add specified product command to the basket,
-				basket.Add(new Commande(collection));
+				basket.Add(new Commande(0,0,collection));
 				return View (collection);
 			} catch (Exception e) {
 				ViewData ["Message"] = "Exception:"+e.Message;

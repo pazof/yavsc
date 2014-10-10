@@ -33,7 +33,11 @@ namespace Yavsc.Model.RolesAndMembers
 		[DisplayName("Titre du blog")]
 		public string BlogTitle { get; set; }
 	
-		public void FromProfileBase(ProfileBase profile)
+		public Profile():base()
+		{
+		}
+
+		public Profile(ProfileBase profile)
 		{
 				object b = profile.GetPropertyValue ("BlogVisible");
 				BlogVisible = (b is DBNull) ? true : (bool)b;
@@ -52,11 +56,9 @@ namespace Yavsc.Model.RolesAndMembers
 
 				 s = profile.GetPropertyValue("ZipCode");
 				ZipCode = (s is DBNull)?null:(string)s;
-
 			
 				 s = profile.GetPropertyValue ("WebSite");
 				WebSite = (s is DBNull) ? null : (string)s;
-			
 		}
 	}
 }

@@ -12,13 +12,20 @@ namespace SalesCatalog
 	/// </summary>
 	public static class CatalogHelper
 	{
-		public static CatalogProvider GetProvider ()
-		{
-			CatalogProvidersConfigurationSection config = ConfigurationManager.GetSection ("system.web/catalog") as CatalogProvidersConfigurationSection;
-			if (config == null)
+
+		public static CatalogProvidersConfigurationSection Config {get; set; }
+
+		public static void Load () {
+			if (Config != null)
+				return ;
+			Config = ConfigurationManager.GetSection ("system.web/catalog") as CatalogProvidersConfigurationSection;
+			if (Config == null)
 				throw new ConfigurationErrorsException("The configuration bloc for the catalog provider was not found");
-			CatalogProviderConfigurationElement celt = 
-				config.Providers.GetElement (config.DefaultProvider);
+			foreach (CatalogProviderConfigurationElement e in Config.Providers) {
+				CreateProvider (e);
+			}
+		}
+		private static CatalogProvider CreateProvider(CatalogProviderConfigurationElement celt) {
 			if (celt == null)
 				throw new ConfigurationErrorsException("The default catalog provider was not found");
 			Type catprtype = Type.GetType (celt.Type);
@@ -28,7 +35,7 @@ namespace SalesCatalog
 			ConstructorInfo ci = catprtype.GetConstructor (Type.EmptyTypes);
 			if (ci==null)
 				throw new Exception (
-				string.Format("The catalog provider type ({0}) doesn't contain public constructor with empty parameter list",celt.Type)); 
+					string.Format("The catalog provider type ({0}) doesn't contain public constructor with empty parameter list",celt.Type)); 
 
 			CatalogProvider cp = ci.Invoke (Type.EmptyTypes) as CatalogProvider;
 			NameValueCollection c = new NameValueCollection ();
@@ -39,6 +46,14 @@ namespace SalesCatalog
 			c.Add ("applicationName", celt.ApplicationName);
 			cp.Initialize (celt.Name, c);
 			return cp;
+		}
+
+		public static CatalogProvider GetDefaultProvider ()
+		{
+			CatalogProviderConfigurationElement celt = 
+				Config.Providers.GetElement (Config.DefaultProvider);
+
+			return CreateProvider (celt);
 		}
 	}
 }

@@ -17,6 +17,7 @@ using Yavsc;
 using Yavsc.Model;
 using Yavsc.Model.Blogs;
 using Yavsc.ApiControllers;
+using Yavsc.Model.RolesAndMembers;
 
 namespace Yavsc.Controllers
 {
@@ -82,7 +83,9 @@ namespace Yavsc.Controllers
 			if (u.UserName == user)
 				sf |= FindBlogEntryFlags.MatchInvisible;
 			BlogEntryCollection c = BlogManager.FindPost (user, sf, pageIndex, pageSize, out tr);
-			ViewData ["BlogTitle"] = BlogTitle (user);
+			Profile bupr =  AccountController.GetProfile (user);
+			ViewData ["BlogUserProfile"] = bupr;
+			ViewData ["BlogTitle"] = bupr.BlogTitle;
 			ViewData ["PageIndex"] = pageIndex;
 			ViewData ["PageSize"] = pageSize;
 			ViewData ["RecordCount"] = tr; 
@@ -109,16 +112,23 @@ namespace Yavsc.Controllers
 		{
 			if (e == null)
 				return View ("TitleNotFound");
+			Profile pr = AccountController.GetProfile (e.UserName);
+			if (pr==null)
+				return View ("TitleNotFound");
+			ViewData ["BlogUserProfile"] = pr;
+			ViewData ["BlogTitle"] = pr.BlogTitle;
 			MembershipUser u = Membership.GetUser ();
 			if (u != null)
 				ViewData ["UserName"] = u.UserName;
-			if (!e.Visible) {
+			if (!e.Visible || !pr.BlogVisible) {
 				if (u==null)
 					return View ("TitleNotFound");
-				else if (u.UserName!=e.UserName)
+				else {
+					if (u.UserName!=e.UserName)
+					if (!Roles.IsUserInRole(u.UserName,"Admin"))
 					return View ("TitleNotFound");
+				}
 			}
-			ViewData ["BlogTitle"] = BlogTitle (e.UserName);
 			ViewData ["Comments"] = BlogManager.GetComments (e.Id);
 			return View ("UserPost", e);
 		}
@@ -183,7 +193,9 @@ namespace Yavsc.Controllers
 		{
 			if (model != null) {
 				string user = Membership.GetUser ().UserName;
-				ViewData ["BlogTitle"] = this.BlogTitle (user);
+				Profile pr = new Profile (HttpContext.Profile);
+
+				ViewData ["BlogTitle"] = pr.BlogTitle;
 				ViewData ["UserName"] = user;
 				if (model.UserName == null) {
 					model.UserName = user; 
@@ -202,10 +214,6 @@ namespace Yavsc.Controllers
 			return View (model);
 		}
 
-		private string BlogTitle (string user)
-		{
-			return string.Format ("{0}'s blog", user);
-		}
 
 		[Authorize]
 		public ActionResult Comment (BlogEditCommentModel model) {
