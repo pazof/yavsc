@@ -15,15 +15,13 @@ namespace SalesCatalog
 
 		public static CatalogProvidersConfigurationSection Config {get; set; }
 
-		public static void Load () {
-			if (Config != null)
-				return ;
+		public static void LoadConfig () {
 			Config = ConfigurationManager.GetSection ("system.web/catalog") as CatalogProvidersConfigurationSection;
 			if (Config == null)
 				throw new ConfigurationErrorsException("The configuration bloc for the catalog provider was not found");
-			foreach (CatalogProviderConfigurationElement e in Config.Providers) {
-				CreateProvider (e);
-			}
+			/* foreach (CatalogProviderConfigurationElement e in Config.Providers) {
+				  Providers.Add(CreateProvider (e));
+			} */
 		}
 		private static CatalogProvider CreateProvider(CatalogProviderConfigurationElement celt) {
 			if (celt == null)
@@ -47,9 +45,15 @@ namespace SalesCatalog
 			cp.Initialize (celt.Name, c);
 			return cp;
 		}
-
+		/// <summary>
+		/// Gets the default provider.
+		/// 
+		/// </summary>
+		/// <returns>The default provider.</returns>
 		public static CatalogProvider GetDefaultProvider ()
 		{
+			if (Config == null)
+				throw new Exception ("Configuration wanted, use a call to \"Load\".");
 			CatalogProviderConfigurationElement celt = 
 				Config.Providers.GetElement (Config.DefaultProvider);
 

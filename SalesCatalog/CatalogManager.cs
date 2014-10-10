@@ -9,10 +9,16 @@ namespace SalesCatalog
 	/// </summary>
 	public static class CatalogManager
 	{
+		private static CatalogProvider defaultProvider = null;
 		public static Catalog GetCatalog ()
 		{
-			CatalogProvider p = CatalogHelper.GetDefaultProvider ();
-			return p.GetCatalog ();
+			if (defaultProvider == null) {
+				if (CatalogHelper.Config == null)
+					CatalogHelper.LoadConfig ();
+				defaultProvider = CatalogHelper.GetDefaultProvider ();
+
+			}
+			return defaultProvider.GetCatalog ();
 		}
 	}
 }
