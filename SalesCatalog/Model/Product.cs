@@ -32,6 +32,8 @@ namespace SalesCatalog.Model
 		public Period CommandValidityDates { get; set; }
 		public abstract string[] GetSalesConditions();
 
+		public virtual string Type { get { return GetType().Name; }
+		}
 	}
 }
 
