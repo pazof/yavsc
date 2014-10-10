@@ -221,10 +221,9 @@ namespace Npgsql.Web.Blog
 						be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
 						using (NpgsqlCommand cmdtags = cnx.CreateCommand()) {
 							List<string> tags = new List<string> ();
-							cmd.CommandText = "select tag from bltags where blid = @pid";
+							cmd.CommandText = "select tag.name from tag,tagged where tag._id = tagged.tagid and tagged.postid = @pid";
 							cmd.Parameters.Add ("@pid", be.Id);
 							using (NpgsqlDataReader rdrt = cmd.ExecuteReader ()) {
-
 								while (rdrt.Read ()) {
 									tags.Add (rdrt.GetString (0));
 								}
