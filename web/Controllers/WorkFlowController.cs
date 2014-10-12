@@ -52,6 +52,7 @@ namespace Yavsc.ApiControllers
 		{
 			WorkFlowManager.DropEstimate (estid);
 		}
+
 		[HttpGet]
 		[Authorize]
 		public object Index()
@@ -60,48 +61,12 @@ namespace Yavsc.ApiControllers
 			string username = Membership.GetUser ().UserName;
 			return new { test=string.Format("Hello {0}!",username) }; 
         }
-	
-
 
 		[HttpGet]
 		[Authorize]
 		public long Write (long estid, string desc, decimal ucost, int count, long productid=0) {
 			// TODO ensure estid owner matches the current one
-
 			return WorkFlowManager.Write(estid, desc, ucost, count, productid);
 		}
-
-
-		/*
-	public object Details(int id)
-        {
-			throw new NotImplementedException ();
-        }
-
-		public object Create()
-        {
-			throw new NotImplementedException ();
-        } 
-
-		public object Edit(int id)
-        {
-			throw new NotImplementedException ();
-        }
-
-		public object Delete(int id)
-        {
-			throw new NotImplementedException ();
-        }
-
-		IContentProvider contentProvider = null;
-		IContentProvider ContentProvider {
-			get {
-				if (contentProvider == null )
-					contentProvider = WFManager.GetContentProviderFWC ();
-				return contentProvider;
-			}
-		}
-
-*/
     }
 }

@@ -1,10 +1,6 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEditEntryModel>" MasterPageFile="~/Models/App.master"%>
-<asp:Content ContentPlaceHolderID="head" ID="head" runat="server">
-	<title><%= Html.Encode(ViewData["BlogTitle"]) %> -  Nouveau billet 
-	- <%=Html.Encode(YavscHelpers.SiteName) %>
-	</title>
-</asp:Content>
-<asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">	
+
+<asp:Content ContentPlaceHolderID="overHeaderOne" ID="headerContent" runat="server">	
 <h1 class="blogtitle"> 
 	<a href="/Blog/<%=ViewData["UserName"]%>">
  <img class="avatar" src="/Blogs/Avatar?user=<%=ViewData["UserName"]%>" alt="from <%=ViewData["UserName"]%>"/>

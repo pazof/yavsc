@@ -20,19 +20,37 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class FrontOfficeController : Controller
 	{
-		[HttpGet]
-		[HttpPost]
-		public ActionResult Estimate(Estimate e) 
+		[Authorize]
+		public ActionResult Estimate(Estimate model,string submit) 
 		{
 			if (ModelState.IsValid) {
-				if (e.Id > 0) {
-					Estimate f = WorkFlowManager.GetEstimate (e.Id);
-					if (e.Owner != f.Owner)
+				string username = HttpContext.User.Identity.Name;
+				if (model.Id > 0) {
+					Estimate f = WorkFlowManager.GetEstimate (model.Id);
+					if (f == null) {
+						ModelState.AddModelError ("Id", "Wrong Id");
+						return View (model);
+					}
+
+					if (username != f.Owner)
 					if (!Roles.IsUserInRole ("FrontOffice"))
-						throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
+						throw new UnauthorizedAccessException ("You're not allowed to view/modify this estimate");
+					if (submit == "Update") {
+						if (model != f) {
+							WorkFlowManager.SetTitle (model.Id, model.Title);
+						}
+					} else if (submit == null) {
+						model = f;
+					}
+
+				} else if (model.Id == 0 && submit=="Create") {
+					// Create the estimate
+					model.Id=WorkFlowManager.CreateEstimate (username,
+						model.Title);
+					model.Owner = username;
 				}
 			}
-			return View (e);
+			return View(model);
 		}
 
 		[AcceptVerbs("GET")]

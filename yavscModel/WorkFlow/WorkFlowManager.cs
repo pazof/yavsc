@@ -13,6 +13,11 @@ namespace Yavsc.Model.WorkFlow
 	/// </summary>
 	public static class WorkFlowManager
 	{
+		public static void SetTitle (long id, string title)
+		{
+			ContentProvider.SetTitle (id, title);
+		}
+
 		public static event EventHandler NewOrder;
 
 		public static Estimate GetEstimate (long estid)

@@ -8,6 +8,7 @@ using System.Web.Security;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.Admin;
 using Yavsc.Admin;
+using System.IO;
 
 
 namespace Yavsc.Controllers
@@ -27,6 +28,7 @@ namespace Yavsc.Controllers
 		[Authorize(Roles="Admin")]
 		public ActionResult Backups(DataAccess model)
 		{
+
 			return View (model);
 		}
 
@@ -37,6 +39,7 @@ namespace Yavsc.Controllers
 				if (ModelState.IsValid) {
 					if (string.IsNullOrEmpty (datac.Password))
 						ModelState.AddModelError ("Password", "Invalid passord");
+					datac.BackupPrefix = Server.MapPath (datac.BackupPrefix);
 					DataManager ex = new DataManager (datac);
 					Export e = ex.CreateBackup ();
 					if (e.ExitCode > 0)
@@ -65,13 +68,29 @@ namespace Yavsc.Controllers
 		{
 			ViewData ["BackupName"] = backupName;
 			if (ModelState.IsValid) {
+				// TODO BETTER
+				datac.BackupPrefix = Server.MapPath (datac.BackupPrefix);
 				DataManager mgr = new DataManager (datac);
 				ViewData ["BackupName"] = backupName;
 				ViewData ["DataOnly"] = dataOnly;
-				TaskOutput t = mgr.Restore (backupName,dataOnly);
+
+				TaskOutput t = mgr.Restore (
+					Path.Combine(new FileInfo(datac.BackupPrefix).DirectoryName,
+						backupName),dataOnly);
 				return View ("Restored", t);
 			}
+			BuildBackupList (datac);
 			return View (datac);
+		}
+		private void BuildBackupList(DataAccess datac)
+		{
+			// build ViewData ["Backups"];
+			string bckd=Server.MapPath (datac.BackupPrefix);
+			DirectoryInfo di = new DirectoryInfo (new FileInfo(bckd).DirectoryName);
+			List<string> bks = new List<string> ();
+			foreach (FileInfo ti in di.GetFiles("*.tar"))
+				bks.Add (ti.Name);
+			ViewData ["Backups"] = bks.ToArray ();
 		}
 
 		[Authorize(Roles="Admin")]

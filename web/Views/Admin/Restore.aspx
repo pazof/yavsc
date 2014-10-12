@@ -3,9 +3,9 @@
 <%= Html.ValidationSummary("Restore a database backup") %>
 <% using (Html.BeginForm("Restore")) { %>
 
-<% string [] bckdirs = Model.GetBackupDirs(); %>
+<% string [] bcfiles = (string[]) ViewData["Backups"]; %>
 <select name="backupName">
-<% foreach (string s in bckdirs)
+<% foreach (string s in bcfiles)
 {
 %>
 <option value="<%=s%>"><%=s%></option>

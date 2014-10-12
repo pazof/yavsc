@@ -138,22 +138,21 @@ namespace WorkFlowProvider
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"select _id,title,username from estimate where _id = @estid";
+						"select title,username from estimate where _id = @estid";
 
 					cmd.Parameters.Add ("@estid", estimid);
 					cnx.Open ();
 					Estimate est = null;
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 						if (!rdr.Read ()) {
-							throw new Exception (
-								string.Format("Estimate not found : {0}", estimid));
+							return null;
 						}
 						est = new Estimate ();
 						est.Title = rdr.GetString(
 							rdr.GetOrdinal("title"));
 						est.Owner = rdr.GetString(
 							rdr.GetOrdinal("username"));
-
+						est.Id = estimid;
 						using (NpgsqlCommand cmdw = new NpgsqlCommand ("select _id, productid, ucost, count, description from writtings where _id = @estid", cnx)) {
 							cmdw.Parameters.Add("@estid", estimid);
 							using (NpgsqlDataReader rdrw = cmdw.ExecuteReader ()) {

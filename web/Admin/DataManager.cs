@@ -18,11 +18,16 @@ namespace Yavsc.Admin
 		{
 			Environment.SetEnvironmentVariable("PGPASSWORD", da.Password);
 			Export e = new Export ();
-			string fileName = da.BackupPrefix + "-" + DateTime.Now.ToString ("yyyyMMdd");
+			string fileName = da.BackupPrefix + "-" + DateTime.Now.ToString ("yyyyMMddhhmmss")+".tar";
 			FileInfo ofi = new FileInfo (fileName);
 			e.FileName = ofi.FullName;
+			/*
 			Exec ("pg_dump", string.Format (
-					"-wb -Z3 -f {0} -Fd -h {1} -U {2} -p {3} {4}",
+				"-wb -Z3 -f {0} -Ft -h {1} -U {2} -p {3} {4}",
+				fileName, da.Host, da.Dbuser, da.Port, da.Dbname ),e);
+				*/
+			Exec ("pg_dump", string.Format (
+				"-f {0} -Ft -h {1} -U {2} -p {3} {4}",
 				fileName, da.Host, da.Dbuser, da.Port, da.Dbname ),e);
 			return e;
 		} 
@@ -51,8 +56,13 @@ namespace Yavsc.Admin
 			Environment.SetEnvironmentVariable("PGPASSWORD", da.Password);
 			var t = new TaskOutput ();
 			Exec ("pg_restore", (dataOnly?"-a ":"")+string.Format ( 
+				"-1 -Ft -O -h {0} -U {1} -p {2} -d {3} {4}",
+				da.Host, da.Dbuser, da.Port, da.Dbname, fileName ),t);
+			/*
+			Exec ("pg_restore", (dataOnly?"-a ":"")+string.Format ( 
 				"-1 -w -Fd -O -h {0} -U {1} -p {2} -d {3} {4}",
 				da.Host, da.Dbuser, da.Port, da.Dbname, fileName ),t);
+			*/
 			return t;
 		}
 		public TaskOutput CreateDb ()

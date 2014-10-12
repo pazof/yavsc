@@ -53,7 +53,7 @@ namespace Yavsc.Model.Admin
 		}
 
 		private  string dbpassword ;
-		private  string backupPrefix= "backup/global.backup";
+		private  string backupPrefix= "~/backup/global.backup";
 		 
 		public string BackupPrefix {
 			get {
@@ -68,16 +68,6 @@ namespace Yavsc.Model.Admin
 		public  string Password {
 			get { return dbpassword; }
 			set { dbpassword = value; }
-		}
-
-		public string [] GetBackupDirs()
-		{
-			List<string> res = new List<string> ();
-			string bkpdir = new FileInfo (backupPrefix).DirectoryName;
-			DirectoryInfo bkpdiri = new DirectoryInfo(bkpdir);
-			foreach (DirectoryInfo di in bkpdiri.EnumerateDirectories())
-				res.Add (Path.Combine(bkpdir,di.Name));
-			return res.ToArray ();
 		}
 	}
 	
