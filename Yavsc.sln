@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITContent", "ITContent\ITCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITContentProvider", "ITContentProvider\ITContentProvider.csproj", "{9D7D892E-9B77-4713-892D-C26E1E944119}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{ECEC9074-ACB5-4A74-BE22-FF7B40F25A1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fortune", "plugins\fortune\fortune.csproj", "{B5F49C21-7BB3-4DC0-AE65-F4ED0F6D15BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +65,10 @@ Global
 		{9D7D892E-9B77-4713-892D-C26E1E944119}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D7D892E-9B77-4713-892D-C26E1E944119}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D7D892E-9B77-4713-892D-C26E1E944119}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5F49C21-7BB3-4DC0-AE65-F4ED0F6D15BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5F49C21-7BB3-4DC0-AE65-F4ED0F6D15BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5F49C21-7BB3-4DC0-AE65-F4ED0F6D15BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5F49C21-7BB3-4DC0-AE65-F4ED0F6D15BD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BBA7175D-7F92-4278-96FC-84C495A2B5A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BBA7175D-7F92-4278-96FC-84C495A2B5A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBA7175D-7F92-4278-96FC-84C495A2B5A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -73,6 +81,9 @@ Global
 		{EEFCECE6-3B7F-4BBE-B7AF-69377AF3CF39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEFCECE6-3B7F-4BBE-B7AF-69377AF3CF39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEFCECE6-3B7F-4BBE-B7AF-69377AF3CF39}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B5F49C21-7BB3-4DC0-AE65-F4ED0F6D15BD} = {ECEC9074-ACB5-4A74-BE22-FF7B40F25A1A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = web\Web.csproj

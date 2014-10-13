@@ -2,7 +2,7 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <div>
 <%= Html.ValidationSummary() %>
-<% using ( Html.BeginForm("RemoveRole") ) {  %>
+<% using ( Html.BeginForm("RemoveRole","Admin") ) {  %>
 Supprimer le rôle 
 <%= Html.Encode( ViewData["roletoremove"] ) %> ?
 <br/>

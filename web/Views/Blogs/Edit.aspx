@@ -36,7 +36,7 @@ Usage BBcodes  :
 
 <%= Html.ValidationSummary("Edition du billet") %>
 
-<% using(Html.BeginForm("ValidateEdit")) { %>
+<% using(Html.BeginForm("ValidateEdit","Blogs")) { %>
 <%= Html.LabelFor(model => model.Title) %>:<br/>
 <%= Html.TextBox( "Title" ) %>
 <%= Html.ValidationMessage("Title", "*") %>

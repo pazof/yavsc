@@ -7,7 +7,7 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <div>
 <%= Html.ValidationSummary() %>
-<% using ( Html.BeginForm("RemoveUser") ) {  %>
+<% using ( Html.BeginForm("RemoveUser","Admin") ) {  %>
 Supprimer l'utilisateur 
 <%= Html.Encode( ViewData["usertoremove"] ) %> ?
 <br/>

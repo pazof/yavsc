@@ -1,7 +1,7 @@
 ﻿<%@ Page Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<DataAccess>" %>
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 <%= Html.ValidationSummary("Restore a database backup") %>
-<% using (Html.BeginForm("Restore")) { %>
+<% using (Html.BeginForm("Restore","Admin")) { %>
 
 <% string [] bcfiles = (string[]) ViewData["Backups"]; %>
 <select name="backupName">
