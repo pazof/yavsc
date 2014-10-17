@@ -3,6 +3,7 @@ using Yavsc.Model.WorkFlow;
 using System.Configuration;
 using Yavsc.Model.WorkFlow.Configuration;
 using System.Collections.Specialized;
+using SalesCatalog.Model;
 
 namespace Yavsc.Model.WorkFlow
 {
@@ -13,6 +14,9 @@ namespace Yavsc.Model.WorkFlow
 	/// </summary>
 	public static class WorkFlowManager
 	{
+		public static Catalog Catalog { get; set; }
+
+
 		public static void SetTitle (long id, string title)
 		{
 			ContentProvider.SetTitle (id, title);
@@ -93,13 +97,22 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="title">Title.</param>
 		public static long CreateEstimate(string client, string title)
 		{
-			return ContentProvider.CreateEstimate (client, title);
+			long estid = ContentProvider.CreateEstimate (client, title);
+			if (NewOrder != null)
+				NewOrder.Invoke(ContentProvider, new NewEstimateEvenArgs(estid,client,title));
+			return estid;
 		}
 
-
-
-		public static long Write(long estid, string desc, decimal ucost, int count, long productid)
+		public static long Write(long estid, string desc, decimal ucost, int count, string productid)
 		{
+			if (!string.IsNullOrWhiteSpace(productid)) {
+				if (Catalog == null)
+					Catalog = SalesCatalog.CatalogManager.GetCatalog ();
+				if (Catalog == null)
+					throw new Exception ("No catalog");
+				Product p = Catalog.FindProduct (productid);
+				// TODO new EstimateChange Event
+			}
 			return ContentProvider.Write(estid, desc, ucost, count, productid);
 		}
 

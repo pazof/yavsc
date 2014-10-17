@@ -55,6 +55,15 @@ namespace SalesCatalog.Model
 
 		public DateTime EndDate { get; set; }
 
+		public Product FindProduct (string reference)
+		{
+			Product p = null;
+			foreach (Brand b in Brands)
+				foreach (ProductCategory c in b.Categories)
+					if ((p = c.GetProduct(reference))!=null)
+						return p;
+			return null;
+		}
 	}
 	
 }

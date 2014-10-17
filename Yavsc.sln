@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebControls", "WebControls\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vscadm", "vscadm\vscadm.csproj", "{6C5E1490-E141-4ADA-84E5-6D65523D6B73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITContent", "ITContent\ITContent.csproj", "{88D83FC9-4158-4435-98A6-1F8F7F448B8F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITContentProvider", "ITContentProvider\ITContentProvider.csproj", "{9D7D892E-9B77-4713-892D-C26E1E944119}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{ECEC9074-ACB5-4A74-BE22-FF7B40F25A1A}"
@@ -53,10 +51,6 @@ Global
 		{821FF72D-9F4B-4A2C-B95C-7B965291F119}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{821FF72D-9F4B-4A2C-B95C-7B965291F119}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{821FF72D-9F4B-4A2C-B95C-7B965291F119}.Release|Any CPU.Build.0 = Release|Any CPU
-		{88D83FC9-4158-4435-98A6-1F8F7F448B8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88D83FC9-4158-4435-98A6-1F8F7F448B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88D83FC9-4158-4435-98A6-1F8F7F448B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88D83FC9-4158-4435-98A6-1F8F7F448B8F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{90BF2234-7252-4CD5-B2A4-17501B19279B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{90BF2234-7252-4CD5-B2A4-17501B19279B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90BF2234-7252-4CD5-B2A4-17501B19279B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,5 +81,9 @@ Global
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = web\Web.csproj
+		Policies = $0
+		$0.StandardHeader = $1
+		$1.Text = @\n ${FileName}\n \n Author:\n      ${AuthorName} <${AuthorEmail}>\n \n Copyright (c) ${Year} ${CopyrightHolder}\n\n This program is free software: you can redistribute it and/or modify\n it under the terms of the GNU Lesser General Public License as published by\n the Free Software Foundation, either version 3 of the License, or\n (at your option) any later version.\n\n This program is distributed in the hope that it will be useful,\n but WITHOUT ANY WARRANTY; without even the implied warranty of\n MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n GNU Lesser General Public License for more details.\n\n You should have received a copy of the GNU Lesser General Public License\n along with this program.  If not, see <http://www.gnu.org/licenses/>.
+		$1.IncludeInNewFiles = True
 	EndGlobalSection
 EndGlobal

@@ -4,31 +4,119 @@ using System.Web.Mvc;
 
 namespace Yavsc.Model.WorkFlow
 {
-
+	/// <summary>
+	/// Interface content provider.
+	/// Class Assertion: <c>Statuses.Length &gt;= FinalStatuses.Length</c>.
+	/// </summary>
 	public interface IContentProvider : IModule, IDisposable
 	{
 
 		/// <summary>
-		/// Gets the status labels.
-		/// 0 is the starting status 
+		/// Gets the different status labels.
+		/// 0 is the starting status. Each status is an integer and the 0-based index
+		/// of a string in this array.
 		/// </summary>
 		/// <value>The status labels.</value>
-		string [] StatusLabels {get;}
+		string [] Statuses { get; }
+
+		/// <summary>
+		/// Gets the final statuses.
+		/// </summary>
+		/// <value>The final statuses.</value>
 		bool [] FinalStatuses { get; }
+		/// <summary>
+		/// Gets the writting status changes.
+		/// </summary>
+		/// <returns>The writting statuses.</returns>
+		/// <param name="wrid">Wrid.</param>
 		StatusChange[] GetWrittingStatuses (long wrid);
+		/// <summary>
+		/// Gets the estimate status changes.
+		/// </summary>
+		/// <returns>The estimate statuses.</returns>
+		/// <param name="estid">Estid.</param>
 		StatusChange[] GetEstimateStatuses (long estid);
+		/// <summary>
+		/// Creates the estimate.
+		/// </summary>
+		/// <returns>The estimate.</returns>
+		/// <param name="client">Client.</param>
+		/// <param name="title">Title.</param>
 		long CreateEstimate (string client, string title);
-		Estimate [] GetEstimates(string client);
+		/// <summary>
+		/// Add a line to the specified estimate by id,
+		/// using the specified desc, ucost, count and productid.
+		/// </summary>
+		/// <param name="estid">Estimate identifier.</param>
+		/// <param name="desc">Textual description for this line.</param>
+		/// <param name="ucost">Unitary cost.</param>
+		/// <param name="count">Cost multiplier.</param>
+		/// <param name="productid">Product identifier.</param>
+		long Write (long estid, string desc, decimal ucost, int count, string productid);
+		/// <summary>
+		/// Gets the estimate by identifier.
+		/// </summary>
+		/// <returns>The estimate.</returns>
+		/// <param name="estimid">Estimid.</param>
 		Estimate GetEstimate (long estimid);
-		long Write (long estid, string desc, decimal ucost, int count, long productid);
+		/// <summary>
+		/// Gets the estimates created for a specified client.
+		/// </summary>
+		/// <returns>The estimates.</returns>
+		/// <param name="client">Client.</param>
+		Estimate [] GetEstimates(string client);
+		/// <summary>
+		/// Drops the writting.
+		/// </summary>
+		/// <param name="wrid">Wrid.</param>
 		void DropWritting (long wrid);
+		/// <summary>
+		/// Drops the estimate.
+		/// </summary>
+		/// <param name="estid">Estid.</param>
 		void DropEstimate (long estid);
+		/// <summary>
+		/// Tags the writting.
+		/// </summary>
+		/// <param name="wrid">Wrid.</param>
+		/// <param name="tag">Tag.</param>
 		void TagWritting (long wrid,string tag);
+		/// <summary>
+		/// Drops the tag writting.
+		/// </summary>
+		/// <param name="wrid">Wrid.</param>
+		/// <param name="tag">Tag.</param>
 		void DropTagWritting (long wrid,string tag);
+		/// <summary>
+		/// Updates the writting.
+		/// </summary>
+		/// <param name="wr">Wr.</param>
 		void UpdateWritting (Writting wr);
+		/// <summary>
+		/// Sets the title for a specified estimate by id.
+		/// </summary>
+		/// <param name="estid">Estid.</param>
+		/// <param name="newTitle">New title.</param>
 		void SetTitle (long estid,  string newTitle);
+		/// <summary>
+		/// Sets the descripton for a writting.
+		/// </summary>
+		/// <param name="writid">Writid.</param>
+		/// <param name="newDesc">New desc.</param>
 		void SetDesc (long writid, string newDesc);
+		/// <summary>
+		/// Sets the writting status.
+		/// </summary>
+		/// <param name="wrtid">Wrtid.</param>
+		/// <param name="status">Status.</param>
+		/// <param name="username">Username.</param>
 		void SetWrittingStatus (long wrtid,int status,string username);
+		/// <summary>
+		/// Sets the estimate status.
+		/// </summary>
+		/// <param name="estid">Estid.</param>
+		/// <param name="status">Status.</param>
+		/// <param name="username">Username.</param>
 		void SetEstimateStatus (long estid,int status,string username);
 	}
 }

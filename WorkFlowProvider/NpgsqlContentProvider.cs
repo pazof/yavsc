@@ -12,6 +12,16 @@ namespace WorkFlowProvider
 {
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
+		public void Install (System.Data.IDbConnection cnx)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Uninstall (System.Data.IDbConnection cnx, bool removeConfig)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public Estimate[] GetEstimates (string client)
 		{
 			throw new NotImplementedException ();
@@ -93,7 +103,7 @@ namespace WorkFlowProvider
 			throw new NotImplementedException ();
 		}
 
-		public string[] StatusLabels {
+		public string[] Statuses {
 			get {
 				return new string[] { "Created", "Validated", "Success", "Error" };
 			}
@@ -153,27 +163,30 @@ namespace WorkFlowProvider
 						est.Owner = rdr.GetString(
 							rdr.GetOrdinal("username"));
 						est.Id = estimid;
-						using (NpgsqlCommand cmdw = new NpgsqlCommand ("select _id, productid, ucost, count, description from writtings where _id = @estid", cnx)) {
+						using (NpgsqlCommand cmdw = new NpgsqlCommand ("select _id, productid, ucost, count, description from writtings where estimid = @estid", cnx)) {
 							cmdw.Parameters.Add("@estid", estimid);
 							using (NpgsqlDataReader rdrw = cmdw.ExecuteReader ()) {
-								List<Writting> lw = new List<Writting> ();
-								while (rdrw.Read ()) {
-									Writting w = new Writting ();
-									w.Description = rdrw.GetString (
-										rdrw.GetOrdinal ("description"));
-									int opi = rdrw.GetOrdinal ("productid");
-									if (!rdrw.IsDBNull(opi))				
-										w.ProductReference = rdrw.GetInt64(opi);
-									int oco = rdrw.GetOrdinal ("count");
-									if (!rdrw.IsDBNull(oco))
-										w.Count = rdrw.GetInt32 (oco);
-									int ouc = rdrw.GetOrdinal ("ucost");
-									if (!rdrw.IsDBNull(ouc))
-										w.UnitaryCost = rdrw.GetDecimal (ouc);
-									w.Id = rdrw.GetInt64 (rdrw.GetOrdinal("_id"));
-									lw.Add (w);
+								List<Writting> lw = null; 
+								if (rdrw.HasRows) {
+									lw = new List<Writting> ();
+									while (rdrw.Read ()) {
+										Writting w = new Writting ();
+										w.Description = rdrw.GetString (
+											rdrw.GetOrdinal ("description"));
+										int opi = rdrw.GetOrdinal ("productid");
+										if (!rdrw.IsDBNull (opi))
+											w.ProductReference = rdrw.GetString(opi);
+										int oco = rdrw.GetOrdinal ("count");
+										if (!rdrw.IsDBNull (oco))
+											w.Count = rdrw.GetInt32 (oco);
+										int ouc = rdrw.GetOrdinal ("ucost");
+										if (!rdrw.IsDBNull (ouc))
+											w.UnitaryCost = rdrw.GetDecimal (ouc);
+										w.Id = rdrw.GetInt64 (rdrw.GetOrdinal ("_id"));
+										lw.Add (w);
+									}
+									est.Lines = lw.ToArray ();
 								}
-								est.Lines = lw.ToArray ();
 							}
 						}
 						// TODO est.Ciffer = somme des ecritures
@@ -200,17 +213,21 @@ namespace WorkFlowProvider
 			}
 		}
 
-		public long Write (long estid, string desc, decimal ucost, int count, long productid)
+		public long Write (long estid, string desc, decimal ucost, int count, string productid)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"insert into writtings (description, estimid) VALUES (@dscr,@estid) returning _id";
+						"insert into writtings (description, estimid, ucost, count, productid) VALUES (@dscr,@estid,@ucost,@count,@prdid) returning _id";
 					cmd.Parameters.Add ("@dscr", desc);
 					// cmd.Parameters.Add ("@prdid", productid);
 					// cmd.Parameters.Add("@ucost", ucost);
 					// cmd.Parameters.Add("@mult", count);
 					cmd.Parameters.Add("@estid", estid);
+
+					cmd.Parameters.Add("@ucost", ucost);
+					cmd.Parameters.Add("@count", count);
+					cmd.Parameters.Add("@prdid", productid);
 					cnx.Open ();
 
 					long res = (long) cmd.ExecuteScalar ();

@@ -11,7 +11,7 @@ using System.Web.Security;
 
 namespace Yavsc.ApiControllers
 {
-	[HttpControllerConfiguration(ActionValueBinder=typeof(Basic.MvcActionValueBinder))]
+	//[HttpControllerConfiguration(ActionValueBinder=typeof(Basic.MvcActionValueBinder))]
 	public class WorkFlowController : ApiController
     {
 		string adminRoleName="Admin";
@@ -63,8 +63,9 @@ namespace Yavsc.ApiControllers
         }
 
 		[HttpGet]
+		[HttpPost]
 		[Authorize]
-		public long Write (long estid, string desc, decimal ucost, int count, long productid=0) {
+		public long Write (long estid, string desc, decimal ucost, int count, string productid) {
 			// TODO ensure estid owner matches the current one
 			return WorkFlowManager.Write(estid, desc, ucost, count, productid);
 		}

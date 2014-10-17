@@ -71,9 +71,9 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <returns>The estimate.</returns>
 		/// <param name="estid">Estid.</param>
-		public Estimate GetEstimate (long estid)
+		public Estimate GetEstimate (long Id)
 		{
-			Estimate est = WorkFlowManager.ContentProvider.GetEstimate (estid);
+			Estimate est = WorkFlowManager.ContentProvider.GetEstimate (Id);
 			return est;
 		}
 
