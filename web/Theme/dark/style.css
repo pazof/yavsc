@@ -1,0 +1,41 @@
+/* tables */
+table.tablesorter {
+	font-family:arial;
+	background-color: #333;
+	margin:10px 0pt 15px;
+	font-size: 8pt;
+	width: 100%;
+	text-align: left;
+}
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+	background-color: rgba(0,0,0,0.5);
+	border: 1px solid #206;
+	font-size: 8pt;
+	padding: 4px;
+}
+table.tablesorter thead tr .header {
+	background-image: url(bg.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+}
+table.tablesorter tbody td {
+	color: #ffa;
+	padding: 4px;
+	vertical-align: top;
+	background-color: #002;
+}
+
+table.tablesorter .odd td {
+	background-color: #004;
+}
+
+table.tablesorter thead tr .headerSortUp {
+	background-image: url(/Theme/dark/asc.gif);
+}
+table.tablesorter thead tr .headerSortDown {
+	background-image: url(/Theme/dark/desc.gif);
+}
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+background-color: #123;
+}

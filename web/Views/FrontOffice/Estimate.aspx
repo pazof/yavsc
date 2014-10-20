@@ -1,8 +1,14 @@
 ﻿<%@ Page Title="Devis" Language="C#" Inherits="System.Web.Mvc.ViewPage<Estimate>" MasterPageFile="~/Models/App.master" %>
 
-<asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
+<asp:Content ContentPlaceHolderID="head" ID="head1" runat="server" >
 <script type="text/javascript" src="/js/jquery-latest.js"></script> 
 <script type="text/javascript" src="/js/jquery.tablesorter.js"></script> 
+<link rel="stylesheet" href="/Theme/dark/style.css" type="text/css" media="print, projection, screen" />
+
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
+
 <%= Html.ValidationSummary("Devis") %>
 <% using  (Html.BeginForm("Estimate","FrontOffice")) { %>
 <%= Html.LabelFor(model => model.Title) %>:<%= Html.TextBox( "Title" ) %>
@@ -22,25 +28,14 @@
 <% } else { %>
    <input type="submit" name="submit" value="Update"/>
 
-   <script type="text/javascript" >
-
-   $(document).ready(function() 
-    { 
-        $("#myTable").tablesorter( {sortList: [[0,0], [1,0]]} ); 
-    } 
-);
-     </script>
-
 <% } %>
-<% if (Model.Lines ==null || Model.Lines.Length == 0) { %>
-<i>Pas de ligne.</i>
-<%
-} else { %>
+
+
+
 
 <table class="tablesorter">
 <thead>
 <tr>
-<th>Id</th>
 <th>Description</th>
 <th>Product Reference</th>
 <th>Count</th>
@@ -48,9 +43,10 @@
 </tr>
 </thead>
 <tbody id="wrts">
-<% foreach (Writting wr in Model.Lines) { %>
-<tr>
-<td><%=wr.Id%></td>
+<% int lc=0;
+   if (Model.Lines!=null)
+   foreach (Writting wr in Model.Lines) { lc++; %>
+<tr class="<%= (lc%2==0)?"odd ":"" %>row" id="wr<%=wr.Id%>">
 <td><%=wr.Description%></td>
 <td><%=wr.ProductReference%></td>
 <td><%=wr.Count%></td>
@@ -60,12 +56,13 @@
 </tbody>
 </table>
 
-
-<%   } %>
-
 <%  } %>
 
 <% } %>
+
+   </asp:Content>
+   <asp:Content ContentPlaceHolderID="MASContent" ID="MASContent1" runat="server">
+
 
      <script type="text/javascript" >
      function ShowHideBtn(btn,id)
@@ -78,68 +75,145 @@
      </script>
 
     <form id="writeform">
-  <input type="button" onclick="ShowHideBtn(this,'writearea');" value="+"/>
+      <input type="button" id="btndtl" value="+"/>
   <div id="writearea" style="display:none;">
      <input type="hidden" name="estid" id="estid" value="<%=Model.Id%>"/>
-     <label for="desc">Description:</label>
-     <input type="text" name="desc" id="desc" />
-     <label for="ucost">Prix unitaire:</label>
-     <input type="number" name="ucost" id="ucost"/>
-     <label for="count">Quantité:</label>
-     <input type="number" name="count" id="count"/>
-     <label for="productid">Référence du produit:</label>
-     <input type="text" name="productid" id="productid"/> 
-     <input type="button" name="btnapply" id="btnapply" value="Écrire"/>
+     <label for="Description">Description:</label>
+     <input type="text" name="Description" id="Description" />
+     <label for="UnitaryCost">Prix unitaire:</label>
+     <input type="number" name="UnitaryCost" id="UnitaryCost"/>
+     <label for="Count">Quantité:</label>
+     <input type="number" name="Count" id="Count"/>
+     <label for="ProductReference">Référence du produit:</label>
+     <input type="text" name="ProductReference" id="ProductReference"/> 
+     <input type="button" name="btnmodify" id="btnmodify" value="Modifier"/>
+     <input type="button" name="btncreate" id="btncreate" value="Écrire"/>
+     <input type="button" name="btndrop" id="btndrop" value="Supprimer"/>
      <input type="hidden" name="wrid" id="wrid" />
-     <tt id="dbgv"></tt>
-     <input type="button" name="btnview" id="btnview" value="View Values"/>
 
+     <tt id="msg" class="message"></tt>
+     <style>
+     .row { cursor:pointer; }
+     table.tablesorter td:hover { background-color: rgb(64,0,0); }
+     .hidden { display:none; }
+     </style>
      <script>
 
- jQuery.support.cors = false;  
+ jQuery.support.cors = true;  
      function GetWritting () {
-		var estid = parseInt($("#estid").val());
-    	var ucost = Number($("#ucost").val());
-    	var count = parseInt($("#count").val());
-    	var desc = $("#desc").val();
-    	var productid = $("#productid").val();
      	return {
-     	estid:estid,
-     	desc:desc,
-     	ucost:ucost,
-     	count:count,
-     	productid:productid
+     	Id: Number($("#wrid").val()),
+     	UnitaryCost: Number($("#UnitaryCost").val()),
+     	Count: parseInt($("#Count").val()),
+     	ProductReference: $("#ProductReference").val(),
+     	Description: $("#Description").val()
      	};
      }
-        
 
+     function wredit(pwrid)
+     {
+     	$("#wrid").val(pwrid);
+     	if (pwrid>0) {
+    	$("#btncreate").addClass("hidden");
+    	$("#btnmodify").removeClass("hidden");
+    	$("#btndrop").removeClass("hidden");
+    	} else {
+    	$("#btncreate").removeClass("hidden");
+    	$("#btnmodify").addClass("hidden");
+    	$("#btndrop").addClass("hidden");
+    	}
+     } 
+       
      $(document).ready(function () {
-
- $("#btnapply").click(function () {
-    	
-        $.ajax({
-            url: "http://localhost:8080/api/WorkFlow/Write",
+     // bug at no row: $(".tablesorter").tablesorter( {sortList: [[0,0], [1,0]]} ); 
+      
+      function delRow() {
+       $.ajax({
+            url: "<%=ViewData["WebApiUrl"]+"/DropWritting"%>",
             type: "Get",
-            dataType: "json",
-            data: GetWritting(), 
+            data: { wrid: wrid.value }, 
             contentType: 'application/json; charset=utf-8',
-            success: function (data) { 
-            $("#wrid").val(data);
+            success: function () { 
+		       var tr = document.getElementById("wr"+wrid.value);
+		       $("#wr"+wrid.value).remove();
+		       $("#wrid").val(0);
+		    	$("#ucost").val(0);
+		    	$("#Count").val(0);
+		    	$("#Description").val();
+		    	$("#ProductReference").val();
+			   wredit(0);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-        $("#dbgv").text(xhr.status+" : "+xhr.responseText);
+        $("#msg").text(xhr.status+" : "+xhr.responseText);}
+        });
 
       }
-        });
-    });
+	function setRow() {
+       var wrt = GetWritting();
 
-    $("#btnview").click(function () {
-    	$("#dbgv").text(JSON.stringify(GetWritting()));
+       $.ajax({
+            url: "<%=ViewData["WebApiUrl"]+"/UpdateWritting"%>",
+            type: "POST",
+            data: JSON.stringify(wrt), 
+            contentType: 'application/json; charset=utf-8',
+            success: function () { 
+		       var cells = document.getElementById("wr"+wrt.Id).getElementsByTagName("TD");
+		       cells[0].innerHTML=wrt.Description;
+		       cells[1].innerHTML=wrt.ProductReference;
+		       cells[2].innerHTML=wrt.UnitaryCost;
+		       cells[3].innerHTML=wrt.Count;
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+        $("#msg").text(xhr.status+" : "+xhr.responseText);}
+        });
+    }
+    //data: {estid: estid, wr: { Id: 0, UnitaryCost: wrt.UnitaryCost, Count: wrt.Count, ProductReference: wrt.ProductReference, Description: wrt.Description}}, 
+            
+       function addRow(){
+       var wrt = GetWritting();
+		var estid = parseInt($("#Id").val());
+        $.ajax({
+            url: "<%=ViewData["WebApiUrl"]+"/Write"%>/?estid="+estid,
+            type: "POST",
+            traditional: false,
+            data: JSON.stringify(wrt),
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) { 
+            wrt.Id = Number(data);
+            wredit(wrt.Id);
+            $("<tr class=\"row\" id=\"wr"+wrt.Id+"\"><td>"+wrt.Description+"</td><td>"+wrt.ProductReference+"</td><td>"+wrt.Count+"</td><td>"+wrt.UnitaryCost+"</td></tr>").appendTo("#wrts")
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+        $("#msg").text(xhr.status+" : "+xhr.responseText);}
+        });
+
+    }
+
+ $("#btncreate").click(addRow);
+ $("#btnmodify").click(setRow);
+ $("#btndrop").click(delRow);
+    function ShowDtl(val)
+     {
+     	document.getElementById("writearea").style.display = val ? "block" : "none";
+     	document.getElementById("btndtl").value = val ? "-" : "+";
+     }
+
+     $("#btndtl").click(function(){ShowDtl(document.getElementById("writearea").style.display != "block");});
+
+    $(".row").click(function (e) {
+    	ShowDtl(true);
+    	var cells = e.delegateTarget.getElementsByTagName("TD");
+    	var wrid = Number(e.delegateTarget.id.substr(2));
+    	wredit(wrid);
+    	$("#Description").val(cells[0].innerHTML);
+    	$("#ProductReference").val(cells[1].innerHTML);
+    	$("#Count").val(cells[2].innerHTML);
+    	$("#UnitaryCost").val(Number(cells[3].innerHTML.replace(",",".")));
     });
 });
     </script>
   </div>
-</form>
+    </form>
 </asp:Content>
 
 

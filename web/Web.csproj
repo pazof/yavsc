@@ -25,6 +25,11 @@
     </AspNet>
     <AssemblyName>Yavsc</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="BeforeExecute" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -107,6 +112,10 @@
     <Folder Include="Views\WorkFlow\" />
     <Folder Include="Views\Admin\" />
     <Folder Include="js\" />
+    <Folder Include="Theme\" />
+    <Folder Include="Theme\green\" />
+    <Folder Include="Theme\blue\" />
+    <Folder Include="Theme\dark\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -145,7 +154,6 @@
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Web.config" />
     <Content Include="Global.asax" />
-    <Content Include="style.css" />
     <Content Include="Models\App.master" />
     <Content Include="Views\Account\Register.aspx" />
     <Content Include="Views\Account\ChangePassword.aspx" />
@@ -204,6 +212,19 @@
     <Content Include="js\jquery.tablesorter.min.js" />
     <Content Include="js\jquery-latest.js" />
     <Content Include="Views\FrontOffice\Write.aspx" />
+    <Content Include="Theme\style.css" />
+    <Content Include="Theme\green\asc.png" />
+    <Content Include="Theme\green\bg.png" />
+    <Content Include="Theme\green\desc.png" />
+    <Content Include="Theme\green\style.css" />
+    <Content Include="Theme\blue\asc.gif" />
+    <Content Include="Theme\blue\bg.gif" />
+    <Content Include="Theme\blue\desc.gif" />
+    <Content Include="Theme\blue\style.css" />
+    <Content Include="Theme\dark\asc.gif" />
+    <Content Include="Theme\dark\bg.gif" />
+    <Content Include="Theme\dark\desc.gif" />
+    <Content Include="Theme\dark\style.css" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

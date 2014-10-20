@@ -16,6 +16,10 @@ namespace Yavsc
 		{
 
 			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}");
+			routes.IgnoreRoute ("js/{*pathInfo}");
+			routes.IgnoreRoute ("Theme/{*pathInfo}");
+			routes.IgnoreRoute ("css/{*pathInfo}");
+			routes.IgnoreRoute ("images/{*pathInfo}");
 
 			routes.MapRoute (
 				"Blog",

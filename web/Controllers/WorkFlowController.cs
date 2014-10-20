@@ -11,7 +11,6 @@ using System.Web.Security;
 
 namespace Yavsc.ApiControllers
 {
-	//[HttpControllerConfiguration(ActionValueBinder=typeof(Basic.MvcActionValueBinder))]
 	public class WorkFlowController : ApiController
     {
 		string adminRoleName="Admin";
@@ -39,10 +38,13 @@ namespace Yavsc.ApiControllers
 		{
 			WorkFlowManager.DropWritting (wrid);
 		}
-		[HttpGet]
+
 		[Authorize]
-		public void UpdateWritting(Writting wr)
+		[AcceptVerbs("POST")]
+		public void UpdateWritting([FromBody] Writting wr)
 		{
+			if (!ModelState.IsValid)
+				throw new Exception ("Modèle invalide");
 			WorkFlowManager.UpdateWritting (wr);
 		}
 
@@ -62,12 +64,13 @@ namespace Yavsc.ApiControllers
 			return new { test=string.Format("Hello {0}!",username) }; 
         }
 
-		[HttpGet]
-		[HttpPost]
+
+		[AcceptVerbs("POST")]
 		[Authorize]
-		public long Write (long estid, string desc, decimal ucost, int count, string productid) {
+		public long Write ([FromUri] long estid, [FromBody] Writting wr) {
 			// TODO ensure estid owner matches the current one
-			return WorkFlowManager.Write(estid, desc, ucost, count, productid);
+			return WorkFlowManager.Write(estid, wr.Description,
+				wr.UnitaryCost, wr.Count, wr.ProductReference);
 		}
     }
 }

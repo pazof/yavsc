@@ -21,9 +21,10 @@ namespace Yavsc.Controllers
 	public class FrontOfficeController : Controller
 	{
 		[Authorize]
-		public ActionResult Estimate(Estimate model,string submit) 
+		public ActionResult Estimate(Estimate model,string submit)
 		{
 			if (ModelState.IsValid) {
+				ViewData ["WebApiUrl"] = "http://"+ Request.Url.Authority + "/api/WorkFlow";
 				string username = HttpContext.User.Identity.Name;
 				if (model.Id > 0) {
 					Estimate f = WorkFlowManager.GetEstimate (model.Id);
@@ -31,7 +32,6 @@ namespace Yavsc.Controllers
 						ModelState.AddModelError ("Id", "Wrong Id");
 						return View (model);
 					}
-
 					if (username != f.Owner)
 					if (!Roles.IsUserInRole ("FrontOffice"))
 						throw new UnauthorizedAccessException ("You're not allowed to view/modify this estimate");

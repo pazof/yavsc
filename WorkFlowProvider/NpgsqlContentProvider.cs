@@ -66,11 +66,6 @@ namespace WorkFlowProvider
 			throw new NotImplementedException ();
 		}
 
-		public void UpdateWritting (Writting wr)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public void SetWrittingStatus (long wrtid, int status, string username)
 		{
 			throw new NotImplementedException ();
@@ -194,6 +189,30 @@ namespace WorkFlowProvider
 					}
 					cnx.Close ();
 					return est;
+				}
+			}
+		}
+
+
+		public void UpdateWritting (Writting wr)
+		{
+			using (NpgsqlConnection cnx = CreateConnection ()) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = 
+						"update writtings set " +
+						"description = @desc, " +
+						"ucost = @ucost, " +
+						"count = @count, " +
+						"productid = @prdid " +
+						"where _id = @wrid";
+					cmd.Parameters.Add ("@wrid", wr.Id);
+					cmd.Parameters.Add ("@desc", wr.Description);
+					cmd.Parameters.Add ("@ucost", wr.UnitaryCost);
+					cmd.Parameters.Add ("@prdid", wr.ProductReference);
+					cmd.Parameters.Add ("@count", wr.Count);
+					cnx.Open ();
+					cmd.ExecuteNonQuery ();
+					cnx.Close ();
 				}
 			}
 		}
