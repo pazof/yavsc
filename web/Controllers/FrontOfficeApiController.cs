@@ -14,12 +14,20 @@ using System.Net;
 using WorkFlowProvider;
 using System.Web.Security;
 using Yavsc.Model.WorkFlow;
+using System.Reflection;
+using System.Collections.Generic;
+using Yavsc.Model.RolesAndMembers;
+using Yavsc.Controllers;
+using Yavsc.Formatters;
+using System.Text;
+using System.Web.Profile;
 
 namespace Yavsc.ApiControllers
 {
 
 	public class FrontOfficeController : ApiController
 	{
+
 		[AcceptVerbs("GET")]
 		public Catalog Catalog ()
 		{
@@ -77,6 +85,52 @@ namespace Yavsc.ApiControllers
 			return est;
 		}
 
+		[AcceptVerbs("GET")]
+		public HttpResponseMessage GetTexEstim(long estimid)
+		{
+			return new HttpResponseMessage () {
+				Content = new ObjectContent (typeof(string),
+					getTexEstim (estimid),
+					new TexFormatter ())
+			};
+		}
+
+		private string getTexEstim(long estimid)
+		{
+			Yavsc.templates.Estim  tmpe = new Yavsc.templates.Estim();		
+			Estimate e = WorkFlowManager.GetEstimate (estimid);
+			tmpe.Session = new Dictionary<string,object>();
+			tmpe.Session.Add ("estim", e);
+			Profile pr = AccountController.GetProfile (e.Responsible);
+			tmpe.Session.Add ("from", pr);
+			tmpe.Session.Add ("to", pr);
+			tmpe.Init ();
+			return tmpe.TransformText ();
+		}
+		/// <summary>
+		/// Gets the estimate in pdf format from tex generation.
+		/// </summary>
+		/// <returns>The estim pdf.</returns>
+		/// <param name="estimid">Estimid.</param>
+		public HttpResponseMessage GetEstimPdf(long estimid)
+		{
+			Estimate estim = WorkFlowManager.GetEstimate (estimid);
+
+			Profile prpro = new Profile(ProfileBase.Create(estim.Responsible));
+			if (!prpro.IsBankable)
+				throw new Exception ("NotBankable:"+estim.Responsible);
+
+			Profile prcli = new Profile(ProfileBase.Create(estim.Client));
+			if (!prcli.IsBillable)
+				throw new Exception ("NotBillable:"+estim.Client);
+
+			return new HttpResponseMessage () {
+				Content = new ObjectContent (
+					typeof(Estimate),
+					estim,
+					new EstimToPdfFormatter ())
+			};
+		}
 	}
 }
 

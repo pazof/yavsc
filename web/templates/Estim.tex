@@ -1,0 +1,167 @@
+﻿\documentclass[french,11pt]{article}
+\usepackage{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper]{geometry}
+\usepackage{units}
+\usepackage{bera}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{fp}
+
+\def\TVA{20}    % Taux de la TVA
+
+\def\TotalHT{0}
+\def\TotalTVA{0}
+
+
+\newcommand{\AjouterService}[2]{%    Arguments : Désignation, prix
+    \FPround{\montant}{#2}{2}
+    \FPadd{\TotalHT}{\TotalHT}{\montant}
+    \eaddto\ListeProduits{#1    &   \montant    \cr}
+}
+
+
+\newcommand{\AfficheResultat}{%
+    \ListeProduits
+   
+    \FPeval{\TotalTVA}{\TotalHT * \TVA / 100}
+    \FPadd{\TotalTTC}{\TotalHT}{\TotalTVA}
+    \FPround{\TotalHT}{\TotalHT}{2}
+    \FPround{\TotalTVA}{\TotalTVA}{2}
+    \FPround{\TotalTTC}{\TotalTTC}{2}
+    \global\let\TotalHT\TotalHT
+    \global\let\TotalTVA\TotalTVA
+    \global\let\TotalTTC\TotalTTC
+   
+    \cr 
+    \hline
+    \textbf{Total}    & & &    \TotalHT
+}
+
+\newcommand*\eaddto[2]{% version développée de \addto
+   \edef\tmp{#2}%
+   \expandafter\addto
+   \expandafter#1%
+   \expandafter{\tmp}%
+}
+
+\newcommand{\ListeProduits}{}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%% A MODIFIER DANS LA FACTURE %%%%%%%%%%%%%%%%%%%%%
+
+\def\FactureNum            {<none>}    % Numéro de facture
+\def\FactureAcquittee    {non}        % Facture acquittée : oui/non
+\def\FactureLieu    {Suresnes}    % Lieu de l'édition de la facture
+\def\FactureObjet    {Facture}    % Objet du document
+% Description de la facture
+\def\FactureDescr    {%
+
+Cette facture concerne la prestation de coiffure a domicile du Mardi 23 Septembre 2014 à Meudon, 6 rue de la Verrerie.
+}
+
+% Infos Client
+\def\ClientNom{M. Dupont}    % Nom du client
+\def\ClientAdresse{%                    % Adresse du client
+   Zenosphere : Anthony Courtois (DG)\\
+   6 rue de la Verrerie\\
+   92190 MEUDON\\
+   Mobile: 06 47 60 25 50     
+}
+
+% Liste des produits facturés : Désignation, prix
+\AjouterService    {Forfait Coiffure}        {75}
+%\AjouterService    {Frais de déplacement} {0.84}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\geometry{verbose,tmargin=4em,bmargin=8em,lmargin=6em,rmargin=6em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+
+\thispagestyle{fancy}
+\pagestyle{fancy}
+\setlength{\parindent}{0pt}
+
+\renewcommand{\headrulewidth}{0pt}
+\cfoot{
+    Soraya Coiffure - 2 boulevard Aristide Briand - 92150 SURESNES \newline
+    \small{
+    E-mail: soraya.boudjouraf@free.fr\\
+    Téléphone mobile: +33(0)6 37 57 42 74\\
+        Téléphone fixe: +33(0)9 80 90 36 42
+    }
+}
+
+
+
+\begin{document}
+
+% Logo de la société
+%\includegraphics{logo.jpg}
+
+% Nom et adresse de la société
+Soraya Schneider\\
+2 boulevard Aristide Briand\\
+Bat V\\
+92150 SURESNES\\
+
+Facture n°\FactureNum
+
+
+{\addtolength{\leftskip}{10.5cm} %in ERT
+    \textbf{\ClientNom}    \\
+    \ClientAdresse        \\
+
+} %in ERT
+
+
+\hspace*{10.5cm}
+\FactureLieu, le \today
+
+~\\~\\
+
+\textbf{Objet : \FactureObjet \\}
+
+\textnormal{\FactureDescr}
+
+~\\
+
+\begin{center}
+    \begin{tabular}{lrrr}
+        \textbf{Désignation ~~~~~~}   & \textbf{Montant (EUR)}    \\
+        \hline
+        \AfficheResultat{}
+    \end{tabular}
+\end{center}
+
+\begin{flushright}
+\textit{Auto entreprise en franchise de TVA}\\
+
+\end{flushright}
+~\\
+
+\ifthenelse{\equal{\FactureAcquittee}{oui}}{
+    Facture acquittée.
+}{
+
+    À régler par chèque ou par virement bancaire :
+
+    \begin{center}
+        \begin{tabular}{|c c c c|}
+            \hline     \textbf{Code banque}    & \textbf{Code guichet}    & \textbf{N° de Compte}        & \textbf{Clé RIB}    \\
+                    20041                    & 00001                     & 1225647F020                & 05               \\
+            \hline     \textbf{IBAN N°}        & \multicolumn{3}{|l|}{ FR 91 20041 00001 1225647F020 05 }         \\
+            \hline     \textbf{Code BIC}        & \multicolumn{3}{|l|}{ PSSTFRPPPAR }         \\
+            \hline
+        \end{tabular}
+    \end{center}
+
+}
+
+\end{document}

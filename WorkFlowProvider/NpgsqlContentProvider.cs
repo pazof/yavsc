@@ -12,36 +12,46 @@ namespace WorkFlowProvider
 {
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
+		public StatusChange[] GetWrittingStatuses (long wrid)
+		{
+			throw new NotImplementedException ();
+		}
+		public StatusChange[] GetEstimateStatuses (long estid)
+		{
+			throw new NotImplementedException ();
+		}
+		public void TagWritting (long wrid, string tag)
+		{
+			throw new NotImplementedException ();
+		}
+		public void DropTagWritting (long wrid, string tag)
+		{
+			throw new NotImplementedException ();
+		}
+		public void SetWrittingStatus (long wrtid, int status, string username)
+		{
+			throw new NotImplementedException ();
+		}
+		public void SetEstimateStatus (long estid, int status, string username)
+		{
+			throw new NotImplementedException ();
+		}
+		public void Dispose ()
+		{
+			throw new NotImplementedException ();
+		}
 		public void Install (System.Data.IDbConnection cnx)
 		{
 			throw new NotImplementedException ();
 		}
-
 		public void Uninstall (System.Data.IDbConnection cnx, bool removeConfig)
 		{
 			throw new NotImplementedException ();
 		}
-
-		public Estimate[] GetEstimates (string client)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void Install ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void Uninstall ()
-		{
-			throw new NotImplementedException ();
-		}
-
 		public ConfigurationSection DefaultConfig (string appName, string cnxStr)
 		{
 			throw new NotImplementedException ();
 		}
-
 		public bool Active {
 			get {
 				throw new NotImplementedException ();
@@ -49,53 +59,6 @@ namespace WorkFlowProvider
 			set {
 				throw new NotImplementedException ();
 			}
-		}
-
-		public StatusChange[] GetWrittingStatuses (long wrid)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public StatusChange[] GetEstimateStatuses (long estid)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void DropTagWritting (long wrid, string tag)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void SetWrittingStatus (long wrtid, int status, string username)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void SetEstimateStatus (long estid, int status, string username)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void TagWritting (long wrid, string tag)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-
-		public string Order (IWFOrder c)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public IContent GetBlob (string orderId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public int GetStatus (string orderId)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public string[] Statuses {
@@ -106,6 +69,24 @@ namespace WorkFlowProvider
 		public bool[] FinalStatuses {
 			get {
 				return new bool[] { false, false, true, true };
+			}
+		}
+		public Estimate[] GetEstimates (string client)
+		{
+			using (NpgsqlConnection cnx = CreateConnection ()) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = 
+						"select _id from estimate where client = @clid";
+					cmd.Parameters.Add ("@clid", client);
+					cnx.Open ();
+					List<Estimate> ests = new List<Estimate> ();
+					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
+						while (rdr.Read ()) {
+							ests.Add(GetEstimate(rdr.GetInt64(0)));
+						}
+					}
+					return ests.ToArray();
+				}
 			}
 		}
 
@@ -143,7 +124,7 @@ namespace WorkFlowProvider
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"select title,username from estimate where _id = @estid";
+						"select title,username,client,description from estimate where _id = @estid";
 
 					cmd.Parameters.Add ("@estid", estimid);
 					cnx.Open ();
@@ -155,8 +136,13 @@ namespace WorkFlowProvider
 						est = new Estimate ();
 						est.Title = rdr.GetString(
 							rdr.GetOrdinal("title"));
-						est.Owner = rdr.GetString(
+						est.Responsible = rdr.GetString(
 							rdr.GetOrdinal("username"));
+						est.Client = rdr.GetString (
+							rdr.GetOrdinal ("client"));
+						int index = rdr.GetOrdinal ("description"); 
+						if (!rdr.IsDBNull (index))
+							est.Description = rdr.GetString (index);
 						est.Id = estimid;
 						using (NpgsqlCommand cmdw = new NpgsqlCommand ("select _id, productid, ucost, count, description from writtings where estimid = @estid", cnx)) {
 							cmdw.Parameters.Add("@estid", estimid);
@@ -166,8 +152,9 @@ namespace WorkFlowProvider
 									lw = new List<Writting> ();
 									while (rdrw.Read ()) {
 										Writting w = new Writting ();
-										w.Description = rdrw.GetString (
-											rdrw.GetOrdinal ("description"));
+										int dei = rdrw.GetOrdinal ("description");
+										if (!rdrw.IsDBNull (dei))
+											w.Description = rdrw.GetString (dei);
 										int opi = rdrw.GetOrdinal ("productid");
 										if (!rdrw.IsDBNull (opi))
 											w.ProductReference = rdrw.GetString(opi);
@@ -217,14 +204,18 @@ namespace WorkFlowProvider
 			}
 		}
 	
-		public void SetTitle (long estid, string newTitle)
+		public void UpdateEstimate (Estimate estim)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"update estimate set title = @tit where _id = @estid";
-					cmd.Parameters.Add ("@tit", newTitle);
-					cmd.Parameters.Add ("@estid", estid);
+						"update estimate set title = @tit, username = @un, " +
+						"description = @descr, client = @cli where _id = @estid";
+					cmd.Parameters.Add ("@tit", estim.Title);
+					cmd.Parameters.Add ("@un", estim.Responsible);
+					cmd.Parameters.Add ("@descr", estim.Description);
+					cmd.Parameters.Add ("@cli", estim.Client);
+					cmd.Parameters.Add ("@estid", estim.Id);
 					cnx.Open ();
 					cmd.ExecuteNonQuery ();
 					cnx.Close ();
@@ -272,20 +263,27 @@ namespace WorkFlowProvider
 		}
 
 
-		public long CreateEstimate (string client, string title)
+		public Estimate CreateEstimate (string responsible, string client, string title, string description)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-							"insert into estimate (title,username,applicationname) " +
-					"values (@tit,@un,@app) returning _id";
+							"insert into estimate (title,description,username,client,applicationname) " +
+					"values (@tit,@descr,@resp,@un,@app) returning _id";
 					cmd.Parameters.Add ("@tit", title);
 					cmd.Parameters.Add ("@un", client);
+					cmd.Parameters.Add ("@resp", responsible);
+					cmd.Parameters.Add ("@descr", description);
 					cmd.Parameters.Add("@app", ApplicationName);
 					cnx.Open ();
-					long res = (long)cmd.ExecuteScalar ();
+					Estimate created = new Estimate ();
+					created.Id = (long)cmd.ExecuteScalar ();
 					cnx.Close ();
-					return res;
+					created.Title = title;
+					created.Description = description;
+					created.Client = client;
+					created.Responsible = responsible;
+					return created;
 				}
 			}
 		}
@@ -319,12 +317,6 @@ namespace WorkFlowProvider
 		{
 			return new NpgsqlConnection (cnxstr);
 		}
-		#region IDisposable implementation
-		public void Dispose ()
-		{
-
-		}
-		#endregion
 
 	}
 }

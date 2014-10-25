@@ -21,37 +21,52 @@ namespace Yavsc.Controllers
 	public class FrontOfficeController : Controller
 	{
 		[Authorize]
+		public ActionResult Estimates ()
+		{
+			string username = Membership.GetUser ().UserName;
+			return View(WorkFlowManager.GetEstimates (username));
+		}
+
+		[Authorize]
 		public ActionResult Estimate(Estimate model,string submit)
 		{
-			if (ModelState.IsValid) {
-				ViewData ["WebApiUrl"] = "http://"+ Request.Url.Authority + "/api/WorkFlow";
-				string username = HttpContext.User.Identity.Name;
+			if (submit == null) {
 				if (model.Id > 0) {
 					Estimate f = WorkFlowManager.GetEstimate (model.Id);
 					if (f == null) {
 						ModelState.AddModelError ("Id", "Wrong Id");
 						return View (model);
 					}
-					if (username != f.Owner)
-					if (!Roles.IsUserInRole ("FrontOffice"))
-						throw new UnauthorizedAccessException ("You're not allowed to view/modify this estimate");
-					if (submit == "Update") {
-						if (model != f) {
-							WorkFlowManager.SetTitle (model.Id, model.Title);
-						}
-					} else if (submit == null) {
-						model = f;
-					}
+					model = f;
+					ModelState.Clear ();
+					string username = HttpContext.User.Identity.Name;
+					if (username != model.Responsible
+						&& username != model.Client
+						&& !Roles.IsUserInRole ("FrontOffice"))
+						throw new UnauthorizedAccessException ("You're not allowed to view this estimate");
 
-				} else if (model.Id == 0 && submit=="Create") {
-					// Create the estimate
-					model.Id=WorkFlowManager.CreateEstimate (username,
-						model.Title);
-					model.Owner = username;
-				}
+				} 
+			} else if (ModelState.IsValid) {
+
+				ViewData ["WebApiUrl"] = "http://" + Request.Url.Authority + "/api/WorkFlow";
+				string username = HttpContext.User.Identity.Name;
+				if (username != model.Responsible
+					&& username != model.Client
+					&& !Roles.IsUserInRole ("FrontOffice"))
+					throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
+
+				if (model.Id == 0)
+						model = WorkFlowManager.CreateEstimate (
+							username,
+							model.Client, model.Title, model.Description);
+					else
+						WorkFlowManager.UpdateEstimate (model);
+
 			}
 			return View(model);
 		}
+
+
 
 		[AcceptVerbs("GET")]
 		public ActionResult Catalog ()

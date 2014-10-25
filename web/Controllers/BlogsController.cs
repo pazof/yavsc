@@ -225,7 +225,7 @@ namespace Yavsc.Controllers
 					return UserPost (model.PostId);
 				}
 			}
-			return View (model);
+			return UserPost (model.PostId);
 		}
 
 		string defaultAvatar;

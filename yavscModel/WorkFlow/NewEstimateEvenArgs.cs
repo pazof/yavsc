@@ -8,19 +8,11 @@ namespace Yavsc.Model.WorkFlow
 {
 	public class NewEstimateEvenArgs: EventArgs
 	{
-		private string clientName;
-		private string estimateTitle;
-		private long eid;
-
-		public string ClientName{ get { return clientName; } }
-		public string EstimateTitle { get { return estimateTitle; } }
-		public long EstimateId { get { return eid; } }
-
-		public NewEstimateEvenArgs(long estid, string client, string title)
+		private Estimate data=null;
+		public Estimate Data{ get { return data; } }
+		public NewEstimateEvenArgs(Estimate created)
 		{
-			clientName = client;
-			estimateTitle = title;
-			eid = estid;
+			data = created;
 		}
 
 	}

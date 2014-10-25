@@ -42,7 +42,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <returns>The estimate.</returns>
 		/// <param name="client">Client.</param>
 		/// <param name="title">Title.</param>
-		long CreateEstimate (string client, string title);
+		Estimate CreateEstimate (string responsible, string client, string title, string description);
 		/// <summary>
 		/// Add a line to the specified estimate by id,
 		/// using the specified desc, ucost, count and productid.
@@ -97,13 +97,7 @@ namespace Yavsc.Model.WorkFlow
 		/// </summary>
 		/// <param name="estid">Estid.</param>
 		/// <param name="newTitle">New title.</param>
-		void SetTitle (long estid,  string newTitle);
-		/// <summary>
-		/// Sets the descripton for a writting.
-		/// </summary>
-		/// <param name="writid">Writid.</param>
-		/// <param name="newDesc">New desc.</param>
-		void SetDesc (long writid, string newDesc);
+		void UpdateEstimate (Estimate estim);
 		/// <summary>
 		/// Sets the writting status.
 		/// </summary>

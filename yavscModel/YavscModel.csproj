@@ -35,6 +35,7 @@
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web.ApplicationServices" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -53,7 +54,6 @@
     <Compile Include="WorkFlow\Writting.cs" />
     <Compile Include="WorkFlow\Estimate.cs" />
     <Compile Include="WorkFlow\WFOrder.cs" />
-    <Compile Include="WorkFlow\IContent.cs" />
     <Compile Include="WorkFlow\IContentProvider.cs" />
     <Compile Include="WorkFlow\IWFModule.cs" />
     <Compile Include="WorkFlow\IWFOrder.cs" />

@@ -13,12 +13,16 @@
 <% using  (Html.BeginForm("Estimate","FrontOffice")) { %>
 <%= Html.LabelFor(model => model.Title) %>:<%= Html.TextBox( "Title" ) %>
 <%= Html.ValidationMessage("Title", "*") %>
-<% if (Model.Id > 0) { %>
 <br/>
-<%= Html.LabelFor(model => model.Owner) %>:<%=Model.Owner%>
-<%= Html.ValidationMessage("Owner", "*") %>
+<%= Html.LabelFor(model => model.Responsible) %>:<%=Model.Responsible%>
+<%= Html.Hidden ("Responsible") %>
+<%= Html.ValidationMessage("Responsible", "*") %>
 <br/>
-<%= Html.LabelFor(model => model.Ciffer) %>:<%=Model.Ciffer%>
+<%= Html.LabelFor(model => model.Client) %>:<%=Html.TextBox( "Client" ) %>
+<%= Html.ValidationMessage("Client", "*") %>
+<br/>
+<%= Html.LabelFor(model => model.Description) %>:<%=Html.TextArea( "Description") %>
+<%= Html.ValidationMessage("Description", "*") %>
 <br/>
 <%= Html.LabelFor(model => model.Id) %>:<%=Model.Id%>
 <%= Html.Hidden( "Id" ) %>
@@ -31,7 +35,7 @@
 <% } %>
 
 
-
+   <% if (Model.Id>0) { %>
 
 <table class="tablesorter">
 <thead>
@@ -76,12 +80,14 @@
 
     <form id="writeform">
       <input type="button" id="btndtl" value="+"/>
-  <div id="writearea" style="display:none;">
+     
+     <div id="writearea" style="display:none;">
+     <input type="button" id="btnnew" value="Nouvelle écriture"/>
      <input type="hidden" name="estid" id="estid" value="<%=Model.Id%>"/>
      <label for="Description">Description:</label>
      <input type="text" name="Description" id="Description" />
      <label for="UnitaryCost">Prix unitaire:</label>
-     <input type="number" name="UnitaryCost" id="UnitaryCost"/>
+     <input type="number" name="UnitaryCost" id="UnitaryCost" step="0.01"/>
      <label for="Count">Quantité:</label>
      <input type="number" name="Count" id="Count"/>
      <label for="ProductReference">Référence du produit:</label>
@@ -94,9 +100,11 @@
      <tt id="msg" class="message"></tt>
      <style>
      .row { cursor:pointer; }
-     table.tablesorter td:hover { background-color: rgb(64,0,0); }
+     table.tablesorter td:hover { background-color: rgba(0,64,0,0.5); }
      .hidden { display:none; }
-     </style>
+     .selected *, .odd .selected { font-size-adjust: +1; background-color: rgb(0,64,0); }
+    
+</style>
      <script>
 
  jQuery.support.cors = true;  
@@ -112,7 +120,11 @@
 
      function wredit(pwrid)
      {
+
+    	$("#wr"+wrid.value).removeClass("selected");
      	$("#wrid").val(pwrid);
+     	if (wrid.value!=0)
+    		$("#wr"+wrid.value).addClass("selected");
      	if (pwrid>0) {
     	$("#btncreate").addClass("hidden");
     	$("#btnmodify").removeClass("hidden");
@@ -123,11 +135,8 @@
     	$("#btndrop").addClass("hidden");
     	}
      } 
-       
-     $(document).ready(function () {
-     // bug at no row: $(".tablesorter").tablesorter( {sortList: [[0,0], [1,0]]} ); 
-      
-      function delRow() {
+
+     function delRow() {
        $.ajax({
             url: "<%=ViewData["WebApiUrl"]+"/DropWritting"%>",
             type: "Get",
@@ -148,6 +157,7 @@
         });
 
       }
+	
 	function setRow() {
        var wrt = GetWritting();
 
@@ -167,9 +177,9 @@
         $("#msg").text(xhr.status+" : "+xhr.responseText);}
         });
     }
-    //data: {estid: estid, wr: { Id: 0, UnitaryCost: wrt.UnitaryCost, Count: wrt.Count, ProductReference: wrt.ProductReference, Description: wrt.Description}}, 
-            
-       function addRow(){
+
+
+function addRow(){
        var wrt = GetWritting();
 		var estid = parseInt($("#Id").val());
         $.ajax({
@@ -181,35 +191,47 @@
             success: function (data) { 
             wrt.Id = Number(data);
             wredit(wrt.Id);
-            $("<tr class=\"row\" id=\"wr"+wrt.Id+"\"><td>"+wrt.Description+"</td><td>"+wrt.ProductReference+"</td><td>"+wrt.Count+"</td><td>"+wrt.UnitaryCost+"</td></tr>").appendTo("#wrts")
-            },
+            $("<tr class=\"row\" id=\"wr"+wrt.Id+"\"><td>"+wrt.Description+"</td><td>"+wrt.ProductReference+"</td><td>"+wrt.Count+"</td><td>"+wrt.UnitaryCost+"</td></tr>").appendTo("#wrts");
+             },
             error: function (xhr, ajaxOptions, thrownError) {
         $("#msg").text(xhr.status+" : "+xhr.responseText);}
         });
-
+        $(".wr"+wrt.Id).click(onEditRow(e));  
     }
 
- $("#btncreate").click(addRow);
- $("#btnmodify").click(setRow);
- $("#btndrop").click(delRow);
     function ShowDtl(val)
      {
      	document.getElementById("writearea").style.display = val ? "block" : "none";
      	document.getElementById("btndtl").value = val ? "-" : "+";
      }
 
-     $("#btndtl").click(function(){ShowDtl(document.getElementById("writearea").style.display != "block");});
-
-    $(".row").click(function (e) {
+     function onEditRow(e) {
     	ShowDtl(true);
     	var cells = e.delegateTarget.getElementsByTagName("TD");
-    	var wrid = Number(e.delegateTarget.id.substr(2));
-    	wredit(wrid);
+    	var hid=e.delegateTarget.id;
+    	var vwrid = Number(hid.substr(2));
+    	wredit(vwrid);
     	$("#Description").val(cells[0].innerHTML);
     	$("#ProductReference").val(cells[1].innerHTML);
     	$("#Count").val(cells[2].innerHTML);
     	$("#UnitaryCost").val(Number(cells[3].innerHTML.replace(",",".")));
-    });
+    }
+  
+ $(document).ready(function () {
+     // bug when no row: $(".tablesorter").tablesorter( {sortList: [[0,0], [1,0]]} ); 
+        
+    $("#btncreate").click(addRow);
+    $("#btnmodify").click(setRow);
+    $("#btndrop").click(delRow);
+    $("#btndtl").click(function(){ShowDtl(document.getElementById("writearea").style.display != "block");});
+    $(".row").click(function (e) {onEditRow(e);});
+	$("#btnnew").click(function () {
+		wredit(0);
+		$("#Description").val("");
+    	$("#ProductReference").val("");
+    	$("#Count").val(1);
+    	$("#UnitaryCost").val(0);
+	});
 });
     </script>
   </div>

@@ -5,13 +5,24 @@
 </asp:Content>
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
-   <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account")%>
-
+  
    <%= Html.ValidationSummary() %>
-<% using(Html.BeginForm("UpdateProfile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
+<% using(Html.BeginForm("Profile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
 <% { %>
-
+   <h2>Informations générales</h2>
 <table class="layout">
+<tr><td align="right">
+<%= Html.LabelFor(model => model.Name) %></td><td>
+<%= Html.TextBox("Name") %>
+<%= Html.ValidationMessage("Name", "*") %></td></tr>
+<tr><td align="right">
+<%= Html.LabelFor(model => model.Phone) %></td><td>
+<%= Html.TextBox("Phone") %>
+<%= Html.ValidationMessage("Phone", "*") %></td></tr>
+<tr><td align="right">
+<%= Html.LabelFor(model => model.Mobile) %></td><td>
+<%= Html.TextBox("Mobile") %>
+<%= Html.ValidationMessage("Mobile", "*") %></td></tr>
 <tr><td align="right">
 <%= Html.LabelFor(model => model.Address) %></td><td>
 <%= Html.TextBox("Address") %>
@@ -20,6 +31,10 @@
 <%= Html.LabelFor(model => model.CityAndState) %></td><td>
 <%= Html.TextBox("CityAndState") %>
 <%= Html.ValidationMessage("CityAndState", "*") %></td></tr>
+<tr><td align="right">
+<%= Html.LabelFor(model => model.ZipCode) %></td><td>
+<%= Html.TextBox("ZipCode") %>
+<%= Html.ValidationMessage("ZipCode", "*") %></td></tr>
 <tr><td align="right">
 <%= Html.LabelFor(model => model.Country) %></td><td>
 <%= Html.TextBox("Country") %>
@@ -42,6 +57,74 @@ Avatar   </td><td> <img class="avatar" src="/Blogs/Avatar?user=<%=ViewData["User
 <%= Html.ValidationMessage("AvatarFile", "*") %></td></tr>
 
 </table>
+
+   <h2>Informations de facturation</h2>
+<table class="layout">
+<tr>
+   <td align="right">
+<%= Html.LabelFor(model => model.BankCode) %>
+   </td>
+   <td>
+<%= Html.TextBox("BankCode") %>
+<%= Html.ValidationMessage("BankCode", "*") %>
+   </td>
+</tr>
+   <tr>
+   <td align="right">
+<%= Html.LabelFor(model => model.WicketCode) %></td>
+   <td>
+<%= Html.TextBox("WicketCode") %>
+<%= Html.ValidationMessage("WicketCode", "*") %>
+   </td>
+   </tr>
+
+   <tr>
+   <td align="right">
+<%= Html.LabelFor(model => model.AccountNumber) %></td>
+   <td>
+<%= Html.TextBox("AccountNumber") %>
+<%= Html.ValidationMessage("AccountNumber", "*") %>
+   </td>
+   </tr>
+
+
+   <tr>
+   <td align="right">
+<%= Html.LabelFor(model => model.BankedKey) %></td>
+   <td>
+<%= Html.TextBox("BankedKey") %>
+<%= Html.ValidationMessage("BankedKey", "*") %>
+   </td>
+   </tr>
+
+   <tr>
+   <td align="right">
+<%= Html.LabelFor(model => model.BIC) %></td>
+   <td>
+<%= Html.TextBox("BIC") %>
+<%= Html.ValidationMessage("BIC", "*") %>
+   </td>
+   </tr>
+
+   <tr>
+    <td align="right">
+<%= Html.LabelFor(model => model.IBAN) %></td>
+   <td>
+<%= Html.TextBox("IBAN") %>
+<%= Html.ValidationMessage("IBAN", "*") %>
+   </td>
+   </tr>
+
+
+</table>
+
+
 <input type="submit"/>
 <% } %>
 </asp:Content>
+
+
+<asp:Content ID="MASC1" ContentPlaceHolderID="MASContent" runat="server">
+   <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account")%>
+   </asp:Content>
+

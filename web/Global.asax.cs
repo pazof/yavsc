@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Http;
+using Yavsc.Formatters;
 
 namespace Yavsc
 {
@@ -43,7 +44,7 @@ namespace Yavsc
 		protected void Application_Start ()
 		{
 			AreaRegistration.RegisterAllAreas ();
-
+			GlobalConfiguration.Configuration.Formatters.Add (new TexFormatter ());
 			GlobalConfiguration.Configuration.Routes.MapHttpRoute(
 						name: "DefaultApi",
 				routeTemplate: "api/{controller}/{action}/{*id}",

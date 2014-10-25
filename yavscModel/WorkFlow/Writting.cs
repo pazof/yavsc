@@ -7,6 +7,7 @@ namespace Yavsc.Model.WorkFlow
 	/// A Writting.
 	/// Une ligne d'écriture dans un devis ou une facture
 	/// </summary>
+	[Serializable]
 	public class Writting
 	{
 		/// <summary>

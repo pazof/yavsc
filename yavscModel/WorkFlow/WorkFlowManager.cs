@@ -17,9 +17,9 @@ namespace Yavsc.Model.WorkFlow
 		public static Catalog Catalog { get; set; }
 
 
-		public static void SetTitle (long id, string title)
+		public static void UpdateEstimate (Estimate estim)
 		{
-			ContentProvider.SetTitle (id, title);
+			ContentProvider.UpdateEstimate (estim);
 		}
 
 		public static event EventHandler NewOrder;
@@ -95,12 +95,13 @@ namespace Yavsc.Model.WorkFlow
 		/// </summary>
 		/// <returns>The estimate identifier.</returns>
 		/// <param name="title">Title.</param>
-		public static long CreateEstimate(string client, string title)
+
+		public static Estimate CreateEstimate(string responsible, string client, string title, string description)
 		{
-			long estid = ContentProvider.CreateEstimate (client, title);
+			Estimate created = ContentProvider.CreateEstimate (responsible, client, title, description);
 			if (NewOrder != null)
-				NewOrder.Invoke(ContentProvider, new NewEstimateEvenArgs(estid,client,title));
-			return estid;
+				NewOrder.Invoke(ContentProvider, new NewEstimateEvenArgs(created));
+			return created;
 		}
 
 		public static long Write(long estid, string desc, decimal ucost, int count, string productid)

@@ -26,10 +26,10 @@ namespace Yavsc.ApiControllers
 
 		[HttpGet]
 		[Authorize]
-		public long CreateEstimate (string title)
+		public Estimate CreateEstimate (string title,string client,string description)
 		{
 			return WorkFlowManager.CreateEstimate (
-				Membership.GetUser().UserName,title);
+				Membership.GetUser().UserName,client,title,description);
 		}
 
 		[HttpGet]

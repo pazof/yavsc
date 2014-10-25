@@ -43,13 +43,7 @@ namespace Yavsc.Controllers
 			return new Profile (ProfileBase.Create (user));
 		}
 
-		[Authorize]
-		public ActionResult Profile(Profile model)
-		{
-			ViewData ["UserName"] = Membership.GetUser ().UserName;
-			model = GetProfile ((string)ViewData ["UserName"]);
-			return View (model);
-		}
+
 		// TODO [ValidateAntiForgeryToken]
 		public ActionResult DoLogin (LoginModel model, string returnUrl)
 		{
@@ -200,14 +194,22 @@ namespace Yavsc.Controllers
 		}
 
 
+		[Authorize]
+		[HttpGet]
+		public ActionResult Profile(Profile model)
+		{
+			ViewData ["UserName"] = Membership.GetUser ().UserName;
+			model = GetProfile ((string) ViewData ["UserName"]);
+			return View (model);
+		}
 
 		[Authorize]
 		[HttpPost]
 		//public ActionResult UpdateProfile(HttpPostedFileBase Avatar, string Address, string CityAndState, string ZipCode, string Country, string WebSite) 
-		public ActionResult UpdateProfile(Profile model, HttpPostedFileBase AvatarFile) 
+		public ActionResult Profile(Profile model, HttpPostedFileBase AvatarFile) 
 		{
 			string username = Membership.GetUser ().UserName;
-
+			ViewData ["UserName"] = username;
 			if (AvatarFile != null) { 
 
 				if (AvatarFile.ContentType == "image/png") {
@@ -234,13 +236,35 @@ namespace Yavsc.Controllers
 				HttpContext.Profile.SetPropertyValue (
 					"CityAndState", model.CityAndState);
 				HttpContext.Profile.SetPropertyValue (
+					"ZipCode", model.ZipCode);
+				HttpContext.Profile.SetPropertyValue (
 					"Country", model.Country);
 				HttpContext.Profile.SetPropertyValue (
 					"WebSite", model.WebSite);
+				HttpContext.Profile.SetPropertyValue (
+					"Name", model.Name);
+				HttpContext.Profile.SetPropertyValue (
+					"Phone", model.Phone);
+				HttpContext.Profile.SetPropertyValue (
+					"Mobile", model.Mobile);
+				HttpContext.Profile.SetPropertyValue (
+					"BankCode", model.BankCode);
+				HttpContext.Profile.SetPropertyValue (
+					"WicketCode", model.WicketCode);
+				HttpContext.Profile.SetPropertyValue (
+					"AccountNumber", model.AccountNumber);
+				HttpContext.Profile.SetPropertyValue (
+					"BankedKey", model.BankedKey);
+				HttpContext.Profile.SetPropertyValue (
+					"BIC", model.BIC);
+				HttpContext.Profile.SetPropertyValue (
+					"IBAN", model.IBAN);
+				HttpContext.Profile.Save ();
+				ViewData ["Message"] = "Profile enregistré.";
 
 			}
 			// HttpContext.Profile.SetPropertyValue("Avatar",Avatar);
-			return RedirectToAction ("Profile");
+			return View (model);
 		}
 
 		[Authorize]

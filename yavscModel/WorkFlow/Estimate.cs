@@ -1,15 +1,30 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace Yavsc.Model.WorkFlow
 {
-	public class Estimate
+	[Serializable]
+	public class Estimate 
 	{
 		public Estimate ()
 		{
 		}
+		[Required]
+		[DisplayName("Titre")]
 		public string Title { get; set; }
-		public string Owner { get; set; }
+		[Required]
+		[DisplayName("Description")]
+		public string Description { get; set; }
+		[Required]
+		[DisplayName("Responsable")]
+		public string Responsible { get; set; }
+		[Required]
+		[DisplayName("Client")]
+		public string Client { get; set; }
+
 		public long Id { get; set; }
+		[DisplayName("Chiffre")]
 		public decimal Ciffer {
 			get {
 				decimal total = 0;
@@ -20,6 +35,7 @@ namespace Yavsc.Model.WorkFlow
 				return total;
 			}
 		}
+
 		public Writting[] Lines { get; set; }
 	}
 }
