@@ -244,6 +244,9 @@
     <Content Include="images\pgsql.png" />
     <Content Include="Views\Home\ReferencedAssemblies.aspx" />
     <Content Include="js\rangyinputs-jquery-1.1.2.js" />
+    <Content Include="Catalog.xml" />
+    <Content Include="RegistrationMail.txt" />
+    <Content Include="instdbws.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -262,9 +265,6 @@
     <None Include="README" />
     <None Include="uninstdb.sql" />
     <None Include="uninstdbws.sql" />
-    <None Include="instdbws.sql" />
-    <None Include="RegistrationMail.txt" />
-    <None Include="Catalog.xml" />
     <None Include="templates\Estim.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>Estim.cs</LastGenOutput>
