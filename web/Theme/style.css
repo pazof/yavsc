@@ -4,11 +4,10 @@ body {
 	background-image: url('/images/Banner.png');
 	background-repeat: no-repeat;
 	color: #D0FFD0;
-	margin:1em;
-	padding:1em;
 	font-family: 'Arial', cursive;
 }
-	aside { float: right; }
+
+aside { float: right; }
 
 video,img {
 	max-width:100%;
@@ -17,9 +16,6 @@ video,img {
 	}
 
 #login {
-   position: fixed;
-   top: 3px;
-   right:3px;
    font-size:x-small;
    background-color:rgba(0,0,0,0.6);
    color:rgb(130,254,130);
@@ -152,9 +148,8 @@ padding-left: 20px;
 		header,footer,.postcomment,.actionlink,.metablog{ display:none;} 
 	}
 
-@media all and (max-width: 15em) {
-  section, aside {
+@media all and (max-width: 440px) {
+  aside {
     float: none;
-    width: auto;
   }
 }

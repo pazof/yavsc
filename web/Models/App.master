@@ -12,38 +12,13 @@
 <link rel="stylesheet" href="/Theme/style.css"/>
 <link rel="icon" type="image/png" href="/favicon.png" />
 <link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'/>
-
-
 </head>
 <body>
 <header>
-<div id="login">
-
-
-	<% if (Membership.GetUser()==null) { %>
-	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ) %> 
-<%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, null ) %>
-
-<% } else { %>
-<%= HttpContext.Current.User.Identity.Name %> @ <%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ) %>
-
-	<%=  Html.ActionLink( "Poster", "Post", "Blogs" ) %>
-	<%=  Html.ActionLink( "Profile", "Profile", "Account" ) %>
-	<%= Html.ActionLink( "Logout", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, null) %>
-
-<% } %>
-
-
-
-	</div>
-
-<!-- Use taking care of keeping the title to be the same in the head and h1 sections -->
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
-<h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>">
-	<%= Page.Title %>
-	</a></h1>
+<h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>"><%= Page.Title %></a></h1>
 </asp:ContentPlaceHolder>
-
+<asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
 <% if (ViewData["Error"]!=null) { %>
 <div class="error">
 <%= Html.Encode(ViewData["Error"]) %>
@@ -54,20 +29,26 @@
 <%= Html.Encode(ViewData["Message"]) %>
 </div>
 <% } %>
-	<!-- a place to add some meta information, under the title -->
-	<asp:ContentPlaceHolder ID="header" runat="server">
-	</asp:ContentPlaceHolder>
 	</header>
 	<main>
 	<asp:ContentPlaceHolder ID="MainContent" runat="server">
-
 		</asp:ContentPlaceHolder>
    </main>
    <aside>
+   <div id="login">
+	<% if (Membership.GetUser()==null) { %>
+	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ) %> 
+<%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, null ) %>
+<% } else { %>
+<%= HttpContext.Current.User.Identity.Name %> @ <%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ) %>
+	<%=  Html.ActionLink( "Poster", "Post", "Blogs" ) %>
+	<%=  Html.ActionLink( "Profile", "Profile", "Account" ) %>
+	<%= Html.ActionLink( "Logout", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, null) %>
+<% } %>
+	</div>
    <asp:ContentPlaceHolder ID="MASContent" runat="server">
-		</asp:ContentPlaceHolder>
+   </asp:ContentPlaceHolder>
 	</aside>
-
    <footer>
    <hr/>
      <%= string.Join("\n",Yavsc.ThanksHelper.Links()) %>

@@ -143,6 +143,7 @@ namespace Yavsc.Controllers
 					return UserPost (BlogManager.GetPost (postid));
 				}
 			}
+			string prevstr = App_GlobalResources.LocalizedText.Preview;
 			return UserPost (BlogManager.GetPost (user, title));
 		}
 

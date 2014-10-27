@@ -45,5 +45,18 @@ namespace Yavsc.App_GlobalResources {
                 resourceCulture = value;
             }
         }
+        
+        internal static System.Drawing.Color Color1 {
+            get {
+                object obj = ResourceManager.GetObject("Color1", resourceCulture);
+                return ((System.Drawing.Color)(obj));
+            }
+        }
+        
+        internal static string Name1 {
+            get {
+                return ResourceManager.GetString("Name1", resourceCulture);
+            }
+        }
     }
 }

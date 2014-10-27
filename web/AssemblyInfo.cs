@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
+using System.Resources;
 
 [assembly: AssemblyTitle("Yavsc")]
 [assembly: AssemblyDescription("")]
@@ -12,6 +13,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright("paul schneider")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+
+
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,

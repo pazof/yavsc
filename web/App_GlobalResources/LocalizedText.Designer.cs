@@ -15,7 +15,7 @@ namespace Yavsc.App_GlobalResources {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class LocalizedText {
+    public class LocalizedText {
         
         private static System.Resources.ResourceManager resourceMan;
         
@@ -26,7 +26,7 @@ namespace Yavsc.App_GlobalResources {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static System.Resources.ResourceManager ResourceManager {
+        public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
                     System.Resources.ResourceManager temp = new System.Resources.ResourceManager("Yavsc.App_GlobalResources.LocalizedText", typeof(LocalizedText).Assembly);
@@ -37,7 +37,7 @@ namespace Yavsc.App_GlobalResources {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static System.Globalization.CultureInfo Culture {
+        public static System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -46,9 +46,15 @@ namespace Yavsc.App_GlobalResources {
             }
         }
         
-        internal static string Previe {
+        public static string Preview {
             get {
-                return ResourceManager.GetString("Previe", resourceCulture);
+                return ResourceManager.GetString("Preview", resourceCulture);
+            }
+        }
+        
+        public static string Welcome {
+            get {
+                return ResourceManager.GetString("Welcome", resourceCulture);
             }
         }
     }

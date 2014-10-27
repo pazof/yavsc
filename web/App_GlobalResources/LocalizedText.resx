@@ -12,7 +12,6 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-<data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-
+	<data name="Preview"><value>Preview</value><comment>comment on preview</comment></data>
+	<data name="Welcome"><value>Welcome</value><comment></comment></data>
 </root>

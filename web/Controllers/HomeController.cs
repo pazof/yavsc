@@ -8,6 +8,9 @@ using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 using Yavsc;
+using System.Reflection;
+using Yavsc.App_GlobalResources;
+using System.Resources;
 
 namespace Yavsc.Controllers
 {
@@ -41,6 +44,12 @@ namespace Yavsc.Controllers
 			}
 		}
 
+		public ActionResult ReferencedAssemblies()
+		{
+			AssemblyName[] model = GetType ().Assembly.GetReferencedAssemblies ();
+
+			return View (model);
+		}
 
 		private static string owneremail = null;
 		/// <summary>
@@ -60,31 +69,10 @@ namespace Yavsc.Controllers
 
 		public ActionResult Index ()
 		{
-			InitCulture ();
-			ViewData ["Message"] = string.Format(T.GetString("Welcome")+"({0})",GetType ().Assembly.FullName);
+			string cn = CultureInfo.CurrentCulture.Name;
+			ViewData ["Message"] = 
+				LocalizedText.ResourceManager.GetString("Welcome");
 				return View ();
-		}
-
-		public void InitCulture() { 
-			CultureInfo culture = null;
-			string defaultCulture = "fr";
-			if (Request.UserLanguages==null)
-				culture = CultureInfo.CreateSpecificCulture(defaultCulture);
-			else
-			if (Request.UserLanguages.Length > 0) {
-				try {
-				culture = new CultureInfo (Request.UserLanguages [0]);
-				}
-				catch (Exception e) {
-					ViewData ["Message"] = e.ToString ();
-					culture = CultureInfo.CreateSpecificCulture(defaultCulture);      
-				}
-			}
-			else culture = CultureInfo.CreateSpecificCulture(defaultCulture);      
-			System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
-			System.Threading.Thread.CurrentThread.CurrentCulture = culture;
-			string lcd = Server.MapPath ("./locale");
-			Mono.Unix.Catalog.Init("i8n1", lcd );
 		}
 
 		public ActionResult AOEMail (string reason, string body)
