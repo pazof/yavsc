@@ -104,7 +104,7 @@ namespace Yavsc.Model.RolesAndMembers
 		public Profile (ProfileBase profile)
 		{
 			object b = profile.GetPropertyValue ("BlogVisible");
-			BlogVisible = (b == null) ? true : (bool)b;
+			BlogVisible = (b == null) ? true : (b is DBNull)? true : (bool)b;
 
 			object s = profile.GetPropertyValue ("BlogTitle");
 			BlogTitle = (s is DBNull) ? null : (string)s;
@@ -152,7 +152,7 @@ namespace Yavsc.Model.RolesAndMembers
 			this.AccountNumber = (s is DBNull) ? null : (string)s;
 
 			s = profile.GetPropertyValue ("BankedKey");
-			BankedKey = (s == null) ? 0 : (int)s;
+			BankedKey = (s == null) ? 0 : (s is DBNull)? 0 : (int)s;
 
 		}
 	}
