@@ -14,4 +14,10 @@
 	</resheader>
 	<data name="Preview"><value>Preview</value><comment>comment on preview</comment></data>
 	<data name="Welcome"><value>Welcome</value><comment></comment></data>
+	<data name="User List"><value>User List</value><comment></comment></data>
+	<data name="Register"><value>Register</value></data>
+	<data name="Online"><value>Online</value></data>
+	<data name="Offline"><value>Offline</value></data>
+	<data name="Not Approuved"><value>Not Approuved</value></data>
+	<data name="Remove"><value>Remove</value></data>
 </root>

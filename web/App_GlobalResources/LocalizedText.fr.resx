@@ -14,4 +14,10 @@
 	</resheader>
 	<data name="Preview"><value>Prévisualiser</value><comment>Prévisualiser le document</comment></data>
 	<data name="Welcome"><value>Bienvenue</value><comment></comment></data>
+	<data name="User List"><value>Liste des utilisateurs</value><comment></comment></data>
+	<data name="Register"><value>Enregistez-vous</value></data>
+	<data name="Online"><value>En ligne</value></data>
+	<data name="Offline"><value>Hors ligne</value></data>
+	<data name="Not Approuved"><value>Non approuvé</value></data>
+	<data name="Remove"><value>Supprimer</value></data>
 </root>

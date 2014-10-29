@@ -6,6 +6,7 @@
 <h1 class="blogtitle"><%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %> - 
 <a href="/Blog/<%=Model.UserName%>">
 <img class="avatar" src="/Blogs/Avatar?user=<%=Model.UserName%>" alt="<%=Model.UserName%>"/> <%=ViewData["BlogTitle"]%></a>
+</h1>
 </asp:Content>
 
 	 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
@@ -24,7 +25,7 @@
 <div class="comment" style="min-height:32px;"> <img style="clear:left;float:left;max-width:32px;max-height:32px;margin:.3em;" src="/Blogs/Avatar/<%=c.From%>" alt="<%=c.From%>"/>
 <%= BBCodeHelper.Parser.ToHtml(c.CommentText) %>
 	<% if ( username == Model.UserName || c.From == username ) { %>
-	<%= Html.ActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } )%>
+	<%= Html.ActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } , new { @class="actionlink" })%>
 	<% } %>
 </div>
 <% } %>

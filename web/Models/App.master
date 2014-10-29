@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <asp:ContentPlaceHolder id="init" runat="server">
- <% Page.Title += " - "+YavscHelpers.SiteName; %>
+ <% Page.Title = Page.Title + " - " + YavscHelpers.SiteName; %>
 </asp:ContentPlaceHolder>
 <head runat="server">
  <asp:ContentPlaceHolder id="head" runat="server">
@@ -36,22 +36,28 @@
    </main>
    <aside>
    <div id="login">
-	<% if (Membership.GetUser()==null) { %>
-	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ) %> 
-<%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, null ) %>
+<% if (Membership.GetUser()==null) { %>
+	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" } ) %> 
+	 <span class="hidcom"> Page d'accueil </span>
+	<%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" } ) %>
+	<span class="hidcom">Pour pouvoir poster ou commenter</span>
 <% } else { %>
-<%= HttpContext.Current.User.Identity.Name %> @ <%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ) %>
-	<%=  Html.ActionLink( "Poster", "Post", "Blogs" ) %>
-	<%=  Html.ActionLink( "Profile", "Profile", "Account" ) %>
-	<%= Html.ActionLink( "Logout", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, null) %>
+	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Account", "Profile",null, new { @class="actionlink" }) %>
+	<span class="hidcom"> &Eacute;dition de votre profile </span> 
+	@ <%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" }) %>
+	<span class="hidcom"> Page d'accueil </span> 
+	<a href="/Blogs/Post" class="actionlink">Poster </a>
+	<span class="hidcom"> &Eacute;dition d'un nouveau billet </span> 
+	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" }) %>
 <% } %>
 	</div>
    <asp:ContentPlaceHolder ID="MASContent" runat="server">
    </asp:ContentPlaceHolder>
 	</aside>
    <footer>
-   <hr/>
-     <%= string.Join("\n",Yavsc.ThanksHelper.Links()) %>
+   <% foreach ( string link in Yavsc.ThanksHelper.Links()) { %>
+     <%= link %>
+   <% } %>
    </footer>
 </body>
 </html>

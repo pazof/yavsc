@@ -7,14 +7,14 @@
 <h3 class="blogtitle">
 <%= Html.ActionLink(e.Title,"UserPost", new { user=e.UserName, title = e.Title }) %>
 </h3>
-<div class="metablog">(<%=Html.Encode(e.UserName)%> <%=e.Modified.ToString("yyyy/MM/dd") %>)</div>
+	<div class="metablog">(<%=Html.Encode(e.UserName)%> <%=e.Modified.ToString("yyyy/MM/dd") %>)
 <% if (Membership.GetUser()!=null)
 	if (Membership.GetUser().UserName==e.UserName)
 	 { %>
 	 <%= Html.ActionLink("Editer","Edit", new { user = e.UserName, title = e.Title }, new { @class="actionlink" }) %>
 	 <%= Html.ActionLink("Supprimer","RemovePost", new { user = e.UserName, title = e.Title }, new { @class="actionlink" } ) %>
 	 <% } %>
-
+	 </div>
 </div>
 
 <% } %>

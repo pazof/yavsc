@@ -70,9 +70,8 @@ namespace Yavsc.Controllers
 		public ActionResult Index ()
 		{
 			string cn = CultureInfo.CurrentCulture.Name;
-			ViewData ["Message"] = 
-				LocalizedText.ResourceManager.GetString("Welcome");
-				return View ();
+			ViewData ["Message"] = LocalizedText.Welcome;
+			return View ();
 		}
 
 		public ActionResult AOEMail (string reason, string body)

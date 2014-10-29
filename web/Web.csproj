@@ -157,11 +157,11 @@
     <Compile Include="templates\TexEstimInit.cs" />
     <Compile Include="Formatters\TexFormatter.cs" />
     <Compile Include="Formatters\EstimToPdfFormatter.cs" />
-    <Compile Include="App_GlobalResources\LocalizedTextfr.Designer.cs">
-      <DependentUpon>LocalizedText.fr.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_GlobalResources\LocalizedText.Designer.cs">
       <DependentUpon>LocalizedText.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\LocalizedText.fr.Designer.cs">
+      <DependentUpon>LocalizedText.fr.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -308,7 +308,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\LocalizedText.fr.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>LocalizedTextfr.Designer.cs</LastGenOutput>
+      <LastGenOutput>LocalizedText.fr.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 </Project>
