@@ -30,6 +30,8 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Estimate(Estimate model,string submit)
 		{
+			ViewData ["WebApiBase"] = "http://" + Request.Url.Authority + "/api";
+			ViewData ["WABASEWF"] = ViewData ["WebApiBase"] + "/WorkFlow";
 			if (submit == null) {
 				if (model.Id > 0) {
 					Estimate f = WorkFlowManager.GetEstimate (model.Id);
@@ -41,27 +43,31 @@ namespace Yavsc.Controllers
 					ModelState.Clear ();
 					string username = HttpContext.User.Identity.Name;
 					if (username != model.Responsible
-						&& username != model.Client
-						&& !Roles.IsUserInRole ("FrontOffice"))
+					    && username != model.Client
+					    && !Roles.IsUserInRole ("FrontOffice"))
 						throw new UnauthorizedAccessException ("You're not allowed to view this estimate");
 
 				} 
-			} else if (ModelState.IsValid) {
-
-				ViewData ["WebApiUrl"] = "http://" + Request.Url.Authority + "/api/WorkFlow";
+			} else {
 				string username = HttpContext.User.Identity.Name;
-				if (username != model.Responsible
-					&& username != model.Client
-					&& !Roles.IsUserInRole ("FrontOffice"))
-					throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
+				if (model.Id == 0) {
+					model.Responsible=username;
+					ModelState.Clear ();
+				}
+				if (ModelState.IsValid) {
+					if (username != model.Responsible
+					   && username != model.Client
+					   && !Roles.IsUserInRole ("FrontOffice"))
+						throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
 
-				if (model.Id == 0)
+					if (model.Id == 0)
 						model = WorkFlowManager.CreateEstimate (
 							username,
 							model.Client, model.Title, model.Description);
 					else
 						WorkFlowManager.UpdateEstimate (model);
 
+				}
 			}
 			return View(model);
 		}

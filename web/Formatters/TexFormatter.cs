@@ -27,12 +27,11 @@ using System.Net.Http;
 
 namespace Yavsc.Formatters
 {
-	public class TexFormatter : BufferedMediaTypeFormatter
+	public class SimpleFormatter : BufferedMediaTypeFormatter
 	{
-		public TexFormatter ()
+		public SimpleFormatter (string mimetype)
 		{
-			SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/x-tex"));
-
+			SupportedMediaTypes.Add(new MediaTypeHeaderValue(mimetype));
 		}
 
 		public override bool CanWriteType(System.Type type)

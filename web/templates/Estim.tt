@@ -30,10 +30,13 @@
 \def\TotalTVA{0}
 
 
-\newcommand{\AjouterService}[2]{%    Arguments : Désignation, prix
-    \FPround{\montant}{#2}{2}
+\newcommand{\AjouterService}[3]{%    Arguments : Désignation, quantité, prix
+    \FPround{\prix}{#3}{2}
+    \FPeval{\montant}{#2 * #3}
+    \FPround{\montant}{\montant}{2}
     \FPadd{\TotalHT}{\TotalHT}{\montant}
-    \eaddto\ListeProduits{#1    &   \montant    \cr}
+   
+    \eaddto\ListeProduits{#1    &    \prix    &    #2    &    \montant    \cr}
 }
 
 
@@ -96,7 +99,7 @@
 
    <# foreach (Writting wr in estim.Lines) { #>
 \AjouterService    {<#=wr.Description#> <# if (!string.IsNullOrWhiteSpace(wr.ProductReference)) { #>
-   (<#=wr.ProductReference#>)<# } #>} {<#=wr.UnitaryCost*wr.Count#>}
+   (<#=wr.ProductReference#>)<# } #>} {<#=wr.Count#>} {<#=wr.UnitaryCost#>} 
    <# } #>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,7 +158,7 @@ Facture n°\FactureNum
 
 \begin{center}
     \begin{tabular}{lrrr}
-        \textbf{Désignation ~~~~~~}   & \textbf{Montant (EUR)}    \\
+        \textbf{Désignation ~~~~~~}  & \textbf{Prix unitaire} & \textbf{Quantité} & \textbf{Montant (EUR)}    \\
         \hline
         \AfficheResultat{}
     \end{tabular}

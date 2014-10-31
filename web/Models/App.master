@@ -56,7 +56,7 @@
 	</aside>
    <footer>
    <% foreach ( string link in Yavsc.ThanksHelper.Links()) { %>
-     <%= link %>
+     <div><%= link %></div>
    <% } %>
    </footer>
 </body>

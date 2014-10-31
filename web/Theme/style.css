@@ -12,6 +12,10 @@ main, aside {
 		background-color: rgba(0,0,0,0.8);
 }
 
+		aside {
+		display:inline;
+		max-width:15em;
+		}
 video,img {
 	max-width:100%;
 	max-height:75%;
@@ -24,7 +28,8 @@ footer {
 	left:0;
 	right:0;
 	background-color:rgba(0,16,0,0.6);
-	text-align:center;
+	display: flex;
+	 justify-content: space-around;
 	z-index:-1;
 }
 

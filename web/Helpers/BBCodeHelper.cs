@@ -148,7 +148,9 @@ namespace Yavsc.Helpers
 					}
 				}
 			}
-			return ttb.ToString ();
+			TagBuilder aside = new TagBuilder ("aside");
+			aside.InnerHtml = ttb.ToString ();
+				return aside.ToString();
 		}
 
 		static string DocPageContentTransformer (string instr)

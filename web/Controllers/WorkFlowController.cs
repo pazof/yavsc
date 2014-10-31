@@ -38,14 +38,17 @@ namespace Yavsc.ApiControllers
 		{
 			WorkFlowManager.DropWritting (wrid);
 		}
+		class Error {}
 
 		[Authorize]
 		[AcceptVerbs("POST")]
-		public void UpdateWritting([FromBody] Writting wr)
+		public object UpdateWritting([FromBody] Writting model)
 		{
-			if (!ModelState.IsValid)
-				throw new Exception ("Modèle invalide");
-			WorkFlowManager.UpdateWritting (wr);
+			if (!ModelState.IsValid) {
+				return ModelState.Where ( k => k.Value.Errors.Count>0) ; 
+			}
+			WorkFlowManager.UpdateWritting (model);
+			return null;
 		}
 
 		[HttpGet]
@@ -67,8 +70,12 @@ namespace Yavsc.ApiControllers
 
 		[AcceptVerbs("POST")]
 		[Authorize]
-		public long Write ([FromUri] long estid, [FromBody] Writting wr) {
-			// TODO ensure estid owner matches the current one
+		/// <summary>
+		/// Adds the specified imputation to the given estimation by estimation id.
+		/// </summary>
+		/// <param name="estid">Estimation identifier</param>
+		/// <param name="wr">Imputation to add</param>
+		public long Write ([FromUri] long estid, Writting wr) {
 			return WorkFlowManager.Write(estid, wr.Description,
 				wr.UnitaryCost, wr.Count, wr.ProductReference);
 		}

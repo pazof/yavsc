@@ -20,4 +20,11 @@
 	<data name="Offline"><value>Hors ligne</value></data>
 	<data name="Not Approuved"><value>Non approuvé</value></data>
 	<data name="Remove"><value>Supprimer</value></data>
+	<data name="Pdf_version"><value>Version Pdf</value></data>
+	<data name="Tex_version"><value>Version LaTeX</value></data>
+	<data name="User_name"><value>Nom d'utilisateur</value></data>
+	<data name="Description"><value>Description</value></data>
+	<data name="Product_reference"><value>Référence produit</value></data>
+	<data name="Unitary_cost"><value>Coût unitaire</value></data>
+	<data name="Count"><value>Nombre</value></data>
 </root>

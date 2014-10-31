@@ -44,7 +44,7 @@ namespace Yavsc
 		protected void Application_Start ()
 		{
 			AreaRegistration.RegisterAllAreas ();
-			GlobalConfiguration.Configuration.Formatters.Add (new TexFormatter ());
+			// add formatters : GlobalConfiguration.Configuration.Formatters.Add (new ZeroFormatter ());
 			GlobalConfiguration.Configuration.Routes.MapHttpRoute(
 						name: "DefaultApi",
 				routeTemplate: "api/{controller}/{action}/{*id}",

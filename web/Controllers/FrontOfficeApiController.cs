@@ -86,16 +86,16 @@ namespace Yavsc.ApiControllers
 		}
 
 		[AcceptVerbs("GET")]
-		public HttpResponseMessage GetTexEstim(long estimid)
+		public HttpResponseMessage GetEstimTex(long estimid)
 		{
 			return new HttpResponseMessage () {
 				Content = new ObjectContent (typeof(string),
-					getTexEstim (estimid),
-					new TexFormatter ())
+					getEstimTex (estimid),
+					new SimpleFormatter ("text/x-tex"))
 			};
 		}
 
-		private string getTexEstim(long estimid)
+		private string getEstimTex(long estimid)
 		{
 			Yavsc.templates.Estim  tmpe = new Yavsc.templates.Estim();		
 			Estimate e = WorkFlowManager.GetEstimate (estimid);

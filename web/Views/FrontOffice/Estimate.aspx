@@ -14,10 +14,7 @@
 <%= Html.LabelFor(model => model.Title) %>:<%= Html.TextBox( "Title" ) %>
 <%= Html.ValidationMessage("Title", "*") %>
 <br/>
-<%= Html.LabelFor(model => model.Responsible) %>:<%=Model.Responsible%>
 <%= Html.Hidden ("Responsible") %>
-<%= Html.ValidationMessage("Responsible", "*") %>
-<br/>
 <%= Html.LabelFor(model => model.Client) %>:<%=Html.TextBox( "Client" ) %>
 <%= Html.ValidationMessage("Client", "*") %>
 <br/>
@@ -36,14 +33,13 @@
 
 
    <% if (Model.Id>0) { %>
-
 <table class="tablesorter">
 <thead>
 <tr>
-<th>Description</th>
-<th>Product Reference</th>
-<th>Count</th>
-<th>Unitary Cost</th>
+<th><%=LocalizedText.Description%></th>
+<th><%=LocalizedText.Product_reference%></th>
+<th><%=LocalizedText.Count%></th>
+<th><%=LocalizedText.Unitary_cost%></th>
 </tr>
 </thead>
 <tbody id="wrts">
@@ -59,12 +55,9 @@
 <%    } %>
 </tbody>
 </table>
-
 <%  } %>
-
 <% } %>
-
-   </asp:Content>
+</asp:Content>
    <asp:Content ContentPlaceHolderID="MASContent" ID="MASContent1" runat="server">
 
 
@@ -85,7 +78,7 @@
      <input type="button" id="btnnew" value="Nouvelle écriture"/>
      <input type="hidden" name="estid" id="estid" value="<%=Model.Id%>"/>
      <label for="Description">Description:</label>
-     <input type="text" name="Description" id="Description" />
+     <textarea name="Description" id="wrdesc" ></textarea>
      <label for="UnitaryCost">Prix unitaire:</label>
      <input type="number" name="UnitaryCost" id="UnitaryCost" step="0.01"/>
      <label for="Count">Quantité:</label>
@@ -97,7 +90,7 @@
      <input type="button" name="btndrop" id="btndrop" value="Supprimer"/>
      <input type="hidden" name="wrid" id="wrid" />
 
-     <tt id="msg" class="message"></tt>
+     <tt id="msg" class="message" style="display:none;"></tt>
      <style>
      .row { cursor:pointer; }
      table.tablesorter td:hover { background-color: rgba(0,64,0,0.5); }
@@ -108,19 +101,24 @@
      <script>
 
  jQuery.support.cors = true;  
+ function message(msg) { 
+  if (msg) { $("#msg").css("display:inline");
+  $("#msg").text(msg);} else { $("#msg").css("display:hidden"); } }
+
+
+
      function GetWritting () {
      	return {
      	Id: Number($("#wrid").val()),
      	UnitaryCost: Number($("#UnitaryCost").val()),
      	Count: parseInt($("#Count").val()),
      	ProductReference: $("#ProductReference").val(),
-     	Description: $("#Description").val()
+     	Description: $("#wrdesc").val()
      	};
      }
 
      function wredit(pwrid)
      {
-
     	$("#wr"+wrid.value).removeClass("selected");
      	$("#wrid").val(pwrid);
      	if (wrid.value!=0)
@@ -138,7 +136,7 @@
 
      function delRow() {
        $.ajax({
-            url: "<%=ViewData["WebApiUrl"]+"/DropWritting"%>",
+            url: "<%=ViewData["WABASEWF"]+"/DropWritting"%>",
             type: "Get",
             data: { wrid: wrid.value }, 
             contentType: 'application/json; charset=utf-8',
@@ -153,25 +151,27 @@
 			   wredit(0);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-        $("#msg").text(xhr.status+" : "+xhr.responseText);}
+        message(xhr.status+" : "+xhr.responseText);}
         });
 
       }
 	
 	function setRow() {
        var wrt = GetWritting();
-
        $.ajax({
-            url: "<%=ViewData["WebApiUrl"]+"/UpdateWritting"%>",
-            type: "POST",
-            data: JSON.stringify(wrt), 
-            contentType: 'application/json; charset=utf-8',
-            success: function () { 
-		       var cells = document.getElementById("wr"+wrt.Id).getElementsByTagName("TD");
+            url: "<%=ViewData["WABASEWF"]+"/UpdateWritting"%>",
+            type: 'POST',
+            data: wrt, 
+            success: function (ms) { 
+		       if (ms)
+			   	message(JSON.stringify(ms));
+			   else {
+				var cells = document.getElementById("wr"+wrt.Id).getElementsByTagName("TD");
 		       cells[0].innerHTML=wrt.Description;
 		       cells[1].innerHTML=wrt.ProductReference;
 		       cells[2].innerHTML=wrt.UnitaryCost;
 		       cells[3].innerHTML=wrt.Count;
+				}
             },
             error: function (xhr, ajaxOptions, thrownError) {
         $("#msg").text(xhr.status+" : "+xhr.responseText);}
@@ -183,20 +183,27 @@ function addRow(){
        var wrt = GetWritting();
 		var estid = parseInt($("#Id").val());
         $.ajax({
-            url: "<%=ViewData["WebApiUrl"]+"/Write"%>/?estid="+estid,
+            url: "<%=ViewData["WABASEWF"]+"/Write"%>/?estid="+estid,
             type: "POST",
-            traditional: false,
-            data: JSON.stringify(wrt),
-            contentType: 'application/json; charset=utf-8',
+            data: wrt,
             success: function (data) { 
             wrt.Id = Number(data);
-            wredit(wrt.Id);
-            $("<tr class=\"row\" id=\"wr"+wrt.Id+"\"><td>"+wrt.Description+"</td><td>"+wrt.ProductReference+"</td><td>"+wrt.Count+"</td><td>"+wrt.UnitaryCost+"</td></tr>").appendTo("#wrts");
-             },
+            wrid.value = wrt.Id;
+            var wridval = 'wr'+wrt.Id;
+            //$("#wrts").append("<tr class=\"selected row\" id=\"wr"+wrt.Id+"\"><td>"+wrt.Description+"</td><td>"+wrt.ProductReference+"</td><td>"+wrt.Count+"</td><td>"+wrt.UnitaryCost+"</td></tr>");
+
+            jQuery('<tr/>', { 
+            id: wridval,
+            "class": 'selected row',
+            }).appendTo('#wrts');
+            $("<td>"+wrt.Description+"</td>").appendTo("#"+wridval);
+            $("<td>"+wrt.ProductReference+"</td>").appendTo("#"+wridval);
+            $("<td>"+wrt.Count+"</td>").appendTo("#"+wridval);
+            $("<td>"+wrt.UnitaryCost+"</td>").appendTo("#"+wridval);
+            $("#"+wridval).click(function(ev){onEditRow(ev);});
+            },
             error: function (xhr, ajaxOptions, thrownError) {
-        $("#msg").text(xhr.status+" : "+xhr.responseText);}
-        });
-        $(".wr"+wrt.Id).click(onEditRow(e));  
+        message(xhr.status+" : "+xhr.responseText);}});
     }
 
     function ShowDtl(val)
@@ -211,7 +218,7 @@ function addRow(){
     	var hid=e.delegateTarget.id;
     	var vwrid = Number(hid.substr(2));
     	wredit(vwrid);
-    	$("#Description").val(cells[0].innerHTML);
+    	$("#wrdesc").val(cells[0].innerHTML);
     	$("#ProductReference").val(cells[1].innerHTML);
     	$("#Count").val(cells[2].innerHTML);
     	$("#UnitaryCost").val(Number(cells[3].innerHTML.replace(",",".")));
@@ -227,7 +234,7 @@ function addRow(){
     $(".row").click(function (e) {onEditRow(e);});
 	$("#btnnew").click(function () {
 		wredit(0);
-		$("#Description").val("");
+		$("#wrdesc").val("");
     	$("#ProductReference").val("");
     	$("#Count").val(1);
     	$("#UnitaryCost").val(0);
@@ -236,6 +243,8 @@ function addRow(){
     </script>
   </div>
     </form>
+    <a class="actionlink" href="<%=ViewData["WebApiBase"]%>/FrontOffice/GetEstimTex?estimid=<%=Model.Id%>"><%= LocalizedText.Tex_version %></a>
+    <a class="actionlink" href="<%=ViewData["WebApiBase"]%>/FrontOffice/GetEstimPdf?estimid=<%=Model.Id%>"><%= LocalizedText.Pdf_version %></a>
 </asp:Content>
 
 
