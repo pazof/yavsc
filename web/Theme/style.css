@@ -54,16 +54,14 @@ label {
 }
 
 .message {
-	color: #7FFF00;
 	font-size: large;
-	border: solid green;
-	background-color: rgba(32,0,32,0.3);
+	background-color: rgba(0,64,0,0.1);
 	}
 .error {
 	color: #f88;
 	font-size: large;
 	border: solid green;
-	background-color: rgba(64,0,0,0.3);
+	background-color: rgba(64,0,0,0.1);
 }
 .validation-summary-errors{
 	color: #f88;

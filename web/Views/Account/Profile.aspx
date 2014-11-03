@@ -121,10 +121,19 @@ Avatar   </td><td> <img class="avatar" src="/Blogs/Avatar?user=<%=ViewData["User
 
 <input type="submit"/>
 <% } %>
+
+
 </asp:Content>
 
 
 <asp:Content ID="MASC1" ContentPlaceHolderID="MASContent" runat="server">
+   <% 	if (Roles.IsUserInRole("Admin")) { %>
+   Admin,
+   Bankable:<%= Model.IsBankable %>, Billable:<%=Model.IsBillable%>
+<% } %>
+		
    <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account")%>
+
+
    </asp:Content>
 

@@ -52,23 +52,6 @@ namespace Yavsc
 					);
 
 			RegisterRoutes (RouteTable.Routes);
-			Error += HandleError;
 		}
-
-		void HandleError (object sender, EventArgs e)
-		{
-			if (Server.GetLastError ().GetBaseException () is System.Web.HttpRequestValidationException) {
-				Response.Clear ();
-				Response.Write ("Invalid characters.<br>");
-				Response.Write ("You may want to use your " +
-				"browser to go back to your form. " +
-				"You also can <a href=\"" +
-				Request.UrlReferrer +
-				"\">hit the url referrer</a>.");
-				Response.StatusCode = 200;
-				Response.End ();        
-			} 
-		}
-	 
 	}
 }

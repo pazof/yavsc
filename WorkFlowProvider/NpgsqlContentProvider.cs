@@ -230,9 +230,6 @@ namespace WorkFlowProvider
 					cmd.CommandText = 
 						"insert into writtings (description, estimid, ucost, count, productid) VALUES (@dscr,@estid,@ucost,@count,@prdid) returning _id";
 					cmd.Parameters.Add ("@dscr", desc);
-					// cmd.Parameters.Add ("@prdid", productid);
-					// cmd.Parameters.Add("@ucost", ucost);
-					// cmd.Parameters.Add("@mult", count);
 					cmd.Parameters.Add("@estid", estid);
 
 					cmd.Parameters.Add("@ucost", ucost);

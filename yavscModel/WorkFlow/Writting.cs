@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Model;
 
 namespace Yavsc.Model.WorkFlow
 {
@@ -20,13 +21,14 @@ namespace Yavsc.Model.WorkFlow
  		/// Who knows?
 		/// </summary>
 		/// <value>The unitary cost.</value>
-		[Display(Name="Coût unitaire")]
+		[Display(ResourceType = typeof(LocalizedText),Name="Unitary_cost")]
 		[Required(ErrorMessage="Veuillez renseigner un coût unitaire")]
 		public decimal UnitaryCost { get; set; }
 		/// <summary>
 		/// Gets or sets the count.
 		/// </summary>
 		/// <value>The count.</value>
+		[Display(ResourceType = typeof(LocalizedText),Name="Count")]
 		[Required(ErrorMessage="Veuillez renseigner un multiplicateur pour cette imputation")]
 		public int Count { get; set; }
 		/// <summary>
@@ -35,6 +37,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <value>The product reference.</value>
 		[Required(ErrorMessage="Veuillez renseigner une référence produit")]
 		[StringLength(512)]
+		[Display(ResourceType = typeof(LocalizedText),Name="Product_reference")]
 		public string ProductReference { get; set; }
 		/// <summary>
 		/// Gets or sets the description.
@@ -42,6 +45,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <value>The description.</value>
 		[Required(ErrorMessage="Veuillez renseigner une description de cette imputation.")]
 		[StringLength (2048)]
+		[Display(ResourceType = typeof(LocalizedText),Name="Description")]
 		public string Description { get; set; } 
 
 		public override string ToString ()

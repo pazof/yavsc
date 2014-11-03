@@ -155,14 +155,9 @@
       <DependentUpon>Estim.tt</DependentUpon>
     </Compile>
     <Compile Include="templates\TexEstimInit.cs" />
-    <Compile Include="Formatters\TexFormatter.cs" />
     <Compile Include="Formatters\EstimToPdfFormatter.cs" />
-    <Compile Include="App_GlobalResources\LocalizedText.Designer.cs">
-      <DependentUpon>LocalizedText.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\LocalizedText.fr.Designer.cs">
-      <DependentUpon>LocalizedText.fr.resx</DependentUpon>
-    </Compile>
+    <Compile Include="Formatters\SimpleFormatter.cs" />
+    <Compile Include="ValidateAjaxAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -221,12 +216,10 @@
     <Content Include="Views\Admin\Restored.aspx" />
     <Content Include="Views\Admin\Index.aspx" />
     <Content Include="Views\FrontOffice\Estimate.aspx" />
-    <Content Include="Views\FrontOffice\test.cshtml" />
     <Content Include="js\jquery.metadata.js" />
     <Content Include="js\jquery.tablesorter.js" />
     <Content Include="js\jquery.tablesorter.min.js" />
     <Content Include="js\jquery-latest.js" />
-    <Content Include="Views\FrontOffice\Write.aspx" />
     <Content Include="Theme\style.css" />
     <Content Include="Theme\green\asc.png" />
     <Content Include="Theme\green\bg.png" />
@@ -247,6 +240,7 @@
     <Content Include="Catalog.xml" />
     <Content Include="RegistrationMail.txt" />
     <Content Include="instdbws.sql" />
+    <Content Include="Views\FrontOffice\Writting.ascx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -300,15 +294,5 @@
       <Project>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</Project>
       <Name>NpgsqlWorkflow</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="App_GlobalResources\LocalizedText.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>LocalizedText.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="App_GlobalResources\LocalizedText.fr.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>LocalizedText.fr.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 </Project>

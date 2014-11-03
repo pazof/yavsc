@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>yavscModel</RootNamespace>
+    <RootNamespace>Yavsc.Model</RootNamespace>
     <AssemblyName>YavscModel</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -78,6 +78,12 @@
     <Compile Include="Blogs\Configuration\BlogProvidersConfigurationCollection.cs" />
     <Compile Include="Blogs\Configuration\BlogProvidersConfigurationSection.cs" />
     <Compile Include="WorkFlow\NewEstimateEvenArgs.cs" />
+    <Compile Include="LocalizedText.fr.Designer.cs">
+      <DependentUpon>LocalizedText.fr.resx</DependentUpon>
+    </Compile>
+    <Compile Include="LocalizedText.Designer.cs">
+      <DependentUpon>LocalizedText.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -102,4 +108,14 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <EmbeddedResource Include="LocalizedText.fr.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LocalizedText.fr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LocalizedText.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LocalizedText.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

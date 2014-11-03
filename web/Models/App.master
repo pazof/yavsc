@@ -35,6 +35,8 @@
 		</asp:ContentPlaceHolder>
    </main>
    <aside>
+   <asp:ContentPlaceHolder ID="MASContent" runat="server">
+   </asp:ContentPlaceHolder>
    <div id="login">
 <% if (Membership.GetUser()==null) { %>
 	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" } ) %> 
@@ -42,7 +44,7 @@
 	<%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" } ) %>
 	<span class="hidcom">Pour pouvoir poster ou commenter</span>
 <% } else { %>
-	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Account", "Profile",null, new { @class="actionlink" }) %>
+	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Profile", "Account", null, new { @class="actionlink" }) %>
 	<span class="hidcom"> &Eacute;dition de votre profile </span> 
 	@ <%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" }) %>
 	<span class="hidcom"> Page d'accueil </span> 
@@ -51,8 +53,6 @@
 	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" }) %>
 <% } %>
 	</div>
-   <asp:ContentPlaceHolder ID="MASContent" runat="server">
-   </asp:ContentPlaceHolder>
 	</aside>
    <footer>
    <% foreach ( string link in Yavsc.ThanksHelper.Links()) { %>

@@ -9,8 +9,8 @@ using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 using Yavsc;
 using System.Reflection;
-using Yavsc.App_GlobalResources;
 using System.Resources;
+using Yavsc.Model;
 
 namespace Yavsc.Controllers
 {

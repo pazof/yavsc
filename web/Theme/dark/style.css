@@ -4,7 +4,6 @@ table.tablesorter {
 	background-color: #333;
 	margin:10px 0pt 15px;
 	font-size: 8pt;
-	width: 100%;
 	text-align: left;
 }
 table.tablesorter thead tr th, table.tablesorter tfoot tr th {
@@ -23,12 +22,16 @@ table.tablesorter tbody td {
 	color: #ffa;
 	padding: 4px;
 	vertical-align: top;
-	background-color: #002;
 }
 
 table.tablesorter .odd td {
-	background-color: #004;
+	background-color: rgba(0,0,32,0.5);
 }
+
+table.tablesorter .even td {
+	background-color: rgba(16,0,16,0.5);
+}
+
 
 table.tablesorter thead tr .headerSortUp {
 	background-image: url(/Theme/dark/asc.gif);
@@ -38,7 +41,4 @@ table.tablesorter thead tr .headerSortDown {
 }
 table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
 background-color: #123;
-}
-tr.selected td {
-	background-color:#102010;
 }

@@ -11,7 +11,7 @@ namespace Yavsc.Model.WorkFlow
 		{
 		}
 		[Required]
-		[DisplayName("Titre")]
+		[Display(ResourceType = typeof(LocalizedText),Name="Title")]
 		public string Title { get; set; }
 		[Required]
 		[DisplayName("Description")]
@@ -24,7 +24,7 @@ namespace Yavsc.Model.WorkFlow
 		public string Client { get; set; }
 
 		public long Id { get; set; }
-		[DisplayName("Chiffre")]
+		[Display(ResourceType = typeof(LocalizedText),Name="Ciffer")]
 		public decimal Ciffer {
 			get {
 				decimal total = 0;

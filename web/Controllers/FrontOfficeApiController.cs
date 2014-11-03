@@ -88,9 +88,12 @@ namespace Yavsc.ApiControllers
 		[AcceptVerbs("GET")]
 		public HttpResponseMessage GetEstimTex(long estimid)
 		{
+			string texest = getEstimTex (estimid);
+			if (texest == null)
+				throw new HttpRequestValidationException ("Not an estimation id:"+estimid);
 			return new HttpResponseMessage () {
 				Content = new ObjectContent (typeof(string),
-					getEstimTex (estimid),
+					texest,
 					new SimpleFormatter ("text/x-tex"))
 			};
 		}
@@ -101,12 +104,21 @@ namespace Yavsc.ApiControllers
 			Estimate e = WorkFlowManager.GetEstimate (estimid);
 			tmpe.Session = new Dictionary<string,object>();
 			tmpe.Session.Add ("estim", e);
-			Profile pr = AccountController.GetProfile (e.Responsible);
-			tmpe.Session.Add ("from", pr);
-			tmpe.Session.Add ("to", pr);
+
+			Profile prpro = new Profile(ProfileBase.Create(e.Responsible));
+			if (!prpro.IsBankable)
+				throw new Exception ("NotBankable:"+e.Responsible);
+
+			Profile prcli = new Profile(ProfileBase.Create(e.Client));
+			if (!prcli.IsBillable)
+				throw new Exception ("NotBillable:"+e.Client);
+			tmpe.Session.Add ("from", prpro);
+			tmpe.Session.Add ("to", prcli);
 			tmpe.Init ();
 			return tmpe.TransformText ();
 		}
+
+
 		/// <summary>
 		/// Gets the estimate in pdf format from tex generation.
 		/// </summary>
@@ -115,14 +127,7 @@ namespace Yavsc.ApiControllers
 		public HttpResponseMessage GetEstimPdf(long estimid)
 		{
 			Estimate estim = WorkFlowManager.GetEstimate (estimid);
-
-			Profile prpro = new Profile(ProfileBase.Create(estim.Responsible));
-			if (!prpro.IsBankable)
-				throw new Exception ("NotBankable:"+estim.Responsible);
-
-			Profile prcli = new Profile(ProfileBase.Create(estim.Client));
-			if (!prcli.IsBillable)
-				throw new Exception ("NotBillable:"+estim.Client);
+			//TODO better with pro.IsBankable && cli.IsBillable
 
 			return new HttpResponseMessage () {
 				Content = new ObjectContent (

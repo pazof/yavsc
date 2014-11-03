@@ -69,15 +69,17 @@ namespace Yavsc.Formatters
 
 			var pbc = ProfileBase.Create (e.Client);
 			Profile prcli =  new Profile (pbc);
-			if (!prpro.IsBankable)
-				throw new Exception ("This provider is not bankable.");
+
+			if (!prpro.IsBankable ||  !prcli.IsBillable)
+				throw new Exception("not bankable or not billable.");
+
 			tmpe.Session.Add ("from", prpro);
 			tmpe.Session.Add ("to", prcli);
 			tmpe.Init ();
 
 			string content = tmpe.TransformText ();
 
-			string name = string.Format ("tmpestimtex{0}", e.Id);
+			string name = string.Format ("tmpestimtex-{0}", e.Id);
 			string fullname = Path.Combine (
 				HttpRuntime.CodegenDir, name);
 			FileInfo fi = new FileInfo(fullname + ".tex");
@@ -86,17 +88,19 @@ namespace Yavsc.Formatters
 			{
 				sw.Write (content);
 			}
-			using (Process p = new Process ()) {
+			using (Process p = new Process ()) {			
 				p.StartInfo.WorkingDirectory = HttpRuntime.CodegenDir;
 				p.StartInfo = new ProcessStartInfo ();
 				p.StartInfo.UseShellExecute = false;
 				p.StartInfo.FileName = "/usr/bin/texi2pdf";
 				p.StartInfo.Arguments = 
-					string.Format ("--batch -o {0} {1}",
+					string.Format ("--batch --build-dir={2} -o {0} {1}",
 						fo.FullName,
-						fi.FullName);
+						fi.FullName,HttpRuntime.CodegenDir);
 				p.Start ();
 				p.WaitForExit ();
+				if (p.ExitCode != 0)
+					throw new Exception ("Pdf generation failed with exit code:" + p.ExitCode);
 			}
 
 			using (StreamReader sr = new StreamReader (fo.FullName)) {
