@@ -44,7 +44,7 @@
 <% int lc=0;
    if (Model.Lines!=null)
    foreach (Writting wr in Model.Lines) { lc++; %>
-<tr class="<%= (lc%2==0)?"odd ":"even " %>row" id="wr<%=wr.Id%>">
+<tr class="<%= (wr.Id%2==0)?"even ":"odd " %>row" id="wr<%=wr.Id%>">
 <td><%=wr.Description%></td>
 <td><%=wr.ProductReference%></td>
 <td><%=wr.Count%></td>
@@ -58,7 +58,7 @@
 </asp:Content>
    <asp:Content ContentPlaceHolderID="MASContent" ID="MASContent1" runat="server">
 
-   <div>
+
    <% ViewData["EstimateId"]=Model.Id; %>
    <%= Html.Partial("Writting",new Writting(),new ViewDataDictionary(ViewData)
         {
@@ -67,13 +67,17 @@
                 HtmlFieldPrefix = ViewData.TemplateInfo.HtmlFieldPrefix==""?"wr":ViewData.TemplateInfo.HtmlFieldPrefix+"_wr"
             }
         }) %>
+
+       
         <form>
-        <input type="button" id="btnnew" value="Nouvelle écriture"/>
-        <input type="button" id="btncreate" value="Ecrire"/>
-        <input type="button" id="btnmodify" value="Modifier" class="hidden"/>
-        <input type="button" id="btndrop" value="Supprimer" class="hidden"/>
-        </form>
+     <div>
+        <input type="button" id="btnnew" value="Nouvelle écriture" class="actionlink"/>
+        <input type="button" id="btncreate" value="Ecrire" class="actionlink"/>
+        <input type="button" id="btnmodify" value="Modifier" class="hidden actionlink"/>
+        <input type="button" id="btndrop" value="Supprimer" class="hidden actionlink"/>
+      </div>  </form>
      <tt id="msg" class="hidden message"></tt>
+
      <style>
      .row { cursor:pointer; }
      table.tablesorter td:hover { background-color: rgba(0,64,0,0.5); }
@@ -101,12 +105,11 @@
 
      function wredit(pwrid)
      {
-
+        if (wr_Id.value>0) {
      	$("#wr"+wr_Id.value).removeClass("selected");
      	$("#wr"+wr_Id.value).addClass((wr_Id.value%2==0)?"even":"odd");
+     	}
      	$("#wr_Id").val(pwrid);
-
-
      	if (pwrid>0) {
     	$("#btncreate").addClass("hidden");
     	$("#btnmodify").removeClass("hidden");
@@ -165,13 +168,19 @@
 function addRow(){
        var wrt = GetWritting();
 		var estid = parseInt($("#Id").val());
+        
+            $("#Err_wr_Description").text("");
+            $("#Err_wr_ProductReference").text("");
+            $("#Err_wr_UnitaryCost").text("");
+            $("#Err_wr_Count").text("");
+
         $.ajax({
             url: "<%=Url.Content("~/api/WorkFlow/Write?estid=")%>"+estid,
             type: "POST",
             data: wrt,
             success: function (data) { 
             wrt.Id = Number(data);
-            wr_Id.value = wrt.Id;
+             wredit(wrt.Id);
             var wridval = 'wr'+wrt.Id;
             jQuery('<tr/>', { 
             id: wridval,
@@ -184,14 +193,19 @@ function addRow(){
             $("#"+wridval).click(function(ev){onEditRow(ev);});
      $(".tablesorter").tablesorter( {sortList: [[0,0], [1,0]]} );
             message(false);
+           
             },
+            dataType: "json",
             statusCode: {
             	400: function(data) {
-            		alert(JSON.stringify(data));
+            		$.each(data.responseJSON, function (key, value) {
+            		document.getElementById("Err_" + value.key.replace(".","_")).innerHTML=value.errors.join("<br/>");
+                	});
             		}
             	},
             error: function (xhr, ajaxOptions, thrownError) {
-            message(xhr.status+" : "+xhr.responseText+" / "+thrownError);}});
+			if (xhr.status != 400)
+            	message(xhr.status+" : "+xhr.responseText+" / "+thrownError);}});
     }
 
      function onEditRow(e) {
@@ -227,8 +241,8 @@ function addRow(){
 });
     </script>
   
-   </div>
-    </form>
+   
+    <div>
     <a class="actionlink" href="<%=ViewData["WebApiBase"]%>/FrontOffice/GetEstimTex?estimid=<%=Model.Id%>"><%= LocalizedText.Tex_version %></a>
     <a class="actionlink" href="<%=ViewData["WebApiBase"]%>/FrontOffice/GetEstimPdf?estimid=<%=Model.Id%>"><%= LocalizedText.Pdf_version %></a>
     </div>
