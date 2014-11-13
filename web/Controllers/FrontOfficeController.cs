@@ -46,7 +46,6 @@ namespace Yavsc.Controllers
 					    && username != model.Client
 					    && !Roles.IsUserInRole ("FrontOffice"))
 						throw new UnauthorizedAccessException ("You're not allowed to view this estimate");
-
 				} 
 			} else {
 				string username = HttpContext.User.Identity.Name;
@@ -64,15 +63,14 @@ namespace Yavsc.Controllers
 						model = WorkFlowManager.CreateEstimate (
 							username,
 							model.Client, model.Title, model.Description);
-					else
+					else {
 						WorkFlowManager.UpdateEstimate (model);
-
+						model = WorkFlowManager.GetEstimate (model.Id);
+					}
 				}
 			}
 			return View(model);
 		}
-
-
 
 		[AcceptVerbs("GET")]
 		public ActionResult Catalog ()
@@ -81,6 +79,7 @@ namespace Yavsc.Controllers
 				CatalogManager.GetCatalog ()
 			);
 		}
+
 		/// <summary>
 		/// Catalog this instance.
 		/// </summary>
@@ -136,7 +135,6 @@ namespace Yavsc.Controllers
 				p.CommandForm = b.DefaultForm;
 
 			return View ((p is Service)?"Service":"Product", p);
-
 		}
 
 		public ActionResult Command()
@@ -178,12 +176,11 @@ namespace Yavsc.Controllers
 				// Add specified product command to the basket,
 				basket.Add(new Commande(0,0,collection));
 				return View (collection);
-			} catch (Exception e) {
+			} catch (Exception e) 
+			{
 				ViewData ["Message"] = "Exception:"+e.Message;
 				return View (collection);
 			}
 		}
-
 	}
 }
-
