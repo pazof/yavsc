@@ -82,9 +82,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string access_denied {
+            get {
+                return ResourceManager.GetString("access_denied", resourceCulture);
+            }
+        }
+        
         public static string Product_reference {
             get {
                 return ResourceManager.GetString("Product_reference", resourceCulture);
+            }
+        }
+        
+        public static string Google_error {
+            get {
+                return ResourceManager.GetString("Google_error", resourceCulture);
             }
         }
         

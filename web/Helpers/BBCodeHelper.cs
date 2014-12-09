@@ -298,6 +298,7 @@ namespace Yavsc.Helpers
 					parser = new BBCodeParser (new[] {
 						new BBTag ("b", "<b>", "</b>"), 
 						new BBTag ("i", "<span style=\"font-style:italic;\">", "</span>"), 
+						new BBTag ("em", "<em>", "</em>"), 
 						new BBTag ("u", "<span style=\"text-decoration:underline;\">", "</span>"), 
 						new BBTag ("code", "<span class=\"code\">", "</span>"), 
 						new BBTag ("img", "<img src=\"${content}\" alt=\"${alt}\" style=\"${style}\" />", "", false, true, new BBAttribute ("alt", ""), new BBAttribute("alt","alt"), new BBAttribute ("style", "style")), 

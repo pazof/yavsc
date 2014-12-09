@@ -30,4 +30,6 @@
 	<data name="Pdf_version"><value>Version Pdf</value></data>
 	<data name="Tex_version"><value>Version LaTeX</value></data>
 	<data name="User_name"><value>Nom d'utilisateur</value></data>
+	<data name="Google_error"><value>Erreur Google : {0}</value></data>
+	<data name="access_denied"><value>Accès refusé</value></data>
 </root>

@@ -9,10 +9,14 @@ namespace Yavsc.Model.WorkFlow
 		/// Gets the unique Identifier for this order, in this application.
 		/// </summary>
 		/// <value>The unique I.</value>
-		string UniqueID {
+		long UniqueID {
 			get;
 		}
-		event EventHandler<OrderStatusChangedEventArgs> StatusChanged;
+		/// <summary>
+		/// Gets the actual status for this order.
+		/// </summary>
+		/// <returns>The status.</returns>
+		string GetStatus();
 	}
 }
 

@@ -5,41 +5,60 @@ namespace Yavsc.Model.WorkFlow
 {
 	public class WFOrder : IWFOrder
 	{
-		private Product p;
-		private DateTime date;
-		private string catref;
-		private string id = null;
-		public WFOrder(Product prod,string catalogReference){
-			date = DateTime.Now;
-			catref=catalogReference;
-			p = prod;
-			id = Guid.NewGuid ().ToString();
-		}  
-		public override string ToString ()
+		public string GetStatus ()
 		{
-			return string.Format ("[Commande date={0} prodref={1}, cat={2}]",date,p.Reference,catref);
+			// TODO Manager.GetStatus(this.id);
+			throw new NotImplementedException ();
 		}
 
-		public event EventHandler<OrderStatusChangedEventArgs> StatusChanged;
+		private long prodid;
 
-		#region IWFCommand implementation
-		/// <summary>
-		/// Gets the catalog reference, a unique id for the catalog (not a product id).
-		/// </summary>
-		/// <value>The catalog reference.</value>
-		public string UniqueID {
+		public long ProductId {
+			get {
+				return prodid;
+			}
+		}
+
+		private long id = 0;
+		public long UniqueID {
 			get {
 				return id;
 			}
 		}
 
+		private DateTime date;
 		public DateTime OrderDate {
 			get {
 				return date;
 			}
 		}
 
-		#endregion
+		private string catref;
+
+		/// <summary>
+		/// Gets the catalog reference, a unique id for the catalog (not a product id).
+		/// </summary>
+		/// <value>The catalog reference.</value>
+		public string CatalogReference {
+			get {
+				return catref;
+			}
+		}
+
+		public static WFOrder CreateOrder(long productId,string catalogReference){
+			return new WFOrder() {date = DateTime.Now,
+			catref=catalogReference,
+				prodid = productId};
+			//TODO id = Manager.Order(...)
+		}  
+
+		public override string ToString ()
+		{
+			return string.Format ("[Commande date={0} prodref={1}, cat={2}]",date,prodid,catref);
+		}
+
+
+
 	}
 }
 

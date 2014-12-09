@@ -249,6 +249,7 @@ CREATE TABLE profiledata
   wicketcode character varying(5),
   iban character varying(33),
   bic character varying(15),
+  gcode character varying(512),
   CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE

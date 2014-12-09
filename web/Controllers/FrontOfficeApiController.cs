@@ -21,6 +21,7 @@ using Yavsc.Controllers;
 using Yavsc.Formatters;
 using System.Text;
 using System.Web.Profile;
+using System.Collections.Specialized;
 
 namespace Yavsc.ApiControllers
 {
@@ -70,8 +71,13 @@ namespace Yavsc.ApiControllers
 			return result;
 		}
 */
+		/*
+		[Authorize]
+		public IOrderInfo Order()
+		{
 
-
+		}
+		*/
 		[Authorize]
 		[HttpGet]
 		/// <summary>

@@ -4,22 +4,33 @@ namespace SalesCatalog.Model
 {
 	public class TextInput:FormInput
 	{
+
 		#region implemented abstract members of FormInput
+		private string tpe = null;
 		public override string Type {
 			get {
-				return "text";
+				return tpe;
 			}
 		}
 		#endregion
 
 		public TextInput ()
 		{
+			tpe = "text";
 		}
 
 		public TextInput (string txt)
 		{
+			tpe = "text";
 			text = txt;
 		}
+
+		public TextInput (string type, string txt)
+		{
+			tpe = type;
+			text = txt;
+		}
+
 		string text = null;
 
 
@@ -27,10 +38,12 @@ namespace SalesCatalog.Model
 		{
 			return t.text;
 		}
+
 		public static implicit operator TextInput(string t)
 		{
 			return new TextInput(t);
 		}
+
 		public string DefaultValue {
 			get {
 				return text;

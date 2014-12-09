@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YavscClient", "yavscclient\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebControls", "WebControls\WebControls.csproj", "{59E1DF7B-FFA0-4DEB-B5F3-76EBD98D5356}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vscadm", "vscadm\vscadm.csproj", "{6C5E1490-E141-4ADA-84E5-6D65523D6B73}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITContentProvider", "ITContentProvider\ITContentProvider.csproj", "{9D7D892E-9B77-4713-892D-C26E1E944119}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{ECEC9074-ACB5-4A74-BE22-FF7B40F25A1A}"
@@ -39,10 +37,6 @@ Global
 		{68F5B80A-616E-4C3C-91A0-828AA40000BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68F5B80A-616E-4C3C-91A0-828AA40000BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68F5B80A-616E-4C3C-91A0-828AA40000BD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6C5E1490-E141-4ADA-84E5-6D65523D6B73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6C5E1490-E141-4ADA-84E5-6D65523D6B73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6C5E1490-E141-4ADA-84E5-6D65523D6B73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6C5E1490-E141-4ADA-84E5-6D65523D6B73}.Release|Any CPU.Build.0 = Release|Any CPU
 		{77044C92-D2F1-45BD-80DD-AA25B311B027}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{77044C92-D2F1-45BD-80DD-AA25B311B027}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77044C92-D2F1-45BD-80DD-AA25B311B027}.Release|Any CPU.ActiveCfg = Release|Any CPU
