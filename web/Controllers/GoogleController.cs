@@ -11,26 +11,34 @@ using Mono.Security.Protocol.Tls;
 using System.Net;
 using System.IO;
 using Yavsc.Model;
+using Newtonsoft.Json;
 
 namespace Yavsc.Controllers
 {
+	public class TokenResult {
+		public string access_token { get; set; }
+		public string id_token { get; set; }
+		public int expires_in { get; set; }
+		public string token_type { get; set ; }
+		public string refresh_token { get; set; }
+	}
+
 	public class GoogleController : Controller
 	{
 
-		string API_KEY="AIzaSyBV_LQHb22nGgjNvFzZwnQHjao3Q7IewRw";
+		private string API_KEY="AIzaSyBV_LQHb22nGgjNvFzZwnQHjao3Q7IewRw";
 
-		string CLIENT_ID="325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com";
+		private string CLIENT_ID="325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com";
 
-		string CLIENT_SECRET="MaxYcvJJCs2gDGvaELZbzwfL";
+		private string CLIENT_SECRET="MaxYcvJJCs2gDGvaELZbzwfL";
 
 		string [] SCOPES = { 
 			"profile",
 			"email"
 		} ; 
 
-		string getTokenUrl = "https://accounts.google.com/o/oauth2/token"; 
-		// "https://www.googleapis.com/oauth2/v3/token";https://accounts.google.com/o/oauth2/token
-		string getCodeUrl = "https://accounts.google.com/o/oauth2/auth";
+		string tokenUri = "https://accounts.google.com/o/oauth2/token"; 
+		string authUri = "https://accounts.google.com/o/oauth2/auth";
 
 		public void Login()
 		{
@@ -53,7 +61,7 @@ namespace Yavsc.Controllers
 				state
 			);
 
-			WebRequest wr = WebRequest.Create(getCodeUrl+"?"+prms);
+			WebRequest wr = WebRequest.Create(authUri+"?"+prms);
 
 			wr.Method = "GET";
 			// Get the response.
@@ -69,7 +77,7 @@ namespace Yavsc.Controllers
 
 		}
 		public void Auth() {
-			string redirectUri = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Code";
+			string redirectUri = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Auth";
 			string code = Request.Params ["code"];
 			string error = Request.Params ["error"];
 			if (error != null) {
@@ -84,37 +92,37 @@ namespace Yavsc.Controllers
 					LocalizedText.ResourceManager.GetString("invalid request state");
 				return;
 			}
-			HttpWebRequest webreq = WebRequest.CreateHttp(getTokenUrl);
+
+			string postdata = 
+				string.Format(
+					"redirect_uri={0}&client_id={1}&client_secret={2}&code={3}&grant_type=authorization_code",
+					HttpUtility.UrlEncode(redirectUri),
+					HttpUtility.UrlEncode(CLIENT_ID),
+					HttpUtility.UrlEncode(CLIENT_SECRET),
+					HttpUtility.UrlEncode(code));
+
+			Byte[] bytes = System.Text.Encoding.UTF8.GetBytes (postdata);
+			HttpWebRequest webreq = WebRequest.CreateHttp (tokenUri);
 			webreq.Method = "POST";
+			webreq.Accept = "application/json";
 			webreq.ContentType = "application/x-www-form-urlencoded";
-			webreq.SendChunked = true;
-			string postData = String.Format("code={0}&client_id={1}&client_secret={2}&redirect_uri={3}&grant_type=authorization_code", 
-				code, 
-				CLIENT_ID, 
-				CLIENT_SECRET,
-				redirectUri);
-			Encoding encr = new UTF8Encoding();
-			Byte[] bytes = encr.GetBytes(postData);
 			webreq.ContentLength = bytes.Length;
-			using (Stream dataStream = webreq.GetRequestStream()) {
-				dataStream.Write(bytes,0,bytes.Length);
-				dataStream.Close();
-			}
-			try {
-				WebResponse response = webreq.GetResponse();
-				string resQuery = response.ResponseUri.Query;
-				string cont = HttpUtility.ParseQueryString(resQuery)["continue"];
-				Response.Redirect (cont);
-			}
-			catch (WebException wex) {
-				Response.Redirect(wex.Response.ResponseUri.AbsoluteUri);
+			using (Stream dataStream = webreq.GetRequestStream ()) {
+				dataStream.Write (bytes, 0, bytes.Length);
+			};
+
+			using (WebResponse response = webreq.GetResponse ()) {
+
+				using (Stream responseStream = response.GetResponseStream ()) {
+					using (StreamReader readStream = new StreamReader (responseStream, Encoding.ASCII)) {
+						string responseStr = readStream.ReadToEnd ();
+						TokenResult res = JsonConvert.DeserializeObject<TokenResult>(responseStr);
+
+					}
+				}
 			}
 		}
 
-		public void Code()
-		{
-
-		}
 	}
 }
 

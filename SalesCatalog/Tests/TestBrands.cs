@@ -1,3 +1,5 @@
+
+	#if TEST
 using NUnit.Framework;
 using System;
 using SalesCatalog.Model;
@@ -29,3 +31,4 @@ namespace SalesCatalog.Tests
 	}
 }
 
+#endif 
