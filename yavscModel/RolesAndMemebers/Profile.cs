@@ -12,6 +12,9 @@ namespace Yavsc.Model.RolesAndMembers
 		[StringLength (1024)]
 		public string Name { get; set; }
 
+		[DisplayName("Avatar")]
+		public string avatar { get; set; }
+
 		[DisplayName ("Adresse")]
 		[StringLength (2047)]
 		public string Address { get; set; }
@@ -75,6 +78,9 @@ namespace Yavsc.Model.RolesAndMembers
 		[DisplayName ("Clé RIB")]
 		public int BankedKey { get; set; }
 
+		[Display(Name="Google Calendar")]
+		public string GoogleCalendar { get; set; }
+
 		public bool IsBankable { get { 
 				return IsBillable 
 			&& !string.IsNullOrWhiteSpace (BankCode)
@@ -108,6 +114,9 @@ namespace Yavsc.Model.RolesAndMembers
 
 			object s = profile.GetPropertyValue ("BlogTitle");
 			BlogTitle = (s is DBNull) ? null : (string)s;
+
+			s = profile.GetPropertyValue ("avatar");
+			avatar = (s is DBNull) ? null : (string)s;
 	
 			s = profile.GetPropertyValue ("Address");
 			Address = (s is DBNull) ? null : (string)s;

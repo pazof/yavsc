@@ -1,7 +1,7 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEditEntryModel>" MasterPageFile="~/Models/App.master"%>
 <asp:Content ContentPlaceHolderID="head" ID="head1" runat="server" >
-<script type="text/javascript" src="/js/jquery-latest.js"></script> 
-<script type="text/javascript" src="/js/rangyinputs-jquery-1.1.2.js"></script> 
+<script type="text/javascript" src="/Scripts/jquery-2.1.1.js"></script> 
+<script type="text/javascript" src="/Scripts/rangyinputs-jquery-1.1.2.js"></script> 
 </asp:Content>
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="headerContent" runat="server">	
 <h1 class="blogtitle"> 

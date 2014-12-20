@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using Yavsc.Controllers;
 using System.Collections.Generic;
+using Yavsc.Model;
 using Yavsc.Model.WorkFlow;
 using WorkFlowProvider;
 using System.Web.Security;
@@ -21,14 +22,20 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class FrontOfficeController : Controller
 	{
-		/*
+		protected WorkFlowManager wfmgr = null;
 
-*/
+		protected override void Initialize (System.Web.Routing.RequestContext requestContext)
+		{
+			base.Initialize (requestContext);
+			wfmgr = new WorkFlowManager ();
+		}
+
 		[Authorize]
 		public ActionResult Estimates ()
 		{
 			string username = Membership.GetUser ().UserName;
-			return View(WorkFlowManager.GetEstimates (username));
+
+			return View(wfmgr.GetEstimates (username));
 		}
 
 		[Authorize]
@@ -38,7 +45,7 @@ namespace Yavsc.Controllers
 			ViewData ["WABASEWF"] = ViewData ["WebApiBase"] + "/WorkFlow";
 			if (submit == null) {
 				if (model.Id > 0) {
-					Estimate f = WorkFlowManager.GetEstimate (model.Id);
+					Estimate f = wfmgr.GetEstimate (model.Id);
 					if (f == null) {
 						ModelState.AddModelError ("Id", "Wrong Id");
 						return View (model);
@@ -64,12 +71,12 @@ namespace Yavsc.Controllers
 						throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
 
 					if (model.Id == 0)
-						model = WorkFlowManager.CreateEstimate (
+						model = wfmgr.CreateEstimate (
 							username,
 							model.Client, model.Title, model.Description);
 					else {
-						WorkFlowManager.UpdateEstimate (model);
-						model = WorkFlowManager.GetEstimate (model.Id);
+						wfmgr.UpdateEstimate (model);
+						model = wfmgr.GetEstimate (model.Id);
 					}
 				}
 			}

@@ -249,8 +249,13 @@ CREATE TABLE profiledata
   wicketcode character varying(5),
   iban character varying(33),
   bic character varying(15),
-  gcode character varying(512),
-  CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
+  gtoken character varying(512),
+  grefreshtoken character varying(512), -- Google refresh token
+  gtokentype character varying(256), -- Google access token type
+  gcalid character varying(255),
+  gtokenexpir timestamp with time zone, -- Google access token expiration date
+  avatar character varying(512), -- url for an avatar
+    CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
 )
@@ -264,9 +269,14 @@ COMMENT ON COLUMN profiledata.hasavatar IS 'True when user has specified an imag
 COMMENT ON COLUMN profiledata.accountnumber IS 'Numero de compte';
 COMMENT ON COLUMN profiledata.bankedkey IS 'clé RIB';
 COMMENT ON COLUMN profiledata.bankcode IS 'Code banque';
+COMMENT ON COLUMN profiledata.gtoken IS 'Google authentification token';
+COMMENT ON COLUMN profiledata.gcalid IS 'Google calendar identifier';
+COMMENT ON COLUMN profiledata.gtokentype IS 'Google access token type';
+COMMENT ON COLUMN profiledata.grefreshtoken IS 'Google refresh token';
+COMMENT ON COLUMN profiledata.gtokenexpir IS 'Google access token expiration date';
+COMMENT ON COLUMN profiledata.avatar IS 'url for an avatar';
 
-
--- Index: fki_fkprofiles2
+ -- Index: fki_fkprofiles2
 
 -- DROP INDEX fki_fkprofiles2;
 

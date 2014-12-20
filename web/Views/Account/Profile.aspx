@@ -52,10 +52,16 @@
 <%= Html.TextBox("BlogTitle") %>
 <%= Html.ValidationMessage("BlogTitle", "*") %></td></tr>
 <tr><td align="right">
-Avatar   </td><td> <img class="avatar" src="/Blogs/Avatar?user=<%=ViewData["UserName"]%>" alt=""/>
+Avatar   </td><td> <img class="avatar" src="<%=Model.avatar%>" alt=""/>
 <input type="file" id="AvatarFile" name="AvatarFile"/>
 <%= Html.ValidationMessage("AvatarFile", "*") %></td></tr>
+<tr><td align="right">
+   <%= Html.LabelFor(model => model.GoogleCalendar) %>
+   </td>
+   <td>
 
+   </td>
+   </tr>
 </table>
 
    <h2>Informations de facturation</h2>
@@ -132,8 +138,6 @@ Avatar   </td><td> <img class="avatar" src="/Blogs/Avatar?user=<%=ViewData["User
    Bankable:<%= Model.IsBankable %>, Billable:<%=Model.IsBillable%>
 <% } %>
 		
-   <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account")%>
-
-
-   </asp:Content>
-
+   <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
+   <%= Html.ActionLink("Désincription","Unregister", "Account",null, new { @class="actionlink" })%>
+</asp:Content>

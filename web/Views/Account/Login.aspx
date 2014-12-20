@@ -19,5 +19,5 @@
 <input type="submit"/>
 <% } %>
 
-<%= Html.ActionLink("S'enregistrer","Register",new {returnUrl=ViewData["returnUrl"]}) %>
+<%= Html.ActionLink("S'enregistrer","Register",new {returnUrl=ViewData["returnUrl"]}, new { @class="actionlink" }) %>
 </asp:Content>

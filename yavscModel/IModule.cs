@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Collections.Specialized;
 using System.Data;
+using System.Web.Mvc;
 
 namespace Yavsc.Model
 {
@@ -19,18 +20,14 @@ namespace Yavsc.Model
 		/// <param name="cnx">Cnx.</param>
 		/// <param name="removeConfig">If set to <c>true</c> remove config.</param>
 		void Uninstall(IDbConnection cnx,bool removeConfig);
-		ConfigurationSection DefaultConfig (string appName, string cnxStr);
-		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="Yavsc.Model.IModule"/> is active.
-		/// </summary>
-		/// <value><c>true</c> if active; otherwise, <c>false</c>.</value>
-		bool Active { get; set; }
-		/// <summary>
-		/// Gets or sets the name of the application.
-		/// </summary>
-		/// <value>The name of the application.</value>
-		string ApplicationName { get; set; }
 		void Initialize (string name, NameValueCollection config);
 	}
+	public interface IRenderer {
+		// Should set ViewData["Message|Author|Body"]
+		object Get(Controller c);
+		string Template { get; }
+		string Name { get; set; }
+	}
+
 }
 

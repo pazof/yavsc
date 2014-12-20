@@ -9,7 +9,7 @@
     <ProjectTypeGuids>{349C5851-65DF-11DA-9384-00065B846F21};{603C0E0B-DB56-11DC-BE95-000D561079B0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>Yavsc</RootNamespace>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -78,12 +78,6 @@
     <Reference Include="Microsoft.Build.Tasks.v12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.Build.Utilities.v12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.Build, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="System.Web.Http.WebHost">
-      <HintPath>..\..\..\..\..\usr\lib\mono\4.5\System.Web.Http.WebHost.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Formatting">
-      <HintPath>..\..\..\..\..\usr\lib\mono\4.5\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net" />
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -92,15 +86,16 @@
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Web.Mvc" />
     <Reference Include="System.Web.Http" />
+    <Reference Include="System.Net.Http.Formatting" />
+    <Reference Include="System.Web.Http.WebHost" />
+    <Reference Include="System.Json" />
     <Reference Include="System.Web.WebPages" />
-    <Reference Include="System.Web.WebPages.Deployment" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Scripts\" />
     <Folder Include="Views\Account\" />
     <Folder Include="images\" />
-    <Folder Include="Thanks\" />
     <Folder Include="Views\Blogs\" />
     <Folder Include="Helpers\" />
     <Folder Include="Views\FrontOffice\" />
@@ -112,7 +107,6 @@
     <Folder Include="CatExts\" />
     <Folder Include="Views\WorkFlow\" />
     <Folder Include="Views\Admin\" />
-    <Folder Include="js\" />
     <Folder Include="Theme\" />
     <Folder Include="Theme\green\" />
     <Folder Include="Theme\blue\" />
@@ -122,6 +116,7 @@
     <Folder Include="install\" />
     <Folder Include="App_GlobalResources\" />
     <Folder Include="Views\Google\" />
+    <Folder Include="Settings\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -129,10 +124,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Thanks\ThanksConfigurationSection.cs" />
-    <Compile Include="Thanks\ThanksConfigurationCollection.cs" />
-    <Compile Include="Thanks\ThanksConfigurationElement.cs" />
-    <Compile Include="Thanks\ThanksHelper.cs" />
     <Compile Include="Controllers\BlogsController.cs" />
     <Compile Include="Views\RegisterPage.cs" />
     <Compile Include="AssemblyInfo.cs" />
@@ -165,6 +156,14 @@
     <Compile Include="Controllers\FormInputValue.cs" />
     <Compile Include="Controllers\IValueProvider.cs" />
     <Compile Include="Controllers\GoogleController.cs" />
+    <Compile Include="Controllers\ModuleController.cs" />
+    <Compile Include="Settings\ThanksConfigurationSection.cs" />
+    <Compile Include="Settings\ThanksConfigurationCollection.cs" />
+    <Compile Include="Settings\ThanksConfigurationElement.cs" />
+    <Compile Include="Settings\ThanksHelper.cs" />
+    <Compile Include="Settings\ModulesConfigurationSection.cs" />
+    <Compile Include="Settings\ModuleConfigurationElementCollection.cs" />
+    <Compile Include="Settings\ModuleConfigurationElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -223,10 +222,6 @@
     <Content Include="Views\Admin\Restored.aspx" />
     <Content Include="Views\Admin\Index.aspx" />
     <Content Include="Views\FrontOffice\Estimate.aspx" />
-    <Content Include="js\jquery.metadata.js" />
-    <Content Include="js\jquery.tablesorter.js" />
-    <Content Include="js\jquery.tablesorter.min.js" />
-    <Content Include="js\jquery-latest.js" />
     <Content Include="Theme\style.css" />
     <Content Include="Theme\green\asc.png" />
     <Content Include="Theme\green\bg.png" />
@@ -243,19 +238,23 @@
     <Content Include="Views\FrontOffice\Estimates.aspx" />
     <Content Include="images\pgsql.png" />
     <Content Include="Views\Home\ReferencedAssemblies.aspx" />
-    <Content Include="js\rangyinputs-jquery-1.1.2.js" />
     <Content Include="Catalog.xml" />
     <Content Include="RegistrationMail.txt" />
     <Content Include="instdbws.sql" />
     <Content Include="Views\FrontOffice\Writting.ascx" />
     <Content Include="packages.config" />
-    <Content Include="Views\Account\OpenIDLogOn.aspx" />
     <Content Include="Views\Google\Calendar.aspx" />
     <Content Include="Views\Google\Login.aspx" />
     <Content Include="Scripts\jquery-2.1.1-vsdoc.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-2.1.1.min.js" />
     <Content Include="Views\Google\Auth.aspx" />
+    <Content Include="Scripts\jquery.metadata.js" />
+    <Content Include="Scripts\jquery.tablesorter.js" />
+    <Content Include="Scripts\jquery.tablesorter.min.js" />
+    <Content Include="Scripts\rangyinputs-jquery-1.1.2.js" />
+    <Content Include="images\sign-in-with-google.png" />
+    <Content Include="Views\Account\Unregister.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -272,7 +271,6 @@
   </ProjectExtensions>
   <ItemGroup>
     <None Include="README" />
-    <None Include="uninstdb.sql" />
     <None Include="uninstdbws.sql" />
     <None Include="templates\Estim.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>

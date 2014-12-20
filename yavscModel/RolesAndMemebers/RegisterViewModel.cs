@@ -7,7 +7,6 @@ namespace Yavsc.Model.RolesAndMembers
 	public class RegisterViewModel
 	{
 		[Localizable(true)]
-		[Display(Name="User name")]
 		[Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")]
 		public string UserName { get; set; }
  

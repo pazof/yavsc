@@ -11,6 +11,12 @@ namespace Yavsc.ApiControllers
 	// TODO should mostly be an API Controller
 	public class BasketController : ApiController
     {
+		protected WorkFlowManager wfmgr = null;
+		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
+		{
+			base.Initialize (controllerContext);
+			wfmgr = new WorkFlowManager ();
+		}
 		/// <summary>
 		/// Validates the order.
 		/// 
@@ -42,7 +48,7 @@ namespace Yavsc.ApiControllers
 		[Authorize]
 		public Estimate[] YourEstimates()
 		{
-			return WorkFlowManager.GetEstimates (
+			return wfmgr.GetEstimates (
 				Membership.GetUser().UserName);
 		}
 

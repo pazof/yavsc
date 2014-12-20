@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Yavsc.Model</RootNamespace>
     <AssemblyName>YavscModel</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,10 +33,10 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.Mvc" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -84,6 +85,9 @@
     <Compile Include="LocalizedText.Designer.cs">
       <DependentUpon>LocalizedText.resx</DependentUpon>
     </Compile>
+    <Compile Include="Google\People.cs" />
+    <Compile Include="Google\AuthToken.cs" />
+    <Compile Include="Google\SignIn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -92,6 +96,7 @@
     <Folder Include="Blogs\" />
     <Folder Include="Admin\" />
     <Folder Include="FileSystem\" />
+    <Folder Include="Google\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SalesCatalog\SalesCatalog.csproj">

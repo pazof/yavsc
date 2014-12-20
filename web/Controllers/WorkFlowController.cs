@@ -15,7 +15,7 @@ namespace Yavsc.ApiControllers
 	public class WorkFlowController : ApiController
     {
 		string adminRoleName="Admin";
-
+		protected WorkFlowManager wfmgr = null;
 		protected override void Initialize (HttpControllerContext controllerContext)
 		{
 			// TODO move it in a module initialization
@@ -23,13 +23,14 @@ namespace Yavsc.ApiControllers
 			if (!Roles.RoleExists (adminRoleName)) {
 				Roles.CreateRole (adminRoleName);
 			} 
+			wfmgr = new WorkFlowManager ();
 		}
 
 		[HttpGet]
 		[Authorize]
 		public Estimate CreateEstimate (string title,string client,string description)
 		{
-			return WorkFlowManager.CreateEstimate (
+			return wfmgr.CreateEstimate (
 				Membership.GetUser().UserName,client,title,description);
 		}
 
@@ -37,7 +38,7 @@ namespace Yavsc.ApiControllers
 		[Authorize]
 		public void DropWritting(long wrid)
 		{
-			WorkFlowManager.DropWritting (wrid);
+			wfmgr.DropWritting (wrid);
 		}
 
 
@@ -46,13 +47,13 @@ namespace Yavsc.ApiControllers
 		[Authorize]
 		public void DropEstimate(long estid)
 		{
-			WorkFlowManager.DropEstimate (estid);
+			wfmgr.DropEstimate (estid);
 		}
 
 		[HttpGet]
 		[Authorize]
 		public object Index()
-        {
+		{
 			// TODO inform user on its roles and alerts
 			string username = Membership.GetUser ().UserName;
 			return new { test=string.Format("Hello {0}!",username) }; 
@@ -75,7 +76,7 @@ namespace Yavsc.ApiControllers
 		[ValidateAjax]
 		public HttpResponseMessage UpdateWritting([FromBody] Writting wr)
 		{
-			WorkFlowManager.UpdateWritting (wr);
+			wfmgr.UpdateWritting (wr);
 			return Request.CreateResponse (System.Net.HttpStatusCode.OK);
 		}
 
@@ -95,7 +96,7 @@ namespace Yavsc.ApiControllers
 			}
 			try {
 				return Request.CreateResponse(System.Net.HttpStatusCode.OK,
-					WorkFlowManager.Write(estid, wr.Description,
+					wfmgr.Write(estid, wr.Description,
 						wr.UnitaryCost, wr.Count, wr.ProductReference));
 			}
 			catch (Exception ex) {

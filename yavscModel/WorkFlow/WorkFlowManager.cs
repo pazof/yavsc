@@ -12,44 +12,41 @@ namespace Yavsc.Model.WorkFlow
 	/// It takes orders store them and raise some events for modules
 	/// It publishes estimates and invoices
 	/// </summary>
-	public static class WorkFlowManager
+	public class WorkFlowManager 
 	{
 		public static Catalog Catalog { get; set; }
 
-
-		public static void UpdateEstimate (Estimate estim)
+		public void UpdateEstimate (Estimate estim)
 		{
 			ContentProvider.UpdateEstimate (estim);
 		}
 
-		public static event EventHandler NewOrder;
-
-		public static Estimate GetEstimate (long estid)
+		public Estimate GetEstimate (long estid)
 		{
 			return ContentProvider.GetEstimate (estid);
 		}
 
-		public static Estimate [] GetEstimates (string client)
+		public Estimate [] GetEstimates (string client)
 		{
 			return ContentProvider.GetEstimates (client);
 		}
 
-		public static void UpdateWritting (Writting wr)
+		public void UpdateWritting (Writting wr)
 		{
 			ContentProvider.UpdateWritting (wr);
 		}
 
-		public static void DropWritting (long wrid)
+		public void DropWritting (long wrid)
 		{
 			ContentProvider.DropWritting (wrid);
 		}
-		public static void DropEstimate (long estid)
+		public void DropEstimate (long estid)
 		{
 			ContentProvider.DropEstimate(estid);
 		}
-		static IContentProvider contentProvider;
+		IContentProvider contentProvider;
 
-		public static IContentProvider ContentProvider {
+		public IContentProvider ContentProvider {
 			get {
 				WorkflowConfiguration c = (WorkflowConfiguration) ConfigurationManager.GetSection ("system.web/workflow");
 				if (c == null)
@@ -75,8 +72,6 @@ namespace Yavsc.Model.WorkFlow
 					System.Reflection.ConstructorInfo ci =cpt.GetConstructor (System.Type.EmptyTypes);
 					contentProvider = (IContentProvider)ci.Invoke (System.Type.EmptyTypes);
 				}
-					
-				contentProvider.ApplicationName = confprov.ApplicationName;
 
 				NameValueCollection config = new NameValueCollection ();
 				config.Add ("name", confprov.Name);
@@ -96,15 +91,13 @@ namespace Yavsc.Model.WorkFlow
 		/// <returns>The estimate identifier.</returns>
 		/// <param name="title">Title.</param>
 
-		public static Estimate CreateEstimate(string responsible, string client, string title, string description)
+		public Estimate CreateEstimate(string responsible, string client, string title, string description)
 		{
 			Estimate created = ContentProvider.CreateEstimate (responsible, client, title, description);
-			if (NewOrder != null)
-				NewOrder.Invoke(ContentProvider, new NewEstimateEvenArgs(created));
 			return created;
 		}
 
-		public static long Write(long estid, string desc, decimal ucost, int count, string productid)
+		public long Write(long estid, string desc, decimal ucost, int count, string productid)
 		{
 			if (!string.IsNullOrWhiteSpace(productid)) {
 				if (Catalog == null)
@@ -112,12 +105,14 @@ namespace Yavsc.Model.WorkFlow
 				if (Catalog == null)
 					throw new Exception ("No catalog");
 				Product p = Catalog.FindProduct (productid);
+				if (p == null)
+					throw new Exception ("Product not found");
 				// TODO new EstimateChange Event
 			}
 			return ContentProvider.Write(estid, desc, ucost, count, productid);
 		}
 
-		public static void SetEstimateStatus(long estid, int status, string username)
+		public void SetEstimateStatus(long estid, int status, string username)
 		{
 			ContentProvider.SetEstimateStatus (estid, status, username);
 		}

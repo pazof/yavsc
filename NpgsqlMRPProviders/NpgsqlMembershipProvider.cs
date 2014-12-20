@@ -1172,10 +1172,13 @@ namespace Npgsql.Web
 		{
 			MembershipUserCollection users = new MembershipUserCollection ();
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
+				conn.Open ();
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT count(*) " +
 					" FROM Users " + 
-					" WHERE Email LIKE @EmailSearch AND ApplicationName = @ApplicationName ", conn)) {
-					totalRecords = (int)cmd.ExecuteScalar ();
+					" WHERE Email LIKE @EmailSearch AND ApplicationName = @appname ", conn)) {
+					cmd.Parameters.Add ("@EmailSearch", emailToMatch);
+					cmd.Parameters.Add ("@appname", this.ApplicationName);
+					totalRecords = (int)(long)cmd.ExecuteScalar ();
 				}
 
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT PKID, Username, Email, PasswordQuestion," +
@@ -1186,7 +1189,6 @@ namespace Npgsql.Web
 					" ORDER BY Username Asc", conn)) {
 					cmd.Parameters.Add ("@EmailSearch", NpgsqlDbType.Varchar, 255).Value = emailToMatch;
 					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = ApplicationName;
-					conn.Open ();
 					using (NpgsqlDataReader reader = cmd.ExecuteReader ()) {
 						int counter = 0;
 						int startIndex = pageSize * pageIndex;
@@ -1204,8 +1206,9 @@ namespace Npgsql.Web
 						}
 						reader.Close ();
 					}
-					conn.Close ();
+
 				}
+				conn.Close ();
 			}
 			return users;
 		}

@@ -24,7 +24,7 @@ clean:
 	rm -rf $(DESTDIR)
 
 rsync-preprod: deploy
-	rsync -ravu build/web/$(CONFIG)/ root@lavieille.localdomain:/srv/httpd/luapre
+	rsync -ravu build/web/$(CONFIG)/ root@lua.localdomain:/srv/httpd/luapre
 
 rsync-local:
 	rsync -ravu build/web/$(CONFIG)/ root@localhost:/srv/www/yavsc

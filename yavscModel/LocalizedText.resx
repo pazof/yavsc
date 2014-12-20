@@ -32,4 +32,5 @@
 	<data name="User_name"><value>User name</value></data>
 	<data name="Google_error"><value>Google error : {0}</value></data>
 	<data name="access_denied"><value>Access denied</value></data>
+	<data name="UserName"><value>User name</value></data>
 </root>

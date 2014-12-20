@@ -21,7 +21,13 @@ namespace Yavsc.Controllers
 			WebConfigurationManager.AppSettings ["RegistrationMessage"];
 
 		string avatarDir = "~/avatars";
-
+		/// <summary>
+		/// Gets or sets the avatar dir.
+		/// This value is past to <c>Server.MapPath</c>,
+		/// it should start with </c>~/</c>, and we assume it
+		/// to be relative to the application path.
+		/// </summary>
+		/// <value>The avatar dir.</value>
 		public string AvatarDir {
 			get { return avatarDir; }
 			set { avatarDir = value; }
@@ -160,6 +166,17 @@ namespace Yavsc.Controllers
 		}
 
 		[Authorize]
+		public ActionResult Unregister(bool confirmed=false)
+		{
+			if (!confirmed)
+				return View ();
+
+			Membership.DeleteUser (
+				Membership.GetUser ().UserName);
+			return RedirectToAction ("Index","Home");
+		}
+
+		[Authorize]
 		[HttpPost]
 		public ActionResult ChangePassword (ChangePasswordModel model)
 		{
@@ -173,6 +190,7 @@ namespace Yavsc.Controllers
 
 					if (users.Count > 0) {
 						MembershipUser user = Membership.GetUser (model.Username,true);	
+
 						changePasswordSucceeded = user.ChangePassword (model.OldPassword, model.NewPassword);
 					} else {
 						changePasswordSucceeded = false;
@@ -213,13 +231,15 @@ namespace Yavsc.Controllers
 			if (AvatarFile != null) { 
 
 				if (AvatarFile.ContentType == "image/png") {
-					// byte[] img = new byte[AvatarFile.ContentLength];
-					// AvatarFile.InputStream.Read (img, 0, AvatarFile.ContentLength);
-					// model.Avatar = img;
-
 					string avdir=Server.MapPath (AvatarDir);
 					string avpath=Path.Combine(avdir,username+".png");
 					AvatarFile.SaveAs (avpath);
+					string avuri = avpath.Substring(
+						AppDomain.CurrentDomain.BaseDirectory.Length);
+					avuri = avuri.Replace (" ", "+");
+					avuri = Request.Url.Scheme + "://" + Request.Url.Authority + "/" + avuri;
+					HttpContext.Profile.SetPropertyValue ("avatar", avuri );
+					HttpContext.Profile.Save ();
 				} else
 					ModelState.AddModelError ("Avatar",
 						string.Format ("Image type {0} is not supported (suported formats : {1})",

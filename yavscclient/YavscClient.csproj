@@ -37,7 +37,6 @@
     <Reference Include="System.ServiceModel.Activation" />
     <Reference Include="System.Net.Http.Formatting">
       <HintPath>..\..\..\..\..\usr\lib\mono\4.5\System.Net.Http.Formatting.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Posix" />
   </ItemGroup>

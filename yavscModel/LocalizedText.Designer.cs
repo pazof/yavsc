@@ -112,6 +112,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string UserName {
+            get {
+                return ResourceManager.GetString("UserName", resourceCulture);
+            }
+        }
+        
         public static string Offline {
             get {
                 return ResourceManager.GetString("Offline", resourceCulture);

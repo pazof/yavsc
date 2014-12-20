@@ -29,6 +29,14 @@ namespace Yavsc.ApiControllers
 	public class FrontOfficeController : ApiController
 	{
 
+		protected WorkFlowManager wfmgr = null;
+
+		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
+		{
+			base.Initialize (controllerContext);
+			wfmgr = new WorkFlowManager ();
+		}
+
 		[AcceptVerbs("GET")]
 		public Catalog Catalog ()
 		{
@@ -87,7 +95,7 @@ namespace Yavsc.ApiControllers
 		/// <param name="estid">Estid.</param>
 		public Estimate GetEstimate (long Id)
 		{
-			Estimate est = WorkFlowManager.ContentProvider.GetEstimate (Id);
+			Estimate est = wfmgr.ContentProvider.GetEstimate (Id);
 			return est;
 		}
 
@@ -107,7 +115,7 @@ namespace Yavsc.ApiControllers
 		private string getEstimTex(long estimid)
 		{
 			Yavsc.templates.Estim  tmpe = new Yavsc.templates.Estim();		
-			Estimate e = WorkFlowManager.GetEstimate (estimid);
+			Estimate e = wfmgr.GetEstimate (estimid);
 			tmpe.Session = new Dictionary<string,object>();
 			tmpe.Session.Add ("estim", e);
 
@@ -132,7 +140,7 @@ namespace Yavsc.ApiControllers
 		/// <param name="estimid">Estimid.</param>
 		public HttpResponseMessage GetEstimPdf(long estimid)
 		{
-			Estimate estim = WorkFlowManager.GetEstimate (estimid);
+			Estimate estim = wfmgr.GetEstimate (estimid);
 			//TODO better with pro.IsBankable && cli.IsBillable
 
 			return new HttpResponseMessage () {

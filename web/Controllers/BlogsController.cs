@@ -18,6 +18,7 @@ using Yavsc.Model;
 using Yavsc.Model.Blogs;
 using Yavsc.ApiControllers;
 using Yavsc.Model.RolesAndMembers;
+using System.Net;
 
 namespace Yavsc.Controllers
 {
@@ -234,12 +235,19 @@ namespace Yavsc.Controllers
 		[AcceptVerbs (HttpVerbs.Get)]
 		public ActionResult Avatar (string user)
 		{
-			string avpath = Path.Combine (
-				                Server.MapPath (AvatarDir), user + ".png");
-			FileInfo fia = new FileInfo (avpath);
-			if (!fia.Exists)
-				fia = new FileInfo (Server.MapPath (defaultAvatar));
-			return File (fia.OpenRead (), defaultAvatarMimetype);
+			ProfileBase pr = ProfileBase.Create (user);
+
+			string avpath = (string) pr.GetPropertyValue ("avatar");
+			if (avpath == null) { 
+				FileInfo fia = new FileInfo (Server.MapPath (defaultAvatar));
+				return File (fia.OpenRead (), defaultAvatarMimetype);
+			}
+			WebRequest wr = WebRequest.Create(avpath);
+			using (WebResponse resp = wr.GetResponse ()) {
+				using (Stream str = resp.GetResponseStream ()) {
+					return File (str, resp.ContentType);
+				}
+			}
 		}
 
 		/// <summary>

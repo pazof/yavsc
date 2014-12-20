@@ -17,9 +17,8 @@ namespace Yavsc
 		{
 
 			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}");
-			routes.IgnoreRoute ("js/{*pathInfo}");
+			routes.IgnoreRoute ("Scripts/{*pathInfo}");
 			routes.IgnoreRoute ("Theme/{*pathInfo}");
-			routes.IgnoreRoute ("css/{*pathInfo}");
 			routes.IgnoreRoute ("images/{*pathInfo}");
 
 			routes.MapRoute (
@@ -44,7 +43,6 @@ namespace Yavsc
 		protected void Application_Start ()
 		{
 			AreaRegistration.RegisterAllAreas ();
-			// add formatters : GlobalConfiguration.Configuration.Formatters.Add (new ZeroFormatter ());
 			GlobalConfiguration.Configuration.Routes.MapHttpRoute(
 						name: "DefaultApi",
 				routeTemplate: "api/{controller}/{action}/{*id}",
