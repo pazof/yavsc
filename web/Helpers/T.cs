@@ -8,14 +8,16 @@ using System.Web.Mvc.Ajax;
 using System.Net.Mail;
 using Yavsc;
 using System.Globalization;
+using Yavsc.Model;
 
-namespace Yavsc
+namespace Yavsc.Helpers
 {
 	public class T
 	{
-		public static string GetString(string msgid)
+		public static string GetString(string msg)
 		{
-			return Mono.Unix.Catalog.GetString (msgid);
+			string tr = LocalizedText.ResourceManager.GetString (msg.Replace (" ", "_"));
+			return tr==null?msg:tr;
 		}
 	}
 }

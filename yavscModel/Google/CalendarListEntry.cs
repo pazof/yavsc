@@ -1,5 +1,5 @@
 //
-//  People.cs
+//  CalendarListEntry.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -35,37 +35,31 @@ using Yavsc.Model;
 namespace Yavsc.Model.Google
 {
 
-	public class People {
-		public string kind { get; set; }
+	public class CalendarListEntry {
+		public string kind { get; set;}
 		public string etag { get; set; }
-		public string gender { get; set; }
-		public class EMail{ 
-			public string value { get; set; }
-			public string type { get; set; }
-		}
-		public EMail[] emails { get; set; }
-		public string objectType { get; set; }
 		public string id { get; set; }
-		public string displayName { get; set; }
-		public class Name {
-			public string familyName { get; set; }
-			public string givenName { get; set; }
+		public string summary { get; set; }
+		public string description { get; set; }
+		public string timeZone { get; set; }
+		public string colorId { get; set; }
+		public string backgroundColor { get; set; }
+		public string foregroundColor { get; set; }
+		public bool selected { get; set; }
+		public bool primary { get; set; }
+		public string accessRole { get; set; }
+		public class Reminder {
+			public string method { get; set; }
+			public int minutes { get; set; }
 		}
-		public Name name { get; set;}
-		public string url { get; set; }
-		public class Image {
-			public string url { get; set; }
-			public bool isDefault { get; set; }
-		}
-		public Image image { get; set; }
-		public class Place {
-			public string value { get; set; }
-			public bool primary { get; set; }
-		}
-		public Place[] placesLived { get; set; }
-		public bool isPlusUser { get; set; }
-		public string language { get; set; }
-		public int circledByCount { get; set; }
-		public bool verified { get; set; }
+		public Reminder[] defaultReminders { get; set; }
+		/*   "notificationSettings": { "notifications": 
+      [ { "type": "eventCreation", "method": "email" }, 
+      { "type": "eventChange", "method": "email" }, 
+      { "type": "eventCancellation", "method": "email" }, 
+      { "type": "eventResponse", "method": "email" } ] }, "primary": true },
+
+*/
 	}
+	
 }

@@ -2,8 +2,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <asp:ContentPlaceHolder id="init" runat="server">
- <% Page.Title = Page.Title + " - " + YavscHelpers.SiteName; %>
 </asp:ContentPlaceHolder>
+  <% ViewState["orgtitle"] = T.GetString(Page.Title); %> 
+ <% Page.Title = ViewState["orgtitle"] + " - " + YavscHelpers.SiteName; %>
 <head runat="server">
  <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>
@@ -16,7 +17,9 @@
 <body>
 <header>
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
-<h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>"><%= Page.Title %></a></h1>
+<h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>"> <%=ViewState["orgtitle"]%> </a> - 
+<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
+ </h1>
 </asp:ContentPlaceHolder>
 <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
 <% if (ViewData["Error"]!=null) { %>
@@ -29,32 +32,36 @@
 <%= Html.Encode(ViewData["Message"]) %>
 </div>
 <% } %>
+
 	</header>
 	<main>
+
 	<asp:ContentPlaceHolder ID="MainContent" runat="server">
 		</asp:ContentPlaceHolder>
+
+
    </main>
    <aside>
    <asp:ContentPlaceHolder ID="MASContent" runat="server">
    </asp:ContentPlaceHolder>
    <div id="login">
 <% if (Membership.GetUser()==null) { %>
-	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" } ) %> 
+	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" } ) %> 
 	 <span class="hidcom"> Page d'accueil </span>
-	<%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" } ) %>
+	<%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" } ) %>
 	<span class="hidcom">Pour pouvoir poster ou commenter</span>
 	<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Login"%>?returnUrl=<%=ViewData["returnUrl"]%>" class="actionlink">
-	<img src="/images/sign-in-with-google.png" style="max-height:1.5em; max-width:6em;" alt="Google sign in">
+	<img src="/images/sign-in-with-google-s.png" style="max-height:1.5em; max-width:6em;" alt="Google sign in">
 	</a>
 	<span class="hidcom">S'authentifier avec son compte Google+</span>
 <% } else { %>
-	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Profile", "Account", null, new { @class="actionlink" }) %>
+	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Profile", "Account", null, new { @class="actionlink" }) %>
 	<span class="hidcom"> &Eacute;dition de votre profile </span> 
-	@ <%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" }) %>
+	@ <%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" }) %>
 	<span class="hidcom"> Page d'accueil </span> 
-	<a href="/Blogs/Post" class="actionlink">Poster </a>
+	<a href="/Blogs/Post" class="actionlink">Poster</a>
 	<span class="hidcom"> &Eacute;dition d'un nouveau billet </span> 
-	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" }) %>
+	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" }) %>
 <% } %>
 	</div>
 	</aside>

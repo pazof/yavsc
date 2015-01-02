@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Profile;
 using System.Web.Security;
+using System.Web;
 
 namespace Yavsc.Model.RolesAndMembers
 {
@@ -78,7 +79,7 @@ namespace Yavsc.Model.RolesAndMembers
 		[DisplayName ("Clé RIB")]
 		public int BankedKey { get; set; }
 
-		[Display(Name="Google Calendar")]
+		[Display(Name="Google_calendar",ResourceType=typeof(LocalizedText))]
 		public string GoogleCalendar { get; set; }
 
 		public bool IsBankable { get { 
@@ -106,6 +107,8 @@ namespace Yavsc.Model.RolesAndMembers
 		public Profile () : base ()
 		{
 		}
+
+		public bool RememberMe { get; set; }
 
 		public Profile (ProfileBase profile)
 		{
@@ -163,6 +166,8 @@ namespace Yavsc.Model.RolesAndMembers
 			s = profile.GetPropertyValue ("BankedKey");
 			BankedKey = (s == null) ? 0 : (s is DBNull)? 0 : (int)s;
 
+			s = profile.GetPropertyValue ("gcalid");
+			GoogleCalendar = (s is DBNull)? null : (string) s;
 		}
 	}
 }

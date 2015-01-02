@@ -30,6 +30,11 @@ namespace Yavsc.Controllers
 			wfmgr = new WorkFlowManager ();
 		}
 
+		public ActionResult Index ()
+		{
+			return View ();
+		}
+
 		[Authorize]
 		public ActionResult Estimates ()
 		{

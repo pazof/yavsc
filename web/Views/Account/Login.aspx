@@ -11,7 +11,7 @@
 <%= Html.Password( "Password" ) %>
 <%= Html.ValidationMessage("Password", "*") %><br/>
 
-<label for="RememberMe">Se souvenir du mot de passe:</label>
+<%= Html.LabelFor(model => model.RememberMe) %>
 <%= Html.CheckBox("RememberMe") %>
 <%= Html.ValidationMessage("RememberMe", "") %><br/>
 <%= Html.Hidden("returnUrl",ViewData["returnUrl"]) %>

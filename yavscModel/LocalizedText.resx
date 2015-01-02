@@ -33,4 +33,10 @@
 	<data name="Google_error"><value>Google error : {0}</value></data>
 	<data name="access_denied"><value>Access denied</value></data>
 	<data name="UserName"><value>User name</value></data>
-</root>
+	<data name="Google_calendar"><value>Google calendar</value></data>
+	<data name="Consultant"><value>Consultant</value></data>
+	<data name="MinDate"><value>Minimal date for the rendez-vous</value></data>
+	<data name="MaxDate"><value>Maximal date for the rendez-vous</value></data>
+	<data name="Date_search"><value>Date search for a rendez-vous</value></data>
+	<data name="Remember_me"><value>Remember me</value></data>
+	</root>

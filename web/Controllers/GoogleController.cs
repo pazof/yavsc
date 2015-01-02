@@ -22,79 +22,125 @@ namespace Yavsc.Controllers
 
 	public class GoogleController : Controller
 	{
-
+		// datetime format : yyyy-mm-ddTHH:MM:ss
+		// 2015-01-01T10:00:00-07:00
 		// private string API_KEY="AIzaSyBV_LQHb22nGgjNvFzZwnQHjao3Q7IewRw";
 
 		private string getPeopleUri = "https://www.googleapis.com/plus/v1/people";
+		private string getCalListUri = "https://www.googleapis.com/calendar/v3/users/me/calendarList";
+		private string getCalEntriesUri = "https://developers.google.com/google-apps/calendar/v3/reference/events/list";
 
-		private string CLIENT_ID="325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com";
+		private string CLIENT_ID = "325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com";
+		private string CLIENT_SECRET = "MaxYcvJJCs2gDGvaELZbzwfL";
 
-		private string CLIENT_SECRET="MaxYcvJJCs2gDGvaELZbzwfL";
-
-		string [] SCOPES = { 
-			"openid" ,
+		string[] SCOPES = { 
+			"openid",
 			"profile",
 			"email"
-		} ; 
+		};
 
-		string tokenUri = "https://accounts.google.com/o/oauth2/token"; 
-		string authUri = "https://accounts.google.com/o/oauth2/auth";
+		string tokenUri = "https://accounts.google.com/o/oauth2/token";
+		string authUri  = "https://accounts.google.com/o/oauth2/auth";
 
-		public void Login(string returnUrl)
+		private string SetSessionSate ()
+		{
+			Random rand = new Random ();
+			string state = "security_token" + rand.Next (100000).ToString () + rand.Next (100000).ToString ();
+			Session ["state"] = state;
+			return state;
+		}
+
+		public void Login (string returnUrl)
 		{
 			if (string.IsNullOrWhiteSpace (returnUrl))
 				returnUrl = "/";
-			Random rand = new Random ();
-			string state = "security_token"+rand.Next (100000).ToString()+rand.Next (100000).ToString();
-			Session ["state"] = state;
 			Session ["returnUrl"] = returnUrl;
 
 			string redirectUri = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Auth";
+			string scope = string.Join ("%20", SCOPES);
 
-			string prms = String.Format("response_type=code&client_id={0}&redirect_uri={1}&scope={2}&state={3}&access_type=offline&include_granted_scopes=false",
-				CLIENT_ID, redirectUri, string.Join("%20",SCOPES), state);
+			string prms = String.Format ("response_type=code&client_id={0}&redirect_uri={1}&scope={2}&state={3}&include_granted_scopes=false",
+				              CLIENT_ID, redirectUri, scope, SetSessionSate ());
 
-			WebRequest wr = WebRequest.Create(authUri+"?"+prms);
+			GetAuthResponse (prms);
+		}
+
+		private void GetAuthResponse (string prms)
+		{
+			WebRequest wr = WebRequest.Create (authUri + "?" + prms);
 			wr.Method = "GET";
-			// Get the response.
+			WebResponse response = wr.GetResponse ();
+			string resQuery = response.ResponseUri.Query;
+			string cont = HttpUtility.ParseQueryString (resQuery) ["continue"];
+			Response.Redirect (cont);
+		}
 
-				WebResponse response = wr.GetResponse();
-				string resQuery = response.ResponseUri.Query;
-				string cont = HttpUtility.ParseQueryString(resQuery)["continue"];
-				Response.Redirect (cont);
-
-
+		[Authorize]
+		public void GetCalAuth ()
+		{
+			string redirectUri = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/CalAuth";
+			string scope = string.Join ("%20", SCOPES);
+			scope += "%20https://www.googleapis.com/auth/calendar";
+			string prms = String.Format ("response_type=code&client_id={0}&redirect_uri={1}&scope={2}&state={3}&include_granted_scopes=false&access_type=offline",
+				              CLIENT_ID, redirectUri, scope, SetSessionSate ());
+			Session ["calasked"] = true;
+			GetAuthResponse (prms);
 		}
 
 		[HttpGet]
-		public ActionResult Auth() 
+		[Authorize]
+		public ActionResult CalAuth ()
 		{
+			string redirectUri = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/CalAuth";
+			AuthToken gat = GetToken (TokenPostDataFromCode(redirectUri, GetCodeFromRequest()));
+			if (gat == null) {
+				return View ("Auth");
+			}
+			SaveToken (gat);
+			HttpContext.Profile.SetPropertyValue ("gcalapi", true);
+			string returnUrl = (string)Session ["returnUrl"];
+			Session ["returnUrl"]=null;
+			return Redirect (returnUrl);
+		}
 
-			string returnUrl = (string) Session ["returnUrl"];
-			string redirectUri = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Auth";
+		/// <summary>
+		/// Saves the token.
+		/// This calls the Profile.Save() method.
+		/// It should be called immediatly after getting the token from Google, in
+		/// order to save a descent value as expiration date.
+		/// </summary>
+		/// <param name="gat">Gat.</param>
+		private void SaveToken(AuthToken gat)
+		{		
+			HttpContext.Profile.SetPropertyValue ("gtoken", gat.access_token);
+			if (gat.refresh_token!=null)
+				HttpContext.Profile.SetPropertyValue ("grefreshtoken", gat.refresh_token);
+			HttpContext.Profile.SetPropertyValue ("gtokentype", gat.token_type);
+			HttpContext.Profile.SetPropertyValue ("gtokenexpir", DateTime.Now.AddSeconds(gat.expires_in));
+			HttpContext.Profile.Save ();
+		}
+
+		private string GetCodeFromRequest()
+		{
 			string code = Request.Params ["code"];
 			string error = Request.Params ["error"];
 			if (error != null) {
 				ViewData ["Message"] = 
-					string.Format(LocalizedText.Google_error,
-						LocalizedText.ResourceManager.GetString(error));
-				return View();
+					string.Format (LocalizedText.Google_error,
+						LocalizedText.ResourceManager.GetString (error));
+				return null;
 			}
 			string state = Request.Params ["state"];
-			if (state!=null && string.Compare((string)Session ["state"],state)!=0) {
+			if (state != null && string.Compare ((string)Session ["state"], state) != 0) {
 				ViewData ["Message"] = 
-					LocalizedText.ResourceManager.GetString("invalid request state");
-				return View();
+					LocalizedText.ResourceManager.GetString ("invalid request state");
+				return null;
 			}
+			return code;
+		}
 
-			string postdata = 
-				string.Format(
-					"redirect_uri={0}&client_id={1}&client_secret={2}&code={3}&grant_type=authorization_code",
-					HttpUtility.UrlEncode(redirectUri),
-					HttpUtility.UrlEncode(CLIENT_ID),
-					HttpUtility.UrlEncode(CLIENT_SECRET),
-					HttpUtility.UrlEncode(code));
-
+		private AuthToken GetToken (string postdata)
+		{
 			Byte[] bytes = System.Text.Encoding.UTF8.GetBytes (postdata);
 			HttpWebRequest webreq = WebRequest.CreateHttp (tokenUri);
 			webreq.Method = "POST";
@@ -103,45 +149,71 @@ namespace Yavsc.Controllers
 			webreq.ContentLength = bytes.Length;
 			using (Stream dataStream = webreq.GetRequestStream ()) {
 				dataStream.Write (bytes, 0, bytes.Length);
-			};
+			}
+			AuthToken gat =null;
 
 			using (WebResponse response = webreq.GetResponse ()) {
 				using (Stream responseStream = response.GetResponseStream ()) {
 					using (StreamReader readStream = new StreamReader (responseStream, Encoding.UTF8)) {
 						string responseStr = readStream.ReadToEnd ();
-						AuthToken gat = JsonConvert.DeserializeObject<AuthToken>(responseStr);
-						Session ["GoogleAuthToken"] = gat;
-						SignIn regmod = new SignIn ();
-						HttpWebRequest webreppro = WebRequest.CreateHttp (getPeopleUri+"/me");
-						webreppro.ContentType = "application/http";
-						webreppro.Headers.Add (HttpRequestHeader.Authorization, gat.token_type + " " + gat.access_token);
-						webreppro.Method = "GET";
-						using (WebResponse proresp = webreppro.GetResponse ()) {
-							using (Stream prresponseStream = proresp.GetResponseStream ()) {
-								using (StreamReader readproresp = new StreamReader (prresponseStream, Encoding.UTF8)) {
-									string prresponseStr = readproresp.ReadToEnd ();
-									People me = JsonConvert.DeserializeObject<People> (prresponseStr);
-									// TODO use me.id to retreive an existing user
-									string accEmail = me.emails.Where (x => x.type == "account").First().value;
-									MembershipUserCollection mbrs = Membership.FindUsersByEmail (accEmail);
-									if (mbrs.Count == 1) {
-										// TODO check the google id
-										// just set this user as logged on
-										FormsAuthentication.SetAuthCookie (me.displayName, true);
-										Session ["returnUrl"] = null;
-										return Redirect (returnUrl);
-									}
-									// else create the account
-									regmod.Email = accEmail;
-									regmod.UserName = me.displayName;
-									Session ["me"] = me;
-									return Auth(regmod);
-								}
-							}
-						}
+						gat = JsonConvert.DeserializeObject<AuthToken> (responseStr);
 					}
 				}
 			}
+			return gat;
+		}
+
+		private string TokenPostDataFromCode(string redirectUri, string code)
+		{
+			string postdata = 
+				string.Format (
+					"redirect_uri={0}&client_id={1}&client_secret={2}&code={3}&grant_type=authorization_code",
+					HttpUtility.UrlEncode (redirectUri),
+					HttpUtility.UrlEncode (CLIENT_ID),
+					HttpUtility.UrlEncode (CLIENT_SECRET),
+					HttpUtility.UrlEncode (code));
+			return postdata;
+		}
+
+		[HttpGet]
+		public ActionResult Auth ()
+		{
+			string redirectUri = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Auth";
+			AuthToken gat = GetToken (TokenPostDataFromCode( redirectUri, GetCodeFromRequest()));
+			if (gat == null) {
+				return View ();
+			}
+			string returnUrl = (string)Session ["returnUrl"];
+
+			SignIn regmod = new SignIn ();
+			HttpWebRequest webreppro = WebRequest.CreateHttp (getPeopleUri + "/me");
+			webreppro.ContentType = "application/http";
+			webreppro.Headers.Add (HttpRequestHeader.Authorization, gat.token_type + " " + gat.access_token);
+			webreppro.Method = "GET";
+			using (WebResponse proresp = webreppro.GetResponse ()) {
+				using (Stream prresponseStream = proresp.GetResponseStream ()) {
+					using (StreamReader readproresp = new StreamReader (prresponseStream, Encoding.UTF8)) {
+						string prresponseStr = readproresp.ReadToEnd ();
+						People me = JsonConvert.DeserializeObject<People> (prresponseStr);
+						// TODO use me.id to retreive an existing user
+						string accEmail = me.emails.Where (x => x.type == "account").First ().value;
+						MembershipUserCollection mbrs = Membership.FindUsersByEmail (accEmail);
+						if (mbrs.Count == 1) {
+							// TODO check the google id
+							// just set this user as logged on
+							FormsAuthentication.SetAuthCookie (me.displayName, true);
+							Session ["returnUrl"] = null;
+							return Redirect (returnUrl);
+						}
+						// else create the account
+						regmod.Email = accEmail;
+						regmod.UserName = me.displayName;
+						Session ["me"] = me;
+						Session ["GoogleAuthToken"] = gat;
+						return Auth (regmod);
+					}
+				}
+			}	
 		}
 
 		/// <summary>
@@ -149,7 +221,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="regmod">Regmod.</param>
 		[HttpPost]
-		public ActionResult Auth(SignIn regmod)
+		public ActionResult Auth (SignIn regmod)
 		{
 			if (ModelState.IsValid) {
 				if (Membership.GetUser (regmod.UserName) != null) {
@@ -188,7 +260,6 @@ namespace Yavsc.Controllers
 					FormsAuthentication.SetAuthCookie (regmod.UserName, true);
 
 					HttpContext.Profile.Initialize (regmod.UserName, true);
-					HttpContext.Profile.SetPropertyValue ("gtoken", gat.access_token);
 					HttpContext.Profile.SetPropertyValue ("Name", me.displayName);
 					// TODO use image
 					if (me.image != null) {
@@ -197,11 +268,12 @@ namespace Yavsc.Controllers
 					if (me.placesLived != null) {
 						People.Place pplace = me.placesLived.Where (x => x.primary).First ();
 						if (pplace != null)
-							HttpContext.Profile.SetPropertyValue ("Address", pplace.value);
+							HttpContext.Profile.SetPropertyValue ("CityAndState", pplace.value);
 					}
 					if (me.url != null)
 						HttpContext.Profile.SetPropertyValue ("WebSite", me.url);
-					HttpContext.Profile.Save ();
+					SaveToken (gat);
+					// already done in SaveToken: HttpContext.Profile.Save ();
 					return Redirect (returnUrl);
 				}
 				ViewData ["returnUrl"] = returnUrl;
@@ -209,10 +281,111 @@ namespace Yavsc.Controllers
 			return View (regmod);
 		}
 
-		public void ChooseCalendar()	
+		private string GetFreshGoogleCredential (ProfileBase pr)
 		{
-			throw new NotImplementedException();
+			string token = (string) pr.GetPropertyValue ("gtoken");
+			string token_type = (string) pr.GetPropertyValue ("gtokentype");
+			DateTime token_exp = (DateTime) pr.GetPropertyValue ("gtokenexpir");
+			if (token_exp < DateTime.Now) {
+				string refresh_token = (string) pr.GetPropertyValue ("grefreshtoken");
+				AuthToken gat = GetToken(
+					string.Format("grant_type=refresh_token&client_id={0}&client_secret={1}&refresh_token={2}",
+						CLIENT_ID, CLIENT_SECRET, refresh_token));
+				token = gat.access_token;
+				pr.SetPropertyValue ("gtoken", token);
+				pr.Save ();
+				// assert gat.token_type == token_type
+			}
+			return token_type + " " + token;
+		}
+
+		[Authorize]
+		[HttpGet]
+		public ActionResult ChooseCalendar (string returnUrl)
+		{
+			Session ["ChooseCalReturnUrl"] = returnUrl;
+			bool hasCalAuth = (bool)HttpContext.Profile.GetPropertyValue ("gcalapi");
+			if (!hasCalAuth) {
+				Session["returnUrl"] = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/ChooseCalendar";
+				return RedirectToAction ("GetCalAuth");
+			}
+
+			string cred = GetFreshGoogleCredential (HttpContext.Profile);
+
+			HttpWebRequest webreq = WebRequest.CreateHttp (getCalListUri);
+			webreq.Headers.Add (HttpRequestHeader.Authorization, cred);
+			webreq.Method = "GET";
+			webreq.ContentType = "application/http";
+			using (WebResponse resp = webreq.GetResponse ()) {
+				using (Stream respstream = resp.GetResponseStream ()) {
+					using (StreamReader readresp = new StreamReader (respstream, Encoding.UTF8)) {
+						string responseStr = readresp.ReadToEnd ();
+						CalendarList res = JsonConvert.DeserializeObject<CalendarList> (responseStr);
+						ViewData ["json"] = responseStr;
+						return View (res);
+					}
+				}
+			}
+		}
+
+		[HttpPost]
+		[Authorize]
+		public ActionResult SetCalendar (string calchoice)
+		{
+			HttpContext.Profile.SetPropertyValue ("gcalid", calchoice);
+			HttpContext.Profile.Save ();
+
+			string returnUrl = (string) Session ["ChooseCalReturnUrl"];
+			if (returnUrl != null) {
+				Session ["ChooseCalReturnUrl"] = null;
+				return Redirect (returnUrl);
+			}
+			return Redirect ("/");
+		}
+
+		[Authorize]
+		[HttpGet]
+		public ActionResult DateQuery()
+		{
+			return View (new AskForADate ());
+		}
+
+		[Authorize]
+		[HttpPost]
+		public ActionResult DateQuery(AskForADate model)
+		{
+			if (ModelState.IsValid) {
+				if (model.MinDate < DateTime.Now) {
+					ModelState.AddModelError ("MinTime", "This first date must be in the future.");
+					return View (model);
+				}
+				if (model.MinDate > model.MaxDate) {
+					ModelState.AddModelError ("MinTime", "This first date must be lower than the second one.");
+					return View (model);
+				}
+				ProfileBase upr = ProfileBase.Create (model.UserName);
+				if (upr == null) {
+					ModelState.AddModelError ("UserName", "Non existent user");
+					return View (model);
+				}
+
+
+				HttpWebRequest webreq = WebRequest.CreateHttp (getCalEntriesUri);
+				webreq.Headers.Add (HttpRequestHeader.Authorization, GetFreshGoogleCredential(upr));
+				webreq.Method = "GET";
+				webreq.ContentType = "application/http";
+				using (WebResponse resp = webreq.GetResponse ()) {
+					using (Stream respstream = resp.GetResponseStream ()) {
+						using (StreamReader readresp = new StreamReader (respstream, Encoding.UTF8)) {
+							string responseStr = readresp.ReadToEnd ();
+							CalendarList res = JsonConvert.DeserializeObject<CalendarList> (responseStr);
+							ViewData ["json"] = responseStr;
+							return View (res);
+						}
+					}
+				}
+			}
+			return View (model);
 		}
 	}
 }
-

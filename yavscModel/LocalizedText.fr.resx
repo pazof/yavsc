@@ -33,4 +33,10 @@
 	<data name="Google_error"><value>Erreur Google : {0}</value></data>
 	<data name="access_denied"><value>Accès refusé</value></data>
 	<data name="UserName"><value>Nom d'utilisateur</value></data>
+	<data name="Google_calendar"><value>Agenda Google</value></data>
+	<data name="Consultant"><value>Consultant</value></data>
+	<data name="MinDate"><value>Date minimale du rendez-vous</value></data>
+	<data name="MaxDate"><value>Date maximale du rendez-vous</value></data>
+	<data name="Date_search"><value>Recherche d'une date pour rendez-vous</value></data>
+    <data name="Remember_me"><value>Se souvenir du mot de passe</value></data>
 </root>

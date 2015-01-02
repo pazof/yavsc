@@ -56,10 +56,10 @@ Avatar   </td><td> <img class="avatar" src="<%=Model.avatar%>" alt=""/>
 <input type="file" id="AvatarFile" name="AvatarFile"/>
 <%= Html.ValidationMessage("AvatarFile", "*") %></td></tr>
 <tr><td align="right">
-   <%= Html.LabelFor(model => model.GoogleCalendar) %>
+   <%= Html.LabelFor(model => model.GoogleCalendar) %>:
    </td>
-   <td>
-
+   <td> <%= Html.Encode(Model.GoogleCalendar) %>
+   <%= Html.ActionLink("Choisir l'agenda","ChooseCalendar","Google",new { returnUrl= Request.Url.AbsolutePath }, new { @class="actionlink" }) %>
    </td>
    </tr>
 </table>

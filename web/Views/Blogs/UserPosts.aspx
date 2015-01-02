@@ -1,14 +1,9 @@
 <%@ Page Title="Billets utilisateurs" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
-<% Title = ((string) ((Profile)ViewData["BlogUserProfile"]).BlogTitle)+" - "+YavscHelpers.SiteName ; %>
+<% Title = ((string) ((Profile)ViewData["BlogUserProfile"]).BlogTitle) ; %>
 </asp:Content>
-		<asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
-			<h1 class="blogtitle"><a href="/Blog/<%=ViewData["BlogUser"]%>">
-	<img class="avatar" src="/Blogs/Avatar?user=<%=ViewData["BlogUser"]%>" alt="ViewData["BlogUser"]"/>
-	<%=ViewData["BlogTitle"]%></a> - <a href="/"> <%= YavscHelpers.SiteName %> </a> </h1>
-
-</asp:Content>
+		
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <%  
 	foreach (BlogEntry e in this.Model) { %>

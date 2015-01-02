@@ -255,6 +255,7 @@ CREATE TABLE profiledata
   gcalid character varying(255),
   gtokenexpir timestamp with time zone, -- Google access token expiration date
   avatar character varying(512), -- url for an avatar
+  gcalapi boolean NOT NULL DEFAULT false, -- true when user authorized to use its Google calendar
     CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
@@ -298,6 +299,9 @@ CREATE TABLE profiles
   lastactivitydate timestamp with time zone,
   lastupdateddate timestamp with time zone,
   CONSTRAINT profiles_pkey PRIMARY KEY (uniqueid),
+  CONSTRAINT fk_profileusers FOREIGN KEY (username, applicationname)
+      REFERENCES users (username, applicationname) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT pkprofiles UNIQUE (username, applicationname)
 )
 WITH (

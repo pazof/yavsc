@@ -3,6 +3,7 @@ VERSION=1.1
 CONFIG=Debug
 DESTDIR=build/web/$(CONFIG)
 COPYUNCHANGED="false"
+PREPRODHOST=lua.pschneider.fr
 
 all: deploy
 	
@@ -14,7 +15,7 @@ deploy: ddir build
 	rm -rf $(DESTDIR)/obj
 	mv $(DESTDIR)/Web.config $(DESTDIR)/Web.config.new
 
-rsync: rsync-preprod rsync-local
+rsync: rsync-preprod
 
 build:
 	xbuild /p:Configuration=$(CONFIG) /t:Build Yavsc.sln
@@ -24,7 +25,7 @@ clean:
 	rm -rf $(DESTDIR)
 
 rsync-preprod: deploy
-	rsync -ravu build/web/$(CONFIG)/ root@lua.localdomain:/srv/httpd/luapre
+	rsync -ravu build/web/$(CONFIG)/ root@$(PREPRODHOST):/srv/httpd/luapre
 
 rsync-local:
 	rsync -ravu build/web/$(CONFIG)/ root@localhost:/srv/www/yavsc

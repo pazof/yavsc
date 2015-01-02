@@ -46,7 +46,7 @@ namespace Yavsc.Controllers
 
 		public static Profile GetProfile (string user)
 		{
-			return new Profile (ProfileBase.Create (user));
+			return new Profile (ProfileBase.Create (user)) ;
 		}
 
 
@@ -216,8 +216,10 @@ namespace Yavsc.Controllers
 		[HttpGet]
 		public ActionResult Profile(Profile model)
 		{
-			ViewData ["UserName"] = Membership.GetUser ().UserName;
-			model = GetProfile ((string) ViewData ["UserName"]);
+			string username = Membership.GetUser ().UserName;
+			ViewData ["UserName"] = username;
+			model = GetProfile (username);
+			model.RememberMe = FormsAuthentication.GetAuthCookie ( username, true )==null;
 			return View (model);
 		}
 
@@ -280,9 +282,9 @@ namespace Yavsc.Controllers
 				HttpContext.Profile.SetPropertyValue (
 					"IBAN", model.IBAN);
 				HttpContext.Profile.Save ();
-				ViewData ["Message"] = "Profile enregistré.";
-
-			}
+				FormsAuthentication.SetAuthCookie (username, model.RememberMe);
+				ViewData ["Message"] = "Profile enregistré, cookie modifié.";
+		}
 			// HttpContext.Profile.SetPropertyValue("Avatar",Avatar);
 			return View (model);
 		}

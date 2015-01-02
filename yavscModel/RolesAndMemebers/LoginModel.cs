@@ -16,7 +16,7 @@ namespace Yavsc.Model.RolesAndMembers
 		[RegularExpression("([a-z]|[A-Z]|[-_.~#{}`'\\^])+")]
 		public string Password { get; set; }
 
-		[Display(Name = "Se souvenir du mot de passe")]
+		[Display(Name = "Remember_me",ResourceType=typeof(LocalizedText))]
 		public bool RememberMe { get; set; }
 	}
 }

@@ -25,19 +25,28 @@ namespace Yavsc
 				"Blog",
 				"Blog/{user}/{title}",
 				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
-			); 
+			); /*
 			routes.MapRoute (
 				"Blogs",
 				"Blogs/{action}/{user}/{title}",
 				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional}
-			);
+			);*/ /*
+			routes.MapRoute (
+				"Home",
+				"Home/Index",
+				new { controller = "Blogs", action = "Index", user="paul", title = "Documentation" }
+			);*/
 
+			/*routes.MapRoute (
+				"Default", 
+				"{controller}/{action}/{id}",
+				new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+				);*/
 			routes.MapRoute (
 				"Default",
-				"{controller}/{action}/{user}",
-				new { controller = "Home", action = "Index", user="" }
+				"{controller}/{action}/{user}/{title}",
+				new { controller = "Blogs", action = "Index", user="paul", title = "Documentation"}
 			);
-
 		}
 
 		protected void Application_Start ()

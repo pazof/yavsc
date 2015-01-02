@@ -88,6 +88,9 @@
     <Compile Include="Google\People.cs" />
     <Compile Include="Google\AuthToken.cs" />
     <Compile Include="Google\SignIn.cs" />
+    <Compile Include="Google\CalendarList.cs" />
+    <Compile Include="Google\CalendarListEntry.cs" />
+    <Compile Include="Google\AskForADate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

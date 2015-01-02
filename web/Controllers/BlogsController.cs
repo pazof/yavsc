@@ -48,7 +48,9 @@ namespace Yavsc.Controllers
 			if (string.IsNullOrEmpty (user)) {
 				return BlogList (pageIndex, pageSize);
 			} else {
-				MembershipUser u = Membership.GetUser (user, false);
+				MembershipUser u = null;
+				if (Membership.FindUsersByName (user) != null) 
+					u= Membership.GetUser (user, false);
 				if (u == null) {
 					ModelState.AddModelError ("UserName",
 						string.Format ("Utilisateur inconu : {0}", user));
@@ -58,6 +60,8 @@ namespace Yavsc.Controllers
 						return UserPosts (user, pageIndex, pageSize);
 					return UserPost (user, title);
 				}
+
+
 			}
 		}
 

@@ -19,10 +19,11 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class AdminController : Controller
 	{
+
 		[Authorize(Roles="Admin")]
-		public ActionResult Index(DataAccess model)
+		public ActionResult Index()
 		{
-			return View (model);
+			return View ();
 		}
 
 		[Authorize(Roles="Admin")]

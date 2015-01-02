@@ -30,7 +30,7 @@ namespace Yavsc.ApiControllers
 		DateTime Creation { get; set;  }
 		string Status { get; set; }
 		long OrderId { get; set; }
-		FormInputValue [] Details { get; set; }
+		Object [] Details { get; set; }
 	}
 
 }

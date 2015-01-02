@@ -106,6 +106,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Remember_me {
+            get {
+                return ResourceManager.GetString("Remember_me", resourceCulture);
+            }
+        }
+        
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
@@ -136,6 +142,18 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Date_search {
+            get {
+                return ResourceManager.GetString("Date_search", resourceCulture);
+            }
+        }
+        
+        public static string Google_calendar {
+            get {
+                return ResourceManager.GetString("Google_calendar", resourceCulture);
+            }
+        }
+        
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
@@ -154,15 +172,33 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string MinDate {
+            get {
+                return ResourceManager.GetString("MinDate", resourceCulture);
+            }
+        }
+        
         public static string Tex_version {
             get {
                 return ResourceManager.GetString("Tex_version", resourceCulture);
             }
         }
         
+        public static string Consultant {
+            get {
+                return ResourceManager.GetString("Consultant", resourceCulture);
+            }
+        }
+        
         public static string Count {
             get {
                 return ResourceManager.GetString("Count", resourceCulture);
+            }
+        }
+        
+        public static string MaxDate {
+            get {
+                return ResourceManager.GetString("MaxDate", resourceCulture);
             }
         }
     }

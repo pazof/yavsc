@@ -1,5 +1,5 @@
-//
-//  GoogleAuthToken.cs
+﻿//
+//  AskForADate.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -18,29 +18,31 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Threading;
-using System.Web.Mvc;
-using System.Configuration;
-using System.Threading.Tasks;
-using System.Text;
-using System.Net;
-using System.IO;
-using Yavsc.Model;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Model.Google
 {
+	public class AskForADate
+	{
+		public AskForADate ()
+		{
+			MinDate = MaxDate = DateTime.Now.AddMinutes (5);
+		}
 
-	public class AuthToken {
-		public string access_token { get; set; }
-		public string id_token { get; set; }
-		public int expires_in { get; set; }
-		public string token_type { get; set ; }
-		public string refresh_token { get; set; }
+		[Display(Name="MinDate",ResourceType=typeof(LocalizedText))]
+		[DataType(DataType.Date)]
+		[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+		public DateTime MinDate { get; set; }
+
+		[Display(Name="MaxDate",ResourceType=typeof(LocalizedText))]
+		[DataType(DataType.Date)]
+		[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+		public DateTime MaxDate { get; set; }
+
+		[Display(Name="Consultant",ResourceType=typeof(LocalizedText))]
+		public string UserName { get; set; }
 	}
-	
 }
+
