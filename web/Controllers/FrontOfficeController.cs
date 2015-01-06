@@ -71,7 +71,6 @@ namespace Yavsc.Controllers
 				}
 				if (ModelState.IsValid) {
 					if (username != model.Responsible
-					   && username != model.Client
 					   && !Roles.IsUserInRole ("FrontOffice"))
 						throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
 

@@ -91,6 +91,8 @@
     <Compile Include="Google\CalendarList.cs" />
     <Compile Include="Google\CalendarListEntry.cs" />
     <Compile Include="Google\AskForADate.cs" />
+    <Compile Include="Google\JsonReaderError.cs" />
+    <Compile Include="Google\CalendarEntryList.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

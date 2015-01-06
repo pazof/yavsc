@@ -12,7 +12,7 @@ namespace Yavsc.Model.Blogs
 		public abstract long GetPostId (string username, string title);
 
 		public abstract long Post (string username, string title, string content, bool visible);
-		public abstract void UpdatePost (long postid, string content, bool visible);
+		public abstract void UpdatePost (long postid, string title, string content, bool visible);
 		public abstract BlogEntryCollection FindPost (string pattern, FindBlogEntryFlags searchflags, 
 			int pageIndex, int pageSize, out int totalRecords);
 		public abstract void RemovePost (string username, string title);

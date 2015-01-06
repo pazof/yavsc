@@ -1,11 +1,18 @@
 <%@ Page Title="Billet" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master"%>
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
-<% Title = Model.Title+" - "+ViewData["BlogTitle"]; %>
+<% Title = Model.Title+" - "+((string) ((Profile)ViewData["BlogUserProfile"]).BlogTitle) ; %>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
 <h1 class="blogtitle"><%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %> - 
 <a href="/Blog/<%=Model.UserName%>">
+<% if ((bool)ViewData["HasAvatar"]) { %>
 <img class="avatar" src="/Blogs/Avatar?user=<%=Model.UserName%>" alt="<%=Model.UserName%>"/> <%=ViewData["BlogTitle"]%></a>
+<% } else { %>
+<a href="/Blog/<%=Model.UserName%>">
+<%=Html.Encode(ViewData["BlogTitle"])%>
+</a>
+<% } %>
+
 </h1>
 </asp:Content>
 

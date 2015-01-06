@@ -69,8 +69,15 @@ return Globalize.format( new Date(value), "t" );
   </p>
 
   <p>
-  Durée minimale : <input type="text" id="Duration" />
+  Durée minimale : <input type="text" id="Duration" class="time"/>
   </p>
+
+  <p>
+  <%= Html.LabelFor(model=>model.UserName) %>:<br>
+  <%= Html.TextBoxFor(model=>model.UserName) %><br>
+  <%= Html.ValidationMessageFor(model=>model.UserName) %>
+  </p>
+
   <script>
                 $(function() {
               

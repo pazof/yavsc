@@ -14,9 +14,7 @@ Nouveau billet -
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<div class="message">
-	<%= Html.Encode(ViewData["Message"]) %>
-</div>
+
 	<% if (Model != null ) if (Model.Content != null )  { %>
 <div class="blogpost">
 <%= BBCodeHelper.Parser.ToHtml(Model.Content) %>
@@ -54,7 +52,7 @@ Nouveau billet -
 <%= Html.ValidationMessage("Preview", "*") %>
 <br/>
 	<%= Html.Hidden("Id") %>
-	<input type="button" id="btnpreview" value="<%=LocalizedText.Preview %>"/>
+	<input type="button" id="btnpreview" value="<%= T.GetString("Preview") %>"/>
 <input type="submit"/>
 	<input type="button" id="testbtn">
 	<script language="Javascript">

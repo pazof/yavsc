@@ -50,7 +50,7 @@
 	 <span class="hidcom"> Page d'accueil </span>
 	<%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" } ) %>
 	<span class="hidcom">Pour pouvoir poster ou commenter</span>
-	<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Login"%>?returnUrl=<%=ViewData["returnUrl"]%>" class="actionlink">
+	<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Login"%>?returnUrl=<%=Request.Url.PathAndQuery%>" class="actionlink">
 	<img src="/images/sign-in-with-google-s.png" style="max-height:1.5em; max-width:6em;" alt="Google sign in">
 	</a>
 	<span class="hidcom">S'authentifier avec son compte Google+</span>

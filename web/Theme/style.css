@@ -9,7 +9,7 @@ body {
 }
 
 main {
-	background-color: rgba(0,0,0,0.8);
+	background-color: rgba(17,0,23,0.65);
 	float:left;
 	margin:.5em;
 }
@@ -24,9 +24,13 @@ video,img {
 	max-width:100%;
 	max-height:75%;
     position:relative;
-    top:4px;
 	}
-.panel { max-width: 17em;
+
+.panel {
+	background-color: rgba(16,32,32,0.8);
+	 padding: 1em; margin: 0.5em;
+		border-radius:25px; border: solid 1px #000060;
+	  max-width: 17em;
 	max-height:30em; border:solid green 1px;}
 
 footer {
@@ -39,8 +43,8 @@ footer {
 	 justify-content: space-around;
 	z-index:-1;
 }
-
-	footer img { max-height: 2em; }
+.actionlink img { top:4px; }
+footer img { max-height: 2em; }
 
 a {
 	text-decoration: none;

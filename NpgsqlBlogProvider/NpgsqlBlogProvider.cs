@@ -68,15 +68,19 @@ namespace Npgsql.Web.Blog
 			}
 			return cmts.ToArray();
 		}
-		public override void UpdatePost (long postid, string content, bool visible)
+		public override void UpdatePost (long postid, string title, string content, bool visible)
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				DateTime now = DateTime.Now;
 				cmd.CommandText = 
-					"update blog set modified=@now, bcontent=@content, " +
-					"visible = @visible where _id = @id";
+					"update blog set modified=@now," +
+					" title = @title," +
+					" bcontent=@content, " +
+					" visible = @visible " +
+					"where _id = @id";
 				cmd.Parameters.Add ("@now", now);
+				cmd.Parameters.Add ("@title", title);
 				cmd.Parameters.Add ("@content", content);
 				cmd.Parameters.Add ("@visible", visible);
 				cmd.Parameters.Add ("@id", postid);

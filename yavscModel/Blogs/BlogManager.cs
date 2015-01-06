@@ -39,9 +39,9 @@ namespace Yavsc.Model.Blogs
 		{
 			Provider.Post(username, title, content, visible );
 		}
-		public static void UpdatePost(long postid, string content, bool visible)
+		public static void UpdatePost(long postid, string title, string content, bool visible)
 		{
-			Provider.UpdatePost(postid, content, visible);
+			Provider.UpdatePost(postid, title, content, visible);
 		}
 		public static BlogEntryCollection FindPost (string pattern, FindBlogEntryFlags searchflags, int pageIndex, int pageSize, out int totalRecords)
 		{

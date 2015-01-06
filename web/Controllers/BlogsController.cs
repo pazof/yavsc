@@ -122,6 +122,7 @@ namespace Yavsc.Controllers
 				return View ("TitleNotFound");
 			ViewData ["BlogUserProfile"] = pr;
 			ViewData ["BlogTitle"] = pr.BlogTitle;
+			ViewData ["HasAvatar"] = pr.avatar != null;
 			MembershipUser u = Membership.GetUser ();
 			if (u != null)
 				ViewData ["UserName"] = u.UserName;
@@ -159,8 +160,6 @@ namespace Yavsc.Controllers
 			string un = Membership.GetUser ().UserName;
 			if (String.IsNullOrEmpty (user))
 				user = un;
-			if (un != user)
-				ViewData ["Message"] = string.Format ("Vous n'êtes pas {0}!", user);
 			ViewData ["UserName"] = un;
 			return View (new BlogEditEntryModel { Title = title });
 		}
@@ -187,7 +186,7 @@ namespace Yavsc.Controllers
 			ViewData ["BlogUser"] = Membership.GetUser ().UserName;
 			if (ModelState.IsValid) {
 				if (!model.Preview) {
-					BlogManager.UpdatePost (model.Id, model.Content, model.Visible);
+					BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible);
 					return UserPost (model);
 				}
 			}
@@ -247,11 +246,9 @@ namespace Yavsc.Controllers
 				return File (fia.OpenRead (), defaultAvatarMimetype);
 			}
 			WebRequest wr = WebRequest.Create(avpath);
-			using (WebResponse resp = wr.GetResponse ()) {
-				using (Stream str = resp.GetResponseStream ()) {
-					return File (str, resp.ContentType);
-				}
-			}
+			WebResponse resp = wr.GetResponse ();
+			Stream str = resp.GetResponseStream ();
+			return File (str, resp.ContentType);
 		}
 
 		/// <summary>

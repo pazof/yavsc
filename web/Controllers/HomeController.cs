@@ -69,7 +69,9 @@ namespace Yavsc.Controllers
 
 		public ActionResult Index ()
 		{
-			string cn = CultureInfo.CurrentCulture.Name;
+			string startPage = WebConfigurationManager.AppSettings ["StartPage"];
+			if (startPage != null)
+				Redirect (startPage);
 			ViewData ["Message"] = LocalizedText.Welcome;
 			return View ();
 		}

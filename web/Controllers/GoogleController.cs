@@ -26,22 +26,22 @@ namespace Yavsc.Controllers
 		// 2015-01-01T10:00:00-07:00
 		// private string API_KEY="AIzaSyBV_LQHb22nGgjNvFzZwnQHjao3Q7IewRw";
 
-		private string getPeopleUri = "https://www.googleapis.com/plus/v1/people";
-		private string getCalListUri = "https://www.googleapis.com/calendar/v3/users/me/calendarList";
-		private string getCalEntriesUri = "https://developers.google.com/google-apps/calendar/v3/reference/events/list";
+		private static string getPeopleUri = "https://www.googleapis.com/plus/v1/people";
+		private static string getCalListUri = "https://www.googleapis.com/calendar/v3/users/me/calendarList";
+		private static string getCalEntriesUri = "https://www.googleapis.com/calendar/v3/calendars/{0}/events";
 
-		private string CLIENT_ID = "325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com";
-		private string CLIENT_SECRET = "MaxYcvJJCs2gDGvaELZbzwfL";
+		private static string CLIENT_ID = "325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com";
+		private static string CLIENT_SECRET = "MaxYcvJJCs2gDGvaELZbzwfL";
 
-		string[] SCOPES = { 
+		private static string[] SCOPES = { 
 			"openid",
 			"profile",
 			"email"
 		};
 
-		string tokenUri = "https://accounts.google.com/o/oauth2/token";
-		string authUri  = "https://accounts.google.com/o/oauth2/auth";
-
+		private static string tokenUri = "https://accounts.google.com/o/oauth2/token";
+		private static string authUri  = "https://accounts.google.com/o/oauth2/auth";
+		private static string dateFormat = "yyyy-MM-dd'T'HH:mm:ss.fffK";
 		private string SetSessionSate ()
 		{
 			Random rand = new Random ();
@@ -363,14 +363,24 @@ namespace Yavsc.Controllers
 					ModelState.AddModelError ("MinTime", "This first date must be lower than the second one.");
 					return View (model);
 				}
-				ProfileBase upr = ProfileBase.Create (model.UserName);
-				if (upr == null) {
+				var muc = Membership.FindUsersByName (model.UserName);
+				if (muc.Count==0) {
 					ModelState.AddModelError ("UserName", "Non existent user");
 					return View (model);
 				}
+				ProfileBase upr = ProfileBase.Create (model.UserName);
 
-
-				HttpWebRequest webreq = WebRequest.CreateHttp (getCalEntriesUri);
+				string calid = (string) upr.GetPropertyValue ("gcalid");
+				if (string.IsNullOrWhiteSpace(calid)) {
+					ModelState.AddModelError ("UserName", "L'utilisateur n'a pas de calendrier Google associé.");
+					return View (model);
+				}
+				HttpWebRequest webreq = WebRequest.CreateHttp (
+					string.Format(
+						getCalEntriesUri, calid)+
+					string.Format("?singleEvents=true&orderBy=startTime&timeMin={0}&timeMax={1}",
+						model.MinDate.ToString(dateFormat),model.MaxDate.ToString(dateFormat))
+					);
 				webreq.Headers.Add (HttpRequestHeader.Authorization, GetFreshGoogleCredential(upr));
 				webreq.Method = "GET";
 				webreq.ContentType = "application/http";
@@ -378,12 +388,18 @@ namespace Yavsc.Controllers
 					using (Stream respstream = resp.GetResponseStream ()) {
 						using (StreamReader readresp = new StreamReader (respstream, Encoding.UTF8)) {
 							string responseStr = readresp.ReadToEnd ();
-							CalendarList res = JsonConvert.DeserializeObject<CalendarList> (responseStr);
+							try {
+								CalendarEntryList res = JsonConvert.DeserializeObject<CalendarEntryList> (responseStr);
 							ViewData ["json"] = responseStr;
 							return View (res);
+							}
+							catch (JsonReaderException ex) {
+								return View ("JsonReaderError", new JsonReaderError() {Text= responseStr, Excepx = ex});
+							}
 						}
 					}
 				}
+
 			}
 			return View (model);
 		}
