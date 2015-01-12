@@ -21,6 +21,7 @@ namespace Yavsc.Controllers
 			WebConfigurationManager.AppSettings ["RegistrationMessage"];
 
 		string avatarDir = "~/avatars";
+
 		/// <summary>
 		/// Gets or sets the avatar dir.
 		/// This value is past to <c>Server.MapPath</c>,
@@ -46,7 +47,7 @@ namespace Yavsc.Controllers
 
 		public static Profile GetProfile (string user)
 		{
-			return new Profile (ProfileBase.Create (user)) ;
+			return new Profile (ProfileBase.Create (user));
 		}
 
 
@@ -58,7 +59,8 @@ namespace Yavsc.Controllers
 					FormsAuthentication.SetAuthCookie (model.UserName, model.RememberMe);
 					if (returnUrl != null)
 						return Redirect (returnUrl);
-					else return View ("Index");
+					else
+						return View ("Index");
 				} else {
 					ModelState.AddModelError ("UserName", "The user name or password provided is incorrect.");
 				}
@@ -67,41 +69,40 @@ namespace Yavsc.Controllers
 			ViewData ["returnUrl"] = returnUrl;
 
 			// If we got this far, something failed, redisplay form
-			return View ("Login",model);
+			return View ("Login", model);
 		}
 
 		public ActionResult Register (RegisterViewModel model, string returnUrl)
 		{
-			ViewData["returnUrl"] = returnUrl;
+			ViewData ["returnUrl"] = returnUrl;
 			if (Request.RequestType == "GET") {
 				foreach (string k in ModelState.Keys)
 					ModelState [k].Errors.Clear ();
 				return View (model);
 			}
 			if (ModelState.IsValid) {
-				if (model.ConfirmPassword != model.Password)
-				{
-					ModelState.AddModelError("ConfirmPassword","Veuillez confirmer votre mot de passe");
+				if (model.ConfirmPassword != model.Password) {
+					ModelState.AddModelError ("ConfirmPassword", "Veuillez confirmer votre mot de passe");
 					return View (model);
 				}
 
 				MembershipCreateStatus mcs;
 				var user = Membership.CreateUser (
-					model.UserName,
-					model.Password,
-					model.Email,
-					null,
-					null,
-					false,
-					out mcs);
+					           model.UserName,
+					           model.Password,
+					           model.Email,
+					           null,
+					           null,
+					           false,
+					           out mcs);
 				switch (mcs) {
 				case MembershipCreateStatus.DuplicateEmail:
-					ModelState.AddModelError("Email", "Cette adresse e-mail correspond " +
-						"à un compte utilisateur existant");
+					ModelState.AddModelError ("Email", "Cette adresse e-mail correspond " +
+					"à un compte utilisateur existant");
 					return View (model);
 				case MembershipCreateStatus.DuplicateUserName:
-					ModelState.AddModelError("UserName", "Ce nom d'utilisateur est " +
-						"déjà enregistré");
+					ModelState.AddModelError ("UserName", "Ce nom d'utilisateur est " +
+					"déjà enregistré");
 					return View (model);
 				case MembershipCreateStatus.Success:
 					FileInfo fi = new FileInfo (
@@ -115,23 +116,21 @@ namespace Yavsc.Controllers
 						return View (model);
 					}
 
-					using (StreamReader sr = fi.OpenText()) {
-						string body = sr.ReadToEnd();
-						body = body.Replace("<%SiteName%>",YavscHelpers.SiteName);
-						body = body.Replace("<%UserName%>",user.UserName);
-						body = body.Replace("<%UserActivatonUrl%>",
-						                    string.Format("<{0}://{1}/Account/Validate/{2}?key={3}",
-						              Request.Url.Scheme,
-						              Request.Url.Authority,
-						              user.UserName,
-						             user.ProviderUserKey.ToString()));
-						using (MailMessage msg = new MailMessage(
-							HomeController.Admail,user.Email,
-							string.Format("Validation de votre compte {0}",YavscHelpers.SiteName),
-							body)) 
-						{
-							using (SmtpClient sc = new SmtpClient()) 
-							{
+					using (StreamReader sr = fi.OpenText ()) {
+						string body = sr.ReadToEnd ();
+						body = body.Replace ("<%SiteName%>", YavscHelpers.SiteName);
+						body = body.Replace ("<%UserName%>", user.UserName);
+						body = body.Replace ("<%UserActivatonUrl%>",
+							string.Format ("<{0}://{1}/Account/Validate/{2}?key={3}",
+								Request.Url.Scheme,
+								Request.Url.Authority,
+								user.UserName,
+								user.ProviderUserKey.ToString ()));
+						using (MailMessage msg = new MailMessage (
+							                         HomeController.Admail, user.Email,
+							                         string.Format ("Validation de votre compte {0}", YavscHelpers.SiteName),
+							                         body)) {
+							using (SmtpClient sc = new SmtpClient ()) {
 								sc.Send (msg);
 							}
 						}
@@ -141,11 +140,11 @@ namespace Yavsc.Controllers
 						return View ("RegistrationPending");
 					}
 				default:
-					ViewData["Error"] = "Une erreur inattendue s'est produite" +
-						"a l'enregistrement de votre compte utilisateur" +
-							string.Format("({0}).",mcs.ToString()) +
-						"Veuillez pardonner la gêne" +
-						"occasionnée";
+					ViewData ["Error"] = "Une erreur inattendue s'est produite" +
+					"a l'enregistrement de votre compte utilisateur" +
+					string.Format ("({0}).", mcs.ToString ()) +
+					"Veuillez pardonner la gêne" +
+					"occasionnée";
 					return View (model);
 				}
 
@@ -160,20 +159,20 @@ namespace Yavsc.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public ActionResult ChangePassword()
+		public ActionResult ChangePassword ()
 		{
-			return View();
+			return View ();
 		}
 
 		[Authorize]
-		public ActionResult Unregister(bool confirmed=false)
+		public ActionResult Unregister (bool confirmed = false)
 		{
 			if (!confirmed)
 				return View ();
 
 			Membership.DeleteUser (
 				Membership.GetUser ().UserName);
-			return RedirectToAction ("Index","Home");
+			return RedirectToAction ("Index", "Home");
 		}
 
 		[Authorize]
@@ -184,12 +183,12 @@ namespace Yavsc.Controllers
 
 				// ChangePassword will throw an exception rather
 				// than return false in certain failure scenarios.
-				bool changePasswordSucceeded=false;
+				bool changePasswordSucceeded = false;
 				try {
 					var users = Membership.FindUsersByName (model.Username);
 
 					if (users.Count > 0) {
-						MembershipUser user = Membership.GetUser (model.Username,true);	
+						MembershipUser user = Membership.GetUser (model.Username, true);	
 
 						changePasswordSucceeded = user.ChangePassword (model.OldPassword, model.NewPassword);
 					} else {
@@ -214,34 +213,35 @@ namespace Yavsc.Controllers
 
 		[Authorize]
 		[HttpGet]
-		public ActionResult Profile(Profile model)
+		public ActionResult Profile (Profile model)
 		{
 			string username = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = username;
 			model = GetProfile (username);
-			model.RememberMe = FormsAuthentication.GetAuthCookie ( username, true )==null;
+			model.RememberMe = FormsAuthentication.GetAuthCookie (username, true) == null;
 			return View (model);
 		}
 
 		[Authorize]
 		[HttpPost]
 		//public ActionResult UpdateProfile(HttpPostedFileBase Avatar, string Address, string CityAndState, string ZipCode, string Country, string WebSite) 
-		public ActionResult Profile(Profile model, HttpPostedFileBase AvatarFile) 
+		public ActionResult Profile (Profile model, HttpPostedFileBase AvatarFile)
 		{
 			string username = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = username;
 			if (AvatarFile != null) { 
 
 				if (AvatarFile.ContentType == "image/png") {
-					string avdir=Server.MapPath (AvatarDir);
-					string avpath=Path.Combine(avdir,username+".png");
+					string avdir = Server.MapPath (AvatarDir);
+					string avpath = Path.Combine (avdir, username + ".png");
 					AvatarFile.SaveAs (avpath);
-					string avuri = avpath.Substring(
-						AppDomain.CurrentDomain.BaseDirectory.Length);
+					string avuri = avpath.Substring (
+						               AppDomain.CurrentDomain.BaseDirectory.Length);
 					avuri = avuri.Replace (" ", "+");
 					avuri = Request.Url.Scheme + "://" + Request.Url.Authority + "/" + avuri;
-					HttpContext.Profile.SetPropertyValue ("avatar", avuri );
+					HttpContext.Profile.SetPropertyValue ("avatar", avuri);
 					HttpContext.Profile.Save ();
+					model.avatar = avuri;
 				} else
 					ModelState.AddModelError ("Avatar",
 						string.Format ("Image type {0} is not supported (suported formats : {1})",
@@ -284,16 +284,15 @@ namespace Yavsc.Controllers
 				HttpContext.Profile.Save ();
 				FormsAuthentication.SetAuthCookie (username, model.RememberMe);
 				ViewData ["Message"] = "Profile enregistré, cookie modifié.";
-		}
-			// HttpContext.Profile.SetPropertyValue("Avatar",Avatar);
+			}
 			return View (model);
 		}
 
 		[Authorize]
 		public ActionResult Logout (string returnUrl)
 		{
-			FormsAuthentication.SignOut();
-			return Redirect(returnUrl);
+			FormsAuthentication.SignOut ();
+			return Redirect (returnUrl);
 		}
 
 
@@ -305,15 +304,13 @@ namespace Yavsc.Controllers
 			if (u == null) {
 				ViewData ["Error"] = 
 					string.Format ("Cet utilisateur n'existe pas ({0})", id);
-			}
-			else 
-			if (u.ProviderUserKey.ToString () == key) {
+			} else if (u.ProviderUserKey.ToString () == key) {
 				u.IsApproved = true;
-				Membership.UpdateUser(u);
-				ViewData["Message"] = 
+				Membership.UpdateUser (u);
+				ViewData ["Message"] = 
 					string.Format ("La création de votre compte ({0}) est validée.", id);
-			}
-			else ViewData["Error"] = "La clé utilisée pour valider ce compte est incorrecte";
+			} else
+				ViewData ["Error"] = "La clé utilisée pour valider ce compte est incorrecte";
 			return View ();
 		}
 	}
