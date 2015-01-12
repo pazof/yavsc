@@ -67,11 +67,18 @@ namespace Yavsc.Controllers
 
 		private void GetAuthResponse (string prms)
 		{
+			string cont = null;
 			WebRequest wr = WebRequest.Create (authUri + "?" + prms);
 			wr.Method = "GET";
-			WebResponse response = wr.GetResponse ();
-			string resQuery = response.ResponseUri.Query;
-			string cont = HttpUtility.ParseQueryString (resQuery) ["continue"];
+			using (
+				WebResponse response = wr.GetResponse ()) {
+				string resQuery = response.ResponseUri.Query;
+				cont = HttpUtility.ParseQueryString (resQuery) ["continue"];
+				response.Close ();
+
+			}
+			wr.Abort ();
+
 			Response.Redirect (cont);
 		}
 
@@ -143,12 +150,19 @@ namespace Yavsc.Controllers
 		{
 			Byte[] bytes = System.Text.Encoding.UTF8.GetBytes (postdata);
 			HttpWebRequest webreq = WebRequest.CreateHttp (tokenUri);
+			webreq.KeepAlive = false;
+			webreq.Timeout = 5000;
+			webreq.Proxy = null;
+		// Not implemented:	webreq.ServicePoint.ConnectionLeaseTimeout = 5000;
+			webreq.ServicePoint.MaxIdleTime = 5000;
 			webreq.Method = "POST";
 			webreq.Accept = "application/json";
 			webreq.ContentType = "application/x-www-form-urlencoded";
 			webreq.ContentLength = bytes.Length;
+
 			using (Stream dataStream = webreq.GetRequestStream ()) {
 				dataStream.Write (bytes, 0, bytes.Length);
+				dataStream.Close ();
 			}
 			AuthToken gat =null;
 
@@ -157,9 +171,14 @@ namespace Yavsc.Controllers
 					using (StreamReader readStream = new StreamReader (responseStream, Encoding.UTF8)) {
 						string responseStr = readStream.ReadToEnd ();
 						gat = JsonConvert.DeserializeObject<AuthToken> (responseStr);
+						readStream.Close ();
 					}
+					responseStream.Close ();
 				}
+				response.Close();
 			}
+			webreq.Abort ();
+
 			return gat;
 		}
 
@@ -203,6 +222,9 @@ namespace Yavsc.Controllers
 							// just set this user as logged on
 							FormsAuthentication.SetAuthCookie (me.displayName, true);
 							Session ["returnUrl"] = null;
+							prresponseStream.Close ();
+							proresp.Close ();
+							webreppro.Abort ();
 							return Redirect (returnUrl);
 						}
 						// else create the account
@@ -210,10 +232,16 @@ namespace Yavsc.Controllers
 						regmod.UserName = me.displayName;
 						Session ["me"] = me;
 						Session ["GoogleAuthToken"] = gat;
-						return Auth (regmod);
+						webreppro.Abort ();
+
+
 					}
+					prresponseStream.Close ();
 				}
+				proresp.Close ();
 			}	
+			webreppro.Abort ();
+			return Auth (regmod);
 		}
 
 		/// <summary>
@@ -316,16 +344,19 @@ namespace Yavsc.Controllers
 			webreq.Headers.Add (HttpRequestHeader.Authorization, cred);
 			webreq.Method = "GET";
 			webreq.ContentType = "application/http";
+			CalendarList res = null;
 			using (WebResponse resp = webreq.GetResponse ()) {
 				using (Stream respstream = resp.GetResponseStream ()) {
 					using (StreamReader readresp = new StreamReader (respstream, Encoding.UTF8)) {
 						string responseStr = readresp.ReadToEnd ();
-						CalendarList res = JsonConvert.DeserializeObject<CalendarList> (responseStr);
+						res = JsonConvert.DeserializeObject<CalendarList> (responseStr);
 						ViewData ["json"] = responseStr;
-						return View (res);
 					}
 				}
+				resp.Close ();
 			}
+			webreq.Abort ();
+			return View (res);
 		}
 
 		[HttpPost]
@@ -384,22 +415,30 @@ namespace Yavsc.Controllers
 				webreq.Headers.Add (HttpRequestHeader.Authorization, GetFreshGoogleCredential(upr));
 				webreq.Method = "GET";
 				webreq.ContentType = "application/http";
+				CalendarEntryList res = null;
 				using (WebResponse resp = webreq.GetResponse ()) {
 					using (Stream respstream = resp.GetResponseStream ()) {
 						using (StreamReader readresp = new StreamReader (respstream, Encoding.UTF8)) {
 							string responseStr = readresp.ReadToEnd ();
 							try {
-								CalendarEntryList res = JsonConvert.DeserializeObject<CalendarEntryList> (responseStr);
+								 res = JsonConvert.DeserializeObject<CalendarEntryList> (responseStr);
 							ViewData ["json"] = responseStr;
-							return View (res);
+							
+							
 							}
 							catch (JsonReaderException ex) {
+								respstream.Close ();
+								resp.Close ();
+								webreq.Abort ();
 								return View ("JsonReaderError", new JsonReaderError() {Text= responseStr, Excepx = ex});
 							}
 						}
+						respstream.Close ();
 					}
+					resp.Close ();
 				}
-
+				webreq.Abort ();
+				return View (res);
 			}
 			return View (model);
 		}

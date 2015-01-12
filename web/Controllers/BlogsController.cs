@@ -246,9 +246,16 @@ namespace Yavsc.Controllers
 				return File (fia.OpenRead (), defaultAvatarMimetype);
 			}
 			WebRequest wr = WebRequest.Create(avpath);
-			WebResponse resp = wr.GetResponse ();
-			Stream str = resp.GetResponseStream ();
-			return File (str, resp.ContentType);
+			FileContentResult res;
+			using (WebResponse resp = wr.GetResponse ()) {
+				using (Stream str = resp.GetResponseStream ()) {
+					byte [] content = new byte[str.Length];
+					str.Read (content, 0, (int) str.Length);
+					res = File (content, resp.ContentType);
+					wr.Abort ();
+					return res;
+				}
+			}
 		}
 
 		/// <summary>
