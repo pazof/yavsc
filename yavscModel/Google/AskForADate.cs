@@ -34,6 +34,7 @@ namespace Yavsc.Model.Google
 		[Display(Name="MinDate",ResourceType=typeof(LocalizedText))]
 		[DataType(DataType.Date)]
 		[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+		[Required(ErrorMessage = "S'il vous plait, saisissez une date minimale au format jj/mm/aaaa")]
 		public DateTime MinDate { get; set; }
 
 		[Display(Name="MaxDate",ResourceType=typeof(LocalizedText))]
@@ -41,6 +42,17 @@ namespace Yavsc.Model.Google
 		[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
 		public DateTime MaxDate { get; set; }
 
+		[Required(ErrorMessage = "S'il vous plait, saisissez une heure minimale au format hh:mm sur 24 heures")]
+		[RegularExpression("\\d\\d:\\d\\d")]
+		public string MinTime { get; set; }
+
+		[RegularExpression("\\d\\d:\\d\\d")]
+		public string MaxTime { get; set; }
+
+		[RegularExpression("\\d\\d:\\d\\d")]
+		public string Duration { get; set; }
+
+		[Required(ErrorMessage="S'il vous plait, saisisser le pseudo de votre interlocuteur")]
 		[Display(Name="Consultant",ResourceType=typeof(LocalizedText))]
 		public string UserName { get; set; }
 	}

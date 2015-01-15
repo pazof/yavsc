@@ -162,6 +162,8 @@ padding-left: 20px;
    display:block; 
 }
 
+.input-validation-error { border: solid 1px red; }
+.field-validation-error { color: red; }
 
 @media print {
 		body {background-color:white;color:black;}

@@ -37,6 +37,6 @@
 	<data name="Consultant"><value>Consultant</value></data>
 	<data name="MinDate"><value>Date minimale du rendez-vous</value></data>
 	<data name="MaxDate"><value>Date maximale du rendez-vous</value></data>
-	<data name="Date_search"><value>Recherche d'une date pour rendez-vous</value></data>
+	<data name="Date_search"><value>Demande de rendez-vous</value></data>
     <data name="Remember_me"><value>Se souvenir du mot de passe</value></data>
 </root>

@@ -3,7 +3,7 @@ VERSION=1.1
 CONFIG=Debug
 DESTDIR=build/web/$(CONFIG)
 COPYUNCHANGED="false"
-PREPRODHOST=lua.pschneider.fr
+PREPRODHOST=yavsc.pschneider.fr
 
 all: deploy
 	
@@ -25,7 +25,7 @@ clean:
 	rm -rf $(DESTDIR)
 
 rsync-preprod: deploy
-	rsync -ravu build/web/$(CONFIG)/ root@$(PREPRODHOST):/srv/httpd/luapre
+	rsync -ravu build/web/$(CONFIG)/ root@$(PREPRODHOST):/srv/www/yavsc
 
 rsync-local:
 	rsync -ravu build/web/$(CONFIG)/ root@localhost:/srv/www/yavsc

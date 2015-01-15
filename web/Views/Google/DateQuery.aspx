@@ -3,23 +3,23 @@
 
 <asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
 
- <script type="text/javascript" src="/Scripts/jquery-2.1.1.min.js"></script>
-
-  <script type="text/javascript" src="/Scripts/jquery.timepicker.js"></script>
+ <script type="text/javascript" src="/Scripts/jquery-2.1.3.min.js"></script>
   <script type="text/javascript" src="/Scripts/jquery.mousewheel.js"></script>
-  <link rel="stylesheet" type="text/css" href="/Theme/jquery.timepicker.css" />
   <script type="text/javascript" src="/Scripts/jquery-ui.js"></script>
+  <script type="text/javascript" src="/Scripts/jquery.timepicker.js"></script>
+  <link rel="stylesheet" type="text/css" href="/Theme/jquery.timepicker.css" />
+ <script type="text/javascript" src="/Scripts/globalize/globalize.js"></script>
+ <script type="text/javascript" src="/Scripts/globalize/cultures/globalize.culture.fr.js"></script>
+ <script type="text/javascript" src="/Scripts/datepicker-fr.js"></script>
+ <script type="text/javascript" src="/Scripts/datepicker-en-GB.js"></script>
   <link rel="stylesheet" href="/Theme/jquery-ui.css">
   <style>
-
  .ui-icon .ui-icon-circle-triangle-e {
   background-image: url(/images/ui-bg_flechg.png);
     }
-.ui-datepicker-next .ui-corner-all {
+ .ui-datepicker-next .ui-corner-all {
   background-image: url(/images/ui-bg_flechd.png);
 }
- 
-
   </style>
    <script>
 $.widget( "ui.timespinner", $.ui.spinner, {
@@ -54,22 +54,25 @@ return Globalize.format( new Date(value), "t" );
   <p>Période de recherche:</p>
   <p>
   <%= Html.LabelFor(model=>model.MinDate) %>:<br>
- Le <input type="text" id="MinDate">
+ Le <%= Html.TextBoxFor(model=>model.MinDate) %>
+<%= Html.ValidationMessageFor(model=>model.MinDate) %>
 à
-  <input type="text" id="MinTime" class="time"/>
-  <%= Html.ValidationMessageFor(model=>model.MinDate) %>
+  <%= Html.TextBoxFor(model=>model.MinTime) %>
+  <%= Html.ValidationMessageFor(model=>model.MinTime) %>
   </p>
 
   <p>
 <%= Html.LabelFor(model=>model.MaxDate) %>:<br>
-  Le  <input type="text" id="MaxDate">
- à
-  <input type="text" id="MaxTime" class="time"/>
+  Le  <%= Html.TextBoxFor(model=>model.MaxDate) %>
   <%= Html.ValidationMessageFor(model=>model.MaxDate) %>
+ à
+  <%= Html.TextBoxFor(model=>model.MaxTime) %>
+  <%= Html.ValidationMessageFor(model=>model.MaxTime) %>
   </p>
 
   <p>
-  Durée minimale : <input type="text" id="Duration" class="time"/>
+  Durée minimale : <%= Html.TextBoxFor(model=>model.Duration) %>
+   <%= Html.ValidationMessageFor(model=>model.Duration) %>
   </p>
 
   <p>
@@ -79,17 +82,15 @@ return Globalize.format( new Date(value), "t" );
   </p>
 
   <script>
-                $(function() {
-              
-                    $('#MinTime').timepicker({ 'scrollDefault': 'now' });
-                    $('#MaxTime').timepicker({ 'scrollDefault': 'now' });
-                    $( "#MinDate" ).datepicker();
-                    $( "#MaxDate" ).datepicker();
-                    $( "#Duration" ).timespinner();
-
-                });
+    $(function() {
+       Globalize.culture("fr");
+        $( '#MinTime' ).timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i'  });
+        $( '#MaxTime' ).timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
+        $( "#MinDate" ).datepicker(	$.datepicker.regional["fr"] );
+        $( "#MaxDate" ).datepicker( $.datepicker.regional["fr"] );
+        $( "#Duration" ).timespinner();
+    });
   </script>
-
 
 <input type="submit">
 <% } %>

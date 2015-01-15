@@ -37,6 +37,6 @@
 	<data name="Consultant"><value>Consultant</value></data>
 	<data name="MinDate"><value>Minimal date for the rendez-vous</value></data>
 	<data name="MaxDate"><value>Maximal date for the rendez-vous</value></data>
-	<data name="Date_search"><value>Date search for a rendez-vous</value></data>
+	<data name="Date_search"><value>Rendez-vous query</value></data>
 	<data name="Remember_me"><value>Remember me</value></data>
 	</root>

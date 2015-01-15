@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
 	{
 		// datetime format : yyyy-mm-ddTHH:MM:ss
 		// 2015-01-01T10:00:00-07:00
-		// private string API_KEY="AIzaSyBV_LQHb22nGgjNvFzZwnQHjao3Q7IewRw";
+		private string API_KEY="AIzaSyBV_LQHb22nGgjNvFzZwnQHjao3Q7IewRw";
 
 		private static string getPeopleUri = "https://www.googleapis.com/plus/v1/people";
 		private static string getCalListUri = "https://www.googleapis.com/calendar/v3/users/me/calendarList";
@@ -41,7 +41,9 @@ namespace Yavsc.Controllers
 
 		private static string tokenUri = "https://accounts.google.com/o/oauth2/token";
 		private static string authUri  = "https://accounts.google.com/o/oauth2/auth";
-		private static string dateFormat = "yyyy-MM-dd'T'HH:mm:ss.fffK";
+		private static string dateFormat = "yyyy-MM-ddTHH:mm:ss";
+		private string timeZone = "+02:00";
+
 		private string SetSessionSate ()
 		{
 			Random rand = new Random ();
@@ -406,26 +408,34 @@ namespace Yavsc.Controllers
 					ModelState.AddModelError ("UserName", "L'utilisateur n'a pas de calendrier Google associé.");
 					return View (model);
 				}
-				HttpWebRequest webreq = WebRequest.CreateHttp (
-					string.Format(
-						getCalEntriesUri, calid)+
-					string.Format("?singleEvents=true&orderBy=startTime&timeMin={0}&timeMax={1}",
-						model.MinDate.ToString(dateFormat),model.MaxDate.ToString(dateFormat))
-					);
-				webreq.Headers.Add (HttpRequestHeader.Authorization, GetFreshGoogleCredential(upr));
+
+				DateTime mindate = model.MinDate;
+				mindate = mindate.AddHours (int.Parse (model.MinTime.Substring (0, 2)));
+				mindate = mindate.AddMinutes (int.Parse (model.MinTime.Substring (3, 2)));
+				DateTime maxdate = model.MaxDate;
+				maxdate = maxdate.AddHours (int.Parse (model.MaxTime.Substring (0, 2)));
+				maxdate = maxdate.AddMinutes (int.Parse (model.MaxTime.Substring (3, 2)));
+				string uri = string.Format (
+					getCalEntriesUri, HttpUtility.UrlEncode(calid)) +
+					string.Format ("?orderBy=startTime&singleEvents=true&timeMin={0}&timeMax={1}&key="+API_KEY,
+						HttpUtility.UrlEncode(mindate.ToString (dateFormat)+timeZone) , 
+						HttpUtility.UrlEncode(maxdate.ToString (dateFormat)+timeZone) );
+
+				HttpWebRequest webreq = WebRequest.CreateHttp (uri);
+				string cred = GetFreshGoogleCredential (upr);
+				webreq.Headers.Add (HttpRequestHeader.Authorization, cred);
 				webreq.Method = "GET";
 				webreq.ContentType = "application/http";
 				CalendarEntryList res = null;
+				try {
 				using (WebResponse resp = webreq.GetResponse ()) {
 					using (Stream respstream = resp.GetResponseStream ()) {
 						using (StreamReader readresp = new StreamReader (respstream, Encoding.UTF8)) {
 							string responseStr = readresp.ReadToEnd ();
 							try {
-								 res = JsonConvert.DeserializeObject<CalendarEntryList> (responseStr);
-							ViewData ["json"] = responseStr;
-							
-							
-							}
+								ViewData ["json"] = responseStr;
+								res = JsonConvert.DeserializeObject<CalendarEntryList> (responseStr);
+								}
 							catch (JsonReaderException ex) {
 								respstream.Close ();
 								resp.Close ();
@@ -436,6 +446,19 @@ namespace Yavsc.Controllers
 						respstream.Close ();
 					}
 					resp.Close ();
+				}
+				}
+				catch (WebException ex)
+				{
+					string message;
+					using (var stream = ex.Response.GetResponseStream())
+					using (var reader = new StreamReader(stream))
+					{
+						message = reader.ReadToEnd();
+					}
+					webreq.Abort ();
+					return View ("JsonReaderError", new JsonReaderError() {Text= message, Excepx = ex});
+
 				}
 				webreq.Abort ();
 				return View (res);
