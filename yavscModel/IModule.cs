@@ -22,12 +22,5 @@ namespace Yavsc.Model
 		void Uninstall(IDbConnection cnx,bool removeConfig);
 		void Initialize (string name, NameValueCollection config);
 	}
-	public interface IRenderer {
-		// Should set ViewData["Message|Author|Body"]
-		object Get(Controller c);
-		string Template { get; }
-		string Name { get; set; }
-	}
-
 }
 

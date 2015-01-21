@@ -89,7 +89,7 @@ namespace Yavsc.WebControls
 
 		protected override void RenderContents (HtmlTextWriter writer)
 		{
-			if (ResultCount > 0) {
+			if (ResultCount > 0 &&  ResultCount > ResultsPerPage ) {
 				writer.WriteEncodedText (Text);
 				int pageCount = ((ResultCount-1) / ResultsPerPage) + 1;
 				for (int pi = (CurrentPage < 5) ? 0 : CurrentPage - 5; pi < pageCount && pi < CurrentPage + 5; pi++) {
@@ -105,9 +105,10 @@ namespace Yavsc.WebControls
 					writer.RenderEndTag ();
 					writer.Write ("&nbsp;");
 				}
-				writer.Write ("("+ResultCount.ToString()+" resultat(s))");
-			} else {
-				writer.Write ("(Pas de resultat)");
+				writer.Write (ResultCount.ToString () + " resultat");
+				if (ResultCount>1) writer.Write("s");
+			} else if ( ResultCount == 0 ) {
+				writer.Write ("Pas de resultat");
 			}
 		}
 	}

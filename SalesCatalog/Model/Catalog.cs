@@ -44,7 +44,7 @@ namespace SalesCatalog.Model
 			Brand b = this.GetBrand (brandName);
 			if (b == null)
 				return false;			
-			//assert(Brands.Length>0);
+			//ASSERT Brands.Length>0;
 			List<Brand> nb = new List<Brand> (Brands);
 			nb.Remove (b);
 			Brands = nb.ToArray ();

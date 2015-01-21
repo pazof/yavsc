@@ -239,9 +239,8 @@ namespace Yavsc.Controllers
 		public ActionResult Avatar (string user)
 		{
 			ProfileBase pr = ProfileBase.Create (user);
-
 			string avpath = (string) pr.GetPropertyValue ("avatar");
-			if (avpath == null) { 
+			if (avpath==null) {
 				FileInfo fia = new FileInfo (Server.MapPath (defaultAvatar));
 				return File (fia.OpenRead (), defaultAvatarMimetype);
 			}

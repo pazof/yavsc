@@ -13,13 +13,12 @@ namespace Yavsc.Admin
 		{
 			da = datac;
 		}
-
 		public Export CreateBackup ()
 		{
 			Environment.SetEnvironmentVariable("PGPASSWORD", da.Password);
-			Export e = new Export ();
 			string fileName = da.BackupPrefix + "-" + DateTime.Now.ToString ("yyyyMMddhhmmss")+".tar";
 			FileInfo ofi = new FileInfo (fileName);
+			Export e = new Export ();
 			e.FileName = ofi.FullName;
 			/*
 			Exec ("pg_dump", string.Format (
@@ -65,10 +64,12 @@ namespace Yavsc.Admin
 			*/
 			return t;
 		}
+
 		public TaskOutput CreateDb ()
 		{
 			return Restore ("freshinstall", false);
 		}
+
 		public Export TagBackup (string filename, string [] tags)
 		{
 			/* FileInfo fi = new FileInfo (filename);

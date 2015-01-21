@@ -229,19 +229,21 @@ namespace Yavsc.Controllers
 		{
 			string username = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = username;
-			if (AvatarFile != null) { 
-
+			if (AvatarFile == null) {
+				// do not update <c>avatar</c> to null since
+				// it's not in the model.
+			} 
+			else { 
+				// if said valid, move as avatar file
+				// else invalidate the model
 				if (AvatarFile.ContentType == "image/png") {
 					string avdir = Server.MapPath (AvatarDir);
 					string avpath = Path.Combine (avdir, username + ".png");
 					AvatarFile.SaveAs (avpath);
-					string avuri = avpath.Substring (
-						               AppDomain.CurrentDomain.BaseDirectory.Length);
-					avuri = avuri.Replace (" ", "+");
-					avuri = Request.Url.Scheme + "://" + Request.Url.Authority + "/" + avuri;
-					HttpContext.Profile.SetPropertyValue ("avatar", avuri);
-					HttpContext.Profile.Save ();
-					model.avatar = avuri;
+					model.avatar = 
+						Path.Combine(AvatarDir.Substring(1),username)+".png";
+
+
 				} else
 					ModelState.AddModelError ("Avatar",
 						string.Format ("Image type {0} is not supported (suported formats : {1})",

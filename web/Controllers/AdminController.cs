@@ -178,7 +178,7 @@ namespace Yavsc.Controllers
 				Roles.AddUserToRole (model.UserName, adminRoleName);
 				ViewData ["Message"] = model.UserName + " was added to the role '" + adminRoleName + "'";
 			} else {
-				// assert (Roles.RoleExists (adminRoleName)) 
+				// ASSERT (Roles.RoleExists (adminRoleName)) 
 				string [] admins = Roles.GetUsersInRole (adminRoleName);
 				if (admins.Length > 0) { 
 					if (! admins.Contains (Membership.GetUser ().UserName)) {

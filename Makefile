@@ -3,7 +3,7 @@ VERSION=1.1
 CONFIG=Debug
 DESTDIR=build/web/$(CONFIG)
 COPYUNCHANGED="false"
-PREPRODHOST=yavsc.pschneider.fr
+PREPRODHOST=yavsc.localdomain
 
 all: deploy
 	
@@ -26,6 +26,9 @@ clean:
 
 rsync-preprod: deploy
 	rsync -ravu build/web/$(CONFIG)/ root@$(PREPRODHOST):/srv/www/yavsc
+
+rsync-prod: deploy
+	rsync -ravu build/web/$(CONFIG)/ root@$(PREPRODHOST):/srv/www/lua
 
 rsync-local:
 	rsync -ravu build/web/$(CONFIG)/ root@localhost:/srv/www/yavsc

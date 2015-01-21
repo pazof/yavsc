@@ -130,7 +130,7 @@ namespace Yavsc.Helpers
 
 			for (int i = 1; i<=m1; i++) {
 				string t1 = toc [i, 0, 0];
-				// assert t1 != null
+				// ASSERT t1 != null
 				ttb.AppendFormat ("<a href=\"#s{0}\">{0}) {1}</a><br/>\n", i, t1);
 
 				for (int j = 1; j <= m2; j++) {

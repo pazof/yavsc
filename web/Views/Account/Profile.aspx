@@ -52,7 +52,7 @@
 <%= Html.TextBox("BlogTitle") %>
 <%= Html.ValidationMessage("BlogTitle", "*") %></td></tr>
 <tr><td align="right">
-Avatar   </td><td> <img class="avatar" src="<%=Model.avatar%>" alt=""/>
+Avatar : "<%=Model.avatar%>"  </td><td> <img class="avatar" src="<%=Model.avatar%>" alt=""/>
 <input type="file" id="AvatarFile" name="AvatarFile"/>
 <%= Html.ValidationMessage("AvatarFile", "*") %></td></tr>
 <tr><td align="right">

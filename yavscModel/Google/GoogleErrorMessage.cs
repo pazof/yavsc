@@ -19,13 +19,32 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Yavsc.Model.Google
 {
-	public class JsonReaderError
+	public class GoogleErrorException : Exception 
 	{
-		public string Text { get; set; }
-		public Exception Excepx { get; set; }
+		public string Title { get; set; }
+		public string Content { get; set; }
+
+		public GoogleErrorException (WebException ex) {
+			// ASSERT ex != null;
+			Title = ex.Message;
+
+			using (var stream = ex.Response.GetResponseStream())
+			using (var reader = new StreamReader(stream))
+			{
+				Content = reader.ReadToEnd();
+			}
+		}
+		public GoogleErrorException(JsonReaderException ex, string message) {
+			Content = message;
+			Title = ex.Message;
+		}
 	}
+
 }
 
