@@ -80,8 +80,9 @@ namespace Yavsc.Controllers
 				}
 				for (int i=0; i<hfc.Count; i++)
 					{
-					// TODO Limit with hfc[h].ContentLength 
-					hfc[i].SaveAs(Path.Combine(BaseDir,hfc[i].FileName));
+					// TODO Limit with hfc[h].ContentLength
+					string filename = Path.Combine(Server.MapPath(BaseDir),hfc[i].FileName);
+					hfc[i].SaveAs(filename);
 					ViewData ["Message"] += string.Format("<p>File name '{0}' saved</p>",hfc[i].FileName);
 				}
 				return RedirectToAction ("Index","FileSystem");
