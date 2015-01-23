@@ -3,8 +3,8 @@ VERSION=1.1
 CONFIG=Debug
 DESTDIR=build/web/$(CONFIG)
 COPYUNCHANGED="false"
-PREPRODHOST=yavsc.localdomain
-
+PREPRODHOSTDIR=localhost:/srv/www/yavsc
+PRODHOSTDIR=localhost:/srv/www/lua
 all: deploy
 	
 ddir:
@@ -25,13 +25,10 @@ clean:
 	rm -rf $(DESTDIR)
 
 rsync-preprod: deploy
-	rsync -ravu build/web/$(CONFIG)/ root@$(PREPRODHOST):/srv/www/yavsc
+	rsync -ravu build/web/$(CONFIG)/ root@$(PREPRODHOSTDIR)
 
 rsync-prod: deploy
-	rsync -ravu build/web/$(CONFIG)/ root@$(PREPRODHOST):/srv/www/lua
-
-rsync-local:
-	rsync -ravu build/web/$(CONFIG)/ root@localhost:/srv/www/yavsc
+	rsync -ravu build/web/$(CONFIG)/ root@$(PRODHOSTDIR)
 
 sourcepkg:
 	git archive --format=tar --prefix=yavsc-$(CONFIG)/ $(CONFIG) | bzip2 > yavsc-$(CONFIG).tar.bz2

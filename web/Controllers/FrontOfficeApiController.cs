@@ -22,6 +22,7 @@ using Yavsc.Formatters;
 using System.Text;
 using System.Web.Profile;
 using System.Collections.Specialized;
+using Yavsc.Model;
 
 namespace Yavsc.ApiControllers
 {
@@ -102,9 +103,28 @@ namespace Yavsc.ApiControllers
 		[AcceptVerbs("GET")]
 		public HttpResponseMessage GetEstimTex(long estimid)
 		{
-			string texest = getEstimTex (estimid);
+			string texest = null;
+			try {
+				texest = getEstimTex (estimid);
+			}
+			catch (TemplateException ex) {
+				return new HttpResponseMessage (HttpStatusCode.OK){ Content = 
+					new ObjectContent (typeof(string),
+						ex.Message, new ErrorHtmlFormatter(HttpStatusCode.NotAcceptable,
+							LocalizedText.DocTemplateException
+							))};
+			}
+			catch (Exception ex) {
+				return new HttpResponseMessage (HttpStatusCode.OK){ Content = 
+					new ObjectContent (typeof(string),
+						ex.Message, new SimpleFormatter("text/text")) };
+			}
 			if (texest == null)
-				throw new HttpRequestValidationException ("Not an estimation id:"+estimid);
+				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
+					new ObjectContent (typeof(string),
+						"Not an estimation id:" + estimid, new SimpleFormatter ("text/text"))
+				};
+
 			return new HttpResponseMessage () {
 				Content = new ObjectContent (typeof(string),
 					texest,
@@ -121,11 +141,11 @@ namespace Yavsc.ApiControllers
 
 			Profile prpro = new Profile(ProfileBase.Create(e.Responsible));
 			if (!prpro.IsBankable)
-				throw new Exception ("NotBankable:"+e.Responsible);
+				throw new TemplateException ("NotBankable:"+e.Responsible);
 
 			Profile prcli = new Profile(ProfileBase.Create(e.Client));
 			if (!prcli.IsBillable)
-				throw new Exception ("NotBillable:"+e.Client);
+				throw new TemplateException ("NotBillable:"+e.Client);
 			tmpe.Session.Add ("from", prpro);
 			tmpe.Session.Add ("to", prcli);
 			tmpe.Init ();

@@ -154,6 +154,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string DocTemplateException {
+            get {
+                return ResourceManager.GetString("DocTemplateException", resourceCulture);
+            }
+        }
+        
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);

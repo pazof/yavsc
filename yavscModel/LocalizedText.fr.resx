@@ -39,4 +39,6 @@
 	<data name="MaxDate"><value>Date maximale du rendez-vous</value></data>
 	<data name="Date_search"><value>Demande de rendez-vous</value></data>
     <data name="Remember_me"><value>Se souvenir du mot de passe</value></data>
+    <data name="DocTemplateException"><value>Une erreur est survenue à la génération de votre document</value></data>
+
 </root>

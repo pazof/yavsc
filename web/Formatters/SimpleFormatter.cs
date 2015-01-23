@@ -24,6 +24,8 @@ using System.Net.Http.Headers;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Web.Mvc;
+using System.Net;
 
 namespace Yavsc.Formatters
 {
@@ -63,5 +65,6 @@ namespace Yavsc.Formatters
 		}
 
 	}
+
 }
 

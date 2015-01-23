@@ -20,7 +20,11 @@ namespace Yavsc.Model.WorkFlow
 		{
 			ContentProvider.UpdateEstimate (estim);
 		}
-
+		/// <summary>
+		/// Gets the estimate.
+		/// </summary>
+		/// <returns>The estimate.</returns>
+		/// <param name="estid">Estid.</param>
 		public Estimate GetEstimate (long estid)
 		{
 			return ContentProvider.GetEstimate (estid);
