@@ -6,6 +6,9 @@
 <br/><a href="http://unefenetresurlemonde.over-blog.com/article-34325590.html">Ghost Dog, la Voie du samouraï</a>
 </p><div>
 <%= Html.ActionLink("Les blogs","Index","Blogs",null, new { @class="actionlink" }) %>
+
+<%= Html.ActionLink("Contact","Contact") %>
+<%= Html.ActionLink("Version des librairies","AssemblyInfo") %>
 </div>
  </asp:Content>
 

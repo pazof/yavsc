@@ -44,7 +44,7 @@ namespace Yavsc.Controllers
 			}
 		}
 
-		public ActionResult ReferencedAssemblies()
+		public ActionResult AssemblyInfo()
 		{
 			AssemblyName[] model = GetType ().Assembly.GetReferencedAssemblies ();
 
@@ -76,17 +76,34 @@ namespace Yavsc.Controllers
 			return View ();
 		}
 
-		public ActionResult AOEMail (string reason, string body)
+		public ActionResult Contact (string email, string reason, string body)
 		{
+			if (email==null)
+				ModelState.AddModelError("email","Enter your email");
+
+			if (reason==null)
+				ModelState.AddModelError("reason","Please, fill in a reason");
+
+			if (body==null)
+				ModelState.AddModelError("body","Please, fill in a body");
+			if (!ModelState.IsValid)
+				return View ();
+
 			// requires valid owner and admin email?
-			using (System.Net.Mail.MailMessage msg = new MailMessage(owneremail,admail,"Poke : "+reason,body)) 
+			if (OwnerEmail == null)
+				throw new Exception ("No site owner!");
+
+			using (System.Net.Mail.MailMessage msg = new MailMessage(email,OwnerEmail,"[Contact] "+reason,body)) 
 			{
+				msg.CC.Add(new MailAddress(Admail));
 				using (System.Net.Mail.SmtpClient sc = new SmtpClient()) 
 				{
 					sc.Send (msg);
-					return View ();
+					ViewData ["Message"] = LocalizedText.Message_sent;
+					return View (new { reason="", body="" });
 				}
 			}
 		}
+
 	}
 }

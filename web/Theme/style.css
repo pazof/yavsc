@@ -7,7 +7,13 @@ body {
 	font-family: 'Arial', cursive;
         margin-bottom:3em;
 }
-
+textarea { 
+        width:25em;
+        height:5em;
+        }
+input { 
+        width:25em;
+        }
 main {
 	background-color: rgba(17,0,23,0.65);
 	float:left;

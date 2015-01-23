@@ -40,5 +40,6 @@
 	<data name="Date_search"><value>Rendez-vous query</value></data>
 	<data name="Remember_me"><value>Remember me</value></data>
 	<data name="DocTemplateException"><value>Exception occured when rendering your document</value></data>
-
+	<data name="Message_sent"><value>Your message has been sent.</value></data>
+	
 	</root>
