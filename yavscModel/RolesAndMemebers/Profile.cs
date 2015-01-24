@@ -82,12 +82,11 @@ namespace Yavsc.Model.RolesAndMembers
 		[Display(Name="Google_calendar",ResourceType=typeof(LocalizedText))]
 		public string GoogleCalendar { get; set; }
 
-		public bool IsBankable { get { 
+		public bool HasBankAccount { get { 
 				return IsBillable 
 			&& !string.IsNullOrWhiteSpace (BankCode)
 			&& !string.IsNullOrWhiteSpace (BIC)
 			&& !string.IsNullOrWhiteSpace (IBAN)
-			&& !string.IsNullOrWhiteSpace (BankCode)
 			&& !string.IsNullOrWhiteSpace (WicketCode)
 			&& !string.IsNullOrWhiteSpace (AccountNumber)
 			&& BankedKey != 0; } }

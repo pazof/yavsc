@@ -115,6 +115,7 @@ namespace Yavsc.ApiControllers
 							))};
 			}
 			catch (Exception ex) {
+
 				return new HttpResponseMessage (HttpStatusCode.OK){ Content = 
 					new ObjectContent (typeof(string),
 						ex.Message, new SimpleFormatter("text/text")) };
@@ -140,7 +141,7 @@ namespace Yavsc.ApiControllers
 			tmpe.Session.Add ("estim", e);
 
 			Profile prpro = new Profile(ProfileBase.Create(e.Responsible));
-			if (!prpro.IsBankable)
+			if (!prpro.HasBankAccount)
 				throw new TemplateException ("NotBankable:"+e.Responsible);
 
 			Profile prcli = new Profile(ProfileBase.Create(e.Client));
