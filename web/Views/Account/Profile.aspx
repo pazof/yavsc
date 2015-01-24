@@ -133,10 +133,10 @@ Avatar : "<%=Model.avatar%>"  </td><td> <img class="avatar" src="<%=Model.avatar
 
 
 <asp:Content ID="MASC1" ContentPlaceHolderID="MASContent" runat="server">
-   <% 	if (Roles.IsUserInRole("Admin")) { %>
-   Admin,
-   Bankable:<%= Model.IsBankable %>, Billable:<%=Model.IsBillable%>
-<% } %>
+   <% 	if (Roles.IsUserInRole((string)ViewData ["UserName"],"Admin")) { %>
+   This user is Admin.
+   <% } %>
+   HasBankAccount:<%= Model.HasBankAccount %>, IsBillable:<%=Model.IsBillable%>
 		
    <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
    <%= Html.ActionLink("Désincription","Unregister", "Account",null, new { @class="actionlink" })%>
