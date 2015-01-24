@@ -70,8 +70,8 @@ namespace Yavsc.Formatters
 			var pbc = ProfileBase.Create (e.Client);
 			Profile prcli =  new Profile (pbc);
 
-			if (!prpro.IsBankable ||  !prcli.IsBillable)
-				throw new Exception("not bankable or not billable.");
+			if (!prpro.HasBankAccount ||  !prcli.IsBillable)
+				throw new Exception("account number for provider, or client not billable.");
 
 			tmpe.Session.Add ("from", prpro);
 			tmpe.Session.Add ("to", prcli);
