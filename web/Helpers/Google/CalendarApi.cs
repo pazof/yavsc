@@ -31,7 +31,7 @@ using System.Web;
 
 namespace Yavsc.Helpers.Google
 {
-	public class Calendar: ApiClient 
+	public class CalendarApi: ApiClient 
 	{
 		protected static string getCalListUri = "https://www.googleapis.com/calendar/v3/users/me/calendarList";
 		protected static string getCalEntriesUri = "https://www.googleapis.com/calendar/v3/calendars/{0}/events";

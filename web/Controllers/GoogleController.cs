@@ -217,7 +217,7 @@ namespace Yavsc.Controllers
 			}
 			string cred = OAuth2.GetFreshGoogleCredential (HttpContext.Profile);
 			string json;
-			Calendar c = new Calendar ();
+			CalendarApi c = new CalendarApi ();
 			CalendarList cl = c.GetCalendars (cred, out json);
 			ViewData ["json"] = json;
 			return View (cl);
@@ -278,7 +278,7 @@ namespace Yavsc.Controllers
 				maxdate = maxdate.AddHours (int.Parse (model.MaxTime.Substring (0, 2)));
 				maxdate = maxdate.AddMinutes (int.Parse (model.MaxTime.Substring (3, 2)));
 
-				Calendar c = new Calendar ();
+				CalendarApi c = new CalendarApi ();
 				CalendarEntryList res;
 				string responseStr;
 				try {
