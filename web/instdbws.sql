@@ -1,20 +1,159 @@
+﻿
+  -- Table: users
 
-CREATE TABLE blfiles
+-- DROP TABLE users;
+
+CREATE TABLE users
 (
-  _id bigint NOT NULL DEFAULT nextval('bltags__id_seq'::regclass), -- Identifier
-  name character varying(2048), -- File Name, relative to the user home directory, must not begin with a slash.
-  blid bigint, -- Blog entry identifier (foreign key)
-  CONSTRAINT bltags_pkey PRIMARY KEY (_id),
-  CONSTRAINT bltags_blid_fkey FOREIGN KEY (blid)
-      REFERENCES blog (_id) MATCH SIMPLE
+  pkid character varying NOT NULL,
+  username character varying(255) NOT NULL,
+  applicationname character varying(255) NOT NULL,
+  email character varying(128) NOT NULL,
+  comment character varying(255),
+  passw character varying(128) NOT NULL,
+  passwordquestion character varying(255),
+  passwordanswer character varying(255),
+  isapproved boolean,
+  lastactivitydate timestamp with time zone,
+  lastlogindate timestamp with time zone,
+  lastpasswordchangeddate timestamp with time zone,
+  creationdate timestamp with time zone,
+  islockedout boolean,
+  lastlockedoutdate timestamp with time zone,
+  failedpasswordattemptcount integer,
+  failedpasswordattemptwindowstart timestamp with time zone,
+  failedpasswordanswerattemptcount integer,
+  failedpasswordanswerattemptwindowstart timestamp with time zone,
+  CONSTRAINT users_pkey PRIMARY KEY (pkid),
+  CONSTRAINT uniquelogin UNIQUE (applicationname, email),
+  CONSTRAINT uniquemail UNIQUE (applicationname, username)
+)
+WITH (
+  OIDS=FALSE
+);
+
+-- Table: roles
+
+-- DROP TABLE roles;
+
+CREATE TABLE roles
+(
+  rolename character varying(255) NOT NULL,
+  applicationname character varying(255) NOT NULL,
+  comment character varying(255) NOT NULL,
+  CONSTRAINT roles_pkey PRIMARY KEY (rolename, applicationname)
+)
+WITH (
+  OIDS=FALSE
+);
+
+COMMENT ON TABLE roles
+  IS 'Web application roles';
+
+  -- Table: usersroles
+
+-- DROP TABLE usersroles;
+
+CREATE TABLE usersroles
+(
+  applicationname character varying(255) NOT NULL,
+  rolename character varying(255) NOT NULL,
+  username character varying(255) NOT NULL,
+  CONSTRAINT attrroles_pkey PRIMARY KEY (applicationname, rolename, username),
+  CONSTRAINT usersroles_fk_role FOREIGN KEY (applicationname, rolename)
+      REFERENCES roles (applicationname, rolename) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT usersroles_fk_user FOREIGN KEY (applicationname, username)
+      REFERENCES users (applicationname, username) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
 );
-COMMENT ON COLUMN blfiles._id IS 'Identifier';
-COMMENT ON COLUMN blfiles.name IS 'File Name, relative to the user home directory, must not begin with a slash.';
-COMMENT ON COLUMN blfiles.blid IS 'Blog entry identifier (foreign key)';
+
+-- DROP TABLE profiles;
+
+CREATE TABLE profiles
+(
+  uniqueid bigserial NOT NULL,
+  username character varying(255) NOT NULL,
+  applicationname character varying(255) NOT NULL,
+  isanonymous boolean,
+  lastactivitydate timestamp with time zone,
+  lastupdateddate timestamp with time zone,
+  CONSTRAINT profiles_pkey PRIMARY KEY (uniqueid),
+  CONSTRAINT fk_profileusers FOREIGN KEY (username, applicationname)
+      REFERENCES users (username, applicationname) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT pkprofiles UNIQUE (username, applicationname)
+)
+WITH (
+  OIDS=FALSE
+  );
+
+ -- Table: profiledata
+
+-- DROP TABLE profiledata;
+
+CREATE TABLE profiledata
+(
+  uniqueid integer,
+  zipcode character varying(10),
+  cityandstate character varying(255),
+  blogtitle character varying(255), -- Blog Title
+  address character varying(2048), -- Postal address
+  country character varying(100),
+  website character varying(256),
+  blogvisible boolean,
+  hasavatar boolean, -- True when user has specified an image for avatar
+  name character varying(1024),
+  phone character varying(15),
+  mobile character varying(15),
+  accountnumber character varying(15), -- Numero de compte
+  bankedkey integer, -- clé RIB
+  bankcode character varying(5), -- Code banque
+  wicketcode character varying(5),
+  iban character varying(33),
+  bic character varying(15),
+  gtoken character varying(512),
+  grefreshtoken character varying(512), -- Google refresh token
+  gtokentype character varying(256), -- Google access token type
+  gcalid character varying(255),
+  gtokenexpir timestamp with time zone, -- Google access token expiration date
+  avatar character varying(512), -- url for an avatar
+  gcalapi boolean NOT NULL DEFAULT false, -- true when user authorized to use its Google calendar
+    CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
+      REFERENCES profiles (uniqueid) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+
+COMMENT ON COLUMN profiledata.blogtitle IS 'Blog Title';
+COMMENT ON COLUMN profiledata.address IS 'Postal address';
+COMMENT ON COLUMN profiledata.hasavatar IS 'True when user has specified an image for avatar';
+COMMENT ON COLUMN profiledata.accountnumber IS 'Numero de compte';
+COMMENT ON COLUMN profiledata.bankedkey IS 'clé RIB';
+COMMENT ON COLUMN profiledata.bankcode IS 'Code banque';
+COMMENT ON COLUMN profiledata.gtoken IS 'Google authentification token';
+COMMENT ON COLUMN profiledata.gcalid IS 'Google calendar identifier';
+COMMENT ON COLUMN profiledata.gtokentype IS 'Google access token type';
+COMMENT ON COLUMN profiledata.grefreshtoken IS 'Google refresh token';
+COMMENT ON COLUMN profiledata.gtokenexpir IS 'Google access token expiration date';
+COMMENT ON COLUMN profiledata.avatar IS 'url for an avatar';
+
+ -- Index: fki_fkprofiles2
+
+-- DROP INDEX fki_fkprofiles2;
+
+CREATE INDEX fki_fkprofiles2
+  ON profiledata
+  USING btree
+  (uniqueid);
+
+  -- Table: profiles
+
 
   -- Table: blog
 
@@ -38,6 +177,24 @@ CREATE TABLE blog
 WITH (
   OIDS=FALSE
 );
+
+  -- Table: blfiles
+CREATE TABLE blfiles
+(
+  _id bigserial NOT NULL, -- Identifier
+  name character varying(2048), -- File Name, relative to the user home directory, must not begin with a slash.
+  blid bigint, -- Blog entry identifier (foreign key)
+  CONSTRAINT bltags_pkey PRIMARY KEY (_id),
+  CONSTRAINT bltags_blid_fkey FOREIGN KEY (blid)
+      REFERENCES blog (_id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+COMMENT ON COLUMN blfiles._id IS 'Identifier';
+COMMENT ON COLUMN blfiles.name IS 'File Name, relative to the user home directory, must not begin with a slash.';
+COMMENT ON COLUMN blfiles.blid IS 'Blog entry identifier (foreign key)';
 
   -- Table: commandes
 
@@ -166,29 +323,7 @@ WITH (
   OIDS=FALSE
 );
 
-  -- Table: histowritting
 
--- DROP TABLE histowritting;
-
-CREATE TABLE histowritting
-(
-  datechange timestamp with time zone NOT NULL DEFAULT now(),
-  status integer,
-  wrtid bigint NOT NULL,
-  username character varying(255),
-  applicationname character varying,
-  _id bigserial NOT NULL,
-  CONSTRAINT histowritting_pkey PRIMARY KEY (_id),
-  CONSTRAINT histowritting_username_fkey FOREIGN KEY (username, applicationname)
-      REFERENCES users (username, applicationname) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT histowritting_wrtid_fkey FOREIGN KEY (wrtid)
-      REFERENCES writtings (_id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE
-)
-WITH (
-  OIDS=FALSE
-);
 
   -- Table: hr
 
@@ -225,88 +360,6 @@ COMMENT ON COLUMN product."Description" IS 'Product description';
 
 
 
-  -- Table: profiledata
-
--- DROP TABLE profiledata;
-
-CREATE TABLE profiledata
-(
-  uniqueid integer,
-  zipcode character varying(10),
-  cityandstate character varying(255),
-  blogtitle character varying(255), -- Blog Title
-  address character varying(2048), -- Postal address
-  country character varying(100),
-  website character varying(256),
-  blogvisible boolean,
-  hasavatar boolean, -- True when user has specified an image for avatar
-  name character varying(1024),
-  phone character varying(15),
-  mobile character varying(15),
-  accountnumber character varying(15), -- Numero de compte
-  bankedkey integer, -- clé RIB
-  bankcode character varying(5), -- Code banque
-  wicketcode character varying(5),
-  iban character varying(33),
-  bic character varying(15),
-  gtoken character varying(512),
-  grefreshtoken character varying(512), -- Google refresh token
-  gtokentype character varying(256), -- Google access token type
-  gcalid character varying(255),
-  gtokenexpir timestamp with time zone, -- Google access token expiration date
-  avatar character varying(512), -- url for an avatar
-  gcalapi boolean NOT NULL DEFAULT false, -- true when user authorized to use its Google calendar
-    CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
-      REFERENCES profiles (uniqueid) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE
-)
-WITH (
-  OIDS=FALSE
-);
-
-COMMENT ON COLUMN profiledata.blogtitle IS 'Blog Title';
-COMMENT ON COLUMN profiledata.address IS 'Postal address';
-COMMENT ON COLUMN profiledata.hasavatar IS 'True when user has specified an image for avatar';
-COMMENT ON COLUMN profiledata.accountnumber IS 'Numero de compte';
-COMMENT ON COLUMN profiledata.bankedkey IS 'clé RIB';
-COMMENT ON COLUMN profiledata.bankcode IS 'Code banque';
-COMMENT ON COLUMN profiledata.gtoken IS 'Google authentification token';
-COMMENT ON COLUMN profiledata.gcalid IS 'Google calendar identifier';
-COMMENT ON COLUMN profiledata.gtokentype IS 'Google access token type';
-COMMENT ON COLUMN profiledata.grefreshtoken IS 'Google refresh token';
-COMMENT ON COLUMN profiledata.gtokenexpir IS 'Google access token expiration date';
-COMMENT ON COLUMN profiledata.avatar IS 'url for an avatar';
-
- -- Index: fki_fkprofiles2
-
--- DROP INDEX fki_fkprofiles2;
-
-CREATE INDEX fki_fkprofiles2
-  ON profiledata
-  USING btree
-  (uniqueid);
-
-  -- Table: profiles
-
--- DROP TABLE profiles;
-
-CREATE TABLE profiles
-(
-  uniqueid bigserial NOT NULL,
-  username character varying(255) NOT NULL,
-  applicationname character varying(255) NOT NULL,
-  isanonymous boolean,
-  lastactivitydate timestamp with time zone,
-  lastupdateddate timestamp with time zone,
-  CONSTRAINT profiles_pkey PRIMARY KEY (uniqueid),
-  CONSTRAINT fk_profileusers FOREIGN KEY (username, applicationname)
-      REFERENCES users (username, applicationname) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT pkprofiles UNIQUE (username, applicationname)
-)
-WITH (
-  OIDS=FALSE
-  );
 
 
   -- Table: projet
@@ -338,24 +391,7 @@ CREATE INDEX fki_pk_project_manager
   USING btree
   (managerid COLLATE pg_catalog."default", "ApplicationName" COLLATE pg_catalog."default");
 
-  -- Table: roles
-
--- DROP TABLE roles;
-
-CREATE TABLE roles
-(
-  rolename character varying(255) NOT NULL,
-  applicationname character varying(255) NOT NULL,
-  comment character varying(255) NOT NULL,
-  CONSTRAINT roles_pkey PRIMARY KEY (rolename, applicationname)
-)
-WITH (
-  OIDS=FALSE
-);
-
-COMMENT ON TABLE roles
-  IS 'Web application roles';
-
+  
   -- Table: stocksymbols
 
 -- DROP TABLE stocksymbols;
@@ -412,6 +448,29 @@ WITH (
   OIDS=FALSE
 );
 
+
+  -- Table: tasks
+
+-- DROP TABLE tasks;
+
+CREATE TABLE tasks
+(
+  id bigserial NOT NULL,
+  name character varying NOT NULL,
+  start date NOT NULL,
+  endd date NOT NULL,
+  tdesc text NOT NULL,
+  prid bigint NOT NULL,
+  CONSTRAINT tasks_pk_new PRIMARY KEY (id),
+  CONSTRAINT tasks_fk_new FOREIGN KEY (prid)
+      REFERENCES projet (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+
+
   -- Table: taskdeps
 
 -- DROP TABLE taskdeps;
@@ -457,105 +516,6 @@ CREATE INDEX fki_pk_foreign_task
 
 
 
-  -- Table: tasks
-
--- DROP TABLE tasks;
-
-CREATE TABLE tasks
-(
-  id bigserial NOT NULL,
-  name character varying NOT NULL,
-  start date NOT NULL,
-  endd date NOT NULL,
-  tdesc text NOT NULL,
-  prid bigint NOT NULL,
-  CONSTRAINT tasks_pk_new PRIMARY KEY (id),
-  CONSTRAINT tasks_fk_new FOREIGN KEY (prid)
-      REFERENCES projet (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-WITH (
-  OIDS=FALSE
-);
-
-  -- Table: users
-
--- DROP TABLE users;
-
-CREATE TABLE users
-(
-  pkid character varying NOT NULL,
-  username character varying(255) NOT NULL,
-  applicationname character varying(255) NOT NULL,
-  email character varying(128) NOT NULL,
-  comment character varying(255),
-  passw character varying(128) NOT NULL,
-  passwordquestion character varying(255),
-  passwordanswer character varying(255),
-  isapproved boolean,
-  lastactivitydate timestamp with time zone,
-  lastlogindate timestamp with time zone,
-  lastpasswordchangeddate timestamp with time zone,
-  creationdate timestamp with time zone,
-  islockedout boolean,
-  lastlockedoutdate timestamp with time zone,
-  failedpasswordattemptcount integer,
-  failedpasswordattemptwindowstart timestamp with time zone,
-  failedpasswordanswerattemptcount integer,
-  failedpasswordanswerattemptwindowstart timestamp with time zone,
-  CONSTRAINT users_pkey PRIMARY KEY (pkid),
-  CONSTRAINT uniquelogin UNIQUE (applicationname, email),
-  CONSTRAINT uniquemail UNIQUE (applicationname, username)
-)
-WITH (
-  OIDS=FALSE
-);
-
-  -- Table: usersroles
-
--- DROP TABLE usersroles;
-
-CREATE TABLE usersroles
-(
-  applicationname character varying(255) NOT NULL,
-  rolename character varying(255) NOT NULL,
-  username character varying(255) NOT NULL,
-  CONSTRAINT attrroles_pkey PRIMARY KEY (applicationname, rolename, username),
-  CONSTRAINT usersroles_fk_role FOREIGN KEY (applicationname, rolename)
-      REFERENCES roles (applicationname, rolename) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT usersroles_fk_user FOREIGN KEY (applicationname, username)
-      REFERENCES users (applicationname, username) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE
-)
-WITH (
-  OIDS=FALSE
-);
-
-  -- Table: wrfiles
-
--- DROP TABLE wrfiles;
-
-CREATE TABLE wrfiles
-(
-  _id bigint NOT NULL DEFAULT nextval('wrtags__id_seq'::regclass), -- Identifier
-  name character varying(2048), -- File Name, relative to the user home directory, must not begin with a slash.
-  wrid bigint, -- Writting identifier (foreign key)
-  CONSTRAINT wrtags_pkey PRIMARY KEY (_id),
-  CONSTRAINT wrtags_wrid_fkey FOREIGN KEY (wrid)
-      REFERENCES writtings (_id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE
-)
-WITH (
-  OIDS=FALSE
-);
-
-COMMENT ON COLUMN wrfiles._id IS 'Identifier';
-COMMENT ON COLUMN wrfiles.name IS 'File Name, relative to the user home directory, must not begin with a slash.';
-COMMENT ON COLUMN wrfiles.wrid IS 'Writting identifier (foreign key)';
-
-
-
   -- Table: writtings
 
 -- DROP TABLE writtings;
@@ -583,6 +543,8 @@ COMMENT ON COLUMN writtings.estimid IS 'Estimaton identifier';
 COMMENT ON COLUMN writtings.description IS 'item textual description';
 COMMENT ON COLUMN writtings.productid IS 'Product reference ... may be a key in a catalog, may contain a catalog id';
 COMMENT ON COLUMN writtings.ucost IS 'en euro.?';
+
+
 
 
   -- Table: wrtags
@@ -615,3 +577,49 @@ CREATE INDEX fki_cstwrtagsref
   (tagid);
 
 
+  -- Table: wrfiles
+
+-- DROP TABLE wrfiles;
+
+CREATE TABLE wrfiles
+(
+  _id bigserial NOT NULL , -- Identifier
+  name character varying(2048), -- File Name, relative to the user home directory, must not begin with a slash.
+  wrid bigint, -- Writting identifier (foreign key)
+  CONSTRAINT wrtags_pkey PRIMARY KEY (_id),
+  CONSTRAINT wrtags_wrid_fkey FOREIGN KEY (wrid)
+      REFERENCES writtings (_id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+
+COMMENT ON COLUMN wrfiles._id IS 'Identifier';
+COMMENT ON COLUMN wrfiles.name IS 'File Name, relative to the user home directory, must not begin with a slash.';
+COMMENT ON COLUMN wrfiles.wrid IS 'Writting identifier (foreign key)';
+
+
+  -- Table: histowritting
+
+-- DROP TABLE histowritting;
+
+CREATE TABLE histowritting
+(
+  datechange timestamp with time zone NOT NULL DEFAULT now(),
+  status integer,
+  wrtid bigint NOT NULL,
+  username character varying(255),
+  applicationname character varying,
+  _id bigserial NOT NULL,
+  CONSTRAINT histowritting_pkey PRIMARY KEY (_id),
+  CONSTRAINT histowritting_username_fkey FOREIGN KEY (username, applicationname)
+      REFERENCES users (username, applicationname) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT histowritting_wrtid_fkey FOREIGN KEY (wrtid)
+      REFERENCES writtings (_id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);

@@ -1,5 +1,24 @@
-
+﻿
+DROP TABLE commandes;
+DROP TABLE hr;
+DROP TABLE blfiles;
  DROP table usersroles CASCADE;
  drop table roles CASCADE;
  Drop table users CASCADE;
-
+ DROP TABLE profiles CASCADE;
+DROP TABLE product CASCADE;
+DROP TABLE stocksymbols CASCADE;
+DROP TABLE tag CASCADE;
+DROP TABLE blog CASCADE;
+DROP TABLE writtings CASCADE;
+DROP TABLE tasks CASCADE;
+DROP TABLE estimate CASCADE;
+DROP TABLE histoestim CASCADE;
+DROP TABLE histowritting CASCADE;
+DROP TABLE projet CASCADE;
+DROP TABLE tagged CASCADE;
+DROP TABLE profiledata CASCADE;
+DROP TABLE wrtags CASCADE;
+DROP TABLE taskdeps CASCADE;
+DROP TABLE wrfiles CASCADE;
+DROP TABLE comment CASCADE;
