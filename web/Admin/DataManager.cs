@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using Yavsc.Model.Admin;
 using Npgsql.Web.Blog;
+using System.Resources;
 
 namespace Yavsc.Admin
 {
@@ -67,7 +68,34 @@ namespace Yavsc.Admin
 
 		public TaskOutput CreateDb ()
 		{
-			return Restore ("freshinstall", false);
+			TaskOutput res = new TaskOutput ();
+
+			string sql;
+			try {
+				using (Stream sqlStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Yavsc.instdbws.sql"))
+				{
+					using (StreamReader srdr = new StreamReader (sqlStream)) {
+						sql  = srdr.ReadToEnd ();
+						using (var cnx = new Npgsql.NpgsqlConnection (da.ConnectionString())) {
+							using (var cmd = cnx.CreateCommand ()) {
+								cmd.CommandText = sql;
+								cnx.Open();
+								cmd.ExecuteNonQuery();
+								cnx.Close();
+								}
+						}
+					}
+				}
+			}
+			catch (Exception ex) {
+				res.ExitCode = 1;
+				res.Error = 
+					string.Format ("Exception of type {0} occured during the script execution",
+					ex.GetType ().Name);
+				res.Message = ex.Message;
+			}
+
+			return res;
 		}
 
 		public Export TagBackup (string filename, string [] tags)

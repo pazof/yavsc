@@ -632,6 +632,9 @@
     <Content Include="Views\Google\GoogleErrorMessage.aspx" />
     <Content Include="Views\Home\Contact.aspx" />
     <Content Include="Views\Home\AssemblyInfo.aspx" />
+    <Content Include="Views\Admin\Created.aspx" />
+    <Content Include="Views\Admin\InitDb.aspx" />
+    <Content Include="Models\StaticPage.master" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

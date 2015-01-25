@@ -41,4 +41,9 @@
     <data name="Remember_me"><value>Se souvenir du mot de passe</value></data>
     <data name="DocTemplateException"><value>Une erreur est survenue à la génération de votre document</value></data>
     <data name="Message_sent"><value>Votre message a été envoyé</value></data>
+    <data name="was_added_to_the_role"><value>a été ajouté au rôle</value></data>
+	<data name="was_added_to_the_empty_role"><value>Il n'y avait pas 'utilisateur dans le rôle '{1}'. Vous ({0}) avez été ajouté au rôle '{1}'.</value></data>
+	<data name="younotadmin"><value>Vous n'êtes pas administrateur</value></data>
+    <data name="role_created"><value>Rôle créé</value></data>
+
 </root>

@@ -9,6 +9,7 @@ using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.Admin;
 using Yavsc.Admin;
 using System.IO;
+using Yavsc.Model;
 
 
 namespace Yavsc.Controllers
@@ -19,13 +20,27 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class AdminController : Controller
 	{
-
-		[Authorize(Roles="Admin")]
 		public ActionResult Index()
 		{
+			if (!Roles.RoleExists (adminRoleName)) {
+				Roles.CreateRole (adminRoleName);
+			}
 			return View ();
 		}
 
+		public ActionResult InitDb(DataAccess datac, string doInit)
+		{
+			if (doInit=="on") {
+				if (ModelState.IsValid) {
+					// TODO BETTER
+					datac.BackupPrefix = Server.MapPath (datac.BackupPrefix);
+					DataManager mgr = new DataManager (datac);
+					TaskOutput t = mgr.CreateDb ();
+					return View ("Created", t);
+				}
+			}
+			return View ();
+		}
 		[Authorize(Roles="Admin")]
 		public ActionResult Backups(DataAccess model)
 		{
@@ -134,7 +149,13 @@ namespace Yavsc.Controllers
 			ViewData["usertoremove"] = username;
 			return UserList();
 		}
+
+
 		//TODO no more than pageSize results per page
+		/// <summary>
+		/// User list.
+		/// </summary>
+		/// <returns>The list.</returns>
 		[Authorize()]
 		public ActionResult UserList ()
 		{
@@ -142,55 +163,68 @@ namespace Yavsc.Controllers
 			return View (c);
 		}
 
+		/// <summary>
+		/// a form to add a role
+		/// </summary>
+		/// <returns>The role.</returns>
 		[Authorize(Roles="Admin")]
 		public ActionResult AddRole ()
 		{
 			return View ();
 		}
 
+		/// <summary>
+		/// Add a new role.
+		/// </summary>
+		/// <returns>The add role.</returns>
+		/// <param name="rolename">Rolename.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult DoAddRole (string rolename)
 		{
 			Roles.CreateRole(rolename);
-			ViewData["Message"] = "Rôle créé : "+rolename;
+			ViewData["Message"] = LocalizedText.role_created+ " : "+rolename;
 			return View ();
 		}
 
+		/// <summary>
+		/// Shows the roles list.
+		/// </summary>
+		/// <returns>The list.</returns>
 		[Authorize()]
 		public ActionResult RoleList ()
 		{
 			return View (Roles.GetAllRoles ());
 		}
 		private const string adminRoleName = "Admin";
-		protected override void Initialize (System.Web.Routing.RequestContext requestContext)
-		{
-			base.Initialize (requestContext);
-			if (!Roles.RoleExists (adminRoleName)) {
-				Roles.CreateRole (adminRoleName);
-			}
-		}
 
+
+
+		/// <summary>
+		/// Assing the Admin role to the specified user in model.
+		/// </summary>
+		/// <param name="model">Model.</param>
 		[Authorize()]
 		public ActionResult Admin (NewAdminModel model)
 		{
 			string currentUser = Membership.GetUser ().UserName;
 			if (ModelState.IsValid) {
 				Roles.AddUserToRole (model.UserName, adminRoleName);
-				ViewData ["Message"] = model.UserName + " was added to the role '" + adminRoleName + "'";
+				ViewData ["Message"] = model.UserName + " "+LocalizedText.was_added_to_the_role+" '" + adminRoleName + "'";
 			} else {
 				// ASSERT (Roles.RoleExists (adminRoleName)) 
 				string [] admins = Roles.GetUsersInRole (adminRoleName);
 				if (admins.Length > 0) { 
 					if (! admins.Contains (Membership.GetUser ().UserName)) {
 						ModelState.Remove("UserName");
-						ModelState.AddModelError("UserName", "You're not administrator!");
+						ModelState.AddModelError("UserName",LocalizedText.younotadmin+"!");
 						return View ("Index");
 					}
 				} else {
 					Roles.AddUserToRole (currentUser, adminRoleName);
 					admins = new string[] { currentUser };
 					ViewData ["Message"] += string.Format (
-						"There was no user in the 'Admin' role. You ({0}) was just added as the firt user in the 'Admin' role. ", currentUser);
+						LocalizedText.was_added_to_the_empty_role,
+						currentUser, adminRoleName);
 				}
 
 				List<SelectListItem> users = new List<SelectListItem> ();

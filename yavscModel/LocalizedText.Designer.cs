@@ -46,6 +46,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string was_added_to_the_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
+            }
+        }
+        
         public static string Unitary_cost {
             get {
                 return ResourceManager.GetString("Unitary_cost", resourceCulture);
@@ -136,6 +142,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string younotadmin {
+            get {
+                return ResourceManager.GetString("younotadmin", resourceCulture);
+            }
+        }
+        
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
@@ -163,6 +175,12 @@ namespace Yavsc.Model {
         public static string Pdf_version {
             get {
                 return ResourceManager.GetString("Pdf_version", resourceCulture);
+            }
+        }
+        
+        public static string was_added_to_the_empty_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
             }
         }
         
@@ -199,6 +217,12 @@ namespace Yavsc.Model {
         public static string User_name {
             get {
                 return ResourceManager.GetString("User_name", resourceCulture);
+            }
+        }
+        
+        public static string role_created {
+            get {
+                return ResourceManager.GetString("role_created", resourceCulture);
             }
         }
         

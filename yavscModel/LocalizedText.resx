@@ -41,5 +41,8 @@
 	<data name="Remember_me"><value>Remember me</value></data>
 	<data name="DocTemplateException"><value>Exception occured when rendering your document</value></data>
 	<data name="Message_sent"><value>Your message has been sent.</value></data>
-	
+	<data name="was_added_to_the_role"><value>was added to the role</value></data>
+	<data name="was_added_to_the_empty_role"><value>There was no user in the '{1}' role. You ({0}) was just added as firt user in the '{1}' role.</value></data>
+	<data name="younotadmin"><value>You're not administrator</value></data>
+	 <data name="role_created"><value>role created</value></data>
 	</root>
