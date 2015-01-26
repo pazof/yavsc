@@ -19,9 +19,10 @@ Prix unitaire : <%= Html.Encode(Model.UnitaryPrice.Quantity.ToString())%>
 <% } else { %> Gratuit! <% } %>
 </div>
 <div class="booking">
-<% if (Model.CommandForm!=null) { %>
-Défaut de formulaire de commande!!!
-<% } else { Response.Write( Html.CommandForm(Model,"Ajouter au panier")); } %>
+<!--- 
+- TODO: better
+- ASSERT (Model.CommandForm!=null) --->
+<%= Html.CommandForm(Model,"Ajouter au panier") %>
 
 <% if (Model.CommandValidityDates!=null) { %>
 Offre valable du <%= Model.CommandValidityDates.StartDate.ToString("dd/MM/yyyy") %> au 

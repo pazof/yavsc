@@ -229,11 +229,7 @@ namespace Yavsc.Controllers
 		{
 			string username = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = username;
-			if (AvatarFile == null) {
-				// do not update <c>avatar</c> to null since
-				// it's not in the model.
-			} 
-			else { 
+			if (AvatarFile != null)  { 
 				// if said valid, move as avatar file
 				// else invalidate the model
 				if (AvatarFile.ContentType == "image/png") {
@@ -242,50 +238,39 @@ namespace Yavsc.Controllers
 					AvatarFile.SaveAs (avpath);
 					model.avatar = 
 						Path.Combine(AvatarDir.Substring(1),username)+".png";
-
-
-				} else
+					
+				} else 
 					ModelState.AddModelError ("Avatar",
 						string.Format ("Image type {0} is not supported (suported formats : {1})",
-							AvatarFile.ContentType, "image/png")
-					);
+							AvatarFile.ContentType, "image/png"));
 			}
+		/* Sync the property in the Profile model to display :
+		 *  string cAvat = HttpContext.Profile.GetPropertyValue ("avatar") as string;
+			if (cAvat != null) if (model.avatar == null) model.avatar = cAvat;
+			*/
 			if (ModelState.IsValid) {
-				HttpContext.Profile.SetPropertyValue (
-					"Address", model.Address);
-				HttpContext.Profile.SetPropertyValue (
-					"BlogTitle", model.BlogTitle);
-				HttpContext.Profile.SetPropertyValue (
-					"BlogVisible", model.BlogVisible);
-				HttpContext.Profile.SetPropertyValue (
-					"CityAndState", model.CityAndState);
-				HttpContext.Profile.SetPropertyValue (
-					"ZipCode", model.ZipCode);
-				HttpContext.Profile.SetPropertyValue (
-					"Country", model.Country);
-				HttpContext.Profile.SetPropertyValue (
-					"WebSite", model.WebSite);
-				HttpContext.Profile.SetPropertyValue (
-					"Name", model.Name);
-				HttpContext.Profile.SetPropertyValue (
-					"Phone", model.Phone);
-				HttpContext.Profile.SetPropertyValue (
-					"Mobile", model.Mobile);
-				HttpContext.Profile.SetPropertyValue (
-					"BankCode", model.BankCode);
-				HttpContext.Profile.SetPropertyValue (
-					"WicketCode", model.WicketCode);
-				HttpContext.Profile.SetPropertyValue (
-					"AccountNumber", model.AccountNumber);
-				HttpContext.Profile.SetPropertyValue (
-					"BankedKey", model.BankedKey);
-				HttpContext.Profile.SetPropertyValue (
-					"BIC", model.BIC);
-				HttpContext.Profile.SetPropertyValue (
-					"IBAN", model.IBAN);
+				if (model.avatar != null) 
+					HttpContext.Profile.SetPropertyValue ("avatar", model.avatar);
+				HttpContext.Profile.SetPropertyValue ("Address", model.Address);
+				HttpContext.Profile.SetPropertyValue ("BlogTitle", model.BlogTitle);
+				HttpContext.Profile.SetPropertyValue ("BlogVisible", model.BlogVisible);
+				HttpContext.Profile.SetPropertyValue ("CityAndState", model.CityAndState);
+				HttpContext.Profile.SetPropertyValue ("ZipCode", model.ZipCode);
+				HttpContext.Profile.SetPropertyValue ("Country", model.Country);
+				HttpContext.Profile.SetPropertyValue ("WebSite", model.WebSite);
+				HttpContext.Profile.SetPropertyValue ("Name", model.Name);
+				HttpContext.Profile.SetPropertyValue ("Phone", model.Phone);
+				HttpContext.Profile.SetPropertyValue ("Mobile", model.Mobile);
+				HttpContext.Profile.SetPropertyValue ("BankCode", model.BankCode);
+				HttpContext.Profile.SetPropertyValue ("WicketCode", model.WicketCode);
+				HttpContext.Profile.SetPropertyValue ("AccountNumber", model.AccountNumber);
+				HttpContext.Profile.SetPropertyValue ("BankedKey", model.BankedKey);
+				HttpContext.Profile.SetPropertyValue ("BIC", model.BIC);
+				HttpContext.Profile.SetPropertyValue ("IBAN", model.IBAN);
 				HttpContext.Profile.Save ();
 				FormsAuthentication.SetAuthCookie (username, model.RememberMe);
 				ViewData ["Message"] = "Profile enregistré, cookie modifié.";
+
 			}
 			return View (model);
 		}
