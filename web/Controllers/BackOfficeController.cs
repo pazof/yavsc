@@ -8,8 +8,14 @@ using Yavsc.Admin;
 
 namespace Yavsc.Controllers
 {
+	/// <summary>
+	/// Back office controller.
+	/// </summary>
     public class BackOfficeController : Controller
     {
+		/// <summary>
+		/// Index this instance.
+		/// </summary>
 		[Authorize(Roles="Admin,Providers")]
 		public ActionResult Index()
 		{

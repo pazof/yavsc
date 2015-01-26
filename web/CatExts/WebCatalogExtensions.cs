@@ -9,8 +9,18 @@ using System.Web.Mvc.Html;
 
 namespace Yavsc.CatExts
 {
+	/// <summary>
+	/// Web catalog extensions.
+	/// </summary>
 	public static class WebCatalogExtensions
 	{
+		/// <summary>
+		/// Commands the form.
+		/// </summary>
+		/// <returns>The form.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="pos">Position.</param>
+		/// <param name="atc">Atc.</param>
 		public static string CommandForm(this HtmlHelper<PhysicalProduct> helper, Product pos,string atc="Add to backet") {
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (helper.ValidationSummary ());
@@ -43,6 +53,13 @@ namespace Yavsc.CatExts
 			sb.Append (ft.ToString ());
 			return sb.ToString ();
 		}
+		/// <summary>
+		/// Commands the form.
+		/// </summary>
+		/// <returns>The form.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="pos">Position.</param>
+		/// <param name="atc">Atc.</param>
 		public static string CommandForm(this HtmlHelper<Service> helper, Product pos,string atc="Add to backet") {
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (helper.ValidationSummary ());
@@ -72,9 +89,6 @@ namespace Yavsc.CatExts
 			sb.Append (ft.ToString ());
 			return sb.ToString ();
 		}
-
-
-		 
 	}
 }
 

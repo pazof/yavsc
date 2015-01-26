@@ -12,7 +12,6 @@
 <#@ parameter type="Profile" name="from" #>
 <#@ parameter type="Profile" name="to" #>
 
-
 \documentclass[french,11pt]{article}
 \usepackage{babel}
 \usepackage[T1]{fontenc}

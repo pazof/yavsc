@@ -5,14 +5,26 @@ using Yavsc.Model.RolesAndMembers;
 
 namespace Yavsc
 {
+	/// <summary>
+	/// Register page.
+	/// </summary>
 	public class RegisterPage : System.Web.Mvc.ViewPage<RegisterViewModel>
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.RegisterPage"/> class.
+		/// </summary>
 		public RegisterPage ()
 		{
 		}
-
+		/// <summary>
+		/// The createuserwizard1.
+		/// </summary>
 		public CreateUserWizard Createuserwizard1;
-
+		/// <summary>
+		/// Raises the register send mail event.
+		/// </summary>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
 		public void OnRegisterSendMail(object sender, MailMessageEventArgs e)
  {
     // Set MailMessage fields.

@@ -26,6 +26,9 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Helpers
 {
+	/// <summary>
+	/// Simple json post method.
+	/// </summary>
 	public class SimpleJsonPostMethod<TQuery,TAnswer>: IDisposable
 	{
 		internal HttpWebRequest request = null;
@@ -36,15 +39,25 @@ namespace Yavsc.Helpers
 			set { Request.TransferEncoding=value;} 
 		}
 		string Method { get { return Request.Method; } }
-
+		/// <summary>
+		/// Gets the path.
+		/// </summary>
+		/// <value>The path.</value>
 		public string Path { 
 			get{ return Request.RequestUri.ToString(); } 
 		}
-
+		/// <summary>
+		/// Sets the credential.
+		/// </summary>
+		/// <param name="cred">Cred.</param>
 		public void SetCredential(string cred) {
 			Request.Headers.Add(HttpRequestHeader.Authorization,cred);
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the Yavsc.Helpers.SimpleJsonPostMethod class.
+		/// </summary>
+		/// <param name="pathToMethod">Path to method.</param>
 		public SimpleJsonPostMethod (string pathToMethod)
 		{
 			// ASSERT Request == null
@@ -55,7 +68,10 @@ namespace Yavsc.Helpers
 			Request.ContentType = "application/json";
 			Request.TransferEncoding = "UTF-8";
 		}
-
+		/// <summary>
+		/// Invoke the specified query.
+		/// </summary>
+		/// <param name="query">Query.</param>
 		public TAnswer Invoke(TQuery query)
 		{
 			Byte[] bytes = System.Text.Encoding.UTF8.GetBytes (JsonConvert.SerializeObject(query));
@@ -81,6 +97,14 @@ namespace Yavsc.Helpers
 		}
 
 		#region IDisposable implementation
+		/// <summary>
+		/// Releases all resource used by the <see cref="Yavsc.Helpers.SimpleJsonPostMethod`2"/> object.
+		/// </summary>
+		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="Yavsc.Helpers.SimpleJsonPostMethod`2"/>. The
+		/// <see cref="Dispose"/> method leaves the <see cref="Yavsc.Helpers.SimpleJsonPostMethod`2"/> in an unusable state.
+		/// After calling <see cref="Dispose"/>, you must release all references to the
+		/// <see cref="Yavsc.Helpers.SimpleJsonPostMethod`2"/> so the garbage collector can reclaim the memory that the
+		/// <see cref="Yavsc.Helpers.SimpleJsonPostMethod`2"/> was occupying.</remarks>
 		public void Dispose ()
 		{
 			if (Request != null) Request.Abort ();

@@ -25,7 +25,6 @@ using System.Collections.Specialized;
 
 namespace Yavsc.ApiControllers
 {
-
 	class TemplateException : Exception
 	{
 		public TemplateException(string message):base(message)

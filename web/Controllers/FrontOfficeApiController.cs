@@ -26,80 +26,66 @@ using Yavsc.Model;
 
 namespace Yavsc.ApiControllers
 {
-
+	/// <summary>
+	/// Front office controller.
+	/// </summary>
 	public class FrontOfficeController : ApiController
 	{
-
+		/// <summary>
+		/// The wfmgr.
+		/// </summary>
 		protected WorkFlowManager wfmgr = null;
 
+		/// <summary>
+		/// Initialize the specified controllerContext.
+		/// </summary>
+		/// <param name="controllerContext">Controller context.</param>
 		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
 		{
 			base.Initialize (controllerContext);
 			wfmgr = new WorkFlowManager ();
 		}
 
+		/// <summary>
+		/// Catalog this instance.
+		/// </summary>
 		[AcceptVerbs("GET")]
 		public Catalog Catalog ()
 		{
 			Catalog c = CatalogManager.GetCatalog (Request.RequestUri.AbsolutePath);
 			return c;
 		}
-
+		/// <summary>
+		/// Gets the product categorie.
+		/// </summary>
+		/// <returns>The product categorie.</returns>
+		/// <param name="brandName">Brand name.</param>
+		/// <param name="prodCategorie">Prod categorie.</param>
 		[AcceptVerbs("GET")]
 		public ProductCategory GetProductCategorie (string brandName, string prodCategorie)
 		{
 			return CatalogManager.GetCatalog (Request.RequestUri.AbsolutePath).GetBrand (brandName).GetProductCategory (prodCategorie)
 			;
 		}
-		/*
 
-		public HttpResponseMessage Post()
-		{
-			HttpResponseMessage result = null;
-			var httpRequest = HttpContext.Current.Request;
-			if (httpRequest.Files.Count > 0)
-			{
-				string username = HttpContext.Current.User.Identity.Name;
-				int nbf = 0;
-				foreach(string file in httpRequest.Files)
-				{
-					var postedFile = httpRequest.Files[file];
-					string filePath = HttpContext.Current.Server.MapPath("~/users/"+username+"/"+ postedFile.FileName);
-					postedFile.SaveAs(filePath);
-					nbf++; 
-				}
-				result = Request.CreateResponse <string>(HttpStatusCode.Created,
-					string.Format("Received {0} files",nbf));
-
-			}
-			else
-			{
-				result = Request.CreateResponse <string>(HttpStatusCode.BadRequest,"No file received");
-			}
-
-			return result;
-		}
-*/
-		/*
-		[Authorize]
-		public IOrderInfo Order()
-		{
-
-		}
-		*/
-		[Authorize]
-		[HttpGet]
 		/// <summary>
 		/// Gets the estimate.
 		/// </summary>
 		/// <returns>The estimate.</returns>
-		/// <param name="estid">Estid.</param>
+		/// <param name="Id">Estimate Id.</param>
+		[Authorize]
+		[HttpGet]
 		public Estimate GetEstimate (long Id)
 		{
 			Estimate est = wfmgr.ContentProvider.GetEstimate (Id);
 			return est;
 		}
 
+		/// <summary>
+		/// Gets the estim tex.
+		/// </summary>
+		/// <returns>The estim tex.</returns>
+		/// <param name="estimid">Estimid.</param>
 		[AcceptVerbs("GET")]
 		public HttpResponseMessage GetEstimTex(long estimid)
 		{

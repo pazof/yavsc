@@ -15,6 +15,9 @@ using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
+	/// <summary>
+	/// Account controller.
+	/// </summary>
 	public class AccountController : Controller
 	{
 		private static string registrationMessage =
@@ -25,7 +28,7 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// Gets or sets the avatar dir.
 		/// This value is past to <c>Server.MapPath</c>,
-		/// it should start with </c>~/</c>, and we assume it
+		/// it should start with <c>~/</c>, and we assume it
 		/// to be relative to the application path.
 		/// </summary>
 		/// <value>The avatar dir.</value>
@@ -33,18 +36,28 @@ namespace Yavsc.Controllers
 			get { return avatarDir; }
 			set { avatarDir = value; }
 		}
-
+		/// <summary>
+		/// Index this instance.
+		/// </summary>
 		public ActionResult Index ()
 		{
 			return View ();
 		}
-
+		/// <summary>
+		/// Login the specified returnUrl.
+		/// </summary>
+		/// <param name="returnUrl">Return URL.</param>
 		public ActionResult Login (string returnUrl)
 		{
 			ViewData ["returnUrl"] = returnUrl;
 			return View ();
 		}
 
+		/// <summary>
+		/// Gets the profile.
+		/// </summary>
+		/// <returns>The profile.</returns>
+		/// <param name="user">User.</param>
 		public static Profile GetProfile (string user)
 		{
 			return new Profile (ProfileBase.Create (user));
@@ -52,6 +65,12 @@ namespace Yavsc.Controllers
 
 
 		// TODO [ValidateAntiForgeryToken]
+		/// <summary>
+		/// Dos the login.
+		/// </summary>
+		/// <returns>The login.</returns>
+		/// <param name="model">Model.</param>
+		/// <param name="returnUrl">Return URL.</param>
 		public ActionResult DoLogin (LoginModel model, string returnUrl)
 		{
 			if (ModelState.IsValid) {
@@ -71,7 +90,11 @@ namespace Yavsc.Controllers
 			// If we got this far, something failed, redisplay form
 			return View ("Login", model);
 		}
-
+		/// <summary>
+		/// Register the specified model and returnUrl.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		/// <param name="returnUrl">Return URL.</param>
 		public ActionResult Register (RegisterViewModel model, string returnUrl)
 		{
 			ViewData ["returnUrl"] = returnUrl;
@@ -151,19 +174,29 @@ namespace Yavsc.Controllers
 			}
 			return View (model);
 		}
-
+		/// <summary>
+		/// Changes the password success.
+		/// </summary>
+		/// <returns>The password success.</returns>
 		public ActionResult ChangePasswordSuccess ()
 		{
 			return View ();
 		}
-
+		
+		/// <summary>
+		/// Changes the password.
+		/// </summary>
+		/// <returns>The password.</returns>
 		[HttpGet]
 		[Authorize]
 		public ActionResult ChangePassword ()
 		{
 			return View ();
 		}
-
+		/// <summary>
+		/// Unregister the specified confirmed.
+		/// </summary>
+		/// <param name="confirmed">If set to <c>true</c> confirmed.</param>
 		[Authorize]
 		public ActionResult Unregister (bool confirmed = false)
 		{
@@ -175,6 +208,12 @@ namespace Yavsc.Controllers
 			return RedirectToAction ("Index", "Home");
 		}
 
+		
+		/// <summary>
+		/// Changes the password.
+		/// </summary>
+		/// <returns>The password.</returns>
+		/// <param name="model">Model.</param>
 		[Authorize]
 		[HttpPost]
 		public ActionResult ChangePassword (ChangePasswordModel model)
@@ -210,7 +249,10 @@ namespace Yavsc.Controllers
 			return View (model);
 		}
 
-
+		/// <summary>
+		/// Profile the specified model.
+		/// </summary>
+		/// <param name="model">Model.</param>
 		[Authorize]
 		[HttpGet]
 		public ActionResult Profile (Profile model)
@@ -222,9 +264,13 @@ namespace Yavsc.Controllers
 			return View (model);
 		}
 
+		/// <summary>
+		/// Profile the specified model and AvatarFile.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		/// <param name="AvatarFile">Avatar file.</param>
 		[Authorize]
 		[HttpPost]
-		//public ActionResult UpdateProfile(HttpPostedFileBase Avatar, string Address, string CityAndState, string ZipCode, string Country, string WebSite) 
 		public ActionResult Profile (Profile model, HttpPostedFileBase AvatarFile)
 		{
 			string username = Membership.GetUser ().UserName;
@@ -275,6 +321,10 @@ namespace Yavsc.Controllers
 			return View (model);
 		}
 
+		/// <summary>
+		/// Logout the specified returnUrl.
+		/// </summary>
+		/// <param name="returnUrl">Return URL.</param>
 		[Authorize]
 		public ActionResult Logout (string returnUrl)
 		{
@@ -283,7 +333,11 @@ namespace Yavsc.Controllers
 		}
 
 
-
+		/// <summary>
+		/// Validate the specified id and key.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		/// <param name="key">Key.</param>
 		[HttpGet]
 		public ActionResult Validate (string id, string key)
 		{

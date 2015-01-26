@@ -20,6 +20,9 @@ using Yavsc.Helpers.Google;
 
 namespace Yavsc.Controllers
 {
+	/// <summary>
+	/// Google controller.
+	/// </summary>
 	public class GoogleController : Controller
 	{
 
@@ -44,7 +47,10 @@ namespace Yavsc.Controllers
 				Request.Url.Authority + "/Google/CalAuth";
 			}
 		}
-
+		/// <summary>
+		/// Login the specified returnUrl.
+		/// </summary>
+		/// <param name="returnUrl">Return URL.</param>
 		public void Login (string returnUrl)
 		{
 			if (string.IsNullOrWhiteSpace (returnUrl))
@@ -54,13 +60,15 @@ namespace Yavsc.Controllers
 			oa.Login (Response, SetSessionSate ());
 		}
 
-		[HttpGet]
-		[Authorize]
+
 		/// <summary>
 		/// Called after the Google authorizations screen,
 		/// we assume that <c>Session</c> contains a redirectUrl entry
 		/// </summary>
 		/// <returns>The auth.</returns>
+		[HttpGet]
+		[Authorize]
+
 		public ActionResult CalAuth ()
 		{
 			string msg;
@@ -95,10 +103,9 @@ namespace Yavsc.Controllers
 			HttpContext.Profile.Save ();
 		}
 
-
-
-
-
+		/// <summary>
+		/// Auth this instance.
+		/// </summary>
 		[HttpGet]
 		public ActionResult Auth ()
 		{
@@ -205,6 +212,11 @@ namespace Yavsc.Controllers
 			return View ();
 		}
 
+		/// <summary>
+		/// Chooses the calendar.
+		/// </summary>
+		/// <returns>The calendar.</returns>
+		/// <param name="returnUrl">Return URL.</param>
 		[Authorize]
 		[HttpGet]
 		public ActionResult ChooseCalendar (string returnUrl)
@@ -222,7 +234,12 @@ namespace Yavsc.Controllers
 			ViewData ["json"] = json;
 			return View (cl);
 		}
-
+		
+		/// <summary>
+		/// Sets the calendar.
+		/// </summary>
+		/// <returns>The calendar.</returns>
+		/// <param name="calchoice">Calchoice.</param>
 		[HttpPost]
 		[Authorize]
 		public ActionResult SetCalendar (string calchoice)
@@ -237,14 +254,23 @@ namespace Yavsc.Controllers
 			}
 			return Redirect ("/");
 		}
-
+		
+		/// <summary>
+		/// Dates the query.
+		/// </summary>
+		/// <returns>The query.</returns>
 		[Authorize]
 		[HttpGet]
 		public ActionResult DateQuery ()
 		{
 			return View (new AskForADate ());
 		}
-
+		
+		/// <summary>
+		/// Dates the query.
+		/// </summary>
+		/// <returns>The query.</returns>
+		/// <param name="model">Model.</param>
 		[Authorize]
 		[HttpPost]
 		public ActionResult DateQuery (AskForADate model)

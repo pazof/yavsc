@@ -22,19 +22,29 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class FrontOfficeController : Controller
 	{
+		/// <summary>
+		/// The wfmgr.
+		/// </summary>
 		protected WorkFlowManager wfmgr = null;
-
+		/// <summary>
+		/// Initialize the specified requestContext.
+		/// </summary>
+		/// <param name="requestContext">Request context.</param>
 		protected override void Initialize (System.Web.Routing.RequestContext requestContext)
 		{
 			base.Initialize (requestContext);
 			wfmgr = new WorkFlowManager ();
 		}
-
+		/// <summary>
+		/// Index this instance.
+		/// </summary>
 		public ActionResult Index ()
 		{
 			return View ();
 		}
-
+		/// <summary>
+		/// Estimates this instance.
+		/// </summary>
 		[Authorize]
 		public ActionResult Estimates ()
 		{
@@ -42,7 +52,11 @@ namespace Yavsc.Controllers
 
 			return View(wfmgr.GetEstimates (username));
 		}
-
+		/// <summary>
+		/// Estimate the specified model and submit.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		/// <param name="submit">Submit.</param>
 		[Authorize]
 		public ActionResult Estimate(Estimate model,string submit)
 		{
@@ -86,7 +100,9 @@ namespace Yavsc.Controllers
 			}
 			return View(model);
 		}
-
+		/// <summary>
+		/// Catalog this instance.
+		/// </summary>
 		[AcceptVerbs("GET")]
 		public ActionResult Catalog ()
 		{
@@ -109,18 +125,24 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// get the product category
 		/// </summary>
-		/// <returns>The category.</returns>
-		/// <param name="bn">Bn.</param>
-		/// <param name="pc">Pc.</param>
+		/// <returns>The category object.</returns>
+		/// <param name="brandid">Brand id.</param>
+		/// <param name="pcid">Product category Id.</param>
 		[AcceptVerbs("GET")]
-		public ActionResult ProductCategory (string id, string pc)
+		public ActionResult ProductCategory (string brandid, string pcid)
 		{
-			ViewData ["BrandName"] = id;
+			ViewData ["BrandId"] = brandid;
+			ViewData ["ProductCategoryId"] = pcid;
 			return View (
-				CatalogManager.GetCatalog (Request.Url.AbsolutePath).GetBrand (id).GetProductCategory (pc)
+				CatalogManager.GetCatalog (Request.Url.AbsolutePath).GetBrand (brandid).GetProductCategory (pcid)
 			);
 		}
-
+		/// <summary>
+		/// Product the specified id, pc and pref.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		/// <param name="pc">Pc.</param>
+		/// <param name="pref">Preference.</param>
 		[AcceptVerbs("GET")]
 		public ActionResult Product (string id, string pc, string pref)
 		{
@@ -151,12 +173,18 @@ namespace Yavsc.Controllers
 
 			return View ((p is Service)?"Service":"Product", p);
 		}
-
+		/// <summary>
+		/// Command this instance.
+		/// </summary>
 		public ActionResult Command()
 		{
 			return View ();
 		}
 
+		/// <summary>
+		/// Command the specified collection.
+		/// </summary>
+		/// <param name="collection">Collection.</param>
 		[HttpPost]
 		[Authorize]
 		public ActionResult Command(FormCollection collection)

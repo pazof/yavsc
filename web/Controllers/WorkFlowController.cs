@@ -12,10 +12,20 @@ using System.Web.Http;
 
 namespace Yavsc.ApiControllers
 {
+	/// <summary>
+	/// Work flow controller.
+	/// </summary>
 	public class WorkFlowController : ApiController
     {
 		string adminRoleName="Admin";
+		/// <summary>
+		/// The wfmgr.
+		/// </summary>
 		protected WorkFlowManager wfmgr = null;
+		/// <summary>
+		/// Initialize the specified controllerContext.
+		/// </summary>
+		/// <param name="controllerContext">Controller context.</param>
 		protected override void Initialize (HttpControllerContext controllerContext)
 		{
 			// TODO move it in a module initialization
@@ -26,6 +36,13 @@ namespace Yavsc.ApiControllers
 			wfmgr = new WorkFlowManager ();
 		}
 
+		/// <summary>
+		/// Creates the estimate.
+		/// </summary>
+		/// <returns>The estimate.</returns>
+		/// <param name="title">Title.</param>
+		/// <param name="client">Client.</param>
+		/// <param name="description">Description.</param>
 		[HttpGet]
 		[Authorize]
 		public Estimate CreateEstimate (string title,string client,string description)
@@ -34,6 +51,10 @@ namespace Yavsc.ApiControllers
 				Membership.GetUser().UserName,client,title,description);
 		}
 
+		/// <summary>
+		/// Drops the writting.
+		/// </summary>
+		/// <param name="wrid">Wrid.</param>
 		[HttpGet]
 		[Authorize]
 		public void DropWritting(long wrid)
@@ -41,8 +62,10 @@ namespace Yavsc.ApiControllers
 			wfmgr.DropWritting (wrid);
 		}
 
-
-
+		/// <summary>
+		/// Drops the estimate.
+		/// </summary>
+		/// <param name="estid">Estid.</param>
 		[HttpGet]
 		[Authorize]
 		public void DropEstimate(long estid)
@@ -50,6 +73,9 @@ namespace Yavsc.ApiControllers
 			wfmgr.DropEstimate (estid);
 		}
 
+		/// <summary>
+		/// Index this instance.
+		/// </summary>
 		[HttpGet]
 		[Authorize]
 		public object Index()
@@ -71,6 +97,11 @@ namespace Yavsc.ApiControllers
 				errs);
 		}
 
+		/// <summary>
+		/// Updates the writting.
+		/// </summary>
+		/// <returns>The writting.</returns>
+		/// <param name="wr">Wr.</param>
 		[Authorize]
 		[AcceptVerbs("POST")]
 		[ValidateAjax]
@@ -80,14 +111,14 @@ namespace Yavsc.ApiControllers
 			return Request.CreateResponse (System.Net.HttpStatusCode.OK);
 		}
 
-		[AcceptVerbs("POST")]
-		[Authorize]
-		[ValidateAjax]
 		/// <summary>
 		/// Adds the specified imputation to the given estimation by estimation id.
 		/// </summary>
 		/// <param name="estid">Estimation identifier</param>
 		/// <param name="wr">Imputation to add</param>
+		[AcceptVerbs("POST")]
+		[Authorize]
+		[ValidateAjax]
 		public HttpResponseMessage Write ([FromUri] long estid, [FromBody] Writting wr) {
 			if (estid <= 0) {
 				ModelState.AddModelError ("EstimationId", "Spécifier un identifiant d'estimation valide");

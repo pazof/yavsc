@@ -11,8 +11,15 @@ using Yavsc.Formatters;
 
 namespace Yavsc
 {
+	/// <summary>
+	/// Mvc application.
+	/// </summary>
 	public class MvcApplication : System.Web.HttpApplication
 	{
+		/// <summary>
+		/// Registers the routes.
+		/// </summary>
+		/// <param name="routes">Routes.</param>
 		public static void RegisterRoutes (RouteCollection routes)
 		{
 
@@ -20,7 +27,8 @@ namespace Yavsc
 			routes.IgnoreRoute ("Scripts/{*pathInfo}");
 			routes.IgnoreRoute ("Theme/{*pathInfo}");
 			routes.IgnoreRoute ("images/{*pathInfo}");
-
+			routes.IgnoreRoute ("xmldoc/{*pathInfo}"); // xml doc 
+			routes.IgnoreRoute ("htmldoc/{*pathInfo}"); // html doc 
 			routes.MapRoute (
 				"Blog",
 				"Blog/{user}/{title}",
@@ -38,7 +46,9 @@ namespace Yavsc
 				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
 			);
 		}
-
+		/// <summary>
+		/// Applications the start.
+		/// </summary>
 		protected void Application_Start ()
 		{
 			AreaRegistration.RegisterAllAreas ();

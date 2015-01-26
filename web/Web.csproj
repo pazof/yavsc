@@ -40,6 +40,7 @@
     <ConsolePause>false</ConsolePause>
     <AssemblyName>Yavsc</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Yavsc.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'MVC2|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -154,7 +155,6 @@
     <Compile Include="Formatters\EstimToPdfFormatter.cs" />
     <Compile Include="Formatters\SimpleFormatter.cs" />
     <Compile Include="ValidateAjaxAttribute.cs" />
-    <Compile Include="Controllers\IOrderInfo.cs" />
     <Compile Include="Controllers\IValueProvider.cs" />
     <Compile Include="Controllers\GoogleController.cs" />
     <Compile Include="Controllers\ModuleController.cs" />

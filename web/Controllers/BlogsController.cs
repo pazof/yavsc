@@ -22,6 +22,9 @@ using System.Net;
 
 namespace Yavsc.Controllers
 {
+	/// <summary>
+	/// Blogs controller.
+	/// </summary>
 	public class BlogsController : Controller
 	{
 		string defaultAvatarMimetype;
@@ -29,11 +32,17 @@ namespace Yavsc.Controllers
 			WebConfigurationManager.AppSettings ["Name"];
 		string avatarDir = "~/avatars";
 
+		/// <summary>
+		/// Gets or sets the avatar dir.
+		/// </summary>
+		/// <value>The avatar dir.</value>
 		public string AvatarDir {
 			get { return avatarDir; }
 			set { avatarDir = value; }
 		}
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Controllers.BlogsController"/> class.
+		/// </summary>
 		public BlogsController ()
 		{
 			string[] defaultAvatarSpec = ConfigurationManager.AppSettings.Get ("DefaultAvatar").Split (';');
@@ -42,7 +51,13 @@ namespace Yavsc.Controllers
 			defaultAvatar = defaultAvatarSpec [0];
 			defaultAvatarMimetype = defaultAvatarSpec [1];
 		}
-
+		/// <summary>
+		/// Index the specified user, title, pageIndex and pageSize.
+		/// </summary>
+		/// <param name="user">User.</param>
+		/// <param name="title">Title.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
 		public ActionResult Index (string user = null, string title = null, int pageIndex=0, int pageSize=10)
 		{
 			if (string.IsNullOrEmpty (user)) {
@@ -64,7 +79,12 @@ namespace Yavsc.Controllers
 
 			}
 		}
-
+		/// <summary>
+		/// Blogs the list.
+		/// </summary>
+		/// <returns>The list.</returns>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
 		public ActionResult BlogList (int pageIndex = 0, int pageSize = 10)
 		{
 			ViewData ["SiteName"] = sitename;
@@ -75,7 +95,13 @@ namespace Yavsc.Controllers
 			ViewData ["PageIndex"] = pageIndex;
 			return View ("Index", bs);
 		}
-
+		/// <summary>
+		/// Users the posts.
+		/// </summary>
+		/// <returns>The posts.</returns>
+		/// <param name="user">User.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
 		[HttpGet]
 		public ActionResult UserPosts (string user, int pageIndex = 0, int pageSize = 10)
 		{
@@ -97,7 +123,11 @@ namespace Yavsc.Controllers
 			return View ("UserPosts", c);
 		
 		}
-
+		/// <summary>
+		/// Removes the comment.
+		/// </summary>
+		/// <returns>The comment.</returns>
+		/// <param name="cmtid">Cmtid.</param>
 		[Authorize]
 		public ActionResult RemoveComment(long cmtid) 
 		{
@@ -138,7 +168,12 @@ namespace Yavsc.Controllers
 			ViewData ["Comments"] = BlogManager.GetComments (e.Id);
 			return View ("UserPost", e);
 		}
-
+		/// <summary>
+		/// Users the post.
+		/// </summary>
+		/// <returns>The post.</returns>
+		/// <param name="user">User.</param>
+		/// <param name="title">Title.</param>
 		public ActionResult UserPost (string user, string title)
 		{
 			ViewData ["BlogUser"] = user;
@@ -152,7 +187,11 @@ namespace Yavsc.Controllers
 			string prevstr = LocalizedText.Preview;
 			return UserPost (BlogManager.GetPost (user, title));
 		}
-
+		/// <summary>
+		/// Post the specified user and title.
+		/// </summary>
+		/// <param name="user">User.</param>
+		/// <param name="title">Title.</param>
 		[Authorize]
 		public ActionResult Post (string user, string title)
 		{
@@ -163,7 +202,11 @@ namespace Yavsc.Controllers
 			ViewData ["UserName"] = un;
 			return View (new BlogEditEntryModel { Title = title });
 		}
-
+		/// <summary>
+		/// Validates the post.
+		/// </summary>
+		/// <returns>The post.</returns>
+		/// <param name="model">Model.</param>
 		[Authorize]
 		public ActionResult ValidatePost (BlogEditEntryModel model)
 		{
@@ -178,7 +221,11 @@ namespace Yavsc.Controllers
 			}
 			return View ("Post", model);
 		}
-
+		/// <summary>
+		/// Validates the edit.
+		/// </summary>
+		/// <returns>The edit.</returns>
+		/// <param name="model">Model.</param>
 		[Authorize]
 		public ActionResult ValidateEdit (BlogEditEntryModel model)
 		{
@@ -192,7 +239,10 @@ namespace Yavsc.Controllers
 			}
 			return View ("Edit", model);
 		}
-
+		/// <summary>
+		/// Edit the specified model.
+		/// </summary>
+		/// <param name="model">Model.</param>
 		[Authorize]
 		public ActionResult Edit (BlogEditEntryModel model)
 		{
@@ -219,7 +269,10 @@ namespace Yavsc.Controllers
 			return View (model);
 		}
 
-
+		/// <summary>
+		/// Comment the specified model.
+		/// </summary>
+		/// <param name="model">Model.</param>
 		[Authorize]
 		public ActionResult Comment (BlogEditCommentModel model) {
 			string username = Membership.GetUser ().UserName;
@@ -234,7 +287,10 @@ namespace Yavsc.Controllers
 		}
 
 		string defaultAvatar;
-
+		/// <summary>
+		/// Avatar the specified user.
+		/// </summary>
+		/// <param name="user">User.</param>
 		[AcceptVerbs (HttpVerbs.Get)]
 		public ActionResult Avatar (string user)
 		{

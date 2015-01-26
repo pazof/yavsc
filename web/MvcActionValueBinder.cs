@@ -16,11 +16,19 @@ using System.Web.Http.ValueProviders.Providers;
 namespace Basic
 {
 	// Binder with MVC semantics. Treat the body as KeyValue pairs and model bind it.
+	/// <summary>
+	/// Mvc action value binder.
+	/// </summary>
 	public class MvcActionValueBinder : DefaultActionValueBinder
 	{
 		// Per-request storage, uses the Request.Properties bag. We need a unique key into the bag.
 		private const string Key = "5DC187FB-BFA0-462A-AB93-9E8036871EC8";
 
+		/// <summary>
+		/// Gets the binding.
+		/// </summary>
+		/// <returns>The binding.</returns>
+		/// <param name="actionDescriptor">Action descriptor.</param>
 		public override HttpActionBinding GetBinding (HttpActionDescriptor actionDescriptor)
 		{
 

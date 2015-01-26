@@ -30,17 +30,25 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Helpers.Google
 {
+	/// <summary>
+	/// Entity.
+	/// </summary>
 	public class Entity
 	{
+		/// <summary>
+		/// The I.
+		/// </summary>
 		public string ID;
+		/// <summary>
+		/// The name.
+		/// </summary>
 		public string Name; 
 
 		/// <summary>
-		/// The type: 
-		// AUTOMOBILE: A car or passenger vehicle.
-		// TRUCK: A truck or cargo vehicle.
-		// WATERCRAFT: A boat or other waterborne vehicle.
-		// PERSON: A person.
+		/// The type:  AUTOMOBILE: A car or passenger vehicle.
+		/// * TRUCK: A truck or cargo vehicle.
+		/// * WATERCRAFT: A boat or other waterborne vehicle.
+		/// * PERSON: A person.
 		/// </summary>
 		public string Type;
 	}

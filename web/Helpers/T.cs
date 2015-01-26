@@ -12,8 +12,16 @@ using Yavsc.Model;
 
 namespace Yavsc.Helpers
 {
+	/// <summary>
+	/// T.
+	/// </summary>
 	public class T
 	{
+		/// <summary>
+		/// Gets the string.
+		/// </summary>
+		/// <returns>The string.</returns>
+		/// <param name="msg">Message.</param>
 		public static string GetString(string msg)
 		{
 			string tr = LocalizedText.ResourceManager.GetString (msg.Replace (" ", "_"));

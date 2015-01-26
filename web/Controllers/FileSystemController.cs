@@ -9,16 +9,24 @@ using System.Text.RegularExpressions;
 
 namespace Yavsc.Controllers
 {
+	/// <summary>
+	/// File system controller.
+	/// </summary>
     public class FileSystemController : Controller
     {
 		private static string usersDir ="~/users";
-
+		/// <summary>
+		/// Gets the users dir.
+		/// </summary>
+		/// <value>The users dir.</value>
 		public static string UsersDir {
 			get {
 				return usersDir;
 			}
 		}
-
+		/// <summary>
+		/// Index this instance.
+		/// </summary>
 		[Authorize]
 		public ActionResult Index()
         {
@@ -33,7 +41,10 @@ namespace Yavsc.Controllers
 				di.Create ();
 			return View (new FileInfoCollection( di.GetFiles()));
         }
-
+		/// <summary>
+		/// Details the specified id.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
 		public ActionResult Details(string id)
         {
 			foreach (char x in Path.GetInvalidPathChars()) {
@@ -51,11 +62,18 @@ namespace Yavsc.Controllers
 
 			return View (fi);
         }
-
+		/// <summary>
+		/// Create this instance.
+		/// </summary>
         public ActionResult Create()
         {
             return View ();
         } 
+
+		/// <summary>
+		/// Create the specified collection.
+		/// </summary>
+		/// <param name="collection">Collection.</param>
 		[HttpPost]
 		[Authorize]
 		public ActionResult Create(FormCollection collection)
@@ -92,14 +110,24 @@ namespace Yavsc.Controllers
 			}
 		}
 
-
+		/// <summary>
+		/// Gets the base dir.
+		/// </summary>
+		/// <value>The base dir.</value>
 		public static string BaseDir { get { return Path.Combine (UsersDir, Membership.GetUser ().UserName); } }
-
+		/// <summary>
+		/// Edit the specified id.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
         public ActionResult Edit(int id)
         {
             return View ();
         }
-
+		/// <summary>
+		/// Edit the specified id and collection.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		/// <param name="collection">Collection.</param>
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -109,12 +137,19 @@ namespace Yavsc.Controllers
                 return View ();
             }
         }
-
+		/// <summary>
+		/// Delete the specified id.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
         public ActionResult Delete(int id)
         {
             return View ();
         }
-
+		/// <summary>
+		/// Delete the specified id and collection.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		/// <param name="collection">Collection.</param>
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {

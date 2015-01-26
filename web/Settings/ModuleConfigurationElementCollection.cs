@@ -23,19 +23,32 @@ using System.Configuration;
 
 namespace Yavsc.Settings
 {
+	/// <summary>
+	/// Module configuration element collection.
+	/// </summary>
 	public class ModuleConfigurationElementCollection : ConfigurationElementCollection
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Settings.ModuleConfigurationElementCollection"/> class.
+		/// </summary>
 		public ModuleConfigurationElementCollection ()
 		{
 		}
 
 		#region implemented abstract members of ConfigurationElementCollection
-
+		/// <summary>
+		/// Creates the new element.
+		/// </summary>
+		/// <returns>The new element.</returns>
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			throw new NotImplementedException ();
 		}
-
+		/// <summary>
+		/// Gets the element key.
+		/// </summary>
+		/// <returns>The element key.</returns>
+		/// <param name="element">Element.</param>
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			throw new NotImplementedException ();

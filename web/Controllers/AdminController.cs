@@ -20,6 +20,9 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class AdminController : Controller
 	{
+		/// <summary>
+		/// Index this instance.
+		/// </summary>
 		public ActionResult Index()
 		{
 			if (!Roles.RoleExists (adminRoleName)) {
@@ -27,7 +30,12 @@ namespace Yavsc.Controllers
 			}
 			return View ();
 		}
-
+		/// <summary>
+		/// Inits the db.
+		/// </summary>
+		/// <returns>The db.</returns>
+		/// <param name="datac">Datac.</param>
+		/// <param name="doInit">Do init.</param>
 		public ActionResult InitDb(DataAccess datac, string doInit)
 		{
 			if (doInit=="on") {
@@ -41,13 +49,21 @@ namespace Yavsc.Controllers
 			}
 			return View ();
 		}
+		/// <summary>
+		/// Backups the specified model.
+		/// </summary>
+		/// <param name="model">Model.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult Backups(DataAccess model)
 		{
 
 			return View (model);
 		}
-
+		/// <summary>
+		/// Creates the backup.
+		/// </summary>
+		/// <returns>The backup.</returns>
+		/// <param name="datac">Datac.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult CreateBackup(DataAccess datac)
 		{
@@ -67,18 +83,31 @@ namespace Yavsc.Controllers
 			}
 			return View (datac);
 		}
-
+		/// <summary>
+		/// Creates the user backup.
+		/// </summary>
+		/// <returns>The user backup.</returns>
+		/// <param name="datac">Datac.</param>
+		/// <param name="username">Username.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult CreateUserBackup(DataAccess datac,string username)
 		{
 			throw new NotImplementedException();
 		}
-
+		/// <summary>
+		/// Upgrade the specified datac.
+		/// </summary>
+		/// <param name="datac">Datac.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult Upgrade(DataAccess datac) {
 			throw new NotImplementedException();
 		}
-
+		/// <summary>
+		/// Restore the specified datac, backupName and dataOnly.
+		/// </summary>
+		/// <param name="datac">Datac.</param>
+		/// <param name="backupName">Backup name.</param>
+		/// <param name="dataOnly">If set to <c>true</c> data only.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult Restore(DataAccess datac,string backupName,bool dataOnly=true)
 		{
@@ -108,14 +137,25 @@ namespace Yavsc.Controllers
 				bks.Add (ti.Name);
 			ViewData ["Backups"] = bks.ToArray ();
 		}
-
+		/// <summary>
+		/// Removes from role.
+		/// </summary>
+		/// <returns>The from role.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="rolename">Rolename.</param>
+		/// <param name="returnUrl">Return URL.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult RemoveFromRole(string username, string rolename, string returnUrl)
 		{
 			Roles.RemoveUserFromRole(username,rolename);
 			return Redirect(returnUrl);
 		}
-
+		/// <summary>
+		/// Removes the user.
+		/// </summary>
+		/// <returns>The user.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="submitbutton">Submitbutton.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult RemoveUser (string username, string submitbutton)
 		{
@@ -126,6 +166,12 @@ namespace Yavsc.Controllers
 			}
 			return RedirectToAction("UserList");
 		}
+		/// <summary>
+		/// Removes the role.
+		/// </summary>
+		/// <returns>The role.</returns>
+		/// <param name="rolename">Rolename.</param>
+		/// <param name="submitbutton">Submitbutton.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult RemoveRole (string rolename, string submitbutton)
 		{
@@ -135,14 +181,22 @@ namespace Yavsc.Controllers
 			}
 			return RedirectToAction("RoleList");
 		}
-
+		/// <summary>
+		/// Removes the role query.
+		/// </summary>
+		/// <returns>The role query.</returns>
+		/// <param name="rolename">Rolename.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult RemoveRoleQuery(string rolename)
 		{
 			ViewData["roletoremove"] = rolename;
 			return View ();
 		}
-
+		/// <summary>
+		/// Removes the user query.
+		/// </summary>
+		/// <returns>The user query.</returns>
+		/// <param name="username">Username.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult RemoveUserQuery(string username)
 		{

@@ -7,13 +7,19 @@ using System.Text;
 
 namespace Yavsc.Helpers
 {
-
+	/// <summary>
+	/// BB code helper.
+	/// </summary>
 	public static class BBCodeHelper
 	{
 		static Dictionary<string,BBTag> parent = new Dictionary<string,BBTag>  ();
 		private static string tclass="shoh"; 
 		private static string cclass="hiduh";
 		private static string mp4=null, ogg=null, webm=null;
+		/// <summary>
+		/// Gets or sets the BB code view class.
+		/// </summary>
+		/// <value>The BB code view class.</value>
 		public static string BBCodeViewClass {
 			get {
 				return cclass;
@@ -22,7 +28,10 @@ namespace Yavsc.Helpers
 				cclass = value;
 			}
 		}
-
+		/// <summary>
+		/// Gets or sets the BB code case class.
+		/// </summary>
+		/// <value>The BB code case class.</value>
 		public static string BBCodeCaseClass {
 			get {
 				return tclass;
@@ -31,7 +40,10 @@ namespace Yavsc.Helpers
 				tclass = value;
 			}
 		}
-
+		/// <summary>
+		/// Gets the BB tags usage.
+		/// </summary>
+		/// <value>The BB tags usage.</value>
 		public static string[] BBTagsUsage {
 			get {
 
@@ -85,7 +97,9 @@ namespace Yavsc.Helpers
 		private static int sect2;
 		private static int sect3;
 		private static Dictionary<string,string> d = new Dictionary<string,string> ();
-
+		/// <summary>
+		/// Init this instance.
+		/// </summary>
 		public static void Init ()
 		{
 			sect1 = 0;
@@ -263,7 +277,10 @@ namespace Yavsc.Helpers
 			sb.Append (cnt);
 			return sb.ToString();
 		}
-
+		/// <summary>
+		/// Gets the parser.
+		/// </summary>
+		/// <value>The parser.</value>
 		public static BBCodeParser Parser {
 			get {
 				if (parser == null) {

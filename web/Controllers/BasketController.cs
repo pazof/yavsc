@@ -8,10 +8,19 @@ using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.ApiControllers
 {
-	// TODO should mostly be an API Controller
+	/// <summary>
+	/// Basket controller.
+	/// </summary>
 	public class BasketController : ApiController
     {
+		/// <summary>
+		/// The wfmgr.
+		/// </summary>
 		protected WorkFlowManager wfmgr = null;
+		/// <summary>
+		/// Initialize the specified controllerContext.
+		/// </summary>
+		/// <param name="controllerContext">Controller context.</param>
 		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
 		{
 			base.Initialize (controllerContext);
@@ -44,6 +53,10 @@ namespace Yavsc.ApiControllers
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Yours the estimates.
+		/// </summary>
+		/// <returns>The estimates.</returns>
 		[HttpGet]
 		[Authorize]
 		public Estimate[] YourEstimates()
@@ -52,6 +65,10 @@ namespace Yavsc.ApiControllers
 				Membership.GetUser().UserName);
 		}
 
+		/// <summary>
+		/// Order the specified bi.
+		/// </summary>
+		/// <param name="bi">Bi.</param>
 		[HttpGet]
 		public object Order (BasketImpact bi)
 		{

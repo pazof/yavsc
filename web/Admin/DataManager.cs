@@ -7,13 +7,24 @@ using System.Resources;
 
 namespace Yavsc.Admin
 {
+	/// <summary>
+	/// Data manager.
+	/// </summary>
 	public class DataManager
 	{
 		DataAccess da; 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Admin.DataManager"/> class.
+		/// </summary>
+		/// <param name="datac">Datac.</param>
 		public DataManager (DataAccess datac)
 		{
 			da = datac;
 		}
+		/// <summary>
+		/// Creates the backup.
+		/// </summary>
+		/// <returns>The backup.</returns>
 		public Export CreateBackup ()
 		{
 			Environment.SetEnvironmentVariable("PGPASSWORD", da.Password);
@@ -51,6 +62,11 @@ namespace Yavsc.Admin
 				p.Close ();
 			}
 		}
+		/// <summary>
+		/// Restore the specified fileName and dataOnly.
+		/// </summary>
+		/// <param name="fileName">File name.</param>
+		/// <param name="dataOnly">If set to <c>true</c> data only.</param>
 		public TaskOutput Restore (string fileName, bool dataOnly)
 		{
 			Environment.SetEnvironmentVariable("PGPASSWORD", da.Password);
@@ -65,7 +81,10 @@ namespace Yavsc.Admin
 			*/
 			return t;
 		}
-
+		/// <summary>
+		/// Creates the db.
+		/// </summary>
+		/// <returns>The db.</returns>
 		public TaskOutput CreateDb ()
 		{
 			TaskOutput res = new TaskOutput ();
@@ -97,7 +116,12 @@ namespace Yavsc.Admin
 
 			return res;
 		}
-
+		/// <summary>
+		/// Tags the backup.
+		/// </summary>
+		/// <returns>The backup.</returns>
+		/// <param name="filename">Filename.</param>
+		/// <param name="tags">Tags.</param>
 		public Export TagBackup (string filename, string [] tags)
 		{
 			/* FileInfo fi = new FileInfo (filename);
@@ -106,6 +130,11 @@ namespace Yavsc.Admin
 			} */
 				throw new NotImplementedException ();
 		}
+		/// <summary>
+		/// Tags the restore.
+		/// </summary>
+		/// <returns>The restore.</returns>
+		/// <param name="fileName">File name.</param>
 		public TaskOutput TagRestore (string fileName)
 		{
 			Environment.SetEnvironmentVariable ("PGPASSWORD", da.Password);

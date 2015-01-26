@@ -9,10 +9,17 @@ using Yavsc.Model.Blogs;
 
 namespace Yavsc.ApiControllers
 {
+	/// <summary>
+	/// Blogs API controller.
+	/// </summary>
 	public class BlogsApiController : ApiController
 	{
 		private const string adminRoleName = "Admin";
 
+		/// <summary>
+		/// Initialize the specified controllerContext.
+		/// </summary>
+		/// <param name="controllerContext">Controller context.</param>
 		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
 		{
 			base.Initialize (controllerContext);
@@ -21,6 +28,11 @@ namespace Yavsc.ApiControllers
 			}
 		}
 
+		/// <summary>
+		/// Tag the specified postid and tag.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="tag">Tag.</param>
 		public long Tag (long postid,string tag) {
 			BlogEntry e = BlogManager.GetPost (postid);
 			if (!Roles.IsUserInRole ("Admin")) {
@@ -34,7 +46,11 @@ namespace Yavsc.ApiControllers
 			}
 			return BlogManager.Tag (postid, tag);
 		}
-
+		/// <summary>
+		/// Removes the post.
+		/// </summary>
+		/// <param name="user">User.</param>
+		/// <param name="title">Title.</param>
 		public static void RemovePost(string user, string title) {
 			if (!Roles.IsUserInRole ("Admin")) {
 				string rguser = Membership.GetUser ().UserName;
@@ -53,7 +69,10 @@ namespace Yavsc.ApiControllers
 			}
 			BlogManager.RemovePost (user, title);
 		}
-
+		/// <summary>
+		/// Removes the tag.
+		/// </summary>
+		/// <param name="tagid">Tagid.</param>
 		public void RemoveTag(long tagid) {
 			throw new NotImplementedException ();
 		}

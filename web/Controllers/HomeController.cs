@@ -14,6 +14,9 @@ using Yavsc.Model;
 
 namespace Yavsc.Controllers
 {
+	/// <summary>
+	/// Home controller.
+	/// </summary>
 	public class HomeController : Controller
 	{
 		// Site name
@@ -43,7 +46,10 @@ namespace Yavsc.Controllers
 				return admail;
 			}
 		}
-
+		/// <summary>
+		/// Assemblies the info.
+		/// </summary>
+		/// <returns>The info.</returns>
 		public ActionResult AssemblyInfo()
 		{
 			AssemblyName[] model = GetType ().Assembly.GetReferencedAssemblies ();
@@ -66,7 +72,9 @@ namespace Yavsc.Controllers
 				owneremail = value;
 			}
 		}
-
+		/// <summary>
+		/// Index this instance.
+		/// </summary>
 		public ActionResult Index ()
 		{
 			string startPage = WebConfigurationManager.AppSettings ["StartPage"];
@@ -75,7 +83,12 @@ namespace Yavsc.Controllers
 			ViewData ["Message"] = LocalizedText.Welcome;
 			return View ();
 		}
-
+		/// <summary>
+		/// Contact the specified email, reason and body.
+		/// </summary>
+		/// <param name="email">Email.</param>
+		/// <param name="reason">Reason.</param>
+		/// <param name="body">Body.</param>
 		public ActionResult Contact (string email, string reason, string body)
 		{
 			if (email==null)

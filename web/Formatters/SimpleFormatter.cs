@@ -29,13 +29,24 @@ using System.Net;
 
 namespace Yavsc.Formatters
 {
+	/// <summary>
+	/// Simple formatter.
+	/// </summary>
 	public class SimpleFormatter : BufferedMediaTypeFormatter
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Formatters.SimpleFormatter"/> class.
+		/// </summary>
+		/// <param name="mimetype">Mimetype.</param>
 		public SimpleFormatter (string mimetype)
 		{
 			SupportedMediaTypes.Add(new MediaTypeHeaderValue(mimetype));
 		}
-
+		/// <summary>
+		/// Determines whether this instance can write type the specified type.
+		/// </summary>
+		/// <returns><c>true</c> if this instance can write type the specified type; otherwise, <c>false</c>.</returns>
+		/// <param name="type">Type.</param>
 		public override bool CanWriteType(System.Type type)
 		{
 			if (type == typeof(string))
@@ -48,12 +59,22 @@ namespace Yavsc.Formatters
 				return enumerableType.IsAssignableFrom(type);
 			}
 		}
-
+		/// <summary>
+		/// Determines whether this instance can read type the specified type.
+		/// </summary>
+		/// <returns><c>true</c> if this instance can read type the specified type; otherwise, <c>false</c>.</returns>
+		/// <param name="type">Type.</param>
 		public override bool CanReadType(Type type)
 		{
 			return false;
 		}
-
+		/// <summary>
+		/// Writes to stream.
+		/// </summary>
+		/// <param name="type">Type.</param>
+		/// <param name="value">Value.</param>
+		/// <param name="stream">Stream.</param>
+		/// <param name="contentHeaders">Content headers.</param>
 		public override void WriteToStream (Type type, object value, Stream stream, HttpContentHeaders contentHeaders)
 		{
 			// TODO create a type containing T4 parameters, and generate from them

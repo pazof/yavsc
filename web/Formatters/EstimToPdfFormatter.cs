@@ -31,18 +31,32 @@ using System.Diagnostics;
 
 namespace Yavsc.Formatters
 {
+	/// <summary>
+	/// Estim to pdf formatter.
+	/// </summary>
 	public class EstimToPdfFormatter: BufferedMediaTypeFormatter
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Formatters.EstimToPdfFormatter"/> class.
+		/// </summary>
 		public EstimToPdfFormatter ()
 		{
 			SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/pdf"));
 		}
-
+		/// <summary>
+		/// Determines whether this instance can read type the specified type.
+		/// </summary>
+		/// <returns><c>true</c> if this instance can read type the specified type; otherwise, <c>false</c>.</returns>
+		/// <param name="type">Type.</param>
 		public override bool CanReadType(Type type)
 		{
 			return false;
 		}
-
+		/// <summary>
+		/// Determines whether this instance can write type the specified type.
+		/// </summary>
+		/// <returns><c>true</c> if this instance can write type the specified type; otherwise, <c>false</c>.</returns>
+		/// <param name="type">Type.</param>
 		public override bool CanWriteType(System.Type type)
 		{
 			if (type == typeof(Estimate))
@@ -55,7 +69,13 @@ namespace Yavsc.Formatters
 				return enumerableType.IsAssignableFrom(type);
 			}
 		}
-
+		/// <summary>
+		/// Writes to stream.
+		/// </summary>
+		/// <param name="type">Type.</param>
+		/// <param name="value">Value.</param>
+		/// <param name="stream">Stream.</param>
+		/// <param name="contentHeaders">Content headers.</param>
 		public override void WriteToStream (Type type, object value, Stream stream, HttpContentHeaders contentHeaders)
 		{
 			// TODO create a type containing generation parameters, including a template path, and generate from them

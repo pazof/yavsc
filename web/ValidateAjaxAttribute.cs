@@ -27,8 +27,16 @@ using System.Web.Http.ModelBinding;
 
 namespace Yavsc
 {
+	/// <summary>
+	/// Validate ajax attribute.
+	/// </summary>
 	public class ValidateAjaxAttribute : ActionFilterAttribute
 	{
+		/// <summary>
+		/// Gets the error model object.
+		/// </summary>
+		/// <returns>The error model object.</returns>
+		/// <param name="modelState">Model state.</param>
 		public static object GetErrorModelObject(ModelStateDictionary modelState) {
 			var errorModel = 
 				from x in modelState.Keys
@@ -43,6 +51,10 @@ namespace Yavsc
 			return errorModel;
 
 		}
+		/// <summary>
+		/// Raises the action executing event.
+		/// </summary>
+		/// <param name="actionContext">Action context.</param>
 		public override void OnActionExecuting (System.Web.Http.Controllers.HttpActionContext actionContext)
 		{
 			var modelState = actionContext.ModelState;
