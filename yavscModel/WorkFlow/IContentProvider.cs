@@ -112,6 +112,12 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="status">Status.</param>
 		/// <param name="username">Username.</param>
 		void SetEstimateStatus (long estid,int status,string username);
+		/// <summary>
+		/// Registers the command.
+		/// </summary>
+		/// <returns>The command id in db.</returns>
+		/// <param name="com">COM.</param>
+		long RegisterCommand (Commande com);
 	}
 }
 

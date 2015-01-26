@@ -20,7 +20,7 @@ namespace SalesCatalog.Model
 
 		public override string ToString ()
 		{
-			return string.Format ("[PhysicalProduct: UnitaryPrice={0}]", UnitaryPrice);
+			return string.Format ("[PhysicalProduct: Reference:{0} UnitaryPrice={1}]", Reference, UnitaryPrice);
 		}
 	}
 }

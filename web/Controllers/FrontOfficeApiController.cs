@@ -41,14 +41,14 @@ namespace Yavsc.ApiControllers
 		[AcceptVerbs("GET")]
 		public Catalog Catalog ()
 		{
-			Catalog c = CatalogManager.GetCatalog ();
+			Catalog c = CatalogManager.GetCatalog (Request.RequestUri.AbsolutePath);
 			return c;
 		}
 
 		[AcceptVerbs("GET")]
 		public ProductCategory GetProductCategorie (string brandName, string prodCategorie)
 		{
-			return CatalogManager.GetCatalog ().GetBrand (brandName).GetProductCategory (prodCategorie)
+			return CatalogManager.GetCatalog (Request.RequestUri.AbsolutePath).GetBrand (brandName).GetProductCategory (prodCategorie)
 			;
 		}
 		/*

@@ -16,6 +16,11 @@ namespace Yavsc.Model.WorkFlow
 	{
 		public static Catalog Catalog { get; set; }
 
+		public long RegisterCommand(Commande com)
+		{
+			return ContentProvider.RegisterCommand (com);
+		}
+
 		public void UpdateEstimate (Estimate estim)
 		{
 			ContentProvider.UpdateEstimate (estim);
@@ -105,7 +110,7 @@ namespace Yavsc.Model.WorkFlow
 		{
 			if (!string.IsNullOrWhiteSpace(productid)) {
 				if (Catalog == null)
-					Catalog = SalesCatalog.CatalogManager.GetCatalog ();
+					Catalog = SalesCatalog.CatalogManager.GetCatalog ("/WorkFlowApi");
 				if (Catalog == null)
 					throw new Exception ("No catalog");
 				Product p = Catalog.FindProduct (productid);

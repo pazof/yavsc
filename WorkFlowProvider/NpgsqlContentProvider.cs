@@ -12,6 +12,22 @@ namespace WorkFlowProvider
 {
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
+		public long RegisterCommand (Commande com)
+		{
+			long id;
+			using (NpgsqlConnection cnx = CreateConnection ()) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = 
+						"insert into commandes (pref,creation) values (@pref,@creat) returning _id";
+					cmd.Parameters.Add ("@pref", com.ProdRef);
+					cmd.Parameters.Add ("@creat", com.CreationDate);
+					cnx.Open ();
+					com.Id = id = (long)cmd.ExecuteScalar ();
+				}
+			}
+			return id;
+		}
+		
 		public StatusChange[] GetWrittingStatuses (long wrid)
 		{
 			throw new NotImplementedException ();

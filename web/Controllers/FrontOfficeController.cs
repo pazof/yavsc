@@ -91,7 +91,7 @@ namespace Yavsc.Controllers
 		public ActionResult Catalog ()
 		{
 			return View (
-				CatalogManager.GetCatalog ()
+				CatalogManager.GetCatalog (Request.Url.AbsolutePath)
 			);
 		}
 
@@ -101,7 +101,7 @@ namespace Yavsc.Controllers
 		[AcceptVerbs("GET")]
 		public ActionResult Brand (string id)
 		{
-			Catalog c = CatalogManager.GetCatalog ();
+			Catalog c = CatalogManager.GetCatalog (Request.Url.AbsolutePath);
 			ViewData ["BrandName"] = id;
 			return View ( c.GetBrand (id) );
 		}
@@ -117,7 +117,7 @@ namespace Yavsc.Controllers
 		{
 			ViewData ["BrandName"] = id;
 			return View (
-				CatalogManager.GetCatalog ().GetBrand (id).GetProductCategory (pc)
+				CatalogManager.GetCatalog (Request.Url.AbsolutePath).GetBrand (id).GetProductCategory (pc)
 			);
 		}
 
@@ -128,7 +128,7 @@ namespace Yavsc.Controllers
 			ViewData ["BrandName"] = id;
 			ViewData ["ProdCatRef"] = pc;
 			ViewData ["ProdRef"] = pref;
-			Catalog cat = CatalogManager.GetCatalog ();
+			Catalog cat = CatalogManager.GetCatalog (Request.Url.AbsolutePath);
 			if (cat == null) {
 				ViewData ["Message"] = "Catalog introuvable";
 				ViewData ["RefType"] = "Catalog";
@@ -189,7 +189,7 @@ namespace Yavsc.Controllers
 					Session["Basket"]=new List<Commande>();
 				List<Commande> basket = Session["Basket"] as List<Commande>;
 				// Add specified product command to the basket,
-				basket.Add(new Commande(0,0,collection));
+				basket.Add(Commande.Create(collection));
 				return View (collection);
 			} catch (Exception e) 
 			{

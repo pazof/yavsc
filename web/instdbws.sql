@@ -202,17 +202,40 @@ COMMENT ON COLUMN blfiles.blid IS 'Blog entry identifier (foreign key)';
 
 CREATE TABLE commandes
 (
-  id bigint NOT NULL, -- Identifiant unique de commande e, cours
+  id bigserial NOT NULL, -- Identifiant unique de commande e, cours
   validation date, -- Date de validation
   prdref character varying(255) NOT NULL, -- Product reference from the unique valid catalog at the validation date
-  CONSTRAINT commandes_pkey PRIMARY KEY (id)
+  creation timestamp with time zone, -- creation date
+  clientname character varying(255), -- user who created the command, client of this command
+  applicationname character varying(255), -- application concerned by this command
+  CONSTRAINT commandes_pkey PRIMARY KEY (id),
+  CONSTRAINT commforeignuser FOREIGN KEY (clientname, applicationname)
+      REFERENCES users (username, applicationname) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
 );
+ALTER TABLE commandes
+  OWNER TO yavsc;
 COMMENT ON COLUMN commandes.id IS 'Identifiant unique de commande e, cours';
 COMMENT ON COLUMN commandes.validation IS 'Date de validation';
 COMMENT ON COLUMN commandes.prdref IS 'Product reference from the unique valid catalog at the validation date';
+COMMENT ON COLUMN commandes.creation IS 'creation date';
+COMMENT ON COLUMN commandes.clientname IS 'user who created the command, client of this command';
+COMMENT ON COLUMN commandes.applicationname IS 'application concerned by this command';
+
+
+-- Index: fki_commforeignuser
+
+-- DROP INDEX fki_commforeignuser;
+
+CREATE INDEX fki_commforeignuser
+  ON commandes
+  USING btree
+  (clientname COLLATE pg_catalog."default", applicationname COLLATE pg_catalog."default");
+
+
 
   -- Table: comment
 

@@ -10,15 +10,29 @@ namespace SalesCatalog
 	public static class CatalogManager
 	{
 		private static CatalogProvider defaultProvider = null;
-		public static Catalog GetCatalog ()
+		public static Catalog GetCatalog (string catalogUri)
 		{
+
 			if (defaultProvider == null) {
 				if (CatalogHelper.Config == null)
 					CatalogHelper.LoadConfig ();
 				defaultProvider = CatalogHelper.GetDefaultProvider ();
-
 			}
-			return defaultProvider.GetCatalog ();
+			Catalog res = defaultProvider.GetCatalog ();
+
+			// Assert res.Brands.All( x => x.DefaultForm != null );
+			// Sanity fixes
+			foreach (Brand b in res.Brands) {
+				if (b.DefaultForm.CatalogReference==null)
+					b.DefaultForm.CatalogReference = catalogUri;
+				foreach (ProductCategory pc in b.Categories) {
+					foreach (Product p in pc.Products) {
+						if (p.CommandForm == null)
+							p.CommandForm = b.DefaultForm;
+					}
+				}
+			}
+			return res;
 		}
 	}
 }
