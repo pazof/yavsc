@@ -95,6 +95,9 @@ namespace Yavsc.Controllers
 			ViewData ["PageIndex"] = pageIndex;
 			return View ("Index", bs);
 		}
+
+
+
 		/// <summary>
 		/// Users the posts.
 		/// </summary>
@@ -117,6 +120,7 @@ namespace Yavsc.Controllers
 			Profile bupr =  AccountController.GetProfile (user);
 			ViewData ["BlogUserProfile"] = bupr;
 			ViewData ["BlogTitle"] = bupr.BlogTitle;
+			ViewData ["Avatar"] = bupr.avatar;
 			ViewData ["PageIndex"] = pageIndex;
 			ViewData ["PageSize"] = pageSize;
 			ViewData ["RecordCount"] = tr; 
@@ -138,7 +142,6 @@ namespace Yavsc.Controllers
 		private ActionResult UserPost (long id)
 		{
 			ViewData ["PostId"] = id;
-
 			BlogEntry e = BlogManager.GetPost (id);
 			return UserPost (e);
 		}

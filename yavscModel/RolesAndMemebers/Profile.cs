@@ -39,9 +39,10 @@ namespace Yavsc.Model.RolesAndMembers
 		[DisplayName ("Blog visible")]
 		public bool BlogVisible { get; set; }
 
+		private string blogTitle;
 		[DisplayName ("Titre du blog")]
 		[StringLength (255)]
-		public string BlogTitle { get; set; }
+		public string BlogTitle { get { return blogTitle==null? Name+"'s blog":blogTitle; } set { blogTitle = value; } }
 
 		[DisplayName ("Téléphone fixe")]
 		[StringLength (15)]

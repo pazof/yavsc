@@ -1,12 +1,23 @@
 <%@ Page Title="Billets utilisateurs" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
-<% Title = ((string) ((Profile)ViewData["BlogUserProfile"]).BlogTitle) ; %>
+<% Title = (string) ViewData ["BlogTitle"]; %>
 </asp:Content>
-		
+
+<asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
+<h1 class="blogtitle">
+<a href="/Blog/<%=ViewData["BlogUser"]%>">
+<% if ((bool)ViewData["Avatar"]==null) { %>
+<img class="avatar" src="<%=ViewData["Avatar"]%>" alt=""/> 
+<% } %>
+<%=Html.Encode(ViewData["BlogTitle"])%></a>
+- 
+<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
+</h1>
+</asp:Content>
+
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<%  
-	foreach (BlogEntry e in this.Model) { %>
+<%  foreach (BlogEntry e in this.Model) { %>
 	<div <% if (!e.Visible) { %> style="background-color:#022;" <% } %>>
 
 <h2 class="blogtitle" ><%= Html.ActionLink(e.Title,"UserPost", new { user=e.UserName, title = e.Title }) %></h2>

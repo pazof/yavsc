@@ -3,16 +3,15 @@
 <% Title = Model.Title+" - "+((string) ((Profile)ViewData["BlogUserProfile"]).BlogTitle) ; %>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
-<h1 class="blogtitle"><%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %> - 
+<h1 class="blogtitle">
+<%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %> - 
 <a href="/Blog/<%=Model.UserName%>">
 <% if ((bool)ViewData["HasAvatar"]) { %>
-<img class="avatar" src="/Blogs/Avatar?user=<%=Model.UserName%>" alt="<%=Model.UserName%>"/> <%=ViewData["BlogTitle"]%></a>
-<% } else { %>
-<a href="/Blog/<%=Model.UserName%>">
-<%=Html.Encode(ViewData["BlogTitle"])%>
-</a>
+<img class="avatar" src="<%=ViewData["Avatar"]%>" alt=""/>
 <% } %>
-
+<%=Html.Encode(ViewData["BlogTitle"])%>
+</a> - 
+<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>
 
