@@ -29,8 +29,14 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Helpers.Google
 {
-
+	/// <summary>
+	/// Google Map tracks Api client.
+	/// </summary>
 	public class MapTracks:ApiClient {
+
+		/// <summary>
+		/// The google map tracks path (uri of the service).
+		/// </summary>
 		protected static string googleMapTracksPath = "https://www.googleapis.com/tracks/v1/";
 		// entities/[create|list|delete]
 		// collections/[list|create|[add|remove]entities|delete]
@@ -41,8 +47,12 @@ namespace Yavsc.Helpers.Google
 		// collections/[list|create|[add|remove]entities|delete]
 		// crumbs/[record|getrecent|gethistory|report|summarize|getlocationinfo|delete
 
-
-		static string [] CreateEntity( Entity[] entities ) {
+		/// <summary>
+		/// Creates the entity.
+		/// </summary>
+		/// <returns>The entity.</returns>
+		/// <param name="entities">Entities.</param>
+		public static string [] CreateEntity( Entity[] entities ) {
 			string [] ans = null;
 			using (SimpleJsonPostMethod< Entity[] ,string []> wr = 
 				new SimpleJsonPostMethod< Entity[] ,string[]> (googleMapTracksPath + "entities/create")) 
@@ -51,6 +61,12 @@ namespace Yavsc.Helpers.Google
 			}
 			return ans;
 		}
+
+		/// <summary>
+		/// Lists the entities.
+		/// </summary>
+		/// <returns>The entities.</returns>
+		/// <param name="eq">Eq.</param>
 		static Entity[] ListEntities (EntityQuery eq)
 		{
 			Entity [] ans = null;

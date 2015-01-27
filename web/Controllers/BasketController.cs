@@ -64,15 +64,5 @@ namespace Yavsc.ApiControllers
 			return wfmgr.GetEstimates (
 				Membership.GetUser().UserName);
 		}
-
-		/// <summary>
-		/// Order the specified bi.
-		/// </summary>
-		/// <param name="bi">Bi.</param>
-		[HttpGet]
-		public object Order (BasketImpact bi)
-		{
-			return new { c="lmk,", message="Panier impacté", impactRef=bi.ProductRef, count=bi.Count};
-		}
     }
 }

@@ -30,11 +30,29 @@ using System.Net;
 
 namespace Yavsc.Formatters
 {
-
+	/// <summary>
+	/// Formats a given error message to respond
+	/// in case of error, and in an html format
+	/// </summary>
 	public class ErrorHtmlFormatter:SimpleFormatter {
+
+		/// <summary>
+		/// Gets or sets the title.
+		/// </summary>
+		/// <value>The title.</value>
 		public string Title { get ; set; }
+		/// <summary>
+		/// Gets or sets the error code.
+		/// </summary>
+		/// <value>The error code.</value>
 		public HttpStatusCode ErrorCode { get ; set; }
+
 		string doctype="<!DOCTYPE html>";
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Formatters.ErrorHtmlFormatter"/> class.
+		/// </summary>
+		/// <param name="errorCode">Error code.</param>
+		/// <param name="title">Title.</param>
 		public ErrorHtmlFormatter 
 		(HttpStatusCode errorCode, string title):base("text/html")
 		{
@@ -42,7 +60,13 @@ namespace Yavsc.Formatters
 			Title = title;
 
 		}
-
+		/// <summary>
+		/// Writes to stream.
+		/// </summary>
+		/// <param name="type">Type.</param>
+		/// <param name="value">Value.</param>
+		/// <param name="stream">Stream.</param>
+		/// <param name="contentHeaders">Content headers.</param>
 		public override void WriteToStream (Type type, object value, Stream stream, HttpContentHeaders contentHeaders)
 		{
 			// TODO create a type containing T4 parameters, and generate from them

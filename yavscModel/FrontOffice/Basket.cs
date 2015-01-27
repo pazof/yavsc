@@ -1,10 +1,10 @@
 ﻿//
-//  ModulesConfigurationSection.cs
+//  Basket.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
 //
-//  Copyright (c) 2014 Paul Schneider
+//  Copyright (c) 2015 Paul Schneider
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -19,22 +19,17 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Configuration;
+using System.Collections.Generic;
+using Yavsc.Model.WorkFlow;
 
-namespace Yavsc.Settings
+namespace Yavsc.Model.FrontOffice
 {
-	/// <summary>
-	/// Modules configuration section.
-	/// This class is not yet used ...
-	/// </summary>
-	public class ModulesConfigurationSection : ConfigurationSection
+	public class Basket: List<Commande>
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Settings.ModulesConfigurationSection"/> class.
-		/// </summary>
-		public ModulesConfigurationSection ()
+		public Basket ()
 		{
 		}
+
 	}
 }
 

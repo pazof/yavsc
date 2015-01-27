@@ -58,10 +58,7 @@
     <Compile Include="FileSystem\FileInfoCollection.cs" />
     <Compile Include="WorkFlow\Writting.cs" />
     <Compile Include="WorkFlow\Estimate.cs" />
-    <Compile Include="WorkFlow\WFOrder.cs" />
     <Compile Include="WorkFlow\IContentProvider.cs" />
-    <Compile Include="WorkFlow\IWFModule.cs" />
-    <Compile Include="WorkFlow\IWFOrder.cs" />
     <Compile Include="WorkFlow\OrderStatusChangedEventArgs.cs" />
     <Compile Include="Blogs\BlogEntry.cs" />
     <Compile Include="Blogs\Blog.cs" />
@@ -70,8 +67,6 @@
     <Compile Include="Blogs\FindBlogEntryFlags.cs" />
     <Compile Include="WorkFlow\StatusChange.cs" />
     <Compile Include="IModule.cs" />
-    <Compile Include="WorkFlow\BasketImpact.cs" />
-    <Compile Include="WorkFlow\Commande.cs" />
     <Compile Include="Blogs\BlogManager.cs" />
     <Compile Include="Blogs\BlogProvider.cs" />
     <Compile Include="WorkFlow\WorkFlowManager.cs" />
@@ -102,6 +97,8 @@
     <Compile Include="ViewRenderer.cs" />
     <Compile Include="Google\GoogleErrorMessage.cs" />
     <Compile Include="RssFeeds.cs" />
+    <Compile Include="FrontOffice\Commande.cs" />
+    <Compile Include="FrontOffice\Basket.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -111,6 +108,7 @@
     <Folder Include="Admin\" />
     <Folder Include="FileSystem\" />
     <Folder Include="Google\" />
+    <Folder Include="FrontOffice\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SalesCatalog\SalesCatalog.csproj">

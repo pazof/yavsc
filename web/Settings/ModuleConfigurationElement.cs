@@ -23,12 +23,21 @@ using System.Configuration;
 
 namespace Yavsc.Settings
 {
+	/// <summary>
+	/// Module configuration element. (NOTUSED)
+	/// </summary>
 	public class ModuleConfigurationElement : ConfigurationElement
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Settings.ModuleConfigurationElement"/> class.
+		/// </summary>
 		public ModuleConfigurationElement ()
 		{
 		}
-
+		/// <summary>
+		/// Gets or sets the name of the module.
+		/// </summary>
+		/// <value>The name.</value>
 		[ConfigurationProperty("name", IsKey=true, IsRequired=true)]
 		public string Name {
 			get {
@@ -36,7 +45,10 @@ namespace Yavsc.Settings
 			}
 			set { base ["name"] = value; }
 		}
-
+		/// <summary>
+		/// Gets or sets the name of the class.
+		/// </summary>
+		/// <value>The name of the class.</value>
 		[ConfigurationProperty("name", IsKey=true, IsRequired=true)]
 		public string ClassName {
 			get {

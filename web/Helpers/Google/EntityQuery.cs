@@ -30,9 +30,17 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Helpers.Google
 {
-
+	/// <summary>
+	/// Entity query.
+	/// </summary>
 	public class EntityQuery {
+		/// <summary>
+		/// The entity identifiers.
+		/// </summary>
 		public string [] EntityIds;
+		/// <summary>
+		/// The minimum identifier.
+		/// </summary>
 		public string MinId;
 	}
 }

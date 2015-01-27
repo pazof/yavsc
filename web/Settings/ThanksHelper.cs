@@ -4,8 +4,16 @@ using System.Collections.Generic;
 
 namespace Yavsc
 {
+	/// <summary>
+	/// Thanks helper.
+	/// </summary>
 	public static class ThanksHelper {
-                static private ThanksConfigurationSection configurationSection=null;   
+        
+		static private ThanksConfigurationSection configurationSection=null;   
+		/// <summary>
+		/// Gets the configuration section.
+		/// </summary>
+		/// <value>The configuration section.</value>
 		static public ThanksConfigurationSection ConfigurationSection {
 			get {
 				if (configurationSection==null)
@@ -13,7 +21,9 @@ namespace Yavsc
 				return configurationSection;
 			}
 		}
-		
+		/// <summary>
+		/// Html code for each entry
+		/// </summary>
 		public static string[] Links ()
 		{
 			List<string> result = new List<string>() ;

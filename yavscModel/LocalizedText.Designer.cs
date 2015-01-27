@@ -52,6 +52,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Item_added_to_basket {
+            get {
+                return ResourceManager.GetString("Item_added_to_basket", resourceCulture);
+            }
+        }
+        
         public static string Unitary_cost {
             get {
                 return ResourceManager.GetString("Unitary_cost", resourceCulture);

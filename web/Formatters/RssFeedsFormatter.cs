@@ -32,18 +32,28 @@ using System.Text;
 
 namespace Yavsc.Formatters
 {
-
+	/// <summary>
+	/// Rss feeds formatter.
+	/// </summary>
 	public class RssFeedsFormatter:SimpleFormatter
 	{
 		string doctype = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Formatters.RssFeedsFormatter"/> class.
+		/// </summary>
 		public RssFeedsFormatter 
 		() : base ("application/rss+xml")
 		{
 		}
 
 		private const string dateformat = "ddd, dd MMM yyyy HH:mm:ss K";
-
+		/// <summary>
+		/// Writes to stream.
+		/// </summary>
+		/// <param name="type">Type.</param>
+		/// <param name="value">Value.</param>
+		/// <param name="stream">Stream.</param>
+		/// <param name="contentHeaders">Content headers.</param>
 		public override void WriteToStream (Type type, object value, Stream stream, HttpContentHeaders contentHeaders)
 		{
 			RssFeedsChannel feeds = value as RssFeedsChannel;

@@ -31,14 +31,36 @@ using System.Web;
 
 namespace Yavsc.Helpers.Google
 {
+	/// <summary>
+	/// Google Calendar API client.
+	/// </summary>
 	public class CalendarApi: ApiClient 
 	{
+		/// <summary>
+		/// The get cal list URI.
+		/// </summary>
 		protected static string getCalListUri = "https://www.googleapis.com/calendar/v3/users/me/calendarList";
+		/// <summary>
+		/// The get cal entries URI.
+		/// </summary>
 		protected static string getCalEntriesUri = "https://www.googleapis.com/calendar/v3/calendars/{0}/events";
 
+		/// <summary>
+		/// The date format.
+		/// </summary>
 		private static string dateFormat = "yyyy-MM-ddTHH:mm:ss";
+
+		/// <summary>
+		/// The time zone. TODO Fixme with machine time zone
+		/// </summary>
 		private string timeZone = "+01:00";
 
+		/// <summary>
+		/// Gets the calendar list.
+		/// </summary>
+		/// <returns>The calendars.</returns>
+		/// <param name="cred">Cred.</param>
+		/// <param name="json">Json.</param>
 		public CalendarList GetCalendars (string cred, out string json)
 		{
 			CalendarList res = null;
@@ -59,6 +81,15 @@ namespace Yavsc.Helpers.Google
 			return res;
 		}
 
+		/// <summary>
+		/// Gets a calendar.
+		/// </summary>
+		/// <returns>The calendar.</returns>
+		/// <param name="calid">Calid.</param>
+		/// <param name="mindate">Mindate.</param>
+		/// <param name="maxdate">Maxdate.</param>
+		/// <param name="upr">Upr.</param>
+		/// <param name="responseStr">Response string.</param>
 		public CalendarEntryList GetCalendar  (string calid, DateTime mindate, DateTime maxdate, ProfileBase upr,  out string responseStr)
 		{
 			string uri = string.Format (

@@ -97,14 +97,10 @@ namespace Yavsc.Helpers
 		}
 
 		#region IDisposable implementation
+
 		/// <summary>
-		/// Releases all resource used by the <see cref="Yavsc.Helpers.SimpleJsonPostMethod`2"/> object.
+		/// Releases all resource used by the Yavsc.Helpers.SimpleJsonPostMethod object.
 		/// </summary>
-		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="Yavsc.Helpers.SimpleJsonPostMethod`2"/>. The
-		/// <see cref="Dispose"/> method leaves the <see cref="Yavsc.Helpers.SimpleJsonPostMethod`2"/> in an unusable state.
-		/// After calling <see cref="Dispose"/>, you must release all references to the
-		/// <see cref="Yavsc.Helpers.SimpleJsonPostMethod`2"/> so the garbage collector can reclaim the memory that the
-		/// <see cref="Yavsc.Helpers.SimpleJsonPostMethod`2"/> was occupying.</remarks>
 		public void Dispose ()
 		{
 			if (Request != null) Request.Abort ();

@@ -3,9 +3,10 @@ using Yavsc;
 using SalesCatalog;
 using SalesCatalog.Model;
 using System.Collections.Specialized;
+using Yavsc.Model.WorkFlow;
 
 
-namespace Yavsc.Model.WorkFlow
+namespace Yavsc.Model.FrontOffice
 {
 	public class Commande
 	{
@@ -19,7 +20,7 @@ namespace Yavsc.Model.WorkFlow
 		{
 			Commande cmd = new Commande ();
 			// string catref=collection["catref"]; // Catalog Url from which formdata has been built
-			cmd.ProdRef=collection["prodref"]; // Required product reference
+			cmd.ProdRef=collection["ref"]; // Required product reference
 			cmd.CreationDate = DateTime.Now;
 			WorkFlowManager wm = new WorkFlowManager ();
 			wm.RegisterCommand (cmd); // sets cmd.Id

@@ -24,6 +24,9 @@ namespace Yavsc.templates
 {
 	public partial class Estim
 	{
+		/// <summary>
+		/// Inits this instance.
+		/// </summary>
 		public void Init ()
 		{
 			this.Initialize();

@@ -30,11 +30,18 @@ using Yavsc.Model;
 
 namespace Yavsc.Helpers.Google
 {
-
+	/// <summary>
+	/// Google People API.
+	/// </summary>
 	public class PeopleApi: ApiClient
 	{
 		private static string getPeopleUri = "https://www.googleapis.com/plus/v1/people";
 
+		/// <summary>
+		/// Gets the People object associated to the given Google Access Token
+		/// </summary>
+		/// <returns>The me.</returns>
+		/// <param name="gat">The Google Access Token object <see cref="AuthToken"/> class.</param>
 		public static People GetMe (AuthToken gat)
 		{
 			People me;
@@ -57,13 +64,31 @@ namespace Yavsc.Helpers.Google
 		}
 	}
 
+	/// <summary>
+	/// Google O auth2 client.
+	/// </summary>
 	public class OAuth2:ApiClient
 	{
+		/// <summary>
+		/// The URI used to get tokens.
+		/// </summary>
 		protected static string tokenUri = "https://accounts.google.com/o/oauth2/token";
+
+		/// <summary>
+		/// The URI used to get authorized to.
+		/// </summary>
 		protected static string authUri = "https://accounts.google.com/o/oauth2/auth";
 
+		/// <summary>
+		/// Gets or sets the redirect URI sent to Google.
+		/// </summary>
+		/// <value>The redirect URI.</value>
 		public string RedirectUri { get; set; }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Helpers.Google.OAuth2"/> class.
+		/// </summary>
+		/// <param name="redirectUri">Redirect URI.</param>
 		public OAuth2 (string redirectUri)
 		{
 			RedirectUri = redirectUri;
@@ -84,7 +109,11 @@ namespace Yavsc.Helpers.Google
 				              CLIENT_ID, RedirectUri, scope, state);
 			GetAuthResponse (bresp, prms);
 		}
-
+		/// <summary>
+		/// Gets the cal authorization.
+		/// </summary>
+		/// <param name="bresp">Bresp.</param>
+		/// <param name="state">State.</param>
 		public void GetCalAuth (HttpResponseBase bresp, string state)
 		{
 			string scope = string.Join ("%20", scopeOpenid);
@@ -130,18 +159,18 @@ namespace Yavsc.Helpers.Google
 					HttpUtility.UrlEncode (code));
 			return postdata;
 		}
-
+		/// <summary>
+		/// Gets the Google Authorization token.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="rq">Rq.</param>
+		/// <param name="state">State.</param>
+		/// <param name="message">Message.</param>
 		public AuthToken GetToken (HttpRequestBase rq, string state, out string message)
 		{
 			string code = OAuth2.GetCodeFromRequest (rq, state, out message);
 			string postdata = OAuth2.TokenPostDataFromCode (RedirectUri, code);
 			return GetTokenPosting (postdata);
-		}
-
-		[Obsolete ("Use GetToken instead.")]
-		public static AuthToken GetTokenFromBody (string postdata)
-		{ 
-			throw new NotImplementedException ();
 		}
 
 		internal static AuthToken GetTokenPosting (string postdata)
@@ -174,6 +203,13 @@ namespace Yavsc.Helpers.Google
 			return gat;
 		}
 
+		/// <summary>
+		/// Gets the code from the Google request.
+		/// </summary>
+		/// <returns>The code from request.</returns>
+		/// <param name="rq">Rq.</param>
+		/// <param name="state">State.</param>
+		/// <param name="message">Message.</param>
 		public static string GetCodeFromRequest (HttpRequestBase rq, string state, out string message)
 		{
 			message = "";
@@ -194,6 +230,11 @@ namespace Yavsc.Helpers.Google
 			return code;
 		}
 
+		/// <summary>
+		/// Gets fresh google credential.
+		/// </summary>
+		/// <returns>The fresh google credential.</returns>
+		/// <param name="pr">Pr.</param>
 		public static string GetFreshGoogleCredential (ProfileBase pr)
 		{
 			string token = (string)pr.GetPropertyValue ("gtoken");

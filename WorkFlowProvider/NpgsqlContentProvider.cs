@@ -7,6 +7,7 @@ using Yavsc.Model.WorkFlow;
 using System.Web.Mvc;
 using System.Configuration.Provider;
 using System.Collections.Generic;
+using Yavsc.Model.FrontOffice;
 
 namespace WorkFlowProvider
 {
@@ -18,7 +19,7 @@ namespace WorkFlowProvider
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"insert into commandes (pref,creation) values (@pref,@creat) returning _id";
+						"insert into commandes (prdref,creation) values (@pref,@creat) returning id";
 					cmd.Parameters.Add ("@pref", com.ProdRef);
 					cmd.Parameters.Add ("@creat", com.CreationDate);
 					cnx.Open ();

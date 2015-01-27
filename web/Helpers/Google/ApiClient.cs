@@ -30,29 +30,48 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Helpers.Google
 {
-
+	/// <summary>
+	/// Google base API client.
+	/// This class implements the identification values for a Google Api, 
+	/// and provides some scope values.
+	/// </summary>
 	public class ApiClient 
 	{
+		/// <summary>
+		/// The CLIENT Id.
+		/// </summary>
 		protected static string CLIENT_ID = "325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com";
+		/// <summary>
+		/// The CLIENt SECREt
+		/// </summary>
 		protected static string CLIENT_SECRET = "MaxYcvJJCs2gDGvaELZbzwfL";
+
+		/// <summary>
+		/// The API KEY.
+		/// </summary>
 		protected static string API_KEY="AIzaSyBV_LQHb22nGgjNvFzZwnQHjao3Q7IewRw";
 		/* // to use in descendence
 		* 
 		protected static string getPeopleUri = "https://www.googleapis.com/plus/v1/people";
 		private static string authUri  = "https://accounts.google.com/o/oauth2/auth";
 			*/
-
+		/// <summary>
+		/// The Map tracks scope .
+		/// </summary>
 		protected static string scopeTracks = "https://www.googleapis.com/auth/tracks";
+		/// <summary>
+		/// The calendar scope.
+		/// </summary>
 		protected static string scopeCalendar = "https://www.googleapis.com/auth/calendar";
+
+		/// <summary>
+		/// The scope openid.
+		/// </summary>
 		protected static string[] scopeOpenid = { 
 			"openid",
 			"profile",
 			"email"
 		};
-
-		// private static string dateFormat = "yyyy-MM-ddTHH:mm:ss";
-
-
 	}
 	
 }

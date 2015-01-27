@@ -45,4 +45,5 @@
 	<data name="was_added_to_the_empty_role"><value>There was no user in the '{1}' role. You ({0}) was just added as firt user in the '{1}' role.</value></data>
 	<data name="younotadmin"><value>You're not administrator</value></data>
 	 <data name="role_created"><value>role created</value></data>
+    <data name="Item_added_to_basket"><value>Item added to basket</value></data>
 	</root>
