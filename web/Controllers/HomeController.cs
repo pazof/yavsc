@@ -11,6 +11,10 @@ using Yavsc;
 using System.Reflection;
 using System.Resources;
 using Yavsc.Model;
+using Npgsql.Web;
+using ITContentProvider;
+using WorkFlowProvider;
+using Npgsql.Web.Blog;
 
 namespace Yavsc.Controllers
 {
@@ -52,9 +56,25 @@ namespace Yavsc.Controllers
 		/// <returns>The info.</returns>
 		public ActionResult AssemblyInfo()
 		{
-			AssemblyName[] model = GetType ().Assembly.GetReferencedAssemblies ();
+			Assembly[] aslist = {
+				GetType ().Assembly,
+				typeof(ITCPNpgsqlProvider).Assembly,
+				typeof(NpgsqlMembershipProvider).Assembly,
+				typeof(NpgsqlContentProvider).Assembly,
+				typeof(NpgsqlBlogProvider).Assembly
+			};
 
-			return View (model);
+			List <AssemblyName> asnlist = new List<AssemblyName> ();
+			foreach (Assembly asse in aslist) {
+				foreach (AssemblyName an in asse.GetReferencedAssemblies ()) {
+					if (asnlist.All(x=> string.Compare(x.Name,an.Name)!=0))
+						asnlist.Add (an);
+				}
+			}
+			asnlist.Sort (delegate(AssemblyName x, AssemblyName y) {
+				return string.Compare (x.Name, y.Name);
+			});
+			return View (asnlist.ToArray()) ;
 		}
 
 		private static string owneremail = null;
