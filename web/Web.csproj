@@ -121,6 +121,9 @@
     <Folder Include="Settings\" />
     <Folder Include="Views\BackOffice\" />
     <Folder Include="Helpers\Google\" />
+    <Folder Include="htmldoc\" />
+    <Folder Include="users\" />
+    <Folder Include="xmldoc\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />

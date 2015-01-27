@@ -184,8 +184,8 @@ CREATE TABLE blfiles
   _id bigserial NOT NULL, -- Identifier
   name character varying(2048), -- File Name, relative to the user home directory, must not begin with a slash.
   blid bigint, -- Blog entry identifier (foreign key)
-  CONSTRAINT bltags_pkey PRIMARY KEY (_id),
-  CONSTRAINT bltags_blid_fkey FOREIGN KEY (blid)
+  CONSTRAINT blfiles_pkey PRIMARY KEY (_id),
+  CONSTRAINT blfiles_blid_fkey FOREIGN KEY (blid)
       REFERENCES blog (_id) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
 )
