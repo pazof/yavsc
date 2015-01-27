@@ -30,6 +30,7 @@
         <Command type="BeforeExecute" />
       </CustomCommands>
     </CustomCommands>
+    <DocumentationFile>bin\Yavsc.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>

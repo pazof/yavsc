@@ -47,7 +47,7 @@ namespace Yavsc.Controllers
 			}
 		}
 		/// <summary>
-		/// Assemblies the info.
+		/// Lists the referenced assemblies.
 		/// </summary>
 		/// <returns>The info.</returns>
 		public ActionResult AssemblyInfo()
@@ -113,7 +113,8 @@ namespace Yavsc.Controllers
 				{
 					sc.Send (msg);
 					ViewData ["Message"] = LocalizedText.Message_sent;
-					return View (new { reason="", body="" });
+
+					return View (new { email=email, reason="", body="" });
 				}
 			}
 		}

@@ -7,8 +7,10 @@
   <% ViewState["orgtitle"] = T.GetString(Page.Title); %> 
  <% Page.Title = ViewState["orgtitle"] + " - " + YavscHelpers.SiteName; %>
 <head runat="server">
- <meta name="viewport" content="width=device-width" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="/Theme/style.css"/>
 <link rel="icon" type="image/png" href="/favicon.png" />
  <asp:ContentPlaceHolder id="head" runat="server">
@@ -67,6 +69,7 @@
 	</div>
 	</aside>
    <footer>
+   <%= Html.ActionLink("Contact","Contact","Home",null, new { @class="footerlink" }) %>    <br/>
    <% foreach ( string link in Yavsc.ThanksHelper.Links()) { %>
      <%= link %>
    <% } %>

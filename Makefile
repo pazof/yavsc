@@ -18,10 +18,11 @@ deploy: ddir build
 	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir=../$(DESTDIR) /t:Deploy web/Web.csproj
 	rm -rf $(DESTDIR)/obj
 	mv $(DESTDIR)/Web.config $(DESTDIR)/Web.config.new
+	 
 
 rsync: rsync-preprod
 
-build:
+build: 
 	xbuild /p:Configuration=$(CONFIG) /t:Build Yavsc.sln
 
 clean:
@@ -48,9 +49,13 @@ sourcepkg:
 debug: build
 	(cd web; export MONO_OPTIONS=--debug; xsp4 --port 8080)
 
-xmldoc: build
-	(cd web/bin; monodocer -pretty -o ../xmldoc $(DOCASSBS))
+xmldoc: $(patsubst %,web/bin/%,$(DOCASSBS))
+	mdoc-update $^ $(patsubst %.dll,-i%.xml,$^) --out web/xmldoc
 
 htmldoc: xmldoc
 	(cd web; monodocs2html -o htmldoc xmldoc)
+
+docdeploy-prod: htmldoc
+	rsync -ravu web/htmldoc root@$(PRODHOSTDIR)
+
 
