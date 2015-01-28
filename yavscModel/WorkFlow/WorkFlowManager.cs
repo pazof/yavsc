@@ -3,7 +3,6 @@ using Yavsc.Model.WorkFlow;
 using System.Configuration;
 using Yavsc.Model.WorkFlow.Configuration;
 using System.Collections.Specialized;
-using SalesCatalog.Model;
 using Yavsc.Model.FrontOffice;
 
 namespace Yavsc.Model.WorkFlow
@@ -111,7 +110,7 @@ namespace Yavsc.Model.WorkFlow
 		{
 			if (!string.IsNullOrWhiteSpace(productid)) {
 				if (Catalog == null)
-					Catalog = SalesCatalog.CatalogManager.GetCatalog ("/WorkFlowApi");
+					Catalog = CatalogManager.GetCatalog ("/WorkFlowApi");
 				if (Catalog == null)
 					throw new Exception ("No catalog");
 				Product p = Catalog.FindProduct (productid);

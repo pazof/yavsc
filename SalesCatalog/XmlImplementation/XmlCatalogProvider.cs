@@ -1,9 +1,9 @@
 using System;
 using System.Xml.Serialization;
-using SalesCatalog.Model;
 using System.Configuration;
 using System.IO;
 using System.Xml;
+using Yavsc.Model.FrontOffice;
 
 namespace SalesCatalog.XmlImplementation
 {

@@ -1,7 +1,6 @@
 using System;
 using Yavsc;
 using SalesCatalog;
-using SalesCatalog.Model;
 using System.Web.Routing;
 using System.Threading.Tasks;
 using System.Diagnostics;
@@ -23,6 +22,7 @@ using System.Text;
 using System.Web.Profile;
 using System.Collections.Specialized;
 using Yavsc.Model;
+using Yavsc.Model.FrontOffice;
 
 namespace Yavsc.ApiControllers
 {

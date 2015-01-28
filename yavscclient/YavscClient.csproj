@@ -51,5 +51,9 @@
       <Project>{90BF2234-7252-4CD5-B2A4-17501B19279B}</Project>
       <Name>SalesCatalog</Name>
     </ProjectReference>
+    <ProjectReference Include="..\yavscModel\YavscModel.csproj">
+      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
+      <Name>YavscModel</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

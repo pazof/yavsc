@@ -99,6 +99,40 @@
     <Compile Include="RssFeeds.cs" />
     <Compile Include="FrontOffice\Commande.cs" />
     <Compile Include="FrontOffice\Basket.cs" />
+    <Compile Include="FrontOffice\Catalog\Brand.cs" />
+    <Compile Include="FrontOffice\Catalog\Catalog.cs" />
+    <Compile Include="FrontOffice\Catalog\CheckBox.cs" />
+    <Compile Include="FrontOffice\Catalog\Currency.cs" />
+    <Compile Include="FrontOffice\Catalog\Euro.cs" />
+    <Compile Include="FrontOffice\Catalog\FilesInput.cs" />
+    <Compile Include="FrontOffice\Catalog\FormElement.cs" />
+    <Compile Include="FrontOffice\Catalog\FormInput.cs" />
+    <Compile Include="FrontOffice\Catalog\Label.cs" />
+    <Compile Include="FrontOffice\Catalog\Link.cs" />
+    <Compile Include="FrontOffice\Catalog\Note.cs" />
+    <Compile Include="FrontOffice\Catalog\Option.cs" />
+    <Compile Include="FrontOffice\Catalog\Period.cs" />
+    <Compile Include="FrontOffice\Catalog\PhysicalProduct.cs" />
+    <Compile Include="FrontOffice\Catalog\Price.cs" />
+    <Compile Include="FrontOffice\Catalog\Product.cs" />
+    <Compile Include="FrontOffice\Catalog\ProductCategory.cs" />
+    <Compile Include="FrontOffice\Catalog\ProductImage.cs" />
+    <Compile Include="FrontOffice\Catalog\RadioButton.cs" />
+    <Compile Include="FrontOffice\Catalog\SaleForm.cs" />
+    <Compile Include="FrontOffice\Catalog\Scalar.cs" />
+    <Compile Include="FrontOffice\Catalog\SelectInput.cs" />
+    <Compile Include="FrontOffice\Catalog\SelectItem.cs" />
+    <Compile Include="FrontOffice\Catalog\Service.cs" />
+    <Compile Include="FrontOffice\Catalog\StockStatus.cs" />
+    <Compile Include="FrontOffice\Catalog\Text.cs" />
+    <Compile Include="FrontOffice\Catalog\TextInput.cs" />
+    <Compile Include="FrontOffice\Catalog\Unit.cs" />
+    <Compile Include="FrontOffice\Catalog\Configuration\CatalogProviderConfigurationElement.cs" />
+    <Compile Include="FrontOffice\Catalog\Configuration\CatalogProvidersConfigurationCollection.cs" />
+    <Compile Include="FrontOffice\Catalog\Configuration\CatalogProvidersConfigurationSection.cs" />
+    <Compile Include="FrontOffice\Catalog\CatalogHelper.cs" />
+    <Compile Include="FrontOffice\Catalog\CatalogManager.cs" />
+    <Compile Include="FrontOffice\Catalog\CatalogProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -109,12 +143,7 @@
     <Folder Include="FileSystem\" />
     <Folder Include="Google\" />
     <Folder Include="FrontOffice\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SalesCatalog\SalesCatalog.csproj">
-      <Project>{90BF2234-7252-4CD5-B2A4-17501B19279B}</Project>
-      <Name>SalesCatalog</Name>
-    </ProjectReference>
+    <Folder Include="FrontOffice\Catalog\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

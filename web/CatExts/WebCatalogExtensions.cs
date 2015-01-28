@@ -1,11 +1,10 @@
 using System;
 using System.Web;
-using SalesCatalog;
-using SalesCatalog.Model;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Mvc.Html;
+using Yavsc.Model.FrontOffice;
 
 namespace Yavsc.CatExts
 {

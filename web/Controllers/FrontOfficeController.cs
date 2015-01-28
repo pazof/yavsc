@@ -1,7 +1,5 @@
 using System;
 using Yavsc;
-using SalesCatalog;
-using SalesCatalog.Model;
 using System.Web.Mvc;
 using System.Web;
 using System.Text.RegularExpressions;

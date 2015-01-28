@@ -1,6 +1,6 @@
 using System;
-using SalesCatalog.Model;
 using System.Xml.Serialization;
+using Yavsc.Model.FrontOffice;
 
 namespace SalesCatalog.XmlImplementation
 {

@@ -1,7 +1,6 @@
 using System;
 using Yavsc;
 using SalesCatalog;
-using SalesCatalog.Model;
 using System.Web.Routing;
 using System.Threading.Tasks;
 using System.Diagnostics;
