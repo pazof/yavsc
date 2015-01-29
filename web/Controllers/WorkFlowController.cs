@@ -108,7 +108,7 @@ namespace Yavsc.ApiControllers
 		public HttpResponseMessage UpdateWritting([FromBody] Writting wr)
 		{
 			wfmgr.UpdateWritting (wr);
-			return Request.CreateResponse (System.Net.HttpStatusCode.OK);
+			return Request.CreateResponse<string> (System.Net.HttpStatusCode.OK,"WrittingUpdated:"+wr.Id);
 		}
 
 		/// <summary>

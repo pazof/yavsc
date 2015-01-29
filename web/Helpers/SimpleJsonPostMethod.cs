@@ -74,7 +74,8 @@ namespace Yavsc.Helpers
 		/// <param name="query">Query.</param>
 		public TAnswer Invoke(TQuery query)
 		{
-			Byte[] bytes = System.Text.Encoding.UTF8.GetBytes (JsonConvert.SerializeObject(query));
+			Byte[] bytes = System.Text.Encoding.UTF8.GetBytes (
+				JsonConvert.SerializeObject(query));
 			Request.ContentLength = bytes.Length;
 
 			using (Stream dataStream = Request.GetRequestStream ()) {

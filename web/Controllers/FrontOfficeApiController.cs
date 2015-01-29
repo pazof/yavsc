@@ -49,23 +49,23 @@ namespace Yavsc.ApiControllers
 		/// <summary>
 		/// Catalog this instance.
 		/// </summary>
-		[AcceptVerbs("GET")]
+		[AcceptVerbs ("GET")]
 		public Catalog Catalog ()
 		{
 			Catalog c = CatalogManager.GetCatalog (Request.RequestUri.AbsolutePath);
 			return c;
 		}
+
 		/// <summary>
 		/// Gets the product categorie.
 		/// </summary>
 		/// <returns>The product categorie.</returns>
 		/// <param name="brandName">Brand name.</param>
 		/// <param name="prodCategorie">Prod categorie.</param>
-		[AcceptVerbs("GET")]
+		[AcceptVerbs ("GET")]
 		public ProductCategory GetProductCategorie (string brandName, string prodCategorie)
 		{
-			return CatalogManager.GetCatalog (Request.RequestUri.AbsolutePath).GetBrand (brandName).GetProductCategory (prodCategorie)
-			;
+			return CatalogManager.GetCatalog (Request.RequestUri.AbsolutePath).GetBrand (brandName).GetProductCategory (prodCategorie);
 		}
 
 		/// <summary>
@@ -81,30 +81,32 @@ namespace Yavsc.ApiControllers
 			return est;
 		}
 
+
+
 		/// <summary>
 		/// Gets the estim tex.
 		/// </summary>
 		/// <returns>The estim tex.</returns>
 		/// <param name="estimid">Estimid.</param>
-		[AcceptVerbs("GET")]
-		public HttpResponseMessage GetEstimTex(long estimid)
+		[AcceptVerbs ("GET")]
+		public HttpResponseMessage GetEstimTex (long estimid)
 		{
 			string texest = null;
 			try {
 				texest = getEstimTex (estimid);
-			}
-			catch (TemplateException ex) {
-				return new HttpResponseMessage (HttpStatusCode.OK){ Content = 
+			} catch (TemplateException ex) {
+				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
 					new ObjectContent (typeof(string),
-						ex.Message, new ErrorHtmlFormatter(HttpStatusCode.NotAcceptable,
-							LocalizedText.DocTemplateException
-							))};
-			}
-			catch (Exception ex) {
+						ex.Message, new ErrorHtmlFormatter (HttpStatusCode.NotAcceptable,
+						LocalizedText.DocTemplateException
+					))
+				};
+			} catch (Exception ex) {
 
-				return new HttpResponseMessage (HttpStatusCode.OK){ Content = 
+				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
 					new ObjectContent (typeof(string),
-						ex.Message, new SimpleFormatter("text/text")) };
+						ex.Message, new SimpleFormatter ("text/text"))
+				};
 			}
 			if (texest == null)
 				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
@@ -119,20 +121,20 @@ namespace Yavsc.ApiControllers
 			};
 		}
 
-		private string getEstimTex(long estimid)
+		private string getEstimTex (long estimid)
 		{
-			Yavsc.templates.Estim  tmpe = new Yavsc.templates.Estim();		
+			Yavsc.templates.Estim tmpe = new Yavsc.templates.Estim ();		
 			Estimate e = wfmgr.GetEstimate (estimid);
-			tmpe.Session = new Dictionary<string,object>();
+			tmpe.Session = new Dictionary<string,object> ();
 			tmpe.Session.Add ("estim", e);
 
-			Profile prpro = new Profile(ProfileBase.Create(e.Responsible));
+			Profile prpro = new Profile (ProfileBase.Create (e.Responsible));
 			if (!prpro.HasBankAccount)
-				throw new TemplateException ("NotBankable:"+e.Responsible);
+				throw new TemplateException ("NotBankable:" + e.Responsible);
 
-			Profile prcli = new Profile(ProfileBase.Create(e.Client));
+			Profile prcli = new Profile (ProfileBase.Create (e.Client));
 			if (!prcli.IsBillable)
-				throw new TemplateException ("NotBillable:"+e.Client);
+				throw new TemplateException ("NotBillable:" + e.Client);
 			tmpe.Session.Add ("from", prpro);
 			tmpe.Session.Add ("to", prcli);
 			tmpe.Init ();
@@ -145,7 +147,7 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <returns>The estim pdf.</returns>
 		/// <param name="estimid">Estimid.</param>
-		public HttpResponseMessage GetEstimPdf(long estimid)
+		public HttpResponseMessage GetEstimPdf (long estimid)
 		{
 			Estimate estim = wfmgr.GetEstimate (estimid);
 			//TODO better with pro.IsBankable && cli.IsBillable

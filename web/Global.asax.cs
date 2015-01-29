@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Http;
 using Yavsc.Formatters;
+using Yavsc.Model.FrontOffice;
 
 namespace Yavsc
 {

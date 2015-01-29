@@ -84,8 +84,6 @@ namespace Yavsc.Formatters
 				writer.Write (doc);
 			}
 		}
-
 	}
-
 }
 
