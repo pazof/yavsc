@@ -8,7 +8,7 @@ namespace Yavsc.Model.FrontOffice
 		{
 		}
 		public Price UnitaryPrice { get; set; }		
-		#region implemented abstract members of SalesCatalog.Model.Product
+		#region implemented abstract members of Product
 		public override string[] GetSalesConditions ()
 		{
 			return new string [] { string.Format(

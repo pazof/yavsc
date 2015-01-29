@@ -3,7 +3,6 @@
 using System;
 using NUnit.Framework;
 using SalesCatalog.XmlImplementation;
-using SalesCatalog.Model;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
@@ -68,8 +67,8 @@ namespace SalesCatalog.Tests
 			Option o3 = new Option ();
 			o3.Value = "6m"; o3.Text = "6 mois";
 			selSize.Items = new Option [] { o1, o2, o3 };
-			var txt1 = new SalesCatalog.Model.Text ();
-			var txt2 = new SalesCatalog.Model.Text ();
+			var txt1 = new Text ();
+			var txt2 = new Text ();
 			txt1.Val="Choose a title : ";
 			txt2.Val = "[br]Choose the size : ";
 			f.Items = new FormElement[] {txt1,ticat,txt2,selSize};
