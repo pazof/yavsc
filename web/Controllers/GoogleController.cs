@@ -60,6 +60,18 @@ namespace Yavsc.Controllers
 			oa.Login (Response, SetSessionSate ());
 		}
 
+		/// <summary>
+		/// Gets the cal auth.
+		/// </summary>
+		/// <param name="returnUrl">Return URL.</param>
+		public void GetCalAuth (string returnUrl)
+		{
+			if (string.IsNullOrWhiteSpace (returnUrl))
+				returnUrl = "/";
+			Session ["returnUrl"] = returnUrl;
+			OAuth2 oa = new OAuth2 (CalendarGRU);
+			oa.GetCalAuth (Response, SetSessionSate ());
+		}
 
 		/// <summary>
 		/// Called after the Google authorizations screen,
@@ -68,7 +80,6 @@ namespace Yavsc.Controllers
 		/// <returns>The auth.</returns>
 		[HttpGet]
 		[Authorize]
-
 		public ActionResult CalAuth ()
 		{
 			string msg;
@@ -221,17 +232,21 @@ namespace Yavsc.Controllers
 		[HttpGet]
 		public ActionResult ChooseCalendar (string returnUrl)
 		{
-			Session ["ChooseCalReturnUrl"] = returnUrl;
+
 			bool hasCalAuth = (bool)HttpContext.Profile.GetPropertyValue ("gcalapi");
 			if (!hasCalAuth) {
 				Session ["returnUrl"] = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/ChooseCalendar";
-				return RedirectToAction ("GetCalAuth");
+				return RedirectToAction ("GetCalAuth",
+					new { 
+						returnUrl = "ChooseCalendar?returnUrl="+HttpUtility.UrlEncode(returnUrl)
+					});
 			}
 			string cred = OAuth2.GetFreshGoogleCredential (HttpContext.Profile);
 			string json;
 			CalendarApi c = new CalendarApi ();
 			CalendarList cl = c.GetCalendars (cred, out json);
 			ViewData ["json"] = json;
+			ViewData ["returnUrl"] = returnUrl;
 			return View (cl);
 		}
 		
@@ -242,14 +257,12 @@ namespace Yavsc.Controllers
 		/// <param name="calchoice">Calchoice.</param>
 		[HttpPost]
 		[Authorize]
-		public ActionResult SetCalendar (string calchoice)
+		public ActionResult SetCalendar (string calchoice,string returnUrl)
 		{
 			HttpContext.Profile.SetPropertyValue ("gcalid", calchoice);
 			HttpContext.Profile.Save ();
 
-			string returnUrl = (string)Session ["ChooseCalReturnUrl"];
 			if (returnUrl != null) {
-				Session ["ChooseCalReturnUrl"] = null;
 				return Redirect (returnUrl);
 			}
 			return Redirect ("/");

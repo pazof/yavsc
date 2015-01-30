@@ -57,7 +57,7 @@ table.layout TR TD { max-width:40%; }
 <%= Html.TextBox("BlogTitle") %>
 <%= Html.ValidationMessage("BlogTitle", "*") %></td></tr>
 <tr><td align="right">
-Avatar : "<%=Model.avatar%>"  </td><td> <img class="avatar" src="<%=Model.avatar%>" alt=""/>
+Avatar </td><td> <img class="avatar" src="<%=Model.avatar%>" alt=""/>
 <input type="file" id="AvatarFile" name="AvatarFile"/>
 <%= Html.ValidationMessage("AvatarFile", "*") %></td></tr>
 <tr><td align="right">

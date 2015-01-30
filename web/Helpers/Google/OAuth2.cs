@@ -128,8 +128,7 @@ namespace Yavsc.Helpers.Google
 			string cont = null;
 			WebRequest wr = WebRequest.Create (authUri + "?" + prms);
 			wr.Method = "GET";
-			using (
-				WebResponse response = wr.GetResponse ()) {
+			using (WebResponse response = wr.GetResponse ()) {
 				string resQuery = response.ResponseUri.Query;
 				cont = HttpUtility.ParseQueryString (resQuery) ["continue"];
 				response.Close ();

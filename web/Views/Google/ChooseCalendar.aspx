@@ -8,6 +8,7 @@
 <%=Html.Encode(e.summary)%> <br>
 <i><%=Html.Encode(e.description)%></i> <br>
 <% } %>
+<input type="hidden" name="returnUrl" id="returnUrl" value="<%=Html.Encode(ViewData["returnUrl"])%>">
 <input type="submit">
 <% } %>
 
