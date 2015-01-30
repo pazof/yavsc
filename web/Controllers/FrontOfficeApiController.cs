@@ -89,11 +89,11 @@ namespace Yavsc.ApiControllers
 		/// <returns>The estim tex.</returns>
 		/// <param name="estimid">Estimid.</param>
 		[AcceptVerbs ("GET")]
-		public HttpResponseMessage GetEstimTex (long estimid)
+		public HttpResponseMessage EstimateToTex (long estimid)
 		{
 			string texest = null;
 			try {
-				texest = getEstimTex (estimid);
+				texest = estimateToTex (estimid);
 			} catch (TemplateException ex) {
 				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
 					new ObjectContent (typeof(string),
@@ -102,16 +102,17 @@ namespace Yavsc.ApiControllers
 					))
 				};
 			} catch (Exception ex) {
-
 				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
 					new ObjectContent (typeof(string),
-						ex.Message, new SimpleFormatter ("text/text"))
+						ex.Message, new ErrorHtmlFormatter (HttpStatusCode.InternalServerError,
+							LocalizedText.DocTemplateException))
 				};
 			}
 			if (texest == null)
 				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
-					new ObjectContent (typeof(string),
-						"Not an estimation id:" + estimid, new SimpleFormatter ("text/text"))
+					new ObjectContent (typeof(string), "Not an estimation id:" + estimid, 
+						new ErrorHtmlFormatter (HttpStatusCode.NotFound,
+							LocalizedText.Estimate_not_found))
 				};
 
 			return new HttpResponseMessage () {
@@ -121,7 +122,7 @@ namespace Yavsc.ApiControllers
 			};
 		}
 
-		private string getEstimTex (long estimid)
+		private string estimateToTex (long estimid)
 		{
 			Yavsc.templates.Estim tmpe = new Yavsc.templates.Estim ();		
 			Estimate e = wfmgr.GetEstimate (estimid);
@@ -141,22 +142,42 @@ namespace Yavsc.ApiControllers
 			return tmpe.TransformText ();
 		}
 
-
 		/// <summary>
 		/// Gets the estimate in pdf format from tex generation.
 		/// </summary>
-		/// <returns>The estim pdf.</returns>
+		/// <returns>The to pdf.</returns>
 		/// <param name="estimid">Estimid.</param>
-		public HttpResponseMessage GetEstimPdf (long estimid)
+		[AcceptVerbs("GET")]
+		public HttpResponseMessage EstimateToPdf (long estimid)
 		{
-			Estimate estim = wfmgr.GetEstimate (estimid);
-			//TODO better with pro.IsBankable && cli.IsBillable
+			string texest = null;
+			try {
+				texest = estimateToTex (estimid);
+			} catch (TemplateException ex) {
+				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
+					new ObjectContent (typeof(string),
+						ex.Message, new ErrorHtmlFormatter (HttpStatusCode.NotAcceptable,
+						LocalizedText.DocTemplateException
+					))
+				};
+			} catch (Exception ex) {
+				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
+					new ObjectContent (typeof(string),
+						ex.Message, new ErrorHtmlFormatter (HttpStatusCode.InternalServerError,
+						LocalizedText.DocTemplateException))
+				};
+			}
+			if (texest == null)
+				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
+					new ObjectContent (typeof(string), "Not an estimation id:" + estimid, 
+						new ErrorHtmlFormatter (HttpStatusCode.NotFound,
+							LocalizedText.Estimate_not_found))
+				};
 
 			return new HttpResponseMessage () {
-				Content = new ObjectContent (
-					typeof(Estimate),
-					estim,
-					new EstimToPdfFormatter ())
+				Content = new ObjectContent (typeof(string),
+					texest,
+					new TexToPdfFormatter ())
 			};
 		}
 	}

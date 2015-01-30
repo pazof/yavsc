@@ -46,4 +46,5 @@
 	<data name="younotadmin"><value>You're not administrator</value></data>
 	 <data name="role_created"><value>role created</value></data>
     <data name="Item_added_to_basket"><value>Item added to basket</value></data>
+    <data name="Estimate_not_found"><value>Estimate not found</value></data>
 	</root>

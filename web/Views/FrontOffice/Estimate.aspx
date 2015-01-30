@@ -54,6 +54,11 @@
 </table>
 <%  } %>
 <% } %>
+
+    <aside>
+    <a class="actionlink" href="<%=ViewData["WebApiBase"]%>/FrontOffice/EstimateToTex?estimid=<%=Model.Id%>"><%= LocalizedText.Tex_version %></a>
+    <a class="actionlink" href="<%=ViewData["WebApiBase"]%>/FrontOffice/EstimateToPdf?estimid=<%=Model.Id%>"><%= LocalizedText.Pdf_version %></a>
+    </aside>
 </asp:Content>
    <asp:Content ContentPlaceHolderID="MASContent" ID="MASContent1" runat="server">
 
@@ -241,10 +246,6 @@ function addRow(){
     </script>
   
    
-    <div>
-    <a class="actionlink" href="<%=ViewData["WebApiBase"]%>/FrontOffice/GetEstimTex?estimid=<%=Model.Id%>"><%= LocalizedText.Tex_version %></a>
-    <a class="actionlink" href="<%=ViewData["WebApiBase"]%>/FrontOffice/GetEstimPdf?estimid=<%=Model.Id%>"><%= LocalizedText.Pdf_version %></a>
-    </div>
 </asp:Content>
 
 

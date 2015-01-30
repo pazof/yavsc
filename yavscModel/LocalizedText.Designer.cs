@@ -160,6 +160,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Estimate_not_found {
+            get {
+                return ResourceManager.GetString("Estimate_not_found", resourceCulture);
+            }
+        }
+        
         public static string Online {
             get {
                 return ResourceManager.GetString("Online", resourceCulture);

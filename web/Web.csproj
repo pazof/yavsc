@@ -184,6 +184,7 @@
     <Compile Include="Formatters\ErrorHtmlFormatter.cs" />
     <Compile Include="Formatters\RssFeedsFormatter.cs" />
     <Compile Include="Controllers\PaypalApiController.cs" />
+    <Compile Include="Formatters\TexToPdfFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
