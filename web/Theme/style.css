@@ -7,13 +7,15 @@ body {
 	font-family: 'Arial', cursive;
         margin-bottom:3em;
 }
+
 textarea { 
         width:25em;
         height:5em;
         }
-input { 
-        width:25em;
-        }
+input, textarea, checkbox { 
+    color: #FFFFA0;
+	background: black;
+   }
 main {
 	background-color: rgba(17,0,23,0.65);
 	float:left;
@@ -127,10 +129,6 @@ padding-left: 20px;
 	border-radius:25px;
 	white-space: pre-wrap;
 }
-
-.layout {
-	border-width: 0;
-	}
 
 .avatar {
 	max-width: 64px;

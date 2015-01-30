@@ -5,13 +5,18 @@
 </asp:Content>
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
-  
+  <style>
+fieldset { float:left; }
+table.layout { border-width: 0;  }
+table.layout TR TD { max-width:40%; }
+   </style>
    <%= Html.ValidationSummary() %>
 <% using(Html.BeginForm("Profile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
 <% { %>
-   <h2>Informations générales</h2>
+   <fieldset><legend>Informations générales</legend>
+
 <table class="layout">
-<tr><td align="right">
+<tr><td align="right" style="">
 <%= Html.LabelFor(model => model.Name) %></td><td>
 <%= Html.TextBox("Name") %>
 <%= Html.ValidationMessage("Name", "*") %></td></tr>
@@ -63,8 +68,10 @@ Avatar : "<%=Model.avatar%>"  </td><td> <img class="avatar" src="<%=Model.avatar
    </td>
    </tr>
 </table>
+   </fieldset>
 
-   <h2>Informations de facturation</h2>
+    <fieldset><legend>Informations de facturation</legend>
+ 
 <table class="layout">
 <tr>
    <td align="right">
@@ -124,20 +131,20 @@ Avatar : "<%=Model.avatar%>"  </td><td> <img class="avatar" src="<%=Model.avatar
 
 </table>
 
+   </fieldset>
 
 <input type="submit"/>
 <% } %>
-
-
-</asp:Content>
-
-
-<asp:Content ID="MASC1" ContentPlaceHolderID="MASContent" runat="server">
+   <aside>
+   <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
+   <%= Html.ActionLink("Désincription","Unregister", "Account",null, new { @class="actionlink" })%>
+   </aside>
+   <aside>
    <% 	if (Roles.IsUserInRole((string)ViewData ["UserName"],"Admin")) { %>
    This user is Admin.
    <% } %>
    HasBankAccount:<%= Model.HasBankAccount %>, IsBillable:<%=Model.IsBillable%>
-		
-   <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
-   <%= Html.ActionLink("Désincription","Unregister", "Account",null, new { @class="actionlink" })%>
+   </aside>
+
 </asp:Content>
+
