@@ -86,7 +86,10 @@ namespace Yavsc.WebControls
 				ViewState["CurrentPage"]  = value;
 			}
 		}
-
+		/// <summary>
+		/// Renders the contents as the list of links to pages of results.
+		/// </summary>
+		/// <param name="writer">Writer.</param>
 		protected override void RenderContents (HtmlTextWriter writer)
 		{
 			if (ResultCount > 0 &&  ResultCount > ResultsPerPage ) {
@@ -105,11 +108,15 @@ namespace Yavsc.WebControls
 					writer.RenderEndTag ();
 					writer.Write ("&nbsp;");
 				}
+			} 
+
+			if (ResultCount == 0) {
+				writer.Write ("Pas de resultat");
+			} else {
 				writer.Write (ResultCount.ToString () + " resultat");
 				if (ResultCount>1) writer.Write("s");
-			} else if ( ResultCount == 0 ) {
-				writer.Write ("Pas de resultat");
 			}
+
 		}
 	}
 }

@@ -5,7 +5,7 @@ DESTDIR=build/web/$(CONFIG)
 COPYUNCHANGED="false"
 LOCALHOSTDIR=localhost:/srv/www/lua
 TESTHOSTDIR=localhost:/srv/www/yavsc
-PREPRODHOSTDIR=lua.localdomain:/srv/yavsc
+PREPRODHOSTDIR=lua.localdomain:/srv/www/yavsc
 PRODHOSTDIR=lua.localdomain:/srv/www/lua
 DOCASSBS=NpgsqlBlogProvider.dll WorkFlowProvider.dll Yavsc.WebControls.dll ITContentProvider.dll NpgsqlMRPProviders.dll Yavsc.dll SalesCatalog.dll YavscModel.dll
 

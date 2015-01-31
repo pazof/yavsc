@@ -35,12 +35,6 @@ namespace Yavsc
 				"Blog/{user}/{title}",
 				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
 			); 
-
-			/*routes.MapRoute (
-				"Default", 
-				"{controller}/{action}/{id}",
-				new { controller = "Home", action = "Index", id = UrlParameter.Optional }
-				);*/
 			routes.MapRoute (
 				"Default",
 				"{controller}/{action}/{user}/{title}",
