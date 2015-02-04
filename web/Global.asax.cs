@@ -30,6 +30,9 @@ namespace Yavsc
 			routes.IgnoreRoute ("images/{*pathInfo}");
 			routes.IgnoreRoute ("xmldoc/{*pathInfo}"); // xml doc 
 			routes.IgnoreRoute ("htmldoc/{*pathInfo}"); // html doc 
+			routes.IgnoreRoute ("favicon.ico");
+			routes.IgnoreRoute ("favicon.png");
+			routes.IgnoreRoute ("robots.txt");
 			routes.MapRoute (
 				"Blog",
 				"Blog/{user}/{title}",

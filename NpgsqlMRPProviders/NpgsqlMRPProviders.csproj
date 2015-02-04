@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Npgsql.Web</RootNamespace>
     <AssemblyName>NpgsqlMRPProviders</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
