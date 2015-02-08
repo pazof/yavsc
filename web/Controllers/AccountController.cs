@@ -271,6 +271,7 @@ namespace Yavsc.Controllers
 		/// <param name="AvatarFile">Avatar file.</param>
 		[Authorize]
 		[HttpPost]
+		// ASSERT("Membership.GetUser ().UserName is made of simple characters, no slash nor backslash"
 		public ActionResult Profile (Profile model, HttpPostedFileBase AvatarFile)
 		{
 			string username = Membership.GetUser ().UserName;
@@ -282,9 +283,7 @@ namespace Yavsc.Controllers
 					string avdir = Server.MapPath (AvatarDir);
 					string avpath = Path.Combine (avdir, username + ".png");
 					AvatarFile.SaveAs (avpath);
-					model.avatar = 
-						Path.Combine(AvatarDir.Substring(1),username)+".png";
-					
+					model.avatar = Request.Url.Scheme+ "://"+ Request.Url.Authority + AvatarDir.Substring (1)+ "/" + username + ".png";
 				} else 
 					ModelState.AddModelError ("Avatar",
 						string.Format ("Image type {0} is not supported (suported formats : {1})",

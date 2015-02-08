@@ -7,7 +7,7 @@
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
 <h1 class="blogtitle">
 <a href="/Blog/<%=ViewData["BlogUser"]%>">
-<% if ((bool)ViewData["Avatar"]==null) { %>
+<% if ((bool)ViewData["Avatar"]!=null) { %>
 <img class="avatar" src="<%=ViewData["Avatar"]%>" alt=""/> 
 <% } %>
 <%=Html.Encode(ViewData["BlogTitle"])%></a>

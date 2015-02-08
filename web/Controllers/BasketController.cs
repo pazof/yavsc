@@ -26,6 +26,7 @@ namespace Yavsc.ApiControllers
 			base.Initialize (controllerContext);
 			wfmgr = new WorkFlowManager ();
 		}
+
 		/// <summary>
 		/// Validates the order.
 		/// 
@@ -51,18 +52,6 @@ namespace Yavsc.ApiControllers
 			//TODO find the basket for Membership.GetUser().UserName
 			//return WFManager.Write(estid << from the basket, desc, ucost, count, productid);
 			throw new NotImplementedException ();
-		}
-
-		/// <summary>
-		/// Yours the estimates.
-		/// </summary>
-		/// <returns>The estimates.</returns>
-		[HttpGet]
-		[Authorize]
-		public Estimate[] YourEstimates()
-		{
-			return wfmgr.GetEstimates (
-				Membership.GetUser().UserName);
 		}
     }
 }

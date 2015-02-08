@@ -4,10 +4,10 @@ using NpgsqlTypes;
 using System.Configuration;
 using System.Collections.Specialized;
 using Yavsc.Model.WorkFlow;
-using System.Web.Mvc;
 using System.Configuration.Provider;
 using System.Collections.Generic;
 using Yavsc.Model.FrontOffice;
+using Newtonsoft.Json;
 
 namespace WorkFlowProvider
 {
@@ -19,9 +19,10 @@ namespace WorkFlowProvider
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"insert into commandes (prdref,creation) values (@pref,@creat) returning id";
+						"insert into commandes (prdref,creation,params) values (@pref,@creat,@prs) returning id";
 					cmd.Parameters.Add ("@pref", com.ProdRef);
 					cmd.Parameters.Add ("@creat", com.CreationDate);
+					cmd.Parameters.Add ("@prs", JsonConvert.SerializeObject(com.Parameters));
 					cnx.Open ();
 					com.Id = id = (long)cmd.ExecuteScalar ();
 				}

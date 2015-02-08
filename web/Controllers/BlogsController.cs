@@ -155,7 +155,7 @@ namespace Yavsc.Controllers
 				return View ("TitleNotFound");
 			ViewData ["BlogUserProfile"] = pr;
 			ViewData ["BlogTitle"] = pr.BlogTitle;
-			ViewData ["HasAvatar"] = pr.avatar != null;
+			ViewData ["Avatar"] = pr.avatar;
 			MembershipUser u = Membership.GetUser ();
 			if (u != null)
 				ViewData ["UserName"] = u.UserName;
@@ -302,6 +302,9 @@ namespace Yavsc.Controllers
 			if (avpath==null) {
 				FileInfo fia = new FileInfo (Server.MapPath (defaultAvatar));
 				return File (fia.OpenRead (), defaultAvatarMimetype);
+			}
+			if (avpath.StartsWith ("~/")) {
+
 			}
 			WebRequest wr = WebRequest.Create(avpath);
 			FileContentResult res;

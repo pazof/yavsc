@@ -6,7 +6,7 @@
 <h1 class="blogtitle">
 <%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %> - 
 <a href="/Blog/<%=Model.UserName%>">
-<% if ((bool)ViewData["HasAvatar"]) { %>
+<% if (ViewData["Avatar"]!=null) { %>
 <img class="avatar" src="<%=ViewData["Avatar"]%>" alt=""/>
 <% } %>
 <%=Html.Encode(ViewData["BlogTitle"])%>
