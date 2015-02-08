@@ -144,7 +144,7 @@ namespace Yavsc.Controllers
 						body = body.Replace ("<%SiteName%>", YavscHelpers.SiteName);
 						body = body.Replace ("<%UserName%>", user.UserName);
 						body = body.Replace ("<%UserActivatonUrl%>",
-							string.Format ("<{0}://{1}/Account/Validate/{2}?key={3}",
+							string.Format ("<{0}://{1}/Account/Validate/{2}?key={3}>",
 								Request.Url.Scheme,
 								Request.Url.Authority,
 								user.UserName,

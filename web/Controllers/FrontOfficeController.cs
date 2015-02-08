@@ -204,9 +204,9 @@ namespace Yavsc.Controllers
 		{
 			try {
 				// get files from the request 
-				string fnre = "[A-Za-z0-9~\\-.]+";
+				string fnre = "[A-Za-z0-9~\\-.]+"; 
 				HttpFileCollectionBase hfc = Request.Files;
-
+				// TODO mime-magic on content, and file name filter
 				foreach (String h in hfc.AllKeys) {
 					if (!Regex.Match (hfc [h].FileName, fnre).Success) {
 						ViewData ["Message"] = "File name refused";
@@ -232,9 +232,5 @@ namespace Yavsc.Controllers
 			}
 		}
 
-		ActionResult YourCommands ()
-		{
-			return View (GetBasket());
-		}
 	}
 }

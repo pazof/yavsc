@@ -37,11 +37,11 @@ namespace Yavsc
 				"Blog",
 				"Blog/{user}/{title}",
 				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
-			); 
+			);
 			routes.MapRoute (
 				"Default",
-				"{controller}/{action}/{user}/{title}",
-				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
+				"{controller}/{action}/{id}",
+				new { controller = "Home", action = "Index", id=UrlParameter.Optional}
 			);
 		}
 		/// <summary>

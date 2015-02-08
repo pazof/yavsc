@@ -98,6 +98,7 @@ namespace Yavsc.Controllers
 
 
 
+		// page index becomes one-based
 		/// <summary>
 		/// Users the posts.
 		/// </summary>
@@ -106,7 +107,7 @@ namespace Yavsc.Controllers
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
 		[HttpGet]
-		public ActionResult UserPosts (string user, int pageIndex = 0, int pageSize = 10)
+		public ActionResult UserPosts (string user, int pageIndex = 1, int pageSize = 10)
 		{
 			int tr;
 			MembershipUser u = Membership.GetUser ();

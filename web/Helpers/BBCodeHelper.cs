@@ -325,7 +325,7 @@ namespace Yavsc.Helpers
 						new BBTag ("h", "<h2>", "</h2>"), 
 						bblist, 
 						new BBTag ("*", "<li>", "</li>", true, false), 
-						new BBTag ("url", "<a href=\"${href}\">", "</a>", true, true,  new BBAttribute ("href", ""), new BBAttribute ("href", "href")), 
+						new BBTag ("url", "<a href=\"${href}\">", " <<i>${href}</i>></a>", true, false,  new BBAttribute ("href", ""), new BBAttribute ("href", "href")), 
 						new BBTag ("br", "<br/>", "", true, false),
 						new BBTag ("video", "<video style=\"${style}\" controls>" +
 							"<source src=\"${mp4}\" type=\"video/mp4\"/>" +

@@ -293,7 +293,8 @@ namespace Npgsql.Web.Blog
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
 					totalRecords = 0;
-					int firstrec = pageIndex * pageSize;
+					// pageIndex became one based
+					int firstrec = (pageIndex-1) * pageSize;
 					int lastrec = firstrec + pageSize - 1;
 					while (rdr.Read()) {
 						if (totalRecords >= firstrec && totalRecords <= lastrec) {

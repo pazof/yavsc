@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Init db" Language="C#" MasterPageFile="~/Models/StaticPage.master" Inherits="System.Web.Mvc.ViewPage<DataAccess>" %>
+﻿<%@ Page Title="Init db" Language="C#" MasterPageFile="~/Models/NoLogin.master" Inherits="System.Web.Mvc.ViewPage<DataAccess>" %>
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 <%= Html.ValidationSummary("Init a new data base") %>
 <% using (Html.BeginForm("InitDb","Admin")) { %>

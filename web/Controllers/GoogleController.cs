@@ -25,7 +25,6 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class GoogleController : Controller
 	{
-
 		private string SetSessionSate ()
 		{
 			Random rand = new Random ();

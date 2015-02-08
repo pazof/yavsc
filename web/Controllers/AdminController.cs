@@ -260,13 +260,23 @@ namespace Yavsc.Controllers
 		[Authorize()]
 		public ActionResult Admin (NewAdminModel model)
 		{
+
+			// ASSERT (Roles.RoleExists (adminRoleName)) 
+			string [] admins = Roles.GetUsersInRole (adminRoleName);
 			string currentUser = Membership.GetUser ().UserName;
+			List<SelectListItem> users = new List<SelectListItem> ();
+			foreach (MembershipUser u in Membership.GetAllUsers ()) {
+				var i = new SelectListItem ();
+				i.Text = string.Format ("{0} <{1}>", u.UserName, u.Email);
+				i.Value = u.UserName;
+				users.Add (i);
+			}
+			ViewData ["admins"] = admins;
+			ViewData ["useritems"] = users;
 			if (ModelState.IsValid) {
 				Roles.AddUserToRole (model.UserName, adminRoleName);
 				ViewData ["Message"] = model.UserName + " "+LocalizedText.was_added_to_the_role+" '" + adminRoleName + "'";
 			} else {
-				// ASSERT (Roles.RoleExists (adminRoleName)) 
-				string [] admins = Roles.GetUsersInRole (adminRoleName);
 				if (admins.Length > 0) { 
 					if (! admins.Contains (Membership.GetUser ().UserName)) {
 						ModelState.Remove("UserName");
@@ -274,22 +284,13 @@ namespace Yavsc.Controllers
 						return View ("Index");
 					}
 				} else {
+					// No admin, gives the Admin Role to the current user
 					Roles.AddUserToRole (currentUser, adminRoleName);
 					admins = new string[] { currentUser };
 					ViewData ["Message"] += string.Format (
 						LocalizedText.was_added_to_the_empty_role,
 						currentUser, adminRoleName);
 				}
-
-				List<SelectListItem> users = new List<SelectListItem> ();
-				foreach (MembershipUser u in Membership.GetAllUsers ()) {
-					var i = new SelectListItem ();
-					i.Text = string.Format ("{0} <{1}>", u.UserName, u.Email);
-					i.Value = u.UserName;
-					users.Add (i);
-				}
-				ViewData ["useritems"] = users;
-				ViewData ["admins"] = admins;
 			}
 			return View (model);
 		}
