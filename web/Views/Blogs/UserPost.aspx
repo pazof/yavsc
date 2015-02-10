@@ -18,7 +18,6 @@
 	 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 	
 <div class="blogpost">
-	 <% BBCodeHelper.Init(); %>
 <%= BBCodeHelper.Parser.ToHtml(Model.Content) %>
 </div>
 	 <% 

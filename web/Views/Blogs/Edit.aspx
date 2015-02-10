@@ -20,7 +20,7 @@
 </asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 	 <% if (Model != null ) if (Model.Content != null )  {
-	 BBCodeHelper.Init (); %>
+	 BBCodeHelper.InitParser (); %>
 	 <%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %>
 <div class="blogpost">
 <%= BBCodeHelper.Parser.ToHtml(Model.Content) %>

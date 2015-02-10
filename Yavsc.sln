@@ -23,6 +23,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{ECEC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fortune", "plugins\fortune\fortune.csproj", "{B5F49C21-7BB3-4DC0-AE65-F4ED0F6D15BD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7E3CF14D-91B6-4088-8630-7655C749130E}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		Makefile = Makefile
+		noavatar.xcf = noavatar.xcf
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,7 +82,6 @@ Global
 		{B5F49C21-7BB3-4DC0-AE65-F4ED0F6D15BD} = {ECEC9074-ACB5-4A74-BE22-FF7B40F25A1A}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = web\Web.csproj
 		Policies = $0
 		$0.StandardHeader = $1
 		$1.Text = @\n ${FileName}\n \n Author:\n      ${AuthorName} <${AuthorEmail}>\n \n Copyright (c) ${Year} ${CopyrightHolder}\n\n This program is free software: you can redistribute it and/or modify\n it under the terms of the GNU Lesser General Public License as published by\n the Free Software Foundation, either version 3 of the License, or\n (at your option) any later version.\n\n This program is distributed in the hope that it will be useful,\n but WITHOUT ANY WARRANTY; without even the implied warranty of\n MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n GNU Lesser General Public License for more details.\n\n You should have received a copy of the GNU Lesser General Public License\n along with this program.  If not, see <http://www.gnu.org/licenses/>.

@@ -681,7 +681,6 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <None Include="README" />
     <None Include="templates\Estim.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>Estim.cs</LastGenOutput>

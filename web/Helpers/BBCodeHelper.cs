@@ -93,15 +93,102 @@ namespace Yavsc.Helpers
 
 		}
 		private static BBCodeParser parser = null;
-		private static int sect1;
-		private static int sect2;
-		private static int sect3;
+		private static int sect1=0;
+		private static int sect2=0;
+		private static int sect3=0;
 		private static Dictionary<string,string> d = new Dictionary<string,string> ();
+
 		/// <summary>
-		/// Init this instance.
+		/// Inits the parser.
 		/// </summary>
-		public static void Init ()
+		public static void InitParser ()
 		{
+			BBTag urlBBTag = new BBTag ("url", "<a href=\"${href}\">", "</a>", true, true, UrlContentTransformer, new BBAttribute ("href", "",UrlAttributeTransformer), new BBAttribute ("href", "href",UrlAttributeTransformer));
+
+			BBTag bblist =new BBTag ("list", "<ul>", "</ul>");
+			BBTag bbs2=new BBTag ("sect2",
+				"<div class=\"section\">" +
+				"<h2><a name=\"s${para}\" href=\"#${para}\">${para} - ${title}</a></h2>" +
+				"<div>${content}",
+				"</div></div>", 
+				false, true,
+				Section2Transformer,
+				new BBAttribute ("title", "",TitleContentTransformer),
+				new BBAttribute ("title", "title", TitleContentTransformer),
+				new BBAttribute ("para", "para", L2ContentTransformer));
+			BBTag bbs1=new BBTag ("sect1", 
+				"<div class=\"section\">" +
+				"<h1><a name=\"s${para}\" href=\"#s${para}\">${para} - ${title}</a></h1>" +
+				"<div>${content}",
+				"</div></div>", 
+				false, true,
+				Section1Transformer,
+				new BBAttribute ("title", "",TitleContentTransformer),
+				new BBAttribute ("title", "title", TitleContentTransformer),
+				new BBAttribute ("para", "para", L1ContentTransformer));
+			BBTag bbdp=new BBTag ("docpage",
+				"<div class=docpage>${content}", "</div>",
+				false,
+				false,
+				DocPageContentTransformer);
+
+			parser = new BBCodeParser (new[] {
+				new BBTag ("b", "<b>", "</b>"), 
+				new BBTag ("i", "<span style=\"font-style:italic;\">", "</span>"), 
+				new BBTag ("em", "<em>", "</em>"), 
+				new BBTag ("u", "<span style=\"text-decoration:underline;\">", "</span>"), 
+				new BBTag ("code", "<span class=\"code\">", "</span>"), 
+				new BBTag ("img", "<img src=\"${content}\" alt=\"${alt}\" style=\"${style}\" />", "", false, true, new BBAttribute ("alt", ""), new BBAttribute("alt","alt"), new BBAttribute ("style", "style")), 
+				new BBTag ("quote", "<blockquote>", "</blockquote>"), 
+				new BBTag ("div", "<div style=\"${style}\">", "</div>", new BBAttribute("style","style")), 
+				new BBTag ("p", "<p>", "</p>"), 
+				new BBTag ("h", "<h2>", "</h2>"), 
+				bblist, 
+				new BBTag ("*", "<li>", "</li>", true, false), 
+				urlBBTag,
+				new BBTag ("br", "<br/>", "", true, false),
+				new BBTag ("video", "<video style=\"${style}\" controls>" +
+					"<source src=\"${mp4}\" type=\"video/mp4\"/>" +
+					"<source src=\"${ogg}\" type=\"video/ogg\"/>" +
+					"<source src=\"${webm}\" type=\"video/webm\"/>","</video>", 
+					new BBAttribute("mp4","mp4"),
+					new BBAttribute("ogg","ogg"),
+					new BBAttribute("webm","webm"),
+					new BBAttribute("style","style")),
+				new BBTag ("tag", "<span class=\"tag\">", "</span>", true, true,
+					TagContentTransformer),
+				bbs1,
+				bbs2,
+				new BBTag ("sect3", 
+					"<div class=\"section\">" +
+					"<h3><a name=\"s${para}\" href=\"#${para}\">${para} - ${title}</a></h3>" +
+					"<div>${content}", 
+					"</div></div>", 
+					false, true,
+					Section3Transformer,
+					new BBAttribute ("title", "",TitleContentTransformer),
+					new BBAttribute ("title", "title", TitleContentTransformer),
+					new BBAttribute ("para", "para", L3ContentTransformer)
+				),
+				bbdp,
+				new BBTag ("f", "<iframe src=\"${src}\">", "</iframe>", 
+					new BBAttribute ("src", ""), new BBAttribute ("src", "src")), 
+
+			}
+			);
+			// used to build the doc toc
+			parent.Clear ();
+			parent.Add ("*", bblist);
+			parent.Add ("sect3", bbs2);
+			parent.Add ("sect2", bbs1);
+			parent.Add ("sect1", bbdp);
+			// 
+		}
+		/// <summary>
+		/// Inits the document page.
+		/// </summary>
+		public static void InitDocPage ()
+			{
 			sect1 = 0;
 			sect2 = 0;
 			sect3 = 0;
@@ -170,10 +257,23 @@ namespace Yavsc.Helpers
 		static string DocPageContentTransformer (string instr)
 		{
 			string toc = TocContentTransformer(instr);
-			Init ();
+			InitDocPage ();
 			return toc+instr;
 		}
+		static string urlValue = null;
+		static string UrlAttributeTransformer (IAttributeRenderingContext arg)
+		{
+			urlValue = arg.AttributeValue;
+			return webm;
+		}
 
+		static string UrlContentTransformer (string instr)
+		{
+			if (string.IsNullOrWhiteSpace (instr)) {
+				return urlValue;
+			} else
+				return instr;
+		}
 		static string TagContentTransformer (string instr)
 		{
 			return instr;
@@ -284,83 +384,7 @@ namespace Yavsc.Helpers
 		public static BBCodeParser Parser {
 			get {
 				if (parser == null) {
-					Init ();
-					BBTag bblist =new BBTag ("list", "<ul>", "</ul>");
-					BBTag bbs2=new BBTag ("sect2",
-						"<div class=\"section\">" +
-						"<h2><a name=\"s${para}\" href=\"#${para}\">${para} - ${title}</a></h2>" +
-						"<div>${content}",
-						"</div></div>", 
-						false, true,
-						Section2Transformer,
-						new BBAttribute ("title", "",TitleContentTransformer),
-						new BBAttribute ("title", "title", TitleContentTransformer),
-						new BBAttribute ("para", "para", L2ContentTransformer));
-					BBTag bbs1=new BBTag ("sect1", 
-						"<div class=\"section\">" +
-						"<h1><a name=\"s${para}\" href=\"#s${para}\">${para} - ${title}</a></h1>" +
-						"<div>${content}",
-						"</div></div>", 
-						false, true,
-						Section1Transformer,
-						new BBAttribute ("title", "",TitleContentTransformer),
-						new BBAttribute ("title", "title", TitleContentTransformer),
-						new BBAttribute ("para", "para", L1ContentTransformer));
-					BBTag bbdp=new BBTag ("docpage",
-						"<div class=docpage>${content}", "</div>",
-						false,
-						false,
-						DocPageContentTransformer);
-
-					parser = new BBCodeParser (new[] {
-						new BBTag ("b", "<b>", "</b>"), 
-						new BBTag ("i", "<span style=\"font-style:italic;\">", "</span>"), 
-						new BBTag ("em", "<em>", "</em>"), 
-						new BBTag ("u", "<span style=\"text-decoration:underline;\">", "</span>"), 
-						new BBTag ("code", "<span class=\"code\">", "</span>"), 
-						new BBTag ("img", "<img src=\"${content}\" alt=\"${alt}\" style=\"${style}\" />", "", false, true, new BBAttribute ("alt", ""), new BBAttribute("alt","alt"), new BBAttribute ("style", "style")), 
-						new BBTag ("quote", "<blockquote>", "</blockquote>"), 
-						new BBTag ("div", "<div style=\"${style}\">", "</div>", new BBAttribute("style","style")), 
-						new BBTag ("p", "<p>", "</p>"), 
-						new BBTag ("h", "<h2>", "</h2>"), 
-						bblist, 
-						new BBTag ("*", "<li>", "</li>", true, false), 
-						new BBTag ("url", "<a href=\"${href}\">", " <<i>${href}</i>></a>", true, false,  new BBAttribute ("href", ""), new BBAttribute ("href", "href")), 
-						new BBTag ("br", "<br/>", "", true, false),
-						new BBTag ("video", "<video style=\"${style}\" controls>" +
-							"<source src=\"${mp4}\" type=\"video/mp4\"/>" +
-							"<source src=\"${ogg}\" type=\"video/ogg\"/>" +
-							"<source src=\"${webm}\" type=\"video/webm\"/>","</video>", 
-							new BBAttribute("mp4","mp4"),
-							new BBAttribute("ogg","ogg"),
-							new BBAttribute("webm","webm"),
-							new BBAttribute("style","style")),
-						new BBTag ("tag", "<span class=\"tag\">", "</span>", true, true,
-							TagContentTransformer),
-						bbs1,
-						bbs2,
-						new BBTag ("sect3", 
-							"<div class=\"section\">" +
-							"<h3><a name=\"s${para}\" href=\"#${para}\">${para} - ${title}</a></h3>" +
-							"<div>${content}", 
-							"</div></div>", 
-							false, true,
-							Section3Transformer,
-							new BBAttribute ("title", "",TitleContentTransformer),
-							new BBAttribute ("title", "title", TitleContentTransformer),
-							new BBAttribute ("para", "para", L3ContentTransformer)
-						),
-						bbdp,
-						new BBTag ("f", "<iframe src=\"${src}\">", "</iframe>", 
-							new BBAttribute ("src", ""), new BBAttribute ("src", "src")), 
-
-						}
-					);
-					parent.Add ("*", bblist);
-					parent.Add ("sect3", bbs2);
-					parent.Add ("sect2", bbs1);
-					parent.Add ("sect1", bbdp);
-
+					InitParser ();
 				}
 				return parser;
 			}
