@@ -114,12 +114,16 @@ namespace Yavsc.Controllers
 			FindBlogEntryFlags sf = FindBlogEntryFlags.MatchUserName;
 			ViewData ["SiteName"] = sitename;
 			ViewData ["BlogUser"] = user;
+			// displays invisible items when the logged user is also the author
 			if (u != null)
 			if (u.UserName == user)
 				sf |= FindBlogEntryFlags.MatchInvisible;
+			// find entries
 			BlogEntryCollection c = BlogManager.FindPost (user, sf, pageIndex, pageSize, out tr);
+			// Get author's meta data
 			Profile bupr =  AccountController.GetProfile (user);
 			ViewData ["BlogUserProfile"] = bupr;
+			// Inform of listing meta data
 			ViewData ["BlogTitle"] = bupr.BlogTitle;
 			ViewData ["Avatar"] = bupr.avatar;
 			ViewData ["PageIndex"] = pageIndex;

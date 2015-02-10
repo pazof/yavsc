@@ -95,12 +95,6 @@
       <HintPath>..\packages\PayPalCoreSDK.1.6.0\lib\net451\PayPalCoreSDK.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Formatting" />
-    <Reference Include="GoogleMapsHelpers">
-      <HintPath>..\packages\GoogleMapsHelpers.0.1.4.1\lib\4.5\GoogleMapsHelpers.dll</HintPath>
-    </Reference>
-    <Reference Include="Mvc.GoogleMaps">
-      <HintPath>..\packages\MVC.GoogleMaps.1.0.0\lib\net45\Mvc.GoogleMaps.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
