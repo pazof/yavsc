@@ -268,6 +268,7 @@ namespace Npgsql.Web.Blog
 		public override BlogEntryCollection FindPost (string pattern, FindBlogEntryFlags searchflags, int pageIndex, int pageSize, out int totalRecords)
 		{
 			BlogEntryCollection c = new BlogEntryCollection ();
+			totalRecords = 0;
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				cmd.CommandText = "select title,bcontent,modified,posted,username,visible from blog " +
@@ -292,9 +293,8 @@ namespace Npgsql.Web.Blog
 				cmd.CommandText += " order by posted desc";
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
-					totalRecords = 0;
 					// pageIndex became one based
-					int firstrec = (pageIndex-1) * pageSize;
+					int firstrec = pageIndex * pageSize;
 					int lastrec = firstrec + pageSize - 1;
 					while (rdr.Read()) {
 						if (totalRecords >= firstrec && totalRecords <= lastrec) {
@@ -348,7 +348,7 @@ namespace Npgsql.Web.Blog
 				                  " order by posted desc limit @len" ;
 
 				cmd.Parameters.Add ("@appname", applicationName);
-				cmd.Parameters.Add ("@len", defaultPageSize);
+				cmd.Parameters.Add ("@len", defaultPageSize*10);
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
 					totalRecords = 0;

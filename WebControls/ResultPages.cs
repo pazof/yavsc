@@ -108,13 +108,14 @@ namespace Yavsc.WebControls
 					writer.Write ("&nbsp;");
 				}
 			} 
-
+			writer.Write ("(");
 			if (ResultCount == 0) {
 				writer.Write ("Pas de resultat");
 			} else {
 				writer.Write (ResultCount.ToString () + " resultat");
 				if (ResultCount>1) writer.Write("s");
 			}
+			writer.Write (")");
 
 		}
 	}
