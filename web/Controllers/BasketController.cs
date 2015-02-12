@@ -21,6 +21,7 @@ namespace Yavsc.ApiControllers
 		/// The wfmgr.
 		/// </summary>
 		protected WorkFlowManager wfmgr = null;
+
 		/// <summary>
 		/// Initialize the specified controllerContext.
 		/// </summary>
@@ -78,10 +79,7 @@ namespace Yavsc.ApiControllers
 		[AcceptVerbs("POST")]
 		public void Post(long itemId)
 		{
-
 			throw new NotImplementedException ();
 		}
-
-
     }
 }

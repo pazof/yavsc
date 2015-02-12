@@ -24,8 +24,14 @@ using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.Model.FrontOffice
 {
+	/// <summary>
+	/// Basket.
+	/// </summary>
 	public class Basket: List<Commande>
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.FrontOffice.Basket"/> class.
+		/// </summary>
 		public Basket ()
 		{
 		}

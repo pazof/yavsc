@@ -11,7 +11,7 @@ table.layout { border-width: 0;  }
 table.layout TR TD { max-width:40%; }
    </style>
    <%= Html.ValidationSummary() %>
-<% using(Html.BeginForm("Profile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
+<% using(Html.BeginForm("MyProfile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
 <% { %>
    <fieldset><legend>Informations générales</legend>
 

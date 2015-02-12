@@ -28,6 +28,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using System.Web;
+using System.Runtime.Serialization.Json;
 
 namespace Yavsc.Helpers.Google
 {
@@ -60,8 +61,7 @@ namespace Yavsc.Helpers.Google
 		/// </summary>
 		/// <returns>The calendars.</returns>
 		/// <param name="cred">Cred.</param>
-		/// <param name="json">Json.</param>
-		public CalendarList GetCalendars (string cred, out string json)
+		public CalendarList GetCalendars (string cred)
 		{
 			CalendarList res = null;
 			HttpWebRequest webreq = WebRequest.CreateHttp (getCalListUri);
@@ -70,10 +70,7 @@ namespace Yavsc.Helpers.Google
 			webreq.ContentType = "application/http";
 			using (WebResponse resp = webreq.GetResponse ()) {
 				using (Stream respstream = resp.GetResponseStream ()) {
-					using (StreamReader readresp = new StreamReader (respstream, Encoding.UTF8)) {
-						json = readresp.ReadToEnd ();
-						res = JsonConvert.DeserializeObject<CalendarList> (json);
-					}
+						res = (CalendarList) new DataContractJsonSerializer(typeof(CalendarList)).ReadObject (respstream);
 				}
 				resp.Close ();
 			}
@@ -89,8 +86,7 @@ namespace Yavsc.Helpers.Google
 		/// <param name="mindate">Mindate.</param>
 		/// <param name="maxdate">Maxdate.</param>
 		/// <param name="upr">Upr.</param>
-		/// <param name="responseStr">Response string.</param>
-		public CalendarEntryList GetCalendar  (string calid, DateTime mindate, DateTime maxdate, ProfileBase upr,  out string responseStr)
+		public CalendarEntryList GetCalendar  (string calid, DateTime mindate, DateTime maxdate, ProfileBase upr)
 		{
 			string uri = string.Format (
 				getCalEntriesUri, HttpUtility.UrlEncode (calid)) +
@@ -107,18 +103,14 @@ namespace Yavsc.Helpers.Google
 			try {
 				using (WebResponse resp = webreq.GetResponse ()) {
 					using (Stream respstream = resp.GetResponseStream ()) {
-						using (StreamReader readresp = new StreamReader (respstream, Encoding.UTF8)) {
-							 responseStr = readresp.ReadToEnd ();
 							try {
-								res = JsonConvert.DeserializeObject<CalendarEntryList> (responseStr);
-							} catch (JsonReaderException ex) {
+							res = (CalendarEntryList) new DataContractJsonSerializer(typeof(CalendarEntryList)).ReadObject (respstream);
+							} catch (Exception ex) {
 								respstream.Close ();
 								resp.Close ();
 								webreq.Abort ();
-								throw new GoogleErrorException(ex,responseStr);
+								throw new GoogleErrorException(ex);
 						}
-						}
-						respstream.Close ();
 					}
 					resp.Close ();
 				}

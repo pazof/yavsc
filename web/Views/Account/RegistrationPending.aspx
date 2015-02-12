@@ -8,6 +8,6 @@ a été créé, un e-mail de validation de votre compte a été envoyé a l'adre
 Vous devriez le recevoir rapidement.<br/>
 Pour valider votre compte, suivez le lien indiqué dans cet e-mail.
 <div>
-<a class="actionlink" href="<%=ViewData["ReturnUrl"]%>">Retour</a> 
+<a class="actionlink" href="<%=ViewData["returnUrl"]%>">Retour</a> 
 </div>
 </asp:Content>

@@ -553,7 +553,9 @@ namespace Yavsc.templates {
             #line hidden
             return this.GenerationEnvironment.ToString();
         }
-        
+        /// <summary>
+        /// Initialize this instance.
+        /// </summary>
         public virtual void Initialize() {
             if ((this.Errors.HasErrors == false)) {
                 bool _estimAcquired = false;

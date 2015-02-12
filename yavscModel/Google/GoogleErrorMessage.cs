@@ -25,11 +25,25 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Model.Google
 {
+	/// <summary>
+	/// Google error exception.
+	/// </summary>
 	public class GoogleErrorException : Exception 
 	{
+		/// <summary>
+		/// Gets or sets the title.
+		/// </summary>
+		/// <value>The title.</value>
 		public string Title { get; set; }
+		/// <summary>
+		/// Gets or sets the content.
+		/// </summary>
+		/// <value>The content.</value>
 		public string Content { get; set; }
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Google.GoogleErrorException"/> class.
+		/// </summary>
+		/// <param name="ex">Ex.</param>
 		public GoogleErrorException (WebException ex) {
 			// ASSERT ex != null;
 			Title = ex.Message;
@@ -40,9 +54,24 @@ namespace Yavsc.Model.Google
 				Content = reader.ReadToEnd();
 			}
 		}
-		public GoogleErrorException(JsonReaderException ex, string message) {
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Google.GoogleErrorException"/> class.
+		/// </summary>
+		/// <param name="ex">Ex.</param>
+		/// <param name="message">Message.</param>
+		[Obsolete]
+		public GoogleErrorException(Exception ex, string message) {
 			Content = message;
 			Title = ex.Message;
+		}
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Google.GoogleErrorException"/> class.
+		/// </summary>
+		/// <param name="ex">Ex.</param>
+		[Obsolete]
+		public GoogleErrorException(Exception ex) {
+			Content = ex.Message;
+			Title = ex.GetType().FullName;
 		}
 	}
 

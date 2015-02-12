@@ -241,10 +241,9 @@ namespace Yavsc.Controllers
 					});
 			}
 			string cred = OAuth2.GetFreshGoogleCredential (HttpContext.Profile);
-			string json;
+
 			CalendarApi c = new CalendarApi ();
-			CalendarList cl = c.GetCalendars (cred, out json);
-			ViewData ["json"] = json;
+			CalendarList cl = c.GetCalendars (cred);
 			ViewData ["returnUrl"] = returnUrl;
 			return View (cl);
 		}
@@ -254,6 +253,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The calendar.</returns>
 		/// <param name="calchoice">Calchoice.</param>
+		/// <param name="returnUrl">return Url.</param>
 		[HttpPost]
 		[Authorize]
 		public ActionResult SetCalendar (string calchoice,string returnUrl)
@@ -318,9 +318,8 @@ namespace Yavsc.Controllers
 
 				CalendarApi c = new CalendarApi ();
 				CalendarEntryList res;
-				string responseStr;
 				try {
-					res = c.GetCalendar (calid, mindate, maxdate, upr, out responseStr);
+					res = c.GetCalendar (calid, mindate, maxdate, upr);
 				} catch (GoogleErrorException ex) {
 					ViewData ["Title"] = ex.Title;
 					ViewData ["Content"] = ex.Content;

@@ -53,7 +53,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Routing" />
@@ -86,15 +85,23 @@
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Web.Mvc" />
-    <Reference Include="System.Web.Http" />
-    <Reference Include="System.Web.Http.WebHost" />
-    <Reference Include="System.Json" />
-    <Reference Include="System.Web.WebPages" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.WebPages.Deployment" />
+    <Reference Include="System.Web.WebPages.Razor" />
     <Reference Include="PayPalCoreSDK">
       <HintPath>..\packages\PayPalCoreSDK.1.6.0\lib\net451\PayPalCoreSDK.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Http" />
     <Reference Include="System.Net.Http.Formatting" />
+    <Reference Include="System.Web.Http.WebHost" />
+    <Reference Include="Microsoft.Web.Infrastructure" />
+    <Reference Include="System.Web.WebPages" />
+    <Reference Include="System.Web.Mvc" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -152,7 +159,6 @@
     <Compile Include="Helpers\YavscHelpers.cs" />
     <Compile Include="Controllers\BasketController.cs" />
     <Compile Include="FileInfoCollection.cs" />
-    <Compile Include="MvcActionValueBinder.cs" />
     <Compile Include="Controllers\BlogsApiController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Helpers\T.cs" />
@@ -211,7 +217,6 @@
     <Content Include="Views\Account\RegistrationPending.aspx" />
     <Content Include="Views\Account\Validate.aspx" />
     <Content Include="Views\FrontOffice\Catalog.aspx" />
-    <Content Include="Views\Account\Profile.aspx" />
     <Content Include="Views\Blogs\TitleNotFound.aspx" />
     <Content Include="Views\FrontOffice\ProductCategory.aspx" />
     <Content Include="Views\FrontOffice\Product.aspx" />
@@ -666,6 +671,7 @@
     <Content Include="Scripts\img\map-load.gif" />
     <Content Include="Scripts\jquery.googlemaps.js" />
     <Content Include="Scripts\jquery.googlemaps.min.js" />
+    <Content Include="Views\Account\MyProfile.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

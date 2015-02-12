@@ -25,9 +25,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Diagnostics;
+using System.Net.Http;
 
 namespace Yavsc.Formatters
 {
+	/// <summary>
+	/// Tex to pdf formatter.
+	/// </summary>
 	public class TexToPdfFormatter: BufferedMediaTypeFormatter
 	{
 		/// <summary>
@@ -73,7 +77,7 @@ namespace Yavsc.Formatters
 		public override void WriteToStream (Type type, object value, Stream stream, HttpContentHeaders contentHeaders)
 		{
 
-			string content = value as string;
+			string cntStr = value as string;
 			string name = "tmpdoc-"+Guid.NewGuid().ToString();
 			string fullname = Path.Combine (
 				HttpRuntime.CodegenDir, name);
@@ -81,7 +85,7 @@ namespace Yavsc.Formatters
 			FileInfo fo = new FileInfo(fullname + ".pdf");
 			using (StreamWriter sw = new StreamWriter (fi.FullName))
 			{
-				sw.Write (content);
+				sw.Write (cntStr);
 			}
 			using (Process p = new Process ()) {			
 				p.StartInfo.WorkingDirectory = HttpRuntime.CodegenDir;

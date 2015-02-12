@@ -11,7 +11,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="/Theme/style.css"/>
-<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="icon" type="image/png" href="/favicon.png?v=2" />
  <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>
 <link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'/>
@@ -52,12 +52,12 @@
 	 <span class="hidcom"> Page d'accueil </span>
 	<%= Html.ActionLink("Login", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" } ) %>
 	<span class="hidcom">Pour pouvoir poster ou commenter</span>
-	<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Login"%>?returnUrl=<%=Request.Url.PathAndQuery%>" class="actionlink">
+	<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Login"%>?returnUrl=<%=ViewData["returnUrl"]==null?Request.Url.PathAndQuery:(string)ViewData["returnUrl"]%>" class="actionlink">
 	<img src="/images/sign-in-with-google-s.png" style="max-height:1.5em; max-width:6em;" alt="Google sign in">
 	</a>
 	<span class="hidcom">S'authentifier avec son compte Google+</span>
 <% } else { %>
-	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Profile", "Account", null, new { @class="actionlink" }) %>
+	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "MyProfile", "Account", null, new { @class="actionlink" }) %>
 	<span class="hidcom"> &Eacute;dition de votre profile </span> 
 	@ <%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" }) %>
 	<span class="hidcom"> Page d'accueil </span> 

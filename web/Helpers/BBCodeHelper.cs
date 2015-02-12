@@ -103,6 +103,9 @@ namespace Yavsc.Helpers
 		/// </summary>
 		public static void InitParser ()
 		{
+			// prevents a failure at second call
+			parent.Clear ();
+
 			BBTag urlBBTag = new BBTag ("url", "<a href=\"${href}\">", "</a>", true, true, UrlContentTransformer, new BBAttribute ("href", "",UrlAttributeTransformer), new BBAttribute ("href", "href",UrlAttributeTransformer));
 
 			BBTag bblist =new BBTag ("list", "<ul>", "</ul>");
@@ -177,12 +180,12 @@ namespace Yavsc.Helpers
 			}
 			);
 			// used to build the doc toc
-			parent.Clear ();
 			parent.Add ("*", bblist);
 			parent.Add ("sect3", bbs2);
 			parent.Add ("sect2", bbs1);
 			parent.Add ("sect1", bbdp);
 			// 
+
 		}
 		/// <summary>
 		/// Inits the document page.
@@ -270,7 +273,7 @@ namespace Yavsc.Helpers
 		static string UrlContentTransformer (string instr)
 		{
 			if (string.IsNullOrWhiteSpace (instr)) {
-				return urlValue;
+				return "<"+urlValue+">";
 			} else
 				return instr;
 		}

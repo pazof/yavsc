@@ -48,7 +48,7 @@ namespace Yavsc.Formatters
 
 		private const string dateformat = "ddd, dd MMM yyyy HH:mm:ss K";
 		/// <summary>
-		/// Writes to stream.
+		/// Writes synchronously to the buffered stream.
 		/// </summary>
 		/// <param name="type">Type.</param>
 		/// <param name="value">Value.</param>

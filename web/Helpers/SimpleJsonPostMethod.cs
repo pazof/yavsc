@@ -22,7 +22,7 @@ using System;
 using System.Net;
 using System.Text;
 using System.IO;
-using Newtonsoft.Json;
+using System.Runtime.Serialization.Json;
 
 namespace Yavsc.Helpers
 {
@@ -74,23 +74,18 @@ namespace Yavsc.Helpers
 		/// <param name="query">Query.</param>
 		public TAnswer Invoke(TQuery query)
 		{
-			Byte[] bytes = System.Text.Encoding.UTF8.GetBytes (
-				JsonConvert.SerializeObject(query));
-			Request.ContentLength = bytes.Length;
 
-			using (Stream dataStream = Request.GetRequestStream ()) {
-				dataStream.Write (bytes, 0, bytes.Length);
-				dataStream.Close ();
+			DataContractJsonSerializer serquery = new DataContractJsonSerializer (typeof(TQuery));
+			DataContractJsonSerializer seransw = new DataContractJsonSerializer (typeof(TAnswer));
+
+			using (MemoryStream streamQuery = new MemoryStream ()) {
+				serquery.WriteObject (streamQuery, query);
 			}
+			
 			TAnswer ans = default (TAnswer);
 			using (WebResponse response = Request.GetResponse ()) {
 				using (Stream responseStream = response.GetResponseStream ()) {
-					using (StreamReader readStream = new StreamReader (responseStream, Encoding.UTF8)) {
-						string responseStr = readStream.ReadToEnd ();
-						ans = JsonConvert.DeserializeObject<TAnswer> (responseStr);
-						readStream.Close ();
-					}
-					responseStream.Close ();
+					ans = (TAnswer) seransw.ReadObject(responseStream);
 				}
 				response.Close();
 			}

@@ -4,7 +4,7 @@
 Running assembly :
 <%= GetType().Assembly.FullName %></p>
 <p>
-Assemblies referenced by the controllers :
+Assemblies referenced in this application :
 <ul>
 <% foreach (System.Reflection.AssemblyName item in Model) { %>
 <li><%= item.FullName %></li>

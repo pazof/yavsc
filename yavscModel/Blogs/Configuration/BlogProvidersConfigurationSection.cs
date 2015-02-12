@@ -16,13 +16,12 @@ namespace Yavsc.Model.Blogs.Configuration
 			set { this["defaultProvider"] = value; }
 		}
 
-
-
 		[ConfigurationProperty("providers")]
 		[ConfigurationCollection(typeof(BlogProvidersConfigurationCollection),
         AddItemName = "add",
         ClearItemsName = "clear",
         RemoveItemName = "remove")]
+
 		/// <summary>
 		/// Gets or sets the providers.
 		/// </summary>

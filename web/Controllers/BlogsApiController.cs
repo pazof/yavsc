@@ -51,16 +51,7 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="user">User.</param>
 		/// <param name="title">Title.</param>
-		public static void RemovePost(string user, string title) {
-			if (!Roles.IsUserInRole ("Admin")) {
-				string rguser = Membership.GetUser ().UserName;
-				if (rguser != user) {
-					throw new AccessViolationException (
-						string.Format (
-							"Vous n'avez pas le droit de suprimer des billets du Blog de {0}",
-							user));
-				}
-			}
+		public void RemovePost(string user, string title) {
 			BlogEntry e = BlogManager.GetPost (user, title);
 			if (e == null) {
 				throw new KeyNotFoundException (

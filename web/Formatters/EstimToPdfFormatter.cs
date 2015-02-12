@@ -20,14 +20,15 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net.Http.Headers;
-using System.Net.Http.Formatting;
-using Yavsc.Model.WorkFlow;
-using Yavsc.Model.RolesAndMembers;
-using System.Web.Profile;
-using System.Web;
 using System.Diagnostics;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
+using System.Web;
+using System.Web.Profile;
+using Yavsc.Model.RolesAndMembers;
+using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.Formatters
 {
@@ -69,8 +70,9 @@ namespace Yavsc.Formatters
 				return enumerableType.IsAssignableFrom(type);
 			}
 		}
+
 		/// <summary>
-		/// Writes to stream.
+		/// Writes synchronously to the buffered stream.
 		/// </summary>
 		/// <param name="type">Type.</param>
 		/// <param name="value">Value.</param>
@@ -97,7 +99,7 @@ namespace Yavsc.Formatters
 			tmpe.Session.Add ("to", prcli);
 			tmpe.Init ();
 
-			string content = tmpe.TransformText ();
+			string contentStr = tmpe.TransformText ();
 
 			string name = string.Format ("tmpestimtex-{0}", e.Id);
 			string fullname = Path.Combine (
@@ -106,7 +108,7 @@ namespace Yavsc.Formatters
 			FileInfo fo = new FileInfo(fullname + ".pdf");
 			using (StreamWriter sw = new StreamWriter (fi.FullName))
 			{
-				sw.Write (content);
+				sw.Write (contentStr);
 			}
 			using (Process p = new Process ()) {			
 				p.StartInfo.WorkingDirectory = HttpRuntime.CodegenDir;
@@ -129,7 +131,9 @@ namespace Yavsc.Formatters
 			}
 			fi.Delete();
 			fo.Delete();
+
 		}
+
 
 	}
 }

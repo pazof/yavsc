@@ -2,6 +2,7 @@ using System;
 using Yavsc.Model.Blogs;
 using Yavsc.Model.RolesAndMembers;
 using System.Web;
+using System.Web.Security;
 
 
 namespace Yavsc.Model.Blogs
@@ -49,6 +50,15 @@ namespace Yavsc.Model.Blogs
 		}
 		public static void RemovePost (string username, string title)
 		{
+			if (!Roles.IsUserInRole ("Admin")) {
+				string rguser = Membership.GetUser ().UserName;
+				if (rguser != username) {
+					throw new AccessViolationException (
+						string.Format (
+							"{1}, Vous n'avez pas le droit de suprimer des billets du Blog de {0}",
+							username,rguser));
+				}
+			}
 			Provider.RemovePost (username, title);
 		}
 		public static BlogEntryCollection LastPosts (int pageIndex, int pageSize, out int totalRecords)

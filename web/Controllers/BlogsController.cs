@@ -342,7 +342,7 @@ namespace Yavsc.Controllers
 			ViewData["returnUrl"]=returnUrl;
 			if (!confirm)
 				return View ("RemovePost");
-			BlogsApiController.RemovePost (user,title);
+			BlogManager.RemovePost (user,title);
 			if (returnUrl == null)
 				RedirectToAction ("Index",new { user = user });
 			return Redirect (returnUrl);

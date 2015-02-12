@@ -255,7 +255,7 @@ namespace Yavsc.Controllers
 		/// <param name="model">Model.</param>
 		[Authorize]
 		[HttpGet]
-		public ActionResult Profile (Profile model)
+		public ActionResult MyProfile (Profile model)
 		{
 			string username = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = username;
@@ -272,7 +272,7 @@ namespace Yavsc.Controllers
 		[Authorize]
 		[HttpPost]
 		// ASSERT("Membership.GetUser ().UserName is made of simple characters, no slash nor backslash"
-		public ActionResult Profile (Profile model, HttpPostedFileBase AvatarFile)
+		public ActionResult MyProfile (Profile model, HttpPostedFileBase AvatarFile)
 		{
 			string username = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = username;

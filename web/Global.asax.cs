@@ -6,9 +6,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Web.Http;
 using Yavsc.Formatters;
 using Yavsc.Model.FrontOffice;
+using System.Web.Http;
 
 namespace Yavsc
 {
@@ -49,17 +49,18 @@ namespace Yavsc
 				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
 			);
 		}
+
 		/// <summary>
-		/// Applications the start.
+		/// Starts the Application.
 		/// </summary>
 		protected void Application_Start ()
 		{
 			AreaRegistration.RegisterAllAreas ();
 			GlobalConfiguration.Configuration.Routes.MapHttpRoute(
-						name: "DefaultApi",
+				name: "DefaultApi",
 				routeTemplate: "api/{controller}/{action}/{*id}",
 				defaults: new { controller = "WorkFlow", action="Index", id=0 }
-					);
+			); 
 
 			RegisterRoutes (RouteTable.Routes);
 		}

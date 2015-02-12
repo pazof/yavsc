@@ -27,6 +27,7 @@ using Yavsc.Model.Google;
 using System.Web.Profile;
 using System.Web;
 using Yavsc.Model;
+using System.Runtime.Serialization.Json;
 
 namespace Yavsc.Helpers.Google
 {
@@ -45,16 +46,14 @@ namespace Yavsc.Helpers.Google
 		public static People GetMe (AuthToken gat)
 		{
 			People me;
+			DataContractJsonSerializer ppser = new DataContractJsonSerializer (typeof(People));
 			HttpWebRequest webreppro = WebRequest.CreateHttp (getPeopleUri + "/me");
 			webreppro.ContentType = "application/http";
 			webreppro.Headers.Add (HttpRequestHeader.Authorization, gat.token_type + " " + gat.access_token);
 			webreppro.Method = "GET";
 			using (WebResponse proresp = webreppro.GetResponse ()) {
 				using (Stream prresponseStream = proresp.GetResponseStream ()) {
-					using (StreamReader readproresp = new StreamReader (prresponseStream, Encoding.UTF8)) {
-						string prresponseStr = readproresp.ReadToEnd ();
-						me = JsonConvert.DeserializeObject<People> (prresponseStr);
-					}
+					me = (People) ppser.ReadObject (prresponseStream);
 					prresponseStream.Close ();
 				}
 				proresp.Close ();
@@ -189,11 +188,7 @@ namespace Yavsc.Helpers.Google
 			AuthToken gat = null;
 			using (WebResponse response = webreq.GetResponse ()) {
 				using (Stream responseStream = response.GetResponseStream ()) {
-					using (StreamReader readStream = new StreamReader (responseStream, Encoding.UTF8)) {
-						string responseStr = readStream.ReadToEnd ();
-						gat = JsonConvert.DeserializeObject<AuthToken> (responseStr);
-						readStream.Close ();
-					}
+					gat = (AuthToken) new DataContractJsonSerializer(typeof(AuthToken)).ReadObject (responseStream);
 					responseStream.Close ();
 				}
 				response.Close ();
