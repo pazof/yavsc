@@ -106,7 +106,7 @@ namespace Yavsc.Helpers
 			// prevents a failure at second call
 			parent.Clear ();
 
-			BBTag urlBBTag = new BBTag ("url", "<a href=\"${href}\">", "</a>", true, true, UrlContentTransformer, new BBAttribute ("href", "",UrlAttributeTransformer), new BBAttribute ("href", "href",UrlAttributeTransformer));
+			BBTag urlBBTag = new BBTag ("url", "<a href=\"${href}\">", "</a>", true, true, UrlContentTransformer, new BBAttribute ("href", ""), new BBAttribute ("href", "href"));
 
 			BBTag bblist =new BBTag ("list", "<ul>", "</ul>");
 			BBTag bbs2=new BBTag ("sect2",
@@ -263,17 +263,11 @@ namespace Yavsc.Helpers
 			InitDocPage ();
 			return toc+instr;
 		}
-		static string urlValue = null;
-		static string UrlAttributeTransformer (IAttributeRenderingContext arg)
-		{
-			urlValue = arg.AttributeValue;
-			return webm;
-		}
 
 		static string UrlContentTransformer (string instr)
 		{
 			if (string.IsNullOrWhiteSpace (instr)) {
-				return "<"+urlValue+">";
+				return "-&gt;";
 			} else
 				return instr;
 		}
