@@ -73,6 +73,9 @@
      <%= link %>
    <% } %>
    </footer>
+   <script type="text/javascript">
+        var apiBaseUrl = '@Url.Content(ProjectNameSpace.WebApiConfig.UrlPrefixRelative)';
+    </script>
 </body>
 </html>
 

@@ -49,7 +49,6 @@
     <Compile Include="RolesAndMemebers\NewAdminModel.cs" />
     <Compile Include="RolesAndMemebers\NewRoleModel.cs" />
     <Compile Include="RolesAndMemebers\RegisterViewModel.cs" />
-    <Compile Include="WorkFlow\NewProjectModel.cs" />
     <Compile Include="Blogs\BlogEditEntryModel.cs" />
     <Compile Include="Admin\RestoreQuery.cs" />
     <Compile Include="Admin\DataAccess.cs" />
@@ -90,7 +89,6 @@
     <Compile Include="Google\CalendarList.cs" />
     <Compile Include="Google\CalendarListEntry.cs" />
     <Compile Include="Google\AskForADate.cs" />
-    <Compile Include="Google\CalendarEntryList.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="ITagHandler.cs" />
     <Compile Include="IViewRenderer.cs" />
@@ -133,6 +131,13 @@
     <Compile Include="FrontOffice\Catalog\CatalogHelper.cs" />
     <Compile Include="FrontOffice\Catalog\CatalogManager.cs" />
     <Compile Include="FrontOffice\Catalog\CatalogProvider.cs" />
+    <Compile Include="FileSystem\FileSystemManager.cs" />
+    <Compile Include="FileSystem\DirNotFoundException.cs" />
+    <Compile Include="FileSystem\InvalidDirNameException.cs" />
+    <Compile Include="FileSystem\WebFileInfo.cs" />
+    <Compile Include="Google\CalendarEntryList.cs" />
+    <Compile Include="FrontOffice\WebFileInfoCollection.cs" />
+    <Compile Include="FrontOffice\CommandStatus.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

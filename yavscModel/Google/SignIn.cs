@@ -22,11 +22,24 @@ using System;
 
 namespace Yavsc.Model.Google
 {
+	/// <summary>
+	/// Sign in.
+	/// </summary>
 	public class SignIn
 	{
+		/// <summary>
+		/// Gets or sets the name of the user.
+		/// </summary>
+		/// <value>The name of the user.</value>
 		public string UserName { get; set; }
+		/// <summary>
+		/// Gets or sets the email.
+		/// </summary>
+		/// <value>The email.</value>
 		public string Email { get; set; }
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Google.SignIn"/> class.
+		/// </summary>
 		public SignIn ()
 		{
 		}

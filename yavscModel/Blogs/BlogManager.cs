@@ -7,13 +7,27 @@ using System.Web.Security;
 
 namespace Yavsc.Model.Blogs
 {
+	/// <summary>
+	/// Blog manager.
+	/// </summary>
 	public static class BlogManager
 	{
+		/// <summary>
+		/// Removes the comment.
+		/// </summary>
+		/// <returns>The comment.</returns>
+		/// <param name="cmtid">Cmtid.</param>
 		public static long RemoveComment(long cmtid)
 		{
 			return Provider.RemoveComment (cmtid);
 		}
-
+		/// <summary>
+		/// Comment the specified from, postid, content and visible.
+		/// </summary>
+		/// <param name="from">From.</param>
+		/// <param name="postid">Postid.</param>
+		/// <param name="content">Content.</param>
+		/// <param name="visible">If set to <c>true</c> visible.</param>
 		public static void Comment (string from, long postid, string content, bool visible)
 		{
 			provider.Comment (from, postid, content);
@@ -21,6 +35,10 @@ namespace Yavsc.Model.Blogs
 
 		static BlogProvider provider;
 
+		/// <summary>
+		/// Gets the provider.
+		/// </summary>
+		/// <value>The provider.</value>
 		public static BlogProvider Provider {
 			get {
 				if (provider == null)
@@ -28,26 +46,70 @@ namespace Yavsc.Model.Blogs
 				return provider;
 			}
 		}
+
+		/// <summary>
+		/// Gets the post.
+		/// </summary>
+		/// <returns>The post.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="title">Title.</param>
 		public static BlogEntry GetPost (string username, string title)
 		{
 			return Provider.GetPost (username, title );
 		}
+
+		/// <summary>
+		/// Gets the post.
+		/// </summary>
+		/// <returns>The post.</returns>
+		/// <param name="postid">Postid.</param>
 		public static BlogEntry GetPost(long postid)
 		{
 			return Provider.GetPost (postid);
 		}
+
+		/// <summary>
+		/// Post the specified username, title, content and visible.
+		/// </summary>
+		/// <param name="username">Username.</param>
+		/// <param name="title">Title.</param>
+		/// <param name="content">Content.</param>
+		/// <param name="visible">If set to <c>true</c> visible.</param>
 		public static void Post(string username, string title, string content, bool visible)
 		{
 			Provider.Post(username, title, content, visible );
 		}
+
+		/// <summary>
+		/// Updates the post.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="title">Title.</param>
+		/// <param name="content">Content.</param>
+		/// <param name="visible">If set to <c>true</c> visible.</param>
 		public static void UpdatePost(long postid, string title, string content, bool visible)
 		{
 			Provider.UpdatePost(postid, title, content, visible);
 		}
+
+		/// <summary>
+		/// Finds the post.
+		/// </summary>
+		/// <returns>The post.</returns>
+		/// <param name="pattern">Pattern.</param>
+		/// <param name="searchflags">Searchflags.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
+		/// <param name="totalRecords">Total records.</param>
 		public static BlogEntryCollection FindPost (string pattern, FindBlogEntryFlags searchflags, int pageIndex, int pageSize, out int totalRecords)
 		{
 			return Provider.FindPost (pattern, searchflags, pageIndex, pageSize, out totalRecords);
 		}
+		/// <summary>
+		/// Removes the post.
+		/// </summary>
+		/// <param name="username">Username.</param>
+		/// <param name="title">Title.</param>
 		public static void RemovePost (string username, string title)
 		{
 			if (!Roles.IsUserInRole ("Admin")) {
@@ -61,10 +123,25 @@ namespace Yavsc.Model.Blogs
 			}
 			Provider.RemovePost (username, title);
 		}
+
+		/// <summary>
+		/// Lasts the posts.
+		/// </summary>
+		/// <returns>The posts.</returns>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
+		/// <param name="totalRecords">Total records.</param>
 		public static BlogEntryCollection LastPosts (int pageIndex, int pageSize, out int totalRecords)
 		{
 			return Provider.LastPosts (pageIndex, pageSize, out totalRecords);
 		}
+
+		/// <summary>
+		/// Gets the comments.
+		/// </summary>
+		/// <returns>The comments.</returns>
+		/// <param name="postid">Postid.</param>
+		/// <param name="getHidden">If set to <c>true</c> get hidden.</param>
 		public static Comment[] GetComments(long postid, bool getHidden=true)
 		{
 			return Provider.GetComments (postid,getHidden);
@@ -73,6 +150,7 @@ namespace Yavsc.Model.Blogs
 		/// Tag the specified post by postid.
 		/// </summary>
 		/// <param name="postid">Postid.</param>
+		/// <param name="tag">Tag.</param>
 		/// <returns>The tag identifier</returns>
 		public static long Tag(long postid, string tag) {
 			return Provider.Tag (postid, tag);

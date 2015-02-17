@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Yavsc.Model.FrontOffice
 {
+	/// <summary>
+	/// Sale form.
+	/// </summary>
 	public class SaleForm
 	{
 		/// <summary>
@@ -14,6 +17,9 @@ namespace Yavsc.Model.FrontOffice
 		/// <value>The catalog reference.</value>
 		public string CatalogReference { get; set; }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.FrontOffice.SaleForm"/> class.
+		/// </summary>
 		public SaleForm ()
 		{
 		}

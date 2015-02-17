@@ -1,4 +1,4 @@
-﻿//
+//
 //  CalendarEntry.cs
 //
 //  Author:
@@ -22,6 +22,9 @@ using System;
 
 namespace Yavsc.Model.Google
 {
+	/// <summary>
+	/// Calendar entry list.
+	/// </summary>
 	public class CalendarEntryList
 	{
 

@@ -47,7 +47,10 @@ namespace Yavsc.Model.WorkFlow
 		[StringLength (2048)]
 		[Display(ResourceType = typeof(LocalizedText),Name="Description")]
 		public string Description { get; set; } 
-
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="Yavsc.Model.WorkFlow.Writting"/>.
+		/// </summary>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Yavsc.Model.WorkFlow.Writting"/>.</returns>
 		public override string ToString ()
 		{
 			return string.Format ("[Writting: Id={0}, UnitaryCost={1}, Count={2}, ProductReference={3}, Description={4}]", Id, UnitaryCost, Count, ProductReference, Description);

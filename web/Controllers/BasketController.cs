@@ -7,6 +7,7 @@ using System.Web.Http;
 using Yavsc.Model.WorkFlow;
 using System.Collections.Specialized;
 using Yavsc.Model.FrontOffice;
+using System.Web.SessionState;
 
 namespace Yavsc.ApiControllers
 {
@@ -33,22 +34,39 @@ namespace Yavsc.ApiControllers
 		}
 
 		/// <summary>
+		/// Gets the current basket, creates a new one, if it doesn't exist.
+		/// </summary>
+		/// <value>The current basket.</value>
+		protected Basket CurrentBasket {
+			get {
+				HttpSessionState session = HttpContext.Current.Session;
+				Basket b = (Basket) session ["Basket"];
+				if (b == null)
+					session ["Basket"] = b = new Basket ();
+				return b;
+			}
+		}
+
+		/// <summary>
 		/// Create the specified basket item using specified command parameters.
 		/// </summary>
 		/// <param name="cmdParams">Command parameters.</param>
-		[AcceptVerbs("CREATE")]
+		[Authorize]
 		public long Create(NameValueCollection cmdParams)
 		{
-			throw new NotImplementedException ();
+			// HttpContext.Current.Request.Files
+			Commande cmd = new Commande(cmdParams, HttpContext.Current.Request.Files);
+			CurrentBasket.Add (cmd);
+			return cmd.Id;
 		}
 
 		/// <summary>
 		/// Read the specified basket item.
 		/// </summary>
 		/// <param name="itemid">Itemid.</param>
-		[AcceptVerbs("READ")]
+		[Authorize]
 		Commande Read(long itemid){
-			throw new NotImplementedException ();
+			return CurrentBasket[itemid];
 		}
 
 		/// <summary>
@@ -57,29 +75,21 @@ namespace Yavsc.ApiControllers
 		/// <param name="itemid">Item identifier.</param>
 		/// <param name="param">Parameter name.</param>
 		/// <param name="value">Value.</param>
-		[AcceptVerbs("UPDATE")]
-		public void Update(long itemid, string param, string value)
+		[Authorize]
+		public void UpdateParam(long itemid, string param, string value)
 		{
-			throw new NotImplementedException ();
+			CurrentBasket [itemid].Parameters [param] = value;
 		}
 
 		/// <summary>
 		/// Delete the specified item.
 		/// </summary>
 		/// <param name="itemid">Item identifier.</param>
+		[Authorize]
 		public void Delete(long itemid)
 		{
-			throw new NotImplementedException ();
+			CurrentBasket.Remove (itemid);
 		}
 
-		/// <summary>
-		/// Post a file, as attached document to the specified 
-		/// Item
-		/// </summary>
-		[AcceptVerbs("POST")]
-		public void Post(long itemId)
-		{
-			throw new NotImplementedException ();
-		}
     }
 }

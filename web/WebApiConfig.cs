@@ -1,5 +1,5 @@
 //
-//  ITagHandler.cs
+//  WebApiConfig.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -19,40 +19,48 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+﻿
 using System;
-using System.Configuration;
-using System.Collections.Specialized;
-using System.Data;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
+using Yavsc.Formatters;
+using Yavsc.Model.FrontOffice;
+using System.Web.Http;
 
-namespace Yavsc.Model
+namespace Yavsc
 {
 	/// <summary>
-	/// I tag handler.
+	/// Web API config.
 	/// </summary>
-	public interface ITagHandler {
+	public static class WebApiConfig
+	{
 		/// <summary>
-		/// Backup this instance.
-		/// Should set ViewData["Tags"] with
-		/// an array of rendered tags
+		/// Gets the URL prefix.
 		/// </summary>
-		void Backup();
+		/// <value>The URL prefix.</value>
+		public static string UrlPrefix { get { return "api"; } }
 
 		/// <summary>
-		/// Restore this instance.
+		/// Gets the URL prefix relative.
 		/// </summary>
-		void Restore();
+		/// <value>The URL prefix relative.</value>
+		public static string UrlPrefixRelative { get { return "~/api"; } }
 
 		/// <summary>
-		/// Invoke this instance.
+		/// Register the specified config.
 		/// </summary>
-		void Invoke();
-
-		/// <summary>
-		/// Gets or sets the name.
-		/// </summary>
-		/// <value>The name.</value>
-		string Name { get; set; }
-
+		/// <param name="config">Config.</param>
+		public static void Register(HttpConfiguration config)
+		{
+			config.Routes.MapHttpRoute(
+				name: "DefaultApi",
+				routeTemplate: WebApiConfig.UrlPrefix + "/{controller}/{id}",
+				defaults: new { id = RouteParameter.Optional }
+			);
+		}
 	}
+	
 }

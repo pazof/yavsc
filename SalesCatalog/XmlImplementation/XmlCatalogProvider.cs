@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Xml;
 using Yavsc.Model.FrontOffice;
+using System.Web;
 
 namespace SalesCatalog.XmlImplementation
 {
@@ -48,6 +49,9 @@ namespace SalesCatalog.XmlImplementation
 		/// <summary>
 		/// Initialize the catalog
 		/// using the specified name and config.
+		/// The config object contains under the key
+		/// <c>connection</c> the path to the Xml Catalog file
+		/// at server side.
 		/// </summary>
 		/// <param name="name">Name.</param>
 		/// <param name="config">Config.</param>
@@ -56,9 +60,12 @@ namespace SalesCatalog.XmlImplementation
 			if (config ["connection"] == null)
 				throw new Exception ("the 'connection' parameter is null " +
 					"(it should be the absolute path to the xml catalog)");
-			string basedir = AppDomain.CurrentDomain.BaseDirectory;
 			// config ["connection"] starts with "~/"	
-			fileName = Path.Combine(basedir, config ["connection"].Substring (2));
+			fileName = (string) config ["connection"];
+			if (fileName.StartsWith ("~/")) {
+				fileName = HttpContext.Current.Server.MapPath( 
+					config ["connection"]);
+			}
 			LoadCatalog ();
 		}
 

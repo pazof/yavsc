@@ -34,10 +34,29 @@ using Yavsc.Model;
 
 namespace Yavsc.Model.Google
 {
+	/// <summary>
+	/// Calendar list.
+	/// </summary>
 	public class CalendarList {
+		/// <summary>
+		/// Gets or sets the kind.
+		/// </summary>
+		/// <value>The kind.</value>
 		public string kind { get; set;}
+		/// <summary>
+		/// Gets or sets the etag.
+		/// </summary>
+		/// <value>The etag.</value>
 		public string etag { get; set; }
+		/// <summary>
+		/// Gets or sets the next sync token.
+		/// </summary>
+		/// <value>The next sync token.</value>
 		public string nextSyncToken { get; set; }
+		/// <summary>
+		/// Gets or sets the items.
+		/// </summary>
+		/// <value>The items.</value>
 		public CalendarListEntry[] items { get; set; }
 	}
 

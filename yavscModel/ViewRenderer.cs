@@ -27,18 +27,34 @@ using System.Web.Mvc;
 
 namespace Yavsc.Model
 {
-
+	/// <summary>
+	/// View renderer.
+	/// </summary>
 	public abstract class ViewRenderer<T> : IViewRenderer  {
 		#region IRenderer implementation
+		/// <summary>
+		/// Get the specified c.
+		/// </summary>
+		/// <param name="c">C.</param>
 		public object Get (Controller c)
 		{
 			return Name;
 		}
+
+		/// <summary>
+		/// Gets the template route part.
+		/// </summary>
+		/// <value>The template.</value>
 		public string Template {
 			get {
 				return "Tag.aspx";
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the name.
+		/// </summary>
+		/// <value>The name.</value>
 		public string Name {
 			get {
 				throw new NotImplementedException ();

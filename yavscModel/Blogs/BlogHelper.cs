@@ -6,8 +6,15 @@ using Yavsc.Model.Blogs.Configuration;
 
 namespace Yavsc.Model.Blogs
 {
+	/// <summary>
+	/// Blog helper.
+	/// </summary>
 	public static class BlogHelper
 	{
+		/// <summary>
+		/// Gets the provider.
+		/// </summary>
+		/// <returns>The provider.</returns>
 		public static BlogProvider GetProvider ()
 		{
 			BlogProvidersConfigurationSection config = ConfigurationManager.GetSection ("system.web/blog") as BlogProvidersConfigurationSection;

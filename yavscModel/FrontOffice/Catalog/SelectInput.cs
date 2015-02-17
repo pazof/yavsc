@@ -4,10 +4,16 @@ using System.Web.Mvc;
 
 namespace Yavsc.Model.FrontOffice
 {
+	/// <summary>
+	/// Select input.
+	/// </summary>
 	public class SelectInput: FormInput
 	{
 		#region implemented abstract members of FormInput
-
+		/// <summary>
+		/// Gets the type.
+		/// </summary>
+		/// <value>The type.</value>
 		public override string Type {
 			get {
 				return "select";
@@ -15,9 +21,20 @@ namespace Yavsc.Model.FrontOffice
 		}
 
 		#endregion
-
+		/// <summary>
+		/// The items.
+		/// </summary>
 		public Option[] Items;
+
+		/// <summary>
+		/// The index of the selected.
+		/// </summary>
 		public int SelectedIndex;
+
+		/// <summary>
+		/// Tos the html.
+		/// </summary>
+		/// <returns>The html.</returns>
 		public override string ToHtml ()
 		{
 			StringBuilder sb = new StringBuilder ();

@@ -9,9 +9,11 @@ using System.Web.Routing;
 using Yavsc.Formatters;
 using Yavsc.Model.FrontOffice;
 using System.Web.Http;
+using System.Web.SessionState;
 
 namespace Yavsc
 {
+
 	/// <summary>
 	/// Mvc application.
 	/// </summary>
@@ -28,6 +30,9 @@ namespace Yavsc
 			routes.IgnoreRoute ("Scripts/{*pathInfo}");
 			routes.IgnoreRoute ("Theme/{*pathInfo}");
 			routes.IgnoreRoute ("images/{*pathInfo}");
+			routes.IgnoreRoute ("users/{*pathInfo}");
+			routes.IgnoreRoute ("files/{*pathInfo}");
+			routes.IgnoreRoute ("avatars/{*pathInfo}");
 			routes.IgnoreRoute ("xmldoc/{*pathInfo}"); // xml doc 
 			routes.IgnoreRoute ("htmldoc/{*pathInfo}"); // html doc 
 			routes.IgnoreRoute ("favicon.ico");
@@ -56,13 +61,25 @@ namespace Yavsc
 		protected void Application_Start ()
 		{
 			AreaRegistration.RegisterAllAreas ();
-			GlobalConfiguration.Configuration.Routes.MapHttpRoute(
-				name: "DefaultApi",
-				routeTemplate: "api/{controller}/{action}/{*id}",
-				defaults: new { controller = "WorkFlow", action="Index", id=0 }
-			); 
-
+			WebApiConfig.Register (GlobalConfiguration.Configuration);
 			RegisterRoutes (RouteTable.Routes);
 		}
+
+		/// <summary>
+		/// Applications the post authorize request.
+		/// </summary>
+		protected void Application_PostAuthorizeRequest()
+		{
+			if (IsWebApiRequest())
+			{
+				HttpContext.Current.SetSessionStateBehavior(SessionStateBehavior.Required);
+			}
+		}
+
+		private bool IsWebApiRequest()
+		{
+			return HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.StartsWith(WebApiConfig.UrlPrefixRelative);
+		}
+
 	}
 }

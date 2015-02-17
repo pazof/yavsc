@@ -27,13 +27,12 @@ using System.Web.Mvc;
 
 namespace Yavsc.Model
 {
-
+	/// <summary>
+	/// I view renderer.
+	/// </summary>
 	public interface IViewRenderer : IRenderer {
-
-		// IRenderer.Get() Should set ViewData["Message|Author|Body"]
-		// and return an ActionResult
 		/// <summary>
-		/// Gets the template route part
+		/// Gets the template route part.
 		/// </summary>
 		/// <value>The template.</value>
 		string Template { get; }

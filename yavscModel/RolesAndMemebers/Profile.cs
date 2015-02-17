@@ -7,82 +7,167 @@ using System.Web;
 
 namespace Yavsc.Model.RolesAndMembers
 {
+	/// <summary>
+	/// Profile.
+	/// </summary>
 	public class Profile
 	{
+
+		/// <summary>
+		/// Gets or sets the name.
+		/// </summary>
+		/// <value>The name.</value>
 		[DisplayName ("Nom complet")]
 		[StringLength (1024)]
 		public string Name { get; set; }
 
+		/// <summary>
+		/// Gets or sets the avatar.
+		/// </summary>
+		/// <value>The avatar.</value>
 		[DisplayName("Avatar")]
 		public string avatar { get; set; }
 
+		/// <summary>
+		/// Gets or sets the address.
+		/// </summary>
+		/// <value>The address.</value>
 		[DisplayName ("Adresse")]
 		[StringLength (2047)]
 		public string Address { get; set; }
 
+		/// <summary>
+		/// Gets or sets the state of the city and.
+		/// </summary>
+		/// <value>The state of the city and.</value>
 		[DisplayName ("Ville")]
 		[StringLength (255)]
 		public string CityAndState { get; set; }
 
+		/// <summary>
+		/// Gets or sets the zip code.
+		/// </summary>
+		/// <value>The zip code.</value>
 		[DisplayName ("Code Postal")]
 		[StringLength (9)]
 		public string ZipCode { get; set; }
 
+		/// <summary>
+		/// Gets or sets the country.
+		/// </summary>
+		/// <value>The country.</value>
 		[DisplayName ("Pays")]
 		[StringLength (99)]
 		public string Country { get; set; }
 
+		/// <summary>
+		/// Gets or sets the web site.
+		/// </summary>
+		/// <value>The web site.</value>
 		[DisplayName ("Site Web")]
 		[StringLength (255)]
 		public string WebSite { get; set; }
 
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="Yavsc.Model.RolesAndMembers.Profile"/> blog visible.
+		/// </summary>
+		/// <value><c>true</c> if blog visible; otherwise, <c>false</c>.</value>
 		[DisplayName ("Blog visible")]
 		public bool BlogVisible { get; set; }
 
 		private string blogTitle;
+
+		/// <summary>
+		/// Gets or sets the blog title.
+		/// </summary>
+		/// <value>The blog title.</value>
 		[DisplayName ("Titre du blog")]
 		[StringLength (255)]
 		public string BlogTitle { get { return blogTitle==null? Name+"'s blog":blogTitle; } set { blogTitle = value; } }
 
+		/// <summary>
+		/// Gets or sets the phone number.
+		/// </summary>
+		/// <value>The phone.</value>
 		[DisplayName ("Téléphone fixe")]
 		[StringLength (15)]
 		public string Phone { get; set; }
 
+		/// <summary>
+		/// Gets or sets the mobile.
+		/// </summary>
+		/// <value>The mobile.</value>
 		[DisplayName ("Portable")]
 		[StringLength (15)]
 		public string Mobile { get; set; }
 
+		/// <summary>
+		/// Gets or sets the email.
+		/// </summary>
+		/// <value>The email.</value>
 		[DisplayName ("E-mail")]
 		[StringLength (1024)]
 		public string Email { get; set; }
 
+		/// <summary>
+		/// Gets or sets the BI.
+		/// </summary>
+		/// <value>The BI.</value>
 		[DisplayName ("Code BIC")]
 		[StringLength (15)]
 		public string BIC { get; set; }
 
+		/// <summary>
+		/// Gets or sets the IBA.
+		/// </summary>
+		/// <value>The IBA.</value>
 		[DisplayName ("Code IBAN")]
 		[StringLength (33)]
 		public string IBAN { get; set; }
 
 
+		/// <summary>
+		/// Gets or sets the bank code.
+		/// </summary>
+		/// <value>The bank code.</value>
 		[DisplayName ("Code Banque")]
 		[StringLength (5)]
 		public string BankCode { get; set; }
 
+		/// <summary>
+		/// Gets or sets the wicket code.
+		/// </summary>
+		/// <value>The wicket code.</value>
 		[DisplayName ("Code Guichet")]
 		[StringLength (5)]
 		public string WicketCode { get; set; }
 
+		/// <summary>
+		/// Gets or sets the account number.
+		/// </summary>
+		/// <value>The account number.</value>
 		[DisplayName ("Numéro de compte")]
 		[StringLength (15)]
 		public string AccountNumber { get; set; }
 
+		/// <summary>
+		/// Gets or sets the banked key.
+		/// </summary>
+		/// <value>The banked key.</value>
 		[DisplayName ("Clé RIB")]
 		public int BankedKey { get; set; }
 
+		/// <summary>
+		/// Gets or sets the google calendar.
+		/// </summary>
+		/// <value>The google calendar.</value>
 		[Display(Name="Google_calendar",ResourceType=typeof(LocalizedText))]
 		public string GoogleCalendar { get; set; }
 
+		/// <summary>
+		/// Gets a value indicating whether this instance has bank account.
+		/// </summary>
+		/// <value><c>true</c> if this instance has bank account; otherwise, <c>false</c>.</value>
 		public bool HasBankAccount { get { 
 				return IsBillable 
 			&& !string.IsNullOrWhiteSpace (BankCode)
@@ -92,6 +177,10 @@ namespace Yavsc.Model.RolesAndMembers
 			&& !string.IsNullOrWhiteSpace (AccountNumber)
 			&& BankedKey != 0; } }
 
+		/// <summary>
+		/// Gets a value indicating whether this instance is billable.
+		/// </summary>
+		/// <value><c>true</c> if this instance is billable; otherwise, <c>false</c>.</value>
 		public bool IsBillable { 
 			get { 
 				return !string.IsNullOrWhiteSpace (Name)
@@ -108,8 +197,16 @@ namespace Yavsc.Model.RolesAndMembers
 		{
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="Yavsc.Model.RolesAndMembers.Profile"/> remember me.
+		/// </summary>
+		/// <value><c>true</c> if remember me; otherwise, <c>false</c>.</value>
 		public bool RememberMe { get; set; }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.RolesAndMembers.Profile"/> class.
+		/// </summary>
+		/// <param name="profile">Profile.</param>
 		public Profile (ProfileBase profile)
 		{
 			object b = profile.GetPropertyValue ("BlogVisible");

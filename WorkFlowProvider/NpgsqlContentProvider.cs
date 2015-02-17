@@ -11,8 +11,26 @@ using Newtonsoft.Json;
 
 namespace WorkFlowProvider
 {
+	/// <summary>
+	/// Npgsql content provider.
+	/// </summary>
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
+		/// <summary>
+		/// Gets the stock status.
+		/// </summary>
+		/// <returns>The stock status.</returns>
+		/// <param name="productReference">Product reference.</param>
+		public virtual StockStatus GetStockStatus (string productReference)
+		{
+			return StockStatus.NonExistent;
+		}
+
+		/// <summary>
+		/// Registers the command.
+		/// </summary>
+		/// <returns>The command id in db.</returns>
+		/// <param name="com">COM.</param>
 		public long RegisterCommand (Commande com)
 		{
 			long id;
@@ -20,7 +38,7 @@ namespace WorkFlowProvider
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
 						"insert into commandes (prdref,creation,params) values (@pref,@creat,@prs) returning id";
-					cmd.Parameters.Add ("@pref", com.ProdRef);
+					cmd.Parameters.Add ("@pref", com.ProductRef);
 					cmd.Parameters.Add ("@creat", com.CreationDate);
 					cmd.Parameters.Add ("@prs", JsonConvert.SerializeObject(com.Parameters));
 					cnx.Open ();
@@ -29,47 +47,110 @@ namespace WorkFlowProvider
 			}
 			return id;
 		}
-		
+		/// <summary>
+		/// Gets the writting status changes.
+		/// </summary>
+		/// <returns>The writting statuses.</returns>
+		/// <param name="wrid">Wrid.</param>
 		public StatusChange[] GetWrittingStatuses (long wrid)
 		{
 			throw new NotImplementedException ();
 		}
+		/// <summary>
+		/// Gets the estimate status changes.
+		/// </summary>
+		/// <returns>The estimate statuses.</returns>
+		/// <param name="estid">Estid.</param>
 		public StatusChange[] GetEstimateStatuses (long estid)
 		{
 			throw new NotImplementedException ();
 		}
+		/// <summary>
+		/// Tags the writting.
+		/// </summary>
+		/// <param name="wrid">Wrid.</param>
+		/// <param name="tag">Tag.</param>
 		public void TagWritting (long wrid, string tag)
 		{
 			throw new NotImplementedException ();
 		}
-		public void DropTagWritting (long wrid, string tag)
+
+		/// <summary>
+		/// Drops the writting tag .
+		/// </summary>
+		/// <param name="wrid">Wrid.</param>
+		/// <param name="tag">Tag.</param>
+		public void DropWrittingTag (long wrid, string tag)
 		{
 			throw new NotImplementedException ();
 		}
+		/// <summary>
+		/// Sets the writting status.
+		/// </summary>
+		/// <param name="wrtid">Wrtid.</param>
+		/// <param name="status">Status.</param>
+		/// <param name="username">Username.</param>
 		public void SetWrittingStatus (long wrtid, int status, string username)
 		{
 			throw new NotImplementedException ();
 		}
+		/// <summary>
+		/// Sets the estimate status.
+		/// </summary>
+		/// <param name="estid">Estid.</param>
+		/// <param name="status">Status.</param>
+		/// <param name="username">Username.</param>
 		public void SetEstimateStatus (long estid, int status, string username)
 		{
 			throw new NotImplementedException ();
 		}
+		/// <summary>
+		/// Releases all resource used by the <see cref="WorkFlowProvider.NpgsqlContentProvider"/> object.
+		/// </summary>
+		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="WorkFlowProvider.NpgsqlContentProvider"/>.
+		/// The <see cref="Dispose"/> method leaves the <see cref="WorkFlowProvider.NpgsqlContentProvider"/> in an unusable
+		/// state. After calling <see cref="Dispose"/>, you must release all references to the
+		/// <see cref="WorkFlowProvider.NpgsqlContentProvider"/> so the garbage collector can reclaim the memory that the
+		/// <see cref="WorkFlowProvider.NpgsqlContentProvider"/> was occupying.</remarks>
 		public void Dispose ()
 		{
 			throw new NotImplementedException ();
 		}
+		/// <summary>
+		/// Install the model in database using the specified cnx.
+		/// </summary>
+		/// <param name="cnx">Cnx.</param>
 		public void Install (System.Data.IDbConnection cnx)
 		{
 			throw new NotImplementedException ();
 		}
+
+		/// <summary>
+		/// Uninstall the module data and data model from 
+		/// database, using the specified connection.
+		/// </summary>
+		/// <param name="cnx">Cnx.</param>
+		/// <param name="removeConfig">If set to <c>true</c> remove config.</param>
 		public void Uninstall (System.Data.IDbConnection cnx, bool removeConfig)
 		{
 			throw new NotImplementedException ();
 		}
+
+		/// <summary>
+		/// Defaults the config.
+		/// </summary>
+		/// <returns>The config.</returns>
+		/// <param name="appName">App name.</param>
+		/// <param name="cnxStr">Cnx string.</param>
 		public ConfigurationSection DefaultConfig (string appName, string cnxStr)
 		{
 			throw new NotImplementedException ();
 		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="WorkFlowProvider.NpgsqlContentProvider"/> is active.
+		/// </summary>
+		/// <value><c>true</c> if active; otherwise, <c>false</c>.</value>
 		public bool Active {
 			get {
 				throw new NotImplementedException ();
@@ -79,16 +160,33 @@ namespace WorkFlowProvider
 			}
 		}
 
+		/// <summary>
+		/// Gets the different status labels.
+		/// 0 is the starting status. Each status is an integer and the 0-based index
+		/// of a string in this array.
+		/// </summary>
+		/// <value>The status labels.</value>
 		public string[] Statuses {
 			get {
 				return new string[] { "Created", "Validated", "Success", "Error" };
 			}
 		}
+
+		/// <summary>
+		/// Gets the final statuses.
+		/// </summary>
+		/// <value>The final statuses.</value>
 		public bool[] FinalStatuses {
 			get {
 				return new bool[] { false, false, true, true };
 			}
 		}
+
+		/// <summary>
+		/// Gets the estimates created for a specified client.
+		/// </summary>
+		/// <returns>The estimates.</returns>
+		/// <param name="client">Client.</param>
 		public Estimate[] GetEstimates (string client)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -108,6 +206,10 @@ namespace WorkFlowProvider
 			}
 		}
 
+		/// <summary>
+		/// Drops the writting.
+		/// </summary>
+		/// <param name="wrid">Wrid.</param>
 		public void DropWritting (long wrid)
 		{
 
@@ -123,6 +225,10 @@ namespace WorkFlowProvider
 			}
 		}
 
+		/// <summary>
+		/// Drops the estimate.
+		/// </summary>
+		/// <param name="estid">Estid.</param>
 		public void DropEstimate (long estid)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -137,6 +243,11 @@ namespace WorkFlowProvider
 			}
 		}
 
+		/// <summary>
+		/// Gets the estimate by identifier.
+		/// </summary>
+		/// <returns>The estimate.</returns>
+		/// <param name="estimid">Estimid.</param>
 		public Estimate GetEstimate (long estimid)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -198,7 +309,10 @@ namespace WorkFlowProvider
 			}
 		}
 
-
+		/// <summary>
+		/// Updates the writting.
+		/// </summary>
+		/// <param name="wr">Wr.</param>
 		public void UpdateWritting (Writting wr)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -222,6 +336,10 @@ namespace WorkFlowProvider
 			}
 		}
 	
+		/// <summary>
+		/// Saves the given Estimate object in database.
+		/// </summary>
+		/// <param name="estim">the Estimate object.</param>
 		public void UpdateEstimate (Estimate estim)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -241,6 +359,15 @@ namespace WorkFlowProvider
 			}
 		}
 
+		/// <summary>
+		/// Add a line to the specified estimate by id,
+		/// using the specified desc, ucost, count and productid.
+		/// </summary>
+		/// <param name="estid">Estimate identifier.</param>
+		/// <param name="desc">Textual description for this line.</param>
+		/// <param name="ucost">Unitary cost.</param>
+		/// <param name="count">Cost multiplier.</param>
+		/// <param name="productid">Product identifier.</param>
 		public long Write (long estid, string desc, decimal ucost, int count, string productid)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -262,6 +389,11 @@ namespace WorkFlowProvider
 			}
 		}
 
+		/// <summary>
+		/// Sets the desc.
+		/// </summary>
+		/// <param name="writid">Writid.</param>
+		/// <param name="newDesc">New desc.</param>
 		public void SetDesc (long writid, string newDesc)
 		{ 
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -277,7 +409,14 @@ namespace WorkFlowProvider
 			} 
 		}
 
-
+		/// <summary>
+		/// Creates the estimate.
+		/// </summary>
+		/// <returns>The estimate.</returns>
+		/// <param name="client">Client.</param>
+		/// <param name="title">Title.</param>
+		/// <param name="responsible">Responsible.</param>
+		/// <param name="description">Description.</param>
 		public Estimate CreateEstimate (string responsible, string client, string title, string description)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -304,7 +443,10 @@ namespace WorkFlowProvider
 		}
 
 		string applicationName=null;
-
+		/// <summary>
+		/// Gets or sets the name of the application.
+		/// </summary>
+		/// <value>The name of the application.</value>
 		public string ApplicationName {
 			get {
 				return applicationName;
@@ -315,7 +457,11 @@ namespace WorkFlowProvider
 		}
 
 		string cnxstr = null;
-
+		/// <summary>
+		/// Initialize this object using the specified name and config.
+		/// </summary>
+		/// <param name="name">Name.</param>
+		/// <param name="config">Config.</param>
 		public override void Initialize (string name, NameValueCollection config)
 		{
 			if ( string.IsNullOrWhiteSpace(config ["connectionStringName"]))
@@ -328,6 +474,10 @@ namespace WorkFlowProvider
 
 		}
 
+		/// <summary>
+		/// Creates the connection.
+		/// </summary>
+		/// <returns>The connection.</returns>
 		protected NpgsqlConnection CreateConnection ()
 		{
 			return new NpgsqlConnection (cnxstr);

@@ -14,13 +14,26 @@ namespace Yavsc.Model.WorkFlow
 	/// </summary>
 	public class WorkFlowManager 
 	{
+		/// <summary>
+		/// Gets or sets the catalog.
+		/// </summary>
+		/// <value>The catalog.</value>
 		public static Catalog Catalog { get; set; }
 
+		/// <summary>
+		/// Registers the command.
+		/// </summary>
+		/// <returns>The command.</returns>
+		/// <param name="com">COM.</param>
 		public long RegisterCommand(Commande com)
 		{
 			return ContentProvider.RegisterCommand (com);
 		}
 
+		/// <summary>
+		/// Updates the estimate.
+		/// </summary>
+		/// <param name="estim">Estim.</param>
 		public void UpdateEstimate (Estimate estim)
 		{
 			ContentProvider.UpdateEstimate (estim);
@@ -34,27 +47,56 @@ namespace Yavsc.Model.WorkFlow
 		{
 			return ContentProvider.GetEstimate (estid);
 		}
-
+		/// <summary>
+		/// Gets the estimates.
+		/// </summary>
+		/// <returns>The estimates.</returns>
+		/// <param name="client">Client.</param>
 		public Estimate [] GetEstimates (string client)
 		{
 			return ContentProvider.GetEstimates (client);
 		}
 
+		/// <summary>
+		/// Gets the stock for a given product reference.
+		/// </summary>
+		/// <returns>The stock status.</returns>
+		/// <param name="productReference">Product reference.</param>
+		public StockStatus GetStock(string productReference)
+		{
+			return ContentProvider.GetStockStatus (productReference);
+		}
+
+		/// <summary>
+		/// Updates the writting.
+		/// </summary>
+		/// <param name="wr">Wr.</param>
 		public void UpdateWritting (Writting wr)
 		{
 			ContentProvider.UpdateWritting (wr);
 		}
 
+		/// <summary>
+		/// Drops the writting.
+		/// </summary>
+		/// <param name="wrid">Wrid.</param>
 		public void DropWritting (long wrid)
 		{
 			ContentProvider.DropWritting (wrid);
 		}
+		/// <summary>
+		/// Drops the estimate.
+		/// </summary>
+		/// <param name="estid">Estid.</param>
 		public void DropEstimate (long estid)
 		{
 			ContentProvider.DropEstimate(estid);
 		}
 		IContentProvider contentProvider;
-
+		/// <summary>
+		/// Gets the content provider.
+		/// </summary>
+		/// <value>The content provider.</value>
 		public IContentProvider ContentProvider {
 			get {
 				WorkflowConfiguration c = (WorkflowConfiguration) ConfigurationManager.GetSection ("system.web/workflow");
@@ -97,15 +139,25 @@ namespace Yavsc.Model.WorkFlow
 		/// <summary>
 		/// Creates the estimate.
 		/// </summary>
-		/// <returns>The estimate identifier.</returns>
+		/// <returns>The estimate.</returns>
+		/// <param name="responsible">Responsible.</param>
+		/// <param name="client">Client.</param>
 		/// <param name="title">Title.</param>
-
+		/// <param name="description">Description.</param>
 		public Estimate CreateEstimate(string responsible, string client, string title, string description)
 		{
 			Estimate created = ContentProvider.CreateEstimate (responsible, client, title, description);
 			return created;
 		}
 
+		/// <summary>
+		/// Write the specified estid, desc, ucost, count and productid.
+		/// </summary>
+		/// <param name="estid">Estid.</param>
+		/// <param name="desc">Desc.</param>
+		/// <param name="ucost">Ucost.</param>
+		/// <param name="count">Count.</param>
+		/// <param name="productid">Productid.</param>
 		public long Write(long estid, string desc, decimal ucost, int count, string productid)
 		{
 			if (!string.IsNullOrWhiteSpace(productid)) {
@@ -121,6 +173,12 @@ namespace Yavsc.Model.WorkFlow
 			return ContentProvider.Write(estid, desc, ucost, count, productid);
 		}
 
+		/// <summary>
+		/// Sets the estimate status.
+		/// </summary>
+		/// <param name="estid">Estid.</param>
+		/// <param name="status">Status.</param>
+		/// <param name="username">Username.</param>
 		public void SetEstimateStatus(long estid, int status, string username)
 		{
 			ContentProvider.SetEstimateStatus (estid, status, username);

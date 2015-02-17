@@ -3,6 +3,9 @@ using System.Configuration;
 
 namespace Yavsc.Model.WorkFlow.Configuration
 {
+	/// <summary>
+	/// Workflow configuration.
+	/// </summary>
 	public class WorkflowConfiguration : ConfigurationSection
 	{
 		/// <summary>

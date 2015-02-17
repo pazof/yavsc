@@ -41,8 +41,10 @@ namespace Yavsc.Model.WorkFlow
 		/// Creates the estimate.
 		/// </summary>
 		/// <returns>The estimate.</returns>
+		/// <param name="responsible">Responsible.</param>
 		/// <param name="client">Client.</param>
 		/// <param name="title">Title.</param>
+		/// <param name="description">Description.</param>
 		Estimate CreateEstimate (string responsible, string client, string title, string description);
 		/// <summary>
 		/// Add a line to the specified estimate by id,
@@ -87,17 +89,16 @@ namespace Yavsc.Model.WorkFlow
 		/// </summary>
 		/// <param name="wrid">Wrid.</param>
 		/// <param name="tag">Tag.</param>
-		void DropTagWritting (long wrid,string tag);
+		void DropWrittingTag (long wrid,string tag);
 		/// <summary>
 		/// Updates the writting.
 		/// </summary>
 		/// <param name="wr">Wr.</param>
 		void UpdateWritting (Writting wr);
 		/// <summary>
-		/// Sets the title for a specified estimate by id.
+		/// Updates the estimate.
 		/// </summary>
-		/// <param name="estid">Estid.</param>
-		/// <param name="newTitle">New title.</param>
+		/// <param name="estim">Estim.</param>
 		void UpdateEstimate (Estimate estim);
 		/// <summary>
 		/// Sets the writting status.
@@ -119,6 +120,13 @@ namespace Yavsc.Model.WorkFlow
 		/// <returns>The command id in db.</returns>
 		/// <param name="com">COM.</param>
 		long RegisterCommand (Commande com);
+
+		/// <summary>
+		/// Gets the stock status.
+		/// </summary>
+		/// <returns>The stock status.</returns>
+		/// <param name="productReference">Product reference.</param>
+		StockStatus GetStockStatus (string productReference);
 	}
 }
 

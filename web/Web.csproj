@@ -191,6 +191,7 @@
     <Compile Include="Formatters\RssFeedsFormatter.cs" />
     <Compile Include="Controllers\PaypalApiController.cs" />
     <Compile Include="Formatters\TexToPdfFormatter.cs" />
+    <Compile Include="WebApiConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

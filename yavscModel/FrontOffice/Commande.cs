@@ -2,7 +2,8 @@ using System;
 using Yavsc;
 using System.Collections.Specialized;
 using Yavsc.Model.WorkFlow;
-using Newtonsoft.Json;
+using Yavsc.Model.FileSystem;
+using System.Web;
 
 
 namespace Yavsc.Model.FrontOffice
@@ -23,37 +24,47 @@ namespace Yavsc.Model.FrontOffice
 		/// <value>The identifier.</value>
 		public long Id { get; set; }
 		/// <summary>
-		/// Gets or sets the prod reference.
+		/// Gets or sets the product reference.
 		/// </summary>
 		/// <value>The prod reference.</value>
-		public string ProdRef { get; set; }
+		public CommandStatus Status { get; set; }
+		public string ProductRef { get; set; }
 		/// <summary>
 		/// The parameters.
 		/// </summary>
 		public StringDictionary Parameters = new StringDictionary();
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.FrontOffice.Commande"/> class.
-		/// </summary>
-		public Commande() {
+
+		FileInfoCollection Files { 
+			get {
+				return GetFSM().GetFiles (Id.ToString());
+			}
 		}
+
 		/// <summary>
-		/// Create the specified collection.
+		/// Create a command using the specified collection
+		/// as command parameters, handles the request files.
 		/// </summary>
 		/// <param name="collection">Collection.</param>
-		public static Commande Create(NameValueCollection collection)
+		/// <param name="files">Files.</param>
+		public Commande (NameValueCollection collection, NameObjectCollectionBase files)
 		{
-			Commande cmd = new Commande ();
 			// string catref=collection["catref"]; // Catalog Url from which formdata has been built
-			cmd.ProdRef=collection["ref"]; // Required product reference
-			cmd.CreationDate = DateTime.Now;
-
+			ProductRef=collection["ref"]; // Required product reference
+			CreationDate = DateTime.Now;
+			Status = CommandStatus.Inserted;
 			// stores the parameters:
 			foreach (string key in collection.AllKeys) {
-				cmd.Parameters.Add (key, collection [key]);
+				if (key!="ref")
+					Parameters.Add (key, collection [key]);
 			}
-			WorkFlowManager wm = new WorkFlowManager ();
-			wm.RegisterCommand (cmd); // sets cmd.Id
-			return cmd;
+			WorkFlowManager wfm = new WorkFlowManager ();
+			wfm.RegisterCommand (this); // sets this.Id
+			string strcmdid = Id.ToString ();
+			GetFSM().Put (strcmdid, files);
+		}
+
+		private FileSystemManager GetFSM() {
+			return new FileSystemManager ("~/commands");
 		}
 	}
 }

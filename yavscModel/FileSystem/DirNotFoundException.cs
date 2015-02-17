@@ -1,5 +1,5 @@
 //
-//  ITagHandler.cs
+//  DirNotFoundException.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -20,39 +20,27 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Configuration;
-using System.Collections.Specialized;
-using System.Data;
-using System.Web.Mvc;
+using System.IO;
+using System.Web;
+using System.Text.RegularExpressions;
+using System.Text;
+using System.Web.Security;
 
-namespace Yavsc.Model
+namespace Yavsc.Model.FileSystem
 {
+
 	/// <summary>
-	/// I tag handler.
+	/// Dir not found exception.
 	/// </summary>
-	public interface ITagHandler {
+	public class DirNotFoundException : Exception {
 		/// <summary>
-		/// Backup this instance.
-		/// Should set ViewData["Tags"] with
-		/// an array of rendered tags
+		/// Initializes a new instance of the <see cref="Yavsc.Model.FileSystem.DirNotFoundException"/> class.
 		/// </summary>
-		void Backup();
-
-		/// <summary>
-		/// Restore this instance.
-		/// </summary>
-		void Restore();
-
-		/// <summary>
-		/// Invoke this instance.
-		/// </summary>
-		void Invoke();
-
-		/// <summary>
-		/// Gets or sets the name.
-		/// </summary>
-		/// <value>The name.</value>
-		string Name { get; set; }
-
+		/// <param name="dir">Dir.</param>
+		public DirNotFoundException(string dir) 
+			: base(string.Format( "Directory not found : {0}", dir))
+		{
+		}
 	}
+	
 }

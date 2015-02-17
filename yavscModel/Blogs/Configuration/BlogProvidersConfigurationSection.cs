@@ -4,6 +4,9 @@ using System.ComponentModel;
 
 namespace Yavsc.Model.Blogs.Configuration
 {
+	/// <summary>
+	/// Blog providers configuration section.
+	/// </summary>
 	public class BlogProvidersConfigurationSection : ConfigurationSection
 	{
 		/// <summary>
@@ -16,16 +19,15 @@ namespace Yavsc.Model.Blogs.Configuration
 			set { this["defaultProvider"] = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the providers.
+		/// </summary>
+		/// <value>The providers.</value>
 		[ConfigurationProperty("providers")]
 		[ConfigurationCollection(typeof(BlogProvidersConfigurationCollection),
         AddItemName = "add",
         ClearItemsName = "clear",
         RemoveItemName = "remove")]
-
-		/// <summary>
-		/// Gets or sets the providers.
-		/// </summary>
-		/// <value>The providers.</value>
 		public BlogProvidersConfigurationCollection	Providers{
 			get { return (BlogProvidersConfigurationCollection) this["providers"]; }
 			set { this["providers"] = value; }

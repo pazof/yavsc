@@ -22,19 +22,59 @@ using System;
 
 namespace Yavsc.Model
 {
+	/// <summary>
+	/// Rss feeds entry.
+	/// </summary>
 	public class RssFeedsEntry {
-
+		/// <summary>
+		/// Gets or sets the title.
+		/// </summary>
+		/// <value>The title.</value>
 			public string Title { get ; set; }
+		/// <summary>
+		/// Gets or sets the description.
+		/// </summary>
+		/// <value>The description.</value>
 			public string Description { get ; set; }
+		/// <summary>
+		/// Gets or sets the pub date.
+		/// </summary>
+		/// <value>The pub date.</value>
 		public DateTime PubDate { get ; set; }
+		/// <summary>
+		/// Gets or sets the link.
+		/// </summary>
+		/// <value>The link.</value>
 			public string Link { get ; set; }
 		}
 
+	/// <summary>
+	/// Rss feeds channel.
+	/// </summary>
 	public class RssFeedsChannel {
+		/// <summary>
+		/// Gets or sets the title.
+		/// </summary>
+		/// <value>The title.</value>
 		public string Title { get ; set; }
+		/// <summary>
+		/// Gets or sets the description.
+		/// </summary>
+		/// <value>The description.</value>
 		public string Description { get ; set; }
+		/// <summary>
+		/// Gets or sets the last build date.
+		/// </summary>
+		/// <value>The last build date.</value>
 		public DateTime LastBuildDate { get ; set; }
+		/// <summary>
+		/// Gets or sets the link.
+		/// </summary>
+		/// <value>The link.</value>
 		public string Link { get ; set; }
+		/// <summary>
+		/// The entries.
+		/// </summary>
 		public RssFeedsEntry[] Entries;
 		}
 

@@ -12,9 +12,15 @@ namespace Yavsc.Model.FrontOffice
 	/// </summary>
 	public static class CatalogHelper
 	{
-
+		/// <summary>
+		/// Gets or sets the config.
+		/// </summary>
+		/// <value>The config.</value>
 		public static CatalogProvidersConfigurationSection Config {get; set; }
 
+		/// <summary>
+		/// Loads the config.
+		/// </summary>
 		public static void LoadConfig () {
 			Config = ConfigurationManager.GetSection ("system.web/catalog") as CatalogProvidersConfigurationSection;
 			if (Config == null)

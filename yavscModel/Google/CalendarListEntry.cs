@@ -34,24 +34,89 @@ using Yavsc.Model;
 
 namespace Yavsc.Model.Google
 {
-
+	/// <summary>
+	/// Calendar list entry.
+	/// </summary>
 	public class CalendarListEntry {
+		/// <summary>
+		/// Gets or sets the kind.
+		/// </summary>
+		/// <value>The kind.</value>
 		public string kind { get; set;}
+		/// <summary>
+		/// Gets or sets the etag.
+		/// </summary>
+		/// <value>The etag.</value>
 		public string etag { get; set; }
+		/// <summary>
+		/// Gets or sets the identifier.
+		/// </summary>
+		/// <value>The identifier.</value>
 		public string id { get; set; }
+		/// <summary>
+		/// Gets or sets the summary.
+		/// </summary>
+		/// <value>The summary.</value>
 		public string summary { get; set; }
+		/// <summary>
+		/// Gets or sets the description.
+		/// </summary>
+		/// <value>The description.</value>
 		public string description { get; set; }
+		/// <summary>
+		/// Gets or sets the time zone.
+		/// </summary>
+		/// <value>The time zone.</value>
 		public string timeZone { get; set; }
+		/// <summary>
+		/// Gets or sets the color identifier.
+		/// </summary>
+		/// <value>The color identifier.</value>
 		public string colorId { get; set; }
+		/// <summary>
+		/// Gets or sets the color of the background.
+		/// </summary>
+		/// <value>The color of the background.</value>
 		public string backgroundColor { get; set; }
+		/// <summary>
+		/// Gets or sets the color of the foreground.
+		/// </summary>
+		/// <value>The color of the foreground.</value>
 		public string foregroundColor { get; set; }
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="Yavsc.Model.Google.CalendarListEntry"/> is selected.
+		/// </summary>
+		/// <value><c>true</c> if selected; otherwise, <c>false</c>.</value>
 		public bool selected { get; set; }
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="Yavsc.Model.Google.CalendarListEntry"/> is primary.
+		/// </summary>
+		/// <value><c>true</c> if primary; otherwise, <c>false</c>.</value>
 		public bool primary { get; set; }
+		/// <summary>
+		/// Gets or sets the access role.
+		/// </summary>
+		/// <value>The access role.</value>
 		public string accessRole { get; set; }
+		/// <summary>
+		/// Reminder.
+		/// </summary>
 		public class Reminder {
+			/// <summary>
+			/// Gets or sets the method.
+			/// </summary>
+			/// <value>The method.</value>
 			public string method { get; set; }
+			/// <summary>
+			/// Gets or sets the minutes.
+			/// </summary>
+			/// <value>The minutes.</value>
 			public int minutes { get; set; }
 		}
+		/// <summary>
+		/// Gets or sets the default reminders.
+		/// </summary>
+		/// <value>The default reminders.</value>
 		public Reminder[] defaultReminders { get; set; }
 		/*   "notificationSettings": { "notifications": 
       [ { "type": "eventCreation", "method": "email" }, 

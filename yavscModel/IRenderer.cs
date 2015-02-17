@@ -27,10 +27,21 @@ using System.Web.Mvc;
 
 namespace Yavsc.Model
 {
+	/// <summary>
+	/// I renderer.
+	/// </summary>
 	public interface IRenderer {
 		// Should set ViewData["Message|Author|Body"]
 		// and return an ActionResult
+		/// <summary>
+		/// Get the specified c.
+		/// </summary>
+		/// <param name="c">C.</param>
 		object Get(Controller c);
+		/// <summary>
+		/// Gets or sets the name.
+		/// </summary>
+		/// <value>The name.</value>
 		string Name { get; set; }
 	}
 

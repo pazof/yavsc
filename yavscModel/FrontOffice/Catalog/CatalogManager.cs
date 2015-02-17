@@ -8,6 +8,12 @@ namespace Yavsc.Model.FrontOffice
 	public static class CatalogManager
 	{
 		private static CatalogProvider defaultProvider = null;
+
+		/// <summary>
+		/// Gets the catalog.
+		/// </summary>
+		/// <returns>The catalog.</returns>
+		/// <param name="catalogUri">Catalog URI.</param>
 		public static Catalog GetCatalog (string catalogUri)
 		{
 

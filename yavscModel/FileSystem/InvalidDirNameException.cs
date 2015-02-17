@@ -1,5 +1,5 @@
-﻿//
-//  Basket.cs
+//
+//  InvalidDirNameException.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -18,35 +18,43 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
-using System.Collections.Generic;
-using Yavsc.Model.WorkFlow;
 
-namespace Yavsc.Model.FrontOffice
+using System;
+using System.IO;
+using System.Web;
+using System.Text.RegularExpressions;
+using System.Text;
+using System.Web.Security;
+
+namespace Yavsc.Model.FileSystem
 {
+
 	/// <summary>
-	/// Basket.
+	/// Invalid dir name exception.
 	/// </summary>
-	public class Basket: Dictionary<long,Commande>
-	{
+	public class InvalidDirNameException : Exception {
+
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.FrontOffice.Basket"/> class.
+		/// Initializes a new instance of the <see cref="Yavsc.Model.FileSystem.InvalidDirNameException"/> class.
 		/// </summary>
-		public Basket ()
+		/// <param name="dir">Dir.</param>
+		public InvalidDirNameException(string dir)
+			: base(string.Format( "Invalid directory name : {0}", dir))
 		{
 		}
-		/// <Docs>The item to add to the current collection.</Docs>
-		/// <para>Adds an item to the current collection.</para>
-		/// <remarks>To be added.</remarks>
-		/// <exception cref="System.NotSupportedException">The current collection is read-only.</exception>
+	}
+	/// <summary>
+	/// Invalid file name exception.
+	/// </summary>
+	public class InvalidFileNameException : Exception {
+
 		/// <summary>
-		/// Add the specified cmd.
+		/// Initializes a new instance of the <see cref="Yavsc.Model.FileSystem.InvalidDirNameException"/> class.
 		/// </summary>
-		/// <param name="cmd">Cmd.</param>
-		public void Add(Commande cmd)
+		/// <param name="fileName">Dir.</param>
+		public InvalidFileNameException(string fileName)
+			: base(string.Format( "Invalid file name : {0}", fileName))
 		{
-			Add (cmd.Id, cmd);
 		}
 	}
 }
-

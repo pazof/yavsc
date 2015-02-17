@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.IO;
 using System.Web.Security;
 using System.Text.RegularExpressions;
+using Yavsc.Model.FileSystem;
 
 namespace Yavsc.Controllers
 {
@@ -14,34 +15,37 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class FileSystemController : Controller
 	{
-		private static string usersDir = "~/users";
+		private string usersDir = "~/users";
 
 		/// <summary>
-		/// Gets the users dir.
+		/// Gets the users base directory.
 		/// </summary>
 		/// <value>The users dir.</value>
-		public static string UsersDir {
+		public string UsersDir {
 			get {
 				return usersDir;
 			}
+		}
+
+		FileSystemManager mgr = null ;
+
+		/// <summary>
+		/// Initialize the specified requestContext.
+		/// </summary>
+		/// <param name="requestContext">Request context.</param>
+		protected override void Initialize (System.Web.Routing.RequestContext requestContext)
+		{
+			base.Initialize (requestContext);
+			mgr = new FileSystemManager (UsersDir);
 		}
 
 		/// <summary>
 		/// Index this instance.
 		/// </summary>
 		[Authorize]
-		public ActionResult Index ()
+		public ActionResult Index (string id)
 		{
-			string user = Membership.GetUser ().UserName;
-			ViewData ["UserName"] = user;
-
-			DirectoryInfo di = new DirectoryInfo (
-				                   Path.Combine (
-					                   Server.MapPath (UsersDir),
-					                   user));
-			if (!di.Exists)
-				di.Create ();
-			return View (new FileInfoCollection (di.GetFiles ()));
+			return View (mgr.GetFiles (Membership.GetUser().UserName+"/"+id));
 		}
 
 		/// <summary>
@@ -59,7 +63,7 @@ namespace Yavsc.Controllers
 					return RedirectToAction ("Index");
 				}
 			}
-			string fpath = Path.Combine (BaseDir, id);
+			string fpath = Path.Combine (UserBaseDir, id);
 			ViewData ["Content"] = Url.Content (fpath);
 			FileInfo fi = new FileInfo (fpath);
 
@@ -67,54 +71,23 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Create this instance.
+		/// Create the specified id.
 		/// </summary>
-		public ActionResult Create ()
-		{
-			return View ();
-		}
-
-		/// <summary>
-		/// Create the specified collection.
-		/// </summary>
-		/// <param name="collection">Collection.</param>
+		/// <param name="id">Identifier.</param>
 		[HttpPost]
 		[Authorize]
-		public ActionResult Create (FormCollection collection)
+		public ActionResult Create (string id)
 		{
-			try {
-				string fnre = "[A-Za-z0-9~\\-.]+";
-				HttpFileCollectionBase hfc = Request.Files;
-
-				for (int i = 0; i < hfc.Count; i++) {
-					if (!Regex.Match (hfc [i].FileName, fnre).Success) {
-						ViewData ["Message"] += string.Format ("<p>File name '{0}' refused</p>", hfc [i].FileName);
-						ModelState.AddModelError (
-							"AFile",
-							string.Format (
-								"The file name {0} dosn't match an acceptable file name {1}",
-								hfc [i].FileName, fnre));
-						return View ();
-					}
-				}
-				for (int i = 0; i < hfc.Count; i++) {
-					// TODO Limit with hfc[h].ContentLength
-					string filename = Path.Combine (Server.MapPath (BaseDir), hfc [i].FileName);
-					hfc [i].SaveAs (filename);
-					ViewData ["Message"] += string.Format ("<p>File name '{0}' saved</p>", hfc [i].FileName);
-				}
-				return RedirectToAction ("Index", "FileSystem");
-			} catch (Exception e) {
-				ViewData ["Message"] = "Exception:" + e.Message;
-				return View ();
-			}
+			string path=Membership.GetUser().UserName+"/"+id;
+			mgr.Put ( path, Request.Files);
+			return View ("Index",mgr.GetFiles(path));
 		}
 
 		/// <summary>
-		/// Gets the base dir.
+		/// Gets the user's base dir.
 		/// </summary>
 		/// <value>The base dir.</value>
-		public static string BaseDir { get { return Path.Combine (UsersDir, Membership.GetUser ().UserName); } }
+		public string UserBaseDir { get { return Path.Combine (UsersDir, Membership.GetUser ().UserName); } }
 
 		/// <summary>
 		/// Edit the specified id.
@@ -122,7 +95,7 @@ namespace Yavsc.Controllers
 		/// <param name="id">Identifier.</param>
 		public ActionResult Edit (int id)
 		{
-			return View ();
+			throw new NotImplementedException ();
 		}
 
 		/// <summary>
@@ -133,11 +106,7 @@ namespace Yavsc.Controllers
 		[HttpPost]
 		public ActionResult Edit (int id, FormCollection collection)
 		{
-			try {
-				return RedirectToAction ("Index");
-			} catch {
-				return View ();
-			}
+			throw new NotImplementedException ();
 		}
 
 		/// <summary>
@@ -146,7 +115,7 @@ namespace Yavsc.Controllers
 		/// <param name="id">Identifier.</param>
 		public ActionResult Delete (int id)
 		{
-			return View ();
+			throw new NotImplementedException ();
 		}
 
 		/// <summary>
@@ -157,11 +126,7 @@ namespace Yavsc.Controllers
 		[HttpPost]
 		public ActionResult Delete (int id, FormCollection collection)
 		{
-			try {
-				return RedirectToAction ("Index");
-			} catch {
-				return View ();
-			}
+			throw new NotImplementedException ();
 		}
 	}
 }

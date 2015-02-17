@@ -12,6 +12,7 @@ using WorkFlowProvider;
 using System.Web.Security;
 using System.Threading;
 using Yavsc.Model.FrontOffice;
+using Yavsc.Model.FileSystem;
 
 namespace Yavsc.Controllers
 {
@@ -218,12 +219,14 @@ namespace Yavsc.Controllers
 						return View (collection);
 					}
 				}
+				string usersdir = Server.MapPath("~/users");
+				FileSystemManager fsmgr = new FileSystemManager(usersdir);
 				foreach (String h in hfc.AllKeys) {
 					// TODO Limit with hfc[h].ContentLength 
-					hfc [h].SaveAs (Path.Combine (FileSystemController.BaseDir, hfc [h].FileName));
+					hfc [h].SaveAs (Path.Combine (usersdir, hfc [h].FileName));
 				}
 				// Add specified product command to the basket,
-				GetBasket().Add (Commande.Create (collection));
+				GetBasket().Add (new Commande(collection,HttpContext.Request.Files));
 				ViewData ["Message"] = LocalizedText.Item_added_to_basket;
 				return View (collection);
 			} catch (Exception e) {

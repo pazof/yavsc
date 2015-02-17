@@ -9,6 +9,10 @@ namespace Yavsc.Model.FrontOffice
 	/// </summary>
 	public abstract class CatalogProvider: ProviderBase
 	{
+		/// <summary>
+		/// Gets the catalog.
+		/// </summary>
+		/// <returns>The catalog.</returns>
 		public abstract Catalog GetCatalog ();
 	}
 }
