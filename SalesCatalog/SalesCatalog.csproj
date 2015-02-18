@@ -58,7 +58,6 @@
     <None Include="catalog.xsd" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\" />
     <Folder Include="XmlImplementation\" />
     <Folder Include="Tests\" />
   </ItemGroup>

@@ -1,4 +1,5 @@
 using System;
+using Yavsc.Model.FrontOffice.Billing;
 
 namespace Yavsc.Model.FrontOffice
 {
@@ -19,6 +20,11 @@ namespace Yavsc.Model.FrontOffice
 		/// </summary>
 		/// <value>The hour price.</value>
 		public Price HourPrice { get; set; }
+		/// <summary>
+		/// Gets or sets the set prices.
+		/// </summary>
+		/// <value>The set prices.</value>
+		public SetPrice[] SetPrices { get; set; }
 
 		#region implemented abstract members of Product
 		/// <summary>

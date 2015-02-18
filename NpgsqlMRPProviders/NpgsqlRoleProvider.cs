@@ -41,13 +41,33 @@ using System.Linq;
 
 namespace Npgsql.Web
 {
+	/// <summary>
+	/// Npgsql role provider.
+	/// </summary>
 	public class NpgsqlRoleProvider: RoleProvider
 	{
+		/// <summary>
+		/// The name.
+		/// </summary>
 		protected string name = "NpgsqlRoleProvider";
+		/// <summary>
+		/// The name of the connection string.
+		/// </summary>
 		protected string connectionStringName = "pgProvider";
+		/// <summary>
+		/// The name of the application.
+		/// </summary>
 		protected string applicationName = "/";
+		/// <summary>
+		/// The connection string.
+		/// </summary>
 		protected string connectionString = string.Empty;
 
+		/// <summary>
+		/// Initialize the specified iname and config.
+		/// </summary>
+		/// <param name="iname">Iname.</param>
+		/// <param name="config">Config.</param>
 		public override void Initialize (string iname, System.Collections.Specialized.NameValueCollection config)
 		{
 			try {
@@ -82,6 +102,12 @@ namespace Npgsql.Web
 			}
 		}
 
+		/// <Docs>To be added.</Docs>
+		/// <summary>
+		/// Adds the users to roles.
+		/// </summary>
+		/// <param name="usernames">Usernames.</param>
+		/// <param name="roleNames">Role names.</param>
 		public override void AddUsersToRoles (string[] usernames, string[] roleNames)
 		{
 			if (usernames.Any (x => x == null) || roleNames.Any (x => x == null)) {
@@ -113,6 +139,10 @@ namespace Npgsql.Web
 			
 		}
 
+		/// <summary>
+		/// Gets or sets the name of the application.
+		/// </summary>
+		/// <value>The name of the application.</value>
 		public override string ApplicationName {
 			get {
 				return applicationName;
@@ -122,6 +152,11 @@ namespace Npgsql.Web
 			}
 		}
 
+		/// <Docs>To be added.</Docs>
+		/// <summary>
+		/// Creates the role.
+		/// </summary>
+		/// <param name="roleName">Role name.</param>
 		public override void CreateRole (string roleName)
 		{
 			if (roleName == null)
@@ -148,6 +183,13 @@ namespace Npgsql.Web
 
 		}
 
+		/// <Docs>To be added.</Docs>
+		/// <summary>
+		/// Deletes the role.
+		/// </summary>
+		/// <returns><c>true</c>, if role was deleted, <c>false</c> otherwise.</returns>
+		/// <param name="roleName">Role name.</param>
+		/// <param name="throwOnPopulatedRole">If set to <c>true</c> throw on populated role.</param>
 		public override bool DeleteRole (string roleName, bool throwOnPopulatedRole)
 		{
 			if (roleName == null)
@@ -173,11 +215,23 @@ namespace Npgsql.Web
 			return true;
 		}
 
+		/// <summary>
+		/// Finds the users in role.
+		/// </summary>
+		/// <returns>The users in role.</returns>
+		/// <param name="roleName">Role name.</param>
+		/// <param name="usernameToMatch">Username to match.</param>
 		public override string[] FindUsersInRole (string roleName, string usernameToMatch)
 		{
 			return GetUsersInRole (roleName, usernameToMatch);
 		}
 
+		/// <summary>
+		/// Gets the users in role.
+		/// </summary>
+		/// <returns>The users in role.</returns>
+		/// <param name="rolename">Rolename.</param>
+		/// <param name="usernameToMatch">Username to match.</param>
 		protected string[] GetUsersInRole (string rolename, string usernameToMatch)
 		{
 			if (rolename == null)
@@ -206,6 +260,10 @@ namespace Npgsql.Web
 			}
 		}
 
+		/// <summary>
+		/// Gets all roles.
+		/// </summary>
+		/// <returns>The all roles.</returns>
 		public override string[] GetAllRoles ()
 		{
 			using (var conn = new NpgsqlConnection(connectionString)) {
@@ -227,6 +285,11 @@ namespace Npgsql.Web
 			}
 		}
 
+		/// <summary>
+		/// Gets the roles for user.
+		/// </summary>
+		/// <returns>The roles for user.</returns>
+		/// <param name="username">Username.</param>
 		public override string[] GetRolesForUser (string username)
 		{
 			if (username == null)
@@ -252,6 +315,13 @@ namespace Npgsql.Web
 			}
 		}
 
+
+		/// <Docs>To be added.</Docs>
+		/// <summary>
+		/// Gets the users in role.
+		/// </summary>
+		/// <returns>The users in role.</returns>
+		/// <param name="roleName">Role name.</param>
 		public override string[] GetUsersInRole (string roleName)
 		{
 			if (string.IsNullOrEmpty (roleName))
@@ -277,6 +347,13 @@ namespace Npgsql.Web
 			}
 		}
 
+		/// <Docs>To be added.</Docs>
+		/// <summary>
+		/// Determines whether this instance is user in role the specified username roleName.
+		/// </summary>
+		/// <returns><c>true</c> if this instance is user in role the specified username roleName; otherwise, <c>false</c>.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="roleName">Role name.</param>
 		public override bool IsUserInRole (string username, string roleName)
 		{
 			if (username == null || roleName == null)
@@ -303,6 +380,12 @@ namespace Npgsql.Web
 
 		}
 
+		/// <Docs>To be added.</Docs>
+		/// <summary>
+		/// Removes the users from roles.
+		/// </summary>
+		/// <param name="usernames">Usernames.</param>
+		/// <param name="roleNames">Role names.</param>
 		public override void RemoveUsersFromRoles (string[] usernames, string[] roleNames)
 		{
 			if (usernames.Any (x => x == null) || roleNames.Any (x => x == null)) {
@@ -333,6 +416,12 @@ namespace Npgsql.Web
 			
 		}
 
+		/// <Docs>Tests if a given role name exists.</Docs>
+		/// <summary>
+		/// Tests if a given role name exists.
+		/// </summary>
+		/// <returns><c>true</c>, if exists was roled, <c>false</c> otherwise.</returns>
+		/// <param name="roleName">Role name.</param>
 		public override bool RoleExists (string roleName)
 		{
 			using (var conn = new NpgsqlConnection(connectionString)) {
@@ -347,13 +436,21 @@ namespace Npgsql.Web
 				}
 			}
 		}
-
+		/// <summary>
+		/// Gets the name of this provider, 
+		/// should correspond to the item key
+		/// in the configuration collection of providers.
+		/// </summary>
+		/// <value>The name.</value>
 		public override string Name {
 			get {
 				return name;
 			}
 		}
-
+		/// <summary>
+		/// Gets the description for this provider.
+		/// </summary>
+		/// <value>The description.</value>
 		public override string Description {
 			get {
 				return "PostgreSQL ASP.Net Role Provider class";

@@ -1,4 +1,5 @@
 using System;
+using Yavsc.Model.FrontOffice.Billing;
 
 namespace Yavsc.Model.FrontOffice
 {

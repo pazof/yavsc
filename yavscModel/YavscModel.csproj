@@ -110,7 +110,6 @@
     <Compile Include="FrontOffice\Catalog\Option.cs" />
     <Compile Include="FrontOffice\Catalog\Period.cs" />
     <Compile Include="FrontOffice\Catalog\PhysicalProduct.cs" />
-    <Compile Include="FrontOffice\Catalog\Price.cs" />
     <Compile Include="FrontOffice\Catalog\Product.cs" />
     <Compile Include="FrontOffice\Catalog\ProductCategory.cs" />
     <Compile Include="FrontOffice\Catalog\ProductImage.cs" />
@@ -137,6 +136,8 @@
     <Compile Include="Google\CalendarEntryList.cs" />
     <Compile Include="FrontOffice\CommandStatus.cs" />
     <Compile Include="FrontOffice\CommandSet.cs" />
+    <Compile Include="FrontOffice\Catalog\Billing\SetPrice.cs" />
+    <Compile Include="FrontOffice\Catalog\Billing\Price.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -148,12 +149,13 @@
     <Folder Include="Google\" />
     <Folder Include="FrontOffice\" />
     <Folder Include="FrontOffice\Catalog\" />
+    <Folder Include="FrontOffice\Catalog\Billing\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
         <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="FileFormatDefault" />
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
         </Policies>
       </Properties>
     </MonoDevelop>

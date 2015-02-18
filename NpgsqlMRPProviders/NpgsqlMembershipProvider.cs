@@ -15,6 +15,9 @@ using System.Web.Configuration;
 
 namespace Npgsql.Web
 {
+	/// <summary>
+	/// Npgsql membership provider.
+	/// </summary>
 	public sealed class NpgsqlMembershipProvider: MembershipProvider
 	{
 
@@ -34,7 +37,11 @@ namespace Npgsql.Web
 		//
 		// System.Configuration.Provider.ProviderBase.Initialize Method
 		//
-
+		/// <summary>
+		/// Initialize the specified name and config.
+		/// </summary>
+		/// <param name="name">Name.</param>
+		/// <param name="config">Config.</param>
 		public override void Initialize (string name, NameValueCollection config)
 		{
 			//
@@ -134,54 +141,87 @@ namespace Npgsql.Web
 		private int    pMaxInvalidPasswordAttempts;
 		private int    pPasswordAttemptWindow;
 		private MembershipPasswordFormat pPasswordFormat;
-
+		/// <summary>
+		/// Gets or sets the name of the application.
+		/// </summary>
+		/// <value>The name of the application.</value>
 		public override string ApplicationName {
 			get { return pApplicationName; }
 			set { pApplicationName = value; }
 		}
-
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="Npgsql.Web.NpgsqlMembershipProvider"/> enable password reset.
+		/// </summary>
+		/// <value><c>true</c> if enable password reset; otherwise, <c>false</c>.</value>
 		public override bool EnablePasswordReset {
 			get { return pEnablePasswordReset; }
 		}
-
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="Npgsql.Web.NpgsqlMembershipProvider"/> enable password retrieval.
+		/// </summary>
+		/// <value><c>true</c> if enable password retrieval; otherwise, <c>false</c>.</value>
 		public override bool EnablePasswordRetrieval {
 			get { return pEnablePasswordRetrieval; }
 		}
-
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="Npgsql.Web.NpgsqlMembershipProvider"/> requires question and answer.
+		/// </summary>
+		/// <value><c>true</c> if requires question and answer; otherwise, <c>false</c>.</value>
 		public override bool RequiresQuestionAndAnswer {
 			get { return pRequiresQuestionAndAnswer; }
 		}
-
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="Npgsql.Web.NpgsqlMembershipProvider"/> requires unique email.
+		/// </summary>
+		/// <value><c>true</c> if requires unique email; otherwise, <c>false</c>.</value>
 		public override bool RequiresUniqueEmail {
 			get { return pRequiresUniqueEmail; }
 		}
-
+		/// <summary>
+		/// Gets the max invalid password attempts.
+		/// </summary>
+		/// <value>The max invalid password attempts.</value>
 		public override int MaxInvalidPasswordAttempts {
 			get { return pMaxInvalidPasswordAttempts; }
 		}
-
+		/// <summary>
+		/// Gets the password attempt window.
+		/// </summary>
+		/// <value>The password attempt window.</value>
 		public override int PasswordAttemptWindow {
 			get { return pPasswordAttemptWindow; }
 		}
-
+		/// <summary>
+		/// Gets the password format.
+		/// </summary>
+		/// <value>The password format.</value>
 		public override MembershipPasswordFormat PasswordFormat {
 			get { return pPasswordFormat; }
 		}
 
 		private int pMinRequiredNonAlphanumericCharacters;
-
+		/// <summary>
+		/// Gets the minimum required non alphanumeric characters.
+		/// </summary>
+		/// <value>The minimum required non alphanumeric characters.</value>
 		public override int MinRequiredNonAlphanumericCharacters {
 			get { return pMinRequiredNonAlphanumericCharacters; }
 		}
 
 		private int pMinRequiredPasswordLength;
-
+		/// <summary>
+		/// Gets the minimum length of the required password.
+		/// </summary>
+		/// <value>The minimum length of the required password.</value>
 		public override int MinRequiredPasswordLength {
 			get { return pMinRequiredPasswordLength; }
 		}
 
 		private string pPasswordStrengthRegularExpression;
-
+		/// <summary>
+		/// Gets the password strength regular expression.
+		/// </summary>
+		/// <value>The password strength regular expression.</value>
 		public override string PasswordStrengthRegularExpression {
 			get { return pPasswordStrengthRegularExpression; }
 		}
@@ -193,7 +233,14 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.ChangePassword
 		//
-
+		/// <Docs>To be added.</Docs>
+		/// <param name="newPwd">To be added.</param>
+		/// <summary>
+		/// Changes the password.
+		/// </summary>
+		/// <returns><c>true</c>, if password was changed, <c>false</c> otherwise.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="oldPwd">Old pwd.</param>
 		public override bool ChangePassword (string username, string oldPwd, string newPwd)
 		{
 			if (!ValidateUser (username, oldPwd))
@@ -233,7 +280,15 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.ChangePasswordQuestionAndAnswer
 		//
-
+		/// <Docs>To be added.</Docs>
+		/// <param name="newPwdAnswer">To be added.</param>
+		/// <summary>
+		/// Changes the password question and answer.
+		/// </summary>
+		/// <returns><c>true</c>, if password question and answer was changed, <c>false</c> otherwise.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="password">Password.</param>
+		/// <param name="newPwdQuestion">New pwd question.</param>
 		public override bool ChangePasswordQuestionAndAnswer (string username,
                   string password,
                   string newPwdQuestion,
@@ -268,6 +323,20 @@ namespace Npgsql.Web
 		// MembershipProvider.CreateUser
 		//
 
+		/// <Docs>Creates an User.</Docs>
+		/// <summary>
+		/// To be added.
+		/// </summary>
+		/// <remarks>To be added.</remarks>
+		/// <returns>The user.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="password">Password.</param>
+		/// <param name="email">E-mail.</param>
+		/// <param name="passwordQuestion">Password question.</param>
+		/// <param name="passwordAnswer">Password answer.</param>
+		/// <param name="isApproved">If set to <c>true</c> is approved.</param>
+		/// <param name="providerUserKey">To be added.</param>
+		/// <param name="status">Status.</param>
 		public override MembershipUser CreateUser (string username,
              string password,
              string email,
@@ -397,7 +466,15 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.GetAllUsers
 		//
-
+		/// <Docs>To be added.</Docs>
+		/// <param name="totalRecords">To be added.</param>
+		/// <returns>To be added.</returns>
+		/// <since version=".NET 2.0"></since>
+		/// <summary>
+		/// Gets all users.
+		/// </summary>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
 		public override MembershipUserCollection GetAllUsers (int pageIndex, int pageSize, out int totalRecords)
 		{
 			MembershipUserCollection users = new MembershipUserCollection ();
@@ -448,7 +525,10 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.GetNumberOfUsersOnline
 		//
-
+		/// <summary>
+		/// Gets the number of users online.
+		/// </summary>
+		/// <returns>The number of users online.</returns>
 		public override int GetNumberOfUsersOnline ()
 		{
 			int numOnline = 0;
@@ -479,7 +559,13 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.GetPassword
 		//
-
+		/// <Docs>To be added.</Docs>
+		/// <summary>
+		/// Gets the password.
+		/// </summary>
+		/// <returns>The password.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="answer">Answer.</param>
 		public override string GetPassword (string username, string answer)
 		{
 			string password = "";
@@ -592,6 +678,12 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.GetUser(object, bool)
 		//
+		/// <summary>
+		/// Gets the user.
+		/// </summary>
+		/// <returns>The user.</returns>
+		/// <param name="providerUserKey">Provider user key.</param>
+		/// <param name="userIsOnline">If set to <c>true</c> user is online.</param>
 		public override MembershipUser GetUser (object providerUserKey, bool userIsOnline)
 		{
 			MembershipUser u = null;
@@ -686,7 +778,11 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.UnlockUser
 		//
-
+		/// <summary>
+		/// Unlocks the user.
+		/// </summary>
+		/// <returns><c>true</c>, if user was unlocked, <c>false</c> otherwise.</returns>
+		/// <param name="username">Username.</param>
 		public override bool UnlockUser (string username)
 		{
 			int rowsAffected = 0;
@@ -712,7 +808,11 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.GetUserNameByEmail
 		//
-
+		/// <summary>
+		/// Gets the user name by email.
+		/// </summary>
+		/// <returns>The user name by email.</returns>
+		/// <param name="email">Email.</param>
 		public override string GetUserNameByEmail (string email)
 		{
 			string username = "";
@@ -734,7 +834,13 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.ResetPassword
 		//
-
+		/// <Docs>To be added.</Docs>
+		/// <summary>
+		/// Resets the password.
+		/// </summary>
+		/// <returns>The password.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="answer">Answer.</param>
 		public override string ResetPassword (string username, string answer)
 		{
 			int rowsAffected = 0;
@@ -818,7 +924,10 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.UpdateUser
 		//
-
+		/// <summary>
+		/// Updates the user.
+		/// </summary>
+		/// <param name="user">User.</param>
 		public override void UpdateUser (MembershipUser user)
 		{
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
@@ -842,7 +951,13 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.ValidateUser
 		//
-
+		/// <Docs>To be added.</Docs>
+		/// <summary>
+		/// Validates the user.
+		/// </summary>
+		/// <returns><c>true</c>, if user was validated, <c>false</c> otherwise.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="password">Password.</param>
 		public override bool ValidateUser (string username, string password)
 		{
 			bool isValid = false;
@@ -1022,7 +1137,12 @@ namespace Npgsql.Web
 		// CheckPassword
 		//   Compares password values based on the MembershipPasswordFormat.
 		//
-
+		/// <summary>
+		/// Checks the password.
+		/// </summary>
+		/// <returns><c>true</c>, if password was checked, <c>false</c> otherwise.</returns>
+		/// <param name="password">Password.</param>
+		/// <param name="dbpassword">Dbpassword.</param>
 		private bool CheckPassword (string password, string dbpassword)
 		{
 			string pass1 = password;
@@ -1049,7 +1169,11 @@ namespace Npgsql.Web
 		// EncodePassword
 		//   Encrypts, Hashes, or leaves the password clear based on the PasswordFormat.
 		//
-
+		/// <summary>
+		/// Encodes the password.
+		/// </summary>
+		/// <returns>The password.</returns>
+		/// <param name="password">Password.</param>
 		private string EncodePassword (string password)
 		{
 			string encodedPassword = password;
@@ -1118,7 +1242,16 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.FindUsersByName
 		//
-
+		/// <Docs>To be added.</Docs>
+		/// <param name="pageSize">To be added.</param>
+		/// <summary>
+		/// Finds user by their name.
+		/// The name can use wilcards : % or ? (used in a Npgsql LIKE clause)
+		/// </summary>
+		/// <returns>An user's MembershipUser collection taching that name ...</returns>
+		/// <param name="usernameToMatch">Username to match.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="totalRecords">Total records.</param>
 		public override MembershipUserCollection FindUsersByName (string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			MembershipUserCollection users = new MembershipUserCollection ();
@@ -1168,6 +1301,16 @@ namespace Npgsql.Web
 		// MembershipProvider.FindUsersByEmail
 		//
 
+		/// <Docs>To be added.</Docs>
+		/// <param name="pageSize">To be added.</param>
+		/// <summary>
+		/// To be added.
+		/// </summary>
+		/// <remarks>To be added.</remarks>
+		/// <returns>The users by email.</returns>
+		/// <param name="emailToMatch">Email to match.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="totalRecords">Total records.</param>
 		public override MembershipUserCollection FindUsersByEmail (string emailToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			MembershipUserCollection users = new MembershipUserCollection ();

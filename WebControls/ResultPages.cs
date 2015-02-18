@@ -7,6 +7,9 @@ using System.ComponentModel;
 
 namespace Yavsc.WebControls
 {
+	/// <summary>
+	/// Result pages.
+	/// </summary>
 	[
 		AspNetHostingPermission (SecurityAction.Demand,
 		Level = AspNetHostingPermissionLevel.Minimal),
@@ -18,11 +21,18 @@ namespace Yavsc.WebControls
 	]
 	public class ResultPages: WebControl
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.WebControls.ResultPages"/> class.
+		/// </summary>
 		public ResultPages ()  
 		{
 		}
 
 
+		/// <summary>
+		/// Gets or sets the results per page.
+		/// </summary>
+		/// <value>The results per page.</value>
 		[Bindable (true)]
 		[DefaultValue(10)]
 		public int ResultsPerPage {
@@ -35,6 +45,10 @@ namespace Yavsc.WebControls
 		}
 
 
+		/// <summary>
+		/// Gets or sets the result count.
+		/// </summary>
+		/// <value>The result count.</value>
 		[Bindable (true)]
 		[DefaultValue(0)]
 		public int ResultCount {
@@ -47,6 +61,10 @@ namespace Yavsc.WebControls
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the text.
+		/// </summary>
+		/// <value>The text.</value>
 		[Bindable (true)]
 		[DefaultValue("Pages:")]
 		[Localizable(true)]
@@ -60,7 +78,11 @@ namespace Yavsc.WebControls
 				ViewState["Text"]  = value;
 			}
 		}
-
+		
+		/// <summary>
+		/// Gets or sets the action.
+		/// </summary>
+		/// <value>The action.</value>
 		[Bindable (true)]
 		[DefaultValue("")]
 		public string Action {
@@ -75,6 +97,10 @@ namespace Yavsc.WebControls
 		}
 
 
+		/// <summary>
+		/// Gets or sets the current page.
+		/// </summary>
+		/// <value>The current page.</value>
 		[Bindable (true)]
 		[DefaultValue(0)]
 		public int CurrentPage {

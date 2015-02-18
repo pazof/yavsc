@@ -1,19 +1,12 @@
 using System;
 
-namespace Yavsc.Model.FrontOffice
+namespace Yavsc.Model.FrontOffice.Billing
 {
 	/// <summary>
 	/// Price.
 	/// </summary>
 	public class Price: Scalar
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.FrontOffice.Price"/> class.
-		/// </summary>
-		public Price ()
-		{
-		}
-
 		decimal quantity;
 
 		#region implemented abstract members of SalesCatalog.Value

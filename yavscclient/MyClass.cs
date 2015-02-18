@@ -9,18 +9,31 @@ using Yavsc.Model.FrontOffice;
 
 namespace Yavsc
 {
+	/// <summary>
+	/// Main class.
+	/// </summary>
 	public class MainClass
 	{
+		/// <summary>
+		/// Gets or sets the service URL.
+		/// </summary>
+		/// <value>The service URL.</value>
 		public static string ServiceUrl{ get; set; }
 
+		/// <summary>
+		/// The entry point of the program, where the program control starts and ends.
+		/// </summary>
+		/// <param name="args">The command-line arguments.</param>
 		public static void Main(string [] args)
 		{
 			foreach (string s in args) {
 				if (Uri.IsWellFormedUriString (s,UriKind.Absolute)) {
-					// TODO create a client
+					// TODO create command usage
+					ServiceUrl = s;
+					break;
 				}
-				GetCatalog ();
 			}
+			GetCatalog ();
 		}
 		static HttpClient GetClient()
 		{
@@ -56,7 +69,10 @@ namespace Yavsc
 				Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
 			}
 		}
-
+		/// <summary>
+		/// Ups the load.
+		/// </summary>
+		/// <param name="fileName">File name.</param>
 		public void UpLoad(string fileName)
 		{
 			using (var client = GetClient())

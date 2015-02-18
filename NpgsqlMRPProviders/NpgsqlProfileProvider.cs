@@ -5,15 +5,25 @@ using Npgsql;
 
 namespace Npgsql.Web
 {
+	/// <summary>
+	/// Npgsql profile provider.
+	/// </summary>
 	public class NpgsqlProfileProvider: ProfileProvider
 	{
 		private string connectionString;
 		private string applicationName;
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Npgsql.Web.NpgsqlProfileProvider"/> class.
+		/// </summary>
 		public NpgsqlProfileProvider ()
 		{
 		}
 
+		/// <summary>
+		/// Initialize the specified iname and config.
+		/// </summary>
+		/// <param name="iname">Iname.</param>
+		/// <param name="config">Config.</param>
 		public override void Initialize (string iname, System.Collections.Specialized.NameValueCollection config)
 		{
 			// get the 
@@ -29,27 +39,61 @@ namespace Npgsql.Web
 		}
 
 		#region implemented abstract members of System.Web.Profile.ProfileProvider
-
+		/// <summary>
+		/// Deletes the inactive profiles.
+		/// </summary>
+		/// <returns>The inactive profiles.</returns>
+		/// <param name="authenticationOption">Authentication option.</param>
+		/// <param name="userInactiveSinceDate">User inactive since date.</param>
 		public override int DeleteInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
 		{
 			throw new System.NotImplementedException ();
 		}
-
+		/// <summary>
+		/// Deletes the profiles.
+		/// </summary>
+		/// <returns>The profiles.</returns>
+		/// <param name="usernames">Usernames.</param>
 		public override int DeleteProfiles (string[] usernames)
 		{
 			throw new System.NotImplementedException ();
 		}
-
+		/// <summary>
+		/// Deletes the profiles.
+		/// </summary>
+		/// <returns>The profiles.</returns>
+		/// <param name="profiles">Profiles.</param>
 		public override int DeleteProfiles (ProfileInfoCollection profiles)
 		{
 			throw new System.NotImplementedException ();
 		}
-
+		/// <Docs>To be added.</Docs>
+		/// <param name="userInactiveSinceDate">To be added.</param>
+		/// <param name="pageSize">To be added.</param>
+		/// <summary>
+		/// To be added.
+		/// </summary>
+		/// <remarks>To be added.</remarks>
+		/// <returns>The inactive profiles by user name.</returns>
+		/// <param name="authenticationOption">Authentication option.</param>
+		/// <param name="usernameToMatch">Username to match.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="totalRecords">Total records.</param>
 		public override ProfileInfoCollection FindInactiveProfilesByUserName (ProfileAuthenticationOption authenticationOption, string usernameToMatch, DateTime userInactiveSinceDate, int pageIndex, int pageSize, out int totalRecords)
 		{
 			throw new System.NotImplementedException ();
 		}
-
+		/// <Docs>To be added.</Docs>
+		/// <param name="pageIndex">To be added.</param>
+		/// <param name="totalRecords">To be added.</param>
+		/// <returns>To be added.</returns>
+		/// <since version=".NET 2.0"></since>
+		/// <summary>
+		/// Finds the name of the profiles by user.
+		/// </summary>
+		/// <param name="authenticationOption">Authentication option.</param>
+		/// <param name="usernameToMatch">Username to match.</param>
+		/// <param name="pageSize">Page size.</param>
 		public override ProfileInfoCollection FindProfilesByUserName (ProfileAuthenticationOption authenticationOption, string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			if (pageIndex < 0)
@@ -99,17 +143,41 @@ namespace Npgsql.Web
 			}
 			return c;
 		}
-
+		/// <Docs>To be added.</Docs>
+		/// <param name="pageIndex">To be added.</param>
+		/// <param name="totalRecords">To be added.</param>
+		/// <returns>To be added.</returns>
+		/// <since version=".NET 2.0"></since>
+		/// <summary>
+		/// Gets all inactive profiles.
+		/// </summary>
+		/// <param name="authenticationOption">Authentication option.</param>
+		/// <param name="userInactiveSinceDate">User inactive since date.</param>
+		/// <param name="pageSize">Page size.</param>
 		public override ProfileInfoCollection GetAllInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate, int pageIndex, int pageSize, out int totalRecords)
 		{
 			throw new System.NotImplementedException ();
 		}
-
+		/// <Docs>To be added.</Docs>
+		/// <param name="pageSize">To be added.</param>
+		/// <summary>
+		/// To be added.
+		/// </summary>
+		/// <remarks>To be added.</remarks>
+		/// <returns>The all profiles.</returns>
+		/// <param name="authenticationOption">Authentication option.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="totalRecords">Total records.</param>
 		public override ProfileInfoCollection GetAllProfiles (ProfileAuthenticationOption authenticationOption, int pageIndex, int pageSize, out int totalRecords)
 		{
 			throw new System.NotImplementedException ();
 		}
-
+		/// <summary>
+		/// Gets the number of inactive profiles.
+		/// </summary>
+		/// <returns>The number of inactive profiles.</returns>
+		/// <param name="authenticationOption">Authentication option.</param>
+		/// <param name="userInactiveSinceDate">User inactive since date.</param>
 		public override int GetNumberOfInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
 		{
 			throw new System.NotImplementedException ();
@@ -118,7 +186,12 @@ namespace Npgsql.Web
 		#endregion
 
 		#region implemented abstract members of System.Configuration.SettingsProvider
-
+		/// <summary>
+		/// Gets the property values.
+		/// </summary>
+		/// <returns>The property values.</returns>
+		/// <param name="context">Context.</param>
+		/// <param name="collection">Collection.</param>
 		public override SettingsPropertyValueCollection GetPropertyValues (SettingsContext context, SettingsPropertyCollection collection)
 		{
 			SettingsPropertyValueCollection c = new SettingsPropertyValueCollection ();
@@ -157,7 +230,11 @@ namespace Npgsql.Web
 			return c;
 
 		}
-
+		/// <summary>
+		/// Sets the property values.
+		/// </summary>
+		/// <param name="context">Context.</param>
+		/// <param name="collection">Collection.</param>
 		public override void SetPropertyValues (SettingsContext context, SettingsPropertyValueCollection collection)
 		{
 			// get the unique id of the profile
@@ -220,7 +297,10 @@ namespace Npgsql.Web
 				}
 			}
 		}
-
+		/// <summary>
+		/// Gets or sets the name of the application.
+		/// </summary>
+		/// <value>The name of the application.</value>
 		public override string ApplicationName {
 			get {
 				return applicationName;
