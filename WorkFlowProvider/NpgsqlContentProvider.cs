@@ -7,8 +7,11 @@ using Yavsc.Model.WorkFlow;
 using System.Configuration.Provider;
 using System.Collections.Generic;
 using Yavsc.Model.FrontOffice;
-using Newtonsoft.Json;
 using System.Web.Security;
+using System.Runtime.Serialization.Json;
+using System.IO;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace WorkFlowProvider
 {
@@ -25,13 +28,16 @@ namespace WorkFlowProvider
 		public long RegisterCommand (Command com)
 		{
 			long id;
+
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"insert into commandes (prdref,creation,params) values (@pref,@creat,@prs) returning id";
+						"insert into commandes (prdref,creation,params,clientname,applicationname) values (@pref,@creat,@prms,@cli,@app) returning id";
 					cmd.Parameters.Add ("@pref", com.ProductRef);
 					cmd.Parameters.Add ("@creat", com.CreationDate);
-					cmd.Parameters.Add ("@prs", JsonConvert.SerializeObject(com.Parameters));
+					cmd.Parameters.Add ("@prms", JsonConvert.SerializeObject(com.Parameters));
+					cmd.Parameters.Add ("@cli", Membership.GetUser().UserName);
+					cmd.Parameters.Add ("@app", ApplicationName);
 					cnx.Open ();
 					com.Id = id = (long)cmd.ExecuteScalar ();
 				}
@@ -57,7 +63,7 @@ namespace WorkFlowProvider
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"select id,prdref,creation,params from commandes where @user = clientname and applicationname = @app";
+						"select id,creation,prdref,params from commandes where @user = clientname and applicationname = @app";
 					cmd.Parameters.Add ("@user", username);
 					cmd.Parameters.Add ("@app", this.ApplicationName);
 					cnx.Open ();
@@ -67,7 +73,10 @@ namespace WorkFlowProvider
 							ycmd.Id = rdr.GetInt64(0);
 							ycmd.CreationDate = rdr.GetDateTime(1);
 							ycmd.ProductRef = rdr.GetString(2);
-							ycmd.Parameters = JsonConvert.DeserializeObject(rdr.GetString(3)) as StringDictionary;
+
+							object prms = JsonConvert.DeserializeObject<Dictionary<string,string>>(rdr.GetString (3));
+							ycmd.Parameters = prms as Dictionary<string,string> ;
+
 							cmds.Add (ycmd);
 						}
 					}

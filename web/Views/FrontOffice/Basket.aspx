@@ -1,14 +1,15 @@
-﻿<%@ Page Title="Basket" Language="C#"  Inherits="System.Web.Mvc.ViewPage<Basket>" MasterPageFile="~/Models/App.master" %>
+﻿<%@ Page Title="Basket" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<CommandSet>" %>
+
 
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
 <% Title = Title +" "+ Model.Count+" article(s)"; %>
 </asp:Content>
 
+<asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 
-<asp:Content ContentPlaceHolderID="MainContent" ID="mainContent" runat="server">
-
+<% if (Model.Count>0) { %>
 <ul>
-<% foreach (Commande cmd in Model.Values) { %>
+<% foreach (Command cmd in Model.Values) { %>
 	<li>
 	<%= cmd.Id %>
 	<%= cmd.CreationDate %>
@@ -16,11 +17,22 @@
 	<%= cmd.Status %>
 	<%= cmd.ProductRef %>
 	<ul>
-	<% foreach (string key in cmd.Parameters.Keys) { %>
+	<% if (cmd.Parameters!=null)
+	foreach (string key in cmd.Parameters.Keys) { %>
 		<li><%=key%>: <%=cmd.Parameters[key]%></li>
 	<% } %>
 	</ul>
 	</li>
 <% } %>
 	</ul>
+<% } %>
+
+</asp:Content>
+
+<asp:Content ID="MASContentContent" ContentPlaceHolderID="MASContent" runat="server">
+ <ul><li>
+ <%= Html.ActionLink("Catalog","Catalog" ) %>
+ </li><li>
+ <%= Html.ActionLink("Estimates","Estimates" ) %>
+ </li></ul>
 </asp:Content>

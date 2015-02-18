@@ -186,9 +186,8 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Basket ()
 		{
-			return View (wfmgr.GetCommands(Membership.GetUser().UserName));
+			return View (wfmgr.GetCommands (Membership.GetUser ().UserName));
 		}
-
 
 		/// <summary>
 		/// Command the specified collection.
