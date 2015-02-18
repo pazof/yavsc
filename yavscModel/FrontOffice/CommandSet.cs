@@ -27,12 +27,12 @@ namespace Yavsc.Model.FrontOffice
 	/// <summary>
 	/// Basket.
 	/// </summary>
-	public class Basket: Dictionary<long,Commande>
+	public class CommandSet: Dictionary<long,Command>
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.FrontOffice.Basket"/> class.
+		/// Initializes a new instance of the <see cref="Yavsc.Model.FrontOffice.CommandSet"/> class.
 		/// </summary>
-		public Basket ()
+		public CommandSet ()
 		{
 		}
 		/// <Docs>The item to add to the current collection.</Docs>
@@ -43,7 +43,7 @@ namespace Yavsc.Model.FrontOffice
 		/// Add the specified cmd.
 		/// </summary>
 		/// <param name="cmd">Cmd.</param>
-		public void Add(Commande cmd)
+		public void Add(Command cmd)
 		{
 			Add (cmd.Id, cmd);
 		}

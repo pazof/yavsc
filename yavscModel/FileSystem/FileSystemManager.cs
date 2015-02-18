@@ -56,9 +56,9 @@ namespace Yavsc.Model.FileSystem
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Yavsc.Model.FileSystem.FileSystemManager"/> class.
 		/// </summary>
-		public FileSystemManager (string usersDirectory="~/files", char dirSep = '/')
+		public FileSystemManager (string rootDirectory="~/files", char dirSep = '/')
 		{
-			prefix = usersDirectory;
+			prefix = rootDirectory;
 			DirectorySeparator = dirSep;
 
 		}
@@ -150,7 +150,18 @@ namespace Yavsc.Model.FileSystem
 			}
 			DirectoryInfo di = new DirectoryInfo (path);
 			FileInfoCollection res = new FileInfoCollection (di.GetFiles ());
+			// TODO define an Owner
 			return res;
+		}
+		/// <summary>
+		/// Files the info.
+		/// </summary>
+		/// <returns>The info.</returns>
+		/// <param name="id">Identifier.</param>
+		public FileInfo FileInfo(string id)
+		{
+			checkSubDir (id);
+			return new FileInfo(Path.Combine (Prefix, id));
 		}
 	}
 }

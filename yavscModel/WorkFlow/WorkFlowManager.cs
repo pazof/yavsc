@@ -25,7 +25,7 @@ namespace Yavsc.Model.WorkFlow
 		/// </summary>
 		/// <returns>The command.</returns>
 		/// <param name="com">COM.</param>
-		public long RegisterCommand(Commande com)
+		public long RegisterCommand(Command com)
 		{
 			return ContentProvider.RegisterCommand (com);
 		}
@@ -183,7 +183,15 @@ namespace Yavsc.Model.WorkFlow
 		{
 			ContentProvider.SetEstimateStatus (estid, status, username);
 		}
-
+		/// <summary>
+		/// Gets the commands.
+		/// </summary>
+		/// <returns>The commands.</returns>
+		/// <param name="username">Username.</param>
+		public CommandSet GetCommands(string username)
+		{
+			return ContentProvider.GetCommands (username);
+		}
 	}
 }
 

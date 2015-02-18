@@ -7,13 +7,20 @@ using Yavsc.Model.Blogs;
 
 namespace Npgsql.Web.Blog
 {
+	/// <summary>
+	/// Npgsql blog provider.
+	/// </summary>
 	public class NpgsqlBlogProvider : BlogProvider
 	{
 		string applicationName;
 		string connectionString;
 
 		#region implemented abstract members of BlogProvider
-
+		/// <summary>
+		/// Tag the specified postid and tag.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="tag">Tag.</param>
 		public override long Tag (long postid, string tag)
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
@@ -24,7 +31,10 @@ namespace Npgsql.Web.Blog
 				return (long) cmd.ExecuteScalar ();
 			}
 		}
-
+		/// <summary>
+		/// Removes the tag.
+		/// </summary>
+		/// <param name="tagid">Tagid.</param>
 		public override void RemoveTag (long tagid)
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
@@ -34,10 +44,22 @@ namespace Npgsql.Web.Blog
 				cmd.ExecuteNonQuery ();	
 			}
 		}
+		/// <summary>
+		/// Gets the post identifier.
+		/// </summary>
+		/// <returns>The post identifier.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="title">Title.</param>
 		public override long GetPostId (string username, string title)
 		{
 			throw new NotImplementedException ();
 		}
+		/// <summary>
+		/// Gets the comments.
+		/// </summary>
+		/// <returns>The comments.</returns>
+		/// <param name="postid">Postid.</param>
+		/// <param name="getHidden">If set to <c>true</c> get hidden.</param>
 		public override Comment[] GetComments (long postid, bool getHidden)
 		{
 			List<Comment> cmts = new List<Comment> ();
@@ -68,6 +90,13 @@ namespace Npgsql.Web.Blog
 			}
 			return cmts.ToArray();
 		}
+		/// <summary>
+		/// Updates the post.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="title">Title.</param>
+		/// <param name="content">Content.</param>
+		/// <param name="visible">If set to <c>true</c> visible.</param>
 		public override void UpdatePost (long postid, string title, string content, bool visible)
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection(connectionString))
@@ -89,12 +118,20 @@ namespace Npgsql.Web.Blog
 				cnx.Close();
 			}
 		}
-
+		/// <summary>
+		/// Removes the post.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
 		public override void RemovePost (long postid)
 		{
 			throw new NotImplementedException ();
 		}
-
+		/// <summary>
+		/// Comment the specified from, postid and content.
+		/// </summary>
+		/// <param name="from">From.</param>
+		/// <param name="postid">Postid.</param>
+		/// <param name="content">Content.</param>
 		public override long Comment (string from, long postid, string content)
 		{
 			if (from == null)
@@ -121,12 +158,20 @@ namespace Npgsql.Web.Blog
 				return (long) cmd.ExecuteScalar();
 			}
 		}
-
+		/// <summary>
+		/// Validates the comment.
+		/// </summary>
+		/// <param name="cmtid">Cmtid.</param>
 		public override void ValidateComment (long cmtid)
 		{
 			throw new NotImplementedException ();
 		}
-
+		/// <summary>
+		/// Updates the comment.
+		/// </summary>
+		/// <param name="cmtid">Cmtid.</param>
+		/// <param name="content">Content.</param>
+		/// <param name="visible">If set to <c>true</c> visible.</param>
 		public override void UpdateComment 
 		(long cmtid, string content, bool visible)
 		{
@@ -134,7 +179,10 @@ namespace Npgsql.Web.Blog
 		}
 
 		private bool autoValidateComment = true;
-
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="Npgsql.Web.Blog.NpgsqlBlogProvider"/> auto validate comment.
+		/// </summary>
+		/// <value><c>true</c> if auto validate comment; otherwise, <c>false</c>.</value>
 		public override bool AutoValidateComment {
 			get {
 				return autoValidateComment;
@@ -144,7 +192,11 @@ namespace Npgsql.Web.Blog
 			}
 		}
 
-
+		/// <summary>
+		/// Blogs the title.
+		/// </summary>
+		/// <returns>The title.</returns>
+		/// <param name="username">Username.</param>
 		public override string BlogTitle
 		 (string username)
 		{
@@ -152,7 +204,11 @@ namespace Npgsql.Web.Blog
 		}
 
 		#endregion
-
+		/// <summary>
+		/// Initialize the specified name and config.
+		/// </summary>
+		/// <param name="name">Name.</param>
+		/// <param name="config">Config.</param>
 		public override void Initialize 
 		(string name, System.Collections.Specialized.NameValueCollection config)
 		{
@@ -165,6 +221,11 @@ namespace Npgsql.Web.Blog
 			base.Initialize (name, config);
 		}
 		#region implemented abstract members of BlogProvider
+		/// <summary>
+		/// Gets the post.
+		/// </summary>
+		/// <returns>The post.</returns>
+		/// <param name="postid">Postid.</param>
 		public override BlogEntry GetPost (long postid)
 		{
 			BlogEntry be = null;
@@ -190,6 +251,11 @@ namespace Npgsql.Web.Blog
 			}
 			return be;
 		}
+		/// <summary>
+		/// Removes the comment.
+		/// </summary>
+		/// <returns>The comment.</returns>
+		/// <param name="cmtid">Cmtid.</param>
 		public override long RemoveComment (long cmtid)
 		{
 			long postid = 0;
@@ -202,6 +268,12 @@ namespace Npgsql.Web.Blog
 			}
 			return postid;
 		}
+		/// <summary>
+		/// Gets the post.
+		/// </summary>
+		/// <returns>The post.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="title">Title.</param>
 		public override BlogEntry GetPost (string username, string title)
 		{
 			BlogEntry be = null;
@@ -239,7 +311,13 @@ namespace Npgsql.Web.Blog
 			}
 			return be;
 		}
-
+		/// <summary>
+		/// Post the specified username, title, content and visible.
+		/// </summary>
+		/// <param name="username">Username.</param>
+		/// <param name="title">Title.</param>
+		/// <param name="content">Content.</param>
+		/// <param name="visible">If set to <c>true</c> visible.</param>
 		public override long Post (string username, string title, string content, bool visible)
 		{
 			if (username == null)
@@ -264,7 +342,15 @@ namespace Npgsql.Web.Blog
 				return (long) cmd.ExecuteScalar();
 			}
 		}
-
+		/// <summary>
+		/// Finds the post.
+		/// </summary>
+		/// <returns>The post.</returns>
+		/// <param name="pattern">Pattern.</param>
+		/// <param name="searchflags">Searchflags.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
+		/// <param name="totalRecords">Total records.</param>
 		public override BlogEntryCollection FindPost (string pattern, FindBlogEntryFlags searchflags, int pageIndex, int pageSize, out int totalRecords)
 		{
 			BlogEntryCollection c = new BlogEntryCollection ();
@@ -313,7 +399,11 @@ namespace Npgsql.Web.Blog
 			}
 			return c;
 		}
-
+		/// <summary>
+		/// Removes the post.
+		/// </summary>
+		/// <param name="username">Username.</param>
+		/// <param name="title">Title.</param>
 		public override void RemovePost (string username, string title)
 		{
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
@@ -330,7 +420,13 @@ namespace Npgsql.Web.Blog
 
 
 		int defaultPageSize = 10;
-
+		/// <summary>
+		/// Lasts the posts.
+		/// </summary>
+		/// <returns>The posts.</returns>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
+		/// <param name="totalRecords">Total records.</param>
 		public override BlogEntryCollection LastPosts(int pageIndex, int pageSize, out int totalRecords)
 		{
 			BlogEntryCollection c = new BlogEntryCollection ();

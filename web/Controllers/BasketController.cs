@@ -7,7 +7,6 @@ using System.Web.Http;
 using Yavsc.Model.WorkFlow;
 using System.Collections.Specialized;
 using Yavsc.Model.FrontOffice;
-using System.Web.SessionState;
 
 namespace Yavsc.ApiControllers
 {
@@ -37,12 +36,10 @@ namespace Yavsc.ApiControllers
 		/// Gets the current basket, creates a new one, if it doesn't exist.
 		/// </summary>
 		/// <value>The current basket.</value>
-		protected Basket CurrentBasket {
+		protected CommandSet CurrentBasket {
 			get {
-				HttpSessionState session = HttpContext.Current.Session;
-				Basket b = (Basket) session ["Basket"];
-				if (b == null)
-					session ["Basket"] = b = new Basket ();
+				CommandSet b = wfmgr.GetCommands (Membership.GetUser ().UserName);
+				if (b == null) b = new CommandSet ();
 				return b;
 			}
 		}
@@ -55,7 +52,7 @@ namespace Yavsc.ApiControllers
 		public long Create(NameValueCollection cmdParams)
 		{
 			// HttpContext.Current.Request.Files
-			Commande cmd = new Commande(cmdParams, HttpContext.Current.Request.Files);
+			Command cmd = new Command(cmdParams, HttpContext.Current.Request.Files);
 			CurrentBasket.Add (cmd);
 			return cmd.Id;
 		}
@@ -65,7 +62,7 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="itemid">Itemid.</param>
 		[Authorize]
-		Commande Read(long itemid){
+		Command Read(long itemid){
 			return CurrentBasket[itemid];
 		}
 

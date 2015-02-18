@@ -8,6 +8,7 @@ using System.Configuration.Provider;
 using System.Collections.Generic;
 using Yavsc.Model.FrontOffice;
 using Newtonsoft.Json;
+using System.Web.Security;
 
 namespace WorkFlowProvider
 {
@@ -17,21 +18,11 @@ namespace WorkFlowProvider
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
 		/// <summary>
-		/// Gets the stock status.
-		/// </summary>
-		/// <returns>The stock status.</returns>
-		/// <param name="productReference">Product reference.</param>
-		public virtual StockStatus GetStockStatus (string productReference)
-		{
-			return StockStatus.NonExistent;
-		}
-
-		/// <summary>
 		/// Registers the command.
 		/// </summary>
 		/// <returns>The command id in db.</returns>
 		/// <param name="com">COM.</param>
-		public long RegisterCommand (Commande com)
+		public long RegisterCommand (Command com)
 		{
 			long id;
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -47,6 +38,56 @@ namespace WorkFlowProvider
 			}
 			return id;
 		}
+
+		/// <summary>
+		/// Gets the commands.
+		/// </summary>
+		/// <returns>The commands.</returns>
+		/// <param name="username">Username.</param>
+		public CommandSet GetCommands (string username )
+		{
+			// Check the user's authorisations
+			MembershipUser user = Membership.GetUser ();
+			if (user.UserName != username)
+			if (!Roles.IsUserInRole ("Admin"))
+			if (!Roles.IsUserInRole ("FrontOffice"))
+				throw new Exception ("Not allowed");
+			CommandSet cmds = new CommandSet ();
+
+			using (NpgsqlConnection cnx = CreateConnection ()) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = 
+						"select id,prdref,creation,params from commandes where @user = clientname and applicationname = @app";
+					cmd.Parameters.Add ("@user", username);
+					cmd.Parameters.Add ("@app", this.ApplicationName);
+					cnx.Open ();
+					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
+						while (rdr.Read ()) {
+							Command ycmd = new Command();
+							ycmd.Id = rdr.GetInt64(0);
+							ycmd.CreationDate = rdr.GetDateTime(1);
+							ycmd.ProductRef = rdr.GetString(2);
+							ycmd.Parameters = JsonConvert.DeserializeObject(rdr.GetString(3)) as StringDictionary;
+							cmds.Add (ycmd);
+						}
+					}
+				}
+				cnx.Close ();
+			}
+			return cmds;
+		}
+
+		/// <summary>
+		/// Gets the stock status.
+		/// </summary>
+		/// <returns>The stock status.</returns>
+		/// <param name="productReference">Product reference.</param>
+		public virtual StockStatus GetStockStatus (string productReference)
+		{
+			return StockStatus.NonExistent;
+		}
+
+
 		/// <summary>
 		/// Gets the writting status changes.
 		/// </summary>

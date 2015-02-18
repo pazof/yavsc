@@ -673,6 +673,7 @@
     <Content Include="Scripts\jquery.googlemaps.js" />
     <Content Include="Scripts\jquery.googlemaps.min.js" />
     <Content Include="Views\Account\MyProfile.aspx" />
+    <Content Include="Views\FrontOffice\Basket.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

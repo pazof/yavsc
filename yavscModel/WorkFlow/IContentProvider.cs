@@ -119,8 +119,13 @@ namespace Yavsc.Model.WorkFlow
 		/// </summary>
 		/// <returns>The command id in db.</returns>
 		/// <param name="com">COM.</param>
-		long RegisterCommand (Commande com);
-
+		long RegisterCommand (Command com);
+		/// <summary>
+		/// Gets the commands.
+		/// </summary>
+		/// <returns>The commands.</returns>
+		/// <param name="username">Username.</param>
+		CommandSet GetCommands (string username);
 		/// <summary>
 		/// Gets the stock status.
 		/// </summary>

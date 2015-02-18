@@ -96,7 +96,6 @@
     <Compile Include="Google\GoogleErrorMessage.cs" />
     <Compile Include="RssFeeds.cs" />
     <Compile Include="FrontOffice\Commande.cs" />
-    <Compile Include="FrontOffice\Basket.cs" />
     <Compile Include="FrontOffice\Catalog\Brand.cs" />
     <Compile Include="FrontOffice\Catalog\Catalog.cs" />
     <Compile Include="FrontOffice\Catalog\CheckBox.cs" />
@@ -136,8 +135,8 @@
     <Compile Include="FileSystem\InvalidDirNameException.cs" />
     <Compile Include="FileSystem\WebFileInfo.cs" />
     <Compile Include="Google\CalendarEntryList.cs" />
-    <Compile Include="FrontOffice\WebFileInfoCollection.cs" />
     <Compile Include="FrontOffice\CommandStatus.cs" />
+    <Compile Include="FrontOffice\CommandSet.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

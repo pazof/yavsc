@@ -22,13 +22,34 @@ using System;
 
 namespace Yavsc.Model.FrontOffice
 {
+	/// <summary>
+	/// Command status.
+	/// </summary>
 	public enum CommandStatus:int
 	{
+		/// <summary>
+		/// The inserted.
+		/// </summary>
 		Inserted,
+		/// <summary>
+		/// The user validated.
+		/// </summary>
 		UserValidated,
+		/// <summary>
+		/// The user canceled.
+		/// </summary>
 		UserCanceled,
+		/// <summary>
+		/// The execution pending.
+		/// </summary>
 		ExecutionPending,
+		/// <summary>
+		/// The satisfied.
+		/// </summary>
 		Satisfied,
+		/// <summary>
+		/// The refunded.
+		/// </summary>
 		Refunded
 	}
 }

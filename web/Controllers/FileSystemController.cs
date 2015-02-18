@@ -15,15 +15,13 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class FileSystemController : Controller
 	{
-		private string usersDir = "~/users";
-
 		/// <summary>
 		/// Gets the users base directory.
 		/// </summary>
 		/// <value>The users dir.</value>
-		public string UsersDir {
+		public string RootDir {
 			get {
-				return usersDir;
+				return mgr.Prefix;
 			}
 		}
 
@@ -36,7 +34,8 @@ namespace Yavsc.Controllers
 		protected override void Initialize (System.Web.Routing.RequestContext requestContext)
 		{
 			base.Initialize (requestContext);
-			mgr = new FileSystemManager (UsersDir);
+			mgr = new FileSystemManager (
+				string.Format("~/users/{0}",Membership.GetUser().UserName));
 		}
 
 		/// <summary>
@@ -45,7 +44,7 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Index (string id)
 		{
-			return View (mgr.GetFiles (Membership.GetUser().UserName+"/"+id));
+			return View (mgr.GetFiles (id));
 		}
 
 		/// <summary>
@@ -63,9 +62,9 @@ namespace Yavsc.Controllers
 					return RedirectToAction ("Index");
 				}
 			}
-			string fpath = Path.Combine (UserBaseDir, id);
-			ViewData ["Content"] = Url.Content (fpath);
-			FileInfo fi = new FileInfo (fpath);
+			FileInfo fi = mgr.FileInfo (id);
+
+			ViewData ["Content"] = Url.Content (fi.FullName);
 
 			return View (fi);
 		}
@@ -78,16 +77,15 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Create (string id)
 		{
-			string path=Membership.GetUser().UserName+"/"+id;
-			mgr.Put ( path, Request.Files);
-			return View ("Index",mgr.GetFiles(path));
+			mgr.Put ( id, Request.Files);
+			return View ("Index",mgr.GetFiles(id));
 		}
 
 		/// <summary>
 		/// Gets the user's base dir.
 		/// </summary>
 		/// <value>The base dir.</value>
-		public string UserBaseDir { get { return Path.Combine (UsersDir, Membership.GetUser ().UserName); } }
+		public string UserBaseDir { get { return Path.Combine (RootDir, Membership.GetUser ().UserName); } }
 
 		/// <summary>
 		/// Edit the specified id.

@@ -4,6 +4,9 @@ using Npgsql;
 
 namespace ITContentProvider
 {
+	/// <summary>
+	/// ITCP npgsql provider.
+	/// </summary>
 	public class ITCPNpgsqlProvider : NpgsqlContentProvider
 	{
 		/*	TODO
@@ -19,42 +22,79 @@ namespace ITContentProvider
 		void SetTaskDesc(int taskId, string desc);
 		void NewRelease(int projectId, string Version);
 		*/
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ITContentProvider.ITCPNpgsqlProvider"/> class.
+		/// </summary>
 		public ITCPNpgsqlProvider ()
 		{
 		}
-
+		/// <summary>
+		/// Gets the project info.
+		/// </summary>
+		/// <returns>The project info.</returns>
+		/// <param name="projectid">Projectid.</param>
 		public ProjectInfo GetProjectInfo(int projectid)
 		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Searchs the project.
+		/// </summary>
+		/// <returns>The project.</returns>
+		/// <param name="pi">Pi.</param>
 		public ProjectInfo[] SearchProject(ProjectInfo pi)
 		{
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// News the task.
+		/// </summary>
+		/// <returns>The task.</returns>
+		/// <param name="projectId">Project identifier.</param>
+		/// <param name="name">Name.</param>
+		/// <param name="desc">Desc.</param>
 		public int NewTask (int projectId, string name, string desc)
 		{
 			throw new System.NotImplementedException ();
 		}
 
-
+		/// <summary>
+		/// Sets the name of the task.
+		/// </summary>
+		/// <param name="taskId">Task identifier.</param>
+		/// <param name="name">Name.</param>
 		public void SetTaskName (int taskId, string name)
 		{
 			throw new System.NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Sets the start date.
+		/// </summary>
+		/// <param name="taskId">Task identifier.</param>
+		/// <param name="d">D.</param>
 		public void SetStartDate (int taskId, DateTime d)
 		{
 			throw new System.NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Sets the end date.
+		/// </summary>
+		/// <param name="taskId">Task identifier.</param>
+		/// <param name="d">D.</param>
 		public void SetEndDate (int taskId, DateTime d)
 		{
 			throw new System.NotImplementedException ();
 		}
 
-
+		/// <summary>
+		/// Removes the project.
+		/// </summary>
+		/// <param name="prjId">Prj identifier.</param>
 		public void RemoveProject (int prjId)
 		{
 			using (var cnx = CreateConnection()) {
@@ -68,7 +108,13 @@ namespace ITContentProvider
 			}
 		}
 
-
+		/// <summary>
+		/// News the project.
+		/// </summary>
+		/// <returns>The project.</returns>
+		/// <param name="name">Name.</param>
+		/// <param name="desc">Desc.</param>
+		/// <param name="ownerId">Owner identifier.</param>
 		public int NewProject (string name, string desc, string ownerId)
 		{
 			int id = 0;

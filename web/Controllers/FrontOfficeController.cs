@@ -181,19 +181,14 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Command this instance.
+		/// Basket this instance.
 		/// </summary>
-		public ActionResult Command ()
+		[Authorize]
+		public ActionResult Basket ()
 		{
-			return View ();
+			return View (wfmgr.GetCommands(Membership.GetUser().UserName));
 		}
 
-		private Basket GetBasket ()
-		{
-			if (Session ["Basket"] == null)
-				Session ["Basket"] = new Basket();
-			return Session ["Basket"] as Basket;
-		}
 
 		/// <summary>
 		/// Command the specified collection.
@@ -204,29 +199,9 @@ namespace Yavsc.Controllers
 		public ActionResult Command (FormCollection collection)
 		{
 			try {
-				// get files from the request 
-				string fnre = "[A-Za-z0-9~\\-.]+"; 
-				HttpFileCollectionBase hfc = Request.Files;
-				// TODO mime-magic on content, and file name filter
-				foreach (String h in hfc.AllKeys) {
-					if (!Regex.Match (hfc [h].FileName, fnre).Success) {
-						ViewData ["Message"] = "File name refused";
-						ModelState.AddModelError (
-							h,
-							string.Format (
-								"The file name {0} dosn't match an acceptable file name {1}",
-								hfc [h].FileName, fnre));
-						return View (collection);
-					}
-				}
-				string usersdir = Server.MapPath("~/users");
-				FileSystemManager fsmgr = new FileSystemManager(usersdir);
-				foreach (String h in hfc.AllKeys) {
-					// TODO Limit with hfc[h].ContentLength 
-					hfc [h].SaveAs (Path.Combine (usersdir, hfc [h].FileName));
-				}
 				// Add specified product command to the basket,
-				GetBasket().Add (new Commande(collection,HttpContext.Request.Files));
+				// saves it in db
+				new Command(collection,HttpContext.Request.Files);
 				ViewData ["Message"] = LocalizedText.Item_added_to_basket;
 				return View (collection);
 			} catch (Exception e) {

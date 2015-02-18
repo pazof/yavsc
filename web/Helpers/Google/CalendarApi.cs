@@ -103,13 +103,13 @@ namespace Yavsc.Helpers.Google
 			try {
 				using (WebResponse resp = webreq.GetResponse ()) {
 					using (Stream respstream = resp.GetResponseStream ()) {
-							try {
+						try {
 							res = (CalendarEntryList) new DataContractJsonSerializer(typeof(CalendarEntryList)).ReadObject (respstream);
-							} catch (Exception ex) {
-								respstream.Close ();
-								resp.Close ();
+						} catch (Exception ex) {
+							respstream.Close ();
+							resp.Close ();
 								webreq.Abort ();
-								throw new GoogleErrorException(ex);
+							throw ex;
 						}
 					}
 					resp.Close ();
