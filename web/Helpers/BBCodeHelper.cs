@@ -55,8 +55,13 @@ namespace Yavsc.Helpers
 						tib.AddCssClass (BBCodeCaseClass);
 						string temp = tagUsage (t);
 
-						tib.InnerHtml = temp;
-						u.Add (string.Format ("{0} <div class=\"{2}\">{1}</div>", tib.ToString (), Parser.ToHtml (temp),BBCodeViewClass));
+						tib.InnerHtml = string.Format("[{0}]",t.Name);
+						u.Add (string.Format (
+							"{0} <div class=\"{2}\"><code>{3}</code>{1}</div>", 
+							tib.ToString (), 
+							Parser.ToHtml (temp),
+							BBCodeViewClass,
+							temp));
 
 
 				}
@@ -65,6 +70,7 @@ namespace Yavsc.Helpers
 
 
 		}
+
 		static string tagUsage(BBTag t,string content=null)
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -200,6 +206,13 @@ namespace Yavsc.Helpers
 
 		static string TocContentTransformer (string instr)
 		{
+		
+			StringBuilder header = new StringBuilder ();
+			TagBuilder bshd = new TagBuilder("div");
+			bshd.AddCssClass ("bshd");
+
+			header.AppendFormat ("<img src=\"{0}\" alt=\"[Show/Hide TOC]\" class=\"bsh\">\n",
+			"/Theme/dark/rect.png");
 			StringBuilder ttb = new StringBuilder ();
 			int m1=0, m2=0, m3=0;
 			foreach (string key in d.Keys) {
@@ -254,7 +267,10 @@ namespace Yavsc.Helpers
 			}
 			TagBuilder aside = new TagBuilder ("aside");
 			aside.InnerHtml = ttb.ToString ();
-				return aside.ToString();
+			aside.AddCssClass ("bshpanel");
+			bshd.InnerHtml = header.ToString()+aside.ToString();
+
+			return bshd.ToString ();
 		}
 
 		static string DocPageContentTransformer (string instr)

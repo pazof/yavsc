@@ -8,7 +8,7 @@ using Yavsc.Controllers;
 using System.Collections.Generic;
 using Yavsc.Model;
 using Yavsc.Model.WorkFlow;
-using WorkFlowProvider;
+using Yavsc;
 using System.Web.Security;
 using System.Threading;
 using Yavsc.Model.FrontOffice;
@@ -64,7 +64,8 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Estimate (Estimate model, string submit)
 		{
-			ViewData ["WebApiBase"] = "http://" + Request.Url.Authority + "/api";
+			// Obsolete, set in master page
+ 			ViewData ["WebApiBase"] = "http://" + Request.Url.Authority + "/api";
 			ViewData ["WABASEWF"] = ViewData ["WebApiBase"] + "/WorkFlow";
 			if (submit == null) {
 				if (model.Id > 0) {
@@ -112,7 +113,7 @@ namespace Yavsc.Controllers
 		public ActionResult Catalog ()
 		{
 			return View (
-				CatalogManager.GetCatalog (Request.Url.AbsolutePath)
+				CatalogManager.GetCatalog ()
 			);
 		}
 
@@ -122,7 +123,7 @@ namespace Yavsc.Controllers
 		[AcceptVerbs ("GET")]
 		public ActionResult Brand (string id)
 		{
-			Catalog c = CatalogManager.GetCatalog (Request.Url.AbsolutePath);
+			Catalog c = CatalogManager.GetCatalog ();
 			ViewData ["BrandName"] = id;
 			return View (c.GetBrand (id));
 		}
@@ -139,7 +140,7 @@ namespace Yavsc.Controllers
 			ViewData ["BrandId"] = brandid;
 			ViewData ["ProductCategoryId"] = pcid;
 			return View (
-				CatalogManager.GetCatalog (Request.Url.AbsolutePath).GetBrand (brandid).GetProductCategory (pcid)
+				CatalogManager.GetCatalog ().GetBrand (brandid).GetProductCategory (pcid)
 			);
 		}
 
@@ -156,7 +157,7 @@ namespace Yavsc.Controllers
 			ViewData ["BrandName"] = id;
 			ViewData ["ProdCatRef"] = pc;
 			ViewData ["ProdRef"] = pref;
-			Catalog cat = CatalogManager.GetCatalog (Request.Url.AbsolutePath);
+			Catalog cat = CatalogManager.GetCatalog ();
 			if (cat == null) {
 				ViewData ["Message"] = "Catalog introuvable";
 				ViewData ["RefType"] = "Catalog";

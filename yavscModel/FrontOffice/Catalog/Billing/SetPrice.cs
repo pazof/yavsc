@@ -29,7 +29,7 @@ namespace Yavsc.Model.FrontOffice.Billing
 	public class SetPrice: Price
 	{
 		/// <summary>
-		/// Gets or sets the minimum count.
+		/// Gets or sets the minimum count for this setprice.
 		/// </summary>
 		/// <value>The minimum count.</value>
 		[Range(0,int.MaxValue)]

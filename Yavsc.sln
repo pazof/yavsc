@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesCatalog", "SalesCatalo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YavscModel", "yavscModel\YavscModel.csproj", "{68F5B80A-616E-4C3C-91A0-828AA40000BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpgsqlWorkflow", "WorkFlowProvider\NpgsqlWorkflow.csproj", "{821FF72D-9F4B-4A2C-B95C-7B965291F119}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NpgsqlContentProvider", "WorkFlowProvider\NpgsqlContentProvider.csproj", "{821FF72D-9F4B-4A2C-B95C-7B965291F119}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YavscClient", "yavscclient\YavscClient.csproj", "{EEFCECE6-3B7F-4BBE-B7AF-69377AF3CF39}"
 EndProject

@@ -93,7 +93,6 @@
     <Compile Include="ITagHandler.cs" />
     <Compile Include="IViewRenderer.cs" />
     <Compile Include="ViewRenderer.cs" />
-    <Compile Include="Google\GoogleErrorMessage.cs" />
     <Compile Include="RssFeeds.cs" />
     <Compile Include="FrontOffice\Commande.cs" />
     <Compile Include="FrontOffice\Catalog\Brand.cs" />
@@ -138,6 +137,7 @@
     <Compile Include="FrontOffice\CommandSet.cs" />
     <Compile Include="FrontOffice\Catalog\Billing\SetPrice.cs" />
     <Compile Include="FrontOffice\Catalog\Billing\Price.cs" />
+    <Compile Include="OtherWebException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

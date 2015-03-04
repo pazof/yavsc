@@ -10,7 +10,7 @@ using System.Web;
 using System.Linq;
 using System.IO;
 using System.Net;
-using WorkFlowProvider;
+using Yavsc;
 using System.Web.Security;
 using Yavsc.Model.WorkFlow;
 using System.Reflection;
@@ -52,7 +52,7 @@ namespace Yavsc.ApiControllers
 		[AcceptVerbs ("GET")]
 		public Catalog Catalog ()
 		{
-			Catalog c = CatalogManager.GetCatalog (Request.RequestUri.AbsolutePath);
+			Catalog c = CatalogManager.GetCatalog ();
 			return c;
 		}
 
@@ -65,19 +65,19 @@ namespace Yavsc.ApiControllers
 		[AcceptVerbs ("GET")]
 		public ProductCategory GetProductCategorie (string brandName, string prodCategorie)
 		{
-			return CatalogManager.GetCatalog (Request.RequestUri.AbsolutePath).GetBrand (brandName).GetProductCategory (prodCategorie);
+			return CatalogManager.GetCatalog ().GetBrand (brandName).GetProductCategory (prodCategorie);
 		}
 
 		/// <summary>
 		/// Gets the estimate.
 		/// </summary>
 		/// <returns>The estimate.</returns>
-		/// <param name="Id">Estimate Id.</param>
+		/// <param name="id">Estimate Id.</param>
 		[Authorize]
 		[HttpGet]
-		public Estimate GetEstimate (long Id)
+		public Estimate GetEstimate (long id)
 		{
-			Estimate est = wfmgr.ContentProvider.GetEstimate (Id);
+			Estimate est = wfmgr.ContentProvider.GetEstimate (id);
 			return est;
 		}
 
@@ -87,13 +87,13 @@ namespace Yavsc.ApiControllers
 		/// Gets the estim tex.
 		/// </summary>
 		/// <returns>The estim tex.</returns>
-		/// <param name="estimid">Estimid.</param>
+		/// <param name="id">Estimate id.</param>
 		[AcceptVerbs ("GET")]
-		public HttpResponseMessage EstimateToTex (long estimid)
+		public HttpResponseMessage EstimateToTex (long id)
 		{
 			string texest = null;
 			try {
-				texest = estimateToTex (estimid);
+				texest = estimateToTex (id);
 			} catch (TemplateException ex) {
 				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
 					new ObjectContent (typeof(string),
@@ -110,7 +110,7 @@ namespace Yavsc.ApiControllers
 			}
 			if (texest == null)
 				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
-					new ObjectContent (typeof(string), "Not an estimation id:" + estimid, 
+					new ObjectContent (typeof(string), "Not an estimation id:" + id, 
 						new ErrorHtmlFormatter (HttpStatusCode.NotFound,
 							LocalizedText.Estimate_not_found))
 				};

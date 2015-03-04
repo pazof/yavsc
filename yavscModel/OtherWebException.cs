@@ -23,12 +23,12 @@ using System.Net;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace Yavsc.Model.Google
+namespace Yavsc.Model
 {
 	/// <summary>
 	/// Google error exception.
 	/// </summary>
-	public class GoogleErrorException : Exception 
+	public class OtherWebException : Exception 
 	{
 		/// <summary>
 		/// Gets or sets the title.
@@ -44,7 +44,7 @@ namespace Yavsc.Model.Google
 		/// Initializes a new instance of the <see cref="Yavsc.Model.Google.GoogleErrorException"/> class.
 		/// </summary>
 		/// <param name="ex">Ex.</param>
-		public GoogleErrorException (WebException ex) {
+		public OtherWebException (WebException ex) {
 			// ASSERT ex != null;
 			Title = ex.Message;
 
@@ -60,7 +60,7 @@ namespace Yavsc.Model.Google
 		/// <param name="ex">Ex.</param>
 		/// <param name="message">Message.</param>
 		[Obsolete]
-		public GoogleErrorException(Exception ex, string message) {
+		public OtherWebException(Exception ex, string message) {
 			Content = message;
 			Title = ex.Message;
 		}
@@ -69,7 +69,7 @@ namespace Yavsc.Model.Google
 		/// </summary>
 		/// <param name="ex">Ex.</param>
 		[Obsolete]
-		public GoogleErrorException(Exception ex) {
+		public OtherWebException(Exception ex) {
 			Content = ex.Message;
 			Title = ex.GetType().FullName;
 		}

@@ -162,7 +162,7 @@ namespace Yavsc.Model.WorkFlow
 		{
 			if (!string.IsNullOrWhiteSpace(productid)) {
 				if (Catalog == null)
-					Catalog = CatalogManager.GetCatalog ("/WorkFlowApi");
+					Catalog = CatalogManager.GetCatalog ();
 				if (Catalog == null)
 					throw new Exception ("No catalog");
 				Product p = Catalog.FindProduct (productid);

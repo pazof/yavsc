@@ -288,14 +288,13 @@ namespace Yavsc.Controllers
 		public ActionResult DateQuery (AskForADate model)
 		{
 			if (ModelState.IsValid) {
-				if (model.MinDate < DateTime.Now) {
-					ModelState.AddModelError ("MinTime", "This first date must be in the future.");
-					return View (model);
-				}
-				if (model.MinDate > model.MaxDate) {
-					ModelState.AddModelError ("MinTime", "This first date must be lower than the second one.");
-					return View (model);
-				}
+
+				DateTime mindate = DateTime.Now;
+				if (model.PreferedDate < mindate)
+					model.PreferedDate = mindate;
+				if (model.MaxDate < mindate)
+					model.MaxDate = mindate.AddYears (1);
+
 				var muc = Membership.FindUsersByName (model.UserName);
 				if (muc.Count == 0) {
 					ModelState.AddModelError ("UserName", "Non existent user");
@@ -309,22 +308,18 @@ namespace Yavsc.Controllers
 					return View (model);
 				}
 
-				DateTime mindate = model.MinDate;
-				mindate = mindate.AddHours (int.Parse (model.MinTime.Substring (0, 2)));
-				mindate = mindate.AddMinutes (int.Parse (model.MinTime.Substring (3, 2)));
 				DateTime maxdate = model.MaxDate;
-				maxdate = maxdate.AddHours (int.Parse (model.MaxTime.Substring (0, 2)));
-				maxdate = maxdate.AddMinutes (int.Parse (model.MaxTime.Substring (3, 2)));
 
 				CalendarApi c = new CalendarApi ();
 				CalendarEntryList res;
 				try {
 					res = c.GetCalendar (calid, mindate, maxdate, upr);
-				} catch (GoogleErrorException ex) {
+				} catch (OtherWebException ex) {
 					ViewData ["Title"] = ex.Title;
 					ViewData ["Content"] = ex.Content;
 					return View ("GoogleErrorMessage", ex);
 				}
+
 				return View (res);
 			}
 			return View (model);

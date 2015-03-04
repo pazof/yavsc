@@ -29,6 +29,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Web;
 using System.Runtime.Serialization.Json;
+using Yavsc.Model;
 
 namespace Yavsc.Helpers.Google
 {
@@ -116,7 +117,7 @@ namespace Yavsc.Helpers.Google
 				}
 			} catch (WebException ex) {
 				webreq.Abort ();
-				throw new GoogleErrorException (ex);
+				throw new OtherWebException (ex);
 			}
 			webreq.Abort ();
 				return res;

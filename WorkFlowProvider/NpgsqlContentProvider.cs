@@ -13,7 +13,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace WorkFlowProvider
+namespace Yavsc
 {
 	/// <summary>
 	/// Npgsql content provider.

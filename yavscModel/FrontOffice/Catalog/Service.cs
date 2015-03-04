@@ -26,6 +26,11 @@ namespace Yavsc.Model.FrontOffice
 		/// <value>The set prices.</value>
 		public SetPrice[] SetPrices { get; set; }
 
+		/// <summary>
+		/// Role names involved in this kind of service
+		/// </summary>
+		/// <value>The providers.</value>
+		public string[] Providers { get; set; }
 		#region implemented abstract members of Product
 		/// <summary>
 		/// Gets the sales conditions.

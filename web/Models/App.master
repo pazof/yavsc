@@ -23,6 +23,7 @@
 <a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
  </h1>
 </asp:ContentPlaceHolder>
+
 <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
 <% if (ViewData["Error"]!=null) { %>
 <div class="error">
@@ -34,6 +35,7 @@
 <%= Html.Encode(ViewData["Message"]) %>
 </div>
 <% } %>
+   
 
 	</header>
 	<main>
@@ -43,9 +45,13 @@
 
 
    </main>
+
+
+
    <aside>
    <asp:ContentPlaceHolder ID="MASContent" runat="server">
    </asp:ContentPlaceHolder>
+
    <div id="login">
 <% if (Membership.GetUser()==null) { %>
 	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" } ) %> 
@@ -74,7 +80,7 @@
    <% } %>
    </footer>
    <script type="text/javascript">
-        var apiBaseUrl = '@Url.Content(ProjectNameSpace.WebApiConfig.UrlPrefixRelative)';
+        var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
     </script>
 </body>
 </html>

@@ -13,7 +13,7 @@ using System.Resources;
 using Yavsc.Model;
 using Npgsql.Web;
 using ITContentProvider;
-using WorkFlowProvider;
+using Yavsc;
 using Npgsql.Web.Blog;
 
 namespace Yavsc.Controllers

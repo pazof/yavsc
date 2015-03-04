@@ -15,6 +15,7 @@ namespace SalesCatalog.XmlImplementation
 	/// </summary>
 	public class XmlCatalogProvider: CatalogProvider
 	{
+
 		#region implemented abstract members of SalesCatalog.CatalogProvider
 		/// <summary>
 		/// Gets the catalog, loading it from
@@ -60,12 +61,8 @@ namespace SalesCatalog.XmlImplementation
 			if (config ["connection"] == null)
 				throw new Exception ("the 'connection' parameter is null " +
 					"(it should be the absolute path to the xml catalog)");
-			// config ["connection"] starts with "~/"	
-			fileName = (string) config ["connection"];
-			if (fileName.StartsWith ("~/")) {
-				fileName = HttpContext.Current.Server.MapPath( 
-					config ["connection"]);
-			}
+			string cnx = (string) config ["connection"];
+			fileName = HttpContext.Current.Server.MapPath(cnx);
 			LoadCatalog ();
 		}
 

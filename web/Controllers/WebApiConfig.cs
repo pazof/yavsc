@@ -57,8 +57,8 @@ namespace Yavsc
 		{
 			config.Routes.MapHttpRoute(
 				name: "DefaultApi",
-				routeTemplate: WebApiConfig.UrlPrefix + "/{controller}/{id}",
-				defaults: new { id = RouteParameter.Optional }
+				routeTemplate: WebApiConfig.UrlPrefix + "/{controller}/{action}/{id}",
+				defaults: new { action="Index", id = RouteParameter.Optional }
 			);
 		}
 	}

@@ -52,14 +52,6 @@ return Globalize.format( new Date(value), "t" );
 <% using ( Html.BeginForm("DateQuery","Google") ) { %>
 
   <p>Période de recherche:</p>
-  <p>
-  <%= Html.LabelFor(model=>model.MinDate) %>:<br>
- Le <%= Html.TextBoxFor(model=>model.MinDate) %>
-<%= Html.ValidationMessageFor(model=>model.MinDate) %>
-à
-  <%= Html.TextBoxFor(model=>model.MinTime) %>
-  <%= Html.ValidationMessageFor(model=>model.MinTime) %>
-  </p>
 
   <p>
 <%= Html.LabelFor(model=>model.MaxDate) %>:<br>

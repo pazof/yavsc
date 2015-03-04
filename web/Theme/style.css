@@ -22,24 +22,20 @@ main {
 	margin:.5em;
 }
 
-aside {background-color: rgba(32,16,16,0.8);
+.panel,.bshpanel,aside {
+	background-color: rgba(32,16,16,0.8);
 	 padding: 0.5em; margin: 0.5em;
 		border-radius:5px; border: solid 1px #000060;
 		float: right;
 	}
-
+	.bsh { float: right; }
 video,img {
 	max-width:100%;
 	max-height:75%;
     position:relative;
 	}
 
-.panel {
-	background-color: rgba(16,32,32,0.8);
-	 padding: 1em; margin: 0.5em;
-		border-radius:25px; border: solid 1px #000060;
-	  max-width: 17em;
-	max-height:30em; border:solid green 1px;}
+
 
 footer {
 	position:fixed;
@@ -176,9 +172,21 @@ padding-left: 20px;
 		body {background-color:white;color:black;}
 		header,footer,.postcomment,.actionlink,.metablog{ display:none;} 
 	}
-
+@media all and (min-width: 641px) {
+	.bshpanel { display:block; }
+  .bsh { display: none; }
+	}
 @media all and (max-width: 640px) {
   
+  .bshpanel { display:none; }
+  .bsh { display: inline; }
+
+.bshd:hover .bshpanel {
+  display: block;
+	}
+	.bshd:hover .bsh {
+  display: none;
+	}
   footer img {
     max-height: 1em;
     }
@@ -186,4 +194,7 @@ padding-left: 20px;
     font-size: xx-small;
   }
   body { margin-bottom:1em; font-size: smaller; }
+	}
+
+
 }

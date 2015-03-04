@@ -1,4 +1,7 @@
 using System;
+using System.Web;
+
+
 namespace Yavsc.Model.FrontOffice
 {
 	/// <summary>
@@ -14,9 +17,9 @@ namespace Yavsc.Model.FrontOffice
 		/// </summary>
 		/// <returns>The catalog.</returns>
 		/// <param name="catalogUri">Catalog URI.</param>
-		public static Catalog GetCatalog (string catalogUri)
+		public static Catalog GetCatalog ()
 		{
-
+			string catalogUri = HttpContext.Current.Request.Url.AbsolutePath;
 			if (defaultProvider == null) {
 				if (CatalogHelper.Config == null)
 					CatalogHelper.LoadConfig ();
