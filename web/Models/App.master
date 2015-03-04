@@ -83,10 +83,11 @@
    <script type="text/javascript">
         var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
     </script> <script>
-$( ".bshd" ).on("click",function() {
+$( ".bshd" ).on("click",function(e) {
+    if (e.target == "[object HTMLElement]") {
    $(this).children(".bshpanel").toggleClass("hidden");
    $(this).children(".bsh").toggleClass("hidden");
-    });
+   } });
 </script>
 </body>
 </html>
