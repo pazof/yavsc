@@ -268,6 +268,7 @@ namespace Yavsc.Helpers
 			TagBuilder aside = new TagBuilder ("aside");
 			aside.InnerHtml = ttb.ToString ();
 			aside.AddCssClass ("bshpanel");
+			aside.AddCssClass ("hidden");
 			bshd.InnerHtml = header.ToString()+aside.ToString();
 
 			return bshd.ToString ();

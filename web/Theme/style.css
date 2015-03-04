@@ -134,7 +134,13 @@ padding-left: 20px;
 	max-height: 64px;
 }
 
+.hidden {
+	display:none;
+	}
+
 	.shoh { display:inline; }
+
+
 .hiduh {
 	display:none;
 	}
@@ -178,13 +184,11 @@ padding-left: 20px;
 	}
 @media all and (max-width: 640px) {
   
-  .bshpanel { display:none; }
-  .bsh { display: inline; }
 
-.bshd:hover .bshpanel {
+.bshd:hover > .bshpanel {
   display: block;
 	}
-	.bshd:hover .bsh {
+	.bshd:hover > .bsh {
   display: none;
 	}
   footer img {

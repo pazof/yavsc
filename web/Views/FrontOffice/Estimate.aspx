@@ -1,7 +1,6 @@
 ﻿<%@ Page Title="Devis" Language="C#" Inherits="System.Web.Mvc.ViewPage<Estimate>" MasterPageFile="~/Models/App.master" %>
 
 <asp:Content ContentPlaceHolderID="head" ID="head1" runat="server" >
-<script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery-2.1.3.js")%>"></script> 
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery.tablesorter.js")%>"></script> 
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery.validate.js")%>"></script> 
 <link rel="stylesheet" href="<%=Url.Content("~/Theme/dark/style.css")%>" type="text/css" media="print, projection, screen" />
