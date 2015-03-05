@@ -28,7 +28,10 @@ main {
 		border-radius:5px; border: solid 1px #000060;
 		float: right;
 	}
+
 	.bsh { float: right; }
+
+
 video,img {
 	max-width:100%;
 	max-height:75%;
@@ -184,6 +187,7 @@ padding-left: 20px;
 	}
 @media all and (max-width: 640px) {
   
+	.bshpanel { cursor:zoom-in; }
 
 .bshd:hover > .bshpanel {
   display: block;
