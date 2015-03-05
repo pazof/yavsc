@@ -15,8 +15,8 @@ ddir:
 	mkdir -p $(DESTDIR)
 
 deploy: ddir build
+	rm -rf $(DESTDIR)
 	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir=../$(DESTDIR) /t:Deploy web/Web.csproj
-	rm -rf $(DESTDIR)/obj
 	mv $(DESTDIR)/Web.config $(DESTDIR)/Web.config.new
 	 
 

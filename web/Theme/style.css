@@ -195,7 +195,7 @@ padding-left: 20px;
 	.bshd:hover > .bsh {
   display: none;
 	}
-  footer img {
+  footer  {
     max-height: 1em;
     }
   footer a {
@@ -204,5 +204,9 @@ padding-left: 20px;
   body { margin-bottom:1em; font-size: smaller; }
 	}
 
+	@media all and (max-width: 350px) {
+	  footer img { max-height: 0.7em; }
+	  footer { font-size: xx-small; }
+	}
 
 }
