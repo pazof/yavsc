@@ -27,3 +27,5 @@ Les commandes : c'est une notion liée à celles
 - d'étapes inter dépendantes, de leurs attributs, de leurs états
 - des dates butoires
 
+Voir aussi:
+ http://yavsc.pschneider.fr/Blogs/UserPost/paul/Documentation
