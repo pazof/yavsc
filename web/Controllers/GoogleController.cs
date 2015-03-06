@@ -27,8 +27,22 @@ namespace Yavsc.Controllers
 	{
 		private string SetSessionSate ()
 		{
+			string state = "security_token";
 			Random rand = new Random ();
-			string state = "security_token" + rand.Next (100000).ToString () + rand.Next (100000).ToString ();
+			for (int l = 0; l < 32; l++) {
+				int r = rand.Next (62);
+				char c;
+				if (r < 10) {
+					c = (char)('0' +  r);
+				} else if (r < 36) {
+					r -= 10;
+					c = (char) ('a' + r);
+				} else {
+					r -= 36;
+					c = (char) ('A' + r);
+				}
+				state += c;
+			}
 			Session ["state"] = state;
 			return state;
 		}
@@ -293,7 +307,7 @@ namespace Yavsc.Controllers
 				if (model.PreferedDate < mindate)
 					model.PreferedDate = mindate;
 				if (model.MaxDate < mindate)
-					model.MaxDate = mindate.AddYears (1);
+					model.MaxDate = mindate.AddYears (1).Date;
 
 				var muc = Membership.FindUsersByName (model.UserName);
 				if (muc.Count == 0) {

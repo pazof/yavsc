@@ -29,13 +29,6 @@ namespace Yavsc.Model.Google
 	/// </summary>
 	public class AskForADate
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.Google.AskForADate"/> class.
-		/// </summary>
-		public AskForADate ()
-		{
-			 MaxDate = DateTime.Now.AddMinutes (5);
-		}
 
 		/// <summary>
 		/// Gets or sets the prefered date.
