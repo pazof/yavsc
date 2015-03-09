@@ -334,7 +334,7 @@ namespace Yavsc.Controllers
 					return View ("GoogleErrorMessage", ex);
 				}
 
-				return View (res);
+				return View ("ChooseADate",res);
 			}
 			return View (model);
 		}

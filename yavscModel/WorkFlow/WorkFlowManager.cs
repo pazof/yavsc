@@ -92,6 +92,9 @@ namespace Yavsc.Model.WorkFlow
 		{
 			ContentProvider.DropEstimate(estid);
 		}
+
+
+
 		IContentProvider contentProvider;
 		/// <summary>
 		/// Gets the content provider.
@@ -131,8 +134,6 @@ namespace Yavsc.Model.WorkFlow
 				contentProvider.Initialize (confprov.Name, config);
 
 				return contentProvider;
-
-
 			}
 		}
 

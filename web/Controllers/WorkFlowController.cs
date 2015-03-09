@@ -70,6 +70,14 @@ namespace Yavsc.ApiControllers
 		[Authorize]
 		public void DropEstimate(long estid)
 		{
+			string username = Membership.GetUser().UserName;
+			Estimate e = wfmgr.GetEstimate (estid);
+			if (e == null)
+				throw new InvalidOperationException("not an estimate id:"+estid);
+			if (username != e.Responsible
+				&& !Roles.IsUserInRole ("FrontOffice"))
+				throw new UnauthorizedAccessException ("You're not allowed to drop this estimate");
+
 			wfmgr.DropEstimate (estid);
 		}
 

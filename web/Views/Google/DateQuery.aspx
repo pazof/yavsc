@@ -46,27 +46,32 @@ return Globalize.format( new Date(value), "t" );
    </script>
 </asp:Content>
 
-  <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-
+ <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
 <% using ( Html.BeginForm("DateQuery","Google") ) { %>
 
   <p>Période de recherche:</p>
 
   <p>
+<%= Html.LabelFor(model=>model.PreferedDate) %>:<br>
+  Le  <%= Html.TextBoxFor(model=>model.PreferedDate) %>
+  <%= Html.ValidationMessageFor(model=>model.PreferedDate) %>
+  </p>
+  <p>
+<%= Html.LabelFor(model=>model.PreferedHour) %>:<br>
+  Le  <%= Html.TextBoxFor(model=>model.PreferedHour) %>
+  <%= Html.ValidationMessageFor(model=>model.PreferedHour) %>
+  </p>
+  <p>
 <%= Html.LabelFor(model=>model.MaxDate) %>:<br>
   Le  <%= Html.TextBoxFor(model=>model.MaxDate) %>
   <%= Html.ValidationMessageFor(model=>model.MaxDate) %>
- à
-  <%= Html.TextBoxFor(model=>model.MaxTime) %>
-  <%= Html.ValidationMessageFor(model=>model.MaxTime) %>
   </p>
-
   <p>
-  Durée minimale : <%= Html.TextBoxFor(model=>model.Duration) %>
-   <%= Html.ValidationMessageFor(model=>model.Duration) %>
+<%= Html.LabelFor(model=>model.MinDuration) %>:<br> 
+  <%= Html.TextBoxFor(model=>model.MinDuration) %>
+   <%= Html.ValidationMessageFor(model=>model.MinDuration) %>
   </p>
-
   <p>
   <%= Html.LabelFor(model=>model.UserName) %>:<br>
   <%= Html.TextBoxFor(model=>model.UserName) %><br>

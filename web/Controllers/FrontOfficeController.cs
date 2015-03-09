@@ -8,7 +8,6 @@ using Yavsc.Controllers;
 using System.Collections.Generic;
 using Yavsc.Model;
 using Yavsc.Model.WorkFlow;
-using Yavsc;
 using System.Web.Security;
 using System.Threading;
 using Yavsc.Model.FrontOffice;
@@ -65,7 +64,7 @@ namespace Yavsc.Controllers
 		public ActionResult Estimate (Estimate model, string submit)
 		{
 			// Obsolete, set in master page
- 			ViewData ["WebApiBase"] = "http://" + Request.Url.Authority + "/api";
+			ViewData ["WebApiBase"] = Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative);
 			ViewData ["WABASEWF"] = ViewData ["WebApiBase"] + "/WorkFlow";
 			if (submit == null) {
 				if (model.Id > 0) {
@@ -83,16 +82,17 @@ namespace Yavsc.Controllers
 						throw new UnauthorizedAccessException ("You're not allowed to view this estimate");
 				} 
 			} else {
-				string username = HttpContext.User.Identity.Name;
+				string username = Membership.GetUser().UserName;
+				if (username != model.Responsible
+				&& !Roles.IsUserInRole ("FrontOffice"))
+					throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
 				if (model.Id == 0) {
 					model.Responsible = username;
-					ModelState.Clear ();
+					ModelState.Clear (); 
+					// TODO better, or ensure that the model state is checked
+					// before insertion
 				}
 				if (ModelState.IsValid) {
-					if (username != model.Responsible
-					    && !Roles.IsUserInRole ("FrontOffice"))
-						throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
-
 					if (model.Id == 0)
 						model = wfmgr.CreateEstimate (
 							username,

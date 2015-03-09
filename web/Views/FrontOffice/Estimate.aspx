@@ -1,7 +1,12 @@
 ﻿<%@ Page Title="Devis" Language="C#" Inherits="System.Web.Mvc.ViewPage<Estimate>" MasterPageFile="~/Models/App.master" %>
 
 <asp:Content ContentPlaceHolderID="head" ID="head1" runat="server" >
-<script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery.tablesorter.js")%>"></script> 
+<script type="text/javascript" src="<%=Url.Content("~/Scripts/stupidtable.js")%>"></script> 
+<script>
+$(function(){
+$("#tbwrts").stupidtable();
+});
+</script>
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery.validate.js")%>"></script> 
 <link rel="stylesheet" href="<%=Url.Content("~/Theme/dark/style.css")%>" type="text/css" media="print, projection, screen" />
 </asp:Content>
@@ -29,13 +34,14 @@
 
 
    <% if (Model.Id>0) { %>
-<table class="tablesorter">
+<table  id="tbwrts">
 <thead>
 <tr>
-<th><%=Yavsc.Model.LocalizedText.Description%></th>
-<th><%=Yavsc.Model.LocalizedText.Product_reference%></th>
-<th><%=Yavsc.Model.LocalizedText.Count%></th>
-<th><%=Yavsc.Model.LocalizedText.Unitary_cost%></th>
+<th data-sort="string"><%=Yavsc.Model.LocalizedText.Description%></th>
+<th data-sort="string"><%=Yavsc.Model.LocalizedText.Product_reference%></th>
+<th data-sort="int"><%=Yavsc.Model.LocalizedText.Count%></th>
+<th data-sort="float"><%=Yavsc.Model.LocalizedText.Unitary_cost%></th>
+  
 </tr>
 </thead>
 <tbody id="wrts">
@@ -47,6 +53,9 @@
 <td><%=wr.ProductReference%></td>
 <td><%=wr.Count%></td>
 <td><%=wr.UnitaryCost%></td>
+   <td>
+        <input type="button" value="X" class="actionlink rowbtnrm"/>
+    </td>
 </tr>
 <%    } %>
 </tbody>
@@ -54,15 +63,12 @@
 <%  } %>
 <% } %>
 
+
+
+
     <aside>
-    <a class="actionlink" href="<%=ViewData["WebApiBase"]%>/FrontOffice/EstimateToTex?estimid=<%=Model.Id%>"><%= LocalizedText.Tex_version %></a>
-    <a class="actionlink" href="<%=ViewData["WebApiBase"]%>/FrontOffice/EstimateToPdf?estimid=<%=Model.Id%>"><%= LocalizedText.Pdf_version %></a>
-    </aside>
-</asp:Content>
-   <asp:Content ContentPlaceHolderID="MASContent" ID="MASContent1" runat="server">
 
-
-   <% ViewData["EstimateId"]=Model.Id; %>
+     <% ViewData["EstimateId"]=Model.Id; %>
    <%= Html.Partial("Writting",new Writting(),new ViewDataDictionary(ViewData)
         {
             TemplateInfo = new System.Web.Mvc.TemplateInfo
@@ -77,11 +83,11 @@
         <input type="button" id="btnnew" value="Nouvelle écriture" class="actionlink"/>
         <input type="button" id="btncreate" value="Ecrire" class="actionlink"/>
         <input type="button" id="btnmodify" value="Modifier" class="hidden actionlink"/>
-        <input type="button" id="btndrop" value="Supprimer" class="hidden actionlink"/>
       </div>  </form>
      <tt id="msg" class="hidden message"></tt>
 
      <style>
+     th { cursor:pointer; }
      .row { cursor:pointer; }
      table.tablesorter td:hover { background-color: rgba(0,64,0,0.5); }
      .hidden { display:none; }
@@ -126,21 +132,23 @@
     	}
      } 
 
-     function delRow() {
+     function delRow(e) {
+     e.stopPropagation(); // do not edit this row on this click
+   // from <row id= ...><tr><td><input type="button" > 
+    	var hid=e.delegateTarget.parentNode.parentNode.id;
+    	var vwrid = Number(hid.substr(2));
+    		
        $.ajax({
             url: "<%=Url.Content("~/api/WorkFlow/DropWritting")%>",
             type: "Get",
-            data: { wrid: wr_Id.value }, 
+            data: { wrid: vwrid }, 
             contentType: 'application/json; charset=utf-8',
             success: function () { 
-		       $("#wr"+wr_Id.value).remove();
-		       $("#wr_Id").val(0);
-		    	$("#wr_UnitaryCost").val(0);
-		    	$("#wr_Count").val(0);
-		    	$("#wr_Description").val();
-		    	$("#wr_ProductReference").val();
-			   wredit(0);
-				message(false);
+		      $("#wr"+vwrid).remove(); // removes clicked row
+			   wredit(0); // set current form target id to none
+				message(false); // hides current message
+	//		$("#tbwrts").update();// rebuilds the cache for the tablesorter js
+	//		$("#tbwrts").tablesorter( {sortList: [[0,0], [1,0]]} ); // .update();
             },
             error: function (xhr, ajaxOptions, thrownError) {
         message(xhr.status+" : "+xhr.responseText);}
@@ -169,7 +177,7 @@
 
 
 function addRow(){
-       var wrt = GetWritting();
+       var wrt = GetWritting(); // gets a writting object from input controls
 		var estid = parseInt($("#Id").val());
         
             $("#Err_wr_Description").text("");
@@ -193,8 +201,12 @@ function addRow(){
             $("<td>"+wrt.ProductReference+"</td>").appendTo("#"+wridval);
             $("<td>"+wrt.Count+"</td>").appendTo("#"+wridval);
             $("<td>"+wrt.UnitaryCost+"</td>").appendTo("#"+wridval);
+            var btrm = $("<input type=\"button\" value=\"X\" class=\"actionlink rowbtnrm\"/>");
+	        $("<td></td>").append(btrm).appendTo("#"+wridval); 
+            btrm.click(function (e) {delRow(e);});
             $("#"+wridval).click(function(ev){onEditRow(ev);});
-     $(".tablesorter").tablesorter( {sortList: [[0,0], [1,0]]} );
+		//	$("#tbwrts").tablesorter( {sortList: [[0,0], [1,0]]} ); // .update();
+
             message(false);
            
             },
@@ -225,15 +237,11 @@ function addRow(){
     }
   
  $(document).ready(function () {
-     // bug when no row: 
-     <% if (Model.Lines != null) if (Model.Lines.Length>0) { %>
-     $(".tablesorter").tablesorter( {sortList: [[0,0], [1,0]]} );
-     <% } %> 
-        
     $("#btncreate").click(addRow);
     $("#btnmodify").click(setRow);
-    $("#btndrop").click(delRow);
     $(".row").click(function (e) {onEditRow(e);});
+    $(".rowbtnrm").click(function (e) {delRow(e);});
+
 	$("#btnnew").click(function () {
 		wredit(0);
 		$("#wr_Description").val("");
@@ -243,7 +251,12 @@ function addRow(){
 	});
 });
     </script>
-  
+
+    <a class="actionlink" href="<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>/FrontOffice/EstimateToTex?estimid=<%=Model.Id%>"><%= LocalizedText.Tex_version %></a>
+    <a class="actionlink" href="<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>/FrontOffice/EstimateToPdf?estimid=<%=Model.Id%>"><%= LocalizedText.Pdf_version %></a>
+    </aside>
+
+
    
 </asp:Content>
 

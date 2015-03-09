@@ -268,8 +268,6 @@
     <Content Include="Views\Google\Login.aspx" />
     <Content Include="Views\Google\Auth.aspx" />
     <Content Include="Scripts\jquery.metadata.js" />
-    <Content Include="Scripts\jquery.tablesorter.js" />
-    <Content Include="Scripts\jquery.tablesorter.min.js" />
     <Content Include="Scripts\rangyinputs-jquery-1.1.2.js" />
     <Content Include="images\sign-in-with-google.png" />
     <Content Include="Views\Account\Unregister.aspx" />
@@ -675,6 +673,8 @@
     <Content Include="Views\Account\MyProfile.aspx" />
     <Content Include="Views\FrontOffice\Basket.aspx" />
     <Content Include="Theme\dark\rect.png" />
+    <Content Include="Views\Google\ChooseADate.aspx" />
+    <Content Include="Scripts\stupidtable.js" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

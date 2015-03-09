@@ -139,6 +139,7 @@
     <Compile Include="FrontOffice\Catalog\Billing\Price.cs" />
     <Compile Include="OtherWebException.cs" />
     <Compile Include="WorkFlow\Automate.cs" />
+    <Compile Include="Google\FreeDate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
