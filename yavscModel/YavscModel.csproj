@@ -132,7 +132,6 @@
     <Compile Include="FileSystem\DirNotFoundException.cs" />
     <Compile Include="FileSystem\InvalidDirNameException.cs" />
     <Compile Include="FileSystem\WebFileInfo.cs" />
-    <Compile Include="Google\CalendarEntryList.cs" />
     <Compile Include="FrontOffice\CommandStatus.cs" />
     <Compile Include="FrontOffice\CommandSet.cs" />
     <Compile Include="FrontOffice\Catalog\Billing\SetPrice.cs" />
@@ -140,6 +139,9 @@
     <Compile Include="OtherWebException.cs" />
     <Compile Include="WorkFlow\Automate.cs" />
     <Compile Include="Google\FreeDate.cs" />
+    <Compile Include="Google\CalendarEventList.cs" />
+    <Compile Include="Google\GDate.cs" />
+    <Compile Include="Google\Resource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

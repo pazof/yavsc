@@ -1,5 +1,5 @@
-//
-//  CalendarEntry.cs
+﻿//
+//  CalendarEventList.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -22,12 +22,15 @@ using System;
 
 namespace Yavsc.Model.Google
 {
-	/// <summary>
-	/// Calendar entry list.
-	/// </summary>
-	public class CalendarEntryList
+
+
+	public class CalendarEventList
 	{
 
+		public string nextPageToken;
+		public string nextSyncToken;
+
+		public Resource [] items ;
 	}
 }
 

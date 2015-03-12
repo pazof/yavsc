@@ -1,10 +1,10 @@
-﻿<%@ Page Title="Admin" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage" %>
-<asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
+﻿<%@ Page Title="Administration" Language="C#" Inherits="System.Web.Mvc.ViewPage" MasterPageFile="~/Models/App.master" %>
+<asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
+
 <div class="panel">
 
-<ul><li>
-<%= Html.ActionLink("Backups","Backups") %>
-</li>
+<ul>
+	<li><%= Html.ActionLink("Backups","Backups") %></li>
 <li><%= Html.ActionLink("Restaurations", "Restore") %></li>
 <li><%= Html.ActionLink("Create backup","CreateBackup") %></li>
 <li><%= Html.ActionLink("Remove user", "RemoveUser") %></li>

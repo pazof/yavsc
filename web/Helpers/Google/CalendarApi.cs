@@ -87,7 +87,7 @@ namespace Yavsc.Helpers.Google
 		/// <param name="mindate">Mindate.</param>
 		/// <param name="maxdate">Maxdate.</param>
 		/// <param name="upr">Upr.</param>
-		public CalendarEntryList GetCalendar  (string calid, DateTime mindate, DateTime maxdate, ProfileBase upr)
+		public CalendarEventList GetCalendar  (string calid, DateTime mindate, DateTime maxdate, ProfileBase upr)
 		{
 			string uri = string.Format (
 				getCalEntriesUri, HttpUtility.UrlEncode (calid)) +
@@ -100,16 +100,16 @@ namespace Yavsc.Helpers.Google
 			webreq.Headers.Add (HttpRequestHeader.Authorization, cred);
 			webreq.Method = "GET";
 			webreq.ContentType = "application/http";
-			CalendarEntryList res = null;
+			CalendarEventList res = null;
 			try {
 				using (WebResponse resp = webreq.GetResponse ()) {
 					using (Stream respstream = resp.GetResponseStream ()) {
 						try {
-							res = (CalendarEntryList) new DataContractJsonSerializer(typeof(CalendarEntryList)).ReadObject (respstream);
+							res = (CalendarEventList) new DataContractJsonSerializer(typeof(CalendarEventList)).ReadObject (respstream);
 						} catch (Exception ex) {
 							respstream.Close ();
 							resp.Close ();
-								webreq.Abort ();
+							webreq.Abort ();
 							throw ex;
 						}
 					}
@@ -120,8 +120,8 @@ namespace Yavsc.Helpers.Google
 				throw new OtherWebException (ex);
 			}
 			webreq.Abort ();
-				return res;
+			return res;
 		}
+
 	}
-	
 }

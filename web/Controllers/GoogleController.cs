@@ -325,7 +325,7 @@ namespace Yavsc.Controllers
 				DateTime maxdate = model.MaxDate;
 
 				CalendarApi c = new CalendarApi ();
-				CalendarEntryList res;
+				CalendarEventList res;
 				try {
 					res = c.GetCalendar (calid, mindate, maxdate, upr);
 				} catch (OtherWebException ex) {

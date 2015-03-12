@@ -3,14 +3,25 @@ VERSION=1.1
 CONFIG=Debug
 DESTDIR=build/web/$(CONFIG)
 COPYUNCHANGED="false"
-LOCALHOSTDIR=localhost:/srv/www/lua
-TESTHOSTDIR=localhost:/srv/www/yavsc
-PREPRODHOSTDIR=lua.localdomain:/srv/www/yavsc
-PRODHOSTDIR=lua.localdomain:/srv/www/lua
+
+HOST_rsync_local=localhost
+DESTDIR_rsync_local=/srv/www/yavsc
+
+HOST_rsync_test=localhost
+DESTDIR_rsync_test=/srv/www/lua
+
+HOST_rsync_preprod=lua.localdomain
+DESTDIR_rsync_preprod=/srv/www/yavsc
+
+HOST_rsync_prod=lua.localdomain
+DESTDIR_rsync_prod=/srv/www/lua
+
 DOCASSBS=NpgsqlBlogProvider.dll WorkFlowProvider.dll Yavsc.WebControls.dll ITContentProvider.dll NpgsqlMRPProviders.dll Yavsc.dll SalesCatalog.dll YavscModel.dll
 
+RSYNCCMD=rsync -ravu --chown=www-data:www-data
+
 all: deploy
-	
+
 ddir:
 	mkdir -p $(DESTDIR)
 
@@ -18,9 +29,18 @@ deploy: ddir build
 	rm -rf $(DESTDIR)
 	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir=../$(DESTDIR) /t:Deploy web/Web.csproj
 	mv $(DESTDIR)/Web.config $(DESTDIR)/Web.config.new
-	 
 
-rsync: rsync-preprod
+
+rsync_% : HOST = $(HOST_$@)
+
+rsync_% : DESTDIR = $(DESTDIR_$@)
+
+rsync_% : 
+	echo "!Deploying to $(HOST)!"
+	$(RSYNCCMD) build/web/$(CONFIG)/ root@$(HOST):$(DESTDIR)
+	ssh root@$(HOST) apachectl restart
+
+rsync: rsync_test
 
 build: 
 	xbuild /p:Configuration=$(CONFIG) /t:Build Yavsc.sln
@@ -29,19 +49,8 @@ clean:
 	xbuild /t:Clean
 	rm -rf $(DESTDIR)
 
-rsync-local: deploy
-	rsync -ravu build/web/$(CONFIG)/ root@$(LOCALHOSTDIR)
 
-rsync-test: deploy
-	rsync -ravu build/web/$(CONFIG)/ root@$(TESTHOSTDIR)
-
-rsync-preprod: deploy
-	rsync -ravu build/web/$(CONFIG)/ root@$(PREPRODHOSTDIR)
-
-rsync-prod: deploy
-	rsync -ravu build/web/$(CONFIG)/ root@$(PRODHOSTDIR)
-
-rsync-all: rsync-local rsync-test rsync-preprod rsync-prod
+rsync-all: rsync_local rsync_test rsync_preprod rsync_prod
 
 sourcepkg:
 	git archive --format=tar --prefix=yavsc-$(CONFIG)/ $(CONFIG) | bzip2 > yavsc-$(CONFIG).tar.bz2
@@ -58,4 +67,5 @@ htmldoc: xmldoc
 docdeploy-prod: htmldoc
 	rsync -ravu web/htmldoc root@$(PRODHOSTDIR)
 
+.PHONY: rsync-local
 

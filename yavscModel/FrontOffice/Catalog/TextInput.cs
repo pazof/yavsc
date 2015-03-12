@@ -81,12 +81,11 @@ namespace Yavsc.Model.FrontOffice
 		public bool MultiLine { get { return multiline; } set { multiline = value; } }
 
 		/// <summary>
-		/// Tos the html.
+		/// html representation of this input.
 		/// </summary>
 		/// <returns>The html.</returns>
 		public override string ToHtml ()
 		{
-
 			return MultiLine?
 				string.Format ("<textarea id=\"{0}\" name=\"{1}\">{2}</textarea>", Id,Name,DefaultValue)
 				: string.Format ("<input type=\"text\" id=\"{0}\" name=\"{1}\" value=\"{2}\"/>", Id,Name,DefaultValue);
