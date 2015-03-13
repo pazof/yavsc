@@ -43,35 +43,15 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
-		/// <summary>
-		/// Login the specified returnUrl.
-		/// </summary>
-		/// <param name="returnUrl">Return URL.</param>
-		public ActionResult Login (string returnUrl)
-		{
-			ViewData ["returnUrl"] = returnUrl;
-			return View ();
-		}
-
-		/// <summary>
-		/// Gets the profile.
-		/// </summary>
-		/// <returns>The profile.</returns>
-		/// <param name="user">User.</param>
-		public static Profile GetProfile (string user)
-		{
-			return new Profile (ProfileBase.Create (user));
-		}
-
 
 		// TODO [ValidateAntiForgeryToken]
 		/// <summary>
-		/// Dos the login.
+		/// Does login.
 		/// </summary>
 		/// <returns>The login.</returns>
 		/// <param name="model">Model.</param>
 		/// <param name="returnUrl">Return URL.</param>
-		public ActionResult DoLogin (LoginModel model, string returnUrl)
+		public ActionResult Login (LoginModel model, string returnUrl)
 		{
 			if (ModelState.IsValid) {
 				if (Membership.ValidateUser (model.UserName, model.Password)) {
@@ -88,7 +68,7 @@ namespace Yavsc.Controllers
 			ViewData ["returnUrl"] = returnUrl;
 
 			// If we got this far, something failed, redisplay form
-			return View ("Login", model);
+			return View (model);
 		}
 		/// <summary>
 		/// Register the specified model and returnUrl.
@@ -255,11 +235,11 @@ namespace Yavsc.Controllers
 		/// <param name="model">Model.</param>
 		[Authorize]
 		[HttpGet]
-		public ActionResult MyProfile (Profile model)
+		public ActionResult Profile (Profile model)
 		{
 			string username = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = username;
-			model = GetProfile (username);
+			model = new Profile (ProfileBase.Create (username));
 			model.RememberMe = FormsAuthentication.GetAuthCookie (username, true) == null;
 			return View (model);
 		}
@@ -272,7 +252,7 @@ namespace Yavsc.Controllers
 		[Authorize]
 		[HttpPost]
 		// ASSERT("Membership.GetUser ().UserName is made of simple characters, no slash nor backslash"
-		public ActionResult MyProfile (Profile model, HttpPostedFileBase AvatarFile)
+		public ActionResult Profile (Profile model, HttpPostedFileBase AvatarFile)
 		{
 			string username = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = username;

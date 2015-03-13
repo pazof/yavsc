@@ -2,8 +2,11 @@
 
 
 <asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
-
+<link rel='stylesheet' href='/Scripts/fullcalendar/fullcalendar.css' />
  <script type="text/javascript" src="/Scripts/jquery-2.1.3.min.js"></script>
+<script src='/Scripts/fullcalendar/lib/moment.min.js'></script>
+<script src='/Scripts/fullcalendar/fullcalendar.js'></script>
+
   <script type="text/javascript" src="/Scripts/jquery.mousewheel.js"></script>
   <script type="text/javascript" src="/Scripts/jquery-ui.js"></script>
   <script type="text/javascript" src="/Scripts/jquery.timepicker.js"></script>

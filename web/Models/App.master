@@ -48,12 +48,11 @@
    </main>
 
 
-
    <aside>
    <asp:ContentPlaceHolder ID="MASContent" runat="server">
    </asp:ContentPlaceHolder>
 
-   <div id="login">
+   <div id="login" >
 <% if (Membership.GetUser()==null) { %>
 	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" } ) %> 
 	 <span class="hidcom"> Page d'accueil </span>
@@ -64,7 +63,7 @@
 	</a>
 	<span class="hidcom">S'authentifier avec son compte Google+</span>
 <% } else { %>
-	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "MyProfile", "Account", null, new { @class="actionlink" }) %>
+	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Profile", "Account", null, new { @class="actionlink" }) %>
 	<span class="hidcom"> &Eacute;dition de votre profile </span> 
 	@ <%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" }) %>
 	<span class="hidcom"> Page d'accueil </span> 
@@ -72,9 +71,12 @@
 	<span class="hidcom"> &Eacute;dition d'un nouveau billet </span> 
 	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" }) %>
 <% } %>
-	</div>
-	</aside>
-   <footer>
+
+</div>  
+	</aside> 
+
+ <div style="float:right; height:5em; z-index:-1;"></div>
+	<footer>
    <%= Html.ActionLink("Contact","Contact","Home",null, new { @class="footerlink" }) %>    <br/>
    <% foreach ( string link in Yavsc.ThanksHelper.Links()) { %>
      <%= link %>

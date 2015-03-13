@@ -135,6 +135,7 @@
     <Folder Include="users\" />
     <Folder Include="xmldoc\" />
     <Folder Include="Views\PayPal\" />
+    <Folder Include="ApiControllers\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -154,12 +155,8 @@
     <Compile Include="Admin\TaskOutput.cs" />
     <Compile Include="Controllers\FileSystemController.cs" />
     <Compile Include="CatExts\WebCatalogExtensions.cs" />
-    <Compile Include="Controllers\WorkFlowController.cs" />
-    <Compile Include="Controllers\FrontOfficeApiController.cs" />
     <Compile Include="Helpers\YavscHelpers.cs" />
-    <Compile Include="Controllers\BasketController.cs" />
     <Compile Include="FileInfoCollection.cs" />
-    <Compile Include="Controllers\BlogsApiController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Helpers\T.cs" />
     <Compile Include="templates\Estim.cs">
@@ -169,7 +166,6 @@
     <Compile Include="Formatters\EstimToPdfFormatter.cs" />
     <Compile Include="Formatters\SimpleFormatter.cs" />
     <Compile Include="ValidateAjaxAttribute.cs" />
-    <Compile Include="Controllers\IValueProvider.cs" />
     <Compile Include="Controllers\GoogleController.cs" />
     <Compile Include="Controllers\ModuleController.cs" />
     <Compile Include="Settings\ThanksConfigurationSection.cs" />
@@ -185,13 +181,18 @@
     <Compile Include="Helpers\Google\OAuth2.cs" />
     <Compile Include="Helpers\Google\EntityQuery.cs" />
     <Compile Include="Helpers\Google\ApiClient.cs" />
-    <Compile Include="Controllers\TemplateException.cs" />
     <Compile Include="Helpers\Google\CalendarApi.cs" />
     <Compile Include="Formatters\ErrorHtmlFormatter.cs" />
     <Compile Include="Formatters\RssFeedsFormatter.cs" />
-    <Compile Include="Controllers\PaypalApiController.cs" />
     <Compile Include="Formatters\TexToPdfFormatter.cs" />
-    <Compile Include="Controllers\WebApiConfig.cs" />
+    <Compile Include="ApiControllers\BasketController.cs" />
+    <Compile Include="ApiControllers\BlogsApiController.cs" />
+    <Compile Include="ApiControllers\FrontOfficeApiController.cs" />
+    <Compile Include="ApiControllers\PaypalApiController.cs" />
+    <Compile Include="WebApiConfig.cs" />
+    <Compile Include="ApiControllers\WorkFlowController.cs" />
+    <Compile Include="TemplateException.cs" />
+    <Compile Include="IValueProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -670,11 +671,12 @@
     <Content Include="Scripts\img\map-load.gif" />
     <Content Include="Scripts\jquery.googlemaps.js" />
     <Content Include="Scripts\jquery.googlemaps.min.js" />
-    <Content Include="Views\Account\MyProfile.aspx" />
     <Content Include="Views\FrontOffice\Basket.aspx" />
     <Content Include="Theme\dark\rect.png" />
     <Content Include="Views\Google\ChooseADate.aspx" />
     <Content Include="Scripts\stupidtable.js" />
+    <Content Include="Scripts\jquery-ui.js" />
+    <Content Include="Views\Account\Profile.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

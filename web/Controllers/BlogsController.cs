@@ -121,7 +121,7 @@ namespace Yavsc.Controllers
 			// find entries
 			BlogEntryCollection c = BlogManager.FindPost (user, sf, pageIndex, pageSize, out tr);
 			// Get author's meta data
-			Profile bupr =  AccountController.GetProfile (user);
+			Profile bupr = new Profile (ProfileBase.Create (user));
 			ViewData ["BlogUserProfile"] = bupr;
 			// Inform of listing meta data
 			ViewData ["BlogTitle"] = bupr.BlogTitle;
@@ -155,7 +155,7 @@ namespace Yavsc.Controllers
 		{
 			if (e == null)
 				return View ("TitleNotFound");
-			Profile pr = AccountController.GetProfile (e.UserName);
+			Profile pr = new Profile (ProfileBase.Create (e.UserName));
 			if (pr==null)
 				return View ("TitleNotFound");
 			ViewData ["BlogUserProfile"] = pr;

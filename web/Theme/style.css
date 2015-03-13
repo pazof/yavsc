@@ -5,7 +5,6 @@ body {
 	background-repeat: no-repeat;
 	color: #D0FFD0;
 	font-family: 'Arial', cursive;
-    padding-bottom:2.5em;
 }
 
 textarea { 
@@ -20,9 +19,10 @@ input, textarea, checkbox {
 main {
 	background-color: rgba(17,0,23,0.65);
 	float:left;
-	margin-bottom:3em;
 }
-
+	footer:after {
+		content: '';
+	}
 .panel,.bshpanel,aside {
 	background-color: rgba(32,16,16,0.8);
 		border-radius:5px; border: solid 1px #000060;
@@ -31,35 +31,42 @@ main {
 
 .bsh { float: right; }
 
-
 video,img {
 	max-width:100%;
 	max-height:75%;
     position:relative;
 	}
 
-
-
 footer {
 	position:fixed;
 	bottom:0;
 	left:0;
 	right:0;
-	background-color:rgba(0,16,0,0.8);
+	height:3em;
+	background-color:rgba(16,0,0,0.8);
 	display: flex;
 	justify-content: space-around;
 	z-index:-1;
 }
 
 #login {
-	position:fixed;
-	width:7em;
 	top:0;
 	right:0;
-	background-color:rgba(0,16,0,0.8);
+	background-color:rgba(16,16,0,0.8);
 	justify-content: space-around;
-	padding:1em;
+	text-align: center;
 	}
+
+
+header {
+	background-color:rgba(16,16,0,0.8);
+	top:0;
+	left:0;
+	right:0;
+	text-align: center;
+	text-transform: capitalize;
+	}
+	 h1 img { 	vertical-align: text-top; }
 
 footer img { max-height: 2em; }
 
@@ -121,8 +128,7 @@ padding-left: 20px;
 	color: #B0B080;
 	border-radius:5px;
    background-color:rgba(0,0,32,0.8);
-   font-size:x-small;
-   z-index:1;
+   font-size:large;
    cursor: pointer;
    font-family: 'Arial', cursive;
 }
@@ -206,19 +212,19 @@ padding-left: 20px;
   display: none;
 	}
   footer img {
-    max-height: 1em;
+    max-height: 1.2em;
     }
   footer {
     font-size: small;
+    height: 1.5em;
   }
 
-  body { margin-bottom:1em; font-size: smaller; }
-
+  body { font-size: smaller; }
 	}
 
 	@media all and (max-width: 350px) {
 	  footer img { max-height: 0.8em; }
-	  footer { font-size: x-small; }
+	  footer { font-size: x-small; height: 1em; }
 	}
 
 }

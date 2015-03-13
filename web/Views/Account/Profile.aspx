@@ -11,16 +11,45 @@ table.layout { border-width: 0;  }
 table.layout TR TD { max-width:40%; }
    </style>
    <%= Html.ValidationSummary() %>
-<% using(Html.BeginForm("MyProfile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
+<% using(Html.BeginForm("Profile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
 <% { %>
-   <fieldset><legend>Informations générales</legend>
+   <fieldset><legend>Informations publiques</legend>
 
 <table class="layout">
 <tr><td align="right" style="">
 <%= Html.LabelFor(model => model.Name) %></td><td>
 <%= Html.TextBox("Name") %>
 <%= Html.ValidationMessage("Name", "*") %></td></tr>
+
 <tr><td align="right">
+<%= Html.LabelFor(model => model.WebSite) %></td><td>
+<%= Html.TextBox("WebSite") %>
+<%= Html.ValidationMessage("WebSite", "*") %></td></tr>
+
+<tr><td align="right">
+Avatar </td><td> <img class="avatar" src="<%=Model.avatar%>" alt=""/>
+<input type="file" id="AvatarFile" name="AvatarFile"/>
+<%= Html.ValidationMessage("AvatarFile", "*") %></td></tr>
+
+</table>
+     </fieldset>
+
+    <fieldset><legend>Blog</legend>
+    <table class="layout">
+    <tr><td align="right">
+<%= Html.LabelFor(model => model.BlogVisible) %></td><td>
+<%= Html.CheckBox("BlogVisible") %>
+<%= Html.ValidationMessage("BlogVisible", "*") %></td></tr>
+<tr><td align="right">
+<%= Html.LabelFor(model => model.BlogTitle) %></td><td>
+<%= Html.TextBox("BlogTitle") %>
+<%= Html.ValidationMessage("BlogTitle", "*") %></td></tr>
+      </table>
+   </fieldset>
+
+    <fieldset><legend>Contact</legend>
+    <table class="layout">
+    <tr><td align="right">
 <%= Html.LabelFor(model => model.Phone) %></td><td>
 <%= Html.TextBox("Phone") %>
 <%= Html.ValidationMessage("Phone", "*") %></td></tr>
@@ -44,30 +73,23 @@ table.layout TR TD { max-width:40%; }
 <%= Html.LabelFor(model => model.Country) %></td><td>
 <%= Html.TextBox("Country") %>
 <%= Html.ValidationMessage("Country", "*") %></td></tr>
-<tr><td align="right">
-<%= Html.LabelFor(model => model.WebSite) %></td><td>
-<%= Html.TextBox("WebSite") %>
-<%= Html.ValidationMessage("WebSite", "*") %></td></tr>
-<tr><td align="right">
-<%= Html.LabelFor(model => model.BlogVisible) %></td><td>
-<%= Html.CheckBox("BlogVisible") %>
-<%= Html.ValidationMessage("BlogVisible", "*") %></td></tr>
-<tr><td align="right">
-<%= Html.LabelFor(model => model.BlogTitle) %></td><td>
-<%= Html.TextBox("BlogTitle") %>
-<%= Html.ValidationMessage("BlogTitle", "*") %></td></tr>
-<tr><td align="right">
-Avatar </td><td> <img class="avatar" src="<%=Model.avatar%>" alt=""/>
-<input type="file" id="AvatarFile" name="AvatarFile"/>
-<%= Html.ValidationMessage("AvatarFile", "*") %></td></tr>
-<tr><td align="right">
+    </table>
+      </fieldset>
+
+    <fieldset><legend>Disponibilité</legend>
+ 
+<table class="layout">
+ <tr><td align="right">
    <%= Html.LabelFor(model => model.GoogleCalendar) %>:
    </td>
    <td> <%= Html.Encode(Model.GoogleCalendar) %>
    <%= Html.ActionLink("Choisir l'agenda","ChooseCalendar","Google",new { returnUrl= Request.Url.AbsolutePath }, new { @class="actionlink" }) %>
    </td>
    </tr>
-</table>
+
+ </table>
+
+
    </fieldset>
 
     <fieldset><legend>Informations de facturation</legend>

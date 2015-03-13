@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Login" Language="C#" Inherits="System.Web.Mvc.ViewPage<LoginModel>" MasterPageFile="~/Models/App.master" %>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <%= Html.ValidationSummary("Ouverture de session") %>
-<% using(Html.BeginForm("DoLogin", "Account")) %>
+<% using(Html.BeginForm("Login", "Account")) %>
 <% { %>
 <%= Html.LabelFor(model => model.UserName) %>
 <%= Html.TextBox( "UserName" ) %>

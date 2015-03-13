@@ -41,13 +41,18 @@ namespace Yavsc.Model.Google
 		/// Gets or sets the attendees.
 		/// </summary>
 		/// <value>The attendees.</value>
-		public string Attendees { get; set; }
+		public string UserName { get; set; }
 		/// <summary>
 		/// Gets or sets the location.
 		/// </summary>
 		/// <value>The location.</value>
 		public string Location { get; set; }
 
+		static FreeDateSet CreateFromCalAndQuery(CalendarEventList cal, AskForADate query)
+		{
+
+			throw new NotImplementedException ();
+		}
 	}
 }
 
