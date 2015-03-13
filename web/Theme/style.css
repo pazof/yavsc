@@ -23,6 +23,10 @@ main {
 	footer:after {
 		content: '';
 	}
+	fieldset {
+	background-color: rgba(32,16,16,0.8);
+		border-radius:5px; border: solid 1px #000060;
+		} 
 .panel,.bshpanel,aside {
 	background-color: rgba(32,16,16,0.8);
 		border-radius:5px; border: solid 1px #000060;
@@ -42,7 +46,7 @@ footer {
 	bottom:0;
 	left:0;
 	right:0;
-	height:3em;
+	height:2.5em;
 	background-color:rgba(16,0,0,0.8);
 	display: flex;
 	justify-content: space-around;
