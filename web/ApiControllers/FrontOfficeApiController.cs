@@ -22,6 +22,7 @@ using System.Web.Profile;
 using System.Collections.Specialized;
 using Yavsc.Model;
 using Yavsc.Model.FrontOffice;
+using Yavsc.Helpers;
 
 namespace Yavsc.ApiControllers
 {
@@ -156,7 +157,7 @@ namespace Yavsc.ApiControllers
 				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
 					new ObjectContent (typeof(string),
 						ex.Message, new ErrorHtmlFormatter (HttpStatusCode.NotAcceptable,
-						LocalizedText.DocTemplateException
+						LocalizedText.DocTemplateException 
 					))
 				};
 			} catch (Exception ex) {
@@ -178,6 +179,43 @@ namespace Yavsc.ApiControllers
 					texest,
 					new TexToPdfFormatter ())
 			};
+		}
+		
+		/// <summary>
+		/// Register the specified model.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		/// <param name="isApprouved">if false, sends a registration validation e-mail.</param>
+		[Authorize(Roles="Admin")]
+		[ValidateAjaxAttribute]
+		public void Register ([FromBody] RegisterModel model, bool isApprouved=true)
+		{
+			MembershipCreateStatus mcs;
+			var user = Membership.CreateUser (
+				model.UserName,
+				model.Password,
+				model.Email,
+				null,
+				null,
+				isApprouved,
+				out mcs);
+			switch (mcs) {
+			case MembershipCreateStatus.DuplicateEmail:
+				ModelState.AddModelError ("Email", "Cette adresse e-mail correspond " +
+					"à un compte utilisateur existant");
+				return ;
+			case MembershipCreateStatus.DuplicateUserName:
+				ModelState.AddModelError ("UserName", "Ce nom d'utilisateur est " +
+					"déjà enregistré");
+				return ;
+			case MembershipCreateStatus.Success:
+				if (!isApprouved)
+					Yavsc.Helpers.YavscHelpers.SendActivationEmail (user);
+				return ;
+
+			default:
+				throw new Exception ( string.Format( "Unexpected membership creation status : {0}", mcs.ToString() ) );
+			}
 		}
 	}
 }

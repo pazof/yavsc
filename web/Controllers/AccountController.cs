@@ -20,9 +20,7 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class AccountController : Controller
 	{
-		private static string registrationMessage =
-			WebConfigurationManager.AppSettings ["RegistrationMessage"];
-
+	
 		string avatarDir = "~/avatars";
 
 		/// <summary>
@@ -108,40 +106,10 @@ namespace Yavsc.Controllers
 					"déjà enregistré");
 					return View (model);
 				case MembershipCreateStatus.Success:
-					FileInfo fi = new FileInfo (
-						              Server.MapPath (registrationMessage));
-					if (!fi.Exists) {
-						ViewData ["Error"] = 
-							string.Format (
-							"Erreur inattendue (pas de corps de message " +
-							"à envoyer pour le message de confirmation ({0}))",
-							registrationMessage);
-						return View (model);
-					}
-
-					using (StreamReader sr = fi.OpenText ()) {
-						string body = sr.ReadToEnd ();
-						body = body.Replace ("<%SiteName%>", YavscHelpers.SiteName);
-						body = body.Replace ("<%UserName%>", user.UserName);
-						body = body.Replace ("<%UserActivatonUrl%>",
-							string.Format ("<{0}://{1}/Account/Validate/{2}?key={3}>",
-								Request.Url.Scheme,
-								Request.Url.Authority,
-								user.UserName,
-								user.ProviderUserKey.ToString ()));
-						using (MailMessage msg = new MailMessage (
-							                         HomeController.Admail, user.Email,
-							                         string.Format ("Validation de votre compte {0}", YavscHelpers.SiteName),
-							                         body)) {
-							using (SmtpClient sc = new SmtpClient ()) {
-								sc.Send (msg);
-							}
-						}
-
-						ViewData ["username"] = user.UserName;
-						ViewData ["email"] = user.Email;
-						return View ("RegistrationPending");
-					}
+					YavscHelpers.SendActivationEmail (user);
+					ViewData ["username"] = user.UserName;
+					ViewData ["email"] = user.Email;
+					return View ("RegistrationPending");
 				default:
 					ViewData ["Error"] = "Une erreur inattendue s'est produite" +
 					"a l'enregistrement de votre compte utilisateur" +
@@ -162,7 +130,8 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
-		
+
+
 		/// <summary>
 		/// Changes the password.
 		/// </summary>

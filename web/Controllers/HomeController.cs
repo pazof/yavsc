@@ -15,6 +15,7 @@ using Npgsql.Web;
 using ITContentProvider;
 using Yavsc;
 using Npgsql.Web.Blog;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -38,18 +39,7 @@ namespace Yavsc.Controllers
 				return name;
 			}
 		}
-		// Administrator email
-		private static string admail =
-			WebConfigurationManager.AppSettings ["AdminEmail"];
-		/// <summary>
-		/// Gets the Administrator email.
-		/// </summary>
-		/// <value>The admail.</value>
-		public static string Admail {
-			get {
-				return admail;
-			}
-		}
+
 		/// <summary>
 		/// Lists the referenced assemblies.
 		/// </summary>
@@ -128,7 +118,7 @@ namespace Yavsc.Controllers
 
 			using (System.Net.Mail.MailMessage msg = new MailMessage(email,OwnerEmail,"[Contact] "+reason,body)) 
 			{
-				msg.CC.Add(new MailAddress(Admail));
+				msg.CC.Add(new MailAddress(YavscHelpers.Admail));
 				using (System.Net.Mail.SmtpClient sc = new SmtpClient()) 
 				{
 					sc.Send (msg);
