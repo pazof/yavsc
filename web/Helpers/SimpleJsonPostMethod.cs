@@ -51,7 +51,7 @@ namespace Yavsc.Helpers
 		/// </summary>
 		/// <param name="cred">Cred.</param>
 		public void SetCredential(string cred) {
-			Request.Headers.Add(HttpRequestHeader.Authorization,cred);
+			Request.Headers.Set(HttpRequestHeader.Authorization,cred);
 		}
 
 		/// <summary>
