@@ -15,8 +15,8 @@ namespace Yavsc.WebControls
 		Level = AspNetHostingPermissionLevel.Minimal),
 		AspNetHostingPermission (SecurityAction.InheritanceDemand, 
 		Level = AspNetHostingPermissionLevel.Minimal),
-		ParseChildren (true, "Action"),
-		DefaultProperty ("Action"),
+		ParseChildren (true),
+
 		ToolboxData ("<{0}:ResultPages runat=\"server\"> </{0}:ResultPages>")
 	]
 	public class ResultPages: WebControl
@@ -24,7 +24,7 @@ namespace Yavsc.WebControls
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Yavsc.WebControls.ResultPages"/> class.
 		/// </summary>
-		public ResultPages ()  
+		public ResultPages ()
 		{
 		}
 

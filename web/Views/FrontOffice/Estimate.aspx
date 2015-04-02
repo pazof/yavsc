@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="Devis" Language="C#" Inherits="System.Web.Mvc.ViewPage<Estimate>" MasterPageFile="~/Models/App.master" %>
+<%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 
 <asp:Content ContentPlaceHolderID="head" ID="head1" runat="server" >
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/stupidtable.js")%>"></script> 
@@ -18,7 +19,12 @@ $("#tbwrts").stupidtable();
 <%= Html.ValidationMessage("Title", "*") %>
 <br/>
 <%= Html.Hidden ("Responsible") %>
-<%= Html.LabelFor(model => model.Client) %>:<%=Html.TextBox( "Client" ) %>
+
+<%= Html.LabelFor(model => model.Client) %>:
+   <% Client.Value = Model.Client ; %>
+	 <yavsc:InputUserName id="Client" name="Client" runat="server">
+	 </yavsc:InputUserName> 
+ 		
 <%= Html.ValidationMessage("Client", "*") %>
 <br/>
 <%= Html.LabelFor(model => model.Description) %>:<%=Html.TextArea( "Description") %>

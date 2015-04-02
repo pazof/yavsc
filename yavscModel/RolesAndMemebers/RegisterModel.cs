@@ -25,6 +25,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Model.RolesAndMembers
 {
+
 	/// <summary>
 	/// Register view model.
 	/// </summary>
@@ -53,6 +54,13 @@ namespace Yavsc.Model.RolesAndMembers
 		[DisplayName("Adresse e-mail")]
 		[Required(ErrorMessage = "S'il vous plait, entrez un e-mail valide")]
 		public string Email { get; set; }
+
+		public bool IsApprouved { get; set; }
+
+		public RegisterModel()
+		{
+			IsApprouved = false;
+		}
 	}
 	
 }

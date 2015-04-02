@@ -9,6 +9,9 @@ using Yavsc.Model.WorkFlow;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.ModelBinding;
+using Yavsc.Model.RolesAndMembers;
+using Yavsc.Helpers;
+using Yavsc.Model;
 
 namespace Yavsc.ApiControllers
 {
@@ -49,6 +52,45 @@ namespace Yavsc.ApiControllers
 		{
 			return wfmgr.CreateEstimate (
 				Membership.GetUser().UserName,client,title,description);
+		}
+
+		/// <summary>
+		/// Register the specified model and isapprouved.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		/// <param name="isapprouved">If set to <c>true</c> isapprouved.</param>
+		[HttpGet]
+		[ValidateAjax]
+		[Authorize(Roles="Admin,FrontOffice")]
+		public void Register([FromBody] RegisterModel model)
+		{
+			if (ModelState.IsValid) {
+				MembershipCreateStatus mcs;
+				var user = Membership.CreateUser (
+					model.UserName,
+					model.Password,
+					model.Email,
+					null,
+					null,
+					model.IsApprouved,
+					out mcs);
+				switch (mcs) {
+				case MembershipCreateStatus.DuplicateEmail:
+					ModelState.AddModelError ("Email", 
+						string.Format(LocalizedText.DuplicateEmail,model.UserName) );
+					return ;
+				case MembershipCreateStatus.DuplicateUserName:
+					ModelState.AddModelError ("UserName", 
+						string.Format(LocalizedText.DuplicateUserName,model.Email));
+					return ;
+				case MembershipCreateStatus.Success:
+					if (!model.IsApprouved)
+						YavscHelpers.SendActivationEmail (user);
+					return;
+				default:
+					throw new InvalidOperationException (string.Format("Unexpected user creation code :{0}",mcs));
+				}
+			}
 		}
 
 		/// <summary>

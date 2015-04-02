@@ -178,6 +178,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string DuplicateUserName {
+            get {
+                return ResourceManager.GetString("DuplicateUserName", resourceCulture);
+            }
+        }
+        
         public static string Tex_version {
             get {
                 return ResourceManager.GetString("Tex_version", resourceCulture);
@@ -205,6 +211,12 @@ namespace Yavsc.Model {
         public static string Offline {
             get {
                 return ResourceManager.GetString("Offline", resourceCulture);
+            }
+        }
+        
+        public static string DuplicateEmail {
+            get {
+                return ResourceManager.GetString("DuplicateEmail", resourceCulture);
             }
         }
         
