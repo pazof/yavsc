@@ -81,8 +81,6 @@ namespace Yavsc.ApiControllers
 			return est;
 		}
 
-
-
 		/// <summary>
 		/// Gets the estim tex.
 		/// </summary>
@@ -180,7 +178,7 @@ namespace Yavsc.ApiControllers
 					new TexToPdfFormatter ())
 			};
 		}
-		
+
 		/// <summary>
 		/// Register the specified model.
 		/// </summary>
