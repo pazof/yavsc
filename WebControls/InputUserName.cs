@@ -49,6 +49,7 @@ namespace Yavsc.WebControls
 		public InputUserName ()
 		{
 			Multiple = false;
+			EmptyValue = null;
 		}
 		/// <summary>
 		/// Gets or sets the name.
@@ -80,6 +81,20 @@ namespace Yavsc.WebControls
 				ViewState ["Value"]  = value;
 			}
 		}
+
+		[Bindable (true)]
+		[DefaultValue("")]
+		[Localizable(false)]
+		public string OnChange {
+			get {
+				return (string) ViewState["OnChange"];
+			}
+			set {
+				ViewState ["OnChange"]  = value;
+			}
+		}
+
+
 		/// <summary>
 		/// Gets or sets the in role.
 		/// </summary>
@@ -113,6 +128,21 @@ namespace Yavsc.WebControls
 			}
 		}
 
+
+		[Bindable (true)]
+		[DefaultValue(null)]
+		public string EmptyValue {
+			get {
+				return (string) ViewState["EmptyValue"];
+			}
+			set {
+				ViewState ["EmptyValue"]  = value;
+
+			}
+		}
+
+
+
 		/// <summary>
 		/// Renders the contents.
 		/// </summary>
@@ -122,6 +152,8 @@ namespace Yavsc.WebControls
 			writer.AddAttribute ("id", ID);
 			writer.AddAttribute ("name", Name);
 			writer.AddAttribute ("class", CssClass);
+			if (!string.IsNullOrWhiteSpace(OnChange))
+				writer.AddAttribute ("onchange", OnChange);
 			if (Multiple)
 				writer.AddAttribute ("multiple","true");
 			writer.RenderBeginTag ("select");
@@ -132,6 +164,12 @@ namespace Yavsc.WebControls
 			}
 			if (!string.IsNullOrWhiteSpace (InRole)) {
 				roles = InRole.Split (',');
+			}
+			if (EmptyValue!=null) {
+				writer.AddAttribute ("value", "");
+				writer.RenderBeginTag ("option");
+				writer.Write (EmptyValue);
+				writer.RenderEndTag ();
 			}
 			foreach (MembershipUser u in Membership.GetAllUsers()) {
 				// if roles are specified, members must be in one of them

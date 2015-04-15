@@ -86,9 +86,13 @@ namespace Yavsc.Controllers
 		/// </summary>
 		public ActionResult Index ()
 		{
-			string startPage = WebConfigurationManager.AppSettings ["StartPage"];
+			/* 
+			 * A very bad idea (a redirect permanent as home page):
+			 * 
+			 * string startPage = WebConfigurationManager.AppSettings ["StartPage"];
 			if (startPage != null)
 				Redirect (startPage);
+				*/
 			ViewData ["Message"] = LocalizedText.Welcome;
 			return View ();
 		}

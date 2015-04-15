@@ -1,5 +1,5 @@
 //
-//  RegisterModel.cs
+//  RegisterClientModel.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -25,49 +25,47 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Model.RolesAndMembers
 {
-
 	/// <summary>
-	/// Register view model.
+	/// Register client model.
 	/// </summary>
-	public class RegisterModel
+	public class RegisterClientModel : RegisterModel
 	{
 		/// <summary>
-		/// Gets or sets the name of the user.
+		/// Gets or sets the full name.
 		/// </summary>
-		/// <value>The name of the user.</value>
-		[Localizable(true)]
-		[Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")]
-		public string UserName { get; set; }
- 
+		/// <value>The full name.</value>
+		[DisplayName("Nom complet")]
+		[Required(ErrorMessage="S'il vous plait, saisissez le nom complet")]
+		public string Name { get; set; }
 		/// <summary>
-		/// Gets or sets the password.
+		/// Gets or sets the address.
 		/// </summary>
-		/// <value>The password.</value>
-		[DisplayName("Mot de passe")]
-		[Required(ErrorMessage = "S'il vous plait, entez un mot de passe")]
-		public string Password { get; set; }
- 
+		/// <value>The address.</value>
+		[DisplayName("Addresse")]
+		public string Address { get; set; }
 		/// <summary>
-		/// Gets or sets the email.
+		/// Gets or sets the state of the city and.
 		/// </summary>
-		/// <value>The email.</value>
-		[DisplayName("Adresse e-mail")]
-		[Required(ErrorMessage = "S'il vous plait, entrez un e-mail valide")]
-		public string Email { get; set; }
-
+		/// <value>The state of the city and.</value>
+		[DisplayName("Ville")]
+		public string CityAndState { get; set; }
 		/// <summary>
-		/// Gets or sets a value indicating whether this instance is approuved.
+		/// Gets or sets the zip code.
 		/// </summary>
-		/// <value><c>true</c> if this instance is approuved; otherwise, <c>false</c>.</value>
-		public bool IsApprouved { get; set; }
-
+		/// <value>The zip code.</value>
+		[DisplayName("Code postal")]
+		public string ZipCode { get; set; }
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.RolesAndMembers.RegisterModel"/> class.
+		/// Gets or sets the phone.
 		/// </summary>
-		public RegisterModel()
-		{
-			IsApprouved = false;
-		}
+		/// <value>The phone.</value>
+		[DisplayName("Téléphone fixe")]
+		public string Phone { get; set; }
+		/// <summary>
+		/// Gets or sets the mobile.
+		/// </summary>
+		/// <value>The mobile.</value>
+		[DisplayName("Téléphone mobile")]
+		public string Mobile { get; set; }
 	}
-	
 }

@@ -48,15 +48,30 @@ namespace Yavsc.Model.WorkFlow
 			return ContentProvider.GetEstimate (estid);
 		}
 		/// <summary>
-		/// Gets the estimates.
+		/// Gets the estimates, refering the 
+		/// given client or username .
 		/// </summary>
 		/// <returns>The estimates.</returns>
-		/// <param name="client">Client.</param>
-		public Estimate [] GetEstimates (string client)
+		/// <param name="responsible">Responsible.</param>
+		public Estimate [] GetResponsibleEstimates (string responsible)
 		{
-			return ContentProvider.GetEstimates (client);
+			return ContentProvider.GetEstimates (null, responsible);
 		}
 
+		/// <summary>
+		/// Gets the client estimates.
+		/// </summary>
+		/// <returns>The client estimates.</returns>
+		/// <param name="client">Client.</param>
+		public Estimate [] GetClientEstimates (string client)
+		{
+			return ContentProvider.GetEstimates (client, null);
+		}
+
+		public Estimate [] GetUserEstimates (string username)
+		{
+			return ContentProvider.GetEstimates (username);
+		}
 		/// <summary>
 		/// Gets the stock for a given product reference.
 		/// </summary>

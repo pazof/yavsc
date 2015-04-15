@@ -7,7 +7,7 @@
        <%foreach (MembershipUser user in Model){ %>
        <li><%=user.UserName%> <%=user.Email%> <%=(user.IsApproved)?"":"("+LocalizedText.Not_Approuved+")"%>  <%=user.IsOnline?LocalizedText.Online:LocalizedText.Offline%>
 <% if (Roles.IsUserInRole("Admin")) { %>
-	 <%= Html.ActionLink(LocalizedText.Remove,"RemoveUserQuery", new { username = user.UserName }, new { @class="actionlink" } ) %>	
+	 <%= Html.ActionLink(LocalizedText.Remove,"RemoveUser", new { username = user.UserName }, new { @class="actionlink" } ) %>	
 <% } %>
        </li><% }%>
 </ul>

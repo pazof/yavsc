@@ -199,17 +199,20 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Profile the specified model.
+		/// Profile the specified user.
 		/// </summary>
-		/// <param name="model">Model.</param>
+		/// <param name="user">User name.</param>
 		[Authorize]
 		[HttpGet]
-		public ActionResult Profile (Profile model)
+		public ActionResult Profile (string user)
 		{
-			string username = Membership.GetUser ().UserName;
-			ViewData ["UserName"] = username;
-			model = new Profile (ProfileBase.Create (username));
-			model.RememberMe = FormsAuthentication.GetAuthCookie (username, true) == null;
+			ViewData ["ProfileUserName"] = user;
+			string logdu = Membership.GetUser ().UserName;
+			ViewData ["UserName"] = logdu;
+			if (user == null)
+				user = logdu;
+			Profile model= new Profile (ProfileBase.Create (user));
+			model.RememberMe = FormsAuthentication.GetAuthCookie (user, true) == null;
 			return View (model);
 		}
 
@@ -221,10 +224,17 @@ namespace Yavsc.Controllers
 		[Authorize]
 		[HttpPost]
 		// ASSERT("Membership.GetUser ().UserName is made of simple characters, no slash nor backslash"
-		public ActionResult Profile (Profile model, HttpPostedFileBase AvatarFile)
+		public ActionResult Profile (string username, Profile model, HttpPostedFileBase AvatarFile)
 		{
-			string username = Membership.GetUser ().UserName;
-			ViewData ["UserName"] = username;
+
+			string logdu = Membership.GetUser ().UserName;
+			ViewData ["UserName"] = logdu;
+			if (username != logdu)
+			if (!Roles.IsUserInRole ("Admin"))
+			if (!Roles.IsUserInRole ("FrontOffice"))
+				throw new UnauthorizedAccessException ("Your are not authorized to modify this profile");
+
+			ProfileBase prtoup = ProfileBase.Create (username);
 			if (AvatarFile != null)  { 
 				// if said valid, move as avatar file
 				// else invalidate the model
@@ -244,24 +254,24 @@ namespace Yavsc.Controllers
 			*/
 			if (ModelState.IsValid) {
 				if (model.avatar != null) 
-					HttpContext.Profile.SetPropertyValue ("avatar", model.avatar);
-				HttpContext.Profile.SetPropertyValue ("Address", model.Address);
-				HttpContext.Profile.SetPropertyValue ("BlogTitle", model.BlogTitle);
-				HttpContext.Profile.SetPropertyValue ("BlogVisible", model.BlogVisible);
-				HttpContext.Profile.SetPropertyValue ("CityAndState", model.CityAndState);
-				HttpContext.Profile.SetPropertyValue ("ZipCode", model.ZipCode);
-				HttpContext.Profile.SetPropertyValue ("Country", model.Country);
-				HttpContext.Profile.SetPropertyValue ("WebSite", model.WebSite);
-				HttpContext.Profile.SetPropertyValue ("Name", model.Name);
-				HttpContext.Profile.SetPropertyValue ("Phone", model.Phone);
-				HttpContext.Profile.SetPropertyValue ("Mobile", model.Mobile);
-				HttpContext.Profile.SetPropertyValue ("BankCode", model.BankCode);
-				HttpContext.Profile.SetPropertyValue ("WicketCode", model.WicketCode);
-				HttpContext.Profile.SetPropertyValue ("AccountNumber", model.AccountNumber);
-				HttpContext.Profile.SetPropertyValue ("BankedKey", model.BankedKey);
-				HttpContext.Profile.SetPropertyValue ("BIC", model.BIC);
-				HttpContext.Profile.SetPropertyValue ("IBAN", model.IBAN);
-				HttpContext.Profile.Save ();
+					prtoup.SetPropertyValue ("avatar", model.avatar);
+				prtoup.SetPropertyValue ("Address", model.Address);
+				prtoup.SetPropertyValue ("BlogTitle", model.BlogTitle);
+				prtoup.SetPropertyValue ("BlogVisible", model.BlogVisible);
+				prtoup.SetPropertyValue ("CityAndState", model.CityAndState);
+				prtoup.SetPropertyValue ("ZipCode", model.ZipCode);
+				prtoup.SetPropertyValue ("Country", model.Country);
+				prtoup.SetPropertyValue ("WebSite", model.WebSite);
+				prtoup.SetPropertyValue ("Name", model.Name);
+				prtoup.SetPropertyValue ("Phone", model.Phone);
+				prtoup.SetPropertyValue ("Mobile", model.Mobile);
+				prtoup.SetPropertyValue ("BankCode", model.BankCode);
+				prtoup.SetPropertyValue ("WicketCode", model.WicketCode);
+				prtoup.SetPropertyValue ("AccountNumber", model.AccountNumber);
+				prtoup.SetPropertyValue ("BankedKey", model.BankedKey);
+				prtoup.SetPropertyValue ("BIC", model.BIC);
+				prtoup.SetPropertyValue ("IBAN", model.IBAN);
+				prtoup.Save ();
 				FormsAuthentication.SetAuthCookie (username, model.RememberMe);
 				ViewData ["Message"] = "Profile enregistré, cookie modifié.";
 

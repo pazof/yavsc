@@ -1,6 +1,5 @@
 ﻿<%@ Page Title="Devis" Language="C#" Inherits="System.Web.Mvc.ViewPage<Estimate>" MasterPageFile="~/Models/App.master" %>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
-
 <asp:Content ContentPlaceHolderID="head" ID="head1" runat="server" >
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/stupidtable.js")%>"></script> 
 <script>
@@ -8,11 +7,10 @@ $(function(){
 $("#tbwrts").stupidtable();
 });
 </script>
-<script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery.validate.js")%>"></script> 
 <link rel="stylesheet" href="<%=Url.Content("~/Theme/dark/style.css")%>" type="text/css" media="print, projection, screen" />
 </asp:Content>
-
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
+
 <%= Html.ValidationSummary("Devis") %>
 <% using  (Html.BeginForm("Estimate","FrontOffice")) { %>
 <%= Html.LabelFor(model => model.Title) %>:<%= Html.TextBox( "Title" ) %>
@@ -21,11 +19,25 @@ $("#tbwrts").stupidtable();
 <%= Html.Hidden ("Responsible") %>
 
 <%= Html.LabelFor(model => model.Client) %>:
+   
    <% Client.Value = Model.Client ; %>
-	 <yavsc:InputUserName id="Client" name="Client" runat="server">
+	 <yavsc:InputUserName
+	  id="Client"
+	  name="Client"
+	   emptyvalue="*nouvel utilisateur*"
+	 onchange="onClientChange(this.value);"
+	   runat="server"  >
 	 </yavsc:InputUserName> 
- 		
-<%= Html.ValidationMessage("Client", "*") %>
+ 	<script>
+ 	function onClientChange(newval)
+ 	{
+ 		if (newval=='')
+ 			$("#dfnuser").removeClass("hidden");
+ 		else
+ 			$("#dfnuser").addClass("hidden");
+ 	}
+ 	</script>
+ 	<%= Html.ValidationMessage("Client", "*") %>
 <br/>
 <%= Html.LabelFor(model => model.Description) %>:<%=Html.TextArea( "Description") %>
 <%= Html.ValidationMessage("Description", "*") %>
@@ -37,7 +49,6 @@ $("#tbwrts").stupidtable();
 <% } else { %>
    <input type="submit" name="submit" value="Update"/>
 <% } %>
-
 
    <% if (Model.Id>0) { %>
 <table  id="tbwrts">
@@ -68,13 +79,26 @@ $("#tbwrts").stupidtable();
 </table>
 <%  } %>
 <% } %>
+   
+</asp:Content>
 
 
 
+ <asp:Content ContentPlaceHolderID="MASContent" ID="MASContent1" runat="server">
+     <% ViewData["EstimateId"]=Model.Id; %>
+   <aside>
+    <div id="dfnuser" class="hidden">
+   <%= Html.Partial("Register",new RegisterClientModel(),new ViewDataDictionary(ViewData)
+        {
+            TemplateInfo = new System.Web.Mvc.TemplateInfo
+            {
+                HtmlFieldPrefix = ViewData.TemplateInfo.HtmlFieldPrefix==""?"ur":ViewData.TemplateInfo.HtmlFieldPrefix+"_ur"
+            }
+        }) %>
+ 	</div>
+ 	 </aside>
 
     <aside>
-
-     <% ViewData["EstimateId"]=Model.Id; %>
    <%= Html.Partial("Writting",new Writting(),new ViewDataDictionary(ViewData)
         {
             TemplateInfo = new System.Web.Mvc.TemplateInfo
@@ -82,7 +106,6 @@ $("#tbwrts").stupidtable();
                 HtmlFieldPrefix = ViewData.TemplateInfo.HtmlFieldPrefix==""?"wr":ViewData.TemplateInfo.HtmlFieldPrefix+"_wr"
             }
         }) %>
-
        
         <form>
      <div>
@@ -139,6 +162,7 @@ $("#tbwrts").stupidtable();
      } 
 
      function delRow(e) {
+     clearWrittingValidation();
      e.stopPropagation(); // do not edit this row on this click
    // from <row id= ...><tr><td><input type="button" > 
     	var hid=e.delegateTarget.parentNode.parentNode.id;
@@ -157,13 +181,17 @@ $("#tbwrts").stupidtable();
 	//		$("#tbwrts").tablesorter( {sortList: [[0,0], [1,0]]} ); // .update();
             },
             error: function (xhr, ajaxOptions, thrownError) {
-        message(xhr.status+" : "+xhr.responseText);}
+            	if (xhr.status!=400)
+        			message(xhr.status+" : "+xhr.responseText);
+			    else message(false);
+        		}
         });
 
       }
 	
 	function setRow() {
        var wrt = GetWritting();
+       clearWrittingValidation();
        $.ajax({
             url: "<%=Url.Content("~/api/WorkFlow/UpdateWritting")%>",
             type: 'POST',
@@ -176,25 +204,94 @@ $("#tbwrts").stupidtable();
 		       cells[3].innerHTML=wrt.UnitaryCost;
 			   message(false);
             },
-            error: function (xhr, ajaxOptions, thrownError) {
-            message (xhr.status+" : "+xhr.responseText+" / "+thrownError);}
+            statusCode: {
+            	400: function(data) {
+            		$.each(data.responseJSON, function (key, value) {
+            		var errspanid = "Err_" + value.key.replace(".","_");
+            		var errspan = document.getElementById(errspanid);
+            		if (errspan==null)
+            			alert('enoent '+errspanid);
+            		else 
+            			errspan.innerHTML=value.errors.join("<br/>");
+                	});
+            		}
+            	},
+             error: function (xhr, ajaxOptions, thrownError) {
+            	if (xhr.status!=400)
+        			message(xhr.status+" : "+xhr.responseText);
+			    else message(false);
+        		}
         });
     }
-
+    function addUser()
+    {
+    	var user={
+     	UserName: $("#ur_UserName").val(),
+     	Name: $("#ur_Name").val(),
+     	Password: $("#ur_Password").val(),
+     	Email: $("#ur_Email").val(),
+     	Address: $("#ur_Address").val(),
+     	CityAndState: $("#ur_CityAndState").val(),
+     	ZipCode: $("#ur_ZipCode").val(),
+     	Phone: $("#ur_Phone").val(),
+     	Mobile: $("#ur_Mobile").val(),
+     	IsApprouved: true
+     	};
+     	clearRegistrationValidation();
+        $.ajax({
+            url: "<%=Url.Content("~/api/FrontOffice/Register")%>",
+            type: "POST",
+            data: user,
+            success: function (data) { 
+            	$("#Client option:last").after($('<option>'+user.UserName+'</option>'));
+            	Client.value = user.UserName;
+            	onClientChange(Client.value);
+            },
+            statusCode: {
+            	400: function(data) {
+            		$.each(data.responseJSON, function (key, value) {
+            		var errspanid = "Err_ur_" + value.key.replace("model.","");
+            		var errspan = document.getElementById(errspanid);
+            		if (errspan==null)
+            			alert('enoent '+errspanid);
+            		else 
+            			errspan.innerHTML=value.errors.join("<br/>");
+                	});
+            		}
+            	},
+            error: function (xhr, ajaxOptions, thrownError) {
+            	if (xhr.status!=400)
+        			message(xhr.status+" : "+xhr.responseText);
+			    else message(false);
+        		}});
+    }
+    function clearWrittingValidation() {
+    	$("#Err_wr_Description").text("");
+            $("#Err_wr_ProductReference").text("");
+            $("#Err_wr_UnitaryCost").text("");
+            $("#Err_wr_Count").text("");
+    }
+function clearRegistrationValidation(){
+    		$("#Err_ur_Name").text("");
+            $("#Err_ur_UserName").text("");
+            $("#Err_ur_Mobile").text("");
+            $("#Err_ur_Phone").text("");
+            $("#Err_ur_Email").text("");
+            $("#Err_ur_Address").text("");
+            $("#Err_ur_ZipCode").text("");
+            $("#Err_ur_CityAndState").text("");
+    }
 
 function addRow(){
        var wrt = GetWritting(); // gets a writting object from input controls
 		var estid = parseInt($("#Id").val());
-        
-            $("#Err_wr_Description").text("");
-            $("#Err_wr_ProductReference").text("");
-            $("#Err_wr_UnitaryCost").text("");
-            $("#Err_wr_Count").text("");
+        clearWrittingValidation();
 
         $.ajax({
             url: "<%=Url.Content("~/api/WorkFlow/Write?estid=")%>"+estid,
             type: "POST",
             data: wrt,
+            dataType: "json",
             success: function (data) { 
             wrt.Id = Number(data);
              wredit(wrt.Id);
@@ -211,22 +308,21 @@ function addRow(){
 	        $("<td></td>").append(btrm).appendTo("#"+wridval); 
             btrm.click(function (e) {delRow(e);});
             $("#"+wridval).click(function(ev){onEditRow(ev);});
-		//	$("#tbwrts").tablesorter( {sortList: [[0,0], [1,0]]} ); // .update();
-
             message(false);
-           
             },
-            dataType: "json",
             statusCode: {
             	400: function(data) {
             		$.each(data.responseJSON, function (key, value) {
-            		document.getElementById("Err_" + value.key.replace(".","_")).innerHTML=value.errors.join("<br/>");
+            		document.getElementById("Err_wr_" + value.key).innerHTML=value.errors.join("<br/>");
                 	});
             		}
             	},
-            error: function (xhr, ajaxOptions, thrownError) {
-			if (xhr.status != 400)
-            	message(xhr.status+" : "+xhr.responseText+" / "+thrownError);}});
+            	error: function (xhr, ajaxOptions, thrownError) {
+            	if (xhr.status!=400)
+        			message(xhr.status+" : "+xhr.responseText);
+			    else message(false);
+        		}
+            	});
     }
 
      function onEditRow(e) {
@@ -243,6 +339,7 @@ function addRow(){
     }
   
  $(document).ready(function () {
+    $("#btnnewuser").click(addUser);
     $("#btncreate").click(addRow);
     $("#btnmodify").click(setRow);
     $(".row").click(function (e) {onEditRow(e);});
@@ -261,9 +358,4 @@ function addRow(){
     <a class="actionlink" href="<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>/FrontOffice/EstimateToTex?estimid=<%=Model.Id%>"><%= LocalizedText.Tex_version %></a>
     <a class="actionlink" href="<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>/FrontOffice/EstimateToPdf?estimid=<%=Model.Id%>"><%= LocalizedText.Pdf_version %></a>
     </aside>
-
-
-   
-</asp:Content>
-
-
+   </asp:Content>

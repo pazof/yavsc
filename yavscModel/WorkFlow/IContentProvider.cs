@@ -62,11 +62,19 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="estimid">Estimid.</param>
 		Estimate GetEstimate (long estimid);
 		/// <summary>
-		/// Gets the estimates created for a specified client.
+		/// Gets the estimates created by 
+		/// or for the given user by user name.
+		/// </summary>
+		/// <returns>The estimates.</returns>
+		/// <param name="username">user name.</param>
+		Estimate [] GetEstimates(string username);
+		/// <summary>
+		/// Gets the estimates.
 		/// </summary>
 		/// <returns>The estimates.</returns>
 		/// <param name="client">Client.</param>
-		Estimate [] GetEstimates(string client);
+		/// <param name="responsible">Responsible.</param>
+		Estimate [] GetEstimates(string client, string responsible);
 		/// <summary>
 		/// Drops the writting.
 		/// </summary>

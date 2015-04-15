@@ -48,11 +48,20 @@ namespace Yavsc.Controllers
 		/// Estimates this instance.
 		/// </summary>
 		[Authorize]
-		public ActionResult Estimates ()
+		public ActionResult Estimates (string client)
 		{
 			string username = Membership.GetUser ().UserName;
-
-			return View (wfmgr.GetEstimates (username));
+			Estimate [] estims = wfmgr.GetUserEstimates (username);
+			ViewData ["UserName"] = username;
+			ViewData ["ResponsibleCount"] = 
+				Array.FindAll (
+				estims,
+				x => x.Responsible == username).Length;
+			ViewData ["ClientCount"] = 
+				Array.FindAll (
+					estims,
+					x => x.Client == username).Length;
+			return View (estims);
 		}
 
 		/// <summary>
@@ -63,6 +72,7 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Estimate (Estimate model, string submit)
 		{
+			string username = Membership.GetUser().UserName;
 			// Obsolete, set in master page
 			ViewData ["WebApiBase"] = Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative);
 			ViewData ["WABASEWF"] = ViewData ["WebApiBase"] + "/WorkFlow";
@@ -75,23 +85,23 @@ namespace Yavsc.Controllers
 					}
 					model = f;
 					ModelState.Clear ();
-					string username = HttpContext.User.Identity.Name;
 					if (username != model.Responsible
 					    && username != model.Client
 					    && !Roles.IsUserInRole ("FrontOffice"))
 						throw new UnauthorizedAccessException ("You're not allowed to view this estimate");
-				} 
+				} else if (model.Id == 0) {
+					if (string.IsNullOrWhiteSpace(model.Responsible))
+						model.Responsible = username;
+				}
 			} else {
-				string username = Membership.GetUser().UserName;
+
+				if (model.Id == 0) // if (submit == "Create")
+				if (string.IsNullOrWhiteSpace (model.Responsible))
+					model.Responsible = username;
 				if (username != model.Responsible
 				&& !Roles.IsUserInRole ("FrontOffice"))
 					throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
-				if (model.Id == 0) {
-					model.Responsible = username;
-					ModelState.Clear (); 
-					// TODO better, or ensure that the model state is checked
-					// before insertion
-				}
+
 				if (ModelState.IsValid) {
 					if (model.Id == 0)
 						model = wfmgr.CreateEstimate (

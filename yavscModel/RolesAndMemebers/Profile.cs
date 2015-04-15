@@ -168,28 +168,45 @@ namespace Yavsc.Model.RolesAndMembers
 		/// Gets a value indicating whether this instance has bank account.
 		/// </summary>
 		/// <value><c>true</c> if this instance has bank account; otherwise, <c>false</c>.</value>
-		public bool HasBankAccount { get { 
-				return IsBillable 
-			&& !string.IsNullOrWhiteSpace (BankCode)
-			&& !string.IsNullOrWhiteSpace (BIC)
-			&& !string.IsNullOrWhiteSpace (IBAN)
-			&& !string.IsNullOrWhiteSpace (WicketCode)
-			&& !string.IsNullOrWhiteSpace (AccountNumber)
-			&& BankedKey != 0; } }
+		public bool HasBankAccount { 
+			get { 
+				return !(
+					(
+			string.IsNullOrWhiteSpace (BankCode)
+			|| string.IsNullOrWhiteSpace (WicketCode)
+			|| string.IsNullOrWhiteSpace (AccountNumber)
+			|| BankedKey == 0
+					)
+					&&
+			( string.IsNullOrWhiteSpace (BIC)
+			|| string.IsNullOrWhiteSpace (IBAN))
+				); } }
 
 		/// <summary>
 		/// Gets a value indicating whether this instance is billable.
+		/// Returns true when 
+		/// Name is not null and all of 
+		///  Address, CityAndState and ZipCode are not null,
+		///  or one of Email or Phone or Mobile is not null
+		/// 
 		/// </summary>
 		/// <value><c>true</c> if this instance is billable; otherwise, <c>false</c>.</value>
 		public bool IsBillable { 
 			get { 
+				// true if 
+				// Name is not null and 
+				// (
+				//  (Address and CityAndState and ZipCode)
+				//  or Email or Phone or Mobile
+				// )
 				return !string.IsNullOrWhiteSpace (Name)
-				&& !string.IsNullOrWhiteSpace (Address)
-				&& !string.IsNullOrWhiteSpace (CityAndState)
-				&& !string.IsNullOrWhiteSpace (ZipCode)
-				&& !string.IsNullOrWhiteSpace (Email)
-				&& !(string.IsNullOrWhiteSpace (Phone) &&
-				string.IsNullOrWhiteSpace (Mobile)); 
+				&& !( (
+						string.IsNullOrWhiteSpace (Address)
+						|| string.IsNullOrWhiteSpace (CityAndState)
+						|| string.IsNullOrWhiteSpace (ZipCode))
+					&& string.IsNullOrWhiteSpace (Email) 
+				&& string.IsNullOrWhiteSpace (Phone) 
+				&& string.IsNullOrWhiteSpace (Mobile)); 
 			} 
 		}
 

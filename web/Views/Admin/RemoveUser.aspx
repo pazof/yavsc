@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="User removal" Language="C#" Inherits="System.Web.Mvc.ViewPage" MasterPageFile="~/Models/App.master" %>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <div>
+
 <%= Html.ValidationSummary() %>
 <% using ( Html.BeginForm("RemoveUser","Admin") ) {  %>
 Supprimer l'utilisateur 

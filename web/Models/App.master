@@ -1,15 +1,14 @@
 <%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-
 <asp:ContentPlaceHolder id="init" runat="server">
-</asp:ContentPlaceHolder>
-  <% ViewState["orgtitle"] = T.GetString(Page.Title); %> 
- <% Page.Title = ViewState["orgtitle"] + " - " + YavscHelpers.SiteName; %>
-<head runat="server">
+</asp:ContentPlaceHolder><% 
+ViewState["orgtitle"] = T.GetString(Page.Title);
+ Page.Title = ViewState["orgtitle"] + " - " + YavscHelpers.SiteName; 
+ %><head runat="server">
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="stylesheet" href="/Theme/style.css"/>
 <link rel="icon" type="image/png" href="/favicon.png?v=2" />
   <script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery-2.1.3.js")%>"></script> 
@@ -23,35 +22,21 @@
 <h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>"> <%=ViewState["orgtitle"]%> </a> - 
 <a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
  </h1>
+ </asp:ContentPlaceHolder><asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder><% 
+ if (ViewData["Error"]!=null) { 
+ %><div class="error"><%= Html.Encode(ViewData["Error"]) %>
+</div><% } 
+  if (ViewData["Message"]!=null) { 
+  %><div class="message"><%= Html.Encode(ViewData["Message"]) %></div><% } 
+  %>
+</header>
+<main>
+<asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
-
-<asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
-<% if (ViewData["Error"]!=null) { %>
-<div class="error">
-<%= Html.Encode(ViewData["Error"]) %>
-</div>
-<% } %>
-<% if (ViewData["Message"]!=null) { %>
-<div class="message">
-<%= Html.Encode(ViewData["Message"]) %>
-</div>
-<% } %>
-   
-
-	</header>
-	<main>
-
-	<asp:ContentPlaceHolder ID="MainContent" runat="server">
-		</asp:ContentPlaceHolder>
-
-
-   </main>
-
-
-   <aside>
+</main>
    <asp:ContentPlaceHolder ID="MASContent" runat="server">
    </asp:ContentPlaceHolder>
-
+<aside>
    <div id="login" >
 <% if (Membership.GetUser()==null) { %>
 	<%=  Html.ActionLink( YavscHelpers.SiteName, "Index", "Home" ,null, new { @class="actionlink" } ) %> 
@@ -71,10 +56,8 @@
 	<span class="hidcom"> &Eacute;dition d'un nouveau billet </span> 
 	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { @class="actionlink" }) %>
 <% } %>
-
-</div>  
-	</aside> 
-
+</div>
+</aside>
  <div style="float:right; height:5em; z-index:-1;"></div>
 	<footer>
    <%= Html.ActionLink("Contact","Contact","Home",null, new { @class="footerlink" }) %>    <br/>
@@ -96,4 +79,3 @@ $( ".bshd" ).on("click",function(e) {
 </script>
 </body>
 </html>
-

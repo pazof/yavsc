@@ -144,7 +144,6 @@
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BlogsController.cs" />
-    <Compile Include="Views\RegisterPage.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Helpers\BBCodeHelper.cs" />
     <Compile Include="Test\TestByteA.cs" />
@@ -239,7 +238,6 @@
     <Content Include="Views\Admin\Admin.aspx" />
     <Content Include="Views\Admin\AddRole.aspx" />
     <Content Include="Views\Admin\UserList.aspx" />
-    <Content Include="Views\Admin\RemoveRoleQuery.aspx" />
     <Content Include="Views\Admin\RoleList.aspx" />
     <Content Include="Views\Admin\CreateBackup.aspx" />
     <Content Include="Views\Admin\BackupCreated.aspx" />
@@ -247,7 +245,6 @@
     <Content Include="Views\Admin\Restore.aspx" />
     <Content Include="Views\Admin\Restored.aspx" />
     <Content Include="Views\Admin\Index.aspx" />
-    <Content Include="Views\FrontOffice\Estimate.aspx" />
     <Content Include="Theme\style.css" />
     <Content Include="Theme\green\asc.png" />
     <Content Include="Theme\green\bg.png" />
@@ -678,6 +675,11 @@
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Views\Account\Profile.aspx" />
     <Content Include="robots.txt" />
+    <Content Include="Views\FrontOffice\Register.ascx" />
+    <Content Include="Scripts\form-new-user.js" />
+    <Content Include="Views\FrontOffice\Estimate.aspx" />
+    <Content Include="Theme\dark\croix.png" />
+    <Content Include="Views\Admin\RemoveRole..aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

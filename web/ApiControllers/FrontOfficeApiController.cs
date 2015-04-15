@@ -179,41 +179,58 @@ namespace Yavsc.ApiControllers
 			};
 		}
 
+		private HttpResponseMessage DefaultResponse()
+		{
+			return ModelState.IsValid ?
+				Request.CreateResponse (System.Net.HttpStatusCode.OK) :
+				Request.CreateResponse (System.Net.HttpStatusCode.BadRequest,
+					ValidateAjaxAttribute.GetErrorModelObject (ModelState));
+		}
+
 		/// <summary>
 		/// Register the specified model.
 		/// </summary>
 		/// <param name="model">Model.</param>
-		/// <param name="isApprouved">if false, sends a registration validation e-mail.</param>
-		[Authorize(Roles="Admin")]
+		[Authorize()]
 		[ValidateAjaxAttribute]
-		public void Register ([FromBody] RegisterModel model, bool isApprouved=true)
+		public HttpResponseMessage Register ([FromBody] RegisterModel model)
 		{
-			MembershipCreateStatus mcs;
-			var user = Membership.CreateUser (
-				model.UserName,
-				model.Password,
-				model.Email,
-				null,
-				null,
-				isApprouved,
-				out mcs);
-			switch (mcs) {
-			case MembershipCreateStatus.DuplicateEmail:
-				ModelState.AddModelError ("Email", "Cette adresse e-mail correspond " +
+			if (ModelState.IsValid) {
+				if (model.IsApprouved)
+				if (!Roles.IsUserInRole ("Admin"))
+				if (!Roles.IsUserInRole ("FrontOffice")) {
+					ModelState.AddModelError ("IsApprouved", 
+						"Since you're not member of Admin or FrontOffice groups, " +
+						"you cannot ask for a pre-approuved registration");
+					return DefaultResponse ();
+				}
+				MembershipCreateStatus mcs;
+				var user = Membership.CreateUser (
+					          model.UserName,
+					          model.Password,
+					          model.Email,
+					          null,
+					          null,
+					          model.IsApprouved,
+					          out mcs);
+				switch (mcs) {
+				case MembershipCreateStatus.DuplicateEmail:
+					ModelState.AddModelError ("Email", "Cette adresse e-mail correspond " +
 					"à un compte utilisateur existant");
-				return ;
-			case MembershipCreateStatus.DuplicateUserName:
-				ModelState.AddModelError ("UserName", "Ce nom d'utilisateur est " +
+					break;
+				case MembershipCreateStatus.DuplicateUserName:
+					ModelState.AddModelError ("UserName", "Ce nom d'utilisateur est " +
 					"déjà enregistré");
-				return ;
-			case MembershipCreateStatus.Success:
-				if (!isApprouved)
-					Yavsc.Helpers.YavscHelpers.SendActivationEmail (user);
-				return ;
-
-			default:
-				throw new Exception ( string.Format( "Unexpected membership creation status : {0}", mcs.ToString() ) );
+					break;
+				case MembershipCreateStatus.Success:
+					if (!model.IsApprouved)
+						Yavsc.Helpers.YavscHelpers.SendActivationEmail (user);
+					break;
+				default:
+					break;
+				}
 			}
+			return DefaultResponse ();
 		}
 	}
 }

@@ -159,12 +159,14 @@ namespace Yavsc.Controllers
 		[Authorize(Roles="Admin")]
 		public ActionResult RemoveUser (string username, string submitbutton)
 		{
+			ViewData ["usertoremove"] = username;
 			if (submitbutton == "Supprimer") {
 				Membership.DeleteUser (username);
 				ViewData["Message"]=
 					string.Format("utilisateur \"{0}\" supprimé",username);
+				ViewData ["usertoremove"] = null;
 			}
-			return RedirectToAction("UserList");
+			return View ();
 		}
 		/// <summary>
 		/// Removes the role.

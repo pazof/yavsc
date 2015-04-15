@@ -62,29 +62,29 @@ namespace Yavsc.ApiControllers
 		[HttpGet]
 		[ValidateAjax]
 		[Authorize(Roles="Admin,FrontOffice")]
-		public void Register([FromBody] RegisterModel model)
+		public void Register([FromBody] RegisterModel userModel)
 		{
 			if (ModelState.IsValid) {
 				MembershipCreateStatus mcs;
 				var user = Membership.CreateUser (
-					model.UserName,
-					model.Password,
-					model.Email,
+					userModel.UserName,
+					userModel.Password,
+					userModel.Email,
 					null,
 					null,
-					model.IsApprouved,
+					userModel.IsApprouved,
 					out mcs);
 				switch (mcs) {
 				case MembershipCreateStatus.DuplicateEmail:
 					ModelState.AddModelError ("Email", 
-						string.Format(LocalizedText.DuplicateEmail,model.UserName) );
+						string.Format(LocalizedText.DuplicateEmail,userModel.UserName) );
 					return ;
 				case MembershipCreateStatus.DuplicateUserName:
 					ModelState.AddModelError ("UserName", 
-						string.Format(LocalizedText.DuplicateUserName,model.Email));
+						string.Format(LocalizedText.DuplicateUserName,userModel.Email));
 					return ;
 				case MembershipCreateStatus.Success:
-					if (!model.IsApprouved)
+					if (!userModel.IsApprouved)
 						YavscHelpers.SendActivationEmail (user);
 					return;
 				default:

@@ -47,4 +47,5 @@
     <data name="role_created"><value>Rôle créé</value></data>
     <data name="Item_added_to_basket"><value>Article ajouté au panier</value></data>
     <data name="Estimate_not_found"><value>Devis non trouvé</value></data>
+    <data name="My_Estimates"><value>Mes estimations</value></data>
 </root>

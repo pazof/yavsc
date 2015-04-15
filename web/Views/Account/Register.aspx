@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Register" Language="C#" Inherits="Yavsc.RegisterPage" MasterPageFile="~/Models/App.master" %>
+﻿<%@ Page Title="Register" Language="C#" Inherits="System.Web.Mvc.ViewPages<RegisterViewModel>" MasterPageFile="~/Models/App.master" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <%= Html.ValidationSummary() %>

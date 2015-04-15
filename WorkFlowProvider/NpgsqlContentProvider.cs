@@ -231,19 +231,65 @@ namespace Yavsc
 				return new bool[] { false, false, true, true };
 			}
 		}
-
 		/// <summary>
-		/// Gets the estimates created for a specified client.
+		/// Gets the estimates created by 
+		/// or for the given user by user name.
 		/// </summary>
 		/// <returns>The estimates.</returns>
-		/// <param name="client">Client.</param>
-		public Estimate[] GetEstimates (string client)
+		/// <param name="username">user name.</param>
+		public Estimate[] GetEstimates (string username)
 		{
+			if (username == null)
+				throw new InvalidOperationException (
+					"username cannot be" +
+					"  null at searching for estimates");
+
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"select _id from estimate where client = @clid";
-					cmd.Parameters.Add ("@clid", client);
+						"select _id from estimate where client = @uname or username = @uname";
+						
+					cmd.Parameters.Add ("@uname", username);
+					cnx.Open ();
+					List<Estimate> ests = new List<Estimate> ();
+					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
+						while (rdr.Read ()) {
+							ests.Add(GetEstimate(rdr.GetInt64(0)));
+						}
+					}
+					return ests.ToArray();
+				}
+			}
+		}
+		/// <summary>
+		/// Gets the estimates.
+		/// </summary>
+		/// <returns>The estimates.</returns>
+		/// <param name="client">Client.</param>
+		/// <param name="responsible">Responsible.</param>
+		public Estimate[] GetEstimates (string client, string responsible)
+		{
+			if (client == null && responsible == null)
+				throw new InvalidOperationException (
+					"client and responsible cannot be" +
+					" both null at searching for estimates");
+
+			using (NpgsqlConnection cnx = CreateConnection ()) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = 
+						"select _id from estimate where ";
+
+					if (client != null) {
+						cmd.CommandText += "client = @clid";
+						if (responsible != null)
+							cmd.CommandText += " and ";
+						cmd.Parameters.Add ("@clid", client);
+						}
+					if (responsible != null) {
+						cmd.CommandText += "username = @resp";
+						cmd.Parameters.Add ("@resp", responsible);
+					}
+
 					cnx.Open ();
 					List<Estimate> ests = new List<Estimate> ();
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {

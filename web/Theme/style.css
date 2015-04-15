@@ -20,18 +20,19 @@ main {
 	background-color: rgba(17,0,23,0.65);
 	float:left;
 }
-	footer:after {
-		content: '';
-	}
-	fieldset {
+
+
+fieldset {
 	background-color: rgba(32,16,16,0.8);
-		border-radius:5px; border: solid 1px #000060;
-		} 
+	border-radius:5px; border: solid 1px #000060;
+	float:left; 
+} 
+
 .panel,.bshpanel,aside {
 	background-color: rgba(32,16,16,0.8);
 		border-radius:5px; border: solid 1px #000060;
 		float: right;
-	}
+}
 
 .bsh { float: right; }
 
@@ -128,8 +129,10 @@ padding-left: 20px;
 	color: #f88;
 }
 
-.actionlink {
+
+input.actionlink, a.actionlink {
 	color: #B0B080;
+	border: solid 1px rgb(128,128,128);
 	border-radius:5px;
    background-color:rgba(0,0,32,0.8);
    font-size:large;
@@ -137,10 +140,10 @@ padding-left: 20px;
    font-family: 'Arial', cursive;
 }
 
-.actionlink img { top:4px; }
+a.actionlink img { top:4px; }
 
-.actionlink: hover {
-	background-color:rgba(30,0,124,0.5);
+input.actionlink:hover, a.actionlink:hover {
+	background-color:rgba(30,0,124,0.9);
     border : solid 1px white;
     text-decoration: underline;
 }
@@ -190,7 +193,7 @@ padding-left: 20px;
    background-color: rgba(0,0,40,.8); 
 }
 
-.actionlink:hover + .hidcom {
+a.actionlink:hover + .hidcom {
    display:block; 
 }
 

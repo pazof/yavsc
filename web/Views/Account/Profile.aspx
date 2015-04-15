@@ -6,13 +6,14 @@
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
   <style>
-fieldset { float:left; }
 table.layout { border-width: 0;  }
 table.layout TR TD { max-width:40%; }
    </style>
    <%= Html.ValidationSummary() %>
 <% using(Html.BeginForm("Profile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
 <% { %>
+
+   <input type="hidden" name="username" value="<%=ViewData["ProfileUserName"]%>">
    <fieldset><legend>Informations publiques</legend>
 
 <table class="layout">
@@ -165,7 +166,13 @@ Avatar </td><td> <img class="avatar" src="<%=Model.avatar%>" alt=""/>
    <% 	if (Roles.IsUserInRole((string)ViewData ["UserName"],"Admin")) { %>
    This user is Admin.
    <% } %>
-   HasBankAccount:<%= Model.HasBankAccount %>, IsBillable:<%=Model.IsBillable%>
+   HasBankAccount:<%= Model.HasBankAccount %> 
+   <% if (!Model.HasBankAccount) { %>
+   (IBAN+BIC ou Codes banque, guichet, compte et clé RIB)
+   <% } %>, IsBillable:<%=Model.IsBillable%>
+    <% if (!Model.IsBillable) { %>
+     (un nom et au choix, une adresse postale valide,
+   ou un téléphone, ou un email, ou un Mobile)   <% } %>
    </aside>
 
 </asp:Content>

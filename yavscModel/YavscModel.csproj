@@ -143,6 +143,7 @@
     <Compile Include="Google\GDate.cs" />
     <Compile Include="Google\Resource.cs" />
     <Compile Include="RolesAndMemebers\RegisterModel.cs" />
+    <Compile Include="RolesAndMemebers\RegisterClientModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

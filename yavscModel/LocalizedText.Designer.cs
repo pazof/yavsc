@@ -70,6 +70,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string My_Estimates {
+            get {
+                return ResourceManager.GetString("My_Estimates", resourceCulture);
+            }
+        }
+        
         public static string UserName {
             get {
                 return ResourceManager.GetString("UserName", resourceCulture);
