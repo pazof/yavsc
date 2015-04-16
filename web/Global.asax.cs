@@ -4,12 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
 using System.Web.Routing;
 using Yavsc.Formatters;
 using Yavsc.Model.FrontOffice;
-using System.Web.Http;
 using System.Web.SessionState;
+using System.Web.Mvc;
+using System.Web.Http;
+using System.Web.WebPages.Scope;
+using System.Reflection;
 
 namespace Yavsc
 {
@@ -86,5 +88,14 @@ namespace Yavsc
 			return HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.StartsWith(WebApiConfig.UrlPrefixRelative);
 		}
 
+		protected void Application_BeginRequest()
+		{
+			var ob = typeof(
+				AspNetRequestScopeStorageProvider).Assembly.GetType(
+					"System.Web.WebPages.WebPageHttpModule").GetProperty
+				("AppStartExecuteCompleted", 
+					BindingFlags.NonPublic | BindingFlags.Static);
+			ob.SetValue(null, true, null);
+		}
 	}
 }

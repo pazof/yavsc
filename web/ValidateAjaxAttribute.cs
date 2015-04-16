@@ -21,8 +21,8 @@
 using System;
 using System.Linq;
 using System.Net;
-using System.Web.Http.Filters;
 using System.Net.Http;
+using System.Web.Http.Filters;
 using System.Web.Http.ModelBinding;
 
 namespace Yavsc
@@ -51,18 +51,16 @@ namespace Yavsc
 			return errorModel;
 
 		}
-		/// <summary>
-		/// Raises the action executing event.
-		/// </summary>
-		/// <param name="actionContext">Action context.</param>
-		public override void OnActionExecuting (System.Web.Http.Controllers.HttpActionContext actionContext)
+
+		public override void OnActionExecuted (HttpActionExecutedContext actionExecutedContext)
 		{
-			var modelState = actionContext.ModelState;
+			var modelState = actionExecutedContext.ActionContext.ModelState;
+
 			if (!modelState.IsValid)
 			{
-				actionContext.Response = 
-					actionContext.Request.CreateResponse 
-					(HttpStatusCode.BadRequest,GetErrorModelObject(modelState));
+				actionExecutedContext.Response =
+					actionExecutedContext.Request.CreateResponse (System.Net.HttpStatusCode.BadRequest,
+						ValidateAjaxAttribute.GetErrorModelObject (modelState));
 			}
 		}
 	}

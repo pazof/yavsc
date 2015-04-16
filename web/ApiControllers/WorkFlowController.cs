@@ -7,11 +7,10 @@ using System.Web.Security;
 using Yavsc;
 using Yavsc.Model.WorkFlow;
 using System.Web.Http;
-using System.Web.Http.Controllers;
-using System.Web.Http.ModelBinding;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Helpers;
 using Yavsc.Model;
+using System.Web.Http.Controllers;
 
 namespace Yavsc.ApiControllers
 {
@@ -134,18 +133,6 @@ namespace Yavsc.ApiControllers
 			string username = Membership.GetUser ().UserName;
 			return new { test=string.Format("Hello {0}!",username) }; 
         }
-
-		private HttpResponseMessage CreateModelStateErrorResponse () {
-			// strip exceptions
-			Dictionary<string,string[]> errs = new Dictionary<string, string[]> ();
-
-			foreach (KeyValuePair<string,ModelState> st
-				in ModelState.Where (x => x.Value.Errors.Count > 0))
-				errs.Add(st.Key, st.Value.Errors.Select(x=>x.ErrorMessage).ToArray());
-
-			return Request.CreateResponse(System.Net.HttpStatusCode.BadRequest,
-				errs);
-		}
 
 		/// <summary>
 		/// Updates the writting.

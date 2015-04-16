@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Web.Profile;
 using System.Web.Security;
 using System.Web;
+using System.Configuration;
 
 namespace Yavsc.Model.RolesAndMembers
 {
@@ -12,6 +13,7 @@ namespace Yavsc.Model.RolesAndMembers
 	/// </summary>
 	public class Profile
 	{
+
 
 		/// <summary>
 		/// Gets or sets the name.
@@ -210,6 +212,8 @@ namespace Yavsc.Model.RolesAndMembers
 			} 
 		}
 
+		public string UserName { get ; set; } 
+
 		public Profile () : base ()
 		{
 		}
@@ -258,6 +262,8 @@ namespace Yavsc.Model.RolesAndMembers
 
 			s = profile.GetPropertyValue ("Mobile");
 			Mobile = (s is DBNull) ? null : (string)s;
+
+			UserName = profile.UserName;
 
 			MembershipUser u = Membership.GetUser (profile.UserName);
 			Email = u.Email;

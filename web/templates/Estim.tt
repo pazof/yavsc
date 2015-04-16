@@ -83,15 +83,19 @@
 % Infos Client
 \def\ClientNom{<#= to.Name #>}    % Nom du client
 \def\ClientAdresse{%                    % Adresse du client
+   <# if (!string.IsNullOrWhiteSpace(to.Address)) { #>
    <#= to.Address #>\\
-   <#= to.ZipCode #> <#= to.CityAndState #>\\
+  <# } #>   <# if (!string.IsNullOrWhiteSpace(to.ZipCode)) { #>
+   <#= to.ZipCode #>  <# } #>  <# if (!string.IsNullOrWhiteSpace(to.ZipCode)) { #>
+    <#= to.CityAndState #>\\ <# } #>  
 <# if (!string.IsNullOrWhiteSpace(to.Phone)) { #>
    Téléphone fixe: <#= to.Phone #>\\
 <# } #>
 <# if (!string.IsNullOrWhiteSpace(to.Mobile)) { #>
    Mobile: <#= to.Mobile #>\\
 <# } #>
-   E-mail: <#= to.Email #>
+ <# if (!string.IsNullOrWhiteSpace(to.Email)) { #>
+   E-mail: <#= to.Email #><# } #>
 }
 
 % Liste des produits facturés : Désignation, prix

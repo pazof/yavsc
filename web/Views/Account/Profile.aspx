@@ -12,8 +12,9 @@ table.layout TR TD { max-width:40%; }
    <%= Html.ValidationSummary() %>
 <% using(Html.BeginForm("Profile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
 <% { %>
+  
+ <%= Html.Hidden("UserName",ViewData["ProfileUserName"]) %>
 
-   <input type="hidden" name="username" value="<%=ViewData["ProfileUserName"]%>">
    <fieldset><legend>Informations publiques</legend>
 
 <table class="layout">

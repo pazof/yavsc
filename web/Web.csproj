@@ -53,55 +53,40 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Web.Routing" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Abstractions" />
-    <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Web.ApplicationServices" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="Mono.Security" />
     <Reference Include="Npgsql" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Security" />
     <Reference Include="CodeKicker.BBCode">
       <HintPath>lib\CodeKicker.BBCode.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Posix" />
-    <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.ServiceModel.Routing" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="Microsoft.Build.Tasks.v12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="Microsoft.Build.Utilities.v12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="Microsoft.Build, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="System.Net" />
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.WebPages.Deployment" />
-    <Reference Include="System.Web.WebPages.Razor" />
     <Reference Include="PayPalCoreSDK">
       <HintPath>..\packages\PayPalCoreSDK.1.6.0\lib\net451\PayPalCoreSDK.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Http" />
-    <Reference Include="System.Net.Http.Formatting" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Web.Http.WebHost" />
-    <Reference Include="Microsoft.Web.Infrastructure" />
-    <Reference Include="System.Web.WebPages" />
+    <Reference Include="System.Web.Http" />
     <Reference Include="System.Web.Mvc" />
+    <Reference Include="System.Web.WebPages" />
+    <Reference Include="System.Net.Http.Formatting" />
+    <Reference Include="System.Net.Http.WebRequest" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -192,6 +177,7 @@
     <Compile Include="ApiControllers\WorkFlowController.cs" />
     <Compile Include="TemplateException.cs" />
     <Compile Include="IValueProvider.cs" />
+    <Compile Include="Formatters\EstimToPdfFormatter.MSAN.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -680,6 +666,7 @@
     <Content Include="Views\FrontOffice\Estimate.aspx" />
     <Content Include="Theme\dark\croix.png" />
     <Content Include="Views\Admin\RemoveRole..aspx" />
+    <Content Include="web.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -721,10 +708,6 @@
       <Project>{59E1DF7B-FFA0-4DEB-B5F3-76EBD98D5356}</Project>
       <Name>WebControls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ITContentProvider\ITContentProvider.csproj">
-      <Project>{9D7D892E-9B77-4713-892D-C26E1E944119}</Project>
-      <Name>ITContentProvider</Name>
-    </ProjectReference>
     <ProjectReference Include="..\yavscModel\YavscModel.csproj">
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
       <Name>YavscModel</Name>
@@ -732,6 +715,14 @@
     <ProjectReference Include="..\WorkFlowProvider\NpgsqlContentProvider.csproj">
       <Project>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</Project>
       <Name>NpgsqlContentProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ITContentProvider\ITContentProvider.csproj">
+      <Project>{9D7D892E-9B77-4713-892D-C26E1E944119}</Project>
+      <Name>ITContentProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\plugins\fortune\fortune.csproj">
+      <Project>{B5F49C21-7BB3-4DC0-AE65-F4ED0F6D15BD}</Project>
+      <Name>fortune</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

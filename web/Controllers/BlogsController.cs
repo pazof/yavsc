@@ -7,8 +7,6 @@ using System.Net.Mime;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Web;
 using System.Web.Configuration;
-using System.Web.Mvc;
-using System.Web.Mvc.Ajax;
 using System.Web.Profile;
 using System.Web.Security;
 using CodeKicker.BBCode;
@@ -19,6 +17,7 @@ using Yavsc.Model.Blogs;
 using Yavsc.ApiControllers;
 using Yavsc.Model.RolesAndMembers;
 using System.Net;
+using System.Web.Mvc;
 
 namespace Yavsc.Controllers
 {

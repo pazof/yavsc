@@ -5,13 +5,12 @@ using System.Linq;
 using System.Net.Mail;
 using System.Web;
 using System.Web.Configuration;
-using System.Web.Mvc;
-using System.Web.Mvc.Ajax;
 using System.Web.Profile;
 using System.Web.Security;
 using Yavsc;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Helpers;
+using System.Web.Mvc;
 
 namespace Yavsc.Controllers
 {
@@ -34,6 +33,7 @@ namespace Yavsc.Controllers
 			get { return avatarDir; }
 			set { avatarDir = value; }
 		}
+
 		/// <summary>
 		/// Index this instance.
 		/// </summary>
@@ -68,6 +68,7 @@ namespace Yavsc.Controllers
 			// If we got this far, something failed, redisplay form
 			return View (model);
 		}
+
 		/// <summary>
 		/// Register the specified model and returnUrl.
 		/// </summary>
@@ -122,6 +123,7 @@ namespace Yavsc.Controllers
 			}
 			return View (model);
 		}
+
 		/// <summary>
 		/// Changes the password success.
 		/// </summary>
@@ -142,6 +144,7 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
+
 		/// <summary>
 		/// Unregister the specified confirmed.
 		/// </summary>
@@ -211,70 +214,75 @@ namespace Yavsc.Controllers
 			ViewData ["UserName"] = logdu;
 			if (user == null)
 				user = logdu;
-			Profile model= new Profile (ProfileBase.Create (user));
+			Profile model = new Profile (ProfileBase.Create (user));
 			model.RememberMe = FormsAuthentication.GetAuthCookie (user, true) == null;
 			return View (model);
 		}
 
 		/// <summary>
-		/// Profile the specified model and AvatarFile.
+		/// Profile the specified user, model and AvatarFile.
 		/// </summary>
+		/// <param name="user">User.</param>
 		/// <param name="model">Model.</param>
 		/// <param name="AvatarFile">Avatar file.</param>
 		[Authorize]
 		[HttpPost]
-		// ASSERT("Membership.GetUser ().UserName is made of simple characters, no slash nor backslash"
-		public ActionResult Profile (string username, Profile model, HttpPostedFileBase AvatarFile)
+		public ActionResult Profile (string user, Profile model, HttpPostedFileBase AvatarFile)
 		{
+			// ASSERT("Membership.GetUser ().UserName is made of simple characters, no slash nor backslash"
 
 			string logdu = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = logdu;
-			if (username != logdu)
+			bool editsMyProfile = (user == logdu);
+			if (!editsMyProfile)
 			if (!Roles.IsUserInRole ("Admin"))
 			if (!Roles.IsUserInRole ("FrontOffice"))
 				throw new UnauthorizedAccessException ("Your are not authorized to modify this profile");
 
-			ProfileBase prtoup = ProfileBase.Create (username);
-			if (AvatarFile != null)  { 
+
+			if (AvatarFile != null) { 
 				// if said valid, move as avatar file
 				// else invalidate the model
 				if (AvatarFile.ContentType == "image/png") {
 					string avdir = Server.MapPath (AvatarDir);
-					string avpath = Path.Combine (avdir, username + ".png");
+					string avpath = Path.Combine (avdir, user + ".png");
 					AvatarFile.SaveAs (avpath);
-					model.avatar = Request.Url.Scheme+ "://"+ Request.Url.Authority + AvatarDir.Substring (1)+ "/" + username + ".png";
-				} else 
+					model.avatar = Request.Url.Scheme + "://" + Request.Url.Authority + AvatarDir.Substring (1) + "/" + user + ".png";
+				} else
 					ModelState.AddModelError ("Avatar",
 						string.Format ("Image type {0} is not supported (suported formats : {1})",
 							AvatarFile.ContentType, "image/png"));
 			}
-		/* Sync the property in the Profile model to display :
+			/* Sync the property in the Profile model to display :
 		 *  string cAvat = HttpContext.Profile.GetPropertyValue ("avatar") as string;
 			if (cAvat != null) if (model.avatar == null) model.avatar = cAvat;
 			*/
 			if (ModelState.IsValid) {
-				if (model.avatar != null) 
-					prtoup.SetPropertyValue ("avatar", model.avatar);
-				prtoup.SetPropertyValue ("Address", model.Address);
-				prtoup.SetPropertyValue ("BlogTitle", model.BlogTitle);
-				prtoup.SetPropertyValue ("BlogVisible", model.BlogVisible);
-				prtoup.SetPropertyValue ("CityAndState", model.CityAndState);
-				prtoup.SetPropertyValue ("ZipCode", model.ZipCode);
-				prtoup.SetPropertyValue ("Country", model.Country);
-				prtoup.SetPropertyValue ("WebSite", model.WebSite);
-				prtoup.SetPropertyValue ("Name", model.Name);
-				prtoup.SetPropertyValue ("Phone", model.Phone);
-				prtoup.SetPropertyValue ("Mobile", model.Mobile);
-				prtoup.SetPropertyValue ("BankCode", model.BankCode);
-				prtoup.SetPropertyValue ("WicketCode", model.WicketCode);
-				prtoup.SetPropertyValue ("AccountNumber", model.AccountNumber);
-				prtoup.SetPropertyValue ("BankedKey", model.BankedKey);
-				prtoup.SetPropertyValue ("BIC", model.BIC);
-				prtoup.SetPropertyValue ("IBAN", model.IBAN);
-				prtoup.Save ();
-				FormsAuthentication.SetAuthCookie (username, model.RememberMe);
-				ViewData ["Message"] = "Profile enregistré, cookie modifié.";
+				ProfileBase prf = ProfileBase .Create (model.UserName);
+				prf.SetPropertyValue ("BlogVisible", model.BlogVisible);
+				prf.SetPropertyValue ("BlogTitle", model.BlogTitle);
+				prf.SetPropertyValue ("avatar", model.avatar);
+				prf.SetPropertyValue ("Address", model.Address);
+				prf.SetPropertyValue ("CityAndState", model.CityAndState);
+				prf.SetPropertyValue ("Country", model.Country);
+				prf.SetPropertyValue ("ZipCode", model.ZipCode);
+				prf.SetPropertyValue ("WebSite", model.WebSite);
+				prf.SetPropertyValue ("Name", model.Name);
+				prf.SetPropertyValue ("Phone", model.Phone);
+				prf.SetPropertyValue ("Mobile", model.Mobile);
+				prf.SetPropertyValue ("BankCode", model.BankCode);
+				prf.SetPropertyValue ("IBAN", model.IBAN);
+				prf.SetPropertyValue ("BIC", model.BIC);
+				prf.SetPropertyValue ("WicketCode", model.WicketCode);
+				prf.SetPropertyValue ("AccountNumber", model.AccountNumber);
+				prf.SetPropertyValue ("BankedKey", model.BankedKey);
+				prf.SetPropertyValue ("gcalid", model.GoogleCalendar);
+				prf.Save ();
 
+				// only do the following if this profile belongs to current user
+				if (editsMyProfile)
+					FormsAuthentication.SetAuthCookie (user, model.RememberMe);
+				ViewData ["Message"] = "Profile enregistré"+((editsMyProfile)?", cookie modifié.":"");
 			}
 			return View (model);
 		}
@@ -289,7 +297,6 @@ namespace Yavsc.Controllers
 			FormsAuthentication.SignOut ();
 			return Redirect (returnUrl);
 		}
-
 
 		/// <summary>
 		/// Validate the specified id and key.

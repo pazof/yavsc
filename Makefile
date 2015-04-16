@@ -50,7 +50,7 @@ clean:
 	rm -rf $(DESTDIR)
 
 
-rsync-all: rsync_local rsync_test rsync_preprod rsync_prod
+allrsync: rsync_local rsync_test rsync_preprod rsync_prod
 
 sourcepkg:
 	git archive --format=tar --prefix=yavsc-$(CONFIG)/ $(CONFIG) | bzip2 > yavsc-$(CONFIG).tar.bz2
@@ -67,5 +67,4 @@ htmldoc: xmldoc
 docdeploy-prod: htmldoc
 	rsync -ravu web/htmldoc root@$(PRODHOSTDIR)
 
-.PHONY: rsync-local
 

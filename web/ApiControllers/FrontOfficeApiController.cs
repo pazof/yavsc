@@ -89,30 +89,10 @@ namespace Yavsc.ApiControllers
 		[AcceptVerbs ("GET")]
 		public HttpResponseMessage EstimateToTex (long id)
 		{
-			string texest = null;
-			try {
-				texest = estimateToTex (id);
-			} catch (TemplateException ex) {
-				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
-					new ObjectContent (typeof(string),
-						ex.Message, new ErrorHtmlFormatter (HttpStatusCode.NotAcceptable,
-						LocalizedText.DocTemplateException
-					))
-				};
-			} catch (Exception ex) {
-				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
-					new ObjectContent (typeof(string),
-						ex.Message, new ErrorHtmlFormatter (HttpStatusCode.InternalServerError,
-							LocalizedText.DocTemplateException))
-				};
-			}
+			string texest = estimateToTex (id);
 			if (texest == null)
-				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
-					new ObjectContent (typeof(string), "Not an estimation id:" + id, 
-						new ErrorHtmlFormatter (HttpStatusCode.NotFound,
-							LocalizedText.Estimate_not_found))
-				};
-
+				throw new InvalidOperationException (
+					"Not an estimate");
 			return new HttpResponseMessage () {
 				Content = new ObjectContent (typeof(string),
 					texest,
@@ -146,11 +126,11 @@ namespace Yavsc.ApiControllers
 		/// <returns>The to pdf.</returns>
 		/// <param name="estimid">Estimid.</param>
 		[AcceptVerbs("GET")]
-		public HttpResponseMessage EstimateToPdf (long estimid)
+		public HttpResponseMessage EstimateToPdf (long id)
 		{
 			string texest = null;
 			try {
-				texest = estimateToTex (estimid);
+				texest = estimateToTex (id);
 			} catch (TemplateException ex) {
 				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
 					new ObjectContent (typeof(string),
@@ -167,7 +147,7 @@ namespace Yavsc.ApiControllers
 			}
 			if (texest == null)
 				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
-					new ObjectContent (typeof(string), "Not an estimation id:" + estimid, 
+					new ObjectContent (typeof(string), "Not an estimation id:" + id, 
 						new ErrorHtmlFormatter (HttpStatusCode.NotFound,
 							LocalizedText.Estimate_not_found))
 				};
@@ -193,7 +173,7 @@ namespace Yavsc.ApiControllers
 		/// <param name="model">Model.</param>
 		[Authorize()]
 		[ValidateAjaxAttribute]
-		public HttpResponseMessage Register ([FromBody] RegisterModel model)
+		public HttpResponseMessage Register ([FromBody] RegisterClientModel model)
 		{
 			if (ModelState.IsValid) {
 				if (model.IsApprouved)
@@ -225,6 +205,14 @@ namespace Yavsc.ApiControllers
 				case MembershipCreateStatus.Success:
 					if (!model.IsApprouved)
 						Yavsc.Helpers.YavscHelpers.SendActivationEmail (user);
+					ProfileBase prtu = ProfileBase.Create (model.UserName);
+					prtu.SetPropertyValue("Name",model.Name);
+					prtu.SetPropertyValue("Address",model.Address);
+					prtu.SetPropertyValue("CityAndState",model.CityAndState);
+					prtu.SetPropertyValue("Mobile",model.Mobile);
+					prtu.SetPropertyValue("Phone",model.Phone);
+					prtu.SetPropertyValue("ZipCode",model.ZipCode);
+
 					break;
 				default:
 					break;
