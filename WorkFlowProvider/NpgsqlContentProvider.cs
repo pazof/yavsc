@@ -361,10 +361,12 @@ namespace Yavsc
 						est = new Estimate ();
 						est.Title = rdr.GetString(
 							rdr.GetOrdinal("title"));
+
 						est.Responsible = rdr.GetString(
 							rdr.GetOrdinal("username"));
-						est.Client = rdr.GetString (
-							rdr.GetOrdinal ("client"));
+						int clientidx = rdr.GetOrdinal ("client");
+						if (!rdr.IsDBNull (clientidx))
+							est.Client = rdr.GetString (clientidx);
 						int index = rdr.GetOrdinal ("description"); 
 						if (!rdr.IsDBNull (index))
 							est.Description = rdr.GetString (index);
@@ -565,8 +567,6 @@ namespace Yavsc
 
 			cnxstr = ConfigurationManager.ConnectionStrings [config ["connectionStringName"]].ConnectionString;
 			applicationName = config["applicationName"] ?? "/";
-
-
 
 		}
 

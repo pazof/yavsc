@@ -121,6 +121,7 @@
     <Folder Include="xmldoc\" />
     <Folder Include="Views\PayPal\" />
     <Folder Include="ApiControllers\" />
+    <Folder Include="Views\Modules\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
