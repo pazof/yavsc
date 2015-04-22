@@ -59,9 +59,6 @@
       <HintPath>lib\CodeKicker.BBCode.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -87,6 +84,7 @@
     <Reference Include="System.Web.WebPages" />
     <Reference Include="System.Net.Http.Formatting" />
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Web.WebPages.Razor" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
