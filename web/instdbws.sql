@@ -208,6 +208,7 @@ CREATE TABLE commandes
   creation timestamp with time zone, -- creation date
   clientname character varying(255), -- user who created the command, client of this command
   applicationname character varying(255), -- application concerned by this command
+  params json,
   CONSTRAINT commandes_pkey PRIMARY KEY (id),
   CONSTRAINT commforeignuser FOREIGN KEY (clientname, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
