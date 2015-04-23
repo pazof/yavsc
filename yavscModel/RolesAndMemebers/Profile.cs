@@ -85,7 +85,11 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <value>The blog title.</value>
 		[DisplayName ("Titre du blog")]
 		[StringLength (255)]
-		public string BlogTitle { get { return blogTitle==null? Name+"'s blog":blogTitle; } set { blogTitle = value; } }
+		public string BlogTitle { get { 
+				return string.IsNullOrWhiteSpace(blogTitle)? 
+					(string.IsNullOrWhiteSpace(Name)?
+						UserName:Name)+"'s blog":blogTitle; }
+			set { blogTitle = value; } }
 
 		/// <summary>
 		/// Gets or sets the phone number.

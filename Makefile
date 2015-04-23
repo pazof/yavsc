@@ -1,7 +1,7 @@
 
 VERSION=1.1
 CONFIG=Debug
-DESTDIR=build/web/$(CONFIG)
+LDYDESTDIR=build/web/$(CONFIG)
 COPYUNCHANGED="false"
 
 HOST_rsync_local=localhost
@@ -10,8 +10,8 @@ DESTDIR_rsync_local=/srv/www/yavsc
 HOST_rsync_test=localhost
 DESTDIR_rsync_test=/srv/www/lua
 
-HOST_rsync_preprod=lua.localdomain
-DESTDIR_rsync_preprod=/srv/www/yavsc
+HOST_rsync_pre=lua.localdomain
+DESTDIR_rsync_pre=/srv/www/yavsc
 
 HOST_rsync_prod=lua.localdomain
 DESTDIR_rsync_prod=/srv/www/lua
@@ -23,34 +23,29 @@ RSYNCCMD=rsync -ravu --chown=www-data:www-data
 all: deploy
 
 ddir:
-	mkdir -p $(DESTDIR)
+	mkdir -p $(LDYDESTDIR)
 
 deploy: ddir build
-	rm -rf $(DESTDIR)
-	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir=../$(DESTDIR) /t:Deploy web/Web.csproj
-	mv $(DESTDIR)/Web.config $(DESTDIR)/Web.config.new
+	rm -rf $(LYDESTDIR)
+	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir=../$(LDYDESTDIR) /t:Deploy web/Web.csproj
+	mv $(LDYDESTDIR)/Web.config $(LDYDESTDIR)/Web.config.new
 
 
 rsync_% : HOST = $(HOST_$@)
 
 rsync_% : DESTDIR = $(DESTDIR_$@)
 
-rsync_% : 
+rsync_% : deploy
 	echo "!Deploying to $(HOST)!"
 	$(RSYNCCMD) build/web/$(CONFIG)/ root@$(HOST):$(DESTDIR)
 	ssh root@$(HOST) apachectl restart
-
-rsync: rsync_test
 
 build: 
 	xbuild /p:Configuration=$(CONFIG) /t:Build Yavsc.sln
 
 clean:
 	xbuild /t:Clean
-	rm -rf $(DESTDIR)
-
-
-allrsync: rsync_local rsync_test rsync_preprod rsync_prod
+	rm -rf $(LDYDESTDIR)
 
 sourcepkg:
 	git archive --format=tar --prefix=yavsc-$(CONFIG)/ $(CONFIG) | bzip2 > yavsc-$(CONFIG).tar.bz2
@@ -66,5 +61,15 @@ htmldoc: xmldoc
 
 docdeploy-prod: htmldoc
 	rsync -ravu web/htmldoc root@$(PRODHOSTDIR)
+
+rsync_local:
+
+rsync_test:
+
+rsync_pre:
+
+rsync_prod:
+
+bigrsync: rsync_test rsync_local rsync_pre rsync_prod
 
 

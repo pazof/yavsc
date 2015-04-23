@@ -261,7 +261,11 @@ namespace Yavsc.Controllers
 				ProfileBase prf = ProfileBase .Create (model.UserName);
 				prf.SetPropertyValue ("BlogVisible", model.BlogVisible);
 				prf.SetPropertyValue ("BlogTitle", model.BlogTitle);
-				prf.SetPropertyValue ("avatar", model.avatar);
+				if (AvatarFile != null) { 
+					prf.SetPropertyValue ("avatar", model.avatar);
+				} else {
+					model.avatar = (string) prf.GetPropertyValue ("avatar");
+				}
 				prf.SetPropertyValue ("Address", model.Address);
 				prf.SetPropertyValue ("CityAndState", model.CityAndState);
 				prf.SetPropertyValue ("Country", model.Country);

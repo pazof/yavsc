@@ -27,6 +27,10 @@ fieldset {
 	border-radius:5px; border: solid 1px #000060;
 	float:left; 
 } 
+#logo {
+	float: left;
+
+	}
 
 .panel,.bshpanel,aside {
 	background-color: rgba(32,16,16,0.8);

@@ -12,6 +12,7 @@ using System.Web.Mvc;
 using System.Web.Http;
 using System.Web.WebPages.Scope;
 using System.Reflection;
+using System.Web.Configuration;
 
 namespace Yavsc
 {
@@ -21,13 +22,19 @@ namespace Yavsc
 	/// </summary>
 	public class MvcApplication : System.Web.HttpApplication
 	{
+
 		/// <summary>
 		/// Registers the routes.
 		/// </summary>
 		/// <param name="routes">Routes.</param>
 		public static void RegisterRoutes (RouteCollection routes)
 		{
-
+			// Should be FrontOffice
+			string defaultController = WebConfigurationManager.AppSettings ["DefaultController"]; 
+			if (defaultController == null)
+			{
+				defaultController = "Admin";
+			}
 			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}");
 			routes.IgnoreRoute ("Scripts/{*pathInfo}");
 			routes.IgnoreRoute ("Theme/{*pathInfo}");
@@ -58,7 +65,10 @@ namespace Yavsc
 			routes.MapRoute (
 				"Default",
 				"{controller}/{action}/{user}/{title}",
-				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
+				new { controller = defaultController, 
+					action = "Index", 
+					user=UrlParameter.Optional,
+					title = UrlParameter.Optional }
 			);
 		}
 
