@@ -11,7 +11,6 @@ using Yavsc.Admin;
 using System.IO;
 using Yavsc.Model;
 
-
 namespace Yavsc.Controllers
 {
 	/// <summary>
@@ -40,11 +39,10 @@ namespace Yavsc.Controllers
 		{
 			if (doInit=="on") {
 				if (ModelState.IsValid) {
-					// TODO BETTER
 					datac.BackupPrefix = Server.MapPath (datac.BackupPrefix);
 					DataManager mgr = new DataManager (datac);
-					TaskOutput t = mgr.CreateDb ();
-					return View ("Created", t);
+					TaskOutput tcdb = mgr.CreateDb ();
+					return View ("Created", tcdb);
 				}
 			}
 			return View ();

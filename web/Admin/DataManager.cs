@@ -4,6 +4,7 @@ using System.IO;
 using Yavsc.Model.Admin;
 using Npgsql.Web.Blog;
 using System.Resources;
+using System.Reflection;
 
 namespace Yavsc.Admin
 {
@@ -91,11 +92,12 @@ namespace Yavsc.Admin
 
 			string sql;
 			try {
-				using (Stream sqlStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Yavsc.instdbws.sql"))
+				Assembly a =  System.Reflection.Assembly.GetExecutingAssembly();
+				using (Stream sqlStream = a.GetManifestResourceStream("Yavsc.instdbws.sql"))
 				{
-					using (StreamReader srdr = new StreamReader (sqlStream)) {
+					try { using (StreamReader srdr = new StreamReader (sqlStream)) {
 						sql  = srdr.ReadToEnd ();
-						using (var cnx = new Npgsql.NpgsqlConnection (da.ConnectionString())) {
+						using (var cnx = new Npgsql.NpgsqlConnection (da.ConnectionString)) {
 							using (var cmd = cnx.CreateCommand ()) {
 								cmd.CommandText = sql;
 								cnx.Open();
@@ -103,6 +105,12 @@ namespace Yavsc.Admin
 								cnx.Close();
 								}
 						}
+						} } catch (Exception exg) {
+						res.ExitCode = 1;
+						res.Error = 
+							string.Format ("Exception of type {0} occred retrieving the script",
+								exg.GetType ().Name);
+						res.Message = exg.Message;
 					}
 				}
 			}

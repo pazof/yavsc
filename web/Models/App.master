@@ -34,8 +34,8 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
 </main>
-   <asp:ContentPlaceHolder ID="MASContent" runat="server">
-   </asp:ContentPlaceHolder>
+<asp:ContentPlaceHolder ID="MASContent" runat="server">
+</asp:ContentPlaceHolder>
 <aside>
    <div id="login" >
 <% if (Membership.GetUser()==null) { %>
@@ -58,7 +58,7 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 <% } %>
 </div>
 </aside>
- <div style="float:right; height:5em; z-index:-1;"></div>
+<div style="float:right; height:5em; z-index:-1;"></div>
 	<footer>
    <%= Html.ActionLink("Contact","Contact","Home",null, new { @class="footerlink" }) %>    <br/>
    <% foreach ( string link in Yavsc.ThanksHelper.Links()) { %>

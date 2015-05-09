@@ -17,7 +17,7 @@
 <%= Html.LabelFor(model => model.Password) %>:
 <%= Html.Password( "Password" ) %>
 <%= Html.ValidationMessage("Password", "*") %><br/>
-<label for="doInit">Executer le script de création de la base:</label><input type="checkbox" name="doInit" id="doInit" >
+<label for="doInit">Executer le script de création de la base: </label><input type="checkbox" name="doInit" id="doInit" >
 <input type="submit"/>
 <% } %>
 </asp:Content>

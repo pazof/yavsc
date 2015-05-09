@@ -100,10 +100,8 @@ namespace Yavsc.Model.Admin
 		/// Connections the string.
 		/// </summary>
 		/// <returns>The string.</returns>
-		public string ConnectionString() {
-			return string.Format ("Server={0};Port={1};Database={2};User Id={3};Password={4};Encoding=Unicode;",
-				Host,Port,Dbuser,Password);
-		}
+		public string ConnectionString { get { return string.Format ("Server={0};Port={1};Database={2};User Id={3};Password={4};Encoding=Unicode;",
+			Host, Port, Dbname, Dbuser, Password); } }
 	}
 	
 }

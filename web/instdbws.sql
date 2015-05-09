@@ -217,8 +217,7 @@ CREATE TABLE commandes
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE commandes
-  OWNER TO yavsc;
+
 COMMENT ON COLUMN commandes.id IS 'Identifiant unique de commande e, cours';
 COMMENT ON COLUMN commandes.validation IS 'Date de validation';
 COMMENT ON COLUMN commandes.prdref IS 'Product reference from the unique valid catalog at the validation date';
