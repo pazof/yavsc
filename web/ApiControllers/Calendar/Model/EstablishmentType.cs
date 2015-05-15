@@ -1,5 +1,5 @@
 //
-//  Schedule.cs
+//  NFEvent.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -23,26 +23,40 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
 	/// <summary>
-	/// Schedule.
+	/// Establishment type.
 	/// </summary>
-	public class Schedule {
-		public Periodicity Period { get; set; }
-
+	public enum EstablishmentType
+	{
 		/// <summary>
-		/// Gets or sets the schedule of an open week.
-		/// One item by bay in the week, 
+		/// The discotheque.
 		/// </summary>
-		/// <value>The weekly workdays.</value>
-		public OpenDay [] WeekDays { get; set; }
+		Discotheque,
 		/// <summary>
-		/// Gets or sets the hollydays.
+		/// The piano bar.
 		/// </summary>
-		/// <value>The hollydays.</value>
-		[Required]
-		public Period [] Validity { get; set; }
+		PianoBar,
+		/// <summary>
+		/// The bar.
+		/// </summary>
+		Bar,
+		/// <summary>
+		/// The place publique.
+		/// </summary>
+		PlacePublique,
+		/// <summary>
+		/// The maison privee.
+		/// </summary>
+		MaisonPrivee,
+		/// <summary>
+		/// The domaine publique.
+		/// </summary>
+		DomainePublique,
+		/// <summary>
+		/// The domaine prive.
+		/// </summary>
+		DomainePrive
 	}
-	
 }

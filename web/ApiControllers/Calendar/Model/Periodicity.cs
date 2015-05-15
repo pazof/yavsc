@@ -1,5 +1,5 @@
 //
-//  Position.cs
+//  Periodicity.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -23,21 +23,36 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
 	/// <summary>
-	/// Position.
+	/// Periodicity.
 	/// </summary>
-	public class Position
-	{
+	public enum Periodicity {
 		/// <summary>
-		/// The longitude.
+		/// The daily.
 		/// </summary>
-		public double Longitude { get; set; }
+		Daily,
 		/// <summary>
-		/// The latitude.
+		/// The weekly.
 		/// </summary>
-		public double Latitude { get; set; }
+		Weekly,
+		/// <summary>
+		/// The monthly.
+		/// </summary>
+		Monthly,
+		/// <summary>
+		/// The three m.
+		/// </summary>
+		ThreeM,
+		/// <summary>
+		/// The six m.
+		/// </summary>
+		SixM,
+		/// <summary>
+		/// The yearly.
+		/// </summary>
+		Yearly
 	}
 	
 }

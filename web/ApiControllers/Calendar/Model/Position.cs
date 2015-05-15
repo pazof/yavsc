@@ -1,5 +1,5 @@
 //
-//  OpenDay.cs
+//  Position.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -23,34 +23,22 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
-
 	/// <summary>
-	/// Open day.
+	/// Position.
 	/// </summary>
-	public class OpenDay { 
+	public class Position
+	{
 		/// <summary>
-		/// The day.
+		/// The longitude.
 		/// </summary>
-		[Required]
-		public WeekDay Day;
-		public TimeSpan S { get; set; }
+		public double Longitude { get; set; }
+		/// <summary>
+		/// The latitude.
+		/// </summary>
+		public double Latitude { get; set; }
 
-		// ASSERT Start <= End
-		/// <summary>
-		/// Gets or sets the start hour.
-		/// </summary>
-		/// <value>The start.</value>
-		[Required]
-		public TimeSpan Start { get; set; }
-		/// <summary>
-		/// Gets or sets the end hour 
-		/// (from the next day if lower than the Start).
-		/// </summary>
-		/// <value>The end.</value>
-		[Required]
-		public TimeSpan End { get; set; }
 	}
 	
 }

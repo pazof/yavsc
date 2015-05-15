@@ -53,11 +53,12 @@ namespace Yavsc.ApiControllers
 				Membership.GetUser().UserName,client,title,description);
 		}
 
+
+
 		/// <summary>
-		/// Register the specified model and isapprouved.
+		/// Register the specified userModel.
 		/// </summary>
-		/// <param name="model">Model.</param>
-		/// <param name="isapprouved">If set to <c>true</c> isapprouved.</param>
+		/// <param name="userModel">User model.</param>
 		[HttpGet]
 		[ValidateAjax]
 		[Authorize(Roles="Admin,FrontOffice")]

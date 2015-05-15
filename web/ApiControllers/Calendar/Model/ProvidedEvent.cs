@@ -1,5 +1,5 @@
 //
-//  Period.cs
+//  ProvidedEvent.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -23,16 +23,18 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
+
 	/// <summary>
-	/// Hollydays.
+	/// Provided event.
 	/// </summary>
-	public class Period {
+	public class ProvidedEvent : YaEvent { 
+		/// <summary>
+		/// The privacy.
+		/// </summary>
 		[Required]
-		public DateTime Start { get; set; }
-		[Required]
-		public DateTime End { get; set; }
+		public Publishing Privacy;
 	}
 	
 }

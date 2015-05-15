@@ -1,5 +1,5 @@
 //
-//  Publishing.cs
+//  PositionAndKeyphrase.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -23,21 +23,20 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
-
 	/// <summary>
-	/// Publishing.
+	/// Position and keyphrase.
 	/// </summary>
-	public enum Publishing {
+	public class PositionAndKeyphrase {
 		/// <summary>
-		/// The private.
+		/// The phrase.
 		/// </summary>
-		Private,
+		public string phrase;
 		/// <summary>
-		/// The public.
+		/// The position.
 		/// </summary>
-		Public
+		public Position pos;
 	}
 	
 }

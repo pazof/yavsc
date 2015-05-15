@@ -1,5 +1,5 @@
 //
-//  Periodicity.cs
+//  WeekDay.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -23,21 +23,40 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
 	/// <summary>
-	/// Periodicity.
+	/// Week day.
 	/// </summary>
-	public enum Periodicity {
+	public enum WeekDay:int {
 		/// <summary>
-		/// The daily.
+		/// The monday (0).
 		/// </summary>
-		Daily,
-		Weekly,
-		Monthly,
-		ThreeM,
-		SixM,
-		Yearly
+		Monday=0,
+		/// <summary>
+		/// The tuesday.
+		/// </summary>
+		Tuesday,
+		/// <summary>
+		/// The wednesday.
+		/// </summary>
+		Wednesday,
+		/// <summary>
+		/// The thursday.
+		/// </summary>
+		Thursday,
+		/// <summary>
+		/// The friday.
+		/// </summary>
+		Friday,
+		/// <summary>
+		/// The saturday.
+		/// </summary>
+		Saturday,
+		/// <summary>
+		/// The sunday.
+		/// </summary>
+		Sunday
 	}
 	
 }

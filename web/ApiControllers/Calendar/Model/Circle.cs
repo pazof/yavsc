@@ -1,5 +1,5 @@
 //
-//  ProvidedEvent.cs
+//  NightFlashController.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -18,23 +18,18 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
-
-	/// <summary>
-	/// Provided event.
-	/// </summary>
-	public class ProvidedEvent : NFEvent { 
-		/// <summary>
-		/// The privacy.
-		/// </summary>
-		[Required]
-		public Publishing Privacy;
+	class Circle
+	{
+		public string Title { get; set; }
+		string [] Users { get; set; }
 	}
-	
+
 }
+
+

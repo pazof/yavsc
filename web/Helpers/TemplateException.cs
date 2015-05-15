@@ -21,7 +21,7 @@ using System.Text;
 using System.Web.Profile;
 using System.Collections.Specialized;
 
-namespace Yavsc.ApiControllers
+namespace Yavsc.Helpers
 {
 	class TemplateException : Exception
 	{
@@ -32,6 +32,5 @@ namespace Yavsc.ApiControllers
 		{
 		}
 	}
-
 }
 

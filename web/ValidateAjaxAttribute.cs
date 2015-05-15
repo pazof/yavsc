@@ -51,7 +51,10 @@ namespace Yavsc
 			return errorModel;
 
 		}
-
+		/// <summary>
+		/// Raises the action executed event.
+		/// </summary>
+		/// <param name="actionExecutedContext">Action executed context.</param>
 		public override void OnActionExecuted (HttpActionExecutedContext actionExecutedContext)
 		{
 			var modelState = actionExecutedContext.ActionContext.ModelState;

@@ -21,14 +21,14 @@
 using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
-using Yavsc.ApiControllers.NightFlash.Model;
+using Yavsc.ApiControllers.Calendar.Model;
 
-namespace Yavsc.ApiControllers.NightFlash
+namespace Yavsc.ApiControllers.Calendar
 {
 	/// <summary>
 	/// Night flash controller.
 	/// </summary>
-	public class NightFlashController: ApiController
+	public class CalendarController: ApiController
 	{
 		/// <summary>
 		/// List events according the specified search arguments.
@@ -36,19 +36,18 @@ namespace Yavsc.ApiControllers.NightFlash
 		/// <param name="args">Arguments.</param>
 		[ValidateAjaxAttribute]
 		[HttpGet]
-		public NFEvent[] List ([FromUri] PositionAndKeyphrase args)
+		public YaEvent[] List ([FromUri] PositionAndKeyphrase args)
 		{
-			return new NFEvent[] {
-				new NFEvent () {
-					Title = "Test",
+			return new YaEvent[] {
+				new YaEvent () {
 					Description = "Test Descr",
-					EventType = "Night club special bubble party",
+					Title = "Night club special bubble party",
 					Location = new Position() {
 						Longitude = 0,
 						Latitude = 0 
 					}
 				},
-				new NFEvent () {
+				new YaEvent () {
 					Title = "Test2",
 					ImgLocator = "http://bla/im.png",
 					Location = new Position() {
@@ -56,16 +55,15 @@ namespace Yavsc.ApiControllers.NightFlash
 						Latitude = 0 
 					}
 				},
-				new NFEvent () {
-					Title = "Test",
+				new YaEvent () {
 					Description = "Test Descr",
-					EventType = "Night club special bubble party",
+					Title = "Night club special bubble party",
 					Location = new Position() {
 						Longitude = 0,
 						Latitude = 0 
 					}
 				},
-				new NFEvent () {
+				new YaEvent () {
 					Title = "Test2",
 					ImgLocator = "http://bla/im.png",
 					Location = new Position() {
@@ -81,7 +79,7 @@ namespace Yavsc.ApiControllers.NightFlash
 		/// </summary>
 		/// <param name="ProviderId">Provider identifier.</param>
 		[HttpGet]
-		public ProviderPublicInfo Provider ([FromUri] string ProviderId)
+		public ProviderPublicInfo ProviderInfo ([FromUri] string ProviderId)
 		{
 			return new ProviderPublicInfo () {
 				DisplayName = "Yavsc clubing",
@@ -122,6 +120,11 @@ namespace Yavsc.ApiControllers.NightFlash
 		public int PostEvent ([FromBody] ProvidedEvent ev)
 		{
 			return -1;
+		}
+
+		[Authorize]
+		void NotifyEvent(EventPub evpub) {
+			throw new NotImplementedException();
 		}
 	}
 }

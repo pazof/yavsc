@@ -124,7 +124,7 @@ namespace Yavsc.ApiControllers
 		/// Gets the estimate in pdf format from tex generation.
 		/// </summary>
 		/// <returns>The to pdf.</returns>
-		/// <param name="estimid">Estimid.</param>
+		/// <param name="id">Estimid.</param>
 		[AcceptVerbs("GET")]
 		public HttpResponseMessage EstimateToPdf (long id)
 		{

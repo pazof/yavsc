@@ -1,5 +1,5 @@
 //
-//  WeekDay.cs
+//  Schedule.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -23,40 +23,30 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
 	/// <summary>
-	/// Week day.
+	/// Schedule.
 	/// </summary>
-	public enum WeekDay:int {
+	public class Schedule {
 		/// <summary>
-		/// The monday (0).
+		/// Gets or sets the period.
 		/// </summary>
-		Monday=0,
+		/// <value>The period.</value>
+		public Periodicity Period { get; set; }
+
 		/// <summary>
-		/// The tuesday.
+		/// Gets or sets the schedule of an open week.
+		/// One item by bay in the week, 
 		/// </summary>
-		Tuesday,
+		/// <value>The weekly workdays.</value>
+		public OpenDay [] WeekDays { get; set; }
 		/// <summary>
-		/// The wednesday.
+		/// Gets or sets the hollydays.
 		/// </summary>
-		Wednesday,
-		/// <summary>
-		/// The thursday.
-		/// </summary>
-		Thursday,
-		/// <summary>
-		/// The friday.
-		/// </summary>
-		Friday,
-		/// <summary>
-		/// The saturday.
-		/// </summary>
-		Saturday,
-		/// <summary>
-		/// The sunday.
-		/// </summary>
-		Sunday
+		/// <value>The hollydays.</value>
+		[Required]
+		public Period [] Validity { get; set; }
 	}
 	
 }

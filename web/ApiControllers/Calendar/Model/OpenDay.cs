@@ -1,5 +1,5 @@
 //
-//  PositionAndKeyphrase.cs
+//  OpenDay.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -23,20 +23,39 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
+
 	/// <summary>
-	/// Position and keyphrase.
+	/// Open day.
 	/// </summary>
-	public class PositionAndKeyphrase {
+	public class OpenDay { 
 		/// <summary>
-		/// The phrase.
+		/// The day.
 		/// </summary>
-		public string phrase;
+		[Required]
+		public WeekDay Day;
+
 		/// <summary>
-		/// The position.
+		/// Gets or sets the s.
 		/// </summary>
-		public Position pos;
+		/// <value>The s.</value>
+		public TimeSpan S { get; set; }
+
+		// ASSERT Start <= End
+		/// <summary>
+		/// Gets or sets the start hour.
+		/// </summary>
+		/// <value>The start.</value>
+		[Required]
+		public TimeSpan Start { get; set; }
+		/// <summary>
+		/// Gets or sets the end hour 
+		/// (from the next day if lower than the Start).
+		/// </summary>
+		/// <value>The end.</value>
+		[Required]
+		public TimeSpan End { get; set; }
 	}
 	
 }

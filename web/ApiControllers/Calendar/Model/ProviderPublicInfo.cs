@@ -1,5 +1,5 @@
 //
-//  NFEvent.cs
+//  ProviderPublicInfo.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -23,58 +23,51 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
-
 	/// <summary>
-	/// NF event.
+	/// Provider public info.
 	/// </summary>
-	public class NFEvent
-	{
+	public class ProviderPublicInfo {
 		/// <summary>
-		/// The title.
+		/// Gets or sets the display name.
 		/// </summary>
-		[Required] public string Title { get; set; }
+		/// <value>The display name.</value>
+		[Required]
+		public string DisplayName { get; set; }
 		/// <summary>
-		/// The description.
+		/// Gets or sets the type of the location.
 		/// </summary>
-		[Required] public string Description { get; set; }
+		/// <value>The type of the location.</value>
+		[Required]
+		public string LocationType { get; set; }
 		/// <summary>
-		/// The type of the event.
+		/// Gets or sets the location.
 		/// </summary>
-		[Required] public string EventType { get; set; }
+		/// <value>The location.</value>
+		[Required]
+		public Position Location { get; set; }
 		/// <summary>
-		/// The location.
+		/// Gets or sets the logo image locator.
 		/// </summary>
-		[Required] public Position Location { get; set; }
+		/// <value>The logo image locator.</value>
+		public string LogoImgLocator { get; set; }
 		/// <summary>
-		/// The start date.
+		/// Gets or sets the description.
 		/// </summary>
-		[Required] public DateTime StartDate { get; set; }
+		/// <value>The description.</value>
+		[Required]
+		public string Description { get; set;}
 		/// <summary>
-		/// The name of the NF provider.
+		/// Gets or sets the web page.
 		/// </summary>
-		[Required] public string NFProviderName { get; set; }
+		/// <value>The web page.</value>
+		public string WebPage { get; set; }
 		/// <summary>
-		/// The NF provider identifier.
+		/// Gets or sets the calendar.
 		/// </summary>
-		[Required] public string NFProviderId { get; set; }
-		/// <summary>
-		/// The type of the location.
-		/// </summary>
-		[Required] public string LocationType { get; set; }
-		/// <summary>
-		/// The promotion code.
-		/// </summary>
-		public string PromotionCode { get; set; }
-		/// <summary>
-		/// The event web page.
-		/// </summary>
-		public string EventWebPage { get; set; }
-		/// <summary>
-		/// The image locator.
-		/// </summary>
-		public string ImgLocator { get; set; }
+		/// <value>The calendar.</value>
+		public Schedule Calendar { get; set; }
 	}
 	
 }

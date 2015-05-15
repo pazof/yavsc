@@ -29,12 +29,11 @@ namespace Yavsc
 		/// <param name="routes">Routes.</param>
 		public static void RegisterRoutes (RouteCollection routes)
 		{
-			// Should be FrontOffice
-			string defaultController = WebConfigurationManager.AppSettings ["DefaultController"]; 
+			// Should be FrontOffice in a POS,
+			string defaultController = 
+				WebConfigurationManager.AppSettings ["DefaultController"]; 
 			if (defaultController == null)
-			{
-				defaultController = "Admin";
-			}
+				defaultController = "Home";
 			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}");
 			routes.IgnoreRoute ("Scripts/{*pathInfo}");
 			routes.IgnoreRoute ("Theme/{*pathInfo}");
@@ -98,6 +97,9 @@ namespace Yavsc
 			return HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.StartsWith(WebApiConfig.UrlPrefixRelative);
 		}
 
+		/// <summary>
+		/// begins a request against this application.
+		/// </summary>
 		protected void Application_BeginRequest()
 		{
 			var ob = typeof(

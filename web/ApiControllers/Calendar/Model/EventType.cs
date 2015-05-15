@@ -1,5 +1,5 @@
 //
-//  ProviderPublicInfo.cs
+//  EventType.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -23,51 +23,49 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.NightFlash.Model
+namespace Yavsc.ApiControllers.Calendar.Model
 {
 	/// <summary>
-	/// Provider public info.
+	/// Event type.
 	/// </summary>
-	public class ProviderPublicInfo {
+	public enum EventType
+	{
 		/// <summary>
-		/// Gets or sets the display name.
+		/// The concert gratuit.
 		/// </summary>
-		/// <value>The display name.</value>
-		[Required]
-		public string DisplayName { get; set; }
+		ConcertGratuit,
 		/// <summary>
-		/// Gets or sets the type of the location.
+		/// The concert prive.
 		/// </summary>
-		/// <value>The type of the location.</value>
-		[Required]
-		public string LocationType { get; set; }
+		ConcertPrive,
 		/// <summary>
-		/// Gets or sets the location.
+		/// The distraciton.
 		/// </summary>
-		/// <value>The location.</value>
-		[Required]
-		public Position Location { get; set; }
+		Distraciton,
 		/// <summary>
-		/// Gets or sets the logo image locator.
+		/// The rencontre.
 		/// </summary>
-		/// <value>The logo image locator.</value>
-		public string LogoImgLocator { get; set; }
+		Rencontre,
 		/// <summary>
-		/// Gets or sets the description.
+		/// The assemblee.
 		/// </summary>
-		/// <value>The description.</value>
-		[Required]
-		public string Description { get; set;}
+		Assemblee,
 		/// <summary>
-		/// Gets or sets the web page.
+		/// The reunion.
 		/// </summary>
-		/// <value>The web page.</value>
-		public string WebPage { get; set; }
+		Reunion,
 		/// <summary>
-		/// Gets or sets the calendar.
+		/// The bureau.
 		/// </summary>
-		/// <value>The calendar.</value>
-		public Schedule Calendar { get; set; }
+		Bureau,
+		/// <summary>
+		/// The manifestation.
+		/// </summary>
+		Manifestation,
+		/// <summary>
+		/// The zone de danger.
+		/// </summary>
+		ZoneDeDanger
 	}
 	
 }
