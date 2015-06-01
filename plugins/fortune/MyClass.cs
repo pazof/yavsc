@@ -2,7 +2,6 @@
 using Yavsc.Model;
 using System.Configuration;
 using System.Text;
-using System.Web.Mvc;
 using System.Collections.Generic;
 
 namespace fortune

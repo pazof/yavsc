@@ -7,5 +7,5 @@ Dérnière modification :
 <%= Model.LastWriteTime %><br/>
 Dernier accès : 
 <%= Model.LastAccessTime %><br/>
-Lien permanent : <a href="/<%= ViewData["Content"] %>">/<%= ViewData["Content"] %></a>
+Lien permanent : <a href="<%= ViewData["url"] %>"><%= ViewData["url"] %></a>
 </asp:Content>

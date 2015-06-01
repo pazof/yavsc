@@ -56,11 +56,14 @@ namespace Yavsc.Model.FileSystem
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Yavsc.Model.FileSystem.FileSystemManager"/> class.
 		/// </summary>
-		public FileSystemManager (string rootDirectory="~/files", char dirSep = '/')
+		public FileSystemManager (string rootDirectory="~/users/{0}", char dirSep = '/')
 		{
-			prefix = rootDirectory;
+			MembershipUser user = Membership.GetUser ();
+			if (user == null)
+				throw new Exception ("Not membership available");
+			Prefix = HttpContext.Current.Server.MapPath (
+				string.Format (rootDirectory, user.UserName));
 			DirectorySeparator = dirSep;
-
 		}
 
 		string regexFileName = "^[A-Za-z0-9#^!+ _~\\-.]+$";
@@ -109,9 +112,6 @@ namespace Yavsc.Model.FileSystem
 			}
 			set {
 				prefix = value;
-				if (value.StartsWith ("~/")) {
-					prefix = HttpContext.Current.Server.MapPath(value);
-				}
 			}
 		}
 
@@ -145,7 +145,7 @@ namespace Yavsc.Model.FileSystem
 		{
 			string path = Prefix;
 			if (subdir != null) {
-				checkSubDir (subdir);
+				checkSubDir (subdir); // checks for specification validity
 				path = Path.Combine (Prefix, subdir);
 			}
 			DirectoryInfo di = new DirectoryInfo (path);

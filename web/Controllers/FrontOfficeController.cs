@@ -12,6 +12,7 @@ using System.Web.Security;
 using System.Threading;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Model.FileSystem;
+using Yavsc.ApiControllers.Calendar.Model;
 
 namespace Yavsc.Controllers
 {
@@ -43,7 +44,10 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
-
+		public ActionResult EventPub (EventPub model)
+		{
+			return View (model);
+		}
 		/// <summary>
 		/// Estimates this instance.
 		/// </summary>

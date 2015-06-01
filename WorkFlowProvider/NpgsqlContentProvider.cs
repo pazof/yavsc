@@ -33,11 +33,11 @@ namespace Yavsc
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
 						"insert into commandes (prdref,creation,params,clientname,applicationname) values (@pref,@creat,@prms,@cli,@app) returning id";
-					cmd.Parameters.Add ("@pref", com.ProductRef);
-					cmd.Parameters.Add ("@creat", com.CreationDate);
-					cmd.Parameters.Add ("@prms", JsonConvert.SerializeObject(com.Parameters));
-					cmd.Parameters.Add ("@cli", Membership.GetUser().UserName);
-					cmd.Parameters.Add ("@app", ApplicationName);
+					cmd.Parameters.AddWithValue ("@pref", com.ProductRef);
+					cmd.Parameters.AddWithValue ("@creat", com.CreationDate);
+					cmd.Parameters.AddWithValue ("@prms", JsonConvert.SerializeObject(com.Parameters));
+					cmd.Parameters.AddWithValue ("@cli", Membership.GetUser().UserName);
+					cmd.Parameters.AddWithValue ("@app", ApplicationName);
 					cnx.Open ();
 					com.Id = id = (long)cmd.ExecuteScalar ();
 				}
@@ -64,8 +64,8 @@ namespace Yavsc
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
 						"select id,creation,prdref,params from commandes where @user = clientname and applicationname = @app";
-					cmd.Parameters.Add ("@user", username);
-					cmd.Parameters.Add ("@app", this.ApplicationName);
+					cmd.Parameters.AddWithValue ("@user", username);
+					cmd.Parameters.AddWithValue ("@app", this.ApplicationName);
 					cnx.Open ();
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 						while (rdr.Read ()) {
@@ -249,7 +249,7 @@ namespace Yavsc
 					cmd.CommandText = 
 						"select _id from estimate where client = @uname or username = @uname";
 						
-					cmd.Parameters.Add ("@uname", username);
+					cmd.Parameters.AddWithValue ("@uname", username);
 					cnx.Open ();
 					List<Estimate> ests = new List<Estimate> ();
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
@@ -283,11 +283,11 @@ namespace Yavsc
 						cmd.CommandText += "client = @clid";
 						if (responsible != null)
 							cmd.CommandText += " and ";
-						cmd.Parameters.Add ("@clid", client);
+						cmd.Parameters.AddWithValue ("@clid", client);
 						}
 					if (responsible != null) {
 						cmd.CommandText += "username = @resp";
-						cmd.Parameters.Add ("@resp", responsible);
+						cmd.Parameters.AddWithValue ("@resp", responsible);
 					}
 
 					cnx.Open ();
@@ -314,7 +314,7 @@ namespace Yavsc
 					cmd.CommandText = 
 						"delete from writtings where _id = @wrid";
 
-					cmd.Parameters.Add ("@wrid", wrid);
+					cmd.Parameters.AddWithValue ("@wrid", wrid);
 					cnx.Open ();
 					cmd.ExecuteNonQuery ();
 				}
@@ -332,7 +332,7 @@ namespace Yavsc
 					cmd.CommandText = 
 						"delete from estimate where _id = @estid";
 
-					cmd.Parameters.Add ("@estid", estid);
+					cmd.Parameters.AddWithValue ("@estid", estid);
 					cnx.Open ();
 					cmd.ExecuteNonQuery ();
 				}
@@ -351,7 +351,7 @@ namespace Yavsc
 					cmd.CommandText = 
 						"select title,username,client,description from estimate where _id = @estid";
 
-					cmd.Parameters.Add ("@estid", estimid);
+					cmd.Parameters.AddWithValue ("@estid", estimid);
 					cnx.Open ();
 					Estimate est = null;
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
@@ -372,7 +372,7 @@ namespace Yavsc
 							est.Description = rdr.GetString (index);
 						est.Id = estimid;
 						using (NpgsqlCommand cmdw = new NpgsqlCommand ("select _id, productid, ucost, count, description from writtings where estimid = @estid", cnx)) {
-							cmdw.Parameters.Add("@estid", estimid);
+							cmdw.Parameters.AddWithValue("@estid", estimid);
 							using (NpgsqlDataReader rdrw = cmdw.ExecuteReader ()) {
 								List<Writting> lw = null; 
 								if (rdrw.HasRows) {
@@ -422,11 +422,11 @@ namespace Yavsc
 						"count = @count, " +
 						"productid = @prdid " +
 						"where _id = @wrid";
-					cmd.Parameters.Add ("@wrid", wr.Id);
-					cmd.Parameters.Add ("@desc", wr.Description);
-					cmd.Parameters.Add ("@ucost", wr.UnitaryCost);
-					cmd.Parameters.Add ("@prdid", wr.ProductReference);
-					cmd.Parameters.Add ("@count", wr.Count);
+					cmd.Parameters.AddWithValue ("@wrid", wr.Id);
+					cmd.Parameters.AddWithValue ("@desc", wr.Description);
+					cmd.Parameters.AddWithValue ("@ucost", wr.UnitaryCost);
+					cmd.Parameters.AddWithValue ("@prdid", wr.ProductReference);
+					cmd.Parameters.AddWithValue ("@count", wr.Count);
 					cnx.Open ();
 					cmd.ExecuteNonQuery ();
 					cnx.Close ();
@@ -445,11 +445,11 @@ namespace Yavsc
 					cmd.CommandText = 
 						"update estimate set title = @tit, username = @un, " +
 						"description = @descr, client = @cli where _id = @estid";
-					cmd.Parameters.Add ("@tit", estim.Title);
-					cmd.Parameters.Add ("@un", estim.Responsible);
-					cmd.Parameters.Add ("@descr", estim.Description);
-					cmd.Parameters.Add ("@cli", estim.Client);
-					cmd.Parameters.Add ("@estid", estim.Id);
+					cmd.Parameters.AddWithValue ("@tit", estim.Title);
+					cmd.Parameters.AddWithValue ("@un", estim.Responsible);
+					cmd.Parameters.AddWithValue ("@descr", estim.Description);
+					cmd.Parameters.AddWithValue ("@cli", estim.Client);
+					cmd.Parameters.AddWithValue ("@estid", estim.Id);
 					cnx.Open ();
 					cmd.ExecuteNonQuery ();
 					cnx.Close ();
@@ -472,12 +472,12 @@ namespace Yavsc
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
 						"insert into writtings (description, estimid, ucost, count, productid) VALUES (@dscr,@estid,@ucost,@count,@prdid) returning _id";
-					cmd.Parameters.Add ("@dscr", desc);
-					cmd.Parameters.Add("@estid", estid);
+					cmd.Parameters.AddWithValue ("@dscr", desc);
+					cmd.Parameters.AddWithValue("@estid", estid);
 
-					cmd.Parameters.Add("@ucost", ucost);
-					cmd.Parameters.Add("@count", count);
-					cmd.Parameters.Add("@prdid", productid);
+					cmd.Parameters.AddWithValue("@ucost", ucost);
+					cmd.Parameters.AddWithValue("@count", count);
+					cmd.Parameters.AddWithValue("@prdid", productid);
 					cnx.Open ();
 
 					long res = (long) cmd.ExecuteScalar ();
@@ -498,8 +498,8 @@ namespace Yavsc
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
 						"update writtings set description = @dscr where _id = @writid";
-					cmd.Parameters.Add ("@tit", newDesc);
-					cmd.Parameters.Add ("@writid", writid);
+					cmd.Parameters.AddWithValue ("@tit", newDesc);
+					cmd.Parameters.AddWithValue ("@writid", writid);
 					cnx.Open ();
 					cmd.ExecuteNonQuery ();
 					cnx.Close ();
@@ -522,11 +522,11 @@ namespace Yavsc
 					cmd.CommandText = 
 							"insert into estimate (title,description,username,client,applicationname) " +
 					"values (@tit,@descr,@resp,@un,@app) returning _id";
-					cmd.Parameters.Add ("@tit", title);
-					cmd.Parameters.Add ("@un", client);
-					cmd.Parameters.Add ("@resp", responsible);
-					cmd.Parameters.Add ("@descr", description);
-					cmd.Parameters.Add("@app", ApplicationName);
+					cmd.Parameters.AddWithValue ("@tit", title);
+					cmd.Parameters.AddWithValue ("@un", client);
+					cmd.Parameters.AddWithValue ("@resp", responsible);
+					cmd.Parameters.AddWithValue ("@descr", description);
+					cmd.Parameters.AddWithValue("@app", ApplicationName);
 					cnx.Open ();
 					Estimate created = new Estimate ();
 					created.Id = (long)cmd.ExecuteScalar ();

@@ -22,6 +22,7 @@
 using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Model;
 
 namespace Yavsc.ApiControllers.Calendar.Model
 {
@@ -31,71 +32,65 @@ namespace Yavsc.ApiControllers.Calendar.Model
 	/// </summary>
 	public class YaEvent
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.ApiControllers.Calendar.Model.YaEvent"/> class.
-		/// </summary>
-		public YaEvent()
-		{
-			this.EstabType = EstablishmentType.DomainePublique;
-			this.NFEvType = EventType.Distraciton;
-		}
-
-		/// <summary>
-		/// Gets or sets the type of the NF ev.
-		/// </summary>
-		/// <value>The type of the NF ev.</value>
-		[Required]
-		public EventType NFEvType { get; set; }
-
-		/// <summary>
-		/// Gets or sets the type of the estab.
-		/// </summary>
-		/// <value>The type of the estab.</value>
-		[Required(ErrorMessage="Please, choose an establisment type.")]
-		public EstablishmentType EstabType { get; set; }
 
 		/// <summary>
 		/// The title.
 		/// </summary>
 		[Required(ErrorMessage="Please, choose a .")] 
+		[Display(ResourceType=typeof(LocalizedText),Name="Title")]
 		public string Title { get; set; }
 		/// <summary>
 		/// The description.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a Description.")] public string Description { get; set; }
+		[Required(ErrorMessage="Please, choose a Description.")] 
+		[Display(ResourceType=typeof(LocalizedText),Name="Description")]
+		public string Description { get; set; }
 		/// <summary>
 		/// The location.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a Location.")] public Position Location { get; set; }
+		[Required(ErrorMessage="Please, choose a Location.")] 
+		[Display(ResourceType=typeof(LocalizedText),Name="Location")]
+		public Position Location { get; set; }
 		/// <summary>
 		/// The start date.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a Start Date.")] public DateTime StartDate { get; set; }
+		[Required(ErrorMessage="Please, choose a Start Date.")] 
+		[Display(ResourceType=typeof(LocalizedText),Name="StartDate")]
+		public DateTime StartDate { get; set; }
 
 		/// <summary>
 		/// Gets or sets the end date.
 		/// </summary>
 		/// <value>The end date.</value>
-		[Required(ErrorMessage="Please, choose an End Date.")] public DateTime EndDate { get; set; }
+		[Required(ErrorMessage="Please, choose an End Date.")] 
+		[Display(ResourceType=typeof(LocalizedText),Name="EndDate")]
+		public DateTime EndDate { get; set; }
 		/// <summary>
 		/// The name of the NF provider.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a Nigth Flash Provider Name.")] public string NFProviderName { get; set; }
+		[Required(ErrorMessage="Please, choose a Provider Name.")]
+		[Display(ResourceType=typeof(LocalizedText),Name="ProviderName")]
+		public string ProviderName { get; set; }
 		/// <summary>
 		/// The NF provider identifier.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a Night Flash Provider Identifier.")] public string NFProviderId { get; set; }
+		[Required(ErrorMessage="Please, choose a Provider Identifier.")]
+		[Display(ResourceType=typeof(LocalizedText),Name="ProviderId")]
+		public string ProviderId { get; set; }
 		/// <summary>
 		/// The promotion code.
 		/// </summary>
-		public string PromotionCode { get; set; }
+		[Display(ResourceType=typeof(LocalizedText),Name="Comment")]
+		public string Comment { get; set; }
 		/// <summary>
 		/// The event web page.
 		/// </summary>
+		[Display(ResourceType=typeof(LocalizedText),Name="EventWebPage")]
 		public string EventWebPage { get; set; }
 		/// <summary>
 		/// The image locator.
-		/// </summary>-
+		/// </summary>
+		[Display(ResourceType=typeof(LocalizedText),Name="ImgLocator")]
 		public string ImgLocator { get; set; }
 	}
 }

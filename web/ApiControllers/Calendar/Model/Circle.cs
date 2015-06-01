@@ -1,5 +1,5 @@
 //
-//  NightFlashController.cs
+//  Circle.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -21,13 +21,42 @@
 using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace Yavsc.ApiControllers.Calendar.Model
 {
-	class Circle
+	/// <summary>
+	/// Circle.
+	/// </summary>
+	public class Circle
 	{
+		/// <summary>
+		/// Gets or sets the title.
+		/// </summary>
+		/// <value>The title.</value>
 		public string Title { get; set; }
-		string [] Users { get; set; }
+
+		/// <summary>
+		/// Gets or sets the users.
+		/// </summary>
+		/// <value>The users.</value>
+		public string [] Users { get; set; }
+
+		/// <summary>
+		/// Union the specified that.
+		/// </summary>
+		/// <param name="that">That.</param>
+		public static string [] Union (Circle []those)
+		{
+			List<string> content = new List<string>();
+			foreach (Circle c in those) {
+				foreach (string user_name in c.Users) {
+					if (!content.Contains (user_name))
+						content.Add (user_name);
+				}
+			}
+			return content.ToArray ();
+		}
 	}
 
 }

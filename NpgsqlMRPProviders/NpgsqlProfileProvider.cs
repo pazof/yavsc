@@ -111,8 +111,8 @@ namespace Npgsql.Web
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "select username, uniqueid, lastactivitydate, lastupdateddate, isanonymous from profiles where username like @username and applicationname = @appname";
-					cmd.Parameters.Add ("@username", usernameToMatch);
-					cmd.Parameters.Add ("@appname", applicationName);
+					cmd.Parameters.AddWithValue ("@username", usernameToMatch);
+					cmd.Parameters.AddWithValue ("@appname", applicationName);
 					cnx.Open ();
 					using (NpgsqlDataReader r = cmd.ExecuteReader ()) {
 						if (r.HasRows) {
@@ -206,8 +206,8 @@ namespace Npgsql.Web
 				"profiledata.uniqueid = profiles.uniqueid " +
 				"and profiles.username = @username " +
 				"and profiles.applicationname = @appname";
-				cmd.Parameters.Add ("@username", username);
-				cmd.Parameters.Add ("@appname", applicationName);
+				cmd.Parameters.AddWithValue ("@username", username);
+				cmd.Parameters.AddWithValue ("@appname", applicationName);
 				cnx.Open ();
 				using (NpgsqlDataReader r = cmd.ExecuteReader (
 					                            System.Data.CommandBehavior.CloseConnection | System.Data.CommandBehavior.SingleRow)) {
@@ -249,8 +249,8 @@ namespace Npgsql.Web
 					cmdpi.CommandText = "select count(uniqueid) " +
 					"from profiles where username = @username " +
 					"and applicationname = @appname";
-					cmdpi.Parameters.Add ("@username", username);
-					cmdpi.Parameters.Add ("@appname", applicationName);
+					cmdpi.Parameters.AddWithValue ("@username", username);
+					cmdpi.Parameters.AddWithValue ("@appname", applicationName);
 				
 					long c = (long)cmdpi.ExecuteScalar ();
 					if (c == 0) {
@@ -263,7 +263,7 @@ namespace Npgsql.Web
 						// 
 						using (NpgsqlCommand cmdpdins = cnx.CreateCommand ()) {
 							cmdpdins.CommandText = "insert into profiledata (uniqueid) values (@puid)";
-							cmdpdins.Parameters.Add ("@puid", puid);
+							cmdpdins.Parameters.AddWithValue ("@puid", puid);
 							cmdpdins.ExecuteNonQuery ();
 						}
 					} else {
@@ -288,8 +288,8 @@ namespace Npgsql.Web
 									"where uniqueid = @puid ",
 									s.Name
 								);
-								cmd.Parameters.Add ("@puid", puid);
-								cmd.Parameters.Add ("@val", s.PropertyValue);
+								cmd.Parameters.AddWithValue ("@puid", puid);
+								cmd.Parameters.AddWithValue ("@val", s.PropertyValue);
 								cmd.ExecuteNonQuery ();
 							}
 						}

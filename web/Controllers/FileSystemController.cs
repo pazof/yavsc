@@ -13,29 +13,18 @@ namespace Yavsc.Controllers
 	/// <summary>
 	/// File system controller.
 	/// </summary>
+
 	public class FileSystemController : Controller
 	{
-		/// <summary>
-		/// Gets the users base directory.
-		/// </summary>
-		/// <value>The users dir.</value>
-		public string RootDir {
-			get {
-				return mgr.Prefix;
-			}
-		}
-
-		FileSystemManager mgr = null ;
 
 		/// <summary>
 		/// Initialize the specified requestContext.
 		/// </summary>
 		/// <param name="requestContext">Request context.</param>
+		[Authorize]
 		protected override void Initialize (System.Web.Routing.RequestContext requestContext)
 		{
 			base.Initialize (requestContext);
-			mgr = new FileSystemManager (
-				string.Format("~/users/{0}",Membership.GetUser().UserName));
 		}
 
 		/// <summary>
@@ -44,7 +33,10 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Index (string id)
 		{
-			return View (mgr.GetFiles (id));
+			FileSystemManager fsmgr = new FileSystemManager ();
+			var files = fsmgr.GetFiles (id);
+			files.Owner = Membership.GetUser ().UserName;
+			return View (files);
 		}
 
 		/// <summary>
@@ -53,6 +45,7 @@ namespace Yavsc.Controllers
 		/// <param name="id">Identifier.</param>
 		public ActionResult Details (string id)
 		{
+
 			foreach (char x in Path.GetInvalidPathChars()) {
 				if (id.Contains (x)) {
 					ViewData ["Message"] =
@@ -62,10 +55,19 @@ namespace Yavsc.Controllers
 					return RedirectToAction ("Index");
 				}
 			}
-			FileInfo fi = mgr.FileInfo (id);
+			FileSystemManager fsmgr = new FileSystemManager ();
+			FileInfo fi = fsmgr.FileInfo (id);
 
-			ViewData ["Content"] = Url.Content (fi.FullName);
-
+			ViewData ["id"] = id;
+			// TODO : ensure that we use the default port for 
+			// the used sheme
+			ViewData ["url"] = 
+			string.Format(
+					"{0}://{1}/users/{2}/{3}", 
+					Request.Url.Scheme,
+					Request.Url.Authority,
+				 Membership.GetUser ().UserName ,
+				 id );
 			return View (fi);
 		}
 
@@ -77,15 +79,9 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Create (string id)
 		{
-			mgr.Put ( id, Request.Files);
-			return View ("Index",mgr.GetFiles(id));
+			FileSystemManager fsmgr = new FileSystemManager ();
+			return View ("Index",fsmgr.GetFiles(id));
 		}
-
-		/// <summary>
-		/// Gets the user's base dir.
-		/// </summary>
-		/// <value>The base dir.</value>
-		public string UserBaseDir { get { return Path.Combine (RootDir, Membership.GetUser ().UserName); } }
 
 		/// <summary>
 		/// Edit the specified id.

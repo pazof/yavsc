@@ -1,5 +1,5 @@
 //
-//  NightFlashController.cs
+//  EventPub.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -22,12 +22,21 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.ApiControllers.Calendar.Model;
+using Yavsc.Model;
 
 namespace Yavsc.ApiControllers.Calendar.Model
 {
-	class EventPub: YaEvent
+	/// <summary>
+	/// Event pub.
+	/// </summary>
+	public class EventPub: YaEvent
 	{
-		Circle[] Circles { get; set; }
+		/// <summary>
+		/// Gets or sets the circles.
+		/// </summary>
+		/// <value>The circles.</value>
+		[Display(ResourceType=typeof(LocalizedText),Name="Circles")]
+		public Circle[] Circles { get; set; }
 	}
 
 }

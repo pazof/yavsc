@@ -259,10 +259,10 @@ namespace Npgsql.Web
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("UPDATE Users " +
 					" SET Passw = @Password, LastPasswordChangedDate = @LastPasswordChangedDate " +
 					" WHERE Username = @Username AND ApplicationName = @ApplicationName", conn)) {
-					cmd.Parameters.Add ("@Password", NpgsqlDbType.Varchar, 255).Value = EncodePassword (newPwd);
-					cmd.Parameters.Add ("@LastPasswordChangedDate", DateTime.Now);
-					cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@Password", NpgsqlDbType.Varchar, 255).Value = EncodePassword (newPwd);
+					cmd.Parameters.AddWithValue ("@LastPasswordChangedDate", DateTime.Now);
+					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 					conn.Open ();
 					rowsAffected = cmd.ExecuteNonQuery ();
 					conn.Close ();
@@ -301,10 +301,10 @@ namespace Npgsql.Web
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("UPDATE Users " +
 					" SET PasswordQuestion = @Question, PasswordAnswer = @Answer" +
 					" WHERE Username = @Username AND ApplicationName = @ApplicationName", conn)) {
-					cmd.Parameters.Add ("@Question", NpgsqlDbType.Varchar, 255).Value = newPwdQuestion;
-					cmd.Parameters.Add ("@Answer", NpgsqlDbType.Varchar, 255).Value = EncodePassword (newPwdAnswer);
-					cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@Question", NpgsqlDbType.Varchar, 255).Value = newPwdQuestion;
+					cmd.Parameters.AddWithValue ("@Answer", NpgsqlDbType.Varchar, 255).Value = EncodePassword (newPwdAnswer);
+					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 					conn.Open ();
 					rowsAffected = cmd.ExecuteNonQuery ();
 					conn.Close ();
@@ -388,24 +388,24 @@ namespace Npgsql.Web
 					"@FailedPasswordAttemptCount , @FailedPasswordAttemptWindowStart, " + 
 					" @FailedPasswordAnswerAttemptCount, @FailedPasswordAnswerAttemptWindowStart)", conn)) {
 
-						cmd.Parameters.Add ("@PKID", NpgsqlDbType.Varchar).Value = providerUserKey;
-						cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-						cmd.Parameters.Add ("@Password", NpgsqlDbType.Varchar, 255).Value = EncodePassword (password);
-						cmd.Parameters.Add ("@Email", NpgsqlDbType.Varchar, 128).Value = email;
-						cmd.Parameters.Add ("@PasswordQuestion", NpgsqlDbType.Varchar, 255).Value = passwordQuestion;
-						cmd.Parameters.Add ("@PasswordAnswer", NpgsqlDbType.Varchar, 255).Value = EncodePassword (passwordAnswer);
-						cmd.Parameters.Add ("@IsApproved", NpgsqlDbType.Bit).Value = isApproved;
-						cmd.Parameters.Add ("@Comment", NpgsqlDbType.Varchar, 255).Value = "";
-						cmd.Parameters.Add ("@CreationDate", createDate);
-						cmd.Parameters.Add ("@LastPasswordChangedDate", createDate);
-						cmd.Parameters.Add ("@LastActivityDate", createDate);
-						cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
-						cmd.Parameters.Add ("@IsLockedOut", NpgsqlDbType.Bit).Value = false;
-						cmd.Parameters.Add ("@LastLockedOutDate", createDate);
-						cmd.Parameters.Add ("@FailedPasswordAttemptCount", NpgsqlDbType.Integer).Value = 0;
-						cmd.Parameters.Add ("@FailedPasswordAttemptWindowStart", createDate);
-						cmd.Parameters.Add ("@FailedPasswordAnswerAttemptCount", NpgsqlDbType.Integer).Value = 0;
-						cmd.Parameters.Add ("@FailedPasswordAnswerAttemptWindowStart", createDate);
+						cmd.Parameters.AddWithValue ("@PKID", NpgsqlDbType.Varchar).Value = providerUserKey;
+						cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+						cmd.Parameters.AddWithValue ("@Password", NpgsqlDbType.Varchar, 255).Value = EncodePassword (password);
+						cmd.Parameters.AddWithValue ("@Email", NpgsqlDbType.Varchar, 128).Value = email;
+						cmd.Parameters.AddWithValue ("@PasswordQuestion", NpgsqlDbType.Varchar, 255).Value = passwordQuestion;
+						cmd.Parameters.AddWithValue ("@PasswordAnswer", NpgsqlDbType.Varchar, 255).Value = EncodePassword (passwordAnswer);
+						cmd.Parameters.AddWithValue ("@IsApproved", NpgsqlDbType.Bit).Value = isApproved;
+						cmd.Parameters.AddWithValue ("@Comment", NpgsqlDbType.Varchar, 255).Value = "";
+						cmd.Parameters.AddWithValue ("@CreationDate", createDate);
+						cmd.Parameters.AddWithValue ("@LastPasswordChangedDate", createDate);
+						cmd.Parameters.AddWithValue ("@LastActivityDate", createDate);
+						cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+						cmd.Parameters.AddWithValue ("@IsLockedOut", NpgsqlDbType.Bit).Value = false;
+						cmd.Parameters.AddWithValue ("@LastLockedOutDate", createDate);
+						cmd.Parameters.AddWithValue ("@FailedPasswordAttemptCount", NpgsqlDbType.Integer).Value = 0;
+						cmd.Parameters.AddWithValue ("@FailedPasswordAttemptWindowStart", createDate);
+						cmd.Parameters.AddWithValue ("@FailedPasswordAnswerAttemptCount", NpgsqlDbType.Integer).Value = 0;
+						cmd.Parameters.AddWithValue ("@FailedPasswordAnswerAttemptWindowStart", createDate);
 						conn.Open ();
 						int recAdded = cmd.ExecuteNonQuery ();
 						if (recAdded > 0) {
@@ -450,8 +450,8 @@ namespace Npgsql.Web
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("DELETE FROM Users " +
 					" WHERE Username = @Username AND Applicationname = @ApplicationName", conn)) {
-					cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 					conn.Open ();
 					rowsAffected = cmd.ExecuteNonQuery ();
 					if (deleteAllRelatedData) {
@@ -481,7 +481,7 @@ namespace Npgsql.Web
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT Count(*) FROM Users " +
 				"WHERE ApplicationName = @ApplicationName", conn)) {
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = ApplicationName;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = ApplicationName;
 					conn.Open ();
 					totalRecords = 0;
 					totalRecords = (int)((long)cmd.ExecuteScalar ());
@@ -539,8 +539,8 @@ namespace Npgsql.Web
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT Count(*) FROM Users " +
 					" WHERE LastActivityDate > @CompareDate AND ApplicationName = @ApplicationName", conn)) {
 
-					cmd.Parameters.Add ("@CompareDate", compareTime);
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@CompareDate", compareTime);
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 
 				
 
@@ -583,8 +583,8 @@ namespace Npgsql.Web
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT Passw, PasswordAnswer, IsLockedOut FROM Users " +
 					" WHERE Username = @Username AND ApplicationName = @ApplicationName", conn)) {
 
-					cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 
 
 					NpgsqlDataReader reader = null;
@@ -646,29 +646,30 @@ namespace Npgsql.Web
 					" LastActivityDate, LastPasswordChangedDate, LastLockedOutDate" +
 					" FROM Users WHERE Username = @Username AND ApplicationName = @ApplicationName", conn)) {
 
-					cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 					conn.Open ();
 					using (NpgsqlDataReader reader =  cmd.ExecuteReader ()) {
 						if (reader.HasRows) {
 							reader.Read ();
 							u = GetUserFromReader (reader);
-          
-							if (userIsOnline) {
-								NpgsqlCommand updateCmd = new NpgsqlCommand ("UPDATE Users " +
-									"SET LastActivityDate = @LastActivityDate " +
-									"WHERE Username = @Username AND Applicationname = @ApplicationName", conn);
-
-								updateCmd.Parameters.Add ("@LastActivityDate",  DateTime.Now);
-								updateCmd.Parameters.Add ("@Username", username);
-								updateCmd.Parameters.Add ("@ApplicationName", pApplicationName);
-
-								updateCmd.ExecuteNonQuery ();
-							}
 						}
 						reader.Close ();
 					}
 				}
+
+				if (u != null && userIsOnline) {
+					NpgsqlCommand updateCmd = new NpgsqlCommand ("UPDATE Users " +
+						"SET LastActivityDate = @LastActivityDate " +
+						"WHERE Username = @Username AND Applicationname = @ApplicationName", conn);
+
+					updateCmd.Parameters.AddWithValue ("@LastActivityDate",  DateTime.Now);
+					updateCmd.Parameters.AddWithValue ("@Username", username);
+					updateCmd.Parameters.AddWithValue ("@ApplicationName", pApplicationName);
+
+					updateCmd.ExecuteNonQuery ();
+				}
+
 				conn.Close ();
 			}
 			return u;      
@@ -694,7 +695,7 @@ namespace Npgsql.Web
 				" LastActivityDate, LastPasswordChangedDate, LastLockedOutDate" +
 				" FROM Users WHERE PKID = @PKID", conn)) {
 
-					cmd.Parameters.Add ("@PKID", NpgsqlDbType.Varchar).Value = providerUserKey;
+					cmd.Parameters.AddWithValue ("@PKID", NpgsqlDbType.Varchar).Value = providerUserKey;
 					conn.Open ();
 
 					using (NpgsqlDataReader reader = cmd.ExecuteReader ()) {
@@ -702,16 +703,17 @@ namespace Npgsql.Web
 							reader.Read ();
 							u = GetUserFromReader (reader);
           
-							if (userIsOnline) {
-								NpgsqlCommand updateCmd = new NpgsqlCommand ("UPDATE Users " +
-									"SET LastActivityDate = @LastActivityDate " +
-									"WHERE PKID = @PKID", conn);
-								updateCmd.Parameters.Add ("@LastActivityDate", DateTime.Now);
-								updateCmd.Parameters.Add ("@PKID", providerUserKey);
-								updateCmd.ExecuteNonQuery ();
-							}
+
 						}
 						reader.Close ();
+						if (u!=null && userIsOnline) {
+							NpgsqlCommand updateCmd = new NpgsqlCommand ("UPDATE Users " +
+								"SET LastActivityDate = @LastActivityDate " +
+								"WHERE PKID = @PKID", conn);
+							updateCmd.Parameters.AddWithValue ("@LastActivityDate", DateTime.Now);
+							updateCmd.Parameters.AddWithValue ("@PKID", providerUserKey);
+							updateCmd.ExecuteNonQuery ();
+						}
 					}
 				}
 				conn.Close ();
@@ -790,9 +792,9 @@ namespace Npgsql.Web
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("UPDATE Users " +
 					" SET IsLockedOut = False, LastLockedOutDate = @LastLockedOutDate " +
 					" WHERE Username = @Username AND ApplicationName = @ApplicationName", conn)) {
-					cmd.Parameters.Add ("@LastLockedOutDate", DateTime.Now);
-					cmd.Parameters.Add ("@Username", username);
-					cmd.Parameters.Add ("@ApplicationName", pApplicationName);
+					cmd.Parameters.AddWithValue ("@LastLockedOutDate", DateTime.Now);
+					cmd.Parameters.AddWithValue ("@Username", username);
+					cmd.Parameters.AddWithValue ("@ApplicationName", pApplicationName);
 					conn.Open ();
 					rowsAffected = cmd.ExecuteNonQuery ();
 					conn.Close ();
@@ -819,8 +821,8 @@ namespace Npgsql.Web
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT Username" +
 				" FROM Users WHERE Email = @Email AND ApplicationName = @ApplicationName", conn)) {
-					cmd.Parameters.Add ("@Email", NpgsqlDbType.Varchar, 128).Value = email;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@Email", NpgsqlDbType.Varchar, 128).Value = email;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 					conn.Open ();
 					username = (string)cmd.ExecuteScalar ();
 					conn.Close ();
@@ -870,8 +872,8 @@ namespace Npgsql.Web
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT PasswordAnswer, IsLockedOut FROM Users " +
 				" WHERE Username = @Username AND ApplicationName = @ApplicationName", conn)) {
 
-					cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 
 
 					string passwordAnswer = "";
@@ -900,10 +902,10 @@ namespace Npgsql.Web
 							" SET Passw = @Password, LastPasswordChangedDate = @LastPasswordChangedDate" +
 							" WHERE Username = @Username AND ApplicationName = @ApplicationName AND IsLockedOut = False", conn);
 
-						updateCmd.Parameters.Add ("@Password", NpgsqlDbType.Varchar, 255).Value = EncodePassword (newPassword);
-						updateCmd.Parameters.Add ("@LastPasswordChangedDate", DateTime.Now);
-						updateCmd.Parameters.Add ("@Username", username);
-						updateCmd.Parameters.Add ("@ApplicationName", pApplicationName);
+						updateCmd.Parameters.AddWithValue ("@Password", NpgsqlDbType.Varchar, 255).Value = EncodePassword (newPassword);
+						updateCmd.Parameters.AddWithValue ("@LastPasswordChangedDate", DateTime.Now);
+						updateCmd.Parameters.AddWithValue ("@Username", username);
+						updateCmd.Parameters.AddWithValue ("@ApplicationName", pApplicationName);
 
 						rowsAffected = updateCmd.ExecuteNonQuery ();
 			
@@ -935,11 +937,11 @@ namespace Npgsql.Web
 				" SET Email = @Email, Comment = @Comment," +
 				" IsApproved = @IsApproved" +
 				" WHERE Username = @Username AND ApplicationName = @ApplicationName", conn)) {
-					cmd.Parameters.Add ("@Email", NpgsqlDbType.Varchar, 128).Value = user.Email;
-					cmd.Parameters.Add ("@Comment", NpgsqlDbType.Varchar, 255).Value = user.Comment;
-					cmd.Parameters.Add ("@IsApproved", NpgsqlDbType.Bit).Value = user.IsApproved;
-					cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = user.UserName;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@Email", NpgsqlDbType.Varchar, 128).Value = user.Email;
+					cmd.Parameters.AddWithValue ("@Comment", NpgsqlDbType.Varchar, 255).Value = user.Comment;
+					cmd.Parameters.AddWithValue ("@IsApproved", NpgsqlDbType.Bit).Value = user.IsApproved;
+					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = user.UserName;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 					conn.Open ();
 					cmd.ExecuteNonQuery ();
 					conn.Close ();
@@ -966,8 +968,8 @@ namespace Npgsql.Web
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT Passw, IsApproved FROM Users " +
 				" WHERE Username = @Username AND ApplicationName = @ApplicationName AND IsLockedOut = False", conn)) {
 
-					cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 
 		
 					bool isApproved = false;
@@ -993,9 +995,9 @@ namespace Npgsql.Web
 								NpgsqlCommand updateCmd = new NpgsqlCommand ("UPDATE Users SET LastLoginDate = @LastLoginDate" +
 									" WHERE Username = @Username AND ApplicationName = @ApplicationName", conn);
 
-								updateCmd.Parameters.Add ("@LastLoginDate", DateTime.Now);
-								updateCmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-								updateCmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+								updateCmd.Parameters.AddWithValue ("@LastLoginDate", DateTime.Now);
+								updateCmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+								updateCmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
  
 								updateCmd.ExecuteNonQuery ();
 							}
@@ -1032,8 +1034,8 @@ namespace Npgsql.Web
 				"  FROM Users " +
 				"  WHERE Username = @Username AND ApplicationName = @ApplicationName", conn)) {
 
-					cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 
 			
 					DateTime windowStart = new DateTime ();
@@ -1079,10 +1081,10 @@ namespace Npgsql.Web
 
 						cmd.Parameters.Clear ();
 
-						cmd.Parameters.Add ("@Count", NpgsqlDbType.Integer).Value = 1;
-						cmd.Parameters.Add ("@WindowStart", DateTime.Now);
-						cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-						cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+						cmd.Parameters.AddWithValue ("@Count", NpgsqlDbType.Integer).Value = 1;
+						cmd.Parameters.AddWithValue ("@WindowStart", DateTime.Now);
+						cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+						cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 
 						cmd.ExecuteNonQuery ();
 
@@ -1097,10 +1099,10 @@ namespace Npgsql.Web
 
 							cmd.Parameters.Clear ();
 
-							cmd.Parameters.Add ("@IsLockedOut", NpgsqlDbType.Bit).Value = true;
-							cmd.Parameters.Add ("@LastLockedOutDate", DateTime.Now);
-							cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-							cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+							cmd.Parameters.AddWithValue ("@IsLockedOut", NpgsqlDbType.Bit).Value = true;
+							cmd.Parameters.AddWithValue ("@LastLockedOutDate", DateTime.Now);
+							cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+							cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 
 							cmd.ExecuteNonQuery ();
 
@@ -1120,9 +1122,9 @@ namespace Npgsql.Web
 
 							cmd.Parameters.Clear ();
 
-							cmd.Parameters.Add ("@Count", NpgsqlDbType.Integer).Value = failureCount;
-							cmd.Parameters.Add ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-							cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+							cmd.Parameters.AddWithValue ("@Count", NpgsqlDbType.Integer).Value = failureCount;
+							cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
+							cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 
 							cmd.ExecuteNonQuery ();
 						}
@@ -1260,8 +1262,8 @@ namespace Npgsql.Web
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT count(*)" +
 						" FROM Users " + 
 					" WHERE Username LIKE @uns AND ApplicationName = @appn ", conn)) {
-					cmd.Parameters.Add ("@uns", usernameToMatch);
-					cmd.Parameters.Add ("@appn", ApplicationName);
+					cmd.Parameters.AddWithValue ("@uns", usernameToMatch);
+					cmd.Parameters.AddWithValue ("@appn", ApplicationName);
 					totalRecords = (int)((long)cmd.ExecuteScalar ());
 				}
 				if (totalRecords > 0)
@@ -1271,8 +1273,8 @@ namespace Npgsql.Web
 						" FROM Users " + 
 						" WHERE Username LIKE @UsernameSearch AND ApplicationName = @ApplicationName " +
 						" ORDER BY Username Asc", conn)) {
-						cmd.Parameters.Add ("@UsernameSearch", NpgsqlDbType.Varchar, 255).Value = usernameToMatch;
-						cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+						cmd.Parameters.AddWithValue ("@UsernameSearch", NpgsqlDbType.Varchar, 255).Value = usernameToMatch;
+						cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
 
 						using (NpgsqlDataReader reader = cmd.ExecuteReader ()) {
 							int counter = 0;
@@ -1319,8 +1321,8 @@ namespace Npgsql.Web
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT count(*) " +
 					" FROM Users " + 
 					" WHERE Email LIKE @EmailSearch AND ApplicationName = @appname ", conn)) {
-					cmd.Parameters.Add ("@EmailSearch", emailToMatch);
-					cmd.Parameters.Add ("@appname", this.ApplicationName);
+					cmd.Parameters.AddWithValue ("@EmailSearch", emailToMatch);
+					cmd.Parameters.AddWithValue ("@appname", this.ApplicationName);
 					totalRecords = (int)(long)cmd.ExecuteScalar ();
 				}
 
@@ -1330,8 +1332,8 @@ namespace Npgsql.Web
 					" FROM Users " + 
 					" WHERE Email LIKE @EmailSearch AND ApplicationName = @ApplicationName " +
 					" ORDER BY Username Asc", conn)) {
-					cmd.Parameters.Add ("@EmailSearch", NpgsqlDbType.Varchar, 255).Value = emailToMatch;
-					cmd.Parameters.Add ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = ApplicationName;
+					cmd.Parameters.AddWithValue ("@EmailSearch", NpgsqlDbType.Varchar, 255).Value = emailToMatch;
+					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = ApplicationName;
 					using (NpgsqlDataReader reader = cmd.ExecuteReader ()) {
 						int counter = 0;
 						int startIndex = pageSize * pageIndex;

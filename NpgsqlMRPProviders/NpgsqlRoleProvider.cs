@@ -123,9 +123,9 @@ namespace Npgsql.Web
 				using (var comm = conn.CreateCommand()) {
 					comm.CommandType = System.Data.CommandType.Text;
 					comm.CommandText = "insert into usersroles (applicationname, username, rolename) values (@appname,@user,@role)";
-					comm.Parameters.Add ("appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
-					NpgsqlParameter pu = comm.Parameters.Add ("user", NpgsqlTypes.NpgsqlDbType.Varchar, 250);
-					NpgsqlParameter pr = comm.Parameters.Add ("role", NpgsqlTypes.NpgsqlDbType.Varchar, 250);
+					comm.Parameters.AddWithValue ("appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
+					NpgsqlParameter pu = comm.Parameters.AddWithValue ("user", NpgsqlTypes.NpgsqlDbType.Varchar, 250);
+					NpgsqlParameter pr = comm.Parameters.AddWithValue ("role", NpgsqlTypes.NpgsqlDbType.Varchar, 250);
 					foreach (string u in usernames) {
 						pu.Value = u;
 						foreach (string r in roleNames) {
@@ -174,9 +174,9 @@ namespace Npgsql.Web
 				using (var comm = conn.CreateCommand()) {
 					comm.CommandType = System.Data.CommandType.Text;
 					comm.CommandText = "insert into roles (rolename, applicationname, comment) values (@rolename, @appname, @comment)";
-					comm.Parameters.Add ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = roleName;
-					comm.Parameters.Add ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
-					comm.Parameters.Add ("@comment", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = roleName;
+					comm.Parameters.AddWithValue ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = roleName;
+					comm.Parameters.AddWithValue ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
+					comm.Parameters.AddWithValue ("@comment", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = roleName;
 					comm.ExecuteNonQuery ();
 				}
 			}
@@ -206,9 +206,9 @@ namespace Npgsql.Web
 				using (var comm = conn.CreateCommand()) {
 					comm.CommandType = System.Data.CommandType.Text;
 					comm.CommandText = "delete from roles where rolename = @rolename and applicationname = @appname";
-					comm.Parameters.Add ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = roleName;
-					comm.Parameters.Add ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
-					comm.Parameters.Add ("@comment", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = roleName;
+					comm.Parameters.AddWithValue ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = roleName;
+					comm.Parameters.AddWithValue ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
+					comm.Parameters.AddWithValue ("@comment", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = roleName;
 					comm.ExecuteNonQuery ();
 				}
 			}
@@ -245,9 +245,9 @@ namespace Npgsql.Web
 					comm.CommandType = System.Data.CommandType.Text;
 					comm.CommandText = "select username from usersroles where applicationname = @appname " +
 						"and rolename = @rolename and username like @username";
-					comm.Parameters.Add ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = rolename;
-					comm.Parameters.Add ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
-					comm.Parameters.Add ("@username", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = usernameToMatch;
+					comm.Parameters.AddWithValue ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = rolename;
+					comm.Parameters.AddWithValue ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
+					comm.Parameters.AddWithValue ("@username", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = usernameToMatch;
 					using (var reader = comm.ExecuteReader()) {
 						var r = new List<string> ();
 						var usernameColumn = reader.GetOrdinal ("username");
@@ -272,7 +272,7 @@ namespace Npgsql.Web
 
 					comm.CommandType = System.Data.CommandType.Text;
 					comm.CommandText = "select rolename from roles where applicationname = @appname";
-					comm.Parameters.Add ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
+					comm.Parameters.AddWithValue ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
 					using (var reader = comm.ExecuteReader()) {
 						var r = new List<string> ();
 						var rolenameColumn = reader.GetOrdinal ("rolename");
@@ -301,8 +301,8 @@ namespace Npgsql.Web
 				using (var comm = conn.CreateCommand()) {
 					comm.CommandType = System.Data.CommandType.Text;
 					comm.CommandText = "select rolename from usersroles where applicationname = @appname and username = @username";
-					comm.Parameters.Add ("@username", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = username;
-					comm.Parameters.Add ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
+					comm.Parameters.AddWithValue ("@username", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = username;
+					comm.Parameters.AddWithValue ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
 					using (var reader = comm.ExecuteReader()) {
 						var r = new List<string> ();
 						var rolenameColumn = reader.GetOrdinal ("rolename");
@@ -333,8 +333,8 @@ namespace Npgsql.Web
 					comm.CommandType = System.Data.CommandType.Text;
 					comm.CommandText = "select username from usersroles where applicationname = @appname " +
 						"and rolename = @rolename";
-					comm.Parameters.Add ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 255).Value = roleName;
-					comm.Parameters.Add ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 255).Value = applicationName;
+					comm.Parameters.AddWithValue ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 255).Value = roleName;
+					comm.Parameters.AddWithValue ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 255).Value = applicationName;
 					using (var reader = comm.ExecuteReader()) {
 						var r = new List<string> ();
 						var usernameColumn = reader.GetOrdinal ("username");
@@ -370,9 +370,9 @@ namespace Npgsql.Web
 					comm.CommandType = System.Data.CommandType.Text;
 					comm.CommandText = "select count(*)>0 from usersroles where applicationname = @appname " +
 						"and username = @username and rolename = @rolename";
-					comm.Parameters.Add ("@username", username);
-					comm.Parameters.Add ("@rolename", roleName);
-					comm.Parameters.Add ("@appname", applicationName);
+					comm.Parameters.AddWithValue ("@username", username);
+					comm.Parameters.AddWithValue ("@rolename", roleName);
+					comm.Parameters.AddWithValue ("@appname", applicationName);
 					var retval = (bool)comm.ExecuteScalar ();
 					return retval;
 				}
@@ -401,9 +401,9 @@ namespace Npgsql.Web
 					comm.CommandType = System.Data.CommandType.Text;
 					comm.CommandText = "delete from usersroles where applicationname = @appname and " +
 						"username = @username and rolename = @rolename";
-					NpgsqlParameter pu = comm.Parameters.Add ("@username", NpgsqlTypes.NpgsqlDbType.Varchar, 250);
-					NpgsqlParameter pr = comm.Parameters.Add ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 250);
-					comm.Parameters.Add ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
+					NpgsqlParameter pu = comm.Parameters.AddWithValue ("@username", NpgsqlTypes.NpgsqlDbType.Varchar, 250);
+					NpgsqlParameter pr = comm.Parameters.AddWithValue ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 250);
+					comm.Parameters.AddWithValue ("@appname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
 					foreach (string rolename in roleNames) {
 						pr.Value = rolename;
 						foreach (string username in usernames) {
@@ -429,8 +429,8 @@ namespace Npgsql.Web
 				using (var comm = new NpgsqlCommand("role_exists", conn)) {
 					comm.CommandType = System.Data.CommandType.Text;
 					comm.CommandText = "select Count(*)>0 from roles where applicationname = @applicationname and rolename = @rolename";
-					comm.Parameters.Add ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = roleName;
-					comm.Parameters.Add ("@applicationname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
+					comm.Parameters.AddWithValue ("@rolename", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = roleName;
+					comm.Parameters.AddWithValue ("@applicationname", NpgsqlTypes.NpgsqlDbType.Varchar, 250).Value = applicationName;
 					var retval = (bool)comm.ExecuteScalar ();
 					return retval;
 				}

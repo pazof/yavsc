@@ -64,9 +64,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string ProviderId {
+            get {
+                return ResourceManager.GetString("ProviderId", resourceCulture);
+            }
+        }
+        
         public static string Welcome {
             get {
                 return ResourceManager.GetString("Welcome", resourceCulture);
+            }
+        }
+        
+        public static string StartDate {
+            get {
+                return ResourceManager.GetString("StartDate", resourceCulture);
             }
         }
         
@@ -91,6 +103,12 @@ namespace Yavsc.Model {
         public static string Date_search {
             get {
                 return ResourceManager.GetString("Date_search", resourceCulture);
+            }
+        }
+        
+        public static string ImgLocator {
+            get {
+                return ResourceManager.GetString("ImgLocator", resourceCulture);
             }
         }
         
@@ -124,9 +142,33 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Comment {
+            get {
+                return ResourceManager.GetString("Comment", resourceCulture);
+            }
+        }
+        
+        public static string ProviderName {
+            get {
+                return ResourceManager.GetString("ProviderName", resourceCulture);
+            }
+        }
+        
         public static string User_List {
             get {
                 return ResourceManager.GetString("User List", resourceCulture);
+            }
+        }
+        
+        public static string Circles {
+            get {
+                return ResourceManager.GetString("Circles", resourceCulture);
+            }
+        }
+        
+        public static string EndDate {
+            get {
+                return ResourceManager.GetString("EndDate", resourceCulture);
             }
         }
         
@@ -208,6 +250,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Location {
+            get {
+                return ResourceManager.GetString("Location", resourceCulture);
+            }
+        }
+        
         public static string MinDate {
             get {
                 return ResourceManager.GetString("MinDate", resourceCulture);
@@ -217,6 +265,12 @@ namespace Yavsc.Model {
         public static string Offline {
             get {
                 return ResourceManager.GetString("Offline", resourceCulture);
+            }
+        }
+        
+        public static string EventWebPage {
+            get {
+                return ResourceManager.GetString("EventWebPage", resourceCulture);
             }
         }
         

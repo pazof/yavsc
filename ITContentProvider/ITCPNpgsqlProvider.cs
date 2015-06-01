@@ -101,7 +101,7 @@ namespace ITContentProvider
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 					cmd.CommandText = "delete from projets where id = @id";
-					cmd.Parameters.Add ("@id", prjId);
+					cmd.Parameters.AddWithValue ("@id", prjId);
 					cmd.ExecuteNonQuery();
 				}
 				cnx.Close ();
@@ -122,10 +122,10 @@ namespace ITContentProvider
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 					cmd.CommandText = "insert into projets (name,managerid,ApplicatonName,prdesc) values (@name,@mid,@appname,@pdesc)";
-					cmd.Parameters.Add ("@name", name);
-					cmd.Parameters.Add ("@mid", ownerId);
-					cmd.Parameters.Add ("@appname", ApplicationName);
-					cmd.Parameters.Add ("@desc", desc);
+					cmd.Parameters.AddWithValue ("@name", name);
+					cmd.Parameters.AddWithValue ("@mid", ownerId);
+					cmd.Parameters.AddWithValue ("@appname", ApplicationName);
+					cmd.Parameters.AddWithValue ("@desc", desc);
 					id = (int)cmd.ExecuteScalar ();
 				}
 				cnx.Close ();

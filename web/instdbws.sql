@@ -122,6 +122,7 @@ CREATE TABLE profiledata
   gtokenexpir timestamp with time zone, -- Google access token expiration date
   avatar character varying(512), -- url for an avatar
   gcalapi boolean NOT NULL DEFAULT false, -- true when user authorized to use its Google calendar
+   gregid character varying(1024), -- Google Cloud Message registration identifier
     CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
@@ -142,6 +143,7 @@ COMMENT ON COLUMN profiledata.gtokentype IS 'Google access token type';
 COMMENT ON COLUMN profiledata.grefreshtoken IS 'Google refresh token';
 COMMENT ON COLUMN profiledata.gtokenexpir IS 'Google access token expiration date';
 COMMENT ON COLUMN profiledata.avatar IS 'url for an avatar';
+COMMENT ON COLUMN profiledata.gregid IS 'Google Cloud Message registration identifier';
 
  -- Index: fki_fkprofiles2
 

@@ -48,4 +48,14 @@
     <data name="Item_added_to_basket"><value>Article ajouté au panier</value></data>
     <data name="Estimate_not_found"><value>Devis non trouvé</value></data>
     <data name="My_Estimates"><value>Mes estimations</value></data>
+	<data name="User_name"><value>Nom d'utilisateur</value></data>
+	<data name="Circles"><value>Cercles</value></data>
+	<data name="Location"><value>Lieu</value></data>
+	<data name="StartDate"><value>Date de démarrage</value></data>
+	<data name="EndDate"><value>Date de fin</value></data>
+	<data name="ProviderName"><value>Nom du fournisseur</value></data>
+	<data name="ProviderId"><value>Identifiant du fournisseur</value></data>
+	<data name="Comment"><value>Commentaire</value></data>
+	<data name="EventWebPage"><value>Page web de l'événement</value></data>
+	<data name="ImgLocator"><value>URI de l'image</value></data>
 </root>

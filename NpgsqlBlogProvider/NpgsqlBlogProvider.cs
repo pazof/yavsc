@@ -26,8 +26,8 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "insert into bltag (blid,tag) values (@postid,@tag) returning _id";
-				cmd.Parameters.Add("@tag",tag);
-				cmd.Parameters.Add("@postid",postid);
+				cmd.Parameters.AddWithValue("@tag",tag);
+				cmd.Parameters.AddWithValue("@postid",postid);
 				return (long) cmd.ExecuteScalar ();
 			}
 		}
@@ -40,7 +40,7 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "delete from bltag where _id = @tagid";
-				cmd.Parameters.Add("@tagid",tagid);
+				cmd.Parameters.AddWithValue("@tagid",tagid);
 				cmd.ExecuteNonQuery ();	
 			}
 		}
@@ -71,8 +71,8 @@ namespace Npgsql.Web.Blog
 				                  "where applicationname = @appname and postid = @id" + 
 				                  ((getHidden) ?  " and visible = true ":" ") + 
 				                  "order by posted asc" ;
-				cmd.Parameters.Add ("@appname", applicationName);
-				cmd.Parameters.Add ("@id", postid);
+				cmd.Parameters.AddWithValue ("@appname", applicationName);
+				cmd.Parameters.AddWithValue ("@id", postid);
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
 					while (rdr.Read ()) {
@@ -108,11 +108,11 @@ namespace Npgsql.Web.Blog
 					" bcontent=@content, " +
 					" visible = @visible " +
 					"where _id = @id";
-				cmd.Parameters.Add ("@now", now);
-				cmd.Parameters.Add ("@title", title);
-				cmd.Parameters.Add ("@content", content);
-				cmd.Parameters.Add ("@visible", visible);
-				cmd.Parameters.Add ("@id", postid);
+				cmd.Parameters.AddWithValue ("@now", now);
+				cmd.Parameters.AddWithValue ("@title", title);
+				cmd.Parameters.AddWithValue ("@content", content);
+				cmd.Parameters.AddWithValue ("@visible", visible);
+				cmd.Parameters.AddWithValue ("@id", postid);
 				cnx.Open ();
 				cmd.ExecuteNonQuery ();
 				cnx.Close();
@@ -146,14 +146,14 @@ namespace Npgsql.Web.Blog
 					"modified,posted,visible,username,applicationname)" +
 				    "values (@postid,@bcontent,@modified,@posted," +
 				    "@visible,@username,@appname) returning _id";
-				cmd.Parameters.Add ("@postid", postid);
-				cmd.Parameters.Add ("@bcontent", content);
+				cmd.Parameters.AddWithValue ("@postid", postid);
+				cmd.Parameters.AddWithValue ("@bcontent", content);
 				DateTime now = DateTime.Now;
-				cmd.Parameters.Add ("@modified", now);
-				cmd.Parameters.Add ("@posted", now);
-				cmd.Parameters.Add ("@visible", visible);
-				cmd.Parameters.Add ("@username", from);
-				cmd.Parameters.Add ("@appname", applicationName);
+				cmd.Parameters.AddWithValue ("@modified", now);
+				cmd.Parameters.AddWithValue ("@posted", now);
+				cmd.Parameters.AddWithValue ("@visible", visible);
+				cmd.Parameters.AddWithValue ("@username", from);
+				cmd.Parameters.AddWithValue ("@appname", applicationName);
 				cnx.Open ();
 				return (long) cmd.ExecuteScalar();
 			}
@@ -233,8 +233,8 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				cmd.CommandText = "select username, title, bcontent, modified, posted, visible from blog " +
 				                  "where applicationname = @appname and _id = @id";
-				cmd.Parameters.Add ("@appname", applicationName);
-				cmd.Parameters.Add ("@id", postid);
+				cmd.Parameters.AddWithValue ("@appname", applicationName);
+				cmd.Parameters.AddWithValue ("@id", postid);
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
 					if (rdr.Read ()) {
@@ -262,7 +262,7 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "delete from comment where _id = @id returning postid";
-				cmd.Parameters.Add ("id", cmtid);
+				cmd.Parameters.AddWithValue ("id", cmtid);
 				cnx.Open ();
 				postid = (long) cmd.ExecuteScalar ();
 			}
@@ -281,9 +281,9 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				cmd.CommandText = "select _id,bcontent,modified,posted,visible from blog " +
 				                  "where applicationname = @appname and username = @username and title = @title";
-				cmd.Parameters.Add ("@appname", applicationName);
-				cmd.Parameters.Add ("@username", username);
-				cmd.Parameters.Add ("@title", title);
+				cmd.Parameters.AddWithValue ("@appname", applicationName);
+				cmd.Parameters.AddWithValue ("@username", username);
+				cmd.Parameters.AddWithValue ("@title", title);
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
 					if (rdr.Read ()) {
@@ -295,18 +295,20 @@ namespace Npgsql.Web.Blog
 						be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 						be.Visible = rdr.GetBoolean (rdr.GetOrdinal ("visible"));
 						be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
-						using (NpgsqlCommand cmdtags = cnx.CreateCommand()) {
-							List<string> tags = new List<string> ();
-							cmd.CommandText = "select tag.name from tag,tagged where tag._id = tagged.tagid and tagged.postid = @pid";
-							cmd.Parameters.Add ("@pid", be.Id);
-							using (NpgsqlDataReader rdrt = cmd.ExecuteReader ()) {
-								while (rdrt.Read ()) {
-									tags.Add (rdrt.GetString (0));
-								}
-							}
-							be.Tags = tags.ToArray ();
+					}
+					rdr.Close ();
+				}
+				if (be!=null)
+				using (NpgsqlCommand cmdtags = cnx.CreateCommand()) {
+					List<string> tags = new List<string> ();
+					cmd.CommandText = "select tag.name from tag,tagged where tag._id = tagged.tagid and tagged.postid = @pid";
+					cmd.Parameters.AddWithValue ("@pid", be.Id);
+					using (NpgsqlDataReader rdrt = cmd.ExecuteReader ()) {
+						while (rdrt.Read ()) {
+							tags.Add (rdrt.GetString (0));
 						}
 					}
+					be.Tags = tags.ToArray ();
 				}
 			}
 			return be;
@@ -330,14 +332,14 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				cmd.CommandText = "insert into blog (title,bcontent,modified,posted,visible,username,applicationname)" +
 				                  "values (@title,@bcontent,@modified,@posted,@visible,@username,@appname) returning _id";
-				cmd.Parameters.Add ("@title", title);
-				cmd.Parameters.Add ("@bcontent", content);
+				cmd.Parameters.AddWithValue ("@title", title);
+				cmd.Parameters.AddWithValue ("@bcontent", content);
 				DateTime now = DateTime.Now;
-				cmd.Parameters.Add ("@modified", now);
-				cmd.Parameters.Add ("@posted", now);
-				cmd.Parameters.Add ("@visible", visible);
-				cmd.Parameters.Add ("@username", username);
-				cmd.Parameters.Add ("@appname", applicationName);
+				cmd.Parameters.AddWithValue ("@modified", now);
+				cmd.Parameters.AddWithValue ("@posted", now);
+				cmd.Parameters.AddWithValue ("@visible", visible);
+				cmd.Parameters.AddWithValue ("@username", username);
+				cmd.Parameters.AddWithValue ("@appname", applicationName);
 				cnx.Open ();
 				return (long) cmd.ExecuteScalar();
 			}
@@ -359,18 +361,18 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				cmd.CommandText = "select title,bcontent,modified,posted,username,visible from blog " +
 					"where applicationname = @appname";
-				cmd.Parameters.Add ("@appname", applicationName);
+				cmd.Parameters.AddWithValue ("@appname", applicationName);
 				if ((searchflags & FindBlogEntryFlags.MatchContent) > 0) {
 					cmd.CommandText += " and bcontent like @bcontent";
-					cmd.Parameters.Add ("@bcontent", pattern);
+					cmd.Parameters.AddWithValue ("@bcontent", pattern);
 				}
 				if ((searchflags & FindBlogEntryFlags.MatchTitle) > 0) {
 					cmd.CommandText += " and title like @title";
-					cmd.Parameters.Add ("@title", pattern);
+					cmd.Parameters.AddWithValue ("@title", pattern);
 				}
 				if ((searchflags & FindBlogEntryFlags.MatchUserName) > 0) {
 					cmd.CommandText += " and username like @username";
-					cmd.Parameters.Add ("@username", pattern);
+					cmd.Parameters.AddWithValue ("@username", pattern);
 				}
 				if ((searchflags & FindBlogEntryFlags.MatchInvisible) == 0) {
 					cmd.CommandText += " and visible = true";
@@ -409,9 +411,9 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				cmd.CommandText = "delete from blog where username = @username and applicationname = @appname and title=@title";
-				cmd.Parameters.Add ("@username",username);
-				cmd.Parameters.Add ("@appname", applicationName);
-				cmd.Parameters.Add ("@title",title);
+				cmd.Parameters.AddWithValue ("@username",username);
+				cmd.Parameters.AddWithValue ("@appname", applicationName);
+				cmd.Parameters.AddWithValue ("@title",title);
 				cnx.Open ();
 				cmd.ExecuteNonQuery ();
 				cnx.Close();
@@ -443,8 +445,8 @@ namespace Npgsql.Web.Blog
 				                  "from blog where applicationname = @appname and visible = true " +
 				                  " order by posted desc limit @len" ;
 
-				cmd.Parameters.Add ("@appname", applicationName);
-				cmd.Parameters.Add ("@len", defaultPageSize*10);
+				cmd.Parameters.AddWithValue ("@appname", applicationName);
+				cmd.Parameters.AddWithValue ("@len", defaultPageSize*10);
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
 					totalRecords = 0;

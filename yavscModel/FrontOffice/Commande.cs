@@ -89,7 +89,7 @@ namespace Yavsc.Model.FrontOffice
 		}
 
 		private FileSystemManager GetFSM() {
-			return new FileSystemManager ("~/commands");
+			return new FileSystemManager ("~/commands/{0}");
 		}
 	}
 }

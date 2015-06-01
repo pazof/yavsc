@@ -47,14 +47,14 @@ namespace Yavsc
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) 
 				{
 					cmd.CommandText = "insert into testbytea (t) values (@tv)";
-					cmd.Parameters.Add ("@tv", a);
+					cmd.Parameters.AddWithValue ("@tv", a);
 					cmd.ExecuteNonQuery ();
 				}
 
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) 
 				{
 					cmd.CommandText = "select t from testbytea";
-					cmd.Parameters.Add ("@tv", a);
+					cmd.Parameters.AddWithValue ("@tv", a);
 
 					NpgsqlDataReader rdr = cmd.ExecuteReader ();
 					if (!rdr.Read ())

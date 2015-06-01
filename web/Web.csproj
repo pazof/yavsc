@@ -54,7 +54,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
-    <Reference Include="Npgsql" />
     <Reference Include="CodeKicker.BBCode">
       <HintPath>lib\CodeKicker.BBCode.dll</HintPath>
     </Reference>
@@ -85,6 +84,12 @@
     <Reference Include="System.Net.Http.Formatting" />
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Web.WebPages.Razor" />
+    <Reference Include="Mono.Security">
+      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Npgsql.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -187,8 +192,6 @@
     <Compile Include="ApiControllers\Calendar\Model\Schedule.cs" />
     <Compile Include="ApiControllers\Calendar\Model\ProviderPublicInfo.cs" />
     <Compile Include="ApiControllers\Calendar\Model\WeekDay.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\EstablishmentType.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\EventType.cs" />
     <Compile Include="ApiControllers\Calendar\CalendarController.cs" />
     <Compile Include="ApiControllers\Calendar\Model\YaEvent.cs" />
     <Compile Include="ApiControllers\Calendar\Model\Circle.cs" />
@@ -682,6 +685,7 @@
     <Content Include="Views\FrontOffice\Estimate.aspx" />
     <Content Include="Theme\dark\croix.png" />
     <Content Include="Views\Admin\RemoveRole..aspx" />
+    <Content Include="Views\FrontOffice\EventPub.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

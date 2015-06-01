@@ -1,5 +1,5 @@
 //
-//  NightFlashController.cs
+//  UserPrefs.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -28,7 +28,7 @@ namespace Yavsc.ApiControllers.Calendar.Model
 	class UserPrefs
 	{
 		Circle [] Circles { get; set ; }
-		Dictionary<string,double> MusicTypeRatings { get; set; }
+		Dictionary<string,double> EventTypeRatings { get; set; }
 		Dictionary<string,double> LocationTypeRatings { get; set; }
 	}
 }
