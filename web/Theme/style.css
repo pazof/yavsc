@@ -11,6 +11,7 @@ textarea {
         width:25em;
         height:5em;
         }
+
 input, textarea, checkbox { 
     color: #FFFFA0;
 	background: black;
@@ -21,24 +22,11 @@ main {
 	float:left;
 }
 
-
 fieldset {
 	background-color: rgba(32,16,16,0.8);
 	border-radius:5px; border: solid 1px #000060;
 	float:left; 
 } 
-#logo {
-	float: left;
-
-	}
-
-.panel,.bshpanel,aside {
-	background-color: rgba(32,16,16,0.8);
-		border-radius:5px; border: solid 1px #000060;
-		float: right;
-}
-
-.bsh { float: right; }
 
 video,img {
 	max-width:100%;
@@ -58,6 +46,21 @@ footer {
 	z-index:-1;
 }
 
+#logo {
+	float: left;
+
+	}
+
+.panel,.bshpanel,aside {
+	background-color: rgba(32,16,16,0.8);
+		border-radius:5px; border: solid 1px #000060;
+		float: right;
+}
+
+.bsh { float: right; }
+
+
+
 #login {
 	top:0;
 	right:0;
@@ -73,7 +76,6 @@ header {
 	left:0;
 	right:0;
 	text-align: center;
-	text-transform: capitalize;
 	}
 	 h1 img { 	vertical-align: text-top; }
 
