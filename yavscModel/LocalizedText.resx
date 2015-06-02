@@ -60,4 +60,5 @@
 	<data name="Comment"><value>Comment</value></data>
 	<data name="EventWebPage"><value>Event Web page</value></data>
 	<data name="ImgLocator"><value>Image URI</value></data>
+	<data name="Home"><value>Home</value></data>
 </root>
