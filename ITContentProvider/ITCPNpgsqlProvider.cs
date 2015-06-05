@@ -1,8 +1,9 @@
 using System;
 using Yavsc;
 using Npgsql;
+using Yavsc.Model;
 
-namespace ITContentProvider
+namespace Yavsc
 {
 	/// <summary>
 	/// ITCP npgsql provider.
@@ -23,9 +24,9 @@ namespace ITContentProvider
 		void NewRelease(int projectId, string Version);
 		*/
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ITContentProvider.ITCPNpgsqlProvider"/> class.
-		/// </summary>
+/// <summary>
+/// Initializes a new instance of the <see cref="Yavsc.ITCPNpgsqlProvider"/> class.
+/// </summary>
 		public ITCPNpgsqlProvider ()
 		{
 		}

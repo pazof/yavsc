@@ -1,7 +1,7 @@
 using System;
 using Yavsc;
 
-namespace ITContentProvider
+namespace Yavsc.Model
 {
 	/// <summary>
 	/// Project info.

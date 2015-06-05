@@ -41,7 +41,6 @@
 <input type="submit"/>
 <% } %>
 
-
 <script>
  $(document).ready(function () {
  $("textarea.mdd_editor").MarkdownDeep({ 

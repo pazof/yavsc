@@ -243,7 +243,8 @@ namespace Yavsc
 				throw new InvalidOperationException (
 					"username cannot be" +
 					"  null at searching for estimates");
-
+			List<long> ids = new List<long> ();
+			List<Estimate> ests = new List<Estimate> ();
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
@@ -251,14 +252,18 @@ namespace Yavsc
 						
 					cmd.Parameters.AddWithValue ("@uname", username);
 					cnx.Open ();
-					List<Estimate> ests = new List<Estimate> ();
+
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 						while (rdr.Read ()) {
-							ests.Add(GetEstimate(rdr.GetInt64(0)));
+							ids.Add (rdr.GetInt64 (0));
 						}
+						rdr.Close ();
 					}
-					return ests.ToArray();
+					cnx.Close ();
 				}
+				foreach (long id in ids) 
+					ests.Add(GetEstimate(id));
+				return ests.ToArray();
 			}
 		}
 		/// <summary>
@@ -273,7 +278,8 @@ namespace Yavsc
 				throw new InvalidOperationException (
 					"client and responsible cannot be" +
 					" both null at searching for estimates");
-
+			List<long> ids = new List<long> ();
+			List<Estimate> ests = new List<Estimate> ();
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
@@ -291,12 +297,15 @@ namespace Yavsc
 					}
 
 					cnx.Open ();
-					List<Estimate> ests = new List<Estimate> ();
+
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 						while (rdr.Read ()) {
-							ests.Add(GetEstimate(rdr.GetInt64(0)));
+							ids.Add (rdr.GetInt64 (0));
 						}
+						rdr.Close ();
 					}
+					foreach (long id in ids) 
+						ests.Add(GetEstimate(id));
 					return ests.ToArray();
 				}
 			}
@@ -346,6 +355,7 @@ namespace Yavsc
 		/// <param name="estimid">Estimid.</param>
 		public Estimate GetEstimate (long estimid)
 		{
+			Estimate est = null;
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
@@ -353,7 +363,6 @@ namespace Yavsc
 
 					cmd.Parameters.AddWithValue ("@estid", estimid);
 					cnx.Open ();
-					Estimate est = null;
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 						if (!rdr.Read ()) {
 							return null;
@@ -371,39 +380,39 @@ namespace Yavsc
 						if (!rdr.IsDBNull (index))
 							est.Description = rdr.GetString (index);
 						est.Id = estimid;
-						using (NpgsqlCommand cmdw = new NpgsqlCommand ("select _id, productid, ucost, count, description from writtings where estimid = @estid", cnx)) {
-							cmdw.Parameters.AddWithValue("@estid", estimid);
-							using (NpgsqlDataReader rdrw = cmdw.ExecuteReader ()) {
-								List<Writting> lw = null; 
-								if (rdrw.HasRows) {
-									lw = new List<Writting> ();
-									while (rdrw.Read ()) {
-										Writting w = new Writting ();
-										int dei = rdrw.GetOrdinal ("description");
-										if (!rdrw.IsDBNull (dei))
-											w.Description = rdrw.GetString (dei);
-										int opi = rdrw.GetOrdinal ("productid");
-										if (!rdrw.IsDBNull (opi))
-											w.ProductReference = rdrw.GetString(opi);
-										int oco = rdrw.GetOrdinal ("count");
-										if (!rdrw.IsDBNull (oco))
-											w.Count = rdrw.GetInt32 (oco);
-										int ouc = rdrw.GetOrdinal ("ucost");
-										if (!rdrw.IsDBNull (ouc))
-											w.UnitaryCost = rdrw.GetDecimal (ouc);
-										w.Id = rdrw.GetInt64 (rdrw.GetOrdinal ("_id"));
-										lw.Add (w);
-									}
-									est.Lines = lw.ToArray ();
-								}
-							}
-						}
-						// TODO est.Ciffer = somme des ecritures
-						// TODO read into est.Lines 
+
+						rdr.Close ();
 					}
-					cnx.Close ();
-					return est;
 				}
+				// assert est != null
+				using (NpgsqlCommand cmdw = new NpgsqlCommand ("select _id, productid, ucost, count, description from writtings where estimid = @estid", cnx)) {
+					cmdw.Parameters.AddWithValue("@estid", estimid);
+					using (NpgsqlDataReader rdrw = cmdw.ExecuteReader ()) {
+						List<Writting> lw = null; 
+						if (rdrw.HasRows) {
+							lw = new List<Writting> ();
+							while (rdrw.Read ()) {
+								Writting w = new Writting ();
+								int dei = rdrw.GetOrdinal ("description");
+								if (!rdrw.IsDBNull (dei))
+									w.Description = rdrw.GetString (dei);
+								int opi = rdrw.GetOrdinal ("productid");
+								if (!rdrw.IsDBNull (opi))
+									w.ProductReference = rdrw.GetString(opi);
+								int oco = rdrw.GetOrdinal ("count");
+								if (!rdrw.IsDBNull (oco))
+									w.Count = rdrw.GetInt32 (oco);
+								int ouc = rdrw.GetOrdinal ("ucost");
+								if (!rdrw.IsDBNull (ouc))
+									w.UnitaryCost = rdrw.GetDecimal (ouc);
+								w.Id = rdrw.GetInt64 (rdrw.GetOrdinal ("_id"));
+								lw.Add (w);
+							}
+							est.Lines = lw.ToArray ();
+						}
+					}
+				}
+				return est;
 			}
 		}
 
