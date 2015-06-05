@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace ITContentProvider.Model
+namespace Yavsc.Model
 {
 	/// <summary>
 	/// New project model.

@@ -58,7 +58,7 @@
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
       <Name>YavscModel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WorkFlowProvider\NpgsqlContentProvider.csproj">
+    <ProjectReference Include="..\NpgsqlContentProvider\NpgsqlContentProvider.csproj">
       <Project>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</Project>
       <Name>NpgsqlContentProvider</Name>
     </ProjectReference>

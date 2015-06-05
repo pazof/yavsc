@@ -13,7 +13,6 @@ using Npgsql.Web.Blog;
 using Yavsc.Helpers;
 using Yavsc;
 using System.Web.Mvc;
-using ITContentProvider;
 
 namespace Yavsc.Controllers
 {

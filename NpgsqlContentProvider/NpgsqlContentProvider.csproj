@@ -8,7 +8,7 @@
     <ProjectGuid>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>WorkFlowProvider</RootNamespace>
-    <AssemblyName>WorkFlowProvider</AssemblyName>
+    <AssemblyName>NpgsqlContentProvider</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

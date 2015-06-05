@@ -68,10 +68,16 @@ namespace Yavsc.Model.WorkFlow
 			return ContentProvider.GetEstimates (client, null);
 		}
 
+		/// <summary>
+		/// Gets the user estimates.
+		/// </summary>
+		/// <returns>The user estimates.</returns>
+		/// <param name="username">Username.</param>
 		public Estimate [] GetUserEstimates (string username)
 		{
 			return ContentProvider.GetEstimates (username);
 		}
+
 		/// <summary>
 		/// Gets the stock for a given product reference.
 		/// </summary>
