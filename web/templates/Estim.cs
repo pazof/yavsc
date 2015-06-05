@@ -42,602 +42,706 @@ namespace Yavsc.templates {
         public virtual string TransformText() {
             this.GenerationEnvironment = null;
             
-            #line 10 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 10 ""
             this.Write("\n");
             
             #line default
             #line hidden
             
-            #line 14 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write("\n\\documentclass[french,11pt]{article}\n\\usepackage{babel}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[a4paper]{geometry}\n\\usepackage{units}\n\\usepackage{bera}\n\\usepackage{graphicx}\n\\usepackage{fancyhdr}\n\\usepackage{fp}\n\n\\def\\TVA{20}    % Taux de la TVA\n\n\\def\\TotalHT{0}\n\\def\\TotalTVA{0}\n\n\n\\newcommand{\\AjouterService}[3]{%    Arguments : Désignation, quantité, prix\n    \\FPround{\\prix}{#3}{2}\n    \\FPeval{\\montant}{#2 * #3}\n    \\FPround{\\montant}{\\montant}{2}\n    \\FPadd{\\TotalHT}{\\TotalHT}{\\montant}\n   \n    \\eaddto\\ListeProduits{#1    &    \\prix    &    #2    &    \\montant    \\cr}\n}\n\n\n\\newcommand{\\AfficheResultat}{%\n    \\ListeProduits\n   \n    \\FPeval{\\TotalTVA}{\\TotalHT * \\TVA / 100}\n    \\FPadd{\\TotalTTC}{\\TotalHT}{\\TotalTVA}\n    \\FPround{\\TotalHT}{\\TotalHT}{2}\n    \\FPround{\\TotalTVA}{\\TotalTVA}{2}\n    \\FPround{\\TotalTTC}{\\TotalTTC}{2}\n    \\global\\let\\TotalHT\\TotalHT\n    \\global\\let\\TotalTVA\\TotalTVA\n    \\global\\let\\TotalTTC\\TotalTTC\n   \n\n    \\cr \n    \\hline\n    \\textbf{Total}    & & &    \\TotalHT\n}\n\n\\newcommand*\\eaddto[2]{% version développée de \\addto\n   \\edef\\tmp{#2}%\n   \\expandafter\\addto\n   \\expandafter#1%\n   \\expandafter{\\tmp}%\n}\n\n\\newcommand{\\ListeProduits}{}\n\n\n\n\n%%%%%%%%%%%%%%%%%%%%% A MODIFIER DANS LA FACTURE %%%%%%%%%%%%%%%%%%%%%\n\n\\def\\FactureNum            {");
+            #line 14 ""
+            this.Write("\n\\documentclass[french,11pt]{article}\n\\usepackage{babel}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[a4paper]{geometry}\n\\usepackage{units}\n\\usepackage{bera}\n\\usepackage{graphicx}\n\\usepackage{fancyhdr}\n\\usepackage{fp}\n\n\\def\\TVA{20}    % Taux de la TVA\n\n\\def\\TotalHT{0}\n\\def\\TotalTVA{0}\n\n\\newcommand{\\AjouterService}[3]{%    Arguments : Désignation, quantité, prix\n    \\FPround{\\prix}{#3}{2}\n    \\FPeval{\\montant}{#2 * #3}\n    \\FPround{\\montant}{\\montant}{2}\n    \\FPadd{\\TotalHT}{\\TotalHT}{\\montant}\n   \n    \\eaddto\\ListeProduits{#1    &    \\prix    &    #2    &    \\montant    \\cr}\n}\n\n\n\\newcommand{\\AfficheResultat}{%\n    \\ListeProduits\n   \n    \\FPeval{\\TotalTVA}{\\TotalHT * \\TVA / 100}\n    \\FPadd{\\TotalTTC}{\\TotalHT}{\\TotalTVA}\n    \\FPround{\\TotalHT}{\\TotalHT}{2}\n    \\FPround{\\TotalTVA}{\\TotalTVA}{2}\n    \\FPround{\\TotalTTC}{\\TotalTTC}{2}\n    \\global\\let\\TotalHT\\TotalHT\n    \\global\\let\\TotalTVA\\TotalTVA\n    \\global\\let\\TotalTTC\\TotalTTC\n   \n\n    \\cr \n    \\hline\n    \\textbf{Total}    & & &    \\TotalHT\n}\n\n\\newcommand*\\eaddto[2]{% version développée de \\addto\n   \\edef\\tmp{#2}%\n   \\expandafter\\addto\n   \\expandafter#1%\n   \\expandafter{\\tmp}%\n}\n\n\\newcommand{\\ListeProduits}{}\n\n\n\n\n%%%%%%%%%%%%%%%%%%%%% A MODIFIER DANS LA FACTURE %%%%%%%%%%%%%%%%%%%%%\n\n\\def\\FactureNum            {");
             
             #line default
             #line hidden
             
-            #line 74 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 73 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( estim.Id.ToString() ));
             
             #line default
             #line hidden
             
-            #line 74 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 73 ""
             this.Write("}    % Numéro de facture\n\\def\\FactureAcquittee    {non}        % Facture acquittée : oui/non\n\\def\\FactureLieu    {");
             
             #line default
             #line hidden
             
-            #line 76 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 75 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.CityAndState ));
             
             #line default
             #line hidden
             
-            #line 76 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 75 ""
             this.Write("}    % Lieu de l'édition de la facture\n\\def\\FactureObjet    {Facture : ");
             
             #line default
             #line hidden
             
-            #line 77 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 76 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( estim.Title ));
             
             #line default
             #line hidden
             
-            #line 77 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 76 ""
             this.Write("}    % Objet du document\n% Description de la facture\n\\def\\FactureDescr    {%\n   ");
             
             #line default
             #line hidden
             
-            #line 80 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 79 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( estim.Description ));
             
             #line default
             #line hidden
             
-            #line 80 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 79 ""
             this.Write("\n}\n\n% Infos Client\n\\def\\ClientNom{");
             
             #line default
             #line hidden
             
-            #line 84 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 83 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( to.Name ));
             
             #line default
             #line hidden
             
-            #line 84 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 83 ""
             this.Write("}    % Nom du client\n\\def\\ClientAdresse{%                    % Adresse du client\n   ");
             
             #line default
             #line hidden
             
-            #line 86 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 85 ""
  if (!string.IsNullOrWhiteSpace(to.Address)) { 
             
             #line default
             #line hidden
             
-            #line 87 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 86 ""
             this.Write("   ");
             
             #line default
             #line hidden
             
-            #line 87 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 86 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( to.Address ));
             
             #line default
             #line hidden
             
-            #line 87 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 86 ""
             this.Write("\\\\\n  ");
             
             #line default
             #line hidden
             
-            #line 88 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 87 ""
  } 
             
             #line default
             #line hidden
             
-            #line 89 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 88 ""
             this.Write("   ");
             
             #line default
             #line hidden
             
-            #line 89 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 88 ""
  if (!string.IsNullOrWhiteSpace(to.ZipCode)) { 
             
             #line default
             #line hidden
             
-            #line 90 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 89 ""
             this.Write("   ");
             
             #line default
             #line hidden
             
-            #line 90 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 89 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( to.ZipCode ));
             
             #line default
             #line hidden
             
-            #line 90 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 89 ""
             this.Write("  ");
             
             #line default
             #line hidden
             
-            #line 90 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 89 ""
  } 
             
             #line default
             #line hidden
             
-            #line 91 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 90 ""
             this.Write("  ");
             
             #line default
             #line hidden
             
-            #line 91 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 90 ""
  if (!string.IsNullOrWhiteSpace(to.ZipCode)) { 
             
             #line default
             #line hidden
             
-            #line 92 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 91 ""
             this.Write("    ");
             
             #line default
             #line hidden
             
-            #line 92 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 91 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( to.CityAndState ));
             
             #line default
             #line hidden
             
-            #line 92 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 91 ""
             this.Write("\\\\ ");
             
             #line default
             #line hidden
             
-            #line 92 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 91 ""
  } 
             
             #line default
             #line hidden
             
-            #line 93 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 92 ""
             this.Write("  \n");
             
             #line default
             #line hidden
             
-            #line 94 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 93 ""
  if (!string.IsNullOrWhiteSpace(to.Phone)) { 
             
             #line default
             #line hidden
             
-            #line 95 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 94 ""
             this.Write("   Téléphone fixe: ");
             
             #line default
             #line hidden
             
-            #line 95 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 94 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( to.Phone ));
             
             #line default
             #line hidden
             
-            #line 95 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 94 ""
             this.Write("\\\\\n");
             
             #line default
             #line hidden
             
-            #line 96 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 95 ""
  } 
             
             #line default
             #line hidden
             
-            #line 97 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 96 ""
  if (!string.IsNullOrWhiteSpace(to.Mobile)) { 
             
             #line default
             #line hidden
             
-            #line 98 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 97 ""
             this.Write("   Mobile: ");
             
             #line default
             #line hidden
             
-            #line 98 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 97 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( to.Mobile ));
             
             #line default
             #line hidden
             
-            #line 98 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 97 ""
             this.Write("\\\\\n");
             
             #line default
             #line hidden
             
-            #line 99 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 98 ""
  } 
             
             #line default
             #line hidden
             
-            #line 100 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 99 ""
             this.Write(" ");
             
             #line default
             #line hidden
             
-            #line 100 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 99 ""
  if (!string.IsNullOrWhiteSpace(to.Email)) { 
             
             #line default
             #line hidden
             
-            #line 101 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 100 ""
             this.Write("   E-mail: ");
             
             #line default
             #line hidden
             
-            #line 101 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 100 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( to.Email ));
             
             #line default
             #line hidden
             
-            #line 101 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 100 ""
  } 
             
             #line default
             #line hidden
             
-            #line 102 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 101 ""
             this.Write("}\n\n% Liste des produits facturés : Désignation, prix\n\n   ");
             
             #line default
             #line hidden
             
-            #line 106 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 105 ""
  foreach (Writting wr in estim.Lines) { 
             
             #line default
             #line hidden
             
-            #line 107 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 106 ""
             this.Write("\\AjouterService    {");
             
             #line default
             #line hidden
             
-            #line 107 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 106 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(wr.Description));
             
             #line default
             #line hidden
             
-            #line 107 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 106 ""
             this.Write(" ");
             
             #line default
             #line hidden
             
-            #line 107 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 106 ""
  if (!string.IsNullOrWhiteSpace(wr.ProductReference)) { 
             
             #line default
             #line hidden
             
-            #line 108 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 107 ""
             this.Write("   (");
             
             #line default
             #line hidden
             
-            #line 108 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 107 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(wr.ProductReference));
             
             #line default
             #line hidden
             
-            #line 108 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 107 ""
             this.Write(")");
             
             #line default
             #line hidden
             
-            #line 108 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 107 ""
  } 
             
             #line default
             #line hidden
             
-            #line 109 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 108 ""
             this.Write("} {");
             
             #line default
             #line hidden
             
-            #line 109 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 108 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(wr.Count));
             
             #line default
             #line hidden
             
-            #line 109 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 108 ""
             this.Write("} {");
             
             #line default
             #line hidden
             
-            #line 109 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 108 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(wr.UnitaryCost));
             
             #line default
             #line hidden
             
-            #line 109 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 108 ""
             this.Write("} \n   ");
             
             #line default
             #line hidden
             
-            #line 110 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 109 ""
  } 
             
             #line default
             #line hidden
             
-            #line 111 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n\\geometry{verbose,tmargin=4em,bmargin=8em,lmargin=6em,rmargin=6em}\n\\setlength{\\parindent}{0pt}\n\\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}\n\n\\thispagestyle{fancy}\n\\pagestyle{fancy}\n\\setlength{\\parindent}{0pt}\n\n\\renewcommand{\\headrulewidth}{0pt}\n\\cfoot{\n    ");
+            #line 110 ""
+            this.Write("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n\\geometry{verbose,tmargin=4em,bmargin=8em,lmargin=6em,rmargin=6em}\n\\setlength{\\parindent}{0pt}\n\\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}\n\n\\thispagestyle{fancy}\n\\pagestyle{fancy}\n\\setlength{\\parindent}{0pt}\n\n\\renewcommand{\\headrulewidth}{0pt}\n\\cfoot{\n ");
             
             #line default
             #line hidden
             
-            #line 124 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(from.Name));
+            #line 123 ""
+ if (!string.IsNullOrWhiteSpace(from.Name)) { 
             
             #line default
             #line hidden
             
-            #line 124 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(" - ");
+            #line 124 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.Name  ));
             
             #line default
             #line hidden
             
-            #line 124 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(from.Address ));
-            
-            #line default
-            #line hidden
-            
-            #line 124 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(" - ");
-            
-            #line default
-            #line hidden
-            
-            #line 124 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.CityAndState ));
-            
-            #line default
-            #line hidden
-            
-            #line 124 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(" \\newline\n    \\small{\n    E-mail: ");
-            
-            #line default
-            #line hidden
-            
-            #line 126 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.Email ));
-            
-            #line default
-            #line hidden
-            
-            #line 126 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write("\n    ");
-            
-            #line default
-            #line hidden
-            
-            #line 127 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
- if (!string.IsNullOrWhiteSpace(from.Mobile)) { 
-            
-            #line default
-            #line hidden
-            
-            #line 128 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(" - Téléphone mobile: ");
-            
-            #line default
-            #line hidden
-            
-            #line 128 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.Mobile ));
-            
-            #line default
-            #line hidden
-            
-            #line 128 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 124 ""
  } 
             
             #line default
             #line hidden
             
-            #line 129 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write("    ");
-            
-            #line default
-            #line hidden
-            
-            #line 129 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
- if (!string.IsNullOrWhiteSpace(from.Phone)) { 
-            
-            #line default
-            #line hidden
-            
-            #line 130 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(" - Téléphone fixe: ");
-            
-            #line default
-            #line hidden
-            
-            #line 130 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.Phone ));
-            
-            #line default
-            #line hidden
-            
-            #line 130 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
- } 
-            
-            #line default
-            #line hidden
-            
-            #line 131 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write("    }\n}\n\n\\begin{document}\n\n% Logo de la société\n%\\includegraphics{logo.jpg}\n\n% Nom et adresse de la société\n");
-            
-            #line default
-            #line hidden
-            
-            #line 140 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.Name ));
-            
-            #line default
-            #line hidden
-            
-            #line 140 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write("\\\\\n");
-            
-            #line default
-            #line hidden
-            
-            #line 141 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.Address ));
-            
-            #line default
-            #line hidden
-            
-            #line 141 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write("\\\\\n");
-            
-            #line default
-            #line hidden
-            
-            #line 142 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(from.ZipCode ));
-            
-            #line default
-            #line hidden
-            
-            #line 142 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 125 ""
             this.Write(" ");
             
             #line default
             #line hidden
             
-            #line 142 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 125 ""
+ if (!string.IsNullOrWhiteSpace(from.Address)) { 
+            
+            #line default
+            #line hidden
+            
+            #line 126 ""
+            this.Write(" - ");
+            
+            #line default
+            #line hidden
+            
+            #line 126 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.Address ));
+            
+            #line default
+            #line hidden
+            
+            #line 126 ""
+ } 
+            
+            #line default
+            #line hidden
+            
+            #line 127 ""
+            this.Write(" \n ");
+            
+            #line default
+            #line hidden
+            
+            #line 128 ""
+ if (!string.IsNullOrWhiteSpace(from.CityAndState)) { 
+            
+            #line default
+            #line hidden
+            
+            #line 129 ""
+            this.Write(" - ");
+            
+            #line default
+            #line hidden
+            
+            #line 129 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.CityAndState ));
+            
+            #line default
+            #line hidden
+            
+            #line 129 ""
+ } 
+            
+            #line default
+            #line hidden
+            
+            #line 130 ""
+            this.Write(" \\newline\n    \\small{\n    ");
+            
+            #line default
+            #line hidden
+            
+            #line 132 ""
+ if (!string.IsNullOrWhiteSpace(from.Email)) { 
+            
+            #line default
+            #line hidden
+            
+            #line 133 ""
+            this.Write("E-mail: ");
+            
+            #line default
+            #line hidden
+            
+            #line 133 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.Email ));
+            
+            #line default
+            #line hidden
+            
+            #line 133 ""
+ } 
+            
+            #line default
+            #line hidden
+            
+            #line 134 ""
+            this.Write("    ");
+            
+            #line default
+            #line hidden
+            
+            #line 134 ""
+ if (!string.IsNullOrWhiteSpace(from.Mobile)) { 
+            
+            #line default
+            #line hidden
+            
+            #line 135 ""
+            this.Write(" - Téléphone mobile: ");
+            
+            #line default
+            #line hidden
+            
+            #line 135 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.Mobile ));
+            
+            #line default
+            #line hidden
+            
+            #line 135 ""
+ } 
+            
+            #line default
+            #line hidden
+            
+            #line 136 ""
+            this.Write("    ");
+            
+            #line default
+            #line hidden
+            
+            #line 136 ""
+ if (!string.IsNullOrWhiteSpace(from.Phone)) { 
+            
+            #line default
+            #line hidden
+            
+            #line 137 ""
+            this.Write(" - Téléphone fixe: ");
+            
+            #line default
+            #line hidden
+            
+            #line 137 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.Phone ));
+            
+            #line default
+            #line hidden
+            
+            #line 137 ""
+ } 
+            
+            #line default
+            #line hidden
+            
+            #line 138 ""
+            this.Write("    }\n}\n\n\\begin{document}\n\n% Logo de la société\n%\\includegraphics{logo.jpg}\n\n% Nom et adresse de la société\n");
+            
+            #line default
+            #line hidden
+            
+            #line 147 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.Name ));
+            
+            #line default
+            #line hidden
+            
+            #line 147 ""
+            this.Write("\\\\\n");
+            
+            #line default
+            #line hidden
+            
+            #line 148 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.Address ));
+            
+            #line default
+            #line hidden
+            
+            #line 148 ""
+            this.Write("\\\\\n");
+            
+            #line default
+            #line hidden
+            
+            #line 149 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture(from.ZipCode ));
+            
+            #line default
+            #line hidden
+            
+            #line 149 ""
+            this.Write(" ");
+            
+            #line default
+            #line hidden
+            
+            #line 149 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(from.CityAndState));
             
             #line default
             #line hidden
             
-            #line 142 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write("\\\\\n\nFacture n°\\FactureNum\n\n\n{\\addtolength{\\leftskip}{10.5cm} %in ERT\n    \\textbf{\\ClientNom}    \\\\\n    \\ClientAdresse        \\\\\n\n} %in ERT\n\n\n\\hspace*{10.5cm}\n\\FactureLieu, le \\today\n\n~\\\\~\\\\\n\n\\textbf{Objet : \\FactureObjet \\\\}\n\n\\textnormal{\\FactureDescr}\n\n~\\\\\n\n\\begin{center}\n    \\begin{tabular}{lrrr}\n        \\textbf{Désignation ~~~~~~}  & \\textbf{Prix unitaire} & \\textbf{Quantité} & \\textbf{Montant (EUR)}    \\\\\n        \\hline\n        \\AfficheResultat{}\n    \\end{tabular}\n\\end{center}\n\n\\begin{flushright}\n\\textit{Auto entreprise en franchise de TVA}\\\\\n\n\\end{flushright}\n~\\\\\n\n\\ifthenelse{\\equal{\\FactureAcquittee}{oui}}{\n    Facture acquittée.\n}{\n\n    À régler par chèque ou par virement bancaire :\n\n    \\begin{center}\n        \\begin{tabular}{|c c c c|}\n            \\hline     \\textbf{Code banque}    & \\textbf{Code guichet}    & \\textbf{N° de Compte}        & \\textbf{Clé RIB}    \\\\\n                    ");
+            #line 149 ""
+            this.Write("\\\\\n\nFacture n°\\FactureNum\n\n\n{\\addtolength{\\leftskip}{10.5cm} %in ERT\n    \\textbf{\\ClientNom}    \\\\\n    \\ClientAdresse        \\\\\n\n} %in ERT\n\n\n\\hspace*{10.5cm}\n\\FactureLieu, le \\today\n\n~\\\\~\\\\\n\n\\textbf{Objet : \\FactureObjet \\\\}\n\n\\textnormal{\\FactureDescr}\n\n~\\\\\n\n\\begin{center}\n    \\begin{tabular}{lrrr}\n        \\textbf{Désignation ~~~~~~}  & \\textbf{Prix unitaire} & \\textbf{Quantité} & \\textbf{Montant (EUR)}    \\\\\n        \\hline\n        \\AfficheResultat{}\n    \\end{tabular}\n\\end{center}\n\n\\begin{flushright}\n\\textit{Auto entreprise en franchise de TVA}\\\\\n\n\\end{flushright}\n~\\\\\n\n\\ifthenelse{\\equal{\\FactureAcquittee}{oui}}{\n    Facture acquittée.\n}{\n\n    À régler par chèque ou par virement bancaire :\n\n    \\begin{center}\n        \\begin{tabular}{|c c c c|}\n        ");
             
             #line default
             #line hidden
             
-            #line 188 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 194 ""
+ if (!string.IsNullOrWhiteSpace(from.BankCode) && !string.IsNullOrWhiteSpace(from.WicketCode)
+        && !string.IsNullOrWhiteSpace(from.AccountNumber) ) { 
+            
+            #line default
+            #line hidden
+            
+            #line 196 ""
+            this.Write("            \\hline     \\textbf{Code banque}    & \\textbf{Code guichet}    & \\textbf{N° de Compte}        & \\textbf{Clé RIB}    \\\\\n                    ");
+            
+            #line default
+            #line hidden
+            
+            #line 197 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.BankCode ));
             
             #line default
             #line hidden
             
-            #line 188 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 197 ""
             this.Write("                    & ");
             
             #line default
             #line hidden
             
-            #line 188 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 197 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.WicketCode ));
             
             #line default
             #line hidden
             
-            #line 188 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 197 ""
             this.Write("                     & ");
             
             #line default
             #line hidden
             
-            #line 188 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 197 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(from.AccountNumber ));
             
             #line default
             #line hidden
             
-            #line 188 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 197 ""
             this.Write("                & ");
             
             #line default
             #line hidden
             
-            #line 188 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 197 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(from.BankedKey));
             
             #line default
             #line hidden
             
-            #line 188 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write("               \\\\\n            \\hline     \\textbf{IBAN N°}        & \\multicolumn{3}{|l|}{ ");
+            #line 197 ""
+            this.Write("               \\\\\n        ");
             
             #line default
             #line hidden
             
-            #line 189 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 198 ""
+ }
+        if (!string.IsNullOrWhiteSpace(from.IBAN) && !string.IsNullOrWhiteSpace(from.BIC)) { 
+            
+            #line default
+            #line hidden
+            
+            #line 200 ""
+            this.Write("               \\hline     \\textbf{IBAN N°}        & \\multicolumn{3}{|l|}{ ");
+            
+            #line default
+            #line hidden
+            
+            #line 200 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.IBAN ));
             
             #line default
             #line hidden
             
-            #line 189 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 200 ""
             this.Write(" }         \\\\\n            \\hline     \\textbf{Code BIC}        & \\multicolumn{3}{|l|}{ ");
             
             #line default
             #line hidden
             
-            #line 190 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
+            #line 201 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.BIC ));
             
             #line default
             #line hidden
             
-            #line 190 "/home/paul/workspace/yavsc/web/templates/Estim.tt"
-            this.Write(" }         \\\\\n            \\hline\n        \\end{tabular}\n    \\end{center}\n}\n\\end{document}\n");
+            #line 201 ""
+            this.Write(" }\n        ");
+            
+            #line default
+            #line hidden
+            
+            #line 202 ""
+ } 
+            
+            #line default
+            #line hidden
+            
+            #line 203 ""
+            this.Write("         \\\\\n            \\hline\n        \\end{tabular}\n    \\end{center}\n}\n\\end{document}\n");
             
             #line default
             #line hidden
@@ -843,10 +947,9 @@ namespace Yavsc.templates {
                     return this.formatProvider;
                 }
                 set {
-                    if ((this.formatProvider == null)) {
-                        throw new global::System.ArgumentNullException("formatProvider");
+                    if ((value != null)) {
+                        this.formatProvider = value;
                     }
-                    this.formatProvider = value;
                 }
             }
             

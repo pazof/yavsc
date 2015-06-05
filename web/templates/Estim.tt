@@ -28,7 +28,6 @@
 \def\TotalHT{0}
 \def\TotalTVA{0}
 
-
 \newcommand{\AjouterService}[3]{%    Arguments : Désignation, quantité, prix
     \FPround{\prix}{#3}{2}
     \FPeval{\montant}{#2 * #3}
@@ -117,9 +116,11 @@
 
 \renewcommand{\headrulewidth}{0pt}
 \cfoot{
-    <#=from.Name#> - <#=from.Address #> - <#= from.CityAndState #> \newline
+ <# if (!string.IsNullOrWhiteSpace(from.Name)) { #><#= from.Name  #><# } #>
+ <# if (!string.IsNullOrWhiteSpace(from.Address)) { #> - <#= from.Address #><# } #> 
+ <# if (!string.IsNullOrWhiteSpace(from.CityAndState)) { #> - <#= from.CityAndState #><# } #> \newline
     \small{
-    E-mail: <#= from.Email #>
+    <# if (!string.IsNullOrWhiteSpace(from.Email)) { #>E-mail: <#= from.Email #><# } #>
     <# if (!string.IsNullOrWhiteSpace(from.Mobile)) { #> - Téléphone mobile: <#= from.Mobile #><# } #>
     <# if (!string.IsNullOrWhiteSpace(from.Phone)) { #> - Téléphone fixe: <#= from.Phone #><# } #>
     }
@@ -178,10 +179,15 @@ Facture n°\FactureNum
 
     \begin{center}
         \begin{tabular}{|c c c c|}
+        <# if (!string.IsNullOrWhiteSpace(from.BankCode) && !string.IsNullOrWhiteSpace(from.WicketCode)
+        && !string.IsNullOrWhiteSpace(from.AccountNumber) ) { #>
             \hline     \textbf{Code banque}    & \textbf{Code guichet}    & \textbf{N° de Compte}        & \textbf{Clé RIB}    \\
                     <#= from.BankCode #>                    & <#= from.WicketCode #>                     & <#=from.AccountNumber #>                & <#=from.BankedKey#>               \\
-            \hline     \textbf{IBAN N°}        & \multicolumn{3}{|l|}{ <#= from.IBAN #> }         \\
-            \hline     \textbf{Code BIC}        & \multicolumn{3}{|l|}{ <#= from.BIC #> }         \\
+        <# }
+        if (!string.IsNullOrWhiteSpace(from.IBAN) && !string.IsNullOrWhiteSpace(from.BIC)) { #>
+               \hline     \textbf{IBAN N°}        & \multicolumn{3}{|l|}{ <#= from.IBAN #> }         \\
+            \hline     \textbf{Code BIC}        & \multicolumn{3}{|l|}{ <#= from.BIC #> }
+        <# } #>         \\
             \hline
         \end{tabular}
     \end{center}

@@ -9,7 +9,6 @@ using System.Web;
 using System.Web.Configuration;
 using System.Web.Profile;
 using System.Web.Security;
-using CodeKicker.BBCode;
 using Npgsql.Web.Blog;
 using Yavsc;
 using Yavsc.Model;

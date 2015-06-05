@@ -54,9 +54,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
-    <Reference Include="CodeKicker.BBCode">
-      <HintPath>lib\CodeKicker.BBCode.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration.Install" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -137,7 +134,6 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BlogsController.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Helpers\BBCodeHelper.cs" />
     <Compile Include="Test\TestByteA.cs" />
     <Compile Include="Controllers\FrontOfficeController.cs" />
     <Compile Include="Controllers\BackOfficeController.cs" />

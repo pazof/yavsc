@@ -188,6 +188,13 @@ namespace Yavsc.Model.RolesAndMembers
 			|| string.IsNullOrWhiteSpace (IBAN))
 				); } }
 
+		public bool HasPostalAddress {
+			get { 
+				return !string.IsNullOrWhiteSpace (Address)
+				&& !string.IsNullOrWhiteSpace (CityAndState)
+				&& !string.IsNullOrWhiteSpace (ZipCode);
+			}
+		}
 		/// <summary>
 		/// Gets a value indicating whether this instance is billable.
 		/// Returns true when 

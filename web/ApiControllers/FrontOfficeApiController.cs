@@ -110,10 +110,14 @@ namespace Yavsc.ApiControllers
 			Profile prpro = new Profile (ProfileBase.Create (e.Responsible));
 			if (!prpro.HasBankAccount)
 				throw new TemplateException ("NotBankable:" + e.Responsible);
-
+			if (!prpro.HasPostalAddress)
+				throw new TemplateException ("NoPostalAddress:" + e.Responsible);
+			
 			Profile prcli = new Profile (ProfileBase.Create (e.Client));
 			if (!prcli.IsBillable)
 				throw new TemplateException ("NotBillable:" + e.Client);
+
+
 			tmpe.Session.Add ("from", prpro);
 			tmpe.Session.Add ("to", prcli);
 			tmpe.Init ();
