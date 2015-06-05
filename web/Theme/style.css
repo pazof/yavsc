@@ -5,6 +5,7 @@ body {
 	background-repeat: no-repeat;
 	color: #D0FFD0;
 	font-family: 'Arial', cursive;
+	padding: .5em;
 }
 
 textarea { 

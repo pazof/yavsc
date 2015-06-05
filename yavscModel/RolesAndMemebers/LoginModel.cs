@@ -24,7 +24,7 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <value>The password.</value>
 		[DisplayName("Mot de passe"),
 		Required(ErrorMessage = "S'il vous plait, entez un mot de passe"),
-			RegularExpression("([a-z]|[A-Z]|[0-9]|[-_.~#{}`'\\^])+")]
+		RegularExpression("([a-z]|[A-Z]|[0-9]|[-_.~#{}`'\\^])+")]
 		public string Password { get; set; }
 
 		/// <summary>

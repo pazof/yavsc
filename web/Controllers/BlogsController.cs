@@ -199,22 +199,26 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="user">User.</param>
 		/// <param name="title">Title.</param>
-		[Authorize]
+		[Authorize,
+		ValidateInput(false)]
 		public ActionResult Post (string user, string title)
 		{
 			ViewData ["SiteName"] = sitename;
 			string un = Membership.GetUser ().UserName;
 			if (String.IsNullOrEmpty (user))
 				user = un;
+			if (String.IsNullOrEmpty (title))
+				title = "";
 			ViewData ["UserName"] = un;
-			return View (new BlogEditEntryModel { Title = title });
+			return View ("Edit", new BlogEditEntryModel { Title = title });
 		}
 		/// <summary>
 		/// Validates the post.
 		/// </summary>
 		/// <returns>The post.</returns>
 		/// <param name="model">Model.</param>
-		[Authorize]
+		[Authorize,
+			ValidateInput(false)]
 		public ActionResult ValidatePost (BlogEditEntryModel model)
 		{
 			string username = Membership.GetUser ().UserName;
@@ -233,15 +237,19 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The edit.</returns>
 		/// <param name="model">Model.</param>
-		[Authorize]
+		[Authorize,
+			ValidateInput(false)]
 		public ActionResult ValidateEdit (BlogEditEntryModel model)
 		{
 			ViewData ["SiteName"] = sitename;
 			ViewData ["BlogUser"] = Membership.GetUser ().UserName;
 			if (ModelState.IsValid) {
 				if (!model.Preview) {
-					BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible);
-					return UserPost (model);
+					if (model.Id != 0)
+						BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible);
+					else
+						BlogManager.Post (model.UserName, model.Title, model.Content, model.Visible);
+					return UserPost(model.UserName, model.Title);
 				}
 			}
 			return View ("Edit", model);
@@ -250,7 +258,8 @@ namespace Yavsc.Controllers
 		/// Edit the specified model.
 		/// </summary>
 		/// <param name="model">Model.</param>
-		[Authorize]
+		[Authorize,
+			ValidateInput(false)]
 		public ActionResult Edit (BlogEditEntryModel model)
 		{
 			if (model != null) {
@@ -261,16 +270,13 @@ namespace Yavsc.Controllers
 				ViewData ["UserName"] = user;
 				if (model.UserName == null) {
 					model.UserName = user; 
-					BlogEntry e = BlogManager.GetPost (model.UserName, model.Title);
-					if (e == null) {
+				}
+				BlogEntry e = BlogManager.GetPost (model.UserName, model.Title);
+				if (e != null) {
+					if (e.UserName != user) {
 						return View ("TitleNotFound");
-					} else {
-						model = new BlogEditEntryModel (e);
-						ModelState.Clear ();
-						this.TryValidateModel (model);
 					}
-				} else if (model.UserName != user) {
-					return View ("TitleNotFound");
+					model = new BlogEditEntryModel(e);
 				}
 			}
 			return View (model);

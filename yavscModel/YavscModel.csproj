@@ -144,6 +144,9 @@
     <Compile Include="Google\Resource.cs" />
     <Compile Include="RolesAndMemebers\RegisterModel.cs" />
     <Compile Include="RolesAndMemebers\RegisterClientModel.cs" />
+    <Compile Include="Google\Messaging\MessageWithPayLoad.cs" />
+    <Compile Include="Google\Messaging\MessageWithPayloadResponse.cs" />
+    <Compile Include="Google\Messaging\Notification.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -156,6 +159,7 @@
     <Folder Include="FrontOffice\" />
     <Folder Include="FrontOffice\Catalog\" />
     <Folder Include="FrontOffice\Catalog\Billing\" />
+    <Folder Include="Google\Messaging\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -28,6 +28,7 @@ using Yavsc.Model;
 using System.Web.Security;
 using System.Web.Profile;
 using System.Web.Http.ModelBinding;
+using Yavsc.Model.Google;
 
 namespace Yavsc.ApiControllers.Calendar
 {
@@ -133,155 +134,10 @@ namespace Yavsc.ApiControllers.Calendar
 			throw new NotImplementedException();
 
 		}
-		/// <summary>
-		/// Notification.
-		/// </summary>
-		public class Notification {
-			/// <summary>
-			/// The title.
-			/// </summary>
-			public string title;
-			/// <summary>
-			/// The body.
-			/// </summary>
-			public string body;
-			/// <summary>
-			/// The icon.
-			/// </summary>
-			public string icon;
-			/// <summary>
-			/// The sound.
-			/// </summary>
-			public string sound;
-			/// <summary>
-			/// The tag.
-			/// </summary>
-			public string tag;
-			/// <summary>
-			/// The color.
-			/// </summary>
-			public string color;
-			/// <summary>
-			/// The click action.
-			/// </summary>
-			public string click_action;
 
-		}
 
-		// https://gcm-http.googleapis.com/gcm/send
-		/// <summary>
-		/// Message with payload.
-		/// </summary>
-		public class MessageWithPayload<T> {
-			/// <summary>
-			/// To.
-			/// </summary>
-			public string to;
-			/// <summary>
-			/// The registration identifiers.
-			/// </summary>
-			public string [] registration_ids; 
-			/// <summary>
-			/// The data.
-			/// </summary>
-			public T[] data ;
-			/// <summary>
-			/// The notification.
-			/// </summary>
-			public Notification notification;
-			/// <summary>
-			/// The collapse key.
-			/// </summary>
-			public string collapse_key; // in order to collapse ...
-			/// <summary>
-			/// The priority.
-			/// </summary>
-			public int priority; // between 0 and 10, 10 is the lowest!
-			/// <summary>
-			/// The content available.
-			/// </summary>
-			public bool content_available; 
-			/// <summary>
-			/// The delay while idle.
-			/// </summary>
-			public bool delay_while_idle; 
-			/// <summary>
-			/// The time to live.
-			/// </summary>
-			public int time_to_live; // seconds
-			/// <summary>
-			/// The name of the restricted package.
-			/// </summary>
-			public string restricted_package_name;
-			/// <summary>
-			/// The dry run.
-			/// </summary>
-			public bool dry_run;
-			/// <summary>
-			/// Validate the specified modelState.
-			/// </summary>
-			/// <param name="modelState">Model state.</param>
-			public void Validate(ModelStateDictionary modelState) {
-				if (to==null && registration_ids == null) {
-					modelState.AddModelError ("to", "One of \"to\" or \"registration_ids\" parameters must be specified");
-					modelState.AddModelError ("registration_ids", "*");
-				}
-				if (notification == null && data == null) {
-						modelState.AddModelError ("notification", "At least one of \"notification\" or \"data\" parameters must be specified");
-					modelState.AddModelError ("data", "*");
-				}
-				if (notification != null) {
-					if (notification.icon == null)
-						modelState.AddModelError ("notification.icon", "please, specify an icon resoure name");
-					if (notification.title == null)
-						modelState.AddModelError ("notification.title", "please, specify a title");
-				}
-			}
-		}
 
-		/// <summary>
-		/// Message with payload response.
-		/// </summary>
-		public class MessageWithPayloadResponse { 
-			/// <summary>
-			/// The multicast identifier.
-			/// </summary>
-			public int multicast_id;
-			/// <summary>
-			/// The success count.
-			/// </summary>
-			public int success;
-			/// <summary>
-			/// The failure count.
-			/// </summary>
-			public int failure;
-			/// <summary>
-			/// The canonical identifiers... ?!?
-			/// </summary>
-			public int canonical_ids;
-			/// <summary>
-			/// Detailled result.
-			/// </summary>
-			public class Result {
-				/// <summary>
-				/// The message identifier.
-				/// </summary>
-				public string message_id;
-				/// <summary>
-				/// The registration identifier.
-				/// </summary>
-				public string registration_id;
-				/// <summary>
-				/// The error.
-				/// </summary>
-				public string error;
-			}
 
-			/// <summary>
-			/// The results.
-			/// </summary>
-			public Result [] results;
-		}
 
 		/// <summary>
 		/// GCM register model.

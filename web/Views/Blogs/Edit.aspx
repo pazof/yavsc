@@ -1,38 +1,17 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEditEntryModel>" MasterPageFile="~/Models/App.master"%>
-<asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
-<% Title = Model.Title+" (édition) - "+ViewData["BlogTitle"]; %>
+<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEditEntryModel>" MasterPageFile="~/Models/App.master" %>
+<asp:Content ContentPlaceHolderID="head" ID="HeadContent1" runat="server">
+<link rel="stylesheet" href="<%=Url.Content("~/Theme/mdd_styles.css")%>">
+ <script type="text/javascript" src="<%=Url.Content("~/Scripts/MarkdownDeepLib.min.js")%>">
+ </script>
 </asp:Content>
-<asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
-<h1 class="blogtitle"><%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %> (édition) - 
-<a href="/Blog/<%=Model.UserName%>"><img class="avatar" src="/Blogs/Avatar?user=<%=Model.UserName%>" alt=""/> <%=ViewData["BlogTitle"]%></a>
- <asp:Literal runat="server" Text=" - " />
-   <a href="/"> <%= YavscHelpers.SiteName %> </a> </h1>
- 
-<div class="metablog">(Id:<a href="/Blogs/UserPost/<%=Model.Id%>"><i><%=Model.Id%></i></a>, <%= Model.Posted.ToString("yyyy/MM/dd") %>
-	 - <%= Model.Modified.ToString("yyyy/MM/dd") %> <%= Model.Visible? "":", Invisible!" %>)
-<%  if (Membership.GetUser()!=null)
-	if (Membership.GetUser().UserName==Model.UserName)
-	 {  %>
-	 <%= Html.ActionLink("Editer","Edit", new { user=Model.UserName, title = Model.Title }, new { @class="actionlink" }) %>
-	 <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.UserName, title = Model.Title }, new { @class="actionlink" } ) %>
-	 <% } %>
-	 </div>
-</asp:Content>
+
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-	 <% if (Model != null ) if (Model.Content != null )  {
-	 BBCodeHelper.InitParser (); %>
+	 <% if (Model != null ) if (Model.Content != null )  { %>
 	 <%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %>
 <div class="blogpost">
-<%= BBCodeHelper.Parser.ToHtml(Model.Content) %>
+<%= Html.Markdown(Model.Content) %>
 </div>
 <% } %>
-Usage BBcodes  :
-	 <div style="font-family:monospace;">
-<%
-	foreach (string usage in BBCodeHelper.BBTagsUsage) { %>
-<div style="display:inline"><%= usage %></div>
-<% } %>
-	</div>
 
 <%= Html.ValidationSummary("Edition du billet") %>
 
@@ -42,7 +21,10 @@ Usage BBcodes  :
 <%= Html.ValidationMessage("Title", "*") %>
 <br/>
 <%= Html.LabelFor(model => model.Content) %>:<br/>
-<%= Html.TextArea( "Content" , new { @class="editblog", @rows="15" }) %>
+<div class="mdd_toolbar"></div>
+<%= Html.TextArea( "Content" , new { @class="mdd_editor", @rows="15" }) %>
+<div class="mdd_resizer"></div>
+<div class="mdd_preview"></div>
 <%= Html.ValidationMessage("Content", "*") %>
 <br/>
 <%= Html.CheckBox( "Visible" ) %>
@@ -58,7 +40,22 @@ Usage BBcodes  :
 <br/>
 <input type="submit"/>
 <% } %>
-</div>
+
+
+<script>
+ $("textarea.mdd_editor").MarkdownDeep({ 
+    help_location: "/Scripts/html/mdd_help.htm",
+    disableTabHandling:true
+ });
+</script>
 
 </asp:Content>
+
+<asp:Content ContentPlaceHolderID="MASContent" ID="MASContentContent" runat="server">
+<div class="metablog">
+	(Id:<a href="/Blogs/UserPost/<%= Model.Id %>">
+<i><%= Model.Id%></i></a>, <%= Model.Posted.ToString("yyyy/MM/dd") %> - <%= Model.Modified.ToString("yyyy/MM/dd") %> <%= Model.Visible? "":", Invisible!" %>) <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.UserName, title = Model.Title }, new { @class="actionlink" } ) %>
+</div>
+</asp:Content>
+
 
