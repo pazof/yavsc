@@ -23,6 +23,7 @@ using System.Collections.Specialized;
 using Yavsc.Model;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Helpers;
+using System.Net.Http.Headers;
 
 namespace Yavsc.ApiControllers
 {
@@ -93,11 +94,15 @@ namespace Yavsc.ApiControllers
 			if (texest == null)
 				throw new InvalidOperationException (
 					"Not an estimate");
-			return new HttpResponseMessage () {
+			HttpResponseMessage result =  new HttpResponseMessage () {
 				Content = new ObjectContent (typeof(string),
 					texest,
 					new SimpleFormatter ("text/x-tex"))
 			};
+			result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue ("attachment") {
+				FileName = "estimate-" + id.ToString () + ".tex" 
+			};
+			return result;
 		}
 
 		private string estimateToTex (long estimid)
@@ -156,11 +161,16 @@ namespace Yavsc.ApiControllers
 							LocalizedText.Estimate_not_found))
 				};
 
-			return new HttpResponseMessage () {
+			HttpResponseMessage result = new HttpResponseMessage () {
 				Content = new ObjectContent (typeof(string),
 					texest,
-					new TexToPdfFormatter ())
+					new TexToPdfFormatter ()) 
 			};
+
+			result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue ("attachment") {
+				FileName = "estimate-" + id.ToString () + ".pdf" 
+			};
+			return result;
 		}
 
 		private HttpResponseMessage DefaultResponse()
