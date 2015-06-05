@@ -351,6 +351,7 @@
     <Content Include="Theme\md\mdd_ajax_loader.gif" />
     <Content Include="Theme\md\mdd_gripper.png" />
     <Content Include="Theme\md\mdd_modal_background.png" />
+    <Content Include="Theme\mdd_styles.css" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

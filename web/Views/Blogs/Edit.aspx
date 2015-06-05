@@ -22,7 +22,7 @@
 <br/>
 <%= Html.LabelFor(model => model.Content) %>:<br/>
 <div class="mdd_toolbar"></div>
-<%= Html.TextArea( "Content" , new { @class="mdd_editor", @rows="15" }) %>
+<%= Html.TextArea( "Content" , new { @class="mdd_editor"}) %>
 <div class="mdd_resizer"></div>
 <div class="mdd_preview"></div>
 <%= Html.ValidationMessage("Content", "*") %>
@@ -43,10 +43,11 @@
 
 
 <script>
+ $(document).ready(function () {
  $("textarea.mdd_editor").MarkdownDeep({ 
     help_location: "/Scripts/html/mdd_help.htm",
-    disableTabHandling:true
- });
+    disableTabHandling:false
+ });});
 </script>
 
 </asp:Content>

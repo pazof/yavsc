@@ -113,6 +113,8 @@ div.mdd_toolbar li
 	margin:0;
 	padding:0;
 	list-style:none;
+	background-color:#777;
+	color:black;
 }
 
 div.mdd_toolbar a.mdd_button
@@ -176,7 +178,6 @@ div.mdd_links a:hover
 textarea.mdd_editor
 {
 	width:100%;
-	resize:none;
 	margin:0;
 }
 
