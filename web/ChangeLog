@@ -1,0 +1,14 @@
+2015-06-07  Paul Schneider  <paul@pschneider.fr>
+
+	* CalendarController.cs: removes useless spaces
+
+	* FrontOfficeApiController.cs: Makes the tex to pdf exceptions
+	available to the user interface, as part of the application
+	process.
+	Cleans the using clauses. 
+
+	* TexToPdfFormatter.cs: sets the filename as response header.
+
+	* Web.csproj: a new FormatterException, thrown when exit code
+	of texi2pdf is not null
+

@@ -1,29 +1,18 @@
 using System;
-using Yavsc;
-using SalesCatalog;
-using System.Web.Routing;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Web.Http;
-using System.Net.Http;
-using System.Web;
-using System.Linq;
-using System.IO;
-using System.Net;
-using System.Web.Security;
-using Yavsc.Model.WorkFlow;
-using System.Reflection;
 using System.Collections.Generic;
-using Yavsc.Model.RolesAndMembers;
-using Yavsc.Controllers;
-using Yavsc.Formatters;
-using System.Text;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Web.Http;
 using System.Web.Profile;
-using System.Collections.Specialized;
+using System.Web.Security;
+using Yavsc.Formatters;
+using Yavsc.Helpers;
 using Yavsc.Model;
 using Yavsc.Model.FrontOffice;
-using Yavsc.Helpers;
-using System.Net.Http.Headers;
+using Yavsc.Model.RolesAndMembers;
+using Yavsc.Model.WorkFlow;
+using System.IO;
 
 namespace Yavsc.ApiControllers
 {
@@ -161,15 +150,16 @@ namespace Yavsc.ApiControllers
 							LocalizedText.Estimate_not_found))
 				};
 
-			HttpResponseMessage result = new HttpResponseMessage () {
-				Content = new ObjectContent (typeof(string),
-					texest,
-					new TexToPdfFormatter ()) 
-			};
-
-			result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue ("attachment") {
-				FileName = "estimate-" + id.ToString () + ".pdf" 
-			};
+			var memPdf = new MemoryStream ();
+			HttpResponseMessage result = new HttpResponseMessage ();
+			new TexToPdfFormatter ().WriteToStream (
+				typeof(string), texest, memPdf,null);
+			memPdf.Position = 0;
+			var sr = new StreamReader(memPdf);
+			var str = sr.ReadToEnd();
+			result.Content = new StringContent (str);
+			TexToPdfFormatter.SetFileName (result.Content.Headers, "estimate-" + id.ToString ());
+			result.Content.Headers.ContentType = new MediaTypeHeaderValue("text/x-tex");
 			return result;
 		}
 
@@ -226,7 +216,6 @@ namespace Yavsc.ApiControllers
 					prtu.SetPropertyValue("Mobile",model.Mobile);
 					prtu.SetPropertyValue("Phone",model.Phone);
 					prtu.SetPropertyValue("ZipCode",model.ZipCode);
-
 					break;
 				default:
 					break;

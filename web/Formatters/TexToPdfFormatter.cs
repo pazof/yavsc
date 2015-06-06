@@ -26,6 +26,7 @@ using System.IO;
 using System.Web;
 using System.Diagnostics;
 using System.Net.Http;
+using Yavsc.Helpers;
 
 namespace Yavsc.Formatters
 {
@@ -99,7 +100,7 @@ namespace Yavsc.Formatters
 				p.Start ();
 				p.WaitForExit ();
 				if (p.ExitCode != 0)
-					throw new Exception ("Pdf generation failed with exit code:" + p.ExitCode);
+					throw new FormatterException ("Pdf generation failed with exit code:" + p.ExitCode);
 			}
 
 			using (StreamReader sr = new StreamReader (fo.FullName)) {
@@ -108,7 +109,14 @@ namespace Yavsc.Formatters
 			}
 			fi.Delete();
 			fo.Delete();
+			if (contentHeaders != null)
+				SetFileName(contentHeaders, value.GetHashCode ().ToString ());
 		}
-
+		
+		public static void SetFileName(HttpContentHeaders contentHeaders, string basename) {
+			contentHeaders.ContentDisposition = new ContentDispositionHeaderValue ("attachment") {
+				FileName = "doc-" + basename + ".pdf"
+			};
+		}
 	}
 }

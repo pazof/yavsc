@@ -181,6 +181,7 @@
     <Compile Include="Helpers\TemplateException.cs" />
     <Compile Include="Helpers\MarkdownHelper.cs" />
     <Compile Include="ApiControllers\CalendarController.cs" />
+    <Compile Include="Formatters\FormatterException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

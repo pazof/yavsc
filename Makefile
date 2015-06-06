@@ -45,6 +45,7 @@ build:
 
 clean:
 	xbuild /t:Clean
+	find -name "StyleCop.Cache" -exec rm {} \;
 	rm -rf $(LDYDESTDIR)
 
 sourcepkg:

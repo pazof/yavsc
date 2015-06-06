@@ -108,7 +108,6 @@ namespace Yavsc.ApiControllers
 				LogoImgLocator = "http://yavsc.pschneider.fr/favicon.png",
 				Location = new Position () { Longitude = 0, Latitude = 0 },
 				LocationType = "Salle des fêtes"
-
 			};
 		}
 
@@ -132,12 +131,6 @@ namespace Yavsc.ApiControllers
 			throw new NotImplementedException();
 
 		}
-
-
-
-
-
-
 
 		/// <summary>
 		/// Registers with push notifications enabled.
@@ -200,7 +193,6 @@ namespace Yavsc.ApiControllers
 			using (r) { 
 				var msg = new MessageWithPayload<YaEvent> () { data = new YaEvent[] { (YaEvent)evpub } };
 				msg.to = string.Join (" ", Circle.Union (evpub.Circles));
-
 				return r.Invoke (msg);
 			}
 		}
