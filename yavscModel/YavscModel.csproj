@@ -147,6 +147,20 @@
     <Compile Include="Google\Messaging\MessageWithPayLoad.cs" />
     <Compile Include="Google\Messaging\MessageWithPayloadResponse.cs" />
     <Compile Include="Google\Messaging\Notification.cs" />
+    <Compile Include="Calendar\EventPub.cs" />
+    <Compile Include="Calendar\OpenDay.cs" />
+    <Compile Include="Calendar\Period.cs" />
+    <Compile Include="Calendar\Periodicity.cs" />
+    <Compile Include="Calendar\Position.cs" />
+    <Compile Include="Calendar\PositionAndKeyphrase.cs" />
+    <Compile Include="Calendar\ProvidedEvent.cs" />
+    <Compile Include="Calendar\Schedule.cs" />
+    <Compile Include="Calendar\WeekDay.cs" />
+    <Compile Include="Calendar\YaEvent.cs" />
+    <Compile Include="RolesAndMemebers\Circle.cs" />
+    <Compile Include="RolesAndMemebers\Publishing.cs" />
+    <Compile Include="RolesAndMemebers\ProviderPublicInfo.cs" />
+    <Compile Include="Google\GCMRegisterModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

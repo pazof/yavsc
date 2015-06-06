@@ -123,8 +123,6 @@
     <Folder Include="Views\PayPal\" />
     <Folder Include="ApiControllers\" />
     <Folder Include="Views\Modules\" />
-    <Folder Include="ApiControllers\Calendar\" />
-    <Folder Include="ApiControllers\Calendar\Model\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -181,22 +179,8 @@
     <Compile Include="IValueProvider.cs" />
     <Compile Include="Formatters\EstimToPdfFormatter.MSAN.cs" />
     <Compile Include="Helpers\TemplateException.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\OpenDay.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\Period.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\Periodicity.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\Position.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\PositionAndKeyphrase.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\ProvidedEvent.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\Publishing.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\Schedule.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\ProviderPublicInfo.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\WeekDay.cs" />
-    <Compile Include="ApiControllers\Calendar\CalendarController.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\YaEvent.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\Circle.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\EventPub.cs" />
-    <Compile Include="ApiControllers\Calendar\Model\UserPrefs.cs" />
     <Compile Include="Helpers\MarkdownHelper.cs" />
+    <Compile Include="ApiControllers\CalendarController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

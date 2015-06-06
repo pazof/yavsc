@@ -20,17 +20,15 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Web.Http;
-using System.ComponentModel.DataAnnotations;
 using Yavsc.ApiControllers.Calendar.Model;
-using Yavsc.Helpers;
-using System.ComponentModel;
-using Yavsc.Model;
+using Yavsc.Model.RolesAndMembers;
 using System.Web.Security;
-using System.Web.Profile;
-using System.Web.Http.ModelBinding;
 using Yavsc.Model.Google;
+using Yavsc.Helpers;
+using System.Web.Profile;
 
-namespace Yavsc.ApiControllers.Calendar
+
+namespace Yavsc.ApiControllers
 {
 	/// <summary>
 	/// Night flash controller.
@@ -139,42 +137,7 @@ namespace Yavsc.ApiControllers.Calendar
 
 
 
-		/// <summary>
-		/// GCM register model.
-		/// </summary>
-		public class GCMRegisterModel {
-			/// <summary>
-			/// Gets or sets the name of the user.
-			/// </summary>
-			/// <value>The name of the user.</value>
-			[Localizable(true)]
-			[Display(ResourceType=typeof(LocalizedText),Name="UserName")]
-			[Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")]
-			public string UserName { get; set; }
 
-			/// <summary>
-			/// Gets or sets the password.
-			/// </summary>
-			/// <value>The password.</value>
-			[DisplayName("Mot de passe")]
-			[Required(ErrorMessage = "S'il vous plait, entez un mot de passe")]
-			public string Password { get; set; }
-
-			/// <summary>
-			/// Gets or sets the email.
-			/// </summary>
-			/// <value>The email.</value>
-			[DisplayName("Adresse e-mail")]
-			[Required(ErrorMessage = "S'il vous plait, entrez un e-mail valide")]
-			public string Email { get; set; }
-
-			/// <summary>
-			/// Gets or sets the registration identifier against Google Clood Messaging and their info on this application.
-			/// </summary>
-			/// <value>The registration identifier.</value>
-			public string RegistrationId { get; set; }
-
-		}
 
 		/// <summary>
 		/// Registers with push notifications enabled.

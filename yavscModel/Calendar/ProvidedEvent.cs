@@ -1,5 +1,5 @@
 //
-//  UserPrefs.cs
+//  ProvidedEvent.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -18,17 +18,24 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
+using Yavsc.Model.RolesAndMembers;
 
 namespace Yavsc.ApiControllers.Calendar.Model
 {
-	class UserPrefs
-	{
-		Circle [] Circles { get; set ; }
-		Dictionary<string,double> EventTypeRatings { get; set; }
-		Dictionary<string,double> LocationTypeRatings { get; set; }
+
+	/// <summary>
+	/// Provided event.
+	/// </summary>
+	public class ProvidedEvent : YaEvent { 
+		/// <summary>
+		/// The privacy.
+		/// </summary>
+		[Required]
+		public Publishing Privacy;
 	}
+	
 }

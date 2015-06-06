@@ -23,7 +23,7 @@ using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 
-namespace Yavsc.ApiControllers.Calendar.Model
+namespace Yavsc.Model.RolesAndMembers
 {
 	/// <summary>
 	/// Circle.

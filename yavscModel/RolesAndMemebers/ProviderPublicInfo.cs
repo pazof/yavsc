@@ -22,8 +22,9 @@
 using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
+using Yavsc.ApiControllers.Calendar.Model;
 
-namespace Yavsc.ApiControllers.Calendar.Model
+namespace Yavsc.Model.RolesAndMembers
 {
 	/// <summary>
 	/// Provider public info.

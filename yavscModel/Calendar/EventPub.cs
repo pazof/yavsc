@@ -1,5 +1,5 @@
 //
-//  ProvidedEvent.cs
+//  EventPub.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -18,23 +18,28 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
+using Yavsc.ApiControllers.Calendar.Model;
+using Yavsc.Model;
+using Yavsc.Model.RolesAndMembers;
 
 namespace Yavsc.ApiControllers.Calendar.Model
 {
-
 	/// <summary>
-	/// Provided event.
+	/// Event pub.
 	/// </summary>
-	public class ProvidedEvent : YaEvent { 
+	public class EventPub: YaEvent
+	{
 		/// <summary>
-		/// The privacy.
+		/// Gets or sets the circles.
 		/// </summary>
-		[Required]
-		public Publishing Privacy;
+		/// <value>The circles.</value>
+		[Display(ResourceType=typeof(LocalizedText),Name="Circles")]
+		public Circle[] Circles { get; set; }
 	}
-	
+
 }
+
+
