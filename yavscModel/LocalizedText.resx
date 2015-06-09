@@ -61,4 +61,5 @@
 	<data name="EventWebPage"><value>Event Web page</value></data>
 	<data name="ImgLocator"><value>Image URI</value></data>
 	<data name="Home"><value>Home</value></data>
+	<data name="Bill edition"><value>Bill edition</value></data>
 </root>

@@ -1,4 +1,4 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
+<%@ Page Title="Bill edition" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
 <asp:Content ContentPlaceHolderID="head" ID="HeadContent1" runat="server">
 <link rel="stylesheet" href="<%=Url.Content("~/Theme/mdd_styles.css")%>">
  <script type="text/javascript" src="<%=Url.Content("~/Scripts/MarkdownDeepLib.min.js")%>">
@@ -53,5 +53,5 @@
 
 <asp:Content ContentPlaceHolderID="MASContent" ID="masContent1" runat="server">
 
-<div class="mdd_preview"></div>
+<div class="mdd_preview panel"></div>
 </asp:Content>

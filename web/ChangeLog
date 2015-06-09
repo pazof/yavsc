@@ -1,5 +1,11 @@
 2015-06-09  Paul Schneider  <paul@pschneider.fr>
 
+	* Edit.aspx: A Page Title
+
+	* style.css: space was needed
+
+2015-06-09  Paul Schneider  <paul@pschneider.fr>
+
 	* BlogsController.cs: - cleans unused code
 	- drops the server side "Preview" notion, made obsolete by
 	client side MarkdownDeep js

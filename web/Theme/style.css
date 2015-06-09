@@ -58,6 +58,7 @@ footer {
 		border-radius:5px; border: solid 1px #000060;
 		float: right;
 		margin:.5em;
+		padding: .5em;
 }
 
 .bsh { float: right; }

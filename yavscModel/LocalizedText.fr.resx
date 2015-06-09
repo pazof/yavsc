@@ -59,4 +59,5 @@
 	<data name="EventWebPage"><value>Page web de l'événement</value></data>
 	<data name="ImgLocator"><value>URI de l'image</value></data>
 	<data name="Home"><value>Accueil</value></data>
+	<data name="Bill edition"><value>Édition d'un billet</value></data>
 </root>

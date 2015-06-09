@@ -268,6 +268,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Bill_edition {
+            get {
+                return ResourceManager.GetString("Bill edition", resourceCulture);
+            }
+        }
+        
         public static string Offline {
             get {
                 return ResourceManager.GetString("Offline", resourceCulture);
