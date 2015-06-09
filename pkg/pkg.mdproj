@@ -18,22 +18,6 @@
             <RootEntry path="..\Yavsc.sln" id=":root:" />
           </Builder>
         </Package>
-        <Package name="Web-Tarball">
-          <Builder TargetDirectory="..\build" DefaultConfiguration="Debug" ctype="TarballDeployTarget">
-            <ChildEntries>
-              <SolutionItemReference path="..\web\Web.csproj" />
-            </ChildEntries>
-            <ExcludedFiles>
-              <File>Web,ProgramFiles,MarkdownDeep.dll</File>
-              <File>Web,ProgramFiles,Mono.Security.dll</File>
-              <File>Web,ProgramFiles,Npgsql.dll</File>
-              <File>Web,ProgramFiles,Yavsc.dll.mdb</File>
-              <File>Web,ProgramFiles,xunit.abstractions.dll</File>
-              <File>Web,ProgramFiles,xunit.dll</File>
-            </ExcludedFiles>
-            <RootEntry path="..\Yavsc.sln" id=":root:" />
-          </Builder>
-        </Package>
       </Packages>
     </Packages>
   </PropertyGroup>
