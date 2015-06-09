@@ -1,3 +1,15 @@
+2015-06-09  Paul Schneider  <paul@pschneider.fr>
+
+	* CircleController.cs: adds a Circle controller
+
+	* NUnitTestClass.cs: xml doc
+
+	* Web.config:
+	* Web.csproj:
+	* TestExec.cs:
+	* packages.config:
+	* TestByteA.cs: trying to use xUnit
+
 2015-06-07  Paul Schneider  <paul@pschneider.fr>
 
 	* CalendarController.cs: removes useless spaces

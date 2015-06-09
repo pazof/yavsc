@@ -1,18 +1,19 @@
 #if TEST
 using NUnit.Framework;
 using System;
-using System.Configuration;
 using Npgsql;
+using System.Web.Configuration;
 
 namespace Yavsc
 {
 	[TestFixture ()]
 	public class TestByteA: IDisposable
 	{
-		//string cnxName = "yavsc";
+		string cnxName = "yavsc";
+
 		string ConnectionString { get { 
-				return "Server=127.0.0.1;Port=5432;Database=mae;User Id=mae;Password=admin;Encoding=Unicode;" ;
-					//	return ConfigurationManager.ConnectionStrings [cnxName].ConnectionString; 
+				return "Server=127.0.0.1;Port=5432;Database=YavscDev;User Id=yavscdev;Password=admin;Encoding=Unicode;" ;
+				// Why? not this : return WebConfigurationManager.ConnectionStrings [cnxName].ConnectionString; 
 			
 			} }
 

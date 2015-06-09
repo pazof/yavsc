@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "pkg", "pkg\pkg.mdproj", "{C6DBD1DC-B619-4DC7-BC92-15693508541E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,8 @@ Global
 		{BBA7175D-7F92-4278-96FC-84C495A2B5A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBA7175D-7F92-4278-96FC-84C495A2B5A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBA7175D-7F92-4278-96FC-84C495A2B5A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6DBD1DC-B619-4DC7-BC92-15693508541E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6DBD1DC-B619-4DC7-BC92-15693508541E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6E9E91B-97D3-48D9-8AA7-05356929E162}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6E9E91B-97D3-48D9-8AA7-05356929E162}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6E9E91B-97D3-48D9-8AA7-05356929E162}.Release|Any CPU.ActiveCfg = Release|Any CPU
