@@ -49,11 +49,9 @@
     <Compile Include="RolesAndMemebers\NewAdminModel.cs" />
     <Compile Include="RolesAndMemebers\NewRoleModel.cs" />
     <Compile Include="RolesAndMemebers\RegisterViewModel.cs" />
-    <Compile Include="Blogs\BlogEditEntryModel.cs" />
     <Compile Include="Admin\RestoreQuery.cs" />
     <Compile Include="Admin\DataAccess.cs" />
     <Compile Include="RolesAndMemebers\Profile.cs" />
-    <Compile Include="Blogs\BlogEditCommentModel.cs" />
     <Compile Include="FileSystem\FileInfoCollection.cs" />
     <Compile Include="WorkFlow\Writting.cs" />
     <Compile Include="WorkFlow\Estimate.cs" />

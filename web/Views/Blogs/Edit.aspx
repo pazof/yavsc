@@ -1,4 +1,4 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEditEntryModel>" MasterPageFile="~/Models/App.master" %>
+<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
 <asp:Content ContentPlaceHolderID="head" ID="HeadContent1" runat="server">
 <link rel="stylesheet" href="<%=Url.Content("~/Theme/mdd_styles.css")%>">
  <script type="text/javascript" src="<%=Url.Content("~/Scripts/MarkdownDeepLib.min.js")%>">
@@ -8,9 +8,7 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 	 <% if (Model != null ) if (Model.Content != null )  { %>
 	 <%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %>
-<div class="blogpost">
-<%= Html.Markdown(Model.Content) %>
-</div>
+
 <% } %>
 
 <%= Html.ValidationSummary("Edition du billet") %>
@@ -23,17 +21,12 @@
 <%= Html.LabelFor(model => model.Content) %>:<br/>
 <div class="mdd_toolbar"></div>
 <%= Html.TextArea( "Content" , new { @class="mdd_editor"}) %>
-<div class="mdd_resizer"></div>
-<div class="mdd_preview"></div>
+
 <%= Html.ValidationMessage("Content", "*") %>
 <br/>
 <%= Html.CheckBox( "Visible" ) %>
 <%= Html.LabelFor(model => model.Visible) %>
 <%= Html.ValidationMessage("Visible", "*") %>
-	<br/>
-<%= Html.CheckBox( "Preview" ) %>
-<%= Html.LabelFor(model => model.Preview) %>
-<%= Html.ValidationMessage("Preview", "*") %>
 	<%= Html.Hidden("Id") %>
 	<%= Html.Hidden("UserName") %>
 
@@ -58,4 +51,7 @@
 </div>
 </asp:Content>
 
+<asp:Content ContentPlaceHolderID="MASContent" ID="masContent1" runat="server">
 
+<div class="mdd_preview"></div>
+</asp:Content>

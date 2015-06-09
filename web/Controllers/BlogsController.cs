@@ -190,7 +190,6 @@ namespace Yavsc.Controllers
 					return UserPost (BlogManager.GetPost (postid));
 				}
 			}
-			string prevstr = LocalizedText.Preview;
 			return UserPost (BlogManager.GetPost (user, title));
 		}
 		/// <summary>
@@ -209,7 +208,7 @@ namespace Yavsc.Controllers
 			if (String.IsNullOrEmpty (title))
 				title = "";
 			ViewData ["UserName"] = un;
-			return View ("Edit", new BlogEditEntryModel { Title = title });
+			return View ("Edit", new BlogEntry { Title = title });
 		}
 		/// <summary>
 		/// Validates the post.
@@ -218,16 +217,14 @@ namespace Yavsc.Controllers
 		/// <param name="model">Model.</param>
 		[Authorize,
 			ValidateInput(false)]
-		public ActionResult ValidatePost (BlogEditEntryModel model)
+		public ActionResult ValidatePost (BlogEntry model)
 		{
 			string username = Membership.GetUser ().UserName;
 			ViewData ["SiteName"] = sitename;
 			ViewData ["BlogUser"] = username;
 			if (ModelState.IsValid) {
-				if (!model.Preview) {
 					BlogManager.Post (username, model.Title, model.Content, model.Visible);
 					return UserPost (username, model.Title);
-				}
 			}
 			return View ("Post", model);
 		}
@@ -238,18 +235,16 @@ namespace Yavsc.Controllers
 		/// <param name="model">Model.</param>
 		[Authorize,
 			ValidateInput(false)]
-		public ActionResult ValidateEdit (BlogEditEntryModel model)
+		public ActionResult ValidateEdit (BlogEntry model)
 		{
 			ViewData ["SiteName"] = sitename;
 			ViewData ["BlogUser"] = Membership.GetUser ().UserName;
 			if (ModelState.IsValid) {
-				if (!model.Preview) {
 					if (model.Id != 0)
 						BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible);
 					else
 						BlogManager.Post (model.UserName, model.Title, model.Content, model.Visible);
 					return UserPost(model.UserName, model.Title);
-				}
 			}
 			return View ("Edit", model);
 		}
@@ -259,7 +254,7 @@ namespace Yavsc.Controllers
 		/// <param name="model">Model.</param>
 		[Authorize,
 			ValidateInput(false)]
-		public ActionResult Edit (BlogEditEntryModel model)
+		public ActionResult Edit (BlogEntry model)
 		{
 			if (model != null) {
 				string user = Membership.GetUser ().UserName;
@@ -275,7 +270,9 @@ namespace Yavsc.Controllers
 					if (e.UserName != user) {
 						return View ("TitleNotFound");
 					}
-					model = new BlogEditEntryModel(e);
+					model = e;
+					ModelState.Clear ();
+					TryValidateModel (model);
 				}
 			}
 			return View (model);
@@ -286,14 +283,12 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="model">Model.</param>
 		[Authorize]
-		public ActionResult Comment (BlogEditCommentModel model) {
+		public ActionResult Comment (Comment model) {
 			string username = Membership.GetUser ().UserName;
 			ViewData ["SiteName"] = sitename;
 			if (ModelState.IsValid) {
-				if (!model.Preview) {
 					BlogManager.Comment(username, model.PostId, model.CommentText, model.Visible);
 					return UserPost (model.PostId);
-				}
 			}
 			return UserPost (model.PostId);
 		}

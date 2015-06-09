@@ -1,5 +1,13 @@
 2015-06-09  Paul Schneider  <paul@pschneider.fr>
 
+	* BlogsController.cs: - cleans unused code
+	- drops the server side "Preview" notion, made obsolete by
+	client side MarkdownDeep js
+
+	* Edit.aspx: no more server side preview action
+
+2015-06-09  Paul Schneider  <paul@pschneider.fr>
+
 	* CircleController.cs: adds a Circle controller
 
 	* NUnitTestClass.cs: xml doc
