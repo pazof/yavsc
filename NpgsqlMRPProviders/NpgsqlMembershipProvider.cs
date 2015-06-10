@@ -387,24 +387,24 @@ namespace Npgsql.Web
 					"@ApplicationName,@IsLockedOut, @LastLockedOutDate," +
 					"@FailedPasswordAttemptCount , @FailedPasswordAttemptWindowStart, " + 
 					" @FailedPasswordAnswerAttemptCount, @FailedPasswordAnswerAttemptWindowStart)", conn)) {
-
-						cmd.Parameters.AddWithValue ("@PKID", NpgsqlDbType.Varchar).Value = providerUserKey;
-						cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-						cmd.Parameters.AddWithValue ("@Password", NpgsqlDbType.Varchar, 255).Value = EncodePassword (password);
-						cmd.Parameters.AddWithValue ("@Email", NpgsqlDbType.Varchar, 128).Value = email;
-						cmd.Parameters.AddWithValue ("@PasswordQuestion", NpgsqlDbType.Varchar, 255).Value = passwordQuestion;
-						cmd.Parameters.AddWithValue ("@PasswordAnswer", NpgsqlDbType.Varchar, 255).Value = EncodePassword (passwordAnswer);
-						cmd.Parameters.AddWithValue ("@IsApproved", NpgsqlDbType.Bit).Value = isApproved;
-						cmd.Parameters.AddWithValue ("@Comment", NpgsqlDbType.Varchar, 255).Value = "";
+						string pkid = providerUserKey.ToString ();
+						cmd.Parameters.AddWithValue ("@PKID", pkid);
+						cmd.Parameters.AddWithValue ("@Username", username);
+						cmd.Parameters.AddWithValue ("@Password", EncodePassword (password));
+						cmd.Parameters.AddWithValue ("@Email", email);
+						cmd.Parameters.AddWithValue ("@PasswordQuestion", passwordQuestion);
+						cmd.Parameters.AddWithValue ("@PasswordAnswer", EncodePassword (passwordAnswer));
+						cmd.Parameters.AddWithValue ("@IsApproved", isApproved);
+						cmd.Parameters.AddWithValue ("@Comment", "");
 						cmd.Parameters.AddWithValue ("@CreationDate", createDate);
 						cmd.Parameters.AddWithValue ("@LastPasswordChangedDate", createDate);
 						cmd.Parameters.AddWithValue ("@LastActivityDate", createDate);
-						cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
-						cmd.Parameters.AddWithValue ("@IsLockedOut", NpgsqlDbType.Bit).Value = false;
+						cmd.Parameters.AddWithValue ("@ApplicationName",  pApplicationName);
+						cmd.Parameters.AddWithValue ("@IsLockedOut", false);
 						cmd.Parameters.AddWithValue ("@LastLockedOutDate", createDate);
-						cmd.Parameters.AddWithValue ("@FailedPasswordAttemptCount", NpgsqlDbType.Integer).Value = 0;
+						cmd.Parameters.AddWithValue ("@FailedPasswordAttemptCount", 0);
 						cmd.Parameters.AddWithValue ("@FailedPasswordAttemptWindowStart", createDate);
-						cmd.Parameters.AddWithValue ("@FailedPasswordAnswerAttemptCount", NpgsqlDbType.Integer).Value = 0;
+						cmd.Parameters.AddWithValue ("@FailedPasswordAnswerAttemptCount", 0);
 						cmd.Parameters.AddWithValue ("@FailedPasswordAnswerAttemptWindowStart", createDate);
 						conn.Open ();
 						int recAdded = cmd.ExecuteNonQuery ();
