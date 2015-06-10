@@ -48,6 +48,14 @@ footer {
 	z-index:-1;
 }
 
+footer a { 
+	border: dashed #888 3px;
+}
+
+footer img {
+    max-height: 1em;
+    max-width: 2.5em;
+    }
 #logo {
 	float: left;
 
@@ -81,7 +89,6 @@ header {
 	}
 	 h1 img { 	vertical-align: text-top; }
 
-footer img { max-height: 2em; }
 
 a {
 	text-decoration: none;
@@ -227,19 +234,21 @@ a.actionlink:hover + .hidcom {
   display: none;
 	}
   footer img {
-    max-height: 1.2em;
+    max-height: 0.8em;
+    max-width: 2.0em;
     }
   footer {
     font-size: small;
-    height: 1.5em;
   }
 
   body { font-size: smaller; }
 	}
 
 	@media all and (max-width: 350px) {
-	  footer img { max-height: 0.8em; }
-	  footer { font-size: x-small; height: 1em; }
+	  footer img { 
+    max-height: 0.6em;
+    max-width: 1.4em; }
+	  footer { font-size: x-small;  }
 	}
 
 }

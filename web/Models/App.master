@@ -63,11 +63,11 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 <script src="https://apis.google.com/js/platform.js" async defer>
   {lang: 'fr'}
 </script>
-<div class="g-plusone" data-annotation="inline" data-width="230"></div>
    <%= Html.ActionLink("Contact","Contact","Home",null, new { @class="footerlink" }) %>    <br/>
    <% foreach ( string link in Yavsc.ThanksHelper.Links()) { %>
      <%= link %>
    <% } %>
+<div class="g-plusone" data-annotation="inline" data-width="230"></div>
    </footer>
    <script type="text/javascript">
         var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';

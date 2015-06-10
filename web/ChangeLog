@@ -1,3 +1,9 @@
+2015-06-11  Paul Schneider  <paul@pschneider.fr>
+
+	* App.master: g+1 feels better at right ... 
+
+	* style.css: smaller, but clearer
+
 2015-06-10  Paul Schneider  <paul@pschneider.fr>
 
 	* Estim.cs:
