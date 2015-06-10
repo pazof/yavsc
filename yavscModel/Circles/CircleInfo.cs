@@ -30,13 +30,19 @@ namespace Yavsc.Model.Circles
 	/// </summary>
 	public class CircleInfo
 	{
-		long Id { get; set; }
-		string Title { get; set; }
-		CircleInfo(Circle c)
+		public long Id { get; set; }
+		public string Title { get; set; }
+		public CircleInfo(Circle c)
 		{
 			Id = c.Id;
 			Title = c.Title;
 		}
+		public CircleInfo(long id, string title)
+		{
+			Id = id;
+			Title = title;
+		}
+
 	}
 
 }

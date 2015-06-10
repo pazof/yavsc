@@ -39,27 +39,38 @@ namespace Yavsc.Model.Circles
 		/// <param name="owner">Owner.</param>
 		/// <param name="title">Title.</param>
 		/// <param name="users">Users.</param>
-		public abstract void Add(string owner, string title, string [] users);
+		public abstract long Create(string owner, string title, string [] users);
 
 		/// <summary>
-		/// Delete the specified owner and title.
+		/// Add the specified user.
 		/// </summary>
-		/// <param name="owner">Owner.</param>
-		/// <param name="title">Title.</param>
-		public abstract void Delete(string owner, string title) ;
+		/// <param name="id">circle Identifier.</param>
+		/// <param name="username">User name.</param>
+		public abstract void Add(long id, string username);
 
 		/// <summary>
-		/// Get the specified owner and title.
+		/// Remove the specified user.
 		/// </summary>
-		/// <param name="owner">Owner.</param>
-		/// <param name="title">Title.</param>
-		public abstract Circle Get(string owner, string title);
+		/// <param name="id">circle Identifier.</param>
+		/// <param name="username">User name.</param>
+		public abstract void Remove(long id, string username);
 
+		/// <summary>
+		/// Delete the specified id.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		public abstract void Delete(long id) ;
+
+		/// <summary>
+		/// Get the specified id.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		public abstract Circle Get(long id);
 
 		/// <summary>
 		/// List this instance.
 		/// </summary>
-		public abstract CircleInfoCollection List();
+		public abstract CircleInfoCollection List(string user);
 
 	}
 

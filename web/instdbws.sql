@@ -256,10 +256,10 @@ CREATE TABLE comment
   CONSTRAINT comment_pkey PRIMARY KEY (_id),
   CONSTRAINT fkey_blog FOREIGN KEY (postid)
       REFERENCES blog (_id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
+      ON UPDATE CASCADE ON DELETE ,
   CONSTRAINT fkey_users FOREIGN KEY (username, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+      ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
@@ -342,7 +342,7 @@ CREATE TABLE histoestim
       ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT histoestim_username_fkey FOREIGN KEY (username, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+      ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
@@ -401,7 +401,7 @@ CREATE TABLE projet
   CONSTRAINT projet_pk_new PRIMARY KEY (id),
   CONSTRAINT pk_project_manager FOREIGN KEY (managerid, "ApplicationName")
       REFERENCES users (username, applicationname) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+      ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
@@ -427,7 +427,7 @@ CREATE TABLE stocksymbols
   stocksymbol character varying(10),
   CONSTRAINT fkprofiles1 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+      ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
@@ -489,7 +489,7 @@ CREATE TABLE tasks
   CONSTRAINT tasks_pk_new PRIMARY KEY (id),
   CONSTRAINT tasks_fk_new FOREIGN KEY (prid)
       REFERENCES projet (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+      ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
@@ -507,10 +507,10 @@ CREATE TABLE taskdeps
   CONSTRAINT pk_tasks_deps PRIMARY KEY ("taskId", deptask),
   CONSTRAINT pk_foreign_dep FOREIGN KEY (deptask)
       REFERENCES tasks (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
+      ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT pk_foreign_task FOREIGN KEY ("taskId")
       REFERENCES tasks (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+      ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
@@ -583,10 +583,10 @@ CREATE TABLE wrtags
   CONSTRAINT wrtags_pkey1 PRIMARY KEY (wrid, tagid),
   CONSTRAINT cstwrtagsref FOREIGN KEY (tagid)
       REFERENCES tag (_id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
+      ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT wrtags_wrid_fkey1 FOREIGN KEY (wrid)
       REFERENCES writtings (_id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
+      ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
@@ -640,7 +640,7 @@ CREATE TABLE histowritting
   CONSTRAINT histowritting_pkey PRIMARY KEY (_id),
   CONSTRAINT histowritting_username_fkey FOREIGN KEY (username, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION,
+      ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT histowritting_wrtid_fkey FOREIGN KEY (wrtid)
       REFERENCES writtings (_id) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
@@ -648,3 +648,44 @@ CREATE TABLE histowritting
 WITH (
   OIDS=FALSE
 );
+
+-- Table: circle
+
+-- DROP TABLE circle;
+
+CREATE TABLE circle
+(
+  _id serial NOT NULL, -- Circle identifier
+  owner character varying(255), -- creator of this circle
+  applicationname character varying(255), -- Application name
+  CONSTRAINT circle_pkey PRIMARY KEY (_id),
+  CONSTRAINT circle_owner_fkey FOREIGN KEY (owner, applicationname)
+      REFERENCES users (username, applicationname) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+
+COMMENT ON COLUMN circle._id IS 'Circle identifier';
+COMMENT ON COLUMN circle.owner IS 'creator of this circle';
+COMMENT ON COLUMN circle.applicationname IS 'Application name';
+
+-- Table: circle_members
+
+-- DROP TABLE circle_members;
+
+CREATE TABLE circle_members
+(
+  circle_id bigint NOT NULL,
+  member character varying NOT NULL,
+  CONSTRAINT circle_members_pkey PRIMARY KEY (circle_id, member),
+  CONSTRAINT circle_members_member_fkey FOREIGN KEY (member)
+      REFERENCES users (pkid) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+
+ 

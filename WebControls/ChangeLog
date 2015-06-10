@@ -1,0 +1,11 @@
+2015-06-10  Paul Schneider  <paul@pschneider.fr>
+
+	* InputCircle.cs: An input control specialized for circle
+	selection
+
+	* UserCard.cs: Displays user informations on a little div
+
+	* InputUserName.cs: Fixes the ToolBoxData attribute
+
+	* WebControls.csproj: 
+

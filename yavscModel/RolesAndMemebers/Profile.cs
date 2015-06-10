@@ -13,8 +13,6 @@ namespace Yavsc.Model.RolesAndMembers
 	/// </summary>
 	public class Profile
 	{
-
-
 		/// <summary>
 		/// Gets or sets the name.
 		/// </summary>
@@ -108,14 +106,6 @@ namespace Yavsc.Model.RolesAndMembers
 		public string Mobile { get; set; }
 
 		/// <summary>
-		/// Gets or sets the email.
-		/// </summary>
-		/// <value>The email.</value>
-		[DisplayName ("E-mail")]
-		[StringLength (1024)]
-		public string Email { get; set; }
-
-		/// <summary>
 		/// Gets or sets the BI.
 		/// </summary>
 		/// <value>The BI.</value>
@@ -187,7 +177,10 @@ namespace Yavsc.Model.RolesAndMembers
 			( string.IsNullOrWhiteSpace (BIC)
 			|| string.IsNullOrWhiteSpace (IBAN))
 				); } }
-
+		/// <summary>
+		/// Gets a value indicating whether this instance has postal address.
+		/// </summary>
+		/// <value><c>true</c> if this instance has postal address; otherwise, <c>false</c>.</value>
 		public bool HasPostalAddress {
 			get { 
 				return !string.IsNullOrWhiteSpace (Address)
@@ -206,23 +199,24 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <value><c>true</c> if this instance is billable; otherwise, <c>false</c>.</value>
 		public bool IsBillable { 
 			get { 
-				// true if 
+				// true if has a name and, either a postal address, an email, or a Mobile phone number
 				// Name is not null and 
 				// (
 				//  (Address and CityAndState and ZipCode)
 				//  or Email or Phone or Mobile
 				// )
 				return !string.IsNullOrWhiteSpace (Name)
-				&& !( (
-						string.IsNullOrWhiteSpace (Address)
+				&& !( (string.IsNullOrWhiteSpace (Address)
 						|| string.IsNullOrWhiteSpace (CityAndState)
 						|| string.IsNullOrWhiteSpace (ZipCode))
-					&& string.IsNullOrWhiteSpace (Email) 
 				&& string.IsNullOrWhiteSpace (Phone) 
 				&& string.IsNullOrWhiteSpace (Mobile)); 
 			} 
 		}
-
+		/// <summary>
+		/// Gets or sets the name of the user.
+		/// </summary>
+		/// <value>The name of the user.</value>
 		public string UserName { get ; set; } 
 
 		public Profile () : base ()
@@ -275,9 +269,6 @@ namespace Yavsc.Model.RolesAndMembers
 			Mobile = (s is DBNull) ? null : (string)s;
 
 			UserName = profile.UserName;
-
-			MembershipUser u = Membership.GetUser (profile.UserName);
-			Email = u.Email;
 
 			s = profile.GetPropertyValue ("BankCode");
 			BankCode = (s is DBNull) ? null : (string)s;

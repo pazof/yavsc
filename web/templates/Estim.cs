@@ -37,6 +37,18 @@ namespace Yavsc.templates {
                 return this._toField;
             }
         }
+        private String _efromField;
+        public String efrom {
+            get {
+                return this._efromField;
+            }
+        }
+        private String _etoField;
+        public String eto {
+            get {
+                return this._etoField;
+            }
+        }
 
         
         public virtual string TransformText() {
@@ -48,164 +60,128 @@ namespace Yavsc.templates {
             #line default
             #line hidden
             
-            #line 14 ""
+            #line 16 ""
             this.Write("\n\\documentclass[french,11pt]{article}\n\\usepackage{babel}\n\\usepackage[T1]{fontenc}\n\\usepackage[utf8]{inputenc}\n\\usepackage[a4paper]{geometry}\n\\usepackage{units}\n\\usepackage{bera}\n\\usepackage{graphicx}\n\\usepackage{fancyhdr}\n\\usepackage{fp}\n\n\\def\\TVA{20}    % Taux de la TVA\n\n\\def\\TotalHT{0}\n\\def\\TotalTVA{0}\n\n\\newcommand{\\AjouterService}[3]{%    Arguments : Désignation, quantité, prix\n    \\FPround{\\prix}{#3}{2}\n    \\FPeval{\\montant}{#2 * #3}\n    \\FPround{\\montant}{\\montant}{2}\n    \\FPadd{\\TotalHT}{\\TotalHT}{\\montant}\n   \n    \\eaddto\\ListeProduits{#1    &    \\prix    &    #2    &    \\montant    \\cr}\n}\n\n\n\\newcommand{\\AfficheResultat}{%\n    \\ListeProduits\n   \n    \\FPeval{\\TotalTVA}{\\TotalHT * \\TVA / 100}\n    \\FPadd{\\TotalTTC}{\\TotalHT}{\\TotalTVA}\n    \\FPround{\\TotalHT}{\\TotalHT}{2}\n    \\FPround{\\TotalTVA}{\\TotalTVA}{2}\n    \\FPround{\\TotalTTC}{\\TotalTTC}{2}\n    \\global\\let\\TotalHT\\TotalHT\n    \\global\\let\\TotalTVA\\TotalTVA\n    \\global\\let\\TotalTTC\\TotalTTC\n   \n\n    \\cr \n    \\hline\n    \\textbf{Total}    & & &    \\TotalHT\n}\n\n\\newcommand*\\eaddto[2]{% version développée de \\addto\n   \\edef\\tmp{#2}%\n   \\expandafter\\addto\n   \\expandafter#1%\n   \\expandafter{\\tmp}%\n}\n\n\\newcommand{\\ListeProduits}{}\n\n\n\n\n%%%%%%%%%%%%%%%%%%%%% A MODIFIER DANS LA FACTURE %%%%%%%%%%%%%%%%%%%%%\n\n\\def\\FactureNum            {");
             
             #line default
             #line hidden
             
-            #line 73 ""
+            #line 75 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( estim.Id.ToString() ));
             
             #line default
             #line hidden
             
-            #line 73 ""
+            #line 75 ""
             this.Write("}    % Numéro de facture\n\\def\\FactureAcquittee    {non}        % Facture acquittée : oui/non\n\\def\\FactureLieu    {");
             
             #line default
             #line hidden
             
-            #line 75 ""
+            #line 77 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.CityAndState ));
             
             #line default
             #line hidden
             
-            #line 75 ""
+            #line 77 ""
             this.Write("}    % Lieu de l'édition de la facture\n\\def\\FactureObjet    {Facture : ");
             
             #line default
             #line hidden
             
-            #line 76 ""
+            #line 78 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( estim.Title ));
             
             #line default
             #line hidden
             
-            #line 76 ""
+            #line 78 ""
             this.Write("}    % Objet du document\n% Description de la facture\n\\def\\FactureDescr    {%\n   ");
             
             #line default
             #line hidden
             
-            #line 79 ""
+            #line 81 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( estim.Description ));
             
             #line default
             #line hidden
             
-            #line 79 ""
+            #line 81 ""
             this.Write("\n}\n\n% Infos Client\n\\def\\ClientNom{");
             
             #line default
             #line hidden
             
-            #line 83 ""
+            #line 85 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( to.Name ));
             
             #line default
             #line hidden
             
-            #line 83 ""
+            #line 85 ""
             this.Write("}    % Nom du client\n\\def\\ClientAdresse{%                    % Adresse du client\n   ");
             
             #line default
             #line hidden
             
-            #line 85 ""
+            #line 87 ""
  if (!string.IsNullOrWhiteSpace(to.Address)) { 
             
             #line default
             #line hidden
             
-            #line 86 ""
+            #line 88 ""
             this.Write("   ");
             
             #line default
             #line hidden
             
-            #line 86 ""
+            #line 88 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( to.Address ));
             
             #line default
             #line hidden
             
-            #line 86 ""
+            #line 88 ""
             this.Write("\\\\\n  ");
             
             #line default
             #line hidden
             
-            #line 87 ""
+            #line 89 ""
  } 
             
             #line default
             #line hidden
             
-            #line 88 ""
+            #line 90 ""
             this.Write("   ");
             
             #line default
             #line hidden
             
-            #line 88 ""
+            #line 90 ""
  if (!string.IsNullOrWhiteSpace(to.ZipCode)) { 
             
             #line default
             #line hidden
             
-            #line 89 ""
+            #line 91 ""
             this.Write("   ");
             
             #line default
             #line hidden
             
-            #line 89 ""
+            #line 91 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( to.ZipCode ));
             
             #line default
             #line hidden
             
-            #line 89 ""
+            #line 91 ""
             this.Write("  ");
-            
-            #line default
-            #line hidden
-            
-            #line 89 ""
- } 
-            
-            #line default
-            #line hidden
-            
-            #line 90 ""
-            this.Write("  ");
-            
-            #line default
-            #line hidden
-            
-            #line 90 ""
- if (!string.IsNullOrWhiteSpace(to.ZipCode)) { 
-            
-            #line default
-            #line hidden
-            
-            #line 91 ""
-            this.Write("    ");
-            
-            #line default
-            #line hidden
-            
-            #line 91 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( to.CityAndState ));
-            
-            #line default
-            #line hidden
-            
-            #line 91 ""
-            this.Write("\\\\ ");
             
             #line default
             #line hidden
@@ -217,91 +193,97 @@ namespace Yavsc.templates {
             #line hidden
             
             #line 92 ""
-            this.Write("  \n");
+            this.Write("  ");
+            
+            #line default
+            #line hidden
+            
+            #line 92 ""
+ if (!string.IsNullOrWhiteSpace(to.ZipCode)) { 
             
             #line default
             #line hidden
             
             #line 93 ""
- if (!string.IsNullOrWhiteSpace(to.Phone)) { 
+            this.Write("    ");
+            
+            #line default
+            #line hidden
+            
+            #line 93 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( to.CityAndState ));
+            
+            #line default
+            #line hidden
+            
+            #line 93 ""
+            this.Write("\\\\ ");
+            
+            #line default
+            #line hidden
+            
+            #line 93 ""
+ } 
             
             #line default
             #line hidden
             
             #line 94 ""
-            this.Write("   Téléphone fixe: ");
-            
-            #line default
-            #line hidden
-            
-            #line 94 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( to.Phone ));
-            
-            #line default
-            #line hidden
-            
-            #line 94 ""
-            this.Write("\\\\\n");
+            this.Write("  \n");
             
             #line default
             #line hidden
             
             #line 95 ""
- } 
+ if (!string.IsNullOrWhiteSpace(to.Phone)) { 
             
             #line default
             #line hidden
             
             #line 96 ""
- if (!string.IsNullOrWhiteSpace(to.Mobile)) { 
+            this.Write("   Téléphone fixe: ");
             
             #line default
             #line hidden
             
-            #line 97 ""
-            this.Write("   Mobile: ");
+            #line 96 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( to.Phone ));
             
             #line default
             #line hidden
             
-            #line 97 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( to.Mobile ));
-            
-            #line default
-            #line hidden
-            
-            #line 97 ""
+            #line 96 ""
             this.Write("\\\\\n");
             
             #line default
             #line hidden
             
-            #line 98 ""
+            #line 97 ""
  } 
             
             #line default
             #line hidden
             
-            #line 99 ""
-            this.Write(" ");
+            #line 98 ""
+ if (!string.IsNullOrWhiteSpace(to.Mobile)) { 
             
             #line default
             #line hidden
             
             #line 99 ""
- if (!string.IsNullOrWhiteSpace(to.Email)) { 
+            this.Write("   Mobile: ");
             
             #line default
             #line hidden
             
-            #line 100 ""
-            this.Write("   E-mail: ");
+            #line 99 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( to.Mobile ));
             
             #line default
             #line hidden
             
-            #line 100 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( to.Email ));
+            #line 99 ""
+            this.Write("\\\\\n");
             
             #line default
             #line hidden
@@ -313,91 +295,85 @@ namespace Yavsc.templates {
             #line hidden
             
             #line 101 ""
-            this.Write("}\n\n% Liste des produits facturés : Désignation, prix\n\n   ");
-            
-            #line default
-            #line hidden
-            
-            #line 105 ""
- foreach (Writting wr in estim.Lines) { 
-            
-            #line default
-            #line hidden
-            
-            #line 106 ""
-            this.Write("\\AjouterService    {");
-            
-            #line default
-            #line hidden
-            
-            #line 106 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(wr.Description));
-            
-            #line default
-            #line hidden
-            
-            #line 106 ""
             this.Write(" ");
             
             #line default
             #line hidden
             
-            #line 106 ""
- if (!string.IsNullOrWhiteSpace(wr.ProductReference)) { 
+            #line 101 ""
+ if (!string.IsNullOrWhiteSpace(eto)) { 
             
             #line default
             #line hidden
             
-            #line 107 ""
-            this.Write("   (");
+            #line 102 ""
+            this.Write("   E-mail: ");
             
             #line default
             #line hidden
             
-            #line 107 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(wr.ProductReference));
+            #line 102 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( eto ));
             
             #line default
             #line hidden
             
-            #line 107 ""
-            this.Write(")");
-            
-            #line default
-            #line hidden
-            
-            #line 107 ""
+            #line 102 ""
  } 
             
             #line default
             #line hidden
             
-            #line 108 ""
-            this.Write("} {");
+            #line 103 ""
+            this.Write("}\n\n% Liste des produits facturés : Désignation, prix\n\n   ");
+            
+            #line default
+            #line hidden
+            
+            #line 107 ""
+ foreach (Writting wr in estim.Lines) { 
             
             #line default
             #line hidden
             
             #line 108 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(wr.Count));
+            this.Write("\\AjouterService    {");
             
             #line default
             #line hidden
             
             #line 108 ""
-            this.Write("} {");
+            this.Write(this.ToStringHelper.ToStringWithCulture(wr.Description));
             
             #line default
             #line hidden
             
             #line 108 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(wr.UnitaryCost));
+            this.Write(" ");
             
             #line default
             #line hidden
             
             #line 108 ""
-            this.Write("} \n   ");
+ if (!string.IsNullOrWhiteSpace(wr.ProductReference)) { 
+            
+            #line default
+            #line hidden
+            
+            #line 109 ""
+            this.Write("   (");
+            
+            #line default
+            #line hidden
+            
+            #line 109 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture(wr.ProductReference));
+            
+            #line default
+            #line hidden
+            
+            #line 109 ""
+            this.Write(")");
             
             #line default
             #line hidden
@@ -409,49 +385,55 @@ namespace Yavsc.templates {
             #line hidden
             
             #line 110 ""
-            this.Write("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n\\geometry{verbose,tmargin=4em,bmargin=8em,lmargin=6em,rmargin=6em}\n\\setlength{\\parindent}{0pt}\n\\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}\n\n\\thispagestyle{fancy}\n\\pagestyle{fancy}\n\\setlength{\\parindent}{0pt}\n\n\\renewcommand{\\headrulewidth}{0pt}\n\\cfoot{\n ");
+            this.Write("} {");
             
             #line default
             #line hidden
             
-            #line 123 ""
- if (!string.IsNullOrWhiteSpace(from.Name)) { 
+            #line 110 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture(wr.Count));
             
             #line default
             #line hidden
             
-            #line 124 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.Name  ));
+            #line 110 ""
+            this.Write("} {");
             
             #line default
             #line hidden
             
-            #line 124 ""
+            #line 110 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture(wr.UnitaryCost));
+            
+            #line default
+            #line hidden
+            
+            #line 110 ""
+            this.Write("} \n   ");
+            
+            #line default
+            #line hidden
+            
+            #line 111 ""
  } 
             
             #line default
             #line hidden
             
-            #line 125 ""
-            this.Write(" ");
+            #line 112 ""
+            this.Write("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n\\geometry{verbose,tmargin=4em,bmargin=8em,lmargin=6em,rmargin=6em}\n\\setlength{\\parindent}{0pt}\n\\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}\n\n\\thispagestyle{fancy}\n\\pagestyle{fancy}\n\\setlength{\\parindent}{0pt}\n\n\\renewcommand{\\headrulewidth}{0pt}\n\\cfoot{\n ");
             
             #line default
             #line hidden
             
             #line 125 ""
- if (!string.IsNullOrWhiteSpace(from.Address)) { 
+ if (!string.IsNullOrWhiteSpace(from.Name)) { 
             
             #line default
             #line hidden
             
             #line 126 ""
-            this.Write(" - ");
-            
-            #line default
-            #line hidden
-            
-            #line 126 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.Address ));
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.Name  ));
             
             #line default
             #line hidden
@@ -463,115 +445,115 @@ namespace Yavsc.templates {
             #line hidden
             
             #line 127 ""
-            this.Write(" \n ");
+            this.Write(" ");
+            
+            #line default
+            #line hidden
+            
+            #line 127 ""
+ if (!string.IsNullOrWhiteSpace(from.Address)) { 
             
             #line default
             #line hidden
             
             #line 128 ""
- if (!string.IsNullOrWhiteSpace(from.CityAndState)) { 
-            
-            #line default
-            #line hidden
-            
-            #line 129 ""
             this.Write(" - ");
             
             #line default
             #line hidden
             
-            #line 129 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.CityAndState ));
+            #line 128 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.Address ));
+            
+            #line default
+            #line hidden
+            
+            #line 128 ""
+ } 
             
             #line default
             #line hidden
             
             #line 129 ""
- } 
+            this.Write(" \n ");
             
             #line default
             #line hidden
             
             #line 130 ""
-            this.Write(" \\newline\n    \\small{\n    ");
+ if (!string.IsNullOrWhiteSpace(from.CityAndState)) { 
+            
+            #line default
+            #line hidden
+            
+            #line 131 ""
+            this.Write(" - ");
+            
+            #line default
+            #line hidden
+            
+            #line 131 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.CityAndState ));
+            
+            #line default
+            #line hidden
+            
+            #line 131 ""
+ } 
             
             #line default
             #line hidden
             
             #line 132 ""
- if (!string.IsNullOrWhiteSpace(from.Email)) { 
+            this.Write(" \\newline\n    \\small{\n    ");
             
             #line default
             #line hidden
             
-            #line 133 ""
+            #line 134 ""
+ if (!string.IsNullOrWhiteSpace(efrom)) { 
+            
+            #line default
+            #line hidden
+            
+            #line 135 ""
             this.Write("E-mail: ");
             
             #line default
             #line hidden
             
-            #line 133 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.Email ));
+            #line 135 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( efrom ));
             
             #line default
             #line hidden
             
-            #line 133 ""
+            #line 135 ""
  } 
             
             #line default
             #line hidden
             
-            #line 134 ""
+            #line 136 ""
             this.Write("    ");
             
             #line default
             #line hidden
             
-            #line 134 ""
+            #line 136 ""
  if (!string.IsNullOrWhiteSpace(from.Mobile)) { 
             
             #line default
             #line hidden
             
-            #line 135 ""
+            #line 137 ""
             this.Write(" - Téléphone mobile: ");
             
             #line default
             #line hidden
             
-            #line 135 ""
+            #line 137 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.Mobile ));
-            
-            #line default
-            #line hidden
-            
-            #line 135 ""
- } 
-            
-            #line default
-            #line hidden
-            
-            #line 136 ""
-            this.Write("    ");
-            
-            #line default
-            #line hidden
-            
-            #line 136 ""
- if (!string.IsNullOrWhiteSpace(from.Phone)) { 
-            
-            #line default
-            #line hidden
-            
-            #line 137 ""
-            this.Write(" - Téléphone fixe: ");
-            
-            #line default
-            #line hidden
-            
-            #line 137 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( from.Phone ));
             
             #line default
             #line hidden
@@ -583,164 +565,194 @@ namespace Yavsc.templates {
             #line hidden
             
             #line 138 ""
+            this.Write("    ");
+            
+            #line default
+            #line hidden
+            
+            #line 138 ""
+ if (!string.IsNullOrWhiteSpace(from.Phone)) { 
+            
+            #line default
+            #line hidden
+            
+            #line 139 ""
+            this.Write(" - Téléphone fixe: ");
+            
+            #line default
+            #line hidden
+            
+            #line 139 ""
+            this.Write(this.ToStringHelper.ToStringWithCulture( from.Phone ));
+            
+            #line default
+            #line hidden
+            
+            #line 139 ""
+ } 
+            
+            #line default
+            #line hidden
+            
+            #line 140 ""
             this.Write("    }\n}\n\n\\begin{document}\n\n% Logo de la société\n%\\includegraphics{logo.jpg}\n\n% Nom et adresse de la société\n");
             
             #line default
             #line hidden
             
-            #line 147 ""
+            #line 149 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.Name ));
             
             #line default
             #line hidden
             
-            #line 147 ""
+            #line 149 ""
             this.Write("\\\\\n");
             
             #line default
             #line hidden
             
-            #line 148 ""
+            #line 150 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.Address ));
             
             #line default
             #line hidden
             
-            #line 148 ""
+            #line 150 ""
             this.Write("\\\\\n");
             
             #line default
             #line hidden
             
-            #line 149 ""
+            #line 151 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(from.ZipCode ));
             
             #line default
             #line hidden
             
-            #line 149 ""
+            #line 151 ""
             this.Write(" ");
             
             #line default
             #line hidden
             
-            #line 149 ""
+            #line 151 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(from.CityAndState));
             
             #line default
             #line hidden
             
-            #line 149 ""
+            #line 151 ""
             this.Write("\\\\\n\nFacture n°\\FactureNum\n\n\n{\\addtolength{\\leftskip}{10.5cm} %in ERT\n    \\textbf{\\ClientNom}    \\\\\n    \\ClientAdresse        \\\\\n\n} %in ERT\n\n\n\\hspace*{10.5cm}\n\\FactureLieu, le \\today\n\n~\\\\~\\\\\n\n\\textbf{Objet : \\FactureObjet \\\\}\n\n\\textnormal{\\FactureDescr}\n\n~\\\\\n\n\\begin{center}\n    \\begin{tabular}{lrrr}\n        \\textbf{Désignation ~~~~~~}  & \\textbf{Prix unitaire} & \\textbf{Quantité} & \\textbf{Montant (EUR)}    \\\\\n        \\hline\n        \\AfficheResultat{}\n    \\end{tabular}\n\\end{center}\n\n\\begin{flushright}\n\\textit{Auto entreprise en franchise de TVA}\\\\\n\n\\end{flushright}\n~\\\\\n\n\\ifthenelse{\\equal{\\FactureAcquittee}{oui}}{\n    Facture acquittée.\n}{\n\n    À régler par chèque ou par virement bancaire :\n\n    \\begin{center}\n        \\begin{tabular}{|c c c c|}\n        ");
             
             #line default
             #line hidden
             
-            #line 194 ""
+            #line 196 ""
  if (!string.IsNullOrWhiteSpace(from.BankCode) && !string.IsNullOrWhiteSpace(from.WicketCode)
         && !string.IsNullOrWhiteSpace(from.AccountNumber) ) { 
             
             #line default
             #line hidden
             
-            #line 196 ""
+            #line 198 ""
             this.Write("            \\hline     \\textbf{Code banque}    & \\textbf{Code guichet}    & \\textbf{N° de Compte}        & \\textbf{Clé RIB}    \\\\\n                    ");
             
             #line default
             #line hidden
             
-            #line 197 ""
+            #line 199 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.BankCode ));
             
             #line default
             #line hidden
             
-            #line 197 ""
+            #line 199 ""
             this.Write("                    & ");
             
             #line default
             #line hidden
             
-            #line 197 ""
+            #line 199 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.WicketCode ));
             
             #line default
             #line hidden
             
-            #line 197 ""
+            #line 199 ""
             this.Write("                     & ");
             
             #line default
             #line hidden
             
-            #line 197 ""
+            #line 199 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(from.AccountNumber ));
             
             #line default
             #line hidden
             
-            #line 197 ""
+            #line 199 ""
             this.Write("                & ");
             
             #line default
             #line hidden
             
-            #line 197 ""
+            #line 199 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(from.BankedKey));
             
             #line default
             #line hidden
             
-            #line 197 ""
+            #line 199 ""
             this.Write("               \\\\\n        ");
             
             #line default
             #line hidden
             
-            #line 198 ""
+            #line 200 ""
  }
         if (!string.IsNullOrWhiteSpace(from.IBAN) && !string.IsNullOrWhiteSpace(from.BIC)) { 
             
             #line default
             #line hidden
             
-            #line 200 ""
+            #line 202 ""
             this.Write("               \\hline     \\textbf{IBAN N°}        & \\multicolumn{3}{|l|}{ ");
             
             #line default
             #line hidden
             
-            #line 200 ""
+            #line 202 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.IBAN ));
             
             #line default
             #line hidden
             
-            #line 200 ""
+            #line 202 ""
             this.Write(" }         \\\\\n            \\hline     \\textbf{Code BIC}        & \\multicolumn{3}{|l|}{ ");
             
             #line default
             #line hidden
             
-            #line 201 ""
+            #line 203 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( from.BIC ));
             
             #line default
             #line hidden
             
-            #line 201 ""
+            #line 203 ""
             this.Write(" }\n        ");
             
             #line default
             #line hidden
             
-            #line 202 ""
+            #line 204 ""
  } 
             
             #line default
             #line hidden
             
-            #line 203 ""
+            #line 205 ""
             this.Write("         \\\\\n            \\hline\n        \\end{tabular}\n    \\end{center}\n}\n\\end{document}\n");
             
             #line default
@@ -816,6 +828,52 @@ namespace Yavsc.templates {
                         }
                         else {
                             this.Error("The type 'Profile' of the parameter 'to' did not match the type passed to the template");
+                        }
+                    }
+                }
+                bool _efromAcquired = false;
+                if (((this.Session != null) && this.Session.ContainsKey("efrom"))) {
+                    object data = this.Session["efrom"];
+                    if (typeof(String).IsAssignableFrom(data.GetType())) {
+                        this._efromField = ((String)(data));
+                        _efromAcquired = true;
+                    }
+                    else {
+                        this.Error("The type 'String' of the parameter 'efrom' did not match the type passed to the template");
+                    }
+                }
+                if ((_efromAcquired == false)) {
+                    object data = System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("efrom");
+                    if ((data != null)) {
+                        if (typeof(String).IsAssignableFrom(data.GetType())) {
+                            this._efromField = ((String)(data));
+                            _efromAcquired = true;
+                        }
+                        else {
+                            this.Error("The type 'String' of the parameter 'efrom' did not match the type passed to the template");
+                        }
+                    }
+                }
+                bool _etoAcquired = false;
+                if (((this.Session != null) && this.Session.ContainsKey("eto"))) {
+                    object data = this.Session["eto"];
+                    if (typeof(String).IsAssignableFrom(data.GetType())) {
+                        this._etoField = ((String)(data));
+                        _etoAcquired = true;
+                    }
+                    else {
+                        this.Error("The type 'String' of the parameter 'eto' did not match the type passed to the template");
+                    }
+                }
+                if ((_etoAcquired == false)) {
+                    object data = System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("eto");
+                    if ((data != null)) {
+                        if (typeof(String).IsAssignableFrom(data.GetType())) {
+                            this._etoField = ((String)(data));
+                            _etoAcquired = true;
+                        }
+                        else {
+                            this.Error("The type 'String' of the parameter 'eto' did not match the type passed to the template");
                         }
                     }
                 }

@@ -1,10 +1,10 @@
 ﻿//
-//  SelectUserControl.cs
+//  InputCircle.cs
 //
 //  Author:
-//       Paul Schneider <paulschneider@free.fr>
+//       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015 Paul Schneider
+//  Copyright (c) 2015 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -22,15 +22,15 @@ using System;
 using System.Web;
 using System.Security.Permissions;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.ComponentModel;
+using System.Web.UI.WebControls;
+using Yavsc.Model.Circles;
 using System.Web.Security;
 
-
-namespace Yavsc.WebControls
+namespace WebControls
 {
 	/// <summary>
-	/// Select user control.
+	/// Input circle.
 	/// </summary>
 	[
 		AspNetHostingPermission (SecurityAction.Demand,
@@ -39,25 +39,21 @@ namespace Yavsc.WebControls
 			Level = AspNetHostingPermissionLevel.Minimal),
 		ParseChildren (true),
 		DefaultProperty ("Name"),
-		ToolboxData ("<{0}:InputUserName runat=\"server\"> </{0}:InputUserName>")
+		ToolboxData ("<{0}:InputCircle runat=\"server\"> </{0}:InputCircle>")
 	]
-	public class InputUserName: WebControl
+	public class InputCircle: WebControl
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="WebControls.InputUserName"/> class.
+		/// Initializes a new instance of the <see cref="WebControls.InputCircle"/> class.
 		/// </summary>
-		public InputUserName ()
+		public InputCircle ()
 		{
-			Multiple = false;
-			EmptyValue = null;
 		}
 		/// <summary>
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		[Bindable (true)]
-		[DefaultValue("")]
-		[Localizable(true)]
+		[Bindable (true), DefaultValue(""), Localizable(true)]
 		public string Name {
 			get {
 				return (string) ViewState["Name"];
@@ -70,7 +66,7 @@ namespace Yavsc.WebControls
 		/// Gets or sets the value.
 		/// </summary>
 		/// <value>The value.</value>
-		[Bindable (true),DefaultValue(""),Localizable(true)]
+		[Bindable (true), DefaultValue(""), Localizable(true)]
 		public string Value {
 			get {
 				return (string) ViewState["Value"];
@@ -81,10 +77,10 @@ namespace Yavsc.WebControls
 		}
 
 		/// <summary>
-		/// Gets or sets the client side action on change.
+		/// Gets or sets the on change.
 		/// </summary>
 		/// <value>The on change.</value>
-		[Bindable (true),DefaultValue(""),Localizable(false)]
+		[Bindable (true), DefaultValue(""),	Localizable(false)]
 		public string OnChange {
 			get {
 				return (string) ViewState["OnChange"];
@@ -93,22 +89,6 @@ namespace Yavsc.WebControls
 				ViewState ["OnChange"]  = value;
 			}
 		}
-
-
-		/// <summary>
-		/// Gets or sets the in role.
-		/// </summary>
-		/// <value>The in role.</value>
-		[Bindable (true),DefaultValue(""),Localizable(true)]
-		public string InRole {
-			get {
-				return (string) ViewState["InRole"];
-			}
-			set {
-				ViewState ["InRole"]  = value;
-			}
-		}
-
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="Yavsc.WebControls.InputUserName"/> is multiple.
 		/// </summary>
@@ -140,8 +120,6 @@ namespace Yavsc.WebControls
 			}
 		}
 
-
-
 		/// <summary>
 		/// Renders the contents.
 		/// </summary>
@@ -157,12 +135,8 @@ namespace Yavsc.WebControls
 				writer.AddAttribute ("multiple","true");
 			writer.RenderBeginTag ("select");
 			string[] selected = null;
-			string[] roles = null;
 			if (!string.IsNullOrWhiteSpace (Value)) {
 				selected = Value.Split (',');
-			}
-			if (!string.IsNullOrWhiteSpace (InRole)) {
-				roles = InRole.Split (',');
 			}
 			if (EmptyValue!=null) {
 				writer.AddAttribute ("value", "");
@@ -170,17 +144,17 @@ namespace Yavsc.WebControls
 				writer.Write (EmptyValue);
 				writer.RenderEndTag ();
 			}
-			foreach (MembershipUser u in Membership.GetAllUsers()) {
-				// if roles are specified, members must be in one of them
-				if (roles != null)
-					if (!Array.Exists (roles, x => Roles.IsUserInRole (x)))
-						continue;
-				if (selected!=null)
-					if (Array.Exists(selected, x=> x == u.UserName))
-						writer.AddAttribute ("selected",null);
-				writer.RenderBeginTag ("option");
-				writer.Write (u.UserName);
-				writer.RenderEndTag ();
+			var u = Membership.GetUser ();
+			if (u != null) {
+				foreach (CircleInfo ci in CircleManager.DefaultProvider.List(u.UserName)) {
+					if (selected != null)
+					if (Array.Exists (selected, x => x == ci.Id.ToString ()))
+						writer.AddAttribute ("selected", null);
+					writer.AddAttribute ("value", ci.Id.ToString ());
+					writer.RenderBeginTag ("option");
+					writer.Write (ci.Title);
+					writer.RenderEndTag ();
+				}
 			}
 			writer.RenderEndTag ();
 		}

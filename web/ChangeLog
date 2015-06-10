@@ -1,5 +1,23 @@
 2015-06-10  Paul Schneider  <paul@pschneider.fr>
 
+	* Estim.cs:
+	* BasketApiController.cs:
+	* CircleApiController.cs:
+	* CalendarApiController.cs:
+	* WorkFlowApiController.cs:
+	* FrontOfficeApiController.cs: 
+
+	* Web.csproj: refactoring
+
+	* instdbws.sql: Foreign keys are cascading updates and
+	deletions
+
+	* Estim.tt: User's profile does not contain anymore the main
+	e-mail address, it conflicts with registration informations,
+	it is not part of the profile data
+
+2015-06-10  Paul Schneider  <paul@pschneider.fr>
+
 	* CalendarController.cs: refactoring
 
 	* CircleController.cs: implements with default circle provider

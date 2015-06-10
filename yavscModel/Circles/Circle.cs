@@ -23,7 +23,6 @@ using System.Collections.Generic;
 
 namespace Yavsc.Model.Circles
 {
-	
 	/// <summary>
 	/// Circle.
 	/// </summary>
@@ -41,10 +40,16 @@ namespace Yavsc.Model.Circles
 		public string Title { get; set; }
 
 		/// <summary>
+		/// Gets or sets the owner.
+		/// </summary>
+		/// <value>The owner.</value>
+		public string Owner { get; set; } 
+
+		/// <summary>
 		/// Gets or sets the users.
 		/// </summary>
 		/// <value>The users.</value>
-		public string [] Users { get; set; }
+		public string [] Members { get; set; }
 
 		/// <summary>
 		/// Union the specified that.
@@ -54,7 +59,7 @@ namespace Yavsc.Model.Circles
 		{
 			List<string> content = new List<string>();
 			foreach (Circle c in those) {
-				foreach (string user_name in c.Users) {
+				foreach (string user_name in c.Members) {
 					if (!content.Contains (user_name))
 						content.Add (user_name);
 				}

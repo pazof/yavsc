@@ -100,7 +100,6 @@ namespace Yavsc.ApiControllers
 			Estimate e = wfmgr.GetEstimate (estimid);
 			tmpe.Session = new Dictionary<string,object> ();
 			tmpe.Session.Add ("estim", e);
-
 			Profile prpro = new Profile (ProfileBase.Create (e.Responsible));
 			if (!prpro.HasBankAccount)
 				throw new TemplateException ("NotBankable:" + e.Responsible);
@@ -114,6 +113,8 @@ namespace Yavsc.ApiControllers
 
 			tmpe.Session.Add ("from", prpro);
 			tmpe.Session.Add ("to", prcli);
+			tmpe.Session.Add ("efrom", Membership.GetUser (e.Responsible).Email);
+			tmpe.Session.Add ("efrom", Membership.GetUser (e.Client).Email);
 			tmpe.Init ();
 			return tmpe.TransformText ();
 		}

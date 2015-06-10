@@ -126,6 +126,7 @@
     <Folder Include="Views\PayPal\" />
     <Folder Include="ApiControllers\" />
     <Folder Include="Views\Modules\" />
+    <Folder Include="Views\Circle\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -173,21 +174,21 @@
     <Compile Include="Formatters\ErrorHtmlFormatter.cs" />
     <Compile Include="Formatters\RssFeedsFormatter.cs" />
     <Compile Include="Formatters\TexToPdfFormatter.cs" />
-    <Compile Include="ApiControllers\BasketController.cs" />
     <Compile Include="ApiControllers\BlogsApiController.cs" />
     <Compile Include="ApiControllers\FrontOfficeApiController.cs" />
     <Compile Include="ApiControllers\PaypalApiController.cs" />
     <Compile Include="WebApiConfig.cs" />
-    <Compile Include="ApiControllers\WorkFlowController.cs" />
     <Compile Include="IValueProvider.cs" />
     <Compile Include="Formatters\EstimToPdfFormatter.MSAN.cs" />
     <Compile Include="Helpers\TemplateException.cs" />
     <Compile Include="Helpers\MarkdownHelper.cs" />
-    <Compile Include="ApiControllers\CalendarController.cs" />
     <Compile Include="Formatters\FormatterException.cs" />
     <Compile Include="NUnitTestClass.cs" />
     <Compile Include="TestExec.cs" />
-    <Compile Include="ApiControllers\CircleController.cs" />
+    <Compile Include="ApiControllers\CircleApiController.cs" />
+    <Compile Include="ApiControllers\BasketApiController.cs" />
+    <Compile Include="ApiControllers\CalendarApiController.cs" />
+    <Compile Include="ApiControllers\WorkFlowApiController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

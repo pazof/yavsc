@@ -1,5 +1,16 @@
 2015-06-10  Paul Schneider  <paul@pschneider.fr>
 
+	* Circle.cs: refactoring
+
+	* CircleInfo.cs:
+	* CircleProvider.cs: 
+
+	* Profile.cs: User's profile does not contain anymore the main
+	e-mail address, it conflicts with registration informations,
+	it is not part of the profile data
+
+2015-06-10  Paul Schneider  <paul@pschneider.fr>
+
 	* CircleManager.cs: initializes the default provider
 
 	* CircleProvider.cs: Makes abstract the CircleProvider class

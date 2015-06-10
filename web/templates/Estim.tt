@@ -11,6 +11,8 @@
 <#@ parameter type="Estimate" name="estim" #>
 <#@ parameter type="Profile" name="from" #>
 <#@ parameter type="Profile" name="to" #>
+<#@ parameter type="String" name="efrom" #>
+<#@ parameter type="String" name="eto" #>
 
 \documentclass[french,11pt]{article}
 \usepackage{babel}
@@ -93,8 +95,8 @@
 <# if (!string.IsNullOrWhiteSpace(to.Mobile)) { #>
    Mobile: <#= to.Mobile #>\\
 <# } #>
- <# if (!string.IsNullOrWhiteSpace(to.Email)) { #>
-   E-mail: <#= to.Email #><# } #>
+ <# if (!string.IsNullOrWhiteSpace(eto)) { #>
+   E-mail: <#= eto #><# } #>
 }
 
 % Liste des produits facturés : Désignation, prix
@@ -120,7 +122,7 @@
  <# if (!string.IsNullOrWhiteSpace(from.Address)) { #> - <#= from.Address #><# } #> 
  <# if (!string.IsNullOrWhiteSpace(from.CityAndState)) { #> - <#= from.CityAndState #><# } #> \newline
     \small{
-    <# if (!string.IsNullOrWhiteSpace(from.Email)) { #>E-mail: <#= from.Email #><# } #>
+    <# if (!string.IsNullOrWhiteSpace(efrom)) { #>E-mail: <#= efrom #><# } #>
     <# if (!string.IsNullOrWhiteSpace(from.Mobile)) { #> - Téléphone mobile: <#= from.Mobile #><# } #>
     <# if (!string.IsNullOrWhiteSpace(from.Phone)) { #> - Téléphone fixe: <#= from.Phone #><# } #>
     }

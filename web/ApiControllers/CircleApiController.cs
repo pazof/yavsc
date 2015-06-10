@@ -30,50 +30,71 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Circle controller.
 	/// </summary>
-	public class CircleController : ApiController
+	public class CircleApiController : ApiController
 	{
 		/// <summary>
-		/// Add the specified id and users.
+		/// Creates the specified circle using the given title and user list.
 		/// </summary>
-		/// <param name="id">Identifier.</param>
-		/// <param name="title">Title.</param>
+		/// <param name="title">Identifier.</param>
 		/// <param name="users">Users.</param>
 		[Authorize]
-		public void Add(string id, string [] users) 
+		public long Create(string title, string [] users) 
 		{
 			string user = Membership.GetUser ().UserName;
-			CircleManager.DefaultProvider.Add (user, id, users);
-		}
-		/// <summary>
-		/// Delete the specified id.
-		/// </summary>
-		/// <param name="id">Identifier.</param>
-		[Authorize] public void Delete(string id) 
-		{
-			string user = Membership.GetUser ().UserName;
-			CircleManager.DefaultProvider.Delete (user, id);
+			return CircleManager.DefaultProvider.Create (user, title, users);
 		}
 
 		/// <summary>
-		/// Get the specified id.
+		/// Add the specified users to the circle.
+		/// </summary>
+		/// <param name="id">Circle Identifier.</param>
+		/// <param name="username">username.</param>
+		[Authorize]
+		public void Add(long id, string username)
+		{
+			checkIsOwner (CircleManager.DefaultProvider.Get (id));
+			CircleManager.DefaultProvider.Add (id, username);
+		}
+
+
+		/// <summary>
+		/// Delete the circle specified by id.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		[Authorize] public void Delete(long id) 
+		{
+			checkIsOwner (CircleManager.DefaultProvider.Get(id));
+			CircleManager.DefaultProvider.Delete (id);
+		}
+
+		private void checkIsOwner(Circle c)
+		{
+			string user = Membership.GetUser ().UserName;
+			if (c.Owner != user)
+			throw new AccessViolationException ("You're not owner of this circle");
+		}
+
+		/// <summary>
+		/// Get the circle specified id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
 		[Authorize]
-		public Circle Get(string id)
+		public Circle Get(long id)
 		{
-			string user = Membership.GetUser ().UserName;
-			return CircleManager.DefaultProvider.Get (user, id);
+			var c = CircleManager.DefaultProvider.Get (id);
+			checkIsOwner (c);
+			return c;
 		}
 
 
 		/// <summary>
-		/// List this instance.
+		/// List the circles
 		/// </summary>
 		[Authorize]
 		public CircleInfoCollection List()
 		{
 			string user = Membership.GetUser ().UserName;
-			return CircleManager.DefaultProvider.List ();
+			return CircleManager.DefaultProvider.List (user);
 		}
 	}
 }

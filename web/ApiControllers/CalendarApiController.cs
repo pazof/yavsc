@@ -34,7 +34,7 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Night flash controller.
 	/// </summary>
-	public class CalendarController: ApiController
+	public class CalendarApiController: ApiController
 	{
 		YaEvent[] getTestList()
 		{
