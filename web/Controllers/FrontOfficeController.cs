@@ -153,9 +153,17 @@ namespace Yavsc.Controllers
 		{
 			ViewData ["BrandId"] = brandid;
 			ViewData ["ProductCategoryId"] = pcid;
-			return View (
-				CatalogManager.GetCatalog ().GetBrand (brandid).GetProductCategory (pcid)
-			);
+
+			var cat = CatalogManager.GetCatalog ();
+			if (cat == null)
+				throw new Exception ("No catalog");
+			var brand = cat.GetBrand (brandid);
+			if (brand == null)
+				throw new Exception ("Not a brand id: "+brandid);
+			var pcat = brand.GetProductCategory (pcid);
+			if (pcat == null)
+				throw new Exception ("Not a product category id in this brand: " + pcid);
+			return View (pcat);
 		}
 
 		/// <summary>

@@ -1,10 +1,10 @@
 //
-//  EventPub.cs
+//  CircleInfoCollection.cs
 //
 //  Author:
-//       Paul Schneider <paulschneider@free.fr>
+//       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015 Paul Schneider
+//  Copyright (c) 2015 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -18,29 +18,18 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
-using System.Web.Http;
-using System.ComponentModel.DataAnnotations;
-using Yavsc.ApiControllers.Calendar.Model;
-using Yavsc.Model;
-using Yavsc.Model.RolesAndMembers;
-using Yavsc.Model.Circles;
 
-namespace Yavsc.ApiControllers.Calendar.Model
+using System;
+using System.Collections.Generic;
+
+namespace Yavsc.Model.Circles
 {
+
 	/// <summary>
-	/// Event pub.
+	/// Circle info collection.
 	/// </summary>
-	public class EventPub: YaEvent
+	public class CircleInfoCollection : List<CircleInfo>
 	{
-		/// <summary>
-		/// Gets or sets the circles.
-		/// </summary>
-		/// <value>The circles.</value>
-		[Display(ResourceType=typeof(LocalizedText),Name="Circles")]
-		public Circle[] Circles { get; set; }
 	}
 
 }
-
-

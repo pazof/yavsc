@@ -6,7 +6,7 @@
  	 <p><i><%= Html.Encode( b.Slogan ) %></i></p>
  	<% foreach (ProductCategory pc in b.Categories ) { %>
 <div>
- 	<h2><%= Html.ActionLink( pc.Name, "ProductCategory", new { id = b.Name, pc = pc.Reference }, new { @class="actionlink" } ) %></h2>
+ 	<h2><%= Html.ActionLink( pc.Name, "ProductCategory", new { brandid= b.Name, pcid = pc.Reference }, new { @class="actionlink" } ) %></h2>
  	</div>
 
  	<% foreach (Product p in pc.Products ) { %>

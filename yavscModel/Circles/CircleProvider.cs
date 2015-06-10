@@ -1,5 +1,5 @@
-﻿//
-//  CircleController.cs
+//
+//  CircleManager.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -19,62 +19,57 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Web.Http;
-using Yavsc.Model.RolesAndMembers;
-using System.Collections.Generic;
-using Yavsc.Model.Circles;
-using System.Web.Security;
+using System.Security.Permissions;
+using System.Configuration;
+using System.Collections.Specialized;
+using System.Collections;
+using System.Reflection;
+using System.Configuration.Provider;
 
-namespace Yavsc.ApiControllers
+namespace Yavsc.Model.Circles
 {
 	/// <summary>
-	/// Circle controller.
+	/// Circle provider.
 	/// </summary>
-	public class CircleController : ApiController
+	public class CircleProvider: ProviderBase
 	{
 		/// <summary>
-		/// Add the specified id and users.
+		/// Add the specified title and users.
 		/// </summary>
-		/// <param name="id">Identifier.</param>
 		/// <param name="title">Title.</param>
 		/// <param name="users">Users.</param>
-		[Authorize]
-		public void Add(string id, string [] users) 
+		public void Add(string owner, string title, string [] users)
 		{
-			string user = Membership.GetUser ().UserName;
-			CircleManager.DefaultProvider.Add (user, id, users);
+			throw new NotImplementedException ();
 		}
 		/// <summary>
 		/// Delete the specified id.
 		/// </summary>
-		/// <param name="id">Identifier.</param>
-		[Authorize] public void Delete(string id) 
+		/// <param name="title">Title.</param>
+		public void Delete(string owner, string title) 
 		{
-			string user = Membership.GetUser ().UserName;
-			CircleManager.DefaultProvider.Delete (user, id);
+			throw new NotImplementedException ();
 		}
 
 		/// <summary>
 		/// Get the specified id.
 		/// </summary>
-		/// <param name="id">Identifier.</param>
-		[Authorize]
-		public Circle Get(string id)
+		/// <param name="title">Title.</param>
+		public Circle Get(string owner, string title)
 		{
-			string user = Membership.GetUser ().UserName;
-			return CircleManager.DefaultProvider.Get (user, id);
+			throw new NotImplementedException ();
 		}
 
 
 		/// <summary>
 		/// List this instance.
 		/// </summary>
-		[Authorize]
 		public CircleInfoCollection List()
 		{
-			string user = Membership.GetUser ().UserName;
-			return CircleManager.DefaultProvider.List ();
+			throw new NotImplementedException ();
 		}
+
 	}
+
 }
 

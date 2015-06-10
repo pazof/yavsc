@@ -19,17 +19,21 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Web.Http;
-using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 
-namespace Yavsc.Model.RolesAndMembers
+namespace Yavsc.Model.Circles
 {
+	
 	/// <summary>
 	/// Circle.
 	/// </summary>
 	public class Circle
 	{
+		/// <summary>
+		/// Gets or sets the identifier.
+		/// </summary>
+		/// <value>The identifier.</value>
+		public long Id { get; set; }
 		/// <summary>
 		/// Gets or sets the title.
 		/// </summary>
@@ -45,7 +49,7 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <summary>
 		/// Union the specified that.
 		/// </summary>
-		/// <param name="that">That.</param>
+		/// <param name="those">Those circle about to be merged.</param>
 		public static string [] Union (Circle []those)
 		{
 			List<string> content = new List<string>();

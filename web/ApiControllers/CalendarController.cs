@@ -26,6 +26,7 @@ using System.Web.Security;
 using Yavsc.Model.Google;
 using Yavsc.Helpers;
 using System.Web.Profile;
+using Yavsc.Model.Circles;
 
 
 namespace Yavsc.ApiControllers

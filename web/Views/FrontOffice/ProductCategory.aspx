@@ -3,7 +3,7 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <% foreach (Product p in Model.Products ) { %>
 
- 	<h3><%= Html.ActionLink( p.Name, "Product", new { id = ViewData["BrandName"], pc = Model.Reference , pref = p.Reference }, new { @class="actionlink" } ) %></h3>
+ 	<h3><%= Html.ActionLink( p.Name, "Product", new { id = ViewData["BrandId"], pc = Model.Reference , pref = p.Reference }, new { @class="actionlink" } ) %></h3>
 
  	<p>
  	<%= p.Description %>

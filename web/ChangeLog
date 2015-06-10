@@ -1,3 +1,16 @@
+2015-06-10  Paul Schneider  <paul@pschneider.fr>
+
+	* CalendarController.cs: refactoring
+
+	* CircleController.cs: implements with default circle provider
+
+	* FrontOfficeController.cs: throws descriptive exception
+	message at searching for a catalog
+
+	* Catalog.aspx: Fixes links on product categories
+
+	* ProductCategory.aspx: Fixes links on products
+
 2015-06-09  Paul Schneider  <paul@pschneider.fr>
 
 	* Edit.aspx: A Page Title

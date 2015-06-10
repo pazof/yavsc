@@ -1,3 +1,17 @@
+2015-06-10  Paul Schneider  <paul@pschneider.fr>
+
+	* Circle.cs:
+	* CircleInfo.cs:
+	* CircleInfoCollection.cs: cleans imports
+
+	* CircleManager.cs: implements a circle manager
+
+	* CircleProvider.cs: Defines a default Circle provider
+
+	* EventPub.cs: refactoring
+
+	* YavscModel.csproj: Includes Circle provider definitions
+
 2015-06-09  Paul Schneider  <paul@pschneider.fr>
 
 	* LocalizedText.resx:
