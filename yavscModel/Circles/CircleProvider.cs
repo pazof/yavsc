@@ -31,43 +31,35 @@ namespace Yavsc.Model.Circles
 	/// <summary>
 	/// Circle provider.
 	/// </summary>
-	public class CircleProvider: ProviderBase
+	public abstract class CircleProvider: ProviderBase
 	{
 		/// <summary>
-		/// Add the specified title and users.
+		/// Add the specified owner, title and users.
 		/// </summary>
+		/// <param name="owner">Owner.</param>
 		/// <param name="title">Title.</param>
 		/// <param name="users">Users.</param>
-		public void Add(string owner, string title, string [] users)
-		{
-			throw new NotImplementedException ();
-		}
-		/// <summary>
-		/// Delete the specified id.
-		/// </summary>
-		/// <param name="title">Title.</param>
-		public void Delete(string owner, string title) 
-		{
-			throw new NotImplementedException ();
-		}
+		public abstract void Add(string owner, string title, string [] users);
 
 		/// <summary>
-		/// Get the specified id.
+		/// Delete the specified owner and title.
 		/// </summary>
+		/// <param name="owner">Owner.</param>
 		/// <param name="title">Title.</param>
-		public Circle Get(string owner, string title)
-		{
-			throw new NotImplementedException ();
-		}
+		public abstract void Delete(string owner, string title) ;
+
+		/// <summary>
+		/// Get the specified owner and title.
+		/// </summary>
+		/// <param name="owner">Owner.</param>
+		/// <param name="title">Title.</param>
+		public abstract Circle Get(string owner, string title);
 
 
 		/// <summary>
 		/// List this instance.
 		/// </summary>
-		public CircleInfoCollection List()
-		{
-			throw new NotImplementedException ();
-		}
+		public abstract CircleInfoCollection List();
 
 	}
 

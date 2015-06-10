@@ -1,5 +1,11 @@
 2015-06-10  Paul Schneider  <paul@pschneider.fr>
 
+	* CircleManager.cs: initializes the default provider
+
+	* CircleProvider.cs: Makes abstract the CircleProvider class
+
+2015-06-10  Paul Schneider  <paul@pschneider.fr>
+
 	* Circle.cs:
 	* CircleInfo.cs:
 	* CircleInfoCollection.cs: cleans imports

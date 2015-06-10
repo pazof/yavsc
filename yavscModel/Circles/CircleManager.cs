@@ -66,8 +66,10 @@ namespace Yavsc.Model.Circles
 			ProviderSettingsCollection providerSettings =
 				pSection.Providers;
 			if (pSection.DefaultProvider != null) {
-				ConstructorInfo ci = Type.GetType (providerSettings [pSection.DefaultProvider].Type).GetConstructor (Type.EmptyTypes);
+				var pSetDef = providerSettings [pSection.DefaultProvider];
+				ConstructorInfo ci = Type.GetType (pSetDef.Type).GetConstructor (Type.EmptyTypes);
 				defaultProvider = ci.Invoke (Type.EmptyTypes) as CircleProvider;
+				defaultProvider.Initialize (pSection.DefaultProvider,pSetDef.Parameters);
 			}
 			/*
 
