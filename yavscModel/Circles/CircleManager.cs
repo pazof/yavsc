@@ -58,9 +58,11 @@ namespace Yavsc.Model.Circles
 				ConfigurationManager.OpenExeConfiguration(
 					ConfigurationUserLevel.None);
 
-			ProtectedConfigurationSection pSection =
-				config.GetSection("circleProviders")
-				as ProtectedConfigurationSection;
+			DataProviderConfigurationSection pSection =
+				config.GetSection("system.web/circleProviders")
+				as DataProviderConfigurationSection;
+			if (pSection == null)
+				throw new ConfigurationErrorsException ("no circleProviders section defined");
 			
 
 			ProviderSettingsCollection providerSettings =

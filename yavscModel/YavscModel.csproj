@@ -67,13 +67,7 @@
     <Compile Include="Blogs\BlogManager.cs" />
     <Compile Include="Blogs\BlogProvider.cs" />
     <Compile Include="WorkFlow\WorkFlowManager.cs" />
-    <Compile Include="WorkFlow\Configuration\Provider.cs" />
-    <Compile Include="WorkFlow\Configuration\ProviderCollection.cs" />
-    <Compile Include="WorkFlow\Configuration\WorkflowConfiguration.cs" />
     <Compile Include="Blogs\BlogHelper.cs" />
-    <Compile Include="Blogs\Configuration\BlogProviderConfigurationElement.cs" />
-    <Compile Include="Blogs\Configuration\BlogProvidersConfigurationCollection.cs" />
-    <Compile Include="Blogs\Configuration\BlogProvidersConfigurationSection.cs" />
     <Compile Include="WorkFlow\NewEstimateEvenArgs.cs" />
     <Compile Include="LocalizedText.fr.Designer.cs">
       <DependentUpon>LocalizedText.fr.resx</DependentUpon>
@@ -163,6 +157,7 @@
     <Compile Include="Circles\CircleInfoCollection.cs" />
     <Compile Include="Circles\CircleManager.cs" />
     <Compile Include="Circles\CircleProvider.cs" />
+    <Compile Include="DataProviderConfigurationSection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

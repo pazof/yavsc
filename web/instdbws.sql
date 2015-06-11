@@ -658,6 +658,7 @@ CREATE TABLE circle
   _id serial NOT NULL, -- Circle identifier
   owner character varying(255), -- creator of this circle
   applicationname character varying(255), -- Application name
+  title character varying(512),
   CONSTRAINT circle_pkey PRIMARY KEY (_id),
   CONSTRAINT circle_owner_fkey FOREIGN KEY (owner, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
@@ -666,11 +667,11 @@ CREATE TABLE circle
 WITH (
   OIDS=FALSE
 );
-
+ALTER TABLE circle
+  OWNER TO yavscdev;
 COMMENT ON COLUMN circle._id IS 'Circle identifier';
 COMMENT ON COLUMN circle.owner IS 'creator of this circle';
 COMMENT ON COLUMN circle.applicationname IS 'Application name';
-
 -- Table: circle_members
 
 -- DROP TABLE circle_members;
@@ -688,4 +689,4 @@ WITH (
   OIDS=FALSE
 );
 
- 
+

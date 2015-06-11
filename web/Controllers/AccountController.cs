@@ -11,6 +11,7 @@ using Yavsc;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Helpers;
 using System.Web.Mvc;
+using Yavsc.Model.Circles;
 
 namespace Yavsc.Controllers
 {
@@ -290,7 +291,14 @@ namespace Yavsc.Controllers
 			}
 			return View (model);
 		}
-
+		/// <summary>
+		/// Circles this instance.
+		/// </summary>
+		[Authorize]
+		public ActionResult Circles ()
+		{
+			return View (CircleManager.DefaultProvider.List (Membership.GetUser().UserName));
+		}
 		/// <summary>
 		/// Logout the specified returnUrl.
 		/// </summary>

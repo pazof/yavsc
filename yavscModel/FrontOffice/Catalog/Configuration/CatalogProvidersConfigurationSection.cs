@@ -7,7 +7,7 @@ namespace Yavsc.Model.FrontOffice.Configuration
 	/// <summary>
 	/// Catalog providers configuration section.
 	/// </summary>
-	public class CatalogProvidersConfigurationSection : ConfigurationSection
+	[Obsolete("Use DataProviderConfiguration instead")] public class CatalogProvidersConfigurationSection : ConfigurationSection
 	{
 		/// <summary>
 		/// Gets or sets the default provider.

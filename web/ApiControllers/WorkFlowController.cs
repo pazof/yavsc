@@ -17,7 +17,7 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Work flow controller.
 	/// </summary>
-	public class WorkFlowApiController : ApiController
+	public class WorkFlowController : ApiController
     {
 		string adminRoleName="Admin";
 		/// <summary>

@@ -59,7 +59,6 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 </aside>
 <div style="float:right; height:5em; z-index:-1;"></div>
 	<footer>
-	<!-- Placez cette balise dans l'en-tête ou juste avant la balise de fermeture du corps de texte. -->
 <script src="https://apis.google.com/js/platform.js" async defer>
   {lang: 'fr'}
 </script>

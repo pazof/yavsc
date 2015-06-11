@@ -41,24 +41,24 @@ footer {
 	bottom:0;
 	left:0;
 	right:0;
-	height:2.5em;
 	background-color:rgba(16,0,0,0.8);
 	display: flex;
-	justify-content: space-around;
 	z-index:-1;
+	font-size: small;
 }
 
 footer a { 
-	border: dashed #888 3px;
+    max-height: 2em;
+	padding:.1em;
 }
 
 footer img {
-    max-height: 1em;
-    max-width: 2.5em;
+    max-height: 2em;
+	padding:.1em;
     }
+
 #logo {
 	float: left;
-
 	}
 
 .panel,.bshpanel,aside {
@@ -217,7 +217,7 @@ a.actionlink:hover + .hidcom {
 
 @media print {
 		body {background-color:white;color:black;}
-		header,footer,.postcomment,.actionlink,.metablog{ display:none;} 
+		header,footer,.postcomment,.actionlink,.metablog,#login{ display:none;} 
 	}
 @media all and (min-width: 641px) {
 	.bshpanel { display:block; }
@@ -238,7 +238,7 @@ a.actionlink:hover + .hidcom {
     max-width: 2.0em;
     }
   footer {
-    font-size: small;
+    font-size: x-small;
   }
 
   body { font-size: smaller; }
@@ -248,7 +248,7 @@ a.actionlink:hover + .hidcom {
 	  footer img { 
     max-height: 0.6em;
     max-width: 1.4em; }
-	  footer { font-size: x-small;  }
+	  footer { font-size: xx-small;  }
 	}
 
 }

@@ -1,9 +1,9 @@
 using System;
 using Yavsc.Model.WorkFlow;
 using System.Configuration;
-using Yavsc.Model.WorkFlow.Configuration;
 using System.Collections.Specialized;
 using Yavsc.Model.FrontOffice;
+using System.Configuration.Provider;
 
 namespace Yavsc.Model.WorkFlow
 {
@@ -123,10 +123,10 @@ namespace Yavsc.Model.WorkFlow
 		/// <value>The content provider.</value>
 		public IContentProvider ContentProvider {
 			get {
-				WorkflowConfiguration c = (WorkflowConfiguration) ConfigurationManager.GetSection ("system.web/workflow");
+				DataProviderConfigurationSection c = (DataProviderConfigurationSection) ConfigurationManager.GetSection ("system.web/workflow");
 				if (c == null)
 					throw new Exception ("No system.web/workflow configuration section found");
-				WFProvider confprov = c.Providers.GetElement (c.DefaultProvider);
+				ProviderSettings confprov = c.Providers[c.DefaultProvider] as ProviderSettings;
 				if (confprov == null)
 					throw new Exception ("Default workflow provider not found (system.web/workflow@defaultProvider)");
 				string clsName = confprov.Type;
@@ -147,12 +147,7 @@ namespace Yavsc.Model.WorkFlow
 					System.Reflection.ConstructorInfo ci =cpt.GetConstructor (System.Type.EmptyTypes);
 					contentProvider = (IContentProvider)ci.Invoke (System.Type.EmptyTypes);
 				}
-
-				NameValueCollection config = new NameValueCollection ();
-				config.Add ("name", confprov.Name);
-				config.Add ("connectionStringName", confprov.ConnectionStringName);
-				config.Add ("applicationName", confprov.ApplicationName);
-				contentProvider.Initialize (confprov.Name, config);
+				contentProvider.Initialize (confprov.Name, confprov.Parameters);
 
 				return contentProvider;
 			}
