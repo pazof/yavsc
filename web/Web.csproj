@@ -126,7 +126,6 @@
     <Folder Include="Views\PayPal\" />
     <Folder Include="ApiControllers\" />
     <Folder Include="Views\Modules\" />
-    <Folder Include="Views\Circle\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />

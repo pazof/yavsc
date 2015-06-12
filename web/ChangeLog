@@ -1,5 +1,15 @@
 2015-06-12  Paul Schneider  <paul@pschneider.fr>
 
+	* AccountController.cs: Code formatting
+
+	* Web.csproj: cleanning
+
+	* Web.config: Yavsc.Model.Circles in imported namespaces
+
+	* Circles.aspx: Allow Circle view to handle null model
+
+2015-06-12  Paul Schneider  <paul@pschneider.fr>
+
 	* Web.csproj:
 	* Web.config:
 	* instdbws.sql:

@@ -297,7 +297,9 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Circles ()
 		{
-			return View (CircleManager.DefaultProvider.List (Membership.GetUser().UserName));
+			string user = Membership.GetUser ().UserName;
+			CircleInfoCollection cic = CircleManager.DefaultProvider.List (user);
+			return View (cic);
 		}
 		/// <summary>
 		/// Logout the specified returnUrl.
