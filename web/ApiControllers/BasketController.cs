@@ -15,7 +15,7 @@ namespace Yavsc.ApiControllers
 	/// Maintains a collection of articles
 	/// qualified with name value pairs
 	/// </summary>
-	public class BasketApiController : ApiController
+	public class BasketController : ApiController
     {
 		/// <summary>
 		/// The wfmgr.

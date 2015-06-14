@@ -184,7 +184,7 @@ namespace Yavsc.ApiControllers
 				if (model.IsApprouved)
 				if (!Roles.IsUserInRole ("Admin"))
 				if (!Roles.IsUserInRole ("FrontOffice")) {
-					ModelState.AddModelError ("IsApprouved", 
+					ModelState.AddModelError ("Register", 
 						"Since you're not member of Admin or FrontOffice groups, " +
 						"you cannot ask for a pre-approuved registration");
 					return DefaultResponse ();
