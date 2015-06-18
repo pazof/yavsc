@@ -27,10 +27,15 @@ using System.Web.Security;
 
 namespace Yavsc.ApiControllers
 {
+	public class NewCircle {
+		public string title { get ; set; } 
+		public string [] users { get ; set; }
+	}
+
 	/// <summary>
 	/// Circle controller.
 	/// </summary>
-	public class CircleApiController : ApiController
+	public class CircleController : ApiController
 	{
 		/// <summary>
 		/// Creates the specified circle using the given title and user list.
@@ -38,10 +43,10 @@ namespace Yavsc.ApiControllers
 		/// <param name="title">Identifier.</param>
 		/// <param name="users">Users.</param>
 		[Authorize]
-		public long Create(string title, string [] users) 
+		public long Create(NewCircle model) 
 		{
 			string user = Membership.GetUser ().UserName;
-			return CircleManager.DefaultProvider.Create (user, title, users);
+			return CircleManager.DefaultProvider.Create (user, model.title, model.users);
 		}
 
 		/// <summary>

@@ -76,6 +76,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
         public static string was_added_to_the_empty_role {
             get {
                 return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
@@ -139,6 +145,12 @@ namespace Yavsc.Model {
         public static string Date_search {
             get {
                 return ResourceManager.GetString("Date_search", resourceCulture);
+            }
+        }
+        
+        public static string Members {
+            get {
+                return ResourceManager.GetString("Members", resourceCulture);
             }
         }
         

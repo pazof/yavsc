@@ -44,6 +44,11 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
+		/// <summary>
+		/// Pub the Event
+		/// </summary>
+		/// <returns>The pub.</returns>
+		/// <param name="model">Model.</param>
 		public ActionResult EventPub (EventPub model)
 		{
 			return View (model);

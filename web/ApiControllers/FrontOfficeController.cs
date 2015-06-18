@@ -164,66 +164,6 @@ namespace Yavsc.ApiControllers
 			return result;
 		}
 
-		private HttpResponseMessage DefaultResponse()
-		{
-			return ModelState.IsValid ?
-				Request.CreateResponse (System.Net.HttpStatusCode.OK) :
-				Request.CreateResponse (System.Net.HttpStatusCode.BadRequest,
-					ValidateAjaxAttribute.GetErrorModelObject (ModelState));
-		}
-
-		/// <summary>
-		/// Register the specified model.
-		/// </summary>
-		/// <param name="model">Model.</param>
-		[Authorize()]
-		[ValidateAjaxAttribute]
-		public HttpResponseMessage Register ([FromBody] RegisterClientModel model)
-		{
-			if (ModelState.IsValid) {
-				if (model.IsApprouved)
-				if (!Roles.IsUserInRole ("Admin"))
-				if (!Roles.IsUserInRole ("FrontOffice")) {
-					ModelState.AddModelError ("Register", 
-						"Since you're not member of Admin or FrontOffice groups, " +
-						"you cannot ask for a pre-approuved registration");
-					return DefaultResponse ();
-				}
-				MembershipCreateStatus mcs;
-				var user = Membership.CreateUser (
-					          model.UserName,
-					          model.Password,
-					          model.Email,
-					          null,
-					          null,
-					          model.IsApprouved,
-					          out mcs);
-				switch (mcs) {
-				case MembershipCreateStatus.DuplicateEmail:
-					ModelState.AddModelError ("Email", "Cette adresse e-mail correspond " +
-					"à un compte utilisateur existant");
-					break;
-				case MembershipCreateStatus.DuplicateUserName:
-					ModelState.AddModelError ("UserName", "Ce nom d'utilisateur est " +
-					"déjà enregistré");
-					break;
-				case MembershipCreateStatus.Success:
-					if (!model.IsApprouved)
-						Yavsc.Helpers.YavscHelpers.SendActivationEmail (user);
-					ProfileBase prtu = ProfileBase.Create (model.UserName);
-					prtu.SetPropertyValue("Name",model.Name);
-					prtu.SetPropertyValue("Address",model.Address);
-					prtu.SetPropertyValue("CityAndState",model.CityAndState);
-					prtu.SetPropertyValue("Mobile",model.Mobile);
-					prtu.SetPropertyValue("Phone",model.Phone);
-					prtu.SetPropertyValue("ZipCode",model.ZipCode);
-					break;
-				default:
-					break;
-				}
-			}
-			return DefaultResponse ();
-		}
 	}
 }
 

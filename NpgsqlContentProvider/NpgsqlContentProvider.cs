@@ -538,7 +538,7 @@ namespace Yavsc
 					cmd.Parameters.AddWithValue("@app", ApplicationName);
 					cnx.Open ();
 					Estimate created = new Estimate ();
-					created.Id = (long)cmd.ExecuteScalar ();
+					created.Id = (long) cmd.ExecuteScalar ();
 					cnx.Close ();
 					created.Title = title;
 					created.Description = description;

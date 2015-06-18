@@ -35,8 +35,8 @@ namespace Yavsc.Model.RolesAndMembers
 		/// Gets or sets the name of the user.
 		/// </summary>
 		/// <value>The name of the user.</value>
-		[Localizable(true)]
-		[Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")]
+		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")
+			,Display(ResourceType=typeof(LocalizedText),Name="UserName")]
 		public string UserName { get; set; }
  
 		/// <summary>

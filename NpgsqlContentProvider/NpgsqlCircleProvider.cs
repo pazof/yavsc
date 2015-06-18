@@ -25,6 +25,7 @@ using System.Configuration;
 using Npgsql;
 using NpgsqlTypes;
 using System.Collections.Generic;
+using System.Web.Security;
 
 namespace WorkFlowProvider
 {
@@ -140,7 +141,7 @@ namespace WorkFlowProvider
 					cmd.Parameters.AddWithValue ("wnr", owner);
 					cmd.Parameters.AddWithValue ("tit", title);
 					cmd.Parameters.AddWithValue ("app", applicationName);
-					id = (long)cmd.ExecuteScalar ();
+					id = (long) cmd.ExecuteScalar ();
 				}
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "insert into circle_members (circle_id,member) values (@cid,@mbr)";
@@ -148,14 +149,14 @@ namespace WorkFlowProvider
 					cmd.Parameters.Add ("mbr", NpgsqlDbType.Varchar);
 					cmd.Prepare ();
 					foreach (string user in users) {
-						cmd.Parameters[1].Value = user;
+						object pkid = Membership.GetUser (user).ProviderUserKey;
+						cmd.Parameters[1].Value = pkid.ToString();
 						cmd.ExecuteNonQuery ();
 					}
 				}
 				cnx.Close ();
 			}
-
-			throw new NotImplementedException ();
+			return id;
 		}
 
 		/// <summary>
@@ -190,11 +191,15 @@ namespace WorkFlowProvider
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 					if (rdr.HasRows) {
 						cc = new CircleInfoCollection ();
-						while (rdr.Read ()) 
-							cc.Add( 
-								new CircleInfo (
-									rdr.GetInt64 (0),
-									rdr.GetString (1)));
+						while (rdr.Read ()) {
+							string title = null;
+							int ottl = rdr.GetOrdinal ("title");
+							if (!rdr.IsDBNull (ottl))
+								title = rdr.GetString (ottl);
+							long id = (long) rdr.GetInt64 (
+								          rdr.GetOrdinal ("_id"));
+							cc.Add (new CircleInfo (id,title));
+						}
 					}
 					rdr.Close ();
 				}

@@ -5,6 +5,10 @@ using System.Web.Security;
 using System.IO;
 using System.Web.Configuration;
 using System.Net.Mail;
+using System.Web.Http.ModelBinding;
+using Yavsc.Model.RolesAndMembers;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace Yavsc.Helpers
 {
@@ -13,8 +17,7 @@ namespace Yavsc.Helpers
 	/// </summary>
 	public static class YavscHelpers
 	{
-		private static string registrationMessage =
-			WebConfigurationManager.AppSettings ["RegistrationMessage"];
+		
 
 
 		private static string siteName = null; 
@@ -43,10 +46,21 @@ namespace Yavsc.Helpers
 		}
 
 		/// <summary>
-		/// Sends the activation email.
+		/// Sends the activation message.
 		/// </summary>
 		/// <param name="user">User.</param>
-		public static void SendActivationEmail(MembershipUser user) {
+		public static void SendActivationMessage(MembershipUser user)
+		{
+			SendEmail (WebConfigurationManager.AppSettings ["RegistrationMessage"],
+				user);
+		}
+
+		/// <summary>
+		/// Sends the email.
+		/// </summary>
+		/// <param name="registrationMessage">Registration message.</param>
+		/// <param name="user">User.</param>
+		public static void SendEmail(string registrationMessage, MembershipUser user) {
 			FileInfo fi = new FileInfo (
 				HttpContext.Current.Server.MapPath (registrationMessage));
 			if (!fi.Exists) {
@@ -79,6 +93,48 @@ namespace Yavsc.Helpers
 			}
 		}
 
+		/// <summary>
+		/// Resets the password.
+		/// </summary>
+		/// <param name="modelState">Model state.</param>
+		/// <param name="model">Model.</param>
+		public static void ResetPassword(LostPasswordModel model, out StringDictionary errors)
+		{
+			MembershipUserCollection users = null;
+			errors = new StringDictionary ();
+
+			if (!string.IsNullOrEmpty (model.UserName)) {
+				users =
+					Membership.FindUsersByName (model.UserName);
+				if (users.Count < 1) {
+					errors.Add ("UserName", "User name not found");
+					return ;
+				}
+				if (users.Count != 1) {
+					errors.Add ("UserName", "Found more than one user!(sic)");
+					return ;
+				}
+			}
+			if (!string.IsNullOrEmpty (model.Email)) {
+				users =
+					Membership.FindUsersByEmail (model.Email);
+				if (users.Count < 1) {
+					errors.Add ( "Email", "Email not found");
+					return ;
+				}
+				if (users.Count != 1) {
+					errors.Add ("Email", "Found more than one user!(sic)");
+					return ;
+				}
+			}
+			if (users==null)
+				return;
+			// Assert users.Count == 1
+			if (users.Count != 1)
+				throw new InvalidProgramException ("Emails and user's names are uniques, and we find more than one result here, aborting.");
+			foreach (MembershipUser u in users) 
+				YavscHelpers.SendActivationMessage (u);
+		}
 	}
 }
 

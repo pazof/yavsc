@@ -34,7 +34,7 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Night flash controller.
 	/// </summary>
-	public class CalendarApiController: ApiController
+	public class CalendarController: ApiController
 	{
 		YaEvent[] getTestList()
 		{
@@ -160,7 +160,7 @@ namespace Yavsc.ApiControllers
 					"déjà enregistré");
 					break;
 				case MembershipCreateStatus.Success:
-					YavscHelpers.SendActivationEmail (user);
+					YavscHelpers.SendActivationMessage (user);
 					// TODO set registration id
 					throw new NotImplementedException ();
 				}

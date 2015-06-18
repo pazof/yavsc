@@ -12,7 +12,7 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Blogs API controller.
 	/// </summary>
-	public class BlogsApiController : ApiController
+	public class BlogsController : ApiController
 	{
 		private const string adminRoleName = "Admin";
 

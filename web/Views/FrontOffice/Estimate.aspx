@@ -7,11 +7,11 @@ $(function(){
 $("#tbwrts").stupidtable();
 });
 </script>
-<link rel="stylesheet" href="<%=Url.Content("~/Theme/dark/style.css")%>" type="text/css" media="print, projection, screen" />
 </asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
 <%= Html.ValidationSummary("Devis") %>
+
 <% using  (Html.BeginForm("Estimate","FrontOffice")) { %>
 <%= Html.LabelFor(model => model.Title) %>:<%= Html.TextBox( "Title" ) %>
 <%= Html.ValidationMessage("Title", "*") %>
@@ -85,10 +85,9 @@ $("#tbwrts").stupidtable();
 
 
  <asp:Content ContentPlaceHolderID="MASContent" ID="MASContent1" runat="server">
-     <% ViewData["EstimateId"]=Model.Id; %>
    <aside>
     <div id="dfnuser" class="hidden">
-   <%= Html.Partial("Register",new RegisterClientModel(),new ViewDataDictionary(ViewData)
+   <%= Html.Partial("~/Views/Account/Register.ascx",new RegisterClientModel(),new ViewDataDictionary(ViewData)
         {
             TemplateInfo = new System.Web.Mvc.TemplateInfo
             {
@@ -280,6 +279,7 @@ function clearRegistrationValidation(){
             $("#Err_ur_Address").text("");
             $("#Err_ur_ZipCode").text("");
             $("#Err_ur_CityAndState").text("");
+            $("#Err_ur_IsApprouved").text("");
     }
 
 function addRow(){

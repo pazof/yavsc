@@ -1,3 +1,9 @@
+2015-06-18  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlCircleProvider.cs: Fixes the Circle creation 
+
+	* NpgsqlContentProvider.cs: code formatting
+
 2015-06-10  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlCircleProvider.cs: 

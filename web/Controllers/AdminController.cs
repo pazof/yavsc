@@ -260,7 +260,6 @@ namespace Yavsc.Controllers
 		[Authorize()]
 		public ActionResult Admin (NewAdminModel model)
 		{
-
 			// ASSERT (Roles.RoleExists (adminRoleName)) 
 			string [] admins = Roles.GetUsersInRole (adminRoleName);
 			string currentUser = Membership.GetUser ().UserName;

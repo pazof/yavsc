@@ -62,4 +62,7 @@
 	<data name="ImgLocator"><value>Image URI</value></data>
 	<data name="Home"><value>Home</value></data>
 	<data name="Bill edition"><value>Bill edition</value></data>
+	<data name="Create"><value>Create</value></data>
+	<data name="Members"><value>Members</value></data>
+	<data name="UserName"><value>User Name</value></data>
 </root>

@@ -1,3 +1,51 @@
+2015-06-18  Paul Schneider  <paul@pschneider.fr>
+
+	* AccountController.cs: Register and reset passord from Web
+	API
+
+	* GCMController.cs: initial creation, will host GCM calls and
+	related procedures.
+
+	* ResetPassword.aspx: Html view to resetr the password
+
+	* BlogsController.cs:
+	* CircleController.cs:
+	* WorkFlowController.cs:
+	* PaypalApiController.cs:
+	* FrontOfficeController.cs: refactoring
+
+	* Web.config:
+	* Web.csproj:
+	* CalendarController.cs: 
+
+	* AccountController.cs: Adds the way to reset the password
+
+	* Global.asax.cs:
+	* AdminController.cs: code formatting
+
+	* FrontOfficeController.cs: xml doc
+
+	* T.cs: Make this class an helper to translation
+
+	* YavscHelpers.cs: Implements the e-mail sending
+
+	* style.css: style uniformization
+
+	* Circles.aspx: Implements the Html interface to Circle
+	creation (modifications and deletions are still to implement)
+
+	* Register.ascx: Allows the error display in case of lack of
+	power of the user at registering another user.
+
+
+	* Estimate.aspx: use the partial view to register from the
+	Account folder.
+	Cleans the useless reference to ~/Theme/dark/style.css, that
+	was for using the "tablesorter.js", no used anymore.
+
+
+	* Web.config: Trying to have all the Index pages to work...
+
 2015-06-12  Paul Schneider  <paul@pschneider.fr>
 
 	* AccountController.cs: Code formatting

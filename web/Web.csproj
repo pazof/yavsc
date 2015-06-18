@@ -19,7 +19,6 @@
     <DefineConstants>DEBUG;TEST;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
     <AspNet>
       <AspNet DisableCodeBehindGeneration="True" />
     </AspNet>
@@ -31,6 +30,7 @@
       </CustomCommands>
     </CustomCommands>
     <DocumentationFile>bin\Yavsc.xml</DocumentationFile>
+    <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -173,8 +173,6 @@
     <Compile Include="Formatters\ErrorHtmlFormatter.cs" />
     <Compile Include="Formatters\RssFeedsFormatter.cs" />
     <Compile Include="Formatters\TexToPdfFormatter.cs" />
-    <Compile Include="ApiControllers\BlogsApiController.cs" />
-    <Compile Include="ApiControllers\FrontOfficeApiController.cs" />
     <Compile Include="ApiControllers\PaypalApiController.cs" />
     <Compile Include="WebApiConfig.cs" />
     <Compile Include="IValueProvider.cs" />
@@ -184,10 +182,14 @@
     <Compile Include="Formatters\FormatterException.cs" />
     <Compile Include="NUnitTestClass.cs" />
     <Compile Include="TestExec.cs" />
-    <Compile Include="ApiControllers\CircleApiController.cs" />
-    <Compile Include="ApiControllers\BasketApiController.cs" />
-    <Compile Include="ApiControllers\CalendarApiController.cs" />
     <Compile Include="ApiControllers\WorkFlowController.cs" />
+    <Compile Include="ApiControllers\BasketController.cs" />
+    <Compile Include="ApiControllers\BlogsController.cs" />
+    <Compile Include="ApiControllers\CalendarController.cs" />
+    <Compile Include="ApiControllers\CircleController.cs" />
+    <Compile Include="ApiControllers\FrontOfficeController.cs" />
+    <Compile Include="ApiControllers\GCMController.cs" />
+    <Compile Include="ApiControllers\AccountController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -252,7 +254,6 @@
     <Content Include="Theme\dark\asc.gif" />
     <Content Include="Theme\dark\bg.gif" />
     <Content Include="Theme\dark\desc.gif" />
-    <Content Include="Theme\dark\style.css" />
     <Content Include="Views\FrontOffice\Estimates.aspx" />
     <Content Include="images\pgsql.png" />
     <Content Include="Catalog.xml" />
@@ -313,7 +314,6 @@
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Views\Account\Profile.aspx" />
     <Content Include="robots.txt" />
-    <Content Include="Views\FrontOffice\Register.ascx" />
     <Content Include="Scripts\form-new-user.js" />
     <Content Include="Views\FrontOffice\Estimate.aspx" />
     <Content Include="Theme\dark\croix.png" />
@@ -340,6 +340,8 @@
     <Content Include="Theme\md\mdd_modal_background.png" />
     <Content Include="Theme\mdd_styles.css" />
     <Content Include="Views\Account\Circles.aspx" />
+    <Content Include="Views\Account\Register.ascx" />
+    <Content Include="Views\Account\ResetPassword.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -351,7 +353,7 @@
         <Policies>
           <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="FileFormatDefault" />
         </Policies>
-        <XspParameters Port="8080" Address="127.0.0.1" SslMode="None" SslProtocol="Default" KeyType="None" CertFile="" KeyFile="" PasswordOptions="None" Password="" Verbose="True" />
+        <XspParameters Port="8080" Address="127.0.0.1" SslMode="None" SslProtocol="Ssl2" KeyType="Pkcs12" CertFile="" KeyFile="" PasswordOptions="None" Password="" Verbose="True" />
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>

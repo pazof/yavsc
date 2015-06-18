@@ -12,6 +12,7 @@ using Yavsc.Model.RolesAndMembers;
 using Yavsc.Helpers;
 using System.Web.Mvc;
 using Yavsc.Model.Circles;
+using System.Collections.Specialized;
 
 namespace Yavsc.Controllers
 {
@@ -108,7 +109,7 @@ namespace Yavsc.Controllers
 					"déjà enregistré");
 					return View (model);
 				case MembershipCreateStatus.Success:
-					YavscHelpers.SendActivationEmail (user);
+					YavscHelpers.SendActivationMessage (user);
 					ViewData ["username"] = user.UserName;
 					ViewData ["email"] = user.Email;
 					return View ("RegistrationPending");
@@ -177,8 +178,8 @@ namespace Yavsc.Controllers
 				// than return false in certain failure scenarios.
 				bool changePasswordSucceeded = false;
 				try {
-					var users = Membership.FindUsersByName (model.Username);
-
+					MembershipUserCollection users =
+						Membership.FindUsersByName (model.Username);
 					if (users.Count > 0) {
 						MembershipUser user = Membership.GetUser (model.Username, true);	
 
@@ -299,6 +300,8 @@ namespace Yavsc.Controllers
 		{
 			string user = Membership.GetUser ().UserName;
 			CircleInfoCollection cic = CircleManager.DefaultProvider.List (user);
+			if (cic == null)
+				cic = new CircleInfoCollection ();
 			return View (cic);
 		}
 		/// <summary>
@@ -310,6 +313,22 @@ namespace Yavsc.Controllers
 		{
 			FormsAuthentication.SignOut ();
 			return Redirect (returnUrl);
+		}
+
+		/// <summary>
+		/// Losts the password.
+		/// </summary>
+		/// <returns>The password.</returns>
+		/// <param name="model">Model.</param>
+		public ActionResult ResetPassword(LostPasswordModel model)
+		{
+			if (Request.HttpMethod == "POST") {
+				StringDictionary errors;
+				YavscHelpers.ResetPassword (model, out errors);
+				foreach (string key in errors.Keys)
+					ModelState.AddModelError (key, errors [key]);
+			}
+			return View (model);
 		}
 
 		/// <summary>
@@ -325,13 +344,19 @@ namespace Yavsc.Controllers
 				ViewData ["Error"] = 
 					string.Format ("Cet utilisateur n'existe pas ({0})", id);
 			} else if (u.ProviderUserKey.ToString () == key) {
-				u.IsApproved = true;
-				Membership.UpdateUser (u);
-				ViewData ["Message"] = 
-					string.Format ("La création de votre compte ({0}) est validée.", id);
+				if (u.IsApproved) {
+					ViewData ["Message"] = 
+						string.Format ("Votre compte ({0}) est déjà validé.", id);
+				} else { 
+					u.IsApproved = true;
+					Membership.UpdateUser (u);
+					ViewData ["Message"] = 
+						string.Format ("La création de votre compte ({0}) est validée.", id);
+				}
 			} else
 				ViewData ["Error"] = "La clé utilisée pour valider ce compte est incorrecte";
 			return View ();
 		}
+
 	}
 }

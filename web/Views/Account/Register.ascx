@@ -3,6 +3,7 @@
 <% using(Html.BeginForm("Register")) %>
 <% { %>
 <h1>Nouvel utilisateur</h1>
+<span class="field-validation-valid error" data-valmsg-replace="false" id="Err_ur_IsApprouved">*</span>
 <table class="layout">
 
 <tr><td align="right">

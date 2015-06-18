@@ -44,14 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RolesAndMemebers\ChangePasswordModel.cs" />
-    <Compile Include="RolesAndMemebers\LoginModel.cs" />
-    <Compile Include="RolesAndMemebers\NewAdminModel.cs" />
-    <Compile Include="RolesAndMemebers\NewRoleModel.cs" />
-    <Compile Include="RolesAndMemebers\RegisterViewModel.cs" />
     <Compile Include="Admin\RestoreQuery.cs" />
     <Compile Include="Admin\DataAccess.cs" />
-    <Compile Include="RolesAndMemebers\Profile.cs" />
     <Compile Include="FileSystem\FileInfoCollection.cs" />
     <Compile Include="WorkFlow\Writting.cs" />
     <Compile Include="WorkFlow\Estimate.cs" />
@@ -134,8 +128,6 @@
     <Compile Include="Google\CalendarEventList.cs" />
     <Compile Include="Google\GDate.cs" />
     <Compile Include="Google\Resource.cs" />
-    <Compile Include="RolesAndMemebers\RegisterModel.cs" />
-    <Compile Include="RolesAndMemebers\RegisterClientModel.cs" />
     <Compile Include="Google\Messaging\MessageWithPayLoad.cs" />
     <Compile Include="Google\Messaging\MessageWithPayloadResponse.cs" />
     <Compile Include="Google\Messaging\Notification.cs" />
@@ -149,8 +141,6 @@
     <Compile Include="Calendar\Schedule.cs" />
     <Compile Include="Calendar\WeekDay.cs" />
     <Compile Include="Calendar\YaEvent.cs" />
-    <Compile Include="RolesAndMemebers\Publishing.cs" />
-    <Compile Include="RolesAndMemebers\ProviderPublicInfo.cs" />
     <Compile Include="Google\GCMRegisterModel.cs" />
     <Compile Include="Circles\Circle.cs" />
     <Compile Include="Circles\CircleInfo.cs" />
@@ -158,10 +148,21 @@
     <Compile Include="Circles\CircleManager.cs" />
     <Compile Include="Circles\CircleProvider.cs" />
     <Compile Include="DataProviderConfigurationSection.cs" />
+    <Compile Include="RolesAndMembers\ChangePasswordModel.cs" />
+    <Compile Include="RolesAndMembers\LoginModel.cs" />
+    <Compile Include="RolesAndMembers\NewAdminModel.cs" />
+    <Compile Include="RolesAndMembers\NewRoleModel.cs" />
+    <Compile Include="RolesAndMembers\RegisterViewModel.cs" />
+    <Compile Include="RolesAndMembers\Profile.cs" />
+    <Compile Include="RolesAndMembers\RegisterModel.cs" />
+    <Compile Include="RolesAndMembers\RegisterClientModel.cs" />
+    <Compile Include="RolesAndMembers\Publishing.cs" />
+    <Compile Include="RolesAndMembers\ProviderPublicInfo.cs" />
+    <Compile Include="RolesAndMembers\GCMRegister.cs" />
+    <Compile Include="RolesAndMembers\LostPasswordModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="RolesAndMemebers\" />
     <Folder Include="WorkFlow\" />
     <Folder Include="Blogs\" />
     <Folder Include="Admin\" />
@@ -172,6 +173,7 @@
     <Folder Include="FrontOffice\Catalog\Billing\" />
     <Folder Include="Google\Messaging\" />
     <Folder Include="Circles\" />
+    <Folder Include="RolesAndMembers\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

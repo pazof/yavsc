@@ -1,5 +1,4 @@
 
-﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,6 +107,8 @@ namespace Yavsc
 				("AppStartExecuteCompleted", 
 					BindingFlags.NonPublic | BindingFlags.Static);
 			ob.SetValue(null, true, null);
+			
 		}
 	}
 }
+

@@ -145,7 +145,7 @@ padding-left: 20px;
 }
 
 
-input.actionlink, a.actionlink {
+.actionlink {
 	color: #B0B080;
 	border: solid 1px rgb(128,128,128);
 	border-radius:5px;
@@ -155,9 +155,17 @@ input.actionlink, a.actionlink {
    font-family: 'Arial', cursive;
 }
 
+ input, select { 
+	color: #B0B080;
+	border: solid 1px rgb(128,128,128);
+	border-radius:5px;
+   background-color:rgba(0,0,32,0.8);
+   font-family: 'Arial', cursive;
+}
+
 a.actionlink img { top:4px; }
 
-input.actionlink:hover, a.actionlink:hover {
+.actionlink:hover {
 	background-color:rgba(30,0,124,0.9);
     border : solid 1px white;
     text-decoration: underline;

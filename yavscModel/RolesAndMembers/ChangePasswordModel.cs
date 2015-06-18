@@ -12,14 +12,14 @@ namespace Yavsc.Model.RolesAndMembers
 		/// Gets or sets the username.
 		/// </summary>
 		/// <value>The username.</value>
-		[Required(ErrorMessage = "Please enter a Username")]
+		[Required(ErrorMessage = "Please, enter your user name")] 
 		public string Username { get; set; }
- 
+
 		/// <summary>
 		/// Gets or sets the old password.
 		/// </summary>
 		/// <value>The old password.</value>
-		[Required(ErrorMessage = "Please your old Password")]
+		[Required(ErrorMessage = "Please, enter your old Password")]
 		public string OldPassword { get; set; }
  
 		/// <summary>

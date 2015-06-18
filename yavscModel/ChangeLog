@@ -1,3 +1,34 @@
+2015-06-18  Paul Schneider  <paul@pschneider.fr>
+
+	* YavscModel.csproj:
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* Profile.cs:
+	* Profile.cs:
+	* LocalizedText.fr.Designer.cs:
+	* LoginModel.cs:
+	* Publishing.cs:
+	* LoginModel.cs:
+	* Publishing.cs:
+	* GCMRegister.cs:
+	* NewRoleModel.cs:
+	* GCMRegister.cs:
+	* NewRoleModel.cs:
+	* NewAdminModel.cs:
+	* RegisterModel.cs:
+	* NewAdminModel.cs:
+	* RegisterModel.cs:
+	* RegisterViewModel.cs:
+	* LostPasswordModel.cs:
+	* ProviderPublicInfo.cs:
+	* RegisterViewModel.cs:
+	* ProviderPublicInfo.cs:
+	* ChangePasswordModel.cs:
+	* RegisterClientModel.cs:
+	* RegisterClientModel.cs:
+	* ChangePasswordModel.cs: 
+
 2015-06-12  Paul Schneider  <paul@pschneider.fr>
 
 	* YavscModel.csproj:

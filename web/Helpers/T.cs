@@ -15,8 +15,9 @@ namespace Yavsc.Helpers
 	/// <summary>
 	/// T.
 	/// </summary>
-	public class T
+	public static class T
 	{
+		
 		/// <summary>
 		/// Gets the string.
 		/// </summary>
@@ -27,5 +28,12 @@ namespace Yavsc.Helpers
 			string tr = LocalizedText.ResourceManager.GetString (msg.Replace (" ", "_"));
 			return tr==null?msg:tr;
 		}
+
+		public static string Translate(this HtmlHelper helper, string text)
+		{
+			// Just call the other one, to avoid having two copies (we don't use the HtmlHelper).
+			return GetString(text);
+		}
+
 	}
 }
