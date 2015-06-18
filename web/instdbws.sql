@@ -690,3 +690,24 @@ WITH (
 );
 
 
+-- Table: passwrecovery
+
+-- DROP TABLE passwrecovery;
+
+CREATE TABLE passwrecovery
+(
+  pkid character varying NOT NULL,
+  one_time_pass character varying(512) NOT NULL,
+  creation timestamp with time zone NOT NULL,
+  CONSTRAINT passwrecovery_pkey PRIMARY KEY (pkid),
+  CONSTRAINT passwrecovery_pkid_fkey FOREIGN KEY (pkid)
+      REFERENCES users (pkid) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+
+
+
+

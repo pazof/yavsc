@@ -54,8 +54,8 @@ namespace Yavsc.ApiControllers
 					model.UserName,
 					model.Password,
 					model.Email,
-					null,
-					null,
+					model.Question,
+					model.Answer,
 					model.IsApprouved,
 					out mcs);
 				switch (mcs) {

@@ -1,5 +1,13 @@
 2015-06-18  Paul Schneider  <paul@pschneider.fr>
 
+	* instdbws.sql: Creates a new table to store one time usage
+	passwords
+
+	* AccountController.cs: Allows the questions and answer to be
+	specified for passw recovery
+
+2015-06-18  Paul Schneider  <paul@pschneider.fr>
+
 	* AccountController.cs: Register and reset passord from Web
 	API
 

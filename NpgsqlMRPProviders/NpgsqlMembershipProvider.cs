@@ -729,7 +729,6 @@ namespace Npgsql.Web
 		// and hydrates a MembershiUser from the values. Called by the 
 		// MembershipUser.GetUser implementation.
 		//
-
 		private MembershipUser GetUserFromReader (NpgsqlDataReader reader)
 		{
 			object providerUserKey = reader.GetValue (0);
@@ -870,10 +869,10 @@ namespace Npgsql.Web
 
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("SELECT PasswordAnswer, IsLockedOut FROM Users " +
-				" WHERE Username = @Username AND ApplicationName = @ApplicationName", conn)) {
+				" WHERE Username = :uname AND ApplicationName = :app", conn)) {
 
-					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
-					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+					cmd.Parameters.AddWithValue ("uname", username );
+					cmd.Parameters.AddWithValue ("app",  pApplicationName);
 
 
 					string passwordAnswer = "";
@@ -891,7 +890,7 @@ namespace Npgsql.Web
 						} else {
 							throw new MembershipPasswordException ("The supplied user name is not found.");
 						}
-
+						reader.Close ();
 						if (RequiresQuestionAndAnswer && !CheckPassword (answer, passwordAnswer)) {
 							UpdateFailureCount (username, "passwordAnswer");
 
@@ -909,7 +908,6 @@ namespace Npgsql.Web
 
 						rowsAffected = updateCmd.ExecuteNonQuery ();
 			
-						reader.Close ();
 					}
 					conn.Close ();
 				}

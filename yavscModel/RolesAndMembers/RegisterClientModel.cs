@@ -67,5 +67,9 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <value>The mobile.</value>
 		[DisplayName("Téléphone mobile")]
 		public string Mobile { get; set; }
+
+		public string Question { get; set; }
+
+		public string Answer { get; set; }
 	}
 }
