@@ -1,3 +1,25 @@
+2015-06-26  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.csproj:
+	* ThanksHelper.cs:
+	* YavscHelpers.cs:
+	* CalendarController.cs:
+	* FrontOfficeController.cs: refactoring
+
+	* PaypalApiController.cs: adds a package reference to payPal
+	buttons
+
+	* T.cs: xml doc
+
+	* App.master: yet another thanks giving
+
+	* style.css: Yet another impact on style sheet 
+
+	* Web.config: adds a circle provider section
+
+	* packages.config: Adds PayPal Button manager package
+	reference
+
 2015-06-18  Paul Schneider  <paul@pschneider.fr>
 
 	* instdbws.sql: Creates a new table to store one time usage

@@ -93,6 +93,12 @@
     <Reference Include="xunit.assert">
       <HintPath>..\packages\xunit.assert.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.assert.dll</HintPath>
     </Reference>
+    <Reference Include="PayPalCoreSDK">
+      <HintPath>..\packages\PayPalCoreSDK.1.6.2\lib\net451\PayPalCoreSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="PayPalButtonManagerSDK">
+      <HintPath>..\packages\PayPalButtonManagerSDK.2.9.109\lib\net20\PayPalButtonManagerSDK.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -159,7 +165,6 @@
     <Compile Include="Settings\ThanksConfigurationSection.cs" />
     <Compile Include="Settings\ThanksConfigurationCollection.cs" />
     <Compile Include="Settings\ThanksConfigurationElement.cs" />
-    <Compile Include="Settings\ThanksHelper.cs" />
     <Compile Include="Settings\ModulesConfigurationSection.cs" />
     <Compile Include="Settings\ModuleConfigurationElementCollection.cs" />
     <Compile Include="Settings\ModuleConfigurationElement.cs" />
@@ -190,6 +195,7 @@
     <Compile Include="ApiControllers\FrontOfficeController.cs" />
     <Compile Include="ApiControllers\GCMController.cs" />
     <Compile Include="ApiControllers\AccountController.cs" />
+    <Compile Include="Helpers\ThanksHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

@@ -1,3 +1,17 @@
+2015-06-26  Paul Schneider  <paul@pschneider.fr>
+
+	* Period.cs:
+	* WeekDay.cs:
+	* OpenDay.cs:
+	* YaEvent.cs:
+	* Schedule.cs:
+	* EventPub.cs:
+	* Position.cs:
+	* Periodicity.cs:
+	* ProvidedEvent.cs:
+	* PositionAndKeyphrase.cs:
+	* ProviderPublicInfo.cs: refactoring
+
 2015-06-18  Paul Schneider  <paul@pschneider.fr>
 
 	* RegisterClientModel.cs: Implements the Question and answer

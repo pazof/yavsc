@@ -20,13 +20,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Web.Http;
-using Yavsc.ApiControllers.Calendar.Model;
 using Yavsc.Model.RolesAndMembers;
 using System.Web.Security;
 using Yavsc.Model.Google;
 using Yavsc.Helpers;
 using System.Web.Profile;
 using Yavsc.Model.Circles;
+using Yavsc.Model.Calendar;
 
 
 namespace Yavsc.ApiControllers

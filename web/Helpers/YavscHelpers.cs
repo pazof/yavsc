@@ -96,8 +96,8 @@ namespace Yavsc.Helpers
 		/// <summary>
 		/// Resets the password.
 		/// </summary>
-		/// <param name="modelState">Model state.</param>
 		/// <param name="model">Model.</param>
+		/// <param name="errors">Errors.</param>
 		public static void ResetPassword(LostPasswordModel model, out StringDictionary errors)
 		{
 			MembershipUserCollection users = null;

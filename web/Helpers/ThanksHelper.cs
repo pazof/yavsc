@@ -1,9 +1,31 @@
 using System;
 using System.Configuration;
 using System.Collections.Generic;
+using System.Web.Mvc;
 
-namespace Yavsc
+namespace Yavsc.Helpers
 {
+	/// <summary>
+	/// Link.
+	/// </summary>
+	public class Link {
+		/// <summary>
+		/// Gets or sets the text.
+		/// </summary>
+		/// <value>The text.</value>
+		public string Text { get; set; }
+		/// <summary>
+		/// Gets or sets the URL.
+		/// </summary>
+		/// <value>The URL.</value>
+		public string Url { get; set; }
+		/// <summary>
+		/// Gets or sets the image.
+		/// </summary>
+		/// <value>The image.</value>
+		public string Image { get; set; }
+	}
+
 	/// <summary>
 	/// Thanks helper.
 	/// </summary>
@@ -24,28 +46,13 @@ namespace Yavsc
 		/// <summary>
 		/// Html code for each entry
 		/// </summary>
-		public static string[] Links ()
+		public static Link[] Thanks (this HtmlHelper helper)
 		{
-			List<string> result = new List<string>() ;
+			List<Link> result = new List<Link>() ;
 			if (ConfigurationSection == null) return result.ToArray();
 			if (ConfigurationSection.To == null) return result.ToArray();
-			foreach (ThanksConfigurationElement e in ConfigurationSection.To) {
-				string link = "";
-				if (!string.IsNullOrEmpty(e.Url))
-					link = string.Format("<a href=\"{0}\">",e.Url);
-				string dsp = (string.IsNullOrEmpty(e.Display))?e.Name:e.Display;
-				if (!string.IsNullOrEmpty(e.Image)) {
-					string ttl = (string.IsNullOrEmpty(ConfigurationSection.TitleFormat))?"Go and see the website ({0})":ConfigurationSection.TitleFormat;
-					ttl = string.Format(ttl,dsp);
-					link += string.Format(
-						"<img src=\"{1}\" alt=\"{0}\" title=\"{2}\"/>",
-						dsp,e.Image,ttl);
-				}
-				else link += dsp;
-				if (e.Url!=null)
-					link += "</a> ";
-				result.Add (link);
-			}
+			foreach (ThanksConfigurationElement e in ConfigurationSection.To)
+				result.Add( new Link { Url = e.Url, Image=e.Image, Text = e.Name });
 			return result.ToArray();
 		}
 	}

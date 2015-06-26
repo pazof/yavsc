@@ -21,28 +21,54 @@
 using System;
 using System.Web.Http;
 
-#if USEPAYPALAPI
 
-using PayPal.Api;
+using PayPal;
+using System.Collections.Generic;
+using PayPal.OpenIdConnect;
+using PayPal.Manager;
+using PayPal.PayPalAPIInterfaceService;
+using PayPal.PayPalAPIInterfaceService.Model;
 
 namespace Yavsc.ApiControllers
 {
+	/// <summary>
+	/// Paypal API controller.
+	/// </summary>
 	public class PaypalApiController: ApiController
 	{
-		public void GetPayments()
+		PayPalAPIInterfaceServiceService service = null; 
+		/// <summary>
+		/// Initialize the specified controllerContext.
+		/// </summary>
+		/// <param name="controllerContext">Controller context.</param>
+		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
 		{
-			OAuthTokenCredential tokenCredential =
-				new OAuthTokenCredential("<CLIENT_ID>", "<CLIENT_SECRET>");
+			base.Initialize (controllerContext);
+			// Get the config properties from PayPal.Api.ConfigManager
+			// Create the Classic SDK service instance to use.
+			service = new PayPalAPIInterfaceServiceService(ConfigManager.Instance.GetProperties());
+		}
+	/// <summary>
+	/// Search the specified str.
+	/// </summary>
+	/// <param name="str">str.</param>
+		public BMCreateButtonResponseType Create(string str)
+		{
+			BMCreateButtonRequestType btcrerqu = new BMCreateButtonRequestType ();
+			BMCreateButtonReq btcrerq = new BMCreateButtonReq ();
+			btcrerq.BMCreateButtonRequest = btcrerqu;
+			BMCreateButtonResponseType btcrere = service.BMCreateButton (btcrerq);
+			return btcrere;
+		}
 
-			string accessToken = tokenCredential.GetAccessToken();
-			var parameters = new PayPal.Util.QueryParameters();
-			parameters.Add ("Count", "10");
-
-			PaymentHistory paymentHistory = Payment.Get(apiContext, accessToken, parameters);
-
-
+		public BMButtonSearchResponseType Search(string str)
+		{
+			BMButtonSearchReq req = new BMButtonSearchReq ();
+			req.BMButtonSearchRequest = new BMButtonSearchRequestType ();
+			
+			return service.BMButtonSearch (req);
 		}
 	}
+
 }
 
-#endif

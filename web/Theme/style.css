@@ -44,18 +44,16 @@ footer {
 	background-color:rgba(16,0,0,0.8);
 	display: flex;
 	z-index:-1;
-	font-size: small;
+	font-size: smaller;
 }
 
-footer a { 
-    max-height: 2em;
-	padding:.1em;
+.thanks { 
+max-width: 12%;
+	width: 100%;
+	text-align: center;
+	font-size:smaller;
 }
 
-footer img {
-    max-height: 2em;
-	padding:.1em;
-    }
 
 #logo {
 	float: left;
@@ -241,10 +239,6 @@ a.actionlink:hover + .hidcom {
 	.bshd:hover > .bsh {
   display: none;
 	}
-  footer img {
-    max-height: 0.8em;
-    max-width: 2.0em;
-    }
   footer {
     font-size: x-small;
   }
@@ -253,9 +247,6 @@ a.actionlink:hover + .hidcom {
 	}
 
 	@media all and (max-width: 350px) {
-	  footer img { 
-    max-height: 0.6em;
-    max-width: 1.4em; }
 	  footer { font-size: xx-small;  }
 	}
 

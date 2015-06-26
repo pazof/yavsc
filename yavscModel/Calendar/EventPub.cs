@@ -21,12 +21,11 @@
 using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
-using Yavsc.ApiControllers.Calendar.Model;
 using Yavsc.Model;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.Circles;
 
-namespace Yavsc.ApiControllers.Calendar.Model
+namespace Yavsc.Model.Calendar
 {
 	/// <summary>
 	/// Event pub.

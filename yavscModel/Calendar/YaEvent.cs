@@ -24,7 +24,7 @@ using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Model;
 
-namespace Yavsc.ApiControllers.Calendar.Model
+namespace Yavsc.Model.Calendar
 {
 
 	/// <summary>

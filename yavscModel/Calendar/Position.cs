@@ -23,7 +23,7 @@ using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.ApiControllers.Calendar.Model
+namespace Yavsc.Model.Calendar
 {
 	/// <summary>
 	/// Position.

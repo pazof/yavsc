@@ -12,7 +12,7 @@ using System.Web.Security;
 using System.Threading;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Model.FileSystem;
-using Yavsc.ApiControllers.Calendar.Model;
+using Yavsc.Model.Calendar;
 
 namespace Yavsc.Controllers
 {

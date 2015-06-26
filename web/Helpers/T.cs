@@ -28,7 +28,11 @@ namespace Yavsc.Helpers
 			string tr = LocalizedText.ResourceManager.GetString (msg.Replace (" ", "_"));
 			return tr==null?msg:tr;
 		}
-
+		/// <summary>
+		/// Translate the specified helper and text.
+		/// </summary>
+		/// <param name="helper">Helper.</param>
+		/// <param name="text">Text.</param>
 		public static string Translate(this HtmlHelper helper, string text)
 		{
 			// Just call the other one, to avoid having two copies (we don't use the HtmlHelper).
