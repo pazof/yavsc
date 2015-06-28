@@ -51,6 +51,7 @@ namespace Yavsc.Controllers
 		/// <returns>The login.</returns>
 		/// <param name="model">Model.</param>
 		/// <param name="returnUrl">Return URL.</param>
+		[HttpPost]
 		public ActionResult Login (LoginModel model, string returnUrl)
 		{
 			if (ModelState.IsValid) {
@@ -64,11 +65,20 @@ namespace Yavsc.Controllers
 					ModelState.AddModelError ("UserName", "The user name or password provided is incorrect.");
 				}
 			}
-
 			ViewData ["returnUrl"] = returnUrl;
-
-			// If we got this far, something failed, redisplay form
 			return View (model);
+		}
+
+
+		/// <summary>
+		/// Login the specified returnUrl.
+		/// </summary>
+		/// <param name="returnUrl">Return URL.</param>
+		[HttpGet]
+		public ActionResult Login (string returnUrl)
+		{
+			ViewData ["returnUrl"] = returnUrl;
+			return View ();
 		}
 
 		/// <summary>

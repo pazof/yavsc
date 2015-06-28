@@ -47,11 +47,13 @@ footer {
 	font-size: smaller;
 }
 
-.thanks { 
-max-width: 12%;
-	width: 100%;
+.thanks  { 
+	max-width: 10%;
 	text-align: center;
+	vertical-align: text-bottom;
 	font-size:smaller;
+	display:block;
+	bottom:0;
 }
 
 

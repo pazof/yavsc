@@ -49,8 +49,9 @@
 	  <% if (Membership.GetUser()!=null)
 	if (Membership.GetUser().UserName==Model.UserName)
 	 { %>
+	 <aside>
 	 <%= Html.ActionLink("Editer","Edit", new { user = Model.UserName, title = Model.Title }, new { @class="actionlink" }) %>
 	 <%= Html.ActionLink("Supprimer","RemovePost", new { user = Model.UserName, title = Model.Title }, new { @class="actionlink" } ) %>
 	 <% } %>
-
+	 </aside>
 	 </asp:Content>
