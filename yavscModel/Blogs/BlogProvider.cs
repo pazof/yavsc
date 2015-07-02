@@ -2,6 +2,8 @@ using System;
 using System.Configuration;
 using System.Configuration.Provider;
 using System.Collections.Generic;
+using Yavsc.Model.Circles;
+using System.Web.Mvc;
 
 namespace Yavsc.Model.Blogs
 {
@@ -26,21 +28,13 @@ namespace Yavsc.Model.Blogs
 		public abstract BlogEntry GetPost (string username, string title);
 
 		/// <summary>
-		/// Gets the post identifier.
-		/// </summary>
-		/// <returns>The post identifier.</returns>
-		/// <param name="username">Username.</param>
-		/// <param name="title">Title.</param>
-		public abstract long GetPostId (string username, string title);
-
-		/// <summary>
 		/// Post the specified username, title, content and visible.
 		/// </summary>
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
 		/// <param name="content">Content.</param>
 		/// <param name="visible">If set to <c>true</c> visible.</param>
-		public abstract long Post (string username, string title, string content, bool visible);
+		public abstract long Post (string username, string title, string content, bool visible, long[] allowedCircles);
 
 		/// <summary>
 		/// Updates the post.
@@ -49,7 +43,7 @@ namespace Yavsc.Model.Blogs
 		/// <param name="title">Title.</param>
 		/// <param name="content">Content.</param>
 		/// <param name="visible">If set to <c>true</c> visible.</param>
-		public abstract void UpdatePost (long postid, string title, string content, bool visible);
+		public abstract void UpdatePost (long postid, string title, string content, bool visible, long[] allowedCircles);
 
 		/// <summary>
 		/// Finds the post.
@@ -60,7 +54,7 @@ namespace Yavsc.Model.Blogs
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
 		/// <param name="totalRecords">Total records.</param>
-		public abstract BlogEntryCollection FindPost (string pattern, FindBlogEntryFlags searchflags, 
+		public abstract BlogEntryCollection FindPost (string readersName, string pattern, FindBlogEntryFlags searchflags, 
 			int pageIndex, int pageSize, out int totalRecords);
 
 		/// <summary>

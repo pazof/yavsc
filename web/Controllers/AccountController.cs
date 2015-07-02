@@ -309,10 +309,8 @@ namespace Yavsc.Controllers
 		public ActionResult Circles ()
 		{
 			string user = Membership.GetUser ().UserName;
-			CircleInfoCollection cic = CircleManager.DefaultProvider.List (user);
-			if (cic == null)
-				cic = new CircleInfoCollection ();
-			return View (cic);
+			ViewData["Circles"] = CircleManager.DefaultProvider.List (user);
+			return View ();
 		}
 		/// <summary>
 		/// Logout the specified returnUrl.

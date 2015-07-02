@@ -24,6 +24,8 @@ using Yavsc.Model.RolesAndMembers;
 using System.Collections.Generic;
 using Yavsc.Model.Circles;
 using System.Web.Security;
+using System.Collections.Specialized;
+using Yavsc.Model;
 
 namespace Yavsc.ApiControllers
 {
@@ -91,12 +93,11 @@ namespace Yavsc.ApiControllers
 			return c;
 		}
 
-
 		/// <summary>
 		/// List the circles
 		/// </summary>
 		[Authorize]
-		public CircleInfoCollection List()
+		public IEnumerable<ListItem> List()
 		{
 			string user = Membership.GetUser ().UserName;
 			return CircleManager.DefaultProvider.List (user);

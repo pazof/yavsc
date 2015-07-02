@@ -4,6 +4,8 @@ using System.Configuration.Provider;
 using Npgsql;
 using System.Collections.Generic;
 using Yavsc.Model.Blogs;
+using Yavsc.Model.Circles;
+using System.Web.Mvc;
 
 namespace Npgsql.Web.Blog
 {
@@ -28,6 +30,7 @@ namespace Npgsql.Web.Blog
 				cmd.CommandText = "insert into bltag (blid,tag) values (@postid,@tag) returning _id";
 				cmd.Parameters.AddWithValue("@tag",tag);
 				cmd.Parameters.AddWithValue("@postid",postid);
+				cnx.Open ();
 				return (long) cmd.ExecuteScalar ();
 			}
 		}
@@ -41,18 +44,9 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "delete from bltag where _id = @tagid";
 				cmd.Parameters.AddWithValue("@tagid",tagid);
+				cnx.Open ();
 				cmd.ExecuteNonQuery ();	
 			}
-		}
-		/// <summary>
-		/// Gets the post identifier.
-		/// </summary>
-		/// <returns>The post identifier.</returns>
-		/// <param name="username">Username.</param>
-		/// <param name="title">Title.</param>
-		public override long GetPostId (string username, string title)
-		{
-			throw new NotImplementedException ();
 		}
 		/// <summary>
 		/// Gets the comments.
@@ -97,26 +91,30 @@ namespace Npgsql.Web.Blog
 		/// <param name="title">Title.</param>
 		/// <param name="content">Content.</param>
 		/// <param name="visible">If set to <c>true</c> visible.</param>
-		public override void UpdatePost (long postid, string title, string content, bool visible)
+		/// <param name="cids">Circle identifiers</param>
+		public override void UpdatePost (long postid, string title, string content, 
+			bool visible, long [] cids)
 		{
-			using (NpgsqlConnection cnx = new NpgsqlConnection(connectionString))
-			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
-				DateTime now = DateTime.Now;
-				cmd.CommandText = 
+			using (NpgsqlConnection cnx = new NpgsqlConnection(connectionString)) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					DateTime now = DateTime.Now;
+					cmd.CommandText = 
 					"update blog set modified=@now," +
 					" title = @title," +
 					" bcontent=@content, " +
 					" visible = @visible " +
 					"where _id = @id";
-				cmd.Parameters.AddWithValue ("@now", now);
-				cmd.Parameters.AddWithValue ("@title", title);
-				cmd.Parameters.AddWithValue ("@content", content);
-				cmd.Parameters.AddWithValue ("@visible", visible);
-				cmd.Parameters.AddWithValue ("@id", postid);
-				cnx.Open ();
-				cmd.ExecuteNonQuery ();
+					cmd.Parameters.AddWithValue ("@now", now);
+					cmd.Parameters.AddWithValue ("@title", title);
+					cmd.Parameters.AddWithValue ("@content", content);
+					cmd.Parameters.AddWithValue ("@visible", visible);
+					cmd.Parameters.AddWithValue ("@id", postid);
+					cnx.Open ();
+					cmd.ExecuteNonQuery ();
+				}
 				cnx.Close();
 			}
+			UpdatePostCircles (postid, cids);
 		}
 		/// <summary>
 		/// Removes the post.
@@ -249,6 +247,7 @@ namespace Npgsql.Web.Blog
 					}
 				}
 			}
+			if (be!=null) SetCirclesOn (be);
 			return be;
 		}
 		/// <summary>
@@ -280,10 +279,10 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				cmd.CommandText = "select _id,bcontent,modified,posted,visible from blog " +
-				                  "where applicationname = @appname and username = @username and title = @title";
-				cmd.Parameters.AddWithValue ("@appname", applicationName);
-				cmd.Parameters.AddWithValue ("@username", username);
-				cmd.Parameters.AddWithValue ("@title", title);
+				                  "where applicationname = :appname and username = :username and title = :title";
+				cmd.Parameters.AddWithValue ("appname", applicationName);
+				cmd.Parameters.AddWithValue ("username", username);
+				cmd.Parameters.AddWithValue ("title", title);
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
 					if (rdr.Read ()) {
@@ -298,20 +297,40 @@ namespace Npgsql.Web.Blog
 					}
 					rdr.Close ();
 				}
-				if (be!=null)
-				using (NpgsqlCommand cmdtags = cnx.CreateCommand()) {
-					List<string> tags = new List<string> ();
-					cmd.CommandText = "select tag.name from tag,tagged where tag._id = tagged.tagid and tagged.postid = @pid";
-					cmd.Parameters.AddWithValue ("@pid", be.Id);
-					using (NpgsqlDataReader rdrt = cmd.ExecuteReader ()) {
-						while (rdrt.Read ()) {
-							tags.Add (rdrt.GetString (0));
+				if (be != null) {
+					using (NpgsqlCommand cmdtags = cnx.CreateCommand ()) {
+						List<string> tags = new List<string> ();
+						cmd.CommandText = "select tag.name from tag,tagged where tag._id = tagged.tagid and tagged.postid = :pid";
+						cmd.Parameters.AddWithValue ("pid", be.Id);
+						using (NpgsqlDataReader rdrt = cmd.ExecuteReader ()) {
+							while (rdrt.Read ()) {
+								tags.Add (rdrt.GetString (0));
+							}
 						}
+						be.Tags = tags.ToArray ();
 					}
-					be.Tags = tags.ToArray ();
+					SetCirclesOn (be);
 				}
 			}
 			return be;
+		}
+
+		private void SetCirclesOn(BlogEntry be)
+		{
+			List<long> circles = new List<long> ();
+			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
+			using (NpgsqlCommand cmdcircles = cnx.CreateCommand ()) {
+				cmdcircles.CommandText = "select a.circle_id from blog_access a " +
+					"where a.post_id = :pid";
+				cmdcircles.Parameters.AddWithValue ("pid", be.Id);
+				cnx.Open ();
+				using (NpgsqlDataReader rdr = cmdcircles.ExecuteReader ()) {
+					while (rdr.Read ()) {
+						circles.Add ( rdr.GetInt64 (0) );
+					}
+				}
+			}
+			be.AllowedCircles = circles.ToArray();
 		}
 		/// <summary>
 		/// Post the specified username, title, content and visible.
@@ -320,59 +339,112 @@ namespace Npgsql.Web.Blog
 		/// <param name="title">Title.</param>
 		/// <param name="content">Content.</param>
 		/// <param name="visible">If set to <c>true</c> visible.</param>
-		public override long Post (string username, string title, string content, bool visible)
+		/// <param name="circles">.</param>
+		public override long Post (string username, string title, string content, bool visible, long [] circles)
 		{
+			long pid = 0;
 			if (username == null)
 				throw new ArgumentNullException("username");
 			if (title == null)
 				throw new ArgumentNullException("title");
 			if (content == null)
 				throw new ArgumentNullException("content");
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
-			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
-				cmd.CommandText = "insert into blog (title,bcontent,modified,posted,visible,username,applicationname)" +
-				                  "values (@title,@bcontent,@modified,@posted,@visible,@username,@appname) returning _id";
-				cmd.Parameters.AddWithValue ("@title", title);
-				cmd.Parameters.AddWithValue ("@bcontent", content);
-				DateTime now = DateTime.Now;
-				cmd.Parameters.AddWithValue ("@modified", now);
-				cmd.Parameters.AddWithValue ("@posted", now);
-				cmd.Parameters.AddWithValue ("@visible", visible);
-				cmd.Parameters.AddWithValue ("@username", username);
-				cmd.Parameters.AddWithValue ("@appname", applicationName);
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "insert into blog (title,bcontent,modified,posted,visible,username,applicationname)" +
+					"values (:title,:bcontent,:modified,:posted,:visible,:username,:appname) returning _id";
+					cmd.Parameters.AddWithValue ("title", title);
+					cmd.Parameters.AddWithValue ("bcontent", content);
+					DateTime now = DateTime.Now;
+					cmd.Parameters.AddWithValue ("modified", now);
+					cmd.Parameters.AddWithValue ("posted", now);
+					cmd.Parameters.AddWithValue ("visible", visible);
+					cmd.Parameters.AddWithValue ("username", username);
+					cmd.Parameters.AddWithValue ("appname", applicationName);
+					cnx.Open ();
+					pid = (long)cmd.ExecuteScalar ();
+				}
+				cnx.Close ();
+			}
+			UpdatePostCircles (pid, circles);
+			return pid;
+		}
+
+		private void UpdatePostCircles( long pid, long[] circles)
+		{
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
-				return (long) cmd.ExecuteScalar();
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "delete from blog_access where post_id = :pid";
+					cmd.Parameters.AddWithValue ("pid", pid);
+					cmd.ExecuteNonQuery ();
+				}
+				if (circles!=null)
+				if (circles.Length>0)
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "insert into blog_access (post_id,circle_id) values (:pid,:cid)";
+					cmd.Parameters.AddWithValue ("pid", pid);
+					cmd.Parameters.Add ("cid", NpgsqlTypes.NpgsqlDbType.Bigint);
+					cmd.Prepare ();
+					foreach (long ci in circles) {
+						cmd.Parameters ["cid"].Value = ci;
+						cmd.ExecuteNonQuery ();
+					}
+				}
+				cnx.Close ();
 			}
 		}
 		/// <summary>
 		/// Finds the post.
 		/// </summary>
 		/// <returns>The post.</returns>
+		/// <param name="readersName">Reader's Name.</param>
 		/// <param name="pattern">Pattern.</param>
 		/// <param name="searchflags">Searchflags.</param>
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
 		/// <param name="totalRecords">Total records.</param>
-		public override BlogEntryCollection FindPost (string pattern, FindBlogEntryFlags searchflags, int pageIndex, int pageSize, out int totalRecords)
+		public override BlogEntryCollection FindPost (string readersName, string pattern, FindBlogEntryFlags searchflags, int pageIndex, int pageSize, out int totalRecords)
 		{
 			BlogEntryCollection c = new BlogEntryCollection ();
 			totalRecords = 0;
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
-				cmd.CommandText = "select title,bcontent,modified,posted,username,visible from blog " +
-					"where applicationname = @appname";
+				if (readersName != null) {
+					cmd.CommandText = "select _id, title,bcontent,modified," +
+						"posted,username,visible " +
+						"from blog b left outer join " +
+						"(select count(*)>0 acc, a.post_id pid " +
+						"from blog_access a," +
+						" circle_members m, users u where m.circle_id = a.circle_id " +
+						" and m.member = u.pkid and u.username = :uname " +
+						" and u.applicationname = :appname " +
+						" group by a.post_id) ma on (ma.pid = b._id) " +
+						"where ( ma.acc IS NULL or ma.acc = TRUE or b.UserName = :uname) ";
+					cmd.Parameters.AddWithValue ("uname", readersName);
+				} else {
+					cmd.CommandText = "select _id, title,bcontent,modified," +
+						"posted,username,visible " +
+						"from blog b left outer join " +
+						"(select count(*)>0 acc, a.post_id pid " +
+						"from blog_access a" +
+						" group by a.post_id) ma on (ma.pid = b._id)" +
+						" where " +
+						" ma.acc IS NULL and " +
+						" applicationname = :appname";
+				}
 				cmd.Parameters.AddWithValue ("@appname", applicationName);
 				if ((searchflags & FindBlogEntryFlags.MatchContent) > 0) {
-					cmd.CommandText += " and bcontent like @bcontent";
-					cmd.Parameters.AddWithValue ("@bcontent", pattern);
+					cmd.CommandText += " and bcontent like :bcontent";
+					cmd.Parameters.AddWithValue (":bcontent", pattern);
 				}
 				if ((searchflags & FindBlogEntryFlags.MatchTitle) > 0) {
-					cmd.CommandText += " and title like @title";
-					cmd.Parameters.AddWithValue ("@title", pattern);
+					cmd.CommandText += " and title like :title";
+					cmd.Parameters.AddWithValue (":title", pattern);
 				}
 				if ((searchflags & FindBlogEntryFlags.MatchUserName) > 0) {
-					cmd.CommandText += " and username like @username";
-					cmd.Parameters.AddWithValue ("@username", pattern);
+					cmd.CommandText += " and username like :username";
+					cmd.Parameters.AddWithValue (":username", pattern);
 				}
 				if ((searchflags & FindBlogEntryFlags.MatchInvisible) == 0) {
 					cmd.CommandText += " and visible = true";
@@ -397,8 +469,12 @@ namespace Npgsql.Web.Blog
 						}
 						totalRecords++;
 					}
+					rdr.Close ();
 				}
 			}
+			foreach (BlogEntry be in c)
+				SetCirclesOn (be);
+			
 			return c;
 		}
 		/// <summary>
@@ -442,11 +518,11 @@ namespace Npgsql.Web.Blog
 					"where blog.posted = lblog.lpost and blog.username = lblog.username " ;
 					*/
 				cmd.CommandText = "select * " +
-				                  "from blog where applicationname = @appname and visible = true " +
-				                  " order by posted desc limit @len" ;
+				                  "from blog where applicationname = :appname and visible = true " +
+				                  " order by posted desc limit :len" ;
 
-				cmd.Parameters.AddWithValue ("@appname", applicationName);
-				cmd.Parameters.AddWithValue ("@len", defaultPageSize*10);
+				cmd.Parameters.AddWithValue ("appname", applicationName);
+				cmd.Parameters.AddWithValue ("len", defaultPageSize*10);
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
 					totalRecords = 0;
@@ -467,6 +543,8 @@ namespace Npgsql.Web.Blog
 					}
 				}
 			}
+			foreach (BlogEntry be in c)
+				SetCirclesOn (be);
 			return c;
 		}
 		#endregion

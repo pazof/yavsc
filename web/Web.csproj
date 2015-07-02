@@ -348,6 +348,7 @@
     <Content Include="Views\Account\Circles.aspx" />
     <Content Include="Views\Account\Register.ascx" />
     <Content Include="Views\Account\ResetPassword.aspx" />
+    <Content Include="Views\Blogs\NotAuthorized.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

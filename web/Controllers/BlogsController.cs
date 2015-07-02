@@ -17,6 +17,7 @@ using Yavsc.ApiControllers;
 using Yavsc.Model.RolesAndMembers;
 using System.Net;
 using System.Web.Mvc;
+using Yavsc.Model.Circles;
 
 namespace Yavsc.Controllers
 {
@@ -94,9 +95,6 @@ namespace Yavsc.Controllers
 			return View ("Index", bs);
 		}
 
-
-
-		// page index becomes one-based
 		/// <summary>
 		/// Users the posts.
 		/// </summary>
@@ -112,12 +110,15 @@ namespace Yavsc.Controllers
 			FindBlogEntryFlags sf = FindBlogEntryFlags.MatchUserName;
 			ViewData ["SiteName"] = sitename;
 			ViewData ["BlogUser"] = user;
+			string readersName = null;
 			// displays invisible items when the logged user is also the author
-			if (u != null)
-			if (u.UserName == user)
-				sf |= FindBlogEntryFlags.MatchInvisible;
+			if (u != null) {
+				if (u.UserName == user || Roles.IsUserInRole ("Admin"))
+					sf |= FindBlogEntryFlags.MatchInvisible;
+				readersName = u.UserName;
+			}
 			// find entries
-			BlogEntryCollection c = BlogManager.FindPost (user, sf, pageIndex, pageSize, out tr);
+			BlogEntryCollection c = BlogManager.FindPost (readersName, user, sf, pageIndex, pageSize, out tr);
 			// Get author's meta data
 			Profile bupr = new Profile (ProfileBase.Create (user));
 			ViewData ["BlogUserProfile"] = bupr;
@@ -155,7 +156,7 @@ namespace Yavsc.Controllers
 				return View ("TitleNotFound");
 			Profile pr = new Profile (ProfileBase.Create (e.UserName));
 			if (pr==null)
-				return View ("TitleNotFound");
+				return View ("NotAuthorized");
 			ViewData ["BlogUserProfile"] = pr;
 			ViewData ["BlogTitle"] = pr.BlogTitle;
 			ViewData ["Avatar"] = pr.avatar;
@@ -163,16 +164,32 @@ namespace Yavsc.Controllers
 			if (u != null)
 				ViewData ["UserName"] = u.UserName;
 			if (!e.Visible || !pr.BlogVisible) {
-				if (u==null)
-					return View ("TitleNotFound");
+				// only deliver to admins or owner
+				if (u == null)
+					return View ("NotAuthorized");
 				else {
-					if (u.UserName!=e.UserName)
-					if (!Roles.IsUserInRole(u.UserName,"Admin"))
-					return View ("TitleNotFound");
+					if (u.UserName != e.UserName)
+					if (!Roles.IsUserInRole (u.UserName, "Admin"))
+						return View ("NotAuthorized");
 				}
+			} else {
+				if (!CanViewPost(e,u))
+					return View ("NotAuthorized");
 			}
 			ViewData ["Comments"] = BlogManager.GetComments (e.Id);
 			return View ("UserPost", e);
+		}
+		private bool CanViewPost (BlogEntry e, MembershipUser u=null) {
+			if (e.AllowedCircles!=null && e.AllowedCircles.Length > 0) {
+				// only deliver to admins, owner, or specified circle memebers
+				if (u == null)
+					return false;
+				if (u.UserName != e.UserName)
+				if (!Roles.IsUserInRole (u.UserName, "Admin"))
+				if (!CircleManager.DefaultProvider.Matches (e.AllowedCircles, u.UserName))
+					return false;
+			}
+			return true;
 		}
 		/// <summary>
 		/// Users the post.
@@ -208,26 +225,14 @@ namespace Yavsc.Controllers
 			if (String.IsNullOrEmpty (title))
 				title = "";
 			ViewData ["UserName"] = un;
+			ViewData["AllowedCircles"] = CircleManager.DefaultProvider.List (Membership.GetUser ().UserName).Select (x => new SelectListItem {
+				Value = x.Value,
+				Text = x.Text
+			});
+
 			return View ("Edit", new BlogEntry { Title = title });
 		}
-		/// <summary>
-		/// Validates the post.
-		/// </summary>
-		/// <returns>The post.</returns>
-		/// <param name="model">Model.</param>
-		[Authorize,
-			ValidateInput(false)]
-		public ActionResult ValidatePost (BlogEntry model)
-		{
-			string username = Membership.GetUser ().UserName;
-			ViewData ["SiteName"] = sitename;
-			ViewData ["BlogUser"] = username;
-			if (ModelState.IsValid) {
-					BlogManager.Post (username, model.Title, model.Content, model.Visible);
-					return UserPost (username, model.Title);
-			}
-			return View ("Post", model);
-		}
+
 		/// <summary>
 		/// Validates the edit.
 		/// </summary>
@@ -241,13 +246,14 @@ namespace Yavsc.Controllers
 			ViewData ["BlogUser"] = Membership.GetUser ().UserName;
 			if (ModelState.IsValid) {
 					if (model.Id != 0)
-						BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible);
+						BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible, model.AllowedCircles);
 					else
-						BlogManager.Post (model.UserName, model.Title, model.Content, model.Visible);
-					return UserPost(model.UserName, model.Title);
+					model.Id = BlogManager.Post (model.UserName, model.Title, model.Content, model.Visible, model.AllowedCircles);
+				return RedirectToAction ("UserPost",new { user = model.UserName, title = model.Title });
 			}
 			return View ("Edit", model);
 		}
+
 		/// <summary>
 		/// Edit the specified model.
 		/// </summary>
@@ -256,25 +262,33 @@ namespace Yavsc.Controllers
 			ValidateInput(false)]
 		public ActionResult Edit (BlogEntry model)
 		{
-			if (model != null) {
-				string user = Membership.GetUser ().UserName;
-				Profile pr = new Profile (HttpContext.Profile);
+			string user = Membership.GetUser ().UserName;
+			Profile pr = new Profile (HttpContext.Profile);
 
-				ViewData ["BlogTitle"] = pr.BlogTitle;
-				ViewData ["UserName"] = user;
-				if (model.UserName == null) {
-					model.UserName = user; 
-				}
-				BlogEntry e = BlogManager.GetPost (model.UserName, model.Title);
-				if (e != null) {
-					if (e.UserName != user) {
-						return View ("TitleNotFound");
-					}
-					model = e;
-					ModelState.Clear ();
-					TryValidateModel (model);
-				}
+			ViewData ["BlogTitle"] = pr.BlogTitle;
+			ViewData ["UserName"] = user;
+			if (model.UserName == null) {
+				model.UserName = user; 
 			}
+			BlogEntry e = BlogManager.GetPost (model.UserName, model.Title);
+			if (e != null) {
+				if (e.UserName != user) {
+					return View ("NotAuthorized");
+				}
+				model = e;
+				ModelState.Clear ();
+				TryValidateModel (model);
+			}
+
+			if (model.AllowedCircles==null)
+				model.AllowedCircles = new long[0];
+			
+			ViewData["AllowedCircles"] = CircleManager.DefaultProvider.List (Membership.GetUser ().UserName).Select (x => new SelectListItem {
+				Value = x.Value,
+				Text = x.Text,
+				Selected = model.AllowedCircles.Contains(long.Parse(x.Value))
+			});
+
 			return View (model);
 		}
 

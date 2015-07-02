@@ -26,8 +26,11 @@ using System.Web.UI;
 using System.ComponentModel;
 using System.Web.Security;
 
-namespace WebControls
+namespace Yavsc.WebControls
 {
+	/// <summary>
+	/// User card.
+	/// </summary>
 	[
 		AspNetHostingPermission (SecurityAction.Demand,
 			Level = AspNetHostingPermissionLevel.Minimal),
@@ -37,9 +40,6 @@ namespace WebControls
 		DefaultProperty ("Name"),
 		ToolboxData ("<{0}:UserCard runat=\"server\"> </{0}:UserCard>")
 	]
-	/// <summary>
-	/// User card.
-	/// </summary>
 	public class UserCard: WebControl
 	{
 		/// <summary>

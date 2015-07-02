@@ -1,5 +1,5 @@
-//
-//  CircleInfoCollection.cs
+﻿//
+//  Message.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -18,18 +18,35 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
-using System.Collections.Generic;
 
-namespace Yavsc.Model.Circles
+namespace Yavsc.Model.Messaging
 {
-
 	/// <summary>
-	/// Circle info collection.
+	/// Simple message.
 	/// </summary>
-	public class CircleInfoCollection : List<CircleInfo>
+	public class SimpleMessage
 	{
+		/// <summary>
+		/// Gets or sets the user name this message is comming from.
+		/// </summary>
+		/// <value>From.</value>
+		public string From { get; set; }
+		/// <summary>
+		/// Gets or sets the user names, separted by semilicon to which this message will be sent.
+		/// </summary>
+		/// <value>To.</value>
+		public string To { get; set; }
+		/// <summary>
+		/// Gets or sets the subject.
+		/// </summary>
+		/// <value>The subject.</value>
+		public string Subject { get; set; }
+		/// <summary>
+		/// Gets or sets the body.
+		/// </summary>
+		/// <value>The body.</value>
+		public string Body { get; set; }
 	}
-
 }
+

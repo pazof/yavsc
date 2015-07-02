@@ -25,6 +25,8 @@ using System.Collections.Specialized;
 using System.Collections;
 using System.Reflection;
 using System.Configuration.Provider;
+using System.Web.Mvc;
+using System.Collections.Generic;
 
 namespace Yavsc.Model.Circles
 {
@@ -70,7 +72,14 @@ namespace Yavsc.Model.Circles
 		/// <summary>
 		/// List this instance.
 		/// </summary>
-		public abstract CircleInfoCollection List(string user);
+		public abstract IEnumerable<ListItem> List(string user);
+
+		/// <summary>
+		/// Covers the specified username.
+		/// </summary>
+		/// <param name="circle_ids">circle's owner.</param>
+		/// <param name="member">Username in his circle.</param>
+		public abstract bool Matches(long [] circle_ids, string member);
 
 	}
 

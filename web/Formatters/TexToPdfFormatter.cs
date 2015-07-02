@@ -112,7 +112,12 @@ namespace Yavsc.Formatters
 			if (contentHeaders != null)
 				SetFileName(contentHeaders, value.GetHashCode ().ToString ());
 		}
-		
+
+		/// <summary>
+		/// Sets the name of the file.
+		/// </summary>
+		/// <param name="contentHeaders">Content headers.</param>
+		/// <param name="basename">Basename.</param>
 		public static void SetFileName(HttpContentHeaders contentHeaders, string basename) {
 			contentHeaders.ContentDisposition = new ContentDispositionHeaderValue ("attachment") {
 				FileName = "doc-" + basename + ".pdf"

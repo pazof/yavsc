@@ -143,8 +143,6 @@
     <Compile Include="Calendar\YaEvent.cs" />
     <Compile Include="Google\GCMRegisterModel.cs" />
     <Compile Include="Circles\Circle.cs" />
-    <Compile Include="Circles\CircleInfo.cs" />
-    <Compile Include="Circles\CircleInfoCollection.cs" />
     <Compile Include="Circles\CircleManager.cs" />
     <Compile Include="Circles\CircleProvider.cs" />
     <Compile Include="DataProviderConfigurationSection.cs" />
@@ -160,6 +158,8 @@
     <Compile Include="RolesAndMembers\ProviderPublicInfo.cs" />
     <Compile Include="RolesAndMembers\GCMRegister.cs" />
     <Compile Include="RolesAndMembers\LostPasswordModel.cs" />
+    <Compile Include="Messaging\SimpleMessage.cs" />
+    <Compile Include="ListItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -174,6 +174,7 @@
     <Folder Include="Google\Messaging\" />
     <Folder Include="Circles\" />
     <Folder Include="RolesAndMembers\" />
+    <Folder Include="Messaging\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

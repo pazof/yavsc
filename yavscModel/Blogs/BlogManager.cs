@@ -3,6 +3,8 @@ using Yavsc.Model.Blogs;
 using Yavsc.Model.RolesAndMembers;
 using System.Web;
 using System.Web.Security;
+using Yavsc.Model.Circles;
+using System.Web.Mvc;
 
 
 namespace Yavsc.Model.Blogs
@@ -17,10 +19,11 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		/// <returns>The comment.</returns>
 		/// <param name="cmtid">Cmtid.</param>
-		public static long RemoveComment(long cmtid)
+		public static long RemoveComment (long cmtid)
 		{
 			return Provider.RemoveComment (cmtid);
 		}
+
 		/// <summary>
 		/// Comment the specified from, postid, content and visible.
 		/// </summary>
@@ -42,7 +45,7 @@ namespace Yavsc.Model.Blogs
 		public static BlogProvider Provider {
 			get {
 				if (provider == null)
-					provider = BlogHelper.GetProvider();
+					provider = BlogHelper.GetProvider ();
 				return provider;
 			}
 		}
@@ -55,7 +58,7 @@ namespace Yavsc.Model.Blogs
 		/// <param name="title">Title.</param>
 		public static BlogEntry GetPost (string username, string title)
 		{
-			return Provider.GetPost (username, title );
+			return Provider.GetPost (username, title);
 		}
 
 		/// <summary>
@@ -63,7 +66,7 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		/// <returns>The post.</returns>
 		/// <param name="postid">Postid.</param>
-		public static BlogEntry GetPost(long postid)
+		public static BlogEntry GetPost (long postid)
 		{
 			return Provider.GetPost (postid);
 		}
@@ -75,9 +78,10 @@ namespace Yavsc.Model.Blogs
 		/// <param name="title">Title.</param>
 		/// <param name="content">Content.</param>
 		/// <param name="visible">If set to <c>true</c> visible.</param>
-		public static void Post(string username, string title, string content, bool visible)
+		/// <param name="cids">sets the circles.</param>
+		public static long Post (string username, string title, string content, bool visible, long [] cids)
 		{
-			Provider.Post(username, title, content, visible );
+			return Provider.Post (username, title, content, visible, cids);
 		}
 
 		/// <summary>
@@ -87,9 +91,10 @@ namespace Yavsc.Model.Blogs
 		/// <param name="title">Title.</param>
 		/// <param name="content">Content.</param>
 		/// <param name="visible">If set to <c>true</c> visible.</param>
-		public static void UpdatePost(long postid, string title, string content, bool visible)
+		/// <param name="cids">sets the circles.</param>
+		public static void UpdatePost (long postid, string title, string content, bool visible,long [] cids)
 		{
-			Provider.UpdatePost(postid, title, content, visible);
+			Provider.UpdatePost (postid, title, content, visible,cids);
 		}
 
 		/// <summary>
@@ -101,10 +106,11 @@ namespace Yavsc.Model.Blogs
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
 		/// <param name="totalRecords">Total records.</param>
-		public static BlogEntryCollection FindPost (string pattern, FindBlogEntryFlags searchflags, int pageIndex, int pageSize, out int totalRecords)
+		public static BlogEntryCollection FindPost (string readersName, string pattern, FindBlogEntryFlags searchflags, int pageIndex, int pageSize, out int totalRecords)
 		{
-			return Provider.FindPost (pattern, searchflags, pageIndex, pageSize, out totalRecords);
+			return Provider.FindPost (readersName, pattern, searchflags, pageIndex, pageSize, out totalRecords);
 		}
+
 		/// <summary>
 		/// Removes the post.
 		/// </summary>
@@ -118,7 +124,7 @@ namespace Yavsc.Model.Blogs
 					throw new AccessViolationException (
 						string.Format (
 							"{1}, Vous n'avez pas le droit de suprimer des billets du Blog de {0}",
-							username,rguser));
+							username, rguser));
 				}
 			}
 			Provider.RemovePost (username, title);
@@ -142,17 +148,19 @@ namespace Yavsc.Model.Blogs
 		/// <returns>The comments.</returns>
 		/// <param name="postid">Postid.</param>
 		/// <param name="getHidden">If set to <c>true</c> get hidden.</param>
-		public static Comment[] GetComments(long postid, bool getHidden=true)
+		public static Comment[] GetComments (long postid, bool getHidden = true)
 		{
-			return Provider.GetComments (postid,getHidden);
+			return Provider.GetComments (postid, getHidden);
 		}
+
 		/// <summary>
 		/// Tag the specified post by postid.
 		/// </summary>
 		/// <param name="postid">Postid.</param>
 		/// <param name="tag">Tag.</param>
 		/// <returns>The tag identifier</returns>
-		public static long Tag(long postid, string tag) {
+		public static long Tag (long postid, string tag)
+		{
 			return Provider.Tag (postid, tag);
 		}
 

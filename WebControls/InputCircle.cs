@@ -26,8 +26,11 @@ using System.ComponentModel;
 using System.Web.UI.WebControls;
 using Yavsc.Model.Circles;
 using System.Web.Security;
+using System.Collections;
+using System.Collections.Generic;
+using System.Web.Mvc;
 
-namespace WebControls
+namespace Yavsc.WebControls
 {
 	/// <summary>
 	/// Input circle.
@@ -63,13 +66,21 @@ namespace WebControls
 			}
 		}
 		/// <summary>
-		/// Gets or sets the value.
+		/// Gets or sets the The CircleInfo collection.
 		/// </summary>
 		/// <value>The value.</value>
-		[Bindable (true), DefaultValue(""), Localizable(true)]
-		public string Value {
+		[Bindable (true), DefaultValue(null), Localizable(true),
+			Category("Behavior"),
+			Description("The CircleInfo collection"),
+			DesignerSerializationVisibility(
+				DesignerSerializationVisibility.Content),
+			PersistenceMode(PersistenceMode.InnerDefaultProperty)
+			]
+		public IEnumerable<SelectListItem> Value {
 			get {
-				return (string) ViewState["Value"];
+				if (ViewState ["Value"] == null)
+					ViewState ["Value"] = new List<SelectListItem> ();
+				return (IEnumerable<SelectListItem>) ViewState["Value"];
 			}
 			set {
 				ViewState ["Value"]  = value;
@@ -134,10 +145,7 @@ namespace WebControls
 			if (Multiple)
 				writer.AddAttribute ("multiple","true");
 			writer.RenderBeginTag ("select");
-			string[] selected = null;
-			if (!string.IsNullOrWhiteSpace (Value)) {
-				selected = Value.Split (',');
-			}
+
 			if (EmptyValue!=null) {
 				writer.AddAttribute ("value", "");
 				writer.RenderBeginTag ("option");
@@ -146,13 +154,15 @@ namespace WebControls
 			}
 			var u = Membership.GetUser ();
 			if (u != null) {
-				foreach (CircleInfo ci in CircleManager.DefaultProvider.List(u.UserName)) {
-					if (selected != null)
-					if (Array.Exists (selected, x => x == ci.Id.ToString ()))
-						writer.AddAttribute ("selected", null);
-					writer.AddAttribute ("value", ci.Id.ToString ());
+				foreach (Yavsc.Model.ListItem ci in CircleManager.DefaultProvider.List(u.UserName)) {
+					foreach (SelectListItem sli in Value)
+						if (sli.Value == ci.Value) {
+							writer.AddAttribute ("selected", null);
+							break;
+						}
+					writer.AddAttribute ("value", ci.Value );
 					writer.RenderBeginTag ("option");
-					writer.Write (ci.Title);
+					writer.Write (ci.Text);
 					writer.RenderEndTag ();
 				}
 			}

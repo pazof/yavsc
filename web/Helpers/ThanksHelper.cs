@@ -2,6 +2,8 @@ using System;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Linq.Expressions;
+using Yavsc.Model.Circles;
 
 namespace Yavsc.Helpers
 {
@@ -55,6 +57,7 @@ namespace Yavsc.Helpers
 				result.Add( new Link { Url = e.Url, Image=e.Image, Text = e.Name });
 			return result.ToArray();
 		}
+
 	}
 	
 }

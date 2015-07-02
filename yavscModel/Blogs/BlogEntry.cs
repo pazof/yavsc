@@ -2,6 +2,8 @@ using System;
 using System.Configuration;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Model.Circles;
+using System.Web.Mvc;
 
 namespace Yavsc.Model.Blogs
 {
@@ -122,10 +124,20 @@ namespace Yavsc.Model.Blogs
 		public bool Visible { get; set ; }
 
 		/// <summary>
+		/// Gets or sets the circles allowed to read this ticket.
+		/// An empty collection specifies a public post.
+		/// </summary>
+		/// <value>The circles.</value>
+		[Display(Name="Cercles autorisés")]
+		public long[] AllowedCircles { get; set; }
+
+		/// <summary>
 		/// Gets or sets the tags.
 		/// </summary>
 		/// <value>The tags.</value>
 		public string [] Tags { get; set ; }
+
+
 	}
 	
 }

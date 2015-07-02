@@ -1,3 +1,20 @@
+2015-07-02  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.csproj:
+	* Web.config:
+	* instdbws.sql:
+	* Web.config:
+	* Edit.aspx:
+	* YavscHelpers.cs:
+	* ThanksHelper.cs:
+	* Circles.aspx:
+	* BlogsController.cs:
+	* TitleNotFound.aspx:
+	* NotAuthorized.aspx:
+	* TexToPdfFormatter.cs:
+	* AccountController.cs:
+	* CircleController.cs: 
+
 2015-06-28  Paul Schneider  <paul@pschneider.fr>
 
 	* AccountController.cs: Fixes the canonical login

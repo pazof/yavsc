@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Circles" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<Yavsc.Model.Circles.CircleInfoCollection>" %>
+﻿<%@ Page Title="Circles" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage" %>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ID="headContent" ContentPlaceHolderID="head" runat="server">
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/stupidtable.js")%>"></script> 
@@ -13,9 +13,9 @@
 </thead>
 <tbody id="tbcb">
 <% int lc=0;
-   foreach (CircleInfo ci in Model) { lc++; %>
-<tr class="<%= (ci.Id%2==0)?"even ":"odd " %>row" id="c_<%=ci.Id%>">
-<td><%=ci.Title%></td>
+   foreach (SelectListItem ci in ViewData["Circles"]) { lc++; %>
+<tr class="<%= (lc%2==0)?"even ":"odd " %>row" id="c_<%=ci.Value%>">
+<td><%=ci.Text%></td>
    <td>
         <input type="button" value="<%=Html.Translate("Remove")%>" class="actionlink rowbtnrm"/>
         <input type="button" value="<%=Html.Translate("Members")%>" class="actionlink rowbtnvw"/>

@@ -667,8 +667,7 @@ CREATE TABLE circle
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE circle
-  OWNER TO yavscdev;
+
 COMMENT ON COLUMN circle._id IS 'Circle identifier';
 COMMENT ON COLUMN circle.owner IS 'creator of this circle';
 COMMENT ON COLUMN circle.applicationname IS 'Application name';
@@ -709,5 +708,23 @@ WITH (
 );
 
 
+-- Table: blog_access
 
+-- DROP TABLE blog_access;
+
+CREATE TABLE blog_access
+(
+  post_id bigint NOT NULL,
+  circle_id bigint NOT NULL,
+  CONSTRAINT blog_access_pkey PRIMARY KEY (post_id, circle_id),
+  CONSTRAINT blog_access_circle_id_fkey FOREIGN KEY (circle_id)
+      REFERENCES circle (_id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT blog_access_post_id_fkey FOREIGN KEY (post_id)
+      REFERENCES blog (_id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
 

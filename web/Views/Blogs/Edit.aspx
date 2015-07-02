@@ -1,4 +1,5 @@
 <%@ Page Title="Bill edition" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
+<%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="head" ID="HeadContent1" runat="server">
 <link rel="stylesheet" href="<%=Url.Content("~/Theme/mdd_styles.css")%>">
  <script type="text/javascript" src="<%=Url.Content("~/Scripts/MarkdownDeepLib.min.js")%>">
@@ -26,15 +27,26 @@
 <br/>
 <%= Html.CheckBox( "Visible" ) %>
 <%= Html.LabelFor(model => model.Visible) %>
+
+
+
 <%= Html.ValidationMessage("Visible", "*") %>
-	<%= Html.Hidden("Id") %>
-	<%= Html.Hidden("UserName") %>
+<br/>
+
+<%= Html.LabelFor(model => model.AllowedCircles) %>
+<%= Html.ListBox("AllowedCircles") %>
+
+<%= Html.ValidationMessage("AllowedCircles", "*") %>
+<%= Html.Hidden("Id") %>
+<%= Html.Hidden("UserName") %>
+
 
 <br/>
 <input type="submit"/>
 <% } %>
 
 <script>
+
  $(document).ready(function () {
  $("textarea.mdd_editor").MarkdownDeep({ 
     help_location: "/Scripts/html/mdd_help.htm",

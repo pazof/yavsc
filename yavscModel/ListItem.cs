@@ -1,5 +1,5 @@
-//
-//  CircleInfo.cs
+﻿//
+//  ListItem.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -18,31 +18,15 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Model.Circles
+namespace Yavsc.Model
 {
-
-	/// <summary>
-	/// Circle info.
-	/// </summary>
-	public class CircleInfo
+	public class ListItem
 	{
-		public long Id { get; set; }
-		public string Title { get; set; }
-		public CircleInfo(Circle c)
-		{
-			Id = c.Id;
-			Title = c.Title;
-		}
-		public CircleInfo(long id, string title)
-		{
-			Id = id;
-			Title = title;
-		}
-
+		public string Value { get; set; }
+		public string Text  { get; set; }
+		public string Icon { get; set; }
 	}
-
 }
+

@@ -26,6 +26,8 @@ using Npgsql;
 using NpgsqlTypes;
 using System.Collections.Generic;
 using System.Web.Security;
+using System.Web.Mvc;
+using Yavsc.Model;
 
 namespace WorkFlowProvider
 {
@@ -42,6 +44,31 @@ namespace WorkFlowProvider
 		}
 
 		#region implemented abstract members of CircleProvider
+
+		/// <summary>
+		/// Returns circles from owner.
+		/// </summary>
+		/// <param name="circle_ids">Circle identifiers.</param>
+		/// <param name="member">Member name.</param>
+		public override bool Matches (long [] circle_ids, string member)
+		{
+			bool result=false;
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = "select count(*)>0 from circle_members where _id = :cid and m.member = :mbr";
+				cmd.Parameters.Add("cid",NpgsqlDbType.Bigint);
+				cmd.Parameters.AddWithValue("mbr",member);
+				cnx.Open ();
+				cmd.Prepare ();
+				foreach (long cid in circle_ids) {
+					result = (bool) cmd.ExecuteScalar();
+					if (result)
+						break;
+				}
+				cnx.Close ();
+			}
+			return result;
+		}
 
 		/// <summary>
 		/// Add the specified user.
@@ -148,11 +175,12 @@ namespace WorkFlowProvider
 					cmd.Parameters.AddWithValue ("cid", id);
 					cmd.Parameters.Add ("mbr", NpgsqlDbType.Varchar);
 					cmd.Prepare ();
-					foreach (string user in users) {
-						object pkid = Membership.GetUser (user).ProviderUserKey;
-						cmd.Parameters[1].Value = pkid.ToString();
-						cmd.ExecuteNonQuery ();
-					}
+					if (users!=null)
+						foreach (string user in users) {
+							object pkid = Membership.GetUser (user).ProviderUserKey;
+							cmd.Parameters[1].Value = pkid.ToString();
+							cmd.ExecuteNonQuery ();
+						}
 				}
 				cnx.Close ();
 			}
@@ -179,9 +207,9 @@ namespace WorkFlowProvider
 		/// List user's circles.
 		/// </summary>
 		/// <param name="user">User.</param>
-		public override CircleInfoCollection List (string user)
+		public override IEnumerable<ListItem> List (string user)
 		{
-			CircleInfoCollection cc = null;
+			List<ListItem> cc = null;
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "select _id, title from circle where owner = :wnr";
@@ -190,7 +218,7 @@ namespace WorkFlowProvider
 				cmd.Prepare ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 					if (rdr.HasRows) {
-						cc = new CircleInfoCollection ();
+						cc = new List<ListItem> ();
 						while (rdr.Read ()) {
 							string title = null;
 							int ottl = rdr.GetOrdinal ("title");
@@ -198,7 +226,7 @@ namespace WorkFlowProvider
 								title = rdr.GetString (ottl);
 							long id = (long) rdr.GetInt64 (
 								          rdr.GetOrdinal ("_id"));
-							cc.Add (new CircleInfo (id,title));
+							cc.Add (new ListItem { Value = id.ToString(), Text = title} );
 						}
 					}
 					rdr.Close ();
