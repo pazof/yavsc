@@ -28,13 +28,15 @@ namespace Yavsc.Model.Blogs
 		public abstract BlogEntry GetPost (string username, string title);
 
 		/// <summary>
-		/// Post the specified username, title, content and visible.
+		/// Post the specified username, title, content, visible and allowedCircles.
 		/// </summary>
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
 		/// <param name="content">Content.</param>
 		/// <param name="visible">If set to <c>true</c> visible.</param>
+		/// <param name="allowedCircles">Allowed circles.</param>
 		public abstract long Post (string username, string title, string content, bool visible, long[] allowedCircles);
+
 
 		/// <summary>
 		/// Updates the post.
@@ -43,12 +45,15 @@ namespace Yavsc.Model.Blogs
 		/// <param name="title">Title.</param>
 		/// <param name="content">Content.</param>
 		/// <param name="visible">If set to <c>true</c> visible.</param>
+		/// <param name="allowedCircles">Allowed circles.</param>
 		public abstract void UpdatePost (long postid, string title, string content, bool visible, long[] allowedCircles);
+
 
 		/// <summary>
 		/// Finds the post.
 		/// </summary>
 		/// <returns>The post.</returns>
+		/// <param name="readersName">Readers name.</param>
 		/// <param name="pattern">Pattern.</param>
 		/// <param name="searchflags">Searchflags.</param>
 		/// <param name="pageIndex">Page index.</param>

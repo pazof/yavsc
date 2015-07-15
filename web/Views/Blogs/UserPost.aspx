@@ -34,6 +34,11 @@
 	<% } %>
 </div>
 <% } %>
+
+</asp:Content>
+	  <asp:Content ContentPlaceHolderID="MASContent" ID="mas1" runat="server">
+	  <% if (Membership.GetUser()!=null) { 
+	  %>
 	 <div class="postcomment">
 	 <% using (Html.BeginForm("Comment","Blogs")) { %>
 	 <%=Html.Hidden("UserName")%>
@@ -43,15 +48,13 @@
 	 <input type="submit" value="Poster un commentaire"/>
 	 <% } %>
 	  </div>
+	  <%
 
-</asp:Content>
-	  <asp:Content ContentPlaceHolderID="MASContent" ID="mas1" runat="server">
-	  <% if (Membership.GetUser()!=null)
 	if (Membership.GetUser().UserName==Model.UserName)
 	 { %>
 	 <aside>
 	 <%= Html.ActionLink("Editer","Edit", new { user = Model.UserName, title = Model.Title }, new { @class="actionlink" }) %>
 	 <%= Html.ActionLink("Supprimer","RemovePost", new { user = Model.UserName, title = Model.Title }, new { @class="actionlink" } ) %>
-	 <% } %>
+	 <% } } %>
 	 </aside>
 	 </asp:Content>

@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Npgsql.Web</RootNamespace>
     <AssemblyName>NpgsqlMRPProviders</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,7 +36,6 @@
     <Compile Include="NpgsqlRoleProvider.cs" />
     <Compile Include="NpgsqlProfileProvider.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="NpgsqlCircleProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -70,5 +69,11 @@
     <None Include="Sql\UserRoleTable.sql" />
     <None Include="Sql\StockSymbols.sql" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\yavscModel\YavscModel.csproj">
+      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
+      <Name>YavscModel</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

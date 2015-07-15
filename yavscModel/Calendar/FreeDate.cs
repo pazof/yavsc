@@ -1,5 +1,4 @@
-﻿//
-//  FreeDate.cs
+﻿//  FreeDate.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -19,8 +18,9 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using Yavsc.Model.Google;
 
-namespace Yavsc.Model.Google
+namespace Yavsc.Model.Calendar
 {
 	/// <summary>
 	/// Free date.
@@ -48,7 +48,7 @@ namespace Yavsc.Model.Google
 		/// <value>The location.</value>
 		public string Location { get; set; }
 
-		static FreeDateSet CreateFromCalAndQuery(CalendarEventList cal, AskForADate query)
+		static FreeDateSet CreateFromCalAndQuery(CalendarEventList cal, BookEdit query)
 		{
 
 			throw new NotImplementedException ();

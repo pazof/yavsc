@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Yavsc.Model</RootNamespace>
     <AssemblyName>YavscModel</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -74,7 +74,6 @@
     <Compile Include="Google\SignIn.cs" />
     <Compile Include="Google\CalendarList.cs" />
     <Compile Include="Google\CalendarListEntry.cs" />
-    <Compile Include="Google\AskForADate.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="ITagHandler.cs" />
     <Compile Include="IViewRenderer.cs" />
@@ -124,7 +123,6 @@
     <Compile Include="FrontOffice\Catalog\Billing\Price.cs" />
     <Compile Include="OtherWebException.cs" />
     <Compile Include="WorkFlow\Automate.cs" />
-    <Compile Include="Google\FreeDate.cs" />
     <Compile Include="Google\CalendarEventList.cs" />
     <Compile Include="Google\GDate.cs" />
     <Compile Include="Google\Resource.cs" />
@@ -160,6 +158,8 @@
     <Compile Include="RolesAndMembers\LostPasswordModel.cs" />
     <Compile Include="Messaging\SimpleMessage.cs" />
     <Compile Include="ListItem.cs" />
+    <Compile Include="Calendar\BookEdit.cs" />
+    <Compile Include="Calendar\FreeDate.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -931,15 +931,16 @@ namespace Npgsql.Web
 		public override void UpdateUser (MembershipUser user)
 		{
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
-				using (NpgsqlCommand cmd = new NpgsqlCommand ("UPDATE Users " +
-				" SET Email = @Email, Comment = @Comment," +
-				" IsApproved = @IsApproved" +
-				" WHERE Username = @Username AND ApplicationName = @ApplicationName", conn)) {
-					cmd.Parameters.AddWithValue ("@Email", NpgsqlDbType.Varchar, 128).Value = user.Email;
-					cmd.Parameters.AddWithValue ("@Comment", NpgsqlDbType.Varchar, 255).Value = user.Comment;
-					cmd.Parameters.AddWithValue ("@IsApproved", NpgsqlDbType.Bit).Value = user.IsApproved;
-					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = user.UserName;
-					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+				using (NpgsqlCommand cmd = new NpgsqlCommand ("UPDATE users " +
+				" SET :username = :username, email = :email, comment = :comment," +
+				" isapproved = :isapproved" +
+					" WHERE pkid = :pkid and applicationname = :appname", conn)) {
+					cmd.Parameters.AddWithValue ("email", user.Email);
+					cmd.Parameters.AddWithValue ("comment", user.Comment);
+					cmd.Parameters.AddWithValue ("isapproved", user.IsApproved);
+					cmd.Parameters.AddWithValue ("username", user.UserName);
+					cmd.Parameters.AddWithValue ("pkid", user.ProviderUserKey);
+					cmd.Parameters.AddWithValue ("appname", pApplicationName);
 					conn.Open ();
 					cmd.ExecuteNonQuery ();
 					conn.Close ();

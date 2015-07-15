@@ -19,15 +19,15 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Yavsc.Model.Circles;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Web.Mvc;
+using System.Web.Security;
 using Npgsql;
 using NpgsqlTypes;
-using System.Collections.Generic;
-using System.Web.Security;
-using System.Web.Mvc;
 using Yavsc.Model;
+using Yavsc.Model.Circles;
 
 namespace WorkFlowProvider
 {
@@ -117,7 +117,7 @@ namespace WorkFlowProvider
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = "select title, owner from circle where _id = :cid";
+					cmd.CommandText = "select title, owner, public from circle where _id = :cid";
 					cmd.Parameters.AddWithValue ("cid", id);
 					using (NpgsqlDataReader dr = cmd.ExecuteReader ()) {
 						if (dr.Read ()) {
@@ -127,6 +127,8 @@ namespace WorkFlowProvider
 								dr.GetOrdinal ("title"));
 							circ.Owner = dr.GetString (
 								dr.GetOrdinal ("owner"));
+							circ.IsPrivate = !dr.GetBoolean(dr.GetOrdinal("public"));
+
 						}
 						dr.Close ();
 					}
@@ -164,7 +166,7 @@ namespace WorkFlowProvider
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = "insert into circle (owner,title,applicationname) values (:wnr,:tit,:app) returning _id";
+					cmd.CommandText = "insert into circle (owner,title,applicationname,public) values (:wnr,:tit,:app,FALSE) returning _id";
 					cmd.Parameters.AddWithValue ("wnr", owner);
 					cmd.Parameters.AddWithValue ("tit", title);
 					cmd.Parameters.AddWithValue ("app", applicationName);
@@ -209,7 +211,7 @@ namespace WorkFlowProvider
 		/// <param name="user">User.</param>
 		public override IEnumerable<ListItem> List (string user)
 		{
-			List<ListItem> cc = null;
+			List<ListItem> cc = new List<ListItem> ();
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "select _id, title from circle where owner = :wnr";
@@ -218,7 +220,7 @@ namespace WorkFlowProvider
 				cmd.Prepare ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 					if (rdr.HasRows) {
-						cc = new List<ListItem> ();
+						
 						while (rdr.Read ()) {
 							string title = null;
 							int ottl = rdr.GetOrdinal ("title");

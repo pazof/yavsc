@@ -13,7 +13,7 @@
 </thead>
 <tbody id="tbcb">
 <% int lc=0;
-   foreach (SelectListItem ci in ViewData["Circles"]) { lc++; %>
+   foreach (SelectListItem ci in Model) { lc++; %>
 <tr class="<%= (lc%2==0)?"even ":"odd " %>row" id="c_<%=ci.Value%>">
 <td><%=ci.Text%></td>
    <td>

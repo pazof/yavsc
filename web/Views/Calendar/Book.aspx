@@ -1,6 +1,4 @@
-﻿<%@ Page Title="Date search" Language="C#" Inherits="System.Web.Mvc.ViewPage<AskForADate>" MasterPageFile="~/Models/App.master" %>
-
-
+﻿<%@ Page Title="Booking" Language="C#" Inherits="System.Web.Mvc.ViewPage<BookEdit>" MasterPageFile="~/Models/App.master" %>
 <asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
 <link rel='stylesheet' href='/Scripts/fullcalendar/fullcalendar.css' />
  <script type="text/javascript" src="/Scripts/jquery-2.1.3.min.js"></script>

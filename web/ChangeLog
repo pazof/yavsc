@@ -1,3 +1,82 @@
+2015-07-15  Paul Schneider  <paul@pschneider.fr>
+
+	* cldr.js:
+	* Web.config:
+	* styles.json:
+	* globalize.js:
+	* event.js:
+	* Auth.aspx:
+	* Book.aspx:
+	* jquery-2.1.4.js:
+	* Login.aspx:
+	* map-load.gif:
+	* Book.aspx:
+	* Auth.aspx:
+	* mapstyle.css:
+	* mdd_help.htm:
+	* date.js:
+	* Login.aspx:
+	* unresolved.js:
+	* fit-bounds.png:
+	* plural.js:
+	* number.js:
+	* mapstyle-ie.css:
+	* jquery-2.1.4.min.js:
+	* supplemental.js:
+	* jquery-2.1.4.min.map:
+	* jquery.googlemaps.js:
+	* pin-pink.png:
+	* message.js:
+	* mapstyle.min.css:
+	* jquery-2.1.4-vsdoc.js:
+	* ChooseADate.aspx:
+	* pin-green.png:
+	* pin-azure.png:
+	* currency.js:
+	* flag-green.png:
+	* flag-azure.png:
+	* MarkdownDeepLib.min.js:
+	* ChooseADate.aspx:
+	* needle-pink.png:
+	* current-location.png:
+	* jquery.googlemaps.min.js:
+	* niddle-green.png:
+	* ChooseCalendar.aspx:
+	* ErrorMessage.aspx:
+	* relative-time.js:
+	* ChooseCalendar.aspx:
+	* GoogleErrorMessage.aspx:
+	* popup-template-circle.html:
+	* popup-template-marker.html:
+	* popup-template-polygon.html:
+	* popup-template-polyline.html:
+	* popup-template-rectangle.html: 
+
+	* OAuth2.cs:
+	* CircleController.cs:
+	* AccountController.cs: Impacts htmldoc
+
+	* PeopleApi.cs:
+	* GoogleController.cs:
+	* PaypalController.cs: Refactoring
+
+	* Global.asax.cs: Dropped an useless url mapping
+
+	* MarkdownHelper.cs: Package update
+
+	* App.master:
+	* NoLogin.master: Site's favicon update
+
+	* Circles.aspx: TO BE FIXED :-D
+
+	* UserPost.aspx: Comment only when logged in
+
+	* Web.csproj: Moves to Mono framework
+
+	* instdbws.sql: Circle public
+
+	* packages.config: package update
+
 2015-07-02  Paul Schneider  <paul@pschneider.fr>
 
 	* Web.csproj:

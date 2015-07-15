@@ -16,6 +16,7 @@ using Yavsc.Model;
 using Yavsc.Model.Google;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Helpers.Google;
+using Yavsc.Model.Calendar;
 
 namespace Yavsc.Controllers
 {
@@ -288,7 +289,7 @@ namespace Yavsc.Controllers
 		[HttpGet]
 		public ActionResult DateQuery ()
 		{
-			return View (new AskForADate ());
+			return View (new BookEdit ());
 		}
 		
 		/// <summary>
@@ -298,7 +299,7 @@ namespace Yavsc.Controllers
 		/// <param name="model">Model.</param>
 		[Authorize]
 		[HttpPost]
-		public ActionResult DateQuery (AskForADate model)
+		public ActionResult DateQuery (BookEdit model)
 		{
 			if (ModelState.IsValid) {
 

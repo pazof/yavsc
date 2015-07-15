@@ -22,10 +22,25 @@ using System;
 
 namespace Yavsc.Model
 {
+	/// <summary>
+	/// List item.
+	/// </summary>
 	public class ListItem
 	{
+		/// <summary>
+		/// Gets or sets the value.
+		/// </summary>
+		/// <value>The value.</value>
 		public string Value { get; set; }
+		/// <summary>
+		/// Gets or sets the text.
+		/// </summary>
+		/// <value>The text.</value>
 		public string Text  { get; set; }
+		/// <summary>
+		/// Gets or sets the icon.
+		/// </summary>
+		/// <value>The icon.</value>
 		public string Icon { get; set; }
 	}
 }

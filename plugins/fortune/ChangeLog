@@ -1,0 +1,4 @@
+2015-07-15  Paul Schneider  <paul@pschneider.fr>
+
+	* fortune.csproj: Moves to Mono framework
+

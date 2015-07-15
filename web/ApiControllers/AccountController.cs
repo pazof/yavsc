@@ -29,6 +29,9 @@ using System.Collections.Specialized;
 
 namespace Yavsc.ApiControllers
 {
+	/// <summary>
+	/// Account controller.
+	/// </summary>
 	public class AccountController : ApiController
 	{
 

@@ -154,14 +154,14 @@ namespace Yavsc
 		{
 			throw new NotImplementedException ();
 		}
+
 		/// <summary>
-		/// Releases all resource used by the <see cref="WorkFlowProvider.NpgsqlContentProvider"/> object.
+		/// Releases all resource used by the <see cref="Yavsc.NpgsqlContentProvider"/> object.
 		/// </summary>
-		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="WorkFlowProvider.NpgsqlContentProvider"/>.
-		/// The <see cref="Dispose"/> method leaves the <see cref="WorkFlowProvider.NpgsqlContentProvider"/> in an unusable
-		/// state. After calling <see cref="Dispose"/>, you must release all references to the
-		/// <see cref="WorkFlowProvider.NpgsqlContentProvider"/> so the garbage collector can reclaim the memory that the
-		/// <see cref="WorkFlowProvider.NpgsqlContentProvider"/> was occupying.</remarks>
+		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="Yavsc.NpgsqlContentProvider"/>. The
+		/// <see cref="Dispose"/> method leaves the <see cref="Yavsc.NpgsqlContentProvider"/> in an unusable state. After
+		/// calling <see cref="Dispose"/>, you must release all references to the <see cref="Yavsc.NpgsqlContentProvider"/> so
+		/// the garbage collector can reclaim the memory that the <see cref="Yavsc.NpgsqlContentProvider"/> was occupying.</remarks>
 		public void Dispose ()
 		{
 			throw new NotImplementedException ();
@@ -197,8 +197,9 @@ namespace Yavsc
 			throw new NotImplementedException ();
 		}
 
+
 		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="WorkFlowProvider.NpgsqlContentProvider"/> is active.
+		/// Gets or sets a value indicating whether this <see cref="Yavsc.NpgsqlContentProvider"/> is active.
 		/// </summary>
 		/// <value><c>true</c> if active; otherwise, <c>false</c>.</value>
 		public bool Active {

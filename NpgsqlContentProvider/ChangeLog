@@ -1,3 +1,11 @@
+2015-07-15  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlCircleProvider.cs: Makes Circles private, or not
+
+	* NpgsqlContentProvider.cs: Impacts htmldoc
+
+	* NpgsqlContentProvider.csproj: Moves to Mono framework
+
 2015-07-02  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlCircleProvider.cs: 

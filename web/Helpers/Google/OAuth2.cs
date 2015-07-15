@@ -28,40 +28,10 @@ using System.Web.Profile;
 using System.Web;
 using Yavsc.Model;
 using System.Runtime.Serialization.Json;
+using Yavsc.Helpers.Google;
 
 namespace Yavsc.Helpers.Google
 {
-	/// <summary>
-	/// Google People API.
-	/// </summary>
-	public class PeopleApi: ApiClient
-	{
-		private static string getPeopleUri = "https://www.googleapis.com/plus/v1/people";
-
-		/// <summary>
-		/// Gets the People object associated to the given Google Access Token
-		/// </summary>
-		/// <returns>The me.</returns>
-		/// <param name="gat">The Google Access Token object <see cref="AuthToken"/> class.</param>
-		public static People GetMe (AuthToken gat)
-		{
-			People me;
-			DataContractJsonSerializer ppser = new DataContractJsonSerializer (typeof(People));
-			HttpWebRequest webreppro = WebRequest.CreateHttp (getPeopleUri + "/me");
-			webreppro.ContentType = "application/http";
-			webreppro.Headers.Add (HttpRequestHeader.Authorization, gat.token_type + " " + gat.access_token);
-			webreppro.Method = "GET";
-			using (WebResponse proresp = webreppro.GetResponse ()) {
-				using (Stream prresponseStream = proresp.GetResponseStream ()) {
-					me = (People) ppser.ReadObject (prresponseStream);
-					prresponseStream.Close ();
-				}
-				proresp.Close ();
-			}
-			webreppro.Abort ();
-			return me;
-		}
-	}
 
 	/// <summary>
 	/// Google O auth2 client.
@@ -108,6 +78,7 @@ namespace Yavsc.Helpers.Google
 				              CLIENT_ID, RedirectUri, scope, state);
 			GetAuthResponse (bresp, prms);
 		}
+
 		/// <summary>
 		/// Gets the cal authorization.
 		/// </summary>
@@ -157,6 +128,7 @@ namespace Yavsc.Helpers.Google
 					HttpUtility.UrlEncode (code));
 			return postdata;
 		}
+
 		/// <summary>
 		/// Gets the Google Authorization token.
 		/// </summary>
@@ -188,7 +160,7 @@ namespace Yavsc.Helpers.Google
 			AuthToken gat = null;
 			using (WebResponse response = webreq.GetResponse ()) {
 				using (Stream responseStream = response.GetResponseStream ()) {
-					gat = (AuthToken) new DataContractJsonSerializer(typeof(AuthToken)).ReadObject (responseStream);
+					gat = (AuthToken)new DataContractJsonSerializer (typeof(AuthToken)).ReadObject (responseStream);
 					responseStream.Close ();
 				}
 				response.Close ();
@@ -225,6 +197,28 @@ namespace Yavsc.Helpers.Google
 		}
 
 		/// <summary>
+		/// Invalid O auth2 refresh token.
+		/// </summary>
+		public class InvalidOAuth2RefreshToken: Exception
+		{
+			/// <summary>
+			/// Initializes a new instance of the <see cref="Yavsc.Helpers.Google.OAuth2.InvalidOAuth2RefreshToken"/> class.
+			/// </summary>
+			/// <param name="message">Message.</param>
+			public InvalidOAuth2RefreshToken(string message):base(message)
+			{
+			}
+			/// <summary>
+			/// Initializes a new instance of the <see cref="Yavsc.Helpers.Google.OAuth2.InvalidOAuth2RefreshToken"/> class.
+			/// </summary>
+			/// <param name="message">Message.</param>
+			/// <param name="innerException">Inner exception.</param>
+			public InvalidOAuth2RefreshToken(string message,Exception innerException):base(message,innerException)
+			{
+			}
+		}
+
+		/// <summary>
 		/// Gets fresh google credential.
 		/// </summary>
 		/// <returns>The fresh google credential.</returns>
@@ -235,11 +229,18 @@ namespace Yavsc.Helpers.Google
 			string token_type = (string)pr.GetPropertyValue ("gtokentype");
 			DateTime token_exp = (DateTime)pr.GetPropertyValue ("gtokenexpir");
 			if (token_exp < DateTime.Now) {
-				string refresh_token = (string)pr.GetPropertyValue ("grefreshtoken");
-				AuthToken gat = OAuth2.GetTokenPosting (
-					                string.Format ("grant_type=refresh_token&client_id={0}&client_secret={1}&refresh_token={2}",
-						                CLIENT_ID, CLIENT_SECRET, refresh_token));
-				token = gat.access_token;
+				object ort = pr.GetPropertyValue ("grefreshtoken");
+				if (ort == null) {
+					throw new InvalidOAuth2RefreshToken ("Google");
+				}
+				else {
+					string refresh_token = ort as string;
+
+					AuthToken gat = OAuth2.GetTokenPosting (
+						               string.Format ("grant_type=refresh_token&client_id={0}&client_secret={1}&refresh_token={2}",
+							               CLIENT_ID, CLIENT_SECRET, refresh_token));
+					token = gat.access_token;
+				}
 				pr.SetPropertyValue ("gtoken", token);
 				pr.Save ();
 				// ASSERT gat.token_type == pr.GetPropertyValue("token_type")

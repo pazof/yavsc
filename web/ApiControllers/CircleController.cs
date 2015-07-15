@@ -29,9 +29,25 @@ using Yavsc.Model;
 
 namespace Yavsc.ApiControllers
 {
+	/// <summary>
+	/// New circle.
+	/// </summary>
 	public class NewCircle {
+		/// <summary>
+		/// Gets or sets the title.
+		/// </summary>
+		/// <value>The title.</value>
 		public string title { get ; set; } 
+		/// <summary>
+		/// Gets or sets the users.
+		/// </summary>
+		/// <value>The users.</value>
 		public string [] users { get ; set; }
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="Yavsc.ApiControllers.NewCircle"/> is private.
+		/// </summary>
+		/// <value><c>true</c> if is private; otherwise, <c>false</c>.</value>
+		public bool isPrivate { get; set; }
 	}
 
 	/// <summary>
@@ -39,11 +55,11 @@ namespace Yavsc.ApiControllers
 	/// </summary>
 	public class CircleController : ApiController
 	{
+
 		/// <summary>
-		/// Creates the specified circle using the given title and user list.
+		/// Create the specified circle.
 		/// </summary>
-		/// <param name="title">Identifier.</param>
-		/// <param name="users">Users.</param>
+		/// <param name="model">Model.</param>
 		[Authorize]
 		public long Create(NewCircle model) 
 		{

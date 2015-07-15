@@ -10,7 +10,7 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" href="/Theme/style.css" />
-<link rel="icon" type="image/png" href="/favicon.png?v=2" />
+<link rel="icon" type="image/png" href="/favicon.png?v=3" />
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery-2.1.4.js")%>"></script>
 <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>

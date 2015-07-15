@@ -55,11 +55,11 @@ namespace Yavsc
 				"Blogs/{action}/{user}/{title}",
 				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
 			); 
-			routes.MapRoute (
+			/*routes.MapRoute (
 				"Account",
 				"Account/{action}/{user}",
 				new { controller = "Account", action = "Index", user=UrlParameter.Optional }
-			); 
+			); */
 			routes.MapRoute (
 				"Default",
 				"{controller}/{action}/{user}/{title}",

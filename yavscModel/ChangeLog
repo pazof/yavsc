@@ -1,3 +1,15 @@
+2015-07-15  Paul Schneider  <paul@pschneider.fr>
+
+	* ListItem.cs:
+	* Circle.cs:
+	* BlogHelper.cs:
+	* BlogManager.cs:
+	* BookEdit.cs:
+	* FreeDate.cs:
+	* BlogProvider.cs: 
+
+	* YavscModel.csproj: Moves to Mono framework
+
 2015-07-02  Paul Schneider  <paul@pschneider.fr>
 
 	* ListItem.cs:

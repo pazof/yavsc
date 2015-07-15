@@ -34,7 +34,7 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Paypal API controller.
 	/// </summary>
-	public class PaypalApiController: ApiController
+	public class PaypalController: ApiController
 	{
 		PayPalAPIInterfaceServiceService service = null; 
 		/// <summary>
@@ -60,7 +60,10 @@ namespace Yavsc.ApiControllers
 			BMCreateButtonResponseType btcrere = service.BMCreateButton (btcrerq);
 			return btcrere;
 		}
-
+		/// <summary>
+		/// Search the specified str.
+		/// </summary>
+		/// <param name="str">String.</param>
 		public BMButtonSearchResponseType Search(string str)
 		{
 			BMButtonSearchReq req = new BMButtonSearchReq ();

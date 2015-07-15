@@ -25,7 +25,6 @@ namespace Yavsc.Model.Blogs
 				throw new ConfigurationErrorsException("The default blog provider was not found");
 			ConstructorInfo ci = Type.GetType (celt.Type).GetConstructor (Type.EmptyTypes);
 			BlogProvider bp = ci.Invoke (Type.EmptyTypes) as BlogProvider;
-			NameValueCollection c = new NameValueCollection ();
 			bp.Initialize (celt.Name, celt.Parameters);
 			return bp;
 		}

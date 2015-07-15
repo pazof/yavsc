@@ -652,25 +652,28 @@ WITH (
 -- Table: circle
 
 -- DROP TABLE circle;
-
 CREATE TABLE circle
 (
-  _id serial NOT NULL, -- Circle identifier
-  owner character varying(255), -- creator of this circle
-  applicationname character varying(255), -- Application name
-  title character varying(512),
+  _id bigserial NOT NULL, -- Circle identifier
+  owner character varying(255) NOT NULL, -- creator of this circle
+  applicationname character varying(255) NOT NULL, -- Application name
+  title character varying(512) NOT NULL,
+  public boolean, -- true when this circle is a public circle, from which the title would be available from an anonymous access to the owner's profile
   CONSTRAINT circle_pkey PRIMARY KEY (_id),
   CONSTRAINT circle_owner_fkey FOREIGN KEY (owner, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE
+      ON UPDATE CASCADE ON DELETE CASCADE,
+  CONSTRAINT circle_owner_title_key UNIQUE (owner, title)
 )
 WITH (
   OIDS=FALSE
 );
-
 COMMENT ON COLUMN circle._id IS 'Circle identifier';
 COMMENT ON COLUMN circle.owner IS 'creator of this circle';
 COMMENT ON COLUMN circle.applicationname IS 'Application name';
+COMMENT ON COLUMN circle.public IS 'true when this circle is a public circle, from which the title would be available from an anonymous access to the owner''s profile';
+
+
 -- Table: circle_members
 
 -- DROP TABLE circle_members;

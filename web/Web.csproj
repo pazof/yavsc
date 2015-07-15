@@ -9,7 +9,7 @@
     <ProjectTypeGuids>{349C5851-65DF-11DA-9384-00065B846F21};{603C0E0B-DB56-11DC-BE95-000D561079B0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>Yavsc</RootNamespace>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -75,29 +75,38 @@
     <Reference Include="System.Net.Http.Formatting" />
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Web.WebPages.Razor" />
-    <Reference Include="Npgsql">
-      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Npgsql.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <Package>nunit</Package>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="MarkdownDeep">
       <HintPath>..\packages\MarkdownDeep.NET.1.5\lib\.NetFramework 3.5\MarkdownDeep.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <Package>nunit</Package>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="PayPalButtonManagerSDK">
+      <HintPath>..\packages\PayPalButtonManagerSDK.2.9.109\lib\net20\PayPalButtonManagerSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="PayPalCoreSDK">
+      <HintPath>..\packages\PayPalCoreSDK.1.6.2\lib\net45\PayPalCoreSDK.dll</HintPath>
     </Reference>
     <Reference Include="xunit.abstractions">
       <HintPath>..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="xunit.core">
-      <HintPath>..\packages\xunit.extensibility.core.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.dll</HintPath>
-    </Reference>
     <Reference Include="xunit.assert">
       <HintPath>..\packages\xunit.assert.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.assert.dll</HintPath>
     </Reference>
-    <Reference Include="PayPalCoreSDK">
-      <HintPath>..\packages\PayPalCoreSDK.1.6.2\lib\net451\PayPalCoreSDK.dll</HintPath>
-    </Reference>
-    <Reference Include="PayPalButtonManagerSDK">
-      <HintPath>..\packages\PayPalButtonManagerSDK.2.9.109\lib\net20\PayPalButtonManagerSDK.dll</HintPath>
+    <Reference Include="xunit.core">
+      <HintPath>..\packages\xunit.extensibility.core.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -122,7 +131,6 @@
     <Folder Include="Theme\dark\" />
     <Folder Include="templates\" />
     <Folder Include="Formatters\" />
-    <Folder Include="Views\Google\" />
     <Folder Include="Settings\" />
     <Folder Include="Views\BackOffice\" />
     <Folder Include="Helpers\Google\" />
@@ -132,6 +140,7 @@
     <Folder Include="Views\PayPal\" />
     <Folder Include="ApiControllers\" />
     <Folder Include="Views\Modules\" />
+    <Folder Include="Views\Calendar\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -171,14 +180,12 @@
     <Compile Include="Helpers\SimpleJsonPostMethod.cs" />
     <Compile Include="Helpers\Google\Entity.cs" />
     <Compile Include="Helpers\Google\MapTracks.cs" />
-    <Compile Include="Helpers\Google\OAuth2.cs" />
     <Compile Include="Helpers\Google\EntityQuery.cs" />
     <Compile Include="Helpers\Google\ApiClient.cs" />
     <Compile Include="Helpers\Google\CalendarApi.cs" />
     <Compile Include="Formatters\ErrorHtmlFormatter.cs" />
     <Compile Include="Formatters\RssFeedsFormatter.cs" />
     <Compile Include="Formatters\TexToPdfFormatter.cs" />
-    <Compile Include="ApiControllers\PaypalApiController.cs" />
     <Compile Include="WebApiConfig.cs" />
     <Compile Include="IValueProvider.cs" />
     <Compile Include="Formatters\EstimToPdfFormatter.MSAN.cs" />
@@ -196,6 +203,12 @@
     <Compile Include="ApiControllers\GCMController.cs" />
     <Compile Include="ApiControllers\AccountController.cs" />
     <Compile Include="Helpers\ThanksHelper.cs" />
+    <Compile Include="Web References\sms.diamondcard.us\Reference.cs">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Google\OAuth2.cs" />
+    <Compile Include="Helpers\Google\PeopleApi.cs" />
+    <Compile Include="ApiControllers\PaypalController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -265,14 +278,10 @@
     <Content Include="Catalog.xml" />
     <Content Include="RegistrationMail.txt" />
     <Content Include="Views\FrontOffice\Writting.ascx" />
-    <Content Include="Views\Google\Login.aspx" />
-    <Content Include="Views\Google\Auth.aspx" />
     <Content Include="Scripts\jquery.metadata.js" />
     <Content Include="Scripts\rangyinputs-jquery-1.1.2.js" />
     <Content Include="images\sign-in-with-google.png" />
     <Content Include="Views\Account\Unregister.aspx" />
-    <Content Include="Views\Google\ChooseCalendar.aspx" />
-    <Content Include="Views\Google\DateQuery.aspx" />
     <Content Include="Scripts\GruntFile.js" />
     <Content Include="Scripts\jquery.timepicker.js" />
     <Content Include="Scripts\jquery.timepicker.min.js" />
@@ -286,36 +295,14 @@
     <Content Include="images\sign-in-with-google-s.png" />
     <Content Include="Scripts\datepicker-en-GB.js" />
     <Content Include="Scripts\datepicker-fr.js" />
-    <Content Include="Views\Google\GoogleErrorMessage.aspx" />
     <Content Include="Views\Home\Contact.aspx" />
     <Content Include="Views\Home\AssemblyInfo.aspx" />
     <Content Include="Views\Admin\Created.aspx" />
     <Content Include="Views\Admin\InitDb.aspx" />
     <Content Include="favicon.png" />
     <Content Include="Models\NoLogin.master" />
-    <Content Include="Scripts\css\mapstyle-ie.css" />
-    <Content Include="Scripts\css\mapstyle.css" />
-    <Content Include="Scripts\css\mapstyle.min.css" />
-    <Content Include="Scripts\html\popup-template-circle.html" />
-    <Content Include="Scripts\html\popup-template-marker.html" />
-    <Content Include="Scripts\html\popup-template-polygon.html" />
-    <Content Include="Scripts\html\popup-template-polyline.html" />
-    <Content Include="Scripts\html\popup-template-rectangle.html" />
-    <Content Include="Scripts\img\pin\flag-azure.png" />
-    <Content Include="Scripts\img\pin\flag-green.png" />
-    <Content Include="Scripts\img\pin\needle-pink.png" />
-    <Content Include="Scripts\img\pin\niddle-green.png" />
-    <Content Include="Scripts\img\pin\pin-azure.png" />
-    <Content Include="Scripts\img\pin\pin-green.png" />
-    <Content Include="Scripts\img\pin\pin-pink.png" />
-    <Content Include="Scripts\img\current-location.png" />
-    <Content Include="Scripts\img\fit-bounds.png" />
-    <Content Include="Scripts\img\map-load.gif" />
-    <Content Include="Scripts\jquery.googlemaps.js" />
-    <Content Include="Scripts\jquery.googlemaps.min.js" />
     <Content Include="Views\FrontOffice\Basket.aspx" />
     <Content Include="Theme\dark\rect.png" />
-    <Content Include="Views\Google\ChooseADate.aspx" />
     <Content Include="Scripts\stupidtable.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Views\Account\Profile.aspx" />
@@ -325,21 +312,6 @@
     <Content Include="Theme\dark\croix.png" />
     <Content Include="Views\Admin\RemoveRole..aspx" />
     <Content Include="Views\FrontOffice\EventPub.aspx" />
-    <Content Include="Scripts\cldr\event.js" />
-    <Content Include="Scripts\cldr\supplemental.js" />
-    <Content Include="Scripts\cldr\unresolved.js" />
-    <Content Include="Scripts\cldr.js" />
-    <Content Include="Scripts\globalize\currency.js" />
-    <Content Include="Scripts\globalize\date.js" />
-    <Content Include="Scripts\globalize\message.js" />
-    <Content Include="Scripts\globalize\number.js" />
-    <Content Include="Scripts\globalize\plural.js" />
-    <Content Include="Scripts\globalize\relative-time.js" />
-    <Content Include="Scripts\globalize.js" />
-    <Content Include="Scripts\jquery-2.1.4-vsdoc.js" />
-    <Content Include="Scripts\jquery-2.1.4.js" />
-    <Content Include="Scripts\jquery-2.1.4.min.js" />
-    <Content Include="Scripts\MarkdownDeepLib.min.js" />
     <Content Include="Theme\md\mdd_toolbar.png" />
     <Content Include="Theme\md\mdd_ajax_loader.gif" />
     <Content Include="Theme\md\mdd_gripper.png" />
@@ -349,6 +321,18 @@
     <Content Include="Views\Account\Register.ascx" />
     <Content Include="Views\Account\ResetPassword.aspx" />
     <Content Include="Views\Blogs\NotAuthorized.aspx" />
+    <Content Include="Scripts\mdd_ajax_loader.gif" />
+    <Content Include="Scripts\mdd_gripper.png" />
+    <Content Include="Scripts\mdd_help.htm" />
+    <Content Include="Scripts\mdd_modal_background.png" />
+    <Content Include="Scripts\mdd_styles.css" />
+    <Content Include="Scripts\mdd_toolbar.png" />
+    <Content Include="Views\Calendar\Login.aspx" />
+    <Content Include="Views\Calendar\Auth.aspx" />
+    <Content Include="Views\Calendar\ChooseCalendar.aspx" />
+    <Content Include="Views\Calendar\Book.aspx" />
+    <Content Include="Views\Calendar\ChooseADate.aspx" />
+    <Content Include="Views\Calendar\ErrorMessage.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -370,8 +354,13 @@
       <LastGenOutput>Estim.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
-    <None Include="Scripts\styles.json" />
-    <None Include="Scripts\jquery-2.1.4.min.map" />
+    <None Include="Web References\sms.diamondcard.us\smsapi.wsdl" />
+    <None Include="Web References\sms.diamondcard.us\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Scripts\MarkdownDeep Quick Reference.txt" />
+    <None Include="Scripts\MarkdownDeep License.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">
@@ -409,5 +398,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="instdbws.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://sms.diamondcard.us/doc/sms-api.wsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\sms.diamondcard.us</RelPath>
+      <UpdateFromURL>http://sms.diamondcard.us/doc/sms-api.wsdl</UpdateFromURL>
+    </WebReferenceUrl>
   </ItemGroup>
 </Project>

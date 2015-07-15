@@ -52,7 +52,8 @@ namespace Yavsc.Model.Circles
 		public string [] Members { get; set; }
 
 		/// <summary>
-		/// Union the specified that.
+		/// Merge the specified circle array into
+		/// an user name list.
 		/// </summary>
 		/// <param name="those">Those circle about to be merged.</param>
 		public static string [] Union (Circle []those)
@@ -66,6 +67,11 @@ namespace Yavsc.Model.Circles
 			}
 			return content.ToArray ();
 		}
+		/// <summary>
+		/// Gets or sets a value indicating whether this instance is private.
+		/// </summary>
+		/// <value><c>true</c> if this instance is private; otherwise, <c>false</c>.</value>
+		public bool IsPrivate { get; set; }
 	}
 
 }

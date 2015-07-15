@@ -22,12 +22,12 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Model.Google
+namespace Yavsc.Model.Calendar
 {
 	/// <summary>
 	/// Ask for A date.
 	/// </summary>
-	public class AskForADate
+	public class BookEdit
 	{
 
 		/// <summary>

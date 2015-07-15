@@ -97,10 +97,12 @@ namespace Yavsc.Model.Blogs
 			Provider.UpdatePost (postid, title, content, visible,cids);
 		}
 
+
 		/// <summary>
 		/// Finds the post.
 		/// </summary>
 		/// <returns>The post.</returns>
+		/// <param name="readersName">Readers name.</param>
 		/// <param name="pattern">Pattern.</param>
 		/// <param name="searchflags">Searchflags.</param>
 		/// <param name="pageIndex">Page index.</param>
