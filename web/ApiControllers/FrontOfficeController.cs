@@ -59,6 +59,19 @@ namespace Yavsc.ApiControllers
 		}
 
 		/// <summary>
+		/// Authorization denied.
+		/// </summary>
+		public class AuthorizationDenied : HttpRequestException {
+			/// <summary>
+			/// Initializes a new instance of the <see cref="Yavsc.ApiControllers.FrontOfficeController+AuthorizationDenied"/> class.
+			/// </summary>
+			/// <param name="msg">Message.</param>
+			public AuthorizationDenied(string msg) : base(msg)
+			{
+			}
+		}
+
+		/// <summary>
 		/// Gets the estimate.
 		/// </summary>
 		/// <returns>The estimate.</returns>
@@ -68,6 +81,14 @@ namespace Yavsc.ApiControllers
 		public Estimate GetEstimate (long id)
 		{
 			Estimate est = wfmgr.ContentProvider.GetEstimate (id);
+			string username = Membership.GetUser ().UserName;
+			if (est.Client != username)
+			if (!Roles.IsUserInRole("Admin"))
+			if (!Roles.IsUserInRole("FrontOffice"))
+				throw new AuthorizationDenied (
+					string.Format (
+						"Auth denied to eid {1} for:{2}", 
+						id, username));
 			return est;
 		}
 

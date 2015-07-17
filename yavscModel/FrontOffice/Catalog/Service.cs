@@ -24,7 +24,7 @@ namespace Yavsc.Model.FrontOffice
 		/// Gets or sets the set prices.
 		/// </summary>
 		/// <value>The set prices.</value>
-		public SetPrice[] SetPrices { get; set; }
+		public PriceOnItemCount[] SetPrices { get; set; }
 
 		/// <summary>
 		/// Role names involved in this kind of service

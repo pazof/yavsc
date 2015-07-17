@@ -1,5 +1,5 @@
-﻿//
-//  ServiceForfait.cs
+//
+//  Automate.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -19,22 +19,24 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
-namespace Yavsc.Model.FrontOffice.Billing
+namespace Yavsc.Model.WorkFlow
 {
 	/// <summary>
-	/// A set price.
+	/// Invalid letter exception.
 	/// </summary>
-	public class SetPrice: Price
+	public class InvalidLetterException : Exception
 	{
 		/// <summary>
-		/// Gets or sets the minimum count for this setprice.
+		/// Initializes a new instance of the <see cref="Yavsc.Model.WorkFlow.InvalidLetterException"/> class.
 		/// </summary>
-		/// <value>The minimum count.</value>
-		[Range(0,int.MaxValue)]
-		public int MinCount { get; set; }
-
+		/// <param name="letter">Letter.</param>
+		public InvalidLetterException(object letter):base(letter.ToString())
+		{
+		}
 	}
+
+
 }
 

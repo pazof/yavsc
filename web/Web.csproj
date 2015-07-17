@@ -155,7 +155,6 @@
     <Compile Include="Controllers\BackOfficeController.cs" />
     <Compile Include="Admin\Export.cs" />
     <Compile Include="Admin\DataManager.cs" />
-    <Compile Include="Admin\TaskOutput.cs" />
     <Compile Include="Controllers\FileSystemController.cs" />
     <Compile Include="CatExts\WebCatalogExtensions.cs" />
     <Compile Include="Helpers\YavscHelpers.cs" />

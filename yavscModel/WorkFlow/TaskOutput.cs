@@ -3,6 +3,7 @@ using System.ComponentModel;
 
 namespace Yavsc.Admin
 {
+
 	/// <summary>
 	/// Task output.
 	/// </summary>

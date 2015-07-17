@@ -26,103 +26,75 @@ namespace Yavsc.Model.WorkFlow
 	/// <summary>
 	/// Automate.
 	/// </summary>
-	public class Automate
+	public class Automate<TState,TLetter>
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.WorkFlow.Automate"/> class.
+		/// Initializes a new instance of the Automate class.
 		/// </summary>
 		public Automate ()
 		{
-
 		}
-
-		private List<IEquatable<long>> eventids = 
-			new List<IEquatable<long>>();
-		private List<IEquatable<long>> stateids = 
-			new List<IEquatable<long>>();
-		private IEquatable<long> startingstateid ;
-		private List<IEquatable<long>> endingstateids = 
-			new List<IEquatable<long>>();
-		private Dictionary<IEquatable<long>,Dictionary<IEquatable<long>,IEquatable<long>>> transitions =
-			new Dictionary<IEquatable<long>, Dictionary<IEquatable<long>, IEquatable<long>>>();
-
-		/// <summary>
-		/// Sets the state of the starting.
-		/// </summary>
-		/// <param name="startingStateId">Starting state identifier.</param>
-		public void SetStartingState(IEquatable<long> startingStateId)
-		{
-			if (endingstateids.Contains (startingStateId))
-				throw new InvalidOperationException ("endingstateids.Contains (startingStateId)");
-			if (!stateids.Contains (startingStateId))
-				stateids.Add (startingStateId);
-			startingstateid = startingStateId;
-		}
-
-		/// <summary>
-		/// Sets the state of the ending.
-		/// </summary>
-		/// <param name="endingStateId">Ending state identifier.</param>
-		public void SetEndingState(IEquatable<long> endingStateId)
-		{
-
-			if (startingstateid==endingStateId)
-				throw new InvalidOperationException ("startingstateid==endingStateId");
-			if (!stateids.Contains (endingStateId))
-				stateids.Add (endingStateId);
-			if (!endingstateids.Contains (endingStateId))
-				endingstateids.Add (endingStateId);
-		}
-
-
-		/// <summary>
-		/// Adds the transition.
-		/// </summary>
-		/// <param name="startingStateId">Starting state identifier.</param>
-		/// <param name="endingStateId">Ending state identifier.</param>
-		/// <param name="eventId">Event identifier.</param>
-		public void AddTransition(
-			IEquatable<long> startingStateId, 
-			IEquatable<long> endingStateId, 
-			IEquatable<long> eventId)
-		{
-			if (!stateids.Contains (startingStateId))
-				stateids.Add (startingStateId);
-			if (!stateids.Contains (endingStateId))
-				stateids.Add (endingStateId);
-
-			Dictionary<IEquatable<long>,IEquatable<long>> currentNode = transitions [startingStateId];
-			if (currentNode == null) {
-				transitions.Add(
-					startingStateId,
-					currentNode = 
-					new Dictionary<IEquatable<long>, IEquatable<long>> ());
-			}
-			currentNode [eventId] = endingStateId;
-			if (!eventids.Contains (eventId))
-				eventids.Add (eventId);
-		}
-
+		private Dictionary<TState,Dictionary<TLetter,TState>> transitions =
+			new Dictionary<TState,Dictionary<TLetter,TState>>();
+		private List<TLetter> letters = new List<TLetter>();
+		private List<TState> states = new List<TState>();
 		/// <summary>
 		/// Gets or sets the state.
 		/// </summary>
 		/// <value>The state.</value>
-		public IEquatable<long> State { get; set; }
+		public TState State { get; set; }
+
+		/// <summary>
+		/// Gets or sets the starting state.
+		/// </summary>
+		/// <value>The state.</value>
+		public TState StartingState { get; set; }
+
+		/// <summary>
+		/// Adds the transition.
+		/// </summary>
+		/// <param name="start">Start.</param>
+		/// <param name="end">End.</param>
+		/// <param name="letter">Letter.</param>
+		public virtual void AddTransition(
+			TState start, 
+			TState end, 
+			TLetter letter)
+		{
+			if (!states.Contains (start))
+				states.Add (start);
+			if (!states.Contains (end))
+				states.Add (end);
+			if (!letters.Contains (letter))
+				letters.Add (letter);
+			Dictionary<TLetter,TState> node = null;
+			if (!transitions.ContainsKey(start))
+				transitions.Add(
+					start,
+					node = 
+					new Dictionary<TLetter,TState> ());
+			else node = transitions [start];
+			if (node.ContainsKey (letter))
+				throw new NotImplementedException ("Automates indéterministes");
+			node.Add(letter, end);
+		}
+
 
 		/// <summary>
 		/// Move this instance according the specified eventId.
 		/// </summary>
 		/// <param name="eventId">Event identifier.</param>
-		public void Move(IEquatable<long> eventId)
+		public void Aggregate(TLetter eventId)
 		{
 			if (State == null)
 				throw new InvalidOperationException ("Set the current state or reset the automate before");
-			Dictionary<IEquatable<long>,IEquatable<long>> node = transitions [State];
-			if (node == null) // no transition found
-				return;
-			IEquatable<long> nextState = node [eventId];
+			Dictionary<TLetter,TState> node = transitions [State];
+			if (node == null) // no transition found from this state
+				// it is final.
+				throw new FinalStateException();
+			TState nextState = node [eventId];
 			if (nextState == null) // no transition found for this event
-				return;
+				throw new InvalidLetterException(eventId);
 			State = nextState;
 		}
 
@@ -131,7 +103,7 @@ namespace Yavsc.Model.WorkFlow
 		/// </summary>
 		public void Reset()
 		{
-			State = startingstateid;
+			State = StartingState;
 		}
 
 		/// <summary>
@@ -139,10 +111,9 @@ namespace Yavsc.Model.WorkFlow
 		/// reset all of its properties
 		/// </summary>
 		public void FactoryReset() {
-			State = null;
-			startingstateid = null;
-			endingstateids.Clear ();
-			eventids.Clear ();
+			State = default(TState);
+			StartingState = default(TState);
+			letters.Clear ();
 			transitions.Clear ();
 		}
 
@@ -152,7 +123,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <returns><c>true</c> if this instance is in final state; otherwise, <c>false</c>.</returns>
 		public bool IsInFinalState()
 		{
-			return endingstateids.Contains (State);
+			return !transitions.ContainsKey(this.State);
 		}
 	}
 
