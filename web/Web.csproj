@@ -332,6 +332,7 @@
     <Content Include="Views\Calendar\Book.aspx" />
     <Content Include="Views\Calendar\ChooseADate.aspx" />
     <Content Include="Views\Calendar\ErrorMessage.aspx" />
+    <Content Include="Views\Blogs\RemoveTitle.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
