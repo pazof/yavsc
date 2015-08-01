@@ -1,20 +1,17 @@
 using System.Web.Security;
-using System.Configuration.Provider;
+using System.Web.Configuration;
 using System.Collections.Specialized;
 using System;
-using System.Data;
-using Npgsql;
-using NpgsqlTypes;
+using System.Configuration.Provider;
 using System.Configuration;
-using System.Diagnostics;
-using System.Web;
-using System.Globalization;
-using System.Security.Cryptography;
+using NpgsqlTypes;
+using System.Data;
 using System.Text;
-using System.Web.Configuration;
+using System.Security.Cryptography;
 
 namespace Npgsql.Web
 {
+
 	/// <summary>
 	/// Npgsql membership provider.
 	/// </summary>
@@ -932,13 +929,12 @@ namespace Npgsql.Web
 		{
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
 				using (NpgsqlCommand cmd = new NpgsqlCommand ("UPDATE users " +
-				" SET :username = :username, email = :email, comment = :comment," +
+				" SET email = :email, comment = :comment," +
 				" isapproved = :isapproved" +
 					" WHERE pkid = :pkid and applicationname = :appname", conn)) {
 					cmd.Parameters.AddWithValue ("email", user.Email);
 					cmd.Parameters.AddWithValue ("comment", user.Comment);
 					cmd.Parameters.AddWithValue ("isapproved", user.IsApproved);
-					cmd.Parameters.AddWithValue ("username", user.UserName);
 					cmd.Parameters.AddWithValue ("pkid", user.ProviderUserKey);
 					cmd.Parameters.AddWithValue ("appname", pApplicationName);
 					conn.Open ();
