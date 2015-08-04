@@ -46,6 +46,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Bill_edition {
+            get {
+                return ResourceManager.GetString("Bill_edition", resourceCulture);
+            }
+        }
+        
         public static string Tex_version {
             get {
                 return ResourceManager.GetString("Tex_version", resourceCulture);
@@ -286,12 +292,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Bill_edition {
-            get {
-                return ResourceManager.GetString("Bill edition", resourceCulture);
-            }
-        }
-        
         public static string Offline {
             get {
                 return ResourceManager.GetString("Offline", resourceCulture);
@@ -334,9 +334,27 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string DisplayName {
+            get {
+                return ResourceManager.GetString("DisplayName", resourceCulture);
+            }
+        }
+        
         public static string Consultant {
             get {
                 return ResourceManager.GetString("Consultant", resourceCulture);
+            }
+        }
+        
+        public static string InternalServerError {
+            get {
+                return ResourceManager.GetString("InternalServerError", resourceCulture);
+            }
+        }
+        
+        public static string entries {
+            get {
+                return ResourceManager.GetString("entries", resourceCulture);
             }
         }
         

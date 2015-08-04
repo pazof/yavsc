@@ -150,9 +150,11 @@ namespace Yavsc.Controllers
 			if (mbrs.Count == 1) {
 				// TODO check the google id
 				// just set this user as logged on
-				FormsAuthentication.SetAuthCookie (me.displayName, true);
+				foreach (MembershipUser u in mbrs) {
+				string username = u.UserName;
+				FormsAuthentication.SetAuthCookie (username, true);
+				}
 				Session ["returnUrl"] = null;
-							
 				return Redirect (returnUrl);
 			}
 			// else create the account

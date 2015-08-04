@@ -36,7 +36,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="estim">Estim.</param>
 		public void UpdateEstimate (Estimate estim)
 		{
-			ContentProvider.UpdateEstimate (estim);
+			ContentProvider.Update (estim);
 		}
 		/// <summary>
 		/// Gets the estimate.
@@ -45,7 +45,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="estid">Estid.</param>
 		public Estimate GetEstimate (long estid)
 		{
-			return ContentProvider.GetEstimate (estid);
+			return ContentProvider.Get (estid);
 		}
 		/// <summary>
 		/// Gets the estimates, refering the 

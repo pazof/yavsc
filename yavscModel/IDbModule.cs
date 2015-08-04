@@ -9,7 +9,7 @@ namespace Yavsc.Model
 	/// <summary>
 	/// I module.
 	/// </summary>
-	public interface IModule
+	public interface IDbModule
 	{
 		/// <summary>
 		/// Install the model in database using the specified cnx.

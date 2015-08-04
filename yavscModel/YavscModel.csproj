@@ -57,7 +57,6 @@
     <Compile Include="Blogs\Comment.cs" />
     <Compile Include="Blogs\FindBlogEntryFlags.cs" />
     <Compile Include="WorkFlow\StatusChange.cs" />
-    <Compile Include="IModule.cs" />
     <Compile Include="Blogs\BlogManager.cs" />
     <Compile Include="Blogs\BlogProvider.cs" />
     <Compile Include="WorkFlow\WorkFlowManager.cs" />
@@ -163,6 +162,13 @@
     <Compile Include="WorkFlow\TaskOutput.cs" />
     <Compile Include="WorkFlow\FinalStateException.cs" />
     <Compile Include="WorkFlow\InvalidLetterException.cs" />
+    <Compile Include="Blogs\UUTBlogEntryCollection.cs" />
+    <Compile Include="Blogs\UUBlogEntryCollection.cs" />
+    <Compile Include="IDbModule.cs" />
+    <Compile Include="WorkFlow\IDataProvider.cs" />
+    <Compile Include="Blogs\PostNotFoundException.cs" />
+    <Compile Include="RolesAndMembers\ChangeUserNameProvider.cs" />
+    <Compile Include="RolesAndMembers\UserManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

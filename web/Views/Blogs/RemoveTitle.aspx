@@ -5,9 +5,9 @@
 <%= Html.ValidationSummary() %>
 <% using (Html.BeginForm("RemoveTitle","Blogs")) { %>
 
-<%= Html.LabelFor(model => model.Title) %> :
-<%= Html.TextBox( "Title" ) %>
-<%= Html.ValidationMessage("Title", "*") %><br/>
+<%= Html.LabelFor(model => model.Titles) %> :
+<%= Html.TextBox( "Titles" ) %>
+<%= Html.ValidationMessage("Titles", "*") %><br/>
 <%= Html.Hidden("UserName") %>
 <label for="confirm">supprimer le billet</label>
 <%= Html.CheckBox( "confirm" ) %>

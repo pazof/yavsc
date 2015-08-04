@@ -1,14 +1,14 @@
-<%@ Page Title="Bill edition" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
+<%@ Page Title="Bill_edition" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="head" ID="HeadContent1" runat="server">
-<link rel="stylesheet" href="<%=Url.Content("~/Theme/mdd_styles.css")%>">
+<link rel="stylesheet" href="<%=Url.Content("~/Scripts/mdd_styles.css")%>">
  <script type="text/javascript" src="<%=Url.Content("~/Scripts/MarkdownDeepLib.min.js")%>">
- </script>
+  </script>
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 	 <% if (Model != null ) if (Model.Content != null )  { %>
-	 <%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title}) %>
+	 <%= Html.ActionLink(Model.Title,"UserPost",new{user=Model.UserName,title=Model.Title,id=Model.Id}) %>
 
 <% } %>
 
@@ -28,8 +28,6 @@
 <%= Html.CheckBox( "Visible" ) %>
 <%= Html.LabelFor(model => model.Visible) %>
 
-
-
 <%= Html.ValidationMessage("Visible", "*") %>
 <br/>
 
@@ -46,7 +44,6 @@
 <% } %>
 
 <script>
-
  $(document).ready(function () {
  $("textarea.mdd_editor").MarkdownDeep({ 
     help_location: "/Scripts/html/mdd_help.htm",

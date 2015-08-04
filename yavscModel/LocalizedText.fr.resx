@@ -59,8 +59,11 @@
 	<data name="EventWebPage"><value>Page web de l'événement</value></data>
 	<data name="ImgLocator"><value>URI de l'image</value></data>
 	<data name="Home"><value>Accueil</value></data>
-	<data name="Bill edition"><value>Édition d'un billet</value></data>
+	<data name="Bill_edition"><value>Édition d'un billet</value></data>
 	<data name="Create"><value>Créer</value></data>
 	<data name="Members"><value>Membres</value></data>
 	<data name="UserName"><value>Nom d'utilisateur</value></data>
+	<data name="DisplayName"><value>Nom affiché</value></data>
+	<data name="entries"><value>entrées</value></data>
+	<data name="InternalServerError"><value>Erreur serveur interne</value></data>
 </root>

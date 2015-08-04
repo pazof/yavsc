@@ -46,27 +46,27 @@ namespace Yavsc
 			routes.IgnoreRoute ("favicon.png");
 			routes.IgnoreRoute ("robots.txt");
 			routes.MapRoute (
-				"Blog",
-				"Blog/{user}/{title}",
-				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
-			); 
-			routes.MapRoute (
 				"Blogs",
 				"Blogs/{action}/{user}/{title}",
 				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
 			); 
-			/*routes.MapRoute (
-				"Account",
-				"Account/{action}/{user}",
-				new { controller = "Account", action = "Index", user=UrlParameter.Optional }
-			); */
+			routes.MapRoute (
+				"BlogByTitleRO",
+				"Blog/{user}/{title}",
+				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
+			); 
+			routes.MapRoute (
+				"BlogById",
+				"B/{action}/{id}",
+				new { controller = "Blogs", action = "UserPost", id = UrlParameter.Optional }
+			); 
 			routes.MapRoute (
 				"Default",
-				"{controller}/{action}/{user}/{title}",
+				"{controller}/{action}/{id}",
 				new { controller = defaultController, 
 					action = "Index", 
 					user=UrlParameter.Optional,
-					title = UrlParameter.Optional }
+					id = UrlParameter.Optional }
 			);
 		}
 

@@ -77,38 +77,46 @@ namespace Yavsc.Formatters
 		/// <param name="contentHeaders">Content headers.</param>
 		public override void WriteToStream (Type type, object value, Stream stream, HttpContentHeaders contentHeaders)
 		{
-
+			string temp = Path.GetTempPath ();
 			string cntStr = value as string;
 			string name = "tmpdoc-"+Guid.NewGuid().ToString();
-			string fullname = Path.Combine (
-				HttpRuntime.CodegenDir, name);
+			string fullname = Path.Combine (temp, name);
 			FileInfo fi = new FileInfo(fullname + ".tex");
-			FileInfo fo = new FileInfo(fullname + ".pdf");
-			using (StreamWriter sw = new StreamWriter (fi.FullName))
+			FileInfo fo = null;
+			using (StreamWriter sw = new StreamWriter (fi.OpenWrite()))
 			{
 				sw.Write (cntStr);
-			}
-			using (Process p = new Process ()) {			
-				p.StartInfo.WorkingDirectory = HttpRuntime.CodegenDir;
-				p.StartInfo = new ProcessStartInfo ();
-				p.StartInfo.UseShellExecute = false;
-				p.StartInfo.FileName = "/usr/bin/texi2pdf";
-				p.StartInfo.Arguments = 
-					string.Format ("--batch --build-dir={2} -o {0} {1}",
-						fo.FullName,
-						fi.FullName,HttpRuntime.CodegenDir);
-				p.Start ();
-				p.WaitForExit ();
-				if (p.ExitCode != 0)
-					throw new FormatterException ("Pdf generation failed with exit code:" + p.ExitCode);
+				sw.Close ();
 			}
 
-			using (StreamReader sr = new StreamReader (fo.FullName)) {
-				byte[] buffer = File.ReadAllBytes (fo.FullName);
-				stream.Write(buffer,0,buffer.Length);
+			using (Process p = new Process ()) {
+				
+				Directory.SetCurrentDirectory (temp);
+
+				p.StartInfo.WorkingDirectory = temp;
+				p.StartInfo = new ProcessStartInfo ();
+				p.StartInfo.UseShellExecute = false;
+				p.StartInfo.FileName = "texi2pdf";
+				p.StartInfo.Arguments = 
+					string.Format ("--batch {0}",
+						fi.FullName);
+				p.StartInfo.RedirectStandardOutput = true;
+				p.StartInfo.RedirectStandardError = true;
+
+				p.Start ();
+				p.WaitForExit ();
+
+				if (p.ExitCode != 0) {
+					var ex = new FormatterException ("Pdf generation failed with exit code:" + p.ExitCode);
+					ex.Output = p.StandardOutput.ReadToEnd ()+"\nCWD:"+temp;
+					ex.Error = p.StandardError.ReadToEnd ();
+					throw ex;
+				}
+				fo = new FileInfo(name + ".pdf");
 			}
-			fi.Delete();
-			fo.Delete();
+
+			byte[] buffer = File.ReadAllBytes (fo.Name);
+			stream.Write(buffer,0,buffer.Length);
 			if (contentHeaders != null)
 				SetFileName(contentHeaders, value.GetHashCode ().ToString ());
 		}

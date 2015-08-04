@@ -4,8 +4,10 @@ using Yavsc.Model.FrontOffice;
 
 namespace Yavsc.Model.WorkFlow
 {
-	public interface IDataProvider
+	public interface IDataProvider<T>
 	{
+		T Get (long id);
+		void Update (T data);
 	}
 
 }

@@ -4,7 +4,6 @@
 <% using  (Html.BeginForm("Write","WorkFlow")) { %>
 <div>
 <%= Html.Hidden( "Id" ) %>
-<%= Html.Hidden( "EstimateId", (long) ViewData["EstimateId"]) %>
 
 <%= Html.LabelFor(model => model.Description) %>:<%= Html.TextArea( "Description" ) %>
 <%= Html.ValidationMessage("Description", "*", new { @id="Err_wr_Description", @class="error" }) %>

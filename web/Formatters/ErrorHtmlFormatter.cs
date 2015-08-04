@@ -27,6 +27,8 @@ using System.IO;
 using System.Net.Http;
 using System.Web.Mvc;
 using System.Net;
+using MarkdownDeep;
+using Yavsc.Helpers;
 
 namespace Yavsc.Formatters
 {
@@ -84,7 +86,7 @@ namespace Yavsc.Formatters
 					"href=\"/Theme/style.css\" />" +
 					"<link rel=\"icon\" type=\"image/png\"" +
 					" href=\"/favicon.png\" />";
-				p.InnerHtml = MvcHtmlString.Create (message).ToHtmlString();
+				p.InnerHtml = MarkdownHelper.Markdown(message).ToHtmlString();
 				h1.InnerHtml = MvcHtmlString.Create (Title).ToHtmlString();
 				body.InnerHtml = h1.ToString()+p.ToString ();
 				doc.InnerHtml = head.ToString()+"\n"+body.ToString ();

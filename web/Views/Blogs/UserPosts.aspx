@@ -20,9 +20,15 @@
 <%  foreach (BlogEntry e in this.Model) { %>
 	<div <% if (!e.Visible) { %> style="background-color:#022;" <% } %>>
 
-<h2 class="blogtitle" ><%= Html.ActionLink(e.Title,"UserPost", new { user=e.UserName, title = e.Title }) %></h2>
+<h2 class="blogtitle" ><%= Html.ActionLink(e.Title,"GetPost", new { id = e.Id }) %></h2>
 <div class="metablog">(<%= e.Posted.ToString("yyyy/MM/dd") %>
 	 - <%= e.Modified.ToString("yyyy/MM/dd") %> <%= e.Visible? "":", Invisible!" %>)
+	 <% if (Membership.GetUser()!=null)
+	if (Membership.GetUser().UserName==e.UserName)
+	 { %>
+	 <%= Html.ActionLink("Editer","Edit", new { id = e.Id }, new { @class="actionlink" }) %>
+	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = e.Id }, new { @class="actionlink" } ) %>
+	 <% } %>
 </div>
 
 </div>

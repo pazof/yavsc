@@ -20,15 +20,17 @@ namespace Yavsc.Model.Blogs
 		public abstract BlogEntry GetPost (long postid);
 
 		/// <summary>
-		/// Gets the post.
+		/// Gets the post collection from a given user and at a given title.
 		/// </summary>
 		/// <returns>The post.</returns>
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
-		public abstract BlogEntry GetPost (string username, string title);
+		public abstract UUTBlogEntryCollection GetPost (string username, string title);
 
 		/// <summary>
-		/// Post the specified username, title, content, visible and allowedCircles.
+		/// Saves a post from the given username, 
+		/// at the specified title, this content, 
+		/// visible or not, and for allowedCircles.
 		/// </summary>
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
@@ -39,7 +41,8 @@ namespace Yavsc.Model.Blogs
 
 
 		/// <summary>
-		/// Updates the post.
+		/// Updates the post specified by its id,
+		/// using the given title, content, visibility and circle collection.
 		/// </summary>
 		/// <param name="postid">Postid.</param>
 		/// <param name="title">Title.</param>
@@ -48,9 +51,8 @@ namespace Yavsc.Model.Blogs
 		/// <param name="allowedCircles">Allowed circles.</param>
 		public abstract void UpdatePost (long postid, string title, string content, bool visible, long[] allowedCircles);
 
-
 		/// <summary>
-		/// Finds the post.
+		/// Finds a post.
 		/// </summary>
 		/// <returns>The post.</returns>
 		/// <param name="readersName">Readers name.</param>
@@ -63,11 +65,11 @@ namespace Yavsc.Model.Blogs
 			int pageIndex, int pageSize, out int totalRecords);
 
 		/// <summary>
-		/// Removes the post.
+		/// Removes the posts under the specified title and user.
 		/// </summary>
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
-		public abstract void RemovePost (string username, string title);
+		public abstract void RemoveTitle (string username, string title);
 
 		/// <summary>
 		/// Removes the post.
@@ -83,7 +85,7 @@ namespace Yavsc.Model.Blogs
 		public abstract long RemoveComment (long cmtid);
 
 		/// <summary>
-		/// Lasts the posts.
+		/// Lasts the posts for this application.
 		/// </summary>
 		/// <returns>The posts.</returns>
 		/// <param name="pageIndex">Page index.</param>
@@ -92,14 +94,15 @@ namespace Yavsc.Model.Blogs
 		public abstract BlogEntryCollection LastPosts(int pageIndex, int pageSize, out int totalRecords);
 
 		/// <summary>
-		/// Blogs the title.
+		/// Returns the user's blog title.
 		/// </summary>
 		/// <returns>The title.</returns>
 		/// <param name="username">Username.</param>
 		public abstract string BlogTitle (string username);
 
 		/// <summary>
-		/// Comment the specified from, postid and content.
+		/// Saves a comment from specified user
+		/// on the specided post using the specified content.
 		/// </summary>
 		/// <param name="from">From.</param>
 		/// <param name="postid">Postid.</param>
@@ -107,7 +110,7 @@ namespace Yavsc.Model.Blogs
 		public abstract long Comment (string from, long postid, string content);
 
 		/// <summary>
-		/// Gets the comments.
+		/// Gets the comments on a specided post by identifier <c>postid</c>.
 		/// </summary>
 		/// <returns>The comments.</returns>
 		/// <param name="postid">Postid.</param>
@@ -115,10 +118,10 @@ namespace Yavsc.Model.Blogs
 		public abstract Comment[] GetComments (long postid, bool getHidden) ;
 
 		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="Yavsc.Model.Blogs.BlogProvider"/> auto validate comment.
+		/// Gets or sets a value indicating whether this <see cref="Yavsc.Model.Blogs.BlogProvider"/> auto validates comments.
 		/// </summary>
 		/// <value><c>true</c> if auto validate comment; otherwise, <c>false</c>.</value>
-		public abstract bool AutoValidateComment { get; set; }
+		public abstract bool AutoValidatesComments { get; set; }
 
 		/// <summary>
 		/// Validates the comment.
@@ -135,7 +138,8 @@ namespace Yavsc.Model.Blogs
 		public abstract void UpdateComment (long cmtid, string content, bool visible);
 
 		/// <summary>
-		/// Tag the specified postid and tag.
+		/// Tag the specified post by identifier 
+		/// using the given tag.
 		/// </summary>
 		/// <param name="postid">Postid.</param>
 		/// <param name="tag">Tag.</param>

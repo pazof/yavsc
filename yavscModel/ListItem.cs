@@ -25,6 +25,7 @@ namespace Yavsc.Model
 	/// <summary>
 	/// List item.
 	/// </summary>
+	[Obsolete("Use MVC SelectItem")]
 	public class ListItem
 	{
 		/// <summary>

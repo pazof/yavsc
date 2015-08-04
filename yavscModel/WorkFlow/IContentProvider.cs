@@ -8,7 +8,7 @@ namespace Yavsc.Model.WorkFlow
 	/// Interface content provider.
 	/// Class Assertion: <c>Statuses.Length &gt;= FinalStatuses.Length</c>.
 	/// </summary>
-	public interface IContentProvider : IModule, IDisposable
+	public interface IContentProvider : IDbModule, IDisposable, IDataProvider<Estimate>
 	{
 
 		/// <summary>
@@ -55,12 +55,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="count">Cost multiplier.</param>
 		/// <param name="productid">Product identifier.</param>
 		long Write (long estid, string desc, decimal ucost, int count, string productid);
-		/// <summary>
-		/// Gets the estimate by identifier.
-		/// </summary>
-		/// <returns>The estimate.</returns>
-		/// <param name="estimid">Estimid.</param>
-		Estimate GetEstimate (long estimid);
+
 		/// <summary>
 		/// Gets the estimates created by 
 		/// or for the given user by user name.
@@ -102,11 +97,6 @@ namespace Yavsc.Model.WorkFlow
 		/// </summary>
 		/// <param name="wr">Wr.</param>
 		void UpdateWritting (Writting wr);
-		/// <summary>
-		/// Updates the estimate.
-		/// </summary>
-		/// <param name="estim">Estim.</param>
-		void UpdateEstimate (Estimate estim);
 		/// <summary>
 		/// Sets the writting status.
 		/// </summary>

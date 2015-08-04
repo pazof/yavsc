@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<Yavsc.ApiControllers.Calendar.Model.EventPub>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<EventPub>" %>
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 

@@ -16,6 +16,8 @@ using System.IO;
 
 namespace Yavsc.ApiControllers
 {
+
+
 	/// <summary>
 	/// Front office controller.
 	/// </summary>
@@ -58,18 +60,6 @@ namespace Yavsc.ApiControllers
 			return CatalogManager.GetCatalog ().GetBrand (brandName).GetProductCategory (prodCategorie);
 		}
 
-		/// <summary>
-		/// Authorization denied.
-		/// </summary>
-		public class AuthorizationDenied : HttpRequestException {
-			/// <summary>
-			/// Initializes a new instance of the <see cref="Yavsc.ApiControllers.FrontOfficeController+AuthorizationDenied"/> class.
-			/// </summary>
-			/// <param name="msg">Message.</param>
-			public AuthorizationDenied(string msg) : base(msg)
-			{
-			}
-		}
 
 		/// <summary>
 		/// Gets the estimate.
@@ -80,7 +70,7 @@ namespace Yavsc.ApiControllers
 		[HttpGet]
 		public Estimate GetEstimate (long id)
 		{
-			Estimate est = wfmgr.ContentProvider.GetEstimate (id);
+			Estimate est = wfmgr.ContentProvider.Get (id);
 			string username = Membership.GetUser ().UserName;
 			if (est.Client != username)
 			if (!Roles.IsUserInRole("Admin"))
@@ -135,7 +125,7 @@ namespace Yavsc.ApiControllers
 			tmpe.Session.Add ("from", prpro);
 			tmpe.Session.Add ("to", prcli);
 			tmpe.Session.Add ("efrom", Membership.GetUser (e.Responsible).Email);
-			tmpe.Session.Add ("efrom", Membership.GetUser (e.Client).Email);
+			tmpe.Session.Add ("eto", Membership.GetUser (e.Client).Email);
 			tmpe.Init ();
 			return tmpe.TransformText ();
 		}
@@ -173,15 +163,29 @@ namespace Yavsc.ApiControllers
 				};
 
 			var memPdf = new MemoryStream ();
-			HttpResponseMessage result = new HttpResponseMessage ();
+			try {
 			new TexToPdfFormatter ().WriteToStream (
 				typeof(string), texest, memPdf,null);
-			memPdf.Position = 0;
-			var sr = new StreamReader(memPdf);
-			var str = sr.ReadToEnd();
-			result.Content = new StringContent (str);
-			TexToPdfFormatter.SetFileName (result.Content.Headers, "estimate-" + id.ToString ());
-			result.Content.Headers.ContentType = new MediaTypeHeaderValue("text/x-tex");
+			}
+			catch (FormatterException ex) {
+				return new HttpResponseMessage (HttpStatusCode.OK) { Content = 
+					new ObjectContent (typeof(string), ex.Message+"\n\n"+ex.Output+"\n\n"+ex.Error, 
+						new ErrorHtmlFormatter (HttpStatusCode.InternalServerError,
+							LocalizedText.InternalServerError))
+				};
+			}
+
+			var result = new HttpResponseMessage(HttpStatusCode.OK)
+			{
+				Content = new ByteArrayContent(memPdf.GetBuffer())
+			};
+
+			result.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue ("attachment") {
+				FileName = String.Format (
+					"Estimation-{0}.pdf",
+					id)
+			};
+
 			return result;
 		}
 

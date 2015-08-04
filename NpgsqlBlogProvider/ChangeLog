@@ -1,3 +1,10 @@
+2015-08-04  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlBlogProvider.cs: * Remove post by id
+	* Manage collections of entries on a couple (user,title), not
+	a single post
+
+
 2015-07-15  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlBlogProvider.csproj: Moves to Mono framework

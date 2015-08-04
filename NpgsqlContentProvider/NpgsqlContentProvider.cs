@@ -20,6 +20,8 @@ namespace Yavsc
 	/// </summary>
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
+		
+
 		/// <summary>
 		/// Registers the command.
 		/// </summary>
@@ -263,7 +265,7 @@ namespace Yavsc
 					cnx.Close ();
 				}
 				foreach (long id in ids) 
-					ests.Add(GetEstimate(id));
+					ests.Add(Get(id));
 				return ests.ToArray();
 			}
 		}
@@ -306,7 +308,7 @@ namespace Yavsc
 						rdr.Close ();
 					}
 					foreach (long id in ids) 
-						ests.Add(GetEstimate(id));
+						ests.Add(Get(id));
 					return ests.ToArray();
 				}
 			}
@@ -354,7 +356,7 @@ namespace Yavsc
 		/// </summary>
 		/// <returns>The estimate.</returns>
 		/// <param name="estimid">Estimid.</param>
-		public Estimate GetEstimate (long estimid)
+		public Estimate Get (long estimid)
 		{
 			Estimate est = null;
 			using (NpgsqlConnection cnx = CreateConnection ()) {
@@ -448,7 +450,7 @@ namespace Yavsc
 		/// Saves the given Estimate object in database.
 		/// </summary>
 		/// <param name="estim">the Estimate object.</param>
-		public void UpdateEstimate (Estimate estim)
+		public void Update (Estimate estim)
 		{
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {

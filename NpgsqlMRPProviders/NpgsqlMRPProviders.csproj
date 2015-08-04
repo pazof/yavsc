@@ -36,6 +36,7 @@
     <Compile Include="NpgsqlRoleProvider.cs" />
     <Compile Include="NpgsqlProfileProvider.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="NpgsqlUserNameProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />

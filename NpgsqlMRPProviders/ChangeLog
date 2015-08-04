@@ -1,3 +1,11 @@
+2015-08-04  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlMRPProviders.csproj: new NpgsqlUserName provider
+
+	* NpgsqlRoleProvider.cs: simpler init method
+
+	* NpgsqlUserNameProvider.cs: impements a UserNameProvider
+
 2015-08-01  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlMembershipProvider.cs: Fixes the membership update.

@@ -34,12 +34,7 @@ namespace Yavsc.Model.Blogs
 		/// <param name="username">Username.</param>
 		/// <param name="items">Items.</param>
 		public UUBlogEntryCollection(string username, 
-			BlogEntryCollection items = null) {
-			if (items != null) {
-				if (!items.ConcernsAUniqueUser)
-					throw new InvalidOperationException ();
-				this.AddRange (items);
-			}
+			BlogEntryCollection items = null) : base(items) {
 			_username = username;
 		}
 		private string _username;
@@ -48,6 +43,11 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		/// <value>The name of the user.</value>
 		public string UserName { get { return _username; } }
+
+		public override string ToString ()
+		{
+			return string.Format ("[UUBlogEntryCollection: UserName={0} Count={1}]", UserName, Count);
+		}
 	}
 	
 }

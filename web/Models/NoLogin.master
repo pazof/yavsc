@@ -9,9 +9,9 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="/Theme/style.css" />
+<link rel="stylesheet" href="/App_Themes/style.css" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
-<script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery-2.1.4.js")%>"></script>
+<script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
 <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>
 <link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'/>

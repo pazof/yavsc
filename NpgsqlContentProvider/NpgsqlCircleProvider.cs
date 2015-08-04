@@ -55,7 +55,7 @@ namespace WorkFlowProvider
 			bool result=false;
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "select count(*)>0 from circle_members where _id = :cid and m.member = :mbr";
+				cmd.CommandText = "select count(*)>0 from circle_members where circle_id = :cid and member = :mbr";
 				cmd.Parameters.Add("cid",NpgsqlDbType.Bigint);
 				cmd.Parameters.AddWithValue("mbr",member);
 				cnx.Open ();

@@ -5,6 +5,9 @@ using System.Web;
 using System.Web.Security;
 using Yavsc.Model.Circles;
 using System.Web.Mvc;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 
 
 namespace Yavsc.Model.Blogs
@@ -56,7 +59,7 @@ namespace Yavsc.Model.Blogs
 		/// <returns>The post.</returns>
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
-		public static BlogEntry GetPost (string username, string title)
+		public static UUTBlogEntryCollection GetPost (string username, string title)
 		{
 			return Provider.GetPost (username, title);
 		}
@@ -79,7 +82,7 @@ namespace Yavsc.Model.Blogs
 		/// <param name="content">Content.</param>
 		/// <param name="visible">If set to <c>true</c> visible.</param>
 		/// <param name="cids">sets the circles.</param>
-		public static long Post (string username, string title, string content, bool visible, long [] cids)
+		public static long Post (string username, string title, string content, bool visible, long[] cids)
 		{
 			return Provider.Post (username, title, content, visible, cids);
 		}
@@ -92,9 +95,9 @@ namespace Yavsc.Model.Blogs
 		/// <param name="content">Content.</param>
 		/// <param name="visible">If set to <c>true</c> visible.</param>
 		/// <param name="cids">sets the circles.</param>
-		public static void UpdatePost (long postid, string title, string content, bool visible,long [] cids)
+		public static void UpdatePost (long postid, string title, string content, bool visible, long[] cids)
 		{
-			Provider.UpdatePost (postid, title, content, visible,cids);
+			Provider.UpdatePost (postid, title, content, visible, cids);
 		}
 
 
@@ -116,20 +119,29 @@ namespace Yavsc.Model.Blogs
 		/// <summary>
 		/// Removes the post.
 		/// </summary>
+		/// <param name="post_id">Post identifier.</param>
+		public static void RemovePost (long post_id)
+		{
+			Provider.RemovePost (post_id);
+		}
+
+		/// <summary>
+		/// Removes the post.
+		/// </summary>
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
-		public static void RemovePost (string username, string title)
+		public static void RemoveTitle (string username, string title)
 		{
 			if (!Roles.IsUserInRole ("Admin")) {
 				string rguser = Membership.GetUser ().UserName;
 				if (rguser != username) {
 					throw new AccessViolationException (
 						string.Format (
-							"{1}, Vous n'avez pas le droit de suprimer des billets du Blog de {0}",
+							"{1}, Vous n'avez pas le droit de suprimer les Blogs de {0}",
 							username, rguser));
 				}
 			}
-			Provider.RemovePost (username, title);
+			Provider.RemoveTitle (username, title);
 		}
 
 		/// <summary>
@@ -139,9 +151,10 @@ namespace Yavsc.Model.Blogs
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
 		/// <param name="totalRecords">Total records.</param>
-		public static BlogEntryCollection LastPosts (int pageIndex, int pageSize, out int totalRecords)
+		public static IEnumerable<BlogEntry> LastPosts (int pageIndex, int pageSize, out int totalRecords)
 		{
-			return Provider.LastPosts (pageIndex, pageSize, out totalRecords);
+			var c =  Provider.LastPosts (pageIndex, pageSize, out totalRecords);
+			return FilterOnReadAccess (c);
 		}
 
 		/// <summary>
@@ -166,6 +179,136 @@ namespace Yavsc.Model.Blogs
 			return Provider.Tag (postid, tag);
 		}
 
+		/// <summary>
+		/// Checks the auth can edit.
+		/// </summary>
+		/// <returns><c>true</c>, if can edit was authed, <c>false</c> otherwise.</returns>
+		/// <param name="user">User.</param>
+		/// <param name="title">Title.</param>
+		/// <param name="throwEx">If set to <c>true</c> throw ex.</param>
+		public static bool CheckAuthCanEdit (string user, string title, bool throwEx = true)
+		{
+			BlogEntryCollection bec = BlogManager.GetPost (user, title);
+			if (bec == null)
+				throw new FileNotFoundException ();
+			if (!Roles.IsUserInRole ("Admin"))
+			if (bec.Count > 0)
+			if (Membership.GetUser ().UserName != user) {
+				if (throwEx)
+					throw new AccessViolationException (
+						string.Format (
+							"Vous n'avez pas le droit d'editer ce blog (title:{0})",
+							title));
+				else
+					return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Checks the auth can edit.
+		/// </summary>
+		/// <returns><c>true</c>, if auth can edit was checked, <c>false</c> otherwise.</returns>
+		/// <param name="postid">Postid.</param>
+		/// <param name="throwEx">If set to <c>true</c> throw ex.</param>
+		public static BlogEntry GetForEditing (long postid, bool throwEx = true)
+		{
+			BlogEntry e = BlogManager.GetPost (postid);
+			if (e == null)
+				throw new PostNotFoundException ();
+			if (!Roles.IsUserInRole ("Admin")) {
+				string rguser = Membership.GetUser ().UserName;
+				if (rguser != e.UserName) {
+					if (throwEx)
+						throw new AccessViolationException (
+							string.Format (
+								"Vous n'avez pas le droit d'editer ce billet (id:{0})",
+								e.Id));
+					else
+						return null;
+					
+				}
+			}
+			return e;
+		}
+
+		private static bool CanView (BlogEntry e, MembershipUser u = null)
+		{
+			if (e.AllowedCircles != null && e.AllowedCircles.Length > 0) {
+				// only deliver to admins, owner, or specified circle memebers
+				if (u == null)
+					return false;
+				if (u.UserName != e.UserName)
+				if (!Roles.IsUserInRole (u.UserName, "Admin"))
+				{
+					if (!e.Visible)
+						return false;
+					if (!CircleManager.DefaultProvider.Matches (e.AllowedCircles, u.UserName))
+						return false;
+				}
+			}
+			return true;
+		}
+		/// <summary>
+		/// Checks the auth can read.
+		/// </summary>
+		/// <returns><c>true</c>, if auth can read was checked, <c>false</c> otherwise.</returns>
+		/// <param name="postid">Postid.</param>
+		/// <param name="throwEx">If set to <c>true</c> throw ex.</param>
+		public static BlogEntry GetForReading (long postid, bool throwEx = true)
+		{
+			BlogEntry e = BlogManager.GetPost (postid);
+			if (e == null) 
+			if (throwEx)
+				throw new FileNotFoundException ();
+			if ( CanView (e, Membership.GetUser ()))
+				return e;
+			if (throwEx)
+				throw new AccessViolationException (string.Format (
+					"Vous n'avez pas le droit de lire ce billet (id:{0})",
+					postid.ToString ()));
+			return null;
+			
+		}
+
+		/// <summary>
+		/// Checks the auth can read.
+		/// </summary>
+		/// <returns><c>true</c>, if auth can read was checked, <c>false</c> otherwise.</returns>
+		/// <param name="bec">Bec.</param>
+		/// <param name="throwEx">If set to <c>true</c> throw ex.</param>
+		private static bool HasReadAccess (BlogEntryCollection bec, bool throwEx = true)
+		{
+			if (bec == null)
+				throw new FileNotFoundException ();
+			if (Roles.IsUserInRole ("Admin"))
+				return true;
+			var u = Membership.GetUser ();
+			BlogEntry e = bec.First (x=>!CanView(x,u));
+			if (e == null)
+				return true;
+			if (throwEx)
+				throw new AccessViolationException (
+					string.Format (
+						"Vous n'avez pas le droit de lire cette collection de billet (titles:{0})",
+						bec.ToString()));
+			else
+				return false;
+		}
+		/// <summary>
+		/// Filters the on read access.
+		/// </summary>
+		/// <returns>The on read access.</returns>
+		/// <param name="bec">Bec.</param>
+		/// <typeparam name="TEntry">The 1st type parameter.</typeparam>
+		public static IEnumerable<TEntry> FilterOnReadAccess<TEntry> ( IEnumerable<TEntry> bec)
+		{
+			if (bec == null) return null;
+			if (Roles.IsUserInRole ("Admin")) return bec;
+			var u = Membership.GetUser ();
+			var r = bec.Where (x => CanView (x as BlogEntry, u));
+			return r;
+		}
 	}
 }
 

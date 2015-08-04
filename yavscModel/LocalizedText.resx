@@ -61,8 +61,12 @@
 	<data name="EventWebPage"><value>Event Web page</value></data>
 	<data name="ImgLocator"><value>Image URI</value></data>
 	<data name="Home"><value>Home</value></data>
-	<data name="Bill edition"><value>Bill edition</value></data>
+	<data name="Bill_edition"><value>Bill edition</value></data>
 	<data name="Create"><value>Create</value></data>
 	<data name="Members"><value>Members</value></data>
 	<data name="UserName"><value>User Name</value></data>
+	<data name="DisplayName"><value>Display Name</value></data>
+	<data name="entries"><value>entries</value></data>
+	<data name="InternalServerError"><value>Internal Server Error</value></data>
+
 </root>

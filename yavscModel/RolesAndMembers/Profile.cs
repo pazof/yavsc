@@ -213,11 +213,13 @@ namespace Yavsc.Model.RolesAndMembers
 				&& string.IsNullOrWhiteSpace (Mobile)); 
 			} 
 		}
+		private string userName;
+
 		/// <summary>
 		/// Gets or sets the name of the user.
 		/// </summary>
 		/// <value>The name of the user.</value>
-		public string UserName { get ; set; } 
+		public string UserName { get { return userName; } } 
 
 		public Profile () : base ()
 		{
@@ -268,7 +270,7 @@ namespace Yavsc.Model.RolesAndMembers
 			s = profile.GetPropertyValue ("Mobile");
 			Mobile = (s is DBNull) ? null : (string)s;
 
-			UserName = profile.UserName;
+			userName = profile.UserName;
 
 			s = profile.GetPropertyValue ("BankCode");
 			BankCode = (s is DBNull) ? null : (string)s;

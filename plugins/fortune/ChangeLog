@@ -1,3 +1,7 @@
+2015-08-04  Paul Schneider  <paul@pschneider.fr>
+
+	* MyClass.cs: refactoring from Yavsc.Model
+
 2015-07-15  Paul Schneider  <paul@pschneider.fr>
 
 	* fortune.csproj: Moves to Mono framework

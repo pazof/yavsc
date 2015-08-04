@@ -18,47 +18,46 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Net.Mime;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Web;
-using System.Web.Configuration;
-using System.Web.Profile;
-using System.Web.Security;
-using Npgsql.Web.Blog;
-using Yavsc;
-using Yavsc.Model;
-using Yavsc.Model.Blogs;
-using Yavsc.ApiControllers;
-using Yavsc.Model.RolesAndMembers;
-using System.Net;
-using System.Web.Mvc;
-using Yavsc.Model.Circles;
 
-namespace Yavsc.Controllers
+namespace Yavsc.Model.Blogs
 {
-	public class UUTBlogEntryCollection : BlogEntryCollection {
-		
-		UUTBlogEntryCollection(string username, string title, 
-			public BlogEntryCollection items = null) {
-			if (items != null) {
-				if (!items.ConcernsAUniqueTitle && items.ConcernsAUniqueTitle)
+	/// <summary>
+	/// Unique User and Title blog entry collection.
+	/// </summary>
+	public class UUTBlogEntryCollection : UUBlogEntryCollection {
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Blogs.UUTBlogEntryCollection"/> class.
+		/// </summary>
+		/// <param name="username">Username.</param>
+		/// <param name="title">Title.</param>
+		/// <param name="items">Items.</param>
+		public UUTBlogEntryCollection(string username, string title, 
+			IEnumerable<BlogEntry> items = null) : base(username) {
+			if (Count>0) {
+				if (!(ConcernsAUniqueTitle && ConcernsAUniqueTitle))
 					throw new InvalidOperationException ();
-				this.AddRange (items);
 			}
 			_title = title;
-			_username = username;
 		}
+
 		private string _title;
-		private string _username;
-		public string UserName { get { return _username; } }
+		/// <summary>
+		/// Gets the title.
+		/// </summary>
+		/// <value>The title.</value>
 		public string Title { get { return _title; } }
 
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="Yavsc.Model.Blogs.UUTBlogEntryCollection"/>.
+		/// </summary>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Yavsc.Model.Blogs.UUTBlogEntryCollection"/>.</returns>
+		public override string ToString ()
+		{
+			return string.Format ("[UUTBlogEntryCollection: " +
+				"Title={0} User={1} Count={2}]", Title, UserName, Count);
+		}
 	}
 	
 }

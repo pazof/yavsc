@@ -7,19 +7,18 @@ Les estimations que vous avez faites (<%=ViewData["ResponsibleCount"]%>):<br>
 foreach (Estimate estim in Model) {
 	if (string.Compare(estim.Responsible,(string) ViewData["UserName"])==0) { %>
 
-	<%= Html.ActionLink("Titre:"+estim.Title+" Client:"+estim.Client+" Id:"+estim.Id.ToString(),"Estimate",new {Id=estim.Id}) %>
+	<%= Html.ActionLink("Titre:"+estim.Title+" Client:"+estim.Client,"Estimate",new{id=estim.Id}) %>
 	<br>
 	<% }}%>
 </div>
 <% } %>
+<% if (((int)ViewData["ClientCount"])>0) { %>
 	<div>
-	Vos estimations <% if (((int)ViewData["ResponsibleCount"])>0) { %>
-	en tant que client 
-	<% } %> (<%=ViewData["ClientCount"]%>):<br>
-	<% foreach (Estimate estim in Model) {
-	if (string.Compare(estim.Client,(string)ViewData["UserName"])==0) { %>
-	<%= Html.ActionLink("Titre:"+estim.Title+" Responsable:"+estim.Responsible+" Id:"+estim.Id.ToString(),"Estimate",new {Id=estim.Id}) %>
-	<br>
-	<% }} %>
+	Vos estimations en tant que client 
+	(<%=ViewData["ClientCount"]%>):<br>
+	<% foreach (Estimate estim in Model) { %>
+		<%= Html.ActionLink("Titre:"+estim.Title+" Responsable:"+estim.Responsible,"Estimate",new{id=estim.Id}) %>
+	<br><% } %>
 	</div>
+	<% } %> 
 </asp:Content>

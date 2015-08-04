@@ -1,3 +1,110 @@
+2015-08-04  Paul Schneider  <paul@pschneider.fr>
+
+	* bg.gif:
+	* asc.gif:
+	* desc.gif:
+	* style.css: moved to App_Themes
+
+	* style.css:
+	* bg.gif:
+	* asc.gif:
+	* bg.png:
+	* rect.png:
+	* asc.png:
+	* desc.gif:
+	* jquery-ui.css:
+	* mdd_styles.css:
+	* croix.png:
+	* desc.png:
+	* style.css:
+	* jquery-ui.min.css:
+	* mdd_gripper.png:
+	* mdd_toolbar.png:
+	* jquery.timepicker.css:
+	* mdd_ajax_loader.gif:
+	* mdd_modal_background.png: moved to /App_Themes
+
+	* BlogsController.cs: access control simplified
+
+	* FrontOfficeController.cs: Pdf generation made public ni case
+	of formatting exception
+
+	* mdd_styles.css: Theme -> App_Themes
+
+	* style.css: yet another style impact
+
+	* AccountController.cs: Fixes the user name modification
+
+	* BlogsController.cs: * Fixes the removal process
+	* On a title and user name, we get collection of posts, not
+	only one.
+	* Implements an Access on circle
+
+
+	* FrontOfficeController.cs: * implements a new Get method.
+	* ensure a membership existence before delivering an estimate.
+
+
+	* GoogleController.cs: Fixes the user name modification on a
+	Google account
+
+	* ErrorHtmlFormatter.cs: nice error message in html (using
+	Markdown helper)
+
+	* FormatterException.cs: formatter exception exposes error and
+	standard output of the process
+
+	* TexToPdfFormatter.cs: * generates temporary files in the
+	folder returned by Path.GetTempPath()
+	* throws FormatterException
+
+	* Global.asax.cs: new route map:
+	Blogs/{action}/{user}/{title}
+	Blog/{user}/{title}
+	B/{id}
+	{controller}/{action}/{id}
+
+
+	* App.master: * refactoring: Theme moved to App_Themes
+	* a link to the logged user's blog
+	* 
+
+	* NoLogin.master: refactoring: Theme moved to App_Themes
+
+	* Circles.aspx: refactoring : circles now are given as select
+	items
+
+	* Login.aspx: fixes the html presentation 
+
+	* Register.aspx: Fixes a Typo
+
+	* Edit.aspx:
+	* Estimates.aspx: refactoring
+
+	* Index.aspx: Implements a blog index, due to M&C changes with
+	this commit
+
+	* RemovePost.aspx: links to the new route to the "RemovePost"
+	action, giving it a post id
+
+
+	* RemoveTitle.aspx: fixes a not yet linked page to remove a
+	post collection under a given title
+
+	* EventPub.aspx: code refactoring
+
+	* Writting.ascx: cleans the code
+
+	* Web.config: fills the config with new names in the space
+
+	* Web.config: configures the new NpgsqlUserNameProvider
+
+	* Web.csproj: refactoring and others
+
+	* UserPosts.aspx: adds a link to remove a post
+
+	* UserPost.aspx: now uses the new BlogEntryCollection object
+
 2015-07-23  Paul Schneider  <paul@pschneider.fr>
 
 	* Web.config: Trace may be enabled, as long it is in local

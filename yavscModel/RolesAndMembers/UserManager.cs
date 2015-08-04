@@ -1,22 +1,8 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Mail;
-using System.Web;
-using System.Web.Configuration;
-using System.Web.Profile;
-using System.Web.Security;
-using Yavsc;
-using Yavsc.Model.RolesAndMembers;
-using Yavsc.Helpers;
-using System.Web.Mvc;
-using Yavsc.Model.Circles;
-using System.Collections.Specialized;
-using Yavsc.Model;
 using System.Configuration;
 using System.Reflection;
+using System;
 
-namespace Yavsc.Controllers
+namespace Yavsc.Model.RolesAndMembers
 {
 	/// <summary>
 	/// User manager.
@@ -52,19 +38,27 @@ namespace Yavsc.Controllers
 		/// <value>The provider.</value>
 		public static ChangeUserNameProvider Provider {
 			get {
+				if (provider == null)
+					provider = GetProvider ();
+				if (provider == null)
+					throw new ConfigurationErrorsException ("No username section defined");
 				return provider;
 			}
 		}
 
 		private static ChangeUserNameProvider GetProvider ()
 		{
-			DataProviderConfigurationSection config = ConfigurationManager.GetSection ("system.web/blog") as DataProviderConfigurationSection;
+			DataProviderConfigurationSection config = ConfigurationManager.GetSection ("system.web/userNameManager") as DataProviderConfigurationSection;
 			if (config == null)
-				throw new ConfigurationErrorsException("The configuration bloc for the blog provider was not found");
-			ProviderSettings celt = 
-				config.Providers[config.DefaultProvider];
-			if (config == null)
-				throw new ConfigurationErrorsException("The default blog provider was not found");
+				throw new ConfigurationErrorsException("The configuration bloc for the username provider was not found");
+			ProviderSettings celt=null;
+			if (config.DefaultProvider!=null)
+				celt = config.Providers[config.DefaultProvider];
+			if ((celt == null) && config.Providers!=null)
+			if (config.Providers.Count>0)
+				celt = config.Providers [0];
+			if (celt == null)
+				throw new ConfigurationErrorsException("The default username provider was not found");
 			ConstructorInfo ci = Type.GetType (celt.Type).GetConstructor (Type.EmptyTypes);
 			provider = ci.Invoke (Type.EmptyTypes) as ChangeUserNameProvider;
 			provider.Initialize (celt.Name, celt.Parameters);

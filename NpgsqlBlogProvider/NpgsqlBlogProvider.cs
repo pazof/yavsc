@@ -122,7 +122,13 @@ namespace Npgsql.Web.Blog
 		/// <param name="postid">Postid.</param>
 		public override void RemovePost (long postid)
 		{
-			throw new NotImplementedException ();
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = "delete from blog where _id = @id";
+				cmd.Parameters.AddWithValue ("id", postid);
+				cnx.Open ();
+				cmd.ExecuteNonQuery();
+			}
 		}
 		/// <summary>
 		/// Comment the specified from, postid and content.
@@ -136,7 +142,7 @@ namespace Npgsql.Web.Blog
 				throw new ArgumentNullException("from");
 			if (content == null)
 				throw new ArgumentNullException("content");
-			bool visible = AutoValidateComment;
+			bool visible = AutoValidatesComments;
 			using (NpgsqlConnection cnx=
 				new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
@@ -181,7 +187,7 @@ namespace Npgsql.Web.Blog
 		/// Gets or sets a value indicating whether this <see cref="Npgsql.Web.Blog.NpgsqlBlogProvider"/> auto validate comment.
 		/// </summary>
 		/// <value><c>true</c> if auto validate comment; otherwise, <c>false</c>.</value>
-		public override bool AutoValidateComment {
+		public override bool AutoValidatesComments {
 			get {
 				return autoValidateComment;
 			}
@@ -273,52 +279,62 @@ namespace Npgsql.Web.Blog
 		/// <returns>The post.</returns>
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
-		public override BlogEntry GetPost (string username, string title)
+		public override UUTBlogEntryCollection GetPost (string username, string title)
 		{
-			BlogEntry be = null;
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
-			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
-				cmd.CommandText = "select _id,bcontent,modified,posted,visible from blog " +
-				                  "where applicationname = :appname and username = :username and title = :title";
-				cmd.Parameters.AddWithValue ("appname", applicationName);
-				cmd.Parameters.AddWithValue ("username", username);
-				cmd.Parameters.AddWithValue ("title", title);
-				cnx.Open ();
-				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
-					if (rdr.Read ()) {
-						be = new BlogEntry ();
-						be.Title = title;
-						be.Content = rdr.GetString (rdr.GetOrdinal ("bcontent"));
-						be.UserName = username;
-						be.Modified = rdr.GetDateTime (rdr.GetOrdinal ("modified"));
-						be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
-						be.Visible = rdr.GetBoolean (rdr.GetOrdinal ("visible"));
-						be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
-					}
-					rdr.Close ();
-				}
-				if (be != null) {
-					using (NpgsqlCommand cmdtags = cnx.CreateCommand ()) {
-						List<string> tags = new List<string> ();
-						cmd.CommandText = "select tag.name from tag,tagged where tag._id = tagged.tagid and tagged.postid = :pid";
-						cmd.Parameters.AddWithValue ("pid", be.Id);
-						using (NpgsqlDataReader rdrt = cmd.ExecuteReader ()) {
-							while (rdrt.Read ()) {
-								tags.Add (rdrt.GetString (0));
-							}
+			UUTBlogEntryCollection bec = new UUTBlogEntryCollection (username,title);
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "select _id,bcontent,modified,posted,visible from blog " +
+					"where applicationname = :appname and username = :username and title = :title";
+					cmd.Parameters.AddWithValue ("appname", applicationName);
+					cmd.Parameters.AddWithValue ("username", username);
+					cmd.Parameters.AddWithValue ("title", title);
+					cnx.Open ();
+					cmd.Prepare ();
+					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
+						while (rdr.Read ()) {
+							BlogEntry be = new BlogEntry ();
+							be.Title = title;
+							be.Content = rdr.GetString (rdr.GetOrdinal ("bcontent"));
+							be.UserName = username;
+							be.Modified = rdr.GetDateTime (rdr.GetOrdinal ("modified"));
+							be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
+							be.Visible = rdr.GetBoolean (rdr.GetOrdinal ("visible"));
+							be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
+							bec.Add (be);
 						}
-						be.Tags = tags.ToArray ();
+						rdr.Close ();
 					}
-					SetCirclesOn (be);
+
+				}
+				if (bec.Count != 0) {
+					using (NpgsqlCommand cmdtags = cnx.CreateCommand ()) {
+						long pid = 0;
+						cmdtags.CommandText = "select tag.name from tag,tagged where tag._id = tagged.tagid and tagged.postid = :postid";
+						cmdtags.Parameters.AddWithValue ("postid", NpgsqlTypes.NpgsqlDbType.Bigint, pid);
+						cmdtags.Prepare ();
+						foreach (BlogEntry be in bec) {
+							List<string> tags = new List<string> ();
+							cmdtags.Parameters ["postid"].Value = be.Id;
+							using (NpgsqlDataReader rdrt = cmdtags.ExecuteReader ()) {
+								while (rdrt.Read ()) {
+									tags.Add (rdrt.GetString (0));
+								}
+							}
+							be.Tags = tags.ToArray ();
+						}
+					}
+
+					SetCirclesOn (bec);
 				}
 			}
-			return be;
+			return bec;
 		}
 
 		private void SetCirclesOn(BlogEntry be)
 		{
 			List<long> circles = new List<long> ();
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmdcircles = cnx.CreateCommand ()) {
 				cmdcircles.CommandText = "select a.circle_id from blog_access a " +
 					"where a.post_id = :pid";
@@ -326,11 +342,18 @@ namespace Npgsql.Web.Blog
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmdcircles.ExecuteReader ()) {
 					while (rdr.Read ()) {
-						circles.Add ( rdr.GetInt64 (0) );
+						circles.Add (rdr.GetInt64 (0));
 					}
 				}
 			}
-			be.AllowedCircles = circles.ToArray();
+			be.AllowedCircles = circles.ToArray ();
+		}
+
+		private void SetCirclesOn(BlogEntryCollection bec)
+			{
+			foreach (BlogEntry be in bec) {
+				SetCirclesOn (be);
+			}
 		}
 		/// <summary>
 		/// Post the specified username, title, content and visible.
@@ -460,6 +483,7 @@ namespace Npgsql.Web.Blog
 						if (totalRecords >= firstrec && totalRecords <= lastrec) {
 							BlogEntry be = new BlogEntry ();
 							be.Title = rdr.GetString (rdr.GetOrdinal ("title"));
+							be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
 							be.Content = rdr.GetString (rdr.GetOrdinal ("bcontent"));
 							be.UserName = rdr.GetString (rdr.GetOrdinal ("username"));
 							be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
@@ -482,7 +506,7 @@ namespace Npgsql.Web.Blog
 		/// </summary>
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
-		public override void RemovePost (string username, string title)
+		public override void RemoveTitle (string username, string title)
 		{
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
@@ -531,6 +555,7 @@ namespace Npgsql.Web.Blog
 					while (rdr.Read()) {
 						if (totalRecords >= firstrec && totalRecords <= lastrec) {
 							BlogEntry be = new BlogEntry ();
+							be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
 							be.Title = rdr.GetString (rdr.GetOrdinal ("title"));
 							be.Content = rdr.GetString (rdr.GetOrdinal ("bcontent"));
 							be.UserName = rdr.GetString (rdr.GetOrdinal ("username"));

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 
 using System.Linq;
-
+using System.Collections.Specialized;
 
 namespace Npgsql.Web
 {
@@ -38,40 +38,19 @@ namespace Npgsql.Web
 		/// </summary>
 		/// <param name="iname">Iname.</param>
 		/// <param name="config">Config.</param>
-		public override void Initialize (string iname, System.Collections.Specialized.NameValueCollection config)
+		public override void Initialize (string iname, NameValueCollection config)
 		{
-			try {
-
-				name = iname ?? config ["name"];
-
-				connectionStringName = config ["connectionStringName"] ?? connectionStringName;
-
-				applicationName = config ["applicationName"] ?? applicationName;
-		
-				if (applicationName.Length > 250)
-					throw new ProviderException ("The maximum length for an application name is 250 characters.");
-
-				var cs = ConfigurationManager.ConnectionStrings [connectionStringName];
-				if (cs == null || string.IsNullOrEmpty (cs.ConnectionString)) {
-					throw new ProviderException (
-						string.Format ("The role provider connection string, '{0}', is not defined.", connectionStringName));
-				}
-
-				connectionString = ConfigurationManager.ConnectionStrings [connectionStringName].ConnectionString;
-				if (string.IsNullOrEmpty (connectionString))
-					throw new ConfigurationErrorsException (
-						string.Format (
-						"The connection string for the given name ({0})" +
-						"must be specified in the <connectionStrings>" +
-						"configuration bloc. Aborting.", connectionStringName)
-					);
-
-			} catch (Exception ex) {
-				var message = "Error initializing the role configuration settings";
-				throw new ProviderException (message, ex);
-			}
+				// get the 
+				// - application name
+				// - connection string name
+				// - the connection string from its name
+				string cnxName = config ["connectionStringName"];
+				connectionString = ConfigurationManager.ConnectionStrings [cnxName].ConnectionString;
+				config.Remove ("connectionStringName");
+				applicationName = config ["applicationName"];
+				config.Remove ("applicationName");
+				base.Initialize (iname, config);
 		}
-
 		/// <Docs>To be added.</Docs>
 		/// <summary>
 		/// Adds the users to roles.

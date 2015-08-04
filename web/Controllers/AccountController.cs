@@ -219,15 +219,13 @@ namespace Yavsc.Controllers
 		/// <param name="user">User name.</param>
 		[Authorize]
 		[HttpGet]
-		public ActionResult Profile (string user)
+		public ActionResult Profile (string id)
 		{
-			ViewData ["ProfileUserName"] = user;
-			string logdu = Membership.GetUser ().UserName;
-			ViewData ["UserName"] = logdu;
-			if (user == null)
-				user = logdu;
-			Profile model = new Profile (ProfileBase.Create (user));
-			model.RememberMe = FormsAuthentication.GetAuthCookie (user, true) == null;
+			if (id == null)
+				id = Membership.GetUser ().UserName;
+			ViewData ["UserName"] = id;
+			Profile model = new Profile (ProfileBase.Create (id));
+			model.RememberMe = FormsAuthentication.GetAuthCookie (id, true) == null;
 			return View (model);
 		}
 
@@ -239,14 +237,14 @@ namespace Yavsc.Controllers
 		/// <param name="AvatarFile">Avatar file.</param>
 		[Authorize]
 		[HttpPost]
-		public ActionResult Profile (string user, Profile model, HttpPostedFileBase AvatarFile)
+		public ActionResult Profile (string id, Profile model, HttpPostedFileBase AvatarFile)
 		{
 			// ASSERT("Membership.GetUser ().UserName is made of simple characters, no slash nor backslash"
 
 			string logdu = Membership.GetUser ().UserName;
-			ViewData ["UserName"] = logdu;
-			bool editsMyProfile = (user == logdu);
-			if (!editsMyProfile)
+			ViewData ["UserName"] = id;
+			bool editsMyName = (id != model.Name);
+			if (!editsMyName)
 			if (!Roles.IsUserInRole ("Admin"))
 			if (!Roles.IsUserInRole ("FrontOffice"))
 				throw new UnauthorizedAccessException ("Your are not authorized to modify this profile");
@@ -257,9 +255,9 @@ namespace Yavsc.Controllers
 				// else invalidate the model
 				if (AvatarFile.ContentType == "image/png") {
 					string avdir = Server.MapPath (AvatarDir);
-					string avpath = Path.Combine (avdir, user + ".png");
+					string avpath = Path.Combine (avdir, id + ".png");
 					AvatarFile.SaveAs (avpath);
-					model.avatar = Request.Url.Scheme + "://" + Request.Url.Authority + AvatarDir.Substring (1) + "/" + user + ".png";
+					model.avatar = Request.Url.Scheme + "://" + Request.Url.Authority + AvatarDir.Substring (1) + "/" + id + ".png";
 				} else
 					ModelState.AddModelError ("Avatar",
 						string.Format ("Image type {0} is not supported (suported formats : {1})",
@@ -270,7 +268,8 @@ namespace Yavsc.Controllers
 			if (cAvat != null) if (model.avatar == null) model.avatar = cAvat;
 			*/
 			if (ModelState.IsValid) {
-				ProfileBase prf = ProfileBase .Create (model.UserName);
+				ProfileBase prf = ProfileBase .Create (id);
+				prf.SetPropertyValue ("Name", model.Name);
 				prf.SetPropertyValue ("BlogVisible", model.BlogVisible);
 				prf.SetPropertyValue ("BlogTitle", model.BlogTitle);
 				if (AvatarFile != null) { 
@@ -295,10 +294,11 @@ namespace Yavsc.Controllers
 				prf.SetPropertyValue ("gcalid", model.GoogleCalendar);
 				prf.Save ();
 
-				// only do the following if this profile belongs to current user
-				if (editsMyProfile)
-					FormsAuthentication.SetAuthCookie (user, model.RememberMe);
-				ViewData ["Message"] = "Profile enregistré"+((editsMyProfile)?", cookie modifié.":"");
+				if (editsMyName) {
+					UserManager.ChangeName (id, model.Name);
+					FormsAuthentication.SetAuthCookie (model.Name, model.RememberMe);
+				}
+				ViewData ["Message"] = "Profile enregistré"+((editsMyName)?", nom public inclus.":"");
 			}
 			return View (model);
 		}
@@ -309,7 +309,10 @@ namespace Yavsc.Controllers
 		public ActionResult Circles ()
 		{
 			string user = Membership.GetUser ().UserName;
-			ViewData["Circles"] = CircleManager.DefaultProvider.List (user);
+			ViewData["Circles"] = CircleManager.DefaultProvider.List (user).Select (x => new SelectListItem {
+				Value = x.Value,
+				Text = x.Text
+			});;
 			return View ();
 		}
 		/// <summary>

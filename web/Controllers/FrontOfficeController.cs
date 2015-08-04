@@ -13,6 +13,7 @@ using System.Threading;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Model.FileSystem;
 using Yavsc.Model.Calendar;
+using System.Configuration;
 
 namespace Yavsc.Controllers
 {
@@ -59,7 +60,11 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Estimates (string client)
 		{
-			string username = Membership.GetUser ().UserName;
+			var u = Membership.GetUser ();
+			if (u == null) // There was no redirection to any login page
+				throw new ConfigurationErrorsException ("no redirection to any login page");
+			
+			string username = u.UserName;
 			Estimate [] estims = wfmgr.GetUserEstimates (username);
 			ViewData ["UserName"] = username;
 			ViewData ["ResponsibleCount"] = 
@@ -71,6 +76,21 @@ namespace Yavsc.Controllers
 					estims,
 					x => x.Client == username).Length;
 			return View (estims);
+		}
+
+
+		/// <summary>
+		/// Estimate the specified id.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		public ActionResult Get (long id)
+		{
+			Estimate f = wfmgr.GetEstimate (id);
+			if (f == null) {
+				ModelState.AddModelError ("Id", "Wrong Id");
+				return View (new Estimate ()  { Id=id } );
+			}
+			return View (f);
 		}
 
 		/// <summary>
