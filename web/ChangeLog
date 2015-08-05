@@ -1,5 +1,11 @@
 2015-08-05  Paul Schneider  <paul@pschneider.fr>
 
+	* Index.aspx:
+	* UserPost.aspx:
+	* UserPosts.aspx: sets actionlink and block disply to titles
+
+2015-08-05  Paul Schneider  <paul@pschneider.fr>
+
 	* Index.aspx: Fixes another link to Blog
 
 2015-08-05  Paul Schneider  <paul@pschneider.fr>

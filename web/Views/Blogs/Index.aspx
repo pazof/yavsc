@@ -11,7 +11,7 @@
 
 
 <%= Html.ActionLink(p.Title, "UserPost",
- new { user = g.Key, title = p.Title }, new { @class = "usertitleref" } ) %>
+ new { user = g.Key, title = p.Title }, new { @class = "usertitleref actionlink" , style="display:block;"} ) %>
 le  <%=p.Posted.ToString("D") %>
 
   <% if (Membership.GetUser()!=null)

@@ -6,8 +6,8 @@
 <h1 class="blogtitle"><% if (ViewData["Avatar"]!=null) { %>
 <img src="<%=ViewData["Avatar"]%>" alt="" id="logo"/>
 <% } %> 
-<%= Html.ActionLink(Model.Title,"UserPost","Blog",new{user=Model.UserName, title = Model.Title}) %> 
-<span class="c2"> - <%= Html.ActionLink((string)ViewData ["BlogTitle"] ,"UserPosts",new{user=Model.UserName}) %>
+<%= Html.ActionLink(Model.Title,"UserPost", new{user=Model.UserName, title = Model.Title}, new { @class = "usertitleref actionlink" , style="display:block;"}) %> 
+<span class="c2"> - <%= Html.ActionLink((string)ViewData ["BlogTitle"] ,"UserPosts",new{user=Model.UserName}, new { @class = "usertitleref actionlink" , style="display:block;"}) %>
 </span>
 <span class="c3"> - 
 <a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
