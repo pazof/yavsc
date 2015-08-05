@@ -1,4 +1,4 @@
-<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage"  %>
+<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" CodeBehind="App.master.cs" %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <asp:ContentPlaceHolder id="init" runat="server">
@@ -38,14 +38,15 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 <asp:ContentPlaceHolder ID="MASContent" runat="server">
 </asp:ContentPlaceHolder>
 <div id="login" ><span class="ohinside">
-    <a href="<%= Url.Content("~/Blog/"+HttpContext.Current.User.Identity.Name)%>"><img src="/favicon.png" width="25%"/> Votre Blog</a><br/>
-	<a href="<%= Url.Content("~/")%>">
+    <a href="<%= Url.Content("~/")%>">
 	<span class="c2"><%=Html.Encode(YavscHelpers.SiteName) %></span></a><br/>
 	<span class="onhover">Page d'accueil<br/></span></span>
 <% if (Membership.GetUser()==null) { %>
 	<div class="ohinside"><%= Html.ActionLink("Authentification", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery },null) %>
 	<span class="onhover">Pourquoi s'authentifier?</span></div><br/>
-<% } else { %><span class="ohinside">
+<% } else { %>
+<a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>"><img src="/favicon.png" width="25%"/> Votre Blog</a><br/>
+<span class="ohinside">
 	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Profile", "Account", new { id = HttpContext.Current.User.Identity.Name }, null) %>
 	<span class="onhover"> &Eacute;dition de votre profile </span></span><br/>
 	<a href="/Blogs/Post" class="ohafter">Poster</a>
@@ -59,8 +60,10 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
    <%= Html.ActionLink("Contact","Contact","Home",null, new { @class="thanks" }) %>
    <% foreach ( Link link in Html.Thanks()) { %>
      <a class="thanks" href="<%=link.Url%>"><% if (link.Image !=null) { 
-     %><img src="<%= link.Image %>" alt="<%= link.Text %>"/></a><% 
-     } else { %><a class="thanks" href="<%=link.Url%>"><%= link.Text %></a><% }} %>
+     %><img src="<%= link.Image %>" alt="<%= link.Text %>"/></a>
+     <%  } else { %>
+     <a class="thanks" href="<%=link.Url%>"><%= link.Text %></a>
+     <% }} %>
 <div class="g-plusone" data-annotation="inline" data-width="230"></div>
    </footer>
    <script type="text/javascript">

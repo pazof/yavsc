@@ -135,7 +135,7 @@ namespace Yavsc.Controllers
 			if (uuc.Count>0)
 				return View ("UserPost", new UUTBlogEntryCollection(uuc.UserName,
 					uuc[0].Title,uuc));
-			return View ("Index", uuc);
+			return View ("UserPosts", uuc);
 		}
 
 		/// <summary>

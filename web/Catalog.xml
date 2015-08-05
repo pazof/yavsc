@@ -2,7 +2,7 @@
 <XmlCatalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<Brands>
 		<Brand>
-			<Name>shdsi</Name>
+			<Name>psc</Name>
 			<Slogan>Votre logiciel, efficace, sûr, et sur mesure</Slogan>
 			<Logo>
 				<Src>/images/logoDev.png</Src>
@@ -11,20 +11,34 @@
 			</Logo>
 			<Categories>
 				<ProductCategory>
-					<Name>Systèmes d'information et sites Web</Name>
+					<Name>Conseil, conception logicielle</Name>
+					<Reference>ccl</Reference>
+					<Products>
+						<Product xsi:type="Service">
+							<Name>Aide au choix technologiques</Name>
+							<Description>tout un art</Description>
+							<Reference>conseil</Reference>
+						</Product>
+						<Product xsi:type="Service">
+							<Name>Conceptualisation de projet</Name>
+							<Description>Consolidation d'un niveau logique de projet, spécifications détaillées</Description>
+							<Reference>concept</Reference>
+						</Product>
+					</Products>
+				</ProductCategory>
+				<ProductCategory>
+					<Name>Développement et maintenance</Name>
 					<Reference>ntic</Reference>
 					<Products>
 						<Product xsi:type="Service">
 							<Name>Développement</Name>
-							<Description>Votre Extranet, Intranet,
-                site Web, sur mesure, élégant et efficace, au look racé, accessible,
-                et développé en cycles courts</Description>
-							<Reference>nticdev</Reference>
+							<Description>Votre appli développée en cycles courts</Description>
+							<Reference>dev</Reference>
 						</Product>
 						<Product xsi:type="Service">
 							<Name>Maintenance</Name>
 							<Description>Correction des anomalies, réalisation des évolutions, prévision des besoins</Description>
-							<Reference>nticmaint</Reference>
+							<Reference>main</Reference>
 						</Product>
 					</Products>
 				</ProductCategory>

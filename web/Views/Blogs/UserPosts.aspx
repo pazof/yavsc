@@ -1,7 +1,7 @@
-<%@ Page Title="Billets utilisateurs" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
+<%@ Page Title="Blog" Language="C#" Inherits="System.Web.Mvc.ViewPage<UUBlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
-<% Title = (string) ViewData ["BlogTitle"]; %>
+<% Title = (string) ViewData ["BlogTitle"] ; %>
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
@@ -20,7 +20,7 @@
 <%  foreach (BlogEntry e in this.Model) { %>
 	<div <% if (!e.Visible) { %> style="background-color:#022;" <% } %>>
 
-<h2 class="blogtitle" ><%= Html.ActionLink(e.Title,"GetPost", new { id = e.Id }) %></h2>
+<h2 class="blogtitle" ><%= Html.ActionLink(e.Title,"UserPost", new { user=e.UserName, title=e.Title, id = e.Id }) %></h2>
 <div class="metablog">(<%= e.Posted.ToString("yyyy/MM/dd") %>
 	 - <%= e.Modified.ToString("yyyy/MM/dd") %> <%= e.Visible? "":", Invisible!" %>)
 	 <% if (Membership.GetUser()!=null)

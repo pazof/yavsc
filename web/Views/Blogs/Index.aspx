@@ -3,29 +3,26 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
 <div>
-<table>
 <% foreach (var g in Model.GroupByUser()) { %>
-<tr><th><%= Html.ActionLink(g.Key, "Index",
- new { user = g.Key }, new { @class = "userref" } ) %>
- </th></tr>
+<h1><a href="<%= Url.Content("~/Blog") %>" class="actionlink userref">
+<%=g.Key%></a></h1>
 <% foreach (var p in g) { %> 
-<tr>
-<td> 
+<div class="blogpost">
+
 
 <%= Html.ActionLink(p.Title, "UserPost",
  new { user = g.Key, title = p.Title }, new { @class = "usertitleref" } ) %>
 le  <%=p.Posted.ToString("D") %>
- </td>
+
   <% if (Membership.GetUser()!=null)
 	if ((Membership.GetUser().UserName==g.Key)
 	|| (Roles.IsUserInRole ("Admin")))
-	 { %><td>
+	 { %><aside>
 	 <%= Html.ActionLink("Editer","Edit", new { id = p.Id }, new { @class="actionlink" }) %>
 	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = p.Id }, new { @class="actionlink" } ) %>
-</td><% } %>
- </tr> <% } %>
+</aside><% } %>
+</div> <% } %>
  <% } %>
- </table>
 </div>
 
 	  <form runat="server" id="form1" method="GET">

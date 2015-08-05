@@ -1,3 +1,18 @@
+2015-08-05  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css: * Gives main background a color
+	* lets small screens keep their font sizes
+
+	* Catalog.xml: makes it a better
+
+	* BlogsController.cs: Fixes the access to the Blog
+
+	* App.master: fixes the quick link to the user's blog
+
+	* Index.aspx: removes the table
+
+	* UserPosts.aspx: Mainly links to UserPost
+
 2015-08-04  Paul Schneider  <paul@pschneider.fr>
 
 	* bg.gif:

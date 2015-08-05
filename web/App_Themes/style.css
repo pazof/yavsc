@@ -21,6 +21,7 @@ input, textarea, checkbox {
 
 main {
 	margin:1em;
+	background-color: rgba(64,64,64,0.6);
 	}
 fieldset {
 	background-color: rgba(32,16,16,0.8);
@@ -44,12 +45,12 @@ footer {
 	z-index:-1;
 	font-size: smaller;
 }
+
 .thanks  { 
 	max-width: 10%;
 	text-align: center;
-	vertical-align: text-bottom;
 	font-size:smaller;
-	display:block;
+	display:inline;
 	bottom:0;
 }
 
@@ -63,7 +64,6 @@ footer {
 .panel,.bshpanel,aside {
 	background-color: rgba(32,16,16,0.8);
 		border-radius:5px; border: solid 1px #000060;
-		float: left;
 		margin:.5em;
 		padding: .5em;
 }
@@ -71,6 +71,7 @@ footer {
 .bsh { float: right; }
 
 #login {
+background-color: rgba(32,0,0,.5);
 	position: fixed;
 	margin:0em; 
 	padding:0em;
@@ -90,8 +91,6 @@ header {
 	left:0;
 	margin:0em;
 	padding:0em;
-	text-align: center;
-	max-width:55%;
 	}
 h1 img { vertical-align: text-top; }
 
@@ -167,6 +166,8 @@ ul.preview li:nth-child(n) {
 	color: #f88;
 }
 
+usertitleref {
+}
 
 .actionlink {
 	color: #B0B080;
@@ -175,6 +176,8 @@ ul.preview li:nth-child(n) {
    background-color:rgba(0,0,32,0.8);
    cursor: pointer;
    font-family: 'Arial', cursive;
+   font-size: 140%;
+	display:block;
 }
 
 input, select { 
@@ -247,7 +250,6 @@ a.actionlink img { top:4px; }
     font-size: x-small;
   }
 
-  body { font-size: smaller; }
 	.c2 { display:initial; }
 	.c2-alt { display:none; }
 	.c3 { display:none; }
@@ -255,7 +257,6 @@ a.actionlink img { top:4px; }
 	}
 
 	@media all and (max-width: 350px) {
-	  footer { font-size: xx-small;  }
 	  .c2 { display:none; }
 	  .c2-alt { display:initial; }
 	}
