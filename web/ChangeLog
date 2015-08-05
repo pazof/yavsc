@@ -1,5 +1,9 @@
 2015-08-05  Paul Schneider  <paul@pschneider.fr>
 
+	* Index.aspx: Fixes another link to Blog
+
+2015-08-05  Paul Schneider  <paul@pschneider.fr>
+
 	* style.css: * Gives main background a color
 	* lets small screens keep their font sizes
 

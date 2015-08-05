@@ -4,7 +4,7 @@
 
 <div>
 <% foreach (var g in Model.GroupByUser()) { %>
-<h1><a href="<%= Url.Content("~/Blog") %>" class="actionlink userref">
+<h1><a href="<%= Url.Content("~/Blog/"+g.Key) %>" class="actionlink userref">
 <%=g.Key%></a></h1>
 <% foreach (var p in g) { %> 
 <div class="blogpost">
