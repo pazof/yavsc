@@ -36,7 +36,7 @@ namespace Yavsc.Model.Blogs
 		/// <param name="visible">If set to <c>true</c> visible.</param>
 		public static void Comment (string from, long postid, string content, bool visible)
 		{
-			provider.Comment (from, postid, content);
+			Provider.Comment (from, postid, content);
 		}
 
 		static BlogProvider provider;

@@ -1,5 +1,15 @@
 2015-08-05  Paul Schneider  <paul@pschneider.fr>
 
+	* style.css: the style changes ...
+
+	* BlogsController.cs: Fixes the comment posting
+
+	* App.master: Don't hide the Home page link! TODO: a logo
+
+	* UserPost.aspx: don't hide the blog title
+
+2015-08-05  Paul Schneider  <paul@pschneider.fr>
+
 	* Index.aspx:
 	* UserPost.aspx:
 	* UserPosts.aspx: sets actionlink and block disply to titles

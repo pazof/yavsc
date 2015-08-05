@@ -171,7 +171,7 @@ namespace Yavsc.Controllers
 			ViewData ["BlogUserProfile"] = pr;
 			ViewData ["Avatar"] = pr.avatar;
 			ViewData ["BlogTitle"] = pr.BlogTitle;
-			return View (c);
+			return View ("UserPost",c);
 		}
 
 		/// <summary>

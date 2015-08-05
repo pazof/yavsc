@@ -1,3 +1,7 @@
+2015-08-05  Paul Schneider  <paul@pschneider.fr>
+
+	* BlogManager.cs: fixes the comment posting
+
 2015-08-04  Paul Schneider  <paul@pschneider.fr>
 
 	* BlogEntryCollection.cs: implement the BlogEntryCollection

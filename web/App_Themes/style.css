@@ -20,8 +20,10 @@ input, textarea, checkbox {
    }
 
 main {
-	margin:1em;
+	margin: .5em;
+	padding: .5em;
 	background-color: rgba(64,64,64,0.6);
+	border-radius:10px;
 	}
 fieldset {
 	background-color: rgba(32,16,16,0.8);
@@ -63,7 +65,7 @@ footer {
 
 .panel,.bshpanel,aside {
 	background-color: rgba(32,16,16,0.8);
-		border-radius:5px; border: solid 1px #000060;
+		border-radius:5px; 
 		margin:.5em;
 		padding: .5em;
 }
@@ -71,7 +73,7 @@ footer {
 .bsh { float: right; }
 
 #login {
-background-color: rgba(32,0,0,.5);
+	background-color: rgba(32,0,0,.5);
 	position: fixed;
 	margin:0em; 
 	padding:0em;
@@ -98,6 +100,7 @@ a {
 	text-decoration: none;
 	color: #B0B080;
    background-color:rgba(20,0,20,0.5);
+   text-decoration: underline;
 }
 
 a:hover  {
@@ -143,7 +146,6 @@ label {
 	display:block;
 	margin:1em;
 	padding:1em;
-	border: solid 2px blue;
 	background-color: #090609;
 	color: #aaa;
 	border-radius:5px;
@@ -171,7 +173,6 @@ usertitleref {
 
 .actionlink {
 	color: #B0B080;
-	border: solid 1px rgb(128,128,128);
 	border-radius: 5px;
    background-color:rgba(0,0,32,0.8);
    cursor: pointer;
@@ -192,7 +193,6 @@ a.actionlink img { top:4px; }
 
 .actionlink:hover {
 	background-color:rgba(30,0,124,0.9);
-    border : solid 1px white;
     text-decoration: underline;
 }
 
@@ -210,9 +210,6 @@ a.actionlink img { top:4px; }
 
 .comment {
 	border-radius:25px;
-	border-width:1px;
-    border-style: solid;
-	border-color:rgb(0,64,0);
 	font-size: smaller;
 	}
 

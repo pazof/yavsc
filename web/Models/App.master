@@ -23,7 +23,8 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 <span> - 
 <a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
  </span></h1>
- </asp:ContentPlaceHolder><asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder><% 
+ </asp:ContentPlaceHolder>
+ <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder><% 
  if (ViewData["Error"]!=null) { 
  %><div class="error"><%= Html.Encode(ViewData["Error"]) %>
 </div><% } 
@@ -39,7 +40,7 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 </asp:ContentPlaceHolder>
 <div id="login" ><span class="ohinside">
     <a href="<%= Url.Content("~/")%>">
-	<span class="c2"><%=Html.Encode(YavscHelpers.SiteName) %></span></a><br/>
+	<span ><%=Html.Encode(YavscHelpers.SiteName) %></span></a><br/>
 	<span class="onhover">Page d'accueil<br/></span></span>
 <% if (Membership.GetUser()==null) { %>
 	<div class="ohinside"><%= Html.ActionLink("Authentification", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery },null) %>
