@@ -131,10 +131,11 @@ namespace Yavsc.Controllers
 			ViewData ["Avatar"] = bupr.avatar;
 			ViewData ["RecordCount"] = tr; 
 			UUBlogEntryCollection uuc = new UUBlogEntryCollection (user, c);
-			if (uuc.ConcernsAUniqueTitle)
-			if (uuc.Count>0)
-				return View ("UserPost", new UUTBlogEntryCollection(uuc.UserName,
-					uuc[0].Title,uuc));
+			if (uuc.ConcernsAUniqueTitle) {
+				var uutc = new UUTBlogEntryCollection (uuc.UserName,
+					           uuc [0].Title, uuc);
+				return View ("UserPost", uutc );
+			}
 			return View ("UserPosts", uuc);
 		}
 
@@ -182,7 +183,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The post.</returns>
 		/// <param name="bec">Bec.</param>
-		private ActionResult UserPosts (UUTBlogEntryCollection bec)
+		private ActionResult UserPost (UUTBlogEntryCollection bec)
 		{
 			if (ModelState.IsValid)
 			if (bec.Count > 0) {
@@ -208,7 +209,7 @@ namespace Yavsc.Controllers
 					}
 				}
 			}
-			return View (BlogManager.FilterOnReadAccess(bec as UUTBlogEntryCollection));
+			return View ("UserPost",bec);
 		}
 
 		/// <summary>

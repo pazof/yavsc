@@ -73,10 +73,11 @@ footer {
 .bsh { float: right; }
 
 #login {
-	background-color: rgba(32,0,0,.5);
+	margin: .5em;
+	padding: .5em;
+	border-radius:10px;
+	background-color: rgba(32,16,16,.6);
 	position: fixed;
-	margin:0em; 
-	padding:0em;
 	top:0;
 	right:0;
 	justify-content: space-around;

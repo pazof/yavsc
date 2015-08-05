@@ -5,7 +5,7 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
  <ul>
        <%foreach (MembershipUser user in Model){ %>
-       <li><%=user.UserName%> <%=user.Email%> <%=(user.IsApproved)?"":"("+LocalizedText.Not_Approuved+")"%>  <%=user.IsOnline?LocalizedText.Online:LocalizedText.Offline%>
+       <li><%=user.UserName%> (created <%=user.CreationDate.ToString("D")%>) <%=user.Email%> <%=(user.IsApproved)?"":"("+LocalizedText.Not_Approuved+")"%>  <%=user.IsOnline?LocalizedText.Online:LocalizedText.Offline%>
 <% if (Roles.IsUserInRole("Admin")) { %>
 	 <%= Html.ActionLink(LocalizedText.Remove,"RemoveUser", new { username = user.UserName }, new { @class="actionlink" } ) %>	
 <% } %>

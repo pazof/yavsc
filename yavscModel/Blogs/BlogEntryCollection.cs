@@ -11,10 +11,16 @@ namespace Yavsc.Model.Blogs
 	/// </summary>
 	public class BlogEntryCollection : List<BlogEntry>
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Blogs.BlogEntryCollection"/> class.
+		/// </summary>
 		public BlogEntryCollection ()
 		{
 		}
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Blogs.BlogEntryCollection"/> class.
+		/// </summary>
+		/// <param name="items">Items.</param>
 		public BlogEntryCollection(IEnumerable<BlogEntry> items)
 		{
 			if (items!=null)
@@ -73,6 +79,9 @@ namespace Yavsc.Model.Blogs
 			public DateTime Modified;
 
 		}
+		/// <summary>
+		/// Post info by user.
+		/// </summary>
 		public struct PostInfoByUser {
 
 			/// <summary>

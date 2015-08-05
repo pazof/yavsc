@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 
 namespace Yavsc.Model.Blogs
 {
@@ -34,7 +35,7 @@ namespace Yavsc.Model.Blogs
 		/// <param name="username">Username.</param>
 		/// <param name="items">Items.</param>
 		public UUBlogEntryCollection(string username, 
-			BlogEntryCollection items = null) : base(items) {
+			IEnumerable<BlogEntry> items = null) : base(items) {
 			_username = username;
 		}
 		private string _username;
@@ -43,7 +44,10 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		/// <value>The name of the user.</value>
 		public string UserName { get { return _username; } }
-
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="Yavsc.Model.Blogs.UUBlogEntryCollection"/>.
+		/// </summary>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Yavsc.Model.Blogs.UUBlogEntryCollection"/>.</returns>
 		public override string ToString ()
 		{
 			return string.Format ("[UUBlogEntryCollection: UserName={0} Count={1}]", UserName, Count);

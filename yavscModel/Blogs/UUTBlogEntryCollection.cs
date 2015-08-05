@@ -34,7 +34,7 @@ namespace Yavsc.Model.Blogs
 		/// <param name="title">Title.</param>
 		/// <param name="items">Items.</param>
 		public UUTBlogEntryCollection(string username, string title, 
-			IEnumerable<BlogEntry> items = null) : base(username) {
+			IEnumerable<BlogEntry> items = null) : base(username,items) {
 			if (Count>0) {
 				if (!(ConcernsAUniqueTitle && ConcernsAUniqueTitle))
 					throw new InvalidOperationException ();

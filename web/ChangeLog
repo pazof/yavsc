@@ -1,5 +1,13 @@
 2015-08-05  Paul Schneider  <paul@pschneider.fr>
 
+	* style.css: Gives a margin to the login panel
+
+	* BlogsController.cs: Simplifies the code and method
+
+	* UserList.aspx: Displays the creation date
+
+2015-08-05  Paul Schneider  <paul@pschneider.fr>
+
 	* style.css: the style changes ...
 
 	* BlogsController.cs: Fixes the comment posting
