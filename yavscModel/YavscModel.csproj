@@ -46,7 +46,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Admin\RestoreQuery.cs" />
     <Compile Include="Admin\DataAccess.cs" />
-    <Compile Include="FileSystem\FileInfoCollection.cs" />
     <Compile Include="WorkFlow\Writting.cs" />
     <Compile Include="WorkFlow\Estimate.cs" />
     <Compile Include="WorkFlow\IContentProvider.cs" />
@@ -113,7 +112,6 @@
     <Compile Include="FrontOffice\Catalog\CatalogManager.cs" />
     <Compile Include="FrontOffice\Catalog\CatalogProvider.cs" />
     <Compile Include="FileSystem\FileSystemManager.cs" />
-    <Compile Include="FileSystem\DirNotFoundException.cs" />
     <Compile Include="FileSystem\InvalidDirNameException.cs" />
     <Compile Include="FileSystem\WebFileInfo.cs" />
     <Compile Include="FrontOffice\CommandStatus.cs" />

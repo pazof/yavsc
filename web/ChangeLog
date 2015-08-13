@@ -1,3 +1,8 @@
+2015-08-14  Paul Schneider  <paul@pschneider.fr>
+
+	* FileSystemController.cs: Fixes the route to user's Files by
+	an Admin.
+
 2015-08-05  Paul Schneider  <paul@pschneider.fr>
 
 	* style.css: Gives a margin to the login panel

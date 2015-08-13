@@ -31,96 +31,37 @@ namespace Yavsc.Controllers
 		/// Index this instance.
 		/// </summary>
 		[Authorize]
-		public ActionResult Index (string id)
+		public ActionResult Index (string user, string filename)
 		{
 			FileSystemManager fsmgr = new FileSystemManager ();
-			var files = fsmgr.GetFiles (id);
-			files.Owner = Membership.GetUser ().UserName;
+			var files = fsmgr.GetFiles (user,filename);
 			return View (files);
 		}
 
 		/// <summary>
-		/// Details the specified id.
+		/// Post the specified id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		public ActionResult Details (string id)
+		public ActionResult Post (string id)
 		{
+			return View ();
+		}
 
-			foreach (char x in Path.GetInvalidPathChars()) {
-				if (id.Contains (x)) {
-					ViewData ["Message"] =
-					string.Format (
-						"Something went wrong following the following path : {0} (\"{1}\")",
-						id, x);
-					return RedirectToAction ("Index");
-				}
-			}
+		/// <summary>
+		/// Details the specified user and filename.
+		/// </summary>
+		/// <param name="user">User.</param>
+		/// <param name="filename">Filename.</param>
+		public ActionResult Details (string user, string filename)
+		{
 			FileSystemManager fsmgr = new FileSystemManager ();
-			FileInfo fi = fsmgr.FileInfo (id);
+			FileInfo fi = fsmgr.FileInfo (filename);
 
-			ViewData ["id"] = id;
+			ViewData ["filename"] = filename;
 			// TODO : ensure that we use the default port for 
 			// the used sheme
-			ViewData ["url"] = 
-			string.Format(
-					"{0}://{1}/users/{2}/{3}", 
-					Request.Url.Scheme,
-					Request.Url.Authority,
-				 Membership.GetUser ().UserName ,
-				 id );
+			ViewData ["url"] = Url.Content("~/users/"+user+"/"+filename);
 			return View (fi);
-		}
-
-		/// <summary>
-		/// Create the specified id.
-		/// </summary>
-		/// <param name="id">Identifier.</param>
-		[HttpPost]
-		[Authorize]
-		public ActionResult Create (string id)
-		{
-			FileSystemManager fsmgr = new FileSystemManager ();
-			return View ("Index",fsmgr.GetFiles(id));
-		}
-
-		/// <summary>
-		/// Edit the specified id.
-		/// </summary>
-		/// <param name="id">Identifier.</param>
-		public ActionResult Edit (int id)
-		{
-			throw new NotImplementedException ();
-		}
-
-		/// <summary>
-		/// Edit the specified id and collection.
-		/// </summary>
-		/// <param name="id">Identifier.</param>
-		/// <param name="collection">Collection.</param>
-		[HttpPost]
-		public ActionResult Edit (int id, FormCollection collection)
-		{
-			throw new NotImplementedException ();
-		}
-
-		/// <summary>
-		/// Delete the specified id.
-		/// </summary>
-		/// <param name="id">Identifier.</param>
-		public ActionResult Delete (int id)
-		{
-			throw new NotImplementedException ();
-		}
-
-		/// <summary>
-		/// Delete the specified id and collection.
-		/// </summary>
-		/// <param name="id">Identifier.</param>
-		/// <param name="collection">Collection.</param>
-		[HttpPost]
-		public ActionResult Delete (int id, FormCollection collection)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

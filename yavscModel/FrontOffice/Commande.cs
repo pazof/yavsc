@@ -5,6 +5,7 @@ using Yavsc.Model.WorkFlow;
 using Yavsc.Model.FileSystem;
 using System.Web;
 using System.Collections.Generic;
+using System.IO;
 
 
 namespace Yavsc.Model.FrontOffice
@@ -43,7 +44,7 @@ namespace Yavsc.Model.FrontOffice
 		/// </summary>
 		public Dictionary<string,string> Parameters = new Dictionary<string,string> ();
 
-		FileInfoCollection Files { 
+		IEnumerable<FileInfo> Files { 
 			get {
 				return GetFSM().GetFiles (Id.ToString());
 			}
