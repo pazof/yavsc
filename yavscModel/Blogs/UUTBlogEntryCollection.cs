@@ -33,12 +33,7 @@ namespace Yavsc.Model.Blogs
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
 		/// <param name="items">Items.</param>
-		public UUTBlogEntryCollection(string username, string title, 
-			IEnumerable<BlogEntry> items = null) : base(username,items) {
-			if (Count>0) {
-				if (!(ConcernsAUniqueTitle && ConcernsAUniqueTitle))
-					throw new InvalidOperationException ();
-			}
+		public UUTBlogEntryCollection(string username, string title) : base(username) {
 			_title = title;
 		}
 
@@ -58,6 +53,8 @@ namespace Yavsc.Model.Blogs
 			return string.Format ("[UUTBlogEntryCollection: " +
 				"Title={0} User={1} Count={2}]", Title, UserName, Count);
 		}
+
+		
 	}
 	
 }

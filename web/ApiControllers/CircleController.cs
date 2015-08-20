@@ -60,7 +60,8 @@ namespace Yavsc.ApiControllers
 		/// Create the specified circle.
 		/// </summary>
 		/// <param name="model">Model.</param>
-		[Authorize]
+		[Authorize,
+			AcceptVerbs ("POST")]
 		public long Create(NewCircle model) 
 		{
 			string user = Membership.GetUser ().UserName;
@@ -72,7 +73,8 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="id">Circle Identifier.</param>
 		/// <param name="username">username.</param>
-		[Authorize]
+		[Authorize,
+			AcceptVerbs ("POST")]
 		public void Add(long id, string username)
 		{
 			checkIsOwner (CircleManager.DefaultProvider.Get (id));
@@ -84,7 +86,9 @@ namespace Yavsc.ApiControllers
 		/// Delete the circle specified by id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		[Authorize] public void Delete(long id) 
+		[Authorize,
+			AcceptVerbs ("GET")] 
+		public void Delete(long id) 
 		{
 			checkIsOwner (CircleManager.DefaultProvider.Get(id));
 			CircleManager.DefaultProvider.Delete (id);
@@ -101,7 +105,8 @@ namespace Yavsc.ApiControllers
 		/// Get the circle specified id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		[Authorize]
+		[Authorize,
+		AcceptVerbs ("GET")]
 		public Circle Get(long id)
 		{
 			var c = CircleManager.DefaultProvider.Get (id);
@@ -112,8 +117,9 @@ namespace Yavsc.ApiControllers
 		/// <summary>
 		/// List the circles
 		/// </summary>
-		[Authorize]
-		public IEnumerable<ListItem> List()
+		[Authorize,
+			AcceptVerbs ("GET")]
+		public IEnumerable<Circle> List()
 		{
 			string user = Membership.GetUser ().UserName;
 			return CircleManager.DefaultProvider.List (user);

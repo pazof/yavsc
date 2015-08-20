@@ -1,3 +1,8 @@
+2015-08-20  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlCircleProvider.cs: circle members are now stored in bd
+	upon their user's name
+
 2015-08-04  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlCircleProvider.cs: Fixes the "Match" method.

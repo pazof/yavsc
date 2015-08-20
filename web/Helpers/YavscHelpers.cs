@@ -21,6 +21,32 @@ namespace Yavsc.Helpers
 	/// </summary>
 	public static class YavscHelpers
 	{
+		/// <summary>
+		/// Formats the circle.
+		/// </summary>
+		/// <returns>The circle.</returns>
+		/// <param name="c">C.</param>
+		public static HtmlString FormatCircle (Circle c)
+		{
+			if (c.Members!=null)
+			if (c.Members.Length > 0) {
+				TagBuilder i = new TagBuilder ("i");
+				i.SetInnerText (String.Join (", ", c.Members));
+				return new HtmlString (c.Title+"<br/>\n"+i.ToString());
+			}
+			return new HtmlString (c.Title);
+		}
+		/// <summary>
+		/// Formats the circle.
+		/// </summary>
+		/// <returns>The circle as Html string.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="c">C.</param>
+		public static HtmlString FormatCircle(this HtmlHelper helper, Circle c)
+		{
+			return FormatCircle (c);
+		}
+
 		private static string siteName = null; 
 		/// <summary>
 		/// Gets the name of the site.

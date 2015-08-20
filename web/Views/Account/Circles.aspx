@@ -13,12 +13,11 @@
 </thead>
 <tbody id="tbcb">
 <% int lc=0;
-   foreach (SelectListItem ci in (IEnumerable<SelectListItem>) ViewData["Circles"]) { lc++; %>
-<tr class="<%= (lc%2==0)?"even ":"odd " %>row" id="c_<%=ci.Value%>">
-<td><%=ci.Text%></td>
+   foreach (var ci in (IEnumerable<Circle>) ViewData["Circles"]) { lc++; %>
+<tr class="<%= (lc%2==0)?"even ":"odd " %>row" id="c_<%=ci.Id%>">
+<td><%=Html.FormatCircle(ci)%></td>
    <td>
-        <input type="button" value="<%=Html.Translate("Remove")%>" class="actionlink rowbtnrm"/>
-        <input type="button" value="<%=Html.Translate("Members")%>" class="actionlink rowbtnvw"/>
+   <input type="button" value="<%=Html.Translate("Remove")%>" class="btnremovecircle actionlink" cid="<%=ci.Id%>"/>
     </td>
 </tr>
 <% } %>
@@ -33,13 +32,13 @@ $("#tbc").stupidtable();
 <asp:Content ID="MASContentContent" ContentPlaceHolderID="MASContent" runat="server">
 
     <div id="dfnuser" class="hidden panel">
-   <%= Html.Partial("~/Views/Account/Register.ascx",new RegisterClientModel(),new ViewDataDictionary(ViewData)
+<%= Html.Partial("~/Views/Account/Register.ascx",new RegisterClientModel(),new ViewDataDictionary(ViewData)
+    {
+        TemplateInfo = new System.Web.Mvc.TemplateInfo
         {
-            TemplateInfo = new System.Web.Mvc.TemplateInfo
-            {
-                HtmlFieldPrefix = ViewData.TemplateInfo.HtmlFieldPrefix==""?"ur":ViewData.TemplateInfo.HtmlFieldPrefix+"_ur"
-            }
-        }) %>
+            HtmlFieldPrefix = ViewData.TemplateInfo.HtmlFieldPrefix==""?"ur":ViewData.TemplateInfo.HtmlFieldPrefix+"_ur"
+        }
+    }) %>
  	</div>
 <form>
 <fieldset>
@@ -87,9 +86,38 @@ $("#tbc").stupidtable();
             $("#Err_ur_IsApprouved").text("");
     }
     function clearCircleValidation() {}
+    function removeCircle() {
+    	message(false);
+    	 var id = $(this).attr('cid'); 
+    	 $.ajax({
+            url: "<%=Url.Content("~/api/Circle/Delete/")%>"+id,
+            type: "GET",
+            success: function (data) { 
+            // Drops the detroyed circle row
+            $("c_"+id).remove();
+           },
+            statusCode: {
+            	400: function(data) {
+            		$.each(data.responseJSON, function (key, value) {
+            		var errspanid = "Err_cr_" + value.key.replace("model.","");
+            		var errspan = document.getElementById(errspanid);
+            		if (errspan==null)
+            			alert('enoent '+errspanid);
+            		else 
+            			errspan.innerHTML=value.errors.join("<br/>");
+                	});
+            		}
+            	},
+            error: function (xhr, ajaxOptions, thrownError) {
+            	if (xhr.status!=400)
+        			message(xhr.status+" : "+xhr.responseText);
+			    else message(false);
+        		}});
+    }
 
     function addCircle()
     {
+    message(false);
   	  var circle = { title: $("#title").val(), users: $("#users").val() } ;
     	 $("#title").text('');
     	 $("#users").val('');
@@ -98,7 +126,8 @@ $("#tbc").stupidtable();
             type: "POST",
             data: circle,
             success: function (data) { 
-            	$("#users option:last").after($('<option>'+user.UserName+'</option>'));
+            // Adds a node rendering the new circle
+            $("#tbcb").append("<tr><td>"+circle.title+" <br><i>"+circle.users+"</i></td></tr>");
            },
             statusCode: {
             	400: function(data) {
@@ -121,6 +150,7 @@ $("#tbc").stupidtable();
 
     function addUser()
     {
+    message(false);
     	var user={
      	UserName: $("#ur_UserName").val(),
      	Name: $("#ur_Name").val(),
@@ -174,6 +204,7 @@ $("#tbc").stupidtable();
  $(document).ready(function () {
  $("#btnnewuser").click(addUser);
  $("#btnnewcircle").click(addCircle);
+ $(".btnremovecircle").click(removeCircle);
     });
  	</script>
 </asp:Content>

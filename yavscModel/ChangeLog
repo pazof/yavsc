@@ -1,3 +1,13 @@
+2015-08-20  Paul Schneider  <paul@pschneider.fr>
+
+	* BlogEntryCollection.cs: ConcernsAUniqueTitle and
+	ConcernsAUniqueUser are now Obsoletes
+
+	* UUTBlogEntryCollection.cs: Drops a useless ctor
+
+	* CircleProvider.cs: The `CircleManager` now delivers the
+	user's circle as a `Circle` object collection.
+
 2015-08-14  Paul Schneider  <paul@pschneider.fr>
 
 	* FileSystemManager.cs: * Fixes the dir separator usage

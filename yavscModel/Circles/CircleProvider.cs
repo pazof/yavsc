@@ -72,7 +72,7 @@ namespace Yavsc.Model.Circles
 		/// <summary>
 		/// List this instance.
 		/// </summary>
-		public abstract IEnumerable<ListItem> List(string user);
+		public abstract IEnumerable<Circle> List(string user);
 
 		/// <summary>
 		/// Covers the specified username.

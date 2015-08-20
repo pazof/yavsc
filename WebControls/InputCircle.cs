@@ -154,15 +154,24 @@ namespace Yavsc.WebControls
 			}
 			var u = Membership.GetUser ();
 			if (u != null) {
-				foreach (Yavsc.Model.ListItem ci in CircleManager.DefaultProvider.List(u.UserName)) {
+				foreach (var ci in CircleManager.DefaultProvider.List(u.UserName)) {
 					foreach (SelectListItem sli in Value)
-						if (sli.Value == ci.Value) {
+						if (sli.Value == ci.Id.ToString()) {
 							writer.AddAttribute ("selected", null);
 							break;
 						}
-					writer.AddAttribute ("value", ci.Value );
+					writer.AddAttribute ("value", ci.Id.ToString() );
 					writer.RenderBeginTag ("option");
-					writer.Write (ci.Text);
+					writer.Write (ci.Title);
+					if (ci.Members.Length > 0) {
+						writer.RenderBeginTag ("br");
+						writer.RenderEndTag ();
+						writer.RenderBeginTag ("i");
+						writer.Write (ci.Members [0]);
+						for (int i=1; i<ci.Members.Length; i++)
+							writer.Write (", "+ci.Members [i]);
+						writer.RenderEndTag ();
+					}
 					writer.RenderEndTag ();
 				}
 			}

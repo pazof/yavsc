@@ -12,7 +12,7 @@ body {
 textarea { 
         width:25em;
         height:5em;
-        }
+}
 
 input, textarea, checkbox { 
     color: #FFFFA0;
@@ -86,7 +86,7 @@ footer {
 	font-size:75%;
 	}
 
-	#login img { max-height:5em; max-width:5em; }
+#login img { max-height:5em; max-width:5em; }
 
 header {
 	background-color:rgba(16,16,0,0.8);
@@ -155,6 +155,7 @@ label {
 padding-left: 20px;
 }
 
+.hidden { display:none; }
 
 ul.preview li:nth-child(-n+10) {
    display:inline;
@@ -180,6 +181,7 @@ usertitleref {
    font-family: 'Arial', cursive;
    font-size: 140%;
 	display:block;
+	padding: .2em;
 }
 
 input, select { 
@@ -230,34 +232,35 @@ a.actionlink img { top:4px; }
 .field-validation-error { color: red; }
 .c2 { font-size: small; font-style: italic; }
 .c3 { font-size: x-small; font-style: italic; }
+
 @media print {
 		body {background-color:white;color:black;}
-		header,footer,.postcomment,.actionlink,.metablog,#login{ display:none;} 
+		header,footer,.postcomment,.actionlink,.metablog,#login
+		{ display:none;} 
 	}
+
 @media all and (min-width: 641px) {
 	.bshpanel { display:block; }
   .bsh { display: none; }
   .c3 { display:initial; }
   .c3-alt { display:none; }
 	}
-@media all and (max-width: 640px) {
-  
-	.bshpanel { cursor:zoom-in; }
 
+@media all and (max-width: 640px) {
+	.bshpanel { cursor:zoom-in; }
   footer {
     font-size: x-small;
   }
-
 	.c2 { display:initial; }
 	.c2-alt { display:none; }
 	.c3 { display:none; }
 	.c3-alt { display:initial; }
-	}
-
-	@media all and (max-width: 350px) {
-	  .c2 { display:none; }
-	  .c2-alt { display:initial; }
-	}
-
 }
+
+@media all and (max-width: 350px) {
+  .c2 { display:none; }
+  .c2-alt { display:initial; }
+}
+
+
 

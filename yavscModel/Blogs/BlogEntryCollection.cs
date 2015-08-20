@@ -148,6 +148,7 @@ namespace Yavsc.Model.Blogs
 		/// Gets a value indicating whether this <see cref="Yavsc.Model.Blogs.BlogEntryCollection"/> concerns A unique title.
 		/// </summary>
 		/// <value><c>true</c> if concerns A unique title; otherwise, <c>false</c>.</value>
+		[Obsolete("And what if no title? Do you really need this test?")]
 		public bool ConcernsAUniqueTitle {
 			get {
 				if (this.Count <= 1)
@@ -160,6 +161,7 @@ namespace Yavsc.Model.Blogs
 		/// Gets a value indicating whether this <see cref="Yavsc.Model.Blogs.BlogEntryCollection"/> concerns A unique title.
 		/// </summary>
 		/// <value><c>true</c> if concerns A unique title; otherwise, <c>false</c>.</value>
+		[Obsolete("And what if no title? Do you really need this test?")]
 		public bool ConcernsAUniqueUser {
 			get {
 				if (this.Count <= 1)

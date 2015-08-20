@@ -13,6 +13,7 @@ using Yavsc.Helpers;
 using System.Web.Mvc;
 using Yavsc.Model.Circles;
 using System.Collections.Specialized;
+using System.Text;
 
 namespace Yavsc.Controllers
 {
@@ -309,12 +310,10 @@ namespace Yavsc.Controllers
 		public ActionResult Circles ()
 		{
 			string user = Membership.GetUser ().UserName;
-			ViewData["Circles"] = CircleManager.DefaultProvider.List (user).Select (x => new SelectListItem {
-				Value = x.Value,
-				Text = x.Text
-			});;
+			ViewData["Circles"] = CircleManager.DefaultProvider.List (user);
 			return View ();
 		}
+
 		/// <summary>
 		/// Logout the specified returnUrl.
 		/// </summary>

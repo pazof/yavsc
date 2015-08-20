@@ -179,8 +179,7 @@ namespace WorkFlowProvider
 					cmd.Prepare ();
 					if (users!=null)
 						foreach (string user in users) {
-							object pkid = Membership.GetUser (user).ProviderUserKey;
-							cmd.Parameters[1].Value = pkid.ToString();
+							cmd.Parameters[1].Value = user;
 							cmd.ExecuteNonQuery ();
 						}
 				}
@@ -190,7 +189,7 @@ namespace WorkFlowProvider
 		}
 
 		/// <summary>
-		/// Delete the specified owner and title.
+		/// Delete the specified title.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
 		public override void Delete (long id)
@@ -209,32 +208,51 @@ namespace WorkFlowProvider
 		/// List user's circles.
 		/// </summary>
 		/// <param name="user">User.</param>
-		public override IEnumerable<ListItem> List (string user)
+		public override IEnumerable<Circle> List (string user)
 		{
-			List<ListItem> cc = new List<ListItem> ();
-			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
-			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "select _id, title from circle where owner = :wnr";
-				cmd.Parameters.AddWithValue("wnr",user);
-				cnx.Open ();
-				cmd.Prepare ();
-				using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
-					if (rdr.HasRows) {
+			List<Circle> cc = new List<Circle> ();
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "select _id, title from circle where owner = :wnr";
+					cmd.Parameters.AddWithValue ("wnr", user);
+					cnx.Open ();
+					cmd.Prepare ();
+					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
+						if (rdr.HasRows) {
 						
-						while (rdr.Read ()) {
-							string title = null;
-							int ottl = rdr.GetOrdinal ("title");
-							if (!rdr.IsDBNull (ottl))
-								title = rdr.GetString (ottl);
-							long id = (long) rdr.GetInt64 (
-								          rdr.GetOrdinal ("_id"));
-							cc.Add (new ListItem { Value = id.ToString(), Text = title} );
+							while (rdr.Read ()) {
+								string title = null;
+								int ottl = rdr.GetOrdinal ("title");
+								if (!rdr.IsDBNull (ottl))
+									title = rdr.GetString (ottl);
+								long id = (long)rdr.GetInt64 (
+									         rdr.GetOrdinal ("_id"));
+								cc.Add (new Circle { Id = id, Title = title });
+							}
+						}
+						rdr.Close ();
+					}
+				}
+				// select members
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "select member from circle_members where circle_id = :cid";
+					cmd.Parameters.Add("cid",NpgsqlDbType.Bigint);
+					cmd.Prepare ();
+					foreach (Circle c in cc) {
+						cmd.Parameters ["cid"].Value = c.Id;
+						using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
+							if (rdr.HasRows) {
+								var res = new List<string> ();
+								while (rdr.Read ()) {
+									res.Add (rdr.GetString (0));
+								}
+								c.Members = res.ToArray ();
+							}
+							rdr.Close ();
 						}
 					}
-					rdr.Close ();
 				}
 				cnx.Close ();
-
 			}
 			return cc;
 		}

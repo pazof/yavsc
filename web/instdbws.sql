@@ -680,11 +680,12 @@ COMMENT ON COLUMN circle.public IS 'true when this circle is a public circle, fr
 
 CREATE TABLE circle_members
 (
-  circle_id bigint NOT NULL,
-  member character varying NOT NULL,
+  circle_id bigserial NOT NULL,
+  member character varying (255) NOT NULL,
+  applicationname character varying (255) NOT NULL,
   CONSTRAINT circle_members_pkey PRIMARY KEY (circle_id, member),
-  CONSTRAINT circle_members_member_fkey FOREIGN KEY (member)
-      REFERENCES users (pkid) MATCH SIMPLE
+  CONSTRAINT fk_circle_members_users FOREIGN KEY (member, applicationname)
+      REFERENCES users (username, applicationname) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (

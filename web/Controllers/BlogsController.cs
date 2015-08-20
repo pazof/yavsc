@@ -18,6 +18,7 @@ using Yavsc.Model.RolesAndMembers;
 using System.Net;
 using System.Web.Mvc;
 using Yavsc.Model.Circles;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -131,11 +132,6 @@ namespace Yavsc.Controllers
 			ViewData ["Avatar"] = bupr.avatar;
 			ViewData ["RecordCount"] = tr; 
 			UUBlogEntryCollection uuc = new UUBlogEntryCollection (user, c);
-			if (uuc.ConcernsAUniqueTitle) {
-				var uutc = new UUTBlogEntryCollection (uuc.UserName,
-					           uuc [0].Title, uuc);
-				return View ("UserPost", uutc );
-			}
 			return View ("UserPosts", uuc);
 		}
 
@@ -259,8 +255,8 @@ namespace Yavsc.Controllers
 				title = "";
 			ViewData ["UserName"] = un;
 			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (Membership.GetUser ().UserName).Select (x => new SelectListItem {
-				Value = x.Value,
-				Text = x.Text
+				Value = x.Id.ToString(),
+				Text = YavscHelpers.FormatCircle(x).ToHtmlString()
 			});
 
 			return View ("Edit", new BlogEntry { Title = title });
@@ -306,9 +302,9 @@ namespace Yavsc.Controllers
 				e.AllowedCircles = new long[0];
 			
 			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (Membership.GetUser ().UserName).Select (x => new SelectListItem {
-				Value = x.Value,
-				Text = x.Text,
-				Selected = e.AllowedCircles.Contains (long.Parse (x.Value))
+				Value = x.Id.ToString(),
+				Text = YavscHelpers.FormatCircle(x).ToHtmlString(),
+				Selected = e.AllowedCircles.Contains (x.Id)
 			});
 			return View (e);
 		}

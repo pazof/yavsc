@@ -1,3 +1,7 @@
+2015-08-20  Paul Schneider  <paul@pschneider.fr>
+
+	* InputCircle.cs: fixes the new CircleManager interface usage
+
 2015-07-15  Paul Schneider  <paul@pschneider.fr>
 
 	* WebControls.csproj: Moves to Mono framework
