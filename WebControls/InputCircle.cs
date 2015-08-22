@@ -163,15 +163,6 @@ namespace Yavsc.WebControls
 					writer.AddAttribute ("value", ci.Id.ToString() );
 					writer.RenderBeginTag ("option");
 					writer.Write (ci.Title);
-					if (ci.Members.Length > 0) {
-						writer.RenderBeginTag ("br");
-						writer.RenderEndTag ();
-						writer.RenderBeginTag ("i");
-						writer.Write (ci.Members [0]);
-						for (int i=1; i<ci.Members.Length; i++)
-							writer.Write (", "+ci.Members [i]);
-						writer.RenderEndTag ();
-					}
 					writer.RenderEndTag ();
 				}
 			}

@@ -1,4 +1,4 @@
-<%@ Page Title="Blogs - Indexe" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master" EnableTheming="True" StylesheetTheme="dark" %>
+<%@ Page Title="Blogs - Index" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master" EnableTheming="True" StylesheetTheme="dark" %>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 

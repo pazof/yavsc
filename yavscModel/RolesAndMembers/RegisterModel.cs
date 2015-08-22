@@ -36,7 +36,7 @@ namespace Yavsc.Model.RolesAndMembers
 		/// </summary>
 		/// <value>The name of the user.</value>
 		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")
-			,Display(ResourceType=typeof(LocalizedText),Name="UserName")]
+			,Display(ResourceType=typeof(LocalizedText),Name="User_name")]
 		public string UserName { get; set; }
  
 		/// <summary>

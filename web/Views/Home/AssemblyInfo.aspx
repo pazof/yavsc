@@ -1,4 +1,4 @@
-<%@ Page Title="Yavsc - indexe" Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<System.Reflection.AssemblyName>>" MasterPageFile="~/Models/App.master"%>
+<%@ Page Title="Yavsc - index" Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<System.Reflection.AssemblyName>>" MasterPageFile="~/Models/App.master"%>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <p>
 Running assembly :

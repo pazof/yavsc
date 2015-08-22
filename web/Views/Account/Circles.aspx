@@ -8,21 +8,25 @@
 <table  id="tbc">
 <thead>
 <tr>
-<th data-sort="string"><%=Html.Translate("Title")%></th>
+<th data-sort="string"><%=Html.Translate("Title")%>
+</th>
 </tr>
 </thead>
 <tbody id="tbcb">
 <% int lc=0;
    foreach (var ci in (IEnumerable<Circle>) ViewData["Circles"]) { lc++; %>
 <tr class="<%= (lc%2==0)?"even ":"odd " %>row" id="c_<%=ci.Id%>">
-<td><%=Html.FormatCircle(ci)%></td>
+<td cid="<%=ci.Id%>" style="cursor: pointer;" class="btnselcircle" ><%=Html.FormatCircle(ci)%></td>
    <td>
-   <input type="button" value="<%=Html.Translate("Remove")%>" class="btnremovecircle actionlink" cid="<%=ci.Id%>"/>
+   <input type="button" value="<%=Html.Translate("Remove")%>" 
+   class="btnremovecircle actionlink" cid="<%=ci.Id%>"/>
     </td>
 </tr>
 <% } %>
 </tbody>
 </table>
+
+<div class="actionlink" id="btednvcirc" did="fncirc">Ajouter un cercle</div>
 <script>
 $(function(){
 $("#tbc").stupidtable();
@@ -30,19 +34,13 @@ $("#tbc").stupidtable();
 </script>
 </asp:Content>
 <asp:Content ID="MASContentContent" ContentPlaceHolderID="MASContent" runat="server">
+<div id="fncirc" class="hidden">
 
-    <div id="dfnuser" class="hidden panel">
-<%= Html.Partial("~/Views/Account/Register.ascx",new RegisterClientModel(),new ViewDataDictionary(ViewData)
-    {
-        TemplateInfo = new System.Web.Mvc.TemplateInfo
-        {
-            HtmlFieldPrefix = ViewData.TemplateInfo.HtmlFieldPrefix==""?"ur":ViewData.TemplateInfo.HtmlFieldPrefix+"_ur"
-        }
-    }) %>
- 	</div>
+
+<div class="panel">
 <form>
 <fieldset>
-<legend>Nouveau cercle</legend>
+<legend id="lgdnvcirc"></legend>
 <span id="msg" class="field-validation-valid error"></span>
 <label for="title"><b><%=Html.Translate("Title")%></b></label>
 <input type="text" id="title" name="title" class="inputtext"/>
@@ -55,37 +53,58 @@ $("#tbc").stupidtable();
 	 <yavsc:InputUserName
 	  id="users"
 	  name="users"
-	   emptyvalue="[nouvel utilisateur]"
+	   emptyvalue="[aucun]"
 	 onchange="onmembersChange(this.value);"
 	 multiple="true"
 	   runat="server" >
-	 </yavsc:InputUserName> 
- 	<script>
- 	function message(msg) { 
-  if (msg) { 
-  $("#msg").removeClass("hidden");
-  $("#msg").text(msg);
-  } else { $("#msg").addClass("hidden"); } }
+	 </yavsc:InputUserName>
+
+</th>
+</tr>
+</thead>
+<tbody id="tbmbrsb">
+</tbody>
+</table>
+<input type="button" id="btnnewcircle" value="<%=Html.Translate("Create")%>" class="actionlink rowbtnct" />
+</fieldset>
+</form>
+
+
+
+</div>
+
+
+</div>
+
+
+<script>
+
+var cformhidden=true;
+var errspanid="msg";
+
+function getCircle(id)
+{
+$.getJSON("<%=Url.Content("~/api/Circle/Get/")%>"+id,
+function(json) { $("#title").val( json.Title); $("#users").val( json.Members ) ; });
+}
+
+function editNewCircle() {
+  if ($('#fncirc').hasClass('hidden')) $('#fncirc').removeClass('hidden')
+	$('#lgdnvcirc').html("Creation d'un cercle");
+ }
+
+function selectCircle() {
+    if ($('#fncirc').hasClass('hidden')) $('#fncirc').removeClass('hidden')
+	var id = $(this).attr('cid');
+	$('#lgdnvcirc').html("Edition du cercle");
+    // get it from the server
+    getCircle(id);
+}
 
  	function onmembersChange(newval)
  	{
- 		if (newval=='')
- 			$("#dfnuser").removeClass("hidden");
- 		else
- 			$("#dfnuser").addClass("hidden");
  	}
- 	function clearRegistrationValidation(){
-    		$("#Err_ur_Name").text("");
-            $("#Err_ur_UserName").text("");
-            $("#Err_ur_Mobile").text("");
-            $("#Err_ur_Phone").text("");
-            $("#Err_ur_Email").text("");
-            $("#Err_ur_Address").text("");
-            $("#Err_ur_ZipCode").text("");
-            $("#Err_ur_CityAndState").text("");
-            $("#Err_ur_IsApprouved").text("");
-    }
-    function clearCircleValidation() {}
+
     function removeCircle() {
     	message(false);
     	 var id = $(this).attr('cid'); 
@@ -93,8 +112,8 @@ $("#tbc").stupidtable();
             url: "<%=Url.Content("~/api/Circle/Delete/")%>"+id,
             type: "GET",
             success: function (data) { 
-            // Drops the detroyed circle row
-            $("c_"+id).remove();
+            // Drops the row
+            $("#c_"+id).remove();
            },
             statusCode: {
             	400: function(data) {
@@ -125,9 +144,18 @@ $("#tbc").stupidtable();
             url: "<%=Url.Content("~/api/Circle/Create")%>",
             type: "POST",
             data: circle,
-            success: function (data) { 
+            success: function (id) { 
             // Adds a node rendering the new circle
-            $("#tbcb").append("<tr><td>"+circle.title+" <br><i>"+circle.users+"</i></td></tr>");
+            $('<tr id="c_'+id+'"/>').addClass('selected row')
+            .appendTo('#tbcb');
+
+            $('<td>'+circle.title+'<br><i>'+
+            circle.users+
+            '</i></td></td>')
+            .appendTo('#c_'+id);
+
+            $('<td><input class="btnremovecircle actionlink" cid="'+id+'" type="button" value="Remove" onclick="removeCircle"></td>').appendTo('#c_'+id);
+         
            },
             statusCode: {
             	400: function(data) {
@@ -147,64 +175,11 @@ $("#tbc").stupidtable();
 			    else message(false);
         		}});
     }
-
-    function addUser()
-    {
-    message(false);
-    	var user={
-     	UserName: $("#ur_UserName").val(),
-     	Name: $("#ur_Name").val(),
-     	Password: $("#ur_Password").val(),
-     	Email: $("#ur_Email").val(),
-     	Address: $("#ur_Address").val(),
-     	CityAndState: $("#ur_CityAndState").val(),
-     	ZipCode: $("#ur_ZipCode").val(),
-     	Phone: $("#ur_Phone").val(),
-     	Mobile: $("#ur_Mobile").val(),
-     	IsApprouved: true
-     	};
-     	clearRegistrationValidation();
-        $.ajax({
-            url: "<%=Url.Content("~/api/FrontOffice/Register")%>",
-            type: "POST",
-            data: user,
-            success: function (data) { 
-            	$("#users option:last").after($('<option>'+user.UserName+'</option>'));
-           },
-            statusCode: {
-            	400: function(data) {
-            		$.each(data.responseJSON, function (key, value) {
-            		var errspanid = "Err_ur_" + value.key.replace("model.","");
-            		var errspan = document.getElementById(errspanid);
-            		if (errspan==null)
-            			alert('enoent '+errspanid);
-            		else 
-            			errspan.innerHTML=value.errors.join("<br/>");
-                	});
-            		}
-            	},
-            error: function (xhr, ajaxOptions, thrownError) {
-            	if (xhr.status!=400)
-        			message(xhr.status+" : "+xhr.responseText);
-			    else message(false);
-        		}});
-    }
-    </script>
-
-</th>
-</tr>
-</thead>
-<tbody id="tbmbrsb">
-</tbody>
-</table>
-<input type="button" id="btnnewcircle" value="<%=Html.Translate("Create")%>" class="actionlink rowbtnct" />
-</fieldset>
-</form>
-<script>
  $(document).ready(function () {
- $("#btnnewuser").click(addUser);
+ $('#btednvcirc').click(editNewCircle);
  $("#btnnewcircle").click(addCircle);
  $(".btnremovecircle").click(removeCircle);
+ $(".btnselcircle").click(selectCircle);
     });
  	</script>
 </asp:Content>

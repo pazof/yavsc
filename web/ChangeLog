@@ -1,3 +1,21 @@
+2015-08-22  Paul Schneider  <paul@pschneider.fr>
+
+	* yavsc.js: factorize some javascript
+
+	* BlogsController.cs: removes Html used as text
+
+	* App.master: removes the bsd css class script
+
+	* Circles.aspx: fixes the Javascript circle selection
+
+	* Index.aspx:
+	* AssemblyInfo.aspx: `Indexe` is not a french word, sorry for
+	the trouble
+
+	* Web.csproj: includes yavsc Javascript in the project
+
+	* style.css: panels float left
+
 2015-08-20  Paul Schneider  <paul@pschneider.fr>
 
 	* CircleController.cs: * Authorize some Http methods

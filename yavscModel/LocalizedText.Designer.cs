@@ -46,6 +46,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string was_added_to_the_empty_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
+            }
+        }
+        
         public static string Bill_edition {
             get {
                 return ResourceManager.GetString("Bill_edition", resourceCulture);
@@ -70,9 +76,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string was_added_to_the_role {
+        public static string Create {
             get {
-                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
+                return ResourceManager.GetString("Create", resourceCulture);
             }
         }
         
@@ -82,15 +88,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Create {
+        public static string Title {
             get {
-                return ResourceManager.GetString("Create", resourceCulture);
-            }
-        }
-        
-        public static string was_added_to_the_empty_role {
-            get {
-                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
+                return ResourceManager.GetString("Title", resourceCulture);
             }
         }
         
@@ -112,9 +112,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string DocTemplateException {
+        public static string DuplicateEmail {
             get {
-                return ResourceManager.GetString("DocTemplateException", resourceCulture);
+                return ResourceManager.GetString("DuplicateEmail", resourceCulture);
             }
         }
         
@@ -124,9 +124,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Title {
+        public static string Pdf_version {
             get {
-                return ResourceManager.GetString("Title", resourceCulture);
+                return ResourceManager.GetString("Pdf_version", resourceCulture);
             }
         }
         
@@ -184,9 +184,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Welcome {
+        public static string DuplicateUserName {
             get {
-                return ResourceManager.GetString("Welcome", resourceCulture);
+                return ResourceManager.GetString("DuplicateUserName", resourceCulture);
             }
         }
         
@@ -208,15 +208,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string UserName {
+        public static string Consultant {
             get {
-                return ResourceManager.GetString("UserName", resourceCulture);
+                return ResourceManager.GetString("Consultant", resourceCulture);
             }
         }
         
-        public static string Remember_me {
+        public static string EventWebPage {
             get {
-                return ResourceManager.GetString("Remember_me", resourceCulture);
+                return ResourceManager.GetString("EventWebPage", resourceCulture);
             }
         }
         
@@ -226,15 +226,21 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Home {
+        public static string Not_Approuved {
             get {
-                return ResourceManager.GetString("Home", resourceCulture);
+                return ResourceManager.GetString("Not_Approuved", resourceCulture);
             }
         }
         
-        public static string Pdf_version {
+        public static string Remember_me {
             get {
-                return ResourceManager.GetString("Pdf_version", resourceCulture);
+                return ResourceManager.GetString("Remember_me", resourceCulture);
+            }
+        }
+        
+        public static string DocTemplateException {
+            get {
+                return ResourceManager.GetString("DocTemplateException", resourceCulture);
             }
         }
         
@@ -262,9 +268,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string DuplicateEmail {
+        public static string was_added_to_the_role {
             get {
-                return ResourceManager.GetString("DuplicateEmail", resourceCulture);
+                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
+            }
+        }
+        
+        public static string User_List {
+            get {
+                return ResourceManager.GetString("User_List", resourceCulture);
             }
         }
         
@@ -280,15 +292,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Welcome {
+            get {
+                return ResourceManager.GetString("Welcome", resourceCulture);
+            }
+        }
+        
         public static string Online {
             get {
                 return ResourceManager.GetString("Online", resourceCulture);
             }
         }
         
-        public static string Not_Approuved {
+        public static string Home {
             get {
-                return ResourceManager.GetString("Not Approuved", resourceCulture);
+                return ResourceManager.GetString("Home", resourceCulture);
             }
         }
         
@@ -310,21 +328,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string role_created {
+        public static string DisplayName {
             get {
-                return ResourceManager.GetString("role_created", resourceCulture);
-            }
-        }
-        
-        public static string User_List {
-            get {
-                return ResourceManager.GetString("User List", resourceCulture);
-            }
-        }
-        
-        public static string EventWebPage {
-            get {
-                return ResourceManager.GetString("EventWebPage", resourceCulture);
+                return ResourceManager.GetString("DisplayName", resourceCulture);
             }
         }
         
@@ -334,15 +340,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string DisplayName {
+        public static string role_created {
             get {
-                return ResourceManager.GetString("DisplayName", resourceCulture);
-            }
-        }
-        
-        public static string Consultant {
-            get {
-                return ResourceManager.GetString("Consultant", resourceCulture);
+                return ResourceManager.GetString("role_created", resourceCulture);
             }
         }
         
@@ -355,12 +355,6 @@ namespace Yavsc.Model {
         public static string entries {
             get {
                 return ResourceManager.GetString("entries", resourceCulture);
-            }
-        }
-        
-        public static string DuplicateUserName {
-            get {
-                return ResourceManager.GetString("DuplicateUserName", resourceCulture);
             }
         }
     }

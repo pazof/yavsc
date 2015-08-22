@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <asp:ContentPlaceHolder id="init" runat="server">
 </asp:ContentPlaceHolder><% 
-ViewState["orgtitle"] = T.GetString(Page.Title);
+ViewState["orgtitle"] = Html.Translate(Page.Title);
  Page.Title = ViewState["orgtitle"] + " - " + YavscHelpers.SiteName; 
  %><head runat="server">
 <meta charset="utf-8">
@@ -55,7 +55,8 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, null) %>
 <% } %></div>
 <footer>
-<script src="https://apis.google.com/js/platform.js" async defer>
+<script src="/Scripts/yavsc.js" async defer>
+<script src="https://apis.google.com/js/platform.js" defer>
   {lang: 'fr'}
 </script>
    <%= Html.ActionLink("Contact","Contact","Home",null, new { @class="thanks" }) %>
@@ -70,15 +71,6 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
    <script type="text/javascript">
         var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
     </script> 
-    <script>
-$( ".bshd" ).on("click",function(e) {
-    if (e.target == "[object HTMLElement]") {
-    var panel = $(this).children(".bshpanel");
-    if (panel.hasClass("hidden")) panel.css("cursor","zoom-out");
-    else panel.css("cursor","zoom-in");
-    panel.toggleClass("hidden");
-   $(this).children(".bsh").toggleClass("hidden");
-   } });
-</script>
+
 </body>
 </html>

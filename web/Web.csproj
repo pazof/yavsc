@@ -336,6 +336,7 @@
     <Content Include="App_Themes\mdd_styles.css" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\MarkdownDeepLib.min.js" />
+    <Content Include="Scripts\yavsc.js" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

@@ -25,6 +25,7 @@ main {
 	background-color: rgba(64,64,64,0.6);
 	border-radius:10px;
 	}
+
 fieldset {
 	background-color: rgba(32,16,16,0.8);
 	border-radius:5px; border: solid 1px #000060;
@@ -68,6 +69,7 @@ footer {
 		border-radius:5px; 
 		margin:.5em;
 		padding: .5em;
+		float:left; 
 }
 
 .bsh { float: right; }
@@ -95,6 +97,7 @@ header {
 	margin:0em;
 	padding:0em;
 	}
+
 h1 img { vertical-align: text-top; }
 
 a {

@@ -303,7 +303,7 @@ namespace Yavsc.Controllers
 			
 			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (Membership.GetUser ().UserName).Select (x => new SelectListItem {
 				Value = x.Id.ToString(),
-				Text = YavscHelpers.FormatCircle(x).ToHtmlString(),
+				Text = x.Title,
 				Selected = e.AllowedCircles.Contains (x.Id)
 			});
 			return View (e);
