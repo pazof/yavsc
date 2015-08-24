@@ -6,7 +6,6 @@ plugins/*/obj
 packages
 web/avatars
 web/users
-web/Web References
 build
 .nuget
 .gitignore
