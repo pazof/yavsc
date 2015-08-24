@@ -44,23 +44,16 @@ namespace Yavsc.Model.Circles
 		public abstract long Create(string owner, string title, string [] users);
 
 		/// <summary>
-		/// Add the specified user.
+		/// Add the specified user to the specified circle.
 		/// </summary>
 		/// <param name="id">circle Identifier.</param>
 		/// <param name="username">User name.</param>
 		public abstract void Add(long id, string username);
 
 		/// <summary>
-		/// Remove the specified user.
+		/// Delete the specified circle by its id.
 		/// </summary>
-		/// <param name="id">circle Identifier.</param>
-		/// <param name="username">User name.</param>
-		public abstract void Remove(long id, string username);
-
-		/// <summary>
-		/// Delete the specified id.
-		/// </summary>
-		/// <param name="id">Identifier.</param>
+		/// <param name="id">Circle Identifier.</param>
 		public abstract void Delete(long id) ;
 
 		/// <summary>
@@ -70,16 +63,30 @@ namespace Yavsc.Model.Circles
 		public abstract Circle Get(long id);
 
 		/// <summary>
-		/// List this instance.
+		/// List circle's user.
 		/// </summary>
 		public abstract IEnumerable<Circle> List(string user);
 
 		/// <summary>
-		/// Covers the specified username.
+		/// True when the specified user is listed in one of 
+		/// the specified circles
 		/// </summary>
-		/// <param name="circle_ids">circle's owner.</param>
-		/// <param name="member">Username in his circle.</param>
+		/// <param name="circle_ids">circles to look at</param>
+		/// <param name="member">Username to look for in the circles</param>
 		public abstract bool Matches(long [] circle_ids, string member);
+
+		/// <summary>
+		/// Removes the membership.
+		/// </summary>
+		/// <param name="circle_id">Circle identifier.</param>
+		/// <param name="member">Member.</param>
+		public abstract void RemoveMembership(long circle_id, string member);
+
+		/// <summary>
+		/// Removes the member from all current user circles.
+		/// </summary>
+		/// <param name="member">Member.</param>
+		public abstract void RemoveMember(string member);
 
 	}
 

@@ -36,6 +36,28 @@ namespace WorkFlowProvider
 	/// </summary>
 	public class NpgsqlCircleProvider : CircleProvider
 	{
+		#region implemented abstract members of CircleProvider
+
+		public override void RemoveMembership (long circle_id, string member)
+		{
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = "delete from circle_members where circle_id = :cid and username = :uname";
+				cmd.Parameters.AddWithValue("cid",circle_id);
+				cmd.Parameters.AddWithValue("uname",member);
+				cnx.Open ();
+				cmd.ExecuteNonQuery ();	
+				cnx.Close ();
+			}
+		}
+
+		public override void RemoveMember (string member)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WorkFlowProvider.NpgsqlCircleProvider"/> class.
 		/// </summary>
@@ -88,23 +110,6 @@ namespace WorkFlowProvider
 			}
 		}
 
-		/// <summary>
-		/// Remove the specified user.
-		/// </summary>
-		/// <param name="id">circle Identifier.</param>
-		/// <param name="username">User name.</param>
-		public override void Remove (long id, string username)
-		{
-			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
-			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "delete from circle_members where circle_id = :cid and username = :uname";
-				cmd.Parameters.AddWithValue("cid",id);
-				cmd.Parameters.AddWithValue("uname",username);
-				cnx.Open ();
-				cmd.ExecuteNonQuery ();	
-				cnx.Close ();
-			}
-		}
 
 		/// <summary>
 		/// Get the specified id.

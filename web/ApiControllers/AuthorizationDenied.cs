@@ -44,7 +44,7 @@ namespace Yavsc.ApiControllers
 	public class AuthorizationDenied : HttpRequestException {
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.ApiControllers.FrontOfficeController+AuthorizationDenied"/> class.
+		/// Initializes a new instance of the Yavsc.ApiControllers.AuthorizationDenied class.
 		/// </summary>
 		/// <param name="msg">Message.</param>
 		public AuthorizationDenied(string msg) : base(msg)

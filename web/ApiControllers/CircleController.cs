@@ -29,26 +29,6 @@ using Yavsc.Model;
 
 namespace Yavsc.ApiControllers
 {
-	/// <summary>
-	/// New circle.
-	/// </summary>
-	public class NewCircle {
-		/// <summary>
-		/// Gets or sets the title.
-		/// </summary>
-		/// <value>The title.</value>
-		public string title { get ; set; } 
-		/// <summary>
-		/// Gets or sets the users.
-		/// </summary>
-		/// <value>The users.</value>
-		public string [] users { get ; set; }
-		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="Yavsc.ApiControllers.NewCircle"/> is private.
-		/// </summary>
-		/// <value><c>true</c> if is private; otherwise, <c>false</c>.</value>
-		public bool isPrivate { get; set; }
-	}
 
 	/// <summary>
 	/// Circle controller.
@@ -62,10 +42,10 @@ namespace Yavsc.ApiControllers
 		/// <param name="model">Model.</param>
 		[Authorize,
 			AcceptVerbs ("POST")]
-		public long Create(NewCircle model) 
+		public long Create(Circle model) 
 		{
 			string user = Membership.GetUser ().UserName;
-			return CircleManager.DefaultProvider.Create (user, model.title, model.users);
+			return CircleManager.DefaultProvider.Create (user, model.Title, model.Members);
 		}
 
 		/// <summary>
@@ -92,6 +72,20 @@ namespace Yavsc.ApiControllers
 		{
 			checkIsOwner (CircleManager.DefaultProvider.Get(id));
 			CircleManager.DefaultProvider.Delete (id);
+		}
+
+
+		/// <summary>
+		/// Removes the user from circle.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		/// <param name="username">Username.</param>
+		[Authorize,
+			AcceptVerbs ("GET")] 
+		public void RemoveUserFromCircle(long id, string username) 
+		{
+			checkIsOwner (CircleManager.DefaultProvider.Get(id));
+			CircleManager.DefaultProvider.RemoveMembership (id,username);
 		}
 
 		private void checkIsOwner(Circle c)

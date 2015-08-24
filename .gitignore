@@ -1,0 +1,13 @@
+*/bin
+*/obj
+plugins/*/bin
+plugins/*/obj
+*.userprefs
+packages
+web/avatars
+web/users
+web/Web References
+build
+.nuget
+.gitignore
+

@@ -658,7 +658,7 @@ CREATE TABLE circle
   owner character varying(255) NOT NULL, -- creator of this circle
   applicationname character varying(255) NOT NULL, -- Application name
   title character varying(512) NOT NULL,
-  public boolean, -- true when this circle is a public circle, from which the title would be available from an anonymous access to the owner's profile
+  public boolean default FALSE, -- true when this circle is a public circle, from which the title would be available from an anonymous access to the owner's profile
   CONSTRAINT circle_pkey PRIMARY KEY (_id),
   CONSTRAINT circle_owner_fkey FOREIGN KEY (owner, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
@@ -672,7 +672,6 @@ COMMENT ON COLUMN circle._id IS 'Circle identifier';
 COMMENT ON COLUMN circle.owner IS 'creator of this circle';
 COMMENT ON COLUMN circle.applicationname IS 'Application name';
 COMMENT ON COLUMN circle.public IS 'true when this circle is a public circle, from which the title would be available from an anonymous access to the owner''s profile';
-
 
 -- Table: circle_members
 

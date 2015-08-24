@@ -43,7 +43,7 @@ $("#tbc").stupidtable();
 <legend id="lgdnvcirc"></legend>
 <span id="msg" class="field-validation-valid error"></span>
 <label for="title"><b><%=Html.Translate("Title")%></b></label>
-<input type="text" id="title" name="title" class="inputtext"/>
+<input type="text" id="title" name="title" class="inputtext" onchange="onTitleChanged"/>
 <span id="Err_cr_title" class="field-validation-valid error"></span>
 <table  id="tbmbrs">
 <thead>
@@ -91,19 +91,24 @@ function(json) { $("#title").val( json.Title); $("#users").val( json.Members ) ;
 function editNewCircle() {
   if ($('#fncirc').hasClass('hidden')) $('#fncirc').removeClass('hidden')
 	$('#lgdnvcirc').html("Creation d'un cercle");
+	$('#btnnewcircle').val("Créer");
+	$('#fncirc').removeClass("dirty");
  }
 
 function selectCircle() {
     if ($('#fncirc').hasClass('hidden')) $('#fncirc').removeClass('hidden')
 	var id = $(this).attr('cid');
 	$('#lgdnvcirc').html("Edition du cercle");
+	$('#btnnewcircle').val("Modifier");
     // get it from the server
     getCircle(id);
+	$('#fncirc').removeClass("dirty");
 }
 
  	function onmembersChange(newval)
- 	{
- 	}
+ 	{$('#fncirc').addClass("dirty");}
+    function onTitleChanged() 
+    { $('#fncirc').addClass("dirty"); }
 
     function removeCircle() {
     	message(false);
@@ -137,7 +142,7 @@ function selectCircle() {
     function addCircle()
     {
     message(false);
-  	  var circle = { title: $("#title").val(), users: $("#users").val() } ;
+  	  var circle = { title: $("#title").val(), members: $("#users").val() } ;
     	 $("#title").text('');
     	 $("#users").val('');
     	 $.ajax({
@@ -149,8 +154,8 @@ function selectCircle() {
             $('<tr id="c_'+id+'"/>').addClass('selected row')
             .appendTo('#tbcb');
 
-            $('<td>'+circle.title+'<br><i>'+
-            circle.users+
+            $('<td>'+circle.title+' <br><i>'+
+            circle.members+
             '</i></td></td>')
             .appendTo('#c_'+id);
 

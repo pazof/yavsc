@@ -153,7 +153,6 @@
     <Compile Include="RolesAndMembers\GCMRegister.cs" />
     <Compile Include="RolesAndMembers\LostPasswordModel.cs" />
     <Compile Include="Messaging\SimpleMessage.cs" />
-    <Compile Include="ListItem.cs" />
     <Compile Include="Calendar\BookEdit.cs" />
     <Compile Include="Calendar\FreeDate.cs" />
     <Compile Include="FrontOffice\Catalog\Billing\PriceOnItemCount.cs" />
