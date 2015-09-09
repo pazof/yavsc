@@ -648,30 +648,33 @@ CREATE TABLE histowritting
 WITH (
   OIDS=FALSE
 );
-
 -- Table: circle
 
 -- DROP TABLE circle;
+
 CREATE TABLE circle
 (
   _id bigserial NOT NULL, -- Circle identifier
   owner character varying(255) NOT NULL, -- creator of this circle
   applicationname character varying(255) NOT NULL, -- Application name
   title character varying(512) NOT NULL,
-  public boolean default FALSE, -- true when this circle is a public circle, from which the title would be available from an anonymous access to the owner's profile
+  public boolean DEFAULT false, -- true when this circle is a public circle, from which the title would be available from an anonymous access to the owner's profile
   CONSTRAINT circle_pkey PRIMARY KEY (_id),
   CONSTRAINT circle_owner_fkey FOREIGN KEY (owner, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT circle_owner_title_key UNIQUE (owner, title)
+  CONSTRAINT circle_owner_applicationname_title_key UNIQUE (owner, applicationname, title)
 )
 WITH (
   OIDS=FALSE
 );
+ALTER TABLE circle
+  OWNER TO yavscdev;
 COMMENT ON COLUMN circle._id IS 'Circle identifier';
 COMMENT ON COLUMN circle.owner IS 'creator of this circle';
 COMMENT ON COLUMN circle.applicationname IS 'Application name';
 COMMENT ON COLUMN circle.public IS 'true when this circle is a public circle, from which the title would be available from an anonymous access to the owner''s profile';
+
 
 -- Table: circle_members
 

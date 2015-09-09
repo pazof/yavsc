@@ -12,6 +12,9 @@ ViewState["orgtitle"] = Html.Translate(Page.Title);
 <link rel="stylesheet" href="~/App_Themes/style.css" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
+<script type="text/javascript">
+var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
+</script> 
 <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>
 <link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'/>
@@ -32,28 +35,39 @@ ViewState["orgtitle"] = Html.Translate(Page.Title);
   %><div class="message"><%= Html.Encode(ViewData["Message"]) %></div><% } 
   %>
 </header>
+
+<div id="appmenu" >
+<% if (Membership.GetUser()==null) { %>
+<div class="menuitem">
+	<%= Html.ActionLink("Authentification", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery },null) %>
+	<div class="hint">Pour pouvoir publier</div>
+	</div>
+<% } else { %><div class="menuitem">
+<a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>">
+<img src="<%=Html.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" width="25%" alt="vos posts" /></a>
+<div class="hint">Votre Blog</div>
+</div>
+
+<div class="menuitem">
+	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Profile", "Account", new { id = HttpContext.Current.User.Identity.Name }, null) %>
+	<div class="hint"> &Eacute;dition de votre profile </div></div>
+
+<div class="menuitem">
+	<a href="/Blogs/Post" >Poster</a>
+	<div class="hint">
+	&Eacute;dition d'un nouveau billet </div></div>
+<div class="menuitem">
+	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, null) %>
+<% } %>
+</div>
+</div>
 <main>
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
 </main>
 <asp:ContentPlaceHolder ID="MASContent" runat="server">
 </asp:ContentPlaceHolder>
-<div id="login" ><span class="ohinside">
-    <a href="<%= Url.Content("~/")%>">
-	<span ><%=Html.Encode(YavscHelpers.SiteName) %></span></a><br/>
-	<span class="onhover">Page d'accueil<br/></span></span>
-<% if (Membership.GetUser()==null) { %>
-	<div class="ohinside"><%= Html.ActionLink("Authentification", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery },null) %>
-	<span class="onhover">Pourquoi s'authentifier?</span></div><br/>
-<% } else { %>
-<a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>"><img src="/favicon.png" width="25%"/> Votre Blog</a><br/>
-<span class="ohinside">
-	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Profile", "Account", new { id = HttpContext.Current.User.Identity.Name }, null) %>
-	<span class="onhover"> &Eacute;dition de votre profile </span></span><br/>
-	<a href="/Blogs/Post" class="ohafter">Poster</a>
-	<span class="onhover"> &Eacute;dition d'un nouveau billet </span><br/>
-	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, null) %>
-<% } %></div>
+
 <footer>
 <script src="/Scripts/yavsc.js" async defer>
 <script src="https://apis.google.com/js/platform.js" defer>
@@ -68,9 +82,7 @@ ViewState["orgtitle"] = Html.Translate(Page.Title);
      <% }} %>
 <div class="g-plusone" data-annotation="inline" data-width="230"></div>
    </footer>
-   <script type="text/javascript">
-        var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
-    </script> 
+
 
 </body>
 </html>

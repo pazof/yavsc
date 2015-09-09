@@ -1,10 +1,10 @@
-//
-//  Circle.cs
+﻿//
+//  CircleBase.cs
 //
 //  Author:
-//       Paul Schneider <paulschneider@free.fr>
+//       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015 Paul Schneider
+//  Copyright (c) 2015 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -19,41 +19,38 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 
 namespace Yavsc.Model.Circles
 {
-	/// <summary>
-	/// Circle.
-	/// </summary>
-	public class Circle : CircleBase
+	public class CircleBase
 	{
-		
-
-		/// <summary>
-		/// Gets or sets the users.
-		/// </summary>
-		/// <value>The users.</value>
-		public string [] Members { get; set; }
-
-		/// <summary>
-		/// Merge the specified circle array into
-		/// an user name list.
-		/// </summary>
-		/// <param name="those">Those circle about to be merged.</param>
-		public static string [] Union (Circle []those)
+		public CircleBase ()
 		{
-			List<string> content = new List<string>();
-			foreach (Circle c in those) {
-				foreach (string user_name in c.Members) {
-					if (!content.Contains (user_name))
-						content.Add (user_name);
-				}
-			}
-			return content.ToArray ();
 		}
+
+		/// <summary>
+		/// Gets or sets the owner.
+		/// </summary>
+		/// <value>The owner.</value>
+		public string Owner { get; set; } 
+
+		/// <summary>
+		/// Gets or sets the identifier.
+		/// </summary>
+		/// <value>The identifier.</value>
+		public long Id { get; set; }
+
+		/// <summary>
+		/// Gets or sets the title.
+		/// </summary>
+		/// <value>The title.</value>
+		public string Title { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this instance is private.
+		/// </summary>
+		/// <value><c>true</c> if this instance is private; otherwise, <c>false</c>.</value>
+		public bool IsPrivate { get; set; }
 	}
-
 }
-
 

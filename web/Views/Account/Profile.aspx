@@ -17,145 +17,96 @@ table.layout TR TD { max-width:40%; }
 
    <fieldset><legend>Informations publiques</legend>
 
-<table class="layout">
-<tr><td align="right" style="">
-<%= Html.LabelFor(model => model.Name) %></td><td>
-<%= Html.TextBox("Name") %>
-<%= Html.ValidationMessage("Name", "*") %></td></tr>
 
-<tr><td align="right">
-<%= Html.LabelFor(model => model.WebSite) %></td><td>
+<%= Html.LabelFor(model => model.Name) %> :
+<%= Html.TextBox("Name") %> 
+<%= Html.ValidationMessage("Name", "*") %>
+<br>
+
+<%= Html.LabelFor(model => model.WebSite) %> : 
 <%= Html.TextBox("WebSite") %>
-<%= Html.ValidationMessage("WebSite", "*") %></td></tr>
+<%= Html.ValidationMessage("WebSite", "*") %>
+<br>
 
-<tr><td align="right">
-Avatar </td><td> <img class="avatar" src="<%=Model.avatar%>?version=<%=Html.Encode(DateTime.Now.ToString())%>" alt=""/>
+Avatar : <img class="avatar" src="<%=Model.avatar%>?version=<%=Html.Encode(DateTime.Now.ToString())%>" alt=""/>
 <input type="file" id="AvatarFile" name="AvatarFile"/>
-<%= Html.ValidationMessage("AvatarFile", "*") %></td></tr>
+<%= Html.ValidationMessage("AvatarFile", "*") %>
 
-</table>
-     </fieldset>
+</fieldset>
 
     <fieldset><legend>Blog</legend>
-    <table class="layout">
-    <tr><td align="right">
-<%= Html.LabelFor(model => model.BlogVisible) %></td><td>
+
+<%= Html.LabelFor(model => model.BlogVisible) %> :
 <%= Html.CheckBox("BlogVisible") %>
-<%= Html.ValidationMessage("BlogVisible", "*") %></td></tr>
-<tr><td align="right">
-<%= Html.LabelFor(model => model.BlogTitle) %></td><td>
+<%= Html.ValidationMessage("BlogVisible", "*") %>
+<br>
+
+<%= Html.LabelFor(model => model.BlogTitle) %> :
 <%= Html.TextBox("BlogTitle") %>
-<%= Html.ValidationMessage("BlogTitle", "*") %></td></tr>
-      </table>
+<%= Html.ValidationMessage("BlogTitle", "*") %>
+
    </fieldset>
 
     <fieldset><legend>Contact</legend>
-    <table class="layout">
-    <tr><td align="right">
-<%= Html.LabelFor(model => model.Phone) %></td><td>
+  
+<%= Html.LabelFor(model => model.Phone) %>
 <%= Html.TextBox("Phone") %>
-<%= Html.ValidationMessage("Phone", "*") %></td></tr>
-<tr><td align="right">
-<%= Html.LabelFor(model => model.Mobile) %></td><td>
+<%= Html.ValidationMessage("Phone", "*") %>
+
+<%= Html.LabelFor(model => model.Mobile) %>
 <%= Html.TextBox("Mobile") %>
-<%= Html.ValidationMessage("Mobile", "*") %></td></tr>
-<tr><td align="right">
-<%= Html.LabelFor(model => model.Address) %></td><td>
+<%= Html.ValidationMessage("Mobile", "*") %>
+
+<%= Html.LabelFor(model => model.Address) %>
 <%= Html.TextBox("Address") %>
-<%= Html.ValidationMessage("Address", "*") %></td></tr>
-<tr><td align="right">
-<%= Html.LabelFor(model => model.CityAndState) %></td><td>
+<%= Html.ValidationMessage("Address", "*") %>
+
+<%= Html.LabelFor(model => model.CityAndState) %>
 <%= Html.TextBox("CityAndState") %>
-<%= Html.ValidationMessage("CityAndState", "*") %></td></tr>
-<tr><td align="right">
-<%= Html.LabelFor(model => model.ZipCode) %></td><td>
+<%= Html.ValidationMessage("CityAndState", "*") %>
+
+<%= Html.LabelFor(model => model.ZipCode) %>
 <%= Html.TextBox("ZipCode") %>
-<%= Html.ValidationMessage("ZipCode", "*") %></td></tr>
-<tr><td align="right">
-<%= Html.LabelFor(model => model.Country) %></td><td>
+<%= Html.ValidationMessage("ZipCode", "*") %>
+
+<%= Html.LabelFor(model => model.Country) %>
 <%= Html.TextBox("Country") %>
-<%= Html.ValidationMessage("Country", "*") %></td></tr>
-    </table>
-      </fieldset>
-
-    <fieldset><legend>Disponibilité</legend>
- 
-<table class="layout">
- <tr><td align="right">
-   <%= Html.LabelFor(model => model.GoogleCalendar) %>:
-   </td>
-   <td> <%= Html.Encode(Model.GoogleCalendar) %>
+<%= Html.ValidationMessage("Country", "*") %>
+</fieldset>
+<fieldset><legend>Disponibilité</legend>
+   <%= Html.LabelFor(model => model.GoogleCalendar) %> :
+   
+    <%= Html.Encode(Model.GoogleCalendar) %>
    <%= Html.ActionLink("Choisir l'agenda","ChooseCalendar","Google",new { returnUrl= Request.Url.AbsolutePath }, new { @class="actionlink" }) %>
-   </td>
-   </tr>
-
- </table>
-
-
-   </fieldset>
-
-    <fieldset><legend>Informations de facturation</legend>
- 
-<table class="layout">
-<tr>
-   <td align="right">
-<%= Html.LabelFor(model => model.BankCode) %>
-   </td>
-   <td>
+</fieldset>
+<fieldset><legend>Informations de facturation</legend>
+   
+<%= Html.LabelFor(model => model.BankCode) %> :
 <%= Html.TextBox("BankCode") %>
 <%= Html.ValidationMessage("BankCode", "*") %>
-   </td>
-</tr>
-   <tr>
-   <td align="right">
-<%= Html.LabelFor(model => model.WicketCode) %></td>
-   <td>
+<br>
+
+<%= Html.LabelFor(model => model.WicketCode) %> :
 <%= Html.TextBox("WicketCode") %>
 <%= Html.ValidationMessage("WicketCode", "*") %>
-   </td>
-   </tr>
-
-   <tr>
-   <td align="right">
-<%= Html.LabelFor(model => model.AccountNumber) %></td>
-   <td>
+<br>
+   
+<%= Html.LabelFor(model => model.AccountNumber) %> :
 <%= Html.TextBox("AccountNumber") %>
 <%= Html.ValidationMessage("AccountNumber", "*") %>
-   </td>
-   </tr>
-
-
-   <tr>
-   <td align="right">
-<%= Html.LabelFor(model => model.BankedKey) %></td>
-   <td>
+<br>
+<%= Html.LabelFor(model => model.BankedKey) %> :  
 <%= Html.TextBox("BankedKey") %>
 <%= Html.ValidationMessage("BankedKey", "*") %>
-   </td>
-   </tr>
-
-   <tr>
-   <td align="right">
-<%= Html.LabelFor(model => model.BIC) %></td>
-   <td>
+<br>
+<%= Html.LabelFor(model => model.BIC) %> :
 <%= Html.TextBox("BIC") %>
 <%= Html.ValidationMessage("BIC", "*") %>
-   </td>
-   </tr>
-
-   <tr>
-    <td align="right">
-<%= Html.LabelFor(model => model.IBAN) %></td>
-   <td>
+<br>
+<%= Html.LabelFor(model => model.IBAN) %> :
 <%= Html.TextBox("IBAN") %>
 <%= Html.ValidationMessage("IBAN", "*") %>
-   </td>
-   </tr>
-
-
-</table>
-
-   </fieldset>
+</fieldset>
 
 <input type="submit"/>
 <% } %>

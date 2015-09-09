@@ -14,6 +14,9 @@
 	</resheader>
 	<data name="Count"><value>Nombre</value></data>
 	<data name="Ciffer"><value>Chiffre</value></data>
+	<data name="none"><value>aucun(e)</value></data>
+	<data name="Modify"><value>Modifier</value></data>
+	<data name="no_content"><value>pas de contenu</value></data>
 	<data name="Title"><value>Titre</value></data>
 	<data name="Description"><value>Description</value></data>
 	<data name="Product_reference"><value>Référence produit</value></data>

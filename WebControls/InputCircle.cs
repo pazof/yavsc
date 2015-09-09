@@ -29,6 +29,7 @@ using System.Web.Security;
 using System.Collections;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace Yavsc.WebControls
 {
@@ -154,15 +155,15 @@ namespace Yavsc.WebControls
 			}
 			var u = Membership.GetUser ();
 			if (u != null) {
-				foreach (var ci in CircleManager.DefaultProvider.List(u.UserName)) {
-					foreach (SelectListItem sli in Value)
-						if (sli.Value == ci.Id.ToString()) {
+				var circles = CircleManager.DefaultProvider.List (u.UserName);
+				foreach (SelectListItem sli in Value) {
+					if (circles.Any( x=> x.Title == sli.Text)) {
 							writer.AddAttribute ("selected", null);
 							break;
 						}
-					writer.AddAttribute ("value", ci.Id.ToString() );
+					writer.AddAttribute ("value", sli.Value );
 					writer.RenderBeginTag ("option");
-					writer.Write (ci.Title);
+					writer.Write (sli.Text);
 					writer.RenderEndTag ();
 				}
 			}

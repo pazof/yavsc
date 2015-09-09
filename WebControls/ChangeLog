@@ -1,3 +1,9 @@
+2015-09-10  Paul Schneider  <paul@pschneider.fr>
+
+	* InputCircle.cs: using the new CircleBase class
+
+	* ResultPages.cs: Using a new "None" attribute
+
 2015-08-22  Paul Schneider  <paul@pschneider.fr>
 
 	* InputCircle.cs: this class is about to be removed

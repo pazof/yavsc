@@ -1,3 +1,21 @@
+2015-09-10  Paul Schneider  <paul@pschneider.fr>
+
+	* CircleBase.cs: The Circle base
+
+	* Circle.cs: Now inherits CircleBase to implement a member
+	list
+
+	* CircleProvider.cs: implements a circle update method
+
+
+	* LocalizedText.resx:
+	* LocalizedText.Designer.cs: no content!!!
+
+	* LocalizedText.fr.resx:
+	* LocalizedText.fr.Designer.cs: pas content
+
+	* YavscModel.csproj: a new CircleBAse class
+
 2015-08-22  Paul Schneider  <paul@pschneider.fr>
 
 	* LocalizedText.Designer.cs: alphabetic order in ressource

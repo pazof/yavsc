@@ -337,6 +337,8 @@
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\MarkdownDeepLib.min.js" />
     <Content Include="Scripts\yavsc.js" />
+    <Content Include="Scripts\yavsc.circles.js" />
+    <Content Include="Views\Home\Credits.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

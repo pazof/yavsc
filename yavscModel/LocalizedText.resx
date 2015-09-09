@@ -42,12 +42,17 @@
 	<data name="Members"><value>Members</value></data>
 	<data name="Message_sent"><value>Your message has been sent.</value></data>
 	<data name="MinDate"><value>Minimal date for the rendez-vous</value></data>
+	<data name="Modify"><value>Modify</value></data>
 	<data name="My_Estimates"><value>My estimates</value></data>
+	<data name="none"><value>none</value></data>
+	<data name="no_content"><value>no content</value></data>
 	<data name="Not_Approuved"><value>Not Approuved</value></data>
 	<data name="Online"><value>Online</value></data>
 	<data name="Offline"><value>Offline</value></data>
 	<data name="Pdf_version"><value>Pdf version</value></data>
 	<data name="Preview"><value>Preview</value><comment>comment on preview</comment></data>
+	<data name="Private_circle"><value>Private circle</value></data>
+
 	<data name="ProviderId"><value>Provider identifier</value></data>
 	<data name="ProviderName"><value>Provider name</value></data>
 	<data name="Product_reference"><value>Product_reference</value></data>
@@ -65,4 +70,5 @@
 	<data name="was_added_to_the_empty_role"><value>There was no user in the '{1}' role. You ({0}) was just added as firt user in the '{1}' role.</value></data>
 	<data name="Welcome"><value>Welcome</value><comment></comment></data>
 	<data name="younotadmin"><value>You're not administrator</value></data>
+
 </root>

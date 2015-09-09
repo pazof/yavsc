@@ -112,6 +112,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string no_content {
+            get {
+                return ResourceManager.GetString("no_content", resourceCulture);
+            }
+        }
+        
         public static string DuplicateEmail {
             get {
                 return ResourceManager.GetString("DuplicateEmail", resourceCulture);
@@ -124,9 +130,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Pdf_version {
+        public static string Modify {
             get {
-                return ResourceManager.GetString("Pdf_version", resourceCulture);
+                return ResourceManager.GetString("Modify", resourceCulture);
             }
         }
         
@@ -232,9 +238,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Remember_me {
+        public static string Private_circle {
             get {
-                return ResourceManager.GetString("Remember_me", resourceCulture);
+                return ResourceManager.GetString("Private_circle", resourceCulture);
             }
         }
         
@@ -262,15 +268,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Remember_me {
+            get {
+                return ResourceManager.GetString("Remember_me", resourceCulture);
+            }
+        }
+        
         public static string Remove {
             get {
                 return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
         
-        public static string was_added_to_the_role {
+        public static string none {
             get {
-                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
+                return ResourceManager.GetString("none", resourceCulture);
             }
         }
         
@@ -334,6 +346,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Pdf_version {
+            get {
+                return ResourceManager.GetString("Pdf_version", resourceCulture);
+            }
+        }
+        
         public static string Item_added_to_basket {
             get {
                 return ResourceManager.GetString("Item_added_to_basket", resourceCulture);
@@ -355,6 +373,12 @@ namespace Yavsc.Model {
         public static string entries {
             get {
                 return ResourceManager.GetString("entries", resourceCulture);
+            }
+        }
+        
+        public static string was_added_to_the_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
             }
         }
     }

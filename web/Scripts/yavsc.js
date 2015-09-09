@@ -1,6 +1,9 @@
-﻿
+﻿var Yavsc =  (function(apiBaseUrl){ 
+var self = {};
 
-function showHide() { 
+self.apiBaseUrl = (apiBaseUrl || '/api');
+
+self.showHide = function () { 
     var id = $(this).attr('did');
     var target = $('#'+id);
     if (target.hasClass('hidden')) {
@@ -13,11 +16,14 @@ function showHide() {
 	target.addClass('hidden');
 	$(this).html(this.oldhtml);
     }
-}
+	};
 
-function message(msg) { 
+self.message = function (msg) { 
   if (msg) { 
   $("#msg").removeClass("hidden");
   $("#msg").text(msg);
-  } else { $("#msg").addClass("hidden"); } }
+  } else { $("#msg").addClass("hidden"); } };
 
+
+return self;
+})();

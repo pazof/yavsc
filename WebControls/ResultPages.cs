@@ -26,6 +26,7 @@ namespace Yavsc.WebControls
 		/// </summary>
 		public ResultPages ()
 		{
+			
 		}
 
 
@@ -96,6 +97,18 @@ namespace Yavsc.WebControls
 			}
 		}
 
+		[Bindable (true)]
+		[DefaultValue("none")]
+		public string None {
+			get {
+
+				string s = (string) ViewState["None"];
+				return (s == null) ? String.Empty : s;
+			}
+			set {
+				ViewState["None"]  = value;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the current page.
@@ -134,14 +147,11 @@ namespace Yavsc.WebControls
 					writer.Write ("&nbsp;");
 				}
 			} 
-			writer.Write ("(");
 			if (ResultCount == 0) {
-				writer.Write ("Pas de resultat");
-			} else {
-				writer.Write (ResultCount.ToString () + " resultat");
-				if (ResultCount>1) writer.Write("s");
+				writer.Write ("(");
+				writer.Write (None);
+				writer.Write (")");
 			}
-			writer.Write (")");
 
 		}
 	}

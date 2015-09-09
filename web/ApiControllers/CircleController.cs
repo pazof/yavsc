@@ -58,7 +58,7 @@ namespace Yavsc.ApiControllers
 		public void Add(long id, string username)
 		{
 			checkIsOwner (CircleManager.DefaultProvider.Get (id));
-			CircleManager.DefaultProvider.Add (id, username);
+			CircleManager.DefaultProvider.AddMember (id, username);
 		}
 
 
@@ -70,7 +70,7 @@ namespace Yavsc.ApiControllers
 			AcceptVerbs ("GET")] 
 		public void Delete(long id) 
 		{
-			checkIsOwner (CircleManager.DefaultProvider.Get(id));
+			checkIsOwner (CircleManager.DefaultProvider.Get (id));
 			CircleManager.DefaultProvider.Delete (id);
 		}
 
@@ -88,7 +88,7 @@ namespace Yavsc.ApiControllers
 			CircleManager.DefaultProvider.RemoveMembership (id,username);
 		}
 
-		private void checkIsOwner(Circle c)
+		private void checkIsOwner(CircleBase c)
 		{
 			string user = Membership.GetUser ().UserName;
 			if (c.Owner != user)
@@ -103,7 +103,7 @@ namespace Yavsc.ApiControllers
 		AcceptVerbs ("GET")]
 		public Circle Get(long id)
 		{
-			var c = CircleManager.DefaultProvider.Get (id);
+			var c = CircleManager.DefaultProvider.GetMembers (id);
 			checkIsOwner (c);
 			return c;
 		}
@@ -113,11 +113,26 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		[Authorize,
 			AcceptVerbs ("GET")]
-		public IEnumerable<Circle> List()
+		public IEnumerable<CircleBase> List()
 		{
 			string user = Membership.GetUser ().UserName;
 			return CircleManager.DefaultProvider.List (user);
 		}
+
+		/// <summary>
+		/// List the circles
+		/// </summary>
+		[Authorize,
+			AcceptVerbs ("POST")]
+		public void Update(CircleBase circle)
+		{
+			string user = Membership.GetUser ().UserName;
+			CircleBase current = CircleManager.DefaultProvider.Get (circle.Id);
+			if (current.Owner != user)
+				throw new AuthorizationDenied ("Your not owner of circle at id "+circle.Id);
+			CircleManager.DefaultProvider.UpdateCircle (circle);
+		}
+
 	}
 }
 

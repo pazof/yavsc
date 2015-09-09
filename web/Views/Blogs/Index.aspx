@@ -28,7 +28,9 @@ le  <%=p.Posted.ToString("D") %>
 	  <form runat="server" id="form1" method="GET">
 	<% rp1.ResultCount = Model.Count; rp1.ResultsPerPage = 50; %>
 <% rp1.CurrentPage = (int) ViewData["PageIndex"]; %>
-	 <yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server" ></yavsc:ResultPages> 
+<% rp1.None = Html.Translate("no content"); %>
+	 <yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server" >
+	 </yavsc:ResultPages> 
  		
 	 </form>
 </asp:Content>

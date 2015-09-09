@@ -27,7 +27,6 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class BlogsController : Controller
 	{
-		string defaultAvatarMimetype;
 		private string sitename =
 			WebConfigurationManager.AppSettings ["Name"];
 		string avatarDir = "~/avatars";
@@ -41,17 +40,7 @@ namespace Yavsc.Controllers
 			set { avatarDir = value; }
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Controllers.BlogsController"/> class.
-		/// </summary>
-		public BlogsController ()
-		{
-			string[] defaultAvatarSpec = ConfigurationManager.AppSettings.Get ("DefaultAvatar").Split (';');
-			if (defaultAvatarSpec.Length != 2)
-				throw new ConfigurationErrorsException ("the DefaultAvatar spec should be found as <fileName>;<mime-type> ");
-			defaultAvatar = defaultAvatarSpec [0];
-			defaultAvatarMimetype = defaultAvatarSpec [1];
-		}
+
 
 		/// <summary>
 		/// Index the specified user, title, pageIndex and pageSize.
@@ -256,7 +245,7 @@ namespace Yavsc.Controllers
 			ViewData ["UserName"] = un;
 			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (Membership.GetUser ().UserName).Select (x => new SelectListItem {
 				Value = x.Id.ToString(),
-				Text = YavscHelpers.FormatCircle(x).ToHtmlString()
+				Text = x.Title
 			});
 
 			return View ("Edit", new BlogEntry { Title = title });
@@ -325,36 +314,7 @@ namespace Yavsc.Controllers
 			return GetPost (model.PostId);
 		}
 
-		string defaultAvatar;
 
-		/// <summary>
-		/// Avatar the specified user.
-		/// </summary>
-		/// <param name="user">User.</param>
-		[AcceptVerbs (HttpVerbs.Get)]
-		public ActionResult Avatar (string user)
-		{
-			ProfileBase pr = ProfileBase.Create (user);
-			string avpath = (string)pr.GetPropertyValue ("avatar");
-			if (avpath == null) {
-				FileInfo fia = new FileInfo (Server.MapPath (defaultAvatar));
-				return File (fia.OpenRead (), defaultAvatarMimetype);
-			}
-			if (avpath.StartsWith ("~/")) {
-
-			}
-			WebRequest wr = WebRequest.Create (avpath);
-			FileContentResult res;
-			using (WebResponse resp = wr.GetResponse ()) {
-				using (Stream str = resp.GetResponseStream ()) {
-					byte[] content = new byte[str.Length];
-					str.Read (content, 0, (int)str.Length);
-					res = File (content, resp.ContentType);
-					wr.Abort ();
-					return res;
-				}
-			}
-		}
 
 		/// <summary>
 		/// Remove the specified blog entry, by its author and title, 

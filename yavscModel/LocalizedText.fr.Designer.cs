@@ -46,6 +46,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string was_added_to_the_empty_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
+            }
+        }
+        
         public static string Bill_edition {
             get {
                 return ResourceManager.GetString("Bill_edition", resourceCulture);
@@ -88,9 +94,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string was_added_to_the_empty_role {
+        public static string Title {
             get {
-                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
+                return ResourceManager.GetString("Title", resourceCulture);
             }
         }
         
@@ -112,6 +118,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string no_content {
+            get {
+                return ResourceManager.GetString("no_content", resourceCulture);
+            }
+        }
+        
         public static string DocTemplateException {
             get {
                 return ResourceManager.GetString("DocTemplateException", resourceCulture);
@@ -124,9 +136,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Title {
+        public static string Modify {
             get {
-                return ResourceManager.GetString("Title", resourceCulture);
+                return ResourceManager.GetString("Modify", resourceCulture);
             }
         }
         
@@ -259,6 +271,12 @@ namespace Yavsc.Model {
         public static string Remove {
             get {
                 return ResourceManager.GetString("Remove", resourceCulture);
+            }
+        }
+        
+        public static string none {
+            get {
+                return ResourceManager.GetString("none", resourceCulture);
             }
         }
         

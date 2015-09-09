@@ -1,3 +1,44 @@
+2015-09-10  Paul Schneider  <paul@pschneider.fr>
+
+	* yavsc.js:
+	* yavsc.circles.js: js refactoring
+
+	* Credits.aspx: A credit about to add
+
+	* CircleController.cs: refactoring : drops the NewCircle class
+	The `List` method now resterns collection of circlebase
+
+	* style.css: * a new `dirty` css class, could be used to tag
+	data to validate ala ajax
+	* removed quite all of the `float` usages
+
+	* AccountController.cs: xml doc
+
+	* BlogsController.cs: Avatar method moved to the Account
+	controller
+
+	* YavscHelpers.cs: An avatar url
+
+	* App.master: Login div moved up
+
+	* Circles.aspx: a new `private` filed in the `Circle` object,
+	in order to keep circle names from being published as user's
+	information,
+	should be true by default
+
+	* Profile.aspx: removed the tables
+
+	* Index.aspx: Un message plus explicite
+
+	* Web.config: nothing to view
+
+	* Web.csproj: * new page : Credit
+	* new script: yavsc.circle.js
+
+
+	* instdbws.sql: circles are uniques for a given user against a
+	given app
+
 2015-08-22  Paul Schneider  <paul@pschneider.fr>
 
 	* yavsc.js: factorize some javascript

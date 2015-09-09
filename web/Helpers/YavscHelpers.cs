@@ -13,6 +13,7 @@ using System.Web.Mvc;
 using Yavsc.Model.Circles;
 using System.Web.UI;
 using System.Linq.Expressions;
+using System.Web.Profile;
 
 namespace Yavsc.Helpers
 {
@@ -161,6 +162,14 @@ namespace Yavsc.Helpers
 				throw new InvalidProgramException ("Emails and user's names are uniques, and we find more than one result here, aborting.");
 			foreach (MembershipUser u in users) 
 				YavscHelpers.SendActivationMessage (u);
+		}
+
+		public static string AvatarUrl (this HtmlHelper helper, string username) {
+			ProfileBase pr = ProfileBase.Create (username);
+			string avpath = (string ) pr.GetPropertyValue("avatar") ;
+			if (avpath != null)
+				return helper.Encode (avpath);
+			return "/avatars/" + helper.Encode(username)+".png";
 		}
 	}
 }

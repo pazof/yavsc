@@ -37,20 +37,122 @@ namespace WorkFlowProvider
 	public class NpgsqlCircleProvider : CircleProvider
 	{
 		#region implemented abstract members of CircleProvider
+		/// <summary>
+		/// Updates the circle.
+		/// </summary>
+		/// <param name="c">C.</param>
+		public override void UpdateCircle (CircleBase c)
+		{
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
+				cnx.Open ();
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "update circle " +
+						"set title = :title, " +
+						"isprivate = :pv " +
+						"where _id = :cid ";
+					cmd.Parameters.AddWithValue ("title", c.Title);
+					cmd.Parameters.AddWithValue ("pv", c.IsPrivate);
+					cmd.Parameters.AddWithValue ("cid", c.Id);
+					cmd.ExecuteNonQuery ();
+				}
+				cnx.Close ();
+			}
+		}
+		/// <summary>
+		/// Get the specified circle by id, including all of its members.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		/// <returns>The members.</returns>
+		public override Circle GetMembers (long id)
+		{
+			Circle circ = null;
 
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
+				cnx.Open ();
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "select title, owner, public from circle where _id = :cid";
+					cmd.Parameters.AddWithValue ("cid", id);
+					using (NpgsqlDataReader dr = cmd.ExecuteReader ()) {
+						if (dr.Read ()) {
+							circ = new Circle ();
+							circ.Id = id;
+							circ.Title = dr.GetString (
+								dr.GetOrdinal ("title"));
+							circ.Owner = dr.GetString (
+								dr.GetOrdinal ("owner"));
+							circ.IsPrivate = !dr.GetBoolean (dr.GetOrdinal ("public"));
+
+						}
+						dr.Close ();
+					}
+				}
+
+				if (circ != null) {
+
+					using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+						cmd.CommandText = "select member from circle_members where circle_id = :cid";
+						cmd.Parameters.AddWithValue ("cid", id);
+						cmd.Prepare ();
+						List<string> members = new List<string> ();
+						using (NpgsqlDataReader dr = cmd.ExecuteReader ()) {
+							while (dr.Read ())
+								members.Add (dr.GetString (0));
+							dr.Close ();
+							circ.Members = members.ToArray ();
+						}
+					}
+				}
+				cnx.Close ();
+			}
+			return circ;
+		}
+		/// <summary>
+		/// Gets the identifier.
+		/// </summary>
+		/// <returns>The identifier.</returns>
+		/// <param name="circle">Circle.</param>
+		/// <param name="username">Username.</param>
+		public override long GetId (string circle, string username)
+		{
+			long cid = 0;
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
+				cnx.Open ();
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "select _id from circle where " +
+					"owner = :uname " +
+					"and title = :title " +
+					"and applicationname = :appname";
+
+					cmd.Parameters.AddWithValue ("uname", username);
+					cmd.Parameters.AddWithValue ("title", circle);
+					cmd.Parameters.AddWithValue ("appname", applicationName);
+					cid = (long)cmd.ExecuteScalar ();
+				}
+				cnx.Close ();
+			}
+			return cid;
+		}
+		/// <summary>
+		/// Removes the membership.
+		/// </summary>
+		/// <param name="circle_id">Circle identifier.</param>
+		/// <param name="member">Member.</param>
 		public override void RemoveMembership (long circle_id, string member)
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "delete from circle_members where circle_id = :cid and username = :uname";
-				cmd.Parameters.AddWithValue("cid",circle_id);
-				cmd.Parameters.AddWithValue("uname",member);
+				cmd.Parameters.AddWithValue ("cid", circle_id);
+				cmd.Parameters.AddWithValue ("uname", member);
 				cnx.Open ();
 				cmd.ExecuteNonQuery ();	
 				cnx.Close ();
 			}
 		}
-
+		/// <summary>
+		/// Removes the member from all current user circles.
+		/// </summary>
+		/// <param name="member">Member.</param>
 		public override void RemoveMember (string member)
 		{
 			throw new NotImplementedException ();
@@ -72,18 +174,18 @@ namespace WorkFlowProvider
 		/// </summary>
 		/// <param name="circle_ids">Circle identifiers.</param>
 		/// <param name="member">Member name.</param>
-		public override bool Matches (long [] circle_ids, string member)
+		public override bool Matches (long[] circle_ids, string member)
 		{
-			bool result=false;
+			bool result = false;
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "select count(*)>0 from circle_members where circle_id = :cid and member = :mbr";
-				cmd.Parameters.Add("cid",NpgsqlDbType.Bigint);
-				cmd.Parameters.AddWithValue("mbr",member);
+				cmd.Parameters.Add ("cid", NpgsqlDbType.Bigint);
+				cmd.Parameters.AddWithValue ("mbr", member);
 				cnx.Open ();
 				cmd.Prepare ();
 				foreach (long cid in circle_ids) {
-					result = (bool) cmd.ExecuteScalar();
+					result = (bool)cmd.ExecuteScalar ();
 					if (result)
 						break;
 				}
@@ -97,67 +199,45 @@ namespace WorkFlowProvider
 		/// </summary>
 		/// <param name="id">circle Identifier.</param>
 		/// <param name="username">User name.</param>
-		public override void Add (long id, string username)
+		public override void AddMember (long id, string username)
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "insert into circle_members (circle_id, member) values (:cid,:uname)";
-				cmd.Parameters.AddWithValue("cid",id);
-				cmd.Parameters.AddWithValue("uname",username);
+				cmd.Parameters.AddWithValue ("cid", id);
+				cmd.Parameters.AddWithValue ("uname", username);
 				cnx.Open ();
 				cmd.ExecuteNonQuery ();	
 				cnx.Close ();
 			}
 		}
 
-
 		/// <summary>
-		/// Get the specified id.
+		/// Get the specified circle by id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		public override Circle Get (long id)
+		public override CircleBase Get (long id)
 		{
-			Circle circ=null;
-
+			CircleBase circ = null;
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = "select title, owner, public from circle where _id = :cid";
+					cmd.CommandText = "select title, owner from circle where _id = :cid";
 					cmd.Parameters.AddWithValue ("cid", id);
-					using (NpgsqlDataReader dr = cmd.ExecuteReader ()) {
-						if (dr.Read ()) {
-							circ = new Circle ();
-							circ.Id = id;
-							circ.Title = dr.GetString (
-								dr.GetOrdinal ("title"));
-							circ.Owner = dr.GetString (
-								dr.GetOrdinal ("owner"));
-							circ.IsPrivate = !dr.GetBoolean(dr.GetOrdinal("public"));
-
-						}
-						dr.Close ();
-					}
-				}
-
-				if (circ != null) {
-
-					using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-						cmd.CommandText = "select member from circle_members where circle_id = :cid";
-						cmd.Parameters.AddWithValue ("cid", id);
-						cmd.Prepare ();
-						List<string> members = new List<string> ();
-						using (NpgsqlDataReader dr = cmd.ExecuteReader ()) {
-							while (dr.Read ()) 
-								members.Add (dr.GetString (0));
-							dr.Close ();
-							circ.Members = members.ToArray ();
-						}
+					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
+							if (rdr.Read ()) {
+								circ = new CircleBase ();
+								circ.Id = id;
+								circ.Owner = rdr.GetString (1);
+								circ.Title = rdr.GetString (0);
+							}
 					}
 				}
 				cnx.Close ();
 			}
 			return circ;
 		}
+
 
 		/// <summary>
 		/// Add the specified owner, title and users.
@@ -175,16 +255,16 @@ namespace WorkFlowProvider
 					cmd.Parameters.AddWithValue ("wnr", owner);
 					cmd.Parameters.AddWithValue ("tit", title);
 					cmd.Parameters.AddWithValue ("app", applicationName);
-					id = (long) cmd.ExecuteScalar ();
+					id = (long)cmd.ExecuteScalar ();
 				}
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "insert into circle_members (circle_id,member) values (@cid,@mbr)";
 					cmd.Parameters.AddWithValue ("cid", id);
 					cmd.Parameters.Add ("mbr", NpgsqlDbType.Varchar);
 					cmd.Prepare ();
-					if (users!=null)
+					if (users != null)
 						foreach (string user in users) {
-							cmd.Parameters[1].Value = user;
+							cmd.Parameters [1].Value = user;
 							cmd.ExecuteNonQuery ();
 						}
 				}
@@ -202,7 +282,7 @@ namespace WorkFlowProvider
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "delete from circle where _id = @cid";
-				cmd.Parameters.AddWithValue("cid",id);
+				cmd.Parameters.AddWithValue ("cid", id);
 				cnx.Open ();
 				cmd.ExecuteNonQuery ();	
 				cnx.Close ();
@@ -213,9 +293,9 @@ namespace WorkFlowProvider
 		/// List user's circles.
 		/// </summary>
 		/// <param name="user">User.</param>
-		public override IEnumerable<Circle> List (string user)
+		public override IEnumerable<CircleBase> List (string user)
 		{
-			List<Circle> cc = new List<Circle> ();
+			List<CircleBase> cc = new List<CircleBase> ();
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "select _id, title from circle where owner = :wnr";
@@ -224,39 +304,18 @@ namespace WorkFlowProvider
 					cmd.Prepare ();
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 						if (rdr.HasRows) {
-						
 							while (rdr.Read ()) {
-								string title = null;
-								int ottl = rdr.GetOrdinal ("title");
-								if (!rdr.IsDBNull (ottl))
-									title = rdr.GetString (ottl);
-								long id = (long)rdr.GetInt64 (
-									         rdr.GetOrdinal ("_id"));
-								cc.Add (new Circle { Id = id, Title = title });
+								CircleBase cb = new CircleBase ();
+								cb.Id = rdr.GetInt64 (0);
+								cb.Title = rdr.GetString (1);
+								cb.Owner = user;
+								cc.Add (cb);
 							}
 						}
 						rdr.Close ();
 					}
 				}
-				// select members
-				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = "select member from circle_members where circle_id = :cid";
-					cmd.Parameters.Add("cid",NpgsqlDbType.Bigint);
-					cmd.Prepare ();
-					foreach (Circle c in cc) {
-						cmd.Parameters ["cid"].Value = c.Id;
-						using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
-							if (rdr.HasRows) {
-								var res = new List<string> ();
-								while (rdr.Read ()) {
-									res.Add (rdr.GetString (0));
-								}
-								c.Members = res.ToArray ();
-							}
-							rdr.Close ();
-						}
-					}
-				}
+
 				cnx.Close ();
 			}
 			return cc;
@@ -266,6 +325,7 @@ namespace WorkFlowProvider
 
 		string connectionString = null;
 		string applicationName = null;
+
 		/// <summary>
 		/// Initialize this object using the specified name and config.
 		/// </summary>
@@ -273,11 +333,11 @@ namespace WorkFlowProvider
 		/// <param name="config">Config.</param>
 		public override void Initialize (string name, NameValueCollection config)
 		{
-			if ( string.IsNullOrWhiteSpace(config ["connectionStringName"]))
+			if (string.IsNullOrWhiteSpace (config ["connectionStringName"]))
 				throw new ConfigurationErrorsException ("No name for Npgsql connection string found");
 
 			connectionString = ConfigurationManager.ConnectionStrings [config ["connectionStringName"]].ConnectionString;
-			applicationName = config["applicationName"] ?? "/";
+			applicationName = config ["applicationName"] ?? "/";
 		}
 
 	}

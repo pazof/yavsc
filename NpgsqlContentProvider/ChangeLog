@@ -1,3 +1,8 @@
+2015-09-10  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlCircleProvider.cs: * refactoring
+	* updates the circle
+
 2015-08-20  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlCircleProvider.cs: circle members are now stored in bd

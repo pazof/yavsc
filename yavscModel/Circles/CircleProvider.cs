@@ -48,7 +48,7 @@ namespace Yavsc.Model.Circles
 		/// </summary>
 		/// <param name="id">circle Identifier.</param>
 		/// <param name="username">User name.</param>
-		public abstract void Add(long id, string username);
+		public abstract void AddMember(long id, string username);
 
 		/// <summary>
 		/// Delete the specified circle by its id.
@@ -57,15 +57,21 @@ namespace Yavsc.Model.Circles
 		public abstract void Delete(long id) ;
 
 		/// <summary>
-		/// Get the specified id.
+		/// Get the specified circle by id, including all of its members.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		public abstract Circle Get(long id);
+		public abstract Circle GetMembers(long id);
+		/// <summary>
+		/// Get the specified circle by id.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		public abstract CircleBase Get (long id);
 
+		public abstract long GetId (string circle, string username);
 		/// <summary>
 		/// List circle's user.
 		/// </summary>
-		public abstract IEnumerable<Circle> List(string user);
+		public abstract IEnumerable<CircleBase> List(string user);
 
 		/// <summary>
 		/// True when the specified user is listed in one of 
@@ -87,6 +93,12 @@ namespace Yavsc.Model.Circles
 		/// </summary>
 		/// <param name="member">Member.</param>
 		public abstract void RemoveMember(string member);
+
+		/// <summary>
+		/// Updates the circle.
+		/// </summary>
+		/// <param name="c">C.</param>
+		public abstract void UpdateCircle(CircleBase c);
 
 	}
 

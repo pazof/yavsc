@@ -14,6 +14,8 @@ using System.Web.Mvc;
 using Yavsc.Model.Circles;
 using System.Collections.Specialized;
 using System.Text;
+using System.Net;
+using System.Configuration;
 
 namespace Yavsc.Controllers
 {
@@ -23,8 +25,40 @@ namespace Yavsc.Controllers
 	public class AccountController : Controller
 	{
 	
-		string avatarDir = "~/avatars";
+		string avatarDir = "~/avatars";		
+		string defaultAvatar;
+		string defaultAvatarMimetype;
 
+
+		/// <summary>
+		/// Avatar the specified user.
+		/// </summary>
+		/// <param name="user">User.</param>
+		[AcceptVerbs (HttpVerbs.Get)]
+		public ActionResult Avatar (string user)
+		{
+			ProfileBase pr = ProfileBase.Create (user);
+			string avpath = (string ) pr.GetPropertyValue("avatar") ;
+			if (avpath == null) {
+				FileInfo fia = new FileInfo (Server.MapPath (defaultAvatar));
+				return File (fia.OpenRead (), defaultAvatarMimetype);
+			}
+			if (avpath.StartsWith ("~/")) {
+				avpath = Server.MapPath (avpath);
+			}
+
+			WebRequest wr = WebRequest.Create (avpath);
+			FileContentResult res;
+			using (WebResponse resp = wr.GetResponse ()) {
+				using (Stream str = resp.GetResponseStream ()) {
+					byte[] content = new byte[str.Length];
+					str.Read (content, 0, (int)str.Length);
+					res = File (content, resp.ContentType);
+					wr.Abort ();
+					return res;
+				}
+			}
+		}
 		/// <summary>
 		/// Gets or sets the avatar dir.
 		/// This value is past to <c>Server.MapPath</c>,
@@ -69,7 +103,17 @@ namespace Yavsc.Controllers
 			ViewData ["returnUrl"] = returnUrl;
 			return View (model);
 		}
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Controllers.BlogsController"/> class.
+		/// </summary>
+		private void GetAvatarConfig ()
+		{
+			string[] defaultAvatarSpec = ConfigurationManager.AppSettings.Get ("DefaultAvatar").Split (';');
+			if (defaultAvatarSpec.Length != 2)
+				throw new ConfigurationErrorsException ("the DefaultAvatar spec should be found as <fileName>;<mime-type> ");
+			defaultAvatar = defaultAvatarSpec [0];
+			defaultAvatarMimetype = defaultAvatarSpec [1];
+		}
 
 		/// <summary>
 		/// Login the specified returnUrl.
