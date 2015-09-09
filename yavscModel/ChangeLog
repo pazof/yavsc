@@ -1,5 +1,9 @@
 2015-09-10  Paul Schneider  <paul@pschneider.fr>
 
+	* CircleBase.cs: 
+
+2015-09-10  Paul Schneider  <paul@pschneider.fr>
+
 	* CircleBase.cs: The Circle base
 
 	* Circle.cs: Now inherits CircleBase to implement a member

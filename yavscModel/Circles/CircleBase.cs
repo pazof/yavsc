@@ -46,11 +46,6 @@ namespace Yavsc.Model.Circles
 		/// <value>The title.</value>
 		public string Title { get; set; }
 
-		/// <summary>
-		/// Gets or sets a value indicating whether this instance is private.
-		/// </summary>
-		/// <value><c>true</c> if this instance is private; otherwise, <c>false</c>.</value>
-		public bool IsPrivate { get; set; }
 	}
 }
 

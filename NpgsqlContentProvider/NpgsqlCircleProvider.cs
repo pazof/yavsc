@@ -47,11 +47,9 @@ namespace WorkFlowProvider
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "update circle " +
-						"set title = :title, " +
-						"isprivate = :pv " +
+						"set title = :title " +
 						"where _id = :cid ";
 					cmd.Parameters.AddWithValue ("title", c.Title);
-					cmd.Parameters.AddWithValue ("pv", c.IsPrivate);
 					cmd.Parameters.AddWithValue ("cid", c.Id);
 					cmd.ExecuteNonQuery ();
 				}
@@ -80,7 +78,6 @@ namespace WorkFlowProvider
 								dr.GetOrdinal ("title"));
 							circ.Owner = dr.GetString (
 								dr.GetOrdinal ("owner"));
-							circ.IsPrivate = !dr.GetBoolean (dr.GetOrdinal ("public"));
 
 						}
 						dr.Close ();

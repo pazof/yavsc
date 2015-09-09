@@ -1,5 +1,9 @@
 2015-09-10  Paul Schneider  <paul@pschneider.fr>
 
+	* instdbws.sql: 
+
+2015-09-10  Paul Schneider  <paul@pschneider.fr>
+
 	* yavsc.js:
 	* yavsc.circles.js: js refactoring
 
