@@ -2,8 +2,23 @@
 
 var errspanid="msg";
 var CirclesApiUrl = apiBaseUrl + "/Circle";
+function onAjaxBadInput(data)
+    {
+		$.each(data.responseJSON, function (key, value) {
+		var errspanid = "Err_cr_" + value.key.replace("model.","");
+		var errspan = document.getElementById(errspanid);
+		if (errspan==null)
+			alert('enoent '+errspanid);
+		else 
+			errspan.innerHTML=value.errors.join("<br/>");
+    	});
 
-
+    }
+function onAjaxError(xhr, ajaxOptions, thrownError) {
+            	if (xhr.status!=400)
+        			Yavsc.message(xhr.status+" : "+xhr.responseText);
+			    else Yavsc.message(false);
+     }
 
 function editNewCircle() {
   if ($('#fncirc').hasClass('hidden')) $('#fncirc').removeClass('hidden')
@@ -42,26 +57,30 @@ function removeCircle() {
             $("#c_"+id).remove();
            },
             statusCode: {
-            	400: function(data) {
-            		$.each(data.responseJSON, function (key, value) {
-            		var errspanid = "Err_cr_" + value.key.replace("model.","");
-            		var errspan = document.getElementById(errspanid);
-            		if (errspan==null)
-            			alert('enoent '+errspanid);
-            		else 
-            			errspan.innerHTML=value.errors.join("<br/>");
-                	});
-            		}
-            	},
+            	400: onAjaxBadInput,
             error: function (xhr, ajaxOptions, thrownError) {
             	if (xhr.status!=400)
         			Yavsc.message(xhr.status+" : "+xhr.responseText);
 			    else Yavsc.message(false);
-        		}});
+        		}}});
     }
  function modifyCircle() {
  Yavsc.message(false);
- var circle = { title: $("#title").val(), id: $('#id').val(), isprivate: $('#isprivate').val() } ;
+ var id = $('#id').val();
+ var circle = { title: $("#title").val(), id: id} ;
+ $.ajax({
+            url: CirclesApiUrl+"/Update",
+            type: "POST",
+            data: circle,
+            success: function () { 
+            	$('#c_'+id+' td:first-child').text(circle.title);
+            }
+            ,
+            statusCode: {
+            	400: onAjaxBadInput,
+            	error: onAjaxError
+            	}
+            	});
  }
     
 function addCircle()
@@ -78,25 +97,14 @@ function addCircle()
             $('<tr id="c_'+id+'"/>').addClass('selected row')
             .appendTo('#tbcb');
 
-            $('<td>'+circle.title+' <br><i>'+
-            circle.members+
-            '</i></td></td>')
+            $('<td>'+circle.title+'</td>').attr('cid',id).click(selectCircle)
             .appendTo('#c_'+id);
 
-            $('<td><input class="btnremovecircle actionlink" cid="'+id+'" type="button" value="Remove" onclick="removeCircle"></td>').appendTo('#c_'+id);
+            $('<input type="button" value="Remove">').addClass("actionlink").attr('cid',id).click(removeCircle).appendTo('<td></td>').appendTo('#c_'+id);
          
            },
             statusCode: {
-            	400: function(data) {
-            		$.each(data.responseJSON, function (key, value) {
-            		var errspanid = "Err_cr_" + value.key.replace("model.","");
-            		var errspan = document.getElementById(errspanid);
-            		if (errspan==null)
-            			alert('enoent '+errspanid);
-            		else 
-            			errspan.innerHTML=value.errors.join("<br/>");
-                	});
-            		}
+            	400: onAjaxBadInput
             	},
             error: function (xhr, ajaxOptions, thrownError) {
             	if (xhr.status!=400)
@@ -104,3 +112,5 @@ function addCircle()
 			    else Yavsc.message(false);
         		}});
     }
+
+
