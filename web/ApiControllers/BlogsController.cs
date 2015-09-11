@@ -7,13 +7,17 @@ using System.Web.Http;
 using Npgsql.Web.Blog;
 using Yavsc.Model.Blogs;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Yavsc.ApiControllers
 {
 	/// <summary>
 	/// Blogs API controller.
 	/// </summary>
-	public class BlogsController : ApiController
+	public class BlogsController : YavscApiController
 	{
 		private const string adminRoleName = "Admin";
 
@@ -46,7 +50,9 @@ namespace Yavsc.ApiControllers
 		/// <param name="title">Title.</param>
 		[Authorize]
 		public void RemoveTitle(string user, string title) {
-			BlogManager.CheckAuthCanEdit (user,title);
+			if (Membership.GetUser ().UserName != user)
+			if (!Roles.IsUserInRole("Admin"))
+				throw new AuthorizationDenied (user);
 			BlogManager.RemoveTitle (user, title);
 		}
 		/// <summary>
@@ -57,6 +63,66 @@ namespace Yavsc.ApiControllers
 			
 			throw new NotImplementedException ();
 		}
+		/// <summary>
+		/// The allowed media types.
+		/// </summary>
+		protected string[] allowedMediaTypes = { 
+			"text/plain",
+			"text/x-tex",
+			"text/html",
+			"image/png",
+			"image/gif",
+			"image/jpeg",
+			"image/x-xcf",
+			"application/pdf",
+			"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+		};
+
+		/// <summary>
+		/// Posts the file.
+		/// </summary>
+		/// <returns>The file.</returns>
+		[Authorize]
+		public async Task<HttpResponseMessage> PostFile(long postid) {
+			if (!(Request.Content.Headers.ContentType.MediaType=="multipart/form-data"))
+			{ 
+				throw new HttpRequestException ("not a multipart/form-data request");
+			}
+
+			string root = HttpContext.Current.Server.MapPath("~/bfiles/"+postid);
+			BlogEntry be = BlogManager.GetPost (postid);
+			if (be.UserName != Membership.GetUser ().UserName)
+				throw new AuthorizationDenied ("b"+postid);
+			
+			DirectoryInfo di = new DirectoryInfo (root);
+			if (!di.Exists) di.Create ();
+			
+			var provider = new MultipartFormDataStreamProvider(root);
+			try
+			{
+
+
+				// Read the form data.
+				foreach (var content in await Request.Content.ReadAsMultipartAsync(provider)) {
+					Trace.WriteLine("Server file path: " + provider.GetLocalFileName(
+						content.Headers));
+				}
+
+				// This illustrates how to get the file names.
+				foreach (string fkey in provider.BodyPartFileNames.Keys)
+				{
+					Trace.WriteLine(provider.BodyPartFileNames[fkey]);
+
+				}
+
+				return Request.CreateResponse(HttpStatusCode.OK);
+			}
+			catch (System.Exception e)
+			{
+				return Request.CreateResponse(HttpStatusCode.InternalServerError, e);
+			}
+		}
+			
 	}
 }
 

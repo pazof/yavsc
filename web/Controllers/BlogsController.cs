@@ -314,8 +314,6 @@ namespace Yavsc.Controllers
 			return GetPost (model.PostId);
 		}
 
-
-
 		/// <summary>
 		/// Remove the specified blog entry, by its author and title, 
 		/// using returnUrl as the URL to return to,
@@ -334,7 +332,10 @@ namespace Yavsc.Controllers
 			ViewData ["returnUrl"] = returnUrl;
 			ViewData ["UserName"] = user;
 			ViewData ["Title"] = title;
-			BlogManager.CheckAuthCanEdit (user, title);
+
+			if (Membership.GetUser ().UserName != user)
+			if (!Roles.IsUserInRole("Admin"))
+				throw new AuthorizationDenied (user);
 			if (!confirm)
 				return View ("RemoveTitle");
 			BlogManager.RemoveTitle (user, title);
@@ -353,6 +354,7 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult RemovePost (long id, string returnUrl, bool confirm = false)
 		{
+			// ensures the access control
 			BlogEntry e = BlogManager.GetForEditing (id);
 			if (e == null)
 				return new HttpNotFoundResult ("post id "+id.ToString());

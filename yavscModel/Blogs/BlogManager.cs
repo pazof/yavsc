@@ -182,32 +182,6 @@ namespace Yavsc.Model.Blogs
 		/// <summary>
 		/// Checks the auth can edit.
 		/// </summary>
-		/// <returns><c>true</c>, if can edit was authed, <c>false</c> otherwise.</returns>
-		/// <param name="user">User.</param>
-		/// <param name="title">Title.</param>
-		/// <param name="throwEx">If set to <c>true</c> throw ex.</param>
-		public static bool CheckAuthCanEdit (string user, string title, bool throwEx = true)
-		{
-			BlogEntryCollection bec = BlogManager.GetPost (user, title);
-			if (bec == null)
-				throw new FileNotFoundException ();
-			if (!Roles.IsUserInRole ("Admin"))
-			if (bec.Count > 0)
-			if (Membership.GetUser ().UserName != user) {
-				if (throwEx)
-					throw new AccessViolationException (
-						string.Format (
-							"Vous n'avez pas le droit d'editer ce blog (title:{0})",
-							title));
-				else
-					return false;
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// Checks the auth can edit.
-		/// </summary>
 		/// <returns><c>true</c>, if auth can edit was checked, <c>false</c> otherwise.</returns>
 		/// <param name="postid">Postid.</param>
 		/// <param name="throwEx">If set to <c>true</c> throw ex.</param>

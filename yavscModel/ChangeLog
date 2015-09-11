@@ -1,3 +1,7 @@
+2015-09-11  Paul Schneider  <paul@pschneider.fr>
+
+	* BlogManager.cs: Any user may edit any title
+
 2015-09-10  Paul Schneider  <paul@pschneider.fr>
 
 	* CircleBase.cs: 
