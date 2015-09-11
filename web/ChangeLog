@@ -1,5 +1,13 @@
 2015-09-11  Paul Schneider  <paul@pschneider.fr>
 
+	* style.css: yastyle
+
+	* Web.csproj: Cleanning
+
+	* FileInfoCollection.cs: cleanning
+
+2015-09-11  Paul Schneider  <paul@pschneider.fr>
+
 	* BlogsController.cs: * refactoring
 	* implements a file posting, in a directory named with an
 	user's post id

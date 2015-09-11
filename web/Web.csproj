@@ -156,7 +156,6 @@
     <Compile Include="Controllers\FileSystemController.cs" />
     <Compile Include="CatExts\WebCatalogExtensions.cs" />
     <Compile Include="Helpers\YavscHelpers.cs" />
-    <Compile Include="FileInfoCollection.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Helpers\T.cs" />
     <Compile Include="templates\Estim.cs">

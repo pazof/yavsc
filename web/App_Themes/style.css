@@ -57,12 +57,6 @@ footer {
 }
 
 
-#logo {
-	float: left;
-	max-height: 25%;
-	max-width: 25%;
-	}
-
 .panel,.bshpanel,aside {
 	background-color: rgba(32,16,16,0.8);
 		border-radius:5px; 
@@ -92,12 +86,12 @@ content: "(";
 .hint::after { 
 content: ")";
 }
+
 header {
 	background-color:rgba(16,16,0,0.8);
-	top:0;
-	left:0;
-	margin:0em;
-	padding:0em;
+	display: block;
+	float:left;
+	margin: .5em;
 	}
 
 h1 img { vertical-align: text-top; }
@@ -257,13 +251,10 @@ a.actionlink img { top:4px; }
   .c3-alt { display:none; }
 
 
-  #appmenu {position: fixed;
-	top:0;
-	right:0;}
 	}
 
 @media all and (max-width: 640px) {
-#appmenu {position:relative;}
+#appmenu {display:inline;}
 .menuitem {
 	display: inline; 
 }
