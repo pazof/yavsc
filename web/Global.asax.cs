@@ -33,18 +33,18 @@ namespace Yavsc
 				WebConfigurationManager.AppSettings ["DefaultController"]; 
 			if (defaultController == null)
 				defaultController = "Home";
-			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}");
-			routes.IgnoreRoute ("Scripts/{*pathInfo}");
-			routes.IgnoreRoute ("Theme/{*pathInfo}");
-			routes.IgnoreRoute ("images/{*pathInfo}");
-			routes.IgnoreRoute ("users/{*pathInfo}");
-			routes.IgnoreRoute ("files/{*pathInfo}");
-			routes.IgnoreRoute ("avatars/{*pathInfo}");
+			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}"); // not used
+			routes.IgnoreRoute ("Scripts/{*pathInfo}"); // web user side scripts
+			routes.IgnoreRoute ("App_Theme/{*pathInfo}"); // sites themes
+			routes.IgnoreRoute ("images/{*pathInfo}"); // site images
+			routes.IgnoreRoute ("users/{*pathInfo}"); // user's files
+			routes.IgnoreRoute ("avatars/{*pathInfo}"); // user's avatar
+			routes.IgnoreRoute ("bfiles/{*pathInfo}"); // Blog files
 			routes.IgnoreRoute ("xmldoc/{*pathInfo}"); // xml doc 
 			routes.IgnoreRoute ("htmldoc/{*pathInfo}"); // html doc 
-			routes.IgnoreRoute ("favicon.ico");
-			routes.IgnoreRoute ("favicon.png");
-			routes.IgnoreRoute ("robots.txt");
+			routes.IgnoreRoute ("favicon.ico"); // favorite icon
+			routes.IgnoreRoute ("favicon.png"); // favorite icon
+			routes.IgnoreRoute ("robots.txt");  // for search engine robots
 			routes.MapRoute (
 				"Blogs",
 				"Blogs/{action}/{user}/{title}",

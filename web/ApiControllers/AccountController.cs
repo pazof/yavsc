@@ -32,7 +32,7 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Account controller.
 	/// </summary>
-	public class AccountController : ApiController
+	public class AccountController : YavscApiController
 	{
 
 		/// <summary>
@@ -89,13 +89,7 @@ namespace Yavsc.ApiControllers
 		}
 
 
-		private HttpResponseMessage DefaultResponse()
-		{
-			return ModelState.IsValid ?
-				Request.CreateResponse (System.Net.HttpStatusCode.OK) :
-				Request.CreateResponse (System.Net.HttpStatusCode.BadRequest,
-					ValidateAjaxAttribute.GetErrorModelObject (ModelState));
-		}
+
 
 		/// <summary>
 		/// Resets the password.

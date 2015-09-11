@@ -9,7 +9,7 @@
     <ProjectTypeGuids>{349C5851-65DF-11DA-9384-00065B846F21};{603C0E0B-DB56-11DC-BE95-000D561079B0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>Yavsc</RootNamespace>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,7 +23,6 @@
       <AspNet DisableCodeBehindGeneration="True" />
     </AspNet>
     <AssemblyName>Yavsc</AssemblyName>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CustomCommands>
       <CustomCommands>
         <Command type="BeforeExecute" />
@@ -40,7 +39,6 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <AssemblyName>Yavsc</AssemblyName>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>bin\Yavsc.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'MVC2|AnyCPU' ">
@@ -49,7 +47,6 @@
     <DefineConstants>DEBUG,TEST,WEBAPI</DefineConstants>
     <WarningLevel>4</WarningLevel>
     <AssemblyName>maeweb</AssemblyName>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -96,9 +93,6 @@
     <Reference Include="PayPalButtonManagerSDK">
       <HintPath>..\packages\PayPalButtonManagerSDK.2.9.109\lib\net20\PayPalButtonManagerSDK.dll</HintPath>
     </Reference>
-    <Reference Include="PayPalCoreSDK">
-      <HintPath>..\packages\PayPalCoreSDK.1.6.2\lib\net45\PayPalCoreSDK.dll</HintPath>
-    </Reference>
     <Reference Include="xunit.abstractions">
       <HintPath>..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
     </Reference>
@@ -107,6 +101,9 @@
     </Reference>
     <Reference Include="xunit.core">
       <HintPath>..\packages\xunit.extensibility.core.2.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="PayPalCoreSDK">
+      <HintPath>..\packages\PayPalCoreSDK.1.6.2\lib\net451\PayPalCoreSDK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +138,7 @@
     <Folder Include="App_Themes\green\" />
     <Folder Include="App_Themes\blue\" />
     <Folder Include="App_Themes\dark\" />
+    <Folder Include="bfiles\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -209,6 +207,7 @@
     <Compile Include="Helpers\Google\PeopleApi.cs" />
     <Compile Include="ApiControllers\PaypalController.cs" />
     <Compile Include="ApiControllers\AuthorizationDenied.cs" />
+    <Compile Include="ApiControllers\YavscApiController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

@@ -259,12 +259,12 @@ namespace Yavsc.Controllers
 		}
 
 
-		[Authorize]
-		[HttpGet]
 		/// <summary>
 		/// Profile the specified id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
+		[Authorize]
+		[HttpGet]
 		public ActionResult Profile (string id)
 		{
 			if (id == null)
@@ -277,14 +277,14 @@ namespace Yavsc.Controllers
 
 
 
-		[Authorize]
-		[HttpPost]
 		/// <summary>
 		/// Profile the specified id, model and AvatarFile.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
 		/// <param name="model">Model.</param>
 		/// <param name="AvatarFile">Avatar file.</param>
+		[Authorize]
+		[HttpPost]
 		public ActionResult Profile (string id, Profile model, HttpPostedFileBase AvatarFile)
 		{
 			// ASSERT("Membership.GetUser ().UserName is made of simple characters, no slash nor backslash"

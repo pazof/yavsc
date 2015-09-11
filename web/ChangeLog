@@ -1,3 +1,23 @@
+2015-09-11  Paul Schneider  <paul@pschneider.fr>
+
+	* Global.asax.cs: ignored routes are revisited
+
+	* YavscApiController.cs: implements a default web api response
+
+	* Web.csproj: bask to net451
+
+	* AccountController.cs: refactoring
+
+	* Web.config: removes the app setting
+	"ClientValidationEnabled" 
+
+	* Web.config: Makes true the clientValidationEnabled app
+	parameter
+
+	* packages.config: retargeting Paypal api to net451
+
+	* AccountController.cs: xml doc 
+
 2015-09-10  Paul Schneider  <paul@pschneider.fr>
 
 	* Circles.aspx: fixes circle updates
