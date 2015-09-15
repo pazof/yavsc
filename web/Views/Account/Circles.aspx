@@ -43,7 +43,6 @@ $("#tbc").stupidtable();
 <form>
 <fieldset>
 <legend id="lgdnvcirc"></legend>
-<span id="msg" class="field-validation-valid error"></span>
 
 <label for="title"><b><%=Html.Translate("Title")%></b></label>
 <input type="text" id="title" name="title" class="inputtext" onchange="onCircleChanged"/>

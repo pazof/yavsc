@@ -22,6 +22,8 @@
 <%= Html.LabelFor(model => model.Content) %>:<br/>
 <div class="mdd_toolbar"></div>
 <%= Html.TextArea( "Content" , new { @class="mdd_editor"}) %>
+<div class="mdd_resizer"></div>
+<div class="mdd_preview panel"></div>
 
 <%= Html.ValidationMessage("Content", "*") %>
 <br/>
@@ -38,29 +40,69 @@
 <%= Html.Hidden("Id") %>
 <%= Html.Hidden("UserName") %>
 
-
 <br/>
 <input type="submit"/>
 <% } %>
 
+
 <script>
  $(document).ready(function () {
  $("textarea.mdd_editor").MarkdownDeep({ 
-    help_location: "/Scripts/html/mdd_help.htm",
-    disableTabHandling:false
+    help_location: "/Scripts/mdd_help.htm",
+    disableTabHandling:false,
+    ExtraMode: true
  });});
-</script>
 
+</script>
+<% if (Model.Id!=0) {  %> 
+<script>
+
+
+function submitTo(method)
+{
+	var data  = new FormData($('#uploads').get()[0]);
+	Yavsc.message('Submitting via '+method);
+	$.ajax({
+	  url: apiBaseUrl+'/Blogs/'+method+'/'+$('#Id').val(),
+	  type: "POST",
+	  data: data,
+	  processData: false, 
+	  contentType: false,
+	  success: function(data) {
+	  $('#Content').val(data+"\n"+$('#Content').val());
+	  Yavsc.message(false);
+	    },
+	  error: Yavsc.onAjaxError,
+	});
+}
+
+function submitImport()
+{
+	submitTo('Import');
+}
+
+function submitFile()
+{
+	submitTo('PostFile');
+}
+</script>
+<form id="uploads" method="post" enctype="multipart/form-data">
+<input type="file" name="attached" id="postedfile" multiple>
+<input type="button" value="attacher les ficher" onclick="submitFile()">
+<input type="button" value="importer les documents" onclick="submitImport()">
+</form>
+
+
+<% } %> 
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MASContent" ID="MASContentContent" runat="server">
 <div class="metablog">
 	(Id:<a href="/Blogs/UserPost/<%= Model.Id %>">
-<i><%= Model.Id%></i></a>, <%= Model.Posted.ToString("yyyy/MM/dd") %> - <%= Model.Modified.ToString("yyyy/MM/dd") %> <%= Model.Visible? "":", Invisible!" %>) <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.UserName, title = Model.Title }, new { @class="actionlink" } ) %>
+<i><%= Model.Id %></i></a>, <%= Model.Posted.ToString("yyyy/MM/dd") %> - <%= Model.Modified.ToString("yyyy/MM/dd") %> <%= Model.Visible? "":", Invisible!" %>) <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.UserName, title = Model.Title }, new { @class="actionlink" } ) %>
 </div>
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MASContent" ID="masContent1" runat="server">
 
-<div class="mdd_preview panel"></div>
 </asp:Content>

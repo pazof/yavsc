@@ -1,6 +1,6 @@
 div.mdd_modal
 {
-	position:fixed;
+	position:absolute;
 	top:0;
 	left:0;
 	padding:0;
@@ -14,9 +14,8 @@ div.mdd_modal
 }
 div.mdd_modal_frame
 {
-	width:650px;
-	height:400px;
-	background-color:White;
+	background-color:black;
+	color:white;
 	z-index:2000;
 	margin:0 auto;
 	margin-top:60px;
@@ -37,7 +36,7 @@ div.mdd_modal_button
 	padding-top:4px;
 	padding-bottom:0px;
 	height:20px;
-	background-color:#808080;
+	background-color:#202020;
 	z-index:1999;
 	border-radius:4px;	
 	-moz-border-radius:4px;
@@ -47,7 +46,7 @@ div.mdd_modal_button
 
 div.mdd_modal_button a
 {
-	color:White;
+	color:Yellow;
 	text-decoration:none;
 }
 
@@ -93,7 +92,7 @@ div.mdd_syntax pre
 	font-size:10pt;
 	border:solid 1px silver;
 	padding:4px;
-	background-color:#f8f8f8;
+	background-color:#282828;
 }
 
 div.mdd_toolbar_wrap 
@@ -118,6 +117,7 @@ div.mdd_toolbar li
 	margin:0;
 	padding:0;
 	list-style:none;
+	background-color: #888;
 }
 
 div.mdd_toolbar a.mdd_button
@@ -172,12 +172,12 @@ div.mdd_links
 div.mdd_links a
 {
 	text-decoration:none;
-	color:#404040;
+	color:#a0a0a0;
 	font-size:smaller;
 }
 div.mdd_links a:hover
 {
-	color:black;
+	color:white;
 }
 
 div.mdd_editor_wrap
@@ -197,14 +197,14 @@ div.mdd_resizer_wrap
 }
 div.mdd_resizer
 {
-	background:#f8f8f8; 
+	background:#181818; 
 	background-image:url("mdd_gripper.png");
 	background-position:center center;
 	background-repeat:no-repeat;
 	padding-left:2px;
 	padding-right:2px;
 	height:9px;
-	border:solid 1px #d0d0d0;
+	border:solid 1px #303030;
 	margin-top:-1px;
 	cursor:n-resize;
 }

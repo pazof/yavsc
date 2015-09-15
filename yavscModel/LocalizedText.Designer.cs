@@ -166,9 +166,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string User_name {
+        public static string ImportException {
             get {
-                return ResourceManager.GetString("User_name", resourceCulture);
+                return ResourceManager.GetString("ImportException", resourceCulture);
             }
         }
         
@@ -337,6 +337,12 @@ namespace Yavsc.Model {
         public static string Comment {
             get {
                 return ResourceManager.GetString("Comment", resourceCulture);
+            }
+        }
+        
+        public static string User_name {
+            get {
+                return ResourceManager.GetString("User_name", resourceCulture);
             }
         }
         

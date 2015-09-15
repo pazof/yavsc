@@ -1,3 +1,71 @@
+2015-09-16  Paul Schneider  <paul@pschneider.fr>
+
+	* mdd_help.htm:
+	* mdd_styles.css:
+	* jquery-ui-1.11.4.js:
+	* all.css:
+	* base.css:
+	* menu.css:
+	* core.css:
+	* tabs.css:
+	* theme.css:
+	* dialog.css:
+	* button.css:
+	* slider.css:
+	* tooltip.css:
+	* jquery-ui-1.11.4.min.js:
+	* spinner.css:
+	* sortable.css:
+	* resizable.css:
+	* accordion.css:
+	* draggable.css:
+	* datepicker.css:
+	* selectmenu.css:
+	* selectable.css:
+	* progressbar.css:
+	* autocomplete.css:
+	* ui-icons_2e83ff_256x240.png:
+	* ui-icons_454545_256x240.png:
+	* ui-icons_222222_256x240.png:
+	* ui-icons_888888_256x240.png:
+	* ui-icons_cd0a0a_256x240.png:
+	* ui-bg_flat_0_aaaaaa_40x100.png:
+	* ui-bg_flat_75_ffffff_40x100.png:
+	* ui-bg_glass_55_fbf9ee_1x400.png:
+	* ui-bg_glass_65_ffffff_1x400.png:
+	* ui-bg_glass_75_dadada_1x400.png:
+	* ui-bg_glass_75_e6e6e6_1x400.png:
+	* ui-bg_glass_95_fef1ec_1x400.png:
+	* ui-bg_highlight-soft_75_cccccc_1x100.png: 
+
+	* BlogsController.cs: implements the access control on file
+	upload to blog entries
+
+	* style.css: nicer appmenu
+
+	* BlogsController.cs: Enables the input validation at posting
+	blog entries
+
+	* MarkdownHelper.cs: enables ExtraMode transformation
+	parameter
+
+	* App.master: Error and message html divisions must exist in
+	the DOM to display Ajax messages and errors
+
+	* yavsc.js:
+	* yavsc.circles.js: refactoring
+
+	* Circles.aspx: removes a DOM element that already exists in
+	the mastyer page : the message box
+
+	* Edit.aspx: submits files for import as Markdown text
+
+	* Web.config: Disables the local trace
+
+	* Web.csproj: jQuery.UI addition
+
+	* packages.config: adds a ref to jQuery.UI Combined
+
 2015-09-11  Paul Schneider  <paul@pschneider.fr>
 
 	* style.css: yastyle

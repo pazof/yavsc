@@ -230,8 +230,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="user">User.</param>
 		/// <param name="title">Title.</param>
-		[Authorize,
-		ValidateInput (false)]
+		[Authorize]
 		public ActionResult Post (string user, string title)
 		{
 			ViewData ["BlogUser"] = user;
@@ -256,15 +255,18 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The edit.</returns>
 		/// <param name="model">Model.</param>
-		[Authorize,
-			ValidateInput (false)]
+		[Authorize]
 		public ActionResult ValidateEdit (BlogEntry model)
 		{
 			ViewData ["SiteName"] = sitename;
 			ViewData ["BlogUser"] = Membership.GetUser ().UserName;
 			if (ModelState.IsValid) {
-				if (model.Id != 0)
+				if (model.Id != 0) {
+					// ensures rights to update
+					BlogManager.GetForEditing (model.Id, true);
 					BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible, model.AllowedCircles);
+
+				}
 				else
 					model.Id = BlogManager.Post (model.UserName, model.Title, model.Content, model.Visible, model.AllowedCircles);
 				return RedirectToAction ("UserPosts", new { user = model.UserName, title = model.Title });
@@ -276,7 +278,7 @@ namespace Yavsc.Controllers
 		/// Edit the specified bill 
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		[Authorize, ValidateInput (false)]
+		[Authorize]
 		public ActionResult Edit (long id)
 		{
 			
@@ -290,7 +292,9 @@ namespace Yavsc.Controllers
 			if (e.AllowedCircles == null)
 				e.AllowedCircles = new long[0];
 			
-			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (Membership.GetUser ().UserName).Select (x => new SelectListItem {
+			ViewData ["AllowedCircles"] = 
+				CircleManager.DefaultProvider.List (
+					Membership.GetUser ().UserName).Select (x => new SelectListItem {
 				Value = x.Id.ToString(),
 				Text = x.Title,
 				Selected = e.AllowedCircles.Contains (x.Id)

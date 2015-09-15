@@ -20,9 +20,28 @@ self.showHide = function () {
 
 self.message = function (msg) { 
   if (msg) { 
-  $("#msg").removeClass("hidden");
-  $("#msg").text(msg);
-  } else { $("#msg").addClass("hidden"); } };
+  $("#message").removeClass("hidden");
+  $("#message").text(msg);
+  } else { $("#message").addClass("hidden"); } };
+
+
+ self.onAjaxBadInput = function (data)
+    {
+		$.each(data.responseJSON, function (key, value) {
+		var errspanid = "Err_cr_" + value.key.replace("model.","");
+		var errspan = document.getElementById(errspanid);
+		if (errspan==null)
+			alert('enoent '+errspanid);
+		else 
+			errspan.innerHTML=value.errors.join("<br/>");
+    	});
+
+    }
+self.onAjaxError = function (xhr, ajaxOptions, thrownError) {
+            	if (xhr.status!=400)
+        			Yavsc.message(xhr.status+" : "+xhr.responseText);
+			    else Yavsc.message(false);
+     }
 
 
 return self;

@@ -2,23 +2,7 @@
 
 var errspanid="msg";
 var CirclesApiUrl = apiBaseUrl + "/Circle";
-function onAjaxBadInput(data)
-    {
-		$.each(data.responseJSON, function (key, value) {
-		var errspanid = "Err_cr_" + value.key.replace("model.","");
-		var errspan = document.getElementById(errspanid);
-		if (errspan==null)
-			alert('enoent '+errspanid);
-		else 
-			errspan.innerHTML=value.errors.join("<br/>");
-    	});
 
-    }
-function onAjaxError(xhr, ajaxOptions, thrownError) {
-            	if (xhr.status!=400)
-        			Yavsc.message(xhr.status+" : "+xhr.responseText);
-			    else Yavsc.message(false);
-     }
 
 function editNewCircle() {
   if ($('#fncirc').hasClass('hidden')) $('#fncirc').removeClass('hidden')
@@ -104,13 +88,9 @@ function addCircle()
          
            },
             statusCode: {
-            	400: onAjaxBadInput
+            	400: Yavsc.onAjaxBadInput
             	},
-            error: function (xhr, ajaxOptions, thrownError) {
-            	if (xhr.status!=400)
-        			Yavsc.message(xhr.status+" : "+xhr.responseText);
-			    else Yavsc.message(false);
-        		}});
+            error: Yavsc.onAjaxError});
     }
 
 

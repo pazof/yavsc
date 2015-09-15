@@ -1,8 +1,8 @@
 
 body {
-	background: black;
 	background-image: url('/images/Banner.png');
 	background-repeat: no-repeat;
+	background-color: black;
 	color: #D0FFD0;
 	font-family: 'Arial', cursive;
 	padding: 0em;
@@ -24,6 +24,7 @@ main {
 	padding: .5em;
 	background-color: rgba(64,64,64,0.6);
 	border-radius:10px;
+	clear: both;
 	}
 
 fieldset {
@@ -66,16 +67,19 @@ footer {
 
 
 #appmenu {
+	line-height: 1em;
 	margin: .5em;
 	padding: .5em;
 	border-radius:10px;
 	color: #ff8;
 	background-color: rgba(32,16,16,.6);
+	float: right;
 	}
 
 #appmenu img { max-height:2em; max-width:2em; }
 
-
+.menuitem {
+}
 .hint {
 	display: inline;
 	font-style: italic;
@@ -88,10 +92,12 @@ content: ")";
 }
 
 header {
+	border-radius:10px;
 	background-color:rgba(16,16,0,0.8);
 	display: block;
 	float:left;
 	margin: .5em;
+	padding: .5em;
 	}
 
 h1 img { vertical-align: text-top; }
@@ -113,14 +119,14 @@ label {
 	font-size: medium;
 }
 
-.message {
+.message, #message {
 	font-size: large;
 	background-color: rgba(0,64,0,0.1);
 	}
 .dirty { 
 	background-color: rgba(128,128,0,0.3);
 }
-.error {
+.error, #error {
 	color: #f88;
 	font-size: large;
 	background-color: rgba(128,0,0,0.3);
@@ -181,8 +187,6 @@ usertitleref {
    background-color:rgba(0,0,32,0.8);
    cursor: pointer;
    font-family: 'Arial', cursive;
-   font-size: 140%;
-	display:block;
 	padding: .2em;
 }
 
@@ -217,10 +221,8 @@ a.actionlink img { top:4px; }
 	border-radius:25px;
 	font-size: smaller;
 	}
-.menuitem {
-	display: block;
 
-}
+
 .onhover {
 	display:none; 
 	position: absolute;
@@ -235,6 +237,7 @@ a.actionlink img { top:4px; }
 
 .input-validation-error { border: solid 1px red; }
 .field-validation-error { color: red; }
+
 .c2 { font-size: small; font-style: italic; }
 .c3 { font-size: x-small; font-style: italic; }
 

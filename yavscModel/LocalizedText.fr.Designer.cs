@@ -88,9 +88,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Create {
+        public static string ImportException {
             get {
-                return ResourceManager.GetString("Create", resourceCulture);
+                return ResourceManager.GetString("ImportException", resourceCulture);
             }
         }
         
@@ -301,6 +301,12 @@ namespace Yavsc.Model {
         public static string Not_Approuved {
             get {
                 return ResourceManager.GetString("Not Approuved", resourceCulture);
+            }
+        }
+        
+        public static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
             }
         }
         
