@@ -25,6 +25,24 @@ namespace Yavsc.Helpers
 			return new MvcHtmlString(html);
 		}
 
+
+		/// <summary>
+		/// Transforms a string of Markdown into HTML.
+		/// </summary>
+		/// <param name="helper">HtmlHelper - Not used, but required to make this an extension method.</param>
+		/// <param name="text">The Markdown that should be transformed.</param>
+		/// <param name="urlBaseLocation">The url Base Location.</param>
+		/// <returns>The HTML representation of the supplied Markdown.</returns>
+		public static IHtmlString Markdown(this HtmlHelper helper, string text, string urlBaseLocation="")
+		{
+			// Transform the supplied text (Markdown) into HTML.
+			var markdownTransformer = new Markdown();
+			markdownTransformer.ExtraMode = true;
+			markdownTransformer.UrlBaseLocation = urlBaseLocation;
+			string html = markdownTransformer.Transform(text);
+			// Wrap the html in an MvcHtmlString otherwise it'll be HtmlEncoded and displayed to the user as HTML :(
+			return new MvcHtmlString(html);
+		}
 		/// <summary>
 		/// Transforms a string of Markdown into HTML.
 		/// </summary>

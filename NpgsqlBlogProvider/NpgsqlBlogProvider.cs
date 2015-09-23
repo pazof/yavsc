@@ -245,7 +245,7 @@ namespace Npgsql.Web.Blog
 						be = new BlogEntry ();
 						be.Title = rdr.GetString (rdr.GetOrdinal ("title"));
 						be.Content = rdr.GetString (rdr.GetOrdinal ("bcontent"));
-						be.UserName = rdr.GetString (rdr.GetOrdinal ("username"));
+						be.Author = rdr.GetString (rdr.GetOrdinal ("username"));
 						be.Modified = rdr.GetDateTime (rdr.GetOrdinal ("modified"));
 						be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 						be.Visible = rdr.GetBoolean (rdr.GetOrdinal ("visible"));
@@ -296,7 +296,7 @@ namespace Npgsql.Web.Blog
 							BlogEntry be = new BlogEntry ();
 							be.Title = title;
 							be.Content = rdr.GetString (rdr.GetOrdinal ("bcontent"));
-							be.UserName = username;
+							be.Author = username;
 							be.Modified = rdr.GetDateTime (rdr.GetOrdinal ("modified"));
 							be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 							be.Visible = rdr.GetBoolean (rdr.GetOrdinal ("visible"));
@@ -443,7 +443,7 @@ namespace Npgsql.Web.Blog
 						" and m.member = u.pkid and u.username = :uname " +
 						" and u.applicationname = :appname " +
 						" group by a.post_id) ma on (ma.pid = b._id) " +
-						"where ( ma.acc IS NULL or ma.acc = TRUE or b.UserName = :uname) ";
+						"where ( ma.acc IS NULL or ma.acc = TRUE or b.username = :uname) ";
 					cmd.Parameters.AddWithValue ("uname", readersName);
 				} else {
 					cmd.CommandText = "select _id, title,bcontent,modified," +
@@ -485,7 +485,7 @@ namespace Npgsql.Web.Blog
 							be.Title = rdr.GetString (rdr.GetOrdinal ("title"));
 							be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
 							be.Content = rdr.GetString (rdr.GetOrdinal ("bcontent"));
-							be.UserName = rdr.GetString (rdr.GetOrdinal ("username"));
+							be.Author = rdr.GetString (rdr.GetOrdinal ("username"));
 							be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 							be.Modified = rdr.GetDateTime (rdr.GetOrdinal ("modified"));
 							be.Visible =  rdr.GetBoolean (rdr.GetOrdinal ("visible"));
@@ -558,7 +558,7 @@ namespace Npgsql.Web.Blog
 							be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
 							be.Title = rdr.GetString (rdr.GetOrdinal ("title"));
 							be.Content = rdr.GetString (rdr.GetOrdinal ("bcontent"));
-							be.UserName = rdr.GetString (rdr.GetOrdinal ("username"));
+							be.Author = rdr.GetString (rdr.GetOrdinal ("username"));
 							be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 							be.Modified = rdr.GetDateTime (rdr.GetOrdinal ("modified"));
 							be.Visible = true; // because of sql code used

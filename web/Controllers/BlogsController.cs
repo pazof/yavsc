@@ -58,7 +58,7 @@ namespace Yavsc.Controllers
 				if (Membership.FindUsersByName (user) != null)
 					u = Membership.GetUser (user, false);
 				if (u == null) {
-					ModelState.AddModelError ("UserName",
+					ModelState.AddModelError ("Author",
 						string.Format ("Utilisateur inconu : {0}", user));
 					return BlogList ();
 				} else {
@@ -145,11 +145,11 @@ namespace Yavsc.Controllers
 		{
 			ViewData ["id"] = id;
 			BlogEntry e = BlogManager.GetForReading (id);
-			UUTBlogEntryCollection c = new UUTBlogEntryCollection (e.UserName,e.Title);
+			UUTBlogEntryCollection c = new UUTBlogEntryCollection (e.Author,e.Title);
 			c.Add (e);
-			ViewData ["user"] = c.UserName;
+			ViewData ["user"] = c.Author;
 			ViewData ["title"] = c.Title;
-			Profile pr = new Profile (ProfileBase.Create (c.UserName));
+			Profile pr = new Profile (ProfileBase.Create (c.Author));
 			if (pr == null)
 				// the owner's profile must exist 
 				// in order to publish its bills
@@ -164,7 +164,7 @@ namespace Yavsc.Controllers
 		/// Users the post.
 		/// Assume that :
 		/// * bec.Count > O
-		/// * bec.All(x=>x.UserName == bec[0].UserName) ;
+		/// * bec.All(x=>x.Author == bec[0].Author) ;
 		/// </summary>
 		/// <returns>The post.</returns>
 		/// <param name="bec">Bec.</param>
@@ -172,7 +172,7 @@ namespace Yavsc.Controllers
 		{
 			if (ModelState.IsValid)
 			if (bec.Count > 0) {
-				Profile pr = new Profile (ProfileBase.Create (bec.UserName));
+				Profile pr = new Profile (ProfileBase.Create (bec.Author));
 				if (pr == null)
 					// the owner's profile must exist 
 					// in order to publish its bills
@@ -182,13 +182,13 @@ namespace Yavsc.Controllers
 				ViewData ["BlogTitle"] = pr.BlogTitle;
 				MembershipUser u = Membership.GetUser ();
 				if (u != null)
-					ViewData ["UserName"] = u.UserName;
+					ViewData ["Author"] = u.UserName;
 				if (!pr.BlogVisible) {
 					// only deliver to admins or owner
 					if (u == null)
 						return View ("NotAuthorized");
 					else {
-						if (u.UserName != bec.UserName)
+						if (u.UserName != bec.Author)
 						if (!Roles.IsUserInRole (u.UserName, "Admin"))
 							return View ("NotAuthorized");
 					}
@@ -241,7 +241,7 @@ namespace Yavsc.Controllers
 				user = un;
 			if (String.IsNullOrEmpty (title))
 				title = "";
-			ViewData ["UserName"] = un;
+			ViewData ["Author"] = un;
 			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (Membership.GetUser ().UserName).Select (x => new SelectListItem {
 				Value = x.Id.ToString(),
 				Text = x.Title
@@ -259,7 +259,7 @@ namespace Yavsc.Controllers
 		public ActionResult ValidateEdit (BlogEntry model)
 		{
 			ViewData ["SiteName"] = sitename;
-			ViewData ["BlogUser"] = Membership.GetUser ().UserName;
+			ViewData ["Author"] = Membership.GetUser ().UserName;
 			if (ModelState.IsValid) {
 				if (model.Id != 0) {
 					// ensures rights to update
@@ -268,8 +268,8 @@ namespace Yavsc.Controllers
 
 				}
 				else
-					model.Id = BlogManager.Post (model.UserName, model.Title, model.Content, model.Visible, model.AllowedCircles);
-				return RedirectToAction ("UserPosts", new { user = model.UserName, title = model.Title });
+					model.Id = BlogManager.Post (model.Author, model.Title, model.Content, model.Visible, model.AllowedCircles);
+				return RedirectToAction ("UserPosts", new { user = model.Author, title = model.Title });
 			}
 			return View ("Edit", model);
 		}
@@ -284,9 +284,10 @@ namespace Yavsc.Controllers
 			
 			BlogEntry e = BlogManager.GetForEditing (id);
 			string user = Membership.GetUser ().UserName;
-			Profile pr = new Profile (ProfileBase.Create(e.UserName));
+			Profile pr = new Profile (ProfileBase.Create(e.Author));
 			ViewData ["BlogTitle"] = pr.BlogTitle;
 			ViewData ["LOGIN"] = user; 
+			ViewData ["Id"] = id;
 			// Populates the circles combo items
 
 			if (e.AllowedCircles == null)
@@ -334,7 +335,7 @@ namespace Yavsc.Controllers
 			if (Request.UrlReferrer != null)
 				returnUrl = Request.UrlReferrer.AbsoluteUri;
 			ViewData ["returnUrl"] = returnUrl;
-			ViewData ["UserName"] = user;
+			ViewData ["Author"] = user;
 			ViewData ["Title"] = title;
 
 			if (Membership.GetUser ().UserName != user)

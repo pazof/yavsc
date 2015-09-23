@@ -11,8 +11,6 @@ ViewState["orgtitle"] = Html.Translate(Page.Title);
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" href="~/App_Themes/style.css" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
-<script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>">
-</script>
 <script type="text/javascript">
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 </script> 
@@ -44,8 +42,8 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 	</div>
 <% } else { %><div class="menuitem">
 <a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>">
-<img src="<%=Html.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" width="25%" alt="vos posts" /></a>
-<div class="hint">Votre Blog</div>
+<img src="<%=Html.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" width="25%" alt="vos billets" /></a>
+<div class="hint">Vos billets</div>
 </div>
 
 <div class="menuitem">

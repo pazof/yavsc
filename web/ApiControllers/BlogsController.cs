@@ -89,7 +89,7 @@ namespace Yavsc.ApiControllers
 			if (!(Request.Content.Headers.ContentType.MediaType=="multipart/form-data"))
 				throw new HttpRequestException ("not a multipart/form-data request");
 			BlogEntry be = BlogManager.GetPost (id);
-			if (be.UserName != Membership.GetUser ().UserName)
+			if (be.Author != Membership.GetUser ().UserName)
 				throw new AuthorizationDenied ("b"+id);
 			string root = HttpContext.Current.Server.MapPath("~/bfiles/"+id);
 			DirectoryInfo di = new DirectoryInfo (root);
@@ -128,7 +128,7 @@ namespace Yavsc.ApiControllers
 			if (!(Request.Content.Headers.ContentType.MediaType=="multipart/form-data"))
 				throw new HttpRequestException ("not a multipart/form-data request");
 			BlogEntry be = BlogManager.GetPost (id);
-			if (be.UserName != Membership.GetUser ().UserName)
+			if (be.Author != Membership.GetUser ().UserName)
 				throw new AuthorizationDenied ("b"+id);
 			string root = HttpContext.Current.Server.MapPath("~/bfiles/"+id);
 			DirectoryInfo di = new DirectoryInfo (root);
@@ -162,7 +162,7 @@ namespace Yavsc.ApiControllers
 						p.StartInfo.UseShellExecute = false;
 						p.StartInfo.FileName = "/usr/bin/pandoc";
 						p.StartInfo.Arguments = 
-							string.Format (" -o {0} -t markdown {1}",
+							string.Format (" -o '{0}' -t markdown '{1}'",
 								fo.FullName,
 								fi.FullName);
 						p.StartInfo.RedirectStandardError = true;

@@ -8,7 +8,7 @@
 <%= Html.LabelFor(model => model.Titles) %> :
 <%= Html.TextBox( "Titles" ) %>
 <%= Html.ValidationMessage("Titles", "*") %><br/>
-<%= Html.Hidden("UserName") %>
+<%= Html.Hidden("Author") %>
 <label for="confirm">supprimer le billet</label>
 <%= Html.CheckBox( "confirm" ) %>
 <%= Html.ValidationMessage("AgreeToRemove", "*") %>

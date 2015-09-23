@@ -176,7 +176,7 @@ namespace Yavsc.WebControls
 					if (!Array.Exists (roles, x => Roles.IsUserInRole (x)))
 						continue;
 				if (selected!=null)
-					if (Array.Exists(selected, x=> x == u.UserName))
+				if (Array.Exists(selected, x=> x == u.UserName))
 						writer.AddAttribute ("selected",null);
 				writer.RenderBeginTag ("option");
 				writer.Write (u.UserName);

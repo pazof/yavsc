@@ -43,14 +43,14 @@ namespace Yavsc.Model.Blogs
 		/// Gets the name of the user.
 		/// </summary>
 		/// <value>The name of the user.</value>
-		public string UserName { get { return _username; } }
+		public string Author { get { return _username; } }
 		/// <summary>
 		/// Returns a <see cref="System.String"/> that represents the current <see cref="Yavsc.Model.Blogs.UUBlogEntryCollection"/>.
 		/// </summary>
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="Yavsc.Model.Blogs.UUBlogEntryCollection"/>.</returns>
 		public override string ToString ()
 		{
-			return string.Format ("[UUBlogEntryCollection: UserName={0} Count={1}]", UserName, Count);
+			return string.Format ("[UUBlogEntryCollection: Author={0} Count={1}]", Author, Count);
 		}
 	}
 	

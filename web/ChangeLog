@@ -1,3 +1,66 @@
+2015-09-23  Paul Schneider  <paul@pschneider.fr>
+
+	* font-awesome.css: an awesome css
+
+	* hallo.js: Use a forked Hallo.js 
+
+	* showdown.js:
+	* to-markdown.js:
+	* mdd_gripper.png:
+	* mdd_toolbar.png:
+	* mdd_modal_background.png: The client side Markdown is now
+	implemented using Hallo.js
+
+	* FontAwesome.otf:
+	* fontawesome-webfont.eot:
+	* fontawesome-webfont.svg:
+	* fontawesome-webfont.ttf:
+	* fontawesome-webfont.woff:
+	* fontawesome-webfont.woff2: awesome
+
+	* MarkdownDeep.dll: a modified version to render video and
+	audio tags
+
+	* BlogsController.cs: * refactoring: The `UserName` property
+	from the `BlogEntry` class is renamed to `Author`
+	* Fixes pandoc process on file named with some spaces
+
+	* CalendarController.cs:
+	* WorkFlowController.cs: refactoring: The `UserName` property
+	from the `BlogEntry` class is renamed to `Author`
+
+	* BlogsController.cs: UserName became Author on BlogEntry
+	objects
+
+	* Global.asax.cs: route /fonts is now ignored.
+
+	* MarkdownHelper.cs: transform Markdown using a given base url
+
+	* App.master: jquery was not needed on all pages.
+
+	* Edit.aspx: using Hallo.js
+
+	* UserPost.aspx:
+	* UserPosts.aspx:
+	* RemoveTitle.aspx: refactoring
+
+	* Web.config: ?
+
+	* Web.csproj: * use my local assembly for MarkdownDeep.dll
+	* fontawesome integration
+	* Hallo.js, to-markdown.js, showdowwn.js integration
+
+
+	* packages.config: Now use forked MarkdownDeep 
+
+	* MarkdownDeepLib.min.js:
+	* MarkdownDeep License.txt:
+	* MarkdownDeep Quick Reference.txt: using my local revision
+
+	* mdd_ajax_loader.gif: The client side Markdown is now
+	implemented using Hallo.js
+
+
 2015-09-16  Paul Schneider  <paul@pschneider.fr>
 
 	* mdd_help.htm:

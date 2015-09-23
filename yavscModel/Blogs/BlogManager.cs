@@ -192,7 +192,7 @@ namespace Yavsc.Model.Blogs
 				throw new PostNotFoundException ();
 			if (!Roles.IsUserInRole ("Admin")) {
 				string rguser = Membership.GetUser ().UserName;
-				if (rguser != e.UserName) {
+				if (rguser != e.Author) {
 					if (throwEx)
 						throw new AccessViolationException (
 							string.Format (
@@ -212,7 +212,7 @@ namespace Yavsc.Model.Blogs
 				// only deliver to admins, owner, or specified circle memebers
 				if (u == null)
 					return false;
-				if (u.UserName != e.UserName)
+				if (u.UserName != e.Author)
 				if (!Roles.IsUserInRole (u.UserName, "Admin"))
 				{
 					if (!e.Visible)

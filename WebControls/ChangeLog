@@ -1,3 +1,7 @@
+2015-09-23  Paul Schneider  <paul@pschneider.fr>
+
+	* InputUserName.cs: formatting
+
 2015-09-10  Paul Schneider  <paul@pschneider.fr>
 
 	* InputCircle.cs: using the new CircleBase class

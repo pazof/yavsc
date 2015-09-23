@@ -156,7 +156,7 @@ namespace Yavsc.ApiControllers
 					"à un compte utilisateur existant");
 					break;
 				case MembershipCreateStatus.DuplicateUserName:
-					ModelState.AddModelError ("UserName", "Ce nom d'utilisateur est " +
+					ModelState.AddModelError ("Author", "Ce nom d'utilisateur est " +
 					"déjà enregistré");
 					break;
 				case MembershipCreateStatus.Success:

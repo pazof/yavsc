@@ -42,6 +42,7 @@ namespace Yavsc
 			routes.IgnoreRoute ("bfiles/{*pathInfo}"); // Blog files
 			routes.IgnoreRoute ("xmldoc/{*pathInfo}"); // xml doc 
 			routes.IgnoreRoute ("htmldoc/{*pathInfo}"); // html doc 
+			routes.IgnoreRoute ("fonts/{*pathInfo}"); // fonts 
 			routes.IgnoreRoute ("favicon.ico"); // favorite icon
 			routes.IgnoreRoute ("favicon.png"); // favorite icon
 			routes.IgnoreRoute ("robots.txt");  // for search engine robots

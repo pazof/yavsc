@@ -71,8 +71,8 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		/// <value>The name of the user.</value>
 		[StringLength(255)]
-		[DisplayName("Nom de l'auteur")]
-		public string UserName {
+		[DisplayName("Auteur")]
+		public string Author {
 			get {
 				return userName;
 			}

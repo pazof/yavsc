@@ -80,7 +80,7 @@ namespace Yavsc.ApiControllers
 						string.Format(LocalizedText.DuplicateEmail,userModel.UserName) );
 					return ;
 				case MembershipCreateStatus.DuplicateUserName:
-					ModelState.AddModelError ("UserName", 
+					ModelState.AddModelError ("Author", 
 						string.Format(LocalizedText.DuplicateUserName,userModel.Email));
 					return ;
 				case MembershipCreateStatus.Success:

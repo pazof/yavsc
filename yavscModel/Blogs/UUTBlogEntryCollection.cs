@@ -51,7 +51,7 @@ namespace Yavsc.Model.Blogs
 		public override string ToString ()
 		{
 			return string.Format ("[UUTBlogEntryCollection: " +
-				"Title={0} User={1} Count={2}]", Title, UserName, Count);
+				"Title={0} User={1} Count={2}]", Title, Author, Count);
 		}
 
 		

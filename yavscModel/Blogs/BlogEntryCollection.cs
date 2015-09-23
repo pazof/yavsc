@@ -64,7 +64,7 @@ namespace Yavsc.Model.Blogs
 			/// <summary>
 			/// The name of the user.
 			/// </summary>
-			public string UserName;
+			public string Author;
 			/// <summary>
 			/// The identifier.
 			/// </summary>
@@ -111,7 +111,7 @@ namespace Yavsc.Model.Blogs
 			return from be in this
 				orderby be.Posted descending
 			        group
-				new  PostInfoByTitle { UserName=be.UserName, Id=be.Id, 
+				new  PostInfoByTitle { Author=be.Author, Id=be.Id, 
 				Posted=be.Posted, Modified=be.Modified }
 				by be.Title
 				into titlegroup
@@ -128,7 +128,7 @@ namespace Yavsc.Model.Blogs
 				group
 				new  PostInfoByUser { Title=be.Title, Id=be.Id, 
 				Posted=be.Posted, Modified=be.Modified }
-				by be.UserName
+				by be.Author
 				into usergroup
 				select usergroup;
 		}
