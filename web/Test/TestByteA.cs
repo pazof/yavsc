@@ -26,11 +26,11 @@ namespace Yavsc
 			{
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = "drop table testbytea";
+					cmd.CommandText = "drop table _testbytea";
 					try { cmd.ExecuteNonQuery (); }
 					catch (NpgsqlException) {
 					}
-					cmd.CommandText = "create table testbytea( t bytea )";
+					cmd.CommandText = "create table _testbytea( t bytea )";
 					cmd.ExecuteNonQuery ();
 				}
 			}
@@ -47,14 +47,14 @@ namespace Yavsc
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) 
 				{
-					cmd.CommandText = "insert into testbytea (t) values (@tv)";
+					cmd.CommandText = "insert into _testbytea (t) values (@tv)";
 					cmd.Parameters.AddWithValue ("@tv", a);
 					cmd.ExecuteNonQuery ();
 				}
 
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) 
 				{
-					cmd.CommandText = "select t from testbytea";
+					cmd.CommandText = "select t from _testbytea";
 					cmd.Parameters.AddWithValue ("@tv", a);
 
 					NpgsqlDataReader rdr = cmd.ExecuteReader ();
@@ -77,7 +77,7 @@ namespace Yavsc
 			using (NpgsqlConnection cnx = new NpgsqlConnection (ConnectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = "drop table testbytea";
+					cmd.CommandText = "drop table _testbytea";
 					cmd.ExecuteNonQuery ();
 				}
 			}

@@ -29,6 +29,7 @@
 <%=Html.Hidden("Id")%>
 <input type="submit">
 <% } %>
+
 <script>
 jQuery('#vtitle').hallo({
   plugins: {
@@ -54,8 +55,8 @@ var markdownize = function(content) {
     }).join("\n");
     return toMarkdown(html);
   };
-  var converter = new Showdown.converter();
-  var htmlize = function(content) {
+  var converter = new showdown.Converter(),
+    htmlize = function(content) {
     return converter.makeHtml(content);
   };
 

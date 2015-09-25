@@ -94,6 +94,7 @@ namespace Yavsc.ApiControllers
 			string root = HttpContext.Current.Server.MapPath("~/bfiles/"+id);
 			DirectoryInfo di = new DirectoryInfo (root);
 			if (!di.Exists) di.Create ();
+
 			var provider = new MultipartFormDataStreamProvider(root);
 			try
 			{
@@ -105,12 +106,15 @@ namespace Yavsc.ApiControllers
 					string filename = provider.BodyPartFileNames[fkey];
 					Trace.WriteLine(filename);
 
-					string nicename=fkey;
+					string nicename = HttpUtility.UrlDecode(fkey) ;
 					if (fkey.StartsWith("\"") && fkey.EndsWith("\"") && fkey.Length > 2)
 						nicename = fkey.Substring(1,fkey.Length-2);
-					var filtered  = new string (nicename.Where( x=> !invalidChars.Contains(x)).ToArray());
-					File.Move(Path.Combine(root,filename),
-						Path.Combine(root,filtered));
+					nicename = new string (nicename.Where( x=> !invalidChars.Contains(x)).ToArray());
+					nicename = nicename.Replace(' ','_');
+					var dest = Path.Combine(root,nicename);
+					var fi = new FileInfo(dest);
+					if (fi.Exists) fi.Delete();
+					File.Move(filename, fi.FullName);
 				}
 
 				return Request.CreateResponse(HttpStatusCode.OK);

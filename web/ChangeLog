@@ -1,3 +1,28 @@
+2015-09-25  Paul Schneider  <paul@pschneider.fr>
+
+	* BlogsController.cs: Fixes the Markdown usage of the uploaded
+	files:
+	Files are now renamed by dropping invalid characters and
+	replacing spaces by underscores.
+	An existing destination file is removed at upload.
+
+
+	* showdown.js: Renders audio and video at client side
+
+	* to-markdown.js: converts html audio and video to Markdown
+
+	* TestByteA.cs: adds a prefix, an underscore, to the test
+	table `_testbytea`
+
+	* Edit.aspx: Uses the new `showdown` javascript module (that
+	previously was named `Showdown`) 
+
+	* Web.csproj: cleaning
+
+	* MarkdownDeep.dll: Renders video an audio
+
+	* GruntFile.js: Was pollution
+
 2015-09-23  Paul Schneider  <paul@pschneider.fr>
 
 	* font-awesome.css: an awesome css

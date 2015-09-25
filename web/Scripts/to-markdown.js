@@ -49,7 +49,7 @@ function isBlock(node) {
 
 var voids = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
-  'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr', 'audio',
+  'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr',
 ];
 
 function isVoid(node) {
@@ -489,8 +489,16 @@ module.exports = [
   {
     filter: 'audio',
     replacement: function(content, node) {
-      var alt = node.alt || '';
+      var alt = node.getAttribute("alt") || '';
       var src = node.getAttribute('src') || '';
+      if (!src)
+      for (var i = 0; i < node.childNodes.length; i++) 
+  		{
+  		if (node.childNodes[i].localName == 'source') {
+	  		src = node.childNodes[i].getAttribute('src') ;
+	  		break;
+	  		}
+  		}
       var title = node.title || '';
       var titlePart = title ? ' "'+ title +'"' : '';
       return src ? '![audio:' + alt + ']' + '(' + src + titlePart + ')' : '';

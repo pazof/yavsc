@@ -270,7 +270,6 @@
     <Content Include="Scripts\rangyinputs-jquery-1.1.2.js" />
     <Content Include="images\sign-in-with-google.png" />
     <Content Include="Views\Account\Unregister.aspx" />
-    <Content Include="Scripts\GruntFile.js" />
     <Content Include="Scripts\jquery.timepicker.js" />
     <Content Include="Scripts\jquery.timepicker.min.js" />
     <Content Include="Scripts\jquery.mousewheel.js" />
