@@ -7,6 +7,9 @@ packages
 web/avatars
 web/users
 build
+bower_components
+node_modules
+svg
 .nuget
 .gitignore
 
