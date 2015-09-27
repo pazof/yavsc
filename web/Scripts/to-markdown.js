@@ -49,7 +49,7 @@ function isBlock(node) {
 
 var voids = [
   'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input',
-  'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr',
+  'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'
 ];
 
 function isVoid(node) {
@@ -582,6 +582,7 @@ module.exports = [
     }
   }
 ];
+
 },{}],4:[function(require,module,exports){
 'use strict';
 
@@ -786,7 +787,6 @@ module.exports = {
   "param": true,
   "source": true,
   "track": true,
-  "video": true,
   "wbr": true
 };
 

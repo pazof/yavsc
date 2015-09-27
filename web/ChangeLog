@@ -1,3 +1,29 @@
+2015-09-27  Paul Schneider  <paul@pschneider.fr>
+
+	* jquery.htmlClean.min.js: * in order to paste from any(?)
+	document
+
+	* rangy-selectionsaverestore.js: required by hallo html
+	cleanup
+
+	* App.master: * A link to awesome fonts
+	* a hint, to engage to invoice :-)
+
+	* rangy-core.js: using the bower installed one
+
+	* to-markdown.js: using the new code, came from the `npm
+	start` process
+
+	* Edit.aspx: fixes copy/paste from LibreOffice writter colored
+	text.
+
+	* Web.csproj: using new javascript references to:
+	rangy-core, rangy-selectionsaverestore jquery.htmlClean
+
+	* mdd_help.htm:
+	* mdd_styles.css:
+	* rangyinputs-jquery-1.1.2.js: obsolete
+
 2015-09-25  Paul Schneider  <paul@pschneider.fr>
 
 	* BlogsController.cs: Fixes the Markdown usage of the uploaded

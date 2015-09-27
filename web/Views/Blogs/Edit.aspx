@@ -4,10 +4,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
 <script src="http://rangy.googlecode.com/svn/trunk/currentrelease/rangy-core.js"></script>
-<link rel="stylesheet" href="<%=Url.Content("~/Scripts/mdd_styles.css")%>">
-<script type="text/javascript" src="<%=Url.Content("~/Scripts/MarkdownDeepLib.min.js")%>"></script>
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/jquery-ui.css")%>" />
-<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/font-awesome.css")%>" />
+<script type="text/javascript" src="<%=Url.Content("~/Scripts/rangy-core.js")%>"></script>
+<script type="text/javascript" src="<%=Url.Content("~/Scripts/rangy-selectionsaverestore.js")%>"></script>
+<script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery.htmlClean.min.js")%>"></script>
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/hallo.js")%>"></script>
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/to-markdown.js")%>"></script>
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/showdown.js")%>"></script>
@@ -38,13 +38,38 @@ jQuery('#vtitle').hallo({
   },
   toolbar: 'halloToolbarFixed'
 });
+
 jQuery('#vcontent').hallo({
   plugins: {
     'halloformat': {},
-      'halloheadings': {},
-      'hallolists': {},
-      'halloimage': {},
-      'halloreundo': {}
+    'halloheadings': {},
+    'hallolists': {},
+    'halloimage': {},
+    'halloreundo': {},
+    'hallocleanhtml': {
+            format: false,
+            allowedTags: [
+                'i',
+                'p',
+                'em',
+                'strong',
+                'br',
+                'div',
+                'ol',
+                'ul',
+                'li',
+                'a',
+                'audio',
+                'video',
+                'img',
+                'table',
+                'tr',
+                'td',
+                'th',
+                'style'
+                ]
+            },
+    'halloblacklist': {tags: ['style']},
   },
   toolbar: 'halloToolbarFixed'
 });
@@ -53,22 +78,27 @@ var markdownize = function(content) {
     var html = content.split("\n").map($.trim).filter(function(line) { 
       return line != "";
     }).join("\n");
-    return toMarkdown(html);
+    var tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    jQuery("style",tmp).remove();
+    return toMarkdown(tmp.innerHTML);
   };
-  var converter = new showdown.Converter(),
+
+var converter = new showdown.Converter(),
     htmlize = function(content) {
     return converter.makeHtml(content);
   };
 
    // Method that converts the HTML contents to Markdown
-  var showSource = function(id,content) {
+var showSource = function(id,content) {
     var markdown = markdownize(content);
     if (jQuery('#'+id).get(0).value == markdown) {
       return;
     }
     jQuery('#'+id).get(0).value = markdown;
   };
-  var updateHtml = function(id,content) {
+
+var updateHtml = function(id,content) {
   	var jView = jQuery('div[for="'+id+'"]');
     if (markdownize(jView.html()) == content) {
       return;
@@ -76,6 +106,7 @@ var markdownize = function(content) {
     var html = htmlize(content);
     jView.html(html); 
   };
+
   // Update Markdown every time content is modified
   jQuery('.editable').bind('hallomodified', function(event, data) {
     showSource(this.attributes["for"].value, data.content);
@@ -86,6 +117,7 @@ var markdownize = function(content) {
   jQuery('#Title').bind('keyup', function() {
     updateHtml(this.id, this.value);
   });
+
   showSource("Title",jQuery('#vtitle').html());
   showSource("Content",jQuery('#vcontent').html());
 
@@ -121,6 +153,8 @@ function submitFile()
 {
 	submitFilesTo('PostFile');
 }
+
+
 
 </script>
 <form id="uploads" method="post" enctype="multipart/form-data">

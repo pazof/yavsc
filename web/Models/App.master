@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <asp:ContentPlaceHolder id="init" runat="server">
-</asp:ContentPlaceHolder><% 
-ViewState["orgtitle"] = Html.Translate(Page.Title);
+</asp:ContentPlaceHolder>
+<% ViewState["orgtitle"] = Html.Translate(Page.Title);
  Page.Title = ViewState["orgtitle"] + " - " + YavscHelpers.SiteName; 
  %><head runat="server">
 <meta charset="utf-8">
@@ -11,6 +11,7 @@ ViewState["orgtitle"] = Html.Translate(Page.Title);
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" href="~/App_Themes/style.css" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/font-awesome.css")%>" />
 <script type="text/javascript">
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 </script> 
@@ -38,7 +39,7 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 <% if (Membership.GetUser()==null) { %>
 <div class="menuitem">
 	<%= Html.ActionLink("Authentification", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery },null) %>
-	<div class="hint">Pour pouvoir publier</div>
+	<div class="hint">Pour pouvoir publier, facturer</div>
 	</div>
 <% } else { %><div class="menuitem">
 <a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>">
