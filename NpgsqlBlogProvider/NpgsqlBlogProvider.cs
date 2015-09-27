@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Yavsc.Model.Blogs;
 using Yavsc.Model.Circles;
 using System.Web.Mvc;
+using NpgsqlTypes;
 
 namespace Npgsql.Web.Blog
 {
@@ -286,9 +287,9 @@ namespace Npgsql.Web.Blog
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "select _id,bcontent,modified,posted,visible from blog " +
 					"where applicationname = :appname and username = :username and title = :title";
-					cmd.Parameters.AddWithValue ("appname", applicationName);
-					cmd.Parameters.AddWithValue ("username", username);
-					cmd.Parameters.AddWithValue ("title", title);
+					cmd.Parameters.AddWithValue ("appname", NpgsqlDbType.Varchar, applicationName);
+					cmd.Parameters.AddWithValue ("username", NpgsqlDbType.Varchar ,username);
+					cmd.Parameters.AddWithValue ("title", NpgsqlDbType.Varchar, title);
 					cnx.Open ();
 					cmd.Prepare ();
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {

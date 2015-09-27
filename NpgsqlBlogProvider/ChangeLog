@@ -1,3 +1,7 @@
+2015-09-27  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlBlogProvider.cs: Fixes the sql command preparation
+
 2015-09-23  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlBlogProvider.cs: refactoring: The `UserName` property

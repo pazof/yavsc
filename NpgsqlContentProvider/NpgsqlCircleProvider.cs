@@ -88,7 +88,7 @@ namespace WorkFlowProvider
 
 					using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 						cmd.CommandText = "select member from circle_members where circle_id = :cid";
-						cmd.Parameters.AddWithValue ("cid", id);
+						cmd.Parameters.AddWithValue ("cid", NpgsqlTypes.NpgsqlDbType.Bigint, id);
 						cmd.Prepare ();
 						List<string> members = new List<string> ();
 						using (NpgsqlDataReader dr = cmd.ExecuteReader ()) {
@@ -178,7 +178,7 @@ namespace WorkFlowProvider
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "select count(*)>0 from circle_members where circle_id = :cid and member = :mbr";
 				cmd.Parameters.Add ("cid", NpgsqlDbType.Bigint);
-				cmd.Parameters.AddWithValue ("mbr", member);
+				cmd.Parameters.AddWithValue ("mbr", NpgsqlDbType.Varchar,  member);
 				cnx.Open ();
 				cmd.Prepare ();
 				foreach (long cid in circle_ids) {
@@ -256,7 +256,7 @@ namespace WorkFlowProvider
 				}
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "insert into circle_members (circle_id,member) values (@cid,@mbr)";
-					cmd.Parameters.AddWithValue ("cid", id);
+					cmd.Parameters.AddWithValue ("cid", NpgsqlDbType.Varchar , id);
 					cmd.Parameters.Add ("mbr", NpgsqlDbType.Varchar);
 					cmd.Prepare ();
 					if (users != null)
@@ -296,9 +296,8 @@ namespace WorkFlowProvider
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "select _id, title from circle where owner = :wnr";
-					cmd.Parameters.AddWithValue ("wnr", user);
+					cmd.Parameters.AddWithValue ("wnr",user);
 					cnx.Open ();
-					cmd.Prepare ();
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 						if (rdr.HasRows) {
 							while (rdr.Read ()) {

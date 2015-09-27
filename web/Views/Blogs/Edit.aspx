@@ -1,10 +1,9 @@
 <%@ Page Title="Bill_edition" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="head" ID="HeadContent1" runat="server">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
-<script src="http://rangy.googlecode.com/svn/trunk/currentrelease/rangy-core.js"></script>
-<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/jquery-ui.css")%>" />
+
+
+
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/rangy-core.js")%>"></script>
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/rangy-selectionsaverestore.js")%>"></script>
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery.htmlClean.min.js")%>"></script>
@@ -25,6 +24,18 @@
 <%= Html.LabelFor(model => model.Content) %> 
 <%= Html.ValidationMessage("Content") %>: <br>
 <textarea id="Content" name="Content"><%=Html.Markdown(Model.Content)%></textarea><br>
+
+<%= Html.CheckBox( "Visible" ) %>
+<%= Html.LabelFor(model => model.Visible) %>
+
+<%= Html.ValidationMessage("Visible", "*") %>
+<br/>
+
+<%= Html.LabelFor(model => model.AllowedCircles) %>
+<%= Html.ListBox("AllowedCircles") %>
+
+<%= Html.ValidationMessage("AllowedCircles", "*") %>
+
 <%=Html.Hidden("Author")%>
 <%=Html.Hidden("Id")%>
 <input type="submit">
@@ -145,17 +156,10 @@ function submitFilesTo(method)
 }
 
 function submitImport()
-{
-	submitFilesTo('Import');
-}
+{ submitFilesTo('Import'); }
 
 function submitFile()
-{
-	submitFilesTo('PostFile');
-}
-
-
-
+{ submitFilesTo('PostFile'); }
 </script>
 <form id="uploads" method="post" enctype="multipart/form-data">
 <input type="file" name="attached" id="postedfile" multiple>
@@ -171,6 +175,3 @@ function submitFile()
 </div>
 </asp:Content>
 
-<asp:Content ContentPlaceHolderID="MASContent" ID="masContent1" runat="server">
-
-</asp:Content>

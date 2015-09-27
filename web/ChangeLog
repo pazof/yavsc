@@ -1,5 +1,19 @@
 2015-09-27  Paul Schneider  <paul@pschneider.fr>
 
+	* App.master: Circles edition needs also this lib, all pages
+	will need it ... 
+
+	* Edit.aspx: Restores the post visibility control
+
+	* Web.config: Fixes the new connection string, the `Encoding`
+	parameter is no more supported.
+
+	* Web.csproj: Nuget packages updating
+
+	* packages.config: Nuget packages updating 
+
+2015-09-27  Paul Schneider  <paul@pschneider.fr>
+
 	* jquery.htmlClean.min.js: * in order to paste from any(?)
 	document
 
