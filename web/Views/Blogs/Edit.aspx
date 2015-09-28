@@ -2,8 +2,6 @@
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="head" ID="HeadContent1" runat="server">
 
-
-
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/rangy-core.js")%>"></script>
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/rangy-selectionsaverestore.js")%>"></script>
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery.htmlClean.min.js")%>"></script>
@@ -47,7 +45,8 @@ jQuery('#vtitle').hallo({
     'halloformat': {},
       'halloreundo': {}
   },
-  toolbar: 'halloToolbarFixed'
+  toolbar: 'halloToolbarFixed',
+  lang: 'fr'
 });
 
 jQuery('#vcontent').hallo({
@@ -55,7 +54,15 @@ jQuery('#vcontent').hallo({
     'halloformat': {},
     'halloheadings': {},
     'hallolists': {},
-    'halloimage': {},
+    'hallo-image-insert-edit': {
+      lang: 'fr'
+    },
+    'halloimage': {
+      searchUrl: apiBaseUrl+'/Blogs/SearchFile/'+$('#Id').val(),
+      uploadUrl: apiBaseUrl+'/Blogs/PostFile/'+$('#Id').val(),
+      suggestions: true,
+      insert_file_dialog_ui_url: '<%= Url.Content("~/Blog/ChooseMedia/?id="+Model.Id) %>'
+    },
     'halloreundo': {},
     'hallocleanhtml': {
             format: false,
@@ -89,10 +96,7 @@ var markdownize = function(content) {
     var html = content.split("\n").map($.trim).filter(function(line) { 
       return line != "";
     }).join("\n");
-    var tmp = document.createElement("DIV");
-    tmp.innerHTML = html;
-    jQuery("style",tmp).remove();
-    return toMarkdown(tmp.innerHTML);
+  return toMarkdown(html);
   };
 
 var converter = new showdown.Converter(),

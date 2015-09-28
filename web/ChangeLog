@@ -1,5 +1,20 @@
 2015-09-28  Paul Schneider  <paul@pschneider.fr>
 
+	* FontAwesome.otf:
+	* font-awesome.css:
+	* fontawesome-webfont.eot:
+	* fontawesome-webfont.svg:
+	* fontawesome-webfont.ttf:
+	* fontawesome-webfont.woff:
+	* font-awesome.min.css: return to version 4.4
+
+	* hallo.js: using my development version 
+
+	* Edit.aspx: * code made obsolete, by using the halloblacklist
+	plugin
+
+2015-09-28  Paul Schneider  <paul@pschneider.fr>
+
 	* App.master: Fixes the missing jquery ui css
 
 2015-09-27  Paul Schneider  <paul@pschneider.fr>
