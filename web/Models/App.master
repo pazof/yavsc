@@ -10,8 +10,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="stylesheet" href="~/App_Themes/style.css" />
-<link rel="icon" type="image/png" href="/favicon.png?v=3" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/font-awesome.css")%>" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/jquery-ui.css")%>" />
+<link rel="icon" type="image/png" href="/favicon.png?v=3" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
 <script type="text/javascript">
