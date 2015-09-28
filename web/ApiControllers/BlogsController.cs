@@ -124,6 +124,11 @@ namespace Yavsc.ApiControllers
 				return Request.CreateResponse(HttpStatusCode.InternalServerError, e);
 			}
 		}
+
+		[Authorize,HttpGet]
+		public async Task<HttpResponseMessage> SearchFile(long postid, string terms) {
+			throw new NotImplementedException ();
+		}
 		/// <summary>
 		/// Import the specified id.
 		/// </summary>
