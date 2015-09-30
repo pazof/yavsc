@@ -246,16 +246,18 @@ namespace Yavsc.Model.RolesAndMembers
 			s = profile.GetPropertyValue ("avatar");
 			avatar = (s is DBNull) ? null : (string)s;
 	
-			s = profile.GetPropertyValue ("Address");
+			var address = profile.GetProfileGroup ("address");
+
+			s = address.GetPropertyValue ("address");
 			Address = (s is DBNull) ? null : (string)s;
 
-			s = profile.GetPropertyValue ("CityAndState");
+			s = address.GetPropertyValue ("cityandstate");
 			CityAndState = (s is DBNull) ? null : (string)s;
 
-			s = profile.GetPropertyValue ("Country");
+			s = address.GetPropertyValue ("country");
 			Country = (s is DBNull) ? null : (string)s;
 
-			s = profile.GetPropertyValue ("ZipCode");
+			s = address.GetPropertyValue ("zipcode");
 			ZipCode = (s is DBNull) ? null : (string)s;
 		
 			s = profile.GetPropertyValue ("WebSite");
@@ -272,25 +274,28 @@ namespace Yavsc.Model.RolesAndMembers
 
 			userName = profile.UserName;
 
-			s = profile.GetPropertyValue ("BankCode");
+			var bank = profile.GetProfileGroup ("bank");
+
+			s = bank.GetPropertyValue ("Code");
 			BankCode = (s is DBNull) ? null : (string)s;
 
-			s = profile.GetPropertyValue ("IBAN");
+			s = bank.GetPropertyValue ("IBAN");
 			IBAN = (s is DBNull) ? null : (string)s;
 
-			s = profile.GetPropertyValue ("BIC");
+			s = bank.GetPropertyValue ("BIC");
 			BIC = (s is DBNull) ? null : (string)s;
 
-			s = profile.GetPropertyValue ("WicketCode");
+			s = bank.GetPropertyValue ("WicketCode");
 			WicketCode = (s is DBNull) ? null : (string)s;
 
-			s = profile.GetPropertyValue ("AccountNumber");
+			s = bank.GetPropertyValue ("AccountNumber");
 			this.AccountNumber = (s is DBNull) ? null : (string)s;
 
-			s = profile.GetPropertyValue ("BankedKey");
+			s = bank.GetPropertyValue ("Key");
 			BankedKey = (s == null) ? 0 : (s is DBNull)? 0 : (int)s;
 
-			s = profile.GetPropertyValue ("gcalid");
+			var google = profile.GetProfileGroup ("google");
+			s = google.GetPropertyValue ("calid");
 			GoogleCalendar = (s is DBNull)? null : (string) s;
 		}
 	}

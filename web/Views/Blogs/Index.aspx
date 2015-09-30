@@ -4,23 +4,23 @@
 
 <div>
 <% foreach (var g in Model.GroupByUser()) { %>
-<h1><a href="<%= Url.Content("~/Blog/"+g.Key) %>" class="actionlink userref">
-<%=g.Key%></a></h1>
+<h2><a href="<%= Url.Content("~/Blog/"+g.Key) %>" class="actionlink userref">
+<%=g.Key%></a></h2>
 <% foreach (var p in g) { %> 
-<div class="blogpost">
-
-
+<div class="postpreview">
 <%= Html.ActionLink(p.Title, "UserPost",
- new { user = g.Key, title = p.Title }, new { @class = "usertitleref actionlink" , style="display:block;"} ) %>
-le  <%=p.Posted.ToString("D") %>
+ new { user = g.Key, title = p.Title }, new { @class = "usertitleref actionlink" } ) %>
+
+  <aside>
+(Posté le  <%=p.Posted.ToString("D") %>)
 
   <% if (Membership.GetUser()!=null)
 	if ((Membership.GetUser().UserName==g.Key)
 	|| (Roles.IsUserInRole ("Admin")))
-	 { %><aside>
+	 { %>
 	 <%= Html.ActionLink("Editer","Edit", new { id = p.Id }, new { @class="actionlink" }) %>
 	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = p.Id }, new { @class="actionlink" } ) %>
-</aside><% } %>
+<% } %> </aside>
 </div> <% } %>
  <% } %>
 </div>

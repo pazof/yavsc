@@ -1,53 +1,99 @@
 
+
 body {
-	background-image: url('/images/Banner.png');
-	background-repeat: no-repeat;
 	background-color: black;
 	color: #D0FFD0;
 	font-family: 'Arial', cursive;
 	padding: 0em;
-	margin-bottom:3em;
 }
 
-textarea { 
-        width:25em;
-        height:5em;
-}
+.iconsmall { max-height: 1.3em; max-width: 1.3em; } 
 
 input, textarea, checkbox { 
     color: #FFFFA0;
 	background: black;
    }
 
-main {
+header {
+	border-radius:10px;
 	margin: .5em;
 	padding: .5em;
-	background-color: rgba(64,64,64,0.6);
-	border-radius:10px;
-	clear: both;
+	display: block;
+	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 0 repeat fixed;
+	min-height: 25em;
 	}
+
+nav {
+	border-radius:10px;
+	margin: .5em;
+	padding: .5em;
+	display: block;
+	background: url("/images/live-concert-388160_1280.s.jpg") 50% 0 repeat fixed ;
+	min-height: 25em;
+}
+
+main {
+	border-radius:10px;
+	margin: .5em;
+	padding: .5em;
+	display: block;
+	background: url("/images/musician-923526_1280.s.jpg") 50% 0 repeat fixed ;
+	min-height: 25em;
+	}
+
+footer {
+	border-radius:10px;
+	margin: .5em;
+	padding: .5em;
+	display: block;
+	background: url("/images/drummer-652345_1280.s.jpg") 50% 0 repeat fixed ;
+	min-height: 25em;
+	clear: both;
+	display: flex;
+	font-size: smaller;
+}
 
 fieldset {
 	background-color: rgba(32,16,16,0.8);
 	border-radius:5px; border: solid 1px #000060;
 } 
 
-video,img {
+video, img {
 	max-width:100%;
 	max-height:75%;
-    position:relative;
+	padding: .5em;
 	}
 
-footer {
-	position:fixed;
-	bottom:0;
-	left:0;
-	right:0;
-	background-color:rgba(16,0,0,0.8);
-	display: flex;
-	z-index:-1;
-	font-size: smaller;
+aside { 
+	display: inline-block;
+	float: right;
+	max-width: 40em;
 }
+
+.postpreview {
+	display: inline-block;
+	max-width: 40em;
+	padding: .5em;
+	margin: .5em;
+	background-color: rgba(32,32,64,0.8);
+	border-radius:10px;
+}
+.postpreview video, .postpreview img {
+	max-width:100%;
+	max-height:5em;
+	}
+.post { 
+	display:block;
+	margin:1em;
+	padding:1em;
+	background-color: rgba(32,32,64,0.8);
+	color: #aaa;
+	border-radius:10px;
+	}
+.hiddenpost { background-color: rgba(16,16,0,0.3); }
+.fullwidth { width: 100%;  }
+
+textarea.fullwidth { min-height:10em; }
 
 .thanks  { 
 	max-width: 10%;
@@ -58,7 +104,7 @@ footer {
 }
 
 
-.panel,.bshpanel,aside {
+.panel,.bshpanel, aside {
 	background-color: rgba(32,16,16,0.8);
 		border-radius:5px; 
 		margin:.5em;
@@ -66,23 +112,10 @@ footer {
 }
 
 
-#appmenu {
-	line-height: 1em;
-	margin: .5em;
-	padding: .5em;
-	border-radius:10px;
-	color: #ff8;
-	background-color: rgba(32,16,16,.6);
-	float: right;
-	}
-
-#appmenu img { max-height:2em; max-width:2em; }
-
-.menuitem {
-}
 .hint {
 	display: inline;
 	font-style: italic;
+	font-size: smaller;
 }
 .hint::before { 
 content: "(";
@@ -91,16 +124,10 @@ content: "(";
 content: ")";
 }
 
-header {
-	border-radius:10px;
-	background-color:rgba(16,16,0,0.8);
-	display: block;
-	float:left;
-	margin: .5em;
-	padding: .5em;
-	}
 
-h1 img { vertical-align: text-top; }
+
+h1 img { vertical-align: text-top; 
+	}
 
 a {
 	text-decoration: none;
@@ -136,32 +163,6 @@ label {
 	background-color: rgba(64,0,0,0.3);
 }
 
-.editblog {
-	width: 95%;
-	height: 95%;
-}
-
-.metablog {
-	font-style: italic;
-	font-size: small;
-	text-align: right;
-	display: inline;
-}
-
-.blogtitle {
-	display:inline;
-}
-.blogpost {
-	display:block;
-	margin:1em;
-	padding:1em;
-	background-color: #090609;
-	color: #aaa;
-	border-radius:5px;
-}
-.contenu {
-padding-left: 20px;
-}
 
 .hidden { display:none; }
 
@@ -223,6 +224,13 @@ a.actionlink img { top:4px; }
 	}
 
 
+.menuitem {
+	background-color: rgba(0,0,40,.8); 
+	border-radius:5px;
+	margin:.5em;
+	padding:.5em;
+}
+
 .onhover {
 	display:none; 
 	position: absolute;
@@ -243,7 +251,7 @@ a.actionlink img { top:4px; }
 
 @media print {
 		body {background-color:white;color:black;}
-		header,footer,.postcomment,.actionlink,.metablog,#appmenu
+		header,footer,.postcomment,.actionlink,nav
 		{ display:none;} 
 	}
 
@@ -257,13 +265,12 @@ a.actionlink img { top:4px; }
 	}
 
 @media all and (max-width: 640px) {
-#appmenu {display:inline;}
+
+
 .menuitem {
-	display: inline; 
+	display: inline-block; 
 }
-.menuitem:not(:last-child):after {
-    content:' |';
-}
+
 .bshpanel { cursor:zoom-in; }
   footer {
 		clear:both;
@@ -279,6 +286,4 @@ a.actionlink img { top:4px; }
   .c2 { display:none; }
   .c2-alt { display:initial; }
 }
-
-
 

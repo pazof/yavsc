@@ -98,54 +98,55 @@ WITH (
 CREATE TABLE profiledata
 (
   uniqueid integer,
-  zipcode character varying(10),
-  cityandstate character varying(255),
+  "address.zipcode" character varying(10),
+  "address.cityandstate" character varying(255),
   blogtitle character varying(255), -- Blog Title
-  address character varying(2048), -- Postal address
-  country character varying(100),
+  "address.address" character varying(2048), -- Postal address
+  "address.country" character varying(100),
   website character varying(256),
   blogvisible boolean,
-  hasavatar boolean, -- True when user has specified an image for avatar
   name character varying(1024),
   phone character varying(15),
   mobile character varying(15),
-  accountnumber character varying(15), -- Numero de compte
-  bankedkey integer, -- clé RIB
-  bankcode character varying(5), -- Code banque
-  wicketcode character varying(5),
-  iban character varying(33),
-  bic character varying(15),
-  gtoken character varying(512),
-  grefreshtoken character varying(512), -- Google refresh token
-  gtokentype character varying(256), -- Google access token type
-  gcalid character varying(255),
-  gtokenexpir timestamp with time zone, -- Google access token expiration date
+  "bank.accountnumber" character varying(15), -- Numero de compte
+  "bank.key" integer, -- clé RIB
+  "bank.code" character varying(5), -- Code banque
+  "bank.wicketcode" character varying(5),
+  "bank.iban" character varying(33),
+  "bank.bic" character varying(15),
+  "google.token" character varying(512), -- Google authentification token
+  "google.refreshtoken" character varying(512), -- Google refresh token
+  "google.tokentype" character varying(256), -- Google access token type
+  "google.calid" character varying(255), -- Google calendar identifier
+  "google.tokenexpir" timestamp with time zone, -- Google access token expiration date
   avatar character varying(512), -- url for an avatar
-  gcalapi boolean NOT NULL DEFAULT false, -- true when user authorized to use its Google calendar
-   gregid character varying(1024), -- Google Cloud Message registration identifier
-    CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
+  "google.calapi" boolean NOT NULL DEFAULT false,
+  "google.regid" character varying(1024), -- Google Cloud Message registration identifier
+  CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
 )
 WITH (
   OIDS=FALSE
 );
-
+ALTER TABLE profiledata
+  OWNER TO yavscdev;
+COMMENT ON COLUMN profiledata."address.address" IS 'Postal address';
 COMMENT ON COLUMN profiledata.blogtitle IS 'Blog Title';
-COMMENT ON COLUMN profiledata.address IS 'Postal address';
-COMMENT ON COLUMN profiledata.hasavatar IS 'True when user has specified an image for avatar';
-COMMENT ON COLUMN profiledata.accountnumber IS 'Numero de compte';
-COMMENT ON COLUMN profiledata.bankedkey IS 'clé RIB';
-COMMENT ON COLUMN profiledata.bankcode IS 'Code banque';
-COMMENT ON COLUMN profiledata.gtoken IS 'Google authentification token';
-COMMENT ON COLUMN profiledata.gcalid IS 'Google calendar identifier';
-COMMENT ON COLUMN profiledata.gtokentype IS 'Google access token type';
-COMMENT ON COLUMN profiledata.grefreshtoken IS 'Google refresh token';
-COMMENT ON COLUMN profiledata.gtokenexpir IS 'Google access token expiration date';
 COMMENT ON COLUMN profiledata.avatar IS 'url for an avatar';
-COMMENT ON COLUMN profiledata.gregid IS 'Google Cloud Message registration identifier';
+COMMENT ON COLUMN profiledata.hasavatar IS 'True when user has specified an image for avatar';
+COMMENT ON COLUMN profiledata."bank.accountnumber" IS 'Numero de compte';
+COMMENT ON COLUMN profiledata."bank.key" IS 'clé RIB';
+COMMENT ON COLUMN profiledata."bank.code" IS 'Code banque';
+COMMENT ON COLUMN profiledata."google.token" IS 'Google authentification token';
+COMMENT ON COLUMN profiledata."google.refreshtoken" IS 'Google refresh token';
+COMMENT ON COLUMN profiledata."google.tokentype" IS 'Google access token type';
+COMMENT ON COLUMN profiledata."google.calid" IS 'Google calendar identifier';
+COMMENT ON COLUMN profiledata."google.tokenexpir" IS 'Google access token expiration date';
+COMMENT ON COLUMN profiledata."google.regid" IS 'Google Cloud Message registration identifier';
 
- -- Index: fki_fkprofiles2
+
+-- Index: fki_fkprofiles2
 
 -- DROP INDEX fki_fkprofiles2;
 
@@ -153,6 +154,8 @@ CREATE INDEX fki_fkprofiles2
   ON profiledata
   USING btree
   (uniqueid);
+
+
 
   -- Table: profiles
 

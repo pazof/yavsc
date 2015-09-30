@@ -291,7 +291,7 @@ namespace Yavsc.Controllers
 
 			string logdu = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = id;
-			bool editsMyName = (id != model.Name);
+			bool editsMyName = (string.Compare(id,model.Name)==0);
 			if (!editsMyName)
 			if (!Roles.IsUserInRole ("Admin"))
 			if (!Roles.IsUserInRole ("FrontOffice"))

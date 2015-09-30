@@ -9,36 +9,53 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="~/App_Themes/style.css" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/style.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/font-awesome.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/jquery-ui.css")%>" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
 <script src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
-<script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.min.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.js")%>"></script>
 <script type="text/javascript">
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
+$(document).ready(function(){
+	var $window = $(window); 
+	$('[data-type="background"]').each(function(){
+		var $bgobj = $(this); // assigning the object
+		$(window).scroll(function() {
+			var yPos = -($window.scrollTop() / $bgobj.data('speed'));
+			// Put together our final background position
+			var coords = '50% '+ yPos + 'px';
+			// Move the background
+			$bgobj.css({ backgroundPosition: coords });
+		});
+	});
+});
 </script> 
-<script src="/Scripts/yavsc.js">
-</script>
+<script src="/Scripts/yavsc.js"></script>
 <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>
 <link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'/>
 </head>
 <body>
-<header>
+<header data-type="background" data-speed="10">
+
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
+
 <h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>"> <%=ViewState["orgtitle"]%> </a>
 <span> - 
-<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
+<a href="<%= Url.Content("~/") %>"><%= YavscHelpers.SiteName %></a>
  </span></h1>
 
  </asp:ContentPlaceHolder>
+
+
  <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
  <div id="error"><%= (ViewData["Error"]!=null)? Html.Encode(ViewData["Error"]) : "" %></div>
  <div id="message"><%= Html.Encode(ViewData["Message"]) %></div>
+
 </header>
 
-<div id="appmenu" >
+<nav data-type="background" data-speed="10">
 <% if (Membership.GetUser()==null) { %>
 <div class="menuitem">
 	<%= Html.ActionLink("Authentification", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery },null) %>
@@ -46,7 +63,7 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 	</div>
 <% } else { %><div class="menuitem">
 <a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>">
-<img src="<%=Html.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" width="25%" alt="vos billets" /></a>
+<img src="<%=Html.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="vos billets" class="iconsmall" /></a>
 <div class="hint">Vos billets</div>
 </div>
 
@@ -62,28 +79,32 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, null) %>
 <% } %>
 </div>
-</div>
-<main>
+</nav>
+<main data-type="background" data-speed="10">
+  <div>
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
+</div>
 </main>
 <asp:ContentPlaceHolder ID="MASContent" runat="server">
 </asp:ContentPlaceHolder>
 
-<footer>
-<script src="https://apis.google.com/js/platform.js" defer>
-  {lang: 'fr'}
-</script>
-   <%= Html.ActionLink("Contact","Contact","Home",null, new { @class="thanks" }) %>
+<footer data-type="background" data-speed="10">
+<div >
+   <%= Html.ActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
    <% foreach ( Link link in Html.Thanks()) { %>
      <a class="thanks" href="<%=link.Url%>"><% if (link.Image !=null) { 
      %><img src="<%= link.Image %>" alt="<%= link.Text %>"/></a>
      <%  } else { %>
      <a class="thanks" href="<%=link.Url%>"><%= link.Text %></a>
      <% }} %>
+</div>
+<% #if !DEBUG %>
+<script src="https://apis.google.com/js/platform.js" defer>
+  {lang: 'fr'}
+</script>
 <div class="g-plusone" data-annotation="inline" data-width="230"></div>
+<% #endif %>
    </footer>
-
-
 </body>
 </html>

@@ -18,10 +18,14 @@
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <%  foreach (BlogEntry e in this.Model) { %>
-	<div <% if (!e.Visible) { %> style="background-color:#022;" <% } %>>
-
-<h2 class="blogtitle" ><%= Html.ActionLink(e.Title,"UserPost", new { user=e.Author, title=e.Title, id = e.Id }, new { @class = "usertitleref actionlink" , style="display:block;"}) %></h2>
-<div class="metablog">(<%= e.Posted.ToString("yyyy/MM/dd") %>
+<div class="postpreview<% if (!e.Visible) { %> hiddenpost<% } %>" >
+<h2><%= Html.ActionLink(e.Title,"UserPost", new { user=e.Author, title=e.Title, id = e.Id }, new { @class = "usertitleref actionlink" }) %></h2>
+<% bool truncated = false; %>
+<%= Html.MarkdownToHtmlIntro(out truncated, e.Content,"/bfiles/"+e.Id+"/") %>
+<% if (truncated) { %>
+  <i><%= Html.ActionLink( "lire la suite" ,"UserPost", new { user=e.Author, title=e.Title, id = e.Id }, new { @class = "usertitleref actionlink" }) %></i>
+  <% } %>
+<aside>(<%= e.Posted.ToString("yyyy/MM/dd") %>
 	 - <%= e.Modified.ToString("yyyy/MM/dd") %> <%= e.Visible? "":", Invisible!" %>)
 	 <% if (Membership.GetUser()!=null)
 	if (Membership.GetUser().UserName==e.Author)
@@ -29,8 +33,7 @@
 	 <%= Html.ActionLink("Editer","Edit", new { id = e.Id }, new { @class="actionlink" }) %>
 	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = e.Id }, new { @class="actionlink" } ) %>
 	 <% } %>
-</div>
-
+</aside>
 </div>
 <% } %>
 	

@@ -43,6 +43,30 @@ namespace Yavsc.Helpers
 			// Wrap the html in an MvcHtmlString otherwise it'll be HtmlEncoded and displayed to the user as HTML :(
 			return new MvcHtmlString(html);
 		}
+
+		public static IHtmlString MarkdownToHtmlIntro(this HtmlHelper helper, out bool truncated, string text, string urlBaseLocation="")
+		{
+			int maxLen = 250;
+			// Transform the supplied text (Markdown) into HTML.
+			var markdownTransformer = new Markdown();
+			markdownTransformer.ExtraMode = true;
+			markdownTransformer.UrlBaseLocation = urlBaseLocation;
+			if (text.Length < maxLen) {
+				truncated = false;
+				return new MvcHtmlString(markdownTransformer.Transform(text));
+			}
+			string intro = text.Remove (maxLen);
+			truncated = true;
+			int inl = intro.LastIndexOf ("\n");
+			if (inl > 20)
+				intro = intro.Remove (inl);
+			intro += " ...";
+
+			string html = markdownTransformer.Transform(intro);
+			// Wrap the html in an MvcHtmlString otherwise it'll be HtmlEncoded and displayed to the user as HTML :(
+			return new MvcHtmlString(html);
+		}
+
 		/// <summary>
 		/// Transforms a string of Markdown into HTML.
 		/// </summary>

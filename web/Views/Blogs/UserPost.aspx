@@ -17,25 +17,27 @@
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <% foreach (var be in Model) { %>
-<div class="blogpost">
+<div class="post">
 <%= Html.Markdown(be.Content,"/bfiles/"+be.Id+"/") %>
-</div>
+
+ <% string username = Membership.GetUser().UserName; %>
+		<% foreach (var c in (Comment[]) BlogManager.GetComments(be.Id)) {  %> 
+<div class="comment" style="min-height:32px;"> <img style="clear:left;float:left;max-width:32px;max-height:32px;margin:.3em;" src="<%= Url.Content("~/Account/Avatar/"+c.From) %>" alt="<%=c.From%>"/>
+<%= Html.Markdown(c.CommentText) %>
+	<% if ( username == Model.Author || c.From == username ) { %>
+	<%= Html.ActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } , new { @class="actionlink" })%>
+	<% } %>
+</div><% } %>
+
+
 <% if (Membership.GetUser()!=null) { 
 	if (Membership.GetUser().UserName==be.Author)
 	 { %> <div class="metapost">
 	 <%= Html.ActionLink("Editer","Edit", new { id = be.Id }, new { @class="actionlink" }) %>
 	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = be.Id }, new { @class="actionlink" } ) %>
 	</div> <% } %>
- <% 
-		string username = Membership.GetUser().UserName; %>
-		<% foreach (var c in (Comment[]) BlogManager.GetComments(be.Id)) {  %> 
-<div class="comment" style="min-height:32px;"> <img style="clear:left;float:left;max-width:32px;max-height:32px;margin:.3em;" src="/Blogs/Avatar/<%=c.From%>" alt="<%=c.From%>"/>
-<%= Html.Markdown(c.CommentText) %>
-	<% if ( username == Model.Author || c.From == username ) { %>
-	<%= Html.ActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } , new { @class="actionlink" })%>
-	<% } %>
-</div><% } %>
- <div class="postcomment">
+
+ <aside>
 	 <% using (Html.BeginForm("Comment","Blogs")) { %>
 	 <%=Html.Hidden("Author")%>
 	 <%=Html.Hidden("Title")%>
@@ -43,6 +45,6 @@
 	 <%=Html.Hidden("PostId",be.Id)%>
 	 <input type="submit" value="Poster un commentaire"/>
 	 <% } %>
-	  </div>
-<% } %><% } %>
+	  </aside>
+<% } %></div><% } %>
 </asp:Content>

@@ -11,17 +11,18 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<h1><div id="vtitle" for="Title" class="post title editable"><%=Html.Markdown(Model.Title)%></div></h1>
-<div id="vcontent" for="Content" class="post content editable">
-<%=Html.Markdown(Model.Content,"/bfiles/"+Model.Id+"/")%>
-</div>
+<div>
 <% using(Html.BeginForm("ValidateEdit","Blogs")) { %>
+<fieldset>
+<legend>Billet</legend>
 <%= Html.LabelFor(model => model.Title) %> <%= Html.ValidationMessage("Title") %> : <br>
-<input name="Title" id="Title">
+<input name="Title" id="Title" class="fullwidth">
 <br>
 <%= Html.LabelFor(model => model.Content) %> 
 <%= Html.ValidationMessage("Content") %>: <br>
-<textarea id="Content" name="Content"><%=Html.Markdown(Model.Content)%></textarea><br>
+<style> #Content { } 
+</style>
+<textarea id="Content" name="Content" class="fullwidth" ><%=Html.Markdown(Model.Content)%></textarea><br>
 
 <%= Html.CheckBox( "Visible" ) %>
 <%= Html.LabelFor(model => model.Visible) %>
@@ -37,7 +38,16 @@
 <%=Html.Hidden("Author")%>
 <%=Html.Hidden("Id")%>
 <input type="submit">
+</fieldset>
 <% } %>
+</div>
+<div class="post">
+<h1><div id="vtitle" for="Title" class="post title editable"><%=Html.Markdown(Model.Title)%></div></h1>
+<div id="vcontent" for="Content" class="post content editable">
+<%=Html.Markdown(Model.Content,"/bfiles/"+Model.Id+"/")%>
+</div>
+</div>
+
 
 <script>
 jQuery('#vtitle').hallo({
@@ -166,16 +176,18 @@ function submitFile()
 { submitFilesTo('PostFile'); }
 </script>
 <form id="uploads" method="post" enctype="multipart/form-data">
+<fieldset>
+<legend>Fichiers attachés</legend>
 <input type="file" name="attached" id="postedfile" multiple>
 <input type="button" value="attacher les ficher" onclick="submitFile()">
 <input type="button" value="importer les documents" onclick="submitImport()">
+</fieldset>
 </form>
-</asp:Content>
 
-<asp:Content ContentPlaceHolderID="MASContent" ID="MASContentContent" runat="server">
-<div class="metablog">
-	(Id:<a href="/Blogs/UserPost/<%= Model.Id %>">
-<i><%= Model.Id %></i></a>, <%= Model.Posted.ToString("yyyy/MM/dd") %> - <%= Model.Modified.ToString("yyyy/MM/dd") %> <%= Model.Visible? "":", Invisible!" %>) <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title }, new { @class="actionlink" } ) %>
-</div>
-</asp:Content>
+<aside>
+	Id:<%= Html.ActionLink( Model.Id.ToString() , "UserPost", new { user= Model.Author, title=Model.Title, id = Model.Id }, new { @class = "usertitleref actionlink" }) %>
+, Posted: <%= Model.Posted.ToString("yyyy/MM/dd") %> - Modified: <%= Model.Modified.ToString("yyyy/MM/dd") %> 
+Visible: <%= Model.Visible? "oui":"non" %> <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title }, new { @class="actionlink" } ) %>
+</aside>
 
+</asp:Content>

@@ -1,3 +1,69 @@
+2015-09-30  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css: Makes a better style
+
+	* Banner.png: Made obsolete
+
+	* ChangeLog: Must not exist in the source tree
+
+	* Web.config:
+	* instdbws.sql: Groups profile properties
+
+	* App.master: A better Html structure
+
+	* AccountController.cs: Fixes the Profile edition
+
+	* MarkdownHelper.cs: Adds an extraction of an introduction
+	from a Markdown text
+
+	* Edit.aspx:
+	* Index.aspx:
+	* UserPost.aspx: a better html structure
+
+	* UserPosts.aspx: * a better html structure
+	* post previews
+
+	* Web.csproj: Adds and removes images
+
+2015-09-30  Paul Schneider  <paul@pschneider.fr>
+
+	* drummer-652345_1280.jpg:
+	* musician-923526_1280.jpg:
+	* an-pierle-876094_1280.jpg:
+	* drummer-652345_1280.s.jpg:
+	* musician-923526_1280.s.jpg:
+	* helix-nebula-1400x1400.jpg:
+	* live-concert-388160_1280.jpg:
+	* helix-nebula-1400x1400.s.jpg:
+	* live-concert-388160_1280.s.jpg: some image
+
+	* style.css: makes a new style
+
+	* AccountController.cs: fixes the profile edition
+
+	* MarkdownHelper.cs: implements an helper to build a preview
+	from some Markdown text
+
+	* App.master: * use the non-min jquery-ui.js
+	* use a simpler code for parallax
+	* nicer code
+	* small icon in the link to blog posts
+	* do not show G+1 in Debug mode
+
+	* Web.config:
+	* Edit.aspx:
+	* Index.aspx:
+	* UserPost.aspx: a better html structure
+
+	* UserPosts.aspx: * a better html structure
+	* displays a post preview
+
+	* Web.csproj: image additions and deletion
+
+	* instdbws.sql: groups some profile attributes
+
+	* Banner.png: obsolete
+
 2015-09-28  Paul Schneider  <paul@pschneider.fr>
 
 	* App.master: Use local copies for jquery & jquery-ui
