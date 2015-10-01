@@ -1,5 +1,29 @@
 2015-10-01  Paul Schneider  <paul@pschneider.fr>
 
+	* Web.config:
+	* YavscHelpers.cs:
+	* GoogleController.cs: refactoring
+
+	* OAuth2.cs: refactoring
+
+
+	* AccountController.cs: * refactoring profile properties
+	* fixes profile edition auth
+
+	* instdbws.sql: remove some ownership attribution
+
+	* Web.csproj: totem prod custo
+
+	* App.master: Totem prod custo
+	nice and simple parralax effect,
+	quiet working on my android browser ...
+
+	* Profile.aspx: a smaller avatar
+
+	* style.css: Totem prod custo
+
+2015-10-01  Paul Schneider  <paul@pschneider.fr>
+
 	* UserPost.aspx: Fixes the anonymous access !
 
 	* drummer-652345_1280.jpg:

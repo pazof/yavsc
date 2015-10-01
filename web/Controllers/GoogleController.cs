@@ -118,7 +118,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="gat">Gat.</param>
 		private void SaveToken (AuthToken gat)
-		{		
+		{	
 			HttpContext.Profile.SetPropertyValue ("gtoken", gat.access_token);
 			if (gat.refresh_token != null)
 				HttpContext.Profile.SetPropertyValue ("grefreshtoken", gat.refresh_token);
@@ -212,7 +212,7 @@ namespace Yavsc.Controllers
 					HttpContext.Profile.SetPropertyValue ("Name", me.displayName);
 					// TODO use image
 					if (me.image != null) {
-						HttpContext.Profile.SetPropertyValue ("avatar", me.image.url);
+						HttpContext.Profile.SetPropertyValue ("Avatar", me.image.url);
 					}
 					if (me.placesLived != null) {
 						People.Place pplace = me.placesLived.Where (x => x.primary).First ();

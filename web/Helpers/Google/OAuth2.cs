@@ -243,7 +243,7 @@ namespace Yavsc.Helpers.Google
 				}
 				pr.SetPropertyValue ("gtoken", token);
 				pr.Save ();
-				// ASSERT gat.token_type == pr.GetPropertyValue("token_type")
+				// ASSERT gat.token_type == pr.GetPropertyValue("gtokentype")
 			}
 			return token_type + " " + token;
 		}

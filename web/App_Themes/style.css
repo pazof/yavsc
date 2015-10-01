@@ -17,10 +17,12 @@ input, textarea, checkbox {
 header {
 	border-radius:10px;
 	margin: .5em;
-	padding: .5em;
+	padding: 3em;
+	padding-top: 5em;
 	display: block;
-	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 0 repeat fixed;
-	min-height: 25em;
+	background: url("/images/totemprod.png") 50% 0 no-repeat fixed;
+	min-height: 10em;
+	text-align: center;
 	}
 
 nav {
@@ -28,8 +30,8 @@ nav {
 	margin: .5em;
 	padding: .5em;
 	display: block;
-	background: url("/images/live-concert-388160_1280.s.jpg") 50% 0 repeat fixed ;
-	min-height: 25em;
+	background: url("/images/live-concert-388160_1280.s.jpg") 50% 10em repeat fixed ;
+	min-height: 10em;
 }
 
 main {
@@ -37,21 +39,25 @@ main {
 	margin: .5em;
 	padding: .5em;
 	display: block;
-	background: url("/images/musician-923526_1280.s.jpg") 50% 0 repeat fixed ;
-	min-height: 25em;
+	background: url("/images/musician-923526_1280.s.jpg") 50% 20em repeat fixed ;
+	min-height: 10em;
 	}
 
 footer {
 	border-radius:10px;
-	margin: .5em;
-	padding: .5em;
+	margin: 1em;
+	padding: 1em;
 	display: block;
-	background: url("/images/drummer-652345_1280.s.jpg") 50% 0 repeat fixed ;
-	min-height: 25em;
+	background: url("/images/drummer-652345_1280.s.jpg") 50% 30em repeat fixed ;
+	min-height: 10em;
 	clear: both;
 	display: flex;
 	font-size: smaller;
+	justify-content: center;
 }
+
+#copyr { text-align: center; }
+footer p { background-color: rgba(20,20,20,.5); } 
 
 fieldset {
 	background-color: rgba(32,16,16,0.8);
@@ -248,7 +254,6 @@ a.actionlink img { top:4px; }
 
 .c2 { font-size: small; font-style: italic; }
 .c3 { font-size: x-small; font-style: italic; }
-
 @media print {
 		body {background-color:white;color:black;}
 		header,footer,.postcomment,.actionlink,nav

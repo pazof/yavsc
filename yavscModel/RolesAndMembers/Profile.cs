@@ -243,21 +243,20 @@ namespace Yavsc.Model.RolesAndMembers
 			object s = profile.GetPropertyValue ("BlogTitle");
 			BlogTitle = (s is DBNull) ? null : (string)s;
 
-			s = profile.GetPropertyValue ("avatar");
+			s = profile.GetPropertyValue ("Avatar");
 			avatar = (s is DBNull) ? null : (string)s;
 	
-			var address = profile.GetProfileGroup ("address");
 
-			s = address.GetPropertyValue ("address");
+			s = profile.GetPropertyValue ("Address");
 			Address = (s is DBNull) ? null : (string)s;
 
-			s = address.GetPropertyValue ("cityandstate");
+			s = profile.GetPropertyValue ("CityAndState");
 			CityAndState = (s is DBNull) ? null : (string)s;
 
-			s = address.GetPropertyValue ("country");
+			s = profile.GetPropertyValue ("Country");
 			Country = (s is DBNull) ? null : (string)s;
 
-			s = address.GetPropertyValue ("zipcode");
+			s = profile.GetPropertyValue ("ZipCode");
 			ZipCode = (s is DBNull) ? null : (string)s;
 		
 			s = profile.GetPropertyValue ("WebSite");
@@ -274,28 +273,26 @@ namespace Yavsc.Model.RolesAndMembers
 
 			userName = profile.UserName;
 
-			var bank = profile.GetProfileGroup ("bank");
 
-			s = bank.GetPropertyValue ("Code");
+			s = profile.GetPropertyValue ("BankCode");
 			BankCode = (s is DBNull) ? null : (string)s;
 
-			s = bank.GetPropertyValue ("IBAN");
+			s = profile.GetPropertyValue ("IBAN");
 			IBAN = (s is DBNull) ? null : (string)s;
 
-			s = bank.GetPropertyValue ("BIC");
+			s = profile.GetPropertyValue ("BIC");
 			BIC = (s is DBNull) ? null : (string)s;
 
-			s = bank.GetPropertyValue ("WicketCode");
+			s = profile.GetPropertyValue ("WicketCode");
 			WicketCode = (s is DBNull) ? null : (string)s;
 
-			s = bank.GetPropertyValue ("AccountNumber");
+			s = profile.GetPropertyValue ("AccountNumber");
 			this.AccountNumber = (s is DBNull) ? null : (string)s;
 
-			s = bank.GetPropertyValue ("Key");
+			s = profile.GetPropertyValue ("BankedKey");
 			BankedKey = (s == null) ? 0 : (s is DBNull)? 0 : (int)s;
 
-			var google = profile.GetProfileGroup ("google");
-			s = google.GetPropertyValue ("calid");
+			s = profile.GetPropertyValue ("gcalid");
 			GoogleCalendar = (s is DBNull)? null : (string) s;
 		}
 	}

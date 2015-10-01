@@ -377,7 +377,6 @@
     <Content Include="Scripts\rangy-selectionsaverestore.js" />
     <Content Include="Scripts\jquery.htmlClean.min.js" />
     <Content Include="Views\Blogs\ChooseMedia.aspx" />
-    <Content Include="Scripts\parallax.js" />
     <Content Include="images\helix-nebula-1400x1400.jpg" />
     <Content Include="images\an-pierle-876094_1280.jpg" />
     <Content Include="images\drummer-652345_1280.jpg" />
@@ -387,6 +386,10 @@
     <Content Include="images\helix-nebula-1400x1400.s.jpg" />
     <Content Include="images\live-concert-388160_1280.s.jpg" />
     <Content Include="images\musician-923526_1280.s.jpg" />
+    <Content Include="images\facebook.png" />
+    <Content Include="images\twiter.png" />
+    <Content Include="images\concert.clear.jpg" />
+    <Content Include="images\totemprod.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

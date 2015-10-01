@@ -129,12 +129,9 @@ CREATE TABLE profiledata
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE profiledata
-  OWNER TO yavscdev;
 COMMENT ON COLUMN profiledata."address.address" IS 'Postal address';
 COMMENT ON COLUMN profiledata.blogtitle IS 'Blog Title';
 COMMENT ON COLUMN profiledata.avatar IS 'url for an avatar';
-COMMENT ON COLUMN profiledata.hasavatar IS 'True when user has specified an image for avatar';
 COMMENT ON COLUMN profiledata."bank.accountnumber" IS 'Numero de compte';
 COMMENT ON COLUMN profiledata."bank.key" IS 'clé RIB';
 COMMENT ON COLUMN profiledata."bank.code" IS 'Code banque';
@@ -183,23 +180,20 @@ WITH (
   OIDS=FALSE
 );
 
-  -- Table: blfiles
+
 CREATE TABLE blfiles
 (
   _id bigserial NOT NULL, -- Identifier
   name character varying(2048), -- File Name, relative to the user home directory, must not begin with a slash.
-  blid bigint, -- Blog entry identifier (foreign key)
-  CONSTRAINT blfiles_pkey PRIMARY KEY (_id),
-  CONSTRAINT blfiles_blid_fkey FOREIGN KEY (blid)
-      REFERENCES blog (_id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE
+  alt_text character varying(512),
+  CONSTRAINT bltags_pkey PRIMARY KEY (_id)
 )
 WITH (
   OIDS=FALSE
 );
 COMMENT ON COLUMN blfiles._id IS 'Identifier';
 COMMENT ON COLUMN blfiles.name IS 'File Name, relative to the user home directory, must not begin with a slash.';
-COMMENT ON COLUMN blfiles.blid IS 'Blog entry identifier (foreign key)';
+
 
   -- Table: commandes
 
@@ -259,7 +253,7 @@ CREATE TABLE comment
   CONSTRAINT comment_pkey PRIMARY KEY (_id),
   CONSTRAINT fkey_blog FOREIGN KEY (postid)
       REFERENCES blog (_id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE ,
+      ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT fkey_users FOREIGN KEY (username, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
@@ -670,8 +664,7 @@ CREATE TABLE circle
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE circle
-  OWNER TO yavscdev;
+
 COMMENT ON COLUMN circle._id IS 'Circle identifier';
 COMMENT ON COLUMN circle.owner IS 'creator of this circle';
 COMMENT ON COLUMN circle.applicationname IS 'Application name';
