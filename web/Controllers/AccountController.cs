@@ -38,7 +38,7 @@ namespace Yavsc.Controllers
 		public ActionResult Avatar (string user)
 		{
 			ProfileBase pr = ProfileBase.Create (user);
-			string avpath = (string ) pr.GetPropertyValue("avatar") ;
+			string avpath = (string ) pr.GetPropertyValue("Avatar") ;
 			if (avpath == null) {
 				FileInfo fia = new FileInfo (Server.MapPath (defaultAvatar));
 				return File (fia.OpenRead (), defaultAvatarMimetype);
@@ -291,7 +291,7 @@ namespace Yavsc.Controllers
 
 			string logdu = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = id;
-			bool editsMyName = (string.Compare(id,model.Name)==0);
+			bool editsMyName = (string.Compare(id,logdu)==0);
 			if (!editsMyName)
 			if (!Roles.IsUserInRole ("Admin"))
 			if (!Roles.IsUserInRole ("FrontOffice"))
@@ -312,7 +312,7 @@ namespace Yavsc.Controllers
 							AvatarFile.ContentType, "image/png"));
 			}
 			/* Sync the property in the Profile model to display :
-		 *  string cAvat = HttpContext.Profile.GetPropertyValue ("avatar") as string;
+		 *  string cAvat = HttpContext.Profile.GetPropertyValue ("Avatar") as string;
 			if (cAvat != null) if (model.avatar == null) model.avatar = cAvat;
 			*/
 			if (ModelState.IsValid) {
@@ -321,9 +321,9 @@ namespace Yavsc.Controllers
 				prf.SetPropertyValue ("BlogVisible", model.BlogVisible);
 				prf.SetPropertyValue ("BlogTitle", model.BlogTitle);
 				if (AvatarFile != null) { 
-					prf.SetPropertyValue ("avatar", model.avatar);
+					prf.SetPropertyValue ("Avatar", model.avatar);
 				} else {
-					model.avatar = (string) prf.GetPropertyValue ("avatar");
+					model.avatar = (string) prf.GetPropertyValue ("Avatar");
 				}
 				prf.SetPropertyValue ("Address", model.Address);
 				prf.SetPropertyValue ("CityAndState", model.CityAndState);
@@ -346,7 +346,7 @@ namespace Yavsc.Controllers
 					UserManager.ChangeName (id, model.Name);
 					FormsAuthentication.SetAuthCookie (model.Name, model.RememberMe);
 				}
-				ViewData ["Message"] = "Profile enregistré"+((editsMyName)?", nom public inclus.":"");
+				ViewData ["Message"] = "Profile enregistré"+((editsMyName)?", nom public inclu.":"");
 			}
 			return View (model);
 		}

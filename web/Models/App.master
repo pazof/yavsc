@@ -19,12 +19,50 @@
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 $(document).ready(function(){
 	var $window = $(window); 
+
 	$('[data-type="background"]').each(function(){
 		var $bgobj = $(this); // assigning the object
+		// get the initial background position, assumes a "X% Yem" ?
+		var orgpos = $bgobj.css('backgroundPosition');
+		var bgpos = orgpos.split(" ");
+
+		var bgposx = bgpos[0];
+		var bgposy = bgpos[1];
+		if (/%$/.test(bgposx)){ 
+			bgposx = bgposx.substr(0,bgposx.length-1);
+			$bgobj.attr('orgbgpxu','% ');
+		}
+		else if (/em$/.test(bgposx)){
+			bgposx = bgposx.substr(0,bgposx.length-2);
+			$bgobj.attr('orgbgpxu','em ');
+		}
+		else if (/px$/.test(bgposx)){
+			bgposx = bgposx.substr(0,bgposx.length-2);
+			$bgobj.attr('orgbgpxu','px ');
+		}
+		else { $bgobj.attr('orgbgpxu','px '); } 
+
+		if (/%$/.test(bgposy)){ 
+			bgposy = bgposy.substr(0,bgposy.length-1);
+			$bgobj.attr('orgbgpyu','% ');
+		}
+		else if (/em$/.test(bgposy)){
+			bgposy = bgposy.substr(0,bgposy.length-2);
+			$bgobj.attr('orgbgpyu','em ');
+		}
+		else if (/px$/.test(bgposy)){
+			bgposy = bgposy.substr(0,bgposy.length-2);
+			$bgobj.attr('orgbgpyu','px ');
+		}
+		else { $bgobj.attr('orgbgpyu','px '); } 
+		$bgobj.attr('orgbgpx',parseInt(bgposx));
+		$bgobj.attr('orgbgpy',parseInt(bgposy));
+
 		$(window).scroll(function() {
-			var yPos = -($window.scrollTop() / $bgobj.data('speed'));
+			var xPos = $bgobj.attr('orgbgpx') - ($window.scrollLeft() / $bgobj.data('speed'));
+			var yPos = $bgobj.attr('orgbgpy') - ($window.scrollTop() / $bgobj.data('speed'));
 			// Put together our final background position
-			var coords = '50% '+ yPos + 'px';
+			var coords = '' + xPos + $bgobj.attr('orgbgpxu') + yPos + $bgobj.attr('orgbgpyu');
 			// Move the background
 			$bgobj.css({ backgroundPosition: coords });
 		});
@@ -37,7 +75,7 @@ $(document).ready(function(){
 <link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'/>
 </head>
 <body>
-<header data-type="background" data-speed="10">
+<header data-type="background" data-speed="10" >
 
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
 
@@ -55,32 +93,32 @@ $(document).ready(function(){
 
 </header>
 
-<nav data-type="background" data-speed="10">
+<nav data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="11" >
 <% if (Membership.GetUser()==null) { %>
 <div class="menuitem">
-	<%= Html.ActionLink("Authentification", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery },null) %>
+	<%= Html.ActionLink("Authentification", "Login", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { accesskey = "L" } ) %>
 	<div class="hint">Pour pouvoir publier, facturer</div>
 	</div>
 <% } else { %><div class="menuitem">
-<a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>">
+<a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>" accesskey = "B" >
 <img src="<%=Html.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="vos billets" class="iconsmall" /></a>
 <div class="hint">Vos billets</div>
 </div>
 
 <div class="menuitem">
-	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Profile", "Account", new { id = HttpContext.Current.User.Identity.Name }, null) %>
+	<%= Html.ActionLink(HttpContext.Current.User.Identity.Name, "Profile", "Account", new { id = HttpContext.Current.User.Identity.Name }, new { accesskey = "P" } ) %>
 	<div class="hint"> &Eacute;dition de votre profile </div></div>
 
 <div class="menuitem">
-	<a href="/Blogs/Post" >Poster</a>
+	<a href="/Blogs/Post" accesskey="P"><u>P</u>oster</a>
 	<div class="hint">
 	&Eacute;dition d'un nouveau billet </div></div>
 <div class="menuitem">
-	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, null) %>
+	<%= Html.ActionLink( "Deconnexion", "Logout", "Account", new { returnUrl=Request.Url.PathAndQuery }, new { accesskey = "L" }) %>
 <% } %>
 </div>
 </nav>
-<main data-type="background" data-speed="10">
+<main data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="22" >
   <div>
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
@@ -104,7 +142,10 @@ $(document).ready(function(){
   {lang: 'fr'}
 </script>
 <div class="g-plusone" data-annotation="inline" data-width="230"></div>
+<% #else %>
+<p><i>(Version de développement, G+1 desactivé)</i></p>
 <% #endif %>
+
    </footer>
 </body>
 </html>

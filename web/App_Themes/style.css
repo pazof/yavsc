@@ -16,41 +16,43 @@ input, textarea, checkbox {
 
 header {
 	border-radius:10px;
-	margin: .5em;
-	padding: .5em;
+	margin: 1em;
+	padding: 3em;
+	padding-top: 5em;
 	display: block;
 	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 0 repeat fixed;
-	min-height: 25em;
+	min-height: 10em;
 	}
 
 nav {
 	border-radius:10px;
-	margin: .5em;
-	padding: .5em;
+	margin: 1em;
+	padding: 1em;
 	display: block;
 	background: url("/images/live-concert-388160_1280.s.jpg") 50% 0 repeat fixed ;
-	min-height: 25em;
+	min-height: 10em;
 }
 
 main {
 	border-radius:10px;
-	margin: .5em;
-	padding: .5em;
+	margin: 1em;
+	padding: 1em;
 	display: block;
 	background: url("/images/musician-923526_1280.s.jpg") 50% 0 repeat fixed ;
-	min-height: 25em;
+	min-height: 10em;
 	}
 
 footer {
 	border-radius:10px;
-	margin: .5em;
-	padding: .5em;
+	margin: 1em;
+	padding: 1em;
 	display: block;
 	background: url("/images/drummer-652345_1280.s.jpg") 50% 0 repeat fixed ;
-	min-height: 25em;
+	min-height: 10em;
 	clear: both;
 	display: flex;
 	font-size: smaller;
+	justify-content: center;
 }
 
 fieldset {
