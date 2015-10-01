@@ -20,11 +20,11 @@
 <div class="post">
 <%= Html.Markdown(be.Content,"/bfiles/"+be.Id+"/") %>
 
- <% string username = Membership.GetUser().UserName; %>
+ <% string username = Membership.GetUser()==null ? null : Membership.GetUser().UserName; %>
 		<% foreach (var c in (Comment[]) BlogManager.GetComments(be.Id)) {  %> 
 <div class="comment" style="min-height:32px;"> <img style="clear:left;float:left;max-width:32px;max-height:32px;margin:.3em;" src="<%= Url.Content("~/Account/Avatar/"+c.From) %>" alt="<%=c.From%>"/>
 <%= Html.Markdown(c.CommentText) %>
-	<% if ( username == Model.Author || c.From == username ) { %>
+	<% if (Model.Author ==  username || c.From == username ) { %>
 	<%= Html.ActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } , new { @class="actionlink" })%>
 	<% } %>
 </div><% } %>
