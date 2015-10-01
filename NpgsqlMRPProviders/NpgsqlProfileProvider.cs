@@ -202,7 +202,7 @@ namespace Npgsql.Web
 				return c;
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "SELECT * from profiledata,profiles where " +
+				cmd.CommandText = "SELECT * from profiledata, profiles where " +
 				"profiledata.uniqueid = profiles.uniqueid " +
 				"and profiles.username = @username " +
 				"and profiles.applicationname = @appname";

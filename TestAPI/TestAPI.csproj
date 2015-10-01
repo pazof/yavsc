@@ -40,20 +40,20 @@
     <Reference Include="Machine.Specifications.Runner.Utility">
       <HintPath>..\packages\Machine.Specifications.Runner.Utility.0.9.0\lib\net45\Machine.Specifications.Runner.Utility.dll</HintPath>
     </Reference>
-    <Reference Include="Spark">
-      <HintPath>..\packages\Spark.1.7.5.3\lib\NET45\Spark.dll</HintPath>
-    </Reference>
-    <Reference Include="Machine.Specifications.Reporting">
-      <HintPath>..\packages\Machine.Specifications.Reporting.0.9.0\lib\net45\Machine.Specifications.Reporting.dll</HintPath>
-    </Reference>
-    <Reference Include="Machine.Specifications.Reporting.Templates">
-      <HintPath>..\packages\Machine.Specifications.Reporting.0.9.0\lib\net45\Machine.Specifications.Reporting.Templates.dll</HintPath>
-    </Reference>
-    <Reference Include="Machine.Specifications.Should">
-      <HintPath>..\packages\Machine.Specifications.Should.0.7.2\lib\net45\Machine.Specifications.Should.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework, Version=2.6.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <Package>nunit</Package>
+    </Reference>
+    <Reference Include="Machine.Specifications.Should">
+      <HintPath>..\packages\Machine.Specifications.Should.0.8.0\lib\net45\Machine.Specifications.Should.dll</HintPath>
+    </Reference>
+    <Reference Include="Machine.Specifications.Reporting">
+      <HintPath>..\packages\Machine.Specifications.Reporting.0.9.1\lib\net45\Machine.Specifications.Reporting.dll</HintPath>
+    </Reference>
+    <Reference Include="Machine.Specifications.Reporting.Templates">
+      <HintPath>..\packages\Machine.Specifications.Reporting.0.9.1\lib\net45\Machine.Specifications.Reporting.Templates.dll</HintPath>
+    </Reference>
+    <Reference Include="Spark">
+      <HintPath>..\packages\Spark.1.8.1.0\lib\NET45\Spark.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

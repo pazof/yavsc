@@ -1,3 +1,8 @@
+2015-10-01  Paul Schneider  <paul@pschneider.fr>
+
+	* packages.config:
+	* NpgsqlBlogProvider.csproj: 
+
 2015-09-27  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlBlogProvider.cs: Fixes the sql command preparation
