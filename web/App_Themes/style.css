@@ -47,14 +47,24 @@ footer {
 	margin: 1em;
 	padding: 1em;
 	display: block;
-	background: url("/images/drummer-652345_1280.s.jpg") 50% 0 repeat fixed ;
+	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 0 repeat fixed ;
 	min-height: 10em;
 	clear: both;
-	display: flex;
 	font-size: smaller;
 	justify-content: center;
 }
+footer a {
+	background-color: rgba(0,0,40,.8); 
+	border-radius:5px;
+	margin:.5em;
+	padding:.5em;
+  }
 
+footer img { max-height: 2em; }
+#gspacer { 
+	background-color: rgba(0,0,40,.8); 
+	border-radius:5px;
+	margin:.5em; padding:1em; display: inline-block }
 fieldset {
 	background-color: rgba(32,16,16,0.8);
 	border-radius:5px; border: solid 1px #000060;
@@ -125,7 +135,6 @@ content: "(";
 .hint::after { 
 content: ")";
 }
-
 
 
 h1 img { vertical-align: text-top; 
@@ -231,6 +240,7 @@ a.actionlink img { top:4px; }
 	border-radius:5px;
 	margin:.5em;
 	padding:.5em;
+	display: inline-block; 
 }
 
 .onhover {
@@ -270,14 +280,15 @@ a.actionlink img { top:4px; }
 
 
 .menuitem {
-	display: inline-block; 
+	display: block; 
 }
 
 .bshpanel { cursor:zoom-in; }
   footer {
 		clear:both;
-    font-size: x-small;
   }
+ 
+
 	.c2 { display:initial; }
 	.c2-alt { display:none; }
 	.c3 { display:none; }
