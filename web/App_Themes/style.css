@@ -20,7 +20,7 @@ header {
 	padding: 3em;
 	padding-top: 5em;
 	display: block;
-	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 0 repeat fixed;
+	background: url("/images/star-939235_1280.jpg") 0 0 no-repeat fixed;
 	min-height: 10em;
 	}
 
@@ -29,7 +29,7 @@ nav {
 	margin: 1em;
 	padding: 1em;
 	display: block;
-	background: url("/images/live-concert-388160_1280.s.jpg") 50% 0 repeat fixed ;
+	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 10em no-repeat fixed ;
 	min-height: 10em;
 }
 
@@ -38,7 +38,7 @@ main {
 	margin: 1em;
 	padding: 1em;
 	display: block;
-	background: url("/images/musician-923526_1280.s.jpg") 50% 0 repeat fixed ;
+	background: url("/images/p8-av4.png") 50% 20em repeat fixed ;
 	min-height: 10em;
 	}
 
@@ -47,7 +47,7 @@ footer {
 	margin: 1em;
 	padding: 1em;
 	display: block;
-	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 0 repeat fixed ;
+	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ;
 	min-height: 10em;
 	clear: both;
 	font-size: smaller;

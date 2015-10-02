@@ -1,3 +1,30 @@
+2015-10-02  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.csproj:
+	* p8-av4.png:
+	* all.css:
+	* core.css:
+	* tabs.css:
+	* base.css:
+	* menu.css:
+	* style.css:
+	* theme.css:
+	* dialog.css:
+	* button.css:
+	* slider.css:
+	* tooltip.css:
+	* spinner.css:
+	* sortable.css:
+	* draggable.css:
+	* resizable.css:
+	* accordion.css:
+	* selectable.css:
+	* selectmenu.css:
+	* datepicker.css:
+	* progressbar.css:
+	* star-939235_1280.jpg:
+	* autocomplete.css: 
+
 2015-10-01  Paul Schneider  <paul@pschneider.fr>
 
 	* style.css: nicer theme
