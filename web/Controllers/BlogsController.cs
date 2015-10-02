@@ -69,6 +69,11 @@ namespace Yavsc.Controllers
 			}
 		}
 
+		public ActionResult ChooseMedia(long id) 
+		{
+			return View ();
+		}
+
 		/// <summary>
 		/// Blogs the list.
 		/// </summary>

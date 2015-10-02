@@ -312,7 +312,7 @@ namespace Yavsc.Controllers
 							AvatarFile.ContentType, "image/png"));
 			}
 			/* Sync the property in the Profile model to display :
-		 *  string cAvat = HttpContext.Profile.GetPropertyValue ("avatar") as string;
+		 *  string cAvat = HttpContext.Profile.GetPropertyValue ("Avatar") as string;
 			if (cAvat != null) if (model.avatar == null) model.avatar = cAvat;
 			*/
 			if (ModelState.IsValid) {

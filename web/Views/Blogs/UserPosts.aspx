@@ -19,11 +19,11 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <%  foreach (BlogEntry e in this.Model) { %>
 <div class="postpreview<% if (!e.Visible) { %> hiddenpost<% } %>" >
-<h2><%= Html.ActionLink(e.Title,"UserPost", new { user=e.Author, title=e.Title, id = e.Id }, new { @class = "usertitleref actionlink" }) %></h2>
+<h2><%= Html.ActionLink(e.Title,"UserPost", new { user=e.Author, title=e.Title, id = e.Id }, new { @class = "usertitleref" }) %></h2>
 <% bool truncated = false; %>
 <%= Html.MarkdownToHtmlIntro(out truncated, e.Content,"/bfiles/"+e.Id+"/") %>
 <% if (truncated) { %>
-  <i><%= Html.ActionLink( "lire la suite" ,"UserPost", new { user=e.Author, title=e.Title, id = e.Id }, new { @class = "usertitleref actionlink" }) %></i>
+  <i><%= Html.ActionLink( "lire la suite" ,"UserPost", new { user=e.Author, title=e.Title, id = e.Id }, new { @class = "usertitleref" }) %></i>
   <% } %>
 <aside>(<%= e.Posted.ToString("yyyy/MM/dd") %>
 	 - <%= e.Modified.ToString("yyyy/MM/dd") %> <%= e.Visible? "":", Invisible!" %>)
@@ -44,8 +44,9 @@
  user.Value = (string) ViewData["BlogUser"];
 
 %>
-
+<aside>
 	 <yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server"></yavsc:ResultPages> 
+	 </aside>
  		<asp:HiddenField id="user" runat="server"></asp:HiddenField>
 	 </form>
 	

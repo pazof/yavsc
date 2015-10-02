@@ -9,7 +9,7 @@
 <% foreach (var p in g) { %> 
 <div class="postpreview">
 <%= Html.ActionLink(p.Title, "UserPost",
- new { user = g.Key, title = p.Title }, new { @class = "usertitleref actionlink" } ) %>
+ new { user = g.Key, title = p.Title }, new { @class = "usertitleref" } ) %>
 
   <aside>
 (Posté le  <%=p.Posted.ToString("D") %>)

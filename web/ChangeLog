@@ -1,3 +1,85 @@
+2015-10-02  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css: yauniformisation small & large screens.
+	nav and footer must have a repeating background image
+
+2015-10-02  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css: style uniformisation, between small and large
+	screens
+
+	* App.master: mainly cleans the code
+	additionaly, modifies the background speed for `nav`
+
+2015-10-02  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.csproj: new images
+
+	* App.master: a nicer javascript and better structure
+
+	* style.css: less padding on small screens
+
+	* p8-av4.xxs.png: from Kali, Da code
+
+	* p8-av4.xxs.jpg: from Kali, Da code, da light one
+
+	* Index.aspx: print titles, removes actionlink class to these last one
+
+	* UserPosts.aspx: print titles, removes actionlink class to these last one
+
+	* star-939235_1280.xxs.jpg: a lighter weight
+
+	* helix-nebula-1400x1400.xxs.jpg: a lighter weight
+
+2015-10-02  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.csproj:
+	* p8-av4.png:
+	* all.css:
+	* core.css:
+	* tabs.css:
+	* base.css:
+	* menu.css:
+	* style.css:
+	* theme.css:
+	* dialog.css:
+	* button.css:
+	* slider.css:
+	* tooltip.css:
+	* spinner.css:
+	* sortable.css:
+	* draggable.css:
+	* resizable.css:
+	* accordion.css:
+	* selectable.css:
+	* selectmenu.css:
+	* datepicker.css:
+	* progressbar.css:
+	* star-939235_1280.jpg:
+	* autocomplete.css: 
+
+2015-10-01  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css: nicer theme
+
+	* App.master: fixes the return url using Url.Encode
+
+2015-10-01  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css: more space
+
+	* Web.config:
+	* YavscHelpers.cs:
+	* OAuth2.cs:
+	* AccountController.cs: refactoring
+
+	* BlogsController.cs: A new page, to become a media chooser
+
+	* App.master: nice small parralax.js, could work on android
+	browers
+
+	* Web.config: unix line endings
+
 2015-10-01  Paul Schneider  <paul@pschneider.fr>
 
 	* Web.config:
