@@ -15,17 +15,16 @@ input, textarea, checkbox {
    }
 
 header {
-	border-radius:10px;
+	display: block;
+	border-radius:1em;
 	margin: 1em;
 	padding: 3em;
-	padding-top: 5em;
-	display: block;
-	background: url("/images/star-939235_1280.jpg") 0 0 no-repeat fixed;
 	min-height: 10em;
+	background: url("/images/star-939235_1280.jpg") 0 0 no-repeat fixed;
 	}
 
 nav {
-	border-radius:10px;
+	border-radius:1em;
 	margin: 1em;
 	padding: 1em;
 	display: block;
@@ -34,7 +33,7 @@ nav {
 }
 
 main {
-	border-radius:10px;
+	border-radius:1em;
 	margin: 1em;
 	padding: 1em;
 	display: block;
@@ -43,7 +42,7 @@ main {
 	}
 
 footer {
-	border-radius:10px;
+	border-radius:1em;
 	margin: 1em;
 	padding: 1em;
 	display: block;
@@ -57,10 +56,12 @@ footer a {
 	background-color: rgba(0,0,40,.8); 
 	border-radius:5px;
 	margin:.5em;
-	padding:.5em;
+	padding:1em;
   }
 
-footer img { max-height: 2em; }
+footer img { max-height: 2em; vertical-align: middle; }
+a.actionlink img, h1 img, .menuitem img  { vertical-align: middle; }
+
 #gspacer { 
 	background-color: rgba(0,0,40,.8); 
 	border-radius:5px;
@@ -115,14 +116,12 @@ textarea.fullwidth { min-height:10em; }
 	bottom:0;
 }
 
-
 .panel,.bshpanel, aside {
 	background-color: rgba(32,16,16,0.8);
 		border-radius:5px; 
 		margin:.5em;
 		padding: .5em;
 }
-
 
 .hint {
 	display: inline;
@@ -137,16 +136,19 @@ content: ")";
 }
 
 
-h1 img { vertical-align: text-top; 
-	}
-
 a {
 	text-decoration: none;
 	color: #B0B080;
    background-color:rgba(20,0,20,0.5);
-   text-decoration: underline;
+   text-decoration: none;
 }
-
+.usertitleref {
+	color: #B0B080;
+	border-radius: 5px;
+   background-color:rgba(0,0,32,0.8);
+   font-family: 'Arial', cursive;
+	padding: 1em;
+}
 a:hover  {
 	text-decoration: underline;
 }
@@ -190,9 +192,6 @@ ul.preview li:nth-child(n) {
 	color: #f88;
 }
 
-usertitleref {
-}
-
 .actionlink {
 	color: #B0B080;
 	border-radius: 5px;
@@ -210,7 +209,6 @@ input, select {
    font-family: 'Arial', cursive;
 }
 
-a.actionlink img { top:4px; }
 
 .actionlink:hover {
 	background-color:rgba(30,0,124,0.9);
@@ -267,27 +265,50 @@ a.actionlink img { top:4px; }
 		{ display:none;} 
 	}
 
-@media all and (min-width: 641px) {
+@media all and (min-width: 640px) {
 	.bshpanel { display:block; }
   .bsh { display: none; }
   .c3 { display:initial; }
   .c3-alt { display:none; }
-
-
 	}
 
 @media all and (max-width: 640px) {
-
-
-.menuitem {
-	display: block; 
-}
-
-.bshpanel { cursor:zoom-in; }
-  footer {
-		clear:both;
-  }
- 
+	header {
+		margin: .5em;
+		padding: .5em;
+		min-height: 3em;
+		 background: url("/images/star-939235_1280.xxs.jpg")       0 0 repeat fixed;
+	}
+	nav {
+		margin: .5em;
+		padding: .5em;
+		min-height: 3em;
+		background:    url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 10em no-repeat fixed ; 
+	}
+	main { 
+		margin: .5em;
+		padding: .5em;
+		min-height: 7em;
+		background:   url("/images/p8-av4.xxs.jpg")                 50% 20em repeat fixed ; 
+	} 
+	footer { 
+		margin: .5em;
+		padding: .5em;
+		min-height: 3em;
+		background: url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 90% repeat fixed ; 
+	} 
+	.menuitem {
+		display: block; 
+	}
+	.post { 
+	margin:.3em;
+	padding:.3em;
+	}
+	.usertitleref{ 
+	padding:.3em;
+	}
+  .bshpanel { cursor:zoom-in; }
+  footer { clear:both; }
 
 	.c2 { display:initial; }
 	.c2-alt { display:none; }

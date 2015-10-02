@@ -410,6 +410,10 @@
     <Content Include="App_Themes\tabs.css" />
     <Content Include="App_Themes\theme.css" />
     <Content Include="App_Themes\tooltip.css" />
+    <Content Include="images\helix-nebula-1400x1400.xxs.jpg" />
+    <Content Include="images\star-939235_1280.xxs.jpg" />
+    <Content Include="images\p8-av4.xxs.png" />
+    <Content Include="images\p8-av4.xxs.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

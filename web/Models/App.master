@@ -19,7 +19,6 @@
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 $(document).ready(function(){
 	var $window = $(window); 
-
 	$('[data-type="background"]').each(function(){
 		var $bgobj = $(this); // assigning the object
 		// get the initial background position, assumes a "X% Yem" ?
@@ -59,8 +58,9 @@ $(document).ready(function(){
 		$bgobj.attr('orgbgpy',parseInt(bgposy));
 
 		$(window).scroll(function() {
-			var xPos = $bgobj.attr('orgbgpx') - ($window.scrollLeft() / $bgobj.data('speed'));
-			var yPos = $bgobj.attr('orgbgpy') - ($window.scrollTop() / $bgobj.data('speed'));
+		    var speed = $bgobj.data('speed');
+			var xPos = $bgobj.attr('orgbgpx') - Math.round($window.scrollLeft() / speed);
+			var yPos = $bgobj.attr('orgbgpy') - Math.round($window.scrollTop() / speed);
 			// Put together our final background position
 			var coords = '' + xPos + $bgobj.attr('orgbgpxu') + yPos + $bgobj.attr('orgbgpyu');
 			// Move the background
@@ -75,7 +75,7 @@ $(document).ready(function(){
 <link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'/>
 </head>
 <body>
-<header data-type="background" data-speed="10" >
+<header data-type="background" data-speed="8" >
 
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
 
@@ -93,7 +93,7 @@ $(document).ready(function(){
 
 </header>
 
-<nav data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="11" >
+<nav data-type="background" data-speed="6" data-emheight="10" data-posx="0" data-posy="11" >
 <% if (Membership.GetUser()==null) { %>
 <a href="<%= Url.Content("~/Account/Login/?returnUrl=") + Url.Encode( Request.Url.PathAndQuery )%>"  >
 <div class="menuitem">
@@ -120,7 +120,7 @@ $(document).ready(function(){
 <i class="fa fa-sign-out"></i>Deconnexion</a> 
 <% } %>
 </nav>
-<main data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="22" >
+<main data-type="background" data-speed="10">
   <div>
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
@@ -129,7 +129,7 @@ $(document).ready(function(){
 <asp:ContentPlaceHolder ID="MASContent" runat="server">
 </asp:ContentPlaceHolder>
 
-<footer data-type="background" data-speed="10">
+<footer data-type="background" data-speed="2">
 <div >
    <%= Html.ActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
    <% foreach ( Link link in Html.Thanks()) { %>
@@ -142,7 +142,7 @@ $(document).ready(function(){
 <script src="https://apis.google.com/js/platform.js" defer>
   {lang: 'fr'}
 </script>
-<div id="gspacer"><div class="g-plusone" data-annotation="inline" data-width="230"></div></div>
+<div id="gspacer"><div class="g-plusone" data-annotation="inline" data-width="170"></div></div>
    </footer>
 </body>
 </html>
