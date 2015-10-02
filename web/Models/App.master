@@ -65,6 +65,7 @@ $(document).ready(function(){
 			var coords = '' + xPos + $bgobj.attr('orgbgpxu') + yPos + $bgobj.attr('orgbgpyu');
 			// Move the background
 			$bgobj.css({ backgroundPosition: coords });
+			// console.log($bgobj.get()[0].localName+' backgroundPosition: '+coords);
 		});
 	});
 });
@@ -93,7 +94,7 @@ $(document).ready(function(){
 
 </header>
 
-<nav data-type="background" data-speed="6" data-emheight="10" data-posx="0" data-posy="11" >
+<nav data-type="background" data-speed="2">
 <% if (Membership.GetUser()==null) { %>
 <a href="<%= Url.Content("~/Account/Login/?returnUrl=") + Url.Encode( Request.Url.PathAndQuery )%>"  >
 <div class="menuitem">

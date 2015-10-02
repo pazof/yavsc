@@ -1,5 +1,13 @@
 2015-10-02  Paul Schneider  <paul@pschneider.fr>
 
+	* style.css: style uniformisation, between small and large
+	screens
+
+	* App.master: mainly cleans the code
+	additionaly, modifies the background speed for `nav`
+
+2015-10-02  Paul Schneider  <paul@pschneider.fr>
+
 	* Web.csproj: new images
 
 	* App.master: a nicer javascript and better structure

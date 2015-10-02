@@ -28,7 +28,7 @@ nav {
 	margin: 1em;
 	padding: 1em;
 	display: block;
-	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 10em no-repeat fixed ;
+	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 10% no-repeat fixed ;
 	min-height: 10em;
 }
 
@@ -283,13 +283,13 @@ input, select {
 		margin: .5em;
 		padding: .5em;
 		min-height: 3em;
-		background:    url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 10em no-repeat fixed ; 
+		background:    url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
 		margin: .5em;
 		padding: .5em;
 		min-height: 7em;
-		background:   url("/images/p8-av4.xxs.jpg")                 50% 20em repeat fixed ; 
+		background:   url("/images/p8-av4.xxs.jpg")                 50% 20em no-repeat fixed ; 
 	} 
 	footer { 
 		margin: .5em;
