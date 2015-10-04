@@ -276,6 +276,13 @@ namespace Yavsc.Controllers
 					model.Id = BlogManager.Post (model.Author, model.Title, model.Content, model.Visible, model.AllowedCircles);
 				return RedirectToAction ("UserPosts", new { user = model.Author, title = model.Title });
 			}
+			ViewData ["AllowedCircles"] = 
+				CircleManager.DefaultProvider.List (
+					Membership.GetUser ().UserName).Select (x => new SelectListItem {
+						Value = x.Id.ToString(),
+						Text = x.Title,
+						Selected = model.AllowedCircles.Contains (x.Id)
+					});
 			return View ("Edit", model);
 		}
 

@@ -1,3 +1,25 @@
+2015-10-04  Paul Schneider  <paul@pschneider.fr>
+
+	* parralax.js: refactoring
+
+	* drummer-652345_1280.xxs.jpg:
+	* musician-923526_1280.xxs.jpg:
+	* live-concert-388160_1280.xxs.jpg: totem style
+
+	* style.css: -> Totem 
+
+	* BlogsController.cs: Fixes edition validation
+
+	* App.master: externalize the parralax javascript code,
+	finishes the merge from yavsc
+
+	* UserPosts.aspx: Affiche "pas de contenu" quand aucun post
+	n'est à afficher
+
+	* Web.csproj: Totem images
+
+	* instdbws.sql: Header images
+
 2015-10-02  Paul Schneider  <paul@pschneider.fr>
 
 	* style.css: yauniformisation small & large screens.

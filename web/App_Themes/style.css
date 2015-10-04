@@ -5,13 +5,14 @@ body {
 	color: #D0FFD0;
 	font-family: 'Arial', cursive;
 	padding: 0em;
+	margin: 0;
 }
 
 .iconsmall { max-height: 1.3em; max-width: 1.3em; } 
 
 input, textarea, checkbox { 
     color: #FFFFA0;
-	background: black;
+	background-color: black;
    }
 
 header {
@@ -22,8 +23,11 @@ header {
 	display: block;
 	min-height: 10em;
 	text-align: center;
-	background: url("/images/star-939235_1280.jpg") 0 0 no-repeat fixed;
+	background: url("/images/totemprod.png") 0 0 no-repeat fixed;
 	}
+header h1, header a {
+background-color: rgba(0,0,0,.5); 
+}
 
 nav {
 	border-radius:1em;
@@ -55,14 +59,13 @@ footer {
 	justify-content: center;
 }
 footer a {
-	background-color: rgba(0,0,40,.8); 
 	border-radius:5px;
 	margin:.5em;
 	padding:1em;
   }
 
-#copyr { text-align: center; }
-footer p { background-color: rgba(20,20,20,.5); } 
+#copyr { text-align: center; display: block; background-color: rgba(20,20,20,.5); }
+footer p { display:inline-block; } 
 
 footer img { max-height: 2em; vertical-align: middle; }
 a.actionlink img, h1 img, .menuitem img  { vertical-align: middle; }
@@ -108,7 +111,7 @@ aside {
 	color: #aaa;
 	border-radius:10px;
 	}
-.hiddenpost { background-color: rgba(16,16,0,0.3); }
+.hiddenpost { background-color: rgba(16,16,16,0.7); }
 .fullwidth { width: 100%;  }
 
 textarea.fullwidth { min-height:10em; }
@@ -144,8 +147,6 @@ content: ")";
 a {
 	text-decoration: none;
 	color: #B0B080;
-   background-color:rgba(20,0,20,0.5);
-   text-decoration: none;
 }
 .usertitleref {
 	color: #B0B080;
@@ -281,25 +282,25 @@ input, select {
 		margin: .5em;
 		padding: .5em;
 		min-height: 3em;
-		 background: url("/images/star-939235_1280.xxs.jpg")       0 0 no-repeat fixed;
+	    padding-top: 5em;
 	}
 	nav {
 		margin: .5em;
 		padding: .5em;
 		min-height: 3em;
-		background:    url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
+		background:    url("/images/live-concert-388160_1280.xxs.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
 		margin: .5em;
 		padding: .5em;
 		min-height: 7em;
-		background:   url("/images/p8-av4.xxs.jpg")                 50% 20em no-repeat fixed ; 
+		background:   url("/images/musician-923526_1280.xxs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
 		margin: .5em;
 		padding: .5em;
 		min-height: 3em;
-		background: url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 90% repeat fixed ; 
+		background: url("/images/drummer-652345_1280.xxs.jpg") 50% 90% repeat fixed ; 
 	} 
 	.menuitem {
 		display: block; 

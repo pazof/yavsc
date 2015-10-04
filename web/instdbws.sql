@@ -728,3 +728,23 @@ WITH (
   OIDS=FALSE
 );
 
+-- Table: postheader
+
+-- DROP TABLE postheader;
+
+CREATE TABLE postheader
+(
+  postid bigserial NOT NULL, -- Blog post identifier, to which will be associated this head image
+  url character varying(512), -- Url for this header image,...
+  CONSTRAINT postheader_pkey PRIMARY KEY (postid),
+  CONSTRAINT postheader_postid_fkey FOREIGN KEY (postid)
+      REFERENCES blog (_id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+COMMENT ON COLUMN postheader.postid IS 'Blog post identifier, to which will be associated this head image';
+COMMENT ON COLUMN postheader.url IS 'Url for this header image, if relative, it will be on the path "~/bfiles/<postid>"';
+
+

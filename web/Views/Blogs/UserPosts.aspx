@@ -45,7 +45,9 @@
 
 %>
 <aside>
-	 <yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server"></yavsc:ResultPages> 
+	 <yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server">
+	 <None><i>Pas de contenu</i></None>
+	 </yavsc:ResultPages> 
 	 </aside>
  		<asp:HiddenField id="user" runat="server"></asp:HiddenField>
 	 </form>
