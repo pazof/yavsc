@@ -1,5 +1,10 @@
 2015-10-04  Paul Schneider  <paul@pschneider.fr>
 
+	* packages.config:
+	* NpgsqlMRPProviders.csproj: Npgsql package update
+
+2015-10-04  Paul Schneider  <paul@pschneider.fr>
+
 	* NpgsqlMembershipProvider.cs: Fixes a Bug introduced by
 	Npgsql driver upgrade
 

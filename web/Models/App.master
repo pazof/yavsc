@@ -99,7 +99,7 @@ $(document).ready(function(){
 <a href="<%= Url.Content("~/Account/Login/?returnUrl=") + Url.Encode( Request.Url.PathAndQuery )%>"  >
 <div class="menuitem">
 <i class="fa fa-sign-in"></i> Connexion
-	<div class="hint">Pour pouvoir publier, facturer</div>
+	<div class="hint">Pour pouvoir commenter, publier, facturer</div>
 </div>
 </a>
 <% } else { %>

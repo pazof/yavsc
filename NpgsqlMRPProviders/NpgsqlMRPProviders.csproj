@@ -48,7 +48,7 @@
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Core" />
     <Reference Include="Npgsql">
-      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Npgsql.dll</HintPath>
+      <HintPath>..\packages\Npgsql.3.0.3\lib\net45\Npgsql.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ProjectExtensions>

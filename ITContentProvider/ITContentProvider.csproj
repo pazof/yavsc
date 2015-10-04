@@ -40,7 +40,7 @@
     <Reference Include="System.Web.Http.WebHost" />
     <Reference Include="System.Web" />
     <Reference Include="Npgsql">
-      <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Npgsql.dll</HintPath>
+      <HintPath>..\packages\Npgsql.3.0.3\lib\net45\Npgsql.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

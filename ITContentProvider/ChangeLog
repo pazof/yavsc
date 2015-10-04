@@ -1,3 +1,8 @@
+2015-10-04  Paul Schneider  <paul@pschneider.fr>
+
+	* packages.config:
+	* ITContentProvider.csproj: Npgsql package update
+
 2015-07-15  Paul Schneider  <paul@pschneider.fr>
 
 	* ITContentProvider.csproj: Moves to Mono framework

@@ -1,3 +1,8 @@
+2015-10-04  Paul Schneider  <paul@pschneider.fr>
+
+	* packages.config:
+	* NpgsqlContentProvider.csproj: Npgsql package update
+
 2015-09-27  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlCircleProvider.cs: Fixes the sql command preparation
