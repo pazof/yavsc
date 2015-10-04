@@ -56,51 +56,50 @@ namespace Yavsc.Model.Blogs
 		{
 			return this.Where (x => x.Title == title).ToArray ();
 		}
+
+		/// <summary>
+		/// Base post info.
+		/// </summary>
+		public class BasePostInfo { 
+			/// <summary>
+			/// The identifier.
+			/// </summary>
+			public long Id;
+			/// <summary>
+			/// The posted.
+			/// </summary>
+			public DateTime Posted;
+			/// <summary>
+			/// The modified.
+			/// </summary>
+			public DateTime Modified;
+
+			/// <summary>
+			/// The intro.
+			/// </summary>
+			public string Intro;
+		}
+
 		/// <summary>
 		/// Post info.
 		/// </summary>
-		public struct PostInfoByTitle {
+		public class PostInfoByTitle : BasePostInfo {
 
 			/// <summary>
 			/// The name of the user.
 			/// </summary>
 			public string Author;
-			/// <summary>
-			/// The identifier.
-			/// </summary>
-			public long Id;
-			/// <summary>
-			/// The posted.
-			/// </summary>
-			public DateTime Posted;
-			/// <summary>
-			/// The modified.
-			/// </summary>
-			public DateTime Modified;
 
 		}
 		/// <summary>
 		/// Post info by user.
 		/// </summary>
-		public struct PostInfoByUser {
+		public class PostInfoByUser : BasePostInfo {
 
 			/// <summary>
 			/// The name of the user.
 			/// </summary>
 			public string Title;
-			/// <summary>
-			/// The identifier.
-			/// </summary>
-			public long Id;
-			/// <summary>
-			/// The posted.
-			/// </summary>
-			public DateTime Posted;
-			/// <summary>
-			/// The modified.
-			/// </summary>
-			public DateTime Modified;
-
 		}
 
 		/// <summary>
@@ -108,11 +107,12 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		public IEnumerable<IGrouping<string,PostInfoByTitle>> GroupByTitle()
 		{
+			bool truncated;
 			return from be in this
 				orderby be.Posted descending
 			        group
 				new  PostInfoByTitle { Author=be.Author, Id=be.Id, 
-				Posted=be.Posted, Modified=be.Modified }
+				Posted=be.Posted, Modified=be.Modified, Intro = MarkdownHelper.MarkdownIntro(be.Content, out truncated) }
 				by be.Title
 				into titlegroup
 			        select titlegroup;
@@ -123,11 +123,12 @@ namespace Yavsc.Model.Blogs
 		/// <returns>The by user.</returns>
 		public IEnumerable<IGrouping<string,PostInfoByUser>> GroupByUser()
 		{
+			bool truncated;
 			return from be in this
 				orderby be.Posted descending
 				group
 				new  PostInfoByUser { Title=be.Title, Id=be.Id, 
-				Posted=be.Posted, Modified=be.Modified }
+				Posted=be.Posted, Modified=be.Modified, Intro = MarkdownHelper.MarkdownIntro(be.Content, out truncated) }
 				by be.Author
 				into usergroup
 				select usergroup;

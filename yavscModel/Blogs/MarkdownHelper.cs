@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using MarkdownDeep;
 
-namespace Yavsc.Helpers
+namespace Yavsc.Model.Blogs
 {
 	/// <summary>
 	/// Helper class for transforming Markdown.
@@ -44,27 +44,47 @@ namespace Yavsc.Helpers
 			return new MvcHtmlString(html);
 		}
 
-		public static IHtmlString MarkdownToHtmlIntro(this HtmlHelper helper, out bool truncated, string text, string urlBaseLocation="")
-		{
+		public static string MarkdownIntro(string markdown, out bool truncated) { 
 			int maxLen = 250;
-			// Transform the supplied text (Markdown) into HTML.
-			var markdownTransformer = new Markdown();
-			markdownTransformer.ExtraMode = true;
-			markdownTransformer.UrlBaseLocation = urlBaseLocation;
-			if (text.Length < maxLen) {
+			if (markdown.Length < maxLen) {
 				truncated = false;
-				return new MvcHtmlString(markdownTransformer.Transform(text));
+				return markdown;
 			}
-			string intro = text.Remove (maxLen);
+			string intro = markdown.Remove (maxLen);
 			truncated = true;
 			int inl = intro.LastIndexOf ("\n");
 			if (inl > 20)
 				intro = intro.Remove (inl);
 			intro += " ...";
-
-			string html = markdownTransformer.Transform(intro);
+			return intro;
+		}
+		/// <summary>
+		/// Markdowns to html intro.
+		/// </summary>
+		/// <returns>The to html intro.</returns>
+		/// <param name="truncated">Truncated.</param>
+		/// <param name="text">Text.</param>
+		/// <param name="urlBaseLocation">URL base location.</param>
+		public static string MarkdownToHtmlIntro(out bool truncated, string text, string urlBaseLocation="") {
+			var md = MarkdownIntro(text, out truncated);
+			var markdownTransformer = new Markdown();
+			markdownTransformer.ExtraMode = true;
+			markdownTransformer.UrlBaseLocation = urlBaseLocation;
+			string html = markdownTransformer.Transform(md);
+			return html;
+		}
+		/// <summary>
+		/// Markdowns to html intro.
+		/// </summary>
+		/// <returns>The to html intro.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="truncated">Truncated.</param>
+		/// <param name="text">Text.</param>
+		/// <param name="urlBaseLocation">URL base location.</param>
+		public static IHtmlString MarkdownToHtmlIntro(this HtmlHelper helper, out bool truncated, string text, string urlBaseLocation="")
+		{
 			// Wrap the html in an MvcHtmlString otherwise it'll be HtmlEncoded and displayed to the user as HTML :(
-			return new MvcHtmlString(html);
+			return new MvcHtmlString(MarkdownToHtmlIntro (out truncated, text, urlBaseLocation));
 		}
 
 		/// <summary>
