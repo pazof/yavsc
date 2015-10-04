@@ -33,22 +33,19 @@
 	 <%= Html.ActionLink("Editer","Edit", new { id = e.Id }, new { @class="actionlink" }) %>
 	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = e.Id }, new { @class="actionlink" } ) %>
 	 <% } %>
-</aside>
+
+
+	 </aside>
 </div>
 <% } %>
-	
-	 <form runat="server" id="form1" method="GET">
+<aside>
+	<form runat="server" id="form1" method="GET">
 	<%
  rp1.ResultCount = (int) ViewData["RecordCount"];
- rp1.CurrentPage = (int) ViewData["PageIndex"];
- user.Value = (string) ViewData["BlogUser"];
-
-%>
-<aside>
-	 <yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server"></yavsc:ResultPages> 
-	 </aside>
- 		<asp:HiddenField id="user" runat="server"></asp:HiddenField>
-	 </form>
+ rp1.PageIndex = (int) ViewData["PageIndex"];
+%><yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server"></yavsc:ResultPages> 
+	</form>
+</aside>
 	
 
 </asp:Content>

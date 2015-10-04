@@ -1,3 +1,11 @@
+2015-10-04  Paul Schneider  <paul@pschneider.fr>
+
+	* MarkdownHelper.cs:
+	* BlogEntryCollection.cs: refactoring + extract an intro from
+	Markdown for PostInfo*
+
+	* YavscModel.csproj: MarkdownHelper integration
+
 2015-10-01  Paul Schneider  <paul@pschneider.fr>
 
 	* Profile.cs: refactoring

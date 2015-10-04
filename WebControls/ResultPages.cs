@@ -4,6 +4,7 @@ using System.Security.Permissions;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.ComponentModel;
+using System.Collections;
 
 namespace Yavsc.WebControls
 {
@@ -29,19 +30,16 @@ namespace Yavsc.WebControls
 			
 		}
 
-
 		/// <summary>
 		/// Gets or sets the results per page.
 		/// </summary>
 		/// <value>The results per page.</value>
-		[Bindable (true)]
-		[DefaultValue(10)]
-		public int ResultsPerPage {
+		public int PageSize {
 			get {
-				return (int)( ViewState["ResultsPerPage"]==null?10:ViewState["ResultsPerPage"]);
+				return (int)( ViewState["PageSize"]==null?10:ViewState["PageSize"]);
 			}
 			set {
-				ViewState["ResultsPerPage"]=value;
+				ViewState["PageSize"]=value;
 			}
 		}
 
@@ -50,11 +48,8 @@ namespace Yavsc.WebControls
 		/// Gets or sets the result count.
 		/// </summary>
 		/// <value>The result count.</value>
-		[Bindable (true)]
-		[DefaultValue(0)]
 		public int ResultCount {
 			get {
-
 				return (int)( ViewState["ResultCount"]==null?0:ViewState["ResultCount"]);
 			}
 			set {
@@ -66,7 +61,6 @@ namespace Yavsc.WebControls
 		/// Gets or sets the text.
 		/// </summary>
 		/// <value>The text.</value>
-		[Bindable (true)]
 		[DefaultValue("Pages:")]
 		[Localizable(true)]
 		public string Text {
@@ -85,25 +79,27 @@ namespace Yavsc.WebControls
 		/// </summary>
 		/// <value>The action.</value>
 		[Bindable (true)]
-		[DefaultValue("")]
+		[DefaultValue("?pageIndex=")]
 		public string Action {
 			get {
 
 				string s = (string)ViewState["Action"];
-				return (s == null) ? String.Empty : s;
+				return (s == null) ? "?pageIndex=" : s;
 			}
 			set {
 				ViewState["Action"]  = value;
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the none.
+		/// </summary>
+		/// <value>The none.</value>
 		[Bindable (true)]
 		[DefaultValue("none")]
 		public string None {
 			get {
-
-				string s = (string) ViewState["None"];
-				return (s == null) ? String.Empty : s;
+				return (string) ViewState["None"];
 			}
 			set {
 				ViewState["None"]  = value;
@@ -116,41 +112,42 @@ namespace Yavsc.WebControls
 		/// <value>The current page.</value>
 		[Bindable (true)]
 		[DefaultValue(0)]
-		public int CurrentPage {
+		public int PageIndex {
 			get {
-				int i = (int)(ViewState["CurrentPage"]==null?0:ViewState["CurrentPage"]);
+				int i = (int)(ViewState["PageIndex"]==null?0:ViewState["PageIndex"]);
 				return i;
 			}
 			set {
-				ViewState["CurrentPage"]  = value;
+				ViewState["PageIndex"]  = value;
 			}
 		}
+
 		/// <summary>
 		/// Renders the contents as the list of links to pages of results.
 		/// </summary>
 		/// <param name="writer">Writer.</param>
 		protected override void RenderContents (HtmlTextWriter writer)
 		{
-			if (ResultCount > 0 &&  ResultCount > ResultsPerPage ) {
+			if (ResultCount > 0 &&  ResultCount > PageSize ) {
 				writer.WriteEncodedText (Text);
-				int pageCount = ((ResultCount-1) / ResultsPerPage) + 1;
-				for (int pi = (CurrentPage < 5) ? 0 : CurrentPage - 5; pi < pageCount && pi < CurrentPage + 5; pi++) {
-					if (CurrentPage == pi)
-						writer.RenderBeginTag ("b");
-					else {
-						writer.AddAttribute (HtmlTextWriterAttribute.Href,
-							string.Format (Action, pi));
-						writer.RenderBeginTag ("a");
+				int pageCount = ((ResultCount-1) / PageSize) + 1;
+				if ( pageCount > 1 ) {
+					for (int pi = (PageIndex < 5) ? 0 : PageIndex - 5; pi < pageCount && pi < PageIndex + 5; pi++) {
+						if (PageIndex == pi)
+							writer.RenderBeginTag ("b");
+						else {
+							writer.AddAttribute (HtmlTextWriterAttribute.Href,
+								string.Format (Action, pi));
+							writer.RenderBeginTag ("a");
+						}
+						writer.Write (pi + 1);
+						writer.RenderEndTag ();
+						writer.Write ("&nbsp;");
 					}
-					writer.Write (pi+1);
-					writer.RenderEndTag ();
-					writer.Write ("&nbsp;");
 				}
 			} 
 			if (ResultCount == 0) {
-				writer.Write ("(");
 				writer.Write (None);
-				writer.Write (")");
 			}
 
 		}

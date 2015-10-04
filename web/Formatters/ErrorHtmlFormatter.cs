@@ -29,6 +29,7 @@ using System.Web.Mvc;
 using System.Net;
 using MarkdownDeep;
 using Yavsc.Helpers;
+using Yavsc.Model.Blogs;
 
 namespace Yavsc.Formatters
 {

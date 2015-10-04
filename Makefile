@@ -4,17 +4,17 @@ CONFIG=Debug
 LDYDESTDIR=build/web/$(CONFIG)
 COPYUNCHANGED="false"
 
-HOST_rsync_local=localhost
-DESTDIR_rsync_local=/srv/www/yavsc
+HOST_rsync_yavsc=lua.pschneider.fr
+DESTDIR_rsync_yavsc=/srv/www/yavsc
 
-HOST_rsync_test=localhost
-DESTDIR_rsync_test=/srv/www/lua
+HOST_rsync_lua=lua.pschneider.fr
+DESTDIR_rsync_lua=/srv/www/lua
 
-HOST_rsync_pre=lua.localdomain
-DESTDIR_rsync_pre=/srv/www/yavsc
+HOST_rsync_pre=lua.pschneider.fr
+DESTDIR_rsync_pre=/srv/www/yavscpre
 
-HOST_rsync_prod=lua.localdomain
-DESTDIR_rsync_prod=/srv/www/lua
+HOST_rsync_prod=lua.pschneider.fr
+DESTDIR_rsync_prod=/srv/www/yavsc
 
 DOCASSBS=NpgsqlBlogProvider.dll WorkFlowProvider.dll Yavsc.WebControls.dll ITContentProvider.dll NpgsqlMRPProviders.dll Yavsc.dll SalesCatalog.dll YavscModel.dll
 
@@ -38,7 +38,6 @@ rsync_% : DESTDIR = $(DESTDIR_$@)
 rsync_% : deploy
 	echo "!Deploying to $(HOST)!"
 	$(RSYNCCMD) build/web/$(CONFIG)/ root@$(HOST):$(DESTDIR)
-	ssh root@$(HOST) apachectl restart
 
 build: 
 	xbuild /p:Configuration=$(CONFIG) /t:Build Yavsc.sln
@@ -46,6 +45,8 @@ build:
 clean:
 	xbuild /t:Clean
 	find -name "StyleCop.Cache" -exec rm {} \;
+
+distclean: clean
 	rm -rf $(LDYDESTDIR)
 
 sourcepkg:
@@ -63,14 +64,10 @@ htmldoc: xmldoc
 docdeploy-prod: htmldoc
 	rsync -ravu web/htmldoc root@$(PRODHOSTDIR)
 
-rsync_local:
+rsync_lua:
 
-rsync_test:
+rsync_yavsc:
 
 rsync_pre:
 
 rsync_prod:
-
-bigrsync: rsync_test rsync_local rsync_pre rsync_prod
-
-

@@ -163,13 +163,17 @@ namespace Yavsc.Helpers
 			foreach (MembershipUser u in users) 
 				YavscHelpers.SendActivationMessage (u);
 		}
-
+		/// <summary>
+		/// Avatars the URL.
+		/// </summary>
+		/// <returns>The URL.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="username">Username.</param>
 		public static string AvatarUrl (this HtmlHelper helper, string username) {
 			ProfileBase pr = ProfileBase.Create (username);
-			string avpath = (string ) pr.GetPropertyValue("Avatar") ;
-			if (avpath != null)
-				return helper.Encode (avpath);
-			return "/avatars/" + helper.Encode(username)+".png";
+			var a = pr.GetPropertyValue("Avatar") ;
+			if (a == null || a is DBNull) return "/avatars/" + helper.Encode(username)+".png";
+			return helper.Encode ((string)a);
 		}
 	}
 }

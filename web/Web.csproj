@@ -188,7 +188,6 @@
     <Compile Include="IValueProvider.cs" />
     <Compile Include="Formatters\EstimToPdfFormatter.MSAN.cs" />
     <Compile Include="Helpers\TemplateException.cs" />
-    <Compile Include="Helpers\MarkdownHelper.cs" />
     <Compile Include="Formatters\FormatterException.cs" />
     <Compile Include="NUnitTestClass.cs" />
     <Compile Include="TestExec.cs" />

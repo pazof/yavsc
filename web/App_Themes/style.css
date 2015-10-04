@@ -4,7 +4,7 @@ body {
 	background-color: black;
 	color: #D0FFD0;
 	font-family: 'Arial', cursive;
-	padding: 0em;
+	padding: 2em;
 }
 
 .iconsmall { max-height: 1.3em; max-width: 1.3em; } 
@@ -20,7 +20,7 @@ header {
 	margin: 1em;
 	padding: 3em;
 	min-height: 10em;
-	background: url("/images/star-939235_1280.jpg") 0 0 no-repeat fixed;
+	background: url("/images/star-939235_1280.jpg") 0 0  no-repeat fixed;
 	}
 
 nav {
@@ -88,7 +88,7 @@ aside {
 	max-width: 40em;
 	padding: .5em;
 	margin: .5em;
-	background-color: rgba(32,32,64,0.8);
+	background-color: rgba(32,32,32,0.8);
 	border-radius:10px;
 }
 .postpreview video, .postpreview img {
@@ -99,11 +99,11 @@ aside {
 	display:block;
 	margin:1em;
 	padding:1em;
-	background-color: rgba(32,32,64,0.8);
+	background-color: rgba(32,32,32,0.8);
 	color: #aaa;
 	border-radius:10px;
 	}
-.hiddenpost { background-color: rgba(16,16,0,0.3); }
+.hiddenpost { background-color: rgba(16,16,16,0.5); }
 .fullwidth { width: 100%;  }
 
 textarea.fullwidth { min-height:10em; }
@@ -117,7 +117,7 @@ textarea.fullwidth { min-height:10em; }
 }
 
 .panel,.bshpanel, aside {
-	background-color: rgba(32,16,16,0.8);
+	background-color: rgba(32,32,16,0.8);
 		border-radius:5px; 
 		margin:.5em;
 		padding: .5em;
@@ -139,13 +139,13 @@ content: ")";
 a {
 	text-decoration: none;
 	color: #B0B080;
-   background-color:rgba(20,0,20,0.5);
+   background-color:rgba(20,20,20,0.5);
    text-decoration: none;
 }
 .usertitleref {
 	color: #B0B080;
 	border-radius: 5px;
-   background-color:rgba(0,0,32,0.8);
+   background-color:rgba(0,0,32,0.6);
    font-family: 'Arial', cursive;
 	padding: 1em;
 }
@@ -161,19 +161,19 @@ label {
 
 .message, #message {
 	font-size: large;
-	background-color: rgba(0,64,0,0.1);
+	background-color: rgba(64,64,0,0.5);
 	}
 .dirty { 
-	background-color: rgba(128,128,0,0.3);
+	background-color: rgba(128,128,0,0.5);
 }
 .error, #error {
 	color: #f88;
 	font-size: large;
-	background-color: rgba(128,0,0,0.3);
+	background-color: rgba(256,0,0,0.5);
 }
 .validation-summary-errors{
 	color: #f88;
-	background-color: rgba(64,0,0,0.3);
+	background-color: rgba(256,0,0,0.5);
 }
 
 
@@ -195,7 +195,7 @@ ul.preview li:nth-child(n) {
 .actionlink {
 	color: #B0B080;
 	border-radius: 5px;
-   background-color:rgba(0,0,32,0.8);
+   background-color:rgba(0,0,32,0.5);
    cursor: pointer;
    font-family: 'Arial', cursive;
 	padding: .2em;

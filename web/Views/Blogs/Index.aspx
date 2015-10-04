@@ -10,7 +10,7 @@
 <div class="postpreview">
 <%= Html.ActionLink(p.Title, "UserPost",
  new { user = g.Key, title = p.Title }, new { @class = "usertitleref" } ) %>
-
+ <p><%=  Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %></p>
   <aside>
 (Posté le  <%=p.Posted.ToString("D") %>)
 
@@ -24,14 +24,15 @@
 </div> <% } %>
  <% } %>
 </div>
-
-	  <form runat="server" id="form1" method="GET">
-	<% rp1.ResultCount = Model.Count; rp1.ResultsPerPage = 50; %>
-<% rp1.CurrentPage = (int) ViewData["PageIndex"]; %>
-<% rp1.None = Html.Translate("no content"); %>
-	 <yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server" >
+<form runat="server" id="form1" method="GET">
+<% rp1.ResultCount =  (int) ViewData["ResultCount"]; 
+   rp1.PageSize = (int) ViewData ["PageSize"]; 
+   rp1.PageIndex = (int) ViewData["PageIndex"]; 
+   rp1.None = Html.Translate("no content"); 
+%>
+	 	 	 <yavsc:ResultPages id="rp1" runat="server" >
+	 <None>Aucun résultat</None>
 	 </yavsc:ResultPages> 
- 		
-	 </form>
+</form>
 </asp:Content>
 

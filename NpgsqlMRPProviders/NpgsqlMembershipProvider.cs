@@ -358,7 +358,10 @@ namespace Npgsql.Web
 			}
 
 			MembershipUser u = GetUser (username, false);
-
+			if (passwordQuestion == null)
+				passwordQuestion = "";
+			if (passwordAnswer == null)
+				passwordAnswer = "";
 			if (u == null) {
 				DateTime createDate = DateTime.Now;
 

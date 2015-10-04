@@ -41,6 +41,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting" />
     <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="MarkdownDeep">
+      <HintPath>..\web\lib\MarkdownDeep.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -167,6 +170,7 @@
     <Compile Include="RolesAndMembers\ChangeUserNameProvider.cs" />
     <Compile Include="RolesAndMembers\UserManager.cs" />
     <Compile Include="Circles\CircleBase.cs" />
+    <Compile Include="Blogs\MarkdownHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

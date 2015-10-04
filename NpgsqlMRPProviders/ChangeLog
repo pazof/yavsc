@@ -1,3 +1,8 @@
+2015-10-04  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlMembershipProvider.cs: Fixes a Bug introduced by
+	Npgsql driver upgrade
+
 2015-08-04  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlMRPProviders.csproj: new NpgsqlUserName provider

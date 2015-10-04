@@ -82,11 +82,10 @@ namespace Yavsc.Controllers
 		/// <param name="pageSize">Page size.</param>
 		public ActionResult BlogList (int pageIndex = 0, int pageSize = 10)
 		{
-			ViewData ["SiteName"] = sitename;
 			int totalRecords;
 			var bs = BlogManager.LastPosts (pageIndex, pageSize, out totalRecords);
-			ViewData ["RecordCount"] = totalRecords; 
-			ViewData ["pageSize"] = pageSize;
+			ViewData ["ResultCount"] = totalRecords; 
+			ViewData ["PageSize"] = pageSize;
 			ViewData ["PageIndex"] = pageIndex;
 			return View ("Index", new BlogEntryCollection(bs) );
 		}

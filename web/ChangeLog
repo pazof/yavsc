@@ -1,3 +1,23 @@
+2015-10-04  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css: other colors
+
+	* BlogsController.cs: code cleaning
+
+	* GoogleController.cs: refactoring
+
+	* ErrorHtmlFormatter.cs: MarkdownDeep calls now come from
+	yavscModel 
+
+	* YavscHelpers.cs: xmldoc
+
+	* Index.aspx: code formatting
+
+	* UserPosts.aspx: nothing to note
+
+	* Web.csproj: MarkdownHelper has gone to the yavscModel
+	project
+
 2015-10-02  Paul Schneider  <paul@pschneider.fr>
 
 	* style.css: yauniformisation small & large screens.
