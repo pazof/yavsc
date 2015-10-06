@@ -4,7 +4,8 @@ body {
 	background-color: black;
 	color: #D0FFD0;
 	font-family: 'Arial', cursive;
-	padding: 2em;
+	padding:2em;
+	margin:2em;
 }
 
 .iconsmall { max-height: 1.3em; max-width: 1.3em; } 
@@ -19,7 +20,7 @@ header {
 	border-radius:1em;
 	margin: 1em;
 	padding: 3em;
-	min-height: 10em;
+	min-height: 8em;
 	background: url("/images/star-939235_1280.jpg") 0 0  no-repeat fixed;
 	}
 
@@ -265,14 +266,18 @@ input, select {
 		{ display:none;} 
 	}
 
-@media all and (min-width: 640px) {
 	.bshpanel { display:block; }
   .bsh { display: none; }
   .c3 { display:initial; }
   .c3-alt { display:none; }
-	}
 
 @media all and (max-width: 640px) {
+body { padding: 1em; margin: 1em;}
+	header {min-height: 5em;}
+	}
+
+@media all and (max-width: 460px) {
+body { padding: .5em; margin:.5;}
 	header {
 		margin: .5em;
 		padding: .5em;
@@ -317,6 +322,7 @@ input, select {
 }
 
 @media all and (max-width: 350px) {
+body { padding: 0em; margin:0; }
   .c2 { display:none; }
   .c2-alt { display:initial; }
 }

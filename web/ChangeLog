@@ -1,3 +1,9 @@
+2015-10-06  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css: reactive margins
+
+	* Edit.aspx: The 'div' tag is not interpreted in Markdown.
+
 2015-10-04  Paul Schneider  <paul@pschneider.fr>
 
 	* App.master: Indicates that a login permits to comment

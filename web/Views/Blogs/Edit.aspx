@@ -82,7 +82,6 @@ jQuery('#vcontent').hallo({
                 'em',
                 'strong',
                 'br',
-                'div',
                 'ol',
                 'ul',
                 'li',
