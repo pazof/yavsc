@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>TestAPI</RootNamespace>
     <AssemblyName>TestAPI</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,16 +55,24 @@
     <Reference Include="Spark">
       <HintPath>..\packages\Spark.1.8.1.0\lib\NET45\Spark.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Mvc" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestAutomate.cs" />
+    <Compile Include="BlogUnitTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\yavscModel\YavscModel.csproj">
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
       <Name>YavscModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\web\Web.csproj">
+      <Project>{77044C92-D2F1-45BD-80DD-AA25B311B027}</Project>
+      <Name>Web</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -27,6 +27,7 @@ using Yavsc.Helpers;
 using System.Web.Profile;
 using Yavsc.Model.Circles;
 using Yavsc.Model.Calendar;
+using System.Web.Http.Routing;
 
 
 namespace Yavsc.ApiControllers
@@ -160,7 +161,7 @@ namespace Yavsc.ApiControllers
 					"déjà enregistré");
 					break;
 				case MembershipCreateStatus.Success:
-					YavscHelpers.SendActivationMessage (user);
+					Url.SendActivationMessage (user);
 					// TODO set registration id
 					throw new NotImplementedException ();
 				}

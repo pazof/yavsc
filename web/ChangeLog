@@ -1,3 +1,28 @@
+2015-10-07  Paul Schneider  <paul@pschneider.fr>
+
+	* AccountController.cs: refactoring password validation
+
+	* CalendarController.cs:
+	* WorkFlowController.cs: SendActivationMessage became an
+	extension method
+
+	* style.css: menu items already have a background and color,
+	since they're `<A>` tags
+
+	* Unregister.aspx:
+	* AccountController.cs: refactoring user registration
+
+	* BlogsController.cs: Fixes a confusion between Author and
+	reader ...
+
+	* YavscHelpers.cs: refactoring the password reset
+
+	* App.master: no more <div class="menuitem">, they're
+	hyperlinks 
+
+	* Login.aspx:
+	* Profile.aspx: refactoring the user registration 
+
 2015-10-06  Paul Schneider  <paul@pschneider.fr>
 
 	* style.css: reactive margins

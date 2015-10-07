@@ -112,7 +112,7 @@ Avatar : <img class="avatar" src="<%=Model.avatar%>?version=<%=Html.Encode(DateT
 <% } %>
    <aside>
    <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
-   <%= Html.ActionLink("Désincription","Unregister", "Account",null, new { @class="actionlink" })%>
+   <%= Html.ActionLink("Désincription","Unregister", "Account",  new { id=ViewData["UserName"] } , new { @class="actionlink" })%>
    </aside>
    <aside>
    <% 	if (Roles.IsUserInRole((string)ViewData ["UserName"],"Admin")) { %>

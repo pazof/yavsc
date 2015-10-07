@@ -185,8 +185,8 @@ namespace Yavsc.Controllers
 				ViewData ["Avatar"] = pr.avatar;
 				ViewData ["BlogTitle"] = pr.BlogTitle;
 				MembershipUser u = Membership.GetUser ();
-				if (u != null)
-					ViewData ["Author"] = u.UserName;
+
+				ViewData ["Author"] = bec.Author;
 				if (!pr.BlogVisible) {
 					// only deliver to admins or owner
 					if (u == null)
@@ -196,6 +196,13 @@ namespace Yavsc.Controllers
 						if (!Roles.IsUserInRole (u.UserName, "Admin"))
 							return View ("NotAuthorized");
 					}
+				}
+				if (u == null || (u.UserName != bec.Author) && !Roles.IsUserInRole (u.UserName, "Admin")) {
+					// Filer on allowed posts
+					BlogEntryCollection filtered = bec.FilterFor((u == null)?null : u.UserName);
+					UUTBlogEntryCollection nbec = new UUTBlogEntryCollection (bec.Author, bec.Title);
+					nbec.AddRange (filtered);
+					View ("UserPost",nbec);
 				}
 			}
 			return View ("UserPost",bec);

@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Collections.Generic;
 using Yavsc.Model.Blogs;
 using System.Linq;
+using Yavsc.Model.Circles;
 
 namespace Yavsc.Model.Blogs
 {
@@ -56,7 +57,25 @@ namespace Yavsc.Model.Blogs
 		{
 			return this.Where (x => x.Title == title).ToArray ();
 		}
-
+		/// <summary>
+		/// Filters the current collection for a given user by its name.
+		/// Assumes that this user is not an author of any of these posts.
+		/// </summary>
+		/// <param name="username">Username.</param>
+		public BlogEntryCollection FilterFor(string username)
+		{
+			BlogEntryCollection res = new BlogEntryCollection ();
+			foreach (BlogEntry be in this) {
+				if (be.Visible && 
+					(be.AllowedCircles == null || 
+						(username!= null && CircleManager.DefaultProvider.Matches
+							(be.AllowedCircles,username))))
+					{
+						res.Add(be);
+					}
+			}
+			return res;
+		}
 		/// <summary>
 		/// Base post info.
 		/// </summary>

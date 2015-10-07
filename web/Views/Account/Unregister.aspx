@@ -7,5 +7,6 @@ Warning: This will delete all of your data here, your profile, your posts and ot
    <label for="confirmed">Unregister</label> 
    <%=Html.CheckBox("confirmed")%>
    <input type="submit"/>
+   <%= Html.Hidden("UserName") %>
    <% } %>
 </asp:Content>

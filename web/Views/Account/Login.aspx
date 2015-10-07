@@ -20,7 +20,7 @@
 <input type="submit"/>
 <% } %></div>
 <div class="panel">
-<%= Html.ActionLink("S'enregistrer","Register",new {returnUrl=ViewData["returnUrl"]}, new { @class="actionlink" }) %>
+<%= Html.ActionLink("S'enregistrer","RegisterForm",new {returnUrl=ViewData["returnUrl"]}, new { @class="actionlink" }) %>
 </div>
 <div class="panel">
 <a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Login"%>?returnUrl=<%=ViewData["returnUrl"]==null?Request.Url.PathAndQuery:(string)ViewData["returnUrl"]%>" class="actionlink">

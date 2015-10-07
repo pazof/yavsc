@@ -407,7 +407,7 @@ namespace Npgsql.Web.Blog
 				if (circles.Length>0)
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "insert into blog_access (post_id,circle_id) values (:pid,:cid)";
-					cmd.Parameters.AddWithValue ("pid", pid);
+					cmd.Parameters.AddWithValue ("pid", NpgsqlTypes.NpgsqlDbType.Bigint, pid);
 					cmd.Parameters.Add ("cid", NpgsqlTypes.NpgsqlDbType.Bigint);
 					cmd.Prepare ();
 					foreach (long ci in circles) {

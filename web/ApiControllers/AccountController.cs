@@ -72,7 +72,7 @@ namespace Yavsc.ApiControllers
 					break;
 				case MembershipCreateStatus.Success:
 					if (!model.IsApprouved)
-						YavscHelpers.SendActivationMessage (user);
+						Url.SendActivationMessage (user);
 					ProfileBase prtu = ProfileBase.Create (model.UserName);
 					prtu.SetPropertyValue("Name",model.Name);
 					prtu.SetPropertyValue("Address",model.Address);
@@ -99,9 +99,12 @@ namespace Yavsc.ApiControllers
 		public void ResetPassword(LostPasswordModel model)
 		{
 			StringDictionary errors;
-			YavscHelpers.ResetPassword (model, out errors);
+			MembershipUser user;
+			YavscHelpers.ValidatePasswordReset (model, out errors, out user);
 			foreach (string key in errors.Keys)
 				ModelState.AddModelError (key, errors [key]);
+			if (user != null && ModelState.IsValid)
+				Url.SendActivationMessage (user);
 		}
 	}
 }
