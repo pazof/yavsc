@@ -14,6 +14,7 @@ using Yavsc.Model.Circles;
 using System.Web.UI;
 using System.Linq.Expressions;
 using System.Web.Profile;
+using System.Web.Script.Serialization;
 
 namespace Yavsc.Helpers
 {
@@ -174,6 +175,23 @@ namespace Yavsc.Helpers
 			var a = pr.GetPropertyValue("Avatar") ;
 			if (a == null || a is DBNull) return "/avatars/" + helper.Encode(username)+".png";
 			return helper.Encode ((string)a);
+		}
+
+		public static string JavaScript(this HtmlHelper html, object obj)
+		{
+			return JavaScript (obj);
+		}
+
+		public static string JavaScript(object obj)
+		{
+			JavaScriptSerializer serializer = new JavaScriptSerializer();
+			return serializer.Serialize(obj);
+		}
+
+		public static void Notice (ViewDataDictionary ViewData, string message) {
+			if (ViewData ["Notifications"] == null)
+				ViewData ["Notifications"] = new List<string> ();
+			(ViewData ["Notifications"] as List<string>).Add (message.Replace("\'","\\\'"));
 		}
 	}
 }

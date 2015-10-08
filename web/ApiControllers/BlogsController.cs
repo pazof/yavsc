@@ -125,10 +125,29 @@ namespace Yavsc.ApiControllers
 			}
 		}
 
+		/// <summary>
+		/// Searchs the files accociated to the given post id,
+		/// or related to the given terms.
+		/// </summary>
+		/// <returns>The file.</returns>
+		/// <param name="postid">Postid.</param>
+		/// <param name="terms">Terms.</param>
 		[Authorize,HttpGet]
 		public async Task<HttpResponseMessage> SearchFile(long postid, string terms) {
 			throw new NotImplementedException ();
 		}
+
+		/// <summary>
+		/// Sets the photo.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		/// <param name="photo">Photo.</param>
+		[Authorize,HttpPost]
+		public void SetPhoto(long id, string photo)
+		{
+			BlogManager.Provider.UpdatePostPhoto (id, photo);
+		}
+
 		/// <summary>
 		/// Import the specified id.
 		/// </summary>
@@ -138,7 +157,7 @@ namespace Yavsc.ApiControllers
 				throw new HttpRequestException ("not a multipart/form-data request");
 			BlogEntry be = BlogManager.GetPost (id);
 			if (be.Author != Membership.GetUser ().UserName)
-				throw new AuthorizationDenied ("b"+id);
+				throw new AuthorizationDenied ("post: "+id);
 			string root = HttpContext.Current.Server.MapPath("~/bfiles/"+id);
 			DirectoryInfo di = new DirectoryInfo (root);
 			if (!di.Exists) di.Create ();
@@ -150,7 +169,7 @@ namespace Yavsc.ApiControllers
 
 				var invalidChars = Path.GetInvalidFileNameChars();
 				List<string> bodies = new List<string>();
-
+				 
 				foreach (string fkey in provider.BodyPartFileNames.Keys)
 				{
 					string filename = provider.BodyPartFileNames[fkey];

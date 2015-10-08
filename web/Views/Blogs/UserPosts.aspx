@@ -42,7 +42,6 @@
 	<form runat="server" id="form1" method="GET">
 <%
  rp1.ResultCount = (int) ViewData["RecordCount"];
- rp1.CurrentPage = (int) ViewData["PageIndex"];
  rp1.PageIndex = (int) ViewData["PageIndex"];
 %>
 <yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server">

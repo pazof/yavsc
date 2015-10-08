@@ -1,3 +1,18 @@
+2015-10-08  Paul Schneider  <paul@pschneider.fr>
+
+	* BlogEntry.cs: defines the photo in the model
+
+	* BlogManager.cs: a new method to set the photo on a blog
+	post.
+
+	* BlogProvider.cs: the blog provider now also gives some photo
+
+	* LocalizedText.fr.Designer.cs: Reordering the french
+	localisation resource
+
+	* LocalizedText.fr.resx: Reorders the french localisation
+	resource
+
 2015-10-04  Paul Schneider  <paul@pschneider.fr>
 
 	* MarkdownHelper.cs:

@@ -10,6 +10,7 @@ using Yavsc.Model.Admin;
 using Yavsc.Admin;
 using System.IO;
 using Yavsc.Model;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -160,8 +161,7 @@ namespace Yavsc.Controllers
 			ViewData ["usertoremove"] = username;
 			if (submitbutton == "Supprimer") {
 				Membership.DeleteUser (username);
-				ViewData["Message"]=
-					string.Format("utilisateur \"{0}\" supprimé",username);
+				YavscHelpers.Notice(ViewData, string.Format("utilisateur \"{0}\" supprimé",username));
 				ViewData ["usertoremove"] = null;
 			}
 			return View ();
@@ -236,7 +236,7 @@ namespace Yavsc.Controllers
 		public ActionResult DoAddRole (string rolename)
 		{
 			Roles.CreateRole(rolename);
-			ViewData["Message"] = LocalizedText.role_created+ " : "+rolename;
+			YavscHelpers.Notice(ViewData, LocalizedText.role_created+ " : "+rolename);
 			return View ();
 		}
 
@@ -274,7 +274,7 @@ namespace Yavsc.Controllers
 			ViewData ["useritems"] = users;
 			if (ModelState.IsValid) {
 				Roles.AddUserToRole (model.UserName, adminRoleName);
-				ViewData ["Message"] = model.UserName + " "+LocalizedText.was_added_to_the_role+" '" + adminRoleName + "'";
+				YavscHelpers.Notice(ViewData,  model.UserName + " "+LocalizedText.was_added_to_the_role+" '" + adminRoleName + "'");
 			} else {
 				if (admins.Length > 0) { 
 					if (! admins.Contains (Membership.GetUser ().UserName)) {
@@ -286,9 +286,9 @@ namespace Yavsc.Controllers
 					// No admin, gives the Admin Role to the current user
 					Roles.AddUserToRole (currentUser, adminRoleName);
 					admins = new string[] { currentUser };
-					ViewData ["Message"] += string.Format (
+					YavscHelpers.Notice(ViewData, string.Format (
 						LocalizedText.was_added_to_the_empty_role,
-						currentUser, adminRoleName);
+						currentUser, adminRoleName));
 				}
 			}
 			return View (model);

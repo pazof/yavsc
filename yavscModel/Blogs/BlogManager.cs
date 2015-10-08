@@ -100,6 +100,10 @@ namespace Yavsc.Model.Blogs
 			Provider.UpdatePost (postid, title, content, visible, cids);
 		}
 
+		public static void UpdatePostPhoto (long postid, string photo)
+		{
+			Provider.UpdatePostPhoto (postid, photo);
+		}
 
 		/// <summary>
 		/// Finds the post.

@@ -75,7 +75,7 @@ a.actionlink img, h1 img, .menuitem img  { vertical-align: middle; }
 	border-radius:5px;
 	margin:.5em; padding:1em; display: inline-block }
 fieldset {
-	background-color: rgba(32,16,16,0.8);
+	background-color: rgba(16,16,64,0.8);
 	border-radius:5px; border: solid 1px #000060;
 } 
 
@@ -96,7 +96,7 @@ aside {
 	max-width: 40em;
 	padding: .5em;
 	margin: .5em;
-	background-color: rgba(32,32,32,0.8);
+	background-color: rgba(0,0,32,0.8);
 	border-radius:10px;
 }
 .postpreview video, .postpreview img {
@@ -107,7 +107,7 @@ aside {
 	display:block;
 	margin:1em;
 	padding:1em;
-	background-color: rgba(32,32,32,0.8);
+	background-color: rgba(0,0,32,0.8);
 	color: #aaa;
 	border-radius:10px;
 	}
@@ -125,7 +125,7 @@ textarea.fullwidth { min-height:10em; }
 }
 
 .panel,.bshpanel, aside {
-	background-color: rgba(32,32,16,0.8);
+	background-color: rgba(0,0,128,.5);
 		border-radius:5px; 
 		margin:.5em;
 		padding: .5em;
@@ -167,9 +167,14 @@ label {
 	font-size: medium;
 }
 
-.message, #message {
+ #notifications { 
+	padding: .5em;
+ }
+
+.notification {
 	font-size: large;
 	background-color: rgba(64,64,0,0.5);
+	border: solid green 1px;
 	}
 .dirty { 
 	background-color: rgba(128,128,0,0.5);
@@ -183,7 +188,6 @@ label {
 	color: #f88;
 	background-color: rgba(256,0,0,0.5);
 }
-
 
 .hidden { display:none; }
 
@@ -234,6 +238,9 @@ input, select {
 	max-width: 64px;
 	max-height: 64px;
 }
+#avatar { 
+ float: left;
+ }
 
 .comment {
 	border-radius:25px;
@@ -268,8 +275,7 @@ input, select {
 .c3 { font-size: x-small; font-style: italic; }
 @media print {
 		body {background-color:white;color:black;}
-		header,footer,.postcomment,.actionlink,nav
-		{ display:none;} 
+		.control,.actionlink,nav { display:none;} 
 	}
 
 @media all and (min-width: 640px) {

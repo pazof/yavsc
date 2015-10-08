@@ -150,6 +150,13 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		/// <param name="tagid">Tagid.</param>
 		public abstract void RemoveTag (long tagid);
+
+		/// <summary>
+		/// Updates the post photo.
+		/// </summary>
+		/// <param name="pid">Pid.</param>
+		/// <param name="photo">Photo.</param>
+		public abstract void UpdatePostPhoto (long pid, string photo);
 	}
 
 }

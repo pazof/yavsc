@@ -1,0 +1,40 @@
+2015-10-08  Paul Schneider  <paul@pschneider.fr>
+
+	* BlogsController.cs: implements a method to update the photo
+	url
+
+	* style.css: yastyle
+
+	* AdminController.cs: refactoring the notification:
+	Introduces a static `Notice` method, server side, to populate
+	an array
+	in `ViewData`, used in the paster page.
+
+	* BlogsController.cs: Controls the photo update
+
+	* YavscHelpers.cs:
+	* yavsc.circles.js:
+	* HomeController.cs:
+	* GoogleController.cs: notification refactoring
+
+	* App.master: - notification refactoring
+	- html structure in the `nav`
+
+	* hallo.js: event 'hallomodified' now also occurs at image
+	modifications
+
+	* to-markdown.js: ?Fixes? html images alt text and title to
+	Markdown
+
+	* yavsc.js: implements the photo in database
+
+	* Edit.aspx: A nicer bill edition, with a photo
+
+	* UserPost.aspx: Displays the photo
+
+	* UserPosts.aspx: Fixes the new usage of `ResultPages`
+
+	* Web.config: totem custo
+
+	* instdbws.sql: adds a `photo` field in the `blog` table
+

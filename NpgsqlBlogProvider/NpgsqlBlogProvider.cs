@@ -236,7 +236,7 @@ namespace Npgsql.Web.Blog
 			BlogEntry be = null;
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
-				cmd.CommandText = "select username, title, bcontent, modified, posted, visible from blog " +
+				cmd.CommandText = "select username, title, bcontent, modified, posted, visible, photo from blog " +
 				                  "where applicationname = @appname and _id = @id";
 				cmd.Parameters.AddWithValue ("@appname", applicationName);
 				cmd.Parameters.AddWithValue ("@id", postid);
@@ -250,6 +250,7 @@ namespace Npgsql.Web.Blog
 						be.Modified = rdr.GetDateTime (rdr.GetOrdinal ("modified"));
 						be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 						be.Visible = rdr.GetBoolean (rdr.GetOrdinal ("visible"));
+						be.Photo = rdr.GetString (rdr.GetOrdinal ("photo"));
 						be.Id = postid;
 					}
 				}
@@ -285,7 +286,7 @@ namespace Npgsql.Web.Blog
 			UUTBlogEntryCollection bec = new UUTBlogEntryCollection (username,title);
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = "select _id,bcontent,modified,posted,visible from blog " +
+					cmd.CommandText = "select _id,bcontent,modified,posted,visible,photo from blog " +
 					"where applicationname = :appname and username = :username and title = :title";
 					cmd.Parameters.AddWithValue ("appname", NpgsqlDbType.Varchar, applicationName);
 					cmd.Parameters.AddWithValue ("username", NpgsqlDbType.Varchar ,username);
@@ -302,6 +303,7 @@ namespace Npgsql.Web.Blog
 							be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 							be.Visible = rdr.GetBoolean (rdr.GetOrdinal ("visible"));
 							be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
+							be.Photo = rdr.GetString (rdr.GetOrdinal ("photo"));
 							bec.Add (be);
 						}
 						rdr.Close ();
@@ -392,6 +394,24 @@ namespace Npgsql.Web.Blog
 			}
 			UpdatePostCircles (pid, circles);
 			return pid;
+		}
+		/// <summary>
+		/// Updates the post photo.
+		/// </summary>
+		/// <param name="pid">Pid.</param>
+		/// <param name="photo">Photo.</param>
+		public override void UpdatePostPhoto ( long pid, string photo)
+		{
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
+				cnx.Open ();
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "update blog set photo = :photo where _id = :pid";
+					cmd.Parameters.AddWithValue ("pid", pid);
+					cmd.Parameters.AddWithValue ("photo", photo);
+					cmd.ExecuteNonQuery ();
+				}
+				cnx.Close ();
+			}
 		}
 
 		private void UpdatePostCircles( long pid, long[] circles)

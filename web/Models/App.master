@@ -22,7 +22,6 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 <script src="/Scripts/yavsc.js"></script>
 <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>
-<link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'/>
 </head>
 <body>
 <header data-type="background" data-speed="8" >
@@ -34,26 +33,33 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
  </span></h1>
  </asp:ContentPlaceHolder>
  <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
- <div id="error"><%= (ViewData["Error"]!=null)? Html.Encode(ViewData["Error"]) : "" %></div>
- <div id="message"><%= Html.Encode(ViewData["Message"]) %></div>
+
+ <div id="notifications">
+ </div>
+<%if (ViewData ["Notifications"]!=null) { %>
+<script>
+$(document).ready(function(){
+<% foreach (string notice in (IEnumerable<string>) ViewData ["Notifications"] ) { %>
+Yavsc.notice('<%=notice%>');
+<% } %>
+});
+</script>
+<% } %>
 </header>
 <nav data-type="background" data-speed="2">
 <% if (Membership.GetUser()==null) { %>
-<a href="<%= Url.Content("~/Account/Login/?returnUrl=") + Url.Encode( Request.Url.PathAndQuery )%>"  >
-<div class="menuitem">
-<i class="fa fa-sign-in"></i> Connexion
-</div>
+<a href="<%= Url.Content("~/Account/Login/?returnUrl=") + Url.Encode( Request.Url.PathAndQuery )%>" class="menuitem" >
+<i class="fa fa-sign-in">Connexion</i> 
 </a>
 <% } else { %>
-<a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>" accesskey = "B" >
-<div class="menuitem">
+<a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>" accesskey = "B" class="menuitem" >
+
 <img src="<%=Html.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="vos billets" class="iconsmall" />
-<div class="hint">Vos billets</div>
-</div>
+<span class="hint">Vos billets</span>
 </a>
 <a href="<%= Url.Content("~/Account/Profile/" + HttpContext.Current.User.Identity.Name) %>" accesskey="L" class="menuitem">
 <i class="fa fa-user"><%= HttpContext.Current.User.Identity.Name %>
-<div class="hint"> &Eacute;dition de votre profile </div></i> 
+<span class="hint"> &Eacute;dition de votre profile </span></i> 
 </a>
 <a href="/Blogs/Post" accesskey="P" class="menuitem">
 <i class="fa fa-pencil"><u>P</u>oster
@@ -76,6 +82,7 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 <div id="copyr">
 © 2012 Totem Production. Tous droits réservés.
 </div>
+<div class="control">
 <p>
 <%= Html.ActionLink("Formulaire de contact","Contact","Home") %>
 </p>
@@ -87,6 +94,7 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
   {lang: 'fr'}
 </script>
 <div id="gspacer"><div class="g-plusone" data-annotation="inline" data-width="170"></div>
+</div>
 </div>
 </footer>
 </body>

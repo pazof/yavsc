@@ -4,7 +4,7 @@
 </asp:Content>
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
 <h1 class="blogtitle"><% if (ViewData["Avatar"]!=null) { %>
-<img src="<%=ViewData["Avatar"]%>" alt="" id="logo"/>
+<img src="<%=ViewData["Avatar"]%>" alt="avatar" id="avatar"/>
 <% } %> 
 <%= Html.ActionLink(Model.Title,"UserPost", new{user=Model.Author, title = Model.Title}, null) %> 
 <span> - <%= Html.ActionLink((string)ViewData ["BlogTitle"] ,"UserPosts",new{user=Model.Author}, null) %>
@@ -18,6 +18,11 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <% foreach (var be in Model) { %>
 <div class="post">
+<% if (be.Photo != null) { %>
+
+	<img src="<%=Url.Content(be.Photo)%>" alt="<%=be.Title%>">
+<% } %>
+
 <%= Html.Markdown(be.Content,"/bfiles/"+be.Id+"/") %>
 
  <% string username = Membership.GetUser()==null ? null : Membership.GetUser().UserName; %>
@@ -32,12 +37,12 @@
 
 <% if (Membership.GetUser()!=null) { 
 	if (Membership.GetUser().UserName==be.Author)
-	 { %> <div class="metapost">
+	 { %> <div class="control">
 	 <%= Html.ActionLink("Editer","Edit", new { id = be.Id }, new { @class="actionlink" }) %>
 	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = be.Id }, new { @class="actionlink" } ) %>
 	</div> <% } %>
 
- <aside>
+ <aside class="control">
 	 <% using (Html.BeginForm("Comment","Blogs")) { %>
 	 <%=Html.Hidden("Author")%>
 	 <%=Html.Hidden("Title")%>

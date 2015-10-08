@@ -17,12 +17,16 @@ self.showHide = function () {
 	$(this).html(this.oldhtml);
     }
 	};
-
-self.message = function (msg) { 
-  if (msg) { 
-  $("#message").removeClass("hidden");
-  $("#message").text(msg);
-  } else { $("#message").addClass("hidden"); } };
+	self.dimiss = function () { 
+		$(this).parent().remove();
+	}
+   	self.notice = function (msg, msgok) { 
+   	if (!msgok) msgok='Ok';
+   	if (msg) { 
+   	var note = $('<div class="notification">'+msg+'<br></div>');
+   	$('<a class="actionlink"><i class="fa fa-check">'+msgok+'</i></a>').click(self.dimiss).appendTo(note);
+   	note.appendTo("#notifications");
+  	}  };
 
 
  self.onAjaxBadInput = function (data)
@@ -39,10 +43,9 @@ self.message = function (msg) {
     }
 self.onAjaxError = function (xhr, ajaxOptions, thrownError) {
             	if (xhr.status!=400)
-        			Yavsc.message(xhr.status+" : "+xhr.responseText);
-			    else Yavsc.message(false);
+        			Yavsc.notice(xhr.status+" : "+xhr.responseText);
+			    else Yavsc.notice(false);
      }
-
-
 return self;
 })();
+

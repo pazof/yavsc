@@ -171,6 +171,7 @@ CREATE TABLE blog
   bcontent text NOT NULL,
   visible boolean NOT NULL,
   _id bigserial NOT NULL,
+  photo character varying(512), 
   CONSTRAINT blog_pkey PRIMARY KEY (_id),
   CONSTRAINT bloguser FOREIGN KEY (applicationname, username)
       REFERENCES users (applicationname, username) MATCH SIMPLE
@@ -180,6 +181,8 @@ WITH (
   OIDS=FALSE
 );
 
+COMMENT ON COLUMN blog.photo IS 'a photo url, supposed to be the main photo
+related to this post';
 
 CREATE TABLE blfiles
 (

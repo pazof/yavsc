@@ -17,6 +17,7 @@ using Yavsc.Model.Google;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Helpers.Google;
 using Yavsc.Model.Calendar;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -100,7 +101,7 @@ namespace Yavsc.Controllers
 
 			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
 			if (gat == null) {
-				ViewData ["Message"] = msg;
+				YavscHelpers.Notice(ViewData,  msg);
 				return View ("Auth");
 			}
 			SaveToken (gat);
@@ -137,7 +138,7 @@ namespace Yavsc.Controllers
 			OAuth2 oa = new OAuth2 (AuthGRU);
 			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
 			if (gat == null) {
-				ViewData ["Message"] = msg;
+				YavscHelpers.Notice(ViewData,  msg);
 				return View ();
 			}
 			string returnUrl = (string)Session ["returnUrl"];

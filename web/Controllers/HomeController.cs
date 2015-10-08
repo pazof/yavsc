@@ -84,16 +84,9 @@ namespace Yavsc.Controllers
 		/// </summary>
 		public ActionResult Index ()
 		{
-			/* 
-			 * A very bad idea (a redirect permanent as home page):
-			 * 
-			 * string startPage = WebConfigurationManager.AppSettings ["StartPage"];
-			if (startPage != null)
-				Redirect (startPage);
-				*/
-			ViewData ["Message"] = LocalizedText.Welcome;
 			return View ();
 		}
+
 		/// <summary>
 		/// Contact the specified email, reason and body.
 		/// </summary>
@@ -123,8 +116,7 @@ namespace Yavsc.Controllers
 				using (System.Net.Mail.SmtpClient sc = new SmtpClient()) 
 				{
 					sc.Send (msg);
-					ViewData ["Message"] = LocalizedText.Message_sent;
-
+					YavscHelpers.Notice(ViewData, LocalizedText.Message_sent);
 					return View (new { email=email, reason="", body="" });
 				}
 			}

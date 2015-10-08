@@ -28,6 +28,15 @@ namespace Yavsc.Model.Blogs
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the photo.
+		/// </summary>
+		/// <value>The photo.</value>
+		public string Photo { 
+			get;
+			set;
+		}
+
 		string title;
 
 		/// <summary>

@@ -273,6 +273,8 @@ namespace Yavsc.Controllers
 				}
 				else
 					model.Id = BlogManager.Post (model.Author, model.Title, model.Content, model.Visible, model.AllowedCircles);
+				if (model.Photo != null)
+					BlogManager.UpdatePostPhoto (model.Id, model.Photo);
 				return RedirectToAction ("UserPosts", new { user = model.Author, title = model.Title });
 			}
 			ViewData ["AllowedCircles"] = 
