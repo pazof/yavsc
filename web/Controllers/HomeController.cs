@@ -86,6 +86,10 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
+		public ActionResult Credits ()
+		{
+			return View ();
+		}
 
 		/// <summary>
 		/// Contact the specified email, reason and body.
