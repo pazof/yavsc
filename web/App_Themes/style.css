@@ -17,13 +17,12 @@ input, textarea, checkbox {
 
 header {
 	border-radius:10px;
-	margin: .5em;
-	padding: 3em;
+	margin: 1em;
+	padding: 1em;
 	padding-top: 5em;
 	display: block;
-	min-height: 10em;
 	text-align: center;
-	background: url("/images/totemprod.png") 0 0 no-repeat fixed;
+	background: url("/images/totemprod.png") 50% 0 no-repeat fixed;
 	}
 header h1, header a {
 background-color: rgba(0,0,0,.5); 
@@ -289,7 +288,6 @@ input, select {
 	header {
 		margin: .5em;
 		padding: .5em;
-		min-height: 3em;
 	    padding-top: 5em;
 	}
 	nav {

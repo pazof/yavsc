@@ -303,7 +303,11 @@ namespace Npgsql.Web.Blog
 							be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 							be.Visible = rdr.GetBoolean (rdr.GetOrdinal ("visible"));
 							be.Id = rdr.GetInt64 (rdr.GetOrdinal ("_id"));
-							be.Photo = rdr.GetString (rdr.GetOrdinal ("photo"));
+							{
+								int oph = rdr.GetOrdinal ("photo");
+								if (!rdr.IsDBNull (oph))
+									be.Photo = rdr.GetString (oph);
+							}
 							bec.Add (be);
 						}
 						rdr.Close ();
