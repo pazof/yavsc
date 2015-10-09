@@ -33,21 +33,25 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// Avatar the specified user.
 		/// </summary>
-		/// <param name="user">User.</param>
+		/// <param name="id">User.</param>
 		[AcceptVerbs (HttpVerbs.Get)]
-		public ActionResult Avatar (string user)
+		public ActionResult Avatar (string id)
 		{
-			ProfileBase pr = ProfileBase.Create (user);
-			string avpath = (string ) pr.GetPropertyValue("Avatar") ;
+			if (id == null)
+				return new EmptyResult ();
+			
+			ProfileBase pr = ProfileBase.Create (id);
+			var avpath = pr.GetPropertyValue("Avatar");
 			if (avpath == null) {
 				FileInfo fia = new FileInfo (Server.MapPath (defaultAvatar));
 				return File (fia.OpenRead (), defaultAvatarMimetype);
 			}
-			if (avpath.StartsWith ("~/")) {
-				avpath = Server.MapPath (avpath);
+			string avatarLocation = avpath as string;
+			if (avatarLocation.StartsWith ("~/")) {
+				avatarLocation = Server.MapPath (avatarLocation);
 			}
 
-			WebRequest wr = WebRequest.Create (avpath);
+			WebRequest wr = WebRequest.Create (avatarLocation);
 			FileContentResult res;
 			using (WebResponse resp = wr.GetResponse ()) {
 				using (Stream str = resp.GetResponseStream ()) {

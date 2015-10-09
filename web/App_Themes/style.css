@@ -37,16 +37,17 @@ nav {
 	padding: 2em;
 	display: block;
 	border-radius:1em;
-	background: url("/images/live-concert-388160_1280.s.jpg") 50% 10em repeat fixed ;
+	background: url("/images/live-concert-388160_1280.jpg") 50% 10em repeat fixed ;
 	justify-content: space-around;
+	min-height:5em;
 }
 
 main {
 	margin: 2em;
-	padding: 2em;
+	padding: 6em 2em 6em 2em;
 	display: block;
 	border-radius:1em;
-	background: url("/images/musician-923526_1280.s.jpg") 50% 20em repeat fixed ;
+	background: url("/images/musician-923526_1.nbb.jpg") 50% 20em repeat fixed ;
 	}
 
 footer {
@@ -133,14 +134,14 @@ textarea.fullwidth { min-height:10em; }
 
 .panel,.bshpanel, aside {
 	background-color: rgba(20,20,20,.8); 
-	border-radius:5px; 
-	margin:.5em;
+	border-radius: 5px; 
+	margin: .5em;
 	padding: .5em;
 }
 .spanel {
-  max-width:24em;
-  display: inline-block;
-  margin:.3em;
+  max-width: 24em;
+    display: inline-block;
+  margin: .3em;
 }
 .xspanel {
   max-width:13em;
@@ -178,13 +179,13 @@ a:visited {
 label {
 	font-size: medium;
 }
-.editable { 
-margin 1em; 
-min-height:1em; 
-border-radius: 1em; 
-border: dashed rgb(020,20,256) 2px; 
+.editable {
+	margin 1em; 
+	min-height:1em; 
+	border-radius: 1em; 
+	border: dashed rgb(020,20,256) 2px; 
 }
- #notifications { 
+#notifications { 
 	padding: .5em;
  }
 
@@ -302,24 +303,21 @@ input, select {
 	}
 
 @media all and (max-width: 640px) {
-header {
-	margin-bottom:1em;
-	background: url("/images/totem-banner.xs.jpg") 0 0 no-repeat fixed;
- }
-
 	nav {
 		margin: 1em;
 		padding: 1em;
-		background:    url("/images/live-concert-388160_1280.xxs.jpg") 50% 10% repeat fixed ; 
+		min-height:4em;
+		background:    url("/images/live-concert-388160_1280.s.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
 		margin: 1em;
-		padding: 1em;
-		background:   url("/images/musician-923526_1280.xxs.jpg")  50% 20em repeat fixed ; 
+	padding: 4em 1em 4em 1em;
+		background:   url("/images/musician-923526_1.nbb.xs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
-		background: url("/images/drummer-652345_1280.xxs.jpg") 50% 90% repeat fixed ; 
+		background: url("/images/drummer-652345_1280.xs.jpg") 50% 90% repeat fixed ; 
 		padding: 1em;
+		margin: 1em;
 	} 
 	.menuitem {
 		display: block; 
@@ -342,19 +340,30 @@ header {
 
 @media all and (max-width: 350px) {
 header {
+	padding: 0;
+	margin: 0;
+	margin-top: 0;
 	padding-top: 101px;
+	margin-bottom:1em;
 	background: url("/images/totem-banner.xxs.jpg") 0 0 no-repeat fixed;
  }
- nav { 
-	margin: 0.3em;
-	padding: 0.3em;
+	nav {
+		margin: .5em;
+		padding: .5em;
+		min-height:3em;
+		background:    url("/images/live-concert-388160_1280.xxs.jpg") 50% 10% repeat fixed ; 
 	}
-	main {
-	margin: 0.3em;
-	padding: 0.3em;}
+	main { 
+		margin: .5em;
+	padding: 3em .5em 3em .5em;
+		background:   url("/images/musician-923526_1.nbb.xxs.jpg")  50% 20em repeat fixed ; 
+	} 
+	footer { 
+		background: url("/images/drummer-652345_1280.xxs.jpg") 50% 90% repeat fixed ; 
 
-	padding: 0em;
-	margin: 0em;
+	margin: 0.5em;
+	padding: 0.5em;
+	} 
   .c2 { display:none; }
   .c2-alt { display:initial; }
 }

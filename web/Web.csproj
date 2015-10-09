@@ -422,6 +422,12 @@
     <Content Include="images\totem-banner.png" />
     <Content Include="images\totem-banner.xxs.jpg" />
     <Content Include="images\totem-banner.xs.jpg" />
+    <Content Include="images\musician-923526_1.nb.jpg" />
+    <Content Include="images\musician-923526_1.nb.xs.jpg" />
+    <Content Include="images\musician-923526_1.nb.xxs.jpg" />
+    <Content Include="images\musician-923526_1.nbb.jpg" />
+    <Content Include="images\musician-923526_1.nbb.xs.jpg" />
+    <Content Include="images\musician-923526_1.nbb.xxs.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
