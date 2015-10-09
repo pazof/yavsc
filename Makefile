@@ -29,6 +29,7 @@ rsync_% : DESTDIR = $(DESTDIR_$@)
 rsync_% : deploy
 	echo "!Deploying to $(HOST)!"
 	$(RSYNCCMD) build/web/$(CONFIG)/ root@$(HOST):$(DESTDIR)
+	ssh root@$(HOST) "service apache2 reload"
 
 build: 
 	xbuild /p:Configuration=$(CONFIG) /t:Build Yavsc.sln

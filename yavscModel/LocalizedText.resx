@@ -53,7 +53,7 @@
 	<data name="Pdf_version"><value>Pdf version</value></data>
 	<data name="Preview"><value>Preview</value><comment>comment on preview</comment></data>
 	<data name="Private_circle"><value>Private circle</value></data>
-
+	<data name="Profile_edition"><value>Profile edition</value></data>
 	<data name="ProviderId"><value>Provider identifier</value></data>
 	<data name="ProviderName"><value>Provider name</value></data>
 	<data name="Product_reference"><value>Product_reference</value></data>

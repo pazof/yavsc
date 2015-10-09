@@ -418,6 +418,10 @@
     <Content Include="images\drummer-652345_1280.xxs.jpg" />
     <Content Include="images\live-concert-388160_1280.xxs.jpg" />
     <Content Include="Scripts\parralax.js" />
+    <Content Include="images\totem.jpg" />
+    <Content Include="images\totem-banner.png" />
+    <Content Include="images\totem-banner.xxs.jpg" />
+    <Content Include="images\totem-banner.xs.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

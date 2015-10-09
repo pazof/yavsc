@@ -230,28 +230,24 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Post the specified user and title.
+		/// Post the specified title.
 		/// </summary>
-		/// <param name="user">User.</param>
 		/// <param name="title">Title.</param>
 		[Authorize]
-		public ActionResult Post (string user, string title)
+		public ActionResult Post ( string title)
 		{
-			ViewData ["BlogUser"] = user;
-			ViewData ["PostTitle"] = title;
-			ViewData ["SiteName"] = sitename;
 			string un = Membership.GetUser ().UserName;
-			if (String.IsNullOrEmpty (user))
-				user = un;
 			if (String.IsNullOrEmpty (title))
 				title = "";
+			ViewData ["SiteName"] = sitename;
 			ViewData ["Author"] = un;
-			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (Membership.GetUser ().UserName).Select (x => new SelectListItem {
+			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (un)
+				.Select (x => new SelectListItem {
 				Value = x.Id.ToString(),
 				Text = x.Title
 			});
 
-			return View ("Edit", new BlogEntry { Title = title });
+			return View ("Edit", new BlogEntry { Title = title, Author = un });
 		}
 
 		/// <summary>

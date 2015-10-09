@@ -5,11 +5,14 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
-<h1 class="blogtitle">
-<a href="/Blog/<%=ViewData["BlogUser"]%>">
-<% if ((bool)ViewData["Avatar"]!=null) { %>
-<img class="avatar" src="<%=ViewData["Avatar"]%>" alt=""/> 
+
+<% if (!string.IsNullOrEmpty((string)ViewData["Avatar"])) { %>
+<a href="<%=Url.Content("~/Blog/"+Model.Author)%>" id="avatar">
+<img src="<%=ViewData["Avatar"]%>" />
+</a>
 <% } %>
+<h1 class="blogtitle">
+<a href="<%=Url.Content("~/Blog/"+Model.Author)%>">
 <%=Html.Encode(ViewData["BlogTitle"])%></a>
 - 
 <a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>

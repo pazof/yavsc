@@ -97,31 +97,31 @@ WITH (
 
 CREATE TABLE profiledata
 (
-  uniqueid integer,
-  "address.zipcode" character varying(10),
-  "address.cityandstate" character varying(255),
+ uniqueid integer,
+  zipcode character varying(10),
+  cityandstate character varying(255),
   blogtitle character varying(255), -- Blog Title
-  "address.address" character varying(2048), -- Postal address
-  "address.country" character varying(100),
+  address character varying(2048), -- Postal address
+  country character varying(100),
   website character varying(256),
   blogvisible boolean,
   name character varying(1024),
   phone character varying(15),
   mobile character varying(15),
-  "bank.accountnumber" character varying(15), -- Numero de compte
-  "bank.key" integer, -- clé RIB
-  "bank.code" character varying(5), -- Code banque
-  "bank.wicketcode" character varying(5),
-  "bank.iban" character varying(33),
-  "bank.bic" character varying(15),
-  "google.token" character varying(512), -- Google authentification token
-  "google.refreshtoken" character varying(512), -- Google refresh token
-  "google.tokentype" character varying(256), -- Google access token type
-  "google.calid" character varying(255), -- Google calendar identifier
-  "google.tokenexpir" timestamp with time zone, -- Google access token expiration date
+  accountnumber character varying(15), -- Numero de compte
+  bankedkey integer, -- clé RIB
+  bankcode character varying(5), -- Code banque
+  wicketcode character varying(5),
+  iban character varying(33),
+  bic character varying(15),
+  gtoken character varying(512), -- Google authentification token
+  grefreshtoken character varying(512), -- Google refresh token
+  gtokentype character varying(256), -- Google access token type
+  gcalid character varying(255), -- Google calendar identifier
+  gtokenexpir timestamp with time zone, -- Google access token expiration date
   avatar character varying(512), -- url for an avatar
-  "google.calapi" boolean NOT NULL DEFAULT false,
-  "google.regid" character varying(1024), -- Google Cloud Message registration identifier
+  gcalapi boolean NOT NULL DEFAULT false,
+  gregid character varying(1024), -- Google Cloud Message registration identifier
   CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE

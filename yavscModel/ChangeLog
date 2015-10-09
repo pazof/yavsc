@@ -1,3 +1,10 @@
+2015-10-09  Paul Schneider  <paul@pschneider.fr>
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: a new translation
+
 2015-10-08  Paul Schneider  <paul@pschneider.fr>
 
 	* BlogEntry.cs: defines the photo in the model

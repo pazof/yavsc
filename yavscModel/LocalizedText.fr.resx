@@ -50,6 +50,7 @@
 	<data name="Online"><value>En ligne</value></data>
 	<data name="Pdf_version"><value>Version Pdf</value></data>
 	<data name="Preview"><value>Prévisualiser</value><comment>Prévisualiser le document</comment></data>
+	<data name="Profile_edition"><value>Édition du profile</value></data>
 	<data name="Product_reference"><value>Référence produit</value></data>
 	<data name="ProviderId"><value>Identifiant du fournisseur</value></data>
 	<data name="ProviderName"><value>Nom du fournisseur</value></data>

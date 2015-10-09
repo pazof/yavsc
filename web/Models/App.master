@@ -33,9 +33,7 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
  </span></h1>
  </asp:ContentPlaceHolder>
  <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
-
- <div id="notifications">
- </div>
+ <div id="notifications"></div>
 <%if (ViewData ["Notifications"]!=null) { %>
 <script>
 $(document).ready(function(){
@@ -71,10 +69,8 @@ Yavsc.notice('<%=notice%>');
 <% } %>
 </nav>
 <main data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="22" >
-  <div>
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
-</div>
 </main>
 <asp:ContentPlaceHolder ID="MASContent" runat="server">
 </asp:ContentPlaceHolder>
@@ -82,8 +78,8 @@ Yavsc.notice('<%=notice%>');
 <div id="copyr">
 © 2012 Totem Production. Tous droits réservés.
 </div>
-<div class="control">
-<p>
+<div >
+<p class="control">
 <%= Html.ActionLink("Formulaire de contact","Contact","Home") %>
 </p>
 <p>
@@ -93,7 +89,7 @@ Yavsc.notice('<%=notice%>');
 <script src="https://apis.google.com/js/platform.js" defer>
   {lang: 'fr'}
 </script>
-<div id="gspacer"><div class="g-plusone" data-annotation="inline" data-width="170"></div>
+<div id="gspacer" class="control"><div class="g-plusone" data-annotation="inline" data-width="170"></div>
 </div>
 </div>
 </footer>

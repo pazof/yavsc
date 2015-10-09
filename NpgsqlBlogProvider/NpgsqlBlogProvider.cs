@@ -250,13 +250,16 @@ namespace Npgsql.Web.Blog
 						be.Modified = rdr.GetDateTime (rdr.GetOrdinal ("modified"));
 						be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 						be.Visible = rdr.GetBoolean (rdr.GetOrdinal ("visible"));
-						be.Photo = rdr.GetString (rdr.GetOrdinal ("photo"));
+						int oph = rdr.GetOrdinal ("photo");
+						if (!rdr.IsDBNull(oph))
+							be.Photo = rdr.GetString (oph);
 						be.Id = postid;
 					}
 				}
 			}
 			if (be!=null) SetCirclesOn (be);
 			return be;
+
 		}
 		/// <summary>
 		/// Removes the comment.
@@ -459,16 +462,16 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				if (readersName != null) {
-					cmd.CommandText = "select _id, title,bcontent,modified," +
+					cmd.CommandText = "select _id, title,bcontent, modified," +
 						"posted,username,visible " +
 						"from blog b left outer join " +
 						"(select count(*)>0 acc, a.post_id pid " +
 						"from blog_access a," +
 						" circle_members m, users u where m.circle_id = a.circle_id " +
-						" and m.member = u.pkid and u.username = :uname " +
+						" and m.member = u.username and u.username = :uname " +
 						" and u.applicationname = :appname " +
 						" group by a.post_id) ma on (ma.pid = b._id) " +
-						"where ( ma.acc IS NULL or ma.acc = TRUE or b.username = :uname) ";
+						"where ( ((ma.acc IS NULL or ma.acc = TRUE) and b.Visible IS TRUE ) or b.username = :uname) ";
 					cmd.Parameters.AddWithValue ("uname", readersName);
 				} else {
 					cmd.CommandText = "select _id, title,bcontent,modified," +
@@ -478,7 +481,8 @@ namespace Npgsql.Web.Blog
 						"from blog_access a" +
 						" group by a.post_id) ma on (ma.pid = b._id)" +
 						" where " +
-						" ma.acc IS NULL and " +
+						" ma.acc IS NULL and  " +
+						" b.Visible IS TRUE and  " +
 						" applicationname = :appname";
 				}
 				cmd.Parameters.AddWithValue ("@appname", applicationName);

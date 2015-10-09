@@ -15,16 +15,15 @@
 <img src="<%=Model.Photo%>" alt="photo" id="vphoto" >
 </span>
 <!-- TODO? Model.Photo.(Legend|Date|Location|ref) -->
-<h1 id="vtitle" for="Title" class="editable"><%=Html.Markdown(Model.Title)%></h1>
+<h1 id="vtitle" for="Title" class="editable" ><%=Html.Markdown(Model.Title)%></h1>
 <div id="vcontent" for="Content" class="editable">
 <%=Html.Markdown(Model.Content,"/bfiles/"+Model.Id+"/")%>
 </div>
-<span id="viewsource" class="actionlink">
-<i class="fa fa-code">View Source</i></span>
-<span id="hidesource" class="actionlink hidden">
-<i class="fa fa-code">Hide Source</i>
-</span>
+<hr><h2>Fichiers attachées</h2> 
 
+<%= Html.FileList("~/bfiles/"+Model.Id) %>
+
+<hr>
 <script>
 function dumpprops(obj) { 
 var str = "";
@@ -94,6 +93,7 @@ jQuery('#vcontent').hallo({
 });
 
 var markdownize = function(content) {
+	if (!content) return '';
     var html = content.split("\n").map($.trim).filter(function(line) { 
       return line != "";
     }).join("\n");
@@ -107,16 +107,17 @@ var converter = new showdown.Converter(),
 
    // Method that converts the HTML contents to Markdown
 var showSource = function(id,content) {
+	if (!content) content = '';
     var markdown = markdownize(content);
-    if (jQuery('#'+id).get(0).value == markdown) {
+    if (jQuery('#'+id).val() === markdown) {
       return;
     }
-    jQuery('#'+id).get(0).value = markdown;
+    jQuery('#'+id).val( markdown );
   };
 
 var updateHtml = function(id,content) {
-  	var jView = jQuery('div[for="'+id+'"]');
-    if (markdownize(jView.html()) == content) {
+  	var jView = jQuery('*[for="'+id+'"]');
+    if (markdownize(jView.html()) === content) {
       return;
     }
     var html = htmlize(content);
@@ -228,10 +229,15 @@ var data  = new FormData($('#frmajax').get()[0]);
 <i class="af af-check actionlink"><input type="submit" id="validate" value="Valider"></i>
 <% } %>
 
+<span id="viewsource" class="actionlink">
+<i class="fa fa-code">View Source</i></span>
+<span id="hidesource" class="actionlink hidden">
+<i class="fa fa-code">Hide Source</i>
+</span>
 <aside>
 	Id:<%= Html.ActionLink( Model.Id.ToString() , "UserPost", new { user= Model.Author, title=Model.Title, id = Model.Id }, new { @class = "usertitleref actionlink" }) %>
 , Posted: <%= Model.Posted.ToString("yyyy/MM/dd") %> - Modified: <%= Model.Modified.ToString("yyyy/MM/dd") %> 
-Visible: <%= Model.Visible? "oui":"non" %> <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title }, new { @class="actionlink" } ) %>
+Visible: <%= Model.Visible? "oui":"non" %> <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title, id = Model.Id }, new { @class="actionlink" } ) %>
 </aside>
 
 </asp:Content>

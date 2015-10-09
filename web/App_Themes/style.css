@@ -4,9 +4,10 @@ body {
 	background-color: black;
 	color: #D0FFD0;
 	font-family: 'Arial', cursive;
-	padding: 0em;
+	padding: 0;
 	margin: 0;
 }
+
 
 .iconsmall { max-height: 1.3em; max-width: 1.3em; } 
 
@@ -15,62 +16,69 @@ input, textarea, checkbox {
 	background-color: black;
    }
 
+.photo { width: 100%; }
+.blogbanner { float: left; top:0; }
 header {
-	border-radius:10px;
-	margin: 1em;
-	padding: 1em;
-	padding-top: 5em;
+	padding: 0;
+	margin: 0;
+	margin-top: 0;
+	padding-top: 201px;
+	margin-bottom:2em;
 	display: block;
 	text-align: center;
-	background: url("/images/totemprod.png") 50% 0 no-repeat fixed;
+	background: url("/images/totem-banner.xs.jpg") 0 0 no-repeat fixed;
 	}
 header h1, header a {
 background-color: rgba(0,0,0,.5); 
 }
 
 nav {
-	border-radius:1em;
-	margin: 1em;
-	padding: 1em;
+	margin: 2em;
+	padding: 2em;
 	display: block;
+	border-radius:1em;
 	background: url("/images/live-concert-388160_1280.s.jpg") 50% 10em repeat fixed ;
-	min-height: 10em;
+	justify-content: space-around;
 }
 
 main {
-	border-radius:1em;
-	margin: 1em;
-	padding: 1em;
+	margin: 2em;
+	padding: 2em;
 	display: block;
+	border-radius:1em;
 	background: url("/images/musician-923526_1280.s.jpg") 50% 20em repeat fixed ;
-	min-height: 10em;
 	}
 
 footer {
 	background: url("/images/drummer-652345_1280.s.jpg") 50% 30em repeat fixed ;
-	border-radius:1em;
-	margin: 1em;
-	padding: 1em;
+	margin: 0;
+	margin-top: 2em;
+	padding: 2em;
 	display: block;
-	min-height: 10em;
 	clear: both;
 	font-size: smaller;
-	justify-content: center;
+	justify-content: space-around;
+
 }
 footer a {
 	border-radius:5px;
 	margin:.5em;
 	padding:1em;
   }
-
-#copyr { text-align: center; display: block; background-color: rgba(20,20,20,.5); }
+legend {
+	border-radius:5px;
+	margin:.5em;
+	padding:1.5em;
+	background-color: rgba(0,0,32,.5);
+  }
+#copyr { text-align: center; display: block; background-color: rgba(20,20,20,.8); }
 footer p { display:inline-block; } 
 
 footer img { max-height: 2em; vertical-align: middle; }
 a.actionlink img, h1 img, .menuitem img  { vertical-align: middle; }
 
 #gspacer { 
-	background-color: rgba(0,0,40,.8); 
+	background-color: rgba(20,20,20,.8); 
 	border-radius:5px;
 	margin:.5em; padding:1em; display: inline-block }
 fieldset {
@@ -78,7 +86,7 @@ fieldset {
 	border-radius:5px; border: solid 1px #000060;
 } 
 
-video, img {
+main video, main img {
 	max-width:100%;
 	max-height:75%;
 	padding: .5em;
@@ -124,12 +132,26 @@ textarea.fullwidth { min-height:10em; }
 }
 
 .panel,.bshpanel, aside {
-	background-color: rgba(0,0,128,.5);
-		border-radius:5px; 
-		margin:.5em;
-		padding: .5em;
+	background-color: rgba(20,20,20,.8); 
+	border-radius:5px; 
+	margin:.5em;
+	padding: .5em;
 }
-
+.spanel {
+  max-width:24em;
+  display: inline-block;
+  margin:.3em;
+}
+.xspanel {
+  max-width:13em;
+  display: inline-block;
+  margin:.2em;
+}
+.xxspanel {
+  max-width:7em;
+  display: inline-block;
+  margin:.1em;
+}
 .hint {
 	display: inline;
 	font-style: italic;
@@ -143,12 +165,6 @@ content: ")";
 }
 
 
-a {
-	text-decoration: none;
-	color: #B0B080;
-   background-color:rgba(20,20,20,0.5);
-   text-decoration: none;
-}
 .usertitleref {
 	color: #B0B080;
 	border-radius: 5px;
@@ -156,16 +172,18 @@ a {
    font-family: 'Arial', cursive;
 	padding: 1em;
 }
-a:hover  {
-	text-decoration: underline;
-}
 a:visited {
 	color: #90B090;
 }
 label {
 	font-size: medium;
 }
-
+.editable { 
+margin 1em; 
+min-height:1em; 
+border-radius: 1em; 
+border: dashed rgb(020,20,256) 2px; 
+}
  #notifications { 
 	padding: .5em;
  }
@@ -203,27 +221,33 @@ ul.preview li:nth-child(n) {
 	color: #f88;
 }
 
-.actionlink {
+a {
+   text-decoration: none;
+}
+
+.actionlink, .menuitem, a {
 	color: #B0B080;
-	border-radius: 5px;
-   background-color:rgba(0,0,32,0.5);
+	border-radius:1em;
+	border: solid black 1px;
+   background-color: rgba(20,20,20,.8); 
    cursor: pointer;
    font-family: 'Arial', cursive;
 	padding: .2em;
+	display: inline-block; 
 }
 
 input, select { 
 	color: #B0B080;
 	border: solid 1px rgb(128,128,128);
-	border-radius:5px;
+	border-radius:1em;
    background-color:rgba(0,0,32,0.8);
    font-family: 'Arial', cursive;
 }
 
 
-.actionlink:hover {
+.actionlink:hover, fa:hover, .menuitem:hover, a:hover, input:hover {
 	background-color:rgba(30,0,124,0.9);
-    text-decoration: underline;
+	border: solid green 1px;
 }
 
 .code {
@@ -237,23 +261,16 @@ input, select {
 	max-width: 64px;
 	max-height: 64px;
 }
+
 #avatar { 
  float: left;
+ margin:1em;
  }
 
 .comment {
 	border-radius:25px;
 	font-size: smaller;
 	}
-
-
-.menuitem {
-	background-color: rgba(0,0,40,.8); 
-	border-radius:5px;
-	margin:.5em;
-	padding:.5em;
-	display: inline-block; 
-}
 
 .onhover {
 	display:none; 
@@ -285,28 +302,24 @@ input, select {
 	}
 
 @media all and (max-width: 640px) {
-	header {
-		margin: .5em;
-		padding: .5em;
-	    padding-top: 5em;
-	}
+header {
+	margin-bottom:1em;
+	background: url("/images/totem-banner.xs.jpg") 0 0 no-repeat fixed;
+ }
+
 	nav {
-		margin: .5em;
-		padding: .5em;
-		min-height: 3em;
+		margin: 1em;
+		padding: 1em;
 		background:    url("/images/live-concert-388160_1280.xxs.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
-		margin: .5em;
-		padding: .5em;
-		min-height: 7em;
+		margin: 1em;
+		padding: 1em;
 		background:   url("/images/musician-923526_1280.xxs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
-		margin: .5em;
-		padding: .5em;
-		min-height: 3em;
 		background: url("/images/drummer-652345_1280.xxs.jpg") 50% 90% repeat fixed ; 
+		padding: 1em;
 	} 
 	.menuitem {
 		display: block; 
@@ -328,6 +341,20 @@ input, select {
 }
 
 @media all and (max-width: 350px) {
+header {
+	padding-top: 101px;
+	background: url("/images/totem-banner.xxs.jpg") 0 0 no-repeat fixed;
+ }
+ nav { 
+	margin: 0.3em;
+	padding: 0.3em;
+	}
+	main {
+	margin: 0.3em;
+	padding: 0.3em;}
+
+	padding: 0em;
+	margin: 0em;
   .c2 { display:none; }
   .c2-alt { display:initial; }
 }

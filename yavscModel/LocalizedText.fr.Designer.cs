@@ -88,6 +88,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Profile_edition {
+            get {
+                return ResourceManager.GetString("Profile_edition", resourceCulture);
+            }
+        }
+        
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);

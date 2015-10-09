@@ -3,15 +3,19 @@
 <% Title = Model.Title+ " - " + ViewData ["BlogTitle"] ; %>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
-<h1 class="blogtitle"><% if (ViewData["Avatar"]!=null) { %>
-<img src="<%=ViewData["Avatar"]%>" alt="avatar" id="avatar"/>
-<% } %> 
-<%= Html.ActionLink(Model.Title,"UserPost", new{user=Model.Author, title = Model.Title}, null) %> 
-<span> - <%= Html.ActionLink((string)ViewData ["BlogTitle"] ,"UserPosts",new{user=Model.Author}, null) %>
-</span>
-<span> - 
-<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
-</span>
+
+<% if (!string.IsNullOrEmpty((string)ViewData["Avatar"])) { %>
+<a href="<%= Url.Action("UserPosts", new{user=Model.Author}) %>" id="avatar">
+<img src="<%=ViewData["Avatar"]%>" />
+</a>
+<% } %>
+<h1 class="blogtitle">
+<a href="<%= Url.Action("UserPost", new{user=Model.Author, title = Model.Title}) %>">
+<%=Model.Title%>
+</a>
+ - <%= Html.ActionLink((string)ViewData ["BlogTitle"] ,"UserPosts",new{user=Model.Author}, null) %>
+  - 
+<a href="<%=Url.Content("~/")%>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>
 
@@ -19,8 +23,7 @@
 <% foreach (var be in Model) { %>
 <div class="post">
 <% if (be.Photo != null) { %>
-
-	<img src="<%=Url.Content(be.Photo)%>" alt="<%=be.Title%>">
+	<img src="<%=Url.Content(be.Photo)%>" alt="<%=be.Title%>" class="photo">
 <% } %>
 
 <%= Html.Markdown(be.Content,"/bfiles/"+be.Id+"/") %>

@@ -1,3 +1,35 @@
+2015-10-09  Paul Schneider  <paul@pschneider.fr>
+
+	* totem-banner.png:
+	* totem-banner.xs.jpg:
+	* totem-banner.xxs.jpg: totem custo
+
+	* style.css: yastyle
+
+	* AccountController.cs: - Fixes route usage with n ovalue for
+	`id`
+	- better code at getting the avatar url
+
+
+	* BlogsController.cs: Fixes a Post request without user name
+	in the route
+
+	* YavscHelpers.cs: Implements a file list html rendering
+
+	* App.master:
+	* UserPost.aspx:
+	* Profile.aspx:
+	* AssemblyInfo.aspx: yahtmlstructure
+
+	* Edit.aspx: Displays a list a attached files
+
+	* UserPosts.aspx: yahtmlstrucure
+
+	* Web.csproj: new images
+
+	* instdbws.sql: returns to the flat list of properies (groups
+	are not working)
+
 2015-10-08  Paul Schneider  <paul@pschneider.fr>
 
 	* Contact.aspx: a form background color

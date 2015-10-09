@@ -176,23 +176,92 @@ namespace Yavsc.Helpers
 			if (a == null || a is DBNull) return "/avatars/" + helper.Encode(username)+".png";
 			return helper.Encode ((string)a);
 		}
-
+		/// <summary>
+		/// Javas the script.
+		/// </summary>
+		/// <returns>The script.</returns>
+		/// <param name="html">Html.</param>
+		/// <param name="obj">Object.</param>
 		public static string JavaScript(this HtmlHelper html, object obj)
 		{
 			return JavaScript (obj);
 		}
-
+		/// <summary>
+		/// Javas the script.
+		/// </summary>
+		/// <returns>The script.</returns>
+		/// <param name="obj">Object.</param>
 		public static string JavaScript(object obj)
 		{
 			JavaScriptSerializer serializer = new JavaScriptSerializer();
 			return serializer.Serialize(obj);
 		}
-
+		/// <summary>
+		/// Notice the specified ViewData with message.
+		/// </summary>
+		/// <param name="ViewData">View data.</param>
+		/// <param name="message">Message.</param>
 		public static void Notice (ViewDataDictionary ViewData, string message) {
 			if (ViewData ["Notifications"] == null)
 				ViewData ["Notifications"] = new List<string> ();
 			(ViewData ["Notifications"] as List<string>).Add (message.Replace("\'","\\\'"));
 		}
+		/// <summary>
+		/// Files the list.
+		/// </summary>
+		/// <returns>The list.</returns>
+		/// <param name="html">Html.</param>
+		/// <param name="path">Path.</param>
+		/// <param name="patterns">Patterns.</param>
+		public static IHtmlString FileList(this HtmlHelper html, string path, string [] patterns = null) {
+			StringWriter str = new StringWriter();
+			HtmlTextWriter writter = new HtmlTextWriter (str);
+			DirectoryInfo di = new DirectoryInfo (HttpContext.Current.Server.MapPath(path));
+			if (!di.Exists)
+				return new MvcHtmlString ("");
+			var files = new List<FileInfo> ();
+			if (patterns == null)
+				patterns = new string[] { "*" };
+			var url = new UrlHelper(html.ViewContext.RequestContext, 
+				html.RouteCollection);
+
+			foreach (string pattern in patterns) 
+				files.AddRange(
+					di.EnumerateFiles (
+						pattern, 
+						SearchOption.TopDirectoryOnly));
+			writter.RenderBeginTag ("table");
+			writter.RenderBeginTag ("tr");
+			writter.RenderBeginTag ("td");
+			writter.Write (html.Translate ("Name"));
+			writter.RenderEndTag ();
+			writter.RenderBeginTag ("td");
+			writter.Write (html.Translate ("Created"));
+			writter.RenderEndTag ();
+			writter.RenderBeginTag ("td");
+			writter.Write (html.Translate ("Modified"));
+			writter.RenderEndTag ();
+			writter.RenderEndTag ();
+			foreach (FileInfo fi in files) {
+				writter.RenderBeginTag ("tr");
+				writter.RenderBeginTag ("td");
+				writter.AddAttribute ("href", url.Content(path+"/"+fi.Name));
+				writter.RenderBeginTag ("a");
+				writter.Write (fi.Name);
+				writter.RenderEndTag ();
+				writter.RenderEndTag ();
+				writter.RenderBeginTag ("td");
+				writter.Write (fi.LastWriteTime.ToString ("U"));
+				writter.RenderEndTag ();
+				writter.RenderBeginTag ("td");
+				writter.Write (fi.CreationTime.ToString("U"));
+				writter.RenderEndTag ();
+				writter.RenderEndTag ();
+			}
+			writter.RenderEndTag ();
+			return new MvcHtmlString (str.ToString ());
+		}
+
 	}
 }
 
