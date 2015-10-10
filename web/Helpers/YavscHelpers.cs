@@ -150,7 +150,7 @@ namespace Yavsc.Helpers
 		/// <returns>The URL.</returns>
 		/// <param name="helper">Helper.</param>
 		/// <param name="username">Username.</param>
-		public static string AvatarUrl (this System.Web.WebPages.Html.HtmlHelper helper, string username) {
+		public static string AvatarUrl (this System.Web.Mvc.UrlHelper helper, string username) {
 			ProfileBase pr = ProfileBase.Create (username);
 			var a = pr.GetPropertyValue("Avatar") ;
 			if (a == null || a is DBNull) return "/avatars/" + helper.Encode(username)+".png";

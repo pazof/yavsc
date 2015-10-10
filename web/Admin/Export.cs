@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 
-namespace Yavsc.Admin
+namespace Yavsc.Model.Admin
 {
 	/// <summary>
 	/// Export.
@@ -9,7 +9,7 @@ namespace Yavsc.Admin
 	public class Export: TaskOutput
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Admin.Export"/> class.
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Admin.Export"/> class.
 		/// </summary>
 		public Export ()
 		{

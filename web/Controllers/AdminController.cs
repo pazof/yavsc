@@ -42,6 +42,10 @@ namespace Yavsc.Controllers
 					datac.BackupPrefix = Server.MapPath (datac.BackupPrefix);
 					DataManager mgr = new DataManager (datac);
 					TaskOutput tcdb = mgr.CreateDb ();
+					ViewData ["DbName"] = datac.DbName;
+					ViewData ["DbUser"] = datac.DbUser;
+					ViewData ["Host"] = datac.Host;
+					ViewData ["Port"] = datac.Port;
 					return View ("Created", tcdb);
 				}
 			}

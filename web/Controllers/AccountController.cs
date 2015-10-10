@@ -33,21 +33,25 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// Avatar the specified user.
 		/// </summary>
-		/// <param name="user">User.</param>
+		/// <param name="id">User.</param>
 		[AcceptVerbs (HttpVerbs.Get)]
-		public ActionResult Avatar (string user)
+		public ActionResult Avatar (string id)
 		{
-			ProfileBase pr = ProfileBase.Create (user);
-			string avpath = (string ) pr.GetPropertyValue("Avatar") ;
+			if (id == null)
+			return new EmptyResult ();
+			
+			ProfileBase pr = ProfileBase.Create (id);
+			var avpath = pr.GetPropertyValue("Avatar");
 			if (avpath == null) {
 				FileInfo fia = new FileInfo (Server.MapPath (defaultAvatar));
 				return File (fia.OpenRead (), defaultAvatarMimetype);
 			}
-			if (avpath.StartsWith ("~/")) {
-				avpath = Server.MapPath (avpath);
+			string avatarLocation = avpath as string;
+			if (avatarLocation.StartsWith ("~/")) {
+				avatarLocation = Server.MapPath (avatarLocation);
 			}
 
-			WebRequest wr = WebRequest.Create (avpath);
+			WebRequest wr = WebRequest.Create (avatarLocation);
 			FileContentResult res;
 			using (WebResponse resp = wr.GetResponse ()) {
 				using (Stream str = resp.GetResponseStream ()) {
@@ -303,6 +307,8 @@ namespace Yavsc.Controllers
 			// ASSERT("Membership.GetUser ().UserName is made of simple characters, no slash nor backslash"
 
 			string logdu = Membership.GetUser ().UserName;
+			if (string.IsNullOrWhiteSpace (id))
+				id = logdu;
 			ViewData ["UserName"] = id;
 			bool editsMyName = (string.Compare(id,logdu)==0);
 			if (!editsMyName)
@@ -310,15 +316,17 @@ namespace Yavsc.Controllers
 			if (!Roles.IsUserInRole ("FrontOffice"))
 				throw new UnauthorizedAccessException ("Your are not authorized to modify this profile");
 
-
 			if (AvatarFile != null) { 
 				// if said valid, move as avatar file
 				// else invalidate the model
 				if (AvatarFile.ContentType == "image/png") {
 					string avdir = Server.MapPath (AvatarDir);
+					var di = new DirectoryInfo (avdir);
+					if (!di.Exists)
+						di.Create ();
 					string avpath = Path.Combine (avdir, id + ".png");
 					AvatarFile.SaveAs (avpath);
-					model.avatar = Request.Url.Scheme + "://" + Request.Url.Authority + AvatarDir.Substring (1) + "/" + id + ".png";
+					model.avatar = Url.Content( AvatarDir + "/" + id + ".png");
 				} else
 					ModelState.AddModelError ("Avatar",
 						string.Format ("Image type {0} is not supported (suported formats : {1})",
@@ -336,7 +344,9 @@ namespace Yavsc.Controllers
 				if (AvatarFile != null) { 
 					prf.SetPropertyValue ("Avatar", model.avatar);
 				} else {
-					model.avatar = (string) prf.GetPropertyValue ("Avatar");
+					var av = prf.GetPropertyValue ("Avatar");
+					if (av != null)
+						model.avatar = av as string;
 				}
 				prf.SetPropertyValue ("Address", model.Address);
 				prf.SetPropertyValue ("CityAndState", model.CityAndState);

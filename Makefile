@@ -1,7 +1,7 @@
 
 VERSION=1.1
 CONFIG=Debug
-LDYDESTDIR=build/web/$(CONFIG)
+LDYDESTDIR=dist/web/$(CONFIG)
 COPYUNCHANGED="false"
 
 HOST_rsync_yavsc=lua.pschneider.fr
@@ -37,7 +37,7 @@ rsync_% : DESTDIR = $(DESTDIR_$@)
 
 rsync_% : deploy
 	echo "!Deploying to $(HOST)!"
-	$(RSYNCCMD) build/web/$(CONFIG)/ root@$(HOST):$(DESTDIR)
+	$(RSYNCCMD) dist/web/$(CONFIG)/ root@$(HOST):$(DESTDIR)
 
 build: 
 	xbuild /p:Configuration=$(CONFIG) /t:Build Yavsc.sln

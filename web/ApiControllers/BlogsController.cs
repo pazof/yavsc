@@ -146,18 +146,30 @@ namespace Yavsc.ApiControllers
 			try
 			{
 				// Read the form data.
-				await Request.Content.ReadAsMultipartAsync(provider) ;
+				IEnumerable<HttpContent> data = await Request.Content.ReadAsMultipartAsync(provider) ;
 
 				var invalidChars = Path.GetInvalidFileNameChars();
-				List<string> bodies = new List<string>();
+				List<string> parts = new List<string>();
+				List<string> text = new List<string>();
 
-				foreach (string fkey in provider.BodyPartFileNames.Keys)
+				// filter files on their mime type
+				foreach ( var httpAudioContent in data
+				) {
+					string [] mimetype = httpAudioContent.Headers.ContentType.MediaType.Split('/');
+					switch (mimetype[0]) {
+					case "application": break;
+					case "text": break;
+					case "image": break;
+					case "audio": break;
+					case "video": break;
+					}
+				}
+				
+				foreach (string fkey in text)
 				{
 					string filename = provider.BodyPartFileNames[fkey];
-
+					
 					string nicename=fkey;
-					if (fkey.StartsWith("\"") && fkey.EndsWith("\"") && fkey.Length > 2)
-						nicename = fkey.Substring(1,fkey.Length-2);
 					var filtered  = new string (nicename.Where( x=> !invalidChars.Contains(x)).ToArray());
 
 					FileInfo fi = new FileInfo(filtered);
@@ -165,6 +177,10 @@ namespace Yavsc.ApiControllers
 					FileInfo fp = new FileInfo (Path.Combine(root,filename));
 					if (fi.Exists) fi.Delete();
 					fp.MoveTo(fi.FullName);
+					// Get the mime type
+
+
+
 					using (Process p = new Process ()) {			
 						p.StartInfo.WorkingDirectory = root;
 						p.StartInfo = new ProcessStartInfo ();
@@ -187,14 +203,14 @@ namespace Yavsc.ApiControllers
 									);
 						}
 					}
-					bodies.Add(fo.OpenText().ReadToEnd());
+					parts.Add(fo.OpenText().ReadToEnd());
 
 					 
 					fi.Delete();
 					fo.Delete();
 				}
 
-				return Request.CreateResponse(HttpStatusCode.OK,string.Join("---\n",bodies),new SimpleFormatter("text/plain"));
+				return Request.CreateResponse(HttpStatusCode.OK,string.Join("---\n",parts),new SimpleFormatter("text/plain"));
 
 			}
 			catch (System.Exception e)
