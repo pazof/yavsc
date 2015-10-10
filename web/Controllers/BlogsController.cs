@@ -29,46 +29,22 @@ namespace Yavsc.Controllers
 	{
 		private string sitename =
 			WebConfigurationManager.AppSettings ["Name"];
-		string avatarDir = "~/avatars";
 
 		/// <summary>
-		/// Gets or sets the avatar dir.
+		/// Index the specified title, pageIndex and pageSize.
 		/// </summary>
-		/// <value>The avatar dir.</value>
-		public string AvatarDir {
-			get { return avatarDir; }
-			set { avatarDir = value; }
-		}
-
-
-
-		/// <summary>
-		/// Index the specified user, title, pageIndex and pageSize.
-		/// </summary>
-		/// <param name="user">User.</param>
 		/// <param name="title">Title.</param>
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
-		public ActionResult Index (string user = null, string title = null, int pageIndex = 0, int pageSize = 10)
+		public ActionResult Index (int pageIndex = 0, int pageSize = 10)
 		{
-			if (string.IsNullOrEmpty (user)) {
-				return BlogList (pageIndex, pageSize);
-			} else {
-				MembershipUser u = null;
-				if (Membership.FindUsersByName (user) != null)
-					u = Membership.GetUser (user, false);
-				if (u == null) {
-					ModelState.AddModelError ("Author",
-						string.Format ("Utilisateur inconu : {0}", user));
-					return BlogList ();
-				} else {
-					if (string.IsNullOrEmpty (title))
-						return UserPosts (user, pageIndex, pageSize);
-					return UserPost (user, title, pageIndex, pageSize);
-				}
-			}
+			return BlogList (pageIndex, pageSize);
 		}
-
+		/// <summary>
+		/// Chooses the media.
+		/// </summary>
+		/// <returns>The media.</returns>
+		/// <param name="id">Identifier.</param>
 		public ActionResult ChooseMedia(long id) 
 		{
 			return View ();
@@ -87,7 +63,33 @@ namespace Yavsc.Controllers
 			ViewData ["ResultCount"] = totalRecords; 
 			ViewData ["PageSize"] = pageSize;
 			ViewData ["PageIndex"] = pageIndex;
-			return View ("Index", new BlogEntryCollection(bs) );
+			var bec = new BlogEntryCollection (bs);
+			return View ("Index", bec );
+		}
+
+
+		/// <summary>
+		/// Title the specified title, pageIndex and pageSize.
+		/// </summary>
+		/// <param name="title">Title.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
+		/// 
+		[HttpGet]
+		public ActionResult Title (string id, int pageIndex = 0, int pageSize = 10)
+		{
+			int recordCount;
+			MembershipUser u = Membership.GetUser ();
+			string username = u == null ? null : u.UserName;
+			FindBlogEntryFlags sf = FindBlogEntryFlags.MatchTitle;
+			BlogEntryCollection c = 
+				BlogManager.FindPost (username, id, sf, pageIndex, pageSize, out recordCount);
+			var utc = new UTBlogEntryCollection (id);
+			utc.AddRange (c);
+			ViewData ["RecordCount"] = recordCount;
+			ViewData ["PageIndex"] = pageIndex; 
+			ViewData ["PageSize"] = pageSize;
+			return View (utc);
 		}
 
 		/// <summary>
@@ -98,33 +100,37 @@ namespace Yavsc.Controllers
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
 		[HttpGet]
-		public ActionResult UserPosts (string user, int pageIndex = 0, int pageSize = 10)
+		public ActionResult UserPosts (string id, int pageIndex = 0, int pageSize = 10)
 		{
-			int tr;
+			int recordcount=0;
 			MembershipUser u = Membership.GetUser ();
 			FindBlogEntryFlags sf = FindBlogEntryFlags.MatchUserName;
 			ViewData ["SiteName"] = sitename;
-			ViewData ["BlogUser"] = user;
+			ViewData ["BlogUser"] = id;
 			string readersName = null;
 			ViewData ["PageIndex"] = pageIndex;
 			ViewData ["pageSize"] = pageSize;
 			// displays invisible items when the logged user is also the author
 			if (u != null) {
-				if (u.UserName == user || Roles.IsUserInRole ("Admin"))
+				if (u.UserName == id || Roles.IsUserInRole ("Admin"))
 					sf |= FindBlogEntryFlags.MatchInvisible;
 				readersName = u.UserName;
 			}
 			// find entries
 			BlogEntryCollection c = 
-				BlogManager.FindPost (readersName, user, sf, pageIndex, pageSize, out tr);
+				BlogManager.FindPost (readersName, id, sf, pageIndex, pageSize, out recordcount);
 			// Get author's meta data
-			Profile bupr = new Profile (ProfileBase.Create (user));
-			ViewData ["BlogUserProfile"] = bupr;
+			var pr = ProfileBase.Create (id);
+			if (pr != null) {
+				Profile bupr = new Profile (pr);
+				ViewData ["BlogUserProfile"] = bupr;
+			
 			// Inform of listing meta data
 			ViewData ["BlogTitle"] = bupr.BlogTitle;
 			ViewData ["Avatar"] = bupr.avatar;
-			ViewData ["RecordCount"] = tr; 
-			UUBlogEntryCollection uuc = new UUBlogEntryCollection (user, c);
+			}
+			ViewData ["RecordCount"] = recordcount; 
+			UUBlogEntryCollection uuc = new UUBlogEntryCollection (id, c);
 			return View ("UserPosts", uuc);
 		}
 
@@ -180,7 +186,12 @@ namespace Yavsc.Controllers
 				if (pr == null)
 					// the owner's profile must exist 
 					// in order to publish its bills
-					return View ("NotAuthorized");
+					// This should'nt occur, as long as 
+					// a profile must exist for each one of 
+					// existing user record in data base
+					// and each post is deleted with user deletion
+					// a post => an author => a profile
+					throw new Exception("Unexpected error retreiving author's profile");
 				ViewData ["BlogUserProfile"] = pr;
 				ViewData ["Avatar"] = pr.avatar;
 				ViewData ["BlogTitle"] = pr.BlogTitle;
@@ -241,7 +252,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="title">Title.</param>
 		[Authorize]
-		public ActionResult Post ( string title)
+		public ActionResult Post (string title)
 		{
 			string un = Membership.GetUser ().UserName;
 			if (String.IsNullOrEmpty (title))
@@ -340,26 +351,26 @@ namespace Yavsc.Controllers
 		/// using returnUrl as the URL to return to,
 		/// and confirm as a proof you really know what you do.
 		/// </summary>
+		/// <param name="id">Title.</param>
 		/// <param name="user">User.</param>
-		/// <param name="title">Title.</param>
 		/// <param name="returnUrl">Return URL.</param>
 		/// <param name="confirm">If set to <c>true</c> confirm.</param>
 		[Authorize]
-		public ActionResult RemoveTitle (string user, string title, string returnUrl, bool confirm = false)
+		public ActionResult RemoveTitle (string id, string user,  string returnUrl, bool confirm = false)
 		{
 			if (returnUrl == null)
 			if (Request.UrlReferrer != null)
 				returnUrl = Request.UrlReferrer.AbsoluteUri;
 			ViewData ["returnUrl"] = returnUrl;
 			ViewData ["Author"] = user;
-			ViewData ["Title"] = title;
+			ViewData ["Title"] = id;
 
 			if (Membership.GetUser ().UserName != user)
 			if (!Roles.IsUserInRole("Admin"))
 				throw new AuthorizationDenied (user);
 			if (!confirm)
 				return View ("RemoveTitle");
-			BlogManager.RemoveTitle (user, title);
+			BlogManager.RemoveTitle (user, id);
 			if (returnUrl == null)
 				RedirectToAction ("Index", new { user = user });
 			return Redirect (returnUrl);

@@ -171,6 +171,7 @@
     <Compile Include="RolesAndMembers\UserManager.cs" />
     <Compile Include="Circles\CircleBase.cs" />
     <Compile Include="Blogs\MarkdownHelper.cs" />
+    <Compile Include="Blogs\UTBlogEntryCollection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

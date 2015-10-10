@@ -428,6 +428,7 @@
     <Content Include="images\musician-923526_1.nbb.jpg" />
     <Content Include="images\musician-923526_1.nbb.xs.jpg" />
     <Content Include="images\musician-923526_1.nbb.xxs.jpg" />
+    <Content Include="Views\Blogs\Title.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

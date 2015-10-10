@@ -19,7 +19,7 @@ ViewState["orgtitle"] = T.GetString(Page.Title);
 <body>
 <header>
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
-<h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>"> <%=ViewState["orgtitle"]%> </a> - 
+<h1><a href="<%= Url.Content("~/") %>"> <%=ViewState["orgtitle"]%> </a> - 
 <a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
  </h1>
  </asp:ContentPlaceHolder><asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder><% 

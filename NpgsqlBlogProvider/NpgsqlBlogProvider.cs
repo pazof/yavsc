@@ -28,9 +28,9 @@ namespace Npgsql.Web.Blog
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "insert into bltag (blid,tag) values (@postid,@tag) returning _id";
-				cmd.Parameters.AddWithValue("@tag",tag);
-				cmd.Parameters.AddWithValue("@postid",postid);
+				cmd.CommandText = "insert into bltag (blid,tag) values (:postid,:tag) returning _id";
+				cmd.Parameters.AddWithValue("tag",tag);
+				cmd.Parameters.AddWithValue("postid",postid);
 				cnx.Open ();
 				return (long) cmd.ExecuteScalar ();
 			}
@@ -43,8 +43,8 @@ namespace Npgsql.Web.Blog
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "delete from bltag where _id = @tagid";
-				cmd.Parameters.AddWithValue("@tagid",tagid);
+				cmd.CommandText = "delete from bltag where _id = :tagid";
+				cmd.Parameters.AddWithValue("tagid",tagid);
 				cnx.Open ();
 				cmd.ExecuteNonQuery ();	
 			}
@@ -63,11 +63,11 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 
 				cmd.CommandText = "select _id, username, bcontent, modified, posted, visible from comment " +
-				                  "where applicationname = @appname and postid = @id" + 
+				                  "where applicationname = :appname and postid = :id" + 
 				                  ((getHidden) ?  " and visible = true ":" ") + 
 				                  "order by posted asc" ;
-				cmd.Parameters.AddWithValue ("@appname", applicationName);
-				cmd.Parameters.AddWithValue ("@id", postid);
+				cmd.Parameters.AddWithValue ("appname", applicationName);
+				cmd.Parameters.AddWithValue ("id", postid);
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
 					while (rdr.Read ()) {
@@ -100,16 +100,16 @@ namespace Npgsql.Web.Blog
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					DateTime now = DateTime.Now;
 					cmd.CommandText = 
-					"update blog set modified=@now," +
-					" title = @title," +
-					" bcontent=@content, " +
-					" visible = @visible " +
-					"where _id = @id";
-					cmd.Parameters.AddWithValue ("@now", now);
-					cmd.Parameters.AddWithValue ("@title", title);
-					cmd.Parameters.AddWithValue ("@content", content);
-					cmd.Parameters.AddWithValue ("@visible", visible);
-					cmd.Parameters.AddWithValue ("@id", postid);
+					"update blog set modified=:now," +
+					" title = :title," +
+					" bcontent=:content, " +
+					" visible = :visible " +
+					"where _id = :id";
+					cmd.Parameters.AddWithValue ("now", now);
+					cmd.Parameters.AddWithValue ("title", title);
+					cmd.Parameters.AddWithValue ("content", content);
+					cmd.Parameters.AddWithValue ("visible", visible);
+					cmd.Parameters.AddWithValue ("id", postid);
 					cnx.Open ();
 					cmd.ExecuteNonQuery ();
 				}
@@ -125,7 +125,7 @@ namespace Npgsql.Web.Blog
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "delete from blog where _id = @id";
+				cmd.CommandText = "delete from blog where _id = :id";
 				cmd.Parameters.AddWithValue ("id", postid);
 				cnx.Open ();
 				cmd.ExecuteNonQuery();
@@ -149,16 +149,16 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				cmd.CommandText = "insert into comment (postid,bcontent," +
 					"modified,posted,visible,username,applicationname)" +
-				    "values (@postid,@bcontent,@modified,@posted," +
-				    "@visible,@username,@appname) returning _id";
-				cmd.Parameters.AddWithValue ("@postid", postid);
-				cmd.Parameters.AddWithValue ("@bcontent", content);
+				    "values (:postid,:bcontent,:modified,:posted," +
+				    ":visible,:username,:appname) returning _id";
+				cmd.Parameters.AddWithValue ("postid", postid);
+				cmd.Parameters.AddWithValue ("bcontent", content);
 				DateTime now = DateTime.Now;
-				cmd.Parameters.AddWithValue ("@modified", now);
-				cmd.Parameters.AddWithValue ("@posted", now);
-				cmd.Parameters.AddWithValue ("@visible", visible);
-				cmd.Parameters.AddWithValue ("@username", from);
-				cmd.Parameters.AddWithValue ("@appname", applicationName);
+				cmd.Parameters.AddWithValue ("modified", now);
+				cmd.Parameters.AddWithValue ("posted", now);
+				cmd.Parameters.AddWithValue ("visible", visible);
+				cmd.Parameters.AddWithValue ("username", from);
+				cmd.Parameters.AddWithValue ("appname", applicationName);
 				cnx.Open ();
 				return (long) cmd.ExecuteScalar();
 			}
@@ -237,9 +237,9 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				cmd.CommandText = "select username, title, bcontent, modified, posted, visible, photo from blog " +
-				                  "where applicationname = @appname and _id = @id";
-				cmd.Parameters.AddWithValue ("@appname", applicationName);
-				cmd.Parameters.AddWithValue ("@id", postid);
+				                  "where applicationname = :appname and _id = :id";
+				cmd.Parameters.AddWithValue ("appname", applicationName);
+				cmd.Parameters.AddWithValue ("id", postid);
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader()) {
 					if (rdr.Read ()) {
@@ -271,7 +271,7 @@ namespace Npgsql.Web.Blog
 			long postid = 0;
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "delete from comment where _id = @id returning postid";
+				cmd.CommandText = "delete from comment where _id = :id returning postid";
 				cmd.Parameters.AddWithValue ("id", cmtid);
 				cnx.Open ();
 				postid = (long) cmd.ExecuteScalar ();
@@ -463,7 +463,7 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
 				if (readersName != null) {
 					cmd.CommandText = "select _id, title,bcontent, modified," +
-						"posted,username,visible " +
+						"posted,username,visible,photo " +
 						"from blog b left outer join " +
 						"(select count(*)>0 acc, a.post_id pid " +
 						"from blog_access a," +
@@ -475,7 +475,7 @@ namespace Npgsql.Web.Blog
 					cmd.Parameters.AddWithValue ("uname", readersName);
 				} else {
 					cmd.CommandText = "select _id, title,bcontent,modified," +
-						"posted,username,visible " +
+						"posted,username,visible,photo " +
 						"from blog b left outer join " +
 						"(select count(*)>0 acc, a.post_id pid " +
 						"from blog_access a" +
@@ -485,18 +485,20 @@ namespace Npgsql.Web.Blog
 						" b.Visible IS TRUE and  " +
 						" applicationname = :appname";
 				}
-				cmd.Parameters.AddWithValue ("@appname", applicationName);
-				if ((searchflags & FindBlogEntryFlags.MatchContent) > 0) {
-					cmd.CommandText += " and bcontent like :bcontent";
-					cmd.Parameters.AddWithValue (":bcontent", pattern);
-				}
-				if ((searchflags & FindBlogEntryFlags.MatchTitle) > 0) {
-					cmd.CommandText += " and title like :title";
-					cmd.Parameters.AddWithValue (":title", pattern);
-				}
-				if ((searchflags & FindBlogEntryFlags.MatchUserName) > 0) {
-					cmd.CommandText += " and username like :username";
-					cmd.Parameters.AddWithValue (":username", pattern);
+				cmd.Parameters.AddWithValue ("appname", applicationName);
+				if (pattern != null) {
+					if ((searchflags & FindBlogEntryFlags.MatchContent) > 0) {
+						cmd.CommandText += " and bcontent like :bcontent";
+						cmd.Parameters.AddWithValue ("bcontent", pattern);
+					}
+					if ((searchflags & FindBlogEntryFlags.MatchTitle) > 0) {
+						cmd.CommandText += " and title like :title";
+						cmd.Parameters.AddWithValue ("title", pattern);
+					}
+					if ((searchflags & FindBlogEntryFlags.MatchUserName) > 0) {
+						cmd.CommandText += " and username like :username";
+						cmd.Parameters.AddWithValue ("username", pattern);
+					}
 				}
 				if ((searchflags & FindBlogEntryFlags.MatchInvisible) == 0) {
 					cmd.CommandText += " and visible = true";
@@ -518,6 +520,11 @@ namespace Npgsql.Web.Blog
 							be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 							be.Modified = rdr.GetDateTime (rdr.GetOrdinal ("modified"));
 							be.Visible =  rdr.GetBoolean (rdr.GetOrdinal ("visible"));
+							{
+								int oph = rdr.GetOrdinal ("photo");
+								if (!rdr.IsDBNull (oph))
+									be.Photo = rdr.GetString (oph);
+							}
 							c.Add (be);
 						}
 						totalRecords++;
@@ -539,10 +546,10 @@ namespace Npgsql.Web.Blog
 		{
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
-				cmd.CommandText = "delete from blog where username = @username and applicationname = @appname and title=@title";
-				cmd.Parameters.AddWithValue ("@username",username);
-				cmd.Parameters.AddWithValue ("@appname", applicationName);
-				cmd.Parameters.AddWithValue ("@title",title);
+				cmd.CommandText = "delete from blog where username = :username and applicationname = :appname and title=:title";
+				cmd.Parameters.AddWithValue ("username",username);
+				cmd.Parameters.AddWithValue ("appname", applicationName);
+				cmd.Parameters.AddWithValue ("title",title);
 				cnx.Open ();
 				cmd.ExecuteNonQuery ();
 				cnx.Close();
@@ -563,13 +570,6 @@ namespace Npgsql.Web.Blog
 			BlogEntryCollection c = new BlogEntryCollection ();
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand()) {
-
-				/*cmd.CommandText = "select blog.* from blog, " +
-					"(select max(posted) lpost, username " +
-					"from blog where applicationname = @appname " +
-					"group by username) as lblog " +
-					"where blog.posted = lblog.lpost and blog.username = lblog.username " ;
-					*/
 				cmd.CommandText = "select * " +
 				                  "from blog where applicationname = :appname and visible = true " +
 				                  " order by posted desc limit :len" ;
@@ -591,6 +591,11 @@ namespace Npgsql.Web.Blog
 							be.Posted = rdr.GetDateTime (rdr.GetOrdinal ("posted"));
 							be.Modified = rdr.GetDateTime (rdr.GetOrdinal ("modified"));
 							be.Visible = true; // because of sql code used
+							{
+								int oph = rdr.GetOrdinal ("photo");
+								if (!rdr.IsDBNull (oph))
+									be.Photo = rdr.GetString (oph);
+							}
 							c.Add (be);
 						}
 						totalRecords++;

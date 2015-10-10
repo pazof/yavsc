@@ -157,7 +157,7 @@ namespace Yavsc.Helpers
 			ProfileBase pr = ProfileBase.Create (username);
 			object avpath = null;
 			if (pr != null) avpath = pr.GetPropertyValue("Avatar");
-			if (avpath == null) return "/bfiles/"+username+".png";
+			if (avpath == null) return DefaultAvatar==null?"/bfiles/"+username+".png":DefaultAvatar;
 			string avatarLocation = avpath as string;
 			if (avatarLocation.StartsWith ("~/")) {
 				avatarLocation = helper.RequestContext.HttpContext.Server.MapPath(avatarLocation);
@@ -165,6 +165,34 @@ namespace Yavsc.Helpers
 			return avatarLocation;
 				
 		}
+
+		private static string avatarDir = "~/avatars";		
+		private static string defaultAvatar = null;
+		private static string defaultAvatarMimetype = null;
+		public static string DefaultAvatar { 
+			get {
+				if (defaultAvatar == null)
+					GetAvatarConfig ();
+				return defaultAvatar;
+			}
+		}
+		public static string AvatarDir { 
+			get {
+				return avatarDir;
+			}
+		}
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Controllers.BlogsController"/> class.
+		/// </summary>
+		private static void GetAvatarConfig ()
+		{
+			string[] defaultAvatarSpec = ConfigurationManager.AppSettings.Get ("DefaultAvatar").Split (';');
+			if (defaultAvatarSpec.Length != 2)
+				throw new ConfigurationErrorsException ("the DefaultAvatar spec should be found as <fileName>;<mime-type> ");
+			defaultAvatar = defaultAvatarSpec [0];
+			defaultAvatarMimetype = defaultAvatarSpec [1];
+		}
+
 		/// <summary>
 		/// Javas the script.
 		/// </summary>

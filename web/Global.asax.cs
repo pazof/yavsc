@@ -47,28 +47,29 @@ namespace Yavsc
 			routes.IgnoreRoute ("favicon.png"); // favorite icon
 			routes.IgnoreRoute ("robots.txt");  // for search engine robots
 			routes.MapRoute (
+				"View",
+				"v/{title}",
+				new { controller = "Blogs", action = "Index", 
+					title=UrlParameter.Optional }
+			);
+			routes.MapRoute (
 				"Blogs",
-				"Blogs/{action}/{user}/{title}",
-				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
+				"b/{user}/{title}",
+				new { controller = "Blogs", action = "Index", 
+					user=UrlParameter.Optional,
+					title=UrlParameter.Optional }
 			); 
-			routes.MapRoute (
-				"BlogByTitleRO",
-				"Blog/{user}/{title}",
-				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
-			); 
-			routes.MapRoute (
-				"BlogById",
-				"B/{action}/{id}",
-				new { controller = "Blogs", action = "UserPost", id = UrlParameter.Optional }
-			); 
+			/* routes.MapRoute (
+				"Artistes",
+				"a/{artiste}",
+				new { controller = "Artistes", action = "Index", artiste = UrlParameter.Optional }
+			);  */
 			routes.MapRoute (
 				"Default",
 				"{controller}/{action}/{id}",
-				new { controller = defaultController, 
-					action = "Index", 
-					user=UrlParameter.Optional,
-					id = UrlParameter.Optional }
+				new { controller = "Home", action = "Index", id = UrlParameter.Optional }
 			);
+
 		}
 
 		/// <summary>

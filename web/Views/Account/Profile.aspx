@@ -28,7 +28,7 @@ table.layout TR TD { max-width:40%; }
 <%= Html.ValidationMessage("WebSite", "*") %>
 <br>
 
-Avatar : <img src="<%=Html.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="avatar" class="iconsmall" />
+Avatar : <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="avatar" class="iconsmall" />
 
 <input type="file" id="AvatarFile" name="AvatarFile"/>
 <%= Html.ValidationMessage("AvatarFile", "*") %>

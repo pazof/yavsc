@@ -50,7 +50,7 @@ Yavsc.notice('<%=notice%>');
 <i class="fa fa-sign-in">Connexion</i> 
 </a>
 <% } else { %>
-<a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>" accesskey = "B" class="menuitem" >
+<a href="<%=Url.Content("~/b/"+HttpContext.Current.User.Identity.Name)%>" accesskey = "B" class="menuitem" >
 <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="vos billets" class="iconsmall" />
 <span class="hint">Vos billets</span>
 </a>

@@ -24,12 +24,6 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class AccountController : Controller
 	{
-		
-		string avatarDir = "~/avatars";		
-		string defaultAvatar;
-		string defaultAvatarMimetype;
-
-
 		/// <summary>
 		/// Avatar the specified user.
 		/// </summary>
@@ -50,17 +44,7 @@ namespace Yavsc.Controllers
 				}
 			}
 		}
-		/// <summary>
-		/// Gets or sets the avatar dir.
-		/// This value is past to <c>Server.MapPath</c>,
-		/// it should start with <c>~/</c>, and we assume it
-		/// to be relative to the application path.
-		/// </summary>
-		/// <value>The avatar dir.</value>
-		public string AvatarDir {
-			get { return avatarDir; }
-			set { avatarDir = value; }
-		}
+
 
 		/// <summary>
 		/// Index this instance.
@@ -94,17 +78,7 @@ namespace Yavsc.Controllers
 			ViewData ["returnUrl"] = returnUrl;
 			return View (model);
 		}
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Controllers.BlogsController"/> class.
-		/// </summary>
-		private void GetAvatarConfig ()
-		{
-			string[] defaultAvatarSpec = ConfigurationManager.AppSettings.Get ("DefaultAvatar").Split (';');
-			if (defaultAvatarSpec.Length != 2)
-				throw new ConfigurationErrorsException ("the DefaultAvatar spec should be found as <fileName>;<mime-type> ");
-			defaultAvatar = defaultAvatarSpec [0];
-			defaultAvatarMimetype = defaultAvatarSpec [1];
-		}
+
 
 		/// <summary>
 		/// Login the specified returnUrl.
@@ -117,6 +91,10 @@ namespace Yavsc.Controllers
 			return View ();
 		}
 
+		/// <summary>
+		/// Registers the form.
+		/// </summary>
+		/// <returns>The form.</returns>
 		public ActionResult RegisterForm()
 		{
 			return View ("Register"); 
@@ -307,13 +285,13 @@ namespace Yavsc.Controllers
 				// if said valid, move as avatar file
 				// else invalidate the model
 				if (AvatarFile.ContentType == "image/png") {
-					string avdir = Server.MapPath (AvatarDir);
+					string avdir = Server.MapPath (YavscHelpers.AvatarDir);
 					var di = new DirectoryInfo (avdir);
 					if (!di.Exists)
 						di.Create ();
 					string avpath = Path.Combine (avdir, id + ".png");
 					AvatarFile.SaveAs (avpath);
-					model.avatar = Url.Content( AvatarDir + "/" + id + ".png");
+					model.avatar = Url.Content( YavscHelpers.AvatarDir + "/" + id + ".png");
 				} else
 					ModelState.AddModelError ("Avatar",
 						string.Format ("Image type {0} is not supported (suported formats : {1})",

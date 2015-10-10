@@ -86,6 +86,7 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
+
 		public ActionResult Credits ()
 		{
 			return View ();

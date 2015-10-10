@@ -26,6 +26,11 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class GoogleController : Controller
 	{
+		public ActionResult Index()
+		{
+			return View ();
+		}
+
 		private string SetSessionSate ()
 		{
 			string state = "security_token";

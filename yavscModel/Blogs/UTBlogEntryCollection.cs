@@ -26,13 +26,13 @@ namespace Yavsc.Model.Blogs
 	/// <summary>
 	/// Unique User and Title blog entry collection.
 	/// </summary>
-	public class UUTBlogEntryCollection : UUBlogEntryCollection {
+	public class UTBlogEntryCollection : BlogEntryCollection {
+
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.Blogs.UUTBlogEntryCollection"/> class.
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Blogs.UTBlogEntryCollection"/> class.
 		/// </summary>
-		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
-		public UUTBlogEntryCollection(string username, string title) : base(username) {
+		public UTBlogEntryCollection(string title) : base() {
 			_title = title;
 		}
 
@@ -50,7 +50,7 @@ namespace Yavsc.Model.Blogs
 		public override string ToString ()
 		{
 			return string.Format ("[UUTBlogEntryCollection: " +
-				"Title={0} User={1} Count={2}]", Title, Author, Count);
+				"Title={0} Count={2}]", Title, Count);
 		}
 
 		
