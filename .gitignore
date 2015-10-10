@@ -6,7 +6,7 @@ plugins/*/obj
 packages
 web/avatars
 web/users
-build
+dist
 bower_components
 node_modules
 svg
