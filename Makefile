@@ -32,7 +32,7 @@ rsync_% : deploy
 	ssh root@$(HOST) "service apache2 reload"
 
 build: 
-	xbuild /p:Configuration=$(CONFIG) /t:Build Yavsc.sln
+	xbuild /p:Configuration=$(CONFIG) /t:Build Totem.sln
 
 clean:
 	xbuild /t:Clean
