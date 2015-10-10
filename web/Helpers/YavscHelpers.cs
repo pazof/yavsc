@@ -171,7 +171,7 @@ namespace Yavsc.Helpers
 		/// <returns>The script.</returns>
 		/// <param name="html">Html.</param>
 		/// <param name="obj">Object.</param>
-		public static string JavaScript(this HtmlHelper html, object obj)
+		public static string JavaScript(this System.Web.Mvc.HtmlHelper html, object obj)
 		{
 			return JavaScript (obj);
 		}
@@ -190,7 +190,7 @@ namespace Yavsc.Helpers
 		/// </summary>
 		/// <param name="ViewData">View data.</param>
 		/// <param name="message">Message.</param>
-		public static void Notice (ViewDataDictionary ViewData, string message) {
+		public static void Notice (System.Web.Mvc.ViewDataDictionary ViewData, string message) {
 			if (ViewData ["Notifications"] == null)
 				ViewData ["Notifications"] = new List<string> ();
 			(ViewData ["Notifications"] as List<string>).Add (message.Replace("\'","\\\'"));
@@ -202,16 +202,16 @@ namespace Yavsc.Helpers
 		/// <param name="html">Html.</param>
 		/// <param name="path">Path.</param>
 		/// <param name="patterns">Patterns.</param>
-		public static IHtmlString FileList(this HtmlHelper html, string path, string [] patterns = null) {
+		public static IHtmlString FileList(this System.Web.Mvc.HtmlHelper html, string path, string [] patterns = null) {
 			StringWriter str = new StringWriter();
 			HtmlTextWriter writter = new HtmlTextWriter (str);
 			DirectoryInfo di = new DirectoryInfo (HttpContext.Current.Server.MapPath(path));
 			if (!di.Exists)
-				return new MvcHtmlString ("");
+				return new System.Web.Mvc.MvcHtmlString ("");
 			var files = new List<FileInfo> ();
 			if (patterns == null)
 				patterns = new string[] { "*" };
-			var url = new UrlHelper(html.ViewContext.RequestContext, 
+			var url = new System.Web.Mvc.UrlHelper(html.ViewContext.RequestContext, 
 				html.RouteCollection);
 
 			foreach (string pattern in patterns) 
@@ -248,7 +248,7 @@ namespace Yavsc.Helpers
 				writter.RenderEndTag ();
 			}
 			writter.RenderEndTag ();
-			return new MvcHtmlString (str.ToString ());
+			return new System.Web.Mvc.MvcHtmlString (str.ToString ());
 		}
 
 	}

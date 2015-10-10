@@ -208,14 +208,14 @@ namespace Yavsc.ApiControllers
 									);
 						}
 					}
-					parts.Add(fo.OpenText().ReadToEnd());
+					bodies.Add(fo.OpenText().ReadToEnd());
 
 					 
 					fi.Delete();
 					fo.Delete();
 				}
 
-				return Request.CreateResponse(HttpStatusCode.OK,string.Join("---\n",parts),new SimpleFormatter("text/plain"));
+				return Request.CreateResponse(HttpStatusCode.OK,string.Join("---\n",bodies),new SimpleFormatter("text/plain"));
 
 			}
 			catch (System.Exception e)
