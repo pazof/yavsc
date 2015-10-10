@@ -40,7 +40,7 @@ namespace Yavsc.Admin
 				*/
 			Exec ("pg_dump", string.Format (
 				"-f {0} -Ft -h {1} -U {2} -p {3} {4}",
-				fileName, da.Host, da.Dbuser, da.Port, da.Dbname ),e);
+				fileName, da.Host, da.DbUser, da.Port, da.DbName ),e);
 			return e;
 		} 
 
@@ -74,7 +74,7 @@ namespace Yavsc.Admin
 			var t = new TaskOutput ();
 			Exec ("pg_restore", (dataOnly?"-a ":"")+string.Format ( 
 				"-1 -Ft -O -h {0} -U {1} -p {2} -d {3} {4}",
-				da.Host, da.Dbuser, da.Port, da.Dbname, fileName ),t);
+				da.Host, da.DbUser, da.Port, da.DbName, fileName ),t);
 			/*
 			Exec ("pg_restore", (dataOnly?"-a ":"")+string.Format ( 
 				"-1 -w -Fd -O -h {0} -U {1} -p {2} -d {3} {4}",
@@ -149,7 +149,7 @@ namespace Yavsc.Admin
 			var t = new TaskOutput ();
 			Exec ("pg_restore", string.Format ( 
 				"-a -w -Fd -O -h {0} -U {1} -p {2} -d {3} {4}",
-				da.Host, da.Dbuser, da.Port, da.Dbname, fileName ),t);
+				da.Host, da.DbUser, da.Port, da.DbName, fileName ),t);
 			return t;
 		}
 	}

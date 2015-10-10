@@ -85,7 +85,8 @@ namespace Yavsc.ApiControllers
 					return ;
 				case MembershipCreateStatus.Success:
 					if (!userModel.IsApprouved)
-						YavscHelpers.SendActivationMessage (user);
+						
+						Url.SendActivationMessage (user);
 					return;
 				default:
 					throw new InvalidOperationException (string.Format("Unexpected user creation code :{0}",mcs));

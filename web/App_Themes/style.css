@@ -273,6 +273,14 @@ input, select {
 	font-size: smaller;
 	}
 
+
+.menuitem {
+	border-radius:5px;
+	margin:.5em;
+	padding:.5em;
+	display: inline-block; 
+}
+
 .onhover {
 	display:none; 
 	position: absolute;
@@ -295,12 +303,10 @@ input, select {
 		.control,.actionlink,nav { display:none;} 
 	}
 
-@media all and (min-width: 640px) {
 	.bshpanel { display:block; }
   .bsh { display: none; }
   .c3 { display:initial; }
   .c3-alt { display:none; }
-	}
 
 @media all and (max-width: 640px) {
 	nav {

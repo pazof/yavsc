@@ -117,7 +117,7 @@ Avatar : <img src="<%=Html.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" 
 <% } %>
    <aside>
    <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
-   <%= Html.ActionLink("Désincription","Unregister", "Account",null, new { @class="actionlink" })%>
+   <%= Html.ActionLink("Désincription","Unregister", "Account",  new { id=ViewData["UserName"] } , new { @class="actionlink" })%>
    </aside>
    <aside>
    <% 	if (Roles.IsUserInRole((string)ViewData ["UserName"],"Admin")) { %>

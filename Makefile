@@ -1,7 +1,7 @@
 
 VERSION=1.1
 CONFIG=Debug
-LDYDESTDIR=build/web/$(CONFIG)
+LDYDESTDIR=dist/web/$(CONFIG)
 COPYUNCHANGED="false"
 RSYNCCMD=rsync -ravu --chown=www-data:www-data
 HOST_rsync_dev=totemdev.localdomain
@@ -28,7 +28,7 @@ rsync_% : DESTDIR = $(DESTDIR_$@)
 	
 rsync_% : deploy
 	echo "!Deploying to $(HOST)!"
-	$(RSYNCCMD) build/web/$(CONFIG)/ root@$(HOST):$(DESTDIR)
+	$(RSYNCCMD) dist/web/$(CONFIG)/ root@$(HOST):$(DESTDIR)
 	ssh root@$(HOST) "service apache2 reload"
 
 build: 

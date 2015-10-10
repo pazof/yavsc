@@ -26,7 +26,7 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 <body>
 <header data-type="background" data-speed="8" >
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
-<h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>">
+<h1><a href="<%= Url.Content("~/") %>">
 <%=ViewState["orgtitle"]%></a>
 <span> - 
 <a href="<%= Url.Content("~/") %>"><%= YavscHelpers.SiteName %></a>
@@ -51,8 +51,7 @@ Yavsc.notice('<%=notice%>');
 </a>
 <% } else { %>
 <a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>" accesskey = "B" class="menuitem" >
-
-<img src="<%=Html.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="vos billets" class="iconsmall" />
+<img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="vos billets" class="iconsmall" />
 <span class="hint">Vos billets</span>
 </a>
 <a href="<%= Url.Content("~/Account/Profile/" + HttpContext.Current.User.Identity.Name) %>" accesskey="L" class="menuitem">

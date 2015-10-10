@@ -165,7 +165,7 @@ namespace Yavsc.ApiControllers
 			try
 			{
 				// Read the form data.
-				await Request.Content.ReadAsMultipartAsync(provider) ;
+				IEnumerable<HttpContent> data = await Request.Content.ReadAsMultipartAsync(provider) ;
 
 				var invalidChars = Path.GetInvalidFileNameChars();
 				List<string> bodies = new List<string>();
@@ -173,10 +173,8 @@ namespace Yavsc.ApiControllers
 				foreach (string fkey in provider.BodyPartFileNames.Keys)
 				{
 					string filename = provider.BodyPartFileNames[fkey];
-
+					
 					string nicename=fkey;
-					if (fkey.StartsWith("\"") && fkey.EndsWith("\"") && fkey.Length > 2)
-						nicename = fkey.Substring(1,fkey.Length-2);
 					var filtered  = new string (nicename.Where( x=> !invalidChars.Contains(x)).ToArray());
 
 					FileInfo fi = new FileInfo(filtered);
@@ -184,6 +182,10 @@ namespace Yavsc.ApiControllers
 					FileInfo fp = new FileInfo (Path.Combine(root,filename));
 					if (fi.Exists) fi.Delete();
 					fp.MoveTo(fi.FullName);
+					// Get the mime type
+
+
+
 					using (Process p = new Process ()) {			
 						p.StartInfo.WorkingDirectory = root;
 						p.StartInfo = new ProcessStartInfo ();
@@ -206,14 +208,14 @@ namespace Yavsc.ApiControllers
 									);
 						}
 					}
-					bodies.Add(fo.OpenText().ReadToEnd());
+					parts.Add(fo.OpenText().ReadToEnd());
 
 					 
 					fi.Delete();
 					fo.Delete();
 				}
 
-				return Request.CreateResponse(HttpStatusCode.OK,string.Join("---\n",bodies),new SimpleFormatter("text/plain"));
+				return Request.CreateResponse(HttpStatusCode.OK,string.Join("---\n",parts),new SimpleFormatter("text/plain"));
 
 			}
 			catch (System.Exception e)

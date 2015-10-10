@@ -47,7 +47,7 @@ namespace Yavsc.Model.Admin
 		/// Gets or sets the dbname.
 		/// </summary>
 		/// <value>The dbname.</value>
-		public string Dbname {
+		public string DbName {
 			get {
 				return dbname;
 			}
@@ -62,7 +62,7 @@ namespace Yavsc.Model.Admin
 		/// Gets or sets the dbuser.
 		/// </summary>
 		/// <value>The dbuser.</value>
-		public string Dbuser {
+		public string DbUser {
 			get {
 				return dbuser;
 			}
@@ -101,7 +101,7 @@ namespace Yavsc.Model.Admin
 		/// </summary>
 		/// <returns>The string.</returns>
 		public string ConnectionString { get { return string.Format ("Server={0};Port={1};Database={2};User Id={3};Password={4};Encoding=Unicode;",
-			Host, Port, Dbname, Dbuser, Password); } }
+			Host, Port, DbName, DbUser, Password); } }
 	}
 	
 }

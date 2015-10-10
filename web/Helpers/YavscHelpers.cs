@@ -5,11 +5,9 @@ using System.Web.Security;
 using System.IO;
 using System.Web.Configuration;
 using System.Net.Mail;
-using System.Web.Http.ModelBinding;
 using Yavsc.Model.RolesAndMembers;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Web.Mvc;
 using Yavsc.Model.Circles;
 using System.Web.UI;
 using System.Linq.Expressions;
@@ -23,31 +21,6 @@ namespace Yavsc.Helpers
 	/// </summary>
 	public static class YavscHelpers
 	{
-		/// <summary>
-		/// Formats the circle.
-		/// </summary>
-		/// <returns>The circle.</returns>
-		/// <param name="c">C.</param>
-		public static HtmlString FormatCircle (Circle c)
-		{
-			if (c.Members!=null)
-			if (c.Members.Length > 0) {
-				TagBuilder i = new TagBuilder ("i");
-				i.SetInnerText (String.Join (", ", c.Members));
-				return new HtmlString (c.Title+"<br/>\n"+i.ToString());
-			}
-			return new HtmlString (c.Title);
-		}
-		/// <summary>
-		/// Formats the circle.
-		/// </summary>
-		/// <returns>The circle as Html string.</returns>
-		/// <param name="helper">Helper.</param>
-		/// <param name="c">C.</param>
-		public static HtmlString FormatCircle(this HtmlHelper helper, Circle c)
-		{
-			return FormatCircle (c);
-		}
 
 		private static string siteName = null; 
 		/// <summary>
@@ -77,19 +50,33 @@ namespace Yavsc.Helpers
 		/// <summary>
 		/// Sends the activation message.
 		/// </summary>
+		/// <param name="helper">Helper.</param>
 		/// <param name="user">User.</param>
-		public static void SendActivationMessage(MembershipUser user)
+		public static void SendActivationMessage(this System.Web.Http.Routing.UrlHelper helper, MembershipUser user)
 		{
-			SendEmail (WebConfigurationManager.AppSettings ["RegistrationMessage"],
+			SendActivationMessage (helper.Route("~/Account/Validate/",new { id=user.UserName, key=user.ProviderUserKey.ToString() } )
+				, WebConfigurationManager.AppSettings ["RegistrationMessage"],
+				user);
+		}
+		/// <summary>
+		/// Sends the activation message.
+		/// </summary>
+		/// <param name="helper">Helper.</param>
+		/// <param name="user">User.</param>
+		public static void SendActivationMessage(this System.Web.Mvc.UrlHelper helper, MembershipUser user)
+		{
+			SendActivationMessage (helper.Content("~/Account/Validate/"+user.UserName+"/?key="+user.ProviderUserKey.ToString())
+				, WebConfigurationManager.AppSettings ["RegistrationMessage"],
 				user);
 		}
 
 		/// <summary>
-		/// Sends the email.
+		/// Sends the activation message.
 		/// </summary>
+		/// <param name="validationUrl">Validation URL.</param>
 		/// <param name="registrationMessage">Registration message.</param>
 		/// <param name="user">User.</param>
-		public static void SendEmail(string registrationMessage, MembershipUser user) {
+		public static void SendActivationMessage(string validationUrl, string registrationMessage, MembershipUser user) {
 			FileInfo fi = new FileInfo (
 				HttpContext.Current.Server.MapPath (registrationMessage));
 			if (!fi.Exists) {
@@ -104,12 +91,8 @@ namespace Yavsc.Helpers
 				string body = sr.ReadToEnd ();
 				body = body.Replace ("<%SiteName%>", YavscHelpers.SiteName);
 				body = body.Replace ("<%UserName%>", user.UserName);
-				body = body.Replace ("<%UserActivatonUrl%>",
-					string.Format ("<{0}://{1}/Account/Validate/{2}?key={3}>",
-						HttpContext.Current.Request.Url.Scheme,
-						HttpContext.Current.Request.Url.Authority,
-						user.UserName,
-						user.ProviderUserKey.ToString ()));
+				body = body.Replace ("<%UserActivatonUrl%>", validationUrl);
+
 				using (MailMessage msg = new MailMessage (
 					Admail, user.Email,
 					string.Format ("Validation de votre compte {0}", YavscHelpers.SiteName),
@@ -123,15 +106,16 @@ namespace Yavsc.Helpers
 		}
 
 		/// <summary>
-		/// Resets the password.
+		/// Validates the password reset.
 		/// </summary>
 		/// <param name="model">Model.</param>
 		/// <param name="errors">Errors.</param>
-		public static void ResetPassword(LostPasswordModel model, out StringDictionary errors)
+		/// <param name="user">User.</param>
+		public static void ValidatePasswordReset(LostPasswordModel model, out StringDictionary errors, out MembershipUser user)
 		{
 			MembershipUserCollection users = null;
 			errors = new StringDictionary ();
-
+			user = null;
 			if (!string.IsNullOrEmpty (model.UserName)) {
 				users =
 					Membership.FindUsersByName (model.UserName);
@@ -159,10 +143,7 @@ namespace Yavsc.Helpers
 			if (users==null)
 				return;
 			// Assert users.Count == 1
-			if (users.Count != 1)
-				throw new InvalidProgramException ("Emails and user's names are uniques, and we find more than one result here, aborting.");
-			foreach (MembershipUser u in users) 
-				YavscHelpers.SendActivationMessage (u);
+			foreach (MembershipUser u in users) user = u;
 		}
 		/// <summary>
 		/// Avatars the URL.
@@ -170,11 +151,19 @@ namespace Yavsc.Helpers
 		/// <returns>The URL.</returns>
 		/// <param name="helper">Helper.</param>
 		/// <param name="username">Username.</param>
-		public static string AvatarUrl (this HtmlHelper helper, string username) {
+		public static string AvatarUrl (this System.Web.Mvc.UrlHelper helper, string username) {
+			if (username == null)
+				return null;
 			ProfileBase pr = ProfileBase.Create (username);
-			var a = pr.GetPropertyValue("Avatar") ;
-			if (a == null || a is DBNull) return "/avatars/" + helper.Encode(username)+".png";
-			return helper.Encode ((string)a);
+			object avpath = null;
+			if (pr != null) avpath = pr.GetPropertyValue("Avatar");
+			if (avpath == null) return "/bfiles/"+username+".png";
+			string avatarLocation = avpath as string;
+			if (avatarLocation.StartsWith ("~/")) {
+				avatarLocation = helper.RequestContext.HttpContext.Server.MapPath(avatarLocation);
+			}
+			return avatarLocation;
+				
 		}
 		/// <summary>
 		/// Javas the script.

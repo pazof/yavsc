@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class AccountController : Controller
 	{
-	
+		
 		string avatarDir = "~/avatars";		
 		string defaultAvatar;
 		string defaultAvatarMimetype;
@@ -37,20 +37,7 @@ namespace Yavsc.Controllers
 		[AcceptVerbs (HttpVerbs.Get)]
 		public ActionResult Avatar (string id)
 		{
-			if (id == null)
-				return new EmptyResult ();
-			
-			ProfileBase pr = ProfileBase.Create (id);
-			var avpath = pr.GetPropertyValue("Avatar");
-			if (avpath == null) {
-				FileInfo fia = new FileInfo (Server.MapPath (defaultAvatar));
-				return File (fia.OpenRead (), defaultAvatarMimetype);
-			}
-			string avatarLocation = avpath as string;
-			if (avatarLocation.StartsWith ("~/")) {
-				avatarLocation = Server.MapPath (avatarLocation);
-			}
-
+			string avatarLocation = Url.AvatarUrl (id);
 			WebRequest wr = WebRequest.Create (avatarLocation);
 			FileContentResult res;
 			using (WebResponse resp = wr.GetResponse ()) {
@@ -130,11 +117,17 @@ namespace Yavsc.Controllers
 			return View ();
 		}
 
+		public ActionResult RegisterForm()
+		{
+			return View ("Register"); 
+		}
+
 		/// <summary>
 		/// Register the specified model and returnUrl.
 		/// </summary>
 		/// <param name="model">Model.</param>
 		/// <param name="returnUrl">Return URL.</param>
+		[HttpPost]
 		public ActionResult Register (RegisterViewModel model, string returnUrl)
 		{
 			ViewData ["returnUrl"] = returnUrl;
@@ -142,7 +135,8 @@ namespace Yavsc.Controllers
 				foreach (string k in ModelState.Keys)
 					ModelState [k].Errors.Clear ();
 				return View (model);
-			}
+			} 
+				
 			if (ModelState.IsValid) {
 				if (model.ConfirmPassword != model.Password) {
 					ModelState.AddModelError ("ConfirmPassword", "Veuillez confirmer votre mot de passe");
@@ -168,7 +162,7 @@ namespace Yavsc.Controllers
 					"déjà enregistré");
 					return View (model);
 				case MembershipCreateStatus.Success:
-					YavscHelpers.SendActivationMessage (user);
+					Url.SendActivationMessage (user);
 					ViewData ["username"] = user.UserName;
 					ViewData ["email"] = user.Email;
 					return View ("RegistrationPending");
@@ -207,14 +201,20 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Unregister the specified confirmed.
+		/// Unregister the specified id and confirmed.
 		/// </summary>
+		/// <param name="id">Identifier.</param>
 		/// <param name="confirmed">If set to <c>true</c> confirmed.</param>
 		[Authorize]
-		public ActionResult Unregister (bool confirmed = false)
+		public ActionResult Unregister (string id, bool confirmed = false)
 		{
+			ViewData ["UserName"] = id;
 			if (!confirmed)
 				return View ();
+			string logged = Membership.GetUser ().UserName;
+			if (logged != id)
+			if (!Roles.IsUserInRole ("Admin"))
+				throw new Exception ("Unregister another user");
 
 			Membership.DeleteUser (
 				Membership.GetUser ().UserName);
@@ -391,9 +391,13 @@ namespace Yavsc.Controllers
 		{
 			if (Request.HttpMethod == "POST") {
 				StringDictionary errors;
-				YavscHelpers.ResetPassword (model, out errors);
+				MembershipUser user;
+				YavscHelpers.ValidatePasswordReset (model, out errors, out user);
 				foreach (string key in errors.Keys)
 					ModelState.AddModelError (key, errors [key]);
+				
+				if (user != null && ModelState.IsValid)
+					Url.SendActivationMessage (user);
 			}
 			return View (model);
 		}
