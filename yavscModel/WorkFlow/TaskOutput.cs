@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 
-namespace Yavsc.Admin
+namespace Yavsc.Model.Admin
 {
 
 	/// <summary>
