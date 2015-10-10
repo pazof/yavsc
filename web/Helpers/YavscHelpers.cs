@@ -151,10 +151,18 @@ namespace Yavsc.Helpers
 		/// <param name="helper">Helper.</param>
 		/// <param name="username">Username.</param>
 		public static string AvatarUrl (this System.Web.Mvc.UrlHelper helper, string username) {
+			if (username == null)
+				return null;
 			ProfileBase pr = ProfileBase.Create (username);
-			var a = pr.GetPropertyValue("Avatar") ;
-			if (a == null || a is DBNull) return "/avatars/" + helper.Encode(username)+".png";
-			return helper.Encode ((string)a);
+			object avpath = null;
+			if (pr != null) avpath = pr.GetPropertyValue("Avatar");
+			if (avpath == null) return "/bfiles/"+username+".png";
+			string avatarLocation = avpath as string;
+			if (avatarLocation.StartsWith ("~/")) {
+				avatarLocation = helper.RequestContext.HttpContext.Server.MapPath(avatarLocation);
+			}
+			return avatarLocation;
+				
 		}
 	}
 }

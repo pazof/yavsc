@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class AccountController : Controller
 	{
-	
+		
 		string avatarDir = "~/avatars";		
 		string defaultAvatar;
 		string defaultAvatarMimetype;
@@ -37,20 +37,7 @@ namespace Yavsc.Controllers
 		[AcceptVerbs (HttpVerbs.Get)]
 		public ActionResult Avatar (string id)
 		{
-			if (id == null)
-			return new EmptyResult ();
-			
-			ProfileBase pr = ProfileBase.Create (id);
-			var avpath = pr.GetPropertyValue("Avatar");
-			if (avpath == null) {
-				FileInfo fia = new FileInfo (Server.MapPath (defaultAvatar));
-				return File (fia.OpenRead (), defaultAvatarMimetype);
-			}
-			string avatarLocation = avpath as string;
-			if (avatarLocation.StartsWith ("~/")) {
-				avatarLocation = Server.MapPath (avatarLocation);
-			}
-
+			string avatarLocation = Url.AvatarUrl (id);
 			WebRequest wr = WebRequest.Create (avatarLocation);
 			FileContentResult res;
 			using (WebResponse resp = wr.GetResponse ()) {
