@@ -183,9 +183,9 @@ namespace Yavsc.Model.Blogs
 		/// <param name="postid">Postid.</param>
 		/// <param name="tag">Tag.</param>
 		/// <returns>The tag identifier</returns>
-		public static long Tag (long postid, string tag)
+		public static void Tag (long postid, string tag)
 		{
-			return Provider.Tag (postid, tag);
+			Provider.Tag (postid, tag);
 		}
 
 		/// <summary>
@@ -213,6 +213,16 @@ namespace Yavsc.Model.Blogs
 				}
 			}
 			return e;
+		}
+
+		/// <summary>
+		/// Untag the specified postid and tagname.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="tagname">Tagname.</param>
+		public static void Untag (long postid, string tagname)
+		{
+			Provider.Untag (postid, tagname);
 		}
 
 		private static bool CanView (BlogEntry e, MembershipUser u = null)

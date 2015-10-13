@@ -25,12 +25,15 @@
 	<data name="DocTemplateException"><value>Une erreur est survenue à la génération de votre document</value></data>
     <data name="Description"><value>Description</value></data>
 	<data name="DisplayName"><value>Nom affiché</value></data>
+	<data name="DoTag"><value>Tagger</value></data>
 	<data name="entries"><value>entrées</value></data>
+	<data name="Edit"><value>Éditer</value></data>
 	<data name="EndDate"><value>Date de fin</value></data>
 	<data name="Estimate_not_found"><value>Devis non trouvé</value></data>
     <data name="EventWebPage"><value>Page web de l'événement</value></data>
 	<data name="Google_calendar"><value>Agenda Google</value></data>
 	<data name="Google_error"><value>Erreur Google : {0}</value></data>
+	<data name="Hide_source"><value>Cacher le texte source du billet</value></data>
 	<data name="Home"><value>Accueil</value></data>
 	<data name="ImgLocator"><value>URI de l'image</value></data>
 	<data name="ImportException"><value>Exception à l'import</value></data>
@@ -52,6 +55,7 @@
 	<data name="Preview"><value>Prévisualiser</value><comment>Prévisualiser le document</comment></data>
 	<data name="Profile_edition"><value>Édition du profile</value></data>
 	<data name="Product_reference"><value>Référence produit</value></data>
+	<data name="ReadMore"><value>Lire la suite ...</value></data>
 	<data name="ProviderId"><value>Identifiant du fournisseur</value></data>
 	<data name="ProviderName"><value>Nom du fournisseur</value></data>
 	<data name="Register"><value>Enregistez-vous</value></data>
@@ -64,6 +68,7 @@
 	<data name="Unitary_cost"><value>Coût unitaire</value></data>
 	<data name="User List"><value>Liste des utilisateurs</value><comment></comment></data>
 	<data name="User_name"><value>Nom d'utilisateur</value></data>
+	<data name="View_source"><value>Voir le texte source du billet</value></data>
 	<data name="was_added_to_the_role"><value>a été ajouté au rôle</value></data>
 	<data name="was_added_to_the_empty_role"><value>Il n'y avait pas 'utilisateur dans le rôle '{1}'. Vous ({0}) avez été ajouté au rôle '{1}'.</value></data>
 	<data name="Welcome"><value>Bienvenue</value><comment></comment></data>

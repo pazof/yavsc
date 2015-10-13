@@ -124,6 +124,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string View_source {
+            get {
+                return ResourceManager.GetString("View_source", resourceCulture);
+            }
+        }
+        
         public static string Ciffer {
             get {
                 return ResourceManager.GetString("Ciffer", resourceCulture);
@@ -184,15 +190,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Hide_source {
+            get {
+                return ResourceManager.GetString("Hide_source", resourceCulture);
+            }
+        }
+        
         public static string access_denied {
             get {
                 return ResourceManager.GetString("access_denied", resourceCulture);
             }
         }
         
-        public static string was_added_to_the_role {
+        public static string DoTag {
             get {
-                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
+                return ResourceManager.GetString("DoTag", resourceCulture);
             }
         }
         
@@ -352,6 +364,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string ReadMore {
+            get {
+                return ResourceManager.GetString("ReadMore", resourceCulture);
+            }
+        }
+        
         public static string Item_added_to_basket {
             get {
                 return ResourceManager.GetString("Item_added_to_basket", resourceCulture);
@@ -364,6 +382,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
         public static string InternalServerError {
             get {
                 return ResourceManager.GetString("InternalServerError", resourceCulture);
@@ -373,6 +397,12 @@ namespace Yavsc.Model {
         public static string entries {
             get {
                 return ResourceManager.GetString("entries", resourceCulture);
+            }
+        }
+        
+        public static string was_added_to_the_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
             }
         }
     }

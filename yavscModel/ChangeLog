@@ -1,3 +1,31 @@
+2015-10-13  Paul Schneider  <paul@pschneider.fr>
+
+	* BasePost.cs: refactoring:
+	allows the "PostActions" user control to use a common base
+	object as post reference
+
+	* YavscModel.csproj:
+	* BlogEntry.cs:
+	* BlogEntryCollection.cs: refactoring
+
+	* BlogManager.cs: Makes the blog manager expose of the new
+	`UnTag` method
+
+	* BlogProvider.cs: introduces a method to `untag`
+
+	* FindBlogEntryFlags.cs: Find post entry by tag
+
+	* LocalizedText.resx:
+	* LocalizedText.Designer.cs: new translations: - "Tag"
+	- "Edit"
+
+
+	* LocalizedText.fr.resx:
+	* LocalizedText.fr.Designer.cs: nouvelles traductions: - "Tag"
+	- "Edit"
+
+	* Profile.cs: a nicer stack trace at buggy usage
+
 2015-10-10  Paul Schneider  <paul@pschneider.fr>
 
 	* YavscModel.csproj:

@@ -17,10 +17,12 @@ self.showHide = function () {
 	$(this).html(this.oldhtml);
     }
 	};
-	self.dimiss = function () { 
+
+self.dimiss = function () { 
 		$(this).parent().remove();
-	}
-   	self.notice = function (msg, msgok) { 
+	};
+
+self.notice = function (msg, msgok) { 
    	if (!msgok) msgok='Ok';
    	if (msg) { 
    	var note = $('<div class="notification">'+msg+'<br></div>');
@@ -40,12 +42,14 @@ self.showHide = function () {
 			errspan.innerHTML=value.errors.join("<br/>");
     	});
 
-    }
+    };
+
 self.onAjaxError = function (xhr, ajaxOptions, thrownError) {
             	if (xhr.status!=400)
         			Yavsc.notice(xhr.status+" : "+xhr.responseText);
 			    else Yavsc.notice(false);
-     }
+     };
+
 return self;
 })();
 

@@ -92,12 +92,15 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Registers the form.
+		/// Gets the registration form.
 		/// </summary>
-		/// <returns>The form.</returns>
-		public ActionResult RegisterForm()
+		/// <returns>The register.</returns>
+		/// <param name="model">Model.</param>
+		/// <param name="returnUrl">Return URL.</param>
+		public ActionResult GetRegister(RegisterViewModel model, string returnUrl)
 		{
-			return View ("Register"); 
+			ViewData ["returnUrl"] = returnUrl;
+			return View ("Register",model);
 		}
 
 		/// <summary>
@@ -109,11 +112,6 @@ namespace Yavsc.Controllers
 		public ActionResult Register (RegisterViewModel model, string returnUrl)
 		{
 			ViewData ["returnUrl"] = returnUrl;
-			if (Request.RequestType == "GET") {
-				foreach (string k in ModelState.Keys)
-					ModelState [k].Errors.Clear ();
-				return View (model);
-			} 
 				
 			if (ModelState.IsValid) {
 				if (model.ConfirmPassword != model.Password) {

@@ -16,30 +16,19 @@
 <div class="post<% if (!e.Visible) { %> hiddenpost<% } %>" >
 <% if (e.Photo!=null) { %><img src="<%=e.Photo%>" alt="" class="photo"><% } %>
 <%= Html.Markdown(e.Content,"/bfiles/"+e.Id+"/") %>
-
-<aside class="hidden">(<%= e.Posted.ToString("yyyy/MM/dd") %>
-	 - <%= e.Modified.ToString("yyyy/MM/dd") %> <%= e.Visible? "":", Invisible!" %>)
-	 <% if (Membership.GetUser()!=null)
-	if (Membership.GetUser().UserName==e.Author || Roles.IsUserInRole("Admin") )
-	 { %>
-	 <%= Html.ActionLink("Editer","Edit", new { id = e.Id }, new { @class="actionlink" }) %>
-	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = e.Id }, new { @class="actionlink" } ) %>
-	 <% } %>
-	 </aside>
+<%= Html.Partial("PostActions",e)%>
 </div>
 <% } %>
-<aside>
-	<form runat="server" id="form1" method="GET">
 <%
+if (((int) ViewData["RecordCount"]) > ((int) ViewData["PageSize"])) {
  rp1.ResultCount = (int) ViewData["RecordCount"];
  rp1.PageIndex = (int) ViewData["PageIndex"];
  rp1.PageSize = (int) ViewData["PageSize"];
-%>
+%><aside><form runat="server" id="form1">
 <yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server">
 	 <None><i>Pas de contenu</i></None>
 </yavsc:ResultPages> 
 	</form>
 </aside>
-	
-
+<% } %>
 </asp:Content>

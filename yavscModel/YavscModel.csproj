@@ -172,6 +172,7 @@
     <Compile Include="Circles\CircleBase.cs" />
     <Compile Include="Blogs\MarkdownHelper.cs" />
     <Compile Include="Blogs\UTBlogEntryCollection.cs" />
+    <Compile Include="Blogs\BasePost.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

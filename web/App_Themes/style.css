@@ -8,13 +8,8 @@ body {
 	margin: 0;
 }
 
-
 .iconsmall { max-height: 1.3em; max-width: 1.3em; } 
 
-input, textarea, checkbox { 
-    color: #FFFFA0;
-	background-color: black;
-   }
 
 .photo { width: 100%; }
 .blogbanner { float: left; top:0; }
@@ -76,7 +71,7 @@ legend {
 footer p { display:inline-block; } 
 
 footer img { max-height: 2em; vertical-align: middle; }
-a.actionlink img, h1 img, .menuitem img  { vertical-align: middle; }
+a img, h1 img, .menuitem img  {  max-height: 1em; vertical-align: middle; }
 
 #gspacer { 
 	background-color: rgba(20,20,20,.8); 
@@ -116,7 +111,7 @@ aside {
 	margin:1em;
 	padding:1em;
 	background-color: rgba(0,0,32,0.8);
-	color: #aaa;
+	color: #eee;
 	border-radius:10px;
 	}
 .hiddenpost { background-color: rgba(16,16,16,0.5); }
@@ -167,14 +162,13 @@ content: ")";
 
 
 .usertitleref {
-	color: #B0B080;
 	border-radius: 5px;
    background-color:rgba(0,0,32,0.6);
    font-family: 'Arial', cursive;
 	padding: 1em;
 }
 a:visited {
-	color: #90B090;
+	color: #E0E0E0;
 }
 label {
 	font-size: medium;
@@ -186,7 +180,8 @@ label {
 	border: dashed rgb(020,20,256) 2px; 
 }
 #notifications { 
-	padding: .5em;
+	margin: 2em;
+	padding: 2em;
  }
 
 .notification {
@@ -227,30 +222,33 @@ a {
 }
 
 .actionlink, .menuitem, a {
-	color: #B0B080;
+   display:inline-block;
+	color: white;
 	border-radius:1em;
 	border: solid black 1px;
    background-color: rgba(20,20,20,.8); 
    cursor: pointer;
    font-family: 'Arial', cursive;
-	padding: .2em;
-	display: inline-block; 
+	padding: 1em;
+	margin:1em;
 }
 
-input, select { 
-	color: #B0B080;
+input, select, textarea { 
+	color: white;
+	background-color:rgba(0,0,64,0.8);
 	border: solid 1px rgb(128,128,128);
 	border-radius:1em;
-   background-color:rgba(0,0,32,0.8);
-   font-family: 'Arial', cursive;
+    font-family: 'Arial', cursive;
 }
 
-
-.actionlink:hover, fa:hover, .menuitem:hover, a:hover, input:hover {
+.actionlink:hover, fa:hover, .menuitem:hover, a:hover {
 	background-color:rgba(30,0,124,0.9);
 	border: solid green 1px;
 }
-
+ input:hover, textarea:hover {
+	color: white;
+	background-color:rgba(64,64,64,0.8);
+}
 .code {
 	font-family: "monospace";
 	background-color: rgba(0,0,256,0.1);
@@ -273,14 +271,6 @@ input, select {
 	font-size: smaller;
 	}
 
-
-.menuitem {
-	border-radius:5px;
-	margin:.5em;
-	padding:.5em;
-	display: inline-block; 
-}
-
 .onhover {
 	display:none; 
 	position: absolute;
@@ -300,7 +290,7 @@ input, select {
 .c3 { font-size: x-small; font-style: italic; }
 @media print {
 		body {background-color:white;color:black;}
-		.control,.actionlink,nav { display:none;} 
+		.control, .actionlink,  .menuitem, nav { display:none;} 
 	}
 
 	.bshpanel { display:block; }

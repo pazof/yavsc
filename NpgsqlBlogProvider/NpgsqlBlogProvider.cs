@@ -7,6 +7,7 @@ using Yavsc.Model.Blogs;
 using Yavsc.Model.Circles;
 using System.Web.Mvc;
 using NpgsqlTypes;
+using System.Linq;
 
 namespace Npgsql.Web.Blog
 {
@@ -19,34 +20,51 @@ namespace Npgsql.Web.Blog
 		string connectionString;
 
 		#region implemented abstract members of BlogProvider
+
 		/// <summary>
-		/// Tag the specified postid and tag.
+		/// Tag the specified post by identifier 
+		/// using the given tag.
 		/// </summary>
 		/// <param name="postid">Postid.</param>
-		/// <param name="tag">Tag.</param>
-		public override long Tag (long postid, string tag)
+		/// <param name="tagname">Tag name.</param>
+		public override long Tag (long postid, string tagname)
 		{
+			long tid = GetOrCreateTagId (tagname);
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "insert into bltag (blid,tag) values (:postid,:tag) returning _id";
-				cmd.Parameters.AddWithValue("tag",tag);
-				cmd.Parameters.AddWithValue("postid",postid);
+				cmd.CommandText = "INSERT INTO tagged (tagid,postid) VALUES (:tid,:pid)";
+				cmd.Parameters.AddWithValue("tid",tid);
+				cmd.Parameters.AddWithValue("pid",postid);
 				cnx.Open ();
-				return (long) cmd.ExecuteScalar ();
+				cmd.ExecuteNonQuery ();
+				return tid;
 			}
 		}
+
 		/// <summary>
-		/// Removes the tag.
+		/// Uns the tag.
 		/// </summary>
+		/// <param name="postid">Postid.</param>
 		/// <param name="tagid">Tagid.</param>
-		public override void RemoveTag (long tagid)
-		{
+		/// <param name="name">Name.</param>
+		override public void Untag(long postid, string name) {
+			Untag(postid, GetTagId (name));
+		}
+
+		/// <summary>
+		/// Uns the tag.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="tagid">Tagid.</param>
+		/// <param name="tid">Tid.</param>
+		override public void Untag(long postid, long tid) {
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "delete from bltag where _id = :tagid";
-				cmd.Parameters.AddWithValue("tagid",tagid);
+				cmd.CommandText = "DELETE FROM tagged WHERE postid = :pid AND tagid = :tid";
+				cmd.Parameters.AddWithValue ("pid", postid);
+				cmd.Parameters.AddWithValue ("tid", tid);
 				cnx.Open ();
-				cmd.ExecuteNonQuery ();	
+				cmd.ExecuteNonQuery ();
 			}
 		}
 		/// <summary>
@@ -257,7 +275,7 @@ namespace Npgsql.Web.Blog
 					}
 				}
 			}
-			if (be!=null) SetCirclesOn (be);
+			if (be!=null) Populate (be);
 			return be;
 
 		}
@@ -334,8 +352,7 @@ namespace Npgsql.Web.Blog
 							be.Tags = tags.ToArray ();
 						}
 					}
-
-					SetCirclesOn (bec);
+					if (bec!=null) Populate (bec);
 				}
 			}
 			return bec;
@@ -359,11 +376,103 @@ namespace Npgsql.Web.Blog
 			be.AllowedCircles = circles.ToArray ();
 		}
 
-		private void SetCirclesOn(BlogEntryCollection bec)
-			{
-			foreach (BlogEntry be in bec) {
-				SetCirclesOn (be);
+		/// <summary>
+		/// Removes the tag.
+		/// </summary>
+		/// <param name="tagid">Tagid.</param>
+		public override void DropTag(long tagid)
+		{
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = "DELETE from public.tag where _id = :tid";
+				cmd.Parameters.AddWithValue("tagid",tagid);
+				cnx.Open ();
+				cmd.ExecuteNonQuery ();	
+				cnx.Close ();
 			}
+		}
+
+		private static string SelectTagsSql = "SELECT tag.name, tag._id FROM public.tag WHERE name like :name";
+		private IEnumerable<string> GetSuggestion (string pattern) {
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = SelectTagsSql;
+				throw new NotImplementedException ();
+			}
+		}
+
+		private static string InsertTagSql = "INSERT INTO tag (name) VALUES (:name) returning _id";
+		private void InsertTag(long postid, long tagid)
+		{
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = InsertTagSql;
+				throw new NotImplementedException ();
+			}
+		}
+	
+		private long GetTagId(string tagname)
+		{
+			long id = 0;
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = "SELECT tag._id FROM public.tag WHERE name = :name";
+				cmd.Parameters.AddWithValue ("name", tagname);
+				cnx.Open ();
+				id = (long) cmd.ExecuteScalar ();
+			}
+			return id;
+		}
+		private long GetOrCreateTagId(string tagname)
+		{
+			long id = 0;
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = "SELECT tag._id FROM public.tag WHERE name = :name;\n" +
+					"IF NOT FOUND THEN INSERT INTO tag (name) values (:name) RETURNING _id; ENDIF;\n";
+				cmd.Parameters.AddWithValue ("name", tagname);
+				cnx.Open ();
+				id = (long) cmd.ExecuteScalar ();
+			}
+			return id;
+		}
+
+
+
+		private static string SelectPostTagsSql = "SELECT tag.name FROM public.tag, public.tagged\n" +
+			"WHERE tag._id = tagged.tagid AND tagged.postid = :pid \n";
+		private void SetTagsOn(BlogEntryCollection bec){
+			foreach (BlogEntry be in bec) {
+				SetTagsOn (be);
+			}
+		}
+		private void SetTagsOn(BlogEntry be)
+		{
+			List<string> tags = new List<string> ();
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmdtags = cnx.CreateCommand ()) {
+				cmdtags.CommandText = SelectPostTagsSql;
+				cmdtags.Parameters.AddWithValue ("pid", be.Id);
+				cnx.Open ();
+				using (NpgsqlDataReader rdr = cmdtags.ExecuteReader ()) {
+					while (rdr.Read ()) {
+						tags.Add (rdr.GetString (0));
+					}
+				}
+			}
+			be.Tags = tags.ToArray ();
+		}
+
+		// Assert(bec!=null);
+		private  void Populate(BlogEntryCollection bec)
+		{
+			foreach (BlogEntry be in bec) Populate(be);
+		}
+
+		private void Populate(BlogEntry be)
+		{
+			SetTagsOn (be);
+			SetCirclesOn (be);
 		}
 		/// <summary>
 		/// Post the specified username, title, content and visible.
@@ -487,6 +596,15 @@ namespace Npgsql.Web.Blog
 				}
 				cmd.Parameters.AddWithValue ("appname", applicationName);
 				if (pattern != null) {
+					if ((searchflags & FindBlogEntryFlags.MatchTag) > 0) {
+						cmd.CommandText += 
+							"AND EXISTS (SELECT tag._id FROM public.tag, public.tagged WHERE " +
+							"public.tag._id = public.tagged.tagid " +
+							"AND public.tagged.postid = a.post_id " +
+							"public.tag.name like :tagname) ";
+						cmd.Parameters.AddWithValue ("tagname", pattern);
+					}
+
 					if ((searchflags & FindBlogEntryFlags.MatchContent) > 0) {
 						cmd.CommandText += " and bcontent like :bcontent";
 						cmd.Parameters.AddWithValue ("bcontent", pattern);
@@ -532,8 +650,7 @@ namespace Npgsql.Web.Blog
 					rdr.Close ();
 				}
 			}
-			foreach (BlogEntry be in c)
-				SetCirclesOn (be);
+			if (c!=null) Populate (c);
 			
 			return c;
 		}
@@ -602,8 +719,7 @@ namespace Npgsql.Web.Blog
 					}
 				}
 			}
-			foreach (BlogEntry be in c)
-				SetCirclesOn (be);
+			if (c!=null) Populate (c);
 			return c;
 		}
 		#endregion

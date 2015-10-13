@@ -1,3 +1,38 @@
+2015-10-13  Paul Schneider  <paul@pschneider.fr>
+
+	* Index.aspx:
+	* Title.aspx:
+	* yavsc.scrollnotif.js:
+	* AccountController.cs: refactoring
+
+	* yavsc.tags.js: Implements a js call
+	to the tag & untag methods
+
+	* PostActions.ascx: a better html structure
+
+	* yavsc.circles.js:
+	* AccountController.cs: code formatting
+
+	* BlogsController.cs: Untag a post
+
+	* style.css: yastyle, yet a better one.
+
+	* BlogsController.cs: View the Title after edition
+
+	* App.master:
+	* UserPosts.aspx: a nicer html structure
+
+	* yavsc.js: Fixes notice & dimiss js
+
+	* Login.aspx: refactoring 
+
+	* Edit.aspx: better html
+
+	* UserPost.aspx: A promess to be allowed to tag.
+
+	* Web.csproj: Adds yavsc.tags.js and yavsc.scrollnotifs.js to
+	the project decription.
+
 2015-10-10  Paul Schneider  <paul@pschneider.fr>
 
 	* Web.csproj:

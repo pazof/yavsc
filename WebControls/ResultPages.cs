@@ -92,6 +92,21 @@ namespace Yavsc.WebControls
 		}
 
 		/// <summary>
+		/// Gets or sets the Single page message.
+		/// </summary>
+		/// <value>The none.</value>
+		[Bindable (true)]
+		[DefaultValue("1")]
+		public string SinglePage {
+			get {
+				return (string) ViewState["SinglePage"];
+			}
+			set {
+				ViewState["SinglePage"]  = value;
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the none.
 		/// </summary>
 		/// <value>The none.</value>
@@ -105,7 +120,20 @@ namespace Yavsc.WebControls
 				ViewState["None"]  = value;
 			}
 		}
-
+		/// <summary>
+		/// Gets or sets the none.
+		/// </summary>
+		/// <value>The none.</value>
+		[Bindable (true)]
+		[DefaultValue("Pages: ")]
+		public string PagesLabel {
+			get {
+				return (string) ViewState["PagesLabel"];
+			}
+			set {
+				ViewState["PagesLabel"]  = value;
+			}
+		}
 		/// <summary>
 		/// Gets or sets the current page.
 		/// </summary>
@@ -132,6 +160,7 @@ namespace Yavsc.WebControls
 				writer.WriteEncodedText (Text);
 				int pageCount = ((ResultCount-1) / PageSize) + 1;
 				if ( pageCount > 1 ) {
+					writer.Write (PagesLabel);
 					for (int pi = (PageIndex < 5) ? 0 : PageIndex - 5; pi < pageCount && pi < PageIndex + 5; pi++) {
 						if (PageIndex == pi)
 							writer.RenderBeginTag ("b");
@@ -144,6 +173,9 @@ namespace Yavsc.WebControls
 						writer.RenderEndTag ();
 						writer.Write ("&nbsp;");
 					}
+				} 
+				else {
+					writer.Write (SinglePage);
 				}
 			} 
 			if (ResultCount == 0) {

@@ -35,14 +35,15 @@
 	<% if (Model.Author ==  username || c.From == username ) { %>
 	<%= Html.ActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } , new { @class="actionlink" })%>
 	<% } %>
+
+
 </div><% } %>
-
-
 <% if (Membership.GetUser()!=null) { 
 	if (Membership.GetUser().UserName==be.Author)
 	 { %> <div class="control">
 	 <%= Html.ActionLink("Editer","Edit", new { id = be.Id }, new { @class="actionlink" }) %>
 	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = be.Id }, new { @class="actionlink" } ) %>
+	<i class="fa fa-tag">Tagger</i>
 	</div> <% } %>
 
  <aside class="control">

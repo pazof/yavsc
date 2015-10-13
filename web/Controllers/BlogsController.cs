@@ -71,7 +71,7 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// Title the specified title, pageIndex and pageSize.
 		/// </summary>
-		/// <param name="title">Title.</param>
+		/// <param name="id">Title.</param>
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
 		/// 
@@ -289,7 +289,7 @@ namespace Yavsc.Controllers
 					model.Id = BlogManager.Post (model.Author, model.Title, model.Content, model.Visible, model.AllowedCircles);
 				if (model.Photo != null)
 					BlogManager.UpdatePostPhoto (model.Id, model.Photo);
-				return RedirectToAction ("UserPosts", new { user = model.Author, title = model.Title });
+				return RedirectToAction ("Title", new { id = model.Title });
 			}
 			ViewData ["AllowedCircles"] = 
 				CircleManager.DefaultProvider.List (

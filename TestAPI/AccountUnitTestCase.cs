@@ -24,27 +24,55 @@ using Yavsc.Model.Blogs;
 using Yavsc.Controllers;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.Web.Configuration;
+using System.Configuration;
+using System.IO;
+using System.Web.Http;
 
-namespace TestAPI
+namespace Yavsc
 {
+
 	[TestFixture ()]
-	public class BlogUnitTest
+	public class AccountUnitTestCase
 	{
 
 		public string UserName { get; set; }
 		public string Email { get; set; }
 		public string Password { get; set; }
 
-
 		AccountController accountController;
-		[TestFixtureSetUp]
-		public void Init()
+
+		public AccountController AccountController {
+			get {
+				return accountController;
+			}
+		}
+		string defaultMembershipProvider = null;
+		[Test]
+		public virtual void Init()
 		{
+			webSource = new XSPWebSource (configurationManager.Address, configurationManager.Port, !root);
+		
+
+		var server = new ApplicationServer (webSource, configurationManager.Root) {
+			Verbose = configurationManager.Verbose,
+			SingleApplication = !root
+		};
+			string basedir = AppDomain.CurrentDomain.BaseDirectory;
+			string curdir = Directory.GetCurrentDirectory ();
+			string dummyVirtualPath = "/";
+			string physicalPath = @"/home/paul/workspace/totem/web/";
+			WebConfigurationFileMap map = new WebConfigurationFileMap ();
+			map.VirtualDirectories.Add(dummyVirtualPath, new VirtualDirectoryMapping(physicalPath, true));
+			Configuration configuration = WebConfigurationManager.OpenMappedWebConfiguration(map, dummyVirtualPath);
 			accountController = new AccountController ();
+			string da  = (string) configuration.AppSettings.Settings ["DefaultAvatar"].Value;
+			MembershipSection s = configuration.GetSection ("system.web/membership") as MembershipSection;
+			defaultMembershipProvider = s.DefaultProvider;
 		}
 
 		[Test ()]
-		public void Register ()
+		public virtual void Register ()
 		{
 			ViewResult actionResult = accountController.Register (
 				new Yavsc.Model.RolesAndMembers.RegisterViewModel () {
@@ -53,7 +81,7 @@ namespace TestAPI
 					IsApprouved = true
 				}, 
 				"/testreturnurl") as ViewResult;
-			Assert.AreEqual (actionResult.ViewName, "RegistrationPending");
+			Assert.AreSame ("",actionResult.ViewName);
 			MembershipUser u = Membership.GetUser (UserName, false);
 			Assert.NotNull (u);
 			Assert.False (u.IsApproved);
@@ -64,8 +92,9 @@ namespace TestAPI
 			Membership.UpdateUser (u);
 			Assert.True (u.IsApproved);
 		}
+
 		[TestFixtureTearDown()]
-		public void Unregister()
+		public virtual void Unregister()
 		{
 			ViewResult actionResult  = 
 				accountController.Unregister (UserName, true)  as ViewResult;

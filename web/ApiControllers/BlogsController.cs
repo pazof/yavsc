@@ -40,9 +40,19 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="postid">Postid.</param>
 		/// <param name="tag">Tag.</param>
-		public long Tag (long postid,string tag) {
+		public void Tag (long postid,string tag) {
 			BlogManager.GetForEditing (postid);
-			return BlogManager.Tag (postid, tag);
+			BlogManager.Tag (postid, tag);
+		}
+
+		/// <summary>
+		/// Untag the specified postid and tag.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="tag">Tag.</param>
+		public void Untag (long postid,string tag) {
+			BlogManager.GetForEditing (postid);
+			BlogManager.Untag (postid, tag);
 		}
 
 		/// <summary>
@@ -57,6 +67,7 @@ namespace Yavsc.ApiControllers
 				throw new AuthorizationDenied (user);
 			BlogManager.RemoveTitle (user, title);
 		}
+
 		/// <summary>
 		/// Removes the tag.
 		/// </summary>
@@ -65,6 +76,7 @@ namespace Yavsc.ApiControllers
 			
 			throw new NotImplementedException ();
 		}
+
 		/// <summary>
 		/// The allowed media types.
 		/// </summary>
@@ -125,9 +137,9 @@ namespace Yavsc.ApiControllers
 			}
 		}
 
+
 		/// <summary>
-		/// Searchs the files accociated to the given post id,
-		/// or related to the given terms.
+		/// Searchs the file.
 		/// </summary>
 		/// <returns>The file.</returns>
 		/// <param name="postid">Postid.</param>
@@ -165,7 +177,8 @@ namespace Yavsc.ApiControllers
 			try
 			{
 				// Read the form data.
-				IEnumerable<HttpContent> data = await Request.Content.ReadAsMultipartAsync(provider) ;
+				//IEnumerable<HttpContent> data = 
+				await Request.Content.ReadAsMultipartAsync(provider) ;
 
 				var invalidChars = Path.GetInvalidFileNameChars();
 				List<string> bodies = new List<string>();
@@ -182,10 +195,7 @@ namespace Yavsc.ApiControllers
 					FileInfo fp = new FileInfo (Path.Combine(root,filename));
 					if (fi.Exists) fi.Delete();
 					fp.MoveTo(fi.FullName);
-					// Get the mime type
-
-
-
+					// TODO Get the mime type
 					using (Process p = new Process ()) {			
 						p.StartInfo.WorkingDirectory = root;
 						p.StartInfo = new ProcessStartInfo ();

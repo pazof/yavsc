@@ -76,22 +76,13 @@ namespace Yavsc.Model.Blogs
 			}
 			return res;
 		}
+
+
+
 		/// <summary>
 		/// Base post info.
 		/// </summary>
-		public class BasePostInfo { 
-			/// <summary>
-			/// The identifier.
-			/// </summary>
-			public long Id;
-			/// <summary>
-			/// The posted.
-			/// </summary>
-			public DateTime Posted;
-			/// <summary>
-			/// The modified.
-			/// </summary>
-			public DateTime Modified;
+		public class BasePostInfo: BasePost { 
 
 			/// <summary>
 			/// The intro.

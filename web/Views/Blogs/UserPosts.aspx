@@ -25,19 +25,10 @@
 <% bool truncated = false; %>
 <%= Html.MarkdownToHtmlIntro(out truncated, e.Content,"/bfiles/"+e.Id+"/") %>
 <% if (truncated) { %>
-  <i><%= Html.ActionLink( "lire la suite" ,"UserPost", new { user=e.Author, title=e.Title, id = e.Id }, new { @class = "usertitleref" }) %></i>
+<a href="<%= Url.RouteUrl( "View", new { action="Title", title=e.Title}) %>">
+  <i>Html.Translate("ReadMore")</i></a>
   <% } %>
-<aside>(<%= e.Posted.ToString("yyyy/MM/dd") %>
-	 - <%= e.Modified.ToString("yyyy/MM/dd") %> <%= e.Visible? "":", Invisible!" %>)
-	 <% if (Membership.GetUser()!=null)
-	if (Membership.GetUser().UserName==e.Author)
-	 { %>
-	 <%= Html.ActionLink("Editer","Edit", new { id = e.Id }, new { @class="actionlink" }) %>
-	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = e.Id }, new { @class="actionlink" } ) %>
-	 <% } %>
-
-
-	 </aside>
+<%= Html.Partial("PostActions",e)%>
 </div>
 <% } %>
 <aside>

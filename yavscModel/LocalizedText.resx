@@ -25,12 +25,15 @@
 	<data name="Description"><value>Description</value></data>
 	<data name="DisplayName"><value>Display Name</value></data>
 	<data name="DocTemplateException"><value>Exception occured when rendering your document</value></data>
+	<data name="DoTag"><value>Tag</value></data>
 	<data name="DuplicateEmail"><value>This email adress is already used ({0}).</value></data>
 	<data name="DuplicateUserName"><value>This user name is already used ({0}).</value></data>
+	<data name="Edit"><value>Edit</value></data>
 	<data name="EndDate"><value>End date</value></data>
     <data name="Estimate_not_found"><value>Estimate not found</value></data>
 	<data name="EventWebPage"><value>Event Web page</value></data>
 	<data name="Home"><value>Home</value></data>
+	<data name="Hide_source"><value>Hide the bill source text</value></data>
 	<data name="entries"><value>entries</value></data>
 	<data name="Google_calendar"><value>Google calendar</value></data>
 	<data name="Google_error"><value>Google error : {0}</value></data>
@@ -57,6 +60,7 @@
 	<data name="ProviderId"><value>Provider identifier</value></data>
 	<data name="ProviderName"><value>Provider name</value></data>
 	<data name="Product_reference"><value>Product_reference</value></data>
+	<data name="ReadMore"><value>Read more ...</value></data>
 	<data name="Register"><value>Register</value></data>
 	<data name="Remember_me"><value>Remember me</value></data>
 	<data name="Remove"><value>Remove</value></data>
@@ -67,6 +71,7 @@
 	<data name="Unitary_cost"><value>Unitary_cost</value></data>
 	<data name="User_List"><value>User List</value><comment></comment></data>
 	<data name="User_name"><value>User name</value></data>
+	<data name="View_source"><value>View source</value></data>
 	<data name="was_added_to_the_role"><value>was added to the role</value></data>
 	<data name="was_added_to_the_empty_role"><value>There was no user in the '{1}' role. You ({0}) was just added as firt user in the '{1}' role.</value></data>
 	<data name="Welcome"><value>Welcome</value><comment></comment></data>

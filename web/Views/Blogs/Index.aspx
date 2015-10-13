@@ -8,16 +8,7 @@
 <% foreach (var p in g) { %> 
 <div class="postpreview">
  <p><%=  Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %></p>
-  <aside>
-(Posté le  <%=p.Posted.ToString("D") %>)
-
-  <% if (Membership.GetUser()!=null)
-	if ((Membership.GetUser().UserName==g.Key)
-	|| (Roles.IsUserInRole ("Admin")))
-	 { %>
-	 <%= Html.ActionLink("Editer","Edit", new { id = p.Id }, new { @class="actionlink" }) %>
-	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = p.Id }, new { @class="actionlink" } ) %>
-<% } %> </aside>
+ <%= Html.Partial("PostActions",p)%>
 </div> <% } %>
  <% } %>
 </div>

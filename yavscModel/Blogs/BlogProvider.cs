@@ -143,14 +143,26 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		/// <param name="postid">Postid.</param>
 		/// <param name="tag">Tag.</param>
-		public abstract long Tag (long postid,string tag);
+		public abstract long Tag (long postid, string tag);
 
+		/// <summary>
+		/// Uns the tag.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="tagid">Tagid.</param>
+		public abstract void Untag (long postid, long tagid);
+
+		/// <summary>
+		/// Uns the tag.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="name">Name.</param>
+		public abstract void Untag (long postid, string name);
 		/// <summary>
 		/// Removes the tag.
 		/// </summary>
 		/// <param name="tagid">Tagid.</param>
-		public abstract void RemoveTag (long tagid);
-
+		public abstract void DropTag (long tagid);
 		/// <summary>
 		/// Updates the post photo.
 		/// </summary>

@@ -48,6 +48,7 @@ function removeCircle() {
 			    else Yavsc.notice(false);
         		}}});
     }
+
  function modifyCircle() {
  Yavsc.notice(false);
  var id = $('#id').val();

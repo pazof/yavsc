@@ -190,6 +190,18 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string View_source {
+            get {
+                return ResourceManager.GetString("View_source", resourceCulture);
+            }
+        }
+        
+        public static string Hide_source {
+            get {
+                return ResourceManager.GetString("Hide_source", resourceCulture);
+            }
+        }
+        
         public static string access_denied {
             get {
                 return ResourceManager.GetString("access_denied", resourceCulture);
@@ -235,6 +247,12 @@ namespace Yavsc.Model {
         public static string ImgLocator {
             get {
                 return ResourceManager.GetString("ImgLocator", resourceCulture);
+            }
+        }
+        
+        public static string DoTag {
+            get {
+                return ResourceManager.GetString("DoTag", resourceCulture);
             }
         }
         
@@ -364,6 +382,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string ReadMore {
+            get {
+                return ResourceManager.GetString("ReadMore", resourceCulture);
+            }
+        }
+        
         public static string Item_added_to_basket {
             get {
                 return ResourceManager.GetString("Item_added_to_basket", resourceCulture);
@@ -373,6 +397,12 @@ namespace Yavsc.Model {
         public static string role_created {
             get {
                 return ResourceManager.GetString("role_created", resourceCulture);
+            }
+        }
+        
+        public static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
             }
         }
         

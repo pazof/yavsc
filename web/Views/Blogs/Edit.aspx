@@ -197,7 +197,7 @@ var data  = new FormData($('#frmajax').get()[0]);
 </script>
 <form id="frmajax">
 <fieldset>
-<legend>Fichiers attachés</legend>
+<legend>Attacher des fichiers</legend>
 <input type="file" name="attached" id="postedfile" multiple>
 <input type="button" value="attacher les ficher" onclick="submitFile()">
 <input type="button" value="importer les documents" onclick="submitImport()">
@@ -214,6 +214,11 @@ var data  = new FormData($('#frmajax').get()[0]);
 <%= Html.ListBox("AllowedCircles") %>
 <%= Html.ValidationMessage("AllowedCircles", "*") %>
 </fieldset>
+<span id="viewsource">
+<i class="fa fa-code menuitem"><%=Html.Translate("View_source")%></i></span>
+<span id="hidesource" class="hidden">
+<i class="fa fa-code menuitem"><%=Html.Translate("Hide_source")%></i>
+</span>
 <fieldset id="source" class="hidden">
 <%=Html.Hidden("Author")%>
 <%=Html.Hidden("Id")%>
@@ -226,14 +231,10 @@ var data  = new FormData($('#frmajax').get()[0]);
 <%=Html.TextArea("Content")%>
 <%=Html.ValidationMessage("Content")%>
 </fieldset>
-<i class="af af-check actionlink"><input type="submit" id="validate" value="Valider"></i>
+<input type="submit" id="validate" value="Valider" class="fa fa-check menuitem">
 <% } %>
 
-<span id="viewsource" class="actionlink">
-<i class="fa fa-code">View Source</i></span>
-<span id="hidesource" class="actionlink hidden">
-<i class="fa fa-code">Hide Source</i>
-</span>
+
 <aside>
 	Id:<%= Html.ActionLink( Model.Id.ToString() , "UserPost", new { user= Model.Author, title=Model.Title, id = Model.Id }, new { @class = "usertitleref actionlink" }) %>
 , Posted: <%= Model.Posted.ToString("yyyy/MM/dd") %> - Modified: <%= Model.Modified.ToString("yyyy/MM/dd") %> 
