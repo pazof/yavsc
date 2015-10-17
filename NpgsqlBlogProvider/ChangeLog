@@ -1,5 +1,11 @@
 2015-10-17  Paul Schneider  <paul@pschneider.fr>
 
+	* NpgsqlTagInfo.cs:
+	* NpgsqlBlogProvider.cs:
+	* NpgsqlBlogProvider.csproj: 
+
+2015-10-17  Paul Schneider  <paul@pschneider.fr>
+
 	* NpgsqlBlogProvider.cs: 
 
 2015-10-13  Paul Schneider  <paul@pschneider.fr>

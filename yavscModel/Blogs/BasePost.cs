@@ -30,8 +30,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Model.Blogs
 {
-
-
 	/// <summary>
 	/// Base post.
 	/// </summary>
@@ -54,8 +52,6 @@ namespace Yavsc.Model.Blogs
 				id = value;
 			}
 		}
-
-
 
 		/// <summary>
 		/// The posted.
@@ -139,12 +135,10 @@ namespace Yavsc.Model.Blogs
 			set;
 		}
 
-
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="Yavsc.Model.Blogs.BlogEntry"/> is visible.
 		/// </summary>
 		/// <value><c>true</c> if visible; otherwise, <c>false</c>.</value>
 		public bool Visible { get; set ; }
 	}
-	
 }

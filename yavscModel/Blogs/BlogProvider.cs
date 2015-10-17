@@ -19,6 +19,8 @@ namespace Yavsc.Model.Blogs
 		/// <param name="postid">Postid.</param>
 		public abstract BlogEntry GetPost (long postid);
 
+		public abstract TagInfo GetTagInfo (string tagname);
+
 		/// <summary>
 		/// Gets the post collection from a given user and at a given title.
 		/// </summary>

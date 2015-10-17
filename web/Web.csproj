@@ -434,6 +434,7 @@
     <Content Include="Scripts\knockout-jqAutocomplete.js" />
     <Content Include="Scripts\knockout-jqAutocomplete.min.js" />
     <Content Include="Views\Blogs\PageLinks.ascx" />
+    <Content Include="Views\Blogs\TagPanel.ascx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

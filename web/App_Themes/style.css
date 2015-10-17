@@ -39,7 +39,6 @@ body.loading .modal {
 }
 .iconsmall { max-height: 1.3em; max-width: 1.3em; } 
 
-
 .photo { width: 100%; }
 .blogbanner { float: left; top:0; }
 .subtitle { font-size:small; font-style: italic; }
@@ -96,7 +95,7 @@ legend {
 footer p { display:inline-block; } 
 
 footer img { max-height: 3em; vertical-align: middle; }
-a img, h1 img, .menuitem img  {  max-height: 1em; vertical-align: middle; }
+a img, h1 img, .menuitem img  { vertical-align: middle; }
 
 #gspacer { 
 	background-color: rgba(20,20,20,.8); 
@@ -275,12 +274,6 @@ input, select, textarea {
 	border-radius:25px;
 	white-space: pre-wrap;
 }
-
-.avatar {
-	max-width: 64px;
-	max-height: 64px;
-}
-
 #avatar { 
  float: left;
  margin:1em;
@@ -322,6 +315,10 @@ input, select, textarea {
 header {
 	padding-bottom:1em;
 		}
+
+#avatar { 
+ margin:.5em;
+ }
 
 header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 

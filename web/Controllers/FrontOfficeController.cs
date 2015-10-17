@@ -14,6 +14,7 @@ using Yavsc.Model.FrontOffice;
 using Yavsc.Model.FileSystem;
 using Yavsc.Model.Calendar;
 using System.Configuration;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -206,7 +207,7 @@ namespace Yavsc.Controllers
 			ViewData ["ProdRef"] = pref;
 			Catalog cat = CatalogManager.GetCatalog ();
 			if (cat == null) {
-				ViewData ["Message"] = "Catalog introuvable";
+				YavscHelpers.Notify(ViewData, "Catalog introuvable");
 				ViewData ["RefType"] = "Catalog";
 				return View ("ReferenceNotFound");
 			}
@@ -249,10 +250,10 @@ namespace Yavsc.Controllers
 				// Add specified product command to the basket,
 				// saves it in db
 				new Command(collection,HttpContext.Request.Files);
-				ViewData ["Message"] = LocalizedText.Item_added_to_basket;
+				YavscHelpers.Notify(ViewData, LocalizedText.Item_added_to_basket);
 				return View (collection);
 			} catch (Exception e) {
-				ViewData ["Message"] = "Exception:" + e.Message;
+				YavscHelpers.Notify(ViewData,"Exception:" + e.Message);
 				return View (collection);
 			}
 		}

@@ -5,6 +5,20 @@
 	* yavsc.js:
 	* App.master:
 	* style.css:
+	* NoLogin.master:
+	* YavscHelpers.cs:
+	* TagPanel.ascx:
+	* UserPosts.aspx:
+	* AccountController.cs:
+	* FrontOfficeController.cs: 
+
+2015-10-17  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.csproj:
+	* Global.asax.cs:
+	* yavsc.js:
+	* App.master:
+	* style.css:
 	* Edit.aspx:
 	* Title.aspx:
 	* Index.aspx:

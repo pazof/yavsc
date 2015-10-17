@@ -16,10 +16,20 @@ namespace Npgsql.Web.Blog
 	/// </summary>
 	public class NpgsqlBlogProvider : BlogProvider
 	{
+
 		string applicationName;
 		string connectionString;
 
 		#region implemented abstract members of BlogProvider
+		/// <summary>
+		/// Gets the tag info.
+		/// </summary>
+		/// <returns>The tag info.</returns>
+		/// <param name="tagname">Tagname.</param>
+		public override TagInfo GetTagInfo (string tagname)
+		{
+			return new NpgsqlTagInfo (connectionString, tagname);
+		}
 
 		/// <summary>
 		/// Tag the specified post by identifier 

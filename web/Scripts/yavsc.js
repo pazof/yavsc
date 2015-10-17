@@ -63,6 +63,13 @@ return self;
 })();
 
 $(document).ready(function(){
+
+$body = $("body");
+$(document).on({
+    ajaxStart: function() { $body.addClass("loading");    },
+    ajaxStop: function() { $body.removeClass("loading"); }    
+});
+
 	var $window = $(window);
 	$(window).scroll(function() {
 		var $ns = $('#notifications');

@@ -64,6 +64,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Location {
+            get {
+                return ResourceManager.GetString("Location", resourceCulture);
+            }
+        }
+        
         public static string Circles {
             get {
                 return ResourceManager.GetString("Circles", resourceCulture);
@@ -250,9 +256,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Location {
+        public static string Tag_name {
             get {
-                return ResourceManager.GetString("Location", resourceCulture);
+                return ResourceManager.GetString("Tag_name", resourceCulture);
             }
         }
         
@@ -280,9 +286,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Tag_name {
+        public static string Logout {
             get {
-                return ResourceManager.GetString("Tag_name", resourceCulture);
+                return ResourceManager.GetString("Logout", resourceCulture);
             }
         }
         

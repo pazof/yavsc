@@ -332,7 +332,7 @@ namespace Yavsc.Controllers
 					UserManager.ChangeName (id, model.Name);
 					FormsAuthentication.SetAuthCookie (model.Name, model.RememberMe);
 				}
-				ViewData ["Message"] = "Profile enregistré"+((editsMyName)?", nom public inclu.":"");
+				YavscHelpers.Notify(ViewData, "Profile enregistré"+((editsMyName)?", nom public inclu.":""));
 			}
 			return View (model);
 		}

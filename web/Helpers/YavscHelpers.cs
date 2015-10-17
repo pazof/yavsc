@@ -55,7 +55,9 @@ namespace Yavsc.Helpers
 		/// <param name="user">User.</param>
 		public static void SendActivationMessage(this System.Web.Http.Routing.UrlHelper helper, MembershipUser user)
 		{
-			SendActivationMessage (helper.Route("~/Account/Validate/",new { id=user.UserName, key=user.ProviderUserKey.ToString() } )
+			SendActivationMessage (helper.Route("Default", new { controller="Account", 
+				action = "Validate",
+				key=user.ProviderUserKey.ToString() } )
 				, WebConfigurationManager.AppSettings ["RegistrationMessage"],
 				user);
 		}

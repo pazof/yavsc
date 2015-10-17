@@ -1,5 +1,20 @@
 2015-10-17  Paul Schneider  <paul@pschneider.fr>
 
+	* TagInfo.cs:
+	* YavscModel.csproj:
+	* BasePost.cs:
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* BlogProvider.cs:
+	* BasePostInfo.cs:
+	* PostInfoByUser.cs:
+	* PostInfoByTitle.cs:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs:
+	* BlogEntryCollection.cs: 
+
+2015-10-17  Paul Schneider  <paul@pschneider.fr>
+
 	* PostTag.cs:
 	* BasePost.cs:
 	* YavscModel.csproj:

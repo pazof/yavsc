@@ -14,7 +14,7 @@
 <h1 class="blogtitle">
 <a href="<%=Url.RouteUrl( "Blogs", new { user = Model.Author } )%>">
 <%=Html.Encode(ViewData["BlogTitle"])%></a>
-- <a href="<%= Url.RouteUrl( "Default") %>"><%= YavscHelpers.SiteName %></a>
+- <a href="<%= Url.RouteUrl( "Default", new { controller = "Home" } ) %>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>
 

@@ -48,13 +48,13 @@ namespace Yavsc
 			routes.IgnoreRoute ("robots.txt");  // for search engine robots
 			routes.MapRoute (
 				"Titles",
-				"t/{title}",
+				"title/{title}",
 				new { controller = "Blogs", action = "Index", 
 					title=UrlParameter.Optional }
 			);
 			routes.MapRoute (
 				"Blogs",
-				"b/{user}",
+				"blog/{user}",
 				new { controller = "Blogs", 
 					action = "UserPosts", 
 					user="Paul Schneider" }
@@ -75,11 +75,6 @@ namespace Yavsc
 				new { controller = "Blogs", action = "Index", 
 					postid=UrlParameter.Optional }
 			); 
-			/* routes.MapRoute (
-				"Artistes",
-				"a/{artiste}",
-				new { controller = "Artistes", action = "Index", artiste = UrlParameter.Optional }
-			);  */
 			routes.MapRoute (
 				"Default",
 				"{controller}/{action}/{id}",

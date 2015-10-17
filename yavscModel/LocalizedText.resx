@@ -43,6 +43,7 @@
 	<data name="ImportException"><value>Exception at importing</value></data>
     <data name="Item_added_to_basket"><value>Item added to basket</value></data>
 	<data name="Location"><value>Location</value></data>
+	<data name="Logout"><value>Logout</value></data>
 	<data name="MaxDate"><value>Maximal date for the rendez-vous</value></data>
 	<data name="Members"><value>Members</value></data>
 	<data name="Message_sent"><value>Your message has been sent.</value></data>

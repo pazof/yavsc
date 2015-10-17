@@ -1,4 +1,4 @@
-<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" CodeBehind="App.master.cs" %>
+<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <asp:ContentPlaceHolder id="init" runat="server">
@@ -35,20 +35,15 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
  </asp:ContentPlaceHolder>
  <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
  <div id="notifications"></div>
+<%if (ViewData ["Notifications"]!=null) { %>
 <script>
 $(document).ready(function(){
-<%if (ViewData ["Notifications"]!=null) { %>
-<% foreach (string notice in (IEnumerable<string>) ViewData ["Notifications"] ) { %>
-Yavsc.notice('<%=notice%>');
+<% foreach (string note in (IEnumerable<string>) ViewData ["Notifications"] ) { %>
+Yavsc.notice('<%=note%>');
 <% } %>
-<% } %>
-$body = $("body");
-$(document).on({
-    ajaxStart: function() { $body.addClass("loading");    },
-    ajaxStop: function() { $body.removeClass("loading"); }    
-});
 });
 </script>
+<% } %>
 </header>
 <nav data-type="background" data-speed="2">
 <% if (Membership.GetUser()==null) { %>
@@ -71,7 +66,7 @@ $(document).on({
 </a>
 
 <a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Logout", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C" class="menuitem">
-<i class="fa fa-sign-out">Deconnexion</i></a> 
+<i class="fa fa-sign-out"><%=Html.Translate("Logout")%></i></a> 
 <% } %>
 </nav>
 <main data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="22" >
