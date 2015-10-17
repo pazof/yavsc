@@ -58,11 +58,37 @@
     <Reference Include="System.Web.Mvc" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.Http" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Net" />
+    <Reference Include="Mono.WebServer2">
+      <HintPath>..\..\..\..\..\usr\lib\mono\4.5\Mono.WebServer2.dll</HintPath>
+    </Reference>
+    <Reference Include="xsp4">
+      <HintPath>..\..\..\..\..\usr\lib\mono\4.5\xsp4.exe</HintPath>
+    </Reference>
+    <Reference Include="nunit.util, Version=2.6.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Package>nunit</Package>
+    </Reference>
+    <Reference Include="nunit.mocks, Version=2.6.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Package>nunit</Package>
+    </Reference>
+    <Reference Include="nunit-console-runner, Version=2.6.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Package>nunit</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestAutomate.cs" />
-    <Compile Include="BlogUnitTest.cs" />
+    <Compile Include="BlogUnitTestCase.cs" />
+    <Compile Include="TestByteA.cs" />
+    <Compile Include="AllTests.cs" />
+    <Compile Include="HelloWorld.cs" />
+    <Compile Include="ServerTestCase.cs" />
+    <Compile Include="DebugServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -74,8 +100,28 @@
       <Project>{77044C92-D2F1-45BD-80DD-AA25B311B027}</Project>
       <Name>Web</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NpgsqlBlogProvider\NpgsqlBlogProvider.csproj">
+      <Project>{C6E9E91B-97D3-48D9-8AA7-05356929E162}</Project>
+      <Name>NpgsqlBlogProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NpgsqlContentProvider\NpgsqlContentProvider.csproj">
+      <Project>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</Project>
+      <Name>NpgsqlContentProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">
+      <Project>{BBA7175D-7F92-4278-96FC-84C495A2B5A6}</Project>
+      <Name>NpgsqlMRPProviders</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SalesCatalog\SalesCatalog.csproj">
+      <Project>{90BF2234-7252-4CD5-B2A4-17501B19279B}</Project>
+      <Name>SalesCatalog</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="test-domain-TestAPI.config">
+      <Gettext-ScanForTranslations>False</Gettext-ScanForTranslations>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

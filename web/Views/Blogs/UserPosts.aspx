@@ -7,25 +7,26 @@
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
 
 <% if (!string.IsNullOrEmpty((string)ViewData["Avatar"])) { %>
-<a href="<%=Url.Content("~/Blog/"+Model.Author)%>" id="avatar">
+<a href="<%=Url.RouteUrl( "Blogs", new { user = Model.Author } )%>" id="avatar">
 <img src="<%=ViewData["Avatar"]%>" />
 </a>
 <% } %>
 <h1 class="blogtitle">
-<a href="<%=Url.Content("~/Blog/"+Model.Author)%>">
+<a href="<%=Url.RouteUrl( "Blogs", new { user = Model.Author } )%>">
 <%=Html.Encode(ViewData["BlogTitle"])%></a>
-- <a href="<%= Url.Content("~/") %>"><%= YavscHelpers.SiteName %></a>
+- <a href="<%= Url.RouteUrl( "Default") %>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <%  foreach (BlogEntry e in this.Model) { %>
 <div class="postpreview<% if (!e.Visible) { %> hiddenpost<% } %>" >
-<h2><%= Html.ActionLink(e.Title,"UserPost", new { user=e.Author, title=e.Title, id = e.Id }, new { @class = "usertitleref" }) %></h2>
+<h2><a href="<%= Url.RouteUrl("BlogByTitle", new { user=e.Author, title=e.Title, id = e.Id })%>" class="usertitleref">
+<%=Html.Markdown(e.Title)%></a></h2>
 <% bool truncated = false; %>
 <%= Html.MarkdownToHtmlIntro(out truncated, e.Content,"/bfiles/"+e.Id+"/") %>
 <% if (truncated) { %>
-<a href="<%= Url.RouteUrl( "View", new { action="Title", title=e.Title}) %>">
+<a href="<%= Url.RouteUrl( "BlogByTitle", new { user=e.Author ,  title=e.Title, id = e.Id}) %>">
   <i>Html.Translate("ReadMore")</i></a>
   <% } %>
 <%= Html.Partial("PostActions",e)%>

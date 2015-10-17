@@ -388,20 +388,20 @@ namespace Yavsc.Controllers
 		{
 			MembershipUser u = Membership.GetUser (id, false);
 			if (u == null) {
-				ViewData ["Error"] = 
-					string.Format ("Cet utilisateur n'existe pas ({0})", id);
+				YavscHelpers.Notify( ViewData,
+					string.Format ("Cet utilisateur n'existe pas ({0})", id));
 			} else if (u.ProviderUserKey.ToString () == key) {
 				if (u.IsApproved) {
-					ViewData ["Message"] = 
-						string.Format ("Votre compte ({0}) est déjà validé.", id);
+					YavscHelpers.Notify( ViewData,
+						string.Format ("Votre compte ({0}) est déjà validé.", id));
 				} else { 
 					u.IsApproved = true;
 					Membership.UpdateUser (u);
-					ViewData ["Message"] = 
-						string.Format ("La création de votre compte ({0}) est validée.", id);
+					YavscHelpers.Notify( ViewData,
+						string.Format ("La création de votre compte ({0}) est validée.", id));
 				}
 			} else
-				ViewData ["Error"] = "La clé utilisée pour valider ce compte est incorrecte";
+				YavscHelpers.Notify( ViewData, "La clé utilisée pour valider ce compte est incorrecte" );
 			return View ();
 		}
 

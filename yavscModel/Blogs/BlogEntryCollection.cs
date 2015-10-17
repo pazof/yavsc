@@ -122,7 +122,11 @@ namespace Yavsc.Model.Blogs
 				orderby be.Posted descending
 			        group
 				new  PostInfoByTitle { Author=be.Author, Id=be.Id, 
-				Posted=be.Posted, Modified=be.Modified, Intro = MarkdownHelper.MarkdownIntro(be.Content, out truncated) }
+				Posted=be.Posted, Modified=be.Modified, 
+				Intro = MarkdownHelper.MarkdownIntro(be.Content, out truncated),
+				Visible = be.Visible,
+				Photo = be.Photo
+			}
 				by be.Title
 				into titlegroup
 			        select titlegroup;
@@ -137,8 +141,15 @@ namespace Yavsc.Model.Blogs
 			return from be in this
 				orderby be.Posted descending
 				group
-				new  PostInfoByUser { Title=be.Title, Id=be.Id, 
-				Posted=be.Posted, Modified=be.Modified, Intro = MarkdownHelper.MarkdownIntro(be.Content, out truncated) }
+				new  PostInfoByUser { 
+				Title=be.Title, 
+				Id=be.Id, 
+				Posted=be.Posted, 
+				Modified=be.Modified, 
+				Intro = MarkdownHelper.MarkdownIntro(be.Content, out truncated) , 
+				Photo = be.Photo,
+				Visible = be.Visible
+			}
 				by be.Author
 				into usergroup
 				select usergroup;

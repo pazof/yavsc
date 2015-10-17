@@ -36,8 +36,11 @@ namespace Yavsc.Controllers
 		/// <param name="title">Title.</param>
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
-		public ActionResult Index (int pageIndex = 0, int pageSize = 10)
+		public ActionResult Index (string title, int pageIndex = 0, int pageSize = 10)
 		{
+			if (title != null)
+				return Title (title, pageIndex, pageSize);
+			
 			return BlogList (pageIndex, pageSize);
 		}
 		/// <summary>
@@ -45,7 +48,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The media.</returns>
 		/// <param name="id">Identifier.</param>
-		public ActionResult ChooseMedia(long id) 
+		public ActionResult ChooseMedia(long postid) 
 		{
 			return View ();
 		}
@@ -76,20 +79,20 @@ namespace Yavsc.Controllers
 		/// <param name="pageSize">Page size.</param>
 		/// 
 		[HttpGet]
-		public ActionResult Title (string id, int pageIndex = 0, int pageSize = 10)
+		public ActionResult Title (string title, int pageIndex = 0, int pageSize = 10)
 		{
 			int recordCount;
 			MembershipUser u = Membership.GetUser ();
 			string username = u == null ? null : u.UserName;
 			FindBlogEntryFlags sf = FindBlogEntryFlags.MatchTitle;
 			BlogEntryCollection c = 
-				BlogManager.FindPost (username, id, sf, pageIndex, pageSize, out recordCount);
-			var utc = new UTBlogEntryCollection (id);
+				BlogManager.FindPost (username, title, sf, pageIndex, pageSize, out recordCount);
+			var utc = new UTBlogEntryCollection (title);
 			utc.AddRange (c);
 			ViewData ["RecordCount"] = recordCount;
 			ViewData ["PageIndex"] = pageIndex; 
 			ViewData ["PageSize"] = pageSize;
-			return View (utc);
+			return View ("Title", utc);
 		}
 
 		/// <summary>
@@ -100,27 +103,30 @@ namespace Yavsc.Controllers
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
 		[HttpGet]
-		public ActionResult UserPosts (string id, int pageIndex = 0, int pageSize = 10)
+		public ActionResult UserPosts (string user, string title=null, int pageIndex = 0, int pageSize = 10)
 		{
+			if (title != null) return UserPost (user, title, pageIndex, pageSize);
 			int recordcount=0;
 			MembershipUser u = Membership.GetUser ();
 			FindBlogEntryFlags sf = FindBlogEntryFlags.MatchUserName;
 			ViewData ["SiteName"] = sitename;
-			ViewData ["BlogUser"] = id;
+			ViewData ["BlogUser"] = user;
 			string readersName = null;
 			ViewData ["PageIndex"] = pageIndex;
 			ViewData ["pageSize"] = pageSize;
 			// displays invisible items when the logged user is also the author
 			if (u != null) {
-				if (u.UserName == id || Roles.IsUserInRole ("Admin"))
+				if (u.UserName == user || Roles.IsUserInRole ("Admin"))
 					sf |= FindBlogEntryFlags.MatchInvisible;
 				readersName = u.UserName;
+				if (user == null)
+					user = u.UserName;
 			}
 			// find entries
 			BlogEntryCollection c = 
-				BlogManager.FindPost (readersName, id, sf, pageIndex, pageSize, out recordcount);
+				BlogManager.FindPost (readersName, user, sf, pageIndex, pageSize, out recordcount);
 			// Get author's meta data
-			var pr = ProfileBase.Create (id);
+			var pr = ProfileBase.Create (user);
 			if (pr != null) {
 				Profile bupr = new Profile (pr);
 				ViewData ["BlogUserProfile"] = bupr;
@@ -130,7 +136,7 @@ namespace Yavsc.Controllers
 			ViewData ["Avatar"] = bupr.avatar;
 			}
 			ViewData ["RecordCount"] = recordcount; 
-			UUBlogEntryCollection uuc = new UUBlogEntryCollection (id, c);
+			UUBlogEntryCollection uuc = new UUBlogEntryCollection (user, c);
 			return View ("UserPosts", uuc);
 		}
 
@@ -147,14 +153,14 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Returns the post.
+		/// Gets the post.
 		/// </summary>
 		/// <returns>The post.</returns>
-		/// <param name="id">Identifier.</param>
-		public ActionResult GetPost (long id)
+		/// <param name="postid">Postid.</param>
+		public ActionResult GetPost (long postid)
 		{
-			ViewData ["id"] = id;
-			BlogEntry e = BlogManager.GetForReading (id);
+			ViewData ["id"] = postid;
+			BlogEntry e = BlogManager.GetForReading (postid);
 			UUTBlogEntryCollection c = new UUTBlogEntryCollection (e.Author,e.Title);
 			c.Add (e);
 			ViewData ["user"] = c.Author;
@@ -306,15 +312,15 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="id">Identifier.</param>
 		[Authorize]
-		public ActionResult Edit (long id)
+		public ActionResult Edit (long postid)
 		{
 			
-			BlogEntry e = BlogManager.GetForEditing (id);
+			BlogEntry e = BlogManager.GetForEditing (postid);
 			string user = Membership.GetUser ().UserName;
 			Profile pr = new Profile (ProfileBase.Create(e.Author));
 			ViewData ["BlogTitle"] = pr.BlogTitle;
 			ViewData ["LOGIN"] = user; 
-			ViewData ["Id"] = id;
+			ViewData ["Id"] = postid;
 			// Populates the circles combo items
 
 			if (e.AllowedCircles == null)
@@ -356,21 +362,21 @@ namespace Yavsc.Controllers
 		/// <param name="returnUrl">Return URL.</param>
 		/// <param name="confirm">If set to <c>true</c> confirm.</param>
 		[Authorize]
-		public ActionResult RemoveTitle (string id, string user,  string returnUrl, bool confirm = false)
+		public ActionResult RemoveTitle (string user, string title, string returnUrl, bool confirm = false)
 		{
 			if (returnUrl == null)
 			if (Request.UrlReferrer != null)
 				returnUrl = Request.UrlReferrer.AbsoluteUri;
 			ViewData ["returnUrl"] = returnUrl;
 			ViewData ["Author"] = user;
-			ViewData ["Title"] = id;
+			ViewData ["Title"] = title;
 
 			if (Membership.GetUser ().UserName != user)
 			if (!Roles.IsUserInRole("Admin"))
 				throw new AuthorizationDenied (user);
 			if (!confirm)
 				return View ("RemoveTitle");
-			BlogManager.RemoveTitle (user, id);
+			BlogManager.RemoveTitle (user, title);
 			if (returnUrl == null)
 				RedirectToAction ("Index", new { user = user });
 			return Redirect (returnUrl);
@@ -384,19 +390,19 @@ namespace Yavsc.Controllers
 		/// <param name="returnUrl">Return URL.</param>
 		/// <param name="confirm">If set to <c>true</c> confirm.</param>
 		[Authorize]
-		public ActionResult RemovePost (long id, string returnUrl, bool confirm = false)
+		public ActionResult RemovePost (long postid, string returnUrl, bool confirm = false)
 		{
 			// ensures the access control
-			BlogEntry e = BlogManager.GetForEditing (id);
+			BlogEntry e = BlogManager.GetForEditing (postid);
 			if (e == null)
-				return new HttpNotFoundResult ("post id "+id.ToString());
-			ViewData ["id"] = id;
+				return new HttpNotFoundResult ("post id "+postid.ToString());
+			ViewData ["id"] = postid;
 			ViewData ["returnUrl"] = string.IsNullOrWhiteSpace(returnUrl)?
 				Request.UrlReferrer.AbsoluteUri.ToString(): returnUrl;
 			// TODO: cleaner way to disallow deletion
 			if (!confirm)
 				return View ("RemovePost",e);
-			BlogManager.RemovePost (id);
+			BlogManager.RemovePost (postid);
 			if (string.IsNullOrWhiteSpace(returnUrl))
 				return RedirectToAction ("Index");
 			return Redirect (returnUrl);

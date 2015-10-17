@@ -21,38 +21,38 @@ namespace Yavsc.ApiControllers
 	/// </summary>
 	public class BlogsController : YavscApiController
 	{
-		private const string adminRoleName = "Admin";
-
-		/// <summary>
-		/// Initialize the specified controllerContext.
-		/// </summary>
-		/// <param name="controllerContext">Controller context.</param>
-		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
-		{
-			base.Initialize (controllerContext);
-			if (!Roles.RoleExists (adminRoleName)) {
-				Roles.CreateRole (adminRoleName);
-			}
-		}
-
 		/// <summary>
 		/// Tag the specified postid and tag.
 		/// </summary>
-		/// <param name="postid">Postid.</param>
+		/// <param name="id">Postid.</param>
 		/// <param name="tag">Tag.</param>
-		public void Tag (long postid,string tag) {
-			BlogManager.GetForEditing (postid);
-			BlogManager.Tag (postid, tag);
+		[Authorize, 
+			AcceptVerbs ("POST")]
+		public void Tag (PostTag model) {
+			if (ModelState.IsValid) {
+				BlogManager.GetForEditing (model.PostId);
+				BlogManager.Tag (model.PostId, model.Tag);
+			}
+		}
+		/// <summary> 
+		/// Tags the specified pattern.
+		/// </summary>
+		/// <param name="pattern">Pattern.</param>
+		[ValidateAjaxAttribute]
+		public IEnumerable<string> Tags(string pattern)
+		{
+			return new string[] { "Artistes", "Accueil", "Mentions juridique", "Admin", "Web" } ;
 		}
 
 		/// <summary>
 		/// Untag the specified postid and tag.
 		/// </summary>
-		/// <param name="postid">Postid.</param>
+		/// <param name="id">Postid.</param>
 		/// <param name="tag">Tag.</param>
-		public void Untag (long postid,string tag) {
-			BlogManager.GetForEditing (postid);
-			BlogManager.Untag (postid, tag);
+		[Authorize, ValidateAjaxAttribute, HttpPost]
+		public void Untag (long id, [FromBody] string tag) {
+			BlogManager.GetForEditing (id);
+			BlogManager.Untag (id, tag);
 		}
 
 		/// <summary>
@@ -60,8 +60,8 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="user">User.</param>
 		/// <param name="title">Title.</param>
-		[Authorize]
-		public void RemoveTitle(string user, string title) {
+		[Authorize, ValidateAjaxAttribute, HttpPost]
+		public void RemoveTitle(string user,  string title) {
 			if (Membership.GetUser ().UserName != user)
 			if (!Roles.IsUserInRole("Admin"))
 				throw new AuthorizationDenied (user);
@@ -72,7 +72,8 @@ namespace Yavsc.ApiControllers
 		/// Removes the tag.
 		/// </summary>
 		/// <param name="tagid">Tagid.</param>
-		public void RemoveTag(long tagid) {
+		[Authorize, ValidateAjaxAttribute, HttpPost]
+		public void RemoveTag([FromBody] long tagid) {
 			
 			throw new NotImplementedException ();
 		}
@@ -96,7 +97,7 @@ namespace Yavsc.ApiControllers
 		/// Posts the file.
 		/// </summary>
 		/// <returns>The file.</returns>
-		[Authorize,HttpPost]
+		[Authorize, HttpPost]
 		public async Task<HttpResponseMessage> PostFile(long id) {
 			if (!(Request.Content.Headers.ContentType.MediaType=="multipart/form-data"))
 				throw new HttpRequestException ("not a multipart/form-data request");
@@ -142,10 +143,10 @@ namespace Yavsc.ApiControllers
 		/// Searchs the file.
 		/// </summary>
 		/// <returns>The file.</returns>
-		/// <param name="postid">Postid.</param>
+		/// <param name="id">Postid.</param>
 		/// <param name="terms">Terms.</param>
-		[Authorize,HttpGet]
-		public async Task<HttpResponseMessage> SearchFile(long postid, string terms) {
+		[HttpGet]
+		public async Task<HttpResponseMessage> SearchFile(long id, string terms) {
 			throw new NotImplementedException ();
 		}
 
@@ -154,8 +155,8 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="id">Identifier.</param>
 		/// <param name="photo">Photo.</param>
-		[Authorize,HttpPost]
-		public void SetPhoto(long id, string photo)
+		[Authorize, HttpPost, ValidateAjaxAttribute]
+		public void SetPhoto(long id, [FromBody] string photo)
 		{
 			BlogManager.Provider.UpdatePostPhoto (id, photo);
 		}
@@ -164,6 +165,7 @@ namespace Yavsc.ApiControllers
 		/// Import the specified id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
+		[Authorize, HttpPost, ValidateAjaxAttribute]
 		public async Task<HttpResponseMessage> Import(long id) {
 			if (!(Request.Content.Headers.ContentType.MediaType=="multipart/form-data"))
 				throw new HttpRequestException ("not a multipart/form-data request");

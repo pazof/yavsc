@@ -4,7 +4,7 @@
 
 <div>
 <% foreach (var g in Model.GroupByTitle()) { %>
-<h2><%=Html.ActionLink(g.Key, "Title", "Blogs", new { id = g.Key } , new { @class="userref" } )%></h2>
+<h2><a href="<%= Url.RouteUrl("Titles", new { title = g.Key }) %>" class="usertitleref"><%=Html.Encode(g.Key)%></a></h2>
 <% foreach (var p in g) { %> 
 <div class="postpreview">
  <p><%=  Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %></p>
@@ -12,16 +12,5 @@
 </div> <% } %>
  <% } %>
 </div>
-<form runat="server" id="form1" method="GET">
-<%
- rp1.ResultCount =  (int) ViewData["ResultCount"]; 
-   rp1.PageSize = (int) ViewData ["PageSize"]; 
-   rp1.PageIndex = (int) ViewData["PageIndex"]; 
-   rp1.None = Html.Translate("no content"); 
-%>
-	 	 	 <yavsc:ResultPages id="rp1" runat="server" >
-	 <None>Aucun résultat</None>
-	 </yavsc:ResultPages> 
-</form>
+ <%= Html.RenderPageLinks((int)ViewData["PageIndex"],(int)ViewData["PageSize"],(int)ViewData["ResultCount"])%>
 </asp:Content>
-

@@ -19,8 +19,9 @@
 <script type="text/javascript">
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 </script> 
-<script src="<%=Url.Content("~/Scripts/yavsc.js")%>"></script>
-<script src="<%=Url.Content("~/Scripts/yavsc.scrollnotif.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/yavsc.js")%>">
+
+</script>
 <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>
 </head>
@@ -29,34 +30,38 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
 <h1><a href="<%= Url.Content("~/") %>">
 <%=ViewState["orgtitle"]%></a>
-<span> - 
-<a href="<%= Url.Content("~/") %>"><%= YavscHelpers.SiteName %></a>
- </span></h1>
+- <a href="<%= Url.Content("~/") %>"><%= YavscHelpers.SiteName %></a>
+</h1>
  </asp:ContentPlaceHolder>
  <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
  <div id="notifications"></div>
-<%if (ViewData ["Notifications"]!=null) { %>
 <script>
 $(document).ready(function(){
+<%if (ViewData ["Notifications"]!=null) { %>
 <% foreach (string notice in (IEnumerable<string>) ViewData ["Notifications"] ) { %>
 Yavsc.notice('<%=notice%>');
 <% } %>
+<% } %>
+$body = $("body");
+$(document).on({
+    ajaxStart: function() { $body.addClass("loading");    },
+    ajaxStop: function() { $body.removeClass("loading"); }    
+});
 });
 </script>
-<% } %>
 </header>
 <nav data-type="background" data-speed="2">
 <% if (Membership.GetUser()==null) { %>
 
-<a href="<%= Url.Content("~/Account/Login/?returnUrl=") + Url.Encode( Request.Url.PathAndQuery )%>" class="menuitem" >
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" class="menuitem" accesskey = "C">
 <i class="fa fa-sign-in">Connexion</i> 
 </a>
 <% } else { %>
-<a href="<%=Url.Content("~/b/"+HttpContext.Current.User.Identity.Name)%>" accesskey = "B" class="menuitem" >
+<a href="<%=Url.RouteUrl("Blogs", new { user = HttpContext.Current.User.Identity.Name } )%>" accesskey = "B" class="menuitem" >
 <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="vos billets" class="iconsmall" />
 <span class="hint">Vos billets</span>
 </a>
-<a href="<%= Url.Content("~/Account/Profile/" + HttpContext.Current.User.Identity.Name) %>" accesskey="L" class="menuitem">
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Profile", id = HttpContext.Current.User.Identity.Name} ) %>" accesskey="P" class="menuitem">
 <i class="fa fa-user"><%= HttpContext.Current.User.Identity.Name %>
 <span class="hint"> &Eacute;dition de votre profile </span></i> 
 </a>
@@ -65,7 +70,7 @@ Yavsc.notice('<%=notice%>');
 <span class="hint">&Eacute;dition d'un nouveau billet </span></i>
 </a>
 
-<a href="<%= Url.Content( "~/Account/Logout/?returnUrl=")+Url.Encode(Request.Url.PathAndQuery)%>" accesskey = "P" class="menuitem">
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Logout", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C" class="menuitem">
 <i class="fa fa-sign-out">Deconnexion</i></a> 
 <% } %>
 </nav>
@@ -93,6 +98,6 @@ Yavsc.notice('<%=notice%>');
 <div id="gspacer" class="control"><div class="g-plusone" data-annotation="inline" data-width="170"></div>
 </div>
 </div>
-</footer>
+</footer><div class="modal"></div>
 </body>
 </html>

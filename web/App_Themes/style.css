@@ -7,24 +7,53 @@ body {
 	padding: 0;
 	margin: 0;
 }
+/* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('http://i.stack.imgur.com/FhHRx.gif') 
+                50% 50% 
+                no-repeat;
+}
 
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;   
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .modal {
+    display: block;
+}
 .iconsmall { max-height: 1.3em; max-width: 1.3em; } 
 
 
 .photo { width: 100%; }
 .blogbanner { float: left; top:0; }
+.subtitle { font-size:small; font-style: italic; }
 header {
 	padding: 0;
 	margin: 0;
-	margin-top: 0;
 	padding-top: 201px;
-	margin-bottom:2em;
+	padding-bottom:2em;
 	display: block;
-	text-align: center;
 	background: url("/images/totem-banner.xs.jpg") 0 0 no-repeat fixed;
 	}
 header h1, header a {
 background-color: rgba(0,0,0,.5); 
+margin:0; padding:1em;
 }
 
 nav {
@@ -34,12 +63,11 @@ nav {
 	border-radius:1em;
 	background: url("/images/live-concert-388160_1280.jpg") 50% 10em repeat fixed ;
 	justify-content: space-around;
-	min-height:5em;
 }
 
 main {
 	margin: 2em;
-	padding: 6em 2em 6em 2em;
+	padding: 2em;
 	display: block;
 	border-radius:1em;
 	background: url("/images/musician-923526_1.nbb.jpg") 50% 20em repeat fixed ;
@@ -54,29 +82,26 @@ footer {
 	clear: both;
 	font-size: smaller;
 	justify-content: space-around;
-
 }
 footer a {
-	border-radius:5px;
-	margin:.5em;
+	border-radius:1em;
 	padding:1em;
   }
 legend {
 	border-radius:5px;
-	margin:.5em;
-	padding:1.5em;
+	padding:.5em;
 	background-color: rgba(0,0,32,.5);
   }
 #copyr { text-align: center; display: block; background-color: rgba(20,20,20,.8); }
 footer p { display:inline-block; } 
 
-footer img { max-height: 2em; vertical-align: middle; }
+footer img { max-height: 3em; vertical-align: middle; }
 a img, h1 img, .menuitem img  {  max-height: 1em; vertical-align: middle; }
 
 #gspacer { 
 	background-color: rgba(20,20,20,.8); 
-	border-radius:5px;
-	margin:.5em; padding:1em; display: inline-block }
+	border-radius:1em;
+	margin:1em; padding:1em; display: inline-block }
 fieldset {
 	background-color: rgba(16,16,64,0.8);
 	border-radius:5px; border: solid 1px #000060;
@@ -85,7 +110,7 @@ fieldset {
 main video, main img {
 	max-width:100%;
 	max-height:75%;
-	padding: .5em;
+	padding: 1em;
 	}
 
 aside { 
@@ -97,10 +122,9 @@ aside {
 .postpreview {
 	display: inline-block;
 	max-width: 40em;
-	padding: .5em;
-	margin: .5em;
+	padding: 1em;
 	background-color: rgba(0,0,32,0.8);
-	border-radius:10px;
+	border-radius:1em;
 }
 .postpreview video, .postpreview img {
 	max-width:100%;
@@ -108,11 +132,10 @@ aside {
 	}
 .post { 
 	display:block;
-	margin:1em;
-	padding:1em;
+	padding: 1em;
 	background-color: rgba(0,0,32,0.8);
 	color: #eee;
-	border-radius:10px;
+	border-radius:1em;
 	}
 .hiddenpost { background-color: rgba(16,16,16,0.5); }
 .fullwidth { width: 100%;  }
@@ -129,24 +152,23 @@ textarea.fullwidth { min-height:10em; }
 
 .panel,.bshpanel, aside {
 	background-color: rgba(20,20,20,.8); 
-	border-radius: 5px; 
-	margin: .5em;
-	padding: .5em;
+	border-radius: 1em; 
+	padding: 1em;
 }
 .spanel {
   max-width: 24em;
     display: inline-block;
-  margin: .3em;
+  padding: .3em;
 }
 .xspanel {
   max-width:13em;
   display: inline-block;
-  margin:.2em;
+  padding:.2em;
 }
 .xxspanel {
   max-width:7em;
   display: inline-block;
-  margin:.1em;
+  padding:.1em;
 }
 .hint {
 	display: inline;
@@ -162,7 +184,7 @@ content: ")";
 
 
 .usertitleref {
-	border-radius: 5px;
+	border-radius: 1em;
    background-color:rgba(0,0,32,0.6);
    font-family: 'Arial', cursive;
 	padding: 1em;
@@ -180,8 +202,7 @@ label {
 	border: dashed rgb(020,20,256) 2px; 
 }
 #notifications { 
-	margin: 2em;
-	padding: 2em;
+	padding: 1em;
  }
 
 .notification {
@@ -230,7 +251,6 @@ a {
    cursor: pointer;
    font-family: 'Arial', cursive;
 	padding: 1em;
-	margin:1em;
 }
 
 input, select, textarea { 
@@ -299,22 +319,33 @@ input, select, textarea {
   .c3-alt { display:none; }
 
 @media all and (max-width: 640px) {
+header {
+	padding-bottom:1em;
+		}
+
+header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
+
 	nav {
-		margin: 1em;
+	margin: 1em;
 		padding: 1em;
-		min-height:4em;
 		background:    url("/images/live-concert-388160_1280.s.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
-		margin: 1em;
-	padding: 4em 1em 4em 1em;
+	margin: 1em;
+	padding: 1em;
 		background:   url("/images/musician-923526_1.nbb.xs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
-		background: url("/images/drummer-652345_1280.xs.jpg") 50% 90% repeat fixed ; 
-		padding: 1em;
-		margin: 1em;
+		background: url("/images/drummer-652345_1280.s.jpg") 50% 90% repeat fixed ; 
 	} 
+	footer a {
+	border-radius:.5em;
+	margin:.5em;
+	padding:.5em;
+  }
+  #notifications { 
+	padding: .5em;
+ }
 	.menuitem {
 		display: block; 
 	}
@@ -326,7 +357,6 @@ input, select, textarea {
 	padding:.3em;
 	}
   .bshpanel { cursor:zoom-in; }
-  footer { clear:both; }
 
 	.c2 { display:initial; }
 	.c2-alt { display:none; }
@@ -336,30 +366,30 @@ input, select, textarea {
 
 @media all and (max-width: 350px) {
 header {
-	padding: 0;
-	margin: 0;
-	margin-top: 0;
 	padding-top: 101px;
-	margin-bottom:1em;
+	padding-bottom:1em;
 	background: url("/images/totem-banner.xxs.jpg") 0 0 no-repeat fixed;
  }
+header h1, header a { padding:.2em;}
+
 	nav {
-		margin: .5em;
+	margin: .5em;
 		padding: .5em;
-		min-height:3em;
 		background:    url("/images/live-concert-388160_1280.xxs.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
-		margin: .5em;
-	padding: 3em .5em 3em .5em;
+	margin: .5em;
+	    padding: .5em;
 		background:   url("/images/musician-923526_1.nbb.xxs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
 		background: url("/images/drummer-652345_1280.xxs.jpg") 50% 90% repeat fixed ; 
-
-	margin: 0.5em;
-	padding: 0.5em;
 	} 
+	footer a {
+	border-radius:.2em;
+	margin:.2em;
+	padding:.2em;
+  }
   .c2 { display:none; }
   .c2-alt { display:initial; }
 }

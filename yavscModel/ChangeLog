@@ -1,3 +1,16 @@
+2015-10-17  Paul Schneider  <paul@pschneider.fr>
+
+	* PostTag.cs:
+	* BasePost.cs:
+	* YavscModel.csproj:
+	* BlogEntry.cs:
+	* LocalizedText.resx:
+	* Automate.cs:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* BlogEntryCollection.cs:
+	* LocalizedText.fr.Designer.cs: 
+
 2015-10-13  Paul Schneider  <paul@pschneider.fr>
 
 	* BasePost.cs: refactoring:

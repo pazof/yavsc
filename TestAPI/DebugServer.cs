@@ -1,5 +1,5 @@
-﻿//
-//  NUnitTestClass.cs
+//
+//  DebugServer.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -18,24 +18,34 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using NUnit.Framework;
-using System;
 
-namespace Yavsc
+using System;
+using NUnit.Framework;
+using System.Net;
+using Mono.WebServer.XSP;
+
+namespace Mono.WebServer.Test
 {
-	/// <summary>
-	/// N unit test class.
-	/// </summary>
-	[TestFixture ()]
-	public class NUnitTestClass
+
+	public class DebugServer : IDisposable
 	{
-		/// <summary>
-		/// Tests the case.
-		/// </summary>
-		[Test ()]
-		public void TestCase ()
+		#region IDisposable implementation
+
+		public void Dispose ()
 		{
+			// would have a sense when managing the Xsp server instance: 
+			// server.Stop();
+		}
+
+		#endregion
+
+		string physicalPath = @"/home/paul/workspace/totem/web/";
+
+		public int Run ()
+		{
+			
+			return Server.Main (new [] { "--applications", "/:"+physicalPath, "--port", "8080", "--nonstop" });
 		}
 	}
+	
 }
-

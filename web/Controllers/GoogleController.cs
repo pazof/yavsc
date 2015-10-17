@@ -106,7 +106,7 @@ namespace Yavsc.Controllers
 
 			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
 			if (gat == null) {
-				YavscHelpers.Notice(ViewData,  msg);
+				YavscHelpers.Notify(ViewData,  msg);
 				return View ("Auth");
 			}
 			SaveToken (gat);
@@ -143,7 +143,7 @@ namespace Yavsc.Controllers
 			OAuth2 oa = new OAuth2 (AuthGRU);
 			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
 			if (gat == null) {
-				YavscHelpers.Notice(ViewData,  msg);
+				YavscHelpers.Notify(ViewData,  msg);
 				return View ();
 			}
 			string returnUrl = (string)Session ["returnUrl"];

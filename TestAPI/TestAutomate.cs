@@ -55,7 +55,9 @@ namespace TestAPI
 		[Test]
 		public void DoTheTest()
 		{
+			// Establish
 			context.Invoke ();
+			// Because
 			of.Invoke ();
 			should_be_in_state_0.Invoke ();
 			should_not_be_in_state_1.Invoke ();

@@ -1,3 +1,29 @@
+2015-10-17  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.csproj:
+	* Global.asax.cs:
+	* yavsc.js:
+	* App.master:
+	* style.css:
+	* Edit.aspx:
+	* Title.aspx:
+	* Index.aspx:
+	* YavscHelpers.cs:
+	* UserPost.aspx:
+	* UserPosts.aspx:
+	* PageLinks.ascx:
+	* TagControl.ascx:
+	* PostActions.ascx:
+	* HomeController.cs:
+	* AdminController.cs:
+	* BlogsController.cs:
+	* GoogleController.cs:
+	* Estimate.aspx:
+	* AccountController.cs:
+	* BlogsController.cs:
+	* knockout-jqAutocomplete.js:
+	* knockout-jqAutocomplete.min.js: 
+
 2015-10-13  Paul Schneider  <paul@pschneider.fr>
 
 	* Index.aspx:

@@ -121,7 +121,7 @@ namespace Yavsc.Controllers
 				using (System.Net.Mail.SmtpClient sc = new SmtpClient()) 
 				{
 					sc.Send (msg);
-					YavscHelpers.Notice(ViewData, LocalizedText.Message_sent);
+					YavscHelpers.Notify(ViewData, LocalizedText.Message_sent);
 					return View (new { email=email, reason="", body="" });
 				}
 			}

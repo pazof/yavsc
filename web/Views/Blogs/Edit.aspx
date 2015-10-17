@@ -25,25 +25,19 @@
 
 <hr>
 <script>
-function dumpprops(obj) { 
-var str = "";
-for(var k in obj)
-    if (obj.hasOwnProperty(k)) 
-        str += k + " = " + obj[k] + "\n";
-      return (str);   }
 
 $(document).ready(function(){
 
-$('#hidesource').click(function(){
-$('#source').addClass('hidden');
-$('#viewsource').removeClass('hidden');
-$('#hidesource').addClass('hidden');
-});
-$('#viewsource').click(function(){
-$('#source').removeClass('hidden');
-$('#viewsource').addClass('hidden');
-$('#hidesource').removeClass('hidden');
-});
+	$('#hidesource').click(function(){
+	$('#source').addClass('hidden');
+	$('#viewsource').removeClass('hidden');
+	$('#hidesource').addClass('hidden');
+	});
+	$('#viewsource').click(function(){
+	$('#source').removeClass('hidden');
+	$('#viewsource').addClass('hidden');
+	$('#hidesource').removeClass('hidden');
+	});
 
 jQuery('.placard').hallo({plugins: {'hallo-image-insert-edit': { lang: 'fr' } } });
 

@@ -1,5 +1,5 @@
-﻿//
-//  parralax.js
+//
+//  AllTests.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -19,19 +19,34 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-$(document).ready(function(){
-	var $window = $(window);
-	$(window).scroll(function() {
-		var $ns = $('#notifications');
-		if ($ns.has('*').length>0) {
-		if ($window.scrollTop()>375) { 
-			$ns.css('position','fixed');
-			$ns.css('z-index',2);
-			$ns.css('top',0);
+using NUnit.Framework;
+using System;
+using Yavsc.Model.Blogs;
+using Yavsc.Controllers;
+using System.Web.Mvc;
+using System.Web.Security;
+using System.Web.Configuration;
+using System.Configuration;
+using System.IO;
+using System.Web.Http;
+using Mono.WebServer;
+using System.Net;
+using System.Collections;
+
+namespace Yavsc
+{
+	public class AllTests
+	{
+		[Suite]
+		public static IEnumerable Suite
+		{
+			get
+			{
+				ArrayList suite = new ArrayList ();
+				suite.Add(new BlogUnitTestCase());
+				return suite;
+			}
 		}
-		else {  
-			$ns.css('position','static');
-			$ns.css('z-index',1); 
-		}}
-	});
-});
+	}
+	
+}

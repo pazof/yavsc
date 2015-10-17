@@ -148,9 +148,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string younotadmin {
+        public static string New_Tag {
             get {
-                return ResourceManager.GetString("younotadmin", resourceCulture);
+                return ResourceManager.GetString("New_Tag", resourceCulture);
             }
         }
         
@@ -250,6 +250,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Submit {
+            get {
+                return ResourceManager.GetString("Submit", resourceCulture);
+            }
+        }
+        
         public static string Not_Approuved {
             get {
                 return ResourceManager.GetString("Not Approuved", resourceCulture);
@@ -286,6 +292,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Tag_name {
+            get {
+                return ResourceManager.GetString("Tag_name", resourceCulture);
+            }
+        }
+        
         public static string Remove {
             get {
                 return ResourceManager.GetString("Remove", resourceCulture);
@@ -295,6 +307,12 @@ namespace Yavsc.Model {
         public static string none {
             get {
                 return ResourceManager.GetString("none", resourceCulture);
+            }
+        }
+        
+        public static string Hide {
+            get {
+                return ResourceManager.GetString("Hide", resourceCulture);
             }
         }
         
@@ -367,6 +385,12 @@ namespace Yavsc.Model {
         public static string ReadMore {
             get {
                 return ResourceManager.GetString("ReadMore", resourceCulture);
+            }
+        }
+        
+        public static string younotadmin {
+            get {
+                return ResourceManager.GetString("younotadmin", resourceCulture);
             }
         }
         

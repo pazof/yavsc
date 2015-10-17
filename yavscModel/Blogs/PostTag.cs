@@ -1,5 +1,5 @@
-﻿//
-//  TagTestCases.cs
+//
+//  PostTag.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -18,35 +18,28 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using NUnit.Framework;
+
 using System;
+using System.Configuration;
+using System.Collections.Generic;
 using Yavsc.Model.Blogs;
+using System.Linq;
+using Yavsc.Model.Circles;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc
+namespace Yavsc.Model.Blogs
 {
-	[TestFixture ()]
-	public class BlogUnitTestCase: ServerTestCase
-	{
-		
-		[TestFixtureSetUp]
-		void NeedAPost()
-		{
-			Register ();
-		}
 
-		[Test ()]
-		public void TestCase ()
-		{
-			long pid = BlogManager.Post (UserName, "BlogUnitTestCase", "content", true, null);
-			BlogManager.Tag (pid, "test");
+	public class PostTag {
+		public long PostId { get; set; }
 
-		}
+		[StringLength(512)]
+		[RegularExpression(@"^[a-zA-Z0-9 ]+$",ErrorMessage = "Un tag n'est composé que de lettres et de chiffres, les espaces" +
+			"sont autorisés")]
+		[Required(ErrorMessage = "S'il vous plait, saisissez nom de tag")]
+		public string Tag { get; set; }
 
-		[TestFixtureTearDown()]
-		void Cleanup()
-		{
-			Unregister ();
-		}
 	}
+	
 }
-

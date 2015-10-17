@@ -6,8 +6,8 @@
 
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
 <h1 class="post">
-<%=Html.ActionLink(Model.Title, "Title", new{id=Model.Title}, null)%>
-- <a href="<%= Url.Content("~/") %>"><%= YavscHelpers.SiteName %></a>
+<%=Html.ActionLink(Model.Title, "Title", new{title=Model.Title}, null)%>
+- <a href="<%= Url.RouteUrl("Default") %>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>
 

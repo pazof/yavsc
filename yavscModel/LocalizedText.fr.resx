@@ -35,6 +35,7 @@
 	<data name="Google_error"><value>Erreur Google : {0}</value></data>
 	<data name="Hide_source"><value>Cacher le texte source du billet</value></data>
 	<data name="Home"><value>Accueil</value></data>
+	<data name="Hide"><value>Cacher</value></data>
 	<data name="ImgLocator"><value>URI de l'image</value></data>
 	<data name="ImportException"><value>Exception à l'import</value></data>
 	<data name="InternalServerError"><value>Erreur serveur interne</value></data>
@@ -46,6 +47,7 @@
     <data name="MinDate"><value>Date minimale du rendez-vous</value></data>
 	<data name="Modify"><value>Modifier</value></data>
 	<data name="My_Estimates"><value>Mes estimations</value></data>
+	<data name="New_Tag"><value>Nouveau Tag</value></data>
 	<data name="none"><value>aucun(e)</value></data>
 	<data name="Not Approuved"><value>Non approuvé</value></data>
 	<data name="no_content"><value>pas de contenu</value></data>
@@ -63,8 +65,10 @@
 	<data name="Remove"><value>Supprimer</value></data>
 	<data name="role_created"><value>Rôle créé</value></data>
     <data name="StartDate"><value>Date de démarrage</value></data>
+	<data name="Submit"><value>Soumettre</value></data>
 	<data name="Tex_version"><value>Version LaTeX</value></data>
 	<data name="Title"><value>Titre</value></data>
+	<data name="Tag_name"><value>Nom du tag</value></data>
 	<data name="Unitary_cost"><value>Coût unitaire</value></data>
 	<data name="User List"><value>Liste des utilisateurs</value><comment></comment></data>
 	<data name="User_name"><value>Nom d'utilisateur</value></data>

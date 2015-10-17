@@ -33,6 +33,7 @@
     <data name="Estimate_not_found"><value>Estimate not found</value></data>
 	<data name="EventWebPage"><value>Event Web page</value></data>
 	<data name="Home"><value>Home</value></data>
+	<data name="Hide"><value>Hide</value></data>
 	<data name="Hide_source"><value>Hide the bill source text</value></data>
 	<data name="entries"><value>entries</value></data>
 	<data name="Google_calendar"><value>Google calendar</value></data>
@@ -48,6 +49,7 @@
 	<data name="MinDate"><value>Minimal date for the rendez-vous</value></data>
 	<data name="Modify"><value>Modify</value></data>
 	<data name="My_Estimates"><value>My estimates</value></data>
+	<data name="New_Tag"><value>New Tag</value></data>
 	<data name="none"><value>none</value></data>
 	<data name="no_content"><value>no content</value></data>
 	<data name="Not_Approuved"><value>Not Approuved</value></data>
@@ -66,8 +68,10 @@
 	<data name="Remove"><value>Remove</value></data>
 	<data name="role_created"><value>role created</value></data>
 	<data name="StartDate"><value>Start date</value></data>
+	<data name="Submit"><value>Submit</value></data>
 	<data name="Tex_version"><value>LaTeX version</value></data>
 	<data name="Title"><value>Title</value></data>
+	<data name="Tag_name"><value>Tag name</value></data>
 	<data name="Unitary_cost"><value>Unitary_cost</value></data>
 	<data name="User_List"><value>User List</value><comment></comment></data>
 	<data name="User_name"><value>User name</value></data>

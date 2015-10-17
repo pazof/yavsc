@@ -13,6 +13,7 @@ using System.Web.UI;
 using System.Linq.Expressions;
 using System.Web.Profile;
 using System.Web.Script.Serialization;
+using System.Web.Mvc;
 
 namespace Yavsc.Helpers
 {
@@ -214,14 +215,22 @@ namespace Yavsc.Helpers
 			return serializer.Serialize(obj);
 		}
 		/// <summary>
-		/// Notice the specified ViewData with message.
+		/// Notifies 
 		/// </summary>
 		/// <param name="ViewData">View data.</param>
 		/// <param name="message">Message.</param>
-		public static void Notice (System.Web.Mvc.ViewDataDictionary ViewData, string message) {
-			if (ViewData ["Notifications"] == null)
-				ViewData ["Notifications"] = new List<string> ();
-			(ViewData ["Notifications"] as List<string>).Add (message.Replace("\'","\\\'"));
+		public static void Notify (this HtmlHelper helper, string message) {
+			Notify (helper.ViewData, message);
+		}
+		/// <summary>
+		/// Notify the specified viewData and message.
+		/// </summary>
+		/// <param name="viewData">View data.</param>
+		/// <param name="message">Message.</param>
+		public static void Notify(ViewDataDictionary viewData, string message) {
+			if (viewData ["Notifications"] == null)
+				viewData ["Notifications"] = new List<string> ();
+			(viewData ["Notifications"] as List<string>).Add (message.Replace("\'","\\\'"));
 		}
 		/// <summary>
 		/// Files the list.
@@ -278,6 +287,53 @@ namespace Yavsc.Helpers
 			writter.RenderEndTag ();
 			return new System.Web.Mvc.MvcHtmlString (str.ToString ());
 		}
+
+		/// <summary>
+		/// Renders the page links.
+		/// </summary>
+		/// <returns>The page links.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="ResultCount">Result count.</param>
+		/// <param name="PageSize">Page size.</param>
+		/// <param name="PageIndex">Page index.</param>
+		public static IHtmlString RenderPageLinks (
+			this HtmlHelper helper,
+			int PageIndex, int PageSize, int ResultCount, 
+			string args="?PageIndex={0}",
+			string pagesLabel="Pages: ", string singlePage="",
+			string none="néant"
+		)
+		{
+			StringWriter strwr = new StringWriter ();
+			HtmlTextWriter writer = new HtmlTextWriter(strwr);
+
+			if (ResultCount > 0 &&  ResultCount > PageSize ) {
+				int pageCount = ((ResultCount-1) / PageSize) + 1;
+				if ( pageCount > 1 ) {
+					writer.WriteEncodedText (pagesLabel);
+					for (int pi = (PageIndex < 5) ? 0 : PageIndex - 5; pi < pageCount && pi < PageIndex + 5; pi++) {
+						if (PageIndex == pi)
+							writer.RenderBeginTag ("b");
+						else {
+							writer.AddAttribute (HtmlTextWriterAttribute.Href,
+								string.Format (args, pi));
+							writer.RenderBeginTag ("a");
+						}
+						writer.Write (pi + 1);
+						writer.RenderEndTag ();
+						writer.Write ("&nbsp;");
+					}
+				} 
+				else {
+					writer.Write (singlePage);
+				}
+			} 
+			if (ResultCount == 0) {
+				writer.Write (none);
+			}
+			return new MvcHtmlString(strwr.ToString());
+		}
+
 
 	}
 }
