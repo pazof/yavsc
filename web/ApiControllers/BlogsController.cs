@@ -22,10 +22,9 @@ namespace Yavsc.ApiControllers
 	public class BlogsController : YavscApiController
 	{
 		/// <summary>
-		/// Tag the specified postid and tag.
+		/// Tag the specified model.
 		/// </summary>
-		/// <param name="id">Postid.</param>
-		/// <param name="tag">Tag.</param>
+		/// <param name="model">Model.</param>
 		[Authorize, 
 			AcceptVerbs ("POST")]
 		public void Tag (PostTag model) {
@@ -34,6 +33,7 @@ namespace Yavsc.ApiControllers
 				BlogManager.Tag (model.PostId, model.Tag);
 			}
 		}
+		static string [] officalTags = new string[] { "Artistes", "Accueil", "Actualités", "Mentions légales", "Admin", "Web" } ;
 		/// <summary> 
 		/// Tags the specified pattern.
 		/// </summary>
@@ -41,7 +41,7 @@ namespace Yavsc.ApiControllers
 		[ValidateAjaxAttribute]
 		public IEnumerable<string> Tags(string pattern)
 		{
-			return new string[] { "Artistes", "Accueil", "Mentions juridique", "Admin", "Web" } ;
+			return officalTags;
 		}
 
 		/// <summary>

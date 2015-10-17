@@ -56,7 +56,7 @@ namespace Npgsql.Web.Blog
 					"  tag._id = tagged.tagid AND \n" +
 					" public.tag.name = :name";
 				cmd.Parameters.AddWithValue ("name", tagname);
-
+				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 					while (rdr.Read ()) {
 						bool truncated;

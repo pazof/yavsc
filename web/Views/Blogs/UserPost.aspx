@@ -36,8 +36,6 @@
 	<% if (Model.Author ==  username || c.From == username ) { %>
 	<%= Html.ActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } , new { @class="actionlink" })%>
 	<% } %>
-
-
 </div><% } %>
 <% if (Membership.GetUser()!=null) { 
 	if (Membership.GetUser().UserName==be.Author)

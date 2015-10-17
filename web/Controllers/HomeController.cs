@@ -13,6 +13,7 @@ using Npgsql.Web.Blog;
 using Yavsc.Helpers;
 using Yavsc;
 using System.Web.Mvc;
+using Yavsc.Model.Blogs;
 
 namespace Yavsc.Controllers
 {
@@ -84,6 +85,10 @@ namespace Yavsc.Controllers
 		/// </summary>
 		public ActionResult Index ()
 		{
+			foreach (string tagname in new string[] {"Artistes","Accueil","Actualités","Mentions légales"})
+			{
+				ViewData [tagname] = BlogManager.GetTagInfo (tagname);
+			}
 			return View ();
 		}
 

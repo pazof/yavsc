@@ -152,7 +152,10 @@ namespace Yavsc.Model.Blogs
 			}
 			Provider.RemoveTitle (username, title);
 		}
-
+		public static TagInfo GetTagInfo(string tagname)
+		{
+			return Provider.GetTagInfo (tagname);
+		}
 		/// <summary>
 		/// Lasts the posts.
 		/// </summary>

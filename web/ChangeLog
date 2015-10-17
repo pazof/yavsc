@@ -1,6 +1,17 @@
 2015-10-17  Paul Schneider  <paul@pschneider.fr>
 
 	* Web.csproj:
+	* Index.aspx:
+	* Error.aspx:
+	* TagPanel.ascx:
+	* UserPost.aspx:
+	* PageLinks.ascx:
+	* HomeController.cs:
+	* BlogsController.cs: 
+
+2015-10-17  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.csproj:
 	* Global.asax.cs:
 	* yavsc.js:
 	* App.master:

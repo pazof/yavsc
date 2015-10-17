@@ -738,7 +738,7 @@ namespace Npgsql.Web.Blog
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "select * " +
 				"from blog where applicationname = :appname and visible = true " +
-				" order by posted desc limit :len";
+				" order by modified desc limit :len";
 
 				cmd.Parameters.AddWithValue ("appname", applicationName);
 				cmd.Parameters.AddWithValue ("len", defaultPageSize * 10);
