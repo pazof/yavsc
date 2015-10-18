@@ -30,7 +30,7 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
 <h1><a href="<%= Url.Content("~/") %>">
 <%=ViewState["orgtitle"]%></a>
-- <a href="<%= Url.Content("~/") %>"><%= YavscHelpers.SiteName %></a>
+- <a href="<%= Url.RouteUrl("Default", new {controller="Home" }) %>"><%= YavscHelpers.SiteName %></a>
 </h1>
  </asp:ContentPlaceHolder>
  <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
