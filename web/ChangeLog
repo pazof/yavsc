@@ -1,5 +1,9 @@
 2015-10-18  Paul Schneider  <paul@pschneider.fr>
 
+	* BlogsController.cs: Fixes the redirection after bill edition
+
+2015-10-18  Paul Schneider  <paul@pschneider.fr>
+
 	* App.master:
 	* Title.aspx: Reset the Home page link
 
