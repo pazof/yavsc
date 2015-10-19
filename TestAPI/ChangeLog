@@ -1,20 +1,11 @@
-2015-10-07  Paul Schneider  <paul@pschneider.fr>
+2015-10-17  Paul Schneider  <paul@pschneider.fr>
 
-	* BlogUnitTest.cs: Should test the user registration
-
-	* TestAPI.csproj: switch to .Net framework 4.5.1
-
-2015-10-04  Paul Schneider  <paul@pschneider.fr>
-
+	* AllTests.cs:
+	* HelloWorld.cs:
+	* DebugServer.cs:
 	* TestAPI.csproj:
-	* packages.config: Npgsql package update
-
-2015-07-17  Paul Schneider  <paul@pschneider.fr>
-
-	* TestAPI.csproj:
-	* AssemblyInfo.cs: 
-
-	* TestAutomate.cs: Tests an Automate
-
-	* packages.config: using Machine.Specifications
+	* TestAutomate.cs:
+	* ServerTestCase.cs:
+	* BlogUnitTestCase.cs:
+	* test-domain-TestAPI.config: 
 

@@ -21,28 +21,38 @@ namespace Yavsc.ApiControllers
 	/// </summary>
 	public class BlogsController : YavscApiController
 	{
-		private const string adminRoleName = "Admin";
-
 		/// <summary>
-		/// Initialize the specified controllerContext.
+		/// Tag the specified model.
 		/// </summary>
-		/// <param name="controllerContext">Controller context.</param>
-		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
-		{
-			base.Initialize (controllerContext);
-			if (!Roles.RoleExists (adminRoleName)) {
-				Roles.CreateRole (adminRoleName);
+		/// <param name="model">Model.</param>
+		[Authorize, 
+			AcceptVerbs ("POST")]
+		public void Tag (PostTag model) {
+			if (ModelState.IsValid) {
+				BlogManager.GetForEditing (model.PostId);
+				BlogManager.Tag (model.PostId, model.Tag);
 			}
+		}
+		static string [] officalTags = new string[] { "Artistes", "Accueil", "Actualités", "Mentions légales", "Admin", "Web" } ;
+		/// <summary> 
+		/// Tags the specified pattern.
+		/// </summary>
+		/// <param name="pattern">Pattern.</param>
+		[ValidateAjaxAttribute]
+		public IEnumerable<string> Tags(string pattern)
+		{
+			return officalTags;
 		}
 
 		/// <summary>
-		/// Tag the specified postid and tag.
+		/// Untag the specified postid and tag.
 		/// </summary>
-		/// <param name="postid">Postid.</param>
+		/// <param name="id">Postid.</param>
 		/// <param name="tag">Tag.</param>
-		public long Tag (long postid,string tag) {
-			BlogManager.GetForEditing (postid);
-			return BlogManager.Tag (postid, tag);
+		[Authorize, ValidateAjaxAttribute, HttpPost]
+		public void Untag (long id, [FromBody] string tag) {
+			BlogManager.GetForEditing (id);
+			BlogManager.Untag (id, tag);
 		}
 
 		/// <summary>
@@ -50,21 +60,24 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="user">User.</param>
 		/// <param name="title">Title.</param>
-		[Authorize]
-		public void RemoveTitle(string user, string title) {
+		[Authorize, ValidateAjaxAttribute, HttpPost]
+		public void RemoveTitle(string user,  string title) {
 			if (Membership.GetUser ().UserName != user)
 			if (!Roles.IsUserInRole("Admin"))
 				throw new AuthorizationDenied (user);
 			BlogManager.RemoveTitle (user, title);
 		}
+
 		/// <summary>
 		/// Removes the tag.
 		/// </summary>
 		/// <param name="tagid">Tagid.</param>
-		public void RemoveTag(long tagid) {
+		[Authorize, ValidateAjaxAttribute, HttpPost]
+		public void RemoveTag([FromBody] long tagid) {
 			
 			throw new NotImplementedException ();
 		}
+
 		/// <summary>
 		/// The allowed media types.
 		/// </summary>
@@ -84,7 +97,7 @@ namespace Yavsc.ApiControllers
 		/// Posts the file.
 		/// </summary>
 		/// <returns>The file.</returns>
-		[Authorize,HttpPost]
+		[Authorize, HttpPost]
 		public async Task<HttpResponseMessage> PostFile(long id) {
 			if (!(Request.Content.Headers.ContentType.MediaType=="multipart/form-data"))
 				throw new HttpRequestException ("not a multipart/form-data request");
@@ -125,20 +138,40 @@ namespace Yavsc.ApiControllers
 			}
 		}
 
-		[Authorize,HttpGet]
-		public async Task<HttpResponseMessage> SearchFile(long postid, string terms) {
+
+		/// <summary>
+		/// Searchs the file.
+		/// </summary>
+		/// <returns>The file.</returns>
+		/// <param name="id">Postid.</param>
+		/// <param name="terms">Terms.</param>
+		[HttpGet]
+		public async Task<HttpResponseMessage> SearchFile(long id, string terms) {
 			throw new NotImplementedException ();
 		}
+
+		/// <summary>
+		/// Sets the photo.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
+		/// <param name="photo">Photo.</param>
+		[Authorize, HttpPost, ValidateAjaxAttribute]
+		public void SetPhoto(long id, [FromBody] string photo)
+		{
+			BlogManager.Provider.UpdatePostPhoto (id, photo);
+		}
+
 		/// <summary>
 		/// Import the specified id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
+		[Authorize, HttpPost, ValidateAjaxAttribute]
 		public async Task<HttpResponseMessage> Import(long id) {
 			if (!(Request.Content.Headers.ContentType.MediaType=="multipart/form-data"))
 				throw new HttpRequestException ("not a multipart/form-data request");
 			BlogEntry be = BlogManager.GetPost (id);
 			if (be.Author != Membership.GetUser ().UserName)
-				throw new AuthorizationDenied ("b"+id);
+				throw new AuthorizationDenied ("post: "+id);
 			string root = HttpContext.Current.Server.MapPath("~/bfiles/"+id);
 			DirectoryInfo di = new DirectoryInfo (root);
 			if (!di.Exists) di.Create ();
@@ -146,26 +179,13 @@ namespace Yavsc.ApiControllers
 			try
 			{
 				// Read the form data.
-				IEnumerable<HttpContent> data = await Request.Content.ReadAsMultipartAsync(provider) ;
+				//IEnumerable<HttpContent> data = 
+				await Request.Content.ReadAsMultipartAsync(provider) ;
 
 				var invalidChars = Path.GetInvalidFileNameChars();
-				List<string> parts = new List<string>();
-				List<string> text = new List<string>();
-
-				// filter files on their mime type
-				foreach ( var httpAudioContent in data
-				) {
-					string [] mimetype = httpAudioContent.Headers.ContentType.MediaType.Split('/');
-					switch (mimetype[0]) {
-					case "application": break;
-					case "text": break;
-					case "image": break;
-					case "audio": break;
-					case "video": break;
-					}
-				}
-				
-				foreach (string fkey in text)
+				List<string> bodies = new List<string>();
+				 
+				foreach (string fkey in provider.BodyPartFileNames.Keys)
 				{
 					string filename = provider.BodyPartFileNames[fkey];
 					
@@ -177,10 +197,7 @@ namespace Yavsc.ApiControllers
 					FileInfo fp = new FileInfo (Path.Combine(root,filename));
 					if (fi.Exists) fi.Delete();
 					fp.MoveTo(fi.FullName);
-					// Get the mime type
-
-
-
+					// TODO Get the mime type
 					using (Process p = new Process ()) {			
 						p.StartInfo.WorkingDirectory = root;
 						p.StartInfo = new ProcessStartInfo ();
@@ -203,14 +220,14 @@ namespace Yavsc.ApiControllers
 									);
 						}
 					}
-					parts.Add(fo.OpenText().ReadToEnd());
+					bodies.Add(fo.OpenText().ReadToEnd());
 
 					 
 					fi.Delete();
 					fo.Delete();
 				}
 
-				return Request.CreateResponse(HttpStatusCode.OK,string.Join("---\n",parts),new SimpleFormatter("text/plain"));
+				return Request.CreateResponse(HttpStatusCode.OK,string.Join("---\n",bodies),new SimpleFormatter("text/plain"));
 
 			}
 			catch (System.Exception e)

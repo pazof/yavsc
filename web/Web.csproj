@@ -141,6 +141,7 @@
     <Folder Include="bfiles\" />
     <Folder Include="fonts\" />
     <Folder Include="lib\" />
+    <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -150,7 +151,6 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BlogsController.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Test\TestByteA.cs" />
     <Compile Include="Controllers\FrontOfficeController.cs" />
     <Compile Include="Controllers\BackOfficeController.cs" />
     <Compile Include="Admin\Export.cs" />
@@ -185,12 +185,9 @@
     <Compile Include="Formatters\RssFeedsFormatter.cs" />
     <Compile Include="Formatters\TexToPdfFormatter.cs" />
     <Compile Include="WebApiConfig.cs" />
-    <Compile Include="IValueProvider.cs" />
     <Compile Include="Formatters\EstimToPdfFormatter.MSAN.cs" />
     <Compile Include="Helpers\TemplateException.cs" />
     <Compile Include="Formatters\FormatterException.cs" />
-    <Compile Include="NUnitTestClass.cs" />
-    <Compile Include="TestExec.cs" />
     <Compile Include="ApiControllers\WorkFlowController.cs" />
     <Compile Include="ApiControllers\BasketController.cs" />
     <Compile Include="ApiControllers\BlogsController.cs" />
@@ -228,7 +225,6 @@
     <Content Include="Views\Blogs\UserPosts.aspx" />
     <Content Include="Views\Blogs\UserPost.aspx" />
     <Content Include="Views\Blogs\Edit.aspx" />
-    <Content Include="Views\Blogs\Error.aspx" />
     <Content Include="Views\Account\RegistrationPending.aspx" />
     <Content Include="Views\Account\Validate.aspx" />
     <Content Include="Views\FrontOffice\Catalog.aspx" />
@@ -376,7 +372,6 @@
     <Content Include="Scripts\rangy-selectionsaverestore.js" />
     <Content Include="Scripts\jquery.htmlClean.min.js" />
     <Content Include="Views\Blogs\ChooseMedia.aspx" />
-    <Content Include="Scripts\parallax.js" />
     <Content Include="images\helix-nebula-1400x1400.jpg" />
     <Content Include="images\an-pierle-876094_1280.jpg" />
     <Content Include="images\drummer-652345_1280.jpg" />
@@ -386,8 +381,10 @@
     <Content Include="images\helix-nebula-1400x1400.s.jpg" />
     <Content Include="images\live-concert-388160_1280.s.jpg" />
     <Content Include="images\musician-923526_1280.s.jpg" />
-    <Content Include="images\p8-av4.png" />
-    <Content Include="images\logoDev.png" />
+    <Content Include="images\facebook.png" />
+    <Content Include="images\twiter.png" />
+    <Content Include="images\concert.clear.jpg" />
+    <Content Include="images\totemprod.png" />
     <Content Include="images\star-939235_1280.jpg" />
     <Content Include="App_Themes\accordion.css" />
     <Content Include="App_Themes\all.css" />
@@ -413,6 +410,63 @@
     <Content Include="images\star-939235_1280.xxs.jpg" />
     <Content Include="images\p8-av4.xxs.png" />
     <Content Include="images\p8-av4.xxs.jpg" />
+    <Content Include="images\musician-923526_1280.xxs.jpg" />
+    <Content Include="images\drummer-652345_1280.xxs.jpg" />
+    <Content Include="images\live-concert-388160_1280.xxs.jpg" />
+    <Content Include="Scripts\parralax.js" />
+    <Content Include="images\totem.jpg" />
+    <Content Include="images\totem-banner.png" />
+    <Content Include="images\totem-banner.xxs.jpg" />
+    <Content Include="images\totem-banner.xs.jpg" />
+    <Content Include="images\musician-923526_1.nb.jpg" />
+    <Content Include="images\musician-923526_1.nb.xs.jpg" />
+    <Content Include="images\musician-923526_1.nb.xxs.jpg" />
+    <Content Include="images\musician-923526_1.nbb.jpg" />
+    <Content Include="images\musician-923526_1.nbb.xs.jpg" />
+    <Content Include="images\musician-923526_1.nbb.xxs.jpg" />
+    <Content Include="Views\Blogs\Title.aspx" />
+    <Content Include="Views\Blogs\PostActions.ascx" />
+    <Content Include="Scripts\yavsc.tags.js" />
+    <Content Include="Views\Blogs\TagControl.ascx" />
+    <Content Include="Scripts\knockout-jqAutocomplete.js" />
+    <Content Include="Scripts\knockout-jqAutocomplete.min.js" />
+    <Content Include="Views\Blogs\TagPanel.ascx" />
+    <Content Include="Views\Home\TagPanel.ascx" />
+    <Content Include="Scripts\Prettify\lang-apollo.js" />
+    <Content Include="Scripts\Prettify\lang-basic.js" />
+    <Content Include="Scripts\Prettify\lang-clj.js" />
+    <Content Include="Scripts\Prettify\lang-css.js" />
+    <Content Include="Scripts\Prettify\lang-dart.js" />
+    <Content Include="Scripts\Prettify\lang-erlang.js" />
+    <Content Include="Scripts\Prettify\lang-go.js" />
+    <Content Include="Scripts\Prettify\lang-hs.js" />
+    <Content Include="Scripts\Prettify\lang-lisp.js" />
+    <Content Include="Scripts\Prettify\lang-llvm.js" />
+    <Content Include="Scripts\Prettify\lang-lua.js" />
+    <Content Include="Scripts\Prettify\lang-matlab.js" />
+    <Content Include="Scripts\Prettify\lang-ml.js" />
+    <Content Include="Scripts\Prettify\lang-mumps.js" />
+    <Content Include="Scripts\Prettify\lang-n.js" />
+    <Content Include="Scripts\Prettify\lang-pascal.js" />
+    <Content Include="Scripts\Prettify\lang-proto.js" />
+    <Content Include="Scripts\Prettify\lang-r.js" />
+    <Content Include="Scripts\Prettify\lang-rd.js" />
+    <Content Include="Scripts\Prettify\lang-scala.js" />
+    <Content Include="Scripts\Prettify\lang-sql.js" />
+    <Content Include="Scripts\Prettify\lang-tcl.js" />
+    <Content Include="Scripts\Prettify\lang-tex.js" />
+    <Content Include="Scripts\Prettify\lang-vb.js" />
+    <Content Include="Scripts\Prettify\lang-vhdl.js" />
+    <Content Include="Scripts\Prettify\lang-wiki.js" />
+    <Content Include="Scripts\Prettify\lang-xq.js" />
+    <Content Include="Scripts\Prettify\lang-yaml.js" />
+    <Content Include="Scripts\Prettify\prettify.js" />
+    <Content Include="Scripts\Prettify\run_prettify.js" />
+    <Content Include="App_Themes\desert.css" />
+    <Content Include="App_Themes\doxy.css" />
+    <Content Include="App_Themes\sons-of-obsidian.css" />
+    <Content Include="App_Themes\sunburst.css" />
+    <Content Include="App_Themes\prettify.css" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -477,7 +531,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="instdbws.sql" />
+    <EmbeddedResource Include="App_Data\instdbws.sql" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References" />

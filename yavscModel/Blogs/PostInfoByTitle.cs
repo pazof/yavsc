@@ -1,5 +1,5 @@
-﻿//
-//  NUnitTestClass.cs
+//
+//  PostInfoByTitle.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -18,24 +18,27 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using NUnit.Framework;
+
 using System;
+using System.Configuration;
+using System.Collections.Generic;
+using Yavsc.Model.Blogs;
+using System.Linq;
+using Yavsc.Model.Circles;
 
-namespace Yavsc
+namespace Yavsc.Model.Blogs
 {
-	/// <summary>
-	/// N unit test class.
-	/// </summary>
-	[TestFixture ()]
-	public class NUnitTestClass
-	{
-		/// <summary>
-		/// Tests the case.
-		/// </summary>
-		[Test ()]
-		public void TestCase ()
-		{
-		}
-	}
-}
 
+	/// <summary>
+	/// Post info.
+	/// </summary>
+	public class PostInfoByTitle : BasePostInfo {
+
+		/// <summary>
+		/// The name of the user.
+		/// </summary>
+		public string Author;
+
+	}
+	
+}

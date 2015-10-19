@@ -17,6 +17,7 @@ using Yavsc.Model.Google;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Helpers.Google;
 using Yavsc.Model.Calendar;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -25,6 +26,11 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class GoogleController : Controller
 	{
+		public ActionResult Index()
+		{
+			return View ();
+		}
+
 		private string SetSessionSate ()
 		{
 			string state = "security_token";
@@ -100,7 +106,7 @@ namespace Yavsc.Controllers
 
 			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
 			if (gat == null) {
-				ViewData ["Message"] = msg;
+				YavscHelpers.Notify(ViewData,  msg);
 				return View ("Auth");
 			}
 			SaveToken (gat);
@@ -118,7 +124,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="gat">Gat.</param>
 		private void SaveToken (AuthToken gat)
-		{		
+		{	
 			HttpContext.Profile.SetPropertyValue ("gtoken", gat.access_token);
 			if (gat.refresh_token != null)
 				HttpContext.Profile.SetPropertyValue ("grefreshtoken", gat.refresh_token);
@@ -137,7 +143,7 @@ namespace Yavsc.Controllers
 			OAuth2 oa = new OAuth2 (AuthGRU);
 			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
 			if (gat == null) {
-				ViewData ["Message"] = msg;
+				YavscHelpers.Notify(ViewData,  msg);
 				return View ();
 			}
 			string returnUrl = (string)Session ["returnUrl"];

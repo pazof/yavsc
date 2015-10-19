@@ -13,6 +13,7 @@ using Npgsql.Web.Blog;
 using Yavsc.Helpers;
 using Yavsc;
 using System.Web.Mvc;
+using Yavsc.Model.Blogs;
 
 namespace Yavsc.Controllers
 {
@@ -84,16 +85,22 @@ namespace Yavsc.Controllers
 		/// </summary>
 		public ActionResult Index ()
 		{
-			/* 
-			 * A very bad idea (a redirect permanent as home page):
-			 * 
-			 * string startPage = WebConfigurationManager.AppSettings ["StartPage"];
-			if (startPage != null)
-				Redirect (startPage);
-				*/
-			ViewData ["Message"] = LocalizedText.Welcome;
+			foreach (string tagname in new string[] {"Artistes","Accueil","Actualités","Mentions légales"})
+			{
+				TagInfo ti = BlogManager.GetTagInfo (tagname);
+				// TODO specialyze BlogEntry creating a PhotoEntry 
+				ViewData [tagname] = ti;
+			}
 			return View ();
 		}
+		/// <summary>
+		/// Credits this instance.
+		/// </summary>
+		public ActionResult Credits ()
+		{
+			return View ();
+		}
+
 		/// <summary>
 		/// Contact the specified email, reason and body.
 		/// </summary>
@@ -123,8 +130,7 @@ namespace Yavsc.Controllers
 				using (System.Net.Mail.SmtpClient sc = new SmtpClient()) 
 				{
 					sc.Send (msg);
-					ViewData ["Message"] = LocalizedText.Message_sent;
-
+					YavscHelpers.Notify(ViewData, LocalizedText.Message_sent);
 					return View (new { email=email, reason="", body="" });
 				}
 			}

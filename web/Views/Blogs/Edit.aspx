@@ -11,45 +11,36 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<div>
-<% using(Html.BeginForm("ValidateEdit","Blogs")) { %>
-<fieldset>
-<legend>Billet</legend>
-<%= Html.LabelFor(model => model.Title) %> <%= Html.ValidationMessage("Title") %> : <br>
-<input name="Title" id="Title" class="fullwidth">
-<br>
-<%= Html.LabelFor(model => model.Content) %> 
-<%= Html.ValidationMessage("Content") %>: <br>
-<style> #Content { } 
-</style>
-<textarea id="Content" name="Content" class="fullwidth" ><%=Html.Markdown(Model.Content)%></textarea><br>
-
-<%= Html.CheckBox( "Visible" ) %>
-<%= Html.LabelFor(model => model.Visible) %>
-
-<%= Html.ValidationMessage("Visible", "*") %>
-<br/>
-
-<%= Html.LabelFor(model => model.AllowedCircles) %>
-<%= Html.ListBox("AllowedCircles") %>
-
-<%= Html.ValidationMessage("AllowedCircles", "*") %>
-
-<%=Html.Hidden("Author")%>
-<%=Html.Hidden("Id")%>
-<input type="submit">
-</fieldset>
-<% } %>
-</div>
-<div class="post">
-<h1><div id="vtitle" for="Title" class="post title editable"><%=Html.Markdown(Model.Title)%></div></h1>
-<div id="vcontent" for="Content" class="post content editable">
+<span class="placard editable" for="Photo">
+<img src="<%=Model.Photo%>" alt="photo" id="vphoto" >
+</span>
+<!-- TODO? Model.Photo.(Legend|Date|Location|ref) -->
+<h1 id="vtitle" for="Title" class="editable" ><%=Html.Markdown(Model.Title)%></h1>
+<div id="vcontent" for="Content" class="editable">
 <%=Html.Markdown(Model.Content,"/bfiles/"+Model.Id+"/")%>
 </div>
-</div>
+<hr><h2>Fichiers attachées</h2> 
 
+<%= Html.FileList("~/bfiles/"+Model.Id) %>
 
+<hr>
 <script>
+
+$(document).ready(function(){
+
+	$('#hidesource').click(function(){
+	$('#source').addClass('hidden');
+	$('#viewsource').removeClass('hidden');
+	$('#hidesource').addClass('hidden');
+	});
+	$('#viewsource').click(function(){
+	$('#source').removeClass('hidden');
+	$('#viewsource').addClass('hidden');
+	$('#hidesource').removeClass('hidden');
+	});
+
+jQuery('.placard').hallo({plugins: {'hallo-image-insert-edit': { lang: 'fr' } } });
+
 jQuery('#vtitle').hallo({
   plugins: {
     'halloformat': {},
@@ -66,12 +57,6 @@ jQuery('#vcontent').hallo({
     'hallolists': {},
     'hallo-image-insert-edit': {
       lang: 'fr'
-    },
-    'halloimage': {
-      searchUrl: apiBaseUrl+'/Blogs/SearchFile/'+$('#Id').val(),
-      uploadUrl: apiBaseUrl+'/Blogs/PostFile/'+$('#Id').val(),
-      suggestions: true,
-      insert_file_dialog_ui_url: '<%= Url.Content("~/Blog/ChooseMedia/?id="+Model.Id) %>'
     },
     'halloreundo': {},
     'hallocleanhtml': {
@@ -102,6 +87,7 @@ jQuery('#vcontent').hallo({
 });
 
 var markdownize = function(content) {
+	if (!content) return '';
     var html = content.split("\n").map($.trim).filter(function(line) { 
       return line != "";
     }).join("\n");
@@ -115,26 +101,36 @@ var converter = new showdown.Converter(),
 
    // Method that converts the HTML contents to Markdown
 var showSource = function(id,content) {
+	if (!content) content = '';
     var markdown = markdownize(content);
-    if (jQuery('#'+id).get(0).value == markdown) {
+    if (jQuery('#'+id).val() === markdown) {
       return;
     }
-    jQuery('#'+id).get(0).value = markdown;
+    jQuery('#'+id).val( markdown );
   };
 
 var updateHtml = function(id,content) {
-  	var jView = jQuery('div[for="'+id+'"]');
-    if (markdownize(jView.html()) == content) {
+  	var jView = jQuery('*[for="'+id+'"]');
+    if (markdownize(jView.html()) === content) {
       return;
     }
     var html = htmlize(content);
     jView.html(html); 
   };
 
+  jQuery('.placard').bind('hallomodified', function(event, data) {
+   // TODO get image source from data.content
+      $('#'+this.attributes["for"].value).val(
+       $('#vphoto').attr('src'));
+  });
+
   // Update Markdown every time content is modified
-  jQuery('.editable').bind('hallomodified', function(event, data) {
+  var onMDModified = ( function (event, data) {
     showSource(this.attributes["for"].value, data.content);
   });
+  jQuery('#vtitle').bind('hallomodified', onMDModified);
+  jQuery('#vcontent').bind('hallomodified', onMDModified);
+
   jQuery('#Content').bind('keyup', function() {
     updateHtml(this.id, this.value);
   });
@@ -142,9 +138,9 @@ var updateHtml = function(id,content) {
     updateHtml(this.id, this.value);
   });
 
-  showSource("Title",jQuery('#vtitle').html());
-  showSource("Content",jQuery('#vcontent').html());
-
+  // showSource("Title",jQuery('#vtitle').html());
+  // showSource("Content",jQuery('#vcontent').html());
+  });
 </script>
 
 	
@@ -152,8 +148,8 @@ var updateHtml = function(id,content) {
 
 function submitFilesTo(method)
 {
-	var data  = new FormData($('#uploads').get()[0]);
-	Yavsc.message('Submitting via '+method);
+	var data  = new FormData($('#frmajax').get()[0]);
+	Yavsc.notice('Submitting via '+method);
 	$.ajax({
 	  url: apiBaseUrl+'/Blogs/'+method+'/'+$('#Id').val(),
 	  type: "POST",
@@ -162,7 +158,7 @@ function submitFilesTo(method)
 	  contentType: false,
 	  success: function(data) {
 	  $('#Content').val(data+"\n"+$('#Content').val());
-	  Yavsc.message(false);
+	  Yavsc.notice(false);
 	    },
 	  error: Yavsc.onAjaxError,
 	});
@@ -173,20 +169,70 @@ function submitImport()
 
 function submitFile()
 { submitFilesTo('PostFile'); }
+
+function submitBaseDoc()
+{ 
+var data  = new FormData($('#frmajax').get()[0]);
+	Yavsc.notice('Submitting via '+method);
+	$.ajax({
+	  url: apiBaseUrl+'/Blogs/'+method+'/'+$('#Id').val(),
+	  type: "POST",
+	  data: data,
+	  processData: false, 
+	  contentType: false,
+	  success: function(data) {
+	  $('#Content').val(data+"\n"+$('#Content').val());
+	  Yavsc.notice('Posted updated');
+	    },
+	  error: Yavsc.onAjaxError,
+	});
+}
+
 </script>
-<form id="uploads" method="post" enctype="multipart/form-data">
+<form id="frmajax">
 <fieldset>
-<legend>Fichiers attachés</legend>
+<legend>Attacher des fichiers</legend>
 <input type="file" name="attached" id="postedfile" multiple>
 <input type="button" value="attacher les ficher" onclick="submitFile()">
 <input type="button" value="importer les documents" onclick="submitImport()">
 </fieldset>
 </form>
+<% using(Html.BeginForm("ValidateEdit","Blogs")) { %>
+<fieldset>
+<legend>Contrôle d'accès au Billet</legend>
+<%= Html.LabelFor(model => model.Visible) %> : <%= Html.CheckBox( "Visible" ) %> 
+<i id="note_visible">Note: Si un ou plusieurs cercles sont séléctionnés ici,
+ le billet ne sera visible qu'aux membres de ces cercles.</i>
+<%= Html.ValidationMessage("Visible", "*") %>
+<%= Html.LabelFor(model => model.AllowedCircles) %>
+<%= Html.ListBox("AllowedCircles") %>
+<%= Html.ValidationMessage("AllowedCircles", "*") %>
+</fieldset>
+<span id="viewsource">
+<i class="fa fa-code menuitem"><%=Html.Translate("View_source")%></i></span>
+<span id="hidesource" class="hidden">
+<i class="fa fa-code menuitem"><%=Html.Translate("Hide_source")%></i>
+</span>
+<fieldset id="source" class="hidden">
+<%=Html.Hidden("Author")%>
+<%=Html.Hidden("Id")%>
+<%= Html.LabelFor(model => model.Photo) %>
+<%=Html.TextBox("Photo")%>
+<%=Html.ValidationMessage("Photo")%><br>
+<%= Html.LabelFor(model => model.Title) %>
+<%=Html.TextBox("Title")%>
+<%=Html.ValidationMessage("Title")%><br>
+<%=Html.TextArea("Content")%>
+<%=Html.ValidationMessage("Content")%>
+</fieldset>
+<input type="submit" id="validate" value="Valider" class="fa fa-check menuitem">
+<% } %>
+
 
 <aside>
 	Id:<%= Html.ActionLink( Model.Id.ToString() , "UserPost", new { user= Model.Author, title=Model.Title, id = Model.Id }, new { @class = "usertitleref actionlink" }) %>
 , Posted: <%= Model.Posted.ToString("yyyy/MM/dd") %> - Modified: <%= Model.Modified.ToString("yyyy/MM/dd") %> 
-Visible: <%= Model.Visible? "oui":"non" %> <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title }, new { @class="actionlink" } ) %>
+Visible: <%= Model.Visible? "oui":"non" %> <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title, id = Model.Id }, new { @class="actionlink" } ) %>
 </aside>
 
 </asp:Content>

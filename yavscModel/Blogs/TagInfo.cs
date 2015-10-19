@@ -1,5 +1,5 @@
 ﻿//
-//  TestExec.cs
+//  TagInfo.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -19,24 +19,42 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Xunit;
+using System.Collections.Generic;
 
-namespace Yavsc
+namespace Yavsc.Model.Blogs
 {
 	/// <summary>
-	/// Test exec.
+	/// Tag info.
 	/// </summary>
-
-	public class TestExec
+	public abstract class TagInfo
 	{
+		string name;
 		/// <summary>
-		/// As the test.
+		/// Gets or sets the name.
 		/// </summary>
-		[Fact]
-		public void ATest ()
-		{
-			Assert.True (true);
+		/// <value>The name.</value>
+		public string Name {
+			get {
+				return name;
+			}
+			set {
+				name = value;
+			}
 		}
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Blogs.TagInfo"/> class.
+		/// </summary>
+		/// <param name="tagname">Tagname.</param>
+		public TagInfo (string tagname)
+		{
+			Name = tagname;
+		}
+
+		/// <summary>
+		/// Gets the titles.
+		/// </summary>
+		/// <value>The titles.</value>
+		public abstract IEnumerable<BasePostInfo> Titles { get; }
 	}
 }
 

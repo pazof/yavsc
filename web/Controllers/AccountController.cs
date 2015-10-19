@@ -24,12 +24,6 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class AccountController : Controller
 	{
-		
-		string avatarDir = "~/avatars";		
-		string defaultAvatar;
-		string defaultAvatarMimetype;
-
-
 		/// <summary>
 		/// Avatar the specified user.
 		/// </summary>
@@ -50,17 +44,7 @@ namespace Yavsc.Controllers
 				}
 			}
 		}
-		/// <summary>
-		/// Gets or sets the avatar dir.
-		/// This value is past to <c>Server.MapPath</c>,
-		/// it should start with <c>~/</c>, and we assume it
-		/// to be relative to the application path.
-		/// </summary>
-		/// <value>The avatar dir.</value>
-		public string AvatarDir {
-			get { return avatarDir; }
-			set { avatarDir = value; }
-		}
+
 
 		/// <summary>
 		/// Index this instance.
@@ -94,17 +78,7 @@ namespace Yavsc.Controllers
 			ViewData ["returnUrl"] = returnUrl;
 			return View (model);
 		}
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Controllers.BlogsController"/> class.
-		/// </summary>
-		private void GetAvatarConfig ()
-		{
-			string[] defaultAvatarSpec = ConfigurationManager.AppSettings.Get ("DefaultAvatar").Split (';');
-			if (defaultAvatarSpec.Length != 2)
-				throw new ConfigurationErrorsException ("the DefaultAvatar spec should be found as <fileName>;<mime-type> ");
-			defaultAvatar = defaultAvatarSpec [0];
-			defaultAvatarMimetype = defaultAvatarSpec [1];
-		}
+
 
 		/// <summary>
 		/// Login the specified returnUrl.
@@ -117,9 +91,16 @@ namespace Yavsc.Controllers
 			return View ();
 		}
 
-		public ActionResult RegisterForm()
+		/// <summary>
+		/// Gets the registration form.
+		/// </summary>
+		/// <returns>The register.</returns>
+		/// <param name="model">Model.</param>
+		/// <param name="returnUrl">Return URL.</param>
+		public ActionResult GetRegister(RegisterViewModel model, string returnUrl)
 		{
-			return View ("Register"); 
+			ViewData ["returnUrl"] = returnUrl;
+			return View ("Register",model);
 		}
 
 		/// <summary>
@@ -131,11 +112,6 @@ namespace Yavsc.Controllers
 		public ActionResult Register (RegisterViewModel model, string returnUrl)
 		{
 			ViewData ["returnUrl"] = returnUrl;
-			if (Request.RequestType == "GET") {
-				foreach (string k in ModelState.Keys)
-					ModelState [k].Errors.Clear ();
-				return View (model);
-			} 
 				
 			if (ModelState.IsValid) {
 				if (model.ConfirmPassword != model.Password) {
@@ -307,13 +283,13 @@ namespace Yavsc.Controllers
 				// if said valid, move as avatar file
 				// else invalidate the model
 				if (AvatarFile.ContentType == "image/png") {
-					string avdir = Server.MapPath (AvatarDir);
+					string avdir = Server.MapPath (YavscHelpers.AvatarDir);
 					var di = new DirectoryInfo (avdir);
 					if (!di.Exists)
 						di.Create ();
 					string avpath = Path.Combine (avdir, id + ".png");
 					AvatarFile.SaveAs (avpath);
-					model.avatar = Url.Content( AvatarDir + "/" + id + ".png");
+					model.avatar = Url.Content( YavscHelpers.AvatarDir + "/" + id + ".png");
 				} else
 					ModelState.AddModelError ("Avatar",
 						string.Format ("Image type {0} is not supported (suported formats : {1})",
@@ -356,7 +332,7 @@ namespace Yavsc.Controllers
 					UserManager.ChangeName (id, model.Name);
 					FormsAuthentication.SetAuthCookie (model.Name, model.RememberMe);
 				}
-				ViewData ["Message"] = "Profile enregistré"+((editsMyName)?", nom public inclu.":"");
+				YavscHelpers.Notify(ViewData, "Profile enregistré"+((editsMyName)?", nom public inclu.":""));
 			}
 			return View (model);
 		}
@@ -412,20 +388,20 @@ namespace Yavsc.Controllers
 		{
 			MembershipUser u = Membership.GetUser (id, false);
 			if (u == null) {
-				ViewData ["Error"] = 
-					string.Format ("Cet utilisateur n'existe pas ({0})", id);
+				YavscHelpers.Notify( ViewData,
+					string.Format ("Cet utilisateur n'existe pas ({0})", id));
 			} else if (u.ProviderUserKey.ToString () == key) {
 				if (u.IsApproved) {
-					ViewData ["Message"] = 
-						string.Format ("Votre compte ({0}) est déjà validé.", id);
+					YavscHelpers.Notify( ViewData,
+						string.Format ("Votre compte ({0}) est déjà validé.", id));
 				} else { 
 					u.IsApproved = true;
 					Membership.UpdateUser (u);
-					ViewData ["Message"] = 
-						string.Format ("La création de votre compte ({0}) est validée.", id);
+					YavscHelpers.Notify( ViewData,
+						string.Format ("La création de votre compte ({0}) est validée.", id));
 				}
 			} else
-				ViewData ["Error"] = "La clé utilisée pour valider ce compte est incorrecte";
+				YavscHelpers.Notify( ViewData, "La clé utilisée pour valider ce compte est incorrecte" );
 			return View ();
 		}
 

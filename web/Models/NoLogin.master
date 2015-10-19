@@ -2,64 +2,80 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <asp:ContentPlaceHolder id="init" runat="server">
-</asp:ContentPlaceHolder><% 
-ViewState["orgtitle"] = T.GetString(Page.Title);
+</asp:ContentPlaceHolder>
+<% ViewState["orgtitle"] = Html.Translate(Page.Title);
  Page.Title = ViewState["orgtitle"] + " - " + YavscHelpers.SiteName; 
  %><head runat="server">
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="/App_Themes/style.css" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/style.css")%>" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/font-awesome.css")%>" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/jquery-ui.css")%>" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
-<script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/parralax.js")%>"></script>
+<script type="text/javascript">
+var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
+</script> 
+<script src="<%=Url.Content("~/Scripts/yavsc.js")%>">
+
+</script>
 <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>
-<link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'/>
 </head>
 <body>
-<header>
+<header data-type="background" data-speed="8" >
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
-<h1><a href="<%= Html.Encode(Request.Url.AbsoluteUri.ToString()) %>"> <%=ViewState["orgtitle"]%> </a> - 
-<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority%>"><%= YavscHelpers.SiteName %></a>
- </h1>
- </asp:ContentPlaceHolder><asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder><% 
- if (ViewData["Error"]!=null) { 
- %><div class="error"><%= Html.Encode(ViewData["Error"]) %>
-</div><% } 
-  if (ViewData["Message"]!=null) { 
-  %><div class="message"><%= Html.Encode(ViewData["Message"]) %></div><% } 
-  %>
+<h1><a href="<%= Url.Content("~/") %>">
+<%=ViewState["orgtitle"]%></a>
+- <a href="<%= Url.Content("~/") %>"><%= YavscHelpers.SiteName %></a>
+</h1>
+ </asp:ContentPlaceHolder>
+ <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
+ <div id="notifications"></div>
+<%if (ViewData ["Notifications"]!=null) { %>
+<script>
+$(document).ready(function(){
+<% foreach (string note in (IEnumerable<string>) ViewData ["Notifications"] ) { %>
+Yavsc.notice('<%=note%>');
+<% } %>
+});
+</script>
+<% } %>
 </header>
-<main>
+<nav data-type="background" data-speed="2">
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Logout", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C" class="menuitem">
+<i class="fa fa-sign-out">Deconnexion</i></a> 
+</nav>
+
+<main data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="22" >
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
 </main>
 <asp:ContentPlaceHolder ID="MASContent" runat="server">
 </asp:ContentPlaceHolder>
 
-<footer>
-<script src="https://apis.google.com/js/platform.js" async defer>
+<footer data-type="background" data-speed="2" >
+<div id="copyr">
+© 2012 Totem Production. Tous droits réservés.
+</div>
+<div >
+<p class="control">
+<%= Html.ActionLink("Formulaire de contact","Contact","Home") %>
+</p>
+<p>
+<a href="https://fr-fr.facebook.com/Brahms.Totem.officiel" ><img src="/images/facebook.png" alt="facebook"/></a>
+<a href="http://twitter.com/TotemOfficiel"><img src="/images/twiter.png" alt="twiter"/></a>
+</p>
+<script src="https://apis.google.com/js/platform.js" defer>
   {lang: 'fr'}
 </script>
-   <%= Html.ActionLink("Contact","Contact","Home",null, new { @class="thanks" }) %>
-   <% foreach ( Link link in Html.Thanks()) { %>
-     <a class="thanks" href="<%=link.Url%>"><% if (link.Image !=null) { 
-     %><img src="<%= link.Image %>" alt="<%= link.Text %>"/></a><% 
-     } else { %><a class="thanks" href="<%=link.Url%>"><%= link.Text %></a><% }} %>
-<div class="g-plusone" data-annotation="inline" data-width="230"></div>
-   </footer>
-   <script type="text/javascript">
-        var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
-    </script> <script>
-$( ".bshd" ).on("click",function(e) {
-    if (e.target == "[object HTMLElement]") {
-    var panel = $(this).children(".bshpanel");
-    if (panel.hasClass("hidden")) panel.css("cursor","zoom-out");
-    else panel.css("cursor","zoom-in");
-    panel.toggleClass("hidden");
-   $(this).children(".bsh").toggleClass("hidden");
-   } });
-</script>
+<div id="gspacer" class="control"><div class="g-plusone" data-annotation="inline" data-width="170"></div>
+</div>
+</div>
+</footer><div class="modal"></div>
 </body>
 </html>
 

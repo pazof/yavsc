@@ -23,7 +23,11 @@ namespace Yavsc.Model.Blogs
 		/// <summary>
 		/// The match invisible.
 		/// </summary>
-		MatchInvisible = 8
+		MatchInvisible = 8,
+		/// <summary>
+		/// The match tag.
+		/// </summary>
+		MatchTag = 16,
 	}
 	
 }

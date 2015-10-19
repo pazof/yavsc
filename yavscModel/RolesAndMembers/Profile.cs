@@ -237,6 +237,9 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <param name="profile">Profile.</param>
 		public Profile (ProfileBase profile)
 		{
+			if (profile == null)
+				throw new Exception ("No profile");
+
 			object b = profile.GetPropertyValue ("BlogVisible");
 			BlogVisible = (b == null) ? true : (b is DBNull)? true : (bool)b;
 

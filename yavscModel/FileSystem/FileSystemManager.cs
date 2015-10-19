@@ -166,7 +166,7 @@ namespace Yavsc.Model.FileSystem
 			return (di.GetFiles ());
 		}
 
-		public IEnumerable<FileInfo> GetFiles (string username, string subdir)
+		public IEnumerable<FileInfo> GetFiles (string username, string subdir, bool createNonExistent = false)
 		{
 			string path = Prefix;
 			if (subdir != null) {
@@ -174,6 +174,9 @@ namespace Yavsc.Model.FileSystem
 				path = Path.Combine (Prefix, subdir);
 			}
 			DirectoryInfo di = new DirectoryInfo (path);
+			if (createNonExistent)
+			if (!di.Exists)
+				di.Create ();
 			return (di.GetFiles ());
 		}
 

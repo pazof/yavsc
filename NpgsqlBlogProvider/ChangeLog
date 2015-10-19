@@ -1,40 +1,27 @@
-2015-10-07  Paul Schneider  <paul@pschneider.fr>
+2015-10-19  Paul Schneider  <paul@pschneider.fr>
 
-	* NpgsqlBlogProvider.cs: Fixes usage of Npgsql upgrade to
-	latest version
+	* NpgsqlTagInfo.cs: Fixes the photo retreival
 
-2015-10-04  Paul Schneider  <paul@pschneider.fr>
+2015-10-17  Paul Schneider  <paul@pschneider.fr>
 
-	* packages.config:
-	* NpgsqlBlogProvider.csproj: Npgsql package update
+	* NpgsqlTagInfo.cs:
+	* NpgsqlBlogProvider.cs: 
 
-2015-09-27  Paul Schneider  <paul@pschneider.fr>
+2015-10-17  Paul Schneider  <paul@pschneider.fr>
 
-	* NpgsqlBlogProvider.cs: Fixes the sql command preparation
-
-2015-09-23  Paul Schneider  <paul@pschneider.fr>
-
-	* NpgsqlBlogProvider.cs: refactoring: The `UserName` property
-	from the `BlogEntry` class is renamed to `Author`
-
-2015-08-04  Paul Schneider  <paul@pschneider.fr>
-
-	* NpgsqlBlogProvider.cs: * Remove post by id
-	* Manage collections of entries on a couple (user,title), not
-	a single post
-
-
-2015-07-15  Paul Schneider  <paul@pschneider.fr>
-
-	* NpgsqlBlogProvider.csproj: Moves to Mono framework
-
-2015-07-02  Paul Schneider  <paul@pschneider.fr>
-
+	* NpgsqlTagInfo.cs:
 	* NpgsqlBlogProvider.cs:
 	* NpgsqlBlogProvider.csproj: 
 
-2015-06-09  Paul Schneider  <paul@pschneider.fr>
+2015-10-17  Paul Schneider  <paul@pschneider.fr>
 
-	* NpgsqlBlogProvider.csproj: Helps to fix packaging, and
-	cleans dependencies
+	* NpgsqlBlogProvider.cs: 
+
+2015-10-13  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlBlogProvider.cs: implements the tag methods on db
+
+2015-10-10  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlBlogProvider.cs: 
 

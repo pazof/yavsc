@@ -4,78 +4,112 @@ body {
 	background-color: black;
 	color: #D0FFD0;
 	font-family: 'Arial', cursive;
-	padding:2em;
-	margin:2em;
+	padding: 0;
+	margin: 0;
+}
+/* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('http://i.stack.imgur.com/FhHRx.gif') 
+                50% 50% 
+                no-repeat;
 }
 
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;   
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .modal {
+    display: block;
+}
 .iconsmall { max-height: 1.3em; max-width: 1.3em; } 
 
-input, textarea, checkbox { 
-    color: #FFFFA0;
-	background: black;
-   }
-
+.photo { width: 100%; }
+.blogbanner { float: left; top:0; }
+.subtitle { font-size:small; font-style: italic; }
 header {
+	padding: 0;
+	margin: 0;
+	padding-top: 201px;
+	padding-bottom:2em;
 	display: block;
-	border-radius:1em;
-	margin: 1em;
-	padding: 3em;
-	min-height: 8em;
-	background: url("/images/star-939235_1280.jpg") 0 0  no-repeat fixed;
+	background: url("/images/totem-banner.xs.jpg") 0 0 no-repeat fixed;
 	}
+header h1, header a {
+background-color: rgba(0,0,0,.5); 
+margin:0; padding:1em;
+}
 
 nav {
-	border-radius:1em;
-	margin: 1em;
-	padding: 1em;
+	margin: 2em;
+	padding: 2em;
 	display: block;
-	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ;
-	min-height: 10em;
+	border-radius:1em;
+	background: url("/images/live-concert-388160_1280.jpg") 50% 10em repeat fixed ;
+	justify-content: space-around;
 }
 
 main {
-	border-radius:1em;
-	margin: 1em;
-	padding: 1em;
+	margin: 2em;
+	padding: 2em;
 	display: block;
-	background: url("/images/p8-av4.png") 50% 20em no-repeat fixed ;
-	min-height: 10em;
+	border-radius:1em;
+	background: url("/images/musician-923526_1.nbb.jpg") 50% 20em repeat fixed ;
 	}
 
 footer {
-	border-radius:1em;
-	margin: 1em;
-	padding: 1em;
+	background: url("/images/drummer-652345_1280.s.jpg") 50% 30em repeat fixed ;
+	margin: 0;
+	margin-top: 2em;
+	padding: 2em;
 	display: block;
-	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ;
-	min-height: 10em;
 	clear: both;
 	font-size: smaller;
-	justify-content: center;
+	justify-content: space-around;
 }
 footer a {
-	background-color: rgba(0,0,40,.8); 
-	border-radius:5px;
-	margin:.5em;
+	border-radius:1em;
 	padding:1em;
   }
+legend {
+	border-radius:5px;
+	padding:.5em;
+	background-color: rgba(0,0,32,.5);
+  }
+#copyr { text-align: center; display: block; background-color: rgba(20,20,20,.8); }
+footer p { display:inline-block; } 
 
-footer img { max-height: 2em; vertical-align: middle; }
-a.actionlink img, h1 img, .menuitem img  { vertical-align: middle; }
+footer img { max-height: 3em; vertical-align: middle; }
+a img, h1 img, .menuitem img  { vertical-align: middle; }
 
 #gspacer { 
-	background-color: rgba(0,0,40,.8); 
-	border-radius:5px;
-	margin:.5em; padding:1em; display: inline-block }
+	background-color: rgba(20,20,20,.8); 
+	border-radius:1em;
+	margin:1em; padding:1em; display: inline-block }
 fieldset {
-	background-color: rgba(32,16,16,0.8);
+	background-color: rgba(16,16,64,0.8);
 	border-radius:5px; border: solid 1px #000060;
 } 
 
-video, img {
+main video, main img {
 	max-width:100%;
 	max-height:75%;
-	padding: .5em;
+	padding: 1em;
 	}
 
 aside { 
@@ -87,10 +121,9 @@ aside {
 .postpreview {
 	display: inline-block;
 	max-width: 40em;
-	padding: .5em;
-	margin: .5em;
-	background-color: rgba(32,32,32,0.8);
-	border-radius:10px;
+	padding: 1em;
+	background-color: rgba(0,0,32,0.8);
+	border-radius:1em;
 }
 .postpreview video, .postpreview img {
 	max-width:100%;
@@ -98,11 +131,10 @@ aside {
 	}
 .post { 
 	display:block;
-	margin:1em;
-	padding:1em;
-	background-color: rgba(32,32,32,0.8);
-	color: #aaa;
-	border-radius:10px;
+	padding: 1em;
+	background-color: rgba(0,0,32,0.8);
+	color: #eee;
+	border-radius:1em;
 	}
 .hiddenpost { background-color: rgba(16,16,16,0.5); }
 .fullwidth { width: 100%;  }
@@ -118,12 +150,25 @@ textarea.fullwidth { min-height:10em; }
 }
 
 .panel,.bshpanel, aside {
-	background-color: rgba(32,32,16,0.8);
-		border-radius:5px; 
-		margin:.5em;
-		padding: .5em;
+	background-color: rgba(20,20,20,.8); 
+	border-radius: 1em; 
+	padding: 1em;
 }
-
+.spanel {
+  max-width: 24em;
+    display: inline-block;
+  padding: .3em;
+}
+.xspanel {
+  max-width:13em;
+  display: inline-block;
+  padding:.2em;
+}
+.xxspanel {
+  max-width:7em;
+  display: inline-block;
+  padding:.1em;
+}
 .hint {
 	display: inline;
 	font-style: italic;
@@ -137,32 +182,32 @@ content: ")";
 }
 
 
-a {
-	text-decoration: none;
-	color: #B0B080;
-   background-color:rgba(20,20,20,0.5);
-   text-decoration: none;
-}
 .usertitleref {
-	color: #B0B080;
-	border-radius: 5px;
+	border-radius: 1em;
    background-color:rgba(0,0,32,0.6);
    font-family: 'Arial', cursive;
 	padding: 1em;
 }
-a:hover  {
-	text-decoration: underline;
-}
 a:visited {
-	color: #90B090;
+	color: #E0E0E0;
 }
 label {
 	font-size: medium;
 }
+.editable {
+	margin 1em; 
+	min-height:1em; 
+	border-radius: 1em; 
+	border: dashed rgb(020,20,256) 2px; 
+}
+#notifications { 
+	padding: 1em;
+ }
 
-.message, #message {
+.notification {
 	font-size: large;
 	background-color: rgba(64,64,0,0.5);
+	border: solid green 1px;
 	}
 .dirty { 
 	background-color: rgba(128,128,0,0.5);
@@ -176,7 +221,6 @@ label {
 	color: #f88;
 	background-color: rgba(256,0,0,0.5);
 }
-
 
 .hidden { display:none; }
 
@@ -193,53 +237,52 @@ ul.preview li:nth-child(n) {
 	color: #f88;
 }
 
-.actionlink {
-	color: #B0B080;
-	border-radius: 5px;
-   background-color:rgba(0,0,32,0.5);
+a {
+   text-decoration: none;
+}
+
+.actionlink, .menuitem, a {
+   display:inline-block;
+	color: white;
+	border-radius:1em;
+	border: solid black 1px;
+   background-color: rgba(20,20,20,.8); 
    cursor: pointer;
    font-family: 'Arial', cursive;
-	padding: .2em;
+	padding: 1em;
 }
 
-input, select { 
-	color: #B0B080;
+input, select, textarea { 
+	color: white;
+	background-color:rgba(0,0,64,0.8);
 	border: solid 1px rgb(128,128,128);
-	border-radius:5px;
-   background-color:rgba(0,0,32,0.8);
-   font-family: 'Arial', cursive;
+	border-radius:1em;
+    font-family: 'Arial', cursive;
 }
 
-
-.actionlink:hover {
+.actionlink:hover, fa:hover, .menuitem:hover, a:hover {
 	background-color:rgba(30,0,124,0.9);
-    text-decoration: underline;
+	border: solid green 1px;
 }
-
+ input:hover, textarea:hover {
+	color: white;
+	background-color:rgba(64,64,64,0.8);
+}
 .code {
 	font-family: "monospace";
 	background-color: rgba(0,0,256,0.1);
 	border-radius:25px;
 	white-space: pre-wrap;
 }
-
-.avatar {
-	max-width: 64px;
-	max-height: 64px;
-}
+#avatar { 
+ float: left;
+ margin:1em;
+ }
 
 .comment {
 	border-radius:25px;
 	font-size: smaller;
 	}
-
-
-.menuitem {
-	border-radius:5px;
-	margin:.5em;
-	padding:.5em;
-	display: inline-block; 
-}
 
 .onhover {
 	display:none; 
@@ -258,11 +301,9 @@ input, select {
 
 .c2 { font-size: small; font-style: italic; }
 .c3 { font-size: x-small; font-style: italic; }
-
 @media print {
 		body {background-color:white;color:black;}
-		header,footer,.postcomment,.actionlink,nav
-		{ display:none;} 
+		.control, .actionlink,  .menuitem, nav { display:none;} 
 	}
 
 	.bshpanel { display:block; }
@@ -271,36 +312,37 @@ input, select {
   .c3-alt { display:none; }
 
 @media all and (max-width: 640px) {
-body { padding: 1em; margin: 1em;}
-	header {min-height: 5em;}
-	}
+header {
+	padding-bottom:1em;
+		}
 
-@media all and (max-width: 460px) {
-body { padding: .5em; margin:.5;}
-	header {
-		margin: .5em;
-		padding: .5em;
-		min-height: 3em;
-		 background: url("/images/star-939235_1280.xxs.jpg")       0 0 no-repeat fixed;
-	}
+#avatar { 
+ margin:.5em;
+ }
+
+header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
+
 	nav {
-		margin: .5em;
-		padding: .5em;
-		min-height: 3em;
-		background:    url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
+	margin: 1em;
+		padding: 1em;
+		background:    url("/images/live-concert-388160_1280.s.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
-		margin: .5em;
-		padding: .5em;
-		min-height: 7em;
-		background:   url("/images/p8-av4.xxs.jpg")                 50% 20em no-repeat fixed ; 
+	margin: 1em;
+	padding: 1em;
+		background:   url("/images/musician-923526_1.nbb.xs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
-		margin: .5em;
-		padding: .5em;
-		min-height: 3em;
-		background: url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 90% repeat fixed ; 
+		background: url("/images/drummer-652345_1280.s.jpg") 50% 90% repeat fixed ; 
 	} 
+	footer a {
+	border-radius:.5em;
+	margin:.5em;
+	padding:.5em;
+  }
+  #notifications { 
+	padding: .5em;
+ }
 	.menuitem {
 		display: block; 
 	}
@@ -312,7 +354,6 @@ body { padding: .5em; margin:.5;}
 	padding:.3em;
 	}
   .bshpanel { cursor:zoom-in; }
-  footer { clear:both; }
 
 	.c2 { display:initial; }
 	.c2-alt { display:none; }
@@ -321,7 +362,31 @@ body { padding: .5em; margin:.5;}
 }
 
 @media all and (max-width: 350px) {
-body { padding: 0em; margin:0; }
+header {
+	padding-top: 101px;
+	padding-bottom:1em;
+	background: url("/images/totem-banner.xxs.jpg") 0 0 no-repeat fixed;
+ }
+header h1, header a { padding:.2em;}
+
+	nav {
+	margin: .5em;
+		padding: .5em;
+		background:    url("/images/live-concert-388160_1280.xxs.jpg") 50% 10% repeat fixed ; 
+	}
+	main { 
+	margin: .5em;
+	    padding: .5em;
+		background:   url("/images/musician-923526_1.nbb.xxs.jpg")  50% 20em repeat fixed ; 
+	} 
+	footer { 
+		background: url("/images/drummer-652345_1280.xxs.jpg") 50% 90% repeat fixed ; 
+	} 
+	footer a {
+	border-radius:.2em;
+	margin:.2em;
+	padding:.2em;
+  }
   .c2 { display:none; }
   .c2-alt { display:initial; }
 }

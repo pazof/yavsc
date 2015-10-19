@@ -97,31 +97,31 @@ WITH (
 
 CREATE TABLE profiledata
 (
-  uniqueid integer,
-  "address.zipcode" character varying(10),
-  "address.cityandstate" character varying(255),
+ uniqueid integer,
+  zipcode character varying(10),
+  cityandstate character varying(255),
   blogtitle character varying(255), -- Blog Title
-  "address.address" character varying(2048), -- Postal address
-  "address.country" character varying(100),
+  address character varying(2048), -- Postal address
+  country character varying(100),
   website character varying(256),
   blogvisible boolean,
   name character varying(1024),
   phone character varying(15),
   mobile character varying(15),
-  "bank.accountnumber" character varying(15), -- Numero de compte
-  "bank.key" integer, -- clé RIB
-  "bank.code" character varying(5), -- Code banque
-  "bank.wicketcode" character varying(5),
-  "bank.iban" character varying(33),
-  "bank.bic" character varying(15),
-  "google.token" character varying(512), -- Google authentification token
-  "google.refreshtoken" character varying(512), -- Google refresh token
-  "google.tokentype" character varying(256), -- Google access token type
-  "google.calid" character varying(255), -- Google calendar identifier
-  "google.tokenexpir" timestamp with time zone, -- Google access token expiration date
+  accountnumber character varying(15), -- Numero de compte
+  bankedkey integer, -- clé RIB
+  bankcode character varying(5), -- Code banque
+  wicketcode character varying(5),
+  iban character varying(33),
+  bic character varying(15),
+  gtoken character varying(512), -- Google authentification token
+  grefreshtoken character varying(512), -- Google refresh token
+  gtokentype character varying(256), -- Google access token type
+  gcalid character varying(255), -- Google calendar identifier
+  gtokenexpir timestamp with time zone, -- Google access token expiration date
   avatar character varying(512), -- url for an avatar
-  "google.calapi" boolean NOT NULL DEFAULT false,
-  "google.regid" character varying(1024), -- Google Cloud Message registration identifier
+  gcalapi boolean NOT NULL DEFAULT false,
+  gregid character varying(1024), -- Google Cloud Message registration identifier
   CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
@@ -129,12 +129,9 @@ CREATE TABLE profiledata
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE profiledata
-  OWNER TO yavscdev;
 COMMENT ON COLUMN profiledata."address.address" IS 'Postal address';
 COMMENT ON COLUMN profiledata.blogtitle IS 'Blog Title';
 COMMENT ON COLUMN profiledata.avatar IS 'url for an avatar';
-COMMENT ON COLUMN profiledata.hasavatar IS 'True when user has specified an image for avatar';
 COMMENT ON COLUMN profiledata."bank.accountnumber" IS 'Numero de compte';
 COMMENT ON COLUMN profiledata."bank.key" IS 'clé RIB';
 COMMENT ON COLUMN profiledata."bank.code" IS 'Code banque';
@@ -174,6 +171,7 @@ CREATE TABLE blog
   bcontent text NOT NULL,
   visible boolean NOT NULL,
   _id bigserial NOT NULL,
+  photo character varying(512), 
   CONSTRAINT blog_pkey PRIMARY KEY (_id),
   CONSTRAINT bloguser FOREIGN KEY (applicationname, username)
       REFERENCES users (applicationname, username) MATCH SIMPLE
@@ -183,23 +181,22 @@ WITH (
   OIDS=FALSE
 );
 
-  -- Table: blfiles
+COMMENT ON COLUMN blog.photo IS 'a photo url, supposed to be the main photo
+related to this post';
+
 CREATE TABLE blfiles
 (
   _id bigserial NOT NULL, -- Identifier
   name character varying(2048), -- File Name, relative to the user home directory, must not begin with a slash.
-  blid bigint, -- Blog entry identifier (foreign key)
-  CONSTRAINT blfiles_pkey PRIMARY KEY (_id),
-  CONSTRAINT blfiles_blid_fkey FOREIGN KEY (blid)
-      REFERENCES blog (_id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE
+  alt_text character varying(512),
+  CONSTRAINT bltags_pkey PRIMARY KEY (_id)
 )
 WITH (
   OIDS=FALSE
 );
 COMMENT ON COLUMN blfiles._id IS 'Identifier';
 COMMENT ON COLUMN blfiles.name IS 'File Name, relative to the user home directory, must not begin with a slash.';
-COMMENT ON COLUMN blfiles.blid IS 'Blog entry identifier (foreign key)';
+
 
   -- Table: commandes
 
@@ -259,7 +256,7 @@ CREATE TABLE comment
   CONSTRAINT comment_pkey PRIMARY KEY (_id),
   CONSTRAINT fkey_blog FOREIGN KEY (postid)
       REFERENCES blog (_id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE ,
+      ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT fkey_users FOREIGN KEY (username, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
@@ -670,8 +667,7 @@ CREATE TABLE circle
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE circle
-  OWNER TO yavscdev;
+
 COMMENT ON COLUMN circle._id IS 'Circle identifier';
 COMMENT ON COLUMN circle.owner IS 'creator of this circle';
 COMMENT ON COLUMN circle.applicationname IS 'Application name';
@@ -734,4 +730,24 @@ CREATE TABLE blog_access
 WITH (
   OIDS=FALSE
 );
+
+-- Table: postheader
+
+-- DROP TABLE postheader;
+
+CREATE TABLE postheader
+(
+  postid bigserial NOT NULL, -- Blog post identifier, to which will be associated this head image
+  url character varying(512), -- Url for this header image,...
+  CONSTRAINT postheader_pkey PRIMARY KEY (postid),
+  CONSTRAINT postheader_postid_fkey FOREIGN KEY (postid)
+      REFERENCES blog (_id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+COMMENT ON COLUMN postheader.postid IS 'Blog post identifier, to which will be associated this head image';
+COMMENT ON COLUMN postheader.url IS 'Url for this header image, if relative, it will be on the path "~/bfiles/<postid>"';
+
 

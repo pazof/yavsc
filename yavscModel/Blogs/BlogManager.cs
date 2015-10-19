@@ -100,6 +100,15 @@ namespace Yavsc.Model.Blogs
 			Provider.UpdatePost (postid, title, content, visible, cids);
 		}
 
+		/// <summary>
+		/// Updates the post photo.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="photo">Photo.</param>
+		public static void UpdatePostPhoto (long postid, string photo)
+		{
+			Provider.UpdatePostPhoto (postid, photo);
+		}
 
 		/// <summary>
 		/// Finds the post.
@@ -143,7 +152,10 @@ namespace Yavsc.Model.Blogs
 			}
 			Provider.RemoveTitle (username, title);
 		}
-
+		public static TagInfo GetTagInfo(string tagname)
+		{
+			return Provider.GetTagInfo (tagname);
+		}
 		/// <summary>
 		/// Lasts the posts.
 		/// </summary>
@@ -174,9 +186,9 @@ namespace Yavsc.Model.Blogs
 		/// <param name="postid">Postid.</param>
 		/// <param name="tag">Tag.</param>
 		/// <returns>The tag identifier</returns>
-		public static long Tag (long postid, string tag)
+		public static void Tag (long postid, string tag)
 		{
-			return Provider.Tag (postid, tag);
+			Provider.Tag (postid, tag);
 		}
 
 		/// <summary>
@@ -204,6 +216,16 @@ namespace Yavsc.Model.Blogs
 				}
 			}
 			return e;
+		}
+
+		/// <summary>
+		/// Untag the specified postid and tagname.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="tagname">Tagname.</param>
+		public static void Untag (long postid, string tagname)
+		{
+			Provider.Untag (postid, tagname);
 		}
 
 		private static bool CanView (BlogEntry e, MembershipUser u = null)

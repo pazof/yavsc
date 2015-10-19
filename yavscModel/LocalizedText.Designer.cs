@@ -46,75 +46,33 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string was_added_to_the_empty_role {
+        public static string EventWebPage {
             get {
-                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
+                return ResourceManager.GetString("EventWebPage", resourceCulture);
             }
         }
         
-        public static string Bill_edition {
+        public static string ProviderId {
             get {
-                return ResourceManager.GetString("Bill_edition", resourceCulture);
+                return ResourceManager.GetString("ProviderId", resourceCulture);
             }
         }
         
-        public static string Tex_version {
+        public static string Pdf_version {
             get {
-                return ResourceManager.GetString("Tex_version", resourceCulture);
+                return ResourceManager.GetString("Pdf_version", resourceCulture);
             }
         }
         
-        public static string Message_sent {
+        public static string Location {
             get {
-                return ResourceManager.GetString("Message_sent", resourceCulture);
+                return ResourceManager.GetString("Location", resourceCulture);
             }
         }
         
-        public static string Count {
+        public static string Circles {
             get {
-                return ResourceManager.GetString("Count", resourceCulture);
-            }
-        }
-        
-        public static string Create {
-            get {
-                return ResourceManager.GetString("Create", resourceCulture);
-            }
-        }
-        
-        public static string Description {
-            get {
-                return ResourceManager.GetString("Description", resourceCulture);
-            }
-        }
-        
-        public static string Title {
-            get {
-                return ResourceManager.GetString("Title", resourceCulture);
-            }
-        }
-        
-        public static string My_Estimates {
-            get {
-                return ResourceManager.GetString("My_Estimates", resourceCulture);
-            }
-        }
-        
-        public static string Google_error {
-            get {
-                return ResourceManager.GetString("Google_error", resourceCulture);
-            }
-        }
-        
-        public static string StartDate {
-            get {
-                return ResourceManager.GetString("StartDate", resourceCulture);
-            }
-        }
-        
-        public static string no_content {
-            get {
-                return ResourceManager.GetString("no_content", resourceCulture);
+                return ResourceManager.GetString("Circles", resourceCulture);
             }
         }
         
@@ -124,27 +82,21 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Ciffer {
+        public static string Preview {
             get {
-                return ResourceManager.GetString("Ciffer", resourceCulture);
+                return ResourceManager.GetString("Preview", resourceCulture);
             }
         }
         
-        public static string Modify {
+        public static string DisplayName {
             get {
-                return ResourceManager.GetString("Modify", resourceCulture);
+                return ResourceManager.GetString("DisplayName", resourceCulture);
             }
         }
         
-        public static string MaxDate {
+        public static string none {
             get {
-                return ResourceManager.GetString("MaxDate", resourceCulture);
-            }
-        }
-        
-        public static string younotadmin {
-            get {
-                return ResourceManager.GetString("younotadmin", resourceCulture);
+                return ResourceManager.GetString("none", resourceCulture);
             }
         }
         
@@ -154,9 +106,27 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Date_search {
+        public static string Not_Approuved {
             get {
-                return ResourceManager.GetString("Date_search", resourceCulture);
+                return ResourceManager.GetString("Not_Approuved", resourceCulture);
+            }
+        }
+        
+        public static string User_name {
+            get {
+                return ResourceManager.GetString("User_name", resourceCulture);
+            }
+        }
+        
+        public static string Estimate_not_found {
+            get {
+                return ResourceManager.GetString("Estimate_not_found", resourceCulture);
+            }
+        }
+        
+        public static string was_added_to_the_empty_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
             }
         }
         
@@ -166,27 +136,93 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Google_calendar {
+            get {
+                return ResourceManager.GetString("Google_calendar", resourceCulture);
+            }
+        }
+        
+        public static string Welcome {
+            get {
+                return ResourceManager.GetString("Welcome", resourceCulture);
+            }
+        }
+        
+        public static string Private_circle {
+            get {
+                return ResourceManager.GetString("Private_circle", resourceCulture);
+            }
+        }
+        
         public static string ImportException {
             get {
                 return ResourceManager.GetString("ImportException", resourceCulture);
             }
         }
         
-        public static string Preview {
-            get {
-                return ResourceManager.GetString("Preview", resourceCulture);
-            }
-        }
-        
-        public static string Register {
-            get {
-                return ResourceManager.GetString("Register", resourceCulture);
-            }
-        }
-        
         public static string access_denied {
             get {
                 return ResourceManager.GetString("access_denied", resourceCulture);
+            }
+        }
+        
+        public static string Ciffer {
+            get {
+                return ResourceManager.GetString("Ciffer", resourceCulture);
+            }
+        }
+        
+        public static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
+        public static string Submit {
+            get {
+                return ResourceManager.GetString("Submit", resourceCulture);
+            }
+        }
+        
+        public static string ImgLocator {
+            get {
+                return ResourceManager.GetString("ImgLocator", resourceCulture);
+            }
+        }
+        
+        public static string entries {
+            get {
+                return ResourceManager.GetString("entries", resourceCulture);
+            }
+        }
+        
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        public static string Google_error {
+            get {
+                return ResourceManager.GetString("Google_error", resourceCulture);
+            }
+        }
+        
+        public static string Comment {
+            get {
+                return ResourceManager.GetString("Comment", resourceCulture);
+            }
+        }
+        
+        public static string Tex_version {
+            get {
+                return ResourceManager.GetString("Tex_version", resourceCulture);
+            }
+        }
+        
+        public static string Item_added_to_basket {
+            get {
+                return ResourceManager.GetString("Item_added_to_basket", resourceCulture);
             }
         }
         
@@ -202,75 +238,39 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string EndDate {
+        public static string Hide {
             get {
-                return ResourceManager.GetString("EndDate", resourceCulture);
+                return ResourceManager.GetString("Hide", resourceCulture);
             }
         }
         
-        public static string Google_calendar {
+        public static string Register {
             get {
-                return ResourceManager.GetString("Google_calendar", resourceCulture);
+                return ResourceManager.GetString("Register", resourceCulture);
             }
         }
         
-        public static string Consultant {
+        public static string younotadmin {
             get {
-                return ResourceManager.GetString("Consultant", resourceCulture);
+                return ResourceManager.GetString("younotadmin", resourceCulture);
             }
         }
         
-        public static string EventWebPage {
+        public static string Tag_name {
             get {
-                return ResourceManager.GetString("EventWebPage", resourceCulture);
+                return ResourceManager.GetString("Tag_name", resourceCulture);
             }
         }
         
-        public static string ImgLocator {
+        public static string New_Tag {
             get {
-                return ResourceManager.GetString("ImgLocator", resourceCulture);
+                return ResourceManager.GetString("New_Tag", resourceCulture);
             }
         }
         
-        public static string Not_Approuved {
+        public static string Modify {
             get {
-                return ResourceManager.GetString("Not_Approuved", resourceCulture);
-            }
-        }
-        
-        public static string Private_circle {
-            get {
-                return ResourceManager.GetString("Private_circle", resourceCulture);
-            }
-        }
-        
-        public static string DocTemplateException {
-            get {
-                return ResourceManager.GetString("DocTemplateException", resourceCulture);
-            }
-        }
-        
-        public static string Unitary_cost {
-            get {
-                return ResourceManager.GetString("Unitary_cost", resourceCulture);
-            }
-        }
-        
-        public static string Circles {
-            get {
-                return ResourceManager.GetString("Circles", resourceCulture);
-            }
-        }
-        
-        public static string Location {
-            get {
-                return ResourceManager.GetString("Location", resourceCulture);
-            }
-        }
-        
-        public static string Remember_me {
-            get {
-                return ResourceManager.GetString("Remember_me", resourceCulture);
+                return ResourceManager.GetString("Modify", resourceCulture);
             }
         }
         
@@ -280,45 +280,21 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string none {
+        public static string Title {
             get {
-                return ResourceManager.GetString("none", resourceCulture);
+                return ResourceManager.GetString("Title", resourceCulture);
             }
         }
         
-        public static string User_List {
+        public static string Logout {
             get {
-                return ResourceManager.GetString("User_List", resourceCulture);
+                return ResourceManager.GetString("Logout", resourceCulture);
             }
         }
         
-        public static string Estimate_not_found {
+        public static string Message_sent {
             get {
-                return ResourceManager.GetString("Estimate_not_found", resourceCulture);
-            }
-        }
-        
-        public static string ProviderId {
-            get {
-                return ResourceManager.GetString("ProviderId", resourceCulture);
-            }
-        }
-        
-        public static string Welcome {
-            get {
-                return ResourceManager.GetString("Welcome", resourceCulture);
-            }
-        }
-        
-        public static string Online {
-            get {
-                return ResourceManager.GetString("Online", resourceCulture);
-            }
-        }
-        
-        public static string Home {
-            get {
-                return ResourceManager.GetString("Home", resourceCulture);
+                return ResourceManager.GetString("Message_sent", resourceCulture);
             }
         }
         
@@ -328,45 +304,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string MinDate {
+        public static string Bill_edition {
             get {
-                return ResourceManager.GetString("MinDate", resourceCulture);
-            }
-        }
-        
-        public static string Comment {
-            get {
-                return ResourceManager.GetString("Comment", resourceCulture);
-            }
-        }
-        
-        public static string User_name {
-            get {
-                return ResourceManager.GetString("User_name", resourceCulture);
-            }
-        }
-        
-        public static string DisplayName {
-            get {
-                return ResourceManager.GetString("DisplayName", resourceCulture);
-            }
-        }
-        
-        public static string Pdf_version {
-            get {
-                return ResourceManager.GetString("Pdf_version", resourceCulture);
-            }
-        }
-        
-        public static string Item_added_to_basket {
-            get {
-                return ResourceManager.GetString("Item_added_to_basket", resourceCulture);
-            }
-        }
-        
-        public static string role_created {
-            get {
-                return ResourceManager.GetString("role_created", resourceCulture);
+                return ResourceManager.GetString("Bill_edition", resourceCulture);
             }
         }
         
@@ -376,15 +316,141 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string entries {
+        public static string MaxDate {
             get {
-                return ResourceManager.GetString("entries", resourceCulture);
+                return ResourceManager.GetString("MaxDate", resourceCulture);
+            }
+        }
+        
+        public static string Count {
+            get {
+                return ResourceManager.GetString("Count", resourceCulture);
+            }
+        }
+        
+        public static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        public static string Date_search {
+            get {
+                return ResourceManager.GetString("Date_search", resourceCulture);
+            }
+        }
+        
+        public static string View_source {
+            get {
+                return ResourceManager.GetString("View_source", resourceCulture);
+            }
+        }
+        
+        public static string role_created {
+            get {
+                return ResourceManager.GetString("role_created", resourceCulture);
+            }
+        }
+        
+        public static string ReadMore {
+            get {
+                return ResourceManager.GetString("ReadMore", resourceCulture);
+            }
+        }
+        
+        public static string EndDate {
+            get {
+                return ResourceManager.GetString("EndDate", resourceCulture);
+            }
+        }
+        
+        public static string MinDate {
+            get {
+                return ResourceManager.GetString("MinDate", resourceCulture);
+            }
+        }
+        
+        public static string User_List {
+            get {
+                return ResourceManager.GetString("User_List", resourceCulture);
+            }
+        }
+        
+        public static string Remember_me {
+            get {
+                return ResourceManager.GetString("Remember_me", resourceCulture);
+            }
+        }
+        
+        public static string Home {
+            get {
+                return ResourceManager.GetString("Home", resourceCulture);
+            }
+        }
+        
+        public static string Consultant {
+            get {
+                return ResourceManager.GetString("Consultant", resourceCulture);
             }
         }
         
         public static string was_added_to_the_role {
             get {
                 return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
+            }
+        }
+        
+        public static string DoTag {
+            get {
+                return ResourceManager.GetString("DoTag", resourceCulture);
+            }
+        }
+        
+        public static string DocTemplateException {
+            get {
+                return ResourceManager.GetString("DocTemplateException", resourceCulture);
+            }
+        }
+        
+        public static string no_content {
+            get {
+                return ResourceManager.GetString("no_content", resourceCulture);
+            }
+        }
+        
+        public static string Unitary_cost {
+            get {
+                return ResourceManager.GetString("Unitary_cost", resourceCulture);
+            }
+        }
+        
+        public static string Online {
+            get {
+                return ResourceManager.GetString("Online", resourceCulture);
+            }
+        }
+        
+        public static string StartDate {
+            get {
+                return ResourceManager.GetString("StartDate", resourceCulture);
+            }
+        }
+        
+        public static string Hide_source {
+            get {
+                return ResourceManager.GetString("Hide_source", resourceCulture);
+            }
+        }
+        
+        public static string Profile_edition {
+            get {
+                return ResourceManager.GetString("Profile_edition", resourceCulture);
+            }
+        }
+        
+        public static string My_Estimates {
+            get {
+                return ResourceManager.GetString("My_Estimates", resourceCulture);
             }
         }
     }

@@ -2,6 +2,8 @@
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <% using (Html.BeginForm("Contact", "Home")) { %>
+<fieldset>
+<legend>Message</legend>
 <p>
 <%= Html.Label("email") %>:
 <%= Html.ValidationMessage("email") %><br/>
@@ -17,6 +19,7 @@
 <%= Html.ValidationMessage("body") %><br/>
 <%= Html.TextArea("body") %>
 </p>
+</fieldset>
 <input type="submit">
 <% } %>
 

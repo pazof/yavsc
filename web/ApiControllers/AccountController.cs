@@ -39,10 +39,11 @@ namespace Yavsc.ApiControllers
 		/// Register the specified model.
 		/// </summary>
 		/// <param name="model">Model.</param>
-		[Authorize()]
+		[Authorize ()]
 		[ValidateAjaxAttribute]
 		public HttpResponseMessage Register ([FromBody] RegisterClientModel model)
 		{
+			
 			if (ModelState.IsValid) {
 				if (model.IsApprouved)
 				if (!Roles.IsUserInRole ("Admin"))
@@ -54,32 +55,32 @@ namespace Yavsc.ApiControllers
 				}
 				MembershipCreateStatus mcs;
 				var user = Membership.CreateUser (
-					model.UserName,
-					model.Password,
-					model.Email,
-					model.Question,
-					model.Answer,
-					model.IsApprouved,
-					out mcs);
+					           model.UserName,
+					           model.Password,
+					           model.Email,
+					           model.Question,
+					           model.Answer,
+					           model.IsApprouved,
+					           out mcs);
 				switch (mcs) {
 				case MembershipCreateStatus.DuplicateEmail:
 					ModelState.AddModelError ("Email", "Cette adresse e-mail correspond " +
-						"à un compte utilisateur existant");
+					"à un compte utilisateur existant");
 					break;
 				case MembershipCreateStatus.DuplicateUserName:
 					ModelState.AddModelError ("UserName", "Ce nom d'utilisateur est " +
-						"déjà enregistré");
+					"déjà enregistré");
 					break;
 				case MembershipCreateStatus.Success:
 					if (!model.IsApprouved)
 						Url.SendActivationMessage (user);
 					ProfileBase prtu = ProfileBase.Create (model.UserName);
-					prtu.SetPropertyValue("Name",model.Name);
-					prtu.SetPropertyValue("Address",model.Address);
-					prtu.SetPropertyValue("CityAndState",model.CityAndState);
-					prtu.SetPropertyValue("Mobile",model.Mobile);
-					prtu.SetPropertyValue("Phone",model.Phone);
-					prtu.SetPropertyValue("ZipCode",model.ZipCode);
+					prtu.SetPropertyValue ("Name", model.Name);
+					prtu.SetPropertyValue ("Address", model.Address);
+					prtu.SetPropertyValue ("CityAndState", model.CityAndState);
+					prtu.SetPropertyValue ("Mobile", model.Mobile);
+					prtu.SetPropertyValue ("Phone", model.Phone);
+					prtu.SetPropertyValue ("ZipCode", model.ZipCode);
 					break;
 				default:
 					break;
@@ -88,15 +89,12 @@ namespace Yavsc.ApiControllers
 			return DefaultResponse ();
 		}
 
-
-
-
 		/// <summary>
 		/// Resets the password.
 		/// </summary>
 		/// <param name="model">Model.</param>
 		[ValidateAjax]
-		public void ResetPassword(LostPasswordModel model)
+		public void ResetPassword (LostPasswordModel model)
 		{
 			StringDictionary errors;
 			MembershipUser user;
@@ -108,4 +106,3 @@ namespace Yavsc.ApiControllers
 		}
 	}
 }
-

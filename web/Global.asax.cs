@@ -47,28 +47,40 @@ namespace Yavsc
 			routes.IgnoreRoute ("favicon.png"); // favorite icon
 			routes.IgnoreRoute ("robots.txt");  // for search engine robots
 			routes.MapRoute (
-				"Blogs",
-				"Blogs/{action}/{user}/{title}",
-				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
-			); 
+				"Titles",
+				"title/{title}",
+				new { controller = "Blogs", action = "Index", 
+					title=UrlParameter.Optional }
+			);
 			routes.MapRoute (
-				"BlogByTitleRO",
-				"Blog/{user}/{title}",
-				new { controller = "Blogs", action = "Index", user=UrlParameter.Optional, title = UrlParameter.Optional }
+				"Blogs",
+				"blog/{user}",
+				new { controller = "Blogs", 
+					action = "UserPosts", 
+					user="Paul Schneider" }
 			); 
+
+			routes.MapRoute (
+				"BlogByTitle",
+				"by/{user}/{title}/{id}",
+				new { controller = "Blogs", 
+					action = "UserPosts", 
+					user="Paul Schneider",
+					title=UrlParameter.Optional,
+					id=UrlParameter.Optional }
+			);
 			routes.MapRoute (
 				"BlogById",
-				"B/{action}/{id}",
-				new { controller = "Blogs", action = "UserPost", id = UrlParameter.Optional }
+				"b/{action}/{postid}",
+				new { controller = "Blogs", action = "Index", 
+					postid=UrlParameter.Optional }
 			); 
 			routes.MapRoute (
 				"Default",
 				"{controller}/{action}/{id}",
-				new { controller = defaultController, 
-					action = "Index", 
-					user=UrlParameter.Optional,
-					id = UrlParameter.Optional }
+				new { controller = "Home", action = "Index", id = UrlParameter.Optional }
 			);
+
 		}
 
 		/// <summary>

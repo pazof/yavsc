@@ -3,9 +3,6 @@
 <asp:Content ContentPlaceHolderID="head" ID="head1" runat="server" >
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/stupidtable.js")%>"></script> 
 <script>
-$(function(){
-$("#tbwrts").stupidtable();
-});
 </script>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
@@ -352,6 +349,9 @@ function addRow(){
     	$("#wr_Count").val(1);
     	$("#wr_UnitaryCost").val(0);
 	});
+
+	$("#tbwrts").stupidtable();
+
 });
     </script>
 

@@ -29,47 +29,26 @@ namespace Yavsc.Controllers
 	{
 		private string sitename =
 			WebConfigurationManager.AppSettings ["Name"];
-		string avatarDir = "~/avatars";
 
 		/// <summary>
-		/// Gets or sets the avatar dir.
+		/// Index the specified title, pageIndex and pageSize.
 		/// </summary>
-		/// <value>The avatar dir.</value>
-		public string AvatarDir {
-			get { return avatarDir; }
-			set { avatarDir = value; }
-		}
-
-
-
-		/// <summary>
-		/// Index the specified user, title, pageIndex and pageSize.
-		/// </summary>
-		/// <param name="user">User.</param>
 		/// <param name="title">Title.</param>
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
-		public ActionResult Index (string user = null, string title = null, int pageIndex = 0, int pageSize = 10)
+		public ActionResult Index (string title, int pageIndex = 0, int pageSize = 10)
 		{
-			if (string.IsNullOrEmpty (user)) {
-				return BlogList (pageIndex, pageSize);
-			} else {
-				MembershipUser u = null;
-				if (Membership.FindUsersByName (user) != null)
-					u = Membership.GetUser (user, false);
-				if (u == null) {
-					ModelState.AddModelError ("Author",
-						string.Format ("Utilisateur inconu : {0}", user));
-					return BlogList ();
-				} else {
-					if (string.IsNullOrEmpty (title))
-						return UserPosts (user, pageIndex, pageSize);
-					return UserPost (user, title, pageIndex, pageSize);
-				}
-			}
+			if (title != null)
+				return Title (title, pageIndex, pageSize);
+			
+			return BlogList (pageIndex, pageSize);
 		}
-
-		public ActionResult ChooseMedia(long id) 
+		/// <summary>
+		/// Chooses the media.
+		/// </summary>
+		/// <returns>The media.</returns>
+		/// <param name="id">Identifier.</param>
+		public ActionResult ChooseMedia(long postid) 
 		{
 			return View ();
 		}
@@ -87,7 +66,33 @@ namespace Yavsc.Controllers
 			ViewData ["ResultCount"] = totalRecords; 
 			ViewData ["PageSize"] = pageSize;
 			ViewData ["PageIndex"] = pageIndex;
-			return View ("Index", new BlogEntryCollection(bs) );
+			var bec = new BlogEntryCollection (bs);
+			return View ("Index", bec );
+		}
+
+
+		/// <summary>
+		/// Title the specified title, pageIndex and pageSize.
+		/// </summary>
+		/// <param name="id">Title.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
+		/// 
+		[HttpGet]
+		public ActionResult Title (string title, int pageIndex = 0, int pageSize = 10)
+		{
+			int recordCount;
+			MembershipUser u = Membership.GetUser ();
+			string username = u == null ? null : u.UserName;
+			FindBlogEntryFlags sf = FindBlogEntryFlags.MatchTitle;
+			BlogEntryCollection c = 
+				BlogManager.FindPost (username, title, sf, pageIndex, pageSize, out recordCount);
+			var utc = new UTBlogEntryCollection (title);
+			utc.AddRange (c);
+			ViewData ["RecordCount"] = recordCount;
+			ViewData ["PageIndex"] = pageIndex; 
+			ViewData ["PageSize"] = pageSize;
+			return View ("Title", utc);
 		}
 
 		/// <summary>
@@ -98,9 +103,10 @@ namespace Yavsc.Controllers
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
 		[HttpGet]
-		public ActionResult UserPosts (string user, int pageIndex = 0, int pageSize = 10)
+		public ActionResult UserPosts (string user, string title=null, int pageIndex = 0, int pageSize = 10)
 		{
-			int tr;
+			if (title != null) return UserPost (user, title, pageIndex, pageSize);
+			int recordcount=0;
 			MembershipUser u = Membership.GetUser ();
 			FindBlogEntryFlags sf = FindBlogEntryFlags.MatchUserName;
 			ViewData ["SiteName"] = sitename;
@@ -113,17 +119,23 @@ namespace Yavsc.Controllers
 				if (u.UserName == user || Roles.IsUserInRole ("Admin"))
 					sf |= FindBlogEntryFlags.MatchInvisible;
 				readersName = u.UserName;
+				if (user == null)
+					user = u.UserName;
 			}
 			// find entries
 			BlogEntryCollection c = 
-				BlogManager.FindPost (readersName, user, sf, pageIndex, pageSize, out tr);
+				BlogManager.FindPost (readersName, user, sf, pageIndex, pageSize, out recordcount);
 			// Get author's meta data
-			Profile bupr = new Profile (ProfileBase.Create (user));
-			ViewData ["BlogUserProfile"] = bupr;
+			var pr = ProfileBase.Create (user);
+			if (pr != null) {
+				Profile bupr = new Profile (pr);
+				ViewData ["BlogUserProfile"] = bupr;
+			
 			// Inform of listing meta data
 			ViewData ["BlogTitle"] = bupr.BlogTitle;
 			ViewData ["Avatar"] = bupr.avatar;
-			ViewData ["RecordCount"] = tr; 
+			}
+			ViewData ["RecordCount"] = recordcount; 
 			UUBlogEntryCollection uuc = new UUBlogEntryCollection (user, c);
 			return View ("UserPosts", uuc);
 		}
@@ -141,14 +153,14 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Returns the post.
+		/// Gets the post.
 		/// </summary>
 		/// <returns>The post.</returns>
-		/// <param name="id">Identifier.</param>
-		public ActionResult GetPost (long id)
+		/// <param name="postid">Postid.</param>
+		public ActionResult GetPost (long postid)
 		{
-			ViewData ["id"] = id;
-			BlogEntry e = BlogManager.GetForReading (id);
+			ViewData ["id"] = postid;
+			BlogEntry e = BlogManager.GetForReading (postid);
 			UUTBlogEntryCollection c = new UUTBlogEntryCollection (e.Author,e.Title);
 			c.Add (e);
 			ViewData ["user"] = c.Author;
@@ -180,7 +192,12 @@ namespace Yavsc.Controllers
 				if (pr == null)
 					// the owner's profile must exist 
 					// in order to publish its bills
-					return View ("NotAuthorized");
+					// This should'nt occur, as long as 
+					// a profile must exist for each one of 
+					// existing user record in data base
+					// and each post is deleted with user deletion
+					// a post => an author => a profile
+					throw new Exception("Unexpected error retreiving author's profile");
 				ViewData ["BlogUserProfile"] = pr;
 				ViewData ["Avatar"] = pr.avatar;
 				ViewData ["BlogTitle"] = pr.BlogTitle;
@@ -237,28 +254,24 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Post the specified user and title.
+		/// Post the specified title.
 		/// </summary>
-		/// <param name="user">User.</param>
 		/// <param name="title">Title.</param>
 		[Authorize]
-		public ActionResult Post (string user, string title)
+		public ActionResult Post (string title)
 		{
-			ViewData ["BlogUser"] = user;
-			ViewData ["PostTitle"] = title;
-			ViewData ["SiteName"] = sitename;
 			string un = Membership.GetUser ().UserName;
-			if (String.IsNullOrEmpty (user))
-				user = un;
 			if (String.IsNullOrEmpty (title))
 				title = "";
+			ViewData ["SiteName"] = sitename;
 			ViewData ["Author"] = un;
-			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (Membership.GetUser ().UserName).Select (x => new SelectListItem {
+			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (un)
+				.Select (x => new SelectListItem {
 				Value = x.Id.ToString(),
 				Text = x.Title
 			});
 
-			return View ("Edit", new BlogEntry { Title = title });
+			return View ("Edit", new BlogEntry { Title = title, Author = un });
 		}
 
 		/// <summary>
@@ -280,8 +293,17 @@ namespace Yavsc.Controllers
 				}
 				else
 					model.Id = BlogManager.Post (model.Author, model.Title, model.Content, model.Visible, model.AllowedCircles);
-				return RedirectToAction ("UserPosts", new { user = model.Author, title = model.Title });
+				if (model.Photo != null)
+					BlogManager.UpdatePostPhoto (model.Id, model.Photo);
+				return RedirectToAction ("Title", new { title = model.Title });
 			}
+			ViewData ["AllowedCircles"] = 
+				CircleManager.DefaultProvider.List (
+					Membership.GetUser ().UserName).Select (x => new SelectListItem {
+						Value = x.Id.ToString(),
+						Text = x.Title,
+						Selected = model.AllowedCircles.Contains (x.Id)
+					});
 			return View ("Edit", model);
 		}
 
@@ -290,15 +312,15 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="id">Identifier.</param>
 		[Authorize]
-		public ActionResult Edit (long id)
+		public ActionResult Edit (long postid)
 		{
 			
-			BlogEntry e = BlogManager.GetForEditing (id);
+			BlogEntry e = BlogManager.GetForEditing (postid);
 			string user = Membership.GetUser ().UserName;
 			Profile pr = new Profile (ProfileBase.Create(e.Author));
 			ViewData ["BlogTitle"] = pr.BlogTitle;
 			ViewData ["LOGIN"] = user; 
-			ViewData ["Id"] = id;
+			ViewData ["Id"] = postid;
 			// Populates the circles combo items
 
 			if (e.AllowedCircles == null)
@@ -335,8 +357,8 @@ namespace Yavsc.Controllers
 		/// using returnUrl as the URL to return to,
 		/// and confirm as a proof you really know what you do.
 		/// </summary>
+		/// <param name="id">Title.</param>
 		/// <param name="user">User.</param>
-		/// <param name="title">Title.</param>
 		/// <param name="returnUrl">Return URL.</param>
 		/// <param name="confirm">If set to <c>true</c> confirm.</param>
 		[Authorize]
@@ -368,19 +390,19 @@ namespace Yavsc.Controllers
 		/// <param name="returnUrl">Return URL.</param>
 		/// <param name="confirm">If set to <c>true</c> confirm.</param>
 		[Authorize]
-		public ActionResult RemovePost (long id, string returnUrl, bool confirm = false)
+		public ActionResult RemovePost (long postid, string returnUrl, bool confirm = false)
 		{
 			// ensures the access control
-			BlogEntry e = BlogManager.GetForEditing (id);
+			BlogEntry e = BlogManager.GetForEditing (postid);
 			if (e == null)
-				return new HttpNotFoundResult ("post id "+id.ToString());
-			ViewData ["id"] = id;
+				return new HttpNotFoundResult ("post id "+postid.ToString());
+			ViewData ["id"] = postid;
 			ViewData ["returnUrl"] = string.IsNullOrWhiteSpace(returnUrl)?
 				Request.UrlReferrer.AbsoluteUri.ToString(): returnUrl;
 			// TODO: cleaner way to disallow deletion
 			if (!confirm)
 				return View ("RemovePost",e);
-			BlogManager.RemovePost (id);
+			BlogManager.RemovePost (postid);
 			if (string.IsNullOrWhiteSpace(returnUrl))
 				return RedirectToAction ("Index");
 			return Redirect (returnUrl);

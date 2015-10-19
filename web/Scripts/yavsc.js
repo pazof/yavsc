@@ -1,6 +1,13 @@
 ﻿var Yavsc =  (function(apiBaseUrl){ 
 var self = {};
 
+function dumpprops(obj) { 
+var str = "";
+for(var k in obj)
+    if (obj.hasOwnProperty(k)) 
+        str += k + " = " + obj[k] + "\n";
+      return (str);   }
+
 self.apiBaseUrl = (apiBaseUrl || '/api');
 
 self.showHide = function () { 
@@ -33,8 +40,11 @@ self.notice = function (msg, msgok) {
 
  self.onAjaxBadInput = function (data)
     {
+    	if (!data) { Yavsc.notice('no data'); return; }
+    	if (!data.responseJSON) { Yavsc.notice('no json data:'+data); return; }
+   		if (!Array.isArray(data.responseJSON))  { Yavsc.notice('Bad Input: '+data.responseJSON); return; }
 		$.each(data.responseJSON, function (key, value) {
-		var errspanid = "Err_cr_" + value.key.replace("model.","");
+		var errspanid = "Err_" + value.key;
 		var errspan = document.getElementById(errspanid);
 		if (errspan==null)
 			alert('enoent '+errspanid);
@@ -47,9 +57,34 @@ self.notice = function (msg, msgok) {
 self.onAjaxError = function (xhr, ajaxOptions, thrownError) {
             	if (xhr.status!=400)
         			Yavsc.notice(xhr.status+" : "+xhr.responseText);
-			    else Yavsc.notice(false);
      };
 
 return self;
 })();
 
+<<<<<<< HEAD
+=======
+$(document).ready(function(){
+
+$body = $("body");
+$(document).on({
+    ajaxStart: function() { $body.addClass("loading");    },
+    ajaxStop: function() { $body.removeClass("loading"); }    
+});
+
+	var $window = $(window);
+	$(window).scroll(function() {
+		var $ns = $('#notifications');
+		if ($ns.has('*').length>0) {
+		if ($window.scrollTop()>375) { 
+			$ns.css('position','fixed');
+			$ns.css('z-index',2);
+			$ns.css('top',0);
+		}
+		else {  
+			$ns.css('position','static');
+			$ns.css('z-index',1); 
+		}}
+	});
+});
+>>>>>>> 5cb90afe2ce804d06034b0e0aa52e73c33baff83

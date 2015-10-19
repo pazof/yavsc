@@ -32,7 +32,6 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		/// <param name="username">Username.</param>
 		/// <param name="title">Title.</param>
-		/// <param name="items">Items.</param>
 		public UUTBlogEntryCollection(string username, string title) : base(username) {
 			_title = title;
 		}

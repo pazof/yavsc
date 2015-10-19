@@ -31,7 +31,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <summary>
 		/// Initializes a new instance of the Automate class.
 		/// </summary>
-		public Automate ()
+		 public Automate ()
 		{
 		}
 		private Dictionary<TState,Dictionary<TLetter,TState>> transitions =
