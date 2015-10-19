@@ -27,7 +27,7 @@
 <%= Html.MarkdownToHtmlIntro(out truncated, e.Content,"/bfiles/"+e.Id+"/") %>
 <% if (truncated) { %>
 <a href="<%= Url.RouteUrl( "BlogByTitle", new { user=e.Author ,  title=e.Title, postid = e.Id}) %>">
-  <i>Html.Translate("ReadMore")</i></a>
+  <i><%=Html.Translate("ReadMore")%></i></a>
   <% } %>
 <%= Html.Partial("PostActions",e)%>
 </div>

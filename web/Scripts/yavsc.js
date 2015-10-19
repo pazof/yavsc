@@ -62,8 +62,7 @@ self.onAjaxError = function (xhr, ajaxOptions, thrownError) {
 return self;
 })();
 
-<<<<<<< HEAD
-=======
+
 $(document).ready(function(){
 
 $body = $("body");
@@ -87,4 +86,4 @@ $(document).on({
 		}}
 	});
 });
->>>>>>> 5cb90afe2ce804d06034b0e0aa52e73c33baff83
+

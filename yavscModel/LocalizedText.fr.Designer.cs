@@ -94,12 +94,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Count {
-            get {
-                return ResourceManager.GetString("Count", resourceCulture);
-            }
-        }
-        
         public static string ProviderName {
             get {
                 return ResourceManager.GetString("ProviderName", resourceCulture);
@@ -124,6 +118,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string DoComment {
+            get {
+                return ResourceManager.GetString("DoComment", resourceCulture);
+            }
+        }
+        
         public static string Members {
             get {
                 return ResourceManager.GetString("Members", resourceCulture);
@@ -136,9 +136,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string younotadmin {
+        public static string Welcome {
             get {
-                return ResourceManager.GetString("younotadmin", resourceCulture);
+                return ResourceManager.GetString("Welcome", resourceCulture);
             }
         }
         
@@ -238,6 +238,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string younotadmin {
+            get {
+                return ResourceManager.GetString("younotadmin", resourceCulture);
+            }
+        }
+        
         public static string Tag_name {
             get {
                 return ResourceManager.GetString("Tag_name", resourceCulture);
@@ -304,9 +310,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Welcome {
+        public static string Count {
             get {
-                return ResourceManager.GetString("Welcome", resourceCulture);
+                return ResourceManager.GetString("Count", resourceCulture);
             }
         }
         

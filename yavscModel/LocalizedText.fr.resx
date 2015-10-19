@@ -20,6 +20,7 @@
 	<data name="Ciffer"><value>Chiffre</value></data>
 	<data name="Circles"><value>Cercles</value></data>
 	<data name="Comment"><value>Commentaire</value></data>
+	<data name="DoComment"><value>Commenter</value></data>
 	<data name="Create"><value>Créer</value></data>
 	<data name="Date_search"><value>Demande de rendez-vous</value></data>
 	<data name="DocTemplateException"><value>Une erreur est survenue à la génération de votre document</value></data>

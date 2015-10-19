@@ -27,32 +27,15 @@
 <% } %>
 
 <%= Html.Markdown(be.Content,"/bfiles/"+be.Id+"/") %>
-
+ <%= Html.Partial("PostActions",be)%>
  <% string username = Membership.GetUser()==null ? null : Membership.GetUser().UserName; %>
 		<% foreach (var c in (Comment[]) BlogManager.GetComments(be.Id)) {  %> 
 <div class="comment" style="min-height:32px;"> 
-<img style="clear:left;float:left;max-width:32px;max-height:32px;margin:.3em;" src="<%= Url.RouteUrl("Blogs", new { user = c.From } ) %>" alt="<%=c.From%>"/>
+<img class="avatar" src="<%= Url.RouteUrl("Default", new { action="Avatar", controller="Account", user = c.From } ) %>" alt="<%=c.From%>"/>
 <%= Html.Markdown(c.CommentText) %>
 	<% if (Model.Author ==  username || c.From == username ) { %>
 	<%= Html.ActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } , new { @class="actionlink" })%>
 	<% } %>
 </div><% } %>
-<% if (Membership.GetUser()!=null) { 
-	if (Membership.GetUser().UserName==be.Author)
-	 { %> <div class="control">
-	 <%= Html.ActionLink("Editer","Edit", new { id = be.Id }, new { @class="actionlink" }) %>
-	 <%= Html.ActionLink("Supprimer","RemovePost", new { id = be.Id }, new { @class="actionlink" } ) %>
-	<i class="fa fa-tag">Tagger</i>
-	</div> <% } %>
-
- <aside class="control">
-	 <% using (Html.BeginForm("Comment","Blogs")) { %>
-	 <%=Html.Hidden("Author")%>
-	 <%=Html.Hidden("Title")%>
-	 <%=Html.TextArea("CommentText","")%>
-	 <%=Html.Hidden("PostId",be.Id)%>
-	 <input type="submit" value="Poster un commentaire"/>
-	 <% } %>
-	  </aside>
-<% } %></div><% } %>
+</div><% } %>
 </asp:Content>

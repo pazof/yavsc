@@ -45,11 +45,6 @@ Yavsc.notice('<%=note%>');
 </script>
 <% } %>
 </header>
-<nav data-type="background" data-speed="2">
-<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Logout", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C" class="menuitem">
-<i class="fa fa-sign-out">Deconnexion</i></a> 
-</nav>
-
 <main data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="22" >
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
