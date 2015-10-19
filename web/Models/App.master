@@ -93,11 +93,10 @@ $(document).ready(function(){
 
 <nav data-type="background" data-speed="2">
 <% if (Membership.GetUser()==null) { %>
-<a href="<%= Url.Content("~/Account/Login/?returnUrl=") + Url.Encode( Request.Url.PathAndQuery )%>"  >
-<div class="menuitem">
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action="Login", returnUrl=Request.Url.PathAndQuery } ) %>" class="menuitem">
+
 <i class="fa fa-sign-in"></i> Connexion
-	<div class="hint">Pour pouvoir commenter, publier, facturer</div>
-</div>
+	<div class="hint">Pour pouvoir commenter, publier, facturer, partager en cercles privés ...</div>
 </a>
 <% } else { %>
 <a href="/Blog/<%= HttpContext.Current.User.Identity.Name%>" accesskey = "B" class="menuitem">
