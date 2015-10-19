@@ -1,6 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using MarkdownDeep;
+using System.Text.RegularExpressions;
 
 namespace Yavsc.Model.Blogs
 {
@@ -9,6 +10,46 @@ namespace Yavsc.Model.Blogs
 	/// </summary>
 	public static partial class MarkdownHelper
 	{
+		public static Regex rxExtractLanguage = new Regex("^({{(.+)}}[\r\n])", RegexOptions.Compiled);
+		public static string FormatCodePrettyPrint(MarkdownDeep.Markdown m, string code)
+		{
+			// Try to extract the language from the first line
+			var match = rxExtractLanguage.Match(code);
+			string language = null;
+
+			if (match.Success)
+			{
+				// Save the language
+				var g = (Group)match.Groups[2];
+				language = g.ToString();
+
+				// Remove the first line
+				code = code.Substring(match.Groups[1].Length);
+			}
+
+			// If not specified, look for a link definition called "default_syntax" and
+			// grab the language from its title
+			if (language == null)
+			{
+				var d = m.GetLinkDefinition("default_syntax");
+				if (d != null)
+					language = d.title;
+			}
+
+			// Common replacements
+			if (language == "C#")
+				language = "csharp";
+			if (language == "C++")
+				language = "cpp";
+
+			// Wrap code in pre/code tags and add PrettyPrint attributes if necessary
+			if (string.IsNullOrEmpty(language))
+				return string.Format("<pre><code>{0}</code></pre>\n", code);
+			else
+				return string.Format("<pre class=\"prettyprint lang-{0}\"><code>{1}</code></pre>\n", 
+					language.ToLowerInvariant(), code);
+		}
+
 		/// <summary>
 		/// Transforms a string of Markdown into HTML.
 		/// </summary>
@@ -17,10 +58,8 @@ namespace Yavsc.Model.Blogs
 		public static IHtmlString Markdown(string text)
 		{
 			// Transform the supplied text (Markdown) into HTML.
-			var markdownTransformer = new Markdown();
-			markdownTransformer.ExtraMode = true;
+			var markdownTransformer = GetMarkdownTransformer();
 			string html = markdownTransformer.Transform(text);
-
 			// Wrap the html in an MvcHtmlString otherwise it'll be HtmlEncoded and displayed to the user as HTML :(
 			return new MvcHtmlString(html);
 		}
@@ -36,14 +75,19 @@ namespace Yavsc.Model.Blogs
 		public static IHtmlString Markdown(this HtmlHelper helper, string text, string urlBaseLocation="")
 		{
 			// Transform the supplied text (Markdown) into HTML.
-			var markdownTransformer = new Markdown();
-			markdownTransformer.ExtraMode = true;
+			var markdownTransformer=GetMarkdownTransformer ();
 			markdownTransformer.UrlBaseLocation = urlBaseLocation;
 			string html = markdownTransformer.Transform(text);
 			// Wrap the html in an MvcHtmlString otherwise it'll be HtmlEncoded and displayed to the user as HTML :(
 			return new MvcHtmlString(html);
 		}
 
+		/// <summary>
+		/// Markdowns the intro.
+		/// </summary>
+		/// <returns>The intro.</returns>
+		/// <param name="markdown">Markdown.</param>
+		/// <param name="truncated">Truncated.</param>
 		public static string MarkdownIntro(string markdown, out bool truncated) { 
 			int maxLen = 250;
 			if (markdown.Length < maxLen) {
@@ -58,6 +102,19 @@ namespace Yavsc.Model.Blogs
 			intro += " ...";
 			return intro;
 		}
+
+		internal static Markdown GetMarkdownTransformer()
+		{
+			var markdownTransformer = new Markdown();
+			markdownTransformer.ExtraMode = true;
+			markdownTransformer.NoFollowLinks = true;
+			markdownTransformer.SafeMode = false;
+			markdownTransformer.FormatCodeBlock = FormatCodePrettyPrint;
+			markdownTransformer.ExtractHeadBlocks = true;
+			markdownTransformer.UserBreaks = true;
+			return markdownTransformer;
+		}
+
 		/// <summary>
 		/// Markdowns to html intro.
 		/// </summary>
@@ -67,8 +124,7 @@ namespace Yavsc.Model.Blogs
 		/// <param name="urlBaseLocation">URL base location.</param>
 		public static string MarkdownToHtmlIntro(out bool truncated, string text, string urlBaseLocation="") {
 			var md = MarkdownIntro(text, out truncated);
-			var markdownTransformer = new Markdown();
-			markdownTransformer.ExtraMode = true;
+			var markdownTransformer=GetMarkdownTransformer ();
 			markdownTransformer.UrlBaseLocation = urlBaseLocation;
 			string html = markdownTransformer.Transform(md);
 			return html;

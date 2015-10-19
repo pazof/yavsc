@@ -87,11 +87,15 @@ namespace Yavsc.Controllers
 		{
 			foreach (string tagname in new string[] {"Artistes","Accueil","Actualités","Mentions légales"})
 			{
-				ViewData [tagname] = BlogManager.GetTagInfo (tagname);
+				TagInfo ti = BlogManager.GetTagInfo (tagname);
+				// TODO specialyze BlogEntry creating a PhotoEntry 
+				ViewData [tagname] = ti;
 			}
 			return View ();
 		}
-
+		/// <summary>
+		/// Credits this instance.
+		/// </summary>
 		public ActionResult Credits ()
 		{
 			return View ();

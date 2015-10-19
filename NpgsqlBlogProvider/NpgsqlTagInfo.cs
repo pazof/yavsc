@@ -39,7 +39,8 @@ namespace Npgsql.Web.Blog
 			titles = new List<BasePostInfo>();
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "SELECT \n" +
+				cmd.CommandText = 
+					"SELECT \n" +
 					"  blog.username, \n" +
 					"  blog.posted, \n" +
 					"  blog.modified, \n" +
@@ -48,10 +49,12 @@ namespace Npgsql.Web.Blog
 					"  blog.visible, \n" +
 					"  blog._id, \n" +
 					"  blog.photo, \n" +
-					"  tag.name\nFROM \n" +
+					"  tag.name\n" +
+					"FROM \n" +
 					"  public.blog, \n" +
 					"  public.tagged, \n" +
-					"  public.tag\nWHERE \n" +
+					"  public.tag\n" +
+					"WHERE \n" +
 					"  tagged.postid = blog._id AND \n" +
 					"  tag._id = tagged.tagid AND \n" +
 					" public.tag.name = :name";
@@ -60,6 +63,10 @@ namespace Npgsql.Web.Blog
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 					while (rdr.Read ()) {
 						bool truncated;
+						int oph = rdr.GetOrdinal ("photo");
+						string photo = null;
+						if (!rdr.IsDBNull (oph))
+							photo = rdr.GetString (oph);
 						var pi = new  BasePostInfo { 
 							Title = rdr.GetString(3),
 							Author = rdr.GetString (0), 
@@ -68,7 +75,7 @@ namespace Npgsql.Web.Blog
 								rdr.GetString (4),
 								out truncated),
 							Visible = rdr.GetBoolean(5),
-							Photo = (!rdr.IsDBNull (7))?null:rdr.GetString (7),
+							Photo = photo,
 							Modified = rdr.GetDateTime(2),
 							Posted = rdr.GetDateTime(1)
 						};

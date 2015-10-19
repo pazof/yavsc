@@ -12,10 +12,13 @@
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/style.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/font-awesome.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/jquery-ui.css")%>" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/prettify.css")%>" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/doxy.css")%>" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
 <script src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/parralax.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>
 <script type="text/javascript">
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 </script> 
@@ -77,7 +80,7 @@ Yavsc.notice('<%=note%>');
 </asp:ContentPlaceHolder>
 <footer data-type="background" data-speed="2" >
 <div id="copyr">
-© 2012 Totem Production. Tous droits réservés.
+© 2015 Totem Production. Tous droits réservés.
 </div>
 <div >
 <p class="control">

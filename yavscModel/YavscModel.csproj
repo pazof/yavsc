@@ -170,7 +170,6 @@
     <Compile Include="RolesAndMembers\ChangeUserNameProvider.cs" />
     <Compile Include="RolesAndMembers\UserManager.cs" />
     <Compile Include="Circles\CircleBase.cs" />
-    <Compile Include="Blogs\MarkdownHelper.cs" />
     <Compile Include="Blogs\UTBlogEntryCollection.cs" />
     <Compile Include="Blogs\BasePost.cs" />
     <Compile Include="Blogs\PostTag.cs" />
@@ -178,6 +177,7 @@
     <Compile Include="Blogs\PostInfoByTitle.cs" />
     <Compile Include="Blogs\PostInfoByUser.cs" />
     <Compile Include="Blogs\TagInfo.cs" />
+    <Compile Include="Blogs\MarkdownHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

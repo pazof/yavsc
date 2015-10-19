@@ -21,12 +21,12 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <%  foreach (BlogEntry e in this.Model) { %>
 <div class="postpreview<% if (!e.Visible) { %> hiddenpost<% } %>" >
-<h2><a href="<%= Url.RouteUrl("BlogByTitle", new { user=e.Author, title=e.Title, id = e.Id })%>" class="usertitleref">
+<h2><a href="<%= Url.RouteUrl("BlogByTitle", new { user=e.Author, title=e.Title, postid = e.Id })%>" class="usertitleref">
 <%=Html.Markdown(e.Title)%></a></h2>
 <% bool truncated = false; %>
 <%= Html.MarkdownToHtmlIntro(out truncated, e.Content,"/bfiles/"+e.Id+"/") %>
 <% if (truncated) { %>
-<a href="<%= Url.RouteUrl( "BlogByTitle", new { user=e.Author ,  title=e.Title, id = e.Id}) %>">
+<a href="<%= Url.RouteUrl( "BlogByTitle", new { user=e.Author ,  title=e.Title, postid = e.Id}) %>">
   <i>Html.Translate("ReadMore")</i></a>
   <% } %>
 <%= Html.Partial("PostActions",e)%>

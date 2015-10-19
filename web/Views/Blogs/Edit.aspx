@@ -138,8 +138,8 @@ var updateHtml = function(id,content) {
     updateHtml(this.id, this.value);
   });
 
-  showSource("Title",jQuery('#vtitle').html());
-  showSource("Content",jQuery('#vcontent').html());
+  // showSource("Title",jQuery('#vtitle').html());
+  // showSource("Content",jQuery('#vcontent').html());
   });
 </script>
 

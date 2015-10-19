@@ -1,3 +1,55 @@
+2015-10-19  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.csproj:
+	* packages.config:
+	* App.master:
+	* doxy.css:
+	* Edit.aspx:
+	* desert.css:
+	* sunburst.css:
+	* YavscHelpers.cs:
+	* prettify.css:
+	* lang-r.js:
+	* lang-n.js:
+	* UserPosts.aspx:
+	* lang-hs.js:
+	* lang-rd.js:
+	* lang-ml.js:
+	* lang-go.js:
+	* lang-vb.js:
+	* lang-xq.js:
+	* lang-tex.js:
+	* lang-tcl.js:
+	* lang-sql.js:
+	* lang-clj.js:
+	* lang-lua.js:
+	* PostActions.ascx:
+	* prettify.js:
+	* lang-css.js:
+	* HomeController.cs:
+	* lang-lisp.js:
+	* lang-wiki.js:
+	* lang-vhdl.js:
+	* lang-llvm.js:
+	* lang-dart.js:
+	* lang-yaml.js:
+	* lang-basic.js:
+	* lang-proto.js:
+	* lang-scala.js:
+	* lang-mumps.js:
+	* lang-erlang.js:
+	* lang-matlab.js:
+	* sons-of-obsidian.css:
+	* lang-pascal.js:
+	* lang-apollo.js:
+	* run_prettify.js: 
+
+	* TagPanel.ascx: displays the photo
+
+	* IValueProvider.cs: useless, unused
+
+	* TestExec.cs: pollution
+
 2015-10-18  Paul Schneider  <paul@pschneider.fr>
 
 	* BlogsController.cs: Fixes the redirection after bill edition
