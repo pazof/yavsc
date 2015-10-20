@@ -39,6 +39,11 @@ body.loading .modal {
 }
 .iconsmall { max-height: 1.3em; max-width: 1.3em; } 
 
+input, textarea, checkbox { 
+    color: #FFFFA0;
+	background-color: black;
+   }
+
 .photo { width: 100%; }
 .blogbanner { float: left; top:0; }
 .subtitle { font-size:small; font-style: italic; }
@@ -48,7 +53,7 @@ header {
 	padding-top: 201px;
 	padding-bottom:2em;
 	display: block;
-	background: url("/images/totem-banner.xs.jpg") 0 0 no-repeat fixed;
+	background: url("/images/star-939235_1280.jpg") 0 0 no-repeat fixed;
 	}
 header h1, header a {
 background-color: rgba(0,0,0,.5); 
@@ -60,7 +65,7 @@ nav {
 	padding: 2em;
 	display: block;
 	border-radius:1em;
-	background: url("/images/live-concert-388160_1280.jpg") 50% 10em repeat fixed ;
+	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ;
 	justify-content: space-around;
 }
 
@@ -69,11 +74,11 @@ main {
 	padding: 2em;
 	display: block;
 	border-radius:1em;
-	background: url("/images/musician-923526_1.nbb.jpg") 50% 20em repeat fixed ;
+	background: url("/images/p8-av4.png") 50% 20em no-repeat fixed ;
 	}
 
 footer {
-	background: url("/images/drummer-652345_1280.s.jpg") 50% 30em repeat fixed ;
+	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ;
 	margin: 0;
 	margin-top: 2em;
 	padding: 2em;
@@ -314,8 +319,8 @@ input, select, textarea {
 @media all and (max-width: 640px) {
 header {
 	padding-bottom:1em;
-		}
-
+	}
+		
 #avatar { 
  margin:.5em;
  }
@@ -325,15 +330,14 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 	nav {
 	margin: 1em;
 		padding: 1em;
-		background:    url("/images/live-concert-388160_1280.s.jpg") 50% 10% repeat fixed ; 
+		background:    url("/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
 	margin: 1em;
 	padding: 1em;
-		background:   url("/images/musician-923526_1.nbb.xs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
-		background: url("/images/drummer-652345_1280.s.jpg") 50% 90% repeat fixed ; 
+		background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ; 
 	} 
 	footer a {
 	border-radius:.5em;
@@ -365,22 +369,22 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 header {
 	padding-top: 101px;
 	padding-bottom:1em;
-	background: url("/images/totem-banner.xxs.jpg") 0 0 no-repeat fixed;
+	background: url("/images/star-939235_1280.xxs.jpg") 0 0 no-repeat fixed;
  }
 header h1, header a { padding:.2em;}
 
 	nav {
 	margin: .5em;
 		padding: .5em;
-		background:    url("/images/live-concert-388160_1280.xxs.jpg") 50% 10% repeat fixed ; 
+		background:    url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
 	margin: .5em;
 	    padding: .5em;
-		background:   url("/images/musician-923526_1.nbb.xxs.jpg")  50% 20em repeat fixed ; 
+		background:   url("/images/p8-av4.xxs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
-		background: url("/images/drummer-652345_1280.xxs.jpg") 50% 90% repeat fixed ; 
+		background:    url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
 	} 
 	footer a {
 	border-radius:.2em;

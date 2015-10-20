@@ -1,3 +1,36 @@
+2015-10-20  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.config:
+	* Web.csproj:
+	* totem.jpg:
+	* App.master:
+	* twiter.png:
+	* facebook.png:
+	* totemprod.png:
+	* style.css:
+	* p8-av4.xxs.png:
+	* totem-banner.png:
+	* YavscHelpers.cs:
+	* concert.clear.jpg:
+	* totem-banner.xs.jpg:
+	* totem-banner.xxs.jpg:
+	* drummer-652345_1280.jpg:
+	* musician-923526_1.nb.jpg:
+	* musician-923526_1280.jpg:
+	* drummer-652345_1280.s.jpg:
+	* an-pierle-876094_1280.jpg:
+	* musician-923526_1.nbb.jpg:
+	* musician-923526_1280.s.jpg:
+	* drummer-652345_1280.xxs.jpg:
+	* musician-923526_1.nb.xs.jpg:
+	* live-concert-388160_1280.jpg:
+	* musician-923526_1280.xxs.jpg:
+	* musician-923526_1.nb.xxs.jpg:
+	* musician-923526_1.nbb.xs.jpg:
+	* musician-923526_1.nbb.xxs.jpg:
+	* live-concert-388160_1280.s.jpg:
+	* live-concert-388160_1280.xxs.jpg: 
+
 2015-10-19  Paul Schneider  <paul@pschneider.fr>
 
 	* Web.csproj:

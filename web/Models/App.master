@@ -79,21 +79,20 @@ Yavsc.notice('<%=note%>');
 </asp:ContentPlaceHolder>
 <footer data-type="background" data-speed="2" >
 <div id="copyr">
-© 2015 Totem Production. Tous droits réservés.
+<a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">© 2015 GNU GENERAL PUBLIC LICENSE  <i>Version 3, 29 June 2007</i></a>
 </div>
-<div >
-<p class="control">
+   <%= Html.ActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
+   <% foreach ( Link link in Html.Thanks()) { %>
+     <a class="thanks" href="<%=link.Url%>"><% if (link.Image !=null) { 
+     %><img src="<%= link.Image %>" alt="<%= link.Text %>"/></a>
+     <%  } else { %>
+     <a class="thanks" href="<%=link.Url%>"><%= link.Text %></a>
+     <% }} %>
 <%= Html.ActionLink("Formulaire de contact","Contact","Home") %>
-</p>
-<p>
-<a href="https://fr-fr.facebook.com/Brahms.Totem.officiel" ><img src="/images/facebook.png" alt="facebook"/></a>
-<a href="http://twitter.com/TotemOfficiel"><img src="/images/twiter.png" alt="twiter"/></a>
-</p>
 <script src="https://apis.google.com/js/platform.js" defer>
   {lang: 'fr'}
 </script>
 <div id="gspacer" class="control"><div class="g-plusone" data-annotation="inline" data-width="170"></div>
-</div>
 </div>
 </footer><div class="modal"></div>
 </body>
