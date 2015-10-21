@@ -57,7 +57,8 @@ namespace Npgsql.Web.Blog
 					"WHERE \n" +
 					"  tagged.postid = blog._id AND \n" +
 					"  tag._id = tagged.tagid AND \n" +
-					" public.tag.name = :name";
+					"  blog.visible = TRUE AND \n" +
+					"  public.tag.name = :name";
 				cmd.Parameters.AddWithValue ("name", tagname);
 				cnx.Open ();
 				using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {

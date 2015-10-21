@@ -1,97 +1,48 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<BlogEntry>" %>
-
-<ul id="tags">
-<% if (Model.Tags != null) foreach (string tagname in Model.Tags) { %>
-<li><%= tagname %></li>
-<% } %>
-</ul>
+<p id="tags<%=Model.Id%>" data-postid="<%=Model.Id%>" class="fa fa-tag">
+<% if (Model.Tags != null) {
+foreach ( var tagname in Model.Tags) { %>
+<span class="tagname"><%=tagname%></span> <%
+%><% } } %>
+</p>
 <% if (Membership.GetUser()!=null) { %>
 <% if (Membership.GetUser().UserName==Model.Author || Roles.IsUserInRole("Admin"))
 { // grant all permissions: to choose a given set of tags, also create some new tags %>
 
-<span id="viewtagger">
-<i class="fa fa-tag menuitem" id="viewtaggerbtn"><%=Html.Translate("DoTag")%></i></span>
-<span id="hidetagger" class="hidden">
-<i class="fa fa-tag menuitem"  id="hidetaggerbtn" ><%=Html.Translate("Hide")%></i>
+<span id="viewtagger<%=Model.Id%>">
+<i class="fa fa-tag menuitem" id="viewtaggerbtn<%=Model.Id%>"><%=Html.Translate("DoTag")%></i></span>
+<span id="hidetagger<%=Model.Id%>" class="hidden">
+<i class="fa fa-tag menuitem"  id="hidetaggerbtn<%=Model.Id%>" ><%=Html.Translate("Tags")%> - <%=Html.Translate("Hide")%></i>
 Note: Ils sont utilisé pour classifier le document. Par exemple, le tag <code>Accueil</code> rend le document 
 éligible à une place en page d'Accueil.
 </span>
-<form id="tagger" class="hidden">
+<form id="tagger<%=Model.Id%>" class="maskable" data-btn-show="viewtagger<%=Model.Id%>" data-btn-hide="hidetagger<%=Model.Id%>" >
 <fieldset>
 <legend>Associer des tags au billet</legend>
  <label for="newtag"><%= Html.Translate("Tag_name")%>: </label>
- <span id="Err_tag" class="error"></span>
-<input type="text" id="newtag">
-<span id="Err_model" class="error"></span>
-<input id="sendnewtag" type="submit" class="fa fa-tag" value="<%=Html.Translate("Submit")%>">
+ <span id="Err_tag<%=Model.Id%>" class="error"></span>
+<input type="text" id="newtag<%=Model.Id%>" class="taginput">
+<span id="Err_model<%=Model.Id%>" class="error"></span>
+<input id="sendnewtag<%=Model.Id%>" type="submit" class="submittag fa fa-tag" value="<%=Html.Translate("Submit")%>">
 </fieldset>
 </form>
 <script>
-
-
-
-$(document).ready(function(){
-
-$('#hidetaggerbtn').click(function(){
-$('#tagger').addClass('hidden');
-$('#viewtagger').removeClass('hidden');
-$('#hidetagger').addClass('hidden');
-});
-$('#viewtaggerbtn').click(function(){
-$('#tagger').removeClass('hidden');
-$('#viewtagger').addClass('hidden');
-$('#hidetagger').removeClass('hidden');
-});
-
-	$('#newtag').autocomplete({
-  	  minLength: 0,
-      delay: 200,
-      source:  function( request, response ) {
-        $.ajax({
-          url: "/api/Blogs/Tags",
-          type: "POST",
-          data: {
-            pattern: request.term
-          },
-          success: function( data ) {
-            response( data );
-          }
-        });
-      },      
-      select: function( event, ui ) {
-        console.log( ui.item ?
-          "Selected: " + ui.item.label :
-          "Nothing selected, input was " + this.value);
-      },
-      open: function() {
-        $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-      },
-      close: function() {
-        $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-      }
-	});	
-	$('#tagger').on('submit', function(e) { e.preventDefault(); });
-
-	$('#sendnewtag').click(function(){
-	var data = {
-           postid: <%= Model.Id %>,
-           tag: $('#newtag').val()
-          }
-	$.ajax({
-          url: '/api/Blogs/Tag/',
-          type: 'POST',
-          data: data,
-          success: function() {
-            $('<li>'+data.tag+'</li>').appendTo('#tags');
-            $('#newtag').val('');
-          },
-          statusCode: {
-            	400: Yavsc.onAjaxBadInput
-            	},
-            error: Yavsc.onAjaxError
-        });
+	$('#sendnewtag<%=Model.Id%>').click(function(e){
+		Tags.tag(<%=Model.Id%>,$('#newtag<%=Model.Id%>').val(),
+		function(postid,tagname){
+			var nTagDisplay = $('<span class="tagname">'+tagname+'</span>');
+			nTagDisplay.click( function() {
+	   var postid=$(this).parent().data('postid');
+	   var $thistag = $(this);
+	   Tags.untag(postid, $thistag.text(), function () { $thistag.remove(); } );
+	   });
+            nTagDisplay.appendTo('#tags'+postid);
+            $('#newtag'+postid).val('');
+            }
+		);
+		e.preventDefault();
 	});
-});
+	$('#sendnewtag<%=Model.Id%>').on('submit', function(e) { e.preventDefault(); });
 </script>
 <% } %>
 <% } %>

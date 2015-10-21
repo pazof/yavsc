@@ -7,6 +7,10 @@ body {
 	padding: 0;
 	margin: 0;
 }
+.tagname {  color: #D0FFD0; }
+.tagname+.tagname:before { content: ', '; } 
+.tagname:hover { background-color: red; cursor:pointer; }
+
 /* Start by setting display:none to make this hidden.
    Then we position it in relation to the viewport window
    with position:fixed. Width, height, top and left speak
@@ -153,6 +157,7 @@ textarea.fullwidth { min-height:10em; }
 	display:inline;
 	bottom:0;
 }
+.panel { max-width: 24em; display:inline-block; }
 
 .panel,.bshpanel, aside {
 	background-color: rgba(20,20,20,.8); 
@@ -160,7 +165,7 @@ textarea.fullwidth { min-height:10em; }
 	padding: 1em;
 }
 .spanel {
-  max-width: 24em;
+  max-width: 18em;
     display: inline-block;
   padding: .3em;
 }
@@ -200,7 +205,7 @@ label {
 	font-size: medium;
 }
 .editable {
-	margin 1em; 
+	margin: .5em; 
 	min-height:1em; 
 	border-radius: 1em; 
 	border: dashed rgb(020,20,256) 2px; 

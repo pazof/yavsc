@@ -33,7 +33,7 @@ namespace Yavsc.ApiControllers
 				BlogManager.Tag (model.PostId, model.Tag);
 			}
 		}
-		static string [] officalTags = new string[] { "Artistes", "Accueil", "Actualités", "Mentions légales", "Admin", "Web" } ;
+		static string [] officalTags = new string[] { "Artistes", "Accueil", "Événements", "Mentions légales", "Admin", "Web" } ;
 		/// <summary> 
 		/// Tags the specified pattern.
 		/// </summary>
@@ -45,14 +45,16 @@ namespace Yavsc.ApiControllers
 		}
 
 		/// <summary>
-		/// Untag the specified postid and tag.
+		/// Untag the specified model.
 		/// </summary>
-		/// <param name="id">Postid.</param>
-		/// <param name="tag">Tag.</param>
-		[Authorize, ValidateAjaxAttribute, HttpPost]
-		public void Untag (long id, [FromBody] string tag) {
-			BlogManager.GetForEditing (id);
-			BlogManager.Untag (id, tag);
+		/// <param name="model">Model.</param>
+		[Authorize, 
+			AcceptVerbs ("POST")]
+		public void Untag (PostTag model) {
+			if (ModelState.IsValid) {
+				BlogManager.GetForEditing (model.PostId);
+				BlogManager.Untag (model.PostId, model.Tag);
+			}
 		}
 
 		/// <summary>

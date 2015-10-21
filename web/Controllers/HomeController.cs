@@ -85,7 +85,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		public ActionResult Index ()
 		{
-			foreach (string tagname in new string[] {"Artistes","Accueil","Actualités","Mentions légales"})
+			foreach (string tagname in new string[] {"Accueil","Événements","Mentions légales"})
 			{
 				TagInfo ti = BlogManager.GetTagInfo (tagname);
 				// TODO specialyze BlogEntry creating a PhotoEntry 

@@ -11,6 +11,48 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
+
+
+<% using(Html.BeginForm("ValidateEdit","Blogs")) { %>
+<fieldset>
+<legend>Contrôle d'accès au Billet</legend>
+<%= Html.LabelFor(model => model.Visible) %> : <%= Html.CheckBox( "Visible" ) %> 
+<i id="note_visible">Note: Si un ou plusieurs cercles sont séléctionnés ici,
+ le billet ne sera visible qu'aux membres de ces cercles.</i>
+<%= Html.ValidationMessage("Visible", "*") %>
+<%= Html.LabelFor(model => model.AllowedCircles) %>
+<%= Html.ListBox("AllowedCircles") %>
+<%= Html.ValidationMessage("AllowedCircles", "*") %>
+</fieldset>
+<span id="viewsource">
+<i class="fa fa-code menuitem"><%=Html.Translate("View_source")%></i></span>
+<span id="hidesource" class="hidden">
+<i class="fa fa-code menuitem"><%=Html.Translate("Hide_source")%></i>
+</span>
+<fieldset id="source" class="hidden">
+<%=Html.Hidden("Author")%>
+<%=Html.Hidden("Id")%>
+<%= Html.LabelFor(model => model.Photo) %>
+<%=Html.TextBox("Photo")%>
+<%=Html.ValidationMessage("Photo")%><br>
+<%= Html.LabelFor(model => model.Title) %>
+<%=Html.TextBox("Title")%>
+<%=Html.ValidationMessage("Title")%><br>
+<%=Html.TextArea("Content")%>
+<%=Html.ValidationMessage("Content")%>
+</fieldset>
+<input type="submit" id="validate" value="Valider" class="fa fa-check menuitem">
+<% } %>
+
+<form id="frmajax">
+<fieldset>
+<legend>Attacher des fichiers</legend>
+<input type="file" name="attached" id="postedfile" multiple>
+<input type="button" value="attacher les ficher" onclick="submitFile()">
+<input type="button" value="importer les documents" onclick="submitImport()">
+</fieldset>
+</form>
+
 <span class="placard editable" for="Photo">
 <img src="<%=Model.Photo%>" alt="photo" id="vphoto" >
 </span>
@@ -189,44 +231,7 @@ var data  = new FormData($('#frmajax').get()[0]);
 }
 
 </script>
-<form id="frmajax">
-<fieldset>
-<legend>Attacher des fichiers</legend>
-<input type="file" name="attached" id="postedfile" multiple>
-<input type="button" value="attacher les ficher" onclick="submitFile()">
-<input type="button" value="importer les documents" onclick="submitImport()">
-</fieldset>
-</form>
-<% using(Html.BeginForm("ValidateEdit","Blogs")) { %>
-<fieldset>
-<legend>Contrôle d'accès au Billet</legend>
-<%= Html.LabelFor(model => model.Visible) %> : <%= Html.CheckBox( "Visible" ) %> 
-<i id="note_visible">Note: Si un ou plusieurs cercles sont séléctionnés ici,
- le billet ne sera visible qu'aux membres de ces cercles.</i>
-<%= Html.ValidationMessage("Visible", "*") %>
-<%= Html.LabelFor(model => model.AllowedCircles) %>
-<%= Html.ListBox("AllowedCircles") %>
-<%= Html.ValidationMessage("AllowedCircles", "*") %>
-</fieldset>
-<span id="viewsource">
-<i class="fa fa-code menuitem"><%=Html.Translate("View_source")%></i></span>
-<span id="hidesource" class="hidden">
-<i class="fa fa-code menuitem"><%=Html.Translate("Hide_source")%></i>
-</span>
-<fieldset id="source" class="hidden">
-<%=Html.Hidden("Author")%>
-<%=Html.Hidden("Id")%>
-<%= Html.LabelFor(model => model.Photo) %>
-<%=Html.TextBox("Photo")%>
-<%=Html.ValidationMessage("Photo")%><br>
-<%= Html.LabelFor(model => model.Title) %>
-<%=Html.TextBox("Title")%>
-<%=Html.ValidationMessage("Title")%><br>
-<%=Html.TextArea("Content")%>
-<%=Html.ValidationMessage("Content")%>
-</fieldset>
-<input type="submit" id="validate" value="Valider" class="fa fa-check menuitem">
-<% } %>
+
 
 
 <aside>

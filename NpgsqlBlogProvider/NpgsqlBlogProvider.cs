@@ -442,6 +442,8 @@ namespace Npgsql.Web.Blog
 
 		private long GetTagId (string tagname)
 		{
+			if (tagname == null)
+				throw new NullReferenceException ("This tag name is null");
 			long id = 0;
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
@@ -455,6 +457,8 @@ namespace Npgsql.Web.Blog
 
 		private long GetOrCreateTagId (string tagname)
 		{
+			if (tagname == null)
+				throw new NullReferenceException ("This tag name is null");
 			long id = 0;
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				try { 
@@ -468,7 +472,6 @@ namespace Npgsql.Web.Blog
 					using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 						cmd.CommandText = "INSERT INTO public.tag(name) VALUES (:name) RETURNING _id";
 						cmd.Parameters.AddWithValue ("name", tagname);
-						cnx.Open ();
 						id = (long)cmd.ExecuteScalar ();
 					}
 				}

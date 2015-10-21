@@ -1,6 +1,7 @@
 ﻿var Yavsc =  (function(apiBaseUrl){ 
 var self = {};
 
+var $notifications = $('#notifications');
 function dumpprops(obj) { 
 var str = "";
 for(var k in obj)
@@ -29,13 +30,29 @@ self.dimiss = function () {
 		$(this).parent().remove();
 	};
 
+self.onScroll = function() {
+		if ($notifications.has('*').length>0) {
+		if ($(window).scrollTop()>375) { 
+		console.log('fixit');
+			$notifications.css('position','fixed');
+			$notifications.css('z-index',2);
+			$notifications.css('top',0);
+		}
+		else {  
+			$notifications.css('position','static');
+			$notifications.css('z-index',1); 
+		}}
+	};
+
 self.notice = function (msg, msgok) { 
    	if (!msgok) msgok='Ok';
    	if (msg) { 
    	var note = $('<div class="notification">'+msg+'<br></div>');
    	$('<a class="actionlink"><i class="fa fa-check">'+msgok+'</i></a>').click(self.dimiss).appendTo(note);
    	note.appendTo("#notifications");
-  	}  };
+   	self.onScroll();
+  	} 
+  	 };
 
 
  self.onAjaxBadInput = function (data)
@@ -59,8 +76,29 @@ self.onAjaxError = function (xhr, ajaxOptions, thrownError) {
         			Yavsc.notice(xhr.status+" : "+xhr.responseText);
      };
 
-return self;
-})();
+$(document).ready(function(){
+
+$('.maskable').each( function() {
+var $mobj = $(this);
+var $btnshow = $('#'+$mobj.data('btn-show'));
+var $btnhide = $('#'+$mobj.data('btn-hide'));
+var onClickHide = function(){
+$mobj.addClass('hidden');
+$btnshow.removeClass('hidden');
+$btnhide.addClass('hidden');
+};
+$btnhide.click(onClickHide);
+onClickHide();
+$btnshow.click(function(){
+$mobj.removeClass('hidden');
+$btnshow.addClass('hidden');
+$btnhide.removeClass('hidden');
+});
+});
+
+
+});
+
 
 
 $(document).ready(function(){
@@ -70,20 +108,11 @@ $(document).on({
     ajaxStart: function() { $body.addClass("loading");    },
     ajaxStop: function() { $body.removeClass("loading"); }    
 });
-
-	var $window = $(window);
-	$(window).scroll(function() {
-		var $ns = $('#notifications');
-		if ($ns.has('*').length>0) {
-		if ($window.scrollTop()>375) { 
-			$ns.css('position','fixed');
-			$ns.css('z-index',2);
-			$ns.css('top',0);
-		}
-		else {  
-			$ns.css('position','static');
-			$ns.css('z-index',1); 
-		}}
-	});
+	$(window).scroll(self.onScroll);
 });
+
+
+
+return self;
+})();
 
