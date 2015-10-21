@@ -442,6 +442,7 @@
     <Content Include="App_Themes\sons-of-obsidian.css" />
     <Content Include="App_Themes\sunburst.css" />
     <Content Include="App_Themes\prettify.css" />
+    <Content Include="images\FhHRx.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
