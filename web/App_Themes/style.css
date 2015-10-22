@@ -156,7 +156,7 @@ textarea.fullwidth { min-height:10em; }
 	display:inline;
 	bottom:0;
 }
-.panel { max-width: 24em; display:inline-block; }
+.panel {  display:inline-block; }
 
 .panel,.bshpanel, aside {
 	background-color: rgba(20,20,20,.8); 

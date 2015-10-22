@@ -1,9 +1,9 @@
-﻿<%@ Page Title="" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
+﻿<%@ Page Title="Bill_removal" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
 <%= Html.ValidationSummary() %>
-<% using (Html.BeginForm("RemovePost","Blogs",new {id=Model.Id})) { %>
+<% using (Html.BeginForm("RemovePost","Blogs",new {postid=Model.Id})) { %>
 
 <%= Html.LabelFor(model => model.Title) %> :
 <%= Html.TextBox( "Title" ) %>

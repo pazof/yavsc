@@ -1,3 +1,12 @@
+2015-10-22  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css: no max width for panels, it's too abstract for a
+	notion
+
+	* RemovePost.aspx: Adds a Title and fixes the action call
+
+	* Contact.aspx: cleans the code from totem
+
 2015-10-20  Paul Schneider  <paul@pschneider.fr>
 
 	* Web.config:

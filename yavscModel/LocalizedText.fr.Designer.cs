@@ -256,6 +256,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Bill_removal {
+            get {
+                return ResourceManager.GetString("Bill_removal", resourceCulture);
+            }
+        }
+        
         public static string Modify {
             get {
                 return ResourceManager.GetString("Modify", resourceCulture);
