@@ -19,8 +19,25 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 $(document).ready(function(){
 	var $window = $(window); 
+	var onPos = function (bgobj,dx,dy) {
+		x=$window.scrollLeft()+dx;
+		y=$window.scrollTop()+dy;
+
+	  	var speed = bgobj.data('speed');
+		var xPos = bgobj.attr('orgbgpx') - Math.round( x / speed);
+		var yPos = bgobj.attr('orgbgpy') - Math.round( y / speed);
+		// Put together our final background position
+		var coords = '' + xPos + bgobj.attr('orgbgpxu') + yPos + bgobj.attr('orgbgpyu');
+		// Move the background
+		bgobj.css({ backgroundPosition: coords });
+	};
+	 var tiltLR=0;
+	 var titleFB=0;
+
+	
 
 	$('[data-type="background"]').each(function(){
 		var $bgobj = $(this); // assigning the object
@@ -59,16 +76,24 @@ $(document).ready(function(){
 		else { $bgobj.attr('orgbgpyu','px '); } 
 		$bgobj.attr('orgbgpx',parseInt(bgposx));
 		$bgobj.attr('orgbgpy',parseInt(bgposy));
-
+		    
 		$(window).scroll(function() {
-		    var speed = $bgobj.data('speed');
-		var xPos = $bgobj.attr('orgbgpx') - Math.round($window.scrollLeft() / speed);
-		var yPos = $bgobj.attr('orgbgpy') - Math.round($window.scrollTop() / speed);
-		// Put together our final background position
-		var coords = '' + xPos + $bgobj.attr('orgbgpxu') + yPos + $bgobj.attr('orgbgpyu');
-		// Move the background
-		$bgobj.css({ backgroundPosition: coords });
-		// console.log($bgobj.get()[0].localName+' backgroundPosition: '+coords);
+		  onPos($bgobj,tiltLR,titleFB);
 		});
+		if (window.DeviceOrientationEvent) {
+
+	  // Create an event listener
+		  window.addEventListener('deviceorientation', function(event) {
+		  	tiltLR = event.gamma;
+		  	titleFB = event.beta;
+		  	console.log("DeviceOrientationEvent");
+			onPos($bgobj,tiltLR,titleFB);
+		  });
+		  $(window).mousemove(function(e) {
+			tiltLR = e.pageX;
+			titleFB = e.pageY;
+			onPos($bgobj,tiltLR,titleFB);
+			});
+		}  
 	});
 });
