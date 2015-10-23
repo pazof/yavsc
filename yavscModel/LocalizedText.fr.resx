@@ -21,6 +21,7 @@
 	<data name="Ciffer"><value>Chiffre</value></data>
 	<data name="Circles"><value>Cercles</value></data>
 	<data name="Comment"><value>Commentaire</value></data>
+	<data name="DB"><value>Base de données</value></data>
 	<data name="DoComment"><value>Commenter</value></data>
 	<data name="Create"><value>Créer</value></data>
 	<data name="Date_search"><value>Demande de rendez-vous</value></data>
@@ -33,6 +34,7 @@
 	<data name="EndDate"><value>Date de fin</value></data>
 	<data name="Estimate_not_found"><value>Devis non trouvé</value></data>
     <data name="EventWebPage"><value>Page web de l'événement</value></data>
+	<data name="ExistantDB"><value>Base de données éxistante</value></data>
 	<data name="Google_calendar"><value>Agenda Google</value></data>
 	<data name="Google_error"><value>Erreur Google : {0}</value></data>
 	<data name="Hide_source"><value>Cacher le texte source du billet</value></data>

@@ -118,6 +118,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string ExistantDB {
+            get {
+                return ResourceManager.GetString("ExistantDB", resourceCulture);
+            }
+        }
+        
         public static string DoComment {
             get {
                 return ResourceManager.GetString("DoComment", resourceCulture);
@@ -145,6 +151,12 @@ namespace Yavsc.Model {
         public static string was_added_to_the_empty_role {
             get {
                 return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
+            }
+        }
+        
+        public static string ImportException {
+            get {
+                return ResourceManager.GetString("ImportException", resourceCulture);
             }
         }
         
@@ -214,9 +226,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string ImportException {
+        public static string Modify {
             get {
-                return ResourceManager.GetString("ImportException", resourceCulture);
+                return ResourceManager.GetString("Modify", resourceCulture);
             }
         }
         
@@ -259,12 +271,6 @@ namespace Yavsc.Model {
         public static string Bill_removal {
             get {
                 return ResourceManager.GetString("Bill_removal", resourceCulture);
-            }
-        }
-        
-        public static string Modify {
-            get {
-                return ResourceManager.GetString("Modify", resourceCulture);
             }
         }
         
@@ -412,6 +418,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string User_List {
+            get {
+                return ResourceManager.GetString("User List", resourceCulture);
+            }
+        }
+        
         public static string Online {
             get {
                 return ResourceManager.GetString("Online", resourceCulture);
@@ -430,9 +442,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string User_List {
+        public static string DB {
             get {
-                return ResourceManager.GetString("User List", resourceCulture);
+                return ResourceManager.GetString("DB", resourceCulture);
             }
         }
         

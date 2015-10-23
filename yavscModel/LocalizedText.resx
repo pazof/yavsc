@@ -22,6 +22,7 @@
 	<data name="Consultant"><value>Consultant</value></data>
 	<data name="Comment"><value>Comment</value></data>
 	<data name="Count"><value>Count</value></data>
+	<data name="DB"><value>Data base</value></data>
 	<data name="Date_search"><value>Rendez-vous query</value></data>
 	<data name="Description"><value>Description</value></data>
 	<data name="DisplayName"><value>Display Name</value></data>
@@ -33,6 +34,7 @@
 	<data name="EndDate"><value>End date</value></data>
     <data name="Estimate_not_found"><value>Estimate not found</value></data>
 	<data name="EventWebPage"><value>Event Web page</value></data>
+	<data name="ExistantDB"><value>Existant data base</value></data>
 	<data name="Home"><value>Home</value></data>
 	<data name="Hide"><value>Hide</value></data>
 	<data name="Hide_source"><value>Hide the bill source text</value></data>

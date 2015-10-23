@@ -106,6 +106,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string was_added_to_the_empty_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
+            }
+        }
+        
         public static string Not_Approuved {
             get {
                 return ResourceManager.GetString("Not_Approuved", resourceCulture);
@@ -124,9 +130,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string was_added_to_the_empty_role {
+        public static string ExistantDB {
             get {
-                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
+                return ResourceManager.GetString("ExistantDB", resourceCulture);
             }
         }
         
@@ -445,6 +451,12 @@ namespace Yavsc.Model {
         public static string Hide_source {
             get {
                 return ResourceManager.GetString("Hide_source", resourceCulture);
+            }
+        }
+        
+        public static string DB {
+            get {
+                return ResourceManager.GetString("DB", resourceCulture);
             }
         }
         

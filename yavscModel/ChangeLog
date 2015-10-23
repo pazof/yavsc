@@ -1,3 +1,10 @@
+2015-10-23  Paul Schneider  <paul@pschneider.fr>
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: Existant DB message
+
 2015-10-22  Paul Schneider  <paul@pschneider.fr>
 
 	* LocalizedText.resx:

@@ -27,11 +27,16 @@ namespace Yavsc.Controllers
 		{
 			if (!Roles.RoleExists (adminRoleName)) {
 				Roles.CreateRole (adminRoleName);
+				YavscHelpers.Notify (adminRoleName + " " + LocalizedText.role_created);
+
 			}
 			return View ();
 		}
 		/// <summary>
 		/// Inits the db.
+		/// In order this action succeds, 
+		/// there must not exist any administrator,
+		/// nor Admin group.
 		/// </summary>
 		/// <returns>The db.</returns>
 		/// <param name="datac">Datac.</param>
@@ -59,7 +64,6 @@ namespace Yavsc.Controllers
 		[Authorize(Roles="Admin")]
 		public ActionResult Backups(DataAccess model)
 		{
-
 			return View (model);
 		}
 		/// <summary>

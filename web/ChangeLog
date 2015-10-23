@@ -1,3 +1,7 @@
+2015-10-23  Paul Schneider  <paul@pschneider.fr>
+
+	* AdminController.cs: Notification when Admin group is created
+
 2015-10-22  Paul Schneider  <paul@pschneider.fr>
 
 	* parralax.js: YastepInDaPresentation
