@@ -15,9 +15,9 @@
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/doxy.css")%>" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
 <script src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
-<script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.js")%>"></script>
-<script src="<%=Url.Content("~/Scripts/parralax.js")%>"></script>
-<script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>
+<!--<script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.min.js")%>"></script>-->
+<script src="<%=Url.Content("~/Scripts/parallax.js")%>"></script>
+<!--<script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>-->
 <script type="text/javascript">
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 </script> 
@@ -29,9 +29,9 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 <body>
 <header data-type="background" data-speed="8" >
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
-<h1><a href="<%= Url.Content("~/") %>">
+<h1><a href="<%= Url.RouteUrl("Default") %>">
 <%=ViewState["orgtitle"]%></a>
-- <a href="<%= Url.RouteUrl("Default", new {controller="Home" }) %>"><%= YavscHelpers.SiteName %></a>
+- <a href="<%= Url.RouteUrl("Default", new {controller = "Home" , action = "Index" }) %>"><%= YavscHelpers.SiteName %></a>
 </h1>
  </asp:ContentPlaceHolder>
  <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
@@ -56,17 +56,17 @@ Yavsc.notice('<%=note%>');
 <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="vos billets" class="iconsmall" />
 <span class="hint">Vos billets</span>
 </a>
-<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Profile", id = HttpContext.Current.User.Identity.Name} ) %>" accesskey="P" class="menuitem">
-<i class="fa fa-user"><%= HttpContext.Current.User.Identity.Name %>
-<span class="hint"> &Eacute;dition de votre profile </span></i> 
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Profile", id = HttpContext.Current.User.Identity.Name} ) %>" accesskey="P" class="menuitem fa fa-user">
+<%= HttpContext.Current.User.Identity.Name %>
+<span class="hint"> &Eacute;dition de votre profile </span>
 </a>
-<a href="/Blogs/Post" accesskey="P" class="menuitem">
-<i class="fa fa-pencil"><u>P</u>oster
-<span class="hint">&Eacute;dition d'un nouveau billet </span></i>
+<a href="/Blogs/Post" accesskey="P" class="menuitem fa fa-pencil">
+<u>P</u>oster
+<span class="hint">&Eacute;dition d'un nouveau billet </span>
 </a>
 
-<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Logout", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C" class="menuitem">
-<i class="fa fa-sign-out"><%=Html.Translate("Logout")%></i></a> 
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Logout", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C" class="menuitem fa fa-sign-out">
+<%=Html.Translate("Logout")%></a> 
 <% } %>
 </nav>
 <main data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="22" >
@@ -87,11 +87,6 @@ Yavsc.notice('<%=note%>');
      <a class="thanks" href="<%=link.Url%>"><%= link.Text %></a>
      <% }} %>
 <%= Html.ActionLink("Formulaire de contact","Contact","Home") %>
-<script src="https://apis.google.com/js/platform.js" defer>
-  {lang: 'fr'}
-</script>
-<div id="gspacer" class="control"><div class="g-plusone" data-annotation="inline" data-width="170"></div>
-</div>
 </footer><div class="modal"></div>
 </body>
 </html>

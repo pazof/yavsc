@@ -6,7 +6,7 @@
 
 </asp:Content>
 <asp:Content ContentPlaceHolderID="MASContent" ID="MASContentContent" runat="server">
-<div>
+<div class="panel">
 <%= Html.ActionLink("Les articles", "Index", "Blogs", null, new { @class="actionlink" }) %>
 <%= Html.ActionLink("Contact", "Contact", "Home", null, new { @class="actionlink" }) %>
 <%= Html.ActionLink("Credits", "Credits", "Home", null, new { @class="actionlink" }) %>

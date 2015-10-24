@@ -76,6 +76,12 @@ namespace Yavsc
 					postid=UrlParameter.Optional }
 			); 
 			routes.MapRoute (
+				"BackCompat",
+				"{controller}/{action}/{user}/{title}",
+				new { controller = "Home", action = "Index", user = UrlParameter.Optional, title = UrlParameter.Optional }
+				);
+
+			routes.MapRoute (
 				"Default",
 				"{controller}/{action}/{id}",
 				new { controller = "Home", action = "Index", id = UrlParameter.Optional }

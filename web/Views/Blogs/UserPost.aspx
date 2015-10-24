@@ -10,7 +10,7 @@
 </a>
 <% } %>
 <h1 class="blogtitle">
-<a href="<%= Url.Action("UserPost", new{user=Model.Author, title = Model.Title}) %>">
+<a href="<%= Url.RouteUrl("BlogByTitle", new{ user=Model.Author, title = Model.Title}) %>">
 <%=Model.Title%>
 </a>
  - <%= Html.ActionLink((string)ViewData ["BlogTitle"] ,"UserPosts",new{user=Model.Author}, null) %>

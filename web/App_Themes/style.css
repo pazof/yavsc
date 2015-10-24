@@ -51,6 +51,7 @@ input, textarea, checkbox {
 .blogbanner { float: left; top:0; }
 .subtitle { font-size:small; font-style: italic; }
 header {
+transition: margin 2s, padding 2s, background 2s;
 	padding: 0;
 	margin: 0;
 	padding-top: 201px;
@@ -59,11 +60,13 @@ header {
 	background: url("/images/star-939235_1280.jpg") 0 0 no-repeat fixed;
 	}
 header h1, header a {
+transition:padding 2s;
 background-color: rgba(0,0,0,.5); 
 margin:0; padding:1em;
 }
 
 nav {
+transition: margin 2s, padding 2s, background 2s;
 	margin: 2em;
 	padding: 2em;
 	display: block;
@@ -73,6 +76,7 @@ nav {
 }
 
 main {
+transition: margin 2s, padding 2s, background 2s;
 	margin: 2em;
 	padding: 2em;
 	display: block;
@@ -81,6 +85,7 @@ main {
 	}
 
 footer {
+transition: margin 2s, padding 2s, background 2s;
 	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ;
 	margin: 0;
 	margin-top: 2em;
@@ -156,7 +161,9 @@ textarea.fullwidth { min-height:10em; }
 	display:inline;
 	bottom:0;
 }
-.panel {  display:inline-block; }
+.panel { 
+display:inline-block;
+  }
 
 .panel,.bshpanel, aside {
 	background-color: rgba(20,20,20,.8); 
@@ -196,9 +203,6 @@ content: ")";
    background-color:rgba(0,0,32,0.6);
    font-family: 'Arial', cursive;
 	padding: 1em;
-}
-a:visited {
-	color: #E0E0E0;
 }
 label {
 	font-size: medium;
@@ -269,10 +273,14 @@ input, select, textarea {
     font-family: 'Arial', cursive;
 }
 
-.actionlink:hover, fa:hover, .menuitem:hover, a:hover {
+ a:hover {
 	background-color:rgba(30,0,124,0.9);
 	border: solid green 1px;
 }
+a:active { 
+	background-color:rgba(124,0,32,0.9);
+}
+
  input:hover, textarea:hover {
 	color: white;
 	background-color:rgba(64,64,64,0.8);
@@ -323,10 +331,11 @@ input, select, textarea {
 @media all and (max-width: 640px) {
 header {
 	padding-bottom:1em;
+	background: url("/images/star-939235_1280.s.jpg") 0 0 no-repeat fixed;
 	}
 		
 #avatar { 
- margin:.5em;
+ 	margin:.5em;
  }
 
 header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
@@ -339,6 +348,7 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 	main { 
 	margin: 1em;
 	padding: 1em;
+	background: url("/images/p8-av4.s.jpg") 50% 20em no-repeat fixed ;
 	} 
 	footer { 
 		background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ; 

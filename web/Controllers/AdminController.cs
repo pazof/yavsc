@@ -27,7 +27,7 @@ namespace Yavsc.Controllers
 		{
 			if (!Roles.RoleExists (adminRoleName)) {
 				Roles.CreateRole (adminRoleName);
-				YavscHelpers.Notify (adminRoleName + " " + LocalizedText.role_created);
+				YavscHelpers.Notify (ViewData, adminRoleName + " " + LocalizedText.role_created);
 
 			}
 			return View ();

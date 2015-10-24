@@ -1,3 +1,31 @@
+2015-10-24  Paul Schneider  <paul@pschneider.fr>
+
+	* p8-av4.s.jpg:
+	* star-939235_1280.s.jpg:
+	* star-939235_1280.xxs.jpg: a smaller background
+
+	* style.css: adds animation
+
+	* AdminController.cs: Fixes the call to Notify
+
+	* Global.asax.cs: restores a dropped route
+
+	* App.master: Drops script references to jQuery-ui and
+	Prettify from
+	the master page. They are heavy.
+
+	* parallax.js: specifies the capture to false at calling the
+	event listener registration
+
+	* UserPost.aspx: Fixes this page
+
+	* Index.aspx: adds the `panel` class to embed those default
+	home page links 
+
+	* Web.csproj: dropping the imported parallax.js script
+
+	* animated-overlay.gif: may be used in a futur work :-)
+
 2015-10-23  Paul Schneider  <paul@pschneider.fr>
 
 	* AdminController.cs: Notification when Admin group is created
