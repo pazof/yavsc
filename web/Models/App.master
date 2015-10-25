@@ -86,7 +86,6 @@ Yavsc.notice('<%=note%>');
      <%  } else { %>
      <a class="thanks" href="<%=link.Url%>"><%= link.Text %></a>
      <% }} %>
-<%= Html.ActionLink("Formulaire de contact","Contact","Home") %>
 </footer><div class="modal"></div>
 </body>
 </html>

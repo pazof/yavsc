@@ -51,7 +51,7 @@ input, textarea, checkbox {
 .blogbanner { float: left; top:0; }
 .subtitle { font-size:small; font-style: italic; }
 header {
-transition: margin 2s, padding 2s, background 2s;
+transition: margin 2s, padding 2s;
 	padding: 0;
 	margin: 0;
 	padding-top: 201px;
@@ -66,7 +66,7 @@ margin:0; padding:1em;
 }
 
 nav {
-transition: margin 2s, padding 2s, background 2s;
+transition: margin 2s, padding 2s;
 	margin: 2em;
 	padding: 2em;
 	display: block;
@@ -76,7 +76,7 @@ transition: margin 2s, padding 2s, background 2s;
 }
 
 main {
-transition: margin 2s, padding 2s, background 2s;
+transition: margin 2s, padding 2s;
 	margin: 2em;
 	padding: 2em;
 	display: block;
@@ -85,7 +85,7 @@ transition: margin 2s, padding 2s, background 2s;
 	}
 
 footer {
-transition: margin 2s, padding 2s, background 2s;
+transition: margin 2s, padding 2s;
 	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ;
 	margin: 0;
 	margin-top: 2em;

@@ -78,11 +78,15 @@ $(document).ready(function(){
 		$(window).scroll(function() {
 		  onPos($bgobj,tiltLR,titleFB);
 		});
+		var nbevo=0;
 		if (window.DeviceOrientationEvent) {
 		  window.addEventListener('deviceorientation', function(event) {
+		    if (nbevo++>6) {
 		  	tiltLR = event.gamma;
 		  	titleFB = event.beta;
 			onPos($bgobj,tiltLR,titleFB);
+			nbevo=0;
+			}
 		  },false);
 		  $(window).mousemove(function(e) {
 			tiltLR = e.pageX;
