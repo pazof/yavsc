@@ -48,7 +48,7 @@ namespace Yavsc.Model.Calendar
 		/// <value>The location.</value>
 		public string Location { get; set; }
 
-		static FreeDateSet CreateFromCalAndQuery(CalendarEventList cal, BookEdit query)
+		static FreeDateSet CreateFromCalAndQuery(CalendarEventList cal, BookQuery query)
 		{
 
 			throw new NotImplementedException ();

@@ -1,4 +1,4 @@
-<%@ Page Title="Liste des administrateurs" Language="C#" Inherits="System.Web.Mvc.ViewPage<NewAdminModel>" MasterPageFile="~/Models/App.master" %>
+<%@ Page Title="Liste des administrateurs" Language="C#" Inherits="System.Web.Mvc.ViewPage<NewAdminModel>" MasterPageFile="~/Models/AppAdmin.master" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <div>

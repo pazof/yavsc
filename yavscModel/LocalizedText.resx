@@ -54,12 +54,15 @@
 	<data name="Modify"><value>Modify</value></data>
 	<data name="My_Estimates"><value>My estimates</value></data>
 	<data name="New_Tag"><value>New Tag</value></data>
-	<data name="none"><value>none</value></data>
 	<data name="no_content"><value>no content</value></data>
+	<data name="none"><value>none</value></data>
+	<data name="Non_existent_user"><value>Non existent user</value></data>
 	<data name="Not_Approuved"><value>Not Approuved</value></data>
+	<data name="No_calendar_for_this_user"><value>No calendar was associated to this user.</value></data>
 	<data name="Online"><value>Online</value></data>
 	<data name="Offline"><value>Offline</value></data>
 	<data name="Pdf_version"><value>Pdf version</value></data>
+	<data name="Person"><value>Person</value></data>
 	<data name="Preview"><value>Preview</value><comment>comment on preview</comment></data>
 	<data name="Private_circle"><value>Private circle</value></data>
 	<data name="Profile_edition"><value>Profile edition</value></data>
@@ -70,6 +73,7 @@
 	<data name="Register"><value>Register</value></data>
 	<data name="Remember_me"><value>Remember me</value></data>
 	<data name="Remove"><value>Remove</value></data>
+	<data name="Role"><value>Role</value></data>
 	<data name="role_created"><value>role created</value></data>
 	<data name="StartDate"><value>Start date</value></data>
 	<data name="Submit"><value>Submit</value></data>
@@ -79,6 +83,7 @@
 	<data name="Unitary_cost"><value>Unitary_cost</value></data>
 	<data name="User_List"><value>User List</value><comment></comment></data>
 	<data name="User_name"><value>User name</value></data>
+	<data name="UserNotInThisRole"><value>This user is not in this role</value></data>
 	<data name="View_source"><value>View source</value></data>
 	<data name="was_added_to_the_role"><value>was added to the role</value></data>
 	<data name="was_added_to_the_empty_role"><value>There was no user in the '{1}' role. You ({0}) was just added as firt user in the '{1}' role.</value></data>

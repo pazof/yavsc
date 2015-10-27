@@ -1,4 +1,4 @@
-<%@ Page Title="Liste des rôles" Language="C#" Inherits="System.Web.Mvc.ViewPage" MasterPageFile="~/Models/App.master" %>
+<%@ Page Title="Liste des rôles" Language="C#" Inherits="System.Web.Mvc.ViewPage" MasterPageFile="~/Models/AppAdmin.master" %>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 Roles:
  <ul>

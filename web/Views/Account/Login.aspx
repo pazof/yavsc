@@ -23,7 +23,7 @@
 <%= Html.ActionLink("S'enregistrer","GetRegister",new {returnUrl=ViewData["returnUrl"]}, new { @class="actionlink" }) %>
 </div>
 <div class="panel">
-<a href="<%=Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/Login"%>?returnUrl=<%=ViewData["returnUrl"]==null?Request.Url.PathAndQuery:(string)ViewData["returnUrl"]%>" class="actionlink">
+<a href="<%= Url.RouteUrl ("Default", new { controller = "Google", action= "Login", returnUrl=ViewData["returnUrl"] }) %>" class="actionlink">
 	Identification avec un compte Google
 	<img src="/images/sign-in-with-google.png" style="max-height:1.5em; max-width:6em;" alt="Google sign in">
 	</a>

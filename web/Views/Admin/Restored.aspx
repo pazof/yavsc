@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<TaskOutput>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Models/AppAdmin.master" Inherits="System.Web.Mvc.ViewPage<TaskOutput>" %>
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 <h1><%=Html.Encode(ViewData["BackupName"])%> Restauration</h1>
 <div><h2>Error message </h2> <%= Html.Encode(Model.Error) %></div>

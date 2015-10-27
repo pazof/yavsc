@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Restore" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<DataAccess>" %>
+﻿<%@ Page Title="Restore" Language="C#" MasterPageFile="~/Models/AppAdmin.master" Inherits="System.Web.Mvc.ViewPage<DataAccess>" %>
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 <%= Html.ValidationSummary("Restore a database backup") %>
 <% using (Html.BeginForm("Restore","Admin")) { %>

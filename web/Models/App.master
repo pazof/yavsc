@@ -15,9 +15,9 @@
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/doxy.css")%>" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
 <script src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
-<!--<script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.min.js")%>"></script>-->
+<script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.min.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/parallax.js")%>"></script>
-<!--<script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>-->
+<script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>
 <script type="text/javascript">
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 </script> 
@@ -46,7 +46,7 @@ Yavsc.notice('<%=note%>');
 </script>
 <% } %>
 </header>
-<nav data-type="background" data-speed="2">
+<nav data-type="background" data-speed="5">
 <% if (Membership.GetUser()==null) { %>
 <a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" class="menuitem" accesskey = "C">
 <i class="fa fa-sign-in">Connexion</i> 
@@ -75,7 +75,7 @@ Yavsc.notice('<%=note%>');
 </main>
 <asp:ContentPlaceHolder ID="MASContent" runat="server">
 </asp:ContentPlaceHolder>
-<footer data-type="background" data-speed="2" >
+<footer data-type="background" data-speed="5" >
 <div id="copyr">
 <a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">© 2015 GNU GENERAL PUBLIC LICENSE  <i>Version 3, 29 June 2007</i></a>
 </div>

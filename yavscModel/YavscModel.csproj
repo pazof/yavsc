@@ -156,7 +156,6 @@
     <Compile Include="RolesAndMembers\GCMRegister.cs" />
     <Compile Include="RolesAndMembers\LostPasswordModel.cs" />
     <Compile Include="Messaging\SimpleMessage.cs" />
-    <Compile Include="Calendar\BookEdit.cs" />
     <Compile Include="Calendar\FreeDate.cs" />
     <Compile Include="FrontOffice\Catalog\Billing\PriceOnItemCount.cs" />
     <Compile Include="WorkFlow\TaskOutput.cs" />
@@ -178,6 +177,7 @@
     <Compile Include="Blogs\PostInfoByUser.cs" />
     <Compile Include="Blogs\TagInfo.cs" />
     <Compile Include="Blogs\MarkdownHelper.cs" />
+    <Compile Include="Calendar\BookQuery.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

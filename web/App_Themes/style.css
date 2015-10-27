@@ -29,14 +29,10 @@ body {
                 no-repeat;
 }
 
-/* When the body has the loading class, we turn
-   the scrollbar off with overflow:hidden */
 body.loading {
     overflow: hidden;   
 }
 
-/* Anytime the body has the loading class, our
-   modal element will be visible */
 body.loading .modal {
     display: block;
 }
@@ -57,7 +53,7 @@ transition: margin 2s, padding 2s;
 	padding-top: 201px;
 	padding-bottom:2em;
 	display: block;
-	background: url("/images/star-939235_1280.jpg") 0 0 no-repeat fixed;
+	background: url("/images/star-939235_1280.jpg") -3em -3em no-repeat fixed;
 	}
 header h1, header a {
 transition:padding 2s;
@@ -74,7 +70,7 @@ transition: margin 2s, padding 2s;
 	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ;
 	justify-content: space-around;
 }
-
+nav li { display: inline-block; }
 main {
 transition: margin 2s, padding 2s;
 	margin: 2em;

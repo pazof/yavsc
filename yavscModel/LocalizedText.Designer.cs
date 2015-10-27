@@ -64,12 +64,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Location {
-            get {
-                return ResourceManager.GetString("Location", resourceCulture);
-            }
-        }
-        
         public static string Circles {
             get {
                 return ResourceManager.GetString("Circles", resourceCulture);
@@ -112,9 +106,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string UserNotInThisRole {
+            get {
+                return ResourceManager.GetString("UserNotInThisRole", resourceCulture);
+            }
+        }
+        
         public static string Not_Approuved {
             get {
                 return ResourceManager.GetString("Not_Approuved", resourceCulture);
+            }
+        }
+        
+        public static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
             }
         }
         
@@ -148,9 +154,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Welcome {
+        public static string Person {
             get {
-                return ResourceManager.GetString("Welcome", resourceCulture);
+                return ResourceManager.GetString("Person", resourceCulture);
             }
         }
         
@@ -178,9 +184,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Create {
+        public static string My_Estimates {
             get {
-                return ResourceManager.GetString("Create", resourceCulture);
+                return ResourceManager.GetString("My_Estimates", resourceCulture);
             }
         }
         
@@ -205,6 +211,12 @@ namespace Yavsc.Model {
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        public static string Tag_name {
+            get {
+                return ResourceManager.GetString("Tag_name", resourceCulture);
             }
         }
         
@@ -244,6 +256,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string No_calendar_for_this_user {
+            get {
+                return ResourceManager.GetString("No_calendar_for_this_user", resourceCulture);
+            }
+        }
+        
         public static string Hide {
             get {
                 return ResourceManager.GetString("Hide", resourceCulture);
@@ -262,9 +280,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Tag_name {
+        public static string Location {
             get {
-                return ResourceManager.GetString("Tag_name", resourceCulture);
+                return ResourceManager.GetString("Location", resourceCulture);
             }
         }
         
@@ -364,6 +382,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Role {
+            get {
+                return ResourceManager.GetString("Role", resourceCulture);
+            }
+        }
+        
         public static string ReadMore {
             get {
                 return ResourceManager.GetString("ReadMore", resourceCulture);
@@ -436,6 +460,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Welcome {
+            get {
+                return ResourceManager.GetString("Welcome", resourceCulture);
+            }
+        }
+        
         public static string Online {
             get {
                 return ResourceManager.GetString("Online", resourceCulture);
@@ -466,9 +496,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string My_Estimates {
+        public static string Non_existent_user {
             get {
-                return ResourceManager.GetString("My_Estimates", resourceCulture);
+                return ResourceManager.GetString("Non_existent_user", resourceCulture);
             }
         }
     }

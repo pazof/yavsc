@@ -64,12 +64,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Location {
-            get {
-                return ResourceManager.GetString("Location", resourceCulture);
-            }
-        }
-        
         public static string Circles {
             get {
                 return ResourceManager.GetString("Circles", resourceCulture);
@@ -94,15 +88,21 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string ProviderName {
+        public static string My_Estimates {
             get {
-                return ResourceManager.GetString("ProviderName", resourceCulture);
+                return ResourceManager.GetString("My_Estimates", resourceCulture);
             }
         }
         
         public static string Not_Approuved {
             get {
                 return ResourceManager.GetString("Not Approuved", resourceCulture);
+            }
+        }
+        
+        public static string UserNotInThisRole {
+            get {
+                return ResourceManager.GetString("UserNotInThisRole", resourceCulture);
             }
         }
         
@@ -142,9 +142,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Welcome {
+        public static string Person {
             get {
-                return ResourceManager.GetString("Welcome", resourceCulture);
+                return ResourceManager.GetString("Person", resourceCulture);
             }
         }
         
@@ -157,6 +157,12 @@ namespace Yavsc.Model {
         public static string ImportException {
             get {
                 return ResourceManager.GetString("ImportException", resourceCulture);
+            }
+        }
+        
+        public static string ProviderName {
+            get {
+                return ResourceManager.GetString("ProviderName", resourceCulture);
             }
         }
         
@@ -202,6 +208,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Tag_name {
+            get {
+                return ResourceManager.GetString("Tag_name", resourceCulture);
+            }
+        }
+        
         public static string Google_error {
             get {
                 return ResourceManager.GetString("Google_error", resourceCulture);
@@ -238,6 +250,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string No_calendar_for_this_user {
+            get {
+                return ResourceManager.GetString("No_calendar_for_this_user", resourceCulture);
+            }
+        }
+        
         public static string Hide {
             get {
                 return ResourceManager.GetString("Hide", resourceCulture);
@@ -256,9 +274,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Tag_name {
+        public static string Location {
             get {
-                return ResourceManager.GetString("Tag_name", resourceCulture);
+                return ResourceManager.GetString("Location", resourceCulture);
             }
         }
         
@@ -352,6 +370,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Role {
+            get {
+                return ResourceManager.GetString("Role", resourceCulture);
+            }
+        }
+        
         public static string ReadMore {
             get {
                 return ResourceManager.GetString("ReadMore", resourceCulture);
@@ -367,6 +391,12 @@ namespace Yavsc.Model {
         public static string MinDate {
             get {
                 return ResourceManager.GetString("MinDate", resourceCulture);
+            }
+        }
+        
+        public static string User_List {
+            get {
+                return ResourceManager.GetString("User_List", resourceCulture);
             }
         }
         
@@ -418,9 +448,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string User_List {
+        public static string Welcome {
             get {
-                return ResourceManager.GetString("User List", resourceCulture);
+                return ResourceManager.GetString("Welcome", resourceCulture);
             }
         }
         
@@ -454,9 +484,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string My_Estimates {
+        public static string Non_existent_user {
             get {
-                return ResourceManager.GetString("My_Estimates", resourceCulture);
+                return ResourceManager.GetString("Non_existent_user", resourceCulture);
             }
         }
     }
