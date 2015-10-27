@@ -26,6 +26,9 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class GoogleController : Controller
 	{
+		/// <summary>
+		/// Index this instance.
+		/// </summary>
 		public ActionResult Index()
 		{
 			return View ();
@@ -295,9 +298,9 @@ namespace Yavsc.Controllers
 		/// <returns>The query.</returns>
 		[Authorize]
 		[HttpGet]
-		public ActionResult DateQuery ()
+		public ActionResult Book ()
 		{
-			return View (new BookEdit ());
+			return View (new BookQuery ());
 		}
 		
 		/// <summary>
@@ -307,42 +310,41 @@ namespace Yavsc.Controllers
 		/// <param name="model">Model.</param>
 		[Authorize]
 		[HttpPost]
-		public ActionResult DateQuery (BookEdit model)
+		public ActionResult Book (BookQuery model)
 		{
 			if (ModelState.IsValid) {
-
 				DateTime mindate = DateTime.Now;
 				if (model.PreferedDate < mindate)
 					model.PreferedDate = mindate;
 				if (model.MaxDate < mindate)
 					model.MaxDate = mindate.AddYears (1).Date;
 
-				var muc = Membership.FindUsersByName (model.UserName);
+				var muc = Membership.FindUsersByName (model.Person);
 				if (muc.Count == 0) {
-					ModelState.AddModelError ("UserName", "Non existent user");
+					ModelState.AddModelError ("Person", LocalizedText.Non_existent_user);
 					return View (model);
 				}
-				ProfileBase upr = ProfileBase.Create (model.UserName);
+				if (!Roles.IsUserInRole (model.Role)) {
+					ModelState.AddModelError ("Role", LocalizedText.UserNotInThisRole);
+					return View (model);
+				}
+
+				ProfileBase upr = ProfileBase.Create (model.Person);
 
 				string calid = (string)upr.GetPropertyValue ("gcalid");
 				if (string.IsNullOrWhiteSpace (calid)) {
-					ModelState.AddModelError ("UserName", "L'utilisateur n'a pas de calendrier Google associé.");
+					ModelState.AddModelError ("Person", LocalizedText.No_calendar_for_this_user);
 					return View (model);
 				}
-
 				DateTime maxdate = model.MaxDate;
-
 				CalendarApi c = new CalendarApi ();
 				CalendarEventList res;
 				try {
-					res = c.GetCalendar (calid, mindate, maxdate, upr);
-				} catch (OtherWebException ex) {
-					ViewData ["Title"] = ex.Title;
-					ViewData ["Content"] = ex.Content;
-					return View ("GoogleErrorMessage", ex);
-				}
+					var events = c.GetCalendar (calid, mindate, maxdate, upr);
 
-				return View ("ChooseADate",res);
+				} catch (OtherWebException ex) {
+					return View ("OtherWebException", ex);
+				}
 			}
 			return View (model);
 		}

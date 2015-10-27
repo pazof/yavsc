@@ -22,13 +22,15 @@
 
 $(document).ready(function(){
 	var $window = $(window); 
-	var onPos = function (bgobj,dx,dy) {
-		x=$window.scrollLeft()+dx;
-		y=$window.scrollTop()+dy;
+	var $stwidth = $(window).width();
+	var $stheight = $(window).width();
 
+	var onPos = function (bgobj,ax,ay) {
 	  	var speed = bgobj.data('speed');
-		var xPos = bgobj.attr('orgbgpx') - Math.round( x / speed);
-		var yPos = bgobj.attr('orgbgpy') - Math.round( y / speed);
+		var dx=($window.scrollLeft()+ax-$stwidth/2)/speed;
+		var dy=($window.scrollTop()+ay-$stheight/2)/speed;
+		var xPos = bgobj.attr('orgbgpx') - Math.round( dx );
+		var yPos = bgobj.attr('orgbgpy') - Math.round( dy );
 		// Put together our final background position
 		var coords = '' + xPos + bgobj.attr('orgbgpxu') + yPos + bgobj.attr('orgbgpyu');
 		// Move the background
@@ -80,18 +82,16 @@ $(document).ready(function(){
 		});
 		var nbevo=0;
 		if (window.DeviceOrientationEvent) {
+		if ($stwidth>320 && $stheight>320) {
 		  window.addEventListener('deviceorientation', function(event) {
-		    if (nbevo++>6) {
-		  	tiltLR = event.gamma;
-		  	titleFB = event.beta;
+		  tiltLR = $stwidth*Math.sin(event.gamma*Math.PI/180);
+		  	titleFB = $stheight*Math.sin(event.beta*Math.PI/180);
 			onPos($bgobj,tiltLR,titleFB);
-			nbevo=0;
-			}
-		  },false);
+		  },false); }
 		  $(window).mousemove(function(e) {
-			tiltLR = e.pageX;
-			titleFB = e.pageY;
-			onPos($bgobj,tiltLR,titleFB);
+		  	tiltLR = e.pageX;
+		  	titleFB = e.pageY;
+			onPos($bgobj,e.pageX,e.pageY);
 			});
 		}  
 	});

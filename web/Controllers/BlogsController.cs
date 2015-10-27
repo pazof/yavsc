@@ -145,7 +145,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The comment.</returns>
 		/// <param name="cmtid">Cmtid.</param>
-		[Authorize]
+		[Authorize(Roles="Blogger")]
 		public ActionResult RemoveComment (long cmtid)
 		{
 			long postid = BlogManager.RemoveComment (cmtid);
@@ -257,7 +257,7 @@ namespace Yavsc.Controllers
 		/// Post the specified title.
 		/// </summary>
 		/// <param name="title">Title.</param>
-		[Authorize]
+		[Authorize(Roles="Blogger")]
 		public ActionResult Post (string title)
 		{
 			string un = Membership.GetUser ().UserName;
@@ -279,7 +279,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The edit.</returns>
 		/// <param name="model">Model.</param>
-		[Authorize]
+		[Authorize(Roles="Blogger")]
 		public ActionResult ValidateEdit (BlogEntry model)
 		{
 			ViewData ["SiteName"] = sitename;
@@ -311,7 +311,7 @@ namespace Yavsc.Controllers
 		/// Edit the specified bill 
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		[Authorize]
+		[Authorize(Roles="Blogger")]
 		public ActionResult Edit (long postid)
 		{
 			
@@ -361,7 +361,7 @@ namespace Yavsc.Controllers
 		/// <param name="user">User.</param>
 		/// <param name="returnUrl">Return URL.</param>
 		/// <param name="confirm">If set to <c>true</c> confirm.</param>
-		[Authorize]
+		[Authorize(Roles="Blogger")]
 		public ActionResult RemoveTitle (string user, string title, string returnUrl, bool confirm = false)
 		{
 			if (returnUrl == null)
@@ -389,7 +389,7 @@ namespace Yavsc.Controllers
 		/// <param name="id">Identifier.</param>
 		/// <param name="returnUrl">Return URL.</param>
 		/// <param name="confirm">If set to <c>true</c> confirm.</param>
-		[Authorize]
+		[Authorize(Roles="Blogger")]
 		public ActionResult RemovePost (long postid, string returnUrl, bool confirm = false)
 		{
 			// ensures the access control
