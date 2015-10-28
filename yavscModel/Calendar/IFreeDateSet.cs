@@ -19,40 +19,36 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Yavsc.Model.Google;
+using System.Collections.Generic;
 
 namespace Yavsc.Model.Calendar
 {
+
 	/// <summary>
 	/// Free date.
 	/// </summary>
-	public class FreeDateSet
+	public interface IFreeDateSet
 	{
 		/// <summary>
 		/// Gets or sets the reference.
 		/// </summary>
 		/// <value>The reference.</value>
-		public DateTime [] Values { get; set; }
+		 IEnumerable<Period> Values { get; set; }
 		/// <summary>
 		/// Gets or sets the duration.
 		/// </summary>
 		/// <value>The duration.</value>
-		public TimeSpan Duration { get; set; }
+		 TimeSpan Duration { get; set; }
 		/// <summary>
 		/// Gets or sets the attendees.
 		/// </summary>
 		/// <value>The attendees.</value>
-		public string UserName { get; set; }
+		 string UserName { get; set; }
 		/// <summary>
 		/// Gets or sets the location.
 		/// </summary>
 		/// <value>The location.</value>
-		public string Location { get; set; }
-
-		static FreeDateSet CreateFromCalAndQuery(CalendarEventList cal, BookQuery query)
-		{
-
-			throw new NotImplementedException ();
-		}
+		 string Location { get; set; }
 	}
 }
 

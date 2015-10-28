@@ -1,3 +1,38 @@
+2015-10-28  Paul Schneider  <paul@pschneider.fr>
+
+	* BlogsController.cs:
+	* AccountController.cs:
+	* CalendarController.cs: refactoring : the Yavsc controller
+	name
+
+	* instdbws.sql: a new profile value : a boolean,
+	`AllowCookies` :'{
+
+	* style.css: a class to display notification 
+
+	* HomeController.cs: Notifies users this site uses cookies
+	(what for an information!)
+	If authenticated, at dimissing this notification, the user's
+	profile is updated,
+	and he'll not mess up anymore with the info.
+
+	* App.master:
+	* YavscHelpers.cs: adds usage of click_action value at
+	displaying a notification.
+
+	* yavsc.js: Implements the notification `click_action`
+
+
+	* Web.config: * enables anonymous profiles
+	* adds a new `allowcookies` profile property
+
+
+	* Web.csproj: Yavsc controller refactoring
+
+	* Web.config: code prettying
+
+	* YavscController.cs: Gives Yavsc a concrete base controller
+
 2015-10-27  Paul Schneider  <paul@pschneider.fr>
 
 	* AppAdmin.master: A new master page for Administration

@@ -75,9 +75,10 @@
 	<data name="role_created"><value>Rôle créé</value></data>
     <data name="StartDate"><value>Date de démarrage</value></data>
 	<data name="Submit"><value>Soumettre</value></data>
-	<data name="Tex_version"><value>Version LaTeX</value></data>
-	<data name="Title"><value>Titre</value></data>
 	<data name="Tag_name"><value>Nom du tag</value></data>
+	<data name="Tex_version"><value>Version LaTeX</value></data>
+	<data name="ThisSiteUsesCookies"><value>Ce site utilise les cookies</value></data>
+	<data name="Title"><value>Titre</value></data>
 	<data name="Unitary_cost"><value>Coût unitaire</value></data>
 	<data name="User_List"><value>Liste des utilisateurs</value><comment></comment></data>
 	<data name="User_name"><value>Nom d'utilisateur</value></data>

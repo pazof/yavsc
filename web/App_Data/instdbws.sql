@@ -91,13 +91,13 @@ WITH (
   OIDS=FALSE
   );
 
- -- Table: profiledata
+  -- Table: profiledata
 
 -- DROP TABLE profiledata;
 
 CREATE TABLE profiledata
 (
- uniqueid integer,
+  uniqueid integer,
   zipcode character varying(10),
   cityandstate character varying(255),
   blogtitle character varying(255), -- Blog Title
@@ -122,6 +122,7 @@ CREATE TABLE profiledata
   avatar character varying(512), -- url for an avatar
   gcalapi boolean NOT NULL DEFAULT false,
   gregid character varying(1024), -- Google Cloud Message registration identifier
+  allowcookies boolean NOT NULL DEFAULT false,
   CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
@@ -129,18 +130,18 @@ CREATE TABLE profiledata
 WITH (
   OIDS=FALSE
 );
-COMMENT ON COLUMN profiledata."address.address" IS 'Postal address';
 COMMENT ON COLUMN profiledata.blogtitle IS 'Blog Title';
+COMMENT ON COLUMN profiledata.address IS 'Postal address';
+COMMENT ON COLUMN profiledata.accountnumber IS 'Numero de compte';
+COMMENT ON COLUMN profiledata.bankedkey IS 'clé RIB';
+COMMENT ON COLUMN profiledata.bankcode IS 'Code banque';
+COMMENT ON COLUMN profiledata.gtoken IS 'Google authentification token';
+COMMENT ON COLUMN profiledata.grefreshtoken IS 'Google refresh token';
+COMMENT ON COLUMN profiledata.gtokentype IS 'Google access token type';
+COMMENT ON COLUMN profiledata.gcalid IS 'Google calendar identifier';
+COMMENT ON COLUMN profiledata.gtokenexpir IS 'Google access token expiration date';
 COMMENT ON COLUMN profiledata.avatar IS 'url for an avatar';
-COMMENT ON COLUMN profiledata."bank.accountnumber" IS 'Numero de compte';
-COMMENT ON COLUMN profiledata."bank.key" IS 'clé RIB';
-COMMENT ON COLUMN profiledata."bank.code" IS 'Code banque';
-COMMENT ON COLUMN profiledata."google.token" IS 'Google authentification token';
-COMMENT ON COLUMN profiledata."google.refreshtoken" IS 'Google refresh token';
-COMMENT ON COLUMN profiledata."google.tokentype" IS 'Google access token type';
-COMMENT ON COLUMN profiledata."google.calid" IS 'Google calendar identifier';
-COMMENT ON COLUMN profiledata."google.tokenexpir" IS 'Google access token expiration date';
-COMMENT ON COLUMN profiledata."google.regid" IS 'Google Cloud Message registration identifier';
+COMMENT ON COLUMN profiledata.gregid IS 'Google Cloud Message registration identifier';
 
 
 -- Index: fki_fkprofiles2
@@ -151,6 +152,9 @@ CREATE INDEX fki_fkprofiles2
   ON profiledata
   USING btree
   (uniqueid);
+
+
+
 
 
 

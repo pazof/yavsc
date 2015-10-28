@@ -1,5 +1,5 @@
 ﻿//
-//  YavscApiController.cs
+//  Notification.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -19,23 +19,13 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Web.Http;
-using System.Net.Http;
 
-namespace Yavsc.ApiControllers
+namespace Yavsc.Model.Messaging
 {
-	public abstract class YavscApiController : ApiController
+	public class Notification : Google.Notification
 	{
-		public YavscApiController ()
+		public Notification ()
 		{
-		}
-
-		protected HttpResponseMessage DefaultResponse()
-		{
-			return ModelState.IsValid ?
-				Request.CreateResponse (System.Net.HttpStatusCode.OK) :
-				Request.CreateResponse (System.Net.HttpStatusCode.BadRequest,
-					ValidateAjaxAttribute.GetErrorModelObject (ModelState));
 		}
 	}
 }

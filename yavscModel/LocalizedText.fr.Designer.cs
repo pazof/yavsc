@@ -64,6 +64,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Location {
+            get {
+                return ResourceManager.GetString("Location", resourceCulture);
+            }
+        }
+        
         public static string Circles {
             get {
                 return ResourceManager.GetString("Circles", resourceCulture);
@@ -208,12 +214,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Tag_name {
-            get {
-                return ResourceManager.GetString("Tag_name", resourceCulture);
-            }
-        }
-        
         public static string Google_error {
             get {
                 return ResourceManager.GetString("Google_error", resourceCulture);
@@ -274,9 +274,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Location {
+        public static string Tag_name {
             get {
-                return ResourceManager.GetString("Location", resourceCulture);
+                return ResourceManager.GetString("Tag_name", resourceCulture);
             }
         }
         
@@ -373,6 +373,12 @@ namespace Yavsc.Model {
         public static string Role {
             get {
                 return ResourceManager.GetString("Role", resourceCulture);
+            }
+        }
+        
+        public static string ThisSiteUsesCookies {
+            get {
+                return ResourceManager.GetString("ThisSiteUsesCookies", resourceCulture);
             }
         }
         

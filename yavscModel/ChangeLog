@@ -1,3 +1,22 @@
+2015-10-28  Paul Schneider  <paul@pschneider.fr>
+
+	* ICalendarManager.cs: WIP booking TODO a calendar provider
+
+	* YaEvent.cs:
+	* IFreeDateSet.cs: WIP booking
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: implements the message "uses
+	cookies" 
+
+	* YavscModel.csproj: refactoring
+
+	* Notification.cs: The Yavsc otification will start as a
+	Google one ...
+	many properties are not yet used, but all seems usefull.
+
 2015-10-27  Paul Schneider  <paul@pschneider.fr>
 
 	* YavscModel.csproj:

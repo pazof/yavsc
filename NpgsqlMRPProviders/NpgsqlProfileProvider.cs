@@ -221,7 +221,7 @@ namespace Npgsql.Web
 					} else {
 						foreach (SettingsProperty p in collection) {
 							SettingsPropertyValue v = new SettingsPropertyValue (p);
-							v.PropertyValue = null;
+							v.PropertyValue = p.DefaultValue;
 							c.Add (v);
 						}
 					}

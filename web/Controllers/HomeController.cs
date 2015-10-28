@@ -14,6 +14,8 @@ using Yavsc.Helpers;
 using Yavsc;
 using System.Web.Mvc;
 using Yavsc.Model.Blogs;
+using System.Web.Security;
+using System.Web.Profile;
 
 namespace Yavsc.Controllers
 {
@@ -85,6 +87,17 @@ namespace Yavsc.Controllers
 		/// </summary>
 		public ActionResult Index ()
 		{
+			var anonid = Request.AnonymousID;
+			if (Session.IsNewSession) {
+				if (!Request.IsAuthenticated) {
+					ProfileBase anonymousProfile = ProfileBase.Create(anonid);
+					object ac = anonymousProfile.GetPropertyValue ("allowcookies");
+					if (ac is string && ac!="true")
+						YavscHelpers.Notify (ViewData, LocalizedText.ThisSiteUsesCookies, 
+							"function(){Yavsc.ajax(\"/Yavsc/AllowCookies\", { id:'"+anonid+"' });}");
+				}
+			}
+					
 			foreach (string tagname in new string[] {"Accueil","Événements","Mentions légales"})
 			{
 				TagInfo ti = BlogManager.GetTagInfo (tagname);

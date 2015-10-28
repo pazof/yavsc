@@ -50,7 +50,7 @@ namespace Yavsc.ApiControllers
 				},
 				new YaEvent () {
 					Title = "Test2",
-					ImgLocator = "http://bla/im.png",
+					Photo = "http://bla/im.png",
 					Location = new Position () {
 						Longitude = 0,
 						Latitude = 0 
@@ -66,7 +66,7 @@ namespace Yavsc.ApiControllers
 				},
 				new YaEvent () {
 					Title = "Test2",
-					ImgLocator = "http://bla/im.png",
+					Photo = "http://bla/im.png",
 					Location = new Position () {
 						Longitude = 0,
 						Latitude = 0 

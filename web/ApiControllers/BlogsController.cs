@@ -19,7 +19,7 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Blogs API controller.
 	/// </summary>
-	public class BlogsController : YavscApiController
+	public class BlogsController : YavscController
 	{
 		/// <summary>
 		/// Tag the specified model.

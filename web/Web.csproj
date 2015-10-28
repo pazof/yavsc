@@ -205,7 +205,7 @@
     <Compile Include="Helpers\Google\PeopleApi.cs" />
     <Compile Include="ApiControllers\PaypalController.cs" />
     <Compile Include="ApiControllers\AuthorizationDenied.cs" />
-    <Compile Include="ApiControllers\YavscApiController.cs" />
+    <Compile Include="ApiControllers\YavscController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

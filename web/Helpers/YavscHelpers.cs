@@ -15,10 +15,12 @@ using System.Web.Profile;
 using System.Web.Script.Serialization;
 using System.Web.Mvc;
 using System.Text.RegularExpressions;
+using Yavsc.Model.Messaging;
 
 namespace Yavsc.Helpers
 {
-	
+
+
 	/// <summary>
 	/// Yavsc helpers.
 	/// </summary>
@@ -219,10 +221,11 @@ namespace Yavsc.Helpers
 			JavaScriptSerializer serializer = new JavaScriptSerializer();
 			return serializer.Serialize(obj);
 		}
+
 		/// <summary>
-		/// Notifies 
+		/// Notify the specified helper and message.
 		/// </summary>
-		/// <param name="ViewData">View data.</param>
+		/// <param name="helper">Helper.</param>
 		/// <param name="message">Message.</param>
 		public static void Notify (this HtmlHelper helper, string message) {
 			Notify (helper.ViewData, message);
@@ -232,10 +235,12 @@ namespace Yavsc.Helpers
 		/// </summary>
 		/// <param name="viewData">View data.</param>
 		/// <param name="message">Message.</param>
-		public static void Notify(ViewDataDictionary viewData, string message) {
+		public static void Notify(ViewDataDictionary viewData, string message, string click_action=null) {
 			if (viewData ["Notifications"] == null)
-				viewData ["Notifications"] = new List<string> ();
-			(viewData ["Notifications"] as List<string>).Add (message.Replace("\'","\\\'"));
+				viewData ["Notifications"] = new List<Notification> ();
+			(viewData ["Notifications"] as List<Notification>).Add (
+				new Notification { body = message.Replace("\'","\\\'"), 
+					click_action = click_action } ) ;
 		}
 		/// <summary>
 		/// Files the list.

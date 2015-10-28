@@ -32,7 +32,7 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Account controller.
 	/// </summary>
-	public class AccountController : YavscApiController
+	public class AccountController : YavscController
 	{
 
 		/// <summary>

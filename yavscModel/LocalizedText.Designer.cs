@@ -388,6 +388,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string ThisSiteUsesCookies {
+            get {
+                return ResourceManager.GetString("ThisSiteUsesCookies", resourceCulture);
+            }
+        }
+        
         public static string ReadMore {
             get {
                 return ResourceManager.GetString("ReadMore", resourceCulture);

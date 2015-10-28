@@ -77,9 +77,10 @@
 	<data name="role_created"><value>role created</value></data>
 	<data name="StartDate"><value>Start date</value></data>
 	<data name="Submit"><value>Submit</value></data>
-	<data name="Tex_version"><value>LaTeX version</value></data>
-	<data name="Title"><value>Title</value></data>
 	<data name="Tag_name"><value>Tag name</value></data>
+	<data name="Tex_version"><value>LaTeX version</value></data>
+	<data name="ThisSiteUsesCookies"><value>This site uses cookies</value></data>
+	<data name="Title"><value>Title</value></data>
 	<data name="Unitary_cost"><value>Unitary_cost</value></data>
 	<data name="User_List"><value>User List</value><comment></comment></data>
 	<data name="User_name"><value>User name</value></data>

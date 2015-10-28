@@ -26,13 +26,8 @@ using Yavsc.Model;
 
 namespace Yavsc.Model.Calendar
 {
-
-	/// <summary>
-	/// NF event.
-	/// </summary>
-	public class YaEvent
+	public class BaseEvent
 	{
-
 		/// <summary>
 		/// The title.
 		/// </summary>
@@ -45,6 +40,7 @@ namespace Yavsc.Model.Calendar
 		[Required(ErrorMessage="Please, choose a Description.")] 
 		[Display(ResourceType=typeof(LocalizedText),Name="Description")]
 		public string Description { get; set; }
+
 		/// <summary>
 		/// The location.
 		/// </summary>
@@ -65,6 +61,13 @@ namespace Yavsc.Model.Calendar
 		[Required(ErrorMessage="Please, choose an End Date.")] 
 		[Display(ResourceType=typeof(LocalizedText),Name="EndDate")]
 		public DateTime EndDate { get; set; }
+
+	}
+	/// <summary>
+	/// NF event.
+	/// </summary>
+	public class YaEvent : BaseEvent
+	{
 		/// <summary>
 		/// The name of the NF provider.
 		/// </summary>
@@ -90,7 +93,7 @@ namespace Yavsc.Model.Calendar
 		/// <summary>
 		/// The image locator.
 		/// </summary>
-		[Display(ResourceType=typeof(LocalizedText),Name="ImgLocator")]
-		public string ImgLocator { get; set; }
+		[Display(ResourceType=typeof(LocalizedText),Name="Photo")]
+		public string Photo { get; set; }
 	}
 }

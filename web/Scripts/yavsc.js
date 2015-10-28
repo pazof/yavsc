@@ -1,8 +1,8 @@
 ﻿var Yavsc =  (function(apiBaseUrl){ 
 var self = {};
 
-var $notifications = $('#notifications');
-function dumpprops(obj) { 
+
+self.dumpprops = function (obj) { 
 var str = "";
 for(var k in obj)
     if (obj.hasOwnProperty(k)) 
@@ -30,32 +30,42 @@ self.dimiss = function () {
 		$(this).parent().remove();
 	};
 
+self.ajax = function (method,data,callback) {
+	$.ajax({
+            url: self.apiBaseUrl+method,
+            type: "POST",
+            data: data,
+            success: function (response) { 
+            	if (callback) callback(response);
+           },
+            statusCode: {
+            	400: Yavsc.onAjaxBadInput
+            	},
+            error: Yavsc.onAjaxError});
+	};
+
 self.onScroll = function() {
+	var $notifications = $('#notifications');
 		if ($notifications.has('*').length>0) {
-		if ($(window).scrollTop()>375) { 
-		console.log('fixit');
-			$notifications.css('position','fixed');
-			$notifications.css('z-index',2);
-			$notifications.css('top',0);
+		if ($(window).scrollTop()>100) { 
+			$notifications.addClass("dispmodal");
 		}
 		else {  
-			$notifications.css('position','static');
-			$notifications.css('z-index',1); 
+			$notifications.removeClass("dispmodal");
 		}}
 	};
 
-self.notice = function (msg, msgok) { 
+self.notice = function (msg, callback, msgok) { 
    	if (!msgok) msgok='Ok';
-   	if (msg) { 
    	var note = $('<div class="notification">'+msg+'<br></div>');
-   	$('<a class="actionlink"><i class="fa fa-check">'+msgok+'</i></a>').click(self.dimiss).appendTo(note);
+   	var btn = $('<a class="actionlink"><i class="fa fa-check">'+msgok+'</i></a>');
+   	if (callback) btn.click(callback);  
+   	btn.click(self.dimiss).appendTo(note);
    	note.appendTo("#notifications");
    	self.onScroll();
-  	} 
-  	 };
+  };
 
-
- self.onAjaxBadInput = function (data)
+self.onAjaxBadInput = function (data)
     {
     	if (!data) { Yavsc.notice('no data'); return; }
     	if (!data.responseJSON) { Yavsc.notice('no json data:'+data); return; }
@@ -68,7 +78,6 @@ self.notice = function (msg, msgok) {
 		else 
 			errspan.innerHTML=value.errors.join("<br/>");
     	});
-
     };
 
 self.onAjaxError = function (xhr, ajaxOptions, thrownError) {
@@ -95,24 +104,16 @@ $btnshow.addClass('hidden');
 $btnhide.removeClass('hidden');
 });
 });
-
-
 });
-
-
 
 $(document).ready(function(){
-
-$body = $("body");
-$(document).on({
-    ajaxStart: function() { $body.addClass("loading");    },
-    ajaxStop: function() { $body.removeClass("loading"); }    
-});
+	$body = $("body");
+	$(document).on({
+	    ajaxStart: function() { $body.addClass("loading");    },
+	    ajaxStop: function() { $body.removeClass("loading"); }    
+	});
 	$(window).scroll(self.onScroll);
 });
-
-
-
 return self;
 })();
 
