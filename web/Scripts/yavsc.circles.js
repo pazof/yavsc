@@ -31,7 +31,6 @@ function onCircleChanged()
     { $('#fncirc').addClass("dirty"); }
 
 function removeCircle() {
-    	Yavsc.notice(false);
     	 var id = $(this).attr('cid'); 
     	 $.ajax({
             url: CirclesApiUrl+"/Delete/"+id,
@@ -41,16 +40,11 @@ function removeCircle() {
             $("#c_"+id).remove();
            },
             statusCode: {
-            	400: onAjaxBadInput,
-            error: function (xhr, ajaxOptions, thrownError) {
-            	if (xhr.status!=400)
-        			Yavsc.notice(xhr.status+" : "+xhr.responseText);
-			    else Yavsc.notice(false);
-        		}}});
+            	400: Yavsc.onAjaxBadInput,
+            error: Yavsc.onAjaxError }});
     }
 
  function modifyCircle() {
- Yavsc.notice(false);
  var id = $('#id').val();
  var circle = { title: $("#title").val(), id: id} ;
  $.ajax({
@@ -62,15 +56,14 @@ function removeCircle() {
             }
             ,
             statusCode: {
-            	400: onAjaxBadInput,
-            	error: onAjaxError
+            	400: Yavsc.onAjaxBadInput,
+            	error: Yavsc.onAjaxError
             	}
             	});
  }
     
 function addCircle()
     {
-    Yavsc.notice(false);
   	  var circle = { title: $("#title").val() } ;
     	 $("#title").text('');
     	 $.ajax({

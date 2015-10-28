@@ -256,7 +256,7 @@ namespace WorkFlowProvider
 				}
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "insert into circle_members (circle_id,member) values (@cid,@mbr)";
-					cmd.Parameters.AddWithValue ("cid", NpgsqlDbType.Varchar , id);
+					cmd.Parameters.AddWithValue ("cid", NpgsqlDbType.Bigint , id);
 					cmd.Parameters.Add ("mbr", NpgsqlDbType.Varchar);
 					cmd.Prepare ();
 					if (users != null)

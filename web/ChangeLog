@@ -1,5 +1,9 @@
 2015-10-28  Paul Schneider  <paul@pschneider.fr>
 
+	* yavsc.circles.js: 
+
+2015-10-28  Paul Schneider  <paul@pschneider.fr>
+
 	* BlogsController.cs:
 	* AccountController.cs:
 	* CalendarController.cs: refactoring : the Yavsc controller
