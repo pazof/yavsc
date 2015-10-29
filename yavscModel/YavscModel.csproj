@@ -114,7 +114,6 @@
     <Compile Include="FrontOffice\Catalog\CatalogHelper.cs" />
     <Compile Include="FrontOffice\Catalog\CatalogManager.cs" />
     <Compile Include="FrontOffice\Catalog\CatalogProvider.cs" />
-    <Compile Include="FileSystem\FileSystemManager.cs" />
     <Compile Include="FileSystem\InvalidDirNameException.cs" />
     <Compile Include="FileSystem\WebFileInfo.cs" />
     <Compile Include="FrontOffice\CommandStatus.cs" />
@@ -179,6 +178,7 @@
     <Compile Include="Calendar\IFreeDateSet.cs" />
     <Compile Include="Calendar\ICalendarManager.cs" />
     <Compile Include="Messaging\Notification.cs" />
+    <Compile Include="FileSystem\WebFileSystemManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

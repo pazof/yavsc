@@ -38,7 +38,7 @@ namespace Yavsc.Model.FileSystem
 	/// It just provides simple method for a small set of 
 	/// files, in a small tree of sub-folders .
 	/// </summary>
-	public class FileSystemManager
+	public class WebFileSystemManager
 	{
 		/// <summary>
 		/// Gets or sets the size of the max file.
@@ -56,23 +56,18 @@ namespace Yavsc.Model.FileSystem
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Yavsc.Model.FileSystem.FileSystemManager"/> class.
 		/// </summary>
-		public FileSystemManager (string rootDirectory="~/users/{0}")
+		public WebFileSystemManager (string rootDirectory="~/users")
 		{
+			string rootpath = HttpContext.Current.Server.MapPath (rootDirectory);
+			var rdi = new DirectoryInfo (rootpath);
+			if (!rdi.Exists)
+				rdi.Create ();
 			MembershipUser user = Membership.GetUser ();
 			if (user == null)
 				throw new Exception ("Not membership available");
-			Prefix = HttpContext.Current.Server.MapPath (
-				string.Format (rootDirectory, user.UserName));
+			Prefix = Path.Combine(rootpath, user.ProviderUserKey.ToString());
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.FileSystem.FileSystemManager"/> class.
-		/// </summary>
-		public FileSystemManager (string username, string rootDirectory="~/users/{0}")
-		{
-			Prefix = HttpContext.Current.Server.MapPath (
-				string.Format (rootDirectory, username));
-		}
 		string regexFileName = "^[A-Za-z0-9#^!+ _~\\-.]+$";
 		/// <summary>
 		/// Determines if the specified name is OK.
@@ -166,7 +161,7 @@ namespace Yavsc.Model.FileSystem
 			return (di.GetFiles ());
 		}
 
-		public IEnumerable<FileInfo> GetFiles (string username, string subdir, bool createNonExistent = false)
+		public FileInfo[] GetFiles (string username, string subdir)
 		{
 			string path = Prefix;
 			if (subdir != null) {
@@ -174,9 +169,9 @@ namespace Yavsc.Model.FileSystem
 				path = Path.Combine (Prefix, subdir);
 			}
 			DirectoryInfo di = new DirectoryInfo (path);
-			if (createNonExistent)
-			if (!di.Exists)
-				di.Create ();
+
+			if (!di.Exists) 
+				return new FileInfo[0];
 			return (di.GetFiles ());
 		}
 

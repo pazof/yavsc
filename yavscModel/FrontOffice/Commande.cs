@@ -89,8 +89,8 @@ namespace Yavsc.Model.FrontOffice
 			FromPost (collection, files);
 		}
 
-		private FileSystemManager GetFSM() {
-			return new FileSystemManager ("~/commands/{0}");
+		private WebFileSystemManager GetFSM() {
+			return new WebFileSystemManager ("~/commands/{0}");
 		}
 	}
 }

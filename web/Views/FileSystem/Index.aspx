@@ -1,6 +1,6 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<Yavsc.Model.FileSystem.FileInfoCollection>" %>
+﻿<%@ Page Title="Files" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<System.IO.FileInfo[]>" %>
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
-<h1> Index of <%= Model.Owner %>'s files  (<%= Html.Encode(Model.Count) %>)
+<h1> Index 
  </h1>
 <ul>
 <% foreach (System.IO.FileInfo fi in Model) { %>

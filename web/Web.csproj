@@ -286,7 +286,6 @@
     <Content Include="robots.txt" />
     <Content Include="Scripts\form-new-user.js" />
     <Content Include="Views\FrontOffice\Estimate.aspx" />
-    <Content Include="Views\Admin\RemoveRole..aspx" />
     <Content Include="Views\FrontOffice\EventPub.aspx" />
     <Content Include="Views\Account\Circles.aspx" />
     <Content Include="Views\Account\Register.ascx" />
@@ -461,6 +460,8 @@
     <Content Include="Views\Google\ChooseADate.aspx" />
     <Content Include="Views\Google\OtherWebException.aspx" />
     <Content Include="Models\AppAdmin.master" />
+    <Content Include="Views\Google\Index.aspx" />
+    <Content Include="Views\Admin\RemoveRole.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

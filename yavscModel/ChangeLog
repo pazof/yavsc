@@ -1,3 +1,10 @@
+2015-10-29  Paul Schneider  <paul@pschneider.fr>
+
+	* YavscModel.csproj:
+	* Commande.cs:
+	* WebFileSystemManager.cs: Refactoring the name of the files
+	manager class
+
 2015-10-28  Paul Schneider  <paul@pschneider.fr>
 
 	* ICalendarManager.cs: WIP booking TODO a calendar provider

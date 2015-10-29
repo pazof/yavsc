@@ -1,3 +1,20 @@
+2015-10-29  Paul Schneider  <paul@pschneider.fr>
+
+	* Index.aspx: Gives this page a title
+
+	* AdminController.cs: Trying to fix this Index : /Admin ... a
+	404
+
+	* FileSystemController.cs: Refactoring the name of the files
+	manager class
+
+	* Index.aspx: Fixes the file system access
+
+	* RemoveRole.aspx: Role removal form, had not a canonical
+	name!
+
+	* Web.csproj: a page was renamed
+
 2015-10-28  Paul Schneider  <paul@pschneider.fr>
 
 	* yavsc.circles.js: 

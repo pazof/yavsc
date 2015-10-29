@@ -33,7 +33,7 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Index (string user, string filename)
 		{
-			FileSystemManager fsmgr = new FileSystemManager ();
+			WebFileSystemManager fsmgr = new WebFileSystemManager ();
 			var files = fsmgr.GetFiles (user,filename);
 			return View (files);
 		}
@@ -54,7 +54,7 @@ namespace Yavsc.Controllers
 		/// <param name="filename">Filename.</param>
 		public ActionResult Details (string user, string filename)
 		{
-			FileSystemManager fsmgr = new FileSystemManager ();
+			WebFileSystemManager fsmgr = new WebFileSystemManager ();
 			FileInfo fi = fsmgr.FileInfo (filename);
 
 			ViewData ["filename"] = filename;

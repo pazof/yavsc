@@ -29,7 +29,8 @@ namespace Yavsc.Controllers
 				YavscHelpers.Notify (ViewData, roleName + " " + LocalizedText.role_created);
 
 			}
-			return View ("Index");
+
+			return View ();
 		}
 		/// <summary>
 		/// Inits the db.
