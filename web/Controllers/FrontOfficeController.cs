@@ -15,6 +15,7 @@ using Yavsc.Model.FileSystem;
 using Yavsc.Model.Calendar;
 using System.Configuration;
 using Yavsc.Helpers;
+using Yavsc.Model.FrontOffice.Catalog;
 
 namespace Yavsc.Controllers
 {

@@ -314,10 +314,10 @@ namespace Yavsc.Controllers
 		{
 			if (ModelState.IsValid) {
 				DateTime mindate = DateTime.Now;
-				if (model.PreferedDate < mindate)
-					model.PreferedDate = mindate;
-				if (model.MaxDate < mindate)
-					model.MaxDate = mindate.AddYears (1).Date;
+				if (model.StartDate < mindate)
+					model.StartDate = mindate;
+				if (model.EndDate < mindate)
+					model.EndDate = mindate.AddYears (1).Date;
 
 				var muc = Membership.FindUsersByName (model.Person);
 				if (muc.Count == 0) {
@@ -336,7 +336,7 @@ namespace Yavsc.Controllers
 					ModelState.AddModelError ("Person", LocalizedText.No_calendar_for_this_user);
 					return View (model);
 				}
-				DateTime maxdate = model.MaxDate;
+				DateTime maxdate = model.EndDate;
 				CalendarApi c = new CalendarApi ();
 				CalendarEventList res;
 				try {

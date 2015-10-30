@@ -112,6 +112,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
         public static string User_name {
             get {
                 return ResourceManager.GetString("User_name", resourceCulture);
@@ -184,9 +190,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Create {
+        public static string EndHour {
             get {
-                return ResourceManager.GetString("Create", resourceCulture);
+                return ResourceManager.GetString("EndHour", resourceCulture);
             }
         }
         
@@ -211,6 +217,12 @@ namespace Yavsc.Model {
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        public static string Tag_name {
+            get {
+                return ResourceManager.GetString("Tag_name", resourceCulture);
             }
         }
         
@@ -274,9 +286,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Tag_name {
+        public static string StartHour {
             get {
-                return ResourceManager.GetString("Tag_name", resourceCulture);
+                return ResourceManager.GetString("StartHour", resourceCulture);
             }
         }
         

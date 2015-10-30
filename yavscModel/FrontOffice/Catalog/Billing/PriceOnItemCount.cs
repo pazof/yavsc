@@ -21,7 +21,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Model.FrontOffice.Billing
+namespace Yavsc.Model.FrontOffice.Catalog.Billing
 {
 	/// <summary>
 	/// A set price.

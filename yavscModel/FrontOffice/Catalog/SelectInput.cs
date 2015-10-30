@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Web.Mvc;
 
-namespace Yavsc.Model.FrontOffice
+namespace Yavsc.Model.FrontOffice.Catalog
 {
 	/// <summary>
 	/// Select input.

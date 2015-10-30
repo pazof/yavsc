@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Collections.Specialized;
 using Yavsc.Model.FrontOffice;
 using System.Configuration.Provider;
+using Yavsc.Model.FrontOffice.Catalog;
 
 namespace Yavsc.Model.WorkFlow
 {

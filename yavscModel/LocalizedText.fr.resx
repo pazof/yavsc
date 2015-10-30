@@ -32,6 +32,7 @@
 	<data name="entries"><value>entrées</value></data>
 	<data name="Edit"><value>Éditer</value></data>
 	<data name="EndDate"><value>Date de fin</value></data>
+	<data name="EndHour"><value>Heure de fin</value></data>
 	<data name="Estimate_not_found"><value>Devis non trouvé</value></data>
     <data name="EventWebPage"><value>Page web de l'événement</value></data>
 	<data name="ExistantDB"><value>Base de données éxistante</value></data>
@@ -73,7 +74,8 @@
     <data name="Remember_me"><value>Se souvenir du mot de passe</value></data>
 	<data name="Remove"><value>Supprimer</value></data>
 	<data name="role_created"><value>Rôle créé</value></data>
-    <data name="StartDate"><value>Date de démarrage</value></data>
+    <data name="StartDate"><value>Date de début</value></data>
+	<data name="StartHour"><value>Heure de début</value></data>
 	<data name="Submit"><value>Soumettre</value></data>
 	<data name="Tag_name"><value>Nom du tag</value></data>
 	<data name="Tex_version"><value>Version LaTeX</value></data>

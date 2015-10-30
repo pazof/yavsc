@@ -13,6 +13,7 @@ using Yavsc.Model.FrontOffice;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.WorkFlow;
 using System.IO;
+using Yavsc.Model.FrontOffice.Catalog;
 
 namespace Yavsc.ApiControllers
 {

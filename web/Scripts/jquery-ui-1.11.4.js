@@ -4555,6 +4555,7 @@ $.extend(Datepicker.prototype, {
 	_updateDatepicker: function(inst) {
 		this.maxRows = 4; //Reset the max number of rows being displayed (see #7043)
 		datepicker_instActive = inst; // for delegate hover events
+		if (!inst.dpDiv) return;
 		inst.dpDiv.empty().append(this._generateHTML(inst));
 		this._attachHandlers(inst);
 

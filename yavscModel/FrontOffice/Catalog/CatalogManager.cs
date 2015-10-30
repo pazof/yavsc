@@ -2,7 +2,7 @@ using System;
 using System.Web;
 
 
-namespace Yavsc.Model.FrontOffice
+namespace Yavsc.Model.FrontOffice.Catalog
 {
 	/// <summary>
 	/// Catalog manager.

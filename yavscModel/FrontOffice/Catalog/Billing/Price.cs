@@ -1,6 +1,6 @@
 using System;
 
-namespace Yavsc.Model.FrontOffice.Billing
+namespace Yavsc.Model.FrontOffice.Catalog.Billing
 {
 	/// <summary>
 	/// Price.

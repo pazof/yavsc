@@ -1,7 +1,7 @@
 using System;
-using Yavsc.Model.FrontOffice.Billing;
+using Yavsc.Model.FrontOffice.Catalog.Billing;
 
-namespace Yavsc.Model.FrontOffice
+namespace Yavsc.Model.FrontOffice.Catalog
 {
 	/// <summary>
 	/// Service.

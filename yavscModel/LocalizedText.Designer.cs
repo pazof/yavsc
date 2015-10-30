@@ -184,9 +184,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string My_Estimates {
+        public static string EndHour {
             get {
-                return ResourceManager.GetString("My_Estimates", resourceCulture);
+                return ResourceManager.GetString("EndHour", resourceCulture);
             }
         }
         
@@ -277,6 +277,12 @@ namespace Yavsc.Model {
         public static string younotadmin {
             get {
                 return ResourceManager.GetString("younotadmin", resourceCulture);
+            }
+        }
+        
+        public static string My_Estimates {
+            get {
+                return ResourceManager.GetString("My_Estimates", resourceCulture);
             }
         }
         
@@ -457,6 +463,12 @@ namespace Yavsc.Model {
         public static string no_content {
             get {
                 return ResourceManager.GetString("no_content", resourceCulture);
+            }
+        }
+        
+        public static string StartHour {
+            get {
+                return ResourceManager.GetString("StartHour", resourceCulture);
             }
         }
         

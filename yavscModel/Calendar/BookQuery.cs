@@ -35,24 +35,26 @@ namespace Yavsc.Model.Calendar
 		/// </summary>
 		/// <value>The prefered date.</value>
 		[DataType(DataType.Date)]
-		[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-		public DateTime PreferedDate { get; set; }
+		[DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = true)]
+		[Display(ResourceType=typeof(LocalizedText),Name="StartDate")]
+		public DateTime StartDate { get; set; }
 
 		/// <summary>
 		/// Gets or sets the minimum time.
 		/// </summary>
 		/// <value>The minimum time.</value>
 		[RegularExpression("\\d\\d:\\d\\d")]
-		public string PreferedHour { get; set; }
+		[Display(ResourceType=typeof(LocalizedText),Name="StartHour")]
+		public string StartHour { get; set; }
 
 		/// <summary>
 		/// Gets or sets the max date.
 		/// </summary>
 		/// <value>The max date.</value>
-		[Display(Name="MaxDate",ResourceType=typeof(LocalizedText))]
+		[Display(Name="EndDate",ResourceType=typeof(LocalizedText))]
 		[DataType(DataType.Date)]
-		[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-		public DateTime MaxDate { get; set; }
+		[DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = true)]
+		public DateTime EndDate { get; set; }
 
 
 		/// <summary>
@@ -61,7 +63,8 @@ namespace Yavsc.Model.Calendar
 		/// <value>The duration.</value>
 		[RegularExpression("\\d\\d:\\d\\d")]
 		[Required(ErrorMessage= "S'il vous plait, saisissez une durée minimale d'intervention")]
-		public string MinDuration { get; set; }
+		[Display(Name="EndHour",ResourceType=typeof(LocalizedText))]
+		public string EndHour { get; set; }
 
 		/// <summary>
 		/// Gets or sets the person.

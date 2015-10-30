@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Yavsc.Model.FrontOffice
+namespace Yavsc.Model.FrontOffice.Catalog
 {
 	/// <summary>
 	/// Sale form.

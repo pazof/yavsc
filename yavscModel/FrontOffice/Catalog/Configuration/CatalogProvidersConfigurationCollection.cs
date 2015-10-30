@@ -2,7 +2,7 @@ using System;
 using System.Configuration;
 using System.ComponentModel;
 
-namespace Yavsc.Model.FrontOffice.Configuration
+namespace Yavsc.Model.FrontOffice.Catalog.Configuration
 {
 	/// <summary>
 	/// Catalog providers configuration collection.

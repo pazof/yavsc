@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Yavsc.Model.FrontOffice;
 using System.Web.Mvc.Html;
+using Yavsc.Model.FrontOffice.Catalog;
 
 namespace Yavsc.CatExts
 {

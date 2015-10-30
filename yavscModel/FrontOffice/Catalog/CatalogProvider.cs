@@ -1,7 +1,7 @@
 using System;
 using System.Configuration.Provider;
 
-namespace Yavsc.Model.FrontOffice
+namespace Yavsc.Model.FrontOffice.Catalog
 {
 	/// <summary>
 	/// Catalog provider.<br/>

@@ -1,3 +1,52 @@
+2015-10-30  Paul Schneider  <paul@pschneider.fr>
+
+	* packages.config:
+	* App.master:
+	* datepair.js:
+	* Book.aspx:
+	* datepair.min.js:
+	* jquery.datepair.js:
+	* jquery-ui-1.11.4.js:
+	* jquery.timepicker.js:
+	* jquery-1.11.3.min.js:
+	* jquery.datepair.min.js:
+	* WebCatalogExtensions.cs:
+	* GoogleController.cs:
+	* jquery.timepicker.min.js:
+	* jquery.timepicker.css:
+	* FrontOfficeController.cs:
+	* ui-icons_ffffff_256x240.png:
+	* ui-icons_cccccc_256x240.png:
+	* ui-icons_a83300_256x240.png:
+	* ui-icons_4b8e0b_256x240.png:
+	* ui-icons_222222_256x240.png:
+	* ui-bg_glass_40_ffc73d_1x400.png:
+	* ui-bg_glass_40_0078a3_1x400.png:
+	* ui-bg_glass_20_555555_1x400.png:
+	* ui-icons_222222_256x240.png:
+	* ui-icons_4b8e0b_256x240.png:
+	* ui-icons_a83300_256x240.png:
+	* ui-icons_cccccc_256x240.png:
+	* ui-icons_ffffff_256x240.png:
+	* ui-bg_glass_40_ffc73d_1x400.png:
+	* ui-bg_glass_40_0078a3_1x400.png:
+	* ui-bg_glass_20_555555_1x400.png:
+	* ui-bg_inset-soft_25_000000_1x100.png:
+	* ui-bg_inset-soft_30_f58400_1x100.png:
+	* ui-bg_gloss-wave_25_333333_500x100.png:
+	* ui-bg_highlight-soft_80_eeeeee_1x100.png:
+	* ui-bg_inset-soft_30_f58400_1x100.png:
+	* ui-bg_inset-soft_25_000000_1x100.png:
+	* ui-bg_gloss-wave_25_333333_500x100.png:
+	* ui-bg_highlight-soft_80_eeeeee_1x100.png: 
+
+	* FrontOfficeController.cs: refactoring: a dedicated name
+	space for the catalog
+
+	* ChooseADate.aspx: WIP
+
+	* Web.csproj: date pairing : includes the javascript modules
+
 2015-10-29  Paul Schneider  <paul@pschneider.fr>
 
 	* Index.aspx: Gives this page a title

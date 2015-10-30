@@ -2,9 +2,9 @@ using System;
 using System.Configuration;
 using System.Reflection;
 using System.Collections.Specialized;
-using Yavsc.Model.FrontOffice.Configuration;
+using Yavsc.Model.FrontOffice.Catalog.Configuration;
 
-namespace Yavsc.Model.FrontOffice
+namespace Yavsc.Model.FrontOffice.Catalog
 {
 	/// <summary>
 	/// Catalog helper.

@@ -3,8 +3,8 @@ using System.Xml.Serialization;
 using System.Configuration;
 using System.IO;
 using System.Xml;
-using Yavsc.Model.FrontOffice;
 using System.Web;
+using Yavsc.Model.FrontOffice.Catalog;
 
 namespace SalesCatalog.XmlImplementation
 {

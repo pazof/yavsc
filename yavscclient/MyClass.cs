@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Net.Http.Formatting;
 using Newtonsoft.Json;
 using Yavsc.Model.FrontOffice;
+using Yavsc.Model.FrontOffice.Catalog;
 
 namespace Yavsc
 {

@@ -12,6 +12,7 @@ using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using Yavsc.Model.FrontOffice.Catalog;
 
 namespace Yavsc
 {

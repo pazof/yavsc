@@ -1,3 +1,50 @@
+2015-10-30  Paul Schneider  <paul@pschneider.fr>
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* BookQuery.cs:
+	* LocalizedText.Designer.cs:
+	* Link.cs:
+	* Note.cs:
+	* Euro.cs:
+	* Text.cs:
+	* Unit.cs:
+	* LocalizedText.fr.Designer.cs:
+	* Brand.cs:
+	* Label.cs:
+	* Scalar.cs:
+	* Period.cs:
+	* Option.cs:
+	* Product.cs:
+	* Catalog.cs:
+	* Service.cs:
+	* SaleForm.cs:
+	* Currency.cs:
+	* CheckBox.cs:
+	* FormInput.cs:
+	* TextInput.cs:
+	* SelectItem.cs:
+	* FilesInput.cs:
+	* RadioButton.cs:
+	* StockStatus.cs:
+	* SelectInput.cs:
+	* FormElement.cs:
+	* ProductImage.cs:
+	* CatalogHelper.cs:
+	* CatalogManager.cs:
+	* CatalogProvider.cs:
+	* PhysicalProduct.cs:
+	* ProductCategory.cs:
+	* CatalogProviderConfigurationElement.cs:
+	* CatalogProvidersConfigurationSection.cs:
+	* CatalogProvidersConfigurationCollection.cs: 
+
+	* WorkFlowManager.cs:
+	* IContentProvider.cs:
+	* Price.cs:
+	* PriceOnItemCount.cs: refactoring: a dedicated name space for
+	the catalog
+
 2015-10-29  Paul Schneider  <paul@pschneider.fr>
 
 	* YavscModel.csproj:
