@@ -33,10 +33,10 @@ namespace Yavsc.Helpers
 		/// </summary>
 		/// <param name="helper">Helper.</param>
 		/// <param name="text">Text.</param>
-		public static string Translate(this HtmlHelper helper, string text)
+		public static IHtmlString Translate(this HtmlHelper helper, string text)
 		{
 			// Just call the other one, to avoid having two copies (we don't use the HtmlHelper).
-			return GetString(text);
+			return new MvcHtmlString(helper.Encode(GetString(text)));
 		}
 
 	}

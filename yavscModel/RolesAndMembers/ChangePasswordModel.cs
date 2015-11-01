@@ -12,7 +12,7 @@ namespace Yavsc.Model.RolesAndMembers
 		/// Gets or sets the username.
 		/// </summary>
 		/// <value>The username.</value>
-		[Required(ErrorMessage = "Please, enter your user name")] 
+		[Required(ErrorMessage = "Please, enter your user name"),RegularExpression("([a-z]|[A-Z]|[\\s-_.~]|[0-9])+")] 
 		public string Username { get; set; }
 
 		/// <summary>

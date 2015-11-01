@@ -77,8 +77,8 @@ namespace Yavsc
 			); 
 			routes.MapRoute (
 				"BackCompat",
-				"{controller}/{action}/{user}/{title}",
-				new { controller = "Home", action = "Index", user = UrlParameter.Optional, title = UrlParameter.Optional }
+				"Blogs/{action}/{user}/{title}",
+				new { controller = "Blogs", action = "Index", user = UrlParameter.Optional, title = UrlParameter.Optional }
 				);
 
 			routes.MapRoute (

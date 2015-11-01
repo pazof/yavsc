@@ -91,7 +91,7 @@ namespace Npgsql.Web.RolesAndMembers
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
 				conn.Open ();
 				using (NpgsqlCommand cmd = new NpgsqlCommand (
-					"SELECT count(*)>0 FROM users " +
+					"SELECT count(*)=0 FROM users " +
 					"WHERE username = :uname AND ApplicationName = :appname", conn)) {
 					cmd.Parameters.AddWithValue ("uname", name);
 					cmd.Parameters.AddWithValue ("appname", this.applicationName);

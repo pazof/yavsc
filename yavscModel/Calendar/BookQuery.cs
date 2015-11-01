@@ -45,6 +45,7 @@ namespace Yavsc.Model.Calendar
 		/// <value>The minimum time.</value>
 		[RegularExpression("\\d\\d:\\d\\d")]
 		[Display(ResourceType=typeof(LocalizedText),Name="StartHour")]
+		[Required(ErrorMessage= "S'il vous plait, saisissez une heure de début d'intervention")]
 		public string StartHour { get; set; }
 
 		/// <summary>
@@ -62,7 +63,7 @@ namespace Yavsc.Model.Calendar
 		/// </summary>
 		/// <value>The duration.</value>
 		[RegularExpression("\\d\\d:\\d\\d")]
-		[Required(ErrorMessage= "S'il vous plait, saisissez une durée minimale d'intervention")]
+		[Required(ErrorMessage= "S'il vous plait, saisissez une heure de fin d'intervention")]
 		[Display(Name="EndHour",ResourceType=typeof(LocalizedText))]
 		public string EndHour { get; set; }
 
@@ -77,6 +78,7 @@ namespace Yavsc.Model.Calendar
 		/// Gets or sets the role.
 		/// </summary>
 		/// <value>The role.</value>
+		[Required(ErrorMessage= "S'il vous plait, saisissez le type d'intervention souhaité")]
 		[Display(Name="Role",ResourceType=typeof(LocalizedText))]
 		public string Role { get; set; }
 	}

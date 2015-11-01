@@ -16,6 +16,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Net;
 using System.Configuration;
+using Yavsc.Model;
 
 namespace Yavsc.Controllers
 {
@@ -61,7 +62,7 @@ namespace Yavsc.Controllers
 		/// <returns>The login.</returns>
 		/// <param name="model">Model.</param>
 		/// <param name="returnUrl">Return URL.</param>
-		[HttpPost]
+		[HttpPost,ValidateAntiForgeryToken]
 		public ActionResult Login (LoginModel model, string returnUrl)
 		{
 			if (ModelState.IsValid) {
@@ -187,7 +188,7 @@ namespace Yavsc.Controllers
 			ViewData ["UserName"] = id;
 			if (!confirmed)
 				return View ();
-			string logged = Membership.GetUser ().UserName;
+			string logged = this.User.Identity.Name;
 			if (logged != id)
 			if (!Roles.IsUserInRole ("Admin"))
 				throw new Exception ("Unregister another user");
@@ -250,7 +251,7 @@ namespace Yavsc.Controllers
 			if (id == null)
 				id = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = id;
-			Profile model = new Profile (ProfileBase.Create (id));
+			ProfileEdition model = new ProfileEdition (ProfileBase.Create (id));
 			model.RememberMe = FormsAuthentication.GetAuthCookie (id, true) == null;
 			return View (model);
 		}
@@ -265,20 +266,32 @@ namespace Yavsc.Controllers
 		/// <param name="AvatarFile">Avatar file.</param>
 		[Authorize]
 		[HttpPost]
-		public ActionResult Profile (string id, Profile model, HttpPostedFileBase AvatarFile)
+		public ActionResult Profile (string id, ProfileEdition model, HttpPostedFileBase AvatarFile)
 		{
-			// ASSERT("Membership.GetUser ().UserName is made of simple characters, no slash nor backslash"
-
-			string logdu = Membership.GetUser ().UserName;
-			if (string.IsNullOrWhiteSpace (id))
-				id = logdu;
+			string logdu = User.Identity.Name;
+			if (string.IsNullOrWhiteSpace (id)) {
+				if (string.IsNullOrWhiteSpace (model.UserName)) {
+					model.UserName = logdu;
+					return View (model);
+				} else {
+					id = logdu;
+				}
+			}
 			ViewData ["UserName"] = id;
-			bool editsMyName = (string.Compare(id,logdu)==0);
-			if (!editsMyName)
+			bool editsTheUserName = model.NewUserName!=null&&(string.Compare(id,model.NewUserName)!=0);
+			// Checks authorisation
+			if (logdu!=id)
 			if (!Roles.IsUserInRole ("Admin"))
 			if (!Roles.IsUserInRole ("FrontOffice"))
 				throw new UnauthorizedAccessException ("Your are not authorized to modify this profile");
-
+			// checks availability of a new username
+			if (editsTheUserName)
+			if (!UserManager.IsAvailable (model.NewUserName))
+				ModelState.AddModelError ("UserName",
+					string.Format (
+						LocalizedText.DuplicateUserName,
+						model.NewUserName
+					));
 			if (AvatarFile != null) { 
 				// if said valid, move as avatar file
 				// else invalidate the model
@@ -295,10 +308,6 @@ namespace Yavsc.Controllers
 						string.Format ("Image type {0} is not supported (suported formats : {1})",
 							AvatarFile.ContentType, "image/png"));
 			}
-			/* Sync the property in the Profile model to display :
-		 *  string cAvat = HttpContext.Profile.GetPropertyValue ("Avatar") as string;
-			if (cAvat != null) if (model.avatar == null) model.avatar = cAvat;
-			*/
 			if (ModelState.IsValid) {
 				ProfileBase prf = ProfileBase .Create (id);
 				prf.SetPropertyValue ("Name", model.Name);
@@ -328,11 +337,12 @@ namespace Yavsc.Controllers
 				prf.SetPropertyValue ("gcalid", model.GoogleCalendar);
 				prf.Save ();
 
-				if (editsMyName) {
-					UserManager.ChangeName (id, model.Name);
-					FormsAuthentication.SetAuthCookie (model.Name, model.RememberMe);
+				if (editsTheUserName) {
+					UserManager.ChangeName (id, model.NewUserName);
+					FormsAuthentication.SetAuthCookie (model.NewUserName, model.RememberMe);
+					model.UserName = model.NewUserName;
 				}
-				YavscHelpers.Notify(ViewData, "Profile enregistré"+((editsMyName)?", nom public inclu.":""));
+				YavscHelpers.Notify(ViewData, "Profile enregistré"+((editsTheUserName)?", nom public inclu.":""));
 			}
 			return View (model);
 		}

@@ -1,3 +1,12 @@
+2015-11-01  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlMembershipProvider.cs: xmldoc
+
+	* NpgsqlProfileProvider.cs: use default values from
+	configuration
+
+	* NpgsqlUserNameProvider.cs: Fixes the username detection
+
 2015-10-28  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlProfileProvider.cs: Fixes the defaultValue

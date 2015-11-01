@@ -15,6 +15,12 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <param name="oldName">Old name.</param>
 		/// <param name="newName">New name.</param>
 		public static void ChangeName (string oldName, string newName) {
+			if (!IsAvailable (newName))
+				throw new Exception (
+					string.Format(
+						LocalizedText.DuplicateUserName,
+						newName
+					));
 			Provider.ChangeName (oldName, newName);
 		}
 

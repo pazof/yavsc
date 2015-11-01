@@ -34,8 +34,7 @@ body {
     z-index:    1000;
     top:        0;
     left:       0;
-    height:     100%;
-    width:      100%;
+    right: 0;
     overflow:   scroll; 
 }
 
@@ -60,7 +59,7 @@ header {
 transition: margin 2s, padding 2s;
 	padding: 0;
 	margin: 0;
-	padding-top: 201px;
+	padding-top: 2em;
 	padding-bottom:2em;
 	display: block;
 	background: url("/images/star-939235_1280.jpg") -3em -3em no-repeat fixed;
@@ -145,8 +144,8 @@ aside {
 	border-radius:1em;
 }
 .postpreview video, .postpreview img {
-	max-width:100%;
-	max-height:5em;
+	max-width: 100%;
+	padding: 1em;
 	}
 .post { 
 	display:block;
@@ -266,7 +265,7 @@ a {
 
 .actionlink, .menuitem, a {
    display:inline-block;
-	color: white;
+	color: yellow;
 	border-radius:1em;
 	border: solid black 1px;
    background-color: rgba(20,20,20,.8); 
@@ -340,6 +339,7 @@ a:active {
 
 @media all and (max-width: 640px) {
 header {
+	padding-top:1em;
 	padding-bottom:1em;
 	background: url("/images/star-939235_1280.s.jpg") 0 0 no-repeat fixed;
 	}
@@ -394,8 +394,8 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 
 @media all and (max-width: 350px) {
 header {
-	padding-top: 101px;
-	padding-bottom:1em;
+	padding-top:.5em;
+	padding-bottom:.5em;
 	background: url("/images/star-939235_1280.xxs.jpg") 0 0 no-repeat fixed;
  }
 header h1, header a { padding:.2em;}

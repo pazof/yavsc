@@ -16,19 +16,19 @@
 <% using ( Html.BeginForm("Book","Google") ) { %>
 <div id="book" >Date d'intervention :
 Intervention souhaitée entre le 
-  <input type="text" id="StartDate" class="start date" >
+  <input type="text" id="StartDate" name="StartDate" class="start date" value="<%=Model.StartDate.ToString("yyyy/MM/dd")%>">
   <%= Html.ValidationMessageFor(model=>model.StartDate) %>
 et le 
-  <input type="text" id="EndDate" class="end date" >
+  <input type="text" id="EndDate" name="EndDate" class="end date" value="<%=Model.StartDate.ToString("yyyy/MM/dd")%>">
   <%= Html.ValidationMessageFor(model=>model.EndDate) %>
  <br>
  Heure et durée d'intervention souhaitée
 <%= Html.LabelFor(model=>model.StartHour) %>
- <input type="text" id="StartHour" class="start time" >
+ <input type="text" id="StartHour" name="StartHour" class="start time" value="<%=Model.StartHour%>">
   <%= Html.ValidationMessageFor(model=>model.StartHour) %>
 
 <%= Html.LabelFor(model=>model.EndHour) %>
-  <input type="text" id="EndHour" class="end time" >
+  <input type="text" id="EndHour" name="EndHour" class="end time" value="<%=Model.EndHour%>">
   <%= Html.ValidationMessageFor(model=>model.EndHour) %>
  
   </div>

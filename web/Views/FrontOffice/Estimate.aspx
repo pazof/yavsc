@@ -308,11 +308,7 @@ function addRow(){
             message(false);
             },
             statusCode: {
-            	400: function(data) {
-            		$.each(data.responseJSON, function (key, value) {
-            		document.getElementById("Err_wr_" + value.key).innerHTML=value.errors.join("<br/>");
-                	});
-            		}
+            	400: Yavsc.onAjaxBadInput
             	},
             	error: function (xhr, ajaxOptions, thrownError) {
             	if (xhr.status!=400)

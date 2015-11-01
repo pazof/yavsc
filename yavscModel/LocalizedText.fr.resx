@@ -36,6 +36,7 @@
 	<data name="Estimate_not_found"><value>Devis non trouvé</value></data>
     <data name="EventWebPage"><value>Page web de l'événement</value></data>
 	<data name="ExistantDB"><value>Base de données éxistante</value></data>
+	<data name="FillInAFutureDate"><value>Veuilliez, s'il vous plait, utiliser une date future.</value></data>
 	<data name="Google_calendar"><value>Agenda Google</value></data>
 	<data name="Google_error"><value>Erreur Google : {0}</value></data>
 	<data name="Hide_source"><value>Cacher le texte source du billet</value></data>
@@ -75,6 +76,7 @@
 	<data name="Remove"><value>Supprimer</value></data>
 	<data name="role_created"><value>Rôle créé</value></data>
     <data name="StartDate"><value>Date de début</value></data>
+	<data name="StartDateAfterEndDate"><value>La date de fin doit être postérieure à la date de début.</value></data>
 	<data name="StartHour"><value>Heure de début</value></data>
 	<data name="Submit"><value>Soumettre</value></data>
 	<data name="Tag_name"><value>Nom du tag</value></data>

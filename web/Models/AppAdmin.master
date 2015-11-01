@@ -36,11 +36,12 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
  </asp:ContentPlaceHolder>
  <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
  <div id="notifications"></div>
-<%if (ViewData ["Notifications"]!=null) { %>
+<% if (ViewData ["Notifications"]!=null) { %>
 <script>
 $(document).ready(function(){
-<% foreach (string note in (IEnumerable<string>) ViewData ["Notifications"] ) { %>
-Yavsc.notice('<%=note%>');
+<% foreach (Notification note in (IEnumerable<Notification>) ViewData ["Notifications"] ) { 
+if (note.click_action == null) {%> Yavsc.notice(<%=note.body%>); <% } 
+else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>); <% } %>
 <% } %>
 });
 </script>

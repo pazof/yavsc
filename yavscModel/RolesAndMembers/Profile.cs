@@ -219,7 +219,11 @@ namespace Yavsc.Model.RolesAndMembers
 		/// Gets or sets the name of the user.
 		/// </summary>
 		/// <value>The name of the user.</value>
-		public string UserName { get { return userName; } } 
+		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur valide")
+			,Display(ResourceType=typeof(LocalizedText),Name="User_name"),
+			RegularExpression("([a-z]|[A-Z]|[\\s-_.~]|[0-9])+")
+		]
+		public string UserName { get { return userName; } set { userName=value; } } 
 
 		public Profile () : base ()
 		{
@@ -276,7 +280,6 @@ namespace Yavsc.Model.RolesAndMembers
 
 			userName = profile.UserName;
 
-
 			s = profile.GetPropertyValue ("BankCode");
 			BankCode = (s is DBNull) ? null : (string)s;
 
@@ -290,11 +293,10 @@ namespace Yavsc.Model.RolesAndMembers
 			WicketCode = (s is DBNull) ? null : (string)s;
 
 			s = profile.GetPropertyValue ("AccountNumber");
-			this.AccountNumber = (s is DBNull) ? null : (string)s;
+			AccountNumber = (s is DBNull) ? null : (string)s;
 
-			s = profile.GetPropertyValue ("BankedKey");
-			BankedKey = (s == null) ? 0 : (s is DBNull)? 0 : (int)s;
-
+			object o = profile.GetPropertyValue ("BankedKey");
+			BankedKey = (int)0;
 			s = profile.GetPropertyValue ("gcalid");
 			GoogleCalendar = (s is DBNull)? null : (string) s;
 		}

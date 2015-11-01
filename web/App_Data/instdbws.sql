@@ -118,7 +118,7 @@ CREATE TABLE profiledata
   grefreshtoken character varying(512), -- Google refresh token
   gtokentype character varying(256), -- Google access token type
   gcalid character varying(255), -- Google calendar identifier
-  gtokenexpir timestamp with time zone, -- Google access token expiration date
+  gtokenexpir timestamp with time zone NOT NULL DEFAULT now(), -- Google access token expiration date
   avatar character varying(512), -- url for an avatar
   gcalapi boolean NOT NULL DEFAULT false,
   gregid character varying(1024), -- Google Cloud Message registration identifier
@@ -211,7 +211,7 @@ CREATE TABLE commandes
   id bigserial NOT NULL, -- Identifiant unique de commande e, cours
   validation date, -- Date de validation
   prdref character varying(255) NOT NULL, -- Product reference from the unique valid catalog at the validation date
-  creation timestamp with time zone, -- creation date
+  creation timestamp with time zone NOT NULL, -- creation date
   clientname character varying(255), -- user who created the command, client of this command
   applicationname character varying(255), -- application concerned by this command
   params json,

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Profile_edition" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<Profile>" %>
+﻿<%@ Page Title="Profile_edition" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<ProfileEdition>" %>
 
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
 <% Title = ViewData["UserName"] + " : " +Html.Translate("Profile_edition"); %>
@@ -18,9 +18,9 @@ table.layout TR TD { max-width:40%; }
    <fieldset><legend>Informations publiques</legend>
 
 
-<%= Html.LabelFor(model => model.Name) %> :
-<%= Html.TextBox("Name") %> 
-<%= Html.ValidationMessage("Name", "*") %>
+<%= Html.LabelFor(model => model.NewUserName) %> :
+<%= Html.TextBox("NewUserName") %> 
+<%= Html.ValidationMessage("NewUserName", "*") %>
 <br>
 
 <%= Html.LabelFor(model => model.WebSite) %> : 
@@ -34,7 +34,11 @@ Avatar : <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" a
 <%= Html.ValidationMessage("AvatarFile", "*") %>
 
 </fieldset>
-
+<fieldset><legend>Informations administratives</legend>
+<%= Html.LabelFor(model => model.Name) %> :
+<%= Html.TextBox("Name") %> 
+<%= Html.ValidationMessage("Name", "*") %>
+</fieldset>
     <fieldset><legend>Blog</legend>
     <div class="spanel">
 <%= Html.LabelFor(model => model.BlogVisible) %> :
@@ -117,7 +121,7 @@ Avatar : <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" a
 <% } %>
    <aside>
    <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
-   <%= Html.ActionLink("Désincription","Unregister", "Account",  new { id=ViewData["UserName"] } , new { @class="actionlink" })%>
+   <%= Html.ActionLink("Désincription", "Unregister", "Account",  new { id = ViewData["UserName"] } , new { @class="actionlink" })%>
    </aside>
    <aside>
    <% 	if (Roles.IsUserInRole((string)ViewData ["UserName"],"Admin")) { %>

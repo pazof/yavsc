@@ -52,6 +52,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string StartDateAfterEndDate {
+            get {
+                return ResourceManager.GetString("StartDateAfterEndDate", resourceCulture);
+            }
+        }
+        
         public static string ProviderId {
             get {
                 return ResourceManager.GetString("ProviderId", resourceCulture);
@@ -61,12 +67,6 @@ namespace Yavsc.Model {
         public static string Pdf_version {
             get {
                 return ResourceManager.GetString("Pdf_version", resourceCulture);
-            }
-        }
-        
-        public static string Location {
-            get {
-                return ResourceManager.GetString("Location", resourceCulture);
             }
         }
         
@@ -286,9 +286,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string StartHour {
+        public static string Location {
             get {
-                return ResourceManager.GetString("StartHour", resourceCulture);
+                return ResourceManager.GetString("Location", resourceCulture);
             }
         }
         
@@ -460,6 +460,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string StartHour {
+            get {
+                return ResourceManager.GetString("StartHour", resourceCulture);
+            }
+        }
+        
         public static string Unitary_cost {
             get {
                 return ResourceManager.GetString("Unitary_cost", resourceCulture);
@@ -505,6 +511,12 @@ namespace Yavsc.Model {
         public static string Non_existent_user {
             get {
                 return ResourceManager.GetString("Non_existent_user", resourceCulture);
+            }
+        }
+        
+        public static string FillInAFutureDate {
+            get {
+                return ResourceManager.GetString("FillInAFutureDate", resourceCulture);
             }
         }
     }

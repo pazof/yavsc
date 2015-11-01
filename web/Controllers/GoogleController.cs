@@ -112,7 +112,7 @@ namespace Yavsc.Controllers
 				YavscHelpers.Notify(ViewData,  msg);
 				return View ("Auth");
 			}
-			SaveToken (gat);
+			SaveToken (HttpContext.Profile,gat);
 			HttpContext.Profile.SetPropertyValue ("gcalapi", true);
 			string returnUrl = (string)Session ["returnUrl"];
 			Session ["returnUrl"] = null;
@@ -126,14 +126,14 @@ namespace Yavsc.Controllers
 		/// order to save a descent value as expiration date.
 		/// </summary>
 		/// <param name="gat">Gat.</param>
-		private void SaveToken (AuthToken gat)
+		private void SaveToken (ProfileBase pr, AuthToken gat)
 		{	
-			HttpContext.Profile.SetPropertyValue ("gtoken", gat.access_token);
+			pr.SetPropertyValue ("gtoken", gat.access_token);
 			if (gat.refresh_token != null)
-				HttpContext.Profile.SetPropertyValue ("grefreshtoken", gat.refresh_token);
-			HttpContext.Profile.SetPropertyValue ("gtokentype", gat.token_type);
-			HttpContext.Profile.SetPropertyValue ("gtokenexpir", DateTime.Now.AddSeconds (gat.expires_in));
-			HttpContext.Profile.Save ();
+				pr.SetPropertyValue ("grefreshtoken", gat.refresh_token);
+			pr.SetPropertyValue ("gtokentype", gat.token_type);
+			pr.SetPropertyValue ("gtokenexpir", DateTime.Now.AddSeconds (gat.expires_in));
+			pr.Save ();
 		}
 
 		/// <summary>
@@ -161,7 +161,9 @@ namespace Yavsc.Controllers
 				// just set this user as logged on
 				foreach (MembershipUser u in mbrs) {
 				string username = u.UserName;
-				FormsAuthentication.SetAuthCookie (username, true);
+				    FormsAuthentication.SetAuthCookie (username, true);
+					/* var upr = ProfileBase.Create (username);
+					SaveToken (upr,gat); */
 				}
 				Session ["returnUrl"] = null;
 				return Redirect (returnUrl);
@@ -230,7 +232,7 @@ namespace Yavsc.Controllers
 					}
 					if (me.url != null)
 						HttpContext.Profile.SetPropertyValue ("WebSite", me.url);
-					SaveToken (gat);
+					SaveToken (HttpContext.Profile,gat);
 					// already done in SaveToken: HttpContext.Profile.Save ();
 					return Redirect (returnUrl);
 				}
@@ -256,7 +258,6 @@ namespace Yavsc.Controllers
 		[HttpGet]
 		public ActionResult ChooseCalendar (string returnUrl)
 		{
-
 			bool hasCalAuth = (bool)HttpContext.Profile.GetPropertyValue ("gcalapi");
 			if (!hasCalAuth) {
 				Session ["returnUrl"] = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/ChooseCalendar";
@@ -296,8 +297,7 @@ namespace Yavsc.Controllers
 		/// Dates the query.
 		/// </summary>
 		/// <returns>The query.</returns>
-		[Authorize]
-		[HttpGet]
+		[Authorize,HttpGet]
 		public ActionResult Book ()
 		{
 			return View (new BookQuery ());
@@ -308,42 +308,50 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The query.</returns>
 		/// <param name="model">Model.</param>
-		[Authorize]
-		[HttpPost]
+		[Authorize,HttpPost]
 		public ActionResult Book (BookQuery model)
 		{
 			if (ModelState.IsValid) {
 				DateTime mindate = DateTime.Now;
-				if (model.StartDate < mindate)
-					model.StartDate = mindate;
-				if (model.EndDate < mindate)
-					model.EndDate = mindate.AddYears (1).Date;
+				if (model.StartDate < mindate){
+					ModelState.AddModelError ("StartDate", LocalizedText.FillInAFutureDate);
+				}
+				if (model.EndDate < model.StartDate)
+					ModelState.AddModelError ("EndDate", LocalizedText.StartDateAfterEndDate);
 
 				var muc = Membership.FindUsersByName (model.Person);
 				if (muc.Count == 0) {
 					ModelState.AddModelError ("Person", LocalizedText.Non_existent_user);
-					return View (model);
 				}
 				if (!Roles.IsUserInRole (model.Role)) {
 					ModelState.AddModelError ("Role", LocalizedText.UserNotInThisRole);
-					return View (model);
 				}
-
 				ProfileBase upr = ProfileBase.Create (model.Person);
-
-				string calid = (string)upr.GetPropertyValue ("gcalid");
-				if (string.IsNullOrWhiteSpace (calid)) {
+				var gcalid = upr.GetPropertyValue ("gcalid");
+				if (gcalid is DBNull)
 					ModelState.AddModelError ("Person", LocalizedText.No_calendar_for_this_user);
-					return View (model);
-				}
-				DateTime maxdate = model.EndDate;
-				CalendarApi c = new CalendarApi ();
-				CalendarEventList res;
-				try {
-					var events = c.GetCalendar (calid, mindate, maxdate, upr);
-
-				} catch (OtherWebException ex) {
-					return View ("OtherWebException", ex);
+				if (ModelState.IsValid) {
+					string calid = (string) gcalid; 
+					DateTime maxdate = model.EndDate;
+					CalendarApi c = new CalendarApi ();
+					CalendarEventList events;
+					try {
+						events = c.GetCalendar (calid, mindate, maxdate, upr);
+						YavscHelpers.Notify (ViewData, "Google calendar API call success");
+					} catch (WebException ex) {
+						string response;
+						using (var stream = ex.Response.GetResponseStream())
+						using (var reader = new StreamReader(stream))
+						{
+							response = reader.ReadToEnd();
+						}
+						YavscHelpers.Notify (ViewData, 
+							string.Format(
+								"Google calendar API exception {0} : {1}<br><pre>{2}</pre>",
+								ex.Status.ToString(),
+								ex.Message,
+								response));
+					}
 				}
 			}
 			return View (model);

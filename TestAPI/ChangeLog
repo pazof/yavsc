@@ -1,3 +1,8 @@
+2015-11-01  Paul Schneider  <paul@pschneider.fr>
+
+	* test-domain-TestAPI.config: profile dates must be returned
+	as DateTime
+
 2015-10-17  Paul Schneider  <paul@pschneider.fr>
 
 	* AllTests.cs:

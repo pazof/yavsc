@@ -951,11 +951,13 @@ namespace Npgsql.Web
 		//
 		// MembershipProvider.ValidateUser
 		//
-		/// <Docs>To be added.</Docs>
+		/// <Docs>Validates an user identification by password,
+		/// and, when he's approuved, updates its last login date and 
+		/// returns true.</Docs>
 		/// <summary>
-		/// Validates the user.
+		/// Validates the user at login time.
 		/// </summary>
-		/// <returns><c>true</c>, if user was validated, <c>false</c> otherwise.</returns>
+		/// <returns><c>true</c>, if user was approuved and its password is valid, <c>false</c> otherwise.</returns>
 		/// <param name="username">Username.</param>
 		/// <param name="password">Password.</param>
 		public override bool ValidateUser (string username, string password)

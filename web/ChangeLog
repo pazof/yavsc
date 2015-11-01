@@ -1,3 +1,72 @@
+2015-11-01  Paul Schneider  <paul@pschneider.fr>
+
+	* Book-next.aspx: pollution
+
+	* instdbws.sql: The conversion to a valid .Net DateTime
+	requires a credible date time as source value, the null one is
+	not supported.
+
+	* style.css: Fixes the new notification style
+
+	* AccountController.cs: Fixes the profile edition.
+	Now using the anti forgery key at login time
+
+	* Book.aspx:
+	* CalendarApi.cs:
+	* GoogleController.cs: WIP booking
+
+	* HomeController.cs: code prettying
+
+	* Global.asax.cs: Limits the usage of titles in a route to the
+	blog controller
+
+	* OAuth2.cs: Profile values may be of type DBNull ...
+
+	* T.cs: All translated strings will be Html encoded, as
+	expected from an html helper
+
+	* YavscHelpers.cs: A new method to build a javascript
+	string...
+
+	* App.master:
+	* AppAdmin.master: Notification.body is now a js string
+	literal
+
+	* NoLogin.master: sync with the true master
+
+	* Login.aspx: Permits the anti forgery key usage
+
+	* Profile.aspx: Fixes the username modification
+
+	* Estimate.aspx: refactoring
+
+	* Web.config: Fixes a later commit on the catalog name space
+
+	* Web.csproj: An ajax helper to notify
+
+	* ChangeLog: should not be indexed
+
+	* ValidateAjaxAttribute.cs: Fixes usage of HtmlFieldPrefix
+
+2015-10-31  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.csproj:
+	* Web.config:
+	* T.cs:
+	* Global.asax.cs:
+	* App.master:
+	* Book.aspx:
+	* YavscHelpers.cs:
+	* OAuth2.cs:
+	* Profile.aspx:
+	* YavscAjaxHelper.cs:
+	* Book-next.aspx:
+	* CalendarApi.cs:
+	* HomeController.cs:
+	* GoogleController.cs:
+	* Estimate.aspx:
+	* AccountController.cs: 
+
 2015-10-30  Paul Schneider  <paul@pschneider.fr>
 
 	* packages.config:

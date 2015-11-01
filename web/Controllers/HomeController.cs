@@ -92,7 +92,8 @@ namespace Yavsc.Controllers
 				if (!Request.IsAuthenticated) {
 					ProfileBase anonymousProfile = ProfileBase.Create(anonid);
 					object ac = anonymousProfile.GetPropertyValue ("allowcookies");
-					if (ac is string && ac!="true")
+
+					if (ac is string && ((string)ac)!="true")
 						YavscHelpers.Notify (ViewData, LocalizedText.ThisSiteUsesCookies, 
 							"function(){Yavsc.ajax(\"/Yavsc/AllowCookies\", { id:'"+anonid+"' });}");
 				}

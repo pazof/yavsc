@@ -16,6 +16,7 @@
 <%= Html.CheckBox("RememberMe") %>
 <%= Html.ValidationMessage("RememberMe", "") %><br/>
 <%= Html.Hidden("returnUrl",ViewData["returnUrl"]) %>
+<%= Html.AntiForgeryToken() %>
 <!-- Html.AntiForgeryToken() -->
 <input type="submit"/>
 <% } %></div>

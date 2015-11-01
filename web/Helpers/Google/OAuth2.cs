@@ -226,16 +226,15 @@ namespace Yavsc.Helpers.Google
 		public static string GetFreshGoogleCredential (ProfileBase pr)
 		{
 			string token = (string)pr.GetPropertyValue ("gtoken");
-			string token_type = (string)pr.GetPropertyValue ("gtokentype");
-			DateTime token_exp = (DateTime)pr.GetPropertyValue ("gtokenexpir");
+			string token_type = (string) pr.GetPropertyValue ("gtokentype");
+			DateTime token_exp = (DateTime) pr.GetPropertyValue ("gtokenexpir");
 			if (token_exp < DateTime.Now) {
 				object ort = pr.GetPropertyValue ("grefreshtoken");
-				if (ort == null) {
+				if (ort == null || ort is DBNull) {
 					throw new InvalidOAuth2RefreshToken ("Google");
 				}
 				else {
 					string refresh_token = ort as string;
-
 					AuthToken gat = OAuth2.GetTokenPosting (
 						               string.Format ("grant_type=refresh_token&client_id={0}&client_secret={1}&refresh_token={2}",
 							               CLIENT_ID, CLIENT_SECRET, refresh_token));

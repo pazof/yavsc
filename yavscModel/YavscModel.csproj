@@ -179,6 +179,7 @@
     <Compile Include="Calendar\ICalendarManager.cs" />
     <Compile Include="Messaging\Notification.cs" />
     <Compile Include="FileSystem\WebFileSystemManager.cs" />
+    <Compile Include="RolesAndMembers\ProfileEdition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -52,6 +52,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string StartDateAfterEndDate {
+            get {
+                return ResourceManager.GetString("StartDateAfterEndDate", resourceCulture);
+            }
+        }
+        
         public static string ProviderId {
             get {
                 return ResourceManager.GetString("ProviderId", resourceCulture);
@@ -517,6 +523,12 @@ namespace Yavsc.Model {
         public static string Non_existent_user {
             get {
                 return ResourceManager.GetString("Non_existent_user", resourceCulture);
+            }
+        }
+        
+        public static string FillInAFutureDate {
+            get {
+                return ResourceManager.GetString("FillInAFutureDate", resourceCulture);
             }
         }
     }

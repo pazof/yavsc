@@ -1,3 +1,39 @@
+2015-11-01  Paul Schneider  <paul@pschneider.fr>
+
+	* ProfileEdition.cs: Fixes the username modification
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: WIP booking
+
+	* ChangePasswordModel.cs:
+	* RegisterClientModel.cs: A regexp for user name
+
+	* LoginModel.cs: A regexp for user name and password
+
+	* Profile.cs: A regexp for user name, and profile usage fixes
+
+	* UserManager.cs: Checks for username availability before
+	trying to modify it
+
+	* YavscModel.csproj: `ProfileEdition` class addition
+
+	* ChangeLog: useless here
+
+	* BookQuery.cs: Start, end hour and role are required
+
+	* OtherWebException.cs: useless
+
+2015-10-31  Paul Schneider  <paul@pschneider.fr>
+
+	* LocalizedText.resx:
+	* OtherWebException.cs:
+	* BookQuery.cs:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: 
+
 2015-10-30  Paul Schneider  <paul@pschneider.fr>
 
 	* LocalizedText.resx:

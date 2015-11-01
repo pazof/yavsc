@@ -35,7 +35,8 @@ namespace Yavsc.Model.RolesAndMembers
 		/// </summary>
 		/// <value>The full name.</value>
 		[DisplayName("Nom complet")]
-		[Required(ErrorMessage="S'il vous plait, saisissez le nom complet")]
+		[Required(ErrorMessage="S'il vous plait, saisissez le nom complet"),
+			RegularExpression("([a-z]|[A-Z]|[\\s-_.~]|[0-9])+")]
 		public string Name { get; set; }
 		/// <summary>
 		/// Gets or sets the address.

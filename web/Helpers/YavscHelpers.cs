@@ -20,7 +20,6 @@ using Yavsc.Model.Messaging;
 namespace Yavsc.Helpers
 {
 
-
 	/// <summary>
 	/// Yavsc helpers.
 	/// </summary>
@@ -62,7 +61,7 @@ namespace Yavsc.Helpers
 		{
 			SendActivationMessage (helper.Route("Default", new { controller="Account", 
 				action = "Validate",
-				key=user.ProviderUserKey.ToString() } )
+				key=user.ProviderUserKey.ToString(), id = user.UserName } )
 				, WebConfigurationManager.AppSettings ["RegistrationMessage"],
 				user);
 		}
@@ -73,7 +72,12 @@ namespace Yavsc.Helpers
 		/// <param name="user">User.</param>
 		public static void SendActivationMessage(this System.Web.Mvc.UrlHelper helper, MembershipUser user)
 		{
-			SendActivationMessage (helper.Content("~/Account/Validate/"+user.UserName+"/?key="+user.ProviderUserKey.ToString())
+			SendActivationMessage (
+				string.Format("{2}://{3}/Account/Validate/{1}?key={0}",
+					user.ProviderUserKey.ToString(), user.UserName , 
+					helper.RequestContext.HttpContext.Request.Url.Scheme,
+					helper.RequestContext.HttpContext.Request.Url.Authority
+				)
 				, WebConfigurationManager.AppSettings ["RegistrationMessage"],
 				user);
 		}
@@ -221,25 +225,11 @@ namespace Yavsc.Helpers
 			JavaScriptSerializer serializer = new JavaScriptSerializer();
 			return serializer.Serialize(obj);
 		}
-
-		/// <summary>
-		/// Notify the specified helper and message.
-		/// </summary>
-		/// <param name="helper">Helper.</param>
-		/// <param name="message">Message.</param>
-		public static void Notify (this HtmlHelper helper, string message) {
-			Notify (helper.ViewData, message);
-		}
-		/// <summary>
-		/// Notify the specified viewData and message.
-		/// </summary>
-		/// <param name="viewData">View data.</param>
-		/// <param name="message">Message.</param>
-		public static void Notify(ViewDataDictionary viewData, string message, string click_action=null) {
-			if (viewData ["Notifications"] == null)
-				viewData ["Notifications"] = new List<Notification> ();
-			(viewData ["Notifications"] as List<Notification>).Add (
-				new Notification { body = message.Replace("\'","\\\'"), 
+		public static void Notify(ViewDataDictionary ViewData, string message, string click_action=null) {
+			if (ViewData ["Notifications"] == null)
+				ViewData ["Notifications"] = new List<Notification> ();
+			(ViewData ["Notifications"] as List<Notification>).Add (
+				new Notification { body = YavscAjaxHelper.QuoteJavascriptString(message), 
 					click_action = click_action } ) ;
 		}
 		/// <summary>
@@ -339,7 +329,7 @@ namespace Yavsc.Helpers
 				}
 			} 
 			if (ResultCount == 0) {
-				writer.Write (none);
+				writer.WriteEncodedText(none);
 			}
 			return new MvcHtmlString(strwr.ToString());
 		}

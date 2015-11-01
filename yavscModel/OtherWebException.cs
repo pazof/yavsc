@@ -28,7 +28,7 @@ namespace Yavsc.Model
 	/// <summary>
 	/// Google error exception.
 	/// </summary>
-	public class OtherWebException : Exception 
+	public class OtherWebException : WebException 
 	{
 		/// <summary>
 		/// Gets or sets the title.

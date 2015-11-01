@@ -106,18 +106,18 @@ namespace Yavsc.Helpers.Google
 					using (Stream respstream = resp.GetResponseStream ()) {
 						try {
 							res = (CalendarEventList) new DataContractJsonSerializer(typeof(CalendarEventList)).ReadObject (respstream);
-						} catch (Exception ex) {
+						} catch (Exception ) {
 							respstream.Close ();
 							resp.Close ();
 							webreq.Abort ();
-							throw ex;
+							throw ;
 						}
 					}
 					resp.Close ();
 				}
-			} catch (WebException ex) {
+			} catch (WebException ) {
 				webreq.Abort ();
-				throw new OtherWebException (ex);
+				throw;
 			}
 			webreq.Abort ();
 			return res;
