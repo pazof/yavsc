@@ -170,8 +170,6 @@
     <Compile Include="Blogs\BasePost.cs" />
     <Compile Include="Blogs\PostTag.cs" />
     <Compile Include="Blogs\BasePostInfo.cs" />
-    <Compile Include="Blogs\PostInfoByTitle.cs" />
-    <Compile Include="Blogs\PostInfoByUser.cs" />
     <Compile Include="Blogs\TagInfo.cs" />
     <Compile Include="Blogs\MarkdownHelper.cs" />
     <Compile Include="Calendar\BookQuery.cs" />

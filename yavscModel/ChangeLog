@@ -1,5 +1,12 @@
 2015-11-01  Paul Schneider  <paul@pschneider.fr>
 
+	* YavscModel.csproj:
+	* PostInfoByUser.cs:
+	* PostInfoByTitle.cs:
+	* BlogEntryCollection.cs: refactoring
+
+2015-11-01  Paul Schneider  <paul@pschneider.fr>
+
 	* ProfileEdition.cs: Fixes the username modification
 
 	* LocalizedText.resx:

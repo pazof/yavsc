@@ -47,7 +47,7 @@ self.ajax = function (method,data,callback) {
 self.onScroll = function() {
 	var $notifications = $('#notifications');
 		if ($notifications.has('*').length>0) {
-		if ($(window).scrollTop()>100) { 
+		if ($(window).scrollTop()>0) { 
 			$notifications.addClass("dispmodal");
 		}
 		else {  

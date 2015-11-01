@@ -36,7 +36,7 @@ namespace Yavsc.Helpers.Google
 	/// <summary>
 	/// Google O auth2 client.
 	/// </summary>
-	public class OAuth2:ApiClient
+	public class OAuth2 : ApiClient
 	{
 		/// <summary>
 		/// The URI used to get tokens.
@@ -58,9 +58,11 @@ namespace Yavsc.Helpers.Google
 		/// Initializes a new instance of the <see cref="Yavsc.Helpers.Google.OAuth2"/> class.
 		/// </summary>
 		/// <param name="redirectUri">Redirect URI.</param>
-		public OAuth2 (string redirectUri)
+		public OAuth2 (string redirectUri, string clientId, string clientSecret)
 		{
 			RedirectUri = redirectUri;
+			CLIENT_ID = clientId;
+			CLIENT_SECRET = clientSecret;
 		}
 
 		/// <summary>
@@ -84,12 +86,10 @@ namespace Yavsc.Helpers.Google
 		/// </summary>
 		/// <param name="bresp">Bresp.</param>
 		/// <param name="state">State.</param>
-		public void GetCalAuth (HttpResponseBase bresp, string state)
+		public void GetCalendarScope (HttpResponseBase bresp, string state)
 		{
-			string scope = string.Join ("%20", scopeOpenid);
-			scope = string.Join ("%20", scopeCalendar);
-			string prms = String.Format ("response_type=code&client_id={0}&redirect_uri={1}&scope={2}&state={3}&include_granted_scopes=false&access_type=offline",
-				              CLIENT_ID, RedirectUri, scope, state);
+			string prms = String.Format ("response_type=code&client_id={0}&redirect_uri={1}&scope={2}&state={3}&include_granted_scopes=true&access_type=offline&approval_prompt=force",
+				CLIENT_ID, RedirectUri, scopeCalendar, state);
 			GetAuthResponse (bresp, prms);
 		}
 
@@ -230,16 +230,14 @@ namespace Yavsc.Helpers.Google
 			DateTime token_exp = (DateTime) pr.GetPropertyValue ("gtokenexpir");
 			if (token_exp < DateTime.Now) {
 				object ort = pr.GetPropertyValue ("grefreshtoken");
-				if (ort == null || ort is DBNull) {
+				if (ort is DBNull || string.IsNullOrWhiteSpace((string)ort)) {
 					throw new InvalidOAuth2RefreshToken ("Google");
 				}
-				else {
-					string refresh_token = ort as string;
-					AuthToken gat = OAuth2.GetTokenPosting (
-						               string.Format ("grant_type=refresh_token&client_id={0}&client_secret={1}&refresh_token={2}",
-							               CLIENT_ID, CLIENT_SECRET, refresh_token));
-					token = gat.access_token;
-				}
+				string refresh_token = ort as string;
+				AuthToken gat = OAuth2.GetTokenPosting (
+						string.Format ("grant_type=refresh_token&client_id={0}&client_secret={1}&refresh_token={2}",
+						CLIENT_ID, CLIENT_SECRET, refresh_token));
+				token = gat.access_token;
 				pr.SetPropertyValue ("gtoken", token);
 				pr.Save ();
 				// ASSERT gat.token_type == pr.GetPropertyValue("gtokentype")

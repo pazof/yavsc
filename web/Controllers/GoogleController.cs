@@ -78,10 +78,12 @@ namespace Yavsc.Controllers
 			if (string.IsNullOrWhiteSpace (returnUrl))
 				returnUrl = "/";
 			Session ["returnUrl"] = returnUrl;
-			OAuth2 oa = new OAuth2 (AuthGRU);
+			OAuth2 oa = new OAuth2 (AuthGRU,clientId,clientSecret);
 			oa.Login (Response, SetSessionSate ());
 		}
-
+		private string clientId = ConfigurationManager.AppSettings ["GOOGLE_CLIENT_ID"];
+		private string clientSecret = ConfigurationManager.AppSettings ["GOOGLE_CLIENT_SECRET"];
+		private string clientApiKey = ConfigurationManager.AppSettings ["GOOGLE_API_KEY"];
 		/// <summary>
 		/// Gets the cal auth.
 		/// </summary>
@@ -91,8 +93,8 @@ namespace Yavsc.Controllers
 			if (string.IsNullOrWhiteSpace (returnUrl))
 				returnUrl = "/";
 			Session ["returnUrl"] = returnUrl;
-			OAuth2 oa = new OAuth2 (CalendarGRU);
-			oa.GetCalAuth (Response, SetSessionSate ());
+			OAuth2 oa = new OAuth2 (CalendarGRU,clientId,clientSecret);
+			oa.GetCalendarScope (Response, SetSessionSate ());
 		}
 
 		/// <summary>
@@ -105,16 +107,16 @@ namespace Yavsc.Controllers
 		public ActionResult CalAuth ()
 		{
 			string msg;
-			OAuth2 oa = new OAuth2 (CalendarGRU);
+			OAuth2 oa = new OAuth2 (CalendarGRU,clientId,clientSecret);
 
-			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
+			AuthToken gat = oa.GetToken (Request, (string) Session ["state"], out msg);
 			if (gat == null) {
 				YavscHelpers.Notify(ViewData,  msg);
 				return View ("Auth");
 			}
 			SaveToken (HttpContext.Profile,gat);
 			HttpContext.Profile.SetPropertyValue ("gcalapi", true);
-			string returnUrl = (string)Session ["returnUrl"];
+			string returnUrl = (string) Session ["returnUrl"];
 			Session ["returnUrl"] = null;
 			return Redirect (returnUrl);
 		}
@@ -143,7 +145,7 @@ namespace Yavsc.Controllers
 		public ActionResult Auth ()
 		{
 			string msg;
-			OAuth2 oa = new OAuth2 (AuthGRU);
+			OAuth2 oa = new OAuth2 (AuthGRU,clientId,clientSecret);
 			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
 			if (gat == null) {
 				YavscHelpers.Notify(ViewData,  msg);
@@ -188,8 +190,8 @@ namespace Yavsc.Controllers
 					ModelState.AddModelError ("UserName", "This user name already is in use");
 					return View ();
 				}
-				string returnUrl = (string)Session ["returnUrl"];
-				AuthToken gat = (AuthToken)Session ["GoogleAuthToken"];
+				string returnUrl = (string) Session ["returnUrl"];
+				AuthToken gat = (AuthToken) Session ["GoogleAuthToken"];
 				People me = (People)Session ["me"];
 				if (gat == null || me == null)
 					throw new InvalidDataException ();
@@ -232,8 +234,9 @@ namespace Yavsc.Controllers
 					}
 					if (me.url != null)
 						HttpContext.Profile.SetPropertyValue ("WebSite", me.url);
-					SaveToken (HttpContext.Profile,gat);
-					// already done in SaveToken: HttpContext.Profile.Save ();
+					// Will be done in SaveToken: HttpContext.Profile.Save ();
+					SaveToken (HttpContext.Profile, gat);
+					Session ["returnUrl"] = null;
 					return Redirect (returnUrl);
 				}
 				ViewData ["returnUrl"] = returnUrl;
@@ -258,19 +261,17 @@ namespace Yavsc.Controllers
 		[HttpGet]
 		public ActionResult ChooseCalendar (string returnUrl)
 		{
-			bool hasCalAuth = (bool)HttpContext.Profile.GetPropertyValue ("gcalapi");
-			if (!hasCalAuth) {
-				Session ["returnUrl"] = Request.Url.Scheme + "://" + Request.Url.Authority + "/Google/ChooseCalendar";
+			if (returnUrl != null) { 
+				Session ["chooseCalReturnUrl"] = returnUrl;
 				return RedirectToAction ("GetCalAuth",
 					new { 
-						returnUrl = "ChooseCalendar?returnUrl="+HttpUtility.UrlEncode(returnUrl)
+						returnUrl = Url.Action ("ChooseCalendar") // "ChooseCalendar?returnUrl="+HttpUtility.UrlEncode(returnUrl)
 					});
 			}
 			string cred = OAuth2.GetFreshGoogleCredential (HttpContext.Profile);
-
-			CalendarApi c = new CalendarApi ();
+			CalendarApi c = new CalendarApi (clientApiKey);
 			CalendarList cl = c.GetCalendars (cred);
-			ViewData ["returnUrl"] = returnUrl;
+			ViewData ["returnUrl"] = Session ["chooseCalReturnUrl"];
 			return View (cl);
 		}
 		
@@ -300,7 +301,12 @@ namespace Yavsc.Controllers
 		[Authorize,HttpGet]
 		public ActionResult Book ()
 		{
-			return View (new BookQuery ());
+			var model = new BookQuery ();
+			model.StartDate = DateTime.Now;
+			model.EndDate = model.StartDate.AddDays(2);
+			model.StartHour = DateTime.Now.ToString("HH:mm");
+			model.EndHour = DateTime.Now.AddHours(1).ToString("HH:mm");
+			return View (model);
 		}
 		
 		/// <summary>
@@ -313,7 +319,7 @@ namespace Yavsc.Controllers
 		{
 			if (ModelState.IsValid) {
 				DateTime mindate = DateTime.Now;
-				if (model.StartDate < mindate){
+				if (model.StartDate.Date < mindate.Date){
 					ModelState.AddModelError ("StartDate", LocalizedText.FillInAFutureDate);
 				}
 				if (model.EndDate < model.StartDate)
@@ -333,10 +339,11 @@ namespace Yavsc.Controllers
 				if (ModelState.IsValid) {
 					string calid = (string) gcalid; 
 					DateTime maxdate = model.EndDate;
-					CalendarApi c = new CalendarApi ();
+					CalendarApi c = new CalendarApi (clientApiKey);
 					CalendarEventList events;
 					try {
-						events = c.GetCalendar (calid, mindate, maxdate, upr);
+						string creds = OAuth2.GetFreshGoogleCredential (upr);
+						events = c.GetCalendar (calid, mindate, maxdate, creds);
 						YavscHelpers.Notify (ViewData, "Google calendar API call success");
 					} catch (WebException ex) {
 						string response;

@@ -43,7 +43,7 @@ namespace Yavsc
 					where modelState[x].Errors.Count > 0
 				select new
 			{
-				// FIXME why?
+				// FIXME why not directly underscores?
 				key = x.Replace(".","_"),
 				errors = modelState[x].Errors.
 					Select(y => y.ErrorMessage).

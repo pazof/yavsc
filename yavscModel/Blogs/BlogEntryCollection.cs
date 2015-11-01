@@ -82,13 +82,13 @@ namespace Yavsc.Model.Blogs
 		/// <summary>
 		/// Groups by title.
 		/// </summary>
-		public IEnumerable<IGrouping<string,PostInfoByTitle>> GroupByTitle ()
+		public IEnumerable<IGrouping<string,BasePostInfo>> GroupByTitle ()
 		{
 			bool truncated;
 			return from be in this
 				orderby be.Posted descending
-			       group
-			           new  PostInfoByTitle { Author = be.Author, Id = be.Id, 
+			       group 
+				new  BasePostInfo { Author = be.Author, Id = be.Id, 
 				Posted = be.Posted, Modified = be.Modified, 
 				Intro = MarkdownHelper.MarkdownIntro (be.Content, out truncated),
 				Visible = be.Visible,
@@ -103,13 +103,13 @@ namespace Yavsc.Model.Blogs
 		/// Groups by user.
 		/// </summary>
 		/// <returns>The by user.</returns>
-		public IEnumerable<IGrouping<string,PostInfoByUser>> GroupByUser ()
+		public IEnumerable<IGrouping<string,BasePostInfo>> GroupByUser ()
 		{
 			bool truncated;
 			return from be in this
 				orderby be.Posted descending
 			       group
-			           new  PostInfoByUser { 
+				new  BasePostInfo { 
 				Title = be.Title, 
 				Id = be.Id, 
 				Posted = be.Posted, 

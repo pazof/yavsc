@@ -27,7 +27,7 @@ body {
                 url('/images/FhHRx.gif') 
                 50% 50% 
                 no-repeat;
-    overflow:   scroll; 
+    overflow:   auto; 
 }
 .dispmodal {
     position:   fixed;
@@ -35,7 +35,9 @@ body {
     top:        0;
     left:       0;
     right: 0;
-    overflow:   scroll; 
+    width:      100%;
+    overflow-y:   auto; 
+    overflow-x:   hidden; 
 }
 
 body.loading {
@@ -218,9 +220,6 @@ label {
 	border-radius: 1em; 
 	border: dashed rgb(020,20,256) 2px; 
 }
-#notifications { 
-	padding: 1em;
- }
 
 .notification {
 	font-size: large;
@@ -368,7 +367,8 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 	margin:.5em;
 	padding:.5em;
   }
-  #notifications { 
+
+  .notification { 
 	padding: .5em;
 	border-radius:.5em;
 	margin:.5em;
@@ -398,6 +398,7 @@ header {
 	padding-bottom:.5em;
 	background: url("/images/star-939235_1280.xxs.jpg") 0 0 no-repeat fixed;
  }
+
 header h1, header a { padding:.2em;}
 
 	nav {

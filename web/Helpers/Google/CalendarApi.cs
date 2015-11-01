@@ -36,8 +36,12 @@ namespace Yavsc.Helpers.Google
 	/// <summary>
 	/// Google Calendar API client.
 	/// </summary>
-	public class CalendarApi: ApiClient 
+	public class CalendarApi : ApiClient 
 	{
+		public CalendarApi(string apiKey)
+		{
+			API_KEY = apiKey;
+		}
 		/// <summary>
 		/// The get cal list URI.
 		/// </summary>
@@ -87,8 +91,11 @@ namespace Yavsc.Helpers.Google
 		/// <param name="mindate">Mindate.</param>
 		/// <param name="maxdate">Maxdate.</param>
 		/// <param name="upr">Upr.</param>
-		public CalendarEventList GetCalendar  (string calid, DateTime mindate, DateTime maxdate, ProfileBase upr)
+		public CalendarEventList GetCalendar  (string calid, DateTime mindate, DateTime maxdate,string cred)
 		{
+			if (string.IsNullOrWhiteSpace (calid))
+				throw new Exception ("the calendar identifier is not specified");
+			
 			string uri = string.Format (
 				getCalEntriesUri, HttpUtility.UrlEncode (calid)) +
 				string.Format ("?orderBy=startTime&singleEvents=true&timeMin={0}&timeMax={1}&key=" + API_KEY,
@@ -96,7 +103,7 @@ namespace Yavsc.Helpers.Google
 					HttpUtility.UrlEncode (maxdate.ToString (dateFormat) + timeZone));
 
 			HttpWebRequest webreq = WebRequest.CreateHttp (uri);
-			string cred = OAuth2.GetFreshGoogleCredential (upr);
+
 			webreq.Headers.Add (HttpRequestHeader.Authorization, cred);
 			webreq.Method = "GET";
 			webreq.ContentType = "application/http";

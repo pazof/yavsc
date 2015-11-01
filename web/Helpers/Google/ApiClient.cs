@@ -40,16 +40,17 @@ namespace Yavsc.Helpers.Google
 		/// <summary>
 		/// The CLIENT Id.
 		/// </summary>
-		protected static string CLIENT_ID = "325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com";
+		public static string CLIENT_ID { get ; set ; }
+
 		/// <summary>
 		/// The CLIENt SECREt
 		/// </summary>
-		protected static string CLIENT_SECRET = "MaxYcvJJCs2gDGvaELZbzwfL";
+		public static string  CLIENT_SECRET { get ; set ; }
 
 		/// <summary>
 		/// The API KEY.
 		/// </summary>
-		protected static string API_KEY="AIzaSyBV_LQHb22nGgjNvFzZwnQHjao3Q7IewRw";
+		public static string  API_KEY { get ; set ; }
 		/* // to use in descendence
 		* 
 		protected static string getPeopleUri = "https://www.googleapis.com/plus/v1/people";

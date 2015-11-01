@@ -1,5 +1,34 @@
 2015-11-01  Paul Schneider  <paul@pschneider.fr>
 
+	* CalAuth.aspx: A view ... still unused
+
+	* style.css: css overflow-y auto, the container making it
+	modal has no margin.
+
+	* GoogleController.cs: Fixes again the calendar usage,
+	uses Google API key and client credentials found in
+	configuration file
+
+	* ApiClient.cs: Google API key and client credentials are now
+	found in configuration file
+
+	* CalendarApi.cs: Let the controller build the credential
+	string from thr profile object.
+
+	* OAuth2.cs: The OAuth2 Client only needs a client id and
+	secret
+
+	* yavsc.js: Fixes some css flipping
+
+	* ValidateAjaxAttribute.cs: A FIXME
+
+	* Web.config: Google key, client id and secret come from
+	application settings
+
+	* Web.csproj: a page in more
+
+2015-11-01  Paul Schneider  <paul@pschneider.fr>
+
 	* Book-next.aspx: pollution
 
 	* instdbws.sql: The conversion to a valid .Net DateTime
