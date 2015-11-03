@@ -225,12 +225,17 @@ namespace Yavsc.Helpers
 			JavaScriptSerializer serializer = new JavaScriptSerializer();
 			return serializer.Serialize(obj);
 		}
-		public static void Notify(ViewDataDictionary ViewData, string message, string click_action=null) {
+
+		public static void Notify(ViewDataDictionary ViewData, string message, string click_action=null, string clickActionName="Ok") {
+			Notify(ViewData, new Notification { body = YavscAjaxHelper.QuoteJavascriptString(message), 
+				click_action = click_action, click_action_name = YavscAjaxHelper.QuoteJavascriptString(clickActionName)} ) ;
+		}
+
+		public static void Notify(ViewDataDictionary ViewData, Notification note) {
 			if (ViewData ["Notifications"] == null)
 				ViewData ["Notifications"] = new List<Notification> ();
 			(ViewData ["Notifications"] as List<Notification>).Add (
-				new Notification { body = YavscAjaxHelper.QuoteJavascriptString(message), 
-					click_action = click_action } ) ;
+				note ) ;
 		}
 		/// <summary>
 		/// Files the list.

@@ -27,6 +27,8 @@ namespace Yavsc.Model.Messaging
 		public Notification ()
 		{
 		}
+
+		public string click_action_name ;
 	}
 }
 

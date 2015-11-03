@@ -375,6 +375,16 @@ namespace Npgsql.Web
 				}
 
 				using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
+					using (NpgsqlCommand cmd = new NpgsqlCommand ("INSERT INTO profiles (username,applicationname,isanonymous)\n" +
+						"VALUES (:uname,:app,FALSE)")) {
+						cmd.Parameters.AddWithValue ("uname", username);
+						cmd.Parameters.AddWithValue ("app", pApplicationName);
+						conn.Open ();
+						cmd.ExecuteNonQuery ();
+					}
+				}
+
+				using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
 					using (NpgsqlCommand cmd = new NpgsqlCommand ("INSERT INTO Users " +
 					" (PKID, Username, Passw, Email, PasswordQuestion, " +
 					" PasswordAnswer, IsApproved," +
@@ -406,7 +416,7 @@ namespace Npgsql.Web
 						cmd.Parameters.AddWithValue ("@FailedPasswordAttemptWindowStart", createDate);
 						cmd.Parameters.AddWithValue ("@FailedPasswordAnswerAttemptCount", 0);
 						cmd.Parameters.AddWithValue ("@FailedPasswordAnswerAttemptWindowStart", createDate);
-						conn.Open ();
+
 						int recAdded = cmd.ExecuteNonQuery ();
 						if (recAdded > 0) {
 							status = MembershipCreateStatus.Success;

@@ -143,6 +143,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="App_Themes\images\" />
     <Folder Include="Views\Google\" />
+    <Folder Include="App_Data\Sql\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -533,7 +534,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="App_Data\instdbws.sql" />
+    <EmbeddedResource Include="App_Data\Sql\instdbws.sql" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References" />

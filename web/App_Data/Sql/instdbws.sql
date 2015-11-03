@@ -25,6 +25,9 @@ CREATE TABLE users
   failedpasswordanswerattemptcount integer,
   failedpasswordanswerattemptwindowstart timestamp with time zone,
   CONSTRAINT users_pkey PRIMARY KEY (pkid),
+  CONSTRAINT users_applicationname_fkey FOREIGN KEY (applicationname, username)
+      REFERENCES profiles (applicationname, username) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT uniquelogin UNIQUE (applicationname, email),
   CONSTRAINT uniquemail UNIQUE (applicationname, username)
 )
@@ -82,9 +85,6 @@ CREATE TABLE profiles
   lastactivitydate timestamp with time zone,
   lastupdateddate timestamp with time zone,
   CONSTRAINT profiles_pkey PRIMARY KEY (uniqueid),
-  CONSTRAINT fk_profileusers FOREIGN KEY (username, applicationname)
-      REFERENCES users (username, applicationname) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT pkprofiles UNIQUE (username, applicationname)
 )
 WITH (

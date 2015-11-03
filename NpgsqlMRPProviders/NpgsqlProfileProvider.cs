@@ -193,13 +193,14 @@ namespace Npgsql.Web
 		/// <param name="context">Context.</param>
 		/// <param name="collection">Collection.</param>
 		public override SettingsPropertyValueCollection GetPropertyValues (SettingsContext context, SettingsPropertyCollection collection)
-		{
+		{// TODO get anon 
 			SettingsPropertyValueCollection c = new SettingsPropertyValueCollection ();
 			if (collection == null || collection.Count < 1 || context == null)
 				return c;
-			string username = (string)context ["UserName"];
+			string username = (string) context ["UserName"];
 			if (String.IsNullOrEmpty (username))
 				return c;
+
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 				cmd.CommandText = "SELECT * from profiledata, profiles where " +
@@ -228,15 +229,13 @@ namespace Npgsql.Web
 				}
 			}
 			return c;
-
 		}
 
 		private object GetDefaultValue(SettingsProperty setting)
 		{
 			if (setting.PropertyType.IsEnum)
 				return Enum.Parse(setting.PropertyType, setting.DefaultValue.ToString());
-
-			// Return the default value if it is set
+			
 			// Return the default value if it is set
 			if (setting.DefaultValue != null)
 			{
@@ -259,8 +258,12 @@ namespace Npgsql.Web
 			if (collection == null)
 				return;
 			long puid = 0;
-			string username = (string)context ["UserName"];
-
+			string username = (string) context ["UserName"];
+			// This user is either a authentified username, or an anonymous asp user id
+			// He's anonymous when he's got no associated record in the "users" table
+			// But, as long as our membership provider creates a mandatory (by db constraint) associated 
+			// record in the profile table, with a "isanonymous" field value to FALSE, 
+			// we can asume that an inexistant profile, once here, is an anonymous profile
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmdpi = cnx.CreateCommand ()) {
@@ -272,13 +275,12 @@ namespace Npgsql.Web
 				
 					long c = (long)cmdpi.ExecuteScalar ();
 					if (c == 0) {
+						// the `isanonymous` field is specified true by default
 						cmdpi.CommandText = "insert into profiles (username,applicationname) " +
 						"values ( @username, @appname ) " +
 						"returning uniqueid";
 						puid = (long)cmdpi.ExecuteScalar ();
-						// TODO spec: profiledata insertion <=> profile insertion
-						// => BAD DESIGN
-						// 
+
 						using (NpgsqlCommand cmdpdins = cnx.CreateCommand ()) {
 							cmdpdins.CommandText = "insert into profiledata (uniqueid) values (@puid)";
 							cmdpdins.Parameters.AddWithValue ("@puid", puid);
@@ -295,6 +297,7 @@ namespace Npgsql.Web
 				foreach (SettingsPropertyValue s in collection) {
 					if (s.UsingDefaultValue) {
 						//TODO Drop the property in the profile
+
 					} else {
 						// update the property value
 						// TODO update to null values (included to avoid Not Implemented columns in profiledata

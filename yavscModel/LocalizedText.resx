@@ -43,6 +43,7 @@
 	<data name="entries"><value>entries</value></data>
 	<data name="Google_calendar"><value>Google calendar</value></data>
 	<data name="Google_error"><value>Google error : {0}</value></data>
+	<data name="I_understood"><value>I understood</value></data>
 	<data name="InternalServerError"><value>Internal Server Error</value></data>
 	<data name="ImgLocator"><value>Image URI</value></data>
 	<data name="ImportException"><value>Exception at importing</value></data>

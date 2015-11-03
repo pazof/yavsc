@@ -298,6 +298,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string I_understood {
+            get {
+                return ResourceManager.GetString("I_understood", resourceCulture);
+            }
+        }
+        
         public static string Bill_removal {
             get {
                 return ResourceManager.GetString("Bill_removal", resourceCulture);

@@ -24,21 +24,6 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class HomeController : Controller
 	{
-		// Site name
-		private static string name = null;
-			
-		/// <summary>
-		/// Gets or sets the site name.
-		/// </summary>
-		/// <value>The name.</value>
-		[Obsolete("Use YavscHelpers.SiteName insteed.")]
-		public static string Name {
-			get {
-				if (name == null) 
-					name = WebConfigurationManager.AppSettings ["Name"];
-				return name;
-			}
-		}
 
 		/// <summary>
 		/// Lists the referenced assemblies.
@@ -87,16 +72,15 @@ namespace Yavsc.Controllers
 		/// </summary>
 		public ActionResult Index ()
 		{
-			var anonid = Request.AnonymousID;
 			if (Session.IsNewSession) {
-				if (!Request.IsAuthenticated) {
-					ProfileBase anonymousProfile = ProfileBase.Create(anonid);
-					object ac = anonymousProfile.GetPropertyValue ("allowcookies");
-
-					if (ac is string && ((string)ac)!="true")
-						YavscHelpers.Notify (ViewData, LocalizedText.ThisSiteUsesCookies, 
-							"function(){Yavsc.ajax(\"/Yavsc/AllowCookies\", { id:'"+anonid+"' });}");
-				}
+				string uid = (!Request.IsAuthenticated) ? Request.AnonymousID : User.Identity.Name;
+				ProfileBase pr = 
+					ProfileBase.Create (uid);
+				bool ac = (bool) pr.GetPropertyValue ("allowcookies");
+				if (!ac)
+					YavscHelpers.Notify (ViewData, LocalizedText.ThisSiteUsesCookies, 
+						"function(){Yavsc.ajax(\"/Yavsc/AllowCookies\", { id:'"+uid+"' });}",
+						LocalizedText.I_understood);
 			}
 					
 			foreach (string tagname in new string[] {"Accueil","Événements","Mentions légales"})
