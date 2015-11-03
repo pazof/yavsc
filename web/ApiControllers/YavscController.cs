@@ -36,6 +36,7 @@ namespace Yavsc.ApiControllers
 
 		public void AllowCookies (Auth model)
 		{
+			// TODO check Auth when existing
 			if (model.Id != null) {
 				ProfileBase pr = ProfileBase.Create (model.Id);
 				pr.SetPropertyValue ("allowcookies", true);

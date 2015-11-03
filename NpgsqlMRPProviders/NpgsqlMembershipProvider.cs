@@ -375,16 +375,18 @@ namespace Npgsql.Web
 				}
 
 				using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
+					conn.Open ();
+
+					NpgsqlTransaction tran = conn.BeginTransaction();
 					using (NpgsqlCommand cmd = new NpgsqlCommand ("INSERT INTO profiles (username,applicationname,isanonymous)\n" +
 						"VALUES (:uname,:app,FALSE)")) {
+						cmd.Connection = conn;
 						cmd.Parameters.AddWithValue ("uname", username);
 						cmd.Parameters.AddWithValue ("app", pApplicationName);
-						conn.Open ();
+
 						cmd.ExecuteNonQuery ();
 					}
-				}
-
-				using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
+				
 					using (NpgsqlCommand cmd = new NpgsqlCommand ("INSERT INTO Users " +
 					" (PKID, Username, Passw, Email, PasswordQuestion, " +
 					" PasswordAnswer, IsApproved," +
@@ -416,15 +418,15 @@ namespace Npgsql.Web
 						cmd.Parameters.AddWithValue ("@FailedPasswordAttemptWindowStart", createDate);
 						cmd.Parameters.AddWithValue ("@FailedPasswordAnswerAttemptCount", 0);
 						cmd.Parameters.AddWithValue ("@FailedPasswordAnswerAttemptWindowStart", createDate);
-
 						int recAdded = cmd.ExecuteNonQuery ();
 						if (recAdded > 0) {
 							status = MembershipCreateStatus.Success;
 						} else {
 							status = MembershipCreateStatus.UserRejected;
 						}
-						conn.Close ();
 					}
+					tran.Commit();  
+					conn.Close ();
 				}
 				return GetUser (username, false);      
 			} else {
@@ -458,17 +460,33 @@ namespace Npgsql.Web
 		{
 			int rowsAffected = 0;
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
-				using (NpgsqlCommand cmd = new NpgsqlCommand ("DELETE FROM Users " +
-					" WHERE Username = @Username AND Applicationname = @ApplicationName", conn)) {
+				conn.Open ();
+				NpgsqlTransaction trans = conn.BeginTransaction ();
+				using (NpgsqlCommand cmd = new NpgsqlCommand ("DELETE FROM users " +
+				                           " WHERE username = @Username AND applicationname = @ApplicationName", conn)) {
 					cmd.Parameters.AddWithValue ("@Username", NpgsqlDbType.Varchar, 255).Value = username;
 					cmd.Parameters.AddWithValue ("@ApplicationName", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
-					conn.Open ();
+
 					rowsAffected = cmd.ExecuteNonQuery ();
-					if (deleteAllRelatedData) {
-						// TODO Process commands to delete all data for the user in the database.
-					}
-					conn.Close ();
 				}
+
+				// TODO  if (deleteAllRelatedData) {  Process commands to delete all data for the user in the database. }
+				// OR NOT TO DO, to me, deleting an user implies delete all of its related data in db,
+				// as long they belong to him.
+				//
+				// So, just ignore this parameter,
+				// and remove the records from the profile model, that are not 
+				// dropped in cascade by constraint,
+				// as long as these profiles may also be anonymous
+				using (NpgsqlCommand cmd = new NpgsqlCommand ("DELETE FROM profiles " +
+						" WHERE username = :uname AND applicationname = :appname", conn)) {
+						cmd.Parameters.AddWithValue ("uname", NpgsqlDbType.Varchar, 255).Value = username;
+						cmd.Parameters.AddWithValue ("appname", NpgsqlDbType.Varchar, 255).Value = pApplicationName;
+						cmd.ExecuteNonQuery ();
+
+				}
+				trans.Commit ();
+				conn.Close ();
 			}
 			return (rowsAffected > 0);
 		}

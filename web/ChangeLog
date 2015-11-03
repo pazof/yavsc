@@ -1,5 +1,9 @@
 2015-11-03  Paul Schneider  <paul@pschneider.fr>
 
+	* YavscController.cs: TODO ... 
+
+2015-11-03  Paul Schneider  <paul@pschneider.fr>
+
 	* YavscController.cs: Fixes the cookies agreement
 
 	* HomeController.cs: Finalizes the cookie agreement system.
