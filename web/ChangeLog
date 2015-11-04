@@ -1,3 +1,50 @@
+2015-11-04  Paul Schneider  <paul@pschneider.fr>
+
+	* instdbws.sql:
+	* BlogsController.cs: Implements the note
+
+	* robots.txt:
+	* Web.csproj:
+	* Web.config:
+	* Catalog.xml:
+	* Global.asax.cs:
+	* pgsql.xcf:
+	* pgsql.jpeg:
+	* p8-av4.png:
+	* logoDev.png:
+	* logoDev.xcf:
+	* apache_pb.gif:
+	* style.css:
+	* theme.css:
+	* debian-pb.gif:
+	* apache_pbw.gif:
+	* apache_pby.gif:
+	* Book.aspx:
+	* jquery-ui.css:
+	* Login.aspx:
+	* debian-powered.png:
+	* FhHRx.gif:
+	* TagControl.ascx:
+	* pgsql.png:
+	* jquery-ui.min.css:
+	* theme.css:
+	* noavatar.png:
+	* p8-av4.s.jpg:
+	* p8-av4.xxs.jpg:
+	* apache_pbw.png:
+	* debian-logo.png:
+	* Mono-powered.png:
+	* helix-nebula-1400x1400.l.jpg:
+	* star-939235_1280.jpg:
+	* animated-overlay.gif:
+	* star-939235_1280.s.jpg:
+	* sign-in-with-google.png:
+	* star-939235_1280.xxs.jpg:
+	* sign-in-with-google-s.png:
+	* helix-nebula-1400x1400.jpg:
+	* helix-nebula-1400x1400.s.jpg:
+	* helix-nebula-1400x1400.xxs.jpg: 
+
 2015-11-03  Paul Schneider  <paul@pschneider.fr>
 
 	* YavscController.cs: TODO ... 

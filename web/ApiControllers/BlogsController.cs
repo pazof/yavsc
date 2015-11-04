@@ -140,7 +140,23 @@ namespace Yavsc.ApiControllers
 			}
 		}
 
+		/// <summary>
+		/// Create the specified blog entry.
+		/// </summary>
+		/// <param name="bp">Bp.</param>
+		[Authorize, HttpPost]
+		public long Create (BasePost bp) 
+		{
+			return BlogManager.Post (User.Identity.Name, bp.Title, "", bp.Visible, null);
+		}
 
+		[Authorize, HttpPost]
+		public void Note (long id, int note)
+		{
+			if (note < 0 || note > 100)
+				throw new ArgumentException ("0<=note<=100");
+			BlogManager.Note (id, note);
+		}
 		/// <summary>
 		/// Searchs the file.
 		/// </summary>
@@ -229,7 +245,7 @@ namespace Yavsc.ApiControllers
 					fo.Delete();
 				}
 
-				return Request.CreateResponse(HttpStatusCode.OK,string.Join("---\n",bodies),new SimpleFormatter("text/plain"));
+				return Request.CreateResponse(HttpStatusCode.OK,string.Join("\n---\n",bodies),new SimpleFormatter("text/plain"));
 
 			}
 			catch (System.Exception e)

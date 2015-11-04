@@ -175,7 +175,8 @@ CREATE TABLE blog
   bcontent text NOT NULL,
   visible boolean NOT NULL,
   _id bigserial NOT NULL,
-  photo character varying(512), 
+  photo character varying(512), -- a photo url, supposed to be the main photo...
+  note integer NOT NULL DEFAULT 50, -- a global note for this entry, between 0 and 100
   CONSTRAINT blog_pkey PRIMARY KEY (_id),
   CONSTRAINT bloguser FOREIGN KEY (applicationname, username)
       REFERENCES users (applicationname, username) MATCH SIMPLE
@@ -187,6 +188,7 @@ WITH (
 
 COMMENT ON COLUMN blog.photo IS 'a photo url, supposed to be the main photo
 related to this post';
+COMMENT ON COLUMN blog.note IS 'a global note for this entry, between 0 and 100';
 
 CREATE TABLE blfiles
 (

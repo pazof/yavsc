@@ -5,7 +5,7 @@
 			<Name>psc</Name>
 			<Slogan>Votre logiciel, efficace, sûr, et sur mesure</Slogan>
 			<Logo>
-				<Src>/images/logoDev.png</Src>
+				<Src>/App_Themes/images/logoDev.png</Src>
 				<Alt>
 				</Alt>
 			</Logo>

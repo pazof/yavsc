@@ -24,7 +24,7 @@ body {
     height:     100%;
     width:      100%;
     background: rgba( 255, 255, 255, .8 ) 
-                url('/images/FhHRx.gif') 
+                url('/App_Themes/images/FhHRx.gif') 
                 50% 50% 
                 no-repeat;
     overflow:   auto; 
@@ -64,7 +64,7 @@ transition: margin 2s, padding 2s;
 	padding-top: 2em;
 	padding-bottom:2em;
 	display: block;
-	background: url("/images/star-939235_1280.jpg") -3em -3em no-repeat fixed;
+	background: url("/App_Themes/images/star-939235_1280.jpg") -3em -3em no-repeat fixed;
 	}
 header h1, header a {
 transition:padding 2s;
@@ -78,7 +78,7 @@ transition: margin 2s, padding 2s;
 	padding: 2em;
 	display: block;
 	border-radius:1em;
-	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ;
+	background: url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ;
 	justify-content: space-around;
 }
 nav li { display: inline-block; }
@@ -88,12 +88,12 @@ transition: margin 2s, padding 2s;
 	padding: 2em;
 	display: block;
 	border-radius:1em;
-	background: url("/images/p8-av4.png") 50% 20em no-repeat fixed ;
+	background: url("/App_Themes/images/p8-av4.png") 50% 20em no-repeat fixed ;
 	}
 
 footer {
 transition: margin 2s, padding 2s;
-	background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ;
+	background: url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ;
 	margin: 0;
 	margin-top: 2em;
 	padding: 2em;
@@ -340,7 +340,7 @@ a:active {
 header {
 	padding-top:1em;
 	padding-bottom:1em;
-	background: url("/images/star-939235_1280.s.jpg") 0 0 no-repeat fixed;
+	background: url("/App_Themes/images/star-939235_1280.s.jpg") 0 0 no-repeat fixed;
 	}
 		
 #avatar { 
@@ -352,15 +352,15 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 	nav {
 	margin: 1em;
 		padding: 1em;
-		background:    url("/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ; 
+		background:    url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
 	margin: 1em;
 	padding: 1em;
-	background: url("/images/p8-av4.s.jpg") 50% 20em no-repeat fixed ;
+	background: url("/App_Themes/images/p8-av4.s.jpg") 50% 20em no-repeat fixed ;
 	} 
 	footer { 
-		background: url("/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ; 
+		background: url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ; 
 	} 
 	footer a {
 	border-radius:.5em;
@@ -396,7 +396,7 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 header {
 	padding-top:.5em;
 	padding-bottom:.5em;
-	background: url("/images/star-939235_1280.xxs.jpg") 0 0 no-repeat fixed;
+	background: url("/App_Themes/images/star-939235_1280.xxs.jpg") 0 0 no-repeat fixed;
  }
 
 header h1, header a { padding:.2em;}
@@ -404,15 +404,15 @@ header h1, header a { padding:.2em;}
 	nav {
 	margin: .5em;
 		padding: .5em;
-		background:    url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
+		background:    url("/App_Themes/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
 	margin: .5em;
 	    padding: .5em;
-		background:   url("/images/p8-av4.xxs.jpg")  50% 20em repeat fixed ; 
+		background:   url("/App_Themes/images/p8-av4.xxs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
-		background:    url("/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
+		background:    url("/App_Themes/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
 	} 
 	footer a {
 	border-radius:.2em;

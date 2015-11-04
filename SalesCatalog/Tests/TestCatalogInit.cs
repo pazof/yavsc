@@ -19,7 +19,7 @@ namespace SalesCatalog.Tests
 			Catalog cat = new XmlCatalog ();
 			Brand b = new Brand ();
 			b.Logo = new ProductImage ();
-			b.Logo.Src = "/images/dev.png";
+			b.Logo.Src = "/App_Themes/images/dev.png";
 			b.Logo.Alt = "Dev";
 			b.Name = "Developpement à la carte";
 			b.Slogan = "Votre logiciel, efficace, sûr, et sur mesure";

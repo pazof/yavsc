@@ -12,12 +12,11 @@
 </asp:Content>
 
  <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-
 <% using ( Html.BeginForm("Book","Google") ) { %>
 <div id="book" >Date d'intervention :
 Intervention souhaitée entre le 
   <input type="text" id="StartDate" name="StartDate" class="start date" value="<%=Model.StartDate.ToString("yyyy/MM/dd")%>">
-  <%= Html.ValidationMessageFor(model=>model.StartDate) %>
+  <%= Html.ValidationMessageFor( model=>model.StartDate ) %>
 et le 
   <input type="text" id="EndDate" name="EndDate" class="end date" value="<%=Model.StartDate.ToString("yyyy/MM/dd")%>">
   <%= Html.ValidationMessageFor(model=>model.EndDate) %>
@@ -30,7 +29,6 @@ et le
 <%= Html.LabelFor(model=>model.EndHour) %>
   <input type="text" id="EndHour" name="EndHour" class="end time" value="<%=Model.EndHour%>">
   <%= Html.ValidationMessageFor(model=>model.EndHour) %>
- 
   </div>
   <fieldset>
 <legend>Intervenant</legend>
@@ -64,6 +62,4 @@ et le
 
 <input type="submit">
 <% } %>
-<pre><%= Html.Encode(ViewData["json"]) %></pre>
-
 </asp:Content>

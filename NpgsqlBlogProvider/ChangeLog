@@ -1,3 +1,7 @@
+2015-11-04  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlBlogProvider.cs: Implements the note
+
 2015-10-19  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlTagInfo.cs: Fixes the photo retreival

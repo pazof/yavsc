@@ -8,7 +8,6 @@ foreach ( var tagname in Model.Tags) { %>
 <% if (Membership.GetUser()!=null) { %>
 <% if (Membership.GetUser().UserName==Model.Author || Roles.IsUserInRole("Admin"))
 { // grant all permissions: to choose a given set of tags, also create some new tags %>
-
 <span id="viewtagger<%=Model.Id%>">
 <i class="fa fa-tag menuitem" id="viewtaggerbtn<%=Model.Id%>"><%=Html.Translate("DoTag")%></i></span>
 <span id="hidetagger<%=Model.Id%>" class="hidden">

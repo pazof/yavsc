@@ -26,7 +26,7 @@
 <div class="panel">
 <a href="<%= Url.RouteUrl ("Default", new { controller = "Google", action= "Login", returnUrl=ViewData["returnUrl"] }) %>" class="actionlink">
 	Identification avec un compte Google
-	<img src="/images/sign-in-with-google.png" style="max-height:1.5em; max-width:6em;" alt="Google sign in">
+	<img src="/App_Themes/images/sign-in-with-google.png" style="max-height:1.5em; max-width:6em;" alt="Google sign in">
 	</a>
 	</div>
 </asp:Content>

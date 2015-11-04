@@ -191,6 +191,12 @@ namespace Yavsc.Model.Blogs
 			Provider.Tag (postid, tag);
 		}
 
+
+		public static void Note (long postid, int note)
+		{
+			Provider.Note (postid, note);
+		}
+
 		/// <summary>
 		/// Checks the auth can edit.
 		/// </summary>

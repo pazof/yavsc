@@ -21,6 +21,25 @@ namespace Npgsql.Web.Blog
 		string connectionString;
 
 		#region implemented abstract members of BlogProvider
+
+		/// <summary>
+		/// Note the specified postid and note.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="note">Note.</param>
+		public override void Note (long postid, int note)
+		{
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = "update blogs set note = :note where _id = :pid)";
+				cmd.Parameters.AddWithValue ("note", note);
+				cmd.Parameters.AddWithValue ("pid", postid);
+				cnx.Open ();
+				cmd.ExecuteNonQuery ();
+				cnx.Close ();
+			}
+		}
+
 		/// <summary>
 		/// Gets the tag info.
 		/// </summary>
@@ -147,7 +166,7 @@ namespace Npgsql.Web.Blog
 				}
 				cnx.Close ();
 			}
-			UpdatePostCircles (postid, cids);
+			if (cids != null) UpdatePostCircles (postid, cids);
 		}
 
 		/// <summary>
@@ -555,7 +574,8 @@ namespace Npgsql.Web.Blog
 				}
 				cnx.Close ();
 			}
-			UpdatePostCircles (pid, circles);
+			if (circles != null)
+				UpdatePostCircles (pid, circles);
 			return pid;
 		}
 
@@ -587,7 +607,6 @@ namespace Npgsql.Web.Blog
 					cmd.Parameters.AddWithValue ("pid", pid);
 					cmd.ExecuteNonQuery ();
 				}
-				if (circles != null)
 				if (circles.Length > 0)
 					using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 						cmd.CommandText = "insert into blog_access (post_id,circle_id) values (:pid,:cid)";

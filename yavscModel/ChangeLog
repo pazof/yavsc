@@ -1,3 +1,8 @@
+2015-11-04  Paul Schneider  <paul@pschneider.fr>
+
+	* BlogManager.cs:
+	* BlogProvider.cs: 
+
 2015-11-03  Paul Schneider  <paul@pschneider.fr>
 
 	* LocalizedText.resx:
