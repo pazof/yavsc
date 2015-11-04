@@ -9,6 +9,7 @@ Nom du rôle :
 <%= Html.ValidationMessage("RoleName", "*") %><br/>
 <input class="actionlink" type="submit"/>
 <% } %>
+<%= Html.Partial("AddMemberToRole")%>
 </asp:Content>
 
 

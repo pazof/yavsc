@@ -4,7 +4,7 @@ Roles:
  <ul>
        <%foreach (string rolename in (string[]) Model){ %>
 
-       <li><%=rolename%> <% if (Roles.IsUserInRole("Admin")) { %>
+       <li><%=Html.ActionLink(rolename,"UsersInRole", new { rolename = rolename }, new { @class="actionlink" } )%> <% if (Roles.IsUserInRole("Admin")) { %>
 	 <%= Html.ActionLink("Supprimer","RemoveRole", new { rolename = rolename }, new { @class="actionlink" } ) %>	
 <% } %></li>
 	<% } %>

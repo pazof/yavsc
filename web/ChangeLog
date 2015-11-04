@@ -1,5 +1,16 @@
 2015-11-04  Paul Schneider  <paul@pschneider.fr>
 
+	* Web.csproj:
+	* AppAdmin.master:
+	* AddRole.aspx:
+	* OAuth2.cs:
+	* RoleList.aspx:
+	* UsersInRole.aspx:
+	* AdminController.cs:
+	* AddMemberToRole.ascx: 
+
+2015-11-04  Paul Schneider  <paul@pschneider.fr>
+
 	* instdbws.sql:
 	* BlogsController.cs: Implements the note
 

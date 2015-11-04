@@ -76,7 +76,7 @@ namespace Yavsc.Helpers.Google
 		{
 			string scope = string.Join ("%20", scopeOpenid);
 
-			string prms = String.Format ("response_type=code&client_id={0}&redirect_uri={1}&scope={2}&state={3}&include_granted_scopes=false",
+			string prms = String.Format ("response_type=code&client_id={0}&redirect_uri={1}&scope={2}&state={3}&include_granted_scopes=false&approval_prompt=force",
 				              CLIENT_ID, RedirectUri, scope, state);
 			GetAuthResponse (bresp, prms);
 		}

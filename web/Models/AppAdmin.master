@@ -58,6 +58,7 @@ else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>); <% } %>
 <li><%= Html.ActionLink("Restaurations", "Restore") %></li>
 <li><%= Html.ActionLink("Create backup","CreateBackup") %></li>
 <li><%= Html.ActionLink("Remove user", "RemoveUser") %></li>
+<li><%= Html.ActionLink("Add a Role ", "AddRole") %></li>
 <li><%= Html.ActionLink("Remove role", "RemoveRoleQuery") %></li>
 <li><%= Html.ActionLink("User list", "UserList") %></li>
 <li><%= Html.ActionLink("Role list", "RoleList") %></li>

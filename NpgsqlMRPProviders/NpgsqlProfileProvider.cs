@@ -275,11 +275,12 @@ namespace Npgsql.Web
 				
 					long c = (long)cmdpi.ExecuteScalar ();
 					if (c == 0) {
-						// the `isanonymous` field is specified true by default
+						// This is a new anonymous profile.
+						// the `isanonymous` field should be specified true by default in the ddl
 						cmdpi.CommandText = "insert into profiles (username,applicationname) " +
 						"values ( @username, @appname ) " +
 						"returning uniqueid";
-						puid = (long)cmdpi.ExecuteScalar ();
+						puid = (long) cmdpi.ExecuteScalar ();
 
 						using (NpgsqlCommand cmdpdins = cnx.CreateCommand ()) {
 							cmdpdins.CommandText = "insert into profiledata (uniqueid) values (@puid)";
@@ -287,12 +288,12 @@ namespace Npgsql.Web
 							cmdpdins.ExecuteNonQuery ();
 						}
 					} else {
+						// here we're roughly sure to get the id
 						cmdpi.CommandText = "select uniqueid from profiles where username = @username " +
 						"and applicationname = @appname";
 						puid = (long)cmdpi.ExecuteScalar ();
 					}
 				}
-
 
 				foreach (SettingsPropertyValue s in collection) {
 					if (s.UsingDefaultValue) {

@@ -1,3 +1,8 @@
+2015-11-04  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlProfileProvider.cs:
+	* NpgsqlMembershipProvider.cs: 
+
 2015-11-03  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlMembershipProvider.cs: Fixes the latest commit

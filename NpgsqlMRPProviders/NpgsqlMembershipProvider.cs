@@ -378,15 +378,20 @@ namespace Npgsql.Web
 					conn.Open ();
 
 					NpgsqlTransaction tran = conn.BeginTransaction();
+					long prid = 0;
 					using (NpgsqlCommand cmd = new NpgsqlCommand ("INSERT INTO profiles (username,applicationname,isanonymous)\n" +
-						"VALUES (:uname,:app,FALSE)")) {
+						"VALUES (:uname,:app,FALSE) returning uniqueid")) {
 						cmd.Connection = conn;
 						cmd.Parameters.AddWithValue ("uname", username);
 						cmd.Parameters.AddWithValue ("app", pApplicationName);
 
-						cmd.ExecuteNonQuery ();
+						prid = (long) cmd.ExecuteScalar();
 					}
-				
+					using (NpgsqlCommand cmdpdins = conn.CreateCommand ()) {
+						cmdpdins.CommandText = "insert into profiledata (uniqueid) values (@puid)";
+						cmdpdins.Parameters.AddWithValue ("@puid", prid);
+						cmdpdins.ExecuteNonQuery ();
+					}
 					using (NpgsqlCommand cmd = new NpgsqlCommand ("INSERT INTO Users " +
 					" (PKID, Username, Passw, Email, PasswordQuestion, " +
 					" PasswordAnswer, IsApproved," +

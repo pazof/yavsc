@@ -24,12 +24,11 @@ namespace Yavsc.Controllers
 		/// </summary>
 		public ActionResult Index()
 		{
+			// FIXME do this in a new installation script.
 			if (!Roles.RoleExists (roleName)) {
 				Roles.CreateRole (roleName);
 				YavscHelpers.Notify (ViewData, roleName + " " + LocalizedText.role_created);
-
 			}
-
 			return View ();
 		}
 		/// <summary>
