@@ -13,7 +13,10 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
 
+	<data name="additionally"><value>de plus</value></data>
 	<data name="access_denied"><value>Accès refusé</value></data>
+	<data name="AnIMessageHasbeenSent"><value>Un message instantané a été envoyé à {0}, 
+	lui présentant votre demande. Vous devriez être contacté très rapidement.</value></data>
 	<data name="Bill_edition"><value>Édition d'un billet</value></data>
 	<data name="Bill_removal"><value>Suppression d'un billet</value></data>
 	<data name="Consultant"><value>Consultant</value></data>
@@ -92,6 +95,9 @@
 	<data name="was_added_to_the_role"><value>a été ajouté au rôle</value></data>
 	<data name="was_added_to_the_empty_role"><value>Il n'y avait pas 'utilisateur dans le rôle '{1}'. Vous ({0}) avez été ajouté au rôle '{1}'.</value></data>
 	<data name="Welcome"><value>Bienvenue</value><comment></comment></data>
+	<data name="XHasBeenNotified"><value>{0} à été notifié de votre demande, vous devriez être contacté rapidement</value></data>
+	<data name="Xshouldbeavailable"><value>Au vu de son calendrier, 
+	{0} devrait être disponible pour ce rendez-vous</value></data>
 	<data name="younotadmin"><value>Vous n'êtes pas administrateur</value></data>
-
+	<data name="yourquerytransmitted"><value>Votre demande a été transmise</value></data>
 </root>

@@ -232,9 +232,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string XHasBeenNotified {
+            get {
+                return ResourceManager.GetString("XHasBeenNotified", resourceCulture);
+            }
+        }
+        
         public static string Comment {
             get {
                 return ResourceManager.GetString("Comment", resourceCulture);
+            }
+        }
+        
+        public static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
             }
         }
         
@@ -322,15 +334,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Xshouldbeavailable {
+            get {
+                return ResourceManager.GetString("Xshouldbeavailable", resourceCulture);
+            }
+        }
+        
         public static string Remove {
             get {
                 return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
         
-        public static string Title {
+        public static string AnIMessageHasbeenSent {
             get {
-                return ResourceManager.GetString("Title", resourceCulture);
+                return ResourceManager.GetString("AnIMessageHasbeenSent", resourceCulture);
             }
         }
         
@@ -472,6 +490,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string additionally {
+            get {
+                return ResourceManager.GetString("additionally", resourceCulture);
+            }
+        }
+        
         public static string no_content {
             get {
                 return ResourceManager.GetString("no_content", resourceCulture);
@@ -493,6 +517,12 @@ namespace Yavsc.Model {
         public static string Welcome {
             get {
                 return ResourceManager.GetString("Welcome", resourceCulture);
+            }
+        }
+        
+        public static string yourquerytransmitted {
+            get {
+                return ResourceManager.GetString("yourquerytransmitted", resourceCulture);
             }
         }
         
