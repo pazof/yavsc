@@ -12,7 +12,7 @@ node_modules
 svg
 web/Web.config.prod
 web/Web.config.dev
-
+web/Web.config.lua
 .nuget
 .gitignore
 
