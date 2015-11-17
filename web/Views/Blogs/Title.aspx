@@ -12,16 +12,9 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<%  foreach (BlogEntry e in this.Model) { %>
-<div class="post<% if (!e.Visible) { %> hiddenpost<% } %>" >
-<% if (e.Photo!=null) { %><img src="<%=e.Photo%>" alt="" class="photo"><% } %>
-<%= Html.Markdown(e.Content,"/bfiles/"+e.Id+"/") %>
-<%= Html.Partial("PostActions",e)%>
-</div>
-<% } %>
 <%
-if (((int) ViewData["RecordCount"]) > ((int) ViewData["PageSize"])) {
- rp1.ResultCount = (int) ViewData["RecordCount"];
+if (((int) ViewData["ResultCount"]) > ((int) ViewData["PageSize"])) {
+ rp1.ResultCount = (int) ViewData["ResultCount"];
  rp1.PageIndex = (int) ViewData["PageIndex"];
  rp1.PageSize = (int) ViewData["PageSize"];
 %><aside><form runat="server" id="form1">
@@ -30,5 +23,12 @@ if (((int) ViewData["RecordCount"]) > ((int) ViewData["PageSize"])) {
 </yavsc:ResultPages> 
 	</form>
 </aside>
+<% } %>
+<%  foreach (BlogEntry e in this.Model) { %>
+<div class="post<% if (!e.Visible) { %> hiddenpost<% } %>" >
+<% if (e.Photo!=null) { %><img src="<%=e.Photo%>" alt="" class="photo"><% } %>
+<%= Html.Markdown(e.Content,"/bfiles/"+e.Id+"/") %>
+<%= Html.Partial("PostActions",e)%>
+</div>
 <% } %>
 </asp:Content>

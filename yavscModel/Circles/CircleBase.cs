@@ -22,8 +22,14 @@ using System;
 
 namespace Yavsc.Model.Circles
 {
+	/// <summary>
+	/// Circle base.
+	/// </summary>
 	public class CircleBase
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Circles.CircleBase"/> class.
+		/// </summary>
 		public CircleBase ()
 		{
 		}

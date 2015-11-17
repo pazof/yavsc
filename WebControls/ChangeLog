@@ -1,3 +1,14 @@
+2015-11-17  Paul Schneider  <paul@pschneider.fr>
+
+	* RateControl.cs: refactorization
+
+2015-11-14  Paul Schneider  <paul@pschneider.fr>
+
+	* RateControl.cs: Uses its data model, and moves to the
+	general name space.
+
+	* WebControls.csproj: Implements a server side rating control
+
 2015-10-13  Paul Schneider  <paul@pschneider.fr>
 
 	* ResultPages.cs: A multi-pages result meta info when one page

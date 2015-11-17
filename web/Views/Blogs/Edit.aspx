@@ -12,8 +12,13 @@
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
+<aside>
+	Id:<%= Html.ActionLink( Model.Id.ToString() , "UserPost", new { user= Model.Author, title=Model.Title, id = Model.Id }, new { @class = "usertitleref actionlink" }) %>
+, Posted: <%= Model.Posted.ToString("yyyy/MM/dd") %> - Modified: <%= Model.Modified.ToString("yyyy/MM/dd") %> 
+Visible: <%= Model.Visible? "oui":"non" %> <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title, id = Model.Id }, new { @class="actionlink" } ) %>
+</aside>
 
-<% using(Html.BeginForm("ValidateEdit","Blogs")) { %>
+<% using(Html.BeginForm("Edit","Blogs")) { %>
 <fieldset>
 <legend>Contrôle d'accès au Billet</legend>
 <%= Html.LabelFor(model => model.Visible) %> : <%= Html.CheckBox( "Visible" ) %> 
@@ -234,10 +239,5 @@ var data  = new FormData($('#frmajax').get()[0]);
 
 
 
-<aside>
-	Id:<%= Html.ActionLink( Model.Id.ToString() , "UserPost", new { user= Model.Author, title=Model.Title, id = Model.Id }, new { @class = "usertitleref actionlink" }) %>
-, Posted: <%= Model.Posted.ToString("yyyy/MM/dd") %> - Modified: <%= Model.Modified.ToString("yyyy/MM/dd") %> 
-Visible: <%= Model.Visible? "oui":"non" %> <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title, id = Model.Id }, new { @class="actionlink" } ) %>
-</aside>
 
 </asp:Content>

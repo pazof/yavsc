@@ -47,6 +47,7 @@
     <Compile Include="InputUserName.cs" />
     <Compile Include="InputCircle.cs" />
     <Compile Include="UserCard.cs" />
+    <Compile Include="RateControl.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

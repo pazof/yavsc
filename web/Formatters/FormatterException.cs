@@ -50,8 +50,15 @@ namespace Yavsc.Formatters
 		public FormatterException(string message,Exception innerException):base(message,innerException)
 		{
 		}
-
+		/// <summary>
+		/// Gets or sets the output.
+		/// </summary>
+		/// <value>The output.</value>
 		public string Output { get; set; }
+		/// <summary>
+		/// Gets or sets the error.
+		/// </summary>
+		/// <value>The error.</value>
 		public string Error { get; set; }
 	}
 }

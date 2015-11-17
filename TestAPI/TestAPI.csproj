@@ -79,6 +79,11 @@
     <Reference Include="nunit-console-runner, Version=2.6.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <Package>nunit</Package>
     </Reference>
+    <Reference Include="Microsoft.Build.Tasks.v12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.Web.XmlTransform, Version=1.0.0.0, Culture=neutral">
+      <Package>nuget-core</Package>
+    </Reference>
+    <Reference Include="Microsoft.Build.Utilities.v12.0, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -96,10 +101,6 @@
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
       <Name>YavscModel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\web\Web.csproj">
-      <Project>{77044C92-D2F1-45BD-80DD-AA25B311B027}</Project>
-      <Name>Web</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NpgsqlBlogProvider\NpgsqlBlogProvider.csproj">
       <Project>{C6E9E91B-97D3-48D9-8AA7-05356929E162}</Project>
       <Name>NpgsqlBlogProvider</Name>
@@ -115,6 +116,10 @@
     <ProjectReference Include="..\SalesCatalog\SalesCatalog.csproj">
       <Project>{90BF2234-7252-4CD5-B2A4-17501B19279B}</Project>
       <Name>SalesCatalog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\web\Web.csproj">
+      <Project>{77044C92-D2F1-45BD-80DD-AA25B311B027}</Project>
+      <Name>Web</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

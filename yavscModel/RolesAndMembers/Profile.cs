@@ -37,6 +37,13 @@ namespace Yavsc.Model.RolesAndMembers
 		public string Address { get; set; }
 
 		/// <summary>
+		/// Gets or sets the user interface theme.
+		/// </summary>
+		/// <value>The user interface theme.</value>
+		[DisplayName ("Thème")]
+		[StringLength (2047)]
+		public string UITheme { get; set; }
+		/// <summary>
 		/// Gets or sets the state of the city and.
 		/// </summary>
 		/// <value>The state of the city and.</value>
@@ -241,64 +248,27 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <param name="profile">Profile.</param>
 		public Profile (ProfileBase profile)
 		{
-			if (profile == null)
-				throw new Exception ("No profile");
-
-			object b = profile.GetPropertyValue ("BlogVisible");
-			BlogVisible = (b == null) ? true : (b is DBNull)? true : (bool)b;
-
-			object s = profile.GetPropertyValue ("BlogTitle");
-			BlogTitle = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("Avatar");
-			avatar = (s is DBNull) ? null : (string)s;
-	
-
-			s = profile.GetPropertyValue ("Address");
-			Address = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("CityAndState");
-			CityAndState = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("Country");
-			Country = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("ZipCode");
-			ZipCode = (s is DBNull) ? null : (string)s;
-		
-			s = profile.GetPropertyValue ("WebSite");
-			WebSite = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("Name");
-			Name = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("Phone");
-			Phone = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("Mobile");
-			Mobile = (s is DBNull) ? null : (string)s;
-
+			if (profile == null) throw new Exception ("No profile");
 			userName = profile.UserName;
-
-			s = profile.GetPropertyValue ("BankCode");
-			BankCode = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("IBAN");
-			IBAN = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("BIC");
-			BIC = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("WicketCode");
-			WicketCode = (s is DBNull) ? null : (string)s;
-
-			s = profile.GetPropertyValue ("AccountNumber");
-			AccountNumber = (s is DBNull) ? null : (string)s;
-
-			object o = profile.GetPropertyValue ("BankedKey");
-			BankedKey = (int)0;
-			s = profile.GetPropertyValue ("gcalid");
-			GoogleCalendar = (s is DBNull)? null : (string) s;
+			UITheme = (string) profile.GetPropertyValue ("UITheme");
+			BlogVisible = (bool) profile.GetPropertyValue ("BlogVisible");
+			BlogTitle = (string) profile.GetPropertyValue ("BlogTitle");
+			avatar = (string) profile.GetPropertyValue ("Avatar");
+			Address = (string) profile.GetPropertyValue ("Address"); 
+			CityAndState = (string) profile.GetPropertyValue ("CityAndState");
+			Country = (string) profile.GetPropertyValue ("Country");
+			ZipCode = (string) profile.GetPropertyValue ("ZipCode");
+			WebSite = (string) profile.GetPropertyValue ("WebSite");
+			Name = (string) profile.GetPropertyValue ("Name");
+			Phone = (string) profile.GetPropertyValue ("Phone");
+			Mobile = (string) profile.GetPropertyValue ("Mobile");
+			BankCode = (string)profile.GetPropertyValue ("BankCode");
+			IBAN = (string)profile.GetPropertyValue ("IBAN");
+			BIC =  (string)profile.GetPropertyValue ("BIC");
+			WicketCode = (string) profile.GetPropertyValue ("WicketCode");
+			AccountNumber = (string) profile.GetPropertyValue ("AccountNumber");
+			BankedKey = (int)  profile.GetPropertyValue ("BankedKey");;
+			GoogleCalendar = (string) profile.GetPropertyValue ("gcalid");
 		}
 	}
 }

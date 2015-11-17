@@ -10,7 +10,6 @@
 <%= Html.LabelFor(model => model.StartDate) %>: <%=Model.StartDate%> <br/>
 <%= Html.LabelFor(model => model.EndDate) %>: <%=Model.EndDate%> <br/>
 <%= Html.LabelFor(model => model.Circles) %>: <%=Model.Circles%> <br/>
-<%= Html.LabelFor(model => model.ImgLocator) %>: <%=Model.ImgLocator%> <br/>
 <%= Html.LabelFor(model => model.EventWebPage) %>: <%=Model.EventWebPage%> <br/>
 <%= Html.LabelFor(model => model.ProviderName) %>: <%=Model.ProviderName%> <br/>
 <%= Html.LabelFor(model => model.Comment) %>: <%=Model.Comment%> <br/>

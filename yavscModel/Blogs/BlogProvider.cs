@@ -19,12 +19,6 @@ namespace Yavsc.Model.Blogs
 		/// <param name="postid">Postid.</param>
 		public abstract BlogEntry GetPost (long postid);
 
-		/// <summary>
-		/// Gets the tag info.
-		/// </summary>
-		/// <returns>The tag info.</returns>
-		/// <param name="tagname">Tagname.</param>
-		public abstract TagInfo GetTagInfo (string tagname);
 
 		/// <summary>
 		/// Gets the post collection from a given user and at a given title.
@@ -50,8 +44,8 @@ namespace Yavsc.Model.Blogs
 		/// Note the specified postid and note.
 		/// </summary>
 		/// <param name="postid">Postid.</param>
-		/// <param name="note">Note.</param>
-		public abstract void Note (long postid, int note);
+		/// <param name="rate">rate.</param>
+		public abstract void Rate (long postid, int rate);
 
 
 		/// <summary>
@@ -64,6 +58,13 @@ namespace Yavsc.Model.Blogs
 		/// <param name="visible">If set to <c>true</c> visible.</param>
 		/// <param name="allowedCircles">Allowed circles.</param>
 		public abstract void UpdatePost (long postid, string title, string content, bool visible, long[] allowedCircles);
+
+		/// <summary>
+		/// Updates the post.
+		/// </summary>
+		/// <param name="be">Be.</param>
+		public abstract void UpdatePost ( BlogEntry be );
+
 
 		/// <summary>
 		/// Finds a post.

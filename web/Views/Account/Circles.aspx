@@ -34,8 +34,7 @@ $(function(){
 $("#tbc").stupidtable();
 });
 </script>
-</asp:Content>
-<asp:Content ID="MASContentContent" ContentPlaceHolderID="MASContent" runat="server">
+
 <div id="fncirc" class="hidden">
 
 

@@ -37,6 +37,21 @@ namespace Yavsc.Model.Blogs
 		/// The intro.
 		/// </summary>
 		public string Intro;
+
+		public bool Truncated;
+		public BasePostInfo (BlogEntry be)
+		{
+			Title = be.Title;
+			Id = be.Id;
+			Posted = be.Posted;
+			Modified = be.Modified;
+			Intro = MarkdownHelper.MarkdownIntro (be.Content, out Truncated);
+			Photo = be.Photo;
+			Tags = be.Tags;
+			AllowedCircles = be.AllowedCircles;
+			Visible = be.Visible;
+			Rate = be.Rate;
+		}
 	}
 	
 }

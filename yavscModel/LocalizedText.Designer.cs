@@ -244,6 +244,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Skills {
+            get {
+                return ResourceManager.GetString("Skills", resourceCulture);
+            }
+        }
+        
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
@@ -283,6 +289,12 @@ namespace Yavsc.Model {
         public static string Hide {
             get {
                 return ResourceManager.GetString("Hide", resourceCulture);
+            }
+        }
+        
+        public static string PhotoUpdated {
+            get {
+                return ResourceManager.GetString("PhotoUpdated", resourceCulture);
             }
         }
         
@@ -364,6 +376,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string was_added_to_the_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
+            }
+        }
+        
         public static string Offline {
             get {
                 return ResourceManager.GetString("Offline", resourceCulture);
@@ -406,9 +424,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string View_source {
+        public static string Skill {
             get {
-                return ResourceManager.GetString("View_source", resourceCulture);
+                return ResourceManager.GetString("Skill", resourceCulture);
             }
         }
         
@@ -433,6 +451,12 @@ namespace Yavsc.Model {
         public static string ReadMore {
             get {
                 return ResourceManager.GetString("ReadMore", resourceCulture);
+            }
+        }
+        
+        public static string View_source {
+            get {
+                return ResourceManager.GetString("View_source", resourceCulture);
             }
         }
         
@@ -472,9 +496,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string was_added_to_the_role {
+        public static string BillUpdated {
             get {
-                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
+                return ResourceManager.GetString("BillUpdated", resourceCulture);
             }
         }
         
@@ -532,6 +556,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string BillCreated {
+            get {
+                return ResourceManager.GetString("BillCreated", resourceCulture);
+            }
+        }
+        
         public static string StartDate {
             get {
                 return ResourceManager.GetString("StartDate", resourceCulture);
@@ -541,6 +571,12 @@ namespace Yavsc.Model {
         public static string Hide_source {
             get {
                 return ResourceManager.GetString("Hide_source", resourceCulture);
+            }
+        }
+        
+        public static string UsersInRole {
+            get {
+                return ResourceManager.GetString("UsersInRole", resourceCulture);
             }
         }
         

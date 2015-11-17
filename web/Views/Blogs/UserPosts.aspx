@@ -19,30 +19,18 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<%  foreach (BlogEntry e in this.Model) { %>
-<div class="postpreview<% if (!e.Visible) { %> hiddenpost<% } %>" >
-<h2><a href="<%= Url.RouteUrl("BlogByTitle", new { user=e.Author, title=e.Title, postid = e.Id })%>" class="usertitleref">
-<%=Html.Markdown(e.Title)%></a></h2>
-<% bool truncated = false; %>
-<%= Html.MarkdownToHtmlIntro(out truncated, e.Content,"/bfiles/"+e.Id+"/") %>
-<% if (truncated) { %>
-<a href="<%= Url.RouteUrl( "BlogByTitle", new { user=e.Author ,  title=e.Title, postid = e.Id}) %>">
-  <i><%=Html.Translate("ReadMore")%></i></a>
-  <% } %>
-<%= Html.Partial("PostActions",e)%>
-</div>
-<% } %>
-<aside>
-	<form runat="server" id="form1" method="GET">
-<%
- rp1.ResultCount = (int) ViewData["RecordCount"];
- rp1.PageIndex = (int) ViewData["PageIndex"];
-%>
-<yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server">
-	 <None><i>Pas de contenu</i></None>
-</yavsc:ResultPages> 
-	</form>
-</aside>
-	
 
+<% foreach (var g in Model.GroupByTitle()) { %>
+<div class="panel">
+<h2><a href="<%= Url.RouteUrl("Titles", new { title = g.Key }) %>" class="usertitleref"><%=Html.Encode(g.Key)%></a></h2>
+<% foreach (var p in g) { %> 
+<div class="postpreview">
+<% if (p.Photo!=null) { %>
+<img src="<%=p.Photo%>" alt="photo" class="photo"><% } %>
+<%=  Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %>
+ <%= Html.Partial("PostActions",p)%>
+</div> <% } %>
+</div>
+ <% } %>
+ <%= Html.RenderPageLinks((int)ViewData["PageIndex"],(int)ViewData["PageSize"],(int)ViewData["ResultCount"])%>
 </asp:Content>

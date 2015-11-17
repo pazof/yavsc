@@ -115,7 +115,9 @@ namespace Yavsc.Model.Google
 
 */
 	}
-	
+	/// <summary>
+	/// Reminder.
+	/// </summary>
 public class Reminder {
 	/// <summary>
 	/// Gets or sets the method.

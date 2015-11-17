@@ -6,7 +6,10 @@
 <table>
 <% foreach (string u in (string[])ViewData["admins"]) { %>
 <tr><td>
-<%= u %> </td><td><%= Html.ActionLink("Remove","RemoveFromRole",new { username = u, rolename="Admin", returnUrl = Request.Url.PathAndQuery })%>
+<%= u %> </td><td>
+<%= Html.ActionLink("Remove","RemoveFromRole",
+new { username = u, rolename="Admin", returnUrl = Request.Url.PathAndQuery })%>
+
 </td></tr>
 
 <% } %>

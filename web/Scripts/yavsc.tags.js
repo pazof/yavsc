@@ -1,4 +1,5 @@
-﻿var Tags =  (function(apiBaseUrl){ 
+﻿
+var Tags =  (function(apiBaseUrl){ 
 var self = {};
 self.blogsApiUrl = (apiBaseUrl || '/api') + "/Blogs";
 

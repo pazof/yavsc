@@ -23,8 +23,14 @@ using System.Web.Http;
 
 namespace Yavsc.ApiControllers
 {
+	/// <summary>
+	/// GCM controller.
+	/// </summary>
 	public class GCMController : ApiController
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.ApiControllers.GCMController"/> class.
+		/// </summary>
 		public GCMController ()
 		{
 		}

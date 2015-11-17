@@ -5,10 +5,31 @@
 </asp:Content>
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
+
   <style>
 table.layout { border-width: 0;  }
 table.layout TR TD { max-width:40%; }
    </style>
+
+   <aside>
+   <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
+   <%= Html.ActionLink("Désincription", "Unregister", "Account",  new { id = ViewData["UserName"] } , new { @class="actionlink" })%>
+   </aside>
+   <aside>
+   <% if (Roles.IsUserInRole((string)ViewData ["UserName"],"Admin")) {
+   // TODO View all roles
+     %>
+   This user is Admin.
+   <% } %>
+   <code>HasBankAccount:<%= Model.HasBankAccount %></code>
+   <% if (!Model.HasBankAccount) { %><span class="hint">
+   IBAN+BIC ou Codes banque, guichet, compte et clé RIB</span>
+   <% } %>, <code>IsBillable:<%=Model.IsBillable%></code>
+    <% if (!Model.IsBillable) { %>
+    <span class="hint">un nom et au choix, une adresse postale valide,
+   ou un téléphone, ou un email, ou un Mobile</span>   <% } %>
+   </aside>
+
    <%= Html.ValidationSummary() %>
 <% using(Html.BeginForm("Profile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
 <% { %>
@@ -116,25 +137,15 @@ Avatar : <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" a
 <%= Html.ValidationMessage("IBAN", "*") %>
 </div>
 </fieldset>
+<fieldset><legend>Interface utilisateur</legend>
 
+<%= Html.LabelFor(model => model.UITheme) %> :
+<%= Html.TextBox("UITheme") %>
+<%= Html.ValidationMessage("UITheme", "*") %>
+</fieldset>
 <input type="submit"/>
 <% } %>
-   <aside>
-   <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
-   <%= Html.ActionLink("Désincription", "Unregister", "Account",  new { id = ViewData["UserName"] } , new { @class="actionlink" })%>
-   </aside>
-   <aside>
-   <% 	if (Roles.IsUserInRole((string)ViewData ["UserName"],"Admin")) { %>
-   This user is Admin.
-   <% } %>
-   <code>HasBankAccount:<%= Model.HasBankAccount %></code>
-   <% if (!Model.HasBankAccount) { %><span class="hint">
-   IBAN+BIC ou Codes banque, guichet, compte et clé RIB</span>
-   <% } %>, <code>IsBillable:<%=Model.IsBillable%></code>
-    <% if (!Model.IsBillable) { %>
-    <span class="hint">un nom et au choix, une adresse postale valide,
-   ou un téléphone, ou un email, ou un Mobile</span>   <% } %>
-   </aside>
+ 
 
 </asp:Content>
 

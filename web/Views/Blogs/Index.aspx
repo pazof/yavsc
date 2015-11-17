@@ -8,6 +8,9 @@
 <h2><a href="<%= Url.RouteUrl("Titles", new { title = g.Key }) %>" class="usertitleref"><%=Html.Encode(g.Key)%></a></h2>
 <% foreach (var p in g) { %> 
 <div class="postpreview">
+<% if (p.Photo != null ) { %>
+<img src="<%=p.Photo%>" alt="<%=p.Photo%>" class="photo">
+<% } %>
  <p><%=  Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %></p>
  <%= Html.Partial("PostActions",p)%>
 </div> <% } %>

@@ -16,6 +16,7 @@ using Yavsc.Model.Calendar;
 using System.Configuration;
 using Yavsc.Helpers;
 using Yavsc.Model.FrontOffice.Catalog;
+using Yavsc.Model.Skill;
 
 namespace Yavsc.Controllers
 {
@@ -85,12 +86,12 @@ namespace Yavsc.Controllers
 		/// Estimate the specified id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		public ActionResult Get (long id)
+		public ActionResult Get (long estimid)
 		{
-			Estimate f = wfmgr.GetEstimate (id);
+			Estimate f = wfmgr.GetEstimate (estimid);
 			if (f == null) {
 				ModelState.AddModelError ("Id", "Wrong Id");
-				return View (new Estimate ()  { Id=id } );
+				return View (new Estimate ()  { Id=estimid } );
 			}
 			return View (f);
 		}
@@ -162,11 +163,11 @@ namespace Yavsc.Controllers
 		/// Catalog this instance.
 		/// </summary>
 		[AcceptVerbs ("GET")]
-		public ActionResult Brand (string id)
+		public ActionResult Brand (string brandid)
 		{
 			Catalog c = CatalogManager.GetCatalog ();
-			ViewData ["BrandName"] = id;
-			return View (c.GetBrand (id));
+			ViewData ["BrandName"] = brandid;
+			return View (c.GetBrand (brandid));
 		}
 
 		/// <summary>
@@ -200,10 +201,10 @@ namespace Yavsc.Controllers
 		/// <param name="pc">Pc.</param>
 		/// <param name="pref">Preference.</param>
 		[AcceptVerbs ("GET")]
-		public ActionResult Product (string id, string pc, string pref)
+		public ActionResult Product (string brandid, string pc, string pref)
 		{
 			Product p = null;
-			ViewData ["BrandName"] = id;
+			ViewData ["BrandName"] = brandid;
 			ViewData ["ProdCatRef"] = pc;
 			ViewData ["ProdRef"] = pref;
 			Catalog cat = CatalogManager.GetCatalog ();
@@ -212,7 +213,7 @@ namespace Yavsc.Controllers
 				ViewData ["RefType"] = "Catalog";
 				return View ("ReferenceNotFound");
 			}
-			Brand b = cat.GetBrand (id);
+			Brand b = cat.GetBrand (brandid);
 			if (b == null) {
 				ViewData ["RefType"] = "Brand";
 				return View ("ReferenceNotFound");
@@ -257,6 +258,51 @@ namespace Yavsc.Controllers
 				YavscHelpers.Notify(ViewData,"Exception:" + e.Message);
 				return View (collection);
 			}
+		}
+
+		/// <summary>
+		/// Booking the specified model.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		public ActionResult Booking (BookingQuery model)
+		{
+			return View ();
+		}
+
+		/// <summary>
+		/// Skills the specified model.
+		/// </summary>
+		[Authorize(Roles="Admin")]
+		public ActionResult Skills (string search)
+		{
+			if (search == null)
+				search = "%";
+			var skills = SkillManager.FindSkill (search);
+			return View (skills);
+		}
+
+		/// <summary>
+		/// Display and should
+		/// offer Ajax edition of 
+		/// user's skills.
+		/// </summary>
+		/// <param name="usp">the User Skills Profile.</param>
+		[Authorize()]
+		public ActionResult UserSkills (PerformerProfile usp)
+		{
+			if (usp.UserName == null) 
+				// this is not a call to update,
+				// and this can not concern another user
+				// than the current logged one.
+				usp = new PerformerProfile( User.Identity.Name );
+			// if (usp.UserName was null) {
+			usp = SkillManager.GetUserSkills (usp.UserName);
+			var skills = SkillManager.FindSkill ("%");
+			ViewData ["SiteSkills"] = skills;
+			// TODO or not to do, handle a skills profile update,
+		    // actually performed via the Web API :-°
+			// } else if (ModelState.IsValid) {}
+			return View (usp);
 		}
 
 	}

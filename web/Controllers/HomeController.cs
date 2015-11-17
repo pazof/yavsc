@@ -14,8 +14,6 @@ using Yavsc.Helpers;
 using Yavsc;
 using System.Web.Mvc;
 using Yavsc.Model.Blogs;
-using System.Web.Security;
-using System.Web.Profile;
 
 namespace Yavsc.Controllers
 {
@@ -24,6 +22,21 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class HomeController : Controller
 	{
+		// Site name
+		private static string name = null;
+			
+		/// <summary>
+		/// Gets or sets the site name.
+		/// </summary>
+		/// <value>The name.</value>
+		[Obsolete("Use YavscHelpers.SiteName insteed.")]
+		public static string Name {
+			get {
+				if (name == null) 
+					name = WebConfigurationManager.AppSettings ["Name"];
+				return name;
+			}
+		}
 
 		/// <summary>
 		/// Lists the referenced assemblies.
@@ -72,23 +85,14 @@ namespace Yavsc.Controllers
 		/// </summary>
 		public ActionResult Index ()
 		{
-			if (Session.IsNewSession) {
-				string uid = (!Request.IsAuthenticated) ? Request.AnonymousID : User.Identity.Name;
-				ProfileBase pr = 
-					ProfileBase.Create (uid);
-				bool ac = (bool) pr.GetPropertyValue ("allowcookies");
-				if (!ac)
-					YavscHelpers.Notify (ViewData, LocalizedText.ThisSiteUsesCookies, 
-						"function(){Yavsc.ajax(\"/Yavsc/AllowCookies\", { id:'"+uid+"' });}",
-						LocalizedText.I_understood);
-			}
-					
-			foreach (string tagname in new string[] {"Accueil","Événements","Mentions légales"})
+			foreach (string tagname in new string[] {"Accueil","Yavsc","Événements","Mentions légales"})
 			{
 				TagInfo ti = BlogManager.GetTagInfo (tagname);
 				// TODO specialyze BlogEntry creating a PhotoEntry 
 				ViewData [tagname] = ti;
+
 			}
+				
 			return View ();
 		}
 		/// <summary>

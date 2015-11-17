@@ -12,11 +12,21 @@ using System.Collections.Generic;
 
 namespace Yavsc.Model.Blogs
 {
+	
 	/// <summary>
 	/// Blog manager.
 	/// </summary>
-	public static class BlogManager
+	public static class BlogManager 
 	{
+		static BlogProvider provider = null;
+		static BlogProvider Provider { 
+			get {
+				if (provider == null)
+					provider = ManagerHelper.GetDefaultProvider<BlogProvider>
+						("system.web/blog"); 
+				return provider;
+			} 
+		}
 		/// <summary>
 		/// Removes the comment.
 		/// </summary>
@@ -37,20 +47,6 @@ namespace Yavsc.Model.Blogs
 		public static void Comment (string from, long postid, string content, bool visible)
 		{
 			Provider.Comment (from, postid, content);
-		}
-
-		static BlogProvider provider;
-
-		/// <summary>
-		/// Gets the provider.
-		/// </summary>
-		/// <value>The provider.</value>
-		public static BlogProvider Provider {
-			get {
-				if (provider == null)
-					provider = BlogHelper.GetProvider ();
-				return provider;
-			}
 		}
 
 		/// <summary>
@@ -99,7 +95,10 @@ namespace Yavsc.Model.Blogs
 		{
 			Provider.UpdatePost (postid, title, content, visible, cids);
 		}
-
+		public static void UpdatePost (BlogEntry be)
+		{
+			Provider.UpdatePost (be);
+		}
 		/// <summary>
 		/// Updates the post photo.
 		/// </summary>
@@ -152,9 +151,22 @@ namespace Yavsc.Model.Blogs
 			}
 			Provider.RemoveTitle (username, title);
 		}
-		public static TagInfo GetTagInfo(string tagname)
+		/// <summary>
+		/// Gets the tag info.
+		/// </summary>
+		/// <returns>The tag info.</returns>
+		/// <param name="tagname">Tagname.</param>
+		/// <param name="pageIndex">Page index.</param>
+		/// <param name="pageSize">Page size.</param>
+		public static TagInfo GetTagInfo(string tagname, int pageIndex=0, int pageSize=50)
 		{
-			return Provider.GetTagInfo (tagname);
+			var res = new TagInfo (tagname);
+			int recordCount = 0;
+			var posts = Provider.FindPost (null,tagname,FindBlogEntryFlags.MatchTag,pageIndex,pageSize,out recordCount);
+			res.Titles = posts.GroupByTitle ().ToArray();
+			res.Name = tagname;
+			// out int recordCount ,
+			return res;
 		}
 		/// <summary>
 		/// Lasts the posts.
@@ -192,9 +204,9 @@ namespace Yavsc.Model.Blogs
 		}
 
 
-		public static void Note (long postid, int note)
+		public static void Rate (long postid, int rate)
 		{
-			Provider.Note (postid, note);
+			Provider.Rate (postid, rate);
 		}
 
 		/// <summary>

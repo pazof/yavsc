@@ -62,7 +62,6 @@
     <Compile Include="Blogs\BlogManager.cs" />
     <Compile Include="Blogs\BlogProvider.cs" />
     <Compile Include="WorkFlow\WorkFlowManager.cs" />
-    <Compile Include="Blogs\BlogHelper.cs" />
     <Compile Include="WorkFlow\NewEstimateEvenArgs.cs" />
     <Compile Include="LocalizedText.fr.Designer.cs">
       <DependentUpon>LocalizedText.fr.resx</DependentUpon>
@@ -172,12 +171,29 @@
     <Compile Include="Blogs\BasePostInfo.cs" />
     <Compile Include="Blogs\TagInfo.cs" />
     <Compile Include="Blogs\MarkdownHelper.cs" />
-    <Compile Include="Calendar\BookQuery.cs" />
     <Compile Include="Calendar\IFreeDateSet.cs" />
     <Compile Include="Calendar\ICalendarManager.cs" />
     <Compile Include="Messaging\Notification.cs" />
     <Compile Include="FileSystem\WebFileSystemManager.cs" />
     <Compile Include="RolesAndMembers\ProfileEdition.cs" />
+    <Compile Include="RolesAndMembers\UserRole.cs" />
+    <Compile Include="RolesAndMembers\UserNameBase.cs" />
+    <Compile Include="Calendar\BookingQuery.cs" />
+    <Compile Include="Skill\SkillRating.cs" />
+    <Compile Include="Skill\SkillProvider.cs" />
+    <Compile Include="Skill\SkillManager.cs" />
+    <Compile Include="Manager.cs" />
+    <Compile Include="Skill\Skill.cs" />
+    <Compile Include="Skill\UserSkill.cs" />
+    <Compile Include="Skill\UserSkillComment.cs" />
+    <Compile Include="Skill\UserSkillDeclaration.cs" />
+    <Compile Include="Skill\UserSkillRating.cs" />
+    <Compile Include="Skill\UserSkillReference.cs" />
+    <Compile Include="IComment.cs" />
+    <Compile Include="IIdentified.cs" />
+    <Compile Include="IRating.cs" />
+    <Compile Include="IAuthorized.cs" />
+    <Compile Include="Skill\PerformerProfile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -193,6 +209,7 @@
     <Folder Include="Circles\" />
     <Folder Include="RolesAndMembers\" />
     <Folder Include="Messaging\" />
+    <Folder Include="Skill\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

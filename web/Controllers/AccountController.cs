@@ -335,6 +335,7 @@ namespace Yavsc.Controllers
 				prf.SetPropertyValue ("AccountNumber", model.AccountNumber);
 				prf.SetPropertyValue ("BankedKey", model.BankedKey);
 				prf.SetPropertyValue ("gcalid", model.GoogleCalendar);
+				prf.SetPropertyValue ("UITheme", model.UITheme);
 				prf.Save ();
 
 				if (editsTheUserName) {

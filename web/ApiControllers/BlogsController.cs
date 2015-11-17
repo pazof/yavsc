@@ -14,6 +14,9 @@ using System.Diagnostics;
 using Yavsc.Formatters;
 using Yavsc.Model;
 
+
+
+
 namespace Yavsc.ApiControllers
 {
 	/// <summary>
@@ -143,19 +146,45 @@ namespace Yavsc.ApiControllers
 		/// <summary>
 		/// Create the specified blog entry.
 		/// </summary>
-		/// <param name="bp">Bp.</param>
+		/// <param name="be">Bp.</param>
 		[Authorize, HttpPost]
-		public long Create (BasePost bp) 
+		public long Post (BlogEntry be) 
 		{
-			return BlogManager.Post (User.Identity.Name, bp.Title, "", bp.Visible, null);
+			if (be.Id == 0)
+				return BlogManager.Post (User.Identity.Name, be.Title, 
+					be.Content, be.Visible,be.AllowedCircles );
+			else
+				BlogManager.UpdatePost (be);
+			return 0;
+		}
+		/// <summary>
+		/// Blog entry rating.
+		/// </summary>
+		public class BlogEntryRating { 
+			/// <summary>
+			/// Gets or sets the post identifier.
+			/// </summary>
+			/// <value>The post identifier.</value>
+			public long Id { get; set; }
+			/// <summary>
+			/// Gets or sets the rate.
+			/// </summary>
+			/// <value>The rate.</value>
+			public int Rate { get; set; }
 		}
 
-		[Authorize, HttpPost]
-		public void Note (long id, int note)
+		/// <summary>
+		/// Rate the specified model.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		[Authorize(Roles="Moderator"), HttpPost, ValidateAjax]
+		public void Rate (BlogEntryRating model)
 		{
-			if (note < 0 || note > 100)
-				throw new ArgumentException ("0<=note<=100");
-			BlogManager.Note (id, note);
+			if (model.Rate < 0 || model.Rate > 100)
+				ModelState.AddModelError ("Rate", "0<=Rate<=100");
+			else {
+				BlogManager.Rate (model.Id, model.Rate);
+			}
 		}
 		/// <summary>
 		/// Searchs the file.
@@ -176,7 +205,7 @@ namespace Yavsc.ApiControllers
 		[Authorize, HttpPost, ValidateAjaxAttribute]
 		public void SetPhoto(long id, [FromBody] string photo)
 		{
-			BlogManager.Provider.UpdatePostPhoto (id, photo);
+			BlogManager.UpdatePostPhoto (id, photo);
 		}
 
 		/// <summary>

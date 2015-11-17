@@ -77,7 +77,6 @@ namespace Yavsc.Controllers
 		/// <param name="id">Title.</param>
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
-		/// 
 		[HttpGet]
 		public ActionResult Title (string title, int pageIndex = 0, int pageSize = 10)
 		{
@@ -89,7 +88,7 @@ namespace Yavsc.Controllers
 				BlogManager.FindPost (username, title, sf, pageIndex, pageSize, out recordCount);
 			var utc = new UTBlogEntryCollection (title);
 			utc.AddRange (c);
-			ViewData ["RecordCount"] = recordCount;
+			ViewData ["ResultCount"] = recordCount;
 			ViewData ["PageIndex"] = pageIndex; 
 			ViewData ["PageSize"] = pageSize;
 			return View ("Title", utc);
@@ -135,8 +134,10 @@ namespace Yavsc.Controllers
 			ViewData ["BlogTitle"] = bupr.BlogTitle;
 			ViewData ["Avatar"] = bupr.avatar;
 			}
-			ViewData ["RecordCount"] = recordcount; 
 			UUBlogEntryCollection uuc = new UUBlogEntryCollection (user, c);
+			ViewData ["ResultCount"] = recordcount;
+			ViewData ["PageIndex"] = pageIndex; 
+			ViewData ["PageSize"] = pageSize;
 			return View ("UserPosts", uuc);
 		}
 
@@ -279,8 +280,8 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The edit.</returns>
 		/// <param name="model">Model.</param>
-		[Authorize(Roles="Blogger")]
-		public ActionResult ValidateEdit (BlogEntry model)
+		[Authorize(Roles="")]
+		public ActionResult Edit (BlogEntry model)
 		{
 			ViewData ["SiteName"] = sitename;
 			ViewData ["Author"] = Membership.GetUser ().UserName;
@@ -289,13 +290,13 @@ namespace Yavsc.Controllers
 					// ensures rights to update
 					BlogManager.GetForEditing (model.Id, true);
 					BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible, model.AllowedCircles);
+					YavscHelpers.Notify (ViewData, LocalizedText.BillUpdated);
 
-				}
-				else
+				} else {
 					model.Id = BlogManager.Post (model.Author, model.Title, model.Content, model.Visible, model.AllowedCircles);
-				if (model.Photo != null)
-					BlogManager.UpdatePostPhoto (model.Id, model.Photo);
-				return RedirectToAction ("Title", new { title = model.Title });
+					YavscHelpers.Notify (ViewData, LocalizedText.BillCreated);
+				}
+				BlogManager.UpdatePostPhoto (model.Id, model.Photo);
 			}
 			ViewData ["AllowedCircles"] = 
 				CircleManager.DefaultProvider.List (
@@ -312,7 +313,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="id">Identifier.</param>
 		[Authorize(Roles="Blogger")]
-		public ActionResult Edit (long postid)
+		public ActionResult EditId (long postid)
 		{
 			
 			BlogEntry e = BlogManager.GetForEditing (postid);
@@ -333,7 +334,7 @@ namespace Yavsc.Controllers
 				Text = x.Title,
 				Selected = e.AllowedCircles.Contains (x.Id)
 			});
-			return View (e);
+			return View ("Edit",e);
 		}
 
 		/// <summary>

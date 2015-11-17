@@ -2,12 +2,19 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <% ViewState["orgtitle"] = Html.Translate(Page.Title); %>
-<% Page.Title = ViewState["orgtitle"] + " - " + YavscHelpers.SiteName; %>
+<% Page.Title = ViewState["orgtitle"] + " - " + YavscHelpers.SiteName; 
+Page.Theme = (string) Profile.UITheme; 
+Page.StyleSheetTheme = (string) Profile.UITheme; 
+
+%>
 <asp:ContentPlaceHolder id="init" runat="server">
-</asp:ContentPlaceHolder><head runat="server">
+</asp:ContentPlaceHolder>
+
+<head runat="server">
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/"+Page.StyleSheetTheme+"/style.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/style.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/font-awesome.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/jquery-ui.css")%>" />
@@ -15,14 +22,14 @@
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/doxy.css")%>" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
 <script src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
-<script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.min.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/parallax.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>
 <script type="text/javascript">
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 </script> 
+<%=Ajax.GlobalizationScript()%>
 <script src="<%=Url.Content("~/Scripts/yavsc.js")%>"></script>
-<script src="<%=Url.Content("~/Scripts/yavsc.tags.js")%>"></script>
 <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>
 </head>
@@ -41,7 +48,7 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 $(document).ready(function(){
 <% foreach (Notification note in (IEnumerable<Notification>) ViewData ["Notifications"] ) { 
 if (note.click_action == null) {%> Yavsc.notice(<%=note.body%>); <% } 
-else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>); <% } %>
+else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>, <%=note.click_action_name%>); <% } %>
 <% } %>
 });
 </script>
@@ -51,8 +58,6 @@ else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>); <% } %>
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
 </main>
-<asp:ContentPlaceHolder ID="MASContent" runat="server">
-</asp:ContentPlaceHolder>
 <footer data-type="background" data-speed="5" >
 <div id="copyr">
 <a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">© 2015 GNU GENERAL PUBLIC LICENSE  <i>Version 3, 29 June 2007</i></a>

@@ -58,6 +58,8 @@ namespace Yavsc.Helpers.Google
 		/// Initializes a new instance of the <see cref="Yavsc.Helpers.Google.OAuth2"/> class.
 		/// </summary>
 		/// <param name="redirectUri">Redirect URI.</param>
+		/// <param name="clientId">Client identifier.</param>
+		/// <param name="clientSecret">Client secret.</param>
 		public OAuth2 (string redirectUri, string clientId, string clientSecret)
 		{
 			RedirectUri = redirectUri;

@@ -30,7 +30,6 @@ deploy: ddir build
 	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir=../$(LDYDESTDIR) /t:Deploy web/Web.csproj
 	mv $(LDYDESTDIR)/Web.config $(LDYDESTDIR)/Web.config.new
 
-
 rsync_% : HOST = $(HOST_$@)
 
 rsync_% : DESTDIR = $(DESTDIR_$@)
@@ -44,7 +43,7 @@ build:
 	xbuild /p:Configuration=$(CONFIG) /t:Build Yavsc.sln
 
 clean:
-	xbuild /t:Clean
+	xbuild /p:Configuration=$(CONFIG)  /t:Clean Yavsc.sln
 	find -name "StyleCop.Cache" -exec rm {} \;
 
 distclean: clean
@@ -73,4 +72,8 @@ rsync_pre:
 
 rsync_prod:
 
+nuget_restore:
+	for prj in ITContentProvider NpgsqlBlogProvider NpgsqlContentProvider NpgsqlMRPProviders Presta SalesCatalog TestAPI web WebControls yavscclient yavscModel; do nuget restore "$${prj}/packages.config" -SolutionDirectory . ; done
 
+nuget_update:
+	for prj in ITContentProvider NpgsqlBlogProvider NpgsqlContentProvider NpgsqlMRPProviders Presta SalesCatalog TestAPI web WebControls yavscclient yavscModel; do nuget update "$${prj}/packages.config"  ; done

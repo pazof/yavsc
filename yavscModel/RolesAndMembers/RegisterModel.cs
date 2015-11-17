@@ -25,19 +25,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Model.RolesAndMembers
 {
-
 	/// <summary>
 	/// Register view model.
 	/// </summary>
-	public class RegisterModel
+	public class RegisterModel: UserNameBase
 	{
-		/// <summary>
-		/// Gets or sets the name of the user.
-		/// </summary>
-		/// <value>The name of the user.</value>
-		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")
-			,Display(ResourceType=typeof(LocalizedText),Name="User_name")]
-		public string UserName { get; set; }
  
 		/// <summary>
 		/// Gets or sets the password.

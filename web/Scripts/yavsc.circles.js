@@ -1,8 +1,5 @@
 ﻿
-
-var errspanid="msg";
 var CirclesApiUrl = apiBaseUrl + "/Circle";
-
 
 function editNewCircle() {
   if ($('#fncirc').hasClass('hidden')) $('#fncirc').removeClass('hidden')

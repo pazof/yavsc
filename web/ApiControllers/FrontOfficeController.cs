@@ -22,7 +22,7 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Front office controller.
 	/// </summary>
-	public class FrontOfficeController : ApiController
+	public class FrontOfficeController : YavscController
 	{
 		/// <summary>
 		/// The wfmgr.

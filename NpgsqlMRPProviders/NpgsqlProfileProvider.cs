@@ -206,7 +206,7 @@ namespace Npgsql.Web
 				cmd.CommandText = "SELECT * from profiledata, profiles where " +
 				"profiledata.uniqueid = profiles.uniqueid " +
 				"and profiles.username = @username " +
-				"and profiles.applicationname = @appname";
+				"and profiles.applicationname = @appname ";
 				cmd.Parameters.AddWithValue ("@username", username);
 				cmd.Parameters.AddWithValue ("@appname", applicationName);
 				cnx.Open ();
@@ -216,7 +216,8 @@ namespace Npgsql.Web
 						foreach (SettingsProperty p in collection) {
 							SettingsPropertyValue v = new SettingsPropertyValue (p);
 							int o = r.GetOrdinal (p.Name.ToLower ());
-							v.PropertyValue = r.GetValue (o);
+							var obj = r.GetValue (o);
+							v.PropertyValue = (obj is DBNull) ? GetDefaultValue (p) : obj;
 							c.Add (v);
 						}
 					} else {

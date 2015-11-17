@@ -23,9 +23,21 @@ using System;
 
 namespace Yavsc.Model.Google
 {
+	/// <summary>
+	/// G date.
+	/// </summary>
 	public class GDate {
+		/// <summary>
+		/// The date.
+		/// </summary>
 		public DateTime date;
+		/// <summary>
+		/// The datetime.
+		/// </summary>
 		public DateTime datetime;
+		/// <summary>
+		/// The time zone.
+		/// </summary>
 		public string timeZone;
 	}
 	

@@ -123,6 +123,7 @@ CREATE TABLE profiledata
   gcalapi boolean NOT NULL DEFAULT false,
   gregid character varying(1024), -- Google Cloud Message registration identifier
   allowcookies boolean NOT NULL DEFAULT false,
+  uitheme character varying(64),
   CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
@@ -176,7 +177,7 @@ CREATE TABLE blog
   visible boolean NOT NULL,
   _id bigserial NOT NULL,
   photo character varying(512), -- a photo url, supposed to be the main photo...
-  note integer NOT NULL DEFAULT 50, -- a global note for this entry, between 0 and 100
+  rate integer NOT NULL DEFAULT 50, -- a global note for this entry, between 0 and 100
   CONSTRAINT blog_pkey PRIMARY KEY (_id),
   CONSTRAINT bloguser FOREIGN KEY (applicationname, username)
       REFERENCES users (applicationname, username) MATCH SIMPLE

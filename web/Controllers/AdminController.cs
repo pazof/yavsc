@@ -25,9 +25,9 @@ namespace Yavsc.Controllers
 		public ActionResult Index()
 		{
 			// FIXME do this in a new installation script.
-			if (!Roles.RoleExists (roleName)) {
-				Roles.CreateRole (roleName);
-				YavscHelpers.Notify (ViewData, roleName + " " + LocalizedText.role_created);
+			if (!Roles.RoleExists (_adminRoleName)) {
+				Roles.CreateRole (_adminRoleName);
+				YavscHelpers.Notify (ViewData, _adminRoleName + " " + LocalizedText.role_created);
 			}
 			return View ();
 		}
@@ -156,6 +156,13 @@ namespace Yavsc.Controllers
 			Roles.RemoveUserFromRole(username,rolename);
 			return Redirect(returnUrl);
 		}
+
+		[Authorize(Roles="Admin")]
+		public ActionResult AddUserToRole(string username, string rolename, string returnUrl)
+		{
+			Roles.AddUsersToRole(new string[] { username } ,rolename);
+			return Redirect(returnUrl);
+		}
 		/// <summary>
 		/// Removes the user.
 		/// </summary>
@@ -223,7 +230,27 @@ namespace Yavsc.Controllers
 			MembershipUserCollection c = Membership.GetAllUsers ();
 			return View (c);
 		}
+		[Authorize()]
+		public ActionResult UsersInRole (string rolename)
+		{
+			if (rolename == null)
+				rolename = "Admin";
+			ViewData ["RoleName"] = rolename;
+			ViewData ["Roles"] = Roles.GetAllRoles ();
+			ViewData ["UsersInRole"] = Roles.GetUsersInRole (rolename);
+			return View ();
+		}
 
+		[Authorize()]
+		public ActionResult UserRoles (string username)
+		{
+			ViewData ["AllRoles"] = Roles.GetAllRoles ();
+			if (username == null)
+				username = User.Identity.Name;
+			ViewData ["UserName"] = username;				
+			ViewData ["UsersRoles"] = Roles.GetRolesForUser (username);
+			return View ();
+		}
 		/// <summary>
 		/// a form to add a role
 		/// </summary>
@@ -257,7 +284,7 @@ namespace Yavsc.Controllers
 			return View (Roles.GetAllRoles ());
 		}
 
-		private const string roleName = "Admin";
+		private const string _adminRoleName = "Admin";
 
 		/// <summary>
 		/// Assing the Admin role to the specified user in model.
@@ -267,7 +294,7 @@ namespace Yavsc.Controllers
 		public ActionResult Admin (NewAdminModel model)
 		{
 			// ASSERT (Roles.RoleExists (adminRoleName)) 
-			string [] admins = Roles.GetUsersInRole (roleName);
+			string [] admins = Roles.GetUsersInRole (_adminRoleName);
 			string currentUser = Membership.GetUser ().UserName;
 			List<SelectListItem> users = new List<SelectListItem> ();
 			foreach (MembershipUser u in Membership.GetAllUsers ()) {
@@ -279,22 +306,21 @@ namespace Yavsc.Controllers
 			ViewData ["admins"] = admins;
 			ViewData ["useritems"] = users;
 			if (ModelState.IsValid) {
-				Roles.AddUserToRole (model.UserName, roleName);
-				YavscHelpers.Notify(ViewData,  model.UserName + " "+LocalizedText.was_added_to_the_role+" '" + roleName + "'");
+				Roles.AddUserToRole (model.UserName, _adminRoleName);
+				YavscHelpers.Notify(ViewData,  model.UserName + " "+LocalizedText.was_added_to_the_role+" '" + _adminRoleName + "'");
 			} else {
 				if (admins.Length > 0) { 
 					if (! admins.Contains (Membership.GetUser ().UserName)) {
 						ModelState.Remove("UserName");
 						ModelState.AddModelError("UserName",LocalizedText.younotadmin+"!");
-						return View ("Index");
 					}
 				} else {
 					// No admin, gives the Admin Role to the current user
-					Roles.AddUserToRole (currentUser, roleName);
+					Roles.AddUserToRole (currentUser, _adminRoleName);
 					admins = new string[] { currentUser };
 					YavscHelpers.Notify(ViewData, string.Format (
 						LocalizedText.was_added_to_the_empty_role,
-						currentUser, roleName));
+						currentUser, _adminRoleName));
 				}
 			}
 			return View (model);

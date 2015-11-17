@@ -33,7 +33,7 @@ namespace Yavsc.Model.Blogs
 	/// <summary>
 	/// Base post.
 	/// </summary>
-	public class BasePost {
+	public class BasePost: IRating {
 		/// <summary>
 		/// The identifier.
 		/// </summary>
@@ -140,5 +140,25 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		/// <value><c>true</c> if visible; otherwise, <c>false</c>.</value>
 		public bool Visible { get; set ; }
+
+		/// <summary>
+		/// Gets or sets the rate.
+		/// </summary>
+		/// <value>The rate.</value>
+		public int Rate { get; set; }
+
+		/// <summary>
+		/// Gets or sets the circles allowed to read this ticket.
+		/// An empty collection specifies a public post.
+		/// </summary>
+		/// <value>The circles.</value>
+		[Display(Name="Cercles autorisés")]
+		public long[] AllowedCircles { get; set; }
+
+		/// <summary>
+		/// Gets or sets the tags.
+		/// </summary>
+		/// <value>The tags.</value>
+		public string [] Tags { get; set ; }
 	}
 }

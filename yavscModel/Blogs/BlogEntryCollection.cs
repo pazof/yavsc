@@ -84,19 +84,10 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		public IEnumerable<IGrouping<string,BasePostInfo>> GroupByTitle ()
 		{
-			bool truncated;
 			return from be in this
 				orderby be.Posted descending
-			       group 
-				new  BasePostInfo { Author = be.Author, Id = be.Id, 
-				Posted = be.Posted, Modified = be.Modified, 
-				Intro = MarkdownHelper.MarkdownIntro (be.Content, out truncated),
-				Visible = be.Visible,
-				Photo = be.Photo
-			}
-				by be.Title
-				into titlegroup
-			       select titlegroup;
+				group new BasePostInfo(be)	by be.Title
+				into titlegroup select titlegroup;
 		}
 
 		/// <summary>
@@ -105,19 +96,10 @@ namespace Yavsc.Model.Blogs
 		/// <returns>The by user.</returns>
 		public IEnumerable<IGrouping<string,BasePostInfo>> GroupByUser ()
 		{
-			bool truncated;
 			return from be in this
 				orderby be.Posted descending
 			       group
-				new  BasePostInfo { 
-				Title = be.Title, 
-				Id = be.Id, 
-				Posted = be.Posted, 
-				Modified = be.Modified, 
-				Intro = MarkdownHelper.MarkdownIntro (be.Content, out truncated), 
-				Photo = be.Photo,
-				Visible = be.Visible
-			}
+				new  BasePostInfo (be)
 				by be.Author
 				into usergroup
 			       select usergroup;

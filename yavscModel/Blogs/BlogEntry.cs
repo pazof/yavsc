@@ -11,22 +11,7 @@ namespace Yavsc.Model.Blogs
 	/// Blog entry.
 	/// </summary>
 	public class BlogEntry : BasePost	{
-
-
-		/// <summary>
-		/// Gets or sets the circles allowed to read this ticket.
-		/// An empty collection specifies a public post.
-		/// </summary>
-		/// <value>The circles.</value>
-		[Display(Name="Cercles autorisés")]
-		public long[] AllowedCircles { get; set; }
-
-		/// <summary>
-		/// Gets or sets the tags.
-		/// </summary>
-		/// <value>The tags.</value>
-		public string [] Tags { get; set ; }
-
+		
 		string content;
 
 		/// <summary>
@@ -34,7 +19,6 @@ namespace Yavsc.Model.Blogs
 		/// </summary>
 		/// <value>The content.</value>
 		[DisplayName("Corps du billet")]	
-		[Required(ErrorMessage = "S'il vous plait, saisissez un texte.")]
 		public string Content {
 			get {
 				return content;

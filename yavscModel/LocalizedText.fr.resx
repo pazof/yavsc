@@ -19,6 +19,8 @@
 	lui présentant votre demande. Vous devriez être contacté très rapidement.</value></data>
 	<data name="Bill_edition"><value>Édition d'un billet</value></data>
 	<data name="Bill_removal"><value>Suppression d'un billet</value></data>
+	<data name="BillCreated"><value>Billet créé</value></data>
+	<data name="BillUpdated"><value>Billet mis à jour</value></data>
 	<data name="Consultant"><value>Consultant</value></data>
 	<data name="Count"><value>Nombre</value></data>
 	<data name="Ciffer"><value>Chiffre</value></data>
@@ -79,6 +81,8 @@
     <data name="Remember_me"><value>Se souvenir du mot de passe</value></data>
 	<data name="Remove"><value>Supprimer</value></data>
 	<data name="role_created"><value>Rôle créé</value></data>
+	<data name="Skill"><value>Compétence</value></data>
+	<data name="Skills"><value>Compétences</value></data>
     <data name="StartDate"><value>Date de début</value></data>
 	<data name="StartDateAfterEndDate"><value>La date de fin doit être postérieure à la date de début.</value></data>
 	<data name="StartHour"><value>Heure de début</value></data>
@@ -90,10 +94,11 @@
 	<data name="Unitary_cost"><value>Coût unitaire</value></data>
 	<data name="User_List"><value>Liste des utilisateurs</value><comment></comment></data>
 	<data name="User_name"><value>Nom d'utilisateur</value></data>
+	<data name="UsersInRole">Liste des utilisateurs assumant le rôle "{0}"</data>
 	<data name="UserNotInThisRole"><value>Le rôle demandé n'est pas assumé par ce préstataire</value></data>
 	<data name="View_source"><value>Voir le texte source du billet</value></data>
 	<data name="was_added_to_the_role"><value>a été ajouté au rôle</value></data>
-	<data name="was_added_to_the_empty_role"><value>Il n'y avait pas 'utilisateur dans le rôle '{1}'. Vous ({0}) avez été ajouté au rôle '{1}'.</value></data>
+	<data name="was_added_to_the_empty_role"><value>Il n'y avait pas d'utilisateur dans le rôle "{1}". Vous ({0}) avez été ajouté au rôle "{1}".</value></data>
 	<data name="Welcome"><value>Bienvenue</value><comment></comment></data>
 	<data name="XHasBeenNotified"><value>{0} à été notifié de votre demande, vous devriez être contacté rapidement</value></data>
 	<data name="Xshouldbeavailable"><value>Au vu de son calendrier, 

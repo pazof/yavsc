@@ -1,12 +1,14 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<TagInfo>" %>
+<h2><%=Html.Encode(Model.Name)%></h2>
+<% foreach (var g in Model.Titles) { %>
 <div class="panel">
-<i class="fa fa-tag"><%=Html.Encode(Model.Name)%></i>
-<% foreach (var t in Model.Titles) { %>
-<a href="<%= Url.RouteUrl("Titles", new { title = t.Title }) %>">
-<img src="<%=Url.Encode(t.Photo)%>" alt="placard" class="photo">
-<%= Html.Markdown(t.Title,"/bfiles/"+t.Id+"/")%></a>
+<h3><%= Html.Markdown(g.Key)%></h3>
+<% foreach (var p in g) { %>
+<a href="<%= Url.RouteUrl("Titles", new { title = g.Key, postid = p.Id }) %>">
+<% if (p.Photo != null) { %> <img src="<%=p.Photo%>" alt="placard" class="photo"> <% } %>
 <div class="postpreview">
- <p><%=  Html.Markdown(t.Intro,"/bfiles/"+t.Id+"/") %></p>
-</div> 
+ <p><%=  Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %></p>
+</div> </a>
 <% } %>
 </div>
+<% } %>

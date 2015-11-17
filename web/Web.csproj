@@ -75,9 +75,6 @@
     <Reference Include="nunit.framework">
       <Package>nunit</Package>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -105,44 +102,48 @@
     <Reference Include="Npgsql">
       <HintPath>..\packages\Npgsql.3.0.3\lib\net45\Npgsql.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.4\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Scripts\" />
-    <Folder Include="Views\Account\" />
-    <Folder Include="Views\Blogs\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="Views\FrontOffice\" />
-    <Folder Include="avatars\" />
     <Folder Include="Admin\" />
-    <Folder Include="backup\" />
-    <Folder Include="errors\" />
-    <Folder Include="Views\FileSystem\" />
-    <Folder Include="CatExts\" />
-    <Folder Include="Views\WorkFlow\" />
-    <Folder Include="Views\Admin\" />
-    <Folder Include="templates\" />
-    <Folder Include="Formatters\" />
-    <Folder Include="Settings\" />
-    <Folder Include="Views\BackOffice\" />
-    <Folder Include="Helpers\Google\" />
-    <Folder Include="htmldoc\" />
-    <Folder Include="users\" />
-    <Folder Include="xmldoc\" />
-    <Folder Include="Views\PayPal\" />
     <Folder Include="ApiControllers\" />
-    <Folder Include="Views\Modules\" />
     <Folder Include="App_Themes\" />
     <Folder Include="App_Themes\green\" />
     <Folder Include="App_Themes\blue\" />
     <Folder Include="App_Themes\dark\" />
-    <Folder Include="bfiles\" />
-    <Folder Include="fonts\" />
-    <Folder Include="lib\" />
     <Folder Include="App_Data\" />
     <Folder Include="App_Themes\images\" />
-    <Folder Include="Views\Google\" />
     <Folder Include="App_Data\Sql\" />
+    <Folder Include="App_Themes\clear\" />
+    <Folder Include="avatars\" />
+    <Folder Include="backup\" />
+    <Folder Include="bfiles\" />
+    <Folder Include="CatExts\" />
+    <Folder Include="errors\" />
+    <Folder Include="fonts\" />
+    <Folder Include="Formatters\" />
+    <Folder Include="htmldoc\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Helpers\Google\" />
+    <Folder Include="lib\" />
+    <Folder Include="Models\" />
+    <Folder Include="Settings\" />
+    <Folder Include="Scripts\" />
+    <Folder Include="templates\" />
+    <Folder Include="users\" />
+    <Folder Include="Views\Account\" />
+    <Folder Include="Views\Blogs\" />
+    <Folder Include="Views\Google\" />
+    <Folder Include="Views\FrontOffice\" />
+    <Folder Include="Views\FileSystem\" />
+    <Folder Include="Views\WorkFlow\" />
+    <Folder Include="Views\Admin\" />
+    <Folder Include="Views\BackOffice\" />
+    <Folder Include="Views\PayPal\" />
+    <Folder Include="Views\Modules\" />
+    <Folder Include="xmldoc\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -207,6 +208,9 @@
     <Compile Include="ApiControllers\AuthorizationDenied.cs" />
     <Compile Include="ApiControllers\YavscController.cs" />
     <Compile Include="Helpers\YavscAjaxHelper.cs" />
+    <Compile Include="Helpers\Google\GoogleHelpers.cs" />
+    <Compile Include="AuthorizeAttribute.cs" />
+    <Compile Include="ApiControllers\SkillController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -283,7 +287,6 @@
     <Content Include="Views\Account\Circles.aspx" />
     <Content Include="Views\Account\Register.ascx" />
     <Content Include="Views\Account\ResetPassword.aspx" />
-    <Content Include="Views\Blogs\NotAuthorized.aspx" />
     <Content Include="Views\Blogs\RemoveTitle.aspx" />
     <Content Include="App_Themes\style.css" />
     <Content Include="App_Themes\green\asc.png" />
@@ -358,7 +361,9 @@
     <Content Include="Scripts\rangy-core.js" />
     <Content Include="Scripts\rangy-selectionsaverestore.js" />
     <Content Include="Scripts\jquery.htmlClean.min.js" />
-    <Content Include="Views\Blogs\ChooseMedia.aspx" />
+    <Content Include="App_Themes\images\helix-nebula-1400x1400.jpg" />
+    <Content Include="App_Themes\images\helix-nebula-1400x1400.s.jpg" />
+    <Content Include="App_Themes\images\star-939235_1280.jpg" />
     <Content Include="App_Themes\accordion.css" />
     <Content Include="App_Themes\all.css" />
     <Content Include="App_Themes\autocomplete.css" />
@@ -379,6 +384,8 @@
     <Content Include="App_Themes\tabs.css" />
     <Content Include="App_Themes\theme.css" />
     <Content Include="App_Themes\tooltip.css" />
+    <Content Include="App_Themes\images\helix-nebula-1400x1400.xxs.jpg" />
+    <Content Include="App_Themes\images\star-939235_1280.xxs.jpg" />
     <Content Include="Views\Blogs\Title.aspx" />
     <Content Include="Views\Blogs\PostActions.ascx" />
     <Content Include="Scripts\yavsc.tags.js" />
@@ -422,6 +429,14 @@
     <Content Include="App_Themes\sons-of-obsidian.css" />
     <Content Include="App_Themes\sunburst.css" />
     <Content Include="App_Themes\prettify.css" />
+    <Content Include="App_Themes\images\FhHRx.gif" />
+    <Content Include="Scripts\parallax.js" />
+    <Content Include="App_Themes\images\logo.jpg" />
+    <Content Include="App_Themes\images\star-939235_1280.xs.jpg" />
+    <Content Include="App_Themes\images\logo-1.png" />
+    <Content Include="App_Themes\images\logo.s.png" />
+    <Content Include="App_Themes\images\logo.xs.png" />
+    <Content Include="App_Themes\images\logo.xxs.png" />
     <Content Include="App_Themes\images\ui-bg_flat_30_cccccc_40x100.png" />
     <Content Include="App_Themes\images\ui-bg_flat_50_5c5c5c_40x100.png" />
     <Content Include="App_Themes\images\ui-bg_glass_20_555555_1x400.png" />
@@ -436,7 +451,6 @@
     <Content Include="App_Themes\images\ui-icons_a83300_256x240.png" />
     <Content Include="App_Themes\images\ui-icons_cccccc_256x240.png" />
     <Content Include="App_Themes\images\ui-icons_ffffff_256x240.png" />
-    <Content Include="Scripts\parallax.js" />
     <Content Include="Views\Google\Auth.aspx" />
     <Content Include="Views\Google\ChooseCalendar.aspx" />
     <Content Include="Views\Google\Book.aspx" />
@@ -454,10 +468,6 @@
     <Content Include="App_Themes\images\animated-overlay.gif" />
     <Content Include="App_Themes\images\apache_pbw.png" />
     <Content Include="App_Themes\images\debian-logo.png" />
-    <Content Include="App_Themes\images\FhHRx.gif" />
-    <Content Include="App_Themes\images\helix-nebula-1400x1400.jpg" />
-    <Content Include="App_Themes\images\helix-nebula-1400x1400.s.jpg" />
-    <Content Include="App_Themes\images\helix-nebula-1400x1400.xxs.jpg" />
     <Content Include="App_Themes\images\Mono-powered.png" />
     <Content Include="App_Themes\images\noavatar.png" />
     <Content Include="App_Themes\images\p8-av4.s.jpg" />
@@ -465,12 +475,22 @@
     <Content Include="App_Themes\images\pgsql.png" />
     <Content Include="App_Themes\images\sign-in-with-google.png" />
     <Content Include="App_Themes\images\sign-in-with-google-s.png" />
-    <Content Include="App_Themes\images\star-939235_1280.jpg" />
     <Content Include="App_Themes\images\star-939235_1280.s.jpg" />
-    <Content Include="App_Themes\images\star-939235_1280.xxs.jpg" />
-    <Content Include="Views\Admin\AddMemberToRole.ascx" />
     <Content Include="Views\Admin\UsersInRole.aspx" />
     <Content Include="Views\Admin\Index.aspx" />
+    <Content Include="Views\Admin\AddUserToRole.ascx" />
+    <Content Include="Scripts\yavsc.rate.js" />
+    <Content Include="Views\Admin\UserCard.ascx" />
+    <Content Include="App_Themes\dark\style.css" />
+    <Content Include="Views\Home\Contact.template.aspx" />
+    <Content Include="Views\Home\Contact.totem.aspx" />
+    <Content Include="Views\Home\RestrictedArea.aspx" />
+    <Content Include="Views\FrontOffice\Skills.aspx" />
+    <Content Include="Views\Blogs\RateControl.ascx" />
+    <Content Include="Views\FrontOffice\RateControl.ascx" />
+    <Content Include="Scripts\yavsc.skills.js" />
+    <Content Include="Views\FrontOffice\UserSkills.aspx" />
+    <Content Include="Views\FrontOffice\UserCard.ascx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -499,6 +519,7 @@
     </None>
     <None Include="fonts\fontawesome-webfont.woff2" />
     <None Include="lib\MarkdownDeep.dll" />
+    <None Include="App_Data\Sql\Skills.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">
@@ -512,10 +533,6 @@
     <ProjectReference Include="..\SalesCatalog\SalesCatalog.csproj">
       <Project>{90BF2234-7252-4CD5-B2A4-17501B19279B}</Project>
       <Name>SalesCatalog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebControls\WebControls.csproj">
-      <Project>{59E1DF7B-FFA0-4DEB-B5F3-76EBD98D5356}</Project>
-      <Name>WebControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\yavscModel\YavscModel.csproj">
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
@@ -532,6 +549,10 @@
     <ProjectReference Include="..\NpgsqlContentProvider\NpgsqlContentProvider.csproj">
       <Project>{821FF72D-9F4B-4A2C-B95C-7B965291F119}</Project>
       <Name>NpgsqlContentProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebControls\WebControls.csproj">
+      <Project>{59E1DF7B-FFA0-4DEB-B5F3-76EBD98D5356}</Project>
+      <Name>WebControls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

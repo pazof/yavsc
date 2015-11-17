@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XmlCatalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Brands>
+		<Brand>
+			<Name>psc</Name>
+			<Slogan>Votre logiciel, efficace, sûr, et sur mesure</Slogan>
+			<Logo>
+				<Src>/App_Themes/images/logoDev.png</Src>
+				<Alt>
+				</Alt>
+			</Logo>
+			<Categories>
+				<ProductCategory>
+					<Name>Conseil, conception logicielle</Name>
+					<Reference>ccl</Reference>
+					<Products>
+						<Product xsi:type="Service">
+							<Name>Aide au choix technologiques</Name>
+							<Description>tout un art</Description>
+							<Reference>conseil</Reference>
+						</Product>
+						<Product xsi:type="Service">
+							<Name>Conceptualisation de projet</Name>
+							<Description>Consolidation d'un niveau logique de projet, spécifications détaillées</Description>
+							<Reference>concept</Reference>
+						</Product>
+					</Products>
+				</ProductCategory>
+				<ProductCategory>
+					<Name>Développement et maintenance</Name>
+					<Reference>ntic</Reference>
+					<Products>
+						<Product xsi:type="Service">
+							<Name>Développement</Name>
+							<Description>Votre appli développée en cycles courts</Description>
+							<Reference>dev</Reference>
+						</Product>
+						<Product xsi:type="Service">
+							<Name>Maintenance</Name>
+							<Description>Correction des anomalies, réalisation des évolutions, prévision des besoins</Description>
+							<Reference>main</Reference>
+						</Product>
+					</Products>
+				</ProductCategory>
+			</Categories>
+			<DefaultForm>
+				<Action>/Commande</Action>
+				<Items>
+					<FormElement xsi:type="Text">
+						<Val>Entrez un commentaire :</Val>
+					</FormElement>
+					<FormElement xsi:type="TextInput">
+						<Id>comment</Id>
+						<Value xsi:type="xsd:string">Commentaire</Value>
+					</FormElement>
+					<FormElement xsi:type="Text">
+						<Val>Choisissez le type d'intervention souhaité: </Val>
+					</FormElement>
+					<FormElement xsi:type="SelectInput">
+						<Id>ad</Id>
+						<Items>
+							<Option>
+								<value>d</value>
+								<Text>à distance</Text>
+							</Option>
+							<Option>
+								<value>s</value>
+								<Text>sur site</Text>
+							</Option>
+						</Items>
+						<SelectedIndex>0</SelectedIndex>
+					</FormElement>
+					<FormElement xsi:type="TextInput">
+						<Id>testarray[]</Id>
+						<Value xsi:type="xsd:string">xxxxxxxxxx</Value>
+					</FormElement>
+					<FormElement xsi:type="TextInput">
+						<Id>testarray[]</Id>
+						<Value xsi:type="xsd:string">
+						</Value>
+					</FormElement>
+				</Items>
+			</DefaultForm>
+		</Brand>
+	</Brands>
+</XmlCatalog>

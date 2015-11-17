@@ -1,945 +1,665 @@
-2015-11-04  Paul Schneider  <paul@pschneider.fr>
+2015-11-17  Paul Schneider  <paul@pschneider.fr>
 
-	* Web.csproj:
-	* AppAdmin.master:
-	* AddRole.aspx:
+	* RateControl.ascx: A rate control for the Front Office
+
+	* UserCard.ascx: WIP UserCard
+
+	* FrontOfficeController.cs: restricts the Skills view to
+	Admins,
+	uses the new PerformerProfile object
+
+	* Edit.aspx:
+	* Title.aspx:
+	* Profile.aspx:
+	* Skills.aspx:
+	* Estimate.aspx: the `aside` html node is better placed at the
+	top of the content,
+	overall when it's floating.
+
+	* PostActions.ascx: code formatting
+
+	* UserSkills.aspx: Uses the new `PerformerProfile` object
+
+
+	* Web.csproj: adds a skill view,
+	WIP UserCard
+
+2015-11-17  Paul Schneider  <paul@pschneider.fr>
+
+	* yavsc.skills.js: Implements skills Ajax methods
+
+	* RateControl.ascx:
+	* RateSkillControl.ascx:
+	* RateUserSkillControl.ascx: refactorization
+
+	* UserSkills.aspx: Implements a site user's skills view 
+
+	* BlogsController.cs: Refactorization, with skill and
+	userskills ratings
+
+	* GCMController.cs: xml doc 
+
+	* SkillController.cs: implements a skill controller
+
+	* Skills.sql: defines the skill data model
+
+	* style.css: mainly adds the `rate` css class
+
+	* style.css: adds rate & skill name style
+
+	* AuthorizeAttribute.cs:
 	* OAuth2.cs:
-	* RoleList.aspx:
-	* UsersInRole.aspx:
-	* AdminController.cs:
-	* AddMemberToRole.ascx: 
+	* FormatterException.cs: xmldoc
 
-2015-11-04  Paul Schneider  <paul@pschneider.fr>
+	* FrontOfficeController.cs: implements an user's skills method
+
+	* App.master: code formatting
+
+	* yavsc.rate.js: Makes it a JQuery module
+
+	* EventPub.aspx: no more ImgLocator ... I don't remember why.
+
+	* Skills.aspx: Implements a site wize skills view 
+
+	* Web.config: imports the skill model name space
+
+	* Web.config: SkillProvider section and code formatting
+
+2015-11-14  Paul Schneider  <paul@pschneider.fr>
+
+	* SkillController.cs: WIP Skill interface
+
+	* Skills.sql: WIP skills
+
+	* star.gif:
+	* rateit.css:
+	* delete.gif:
+	* AuthorizeAttribute.cs:
+	* AddRole.aspx:
+	* jquery.rateit.js:
+	* jquery.validate.js:
+	* jquery.rateit.min.js:
+	* HomeController.cs:
+	* jquery.validate.min.js:
+	* BlogsController.cs:
+	* GoogleHelpers.cs:
+	* GoogleController.cs:
+	* jquery.validate-vsdoc.js:
+	* jquery.rateit.min.js.map:
+	* FrontOfficeController.cs: 
+
+	* Skills.aspx:
+	* RateControl.ascx: WIP lists skils
+
+	* Contact.template.aspx: a default contact page
+
+	* Contact.totem.aspx: the totem contact page
+
+	* BlogsController.cs: Uniformize the creation/modificaton
+	action profiles:
+	* no more `Create` action
+	* The Post action creates or updates. 
+
+	* FrontOfficeController.cs: The FE controller is a Yavsc one.
 
 	* instdbws.sql:
-	* BlogsController.cs: Implements the note
+	* RateControl.ascx: refactoring
 
-	* robots.txt:
+	* yavsc.rate.js: the default treatment in case of error is the
+	same.
+
+	* Circles.aspx:
+	* Index.aspx:
+	* UsersInRole.aspx: MAS disapeared
+
+	* Index.aspx:
+	* Basket.aspx:
+	* Command.aspx:
+	* Estimate.aspx: MAS disparition
+
+	* Contact.aspx: My information
+
+	* Index.aspx: This site could talk about Yavsc
+
+	* RestrictedArea.aspx: A customized restricted area wall, with
+	a security hole?
+
+	* Web.csproj: fixes the `Deploy` compilation target
+
+	* WebDeploy.targets: My `DirectorySepartionChar` is a slash
+	... It's prettier to me.
+
+	* packages.config: We don't need jQuery.RateIt ... it's
+	perhaps awesome, I not yet know nor for a while.
+
+2015-11-11  Paul Schneider  <paul@pschneider.fr>
+
+	* App.master:
+	* NoLogin.master:
+	* AppAdmin.master: master pages sync
+
+2015-11-11  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css:
+	* style.css: removes the themable code,
+	it goes to the dark theme.
+
+	* yavsc.rate.js: rates using the web API
+
+	* UserCard.ascx: WIP UserCard
+
+	* RateControl.ascx:
+	* RateControl.ascx.cs: implements a rate control
+
+	* BlogsController.cs: implements a rating API on Blog spot
+
+	* AccountController.cs: Saves the user's theme at profile
+	edition
+
+	* AdminController.cs: Enrols users
+
+	* HomeController.cs: there's still no artiste here.
+
+	* App.master: Uses a page theme
+
+	* yavsc.circles.js: cleaning
+
+	* yavsc.js: some enhancement
+
+	* yavsc.tags.js: adds a new line :-)
+
+	* Profile.aspx: offers the theme choice
+
+	* AddUserToRole.ascx: Implements the enrolment
+
+	* Admin.aspx: code formatting
+
+	* UserList.aspx: lists user's roles and link to enrol
+
+	* UsersInRole.aspx: a more relevant title, and a list as html
+	`UL` node
+
+	* PostActions.ascx: adds on control on rate
+
+	* Index.aspx: Fixes the latest merge
+
+	* Web.csproj: references the rating control
+
+	* ChooseMedia.aspx: useless
+
+	* Web.config: configures the `UITheme` profile property
+
+2015-11-08  Paul Schneider  <paul@pschneider.fr>
+
+	* helix-nebula.l.jpg:
+	* helix-nebula.s.jpg:
+	* helix-nebula.xs.jpg: helix nebula in new sizes
+
+	* Web.config: hides my info on Google
+
+	* facebook.png: a facebook icon, in case of
+
+2015-11-06  Paul Schneider  <paul@pschneider.fr>
+
+	* ChangeLog:
 	* Web.csproj:
 	* Web.config:
-	* Catalog.xml:
-	* Global.asax.cs:
 	* pgsql.xcf:
-	* pgsql.jpeg:
 	* p8-av4.png:
+	* pgsql.jpeg:
+	* logo-1.jpg:
+	* App.master:
 	* logoDev.png:
 	* logoDev.xcf:
-	* apache_pb.gif:
-	* style.css:
-	* theme.css:
+	* datepair.js:
 	* debian-pb.gif:
+	* apache_pb.gif:
 	* apache_pbw.gif:
 	* apache_pby.gif:
+	* Index.aspx:
+	* Index.aspx:
+	* Title.aspx:
 	* Book.aspx:
-	* jquery-ui.css:
-	* Login.aspx:
+	* Auth.aspx:
+	* AppAdmin.master:
+	* datepair.min.js:
+	* Index.aspx:
+	* Book.aspx:
+	* TagPanel.ascx:
+	* CalAuth.aspx:
+	* instdbws.sql:
+	* date.js:
+	* TagPanel.ascx:
 	* debian-powered.png:
+	* YavscAjaxHelper.cs:
+	* logo.jpg:
+	* UserPosts.aspx:
+	* jquery.datepair.js:
 	* FhHRx.gif:
-	* TagControl.ascx:
+	* number.js:
+	* plural.js:
 	* pgsql.png:
-	* jquery-ui.min.css:
-	* theme.css:
+	* totem.jpg:
+	* TagControl.ascx:
+	* RemoveRole.aspx:
+	* twiter.png:
+	* logo.s.png:
+	* jquery-1.11.3.min.js:
+	* UsersInRole.aspx:
+	* logo-1.png:
+	* PostActions.ascx:
+	* message.js:
+	* logo.xs.png:
+	* currency.js:
+	* ChooseADate.aspx:
+	* facebook.png:
 	* noavatar.png:
+	* logo.xxs.png:
 	* p8-av4.s.jpg:
-	* p8-av4.xxs.jpg:
+	* jquery.datepair.min.js:
+	* globalize.js:
+	* totemprod.png:
+	* p8-av4.xxs.png:
 	* apache_pbw.png:
+	* AddMemberToRole.ascx:
+	* p8-av4.xxs.jpg:
+	* ChooseCalendar.aspx:
+	* YavscController.cs:
 	* debian-logo.png:
+	* relative-time.js:
+	* totem-banner.png:
 	* Mono-powered.png:
+	* OtherWebException.aspx:
+	* concert.clear.jpg:
 	* helix-nebula-1400x1400.l.jpg:
+	* totem-banner.xs.jpg:
 	* star-939235_1280.jpg:
-	* animated-overlay.gif:
+	* totem-banner.xxs.jpg:
 	* star-939235_1280.s.jpg:
+	* drummer-652345_1280.jpg:
 	* sign-in-with-google.png:
+	* star-939235_1280.xs.jpg:
+	* musician-923526_1280.jpg:
+	* musician-923526_1.nb.jpg:
 	* star-939235_1280.xxs.jpg:
 	* sign-in-with-google-s.png:
+	* an-pierle-876094_1280.jpg:
+	* musician-923526_1.nbb.jpg:
+	* drummer-652345_1280.s.jpg:
 	* helix-nebula-1400x1400.jpg:
+	* musician-923526_1280.s.jpg:
+	* drummer-652345_1280.xxs.jpg:
+	* musician-923526_1.nb.xs.jpg:
 	* helix-nebula-1400x1400.s.jpg:
-	* helix-nebula-1400x1400.xxs.jpg: 
-
-2015-11-03  Paul Schneider  <paul@pschneider.fr>
-
-	* YavscController.cs: TODO ... 
-
-2015-11-03  Paul Schneider  <paul@pschneider.fr>
-
-	* YavscController.cs: Fixes the cookies agreement
-
-	* HomeController.cs: Finalizes the cookie agreement system.
-
-	* YavscHelpers.cs: Adds a "click_action_name" field, to give a
-	text to the notification dimissing button.
-
-
-	* App.master: Uses the new field from Notification
-
-	* Web.config: No VB code to compile
-
-	* Web.csproj: moves Sql files to Sql folder
-
-	* instdbws.sql: permits profile records with no users record
-	associated to,
-	and so, anonymous profiles creation.
-
-2015-11-01  Paul Schneider  <paul@pschneider.fr>
-
-	* CalAuth.aspx: A view ... still unused
-
-	* style.css: css overflow-y auto, the container making it
-	modal has no margin.
-
-	* GoogleController.cs: Fixes again the calendar usage,
-	uses Google API key and client credentials found in
-	configuration file
-
-	* ApiClient.cs: Google API key and client credentials are now
-	found in configuration file
-
-	* CalendarApi.cs: Let the controller build the credential
-	string from thr profile object.
-
-	* OAuth2.cs: The OAuth2 Client only needs a client id and
-	secret
-
-	* yavsc.js: Fixes some css flipping
-
-	* ValidateAjaxAttribute.cs: A FIXME
-
-	* Web.config: Google key, client id and secret come from
-	application settings
-
-	* Web.csproj: a page in more
-
-2015-11-01  Paul Schneider  <paul@pschneider.fr>
-
-	* Book-next.aspx: pollution
-
-	* instdbws.sql: The conversion to a valid .Net DateTime
-	requires a credible date time as source value, the null one is
-	not supported.
-
-	* style.css: Fixes the new notification style
-
-	* AccountController.cs: Fixes the profile edition.
-	Now using the anti forgery key at login time
-
-	* Book.aspx:
-	* CalendarApi.cs:
-	* GoogleController.cs: WIP booking
-
-	* HomeController.cs: code prettying
-
-	* Global.asax.cs: Limits the usage of titles in a route to the
-	blog controller
-
-	* OAuth2.cs: Profile values may be of type DBNull ...
-
-	* T.cs: All translated strings will be Html encoded, as
-	expected from an html helper
-
-	* YavscHelpers.cs: A new method to build a javascript
-	string...
-
-	* App.master:
-	* AppAdmin.master: Notification.body is now a js string
-	literal
-
-	* NoLogin.master: sync with the true master
-
-	* Login.aspx: Permits the anti forgery key usage
-
-	* Profile.aspx: Fixes the username modification
-
-	* Estimate.aspx: refactoring
-
-	* Web.config: Fixes a later commit on the catalog name space
-
-	* Web.csproj: An ajax helper to notify
-
-	* ChangeLog: should not be indexed
-
-	* ValidateAjaxAttribute.cs: Fixes usage of HtmlFieldPrefix
-
-2015-10-31  Paul Schneider  <paul@pschneider.fr>
-
-	* Web.csproj:
-	* Web.config:
-	* T.cs:
-	* Global.asax.cs:
-	* App.master:
-	* Book.aspx:
-	* YavscHelpers.cs:
-	* OAuth2.cs:
-	* Profile.aspx:
-	* YavscAjaxHelper.cs:
-	* Book-next.aspx:
-	* CalendarApi.cs:
-	* HomeController.cs:
-	* GoogleController.cs:
-	* Estimate.aspx:
-	* AccountController.cs: 
-
-2015-10-30  Paul Schneider  <paul@pschneider.fr>
-
-	* packages.config:
-	* App.master:
-	* datepair.js:
-	* Book.aspx:
-	* datepair.min.js:
-	* jquery.datepair.js:
-	* jquery-ui-1.11.4.js:
-	* jquery.timepicker.js:
-	* jquery-1.11.3.min.js:
-	* jquery.datepair.min.js:
-	* WebCatalogExtensions.cs:
-	* GoogleController.cs:
-	* jquery.timepicker.min.js:
-	* jquery.timepicker.css:
-	* FrontOfficeController.cs:
-	* ui-icons_ffffff_256x240.png:
-	* ui-icons_cccccc_256x240.png:
-	* ui-icons_a83300_256x240.png:
-	* ui-icons_4b8e0b_256x240.png:
-	* ui-icons_222222_256x240.png:
-	* ui-bg_glass_40_ffc73d_1x400.png:
-	* ui-bg_glass_40_0078a3_1x400.png:
-	* ui-bg_glass_20_555555_1x400.png:
-	* ui-icons_222222_256x240.png:
-	* ui-icons_4b8e0b_256x240.png:
-	* ui-icons_a83300_256x240.png:
-	* ui-icons_cccccc_256x240.png:
-	* ui-icons_ffffff_256x240.png:
-	* ui-bg_glass_40_ffc73d_1x400.png:
-	* ui-bg_glass_40_0078a3_1x400.png:
-	* ui-bg_glass_20_555555_1x400.png:
-	* ui-bg_inset-soft_25_000000_1x100.png:
-	* ui-bg_inset-soft_30_f58400_1x100.png:
-	* ui-bg_gloss-wave_25_333333_500x100.png:
-	* ui-bg_highlight-soft_80_eeeeee_1x100.png:
-	* ui-bg_inset-soft_30_f58400_1x100.png:
-	* ui-bg_inset-soft_25_000000_1x100.png:
-	* ui-bg_gloss-wave_25_333333_500x100.png:
-	* ui-bg_highlight-soft_80_eeeeee_1x100.png: 
-
-	* FrontOfficeController.cs: refactoring: a dedicated name
-	space for the catalog
-
-	* ChooseADate.aspx: WIP
-
-	* Web.csproj: date pairing : includes the javascript modules
-
-2015-10-29  Paul Schneider  <paul@pschneider.fr>
-
-	* Index.aspx: Gives this page a title
-
-	* AdminController.cs: Trying to fix this Index : /Admin ... a
-	404
-
-	* FileSystemController.cs: Refactoring the name of the files
-	manager class
-
-	* Index.aspx: Fixes the file system access
-
-	* RemoveRole.aspx: Role removal form, had not a canonical
-	name!
-
-	* Web.csproj: a page was renamed
-
-2015-10-28  Paul Schneider  <paul@pschneider.fr>
-
-	* yavsc.circles.js: 
-
-2015-10-28  Paul Schneider  <paul@pschneider.fr>
-
-	* BlogsController.cs:
-	* AccountController.cs:
-	* CalendarController.cs: refactoring : the Yavsc controller
-	name
-
-	* instdbws.sql: a new profile value : a boolean,
-	`AllowCookies` :'{
-
-	* style.css: a class to display notification 
-
-	* HomeController.cs: Notifies users this site uses cookies
-	(what for an information!)
-	If authenticated, at dimissing this notification, the user's
-	profile is updated,
-	and he'll not mess up anymore with the info.
-
-	* App.master:
-	* YavscHelpers.cs: adds usage of click_action value at
-	displaying a notification.
-
-	* yavsc.js: Implements the notification `click_action`
-
-
-	* Web.config: * enables anonymous profiles
-	* adds a new `allowcookies` profile property
-
-
-	* Web.csproj: Yavsc controller refactoring
-
-	* Web.config: code prettying
-
-	* YavscController.cs: Gives Yavsc a concrete base controller
-
-2015-10-27  Paul Schneider  <paul@pschneider.fr>
-
-	* AppAdmin.master: A new master page for Administration
-
-	* Web.csproj:
-	* Web.config:
-	* Auth.aspx:
-	* Auth.aspx:
-	* Book.aspx:
-	* Book.aspx:
-	* Book.aspx:
-	* Restore.aspx:
-	* Auth.aspx:
-	* TagPanel.ascx:
-	* date.js:
-	* UserList.aspx:
-	* Restored.aspx:
-	* RoleList.aspx:
-	* plural.js:
-	* number.js:
-	* message.js:
-	* ChooseADate.aspx:
-	* ChooseADate.aspx:
-	* currency.js:
-	* ErrorMessage.aspx:
-	* globalize.js:
-	* ChooseADate.aspx:
-	* ChooseCalendar.aspx:
-	* ErrorMessage.aspx:
-	* ChooseCalendar.aspx:
-	* relative-time.js:
-	* ChooseCalendar.aspx:
-	* OtherWebException.aspx:
+	* live-concert-388160_1280.jpg:
+	* musician-923526_1.nb.xxs.jpg:
+	* musician-923526_1.nbb.xs.jpg:
+	* musician-923526_1280.xxs.jpg:
+	* musician-923526_1.nbb.xxs.jpg:
 	* globalize.cultures.js:
-	* globalize.culture.et.js:
-	* globalize.culture.it.js:
-	* globalize.culture.oc.js:
-	* globalize.culture.sq.js:
-	* globalize.culture.sr.js:
-	* globalize.culture.or.js:
-	* globalize.culture.sk.js:
-	* globalize.culture.es.js:
-	* globalize.culture.ii.js:
-	* globalize.culture.sl.js:
-	* globalize.culture.pa.js:
-	* globalize.culture.is.js:
-	* globalize.culture.no.js:
+	* helix-nebula-1400x1400.xxs.jpg:
+	* live-concert-388160_1280.s.jpg:
 	* globalize.culture.nl.js:
-	* globalize.culture.te.js:
-	* globalize.culture.ta.js:
-	* globalize.culture.ka.js:
-	* globalize.culture.tg.js:
-	* globalize.culture.ja.js:
-	* globalize.culture.iu.js:
-	* globalize.culture.sv.js:
-	* globalize.culture.nn.js:
-	* globalize.culture.th.js:
-	* globalize.culture.kk.js:
-	* globalize.culture.sw.js:
-	* globalize.culture.eu.js:
-	* globalize.culture.fy.js:
-	* globalize.culture.ru.js:
-	* globalize.culture.ga.js:
+	* globalize.culture.ko.js:
+	* globalize.culture.zh.js:
 	* globalize.culture.hr.js:
-	* globalize.culture.gd.js:
-	* globalize.culture.ro.js:
-	* globalize.culture.he.js:
-	* globalize.culture.gu.js:
-	* globalize.culture.rm.js:
-	* globalize.culture.pt.js:
-	* globalize.culture.hi.js:
-	* globalize.culture.gl.js:
-	* globalize.culture.ps.js:
-	* globalize.culture.id.js:
-	* globalize.culture.se.js:
-	* globalize.culture.fi.js:
-	* globalize.culture.ig.js:
-	* globalize.culture.fa.js:
-	* globalize.culture.si.js:
-	* globalize.culture.pl.js:
-	* globalize.culture.fr.js:
-	* globalize.culture.rw.js:
-	* globalize.culture.sa.js:
-	* globalize.culture.hu.js:
-	* globalize.culture.hy.js:
-	* globalize.culture.fo.js:
-	* globalize.culture.kl.js:
+	* globalize.culture.th.js:
 	* globalize.culture.ml.js:
 	* globalize.culture.mk.js:
-	* globalize.culture.bs.js:
-	* globalize.culture.mr.js:
-	* globalize.culture.ca.js:
-	* globalize.culture.mi.js:
-	* globalize.culture.lt.js:
-	* globalize.culture.cy.js:
-	* globalize.culture.yo.js:
-	* globalize.culture.cs.js:
-	* globalize.culture.lv.js:
-	* globalize.culture.co.js:
-	* globalize.culture.zh.js:
-	* globalize.culture.az.js:
-	* globalize.culture.as.js:
-	* globalize.culture.mn.js:
-	* globalize.culture.ar.js:
-	* globalize.culture.am.js:
-	* globalize.culture.af.js:
-	* globalize.culture.ba.js:
-	* globalize.culture.br.js:
+	* globalize.culture.id.js:
+	* globalize.culture.pl.js:
+	* globalize.culture.hy.js:
+	* globalize.culture.tk.js:
+	* globalize.culture.hu.js:
 	* globalize.culture.zu.js:
+	* globalize.culture.lo.js:
+	* globalize.culture.no.js:
+	* globalize.culture.lb.js:
+	* globalize.culture.tt.js:
+	* globalize.culture.ha.js:
+	* globalize.culture.ky.js:
+	* globalize.culture.sr.js:
+	* globalize.culture.hi.js:
+	* globalize.culture.nn.js:
+	* globalize.culture.ps.js:
+	* globalize.culture.lt.js:
+	* globalize.culture.he.js:
+	* globalize.culture.ig.js:
+	* globalize.culture.ug.js:
+	* globalize.culture.ja.js:
+	* globalize.culture.uz.js:
+	* globalize.culture.ka.js:
+	* globalize.culture.kn.js:
+	* globalize.culture.lv.js:
+	* globalize.culture.ur.js:
+	* globalize.culture.kk.js:
+	* globalize.culture.sq.js:
+	* globalize.culture.kl.js:
+	* globalize.culture.uk.js:
+	* globalize.culture.km.js:
+	* globalize.culture.oc.js:
+	* globalize.culture.pa.js:
+	* globalize.culture.ii.js:
+	* globalize.culture.yo.js:
+	* globalize.culture.is.js:
+	* globalize.culture.mi.js:
+	* globalize.culture.xh.js:
+	* globalize.culture.iu.js:
+	* globalize.culture.vi.js:
+	* globalize.culture.tn.js:
+	* globalize.culture.wo.js:
+	* globalize.culture.or.js:
+	* globalize.culture.it.js:
+	* globalize.culture.gu.js:
+	* globalize.culture.nb.js:
+	* globalize.culture.dv.js:
+	* globalize.culture.el.js:
+	* live-concert-388160_1280.xxs.jpg:
+	* globalize.culture.sa.js:
+	* globalize.culture.af.js:
+	* globalize.culture.ro.js:
+	* globalize.culture.ru.js:
+	* globalize.culture.mt.js:
+	* globalize.culture.rw.js:
+	* globalize.culture.am.js:
+	* globalize.culture.sw.js:
+	* globalize.culture.de.js:
 	* globalize.culture.bo.js:
 	* globalize.culture.bn.js:
 	* globalize.culture.bg.js:
 	* globalize.culture.be.js:
+	* globalize.culture.ba.js:
+	* globalize.culture.az.js:
+	* globalize.culture.br.js:
 	* globalize.culture.da.js:
-	* globalize.culture.ko.js:
-	* globalize.culture.nb.js:
-	* globalize.culture.ug.js:
-	* globalize.culture.uk.js:
-	* globalize.culture.ky.js:
-	* globalize.culture.el.js:
-	* globalize.culture.tt.js:
-	* globalize.culture.tk.js:
-	* globalize.culture.km.js:
-	* globalize.culture.tn.js:
-	* globalize.culture.ne.js:
-	* globalize.culture.tr.js:
-	* globalize.culture.kn.js:
-	* globalize.culture.mt.js:
-	* globalize.culture.lb.js:
-	* globalize.culture.de.js:
-	* globalize.culture.vi.js:
-	* globalize.culture.lo.js:
-	* globalize.culture.wo.js:
+	* globalize.culture.cy.js:
+	* globalize.culture.cs.js:
+	* globalize.culture.co.js:
+	* globalize.culture.ca.js:
+	* globalize.culture.bs.js:
 	* globalize.culture.ms.js:
-	* globalize.culture.xh.js:
-	* globalize.culture.ha.js:
-	* globalize.culture.uz.js:
-	* globalize.culture.ur.js:
-	* globalize.culture.dv.js:
-	* globalize.culture.qut.js:
-	* globalize.culture.moh.js:
-	* globalize.culture.prs.js:
-	* globalize.culture.kok.js:
-	* globalize.culture.nso.js:
-	* globalize.culture.hsb.js:
-	* globalize.culture.tzm.js:
-	* globalize.culture.sah.js:
-	* globalize.culture.fil.js:
-	* globalize.culture.sms.js:
-	* globalize.culture.smn.js:
-	* globalize.culture.smj.js:
-	* globalize.culture.dsb.js:
+	* globalize.culture.fr.js:
+	* globalize.culture.mn.js:
+	* globalize.culture.ar.js:
+	* globalize.culture.te.js:
+	* globalize.culture.pt.js:
+	* globalize.culture.fo.js:
+	* globalize.culture.fy.js:
+	* globalize.culture.as.js:
+	* globalize.culture.tg.js:
+	* globalize.culture.gl.js:
+	* globalize.culture.gd.js:
+	* globalize.culture.sl.js:
+	* globalize.culture.ga.js:
+	* globalize.culture.sk.js:
+	* globalize.culture.ta.js:
+	* globalize.culture.et.js:
+	* globalize.culture.ne.js:
+	* globalize.culture.es.js:
+	* globalize.culture.se.js:
+	* globalize.culture.rm.js:
+	* globalize.culture.eu.js:
+	* globalize.culture.tr.js:
+	* globalize.culture.sv.js:
+	* globalize.culture.fi.js:
+	* globalize.culture.mr.js:
+	* globalize.culture.fa.js:
+	* globalize.culture.si.js:
 	* globalize.culture.syr.js:
-	* globalize.culture.quz.js:
-	* globalize.culture.arn.js:
-	* globalize.culture.gsw.js:
+	* globalize.culture.moh.js:
 	* globalize.culture.sma.js:
-	* globalize.culture.uk-UA.js:
-	* globalize.culture.ne-NP.js:
-	* globalize.culture.tt-RU.js:
-	* globalize.culture.ur-PK.js:
-	* globalize.culture.tr-TR.js:
-	* globalize.culture.nl-BE.js:
-	* globalize.culture.tn-ZA.js:
-	* globalize.culture.ug-CN.js:
-	* globalize.culture.nb-NO.js:
-	* globalize.culture.zh-HK.js:
-	* globalize.culture.zh-MO.js:
-	* globalize.culture.zh-SG.js:
-	* globalize.culture.mr-IN.js:
-	* globalize.culture.zh-TW.js:
-	* globalize.culture.zu-ZA.js:
-	* globalize.culture.ms-BN.js:
-	* globalize.culture.vi-VN.js:
-	* globalize.culture.mt-MT.js:
-	* globalize.culture.wo-SN.js:
-	* globalize.culture.xh-ZA.js:
-	* globalize.culture.yo-NG.js:
-	* globalize.culture.ms-MY.js:
-	* globalize.culture.zh-CN.js:
-	* globalize.culture.tk-TM.js:
-	* globalize.culture.ps-AF.js:
-	* globalize.culture.se-FI.js:
+	* globalize.culture.gsw.js:
+	* globalize.culture.arn.js:
+	* globalize.culture.fil.js:
+	* globalize.culture.qut.js:
+	* globalize.culture.quz.js:
+	* globalize.culture.sah.js:
+	* globalize.culture.dsb.js:
+	* globalize.culture.hsb.js:
+	* globalize.culture.sms.js:
+	* globalize.culture.kok.js:
+	* globalize.culture.smn.js:
+	* globalize.culture.prs.js:
+	* globalize.culture.nso.js:
+	* globalize.culture.smj.js:
+	* globalize.culture.tzm.js:
 	* globalize.culture.se-NO.js:
 	* globalize.culture.se-SE.js:
-	* globalize.culture.pl-PL.js:
-	* globalize.culture.si-LK.js:
-	* globalize.culture.sa-IN.js:
-	* globalize.culture.rm-CH.js:
-	* globalize.culture.ro-RO.js:
-	* globalize.culture.pt-PT.js:
-	* globalize.culture.pt-BR.js:
-	* globalize.culture.ru-RU.js:
-	* globalize.culture.rw-RW.js:
-	* globalize.culture.sk-SK.js:
-	* globalize.culture.sw-KE.js:
-	* globalize.culture.nn-NO.js:
-	* globalize.culture.ta-IN.js:
-	* globalize.culture.te-IN.js:
-	* globalize.culture.th-TH.js:
-	* globalize.culture.nl-NL.js:
+	* globalize.culture.se-FI.js:
 	* globalize.culture.sv-SE.js:
-	* globalize.culture.sl-SI.js:
-	* globalize.culture.pa-IN.js:
-	* globalize.culture.or-IN.js:
-	* globalize.culture.oc-FR.js:
-	* globalize.culture.sq-AL.js:
 	* globalize.culture.sv-FI.js:
-	* globalize.culture.lo-LA.js:
-	* globalize.culture.es-DO.js:
-	* globalize.culture.es-EC.js:
-	* globalize.culture.es-ES.js:
-	* globalize.culture.es-GT.js:
-	* globalize.culture.es-HN.js:
-	* globalize.culture.es-MX.js:
-	* globalize.culture.es-NI.js:
-	* globalize.culture.es-CR.js:
-	* globalize.culture.en-ZA.js:
-	* globalize.culture.en-ZW.js:
-	* globalize.culture.es-AR.js:
-	* globalize.culture.as-IN.js:
-	* globalize.culture.es-BO.js:
-	* globalize.culture.es-CL.js:
-	* globalize.culture.es-CO.js:
-	* globalize.culture.ar-YE.js:
-	* globalize.culture.es-PA.js:
-	* globalize.culture.es-PE.js:
-	* globalize.culture.es-PR.js:
-	* globalize.culture.es-PY.js:
-	* globalize.culture.es-SV.js:
-	* globalize.culture.es-US.js:
-	* globalize.culture.es-UY.js:
-	* globalize.culture.ar-LB.js:
-	* globalize.culture.ar-TN.js:
-	* globalize.culture.ar-SY.js:
-	* globalize.culture.ar-SA.js:
-	* globalize.culture.ar-QA.js:
-	* globalize.culture.ar-OM.js:
-	* globalize.culture.ar-MA.js:
+	* globalize.culture.sl-SI.js:
+	* globalize.culture.sq-AL.js:
+	* globalize.culture.sk-SK.js:
+	* globalize.culture.si-LK.js:
+	* globalize.culture.sw-KE.js:
 	* globalize.culture.ar-LY.js:
-	* globalize.culture.en-US.js:
-	* globalize.culture.de-CH.js:
-	* globalize.culture.de-DE.js:
-	* globalize.culture.de-LI.js:
-	* globalize.culture.de-LU.js:
-	* globalize.culture.dv-MV.js:
-	* globalize.culture.bn-IN.js:
-	* globalize.culture.bn-BD.js:
-	* globalize.culture.de-AT.js:
-	* globalize.culture.ca-ES.js:
-	* globalize.culture.br-FR.js:
-	* globalize.culture.bo-CN.js:
-	* globalize.culture.co-FR.js:
-	* globalize.culture.cs-CZ.js:
-	* globalize.culture.cy-GB.js:
-	* globalize.culture.da-DK.js:
-	* globalize.culture.bg-BG.js:
-	* globalize.culture.en-IN.js:
-	* globalize.culture.en-JM.js:
-	* globalize.culture.en-MY.js:
-	* globalize.culture.en-NZ.js:
-	* globalize.culture.en-PH.js:
-	* globalize.culture.en-SG.js:
-	* globalize.culture.en-TT.js:
-	* globalize.culture.ba-RU.js:
-	* globalize.culture.be-BY.js:
-	* globalize.culture.el-GR.js:
-	* globalize.culture.en-AU.js:
-	* globalize.culture.en-BZ.js:
-	* globalize.culture.en-CA.js:
-	* globalize.culture.en-GB.js:
-	* globalize.culture.en-IE.js:
-	* globalize.culture.es-VE.js:
+	* globalize.culture.ar-MA.js:
+	* globalize.culture.ar-OM.js:
+	* globalize.culture.ar-QA.js:
+	* globalize.culture.ar-SA.js:
+	* globalize.culture.ar-SY.js:
+	* globalize.culture.ar-TN.js:
+	* globalize.culture.ar-YE.js:
+	* globalize.culture.as-IN.js:
+	* globalize.culture.ar-LB.js:
+	* globalize.culture.af-ZA.js:
+	* globalize.culture.am-ET.js:
+	* globalize.culture.ar-AE.js:
+	* globalize.culture.ar-BH.js:
+	* globalize.culture.ar-DZ.js:
+	* globalize.culture.ar-EG.js:
+	* globalize.culture.ar-IQ.js:
+	* globalize.culture.ar-JO.js:
+	* globalize.culture.ar-KW.js:
+	* globalize.culture.pa-IN.js:
+	* globalize.culture.uk-UA.js:
+	* globalize.culture.ug-CN.js:
+	* globalize.culture.tt-RU.js:
+	* globalize.culture.tr-TR.js:
+	* globalize.culture.tn-ZA.js:
+	* globalize.culture.tk-TM.js:
+	* globalize.culture.th-TH.js:
+	* globalize.culture.te-IN.js:
+	* globalize.culture.ta-IN.js:
+	* globalize.culture.ur-PK.js:
+	* globalize.culture.zu-ZA.js:
+	* globalize.culture.zh-TW.js:
+	* globalize.culture.zh-SG.js:
+	* globalize.culture.zh-MO.js:
+	* globalize.culture.zh-HK.js:
+	* globalize.culture.zh-CN.js:
+	* globalize.culture.yo-NG.js:
+	* globalize.culture.xh-ZA.js:
+	* globalize.culture.wo-SN.js:
+	* globalize.culture.vi-VN.js:
+	* globalize.culture.hu-HU.js:
+	* globalize.culture.es-DO.js:
+	* globalize.culture.is-IS.js:
 	* globalize.culture.it-CH.js:
 	* globalize.culture.it-IT.js:
-	* globalize.culture.ar-IQ.js:
-	* globalize.culture.ar-EG.js:
-	* globalize.culture.ar-DZ.js:
-	* globalize.culture.ar-BH.js:
-	* globalize.culture.ja-JP.js:
-	* globalize.culture.is-IS.js:
-	* globalize.culture.hi-IN.js:
-	* globalize.culture.hr-BA.js:
-	* globalize.culture.hr-HR.js:
-	* globalize.culture.hu-HU.js:
+	* globalize.culture.es-CR.js:
+	* globalize.culture.es-CO.js:
+	* globalize.culture.es-EC.js:
 	* globalize.culture.hy-AM.js:
 	* globalize.culture.id-ID.js:
+	* globalize.culture.es-GT.js:
+	* globalize.culture.es-ES.js:
 	* globalize.culture.ig-NG.js:
 	* globalize.culture.ii-CN.js:
-	* globalize.culture.ka-GE.js:
-	* globalize.culture.lv-LV.js:
-	* globalize.culture.mi-NZ.js:
-	* globalize.culture.mk-MK.js:
-	* globalize.culture.ml-IN.js:
-	* globalize.culture.ar-AE.js:
-	* globalize.culture.mn-MN.js:
-	* globalize.culture.am-ET.js:
-	* globalize.culture.lt-LT.js:
-	* globalize.culture.kk-KZ.js:
+	* globalize.culture.es-CL.js:
 	* globalize.culture.kl-GL.js:
 	* globalize.culture.km-KH.js:
 	* globalize.culture.kn-IN.js:
 	* globalize.culture.ko-KR.js:
+	* globalize.culture.en-TT.js:
 	* globalize.culture.ky-KG.js:
-	* globalize.culture.lb-LU.js:
-	* globalize.culture.af-ZA.js:
-	* globalize.culture.gd-GB.js:
-	* globalize.culture.gu-IN.js:
-	* globalize.culture.fa-IR.js:
-	* globalize.culture.gl-ES.js:
+	* globalize.culture.kk-KZ.js:
+	* globalize.culture.es-BO.js:
+	* globalize.culture.ja-JP.js:
+	* globalize.culture.ka-GE.js:
+	* globalize.culture.es-AR.js:
+	* globalize.culture.en-ZW.js:
+	* globalize.culture.en-ZA.js:
+	* globalize.culture.en-US.js:
+	* globalize.culture.es-HN.js:
+	* globalize.culture.fr-CA.js:
+	* globalize.culture.fr-CH.js:
 	* globalize.culture.fr-FR.js:
-	* globalize.culture.ga-IE.js:
-	* globalize.culture.fy-NL.js:
-	* globalize.culture.fi-FI.js:
+	* globalize.culture.es-SV.js:
+	* globalize.culture.fr-LU.js:
 	* globalize.culture.fr-MC.js:
-	* globalize.culture.ar-KW.js:
-	* globalize.culture.he-IL.js:
+	* globalize.culture.fr-BE.js:
+	* globalize.culture.es-VE.js:
 	* globalize.culture.et-EE.js:
 	* globalize.culture.eu-ES.js:
+	* globalize.culture.fa-IR.js:
+	* globalize.culture.fi-FI.js:
+	* globalize.culture.es-US.js:
 	* globalize.culture.fo-FO.js:
-	* globalize.culture.fr-LU.js:
-	* globalize.culture.fr-BE.js:
-	* globalize.culture.ar-JO.js:
-	* globalize.culture.fr-CH.js:
-	* globalize.culture.fr-CA.js:
-	* globalize.culture.sms-FI.js:
-	* globalize.culture.fil-PH.js:
-	* globalize.culture.smn-FI.js:
-	* globalize.culture.moh-CA.js:
-	* globalize.culture.sma-NO.js:
-	* globalize.culture.sma-SE.js:
-	* globalize.culture.zh-CHT.js:
+	* globalize.culture.fy-NL.js:
+	* globalize.culture.es-NI.js:
+	* globalize.culture.he-IL.js:
+	* globalize.culture.hi-IN.js:
+	* globalize.culture.hr-BA.js:
+	* globalize.culture.hr-HR.js:
+	* globalize.culture.es-MX.js:
+	* globalize.culture.es-PA.js:
+	* globalize.culture.ga-IE.js:
+	* globalize.culture.gd-GB.js:
+	* globalize.culture.gl-ES.js:
+	* globalize.culture.es-PY.js:
+	* globalize.culture.gu-IN.js:
+	* globalize.culture.es-PR.js:
+	* globalize.culture.es-PE.js:
+	* globalize.culture.en-SG.js:
+	* globalize.culture.ms-MY.js:
+	* globalize.culture.cy-GB.js:
+	* globalize.culture.pl-PL.js:
+	* globalize.culture.cs-CZ.js:
+	* globalize.culture.co-FR.js:
+	* globalize.culture.ca-ES.js:
+	* globalize.culture.or-IN.js:
+	* globalize.culture.de-LU.js:
+	* globalize.culture.de-LI.js:
+	* globalize.culture.de-DE.js:
+	* globalize.culture.de-CH.js:
+	* globalize.culture.de-AT.js:
+	* globalize.culture.da-DK.js:
+	* globalize.culture.oc-FR.js:
+	* globalize.culture.br-FR.js:
+	* globalize.culture.ba-RU.js:
+	* globalize.culture.rm-CH.js:
+	* globalize.culture.ro-RO.js:
+	* globalize.culture.ru-RU.js:
+	* globalize.culture.rw-RW.js:
+	* globalize.culture.sa-IN.js:
+	* globalize.culture.be-BY.js:
+	* globalize.culture.ps-AF.js:
+	* globalize.culture.bo-CN.js:
+	* globalize.culture.bn-IN.js:
+	* globalize.culture.pt-BR.js:
+	* globalize.culture.pt-PT.js:
+	* globalize.culture.bn-BD.js:
+	* globalize.culture.bg-BG.js:
+	* globalize.culture.es-UY.js:
+	* globalize.culture.en-NZ.js:
+	* globalize.culture.mn-MN.js:
+	* globalize.culture.en-MY.js:
+	* globalize.culture.en-JM.js:
+	* globalize.culture.en-IN.js:
+	* globalize.culture.en-IE.js:
+	* globalize.culture.ml-IN.js:
+	* globalize.culture.en-PH.js:
+	* globalize.culture.lb-LU.js:
+	* globalize.culture.lo-LA.js:
+	* globalize.culture.lt-LT.js:
+	* globalize.culture.lv-LV.js:
+	* globalize.culture.mi-NZ.js:
+	* globalize.culture.mk-MK.js:
+	* globalize.culture.en-GB.js:
+	* globalize.culture.nl-BE.js:
+	* globalize.culture.nl-NL.js:
+	* globalize.culture.nn-NO.js:
+	* globalize.culture.en-AU.js:
+	* globalize.culture.el-GR.js:
+	* globalize.culture.dv-MV.js:
+	* globalize.culture.ne-NP.js:
+	* globalize.culture.mr-IN.js:
+	* globalize.culture.ms-BN.js:
+	* globalize.culture.en-CA.js:
+	* globalize.culture.mt-MT.js:
+	* globalize.culture.en-BZ.js:
+	* globalize.culture.nb-NO.js:
+	* globalize.culture.en-029.js:
+	* globalize.culture.dsb-DE.js:
 	* globalize.culture.zh-CHS.js:
 	* globalize.culture.smj-NO.js:
-	* globalize.culture.qut-GT.js:
 	* globalize.culture.smj-SE.js:
-	* globalize.culture.dsb-DE.js:
 	* globalize.culture.prs-AF.js:
-	* globalize.culture.quz-PE.js:
-	* globalize.culture.quz-EC.js:
-	* globalize.culture.hsb-DE.js:
-	* globalize.culture.syr-SY.js:
-	* globalize.culture.quz-BO.js:
-	* globalize.culture.gsw-FR.js:
+	* globalize.culture.smn-FI.js:
+	* globalize.culture.sms-FI.js:
 	* globalize.culture.kok-IN.js:
-	* globalize.culture.sah-RU.js:
-	* globalize.culture.en-029.js:
 	* globalize.culture.nso-ZA.js:
+	* globalize.culture.syr-SY.js:
+	* globalize.culture.moh-CA.js:
+	* globalize.culture.zh-CHT.js:
+	* globalize.culture.quz-BO.js:
+	* globalize.culture.quz-EC.js:
+	* globalize.culture.quz-PE.js:
+	* globalize.culture.gsw-FR.js:
 	* globalize.culture.arn-CL.js:
-	* globalize.culture.az-Cyrl.js:
+	* globalize.culture.fil-PH.js:
+	* globalize.culture.qut-GT.js:
+	* globalize.culture.hsb-DE.js:
+	* globalize.culture.sma-SE.js:
+	* globalize.culture.sma-NO.js:
+	* globalize.culture.sah-RU.js:
 	* globalize.culture.az-Latn.js:
-	* globalize.culture.bs-Cyrl.js:
-	* globalize.culture.iu-Latn.js:
 	* globalize.culture.sr-Latn.js:
-	* globalize.culture.tg-Cyrl.js:
-	* globalize.culture.iu-Cans.js:
+	* globalize.culture.bs-Cyrl.js:
 	* globalize.culture.sr-Cyrl.js:
-	* globalize.culture.uz-Cyrl.js:
-	* globalize.culture.mn-Cyrl.js:
 	* globalize.culture.bs-Latn.js:
-	* globalize.culture.mn-Mong.js:
-	* globalize.culture.zh-Hant.js:
+	* globalize.culture.tg-Cyrl.js:
+	* globalize.culture.uz-Cyrl.js:
+	* globalize.culture.iu-Latn.js:
+	* globalize.culture.iu-Cans.js:
 	* globalize.culture.zh-Hans.js:
+	* globalize.culture.zh-Hant.js:
+	* globalize.culture.az-Cyrl.js:
+	* globalize.culture.mn-Mong.js:
 	* globalize.culture.uz-Latn.js:
+	* globalize.culture.mn-Cyrl.js:
 	* globalize.culture.ha-Latn.js:
 	* globalize.culture.tzm-Latn.js:
-	* globalize.culture.sr-Cyrl-CS.js:
-	* globalize.culture.sr-Cyrl-ME.js:
+	* globalize.culture.az-Cyrl-AZ.js:
+	* globalize.culture.iu-Latn-CA.js:
 	* globalize.culture.bs-Latn-BA.js:
-	* globalize.culture.sr-Cyrl-BA.js:
 	* globalize.culture.ha-Latn-NG.js:
 	* globalize.culture.iu-Cans-CA.js:
-	* globalize.culture.iu-Latn-CA.js:
-	* globalize.culture.sr-Cyrl-RS.js:
 	* globalize.culture.bs-Cyrl-BA.js:
-	* globalize.culture.uz-Latn-UZ.js:
-	* globalize.culture.uz-Cyrl-UZ.js:
-	* globalize.culture.az-Latn-AZ.js:
-	* globalize.culture.az-Cyrl-AZ.js:
-	* globalize.culture.sr-Latn-BA.js:
-	* globalize.culture.sr-Latn-CS.js:
-	* globalize.culture.sr-Latn-ME.js:
 	* globalize.culture.mn-Mong-CN.js:
+	* globalize.culture.az-Latn-AZ.js:
 	* globalize.culture.sr-Latn-RS.js:
+	* globalize.culture.sr-Latn-ME.js:
+	* globalize.culture.sr-Latn-CS.js:
+	* globalize.culture.sr-Latn-BA.js:
+	* globalize.culture.uz-Latn-UZ.js:
+	* globalize.culture.sr-Cyrl-BA.js:
+	* globalize.culture.sr-Cyrl-CS.js:
+	* globalize.culture.sr-Cyrl-ME.js:
+	* globalize.culture.sr-Cyrl-RS.js:
+	* globalize.culture.uz-Cyrl-UZ.js:
 	* globalize.culture.tg-Cyrl-TJ.js:
 	* globalize.culture.tzm-Latn-DZ.js: 
 
-	* style.css: list in the nav are in line by default.
+	* style.css: nothing to see
 
-	* AdminController.cs: refactoring
+	* BlogsController.cs: Removes the `ValidateEdit` method,
+	and gives Admins the Blogger role ... a commit to blame in a
+	near future
 
-	* App.master: Restores hallo editing by solving again
-	jQuery-ui ref
+	* yavsc.js: comes from yavsc
 
-	* Login.aspx: Prettier code at building Urls
-
-	* Admin.aspx:
-	* Index.aspx:
-	* AddRole.aspx:
-	* Backups.aspx:
-	* RemoveUser.aspx:
-	* RemoveRole..aspx:
-	* CreateBackup.aspx:
-	* BackupCreated.aspx: new master page
-
-2015-10-25  Paul Schneider  <paul@pschneider.fr>
-
-	* style.css: backgrounds don't really need
-	transitions.
-
-	* App.master: Removes a duplicated link to contact form
-
-	* parallax.js: enforce responsivity on small devices
-	supporting orientation capture.
-
-2015-10-24  Paul Schneider  <paul@pschneider.fr>
-
-	* p8-av4.s.jpg:
-	* star-939235_1280.s.jpg:
-	* star-939235_1280.xxs.jpg: a smaller background
-
-	* style.css: adds animation
-
-	* AdminController.cs: Fixes the call to Notify
-
-	* Global.asax.cs: restores a dropped route
-
-	* App.master: Drops script references to jQuery-ui and
-	Prettify from
-	the master page. They are heavy.
-
-	* parallax.js: specifies the capture to false at calling the
-	event listener registration
-
-	* UserPost.aspx: Fixes this page
-
-	* Index.aspx: adds the `panel` class to embed those default
-	home page links 
-
-	* Web.csproj: dropping the imported parallax.js script
-
-	* animated-overlay.gif: may be used in a futur work :-)
-
-2015-10-23  Paul Schneider  <paul@pschneider.fr>
-
-	* AdminController.cs: Notification when Admin group is created
-
-2015-10-22  Paul Schneider  <paul@pschneider.fr>
-
-	* parralax.js: YastepInDaPresentation
-	move backgrounds with mouse postion and mobile orientation
-
-2015-10-22  Paul Schneider  <paul@pschneider.fr>
-
-	* style.css: no max width for panels, it's too abstract for a
-	notion
-
-	* RemovePost.aspx: Adds a Title and fixes the action call
-
-	* Contact.aspx: cleans the code from totem
-
-2015-10-20  Paul Schneider  <paul@pschneider.fr>
-
-	* Web.config:
-	* Web.csproj:
-	* totem.jpg:
-	* App.master:
-	* twiter.png:
-	* facebook.png:
-	* totemprod.png:
-	* style.css:
-	* p8-av4.xxs.png:
-	* totem-banner.png:
-	* YavscHelpers.cs:
-	* concert.clear.jpg:
-	* totem-banner.xs.jpg:
-	* totem-banner.xxs.jpg:
-	* drummer-652345_1280.jpg:
-	* musician-923526_1.nb.jpg:
-	* musician-923526_1280.jpg:
-	* drummer-652345_1280.s.jpg:
-	* an-pierle-876094_1280.jpg:
-	* musician-923526_1.nbb.jpg:
-	* musician-923526_1280.s.jpg:
-	* drummer-652345_1280.xxs.jpg:
-	* musician-923526_1.nb.xs.jpg:
-	* live-concert-388160_1280.jpg:
-	* musician-923526_1280.xxs.jpg:
-	* musician-923526_1.nb.xxs.jpg:
-	* musician-923526_1.nbb.xs.jpg:
-	* musician-923526_1.nbb.xxs.jpg:
-	* live-concert-388160_1280.s.jpg:
-	* live-concert-388160_1280.xxs.jpg: 
-
-2015-10-19  Paul Schneider  <paul@pschneider.fr>
-
-	* Web.csproj:
-	* packages.config:
-	* App.master:
-	* doxy.css:
-	* Edit.aspx:
-	* desert.css:
-	* sunburst.css:
-	* YavscHelpers.cs:
-	* prettify.css:
-	* lang-r.js:
-	* lang-n.js:
-	* UserPosts.aspx:
-	* lang-hs.js:
-	* lang-rd.js:
-	* lang-ml.js:
-	* lang-go.js:
-	* lang-vb.js:
-	* lang-xq.js:
-	* lang-tex.js:
-	* lang-tcl.js:
-	* lang-sql.js:
-	* lang-clj.js:
-	* lang-lua.js:
-	* PostActions.ascx:
-	* prettify.js:
-	* lang-css.js:
-	* HomeController.cs:
-	* lang-lisp.js:
-	* lang-wiki.js:
-	* lang-vhdl.js:
-	* lang-llvm.js:
-	* lang-dart.js:
-	* lang-yaml.js:
-	* lang-basic.js:
-	* lang-proto.js:
-	* lang-scala.js:
-	* lang-mumps.js:
-	* lang-erlang.js:
-	* lang-matlab.js:
-	* sons-of-obsidian.css:
-	* lang-pascal.js:
-	* lang-apollo.js:
-	* run_prettify.js: 
-
-	* TagPanel.ascx: displays the photo
-
-	* IValueProvider.cs: useless, unused
-
-	* TestExec.cs: pollution
-
-2015-10-18  Paul Schneider  <paul@pschneider.fr>
-
-	* BlogsController.cs: Fixes the redirection after bill edition
-
-2015-10-18  Paul Schneider  <paul@pschneider.fr>
-
-	* App.master:
-	* Title.aspx: Reset the Home page link
-
-	* TagPanel.ascx: implements html links from tag related titles
-
-2015-10-17  Paul Schneider  <paul@pschneider.fr>
-
-	* Web.csproj:
-	* Index.aspx:
-	* Error.aspx:
-	* TagPanel.ascx:
-	* UserPost.aspx:
-	* PageLinks.ascx:
-	* HomeController.cs:
-	* BlogsController.cs: 
-
-2015-10-17  Paul Schneider  <paul@pschneider.fr>
-
-	* Web.csproj:
-	* Global.asax.cs:
-	* yavsc.js:
-	* App.master:
-	* style.css:
-	* NoLogin.master:
-	* YavscHelpers.cs:
-	* TagPanel.ascx:
-	* UserPosts.aspx:
-	* AccountController.cs:
-	* FrontOfficeController.cs: 
-
-2015-10-17  Paul Schneider  <paul@pschneider.fr>
-
-	* Web.csproj:
-	* Global.asax.cs:
-	* yavsc.js:
-	* App.master:
-	* style.css:
-	* Edit.aspx:
-	* Title.aspx:
-	* Index.aspx:
-	* YavscHelpers.cs:
-	* UserPost.aspx:
-	* UserPosts.aspx:
-	* PageLinks.ascx:
-	* TagControl.ascx:
-	* PostActions.ascx:
-	* HomeController.cs:
-	* AdminController.cs:
-	* BlogsController.cs:
-	* GoogleController.cs:
-	* Estimate.aspx:
-	* AccountController.cs:
-	* BlogsController.cs:
-	* knockout-jqAutocomplete.js:
-	* knockout-jqAutocomplete.min.js: 
-
-2015-10-13  Paul Schneider  <paul@pschneider.fr>
-
-	* Index.aspx:
-	* Title.aspx:
-	* yavsc.scrollnotif.js:
-	* AccountController.cs: refactoring
-
-	* yavsc.tags.js: Implements a js call
-	to the tag & untag methods
-
-	* PostActions.ascx: a better html structure
-
-	* yavsc.circles.js:
-	* AccountController.cs: code formatting
-
-	* BlogsController.cs: Untag a post
-
-	* style.css: yastyle, yet a better one.
-
-	* BlogsController.cs: View the Title after edition
-
-	* App.master:
-	* UserPosts.aspx: a nicer html structure
-
-	* yavsc.js: Fixes notice & dimiss js
-
-	* Login.aspx: refactoring 
-
-	* Edit.aspx: better html
-
-	* UserPost.aspx: A promess to be allowed to tag.
-
-	* Web.csproj: Adds yavsc.tags.js and yavsc.scrollnotifs.js to
-	the project decription.
-
-2015-10-10  Paul Schneider  <paul@pschneider.fr>
-
-	* Web.csproj:
-	* Global.asax.cs:
-	* App.master:
-	* Index.aspx:
-	* NoLogin.master:
-	* Title.aspx:
-	* Index.aspx:
-	* YavscHelpers.cs:
-	* Profile.aspx:
-	* UserPosts.aspx:
-	* HomeController.cs:
-	* BlogsController.cs:
-	* GoogleController.cs:
-	* AccountController.cs: 
+	* Edit.aspx: refactoring `ValidateEdit`
 

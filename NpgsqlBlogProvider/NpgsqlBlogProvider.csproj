@@ -34,7 +34,6 @@
   <ItemGroup>
     <Compile Include="NpgsqlBlogProvider.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="NpgsqlTagInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Sql\" />
@@ -44,7 +43,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Web.Mvc" />
     <Reference Include="Npgsql">
       <HintPath>..\packages\Npgsql.3.0.3\lib\net45\Npgsql.dll</HintPath>
     </Reference>

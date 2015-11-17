@@ -12,12 +12,16 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader> 
+
 	<data name="additionally"><value>additionally</value></data>
 	<data name="access_denied"><value>Access denied</value></data>
 	<data name="AnIMessageHasbeenSent"><value>An instant message has been sent to {0}, 
 	showing to him your query. You should be contacted very soon.</value></data>
 	<data name="Bill_edition"><value>Bill edition</value></data>
 	<data name="Bill_removal"><value>Bill removal</value></data>
+	<data name="BillCreated"><value>Bill created</value></data>
+	<data name="BillUpdated"><value>Bill updated</value></data>
+	<data name="PhotoUpdated"><value>Photo updated</value></data>
 	<data name="Create"><value>Create</value></data>
 	<data name="Count"><value>Count</value></data>
 	<data name="Ciffer"><value>Ciffer</value></data>
@@ -81,6 +85,8 @@
 	<data name="Remove"><value>Remove</value></data>
 	<data name="Role"><value>Role</value></data>
 	<data name="role_created"><value>role created</value></data>
+	<data name="Skill"><value>Skill</value></data>
+	<data name="Skills"><value>Skills</value></data>
 	<data name="StartDate"><value>Start date</value></data>
 	<data name="Submit"><value>Submit</value></data>
 	<data name="StartHour"><value>Start hour</value></data>
@@ -93,10 +99,11 @@
 	<data name="Unitary_cost"><value>Unitary_cost</value></data>
 	<data name="User_List"><value>User List</value><comment></comment></data>
 	<data name="User_name"><value>User name</value></data>
+	<data name="UsersInRole">List of users assuming the role "{0}"</data>
 	<data name="UserNotInThisRole"><value>This user is not in this role</value></data>
 	<data name="View_source"><value>View source</value></data>
 	<data name="was_added_to_the_role"><value>was added to the role</value></data>
-	<data name="was_added_to_the_empty_role"><value>There was no user in the '{1}' role. You ({0}) was just added as firt user in the '{1}' role.</value></data>
+	<data name="was_added_to_the_empty_role"><value>There was no user in the "{1}" role. You ({0}) was just added as firt user in the "{1}" role.</value></data>
 	<data name="Welcome"><value>Welcome</value><comment></comment></data>
 	<data name="XHasBeenNotified"><value>{0} has been notified of your query, you should be fast contacted</value></data>
 	<data name="Xshouldbeavailable"><value>regarding his calendar, 

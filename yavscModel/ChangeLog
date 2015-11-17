@@ -1,235 +1,139 @@
-2015-11-04  Paul Schneider  <paul@pschneider.fr>
+2015-11-17  Paul Schneider  <paul@pschneider.fr>
 
-	* LocalizedText.resx:
-	* LocalizedText.fr.resx:
-	* LocalizedText.Designer.cs:
-	* LocalizedText.fr.Designer.cs: texts relatives to message or
-	notification sending
+	* PerformerProfile.cs: implements a performer profile
 
-2015-11-04  Paul Schneider  <paul@pschneider.fr>
+	* SkillManager.cs:
+	* SkillProvider.cs: Makes the method rendering skills return a
+	PerformerProfile object
 
-	* BlogManager.cs:
-	* BlogProvider.cs: 
+	* YavscModel.csproj: replaces the UserSkillProfile with the
+	PerformerProfile class
 
-2015-11-03  Paul Schneider  <paul@pschneider.fr>
+	* UserSkillProfile.cs: obsolete
 
-	* LocalizedText.resx:
-	* LocalizedText.fr.resx:
-	* LocalizedText.Designer.cs:
-	* LocalizedText.fr.Designer.cs: I understood ...
+2015-11-17  Paul Schneider  <paul@pschneider.fr>
 
-	* Notification.cs: a new click action name.
+	* IRating.cs:
+	* IComment.cs:
+	* IIdentified.cs:
+	* IAuthorized.cs:
+	* BasePost.cs:
+	* SkillProvider.cs: refactorization
 
-2015-11-01  Paul Schneider  <paul@pschneider.fr>
-
+	* Skill.cs:
 	* YavscModel.csproj:
-	* PostInfoByUser.cs:
-	* PostInfoByTitle.cs:
-	* BlogEntryCollection.cs: refactoring
+	* UserSkill.cs:
+	* SkillManager.cs:
+	* UserSkillRating.cs:
+	* UserSkillProfile.cs:
+	* UserSkillReference.cs:
+	* UserSkillDeclaration.cs: implements the skill data model
 
-2015-11-01  Paul Schneider  <paul@pschneider.fr>
+	* UserSkillComment.cs: defines an user's skill comment
 
-	* ProfileEdition.cs: Fixes the username modification
-
-	* LocalizedText.resx:
-	* LocalizedText.fr.resx:
-	* LocalizedText.Designer.cs:
-	* LocalizedText.fr.Designer.cs: WIP booking
-
-	* ChangePasswordModel.cs:
-	* RegisterClientModel.cs: A regexp for user name
-
-	* LoginModel.cs: A regexp for user name and password
-
-	* Profile.cs: A regexp for user name, and profile usage fixes
-
-	* UserManager.cs: Checks for username availability before
-	trying to modify it
-
-	* YavscModel.csproj: `ProfileEdition` class addition
-
-	* ChangeLog: useless here
-
-	* BookQuery.cs: Start, end hour and role are required
-
-	* OtherWebException.cs: useless
-
-2015-10-31  Paul Schneider  <paul@pschneider.fr>
-
-	* LocalizedText.resx:
-	* OtherWebException.cs:
-	* BookQuery.cs:
-	* LocalizedText.fr.resx:
-	* LocalizedText.Designer.cs:
-	* LocalizedText.fr.Designer.cs: 
-
-2015-10-30  Paul Schneider  <paul@pschneider.fr>
-
-	* LocalizedText.resx:
-	* LocalizedText.fr.resx:
-	* BookQuery.cs:
-	* LocalizedText.Designer.cs:
-	* Link.cs:
-	* Note.cs:
-	* Euro.cs:
-	* Text.cs:
-	* Unit.cs:
-	* LocalizedText.fr.Designer.cs:
-	* Brand.cs:
-	* Label.cs:
-	* Scalar.cs:
-	* Period.cs:
-	* Option.cs:
-	* Product.cs:
-	* Catalog.cs:
-	* Service.cs:
-	* SaleForm.cs:
-	* Currency.cs:
-	* CheckBox.cs:
-	* FormInput.cs:
-	* TextInput.cs:
-	* SelectItem.cs:
-	* FilesInput.cs:
-	* RadioButton.cs:
-	* StockStatus.cs:
-	* SelectInput.cs:
-	* FormElement.cs:
-	* ProductImage.cs:
-	* CatalogHelper.cs:
-	* CatalogManager.cs:
-	* CatalogProvider.cs:
-	* PhysicalProduct.cs:
-	* ProductCategory.cs:
-	* CatalogProviderConfigurationElement.cs:
-	* CatalogProvidersConfigurationSection.cs:
-	* CatalogProvidersConfigurationCollection.cs: 
-
-	* WorkFlowManager.cs:
-	* IContentProvider.cs:
-	* Price.cs:
-	* PriceOnItemCount.cs: refactoring: a dedicated name space for
-	the catalog
-
-2015-10-29  Paul Schneider  <paul@pschneider.fr>
-
-	* YavscModel.csproj:
-	* Commande.cs:
-	* WebFileSystemManager.cs: Refactoring the name of the files
-	manager class
-
-2015-10-28  Paul Schneider  <paul@pschneider.fr>
-
-	* ICalendarManager.cs: WIP booking TODO a calendar provider
-
+	* GDate.cs:
 	* YaEvent.cs:
-	* IFreeDateSet.cs: WIP booking
-
-	* LocalizedText.resx:
-	* LocalizedText.fr.resx:
-	* LocalizedText.Designer.cs:
-	* LocalizedText.fr.Designer.cs: implements the message "uses
-	cookies" 
-
-	* YavscModel.csproj: refactoring
-
-	* Notification.cs: The Yavsc otification will start as a
-	Google one ...
-	many properties are not yet used, but all seems usefull.
-
-2015-10-27  Paul Schneider  <paul@pschneider.fr>
-
-	* YavscModel.csproj:
-	* LocalizedText.resx:
-	* FreeDate.cs:
-	* BookQuery.cs:
-	* LocalizedText.fr.resx:
-	* LocalizedText.Designer.cs:
-	* LocalizedText.fr.Designer.cs: 
-
-2015-10-23  Paul Schneider  <paul@pschneider.fr>
-
-	* LocalizedText.resx:
-	* LocalizedText.fr.resx:
-	* LocalizedText.Designer.cs:
-	* LocalizedText.fr.Designer.cs: Existant DB message
-
-2015-10-22  Paul Schneider  <paul@pschneider.fr>
-
-	* LocalizedText.resx:
-	* LocalizedText.fr.resx:
-	* LocalizedText.Designer.cs:
-	* LocalizedText.fr.Designer.cs: Localizes a "bill removal"
-
-2015-10-19  Paul Schneider  <paul@pschneider.fr>
-
-	* YavscModel.csproj:
-	* MarkdownHelper.cs: 
-
-2015-10-17  Paul Schneider  <paul@pschneider.fr>
-
-	* BlogManager.cs: 
-
-2015-10-17  Paul Schneider  <paul@pschneider.fr>
-
-	* TagInfo.cs:
-	* YavscModel.csproj:
-	* BasePost.cs:
-	* LocalizedText.resx:
-	* LocalizedText.fr.resx:
 	* BlogProvider.cs:
-	* BasePostInfo.cs:
-	* PostInfoByUser.cs:
-	* PostInfoByTitle.cs:
+	* CircleBase.cs:
+	* Profile.cs:
+	* CalendarListEntry.cs:
+	* CalendarEventList.cs:
+	* UserRole.cs:
+	* ICalendarManager.cs:
+	* ProfileEdition.cs:
+	* LostPasswordModel.cs:
+	* RegisterClientModel.cs: xmldoc
+
+	* LocalizedText.fr.resx: skills
+
+	* Manager.cs: throws an exception when implementation for the
+	provider was not found
+
+	* IDataProvider.cs: xml doc
+
+2015-11-14  Paul Schneider  <paul@pschneider.fr>
+
+	* IRated.cs:
+	* BlogHelper.cs:
+	* ICalendarManager.cs: 
+
+	* Manager.cs:
+	* BookingQuery.cs: refactoring
+
+	* Manager.cs:
+	* YavscModel.csproj:
+	* SkillRating.cs:
+	* SkillManager.cs:
+	* SkillRating.cs:
+	* SkillProvider.cs:
+	* SkillManager.cs:
+	* SkillProvider.cs:
+	* SkillDeclaration.cs:
+	* SkillDeclaration.cs: VIP skills
+
+	* BasePost.cs: One may rate a bill
+
+	* BlogProvider.cs: The blogs provider takes BlogEntry objects
+	at Update time
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
 	* LocalizedText.Designer.cs:
-	* LocalizedText.fr.Designer.cs:
-	* BlogEntryCollection.cs: 
+	* LocalizedText.fr.Designer.cs: WIP skills
 
-2015-10-17  Paul Schneider  <paul@pschneider.fr>
+	* Profile.cs: prettifies the code, as long as the profile
+	providers does'nt return any more DBNull values
 
-	* PostTag.cs:
+	* BlogManager.cs: Uses the static ManagerHelper class to get
+	the configuration
+
+2015-11-11  Paul Schneider  <paul@pschneider.fr>
+
+	* BasePost.cs: all BasePost contains a rate
+
+	* BasePostInfo.cs: due to base implementation
+
+	* BlogEntry.cs: code formatting
+
+	* BlogManager.cs: Fixes the taginfo object delivering
+
+	* BlogProvider.cs: refactoring
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: localizes UserInRole 
+
+	* LoginModel.cs: enables spaces in the legacy login names 
+
+	* Profile.cs: gives users the theme choice
+
+2015-11-08  Paul Schneider  <paul@pschneider.fr>
+
+	* LoginModel.cs:
+	* UserNameBase.cs: enables legacy login with spaces in the
+	user name
+
+	* ProfileEdition.cs: xml doc
+
+2015-11-06  Paul Schneider  <paul@pschneider.fr>
+
+	* ChangeLog:
+	* TagInfo.cs:
 	* BasePost.cs:
-	* YavscModel.csproj:
-	* BlogEntry.cs:
 	* LocalizedText.resx:
-	* Automate.cs:
-	* LocalizedText.fr.resx:
-	* LocalizedText.Designer.cs:
-	* BlogEntryCollection.cs:
-	* LocalizedText.fr.Designer.cs: 
-
-2015-10-13  Paul Schneider  <paul@pschneider.fr>
-
-	* BasePost.cs: refactoring:
-	allows the "PostActions" user control to use a common base
-	object as post reference
-
-	* YavscModel.csproj:
 	* BlogEntry.cs:
-	* BlogEntryCollection.cs: refactoring
-
-	* BlogManager.cs: Makes the blog manager expose of the new
-	`UnTag` method
-
-	* BlogProvider.cs: introduces a method to `untag`
-
-	* FindBlogEntryFlags.cs: Find post entry by tag
-
-	* LocalizedText.resx:
-	* LocalizedText.Designer.cs: new translations: - "Tag"
-	- "Edit"
-
-
-	* LocalizedText.fr.resx:
-	* LocalizedText.fr.Designer.cs: nouvelles traductions: - "Tag"
-	- "Edit"
-
-	* Profile.cs: a nicer stack trace at buggy usage
-
-2015-10-10  Paul Schneider  <paul@pschneider.fr>
-
-	* YavscModel.csproj:
 	* BlogManager.cs:
-	* UTBlogEntryCollection.cs:
-	* UUTBlogEntryCollection.cs:
-	* FileSystemManager.cs: 
+	* BlogProvider.cs:
+	* BookQuery.cs:
+	* BasePostInfo.cs:
+	* LocalizedText.fr.resx:
+	* IFreeDateSet.cs:
+	* LocalizedText.Designer.cs:
+	* Notification.cs:
+	* LocalizedText.fr.Designer.cs:
+	* ICalendarManager.cs:
+	* BlogEntryCollection.cs:
+	* ProfileEdition.cs:
+	* WebFileSystemManager.cs: 
 

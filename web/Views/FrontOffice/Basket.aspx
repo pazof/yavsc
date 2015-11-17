@@ -27,9 +27,7 @@
 	</ul>
 <% } %>
 
-</asp:Content>
 
-<asp:Content ID="MASContentContent" ContentPlaceHolderID="MASContent" runat="server">
  <ul><li>
  <%= Html.ActionLink("Catalog","Catalog" ) %>
  </li><li>

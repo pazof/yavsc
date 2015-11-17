@@ -20,13 +20,14 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Yavsc.Model.Blogs
 {
 	/// <summary>
 	/// Tag info.
 	/// </summary>
-	public abstract class TagInfo
+	public class TagInfo
 	{
 		string name;
 		/// <summary>
@@ -54,7 +55,7 @@ namespace Yavsc.Model.Blogs
 		/// Gets the titles.
 		/// </summary>
 		/// <value>The titles.</value>
-		public abstract IEnumerable<BasePostInfo> Titles { get; }
+		public  IEnumerable<IGrouping<string,BasePostInfo>> Titles { get; set; }
 	}
 }
 

@@ -1,0 +1,7 @@
+﻿
+User-agent: *
+Disallow: /Google/Login
+Disallow: /Account/Login
+Disallow: /Admin/
+Disallow: /App_Themes/
+Disallow: /Scripts/

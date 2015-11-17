@@ -1,3 +1,12 @@
+2015-11-11  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlProfileProvider.cs: return the default value in the
+	targeted Type, in case of DBNull
+
+2015-11-06  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlProfileProvider.cs: nicer code
+
 2015-11-04  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlProfileProvider.cs:

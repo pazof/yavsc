@@ -25,8 +25,22 @@ using System.Collections.Generic;
 
 namespace Yavsc.Model.Calendar
 {
+	/// <summary>
+	/// I calendar manager.
+	/// </summary>
 	public interface ICalendarManager {
-		IFreeDateSet GetFreeDates(string username, BookQuery req);
+		/// <summary>
+		/// Gets the free dates.
+		/// </summary>
+		/// <returns>The free dates.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="req">Req.</param>
+		IFreeDateSet GetFreeDates(string username, BookingQuery req);
+		/// <summary>
+		/// Book the specified username and ev.
+		/// </summary>
+		/// <param name="username">Username.</param>
+		/// <param name="ev">Ev.</param>
 		bool Book(string username, YaEvent ev);
 	}
 }

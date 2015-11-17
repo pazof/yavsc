@@ -14,8 +14,8 @@ namespace Yavsc.Model.RolesAndMembers
 		/// </summary>
 		/// <value>The name of the user.</value>
 		[DisplayName("Nom d'utilisateur"),
-			Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur ([a-z]|[A-Z]|[-_.~]|[0-9])+"),
-		RegularExpression("([a-z]|[A-Z]|[0-9])+")]
+			Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur ([a-z]|[A-Z]|[-_.~]|[0-9]|\\s)+"),
+		RegularExpression("([a-z]|[A-Z]|[0-9]|\\s)+")]
 		public string UserName { get; set; }
  
 		/// <summary>

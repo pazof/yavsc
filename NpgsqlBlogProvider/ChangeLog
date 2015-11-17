@@ -1,31 +1,20 @@
-2015-11-04  Paul Schneider  <paul@pschneider.fr>
+2015-11-14  Paul Schneider  <paul@pschneider.fr>
 
-	* NpgsqlBlogProvider.cs: Implements the note
+	* NpgsqlBlogProvider.cs: Bill ranking, and delivering hidden
+	content to owner
 
-2015-10-19  Paul Schneider  <paul@pschneider.fr>
+2015-11-11  Paul Schneider  <paul@pschneider.fr>
 
-	* NpgsqlTagInfo.cs: Fixes the photo retreival
+	* NpgsqlBlogProvider.cs: refactoring
 
-2015-10-17  Paul Schneider  <paul@pschneider.fr>
+2015-11-06  Paul Schneider  <paul@pschneider.fr>
 
-	* NpgsqlTagInfo.cs:
-	* NpgsqlBlogProvider.cs: 
+	* NpgsqlBlogProvider.cs: refactorisation, to render Tags and
+	Circles on each entry type.
+	Fixes the `Find` Method using the `MatchTag` search flag
 
-2015-10-17  Paul Schneider  <paul@pschneider.fr>
+	* NpgsqlBlogProvider.csproj: cleanning
 
-	* NpgsqlTagInfo.cs:
-	* NpgsqlBlogProvider.cs:
-	* NpgsqlBlogProvider.csproj: 
-
-2015-10-17  Paul Schneider  <paul@pschneider.fr>
-
-	* NpgsqlBlogProvider.cs: 
-
-2015-10-13  Paul Schneider  <paul@pschneider.fr>
-
-	* NpgsqlBlogProvider.cs: implements the tag methods on db
-
-2015-10-10  Paul Schneider  <paul@pschneider.fr>
-
-	* NpgsqlBlogProvider.cs: 
+	* ChangeLog:
+	* NpgsqlTagInfo.cs: 
 

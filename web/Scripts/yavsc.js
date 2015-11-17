@@ -1,6 +1,6 @@
-﻿var Yavsc =  (function(apiBaseUrl){ 
+﻿
+var Yavsc =  (function(apiBaseUrl){ 
 var self = {};
-
 
 self.dumpprops = function (obj) { 
 var str = "";
@@ -30,9 +30,11 @@ self.dimiss = function () {
 		$(this).parent().remove();
 	};
 
-self.ajax = function (method,data,callback) {
+self.ajax = function (method,data,callback,badInputCallback,errorCallBack) {
+if (!badInputCallback) badInputCallback=Yavsc.onAjaxBadInput;
+if (!errorCallBack) errorCallBack=Yavsc.onAjaxError;
 	$.ajax({
-            url: self.apiBaseUrl+method,
+            url: self.apiBaseUrl+'/'+method,
             type: "POST",
             data: data,
             success: function (response) { 
@@ -74,7 +76,7 @@ self.onAjaxBadInput = function (data)
 		var errspanid = "Err_" + value.key;
 		var errspan = document.getElementById(errspanid);
 		if (errspan==null)
-			alert('enoent '+errspanid);
+			Yavsc.notice('ENOTANODE: '+errspanid);
 		else 
 			errspan.innerHTML=value.errors.join("<br/>");
     	});

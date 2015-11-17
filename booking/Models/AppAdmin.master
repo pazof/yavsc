@@ -1,0 +1,107 @@
+<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<% ViewState["orgtitle"] = Html.Translate(Page.Title); %>
+<% Page.Title = ViewState["orgtitle"] + " - " + YavscHelpers.SiteName; %>
+<asp:ContentPlaceHolder id="init" runat="server">
+</asp:ContentPlaceHolder><head runat="server">
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/style.css")%>" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/font-awesome.css")%>" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/jquery-ui.css")%>" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/prettify.css")%>" />
+<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/doxy.css")%>" />
+<link rel="icon" type="image/png" href="/favicon.png?v=3" />
+<script src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.min.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/parallax.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/jquery.validate.min.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")%>"></script>
+<script type="text/javascript">
+var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
+</script> 
+<%=Ajax.GlobalizationScript()%>
+<script src="<%=Url.Content("~/Scripts/yavsc.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/yavsc.tags.js")%>"></script>
+<asp:ContentPlaceHolder id="head" runat="server">
+</asp:ContentPlaceHolder>
+</head>
+<body>
+<header data-type="background" data-speed="8" >
+<asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
+<h1><a href="<%= Url.RouteUrl("Default") %>">
+<%=ViewState["orgtitle"]%></a>
+- <a href="<%= Url.RouteUrl("Default", new {controller = "Home" , action = "Index" }) %>"><%= YavscHelpers.SiteName %></a>
+</h1>
+ </asp:ContentPlaceHolder>
+ <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
+ <div id="notifications"></div>
+<% if (ViewData ["Notifications"]!=null) { %>
+<script>
+$(document).ready(function(){
+<% foreach (Notification note in (IEnumerable<Notification>) ViewData ["Notifications"] ) { 
+if (note.click_action == null) {%> Yavsc.notice(<%=note.body%>); <% } 
+else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>); <% } %>
+<% } %>
+});
+</script>
+<% } %>
+</header>
+<nav data-type="background" data-speed="5">
+<% if (Membership.GetUser()==null) { %>
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" class="menuitem" accesskey = "C">
+<i class="fa fa-sign-in">Connexion</i> 
+</a>
+<% } else { %>
+<ul>
+	<li><%= Html.ActionLink("Backups","Backups") %></li>
+<li><%= Html.ActionLink("Restaurations", "Restore") %></li>
+<li><%= Html.ActionLink("Create backup","CreateBackup") %></li>
+<li><%= Html.ActionLink("Remove user", "RemoveUser") %></li>
+<li><%= Html.ActionLink("Add a Role ", "AddRole") %></li>
+<li><%= Html.ActionLink("Remove role", "RemoveRoleQuery") %></li>
+<li><%= Html.ActionLink("User list", "UserList") %></li>
+<li><%= Html.ActionLink("Role list", "RoleList") %></li>
+</ul>
+
+<a href="<%=Url.RouteUrl("Blogs", new { user = HttpContext.Current.User.Identity.Name } )%>" accesskey = "B" class="menuitem" >
+<img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="vos billets" class="iconsmall" />
+<span class="hint">Vos billets</span>
+</a>
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Profile", id = HttpContext.Current.User.Identity.Name} ) %>" accesskey="P" class="menuitem fa fa-user">
+<%= HttpContext.Current.User.Identity.Name %>
+<span class="hint"> &Eacute;dition de votre profile </span>
+</a>
+<a href="/Blogs/Post" accesskey="P" class="menuitem fa fa-pencil">
+<u>P</u>oster
+<span class="hint">&Eacute;dition d'un nouveau billet </span>
+</a>
+
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Logout", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C" class="menuitem fa fa-sign-out">
+<%=Html.Translate("Logout")%></a> 
+<% } %>
+</nav>
+<main data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="22" >
+<asp:ContentPlaceHolder ID="MainContent" runat="server">
+</asp:ContentPlaceHolder>
+</main>
+<asp:ContentPlaceHolder ID="MASContent" runat="server">
+</asp:ContentPlaceHolder>
+<footer data-type="background" data-speed="5" >
+<div id="copyr">
+<a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">© 2015 GNU GENERAL PUBLIC LICENSE  <i>Version 3, 29 June 2007</i></a>
+</div>
+   <%= Html.ActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
+   <% foreach ( Link link in Html.Thanks()) { %>
+     <a class="thanks" href="<%=link.Url%>"><% if (link.Image !=null) { 
+     %><img src="<%= link.Image %>" alt="<%= link.Text %>"/></a>
+     <%  } else { %>
+     <a class="thanks" href="<%=link.Url%>"><%= link.Text %></a>
+     <% }} %>
+</footer><div class="modal"></div>
+</body>
+</html>

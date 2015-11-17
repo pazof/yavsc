@@ -23,13 +23,22 @@ using System;
 namespace Yavsc.Model.Google
 {
 
-
+	/// <summary>
+	/// Calendar event list.
+	/// </summary>
 	public class CalendarEventList
 	{
-
+		/// <summary>
+		/// The next page token.
+		/// </summary>
 		public string nextPageToken;
+		/// <summary>
+		/// The next sync token.
+		/// </summary>
 		public string nextSyncToken;
-
+		/// <summary>
+		/// The items.
+		/// </summary>
 		public Resource [] items ;
 	}
 }

@@ -1,8 +1,30 @@
-2015-10-24  Paul Schneider  <paul@pschneider.fr>
+2015-11-17  Paul Schneider  <paul@pschneider.fr>
 
-	* Makefile: restores the server reload after rsync call
+	* Makefile: adds nuget targets
 
-2015-10-09  Paul Schneider  <paul@pschneider.fr>
+2015-11-14  Paul Schneider  <paul@pschneider.fr>
 
-	* Makefile: reloads config after each rsync call
+	* Makefile: Fixes the `clean` target
+
+	* README.md: WIP Skills
+
+2015-11-11  Paul Schneider  <paul@pschneider.fr>
+
+	* README.md: \n @ EOF
+
+	* Yavsc.sln: remove the `booking` project from the solution
+
+	* Edit.aspx: cleaning
+
+2015-11-08  Paul Schneider  <paul@pschneider.fr>
+
+	* README.md: Adds a TODO list
+
+	* Yavsc.sln: do not build the MVC 5.1 project, that does not
+	run under mono.
+
+	* ChangeLog: this file should not be maintained as a git
+	respository legacy file
+
+	* .gitignore: this file should not be maintained under git
 

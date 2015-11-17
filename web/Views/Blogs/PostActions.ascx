@@ -1,11 +1,14 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<BasePost>" %>
-<aside>
+	 <% if (Membership.GetUser()!=null) { %>
+	 <aside>
 (<%= Model.Posted.ToString("D") %>
 	 - <%= Model.Modified.ToString("D") %> <%= Model.Visible? "":", Invisible!" %>)
-	 <% if (Membership.GetUser()!=null) {
+	 <%= Html.Partial("RateControl",Model)%>
+	 <%
 	if (Membership.GetUser().UserName==Model.Author || Roles.IsUserInRole("Admin"))
 	 { %>
-<% if (Model is BlogEntry) { %><%= Html.Partial("TagControl",Model)%>
+  <%= Html.Partial("TagControl",Model)%>
+<% if (Model is BlogEntry) { %>
 <i class="fa fa-pencil"><%=Html.Translate("DoComment")%></i>
  <aside class="control" class="hidden">
 	 <% using (Html.BeginForm("Comment","Blogs")) { %>
@@ -17,10 +20,11 @@
 	 <% } %>
 	  </aside>
 <% } %>
-	 <a href="<%= Url.RouteUrl("Default", new { action = "Edit", postid = Model.Id })%>" class="actionlink">
+	 <a href="<%= Url.RouteUrl("Default", new { action = "EditId", postid = Model.Id })%>" class="actionlink">
 	 <i class="fa fa-pencil"><%=Html.Translate("Edit")%></i>
 	 </a>
 	 <a href="<%= Url.RouteUrl("Default", new { action = "RemovePost", postid = Model.Id })%>" class="actionlink">
 	 <i class="fa fa-remove"><%=Html.Translate("Remove")%></i></a>
-<% }} %>
+<% } %>
 </aside>
+<% } %>

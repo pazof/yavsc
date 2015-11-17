@@ -1,9 +1,19 @@
-2015-10-30  Paul Schneider  <paul@pschneider.fr>
+2015-11-17  Paul Schneider  <paul@pschneider.fr>
 
-	* NpgsqlContentProvider.cs: refactoring: a dedicated name
-	space for the catalog
+	* NpgsqlSkillProvider.cs: User's skills profile object now
+	implements an `Id` property,
+	in order to be rated, perhaps ranked in a near future. It's
+	implemented as the legay profile id. 
 
-2015-10-28  Paul Schneider  <paul@pschneider.fr>
+2015-11-17  Paul Schneider  <paul@pschneider.fr>
 
-	* NpgsqlCircleProvider.cs: Restores circles edition
+	* NpgsqlSkillProvider.cs: implements a skill provider
+
+	* NpgsqlContentProvider.csproj: Imports the
+	`NpgsqlSkillProvider` class
+
+2015-11-08  Paul Schneider  <paul@pschneider.fr>
+
+	* ChangeLog: this file should not be maintained as a git
+	respository legacy file
 

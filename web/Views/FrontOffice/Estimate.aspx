@@ -6,83 +6,7 @@
 </script>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-
-<%= Html.ValidationSummary("Devis") %>
-
-<% using  (Html.BeginForm("Estimate","FrontOffice")) { %>
-<%= Html.LabelFor(model => model.Title) %>:<%= Html.TextBox( "Title" ) %>
-<%= Html.ValidationMessage("Title", "*") %>
-<br/>
-<%= Html.Hidden ("Responsible") %>
-
-<%= Html.LabelFor(model => model.Client) %>:
-   
-   <% Client.Value = Model.Client ; %>
-	 <yavsc:InputUserName
-	  id="Client"
-	  name="Client"
-	   emptyvalue="*nouvel utilisateur*"
-	 onchange="onClientChange(this.value);"
-	   runat="server"  >
-	 </yavsc:InputUserName> 
- 	<script>
- 	function onClientChange(newval)
- 	{
- 		if (newval=='')
- 			$("#dfnuser").removeClass("hidden");
- 		else
- 			$("#dfnuser").addClass("hidden");
- 	}
- 	</script>
- 	<%= Html.ValidationMessage("Client", "*") %>
-<br/>
-<%= Html.LabelFor(model => model.Description) %>:<%=Html.TextArea( "Description") %>
-<%= Html.ValidationMessage("Description", "*") %>
-<br/>
-<%= Html.Hidden( "Id" ) %>
-<br/>
-<% if (Model.Id==0) { %>
-   <input type="submit" name="submit" value="Create"/>
-<% } else { %>
-   <input type="submit" name="submit" value="Update"/>
-<% } %>
-
-   <% if (Model.Id>0) { %>
-<table  id="tbwrts">
-<thead>
-<tr>
-<th data-sort="string"><%=Yavsc.Model.LocalizedText.Description%></th>
-<th data-sort="string"><%=Yavsc.Model.LocalizedText.Product_reference%></th>
-<th data-sort="int"><%=Yavsc.Model.LocalizedText.Count%></th>
-<th data-sort="float"><%=Yavsc.Model.LocalizedText.Unitary_cost%></th>
-  
-</tr>
-</thead>
-<tbody id="wrts">
-<% int lc=0;
-   if (Model.Lines!=null)
-   foreach (Writting wr in Model.Lines) { lc++; %>
-<tr class="<%= (wr.Id%2==0)?"even ":"odd " %>row" id="wr<%=wr.Id%>">
-<td><%=wr.Description%></td>
-<td><%=wr.ProductReference%></td>
-<td><%=wr.Count%></td>
-<td><%=wr.UnitaryCost%></td>
-   <td>
-        <input type="button" value="X" class="actionlink rowbtnrm"/>
-    </td>
-</tr>
-<%    } %>
-</tbody>
-</table>
-<%  } %>
-<% } %>
-   
-</asp:Content>
-
-
-
- <asp:Content ContentPlaceHolderID="MASContent" ID="MASContent1" runat="server">
-   <aside>
+ <aside>
     <div id="dfnuser" class="hidden">
    <%= Html.Partial("~/Views/Account/Register.ascx",new RegisterClientModel(),new ViewDataDictionary(ViewData)
         {
@@ -354,4 +278,77 @@ function addRow(){
     <a class="actionlink" href="<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>/FrontOffice/EstimateToTex?id=<%=Model.Id%>"><%= LocalizedText.Tex_version %></a>
     <a class="actionlink" href="<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>/FrontOffice/EstimateToPdf?id=<%=Model.Id%>"><%= LocalizedText.Pdf_version %></a>
     </aside>
+
+<%= Html.ValidationSummary("Devis") %>
+
+<% using  (Html.BeginForm("Estimate","FrontOffice")) { %>
+<%= Html.LabelFor(model => model.Title) %>:<%= Html.TextBox( "Title" ) %>
+<%= Html.ValidationMessage("Title", "*") %>
+<br/>
+<%= Html.Hidden ("Responsible") %>
+
+<%= Html.LabelFor(model => model.Client) %>:
+   
+   <% Client.Value = Model.Client ; %>
+	 <yavsc:InputUserName
+	  id="Client"
+	  name="Client"
+	   emptyvalue="*nouvel utilisateur*"
+	 onchange="onClientChange(this.value);"
+	   runat="server"  >
+	 </yavsc:InputUserName> 
+ 	<script>
+ 	function onClientChange(newval)
+ 	{
+ 		if (newval=='')
+ 			$("#dfnuser").removeClass("hidden");
+ 		else
+ 			$("#dfnuser").addClass("hidden");
+ 	}
+ 	</script>
+ 	<%= Html.ValidationMessage("Client", "*") %>
+<br/>
+<%= Html.LabelFor(model => model.Description) %>:<%=Html.TextArea( "Description") %>
+<%= Html.ValidationMessage("Description", "*") %>
+<br/>
+<%= Html.Hidden( "Id" ) %>
+<br/>
+<% if (Model.Id==0) { %>
+   <input type="submit" name="submit" value="Create"/>
+<% } else { %>
+   <input type="submit" name="submit" value="Update"/>
+<% } %>
+
+   <% if (Model.Id>0) { %>
+<table  id="tbwrts">
+<thead>
+<tr>
+<th data-sort="string"><%=Yavsc.Model.LocalizedText.Description%></th>
+<th data-sort="string"><%=Yavsc.Model.LocalizedText.Product_reference%></th>
+<th data-sort="int"><%=Yavsc.Model.LocalizedText.Count%></th>
+<th data-sort="float"><%=Yavsc.Model.LocalizedText.Unitary_cost%></th>
+  
+</tr>
+</thead>
+<tbody id="wrts">
+<% int lc=0;
+   if (Model.Lines!=null)
+   foreach (Writting wr in Model.Lines) { lc++; %>
+<tr class="<%= (wr.Id%2==0)?"even ":"odd " %>row" id="wr<%=wr.Id%>">
+<td><%=wr.Description%></td>
+<td><%=wr.ProductReference%></td>
+<td><%=wr.Count%></td>
+<td><%=wr.UnitaryCost%></td>
+   <td>
+        <input type="button" value="X" class="actionlink rowbtnrm"/>
+    </td>
+</tr>
+<%    } %>
+</tbody>
+</table>
+<%  } %>
+<% } %>
+   
+
+  
    </asp:Content>

@@ -25,8 +25,14 @@ using System.Web.Profile;
 
 namespace Yavsc.Model.RolesAndMembers
 {
+	/// <summary>
+	/// Profile edition.
+	/// </summary>
 	public class ProfileEdition : Profile
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.RolesAndMembers.ProfileEdition"/> class.
+		/// </summary>
 		public ProfileEdition()
 		{}
 
@@ -36,6 +42,10 @@ namespace Yavsc.Model.RolesAndMembers
 			NewUserName = UserName;
 		}
 
+		/// <summary>
+		/// Gets or sets the new name of the user.
+		/// </summary>
+		/// <value>The new name of the user.</value>
 		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur valide")
 			,Display(ResourceType=typeof(LocalizedText),Name="User_name"),
 			RegularExpression("([a-z]|[A-Z]|[\\s-_.~]|[0-9])+")

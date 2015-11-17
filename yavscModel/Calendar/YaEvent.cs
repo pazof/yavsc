@@ -26,6 +26,9 @@ using Yavsc.Model;
 
 namespace Yavsc.Model.Calendar
 {
+	/// <summary>
+	/// Base event.
+	/// </summary>
 	public class BaseEvent
 	{
 		/// <summary>

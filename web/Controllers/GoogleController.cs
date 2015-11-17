@@ -78,12 +78,9 @@ namespace Yavsc.Controllers
 			if (string.IsNullOrWhiteSpace (returnUrl))
 				returnUrl = "/";
 			Session ["returnUrl"] = returnUrl;
-			OAuth2 oa = new OAuth2 (AuthGRU,clientId,clientSecret);
-			oa.Login (Response, SetSessionSate ());
+			string state = SetSessionSate ();
+			Response.Login (state, AuthGRU);
 		}
-		private string clientId = ConfigurationManager.AppSettings ["GOOGLE_CLIENT_ID"];
-		private string clientSecret = ConfigurationManager.AppSettings ["GOOGLE_CLIENT_SECRET"];
-		private string clientApiKey = ConfigurationManager.AppSettings ["GOOGLE_API_KEY"];
 		/// <summary>
 		/// Gets the cal auth.
 		/// </summary>
@@ -93,8 +90,7 @@ namespace Yavsc.Controllers
 			if (string.IsNullOrWhiteSpace (returnUrl))
 				returnUrl = "/";
 			Session ["returnUrl"] = returnUrl;
-			OAuth2 oa = new OAuth2 (CalendarGRU,clientId,clientSecret);
-			oa.GetCalendarScope (Response, SetSessionSate ());
+			Response.CalLogin (SetSessionSate (), CalendarGRU);
 		}
 
 		/// <summary>
@@ -107,8 +103,7 @@ namespace Yavsc.Controllers
 		public ActionResult CalAuth ()
 		{
 			string msg;
-			OAuth2 oa = new OAuth2 (CalendarGRU,clientId,clientSecret);
-
+			OAuth2 oa = GoogleHelpers.CreateOAuth2 (CalendarGRU);
 			AuthToken gat = oa.GetToken (Request, (string) Session ["state"], out msg);
 			if (gat == null) {
 				YavscHelpers.Notify(ViewData,  msg);
@@ -127,6 +122,7 @@ namespace Yavsc.Controllers
 		/// It should be called immediatly after getting the token from Google, in
 		/// order to save a descent value as expiration date.
 		/// </summary>
+		/// <param name="pr">pr.</param>
 		/// <param name="gat">Gat.</param>
 		private void SaveToken (ProfileBase pr, AuthToken gat)
 		{	
@@ -145,7 +141,7 @@ namespace Yavsc.Controllers
 		public ActionResult Auth ()
 		{
 			string msg;
-			OAuth2 oa = new OAuth2 (AuthGRU,clientId,clientSecret);
+			OAuth2 oa = GoogleHelpers.CreateOAuth2 (AuthGRU);
 			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
 			if (gat == null) {
 				YavscHelpers.Notify(ViewData,  msg);
@@ -268,9 +264,7 @@ namespace Yavsc.Controllers
 						returnUrl = Url.Action ("ChooseCalendar") // "ChooseCalendar?returnUrl="+HttpUtility.UrlEncode(returnUrl)
 					});
 			}
-			string cred = OAuth2.GetFreshGoogleCredential (HttpContext.Profile);
-			CalendarApi c = new CalendarApi (clientApiKey);
-			CalendarList cl = c.GetCalendars (cred);
+			CalendarList cl = GoogleHelpers.GetCalendars(HttpContext.Profile);
 			ViewData ["returnUrl"] = Session ["chooseCalReturnUrl"];
 			return View (cl);
 		}
@@ -301,7 +295,7 @@ namespace Yavsc.Controllers
 		[Authorize,HttpGet]
 		public ActionResult Book ()
 		{
-			var model = new BookQuery ();
+			var model = new BookingQuery ();
 			model.StartDate = DateTime.Now;
 			model.EndDate = model.StartDate.AddDays(2);
 			model.StartHour = DateTime.Now.ToString("HH:mm");
@@ -315,49 +309,35 @@ namespace Yavsc.Controllers
 		/// <returns>The query.</returns>
 		/// <param name="model">Model.</param>
 		[Authorize,HttpPost]
-		public ActionResult Book (BookQuery model)
+		public ActionResult Book (BookingQuery model)
 		{
+			DateTime mindate = DateTime.Now;
+			if (model.StartDate.Date < mindate.Date){
+				ModelState.AddModelError ("StartDate", LocalizedText.FillInAFutureDate);
+			}
+			if (model.EndDate < model.StartDate)
+				ModelState.AddModelError ("EndDate", LocalizedText.StartDateAfterEndDate);
+			
 			if (ModelState.IsValid) {
-				DateTime mindate = DateTime.Now;
-				if (model.StartDate.Date < mindate.Date){
-					ModelState.AddModelError ("StartDate", LocalizedText.FillInAFutureDate);
-				}
-				if (model.EndDate < model.StartDate)
-					ModelState.AddModelError ("EndDate", LocalizedText.StartDateAfterEndDate);
-
-				var muc = Membership.FindUsersByName (model.Person);
-				if (muc.Count == 0) {
-					ModelState.AddModelError ("Person", LocalizedText.Non_existent_user);
-				}
-				if (!Roles.IsUserInRole (model.Role)) {
-					ModelState.AddModelError ("Role", LocalizedText.UserNotInThisRole);
-				}
-				ProfileBase upr = ProfileBase.Create (model.Person);
-				var gcalid = upr.GetPropertyValue ("gcalid");
-				if (gcalid is DBNull)
-					ModelState.AddModelError ("Person", LocalizedText.No_calendar_for_this_user);
-				if (ModelState.IsValid) {
-					string calid = (string) gcalid; 
-					DateTime maxdate = model.EndDate;
-					CalendarApi c = new CalendarApi (clientApiKey);
-					CalendarEventList events;
-					try {
-						string creds = OAuth2.GetFreshGoogleCredential (upr);
-						events = c.GetCalendar (calid, mindate, maxdate, creds);
-						YavscHelpers.Notify (ViewData, "Google calendar API call success");
-					} catch (WebException ex) {
-						string response;
-						using (var stream = ex.Response.GetResponseStream())
-						using (var reader = new StreamReader(stream))
-						{
-							response = reader.ReadToEnd();
+				foreach (string rolename in model.Roles) {
+					foreach (string username in Roles.GetUsersInRole(rolename)) {
+						try {
+							var pr = ProfileBase.Create(username);
+							var events = pr.GetEvents(model.StartDate,model.EndDate);
+						} catch (WebException ex) {
+							string response;
+							using (var stream = ex.Response.GetResponseStream())
+							using (var reader = new StreamReader(stream))
+							{
+								response = reader.ReadToEnd();
+							}
+							YavscHelpers.Notify (ViewData, 
+								string.Format(
+									"Google calendar API exception {0} : {1}<br><pre>{2}</pre>",
+									ex.Status.ToString(),
+									ex.Message,
+									response));
 						}
-						YavscHelpers.Notify (ViewData, 
-							string.Format(
-								"Google calendar API exception {0} : {1}<br><pre>{2}</pre>",
-								ex.Status.ToString(),
-								ex.Message,
-								response));
 					}
 				}
 			}
