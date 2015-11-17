@@ -10,15 +10,14 @@
   <%= Html.Partial("TagControl",Model)%>
 <% if (Model is BlogEntry) { %>
 <i class="fa fa-pencil"><%=Html.Translate("DoComment")%></i>
- <aside class="control" class="hidden">
 	 <% using (Html.BeginForm("Comment","Blogs")) { %>
+	 <filedset>
 	 <%=Html.Hidden("Author")%>
 	 <%=Html.Hidden("Title")%>
 	 <%=Html.TextArea("CommentText","")%>
 	 <%=Html.Hidden("PostId",Model.Id)%>
 	 <input type="submit" value="Poster un commentaire"/>
-	 <% } %>
-	  </aside>
+	 </filedset> <% } %>
 <% } %>
 	 <a href="<%= Url.RouteUrl("Default", new { action = "EditId", postid = Model.Id })%>" class="actionlink">
 	 <i class="fa fa-pencil"><%=Html.Translate("Edit")%></i>

@@ -11,11 +11,10 @@
 </h1>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<ul>
+<ul class="editablelist userlist">
  <%foreach (string username in (string[]) ViewData["UsersInRole"]){ %>
  <li><%= username %></li>
  <% } %>
  </ul>
-
 <%= Html.Partial("AddUserToRole") %>
 </asp:Content>

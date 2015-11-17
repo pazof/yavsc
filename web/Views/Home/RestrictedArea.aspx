@@ -1,7 +1,11 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-	Ce contenu est d'accès restreint : &lt;<%= Html.Encode(ViewData["ControllerName"]) %>/<%= Html.Encode(ViewData["ActionName"]) %>&gt;
+	Ce contenu est d'accès restreint :<br>
+	 &lt;<%= Html.Encode(ViewData["ControllerName"]) %>/<%= Html.Encode(ViewData["ActionName"]) %>&gt;<br>
 
-	Demandez à l'administrateur les autorisations suffisantes pour accèder à cet emplacement.
 
+	Ci après les tièrces parties autorisée actuellement :<br>
+
+	Roles autorisés :<%= Html.Encode(ViewData["Roles"]) %><br>
+	Utilisateurs autorisés :<%= Html.Encode(ViewData["Users"]) %><br>
 </asp:Content>

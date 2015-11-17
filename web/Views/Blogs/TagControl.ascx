@@ -1,10 +1,10 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<BasePost>" %>
-<p id="tags<%=Model.Id%>" data-postid="<%=Model.Id%>" class="fa fa-tag">
+<ul id="tags<%=Model.Id%>" data-postid="<%=Model.Id%>" class="editablelist ">
 <% if (Model.Tags != null) {
 foreach ( var tagname in Model.Tags) { %>
-<span class="tagname"><%=tagname%></span> <%
+<li class="tagname fa fa-tag"><%=tagname%></li> <%
 %><% } } %>
-</p>
+</ul>
 <% if (Membership.GetUser()!=null) { %>
 <% if (Membership.GetUser().UserName==Model.Author || Roles.IsUserInRole("Admin"))
 { // grant all permissions: to choose a given set of tags, also create some new tags %>

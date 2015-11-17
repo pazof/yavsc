@@ -1,3 +1,21 @@
+2015-11-18  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css:
+	* style.css:
+	* UsersInRole.aspx: refactoring
+
+	* HomeController.cs: Fixes the restricted area error page
+
+	* PostActions.ascx: html structure
+
+	* TagControl.ascx: Tags reside in a list here, treat it as an
+	Html one
+
+	* RestrictedArea.aspx: Shows allowed users or/and roles in the
+	error page
+
+	* Web.csproj: cleaning
+
 2015-11-17  Paul Schneider  <paul@pschneider.fr>
 
 	* RateControl.ascx: A rate control for the Front Office

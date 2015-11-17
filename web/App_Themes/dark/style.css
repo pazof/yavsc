@@ -6,9 +6,6 @@ body {
 	background-color: black;
 	color: #D0FFD0;
 }
-.tagname {  color: #D0FFD0; }
-.tagname+.tagname:before { content: ', '; } 
-.tagname:hover { cursor:pointer; background-color: red; }
 
 
 .rate {
@@ -101,7 +98,6 @@ main video, main img {
 aside { 
 	display: inline-block;
 	float: right;
-	max-width: 40em;
 }
 
 .postpreview {

@@ -4,9 +4,7 @@ body {
 	padding: 0;
 	margin: 0;
 }
-
-.tagname+.tagname:before { content: ', '; } 
-.tagname:hover { cursor:pointer; }
+ 
 
 /* Start by setting display:none to make this hidden.
    Then we position it in relation to the viewport window
@@ -27,6 +25,7 @@ body {
                 no-repeat;
     overflow:   auto; 
 }
+
 .dispmodal {
     position:   fixed;
     z-index:    1000;
@@ -140,8 +139,31 @@ display: inline-block;
 .c2 { font-size: small; font-style: italic; }
 .c3 { font-size: x-small; font-style: italic; }
 
-.rate { width:5em; cursor: pointer; text-align:center; }
+.rate { 
+	display:inline-bloc; width:5em; cursor: pointer; text-align:center; 
+	}
 h2 select { font-size: large; }
+
+ul.editablelist { 
+	display: inline;
+	}
+ul.editablelist>li { 
+	display: inline;
+	margin:.5em;
+	padding:.2em;
+	border: solid grey 1px;
+	border-radius: 1em;
+}
+
+ul.editablelist>li:hover { 
+	background-color: rgba(128,0,0,0.5);
+	cursor:pointer;
+}
+
+ul.editablelist>li:hover:after { 
+  font-family: 'FontAwesome';
+  content: "\f00d";
+  }
 
 @media print {
 		body {background-color:white;color:black;}

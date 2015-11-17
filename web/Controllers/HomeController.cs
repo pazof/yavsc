@@ -90,9 +90,7 @@ namespace Yavsc.Controllers
 				TagInfo ti = BlogManager.GetTagInfo (tagname);
 				// TODO specialyze BlogEntry creating a PhotoEntry 
 				ViewData [tagname] = ti;
-
 			}
-				
 			return View ();
 		}
 		/// <summary>
@@ -103,6 +101,10 @@ namespace Yavsc.Controllers
 			return View ();
 		}
 
+		public ActionResult RestrictedArea ()
+		{
+			return View ();
+		}
 		/// <summary>
 		/// Contact the specified email, reason and body.
 		/// </summary>
