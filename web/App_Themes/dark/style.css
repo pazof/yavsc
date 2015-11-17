@@ -1,0 +1,345 @@
+
+body {
+	font-family: 'Arial', cursive;
+	padding: 0;
+	margin: 0;
+	background-color: black;
+	color: #D0FFD0;
+}
+.tagname {  color: #D0FFD0; }
+.tagname+.tagname:before { content: ', '; } 
+.tagname:hover { cursor:pointer; background-color: red; }
+
+
+.rate {
+	border-radius:1em;
+	border: solid  rgb(128,128,0) 1px;
+   background-color: rgba(20,20,20,.8); 
+	color: yellow;
+}
+.rate:hover { border-color: green; 
+	background-color:rgba(30,0,124,0.9); } 
+
+input, textarea, checkbox { 
+    color: #FFFFA0;
+	background-color: black;
+   }
+
+header {
+	transition: margin 2s, padding 2s;
+	padding: 0;
+	margin: 0;
+	padding-top: 2em;
+	padding-bottom:2em;
+	display: block;
+	background: url("/App_Themes/images/star-939235_1280.jpg") -3em -3em no-repeat fixed;
+	}
+
+header h1, header a {
+transition:padding 2s;
+background-color: rgba(0,0,0,.5); 
+margin:0; padding:1em;
+}
+
+nav {
+transition: margin 2s, padding 2s;
+	margin: 2em;
+	padding: 2em;
+	display: block;
+	border-radius:1em;
+	background: url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ;
+	justify-content: space-around;
+}
+
+main {
+transition: margin 2s, padding 2s;
+	margin: 2em;
+	padding: 2em;
+	display: block;
+	border-radius:1em;
+	background: url("/App_Themes/images/p8-av4.png") 50% 20em no-repeat fixed ;
+	}
+
+footer {
+transition: margin 2s, padding 2s;
+	background: url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ;
+	margin: 0;
+	margin-top: 2em;
+	padding: 2em;
+	display: block;
+	clear: both;
+	font-size: smaller;
+	justify-content: space-around;
+}
+
+#copyr { text-align: center; display: block; background-color: rgba(20,20,20,.8); }
+footer p { display:inline-block; } 
+
+footer img { max-height: 3em; vertical-align: middle; }
+a img, h1 img, .menuitem img  { vertical-align: middle; }
+fieldset {
+	background-color: rgba(16,16,64,0.8);
+	border-radius:5px; border: solid 1px #000060;
+} 
+
+legend {
+	background-color: rgba(0,0,32,.5);
+  }
+
+#gspacer { 
+	background-color: rgba(20,20,20,.8); 
+	border-radius:1em;
+	margin:1em; padding:1em; display: inline-block }
+
+
+main video, main img {
+	max-width:100%;
+	max-height:75%;
+	padding: 1em;
+	}
+
+aside { 
+	display: inline-block;
+	float: right;
+	max-width: 40em;
+}
+
+.postpreview {
+	display: inline-block;
+	max-width: 40em;
+	padding: 1em;
+	background-color: rgba(0,0,32,0.8);
+	border-radius:1em;
+}
+.postpreview video, .postpreview img {
+	max-width: 100%;
+	padding: 1em;
+	}
+.post { 
+	display:block;
+	padding: 1em;
+	background-color: rgba(0,0,32,0.8);
+	color: #eee;
+	border-radius:1em;
+	}
+.hiddenpost { background-color: rgba(16,16,16,0.5); }
+.fullwidth { width: 100%;  }
+
+textarea.fullwidth { min-height:10em; }
+
+.thanks  { 
+	max-width: 10%;
+	text-align: center;
+	font-size:smaller;
+	display:inline;
+	bottom:0;
+}
+.panel { 
+display:inline-block;
+  }
+
+.panel,.bshpanel, aside {
+	background-color: rgba(20,20,20,.8); 
+	border-radius: 1em; 
+	padding: 1em;
+}
+.spanel {
+  max-width: 18em;
+    display: inline-block;
+  padding: .3em;
+}
+.xspanel {
+  max-width:13em;
+  display: inline-block;
+  padding:.2em;
+}
+.xxspanel {
+  max-width:7em;
+  display: inline-block;
+  padding:.1em;
+}
+.hint {
+	display: inline;
+	font-style: italic;
+	font-size: smaller;
+}
+.hint::before { 
+content: "(";
+}
+.hint::after { 
+content: ")";
+}
+
+
+.usertitleref {
+	border-radius: 1em;
+   background-color:rgba(0,0,32,0.6);
+   font-family: 'Arial', cursive;
+	padding: 1em;
+}
+label {
+	font-size: medium;
+}
+.editable {
+	margin: .5em; 
+	min-height:1em; 
+	border-radius: 1em; 
+	border: dashed rgb(020,20,256) 2px; 
+}
+
+.notification {
+	font-size: large;
+	background-color: rgba(64,64,0,0.5);
+	border: solid green 1px;
+	padding: 1em;
+	border-radius:1em;
+	margin:1em;
+	padding:1em;
+	}
+.dirty { 
+	background-color: rgba(128,128,0,0.5);
+}
+.error, #error {
+	color: #f88;
+	font-size: large;
+	background-color: rgba(256,0,0,0.5);
+}
+.validation-summary-errors{
+	color: #f88;
+	background-color: rgba(256,0,0,0.5);
+}
+
+.hidden { display:none; }
+
+ul.preview li:nth-child(-n+10) {
+   display:inline;
+	font-size:xx-small;
+}
+
+ul.preview li:nth-child(n) {
+	display:none;
+}
+
+.validation-summary-errors{
+	color: #f88;
+}
+
+a {
+   text-decoration: none;
+}
+
+.actionlink, .menuitem, a {
+	border-color: rgb(128,128,0);
+   background-color: rgba(20,20,20,.8); 
+	color: yellow;
+}
+
+input, select, textarea { 
+	color: white;
+	background-color:rgba(0,0,64,0.8);
+	border-color: rgb(128,128,128);
+}
+
+a:hover {
+	background-color:rgba(30,0,124,0.9);
+	border-color: green ;
+}
+a:active { 
+	background-color:rgba(124,0,32,0.9);
+}
+
+input:hover, textarea:hover {
+	color: white;
+	background-color:rgba(64,64,64,0.8);
+}
+.code {
+	background-color: rgba(0,0,256,0.1);
+}
+
+
+@media all and (max-width: 640px) {
+header {
+	padding-top:1em;
+	padding-bottom:1em;
+	background: url("/App_Themes/images/star-939235_1280.s.jpg") 0 0 no-repeat fixed;
+	}
+		
+#avatar { 
+ 	margin:.5em;
+ }
+
+header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
+
+	nav {
+	margin: 1em;
+		padding: 1em;
+		background:    url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ; 
+	}
+	main { 
+	margin: 1em;
+	padding: 1em;
+	background: url("/App_Themes/images/p8-av4.s.jpg") 50% 20em no-repeat fixed ;
+	} 
+	footer { 
+		background: url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ; 
+	} 
+	footer a {
+	border-radius:.5em;
+	margin:.5em;
+	padding:.5em;
+  }
+
+  .notification { 
+	padding: .5em;
+	border-radius:.5em;
+	margin:.5em;
+	padding:.5em;
+ }
+	.menuitem {
+		display: block; 
+	}
+	.post { 
+	margin:.3em;
+	padding:.3em;
+	}
+	.usertitleref{ 
+	padding:.3em;
+	}
+  .bshpanel { cursor:zoom-in; }
+
+	.c2 { display:initial; }
+	.c2-alt { display:none; }
+	.c3 { display:none; }
+	.c3-alt { display:initial; }
+}
+
+@media all and (max-width: 350px) {
+header {
+	padding-top:.5em;
+	padding-bottom:.5em;
+	background: url("/App_Themes/images/star-939235_1280.xxs.jpg") 0 0 no-repeat fixed;
+ }
+
+header h1, header a { padding:.2em;}
+
+	nav {
+	margin: .5em;
+		padding: .5em;
+		background:    url("/App_Themes/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
+	}
+	main { 
+	margin: .5em;
+	    padding: .5em;
+		background:   url("/App_Themes/images/p8-av4.xxs.jpg")  50% 20em repeat fixed ; 
+	} 
+	footer { 
+		background:    url("/App_Themes/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 
+	} 
+	footer a {
+	border-radius:.2em;
+	margin:.2em;
+	padding:.2em;
+  }
+  .c2 { display:none; }
+  .c2-alt { display:initial; }
+}
