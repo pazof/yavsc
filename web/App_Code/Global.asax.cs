@@ -28,11 +28,6 @@ namespace Yavsc
 		/// <param name="routes">Routes.</param>
 		public static void RegisterRoutes (RouteCollection routes)
 		{
-			// Should be FrontOffice in a POS,
-			string defaultController = 
-				WebConfigurationManager.AppSettings ["DefaultController"]; 
-			if (defaultController == null)
-				defaultController = "Home";
 			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}"); // not used
 			routes.IgnoreRoute ("Scripts/{*pathInfo}"); // web user side scripts
 			routes.IgnoreRoute ("App_Theme/{*pathInfo}"); // sites themes
@@ -56,7 +51,7 @@ namespace Yavsc
 				"blog/{user}",
 				new { controller = "Blogs", 
 					action = "UserPosts", 
-					user="Paul Schneider" }
+					user= UrlParameter.Optional }
 			); 
 
 			routes.MapRoute (

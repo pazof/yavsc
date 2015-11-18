@@ -4,17 +4,26 @@ CONFIG=Debug
 LDYDESTDIR=dist/web/$(CONFIG)
 COPYUNCHANGED="false"
 
-HOST_rsync_yavsc=lua.pschneider.fr
-DESTDIR_rsync_yavsc=/srv/www/yavsc
-
-HOST_rsync_lua=lua.pschneider.fr
-DESTDIR_rsync_lua=/srv/www/lua
+HOST_rsync_dev=lua.pschneider.fr
+DESTDIR_rsync_dev=/srv/www/yavscdev
 
 HOST_rsync_pre=lua.pschneider.fr
 DESTDIR_rsync_pre=/srv/www/yavscpre
 
 HOST_rsync_prod=lua.pschneider.fr
 DESTDIR_rsync_prod=/srv/www/yavsc
+
+HOST_rsync_lua=lua.pschneider.fr
+DESTDIR_rsync_lua=/srv/www/lua
+
+HOST_rsync_totemdev=lua.pschneider.fr
+DESTDIR_rsync_totemdev=/srv/www/totemdev
+
+HOST_rsync_totempre=lua.pschneider.fr
+DESTDIR_rsync_totempre=/srv/www/totempre
+
+HOST_rsync_totemprod=lua.pschneider.fr
+DESTDIR_rsync_totemprod=/srv/www/totemprod
 
 DOCASSBS=NpgsqlBlogProvider.dll WorkFlowProvider.dll Yavsc.WebControls.dll ITContentProvider.dll NpgsqlMRPProviders.dll Yavsc.dll SalesCatalog.dll YavscModel.dll
 

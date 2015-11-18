@@ -144,12 +144,10 @@
     <Folder Include="Views\PayPal\" />
     <Folder Include="Views\Modules\" />
     <Folder Include="xmldoc\" />
+    <Folder Include="App_Code\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BlogsController.cs" />
     <Compile Include="AssemblyInfo.cs" />
@@ -490,6 +488,7 @@
     <Content Include="Scripts\yavsc.skills.js" />
     <Content Include="Views\FrontOffice\UserSkills.aspx" />
     <Content Include="Views\FrontOffice\UserCard.ascx" />
+    <Content Include="App_Code\Global.asax.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

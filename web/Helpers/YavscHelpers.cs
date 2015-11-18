@@ -16,6 +16,7 @@ using System.Web.Script.Serialization;
 using System.Web.Mvc;
 using System.Text.RegularExpressions;
 using Yavsc.Model.Messaging;
+using System.Linq;
 
 namespace Yavsc.Helpers
 {
@@ -338,7 +339,63 @@ namespace Yavsc.Helpers
 			}
 			return new MvcHtmlString(strwr.ToString());
 		}
+		/// <summary>
+		/// The available themes.
+		/// </summary>
+		public static string[] AvailableThemes = {
+			"clear", "dark", "blue", "green"
+		};
 
+		/// <summary>
+		/// Themes the CSS links.
+		/// </summary>
+		/// <returns>The CSS links.</returns>
+		/// <param name="html">Html.</param>
+		/// <param name="theme">Theme.</param>
+		/// <param name="baseName">Base name.</param>
+		public static IHtmlString ThemeCSSLinks (
+			this System.Web.Mvc.HtmlHelper html, string theme, string baseName) {
+
+			if (!AvailableThemes.Contains (theme))
+				throw new ArgumentException ("The given theme is not configured: " +
+				theme);
+			if (string.IsNullOrWhiteSpace(baseName))
+				throw new ArgumentException ("Specify a base name");
+
+			StringWriter strwr = new StringWriter ();
+			HtmlTextWriter writer = new HtmlTextWriter(strwr);
+			// refer to the global style
+			writer.AddAttribute ("rel", "stylesheet");
+			writer.AddAttribute ("title", theme);
+			writer.AddAttribute ("href", 
+				string.Format(
+					"/App_Themes/{1}.css",
+					theme,baseName));
+			writer.RenderBeginTag ("link");
+
+			// refer to the themed style
+			writer.AddAttribute ("rel", "stylesheet");
+			writer.AddAttribute ("title", theme);
+			writer.AddAttribute ("href", 
+				string.Format(
+					"/App_Themes/{0}/{1}.css",
+					theme,baseName));
+			writer.RenderBeginTag ("link");
+			
+			// refer to alternate styles
+			foreach (string atheme in AvailableThemes) {
+				if (atheme != theme) {
+					writer.AddAttribute ("rel", "alternate stylesheet");
+					writer.AddAttribute ("title", atheme);
+					writer.AddAttribute ("href", 
+						string.Format (
+							"/App_Themes/{0}/{1}.css",
+							atheme, baseName));
+					writer.RenderBeginTag ("link");
+				}
+			}
+			return new MvcHtmlString(strwr.ToString());
+		}
 
 	}
 }

@@ -1,1 +1,1 @@
-<%@ Application Inherits="Yavsc.MvcApplication" %>
+<%@ Application Codebehind="Global.asax.cs" Inherits="Yavsc.MvcApplication" Language="C#" %>

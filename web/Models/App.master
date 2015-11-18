@@ -11,8 +11,7 @@ Page.StyleSheetTheme = (string) Profile.UITheme; %>
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/"+Page.StyleSheetTheme+"/style.css")%>" />
-<link rel="stylesheet" href="<%=Url.Content("~/App_Themes/style.css")%>" />
+<%= Html.ThemeCSSLinks(Page.StyleSheetTheme,"style")%>
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/font-awesome.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/jquery-ui.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/prettify.css")%>" />

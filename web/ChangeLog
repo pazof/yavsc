@@ -1,5 +1,31 @@
 2015-11-18  Paul Schneider  <paul@pschneider.fr>
 
+	* style.css: this floating breaks my dark style
+
+	* Global.asax: the application object is now compiled at
+	runtime,
+	its code is in App_Code
+
+	* YavscHelpers.cs: Implements a method helping to refer on
+	themed stylesheets,
+	presenting the "alternate" stylesheet usage.
+
+	* App.master: Uses the new Helper function to refer on the
+	main style sheet `style.css`
+
+	* Web.config: * no more default controller, instead, modify
+	the app code
+	* the client side javascript validation is custommized, and we
+	do not need the M$ js for now
+
+
+	* Web.csproj: Global.asax.cs becomes a content, compiled at
+	runtime, found in ~/App_Code
+
+	* Global.asax.cs: Now compiles at runtime.
+
+2015-11-18  Paul Schneider  <paul@pschneider.fr>
+
 	* style.css:
 	* style.css:
 	* UsersInRole.aspx: refactoring
