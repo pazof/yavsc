@@ -10,11 +10,12 @@ dist
 bower_components
 node_modules
 svg
-web/Web.config.prod
-web/Web.config.dev
-web/Web.config.lua
+web/bfiles
+web/App_Themes/style.totem.css
+web/Web.Debug.config
+web/Web.Release.config
+web/Web.Lua.config
 .nuget
 .gitignore
 
-web/bfiles
-web/App_Themes/style.totem.css
+

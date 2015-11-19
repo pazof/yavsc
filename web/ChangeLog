@@ -1,3 +1,30 @@
+2015-11-19  Paul Schneider  <paul@pschneider.fr>
+
+	* PayPalController.cs: implements a Paypal controller
+
+	* Abort.aspx: Paypal paiement aborting page
+
+	* Commit.aspx: Paypal paiement commit page
+
+	* IPN.aspx: Paypal paiement notification page
+
+	* Index.aspx: Paypal paiement form page
+
+	* WebTasks.dll: thanks to he Marcelo Zabani's coding blog:
+	<https://mzabani.wordpress.com/2013/09/24/mono-asp-net-project-deployment-with-web-config-xdt-transformations/>
+
+
+	* yavsc.rate.js: refactoring, still needs a cleanning
+
+	* RateSkillControl.ascx: give it the `rate-site-skill`
+	`data-type` html attribute
+
+	* RateUserSkillControl.ascx: cleans an obsolete code chunk
+
+	* Web.csproj: Fixes the missing RateSkillControl at deploy
+	time,
+	adds my deployment config
+
 2015-11-18  Paul Schneider  <paul@pschneider.fr>
 
 	* style.css: this floating breaks my dark style

@@ -10,6 +10,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Yavsc</RootNamespace>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <AssemblyName>Yavsc</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +23,6 @@
     <AspNet>
       <AspNet DisableCodeBehindGeneration="True" />
     </AspNet>
-    <AssemblyName>Yavsc</AssemblyName>
     <CustomCommands>
       <CustomCommands>
         <Command type="BeforeExecute" />
@@ -38,15 +38,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <AssemblyName>Yavsc</AssemblyName>
     <DocumentationFile>bin\Yavsc.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'MVC2|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Lua|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin</OutputPath>
-    <DefineConstants>DEBUG,TEST,WEBAPI</DefineConstants>
     <WarningLevel>4</WarningLevel>
-    <AssemblyName>maeweb</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -105,6 +102,9 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.4\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.XmlTransform">
+      <HintPath>..\packages\Mono.Web.Xdt.1.0.0\lib\Net40\Microsoft.Web.XmlTransform.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\" />
@@ -115,7 +115,6 @@
     <Folder Include="App_Themes\dark\" />
     <Folder Include="App_Data\" />
     <Folder Include="App_Themes\images\" />
-    <Folder Include="App_Data\Sql\" />
     <Folder Include="App_Themes\clear\" />
     <Folder Include="avatars\" />
     <Folder Include="backup\" />
@@ -209,6 +208,7 @@
     <Compile Include="Helpers\Google\GoogleHelpers.cs" />
     <Compile Include="AuthorizeAttribute.cs" />
     <Compile Include="ApiControllers\SkillController.cs" />
+    <Compile Include="Controllers\PayPalController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -489,6 +489,15 @@
     <Content Include="Views\FrontOffice\UserSkills.aspx" />
     <Content Include="Views\FrontOffice\UserCard.ascx" />
     <Content Include="App_Code\Global.asax.cs" />
+    <Content Include="Views\FrontOffice\RateSkillControl.ascx" />
+    <Content Include="Views\FrontOffice\RateUserSkillControl.ascx" />
+    <Content Include="Web.Release.config" />
+    <Content Include="Views\PayPal\Index.aspx" />
+    <Content Include="Views\PayPal\Abort.aspx" />
+    <Content Include="Views\PayPal\Commit.aspx" />
+    <Content Include="Views\PayPal\IPN.aspx" />
+    <Content Include="Web.Debug.config" />
+    <Content Include="Web.Lua.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -517,7 +526,9 @@
     </None>
     <None Include="fonts\fontawesome-webfont.woff2" />
     <None Include="lib\MarkdownDeep.dll" />
-    <None Include="App_Data\Sql\Skills.sql" />
+    <None Include="App_Code\Sql\Skills.sql" />
+    <None Include="WebDeploy.targets" />
+    <None Include="WebTasks.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">
@@ -554,7 +565,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="App_Data\Sql\instdbws.sql" />
+    <EmbeddedResource Include="App_Code\Sql\instdbws.sql" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References" />

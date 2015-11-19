@@ -18,10 +18,10 @@
 <script type="text/javascript">
  $(document).ready(function () {
  $('#btncreate').click( function() {
- Skills.createSkill(sname, function(sid) {
- var sname = $('#SkillName').val();
+ var $sname = $('#SkillName').val();
+ Skills.createSkill($sname, function(sid) {
  console.log(' Skill created id : '+sid);
- $('<li>'+sname+'</li>').data('sid',sid).addClass('skillname').appendTo('#skills');
+ $('<li>'+$sname+'</li>').data('sid',sid).addClass('skillname').appendTo('#skills');
  $('#SkillName').val('');
  }); } ); });
 </script>

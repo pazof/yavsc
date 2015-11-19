@@ -37,16 +37,14 @@ ddir:
 deploy: ddir build
 	rm -rf $(LYDESTDIR)
 	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir=../$(LDYDESTDIR) /t:Deploy web/Web.csproj
-	mv $(LDYDESTDIR)/Web.config $(LDYDESTDIR)/Web.config.new
 
 rsync_% : HOST = $(HOST_$@)
 
 rsync_% : DESTDIR = $(DESTDIR_$@)
 
 rsync_% : deploy
-	echo "!Deploying to $(HOST)!"
+	echo "!Deploying to $(HOST) using $(CONFIG) config!"
 	$(RSYNCCMD) dist/web/$(CONFIG)/ root@$(HOST):$(DESTDIR)
-	ssh root@$(HOST) "service apache2 reload"
 
 build: 
 	xbuild /p:Configuration=$(CONFIG) /t:Build Yavsc.sln
@@ -61,8 +59,8 @@ distclean: clean
 sourcepkg:
 	git archive --format=tar --prefix=yavsc-$(CONFIG)/ $(CONFIG) | bzip2 > yavsc-$(CONFIG).tar.bz2
 
-debug: build
-	(cd web; export MONO_OPTIONS=--debug; xsp4 --port 8080)
+start_xsp: deploy
+	(cd $(LDYDESTDIR); export MONO_OPTIONS=--debug; xsp4 --port 8080)
 
 xmldoc: $(patsubst %,web/bin/%,$(DOCASSBS))
 	mdoc-update $^ $(patsubst %.dll,-i%.xml,$^) --out web/xmldoc
@@ -73,7 +71,7 @@ htmldoc: xmldoc
 docdeploy-prod: htmldoc
 	rsync -ravu web/htmldoc root@$(PRODHOSTDIR)
 
-rsync_lua:
+rsync_lua: CONFIG = Lua
 
 rsync_yavsc:
 

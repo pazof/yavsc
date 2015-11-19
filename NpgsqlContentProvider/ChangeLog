@@ -1,3 +1,8 @@
+2015-11-19  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlContentProvider.csproj: adds a build target named
+	"Lua"
+
 2015-11-17  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlSkillProvider.cs: User's skills profile object now

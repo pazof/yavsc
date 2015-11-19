@@ -1,3 +1,12 @@
+2015-11-19  Paul Schneider  <paul@pschneider.fr>
+
+	* .gitignore: ignore my new config transformation sources
+
+	* Makefile: instead of `deploy`, start Xsp, in the `dist`
+	folder
+
+	* Yavsc.sln: Lua config
+
 2015-11-18  Paul Schneider  <paul@pschneider.fr>
 
 	* Makefile: adds my deployment targets

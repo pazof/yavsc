@@ -1,3 +1,7 @@
+2015-11-19  Paul Schneider  <paul@pschneider.fr>
+
+	* SalesCatalog.csproj: adds a build target named "Lua"
+
 2015-11-04  Paul Schneider  <paul@pschneider.fr>
 
 	* TestCatalogInit.cs: 
