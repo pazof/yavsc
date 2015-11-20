@@ -59,8 +59,8 @@ distclean: clean
 sourcepkg:
 	git archive --format=tar --prefix=yavsc-$(CONFIG)/ $(CONFIG) | bzip2 > yavsc-$(CONFIG).tar.bz2
 
-start_xsp: deploy
-	(cd $(LDYDESTDIR); export MONO_OPTIONS=--debug; xsp4 --port 8080)
+start_xsp: build
+	(cd web; export MONO_OPTIONS=--debug; xsp4 --port 8080)
 
 xmldoc: $(patsubst %,web/bin/%,$(DOCASSBS))
 	mdoc-update $^ $(patsubst %.dll,-i%.xml,$^) --out web/xmldoc
@@ -84,3 +84,5 @@ nuget_restore:
 
 nuget_update:
 	for prj in ITContentProvider NpgsqlBlogProvider NpgsqlContentProvider NpgsqlMRPProviders Presta SalesCatalog TestAPI web WebControls yavscclient yavscModel; do nuget update "$${prj}/packages.config"  ; done
+
+

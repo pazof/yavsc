@@ -133,6 +133,7 @@ namespace Yavsc.Controllers
 			BuildBackupList (datac);
 			return View (datac);
 		}
+
 		private void BuildBackupList(DataAccess datac)
 		{
 			// build ViewData ["Backups"];
@@ -151,16 +152,18 @@ namespace Yavsc.Controllers
 		/// <param name="rolename">Rolename.</param>
 		/// <param name="returnUrl">Return URL.</param>
 		[Authorize(Roles="Admin")]
-		public ActionResult RemoveFromRole(string username, string rolename, string returnUrl)
+		public ActionResult RemoveUserFromRole(string username, string rolename, string returnUrl)
 		{
-			Roles.RemoveUserFromRole(username,rolename);
+			if (ModelState.IsValid)
+				Roles.RemoveUserFromRole(username,rolename);
 			return Redirect(returnUrl);
 		}
 
 		[Authorize(Roles="Admin")]
 		public ActionResult AddUserToRole(string username, string rolename, string returnUrl)
 		{
-			Roles.AddUsersToRole(new string[] { username } ,rolename);
+			if (ModelState.IsValid)
+				Roles.AddUsersToRole(new string[] { username } ,rolename);
 			return Redirect(returnUrl);
 		}
 		/// <summary>

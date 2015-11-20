@@ -31,7 +31,7 @@ namespace Yavsc.Model.RolesAndMembers
 		/// </summary>
 		/// <value>The name of the user.</value>
 		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")
-			,Display(ResourceType=typeof(LocalizedText),Name="User_name"),RegularExpression("([a-z]|[A-Z]|[0-9] )+")]
+			,Display(ResourceType=typeof(LocalizedText),Name="User_name"),RegularExpression(@"^[a-zA-Z .-_#]{1,100}$")]
 		public string UserName { get; set; }
 	
 	}

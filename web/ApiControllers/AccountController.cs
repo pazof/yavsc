@@ -96,20 +96,32 @@ namespace Yavsc.ApiControllers
 		[ValidateAjax]
 		public void ResetPassword (LostPasswordModel model)
 		{
-			StringDictionary errors;
-			MembershipUser user;
-			YavscHelpers.ValidatePasswordReset (model, out errors, out user);
-			foreach (string key in errors.Keys)
-				ModelState.AddModelError (key, errors [key]);
-			if (user != null && ModelState.IsValid)
-				Url.SendActivationMessage (user);
+			if (ModelState.IsValid) {
+				StringDictionary errors;
+				MembershipUser user;
+				YavscHelpers.ValidatePasswordReset (model, out errors, out user);
+				foreach (string key in errors.Keys)
+					ModelState.AddModelError (key, errors [key]);
+				if (user != null && ModelState.IsValid)
+					Url.SendActivationMessage (user);
+			}
 		}
 
 		[ValidateAjax]
 		[Authorize(Roles="Admin")]
 		public void AddUserToRole(UserRole model)
 		{
-			Roles.AddUserToRole (model.UserName, model.Role);
+			if (ModelState.IsValid)
+				Roles.AddUserToRole (model.UserName, model.Role);
+		}
+
+		[ValidateAjax]
+		[Authorize(Roles="Admin")]
+		public void RemoveUserFromRole(UserRole model)
+		{
+			if (ModelState.IsValid)
+				Roles.RemoveUserFromRoles (model.UserName, 
+					new string [] { model.Role } );
 		}
 
 	}

@@ -36,12 +36,12 @@ namespace Yavsc.Helpers
 		/// <param name="helper">Helper.</param>
 		/// <param name="message">Message.</param>
 		/// <param name="click_action">Click action.</param>
-		public static void Notify(this AjaxHelper helper, string message, string click_action=null) {
+		public static void Notify(this AjaxHelper helper, object message, string click_action=null) {
 			
 			if (helper.ViewData ["Notifications"] == null)
 				helper.ViewData ["Notifications"] = new List<Notification> ();
 			(helper.ViewData ["Notifications"] as List<Notification>).Add (
-				new Notification { body = QuoteJavascriptString(message), 
+				new Notification { body = QuoteJavascriptString((string)message), 
 					click_action = click_action } ) ;
 		}
 
@@ -50,15 +50,21 @@ namespace Yavsc.Helpers
 		/// </summary>
 		/// <returns>The javascript string.</returns>
 		/// <param name="str">String.</param>
-		public static string QuoteJavascriptString(string str)
+		public static string QuoteJavascriptString(object str)
 		{
-			str = str.Replace ("\n", "\\n");
-			if (str.Contains ("'"))
-			if (str.Contains ("\""))
-				return "'" + str.Replace ("'", "\\'") + "'";
+			string tmpstr = (string) str;
+			tmpstr = tmpstr.Replace ("\n", "\\n");
+			if (tmpstr.Contains ("'"))
+			if (tmpstr.Contains ("\""))
+				return "'" + tmpstr.Replace ("'", "\\'") + "'";
 			else
-				return "\"" + str + "\"";
-			return "'" + str + "'";
+				return "\"" + tmpstr + "\"";
+			return "'" + tmpstr + "'";
+		}
+
+		public static string JString(this AjaxHelper helper, object str)
+		{
+			return QuoteJavascriptString (str);
 		}
 	}
 }

@@ -49,9 +49,3 @@
 	},
 })})(jQuery);
 }).call(this);
-
- $(document).ready(function(){ 
-  $('[data-type="rate-site-skill"]').rate({target: 'Skill/RateSkill'});
-  $('[data-type="rate-user-skill"]').rate({target: 'Skill/RateUserSkill'});
-  $('[data-type="rate-bill"]').rate({target: 'Blogs/Rate'});
- });

@@ -1,3 +1,9 @@
+2015-11-21  Paul Schneider  <paul@pschneider.fr>
+
+	* UserNameBase.cs: Permet l'usage des espaces dans les noms
+	d'utilisateurs,
+	à la création legacy, ou autres usage du nom d'utilisateur. 
+
 2015-11-19  Paul Schneider  <paul@pschneider.fr>
 
 	* YavscModel.csproj: Lua config

@@ -23,6 +23,9 @@ Page.StyleSheetTheme = (string) Profile.UITheme; %>
 <script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>
 <script type="text/javascript">
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
+ $(document).ready(function(){ 
+  $('[data-type="rate-bill"]').rate({target: 'Blogs/Rate'});
+ });
 </script> 
 <%=Ajax.GlobalizationScript()%>
 <script src="<%=Url.Content("~/Scripts/yavsc.js")%>"></script>

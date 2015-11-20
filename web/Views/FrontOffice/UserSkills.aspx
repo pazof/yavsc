@@ -2,6 +2,11 @@
 
 <asp:Content ID="headContent" ContentPlaceHolderID="head" runat="server">
 <script src="<%=Url.Content("~/Scripts/yavsc.skills.js")%>"></script>
+<script>
+ $(document).ready(function(){ 
+  $('[data-type="rate-user-skill"]').rate({target: 'Skill/RateUserSkill'});
+ });
+ </script>
 </asp:Content>
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">

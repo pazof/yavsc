@@ -1,3 +1,87 @@
+2015-11-21  Paul Schneider  <paul@pschneider.fr>
+
+	* Microsoft.Web.XmlTransform.dll: Copié de l'import Nuget de
+	Mono.Web.Xdt (transformations de fichiers de configuration)
+
+	* yavsc.admin.js: Implémente les méthodes Javascript de
+	l'interface utilisateur de suppression et d'ajout d'un
+	utilisateur à un groupe:
+	un widget jQuery pour la suppression, l'accès à l'API
+
+	* RestrictedArea.aspx: Page vue par l'utilisateur si par
+	malheur il suivait un lien vers un contenu d'accès restreint,
+	à la place d'un code Http 404 ou autre.
+	Si cet utilisateur est administrateur, la page lui affiche les
+	rôles ou utilisateurs autorisés à accèder au contenu.
+
+
+	* RestrictedArea.aspx:
+	* RestrictedArea.aspx:
+	* RestrictedArea.aspx:
+	* RestrictedArea.aspx:
+	* RestrictedArea.aspx:
+	* RestrictedArea.aspx:
+	* RestrictedArea.aspx: Page vue par l'utilisateur si par
+	malheur il suivait un lien vers un contenu d'accès restreint,
+	à la place d'un code Http 404 ou autre.
+	Si cet utilisateur est administrateur, la page lui affiche les
+	rôles ou utilisateurs autorisés à accèder au contenu.
+
+	* AccountController.cs: Evite de mettre à jour un mot de passe
+	avec des valeures non attendues
+
+	* style.css: corrige un mouvement de la disposition au survol
+	de la souris
+
+	* AuthorizeAttribute.cs: enlève la redirection à l'accès
+	restreint, et fixe pas la même la transmission des données
+	`Roles` et `Users` de la vue
+
+
+	* AdminController.cs: Evite de supprimer un utilisateur d'un
+	groupe avec des valeures non attendues
+
+	* HomeController.cs: Il n'y avait pas à créer de methode pour
+	la vue publique de l'accès restreint.
+
+	* YavscAjaxHelper.cs: évite d'avoir à convertir en chaine les
+	valeurs de la vue.
+
+
+	* App.master: Cette page maître affiche encore beaucoup de
+	billets de blog, on y installe le coteur, de base. Ça changera
+	quand les blogs auront (enfin) leur page maître dédiée.
+
+
+	* AppAdmin.master: synchronisation avec la page maître
+	principale (thémes)
+
+	* NoLogin.master: synchronisation avec la page maître
+	principale.(thémes)
+
+	* yavsc.rate.js: supprime l'initialisation de tous les type de
+	cotes depuis le script global.
+	C'est fait sur les pages qui en ont besoin, et seulement pour
+	les types de cotes concernés.
+
+	* AddUserToRole.ascx: Ce formulaire est maintenant à la fois
+	opérationel depuis une interface web sans javascript, et à la
+	Ajax quand Javascript activé.
+
+
+	* UsersInRole.aspx: implémente l'interface utilisateur pour
+	l'ajout et la suppression d'un utilisateur à un groupe
+
+	* Skills.aspx: initialise le coteur js des compétences site
+
+	* UserSkills.aspx: initialise le coteur js de compétences
+	utilisateur
+
+	* Web.csproj: un script et des pages d'erreur d'accès, il en
+	faut une par controlleur
+	qui restreint quelque de ses accès.
+
+
 2015-11-19  Paul Schneider  <paul@pschneider.fr>
 
 	* PayPalController.cs: implements a Paypal controller

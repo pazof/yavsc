@@ -154,13 +154,16 @@ ul.editablelist>li {
 	border: solid grey 1px;
 	border-radius: 1em;
 }
-
+ul.editablelist>li:before { 
+  font-family: 'FontAwesome';
+  content: "\f007";
+  }
 ul.editablelist>li:hover { 
 	background-color: rgba(128,0,0,0.5);
 	cursor:pointer;
 }
 
-ul.editablelist>li:hover:after { 
+ul.editablelist>li:hover:before { 
   font-family: 'FontAwesome';
   content: "\f00d";
   }

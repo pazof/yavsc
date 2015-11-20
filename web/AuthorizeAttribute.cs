@@ -40,11 +40,16 @@ namespace Yavsc
 				{			
 					// let the client know which role were allowed here
 					// filterContext.ActionDescriptor.ControllerDescriptor. 
-					filterContext.Result = new System.Web.Mvc.RedirectResult ("~/Home/RestrictedArea");
+					var result = new System.Web.Mvc.ViewResult();
+					
 					filterContext.Controller.ViewData ["ActionName"] = filterContext.ActionDescriptor.ActionName;
 					filterContext.Controller.ViewData ["ControllerName"] = filterContext.ActionDescriptor.ControllerDescriptor.ControllerName;
 					filterContext.Controller.ViewData ["Roles"] = Roles;
 					filterContext.Controller.ViewData ["Users"] = Users;
+					result.ViewName = "RestrictedArea";
+					result.ViewData = filterContext.Controller.ViewData;
+					filterContext.Result = result;
+
 				}
 				else filterContext.Result = new System.Web.Mvc.HttpStatusCodeResult((int)System.Net.HttpStatusCode.Forbidden);
 			}
