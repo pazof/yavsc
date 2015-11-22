@@ -249,9 +249,9 @@ namespace Yavsc.Controllers
 		/// Booking the specified model.
 		/// </summary>
 		/// <param name="model">Model.</param>
-		public ActionResult Booking (BookingQuery model)
+		public ActionResult EavyBooking (BookingQuery model)
 		{
-			return View ();
+			return View (model);
 		}
 
 		/// <summary>
@@ -290,5 +290,15 @@ namespace Yavsc.Controllers
 			return View (usp);
 		}
 
+		/// <summary>
+		/// Booking the specified model.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		public ActionResult Booking (SimpleBookingQuery model)
+		{
+			if (model.Needs == null)
+				model.Needs = SkillManager.FindSkill ("%");
+			return View (model);
+		}
 	}
 }

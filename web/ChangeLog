@@ -1,5 +1,10 @@
 2015-11-23  Paul Schneider  <paul@pschneider.fr>
 
+	* FrontOfficeController.cs: Démarre l'implementation des
+	methodes de réservation
+
+2015-11-23  Paul Schneider  <paul@pschneider.fr>
+
 	* MEA.sql: définit la valeur MEA du profile (Main Exerted
 	Activity) dans la base de donnée
 
