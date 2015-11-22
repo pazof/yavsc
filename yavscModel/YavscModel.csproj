@@ -188,7 +188,6 @@
     <Compile Include="Skill\SkillProvider.cs" />
     <Compile Include="Skill\SkillManager.cs" />
     <Compile Include="Manager.cs" />
-    <Compile Include="Skill\Skill.cs" />
     <Compile Include="Skill\UserSkill.cs" />
     <Compile Include="Skill\UserSkillComment.cs" />
     <Compile Include="Skill\UserSkillDeclaration.cs" />
@@ -198,8 +197,10 @@
     <Compile Include="IIdentified.cs" />
     <Compile Include="IRating.cs" />
     <Compile Include="IAuthorized.cs" />
-    <Compile Include="Skill\PerformerProfile.cs" />
     <Compile Include="FileSystem\UserFileSystemManager.cs" />
+    <Compile Include="FrontOffice\PerformerProfile.cs" />
+    <Compile Include="FrontOffice\SimpleBookingQuery.cs" />
+    <Compile Include="Skill\SkillEntity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,3 +1,31 @@
+2015-11-23  Paul Schneider  <paul@pschneider.fr>
+
+	* MEA.sql: définit la valeur MEA du profile (Main Exerted
+	Activity) dans la base de donnée
+
+	* Booking.aspx: Imlémente la vue du formulaire de reservation
+	simple,
+	c'etait avant la reservation classique, sur une période plutôt
+	qu'un jour.
+	La reservation classique est renomée `EavyBooking`.
+
+	* FrontOfficeController.cs: definit l'interface de cotation
+	des compétences attendues
+
+	* Skills.aspx:
+	* SkillController.cs:
+	* UserSkills.aspx: refactorisation (-Skill+SkillEntity)
+
+	* UserCard.ascx: Imlémente une carte utilisateur.
+
+	* Web.config: déclare le code activité principale exercée
+	parmis les valeurs du profile authentifié.
+
+	* Web.csproj: ajoute les nouveaux formulaire de reservation au
+	projet.
+
+	* EavyBooking.aspx: Implémente la reservation lourde
+
 2015-11-22  Paul Schneider  <paul@pschneider.fr>
 
 	* BasketController.cs:

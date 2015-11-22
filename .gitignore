@@ -15,7 +15,8 @@ web/App_Themes/style.totem.css
 web/Web.Debug.config
 web/Web.Release.config
 web/Web.Lua.config
+web/Web.TotemPre.config
+web/Web.TotemProd.config
 .nuget
 .gitignore
-
 

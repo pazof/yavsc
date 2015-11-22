@@ -22,6 +22,7 @@ using System;
 using System.Configuration;
 using System.Reflection;
 using System.Configuration.Provider;
+using Yavsc.Model.FrontOffice;
 
 namespace Yavsc.Model.Skill
 {
@@ -49,7 +50,7 @@ namespace Yavsc.Model.Skill
 		/// Create or modifies the specified skill.
 		/// </summary>
 		/// <param name="skill">the skill.</param>
-		public static long DeclareSkill(Skill skill) {
+		public static long DeclareSkill(SkillEntity skill) {
 			Provider.Declare(skill);
 			return skill.Id;
 		}
@@ -85,7 +86,7 @@ namespace Yavsc.Model.Skill
 		/// </summary>
 		/// <returns>The skill identifier.</returns>
 		/// <param name="pattern">Pattern.</param>
-		public static Skill [] FindSkill(string pattern){
+		public static SkillEntity [] FindSkill(string pattern){
 			return Provider.FindSkill(pattern);
 		}
 

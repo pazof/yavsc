@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Skills" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Skill>>" %>
+﻿<%@ Page Title="Skills" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<SkillEntity>>" %>
 
 <asp:Content ID="headContent" ContentPlaceHolderID="head" runat="server">
 <script src="<%=Url.Content("~/Scripts/yavsc.skills.js")%>"></script>
@@ -10,8 +10,6 @@
 </asp:Content>
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
-
-
 <aside class="control">
 <form method="post" action="DeclareSkill">
 <fieldset>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Booking" Language="C#" Inherits="System.Web.Mvc.ViewPage<BookQuery>" MasterPageFile="~/Models/App.master" %>
+﻿<%@ Page Title="Booking" Language="C#" Inherits="System.Web.Mvc.ViewPage<BookingQuery>" MasterPageFile="~/Models/App.master" %>
 <asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
  <link rel="stylesheet" type="text/css" href="/App_Themes/jquery.timepicker.css" />
  <script type="text/javascript" src="/Scripts/globalize/globalize.js"></script>
@@ -32,13 +32,9 @@ et le
   </div>
   <fieldset>
 <legend>Intervenant</legend>
-  <%= Html.LabelFor(model=>model.Role) %>:
-  <%= Html.TextBoxFor(model=>model.Role) %>
-  <%= Html.ValidationMessageFor(model=>model.Role) %>
- <br>
-  <%= Html.LabelFor(model=>model.Person) %>:
-  <%= Html.TextBoxFor(model=>model.Person) %>
-  <%= Html.ValidationMessageFor(model=>model.Person) %>
+  <%= Html.LabelFor(model=>model.Roles) %>:
+  <%= Html.TextBoxFor(model=>model.Roles) %>
+  <%= Html.ValidationMessageFor(model=>model.Roles) %>
  </fieldset>
   <script>
   $(document).ready(function(){

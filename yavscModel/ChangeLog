@@ -1,3 +1,36 @@
+2015-11-23  Paul Schneider  <paul@pschneider.fr>
+
+	* SimpleBookingQuery.cs: Implémente une simple commande de
+	rendez-vous,
+	en tant que commande du workflow.
+
+	* PerformerProfile.cs: S'assure d'avoir une valeur pour le nom
+	d'utilisateur à la création.
+
+	* LocalizedText.resx:
+	* LocalizedText.Designer.cs: "date préférée" en anglais
+
+	* LocalizedText.fr.resx:
+	* LocalizedText.fr.Designer.cs: "date préférée" en français
+
+	* Profile.cs: à la creation d'un profile, on doit avoir un nom
+	d'utilisateur,
+	même dans le cas où le profile est anonyme (dans ce cas,
+	on l'appelle identifiant anonyme).
+	Sinon, on lève une exception.
+
+	* SkillEntity.cs:
+	* SkillManager.cs:
+	* SkillProvider.cs: refactorisation (-Skill+SkillEntity)
+
+	* YavscModel.csproj: * refactorisation: le nom `Skill` est
+	celui de l'espace,
+	celui de la classe devient `SkillEntity`.
+	* Creation de la requête dite simple d'un rendez-vous (pour
+	prestation)
+	à une date donnée (sans heure), concernant simplement une
+	activité.
+
 2015-11-22  Paul Schneider  <paul@pschneider.fr>
 
 	* YavscModel.csproj:

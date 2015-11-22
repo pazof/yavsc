@@ -30,7 +30,7 @@ namespace Yavsc.Model.Skill
 	/// <summary>
 	/// Skill.
 	/// </summary>
-	public class Skill : IRating {
+	public class SkillEntity : IRating {
 		
 		/// <summary>
 		/// Gets or sets the identifier.

@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Configuration.Provider;
+using Yavsc.Model.FrontOffice;
 
 namespace Yavsc.Model.Skill
 {
@@ -32,7 +33,7 @@ namespace Yavsc.Model.Skill
 		/// Declare the specified skill.
 		/// </summary>
 		/// <param name="skill">Skill.</param>
-		public abstract long Declare(Skill skill) ;
+		public abstract long Declare(SkillEntity skill) ;
 
 		/// <summary>
 		/// Declare the specified user skill.
@@ -57,7 +58,7 @@ namespace Yavsc.Model.Skill
 		/// </summary>
 		/// <returns>The skill identifier.</returns>
 		/// <param name="pattern">Pattern.</param>
-		public abstract Skill [] FindSkill(string pattern);
+		public abstract SkillEntity [] FindSkill(string pattern);
 
 		/// <summary>
 		/// Gets the user skills.

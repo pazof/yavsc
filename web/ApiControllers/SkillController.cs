@@ -35,7 +35,7 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="s">the Skill objet.</param>
 		[ValidateAjaxAttribute,Authorize(Roles="Profiler")]
-		public long DeclareSkill (Skill s) {
+		public long DeclareSkill (SkillEntity s) {
 			if (ModelState.IsValid) { 
 				SkillManager.DeclareSkill (s);
 			}
@@ -83,7 +83,7 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <returns>The skill identifier.</returns>
 		/// <param name="pattern">Pattern.</param>
-		public Skill [] FindSkill (string pattern){
+		public SkillEntity [] FindSkill (string pattern){
 			return SkillManager.FindSkill(pattern);
 		}
 

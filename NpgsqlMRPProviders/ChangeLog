@@ -1,3 +1,8 @@
+2015-11-23  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlProfileProvider.cs: Fixe un bug introduit avec
+	l'implementation des profiles anonymes.
+
 2015-11-19  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlMRPProviders.csproj: adds a build target named "Lua"

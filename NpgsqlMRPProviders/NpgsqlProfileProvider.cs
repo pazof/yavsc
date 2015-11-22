@@ -260,6 +260,7 @@ namespace Npgsql.Web
 				return;
 			long puid = 0;
 			string username = (string) context ["UserName"];
+			bool needsAProfileDataRecord = false;
 			// This user is either a authentified username, or an anonymous asp user id
 			// He's anonymous when he's got no associated record in the "users" table
 			// But, as long as our membership provider creates a mandatory (by db constraint) associated 
@@ -269,37 +270,44 @@ namespace Npgsql.Web
 				cnx.Open ();
 				using (NpgsqlCommand cmdpi = cnx.CreateCommand ()) {
 					cmdpi.CommandText = "select count(uniqueid) " +
-					"from profiles where username = @username " +
-					"and applicationname = @appname";
-					cmdpi.Parameters.AddWithValue ("@username", username);
-					cmdpi.Parameters.AddWithValue ("@appname", applicationName);
+					"from profiles where username = :username " +
+					"and applicationname = :appname";
+					cmdpi.Parameters.AddWithValue ("username", username);
+					cmdpi.Parameters.AddWithValue ("appname", applicationName);
 				
 					long c = (long)cmdpi.ExecuteScalar ();
 					if (c == 0) {
 						// This is a new anonymous profile.
 						// the `isanonymous` field should be specified true by default in the ddl
 						cmdpi.CommandText = "insert into profiles (username,applicationname) " +
-						"values ( @username, @appname ) " +
+						"values ( :username, :appname ) " +
 						"returning uniqueid";
 						puid = (long) cmdpi.ExecuteScalar ();
-
-						using (NpgsqlCommand cmdpdins = cnx.CreateCommand ()) {
-							cmdpdins.CommandText = "insert into profiledata (uniqueid) values (@puid)";
-							cmdpdins.Parameters.AddWithValue ("@puid", puid);
-							cmdpdins.ExecuteNonQuery ();
-						}
+						needsAProfileDataRecord = true;
 					} else {
 						// here we're roughly sure to get the id
-						cmdpi.CommandText = "select uniqueid from profiles where username = @username " +
-						"and applicationname = @appname";
-						puid = (long)cmdpi.ExecuteScalar ();
+						cmdpi.CommandText = "select uniqueid from profiles where username = :username " +
+						"and applicationname = :appname";
+						puid = (long) cmdpi.ExecuteScalar ();
+						// but still no data
+						using (NpgsqlCommand cmdgetdataprid = cnx.CreateCommand ()) {
+							cmdgetdataprid.CommandText = "select count(uniqueid) from profiledata where uniqueid = :puid";
+							cmdgetdataprid.Parameters.AddWithValue ("puid", puid);
+							long cd = (long) cmdgetdataprid.ExecuteScalar ();
+							if (cd == 0) {
+								needsAProfileDataRecord = true;
+							}
+						}
 					}
 				}
-
+				if (needsAProfileDataRecord) using (NpgsqlCommand cmdpdins = cnx.CreateCommand ()) {
+					cmdpdins.CommandText = "insert into profiledata (uniqueid) values (:puid)";
+					cmdpdins.Parameters.AddWithValue ("puid", puid);
+					cmdpdins.ExecuteNonQuery ();
+				}
 				foreach (SettingsPropertyValue s in collection) {
 					if (s.UsingDefaultValue) {
-						//TODO Drop the property in the profile
-
+						//TODO ? Drop the property in the profile
 					} else {
 						// update the property value
 						// TODO update to null values (included to avoid Not Implemented columns in profiledata

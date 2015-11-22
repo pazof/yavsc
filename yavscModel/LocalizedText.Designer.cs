@@ -298,9 +298,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Register {
+        public static string PreferedDate {
             get {
-                return ResourceManager.GetString("Register", resourceCulture);
+                return ResourceManager.GetString("PreferedDate", resourceCulture);
             }
         }
         
@@ -361,6 +361,12 @@ namespace Yavsc.Model {
         public static string AnIMessageHasbeenSent {
             get {
                 return ResourceManager.GetString("AnIMessageHasbeenSent", resourceCulture);
+            }
+        }
+        
+        public static string Register {
+            get {
+                return ResourceManager.GetString("Register", resourceCulture);
             }
         }
         

@@ -14,6 +14,7 @@ using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.WorkFlow;
 using System.IO;
 using Yavsc.Model.FrontOffice.Catalog;
+using Yavsc.Model.Skill;
 
 namespace Yavsc.ApiControllers
 {
@@ -108,7 +109,6 @@ namespace Yavsc.ApiControllers
 			if (!prcli.IsBillable)
 				throw new TemplateException ("NotBillable:" + e.Client);
 
-
 			tmpe.Session.Add ("from", prpro);
 			tmpe.Session.Add ("to", prcli);
 			tmpe.Session.Add ("efrom", Membership.GetUser (e.Responsible).Email);
@@ -175,6 +175,16 @@ namespace Yavsc.ApiControllers
 
 			return result;
 		}
+
+		/// <summary>
+		/// Rates the skill, this is a client action to profile its needs.
+		/// </summary>
+		/// <param name="rate">Skill rating.</param>
+		[Authorize()]
+		public void RateSkill (SkillRating rate) {
+			throw new NotImplementedException ();
+		}
+
 
 	}
 }

@@ -29,12 +29,12 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace Yavsc.Model.Skill
+namespace Yavsc.Model.FrontOffice
 {
 	/// <summary>
 	/// Performer profile.
 	/// </summary>
-	public class PerformerProfile: IRating, IIdentified
+	public class PerformerProfile: UserNameBase, IRating, IIdentified
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Yavsc.Model.Skill.PerformerProfile"/> class.
@@ -44,12 +44,9 @@ namespace Yavsc.Model.Skill
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the user.
+		/// Gets or sets the identifier.
 		/// </summary>
-		/// <value>The name of the user.</value>
-		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")
-			,Display(ResourceType=typeof(LocalizedText),Name="User_name"),RegularExpression("([a-z]|[A-Z]|[0-9] )+")]
-		public string UserName { get; set; }
+		/// <value>The identifier.</value>
 		public long Id { get; set; }
 		/// <summary>
 		/// Gets or sets the skills.
@@ -57,7 +54,7 @@ namespace Yavsc.Model.Skill
 		/// <value>The skills.</value>
 		public virtual IEnumerable<UserSkill> Skills { get; set; }
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.FrontOffice.PerformerProfile"/> class.
+		/// Initializes a new instance of the <see cref="Yavsc.Model.Skill.PerformerProfile"/> class.
 		/// </summary>
 		/// <param name="username">Username.</param>
 		public PerformerProfile(string username)
@@ -76,13 +73,16 @@ namespace Yavsc.Model.Skill
 		private Profile yavscCLientProfile = null;
 
 		/// <summary>
-		/// Gets the yavsc C lient profile.
+		/// Gets the yavsc Client profile.
 		/// </summary>
-		/// <value>The yavsc C lient profile.</value>
-		public Profile YavscCLientProfile
+		/// <value>The yavsc Client profile.</value>
+		public Profile YavscClientProfile
 		{
 			get { 
 				if (yavscCLientProfile == null)
+				if (UserName == null)
+					throw new Exception ("UserName not set");
+				else 
 					yavscCLientProfile = new Profile (
 						ProfileBase.Create (UserName));
 				return yavscCLientProfile;
@@ -104,6 +104,21 @@ namespace Yavsc.Model.Skill
 		public bool HasSkill(long skillId)
 		{
 			return Skills.Any (x => x.SkillId == skillId);
+		}
+
+		/// <summary>
+		/// Gets the avatar.
+		/// </summary>
+		/// <value>The avatar.</value>
+		public string Avatar { 
+			get { 
+				return YavscClientProfile.avatar;
+			}
+		}
+
+		public bool HasCalendar () 
+		{ 
+				return (YavscClientProfile.GoogleCalendar != null);
 		}
 	}
 }

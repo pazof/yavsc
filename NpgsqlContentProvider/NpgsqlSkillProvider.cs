@@ -25,6 +25,7 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using Npgsql;
 using NpgsqlTypes;
+using Yavsc.Model.FrontOffice;
 
 namespace WorkFlowProvider
 {
@@ -110,7 +111,7 @@ namespace WorkFlowProvider
 		/// Create the specified skill.
 		/// </summary>
 		/// <param name="skill">skill.</param>
-		public override long Declare (Skill skill)
+		public override long Declare (SkillEntity skill)
 		{
 			long res = 0;
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
@@ -258,9 +259,9 @@ namespace WorkFlowProvider
 		/// </summary>
 		/// <returns>The skill identifier.</returns>
 		/// <param name="pattern">Pattern.</param>
-		public override Skill[] FindSkill (string pattern)
+		public override SkillEntity[] FindSkill (string pattern)
 		{
-			List<Skill> skills = new List<Skill> ();
+			List<SkillEntity> skills = new List<SkillEntity> ();
 			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
@@ -269,7 +270,7 @@ namespace WorkFlowProvider
 					cmd.Prepare ();
 					using (var rdr = cmd.ExecuteReader ()) {
 						if (rdr.HasRows) while (rdr.Read ()) {
-							skills.Add (new Skill () { 
+							skills.Add (new SkillEntity () { 
 								Id = (long)rdr.GetInt64 (0),
 								Name = (string)rdr.GetString (1),
 								Rate = (int) rdr.GetInt32(2)

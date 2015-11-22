@@ -17,7 +17,7 @@
 <div id="Err_skillId" class="field-validation-error"></div>
 <h2>
 <select id="SkillId" >
-<% foreach (var skill in (Skill[]) ViewData["SiteSkills"]) { 
+<% foreach (var skill in (SkillEntity[]) ViewData["SiteSkills"]) { 
 if (Model.HasSkill(skill.Id)) {%>
 <option value="<%=skill.Id%>" disabled>
 <%=skill.Name%></option>
@@ -52,5 +52,4 @@ if (Model.HasSkill(skill.Id)) {%>
 </li>
 <% } %>
 </ul>
-
 </asp:Content>

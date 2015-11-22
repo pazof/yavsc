@@ -70,6 +70,7 @@
 	<data name="Online"><value>En ligne</value></data>
 	<data name="Pdf_version"><value>Version Pdf</value></data>
 	<data name="Person"><value>Personne</value></data>
+	<data name="PreferedDate"><value>Date souhaitée</value></data>
 	<data name="Preview"><value>Prévisualiser</value><comment>Prévisualiser le document</comment></data>
 	<data name="Profile_edition"><value>Édition du profile</value></data>
 	<data name="Product_reference"><value>Référence produit</value></data>

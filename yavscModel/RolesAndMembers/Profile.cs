@@ -249,8 +249,10 @@ namespace Yavsc.Model.RolesAndMembers
 		public Profile (ProfileBase profile)
 		{
 			if (profile == null) throw new Exception ("No profile");
-			userName = profile.UserName;
+			if (profile.UserName == null) throw new Exception ("UserName not set");
 			UITheme = (string) profile.GetPropertyValue ("UITheme");
+			userName = profile.UserName;
+			if (profile.IsAnonymous) return;
 			BlogVisible = (bool) profile.GetPropertyValue ("BlogVisible");
 			BlogTitle = (string) profile.GetPropertyValue ("BlogTitle");
 			avatar = (string) profile.GetPropertyValue ("Avatar");
