@@ -31,10 +31,9 @@ namespace Yavsc.Controllers
 		/// Index this instance.
 		/// </summary>
 		[Authorize]
-		public ActionResult Index (string user, string filename)
+		public ActionResult Index (string username, string filename)
 		{
-			WebFileSystemManager fsmgr = new WebFileSystemManager ();
-			var files = fsmgr.GetFiles (user,filename);
+			var files = UserFileSystemManager.GetFiles (username,filename);
 			return View (files);
 		}
 
@@ -54,14 +53,12 @@ namespace Yavsc.Controllers
 		/// <param name="filename">Filename.</param>
 		public ActionResult Details (string user, string filename)
 		{
-			WebFileSystemManager fsmgr = new WebFileSystemManager ();
-			FileInfo fi = fsmgr.FileInfo (filename);
 
 			ViewData ["filename"] = filename;
 			// TODO : ensure that we use the default port for 
 			// the used sheme
 			ViewData ["url"] = Url.Content("~/users/"+user+"/"+filename);
-			return View (fi);
+			return View (UserFileSystemManager.Detail(user,filename));
 		}
 	}
 }

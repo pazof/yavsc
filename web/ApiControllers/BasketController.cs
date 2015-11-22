@@ -17,20 +17,6 @@ namespace Yavsc.ApiControllers
 	/// </summary>
 	public class BasketController : ApiController
     {
-		/// <summary>
-		/// The wfmgr.
-		/// </summary>
-		protected WorkFlowManager wfmgr = null;
-
-		/// <summary>
-		/// Initialize the specified controllerContext.
-		/// </summary>
-		/// <param name="controllerContext">Controller context.</param>
-		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
-		{
-			base.Initialize (controllerContext);
-			wfmgr = new WorkFlowManager ();
-		}
 
 		/// <summary>
 		/// Gets the current basket, creates a new one, if it doesn't exist.
@@ -38,7 +24,8 @@ namespace Yavsc.ApiControllers
 		/// <value>The current basket.</value>
 		protected CommandSet CurrentBasket {
 			get {
-				CommandSet b = wfmgr.GetCommands (Membership.GetUser ().UserName);
+				CommandSet b = WorkFlowManager.GetCommands (
+					Membership.GetUser ().UserName);
 				if (b == null) b = new CommandSet ();
 				return b;
 			}

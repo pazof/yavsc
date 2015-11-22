@@ -506,6 +506,8 @@
     <Content Include="Views\FileSystem\RestrictedArea.aspx" />
     <Content Include="Views\BackOffice\RestrictedArea.aspx" />
     <Content Include="Views\Account\RestrictedArea.aspx" />
+    <Content Include="Web.TotemProd.config" />
+    <Content Include="Web.TotemPre.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

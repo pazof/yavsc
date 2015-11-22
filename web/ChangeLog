@@ -1,3 +1,21 @@
+2015-11-22  Paul Schneider  <paul@pschneider.fr>
+
+	* BasketController.cs:
+	* WorkFlowController.cs:
+	* FrontOfficeController.cs:
+	* FrontOfficeController.cs: Le manager de flux de travaux est
+	devient un objet statique.
+
+	* FileSystemController.cs: refactorisation du code, en vue de
+	la mise en place
+	de la commande sans enregistrement du client sur le site.
+
+
+	* Web.csproj: ajoute les références au déployement des sites
+	* Totem prod
+	* Totem pré
+	Leur configuration n'est pas maintenue sous Git.
+
 2015-11-21  Paul Schneider  <paul@pschneider.fr>
 
 	* Microsoft.Web.XmlTransform.dll: Copié de l'import Nuget de

@@ -46,7 +46,7 @@ namespace Yavsc.Model.FrontOffice
 
 		IEnumerable<FileInfo> Files { 
 			get {
-				return GetFSM().GetFiles (Id.ToString());
+				return UserFileSystemManager.GetFiles (Id.ToString());
 			}
 		}
 		/// <summary>
@@ -72,10 +72,9 @@ namespace Yavsc.Model.FrontOffice
 				if (key!="ref")
 					Parameters.Add (key, collection [key]);
 			}
-			WorkFlowManager wfm = new WorkFlowManager ();
-			wfm.RegisterCommand (this); // overrides this.Id
+			WorkFlowManager.RegisterCommand (this); // gives a value to this.Id
 			string strcmdid = Id.ToString ();
-			GetFSM().Put (strcmdid, files);
+			UserFileSystemManager.Put(Path.Combine("commandes",strcmdid),files);
 		}
 
 		/// <summary>
@@ -89,9 +88,6 @@ namespace Yavsc.Model.FrontOffice
 			FromPost (collection, files);
 		}
 
-		private WebFileSystemManager GetFSM() {
-			return new WebFileSystemManager ("~/commands/{0}");
-		}
 	}
 }
 

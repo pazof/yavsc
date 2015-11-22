@@ -38,7 +38,7 @@ namespace Yavsc.Model.FileSystem
 	/// It just provides simple method for a small set of 
 	/// files, in a small tree of sub-folders .
 	/// </summary>
-	public class WebFileSystemManager
+	public abstract class WebFileSystemManager
 	{
 		/// <summary>
 		/// Gets or sets the size of the max file.
@@ -53,35 +53,8 @@ namespace Yavsc.Model.FileSystem
 		public long MaxUserStorage { get; set; }
 
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.FileSystem.FileSystemManager"/> class.
-		/// </summary>
-		public WebFileSystemManager (string rootDirectory="~/users")
-		{
-			string rootpath = HttpContext.Current.Server.MapPath (rootDirectory);
-			var rdi = new DirectoryInfo (rootpath);
-			if (!rdi.Exists)
-				rdi.Create ();
-			MembershipUser user = Membership.GetUser ();
-			if (user == null)
-				throw new Exception ("Not membership available");
-			Prefix = Path.Combine(rootpath, user.ProviderUserKey.ToString());
-		}
-
 		string regexFileName = "^[A-Za-z0-9#^!+ _~\\-.]+$";
-		/// <summary>
-		/// Determines if the specified name is OK.
-		/// </summary>
-		/// <returns><c>true</c> if is this name O the specified name; otherwise, <c>false</c>.</returns>
-		/// <param name="name">Name.</param>
-		public static bool IsThisNameOK(string name) 
-		{
-			foreach (char x in Path.GetInvalidPathChars()) {
-				if (name.Contains (x))
-					return false;
-			}
-			return true;
-		}
+
 		/// <summary>
 		/// Put the specified files in destDir, as sub dir of the current user's home dir.
 		/// </summary>
@@ -99,8 +72,7 @@ namespace Yavsc.Model.FileSystem
 				}
 			}
 			// do the job
-
-			CheckSubDir (destDir);
+			ValidateSubDir (destDir,true);
 			DirectoryInfo di = new DirectoryInfo (
 				Path.Combine (Prefix, destDir));
 			if (!di.Exists)
@@ -133,15 +105,25 @@ namespace Yavsc.Model.FileSystem
 		/// concerning the allowed character class.
 		/// </summary>
 		/// <param name="subdir">Subdir.</param>
-		private void CheckSubDir (string subdir)
+		/// <param name="throwex">throw ex.</param>
+		public bool ValidateSubDir (string subdir, bool throwex = false)
 		{
 			foreach (string dirname in subdir.Split(Path.DirectorySeparatorChar)) {
-				if (!Regex.Match (dirname, regexFileName).Success)
-					throw new InvalidDirNameException (dirname);
+				if (!Regex.Match (dirname, regexFileName).Success) {
+					if (throwex)
+						throw new InvalidDirNameException (dirname);
+					else
+						return false;
+				}
 				foreach (char x in dirname)
-					if (subdir.Contains (x))
-						throw new InvalidDirNameException (subdir);
+					if (subdir.Contains (x)) {
+						if (throwex)
+							throw new InvalidDirNameException (subdir);
+						else
+							return false;
+					}
 			}
+			return true;
 		}
 		/// <summary>
 		/// Gets the files owned by the current logged user.
@@ -150,28 +132,14 @@ namespace Yavsc.Model.FileSystem
 		/// </summary>
 		/// <returns>The files.</returns>
 		/// <param name="subdir">Subdir.</param>
-		public IEnumerable<FileInfo> GetFiles (string subdir)
+		public virtual IEnumerable<FileInfo> GetFiles (string subdir)
 		{
 			string path = Prefix;
 			if (subdir != null) {
-				CheckSubDir (subdir); // checks for specification validity
+				ValidateSubDir (subdir,true); // checks for specification validity
 				path = Path.Combine (Prefix, subdir);
 			}
 			DirectoryInfo di = new DirectoryInfo (path);
-			return (di.GetFiles ());
-		}
-
-		public FileInfo[] GetFiles (string username, string subdir)
-		{
-			string path = Prefix;
-			if (subdir != null) {
-				CheckSubDir (subdir); // checks for specification validity
-				path = Path.Combine (Prefix, subdir);
-			}
-			DirectoryInfo di = new DirectoryInfo (path);
-
-			if (!di.Exists) 
-				return new FileInfo[0];
 			return (di.GetFiles ());
 		}
 
@@ -179,11 +147,11 @@ namespace Yavsc.Model.FileSystem
 		/// Files the info.
 		/// </summary>
 		/// <returns>The info.</returns>
-		/// <param name="id">Identifier.</param>
-		public FileInfo FileInfo(string id)
+		/// <param name="filePath">file Path.</param>
+		public FileInfo FileInfo(string filePath)
 		{
-			CheckSubDir (id);
-			return new FileInfo(Path.Combine (Prefix, id));
+			ValidateSubDir (filePath,true);
+			return new FileInfo(Path.Combine (Prefix, filePath));
 		}
 	}
 }

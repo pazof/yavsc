@@ -27,21 +27,6 @@ namespace Yavsc.Controllers
 	public class FrontOfficeController : Controller
 	{
 		/// <summary>
-		/// The wfmgr.
-		/// </summary>
-		protected WorkFlowManager wfmgr = null;
-
-		/// <summary>
-		/// Initialize the specified requestContext.
-		/// </summary>
-		/// <param name="requestContext">Request context.</param>
-		protected override void Initialize (System.Web.Routing.RequestContext requestContext)
-		{
-			base.Initialize (requestContext);
-			wfmgr = new WorkFlowManager ();
-		}
-
-		/// <summary>
 		/// Index this instance.
 		/// </summary>
 		public ActionResult Index ()
@@ -68,7 +53,7 @@ namespace Yavsc.Controllers
 				throw new ConfigurationErrorsException ("no redirection to any login page");
 			
 			string username = u.UserName;
-			Estimate [] estims = wfmgr.GetUserEstimates (username);
+			Estimate [] estims = WorkFlowManager.GetUserEstimates (username);
 			ViewData ["UserName"] = username;
 			ViewData ["ResponsibleCount"] = 
 				Array.FindAll (
@@ -88,7 +73,7 @@ namespace Yavsc.Controllers
 		/// <param name="id">Identifier.</param>
 		public ActionResult Get (long estimid)
 		{
-			Estimate f = wfmgr.GetEstimate (estimid);
+			Estimate f = WorkFlowManager.GetEstimate (estimid);
 			if (f == null) {
 				ModelState.AddModelError ("Id", "Wrong Id");
 				return View (new Estimate ()  { Id=estimid } );
@@ -110,7 +95,7 @@ namespace Yavsc.Controllers
 			ViewData ["WABASEWF"] = ViewData ["WebApiBase"] + "/WorkFlow";
 			if (submit == null) {
 				if (model.Id > 0) {
-					Estimate f = wfmgr.GetEstimate (model.Id);
+					Estimate f = WorkFlowManager.GetEstimate (model.Id);
 					if (f == null) {
 						ModelState.AddModelError ("Id", "Wrong Id");
 						return View (model);
@@ -136,12 +121,12 @@ namespace Yavsc.Controllers
 
 				if (ModelState.IsValid) {
 					if (model.Id == 0)
-						model = wfmgr.CreateEstimate (
+						model = WorkFlowManager.CreateEstimate (
 							username,
 							model.Client, model.Title, model.Description);
 					else {
-						wfmgr.UpdateEstimate (model);
-						model = wfmgr.GetEstimate (model.Id);
+						WorkFlowManager.UpdateEstimate (model);
+						model = WorkFlowManager.GetEstimate (model.Id);
 					}
 				}
 			}
@@ -237,7 +222,7 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Basket ()
 		{
-			return View (wfmgr.GetCommands (Membership.GetUser ().UserName));
+			return View (WorkFlowManager.GetCommands (Membership.GetUser ().UserName));
 		}
 
 		/// <summary>

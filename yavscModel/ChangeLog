@@ -1,3 +1,13 @@
+2015-11-22  Paul Schneider  <paul@pschneider.fr>
+
+	* YavscModel.csproj:
+	* Commande.cs:
+	* WorkFlowManager.cs:
+	* WebFileSystemManager.cs:
+	* UserFileSystemManager.cs: refactorisation du code, en vue de
+	la mise en place
+	de la commande sans enregistrement du client sur le site.
+
 2015-11-21  Paul Schneider  <paul@pschneider.fr>
 
 	* UserNameBase.cs: Permet l'usage des espaces dans les noms

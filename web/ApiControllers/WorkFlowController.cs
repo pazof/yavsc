@@ -19,25 +19,6 @@ namespace Yavsc.ApiControllers
 	/// </summary>
 	public class WorkFlowController : ApiController
     {
-		string adminRoleName="Admin";
-		/// <summary>
-		/// The wfmgr.
-		/// </summary>
-		protected WorkFlowManager wfmgr = null;
-		/// <summary>
-		/// Initialize the specified controllerContext.
-		/// </summary>
-		/// <param name="controllerContext">Controller context.</param>
-		protected override void Initialize (HttpControllerContext controllerContext)
-		{
-			// TODO move it in a module initialization
-			base.Initialize (controllerContext);
-			if (!Roles.RoleExists (adminRoleName)) {
-				Roles.CreateRole (adminRoleName);
-			} 
-			wfmgr = new WorkFlowManager ();
-		}
-
 		/// <summary>
 		/// Creates the estimate.
 		/// </summary>
@@ -49,7 +30,7 @@ namespace Yavsc.ApiControllers
 		[Authorize]
 		public Estimate CreateEstimate (string title,string client,string description)
 		{
-			return wfmgr.CreateEstimate (
+			return WorkFlowManager.CreateEstimate (
 				Membership.GetUser().UserName,client,title,description);
 		}
 
@@ -102,7 +83,7 @@ namespace Yavsc.ApiControllers
 		[Authorize]
 		public void DropWritting(long wrid)
 		{
-			wfmgr.DropWritting (wrid);
+			WorkFlowManager.DropWritting (wrid);
 		}
 
 		/// <summary>
@@ -114,14 +95,14 @@ namespace Yavsc.ApiControllers
 		public void DropEstimate(long estid)
 		{
 			string username = Membership.GetUser().UserName;
-			Estimate e = wfmgr.GetEstimate (estid);
+			Estimate e = WorkFlowManager.GetEstimate (estid);
 			if (e == null)
 				throw new InvalidOperationException("not an estimate id:"+estid);
 			if (username != e.Responsible
 				&& !Roles.IsUserInRole ("FrontOffice"))
 				throw new UnauthorizedAccessException ("You're not allowed to drop this estimate");
 
-			wfmgr.DropEstimate (estid);
+			WorkFlowManager.DropEstimate (estid);
 		}
 
 		/// <summary>
@@ -146,7 +127,7 @@ namespace Yavsc.ApiControllers
 		[ValidateAjax]
 		public HttpResponseMessage UpdateWritting([FromBody] Writting wr)
 		{
-			wfmgr.UpdateWritting (wr);
+			WorkFlowManager.UpdateWritting (wr);
 			return Request.CreateResponse<string> (System.Net.HttpStatusCode.OK,"WrittingUpdated:"+wr.Id);
 		}
 
@@ -166,7 +147,7 @@ namespace Yavsc.ApiControllers
 			}
 			try {
 				return Request.CreateResponse(System.Net.HttpStatusCode.OK,
-					wfmgr.Write(estid, wr.Description,
+					WorkFlowManager.Write(estid, wr.Description,
 						wr.UnitaryCost, wr.Count, wr.ProductReference));
 			}
 			catch (Exception ex) {

@@ -24,20 +24,6 @@ namespace Yavsc.ApiControllers
 	/// </summary>
 	public class FrontOfficeController : YavscController
 	{
-		/// <summary>
-		/// The wfmgr.
-		/// </summary>
-		protected WorkFlowManager wfmgr = null;
-
-		/// <summary>
-		/// Initialize the specified controllerContext.
-		/// </summary>
-		/// <param name="controllerContext">Controller context.</param>
-		protected override void Initialize (System.Web.Http.Controllers.HttpControllerContext controllerContext)
-		{
-			base.Initialize (controllerContext);
-			wfmgr = new WorkFlowManager ();
-		}
 
 		/// <summary>
 		/// Catalog this instance.
@@ -71,7 +57,7 @@ namespace Yavsc.ApiControllers
 		[HttpGet]
 		public Estimate GetEstimate (long id)
 		{
-			Estimate est = wfmgr.ContentProvider.Get (id);
+			Estimate est = WorkFlowManager.ContentProvider.Get (id);
 			string username = Membership.GetUser ().UserName;
 			if (est.Client != username)
 			if (!Roles.IsUserInRole("Admin"))
@@ -109,7 +95,7 @@ namespace Yavsc.ApiControllers
 		private string estimateToTex (long estimid)
 		{
 			Yavsc.templates.Estim tmpe = new Yavsc.templates.Estim ();		
-			Estimate e = wfmgr.GetEstimate (estimid);
+			Estimate e = WorkFlowManager.GetEstimate (estimid);
 			tmpe.Session = new Dictionary<string,object> ();
 			tmpe.Session.Add ("estim", e);
 			Profile prpro = new Profile (ProfileBase.Create (e.Responsible));
