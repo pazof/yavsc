@@ -1,5 +1,22 @@
 2015-11-23  Paul Schneider  <paul@pschneider.fr>
 
+	* style.css:
+	* style.css: Ne contient plus que ce qui concerne les couleurs
+	et images
+
+	* font-awesome.css: Il parait plus sage de spécifier des Url
+	absolues vers les polices de caractère.
+
+	* style.css: Réccupère du thème sombre tout ce qui ne concerne
+	pas la couleur, pour en faire profiter tous les thèmes.
+
+	* Web.csproj: Ajoute le style du thème clair au projet.
+
+	* style.tablesorter.css: ce fichier est obsolete et va
+	disparaitre.
+
+2015-11-23  Paul Schneider  <paul@pschneider.fr>
+
 	* ErrorHtmlFormatter.cs: Pour note: conception à revoir
 
 2015-11-23  Paul Schneider  <paul@pschneider.fr>

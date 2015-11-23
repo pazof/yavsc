@@ -1,15 +1,18 @@
 
+
+.skillname { 
+	background-color: rgba(16,16,64,0.8);
+	 border-color: #aaf;
+}
+
 body {
 	font-family: 'Arial', cursive;
-	padding: 0;
-	margin: 0;
 	background-color: black;
 	color: #D0FFD0;
 }
 
 
 .rate {
-	border-radius:1em;
 	border: solid  rgb(128,128,0) 1px;
    background-color: rgba(20,20,20,.8); 
 	color: yellow;
@@ -23,60 +26,30 @@ input, textarea, checkbox {
    }
 
 header {
-	transition: margin 2s, padding 2s;
-	padding: 0;
-	margin: 0;
-	padding-top: 2em;
-	padding-bottom:2em;
-	display: block;
 	background: url("/App_Themes/images/star-939235_1280.jpg") -3em -3em no-repeat fixed;
 	}
 
 header h1, header a {
-transition:padding 2s;
 background-color: rgba(0,0,0,.5); 
-margin:0; padding:1em;
 }
 
 nav {
-transition: margin 2s, padding 2s;
-	margin: 2em;
-	padding: 2em;
-	display: block;
-	border-radius:1em;
 	background: url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 10% repeat fixed ;
-	justify-content: space-around;
 }
 
 main {
-transition: margin 2s, padding 2s;
-	margin: 2em;
-	padding: 2em;
-	display: block;
-	border-radius:1em;
 	background: url("/App_Themes/images/p8-av4.png") 50% 20em no-repeat fixed ;
 	}
 
 footer {
-transition: margin 2s, padding 2s;
 	background: url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ;
-	margin: 0;
-	margin-top: 2em;
-	padding: 2em;
-	display: block;
-	clear: both;
-	font-size: smaller;
-	justify-content: space-around;
 }
 
-#copyr { text-align: center; display: block; background-color: rgba(20,20,20,.8); }
-footer p { display:inline-block; } 
+#copyr {  background-color: rgba(20,20,20,.8); }
 
-footer img { max-height: 3em; vertical-align: middle; }
-a img, h1 img, .menuitem img  { vertical-align: middle; }
 fieldset {
 	background-color: rgba(16,16,64,0.8);
-	border-radius:5px; border: solid 1px #000060;
+	border-color: #000060;
 } 
 
 legend {
@@ -85,134 +58,43 @@ legend {
 
 #gspacer { 
 	background-color: rgba(20,20,20,.8); 
-	border-radius:1em;
-	margin:1em; padding:1em; display: inline-block }
-
-
-main video, main img {
-	max-width:100%;
-	max-height:75%;
-	padding: 1em;
-	}
-
-aside { 
-	display: inline-block;
-}
+	 }
 
 .postpreview {
-	display: inline-block;
-	max-width: 40em;
-	padding: 1em;
 	background-color: rgba(0,0,32,0.8);
-	border-radius:1em;
 }
-.postpreview video, .postpreview img {
-	max-width: 100%;
-	padding: 1em;
-	}
 .post { 
-	display:block;
-	padding: 1em;
 	background-color: rgba(0,0,32,0.8);
 	color: #eee;
-	border-radius:1em;
 	}
 .hiddenpost { background-color: rgba(16,16,16,0.5); }
-.fullwidth { width: 100%;  }
 
-textarea.fullwidth { min-height:10em; }
-
-.thanks  { 
-	max-width: 10%;
-	text-align: center;
-	font-size:smaller;
-	display:inline;
-	bottom:0;
-}
-.panel { 
-display:inline-block;
-  }
 
 .panel,.bshpanel, aside {
 	background-color: rgba(20,20,20,.8); 
-	border-radius: 1em; 
-	padding: 1em;
 }
-.spanel {
-  max-width: 18em;
-    display: inline-block;
-  padding: .3em;
-}
-.xspanel {
-  max-width:13em;
-  display: inline-block;
-  padding:.2em;
-}
-.xxspanel {
-  max-width:7em;
-  display: inline-block;
-  padding:.1em;
-}
-.hint {
-	display: inline;
-	font-style: italic;
-	font-size: smaller;
-}
-.hint::before { 
-content: "(";
-}
-.hint::after { 
-content: ")";
-}
-
 
 .usertitleref {
-	border-radius: 1em;
    background-color:rgba(0,0,32,0.6);
-   font-family: 'Arial', cursive;
-	padding: 1em;
-}
-label {
-	font-size: medium;
 }
 .editable {
-	margin: .5em; 
-	min-height:1em; 
-	border-radius: 1em; 
-	border: dashed rgb(020,20,256) 2px; 
+	border-color: rgb(020,20,256); 
 }
 
 .notification {
-	font-size: large;
 	background-color: rgba(64,64,0,0.5);
-	border: solid green 1px;
-	padding: 1em;
-	border-radius:1em;
-	margin:1em;
-	padding:1em;
+	border-color:  green ;
 	}
 .dirty { 
 	background-color: rgba(128,128,0,0.5);
 }
 .error, #error {
 	color: #f88;
-	font-size: large;
 	background-color: rgba(256,0,0,0.5);
 }
 .validation-summary-errors{
 	color: #f88;
 	background-color: rgba(256,0,0,0.5);
-}
-
-.hidden { display:none; }
-
-ul.preview li:nth-child(-n+10) {
-   display:inline;
-	font-size:xx-small;
-}
-
-ul.preview li:nth-child(n) {
-	display:none;
 }
 
 .validation-summary-errors{

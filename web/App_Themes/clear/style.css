@@ -2,13 +2,9 @@
 body {
 	background-color: grey;
 	color: #303030;
-	font-family: 'Arial', cursive;
-	padding: 0;
-	margin: 0;
 }
 .tagname {  color: #D0FFD0; }
-.tagname+.tagname:before { content: ', '; } 
-.tagname:hover { background-color: red; cursor:pointer; }
+.tagname:hover { background-color: red; }
 
 /* Start by setting display:none to make this hidden.
    Then we position it in relation to the viewport window
@@ -16,116 +12,46 @@ body {
    for themselves. Background we set to 80% white with
    our animation centered, and no-repeating */
 .modal {
-    display:    none;
-    position:   fixed;
-    z-index:    1000;
-    top:        0;
-    left:       0;
-    height:     100%;
-    width:      100%;
     background: rgba( 255, 255, 255, .8 ) 
                 url('/App_Themes/images/FhHRx.gif') 
                 50% 50% 
                 no-repeat;
-    overflow:   auto; 
 }
-.dispmodal {
-    position:   fixed;
-    z-index:    1000;
-    top:        0;
-    left:       0;
-    right: 0;
-    width:      100%;
-    overflow-y:   auto; 
-    overflow-x:   hidden; 
-}
-
-body.loading {
-    overflow: hidden;   
-}
-
-body.loading .modal {
-    display: block;
-}
-.iconsmall { max-height: 1.3em; max-width: 1.3em; } 
 
 input, textarea, checkbox { 
     color: #FFA0A0;
 	background-color: black;
    }
 
-.post .photo { max-width: 100%; }
-
-.blogbanner { float: left; top:0; }
-.subtitle { font-size:small; font-style: italic; }
 header {
-transition: margin 2s, padding 2s;
-	padding: 0;
-	margin: 0;
-	display: block;
 	background: url("/App_Themes/images/live-concert-388160_1280.jpg") 50% 0 repeat fixed;
 	}
 
 #logo { 
-	padding: 0;
-	margin: 0;
-	min-height: 12em;
    background: url("/App_Themes/images/logo.s.png") 1em 1em no-repeat fixed;
 }
-
-
 
 h1, h2, h3 { background-color: rgba(256,256,256,.5);  }
 
 nav {
-transition: margin 2s, padding 2s;
-	margin: 2em;
-	padding: 2em;
-	display: block;
-	border-radius:1em;
 	background: url("/App_Themes/images/live-concert-388160_1280.jpg") 50% 10em repeat fixed ;
-	justify-content: space-around;
 }
 nav li { display: inline-block; }
 main {
-transition: margin 2s, padding 2s;
-	margin: 2em;
-	padding: 2em;
-	display: block;
-	border-radius:1em;
 	background: url("/App_Themes/images/musician-923526_1.nbbi.jpg") 50% 20em repeat fixed ;
 	}
 
 footer {
-	transition: margin 2s, padding 2s;
 	background: url("/App_Themes/images/live-concert-388160_1280.jpg") 50% 30em repeat fixed ;
-	margin: 0;
-	margin-top: 2em;
-	padding: 2em;
-	display: block;
-	clear: both;
-	font-size: smaller;
-	justify-content: space-around;
 }
-footer {
-	border-radius:1em;
-	padding:1em;
-  }
+
 legend {
-	border-radius:5px;
-	padding:.5em;
 	background-color: rgba(240,240,240,.5);
   }
-#copyr { text-align: center; display: block; background-color: rgba(250,250,250,.8); }
-footer p { display:inline-block; } 
-
-footer img { max-height: 3em; vertical-align: middle; }
-a img, h1 img, .menuitem img  { vertical-align: middle; }
+#copyr {  background-color: rgba(250,250,250,.8); }
 
 #gspacer { 
-	background-color: rgba(209,209,209,.8); 
-	border-radius:1em;
-	margin:1em; padding:1em; display: inline-block }
+	background-color: rgba(209,209,209,.8);  }
 
 form { 
 	background-color: rgba(150,150,256,0.8);
@@ -133,128 +59,47 @@ form {
 
 fieldset {
 	background-color: rgba(216,216,256,0.8);
-	border-radius:5px; border: solid 1px #000060;
 } 
 
-.post video, .post img {
-	max-width:100%;
-	max-height:75%;
-	padding: 1em;
-	}
 
-aside { 
-	display: inline-block;
-	float: right;
-	max-width: 40em;
-}
 
 .postpreview {
-	display: inline-block;
-	padding: 1em;
 	background-color: rgba(233,233,233,0.8);
-	border-radius:1em;
-	max-width: 100%;
 }
-
-img.postpreviewphoto, .postpreview video, .postpreview img {
-	padding: 1em; 
-	width: 100%;
-	}
 
 .post { 
-	display:block;
-	padding: 1em;
 	background-color: rgba(256,256,256,0.8);
-	border-radius:1em;
 	}
 .hiddenpost { background-color: rgba(160,160,160,0.5); }
-.fullwidth { width: 100%;  }
 
-textarea.fullwidth { min-height:10em; }
 a { color: rgb(0,56,0); } 
-a:hover {
-background-color: rgba(160,160,160,.7);
-  }
+
+a:hover { background-color: rgba(160,160,160,.7);   }
 
 footer a  { 
-    transition: margin 2s, padding 2s;
-	border-radius:1em;
-	margin:1em;
-	padding:1em;
-   text-decoration: none;
-   display:inline-block;
 	color: black;
-	font-weight: bold;
-	border: solid black 1px;
    background-color: rgba(220,220,220,.8); 
-   cursor: pointer;
-   font-family: 'Arial', cursive;
 }
-.panel { max-width: 24em; display:inline-block; padding: 1em; }
 .panel,.bshpanel, aside {
 	background-color: rgba(200,200,200,.8); 
-	border-radius: 1em; 
-	padding: 1em;
 }
-.spanel {
-  max-width: 18em;
-    display: inline-block;
-  padding: .3em;
-}
-.xspanel {
-  max-width:13em;
-  display: inline-block;
-  padding:.2em;
-}
-.xxspanel {
-  max-width:7em;
-  display: inline-block;
-  padding:.1em;
-}
-.hint {
-	display: inline;
-	font-style: italic;
-	font-size: smaller;
-}
-.hint::before { 
-content: "(";
-}
-.hint::after { 
-content: ")";
-}
-
 
 .usertitleref {
-	border-radius: 1em;
    background-color:rgba(256,256,212,0.6);
-   font-family: 'Arial', cursive;
-	padding: 1em;
-}
-label {
-	font-size: medium;
 }
 .editable {
-	margin: .5em; 
-	min-height:1em; 
-	border-radius: 1em; 
 	border: dashed rgb(200,200,256) 2px; 
 }
 
 .notification {
-	font-size: large;
 	background-color: rgba(264,264,128,0.5);
 	border: solid green 1px;
-	padding: 1em;
-	border-radius:1em;
-	margin:1em;
-	padding:1em;
 	}
 .dirty { 
 	background-color: rgba(256,228,128,0.5);
 }
 .error, #error {
 	color: #f88;
-	font-size: large;
 	background-color: rgba(256,.5);
 }
 .validation-summary-errors{
@@ -262,12 +107,6 @@ label {
 	background-color: rgba(256,256,139,0.5);
 }
 
-.hidden { display:none; }
-
-ul.preview li:nth-child(-n+10) {
-   display:inline;
-	font-size:xx-small;
-}
 
 ul.preview li:nth-child(n) {
 	display:none;
@@ -278,37 +117,21 @@ ul.preview li:nth-child(n) {
 }
 
 a.menuitem {
-   display:inline-block;
 	color: black;
-	font-weight: bold;
-	border-radius:1em;
 	border: solid black 1px;
    background-color: rgba(220,220,220,.8); 
-   cursor: pointer;
-   font-family: 'Arial', cursive;
-	padding: 1em;
 }
 
-
- .actionlink {
-   text-decoration: none;
-   display:inline-block;
+.actionlink {
 	color: black;
-	font-weight: bold;
-	border-radius:1em;
 	border: solid black 1px;
    background-color: rgba(220,220,220,.8); 
-   cursor: pointer;
-   font-family: 'Arial', cursive;
-	padding: 1em;
 }
 
 input, select, textarea { 
 	color: black;
 	background-color:rgba(256,256,256,0.8);
 	border: solid 1px rgb(128,128,128);
-	border-radius:1em;
-    font-family: 'Arial', cursive;
 }
 
 a:active { 
@@ -320,146 +143,52 @@ a:active {
 	background-color:rgba(164,164,164,0.8);
 }
 .code {
-	font-family: "monospace";
 	background-color: rgba(230,230,230,0.5);
-	border-radius:25px;
-	white-space: pre-wrap;
-}
-#avatar { 
- float: left;
- margin:1em;
- }
-
-.comment {
-	border-radius:25px;
-	font-size: smaller;
-	}
-
-.onhover {
-	display:none; 
-	position: absolute;
 }
 
 .ohafter:hover + .onhover, .ohinside:hover > .onhover {
-   display:block; 
-   z-index:2; 
-	 padding:5px; margin:5px;
    background-color: rgba(240,240,250,.8); 
 }
 
 .input-validation-error { border: solid 1px red; }
 .field-validation-error { color: red; }
 
-.c2 { font-size: small; font-style: italic; }
-.c3 { font-size: x-small; font-style: italic; }
-
-header h1, .actionlink, .menuitem {transition: padding 2s; padding:1em;}
-
-@media print {
-		body {background-color:white;color:black;}
-		.control, .actionlink,  .menuitem, nav { display:none;} 
-	}
-
-	.bshpanel { display:block; }
-  .bsh { display: none; }
-  .c3 { display:initial; }
-  .c3-alt { display:none; }
 
 @media all and (max-width: 640px) {
-#logo { 
-	min-height: 6em;
-   background: url("/App_Themes/images/logo.xs.png") 0 0 no-repeat fixed;
-}
+	#logo { 
+	   background: url("/App_Themes/images/logo.xs.png") 0 0 no-repeat fixed;
+	}
 
-header {
-   background: url("/App_Themes/images/live-concert-388160_1280.s.jpg") 50% 0 repeat fixed;
-		}
-
-#avatar { 
- 	margin:.5em;
- }
-
-header h1, .actionlink, .menuitem { padding:.5em;}
-
+	header {
+	   background: url("/App_Themes/images/live-concert-388160_1280.s.jpg") 50% 0 repeat fixed;
+	}
 	nav {
-	margin: 1em;
-		padding: 1em;
 		background:    url("/App_Themes/images/live-concert-388160_1280.s.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
-	margin: 1em;
-	padding: 1em;
 		background:   url("/App_Themes/images/musician-923526_1.nbbi.xs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
 		background: url("/App_Themes/images/live-concert-388160_1280.s.jpg") 50% 90% repeat fixed ; 
 	} 
-	footer a {
-	border-radius:.5em;
-	margin:.5em;
-	padding:.5em;
-  }
-
-  .notification { 
-	padding: .5em;
-	border-radius:.5em;
-	margin:.5em;
-	padding:.5em;
- }
-	.menuitem {
-		display: block; 
-	}
-	.post { 
-	margin:.3em;
-	padding:.3em;
-	}
-	.usertitleref{ 
-	padding:.3em;
-	}
-  .bshpanel { cursor:zoom-in; }
-
-	.c2 { display:initial; }
-	.c2-alt { display:none; }
-	.c3 { display:none; }
-	.c3-alt { display:initial; }
-	#gspacer { 
-	border-radius:.5em;
-	margin:.5em; padding:.5em; }
 }
 
 @media all and (max-width: 350px) {
-#logo { 
-	min-height: 3em;
-   background: url("/App_Themes/images/logo.xxs.png") 0 0 no-repeat fixed;
-}
-header {
-	background: url("/App_Themes/images/live-concert-388160_1280.xxs.jpg") -1em -1em repeat fixed;
- }
-
-header h1, .actionlink, .menuitem { padding:.2em;}
+	#logo { 
+	   background: url("/App_Themes/images/logo.xxs.png") 0 0 no-repeat fixed;
+	}
+	header {
+		background: url("/App_Themes/images/live-concert-388160_1280.xxs.jpg") -1em -1em repeat fixed;
+	}
 
 	nav {
-	margin: .5em;
-		padding: .5em;
 		background:    url("/App_Themes/images/live-concert-388160_1280.xxs.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
-	margin: .5em;
-	    padding: .5em;
 		background:   url("/App_Themes/images/musician-923526_1.nbbi.xxs.jpg")  50% 20em repeat fixed ; 
 	} 
 	footer { 
 		background: url("/App_Themes/images/live-concert-388160_1280.xxs.jpg") 50% 90% repeat fixed ; 
 	} 
-	footer {
-	border-radius:.2em;
-	margin:.2em;
-	padding:.2em;
-  }
-  .c2 { display:none; }
-  .c2-alt { display:initial; }
-	#gspacer { 
-	border-radius:.2em;
-	margin:.2em; padding:.2em; }
 }
 
