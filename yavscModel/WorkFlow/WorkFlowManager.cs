@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using Yavsc.Model.FrontOffice;
 using System.Configuration.Provider;
 using Yavsc.Model.FrontOffice.Catalog;
+using System.Collections.Generic;
 
 namespace Yavsc.Model.WorkFlow
 {
@@ -15,6 +16,26 @@ namespace Yavsc.Model.WorkFlow
 	/// </summary>
 	public static class WorkFlowManager 
 	{
+		/// <summary>
+		/// Finds the activity.
+		/// </summary>
+		/// <returns>The activity.</returns>
+		/// <param name="pattern">Pattern.</param>
+		public static IEnumerable<Activity> FindActivity(string pattern = "%")
+		{
+			throw new NotImplementedException ();
+		}
+
+		/// <summary>
+		/// Gets the activity.
+		/// </summary>
+		/// <returns>The activity.</returns>
+		/// <param name="MAECode">MAE code.</param>
+		public static Activity GetActivity (string MAECode)
+		{
+			throw new NotImplementedException ();
+		}
+
 		/// <summary>
 		/// Gets or sets the catalog.
 		/// </summary>
@@ -123,33 +144,11 @@ namespace Yavsc.Model.WorkFlow
 		/// </summary>
 		/// <value>The content provider.</value>
 		public static IContentProvider ContentProvider {
+			
 			get {
-				DataProviderConfigurationSection c = (DataProviderConfigurationSection) ConfigurationManager.GetSection ("system.web/workflow");
-				if (c == null)
-					throw new Exception ("No system.web/workflow configuration section found");
-				ProviderSettings confprov = c.Providers[c.DefaultProvider] as ProviderSettings;
-				if (confprov == null)
-					throw new Exception ("Default workflow provider not found (system.web/workflow@defaultProvider)");
-				string clsName = confprov.Type;
-				if (clsName == null)
-					throw new Exception ("Provider type not specified (system.web/workflow@type)");
-
-				if (contentProvider != null)
-				{ 
-					if (contentProvider.GetType ().Name != clsName) 
-						contentProvider = null;
-				}
-					
 				if (contentProvider == null)
-				{
-					Type cpt = Type.GetType (clsName);
-					if (cpt == null)
-						throw new Exception (string.Format("Type not found : {0} (wrong name, or missing assembly reference?)",clsName));
-					System.Reflection.ConstructorInfo ci =cpt.GetConstructor (System.Type.EmptyTypes);
-					contentProvider = (IContentProvider)ci.Invoke (System.Type.EmptyTypes);
-				}
-				contentProvider.Initialize (confprov.Name, confprov.Parameters);
-
+					contentProvider = ManagerHelper.GetDefaultProvider
+						("system.web/workflow") as IContentProvider; 
 				return contentProvider;
 			}
 		}

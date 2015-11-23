@@ -59,5 +59,10 @@ namespace Yavsc.Model {
 			bp.Initialize (celt.Name, celt.Parameters);
 			return bp as TProvider;
 		}
+
+		public static ProviderBase GetDefaultProvider (string configSetion) 
+		{
+			return GetDefaultProvider<ProviderBase>(configSetion);
+		}
 	}
 }

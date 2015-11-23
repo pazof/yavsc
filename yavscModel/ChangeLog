@@ -1,5 +1,14 @@
 2015-11-23  Paul Schneider  <paul@pschneider.fr>
 
+	* Manager.cs: implémente la fonction de construction des
+	fournisseurs définis par une interface (sans type, ni concret,
+	ni abstrait, comme ceux du workflow).
+
+	* WorkFlowManager.cs: refactorisation: utiliser le code commun
+	pour instancier le fournisseur de données.
+
+2015-11-23  Paul Schneider  <paul@pschneider.fr>
+
 	* ITitle.cs:
 	* RssFeeds.cs:
 	* Blog.cs:
