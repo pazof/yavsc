@@ -9,7 +9,7 @@ namespace Yavsc.Model.WorkFlow
 	/// Interface content provider.
 	/// Class Assertion: <c>Statuses.Length &gt;= FinalStatuses.Length</c>.
 	/// </summary>
-	public interface IContentProvider : IDbModule, IDisposable, IDataProvider<Estimate>
+	public interface IContentProvider : IDbModule, IDisposable, IDataProvider<Estimate,long>
 	{
 
 		/// <summary>

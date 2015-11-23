@@ -7,13 +7,13 @@ namespace Yavsc.Model.WorkFlow
 	/// <summary>
 	/// I data provider.
 	/// </summary>
-	public interface IDataProvider<T>
+	public interface IDataProvider<T,IDT> where T : IIdentified<IDT>
 	{
 		/// <summary>
 		/// Get the specified id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		T Get (long id);
+		T Get (IDT id);
 		/// <summary>
 		/// Update the specified data.
 		/// </summary>

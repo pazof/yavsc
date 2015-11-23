@@ -1,5 +1,14 @@
 2015-11-23  Paul Schneider  <paul@pschneider.fr>
 
+	* Estimate.cs:
+	* IContentProvider.cs: refactorisation fournisseurs
+
+	* IDataProvider.cs: Permet aux fournisseurs d'identifier les
+	contenus avec un type de donnée arbitraire,
+	du moment que ce type identifie les contenus.
+
+2015-11-23  Paul Schneider  <paul@pschneider.fr>
+
 	* Manager.cs: implémente la fonction de construction des
 	fournisseurs définis par une interface (sans type, ni concret,
 	ni abstrait, comme ceux du workflow).
