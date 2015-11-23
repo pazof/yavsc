@@ -1,5 +1,11 @@
 2015-11-23  Paul Schneider  <paul@pschneider.fr>
 
+	* activity.sql: definit les activités en base de données.
+
+	* Web.csproj: ajoute la definition de la donnée `activité`.
+
+2015-11-23  Paul Schneider  <paul@pschneider.fr>
+
 	* style.css:
 	* style.css: Ne contient plus que ce qui concerne les couleurs
 	et images

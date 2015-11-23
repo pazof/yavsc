@@ -542,6 +542,7 @@
     <None Include="WebDeploy.targets" />
     <None Include="WebTasks.dll" />
     <None Include="App_Code\Sql\MEA.sql" />
+    <None Include="App_Code\Sql\activity.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">
