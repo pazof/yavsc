@@ -34,7 +34,7 @@ namespace Yavsc.Model.FrontOffice
 	/// <summary>
 	/// Performer profile.
 	/// </summary>
-	public class PerformerProfile: UserNameBase, IRating, IIdentified
+	public class PerformerProfile: UserNameBase, IRating, IIdentified<long>
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Yavsc.Model.Skill.PerformerProfile"/> class.

@@ -27,46 +27,6 @@ using Yavsc.Model;
 namespace Yavsc.Model.Calendar
 {
 	/// <summary>
-	/// Base event.
-	/// </summary>
-	public class BaseEvent
-	{
-		/// <summary>
-		/// The title.
-		/// </summary>
-		[Required(ErrorMessage="Please, choose a .")] 
-		[Display(ResourceType=typeof(LocalizedText),Name="Title")]
-		public string Title { get; set; }
-		/// <summary>
-		/// The description.
-		/// </summary>
-		[Required(ErrorMessage="Please, choose a Description.")] 
-		[Display(ResourceType=typeof(LocalizedText),Name="Description")]
-		public string Description { get; set; }
-
-		/// <summary>
-		/// The location.
-		/// </summary>
-		[Required(ErrorMessage="Please, choose a Location.")] 
-		[Display(ResourceType=typeof(LocalizedText),Name="Location")]
-		public Position Location { get; set; }
-		/// <summary>
-		/// The start date.
-		/// </summary>
-		[Required(ErrorMessage="Please, choose a Start Date.")] 
-		[Display(ResourceType=typeof(LocalizedText),Name="StartDate")]
-		public DateTime StartDate { get; set; }
-
-		/// <summary>
-		/// Gets or sets the end date.
-		/// </summary>
-		/// <value>The end date.</value>
-		[Required(ErrorMessage="Please, choose an End Date.")] 
-		[Display(ResourceType=typeof(LocalizedText),Name="EndDate")]
-		public DateTime EndDate { get; set; }
-
-	}
-	/// <summary>
 	/// NF event.
 	/// </summary>
 	public class YaEvent : BaseEvent

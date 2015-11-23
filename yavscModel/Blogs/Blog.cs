@@ -8,7 +8,7 @@ namespace Yavsc.Model.Blogs
 	/// <summary>
 	/// Blog.
 	/// </summary>
-	public class Blog
+	public class Blog: ITitle
 	{
 		string title;
 		

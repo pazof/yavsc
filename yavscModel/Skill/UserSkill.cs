@@ -26,7 +26,7 @@ namespace Yavsc.Model.Skill
 	/// <summary>
 	/// User skill.
 	/// </summary>
-	public class UserSkill : IComment, IRating
+	public class UserSkill : IComment<long>, IRating
 	{
 		/// <summary>
 		/// Gets or sets the identifier for this

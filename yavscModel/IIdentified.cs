@@ -22,9 +22,9 @@ using System;
 
 namespace Yavsc.Model
 {
-	public interface IIdentified
+	public interface IIdentified<T> 
 	{
-		long Id { get; set; }
+		T Id { get; set; }
 	}
 }
 

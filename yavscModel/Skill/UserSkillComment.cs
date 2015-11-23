@@ -27,7 +27,7 @@ namespace Yavsc.Model.Skill
 	/// <summary>
 	/// User skill comment.
 	/// </summary>
-	public class UserSkillComment: UserSkillReference, IComment
+	public class UserSkillComment: UserSkillReference, IComment<long>
 	{
 
 		/// <summary>

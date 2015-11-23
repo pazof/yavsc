@@ -25,7 +25,7 @@ namespace Yavsc.Model
 	/// <summary>
 	/// Rss feeds entry.
 	/// </summary>
-	public class RssFeedsEntry {
+	public class RssFeedsEntry: ITitle {
 		/// <summary>
 		/// Gets or sets the title.
 		/// </summary>

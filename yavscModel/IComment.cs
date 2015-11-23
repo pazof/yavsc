@@ -24,7 +24,7 @@ using System;
 namespace Yavsc.Model
 {
 
-	public interface IComment: IIdentified  {
+	public interface IComment<T>: IIdentified<T> {
 		string Comment { get; set; } 
 	}
 }

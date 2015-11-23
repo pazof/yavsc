@@ -33,7 +33,7 @@ namespace Yavsc.Model.Blogs
 	/// <summary>
 	/// Base post.
 	/// </summary>
-	public class BasePost: IRating {
+	public class BasePost: IRating, ITitle {
 		/// <summary>
 		/// The identifier.
 		/// </summary>

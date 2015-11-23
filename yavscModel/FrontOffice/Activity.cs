@@ -1,10 +1,10 @@
-//
-//  IViewRenderer.cs
+﻿//
+//  Activity.cs
 //
 //  Author:
-//       Paul Schneider <paulschneider@free.fr>
+//       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015 Paul Schneider
+//  Copyright (c) 2015 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -18,24 +18,32 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
-using System.Configuration;
-using System.Collections.Specialized;
-using System.Data;
-using System.Web.Mvc;
 
-namespace Yavsc.Model
+namespace Yavsc.Model.FrontOffice
 {
-	/// <summary>
-	/// I view renderer.
-	/// </summary>
-	public interface IViewRenderer : IRenderer {
-		/// <summary>
-		/// Gets the template route part.
-		/// </summary>
-		/// <value>The template.</value>
-		string Template { get; }
-	}
+	public class Activity:  IComment<string>, ITitle
+	{
+		#region ITitle implementation
+		public string Title {
+			get;
+			set;
+		}
+		#endregion
 
+		#region IComment implementation
+		public string Comment {
+			get;
+			set;
+		}
+		#endregion
+		#region IIdentified implementation
+		public string Id {
+			get;
+			set;
+		}
+		#endregion
+		
+	}
 }
+

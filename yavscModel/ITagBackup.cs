@@ -1,5 +1,5 @@
 //
-//  ViewRenderer.cs
+//  ITagHandler.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -28,43 +28,26 @@ using System.Web.Mvc;
 namespace Yavsc.Model
 {
 	/// <summary>
-	/// View renderer.
+	/// I tag handler.
 	/// </summary>
-	public abstract class ViewRenderer<T> : IViewRenderer  {
-		#region IRenderer implementation
+	public interface ITagBackup {
 		/// <summary>
-		/// Get the specified c.
+		/// Backup this instance.
+		/// Should set ViewData["Tags"] with
+		/// an array of rendered tags
 		/// </summary>
-		/// <param name="c">C.</param>
-		public object Get (Controller c)
-		{
-			return Name;
-		}
+		void Backup();
 
 		/// <summary>
-		/// Gets the template route part.
+		/// Restore this instance.
 		/// </summary>
-		/// <value>The template.</value>
-		public string Template {
-			get {
-				return "Tag.aspx";
-			}
-		}
+		void Restore();
 
 		/// <summary>
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		public string Name {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		#endregion
-		
-	}
+		string Name { get; set; }
 
+	}
 }

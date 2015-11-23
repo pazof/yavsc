@@ -59,6 +59,7 @@ namespace Yavsc.Formatters
 		public ErrorHtmlFormatter 
 		(HttpStatusCode errorCode, string title):base("text/html")
 		{
+			// FIXME this is not a place for this property
 			ErrorCode = errorCode;
 			Title = title;
 

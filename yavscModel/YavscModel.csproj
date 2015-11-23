@@ -80,9 +80,6 @@
     <Compile Include="Google\CalendarList.cs" />
     <Compile Include="Google\CalendarListEntry.cs" />
     <Compile Include="IRenderer.cs" />
-    <Compile Include="ITagHandler.cs" />
-    <Compile Include="IViewRenderer.cs" />
-    <Compile Include="ViewRenderer.cs" />
     <Compile Include="RssFeeds.cs" />
     <Compile Include="FrontOffice\Commande.cs" />
     <Compile Include="FrontOffice\Catalog\Brand.cs" />
@@ -123,7 +120,6 @@
     <Compile Include="FrontOffice\CommandStatus.cs" />
     <Compile Include="FrontOffice\CommandSet.cs" />
     <Compile Include="FrontOffice\Catalog\Billing\Price.cs" />
-    <Compile Include="OtherWebException.cs" />
     <Compile Include="WorkFlow\Automate.cs" />
     <Compile Include="Google\CalendarEventList.cs" />
     <Compile Include="Google\GDate.cs" />
@@ -201,6 +197,10 @@
     <Compile Include="FrontOffice\PerformerProfile.cs" />
     <Compile Include="FrontOffice\SimpleBookingQuery.cs" />
     <Compile Include="Skill\SkillEntity.cs" />
+    <Compile Include="FrontOffice\Activity.cs" />
+    <Compile Include="ITagBackup.cs" />
+    <Compile Include="ITitle.cs" />
+    <Compile Include="Calendar\BaseEvent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

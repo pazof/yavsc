@@ -26,7 +26,7 @@ namespace Yavsc.Model.Blogs
 	/// <summary>
 	/// Unique User and Title blog entry collection.
 	/// </summary>
-	public class UUTBlogEntryCollection : UUBlogEntryCollection {
+	public class UUTBlogEntryCollection : UUBlogEntryCollection, ITitle {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Yavsc.Model.Blogs.UUTBlogEntryCollection"/> class.
 		/// </summary>
@@ -41,7 +41,8 @@ namespace Yavsc.Model.Blogs
 		/// Gets the title.
 		/// </summary>
 		/// <value>The title.</value>
-		public string Title { get { return _title; } }
+		public string Title { get { return _title; }
+			set { _title = value; } }
 
 		/// <summary>
 		/// Returns a <see cref="System.String"/> that represents the current <see cref="Yavsc.Model.Blogs.UUTBlogEntryCollection"/>.

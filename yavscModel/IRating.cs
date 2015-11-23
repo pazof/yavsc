@@ -26,7 +26,7 @@ namespace Yavsc.Model
 	/// <summary>
 	/// I rating.
 	/// </summary>
-	public interface IRating: IIdentified
+	public interface IRating: IIdentified<long>
 	{
 		/// <summary>
 		/// Gets or sets the rate.

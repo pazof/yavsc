@@ -8,7 +8,7 @@ namespace Yavsc.Model.WorkFlow
 	/// Estimate.
 	/// </summary>
 	[Serializable]
-	public class Estimate 
+	public class Estimate : ITitle
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Yavsc.Model.WorkFlow.Estimate"/> class.

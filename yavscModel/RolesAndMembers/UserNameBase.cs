@@ -25,6 +25,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Model.RolesAndMembers
 {
+	/// <summary>
+	/// User name base.
+	/// </summary>
 	public class UserNameBase { 
 		/// <summary>
 		/// Gets or sets the name of the user.

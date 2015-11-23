@@ -1,5 +1,43 @@
 2015-11-23  Paul Schneider  <paul@pschneider.fr>
 
+	* ITitle.cs:
+	* RssFeeds.cs:
+	* Blog.cs:
+	* BasePost.cs:
+	* YaEvent.cs:
+	* Estimate.cs:
+	* BaseEvent.cs:
+	* Activity.cs:
+	* UTBlogEntryCollection.cs:
+	* UUTBlogEntryCollection.cs: refactorisation: Les titres
+	obtiennent une interface logicielle dédiée.
+
+	* PerformerProfile.cs: refactorisation: Les identifiant
+	deviennent génériques
+
+	* IRating.cs:
+	* IComment.cs:
+	* IIdentified.cs: refactorisation: Les identifiant et
+	commentaires deviennent génériques
+
+	* ITagBackup.cs: refactorisation: un meilleur nom pour cette
+	interface qui n'a pas encore d'implementeur.
+
+	* UserNameBase.cs: xml doc
+
+	* UserSkill.cs:
+	* UserSkillComment.cs: Les commentaire deviennent génériques
+
+	* OtherWebException.cs: classe obsolete
+
+	* ViewRenderer.cs: classe obsolète
+
+	* YavscModel.csproj: nettoyages de classes obsoletes, ajout
+	des nouvelles interfaces et de la classe de base implementant
+	l' "activité".
+
+2015-11-23  Paul Schneider  <paul@pschneider.fr>
+
 	* SimpleBookingQuery.cs: Implémente une simple commande de
 	rendez-vous,
 	en tant que commande du workflow.
