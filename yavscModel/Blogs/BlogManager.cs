@@ -22,7 +22,7 @@ namespace Yavsc.Model.Blogs
 		static BlogProvider Provider { 
 			get {
 				if (provider == null)
-					provider = ManagerHelper.GetDefaultProvider<BlogProvider>
+					provider = ManagerHelper.CreateDefaultProvider<BlogProvider>
 						("system.web/blog"); 
 				return provider;
 			} 

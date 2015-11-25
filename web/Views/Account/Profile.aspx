@@ -5,26 +5,19 @@
 </asp:Content>
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
-
-  <style>
-table.layout { border-width: 0;  }
-table.layout TR TD { max-width:40%; }
-   </style>
-
+   <% if (Roles.IsUserInRole((string)ViewData ["UserName"],"Admin")) {
+   // TODO View all roles
+     %><aside>This user is Admin.</aside>
+   <% } %>  
    <aside>
    <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
    <%= Html.ActionLink("Désincription", "Unregister", "Account",  new { id = ViewData["UserName"] } , new { @class="actionlink" })%>
    </aside>
    <aside>
-   <% if (Roles.IsUserInRole((string)ViewData ["UserName"],"Admin")) {
-   // TODO View all roles
-     %>
-   This user is Admin.
-   <% } %>
-   <code>HasBankAccount:<%= Model.HasBankAccount %></code>
+   <code>Compte bancaire:<%= Model.HasBankAccount %></code>
    <% if (!Model.HasBankAccount) { %><span class="hint">
    IBAN+BIC ou Codes banque, guichet, compte et clé RIB</span>
-   <% } %>, <code>IsBillable:<%=Model.IsBillable%></code>
+   <% } %>, <code>Adressable:<%=Model.IsBillable%></code>
     <% if (!Model.IsBillable) { %>
     <span class="hint">un nom et au choix, une adresse postale valide,
    ou un téléphone, ou un email, ou un Mobile</span>   <% } %>
@@ -37,7 +30,10 @@ table.layout TR TD { max-width:40%; }
  <%= Html.Hidden("UserName",ViewData["ProfileUserName"]) %>
 
    <fieldset><legend>Informations publiques</legend>
-
+<%= Html.LabelFor(model => model.MEACode) %> :
+<%= Html.DropDownList("MEACode") %>
+<%= Html.ValidationMessage("MEACode", "*") %>
+<br>
 
 <%= Html.LabelFor(model => model.NewUserName) %> :
 <%= Html.TextBox("NewUserName") %> 
@@ -54,12 +50,15 @@ Avatar : <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" a
 <input type="file" id="AvatarFile" name="AvatarFile"/>
 <%= Html.ValidationMessage("AvatarFile", "*") %>
 
+
 </fieldset>
+
 <fieldset><legend>Informations administratives</legend>
 <%= Html.LabelFor(model => model.Name) %> :
 <%= Html.TextBox("Name") %> 
 <%= Html.ValidationMessage("Name", "*") %>
 </fieldset>
+
     <fieldset><legend>Blog</legend>
     <div class="spanel">
 <%= Html.LabelFor(model => model.BlogVisible) %> :

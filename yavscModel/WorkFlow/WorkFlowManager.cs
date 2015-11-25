@@ -21,19 +21,26 @@ namespace Yavsc.Model.WorkFlow
 		/// </summary>
 		/// <returns>The activity.</returns>
 		/// <param name="pattern">Pattern.</param>
-		public static IEnumerable<Activity> FindActivity(string pattern = "%")
+		/// <param name="exerted">If set to <c>true</c> exerted.</param>
+		public static Activity[] FindActivity(string pattern = "%", bool exerted=true)
 		{
-			throw new NotImplementedException ();
+			List<Activity> activities = new List<Activity> ();
+			foreach (var provider in Providers) {
+				foreach (var act in provider.FindActivity (pattern, exerted))
+					if (!activities.Contains(act))
+						activities.Add(act);
+			}
+			return activities.ToArray();
 		}
 
 		/// <summary>
 		/// Gets the activity.
 		/// </summary>
 		/// <returns>The activity.</returns>
-		/// <param name="MAECode">MAE code.</param>
-		public static Activity GetActivity (string MAECode)
+		/// <param name="meacode">MAE code.</param>
+		public static Activity GetActivity (string meacode)
 		{
-			throw new NotImplementedException ();
+			return DefaultProvider.GetActivity (meacode);
 		}
 
 		/// <summary>
@@ -49,7 +56,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="com">COM.</param>
 		public static long RegisterCommand(Command com)
 		{
-			return ContentProvider.RegisterCommand (com);
+			return DefaultProvider.RegisterCommand (com);
 		}
 
 		/// <summary>
@@ -58,7 +65,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="estim">Estim.</param>
 		public static void UpdateEstimate (Estimate estim)
 		{
-			ContentProvider.Update (estim);
+			DefaultProvider.Update (estim);
 		}
 		/// <summary>
 		/// Gets the estimate.
@@ -67,7 +74,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="estid">Estid.</param>
 		public static Estimate GetEstimate (long estid)
 		{
-			return ContentProvider.Get (estid);
+			return DefaultProvider.Get (estid);
 		}
 		/// <summary>
 		/// Gets the estimates, refering the 
@@ -77,7 +84,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="responsible">Responsible.</param>
 		public static Estimate [] GetResponsibleEstimates (string responsible)
 		{
-			return ContentProvider.GetEstimates (null, responsible);
+			return DefaultProvider.GetEstimates (null, responsible);
 		}
 
 		/// <summary>
@@ -87,7 +94,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="client">Client.</param>
 		public static Estimate [] GetClientEstimates (string client)
 		{
-			return ContentProvider.GetEstimates (client, null);
+			return DefaultProvider.GetEstimates (client, null);
 		}
 
 		/// <summary>
@@ -97,7 +104,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="username">Username.</param>
 		public static Estimate [] GetUserEstimates (string username)
 		{
-			return ContentProvider.GetEstimates (username);
+			return DefaultProvider.GetEstimates (username);
 		}
 
 		/// <summary>
@@ -107,7 +114,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="productReference">Product reference.</param>
 		public static StockStatus GetStock(string productReference)
 		{
-			return ContentProvider.GetStockStatus (productReference);
+			return DefaultProvider.GetStockStatus (productReference);
 		}
 
 		/// <summary>
@@ -116,7 +123,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="wr">Wr.</param>
 		public static void UpdateWritting (Writting wr)
 		{
-			ContentProvider.UpdateWritting (wr);
+			DefaultProvider.UpdateWritting (wr);
 		}
 
 		/// <summary>
@@ -125,7 +132,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="wrid">Wrid.</param>
 		public static void DropWritting (long wrid)
 		{
-			ContentProvider.DropWritting (wrid);
+			DefaultProvider.DropWritting (wrid);
 		}
 		/// <summary>
 		/// Drops the estimate.
@@ -133,25 +140,38 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="estid">Estid.</param>
 		public static void DropEstimate (long estid)
 		{
-			ContentProvider.DropEstimate(estid);
+			DefaultProvider.DropEstimate(estid);
 		}
 
-
-
-		static IContentProvider contentProvider;
+		static IContentProvider defaultProvider;
 		/// <summary>
 		/// Gets the content provider.
 		/// </summary>
 		/// <value>The content provider.</value>
-		public static IContentProvider ContentProvider {
+		public static IContentProvider DefaultProvider {
 			
 			get {
-				if (contentProvider == null)
-					contentProvider = ManagerHelper.GetDefaultProvider
+				if (defaultProvider == null)
+					defaultProvider = ManagerHelper.CreateDefaultProvider
 						("system.web/workflow") as IContentProvider; 
-				return contentProvider;
+				return defaultProvider;
 			}
 		}
+		public static IContentProvider [] Providers {
+
+			get { 
+				if (providers == null) {
+					var pbs = ManagerHelper.CreateProviders
+						("system.web/workflow"); 
+					providers = new IContentProvider [pbs.Length];
+					for (var i=0;i<pbs.Length;i++)
+						providers[i] = pbs[i] as IContentProvider;
+				}
+				return providers;
+			}
+		}
+
+		private static IContentProvider [] providers = null;
 
 		/// <summary>
 		/// Creates the estimate.
@@ -163,7 +183,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="description">Description.</param>
 		public static Estimate CreateEstimate(string responsible, string client, string title, string description)
 		{
-			Estimate created = ContentProvider.CreateEstimate (responsible, client, title, description);
+			Estimate created = DefaultProvider.CreateEstimate (responsible, client, title, description);
 			return created;
 		}
 
@@ -187,7 +207,7 @@ namespace Yavsc.Model.WorkFlow
 					throw new Exception ("Product not found");
 				// TODO new EstimateChange Event
 			}
-			return ContentProvider.Write(estid, desc, ucost, count, productid);
+			return DefaultProvider.Write(estid, desc, ucost, count, productid);
 		}
 
 		/// <summary>
@@ -198,7 +218,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="username">Username.</param>
 		public static void SetEstimateStatus(long estid, int status, string username)
 		{
-			ContentProvider.SetEstimateStatus (estid, status, username);
+			DefaultProvider.SetEstimateStatus (estid, status, username);
 		}
 		/// <summary>
 		/// Gets the commands.
@@ -207,14 +227,12 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="username">Username.</param>
 		public static CommandSet GetCommands(string username)
 		{
-			return ContentProvider.GetCommands (username);
+			return DefaultProvider.GetCommands (username);
 		}
 
-		public static string [] APEDisponibles
+		public static void RegisterActivity (string activityName, string meacode, string comment)
 		{
-			get {
-				return new string[]{ "Chanteur", "DJ", "Musicien", "Clown" };
-			}
+			DefaultProvider.RegisterActivity (activityName, meacode, comment);
 		}
 	}
 }

@@ -19,7 +19,7 @@ namespace Yavsc
 	/// <summary>
 	/// Mvc application.
 	/// </summary>
-	public class MvcApplication : System.Web.HttpApplication
+	public class MvcApplication : HttpApplication
 	{
 
 		/// <summary>

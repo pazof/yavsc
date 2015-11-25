@@ -58,9 +58,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string ProviderId {
+        public static string I_understood {
             get {
-                return ResourceManager.GetString("ProviderId", resourceCulture);
+                return ResourceManager.GetString("I_understood", resourceCulture);
             }
         }
         
@@ -70,9 +70,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Circles {
+        public static string access_denied {
             get {
-                return ResourceManager.GetString("Circles", resourceCulture);
+                return ResourceManager.GetString("access_denied", resourceCulture);
             }
         }
         
@@ -94,15 +94,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string none {
+        public static string Circles {
             get {
-                return ResourceManager.GetString("none", resourceCulture);
+                return ResourceManager.GetString("Circles", resourceCulture);
             }
         }
         
-        public static string ProviderName {
+        public static string My_Estimates {
             get {
-                return ResourceManager.GetString("ProviderName", resourceCulture);
+                return ResourceManager.GetString("My_Estimates", resourceCulture);
             }
         }
         
@@ -178,9 +178,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string access_denied {
+        public static string ProviderName {
             get {
-                return ResourceManager.GetString("access_denied", resourceCulture);
+                return ResourceManager.GetString("ProviderName", resourceCulture);
             }
         }
         
@@ -205,6 +205,12 @@ namespace Yavsc.Model {
         public static string ImgLocator {
             get {
                 return ResourceManager.GetString("ImgLocator", resourceCulture);
+            }
+        }
+        
+        public static string none {
+            get {
+                return ResourceManager.GetString("none", resourceCulture);
             }
         }
         
@@ -250,9 +256,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Remove {
+            get {
+                return ResourceManager.GetString("Remove", resourceCulture);
+            }
+        }
+        
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        public static string DoNotPublishMyActivity {
+            get {
+                return ResourceManager.GetString("DoNotPublishMyActivity", resourceCulture);
             }
         }
         
@@ -310,12 +328,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string My_Estimates {
-            get {
-                return ResourceManager.GetString("My_Estimates", resourceCulture);
-            }
-        }
-        
         public static string Location {
             get {
                 return ResourceManager.GetString("Location", resourceCulture);
@@ -325,12 +337,6 @@ namespace Yavsc.Model {
         public static string New_Tag {
             get {
                 return ResourceManager.GetString("New_Tag", resourceCulture);
-            }
-        }
-        
-        public static string I_understood {
-            get {
-                return ResourceManager.GetString("I_understood", resourceCulture);
             }
         }
         
@@ -352,15 +358,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Remove {
+        public static string MEACode {
             get {
-                return ResourceManager.GetString("Remove", resourceCulture);
+                return ResourceManager.GetString("MEACode", resourceCulture);
             }
         }
         
-        public static string AnIMessageHasbeenSent {
+        public static string DoTag {
             get {
-                return ResourceManager.GetString("AnIMessageHasbeenSent", resourceCulture);
+                return ResourceManager.GetString("DoTag", resourceCulture);
             }
         }
         
@@ -442,6 +448,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string ProviderId {
+            get {
+                return ResourceManager.GetString("ProviderId", resourceCulture);
+            }
+        }
+        
         public static string Role {
             get {
                 return ResourceManager.GetString("Role", resourceCulture);
@@ -508,9 +520,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string DoTag {
+        public static string Hide_source {
             get {
-                return ResourceManager.GetString("DoTag", resourceCulture);
+                return ResourceManager.GetString("Hide_source", resourceCulture);
             }
         }
         
@@ -574,12 +586,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Hide_source {
-            get {
-                return ResourceManager.GetString("Hide_source", resourceCulture);
-            }
-        }
-        
         public static string UsersInRole {
             get {
                 return ResourceManager.GetString("UsersInRole", resourceCulture);
@@ -589,6 +595,12 @@ namespace Yavsc.Model {
         public static string DB {
             get {
                 return ResourceManager.GetString("DB", resourceCulture);
+            }
+        }
+        
+        public static string AnIMessageHasbeenSent {
+            get {
+                return ResourceManager.GetString("AnIMessageHasbeenSent", resourceCulture);
             }
         }
         

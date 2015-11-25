@@ -23,7 +23,6 @@
  $('#btncreate').click( function() {
  var $sname = $('#SkillName').val();
  Skills.createSkill($sname, function(sid) {
- console.log(' Skill created id : '+sid);
  $('<li>'+$sname+'</li>').data('sid',sid).addClass('skillname').appendTo('#skills');
  $('#SkillName').val('');
  }); } ); });

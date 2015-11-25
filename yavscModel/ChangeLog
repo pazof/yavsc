@@ -1,3 +1,40 @@
+2015-11-25  Paul Schneider  <paul@pschneider.fr>
+
+	* BlogManager.cs: refactorisation 
+
+	* Activity.cs: implémente un type de commande à associer à une
+	activité.
+
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: La traduction de "ne pas
+	publier mon activité"
+
+	* LocalizedText.resx: La traduction de "ne pas publier mon
+	activité", et de "Votre activité"
+
+
+	* ManagerHelper.cs: refabrique l'instanciation des
+	fournisseurs du workflow,
+	pour avoir une liste de toutes les activité prises en charges
+	par tous les fournisseurs de contenu.
+
+
+	* Profile.cs: Implement le code activité de l'objet `Profile`
+
+	* ProfileEdition.cs: xmldoc
+
+	* SkillManager.cs: Formattage du code source
+
+	* IContentProvider.cs: reformattage du code+
+	propriété "Name" du fournisseur +
+	definition des methodes relatives à la gestion des activités
+
+	* WorkFlowManager.cs: Methodes de recupperation des activités
+	fournies auprés des fournisseurs de contenu
+
+	* YavscModel.csproj: renommage
+
 2015-11-23  Paul Schneider  <paul@pschneider.fr>
 
 	* Estimate.cs:

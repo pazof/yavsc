@@ -17,6 +17,7 @@ using System.Text;
 using System.Net;
 using System.Configuration;
 using Yavsc.Model;
+using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.Controllers
 {
@@ -251,11 +252,24 @@ namespace Yavsc.Controllers
 			if (id == null)
 				id = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = id;
+
 			ProfileEdition model = new ProfileEdition (ProfileBase.Create (id));
 			model.RememberMe = FormsAuthentication.GetAuthCookie (id, true) == null;
+			SetMEACodeViewData (model);
 			return View (model);
 		}
 
+		private void SetMEACodeViewData(Profile model) {
+			var activities = WorkFlowManager.FindActivity ("%", false);
+			var items = new List<SelectListItem> ();
+			items.Add (new SelectListItem () { Selected = model.MEACode == null, Text = LocalizedText.DoNotPublishMyActivity, Value=null });
+			foreach (var a in activities) {
+				items.Add(new SelectListItem() { Selected = model.MEACode == a.Id, 
+					Text = string.Format("{1} : {0}",a.Title,a.Id), 
+					Value = a.Id });
+			}
+			ViewData ["MEACode"] = items;
+		}
 
 
 		/// <summary>
@@ -336,6 +350,7 @@ namespace Yavsc.Controllers
 				prf.SetPropertyValue ("BankedKey", model.BankedKey);
 				prf.SetPropertyValue ("gcalid", model.GoogleCalendar);
 				prf.SetPropertyValue ("UITheme", model.UITheme);
+				prf.SetPropertyValue ("MEACode", model.MEACode);
 				prf.Save ();
 
 				if (editsTheUserName) {
@@ -345,6 +360,7 @@ namespace Yavsc.Controllers
 				}
 				YavscHelpers.Notify(ViewData, "Profile enregistré"+((editsTheUserName)?", nom public inclu.":""));
 			}
+			SetMEACodeViewData (model);
 			return View (model);
 		}
 		/// <summary>

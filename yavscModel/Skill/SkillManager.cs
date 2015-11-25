@@ -40,7 +40,7 @@ namespace Yavsc.Model.Skill
 		private static SkillProvider Provider { 
 			get {
 				if (provider == null)
-					provider = ManagerHelper.GetDefaultProvider<SkillProvider>
+					provider = ManagerHelper.CreateDefaultProvider<SkillProvider>
 						("system.web/skillProviders"); 
 				return provider;
 			} 

@@ -25,6 +25,27 @@ namespace Yavsc.ApiControllers
 	/// </summary>
 	public class FrontOfficeController : YavscController
 	{
+		/// <summary>
+		/// search the specified Activities.
+		/// </summary>
+		/// <param name="search">Search.</param>
+
+		public Activity[] Activities (string search)
+		{
+			if (search == null)
+				search = "%";
+			return WorkFlowManager.FindActivity(search,true);
+		}
+		/// <summary>
+		/// Registers the activity.
+		/// </summary>
+		/// <param name="act">Act.</param>
+		[HttpPost,ValidateAjax]
+		public void RegisterActivity(Activity act)
+		{
+			if (ModelState.IsValid)
+				WorkFlowManager.RegisterActivity (act.Title, act.Id, act.Comment);
+		}
 
 		/// <summary>
 		/// Catalog this instance.
@@ -58,7 +79,7 @@ namespace Yavsc.ApiControllers
 		[HttpGet]
 		public Estimate GetEstimate (long id)
 		{
-			Estimate est = WorkFlowManager.ContentProvider.Get (id);
+			Estimate est = WorkFlowManager.DefaultProvider.Get (id);
 			string username = Membership.GetUser ().UserName;
 			if (est.Client != username)
 			if (!Roles.IsUserInRole("Admin"))

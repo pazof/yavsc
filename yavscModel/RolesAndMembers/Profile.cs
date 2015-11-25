@@ -5,6 +5,9 @@ using System.Web.Profile;
 using System.Web.Security;
 using System.Web;
 using System.Configuration;
+using System.Collections.Generic;
+using System.Web.Mvc;
+using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.Model.RolesAndMembers
 {
@@ -269,9 +272,21 @@ namespace Yavsc.Model.RolesAndMembers
 			BIC =  (string)profile.GetPropertyValue ("BIC");
 			WicketCode = (string) profile.GetPropertyValue ("WicketCode");
 			AccountNumber = (string) profile.GetPropertyValue ("AccountNumber");
-			BankedKey = (int)  profile.GetPropertyValue ("BankedKey");;
+			BankedKey = (int)  profile.GetPropertyValue ("BankedKey");
 			GoogleCalendar = (string) profile.GetPropertyValue ("gcalid");
+			MEACode = (string) profile.GetPropertyValue ("MEACode");
 		}
+
+		/// <summary>
+		/// Gets or sets the MEA code.
+		/// </summary>
+		/// <value>The MEA code.</value>
+		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un code APE valide")
+			,Display(ResourceType=typeof(LocalizedText),Name="MEACode"),
+			RegularExpression(@"[a-zA-Z0-9 \-_.~/\\]+")
+		]
+		public string MEACode { get; set; }
+
 	}
 }
 

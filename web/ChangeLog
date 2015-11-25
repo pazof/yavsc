@@ -1,3 +1,56 @@
+2015-11-25  Paul Schneider  <paul@pschneider.fr>
+
+	* Activities.aspx: implémente la vue Html de la liste éditable
+	des activités
+
+	* Activity.ascx: implémente la vue Html d'une activité
+
+	* FrontOfficeController.cs: Le contrôleur du FrontOffice gére
+	les activités
+
+	* Global.asax.cs: nettoyage du code
+
+	* activity.sql: Typo corrigée sur le terme "MEACode"
+
+	* style.css: enlève des images qui n'ont plus rien à faire
+	ici, tant ce fichier
+	concerne maintenant uniquement la disposition ou les éléments
+	de base.
+
+
+	* AccountController.cs: implémente le contrôle par
+	l'utilisateur du paramêtre de l'activité principale
+	associé à son profile.
+
+	* FrontOfficeController.cs: Implemente le contrôle de la page
+	des activités,
+	et simplifie le contrôle de la page des compétences.
+
+	* HomeController.cs: formattage du code
+
+	* ModuleController.cs: inutilisé
+
+	* App.master: Theming explicite en page maître
+
+	* Profile.aspx: Propose maintenant l'édition de l'activité
+	principalement éxercée
+
+	* Skills.aspx: supprime une ligne de log
+
+	* Index.aspx: RAZ en home page
+
+	* MarkdownDeep.dll: remplace le tag englobant les
+	transformations,
+	il était un "<p>", il est maintenant un "<span>".
+
+
+	* Web.csproj: reference les nouveaux éléments du projet
+	relatifs au activités
+
+	* Web.config: references manquante en cas d'utilisation du
+	paramértrage global du thème via la section system.web/pages
+	du fichier de configuration.
+
 2015-11-23  Paul Schneider  <paul@pschneider.fr>
 
 	* activity.sql: definit les activités en base de données.

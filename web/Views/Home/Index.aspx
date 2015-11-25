@@ -9,8 +9,5 @@
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <%= Html.Partial("TagPanel",ViewData["Accueil"]) %>
-<%= Html.Partial("TagPanel",ViewData["Yavsc"]) %>
-<%= Html.Partial("TagPanel",ViewData["Événements"]) %>
-<%= Html.Partial("TagPanel",ViewData["Mentions légales"]) %>
 </asp:Content>
 

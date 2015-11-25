@@ -22,6 +22,9 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Profile;
+using System.Collections.Generic;
+using System.Web.Mvc;
+using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.Model.RolesAndMembers
 {
@@ -36,7 +39,10 @@ namespace Yavsc.Model.RolesAndMembers
 		public ProfileEdition()
 		{}
 
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.RolesAndMembers.ProfileEdition"/> class.
+		/// </summary>
+		/// <param name="pr">Pr.</param>
 		public ProfileEdition(ProfileBase pr): base(pr)
 		{
 			NewUserName = UserName;
@@ -51,6 +57,9 @@ namespace Yavsc.Model.RolesAndMembers
 			RegularExpression("([a-z]|[A-Z]|[\\s-_.~]|[0-9])+")
 		]
 		public string NewUserName { get; set; }
+
+
+
 	}
 }
 

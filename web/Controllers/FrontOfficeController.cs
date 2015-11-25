@@ -266,6 +266,18 @@ namespace Yavsc.Controllers
 			return View (skills);
 		}
 
+		public ActionResult Activities (string search, bool toPower = false)
+		{
+			if (search == null)
+				search = "%";
+			var activities = WorkFlowManager.FindActivity(search,!toPower);
+			return View (activities);
+		}
+
+		public ActionResult Activity(string id)
+		{
+			return View(WorkFlowManager.GetActivity (id));
+		}
 		/// <summary>
 		/// Display and should
 		/// offer Ajax edition of 
@@ -273,20 +285,16 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <param name="usp">the User Skills Profile.</param>
 		[Authorize()]
-		public ActionResult UserSkills (PerformerProfile usp)
+		public ActionResult UserSkills (string id)
 		{
-			if (usp.UserName == null) 
-				// this is not a call to update,
-				// and this can not concern another user
-				// than the current logged one.
-				usp = new PerformerProfile( User.Identity.Name );
-			// if (usp.UserName was null) {
-			usp = SkillManager.GetUserSkills (usp.UserName);
+			if (id == null) 
+				id = User.Identity.Name ;
+			// TODO or not to do, handle a skills profile update,
+			//      actually performed via the Web API :-°
+			// else if (ModelState.IsValid) {}
+			var usp = SkillManager.GetUserSkills (id);
 			var skills = SkillManager.FindSkill ("%");
 			ViewData ["SiteSkills"] = skills;
-			// TODO or not to do, handle a skills profile update,
-		    // actually performed via the Web API :-°
-			// } else if (ModelState.IsValid) {}
 			return View (usp);
 		}
 

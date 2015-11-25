@@ -105,6 +105,13 @@
     <Reference Include="Microsoft.Web.XmlTransform">
       <HintPath>..\packages\Mono.Web.Xdt.1.0.0\lib\Net40\Microsoft.Web.XmlTransform.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.IdentityModel.Selectors" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.WebPages.Deployment" />
+    <Reference Include="Microsoft.Web.Infrastructure" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\" />
@@ -141,9 +148,9 @@
     <Folder Include="Views\Admin\" />
     <Folder Include="Views\BackOffice\" />
     <Folder Include="Views\PayPal\" />
-    <Folder Include="Views\Modules\" />
     <Folder Include="xmldoc\" />
     <Folder Include="App_Code\" />
+    <Folder Include="App_Themes\base\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -167,7 +174,6 @@
     <Compile Include="Formatters\SimpleFormatter.cs" />
     <Compile Include="ValidateAjaxAttribute.cs" />
     <Compile Include="Controllers\GoogleController.cs" />
-    <Compile Include="Controllers\ModuleController.cs" />
     <Compile Include="Settings\ThanksConfigurationSection.cs" />
     <Compile Include="Settings\ThanksConfigurationCollection.cs" />
     <Compile Include="Settings\ThanksConfigurationElement.cs" />
@@ -510,6 +516,8 @@
     <Content Include="Views\FrontOffice\EavyBooking.aspx" />
     <Content Include="App_Themes\blue\style.tablesorter.css" />
     <Content Include="App_Themes\clear\style.css" />
+    <Content Include="Views\FrontOffice\Activities.aspx" />
+    <Content Include="Views\FrontOffice\Activity.ascx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

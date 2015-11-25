@@ -91,6 +91,7 @@ namespace Yavsc.Controllers
 				// TODO specialyze BlogEntry creating a PhotoEntry 
 				ViewData [tagname] = ti;
 			}
+
 			return View ();
 		}
 		/// <summary>

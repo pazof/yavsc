@@ -34,6 +34,7 @@
 	<data name="Description"><value>Description</value></data>
 	<data name="DisplayName"><value>Display Name</value></data>
 	<data name="DocTemplateException"><value>Exception occured when rendering your document</value></data>
+	<data name="DoNotPublishMyActivity"><value>Do Not Publish My Activity</value></data>
 	<data name="DoTag"><value>Tag</value></data>
 	<data name="DuplicateEmail"><value>This email adress is already used ({0}).</value></data>
 	<data name="DuplicateUserName"><value>This user name is already used ({0}).</value></data>
@@ -58,6 +59,7 @@
 	<data name="Location"><value>Location</value></data>
 	<data name="Logout"><value>Logout</value></data>
 	<data name="MaxDate"><value>Maximal date for the rendez-vous</value></data>
+	<data name="MEACode"><value>Mainly Exerted Activity</value></data>
 	<data name="Members"><value>Members</value></data>
 	<data name="Message_sent"><value>Your message has been sent.</value></data>
 	<data name="MinDate"><value>Minimal date for the rendez-vous</value></data>
@@ -111,4 +113,5 @@
 	{0} should be available for this booking</value></data>
 	<data name="younotadmin"><value>You're not administrator</value></data>
 	<data name="yourquerytransmitted"><value>your query has been transmitted</value></data>
+
 </root>

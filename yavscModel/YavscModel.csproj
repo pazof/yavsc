@@ -183,7 +183,6 @@
     <Compile Include="Skill\SkillRating.cs" />
     <Compile Include="Skill\SkillProvider.cs" />
     <Compile Include="Skill\SkillManager.cs" />
-    <Compile Include="Manager.cs" />
     <Compile Include="Skill\UserSkill.cs" />
     <Compile Include="Skill\UserSkillComment.cs" />
     <Compile Include="Skill\UserSkillDeclaration.cs" />
@@ -201,6 +200,7 @@
     <Compile Include="ITagBackup.cs" />
     <Compile Include="ITitle.cs" />
     <Compile Include="Calendar\BaseEvent.cs" />
+    <Compile Include="ManagerHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
