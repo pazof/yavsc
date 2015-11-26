@@ -23,7 +23,7 @@
 $(document).ready(function(){
 	var $window = $(window); 
 	var $stwidth = $(window).width();
-	var $stheight = $(window).width();
+	var $stheight = $(window).height();
 
 	var onPos = function (bgobj,ax,ay) {
 	  	var speed = bgobj.data('speed');

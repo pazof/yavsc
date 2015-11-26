@@ -34,13 +34,11 @@ namespace Yavsc.Model.Calendar
 		/// <summary>
 		/// The name of the NF provider.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a Provider Name.")]
 		[Display(ResourceType=typeof(LocalizedText),Name="ProviderName")]
 		public string ProviderName { get; set; }
 		/// <summary>
 		/// The NF provider identifier.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a Provider Identifier.")]
 		[Display(ResourceType=typeof(LocalizedText),Name="ProviderId")]
 		public string ProviderId { get; set; }
 		/// <summary>

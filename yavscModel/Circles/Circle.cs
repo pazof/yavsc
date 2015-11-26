@@ -52,6 +52,20 @@ namespace Yavsc.Model.Circles
 			}
 			return content.ToArray ();
 		}
+		/// <summary>
+		/// Union the specified thoseIds.
+		/// </summary>
+		/// <param name="thoseIds">Those identifiers.</param>
+		public static string [] Union (long [] thoseIds)
+		{
+			List<string> content = new List<string>();
+			foreach (long cid in thoseIds) 
+				foreach (string user_name in 
+					CircleManager.DefaultProvider.GetMembers(cid).Members)
+					if (!content.Contains (user_name))
+						content.Add (user_name);
+			return content.ToArray ();
+		}
 	}
 
 }

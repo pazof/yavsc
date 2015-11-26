@@ -14,6 +14,7 @@ using Yavsc.Helpers;
 using Yavsc;
 using System.Web.Mvc;
 using Yavsc.Model.Blogs;
+using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.Controllers
 {
@@ -83,7 +84,7 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// Index this instance.
 		/// </summary>
-		public ActionResult Index ()
+		public ActionResult Index (string id)
 		{
 			foreach (string tagname in new string[] {"Accueil","Yavsc","Événements","Mentions légales"})
 			{
@@ -91,7 +92,9 @@ namespace Yavsc.Controllers
 				// TODO specialyze BlogEntry creating a PhotoEntry 
 				ViewData [tagname] = ti;
 			}
-
+			if (id == null)
+				id = "%";
+			ViewData["Activities"] = WorkFlowManager.FindActivity(id,true);
 			return View ();
 		}
 		/// <summary>

@@ -21,9 +21,10 @@
 	<data name="Bill_removal"><value>Bill removal</value></data>
 	<data name="BillCreated"><value>Bill created</value></data>
 	<data name="BillUpdated"><value>Bill updated</value></data>
-	<data name="PhotoUpdated"><value>Photo updated</value></data>
 	<data name="Create"><value>Create</value></data>
 	<data name="Count"><value>Count</value></data>
+	<data name="ChooseADescription"><value>Please, choose a description</value></data>
+	<data name="ChooseATitle"><value>Please, choose a title</value></data>
 	<data name="Ciffer"><value>Ciffer</value></data>
 	<data name="Circles"><value>Circles</value></data>
 	<data name="Consultant"><value>Consultant</value></data>
@@ -35,6 +36,7 @@
 	<data name="DisplayName"><value>Display Name</value></data>
 	<data name="DocTemplateException"><value>Exception occured when rendering your document</value></data>
 	<data name="DoNotPublishMyActivity"><value>Do Not Publish My Activity</value></data>
+	<data name="DoSpecifyCircles"><value>Please, specify circles for audiance</value></data>
 	<data name="DoTag"><value>Tag</value></data>
 	<data name="DuplicateEmail"><value>This email adress is already used ({0}).</value></data>
 	<data name="DuplicateUserName"><value>This user name is already used ({0}).</value></data>
@@ -65,6 +67,7 @@
 	<data name="MinDate"><value>Minimal date for the rendez-vous</value></data>
 	<data name="Modify"><value>Modify</value></data>
 	<data name="My_Estimates"><value>My estimates</value></data>
+	<data name="Needs"><value>Needs</value></data>
 	<data name="New_Tag"><value>New Tag</value></data>
 	<data name="no_content"><value>no content</value></data>
 	<data name="none"><value>none</value></data>
@@ -75,6 +78,8 @@
 	<data name="Offline"><value>Offline</value></data>
 	<data name="Pdf_version"><value>Pdf version</value></data>
 	<data name="Person"><value>Person</value></data>
+	<data name="Photo"><value>Photo</value></data>
+	<data name="PhotoUpdated"><value>Photo updated</value></data>
 	<data name="PreferedDate"><value>Prefered date</value></data>
 	<data name="Preview"><value>Preview</value><comment>comment on preview</comment></data>
 	<data name="Private_circle"><value>Private circle</value></data>

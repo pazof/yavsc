@@ -23,12 +23,15 @@
 	<data name="BillUpdated"><value>Billet mis à jour</value></data>
 	<data name="Consultant"><value>Consultant</value></data>
 	<data name="Count"><value>Nombre</value></data>
+	<data name="ChooseADescription"><value>S'il vous plait, choisissez une description.</value></data>
+	<data name="ChooseATitle"><value>S'il vous plait, choisissez un titre.</value></data>
 	<data name="Ciffer"><value>Chiffre</value></data>
 	<data name="Circles"><value>Cercles</value></data>
 	<data name="Comment"><value>Commentaire</value></data>
 	<data name="DB"><value>Base de données</value></data>
 	<data name="DoComment"><value>Commenter</value></data>
 	<data name="DoNotPublishMyActivity"><value>Ne pas publier mon activité</value></data>
+	<data name="DoSpecifyCircles"><value>S'il vous plait, spécifiez ceux de vos cercles à qui est destiné ce contenu</value></data>
 	<data name="Create"><value>Créer</value></data>
 	<data name="Date_search"><value>Demande de rendez-vous</value></data>
 	<data name="DocTemplateException"><value>Une erreur est survenue à la génération de votre document</value></data>
@@ -62,6 +65,7 @@
     <data name="MinDate"><value>Date minimale du rendez-vous</value></data>
 	<data name="Modify"><value>Modifier</value></data>
 	<data name="My_Estimates"><value>Mes estimations</value></data>
+	<data name="Needs"><value>Besoin</value></data>
 	<data name="New_Tag"><value>Nouveau Tag</value></data>
 	<data name="no_content"><value>pas de contenu</value></data>
 	<data name="none"><value>aucun(e)</value></data>
@@ -72,6 +76,8 @@
 	<data name="Online"><value>En ligne</value></data>
 	<data name="Pdf_version"><value>Version Pdf</value></data>
 	<data name="Person"><value>Personne</value></data>
+	<data name="Photo"><value>Photo</value></data>
+	<data name="PhotoUpdated"><value>Photo mise à jour</value></data>
 	<data name="PreferedDate"><value>Date souhaitée</value></data>
 	<data name="Preview"><value>Prévisualiser</value><comment>Prévisualiser le document</comment></data>
 	<data name="Profile_edition"><value>Édition du profile</value></data>

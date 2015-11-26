@@ -4,6 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Yavsc.Admin;
+using Yavsc.Model.Calendar;
+using Yavsc.Helpers.Google;
+using Yavsc.Model.Circles;
+using System.Web.Security;
 
 
 namespace Yavsc.Controllers
@@ -20,6 +24,27 @@ namespace Yavsc.Controllers
 		public ActionResult Index()
 		{
 			return View ();
+		}
+
+		/// <summary>
+		/// Notifies the event.
+		/// </summary>
+		/// <returns>The event.</returns>
+		/// <param name="evpub">Evpub.</param>
+		public ActionResult NotifyEvent(EventPub evpub)
+		{
+			if (ModelState.IsValid) {
+				ViewData ["NotifyEvent"] = evpub;
+				return View ("NotifyEventResponse", GoogleHelpers.NotifyEvent (evpub));
+			}
+
+			ViewData["CircleIds"] = CircleManager.DefaultProvider.List (
+				Membership.GetUser ().UserName).Select (x => new SelectListItem {
+					Value = x.Id.ToString(),
+					Text = x.Title,
+					Selected = (evpub.CircleIds==null) ? false : evpub.CircleIds.Contains (x.Id)
+				});
+			return View (evpub);
 		}
     }
 }

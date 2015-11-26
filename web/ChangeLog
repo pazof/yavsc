@@ -1,3 +1,84 @@
+2015-11-26  Paul Schneider  <paul@pschneider.fr>
+
+	* BackOfficeController.cs: Impléménte un accès à l'API back
+	office pour l'envoi d'une notification aux mobiles des cercles
+	séléctionné de l'utilisateur
+
+	* NotifyEvent.aspx: Implemente un formulaire d'envoi d'une
+	notification mobile
+
+	* NotifyEventResponse.aspx: initie une page de resultat à la
+	notification mobile
+
+	* BlogsController.cs: En attendant mieux, les billets de blog
+	sont noté par leur auteur, ou un admin.
+
+	* CalendarController.cs: Les fontions de notification GCM et
+	de declaration d'enregistrement GCM
+	partent dans le controlleur back office.
+
+	* activity.sql: ajoute la photo activité dans la definition du
+	modèle de données Npgsql
+
+	* style.css: La fonte de caractère "Open Sans" (Google fonts)
+	pour le thème "clear"
+
+	* style.css: La fonte de caractère "Open Sans" (Google fonts)
+	pour le thème "dark" aussi
+
+	* style.css: pas de fonte de caractère dans la feuille de
+	style basique.
+
+	* BackOfficeController.cs: Impléménte un accès web back office
+	pour l'envoi d'une notification aux mobiles des cercles
+	séléctionné de l'utilisateur
+
+	* BlogsController.cs: Fixe la page de garde du blogspot en cas
+	d'absence
+	de billet à publier publiquement.
+
+	* FrontOfficeController.cs: la fontion booking est maintenant
+	censée conerner uniquement une activité,
+	dont le code APE est donné en dernière partie de la route de
+	l'Url, ou en argument `id`.
+
+
+	* HomeController.cs: La page d'accueil présente maintenant les
+	activités mises en oeuvre par au moins un utilisateur
+	enregistré, validé et non vérouillé.
+	Le titre de l'activité est un lien vers la methode de
+	reservation simple.
+
+	* GoogleHelpers.cs: recoit l'implementation de la methode de
+	notification mobile
+
+	* SimpleJsonPostMethod.cs: Fixe l'envoi en UTF-8
+
+	* App.master: fonte de caractère pour le lien vers "Vos
+	billets"
+
+	* parallax.js: fixe la différence de traitement entre
+	l'horizontale et la verticale
+
+	* Profile.aspx: ajoute le sommaire de la validation
+
+	* Index.aspx: initie un index pour le back office
+
+	* Activities.aspx: nettoye la console de log javascript
+
+	* Booking.aspx: ajoute le champ caché au formulaire de resa
+
+	* Index.aspx: affiche les services fournis sur le site, par
+	des utilisateur enregistrés validés non bloqué.
+
+	* Web.config: rends l'id Google d'enregistrement GCM
+	accessible au utilisateurs anonymes,
+	qui voudraient commander ou interagir avec l'application, sans
+	avoir à créer de compte sur le site.
+
+	* Web.csproj: ajoute le contrôleur du back office, et le
+	formulaire de notification mobile
+
 2015-11-25  Paul Schneider  <paul@pschneider.fr>
 
 	* Activities.aspx: implémente la vue Html de la liste éditable

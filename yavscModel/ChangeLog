@@ -1,3 +1,31 @@
+2015-11-26  Paul Schneider  <paul@pschneider.fr>
+
+	* EventPub.cs:
+	* BaseEvent.cs: internationalise l'évennement (la base d'une
+	notification)
+
+	* YaEvent.cs: les champs fournisseur d'une notification ne
+	sont pas requis. On peut en avoir de la part du site lui même,
+	qui ne soient pas à l'origine d'un evennement tiers du
+	workflow. Dans tous les autres cas, ils devraient être
+	renseignés ... à suivre.
+
+	* Circle.cs:
+	* CircleBase.cs: ajoute une methode de construition des
+	destinataires à partir d'un tableau d'identifiants de cercles.
+
+	* Activity.cs: implémente la photo activité dans le modèle
+
+	* SimpleBookingQuery.cs: refabriqué
+
+	* MessageWithPayLoad.cs: accuse aussi le champ `to` en cas
+	d'absence de destinataire.
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: internationalisation
+
 2015-11-25  Paul Schneider  <paul@pschneider.fr>
 
 	* BlogManager.cs: refactorisation 

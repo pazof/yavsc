@@ -23,6 +23,10 @@ using Yavsc.Model.Google;
 using System.Web.Profile;
 using System.Configuration;
 using System.Web;
+using Yavsc.Model.Calendar;
+using Yavsc.Model.Circles;
+using System.Collections.Generic;
+using System.Web.Security;
 
 namespace Yavsc.Helpers.Google
 {
@@ -93,6 +97,41 @@ namespace Yavsc.Helpers.Google
 		{
 			return new OAuth2 (callBack,clientId,clientSecret);
 		}
+
+		/// <summary>
+		/// Notifies the event.
+		/// </summary>
+		/// <returns>The event.</returns>
+		/// <param name="evpub">Evpub.</param>
+		public static MessageWithPayloadResponse NotifyEvent(EventPub evpub) {
+			using (SimpleJsonPostMethod<MessageWithPayload<YaEvent>,MessageWithPayloadResponse> r = 
+				new SimpleJsonPostMethod<MessageWithPayload<YaEvent>,MessageWithPayloadResponse>(
+					"https://gcm-http.googleapis.com/gcm/send")) { 
+				var users  = Circle.Union (evpub.CircleIds);
+				var regids = new List<string> ();
+				var to = new List<string> ();
+				foreach (var u in users) {
+					var p = ProfileBase.Create (u);
+					if (p != null) {
+						var regid = p.GetPropertyValue("gregid");
+						if (regid == null) {
+							var muser = Membership.GetUser (u);
+							to.Add (muser.Email);
+						}
+						else regids.Add ((string)regid);
+					}
+				}
+				if (regids.Count == 0)
+					throw new InvalidOperationException 
+					("No recipient where found for this circle list");
+				
+				var msg = new MessageWithPayload<YaEvent> () { 
+					notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "event" },
+					data = new YaEvent[] { (YaEvent)evpub }, registration_ids = regids.ToArray() };
+				return r.Invoke (msg);
+			}
+		}
+
 	}
 }
 

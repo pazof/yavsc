@@ -28,6 +28,7 @@ using System.Web.Profile;
 using Yavsc.Model.Circles;
 using Yavsc.Model.Calendar;
 using System.Web.Http.Routing;
+using System.Collections.Generic;
 
 
 namespace Yavsc.ApiControllers
@@ -168,36 +169,7 @@ namespace Yavsc.ApiControllers
 			}
 		}
 
-		/// <summary>
-		/// Sets the registration identifier.
-		/// </summary>
-		/// <param name="registrationId">Registration identifier.</param>
-		[Authorize]
-		public void SetRegistrationId(string registrationId)
-		{
-			// TODO set registration id
-			setRegistrationId (Membership.GetUser ().UserName, registrationId);
-		}
 
-		private void setRegistrationId(string username, string regid) {
-			ProfileBase pr = ProfileBase.Create(username);
-			pr.SetPropertyValue ("gregid", regid);
-		}
-
-		/// <summary>
-		/// Notifies the event.
-		/// </summary>
-		/// <param name="evpub">Evpub.</param>
-		public MessageWithPayloadResponse NotifyEvent(EventPub evpub) {
-			SimpleJsonPostMethod<MessageWithPayload<YaEvent>,MessageWithPayloadResponse> r = 
-				new SimpleJsonPostMethod<MessageWithPayload<YaEvent>,MessageWithPayloadResponse>(
-					"https://gcm-http.googleapis.com/gcm/send");
-			using (r) { 
-				var msg = new MessageWithPayload<YaEvent> () { data = new YaEvent[] { (YaEvent)evpub } };
-				msg.to = string.Join (" ", Circle.Union (evpub.Circles));
-				return r.Invoke (msg);
-			}
-		}
 	}
 }
 

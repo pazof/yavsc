@@ -66,6 +66,9 @@ namespace Yavsc.Model.FrontOffice
 			get;
 			set;
 		}
+
+		public string Photo { get; set; }
+
 		/// <summary>
 		/// The activity object has a static value during the
 		/// most of the application life,

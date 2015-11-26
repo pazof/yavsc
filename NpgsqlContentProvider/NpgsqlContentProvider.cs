@@ -32,7 +32,7 @@ namespace Yavsc
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = @"select meacode, title, cmnt 
+					cmd.CommandText = @"select meacode, title, cmnt, photo
  from activity where meacode = :code and applicationname = :app";
 					cmd.Parameters.AddWithValue ("code", MEACode);
 					cmd.Parameters.AddWithValue ("app", applicationName);
@@ -42,7 +42,8 @@ namespace Yavsc
 							result = new Activity () {
 								Id = rdr.GetString (0),
 								Title = rdr.GetString (1),
-								Comment = rdr.GetString (2)
+								Comment = rdr.GetString (2),
+								Photo = rdr.GetString (3)
 							};
 						}
 					}
@@ -65,7 +66,7 @@ namespace Yavsc
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = (exerted) ? 
-	@"SELECT a.meacode, a.title, a.cmnt
+	@"SELECT a.meacode, a.title, a.cmnt, a.photo
 	FROM activity a, profiledata d, profiles p, users u
 	WHERE u.username = p.username 
 	AND u.applicationname = p.applicationname 
@@ -75,7 +76,7 @@ namespace Yavsc
 	AND u.islockedout = FALSE 
 	AND a.title like :pat 
     ORDER BY a.meacode " :
-	@"SELECT meacode, title, cmnt 
+						@"SELECT meacode, title, cmnt, photo
 	FROM activity 
 	WHERE title LIKE :pat 
 	ORDER BY meacode ";
@@ -88,7 +89,8 @@ namespace Yavsc
 							acties.Add (new Activity () {
 								Id = rdr.GetString (0),
 								Title = rdr.GetString (1),
-								Comment = rdr.GetString (2)
+								Comment = rdr.GetString (2),
+								Photo = rdr.GetString (3)
 							});
 						}
 					}

@@ -104,6 +104,8 @@ namespace Yavsc.Controllers
 		[HttpGet]
 		public ActionResult UserPosts (string user, string title=null, int pageIndex = 0, int pageSize = 10)
 		{
+			if (user == null)
+				return Index (title, pageSize, pageIndex);
 			if (title != null) return UserPost (user, title, pageIndex, pageSize);
 			int recordcount=0;
 			MembershipUser u = Membership.GetUser ();
@@ -118,8 +120,6 @@ namespace Yavsc.Controllers
 				if (u.UserName == user || Roles.IsUserInRole ("Admin"))
 					sf |= FindBlogEntryFlags.MatchInvisible;
 				readersName = u.UserName;
-				if (user == null)
-					user = u.UserName;
 			}
 			// find entries
 			BlogEntryCollection c = 
@@ -128,11 +128,10 @@ namespace Yavsc.Controllers
 			var pr = ProfileBase.Create (user);
 			if (pr != null) {
 				Profile bupr = new Profile (pr);
+				// listing meta data
 				ViewData ["BlogUserProfile"] = bupr;
-			
-			// Inform of listing meta data
-			ViewData ["BlogTitle"] = bupr.BlogTitle;
-			ViewData ["Avatar"] = bupr.avatar;
+				ViewData ["BlogTitle"] = bupr.BlogTitle;
+				ViewData ["Avatar"] = bupr.avatar;
 			}
 			UUBlogEntryCollection uuc = new UUBlogEntryCollection (user, c);
 			ViewData ["ResultCount"] = recordcount;

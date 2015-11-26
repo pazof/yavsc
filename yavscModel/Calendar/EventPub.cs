@@ -36,8 +36,10 @@ namespace Yavsc.Model.Calendar
 		/// Gets or sets the circles.
 		/// </summary>
 		/// <value>The circles.</value>
-		[Display(ResourceType=typeof(LocalizedText),Name="Circles")]
-		public Circle[] Circles { get; set; }
+
+		[Required(ErrorMessageResourceName="DoSpecifyCircles",ErrorMessageResourceType=typeof(LocalizedText)), 
+			Display(ResourceType=typeof(LocalizedText),Name="Circles")]
+		public long [] CircleIds { get; set; }
 	}
 
 }

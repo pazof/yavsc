@@ -14,9 +14,6 @@ using System.Diagnostics;
 using Yavsc.Formatters;
 using Yavsc.Model;
 
-
-
-
 namespace Yavsc.ApiControllers
 {
 	/// <summary>
@@ -183,6 +180,7 @@ namespace Yavsc.ApiControllers
 			if (model.Rate < 0 || model.Rate > 100)
 				ModelState.AddModelError ("Rate", "0<=Rate<=100");
 			else {
+				BlogManager.GetForEditing (model.Id);
 				BlogManager.Rate (model.Id, model.Rate);
 			}
 		}
@@ -205,6 +203,7 @@ namespace Yavsc.ApiControllers
 		[Authorize, HttpPost, ValidateAjaxAttribute]
 		public void SetPhoto(long id, [FromBody] string photo)
 		{
+			BlogManager.GetForEditing (id);
 			BlogManager.UpdatePostPhoto (id, photo);
 		}
 

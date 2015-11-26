@@ -11,7 +11,7 @@
 
  <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <% using ( Html.BeginForm("Booking") ) { %>
-
+<%= Html.Hidden("MAECode") %>
   <fieldset>
 <legend>Préferences musicales</legend>
   <%= Html.LabelFor(model=>model.Needs) %>:

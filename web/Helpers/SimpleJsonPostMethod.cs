@@ -66,6 +66,7 @@ namespace Yavsc.Helpers
 			Request.Method = "POST";
 			Request.Accept = "application/json";
 			Request.ContentType = "application/json";
+			Request.SendChunked = true;
 			Request.TransferEncoding = "UTF-8";
 		}
 		/// <summary>

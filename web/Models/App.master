@@ -61,9 +61,9 @@ else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>, <%=note.click_acti
 <i class="fa fa-sign-in">Connexion</i> 
 </a>
 <% } else { %>
-<a href="<%=Url.RouteUrl("Blogs", new { user = HttpContext.Current.User.Identity.Name } )%>" accesskey = "B" class="menuitem" >
-<img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="vos billets" class="iconsmall" />
-<span class="hint">Vos billets</span>
+<a href="<%=Url.RouteUrl("Blogs", new { user = HttpContext.Current.User.Identity.Name } )%>" accesskey = "B" class="menuitem fa" >
+<img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="" class="iconsmall" />
+Vos billets
 </a>
 <a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Profile", id = HttpContext.Current.User.Identity.Name} ) %>" accesskey="P" class="menuitem fa fa-user">
 <%= HttpContext.Current.User.Identity.Name %>
@@ -83,16 +83,14 @@ else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>, <%=note.click_acti
 </asp:ContentPlaceHolder>
 </main>
 <footer data-type="background" data-speed="5" >
+
+<%= Html.ActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
+
 <div id="copyr">
-<a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">© 2015 GNU GENERAL PUBLIC LICENSE  <i>Version 3, 29 June 2007</i></a>
+<a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">
+<%=Html.Encode("© 2015 GNU GENERAL PUBLIC LICENSE")%>  <i>Version 3, 29 June 2007</i></a>
 </div>
-   <%= Html.ActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
-   <% foreach ( Link link in Html.Thanks()) { %>
-     <a class="thanks" href="<%=link.Url%>"><% if (link.Image !=null) { 
-     %><img src="<%= link.Image %>" alt="<%= link.Text %>"/></a>
-     <%  } else { %>
-     <a class="thanks" href="<%=link.Url%>"><%= link.Text %></a>
-     <% }} %>
+
 </footer><div class="modal"></div>
 </body>
 </html>

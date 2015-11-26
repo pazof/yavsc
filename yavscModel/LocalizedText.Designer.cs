@@ -76,15 +76,33 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Message_sent {
+            get {
+                return ResourceManager.GetString("Message_sent", resourceCulture);
+            }
+        }
+        
         public static string DuplicateEmail {
             get {
                 return ResourceManager.GetString("DuplicateEmail", resourceCulture);
             }
         }
         
+        public static string Photo {
+            get {
+                return ResourceManager.GetString("Photo", resourceCulture);
+            }
+        }
+        
         public static string Preview {
             get {
                 return ResourceManager.GetString("Preview", resourceCulture);
+            }
+        }
+        
+        public static string Remove {
+            get {
+                return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
         
@@ -97,6 +115,12 @@ namespace Yavsc.Model {
         public static string Circles {
             get {
                 return ResourceManager.GetString("Circles", resourceCulture);
+            }
+        }
+        
+        public static string DoSpecifyCircles {
+            get {
+                return ResourceManager.GetString("DoSpecifyCircles", resourceCulture);
             }
         }
         
@@ -256,9 +280,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Remove {
+        public static string ChooseATitle {
             get {
-                return ResourceManager.GetString("Remove", resourceCulture);
+                return ResourceManager.GetString("ChooseATitle", resourceCulture);
             }
         }
         
@@ -382,9 +406,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Message_sent {
+        public static string ChooseADescription {
             get {
-                return ResourceManager.GetString("Message_sent", resourceCulture);
+                return ResourceManager.GetString("ChooseADescription", resourceCulture);
             }
         }
         
@@ -451,6 +475,12 @@ namespace Yavsc.Model {
         public static string ProviderId {
             get {
                 return ResourceManager.GetString("ProviderId", resourceCulture);
+            }
+        }
+        
+        public static string Needs {
+            get {
+                return ResourceManager.GetString("Needs", resourceCulture);
             }
         }
         

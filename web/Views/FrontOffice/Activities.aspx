@@ -25,7 +25,6 @@
   	Id: $('#meacode').val(),
    	Comment: $('#comment').val(),
     };
-    console.log(Yavsc.dumpprops(activity));
  Yavsc.ajax( 'FrontOffice/RegisterActivity', activity, 
     function() {
  var na = $('<p></p>').addClass('activity');

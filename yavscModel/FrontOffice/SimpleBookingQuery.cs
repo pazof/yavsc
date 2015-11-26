@@ -38,8 +38,17 @@ namespace Yavsc.Model.FrontOffice
 		[Display(ResourceType=typeof(LocalizedText),Name="PreferedDate")]
 		public DateTime PreferedDate { get; set; }
 
-		public string Activity { get; set; }
+		/// <summary>
+		/// Gets or sets the MAE code.
+		/// </summary>
+		/// <value>The MAE code.</value>
+		public string MAECode { get; set; }
 
+		/// <summary>
+		/// Gets or sets the needs.
+		/// </summary>
+		/// <value>The needs.</value>
+		[Display(ResourceType=typeof(LocalizedText),Name="Needs")]
 		public SkillEntity[] Needs { get; set; }
 
 	}

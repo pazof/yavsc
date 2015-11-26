@@ -34,26 +34,24 @@ namespace Yavsc.Model.Calendar
 		/// <summary>
 		/// The title.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a .")] 
+		[Required(ErrorMessageResourceName="ChooseATitle",ErrorMessageResourceType=typeof(LocalizedText))] 
 		[Display(ResourceType=typeof(LocalizedText),Name="Title")]
 		public string Title { get; set; }
 		/// <summary>
 		/// The description.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a Description.")] 
+		[Required(ErrorMessageResourceName="ChooseADescription",ErrorMessageResourceType=typeof(LocalizedText))] 
 		[Display(ResourceType=typeof(LocalizedText),Name="Description")]
 		public string Description { get; set; }
 
 		/// <summary>
 		/// The location.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a Location.")] 
 		[Display(ResourceType=typeof(LocalizedText),Name="Location")]
 		public Position Location { get; set; }
 		/// <summary>
 		/// The start date.
 		/// </summary>
-		[Required(ErrorMessage="Please, choose a Start Date.")] 
 		[Display(ResourceType=typeof(LocalizedText),Name="StartDate")]
 		public DateTime StartDate { get; set; }
 
@@ -61,7 +59,6 @@ namespace Yavsc.Model.Calendar
 		/// Gets or sets the end date.
 		/// </summary>
 		/// <value>The end date.</value>
-		[Required(ErrorMessage="Please, choose an End Date.")] 
 		[Display(ResourceType=typeof(LocalizedText),Name="EndDate")]
 		public DateTime EndDate { get; set; }
 

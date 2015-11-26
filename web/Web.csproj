@@ -215,6 +215,7 @@
     <Compile Include="AuthorizeAttribute.cs" />
     <Compile Include="ApiControllers\SkillController.cs" />
     <Compile Include="Controllers\PayPalController.cs" />
+    <Compile Include="ApiControllers\BackOfficeController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -518,6 +519,8 @@
     <Content Include="App_Themes\clear\style.css" />
     <Content Include="Views\FrontOffice\Activities.aspx" />
     <Content Include="Views\FrontOffice\Activity.ascx" />
+    <Content Include="Views\BackOffice\NotifyEventResponse.aspx" />
+    <Content Include="Views\BackOffice\NotifyEvent.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

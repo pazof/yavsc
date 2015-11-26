@@ -43,7 +43,7 @@ namespace Yavsc.Controllers
 			return View (model);
 		}
 		/// <summary>
-		/// Estimates this instance.
+		/// Estimates released to this client
 		/// </summary>
 		[Authorize]
 		public ActionResult Estimates (string client)
@@ -68,15 +68,15 @@ namespace Yavsc.Controllers
 
 
 		/// <summary>
-		/// Estimate the specified id.
+		/// Estimate wearing the specified id.
 		/// </summary>
-		/// <param name="id">Identifier.</param>
-		public ActionResult Get (long estimid)
+		/// <param name="id">Estim Identifier.</param>
+		public ActionResult Get (long id)
 		{
-			Estimate f = WorkFlowManager.GetEstimate (estimid);
+			Estimate f = WorkFlowManager.GetEstimate (id);
 			if (f == null) {
 				ModelState.AddModelError ("Id", "Wrong Id");
-				return View (new Estimate ()  { Id=estimid } );
+				return View (new Estimate ()  { Id=id } );
 			}
 			return View (f);
 		}
@@ -182,14 +182,14 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// Product the specified id, pc and pref.
 		/// </summary>
-		/// <param name="id">Identifier.</param>
-		/// <param name="pc">Pc.</param>
+		/// <param name="id">Brand Identifier.</param>
+		/// <param name="pc">Production catalog reference.</param>
 		/// <param name="pref">Preference.</param>
 		[AcceptVerbs ("GET")]
-		public ActionResult Product (string brandid, string pc, string pref)
+		public ActionResult Product (string id, string pc, string pref)
 		{
 			Product p = null;
-			ViewData ["BrandName"] = brandid;
+			ViewData ["BrandName"] = id;
 			ViewData ["ProdCatRef"] = pc;
 			ViewData ["ProdRef"] = pref;
 			Catalog cat = CatalogManager.GetCatalog ();
@@ -198,7 +198,7 @@ namespace Yavsc.Controllers
 				ViewData ["RefType"] = "Catalog";
 				return View ("ReferenceNotFound");
 			}
-			Brand b = cat.GetBrand (brandid);
+			Brand b = cat.GetBrand (id);
 			if (b == null) {
 				ViewData ["RefType"] = "Brand";
 				return View ("ReferenceNotFound");
@@ -266,6 +266,11 @@ namespace Yavsc.Controllers
 			return View (skills);
 		}
 
+		/// <summary>
+		/// Activities the specified search and toPower.
+		/// </summary>
+		/// <param name="search">Search.</param>
+		/// <param name="toPower">If set to <c>true</c> to power.</param>
 		public ActionResult Activities (string search, bool toPower = false)
 		{
 			if (search == null)
@@ -274,6 +279,10 @@ namespace Yavsc.Controllers
 			return View (activities);
 		}
 
+		/// <summary>
+		/// Activity at the specified id.
+		/// </summary>
+		/// <param name="id">Identifier.</param>
 		public ActionResult Activity(string id)
 		{
 			return View(WorkFlowManager.GetActivity (id));
@@ -283,7 +292,7 @@ namespace Yavsc.Controllers
 		/// offer Ajax edition of 
 		/// user's skills.
 		/// </summary>
-		/// <param name="usp">the User Skills Profile.</param>
+		/// <param name="id">the User name.</param>
 		[Authorize()]
 		public ActionResult UserSkills (string id)
 		{
@@ -302,10 +311,11 @@ namespace Yavsc.Controllers
 		/// Booking the specified model.
 		/// </summary>
 		/// <param name="model">Model.</param>
-		public ActionResult Booking (SimpleBookingQuery model)
+		public ActionResult Booking (string id, SimpleBookingQuery model)
 		{
 			if (model.Needs == null)
 				model.Needs = SkillManager.FindSkill ("%");
+			model.MAECode = id;
 			return View (model);
 		}
 	}

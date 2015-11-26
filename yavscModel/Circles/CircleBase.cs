@@ -51,7 +51,18 @@ namespace Yavsc.Model.Circles
 		/// </summary>
 		/// <value>The title.</value>
 		public string Title { get; set; }
-
+		/// <summary>
+		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="Yavsc.Model.Circles.CircleBase"/>.
+		/// </summary>
+		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="Yavsc.Model.Circles.CircleBase"/>.</param>
+		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current
+		/// <see cref="Yavsc.Model.Circles.CircleBase"/>; otherwise, <c>false</c>.</returns>
+		public override bool Equals (object obj)
+		{
+			if (base.Equals (obj))
+				return true;
+			return Id == ((CircleBase)obj).Id;
+		}
 	}
 }
 

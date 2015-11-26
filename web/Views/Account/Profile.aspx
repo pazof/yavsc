@@ -26,7 +26,7 @@
    <%= Html.ValidationSummary() %>
 <% using(Html.BeginForm("Profile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" })) %>
 <% { %>
-  
+  <%= Html.ValidationSummary() %>
  <%= Html.Hidden("UserName",ViewData["ProfileUserName"]) %>
 
    <fieldset><legend>Informations publiques</legend>

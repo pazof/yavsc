@@ -80,6 +80,7 @@ namespace Yavsc.Model.Google
 			if (to==null && registration_ids == null) {
 				modelState.AddModelError ("to", "One of \"to\" or \"registration_ids\" parameters must be specified");
 				modelState.AddModelError ("registration_ids", "*");
+				modelState.AddModelError ("to", "*");
 			}
 			if (notification == null && data == null) {
 				modelState.AddModelError ("notification", "At least one of \"notification\" or \"data\" parameters must be specified");

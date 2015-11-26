@@ -1,6 +1,5 @@
 
 body {
-	font-family: 'Arial', cursive;
 	padding: 0;
 	margin: 0;
 }
@@ -175,7 +174,6 @@ content: ")";
 
 .usertitleref {
 	border-radius: 1em;
-   font-family: 'Arial', cursive;
 	padding: 1em;
 }
 .editable {
@@ -239,7 +237,6 @@ legend {
 	border-style: solid;
 	border-width:1px;
    cursor: pointer;
-   font-family: 'Arial', cursive;
 	padding: 1em;
 }
 
@@ -247,7 +244,6 @@ input, select, textarea {
 	border-radius:1em;
 	border-style: solid;
 	border-width:1px;
-    font-family: 'Arial', cursive;
 }
 
 .code {
