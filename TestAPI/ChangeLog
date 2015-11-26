@@ -1,3 +1,7 @@
+2015-11-26  Paul Schneider  <paul@pschneider.fr>
+
+	* TestAPI.csproj: nouvelles configurations de déploiement
+
 2015-11-25  Paul Schneider  <paul@pschneider.fr>
 
 	* TestAPI.csproj: ... une référence au framework 4.5.1 en

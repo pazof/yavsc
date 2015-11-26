@@ -13,6 +13,9 @@ DESTDIR_rsync_pre=/srv/www/yavscpre
 HOST_rsync_prod=lua.pschneider.fr
 DESTDIR_rsync_prod=/srv/www/yavsc
 
+HOST_rsync_yavsc=lua.pschneider.fr
+DESTDIR_rsync_yavsc=/srv/www/yavsc
+
 HOST_rsync_lua=lua.pschneider.fr
 DESTDIR_rsync_lua=/srv/www/lua
 
@@ -36,7 +39,7 @@ ddir:
 
 deploy: ddir build
 	rm -rf $(LYDESTDIR)
-	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir=../$(LDYDESTDIR) /t:Deploy web/Web.csproj
+	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir=../$(LDYDESTDIR) /t:Deploy web/Yavsc.csproj
 
 rsync_% : HOST = $(HOST_$@)
 
@@ -73,16 +76,19 @@ docdeploy-prod: htmldoc
 
 rsync_lua: CONFIG = Lua
 
-rsync_yavsc:
+rsync_pre: CONFIG = YavscPre
 
-rsync_pre:
+rsync_prod: CONFIG = Yavsc
 
-rsync_prod:
+rsync_totempre: CONFIG = TotemPre
+
+rsync_totemprod: CONFIG = TotemProd
 
 nuget_restore:
 	for prj in ITContentProvider NpgsqlBlogProvider NpgsqlContentProvider NpgsqlMRPProviders Presta SalesCatalog TestAPI web WebControls yavscclient yavscModel; do nuget restore "$${prj}/packages.config" -SolutionDirectory . ; done
 
 nuget_update:
 	for prj in ITContentProvider NpgsqlBlogProvider NpgsqlContentProvider NpgsqlMRPProviders Presta SalesCatalog TestAPI web WebControls yavscclient yavscModel; do nuget update "$${prj}/packages.config"  ; done
+
 
 

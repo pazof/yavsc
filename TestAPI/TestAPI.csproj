@@ -20,6 +20,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -28,10 +29,32 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Lua|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\Lua</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TotemPre|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\TotemPre</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TotemProd|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\TotemProd</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'YavscPre|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\YavscPre</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Yavsc|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Yavsc</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
@@ -122,9 +145,9 @@
       <Project>{90BF2234-7252-4CD5-B2A4-17501B19279B}</Project>
       <Name>SalesCatalog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\web\Web.csproj">
+    <ProjectReference Include="..\web\Yavsc.csproj">
       <Project>{77044C92-D2F1-45BD-80DD-AA25B311B027}</Project>
-      <Name>Web</Name>
+      <Name>Yavsc</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

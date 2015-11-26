@@ -1,3 +1,8 @@
+2015-11-26  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlMRPProviders.csproj: nouvelles configurations de
+	déploiement
+
 2015-11-23  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlProfileProvider.cs: Fixe un bug introduit avec

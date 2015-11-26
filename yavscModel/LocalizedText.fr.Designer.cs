@@ -82,6 +82,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string YourMEACode {
+            get {
+                return ResourceManager.GetString("YourMEACode", resourceCulture);
+            }
+        }
+        
         public static string Photo {
             get {
                 return ResourceManager.GetString("Photo", resourceCulture);
@@ -478,6 +484,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string UsersInRole {
+            get {
+                return ResourceManager.GetString("UsersInRole", resourceCulture);
+            }
+        }
+        
         public static string ThisSiteUsesCookies {
             get {
                 return ResourceManager.GetString("ThisSiteUsesCookies", resourceCulture);
@@ -496,9 +508,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string EndDate {
+        public static string Name {
             get {
-                return ResourceManager.GetString("EndDate", resourceCulture);
+                return ResourceManager.GetString("Name", resourceCulture);
             }
         }
         
@@ -604,9 +616,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string UsersInRole {
+        public static string EndDate {
             get {
-                return ResourceManager.GetString("UsersInRole", resourceCulture);
+                return ResourceManager.GetString("EndDate", resourceCulture);
             }
         }
         

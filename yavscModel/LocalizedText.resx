@@ -61,7 +61,8 @@
 	<data name="Location"><value>Location</value></data>
 	<data name="Logout"><value>Logout</value></data>
 	<data name="MaxDate"><value>Maximal date for the rendez-vous</value></data>
-	<data name="MEACode"><value>Mainly Exerted Activity</value></data>
+	<data name="MEACode"><value>Mainly Exerted Activity code</value></data>
+	<data name="Name"><value>Name</value></data>
 	<data name="Members"><value>Members</value></data>
 	<data name="Message_sent"><value>Your message has been sent.</value></data>
 	<data name="MinDate"><value>Minimal date for the rendez-vous</value></data>
@@ -117,6 +118,7 @@
 	<data name="Xshouldbeavailable"><value>regarding his calendar, 
 	{0} should be available for this booking</value></data>
 	<data name="younotadmin"><value>You're not administrator</value></data>
+	<data name="YourMEACode"><value>Your activity</value></data>
 	<data name="yourquerytransmitted"><value>your query has been transmitted</value></data>
 
 </root>

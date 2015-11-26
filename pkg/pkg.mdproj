@@ -20,7 +20,7 @@
         </Package>
       </Packages>
     </Packages>
-    <Configuration Condition=" '$(Configuration)' == '' ">Lua</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">TotemPre</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
   </PropertyGroup>
 </Project>

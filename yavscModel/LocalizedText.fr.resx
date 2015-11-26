@@ -59,12 +59,13 @@
     <data name="Location"><value>Lieu</value></data>
 	<data name="Logout"><value>Déconnection</value></data>
 	<data name="MaxDate"><value>Date maximale du rendez-vous</value></data>
-	<data name="MEACode"><value>Votre activité</value></data>
+	<data name="MEACode"><value>Code activité principalement éxercée</value></data>
 	<data name="Members"><value>Membres</value></data>
 	<data name="Message_sent"><value>Votre message a été envoyé</value></data>
     <data name="MinDate"><value>Date minimale du rendez-vous</value></data>
 	<data name="Modify"><value>Modifier</value></data>
 	<data name="My_Estimates"><value>Mes estimations</value></data>
+	<data name="Name"><value>Nom</value></data>
 	<data name="Needs"><value>Besoin</value></data>
 	<data name="New_Tag"><value>Nouveau Tag</value></data>
 	<data name="no_content"><value>pas de contenu</value></data>
@@ -113,5 +114,6 @@
 	<data name="Xshouldbeavailable"><value>Au vu de son calendrier, 
 	{0} devrait être disponible pour ce rendez-vous</value></data>
 	<data name="younotadmin"><value>Vous n'êtes pas administrateur</value></data>
+	<data name="YourMEACode"><value>Votre activité</value></data>
 	<data name="yourquerytransmitted"><value>Votre demande a été transmise</value></data>
 </root>

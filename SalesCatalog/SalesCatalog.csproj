@@ -36,6 +36,27 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Lua</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TotemPre|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\TotemPre</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TotemProd|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\TotemProd</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'YavscPre|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\YavscPre</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Yavsc|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Yavsc</OutputPath>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

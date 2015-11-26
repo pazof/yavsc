@@ -1,5 +1,14 @@
 2015-11-26  Paul Schneider  <paul@pschneider.fr>
 
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: internationalisation
+
+	* YavscModel.csproj: nouvelles configurations de déploiement
+
+2015-11-26  Paul Schneider  <paul@pschneider.fr>
+
 	* EventPub.cs:
 	* BaseEvent.cs: internationalise l'évennement (la base d'une
 	notification)

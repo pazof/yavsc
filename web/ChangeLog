@@ -1,5 +1,10 @@
 2015-11-26  Paul Schneider  <paul@pschneider.fr>
 
+	* Yavsc.csproj: nouvelles configurations de
+	déploiementnouvelles configurations de déploiement
+
+2015-11-26  Paul Schneider  <paul@pschneider.fr>
+
 	* BackOfficeController.cs: Impléménte un accès à l'API back
 	office pour l'envoi d'une notification aux mobiles des cercles
 	séléctionné de l'utilisateur

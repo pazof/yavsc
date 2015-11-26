@@ -1,3 +1,7 @@
+2015-11-26  Paul Schneider  <paul@pschneider.fr>
+
+	* SalesCatalog.csproj: nouvelles configurations de déploiement
+
 2015-11-19  Paul Schneider  <paul@pschneider.fr>
 
 	* SalesCatalog.csproj: adds a build target named "Lua"
