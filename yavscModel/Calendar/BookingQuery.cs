@@ -73,7 +73,7 @@ namespace Yavsc.Model.Calendar
 		/// <value>The role.</value>
 		[Required(ErrorMessage= "S'il vous plait, saisissez le ou les types d'intervention souhaité")]
 		[Display(Name="Role",ResourceType=typeof(LocalizedText))]
-		public string [] Roles { get; set; }
+		public string [] MEACodes{ get; set; }
 	}
 }
 

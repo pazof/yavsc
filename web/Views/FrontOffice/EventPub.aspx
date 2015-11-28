@@ -9,7 +9,7 @@
 <%= Html.LabelFor(model => model.Location) %>: <%=Model.Location%> <br/>
 <%= Html.LabelFor(model => model.StartDate) %>: <%=Model.StartDate%> <br/>
 <%= Html.LabelFor(model => model.EndDate) %>: <%=Model.EndDate%> <br/>
-<%= Html.LabelFor(model => model.Circles) %>: <%=Model.Circles%> <br/>
+<%= Html.LabelFor(model => model.CircleIds) %>: <%=Model.CircleIds%> <br/>
 <%= Html.LabelFor(model => model.EventWebPage) %>: <%=Model.EventWebPage%> <br/>
 <%= Html.LabelFor(model => model.ProviderName) %>: <%=Model.ProviderName%> <br/>
 <%= Html.LabelFor(model => model.Comment) %>: <%=Model.Comment%> <br/>

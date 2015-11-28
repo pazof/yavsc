@@ -28,6 +28,7 @@ using Yavsc.Model;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Yavsc.Model.Google.Api;
 
 namespace Yavsc.Model.FrontOffice
 {
@@ -48,6 +49,9 @@ namespace Yavsc.Model.FrontOffice
 		/// </summary>
 		/// <value>The identifier.</value>
 		public long Id { get; set; }
+
+		public int Rate { get; set; }
+
 		/// <summary>
 		/// Gets or sets the skills.
 		/// </summary>
@@ -88,14 +92,19 @@ namespace Yavsc.Model.FrontOffice
 				return yavscCLientProfile;
 			}
 		}
-		/// <summary>
-		/// Gets or sets the rate.
-		/// </summary>
-		/// <value>The rate.</value>
-		public int Rate {
+
+		public string EMail { 
 			get ;
-			set ;
+			set; 
 		}
+
+		public string GoogleRegId { 
+			get { return YavscClientProfile.GoogleRegId; }
+		}		
+
+		public string GoogleCalId { 
+			get { return YavscClientProfile.GoogleCalendar; }
+		}		
 		/// <summary>
 		/// Determines whether this instance references the specified skillId.
 		/// </summary>
@@ -116,9 +125,27 @@ namespace Yavsc.Model.FrontOffice
 			}
 		}
 
+
+		/// <summary>
+		/// Determines whether this instance has calendar.
+		/// </summary>
+		/// <returns><c>true</c> if this instance has calendar; otherwise, <c>false</c>.</returns>
 		public bool HasCalendar () 
 		{ 
 				return (YavscClientProfile.GoogleCalendar != null);
+		}
+
+		/// <summary>
+		/// Creates the availability description object.
+		/// </summary>
+		/// <returns>The availability.</returns>
+		/// <param name="date">Date.</param>
+		/// <param name="available">If set to <c>true</c> available.</param>
+		public  PerformerAvailability CreateAvailability(DateTime date, bool available) {
+			PerformerAvailability p = new PerformerAvailability(this,UserName,date,available);
+			p.DateAvailable = available;
+			p.PerformanceDate = date;
+			return p;
 		}
 	}
 }

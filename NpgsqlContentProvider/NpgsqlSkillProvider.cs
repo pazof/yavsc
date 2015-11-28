@@ -41,6 +41,7 @@ namespace WorkFlowProvider
 		{
 			
 		}
+
 		string connectionString = null;
 		string applicationName = null;
 
@@ -59,6 +60,7 @@ namespace WorkFlowProvider
 		}
 
 		#region implemented abstract members of SkillProvider
+
 		/// <summary>
 		/// Gets the user skills.
 		/// </summary>
@@ -66,30 +68,31 @@ namespace WorkFlowProvider
 		/// <param name="username">Username.</param>
 		public override PerformerProfile GetUserSkills (string username)
 		{
-			var skills = new List <UserSkill>();
+			var skills = new List <UserSkill> ();
 			var profile = new PerformerProfile (username);
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
 						" select u._id, u.skillid, s.name, " +
-						" u.comment, u.rate from userskills u, " +
-						" skill s " +
-						" where u.skillid = s._id and " +
-						" u.username = :uname " +
-						" and applicationname = :app " +
-						" order by u.rate desc";
+					" u.comment, u.rate from userskills u, " +
+					" skill s " +
+					" where u.skillid = s._id and " +
+					" u.username = :uname " +
+					" and applicationname = :app " +
+					" order by u.rate desc";
 					cmd.Parameters.AddWithValue ("uname", NpgsqlTypes.NpgsqlDbType.Varchar, username);
 					cmd.Parameters.AddWithValue ("app", NpgsqlTypes.NpgsqlDbType.Varchar, applicationName);
 					cmd.Prepare ();
 					using (var rdr = cmd.ExecuteReader ()) { 
-						if (rdr.HasRows) while (rdr.Read ()) { 
+						if (rdr.HasRows)
+							while (rdr.Read ()) { 
 								skills.Add (new UserSkill () { 
 									Id = rdr.GetInt64 (0),
 									SkillId = rdr.GetInt64 (1),
 									SkillName = rdr.GetString (2),
 									Comment = rdr.GetString (3),
-									Rate = rdr.GetInt32(4)
+									Rate = rdr.GetInt32 (4)
 								});
 							}
 						profile.Skills = skills.ToArray ();
@@ -97,10 +100,17 @@ namespace WorkFlowProvider
 				}
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"select uniqueid from profiles where username = :user and applicationname = :app";
+						"select p.uniqueid, d.rate from profiles p, profiledata d where " +
+						" username = :user and applicationname = :app " +
+						" and p.uniqueid = d.uniqueid ";
 					cmd.Parameters.AddWithValue ("user", NpgsqlTypes.NpgsqlDbType.Varchar, username);
 					cmd.Parameters.AddWithValue ("app", NpgsqlTypes.NpgsqlDbType.Varchar, applicationName);
-					profile.Id = (long) cmd.ExecuteScalar ();
+
+					using (var rdr = cmd.ExecuteReader ()) { 
+						rdr.Read ();
+						profile.Id = rdr.GetInt64 (0);
+						profile.Rate = rdr.GetInt32 (1);
+					}
 				}
 				cnx.Close ();
 			}
@@ -114,14 +124,18 @@ namespace WorkFlowProvider
 		public override long Declare (SkillEntity skill)
 		{
 			long res = 0;
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				if (skill.Id == 0) {
 					using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-						cmd.CommandText = "insert into skill (name,rate) values (:name,:rate) returning _id";
+						cmd.CommandText = "insert into skill (name,meacode,rate,applicationname) " +
+						" values (:name,:mea,:rate,:app) " +
+						" returning _id ";
 						cmd.Parameters.AddWithValue ("name", NpgsqlTypes.NpgsqlDbType.Varchar, skill.Name);
+						cmd.Parameters.AddWithValue ("mea", NpgsqlTypes.NpgsqlDbType.Varchar, skill.MEACode);
 						cmd.Parameters.AddWithValue ("rate", 
 							NpgsqlTypes.NpgsqlDbType.Integer, skill.Rate);
+						cmd.Parameters.AddWithValue ("app", NpgsqlTypes.NpgsqlDbType.Varchar, applicationName);
 						res = (long)cmd.ExecuteScalar ();
 					}
 				} else {
@@ -145,8 +159,8 @@ namespace WorkFlowProvider
 		/// <param name="userskill">userskill.</param>
 		public override long Declare (UserSkillDeclaration userskill)
 		{
-			long res=0;
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
+			long res = 0;
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				if (userskill.Id == 0) {
 					using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
@@ -198,23 +212,23 @@ namespace WorkFlowProvider
 			// and a client rating that goes into the
 			// `statisfaction` table.
 			long usid = 0;
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					if (userSkill.Id == 0) {
 						cmd.CommandText = "insert into userskills " +
-							" ( skillid, rate, username, applicationname ) " +
-							" values ( :sid, :rate, :uname, :app ) " +
-							" returning _id ";
+						" ( skillid, rate, username, applicationname ) " +
+						" values ( :sid, :rate, :uname, :app ) " +
+						" returning _id ";
 						cmd.Parameters.AddWithValue ("sid", NpgsqlDbType.Bigint, userSkill.Id);
 						cmd.Parameters.AddWithValue ("rate", NpgsqlDbType.Integer, userSkill.Rate);
 						cmd.Parameters.AddWithValue ("uname", NpgsqlDbType.Varchar, userSkill.Performer);
 						cmd.Parameters.AddWithValue ("app", NpgsqlDbType.Varchar, applicationName);
-						usid = (long) cmd.ExecuteScalar ();
+						usid = (long)cmd.ExecuteScalar ();
 					} else {
 						cmd.CommandText = "update userskills " +
-							" set rate = :rate " +
-							" where _id = :usid ";
+						" set rate = :rate " +
+						" where _id = :usid ";
 						cmd.Parameters.AddWithValue ("rate", NpgsqlDbType.Integer, userSkill.Rate);
 						cmd.Parameters.AddWithValue ("usid", NpgsqlDbType.Bigint, userSkill.Id);
 						cmd.ExecuteNonQuery ();
@@ -243,7 +257,7 @@ namespace WorkFlowProvider
 			// it's concerning a rating on a need of the Author
 			// if not, it's a need of the site
 
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "update skill set rate = :rate where _id = :sid";
@@ -254,28 +268,43 @@ namespace WorkFlowProvider
 				cnx.Close ();
 			}
 		}
+
 		/// <summary>
-		/// Finds the skill identifier.
+		/// Finds the skills.
 		/// </summary>
 		/// <returns>The skill identifier.</returns>
 		/// <param name="pattern">Pattern.</param>
-		public override SkillEntity[] FindSkill (string pattern)
+		/// <param name="MEACode">MEA Code.</param>
+		public override SkillEntity[] FindSkill (string pattern, string MEACode)
 		{
 			List<SkillEntity> skills = new List<SkillEntity> ();
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = "select _id, name, rate from skill where name like :name order by rate desc";
+					
+					cmd.CommandText = "select _id, name, rate, meacode " +
+					" from skill " +
+					" where name like :name ";
+					if (MEACode != null)
+						cmd.CommandText +=
+						" and meacode = :mea ";
+					cmd.CommandText += " and applicationname = :app " +
+					" order by rate desc";
 					cmd.Parameters.AddWithValue ("name", NpgsqlTypes.NpgsqlDbType.Varchar, pattern);
+					if (MEACode != null)
+						cmd.Parameters.AddWithValue ("mea", NpgsqlTypes.NpgsqlDbType.Varchar, MEACode);
+					cmd.Parameters.AddWithValue ("app", NpgsqlTypes.NpgsqlDbType.Varchar, applicationName);
 					cmd.Prepare ();
 					using (var rdr = cmd.ExecuteReader ()) {
-						if (rdr.HasRows) while (rdr.Read ()) {
-							skills.Add (new SkillEntity () { 
-								Id = (long)rdr.GetInt64 (0),
-								Name = (string)rdr.GetString (1),
-								Rate = (int) rdr.GetInt32(2)
-							});
-						}
+						if (rdr.HasRows)
+							while (rdr.Read ()) {
+								skills.Add (new SkillEntity () { 
+									Id = (long)rdr.GetInt64 (0),
+									Name = (string)rdr.GetString (1),
+									Rate = (int)rdr.GetInt32 (2),
+									MEACode = (string)rdr.GetString (3),
+								});
+							}
 					}
 				}
 				cnx.Close ();
@@ -292,23 +321,55 @@ namespace WorkFlowProvider
 		{
 			var res = new List<string> ();
 
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					
-					cmd.CommandText = " select username from userskills " +
-						" where skillid = :sid " +
-						" order by rate desc ";
+					cmd.CommandText = " select u.username " +
+					" from userskills s, profiledata p, profile q, users u " +
+					" where s.username = u.username " +
+					" and s.applicationname = u.applicationanme " +
+					" and s.skillid = :sid " +
+					" and u.username = q.username  " +
+					" and u.applicationname = q.applicationanme " +
+					" and p.uniqueid = q.uniqueid " +
+					" and u.applicationanme = :app " +
+					" and u.islockedout = FALSE " +
+					" and u.isapproved = TRUE " +
+					" order by s.rate desc ";
+					
+
 					cmd.Parameters.AddWithValue ("sid", NpgsqlDbType.Bigint, 0);
 					cmd.Prepare ();
 
-					foreach ( long sid in skillIds )
-					{
+					foreach (long sid in skillIds) {
 						cmd.Parameters ["sid"].Value = sid;
 						using (var rdr = cmd.ExecuteReader ()) {
 							string uname = rdr.GetString (0);
-							if (!res.Contains(uname))
+							if (!res.Contains (uname))
 								res.Add (uname);
+						}
+					}
+					// TODO implement a configuration parameter
+					if (res.Count < 10) {
+						cmd.CommandText = " select u.username " +
+							" from skill s, profiledata p , profile q, users u  " +
+							" where u.username = q.username  " +
+							" and u.applicationname = q.applicationanme " +
+							" and p.uniqueid = q.uniqueid " +
+							" and p.meacode = s.meacode " +
+							" and s._id = :sid "  +
+							" and u.applicationanme = :app " +
+							" and u.islockedout = FALSE " +
+							" and u.isapproved = TRUE" +
+							" order by s.rate desc " ;
+						foreach (long sid in skillIds) {
+							cmd.Parameters ["sid"].Value = sid;
+							using (var rdr = cmd.ExecuteReader ()) {
+								string uname = rdr.GetString (0);
+								if (!res.Contains (uname))
+									res.Add (uname);
+							}
 						}
 					}
 				}
@@ -323,12 +384,12 @@ namespace WorkFlowProvider
 		/// <param name="skillId">Skill identifier.</param>
 		public override void DeleteSkill (long skillId)
 		{
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = " delete from skill " +
-						" where _id = :sid ";
-					cmd.Parameters.AddWithValue ("sid", NpgsqlTypes.NpgsqlDbType.Bigint,skillId);
+					" where _id = :sid ";
+					cmd.Parameters.AddWithValue ("sid", NpgsqlTypes.NpgsqlDbType.Bigint, skillId);
 					cmd.ExecuteNonQuery ();
 				}
 				cnx.Close ();
@@ -339,18 +400,20 @@ namespace WorkFlowProvider
 		/// Deletes the user skill.
 		/// </summary>
 		/// <param name="userSkillId">User skill identifier.</param>
-		public override void DeleteUserSkill(long userSkillId) {
-			using (NpgsqlConnection cnx=new NpgsqlConnection(connectionString)) {
+		public override void DeleteUserSkill (long userSkillId)
+		{
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = " delete from userskills " +
-						" where _id = :usid ";
-					cmd.Parameters.AddWithValue ("usid", NpgsqlTypes.NpgsqlDbType.Bigint,userSkillId);
+					" where _id = :usid ";
+					cmd.Parameters.AddWithValue ("usid", NpgsqlTypes.NpgsqlDbType.Bigint, userSkillId);
 					cmd.ExecuteNonQuery ();
 				}
 				cnx.Close ();
 			}
 		}
+
 		#endregion
 	}
 }

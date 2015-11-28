@@ -85,7 +85,7 @@ $(document).ready(function(){
 		if ($stwidth>320 && $stheight>320) {
 		  window.addEventListener('deviceorientation', function(event) {
 		  tiltLR = $stwidth*Math.sin(event.gamma*Math.PI/180);
-		  	titleFB = $stheight*Math.sin(event.beta*Math.PI/180);
+		  	titleFB = $stheight*Math.sin(event.beta*Math.PI/90);
 			onPos($bgobj,tiltLR,titleFB);
 		  },false); }
 		  $(window).mousemove(function(e) {

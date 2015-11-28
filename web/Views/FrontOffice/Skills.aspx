@@ -4,7 +4,7 @@
 <script src="<%=Url.Content("~/Scripts/yavsc.skills.js")%>"></script>
 <script>
  $(document).ready(function(){ 
-  $('[data-type="rate-site-skill"]').rate({target: 'Skill/RateSkill'});
+  $('[data-type="rate-site-skill"]').rate({webTarget: 'Skill/RateSkill'});
  });
  </script>
 </asp:Content>

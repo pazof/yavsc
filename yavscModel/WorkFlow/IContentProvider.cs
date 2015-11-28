@@ -64,6 +64,12 @@ namespace Yavsc.Model.WorkFlow
 		Activity [] FindActivity (string pattern, bool exerted);
 
 		/// <summary>
+		/// Finds the performer.
+		/// </summary>
+		/// <returns>The performer.</returns>
+		/// <param name="MEACode">MEA code.</param>
+		PerformerProfile [] FindPerformer (string MEACode);
+		/// <summary>
 		/// Gets the activity.
 		/// </summary>
 		/// <returns>The activity.</returns>

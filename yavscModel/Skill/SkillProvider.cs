@@ -58,7 +58,7 @@ namespace Yavsc.Model.Skill
 		/// </summary>
 		/// <returns>The skill identifier.</returns>
 		/// <param name="pattern">Pattern.</param>
-		public abstract SkillEntity [] FindSkill(string pattern);
+		public abstract SkillEntity [] FindSkill(string pattern, string MEACode);
 
 		/// <summary>
 		/// Gets the user skills.

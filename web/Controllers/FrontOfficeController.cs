@@ -17,6 +17,10 @@ using System.Configuration;
 using Yavsc.Helpers;
 using Yavsc.Model.FrontOffice.Catalog;
 using Yavsc.Model.Skill;
+using System.Web.Profile;
+using Yavsc.Model.Google.Api;
+using System.Net;
+using System.Linq;
 
 namespace Yavsc.Controllers
 {
@@ -33,6 +37,7 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
+
 		/// <summary>
 		/// Pub the Event
 		/// </summary>
@@ -42,6 +47,7 @@ namespace Yavsc.Controllers
 		{
 			return View (model);
 		}
+
 		/// <summary>
 		/// Estimates released to this client
 		/// </summary>
@@ -53,7 +59,7 @@ namespace Yavsc.Controllers
 				throw new ConfigurationErrorsException ("no redirection to any login page");
 			
 			string username = u.UserName;
-			Estimate [] estims = WorkFlowManager.GetUserEstimates (username);
+			Estimate[] estims = WorkFlowManager.GetUserEstimates (username);
 			ViewData ["UserName"] = username;
 			ViewData ["ResponsibleCount"] = 
 				Array.FindAll (
@@ -61,8 +67,8 @@ namespace Yavsc.Controllers
 				x => x.Responsible == username).Length;
 			ViewData ["ClientCount"] = 
 				Array.FindAll (
-					estims,
-					x => x.Client == username).Length;
+				estims,
+				x => x.Client == username).Length;
 			return View (estims);
 		}
 
@@ -76,7 +82,7 @@ namespace Yavsc.Controllers
 			Estimate f = WorkFlowManager.GetEstimate (id);
 			if (f == null) {
 				ModelState.AddModelError ("Id", "Wrong Id");
-				return View (new Estimate ()  { Id=id } );
+				return View (new Estimate ()  { Id = id });
 			}
 			return View (f);
 		}
@@ -89,9 +95,9 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Estimate (Estimate model, string submit)
 		{
-			string username = Membership.GetUser().UserName;
+			string username = Membership.GetUser ().UserName;
 			// Obsolete, set in master page
-			ViewData ["WebApiBase"] = Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative);
+			ViewData ["WebApiBase"] = Url.Content (Yavsc.WebApiConfig.UrlPrefixRelative);
 			ViewData ["WABASEWF"] = ViewData ["WebApiBase"] + "/WorkFlow";
 			if (submit == null) {
 				if (model.Id > 0) {
@@ -107,7 +113,7 @@ namespace Yavsc.Controllers
 					    && !Roles.IsUserInRole ("FrontOffice"))
 						throw new UnauthorizedAccessException ("You're not allowed to view this estimate");
 				} else if (model.Id == 0) {
-					if (string.IsNullOrWhiteSpace(model.Responsible))
+					if (string.IsNullOrWhiteSpace (model.Responsible))
 						model.Responsible = username;
 				}
 			} else {
@@ -116,7 +122,7 @@ namespace Yavsc.Controllers
 				if (string.IsNullOrWhiteSpace (model.Responsible))
 					model.Responsible = username;
 				if (username != model.Responsible
-				&& !Roles.IsUserInRole ("FrontOffice"))
+				    && !Roles.IsUserInRole ("FrontOffice"))
 					throw new UnauthorizedAccessException ("You're not allowed to modify this estimate");
 
 				if (ModelState.IsValid) {
@@ -172,7 +178,7 @@ namespace Yavsc.Controllers
 				throw new Exception ("No catalog");
 			var brand = cat.GetBrand (brandid);
 			if (brand == null)
-				throw new Exception ("Not a brand id: "+brandid);
+				throw new Exception ("Not a brand id: " + brandid);
 			var pcat = brand.GetProductCategory (pcid);
 			if (pcat == null)
 				throw new Exception ("Not a product category id in this brand: " + pcid);
@@ -194,7 +200,7 @@ namespace Yavsc.Controllers
 			ViewData ["ProdRef"] = pref;
 			Catalog cat = CatalogManager.GetCatalog ();
 			if (cat == null) {
-				YavscHelpers.Notify(ViewData, "Catalog introuvable");
+				YavscHelpers.Notify (ViewData, "Catalog introuvable");
 				ViewData ["RefType"] = "Catalog";
 				return View ("ReferenceNotFound");
 			}
@@ -236,11 +242,11 @@ namespace Yavsc.Controllers
 			try {
 				// Add specified product command to the basket,
 				// saves it in db
-				new Command(collection,HttpContext.Request.Files);
-				YavscHelpers.Notify(ViewData, LocalizedText.Item_added_to_basket);
+				new Command (collection, HttpContext.Request.Files);
+				YavscHelpers.Notify (ViewData, LocalizedText.Item_added_to_basket);
 				return View (collection);
 			} catch (Exception e) {
-				YavscHelpers.Notify(ViewData,"Exception:" + e.Message);
+				YavscHelpers.Notify (ViewData, "Exception:" + e.Message);
 				return View (collection);
 			}
 		}
@@ -257,7 +263,7 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// Skills the specified model.
 		/// </summary>
-		[Authorize(Roles="Admin")]
+		[Authorize (Roles = "Admin")]
 		public ActionResult Skills (string search)
 		{
 			if (search == null)
@@ -267,15 +273,27 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
+		/// Performers on this MEA.
+		/// fr
+		/// Liste des prestataires dont 
+		/// l'activité principale est celle spécifiée
+		/// </summary>
+		/// <param name="id">Identifiant APE de l'activité.</param>
+		public ActionResult Performers (string id)
+		{
+			throw new NotImplementedException ();
+		}
+
+		/// <summary>
 		/// Activities the specified search and toPower.
 		/// </summary>
 		/// <param name="search">Search.</param>
 		/// <param name="toPower">If set to <c>true</c> to power.</param>
-		public ActionResult Activities (string search, bool toPower = false)
+		public ActionResult Activities (string id, bool toPower = false)
 		{
-			if (search == null)
-				search = "%";
-			var activities = WorkFlowManager.FindActivity(search,!toPower);
+			if (id == null)
+				id = "%";
+			var activities = WorkFlowManager.FindActivity (id, !toPower);
 			return View (activities);
 		}
 
@@ -283,21 +301,22 @@ namespace Yavsc.Controllers
 		/// Activity at the specified id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		public ActionResult Activity(string id)
+		public ActionResult Activity (string id)
 		{
-			return View(WorkFlowManager.GetActivity (id));
+			return View (WorkFlowManager.GetActivity (id));
 		}
+
 		/// <summary>
 		/// Display and should
 		/// offer Ajax edition of 
 		/// user's skills.
 		/// </summary>
 		/// <param name="id">the User name.</param>
-		[Authorize()]
+		[Authorize ()]
 		public ActionResult UserSkills (string id)
 		{
-			if (id == null) 
-				id = User.Identity.Name ;
+			if (id == null)
+				id = User.Identity.Name;
 			// TODO or not to do, handle a skills profile update,
 			//      actually performed via the Web API :-°
 			// else if (ModelState.IsValid) {}
@@ -308,15 +327,131 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Booking the specified model.
+		/// Dates the query.
 		/// </summary>
+		/// <returns>The query.</returns>
 		/// <param name="model">Model.</param>
-		public ActionResult Booking (string id, SimpleBookingQuery model)
+		[Authorize,HttpPost]
+		public ActionResult Book (BookingQuery model)
 		{
-			if (model.Needs == null)
-				model.Needs = SkillManager.FindSkill ("%");
-			model.MAECode = id;
+			DateTime mindate = DateTime.Now;
+			if (model.StartDate.Date < mindate.Date) {
+				ModelState.AddModelError ("StartDate", LocalizedText.FillInAFutureDate);
+			}
+			if (model.EndDate < model.StartDate)
+				ModelState.AddModelError ("EndDate", LocalizedText.StartDateAfterEndDate);
+
+			if (ModelState.IsValid) {
+
+				var result = new List<PerformerProfile> ();
+
+				foreach (string meacode in model.MEACodes) {
+					foreach (PerformerProfile profile in  WorkFlowManager.FindPerformer(meacode)) {
+						try {
+							var events = ProfileBase.Create (profile.UserName).GetEvents (model.StartDate, model.EndDate);
+							if (events.items.Length == 0)
+								result.Add (profile);
+						} catch (WebException ex) {
+							string response;
+							using (var stream = ex.Response.GetResponseStream ()) {
+								using (var reader = new StreamReader (stream)) {
+									response = reader.ReadToEnd ();
+									stream.Close ();
+								}
+								YavscHelpers.Notify (ViewData, 
+									string.Format (
+										"Google calendar API exception {0} : {1}<br><pre>{2}</pre>",
+										ex.Status.ToString (),
+										ex.Message,
+										response));
+							}
+						}
+					}
+				}
+				return View ("Performers", result.ToArray ());
+			}
 			return View (model);
 		}
+
+		/// <summary>
+		/// Booking the specified model.
+		/// </summary>
+		/// <param name="MEACode">MEA Code.</param>
+		/// <param name="model">Model.</param>
+		public ActionResult Booking (SimpleBookingQuery model)
+		{
+			
+			// In order to present this form 
+			// with no need selected and without 
+			// validation error display,
+			// we only check the need here, not at validation time.
+			// Although, the need is indeed cruxial requirement,
+			// but we already have got a MEA code  
+			if (ModelState.IsValid)
+			if (model.Needs != null) {
+				var result = new List<PerformerAvailability> ();
+				foreach (PerformerProfile profile in WorkFlowManager.FindPerformer(model.MEACode)) {
+					if (profile.HasCalendar ()) {
+						try {
+							var events = ProfileBase.Create (profile.UserName)
+							.GetEvents (
+								             model.PreferedDate.Date,
+								             model.PreferedDate.AddDays (1).Date);
+							// TODO replace (events.items.Length == 0) 
+							// with a descent computing of dates and times claims, calendar,
+							// AND performer preferences, perhaps also client preferences
+							result.Add (profile.CreateAvailability (model.PreferedDate, (events.items.Length == 0)));
+						} catch (WebException ex) {
+							HandleWebException (ex, "Google Calendar Api");
+						}
+					} else
+						result.Add (profile.CreateAvailability (model.PreferedDate, false));
+
+				}
+				return View ("Performers", result.ToArray ());
+			} else {
+				// A first Get
+				var needs = SkillManager.FindSkill ("%", model.MEACode);
+				ViewData ["Needs"] = needs;
+				model.Needs = needs.Select (
+					x => string.Format ("{0}:{1}", x.Id, x.Rate)).ToArray ();
+			}
+			
+			var activity = WorkFlowManager.GetActivity (model.MEACode);
+			ViewData ["Activity"] = activity;
+			ViewData ["Title"] = activity.Title;
+			ViewData ["Comment"] = activity.Comment;
+			ViewData ["Photo"] = activity.Photo;
+			if (model.PreferedDate < DateTime.Now)
+				model.PreferedDate = DateTime.Now;
+			return View (model);
+		}
+
+		private void HandleWebException (WebException ex, string context)
+		{
+
+			string response = "";
+			using (var stream = ex.Response.GetResponseStream ()) { 
+				if (stream.CanRead) {
+					var reader = new StreamReader (stream);
+						response = reader.ReadToEnd ();
+						reader.Close ();
+						reader.DiscardBufferedData ();
+						reader.Dispose ();
+					}
+				stream.Close ();
+				stream.Dispose ();
+
+			}
+			YavscHelpers.Notify (ViewData, 
+				string.Format (
+					"{3} exception {0} : {1}<br><pre>{2}</pre>",
+					ex.Status.ToString (),
+					ex.Message,
+					response,
+					context
+				));
+		}
+
 	}
 }

@@ -1,3 +1,87 @@
+2015-11-28  Paul Schneider  <paul@pschneider.fr>
+
+	* SkillManager.cs:
+	* Notification.cs:
+	* Notification.cs:
+	* MessageWithPayLoad.cs:
+	* MessageWithPayloadResponse.cs: refabrication
+
+	* BookingQuery.cs: Le booking lourd devient une commande basée
+	sur des activités concernée par l'intervention
+
+	* ChangeLog: nettoyage
+
+	* CatalogProvider.cs: implemente l'interface d'un fournissseur
+	de contenu
+
+	* PerformerProfile.cs: implemente le profile prestataire
+
+	* SimpleBookingQuery.cs: Les besoin sont exprimé sous forme
+	d'un tableau de valeur du parametrage de la commande
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: internationalisation
+
+	* Profile.cs: implemente un accès à l'id d'enregistrement
+	Google GCM
+
+	* SkillEntity.cs: La compétence appartient à un domaine
+	d'activité, on lui associe un et un seul code APE
+
+	* SkillProvider.cs: Fait chercher les compétences à partir
+	d'un code activité
+
+	* IContentProvider.cs: xml doc
+
+	* WorkFlowManager.cs: implemente l'accès à la liste des
+	préstataires
+	de telle activité
+
+	* YavscModel.csproj: refabrications
+
+2015-11-28  Paul Schneider  <paul@pschneider.fr>
+
+	* YavscModel.csproj:
+	* LocalizedText.resx:
+	* Entity.cs:
+	* OAuth2.cs:
+	* SkillEntity.cs:
+	* SkillManager.cs:
+	* LocalizedText.fr.resx:
+	* SkillProvider.cs:
+	* PeopleApi.cs:
+	* MapTracks.cs:
+	* ApiClient.cs:
+	* Entity.cs:
+	* OAuth2.cs:
+	* SimpleJsonPostMethod.cs:
+	* BookingQuery.cs:
+	* CalendarApi.cs:
+	* LocalizedText.Designer.cs:
+	* Notification.cs:
+	* EntityQuery.cs:
+	* ApiClient.cs:
+	* MapTracks.cs:
+	* PeopleApi.cs:
+	* WorkFlowManager.cs:
+	* GoogleHelpers.cs:
+	* EntityQuery.cs:
+	* LocalizedText.fr.Designer.cs:
+	* IContentProvider.cs:
+	* CalendarApi.cs:
+	* GoogleHelpers.cs:
+	* PerformerProfile.cs:
+	* SimpleBookingQuery.cs:
+	* Notification.cs:
+	* PerformerAvailability.cs:
+	* CatalogProvider.cs:
+	* MessageWithPayLoad.cs:
+	* MessageWithPayloadResponse.cs: 
+
+	* Profile.cs: internationalisation
+
 2015-11-26  Paul Schneider  <paul@pschneider.fr>
 
 	* LocalizedText.resx:

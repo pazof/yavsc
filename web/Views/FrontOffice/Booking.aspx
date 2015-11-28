@@ -1,4 +1,19 @@
 ﻿<%@ Page Title="Booking" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<SimpleBookingQuery>" %>
+
+<asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
+<% Title = Html.Translate("BookingTitle"+Model.MEACode) + " - " + YavscHelpers.SiteName; %>
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
+<h1>
+<a href="<%=Url.RouteUrl("FrontOffice",new {action="Booking", MEACode=Model.MEACode })%>">
+<img href="<%= ViewData["Photo"] %>" alt="">
+<%=Html.Translate("BookingTitle"+Model.MEACode)%>
+</a>
+- <a href="<%= Url.RouteUrl("Default",new {controller="Home" }) %>"><%= YavscHelpers.SiteName %></a>
+</h1>
+</asp:Content>
+
 <asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
  <link rel="stylesheet" type="text/css" href="/App_Themes/jquery.timepicker.css" />
  <script type="text/javascript" src="/Scripts/globalize/globalize.js"></script>
@@ -10,28 +25,39 @@
 </asp:Content>
 
  <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<% using ( Html.BeginForm("Booking") ) { %>
-<%= Html.Hidden("MAECode") %>
+<% using ( Html.BeginForm( "Booking", "FrontOffice", new { MEACode = Model.MEACode }) ) { %>
+<%= Html.ValidationSummary() %>
+<%= Html.Hidden("MEACode") %>
   <fieldset>
-<legend>Préferences musicales</legend>
-  <%= Html.LabelFor(model=>model.Needs) %>:
+<legend><%= Html.Translate("YourNeed") %></legend>
+  <input type="hidden" name="Needs" id="Needs" value="">
   <ul>
-  <% foreach (var need in Model.Needs) { %>
-  <li><%= need.Name %> <%= Html.Partial("RateSkillControl",need)%></li>
+  <% foreach (var need in (SkillEntity[])(ViewData["Needs"])) { %>
+  <li><%= need.Name %> <%= Html.Partial("RateSkillControl", need)%></li>
   <% } %>
   </ul>
   <%= Html.ValidationMessageFor(model=>model.Needs) %>
  </fieldset>
-
   <fieldset>
-<legend>Date de l'événement</legend>
+<legend><%= Html.Translate("PerformanceDate") %></legend>
 Intervention souhaitée le 
   <input type="text" id="PreferedDate" name="PreferedDate" class="start date" value="<%=Model.PreferedDate.ToString("yyyy/MM/dd")%>">
   <%= Html.ValidationMessageFor( model=>model.PreferedDate ) %>
  </fieldset>
   <script>
   $(document).ready(function(){
-  $('[data-type="rate-site-skill"]').rate({target: 'FrontOffice/RateSkill'});
+  var needs = <%= Ajax.JSonString((SkillEntity[])(ViewData["Needs"])) %>;
+  var fneeds = needs.map( function (need) { 
+    return need.Id+' '+need.Rate; } );
+
+    fneeds.forEach(function(elt) { console.log(Yavsc.dumpprops(elt)) } );
+  $('#Needs').val(fneeds);
+  $('[data-type="rate-site-skill"]').rate({jsTarget: function (rating)
+  {
+  // console.log(Yavsc.dumpprops(rating)); 
+  return true;
+  }
+  });
   var tpconfig = { 
   'timeFormat': 'H:i',
   'showDuration': true,

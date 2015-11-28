@@ -2,11 +2,16 @@
   (function(jQuery) {
     return jQuery.widget('Yavsc.rate', {
     options: {
-      target: null,
+      webTarget: null,
+      jsTarget: null,
       disabled: false
       },
 	sendRate: function (rating,callback) {
-		Yavsc.ajax(this.options.target+'/Rate', rating, callback);
+		if (this.options.webTarget)
+			Yavsc.ajax(this.options.webTarget+'/Rate', rating, callback);
+		if (this.options.jsTarget)
+			if (this.options.jsTarget(rating))
+			  if (callback) callback();
 		},
     _create: function() {
 	   var $ratectl = $(this.element); 

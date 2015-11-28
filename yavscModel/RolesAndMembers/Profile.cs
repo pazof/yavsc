@@ -169,6 +169,8 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <value>The google calendar.</value>
 		[Display(Name="Google_calendar",ResourceType=typeof(LocalizedText))]
 		public string GoogleCalendar { get; set; }
+		[Display(Name="Google_registration_id",ResourceType=typeof(LocalizedText))]
+		public string GoogleRegId { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether this instance has bank account.
@@ -274,6 +276,7 @@ namespace Yavsc.Model.RolesAndMembers
 			AccountNumber = (string) profile.GetPropertyValue ("AccountNumber");
 			BankedKey = (int)  profile.GetPropertyValue ("BankedKey");
 			GoogleCalendar = (string) profile.GetPropertyValue ("gcalid");
+			GoogleRegId = (string) profile.GetPropertyValue ("gregid");
 			MEACode = (string) profile.GetPropertyValue ("MEACode");
 		}
 
@@ -281,10 +284,8 @@ namespace Yavsc.Model.RolesAndMembers
 		/// Gets or sets the MEA code.
 		/// </summary>
 		/// <value>The MEA code.</value>
-		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un code APE valide")
-			,Display(ResourceType=typeof(LocalizedText),Name="MEACode"),
-			RegularExpression(@"[a-zA-Z0-9 \-_.~/\\]+")
-		]
+		[Display(ResourceType=typeof(LocalizedText),Name="MEACode"),
+			RegularExpression(@"[a-zA-Z0-9 \-_.~/\\]*")]
 		public string MEACode { get; set; }
 
 	}

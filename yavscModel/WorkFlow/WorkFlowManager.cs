@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 namespace Yavsc.Model.WorkFlow
 {
+	
 	/// <summary>
 	/// Work flow manager.
 	/// It takes orders store them and raise some events for modules
@@ -16,6 +17,16 @@ namespace Yavsc.Model.WorkFlow
 	/// </summary>
 	public static class WorkFlowManager 
 	{
+		/// <summary>
+		/// Finds the performer.
+		/// </summary>
+		/// <returns>The performer.</returns>
+		/// <param name="MEACode">MEA code.</param>
+		public static PerformerProfile [] FindPerformer(string MEACode)
+		{
+			return DefaultProvider.FindPerformer (MEACode);
+		}
+
 		/// <summary>
 		/// Finds the activity.
 		/// </summary>
@@ -157,6 +168,16 @@ namespace Yavsc.Model.WorkFlow
 				return defaultProvider;
 			}
 		}
+
+		public static void DropWrittingTag (long wrid, string tag)
+		{
+			throw new NotImplementedException ();
+		}
+
+		/// <summary>
+		/// Gets the providers.
+		/// </summary>
+		/// <value>The providers.</value>
 		public static IContentProvider [] Providers {
 
 			get { 

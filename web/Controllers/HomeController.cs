@@ -15,6 +15,8 @@ using Yavsc;
 using System.Web.Mvc;
 using Yavsc.Model.Blogs;
 using Yavsc.Model.WorkFlow;
+using Yavsc.WebControls;
+using SalesCatalog.XmlImplementation;
 
 namespace Yavsc.Controllers
 {
@@ -47,10 +49,13 @@ namespace Yavsc.Controllers
 		{
 			Assembly[] aslist = {
 				GetType ().Assembly,
+				typeof(BlogsController).Assembly,
 				typeof(ITCPNpgsqlProvider).Assembly,
 				typeof(NpgsqlMembershipProvider).Assembly,
 				typeof(NpgsqlContentProvider).Assembly,
-				typeof(NpgsqlBlogProvider).Assembly
+				typeof(NpgsqlBlogProvider).Assembly,
+				typeof(InputUserName).Assembly,
+				typeof(XmlCatalog).Assembly
 			};
 
 			List <AssemblyName> asnlist = new List<AssemblyName> ();

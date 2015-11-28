@@ -37,7 +37,7 @@ namespace Yavsc.Model.Skill
 		/// Gets the provider.
 		/// </summary>
 		/// <value>The provider.</value>
-		private static SkillProvider Provider { 
+		private static SkillProvider DefaultProvider { 
 			get {
 				if (provider == null)
 					provider = ManagerHelper.CreateDefaultProvider<SkillProvider>
@@ -51,7 +51,7 @@ namespace Yavsc.Model.Skill
 		/// </summary>
 		/// <param name="skill">the skill.</param>
 		public static long DeclareSkill(SkillEntity skill) {
-			Provider.Declare(skill);
+			DefaultProvider.Declare(skill);
 			return skill.Id;
 		}
 		/// <summary>
@@ -60,7 +60,7 @@ namespace Yavsc.Model.Skill
 		/// <returns>The skill.</returns>
 		/// <param name="dec">Dec.</param>
 		public static long DeclareUserSkill(UserSkillDeclaration dec) {
-			return Provider.Declare(dec);
+			return DefaultProvider.Declare(dec);
 		}
 
 		/// <summary>
@@ -70,7 +70,7 @@ namespace Yavsc.Model.Skill
 		/// <param name="username">Username.</param>
 		/// <param name="userSkill">User skill.</param>
 		public static long RateUserSkill(string username, UserSkillRating userSkill) {
-			return Provider.Rate(userSkill);
+			return DefaultProvider.Rate(userSkill);
 		}
 		/// <summary>
 		/// Rates the skill.
@@ -78,7 +78,7 @@ namespace Yavsc.Model.Skill
 		/// <param name="username">Username.</param>
 		/// <param name="skill">Skill.</param>
 		public static void RateSkill(string username, SkillRating skill) {
-			Provider.Rate(skill);
+			DefaultProvider.Rate(skill);
 		}
 
 		/// <summary>
@@ -86,8 +86,8 @@ namespace Yavsc.Model.Skill
 		/// </summary>
 		/// <returns>The skill identifier.</returns>
 		/// <param name="pattern">Pattern.</param>
-		public static SkillEntity [] FindSkill(string pattern){
-			return Provider.FindSkill(pattern);
+		public static SkillEntity [] FindSkill(string pattern, string MEACode=null){
+			return DefaultProvider.FindSkill(pattern, MEACode);
 		}
 
 		/// <summary>
@@ -95,8 +95,8 @@ namespace Yavsc.Model.Skill
 		/// </summary>
 		/// <returns>The performer.</returns>
 		/// <param name="skillIds">Skill identifiers.</param>
-		public static string [] FindPerformer(long []skillIds){
-			return Provider.FindPerformer(skillIds);
+		public static string [] FindPerformer(long [] skillIds) {
+			return DefaultProvider.FindPerformer(skillIds);
 		}
 		/// <summary>
 		/// Deletes the skill.
@@ -104,7 +104,7 @@ namespace Yavsc.Model.Skill
 		/// <param name="skillId">Skill identifier.</param>
 		public static void DeleteSkill (long skillId)
 		{ 
-			Provider.DeleteSkill (skillId);
+			DefaultProvider.DeleteSkill (skillId);
 		}
 		/// <summary>
 		/// Deletes the user skill.
@@ -112,7 +112,7 @@ namespace Yavsc.Model.Skill
 		/// <param name="skillId">Skill identifier.</param>
 		public static void DeleteUserSkill (long skillId)
 		{ 
-			Provider.DeleteUserSkill (skillId);
+			DefaultProvider.DeleteUserSkill (skillId);
 		}
 		/// <summary>
 		/// Gets the user skills.
@@ -121,7 +121,7 @@ namespace Yavsc.Model.Skill
 		/// <param name="userName">User name.</param>
 		public static PerformerProfile GetUserSkills(string userName)
 		{
-			return Provider.GetUserSkills (userName);
+			return DefaultProvider.GetUserSkills (userName);
 		}
 	}
 }

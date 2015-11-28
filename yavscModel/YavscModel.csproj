@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Yavsc.Model</RootNamespace>
     <AssemblyName>YavscModel</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,21 +42,25 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\TotemPre</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TotemProd|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\TotemProd</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'YavscPre|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\YavscPre</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Yavsc|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\Yavsc</OutputPath>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -72,6 +76,8 @@
     <Reference Include="MarkdownDeep">
       <HintPath>..\web\lib\MarkdownDeep.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -147,9 +153,6 @@
     <Compile Include="Google\CalendarEventList.cs" />
     <Compile Include="Google\GDate.cs" />
     <Compile Include="Google\Resource.cs" />
-    <Compile Include="Google\Messaging\MessageWithPayLoad.cs" />
-    <Compile Include="Google\Messaging\MessageWithPayloadResponse.cs" />
-    <Compile Include="Google\Messaging\Notification.cs" />
     <Compile Include="Calendar\EventPub.cs" />
     <Compile Include="Calendar\OpenDay.cs" />
     <Compile Include="Calendar\Period.cs" />
@@ -224,6 +227,19 @@
     <Compile Include="ITitle.cs" />
     <Compile Include="Calendar\BaseEvent.cs" />
     <Compile Include="ManagerHelper.cs" />
+    <Compile Include="Google\Api\ApiClient.cs" />
+    <Compile Include="Google\Api\CalendarApi.cs" />
+    <Compile Include="Google\Api\Entity.cs" />
+    <Compile Include="Google\Api\EntityQuery.cs" />
+    <Compile Include="Google\Api\GoogleHelpers.cs" />
+    <Compile Include="Google\Api\MapTracks.cs" />
+    <Compile Include="Google\Api\OAuth2.cs" />
+    <Compile Include="Google\Api\PeopleApi.cs" />
+    <Compile Include="Google\Api\Messaging\MessageWithPayLoad.cs" />
+    <Compile Include="Google\Api\Messaging\MessageWithPayloadResponse.cs" />
+    <Compile Include="Google\Api\Messaging\Notification.cs" />
+    <Compile Include="SimpleJsonPostMethod.cs" />
+    <Compile Include="FrontOffice\PerformerAvailability.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -235,7 +251,6 @@
     <Folder Include="FrontOffice\" />
     <Folder Include="FrontOffice\Catalog\" />
     <Folder Include="FrontOffice\Catalog\Billing\" />
-    <Folder Include="Google\Messaging\" />
     <Folder Include="Circles\" />
     <Folder Include="RolesAndMembers\" />
     <Folder Include="Messaging\" />

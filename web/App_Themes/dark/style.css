@@ -26,7 +26,7 @@ input, textarea, checkbox {
    }
 
 header {
-	background: url("/App_Themes/images/star-939235_1280.jpg") -3em -3em no-repeat fixed;
+	background: url("http://s448140597.onlinehome.us/wp-content/uploads/2014/12/project-management1.jpg") -20em -20em repeat fixed;
 	}
 
 header h1, header a {
@@ -38,7 +38,7 @@ nav {
 }
 
 main {
-	background: url("/App_Themes/images/p8-av4.png") 50% 20em no-repeat fixed ;
+	background: url("/App_Themes/images/p8-av4.l.jpg") 50% 50% no-repeat fixed ;
 	}
 
 footer {
@@ -138,7 +138,6 @@ input:hover, textarea:hover {
 header {
 	padding-top:1em;
 	padding-bottom:1em;
-	background: url("/App_Themes/images/star-939235_1280.s.jpg") 0 0 no-repeat fixed;
 	}
 		
 #avatar { 
@@ -155,7 +154,7 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 	main { 
 	margin: 1em;
 	padding: 1em;
-	background: url("/App_Themes/images/p8-av4.s.jpg") 50% 20em no-repeat fixed ;
+	background: url("/App_Themes/images/p8-av4.jpg") 50% 50% no-repeat fixed ;
 	} 
 	footer { 
 		background: url("/App_Themes/images/helix-nebula-1400x1400.s.jpg") 50% 90% repeat fixed ; 
@@ -194,7 +193,6 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 header {
 	padding-top:.5em;
 	padding-bottom:.5em;
-	background: url("/App_Themes/images/star-939235_1280.xxs.jpg") 0 0 no-repeat fixed;
  }
 
 header h1, header a { padding:.2em;}
@@ -207,7 +205,7 @@ header h1, header a { padding:.2em;}
 	main { 
 	margin: .5em;
 	    padding: .5em;
-		background:   url("/App_Themes/images/p8-av4.xxs.jpg")  50% 20em repeat fixed ; 
+		background:   url("/App_Themes/images/p8-av4.s.jpg") 50% 50% no-repeat fixed ; 
 	} 
 	footer { 
 		background:    url("/App_Themes/images/helix-nebula-1400x1400.xxs.jpg") 50% 10% repeat fixed ; 

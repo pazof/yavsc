@@ -262,7 +262,7 @@ namespace Yavsc.Controllers
 		private void SetMEACodeViewData(Profile model) {
 			var activities = WorkFlowManager.FindActivity ("%", false);
 			var items = new List<SelectListItem> ();
-			items.Add (new SelectListItem () { Selected = model.MEACode == null, Text = LocalizedText.DoNotPublishMyActivity, Value=null });
+			items.Add (new SelectListItem () { Selected = model.MEACode == null, Text = LocalizedText.DoNotPublishMyActivity, Value="none" });
 			foreach (var a in activities) {
 				items.Add(new SelectListItem() { Selected = model.MEACode == a.Id, 
 					Text = string.Format("{1} : {0}",a.Title,a.Id), 
@@ -270,7 +270,6 @@ namespace Yavsc.Controllers
 			}
 			ViewData ["MEACode"] = items;
 		}
-
 
 		/// <summary>
 		/// Profile the specified id, model and AvatarFile.

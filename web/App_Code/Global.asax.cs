@@ -40,6 +40,13 @@ namespace Yavsc
 			routes.IgnoreRoute ("favicon.ico"); // favorite icon
 			routes.IgnoreRoute ("favicon.png"); // favorite icon
 			routes.IgnoreRoute ("robots.txt");  // for search engine robots
+
+			routes.MapRoute (
+				"FrontOffice",
+				"do/{action}/{MEACode}/{Id}",
+				new { controller = "FrontOffice", action = "Index", MEACode = UrlParameter.Optional, Id = UrlParameter.Optional }
+			);
+
 			routes.MapRoute (
 				"Titles",
 				"title/{title}",

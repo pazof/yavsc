@@ -1,3 +1,91 @@
+2015-11-28  Paul Schneider  <paul@pschneider.fr>
+
+	* p8-av4.xxs.jpg:
+	* p8-av4.xxs.png: inutile
+
+	* NoLogin.master:
+	* Entity.cs:
+	* OAuth2.cs:
+	* ApiClient.cs:
+	* PeopleApi.cs:
+	* MapTracks.cs:
+	* Skills.aspx:
+	* CalendarApi.cs:
+	* EntityQuery.cs:
+	* GoogleHelpers.cs:
+	* EventPub.aspx:
+	* GoogleController.cs:
+	* SimpleJsonPostMethod.cs:
+	* UserSkills.aspx:
+	* BackOfficeController.cs:
+	* BackOfficeController.cs: refabrication
+
+	* FrontOfficeController.cs: format du code
+
+	* Global.asax.cs: Une route customisée pour le Front Office :
+	/do (genre, ici, ça bouge.)
+
+
+	* activity.sql: implémente en base de donnée le modèle des
+	activités et compétences,
+	ajoute aussi deux activités : l'edition logicielle et
+	"Artiste"
+
+
+	* style.css: changement de mes images de fond ... tombées du
+	camion de Xavier et onlinehome.us
+
+	* p8-av4.s.jpg: changement de taille
+
+	* AccountController.cs: Met le code MEA à "none" quand il est
+	spécifié non disponible. 
+
+	* BlogsController.cs: fixe un bug de l'edition d'un billet 
+
+	* FrontOfficeController.cs: implemente le contrôle booking
+	simple
+
+	* HomeController.cs: ajoute l'assemblage du catalog dans le
+	listing dédié
+
+	* YavscAjaxHelper.cs: Implemente un outil de representation
+	JSon des objets côté serveur
+
+	* parallax.js: deux fois plus de mouvement autout de x dans le
+	parallax
+
+	* yavsc.rate.js: imlemente un callback JS pour le rating
+
+	* Activities.aspx: Des labels au formulaire de déclaration des
+	activités
+
+	* Activity.ascx: un panneau activité descent
+
+	* Booking.aspx: implemente l'UI web du booking simple.
+
+	* EavyBooking.aspx: refabrication du booking lourd
+
+	* Index.aspx: supprime le panneau du tag Accueil, affiche les
+	activités en cours du site (avec au moins un préstataire
+	valide pour cette activité)
+
+	* Web.config: Implemente une cote utilisateur, par une
+	nouvelle valeur de son profile (Rate).
+
+
+	* Yavsc.csproj: refabrique du code API Google, qui part dans
+	le model.
+
+	* MarkdownDeep.dll: le tag <p> ne convenait pas, le remplacer
+	par le tag <span> non plus.
+	Maintenant ça devrait être correct, c'est un div, mais que en
+	cas de tag englobant non défini.
+
+	* Skills.sql: vient de passer dans activity.Sql
+
+	* T.cs: la traduction est faite plus simple à appeler (sans
+	cast vers `string`).
+
 2015-11-26  Paul Schneider  <paul@pschneider.fr>
 
 	* Yavsc.csproj: nouvelles configurations de

@@ -22,6 +22,48 @@ namespace Yavsc
 	public class NpgsqlContentProvider: ProviderBase, IContentProvider
 	{
 		/// <summary>
+		/// Finds the performer.
+		/// </summary>
+		/// <returns>The performer.</returns>
+		/// <param name="MEACode">MEA code.</param>
+		public PerformerProfile[] FindPerformer (string MEACode)
+		{
+			var result = new List<PerformerProfile> ();
+
+			using (NpgsqlConnection cnx = CreateConnection ()) {
+				cnx.Open ();
+
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = @"SELECT d.uniqueid, u.username, u.email, d.rate
+	FROM profiledata d, profiles p, users u
+	WHERE u.username = p.username 
+	AND u.applicationname = p.applicationname 
+	AND p.uniqueid = d.uniqueid 
+	AND u.isapproved = TRUE 
+	AND u.islockedout = FALSE 
+	AND d.meacode = :mea 
+    AND u.applicationname = :app
+    ORDER BY u.username ";
+					cmd.Parameters.AddWithValue ("mea", NpgsqlTypes.NpgsqlDbType.Varchar, MEACode);
+					cmd.Parameters.AddWithValue ("app", NpgsqlTypes.NpgsqlDbType.Varchar, applicationName);
+
+					using (var rdr = cmd.ExecuteReader ()) {
+						if (rdr.HasRows) {
+							while (rdr.Read ()) {
+								var profile = new PerformerProfile ();
+								profile.Id = rdr.GetInt64 (0);
+								profile.UserName = rdr.GetString (1);
+								profile.EMail = rdr.GetString (2);
+								result.Add (profile);
+							}
+						}
+					}
+				}
+			}
+			return result.ToArray ();
+		}
+
+		/// <summary>
 		/// Gets the activity.
 		/// </summary>
 		/// <returns>The activity.</returns>
@@ -32,7 +74,7 @@ namespace Yavsc
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = @"select meacode, title, cmnt, photo
+					cmd.CommandText = @"select distinct meacode, title, cmnt, photo
  from activity where meacode = :code and applicationname = :app";
 					cmd.Parameters.AddWithValue ("code", MEACode);
 					cmd.Parameters.AddWithValue ("app", applicationName);

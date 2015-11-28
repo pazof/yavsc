@@ -302,7 +302,7 @@ namespace Yavsc.Controllers
 					Membership.GetUser ().UserName).Select (x => new SelectListItem {
 						Value = x.Id.ToString(),
 						Text = x.Title,
-						Selected = model.AllowedCircles.Contains (x.Id)
+						Selected = (model.AllowedCircles==null)? false : model.AllowedCircles.Contains (x.Id)
 					});
 			return View ("Edit", model);
 		}

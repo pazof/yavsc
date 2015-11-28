@@ -17,14 +17,19 @@
 	<data name="access_denied"><value>Access denied</value></data>
 	<data name="AnIMessageHasbeenSent"><value>An instant message has been sent to {0}, 
 	showing to him your query. You should be contacted very soon.</value></data>
+	<data name="available"><value>available</value></data>
 	<data name="Bill_edition"><value>Bill edition</value></data>
 	<data name="Bill_removal"><value>Bill removal</value></data>
 	<data name="BillCreated"><value>Bill created</value></data>
 	<data name="BillUpdated"><value>Bill updated</value></data>
+	<data name="BookingTitleArtiste"><value>Book an artiste</value></data>
+	<data name="BookingTitle6829C"><value>Book a software editor</value></data>
 	<data name="Create"><value>Create</value></data>
 	<data name="Count"><value>Count</value></data>
 	<data name="ChooseADescription"><value>Please, choose a description</value></data>
 	<data name="ChooseATitle"><value>Please, choose a title</value></data>
+	<data name="ChooseADateInTheFutur"><value>Please, Choose A Date In The Futur</value></data>
+
 	<data name="Ciffer"><value>Ciffer</value></data>
 	<data name="Circles"><value>Circles</value></data>
 	<data name="Consultant"><value>Consultant</value></data>
@@ -52,7 +57,9 @@
 	<data name="Hide_source"><value>Hide the bill source text</value></data>
 	<data name="entries"><value>entries</value></data>
 	<data name="Google_calendar"><value>Google calendar</value></data>
+	<data name="Google_calendar_"><value>Google calendar</value></data>
 	<data name="Google_error"><value>Google error : {0}</value></data>
+	<data name="Google_registration_id"><value>Google registration id</value></data>
 	<data name="I_understood"><value>I understood</value></data>
 	<data name="InternalServerError"><value>Internal Server Error</value></data>
 	<data name="ImgLocator"><value>Image URI</value></data>
@@ -78,6 +85,7 @@
 	<data name="Online"><value>Online</value></data>
 	<data name="Offline"><value>Offline</value></data>
 	<data name="Pdf_version"><value>Pdf version</value></data>
+	<data name="PerformanceDate"><value>Performance Date</value></data>
 	<data name="Person"><value>Person</value></data>
 	<data name="Photo"><value>Photo</value></data>
 	<data name="PhotoUpdated"><value>Photo updated</value></data>
@@ -104,6 +112,9 @@
 	<data name="Tag_name"><value>Tag name</value></data>
 	<data name="Tex_version"><value>LaTeX version</value></data>
 	<data name="ThisSiteUsesCookies"><value>This site uses cookies</value></data>
+	<data name="ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailable"><value>ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailable</value></data>
+	<data name="ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailable"><value>ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailable</value></data>
+	<data name="ThisPerformerDoesntGiveAccessToHisCalendar"><value>ThisPerformerDoesntGiveAccessToHisCalendar</value></data>
 	<data name="Title"><value>Title</value></data>
 	<data name="Unitary_cost"><value>Unitary_cost</value></data>
 	<data name="User_List"><value>User List</value><comment></comment></data>
@@ -119,6 +130,8 @@
 	{0} should be available for this booking</value></data>
 	<data name="younotadmin"><value>You're not administrator</value></data>
 	<data name="YourMEACode"><value>Your activity</value></data>
+	<data name="YourNeed"><value>Your need</value></data>
+	<data name="YourSkills"><value>Vos talents, vos spécialités, le domaine de vos activités</value></data>
 	<data name="yourquerytransmitted"><value>your query has been transmitted</value></data>
 
 </root>

@@ -30,7 +30,6 @@
     </CustomCommands>
     <DocumentationFile>bin\Yavsc.xml</DocumentationFile>
     <Externalconsole>true</Externalconsole>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -40,13 +39,11 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <DocumentationFile>bin\Yavsc.xml</DocumentationFile>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Lua|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin</OutputPath>
     <WarningLevel>4</WarningLevel>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TotemPre|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -155,7 +152,6 @@
     <Folder Include="Formatters\" />
     <Folder Include="htmldoc\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Helpers\Google\" />
     <Folder Include="lib\" />
     <Folder Include="Models\" />
     <Folder Include="Settings\" />
@@ -203,16 +199,9 @@
     <Compile Include="Settings\ModulesConfigurationSection.cs" />
     <Compile Include="Settings\ModuleConfigurationElementCollection.cs" />
     <Compile Include="Settings\ModuleConfigurationElement.cs" />
-    <Compile Include="Helpers\SimpleJsonPostMethod.cs" />
-    <Compile Include="Helpers\Google\Entity.cs" />
-    <Compile Include="Helpers\Google\MapTracks.cs" />
-    <Compile Include="Helpers\Google\EntityQuery.cs" />
-    <Compile Include="Helpers\Google\ApiClient.cs" />
-    <Compile Include="Helpers\Google\CalendarApi.cs" />
     <Compile Include="Formatters\ErrorHtmlFormatter.cs" />
     <Compile Include="Formatters\RssFeedsFormatter.cs" />
     <Compile Include="Formatters\TexToPdfFormatter.cs" />
-    <Compile Include="WebApiConfig.cs" />
     <Compile Include="Formatters\EstimToPdfFormatter.MSAN.cs" />
     <Compile Include="Helpers\TemplateException.cs" />
     <Compile Include="Formatters\FormatterException.cs" />
@@ -228,17 +217,15 @@
     <Compile Include="Web References\sms.diamondcard.us\Reference.cs">
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\Google\OAuth2.cs" />
-    <Compile Include="Helpers\Google\PeopleApi.cs" />
     <Compile Include="ApiControllers\PaypalController.cs" />
     <Compile Include="ApiControllers\AuthorizationDenied.cs" />
     <Compile Include="ApiControllers\YavscController.cs" />
     <Compile Include="Helpers\YavscAjaxHelper.cs" />
-    <Compile Include="Helpers\Google\GoogleHelpers.cs" />
     <Compile Include="AuthorizeAttribute.cs" />
     <Compile Include="ApiControllers\SkillController.cs" />
     <Compile Include="Controllers\PayPalController.cs" />
     <Compile Include="ApiControllers\BackOfficeController.cs" />
+    <Compile Include="WebApiConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -497,7 +484,6 @@
     <Content Include="App_Themes\images\Mono-powered.png" />
     <Content Include="App_Themes\images\noavatar.png" />
     <Content Include="App_Themes\images\p8-av4.s.jpg" />
-    <Content Include="App_Themes\images\p8-av4.xxs.jpg" />
     <Content Include="App_Themes\images\pgsql.png" />
     <Content Include="App_Themes\images\sign-in-with-google.png" />
     <Content Include="App_Themes\images\sign-in-with-google-s.png" />
@@ -519,13 +505,10 @@
     <Content Include="App_Code\Global.asax.cs" />
     <Content Include="Views\FrontOffice\RateSkillControl.ascx" />
     <Content Include="Views\FrontOffice\RateUserSkillControl.ascx" />
-    <Content Include="Web.Release.config" />
     <Content Include="Views\PayPal\Index.aspx" />
     <Content Include="Views\PayPal\Abort.aspx" />
     <Content Include="Views\PayPal\Commit.aspx" />
     <Content Include="Views\PayPal\IPN.aspx" />
-    <Content Include="Web.Debug.config" />
-    <Content Include="Web.Lua.config" />
     <Content Include="Scripts\yavsc.admin.js" />
     <Content Include="Views\FrontOffice\RestrictedArea.aspx" />
     <Content Include="Views\Admin\RestrictedArea.aspx" />
@@ -534,8 +517,6 @@
     <Content Include="Views\FileSystem\RestrictedArea.aspx" />
     <Content Include="Views\BackOffice\RestrictedArea.aspx" />
     <Content Include="Views\Account\RestrictedArea.aspx" />
-    <Content Include="Web.TotemProd.config" />
-    <Content Include="Web.TotemPre.config" />
     <Content Include="Views\FrontOffice\Booking.aspx" />
     <Content Include="Views\FrontOffice\EavyBooking.aspx" />
     <Content Include="App_Themes\blue\style.tablesorter.css" />
@@ -544,6 +525,12 @@
     <Content Include="Views\FrontOffice\Activity.ascx" />
     <Content Include="Views\BackOffice\NotifyEventResponse.aspx" />
     <Content Include="Views\BackOffice\NotifyEvent.aspx" />
+    <Content Include="Views\FrontOffice\Performer.ascx" />
+    <Content Include="App_Themes\images\p8-av4.jpg" />
+    <Content Include="App_Themes\images\p8-av4.xs.jpg" />
+    <Content Include="App_Themes\images\p8-av4.l.jpg" />
+    <Content Include="Views\Home\Activity.ascx" />
+    <Content Include="Views\FrontOffice\Performers.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -572,11 +559,17 @@
     </None>
     <None Include="fonts\fontawesome-webfont.woff2" />
     <None Include="lib\MarkdownDeep.dll" />
-    <None Include="App_Code\Sql\Skills.sql" />
     <None Include="WebDeploy.targets" />
     <None Include="WebTasks.dll" />
     <None Include="App_Code\Sql\MEA.sql" />
     <None Include="App_Code\Sql\activity.sql" />
+    <None Include="Web.Debug.config">
+      <Gettext-ScanForTranslations>False</Gettext-ScanForTranslations>
+    </None>
+    <None Include="Web.Lua.config" />
+    <None Include="Web.Release.config" />
+    <None Include="Web.TotemPre.config" />
+    <None Include="Web.TotemProd.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">

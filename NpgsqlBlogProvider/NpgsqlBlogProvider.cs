@@ -20,7 +20,10 @@ namespace Npgsql.Web.Blog
 		string connectionString;
 
 		#region implemented abstract members of BlogProvider
-
+		/// <summary>
+		/// Updates the post.
+		/// </summary>
+		/// <param name="be">Be.</param>
 		public override void UpdatePost (BlogEntry be)
 		{
 			// TODO Tags and rate should not be ignored

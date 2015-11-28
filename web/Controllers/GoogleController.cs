@@ -15,9 +15,12 @@ using Newtonsoft.Json;
 using Yavsc.Model;
 using Yavsc.Model.Google;
 using Yavsc.Model.RolesAndMembers;
-using Yavsc.Helpers.Google;
 using Yavsc.Model.Calendar;
 using Yavsc.Helpers;
+using Yavsc.Model.WorkFlow;
+using Yavsc.Model.FrontOffice;
+using Yavsc.Model.Google.Api;
+using Yavsc.Model.Skill;
 
 namespace Yavsc.Controllers
 {
@@ -303,44 +306,10 @@ namespace Yavsc.Controllers
 			return View (model);
 		}
 		
-		/// <summary>
-		/// Dates the query.
-		/// </summary>
-		/// <returns>The query.</returns>
-		/// <param name="model">Model.</param>
-		[Authorize,HttpPost]
-		public ActionResult Book (BookingQuery model)
+
+
+		public ActionResult Book (SimpleBookingQuery model)
 		{
-			DateTime mindate = DateTime.Now;
-			if (model.StartDate.Date < mindate.Date){
-				ModelState.AddModelError ("StartDate", LocalizedText.FillInAFutureDate);
-			}
-			if (model.EndDate < model.StartDate)
-				ModelState.AddModelError ("EndDate", LocalizedText.StartDateAfterEndDate);
-			
-			if (ModelState.IsValid) {
-				foreach (string rolename in model.Roles) {
-					foreach (string username in Roles.GetUsersInRole(rolename)) {
-						try {
-							var pr = ProfileBase.Create(username);
-							var events = pr.GetEvents(model.StartDate,model.EndDate);
-						} catch (WebException ex) {
-							string response;
-							using (var stream = ex.Response.GetResponseStream())
-							using (var reader = new StreamReader(stream))
-							{
-								response = reader.ReadToEnd();
-							}
-							YavscHelpers.Notify (ViewData, 
-								string.Format(
-									"Google calendar API exception {0} : {1}<br><pre>{2}</pre>",
-									ex.Status.ToString(),
-									ex.Message,
-									response));
-						}
-					}
-				}
-			}
 			return View (model);
 		}
 	}

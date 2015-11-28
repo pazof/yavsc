@@ -21,13 +21,23 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Model.Skill;
+using Yavsc.Model.WorkFlow;
+using System.Linq;
 
 namespace Yavsc.Model.FrontOffice
 {
+	/// <summary>
+	/// Simple booking query.
+	/// </summary>
 	public class SimpleBookingQuery: Command
 	{
-		public SimpleBookingQuery ()
-		{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.FrontOffice.SimpleBookingQuery"/> class.
+		/// </summary>
+		[Required(ErrorMessageResourceName="MEACode",ErrorMessageResourceType=typeof(LocalizedText))]
+		public string MEACode { 
+			get;
+			set;
 		}
 		/// <summary>
 		/// Gets or sets the prefered date.
@@ -39,17 +49,12 @@ namespace Yavsc.Model.FrontOffice
 		public DateTime PreferedDate { get; set; }
 
 		/// <summary>
-		/// Gets or sets the MAE code.
-		/// </summary>
-		/// <value>The MAE code.</value>
-		public string MAECode { get; set; }
-
-		/// <summary>
 		/// Gets or sets the needs.
 		/// </summary>
 		/// <value>The needs.</value>
 		[Display(ResourceType=typeof(LocalizedText),Name="Needs")]
-		public SkillEntity[] Needs { get; set; }
+		public string[] Needs { get; set; }
+
 
 	}
 }

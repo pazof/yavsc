@@ -15,8 +15,46 @@ namespace SalesCatalog.XmlImplementation
 	/// </summary>
 	public class XmlCatalogProvider: CatalogProvider
 	{
+		#region implemented abstract members of CatalogProvider
 
-		#region implemented abstract members of SalesCatalog.CatalogProvider
+		/// <summary>
+		/// Gets the activity.
+		/// </summary>
+		/// <returns>The activity.</returns>
+		/// <param name="MEACode">MAE code.</param>
+		public override Yavsc.Model.FrontOffice.Activity GetActivity (string MEACode)
+		{
+			throw new NotImplementedException ();
+		}
+		/// <summary>
+		/// Registers the activity.
+		/// </summary>
+		/// <param name="activityName">Activity name.</param>
+		/// <param name="meacode">Meacode.</param>
+		/// <param name="comment">Comment.</param>
+		public override void RegisterActivity (string activityName, string meacode, string comment)
+		{
+			throw new NotImplementedException ();
+		}
+		/// <summary>
+		/// Finds the activity.
+		/// </summary>
+		/// <returns>The activity.</returns>
+		/// <param name="pattern">Pattern.</param>
+		/// <param name="exerted">If set to <c>true</c> exerted.</param>
+		public override Yavsc.Model.FrontOffice.Activity[] FindActivity (string pattern, bool exerted)
+		{
+			throw new NotImplementedException ();
+		}
+		/// <summary>
+		/// Finds the performer.
+		/// </summary>
+		/// <returns>The performer.</returns>
+		/// <param name="MEACode">MEA code.</param>
+		public override Yavsc.Model.FrontOffice.PerformerProfile[] FindPerformer (string MEACode)
+		{
+			throw new NotImplementedException ();
+		}
 		/// <summary>
 		/// Gets the catalog, loading it from
 		/// the file system at a first call,

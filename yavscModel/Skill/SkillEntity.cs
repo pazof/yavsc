@@ -39,6 +39,13 @@ namespace Yavsc.Model.Skill
 		public long Id { get; set; } 
 
 		/// <summary>
+		/// Gets or sets the MEA code.
+		/// </summary>
+		/// <value>The MEA code.</value>
+		[Required(ErrorMessageResourceName="MEACode",ErrorMessageResourceType=typeof(LocalizedText))]
+		public string MEACode { get; set; }
+
+		/// <summary>
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>

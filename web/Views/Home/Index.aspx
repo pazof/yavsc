@@ -10,16 +10,8 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <div id="activities">
 <% foreach (var a in ((Activity[])(ViewData["Activities"]))) { %>
-<div>
-<div data-type="background" data-speed="10" style="width:100%; height:10em; background: url(<%=Ajax.JString(a.Photo)%>) 50% 50% repeat fixed;" >
-</div>
-<h1><a href="<%= Url.RouteUrl("Default", new { controller="FrontOffice", action="Booking", id=a.Id }) %>"><%=Html.Encode(a.Title)%></a></h1>
-<i>(<%=Html.Encode(a.Id)%>)</i>
-<p>
-<%=Html.Markdown(a.Comment)%>
-</p></div>
+<%= Html.Partial("Activity",a) %>
 <% } %>
 </div>
-<%= Html.Partial("TagPanel",ViewData["Accueil"]) %>
 </asp:Content>
 

@@ -22,7 +22,7 @@ using System;
 
 namespace Yavsc.Model.Messaging
 {
-	public class Notification : Google.Notification
+	public class Notification : Yavsc.Model.Google.Api.Messaging.Notification
 	{
 		public Notification ()
 		{

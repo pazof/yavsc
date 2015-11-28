@@ -11,9 +11,12 @@
 <aside class="control">
 <form method="post" action="DeclareActivity">
 <fieldset>
-<input type="text" name="meacode" id="meacode" >
-<input type="text" name="activityname" id="activityname" >
-<input type="text" name="comment" id="comment" >
+<%= Html.Translate("MEACode")%>:
+<input type="text" name="meacode" id="meacode" ><br>
+<%= Html.Translate("Title")%>:
+<input type="text" name="activityname" id="activityname" ><br>
+<%= Html.Translate("Comment")%>:
+<textarea name="comment" id="comment" class="fullwidth" ></textarea><br>
 <input type="button" value="Créer l'activité" id="btncreate" >
 </fieldset>
 </form>

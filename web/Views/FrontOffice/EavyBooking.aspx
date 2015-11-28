@@ -31,10 +31,8 @@ et le
   <%= Html.ValidationMessageFor(model=>model.EndHour) %>
   </div>
   <fieldset>
-<legend>Intervenant</legend>
-  <%= Html.LabelFor(model=>model.Roles) %>:
-  <%= Html.TextBoxFor(model=>model.Roles) %>
-  <%= Html.ValidationMessageFor(model=>model.Roles) %>
+<legend>Services concernés</legend>
+<%= Html.ListBox("MEACodes") %>
  </fieldset>
   <script>
   $(document).ready(function(){

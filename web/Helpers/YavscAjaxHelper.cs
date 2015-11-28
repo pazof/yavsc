@@ -22,6 +22,9 @@ using System;
 using System.Web.Mvc;
 using System.Collections.Generic;
 using Yavsc.Model.Messaging;
+using System.Runtime.Serialization.Json;
+using System.IO;
+using System.Text;
 
 namespace Yavsc.Helpers
 {
@@ -61,10 +64,36 @@ namespace Yavsc.Helpers
 				return "\"" + tmpstr + "\"";
 			return "'" + tmpstr + "'";
 		}
-
-		public static string JString(this AjaxHelper helper, object str)
+		/// <summary>
+		/// Js the son string.
+		/// </summary>
+		/// <returns>The son string.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="obj">Object.</param>
+		public static string JSonString(this AjaxHelper helper, object obj)
 		{
-			return QuoteJavascriptString (str);
+			string result = null;
+			DataContractJsonSerializer ser = new DataContractJsonSerializer (obj.GetType());
+			var e = Encoding.UTF8;
+			using (MemoryStream streamQuery = new MemoryStream ()) {
+				ser.WriteObject (streamQuery, obj);
+				streamQuery.Seek (0, SeekOrigin.Begin);
+				using (StreamReader sr = new StreamReader (streamQuery)) {
+					result = sr.ReadToEnd ();
+				}
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// Js the string.
+		/// </summary>
+		/// <returns>The string.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="text">Text.</param>
+		public static string JString(this AjaxHelper helper, object text)
+		{
+			return QuoteJavascriptString ((string)text);
 		}
 	}
 }

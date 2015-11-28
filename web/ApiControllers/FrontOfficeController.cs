@@ -205,8 +205,6 @@ namespace Yavsc.ApiControllers
 		public void RateSkill (SkillRating rate) {
 			throw new NotImplementedException ();
 		}
-
-
 	}
 }
 
