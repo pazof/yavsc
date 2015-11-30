@@ -13,6 +13,13 @@ namespace Yavsc.Model.Blogs
 	public abstract class BlogProvider: ProviderBase
 	{
 		/// <summary>
+		/// Gets the public post count.
+		/// </summary>
+		/// <returns>The public post count.</returns>
+		/// <param name="bloggerName">Blogger name.</param>
+		public abstract long GetPublicPostCount (string bloggerName);
+
+		/// <summary>
 		/// Gets the post.
 		/// </summary>
 		/// <returns>The post.</returns>

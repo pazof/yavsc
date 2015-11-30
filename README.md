@@ -3,14 +3,18 @@ yavsc
 
 [doc-fr](http://yavsc.pschneider.fr/Blogs/UserPost/paul/Documentation)
 
-# TODO FIRST
+# à faire, par ordre de priorité
 
-1) Implement a Skills provider
 
-2) Create an `UserCardControl`
-  with quick access for users to his chat and the circle membership, and for admins to his roles, a blogentry count, and a link to the booking system
+1) Créer un contrôle "bouton utilisateur" `UserNameControl`
+  avec 
+   * un acces rapide à l'ajout au cercles perso
+   * pour les administrateur, une action "bloquer",
+   * le compteur de ses posts publiques
+   * Si c'est un préstataire, et si on est pas déjà dans un formulaire de reservation, 
+     un lien vers la reservation de ses services
 
-3) Api refatoring:
+2) Refabrication de l'Api :
 
   Concerning the blog entry edition, we only need Two methods: 
 
@@ -20,4 +24,5 @@ yavsc
   * `long Post(BlogEntry be)`, used to create or update a given or not 
     blog entry content. the returned value is the entry id at creation, or 0.
 
-4) UI themes
+
+3) Corriger un peu le thème clair (fond de titres trop sombre)

@@ -28,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		Makefile = Makefile
 		README.md = README.md
+		Features.md = Features.md
 	EndProjectSection
 EndProject
 Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "pkg", "pkg\pkg.mdproj", "{C6DBD1DC-B619-4DC7-BC92-15693508541E}"

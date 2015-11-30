@@ -95,6 +95,11 @@ namespace Yavsc.Model.Blogs
 		{
 			Provider.UpdatePost (postid, title, content, visible, cids);
 		}
+
+		/// <summary>
+		/// Updates the post.
+		/// </summary>
+		/// <param name="be">Be.</param>
 		public static void UpdatePost (BlogEntry be)
 		{
 			Provider.UpdatePost (be);
@@ -203,7 +208,11 @@ namespace Yavsc.Model.Blogs
 			Provider.Tag (postid, tag);
 		}
 
-
+		/// <summary>
+		/// Rate the specified postid and rate.
+		/// </summary>
+		/// <param name="postid">Postid.</param>
+		/// <param name="rate">Rate.</param>
 		public static void Rate (long postid, int rate)
 		{
 			Provider.Rate (postid, rate);
@@ -322,6 +331,15 @@ namespace Yavsc.Model.Blogs
 			var u = Membership.GetUser ();
 			var r = bec.Where (x => CanView (x as BlogEntry, u));
 			return r;
+		}
+		/// <summary>
+		/// Gets the post counter.
+		/// </summary>
+		/// <returns>The count.</returns>
+		/// <param name="bloggerName">Blogger name.</param>
+		public static long GetPostCounter(string bloggerName)
+		{
+			return Provider.GetPublicPostCount (bloggerName);
 		}
 	}
 }

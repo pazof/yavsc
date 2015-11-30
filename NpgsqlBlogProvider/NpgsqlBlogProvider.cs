@@ -15,11 +15,36 @@ namespace Npgsql.Web.Blog
 	/// </summary>
 	public class NpgsqlBlogProvider : BlogProvider
 	{
-
+		
 		string applicationName;
 		string connectionString;
 
 		#region implemented abstract members of BlogProvider
+
+		public override long GetPublicPostCount (string bloggerName)
+		{
+			long result = -1;
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = @"
+Select count(*)
+FROM blog b 
+LEFT OUTER JOIN blog_access a ON a.post_id = b._id
+WHERE a.post_id IS NULL
+AND b.visible = TRUE
+AND b.username = :bname
+AND b.applicationname = :app
+
+";
+				cmd.Parameters.AddWithValue ("bname", bloggerName);
+				cmd.Parameters.AddWithValue ("app", applicationName);
+				cnx.Open ();
+				result = (long) cmd.ExecuteScalar ();
+				cnx.Close ();
+			}
+			return result;
+		}
+
 		/// <summary>
 		/// Updates the post.
 		/// </summary>
