@@ -1,3 +1,32 @@
+2015-11-30  Paul Schneider  <paul@pschneider.fr>
+
+	* PerformerProfile.cs: doc xml
+
+	* SimpleBookingQuery.cs:
+	* AuthentificatedSkillRating.cs: refabrication
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: internationalisation
+
+	* Profile.cs: Décore la valeur de profile "GoogleRegId"
+
+	* SkillEntity.cs: refabrication pour l'instant inutile ...
+
+	* SkillManager.cs: présente à l'espace de travail la nouvelle
+	methode de recherche d'un préstataire
+
+	* SkillProvider.cs: définit la nouvelle methode de recherche
+	d'un préstataire
+
+	* WorkFlowManager.cs: présente à l'espace de travail une
+	nouvelle methode de recherche d'un préstataire,
+	renvoyant toute l'information relative à chaque prestataire
+	listé.
+
+	* YavscModel.csproj: refabrication des cotes de compétences
+
 2015-11-28  Paul Schneider  <paul@pschneider.fr>
 
 	* SkillManager.cs:

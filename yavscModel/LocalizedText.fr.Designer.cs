@@ -184,6 +184,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Performers {
+            get {
+                return ResourceManager.GetString("Performers", resourceCulture);
+            }
+        }
+        
         public static string Members {
             get {
                 return ResourceManager.GetString("Members", resourceCulture);
@@ -382,9 +388,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string My_Estimates {
+        public static string Need {
             get {
-                return ResourceManager.GetString("My_Estimates", resourceCulture);
+                return ResourceManager.GetString("Need", resourceCulture);
+            }
+        }
+        
+        public static string YourNeed {
+            get {
+                return ResourceManager.GetString("YourNeed", resourceCulture);
             }
         }
         
@@ -484,9 +496,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string YourNeed {
+        public static string My_Estimates {
             get {
-                return ResourceManager.GetString("YourNeed", resourceCulture);
+                return ResourceManager.GetString("My_Estimates", resourceCulture);
             }
         }
         
@@ -607,6 +619,12 @@ namespace Yavsc.Model {
         public static string BillUpdated {
             get {
                 return ResourceManager.GetString("BillUpdated", resourceCulture);
+            }
+        }
+        
+        public static string NoSkillforthisactivity {
+            get {
+                return ResourceManager.GetString("NoSkillforthisactivity", resourceCulture);
             }
         }
         

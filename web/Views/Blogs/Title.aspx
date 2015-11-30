@@ -18,7 +18,7 @@ if (((int) ViewData["ResultCount"]) > ((int) ViewData["PageSize"])) {
  rp1.PageIndex = (int) ViewData["PageIndex"];
  rp1.PageSize = (int) ViewData["PageSize"];
 %><aside><form runat="server" id="form1">
-<yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" runat="server">
+<yavsc:ResultPages id="rp1" Action = "?pageIndex={0}" CssClass="pagelink" runat="server">
 	 <None><i>Pas de contenu</i></None>
 </yavsc:ResultPages> 
 	</form>

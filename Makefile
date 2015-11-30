@@ -3,6 +3,7 @@ VERSION=1.1
 CONFIG=Debug
 LDYDESTDIR=dist/web/$(CONFIG)
 COPYUNCHANGED="false"
+SHELL=/bin/bash
 
 HOST_rsync_dev=lua.pschneider.fr
 DESTDIR_rsync_dev=/srv/www/yavscdev
@@ -46,6 +47,7 @@ rsync_% : HOST = $(HOST_$@)
 rsync_% : DESTDIR = $(DESTDIR_$@)
 
 rsync_% : deploy
+	if [[ "x$(HOST)" == "x" ]]; then echo "no host given, aborting"; exit 1; fi
 	echo "!Deploying to $(HOST) using $(CONFIG) config!"
 	$(RSYNCCMD) dist/web/$(CONFIG)/ root@$(HOST):$(DESTDIR)
 
@@ -89,6 +91,8 @@ nuget_restore:
 
 nuget_update:
 	for prj in ITContentProvider NpgsqlBlogProvider NpgsqlContentProvider NpgsqlMRPProviders Presta SalesCatalog TestAPI web WebControls yavscclient yavscModel; do nuget update "$${prj}/packages.config"  ; done
+
+syncall: rsync_lua rsync_pre rsync_prod rsync_totempre rsync_totemprod
 
 
 

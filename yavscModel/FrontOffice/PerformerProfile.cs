@@ -92,16 +92,25 @@ namespace Yavsc.Model.FrontOffice
 				return yavscCLientProfile;
 			}
 		}
-
+		/// <summary>
+		/// Gets or sets the E mail.
+		/// </summary>
+		/// <value>The E mail.</value>
 		public string EMail { 
 			get ;
 			set; 
 		}
-
+		/// <summary>
+		/// Gets the google reg identifier.
+		/// </summary>
+		/// <value>The google reg identifier.</value>
 		public string GoogleRegId { 
 			get { return YavscClientProfile.GoogleRegId; }
 		}		
-
+		/// <summary>
+		/// Gets the google cal identifier.
+		/// </summary>
+		/// <value>The google cal identifier.</value>
 		public string GoogleCalId { 
 			get { return YavscClientProfile.GoogleCalendar; }
 		}		
@@ -125,14 +134,19 @@ namespace Yavsc.Model.FrontOffice
 			}
 		}
 
-
+		/// <summary>
+		/// Gets or sets the MEA code.
+		/// </summary>
+		/// <value>The MEA code.</value>
+		[Required]
+		public string MEACode { get; set; }
 		/// <summary>
 		/// Determines whether this instance has calendar.
 		/// </summary>
 		/// <returns><c>true</c> if this instance has calendar; otherwise, <c>false</c>.</returns>
 		public bool HasCalendar () 
 		{ 
-				return (YavscClientProfile.GoogleCalendar != null);
+			return !string.IsNullOrWhiteSpace( YavscClientProfile.GoogleCalendar );
 		}
 
 		/// <summary>

@@ -54,6 +54,8 @@ namespace Yavsc
 								profile.Id = rdr.GetInt64 (0);
 								profile.UserName = rdr.GetString (1);
 								profile.EMail = rdr.GetString (2);
+								profile.MEACode = MEACode;
+								profile.Rate = rdr.GetInt32 (3);
 								result.Add (profile);
 							}
 						}
@@ -154,11 +156,11 @@ namespace Yavsc
 				cnx.Open ();
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = "insert into activity (meacode,title,applicationname,cmnt) " +
-					" values (:code,:title,:app,:cmt)";
+					" values (:code,:title,:app,:cmnt)";
 					cmd.Parameters.AddWithValue ("code", code);
 					cmd.Parameters.AddWithValue ("title", activity);
 					cmd.Parameters.AddWithValue ("app", applicationName);
-					cmd.Parameters.AddWithValue ("cmt", comment);
+					cmd.Parameters.AddWithValue ("cmnt", comment);
 					cmd.ExecuteNonQuery ();
 				}
 				cnx.Close ();

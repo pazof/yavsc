@@ -72,6 +72,27 @@ namespace WorkFlowProvider
 			var profile = new PerformerProfile (username);
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
+
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = 
+						"select p.uniqueid, d.rate, d.MEACode, u.email " +
+						" from users u, profiles p, profiledata d where " +
+						" u.username = :user and u.applicationname = :app " +
+						" and p.username = u.username " +
+						" and p.applicationname = u.applicationname " +
+						" and p.uniqueid = d.uniqueid ";
+					cmd.Parameters.AddWithValue ("user", NpgsqlTypes.NpgsqlDbType.Varchar, username);
+					cmd.Parameters.AddWithValue ("app", NpgsqlTypes.NpgsqlDbType.Varchar, applicationName);
+
+					using (var rdr = cmd.ExecuteReader ()) { 
+						rdr.Read ();
+						profile.Id = rdr.GetInt64 (0);
+						profile.Rate = rdr.GetInt32 (1);
+						profile.MEACode = rdr.GetString (2);
+						profile.EMail = rdr.GetString (3);
+					}
+				}
+
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
 						" select u._id, u.skillid, s.name, " +
@@ -79,10 +100,13 @@ namespace WorkFlowProvider
 					" skill s " +
 					" where u.skillid = s._id and " +
 					" u.username = :uname " +
-					" and applicationname = :app " +
-					" order by u.rate desc";
+						" and s.applicationname = u.applicationname " +
+					" and s.applicationname = :app " +
+					" and s.meacode = :mea " +
+					" order by u.rate desc ";
 					cmd.Parameters.AddWithValue ("uname", NpgsqlTypes.NpgsqlDbType.Varchar, username);
 					cmd.Parameters.AddWithValue ("app", NpgsqlTypes.NpgsqlDbType.Varchar, applicationName);
+					cmd.Parameters.AddWithValue ("mea", NpgsqlTypes.NpgsqlDbType.Varchar, profile.MEACode);
 					cmd.Prepare ();
 					using (var rdr = cmd.ExecuteReader ()) { 
 						if (rdr.HasRows)
@@ -98,20 +122,7 @@ namespace WorkFlowProvider
 						profile.Skills = skills.ToArray ();
 					}
 				}
-				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					cmd.CommandText = 
-						"select p.uniqueid, d.rate from profiles p, profiledata d where " +
-						" username = :user and applicationname = :app " +
-						" and p.uniqueid = d.uniqueid ";
-					cmd.Parameters.AddWithValue ("user", NpgsqlTypes.NpgsqlDbType.Varchar, username);
-					cmd.Parameters.AddWithValue ("app", NpgsqlTypes.NpgsqlDbType.Varchar, applicationName);
 
-					using (var rdr = cmd.ExecuteReader ()) { 
-						rdr.Read ();
-						profile.Id = rdr.GetInt64 (0);
-						profile.Rate = rdr.GetInt32 (1);
-					}
-				}
 				cnx.Close ();
 			}
 			return profile;
@@ -164,6 +175,8 @@ namespace WorkFlowProvider
 				cnx.Open ();
 				if (userskill.Id == 0) {
 					using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+						if (userskill.Comment == null)
+							userskill.Comment = "";
 						cmd.CommandText = "insert into userskills" +
 						" (username, applicationname, skillid, rate, comment) " +
 						" values (:uname,:app,:sid,:rate,:cmnt) returning _id";
@@ -185,7 +198,7 @@ namespace WorkFlowProvider
 						" set  rate = :rate," +
 						" comment = :cmnt) " +
 						" where _id = :usid ";
-						cmd.Parameters.AddWithValue ("comment", 
+						cmd.Parameters.AddWithValue ("cmnt", 
 							NpgsqlTypes.NpgsqlDbType.Varchar, userskill.Comment);
 						cmd.Parameters.AddWithValue ("rate", 
 							NpgsqlTypes.NpgsqlDbType.Integer, userskill.Rate);
@@ -247,7 +260,7 @@ namespace WorkFlowProvider
 		/// or a rating engine
 		/// </summary>
 		/// <param name="skill">Skill.</param>
-		public override void Rate (SkillRating skill)
+		public override void Rate (AuthentificatedSkillRating skill)
 		{
 			// TODO Use the Author value to choose 
 			// between a global setting for the application
@@ -316,56 +329,73 @@ namespace WorkFlowProvider
 		/// Finds the performer.
 		/// </summary>
 		/// <returns>The performer.</returns>
-		/// <param name="skillIds">Skill identifiers.</param>
-		public override string[] FindPerformer (long[] skillIds)
+		/// <param name="MEACode">MEACode.</param>
+		/// <param name="skills">Skills.</param>
+		public override string[] FindPerformer (string MEACode, SkillRating [] skills)
 		{
 			var res = new List<string> ();
 
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
 				cnx.Open ();
-				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-					
-					cmd.CommandText = " select u.username " +
-					" from userskills s, profiledata p, profile q, users u " +
-					" where s.username = u.username " +
-					" and s.applicationname = u.applicationanme " +
-					" and s.skillid = :sid " +
-					" and u.username = q.username  " +
-					" and u.applicationname = q.applicationanme " +
-					" and p.uniqueid = q.uniqueid " +
-					" and u.applicationanme = :app " +
-					" and u.islockedout = FALSE " +
-					" and u.isapproved = TRUE " +
-					" order by s.rate desc ";
-					
+				if (skills != null) {
+					using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 
-					cmd.Parameters.AddWithValue ("sid", NpgsqlDbType.Bigint, 0);
-					cmd.Prepare ();
+						// on cherche ici simplement les prestataires
+						// ayant déclaré les compétences spécifiées.
 
-					foreach (long sid in skillIds) {
-						cmd.Parameters ["sid"].Value = sid;
-						using (var rdr = cmd.ExecuteReader ()) {
-							string uname = rdr.GetString (0);
-							if (!res.Contains (uname))
-								res.Add (uname);
+						cmd.CommandText = @" select u.username 
+ from userskills s, profiledata p, profiles q, users u
+ where s.username = u.username 
+ and s.applicationname = u.applicationname 
+ and s.skillid = :sid 
+ and p.meacode = :mea
+ and u.username = q.username  
+ and u.applicationname = q.applicationname 
+ and p.uniqueid = q.uniqueid 
+ and u.applicationname = :app 
+ and u.islockedout = FALSE 
+ and u.isapproved = TRUE 
+order by s.rate desc ";
+						cmd.Parameters.AddWithValue ("sid", NpgsqlDbType.Bigint, 0);
+						cmd.Parameters.AddWithValue ("app", NpgsqlDbType.Varchar, applicationName);
+						cmd.Parameters.AddWithValue ("mea", NpgsqlDbType.Varchar, MEACode);
+						cmd.Prepare ();
+						foreach (SkillRating skill in skills) {
+							cmd.Parameters ["sid"].Value = skill.Id;
+							using (var rdr = cmd.ExecuteReader ()) {
+								while (rdr.Read ()) {
+									string uname = rdr.GetString (0);
+									if (!res.Contains (uname))
+										res.Add (uname);
+								}
+							}
 						}
 					}
-					// TODO implement a configuration parameter
-					if (res.Count < 10) {
+				}
+				if (res.Count < 10) {
+					using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					// Si on a trouvé trop peu de prestataire ayant
+					// déclaré ces compétences (moins de 10), 
+					// On en cherche un ayant 
+					// simplement déclaré avoir l'activité
+					// concernée.
+					// TODO implement a configuration parameter :
+
 						cmd.CommandText = " select u.username " +
-							" from skill s, profiledata p , profile q, users u  " +
+							" from profiledata p, profiles q, users u  " +
 							" where u.username = q.username  " +
-							" and u.applicationname = q.applicationanme " +
+							" and u.applicationname = q.applicationname " +
 							" and p.uniqueid = q.uniqueid " +
-							" and p.meacode = s.meacode " +
-							" and s._id = :sid "  +
-							" and u.applicationanme = :app " +
+							" and p.meacode = :mea " +
+							" and u.applicationname = :app " +
 							" and u.islockedout = FALSE " +
-							" and u.isapproved = TRUE" +
-							" order by s.rate desc " ;
-						foreach (long sid in skillIds) {
-							cmd.Parameters ["sid"].Value = sid;
-							using (var rdr = cmd.ExecuteReader ()) {
+							" and u.isapproved = TRUE " +
+							" order by p.rate desc " ;
+						cmd.Parameters.AddWithValue ("app", NpgsqlDbType.Varchar, applicationName);
+						cmd.Parameters.AddWithValue ("mea", NpgsqlDbType.Varchar, MEACode);
+
+						using (var rdr = cmd.ExecuteReader ()) {
+							while (rdr.Read ()) {
 								string uname = rdr.GetString (0);
 								if (!res.Contains (uname))
 									res.Add (uname);

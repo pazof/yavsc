@@ -22,22 +22,12 @@ using System;
 
 namespace Yavsc.Model.Skill
 {
+
 	/// <summary>
 	/// Skill rating.
 	/// </summary>
-	public class SkillRating : IRating, IAuthorized
+	public class AuthentificatedSkillRating : SkillRating, IAuthorized
 	{
-		/// <summary>
-		/// Gets or sets the skill identifier.
-		/// </summary>
-		/// <value>The skill identifier.</value>
-		public long Id { get;set ; }
-
-		/// <summary>
-		/// Gets or sets the rate.
-		/// </summary>
-		/// <value>The rate.</value>
-		public int Rate  { get; set; }
 
 		/// <summary>
 		/// Gets or sets the author.

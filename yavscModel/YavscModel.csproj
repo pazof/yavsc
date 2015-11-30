@@ -206,7 +206,6 @@
     <Compile Include="RolesAndMembers\UserRole.cs" />
     <Compile Include="RolesAndMembers\UserNameBase.cs" />
     <Compile Include="Calendar\BookingQuery.cs" />
-    <Compile Include="Skill\SkillRating.cs" />
     <Compile Include="Skill\SkillProvider.cs" />
     <Compile Include="Skill\SkillManager.cs" />
     <Compile Include="Skill\UserSkill.cs" />
@@ -240,6 +239,8 @@
     <Compile Include="Google\Api\Messaging\Notification.cs" />
     <Compile Include="SimpleJsonPostMethod.cs" />
     <Compile Include="FrontOffice\PerformerAvailability.cs" />
+    <Compile Include="Skill\AuthentificatedSkillRating.cs" />
+    <Compile Include="Skill\SkillRating.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

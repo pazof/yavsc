@@ -169,8 +169,15 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <value>The google calendar.</value>
 		[Display(Name="Google_calendar",ResourceType=typeof(LocalizedText))]
 		public string GoogleCalendar { get; set; }
+
+		/// <summary>
+		/// Gets or sets the google registration identifier.
+		/// </summary>
+		/// <value>The google reg identifier.</value>
 		[Display(Name="Google_registration_id",ResourceType=typeof(LocalizedText))]
-		public string GoogleRegId { get; set; }
+		public string GoogleRegId { 
+			get; set;
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether this instance has bank account.

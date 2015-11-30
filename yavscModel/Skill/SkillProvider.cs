@@ -51,13 +51,14 @@ namespace Yavsc.Model.Skill
 		/// Rate the specified skill.
 		/// </summary>
 		/// <param name="skill">Skill.</param>
-		public abstract void Rate(SkillRating skill) ;
+		public abstract void Rate(AuthentificatedSkillRating skill) ;
 
 		/// <summary>
 		/// Finds the skill identifier.
 		/// </summary>
 		/// <returns>The skill identifier.</returns>
 		/// <param name="pattern">Pattern.</param>
+		/// <param name="MEACode">MEA code.</param>
 		public abstract SkillEntity [] FindSkill(string pattern, string MEACode);
 
 		/// <summary>
@@ -71,8 +72,9 @@ namespace Yavsc.Model.Skill
 		/// Finds the performer.
 		/// </summary>
 		/// <returns>The performer.</returns>
-		/// <param name="skillIds">Skill identifiers.</param>
-		public abstract string [] FindPerformer(long []skillIds);
+		/// <param name="MEACode">MEA code.</param>
+		/// <param name="need">Need.</param>
+		public abstract string [] FindPerformer(string MEACode, SkillRating [] need);
 
 		/// <summary>
 		/// Deletes the skill.

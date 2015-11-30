@@ -76,8 +76,10 @@
 	<data name="Modify"><value>Modify</value></data>
 	<data name="My_Estimates"><value>My estimates</value></data>
 	<data name="Needs"><value>Needs</value></data>
+	<data name="Need"><value>Need</value></data>
 	<data name="New_Tag"><value>New Tag</value></data>
 	<data name="no_content"><value>no content</value></data>
+	<data name="NoSkillforthisactivity"><value>No skill was informed by any performer for this activity</value></data>
 	<data name="none"><value>none</value></data>
 	<data name="Non_existent_user"><value>Non existent user</value></data>
 	<data name="Not_Approuved"><value>Not Approuved</value></data>
@@ -86,6 +88,7 @@
 	<data name="Offline"><value>Offline</value></data>
 	<data name="Pdf_version"><value>Pdf version</value></data>
 	<data name="PerformanceDate"><value>Performance Date</value></data>
+	<data name="Performers"><value>Performers</value></data>
 	<data name="Person"><value>Person</value></data>
 	<data name="Photo"><value>Photo</value></data>
 	<data name="PhotoUpdated"><value>Photo updated</value></data>

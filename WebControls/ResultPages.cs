@@ -17,7 +17,6 @@ namespace Yavsc.WebControls
 		AspNetHostingPermission (SecurityAction.InheritanceDemand, 
 		Level = AspNetHostingPermissionLevel.Minimal),
 		ParseChildren (true),
-
 		ToolboxData ("<{0}:ResultPages runat=\"server\"> </{0}:ResultPages>")
 	]
 	public class ResultPages: WebControl
@@ -156,10 +155,17 @@ namespace Yavsc.WebControls
 		/// <param name="writer">Writer.</param>
 		protected override void RenderContents (HtmlTextWriter writer)
 		{
+			// avoids a division by zero
+			if (PageSize <= 0)
+				PageSize = 5;
+			
 			if (ResultCount > 0 &&  ResultCount > PageSize ) {
 				writer.WriteEncodedText (Text);
 				int pageCount = ((ResultCount-1) / PageSize) + 1;
 				if ( pageCount > 1 ) {
+					if (!string.IsNullOrWhiteSpace(CssClass))
+						writer.AddAttribute ("class", this.CssClass);
+					writer.RenderBeginTag ("div");
 					writer.Write (PagesLabel);
 					for (int pi = (PageIndex < 5) ? 0 : PageIndex - 5; pi < pageCount && pi < PageIndex + 5; pi++) {
 						if (PageIndex == pi)
@@ -173,6 +179,8 @@ namespace Yavsc.WebControls
 						writer.RenderEndTag ();
 						writer.Write ("&nbsp;");
 					}
+					RenderChildren (writer);
+					writer.RenderEndTag ();
 				} 
 				else {
 					writer.Write (SinglePage);
@@ -181,7 +189,6 @@ namespace Yavsc.WebControls
 			if (ResultCount == 0) {
 				writer.Write (None);
 			}
-
 		}
 	}
 }

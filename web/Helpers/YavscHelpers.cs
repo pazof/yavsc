@@ -299,23 +299,33 @@ namespace Yavsc.Helpers
 		/// </summary>
 		/// <returns>The page links.</returns>
 		/// <param name="helper">Helper.</param>
-		/// <param name="ResultCount">Result count.</param>
-		/// <param name="PageSize">Page size.</param>
 		/// <param name="PageIndex">Page index.</param>
+		/// <param name="PageSize">Page size.</param>
+		/// <param name="ResultCount">Result count.</param>
+		/// <param name="args">Arguments.</param>
+		/// <param name="pagesLabel">Pages label.</param>
+		/// <param name="singlePage">Single page.</param>
+		/// <param name="none">None.</param>
+		/// <param name="cssClass">Css class.</param>
 		public static IHtmlString RenderPageLinks (
 			this HtmlHelper helper,
 			int PageIndex, int PageSize, int ResultCount, 
 			string args="?PageIndex={0}",
 			string pagesLabel="Pages: ", string singlePage="",
-			string none="néant"
+			string none="néant", string cssClass = "pagelink"
 		)
 		{
 			StringWriter strwr = new StringWriter ();
 			HtmlTextWriter writer = new HtmlTextWriter(strwr);
-
+			if (PageSize <= 0)
+				PageSize = 0;
 			if (ResultCount > 0 &&  ResultCount > PageSize ) {
 				int pageCount = ((ResultCount-1) / PageSize) + 1;
 				if ( pageCount > 1 ) {
+
+					if (cssClass!=null)
+						writer.AddAttribute ("class", cssClass);
+					writer.RenderBeginTag ("div");
 					writer.WriteEncodedText (pagesLabel);
 					for (int pi = (PageIndex < 5) ? 0 : PageIndex - 5; pi < pageCount && pi < PageIndex + 5; pi++) {
 						if (PageIndex == pi)
@@ -329,6 +339,7 @@ namespace Yavsc.Helpers
 						writer.RenderEndTag ();
 						writer.Write ("&nbsp;");
 					}
+					writer.RenderEndTag ();
 				} 
 				else {
 					writer.Write (singlePage);

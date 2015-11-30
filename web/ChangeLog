@@ -1,3 +1,21 @@
+2015-11-30  Paul Schneider  <paul@pschneider.fr>
+
+	* SkillController.cs:
+	* FrontOfficeController.cs: refabrication
+
+	* style.css: mise en forme du code
+
+	* style.css: du style
+
+	* Booking.aspx:
+	* FrontOfficeController.cs: Modifie la recherche des
+	prestataire, pour qu'un resultat soit donné dès qu'un
+	utilisateur est déclaré prestataire.
+
+	* Title.aspx:
+	* YavscHelpers.cs: ajoute une classe css au bloc de liens vers
+	les autres pages de resultat
+
 2015-11-28  Paul Schneider  <paul@pschneider.fr>
 
 	* p8-av4.xxs.jpg:

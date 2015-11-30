@@ -74,7 +74,7 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="rate">Skill rating.</param>
 		[Authorize()]
-		public void RateSkill (SkillRating rate) {
+		public void RateSkill (AuthentificatedSkillRating rate) {
 			SkillManager.RateSkill(User.Identity.Name,rate);
 		}
 
@@ -91,9 +91,11 @@ namespace Yavsc.ApiControllers
 		/// Finds the performer.
 		/// </summary> 
 		/// <returns>The performer.</returns>
-		/// <param name="skillIds">Skill identifiers.</param>
-		public string [] FindPerformer (long []skillIds){
-			return SkillManager.FindPerformer(skillIds);
+		/// <param name="MEACode">MEA Code.</param>
+		/// <param name="skills">Skill ratings.</param>
+		public string [] FindPerformer (string MEACode, SkillRating []skills) 
+		{
+			return SkillManager.FindPerformer(MEACode, skills);
 		}
 		/// <summary>
 		/// Deletes the skill.

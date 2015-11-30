@@ -32,8 +32,9 @@ namespace Yavsc.Model.FrontOffice
 	public class SimpleBookingQuery: Command
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.FrontOffice.SimpleBookingQuery"/> class.
+		/// Gets or sets the MEA code.
 		/// </summary>
+		/// <value>The MEA code.</value>
 		[Required(ErrorMessageResourceName="MEACode",ErrorMessageResourceType=typeof(LocalizedText))]
 		public string MEACode { 
 			get;
@@ -52,8 +53,8 @@ namespace Yavsc.Model.FrontOffice
 		/// Gets or sets the needs.
 		/// </summary>
 		/// <value>The needs.</value>
-		[Display(ResourceType=typeof(LocalizedText),Name="Needs")]
-		public string[] Needs { get; set; }
+		[Display(ResourceType=typeof(LocalizedText),Name="Need")]
+		public string Need { get; set; }
 
 
 	}

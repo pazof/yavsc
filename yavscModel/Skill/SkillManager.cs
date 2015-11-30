@@ -77,7 +77,7 @@ namespace Yavsc.Model.Skill
 		/// </summary>
 		/// <param name="username">Username.</param>
 		/// <param name="skill">Skill.</param>
-		public static void RateSkill(string username, SkillRating skill) {
+		public static void RateSkill(string username, AuthentificatedSkillRating skill) {
 			DefaultProvider.Rate(skill);
 		}
 
@@ -86,6 +86,7 @@ namespace Yavsc.Model.Skill
 		/// </summary>
 		/// <returns>The skill identifier.</returns>
 		/// <param name="pattern">Pattern.</param>
+		/// <param name="MEACode">code APE.</param>
 		public static SkillEntity [] FindSkill(string pattern, string MEACode=null){
 			return DefaultProvider.FindSkill(pattern, MEACode);
 		}
@@ -94,9 +95,10 @@ namespace Yavsc.Model.Skill
 		/// Finds the performer.
 		/// </summary>
 		/// <returns>The performer.</returns>
-		/// <param name="skillIds">Skill identifiers.</param>
-		public static string [] FindPerformer(long [] skillIds) {
-			return DefaultProvider.FindPerformer(skillIds);
+		/// <param name="MEACode">MEA Code.</param>
+		/// <param name="skills">skills.</param>
+		public static string [] FindPerformer(string MEACode, SkillRating [] skills) {
+			return DefaultProvider.FindPerformer(MEACode, skills);
 		}
 		/// <summary>
 		/// Deletes the skill.

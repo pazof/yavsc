@@ -24,18 +24,21 @@ using System.Configuration;
 using System.Reflection;
 using System.Configuration.Provider;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace Yavsc.Model.Skill
 {
 	/// <summary>
 	/// Skill.
 	/// </summary>
+	[DataContract]
 	public class SkillEntity : IRating {
 		
 		/// <summary>
 		/// Gets or sets the identifier.
 		/// </summary>
 		/// <value>The identifier.</value>
+		[DataMember]
 		public long Id { get; set; } 
 
 		/// <summary>
@@ -43,6 +46,7 @@ namespace Yavsc.Model.Skill
 		/// </summary>
 		/// <value>The MEA code.</value>
 		[Required(ErrorMessageResourceName="MEACode",ErrorMessageResourceType=typeof(LocalizedText))]
+		[DataMember]
 		public string MEACode { get; set; }
 
 		/// <summary>
@@ -50,12 +54,14 @@ namespace Yavsc.Model.Skill
 		/// </summary>
 		/// <value>The name.</value>
 		[Required(ErrorMessage = "Please, specify a skill name")]
+		[DataMember]
 		public string Name { get; set; } 
 
 		/// <summary>
 		/// Gets or sets the rate.
 		/// </summary>
 		/// <value>The rate.</value>
+		[DataMember]
 		public int Rate { get; set; }
 	}
 	

@@ -17,6 +17,7 @@ body {
    background-color: rgba(20,20,20,.8); 
 	color: yellow;
 }
+
 .rate:hover { border-color: green; 
 	background-color:rgba(30,0,124,0.9); } 
 
@@ -181,6 +182,7 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 	.usertitleref{ 
 	padding:.3em;
 	}
+
   .bshpanel { cursor:zoom-in; }
 
 	.c2 { display:initial; }

@@ -202,7 +202,7 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="rate">Skill rating.</param>
 		[Authorize()]
-		public void RateSkill (SkillRating rate) {
+		public void RateSkill (AuthentificatedSkillRating rate) {
 			throw new NotImplementedException ();
 		}
 	}

@@ -14,6 +14,8 @@ body.loading .modal {
 	border-radius:1em;
 	border-style: solid;
 	border-width: 1px;
+	padding:.2em;
+	display: inline-block;
 }
 
 header {
@@ -273,7 +275,7 @@ input, select, textarea {
 	 padding:5px; margin:5px;
    background-color: rgba(0,0,40,.8); 
 }
-.skillname { 
+.skillname, .performer, .usercard, .pagelink { 
 	padding:.5em;
 	margin:.25em;
 	max-width: 24em; 
@@ -282,6 +284,7 @@ input, select, textarea {
 	border-radius:1em;
 	border-style: solid;
 	border-width: 1px;
+	font-size: large;
 } 
 
 .input-validation-error { border: solid 1px red; background-color: rgba(180,256,256,.5); }

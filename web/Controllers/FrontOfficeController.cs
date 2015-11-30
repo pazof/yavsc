@@ -321,7 +321,7 @@ namespace Yavsc.Controllers
 			//      actually performed via the Web API :-°
 			// else if (ModelState.IsValid) {}
 			var usp = SkillManager.GetUserSkills (id);
-			var skills = SkillManager.FindSkill ("%");
+			var skills = SkillManager.FindSkill ("%",usp.MEACode);
 			ViewData ["SiteSkills"] = skills;
 			return View (usp);
 		}
@@ -346,7 +346,8 @@ namespace Yavsc.Controllers
 				var result = new List<PerformerProfile> ();
 
 				foreach (string meacode in model.MEACodes) {
-					foreach (PerformerProfile profile in  WorkFlowManager.FindPerformer(meacode)) {
+					foreach (PerformerProfile profile in  WorkFlowManager.FindPerformer(meacode,null)) {
+						if (profile.HasCalendar())
 						try {
 							var events = ProfileBase.Create (profile.UserName).GetEvents (model.StartDate, model.EndDate);
 							if (events.items.Length == 0)
@@ -376,25 +377,34 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// Booking the specified model.
 		/// </summary>
-		/// <param name="MEACode">MEA Code.</param>
 		/// <param name="model">Model.</param>
 		public ActionResult Booking (SimpleBookingQuery model)
 		{
-			
+			// assert (model.MEACode!=null), since it's the required part of the route data
+			var needs = SkillManager.FindSkill ("%", model.MEACode);
+			var specification = new List<SkillRating> ();
+			ViewData ["Needs"] = needs;
+			if (model.Need != null) {
+				if (model.Need != "none")
+				foreach (string specitem in model.Need.Split(',')) {
+					string[] specvals = specitem.Split (' ');
+					specification.Add (new SkillRating () { Id = long.Parse (specvals [0]),
+						Rate = int.Parse (specvals [1])
+					});
+				}
+			} 
 			// In order to present this form 
 			// with no need selected and without 
 			// validation error display,
 			// we only check the need here, not at validation time.
 			// Although, the need is indeed cruxial requirement,
 			// but we already have got a MEA code  
-			if (ModelState.IsValid)
-			if (model.Needs != null) {
+			if (ModelState.IsValid && model.Need!=null) {
 				var result = new List<PerformerAvailability> ();
-				foreach (PerformerProfile profile in WorkFlowManager.FindPerformer(model.MEACode)) {
+				foreach (PerformerProfile profile in WorkFlowManager.FindPerformer(model.MEACode,specification.ToArray())) 
 					if (profile.HasCalendar ()) {
 						try {
-							var events = ProfileBase.Create (profile.UserName)
-							.GetEvents (
+							var events = ProfileBase.Create (profile.UserName).GetEvents (
 								             model.PreferedDate.Date,
 								             model.PreferedDate.AddDays (1).Date);
 							// TODO replace (events.items.Length == 0) 
@@ -406,17 +416,17 @@ namespace Yavsc.Controllers
 						}
 					} else
 						result.Add (profile.CreateAvailability (model.PreferedDate, false));
-
-				}
 				return View ("Performers", result.ToArray ());
-			} else {
-				// A first Get
-				var needs = SkillManager.FindSkill ("%", model.MEACode);
-				ViewData ["Needs"] = needs;
-				model.Needs = needs.Select (
-					x => string.Format ("{0}:{1}", x.Id, x.Rate)).ToArray ();
+			} 
+			if (model.Need==null) {
+				// A first Get, or no skill available
+				model.Need = 
+					string.Join(",", needs.Select (x => string.Format ("{0}:{1}", x.Id, x.Rate)).ToArray ());
+				if (string.IsNullOrWhiteSpace (model.Need))
+					model.Need = "none";
+				
 			}
-			
+
 			var activity = WorkFlowManager.GetActivity (model.MEACode);
 			ViewData ["Activity"] = activity;
 			ViewData ["Title"] = activity.Title;

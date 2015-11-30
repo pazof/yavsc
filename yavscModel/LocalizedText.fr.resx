@@ -71,9 +71,11 @@
 	<data name="Modify"><value>Modifier</value></data>
 	<data name="My_Estimates"><value>Mes estimations</value></data>
 	<data name="Name"><value>Nom</value></data>
-	<data name="Needs"><value>Besoin</value></data>
+	<data name="Needs"><value>Besoins</value></data>
+	<data name="Need"><value>Besoin</value></data>
 	<data name="New_Tag"><value>Nouveau Tag</value></data>
 	<data name="no_content"><value>pas de contenu</value></data>
+	<data name="NoSkillforthisactivity"><value>Aucune compétence n'a été enregistrée par aucun préstataire pour cette activité</value></data>
 	<data name="none"><value>aucun(e)</value></data>
 	<data name="Non_existent_user"><value>Non existent user</value></data>
 	<data name="Not Approuved"><value>Non approuvé</value></data>
@@ -82,6 +84,7 @@
 	<data name="Online"><value>En ligne</value></data>
 	<data name="Pdf_version"><value>Version Pdf</value></data>
 	<data name="PerformanceDate"><value>Date de la prestation</value></data>
+	<data name="Performers"><value>Perstataires</value></data>
 	<data name="Person"><value>Personne</value></data>
 	<data name="Photo"><value>Photo</value></data>
 	<data name="PhotoUpdated"><value>Photo mise à jour</value></data>

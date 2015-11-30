@@ -30,13 +30,14 @@
 <%= Html.Hidden("MEACode") %>
   <fieldset>
 <legend><%= Html.Translate("YourNeed") %></legend>
-  <input type="hidden" name="Needs" id="Needs" value="">
-  <ul>
-  <% foreach (var need in (SkillEntity[])(ViewData["Needs"])) { %>
-  <li><%= need.Name %> <%= Html.Partial("RateSkillControl", need)%></li>
+  <input type="hidden" name="Need" id="Need" value="">
+  <ul >
+  <% if (ViewData ["Needs"]!=null)
+   foreach (var need in (SkillEntity[])(ViewData ["Needs"])) { %>
+  <li class="skillname"><%= need.Name %> <%= Html.Partial("RateSkillControl", need)%></li>
   <% } %>
   </ul>
-  <%= Html.ValidationMessageFor(model=>model.Needs) %>
+  <%= Html.ValidationMessageFor(model=>model.Need) %>
  </fieldset>
   <fieldset>
 <legend><%= Html.Translate("PerformanceDate") %></legend>
@@ -46,12 +47,10 @@ Intervention souhaitée le
  </fieldset>
   <script>
   $(document).ready(function(){
-  var needs = <%= Ajax.JSonString((SkillEntity[])(ViewData["Needs"])) %>;
-  var fneeds = needs.map( function (need) { 
-    return need.Id+' '+need.Rate; } );
-
-    fneeds.forEach(function(elt) { console.log(Yavsc.dumpprops(elt)) } );
-  $('#Needs').val(fneeds);
+  var needs = <%= Ajax.JSonString((SkillEntity[])(ViewData ["Needs"])) %>;
+  var fneeds = [];
+  needs.forEach(function(elt) { fneeds.push (''+elt.Id+' '+elt.Rate); } );
+  if (needs.length>0) $('#Need').val(fneeds); else $('#Need').val('none');
   $('[data-type="rate-site-skill"]').rate({jsTarget: function (rating)
   {
   // console.log(Yavsc.dumpprops(rating)); 

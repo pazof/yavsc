@@ -6,6 +6,8 @@ using Yavsc.Model.FrontOffice;
 using System.Configuration.Provider;
 using Yavsc.Model.FrontOffice.Catalog;
 using System.Collections.Generic;
+using Yavsc.Model.Skill;
+using System.Linq;
 
 namespace Yavsc.Model.WorkFlow
 {
@@ -17,15 +19,6 @@ namespace Yavsc.Model.WorkFlow
 	/// </summary>
 	public static class WorkFlowManager 
 	{
-		/// <summary>
-		/// Finds the performer.
-		/// </summary>
-		/// <returns>The performer.</returns>
-		/// <param name="MEACode">MEA code.</param>
-		public static PerformerProfile [] FindPerformer(string MEACode)
-		{
-			return DefaultProvider.FindPerformer (MEACode);
-		}
 
 		/// <summary>
 		/// Finds the activity.
@@ -42,6 +35,21 @@ namespace Yavsc.Model.WorkFlow
 						activities.Add(act);
 			}
 			return activities.ToArray();
+		}
+
+		/// <summary>
+		/// Finds the performer.
+		/// </summary>
+		/// <returns>The performer.</returns>
+		/// <param name="MEACode">MEA code.</param>
+		/// <param name="skills">Skills.</param>
+		public static PerformerProfile [] FindPerformer (string MEACode, SkillRating[] skills) 
+		{
+			string[] usernames = SkillManager.FindPerformer (MEACode, skills);
+			List<PerformerProfile> result = new List<PerformerProfile> ();
+			foreach (string user in usernames)
+				result.Add (SkillManager.GetUserSkills (user));
+			return result.ToArray ();
 		}
 
 		/// <summary>
@@ -168,7 +176,11 @@ namespace Yavsc.Model.WorkFlow
 				return defaultProvider;
 			}
 		}
-
+		/// <summary>
+		/// Drops the writting tag.
+		/// </summary>
+		/// <param name="wrid">Wrid.</param>
+		/// <param name="tag">Tag.</param>
 		public static void DropWrittingTag (long wrid, string tag)
 		{
 			throw new NotImplementedException ();
@@ -250,7 +262,12 @@ namespace Yavsc.Model.WorkFlow
 		{
 			return DefaultProvider.GetCommands (username);
 		}
-
+		/// <summary>
+		/// Registers the activity.
+		/// </summary>
+		/// <param name="activityName">Activity name.</param>
+		/// <param name="meacode">Meacode.</param>
+		/// <param name="comment">Comment.</param>
 		public static void RegisterActivity (string activityName, string meacode, string comment)
 		{
 			DefaultProvider.RegisterActivity (activityName, meacode, comment);
