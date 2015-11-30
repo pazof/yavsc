@@ -19,4 +19,7 @@ web/Web.TotemPre.config
 web/Web.TotemProd.config
 .nuget
 .gitignore
+web/Web.YavscPre.config
+web/Web.Yavsc.config
+
 

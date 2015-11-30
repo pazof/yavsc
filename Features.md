@@ -9,6 +9,9 @@ Sont publiées en home page les descriptions en temps réel des activités soute
 
 Le prestataire peut détailler ses compétences, en leur donnant une côte de départ, qui sera modifiée par les clients de ce prestataire, une fois le service rendu.
 
+Les membres du FrontOffice sont seuls, avec les administrateurs tout puissants, à pouvoir éditer les activités et compétences du site.
+Les préstataires ne font que choisir parmis les compétences liées à l'activité qu'il auront choisi.
+
 # Une reservation de préstataire
 
 Le préstataire peut renseigner un identifiant de calendrier Google. 
@@ -24,7 +27,7 @@ Le processus de reservation d'un préstataire peut être conduit par un utilisat
 
 ## Un blog spot
 
-On peut poster des billets, avec une mise en forme stockée à la Markdown en base de donnée,
+Une fois endossé le rôle de `Blogger`, On peut poster des billets, avec une mise en forme stockée à la Markdown en base de donnée,
 en WYSIWYG depuis l'interface Web grâce à un fork de hallo.js .
 
 La syntaxe a été etendue pour pouvoir publier, en tant qu'objet du document, des vidéos et fichiers audio.
@@ -38,7 +41,6 @@ Pour l'instant, il est réduit au minimum : un édition d'un devis, qui à la pu
 ## Peut-être à desactiver ? à rendre optionnel au niveau administratif et utilisateur : le systeme de fichiers utilisateur
 
 Tout utilisateur enregistré dispose aussi du moyen de publier des applications de son choix, via son espace de fichiers perso ou ses billet de blog.
-
 
 # La conformité légale
 
