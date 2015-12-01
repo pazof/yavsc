@@ -98,6 +98,7 @@ namespace Yavsc
 			AreaRegistration.RegisterAllAreas ();
 			WebApiConfig.Register (GlobalConfiguration.Configuration);
 			RegisterRoutes (RouteTable.Routes);
+			AjaxHelper.GlobalizationScriptPath = "~/Scripts/globalize";
 		}
 
 		/// <summary>

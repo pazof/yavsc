@@ -25,6 +25,9 @@ using Yavsc.Model.Messaging;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Text;
+using System.Globalization;
+using System.Diagnostics.CodeAnalysis;
+using System.Web;
 
 namespace Yavsc.Helpers
 {
@@ -47,7 +50,47 @@ namespace Yavsc.Helpers
 				new Notification { body = QuoteJavascriptString((string)message), 
 					click_action = click_action } ) ;
 		}
+		/// <summary>
+		/// Globalizations the script.
+		/// </summary>
+		/// <returns>The script.</returns>
+		/// <param name="ajaxHelper">Ajax helper.</param>
+		public static MvcHtmlString YaGlobalizationScript(this AjaxHelper ajaxHelper)
+		{
+			return YaGlobalizationScript(ajaxHelper, CultureInfo.CurrentCulture);
+		}
+		/// <summary>
+		/// Globalizations the script.
+		/// </summary>
+		/// <returns>The script.</returns>
+		/// <param name="ajaxHelper">Ajax helper.</param>
+		/// <param name="cultureInfo">Culture info.</param>
+		[SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "ajaxHelper", Justification = "This is an extension method")]
+		public static MvcHtmlString YaGlobalizationScript(this AjaxHelper ajaxHelper, CultureInfo cultureInfo)
+		{
+			return YaGlobalizationScriptHelper(AjaxHelper.GlobalizationScriptPath, cultureInfo);
+		}
 
+		internal static MvcHtmlString YaGlobalizationScriptHelper(string scriptPath, CultureInfo cultureInfo)
+		{
+			if (cultureInfo == null)
+			{
+				throw new ArgumentNullException("cultureInfo");
+			}
+
+			// references the global script :
+			TagBuilder tagBuilder = new TagBuilder("script");
+			tagBuilder.MergeAttribute("type", "text/javascript");
+			string src = VirtualPathUtility.AppendTrailingSlash(scriptPath) + "globalize.js";
+			tagBuilder.MergeAttribute("src", VirtualPathUtility.ToAbsolute (src));
+
+			TagBuilder tagCurrentBuilder = new TagBuilder("script");
+			string srccurrent = VirtualPathUtility.AppendTrailingSlash(scriptPath) + "cultures/globalize.culture." + HttpUtility.UrlEncode(cultureInfo.Name) + ".js";
+			tagCurrentBuilder.MergeAttribute("src", VirtualPathUtility.ToAbsolute (srccurrent));
+
+			string html = tagBuilder.ToString(TagRenderMode.Normal)+tagCurrentBuilder.ToString(TagRenderMode.Normal);
+			return new MvcHtmlString(html);
+		}
 		/// <summary>
 		/// Quotes the javascript string.
 		/// </summary>

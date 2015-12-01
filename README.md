@@ -5,6 +5,12 @@ yavsc
 
 # à faire, par ordre de priorité
 
+0) Rendre pliable les groupes de champs de formulaire
+
+0.1) Donner des descriptions textuelles au cotes (ex: dans le cadre d'un prestataire, ses 5 cotes seraient 
+par exemple "Nouvelle star" "Artiste local" "Artiste régional" "Star nationale" "Star internationale"
+
+0.2) Fixer l'edition de la côte zéro. (y en a 6, ou onze avec les moitiés, pas cinq (ni dix avec les moitiés))
 
 1) Créer un contrôle "bouton utilisateur" `UserNameControl`
   avec 
@@ -16,13 +22,20 @@ yavsc
 
 2) Refabrication de l'Api :
 
-  Concerning the blog entry edition, we only need Two methods: 
+  concernant la mise à jour la creation et l'edition d'un post, on
+  doit pouvoir fondre tout en une seule methode : 
 
-  * ```long PostFile(long id)```, 
-    used for creation when the given id is 0, in which case, the entry id created is returned.
-    Otherwise, used for import in the post spécified by its id, in which case, 0 is returned.
-  * `long Post(BlogEntry be)`, used to create or update a given or not 
-    blog entry content. the returned value is the entry id at creation, or 0.
+  * ```long PostFile(BlogEntry be)```, 
+    Utilisée pour la creation quand id est à 0, auquel cas, l'identiffiant
+    du post créé est renvoyé en retour (non nul).
+    Sinon, c'est une mise a jour des propriétés
+    du billet, et on renvoie zero.
 
+    Dans tous les cas, toutes les propriétés du post sont fournies car mises à jour, 
+    et on effectue la reception des fichiers attachés.
+
+    Dans le cas de l'edition (id non nul), 
+    seules les propriétés spécifiées non nulles sont mises à jour
+    (NDLR:la visibilité est donc par exemple toujours mis à jour).
 
 3) Corriger un peu le thème clair (fond de titres trop sombre)

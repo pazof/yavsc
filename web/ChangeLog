@@ -1,3 +1,17 @@
+2015-12-01  Paul Schneider  <paul@pschneider.fr>
+
+	* Global.asax.cs: Fixe un 404 Not Found sur le script
+	d'internationalisation.
+
+	* YavscAjaxHelper.cs: Fixe un 404 Not Found sur le script
+	d'internationalisation:
+	Implementation d'une alternative à Ajax.GlobalisationScript()
+	de Mono System.Web.MVC
+
+
+	* App.master: utilise la nouvelle methode pour construire les
+	references aux scripts d'internationalisation
+
 2015-11-30  Paul Schneider  <paul@pschneider.fr>
 
 	* p8-av4.jpg:

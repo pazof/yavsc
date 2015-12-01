@@ -27,7 +27,7 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
   $('[data-type="rate-bill"]').rate({target: 'Blogs/Rate'});
  });
 </script> 
-<%=Ajax.GlobalizationScript()%>
+<%=Ajax.YaGlobalizationScript()%>
 <script src="<%=Url.Content("~/Scripts/yavsc.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/yavsc.tags.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/yavsc.rate.js")%>"></script>
