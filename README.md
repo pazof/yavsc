@@ -5,6 +5,9 @@ yavsc
 
 # à faire, par ordre de priorité
 
+-1) Messagerie instantanée : choisir entre directement Google Hangouts API,
+  SIP, ou Signal R custom 
+
 0) Fixer l'edition de la côte zéro. (y en a 6, ou onze avec les moitiés, pas cinq (ni dix avec les moitiés))
 
 1) Créer un contrôle "bouton utilisateur" `UserNameControl`

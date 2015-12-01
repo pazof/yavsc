@@ -1,5 +1,9 @@
 2015-12-01  Paul Schneider  <paul@pschneider.fr>
 
+	* Yavsc.csproj: references en plus ...
+
+2015-12-01  Paul Schneider  <paul@pschneider.fr>
+
 	* style.css: ajoute une classe "bigavatar" (l'avatar affiché
 	en gros)
 

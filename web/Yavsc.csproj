@@ -132,6 +132,11 @@
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.WebPages.Deployment" />
     <Reference Include="Microsoft.Web.Infrastructure" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\" />
