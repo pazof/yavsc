@@ -29,7 +29,11 @@
   <%= Html.ValidationSummary() %>
  <%= Html.Hidden("UserName",ViewData["ProfileUserName"]) %>
 
-   <fieldset><legend>Informations publiques</legend>
+   <fieldset><legend>Informations publiques 
+  <i>
+   <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="avatar" class="avatar" />
+   <%=Html.Encode(Model.UserName)%> APE:<%=Model.MEACode%> <%=Model.WebSite%> </i></legend>
+   <span>
 <%= Html.LabelFor(model => model.MEACode) %> :
 <%= Html.DropDownList("MEACode") %>
 <%= Html.ValidationMessage("MEACode", "*") %>
@@ -45,22 +49,27 @@
 <%= Html.ValidationMessage("WebSite", "*") %>
 <br>
 
-Avatar : <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="avatar" class="iconsmall" />
-
+Avatar : 
 <input type="file" id="AvatarFile" name="AvatarFile"/>
 <%= Html.ValidationMessage("AvatarFile", "*") %>
 
-
+</span>
 </fieldset>
 
-<fieldset><legend>Informations administratives</legend>
+<fieldset><legend>Informations administratives
+<i><%= string.IsNullOrWhiteSpace(Model.Name)?"KO":Html.Encode(Model.Name) %>
+</i>
+</legend>
+<span>
 <%= Html.LabelFor(model => model.Name) %> :
 <%= Html.TextBox("Name") %> 
-<%= Html.ValidationMessage("Name", "*") %>
+<%= Html.ValidationMessage("Name", "*") %></span>
 </fieldset>
 
-    <fieldset><legend>Blog</legend>
-    <div class="spanel">
+    <fieldset><legend>Blog <i><%=Html.Encode(Model.BlogTitle)%>
+    <%= Model.BlogVisible?null:Html.Translate("hidden") %>
+    </i></legend>
+<div class="spanel">
 <%= Html.LabelFor(model => model.BlogVisible) %> :
 <%= Html.CheckBox("BlogVisible") %>
 <%= Html.ValidationMessage("BlogVisible", "*") %>
@@ -72,7 +81,10 @@ Avatar : <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" a
 </div>
    </fieldset>
 
-    <fieldset><legend>Contact</legend>
+    <fieldset><legend>Contact
+    <i><%=Html.Encode(Model.Phone)%> <%=Html.Encode(Model.Mobile)%> 
+    <%=Html.Encode(Model.HasPostalAddress?"adresse OK":"adresse KO")%></i>
+    </legend>
 <div class="spanel">
 <%= Html.LabelFor(model => model.Phone) %>
 <%= Html.TextBox("Phone") %>
@@ -99,14 +111,18 @@ Avatar : <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" a
 <%= Html.ValidationMessage("Country", "*") %>
 </div>
 </fieldset>
-<fieldset><legend>Disponibilité</legend>
+<fieldset><legend>Disponibilité
+<i><%=Html.Encode(
+    string.IsNullOrWhiteSpace(Model.GoogleCalendar)?"KO":"OK")%></i></legend>
 <div class="spanel">
    <%= Html.LabelFor(model => model.GoogleCalendar) %> :
    
     <%= Html.Encode(Model.GoogleCalendar) %>
    <%= Html.ActionLink("Choisir l'agenda","ChooseCalendar","Google",new { returnUrl= Request.Url.AbsolutePath }, new { @class="actionlink" }) %>
 </div></fieldset>
-<fieldset><legend>Informations de facturation</legend>
+<fieldset><legend>Informations de facturation
+<i> <%=Html.Encode(Model.HasBankAccount?"OK":"KO")%> </i>
+</legend>
 
 <div class="spanel">
 <%= Html.LabelFor(model => model.BankCode) %> :
@@ -136,11 +152,14 @@ Avatar : <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" a
 <%= Html.ValidationMessage("IBAN", "*") %>
 </div>
 </fieldset>
-<fieldset><legend>Interface utilisateur</legend>
-
+<fieldset><legend>Interface utilisateur
+<i> <%=Html.Encode(Model.UITheme)%> </i>
+</legend>
+<span>
 <%= Html.LabelFor(model => model.UITheme) %> :
 <%= Html.TextBox("UITheme") %>
-<%= Html.ValidationMessage("UITheme", "*") %>
+<%= Html.ValidationMessage("UITheme", "*") %></span>
+
 </fieldset>
 <input type="submit"/>
 <% } %>

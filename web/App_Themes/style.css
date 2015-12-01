@@ -146,7 +146,7 @@ display:inline-block;
 	border-radius: 1em; 
 	padding: 1em;
 }
-.spanel {
+.spanel, fieldset {
   max-width: 18em;
     display: inline-block;
   padding: .3em;
@@ -254,9 +254,9 @@ input, select, textarea {
 	white-space: pre-wrap;
 }
 
-#avatar { 
- float: left;
- margin:1em;
+.avatar { 
+ vertical-align: middle;
+ max-height: 1.3em; max-width: 1.3em; 
  }
 
 .comment {

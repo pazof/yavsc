@@ -54,6 +54,7 @@
 	<data name="FillInAFutureDate"><value>Please, use a date in the future as starting date.</value></data>
 	<data name="Home"><value>Home</value></data>
 	<data name="Hide"><value>Hide</value></data>
+	<data name="hidden"><value>hidden</value></data>
 	<data name="Hide_source"><value>Hide the bill source text</value></data>
 	<data name="entries"><value>entries</value></data>
 	<data name="Google_calendar"><value>Google calendar</value></data>

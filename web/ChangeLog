@@ -1,5 +1,20 @@
 2015-12-01  Paul Schneider  <paul@pschneider.fr>
 
+	* yavsc.hidefieldset.js: Creation d'un nouveau module jQuery
+	pour afficher/cacher les champ de formulaire en cliquant sur
+	le titre des groupes de champ.
+
+	* style.css: style plus compact pour les fieldset
+
+	* App.master: appelle l'initialisation des widget hidefieldset
+
+	* Profile.aspx: mettre tous les elements fils d'un groupe
+	champ dans des noeud cachable.
+
+	* Yavsc.csproj: referencer le nouveau script dans le projet
+
+2015-12-01  Paul Schneider  <paul@pschneider.fr>
+
 	* Global.asax.cs: Fixe un 404 Not Found sur le script
 	d'internationalisation.
 

@@ -358,9 +358,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Google_registration_id {
+        public static string hidden {
             get {
-                return ResourceManager.GetString("Google_registration_id", resourceCulture);
+                return ResourceManager.GetString("hidden", resourceCulture);
             }
         }
         
@@ -415,6 +415,12 @@ namespace Yavsc.Model {
         public static string BookingTitle6829C {
             get {
                 return ResourceManager.GetString("BookingTitle6829C", resourceCulture);
+            }
+        }
+        
+        public static string Google_registration_id {
+            get {
+                return ResourceManager.GetString("Google_registration_id", resourceCulture);
             }
         }
         
@@ -496,9 +502,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string My_Estimates {
+        public static string Non_existent_user {
             get {
-                return ResourceManager.GetString("My_Estimates", resourceCulture);
+                return ResourceManager.GetString("Non_existent_user", resourceCulture);
             }
         }
         
@@ -724,9 +730,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Non_existent_user {
+        public static string My_Estimates {
             get {
-                return ResourceManager.GetString("Non_existent_user", resourceCulture);
+                return ResourceManager.GetString("My_Estimates", resourceCulture);
             }
         }
         
