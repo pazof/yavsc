@@ -5,12 +5,7 @@ yavsc
 
 # à faire, par ordre de priorité
 
-0) Rendre pliable les groupes de champs de formulaire
-
-0.1) Donner des descriptions textuelles au cotes (ex: dans le cadre d'un prestataire, ses 5 cotes seraient 
-par exemple "Nouvelle star" "Artiste local" "Artiste régional" "Star nationale" "Star internationale"
-
-0.2) Fixer l'edition de la côte zéro. (y en a 6, ou onze avec les moitiés, pas cinq (ni dix avec les moitiés))
+0) Fixer l'edition de la côte zéro. (y en a 6, ou onze avec les moitiés, pas cinq (ni dix avec les moitiés))
 
 1) Créer un contrôle "bouton utilisateur" `UserNameControl`
   avec 
@@ -19,6 +14,9 @@ par exemple "Nouvelle star" "Artiste local" "Artiste régional" "Star nationale"
    * le compteur de ses posts publiques
    * Si c'est un préstataire, et si on est pas déjà dans un formulaire de reservation, 
      un lien vers la reservation de ses services
+
+  Et Donner des descriptions textuelles au cotes (ex: dans le cadre d'un prestataire, ses 5 cotes seraient 
+par exemple "Nouvelle star" "Artiste local" "Artiste régional" "Star nationale" "Star internationale"
 
 2) Refabrication de l'Api :
 
@@ -39,3 +37,10 @@ par exemple "Nouvelle star" "Artiste local" "Artiste régional" "Star nationale"
     (NDLR:la visibilité est donc par exemple toujours mis à jour).
 
 3) Corriger un peu le thème clair (fond de titres trop sombre)
+
+4) Terminer l'édition du profile de site, avec la modification
+  et la suppression des activités et compétences
+
+5) Tester le premier client Android-java libre
+
+6) Tester le premier client Android-xamarin pour iOS
