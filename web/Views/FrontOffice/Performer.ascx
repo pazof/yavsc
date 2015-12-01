@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PerformerProfile>" %>
 
-<img src="<%= Model.Avatar %>" alt="" class="avatar"> 
+<img src="<%= Model.Avatar %>" alt="" class="bigavatar"> 
 <div class="performer">
 <h2><%=Html.Encode(Model.UserName)%></h2>
 <%=Html.Partial("RateUserSkillControl", Model) %>

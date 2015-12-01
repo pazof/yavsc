@@ -163,7 +163,10 @@ Avatar :
 </fieldset>
 <input type="submit"/>
 <% } %>
- 
-
+<script>
+$(document).ready(function(){
+$('fieldset').hidefieldset();
+});
+</script>
 </asp:Content>
 

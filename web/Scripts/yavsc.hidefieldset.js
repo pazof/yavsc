@@ -36,7 +36,3 @@
 })})(jQuery);
 }).call(this);
 
-$(document).ready(function(){
-$('fieldset').hidefieldset();
-});
-
