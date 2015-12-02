@@ -118,9 +118,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Remove {
+        public static string Product_reference {
             get {
-                return ResourceManager.GetString("Remove", resourceCulture);
+                return ResourceManager.GetString("Product_reference", resourceCulture);
             }
         }
         
@@ -352,9 +352,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Product_reference {
+        public static string AuthenticatedOnly {
             get {
-                return ResourceManager.GetString("Product_reference", resourceCulture);
+                return ResourceManager.GetString("AuthenticatedOnly", resourceCulture);
             }
         }
         
@@ -739,6 +739,12 @@ namespace Yavsc.Model {
         public static string DB {
             get {
                 return ResourceManager.GetString("DB", resourceCulture);
+            }
+        }
+        
+        public static string Remove {
+            get {
+                return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
         

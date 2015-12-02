@@ -1,3 +1,13 @@
+2015-12-02  Paul Schneider  <paul@pschneider.fr>
+
+	* PerformerProfile.cs: Ajoute la propriété "titre du blog"
+	`BlogTitle` du profile préstataire
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: internationalisation
+
 2015-12-01  Paul Schneider  <paul@pschneider.fr>
 
 	* LocalizedText.resx:

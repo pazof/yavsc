@@ -161,6 +161,15 @@ namespace Yavsc.Model.FrontOffice
 			p.PerformanceDate = date;
 			return p;
 		}
+		/// <summary>
+		/// Gets the blog title.
+		/// </summary>
+		/// <value>The blog title.</value>
+		public string BlogTitle {
+			get { 
+				return YavscClientProfile.BlogTitle;
+			}
+		}
 	}
 }
 

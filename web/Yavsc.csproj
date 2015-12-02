@@ -537,6 +537,7 @@
     <Content Include="Views\Home\Activity.ascx" />
     <Content Include="Views\FrontOffice\Performers.aspx" />
     <Content Include="Scripts\yavsc.hidefieldset.js" />
+    <Content Include="hangouts.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

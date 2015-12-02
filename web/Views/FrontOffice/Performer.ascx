@@ -1,11 +1,20 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PerformerProfile>" %>
-
-<img src="<%= Model.Avatar %>" alt="" class="bigavatar"> 
 <div class="performer">
-<h2><%=Html.Encode(Model.UserName)%></h2>
+<h2>
+<img src="<%= Model.Avatar %>" alt="" class="bigavatar"> 
+<%=Html.Encode(Model.UserName)%> 
 <%=Html.Partial("RateUserSkillControl", Model) %>
-</div><br>
-E-mail: &lt;<%=Html.Encode(Model.EMail)%>&gt;
+</h2>
+<p>
+<i class="fa fa-envelope"> 
+ <% if (Membership.GetUser()!=null) { %>
+&lt;<%=Html.Encode(Model.EMail)%>&gt;
+ <% } else { %><%=Html.LabelFor(m => m.EMail)%>:
+ <i><%= Html.Translate("AuthenticatedOnly") %></i>
+ <% }%>
+ </i>
+ </p>
+
 <% if (Model.Skills==null) { %>
 <%= Html.Translate("") %>
   <% } else 
@@ -21,8 +30,6 @@ foreach (var userskill in Model.Skills) { %>
 <% } %>
 <% if (BlogManager.GetPostCounter(Model.UserName)>0) { %>
 <a href="<%=Url.RouteUrl("Blogs",new { user = Model.UserName } )%>">
-<span class="fa-stack fa-lg">
-  <i class="fa fa-square-o fa-stack-2x"></i>
-  <i class="fa fa-folder fa-stack-1x"></i>
-</span></a>
+  <i class="fa fa-folder"><%=Model.BlogTitle %></i>
+</a></div>
 <% } %>

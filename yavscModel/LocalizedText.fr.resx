@@ -18,6 +18,7 @@
 	<data name="AnIMessageHasbeenSent"><value>Un message instantané a été envoyé à {0}, 
 	lui présentant votre demande. Vous devriez être contacté très rapidement.</value></data>
 	<data name="available"><value>disponible</value></data>
+	<data name="AuthenticatedOnly"><value>Seules les utilisateurs authentifies peuvent accèder à cette information</value></data>
 	<data name="Bill_edition"><value>Édition d'un billet</value></data>
 	<data name="Bill_removal"><value>Suppression d'un billet</value></data>
 	<data name="BillCreated"><value>Billet créé</value></data>
