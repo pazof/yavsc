@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Skills" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<SkillEntity>>" %>
+﻿<%@ Page Title="ManagedSiteSkills" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<SkillEntity>>" %>
 
 <asp:Content ID="headContent" ContentPlaceHolderID="head" runat="server">
 <script src="<%=Url.Content("~/Scripts/yavsc.skills.js")%>"></script>

@@ -1,5 +1,12 @@
 2015-12-02  Paul Schneider  <paul@pschneider.fr>
 
+	* Skills.aspx: Précise la fonction de la methode par un titre
+	plus révélateur
+
+	* Index.aspx: Alimente l'index du front office
+
+2015-12-02  Paul Schneider  <paul@pschneider.fr>
+
 	* hangouts.xml: WIP Hangouts
 
 	* yavsc.rate.js: Fixe l'usage de la souris pour positionner

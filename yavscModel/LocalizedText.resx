@@ -15,6 +15,7 @@
 
 	<data name="additionally"><value>additionally</value></data>
 	<data name="access_denied"><value>Access denied</value></data>
+	<data name="Activities"><value>Activities</value></data>
 	<data name="AnIMessageHasbeenSent"><value>An instant message has been sent to {0}, 
 	showing to him your query. You should be contacted very soon.</value></data>
 	<data name="available"><value>available</value></data>
@@ -69,6 +70,7 @@
     <data name="Item_added_to_basket"><value>Item added to basket</value></data>
 	<data name="Location"><value>Location</value></data>
 	<data name="Logout"><value>Logout</value></data>
+	<data name="ManagedSiteSkills"><value>Site skills</value></data>
 	<data name="MaxDate"><value>Maximal date for the rendez-vous</value></data>
 	<data name="MEACode"><value>Mainly Exerted Activity code</value></data>
 	<data name="Name"><value>Name</value></data>
@@ -126,6 +128,7 @@
 	<data name="User_name"><value>User name</value></data>
 	<data name="UsersInRole">List of users assuming the role "{0}"</data>
 	<data name="UserNotInThisRole"><value>This user is not in this role</value></data>
+	<data name="UserSkills"><value>User skills</value></data>
 	<data name="View_source"><value>View source</value></data>
 	<data name="was_added_to_the_role"><value>was added to the role</value></data>
 	<data name="was_added_to_the_empty_role"><value>There was no user in the "{1}" role. You ({0}) was just added as firt user in the "{1}" role.</value></data>

@@ -52,9 +52,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string StartDateAfterEndDate {
+        public static string ProviderId {
             get {
-                return ResourceManager.GetString("StartDateAfterEndDate", resourceCulture);
+                return ResourceManager.GetString("ProviderId", resourceCulture);
             }
         }
         
@@ -196,6 +196,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Activities {
+            get {
+                return ResourceManager.GetString("Activities", resourceCulture);
+            }
+        }
+        
         public static string Members {
             get {
                 return ResourceManager.GetString("Members", resourceCulture);
@@ -283,6 +289,12 @@ namespace Yavsc.Model {
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        public static string StartDateAfterEndDate {
+            get {
+                return ResourceManager.GetString("StartDateAfterEndDate", resourceCulture);
             }
         }
         
@@ -562,9 +574,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string ProviderId {
+        public static string ManagedSiteSkills {
             get {
-                return ResourceManager.GetString("ProviderId", resourceCulture);
+                return ResourceManager.GetString("ManagedSiteSkills", resourceCulture);
             }
         }
         
@@ -670,6 +682,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string yourquerytransmitted {
+            get {
+                return ResourceManager.GetString("yourquerytransmitted", resourceCulture);
+            }
+        }
+        
         public static string no_content {
             get {
                 return ResourceManager.GetString("no_content", resourceCulture);
@@ -700,9 +718,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string yourquerytransmitted {
+        public static string UserSkills {
             get {
-                return ResourceManager.GetString("yourquerytransmitted", resourceCulture);
+                return ResourceManager.GetString("UserSkills", resourceCulture);
             }
         }
         

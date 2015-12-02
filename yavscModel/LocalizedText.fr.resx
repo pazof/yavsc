@@ -15,6 +15,7 @@
 
 	<data name="additionally"><value>de plus</value></data>
 	<data name="access_denied"><value>Accès refusé</value></data>
+	<data name="Activities"><value>Activités</value></data>
 	<data name="AnIMessageHasbeenSent"><value>Un message instantané a été envoyé à {0}, 
 	lui présentant votre demande. Vous devriez être contacté très rapidement.</value></data>
 	<data name="available"><value>disponible</value></data>
@@ -65,6 +66,7 @@
 	<data name="Item_added_to_basket"><value>Article ajouté au panier</value></data>
     <data name="Location"><value>Lieu</value></data>
 	<data name="Logout"><value>Déconnection</value></data>
+	<data name="ManagedSiteSkills"><value>Compétences gérée sur ce site</value></data>
 	<data name="MaxDate"><value>Date maximale du rendez-vous</value></data>
 	<data name="MEACode"><value>Code d'Activité Principalement Exercée</value></data>
 	<data name="Members"><value>Membres</value></data>
@@ -119,6 +121,7 @@
 	<data name="User_List"><value>Liste des utilisateurs</value><comment></comment></data>
 	<data name="User_name"><value>Nom d'utilisateur</value></data>
 	<data name="UsersInRole">Liste des utilisateurs assumant le rôle "{0}"</data>
+	<data name="UserSkills"><value>Talents/compétences/spécialités utilisateur</value></data>
 	<data name="UserNotInThisRole"><value>Le rôle demandé n'est pas assumé par ce préstataire</value></data>
 	<data name="View_source"><value>Voir le texte source du billet</value></data>
 	<data name="was_added_to_the_role"><value>a été ajouté au rôle</value></data>

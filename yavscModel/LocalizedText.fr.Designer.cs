@@ -154,6 +154,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string ProviderId {
+            get {
+                return ResourceManager.GetString("ProviderId", resourceCulture);
+            }
+        }
+        
         public static string Create {
             get {
                 return ResourceManager.GetString("Create", resourceCulture);
@@ -178,15 +184,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Performers {
+            get {
+                return ResourceManager.GetString("Performers", resourceCulture);
+            }
+        }
+        
         public static string DoComment {
             get {
                 return ResourceManager.GetString("DoComment", resourceCulture);
             }
         }
         
-        public static string Performers {
+        public static string Activities {
             get {
-                return ResourceManager.GetString("Performers", resourceCulture);
+                return ResourceManager.GetString("Activities", resourceCulture);
             }
         }
         
@@ -544,9 +556,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string ProviderId {
+        public static string ManagedSiteSkills {
             get {
-                return ResourceManager.GetString("ProviderId", resourceCulture);
+                return ResourceManager.GetString("ManagedSiteSkills", resourceCulture);
             }
         }
         
@@ -652,6 +664,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string yourquerytransmitted {
+            get {
+                return ResourceManager.GetString("yourquerytransmitted", resourceCulture);
+            }
+        }
+        
         public static string no_content {
             get {
                 return ResourceManager.GetString("no_content", resourceCulture);
@@ -682,9 +700,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string yourquerytransmitted {
+        public static string UserSkills {
             get {
-                return ResourceManager.GetString("yourquerytransmitted", resourceCulture);
+                return ResourceManager.GetString("UserSkills", resourceCulture);
             }
         }
         
