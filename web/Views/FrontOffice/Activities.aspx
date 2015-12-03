@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Activity>>" %>
+﻿<%@ Page Title="Activities" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Activity>>" %>
 
 <asp:Content ID="headContent" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
@@ -6,7 +6,11 @@
 
 <div id="activities">
 <% foreach (var a in Model) { %>
+<div class="spanel">
 <%= Html.Partial("Activity",a) %>
+<a href="<%=Url.RouteUrl("FrontOffice", new { action = "ActivitySkills", MEACode = (string) ViewData["MEACode"] }) %>"><i class="fa fa-pencil">
+<%= Html.Translate("EditRelatedSkills") %>
+</i></a></div>
 <% } %>
 <aside class="control">
 <form method="post" action="DeclareActivity">

@@ -13,6 +13,9 @@
 <aside class="control">
 <form method="post" action="DeclareSkill">
 <fieldset>
+<label for="MEACode"><%= Html.Translate("MEACode") %> :</label>
+<%= Html.DropDownList("MEACode") %>
+
 <div id="Err_skillName" class="field-validation-error"></div>
 <input type="text" name="SkillName" id="SkillName" >
 <input type="button" value="Créer la compétence" id="btncreate" >
@@ -22,7 +25,8 @@
  $(document).ready(function () {
  $('#btncreate').click( function() {
  var $sname = $('#SkillName').val();
- Skills.createSkill($sname, function(sid) {
+ var $meacode = $('#MEACode').val();
+ Skills.createSkill({Name: $sname, MEACode: $meacode }, function(sid) {
  $('<li>'+$sname+'</li>').data('sid',sid).addClass('skillname').appendTo('#skills');
  $('#SkillName').val('');
  }); } ); });

@@ -646,6 +646,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string StartDate {
+            get {
+                return ResourceManager.GetString("StartDate", resourceCulture);
+            }
+        }
+        
         public static string Hide_source {
             get {
                 return ResourceManager.GetString("Hide_source", resourceCulture);
@@ -724,9 +730,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string StartDate {
+        public static string EditRelatedSkills {
             get {
-                return ResourceManager.GetString("StartDate", resourceCulture);
+                return ResourceManager.GetString("EditRelatedSkills", resourceCulture);
             }
         }
         

@@ -1,3 +1,249 @@
+2015-12-03  Paul Schneider  <paul@pschneider.fr>
+
+	* Yavsc.csproj:
+	* jquery.mobile-1.4.5.js:
+	* ajax-loader.gif:
+	* jquery.mobile-1.4.5.css:
+	* jquery.mobile-1.4.5.min.js:
+	* jquery.mobile-1.4.5.min.map:
+	* jquery.mobile-1.4.5.min.css:
+	* FrontOfficeController.cs:
+	* jquery.mobile.icons-1.4.5.css:
+	* jquery.mobile.theme-1.4.5.css:
+	* tag-black.svg:
+	* tag-white.svg:
+	* eye-white.png:
+	* eye-black.png:
+	* tag-black.png:
+	* eye-black.svg:
+	* eye-white.svg:
+	* tag-white.png:
+	* mail-white.png:
+	* shop-white.png:
+	* edit-black.png:
+	* star-black.png:
+	* lock-white.png:
+	* mail-black.png:
+	* info-black.svg:
+	* home-black.svg:
+	* home-white.svg:
+	* edit-white.png:
+	* grid-white.png:
+	* user-black.png:
+	* home-black.png:
+	* home-white.png:
+	* info-black.png:
+	* info-white.png:
+	* grid-black.png:
+	* star-white.png:
+	* plus-white.svg:
+	* plus-black.svg:
+	* user-white.png:
+	* gear-black.png:
+	* gear-white.png:
+	* grid-white.svg:
+	* bars-black.svg:
+	* back-white.svg:
+	* user-white.svg:
+	* back-black.svg:
+	* info-white.svg:
+	* back-black.png:
+	* bars-white.svg:
+	* mail-black.svg:
+	* plus-white.png:
+	* plus-black.png:
+	* lock-white.svg:
+	* lock-black.svg:
+	* mail-white.svg:
+	* back-white.png:
+	* shop-white.svg:
+	* shop-black.svg:
+	* lock-black.png:
+	* gear-black.svg:
+	* gear-white.svg:
+	* grid-black.svg:
+	* star-black.svg:
+	* bars-black.png:
+	* bars-white.png:
+	* user-black.svg:
+	* star-white.svg:
+	* shop-black.png:
+	* edit-black.svg:
+	* edit-white.svg:
+	* cloud-white.svg:
+	* cloud-black.svg:
+	* clock-white.svg:
+	* clock-black.svg:
+	* check-white.svg:
+	* check-black.svg:
+	* audio-white.svg:
+	* video-black.png:
+	* video-white.png:
+	* alert-black.svg:
+	* alert-white.svg:
+	* heart-white.svg:
+	* heart-black.svg:
+	* audio-black.svg:
+	* power-white.png:
+	* clock-black.png:
+	* clock-white.png:
+	* cloud-black.png:
+	* cloud-white.png:
+	* power-white.svg:
+	* power-black.svg:
+	* check-white.png:
+	* alert-white.png:
+	* video-white.svg:
+	* video-black.svg:
+	* audio-black.png:
+	* audio-white.png:
+	* check-black.png:
+	* phone-white.svg:
+	* phone-black.svg:
+	* minus-white.svg:
+	* alert-black.png:
+	* phone-white.png:
+	* minus-black.png:
+	* minus-white.png:
+	* phone-black.png:
+	* heart-white.png:
+	* minus-black.svg:
+	* heart-black.png:
+	* power-black.png:
+	* jquery.mobile.icons-1.4.5.min.css:
+	* camera-black.png:
+	* search-black.png:
+	* delete-white.svg:
+	* action-black.png:
+	* jquery.mobile.theme-1.4.5.min.css:
+	* jquery.mobile.structure-1.4.5.css:
+	* camera-white.svg:
+	* camera-black.svg:
+	* delete-black.svg:
+	* camera-white.png:
+	* search-white.png:
+	* delete-black.png:
+	* action-white.svg:
+	* action-black.svg:
+	* search-white.svg:
+	* action-white.png:
+	* search-black.svg:
+	* delete-white.png:
+	* jquery.mobile.inline-png-1.4.5.css:
+	* recycle-black.svg:
+	* jquery.mobile.inline-svg-1.4.5.css:
+	* refresh-white.svg:
+	* forward-black.svg:
+	* forward-white.svg:
+	* refresh-black.svg:
+	* recycle-white.svg:
+	* comment-white.svg:
+	* comment-black.svg:
+	* carat-u-white.svg:
+	* recycle-white.png:
+	* refresh-black.png:
+	* carat-d-black.png:
+	* refresh-white.png:
+	* arrow-d-black.svg:
+	* bullets-white.png:
+	* bullets-black.png:
+	* arrow-d-white.svg:
+	* arrow-l-black.svg:
+	* recycle-black.png:
+	* comment-black.png:
+	* carat-u-white.png:
+	* forward-black.png:
+	* forward-white.png:
+	* carat-u-black.png:
+	* carat-r-white.png:
+	* carat-r-black.png:
+	* carat-l-white.png:
+	* carat-l-black.png:
+	* carat-d-white.png:
+	* arrow-l-white.svg:
+	* bullets-black.svg:
+	* bullets-white.svg:
+	* arrow-d-white.png:
+	* arrow-d-black.png:
+	* carat-d-black.svg:
+	* carat-d-white.svg:
+	* carat-l-black.svg:
+	* carat-l-white.svg:
+	* carat-r-black.svg:
+	* carat-r-white.svg:
+	* carat-u-black.svg:
+	* arrow-u-white.svg:
+	* arrow-r-black.svg:
+	* arrow-r-white.svg:
+	* arrow-u-black.svg:
+	* arrow-u-white.png:
+	* arrow-u-black.png:
+	* comment-white.png:
+	* arrow-r-white.png:
+	* arrow-r-black.png:
+	* arrow-l-white.png:
+	* arrow-l-black.png:
+	* calendar-white.png:
+	* calendar-black.png:
+	* location-black.svg:
+	* location-white.svg:
+	* calendar-black.svg:
+	* location-white.png:
+	* location-black.png:
+	* calendar-white.svg:
+	* arrow-u-l-white.svg:
+	* forbidden-black.svg:
+	* arrow-d-r-black.png:
+	* forbidden-white.svg:
+	* jquery.mobile.external-png-1.4.5.css:
+	* arrow-u-r-black.svg:
+	* arrow-u-r-white.svg:
+	* arrow-d-l-black.png:
+	* arrow-d-r-white.png:
+	* arrow-d-l-white.png:
+	* arrow-u-l-black.png:
+	* forbidden-black.png:
+	* forbidden-white.png:
+	* arrow-d-l-black.svg:
+	* arrow-d-r-white.svg:
+	* arrow-d-l-white.svg:
+	* arrow-d-r-black.svg:
+	* arrow-u-r-black.png:
+	* arrow-u-r-white.png:
+	* arrow-u-l-black.svg:
+	* arrow-u-l-white.png:
+	* navigation-white.svg:
+	* navigation-black.svg:
+	* navigation-black.png:
+	* navigation-white.png:
+	* jquery.mobile.structure-1.4.5.min.css:
+	* jquery.mobile.inline-png-1.4.5.min.css:
+	* jquery.mobile.inline-svg-1.4.5.min.css:
+	* jquery.mobile.external-png-1.4.5.min.css: 
+
+	* style.css: donne une couleur au fond des panneaux de classes
+	"spanel", "xspanel" et "xxspanel"
+
+	* style.css: autorise de la largeur aux groupes de champs de
+	formulaire
+
+	* T.cs: Lève une exception à la demande de traduction d'une
+	chaine vide.
+	Celà permet entre autres de s'assurer que toutes les pages ont
+	un titre (sans quoi, on ne peut plus les visiter).
+
+	* yavsc.skills.js: La création d'une compétence demande
+	maintenant un code APE.
+
+	* Activities.aspx: Lien vers l'edition des compétences gérées
+	par le site
+
+	* ActivitySkills.aspx: Implemente la nouvelle creation des
+	compétences
+
+	* packages.config: Ajout du paquetage "jQuery.Mobile"
+
+
 2015-12-02  Paul Schneider  <paul@pschneider.fr>
 
 	* Skills.aspx: Précise la fonction de la methode par un titre

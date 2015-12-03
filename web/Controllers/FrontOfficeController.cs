@@ -21,6 +21,7 @@ using System.Web.Profile;
 using Yavsc.Model.Google.Api;
 using System.Net;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Controllers
 {
@@ -260,15 +261,25 @@ namespace Yavsc.Controllers
 			return View (model);
 		}
 
+		private void SetMEACodeViewData(string MEACode) {
+			var activities = WorkFlowManager.FindActivity ("%", false);
+			var items = new List<SelectListItem> ();
+			foreach (var a in activities) {
+				items.Add(new SelectListItem() { Selected = MEACode == a.Id, 
+					Text = string.Format("{1} : {0}",a.Title,a.Id), 
+					Value = a.Id });
+			}
+			ViewData ["MEACode"] = items;
+		}
+
 		/// <summary>
 		/// Skills the specified model.
 		/// </summary>
 		[Authorize (Roles = "Admin")]
-		public ActionResult Skills (string search)
+		public ActionResult ActivitySkills (string MEACode)
 		{
-			if (search == null)
-				search = "%";
-			var skills = SkillManager.FindSkill (search);
+			SetMEACodeViewData (MEACode);
+			var skills = SkillManager.FindSkill ("%",MEACode);
 			return View (skills);
 		}
 
@@ -297,13 +308,14 @@ namespace Yavsc.Controllers
 			return View (activities);
 		}
 
+
 		/// <summary>
 		/// Activity at the specified id.
 		/// </summary>
 		/// <param name="id">Identifier.</param>
-		public ActionResult Activity (string id)
+		public ActionResult Activity (string MEACode)
 		{
-			return View (WorkFlowManager.GetActivity (id));
+			return View (WorkFlowManager.GetActivity (MEACode));
 		}
 
 		/// <summary>

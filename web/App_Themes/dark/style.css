@@ -71,8 +71,11 @@ legend {
 .hiddenpost { background-color: rgba(16,16,16,0.5); }
 
 
-.panel,.bshpanel, aside {
-	background-color: rgba(20,20,20,.8); 
+.panel, .spanel, .bshpanel, .xspanel, .xxspanel, aside {
+	background-color: rgba(20,20,20,.6); 
+	border-color: rgb(128,128,128);
+	border-style: solid;
+	border-width: 1px;
 }
 
 .usertitleref {

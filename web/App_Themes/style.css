@@ -146,20 +146,28 @@ display:inline-block;
 	border-radius: 1em; 
 	padding: 1em;
 }
-.spanel, fieldset {
+.spanel {
   max-width: 18em;
     display: inline-block;
+	border-radius: 1.5em; 
+  padding: .3em;
+  }
+ fieldset {
+    display: inline-block;
+	border-radius: 1.5em; 
   padding: .3em;
 }
 .xspanel {
   max-width:13em;
   display: inline-block;
   padding:.2em;
+  border-radius: 1em; 
 }
 .xxspanel {
   max-width:7em;
   display: inline-block;
   padding:.1em;
+  border-radius: .5em; 
 }
 
 .hint {
@@ -395,7 +403,7 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 	.c3-alt { display:initial; }
 }
 
-@media all and (max-width: 350px) {
+@media all and (max-width: 380px) {
 header {
 	padding-top:.5em;
 	padding-bottom:.5em;
@@ -422,6 +430,8 @@ header h1, header a { padding:.2em;}
   }
   .c2 { display:none; }
   .c2-alt { display:initial; }
+
+  fa::children() { display:none; }
 }
 
 

@@ -35,6 +35,8 @@ namespace Yavsc.Helpers
 		/// <param name="text">Text.</param>
 		public static IHtmlString Translate(this HtmlHelper helper, object text)
 		{
+			if (string.IsNullOrWhiteSpace ((string)text))
+				throw new InvalidOperationException ("Empty text to translate");
 			// Just call the other one, to avoid having two copies (we don't use the HtmlHelper).
 			return new MvcHtmlString(helper.Encode(GetString((string)text)));
 		}

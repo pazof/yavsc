@@ -46,6 +46,7 @@
 	<data name="DoTag"><value>Tagger</value></data>
 	<data name="entries"><value>entrées</value></data>
 	<data name="Edit"><value>Éditer</value></data>
+	<data name="EditRelatedSkills"><value>Editer les compétences associées</value></data>
 	<data name="EndDate"><value>Date de fin</value></data>
 	<data name="EndHour"><value>Heure de fin</value></data>
 	<data name="Estimate_not_found"><value>Devis non trouvé</value></data>
