@@ -431,7 +431,6 @@ header h1, header a { padding:.2em;}
   .c2 { display:none; }
   .c2-alt { display:initial; }
 
-  fa::children() { display:none; }
 }
 
 

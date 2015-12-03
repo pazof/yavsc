@@ -1,4 +1,4 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<System.Web.Security.MembershipUserCollection>" MasterPageFile="~/Models/AppAdmin.master" %>
+<%@ Page Title="User_List" Language="C#" Inherits="System.Web.Mvc.ViewPage<System.Web.Security.MembershipUserCollection>" MasterPageFile="~/Models/AppAdmin.master" %>
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
 	<% Page.Title = LocalizedText.User_List; %>
 </asp:Content>

@@ -333,6 +333,16 @@ namespace Yavsc.Controllers
 			//      actually performed via the Web API :-°
 			// else if (ModelState.IsValid) {}
 			var usp = SkillManager.GetUserSkills (id);
+			var mea = usp.MEACode;
+			// TODO add a route parameter to the profile method,
+			// named "fs" (standing for fieldset)
+			// That filters the view in order to only edit the given fieldset
+
+			if (mea == "none")
+				YavscHelpers.Notify (ViewData, "Vous devez choisir une activité avant de pouvoir déclarer vos compétences " +
+				"(Editez la rubrique <a href=\"" +
+					Url.RouteUrl ("Default", new { controller = "Account", action = "Profile", id = User.Identity.Name, fs="infopub" }) + "\">Informations publiques</a> votre profile)");
+				
 			var skills = SkillManager.FindSkill ("%",usp.MEACode);
 			ViewData ["SiteSkills"] = skills;
 			return View (usp);

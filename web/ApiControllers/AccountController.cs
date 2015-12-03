@@ -107,6 +107,10 @@ namespace Yavsc.ApiControllers
 			}
 		}
 
+		/// <summary>
+		/// Adds the user to role.
+		/// </summary>
+		/// <param name="model">Model.</param>
 		[ValidateAjax]
 		[Authorize(Roles="Admin")]
 		public void AddUserToRole(UserRole model)
@@ -115,6 +119,10 @@ namespace Yavsc.ApiControllers
 				Roles.AddUserToRole (model.UserName, model.Role);
 		}
 
+		/// <summary>
+		/// Removes the user from role.
+		/// </summary>
+		/// <param name="model">Model.</param>
 		[ValidateAjax]
 		[Authorize(Roles="Admin")]
 		public void RemoveUserFromRole(UserRole model)

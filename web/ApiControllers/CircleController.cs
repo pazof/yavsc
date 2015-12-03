@@ -55,7 +55,7 @@ namespace Yavsc.ApiControllers
 		/// <param name="username">username.</param>
 		[Authorize,
 			AcceptVerbs ("POST")]
-		public void Add(long id, string username)
+		public void AddUserToCircle(long id, string username)
 		{
 			checkIsOwner (CircleManager.DefaultProvider.Get (id));
 			CircleManager.DefaultProvider.AddMember (id, username);
