@@ -1,3 +1,11 @@
+2015-12-09  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlCircleProvider.cs: liste les cercles auquels
+	appartient un utilisateur.
+
+	* NpgsqlContentProvider.cs: Les commandes sont fortement
+	typée.
+
 2015-11-30  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlContentProvider.csproj: ...

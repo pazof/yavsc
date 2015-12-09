@@ -22,6 +22,7 @@ using Yavsc.Model.Google.Api;
 using System.Net;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Model.Circles;
 
 namespace Yavsc.Controllers
 {
@@ -53,7 +54,7 @@ namespace Yavsc.Controllers
 		/// Estimates released to this client
 		/// </summary>
 		[Authorize]
-		public ActionResult Estimates (string client)
+		public ActionResult YourEstimates (string client)
 		{
 			var u = Membership.GetUser ();
 			if (u == null) // There was no redirection to any login page
@@ -94,7 +95,7 @@ namespace Yavsc.Controllers
 		/// <param name="model">Model.</param>
 		/// <param name="submit">Submit.</param>
 		[Authorize]
-		public ActionResult Estimate (Estimate model, string submit)
+		public ActionResult DoAnEstimate (Estimate model, string submit)
 		{
 			string username = Membership.GetUser ().UserName;
 			// Obsolete, set in master page
@@ -238,14 +239,23 @@ namespace Yavsc.Controllers
 		/// <param name="collection">Collection.</param>
 		[HttpPost]
 		[Authorize]
-		public ActionResult Command (FormCollection collection)
+		public ActionResult DoCommand (FormCollection collection)
 		{
 			try {
 				// Add specified product command to the basket,
 				// saves it in db
-				new Command (collection, HttpContext.Request.Files);
-				YavscHelpers.Notify (ViewData, LocalizedText.Item_added_to_basket);
-				return View (collection);
+				// 
+				// * check the validity of this request
+				// by finding the "type" parameter between
+				// the allowed command types
+				// * instanciate the given command type, passing it the form data
+				// * Make the workflow register this command
+				// * Render the resulting basket
+				var cmd = Command.CreateCommand (collection, HttpContext.Request.Files);
+				ViewData["Commanded"] = cmd; 
+				YavscHelpers.Notify (ViewData, 
+					LocalizedText.Item_added_to_basket);
+				return View ("Basket",WorkFlowManager.GetCommands (User.Identity.Name));
 			} catch (Exception e) {
 				YavscHelpers.Notify (ViewData, "Exception:" + e.Message);
 				return View (collection);
@@ -276,7 +286,7 @@ namespace Yavsc.Controllers
 		/// Skills the specified model.
 		/// </summary>
 		[Authorize (Roles = "Admin")]
-		public ActionResult ActivitySkills (string MEACode)
+		public ActionResult SiteSkills (string MEACode)
 		{
 			SetMEACodeViewData (MEACode);
 			var skills = SkillManager.FindSkill ("%",MEACode);
@@ -404,6 +414,7 @@ namespace Yavsc.Controllers
 		{
 			// assert (model.MEACode!=null), since it's the required part of the route data
 			var needs = SkillManager.FindSkill ("%", model.MEACode);
+			ViewBag.Activity = WorkFlowManager.GetActivity (model.MEACode);
 			var specification = new List<SkillRating> ();
 			ViewData ["Needs"] = needs;
 			if (model.Need != null) {
@@ -438,6 +449,7 @@ namespace Yavsc.Controllers
 						}
 					} else
 						result.Add (profile.CreateAvailability (model.PreferedDate, false));
+				ViewData["Circles"] = CircleManager.ListAvailableCircles(); 
 				return View ("Performers", result.ToArray ());
 			} 
 			if (model.Need==null) {

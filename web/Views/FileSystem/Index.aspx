@@ -4,9 +4,9 @@
  </h1>
 <ul>
 <% foreach (System.IO.FileInfo fi in Model) { %>
-<li>	<%= Html.ActionLink(fi.Name,"Details",new {id = fi.Name}) %> </li>
+<li>	<%= Html.TranslatedActionLink(fi.Name,"Details",new {id = fi.Name}) %> </li>
 <% } %>
 </ul>
 
-<%= Html.ActionLink("Ajouter des fichiers","Create") %>
+<%= Html.TranslatedActionLink("Ajouter des fichiers","Create") %>
 </asp:Content>

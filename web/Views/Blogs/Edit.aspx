@@ -13,28 +13,37 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
 <aside>
-	Id:<%= Html.ActionLink( Model.Id.ToString() , "UserPost", new { user= Model.Author, title=Model.Title, id = Model.Id }, new { @class = "usertitleref actionlink" }) %>
+	Id:<%= Html.TranslatedActionLink( Model.Id.ToString() , "UserPost", new { user= Model.Author, title=Model.Title, id = Model.Id }, new { @class = "usertitleref actionlink" }) %>
 , Posted: <%= Model.Posted.ToString("yyyy/MM/dd") %> - Modified: <%= Model.Modified.ToString("yyyy/MM/dd") %> 
-Visible: <%= Model.Visible? "oui":"non" %> <%= Html.ActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title, id = Model.Id }, new { @class="actionlink" } ) %>
+Visible: <%= Model.Visible? "oui":"non" %> <%= Html.TranslatedActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title, postid = Model.Id }, new { @class="actionlink" } ) %>
 </aside>
 
+<aside>
+
 <% using(Html.BeginForm("Edit","Blogs")) { %>
-<fieldset>
-<legend>Contrôle d'accès au Billet</legend>
-<%= Html.LabelFor(model => model.Visible) %> : <%= Html.CheckBox( "Visible" ) %> 
-<i id="note_visible">Note: Si un ou plusieurs cercles sont séléctionnés ici,
- le billet ne sera visible qu'aux membres de ces cercles.</i>
-<%= Html.ValidationMessage("Visible", "*") %>
-<%= Html.LabelFor(model => model.AllowedCircles) %>
+
+<fieldset class="mayhide">
+<legend>Attacher des fichiers</legend>
+<input type="file" name="attached" id="postedfile" multiple>
+<input type="button" value="attacher les ficher" onclick="submitFile()">
+<input type="button" value="importer les documents" onclick="submitImport()">
+</fieldset>
+
+<fieldset class="mayhide">
+<legend><i class="fa fa-lock"></i> <%= Html.Translate("BillAccessControl") %></legend>
+<label for="Visible"><i class="fa fa-eye"></i></label> : <%= Html.CheckBox( "Visible" ) %> 
+<%= Html.ValidationMessage("Visible", "*") %> <br>
+
+<label for="AllowedCircles"> <i class="fa fa-users"></i>  <%= Html.Translate("AllowedCircles") %>
+</label>
+<i class="hint">Note: Si un ou plusieurs cercles sont séléctionnés ici,
+ le billet ne sera visible qu'aux membres de ces cercles.</i><br>
+
 <%= Html.ListBox("AllowedCircles") %>
 <%= Html.ValidationMessage("AllowedCircles", "*") %>
 </fieldset>
-<span id="viewsource">
-<i class="fa fa-code menuitem"><%=Html.Translate("View_source")%></i></span>
-<span id="hidesource" class="hidden">
-<i class="fa fa-code menuitem"><%=Html.Translate("Hide_source")%></i>
-</span>
-<fieldset id="source" class="hidden">
+<fieldset  class="mayhide">
+<legend><i class="fa fa-code"></i><%=Html.Translate("BillSourceCode")%></legend>
 <%=Html.Hidden("Author")%>
 <%=Html.Hidden("Id")%>
 <%= Html.LabelFor(model => model.Photo) %>
@@ -46,17 +55,11 @@ Visible: <%= Model.Visible? "oui":"non" %> <%= Html.ActionLink("Supprimer","Remo
 <%=Html.TextArea("Content")%>
 <%=Html.ValidationMessage("Content")%>
 </fieldset>
-<input type="submit" id="validate" value="Valider" class="fa fa-check menuitem">
+<input type="submit" id="validate" class="actionlink">
+
 <% } %>
 
-<form id="frmajax">
-<fieldset>
-<legend>Attacher des fichiers</legend>
-<input type="file" name="attached" id="postedfile" multiple>
-<input type="button" value="attacher les ficher" onclick="submitFile()">
-<input type="button" value="importer les documents" onclick="submitImport()">
-</fieldset>
-</form>
+</aside>
 
 <span class="placard editable" for="Photo">
 <img src="<%=Model.Photo%>" alt="photo" id="vphoto" >
@@ -74,17 +77,6 @@ Visible: <%= Model.Visible? "oui":"non" %> <%= Html.ActionLink("Supprimer","Remo
 <script>
 
 $(document).ready(function(){
-
-	$('#hidesource').click(function(){
-	$('#source').addClass('hidden');
-	$('#viewsource').removeClass('hidden');
-	$('#hidesource').addClass('hidden');
-	});
-	$('#viewsource').click(function(){
-	$('#source').removeClass('hidden');
-	$('#viewsource').addClass('hidden');
-	$('#hidesource').removeClass('hidden');
-	});
 
 jQuery('.placard').hallo({plugins: {'hallo-image-insert-edit': { lang: 'fr' } } });
 
@@ -125,7 +117,7 @@ jQuery('#vcontent').hallo({
                 'tr',
                 'td',
                 'th',
-                'style'
+                'style',
                 ]
             },
     'halloblacklist': {tags: ['style']},
@@ -238,6 +230,12 @@ var data  = new FormData($('#frmajax').get()[0]);
 </script>
 
 
+<script>
+$(document).ready(function(){
+
+$('input').on('change',function(){$(this).addClass('dirty'); $('#validate').addClass('clickme');});
+});
+</script>
 
 
 </asp:Content>

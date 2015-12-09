@@ -38,6 +38,38 @@ namespace WorkFlowProvider
 	{
 		#region implemented abstract members of CircleProvider
 		/// <summary>
+		/// Circles the specified ownername and username.
+		/// </summary>
+		/// <param name="ownername">Ownername.</param>
+		/// <param name="username">Username.</param>
+		public override string[] Circles (string ownername, string username)
+		{
+			List<string> circles = new List<string> ();
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) {
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = @"select c.title from circle c, circle_members m
+	where c.owner = :wnr 
+	and c._id = m.circle_id 
+	and m.member = :user
+and m.applicationname = :app
+";
+					cmd.Parameters.AddWithValue ("wnr",ownername);
+					cmd.Parameters.AddWithValue ("user",username);
+					cmd.Parameters.AddWithValue ("app",applicationName);
+					cnx.Open ();
+					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
+						if (rdr.HasRows) while (rdr.Read ()) 
+							circles.Add (rdr.GetString (0));
+						rdr.Close ();
+					}
+				}
+				cnx.Close ();
+			}
+			return circles.ToArray();
+		}
+
+
+		/// <summary>
 		/// Updates the circle.
 		/// </summary>
 		/// <param name="c">C.</param>

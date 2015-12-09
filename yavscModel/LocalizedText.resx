@@ -13,6 +13,9 @@
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader> 
 
+	<data name="About"><value>About</value></data>
+	<data name="AboutContent"><value>I'm a french developer base in Suresnes, near Paris, 
+   I mainly release some mobile applications for mobiles.</value></data>
 	<data name="additionally"><value>additionally</value></data>
 	<data name="access_denied"><value>Access denied</value></data>
 	<data name="Activities"><value>Activities</value></data>
@@ -22,25 +25,28 @@
 	<data name="AuthenticatedOnly"><value>You must be authenticated in order to access this information</value></data>
 	<data name="Bill_edition"><value>Bill edition</value></data>
 	<data name="Bill_removal"><value>Bill removal</value></data>
+	<data name="BillAccessControl"><value>Bill access control</value></data>
 	<data name="BillCreated"><value>Bill created</value></data>
+	<data name="BillSourceCode"><value>Bill source code</value></data>
 	<data name="BillUpdated"><value>Bill updated</value></data>
 	<data name="BookingTitleArtiste"><value>Book an artiste</value></data>
 	<data name="BookingTitle6829C"><value>Book a software editor</value></data>
+	<data name="Catalog"><value>Catalog</value></data>
 	<data name="Create"><value>Create</value></data>
 	<data name="Count"><value>Count</value></data>
 	<data name="ChooseADescription"><value>Please, choose a description</value></data>
 	<data name="ChooseATitle"><value>Please, choose a title</value></data>
 	<data name="ChooseADateInTheFutur"><value>Please, Choose A Date In The Futur</value></data>
-
 	<data name="Ciffer"><value>Ciffer</value></data>
 	<data name="Circles"><value>Circles</value></data>
-	<data name="Consultant"><value>Consultant</value></data>
 	<data name="Comment"><value>Comment</value></data>
+	<data name="Consultant"><value>Consultant</value></data>
 	<data name="Count"><value>Count</value></data>
+	<data name="Date_search"><value>Date search</value></data>
 	<data name="DB"><value>Data base</value></data>
-	<data name="Date_search"><value>Rendez-vous query</value></data>
 	<data name="Description"><value>Description</value></data>
 	<data name="DisplayName"><value>Display Name</value></data>
+	<data name="DoAnEstimate"><value>Do an estimate</value></data>
 	<data name="DocTemplateException"><value>Exception occured when rendering your document</value></data>
 	<data name="DoNotPublishMyActivity"><value>Do Not Publish My Activity</value></data>
 	<data name="DoSpecifyCircles"><value>Please, specify circles for audiance</value></data>
@@ -48,26 +54,30 @@
 	<data name="DuplicateEmail"><value>This email adress is already used ({0}).</value></data>
 	<data name="DuplicateUserName"><value>This user name is already used ({0}).</value></data>
 	<data name="Edit"><value>Edit</value></data>
+	<data name="Edited"><value>Edited</value></data>
 	<data name="EditRelatedSkills"><value>Edit related skills</value></data>
 	<data name="EndHour"><value>End hour</value></data>
 	<data name="EndDate"><value>End date</value></data>
+	<data name="entries"><value>entries</value></data>
     <data name="Estimate_not_found"><value>Estimate not found</value></data>
 	<data name="EventWebPage"><value>Event Web page</value></data>
 	<data name="ExistantDB"><value>Existant data base</value></data>
 	<data name="FillInAFutureDate"><value>Please, use a date in the future as starting date.</value></data>
+	<data name="from"><value>from</value></data>
 	<data name="Home"><value>Home</value></data>
 	<data name="Hide"><value>Hide</value></data>
 	<data name="hidden"><value>hidden</value></data>
 	<data name="Hide_source"><value>Hide the bill source text</value></data>
-	<data name="entries"><value>entries</value></data>
 	<data name="Google_calendar"><value>Google calendar</value></data>
 	<data name="Google_calendar_"><value>Google calendar</value></data>
 	<data name="Google_error"><value>Google error : {0}</value></data>
 	<data name="Google_registration_id"><value>Google registration id</value></data>
 	<data name="I_understood"><value>I understood</value></data>
+	<data name="Icons_made_by"><value>Icons made by</value></data>
 	<data name="InternalServerError"><value>Internal Server Error</value></data>
 	<data name="ImgLocator"><value>Image URI</value></data>
 	<data name="ImportException"><value>Exception at importing</value></data>
+	<data name="is_licensed_by"><value>is licensed by</value></data>
     <data name="Item_added_to_basket"><value>Item added to basket</value></data>
 	<data name="Location"><value>Location</value></data>
 	<data name="Logout"><value>Logout</value></data>
@@ -97,6 +107,7 @@
 	<data name="Person"><value>Person</value></data>
 	<data name="Photo"><value>Photo</value></data>
 	<data name="PhotoUpdated"><value>Photo updated</value></data>
+	<data name="Posted"><value>Posted</value></data>
 	<data name="PreferedDate"><value>Prefered date</value></data>
 	<data name="Preview"><value>Preview</value><comment>comment on preview</comment></data>
 	<data name="Private_circle"><value>Private circle</value></data>
@@ -110,18 +121,21 @@
 	<data name="Remove"><value>Remove</value></data>
 	<data name="Role"><value>Role</value></data>
 	<data name="role_created"><value>role created</value></data>
+	<data name="Search"><value>Search</value></data>
+	<data name="SiteSkills"><value>Talents/Compétences/Spécialités gérés sur ce site</value></data>
 	<data name="Skill"><value>Skill</value></data>
 	<data name="Skills"><value>Skills</value></data>
 	<data name="StartDate"><value>Start date</value></data>
 	<data name="Submit"><value>Submit</value></data>
+	<data name="SubmitChanges"><value>Submit changes</value></data>
 	<data name="StartHour"><value>Start hour</value></data>
 	<data name="StartDate"><value>Start date</value></data>
 	<data name="StartDateAfterEndDate"><value>The ending date must be later than the starting one.</value></data>
 	<data name="Tag_name"><value>Tag name</value></data>
 	<data name="Tex_version"><value>LaTeX version</value></data>
 	<data name="ThisSiteUsesCookies"><value>This site uses cookies</value></data>
-	<data name="ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailable"><value>ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailable</value></data>
-	<data name="ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailable"><value>ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailable</value></data>
+	<data name="ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailableThis"><value>ThisPerformer Gives access to his calendar and seems to be available this</value></data>
+	<data name="ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis"><value>This performer gives access to his calendar and it appears he should not be available this</value></data>
 	<data name="ThisPerformerDoesntGiveAccessToHisCalendar"><value>ThisPerformerDoesntGiveAccessToHisCalendar</value></data>
 	<data name="Title"><value>Title</value></data>
 	<data name="Unitary_cost"><value>Unitary_cost</value></data>
@@ -138,9 +152,10 @@
 	<data name="Xshouldbeavailable"><value>regarding his calendar, 
 	{0} should be available for this booking</value></data>
 	<data name="younotadmin"><value>You're not administrator</value></data>
+	<data name="YourEstimates"><value>Your estimates</value></data>
 	<data name="YourMEACode"><value>Your activity</value></data>
 	<data name="YourNeed"><value>Your need</value></data>
-	<data name="YourSkills"><value>Vos talents, vos spécialités, le domaine de vos activités</value></data>
 	<data name="yourquerytransmitted"><value>your query has been transmitted</value></data>
+	<data name="YourSkills"><value>Your skills, your special fields, the scope of your activities</value></data>
 
 </root>

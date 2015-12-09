@@ -24,7 +24,7 @@ Page.StyleSheetTheme = (string) Profile.UITheme; %>
 <script type="text/javascript">
 var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
  $(document).ready(function(){ 
-  $('[data-type="rate-bill"]').rate({target: 'Blogs/Rate'});
+  $('[data-type="rate-bill"]').rate({webTarget: 'Blogs/Rate'});
  });
 </script> 
 <%=Ajax.YaGlobalizationScript()%>
@@ -36,10 +36,11 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 </asp:ContentPlaceHolder>
 </head>
 <body>
-<header data-type="background" data-speed="8" >
+
+<header >
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
-<h1><a href="<%= Url.RouteUrl("Default") %>">
-<%=ViewState["orgtitle"]%></a>
+<h1>
+<%=ViewState["orgtitle"]%>
 - <a href="<%= Url.RouteUrl("Default", new {controller = "Home" , action = "Index" }) %>"><%= YavscHelpers.SiteName %></a>
 </h1>
  </asp:ContentPlaceHolder>
@@ -56,36 +57,39 @@ else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>, <%=note.click_acti
 </script>
 <% } %>
 </header>
-<nav data-type="background" data-speed="5">
+<nav >
 <% if (Membership.GetUser()==null) { %>
-<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" class="menuitem" accesskey = "C">
-<i class="fa fa-sign-in">Connexion</i> 
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" class="link" accesskey = "C">
+<i class="fa fa-sign-in"></i> Connexion
 </a>
 <% } else { %>
-<a href="<%=Url.RouteUrl("Blogs", new { user = HttpContext.Current.User.Identity.Name } )%>" accesskey = "B" class="menuitem fa" >
+<a href="<%=Url.RouteUrl("Blogs", new { user = HttpContext.Current.User.Identity.Name } )%>" accesskey = "B" class="link" >
 <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="" class="iconsmall" />
 Vos billets
 </a>
-<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Profile", id = HttpContext.Current.User.Identity.Name} ) %>" accesskey="P" class="menuitem fa fa-user">
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Profile", id = HttpContext.Current.User.Identity.Name} ) %>" accesskey="P" class="link ">
+<i class="fa fa-user"></i>
 <%= HttpContext.Current.User.Identity.Name %>
 <span class="hint"> &Eacute;dition de votre profile </span>
 </a>
-<a href="/Blogs/Post" accesskey="P" class="menuitem fa fa-pencil">
+<a href="/Blogs/Post" accesskey="P" class="link">
+<i class="fa fa-pencil"></i>
 <u>P</u>oster
 <span class="hint">&Eacute;dition d'un nouveau billet </span>
 </a>
 
-<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Logout", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C" class="menuitem fa fa-sign-out">
+<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Logout", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C" class="link">
+<i class="fa fa-sign-out"></i>
 <%=Html.Translate("Logout")%></a> 
 <% } %>
 </nav>
-<main data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="22" >
+<main>
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
 </main>
-<footer data-type="background" data-speed="5" >
+<footer>
 
-<%= Html.ActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
+<%= Html.TranslatedActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
 
 <div id="copyr">
 <a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">
@@ -93,5 +97,11 @@ Vos billets
 </div>
 
 </footer><div class="modal"></div>
+<script>
+$(document).ready(function() {
+$('fieldset.mayhide').hidefieldset();
+ $( "a" ).append("<div class='aback'></div>").append("<div class='bback'></div>");
+   });
+</script>
 </body>
 </html>

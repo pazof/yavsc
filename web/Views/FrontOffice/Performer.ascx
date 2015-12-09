@@ -1,29 +1,41 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PerformerProfile>" %>
+<% ViewBag.BlogCounter = BlogManager.GetPostCounter(Model.UserName); %>
+<% ViewBag.WithinCircles = CircleManager.Circles(Model.UserName); %>
 <div class="performer">
 <h2>
 <img src="<%= Model.Avatar %>" alt="" class="bigavatar"> 
-<%=Html.Encode(Model.UserName)%> 
+<span class="username" data-type="user" data-roles="" data-blog-counter="<%=ViewBag.BlogCounter%>" data-circles="" ><%=Html.Encode(Model.UserName)%></span>
 <%=Html.Partial("RateUserSkillControl", Model) %>
 </h2>
-<p>
-<i class="fa fa-envelope"> 
+<address>
  <% if (Membership.GetUser()!=null) { %>
+<a href="mailto:<%=Model.EMail%>">
+<i class="fa fa-envelope"></i>
 &lt;<%=Html.Encode(Model.EMail)%>&gt;
- <% } else { %><%=Html.LabelFor(m => m.EMail)%>:
- <i><%= Html.Translate("AuthenticatedOnly") %></i>
+</a>
+ <% } else { %>
+ <i class="fa fa-envelope"></i>
+ <%=Html.LabelFor(m => m.EMail)%>:
+ <%= Html.Translate("AuthenticatedOnly") %>
  <% }%>
- </i>
- </p>
+</address>
 
 <% if (Model.Skills==null) { %>
-<%= Html.Translate("") %>
-  <% } else 
-foreach (var userskill in Model.Skills) { %>
+Cet utilisateur n'a pas saisi de compétence particulière ...
+  <% } else if (Model.Skills.Count()>0) { %>
+
+  <ul style="padding:0; margin:0;"> <% foreach (var userskill in Model.Skills) { %>
 <li class="skillname" data-sid="<%= userskill.Id %>">
 <%= userskill.SkillName %> 
-<div data-type="comment">&quot;<%= userskill.Comment %>&quot;</div>
+<% if (!string.IsNullOrWhiteSpace(userskill.Comment)) { %>
+<div data-type="comment">
+&quot;<%= userskill.Comment %>&quot;
+</div><% } %>
  <%=Html.Partial("RateUserSkillControl", userskill) %>
-</li>
+ </li>
+<% } %>
+</ul>
+
 <% } %>
 <% if (Model.HasCalendar()) { %>
 <i class="fa fa-calendar-check" ><%= Html.Translate("Google_calendar") %> : <%= Html.Translate("available") %>.</i><br>
@@ -31,5 +43,9 @@ foreach (var userskill in Model.Skills) { %>
 <% if (BlogManager.GetPostCounter(Model.UserName)>0) { %>
 <a href="<%=Url.RouteUrl("Blogs",new { user = Model.UserName } )%>">
   <i class="fa fa-folder"><%=Model.BlogTitle %></i>
-</a></div>
+</a>
 <% } %>
+
+
+
+</div>

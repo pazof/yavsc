@@ -66,10 +66,15 @@ namespace Yavsc.Model.Circles
 		/// </summary>
 		/// <param name="id">Identifier.</param>
 		public abstract CircleBase Get (long id);
-
+		/// <summary>
+		/// Gets the identifier.
+		/// </summary>
+		/// <returns>The identifier.</returns>
+		/// <param name="circle">Circle.</param>
+		/// <param name="username">Username.</param>
 		public abstract long GetId (string circle, string username);
 		/// <summary>
-		/// List circle's user.
+		/// List user's circles.
 		/// </summary>
 		public abstract IEnumerable<CircleBase> List(string user);
 
@@ -80,6 +85,8 @@ namespace Yavsc.Model.Circles
 		/// <param name="circle_ids">circles to look at</param>
 		/// <param name="member">Username to look for in the circles</param>
 		public abstract bool Matches(long [] circle_ids, string member);
+
+		public abstract string [] Circles(string ownername, string username);
 
 		/// <summary>
 		/// Removes the membership.

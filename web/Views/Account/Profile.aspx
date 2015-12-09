@@ -10,8 +10,8 @@
      %><aside>This user is Admin.</aside>
    <% } %>  
    <aside>
-   <%= Html.ActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
-   <%= Html.ActionLink("Désincription", "Unregister", "Account",  new { id = ViewData["UserName"] } , new { @class="actionlink" })%>
+   <%= Html.TranslatedActionLink("Changer de mot de passe","ChangePassword", "Account",null, new { @class="actionlink" })%>
+   <%= Html.TranslatedActionLink("Désincription", "Unregister", "Account",  new { id = ViewData["UserName"] } , new { @class="actionlink" })%>
    </aside>
    <aside>
    <code>Compte bancaire:<%= Model.HasBankAccount %></code>
@@ -29,7 +29,7 @@
   <%= Html.ValidationSummary() %>
  <%= Html.Hidden("UserName",ViewData["ProfileUserName"]) %>
 
-   <fieldset><legend>Informations publiques 
+   <fieldset class="mayhide"><legend>Informations publiques 
   <i>
    <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="avatar" class="avatar" />
    <%=Html.Encode(Model.UserName)%> APE:<%=Model.MEACode%> <%=Model.WebSite%> </i></legend>
@@ -56,7 +56,7 @@ Avatar :
 </span>
 </fieldset>
 
-<fieldset><legend>Informations administratives
+<fieldset class="mayhide"><legend>Informations administratives
 <i><%= string.IsNullOrWhiteSpace(Model.Name)?"KO":Html.Encode(Model.Name) %>
 </i>
 </legend>
@@ -66,7 +66,7 @@ Avatar :
 <%= Html.ValidationMessage("Name", "*") %></span>
 </fieldset>
 
-    <fieldset><legend>Blog <i><%=Html.Encode(Model.BlogTitle)%>
+    <fieldset class="mayhide"><legend>Blog <i><%=Html.Encode(Model.BlogTitle)%>
     <%= Model.BlogVisible?null:Html.Translate("hidden") %>
     </i></legend>
 <div class="spanel">
@@ -81,7 +81,7 @@ Avatar :
 </div>
    </fieldset>
 
-    <fieldset><legend>Contact
+    <fieldset class="mayhide"><legend>Contact
     <i><%=Html.Encode(Model.Phone)%> <%=Html.Encode(Model.Mobile)%> 
     <%=Html.Encode(Model.HasPostalAddress?"adresse OK":"adresse KO")%></i>
     </legend>
@@ -111,30 +111,35 @@ Avatar :
 <%= Html.ValidationMessage("Country", "*") %>
 </div>
 </fieldset>
-<fieldset><legend>Disponibilité
+<fieldset class="mayhide"><legend>Profile préstataire</legend>
+
+<fieldset class="mayhide"><legend>Disponibilité
 <i><%=Html.Encode(
     string.IsNullOrWhiteSpace(Model.GoogleCalendar)?"KO":"OK")%></i></legend>
 <div class="spanel">
    <%= Html.LabelFor(model => model.GoogleCalendar) %> :
    
     <%= Html.Encode(Model.GoogleCalendar) %>
-   <%= Html.ActionLink("Choisir l'agenda","ChooseCalendar","Google",new { returnUrl= Request.Url.AbsolutePath }, new { @class="actionlink" }) %>
+   <%= Html.TranslatedActionLink("Choisir l'agenda","ChooseCalendar","Google",new { returnUrl= Request.Url.AbsolutePath }, new { @class="actionlink" }) %>
 </div></fieldset>
-<fieldset><legend>Informations de facturation
+<fieldset class="mayhide"><legend>Informations de facturation
 <i> <%=Html.Encode(Model.HasBankAccount?"OK":"KO")%> </i>
 </legend>
 
+<p>Saisissez ici vos informations de facturation.</p>
+
+<fieldset class="mayhide">
+<legend>Par le numéro de compte</legend>
 <div class="spanel">
 <%= Html.LabelFor(model => model.BankCode) %> :
 <%= Html.TextBox("BankCode") %>
 <%= Html.ValidationMessage("BankCode", "*") %>
-</div><div class="spanel">
-
+</div>
+<div class="spanel">
 <%= Html.LabelFor(model => model.WicketCode) %> :
 <%= Html.TextBox("WicketCode") %>
 <%= Html.ValidationMessage("WicketCode", "*") %>
 </div><div class="spanel">
-   
 <%= Html.LabelFor(model => model.AccountNumber) %> :
 <%= Html.TextBox("AccountNumber") %>
 <%= Html.ValidationMessage("AccountNumber", "*") %>
@@ -142,7 +147,11 @@ Avatar :
 <%= Html.LabelFor(model => model.BankedKey) %> :  
 <%= Html.TextBox("BankedKey") %>
 <%= Html.ValidationMessage("BankedKey", "*") %>
-</div><div class="spanel">
+</div>
+</fieldset>
+<fieldset class="mayhide">
+<legend>Par codes BIC et IBAN</legend>
+<div class="spanel">
 <%= Html.LabelFor(model => model.BIC) %> :
 <%= Html.TextBox("BIC") %>
 <%= Html.ValidationMessage("BIC", "*") %>
@@ -152,7 +161,11 @@ Avatar :
 <%= Html.ValidationMessage("IBAN", "*") %>
 </div>
 </fieldset>
-<fieldset><legend>Interface utilisateur
+</fieldset>
+
+</fieldset>
+
+<fieldset class="mayhide"><legend>Interface utilisateur
 <i> <%=Html.Encode(Model.UITheme)%> </i>
 </legend>
 <span>
@@ -161,11 +174,11 @@ Avatar :
 <%= Html.ValidationMessage("UITheme", "*") %></span>
 
 </fieldset>
-<input type="submit"/>
+<input type="submit" id="submit" value="<%=Html.Translate("SubmitChanges")%>" />
 <% } %>
 <script>
 $(document).ready(function(){
-$('fieldset').hidefieldset();
+$('input').on('change',function(){$(this).addClass('dirty'); $('#submit').addClass('clickme');});
 });
 </script>
 </asp:Content>

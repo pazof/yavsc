@@ -6,6 +6,7 @@ using Yavsc.Model.FileSystem;
 using System.Web;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 
 namespace Yavsc.Model.FrontOffice
@@ -13,7 +14,7 @@ namespace Yavsc.Model.FrontOffice
 	/// <summary>
 	/// Commande.
 	/// </summary>
-	public class Command
+	public abstract class Command
 	{
 		/// <summary>
 		/// Gets or sets the creation date.
@@ -55,12 +56,13 @@ namespace Yavsc.Model.FrontOffice
 		public Command()
 		{
 		}
+
 		/// <summary>
 		/// Froms the post.
 		/// </summary>
 		/// <param name="collection">Collection.</param>
 		/// <param name="files">Files.</param>
-		public void FromPost(NameValueCollection collection, NameObjectCollectionBase files)
+		private void FromPost(NameValueCollection collection, NameObjectCollectionBase files)
 		{
 			// string catref=collection["catref"]; // Catalog Url from which formdata has been built
 			ProductRef=collection["ref"]; // Required product reference
@@ -83,11 +85,25 @@ namespace Yavsc.Model.FrontOffice
 		/// </summary>
 		/// <param name="collection">Collection.</param>
 		/// <param name="files">Files.</param>
-		public Command (NameValueCollection collection, NameObjectCollectionBase files)
+		public static Command CreateCommand (NameValueCollection collection, NameObjectCollectionBase files)
 		{
-			FromPost (collection, files);
+			var cmd = CreateCommand (collection ["type"]);
+			cmd.FromPost (collection, files);
+			return cmd;
 		}
 
+		/// <summary>
+		/// Creates the command.
+		/// </summary>
+		/// <returns>The command.</returns>
+		/// <param name="className">Class name.</param>
+		public static Command CreateCommand (string className)
+		{
+			var type = Type.GetType (className);
+			ConstructorInfo ci = type.GetConstructor(new Type[]{});
+			var cmd = ci.Invoke (new object[]{}) as Command;
+			return cmd;
+		}
 	}
 }
 

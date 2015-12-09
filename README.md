@@ -18,8 +18,11 @@ yavsc
    * Si c'est un préstataire, et si on est pas déjà dans un formulaire de reservation, 
      un lien vers la reservation de ses services
 
-  Et Donner des descriptions textuelles au cotes (ex: dans le cadre d'un prestataire, ses 5 cotes seraient 
+
+1.1) Donner des descriptions textuelles au cotes (ex: dans le cadre d'un prestataire, ses 5 cotes seraient 
 par exemple "Nouvelle star" "Artiste local" "Artiste régional" "Star nationale" "Star internationale"
+
+1.2) Concevoir un objet Contact listant les point d'accès par protocol (email, http, sip, irc, téléphone, adresse postale ...)
 
 2) Refabrication de l'Api :
 

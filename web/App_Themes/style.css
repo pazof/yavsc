@@ -1,4 +1,4 @@
-
+@import url(/App_Themes/animate.css);
 body {
 	padding: 0;
 	margin: 0;
@@ -11,42 +11,38 @@ body.loading .modal {
     display: block;
 }
 .rate {
-	border-radius:1em;
 	border-style: solid;
 	border-width: 1px;
-	padding:.2em;
+	margin:.1em;
+	padding:.1em;
 	display: inline-block;
+	width:5em;
+	text-align:center; 
 }
 
 header {
 	transition: margin 2s, padding 2s;
-	padding: 0;
+	padding: 2em;
 	margin: 0;
-	padding-top: 2em;
-	padding-bottom:2em;
-	display: block;
 	}
 
-header h1, header a {
-	transition:padding 2s;
-	margin:0; padding:1em;
+header h1 {
+	transition: padding 2s;
 }
 
 nav {
-transition: margin 2s, padding 2s;
-	margin: 2em;
+   transition: margin 2s, size 2s;
 	padding: 2em;
-	display: block;
-	border-radius:1em;
 	justify-content: space-around;
 }
-
+div { 
+	vertical-align: text-top;
+	transition: margin 2s, padding 2s, height 2s; }
 main {
 	transition: margin 2s, padding 2s;
 	margin: 2em;
 	padding: 2em;
 	display: block;
-	border-radius:1em;
 }
 main video, main img {
 	max-width:100%;
@@ -56,7 +52,6 @@ main video, main img {
 
 footer {
 	transition: margin 2s, padding 2s;
-	margin: 2em;
 	padding: 2em;
 	display: block;
 	clear: both;
@@ -71,7 +66,7 @@ footer img { max-height: 3em; vertical-align: middle; }
 a img, h1 img, .menuitem img  { vertical-align: middle; }
 
 fieldset {
-	border-radius:5px; border-style: solid; 
+	border-style: solid; 
 	border-width: 1px;
 } 
 aside { 
@@ -101,6 +96,8 @@ ul.preview li:nth-child(n) {
     overflow:   auto; 
 }
 
+.switch { cursor: pointer; }
+
 .dispmodal {
     position:   fixed;
     z-index:    1000;
@@ -113,20 +110,13 @@ ul.preview li:nth-child(n) {
     overflow-x:   hidden; 
 }
 
-.postpreview {
-	display: inline-block;
-	max-width: 40em;
-	padding: 1em;
-	border-radius:1em;
-}
 .postpreview video, .postpreview img {
-	max-width: 100%;
-	padding: 1em;
+	max-height: 3em;
+	padding: .3em;
 	}
 .post { 
 	display:block;
 	padding: 1em;
-	border-radius:1em;
 	}
 
 .fullwidth { width: 100%;  }
@@ -139,35 +129,22 @@ textarea.fullwidth { min-height:10em; }
 	display:inline;
 	bottom:0;
 }
-.panel { 
-display:inline-block;
-  }
-.panel,.bshpanel, aside {
-	border-radius: 1em; 
-	padding: 1em;
-}
+
 .spanel {
   max-width: 18em;
     display: inline-block;
-	border-radius: 1.5em; 
-  padding: .3em;
   }
  fieldset {
     display: inline-block;
-	border-radius: 1.5em; 
   padding: .3em;
 }
 .xspanel {
   max-width:13em;
   display: inline-block;
-  padding:.2em;
-  border-radius: 1em; 
 }
 .xxspanel {
   max-width:7em;
   display: inline-block;
-  padding:.1em;
-  border-radius: .5em; 
 }
 
 .hint {
@@ -175,21 +152,22 @@ display:inline-block;
 	font-style: italic;
 	font-size: smaller;
 }
+
 .hint::before { 
 content: "(";
 }
+
 .hint::after { 
 content: ")";
 }
 
 .usertitleref {
-	border-radius: 1em;
 	padding: 1em;
 }
+
 .editable {
 	margin: .5em; 
 	min-height:1em; 
-	border-radius: 1em; 
 	border-style: dashed;
 	border-width: 2px; 
 }
@@ -199,16 +177,15 @@ content: ")";
 	border-style: solid;
 	border-width: 1px;
 	padding: 1em;
-	border-radius:1em;
 	margin:1em;
 	padding:1em;
 	}
+
 .error, #error {
 	font-size: large;
 }
+
 .hidden { display:none; }
-
-
 
 .iconsmall { max-height: 1.3em; max-width: 1.3em; } 
 
@@ -219,7 +196,6 @@ content: ")";
 nav li { display: inline-block; }
 
 footer a {
-	border-radius:1em;
 	padding:1em;
   }
 
@@ -230,35 +206,23 @@ a img, h1 img, .menuitem img  { vertical-align: middle; }
 
 
 legend {
-	border-radius:5px;
 	padding:.5em;
   }
 
 #copyr { text-align: center; display: block;  }
 
 #gspacer { 
-	border-radius:1em;
 	margin:1em; padding:1em; 
 	display: inline-block }
 
-.actionlink, .menuitem, a {
-   display:inline-block;
-	border-radius:1em;
+input, select, textarea { 
 	border-style: solid;
 	border-width:1px;
-   cursor: pointer;
-	padding: 1em;
 }
 
-input, select, textarea { 
-	border-radius:1em;
-	border-style: solid;
-	border-width:1px;
-}
 
 .code {
 	font-family: "monospace";
-	border-radius:25px;
 	white-space: pre-wrap;
 }
 .bigavatar{ 
@@ -271,44 +235,38 @@ input, select, textarea {
  }
 
 .comment {
-	border-radius:25px;
 	font-size: smaller;
 	}
 
-.onhover {
-	display:none; 
-	position: absolute;
+.username {
+	border-style: solid;
+	border-width: 1px;
+	font-size: large;
+	font-weight: bold;
+	display: inline-block; 
+	animation-name: wobble;
+    animation-duration: 4s;
+    animation-iteration-count: 1;
+    padding:1em;
 }
 
-.ohafter:hover + .onhover, .ohinside:hover > .onhover {
-   display:block; 
-   z-index:2; 
-	 padding:5px; margin:5px;
-   background-color: rgba(0,0,40,.8); 
-}
-.skillname, .performer, .usercard, .pagelink { 
+.skillname,  .pagelink { 
 	padding:.5em;
 	margin:.25em;
 	max-width: 24em; 
 	text-align: center;
 	display: inline-block; 
-	border-radius:1em;
 	border-style: solid;
 	border-width: 1px;
 	font-size: large;
 } 
-
-.input-validation-error { border: solid 1px red; background-color: rgba(180,256,256,.5); }
-
-.field-validation-error { color: red; background-color: rgba(180,256,256,.5); }
+.performer , .availability { text-align: center; padding: 1em; }
 
 .c2 { font-size: small; font-style: italic; }
 
 .c3 { font-size: x-small; font-style: italic; }
 
-.rate { 
-	display:inline-bloc; width:5em; cursor: pointer; text-align:center; 
-	}
+
 h2 select { font-size: large; }
 
 ul.editablelist { 
@@ -319,45 +277,47 @@ ul.editablelist>li {
 	margin:.5em;
 	padding:.2em;
 	border: solid grey 1px;
-	border-radius: 1em;
+	cursor:pointer;
 }
 
-ul.editablelist>li:before { 
+ul.editablelist>li:after { 
   font-family: 'FontAwesome';
-  content: "\f007";
+  content: " ";
 }
 
 ul.editablelist>li:hover { 
 	background-color: rgba(128,0,0,0.5);
-	cursor:pointer;
 }
 
-ul.editablelist>li:hover:before { 
+ul.editablelist>li:hover:after { 
   font-family: 'FontAwesome';
   content: "\f00d";
 }
-
-@media print {
-		body {background-color:white;color:black;}
-		.control, .actionlink,  .menuitem, nav { display:none;} 
-	}
-
-  .bshpanel { display: inline-block; }
   .bsh { display: none; }
   .c3 { display:initial; }
   .c3-alt { display:none; }
 
-@media all and (max-width: 640px) {
-header {
-	padding-top:1em;
-	padding-bottom:1em;
+  @media all and (min-width: 640px) {
+
+div.panel { 
+	display:inline-block;
+	} 
+
+}
+.high-z-index { z-index: 99; }
+
+@media print {
+		body {background-color:white;color:black;}
+		.control, nav { display:none;} 
 	}
+
+@media all and (max-width: 640px) {
+
 		
 #avatar { 
  	margin:.5em;
  }
 
-header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 
 	nav {
 	margin: 1em;
@@ -372,22 +332,19 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 	padding: 1em;
 	} 
 	footer a {
-	border-radius:.5em;
 	margin:.5em;
 	padding:.5em;
   }
 
   .notification { 
 	padding: .5em;
-	border-radius:.5em;
 	margin:.5em;
 	padding:.5em;
 	max-height: 100%;
 	overflow-y: auto;
  }
-	.menuitem {
-		display: block; 
-	}
+	.menuitem { display: block; }
+
 	.post { 
 	margin:.3em;
 	padding:.3em;
@@ -404,10 +361,7 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 }
 
 @media all and (max-width: 380px) {
-header {
-	padding-top:.5em;
-	padding-bottom:.5em;
- }
+
 
 header h1, header a { padding:.2em;}
 
@@ -415,6 +369,7 @@ header h1, header a { padding:.2em;}
 	margin: .5em;
 		padding: .5em;
 	}
+
 	main { 
 	margin: .5em;
 	    padding: .5em;
@@ -424,7 +379,6 @@ header h1, header a { padding:.2em;}
 	    padding: .5em;
 	} 
 	footer a {
-	border-radius:.2em;
 	margin:.2em;
 	padding:.2em;
   }
@@ -432,5 +386,4 @@ header h1, header a { padding:.2em;}
   .c2-alt { display:initial; }
 
 }
-
 

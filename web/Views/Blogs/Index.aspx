@@ -1,19 +1,21 @@
-<%@ Page Title="Articles" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master" EnableTheming="True" StylesheetTheme="dark" %>
+<%@ Page Title="Blogs" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntryCollection>" MasterPageFile="~/Models/App.master" EnableTheming="True" StylesheetTheme="dark" %>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
 <div>
 <% foreach (var g in Model.GroupByTitle()) { %>
-<div class="panel">
+<div class="postpreview panel">
 <h2><a href="<%= Url.RouteUrl("Titles", new { title = g.Key }) %>" class="usertitleref"><%=Html.Encode(g.Key)%></a></h2>
 <% foreach (var p in g) { %> 
-<div class="postpreview">
+<div>
 <% if (p.Photo != null ) { %>
 <img src="<%=p.Photo%>" alt="<%=p.Photo%>" class="photo">
-<% } %>
- <p><%=  Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %></p>
- <%= Html.Partial("PostActions",p)%>
-</div> <% } %>
+<% } else {}  %>
+<%=  Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %>
+ <%= Html.Partial("PostActions",p) %>
+</div><% // we only show the first. It's a preview
+ break;
+ } %>
 </div>
  <% } %>
 </div>

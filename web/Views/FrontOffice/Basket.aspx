@@ -10,27 +10,19 @@
 <% if (Model.Count>0) { %>
 <ul>
 <% foreach (Command cmd in Model.Values) { %>
-	<li>
-	<%= cmd.Id %>
-	<%= cmd.CreationDate %>
-
-	<%= cmd.Status %>
-	<%= cmd.ProductRef %>
-	<ul>
-	<% if (cmd.Parameters!=null)
-	foreach (string key in cmd.Parameters.Keys) { %>
-		<li><%=key%>: <%=cmd.Parameters[key]%></li>
-	<% } %>
-	</ul>
+	<li><div>
+	<%= cmd.Id %>/<%= cmd.CreationDate %>/<%= cmd.Status %>
+	<%= cmd.ProductRef %></div>
+	<div>
+	<%= Html.Partial(cmd.GetType().Name,cmd) %>
+	</div>
 	</li>
 <% } %>
 	</ul>
 <% } %>
-
-
  <ul><li>
- <%= Html.ActionLink("Catalog","Catalog" ) %>
+ <%= Html.TranslatedActionLink("Catalog","Catalog" ) %>
  </li><li>
- <%= Html.ActionLink("Estimates","Estimates" ) %>
+ <%= Html.TranslatedActionLink("Estimates","Estimates" ) %>
  </li></ul>
 </asp:Content>

@@ -24,6 +24,9 @@ using System.Configuration;
 using System.Collections.Specialized;
 using System.Collections;
 using System.Reflection;
+using System.Collections.Generic;
+using System.Web;
+using System.Linq;
 
 namespace Yavsc.Model.Circles
 {
@@ -74,6 +77,38 @@ namespace Yavsc.Model.Circles
 				defaultProvider.Initialize (pSection.DefaultProvider,pSetDef.Parameters);
 			}
 
+		}
+		/// <summary>
+		/// List the specified user.
+		/// </summary>
+		/// <param name="user">User.</param>
+		public static IEnumerable<CircleBase> List(string user)
+		{
+			if (user == null)
+				user = HttpContext.Current.User.Identity.Name;
+			return DefaultProvider.List (user);
+		}
+		/// <summary>
+		/// Circles the specified user and relation.
+		/// </summary>
+		/// <param name="user">User.</param>
+		/// <param name="relation">Relation.</param>
+		public static string[] Circles(string relation, string user = null )
+		{
+			if (user == null)
+				user = HttpContext.Current.User.Identity.Name;
+			return DefaultProvider.Circles (user, relation);
+		}
+		/// <summary>
+		/// Lists the available circles.
+		/// </summary>
+		/// <returns>The available circles.</returns>
+		/// <param name="user">User.</param>
+		public static string[] ListAvailableCircles (string user = null )
+		{
+			if (user == null)
+				user = HttpContext.Current.User.Identity.Name;
+			return DefaultProvider.List (user).Select (x => x.Title).ToArray();
 		}
 	}
 }

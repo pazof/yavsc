@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Devis" Language="C#" Inherits="System.Web.Mvc.ViewPage<Estimate>" MasterPageFile="~/Models/App.master" %>
+﻿<%@ Page Title="DoAnEstimate" Language="C#" Inherits="System.Web.Mvc.ViewPage<Estimate>" MasterPageFile="~/Models/App.master" %>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="head" ID="head1" runat="server" >
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/stupidtable.js")%>"></script> 

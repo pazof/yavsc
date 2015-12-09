@@ -70,9 +70,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string BookingTitleArtiste {
+        public static string Basket {
             get {
-                return ResourceManager.GetString("BookingTitleArtiste", resourceCulture);
+                return ResourceManager.GetString("Basket", resourceCulture);
+            }
+        }
+        
+        public static string BillSourceCode {
+            get {
+                return ResourceManager.GetString("BillSourceCode", resourceCulture);
             }
         }
         
@@ -88,9 +94,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string PreferedDate {
+        public static string MEACode {
             get {
-                return ResourceManager.GetString("PreferedDate", resourceCulture);
+                return ResourceManager.GetString("MEACode", resourceCulture);
+            }
+        }
+        
+        public static string from {
+            get {
+                return ResourceManager.GetString("from", resourceCulture);
             }
         }
         
@@ -118,9 +130,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Product_reference {
+        public static string Remove {
             get {
-                return ResourceManager.GetString("Product_reference", resourceCulture);
+                return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
         
@@ -136,15 +148,27 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string DoSpecifyCircles {
+        public static string DoAnEstimate {
             get {
-                return ResourceManager.GetString("DoSpecifyCircles", resourceCulture);
+                return ResourceManager.GetString("DoAnEstimate", resourceCulture);
             }
         }
         
         public static string AnIMessageHasbeenSent {
             get {
                 return ResourceManager.GetString("AnIMessageHasbeenSent", resourceCulture);
+            }
+        }
+        
+        public static string NoSkillforthisactivity {
+            get {
+                return ResourceManager.GetString("NoSkillforthisactivity", resourceCulture);
+            }
+        }
+        
+        public static string was_added_to_the_empty_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
             }
         }
         
@@ -220,15 +244,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string was_added_to_the_empty_role {
+        public static string Title {
             get {
-                return ResourceManager.GetString("was_added_to_the_empty_role", resourceCulture);
+                return ResourceManager.GetString("Title", resourceCulture);
             }
         }
         
-        public static string ImportException {
+        public static string Product_reference {
             get {
-                return ResourceManager.GetString("ImportException", resourceCulture);
+                return ResourceManager.GetString("Product_reference", resourceCulture);
             }
         }
         
@@ -268,6 +292,30 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Catalog {
+            get {
+                return ResourceManager.GetString("Catalog", resourceCulture);
+            }
+        }
+        
+        public static string SubmitChanges {
+            get {
+                return ResourceManager.GetString("SubmitChanges", resourceCulture);
+            }
+        }
+        
+        public static string ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailableThis {
+            get {
+                return ResourceManager.GetString("ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailableThis", resourceCulture);
+            }
+        }
+        
+        public static string BookingTitleArtiste {
+            get {
+                return ResourceManager.GetString("BookingTitleArtiste", resourceCulture);
+            }
+        }
+        
         public static string none {
             get {
                 return ResourceManager.GetString("none", resourceCulture);
@@ -298,9 +346,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Google_error {
+        public static string Home {
             get {
-                return ResourceManager.GetString("Google_error", resourceCulture);
+                return ResourceManager.GetString("Home", resourceCulture);
             }
         }
         
@@ -316,9 +364,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Skills {
+        public static string Posted {
             get {
-                return ResourceManager.GetString("Skills", resourceCulture);
+                return ResourceManager.GetString("Posted", resourceCulture);
             }
         }
         
@@ -328,9 +376,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Title {
+        public static string ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis {
             get {
-                return ResourceManager.GetString("Title", resourceCulture);
+                return ResourceManager.GetString("ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis", resourceCulture);
             }
         }
         
@@ -352,9 +400,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Modify {
+        public static string ImportException {
             get {
-                return ResourceManager.GetString("Modify", resourceCulture);
+                return ResourceManager.GetString("ImportException", resourceCulture);
             }
         }
         
@@ -370,9 +418,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string hidden {
+        public static string Icons_made_by {
             get {
-                return ResourceManager.GetString("hidden", resourceCulture);
+                return ResourceManager.GetString("Icons_made_by", resourceCulture);
             }
         }
         
@@ -403,6 +451,12 @@ namespace Yavsc.Model {
         public static string Need {
             get {
                 return ResourceManager.GetString("Need", resourceCulture);
+            }
+        }
+        
+        public static string AboutContent {
+            get {
+                return ResourceManager.GetString("AboutContent", resourceCulture);
             }
         }
         
@@ -442,15 +496,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Modify {
+            get {
+                return ResourceManager.GetString("Modify", resourceCulture);
+            }
+        }
+        
         public static string Xshouldbeavailable {
             get {
                 return ResourceManager.GetString("Xshouldbeavailable", resourceCulture);
             }
         }
         
-        public static string MEACode {
+        public static string Google_error {
             get {
-                return ResourceManager.GetString("MEACode", resourceCulture);
+                return ResourceManager.GetString("Google_error", resourceCulture);
             }
         }
         
@@ -484,12 +544,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailable {
-            get {
-                return ResourceManager.GetString("ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailable", resourceCulture);
-            }
-        }
-        
         public static string Offline {
             get {
                 return ResourceManager.GetString("Offline", resourceCulture);
@@ -514,6 +568,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
         public static string Non_existent_user {
             get {
                 return ResourceManager.GetString("Non_existent_user", resourceCulture);
@@ -523,6 +583,12 @@ namespace Yavsc.Model {
         public static string Count {
             get {
                 return ResourceManager.GetString("Count", resourceCulture);
+            }
+        }
+        
+        public static string PreferedDate {
+            get {
+                return ResourceManager.GetString("PreferedDate", resourceCulture);
             }
         }
         
@@ -568,9 +634,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string UsersInRole {
+        public static string User_List {
             get {
-                return ResourceManager.GetString("UsersInRole", resourceCulture);
+                return ResourceManager.GetString("User_List", resourceCulture);
+            }
+        }
+        
+        public static string SiteSkills {
+            get {
+                return ResourceManager.GetString("SiteSkills", resourceCulture);
             }
         }
         
@@ -592,9 +664,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Name {
+        public static string EndDate {
             get {
-                return ResourceManager.GetString("Name", resourceCulture);
+                return ResourceManager.GetString("EndDate", resourceCulture);
+            }
+        }
+        
+        public static string YourEstimates {
+            get {
+                return ResourceManager.GetString("YourEstimates", resourceCulture);
             }
         }
         
@@ -604,15 +682,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailable {
+        public static string is_licensed_by {
             get {
-                return ResourceManager.GetString("ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailable", resourceCulture);
+                return ResourceManager.GetString("is_licensed_by", resourceCulture);
             }
         }
         
-        public static string User_List {
+        public static string Edited {
             get {
-                return ResourceManager.GetString("User_List", resourceCulture);
+                return ResourceManager.GetString("Edited", resourceCulture);
             }
         }
         
@@ -622,9 +700,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Home {
+        public static string hidden {
             get {
-                return ResourceManager.GetString("Home", resourceCulture);
+                return ResourceManager.GetString("hidden", resourceCulture);
+            }
+        }
+        
+        public static string Skills {
+            get {
+                return ResourceManager.GetString("Skills", resourceCulture);
             }
         }
         
@@ -640,15 +724,21 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string NoSkillforthisactivity {
+        public static string BillAccessControl {
             get {
-                return ResourceManager.GetString("NoSkillforthisactivity", resourceCulture);
+                return ResourceManager.GetString("BillAccessControl", resourceCulture);
             }
         }
         
         public static string StartDate {
             get {
                 return ResourceManager.GetString("StartDate", resourceCulture);
+            }
+        }
+        
+        public static string yourquerytransmitted {
+            get {
+                return ResourceManager.GetString("yourquerytransmitted", resourceCulture);
             }
         }
         
@@ -670,9 +760,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string yourquerytransmitted {
+        public static string About {
             get {
-                return ResourceManager.GetString("yourquerytransmitted", resourceCulture);
+                return ResourceManager.GetString("About", resourceCulture);
             }
         }
         
@@ -736,21 +826,27 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string EndDate {
+        public static string DoSpecifyCircles {
             get {
-                return ResourceManager.GetString("EndDate", resourceCulture);
+                return ResourceManager.GetString("DoSpecifyCircles", resourceCulture);
+            }
+        }
+        
+        public static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        public static string UsersInRole {
+            get {
+                return ResourceManager.GetString("UsersInRole", resourceCulture);
             }
         }
         
         public static string DB {
             get {
                 return ResourceManager.GetString("DB", resourceCulture);
-            }
-        }
-        
-        public static string Remove {
-            get {
-                return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
         

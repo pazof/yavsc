@@ -2,14 +2,19 @@
 var Yavsc =  (function(apiBaseUrl){ 
 var self = {};
 
+self.apiBaseUrl = (apiBaseUrl || '/api');
+
 self.dumpprops = function (obj) { 
 var str = "";
 for(var k in obj)
     if (obj.hasOwnProperty(k)) 
-        str += k + " = " + obj[k] + "\n";
-      return (str);   }
+        str += "  "+k + " = " + obj[k] + "\n";
+      return (str);   };
 
-self.apiBaseUrl = (apiBaseUrl || '/api');
+self.logObj = function(obj) {
+	console.log('obj:'+obj);
+	console.log('-props:'+self.dumpprops(obj));
+};
 
 self.showHide = function () { 
     var id = $(this).attr('did');

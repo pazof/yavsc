@@ -1,16 +1,11 @@
 ﻿<%@ Page Title="Booking" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<SimpleBookingQuery>" %>
 
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
-<% Title = Html.Translate("BookingTitle"+Model.MEACode) + " - " + YavscHelpers.SiteName; %>
+<% Title = Html.Encode(ViewBag.Activity.Title) + " - " + YavscHelpers.SiteName; %>
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
-<h1>
-<a href="<%=Url.RouteUrl("FrontOffice",new {action="Booking", MEACode=Model.MEACode })%>">
-<img href="<%= ViewData["Photo"] %>" alt="">
-<%=Html.Translate("BookingTitle"+Model.MEACode)%>
-</a>
-- <a href="<%= Url.RouteUrl("Default",new {controller="Home" }) %>"><%= YavscHelpers.SiteName %></a>
+<h1><%=Html.Encode(ViewBag.Activity.Title) %> - <a href="<%= Url.RouteUrl("Default",new {controller="Home" }) %>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>
 
@@ -30,6 +25,8 @@
 <%= Html.Hidden("MEACode") %>
   <fieldset>
 <legend><%= Html.Translate("YourNeed") %></legend>
+<%= Html.Translate("Si vous le voulez, vous pouvez détailler ici votre demande, en matière de compétences attendues:") %>
+<div>
   <input type="hidden" name="Need" id="Need" value="">
   <ul >
   <% if (ViewData ["Needs"]!=null)
@@ -38,12 +35,15 @@
   <% } %>
   </ul>
   <%= Html.ValidationMessageFor(model=>model.Need) %>
+  </div>
  </fieldset>
   <fieldset>
 <legend><%= Html.Translate("PerformanceDate") %></legend>
-Intervention souhaitée le 
-  <input type="text" id="PreferedDate" name="PreferedDate" class="start date" value="<%=Model.PreferedDate.ToString("yyyy/MM/dd")%>">
+<%= Html.Translate("Indiquez ici la date souhaitée pour la prestation.") %>
+<div>
+Intervention souhaitée le : <input type="text" id="PreferedDate" name="PreferedDate" class="start date" style="z-index: 99 !important;" value="<%=Model.PreferedDate.ToString("yyyy/MM/dd")%>">
   <%= Html.ValidationMessageFor( model=>model.PreferedDate ) %>
+   </div>
  </fieldset>
   <script>
   $(document).ready(function(){
@@ -70,12 +70,12 @@ Intervention souhaitée le
    'autoclose': true } ;
 
    // $('#PreferedHour').timepicker(tpconfig);
-   $('#PreferedDate').datepicker(dpconfig);
+   $('#PreferedDate').datepicker(dpconfig).zIndex(4);
  
    });
 </script>
 
-<input type="submit">
+<input type="submit" value="<%=Html.Translate("Search")%>" class="fullwidth actionlink">
 <% } %>
 </asp:Content>
 

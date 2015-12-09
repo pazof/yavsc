@@ -1,11 +1,14 @@
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
+@import url(http://fonts.googleapis.com/css?family=Josefin+Sans&subset=latin,latin-ext);
+@import url(/App_Themes/clear/links.css);
 
 body {
-	background-color: grey;
-	color: #303030;
-	font-family: 'Open Sans', sans-serif;
+	background-color: white;
+	color: black;
+	font-family: 'Josefin Sans', sans-serif;
+	background: url("/App_Themes/images/splash-image-2.jpg") 0 0 repeat fixed ;
 }
-.tagname {  color: #D0FFD0; }
+.tagname {   }
+
 .tagname:hover { background-color: red; }
 
 /* Start by setting display:none to make this hidden.
@@ -21,68 +24,79 @@ body {
 }
 
 input, textarea, checkbox { 
-    color: #FFA0A0;
-	background-color: black;
+    color: black;
+	background-color: white;  
+	font-size: larger;
+	border: solid 1px rgb(128,128,128);
+	animation-name: flash;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
    }
 
-header {
-	background: url("/App_Themes/images/live-concert-388160_1280.jpg") 50% 0 repeat fixed;
-	}
+header { float: left; }
 
-#logo { 
-   background: url("/App_Themes/images/logo.s.png") 1em 1em no-repeat fixed;
-}
-
-h1, h2, h3 { background-color: rgba(256,256,256,.5);  }
+h1 { display: inline-block; }
 
 nav {
-	background: url("/App_Themes/images/live-concert-388160_1280.jpg") 50% 10em repeat fixed ;
+
 }
 nav li { display: inline-block; }
+
+
+
 main {
-	background: url("/App_Themes/images/musician-923526_1.nbbi.jpg") 50% 20em repeat fixed ;
+clear:both;
+background-color: rgba(256,256,256,.5);
 	}
 
 footer {
-	background: url("/App_Themes/images/live-concert-388160_1280.jpg") 50% 30em repeat fixed ;
+	background: url("/App_Themes/images/splash-image-2.jpg") 0 0 repeat fixed ;
 }
 
-legend {
-	background-color: rgba(240,240,240,.5);
+legend, .skillname {
+	background-color: rgba(240,240,240,.8);
   }
-#copyr {  background-color: rgba(250,250,250,.8); }
+#copyr { }
 
 #gspacer { 
 	background-color: rgba(209,209,209,.8);  }
 
-form { 
-	background-color: rgba(150,150,256,0.8);
-	} 
-
-fieldset {
-	background-color: rgba(216,216,256,0.8);
+fieldset, .performer {
+	background-color: rgba(216,216,216,0.8);
 } 
 
-
+ h1 {
+    background-color: rgba(256,256,256,.2); 
+    padding: 1em;
+    color:white;
+    transition: color 1s;
+    } 
 
 .postpreview {
 	background-color: rgba(233,233,233,0.8);
+	animation-name: slideInDown;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
 }
 
+.postpreview > div {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 2s;
+    }
+
+.postpreview:hover > div {
+    overflow: auto;
+	max-height: 15em;
+	background-color: rgba(233,233,233,0.8);
+}
 .post { 
 	background-color: rgba(256,256,256,0.8);
 	}
 .hiddenpost { background-color: rgba(160,160,160,0.5); }
 
-a { color: rgb(0,56,0); } 
 
-a:hover { background-color: rgba(160,160,160,.7);   }
-
-footer a  { 
-	color: black;
-   background-color: rgba(220,220,220,.8); 
-}
-.panel,.bshpanel, aside {
+.panel,.bigpanel, aside {
 	background-color: rgba(200,200,200,.8); 
 }
 
@@ -91,6 +105,7 @@ footer a  {
 }
 .editable {
 	border: dashed rgb(200,200,256) 2px; 
+	background-color: rgba(256,256,256,.8);
 }
 
 .notification {
@@ -102,7 +117,7 @@ footer a  {
 }
 .error, #error {
 	color: #f88;
-	background-color: rgba(256,.5);
+	background-color: rgba(256,0,0,.5);
 }
 .validation-summary-errors{
 	color: #f88;
@@ -118,79 +133,87 @@ ul.preview li:nth-child(n) {
 	color: #f88;
 }
 
-a.menuitem {
-	color: black;
-	border: solid black 1px;
-   background-color: rgba(220,220,220,.8); 
-}
-
-.actionlink {
-	color: black;
-	border: solid black 1px;
-   background-color: rgba(220,220,220,.8); 
-}
-
-input, select, textarea { 
-	color: black;
-	background-color:rgba(256,256,256,0.8);
-	border: solid 1px rgb(128,128,128);
-}
-
 a:active { 
 	background-color:rgba(184,180,132,0.9);
 }
 
- input:hover, textarea:hover {
-	color: white;
-	background-color:rgba(164,164,164,0.8);
+input:hover, textarea:hover {
+    color: black;
+	 background-color: rgba(256,256,256,.8); 
 }
 .code {
 	background-color: rgba(230,230,230,0.5);
 }
 
-.ohafter:hover + .onhover, .ohinside:hover > .onhover {
-   background-color: rgba(240,240,250,.8); 
-}
 
 .input-validation-error { border: solid 1px red; }
 .field-validation-error { color: red; }
 
 
 @media all and (max-width: 640px) {
+
+
+
 	#logo { 
-	   background: url("/App_Themes/images/logo.xs.png") 0 0 no-repeat fixed;
 	}
 
 	header {
-	   background: url("/App_Themes/images/live-concert-388160_1280.s.jpg") 50% 0 repeat fixed;
 	}
 	nav {
-		background:    url("/App_Themes/images/live-concert-388160_1280.s.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
-		background:   url("/App_Themes/images/musician-923526_1.nbbi.xs.jpg")  50% 20em repeat fixed ; 
+		
 	} 
 	footer { 
-		background: url("/App_Themes/images/live-concert-388160_1280.s.jpg") 50% 90% repeat fixed ; 
+		
 	} 
 }
 
 @media all and (max-width: 350px) {
+
 	#logo { 
-	   background: url("/App_Themes/images/logo.xxs.png") 0 0 no-repeat fixed;
 	}
 	header {
-		background: url("/App_Themes/images/live-concert-388160_1280.xxs.jpg") -1em -1em repeat fixed;
 	}
 
 	nav {
-		background:    url("/App_Themes/images/live-concert-388160_1280.xxs.jpg") 50% 10% repeat fixed ; 
 	}
 	main { 
-		background:   url("/App_Themes/images/musician-923526_1.nbbi.xxs.jpg")  50% 20em repeat fixed ; 
+		
 	} 
 	footer { 
-		background: url("/App_Themes/images/live-concert-388160_1280.xxs.jpg") 50% 90% repeat fixed ; 
+		
 	} 
 }
 
+
+.input-validation-error { border: solid 1px red; background-color: rgba(128,0,0,0.5);
+    animation-name: hotzone;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+ }
+
+.field-validation-error { color: rgb(256,200,200); background-color: rgba(128,0,0,0.5);
+    animation-name: hotzone;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+ }
+
+input[type='submit'].clickme { 
+    animation-name: hotzone;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    }
+
+
+@keyframes hotzone {
+    from {
+    background-color: rgba(230,230,230,.8);
+    color: black;
+	}
+    50%  {background-color: rgba(256,150,150,.5);}
+    to {
+    background-color: rgba(230,230,230,.8);
+    color: black;
+    }
+}

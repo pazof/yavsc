@@ -404,7 +404,12 @@ module.exports = [
       return '\n\n' + content + '\n\n';
     }
   },
-
+  {
+    filter: 'div',
+    replacement: function (content) {
+      return '\n\n' + content + '\n\n';
+    }
+  },
   {
     filter: 'br',
     replacement: function () {
@@ -457,7 +462,6 @@ module.exports = [
       return '`' + content + '`';
     }
   },
-
   {
     filter: function (node) {
       return node.nodeName === 'A' && node.getAttribute('href');

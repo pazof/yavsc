@@ -1,7 +1,7 @@
 ﻿<%@  Page Title="Contact" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<div class="panel">
+<div class="bigpanel">
 <p>
 Directeur : Paul Schneider<br>
 Adresse postale : 2 Boulevard Aristide Briand<br>
@@ -12,7 +12,7 @@ SIRET : 803 851 674 00017<br>
 Activité Principalement Exercée (APE) : 5829C Édition de logiciels applicatifs<br>
 </p>
 <% using (Html.BeginForm("Contact", "Home")) { %>
-<fieldset>
+<fieldset style="width:100%">
 <legend>Message</legend>
 <p>
 <%= Html.Label("email") %>:
@@ -27,7 +27,7 @@ Activité Principalement Exercée (APE) : 5829C Édition de logiciels applicatif
 <p>
 <%= Html.Label("body") %>:
 <%= Html.ValidationMessage("body") %><br/>
-<%= Html.TextArea("body") %>
+<%= Html.TextArea("body",new {@rows="25"}) %>
 </p>
 </fieldset>
 <input type="submit" value="<%=Html.Translate("Submit")%>">

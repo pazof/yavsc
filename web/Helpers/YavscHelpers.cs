@@ -17,6 +17,8 @@ using System.Web.Mvc;
 using System.Text.RegularExpressions;
 using Yavsc.Model.Messaging;
 using System.Linq;
+using System.Reflection;
+using System.Web.Routing;
 
 namespace Yavsc.Helpers
 {
@@ -377,7 +379,6 @@ namespace Yavsc.Helpers
 			HtmlTextWriter writer = new HtmlTextWriter(strwr);
 			// refer to the global style
 			writer.AddAttribute ("rel", "stylesheet");
-			writer.AddAttribute ("title", theme);
 			writer.AddAttribute ("href", 
 				string.Format(
 					"/App_Themes/{1}.css",
@@ -407,6 +408,100 @@ namespace Yavsc.Helpers
 			}
 			return new MvcHtmlString(strwr.ToString());
 		}
+		private static object defaultHtmlAttributes =
+			new { @class="actionlink" };
+		
+		/// <summary>
+		/// Translateds the action link.
+		/// </summary>
+		/// <returns>The action link.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="actionName">Action name.</param>
+		/// <param name="htmlAttributes">Html attributes.</param>
+		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
+			string actionLabel, object htmlAttributes = null) {
+			return TranslatedActionLink (helper, actionLabel, actionLabel, htmlAttributes);
+		}
+		/// <summary>
+		/// Translateds the action link.
+		/// </summary>
+		/// <returns>The action link.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="actionName">Action name.</param>
+		/// <param name="method">Method.</param>
+		/// <param name="htmlAttributes">Html attributes.</param>
+		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
+			string actionLabel, string method, object htmlAttributes = null) {
+			return TranslatedActionLink (helper, 
+				actionLabel, method, null, htmlAttributes = null);
+			
+		}
+		/// <summary>
+		/// Translateds the action link.
+		/// </summary>
+		/// <returns>The action link.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="actionName">Action name.</param>
+		/// <param name="method">Method.</param>
+		/// <param name="controller">Controller.</param>
+		/// <param name="htmlAttributes">Html attributes.</param>
+		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
+			string actionLabel, string method, string controller, object htmlAttributes = null) {
+			return TranslatedActionLink (helper, actionLabel, method, controller, 
+				new { controller = controller, action = actionLabel }, htmlAttributes);
+		}
+		/// <summary>
+		/// Translateds the action link.
+		/// </summary>
+		/// <returns>The action link.</returns>
+		/// <param name="helper">Helper.</param>
+		/// <param name="actionName">Action name.</param>
+		/// <param name="method">Method.</param>
+		/// <param name="controller">Controller.</param>
+		/// <param name="routes">Routes.</param>
+		/// <param name="htmlAttributes">Html attributes.</param>
+		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
+			string actionLabel, string actionName, string controller, object routes, object htmlAttributes = null)  {
+
+
+			if (htmlAttributes == null)
+				htmlAttributes = defaultHtmlAttributes;
+			IHtmlString text = T.Translate (helper, actionLabel);
+			StringWriter strwr = new StringWriter ();
+			HtmlTextWriter writer = new HtmlTextWriter(strwr);
+
+			foreach (var ppt in htmlAttributes.GetType().GetProperties(BindingFlags.GetProperty|
+				BindingFlags.Public)) {
+				writer.AddAttribute(ppt.Name, ppt.GetValue(htmlAttributes).ToString())
+				;
+			}
+			writer.AddAttribute ("href",
+				UrlHelper.GenerateUrl (
+					"Default", actionName, controller,
+					( routes == null ) ? null : new RouteValueDictionary ( routes ) , 
+					helper.RouteCollection,
+					helper.ViewContext.RequestContext,
+					false));
+			writer.RenderBeginTag ("a");
+			writer.Write (text);
+			writer.RenderEndTag ();
+			return new MvcHtmlString(strwr.ToString());
+
+		
+		}
+
+
+		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
+			string actionName, string method, object routes, object htmlAttributes = null)  {
+		
+			string controllerName = helper.ViewContext.Controller.GetType ().Name;
+			if (controllerName.EndsWith ("Controller"))
+				controllerName = controllerName.Substring (0,controllerName.Length - 10);
+			return TranslatedActionLink (helper, actionName, method,
+				controllerName, routes, htmlAttributes);
+		}
+
+
 
 	}
 }

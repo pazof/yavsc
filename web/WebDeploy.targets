@@ -4,7 +4,8 @@
   <Target Name="Deploy" Condition="'$(DeployDir)' != '' And !$(SkipCopyUnchangedFiles)" DependsOnTargets="Build">
     <Copy SourceFiles="@(FileWrites)" DestinationFolder="$(DeployDir)/%(RelativeDir)" />
     <Copy SourceFiles="@(Content)" DestinationFolder="$(DeployDir)/%(RelativeDir)" />
-    <TransformXml Source="Web.config" Transform="Web.$(Configuration).config" Destination="$(DeployDir)\Web.config" Condition="Exists('Web.$(Configuration).config')"/>
+    <TransformXml Source="Web.config" Transform="Web.$(Configuration).config" Destination="$(DeployDir)/Web.config" Condition="Exists('Web.$(Configuration).config')"/>
+
   </Target>
 </Project>
 

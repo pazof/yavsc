@@ -21,7 +21,7 @@
 <input type="submit"/>
 <% } %></div>
 <div class="panel">
-<%= Html.ActionLink("S'enregistrer","GetRegister",new {returnUrl=ViewData["returnUrl"]}, new { @class="actionlink" }) %>
+<%= Html.TranslatedActionLink("S'enregistrer","GetRegister",new {returnUrl=ViewData["returnUrl"]}, new { @class="actionlink" }) %>
 </div>
 <div class="panel">
 <a href="<%= Url.RouteUrl ("Default", new { controller = "Google", action= "Login", returnUrl=ViewData["returnUrl"] }) %>" class="actionlink">

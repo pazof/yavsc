@@ -1,4 +1,21 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
+@import url(/App_Themes/dark/links.css);
 
+.panel { 
+   display:inline-block;
+   width: calc(33% - 10px);
+}
+
+@media all and (max-width: 1200px) {
+.panel { 
+	width: calc(50% - 5px); 
+	} 
+}
+@media all and (max-width: 720px) {
+.panel { 
+	width: 100%; 
+	} 
+}
 
 .skillname { 
 	background-color: rgba(16,16,64,0.8);
@@ -21,13 +38,8 @@ body {
 .rate:hover { border-color: green; 
 	background-color:rgba(30,0,124,0.9); } 
 
-input, textarea, checkbox { 
-    color: #FFFFA0;
-	background-color: black;
-   }
 
 header {
-	background: url("http://s448140597.onlinehome.us/wp-content/uploads/2014/12/project-management1.jpg") -20em -20em repeat fixed;
 	}
 
 header h1, header a {
@@ -60,7 +72,16 @@ legend {
 #gspacer { 
 	background-color: rgba(20,20,20,.8); 
 	 }
-
+.thanks {
+  background-color: rgba(50,50,50,.8); 
+  color: rgb(230,230,230);
+  font-size: x-small;
+  font-weight: bold;
+}
+.thanks:hover {
+  background-color: rgba(80,80,80,.8); 
+  color: white;
+}
 .postpreview {
 	background-color: rgba(0,0,32,0.8);
 }
@@ -70,12 +91,12 @@ legend {
 	}
 .hiddenpost { background-color: rgba(16,16,16,0.5); }
 
-
-.panel, .spanel, .bshpanel, .xspanel, .xxspanel, aside {
+ aside {
 	background-color: rgba(20,20,20,.6); 
 	border-color: rgb(128,128,128);
 	border-style: solid;
 	border-width: 1px;
+	padding: 1em;
 }
 
 .usertitleref {
@@ -90,15 +111,19 @@ legend {
 	border-color:  green ;
 	}
 .dirty { 
-	background-color: rgba(128,128,0,0.5);
+	background-color: rgba(128,0,0,0.5);
 }
 .error, #error {
 	color: #f88;
-	background-color: rgba(256,0,0,0.5);
+	background-color: rgba(128,0,0,0.5);
 }
+
+
+
+
 .validation-summary-errors{
 	color: #f88;
-	background-color: rgba(256,0,0,0.5);
+	background-color: rgba(128,0,0,0.5);
 }
 
 .validation-summary-errors{
@@ -107,9 +132,18 @@ legend {
 
 a {
    text-decoration: none;
+   background-color: rgba(30,30,30,.8); 
+   color: yellow;
+}
+a:hover {
+	background-color:rgba(50,50,50,.8); 
+   color: white;
+}
+a:active { 
+	background-color:rgba(124,0,32,0.9);
 }
 
-.actionlink, .menuitem, a {
+.actionlink, .menuitem, input[type='submit']  {
 	border-color: rgb(128,128,0);
    background-color: rgba(20,20,20,.8); 
 	color: yellow;
@@ -117,26 +151,21 @@ a {
 
 input, select, textarea { 
 	color: white;
-	background-color:rgba(0,0,64,0.8);
+	background-color:rgba(32,32,32,0.8);
 	border-color: rgb(128,128,128);
-}
-
-a:hover {
-	background-color:rgba(30,0,124,0.9);
-	border-color: green ;
-}
-a:active { 
-	background-color:rgba(124,0,32,0.9);
 }
 
 input:hover, textarea:hover {
 	color: white;
-	background-color:rgba(64,64,64,0.8);
+	background-color:rgb(0,0,0);
 }
 .code {
 	background-color: rgba(0,0,256,0.1);
 }
 
+.clickme {
+  transition: background-color 2s;
+}
 
 @media all and (max-width: 640px) {
 header {
@@ -223,3 +252,31 @@ header h1, header a { padding:.2em;}
   .c2 { display:none; }
   .c2-alt { display:initial; }
 }
+
+
+.input-validation-error { border: solid 1px red; background-color: rgba(128,0,0,0.5);
+    animation-name: hotzone;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+ }
+
+.field-validation-error { color: rgb(256,200,200); background-color: rgba(128,0,0,0.5);
+    animation-name: hotzone;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+ }
+
+input[type='submit'].clickme { 
+    animation-name: hotzone;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    }
+
+
+@keyframes hotzone {
+    from {
+    background-color: rgba(30,30,30,.8);}
+    50%  {background-color: rgba(90,50,50,.8);}
+    to {background-color: rgba(30,30,30,.8);}
+}
+

@@ -39,7 +39,7 @@ namespace Yavsc.ApiControllers
 		public long Create(NameValueCollection cmdParams)
 		{
 			// HttpContext.Current.Request.Files
-			Command cmd = new Command(cmdParams, HttpContext.Current.Request.Files);
+			Command cmd = Command.CreateCommand(cmdParams, HttpContext.Current.Request.Files);
 			CurrentBasket.Add (cmd);
 			return cmd.Id;
 		}

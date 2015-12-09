@@ -20,7 +20,11 @@ namespace Npgsql.Web.Blog
 		string connectionString;
 
 		#region implemented abstract members of BlogProvider
-
+		/// <summary>
+		/// Gets the public post count.
+		/// </summary>
+		/// <returns>The public post count.</returns>
+		/// <param name="bloggerName">Blogger name.</param>
 		public override long GetPublicPostCount (string bloggerName)
 		{
 			long result = -1;
@@ -100,7 +104,14 @@ AND b.applicationname = :app
 		/// <param name="name">Name.</param>
 		override public void Untag (long postid, string name)
 		{
-			Untag (postid, GetTagId (name));
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
+			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+				cmd.CommandText = "DELETE FROM tagged WHERE tagged.postid = :pid AND tagged.tagid = (select tag._id FROM tag WHERE tag.name = :tnm)";
+				cmd.Parameters.AddWithValue ("pid", postid);
+				cmd.Parameters.AddWithValue ("tnm", name);
+				cnx.Open ();
+				cmd.ExecuteNonQuery ();
+			}
 		}
 
 		/// <summary>
@@ -472,15 +483,19 @@ AND b.applicationname = :app
 
 		private long GetTagId (string tagname)
 		{
+			// FIXME null pointer at cmd.ExecuteScalar!
 			if (tagname == null)
 				throw new NullReferenceException ("This tag name is null");
 			long id = 0;
-			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
-			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "SELECT tag._id FROM public.tag WHERE name = :name";
-				cmd.Parameters.AddWithValue ("name", tagname);
+			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString)) { 
+
 				cnx.Open ();
-				id = (long)cmd.ExecuteScalar ();
+				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
+					cmd.CommandText = "SELECT _id FROM tag WHERE name LIKE :tn";
+					cmd.Parameters.AddWithValue ("tn",NpgsqlDbType.Varchar, tagname);
+					id = (long) cmd.ExecuteScalar ();
+				}
+				cnx.Close ();
 			}
 			return id;
 		}

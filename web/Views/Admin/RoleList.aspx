@@ -6,14 +6,14 @@ Roles:
  <ul>
        <%foreach (string rolename in (string[]) Model){ %>
 
-       <li><%=Html.ActionLink(rolename,"UsersInRole", new { rolename = rolename }, new { @class="actionlink" } )%> <% if (Roles.IsUserInRole("Admin")) { %>
-	 <%= Html.ActionLink("Supprimer","RemoveRole", new { rolename = rolename }, new { @class="actionlink" } ) %>	
+       <li><%=Html.TranslatedActionLink(rolename,"UsersInRole", new { rolename = rolename }, new { @class="actionlink" } )%> <% if (Roles.IsUserInRole("Admin")) { %>
+	 <%= Html.TranslatedActionLink("Supprimer","RemoveRole", new { rolename = rolename }, new { @class="actionlink" } ) %>	
 <% } %></li>
 	<% } %>
 	
 	</ul>
 	<% if (Roles.IsUserInRole("Admin")) { %>
-	 <%= Html.ActionLink("Ajouter un rôle","AddRole", null, new { @class="actionlink" } ) %>	
+	 <%= Html.TranslatedActionLink("Ajouter un rôle","AddRole", null, new { @class="actionlink" } ) %>	
 <% } %>
 </asp:Content>
 

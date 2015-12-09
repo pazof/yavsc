@@ -210,13 +210,14 @@ namespace Yavsc
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"select id,creation,prdref,params from commandes where @user = clientname and applicationname = @app";
+						"select id,creation,prdref,params,class from commandes where @user = clientname and applicationname = @app";
 					cmd.Parameters.AddWithValue ("@user", username);
 					cmd.Parameters.AddWithValue ("@app", this.ApplicationName);
 					cnx.Open ();
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 						while (rdr.Read ()) {
-							Command ycmd = new Command ();
+							string cls = rdr.GetString (4);
+							Command ycmd = Command.CreateCommand(cls);
 							ycmd.Id = rdr.GetInt64 (0);
 							ycmd.CreationDate = rdr.GetDateTime (1);
 							ycmd.ProductRef = rdr.GetString (2);

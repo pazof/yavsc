@@ -87,7 +87,7 @@ namespace Yavsc.Model.WorkFlow
 		/// </summary>
 		/// <returns>The estimate statuses.</returns>
 		/// <param name="estid">Estid.</param>
-		StatusChange[] GetEstimateStatuses (long estid);		/// <summary>
+		StatusChange[] GetEstimateStatuses (long estid);
 
 		/// <summary>
 		/// Gets the estimates.
@@ -99,8 +99,9 @@ namespace Yavsc.Model.WorkFlow
 		/// <summary>
 		/// Registers the activity.
 		/// </summary>
-		/// <param name="activity">Activity.</param>
-		/// <param name="code">Code.</param>
+		/// <param name="activityName">Activity name.</param>
+		/// <param name="meacode">Meacode.</param>
+		/// <param name="comment">Comment.</param>
 		void RegisterActivity (string activityName, string meacode, string comment);
 
 		/// <summary>

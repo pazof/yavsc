@@ -13,7 +13,7 @@
 <a href="<%= Url.RouteUrl("BlogByTitle", new{ user=Model.Author, title = Model.Title}) %>">
 <%=Model.Title%>
 </a>
- - <%= Html.ActionLink((string)ViewData ["BlogTitle"] ,"UserPosts",new{user=Model.Author}, null) %>
+ - <%= Html.TranslatedActionLink((string)ViewData ["BlogTitle"] ,"UserPosts",new{user=Model.Author}, null) %>
   - 
 <a href="<%=Url.Content("~/")%>"><%= YavscHelpers.SiteName %></a>
 </h1>
@@ -34,7 +34,7 @@
 <img class="avatar" src="<%= Url.RouteUrl("Default", new { action="Avatar", controller="Account", user = c.From } ) %>" alt="<%=c.From%>"/>
 <%= Html.Markdown(c.CommentText) %>
 	<% if (Model.Author ==  username || c.From == username ) { %>
-	<%= Html.ActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } , new { @class="actionlink" })%>
+	<%= Html.TranslatedActionLink("Supprimer","RemoveComment", new { cmtid = c.Id } , new { @class="actionlink" })%>
 	<% } %>
 </div><% } %>
 </div><% } %>

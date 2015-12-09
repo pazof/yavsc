@@ -10,12 +10,12 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <% foreach (ProductCategory pc in Model.Categories ) { %>
 <div>
- 	<h2><%= Html.ActionLink( pc.Name, "ProductCategory", new { id = Model.Name, pc = pc.Reference }, new { @class="actionlink" } ) %></h2>
+ 	<h2><%= Html.TranslatedActionLink( pc.Name, "ProductCategory", new { id = Model.Name, pc = pc.Reference }, new { @class="actionlink" } ) %></h2>
  	</div>
 
  	<% foreach (Product p in pc.Products ) { %>
 <div>
- 	<h3><%= Html.ActionLink( p.Name, "Product", new { id = Model.Name,  pc = pc.Reference , pref = p.Reference }, new { @class="actionlink" } ) %></h3>
+ 	<h3><%= Html.TranslatedActionLink( p.Name, "Product", new { id = Model.Name,  pc = pc.Reference , pref = p.Reference }, new { @class="actionlink" } ) %></h3>
  	<p>
  	<%= p.Description %>
  		<% if (p.Images !=null)

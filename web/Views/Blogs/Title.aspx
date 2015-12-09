@@ -6,7 +6,7 @@
 
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
 <h1>
-<%=Html.ActionLink(Model.Title, "Title", new{title=Model.Title}, null)%>
+<%=Html.TranslatedActionLink(Model.Title, "Title", new{title=Model.Title}, null)%>
 - <a href="<%= Url.RouteUrl("Default",new {controller="Home" }) %>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>

@@ -3,7 +3,7 @@
 <% Title = ViewData ["BrandName"] + " " + Model.Name; %>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="header" ID="headerContent" runat="server">
-<h2> <%=ViewData ["ProdCatName"]%> - <%= Html.ActionLink( Model.Name, "Product", new { id = ViewData ["BrandName"],  pc = ViewData ["ProdCatRef"] , pref = Model.Reference } ) %></h2>
+<h2> <%=ViewData ["ProdCatName"]%> - <%= Html.TranslatedActionLink( Model.Name, "Product", new { id = ViewData ["BrandName"],  pc = ViewData ["ProdCatRef"] , pref = Model.Reference } ) %></h2>
 
 </asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">

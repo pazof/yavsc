@@ -7,7 +7,7 @@
 <% foreach (string u in (string[])ViewData["admins"]) { %>
 <tr><td>
 <%= u %> </td><td>
-<%= Html.ActionLink("Remove","RemoveFromRole",
+<%= Html.TranslatedActionLink("Remove","RemoveFromRole",
 new { username = u, rolename="Admin", returnUrl = Request.Url.PathAndQuery })%>
 
 </td></tr>

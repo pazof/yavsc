@@ -22,15 +22,18 @@
 
 <% foreach (var g in Model.GroupByTitle()) { %>
 <div class="panel">
-<h2><a href="<%= Url.RouteUrl("Titles", new { title = g.Key }) %>" class="usertitleref"><%=Html.Encode(g.Key)%></a></h2>
-<% foreach (var p in g) { %> 
+<% foreach (var p in g) {  %> 
 <div class="postpreview">
+<a href="<%= Url.RouteUrl("Titles", new { title = g.Key}) %>" >
 <% if (p.Photo!=null) { %>
-<img src="<%=p.Photo%>" alt="photo" class="photo"><% } %>
-<%=  Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %>
- <%= Html.Partial("PostActions",p)%>
-</div> <% } %>
+<img src="<%=p.Photo%>" alt="<%=g.Key%>" >
+<% } else { %> 
+<%} %><%=Html.Encode(g.Key)%></a>
+<div>
+<%= Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %>
+ <%= Html.Partial("PostActions",p)%></div>
+</div> <% break; } %>
 </div>
  <% } %>
- <%= Html.RenderPageLinks((int)ViewData["PageIndex"],(int)ViewData["PageSize"],(int)ViewData["ResultCount"])%>
+ <%= Html.RenderPageLinks((int) ViewData["PageIndex"],(int)ViewData["PageSize"],(int)ViewData["ResultCount"])%>
 </asp:Content>

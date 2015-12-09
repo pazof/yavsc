@@ -109,7 +109,19 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
-
+		/// <summary>
+		/// About this instance.
+		/// </summary>
+		public ActionResult About ()
+		{
+			return View ();
+		}
+		#if DEBUG
+		public ActionResult Test ()
+		{
+			return View ();
+		}
+		#endif
 		/// <summary>
 		/// Contact the specified email, reason and body.
 		/// </summary>

@@ -2,6 +2,6 @@
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
  <ul>
- <li><%= Html.ActionLink("Notifier des cercles d'un évennement","NotifyEvent","BackOffice" ) %></li>
+ <li><%= Html.TranslatedActionLink("Notifier des cercles d'un évennement","NotifyEvent","BackOffice" ) %></li>
  </ul>
 </asp:Content>

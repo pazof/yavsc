@@ -16,8 +16,8 @@
 
 
 <% if (Roles.IsUserInRole("Admin")) { %>
-	 <%= Html.ActionLink(LocalizedText.Remove,"RemoveUser", new { username = user.UserName, returnUrl = Request.Url.PathAndQuery }, new { @class="actionlink" } ) %>
-	  <%= Html.ActionLink("Blogger","AddUserToRole", new { username = user.UserName, rolename="Blogger", returnUrl = Request.Url.PathAndQuery }, new { @class="actionlink" } ) %>		
+	 <%= Html.TranslatedActionLink(LocalizedText.Remove,"RemoveUser", new { username = user.UserName, returnUrl = Request.Url.PathAndQuery }, new { @class="actionlink" } ) %>
+	  <%= Html.TranslatedActionLink("Blogger","AddUserToRole", new { username = user.UserName, rolename="Blogger", returnUrl = Request.Url.PathAndQuery }, new { @class="actionlink" } ) %>		
 <% } %>
        </li><% }%>
 </ul>

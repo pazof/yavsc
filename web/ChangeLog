@@ -1,3 +1,192 @@
+2015-12-09  Paul Schneider  <paul@pschneider.fr>
+
+	* animate.css: animations css
+
+	* links.css: liens avec le fond blanc qui se déroule
+
+	* links.css: WIP liens thème sombre
+
+	* GitHub.ico: un petit merci à GitHub
+
+	* live-concert-fg.png: image de plan rapproché : les fans
+
+	* live-concert-scene.jpg: Image de fond : la scene
+
+	* splash-image-2.jpg: image de fond : photo colorée, public de
+	concert, vient de totemproduction.fr
+
+
+	* links.css: ficher de définitions globales du style des
+	bouttons (encore inutilisé)
+
+	* yavsc.user.js: WIP implémente le widget "utilisateur",
+	permettant
+	l'affichage des liens rapides pour tout nom d'ulitisateur, le
+	cas échéant, vers l'ajout à un cercle,
+	vers son blog, vers des methodes choisies d'administateur,
+	vers ses réseaux sociaux, voir plus.
+
+	* About.aspx: Implémente une page "à propos"
+
+	* Test.aspx: Page de test: désolé pour le bruit, elle n'est
+	compilée qu'en mode `Debug` (elle n'est pas accessible en
+	production)
+
+	* BasketController.cs: Les commandes sont fortement typée.
+
+	* style.css: réécriture du thème clair
+
+	* style.css: * implémente un classe css `clickme` pour attirer
+	l'oeil
+	sur le boutton de validation après la modification d'un champ
+	de formulaire.
+	* enlève tous les coins arrondis
+	* modifie la chasse de caractères (une seule utilisée pour le
+	moment)
+	* 
+
+	* style.css: * integre la référence à la feuille de style des
+	[animations](https://daneden.github.io/animate.css/)
+	* corrige des marges, alignements
+	* supprime ce qui reste de coin arrondi
+	* néttoye les définitions obsolètes
+	* définit la classe `username`
+	* corrige le survol à la suppression de tag
+
+
+	* FrontOfficeController.cs: renomme des methodes, refabriqué
+	pour s'adapter aux changements de l'API du workflow,
+	WIP propose les cercles utilisateurs pour l'ajout des profiles
+	préstataires aux cercles.
+
+	* HomeController.cs: implémente une page "à propos"
+
+	* T.cs: re-autorise le titre vide de page, au cas où ... car
+	ce n'est pas un véritable
+	défaut fonctionnel.
+
+	* YavscHelpers.cs: Implemente un outil de presentation des
+	liens action traduits. Tous les liens action utilisent
+	maintenant cette nouvelle methode,
+	au profile de celle du framework `HtmlHelpers.ActionLink`
+
+	* App.master: corrige l'usage du contrôle utilisateur des
+	cotes dans le cadre des cotes de billet.
+
+	* AppAdmin.master:
+	* Index.aspx:
+	* Service.aspx:
+	* ProductCategory.aspx: traduction des liens action
+
+	* NoLogin.master: * traduction des liens action
+	* suppression des liens de remerciement dans le bas de page,
+	cette information a été déplacée dans la page `/Home/Credits`
+
+	* to-markdown.js: transforme maintenant les noeuds Html `div`
+	en paragraphes Markdown.
+
+	* yavsc.hidefieldset.js: Le script règle la forme de la souris
+	au survol du bouton,
+	le cas échéant.
+
+	* yavsc.js: nouvelle fonction javascript pour logger un objet
+	arbitraire.
+
+	* yavsc.rate.js: Fixe la possibilité de mettre des cotes très
+	basses ou très hautes (reste encore un mieux à faire),
+	Affiche au survol des descriptions optionnelles de la cote.
+
+
+	* Title.aspx:
+	* UserPost.aspx:
+	* Edit.aspx:
+	* Index.aspx:
+	* Brand.aspx:
+	* Index.aspx:
+	* PostActions.ascx:
+	* TitleNotFound.aspx:
+	* Booking.aspx:
+	* Command.aspx:
+	* ChangePasswordSuccess.aspx: Traduction des liens action
+
+	* Login.aspx: * Traduction des liens actionTraduction des
+	liens action
+
+	* Profile.aspx: * Traduction des liens actionTraduction des
+	liens action
+	* utilisation de la classe css `mayhide` qui autorise
+	maintenant un champ d'entrées de formulaire à être plié/déplié
+	au click sur sa légende.
+
+	* Admin.aspx: Traduction des liens actionTraduction des liens
+	actionTraduction des liens actionTraduction des liens
+	actionTraduction des liens actionTraduction des liens action
+
+	* Backups.aspx:
+	* RoleList.aspx:
+	* UserList.aspx:
+	* Index.aspx: Traduction des liens actionTraduction des liens
+	action
+
+	* Edit.aspx: * refabrication de la structure Html
+	* Traduction des liens actionTraduction des liens action
+
+
+	* Index.aspx: Simlpification des apperçus de blog
+
+	* TagControl.ascx: refabrication pour simplifier
+	l'implémentation du contrôle utilisateur des tags
+
+	* UserPosts.aspx: Traduction des liens action, et
+	simplification du listing de blog
+
+	* Basket.aspx: Affiche les articles du panier de commandes
+	avec leur vue
+	dédiée à leur type (les commande sont maintenant fortement
+	typées)
+
+	* Catalog.aspx: Traduction des liens action, correctin du lien
+	vers le produit
+	(cassé depuis une vielle refabrication des routes)
+
+	* DoAnEstimate.aspx: refabrication de la vue de création du
+	devis: renommée depuis `Estimate`
+
+
+	* Performer.ascx: * un message supplementaire à l'absence de
+	compétence affichée par un préstataire
+	* des guillemets autour du commentaire du préstataire sur sa
+	compétence
+	* ajout du préstataire au cercles
+
+
+	* Performers.aspx: Décrit en détail les informations sur la
+	disponibilité d'un préstataire,
+	à la date demandée.
+
+	* YourEstimates.aspx: renomage de cette page, pour préciser sa
+	fonction : Vos devis.
+
+	* Contact.aspx: structure Html de la page de contact
+
+	* Credits.aspx: Ajoute les remerciements aux communauté du
+	libre
+
+	* Index.aspx: ne fait rien
+
+	* Web.config: * import de `System.Transactions`
+	* mise à jour des credits libres
+
+	* WebDeploy.targets: utilise les séparateurs de chemin vers
+	ficher à la POSIX, ne change rien pour ma config ... (TODO
+	tester sous WoinDose)
+
+	* Yavsc.csproj: déploie des pages des scripts Javascript et
+	des images et feuilles de style en plus.
+
+	* SiteSkills.aspx: renomage de cette page, pour préciser sa
+	fonction : les compétences sur ce site.
+
 2015-12-03  Paul Schneider  <paul@pschneider.fr>
 
 	* AccountController.cs: doc xml	

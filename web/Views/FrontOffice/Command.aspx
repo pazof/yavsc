@@ -1,12 +1,14 @@
-﻿<%@ Page Title="Commande" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<FormCollection>" %>
+﻿<%@ Page Title="Commande" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<Command>" %>
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 
- <%= Html.ActionLink("Votre panier","Basket","FrontOffice" ) %>
+(pas implémenté)
+
+ <%= Html.TranslatedActionLink("Votre panier","Basket","FrontOffice" ) %>
 
   <ul><li>
- <%= Html.ActionLink("Catalog","Catalog" ) %>
+ <%= Html.TranslatedActionLink("Catalog","Catalog" ) %>
  </li><li>
- <%= Html.ActionLink("Estimates","Estimates" ) %>
+ <%= Html.TranslatedActionLink("Estimates","Estimates" ) %>
  </li></ul>
 
 </asp:Content>

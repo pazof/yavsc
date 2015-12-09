@@ -63,13 +63,8 @@ else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>, <%=note.click_acti
 <div id="copyr">
 <a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">© 2015 GNU GENERAL PUBLIC LICENSE  <i>Version 3, 29 June 2007</i></a>
 </div>
-   <%= Html.ActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
-   <% foreach ( Link link in Html.Thanks()) { %>
-     <a class="thanks" href="<%=link.Url%>"><% if (link.Image !=null) { 
-     %><img src="<%= link.Image %>" alt="<%= link.Text %>"/></a>
-     <%  } else { %>
-     <a class="thanks" href="<%=link.Url%>"><%= link.Text %></a>
-     <% }} %>
+   <%= Html.TranslatedActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
+
 </footer><div class="modal"></div>
 </body>
 </html>

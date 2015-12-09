@@ -2,20 +2,20 @@
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 <ul>
- <li><%= Html.ActionLink("Catalog","Catalog" ) %></li>
- <li><%= Html.ActionLink("Basket","Basket" ) %> </li>
- <li><%= Html.ActionLink("Estimates","Estimates" ) %></li>
- <li><%= Html.ActionLink("Estimate","Estimate" ) %></li>
+ <li><%= Html.TranslatedActionLink("Catalog") %></li>
+ <li><%= Html.TranslatedActionLink("Basket" ) %> </li>
+ <li><%= Html.TranslatedActionLink("YourEstimates") %></li>
+ <li><%= Html.TranslatedActionLink("DoAnEstimate") %></li>
  <% if (User.Identity.IsAuthenticated) { %>
- <li><%= Html.ActionLink("Activities","Activities" ) %></li>
- <li><%= Html.ActionLink("ManagedSiteSkills", "Skills" ) %></li>
- <li><%= Html.ActionLink("UserSkills","UserSkills" ) %></li>
+ <li><%= Html.TranslatedActionLink("Activities" ) %></li>
+ <li><%= Html.TranslatedActionLink("SiteSkills") %></li>
+ <li><%= Html.TranslatedActionLink("UserSkills") %></li>
  <% } else { %>
- <li><%= Html.Translate("Activities") %>,
- <%= Html.Translate("ManagedSiteSkills") %>,
- <%= Html.Translate("UserSkills") %>:
- <i><%= Html.Translate("AuthenticatedOnly") %></i></li>
- <% }%>
-
+ <li> <i><%= Html.Translate("AuthenticatedOnly") %>:
+ <%= Html.Translate("Activities") %>,
+ <%= Html.Translate("SiteSkills") %>,
+ <%= Html.Translate("UserSkills") %></i>
+</li> <% }%>
  </ul>
+
 </asp:Content>

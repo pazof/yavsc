@@ -2,7 +2,7 @@
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <div>
-<%= Html.ActionLink("blogs","Index","WorkFlow") %>
+<%= Html.TranslatedActionLink("blogs","Index","WorkFlow") %>
 </div>
      
 </asp:Content>
