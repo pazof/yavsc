@@ -1,3 +1,54 @@
+2015-12-15  Paul Schneider  <paul@pschneider.fr>
+
+	* input.css: refabrication des feuilles de style : la feuille
+	des champs de formulaire.
+
+	* AccountController.cs: implémente une méthode de l'API pour
+	ajouter un utilisateur au cercle
+
+	* links.css: Corrige la couleur du boutton de validation des
+	formulaire de classe `ActionLink`
+
+	* style.css: refabrication: importe la nouvelle feuille de
+	style des champs de formulaires
+
+	* style.css: nettoyage du thème sombre
+
+	* style.css: nettoyage + section principale (`main`) centré
+
+	* FrontOfficeController.cs: Repositionne la route vers le
+	devis à do/Estimate
+
+
+	* YavscHelpers.cs: corrige ma ré-écriture des helpers html
+	ActionLink
+
+	* App.master: formattage du code source
+
+	* AppAdmin.master: synchronisation avec la page maître,
+	beaucoup de changements dans cette page maître pour les
+	administrateurs:
+	* prend en charge les côtes d'article
+	* utilise les fontes de caractère de la page pour les lien
+	action
+	* prend en charge les zones de formulaire masquable.
+
+	* NoLogin.master: synchronisation avec la page maître
+
+	* Performer.ascx: WIP permet d'ajouter un préstataire à un de
+	ses cercles.
+
+	* YourEstimates.aspx: corrige un lien cassé
+
+	* Yavsc.csproj: mise à niveau Npgsql,
+	renommage Estimate
+
+	* packages.config: mise à niveau de la bibliothèque Npgsql
+	(pilote d'accès à la base de donnée)
+
+
+	* Estimate.aspx: refabrication
+
 2015-12-09  Paul Schneider  <paul@pschneider.fr>
 
 	* animate.css: animations css

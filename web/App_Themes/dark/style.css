@@ -1,22 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
 @import url(/App_Themes/dark/links.css);
 
-.panel { 
-   display:inline-block;
-   width: calc(33% - 10px);
-}
-
-@media all and (max-width: 1200px) {
-.panel { 
-	width: calc(50% - 5px); 
-	} 
-}
-@media all and (max-width: 720px) {
-.panel { 
-	width: 100%; 
-	} 
-}
-
 .skillname { 
 	background-color: rgba(16,16,64,0.8);
 	 border-color: #aaf;
@@ -27,7 +11,6 @@ body {
 	background-color: black;
 	color: #D0FFD0;
 }
-
 
 .rate {
 	border: solid  rgb(128,128,0) 1px;
@@ -215,7 +198,6 @@ header h1, header a , .actionlink, .menuitem, a { padding:.5em;}
 	padding:.3em;
 	}
 
-  .bshpanel { cursor:zoom-in; }
 
 	.c2 { display:initial; }
 	.c2-alt { display:none; }

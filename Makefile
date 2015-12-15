@@ -76,7 +76,12 @@ distclean: clean
 sourcepkg:
 	git archive --format=tar --prefix=yavsc-$(CONFIG)/ $(CONFIG) | bzip2 > yavsc-$(CONFIG).tar.bz2
 
-start_xsp: build
+dist/web/$(CONFIG)/Web.config: deploy
+
+web/Web.config: dist/web/$(CONFIG)/Web.config
+	cp dist/web/$(CONFIG)/Web.config web
+
+start_xsp: build web/Web.config
 	(cd web; export MONO_OPTIONS=--debug; xsp4 --port 8080)
 
 xmldoc: $(patsubst %,web/bin/%,$(DOCASSBS))

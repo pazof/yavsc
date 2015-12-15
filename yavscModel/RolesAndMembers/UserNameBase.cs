@@ -28,7 +28,7 @@ namespace Yavsc.Model.RolesAndMembers
 	/// <summary>
 	/// User name base.
 	/// </summary>
-	public class UserNameBase { 
+	public class UserNameBase : IIdentified<string> { 
 		/// <summary>
 		/// Gets or sets the name of the user.
 		/// </summary>
@@ -37,6 +37,20 @@ namespace Yavsc.Model.RolesAndMembers
 			,Display(ResourceType=typeof(LocalizedText),Name="User_name"),RegularExpression(@"^[a-zA-Z .-_#]{1,100}$")]
 		public string UserName { get; set; }
 	
+		#region IIdentified implementation
+		/// <summary>
+		/// Gets or sets the identifier.
+		/// </summary>
+		/// <value>The identifier.</value>
+		public string Id {
+			get {
+				return UserName;
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		#endregion
 	}
 	
 }

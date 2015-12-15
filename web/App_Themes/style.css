@@ -43,6 +43,7 @@ main {
 	margin: 2em;
 	padding: 2em;
 	display: block;
+	text-align: center;
 }
 main video, main img {
 	max-width:100%;
@@ -352,7 +353,6 @@ div.panel {
 	.usertitleref{ 
 	padding:.3em;
 	}
-  .bshpanel { cursor:zoom-in; }
 
 	.c2 { display:initial; }
 	.c2-alt { display:none; }

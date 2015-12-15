@@ -1,5 +1,5 @@
 ﻿//
-//  IIdentified.cs
+//  CircleMember.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -19,19 +19,25 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using Yavsc.Model.RolesAndMembers;
 
-namespace Yavsc.Model
+namespace Yavsc.Model.Circles
 {
 	/// <summary>
-	/// I identified.
+	/// Circle member.
 	/// </summary>
-	public interface IIdentified<T> 
+	public class CircleMember : UserNameBase
 	{
 		/// <summary>
-		/// Gets or sets the identifier.
+		/// Gets or sets the owner.
 		/// </summary>
-		/// <value>The identifier.</value>
-		T Id { get; set; }
+		/// <value>The owner.</value>
+		#region ICircle implementation
+		public string Owner {
+			get;
+			set;
+		}
+		#endregion
 	}
 }
 

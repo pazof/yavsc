@@ -422,6 +422,7 @@ namespace Yavsc.Helpers
 			string actionLabel, object htmlAttributes = null) {
 			return TranslatedActionLink (helper, actionLabel, actionLabel, htmlAttributes);
 		}
+
 		/// <summary>
 		/// Translateds the action link.
 		/// </summary>
@@ -431,10 +432,13 @@ namespace Yavsc.Helpers
 		/// <param name="method">Method.</param>
 		/// <param name="htmlAttributes">Html attributes.</param>
 		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
-			string actionLabel, string method, object htmlAttributes = null) {
-			return TranslatedActionLink (helper, 
-				actionLabel, method, null, htmlAttributes = null);
-			
+			string actionName, string method, object routes, object htmlAttributes = null)  {
+
+			string controllerName = helper.ViewContext.Controller.GetType ().Name;
+			if (controllerName.EndsWith ("Controller"))
+				controllerName = controllerName.Substring (0,controllerName.Length - 10);
+			return TranslatedActionLink (helper, actionName, method,
+				controllerName, routes, htmlAttributes);
 		}
 		/// <summary>
 		/// Translateds the action link.
@@ -447,6 +451,11 @@ namespace Yavsc.Helpers
 		/// <param name="htmlAttributes">Html attributes.</param>
 		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
 			string actionLabel, string method, string controller, object htmlAttributes = null) {
+			string controllerName = helper.ViewContext.Controller.GetType ().Name;
+			if (controllerName.EndsWith ("Controller"))
+				controllerName = controllerName.Substring (0,controllerName.Length - 10);
+			if (controller == null)
+				controller = controllerName;
 			return TranslatedActionLink (helper, actionLabel, method, controller, 
 				new { controller = controller, action = actionLabel }, htmlAttributes);
 		}
@@ -491,15 +500,7 @@ namespace Yavsc.Helpers
 		}
 
 
-		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
-			string actionName, string method, object routes, object htmlAttributes = null)  {
-		
-			string controllerName = helper.ViewContext.Controller.GetType ().Name;
-			if (controllerName.EndsWith ("Controller"))
-				controllerName = controllerName.Substring (0,controllerName.Length - 10);
-			return TranslatedActionLink (helper, actionName, method,
-				controllerName, routes, htmlAttributes);
-		}
+
 
 
 

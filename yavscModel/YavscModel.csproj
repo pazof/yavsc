@@ -241,6 +241,8 @@
     <Compile Include="FrontOffice\PerformerAvailability.cs" />
     <Compile Include="Skill\AuthentificatedSkillRating.cs" />
     <Compile Include="Skill\SkillRating.cs" />
+    <Compile Include="Circles\CircleMember.cs" />
+    <Compile Include="Circles\ICircle.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

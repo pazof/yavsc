@@ -1,10 +1,12 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PerformerProfile>" %>
-<% ViewBag.BlogCounter = BlogManager.GetPostCounter(Model.UserName); %>
-<% ViewBag.WithinCircles = CircleManager.Circles(Model.UserName); %>
 <div class="performer">
 <h2>
 <img src="<%= Model.Avatar %>" alt="" class="bigavatar"> 
-<span class="username" data-type="user" data-roles="" data-blog-counter="<%=ViewBag.BlogCounter%>" data-circles="" ><%=Html.Encode(Model.UserName)%></span>
+<span class="username" data-type="user" 
+data-roles="<%=string.Join (" ",Roles.GetRolesForUser (Model.UserName)) %>" 
+ data-blog-counter="<%=BlogManager.GetPostCounter(Model.UserName)%>" 
+ data-circles="<%=string.Join (" ",CircleManager.Circles(Model.UserName))%>" >
+ <%=Html.Encode(Model.UserName)%></span>
 <%=Html.Partial("RateUserSkillControl", Model) %>
 </h2>
 <address>

@@ -25,7 +25,7 @@ namespace Yavsc.Model.Circles
 	/// <summary>
 	/// Circle base.
 	/// </summary>
-	public class CircleBase
+	public class CircleBase : ICircle
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Yavsc.Model.Circles.CircleBase"/> class.

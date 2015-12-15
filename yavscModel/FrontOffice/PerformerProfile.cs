@@ -37,12 +37,6 @@ namespace Yavsc.Model.FrontOffice
 	/// </summary>
 	public class PerformerProfile: UserNameBase, IRating, IIdentified<long>
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.Skill.PerformerProfile"/> class.
-		/// </summary>
-		public PerformerProfile()
-		{
-		}
 
 		/// <summary>
 		/// Gets or sets the identifier.
@@ -63,6 +57,9 @@ namespace Yavsc.Model.FrontOffice
 		/// <param name="username">Username.</param>
 		public PerformerProfile(string username)
 		{
+			if (string.IsNullOrWhiteSpace (username))
+				throw new InvalidOperationException (
+					"The specified username cannot be blank.");
 			UserName = username;
 		}
 

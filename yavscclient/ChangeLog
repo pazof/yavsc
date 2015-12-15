@@ -1,3 +1,9 @@
+2015-12-15  Paul Schneider  <paul@pschneider.fr>
+
+	* MainClass.cs: format du code
+
+	* YavscClient.csproj: refabrication
+
 2015-11-30  Paul Schneider  <paul@pschneider.fr>
 
 	* YavscClient.csproj: ...

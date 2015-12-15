@@ -17,7 +17,7 @@ foreach (Estimate estim in Model) {
 	Vos estimations en tant que client 
 	(<%=ViewData["ClientCount"]%>):<br>
 	<% foreach (Estimate estim in Model) { %>
-		<%= Html.TranslatedActionLink("Titre:"+estim.Title+" Responsable:"+estim.Responsible,"Estimate",new{id=estim.Id}) %>
+		<%= Html.TranslatedActionLink("Titre:"+estim.Title+" Responsable:"+estim.Responsible,"Estimate", new{ Id=estim.Id }) %>
 	<br><% } %>
 	</div>
 	<% } %> 

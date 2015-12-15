@@ -116,9 +116,6 @@
     <Reference Include="PayPalCoreSDK">
       <HintPath>..\packages\PayPalCoreSDK.1.6.3\lib\net451\PayPalCoreSDK.dll</HintPath>
     </Reference>
-    <Reference Include="Npgsql">
-      <HintPath>..\packages\Npgsql.3.0.3\lib\net45\Npgsql.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.4\lib\net45-full\log4net.dll</HintPath>
     </Reference>
@@ -138,6 +135,9 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Npgsql">
+      <HintPath>..\packages\Npgsql.3.0.4\lib\net45\Npgsql.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\" />
@@ -757,7 +757,6 @@
     <Content Include="Scripts\yavsc.user.js" />
     <Content Include="Views\FrontOffice\SiteSkills.aspx" />
     <Content Include="Views\FrontOffice\YourEstimates.aspx" />
-    <Content Include="Views\FrontOffice\DoAnEstimate.aspx" />
     <Content Include="App_Themes\animate.css" />
     <Content Include="App_Themes\images\live-concert-fg.png" />
     <Content Include="App_Themes\images\live-concert-scene.jpg" />
@@ -766,6 +765,8 @@
     <Content Include="App_Themes\clear\links.css" />
     <Content Include="App_Themes\images\splash-image-2.jpg" />
     <Content Include="Views\Home\Test.aspx" />
+    <Content Include="App_Themes\clear\input.css" />
+    <Content Include="Views\FrontOffice\Estimate.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

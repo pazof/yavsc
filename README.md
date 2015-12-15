@@ -7,8 +7,8 @@ yavsc
 
 -1) Messagerie instantanée : choisir entre directement Google Hangouts API,
   SIP, ou Signal R custom 
-
-0) Fixer l'edition de la côte zéro. (y en a 6, ou onze avec les moitiés, pas cinq (ni dix avec les moitiés))
+0) Bug fixes :
+   stocker le token calendar à part
 
 1) Créer un contrôle "bouton utilisateur" `UserNameControl`
   avec 
@@ -17,10 +17,6 @@ yavsc
    * le compteur de ses posts publiques
    * Si c'est un préstataire, et si on est pas déjà dans un formulaire de reservation, 
      un lien vers la reservation de ses services
-
-
-1.1) Donner des descriptions textuelles au cotes (ex: dans le cadre d'un prestataire, ses 5 cotes seraient 
-par exemple "Nouvelle star" "Artiste local" "Artiste régional" "Star nationale" "Star internationale"
 
 1.2) Concevoir un objet Contact listant les point d'accès par protocol (email, http, sip, irc, téléphone, adresse postale ...)
 
@@ -42,7 +38,6 @@ par exemple "Nouvelle star" "Artiste local" "Artiste régional" "Star nationale"
     seules les propriétés spécifiées non nulles sont mises à jour
     (NDLR:la visibilité est donc par exemple toujours mis à jour).
 
-3) Corriger un peu le thème clair (fond de titres trop sombre)
 
 4) Terminer l'édition du profile de site, avec la modification
   et la suppression des activités et compétences

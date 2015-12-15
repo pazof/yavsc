@@ -1,4 +1,4 @@
-<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" EnableTheming="true"%>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <% ViewState["orgtitle"] = Html.Translate(Page.Title); %>
@@ -27,18 +27,19 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
   $('[data-type="rate-bill"]').rate({webTarget: 'Blogs/Rate'});
  });
 </script> 
-<%=Ajax.GlobalizationScript()%>
+<%=Ajax.YaGlobalizationScript()%>
 <script src="<%=Url.Content("~/Scripts/yavsc.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/yavsc.tags.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/yavsc.rate.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/yavsc.hidefieldset.js")%>"></script>
 <asp:ContentPlaceHolder id="head" runat="server">
 </asp:ContentPlaceHolder>
 </head>
 <body>
-<header data-type="background" data-speed="8" >
+<header >
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
-<h1><a href="<%= Url.RouteUrl("Default") %>">
-<%=ViewState["orgtitle"]%></a>
+<h1>
+<%=ViewState["orgtitle"]%>
 - <a href="<%= Url.RouteUrl("Default", new {controller = "Home" , action = "Index" }) %>"><%= YavscHelpers.SiteName %></a>
 </h1>
  </asp:ContentPlaceHolder>
@@ -59,12 +60,21 @@ else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>, <%=note.click_acti
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
 </main>
-<footer data-type="background" data-speed="5" >
+<footer>
+
+<%= Html.TranslatedActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
+
 <div id="copyr">
-<a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">© 2015 GNU GENERAL PUBLIC LICENSE  <i>Version 3, 29 June 2007</i></a>
+<a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">
+<%=Html.Encode("© 2015 GNU GENERAL PUBLIC LICENSE")%>  <i>Version 3, 29 June 2007</i></a>
 </div>
-   <%= Html.TranslatedActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
 
 </footer><div class="modal"></div>
+<script>
+$(document).ready(function() {
+$('fieldset.mayhide').hidefieldset();
+ $( "a" ).append("<div class='aback'></div>").append("<div class='bback'></div>");
+ });
+</script>
 </body>
 </html>

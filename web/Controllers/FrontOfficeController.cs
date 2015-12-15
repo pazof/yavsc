@@ -95,7 +95,7 @@ namespace Yavsc.Controllers
 		/// <param name="model">Model.</param>
 		/// <param name="submit">Submit.</param>
 		[Authorize]
-		public ActionResult DoAnEstimate (Estimate model, string submit)
+		public ActionResult Estimate (Estimate model, string submit)
 		{
 			string username = Membership.GetUser ().UserName;
 			// Obsolete, set in master page

@@ -36,7 +36,6 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 </asp:ContentPlaceHolder>
 </head>
 <body>
-
 <header >
 <asp:ContentPlaceHolder ID="overHeaderOne" runat="server">
 <h1>
@@ -101,7 +100,7 @@ Vos billets
 $(document).ready(function() {
 $('fieldset.mayhide').hidefieldset();
  $( "a" ).append("<div class='aback'></div>").append("<div class='bback'></div>");
-   });
+ });
 </script>
 </body>
 </html>

@@ -132,5 +132,13 @@ namespace Yavsc.ApiControllers
 					new string [] { model.Role } );
 		}
 
+		[ValidateAjax]
+		[Authorize()]
+		public void AddUserToCircle(UserRole model)
+		{
+			if (ModelState.IsValid)
+				Roles.AddUserToRole (model.UserName, 
+					 model.Role );
+		}
 	}
 }

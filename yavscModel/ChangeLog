@@ -1,3 +1,28 @@
+2015-12-15  Paul Schneider  <paul@pschneider.fr>
+
+	* CircleMember.cs: un membre de cercle est un nom
+	d'utilisateur associé au cercle d'un autre utilisateur.
+
+	* ICircle.cs: Définit l'interface d'un cercle:
+	un cercle est identifié par un entier long,
+	il a un possesseur.
+
+	* CircleBase.cs: un objet cercle basique implémente
+	l'interface d'un cercle.
+
+	* PerformerProfile.cs: s'assure que le nom d'utilisateur
+	utilisé n'est pas vide.
+
+	* IIdentified.cs: doc xml
+
+	* UserNameBase.cs: l'objet base de type "nom d'utilisateur"
+	implémente l'interface générique
+	d'un identifié, par une chaine de caractère.
+
+	* YavscModel.csproj: reference les nouvelles definitions :
+	* un membre de cercle
+	* l'interface d'un cercle
+
 2015-12-09  Paul Schneider  <paul@pschneider.fr>
 
 	* CircleManager.cs: implémente les methodes utilisées à la

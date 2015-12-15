@@ -1,5 +1,5 @@
-﻿//
-//  IIdentified.cs
+//
+//  CircleBase.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -20,18 +20,20 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace Yavsc.Model
+namespace Yavsc.Model.Circles
 {
 	/// <summary>
-	/// I identified.
+	/// I circle.
 	/// </summary>
-	public interface IIdentified<T> 
+	public interface ICircle: IIdentified<long>
 	{
 		/// <summary>
-		/// Gets or sets the identifier.
+		/// Gets or sets the owner.
 		/// </summary>
-		/// <value>The identifier.</value>
-		T Id { get; set; }
+		/// <value>The owner.</value>
+		string Owner { get; set; } 
+
 	}
+
 }
 

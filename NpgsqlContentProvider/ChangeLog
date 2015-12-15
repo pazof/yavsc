@@ -1,3 +1,7 @@
+2015-12-15  Paul Schneider  <paul@pschneider.fr>
+
+	* NpgsqlContentProvider.cs: bug fix
+
 2015-12-09  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlCircleProvider.cs: liste les cercles auquels

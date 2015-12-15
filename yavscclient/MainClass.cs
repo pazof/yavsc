@@ -3,10 +3,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
 using System.Collections.Generic;
-using System.Net.Http.Formatting;
-using Newtonsoft.Json;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Model.FrontOffice.Catalog;
+using System.Net.Http.Formatting;
+using Newtonsoft.Json;
 
 namespace Yavsc
 {
