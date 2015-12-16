@@ -256,9 +256,15 @@ namespace Yavsc.Controllers
 			ProfileEdition model = new ProfileEdition (ProfileBase.Create (id));
 			model.RememberMe = FormsAuthentication.GetAuthCookie (id, true) == null;
 			SetMEACodeViewData (model);
+			SetUIThemeViewData (model);
 			return View (model);
 		}
-
+		private void SetUIThemeViewData(Profile model) {
+			ViewData ["UITheme"] = YavscHelpers.AvailableThemes.Select (
+				x => new SelectListItem () { Selected = 
+					model.UITheme == x, Text = x, Value = x }).ToArray();
+			
+		}
 		private void SetMEACodeViewData(Profile model) {
 			var activities = WorkFlowManager.FindActivity ("%", false);
 			var items = new List<SelectListItem> ();
@@ -360,6 +366,7 @@ namespace Yavsc.Controllers
 				YavscHelpers.Notify(ViewData, "Profile enregistré"+((editsTheUserName)?", nom public inclu.":""));
 			}
 			SetMEACodeViewData (model);
+			SetUIThemeViewData (model);
 			return View (model);
 		}
 		/// <summary>

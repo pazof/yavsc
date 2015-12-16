@@ -1,3 +1,27 @@
+2015-12-16  Paul Schneider  <paul@pschneider.fr>
+
+	* input.css:
+	* style.css: une feuille pour les champs de formulaire thème
+	sombre
+
+	* style.css: une feuille pour un nouveau thème clair "IT" 
+
+	* style.css: une feuille pour un nouveau thème sombre "IT" 
+
+	* AccountController.cs: renseigne le combobox des thèmes
+	disponibles
+
+	* YavscHelpers.cs: Prendre la liste des thème dans un
+	paramètre de configuration
+
+	* Profile.aspx: Selectionner le thème avec un combo à partir
+	de la page du profile
+
+	* Web.config: le thème par défaut devient "clear",
+	le paramètre "Themes" contient la liste des thèmes autorisés.
+
+	* Yavsc.csproj: référencer les nouveaux thèmes
+
 2015-12-15  Paul Schneider  <paul@pschneider.fr>
 
 	* input.css: refabrication des feuilles de style : la feuille

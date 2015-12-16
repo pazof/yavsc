@@ -355,9 +355,9 @@ namespace Yavsc.Helpers
 		/// <summary>
 		/// The available themes.
 		/// </summary>
-		public static string[] AvailableThemes = {
-			"clear", "dark", "blue", "green"
-		};
+		public static string[] AvailableThemes = 
+			ConfigurationManager.AppSettings["Themes"]
+				.Split(',');
 
 		/// <summary>
 		/// Themes the CSS links.
@@ -370,8 +370,11 @@ namespace Yavsc.Helpers
 			this System.Web.Mvc.HtmlHelper html, string theme, string baseName) {
 
 			if (!AvailableThemes.Contains (theme))
-				throw new ArgumentException ("The given theme is not configured: " +
-				theme);
+			if (AvailableThemes.Length > 0)
+				theme = AvailableThemes [0];
+			else
+				return null;
+			
 			if (string.IsNullOrWhiteSpace(baseName))
 				throw new ArgumentException ("Specify a base name");
 

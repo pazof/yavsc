@@ -170,7 +170,7 @@ Avatar :
 </legend>
 <span>
 <%= Html.LabelFor(model => model.UITheme) %> :
-<%= Html.TextBox("UITheme") %>
+<%= Html.DropDownList("UITheme") %>
 <%= Html.ValidationMessage("UITheme", "*") %></span>
 
 </fieldset>

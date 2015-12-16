@@ -176,6 +176,8 @@
     <Folder Include="xmldoc\" />
     <Folder Include="App_Code\" />
     <Folder Include="App_Themes\base\" />
+    <Folder Include="App_Themes\itclear\" />
+    <Folder Include="App_Themes\itdark\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -767,6 +769,9 @@
     <Content Include="Views\Home\Test.aspx" />
     <Content Include="App_Themes\clear\input.css" />
     <Content Include="Views\FrontOffice\Estimate.aspx" />
+    <Content Include="App_Themes\itclear\style.css" />
+    <Content Include="App_Themes\itdark\style.css" />
+    <Content Include="App_Themes\dark\input.css" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
