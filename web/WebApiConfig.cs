@@ -29,6 +29,7 @@ using System.Web.Routing;
 using Yavsc.Formatters;
 using Yavsc.Model.FrontOffice;
 using System.Web.Http;
+using System.IdentityModel;
 
 namespace Yavsc
 {
@@ -60,6 +61,7 @@ namespace Yavsc
 				routeTemplate: WebApiConfig.UrlPrefix + "/{controller}/{action}/{id}",
 				defaults: new { action="Index", id = RouteParameter.Optional }
 			);
+
 		}
 	}
 	

@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Web.Http;
 using Yavsc.Model.Google;
 using Yavsc.Model.Calendar;
 using Yavsc.Helpers;
@@ -41,6 +42,7 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="evpub">Evpub.</param>
 		[Authorize(Roles="BackOffice")]
+		[AcceptVerbs("POST")]
 		public MessageWithPayloadResponse NotifyEvent(EventPub evpub) {
 			return GoogleHelpers.NotifyEvent(evpub);
 		}
@@ -50,10 +52,15 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		/// <param name="registrationId">Registration identifier.</param>
 		[Authorize]
-		public void SetRegistrationId(string registrationId)
+		[AcceptVerbs("GET")]
+		public string SetRegistrationId(string registrationId)
 		{
 			// TODO set registration id
-			setRegistrationId (User.Identity.Name, registrationId);
+			if (string.IsNullOrWhiteSpace(registrationId))
+				return "Registration id cannot be blank";
+			var username = User.Identity.Name;
+			setRegistrationId (username, registrationId);
+			return "Saved registration for user:"+username;
 		}
 
 		private void setRegistrationId(string username, string regid) {

@@ -58,11 +58,18 @@ fieldset, .performer {
 } 
 
  h1 {
-    background-color: rgba(256,256,256,.2); 
+    background-color: rgba(0,0,0,.2); 
     padding: 1em;
     color:white;
     transition: color 1s;
     } 
+
+  main h1 {
+    background-color: rgba(256,256,256,.3); 
+    padding: 1em;
+    color:black;
+    transition: color 1s;
+    }
 
 .postpreview {
 	background-color: rgba(233,233,233,0.8);
