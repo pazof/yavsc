@@ -84,6 +84,7 @@ namespace Yavsc.Model.WorkFlow
 				NominativeEventPub ev = new NominativeEventPub ();
 				ev.PerformerName = cmdn.PerformerName;
 				ev.Description = com.GetDescription ();
+				// TODO send a location
 				GoogleHelpers.NotifyEvent (ev);
 			}
 			return cmdid;

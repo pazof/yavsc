@@ -406,8 +406,8 @@ namespace Yavsc.Helpers
 		/// <param name="baseName">Base name.</param>
 		public static IHtmlString ThemeCSSLinks (
 			this System.Web.Mvc.HtmlHelper html, string theme, string baseName) {
-
-			if (!AvailableThemes.Contains (theme))
+			if (AvailableThemes==null) return null;
+			if (!AvailableThemes.Contains (theme)) 
 			if (AvailableThemes.Length > 0)
 				theme = AvailableThemes [0];
 			else

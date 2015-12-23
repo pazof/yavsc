@@ -1,3 +1,7 @@
+2015-12-23  Paul Schneider  <paul@pschneider.fr>
+
+	* .gitignore: une typo
+
 2015-12-15  Paul Schneider  <paul@pschneider.fr>
 
 	* Makefile: utilise le fichier de conf généré pour débugger.

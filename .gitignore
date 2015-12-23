@@ -16,7 +16,7 @@ web/Web.Debug.config
 web/Web.Release.config
 web/Web.Lua.config
 web/Web.TotemPre.config
-web/Web.TotemProd.config
+web/Web.Totemprod.config
 .nuget
 .gitignore
 web/Web.YavscPre.config

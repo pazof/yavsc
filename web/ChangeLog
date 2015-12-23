@@ -1,5 +1,13 @@
 2015-12-23  Paul Schneider  <paul@pschneider.fr>
 
+	* Web.config: Ajoute le paramètre obligatoire "Themes" au
+	fichier de configuration
+
+	* YavscHelpers.cs: fixe l'absence de configuration des thèmes
+	disponibles
+
+2015-12-23  Paul Schneider  <paul@pschneider.fr>
+
 	* blanc.png:
 	* logo-white.png:
 	* musician-923526_1280.jpg:

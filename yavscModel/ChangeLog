@@ -1,5 +1,10 @@
 2015-12-23  Paul Schneider  <paul@pschneider.fr>
 
+	* WorkFlowManager.cs: une note à faire : envoyer le lieu de la
+	prestation à la demande de devis
+
+2015-12-23  Paul Schneider  <paul@pschneider.fr>
+
 	* EventCirclesPub.cs:
 	* NominativeEventPub.cs: refabrication
 
