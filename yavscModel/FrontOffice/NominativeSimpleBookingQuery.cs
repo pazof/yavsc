@@ -1,5 +1,5 @@
 //
-//  UserNameBase.cs
+//  NominativeSimpleBookingQuery.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -20,37 +20,30 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Model.Skill;
+using Yavsc.Model.WorkFlow;
+using System.Linq;
+using Yavsc.Model.RolesAndMembers;
 
-namespace Yavsc.Model.RolesAndMembers
+namespace Yavsc.Model.FrontOffice
 {
 	/// <summary>
-	/// User name base.
+	/// Nominative simple booking query.
 	/// </summary>
-	public class UserNameBase : IUserName, IIdentified<string> { 
+	public class NominativeSimpleBookingQuery : SimpleBookingQuery, INominative {
+		#region IUserName implementation
 		/// <summary>
-		/// Gets or sets the name of the user.
+		/// Gets or sets the name of the performer.
 		/// </summary>
 		/// <value>The name of the user.</value>
-		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")
-			,Display(ResourceType=typeof(LocalizedText),Name="User_name"),RegularExpression(@"^[a-zA-Z .-_#]{1,100}$")]
-		public string UserName { get; set; }
-	
-		#region IIdentified implementation
-		/// <summary>
-		/// Gets or sets the identifier.
-		/// </summary>
-		/// <value>The identifier.</value>
-		public string Id {
-			get {
-				return UserName;
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public string PerformerName {
+			get;
+			set;
 		}
+
 		#endregion
+ 
 	}
 	
 }

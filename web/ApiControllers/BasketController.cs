@@ -7,6 +7,7 @@ using System.Web.Http;
 using Yavsc.Model.WorkFlow;
 using System.Collections.Specialized;
 using Yavsc.Model.FrontOffice;
+using Yavsc.Helpers;
 
 namespace Yavsc.ApiControllers
 {
@@ -15,6 +16,7 @@ namespace Yavsc.ApiControllers
 	/// Maintains a collection of articles
 	/// qualified with name value pairs
 	/// </summary>
+	[Authorize]
 	public class BasketController : ApiController
     {
 
@@ -30,25 +32,25 @@ namespace Yavsc.ApiControllers
 				return b;
 			}
 		}
+		/// <summary>
+		/// Get the basket.
+		/// </summary>
+		public CommandSet Get() {
+			return CurrentBasket;
+		}
 
 		/// <summary>
 		/// Create the specified basket item using specified command parameters.
 		/// </summary>
-		/// <param name="cmdParams">Command parameters.</param>
-		[Authorize]
-		public long Create(NameValueCollection cmdParams)
+		public long Create()
 		{
-			// HttpContext.Current.Request.Files
-			Command cmd = Command.CreateCommand(cmdParams, HttpContext.Current.Request.Files);
-			CurrentBasket.Add (cmd);
-			return cmd.Id;
+			return YavscHelpers.CreateCommandFromRequest ();
 		}
 
 		/// <summary>
 		/// Read the specified basket item.
 		/// </summary>
 		/// <param name="itemid">Itemid.</param>
-		[Authorize]
 		Command Read(long itemid){
 			return CurrentBasket[itemid];
 		}
@@ -59,7 +61,6 @@ namespace Yavsc.ApiControllers
 		/// <param name="itemid">Item identifier.</param>
 		/// <param name="param">Parameter name.</param>
 		/// <param name="value">Value.</param>
-		[Authorize]
 		public void UpdateParam(long itemid, string param, string value)
 		{
 			CurrentBasket [itemid].Parameters [param] = value;
@@ -69,7 +70,6 @@ namespace Yavsc.ApiControllers
 		/// Delete the specified item.
 		/// </summary>
 		/// <param name="itemid">Item identifier.</param>
-		[Authorize]
 		public void Delete(long itemid)
 		{
 			CurrentBasket.Remove (itemid);

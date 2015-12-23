@@ -56,7 +56,6 @@ namespace Yavsc.Controllers
 			return View ();
 		}
 
-		// TODO [ValidateAntiForgeryToken]
 		/// <summary>
 		/// Does login.
 		/// </summary>

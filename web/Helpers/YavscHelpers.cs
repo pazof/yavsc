@@ -19,6 +19,7 @@ using Yavsc.Model.Messaging;
 using System.Linq;
 using System.Reflection;
 using System.Web.Routing;
+using Yavsc.Model.FrontOffice;
 
 namespace Yavsc.Helpers
 {
@@ -28,7 +29,44 @@ namespace Yavsc.Helpers
 	/// </summary>
 	public static class YavscHelpers
 	{
-		
+		/* {"Need": "11 21,10 14", "MEACode": "6829C", "AUTH_USER": "Paul Schneider", "REMOTE_ADDR": "127.0.0.1",
+		 * "REMOTE_PORT": "43376", "REMOTE_USER": "", "PreferedDate": "22/12/2015 00:00:00", 
+		 * "PerformerName": "Paul Schneider"} */ 
+		public static string[] FilteredKeys = {
+			"URL",	"HTTPS",	"ALL_RAW",	"ALL_HTTP", "ALL_RAW",	"HTTP_DNT",	"PATH_INFO",
+			".ASPXFORM$",	"CERT_FLAGS",	"LOCAL_ADDR",
+			"LOGON_USER",	"CERT_COOKIE",	"CERT_ISSUER",	"HTTP_ACCEPT", "HTTP_COOKIE",	"INSTANCE_ID",
+			//	"REMOTE_ADDR",
+				"REMOTE_HOST",
+				"REMOTE_PORT",
+				"REMOTE_USER",
+			"SCRIPT_NAME",	"SERVER_NAME",	"SERVER_PORT",	"APPL_MD_PATH",	"CERT_KEYSIZE",
+			"CERT_SUBJECT",	"CONTENT_TYPE",		"HTTP_REFERER",
+			"AUTH_PASSWORD",	"HTTPS_KEYSIZE",	".ASPXANONYMOUS",	"CONTENT_LENGTH",
+			"REQUEST_METHOD",	"HTTP_CONNECTION",	"HTTP_USER_AGENT",	"PATH_TRANSLATED",
+			"SERVER_PROTOCOL",	"HTTP_ACCEPT_LANGUAGE",	"AUTH_TYPE",
+			// "AUTH_USER", 
+			"HTTP_HOST", "QUERY_STRING", "SERVER_SOFTWARE", "ASP.NET_SessionId", 
+			"CERT_SERIALNUMBER", "GATEWAY_INTERFACE", "HTTP_CONTENT_TYPE",
+			"APPL_PHYSICAL_PATH", "CERT_SECRETKEYSIZE", "CERT_SERVER_ISSUER", 
+			"INSTANCE_META_PATH", "SERVER_PORT_SECURE",
+			"CERT_SERVER_SUBJECT", "HTTPS_SECRETKEYSIZE", "HTTPS_SERVER_ISSUER", 
+			"HTTP_CONTENT_LENGTH", "HTTPS_SERVER_SUBJECT", "HTTP_ACCEPT_ENCODING", "HTTP_ACCEPT_LANGUAGE"
+		};
+		public static long CreateCommandFromRequest()
+		{
+			var keys = HttpContext.Current.Request.Params.AllKeys.Where (
+				x => !YavscHelpers.FilteredKeys.Contains (x)).ToArray();
+			var prms = new Dictionary<string,string> ();
+
+			foreach (var key in keys) { 
+				prms.Add (key, HttpContext.Current.Request.Params [key]);
+			}
+			Command cmd = Command.CreateCommand(
+				prms, 
+				HttpContext.Current.Request.Files);
+			return cmd.Id;
+		}
 
 		private static string siteName = null; 
 		/// <summary>

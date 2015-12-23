@@ -21,6 +21,7 @@
 	<data name="Activities"><value>Activities</value></data>
 	<data name="AnIMessageHasbeenSent"><value>An instant message has been sent to {0}, 
 	showing to him your query. You should be contacted very soon.</value></data>
+	<data name="AskForAnEstimate"><value>Ask for an estimate</value></data>
 	<data name="available"><value>available</value></data>
 	<data name="AuthenticatedOnly"><value>You must be authenticated in order to access this information</value></data>
 	<data name="Bill_edition"><value>Bill edition</value></data>

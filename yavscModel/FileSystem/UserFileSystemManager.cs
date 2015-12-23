@@ -111,6 +111,8 @@ namespace Yavsc.Model.FileSystem
 		/// <param name="files">Files.</param>
 		public static void Put(string destDir, NameObjectCollectionBase files)
 		{
+			if (files.Count == 0)
+				return;
 			FileManager.ValidateSubDir (destDir);
 			FileManager.Put(
 				Path.Combine(CurrentUserFileRoot(),destDir),

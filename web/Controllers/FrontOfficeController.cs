@@ -40,6 +40,11 @@ namespace Yavsc.Controllers
 			return View ();
 		}
 
+		public ActionResult AskForAnEstimate()
+		{
+			return View();
+		}
+		
 		/// <summary>
 		/// Pub the Event
 		/// </summary>
@@ -251,11 +256,13 @@ namespace Yavsc.Controllers
 				// * instanciate the given command type, passing it the form data
 				// * Make the workflow register this command
 				// * Render the resulting basket
-				var cmd = Command.CreateCommand (collection, HttpContext.Request.Files);
-				ViewData["Commanded"] = cmd; 
+
+				long cmdid = YavscHelpers.CreateCommandFromRequest ();
+				var basket = WorkFlowManager.GetCommands (User.Identity.Name);
+				ViewData["Commanded"] = basket[cmdid]; 
 				YavscHelpers.Notify (ViewData, 
 					LocalizedText.Item_added_to_basket);
-				return View ("Basket",WorkFlowManager.GetCommands (User.Identity.Name));
+				return View ("Basket",basket);
 			} catch (Exception e) {
 				YavscHelpers.Notify (ViewData, "Exception:" + e.Message);
 				return View (collection);
@@ -263,7 +270,7 @@ namespace Yavsc.Controllers
 		}
 
 		/// <summary>
-		/// Booking the specified model.
+		/// Book the specified model.
 		/// </summary>
 		/// <param name="model">Model.</param>
 		public ActionResult EavyBooking (BookingQuery model)
@@ -295,7 +302,7 @@ namespace Yavsc.Controllers
 
 		/// <summary>
 		/// Performers on this MEA.
-		/// fr
+		/// [fr]
 		/// Liste des prestataires dont 
 		/// l'activité principale est celle spécifiée
 		/// </summary>
@@ -450,6 +457,10 @@ namespace Yavsc.Controllers
 					} else
 						result.Add (profile.CreateAvailability (model.PreferedDate, false));
 				ViewData["Circles"] = CircleManager.ListAvailableCircles(); 
+				ViewBag.SimpleBookingQuery = model;
+				ViewBag.ClientName = User.Identity.IsAuthenticated ?
+					User.Identity.Name : User.Identity.Name;
+
 				return View ("Performers", result.ToArray ());
 			} 
 			if (model.Need==null) {

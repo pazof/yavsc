@@ -1,3 +1,8 @@
+2015-12-23  Paul Schneider  <paul@pschneider.fr>
+
+	* packages.config:
+	* NpgsqlBlogProvider.csproj: mise à niveau Npgsql
+
 2015-12-09  Paul Schneider  <paul@pschneider.fr>
 
 	* NpgsqlBlogProvider.cs: Corrige la méthode pour enlever un

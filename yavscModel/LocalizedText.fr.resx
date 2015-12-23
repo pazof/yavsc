@@ -14,14 +14,12 @@
 	</resheader>
 
 	<data name="About"><value>À propos</value></data>
-	<data name="AboutContent"><value>Je suis développeur indépendant à Suresnes depuis quelque mois.
-   Je démarre une activité dans le domaine de l'edition logicielle, 
-   et je délivre principalement des applications pour mobiles.</value></data>
 	<data name="additionally"><value>de plus</value></data>
 	<data name="access_denied"><value>Accès refusé</value></data>
 	<data name="Activities"><value>Activités</value></data>
 	<data name="AnIMessageHasbeenSent"><value>Un message instantané a été envoyé à {0}, 
 	lui présentant votre demande. Vous devriez être contacté très rapidement.</value></data>
+	<data name="AskForAnEstimate"><value>Demander un devis</value></data>
 	<data name="available"><value>disponible</value></data>
 	<data name="AuthenticatedOnly"><value>Seuls les utilisateurs authentifiés peuvent accèder à cette information.</value></data>
 	<data name="Basket"><value>Panier</value></data>

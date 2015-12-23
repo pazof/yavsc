@@ -1,3 +1,29 @@
+2015-12-23  Paul Schneider  <paul@pschneider.fr>
+
+	* AccountController.cs: implémente la methode de login de
+	l'API
+
+	* BasketController.cs: implémente la methode de recupération
+	du panier
+
+	* AccountController.cs: enléve un commaentaire obsolète
+
+	* YavscHelpers.cs:
+	* FrontOfficeController.cs: refabrication de l'ajout au panier
+
+	* yavsc.user.js: enlève un message de debuggage js
+
+	* Performer.ascx: formattage
+
+	* Performers.aspx: implémente le bouton de demande de
+	reservation
+
+	* Yavsc.csproj: validate unobtrusive
+
+	* packages.config: référence M$ Owin
+
+	* Web.config: retour à une version d'équère
+
 2015-12-16  Paul Schneider  <paul@pschneider.fr>
 
 	* input.css:

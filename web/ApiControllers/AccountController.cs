@@ -107,6 +107,16 @@ namespace Yavsc.ApiControllers
 			}
 		}
 
+		[ValidateAjax]
+		public void Login(LoginModel model)
+		{
+			if (ModelState.IsValid) {
+				if (Membership.ValidateUser (model.UserName, model.Password)) {
+					FormsAuthentication.SetAuthCookie (model.UserName, model.RememberMe);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Adds the user to role.
 		/// </summary>

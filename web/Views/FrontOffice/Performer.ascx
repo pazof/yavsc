@@ -1,4 +1,6 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PerformerProfile>" %>
+
+
 <div class="performer">
 <h2>
 <img src="<%= Model.Avatar %>" alt="" class="bigavatar"> 

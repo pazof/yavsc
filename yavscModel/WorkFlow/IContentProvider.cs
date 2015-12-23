@@ -25,6 +25,10 @@ namespace Yavsc.Model.WorkFlow
 		/// <value>The final statuses.</value>
 		bool [] FinalStatuses { get; }
 
+		/// <summary>
+		/// Gets the name.
+		/// </summary>
+		/// <value>The name.</value>
 		string Name { get; }
 		/// <summary>
 		/// Creates the estimate.
@@ -133,6 +137,7 @@ namespace Yavsc.Model.WorkFlow
 		/// <returns>The command id in db.</returns>
 		/// <param name="com">COM.</param>
 		long RegisterCommand (Command com);
+
 		/// <summary>
 		/// Sets the writting status.
 		/// </summary>

@@ -19,7 +19,6 @@
 	     var roles = $this.data('roles');
 	     var bcounter = $this.data('blog-counter');
 	     var circlesspec = $this.data('circles');
-	     console.log('here');
 	     if (bcounter)
 	        if (bcounter>0) {
 	   	 		_this.buttonBlog = $('<a><i class="fa fa-folder"></i></a>');

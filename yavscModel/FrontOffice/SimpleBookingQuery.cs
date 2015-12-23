@@ -23,9 +23,11 @@ using System.ComponentModel.DataAnnotations;
 using Yavsc.Model.Skill;
 using Yavsc.Model.WorkFlow;
 using System.Linq;
+using Yavsc.Model.RolesAndMembers;
 
 namespace Yavsc.Model.FrontOffice
 {
+
 	/// <summary>
 	/// Simple booking query.
 	/// </summary>

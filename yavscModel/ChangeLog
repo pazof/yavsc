@@ -1,3 +1,36 @@
+2015-12-23  Paul Schneider  <paul@pschneider.fr>
+
+	* INominative.cs: Interface d'un objet destiné à un
+	préstataire spécifié,
+	par une propriété `PerformerName`
+
+
+	* NominativeSimpleBookingQuery.cs: implémente l'interface
+	INominative
+
+	* UserFileSystemManager.cs: Fixe: Ne pas créer un dossier de
+	destination si on a aucun fichier à recevoir.
+
+	* Commande.cs: * Ajoute le nom du client dans l'objet commande
+	* Factorise le positionnement des paramêtres
+	* La commande est une instance du type spécifié à la commande,
+	dans son paramêtre `type` 
+
+	* SimpleBookingQuery.cs: refabrication
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx: traducations
+
+	* UserNameBase.cs: implemente l'interface `IUserName`
+
+
+	* IContentProvider.cs: doc xml
+
+	* YavscModel.csproj: reference le nouveau code source
+
+	* IUserName.cs: Définit l'interface d'un objet associé à un
+	utilisateur.
+
 2015-12-15  Paul Schneider  <paul@pschneider.fr>
 
 	* CircleMember.cs: un membre de cercle est un nom

@@ -243,6 +243,9 @@
     <Compile Include="Skill\SkillRating.cs" />
     <Compile Include="Circles\CircleMember.cs" />
     <Compile Include="Circles\ICircle.cs" />
+    <Compile Include="FrontOffice\NominativeSimpleBookingQuery.cs" />
+    <Compile Include="FrontOffice\INominative.cs" />
+    <Compile Include="RolesAndMembers\IUserName.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

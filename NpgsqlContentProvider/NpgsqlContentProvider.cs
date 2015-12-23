@@ -178,12 +178,15 @@ namespace Yavsc
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"insert into commandes (prdref,creation,params,clientname,applicationname) values (@pref,@creat,@prms,@cli,@app) returning id";
-					cmd.Parameters.AddWithValue ("@pref", com.ProductRef);
-					cmd.Parameters.AddWithValue ("@creat", com.CreationDate);
-					cmd.Parameters.AddWithValue ("@prms", JsonConvert.SerializeObject (com.Parameters));
-					cmd.Parameters.AddWithValue ("@cli", Membership.GetUser ().UserName);
-					cmd.Parameters.AddWithValue ("@app", ApplicationName);
+						"insert into commandes (prdref,creation,params,class,clientname,applicationname) values (:pref,:creat,:prms,:cls,:cli,:app) returning id";
+					cmd.Parameters.AddWithValue ("pref", com.ProductRef);
+					cmd.Parameters.AddWithValue ("creat", com.CreationDate);
+					cmd.Parameters.AddWithValue ("prms", NpgsqlTypes.NpgsqlDbType.Jsonb, 
+						JsonConvert.SerializeObject(
+							com.Parameters));
+					cmd.Parameters.AddWithValue ("cls",  com.GetType().FullName);
+					cmd.Parameters.AddWithValue ("cli",  com.ClientName);
+					cmd.Parameters.AddWithValue ("app", ApplicationName);
 					cnx.Open ();
 					com.Id = id = (long)cmd.ExecuteScalar ();
 				}
@@ -209,7 +212,7 @@ namespace Yavsc
 			using (NpgsqlConnection cnx = CreateConnection ()) {
 				using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
 					cmd.CommandText = 
-						"select id,creation,prdref,params,class from commandes where @user = clientname and applicationname = @app";
+						"select id,creation,prdref,params::TEXT,class from commandes where @user = clientname and applicationname = @app";
 					cmd.Parameters.AddWithValue ("@user", username);
 					cmd.Parameters.AddWithValue ("@app", this.ApplicationName);
 					cnx.Open ();
@@ -220,10 +223,10 @@ namespace Yavsc
 							ycmd.Id = rdr.GetInt64 (0);
 							ycmd.CreationDate = rdr.GetDateTime (1);
 							ycmd.ProductRef = rdr.GetString (2);
-
-							object prms = JsonConvert.DeserializeObject<Dictionary<string,string>> (rdr.GetString (3));
-							ycmd.Parameters = prms as Dictionary<string,string>;
-
+							ycmd.ClientName = username;
+							var prms = rdr.GetString (3);
+							var obj = JsonConvert.DeserializeObject<Dictionary<string,string>> (prms);
+							ycmd.SetParameters(obj as Dictionary<string,string>);
 							cmds.Add (ycmd);
 						}
 					}

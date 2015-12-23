@@ -1,5 +1,5 @@
 //
-//  UserNameBase.cs
+//  IUserName.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -25,32 +25,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Model.RolesAndMembers
 {
-	/// <summary>
-	/// User name base.
-	/// </summary>
-	public class UserNameBase : IUserName, IIdentified<string> { 
-		/// <summary>
-		/// Gets or sets the name of the user.
-		/// </summary>
-		/// <value>The name of the user.</value>
-		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")
-			,Display(ResourceType=typeof(LocalizedText),Name="User_name"),RegularExpression(@"^[a-zA-Z .-_#]{1,100}$")]
-		public string UserName { get; set; }
-	
-		#region IIdentified implementation
-		/// <summary>
-		/// Gets or sets the identifier.
-		/// </summary>
-		/// <value>The identifier.</value>
-		public string Id {
-			get {
-				return UserName;
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-		#endregion
+	public interface IUserName   {
+		string UserName { get; set; }
 	}
 	
 }

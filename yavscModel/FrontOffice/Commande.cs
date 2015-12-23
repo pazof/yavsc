@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-
 namespace Yavsc.Model.FrontOffice
 {
 	/// <summary>
@@ -27,6 +26,12 @@ namespace Yavsc.Model.FrontOffice
 		/// </summary>
 		/// <value>The identifier.</value>
 		public long Id { get; set; }
+
+		/// <summary>
+		/// Gets or sets the name of the client.
+		/// </summary>
+		/// <value>The name of the client.</value>
+		public string ClientName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the product reference.
@@ -50,30 +55,55 @@ namespace Yavsc.Model.FrontOffice
 				return UserFileSystemManager.GetFiles (Id.ToString());
 			}
 		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Yavsc.Model.FrontOffice.Command"/> class.
 		/// </summary>
 		public Command()
 		{
 		}
+		public void SetParameters(Dictionary<string,string>  collection)
+		{
+			Parameters.Clear ();
+			foreach (string key in collection.Keys) {
+				if (key != "productref" && key != "type" && key != "clientname" ) {
+					
+					Parameters.Add (key, collection [key]);
+					foreach (var prop in this.GetType().GetRuntimeProperties())
+					{
+						if (prop.Name == key && prop.CanWrite) {
+							System.ComponentModel.TypeConverter tc = System.ComponentModel.TypeDescriptor.GetConverter(prop.PropertyType);
+							prop.SetValue(this,tc.ConvertFromString(collection [key]));
+						}
+					}
+				}
+			}
+		}
 
 		/// <summary>
-		/// Froms the post.
+		/// Creates a command from the http post request.
+		/// This methods applies to one product reference,
+		/// given in a required value "ref" in the given 
+		/// collection of name value couples.
 		/// </summary>
 		/// <param name="collection">Collection.</param>
 		/// <param name="files">Files.</param>
-		private void FromPost(NameValueCollection collection, NameObjectCollectionBase files)
+		private void FromPost(Dictionary<string,string>  collection, NameObjectCollectionBase files)
 		{
 			// string catref=collection["catref"]; // Catalog Url from which formdata has been built
-			ProductRef=collection["ref"]; // Required product reference
+			ProductRef = collection ["productref"];
+			if (ProductRef == null)
+				throw new InvalidOperationException (
+					"A product reference cannot be blank at command time");
+			ClientName = collection ["clientname"];
+			if (ClientName == null)
+				throw new InvalidOperationException (
+					"A client name cannot be blank at command time");
+
 			CreationDate = DateTime.Now;
 			Status = CommandStatus.Inserted;
 			// stores the parameters:
-			Parameters.Clear ();
-			foreach (string key in collection.AllKeys) {
-				if (key!="ref")
-					Parameters.Add (key, collection [key]);
-			}
+			SetParameters(collection);
 			WorkFlowManager.RegisterCommand (this); // gives a value to this.Id
 			string strcmdid = Id.ToString ();
 			UserFileSystemManager.Put(Path.Combine("commandes",strcmdid),files);
@@ -82,12 +112,22 @@ namespace Yavsc.Model.FrontOffice
 		/// <summary>
 		/// Creates a command using the specified collection
 		/// as command parameters, handles the files upload.
+		/// 
+		/// Required values in the command parameters : 
+		///
+		/// * ref: the product reference,
+		/// * type: the command concrete class name.
+		///
 		/// </summary>
 		/// <param name="collection">Collection.</param>
 		/// <param name="files">Files.</param>
-		public static Command CreateCommand (NameValueCollection collection, NameObjectCollectionBase files)
+		public static Command CreateCommand (Dictionary<string,string> collection, NameObjectCollectionBase files)
 		{
-			var cmd = CreateCommand (collection ["type"]);
+			string type = collection ["type"];
+			if (type == null)
+				throw new InvalidOperationException (
+				"A command type cannot be blank");
+			var cmd = CreateCommand (type);
 			cmd.FromPost (collection, files);
 			return cmd;
 		}
@@ -100,9 +140,18 @@ namespace Yavsc.Model.FrontOffice
 		public static Command CreateCommand (string className)
 		{
 			var type = Type.GetType (className);
+
+			if (type == null)
+				throw new InvalidOperationException (
+				 "Cannot find the command class " + className);
+
+			if (!typeof(Command).IsAssignableFrom(type))
+				throw new InvalidOperationException (
+					"No command is assignable from a " + className);
+				
 			ConstructorInfo ci = type.GetConstructor(new Type[]{});
-			var cmd = ci.Invoke (new object[]{}) as Command;
-			return cmd;
+			var cmd = ci.Invoke (new object[]{ });
+			return cmd as Command;
 		}
 	}
 }
