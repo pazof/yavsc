@@ -1,5 +1,29 @@
 2015-12-23  Paul Schneider  <paul@pschneider.fr>
 
+	* blanc.png:
+	* logo-white.png:
+	* musician-923526_1280.jpg:
+	* musician-923526_1.nb.jpg:
+	* musician-923526_1.nbb.jpg:
+	* musician-923526_1280.s.jpg:
+	* musician-923526_1.nbbi.jpg:
+	* musician-923526_1.nb.xs.jpg:
+	* live-concert-388160_1280.jpg:
+	* musician-923526_1280.xxs.jpg:
+	* musician-923526_1.nbb.xs.jpg:
+	* musician-923526_1.nb.xxs.jpg:
+	* musician-923526_1.nbbi.xs.jpg:
+	* musician-923526_1.nbb.xxs.jpg:
+	* musician-923526_1.nbbi.xxs.jpg:
+	* live-concert-388160_1280.s.jpg:
+	* live-concert-388160_1280.xxs.jpg: 
+
+	* BackOfficeController.cs:
+	* FrontOfficeController.cs:
+	* BackOfficeController.cs: refabrication
+
+2015-12-23  Paul Schneider  <paul@pschneider.fr>
+
 	* AccountController.cs: implémente la methode de login de
 	l'API
 

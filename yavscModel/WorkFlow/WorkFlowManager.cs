@@ -8,6 +8,8 @@ using Yavsc.Model.FrontOffice.Catalog;
 using System.Collections.Generic;
 using Yavsc.Model.Skill;
 using System.Linq;
+using Yavsc.Model.Calendar;
+using Yavsc.Model.Google.Api;
 
 namespace Yavsc.Model.WorkFlow
 {
@@ -75,7 +77,16 @@ namespace Yavsc.Model.WorkFlow
 		/// <param name="com">COM.</param>
 		public static long RegisterCommand(Command com)
 		{
-			return DefaultProvider.RegisterCommand (com);
+			long cmdid = DefaultProvider.RegisterCommand (com);
+
+			if (com.GetType ().GetInterface ("INominative") != null) {
+				INominative cmdn = com as INominative;
+				NominativeEventPub ev = new NominativeEventPub ();
+				ev.PerformerName = cmdn.PerformerName;
+				ev.Description = com.GetDescription ();
+				GoogleHelpers.NotifyEvent (ev);
+			}
+			return cmdid;
 		}
 
 		/// <summary>

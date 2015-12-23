@@ -33,6 +33,19 @@ namespace Yavsc.Model.FrontOffice
 	/// </summary>
 	public class SimpleBookingQuery: Command
 	{
+		#region implemented abstract members of Command
+
+		public override string GetDescription ()
+		{
+			return 
+				string.Format (
+					LocalizedText.SomeoneAskingYouForAnEstimate,
+				ClientName,
+					LocalizedText.aprestation+" "+ PreferedDate.ToString("D"));
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Gets or sets the MEA code.
 		/// </summary>

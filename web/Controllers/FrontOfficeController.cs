@@ -50,7 +50,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The pub.</returns>
 		/// <param name="model">Model.</param>
-		public ActionResult EventPub (EventPub model)
+		public ActionResult EventPub (EventCirclesPub model)
 		{
 			return View (model);
 		}

@@ -153,7 +153,6 @@
     <Compile Include="Google\CalendarEventList.cs" />
     <Compile Include="Google\GDate.cs" />
     <Compile Include="Google\Resource.cs" />
-    <Compile Include="Calendar\EventPub.cs" />
     <Compile Include="Calendar\OpenDay.cs" />
     <Compile Include="Calendar\Period.cs" />
     <Compile Include="Calendar\Periodicity.cs" />
@@ -246,6 +245,8 @@
     <Compile Include="FrontOffice\NominativeSimpleBookingQuery.cs" />
     <Compile Include="FrontOffice\INominative.cs" />
     <Compile Include="RolesAndMembers\IUserName.cs" />
+    <Compile Include="Calendar\EventCirclesPub.cs" />
+    <Compile Include="Calendar\NominativeEventPub.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

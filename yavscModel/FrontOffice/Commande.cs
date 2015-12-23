@@ -153,6 +153,7 @@ namespace Yavsc.Model.FrontOffice
 			var cmd = ci.Invoke (new object[]{ });
 			return cmd as Command;
 		}
+		public abstract string GetDescription ();
 	}
 }
 

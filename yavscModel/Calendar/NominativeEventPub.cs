@@ -1,10 +1,10 @@
 //
-//  EventPub.cs
+//  NominativeEventPub.cs
 //
 //  Author:
-//       Paul Schneider <paulschneider@free.fr>
+//       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015 Paul Schneider
+//  Copyright (c) 2015 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -18,30 +18,29 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
 using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Model;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.Circles;
+using Yavsc.Model.FrontOffice;
 
 namespace Yavsc.Model.Calendar
 {
-	/// <summary>
-	/// Event pub.
-	/// </summary>
-	public class EventPub: YaEvent
+
+	public class NominativeEventPub: YaEvent, INominative
 	{
-		/// <summary>
-		/// Gets or sets the circles.
-		/// </summary>
-		/// <value>The circles.</value>
-
-		[Required(ErrorMessageResourceName="DoSpecifyCircles",ErrorMessageResourceType=typeof(LocalizedText)), 
-			Display(ResourceType=typeof(LocalizedText),Name="Circles")]
-		public long [] CircleIds { get; set; }
+		#region INominative implementation
+		public string PerformerName {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		#endregion
 	}
-
 }
-
-

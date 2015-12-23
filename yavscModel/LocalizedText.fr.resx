@@ -20,6 +20,7 @@
 	<data name="AnIMessageHasbeenSent"><value>Un message instantané a été envoyé à {0}, 
 	lui présentant votre demande. Vous devriez être contacté très rapidement.</value></data>
 	<data name="AskForAnEstimate"><value>Demander un devis</value></data>
+	<data name="aprestation"><value>une prestation</value></data>
 	<data name="available"><value>disponible</value></data>
 	<data name="AuthenticatedOnly"><value>Seuls les utilisateurs authentifiés peuvent accèder à cette information.</value></data>
 	<data name="Basket"><value>Panier</value></data>
@@ -111,6 +112,7 @@
 	<data name="Product_reference"><value>Référence produit</value></data>
 	<data name="ReadMore"><value>Lire la suite ...</value></data>
 	<data name="Role"><value>Rôle</value></data>
+	<data name="prestation"><value>prestation</value></data>
 	<data name="ProviderId"><value>Identifiant du fournisseur</value></data>
 	<data name="ProviderName"><value>Nom du fournisseur</value></data>
 	<data name="Register"><value>Enregistez-vous</value></data>
@@ -121,7 +123,8 @@
 	<data name="SiteSkills"><value>Talents/Compétences/Spécialités gérés sur ce site</value></data>
 	<data name="Skill"><value>Compétence</value></data>
 	<data name="Skills"><value>Talents/Compétences/Spécialités</value></data>
-    <data name="StartDate"><value>Date de début</value></data>
+    <data name="SomeoneAskingYouForAnEstimate"><value>{0} would want you to establish an estimate concerning {1}</value></data>
+	<data name="StartDate"><value>Date de début</value></data>
 	<data name="StartDateAfterEndDate"><value>La date de fin doit être postérieure à la date de début.</value></data>
 	<data name="StartHour"><value>Heure de début</value></data>
 	<data name="Submit"><value>Soumettre</value></data>

@@ -102,35 +102,59 @@ namespace Yavsc.Model.Google.Api
 		/// </summary>
 		/// <returns>The event.</returns>
 		/// <param name="evpub">Evpub.</param>
-		public static MessageWithPayloadResponse NotifyEvent(EventPub evpub) {
+		public static MessageWithPayloadResponse NotifyEvent(EventCirclesPub evpub) {
 			using (var r = 
 				new SimpleJsonPostMethod<MessageWithPayload<YaEvent>,MessageWithPayloadResponse>(
 					"https://gcm-http.googleapis.com/gcm/send")) { 
-				var users  = Circle.Union (evpub.CircleIds);
-				var regids = new List<string> ();
-				var to = new List<string> ();
-				foreach (var u in users) {
-					var p = ProfileBase.Create (u);
-					if (p != null) {
-						var regid = p.GetPropertyValue("gregid");
-						if (regid == null) {
-							var muser = Membership.GetUser (u);
-							to.Add (muser.Email);
+				if (evpub.CircleIds != null) {
+					var users = Circle.Union (evpub.CircleIds);
+					var regids = new List<string> ();
+					var to = new List<string> ();
+					foreach (var u in users) {
+						var p = ProfileBase.Create (u);
+						if (p != null) {
+							var regid = p.GetPropertyValue ("gregid");
+							if (regid == null) {
+								var muser = Membership.GetUser (u);
+								to.Add (muser.Email);
+							} else
+								regids.Add ((string)regid);
 						}
-						else regids.Add ((string)regid);
 					}
+					if (regids.Count == 0)
+						throw new InvalidOperationException 
+						("No recipient where found for this circle list");
+					
+					var msg = new MessageWithPayload<YaEvent> () { 
+						notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "event" },
+						data = new YaEvent[] { (YaEvent)evpub }, registration_ids = regids.ToArray() };
+					return r.Invoke (msg);
+
+				} else {
+					throw new NotImplementedException ();
 				}
-				if (regids.Count == 0)
-					throw new InvalidOperationException 
-					("No recipient where found for this circle list");
-				
+			}
+		}
+		/// <summary>
+		/// Notifies the event.
+		/// </summary>
+		/// <returns>The event.</returns>
+		/// <param name="evpub">Evpub.</param>
+		public static MessageWithPayloadResponse NotifyEvent (NominativeEventPub evpub)
+		{
+			using (var r = 
+				       new SimpleJsonPostMethod<MessageWithPayload<YaEvent>,MessageWithPayloadResponse> (
+					       "https://gcm-http.googleapis.com/gcm/send")) { 
+				var userprofile = ProfileBase.Create (evpub.PerformerName);
+				var regid = userprofile.GetPropertyValue ("gregid") as string;
+				if (regid == null)
+					throw new NotImplementedException ("Notification via e-mail");
 				var msg = new MessageWithPayload<YaEvent> () { 
 					notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "event" },
-					data = new YaEvent[] { (YaEvent)evpub }, registration_ids = regids.ToArray() };
+					data = new YaEvent[] { (YaEvent)evpub }, registration_ids = new string[] { regid }  };
 				return r.Invoke (msg);
 			}
 		}
-
 	}
 }
 

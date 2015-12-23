@@ -21,6 +21,7 @@
 	<data name="Activities"><value>Activities</value></data>
 	<data name="AnIMessageHasbeenSent"><value>An instant message has been sent to {0}, 
 	showing to him your query. You should be contacted very soon.</value></data>
+	<data name="aprestation"><value>a prestation</value></data>
 	<data name="AskForAnEstimate"><value>Ask for an estimate</value></data>
 	<data name="available"><value>available</value></data>
 	<data name="AuthenticatedOnly"><value>You must be authenticated in order to access this information</value></data>
@@ -124,6 +125,7 @@
 	<data name="role_created"><value>role created</value></data>
 	<data name="Search"><value>Search</value></data>
 	<data name="SiteSkills"><value>Talents/Compétences/Spécialités gérés sur ce site</value></data>
+	<data name="SomeoneAskingYouForAnEstimate"><value>{0} would want you to establish an estimate concerning {1}</value></data>
 	<data name="Skill"><value>Skill</value></data>
 	<data name="Skills"><value>Skills</value></data>
 	<data name="StartDate"><value>Start date</value></data>

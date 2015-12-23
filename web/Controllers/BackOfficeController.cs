@@ -31,7 +31,7 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <returns>The event.</returns>
 		/// <param name="evpub">Evpub.</param>
-		public ActionResult NotifyEvent(EventPub evpub)
+		public ActionResult NotifyEvent(EventCirclesPub evpub)
 		{
 			if (ModelState.IsValid) {
 				ViewData ["NotifyEvent"] = evpub;

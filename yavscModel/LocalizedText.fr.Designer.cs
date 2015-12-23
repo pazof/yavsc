@@ -454,12 +454,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string AboutContent {
-            get {
-                return ResourceManager.GetString("AboutContent", resourceCulture);
-            }
-        }
-        
         public static string YourNeed {
             get {
                 return ResourceManager.GetString("YourNeed", resourceCulture);
@@ -526,9 +520,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Logout {
+        public static string About {
             get {
-                return ResourceManager.GetString("Logout", resourceCulture);
+                return ResourceManager.GetString("About", resourceCulture);
             }
         }
         
@@ -568,15 +562,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string YourEstimates {
+            get {
+                return ResourceManager.GetString("YourEstimates", resourceCulture);
+            }
+        }
+        
         public static string Name {
             get {
                 return ResourceManager.GetString("Name", resourceCulture);
             }
         }
         
-        public static string Non_existent_user {
+        public static string aprestation {
             get {
-                return ResourceManager.GetString("Non_existent_user", resourceCulture);
+                return ResourceManager.GetString("aprestation", resourceCulture);
             }
         }
         
@@ -670,9 +670,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string YourEstimates {
+        public static string Logout {
             get {
-                return ResourceManager.GetString("YourEstimates", resourceCulture);
+                return ResourceManager.GetString("Logout", resourceCulture);
             }
         }
         
@@ -736,15 +736,21 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string yourquerytransmitted {
-            get {
-                return ResourceManager.GetString("yourquerytransmitted", resourceCulture);
-            }
-        }
-        
         public static string Hide_source {
             get {
                 return ResourceManager.GetString("Hide_source", resourceCulture);
+            }
+        }
+        
+        public static string AskForAnEstimate {
+            get {
+                return ResourceManager.GetString("AskForAnEstimate", resourceCulture);
+            }
+        }
+        
+        public static string SomeoneAskingYouForAnEstimate {
+            get {
+                return ResourceManager.GetString("SomeoneAskingYouForAnEstimate", resourceCulture);
             }
         }
         
@@ -760,9 +766,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string About {
+        public static string yourquerytransmitted {
             get {
-                return ResourceManager.GetString("About", resourceCulture);
+                return ResourceManager.GetString("yourquerytransmitted", resourceCulture);
             }
         }
         
@@ -850,9 +856,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Non_existent_user {
+            get {
+                return ResourceManager.GetString("Non_existent_user", resourceCulture);
+            }
+        }
+        
         public static string Profile_edition {
             get {
                 return ResourceManager.GetString("Profile_edition", resourceCulture);
+            }
+        }
+        
+        public static string prestation {
+            get {
+                return ResourceManager.GetString("prestation", resourceCulture);
             }
         }
         

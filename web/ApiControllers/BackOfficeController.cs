@@ -43,7 +43,7 @@ namespace Yavsc.ApiControllers
 		/// <param name="evpub">Evpub.</param>
 		[Authorize(Roles="BackOffice")]
 		[AcceptVerbs("POST")]
-		public MessageWithPayloadResponse NotifyEvent(EventPub evpub) {
+		public MessageWithPayloadResponse NotifyEvent(EventCirclesPub evpub) {
 			return GoogleHelpers.NotifyEvent(evpub);
 		}
 

@@ -1,5 +1,29 @@
 2015-12-23  Paul Schneider  <paul@pschneider.fr>
 
+	* EventCirclesPub.cs:
+	* NominativeEventPub.cs: refabrication
+
+	* Commande.cs: implémente une description pour toute commande,
+	dans la classe concrete
+
+	* SimpleBookingQuery.cs: la description d'une commande simple
+	de rdv
+
+	* GoogleHelpers.cs: implemente l'envoi d'une notification
+	nominative (à un prestataire en particulier)
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: traductions
+
+	* WorkFlowManager.cs: envoie une notification à la demande de
+	devis d'un client
+
+	* YavscModel.csproj: notifications privée.
+
+2015-12-23  Paul Schneider  <paul@pschneider.fr>
+
 	* INominative.cs: Interface d'un objet destiné à un
 	préstataire spécifié,
 	par une propriété `PerformerName`
