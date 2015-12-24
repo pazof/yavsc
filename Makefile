@@ -15,6 +15,9 @@ DESTDIR_rsync_Release=/srv/www/yavscpre
 HOST_rsync_Lua=lua.pschneider.fr
 DESTDIR_rsync_Lua=/srv/www/lua
 
+HOST_rsync_LuaDebug=lua.pschneider.fr
+DESTDIR_rsync_LuaDebug=/srv/www/lua
+
 HOST_rsync_YavscPre=lua.pschneider.fr
 DESTDIR_rsync_YavscPre=/srv/www/yavscpre
 
@@ -95,6 +98,8 @@ docdeploy-prod: htmldoc
 
 rsync_Lua: 
 
+rsync_LuaDebug:
+
 rsync_Debug: 
 
 rsync_Release: 
@@ -103,7 +108,7 @@ rsync_YavscPre:
 
 rsync_yavsc:
 
-rsync_TotemProd:
+rsync_Totemprod:
 
 nuget_restore:
 	for prj in ITContentProvider NpgsqlBlogProvider NpgsqlContentProvider NpgsqlMRPProviders Presta SalesCatalog TestAPI web WebControls yavscclient yavscModel; do if [ -f "$${prj}/packages.config" ]; then nuget restore "$${prj}/packages.config" -SolutionDirectory . ; fi; done

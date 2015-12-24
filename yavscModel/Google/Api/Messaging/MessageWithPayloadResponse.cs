@@ -32,7 +32,7 @@ namespace Yavsc.Model.Google.Api.Messaging
 		/// <summary>
 		/// The multicast identifier.
 		/// </summary>
-		public int multicast_id;
+		public string multicast_id;
 		/// <summary>
 		/// The success count.
 		/// </summary>
@@ -44,7 +44,7 @@ namespace Yavsc.Model.Google.Api.Messaging
 		/// <summary>
 		/// The canonical identifiers... ?!?
 		/// </summary>
-		public int canonical_ids;
+		public string canonical_ids;
 		/// <summary>
 		/// Detailled result.
 		/// </summary>

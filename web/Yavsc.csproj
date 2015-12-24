@@ -65,6 +65,11 @@
     <OutputPath>bin</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LuaDebug|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -817,6 +822,7 @@
     <None Include="Web.TotemProd.config" />
     <None Include="Scripts\jquery.mobile-1.4.5.min.map" />
     <None Include="App_Themes\images\GitHub.ico" />
+    <None Include="Web.LuaDebug.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">

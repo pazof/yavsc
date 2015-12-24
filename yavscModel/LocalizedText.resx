@@ -49,6 +49,7 @@
 	<data name="Description"><value>Description</value></data>
 	<data name="DisplayName"><value>Display Name</value></data>
 	<data name="DoAnEstimate"><value>Do an estimate</value></data>
+	<data name="DoPost"><value>Do post</value></data>
 	<data name="DocTemplateException"><value>Exception occured when rendering your document</value></data>
 	<data name="DoNotPublishMyActivity"><value>Do Not Publish My Activity</value></data>
 	<data name="DoSpecifyCircles"><value>Please, specify circles for audiance</value></data>
@@ -160,5 +161,7 @@
 	<data name="YourNeed"><value>Your need</value></data>
 	<data name="yourquerytransmitted"><value>your query has been transmitted</value></data>
 	<data name="YourSkills"><value>Your skills, your special fields, the scope of your activities</value></data>
+	<data name="YourPosts"><value>You posts</value></data>
+	<data name="YourProfile"><value>Your profile</value></data>
 
 </root>

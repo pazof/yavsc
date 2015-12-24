@@ -105,8 +105,7 @@ namespace Yavsc.Model.FrontOffice
 			// stores the parameters:
 			SetParameters(collection);
 			WorkFlowManager.RegisterCommand (this); // gives a value to this.Id
-			string strcmdid = Id.ToString ();
-			UserFileSystemManager.Put(Path.Combine("commandes",strcmdid),files);
+			UserFileSystemManager.Put(Path.Combine("commandes",Id.ToString ()),files);
 		}
 
 		/// <summary>

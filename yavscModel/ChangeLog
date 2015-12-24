@@ -1,3 +1,27 @@
+2015-12-24  Paul Schneider  <paul@pschneider.fr>
+
+	* NominativeEventPub.cs: implémentation du nom de préstataire
+	dans la notification nominative
+
+	* Commande.cs: code plus simple
+
+	* GoogleHelpers.cs:
+	* MessageWithPayLoad.cs: fixe l'envoi de la notification GCM
+
+	* MessageWithPayloadResponse.cs: fixe la réception de la
+	notification GCM
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: traductions
+
+	* WorkFlowManager.cs: envoyer un notification GCM + email à la
+	demande de devis
+
+	* YavscModel.csproj: ajout d'une configuration de debuggage
+	pour Lua
+
 2015-12-23  Paul Schneider  <paul@pschneider.fr>
 
 	* WorkFlowManager.cs: une note à faire : envoyer le lieu de la

@@ -34,12 +34,7 @@ namespace Yavsc.Model.Calendar
 	{
 		#region INominative implementation
 		public string PerformerName {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get ; set ;
 		}
 		#endregion
 	}

@@ -196,9 +196,21 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string YourProfile {
+            get {
+                return ResourceManager.GetString("YourProfile", resourceCulture);
+            }
+        }
+        
         public static string EndDate {
             get {
                 return ResourceManager.GetString("EndDate", resourceCulture);
+            }
+        }
+        
+        public static string DoSpecifyCircles {
+            get {
+                return ResourceManager.GetString("DoSpecifyCircles", resourceCulture);
             }
         }
         
@@ -244,6 +256,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string YourPosts {
+            get {
+                return ResourceManager.GetString("YourPosts", resourceCulture);
+            }
+        }
+        
         public static string Non_existent_user {
             get {
                 return ResourceManager.GetString("Non_existent_user", resourceCulture);
@@ -283,6 +301,12 @@ namespace Yavsc.Model {
         public static string Remember_me {
             get {
                 return ResourceManager.GetString("Remember_me", resourceCulture);
+            }
+        }
+        
+        public static string younotadmin {
+            get {
+                return ResourceManager.GetString("younotadmin", resourceCulture);
             }
         }
         
@@ -337,12 +361,6 @@ namespace Yavsc.Model {
         public static string Bill_removal {
             get {
                 return ResourceManager.GetString("Bill_removal", resourceCulture);
-            }
-        }
-        
-        public static string is_licensed_by {
-            get {
-                return ResourceManager.GetString("is_licensed_by", resourceCulture);
             }
         }
         
@@ -622,9 +640,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string DoSpecifyCircles {
+        public static string is_licensed_by {
             get {
-                return ResourceManager.GetString("DoSpecifyCircles", resourceCulture);
+                return ResourceManager.GetString("is_licensed_by", resourceCulture);
             }
         }
         
@@ -646,9 +664,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string younotadmin {
+        public static string Home {
             get {
-                return ResourceManager.GetString("younotadmin", resourceCulture);
+                return ResourceManager.GetString("Home", resourceCulture);
             }
         }
         
@@ -667,12 +685,6 @@ namespace Yavsc.Model {
         public static string yourquerytransmitted {
             get {
                 return ResourceManager.GetString("yourquerytransmitted", resourceCulture);
-            }
-        }
-        
-        public static string Home {
-            get {
-                return ResourceManager.GetString("Home", resourceCulture);
             }
         }
         
@@ -835,6 +847,12 @@ namespace Yavsc.Model {
         public static string PreferedDate {
             get {
                 return ResourceManager.GetString("PreferedDate", resourceCulture);
+            }
+        }
+        
+        public static string DoPost {
+            get {
+                return ResourceManager.GetString("DoPost", resourceCulture);
             }
         }
         

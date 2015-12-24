@@ -51,6 +51,7 @@
 	<data name="DocTemplateException"><value>Une erreur est survenue à la génération de votre document</value></data>
     <data name="Description"><value>Description</value></data>
 	<data name="DisplayName"><value>Nom affiché</value></data>
+	<data name="DoPost"><value>Poster</value></data>
 	<data name="DoTag"><value>Tagger</value></data>
 	<data name="Edit"><value>Éditer</value></data>
 	<data name="Edited"><value>Edité</value></data>
@@ -155,4 +156,6 @@
 	<data name="YourNeed"><value>Votre besoin</value></data>
 	<data name="yourquerytransmitted"><value>Votre demande a été transmise</value></data>
 	<data name="YourSkills"><value>Vos talents, vos spécialités, le domaine de vos activités</value></data>
+	<data name="YourPosts"><value>Vos posts</value></data>
+	<data name="YourProfile"><value>Votre profile</value></data>
 </root>

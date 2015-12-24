@@ -106,6 +106,8 @@ namespace Yavsc.Model.Google.Api
 			using (var r = 
 				new SimpleJsonPostMethod<MessageWithPayload<YaEvent>,MessageWithPayloadResponse>(
 					"https://gcm-http.googleapis.com/gcm/send")) { 
+				r.SetCredential (ConfigurationManager.AppSettings ["GOOGLE_GCM_API_KEY"]);
+					
 				if (evpub.CircleIds != null) {
 					var users = Circle.Union (evpub.CircleIds);
 					var regids = new List<string> ();
@@ -127,7 +129,7 @@ namespace Yavsc.Model.Google.Api
 					
 					var msg = new MessageWithPayload<YaEvent> () { 
 						notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "event" },
-						data = new YaEvent[] { (YaEvent)evpub }, registration_ids = regids.ToArray() };
+						data = evpub , registration_ids = regids.ToArray() };
 					return r.Invoke (msg);
 
 				} else {
@@ -145,13 +147,14 @@ namespace Yavsc.Model.Google.Api
 			using (var r = 
 				       new SimpleJsonPostMethod<MessageWithPayload<YaEvent>,MessageWithPayloadResponse> (
 					       "https://gcm-http.googleapis.com/gcm/send")) { 
+				r.SetCredential ("key="+ConfigurationManager.AppSettings ["GOOGLE_API_KEY"]);
 				var userprofile = ProfileBase.Create (evpub.PerformerName);
 				var regid = userprofile.GetPropertyValue ("gregid") as string;
 				if (regid == null)
 					throw new NotImplementedException ("Notification via e-mail");
 				var msg = new MessageWithPayload<YaEvent> () { 
 					notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "event" },
-					data = new YaEvent[] { (YaEvent)evpub }, registration_ids = new string[] { regid }  };
+					data = evpub, registration_ids = new string[] { regid }  };
 				return r.Invoke (msg);
 			}
 		}

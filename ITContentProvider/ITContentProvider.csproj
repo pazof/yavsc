@@ -55,6 +55,11 @@
     <OutputPath>bin\Yavsc</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LuaDebug|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Lua</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />

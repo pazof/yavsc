@@ -1,3 +1,12 @@
+2015-12-24  Paul Schneider  <paul@pschneider.fr>
+
+	* App.master: traductions
+
+	* EventPub.aspx: debug sur page encore inutilisée
+
+	* Yavsc.csproj: ajout d'une configuration de debuggage pour
+	Lua
+
 2015-12-23  Paul Schneider  <paul@pschneider.fr>
 
 	* Web.config: Ajoute le paramètre obligatoire "Themes" au

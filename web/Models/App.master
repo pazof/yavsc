@@ -64,19 +64,18 @@ else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>, <%=note.click_acti
 <% } else { %>
 <a href="<%=Url.RouteUrl("Blogs", new { user = HttpContext.Current.User.Identity.Name } )%>" accesskey = "B" class="link" >
 <img src="<%=Url.AvatarUrl(HttpContext.Current.User.Identity.Name)%>" alt="" class="iconsmall" />
-Vos billets
+<%= Html.Translate("YourPosts") %>
+
 </a>
 <a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Profile", id = HttpContext.Current.User.Identity.Name} ) %>" accesskey="P" class="link ">
 <i class="fa fa-user"></i>
 <%= HttpContext.Current.User.Identity.Name %>
-<span class="hint"> &Eacute;dition de votre profile </span>
+<span class="hint"><%= Html.Translate("YourProfile") %></span>
 </a>
 <a href="/Blogs/Post" accesskey="P" class="link">
 <i class="fa fa-pencil"></i>
-<u>P</u>oster
-<span class="hint">&Eacute;dition d'un nouveau billet </span>
+<%= Html.Translate("DoPost") %>
 </a>
-
 <a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Logout", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C" class="link">
 <i class="fa fa-sign-out"></i>
 <%=Html.Translate("Logout")%></a> 

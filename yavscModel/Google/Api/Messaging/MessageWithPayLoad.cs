@@ -39,7 +39,7 @@ namespace Yavsc.Model.Google.Api.Messaging
 		/// <summary>
 		/// The data.
 		/// </summary>
-		public T[] data ;
+		public T data ;
 		/// <summary>
 		/// The notification.
 		/// </summary>
