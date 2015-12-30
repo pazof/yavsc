@@ -1,5 +1,12 @@
 2015-12-30  Paul Schneider  <paul@pschneider.fr>
 
+	* GoogleHelpers.cs: ça marchait avant, mais c'etait mal écrit
+	et a cassé à la mise à niveau de la plateforme.
+
+	* SimpleJsonPostMethod.cs: using Newtonsoft.Json
+
+2015-12-30  Paul Schneider  <paul@pschneider.fr>
+
 	* PerformerContact.cs: modèle de donnnée d'un message
 
 	* LocalizedText.resx:

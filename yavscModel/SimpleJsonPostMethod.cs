@@ -23,6 +23,8 @@ using System.Net;
 using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Json;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Yavsc.Model
 {
@@ -75,18 +77,17 @@ namespace Yavsc.Model
 		/// <param name="query">Query.</param>
 		public TAnswer Invoke(TQuery query)
 		{
-
-			DataContractJsonSerializer serquery = new DataContractJsonSerializer (typeof(TQuery));
-			DataContractJsonSerializer seransw = new DataContractJsonSerializer (typeof(TAnswer));
-
-			using (Stream streamQuery = request.GetRequestStream()) {
-				serquery.WriteObject (streamQuery, query);
-			}
 			
+			using (Stream streamQuery = request.GetRequestStream()) {
+				using (StreamWriter writer = new StreamWriter(streamQuery)) {
+					writer.Write (JsonConvert.SerializeObject(query));
+				}}
 			TAnswer ans = default (TAnswer);
 			using (WebResponse response = Request.GetResponse ()) {
 				using (Stream responseStream = response.GetResponseStream ()) {
-					ans = (TAnswer) seransw.ReadObject(responseStream);
+					using (StreamReader rdr = new StreamReader (responseStream)) {
+						ans = (TAnswer) JsonConvert.DeserializeObject<TAnswer> (rdr.ReadToEnd ());
+					}
 				}
 				response.Close();
 			}

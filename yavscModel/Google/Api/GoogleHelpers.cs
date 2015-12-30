@@ -145,14 +145,14 @@ namespace Yavsc.Model.Google.Api
 		public static MessageWithPayloadResponse NotifyEvent (NominativeEventPub evpub)
 		{
 			using (var r = 
-				       new SimpleJsonPostMethod<MessageWithPayload<YaEvent>,MessageWithPayloadResponse> (
+				new SimpleJsonPostMethod<MessageWithPayload<NominativeEventPub>,MessageWithPayloadResponse> (
 					       "https://gcm-http.googleapis.com/gcm/send")) { 
 				r.SetCredential ("key="+ConfigurationManager.AppSettings ["GOOGLE_API_KEY"]);
 				var userprofile = ProfileBase.Create (evpub.PerformerName);
 				var regid = userprofile.GetPropertyValue ("gregid") as string;
 				if (regid == null)
 					throw new NotImplementedException ("Notification via e-mail");
-				var msg = new MessageWithPayload<YaEvent> () { 
+				var msg = new MessageWithPayload<NominativeEventPub> () { 
 					notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "icon" },
 					data = evpub, registration_ids = new string[] { regid }  };
 				return r.Invoke (msg);

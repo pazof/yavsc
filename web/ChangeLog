@@ -1,5 +1,13 @@
 2015-12-30  Paul Schneider  <paul@pschneider.fr>
 
+	* Web.config: l'entité nbsp n'est plus supportée
+
+	* Yavsc.csproj: mise à niveau de Newtownsoft.Json
+
+	* packages.config: mise à jour des paquets nuget
+
+2015-12-30  Paul Schneider  <paul@pschneider.fr>
+
 	* Sent.aspx: Vue de confirmation du messag envoyé
 
 	* Global.asax.cs: ajout d'une route /to/
