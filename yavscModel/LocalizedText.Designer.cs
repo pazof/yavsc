@@ -46,12 +46,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Private_circle {
-            get {
-                return ResourceManager.GetString("Private_circle", resourceCulture);
-            }
-        }
-        
         public static string Comment {
             get {
                 return ResourceManager.GetString("Comment", resourceCulture);
@@ -124,9 +118,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string UsersInRole {
+        public static string PleaseFillInAReason {
             get {
-                return ResourceManager.GetString("UsersInRole", resourceCulture);
+                return ResourceManager.GetString("PleaseFillInAReason", resourceCulture);
             }
         }
         
@@ -412,6 +406,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string to {
+            get {
+                return ResourceManager.GetString("to", resourceCulture);
+            }
+        }
+        
         public static string EndHour {
             get {
                 return ResourceManager.GetString("EndHour", resourceCulture);
@@ -427,6 +427,12 @@ namespace Yavsc.Model {
         public static string BillSourceCode {
             get {
                 return ResourceManager.GetString("BillSourceCode", resourceCulture);
+            }
+        }
+        
+        public static string ContactAPerformer {
+            get {
+                return ResourceManager.GetString("ContactAPerformer", resourceCulture);
             }
         }
         
@@ -478,9 +484,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string ContactThisPerformer {
+        public static string Private_circle {
             get {
-                return ResourceManager.GetString("ContactThisPerformer", resourceCulture);
+                return ResourceManager.GetString("Private_circle", resourceCulture);
             }
         }
         
@@ -556,6 +562,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string YourMessageHasBeenSent {
+            get {
+                return ResourceManager.GetString("YourMessageHasBeenSent", resourceCulture);
+            }
+        }
+        
         public static string UserNotInThisRole {
             get {
                 return ResourceManager.GetString("UserNotInThisRole", resourceCulture);
@@ -628,6 +640,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string PleaseFillInABody {
+            get {
+                return ResourceManager.GetString("PleaseFillInABody", resourceCulture);
+            }
+        }
+        
         public static string PhotoUpdated {
             get {
                 return ResourceManager.GetString("PhotoUpdated", resourceCulture);
@@ -658,9 +676,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string DocTemplateException {
+        public static string UsersInRole {
             get {
-                return ResourceManager.GetString("DocTemplateException", resourceCulture);
+                return ResourceManager.GetString("UsersInRole", resourceCulture);
             }
         }
         
@@ -772,6 +790,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string DocTemplateException {
+            get {
+                return ResourceManager.GetString("DocTemplateException", resourceCulture);
+            }
+        }
+        
         public static string DoNotPublishMyActivity {
             get {
                 return ResourceManager.GetString("DoNotPublishMyActivity", resourceCulture);
@@ -835,6 +859,12 @@ namespace Yavsc.Model {
         public static string About {
             get {
                 return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        public static string Performer {
+            get {
+                return ResourceManager.GetString("Performer", resourceCulture);
             }
         }
         

@@ -1,5 +1,33 @@
 2015-12-30  Paul Schneider  <paul@pschneider.fr>
 
+	* Sent.aspx: Vue de confirmation du messag envoyé
+
+	* Global.asax.cs: ajout d'une route /to/
+
+	* style.css: rien
+
+	* style.css: forme du pointeur de liens 
+
+	* FrontOfficeController.cs: implémente l'envoi d'un e-mail au
+	préstataire
+
+	* YavscHelpers.cs:
+	* HomeController.cs: l'e-mail admin est obtenu du helper
+	global
+
+	* App.master: Corrige les guillemets autour de notifications
+	web
+
+	* yavsc.js: la class des liens est "link", pas "actionlink"
+
+	* Contact.aspx: mise en forme du formulaire de contact 
+
+	* Performer.ascx: lien vers le contact préstataire
+
+	* Yavsc.csproj: ajout de la vue du message envoyé
+
+2015-12-30  Paul Schneider  <paul@pschneider.fr>
+
 	* ResetPassword.txt: Un message pour le mot de passe oublié
 
 	* style.css: fixe un 404

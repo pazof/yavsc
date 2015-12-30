@@ -72,17 +72,25 @@ namespace Yavsc
 					title=UrlParameter.Optional,
 					id=UrlParameter.Optional }
 			);
+
 			routes.MapRoute (
 				"BlogById",
 				"b/{action}/{postid}",
 				new { controller = "Blogs", action = "Index", 
 					postid=UrlParameter.Optional }
 			); 
+
 			routes.MapRoute (
 				"BackCompat",
 				"Blogs/{action}/{user}/{title}",
 				new { controller = "Blogs", action = "Index", user = UrlParameter.Optional, title = UrlParameter.Optional }
 				);
+
+			routes.MapRoute (
+				"Performance",
+				"to/{action}/{Performer}",
+				new { controller = "FrontOffice", action = "Contact", Performer = UrlParameter.Optional }
+			);
 
 			routes.MapRoute (
 				"Default",

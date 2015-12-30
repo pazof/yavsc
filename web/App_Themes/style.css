@@ -262,6 +262,10 @@ input, select, textarea {
 	border-width: 1px;
 	font-size: large;
 } 
+
+.link { cursor: pointer; }
+
+
 .performer , .availability { text-align: center; padding: 1em; }
 
 .c2 { font-size: small; font-style: italic; }

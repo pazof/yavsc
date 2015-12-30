@@ -784,6 +784,7 @@
     <Content Include="Views\Account\UpdatePassword.aspx" />
     <Content Include="App_Themes\base\style.css" />
     <Content Include="Views\FrontOffice\Contact.aspx" />
+    <Content Include="Views\FrontOffice\Sent.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

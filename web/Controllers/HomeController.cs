@@ -71,21 +71,7 @@ namespace Yavsc.Controllers
 			return View (asnlist.ToArray()) ;
 		}
 
-		private static string owneremail = null;
-		/// <summary>
-		/// Gets or sets the owner email.
-		/// </summary>
-		/// <value>The owner email.</value>
-		public static string OwnerEmail {
-			get {
-				if (owneremail == null)
-					owneremail = WebConfigurationManager.AppSettings.Get ("OwnerEMail");
-				return owneremail;
-			}
-			set {
-				owneremail = value;
-			}
-		}
+
 		/// <summary>
 		/// Index this instance.
 		/// </summary>
@@ -102,6 +88,7 @@ namespace Yavsc.Controllers
 			ViewData["Activities"] = WorkFlowManager.FindActivity(id,true);
 			return View ();
 		}
+
 		/// <summary>
 		/// Credits this instance.
 		/// </summary>
@@ -109,6 +96,7 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
+
 		/// <summary>
 		/// About this instance.
 		/// </summary>
@@ -116,12 +104,7 @@ namespace Yavsc.Controllers
 		{
 			return View ();
 		}
-		#if DEBUG
-		public ActionResult Test ()
-		{
-			return View ();
-		}
-		#endif
+
 		/// <summary>
 		/// Contact the specified email, reason and body.
 		/// </summary>
@@ -142,10 +125,10 @@ namespace Yavsc.Controllers
 				return View ();
 
 			// requires valid owner and admin email?
-			if (OwnerEmail == null)
+			if (YavscHelpers.OwnerEmail == null)
 				throw new Exception ("No site owner!");
 
-			using (System.Net.Mail.MailMessage msg = new MailMessage(email,OwnerEmail,"[Contact] "+reason,body)) 
+			using (System.Net.Mail.MailMessage msg = new MailMessage(email,YavscHelpers.OwnerEmail,"[Contact] "+reason,body)) 
 			{
 				msg.CC.Add(new MailAddress(YavscHelpers.Admail));
 				using (System.Net.Mail.SmtpClient sc = new SmtpClient()) 

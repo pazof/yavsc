@@ -41,7 +41,7 @@
 	<data name="Circles"><value>Cercles</value></data>
 	<data name="Comment"><value>Commentaire</value></data>
 	<data name="Consultant"><value>Consultant</value></data>
-	<data name="ContactThisPerformer"><value>Contactez ce préstataire</value></data>
+	<data name="ContactAPerformer"><value>Contactez un préstataire</value></data>
 	<data name="Count"><value>Nombre</value></data>
 	<data name="Create"><value>Créer</value></data>
 	<data name="Date_search"><value>Demande de rendez-vous</value></data>
@@ -109,9 +109,12 @@
 	<data name="Pdf_version"><value>Version Pdf</value></data>
 	<data name="PerformanceDate"><value>Date de la prestation</value></data>
 	<data name="Performers"><value>Perstataires</value></data>
+	<data name="Performer"><value>Préstataire</value></data>
 	<data name="Person"><value>Personne</value></data>
 	<data name="Photo"><value>Photo</value></data>
 	<data name="PhotoUpdated"><value>Photo mise à jour</value></data>
+	<data name="PleaseFillInABody"><value>S'il vous plait, saisissez un corps de message</value></data>
+	<data name="PleaseFillInAReason"><value>S'il vous plait, saisissez une réson, un sujet pour votre message</value></data>
 	<data name="Posted"><value>Posté</value></data>
 	<data name="PreferedDate"><value>Date souhaitée</value></data>
 	<data name="Preview"><value>Prévisualiser</value><comment>Prévisualiser le document</comment></data>
@@ -145,6 +148,7 @@
 	<data name="ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis"><value>Selon son calendier Google, ce perstataire pourrait ne pas être disponible ce</value></data>
 	<data name="ThisPerformerDoesntGiveAccessToHisCalendar"><value>Ce prestataire n'a pas mis de calendrier à disposition.</value></data>
 	<data name="Title"><value>Titre</value></data>
+	<data name="to"><value>pour</value></data>
 	<data name="Unitary_cost"><value>Coût unitaire</value></data>
 	<data name="User_List"><value>Liste des utilisateurs</value><comment></comment></data>
 	<data name="User_name"><value>Nom d'utilisateur</value></data>

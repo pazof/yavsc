@@ -13,9 +13,8 @@ data-roles="<%=string.Join (" ",Roles.GetRolesForUser (Model.UserName)) %>"
 </h2>
 <address>
  <% if (Membership.GetUser()!=null) { %>
-<a href="mailto:<%=Model.EMail%>">
+<a href="<%=Url.RouteUrl("Performance",new { action="Contact", Performer = Model.UserName })%>">
 <i class="fa fa-envelope"></i>
-&lt;<%=Html.Encode(Model.EMail)%>&gt;
 </a>
  <% } else { %>
  <i class="fa fa-envelope"></i>

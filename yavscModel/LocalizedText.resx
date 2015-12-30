@@ -36,7 +36,7 @@
 	<data name="BookingTitle6829C"><value>Book a software editor</value></data>
 	<data name="Catalog"><value>Catalog</value></data>
 	<data name="Create"><value>Create</value></data>
-	<data name="ContactThisPerformer"><value>Contact this performer</value></data>
+	<data name="ContactAPerformer"><value>Contact a performer</value></data>
 	<data name="Count"><value>Count</value></data>
 	<data name="ChooseADescription"><value>Please, choose a description</value></data>
 	<data name="ChooseATitle"><value>Please, choose a title</value></data>
@@ -113,9 +113,12 @@
 	<data name="Pdf_version"><value>Pdf version</value></data>
 	<data name="PerformanceDate"><value>Performance Date</value></data>
 	<data name="Performers"><value>Performers</value></data>
+	<data name="Performer"><value>Performer</value></data>
 	<data name="Person"><value>Person</value></data>
 	<data name="Photo"><value>Photo</value></data>
 	<data name="PhotoUpdated"><value>Photo updated</value></data>
+	<data name="PleaseFillInABody"><value>Please fill in a body</value></data>
+	<data name="PleaseFillInAReason"><value>Please, fill in a reason</value></data>
 	<data name="Posted"><value>Posted</value></data>
 	<data name="PreferedDate"><value>Prefered date</value></data>
 	<data name="Preview"><value>Preview</value><comment>comment on preview</comment></data>
@@ -150,6 +153,7 @@
 	<data name="ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis"><value>This performer gives access to his calendar and it appears he should not be available this</value></data>
 	<data name="ThisPerformerDoesntGiveAccessToHisCalendar"><value>ThisPerformerDoesntGiveAccessToHisCalendar</value></data>
 	<data name="Title"><value>Title</value></data>
+	<data name="to"><value>to</value></data>
 	<data name="Unitary_cost"><value>Unitary_cost</value></data>
 	<data name="User_List"><value>User List</value><comment></comment></data>
 	<data name="User_name"><value>User name</value></data>
@@ -172,5 +176,5 @@
 	<data name="YourSkills"><value>Your skills, your special fields, the scope of your activities</value></data>
 	<data name="YourPosts"><value>You posts</value></data>
 	<data name="YourProfile"><value>Your profile</value></data>
-
+	<data name="YourMessageHasBeenSent"><value>Your message has been sent</value></data>
 </root>

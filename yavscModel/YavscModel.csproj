@@ -255,6 +255,7 @@
     <Compile Include="WorkFlow\CommandRegistration.cs" />
     <Compile Include="WorkFlow\NominativeCommandRegistration.cs" />
     <Compile Include="RolesAndMembers\UpdatePassword.cs" />
+    <Compile Include="FrontOffice\PerformerContact.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

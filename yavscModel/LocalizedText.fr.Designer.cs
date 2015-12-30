@@ -100,9 +100,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Welcome {
+        public static string User_name {
             get {
-                return ResourceManager.GetString("Welcome", resourceCulture);
+                return ResourceManager.GetString("User_name", resourceCulture);
             }
         }
         
@@ -112,9 +112,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string UsersInRole {
+        public static string PleaseFillInAReason {
             get {
-                return ResourceManager.GetString("UsersInRole", resourceCulture);
+                return ResourceManager.GetString("PleaseFillInAReason", resourceCulture);
             }
         }
         
@@ -400,6 +400,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string to {
+            get {
+                return ResourceManager.GetString("to", resourceCulture);
+            }
+        }
+        
         public static string EndHour {
             get {
                 return ResourceManager.GetString("EndHour", resourceCulture);
@@ -415,6 +421,12 @@ namespace Yavsc.Model {
         public static string BillSourceCode {
             get {
                 return ResourceManager.GetString("BillSourceCode", resourceCulture);
+            }
+        }
+        
+        public static string ContactAPerformer {
+            get {
+                return ResourceManager.GetString("ContactAPerformer", resourceCulture);
             }
         }
         
@@ -469,12 +481,6 @@ namespace Yavsc.Model {
         public static string Tex_version {
             get {
                 return ResourceManager.GetString("Tex_version", resourceCulture);
-            }
-        }
-        
-        public static string ContactThisPerformer {
-            get {
-                return ResourceManager.GetString("ContactThisPerformer", resourceCulture);
             }
         }
         
@@ -562,12 +568,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string User_name {
-            get {
-                return ResourceManager.GetString("User_name", resourceCulture);
-            }
-        }
-        
         public static string Item_added_to_basket {
             get {
                 return ResourceManager.GetString("Item_added_to_basket", resourceCulture);
@@ -577,6 +577,12 @@ namespace Yavsc.Model {
         public static string InternalServerError {
             get {
                 return ResourceManager.GetString("InternalServerError", resourceCulture);
+            }
+        }
+        
+        public static string Welcome {
+            get {
+                return ResourceManager.GetString("Welcome", resourceCulture);
             }
         }
         
@@ -622,6 +628,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string PleaseFillInABody {
+            get {
+                return ResourceManager.GetString("PleaseFillInABody", resourceCulture);
+            }
+        }
+        
         public static string PhotoUpdated {
             get {
                 return ResourceManager.GetString("PhotoUpdated", resourceCulture);
@@ -652,9 +664,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string DocTemplateException {
+        public static string UsersInRole {
             get {
-                return ResourceManager.GetString("DocTemplateException", resourceCulture);
+                return ResourceManager.GetString("UsersInRole", resourceCulture);
             }
         }
         
@@ -760,6 +772,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string DocTemplateException {
+            get {
+                return ResourceManager.GetString("DocTemplateException", resourceCulture);
+            }
+        }
+        
         public static string DoNotPublishMyActivity {
             get {
                 return ResourceManager.GetString("DoNotPublishMyActivity", resourceCulture);
@@ -823,6 +841,12 @@ namespace Yavsc.Model {
         public static string About {
             get {
                 return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        public static string Performer {
+            get {
+                return ResourceManager.GetString("Performer", resourceCulture);
             }
         }
         

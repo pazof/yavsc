@@ -1,27 +1,26 @@
-﻿<%@  Page Title="Contact" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage" %>
+﻿<%@  Page Title="Contact" Language="C#" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<PerformerContact>" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <div class="bigpanel">
+
 <p>
-<%= Html.Translate("ContactThisPerformer") %>
+<%= Html.Translate("ContactAPerformer") %>
 </p>
-<% using (Html.BeginForm("Contact", "Home")) { %>
+<% using (Html.BeginForm("Send", "FrontOffice")) { %>
+<%= Html.Translate("Performer") %> : <%= Html.Encode(Model.Performer) %>
+<%= Html.Hidden("Performer") %>
+<br>
 <fieldset style="width:100%">
 <legend>Message</legend>
 <p>
-<%= Html.Label("email",LocalizedText.email) %>:
-<%= Html.ValidationMessage("email") %><br/>
-<%= Html.TextBox("email") %>
-</p>
-<p>
 <%= Html.Label("reason",LocalizedText.reason) %>:
 <%= Html.ValidationMessage("reason") %><br/>
-<%= Html.TextBox("reason") %>
+<%= Html.TextBox("reason",null, new { @style="width:100%", @placeholder=LocalizedText.PleaseFillInAReason } ) %>
 </p>
 <p>
 <%= Html.Label("body",LocalizedText.body) %>:
 <%= Html.ValidationMessage("body") %><br/>
-<%= Html.TextArea("body",new {@rows="25"}) %>
+<%= Html.TextArea("body",new {@rows="25", @style="width:100%",  @placeholder=LocalizedText.PleaseFillInABody }) %>
 </p>
 </fieldset>
 <input type="submit" value="<%=Html.Translate("Submit")%>">

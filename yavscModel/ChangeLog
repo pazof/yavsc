@@ -1,5 +1,16 @@
 2015-12-30  Paul Schneider  <paul@pschneider.fr>
 
+	* PerformerContact.cs: modèle de donnnée d'un message
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: traductions
+
+	* YavscModel.csproj: ajout du modèle de données d'un message
+
+2015-12-30  Paul Schneider  <paul@pschneider.fr>
+
 	* UpdatePassword.cs: modèle de la modification de mot de passe
 	au
 	jeton de securité (qui est encore un fake en l'état)

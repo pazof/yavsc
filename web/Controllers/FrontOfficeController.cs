@@ -1,28 +1,29 @@
 using System;
-using Yavsc;
-using System.Web.Mvc;
-using System.Web;
-using System.Text.RegularExpressions;
-using System.IO;
-using Yavsc.Controllers;
 using System.Collections.Generic;
-using Yavsc.Model;
-using Yavsc.Model.WorkFlow;
-using System.Web.Security;
-using System.Threading;
-using Yavsc.Model.FrontOffice;
-using Yavsc.Model.FileSystem;
-using Yavsc.Model.Calendar;
-using System.Configuration;
-using Yavsc.Helpers;
-using Yavsc.Model.FrontOffice.Catalog;
-using Yavsc.Model.Skill;
-using System.Web.Profile;
-using Yavsc.Model.Google.Api;
-using System.Net;
-using System.Linq;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Profile;
+using System.Web.Security;
+using Yavsc;
+using Yavsc.Controllers;
+using Yavsc.Helpers;
+using Yavsc.Model;
+using Yavsc.Model.Calendar;
 using Yavsc.Model.Circles;
+using Yavsc.Model.FileSystem;
+using Yavsc.Model.FrontOffice;
+using Yavsc.Model.FrontOffice.Catalog;
+using Yavsc.Model.Google.Api;
+using Yavsc.Model.Skill;
+using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.Controllers
 {
@@ -236,6 +237,45 @@ namespace Yavsc.Controllers
 		public ActionResult Basket ()
 		{
 			return View (WorkFlowManager.GetCommands (Membership.GetUser ().UserName));
+		}
+
+		/// <summary>
+		/// Contact the specified user.
+		/// </summary>
+		/// <param name="user">User.</param>
+		[Authorize]
+		public ActionResult Contact(PerformerContact model)
+		{
+			return View (model);
+		}
+
+		/// <summary>
+		/// Send the specified pmsg.
+		/// </summary>
+		/// <param name="pmsg">Pmsg.</param>
+		[Authorize]
+		public ActionResult Send(PerformerContact pmsg)
+		{
+			var performer = Membership.GetUser (pmsg.Performer);
+			if (performer == null)
+				ModelState.AddModelError ("Performer", "This user doesn't exist");
+			var user = Membership.GetUser();
+			if (ModelState.IsValid) {
+				using (System.Net.Mail.MailMessage msg = new MailMessage(
+					YavscHelpers.OwnerEmail, 
+					performer.Email,"[Contact] ("+user.UserName+") "+pmsg.Reason,pmsg.Body)) 
+				{
+					msg.CC.Add(new MailAddress(YavscHelpers.Admail));
+					using (System.Net.Mail.SmtpClient sc = new SmtpClient()) 
+					{
+						sc.Send (msg);
+						ViewData.Notify(LocalizedText.Message_sent);
+					}
+				}
+				return View ("Sent");
+			}
+			else
+				return View ("Contact",pmsg);
 		}
 
 		/// <summary>

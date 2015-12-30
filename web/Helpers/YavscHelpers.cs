@@ -95,7 +95,16 @@ namespace Yavsc.Helpers
 				return admail;
 			}
 		}
-
+		private static string owneremail = WebConfigurationManager.AppSettings.Get ("OwnerEMail");
+		/// <summary>
+		/// Gets or sets the owner email.
+		/// </summary>
+		/// <value>The owner email.</value>
+		public static string OwnerEmail {
+			get {
+				return owneremail;
+			}
+		}
 		/// <summary>
 		/// Sends the activation message.
 		/// </summary>
@@ -293,8 +302,8 @@ namespace Yavsc.Helpers
 		}
 
 		public static void Notify(this ViewDataDictionary ViewData, string message, string click_action=null, string clickActionName="Ok") {
-			Notify(ViewData, new Notification { body = YavscAjaxHelper.QuoteJavascriptString(message), 
-				click_action = click_action, click_action_name = YavscAjaxHelper.QuoteJavascriptString(clickActionName)} ) ;
+			Notify(ViewData, new Notification { body = message, 
+				click_action = click_action, click_action_name = clickActionName} ) ;
 		}
 
 		public static void Notify(this ViewDataDictionary ViewData, Notification note) {

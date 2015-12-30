@@ -64,7 +64,7 @@ self.onScroll = function() {
 self.notice = function (msg, callback, msgok) { 
    	if (!msgok) msgok='Ok';
    	var note = $('<div class="notification">'+msg+'<br></div>');
-   	var btn = $('<a class="actionlink"><i class="fa fa-check">'+msgok+'</i></a>');
+   	var btn = $('<a class="link"><i class="fa fa-check">'+msgok+'</i></a>');
    	if (callback) btn.click(callback);  
    	btn.click(self.dimiss).appendTo(note);
    	note.appendTo("#notifications");
