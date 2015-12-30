@@ -7,3 +7,7 @@ Pour l'activer, veuillez suivre le lien suivant :
 <%UserActivatonUrl%>
 
 Merci d'avoir créé un compte utilisateur.
+
+Puissiez-vous avoir beaucoup de fun.
+-- 
+L'équipe d'administration

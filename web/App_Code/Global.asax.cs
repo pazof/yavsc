@@ -31,6 +31,8 @@ namespace Yavsc
 			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}"); // not used
 			routes.IgnoreRoute ("Scripts/{*pathInfo}"); // web user side scripts
 			routes.IgnoreRoute ("App_Theme/{*pathInfo}"); // sites themes
+			routes.IgnoreRoute ("App_Data/{*pathInfo}"); // sites themes
+			routes.IgnoreRoute ("App_Code/{*pathInfo}"); // sites themes
 			routes.IgnoreRoute ("users/{*pathInfo}"); // user's files
 			routes.IgnoreRoute ("avatars/{*pathInfo}"); // user's avatar
 			routes.IgnoreRoute ("bfiles/{*pathInfo}"); // Blog files

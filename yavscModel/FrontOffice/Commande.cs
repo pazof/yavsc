@@ -7,6 +7,7 @@ using System.Web;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.Model.FrontOffice
 {
@@ -62,6 +63,11 @@ namespace Yavsc.Model.FrontOffice
 		public Command()
 		{
 		}
+
+		/// <summary>
+		/// Sets the parameters.
+		/// </summary>
+		/// <param name="collection">Collection.</param>
 		public void SetParameters(Dictionary<string,string>  collection)
 		{
 			Parameters.Clear ();
@@ -88,7 +94,7 @@ namespace Yavsc.Model.FrontOffice
 		/// </summary>
 		/// <param name="collection">Collection.</param>
 		/// <param name="files">Files.</param>
-		private void FromPost(Dictionary<string,string>  collection, NameObjectCollectionBase files)
+		private CommandRegistration FromPost(Dictionary<string,string>  collection, NameObjectCollectionBase files)
 		{
 			// string catref=collection["catref"]; // Catalog Url from which formdata has been built
 			ProductRef = collection ["productref"];
@@ -104,13 +110,16 @@ namespace Yavsc.Model.FrontOffice
 			Status = CommandStatus.Inserted;
 			// stores the parameters:
 			SetParameters(collection);
-			WorkFlowManager.RegisterCommand (this); // gives a value to this.Id
+			var registration = WorkFlowManager.RegisterCommand (this); // gives a value to this.Id
 			UserFileSystemManager.Put(Path.Combine("commandes",Id.ToString ()),files);
+			return registration;
 		}
 
 		/// <summary>
 		/// Creates a command using the specified collection
-		/// as command parameters, handles the files upload.
+		/// as command parameters, handles the files upload,
+		/// ans register the command in db, positionning the 
+		/// command id.
 		/// 
 		/// Required values in the command parameters : 
 		///
@@ -118,21 +127,27 @@ namespace Yavsc.Model.FrontOffice
 		/// * type: the command concrete class name.
 		///
 		/// </summary>
+		/// <returns>The command.</returns>
 		/// <param name="collection">Collection.</param>
 		/// <param name="files">Files.</param>
-		public static Command CreateCommand (Dictionary<string,string> collection, NameObjectCollectionBase files)
+		/// <param name="cmdreg">Cmdreg.</param>
+		public static Command CreateCommand (
+			Dictionary<string,string> collection,
+			NameObjectCollectionBase files, 
+			out CommandRegistration cmdreg)
 		{
 			string type = collection ["type"];
 			if (type == null)
 				throw new InvalidOperationException (
 				"A command type cannot be blank");
 			var cmd = CreateCommand (type);
-			cmd.FromPost (collection, files);
+			cmdreg = cmd.FromPost (collection, files);
 			return cmd;
 		}
 
 		/// <summary>
-		/// Creates the command.
+		/// Creates the command, for deserialisation,
+		/// do not register it in database.
 		/// </summary>
 		/// <returns>The command.</returns>
 		/// <param name="className">Class name.</param>
@@ -152,6 +167,11 @@ namespace Yavsc.Model.FrontOffice
 			var cmd = ci.Invoke (new object[]{ });
 			return cmd as Command;
 		}
+
+		/// <summary>
+		/// Gets the command textual description.
+		/// </summary>
+		/// <returns>The description.</returns>
 		public abstract string GetDescription ();
 	}
 }

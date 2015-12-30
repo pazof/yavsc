@@ -1,3 +1,87 @@
+2015-12-30  Paul Schneider  <paul@pschneider.fr>
+
+	* ResetPassword.txt: Un message pour le mot de passe oublié
+
+	* style.css: fixe un 404
+
+	* UpdatePassword.aspx: Implémente le formulaire de mise à jour
+	du mot de passe,
+	accessible depuis l'e-mail.
+
+	* Contact.aspx: implémente la page de contact préstataire
+
+	* BasketController.cs: renvoie l'objet décrivant la prise de
+	commande
+
+	* Global.asax.cs: ignorer les routes vers App_Data et App_Code
+
+	* instdbws.sql: passage du type json à jsonb pour les
+	paramètres de la commande
+
+	* RegistrationMail.txt: un piti message à l'enregistrement
+
+	* AccountController.cs: Envoi du message du mot de passe
+	oublié,
+	methode de changemnet du mot de passe.
+
+	* AdminController.cs: xmldoc + refabrication helper Notify
+
+	* HomeController.cs:
+	* BlogsController.cs:
+	* GoogleController.cs: refabrication helper Notify
+
+	* FrontOfficeController.cs: Refabrication: Utilisation du
+	nouvel enregistrement de commande.
+	+ refabrication helper Notify
+
+	* YavscHelpers.cs: implémente la methode d'envoi du message de
+	mot de passe oublié
+	+ refabrication helper Notify
+
+	* App.master: Corrige la notification Html 
+
+	* AppAdmin.master: Le lien vers la page de contact était
+	associé
+	à tort à la classe css "thanks"
+
+	* yavsc.js: message plus parlant en cas de requête Ajax mal
+	formée. 
+
+	* Login.aspx: Implémente le lien vers le formulaire de
+	recupération du mot de passe
+
+	* UserPost.aspx: .
+
+	* Booking.aspx: format du code
+
+	* Performer.ascx: l'e-mail préstataire ne sera jamais fourni
+	par l'application,
+	aussi, on parlera de "prendre contact", d'échanger ... mais
+	pas de donner l'adresse e-mail.
+	L'information "son email" n'est donc pas disponible meme à
+	l'utilisateur autorisé.
+	La prise de contact, ou autre fux de comunication le sont.
+
+	* Performers.aspx: affiche la notification à l'envoi de la
+	demande de devis
+
+	* Product.aspx:
+	* Service.aspx: les periodes du catalogue et du calendrier
+	sont fondue.
+
+	* Contact.aspx: traduction en français
+
+	* Web.config: * la procédure de recupération du mot de passe
+	est activée
+	* l'e-message envoyé est construit à partir d'un modèle, un
+	fichier texte trouvé dans /App_Data, et indiqué à
+	l'application
+	par le paramêtre applicatif "LostPasswordMessage"
+
+	* Yavsc.csproj: reference les nouveaux fichiers
+
+	* OtherWebException.aspx: page obsolete
+
 2015-12-24  Paul Schneider  <paul@pschneider.fr>
 
 	* App.master: traductions

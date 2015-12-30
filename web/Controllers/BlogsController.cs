@@ -289,11 +289,11 @@ namespace Yavsc.Controllers
 					// ensures rights to update
 					BlogManager.GetForEditing (model.Id, true);
 					BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible, model.AllowedCircles);
-					YavscHelpers.Notify (ViewData, LocalizedText.BillUpdated);
+					ViewData.Notify( LocalizedText.BillUpdated);
 
 				} else {
 					model.Id = BlogManager.Post (model.Author, model.Title, model.Content, model.Visible, model.AllowedCircles);
-					YavscHelpers.Notify (ViewData, LocalizedText.BillCreated);
+					ViewData.Notify( LocalizedText.BillCreated);
 				}
 				BlogManager.UpdatePostPhoto (model.Id, model.Photo);
 			}

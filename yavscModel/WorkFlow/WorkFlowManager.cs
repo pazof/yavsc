@@ -18,7 +18,8 @@ using System.IO;
 
 namespace Yavsc.Model.WorkFlow
 {
-	
+
+
 	/// <summary>
 	/// Work flow manager.
 	/// It takes orders store them and raise some events for modules
@@ -75,16 +76,20 @@ namespace Yavsc.Model.WorkFlow
 		/// <value>The catalog.</value>
 		public static Catalog Catalog { get; set; }
 
+
+
 		/// <summary>
 		/// Registers the command.
 		/// </summary>
 		/// <returns>The command.</returns>
 		/// <param name="com">COM.</param>
-		public static long RegisterCommand (Command com)
+		public static CommandRegistration RegisterCommand (Command com)
 		{
 			long cmdid = DefaultProvider.RegisterCommand (com);
 			string errorMsgGCM=null;
 			if (com.GetType ().GetInterface ("INominative") != null) {
+				var result = new NominativeCommandRegistration ();
+				result.CommandId = cmdid;
 				INominative cmdn = com as INominative;
 				NominativeEventPub ev = new NominativeEventPub ();
 				ev.PerformerName = cmdn.PerformerName;
@@ -92,9 +97,13 @@ namespace Yavsc.Model.WorkFlow
 				ev.Description = desc;
 				// TODO send a location
 				try { 
+
 					var gnresponse = GoogleHelpers.NotifyEvent (ev);
-				}
-				catch (WebException ex) {
+					if (gnresponse.failure > 0 || gnresponse.success <=0)
+						result.NotifiedOnMobile = false;
+					else result.NotifiedOnMobile = true;
+					
+				} catch (WebException ex) {
 					
 					using (var respstream = ex.Response.GetResponseStream ()) {
 						using (StreamReader rdr = new StreamReader (respstream)) {
@@ -103,30 +112,32 @@ namespace Yavsc.Model.WorkFlow
 						}
 						respstream.Close ();
 					}
-					if (errorMsgGCM==null)
-						errorMsgGCM = "No response";
+					if (errorMsgGCM == null)
+						throw;
 
-					throw new Exception (errorMsgGCM);
+					throw new Exception (errorMsgGCM,ex);
 				}
 				string errorEMail = null;
 				try {
-				var pref = Membership.GetUser (cmdn.PerformerName);
-				using (System.Net.Mail.MailMessage msg = 
-					       new MailMessage (
-						       WebConfigurationManager.AppSettings.Get ("OwnerEMail"),
-						       pref.Email,
-						       "[Demande de devis] " + com.ClientName,
-						       desc)) {
-					using (System.Net.Mail.SmtpClient sc = new SmtpClient ()) {
-						sc.Send (msg);
+					var pref = Membership.GetUser (cmdn.PerformerName);
+					using (System.Net.Mail.MailMessage msg = 
+						      new MailMessage (
+							      WebConfigurationManager.AppSettings.Get ("OwnerEMail"),
+							      pref.Email,
+							      "[Demande de devis] " + com.ClientName,
+							      desc)) {
+						using (System.Net.Mail.SmtpClient sc = new SmtpClient ()) {
+							sc.Send (msg);
+							result.EmailSent = true;
+						}
 					}
-				}
-				}
-				catch (Exception ex) {
+				} catch (Exception ex) {
 					errorEMail = ex.Message;
+					result.EmailSent = false;
 				}
-			}
-			return cmdid;
+				return result;
+			} else
+				throw new NotImplementedException ();
 		}
 
 		/// <summary>

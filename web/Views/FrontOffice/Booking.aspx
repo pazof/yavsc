@@ -71,7 +71,6 @@ Intervention souhaitée le : <input type="text" id="PreferedDate" name="Prefered
 
    // $('#PreferedHour').timepicker(tpconfig);
    $('#PreferedDate').datepicker(dpconfig).zIndex(4);
- 
    });
 </script>
 

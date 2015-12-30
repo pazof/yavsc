@@ -118,6 +118,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string YourNeed {
+            get {
+                return ResourceManager.GetString("YourNeed", resourceCulture);
+            }
+        }
+        
         public static string ExistantDB {
             get {
                 return ResourceManager.GetString("ExistantDB", resourceCulture);
@@ -196,9 +202,27 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string email {
+            get {
+                return ResourceManager.GetString("email", resourceCulture);
+            }
+        }
+        
         public static string EndDate {
             get {
                 return ResourceManager.GetString("EndDate", resourceCulture);
+            }
+        }
+        
+        public static string body {
+            get {
+                return ResourceManager.GetString("body", resourceCulture);
+            }
+        }
+        
+        public static string ResetPassword {
+            get {
+                return ResourceManager.GetString("ResetPassword", resourceCulture);
             }
         }
         
@@ -289,6 +313,12 @@ namespace Yavsc.Model {
         public static string Search {
             get {
                 return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        public static string YouNeedToBeAuthenticatedIOToContact {
+            get {
+                return ResourceManager.GetString("YouNeedToBeAuthenticatedIOToContact", resourceCulture);
             }
         }
         
@@ -406,9 +436,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string YourNeed {
+        public static string Description {
             get {
-                return ResourceManager.GetString("YourNeed", resourceCulture);
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        public static string was_added_to_the_role {
+            get {
+                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
             }
         }
         
@@ -433,6 +469,18 @@ namespace Yavsc.Model {
         public static string Tex_version {
             get {
                 return ResourceManager.GetString("Tex_version", resourceCulture);
+            }
+        }
+        
+        public static string ContactThisPerformer {
+            get {
+                return ResourceManager.GetString("ContactThisPerformer", resourceCulture);
+            }
+        }
+        
+        public static string OnlyAuthorizedMayContact {
+            get {
+                return ResourceManager.GetString("OnlyAuthorizedMayContact", resourceCulture);
             }
         }
         
@@ -574,9 +622,9 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string YourMEACode {
+        public static string PhotoUpdated {
             get {
-                return ResourceManager.GetString("YourMEACode", resourceCulture);
+                return ResourceManager.GetString("PhotoUpdated", resourceCulture);
             }
         }
         
@@ -694,18 +742,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string PhotoUpdated {
-            get {
-                return ResourceManager.GetString("PhotoUpdated", resourceCulture);
-            }
-        }
-        
-        public static string Description {
-            get {
-                return ResourceManager.GetString("Description", resourceCulture);
-            }
-        }
-        
         public static string from {
             get {
                 return ResourceManager.GetString("from", resourceCulture);
@@ -808,9 +844,15 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string was_added_to_the_role {
+        public static string reason {
             get {
-                return ResourceManager.GetString("was_added_to_the_role", resourceCulture);
+                return ResourceManager.GetString("reason", resourceCulture);
+            }
+        }
+        
+        public static string YourMEACode {
+            get {
+                return ResourceManager.GetString("YourMEACode", resourceCulture);
             }
         }
         
@@ -883,6 +925,12 @@ namespace Yavsc.Model {
         public static string Offline {
             get {
                 return ResourceManager.GetString("Offline", resourceCulture);
+            }
+        }
+        
+        public static string NewPasswordMessageSent {
+            get {
+                return ResourceManager.GetString("NewPasswordMessageSent", resourceCulture);
             }
         }
         

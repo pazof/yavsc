@@ -285,7 +285,6 @@
     <Content Include="Views\Admin\Restore.aspx" />
     <Content Include="Views\Admin\Restored.aspx" />
     <Content Include="Catalog.xml" />
-    <Content Include="RegistrationMail.txt" />
     <Content Include="Views\FrontOffice\Writting.ascx" />
     <Content Include="Scripts\jquery.metadata.js" />
     <Content Include="Views\Account\Unregister.aspx" />
@@ -479,7 +478,6 @@
     <Content Include="Views\Google\Auth.aspx" />
     <Content Include="Views\Google\ChooseCalendar.aspx" />
     <Content Include="Views\Google\ChooseADate.aspx" />
-    <Content Include="Views\Google\OtherWebException.aspx" />
     <Content Include="Models\AppAdmin.master" />
     <Content Include="Views\Google\Index.aspx" />
     <Content Include="Views\Admin\RemoveRole.aspx" />
@@ -781,6 +779,11 @@
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="App_Data\RegistrationMail.txt" />
+    <Content Include="App_Data\ResetPassword.txt" />
+    <Content Include="Views\Account\UpdatePassword.aspx" />
+    <Content Include="App_Themes\base\style.css" />
+    <Content Include="Views\FrontOffice\Contact.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -819,10 +822,10 @@
     <None Include="Web.Lua.config" />
     <None Include="Web.Release.config" />
     <None Include="Web.TotemPre.config" />
-    <None Include="Web.TotemProd.config" />
     <None Include="Scripts\jquery.mobile-1.4.5.min.map" />
     <None Include="App_Themes\images\GitHub.ico" />
     <None Include="Web.LuaDebug.config" />
+    <None Include="Web.Totemprod.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">

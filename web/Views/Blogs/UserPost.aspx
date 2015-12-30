@@ -1,4 +1,4 @@
-<%@ Page Title="Billet" Language="C#" Inherits="System.Web.Mvc.ViewPage<UUTBlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
+<%@ Page Title="Post" Language="C#" Inherits="System.Web.Mvc.ViewPage<UUTBlogEntryCollection>" MasterPageFile="~/Models/App.master"%>
 <asp:Content ContentPlaceHolderID="init" ID="init1" runat="server">
 <% Title = Model.Title+ " - " + ViewData ["BlogTitle"] ; %>
 </asp:Content>

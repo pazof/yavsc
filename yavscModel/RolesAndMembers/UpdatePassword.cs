@@ -1,5 +1,5 @@
-//
-//  UserNameBase.cs
+﻿//
+//  UpdatePassword.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -18,39 +18,24 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Model.RolesAndMembers
 {
-	/// <summary>
-	/// User name base.
-	/// </summary>
-	public class UserNameBase : IUserName, IIdentified<string> { 
+	public class UpdatePassword: UserNameBase
+	{
+		public string UserKey {get; set; }
+
+		[DisplayName("Mot de passe")]
+		public string Password {get; set; }
+
 		/// <summary>
-		/// Gets or sets the name of the user.
+		/// Gets or sets the confirm password.
 		/// </summary>
-		/// <value>The name of the user.</value>
-		[Localizable(true), Required(ErrorMessage = "S'il vous plait, entrez un nom d'utilisateur")
-			,Display(ResourceType=typeof(LocalizedText),Name="User_name"),RegularExpression(@"^[a-zA-Z .-_#]{1,100}$")]
-		public string UserName { get; set; }
-	
-		#region IIdentified implementation
-		/// <summary>
-		/// Gets or sets the identifier.
-		/// </summary>
-		/// <value>The identifier.</value>
-		public string Id {
-			get {
-				return UserName;
-			}
-			set {
-				UserName = value;
-			}
-		}
-		#endregion
+		/// <value>The confirm password.</value>
+		[DisplayName("Confirmation du mot de passe")]
+		public string ConfirmPassword { get; set; }
 	}
-	
 }
+

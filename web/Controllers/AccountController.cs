@@ -18,6 +18,7 @@ using System.Net;
 using System.Configuration;
 using Yavsc.Model;
 using Yavsc.Model.WorkFlow;
+using Yavsc.Model.Messaging;
 
 namespace Yavsc.Controllers
 {
@@ -62,7 +63,7 @@ namespace Yavsc.Controllers
 		/// <returns>The login.</returns>
 		/// <param name="model">Model.</param>
 		/// <param name="returnUrl">Return URL.</param>
-		[HttpPost,ValidateAntiForgeryToken]
+		[HttpPost,ValidateAntiForgeryToken] 
 		public ActionResult Login (LoginModel model, string returnUrl)
 		{
 			if (ModelState.IsValid) {
@@ -362,7 +363,7 @@ namespace Yavsc.Controllers
 					FormsAuthentication.SetAuthCookie (model.NewUserName, model.RememberMe);
 					model.UserName = model.NewUserName;
 				}
-				YavscHelpers.Notify(ViewData, "Profile enregistré"+((editsTheUserName)?", nom public inclu.":""));
+				ViewData.Notify( "Profile enregistré"+((editsTheUserName)?", nom public inclu.":""));
 			}
 			SetMEACodeViewData (model);
 			SetUIThemeViewData (model);
@@ -404,8 +405,10 @@ namespace Yavsc.Controllers
 				foreach (string key in errors.Keys)
 					ModelState.AddModelError (key, errors [key]);
 				
-				if (user != null && ModelState.IsValid)
-					Url.SendActivationMessage (user);
+				if (user != null && ModelState.IsValid) {
+					YavscHelpers.SendNewPasswordMessage (user);
+					ViewData.Notify ( new Notification () { body = LocalizedText.NewPasswordMessageSent } );
+				} 
 			}
 			return View (model);
 		}
@@ -420,22 +423,69 @@ namespace Yavsc.Controllers
 		{
 			MembershipUser u = Membership.GetUser (id, false);
 			if (u == null) {
-				YavscHelpers.Notify( ViewData,
+				ViewData.Notify( 
 					string.Format ("Cet utilisateur n'existe pas ({0})", id));
 			} else if (u.ProviderUserKey.ToString () == key) {
 				if (u.IsApproved) {
-					YavscHelpers.Notify( ViewData,
+					ViewData.Notify( 
 						string.Format ("Votre compte ({0}) est déjà validé.", id));
 				} else { 
 					u.IsApproved = true;
 					Membership.UpdateUser (u);
-					YavscHelpers.Notify( ViewData,
+					ViewData.Notify( 
 						string.Format ("La création de votre compte ({0}) est validée.", id));
 				}
 			} else
-				YavscHelpers.Notify( ViewData, "La clé utilisée pour valider ce compte est incorrecte" );
+				ViewData.Notify( "La clé utilisée pour valider ce compte est incorrecte" );
 			return View ();
 		}
 
+		/// <summary>
+		/// Updates the password.
+		/// </summary>
+		/// <returns>The password.</returns>
+		/// <param name="id">Identifier.</param>
+		/// <param name="key">Key.</param>
+		[HttpGet]
+		public ActionResult UpdatePassword (string id, string key)
+		{
+			MembershipUser u = Membership.GetUser (id, false);
+			if (u == null) {
+				return Content(
+					string.Format("Cet utilisateur n'existe pas ({0})", id));
+			} 
+			if (u.ProviderUserKey.ToString () != key) {
+				return Content("Clé invalide");
+			}
+			ViewData["UserName"] = id;
+			ViewData["UserKey"] = key;
+			return View ();
+		}
+
+		/// <summary>
+		/// Updates the password.
+		/// </summary>
+		/// <returns>The password.</returns>
+		/// <param name="model">Model.</param>
+		[HttpPost]
+		public ActionResult UpdatePassword (UpdatePassword model)
+		{
+			if (ModelState.IsValid) {
+				if (model.Password == model.ConfirmPassword) {
+					MembershipUser u = Membership.GetUser (model.UserName, false);
+					if (u == null) {
+						return Content(
+							string.Format("Cet utilisateur n'existe pas ({0})", model.UserName));
+					} 
+					if (u.ProviderUserKey.ToString () != model.UserKey) {
+						return Content("Clé invalide");
+					}
+					u.ChangePassword(u.GetPassword (),model.Password);
+					ViewData.Notify( "La mise à jour du mot de passe a été effectuée.");
+					return View("Index");
+				}
+			}
+			return View();
+		}
 	}
 }

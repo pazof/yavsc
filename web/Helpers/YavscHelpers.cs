@@ -20,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web.Routing;
 using Yavsc.Model.FrontOffice;
+using Yavsc.Model.WorkFlow;
 
 namespace Yavsc.Helpers
 {
@@ -51,21 +52,23 @@ namespace Yavsc.Helpers
 			"APPL_PHYSICAL_PATH", "CERT_SECRETKEYSIZE", "CERT_SERVER_ISSUER", 
 			"INSTANCE_META_PATH", "SERVER_PORT_SECURE",
 			"CERT_SERVER_SUBJECT", "HTTPS_SECRETKEYSIZE", "HTTPS_SERVER_ISSUER", 
-			"HTTP_CONTENT_LENGTH", "HTTPS_SERVER_SUBJECT", "HTTP_ACCEPT_ENCODING", "HTTP_ACCEPT_LANGUAGE"
+			"HTTP_CONTENT_LENGTH", "HTTPS_SERVER_SUBJECT", "HTTP_ACCEPT_ENCODING", "HTTP_ACCEPT_LANGUAGE",
+			"HTTP_CACHE_CONTROL", "__RequestVerificationToken"
 		};
-		public static long CreateCommandFromRequest()
+		public static CommandRegistration CreateCommandFromRequest()
 		{
 			var keys = HttpContext.Current.Request.Params.AllKeys.Where (
 				x => !YavscHelpers.FilteredKeys.Contains (x)).ToArray();
 			var prms = new Dictionary<string,string> ();
-
+			CommandRegistration cmdreg;
 			foreach (var key in keys) { 
 				prms.Add (key, HttpContext.Current.Request.Params [key]);
 			}
-			Command cmd = Command.CreateCommand(
+			Command.CreateCommand(
 				prms, 
-				HttpContext.Current.Request.Files);
-			return cmd.Id;
+				HttpContext.Current.Request.Files, 
+				out cmdreg);
+			return cmdreg;
 		}
 
 		private static string siteName = null; 
@@ -115,7 +118,8 @@ namespace Yavsc.Helpers
 		{
 			SendActivationMessage (
 				string.Format("{2}://{3}/Account/Validate/{1}?key={0}",
-					user.ProviderUserKey.ToString(), user.UserName , 
+					user.ProviderUserKey.ToString(), 
+					HttpUtility.UrlEncode(user.UserName), 
 					helper.RequestContext.HttpContext.Request.Url.Scheme,
 					helper.RequestContext.HttpContext.Request.Url.Authority
 				)
@@ -123,13 +127,30 @@ namespace Yavsc.Helpers
 				user);
 		}
 
+		public static void SendNewPasswordMessage(MembershipUser user)
+		{
+			SendActivationMessage (
+				string.Format("{2}://{3}/Account/UpdatePassword/{1}?key={0}",
+					user.ProviderUserKey.ToString(), 
+					HttpUtility.UrlEncode(user.UserName), 
+					HttpContext.Current.Request.Url.Scheme,
+					HttpContext.Current.Request.Url.Authority
+				)
+				,  WebConfigurationManager.AppSettings ["LostPasswordMessage"],
+				user,
+				"Mot de passe {0} perdu"
+			);
+		}
+
+
 		/// <summary>
 		/// Sends the activation message.
 		/// </summary>
 		/// <param name="validationUrl">Validation URL.</param>
 		/// <param name="registrationMessage">Registration message.</param>
 		/// <param name="user">User.</param>
-		public static void SendActivationMessage(string validationUrl, string registrationMessage, MembershipUser user) {
+		public static void SendActivationMessage(string validationUrl, 
+			string registrationMessage, MembershipUser user,string title = "Validation de votre compte {0}") {
 			FileInfo fi = new FileInfo (
 				HttpContext.Current.Server.MapPath (registrationMessage));
 			if (!fi.Exists) {
@@ -148,7 +169,7 @@ namespace Yavsc.Helpers
 
 				using (MailMessage msg = new MailMessage (
 					Admail, user.Email,
-					string.Format ("Validation de votre compte {0}", YavscHelpers.SiteName),
+					string.Format (title, YavscHelpers.SiteName),
 					body)) {
 					using (SmtpClient sc = new SmtpClient ()) {
 						sc.Send (msg);
@@ -166,6 +187,7 @@ namespace Yavsc.Helpers
 		/// <param name="user">User.</param>
 		public static void ValidatePasswordReset(LostPasswordModel model, out StringDictionary errors, out MembershipUser user)
 		{
+			MembershipUser user1 = null;
 			MembershipUserCollection users = null;
 			errors = new StringDictionary ();
 			user = null;
@@ -180,23 +202,26 @@ namespace Yavsc.Helpers
 					errors.Add ("UserName", "Found more than one user!(sic)");
 					return ;
 				}
+				foreach (var u in users) user1 = u as MembershipUser;
 			}
-			if (!string.IsNullOrEmpty (model.Email)) {
-				users =
-					Membership.FindUsersByEmail (model.Email);
+			if (string.IsNullOrEmpty (model.Email))
+				errors.Add ("Email", "Please, specify an e-mail");
+			else {
+				users = Membership.FindUsersByEmail (model.Email);
 				if (users.Count < 1) {
-					errors.Add ( "Email", "Email not found");
-					return ;
+					errors.Add ("Email", "Email not found");
+					return;
 				}
 				if (users.Count != 1) {
 					errors.Add ("Email", "Found more than one user!(sic)");
 					return ;
 				}
 			}
-			if (users==null)
-				return;
-			// Assert users.Count == 1
-			foreach (MembershipUser u in users) user = u;
+			MembershipUser user2 = null;
+			foreach (var u in users) user2 = u as MembershipUser;
+			if (user1.UserName != user2.UserName)
+				errors.Add("UserName", "This user is not registered with this e-mail");
+			user = user1;
 		}
 		/// <summary>
 		/// Avatars the URL.
@@ -267,12 +292,13 @@ namespace Yavsc.Helpers
 			return serializer.Serialize(obj);
 		}
 
-		public static void Notify(ViewDataDictionary ViewData, string message, string click_action=null, string clickActionName="Ok") {
+		public static void Notify(this ViewDataDictionary ViewData, string message, string click_action=null, string clickActionName="Ok") {
 			Notify(ViewData, new Notification { body = YavscAjaxHelper.QuoteJavascriptString(message), 
 				click_action = click_action, click_action_name = YavscAjaxHelper.QuoteJavascriptString(clickActionName)} ) ;
 		}
 
-		public static void Notify(ViewDataDictionary ViewData, Notification note) {
+		public static void Notify(this ViewDataDictionary ViewData, Notification note) {
+			
 			if (ViewData ["Notifications"] == null)
 				ViewData ["Notifications"] = new List<Notification> ();
 			(ViewData ["Notifications"] as List<Notification>).Add (

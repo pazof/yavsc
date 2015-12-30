@@ -24,12 +24,13 @@
 	<data name="available"><value>disponible</value></data>
 	<data name="AuthenticatedOnly"><value>Seuls les utilisateurs authentifiés peuvent accèder à cette information.</value></data>
 	<data name="Basket"><value>Panier</value></data>
-	<data name="Bill_edition"><value>Édition d'un billet</value></data>
-	<data name="Bill_removal"><value>Suppression d'un billet</value></data>
-	<data name="BillAccessControl"><value>Contrôle d'accès au Billet</value></data>
-	<data name="BillCreated"><value>Billet créé</value></data>
-	<data name="BillSourceCode"><value>Code source du billet</value></data>
-	<data name="BillUpdated"><value>Billet mis à jour</value></data>
+	<data name="Bill_edition"><value>Édition d'un article</value></data>
+	<data name="Bill_removal"><value>Suppression d'un article</value></data>
+	<data name="BillAccessControl"><value>Contrôle d'accès à l'article</value></data>
+	<data name="BillCreated"><value>Article créé</value></data>
+	<data name="BillSourceCode"><value>Code source de l'article</value></data>
+	<data name="BillUpdated"><value>Article mis à jour</value></data>
+	<data name="body"><value>corps de texte</value></data>
 	<data name="BookingTitleArtiste"><value>Reserver les services d'un artiste</value></data>
 	<data name="BookingTitle6829C"><value>Reserver les services d'un éditeur de logiciel</value></data>
 	<data name="Catalog"><value>Catalogue</value></data>
@@ -38,8 +39,9 @@
 	<data name="ChooseADateInTheFutur"><value>S'il vous plait, choisissez une date dans le futur</value></data>
 	<data name="Ciffer"><value>Chiffre</value></data>
 	<data name="Circles"><value>Cercles</value></data>
-	<data name="Consultant"><value>Consultant</value></data>
 	<data name="Comment"><value>Commentaire</value></data>
+	<data name="Consultant"><value>Consultant</value></data>
+	<data name="ContactThisPerformer"><value>Contactez ce préstataire</value></data>
 	<data name="Count"><value>Nombre</value></data>
 	<data name="Create"><value>Créer</value></data>
 	<data name="Date_search"><value>Demande de rendez-vous</value></data>
@@ -58,6 +60,7 @@
 	<data name="EditRelatedSkills"><value>Editer les compétences associées</value></data>
 	<data name="EndDate"><value>Date de fin</value></data>
 	<data name="EndHour"><value>Heure de fin</value></data>
+	<data name="email"><value>e-mail</value></data>
 	<data name="entries"><value>entrées</value></data>
 	<data name="Estimate_not_found"><value>Devis non trouvé</value></data>
     <data name="EventWebPage"><value>Page web de l'événement</value></data>
@@ -67,7 +70,7 @@
 	<data name="Google_calendar"><value>Agenda Google</value></data>
 	<data name="Google_error"><value>Erreur Google : {0}</value></data>
 	<data name="Google_registration_id"><value>Identifiant d'enregistrement Google</value></data>
-	<data name="Hide_source"><value>Cacher le texte source du billet</value></data>
+	<data name="Hide_source"><value>Cacher le texte source de l'article</value></data>
 	<data name="Home"><value>Accueil</value></data>
 	<data name="Hide"><value>Cacher</value></data>
 	<data name="hidden"><value>caché</value></data>
@@ -92,14 +95,17 @@
 	<data name="Needs"><value>Besoins</value></data>
 	<data name="Need"><value>Besoin</value></data>
 	<data name="New_Tag"><value>Nouveau Tag</value></data>
+	<data name="NewPasswordMessageSent"><value>Un e-mail vient de vous être envoyé, il contient le lien à suivre 
+	pour pouvoir mettre à jour votre mot de passe.</value></data>
 	<data name="no_content"><value>pas de contenu</value></data>
-	<data name="NoSkillforthisactivity"><value>Aucune compétence n'a été enregistrée par aucun préstataire pour cette activité</value></data>
+	<data name="NoSkillforthisactivity"><value>Aucune compétence n'a été enregistrée par aucun préstataire pour cette activité.</value></data>
 	<data name="none"><value>aucun(e)</value></data>
 	<data name="Non_existent_user"><value>Non existent user</value></data>
 	<data name="Not Approuved"><value>Non approuvé</value></data>
 	<data name="No_calendar_for_this_user"><value>Le préstataire n'a pas de calendrier associé.</value></data>
 	<data name="Offline"><value>Hors ligne</value></data>
 	<data name="Online"><value>En ligne</value></data>
+	<data name="OnlyAuthorizedMayContact"><value>Seuls les utilisateurs authorisés peuvent contacter un préstataire par courrier.</value></data>
 	<data name="Pdf_version"><value>Version Pdf</value></data>
 	<data name="PerformanceDate"><value>Date de la prestation</value></data>
 	<data name="Performers"><value>Perstataires</value></data>
@@ -112,6 +118,7 @@
 	<data name="Profile_edition"><value>Édition du profile</value></data>
 	<data name="Product_reference"><value>Référence produit</value></data>
 	<data name="ReadMore"><value>Lire la suite ...</value></data>
+	<data name="reason"><value>réson</value></data>
 	<data name="Role"><value>Rôle</value></data>
 	<data name="prestation"><value>prestation</value></data>
 	<data name="ProviderId"><value>Identifiant du fournisseur</value></data>
@@ -119,12 +126,13 @@
 	<data name="Register"><value>Enregistez-vous</value></data>
     <data name="Remember_me"><value>Se souvenir du mot de passe</value></data>
 	<data name="Remove"><value>Supprimer</value></data>
+	<data name="ResetPassword"><value>Ré-initialiser votre mot de passe</value></data>
 	<data name="role_created"><value>Rôle créé</value></data>
 	<data name="Search"><value>Chercher</value></data>
 	<data name="SiteSkills"><value>Talents/Compétences/Spécialités gérés sur ce site</value></data>
 	<data name="Skill"><value>Compétence</value></data>
 	<data name="Skills"><value>Talents/Compétences/Spécialités</value></data>
-    <data name="SomeoneAskingYouForAnEstimate"><value>{0} would want you to establish an estimate concerning {1}</value></data>
+    <data name="SomeoneAskingYouForAnEstimate"><value>{0} désirerait un devis concernant {1}</value></data>
 	<data name="StartDate"><value>Date de début</value></data>
 	<data name="StartDateAfterEndDate"><value>La date de fin doit être postérieure à la date de début.</value></data>
 	<data name="StartHour"><value>Heure de début</value></data>
@@ -143,19 +151,21 @@
 	<data name="UsersInRole">Liste des utilisateurs assumant le rôle "{0}"</data>
 	<data name="UserSkills"><value>Talents/compétences/spécialités utilisateur</value></data>
 	<data name="UserNotInThisRole"><value>Le rôle demandé n'est pas assumé par ce préstataire</value></data>
-	<data name="View_source"><value>Voir le texte source du billet</value></data>
+	<data name="View_source"><value>Voir le texte source de l'article</value></data>
 	<data name="was_added_to_the_role"><value>a été ajouté au rôle</value></data>
 	<data name="was_added_to_the_empty_role"><value>Il n'y avait pas d'utilisateur dans le rôle "{1}". Vous ({0}) avez été ajouté au rôle "{1}".</value></data>
 	<data name="Welcome"><value>Bienvenue</value><comment></comment></data>
 	<data name="XHasBeenNotified"><value>{0} à été notifié de votre demande, vous devriez être contacté rapidement</value></data>
 	<data name="Xshouldbeavailable"><value>Au vu de son calendrier, 
 	{0} devrait être disponible pour ce rendez-vous</value></data>
+	<data name="YouNeedToBeAuthenticatedIOToContact"><value>Vous devez vous authentifier pour pouvoir demander un devis
+	 à un préstataire.</value></data>
 	<data name="younotadmin"><value>Vous n'êtes pas administrateur</value></data>
 	<data name="YourEstimates"><value>Vos Devis</value></data>
 	<data name="YourMEACode"><value>Votre activité</value></data>
 	<data name="YourNeed"><value>Votre besoin</value></data>
 	<data name="yourquerytransmitted"><value>Votre demande a été transmise</value></data>
 	<data name="YourSkills"><value>Vos talents, vos spécialités, le domaine de vos activités</value></data>
-	<data name="YourPosts"><value>Vos posts</value></data>
+	<data name="YourPosts"><value>Vos publications</value></data>
 	<data name="YourProfile"><value>Votre profile</value></data>
 </root>

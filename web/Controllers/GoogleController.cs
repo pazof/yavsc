@@ -109,7 +109,7 @@ namespace Yavsc.Controllers
 			OAuth2 oa = GoogleHelpers.CreateOAuth2 (CalendarGRU);
 			AuthToken gat = oa.GetToken (Request, (string) Session ["state"], out msg);
 			if (gat == null) {
-				YavscHelpers.Notify(ViewData,  msg);
+				ViewData.Notify( msg);
 				return View ("Auth");
 			}
 			SaveToken (HttpContext.Profile,gat);
@@ -147,7 +147,7 @@ namespace Yavsc.Controllers
 			OAuth2 oa = GoogleHelpers.CreateOAuth2 (AuthGRU);
 			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
 			if (gat == null) {
-				YavscHelpers.Notify(ViewData,  msg);
+				ViewData.Notify(msg);
 				return View ();
 			}
 			string returnUrl = (string)Session ["returnUrl"];

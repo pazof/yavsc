@@ -25,8 +25,8 @@ Prix unitaire : <%= Html.Encode(Model.UnitaryPrice.Quantity.ToString())%>
 <%= Html.CommandForm(Model,"Ajouter au panier") %>
 
 <% if (Model.CommandValidityDates!=null) { %>
-Offre valable du <%= Model.CommandValidityDates.StartDate.ToString("dd/MM/yyyy") %> au 
-<%= Model.CommandValidityDates.EndDate.ToString("dd/MM/yyyy") %>.
+Offre valable du <%= Model.CommandValidityDates.Start.ToString("dd/MM/yyyy") %> au 
+<%= Model.CommandValidityDates.End.ToString("dd/MM/yyyy") %>.
 <% } %>
 
 </div>

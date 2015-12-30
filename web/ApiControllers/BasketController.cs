@@ -42,7 +42,7 @@ namespace Yavsc.ApiControllers
 		/// <summary>
 		/// Create the specified basket item using specified command parameters.
 		/// </summary>
-		public long Create()
+		public CommandRegistration Create()
 		{
 			return YavscHelpers.CreateCommandFromRequest ();
 		}

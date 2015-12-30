@@ -7,13 +7,12 @@ self.apiBaseUrl = (apiBaseUrl || '/api');
 self.dumpprops = function (obj) { 
 var str = "";
 for(var k in obj)
-    if (obj.hasOwnProperty(k)) 
-        str += "  "+k + " = " + obj[k] + "\n";
-      return (str);   };
-
+   if (obj.hasOwnProperty(k)) 
+        str += "."+k + " = " + obj[k] + "\n";
+return str;}
 self.logObj = function(obj) {
 	console.log('obj:'+obj);
-	console.log('-props:'+self.dumpprops(obj));
+	console.log(self.dumpprops(obj));
 };
 
 self.showHide = function () { 
@@ -74,8 +73,8 @@ self.notice = function (msg, callback, msgok) {
 
 self.onAjaxBadInput = function (data)
     {
-    	if (!data) { Yavsc.notice('no data'); return; }
-    	if (!data.responseJSON) { Yavsc.notice('no json data:'+data); return; }
+    	if (!data) { Yavsc.notice('Bad input, no data'); return; }
+    	if (!data.responseJSON) { Yavsc.notice('Bad input, no json data response'); return; }
    		if (!Array.isArray(data.responseJSON))  { Yavsc.notice('Bad Input: '+data.responseJSON); return; }
 		$.each(data.responseJSON, function (key, value) {
 		var errspanid = "Err_" + value.key;

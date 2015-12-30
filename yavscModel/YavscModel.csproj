@@ -129,7 +129,6 @@
     <Compile Include="FrontOffice\Catalog\Link.cs" />
     <Compile Include="FrontOffice\Catalog\Note.cs" />
     <Compile Include="FrontOffice\Catalog\Option.cs" />
-    <Compile Include="FrontOffice\Catalog\Period.cs" />
     <Compile Include="FrontOffice\Catalog\PhysicalProduct.cs" />
     <Compile Include="FrontOffice\Catalog\Product.cs" />
     <Compile Include="FrontOffice\Catalog\ProductCategory.cs" />
@@ -253,6 +252,9 @@
     <Compile Include="RolesAndMembers\IUserName.cs" />
     <Compile Include="Calendar\EventCirclesPub.cs" />
     <Compile Include="Calendar\NominativeEventPub.cs" />
+    <Compile Include="WorkFlow\CommandRegistration.cs" />
+    <Compile Include="WorkFlow\NominativeCommandRegistration.cs" />
+    <Compile Include="RolesAndMembers\UpdatePassword.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

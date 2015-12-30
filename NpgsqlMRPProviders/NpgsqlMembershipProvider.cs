@@ -633,8 +633,10 @@ namespace Npgsql.Web
 							if (reader.GetBoolean (2))
 								throw new MembershipPasswordException ("The supplied user is locked out.");
 
-							password = reader.GetString (0);
-							passwordAnswer = reader.GetString (1);
+							if (!reader.IsDBNull(0))
+								password = reader.GetString (0);
+							if (!reader.IsDBNull(1))
+								passwordAnswer = reader.GetString (1);
 						} else {
 							throw new MembershipPasswordException ("The supplied user name is not found.");
 						}

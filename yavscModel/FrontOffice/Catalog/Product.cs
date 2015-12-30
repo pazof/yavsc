@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Model.Calendar;
 
 namespace Yavsc.Model.FrontOffice.Catalog
 {

@@ -19,6 +19,7 @@
 <%= Html.AntiForgeryToken() %>
 <!-- Html.AntiForgeryToken() -->
 <input type="submit"/>
+<%= Html.TranslatedActionLink("ResetPassword")%>
 <% } %></div>
 <div class="panel">
 <%= Html.TranslatedActionLink("S'enregistrer","GetRegister",new {returnUrl=ViewData["returnUrl"]}, new { @class="actionlink" }) %>

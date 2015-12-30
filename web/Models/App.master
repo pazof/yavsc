@@ -49,7 +49,7 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
 <script>
 $(document).ready(function(){
 <% foreach (Notification note in (IEnumerable<Notification>) ViewData ["Notifications"] ) { 
-if (note.click_action == null) {%> Yavsc.notice(<%=note.body%>); <% } 
+if (note.click_action == null) {%> Yavsc.notice(<%=Ajax.JString(note.body)%>); <% } 
 else {%> Yavsc.notice(<%=note.body%>, <%=note.click_action%>, <%=note.click_action_name%>); <% } %>
 <% } %>
 });

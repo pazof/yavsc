@@ -15,6 +15,7 @@ web/App_Themes/style.totem.css
 web/Web.Debug.config
 web/Web.Release.config
 web/Web.Lua.config
+web/Web.LuaDebug.config
 web/Web.TotemPre.config
 web/Web.Totemprod.config
 .nuget

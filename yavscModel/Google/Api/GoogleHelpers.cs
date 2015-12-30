@@ -153,7 +153,7 @@ namespace Yavsc.Model.Google.Api
 				if (regid == null)
 					throw new NotImplementedException ("Notification via e-mail");
 				var msg = new MessageWithPayload<YaEvent> () { 
-					notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "event" },
+					notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "icon" },
 					data = evpub, registration_ids = new string[] { regid }  };
 				return r.Invoke (msg);
 			}

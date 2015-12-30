@@ -27,7 +27,7 @@ namespace Yavsc.Controllers
 			// FIXME do this in a new installation script.
 			if (!Roles.RoleExists (_adminRoleName)) {
 				Roles.CreateRole (_adminRoleName);
-				YavscHelpers.Notify (ViewData, _adminRoleName + " " + LocalizedText.role_created);
+				ViewData.Notify( _adminRoleName + " " + LocalizedText.role_created);
 			}
 			return View ();
 		}
@@ -159,6 +159,13 @@ namespace Yavsc.Controllers
 			return Redirect(returnUrl);
 		}
 
+		/// <summary>
+		/// Adds the user to role.
+		/// </summary>
+		/// <returns>The user to role.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="rolename">Rolename.</param>
+		/// <param name="returnUrl">Return URL.</param>
 		[Authorize(Roles="Admin")]
 		public ActionResult AddUserToRole(string username, string rolename, string returnUrl)
 		{
@@ -178,7 +185,7 @@ namespace Yavsc.Controllers
 			ViewData ["usertoremove"] = username;
 			if (submitbutton == "Supprimer") {
 				Membership.DeleteUser (username);
-				YavscHelpers.Notify(ViewData, string.Format("utilisateur \"{0}\" supprimé",username));
+				ViewData.Notify( string.Format("utilisateur \"{0}\" supprimé",username));
 				ViewData ["usertoremove"] = null;
 			}
 			return View ();
@@ -273,7 +280,7 @@ namespace Yavsc.Controllers
 		public ActionResult AddRole (string rolename)
 		{
 			Roles.CreateRole(rolename);
-			YavscHelpers.Notify(ViewData, LocalizedText.role_created+ " : "+rolename);
+			ViewData.Notify(LocalizedText.role_created+ " : "+rolename);
 			return View ();
 		}
 
@@ -310,7 +317,7 @@ namespace Yavsc.Controllers
 			ViewData ["useritems"] = users;
 			if (ModelState.IsValid) {
 				Roles.AddUserToRole (model.UserName, _adminRoleName);
-				YavscHelpers.Notify(ViewData,  model.UserName + " "+LocalizedText.was_added_to_the_role+" '" + _adminRoleName + "'");
+				ViewData.Notify(model.UserName + " "+LocalizedText.was_added_to_the_role+" '" + _adminRoleName + "'");
 			} else {
 				if (admins.Length > 0) { 
 					if (! admins.Contains (Membership.GetUser ().UserName)) {
@@ -321,7 +328,7 @@ namespace Yavsc.Controllers
 					// No admin, gives the Admin Role to the current user
 					Roles.AddUserToRole (currentUser, _adminRoleName);
 					admins = new string[] { currentUser };
-					YavscHelpers.Notify(ViewData, string.Format (
+					ViewData.Notify( string.Format (
 						LocalizedText.was_added_to_the_empty_role,
 						currentUser, _adminRoleName));
 				}

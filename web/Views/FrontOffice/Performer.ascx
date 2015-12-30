@@ -20,7 +20,7 @@ data-roles="<%=string.Join (" ",Roles.GetRolesForUser (Model.UserName)) %>"
  <% } else { %>
  <i class="fa fa-envelope"></i>
  <%=Html.LabelFor(m => m.EMail)%>:
- <%= Html.Translate("AuthenticatedOnly") %>
+ <%= Html.Translate("OnlyAuthorizedMayContact") %>
  <% }%>
 </address>
 

@@ -207,7 +207,7 @@ namespace Yavsc.Controllers
 			ViewData ["ProdRef"] = pref;
 			Catalog cat = CatalogManager.GetCatalog ();
 			if (cat == null) {
-				YavscHelpers.Notify (ViewData, "Catalog introuvable");
+				ViewData.Notify( "Catalog introuvable");
 				ViewData ["RefType"] = "Catalog";
 				return View ("ReferenceNotFound");
 			}
@@ -257,10 +257,12 @@ namespace Yavsc.Controllers
 				// * Make the workflow register this command
 				// * Render the resulting basket
 
-				long cmdid = YavscHelpers.CreateCommandFromRequest ();
+				NominativeCommandRegistration cmdreg = YavscHelpers.CreateCommandFromRequest () 
+					as NominativeCommandRegistration;
 				var basket = WorkFlowManager.GetCommands (User.Identity.Name);
-				ViewData["Commanded"] = basket[cmdid]; 
-				YavscHelpers.Notify (ViewData, 
+				ViewData["Commanded"] = basket[cmdreg.CommandId]; 
+				ViewData["CommandResult"]  = cmdreg ;
+				ViewData.Notify( 
 					LocalizedText.Item_added_to_basket);
 				return View ("Basket",basket);
 			} catch (Exception e) {
@@ -315,7 +317,7 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// Activities the specified search and toPower.
 		/// </summary>
-		/// <param name="search">Search.</param>
+		/// <param name="id">Activity identifier.</param>
 		/// <param name="toPower">If set to <c>true</c> to power.</param>
 		public ActionResult Activities (string id, bool toPower = false)
 		{
@@ -329,7 +331,7 @@ namespace Yavsc.Controllers
 		/// <summary>
 		/// Activity at the specified id.
 		/// </summary>
-		/// <param name="id">Identifier.</param>
+		/// <param name="MEACode">Identifier.</param>
 		public ActionResult Activity (string MEACode)
 		{
 			return View (WorkFlowManager.GetActivity (MEACode));
@@ -356,7 +358,7 @@ namespace Yavsc.Controllers
 			// That filters the view in order to only edit the given fieldset
 
 			if (mea == "none")
-				YavscHelpers.Notify (ViewData, "Vous devez choisir une activité avant de pouvoir déclarer vos compétences " +
+				ViewData.Notify(  "Vous devez choisir une activité avant de pouvoir déclarer vos compétences " +
 				"(Editez la rubrique <a href=\"" +
 					Url.RouteUrl ("Default", new { controller = "Account", action = "Profile", id = User.Identity.Name, fs="infopub" }) + "\">Informations publiques</a> votre profile)");
 				
@@ -398,7 +400,7 @@ namespace Yavsc.Controllers
 									response = reader.ReadToEnd ();
 									stream.Close ();
 								}
-								YavscHelpers.Notify (ViewData, 
+								ViewData.Notify( 
 									string.Format (
 										"Google calendar API exception {0} : {1}<br><pre>{2}</pre>",
 										ex.Status.ToString (),
@@ -498,7 +500,7 @@ namespace Yavsc.Controllers
 				stream.Dispose ();
 
 			}
-			YavscHelpers.Notify (ViewData, 
+			ViewData.Notify( 
 				string.Format (
 					"{3} exception {0} : {1}<br><pre>{2}</pre>",
 					ex.Status.ToString (),

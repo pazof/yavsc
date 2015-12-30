@@ -214,10 +214,11 @@ CREATE TABLE commandes
   id bigserial NOT NULL, -- Identifiant unique de commande e, cours
   validation date, -- Date de validation
   prdref character varying(255) NOT NULL, -- Product reference from the unique valid catalog at the validation date
-  creation timestamp with time zone NOT NULL, -- creation date
+  creation timestamp with time zone NOT NULL DEFAULT now(), -- creation date
   clientname character varying(255), -- user who created the command, client of this command
   applicationname character varying(255), -- application concerned by this command
-  params json,
+  class character varying(512), -- Classe de commande:...
+  params jsonb,
   CONSTRAINT commandes_pkey PRIMARY KEY (id),
   CONSTRAINT commforeignuser FOREIGN KEY (clientname, applicationname)
       REFERENCES users (username, applicationname) MATCH SIMPLE
@@ -226,13 +227,19 @@ CREATE TABLE commandes
 WITH (
   OIDS=FALSE
 );
-
+ALTER TABLE commandes
+  OWNER TO yavscdev;
 COMMENT ON COLUMN commandes.id IS 'Identifiant unique de commande e, cours';
 COMMENT ON COLUMN commandes.validation IS 'Date de validation';
 COMMENT ON COLUMN commandes.prdref IS 'Product reference from the unique valid catalog at the validation date';
 COMMENT ON COLUMN commandes.creation IS 'creation date';
 COMMENT ON COLUMN commandes.clientname IS 'user who created the command, client of this command';
 COMMENT ON COLUMN commandes.applicationname IS 'application concerned by this command';
+COMMENT ON COLUMN commandes.class IS 'Classe de commande:
+Utilisé pour l''instanciation de l''objet du SI, 
+le nom du contrôle Html, et 
+determiner les fournisseurs du Workflow
+à mettre en oeuvre pour traiter la commande.';
 
 
 -- Index: fki_commforeignuser

@@ -99,7 +99,7 @@ Vos billets
 </main>
 <footer>
 
-<%= Html.TranslatedActionLink("Formulaire de contact","Contact","Home",null, new { @class="thanks" }) %>
+<%= Html.TranslatedActionLink("Contact","Contact","Home") %>
 
 <div id="copyr">
 <a  href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">
