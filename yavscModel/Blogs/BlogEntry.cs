@@ -3,7 +3,6 @@ using System.Configuration;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Model.Circles;
-using System.Web.Mvc;
 
 namespace Yavsc.Model.Blogs
 {

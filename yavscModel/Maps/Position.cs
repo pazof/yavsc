@@ -1,10 +1,10 @@
-﻿//
-//  Startup.Auth.cs
+//
+//  Position.cs
 //
 //  Author:
-//       Paul Schneider <paul@pschneider.fr>
+//       Paul Schneider <paulschneider@free.fr>
 //
-//  Copyright (c) 2015 GNU GPL
+//  Copyright (c) 2015 Paul Schneider
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -18,15 +18,29 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc
+namespace Yavsc.Model.Maps
 {
-	public class Startup
-	{
-		public Startup ()
-		{
-		}
-	}
-}
 
+	/// <summary>
+	/// Position.
+	/// </summary>
+	public class Position
+	{
+		/// <summary>
+		/// The longitude.
+		/// </summary>
+		public double Longitude { get; set; }
+
+		/// <summary>
+		/// 
+		/// The latitude.
+		/// </summary>
+		public double Latitude { get; set; }
+
+	}
+	
+}

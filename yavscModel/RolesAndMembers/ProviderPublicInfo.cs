@@ -20,9 +20,9 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Model.Calendar;
+using Yavsc.Model.Maps;
 
 namespace Yavsc.Model.RolesAndMembers
 {

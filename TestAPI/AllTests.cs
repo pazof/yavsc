@@ -23,7 +23,7 @@ using NUnit.Framework;
 using System;
 using Yavsc.Model.Blogs;
 using Yavsc.Controllers;
-using System.Web.Mvc;
+using System.Web.Mvc;	
 using System.Web.Security;
 using System.Web.Configuration;
 using System.Configuration;
@@ -39,7 +39,7 @@ namespace Yavsc
 	{
 		[Suite]
 		public static IEnumerable Suite
-		{
+		{	
 			get
 			{
 				ArrayList suite = new ArrayList ();

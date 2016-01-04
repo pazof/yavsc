@@ -70,7 +70,6 @@ namespace Yavsc.Formatters
 				return enumerableType.IsAssignableFrom(type);
 			}
 		}
-
 		/// <summary>
 		/// Writes synchronously to the buffered stream.
 		/// </summary>
@@ -78,7 +77,7 @@ namespace Yavsc.Formatters
 		/// <param name="value">Value.</param>
 		/// <param name="stream">Stream.</param>
 		/// <param name="contentHeaders">Content headers.</param>
-		public override void WriteToStream (Type type, object value, Stream stream, HttpContentHeaders contentHeaders)
+		public override void WriteToStream (Type type, object value, Stream stream, HttpContent contentHeaders)
 		{
 			// TODO create a type containing generation parameters, including a template path, and generate from them
 

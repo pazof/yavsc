@@ -106,7 +106,7 @@ namespace Yavsc
 		protected void Application_Start ()
 		{
 			AreaRegistration.RegisterAllAreas ();
-			WebApiConfig.Register (GlobalConfiguration.Configuration);
+			GlobalConfiguration.Configure (WebApiConfig.Register);
 			RegisterRoutes (RouteTable.Routes);
 			AjaxHelper.GlobalizationScriptPath = "~/Scripts/globalize";
 

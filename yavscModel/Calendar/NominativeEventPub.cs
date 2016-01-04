@@ -20,7 +20,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Model;
 using Yavsc.Model.RolesAndMembers;

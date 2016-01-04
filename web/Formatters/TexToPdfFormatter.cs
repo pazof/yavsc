@@ -75,7 +75,7 @@ namespace Yavsc.Formatters
 		/// <param name="value">Value.</param>
 		/// <param name="stream">Stream.</param>
 		/// <param name="contentHeaders">Content headers.</param>
-		public override void WriteToStream (Type type, object value, Stream stream, HttpContentHeaders contentHeaders)
+		public override void WriteToStream (Type type, object value, Stream stream, HttpContent contentHeaders)
 		{
 			string temp = Path.GetTempPath ();
 			string cntStr = value as string;
@@ -126,8 +126,8 @@ namespace Yavsc.Formatters
 		/// </summary>
 		/// <param name="contentHeaders">Content headers.</param>
 		/// <param name="basename">Basename.</param>
-		public static void SetFileName(HttpContentHeaders contentHeaders, string basename) {
-			contentHeaders.ContentDisposition = new ContentDispositionHeaderValue ("attachment") {
+		public static void SetFileName(HttpContent contentHeaders, string basename) {
+			contentHeaders.Headers.ContentDisposition = new ContentDispositionHeaderValue ("attachment") {
 				FileName = "doc-" + basename + ".pdf"
 			};
 		}

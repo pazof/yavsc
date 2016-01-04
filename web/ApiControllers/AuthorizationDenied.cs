@@ -41,14 +41,15 @@ namespace Yavsc.ApiControllers
 	/// <summary>
 	/// Authorization denied.
 	/// </summary>
-	public class AuthorizationDenied : HttpRequestException {
+	public class AuthorizationDenied : HttpResponseException {
 
 		/// <summary>
 		/// Initializes a new instance of the Yavsc.ApiControllers.AuthorizationDenied class.
 		/// </summary>
 		/// <param name="msg">Message.</param>
-		public AuthorizationDenied(string msg) : base(msg)
+		public AuthorizationDenied() : base(HttpStatusCode.Forbidden)
 		{
+			
 		}
 	}
 	

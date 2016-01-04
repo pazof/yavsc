@@ -12,7 +12,6 @@ using Yavsc.Model.Circles;
 using System.Web.UI;
 using System.Linq.Expressions;
 using System.Web.Profile;
-using System.Web.Script.Serialization;
 using System.Web.Mvc;
 using System.Text.RegularExpressions;
 using Yavsc.Model.Messaging;
@@ -21,6 +20,7 @@ using System.Reflection;
 using System.Web.Routing;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Model.WorkFlow;
+using System.Web.Script.Serialization;
 
 namespace Yavsc.Helpers
 {
@@ -571,15 +571,8 @@ namespace Yavsc.Helpers
 			writer.Write (text);
 			writer.RenderEndTag ();
 			return new MvcHtmlString(strwr.ToString());
-
 		
 		}
-
-
-
-
-
-
 	}
 }
 

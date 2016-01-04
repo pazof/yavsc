@@ -373,7 +373,7 @@ namespace Yavsc.Controllers
 
 			if (Membership.GetUser ().UserName != user)
 			if (!Roles.IsUserInRole("Admin"))
-				throw new AuthorizationDenied (user);
+				throw new AuthorizationDenied ();
 			if (!confirm)
 				return View ("RemoveTitle");
 			BlogManager.RemoveTitle (user, title);

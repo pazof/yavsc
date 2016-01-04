@@ -71,7 +71,7 @@ namespace Yavsc.Formatters
 		/// <param name="value">Value.</param>
 		/// <param name="stream">Stream.</param>
 		/// <param name="contentHeaders">Content headers.</param>
-		public override void WriteToStream (Type type, object value, Stream stream, HttpContentHeaders contentHeaders)
+		public override void WriteToStream (Type type, object value, Stream stream, HttpContent contentHeaders)
 		{
 			// TODO create a type containing T4 parameters, and generate from them
 			using (var writer = new StreamWriter(stream))

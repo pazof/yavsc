@@ -1,10 +1,10 @@
-//
-//  Position.cs
+﻿//
+//  Startup.cs
 //
 //  Author:
-//       Paul Schneider <paulschneider@free.fr>
+//       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015 Paul Schneider
+//  Copyright (c) 2015 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -18,27 +18,21 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
-using System.Web.Http;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.Owin;
+using Owin;
 
-namespace Yavsc.Model.Calendar
+
+[assembly: OwinStartup(typeof(Yavsc.App_Start.Startup))]
+namespace Yavsc.App_Start
 {
-	/// <summary>
-	/// Position.
-	/// </summary>
-	public class Position
+	public partial class Startup 
 	{
-		/// <summary>
-		/// The longitude.
-		/// </summary>
-		public double Longitude { get; set; }
-		/// <summary>
-		/// The latitude.
-		/// </summary>
-		public double Latitude { get; set; }
+		public void Configuration(IAppBuilder app)
+		{
+			ConfigureAuth (app);
 
+		}
 	}
-	
 }
+

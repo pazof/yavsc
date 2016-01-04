@@ -84,10 +84,7 @@ namespace Yavsc.ApiControllers
 			if (est.Client != username)
 			if (!Roles.IsUserInRole("Admin"))
 			if (!Roles.IsUserInRole("FrontOffice"))
-				throw new AuthorizationDenied (
-					string.Format (
-						"Auth denied to eid {1} for:{2}", 
-						id, username));
+				throw new AuthorizationDenied ();
 			return est;
 		}
 

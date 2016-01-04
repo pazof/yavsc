@@ -129,7 +129,7 @@ namespace Yavsc.ApiControllers
 			string user = Membership.GetUser ().UserName;
 			CircleBase current = CircleManager.DefaultProvider.Get (circle.Id);
 			if (current.Owner != user)
-				throw new AuthorizationDenied ("Your not owner of circle at id "+circle.Id);
+				throw new AuthorizationDenied ();
 			CircleManager.DefaultProvider.UpdateCircle (circle);
 		}
 

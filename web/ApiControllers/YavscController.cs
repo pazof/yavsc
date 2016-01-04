@@ -55,17 +55,6 @@ namespace Yavsc.ApiControllers
 				pr.Save ();
 			}
 		}
-		/// <summary>
-		/// Defaults the response.
-		/// </summary>
-		/// <returns>The response.</returns>
-		protected HttpResponseMessage DefaultResponse()
-		{
-			return ModelState.IsValid ?
-				Request.CreateResponse (System.Net.HttpStatusCode.OK) :
-				Request.CreateResponse (System.Net.HttpStatusCode.BadRequest,
-					ValidateAjaxAttribute.GetErrorModelObject (ModelState));
-		}
 	}
 }
 

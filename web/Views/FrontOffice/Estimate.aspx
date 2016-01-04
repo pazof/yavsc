@@ -211,7 +211,7 @@ function addRow(){
         $.ajax({
             url: "<%=Url.Content("~/api/WorkFlow/Write?estid=")%>"+estid,
             type: "POST",
-            data: wrt,
+            data: JSON.stringify(wrt),
             dataType: "json",
             success: function (data) { 
             wrt.Id = Number(data);

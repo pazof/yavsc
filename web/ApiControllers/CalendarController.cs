@@ -29,6 +29,7 @@ using Yavsc.Model.Circles;
 using Yavsc.Model.Calendar;
 using System.Web.Http.Routing;
 using System.Collections.Generic;
+using Yavsc.Model.Maps;
 
 
 namespace Yavsc.ApiControllers
@@ -44,7 +45,8 @@ namespace Yavsc.ApiControllers
 				new YaEvent () {
 					Description = "Test Descr",
 					Title = "Night club special bubble party",
-					Location = new Position () {
+					Location = new Location () {
+						Address = "2 bd A Bri",
 						Longitude = 0,
 						Latitude = 0 
 					}
@@ -52,7 +54,7 @@ namespace Yavsc.ApiControllers
 				new YaEvent () {
 					Title = "Test2",
 					Photo = "http://bla/im.png",
-					Location = new Position () {
+					Location = new Location () {
 						Longitude = 0,
 						Latitude = 0 
 					}
@@ -60,7 +62,7 @@ namespace Yavsc.ApiControllers
 				new YaEvent () {
 					Description = "Test Descr",
 					Title = "Night club special bubble party",
-					Location = new Position () {
+					Location = new Location () {
 						Longitude = 0,
 						Latitude = 0 
 					}
@@ -68,7 +70,7 @@ namespace Yavsc.ApiControllers
 				new YaEvent () {
 					Title = "Test2",
 					Photo = "http://bla/im.png",
-					Location = new Position () {
+					Location = new Location () {
 						Longitude = 0,
 						Latitude = 0 
 					}

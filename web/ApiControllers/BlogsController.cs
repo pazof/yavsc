@@ -66,7 +66,7 @@ namespace Yavsc.ApiControllers
 		public void RemoveTitle(string user,  string title) {
 			if (Membership.GetUser ().UserName != user)
 			if (!Roles.IsUserInRole("Admin"))
-				throw new AuthorizationDenied (user);
+				throw new AuthorizationDenied ();
 			BlogManager.RemoveTitle (user, title);
 		}
 
@@ -103,9 +103,13 @@ namespace Yavsc.ApiControllers
 		public async Task<HttpResponseMessage> PostFile(long id) {
 			if (!(Request.Content.Headers.ContentType.MediaType=="multipart/form-data"))
 				throw new HttpRequestException ("not a multipart/form-data request");
+			if (id == 0) {
+				throw new NotImplementedException ();
+			}
+
 			BlogEntry be = BlogManager.GetPost (id);
 			if (be.Author != Membership.GetUser ().UserName)
-				throw new AuthorizationDenied ("b"+id);
+				throw new AuthorizationDenied ();
 			string root = HttpContext.Current.Server.MapPath("~/bfiles/"+id);
 			DirectoryInfo di = new DirectoryInfo (root);
 			if (!di.Exists) di.Create ();
@@ -116,14 +120,11 @@ namespace Yavsc.ApiControllers
 				// Read the form data.
 				await Request.Content.ReadAsMultipartAsync(provider) ;
 				var invalidChars = Path.GetInvalidFileNameChars();
-				foreach (string fkey in provider.BodyPartFileNames.Keys)
+				foreach (var file in provider.FileData)
 				{
-					string filename = provider.BodyPartFileNames[fkey];
+					string filename = file.LocalFileName;
 					Trace.WriteLine(filename);
-
-					string nicename = HttpUtility.UrlDecode(fkey) ;
-					if (fkey.StartsWith("\"") && fkey.EndsWith("\"") && fkey.Length > 2)
-						nicename = fkey.Substring(1,fkey.Length-2);
+					string nicename = file.Headers.ContentDisposition.FileName ;
 					nicename = new string (nicename.Where( x=> !invalidChars.Contains(x)).ToArray());
 					nicename = nicename.Replace(' ','_');
 					var dest = Path.Combine(root,nicename);
@@ -217,7 +218,7 @@ namespace Yavsc.ApiControllers
 				throw new HttpRequestException ("not a multipart/form-data request");
 			BlogEntry be = BlogManager.GetPost (id);
 			if (be.Author != Membership.GetUser ().UserName)
-				throw new AuthorizationDenied ("post: "+id);
+				throw new AuthorizationDenied ();
 			string root = HttpContext.Current.Server.MapPath("~/bfiles/"+id);
 			DirectoryInfo di = new DirectoryInfo (root);
 			if (!di.Exists) di.Create ();
@@ -231,11 +232,11 @@ namespace Yavsc.ApiControllers
 				var invalidChars = Path.GetInvalidFileNameChars();
 				List<string> bodies = new List<string>();
 				 
-				foreach (string fkey in provider.BodyPartFileNames.Keys)
+				foreach (var file in provider.FileData)
 				{
-					string filename = provider.BodyPartFileNames[fkey];
+					string filename = file.LocalFileName;
 					
-					string nicename=fkey;
+					string nicename= file.Headers.ContentDisposition.FileName;
 					var filtered  = new string (nicename.Where( x=> !invalidChars.Contains(x)).ToArray());
 
 					FileInfo fi = new FileInfo(filtered);

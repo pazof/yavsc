@@ -20,11 +20,11 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Web.Http;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Model;
+using Yavsc.Model.Maps;
 
-namespace Yavsc.Model.Calendar
+namespace Yavsc.Messaging
 {
 	/// <summary>
 	/// Base event.
@@ -48,7 +48,7 @@ namespace Yavsc.Model.Calendar
 		/// The location.
 		/// </summary>
 		[Display(ResourceType=typeof(LocalizedText),Name="Location")]
-		public Position Location { get; set; }
+		public Location Location { get; set; }
 		/// <summary>
 		/// The start date.
 		/// </summary>

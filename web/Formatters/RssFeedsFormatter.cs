@@ -54,7 +54,7 @@ namespace Yavsc.Formatters
 		/// <param name="value">Value.</param>
 		/// <param name="stream">Stream.</param>
 		/// <param name="contentHeaders">Content headers.</param>
-		public override void WriteToStream (Type type, object value, Stream stream, HttpContentHeaders contentHeaders)
+		public override void WriteToStream (Type type, object value, Stream stream, HttpContent contentHeaders)
 		{
 			RssFeedsChannel feeds = value as RssFeedsChannel;
 			using (var writer = new StreamWriter (stream)) {
