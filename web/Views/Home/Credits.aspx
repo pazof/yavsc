@@ -13,10 +13,10 @@
 </div>
 
 <% foreach ( Yavsc.Helpers.Link link in Html.Thanks()) { %>
-     <a href="<%=link.Url%>"><% if (link.Image !=null) { 
+     <a href="<%=link.Url%>" class="actionlink"><% if (link.Image !=null) { 
      %><img src="<%= link.Image %>" alt="<%= link.Text %>"/></a>
      <%  } else { %>
-     <a href="<%=link.Url%>"><%= link.Text %></a>
+     <a href="<%=link.Url%>" class="actionlink"><%= link.Text %></a>
      <% }} %>
 
 </asp:Content>

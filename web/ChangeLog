@@ -1,5 +1,29 @@
 2016-01-06  Paul Schneider  <paul@pschneider.fr>
 
+	* yavsc.js:
+	* App.master:
+	* style.css:
+	* NoLogin.master:
+	* Title.aspx:
+	* AppAdmin.master:
+	* Credits.aspx:
+	* YavscHelpers.cs:
+	* Activity.ascx:
+	* Login.aspx:
+	* UserPost.aspx:
+	* style.css:
+	* style.css:
+	* links.css:
+	* links.css:
+	* UserPosts.aspx:
+	* Sent.aspx:
+	* TagControl.ascx:
+	* Performer.ascx:
+	* Performers.aspx:
+	* ChangePassword.aspx: 
+
+2016-01-06  Paul Schneider  <paul@pschneider.fr>
+
 	* DoubleModelBinder.cs: conversion en `double` depuis la
 	culture invariante
 

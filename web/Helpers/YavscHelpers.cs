@@ -555,10 +555,10 @@ namespace Yavsc.Helpers
 			StringWriter strwr = new StringWriter ();
 			HtmlTextWriter writer = new HtmlTextWriter(strwr);
 
-			foreach (var ppt in htmlAttributes.GetType().GetProperties(BindingFlags.GetProperty|
-				BindingFlags.Public)) {
-				writer.AddAttribute(ppt.Name, ppt.GetValue(htmlAttributes).ToString())
-				;
+			foreach (var ppt in htmlAttributes.GetType().GetRuntimeProperties()) {
+				var name = ppt.Name;
+				var val = ppt.GetValue (htmlAttributes).ToString ();
+				writer.AddAttribute(name, val);
 			}
 			writer.AddAttribute ("href",
 				UrlHelper.GenerateUrl (

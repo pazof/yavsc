@@ -37,7 +37,7 @@
 <% } else { %>
 <p><%= Html.Translate("YouNeedToBeAuthenticatedIOToContact") %></p>
 <p>
-<a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" class="link" accesskey = "C">
+<a class="actionlink" href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" class="link" accesskey = "C">
 <i class="fa fa-sign-in"></i> Connexion
 </a></p>
 

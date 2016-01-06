@@ -1,6 +1,8 @@
 <%@ Page Title="Change your Password" Language="C#" Inherits="System.Web.Mvc.ViewPage<ChangePasswordModel>" MasterPageFile="~/Models/App.master" %>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-<%= Html.ValidationSummary("Modification de mot de passe") %>
+<%= Html.Translate("Modification de mot de passe") %>
+<%= Html.ValidationSummary() %>
+
 <% using(Html.BeginForm("ChangePassword", "Account")) { %>
 <label for="UserName">User Name:</label>
 <%= Html.TextBox( "UserName" ) %>

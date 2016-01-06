@@ -7,14 +7,14 @@
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
 
 <% if (!string.IsNullOrEmpty((string)ViewData["Avatar"])) { %>
-<a href="<%=Url.RouteUrl( "Blogs", new { user = Model.Author } )%>" id="avatar">
+<a class="actionlink" href="<%=Url.RouteUrl( "Blogs", new { user = Model.Author } )%>" id="avatar">
 <img src="<%=ViewData["Avatar"]%>" />
 </a>
 <% } %>
 <h1 class="blogtitle">
-<a href="<%=Url.RouteUrl( "Blogs", new { user = Model.Author } )%>">
+<a class="actionlink" href="<%=Url.RouteUrl( "Blogs", new { user = Model.Author } )%>">
 <%=Html.Encode(ViewData["BlogTitle"])%></a>
-- <a href="<%= Url.RouteUrl( "Default", new { controller = "Home" } ) %>"><%= YavscHelpers.SiteName %></a>
+- <a class="actionlink" href="<%= Url.RouteUrl( "Default", new { controller = "Home" } ) %>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>
 

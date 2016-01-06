@@ -114,24 +114,6 @@ legend {
 	color: #f88;
 }
 
-a {
-   text-decoration: none;
-   background-color: rgba(30,30,30,.8); 
-   color: yellow;
-}
-a:hover {
-	background-color:rgba(50,50,50,.8); 
-   color: white;
-}
-a:active { 
-	background-color:rgba(124,0,32,0.9);
-}
-
-.actionlink, .menuitem, input[type='submit']  {
-	border-color: rgb(128,128,0);
-   background-color: rgba(20,20,20,.8); 
-	color: yellow;
-}
 
 input, select, textarea { 
 	color: white;

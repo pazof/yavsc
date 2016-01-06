@@ -17,7 +17,7 @@ foreach ( var tagname in Model.Tags) { %>
  <span id="Err_tag<%=Model.Id%>" class="error"></span>
 <input type="text" id="newtag<%=Model.Id%>" class="taginput">
 <span id="Err_model<%=Model.Id%>" class="error"></span>
-<input id="sendnewtag<%=Model.Id%>" type="submit" class="link fa fa-tag" value="<%=Html.Translate("Submit")%>">
+<input id="sendnewtag<%=Model.Id%>" type="submit" class="actionlink fa fa-tag" value="<%=Html.Translate("Submit")%>">
 </div>
 </fieldset>
 </form>

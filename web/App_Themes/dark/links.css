@@ -1,6 +1,6 @@
 ﻿
 
-.actionlink, .menuitem, a, input[type='submit'] {
+.actionlink, .menuitem, a.link, input[type='submit'] {
    display:inline-block;
 	border-radius:1em;
 	border-style: solid;
@@ -15,11 +15,35 @@
 
 .menuitem {}
 
-a:hover, .actionlink:hover, input[type='submit']:hover {
+a.link:hover, .actionlink:hover, input[type='submit']:hover {
     animation-name: fadeIn;
     animation-duration: 1s;
     animation-iteration-count: 1;
 }
+
+a.link {
+   text-decoration: none;
+   background-color: rgba(30,30,30,.8); 
+   color: yellow;
+}
+a.link:visited {
+   color: yellow;
+}
+
+a.link:hover {
+	background-color:rgba(50,50,50,.8); 
+   color: white;
+}
+a.link:active { 
+	background-color:rgba(124,0,32,0.9);
+}
+
+.actionlink, .menuitem, input[type='submit']  {
+	border-color: rgb(128,128,0);
+   background-color: rgba(20,20,20,.8); 
+	color: yellow;
+}
+
 
 @media print {
 		.actionlink,  .menuitem { display:none;} 

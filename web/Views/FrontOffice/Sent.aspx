@@ -3,6 +3,6 @@
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 
 <%= Html.Translate("YourMessageHasBeenSent") %>
-Votre message a été envoyé
+
 
 </asp:Content>

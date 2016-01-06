@@ -1,9 +1,13 @@
 ﻿<%@ Page Title="Login" Language="C#" Inherits="System.Web.Mvc.ViewPage<LoginModel>" MasterPageFile="~/Models/NoLogin.master" %>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <div class="panel">
-<%= Html.ValidationSummary("Ouverture de session") %>
+
 <% using(Html.BeginForm("Login", "Account")) %>
 <% { %>
+<fieldset>
+<legend>Ouverture de session</legend>
+<%= Html.ValidationSummary() %>
+
 <%= Html.LabelFor(model => model.UserName) %>
 <%= Html.TextBox( "UserName" ) %>
 <%= Html.ValidationMessage("UserName", "*") %><br/>
@@ -14,13 +18,16 @@
 
 <%= Html.LabelFor(model => model.RememberMe) %>
 <%= Html.CheckBox("RememberMe") %>
-<%= Html.ValidationMessage("RememberMe", "") %><br/>
+<%= Html.ValidationMessage("RememberMe", "*") %><br/>
 <%= Html.Hidden("returnUrl",ViewData["returnUrl"]) %>
 <%= Html.AntiForgeryToken() %>
+</fieldset>
+
 <!-- Html.AntiForgeryToken() -->
 <input type="submit"/>
+<% } %>
 <%= Html.TranslatedActionLink("ResetPassword")%>
-<% } %></div>
+</div>
 <div class="panel">
 <%= Html.TranslatedActionLink("S'enregistrer","GetRegister",new {returnUrl=ViewData["returnUrl"]}, new { @class="actionlink" }) %>
 </div>

@@ -5,17 +5,17 @@
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
 
 <% if (!string.IsNullOrEmpty((string)ViewData["Avatar"])) { %>
-<a href="<%= Url.Action("UserPosts", new{user=Model.Author}) %>" id="avatar">
+<a class="actionlink" href="<%= Url.Action("UserPosts", new{user=Model.Author}) %>" id="avatar">
 <img src="<%=ViewData["Avatar"]%>" />
 </a>
 <% } %>
 <h1 class="blogtitle">
-<a href="<%= Url.RouteUrl("BlogByTitle", new{ user=Model.Author, title = Model.Title}) %>">
+<a class="actionlink" href="<%= Url.RouteUrl("BlogByTitle", new{ user=Model.Author, title = Model.Title}) %>">
 <%=Model.Title%>
 </a>
- - <%= Html.TranslatedActionLink((string)ViewData ["BlogTitle"] ,"UserPosts",new{user=Model.Author}, null) %>
+ - <%= Html.TranslatedActionLink((string)ViewData ["BlogTitle"] ,"UserPosts",new{user=Model.Author}, new { @class="actionlink" } ) %>
   - 
-<a href="<%=Url.Content("~/")%>"><%= YavscHelpers.SiteName %></a>
+<a class="actionlink" href="<%=Url.Content("~/")%>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>
 

@@ -1,5 +1,5 @@
 ﻿
-a, .actionlink {
+.actionlink {
     z-index: 1; 
     color: white;
    display:inline-block;
@@ -15,11 +15,14 @@ input.actionlink
   color: black;
   }
 
-a:visited { color: white; }
+.actionlink:visited { color: white; }
+a.actionlink:active { 
+   color: #900; 
+}
 
 /* inverse the font color, as long as a black one
  is rolling out in backgound */
-a:hover, a:visited:hover, .actionlink:hover { 
+.actionlink:visited:hover, .actionlink:hover { 
    color:black;
 }
 

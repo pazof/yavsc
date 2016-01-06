@@ -1,3 +1,5 @@
+
+
 @import url(/App_Themes/animate.css);
 body {
 	padding: 0;
@@ -46,11 +48,11 @@ main {
 	text-align: center;
 }
 .post { text-align: left; }
-main video, main img {
+.post video, .post  img {
 	max-width:100%;
 	max-height:75%;
 	padding: 1em;
-	}
+	} 
 
 footer {
 	transition: margin 2s, padding 2s;
@@ -65,7 +67,7 @@ footer p { display:inline-block; }
 
 footer img { max-height: 3em; vertical-align: middle; }
 
-a img, h1 img, .menuitem img  { vertical-align: middle; }
+.actionlink img, h1 img, .menuitem img  { vertical-align: middle; }
 
 fieldset {
 	border-style: solid; 
@@ -116,6 +118,7 @@ ul.preview li:nth-child(n) {
 	max-height: 3em;
 	padding: .3em;
 	}
+
 .post { 
 	display:block;
 	padding: 1em;
@@ -204,7 +207,6 @@ footer a {
 footer p { display:inline-block; } 
 
 footer img { max-height: 3em; vertical-align: middle; }
-a img, h1 img, .menuitem img  { vertical-align: middle; }
 
 
 legend {
@@ -263,8 +265,7 @@ input, select, textarea {
 	font-size: large;
 } 
 
-.link { cursor: pointer; }
-
+.actionlink { cursor: pointer; }
 
 .performer , .availability { text-align: center; padding: 1em; }
 

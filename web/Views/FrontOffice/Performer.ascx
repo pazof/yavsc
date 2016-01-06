@@ -13,7 +13,7 @@ data-roles="<%=string.Join (" ",Roles.GetRolesForUser (Model.UserName)) %>"
 </h2>
 <address>
  <% if (Membership.GetUser()!=null) { %>
-<a href="<%=Url.RouteUrl("Performance",new { action="Contact", Performer = Model.UserName })%>">
+<a class="actionlink" href="<%=Url.RouteUrl("Performance",new { action="Contact", Performer = Model.UserName })%>">
 <i class="fa fa-envelope"></i>
 </a>
  <% } else { %>
@@ -44,7 +44,7 @@ Cet utilisateur n'a pas saisi de compétence particulière ...
 <i class="fa fa-calendar-check" ><%= Html.Translate("Google_calendar") %> : <%= Html.Translate("available") %>.</i><br>
 <% } %>
 <% if (BlogManager.GetPostCounter(Model.UserName)>0) { %>
-<a href="<%=Url.RouteUrl("Blogs",new { user = Model.UserName } )%>">
+<a class="actionlink" href="<%=Url.RouteUrl("Blogs",new { user = Model.UserName } )%>">
   <i class="fa fa-folder"><%=Model.BlogTitle %></i>
 </a>
 <% } %>
