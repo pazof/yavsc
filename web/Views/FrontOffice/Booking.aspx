@@ -5,7 +5,7 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
-<h1><%=Html.Encode(ViewBag.Activity.Title) %> - <a href="<%= Url.RouteUrl("Default",new {controller="Home" }) %>"><%= YavscHelpers.SiteName %></a>
+<h1><%=Html.Encode(ViewBag.Activity.Title) %> - <a class="actionlink" href="<%= Url.RouteUrl("Default",new {controller="Home" }) %>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>
 
@@ -17,13 +17,26 @@
  <script type="text/javascript" src="/Scripts/datepicker-fr.js"></script>
  <script type="text/javascript" src="/Scripts/datepicker-en-GB.js"></script>
  <script type="text/javascript" src="/Scripts/jquery.timepicker.min.js"></script>
+ <script src="https://maps.googleapis.com/maps/api/js?key=<%=ViewData["GOOGLE_BROWSER_API_KEY"]%>"></script>
+ <style>
+      #map {
+        width: 100%;
+        height: 250px;
+      }
+</style>
+ 
+ <script type="text/javascript" src="/Scripts/google.geocode.js"></script>
 </asp:Content>
 
  <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
+
+
 <% using ( Html.BeginForm( "Booking", "FrontOffice", new { MEACode = Model.MEACode }) ) { %>
 <%= Html.ValidationSummary() %>
 <%= Html.Hidden("MEACode") %>
-  <fieldset>
+<%= Html.Hidden("Latitude") %>
+<%= Html.Hidden("Longitude") %>
+<fieldset>
 <legend><%= Html.Translate("YourNeed") %></legend>
 <%= Html.Translate("Si vous le voulez, vous pouvez détailler ici votre demande, en matière de compétences attendues:") %>
 <div>
@@ -37,6 +50,14 @@
   <%= Html.ValidationMessageFor(model=>model.Need) %>
   </div>
  </fieldset>
+
+<fieldset>
+<legend><label for="Address"><%=Html.Translate("PerformancePlace")%></label></legend>
+<input type="text" name="Address" id="Address"> 
+<input type="button" id="btngeocode" value="Valider l'adresse" disabled>
+<div id="map"></div>
+</fieldset>
+  
   <fieldset>
 <legend><%= Html.Translate("PerformanceDate") %></legend>
 <%= Html.Translate("Indiquez ici la date souhaitée pour la prestation.") %>
@@ -46,6 +67,7 @@ Intervention souhaitée le : <input type="text" id="PreferedDate" name="Prefered
    </div>
  </fieldset>
   <script>
+   
   $(document).ready(function(){
   var needs = <%= Ajax.JSonString((SkillEntity[])(ViewData ["Needs"])) %>;
   var fneeds = [];
@@ -71,10 +93,20 @@ Intervention souhaitée le : <input type="text" id="PreferedDate" name="Prefered
 
    // $('#PreferedHour').timepicker(tpconfig);
    $('#PreferedDate').datepicker(dpconfig).zIndex(4);
+  $('#Address').geocode( { submit: 'btngeocode' , onValidated: function (pos) {
+  		var lat = pos.lat;
+  		var lng = pos.lng;
+   		$('#Latitude').val(lat);
+   		$('#Longitude').val(lng);
+   } } );
+  
    });
 </script>
 
 <input type="submit" value="<%=Html.Translate("Search")%>" class="fullwidth actionlink">
 <% } %>
+
+<!-- script src="https://maps.googleapis.com/maps/api/js?key=<%=ViewData["GOOGLE_BROWSER_API_KEY"]%>&callback=initMap"
+ async /script -->
 </asp:Content>
 

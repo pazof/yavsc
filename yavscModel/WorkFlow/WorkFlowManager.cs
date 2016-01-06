@@ -1,20 +1,21 @@
 using System;
-using Yavsc.Model.WorkFlow;
-using System.Configuration;
-using System.Collections.Specialized;
-using Yavsc.Model.FrontOffice;
-using System.Configuration.Provider;
-using Yavsc.Model.FrontOffice.Catalog;
 using System.Collections.Generic;
-using Yavsc.Model.Skill;
-using System.Linq;
-using Yavsc.Model.Calendar;
-using Yavsc.Model.Google.Api;
-using System.Net.Mail;
-using System.Web.Security;
-using System.Web.Configuration;
-using System.Net;
+using System.Collections.Specialized;
+using System.Configuration;
+using System.Configuration.Provider;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Web.Configuration;
+using System.Web.Security;
+using Yavsc.Model.Calendar;
+using Yavsc.Model.FrontOffice;
+using Yavsc.Model.FrontOffice.Catalog;
+using Yavsc.Model.Google.Api;
+using Yavsc.Model.Skill;
+using Yavsc.Model.WorkFlow;
+using MailKit.Net.Smtp;
+using MimeKit;
 
 namespace Yavsc.Model.WorkFlow
 {
@@ -99,9 +100,10 @@ namespace Yavsc.Model.WorkFlow
 				try { 
 
 					var gnresponse = GoogleHelpers.NotifyEvent (ev);
-					if (gnresponse.failure > 0 || gnresponse.success <=0)
+					if (gnresponse.failure > 0 || gnresponse.success <= 0)
 						result.NotifiedOnMobile = false;
-					else result.NotifiedOnMobile = true;
+					else
+						result.NotifiedOnMobile = true;
 					
 				} catch (WebException ex) {
 					
@@ -115,29 +117,34 @@ namespace Yavsc.Model.WorkFlow
 					if (errorMsgGCM == null)
 						throw;
 
-					throw new Exception (errorMsgGCM,ex);
+					throw new Exception (errorMsgGCM, ex);
 				}
 				string errorEMail = null;
 				try {
 					var pref = Membership.GetUser (cmdn.PerformerName);
-					using (System.Net.Mail.MailMessage msg = 
-						      new MailMessage (
-							      WebConfigurationManager.AppSettings.Get ("OwnerEMail"),
-							      pref.Email,
-							      "[Demande de devis] " + com.ClientName,
-							      desc)) {
-						using (System.Net.Mail.SmtpClient sc = new SmtpClient ()) {
-							sc.Send (msg);
-							result.EmailSent = true;
-						}
+					MimeMessage msg = 
+						new MimeMessage (
+							       WebConfigurationManager.AppSettings.Get ("OwnerEMail"),
+							       pref.Email,
+							       "[Demande de devis] " + com.ClientName,
+							desc);
+						
+					using (SmtpClient sc = new SmtpClient ()) {
+						sc.Send (msg);
+						result.EmailSent = true;
 					}
+
 				} catch (Exception ex) {
 					errorEMail = ex.Message;
 					result.EmailSent = false;
 				}
 				return result;
-			} else
-				throw new NotImplementedException ();
+			} else {
+				var result = new CommandRegistration ();
+				result.CommandId = cmdid;
+				// TODO send a message with topic /global/commandregistration
+				return result;
+			}
 		}
 
 		/// <summary>

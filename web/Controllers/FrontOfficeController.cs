@@ -24,6 +24,7 @@ using Yavsc.Model.FrontOffice.Catalog;
 using Yavsc.Model.Google.Api;
 using Yavsc.Model.Skill;
 using Yavsc.Model.WorkFlow;
+using System.Globalization;
 
 namespace Yavsc.Controllers
 {
@@ -459,6 +460,7 @@ namespace Yavsc.Controllers
 		/// Booking the specified model.
 		/// </summary>
 		/// <param name="model">Model.</param>
+
 		public ActionResult Booking (SimpleBookingQuery model)
 		{
 			// assert (model.MEACode!=null), since it's the required part of the route data
@@ -475,6 +477,7 @@ namespace Yavsc.Controllers
 					});
 				}
 			} 
+
 			// In order to present this form 
 			// with no need selected and without 
 			// validation error display,
@@ -500,8 +503,7 @@ namespace Yavsc.Controllers
 						result.Add (profile.CreateAvailability (model.PreferedDate, false));
 				ViewData["Circles"] = CircleManager.ListAvailableCircles(); 
 				ViewBag.SimpleBookingQuery = model;
-				ViewBag.ClientName = User.Identity.IsAuthenticated ?
-					User.Identity.Name : User.Identity.Name;
+				ViewBag.ClientName = User.Identity.Name ;
 
 				return View ("Performers", result.ToArray ());
 			} 
@@ -521,7 +523,8 @@ namespace Yavsc.Controllers
 			ViewData ["Photo"] = activity.Photo;
 			if (model.PreferedDate < DateTime.Now)
 				model.PreferedDate = DateTime.Now;
-			return View (model);
+			ViewData["GOOGLE_BROWSER_API_KEY"] = ConfigurationManager.AppSettings["GOOGLE_BROWSER_API_KEY"];
+			return View ("Booking",model);
 		}
 
 		private void HandleWebException (WebException ex, string context)
