@@ -45,6 +45,7 @@
 	<data name="Count"><value>Nombre</value></data>
 	<data name="CouldNotConvertVToDouble"><value>La convertion de '{0}' en 'double' a été impossible.</value></data>
 	<data name="Create"><value>Créer</value></data>
+	<data name="Credits"><value>Crédits</value></data>
 	<data name="Date_search"><value>Demande de rendez-vous</value></data>
 	<data name="DB"><value>Base de données</value></data>
 	<data name="DoAnEstimate"><value>Faire un devis</value></data>
@@ -123,7 +124,7 @@
 	<data name="Profile_edition"><value>Édition du profile</value></data>
 	<data name="Product_reference"><value>Référence produit</value></data>
 	<data name="ReadMore"><value>Lire la suite ...</value></data>
-	<data name="reason"><value>réson</value></data>
+	<data name="reason"><value>raison</value></data>
 	<data name="Role"><value>Rôle</value></data>
 	<data name="prestation"><value>prestation</value></data>
 	<data name="ProviderId"><value>Identifiant du fournisseur</value></data>

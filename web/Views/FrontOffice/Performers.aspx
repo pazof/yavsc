@@ -29,6 +29,9 @@
 <input type="hidden" name="MEACode" value="<%=ViewBag.SimpleBookingQuery.MEACode%>" >
 <input type="hidden" name="Need" value="<%=ViewBag.SimpleBookingQuery.Need%>" >
 <input type="hidden" name="PreferedDate" value="<%=ViewBag.SimpleBookingQuery.PreferedDate%>" >
+<input type="hidden" name="Address" value="<%=(string)ViewBag.SimpleBookingQuery.Address%>" >
+<input type="hidden" name="Latitude" value="<%=ViewBag.SimpleBookingQuery.Latitude%>" >
+<input type="hidden" name="Longitude" value="<%=ViewBag.SimpleBookingQuery.Longitude%>" >
 <input type="hidden" name="PerformerName" value="<%=available.Profile.UserName%>" >
 <input type="submit" name="submit" class="actionlink" id="btnAskFAE" value="<%=Html.Translate("AskForAnEstimate")%>">
 </form>
@@ -37,7 +40,7 @@
 <% } else { %>
 <p><%= Html.Translate("YouNeedToBeAuthenticatedIOToContact") %></p>
 <p>
-<a class="actionlink" href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" class="link" accesskey = "C">
+<a class="actionlink" href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" accesskey = "C">
 <i class="fa fa-sign-in"></i> Connexion
 </a></p>
 

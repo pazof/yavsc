@@ -1,10 +1,10 @@
-//
-//  IUserName.cs
+﻿//
+//  ILocation.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015 GNU GPL
+//  Copyright (c) 2016 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -18,22 +18,32 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Model.RolesAndMembers
+namespace Yavsc.Model.FrontOffice
 {
 	/// <summary>
-	/// I user name.
+	/// a location interface.
 	/// </summary>
-	public interface IUserName   {
+	public interface ILocation
+	{
 		/// <summary>
-		/// Gets or sets the name of the user.
+		/// Gets or sets the address.
 		/// </summary>
-		/// <value>The name of the user.</value>
-		string UserName { get; set; }
+		/// <value>The address.</value>
+		 string Address { get; set; }
+
+		/// <summary>
+		/// Gets or sets the latitude.
+		/// </summary>
+		/// <value>The latitude.</value>
+		 double Latitude { get; set; }
+
+		/// <summary>
+		/// Gets or sets the longitude.
+		/// </summary>
+		/// <value>The longitude.</value>
+		 double Longitude { get; set; }
 	}
-	
 }
+

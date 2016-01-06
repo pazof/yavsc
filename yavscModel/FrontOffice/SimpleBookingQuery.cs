@@ -31,7 +31,7 @@ namespace Yavsc.Model.FrontOffice
 	/// <summary>
 	/// Simple booking query.
 	/// </summary>
-	public class SimpleBookingQuery: Command
+	public class SimpleBookingQuery: Command, ILocation
 	{
 		#region implemented abstract members of Command
 

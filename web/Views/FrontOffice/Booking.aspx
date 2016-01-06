@@ -28,9 +28,7 @@
  <script type="text/javascript" src="/Scripts/google.geocode.js"></script>
 </asp:Content>
 
- <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
-
-
+<asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 <% using ( Html.BeginForm( "Booking", "FrontOffice", new { MEACode = Model.MEACode }) ) { %>
 <%= Html.ValidationSummary() %>
 <%= Html.Hidden("MEACode") %>
@@ -58,7 +56,7 @@
 <div id="map"></div>
 </fieldset>
   
-  <fieldset>
+<fieldset>
 <legend><%= Html.Translate("PerformanceDate") %></legend>
 <%= Html.Translate("Indiquez ici la date souhaitée pour la prestation.") %>
 <div>
@@ -67,16 +65,23 @@ Intervention souhaitée le : <input type="text" id="PreferedDate" name="Prefered
    </div>
  </fieldset>
   <script>
-   
-  $(document).ready(function(){
+  function updateNeed(rating) {
+   if (rating)
+      needs.forEach(function(elt) { 
+       if (elt.Id == rating.Id) elt.Rate = rating.Rate;
+       });
+   var fneeds = [];
+   needs.forEach(function(elt) { fneeds.push (''+elt.Id+' '+elt.Rate); } );
+   if (needs.length>0) $('#Need').val(fneeds); else $('#Need').val('none');
+  }
   var needs = <%= Ajax.JSonString((SkillEntity[])(ViewData ["Needs"])) %>;
-  var fneeds = [];
-  needs.forEach(function(elt) { fneeds.push (''+elt.Id+' '+elt.Rate); } );
-  if (needs.length>0) $('#Need').val(fneeds); else $('#Need').val('none');
+
+  $(document).ready(function(){
+  updateNeed();
   $('[data-type="rate-site-skill"]').rate({jsTarget: function (rating)
   {
-  // console.log(Yavsc.dumpprops(rating)); 
-  return true;
+    updateNeed(rating);
+    return true;
   }
   });
   var tpconfig = { 

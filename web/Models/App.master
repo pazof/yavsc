@@ -88,11 +88,7 @@ else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=A
 <footer>
 
 <%= Html.TranslatedActionLink("Contact","Contact","Home") %>
-
-<div id="copyr">
-<a class="actionlink" href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">
-<%=Html.Encode("© 2015 GNU GENERAL PUBLIC LICENSE")%>  <i>Version 3, 29 June 2007</i></a>
-</div>
+<%= Html.TranslatedActionLink("Credits","Credits","Home") %>
 
 </footer><div class="modal"></div>
 <script>

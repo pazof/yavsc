@@ -290,6 +290,7 @@
     <Compile Include="Maps\Position.cs" />
     <Compile Include="Maps\Location.cs" />
     <Compile Include="Messaging\BaseEvent.cs" />
+    <Compile Include="FrontOffice\ILocation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

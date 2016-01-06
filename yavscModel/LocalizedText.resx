@@ -35,7 +35,6 @@
 	<data name="BookingTitleArtiste"><value>Book an artiste</value></data>
 	<data name="BookingTitle6829C"><value>Book a software editor</value></data>
 	<data name="Catalog"><value>Catalog</value></data>
-	<data name="Create"><value>Create</value></data>
 	<data name="ContactAPerformer"><value>Contact a performer</value></data>
 	<data name="Count"><value>Count</value></data>
 	<data name="ChooseADescription"><value>Please, choose a description</value></data>
@@ -47,6 +46,8 @@
 	<data name="Consultant"><value>Consultant</value></data>
 	<data name="Count"><value>Count</value></data>
 	<data name="CouldNotConvertVToDouble"><value>Could not convert '{0}' to double.</value></data>
+	<data name="Create"><value>Créer</value></data>
+	<data name="Credits"><value>Credits</value></data>
 	<data name="Date_search"><value>Date search</value></data>
 	<data name="DB"><value>Data base</value></data>
 	<data name="Description"><value>Description</value></data>

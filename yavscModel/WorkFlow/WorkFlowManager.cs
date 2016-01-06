@@ -96,7 +96,14 @@ namespace Yavsc.Model.WorkFlow
 				ev.PerformerName = cmdn.PerformerName;
 				string desc = com.GetDescription ();
 				ev.Description = desc;
-				// TODO send a location
+				if (com.GetType ().GetInterface ("ILocation") != null) {
+					ILocation loc = com as ILocation;
+					ev.Location = new Yavsc.Model.Maps.Location { 
+						Address = loc.Address,
+						Latitude = loc.Latitude,
+						Longitude = loc.Longitude
+					};
+				}
 				try { 
 
 					var gnresponse = GoogleHelpers.NotifyEvent (ev);

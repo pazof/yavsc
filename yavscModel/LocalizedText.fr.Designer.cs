@@ -232,6 +232,12 @@ namespace Yavsc.Model {
             }
         }
         
+        public static string Credits {
+            get {
+                return ResourceManager.GetString("Credits", resourceCulture);
+            }
+        }
+        
         public static string Date_search {
             get {
                 return ResourceManager.GetString("Date_search", resourceCulture);

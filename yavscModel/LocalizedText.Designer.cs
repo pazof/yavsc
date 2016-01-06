@@ -166,12 +166,6 @@ namespace Yavsc.Model {
             }
         }
         
-        public static string Create {
-            get {
-                return ResourceManager.GetString("Create", resourceCulture);
-            }
-        }
-        
         public static string ContactAPerformer {
             get {
                 return ResourceManager.GetString("ContactAPerformer", resourceCulture);
@@ -229,6 +223,18 @@ namespace Yavsc.Model {
         public static string CouldNotConvertVToDouble {
             get {
                 return ResourceManager.GetString("CouldNotConvertVToDouble", resourceCulture);
+            }
+        }
+        
+        public static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
+        public static string Credits {
+            get {
+                return ResourceManager.GetString("Credits", resourceCulture);
             }
         }
         

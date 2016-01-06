@@ -1,5 +1,23 @@
 2016-01-06  Paul Schneider  <paul@pschneider.fr>
 
+	* ILocation.cs: interface d'un lieu
+
+	* SimpleBookingQuery.cs: la demande simple de rdv contient un
+	lieu
+
+	* LocalizedText.resx:
+	* LocalizedText.fr.resx:
+	* LocalizedText.Designer.cs:
+	* LocalizedText.fr.Designer.cs: traductions
+
+	* WorkFlowManager.cs: envoie le lieu à la notification
+
+	* YavscModel.csproj: ajoute l'interface d'un lieu
+
+	* IUserName.cs: doc xml
+
+2016-01-06  Paul Schneider  <paul@pschneider.fr>
+
 	* packages.config:
 	* YavscModel.csproj:
 	* WorkFlowManager.cs: 
