@@ -106,6 +106,7 @@ namespace Yavsc
 		protected void Application_Start ()
 		{
 			AreaRegistration.RegisterAllAreas ();
+			ModelBinders.Binders.Add(typeof(double), new DoubleModelBinder());
 			GlobalConfiguration.Configure (WebApiConfig.Register);
 			RegisterRoutes (RouteTable.Routes);
 			AjaxHelper.GlobalizationScriptPath = "~/Scripts/globalize";

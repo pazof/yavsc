@@ -1,3 +1,7 @@
+2016-01-06  Paul Schneider  <paul@pschneider.fr>
+
+	* Yavsc.sln: ... au changement de runtime mono
+
 2015-12-30  Paul Schneider  <paul@pschneider.fr>
 
 	* .gitignore: ignore ma config LuaDebug

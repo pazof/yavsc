@@ -71,6 +71,23 @@ namespace Yavsc.Model.FrontOffice
 		[Display(ResourceType=typeof(LocalizedText),Name="Need")]
 		public string Need { get; set; }
 
+		/// <summary>
+		/// Gets or sets the address.
+		/// </summary>
+		/// <value>The address.</value>
+		public string Address { get; set; }
+
+		/// <summary>
+		/// Gets or sets the latitude.
+		/// </summary>
+		/// <value>The latitude.</value>
+		public double Latitude { get; set; }
+
+		/// <summary>
+		/// Gets or sets the longitude.
+		/// </summary>
+		/// <value>The longitude.</value>
+		public double Longitude { get; set; }
 
 	}
 }

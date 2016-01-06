@@ -43,6 +43,7 @@
 	<data name="Consultant"><value>Consultant</value></data>
 	<data name="ContactAPerformer"><value>Contactez un préstataire</value></data>
 	<data name="Count"><value>Nombre</value></data>
+	<data name="CouldNotConvertVToDouble"><value>La convertion de '{0}' en 'double' a été impossible.</value></data>
 	<data name="Create"><value>Créer</value></data>
 	<data name="Date_search"><value>Demande de rendez-vous</value></data>
 	<data name="DB"><value>Base de données</value></data>
@@ -108,6 +109,7 @@
 	<data name="OnlyAuthorizedMayContact"><value>Seuls les utilisateurs authorisés peuvent contacter un préstataire par courrier.</value></data>
 	<data name="Pdf_version"><value>Version Pdf</value></data>
 	<data name="PerformanceDate"><value>Date de la prestation</value></data>
+	<data name="PerformancePlace"><value>Lieu de la pestation</value></data>
 	<data name="Performers"><value>Perstataires</value></data>
 	<data name="Performer"><value>Préstataire</value></data>
 	<data name="Person"><value>Personne</value></data>
@@ -172,4 +174,6 @@
 	<data name="YourSkills"><value>Vos talents, vos spécialités, le domaine de vos activités</value></data>
 	<data name="YourPosts"><value>Vos publications</value></data>
 	<data name="YourProfile"><value>Votre profile</value></data>
+	<data name="YourMessageHasBeenSent"><value>Votre messge a été envoyé</value></data>
+
 </root>

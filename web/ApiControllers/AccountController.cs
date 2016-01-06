@@ -100,7 +100,7 @@ namespace Yavsc.ApiControllers
 
 		// GET api/Account/ManageInfo?returnUrl=%2F&generateState=true
 		[Route("ManageInfo")]
-		public async Task<ManageInfoViewModel> GetManageInfo(string returnUrl, bool generateState = false)
+		public async Task<ManageInfoViewModel> GetManageInfo (string returnUrl, bool generateState = false)
 		{
 			IdentityUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
 

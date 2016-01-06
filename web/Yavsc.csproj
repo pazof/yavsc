@@ -328,6 +328,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="ApiControllers\ChallengeResult.cs" />
+    <Compile Include="Formatters\DoubleModelBinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -882,6 +883,7 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Views\Account\Test.aspx" />
     <Content Include="web.config" />
+    <Content Include="Scripts\google.geocode.js" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

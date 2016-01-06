@@ -46,6 +46,7 @@
 	<data name="Comment"><value>Comment</value></data>
 	<data name="Consultant"><value>Consultant</value></data>
 	<data name="Count"><value>Count</value></data>
+	<data name="CouldNotConvertVToDouble"><value>Could not convert '{0}' to double.</value></data>
 	<data name="Date_search"><value>Date search</value></data>
 	<data name="DB"><value>Data base</value></data>
 	<data name="Description"><value>Description</value></data>
@@ -111,7 +112,8 @@
 	<data name="OnlyAuthorizedMayContact"><value>Only authorized users may contact a performer by mail.</value></data>
 	<data name="Offline"><value>Offline</value></data>
 	<data name="Pdf_version"><value>Pdf version</value></data>
-	<data name="PerformanceDate"><value>Performance Date</value></data>
+	<data name="PerformanceDate"><value>Performance date</value></data>
+	<data name="PerformancePlace"><value>Performance place</value></data>
 	<data name="Performers"><value>Performers</value></data>
 	<data name="Performer"><value>Performer</value></data>
 	<data name="Person"><value>Person</value></data>
