@@ -19,6 +19,7 @@ using System.Net;
 using System.Web.Mvc;
 using Yavsc.Model.Circles;
 using Yavsc.Helpers;
+using YavscClientModel;
 
 namespace Yavsc.Controllers
 {

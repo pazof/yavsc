@@ -1,3 +1,35 @@
+2016-01-08  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.config:
+	* Yavsc.csproj:
+	* T.cs:
+	* packages.config:
+	* App.master:
+	* yavsc.user.js:
+	* YavscHelpers.cs:
+	* YavscAjaxHelper.cs:
+	* HomeController.cs:
+	* AdminController.cs:
+	* BlogsController.cs:
+	* Estimate.aspx:
+	* DoubleModelBinder.cs:
+	* GoogleController.cs:
+	* Performer.ascx:
+	* AccountController.cs:
+	* Performers.aspx:
+	* SkillController.cs:
+	* BlogsController.cs:
+	* BasketController.cs:
+	* AccountController.cs:
+	* CalendarController.cs:
+	* WorkFlowController.cs:
+	* FrontOfficeController.cs:
+	* BackOfficeController.cs:
+	* FrontOfficeController.cs: 
+
+	* Web.LuaDebug.config: ajout d'une configuration de debuggage
+	pour Lua
+
 2016-01-06  Paul Schneider  <paul@pschneider.fr>
 
 	* App.master: mise à jour du pieds de page

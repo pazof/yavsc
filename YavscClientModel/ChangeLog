@@ -1,0 +1,47 @@
+2016-01-08  Paul Schneider  <paul@pschneider.fr>
+
+	* ITitle.cs:
+	* App.config:
+	* IRating.cs:
+	* IComment.cs:
+	* IAuthorized.cs:
+	* IIdentified.cs:
+	* packages.config:
+	* Location.cs:
+	* Position.cs:
+	* YaEvent.cs:
+	* LocalizedText.resx:
+	* UserSkill.cs:
+	* BaseEvent.cs:
+	* UserRole.cs:
+	* SkillRating.cs:
+	* LocalizedText.fr.resx:
+	* IUserName.cs:
+	* SkillEntity.cs:
+	* Commande.cs:
+	* YavscClientModel.csproj:
+	* Activity.cs:
+	* UserNameBase.cs:
+	* ILocation.cs:
+	* LocalizedText.Designer.cs:
+	* UserSkillRating.cs:
+	* Notification.cs:
+	* CommandSet.cs:
+	* AssemblyInfo.cs:
+	* UserSkillComment.cs:
+	* INominative.cs:
+	* BookingQuery.cs:
+	* CommandStatus.cs:
+	* NominativeEventPub.cs:
+	* UserSkillReference.cs:
+	* LocalizedText.fr.Designer.cs:
+	* UserSkillDeclaration.cs:
+	* MessageWithPayLoad.cs:
+	* PerformerProfile.cs:
+	* PerformerContact.cs:
+	* SimpleBookingQuery.cs:
+	* PerformerAvailability.cs:
+	* AuthentificatedSkillRating.cs:
+	* MessageWithPayloadResponse.cs:
+	* NominativeSimpleBookingQuery.cs: 
+

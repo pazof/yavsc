@@ -29,7 +29,8 @@ using Yavsc.Model.Circles;
 using Yavsc.Model.Calendar;
 using System.Web.Http.Routing;
 using System.Collections.Generic;
-using Yavsc.Model.Maps;
+using YavscClientModel.Maps;
+using YavscClientModel.Events;
 
 
 namespace Yavsc.ApiControllers

@@ -15,6 +15,9 @@ using Yavsc.Model.WorkFlow;
 using System.IO;
 using Yavsc.Model.FrontOffice.Catalog;
 using Yavsc.Model.Skill;
+using YavscClientModel.FrontOffice;
+using YavscClientModel.Skills;
+using YavscClientModel;
 
 namespace Yavsc.ApiControllers
 {

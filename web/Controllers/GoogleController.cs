@@ -21,6 +21,7 @@ using Yavsc.Model.WorkFlow;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Model.Google.Api;
 using Yavsc.Model.Skill;
+using YavscClientModel.FrontOffice;
 
 namespace Yavsc.Controllers
 {

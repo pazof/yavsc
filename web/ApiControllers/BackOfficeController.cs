@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Web.Profile;
 using System.Web.Security;
 using Yavsc.Model.Google.Api;
-using Yavsc.Model.Google.Api.Messaging;
+using YavscClientModel.Messaging;
 
 namespace Yavsc.ApiControllers
 {

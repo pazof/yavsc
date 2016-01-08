@@ -173,6 +173,10 @@
       <Project>{77044C92-D2F1-45BD-80DD-AA25B311B027}</Project>
       <Name>Yavsc</Name>
     </ProjectReference>
+    <ProjectReference Include="..\YavscClientModel\YavscClientModel.csproj">
+      <Project>{C2D2C633-E49B-4956-8FA8-EDDBA5797D98}</Project>
+      <Name>YavscClientModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

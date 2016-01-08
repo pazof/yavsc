@@ -8,6 +8,7 @@ using Yavsc.Model.WorkFlow;
 using System.Collections.Specialized;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Helpers;
+using YavscClientModel.FrontOffice;
 
 namespace Yavsc.ApiControllers
 {
@@ -44,7 +45,9 @@ namespace Yavsc.ApiControllers
 		/// </summary>
 		public CommandRegistration Create()
 		{
-			return YavscHelpers.CreateCommandFromRequest ();
+			return YavscHelpers.CreateCommandFromRequest (
+				Url.Route("Default",new{Controller="Account", action="Profile"})
+			);
 		}
 
 		/// <summary>

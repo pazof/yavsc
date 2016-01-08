@@ -20,12 +20,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Web.Profile;
 using Yavsc.Model.Google;
 using System.Net;
 using System.IO;
 using System.Text;
-using Newtonsoft.Json;
 using System.Configuration;
 
 namespace Yavsc.Model.Google.Api

@@ -25,6 +25,9 @@ using Yavsc.Model.Google.Api;
 using Yavsc.Model.Skill;
 using Yavsc.Model.WorkFlow;
 using System.Globalization;
+using YavscClientModel.FrontOffice;
+using YavscClientModel;
+using YavscClientModel.Skills;
 
 namespace Yavsc.Controllers
 {
@@ -298,8 +301,9 @@ namespace Yavsc.Controllers
 				// * Make the workflow register this command
 				// * Render the resulting basket
 
-				NominativeCommandRegistration cmdreg = YavscHelpers.CreateCommandFromRequest () 
-					as NominativeCommandRegistration;
+				NominativeCommandRegistration cmdreg = YavscHelpers.CreateCommandFromRequest (
+					Url.RouteUrl("Default",new{Controller="Account",action="Profile"})
+				) as NominativeCommandRegistration;
 				var basket = WorkFlowManager.GetCommands (User.Identity.Name);
 				ViewData["Commanded"] = basket[cmdreg.CommandId]; 
 				ViewData["CommandResult"]  = cmdreg ;
@@ -429,9 +433,10 @@ namespace Yavsc.Controllers
 
 				foreach (string meacode in model.MEACodes) {
 					foreach (PerformerProfile profile in  WorkFlowManager.FindPerformer(meacode,null)) {
-						if (profile.HasCalendar())
+						var upr = ProfileBase.Create (profile.UserName);
+						if (upr.GetPropertyValue("gcalid") as string != null)
 						try {
-							var events = ProfileBase.Create (profile.UserName).GetEvents (model.StartDate, model.EndDate);
+							var events = upr.GetEvents (model.StartDate, model.EndDate);
 							if (events.items.Length == 0)
 								result.Add (profile);
 						} catch (WebException ex) {
@@ -486,8 +491,9 @@ namespace Yavsc.Controllers
 			// but we already have got a MEA code  
 			if (ModelState.IsValid && model.Need!=null) {
 				var result = new List<PerformerAvailability> ();
-				foreach (PerformerProfile profile in WorkFlowManager.FindPerformer(model.MEACode,specification.ToArray())) 
-					if (profile.HasCalendar ()) {
+				foreach (PerformerProfile profile in WorkFlowManager.FindPerformer(model.MEACode,specification.ToArray())) {
+					var upr = ProfileBase.Create (profile.UserName);
+					if (upr.GetPropertyValue ("gcalid") as string != null) {
 						try {
 							var events = ProfileBase.Create (profile.UserName).GetEvents (
 								             model.PreferedDate.Date,
@@ -501,10 +507,10 @@ namespace Yavsc.Controllers
 						}
 					} else
 						result.Add (profile.CreateAvailability (model.PreferedDate, false));
+				}
 				ViewData["Circles"] = CircleManager.ListAvailableCircles(); 
 				ViewBag.SimpleBookingQuery = model;
 				ViewBag.ClientName = User.Identity.Name ;
-
 				return View ("Performers", result.ToArray ());
 			} 
 			if (model.Need==null) {

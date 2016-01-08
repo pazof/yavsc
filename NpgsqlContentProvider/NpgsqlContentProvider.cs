@@ -13,6 +13,8 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Yavsc.Model.FrontOffice.Catalog;
+using YavscClientModel.FrontOffice;
+using System.Reflection;
 
 namespace Yavsc
 {
@@ -219,14 +221,15 @@ namespace Yavsc
 					using (NpgsqlDataReader rdr = cmd.ExecuteReader ()) {
 						while (rdr.Read ()) {
 							string cls = rdr.GetString (4);
-							Command ycmd = Command.CreateCommand(cls);
+							var ycmd = FrontOfficeHelpers.CreateCommand (cls);
 							ycmd.Id = rdr.GetInt64 (0);
 							ycmd.CreationDate = rdr.GetDateTime (1);
 							ycmd.ProductRef = rdr.GetString (2);
 							ycmd.ClientName = username;
 							var prms = rdr.GetString (3);
 							var obj = JsonConvert.DeserializeObject<Dictionary<string,string>> (prms);
-							ycmd.SetParameters(obj as Dictionary<string,string>);
+							var collection = obj as Dictionary<string,string>;
+							ycmd.SetParameters (collection);
 							cmds.Add (ycmd);
 						}
 					}

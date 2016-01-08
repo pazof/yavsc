@@ -5,10 +5,7 @@ yavsc
 
 # à faire, par ordre de priorité
 
--1) Messagerie instantanée : choisir entre directement Google Hangouts API,
-  SIP, ou Signal R custom 
-0) Bug fixes :
-   stocker le token calendar à part
+0) Concevoir ou pas un objet Contact listant des point d'accès (email, http, sip, irc, téléphone, adresse postale ...)
 
 1) Créer un contrôle "bouton utilisateur" `UserNameControl`
   avec 
@@ -18,9 +15,11 @@ yavsc
    * Si c'est un préstataire, et si on est pas déjà dans un formulaire de reservation, 
      un lien vers la reservation de ses services
 
-1.2) Concevoir un objet Contact listant les point d'accès par protocol (email, http, sip, irc, téléphone, adresse postale ...)
+2) Terminer l'édition du profile de site, avec la modification
+  et la suppression des activités et compétences
 
-2) Refabrication de l'Api :
+
+3) Refabrication de l'Api :
 
   concernant la mise à jour la creation et l'edition d'un post, on
   doit pouvoir fondre tout en une seule methode : 
@@ -38,10 +37,10 @@ yavsc
     seules les propriétés spécifiées non nulles sont mises à jour
     (NDLR:la visibilité est donc par exemple toujours mis à jour).
 
+4) Messagerie instantanée
 
-4) Terminer l'édition du profile de site, avec la modification
-  et la suppression des activités et compétences
+6) Tester le premier client Android xamarin 
 
 5) Tester le premier client Android-java libre
 
-6) Tester le premier client Android-xamarin pour iOS
+7) Tester le premier client iOS xamarin 

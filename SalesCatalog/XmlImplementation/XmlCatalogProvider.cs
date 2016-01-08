@@ -5,6 +5,7 @@ using System.IO;
 using System.Xml;
 using System.Web;
 using Yavsc.Model.FrontOffice.Catalog;
+using YavscClientModel.FrontOffice;
 
 namespace SalesCatalog.XmlImplementation
 {
@@ -22,7 +23,7 @@ namespace SalesCatalog.XmlImplementation
 		/// </summary>
 		/// <returns>The activity.</returns>
 		/// <param name="MEACode">MAE code.</param>
-		public override Yavsc.Model.FrontOffice.Activity GetActivity (string MEACode)
+		public override Activity GetActivity (string MEACode)
 		{
 			throw new NotImplementedException ();
 		}
@@ -42,7 +43,7 @@ namespace SalesCatalog.XmlImplementation
 		/// <returns>The activity.</returns>
 		/// <param name="pattern">Pattern.</param>
 		/// <param name="exerted">If set to <c>true</c> exerted.</param>
-		public override Yavsc.Model.FrontOffice.Activity[] FindActivity (string pattern, bool exerted)
+		public override Activity[] FindActivity (string pattern, bool exerted)
 		{
 			throw new NotImplementedException ();
 		}
@@ -51,7 +52,7 @@ namespace SalesCatalog.XmlImplementation
 		/// </summary>
 		/// <returns>The performer.</returns>
 		/// <param name="MEACode">MEA code.</param>
-		public override Yavsc.Model.FrontOffice.PerformerProfile[] FindPerformer (string MEACode)
+		public override PerformerProfile[] FindPerformer (string MEACode)
 		{
 			throw new NotImplementedException ();
 		}

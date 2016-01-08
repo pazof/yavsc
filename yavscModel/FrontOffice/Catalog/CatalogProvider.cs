@@ -1,6 +1,7 @@
 using System;
 using System.Configuration.Provider;
 using Yavsc.Model.WorkFlow;
+using YavscClientModel.FrontOffice;
 
 namespace Yavsc.Model.FrontOffice.Catalog
 {

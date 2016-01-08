@@ -323,10 +323,10 @@ function addRow(){
 <table  id="tbwrts">
 <thead>
 <tr>
-<th data-sort="string"><%=Yavsc.Model.LocalizedText.Description%></th>
-<th data-sort="string"><%=Yavsc.Model.LocalizedText.Product_reference%></th>
-<th data-sort="int"><%=Yavsc.Model.LocalizedText.Count%></th>
-<th data-sort="float"><%=Yavsc.Model.LocalizedText.Unitary_cost%></th>
+<th data-sort="string"><%=LocalizedText.Description%></th>
+<th data-sort="string"><%=LocalizedText.Product_reference%></th>
+<th data-sort="int"><%=LocalizedText.Count%></th>
+<th data-sort="float"><%=LocalizedText.Unitary_cost%></th>
   
 </tr>
 </thead>
@@ -348,7 +348,4 @@ function addRow(){
 </table>
 <%  } %>
 <% } %>
-   
-
-  
-   </asp:Content>
+</asp:Content>

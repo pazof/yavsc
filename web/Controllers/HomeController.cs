@@ -17,6 +17,7 @@ using Yavsc.Model.Blogs;
 using Yavsc.Model.WorkFlow;
 using Yavsc.WebControls;
 using SalesCatalog.XmlImplementation;
+using YavscClientModel;
 
 namespace Yavsc.Controllers
 {

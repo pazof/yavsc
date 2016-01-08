@@ -33,6 +33,7 @@ using System.Net;
 using System.Web.Hosting;
 using Mono.Web.Util;
 using Mono.WebServer.Options;
+using Yavsc.Model.RolesAndMembers;
 
 namespace Yavsc
 {
@@ -117,7 +118,7 @@ namespace Yavsc
 			accountController = new AccountController ();
 
 			ViewResult actionResult = accountController.Register (
-				new Yavsc.Model.RolesAndMembers.RegisterViewModel () {
+				new RegisterViewModel () {
 					UserName = UserName, Email = Email,
 					Password = "tpwd", ConfirmPassword = Password, 
 					IsApprouved = true

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C2D2C633-E49B-4956-8FA8-EDDBA5797D98}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>YavscClientModel</RootNamespace>
+    <AssemblyName>YavscClientModel</AssemblyName>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Lua|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Lua</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TotemProd|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\TotemProd</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TotemPre|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\TotemPre</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LuaDebug|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\LuaDebug</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'YavscPre|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\YavscPre</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Yavsc|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Yavsc</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Events\NominativeEventPub.cs" />
+    <Compile Include="IAuthorized.cs" />
+    <Compile Include="IComment.cs" />
+    <Compile Include="IIdentified.cs" />
+    <Compile Include="IRating.cs" />
+    <Compile Include="ITitle.cs" />
+    <Compile Include="Events\YaEvent.cs" />
+    <Compile Include="FrontOffice\BookingQuery.cs" />
+    <Compile Include="FrontOffice\Activity.cs" />
+    <Compile Include="FrontOffice\ILocation.cs" />
+    <Compile Include="FrontOffice\INominative.cs" />
+    <Compile Include="FrontOffice\NominativeSimpleBookingQuery.cs" />
+    <Compile Include="FrontOffice\SimpleBookingQuery.cs" />
+    <Compile Include="LocalizedText.Designer.cs">
+      <DependentUpon>LocalizedText.resx</DependentUpon>
+    </Compile>
+    <Compile Include="LocalizedText.fr.Designer.cs">
+      <DependentUpon>LocalizedText.fr.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Events\BaseEvent.cs" />
+    <Compile Include="Maps\Location.cs" />
+    <Compile Include="Maps\Position.cs" />
+    <Compile Include="Messaging\MessageWithPayLoad.cs" />
+    <Compile Include="Messaging\MessageWithPayloadResponse.cs" />
+    <Compile Include="Messaging\Notification.cs" />
+    <Compile Include="FrontOffice\Commande.cs" />
+    <Compile Include="FrontOffice\CommandSet.cs" />
+    <Compile Include="FrontOffice\CommandStatus.cs" />
+    <Compile Include="FrontOffice\PerformerAvailability.cs" />
+    <Compile Include="FrontOffice\PerformerContact.cs" />
+    <Compile Include="FrontOffice\PerformerProfile.cs" />
+    <Compile Include="Accounts\UserNameBase.cs" />
+    <Compile Include="Accounts\UserRole.cs" />
+    <Compile Include="Skills\AuthentificatedSkillRating.cs" />
+    <Compile Include="Skills\SkillEntity.cs" />
+    <Compile Include="Skills\SkillRating.cs" />
+    <Compile Include="Skills\UserSkill.cs" />
+    <Compile Include="Skills\UserSkillComment.cs" />
+    <Compile Include="Skills\UserSkillDeclaration.cs" />
+    <Compile Include="Skills\UserSkillRating.cs" />
+    <Compile Include="Skills\UserSkillReference.cs" />
+    <Compile Include="Accounts\IUserName.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Events\" />
+    <Folder Include="FrontOffice\" />
+    <Folder Include="Accounts\" />
+    <Folder Include="Skills\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LocalizedText.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LocalizedText.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LocalizedText.fr.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LocalizedText.fr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+  </ItemGroup>
+</Project>

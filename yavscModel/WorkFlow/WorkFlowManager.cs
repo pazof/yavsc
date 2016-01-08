@@ -16,6 +16,8 @@ using Yavsc.Model.Skill;
 using Yavsc.Model.WorkFlow;
 using MailKit.Net.Smtp;
 using MimeKit;
+using YavscClientModel.FrontOffice;
+using YavscClientModel.Skills;
 
 namespace Yavsc.Model.WorkFlow
 {
@@ -79,80 +81,7 @@ namespace Yavsc.Model.WorkFlow
 
 
 
-		/// <summary>
-		/// Registers the command.
-		/// </summary>
-		/// <returns>The command.</returns>
-		/// <param name="com">COM.</param>
-		public static CommandRegistration RegisterCommand (Command com)
-		{
-			long cmdid = DefaultProvider.RegisterCommand (com);
-			string errorMsgGCM=null;
-			if (com.GetType ().GetInterface ("INominative") != null) {
-				var result = new NominativeCommandRegistration ();
-				result.CommandId = cmdid;
-				INominative cmdn = com as INominative;
-				NominativeEventPub ev = new NominativeEventPub ();
-				ev.PerformerName = cmdn.PerformerName;
-				string desc = com.GetDescription ();
-				ev.Description = desc;
-				if (com.GetType ().GetInterface ("ILocation") != null) {
-					ILocation loc = com as ILocation;
-					ev.Location = new Yavsc.Model.Maps.Location { 
-						Address = loc.Address,
-						Latitude = loc.Latitude,
-						Longitude = loc.Longitude
-					};
-				}
-				try { 
 
-					var gnresponse = GoogleHelpers.NotifyEvent (ev);
-					if (gnresponse.failure > 0 || gnresponse.success <= 0)
-						result.NotifiedOnMobile = false;
-					else
-						result.NotifiedOnMobile = true;
-					
-				} catch (WebException ex) {
-					
-					using (var respstream = ex.Response.GetResponseStream ()) {
-						using (StreamReader rdr = new StreamReader (respstream)) {
-							errorMsgGCM = rdr.ReadToEnd ();
-							rdr.Close ();
-						}
-						respstream.Close ();
-					}
-					if (errorMsgGCM == null)
-						throw;
-
-					throw new Exception (errorMsgGCM, ex);
-				}
-				string errorEMail = null;
-				try {
-					var pref = Membership.GetUser (cmdn.PerformerName);
-					MimeMessage msg = 
-						new MimeMessage (
-							       WebConfigurationManager.AppSettings.Get ("OwnerEMail"),
-							       pref.Email,
-							       "[Demande de devis] " + com.ClientName,
-							desc);
-						
-					using (SmtpClient sc = new SmtpClient ()) {
-						sc.Send (msg);
-						result.EmailSent = true;
-					}
-
-				} catch (Exception ex) {
-					errorEMail = ex.Message;
-					result.EmailSent = false;
-				}
-				return result;
-			} else {
-				var result = new CommandRegistration ();
-				result.CommandId = cmdid;
-				// TODO send a message with topic /global/commandregistration
-				return result;
-			}
-		}
 
 		/// <summary>
 		/// Updates the estimate.
@@ -265,6 +194,26 @@ namespace Yavsc.Model.WorkFlow
 		public static void DropWrittingTag (long wrid, string tag)
 		{
 			throw new NotImplementedException ();
+		}
+
+		/// <summary>
+		/// Registers the command.
+		/// </summary>
+		/// <returns>The command.</returns>
+		/// <param name="com">COM.</param>
+		public static CommandRegistration RegisterCommand (Command com)
+		{
+			long cmdid = DefaultProvider.RegisterCommand (com);
+			string errorMsgGCM=null;
+			if (com.GetType ().GetInterface ("INominative") != null) {
+				var result = new NominativeCommandRegistration ();
+				result.CommandId = cmdid;
+				return result;
+			} else {
+				var result = new CommandRegistration ();
+				result.CommandId = cmdid;
+				return result;
+			}
 		}
 
 		/// <summary>

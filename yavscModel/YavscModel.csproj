@@ -15,7 +15,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>bin</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>bin</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -34,37 +34,37 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Lua|AnyCPU' ">
     <Optimize>false</Optimize>
-    <OutputPath>bin\Lua</OutputPath>
+    <OutputPath>bin</OutputPath>
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TotemPre|AnyCPU' ">
     <Optimize>false</Optimize>
-    <OutputPath>bin\TotemPre</OutputPath>
+    <OutputPath>bin</OutputPath>
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TotemProd|AnyCPU' ">
     <Optimize>false</Optimize>
-    <OutputPath>bin\TotemProd</OutputPath>
+    <OutputPath>bin</OutputPath>
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'YavscPre|AnyCPU' ">
     <Optimize>false</Optimize>
-    <OutputPath>bin\YavscPre</OutputPath>
+    <OutputPath>bin</OutputPath>
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Yavsc|AnyCPU' ">
     <Optimize>false</Optimize>
-    <OutputPath>bin\Yavsc</OutputPath>
+    <OutputPath>bin</OutputPath>
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LuaDebug|AnyCPU' ">
     <Optimize>false</Optimize>
-    <OutputPath>bin\Lua</OutputPath>
+    <OutputPath>bin</OutputPath>
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
@@ -137,19 +137,7 @@
     <Compile Include="Blogs\BlogProvider.cs" />
     <Compile Include="WorkFlow\WorkFlowManager.cs" />
     <Compile Include="WorkFlow\NewEstimateEvenArgs.cs" />
-    <Compile Include="LocalizedText.fr.Designer.cs">
-      <DependentUpon>LocalizedText.fr.resx</DependentUpon>
-    </Compile>
-    <Compile Include="LocalizedText.Designer.cs">
-      <DependentUpon>LocalizedText.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Google\People.cs" />
-    <Compile Include="Google\AuthToken.cs" />
-    <Compile Include="Google\SignIn.cs" />
-    <Compile Include="Google\CalendarList.cs" />
-    <Compile Include="Google\CalendarListEntry.cs" />
     <Compile Include="RssFeeds.cs" />
-    <Compile Include="FrontOffice\Commande.cs" />
     <Compile Include="FrontOffice\Catalog\Brand.cs" />
     <Compile Include="FrontOffice\Catalog\Catalog.cs" />
     <Compile Include="FrontOffice\Catalog\CheckBox.cs" />
@@ -184,13 +172,8 @@
     <Compile Include="FrontOffice\Catalog\CatalogProvider.cs" />
     <Compile Include="FileSystem\InvalidDirNameException.cs" />
     <Compile Include="FileSystem\WebFileInfo.cs" />
-    <Compile Include="FrontOffice\CommandStatus.cs" />
-    <Compile Include="FrontOffice\CommandSet.cs" />
     <Compile Include="FrontOffice\Catalog\Billing\Price.cs" />
     <Compile Include="WorkFlow\Automate.cs" />
-    <Compile Include="Google\CalendarEventList.cs" />
-    <Compile Include="Google\GDate.cs" />
-    <Compile Include="Google\Resource.cs" />
     <Compile Include="Calendar\OpenDay.cs" />
     <Compile Include="Calendar\Period.cs" />
     <Compile Include="Calendar\Periodicity.cs" />
@@ -198,8 +181,6 @@
     <Compile Include="Calendar\ProvidedEvent.cs" />
     <Compile Include="Calendar\Schedule.cs" />
     <Compile Include="Calendar\WeekDay.cs" />
-    <Compile Include="Calendar\YaEvent.cs" />
-    <Compile Include="Google\GCMRegisterModel.cs" />
     <Compile Include="Circles\Circle.cs" />
     <Compile Include="Circles\CircleManager.cs" />
     <Compile Include="Circles\CircleProvider.cs" />
@@ -222,7 +203,6 @@
     <Compile Include="WorkFlow\InvalidLetterException.cs" />
     <Compile Include="Blogs\UUTBlogEntryCollection.cs" />
     <Compile Include="Blogs\UUBlogEntryCollection.cs" />
-    <Compile Include="IDbModule.cs" />
     <Compile Include="WorkFlow\IDataProvider.cs" />
     <Compile Include="Blogs\PostNotFoundException.cs" />
     <Compile Include="RolesAndMembers\ChangeUserNameProvider.cs" />
@@ -236,31 +216,21 @@
     <Compile Include="Blogs\MarkdownHelper.cs" />
     <Compile Include="Calendar\IFreeDateSet.cs" />
     <Compile Include="Calendar\ICalendarManager.cs" />
-    <Compile Include="Messaging\Notification.cs" />
     <Compile Include="FileSystem\WebFileSystemManager.cs" />
     <Compile Include="RolesAndMembers\ProfileEdition.cs" />
-    <Compile Include="RolesAndMembers\UserRole.cs" />
-    <Compile Include="RolesAndMembers\UserNameBase.cs" />
-    <Compile Include="Calendar\BookingQuery.cs" />
     <Compile Include="Skill\SkillProvider.cs" />
     <Compile Include="Skill\SkillManager.cs" />
-    <Compile Include="Skill\UserSkill.cs" />
-    <Compile Include="Skill\UserSkillComment.cs" />
-    <Compile Include="Skill\UserSkillDeclaration.cs" />
-    <Compile Include="Skill\UserSkillRating.cs" />
-    <Compile Include="Skill\UserSkillReference.cs" />
-    <Compile Include="IComment.cs" />
-    <Compile Include="IIdentified.cs" />
-    <Compile Include="IRating.cs" />
-    <Compile Include="IAuthorized.cs" />
     <Compile Include="FileSystem\UserFileSystemManager.cs" />
-    <Compile Include="FrontOffice\PerformerProfile.cs" />
-    <Compile Include="FrontOffice\SimpleBookingQuery.cs" />
-    <Compile Include="Skill\SkillEntity.cs" />
-    <Compile Include="FrontOffice\Activity.cs" />
-    <Compile Include="ITagBackup.cs" />
-    <Compile Include="ITitle.cs" />
     <Compile Include="ManagerHelper.cs" />
+    <Compile Include="SimpleJsonPostMethod.cs" />
+    <Compile Include="Circles\CircleMember.cs" />
+    <Compile Include="Circles\ICircle.cs" />
+    <Compile Include="Calendar\EventCirclesPub.cs" />
+    <Compile Include="WorkFlow\CommandRegistration.cs" />
+    <Compile Include="WorkFlow\NominativeCommandRegistration.cs" />
+    <Compile Include="RolesAndMembers\UpdatePassword.cs" />
+    <Compile Include="IDbModule.cs" />
+    <Compile Include="ITagBackup.cs" />
     <Compile Include="Google\Api\ApiClient.cs" />
     <Compile Include="Google\Api\CalendarApi.cs" />
     <Compile Include="Google\Api\Entity.cs" />
@@ -269,28 +239,16 @@
     <Compile Include="Google\Api\MapTracks.cs" />
     <Compile Include="Google\Api\OAuth2.cs" />
     <Compile Include="Google\Api\PeopleApi.cs" />
-    <Compile Include="Google\Api\Messaging\MessageWithPayLoad.cs" />
-    <Compile Include="Google\Api\Messaging\MessageWithPayloadResponse.cs" />
-    <Compile Include="Google\Api\Messaging\Notification.cs" />
-    <Compile Include="SimpleJsonPostMethod.cs" />
-    <Compile Include="FrontOffice\PerformerAvailability.cs" />
-    <Compile Include="Skill\AuthentificatedSkillRating.cs" />
-    <Compile Include="Skill\SkillRating.cs" />
-    <Compile Include="Circles\CircleMember.cs" />
-    <Compile Include="Circles\ICircle.cs" />
-    <Compile Include="FrontOffice\NominativeSimpleBookingQuery.cs" />
-    <Compile Include="FrontOffice\INominative.cs" />
-    <Compile Include="RolesAndMembers\IUserName.cs" />
-    <Compile Include="Calendar\EventCirclesPub.cs" />
-    <Compile Include="Calendar\NominativeEventPub.cs" />
-    <Compile Include="WorkFlow\CommandRegistration.cs" />
-    <Compile Include="WorkFlow\NominativeCommandRegistration.cs" />
-    <Compile Include="RolesAndMembers\UpdatePassword.cs" />
-    <Compile Include="FrontOffice\PerformerContact.cs" />
-    <Compile Include="Maps\Position.cs" />
-    <Compile Include="Maps\Location.cs" />
-    <Compile Include="Messaging\BaseEvent.cs" />
-    <Compile Include="FrontOffice\ILocation.cs" />
+    <Compile Include="Google\AuthToken.cs" />
+    <Compile Include="Google\CalendarEventList.cs" />
+    <Compile Include="Google\CalendarList.cs" />
+    <Compile Include="Google\CalendarListEntry.cs" />
+    <Compile Include="Google\GCMRegisterModel.cs" />
+    <Compile Include="Google\GDate.cs" />
+    <Compile Include="Google\People.cs" />
+    <Compile Include="Google\Resource.cs" />
+    <Compile Include="Google\SignIn.cs" />
+    <Compile Include="FrontOffice\FrontOfficeHelpers.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -298,15 +256,13 @@
     <Folder Include="Blogs\" />
     <Folder Include="Admin\" />
     <Folder Include="FileSystem\" />
-    <Folder Include="Google\" />
     <Folder Include="FrontOffice\" />
     <Folder Include="FrontOffice\Catalog\" />
     <Folder Include="FrontOffice\Catalog\Billing\" />
     <Folder Include="Circles\" />
     <Folder Include="RolesAndMembers\" />
-    <Folder Include="Messaging\" />
     <Folder Include="Skill\" />
-    <Folder Include="Maps\" />
+    <Folder Include="Google\Api\Messaging\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -318,16 +274,12 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <EmbeddedResource Include="LocalizedText.fr.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>LocalizedText.fr.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LocalizedText.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>LocalizedText.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\YavscClientModel\YavscClientModel.csproj">
+      <Project>{C2D2C633-E49B-4956-8FA8-EDDBA5797D98}</Project>
+      <Name>YavscClientModel</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

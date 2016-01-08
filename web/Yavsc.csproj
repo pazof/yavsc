@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Yavsc</RootNamespace>
     <AssemblyName>Yavsc</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -221,6 +221,16 @@
     <Reference Include="System.Web.Mvc">
       <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="BouncyCastle">
+      <HintPath>..\packages\MimeKit.1.2.19\lib\net45\BouncyCastle.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\packages\MimeKit.1.2.19\lib\net45\MimeKit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="MailKit">
+      <HintPath>..\packages\MailKit.1.2.16\lib\net45\MailKit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\" />
@@ -262,7 +272,6 @@
     <Folder Include="App_Themes\itclear\" />
     <Folder Include="App_Themes\itdark\" />
     <Folder Include="App_Start\" />
-    <Folder Include="Models\Identity\" />
     <Folder Include="Providers\" />
   </ItemGroup>
   <ItemGroup>
@@ -322,13 +331,13 @@
     <Compile Include="WebApiConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\Startup.cs" />
-    <Compile Include="Models\Identity\AccountBindingModels.cs" />
-    <Compile Include="Models\Identity\AccountViewModels.cs" />
-    <Compile Include="Models\Identity\IdentityModels.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="ApiControllers\ChallengeResult.cs" />
     <Compile Include="Formatters\DoubleModelBinder.cs" />
+    <Compile Include="Models\Identity\AccountBindingModels.cs" />
+    <Compile Include="Models\Identity\AccountViewModels.cs" />
+    <Compile Include="Models\Identity\IdentityModels.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -926,7 +935,7 @@
     <None Include="Scripts\jquery.mobile-1.4.5.min.map" />
     <None Include="App_Themes\images\GitHub.ico" />
     <None Include="Web.LuaDebug.config" />
-    <None Include="Web.Totemprod.config" />
+    <None Include="Web.TotemProd.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">
@@ -960,6 +969,10 @@
     <ProjectReference Include="..\WebControls\WebControls.csproj">
       <Project>{59E1DF7B-FFA0-4DEB-B5F3-76EBD98D5356}</Project>
       <Name>WebControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\YavscClientModel\YavscClientModel.csproj">
+      <Project>{C2D2C633-E49B-4956-8FA8-EDDBA5797D98}</Project>
+      <Name>YavscClientModel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

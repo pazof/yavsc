@@ -47,8 +47,7 @@ build :
 .PHONY: deploy
 deploy: ddir build
 	rm -rf $(LYDESTDIR)
-	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir=../$(LDYDESTDIR) /t:Deploy web/Yavsc.csproj
-
+	xbuild /p:Configuration=$(CONFIG) /p:SkipCopyUnchangedFiles=$(COPYUNCHANGED) /p:DeployDir="../$(LDYDESTDIR)" /t:Deploy web/Yavsc.csproj
 
 build_%: CONFIG = "$(subst build_,,$@)" 
 
@@ -84,7 +83,7 @@ dist/web/$(CONFIG)/Web.config: deploy
 web/Web.config: dist/web/$(CONFIG)/Web.config
 	cp dist/web/$(CONFIG)/Web.config web
 
-start_xsp: build web/Web.config
+start_xsp: 
 	(cd web; export MONO_OPTIONS=--debug; xsp4 --port 8080)
 
 xmldoc: $(patsubst %,web/bin/%,$(DOCASSBS))
@@ -106,9 +105,9 @@ rsync_Release:
 
 rsync_YavscPre:
 
-rsync_yavsc:
+rsync_Yavsc:
 
-rsync_Totemprod:
+rsync_TotemProd:
 
 nuget_restore:
 	for prj in ITContentProvider NpgsqlBlogProvider NpgsqlContentProvider NpgsqlMRPProviders Presta SalesCatalog TestAPI web WebControls yavscclient yavscModel; do if [ -f "$${prj}/packages.config" ]; then nuget restore "$${prj}/packages.config" -SolutionDirectory . ; fi; done

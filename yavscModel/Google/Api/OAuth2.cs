@@ -28,6 +28,7 @@ using System.Web.Profile;
 using System.Web;
 using Yavsc.Model;
 using System.Runtime.Serialization.Json;
+using YavscClientModel;
 
 namespace Yavsc.Model.Google.Api
 {

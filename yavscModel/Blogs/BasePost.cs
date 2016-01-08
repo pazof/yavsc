@@ -27,6 +27,7 @@ using System.Linq;
 using Yavsc.Model.Circles;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using YavscClientModel;
 
 namespace Yavsc.Model.Blogs
 {

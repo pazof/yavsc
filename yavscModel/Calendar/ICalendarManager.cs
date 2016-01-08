@@ -22,6 +22,8 @@
 using System;
 using Yavsc.Model.Google;
 using System.Collections.Generic;
+using YavscClientModel.FrontOffice;
+using YavscClientModel.Events;
 
 namespace Yavsc.Model.Calendar
 {

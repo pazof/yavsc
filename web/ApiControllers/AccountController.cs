@@ -40,6 +40,7 @@ using Yavsc.Providers;
 using System.Security.Cryptography;
 using System.Web;
 using Microsoft.AspNet.Identity.Owin;
+using YavscClientModel.Accounts;
 
 namespace Yavsc.ApiControllers
 {

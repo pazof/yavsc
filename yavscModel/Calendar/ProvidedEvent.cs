@@ -22,6 +22,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Model.RolesAndMembers;
+using YavscClientModel.Events;
 
 namespace Yavsc.Model.Calendar
 {

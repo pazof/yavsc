@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Yavsc.Model.FrontOffice;
+using YavscClientModel;
 
 namespace Yavsc.Model.WorkFlow
 {

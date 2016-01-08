@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Yavsc.Formatters;
 using Yavsc.Model;
+using YavscClientModel;
 
 namespace Yavsc.ApiControllers
 {

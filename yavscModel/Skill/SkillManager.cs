@@ -23,6 +23,8 @@ using System.Configuration;
 using System.Reflection;
 using System.Configuration.Provider;
 using Yavsc.Model.FrontOffice;
+using YavscClientModel.Skills;
+using YavscClientModel.FrontOffice;
 
 namespace Yavsc.Model.Skill
 {

@@ -9,11 +9,11 @@
 <div class="panel">
 <%= Html.Partial("Performer", available.Profile ) %>
 <div class="availability">
-
+<% Profile userProfile = new Profile(ProfileBase.Create(available.Profile.UserName)); %>
 <% if (available.DateAvailable) { %><p>
 <%= Html.Translate("ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailableThis") %>
 <%= available.PerformanceDate.ToString("D") %>.</p>
-<% } else if (available.Profile.HasCalendar()) { %><p>
+<% } else if (userProfile.GoogleCalendar!=null) { %><p>
 <%= Html.Translate("ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis") %>
 <%= available.PerformanceDate.ToString("D") %>.</p>
 <% } else {%><p>
@@ -25,7 +25,7 @@
 <form data-ajax-action="Basket/Create" method="post" >
 <input type="hidden" name="productref" value="main">
 <input type="hidden" name="clientname" value="<%= ViewBag.ClientName %>">
-<input type="hidden" name="type" value="Yavsc.Model.FrontOffice.NominativeSimpleBookingQuery">
+<input type="hidden" name="type" value="YavscClientModel.FrontOffice.NominativeSimpleBookingQuery, YavscClientModel">
 <input type="hidden" name="MEACode" value="<%=ViewBag.SimpleBookingQuery.MEACode%>" >
 <input type="hidden" name="Need" value="<%=ViewBag.SimpleBookingQuery.Need%>" >
 <input type="hidden" name="PreferedDate" value="<%=ViewBag.SimpleBookingQuery.PreferedDate%>" >

@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Yavsc.Model.WorkFlow;
+using YavscClientModel;
 
 namespace Yavsc.Model.RolesAndMembers
 {

@@ -27,7 +27,9 @@ using Yavsc.Model.Calendar;
 using Yavsc.Model.Circles;
 using System.Collections.Generic;
 using System.Web.Security;
-using Yavsc.Model.Google.Api.Messaging;
+using System.Web.Mvc;
+using YavscClientModel.Events;
+using YavscClientModel.Messaging;
 
 namespace Yavsc.Model.Google.Api
 {
@@ -107,7 +109,6 @@ namespace Yavsc.Model.Google.Api
 				new SimpleJsonPostMethod<MessageWithPayload<YaEvent>,MessageWithPayloadResponse>(
 					"https://gcm-http.googleapis.com/gcm/send")) { 
 				r.SetCredential (ConfigurationManager.AppSettings ["GOOGLE_GCM_API_KEY"]);
-					
 				if (evpub.CircleIds != null) {
 					var users = Circle.Union (evpub.CircleIds);
 					var regids = new List<string> ();
@@ -144,6 +145,7 @@ namespace Yavsc.Model.Google.Api
 		/// <param name="evpub">Evpub.</param>
 		public static MessageWithPayloadResponse NotifyEvent (NominativeEventPub evpub)
 		{
+			MessageWithPayloadResponse result = null;
 			using (var r = 
 				new SimpleJsonPostMethod<MessageWithPayload<NominativeEventPub>,MessageWithPayloadResponse> (
 					       "https://gcm-http.googleapis.com/gcm/send")) { 
@@ -153,11 +155,47 @@ namespace Yavsc.Model.Google.Api
 				if (regid == null)
 					throw new NotImplementedException ("Notification via e-mail");
 				var msg = new MessageWithPayload<NominativeEventPub> () { 
-					notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "icon" },
+					notification = new Notification() { title = evpub.Title, 
+						body = evpub.Description + 
+							evpub.Comment==null?
+							"":"("+evpub.Comment+")", icon = "icon" },
 					data = evpub, registration_ids = new string[] { regid }  };
-				return r.Invoke (msg);
+				result = r.Invoke (msg);
+				if (result != null)
+				if (result.success > 0)
+				if (result.results.Length > 0)
+				if (result.results[0].registration_id != null) {
+					// update the registration id in db
+					userprofile.SetPropertyValue("gregid",result.results [0].registration_id);
+					userprofile.Save ();
+				}
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// Validate the specified modelState.
+		/// </summary>
+		/// <param name="modelState">Model state.</param>
+		public static void Validate<T>(this HtmlHelper helper, MessageWithPayload<T> msg) {
+			var modelState = helper.ViewData.ModelState ;
+			if (msg.to==null && msg.registration_ids == null) {
+				modelState.AddModelError ("to", "One of \"to\" or \"registration_ids\" parameters must be specified");
+				modelState.AddModelError ("registration_ids", "*");
+				modelState.AddModelError ("to", "*");
+			}
+			if (msg.notification == null && msg.data == null) {
+				modelState.AddModelError ("notification", "At least one of \"notification\" or \"data\" parameters must be specified");
+				modelState.AddModelError ("data", "*");
+			}
+			if (msg.notification != null) {
+				if (msg.notification.icon == null)
+					modelState.AddModelError ("notification.icon", "please, specify an icon resoure name");
+				if (msg.notification.title == null)
+					modelState.AddModelError ("notification.title", "please, specify a title");
 			}
 		}
+
 	}
 }
 

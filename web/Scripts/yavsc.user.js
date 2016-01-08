@@ -12,35 +12,36 @@
     buttonAdmin: null,
     circles: [],
     _create: function() {
-       var _this = this;
-       var $this = $(this);
-	   var $ctl = $(this.element); 
-	   if (!_this.options.disabled) {
-	     var roles = $this.data('roles');
-	     var bcounter = $this.data('blog-counter');
-	     var circlesspec = $this.data('circles');
-	     if (bcounter)
+        var _this = this;
+        var $this = $(this);
+	    var $ctl = $(this.element); 
+	    if (!_this.options.disabled) {
+		    var roles = $this.data('roles');
+		    var bcounter = $this.data('blog-counter');
+		    var circlesspec = $this.data('circles');
+		    if (bcounter)
 	        if (bcounter>0) {
 	   	 		_this.buttonBlog = $('<a><i class="fa fa-folder"></i></a>');
 	   	 		$ctl.append(_this.buttonBlog);
-	   	 		}
+	   	 	}
 
-	   	 if (circlesspec)
-	   	   {
-	   	    _this.circles = circlesspec.split(' ');
-	   	    }
+		   	if (circlesspec)
+		   	{
+		   	    _this.circles = circlesspec.split(' ');
+		   	}
+		   	// Builds the inner controls
+		   	var form = '<form><fieldset><i class="fa fa-users"></i><select multiple>';
 
-	   	    var text = '<form><fieldset class="mayhide"><i class="fa fa-users"></i></fieldset>\n';
 	   	    for (i = 0; i < _this.options.circles.length; i++) {
 	   	        var checked = _this.circles.indexOf(_this.options.circles[i])>-1;
-	   	        if (checked) checked = " checked";
-    			text += "<input type='checkbox'"+checked+">"+ _this.options.circles[i] + "</option>\n";
+	   	        checked =  (checked) ? " selected" : "";
+    			form += "<option"+checked+">"+ _this.options.circles[i] + "</option>\n";
 			}
-			text += "</form>";
+			text += "</select></form>\n";
 			_this.buttonCircles = $(text);
 			$ctl.append(_this.buttonCircles);
 			return  $ctl;
-	   }
+	    }
 	},
 })})(jQuery);
 }).call(this);

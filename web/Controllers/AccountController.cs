@@ -1,24 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
+using System.Text;
 using System.Web;
 using System.Web.Configuration;
+using System.Web.Mvc;
 using System.Web.Profile;
 using System.Web.Security;
 using Yavsc;
-using Yavsc.Model.RolesAndMembers;
 using Yavsc.Helpers;
-using System.Web.Mvc;
-using Yavsc.Model.Circles;
-using System.Collections.Specialized;
-using System.Text;
-using System.Net;
-using System.Configuration;
 using Yavsc.Model;
+using Yavsc.Model.Circles;
+using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.WorkFlow;
-using Yavsc.Model.Messaging;
+using YavscClientModel;
+using YavscClientModel.Messaging;
 
 namespace Yavsc.Controllers
 {

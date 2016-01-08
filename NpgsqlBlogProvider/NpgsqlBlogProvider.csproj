@@ -95,5 +95,9 @@
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
       <Name>YavscModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\YavscClientModel\YavscClientModel.csproj">
+      <Project>{C2D2C633-E49B-4956-8FA8-EDDBA5797D98}</Project>
+      <Name>YavscClientModel</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

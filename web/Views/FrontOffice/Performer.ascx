@@ -1,9 +1,9 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PerformerProfile>" %>
 
-
+<% Profile userProfile = new Profile(ProfileBase.Create(Model.UserName)); %>
 <div class="performer">
 <h2>
-<img src="<%= Model.Avatar %>" alt="" class="bigavatar"> 
+<img src="<%= userProfile.avatar %>" alt="" class="bigavatar"> 
 <span class="username" data-type="user" 
 data-roles="<%=string.Join (" ",Roles.GetRolesForUser (Model.UserName)) %>" 
  data-blog-counter="<%=BlogManager.GetPostCounter(Model.UserName)%>" 
@@ -40,12 +40,12 @@ Cet utilisateur n'a pas saisi de compétence particulière ...
 </ul>
 
 <% } %>
-<% if (Model.HasCalendar()) { %>
+<% if (userProfile.GoogleCalendar!=null) { %>
 <i class="fa fa-calendar-check" ><%= Html.Translate("Google_calendar") %> : <%= Html.Translate("available") %>.</i><br>
 <% } %>
 <% if (BlogManager.GetPostCounter(Model.UserName)>0) { %>
 <a class="actionlink" href="<%=Url.RouteUrl("Blogs",new { user = Model.UserName } )%>">
-  <i class="fa fa-folder"><%=Model.BlogTitle %></i>
+  <i class="fa fa-folder"><%=userProfile.BlogTitle %></i>
 </a>
 <% } %>
 

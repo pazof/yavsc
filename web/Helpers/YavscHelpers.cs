@@ -1,26 +1,37 @@
 using System;
-using System.Web;
-using System.Configuration;
-using System.Web.Security;
-using System.IO;
-using System.Web.Configuration;
-using System.Net.Mail;
-using Yavsc.Model.RolesAndMembers;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Yavsc.Model.Circles;
-using System.Web.UI;
-using System.Linq.Expressions;
-using System.Web.Profile;
-using System.Web.Mvc;
-using System.Text.RegularExpressions;
-using Yavsc.Model.Messaging;
+using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Net;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Configuration;
+using System.Web.Mvc;
+using System.Web.Profile;
 using System.Web.Routing;
-using Yavsc.Model.FrontOffice;
-using Yavsc.Model.WorkFlow;
 using System.Web.Script.Serialization;
+using System.Web.Security;
+using System.Web.UI;
+using MailKit.Net.Smtp;
+using MimeKit;
+using Yavsc.Model;
+using Yavsc.Model.Calendar;
+using Yavsc.Model.Circles;
+using Yavsc.Model.FileSystem;
+using Yavsc.Model.FrontOffice;
+using Yavsc.Model.Google.Api;
+using Yavsc.Model.RolesAndMembers;
+using Yavsc.Model.WorkFlow;
+using YavscClientModel;
+using YavscClientModel.Events;
+using YavscClientModel.FrontOffice;
+using YavscClientModel.Messaging;
+using YavscClientModel.Maps;
+using System.Net.Configuration;
 
 namespace Yavsc.Helpers
 {
@@ -55,7 +66,8 @@ namespace Yavsc.Helpers
 			"HTTP_CONTENT_LENGTH", "HTTPS_SERVER_SUBJECT", "HTTP_ACCEPT_ENCODING", "HTTP_ACCEPT_LANGUAGE",
 			"HTTP_CACHE_CONTROL", "__RequestVerificationToken"
 		};
-		public static CommandRegistration CreateCommandFromRequest()
+
+		public static CommandRegistration CreateCommandFromRequest(string userProfileUrl)
 		{
 			var keys = HttpContext.Current.Request.Params.AllKeys.Where (
 				x => !YavscHelpers.FilteredKeys.Contains (x)).ToArray();
@@ -64,10 +76,87 @@ namespace Yavsc.Helpers
 			foreach (var key in keys) { 
 				prms.Add (key, HttpContext.Current.Request.Params [key]);
 			}
-			Command.CreateCommand(
+			CommandRegistration comreg;
+			Command  com =
+				CreateCommand(
 				prms, 
 				HttpContext.Current.Request.Files, 
 				out cmdreg);
+			if (typeof(NominativeCommandRegistration).IsAssignableFrom (cmdreg.GetType ())) {
+				// TODO send a message with topic /global/commandregistration
+				var nomcomreg = cmdreg as NominativeCommandRegistration;
+				INominative cmdn = com as INominative;
+				NominativeEventPub ev = new NominativeEventPub ();
+				ev.PerformerName = cmdn.PerformerName;
+				string desc = com.GetDescription ();
+				desc += userProfileUrl;
+				ev.Description = desc;
+				ev.Title = LocalizedText.EstimateWanted;
+
+				if (com.GetType ().GetInterface ("ILocation") != null) {
+					ILocation loc = com as ILocation;
+					ev.Location = new Location { 
+						Address = loc.Address,
+						Latitude = loc.Latitude,
+						Longitude = loc.Longitude
+					};
+				}
+				try { 
+					var gnresponse = GoogleHelpers.NotifyEvent (ev);
+					if (gnresponse.failure > 0 || gnresponse.success <= 0)
+						nomcomreg.NotifiedOnMobile = false;
+					else
+						nomcomreg.NotifiedOnMobile = true;
+
+				} catch (WebException ex) {
+					string errorMsgGCM;
+					using (var respstream = ex.Response.GetResponseStream ()) {
+						using (StreamReader rdr = new StreamReader (respstream)) {
+							errorMsgGCM = rdr.ReadToEnd ();
+							rdr.Close ();
+						}
+						respstream.Close ();
+					}
+					if (errorMsgGCM == null)
+						throw;
+
+					throw new Exception (errorMsgGCM, ex);
+				}
+				string errorEMail = null;
+				try {
+					var pref = Membership.GetUser (cmdn.PerformerName);
+					MimeMessage msg = new MimeMessage ();
+					msg.From.Add (new MailboxAddress ("Owner", WebConfigurationManager.AppSettings.Get ("OwnerEMail")));
+					msg.To.Add (new MailboxAddress (cmdn.PerformerName,
+						pref.Email));
+					msg.Body = new TextPart ("plain") {
+						Text = desc};
+
+					using (SmtpClient sc = new SmtpClient ()) {
+
+						Configuration c = WebConfigurationManager.OpenWebConfiguration(HttpContext.Current.Request.ApplicationPath);
+						MailSettingsSectionGroup settings = (MailSettingsSectionGroup)c.GetSectionGroup("system.net/mailSettings");
+						 ;
+
+						sc.Connect(settings.Smtp.Network.Host,settings.Smtp.Network.Port,
+							settings.Smtp.Network.EnableSsl);
+						sc.Send (msg);
+						nomcomreg.EmailSent = true;
+					}
+
+				} catch (Exception ex) {
+					errorEMail = ex.Message;
+					nomcomreg.EmailSent = false;
+				}
+
+			} else {
+				var ev = new YaEvent {
+					Title = LocalizedText.EstimateWanted,
+					Description = com.GetDescription (),
+				};
+				throw new NotImplementedException ();
+			}
+
 			return cmdreg;
 		}
 
@@ -135,6 +224,14 @@ namespace Yavsc.Helpers
 				, WebConfigurationManager.AppSettings ["RegistrationMessage"],
 				user);
 		}
+		public static string GetAvatar(this PerformerProfile profile)
+		{
+			return ProfileBase.Create (profile.UserName).GetPropertyValue ("Avatar") as string;
+		}
+		public static bool HasCalendar(this PerformerProfile profile)
+		{
+			return ProfileBase.Create (profile.UserName).GetPropertyValue ("gcalid") as string != null;
+		}
 
 		public static void SendNewPasswordMessage(MembershipUser user)
 		{
@@ -176,15 +273,15 @@ namespace Yavsc.Helpers
 				body = body.Replace ("<%UserName%>", user.UserName);
 				body = body.Replace ("<%UserActivatonUrl%>", validationUrl);
 
-				using (MailMessage msg = new MailMessage (
-					Admail, user.Email,
-					string.Format (title, YavscHelpers.SiteName),
-					body)) {
-					using (SmtpClient sc = new SmtpClient ()) {
-						sc.Send (msg);
-					}
-				}
+				MimeMessage msg = 
+					new MimeMessage (
+						Admail, user.Email,
+						string.Format (title, YavscHelpers.SiteName),
+						body);
 
+				using (SmtpClient sc = new SmtpClient ()) {
+					sc.Send (msg);
+				}
 			}
 		}
 
@@ -573,6 +670,70 @@ namespace Yavsc.Helpers
 			return new MvcHtmlString(strwr.ToString());
 		
 		}
+
+		/// <summary>
+		/// Creates a command from the http post request.
+		/// This methods applies to one product reference,
+		/// given in a required value "ref" in the given 
+		/// collection of name value couples.
+		/// </summary>
+		/// <param name="collection">Collection.</param>
+		/// <param name="files">Files.</param>
+		private static CommandRegistration FromPost(this Command cmd, Dictionary<string,string>  collection, NameObjectCollectionBase files)
+		{
+			// string catref=collection["catref"]; // Catalog Url from which formdata has been built
+			cmd.ProductRef = collection ["productref"];
+			if (cmd.ProductRef == null)
+				throw new InvalidOperationException (
+					"A product reference cannot be blank at command time");
+			cmd.ClientName = collection ["clientname"];
+			if (cmd.ClientName == null)
+				throw new InvalidOperationException (
+					"A client name cannot be blank at command time");
+
+			cmd.CreationDate = DateTime.Now;
+			cmd.Status = CommandStatus.Inserted;
+			// stores the parameters:
+			cmd.SetParameters(collection);
+
+			var registration = WorkFlowManager.RegisterCommand (cmd); // gives a value to this.Id
+			UserFileSystemManager.Put(Path.Combine("commandes",cmd.Id.ToString ()),files);
+			return registration;
+		}
+
+		/// <summary>
+		/// Creates a command using the specified collection
+		/// as command parameters, handles the files upload,
+		/// ans register the command in db, positionning the 
+		/// command id.
+		/// 
+		/// Required values in the command parameters : 
+		///
+		/// * ref: the product reference,
+		/// * type: the command concrete class name.
+		///
+		/// </summary>
+		/// <returns>The command.</returns>
+		/// <param name="collection">Collection.</param>
+		/// <param name="files">Files.</param>
+		/// <param name="cmdreg">Cmdreg.</param>
+		public static Command CreateCommand (
+			Dictionary<string,string> collection,
+			NameObjectCollectionBase files, 
+			out CommandRegistration cmdreg)
+		{
+			string cls = collection ["type"];
+			if (cls == null)
+				throw new InvalidOperationException (
+					"A command type cannot be blank");
+			var cmd = FrontOfficeHelpers.CreateCommand (cls);
+			cmdreg = cmd.FromPost (collection, files);
+			return cmd;
+		}
+
+
+
+
 	}
 }
 
