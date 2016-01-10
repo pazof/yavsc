@@ -110,6 +110,32 @@ namespace Yavsc.Model.Circles
 				user = HttpContext.Current.User.Identity.Name;
 			return DefaultProvider.List (user).Select (x => x.Title).ToArray();
 		}
+		/// <summary>
+		/// Adds the user to circle.
+		/// </summary>
+		/// <param name="circleOwner">Circle owner.</param>
+		/// <param name="circleName">Circle name.</param>
+		/// <param name="userName">User name.</param>
+		public static void AddUserToCircle(string circleOwner, string circleName, string userName)
+		{
+			var id = DefaultProvider.GetId (circleName, circleOwner);
+			if (id <= 0)
+				throw new InvalidOperationException ("not a circle");
+			DefaultProvider.AddMember (id, userName);
+		}
+		public static void RemoveUserFromCircle(string circleOwner, string circleName, string userName)
+		{
+			if (string.IsNullOrEmpty (circleOwner))
+				throw new InvalidOperationException ("circleOwner is empty");
+			if (string.IsNullOrEmpty (circleName))
+				throw new InvalidOperationException ("circleName is empty");
+			if (string.IsNullOrEmpty (userName))
+				throw new InvalidOperationException ("userName is empty");
+			var id = DefaultProvider.GetId (circleName, circleOwner);
+			if (id <= 0)
+				throw new InvalidOperationException ("not a circle");
+			DefaultProvider.RemoveMembership (id, userName);
+		}
 	}
 }
 

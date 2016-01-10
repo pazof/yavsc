@@ -435,7 +435,6 @@
     <Content Include="App_Themes\mdd_styles.css" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\yavsc.js" />
-    <Content Include="Scripts\yavsc.circles.js" />
     <Content Include="Views\Home\Credits.aspx" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
@@ -893,6 +892,7 @@
     <Content Include="Views\Account\Test.aspx" />
     <Content Include="web.config" />
     <Content Include="Scripts\google.geocode.js" />
+    <Content Include="Scripts\yavsc.circles.edit.js" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

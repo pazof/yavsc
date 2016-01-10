@@ -154,7 +154,9 @@ and m.applicationname = :app
 					cmd.Parameters.AddWithValue ("uname", username);
 					cmd.Parameters.AddWithValue ("title", circle);
 					cmd.Parameters.AddWithValue ("appname", applicationName);
-					cid = (long)cmd.ExecuteScalar ();
+					object obj = cmd.ExecuteScalar ();
+					if (!(obj is DBNull))
+						cid = (long)obj;
 				}
 				cnx.Close ();
 			}
@@ -169,7 +171,7 @@ and m.applicationname = :app
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "delete from circle_members where circle_id = :cid and username = :uname";
+				cmd.CommandText = "delete from circle_members where circle_id = :cid and member = :uname";
 				cmd.Parameters.AddWithValue ("cid", circle_id);
 				cmd.Parameters.AddWithValue ("uname", member);
 				cnx.Open ();
@@ -231,9 +233,10 @@ and m.applicationname = :app
 		{
 			using (NpgsqlConnection cnx = new NpgsqlConnection (connectionString))
 			using (NpgsqlCommand cmd = cnx.CreateCommand ()) {
-				cmd.CommandText = "insert into circle_members (circle_id, member) values (:cid,:uname)";
+				cmd.CommandText = "insert into circle_members (circle_id, member, applicationname) values (:cid,:uname,:app)";
 				cmd.Parameters.AddWithValue ("cid", id);
 				cmd.Parameters.AddWithValue ("uname", username);
+				cmd.Parameters.AddWithValue ("app", applicationName);
 				cnx.Open ();
 				cmd.ExecuteNonQuery ();	
 				cnx.Close ();

@@ -41,6 +41,7 @@ using System.Security.Cryptography;
 using System.Web;
 using Microsoft.AspNet.Identity.Owin;
 using YavscClientModel.Accounts;
+using Yavsc.Model.Circles;
 
 namespace Yavsc.ApiControllers
 {
@@ -626,13 +627,33 @@ namespace Yavsc.ApiControllers
 					new string [] { model.Role } );
 		}
 
-		[ValidateAjax]
-		[Authorize()]
-		public void AddUserToCircle(UserRole model)
+		/// <summary>
+		/// Adds the user to circle.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		[ValidateAjax, Authorize()]
+		public void AddUserToCircle(UserCircle model)
 		{
 			if (ModelState.IsValid)
-				Roles.AddUserToRole (model.UserName, 
-					 model.Role );
+				CircleManager.AddUserToCircle (
+					User.Identity.Name,
+					model.Circle,
+					model.UserName
+				);
+		}
+
+		/// <summary>
+		/// Removes the user from circle.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		[ValidateAjax, Authorize()]
+		public void RemoveUserFromCircle(UserCircle model)
+		{
+			if (ModelState.IsValid)
+				CircleManager.RemoveUserFromCircle (
+					User.Identity.Name,
+					model.Circle,
+					model.UserName);
 		}
 	}
 }

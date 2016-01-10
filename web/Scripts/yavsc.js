@@ -45,9 +45,9 @@ if (!errorCallBack) errorCallBack=Yavsc.onAjaxError;
             	if (callback) callback(response);
            },
             statusCode: {
-            	400: Yavsc.onAjaxBadInput
+            	400: badInputCallback
             	},
-            error: Yavsc.onAjaxError});
+            error: errorCallBack});
 	};
 
 self.onScroll = function() {

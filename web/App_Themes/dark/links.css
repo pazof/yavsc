@@ -1,6 +1,6 @@
 ﻿
 
-.actionlink, .menuitem, a.link, input[type='submit'] {
+.actionlink, .menuitem,  input[type='submit'] {
    display:inline-block;
 	border-radius:1em;
 	border-style: solid;
@@ -24,10 +24,13 @@ a.link:hover, .actionlink:hover, input[type='submit']:hover {
 a.link {
    text-decoration: none;
    background-color: rgba(30,30,30,.8); 
-   color: yellow;
+   color: #ff0;
+	animation-name: fadeIn;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
 }
 a.link:visited {
-   color: yellow;
+   color: #fa0;
 }
 
 a.link:hover {

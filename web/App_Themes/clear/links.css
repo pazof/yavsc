@@ -1,4 +1,12 @@
-﻿
+﻿.link {
+color: #550;
+}
+.link:hover {
+color: #770;
+}
+.link:active {
+color: #f90;
+}
 .actionlink {
     z-index: 1; 
     color: white;

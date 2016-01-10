@@ -57,7 +57,7 @@ value="<%=Html.Translate("Modify")%>" class="actionlink rowbtnct" />
 </form>
 </div>
 </div>
-<script type="text/javascript"  src="<%=Url.Content("~/Scripts/yavsc.circles.js")%>" >
+<script type="text/javascript"  src="<%=Url.Content("~/Scripts/yavsc.circles.edit.js")%>" >
 </script>
 <script type="text/javascript">
 

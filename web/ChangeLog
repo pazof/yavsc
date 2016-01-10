@@ -1,3 +1,17 @@
+2016-01-10  Paul Schneider  <paul@pschneider.fr>
+
+	* Web.config:
+	* Yavsc.csproj:
+	* yavsc.js:
+	* yavsc.user.js:
+	* links.css:
+	* Circles.aspx:
+	* links.css:
+	* yavsc.circles.edit.js:
+	* Performer.ascx:
+	* Performers.aspx:
+	* AccountController.cs: 
+
 2016-01-08  Paul Schneider  <paul@pschneider.fr>
 
 	* Web.config:

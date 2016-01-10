@@ -3,12 +3,13 @@
 <% Profile userProfile = new Profile(ProfileBase.Create(Model.UserName)); %>
 <div class="performer">
 <h2>
-<img src="<%= userProfile.avatar %>" alt="" class="bigavatar"> 
-<span class="username" data-type="user" 
+
+<span class="username" data-type="user" data-user="<%=Model.UserName%>"
 data-roles="<%=string.Join (" ",Roles.GetRolesForUser (Model.UserName)) %>" 
  data-blog-counter="<%=BlogManager.GetPostCounter(Model.UserName)%>" 
  data-circles="<%=string.Join (" ",CircleManager.Circles(Model.UserName))%>" >
- <%=Html.Encode(Model.UserName)%></span>
+ <img src="<%= userProfile.avatar %>" alt="" class="bigavatar"> 
+ <%=Html.Encode(Model.UserName)%> </span>
 <%=Html.Partial("RateUserSkillControl", Model) %>
 </h2>
 <address>
@@ -43,11 +44,7 @@ Cet utilisateur n'a pas saisi de compétence particulière ...
 <% if (userProfile.GoogleCalendar!=null) { %>
 <i class="fa fa-calendar-check" ><%= Html.Translate("Google_calendar") %> : <%= Html.Translate("available") %>.</i><br>
 <% } %>
-<% if (BlogManager.GetPostCounter(Model.UserName)>0) { %>
-<a class="actionlink" href="<%=Url.RouteUrl("Blogs",new { user = Model.UserName } )%>">
-  <i class="fa fa-folder"><%=userProfile.BlogTitle %></i>
-</a>
-<% } %>
+
 
 
 

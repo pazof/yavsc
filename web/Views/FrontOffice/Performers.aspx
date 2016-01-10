@@ -70,7 +70,7 @@ $(document).ready(function(){
     var data = JSON.parse(jstxt);
     Yavsc.ajax(action,data,receiveCmdRef);
    });
-   $("[data-type='user']").user({circles:<%=Ajax.JSonString(ViewData["Circles"])%>});
+   $("[data-type='user']").user({circles:<%=Ajax.JSonString(ViewData["Circles"])%>, visiter: <%=Ajax.JSonString(User.Identity.Name)%>});
 });
 </script>
 </asp:Content>
