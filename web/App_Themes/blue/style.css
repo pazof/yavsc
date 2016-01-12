@@ -1,7 +1,6 @@
 @import url(http://fonts.googleapis.com/css?family=Josefin+Sans&subset=latin,latin-ext);
 @import url(/App_Themes/clear/links.css);
 @import url(/App_Themes/clear/input.css);
-@import url(/App_Themes/clear/ronh.css);
 body {
 	background-color: white;
 	color: black;
@@ -39,7 +38,7 @@ nav li { display: inline-block; }
 
 main {
 clear:both;
-background-color: rgba(256,256,256,.5);
+background-color: rgba(64,64,256,.5);
 	}
 
 footer {
@@ -47,15 +46,15 @@ footer {
 }
 
 legend, .skillname {
-	background-color: rgba(240,240,240,.8);
+	background-color: rgba(64,64,220,.8);
   }
 #copyr { }
 
 #gspacer { 
-	background-color: rgba(209,209,209,.8);  }
+	background-color: rgba(0,0,64,.8);  }
 
 fieldset, .performer {
-	background-color: rgba(216,216,216,0.8);
+	background-color: rgba(100,100,256,0.8);
 } 
 
  h1 {
@@ -65,13 +64,13 @@ fieldset, .performer {
     transition: color 1s;
     } 
   main h1 {
-    background-color: rgba(256,256,256,.3); 
+    background-color: rgba(0,0,256,.3); 
     padding: 1em;
     color:black;
     transition: color 1s;
     }
 .postpreview {
-	background-color: rgba(233,233,233,0.8);
+	background-color: rgba(0,0,233,0.8);
 	animation-name: slideInDown;
     animation-duration: 1s;
     animation-iteration-count: 1;
@@ -86,40 +85,40 @@ fieldset, .performer {
 .postpreview:hover > div {
     overflow: auto;
 	max-height: 15em;
-	background-color: rgba(233,233,233,0.8);
+	background-color: rgba(0,0,233,0.8);
 }
 .post { 
-	background-color: rgba(256,256,256,0.8);
+	background-color: rgba(0,0,256,0.8);
 	}
-.hiddenpost { background-color: rgba(160,160,160,0.5); }
+.hiddenpost { background-color: rgba(0,0,160,0.5); }
 
 
 .panel,.bigpanel, aside {
-	background-color: rgba(200,200,200,.8); 
+	background-color: rgba(0,0,200,.8); 
 }
 
 .usertitleref {
    background-color:rgba(256,256,212,0.6);
 }
 .editable {
-	border: dashed rgb(200,200,256) 2px; 
-	background-color: rgba(256,256,256,.8);
+	border: dashed rgb(0,0,256) 2px; 
+	background-color: rgba(0,0,256,.8);
 }
 
 .notification {
-	background-color: rgba(264,264,128,0.5);
+	background-color: rgba(0,0,128,0.5);
 	border: solid green 1px;
 	}
 .dirty { 
-	background-color: rgba(256,228,128,0.5);
+	background-color: rgba(0,0,128,0.5);
 }
 .error, #error {
 	color: #f88;
-	background-color: rgba(256,0,0,.5);
+	background-color: rgba(0,0,64,.5);
 }
 .validation-summary-errors{
 	color: #f88;
-	background-color: rgba(256,256,139,0.5);
+	background-color: rgba(0,0,100,0.5);
 }
 
 

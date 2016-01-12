@@ -72,7 +72,7 @@ else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=A
 <%= HttpContext.Current.User.Identity.Name %>
 <span class="hint"><%= Html.Translate("YourProfile") %></span>
 </a>
-<a href="/Blogs/Post" accesskey="P" class="actionlink">
+<a href="<%=Url.RouteUrl("BlogById",new{action="Edit"})%>" accesskey="P" class="actionlink">
 <i class="fa fa-pencil"></i>
 <%= Html.Translate("DoPost") %>
 </a>

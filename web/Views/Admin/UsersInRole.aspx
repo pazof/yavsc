@@ -14,9 +14,9 @@
  </script>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="overHeaderOne" ID="header1" runat="server">
-<h1><a href="<%= Url.RouteUrl("Default", new { action = "UsersInRole", RoleName = ViewData["RoleName"] } )%>">
+<h1><a class="actionlink" href="<%= Url.RouteUrl("Default", new { action = "UsersInRole", RoleName = ViewData["RoleName"] } )%>">
 <%=ViewState["orgtitle"]%></a>
-- <a href="<%= Url.RouteUrl("Default",new {controller="Home" }) %>"><%= YavscHelpers.SiteName %></a>
+- <a class="actionlink" href="<%= Url.RouteUrl("Default",new {controller="Home" }) %>"><%= YavscHelpers.SiteName %></a>
 </h1>
 </asp:Content>
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">

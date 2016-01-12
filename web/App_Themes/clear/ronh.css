@@ -1,0 +1,16 @@
+﻿
+
+.ronh  .control {
+    max-height: 0;
+    max-width: 0;
+    overflow: hidden;
+    transition: max-height 2s, max-width 2s;
+    }
+
+.ronh:hover .control {
+    overflow: auto;
+	max-height: 15em;
+	max-width: 100%;
+}
+
+

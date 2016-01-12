@@ -1,3 +1,14 @@
+2016-01-12  Paul Schneider  <paul@pschneider.fr>
+
+	* style.css:
+	* ronh.css:
+	* links.css:
+	* style.css:
+	* UsersInRole.aspx: du style
+
+	* App.master: Rend obsolete la page "Blogs/Post", remplacée
+	par Blogs/Edit
+
 2016-01-10  Paul Schneider  <paul@pschneider.fr>
 
 	* Web.config:
