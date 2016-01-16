@@ -1,13 +1,13 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<PerformerProfile>" %>
 
-<% Profile userProfile = new Profile(ProfileBase.Create(Model.UserName)); %>
+<% Profile userProfile = new Profile(Model.UserName);
+userProfile.Populate(); %>
 <div class="performer">
 <h2>
-
 <span class="username" data-type="user" data-user="<%=Model.UserName%>"
 data-roles="<%=string.Join (" ",Roles.GetRolesForUser (Model.UserName)) %>" 
  data-blog-counter="<%=BlogManager.GetPostCounter(Model.UserName)%>" 
- data-circles="<%=string.Join (" ",CircleManager.Circles(Model.UserName))%>" >
+ data-circles="<%=string.Join (" ",ViewData["Circles"])%>" >
  <img src="<%= userProfile.avatar %>" alt="" class="bigavatar"> 
  <%=Html.Encode(Model.UserName)%> </span>
 <%=Html.Partial("RateUserSkillControl", Model) %>

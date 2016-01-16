@@ -255,7 +255,10 @@ namespace Yavsc.Model.RolesAndMembers
 		{
 			
 		}
-
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.RolesAndMembers.Profile"/> class.
+		/// </summary>
+		/// <param name="userName">User name.</param>
 		public Profile (string userName)
 		{
 			UserName = userName;

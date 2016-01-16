@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Comptes utilisateur" Language="C#" Inherits="System.Web.Mvc.ViewPage" MasterPageFile="~/Models/App.master" %>
+﻿<%@ Page Title="Comptes utilisateur" Language="C#" Inherits="System.Web.Mvc.ViewPage<RegisterViewModel>" MasterPageFile="~/Models/App.master" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 Votre compte utilisateur 
@@ -8,6 +8,6 @@ a été créé, un e-mail de validation de votre compte a été envoyé a l'adre
 Vous devriez le recevoir rapidement.<br/>
 Pour valider votre compte, suivez le lien indiqué dans cet e-mail.
 <div>
-<a class="actionlink" href="<%=ViewData["returnUrl"]%>">Retour</a> 
+<a class="actionlink" href="<%=Model.ReturnUrl%>">Retour</a> 
 </div>
 </asp:Content>

@@ -31,7 +31,7 @@
 </table>
 <br/>
 <%= Html.AntiForgeryToken() %>
-<%= Html.Hidden("returnUrl",ViewData["returnUrl"]) %>
+<%= Html.Hidden("ReturnUrl") %>
 
 <input type="submit"/>
 <% } %>

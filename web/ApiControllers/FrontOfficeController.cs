@@ -120,15 +120,15 @@ namespace Yavsc.ApiControllers
 			Estimate e = WorkFlowManager.GetEstimate (estimid);
 			tmpe.Session = new Dictionary<string,object> ();
 			tmpe.Session.Add ("estim", e);
-			Profile prpro = new Profile ();
-			prpro.Populate(e.Responsible);
+			Profile prpro = new Profile (e.Responsible);
+			prpro.Populate();
 			if (!prpro.HasBankAccount)
 				throw new TemplateException ("NotBankable:" + e.Responsible);
 			if (!prpro.HasPostalAddress)
 				throw new TemplateException ("NoPostalAddress:" + e.Responsible);
 			
-			Profile prcli = new Profile ();
-			prcli.Populate(e.Client);
+			Profile prcli = new Profile (e.Client);
+			prcli.Populate();
 			if (!prcli.IsBillable)
 				throw new TemplateException ("NotBillable:" + e.Client);
 

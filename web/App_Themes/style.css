@@ -25,12 +25,11 @@ body.loading .modal {
 header {
 	transition: margin 2s, padding 2s;
 	padding: 2em;
-	margin: 0;
+	margin: 2em;
 	}
 
-header h1 {
-	transition: padding 2s;
-}
+header h1, header a { padding:.5em;
+transition: padding 2s; }
 
 nav {
    transition: margin 2s, size 2s;
@@ -318,8 +317,8 @@ div.panel {
 		.control, nav { display:none;} 
 	}
 
-@media all and (max-width: 640px) {
-
+@media all and (max-width: 980px) {
+header h1, header a { padding:.5em;}
 		
 #avatar { 
  	margin:.5em;
@@ -366,28 +365,28 @@ div.panel {
 	.c3-alt { display:initial; }
 }
 
-@media all and (max-width: 380px) {
+@media all and (max-width: 640px) {
 
 
 header h1, header a { padding:.2em;}
 
 	nav {
-	margin: .5em;
+	    margin: .5em;
 		padding: .5em;
 	}
 
 	main { 
-	margin: .5em;
+	   margin: .5em;
 	    padding: .5em;
 	} 
 	footer { 
-	margin: .5em;
-	    padding: .5em;
+	  margin: .5em;
+	  padding: .5em;
 	} 
 	footer a {
-	margin:.2em;
-	padding:.2em;
-  }
+		margin:.2em;
+		padding:.2em;
+  }	
   .c2 { display:none; }
   .c2-alt { display:initial; }
 

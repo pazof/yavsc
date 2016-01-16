@@ -1,5 +1,4 @@
 ﻿<%@ Page Language="C#" Title="Performers" MasterPageFile="~/Models/App.master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<PerformerAvailability>>" %>
-
 <asp:Content ContentPlaceHolderID="head" ID="headContent" runat="server">
  <script type="text/javascript" src="/Scripts/yavsc.user.js"></script>
 </asp:Content>
@@ -9,7 +8,9 @@
 <div class="panel">
 <%= Html.Partial("Performer", available.Profile ) %>
 <div class="availability">
-<% Profile userProfile = new Profile(ProfileBase.Create(available.Profile.UserName)); %>
+<% Profile userProfile = new Profile(available.UserName);
+userProfile.Populate();
+  %>
 <% if (available.DateAvailable) { %><p>
 <%= Html.Translate("ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailableThis") %>
 <%= available.PerformanceDate.ToString("D") %>.</p>

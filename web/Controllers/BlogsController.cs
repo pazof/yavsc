@@ -121,8 +121,8 @@ namespace Yavsc.Controllers
 			// Get author's meta data
 			var pr = ProfileBase.Create (user);
 			if (pr != null) {
-				Profile bupr = new Profile ();
-				bupr.Populate (user);
+				Profile bupr = new Profile (user);
+				bupr.Populate ();
 				// listing meta data
 				ViewData ["BlogUserProfile"] = bupr;
 				ViewData ["BlogTitle"] = bupr.BlogTitle;
@@ -160,8 +160,8 @@ namespace Yavsc.Controllers
 			c.Add (e);
 			ViewData ["user"] = c.Author;
 			ViewData ["title"] = c.Title;
-			Profile pr = new Profile ();
-			pr.Populate (c.Author);
+			Profile pr = new Profile (c.Author);
+			pr.Populate ();
 			if (pr == null)
 				// the owner's profile must exist 
 				// in order to publish its bills
@@ -184,8 +184,8 @@ namespace Yavsc.Controllers
 		{
 			if (ModelState.IsValid)
 			if (bec.Count > 0) {
-				Profile pr = new Profile ();
-				pr.Populate(bec.Author);
+				Profile pr = new Profile (bec.Author);
+				pr.Populate();
 				if (pr == null)
 					// the owner's profile must exist 
 					// in order to publish its bills
@@ -262,8 +262,8 @@ namespace Yavsc.Controllers
 			ViewData ["title"] = title;
 			ViewData ["PageIndex"] = pageIndex;
 			ViewData ["pageSize"] = pageSize;
-			Profile pr = new Profile ();
-			pr.Populate (pb.UserName);
+			Profile pr = new Profile (pb.UserName);
+			pr.Populate ();
 			ViewData ["BlogUserProfile"] = pr;
 			ViewData ["Avatar"] = pr.avatar;
 			ViewData ["BlogTitle"] = pr.BlogTitle;
@@ -344,8 +344,8 @@ namespace Yavsc.Controllers
 			
 			BlogEntry e = BlogManager.GetForEditing (User.Identity.Name, postid);
 			string user = Membership.GetUser ().UserName;
-			Profile pr = new Profile ();
-			pr.Populate(e.Author);
+			Profile pr = new Profile (e.Author);
+			pr.Populate();
 			ViewData ["BlogTitle"] = pr.BlogTitle;
 			ViewData ["LOGIN"] = user; 
 			ViewData ["Id"] = postid;

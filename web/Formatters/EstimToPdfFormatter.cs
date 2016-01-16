@@ -87,11 +87,11 @@ namespace Yavsc.Formatters
 			Estimate e = value as Estimate;
 			tmpe.Session.Add ("estim", e);
 
-			Profile prpro = new Profile ();
-			prpro.Populate(e.Responsible);
+			Profile prpro = new Profile (e.Responsible);
+			prpro.Populate();
 
-			Profile prcli =  new Profile ();
-			prcli.Populate (e.Client);
+			Profile prcli =  new Profile (e.Client);
+			prcli.Populate ();
 
 			if (!prpro.HasBankAccount ||  !prcli.IsBillable)
 				throw new Exception("account number for provider, or client not billable.");

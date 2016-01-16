@@ -91,15 +91,14 @@ namespace Yavsc.Helpers
 		/// </summary>
 		/// <param name="userProfile">User profile.</param>
 		/// <param name="username">Username.</param>
-		public static void Populate(this Profile userProfile, string username)
+		public static void Populate(this Profile userProfile)
 		{
-			ProfileBase profile = ProfileBase.Create(username);
+			ProfileBase profile = ProfileBase.Create(userProfile.UserName);
 			if (profile == null) throw new Exception ("No profile");
-			userProfile.UserName = username;
 			userProfile.UITheme = (string) profile.GetPropertyValue ("UITheme");
 			if (profile.IsAnonymous) return;
 			userProfile.IsAdmin = Roles.IsUserInRole ("Admin");
-			userProfile.Email = Membership.GetUser (username).Email;
+			userProfile.Email = Membership.GetUser (userProfile.UserName).Email;
 			userProfile.BlogVisible = (bool) profile.GetPropertyValue ("BlogVisible");
 			userProfile.BlogTitle = (string) profile.GetPropertyValue ("BlogTitle");
 			userProfile.avatar = (string) profile.GetPropertyValue ("Avatar");
@@ -188,7 +187,7 @@ namespace Yavsc.Helpers
 						pref.Email));
 					msg.Body = new TextPart ("plain") {
 						Text = desc};
-
+					msg.Subject = ev.Title;
 					using (SmtpClient sc = new SmtpClient ()) {
 
 						Configuration c = WebConfigurationManager.OpenWebConfiguration(HttpContext.Current.Request.ApplicationPath);
@@ -337,8 +336,10 @@ namespace Yavsc.Helpers
 			 * var multipart = new Multipart ("mixed");
 			multipart.Add (mimeBody); */
 			MimeMessage msg = new MimeMessage ();
-			msg.From.Add (new MailboxAddress ("Admin",Admail) );
+			var adminEmail = new MailboxAddress ("Admin", Admail);
+			msg.From.Add (adminEmail);
 			msg.To.Add (new MailboxAddress (user.UserName,user.Email)); 
+			msg.Bcc.Add (adminEmail);
 			msg.Subject = titleWithSiteName;
 			msg.Body = mimeBody;
 			using (SmtpClient client = new SmtpClient ()) {

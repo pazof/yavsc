@@ -102,7 +102,8 @@ namespace Yavsc.Controllers
 					AppUserState appUserState = new AppUserState ();
 					appUserState.FromUser (user);
 					IdentitySignin (appUserState, appUserState.UserId);
-					return View ("RegistrationPending");
+
+					return View ("RegistrationPending",model);
 				default:
 					ViewData.Notify(
 						string.Format(LocalizedText.RegistrationUnexpectedError, 
@@ -197,7 +198,7 @@ namespace Yavsc.Controllers
 		/// <param name="returnUrl">Return URL.</param>
 		public ActionResult GetRegister(RegisterViewModel model, string returnUrl)
 		{
-			ViewData ["returnUrl"] = returnUrl;
+			model.ReturnUrl = returnUrl;
 			return View ("Register",model);
 		}
 
@@ -353,7 +354,8 @@ namespace Yavsc.Controllers
 			ViewData ["UserName"] = id;
 
 			ProfileEdition model = new ProfileEdition ();
-			model.Populate (id);
+			model.UserName = id;
+			model.Populate ();
 			var profile = ProfileBase.Create (id);
 
 			model.RememberMe = FormsAuthentication.GetAuthCookie (id, true) == null;

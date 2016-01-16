@@ -50,6 +50,11 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <param name="name">Name.</param>
 		public abstract bool IsNameAvailable(string name);
 
+		/// <summary>
+		/// Gets the user profile.
+		/// </summary>
+		/// <returns>The user profile.</returns>
+		/// <param name="name">Name.</param>
 		public abstract Profile GetUserProfile(string name);
 
 	}

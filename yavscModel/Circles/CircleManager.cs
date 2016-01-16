@@ -104,6 +104,11 @@ namespace Yavsc.Model.Circles
 				throw new InvalidOperationException ("not a circle");
 			DefaultProvider.RemoveMembership (id, userName);
 		}
+		public string [] Circles (string userName)
+		{
+			return DefaultProvider.List (userName).Select (x =>
+				x.Title).ToArray ();
+		}
 	}
 }
 

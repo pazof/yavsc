@@ -54,9 +54,10 @@ namespace Yavsc
 							while (rdr.Read ()) {
 								var profile = new PerformerProfile (rdr.GetString (1));
 								profile.Id = rdr.GetInt64 (0);
+								profile.UserName = rdr.GetString (1);
 								profile.EMail = rdr.GetString (2);
-								profile.MEACode = MEACode;
 								profile.Rate = rdr.GetInt32 (3);
+								profile.MEACode = MEACode;
 								result.Add (profile);
 							}
 						}
