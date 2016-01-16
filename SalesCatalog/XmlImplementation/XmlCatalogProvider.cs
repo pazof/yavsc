@@ -5,7 +5,7 @@ using System.IO;
 using System.Xml;
 using System.Web;
 using Yavsc.Model.FrontOffice.Catalog;
-using YavscClientModel.FrontOffice;
+using Yavsc.Client.FrontOffice;
 
 namespace SalesCatalog.XmlImplementation
 {

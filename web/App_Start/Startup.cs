@@ -31,7 +31,7 @@ namespace Yavsc.App_Start
 		public void Configuration(IAppBuilder app)
 		{
 			ConfigureAuth (app);
-
+			//ConfigureChat (app);
 		}
 	}
 }

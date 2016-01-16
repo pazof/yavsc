@@ -1,7 +1,6 @@
 <%@ Page Title="Bill_edition" Language="C#" Inherits="System.Web.Mvc.ViewPage<BlogEntry>" MasterPageFile="~/Models/App.master" %>
 <%@ Register Assembly="Yavsc.WebControls" TagPrefix="yavsc" Namespace="Yavsc.WebControls" %> 
 <asp:Content ContentPlaceHolderID="head" ID="HeadContent1" runat="server">
-
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/rangy-core.js")%>"></script>
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/rangy-selectionsaverestore.js")%>"></script>
 <script type="text/javascript" src="<%=Url.Content("~/Scripts/jquery.htmlClean.min.js")%>"></script>
@@ -13,7 +12,7 @@
 <asp:Content ContentPlaceHolderID="MainContent" ID="MainContentContent" runat="server">
 
 <aside>
-	Id:<%= Html.TranslatedActionLink( Model.Id.ToString() , "UserPost", new { user= Model.Author, title=Model.Title, id = Model.Id }, new { @class = "usertitleref actionlink" }) %>
+	Id:<%= Html.TranslatedActionLink( Model.Id.ToString() , "UserPost", new { title=Model.Title, id = Model.Author }, new { @class = "usertitleref actionlink" }) %>
 , Posted: <%= Model.Posted.ToString("yyyy/MM/dd") %> - Modified: <%= Model.Modified.ToString("yyyy/MM/dd") %> 
 Visible: <%= Model.Visible? "oui":"non" %> <%= Html.TranslatedActionLink("Supprimer","RemovePost", new { user=Model.Author, title = Model.Title, postid = Model.Id }, new { @class="actionlink" } ) %>
 </aside>

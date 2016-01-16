@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Profile;
 using System.Web.Security;
 using Newtonsoft.Json;
 using Yavsc.Model;
@@ -19,9 +18,10 @@ using Yavsc.Model.Calendar;
 using Yavsc.Helpers;
 using Yavsc.Model.WorkFlow;
 using Yavsc.Model.FrontOffice;
-using Yavsc.Model.Google.Api;
+using Yavsc.Helpers.Google.Api;
 using Yavsc.Model.Skill;
-using YavscClientModel.FrontOffice;
+using Yavsc.Client.FrontOffice;
+using System.Web.Profile;
 
 namespace Yavsc.Controllers
 {

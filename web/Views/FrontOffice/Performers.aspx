@@ -25,7 +25,7 @@
 <form data-ajax-action="Basket/Create" method="post" >
 <input type="hidden" name="productref" value="main">
 <input type="hidden" name="clientname" value="<%= ViewBag.ClientName %>">
-<input type="hidden" name="type" value="YavscClientModel.FrontOffice.NominativeSimpleBookingQuery, YavscClientModel">
+<input type="hidden" name="type" value="Yavsc.Client.FrontOffice.NominativeSimpleBookingQuery, Yavsc.Client">
 <input type="hidden" name="MEACode" value="<%=ViewBag.SimpleBookingQuery.MEACode%>" >
 <input type="hidden" name="Need" value="<%=ViewBag.SimpleBookingQuery.Need%>" >
 <input type="hidden" name="PreferedDate" value="<%=ViewBag.SimpleBookingQuery.PreferedDate%>" >

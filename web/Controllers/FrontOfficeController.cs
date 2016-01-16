@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Profile;
 using System.Web.Security;
 using Yavsc;
 using Yavsc.Controllers;
@@ -21,13 +20,14 @@ using Yavsc.Model.Circles;
 using Yavsc.Model.FileSystem;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Model.FrontOffice.Catalog;
-using Yavsc.Model.Google.Api;
+using Yavsc.Helpers.Google.Api;
 using Yavsc.Model.Skill;
 using Yavsc.Model.WorkFlow;
 using System.Globalization;
-using YavscClientModel.FrontOffice;
-using YavscClientModel;
-using YavscClientModel.Skills;
+using Yavsc.Client.FrontOffice;
+using Yavsc.Client;
+using Yavsc.Client.Skills;
+using System.Web.Profile;
 
 namespace Yavsc.Controllers
 {
@@ -49,7 +49,14 @@ namespace Yavsc.Controllers
 		{
 			return View();
 		}
-		
+
+		[Authorize]
+		public ActionResult Chat()
+		{
+			ViewBag.SignalRHub = ConfigurationManager.AppSettings ["SignalRHub"];
+			return View ();
+		}
+
 		/// <summary>
 		/// Pub the Event
 		/// </summary>
@@ -508,7 +515,7 @@ namespace Yavsc.Controllers
 					} else
 						result.Add (profile.CreateAvailability (model.PreferedDate, false));
 				}
-				ViewData["Circles"] = CircleManager.ListAvailableCircles(); 
+				ViewData["Circles"] = YavscHelpers.ListAvailableCircles(); 
 				ViewBag.SimpleBookingQuery = model;
 				ViewBag.ClientName = User.Identity.Name ;
 				return View ("Performers", result.ToArray ());

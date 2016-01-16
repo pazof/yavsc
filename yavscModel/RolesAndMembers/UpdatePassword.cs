@@ -20,7 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.ComponentModel;
-using YavscClientModel.Accounts;
+using Yavsc.Client.Accounts;
 
 namespace Yavsc.Model.RolesAndMembers
 {

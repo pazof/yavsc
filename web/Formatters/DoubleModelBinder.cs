@@ -23,7 +23,7 @@ using System.Web.Mvc;
 using System.Threading;
 using System.Globalization;
 using Yavsc.Model;
-using YavscClientModel;
+using Yavsc.Client;
 
 namespace Yavsc.Formatters
 {

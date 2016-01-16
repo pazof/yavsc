@@ -26,8 +26,8 @@ using System.Collections.Generic;
 using Npgsql;
 using NpgsqlTypes;
 using Yavsc.Model.FrontOffice;
-using YavscClientModel.FrontOffice;
-using YavscClientModel.Skills;
+using Yavsc.Client.FrontOffice;
+using Yavsc.Client.Skills;
 
 namespace WorkFlowProvider
 {

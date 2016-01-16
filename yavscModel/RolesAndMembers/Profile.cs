@@ -1,22 +1,22 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Profile;
-using System.Web.Security;
 using System.Web;
 using System.Configuration;
 using System.Collections.Generic;
-using System.Web.Mvc;
 using Yavsc.Model.WorkFlow;
-using YavscClientModel;
+using Yavsc.Client;
 
 namespace Yavsc.Model.RolesAndMembers
 {
 	/// <summary>
 	/// Profile.
 	/// </summary>
-	public class Profile
+	public class Profile : IIdentified<string>
 	{
+		public string Id { get; set; }
+		public string Email { get; set; }
+		public bool IsAdmin { get; set; }
 		/// <summary>
 		/// Gets or sets the name.
 		/// </summary>
@@ -245,8 +245,20 @@ namespace Yavsc.Model.RolesAndMembers
 		]
 		public string UserName { get { return userName; } set { userName=value; } } 
 
-		public Profile () : base ()
+		/// <summary>
+		/// Initializes a new instance of the 
+		/// <see cref="Yavsc.Model.RolesAndMembers.Profile"/> class.
+		/// Used only in case of deserialization, the UserName property is not supposed to
+		/// stay empty
+		/// </summary>
+		public Profile ()
 		{
+			
+		}
+
+		public Profile (string userName)
+		{
+			UserName = userName;
 		}
 
 		/// <summary>
@@ -255,38 +267,6 @@ namespace Yavsc.Model.RolesAndMembers
 		/// <value><c>true</c> if remember me; otherwise, <c>false</c>.</value>
 		public bool RememberMe { get; set; }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Model.RolesAndMembers.Profile"/> class.
-		/// </summary>
-		/// <param name="profile">Profile.</param>
-		public Profile (ProfileBase profile)
-		{
-			if (profile == null) throw new Exception ("No profile");
-			if (profile.UserName == null) throw new Exception ("UserName not set");
-			UITheme = (string) profile.GetPropertyValue ("UITheme");
-			userName = profile.UserName;
-			if (profile.IsAnonymous) return;
-			BlogVisible = (bool) profile.GetPropertyValue ("BlogVisible");
-			BlogTitle = (string) profile.GetPropertyValue ("BlogTitle");
-			avatar = (string) profile.GetPropertyValue ("Avatar");
-			Address = (string) profile.GetPropertyValue ("Address"); 
-			CityAndState = (string) profile.GetPropertyValue ("CityAndState");
-			Country = (string) profile.GetPropertyValue ("Country");
-			ZipCode = (string) profile.GetPropertyValue ("ZipCode");
-			WebSite = (string) profile.GetPropertyValue ("WebSite");
-			Name = (string) profile.GetPropertyValue ("Name");
-			Phone = (string) profile.GetPropertyValue ("Phone");
-			Mobile = (string) profile.GetPropertyValue ("Mobile");
-			BankCode = (string)profile.GetPropertyValue ("BankCode");
-			IBAN = (string)profile.GetPropertyValue ("IBAN");
-			BIC =  (string)profile.GetPropertyValue ("BIC");
-			WicketCode = (string) profile.GetPropertyValue ("WicketCode");
-			AccountNumber = (string) profile.GetPropertyValue ("AccountNumber");
-			BankedKey = (int)  profile.GetPropertyValue ("BankedKey");
-			GoogleCalendar = (string) profile.GetPropertyValue ("gcalid");
-			GoogleRegId = (string) profile.GetPropertyValue ("gregid");
-			MEACode = (string) profile.GetPropertyValue ("MEACode");
-		}
 
 		/// <summary>
 		/// Gets or sets the MEA code.

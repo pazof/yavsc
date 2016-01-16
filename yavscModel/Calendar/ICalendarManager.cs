@@ -20,10 +20,9 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using Yavsc.Model.Google;
 using System.Collections.Generic;
-using YavscClientModel.FrontOffice;
-using YavscClientModel.Events;
+using Yavsc.Client.FrontOffice;
+using Yavsc.Client.Events;
 
 namespace Yavsc.Model.Calendar
 {

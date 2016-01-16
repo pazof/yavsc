@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>WorkFlowProvider</RootNamespace>
     <AssemblyName>NpgsqlContentProvider</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -83,13 +83,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\yavscModel\YavscModel.csproj">
-      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
-      <Name>YavscModel</Name>
+    <ProjectReference Include="..\Yavsc.Client\Yavsc.Client.csproj">
+      <Project>{5F9318D6-A994-497C-96A8-00F97642CE8E}</Project>
+      <Name>Yavsc.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YavscClientModel\YavscClientModel.csproj">
-      <Project>{C2D2C633-E49B-4956-8FA8-EDDBA5797D98}</Project>
-      <Name>YavscClientModel</Name>
+    <ProjectReference Include="..\yavscModel\Yavsc.Server.csproj">
+      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
+      <Name>Yavsc.Server</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

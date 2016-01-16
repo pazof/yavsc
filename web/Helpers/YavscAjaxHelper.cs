@@ -21,7 +21,7 @@
 using System;
 using System.Web.Mvc;
 using System.Collections.Generic;
-using YavscClientModel.Messaging;
+using Yavsc.Client.Messaging;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Text;

@@ -20,22 +20,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using Yavsc.Model.WorkFlow;
-using System.Configuration;
-using System.Collections.Specialized;
-using Yavsc.Model.FrontOffice;
-using System.Configuration.Provider;
-using Yavsc.Model.FrontOffice.Catalog;
-using System.Collections.Generic;
-using Yavsc.Model.Skill;
-using System.Linq;
-using Yavsc.Model.Calendar;
-using Yavsc.Model.Google.Api;
-using System.Net.Mail;
-using System.Web.Security;
-using System.Web.Configuration;
-using System.Net;
-using System.IO;
 
 namespace Yavsc.Model.WorkFlow
 {

@@ -1,3 +1,72 @@
+2016-01-16  Paul Schneider  <paul@pschneider.fr>
+
+	* App.config:
+	* RssFeeds.cs:
+	* IDbModule.cs:
+	* ITagBackup.cs:
+	* Blog.cs:
+	* GDate.cs:
+	* packages.config:
+	* SignIn.cs:
+	* BasePost.cs:
+	* BlogEntry.cs:
+	* ICircle.cs:
+	* Resource.cs:
+	* AuthToken.cs:
+	* Yavsc.Server.csproj:
+	* Entity.cs:
+	* Estimate.cs:
+	* Writting.cs:
+	* BasePostInfo.cs:
+	* SkillManager.cs:
+	* CalendarList.cs:
+	* BlogEntryPost.cs:
+	* SkillProvider.cs:
+	* PeopleApi.cs:
+	* MapTracks.cs:
+	* ApiClient.cs:
+	* CircleMember.cs:
+	* IFreeDateSet.cs:
+	* CircleManager.cs:
+	* AppUserState.cs:
+	* ProvidedEvent.cs:
+	* IPostedFile.cs:
+	* IDataProvider.cs:
+	* CircleProvider.cs:
+	* EntityQuery.cs:
+	* WebFileInfo.cs:
+	* CalendarApi.cs:
+	* IdentityModels.cs:
+	* Profile.cs:
+	* GCMRegisterModel.cs:
+	* CalendarListEntry.cs:
+	* CalendarEventList.cs:
+	* EventCirclesPub.cs:
+	* WorkFlowManager.cs:
+	* ICalendarManager.cs:
+	* IContentProvider.cs:
+	* LoginModel.cs:
+	* AccountViewModels.cs:
+	* PostNotFoundException.cs:
+	* UTBlogEntryCollection.cs:
+	* UserManager.cs:
+	* CommandRegistration.cs:
+	* UUTBlogEntryCollection.cs:
+	* PositionAndKeyphrase.cs:
+	* AccountBindingModels.cs:
+	* RegisterModel.cs:
+	* FrontOfficeHelpers.cs:
+	* ProfileEdition.cs:
+	* UpdatePassword.cs:
+	* WebFileSystemManager.cs:
+	* UserFileSystemManager.cs:
+	* InvalidDirNameException.cs:
+	* CatalogManager.cs:
+	* ProviderPublicInfo.cs:
+	* CatalogProvider.cs:
+	* ChangeUserNameProvider.cs:
+	* NominativeCommandRegistration.cs: 
+
 2016-01-10  Paul Schneider  <paul@pschneider.fr>
 
 	* CircleManager.cs: 

@@ -22,7 +22,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using YavscClientModel.Accounts;
+using Yavsc.Client.Accounts;
 
 namespace Yavsc.Model.RolesAndMembers
 {

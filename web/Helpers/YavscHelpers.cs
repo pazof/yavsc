@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
-using System.Web.Profile;
 using System.Web.Routing;
 using System.Web.Script.Serialization;
 using System.Web.Security;
@@ -23,15 +22,17 @@ using Yavsc.Model.Calendar;
 using Yavsc.Model.Circles;
 using Yavsc.Model.FileSystem;
 using Yavsc.Model.FrontOffice;
-using Yavsc.Model.Google.Api;
+using Yavsc.Helpers.Google.Api;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.WorkFlow;
-using YavscClientModel;
-using YavscClientModel.Events;
-using YavscClientModel.FrontOffice;
-using YavscClientModel.Messaging;
-using YavscClientModel.Maps;
+using Yavsc.Client;
+using Yavsc.Client.Events;
+using Yavsc.Client.FrontOffice;
+using Yavsc.Client.Messaging;
+using Yavsc.Client.Maps;
 using System.Net.Configuration;
+using System.Web.Profile;
+using Yavsc.Model.Identity;
 
 namespace Yavsc.Helpers
 {
@@ -67,6 +68,60 @@ namespace Yavsc.Helpers
 			"HTTP_CACHE_CONTROL", "__RequestVerificationToken"
 		};
 
+		/// <summary>
+		/// Froms the user.
+		/// </summary>
+		/// <param name="state">State.</param>
+		/// <param name="user">User.</param>
+		public static void FromUser(this AppUserState state, MembershipUser user)
+		{
+			if (user == null) {
+				state.UserId = Guid.NewGuid ().ToString ();
+				return;
+			}
+			state.UserId = user.ProviderUserKey.ToString();
+			state.Name = user.UserName;
+			state.Email = user.Email;
+			state.IsAdmin = Roles.IsUserInRole ("Admin");
+			state.Theme = (string) ProfileBase.Create(state.Name).GetPropertyValue("UITheme");
+		}
+
+		/// <summary>
+		/// Populate the specified userProfile and username.
+		/// </summary>
+		/// <param name="userProfile">User profile.</param>
+		/// <param name="username">Username.</param>
+		public static void Populate(this Profile userProfile, string username)
+		{
+			ProfileBase profile = ProfileBase.Create(username);
+			if (profile == null) throw new Exception ("No profile");
+			userProfile.UserName = username;
+			userProfile.UITheme = (string) profile.GetPropertyValue ("UITheme");
+			if (profile.IsAnonymous) return;
+			userProfile.IsAdmin = Roles.IsUserInRole ("Admin");
+			userProfile.Email = Membership.GetUser (username).Email;
+			userProfile.BlogVisible = (bool) profile.GetPropertyValue ("BlogVisible");
+			userProfile.BlogTitle = (string) profile.GetPropertyValue ("BlogTitle");
+			userProfile.avatar = (string) profile.GetPropertyValue ("Avatar");
+			userProfile.Address = (string) profile.GetPropertyValue ("Address"); 
+			userProfile.CityAndState = (string) profile.GetPropertyValue ("CityAndState");
+			userProfile.Country = (string) profile.GetPropertyValue ("Country");
+			userProfile.ZipCode = (string) profile.GetPropertyValue ("ZipCode");
+			userProfile.WebSite = (string) profile.GetPropertyValue ("WebSite");
+			userProfile.Name = (string) profile.GetPropertyValue ("Name");
+			userProfile.Phone = (string) profile.GetPropertyValue ("Phone");
+			userProfile.Mobile = (string) profile.GetPropertyValue ("Mobile");
+			userProfile.BankCode = (string)profile.GetPropertyValue ("BankCode");
+			userProfile.IBAN = (string)profile.GetPropertyValue ("IBAN");
+			userProfile.BIC =  (string)profile.GetPropertyValue ("BIC");
+			userProfile.WicketCode = (string) profile.GetPropertyValue ("WicketCode");
+			userProfile.AccountNumber = (string) profile.GetPropertyValue ("AccountNumber");
+			userProfile.BankedKey = (int)  profile.GetPropertyValue ("BankedKey");
+			userProfile.GoogleCalendar = (string) profile.GetPropertyValue ("gcalid");
+			userProfile.GoogleRegId = (string) profile.GetPropertyValue ("gregid");
+			userProfile.MEACode = (string) profile.GetPropertyValue ("MEACode");
+		}
+
 		public static CommandRegistration CreateCommandFromRequest(string userProfileUrl)
 		{
 			var keys = HttpContext.Current.Request.Params.AllKeys.Where (
@@ -77,10 +132,12 @@ namespace Yavsc.Helpers
 				prms.Add (key, HttpContext.Current.Request.Params [key]);
 			}
 			CommandRegistration comreg;
+			var files = HttpContext.Current.Request.Files;
+			var fileList = new List<HttpPostedFileBase> ();
+			// for (int i = 0; i < files.Count; i++) fileList.Add ( files [i] as HttpPostedFileBase );
 			Command  com =
 				CreateCommand(
-				prms, 
-				HttpContext.Current.Request.Files, 
+					prms, fileList.ToArray(), 
 				out cmdreg);
 			if (typeof(NominativeCommandRegistration).IsAssignableFrom (cmdreg.GetType ())) {
 				// TODO send a message with topic /global/commandregistration
@@ -256,7 +313,7 @@ namespace Yavsc.Helpers
 		/// <param name="registrationMessage">Registration message.</param>
 		/// <param name="user">User.</param>
 		public static void SendActivationMessage(string validationUrl, 
-			string registrationMessage, MembershipUser user,string title = "Validation de votre compte {0}") {
+			string registrationMessage, MembershipUser user, string title = "Validation de votre compte {0}") {
 			FileInfo fi = new FileInfo (
 				HttpContext.Current.Server.MapPath (registrationMessage));
 			if (!fi.Exists) {
@@ -266,22 +323,31 @@ namespace Yavsc.Helpers
 						"à envoyer pour le message de confirmation ({0}))",
 						registrationMessage));
 			}
-
+			string body = null;
 			using (StreamReader sr = fi.OpenText ()) {
-				string body = sr.ReadToEnd ();
-				body = body.Replace ("<%SiteName%>", YavscHelpers.SiteName);
-				body = body.Replace ("<%UserName%>", user.UserName);
-				body = body.Replace ("<%UserActivatonUrl%>", validationUrl);
-
-				MimeMessage msg = 
-					new MimeMessage (
-						Admail, user.Email,
-						string.Format (title, YavscHelpers.SiteName),
-						body);
-
-				using (SmtpClient sc = new SmtpClient ()) {
-					sc.Send (msg);
-				}
+				body = sr.ReadToEnd ();
+			}
+			body = body.Replace ("<%SiteName%>", YavscHelpers.SiteName);
+			body = body.Replace ("<%UserName%>", user.UserName);
+			body = body.Replace ("<%UserActivatonUrl%>", validationUrl);
+			string titleWithSiteName = string.Format (title, YavscHelpers.SiteName);
+			var mimeBody = new  TextPart ("plain") {Text=body};
+			/* TODO 
+			 * multipart in case of attachment:
+			 * var multipart = new Multipart ("mixed");
+			multipart.Add (mimeBody); */
+			MimeMessage msg = new MimeMessage ();
+			msg.From.Add (new MailboxAddress ("Admin",Admail) );
+			msg.To.Add (new MailboxAddress (user.UserName,user.Email)); 
+			msg.Subject = titleWithSiteName;
+			msg.Body = mimeBody;
+			using (SmtpClient client = new SmtpClient ()) {
+				client.Connect ("localhost", 25);
+				// Note: since we don't have an OAuth2 token, disable
+				// the XOAUTH2 authentication mechanism.
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+				client.Send (msg);
+				client.Disconnect (true);
 			}
 		}
 
@@ -605,33 +671,14 @@ namespace Yavsc.Helpers
 		/// <param name="method">Method.</param>
 		/// <param name="htmlAttributes">Html attributes.</param>
 		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
-			string actionName, string method, object routes, object htmlAttributes = null)  {
-
+			string actionName, string method, object routes = null, object htmlAttributes = null)  {
 			string controllerName = helper.ViewContext.Controller.GetType ().Name;
 			if (controllerName.EndsWith ("Controller"))
 				controllerName = controllerName.Substring (0,controllerName.Length - 10);
 			return TranslatedActionLink (helper, actionName, method,
 				controllerName, routes, htmlAttributes);
 		}
-		/// <summary>
-		/// Translateds the action link.
-		/// </summary>
-		/// <returns>The action link.</returns>
-		/// <param name="helper">Helper.</param>
-		/// <param name="actionName">Action name.</param>
-		/// <param name="method">Method.</param>
-		/// <param name="controller">Controller.</param>
-		/// <param name="htmlAttributes">Html attributes.</param>
-		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
-			string actionLabel, string method, string controller, object htmlAttributes = null) {
-			string controllerName = helper.ViewContext.Controller.GetType ().Name;
-			if (controllerName.EndsWith ("Controller"))
-				controllerName = controllerName.Substring (0,controllerName.Length - 10);
-			if (controller == null)
-				controller = controllerName;
-			return TranslatedActionLink (helper, actionLabel, method, controller, 
-				new { controller = controller, action = actionLabel }, htmlAttributes);
-		}
+
 		/// <summary>
 		/// Translateds the action link.
 		/// </summary>
@@ -643,9 +690,13 @@ namespace Yavsc.Helpers
 		/// <param name="routes">Routes.</param>
 		/// <param name="htmlAttributes">Html attributes.</param>
 		public static IHtmlString TranslatedActionLink (this HtmlHelper helper, 
-			string actionLabel, string actionName, string controller, object routes, object htmlAttributes = null)  {
-
-
+			string actionLabel, string actionName, string controller, object routes = null, object htmlAttributes = null)  {
+			if (controller == null) {
+				string controllerName = helper.ViewContext.Controller.GetType ().Name;
+				if (controllerName.EndsWith ("Controller"))
+					controllerName = controllerName.Substring (0,controllerName.Length - 10);
+				controller = controllerName;
+			}
 			if (htmlAttributes == null)
 				htmlAttributes = defaultHtmlAttributes;
 			IHtmlString text = T.Translate (helper, actionLabel);
@@ -653,9 +704,11 @@ namespace Yavsc.Helpers
 			HtmlTextWriter writer = new HtmlTextWriter(strwr);
 
 			foreach (var ppt in htmlAttributes.GetType().GetRuntimeProperties()) {
-				var name = ppt.Name;
-				var val = ppt.GetValue (htmlAttributes).ToString ();
-				writer.AddAttribute(name, val);
+				if (ppt.CanRead) {
+					var name = ppt.Name;
+					var val = ppt.GetValue (htmlAttributes).ToString ();
+					writer.AddAttribute (name, val);
+				}
 			}
 			writer.AddAttribute ("href",
 				UrlHelper.GenerateUrl (
@@ -679,7 +732,8 @@ namespace Yavsc.Helpers
 		/// </summary>
 		/// <param name="collection">Collection.</param>
 		/// <param name="files">Files.</param>
-		private static CommandRegistration FromPost(this Command cmd, Dictionary<string,string>  collection, NameObjectCollectionBase files)
+		private static CommandRegistration FromPost(this Command cmd, Dictionary<string,string>  collection, 
+			HttpPostedFileBase [] files)
 		{
 			// string catref=collection["catref"]; // Catalog Url from which formdata has been built
 			cmd.ProductRef = collection ["productref"];
@@ -719,7 +773,7 @@ namespace Yavsc.Helpers
 		/// <param name="cmdreg">Cmdreg.</param>
 		public static Command CreateCommand (
 			Dictionary<string,string> collection,
-			NameObjectCollectionBase files, 
+			HttpPostedFileBase [] files, 
 			out CommandRegistration cmdreg)
 		{
 			string cls = collection ["type"];
@@ -731,6 +785,39 @@ namespace Yavsc.Helpers
 			return cmd;
 		}
 
+
+		/// <summary>
+		/// List the specified user.
+		/// </summary>
+		/// <param name="user">User.</param>
+		public static IEnumerable<CircleBase> List(string user)
+		{
+			if (user == null)
+				user = HttpContext.Current.User.Identity.Name;
+			return CircleManager.DefaultProvider.List (user);
+		}
+		/// <summary>
+		/// Circles the specified user and relation.
+		/// </summary>
+		/// <param name="user">User.</param>
+		/// <param name="relation">Relation.</param>
+		public static string[] Circles(string relation, string user = null )
+		{
+			if (user == null)
+				user = HttpContext.Current.User.Identity.Name;
+			return CircleManager.DefaultProvider.Circles (user, relation);
+		}
+		/// <summary>
+		/// Lists the available circles.
+		/// </summary>
+		/// <returns>The available circles.</returns>
+		/// <param name="user">User.</param>
+		public static string[] ListAvailableCircles (string user = null )
+		{
+			if (user == null)
+				user = HttpContext.Current.User.Identity.Name;
+			return CircleManager.DefaultProvider.List (user).Select (x => x.Title).ToArray();
+		}
 
 
 

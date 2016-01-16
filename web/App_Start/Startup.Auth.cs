@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Web.Helpers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin;
@@ -10,13 +12,25 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using Yavsc.Models.Identity;
 using Yavsc.Providers;
+using System.Web.Configuration;
+using System.Configuration;
 
 namespace Yavsc.App_Start
 {
+	/// <summary>
+	/// Startup.
+	/// </summary>
 	public partial class Startup
 	{
+		/// <summary>
+		/// Gets the O auth options.
+		/// </summary>
+		/// <value>The O auth options.</value>
 		public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
-
+		/// <summary>
+		/// Gets the public client identifier.
+		/// </summary>
+		/// <value>The public client identifier.</value>
 		public static string PublicClientId { get; private set; }
 
 		// For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
@@ -27,8 +41,11 @@ namespace Yavsc.App_Start
 			app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
 
 			// Enable the application to use a cookie to store information for the signed in user
-			// and to use a cookie to temporarily store information about a user logging in with a third party login provider
-			app.UseCookieAuthentication(new CookieAuthenticationOptions());
+			app.UseCookieAuthentication(new CookieAuthenticationOptions
+				{
+					AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+					LoginPath = new PathString("/Account/Login")
+				});
 			app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
 			// Configure the application for OAuth based flow
@@ -58,11 +75,14 @@ namespace Yavsc.App_Start
 			//    appId: "",
 			//    appSecret: "");
 
-			//app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-			//{
-			//    ClientId = "",
-			//    ClientSecret = ""
-			//});
+			app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+			{
+				ClientId = ConfigurationManager.AppSettings["GOOGLE_CLIENT_ID"],
+				ClientSecret = ConfigurationManager.AppSettings["GOOGLE_CLIENT_SECRET"]
+			});
+
+			AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
+
 		}
 	}
 }

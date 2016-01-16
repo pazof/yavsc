@@ -7,7 +7,6 @@ using System.Net.Mime;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Web;
 using System.Web.Configuration;
-using System.Web.Profile;
 using System.Web.Security;
 using Npgsql.Web.Blog;
 using Yavsc;
@@ -19,7 +18,9 @@ using System.Net;
 using System.Web.Mvc;
 using Yavsc.Model.Circles;
 using Yavsc.Helpers;
-using YavscClientModel;
+using Yavsc.Client;
+using Yavsc.Model.FileSystem;
+using System.Web.Profile;
 
 namespace Yavsc.Controllers
 {
@@ -44,15 +45,7 @@ namespace Yavsc.Controllers
 			
 			return BlogList (pageIndex, pageSize);
 		}
-		/// <summary>
-		/// Chooses the media.
-		/// </summary>
-		/// <returns>The media.</returns>
-		/// <param name="id">Identifier.</param>
-		public ActionResult ChooseMedia(long postid) 
-		{
-			return View ();
-		}
+
 
 		/// <summary>
 		/// Blogs the list.
@@ -63,7 +56,7 @@ namespace Yavsc.Controllers
 		public ActionResult BlogList (int pageIndex = 0, int pageSize = 10)
 		{
 			int totalRecords;
-			var bs = BlogManager.LastPosts (pageIndex, pageSize, out totalRecords);
+			var bs = BlogManager.LastPosts (User.Identity.Name, pageIndex, pageSize, out totalRecords);
 			ViewData ["ResultCount"] = totalRecords; 
 			ViewData ["PageSize"] = pageSize;
 			ViewData ["PageIndex"] = pageIndex;
@@ -128,7 +121,8 @@ namespace Yavsc.Controllers
 			// Get author's meta data
 			var pr = ProfileBase.Create (user);
 			if (pr != null) {
-				Profile bupr = new Profile (pr);
+				Profile bupr = new Profile ();
+				bupr.Populate (user);
 				// listing meta data
 				ViewData ["BlogUserProfile"] = bupr;
 				ViewData ["BlogTitle"] = bupr.BlogTitle;
@@ -161,12 +155,13 @@ namespace Yavsc.Controllers
 		public ActionResult GetPost (long postid)
 		{
 			ViewData ["id"] = postid;
-			BlogEntry e = BlogManager.GetForReading (postid);
+			BlogEntry e = BlogManager.GetForReading (User.Identity.Name, postid);
 			UUTBlogEntryCollection c = new UUTBlogEntryCollection (e.Author,e.Title);
 			c.Add (e);
 			ViewData ["user"] = c.Author;
 			ViewData ["title"] = c.Title;
-			Profile pr = new Profile (ProfileBase.Create (c.Author));
+			Profile pr = new Profile ();
+			pr.Populate (c.Author);
 			if (pr == null)
 				// the owner's profile must exist 
 				// in order to publish its bills
@@ -189,7 +184,8 @@ namespace Yavsc.Controllers
 		{
 			if (ModelState.IsValid)
 			if (bec.Count > 0) {
-				Profile pr = new Profile (ProfileBase.Create (bec.Author));
+				Profile pr = new Profile ();
+				pr.Populate(bec.Author);
 				if (pr == null)
 					// the owner's profile must exist 
 					// in order to publish its bills
@@ -234,70 +230,100 @@ namespace Yavsc.Controllers
 		/// <param name="title">Title.</param>
 		/// <param name="pageIndex">Page index.</param>
 		/// <param name="pageSize">Page size.</param>
-		public ActionResult UserPost (string user, string title, int pageIndex = 0, int pageSize = 10)
+		public ActionResult UserPost (string user, string title, long postid = 0, int pageIndex = 0, int pageSize = 10)
 		{
-			ViewData ["user"] = user;
-			ViewData ["title"] = title;
-			ViewData ["PageIndex"] = pageIndex;
-			ViewData ["pageSize"] = pageSize;
+			UUTBlogEntryCollection c = null;
+			BlogEntry uniquepost = null;
+			if (postid != 0) {
+				uniquepost = BlogManager.GetPost (postid);
+				if (uniquepost == null)
+					return HttpNotFound ();
+				if (user!=null)
+				if (user!=uniquepost.Author)
+					return HttpNotFound ();
+				user = uniquepost.Author;
+				if (title!=null)
+				if (title!= uniquepost.Title)
+					return HttpNotFound ();
+			} 
 			var pb = ProfileBase.Create (user);
 			if (pb == null)
 				// the owner's profile must exist 
 				// in order to publish its bills
-				return View ("NotAuthorized");
-			Profile pr = new Profile (pb);
+				return HttpNotFound ();
+			c = new UUTBlogEntryCollection (user, title);
+			if (postid == 0)
+				c.AddRange (BlogManager.FilterOnReadAccess (User.Identity.Name,
+					BlogManager.GetPost (user, title)));
+			else
+				c.Add (uniquepost);
+			// view meta data
+			ViewData ["user"] = user;
+			ViewData ["title"] = title;
+			ViewData ["PageIndex"] = pageIndex;
+			ViewData ["pageSize"] = pageSize;
+			Profile pr = new Profile ();
+			pr.Populate (pb.UserName);
 			ViewData ["BlogUserProfile"] = pr;
 			ViewData ["Avatar"] = pr.avatar;
 			ViewData ["BlogTitle"] = pr.BlogTitle;
-			UUTBlogEntryCollection c = new UUTBlogEntryCollection (user, title);
-			c.AddRange ( BlogManager.FilterOnReadAccess (BlogManager.GetPost (user, title)));
 			return View ("UserPost",c);
 		}
 
-		/// <summary>
-		/// Post the specified title.
-		/// </summary>
-		/// <param name="title">Title.</param>
-		[Authorize(Roles="Blogger")]
-		public ActionResult Post (string title)
+		[ValidateAjaxAttribute]
+		public JsonResult JEdit (BlogEntry model)
 		{
-			string un = Membership.GetUser ().UserName;
-			if (String.IsNullOrEmpty (title))
-				title = "";
-			ViewData ["SiteName"] = sitename;
-			ViewData ["Author"] = un;
-			ViewData ["AllowedCircles"] = CircleManager.DefaultProvider.List (un)
-				.Select (x => new SelectListItem {
-				Value = x.Id.ToString(),
-				Text = x.Title
-			});
-
-			return View ("Edit", new BlogEntry { Title = title, Author = un });
+			if (ModelState.IsValid) {
+				if (model.Id != 0) {
+					// ensures rights to update
+					BlogManager.GetForEditing (User.Identity.Name, model.Id, true);
+					BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible, model.AllowedCircles);
+					if (model.Photo!=null)
+						BlogManager.UpdatePostPhoto (model.Id, model.Photo);
+					return Json(new { LocalizedText.BillUpdated } );
+				} else {
+					model.Id = BlogManager.Post (model.Author, model.Title, model.Content, model.Visible, model.AllowedCircles);
+					if (model.Photo!=null)
+						BlogManager.UpdatePostPhoto (model.Id, model.Photo);
+					return Json(new { LocalizedText.BillCreated } );
+				}
+			}
+			return Json (new { Ok = "false" });
 		}
-
 		/// <summary>
 		/// Validates the edit.
 		/// </summary>
 		/// <returns>The edit.</returns>
 		/// <param name="model">Model.</param>
-		[Authorize(Roles="")]
-		public ActionResult Edit (BlogEntry model)
+		[Authorize(Roles="Blogger,Admin")]
+		public ActionResult Edit (BlogEntry model, HttpPostedFileBase PhotoUpload, HttpPostedFileBase[] AttachedFiles)
 		{
 			ViewData ["SiteName"] = sitename;
-			ViewData ["Author"] = Membership.GetUser ().UserName;
+			ViewData ["Author"] = User.Identity.Name;
 			if (ModelState.IsValid) {
 				if (model.Id != 0) {
 					// ensures rights to update
-					BlogManager.GetForEditing (model.Id, true);
+					BlogManager.GetForEditing (User.Identity.Name, model.Id, true);
 					BlogManager.UpdatePost (model.Id, model.Title, model.Content, model.Visible, model.AllowedCircles);
 					ViewData.Notify( LocalizedText.BillUpdated);
 
 				} else {
-					model.Id = BlogManager.Post (model.Author, model.Title, model.Content, model.Visible, model.AllowedCircles);
+					model.Id = BlogManager.Post (User.Identity.Name, model.Title, model.Content, model.Visible, model.AllowedCircles);
 					ViewData.Notify( LocalizedText.BillCreated);
 				}
 				BlogManager.UpdatePostPhoto (model.Id, model.Photo);
 			}
+			// if (model.AttachedFiles!=null) UserFileSystemManager.Put (Path.Combine ("bfiles", model.Id.ToString ()),model.AttachedFiles);
+			if (PhotoUpload != null) {
+				UserFileSystemManager.Put (Path.Combine ("bfiles", model.Id.ToString ()), 
+					new HttpPostedFileBase[] {PhotoUpload});
+			}
+			if (AttachedFiles != null)
+			if (AttachedFiles.Length>0)
+			if (AttachedFiles[0]!=null)
+				UserFileSystemManager.Put (Path.Combine ("bfiles", model.Id.ToString ()),
+					AttachedFiles);
+					
 			ViewData ["AllowedCircles"] = 
 				CircleManager.DefaultProvider.List (
 					Membership.GetUser ().UserName).Select (x => new SelectListItem {
@@ -316,9 +342,10 @@ namespace Yavsc.Controllers
 		public ActionResult EditId (long postid)
 		{
 			
-			BlogEntry e = BlogManager.GetForEditing (postid);
+			BlogEntry e = BlogManager.GetForEditing (User.Identity.Name, postid);
 			string user = Membership.GetUser ().UserName;
-			Profile pr = new Profile (ProfileBase.Create(e.Author));
+			Profile pr = new Profile ();
+			pr.Populate(e.Author);
 			ViewData ["BlogTitle"] = pr.BlogTitle;
 			ViewData ["LOGIN"] = user; 
 			ViewData ["Id"] = postid;
@@ -377,7 +404,7 @@ namespace Yavsc.Controllers
 				throw new AuthorizationDenied ();
 			if (!confirm)
 				return View ("RemoveTitle");
-			BlogManager.RemoveTitle (user, title);
+			BlogManager.RemoveTitle (User.Identity.Name, user, title);
 			if (returnUrl == null)
 				RedirectToAction ("Index", new { user = user });
 			return Redirect (returnUrl);
@@ -394,7 +421,7 @@ namespace Yavsc.Controllers
 		public ActionResult RemovePost (long postid, string returnUrl, bool confirm = false)
 		{
 			// ensures the access control
-			BlogEntry e = BlogManager.GetForEditing (postid);
+			BlogEntry e = BlogManager.GetForEditing (User.Identity.Name, postid);
 			if (e == null)
 				return new HttpNotFoundResult ("post id "+postid.ToString());
 			ViewData ["id"] = postid;

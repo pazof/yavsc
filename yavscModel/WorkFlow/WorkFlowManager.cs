@@ -6,18 +6,15 @@ using System.Configuration.Provider;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Web.Configuration;
-using System.Web.Security;
 using Yavsc.Model.Calendar;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Model.FrontOffice.Catalog;
-using Yavsc.Model.Google.Api;
 using Yavsc.Model.Skill;
 using Yavsc.Model.WorkFlow;
 using MailKit.Net.Smtp;
 using MimeKit;
-using YavscClientModel.FrontOffice;
-using YavscClientModel.Skills;
+using Yavsc.Client.FrontOffice;
+using Yavsc.Client.Skills;
 
 namespace Yavsc.Model.WorkFlow
 {

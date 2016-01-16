@@ -26,9 +26,10 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web;
-using System.Web.Profile;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.WorkFlow;
+using System.Web.Profile;
+using Yavsc.Helpers;
 
 namespace Yavsc.Formatters
 {
@@ -86,10 +87,11 @@ namespace Yavsc.Formatters
 			Estimate e = value as Estimate;
 			tmpe.Session.Add ("estim", e);
 
-			Profile prpro =  new Profile (ProfileBase.Create (e.Responsible));
+			Profile prpro = new Profile ();
+			prpro.Populate(e.Responsible);
 
-			var pbc = ProfileBase.Create (e.Client);
-			Profile prcli =  new Profile (pbc);
+			Profile prcli =  new Profile ();
+			prcli.Populate (e.Client);
 
 			if (!prpro.HasBankAccount ||  !prcli.IsBillable)
 				throw new Exception("account number for provider, or client not billable.");

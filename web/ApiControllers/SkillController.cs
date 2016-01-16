@@ -22,7 +22,7 @@ using System;
 using Yavsc.Model.Skill;
 using System.Web.Http;
 using Yavsc.Model;
-using YavscClientModel.Skills;
+using Yavsc.Client.Skills;
 
 namespace Yavsc.ApiControllers
 {

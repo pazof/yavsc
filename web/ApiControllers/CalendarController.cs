@@ -24,13 +24,12 @@ using Yavsc.Model.RolesAndMembers;
 using System.Web.Security;
 using Yavsc.Model.Google;
 using Yavsc.Helpers;
-using System.Web.Profile;
 using Yavsc.Model.Circles;
 using Yavsc.Model.Calendar;
 using System.Web.Http.Routing;
 using System.Collections.Generic;
-using YavscClientModel.Maps;
-using YavscClientModel.Events;
+using Yavsc.Client.Maps;
+using Yavsc.Client.Events;
 
 
 namespace Yavsc.ApiControllers

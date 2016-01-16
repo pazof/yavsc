@@ -27,8 +27,8 @@ using Yavsc.Model.Circles;
 using System.Collections.Generic;
 using System.Web.Profile;
 using System.Web.Security;
-using Yavsc.Model.Google.Api;
-using YavscClientModel.Messaging;
+using Yavsc.Helpers.Google.Api;
+using Yavsc.Client.Messaging;
 
 namespace Yavsc.ApiControllers
 {

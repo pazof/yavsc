@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using YavscClientModel.FrontOffice;
+using Yavsc.Client.FrontOffice;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -54,7 +54,7 @@ namespace Yavsc.Model.FrontOffice
 					"No command is assignable from a " + cls);
 
 			ConstructorInfo ci = type.GetConstructor (new Type[]{ });
-			YavscClientModel.FrontOffice.NominativeSimpleBookingQuery res;
+			Yavsc.Client.FrontOffice.NominativeSimpleBookingQuery res;
 			var result =  ci.Invoke (new object[]{ }) as Command;
 			return result;
 		}

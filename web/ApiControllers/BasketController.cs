@@ -8,7 +8,7 @@ using Yavsc.Model.WorkFlow;
 using System.Collections.Specialized;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Helpers;
-using YavscClientModel.FrontOffice;
+using Yavsc.Client.FrontOffice;
 
 namespace Yavsc.ApiControllers
 {

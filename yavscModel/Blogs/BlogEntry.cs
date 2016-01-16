@@ -3,9 +3,11 @@ using System.Configuration;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Model.Circles;
+using System.Web;
 
 namespace Yavsc.Model.Blogs
 {
+
 	/// <summary>
 	/// Blog entry.
 	/// </summary>

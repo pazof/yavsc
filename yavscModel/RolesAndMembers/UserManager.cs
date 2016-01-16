@@ -1,7 +1,7 @@
 using System.Configuration;
 using System.Reflection;
 using System;
-using YavscClientModel;
+using Yavsc.Client;
 
 namespace Yavsc.Model.RolesAndMembers
 {

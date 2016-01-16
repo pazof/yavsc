@@ -21,7 +21,7 @@
 using System;
 using System.Web.Mvc;
 using Yavsc.Model;
-using YavscClientModel;
+using Yavsc.Client;
 
 namespace Yavsc
 {

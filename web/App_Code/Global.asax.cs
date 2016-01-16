@@ -21,7 +21,7 @@ namespace Yavsc
 	/// </summary>
 	public class MvcApplication : HttpApplication
 	{
-
+		
 		/// <summary>
 		/// Registers the routes.
 		/// </summary>
@@ -77,7 +77,7 @@ namespace Yavsc
 				"BlogById",
 				"b/{action}/{postid}",
 				new { controller = "Blogs", action = "Index", 
-					postid=UrlParameter.Optional }
+					postid = UrlParameter.Optional }
 			); 
 
 			routes.MapRoute (
@@ -105,6 +105,7 @@ namespace Yavsc
 		/// </summary>
 		protected void Application_Start ()
 		{
+			// Microsoft.Owin.Host.SystemWeb.PreApplicationStart.Initialize ();
 			AreaRegistration.RegisterAllAreas ();
 			ModelBinders.Binders.Add(typeof(double), new DoubleModelBinder());
 			GlobalConfiguration.Configure (WebApiConfig.Register);

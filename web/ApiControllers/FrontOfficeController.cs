@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Web.Http;
-using System.Web.Profile;
 using System.Web.Security;
 using Yavsc.Formatters;
 using Yavsc.Helpers;
@@ -15,9 +14,10 @@ using Yavsc.Model.WorkFlow;
 using System.IO;
 using Yavsc.Model.FrontOffice.Catalog;
 using Yavsc.Model.Skill;
-using YavscClientModel.FrontOffice;
-using YavscClientModel.Skills;
-using YavscClientModel;
+using Yavsc.Client.FrontOffice;
+using Yavsc.Client.Skills;
+using Yavsc.Client;
+using System.Web.Profile;
 
 namespace Yavsc.ApiControllers
 {
@@ -120,13 +120,15 @@ namespace Yavsc.ApiControllers
 			Estimate e = WorkFlowManager.GetEstimate (estimid);
 			tmpe.Session = new Dictionary<string,object> ();
 			tmpe.Session.Add ("estim", e);
-			Profile prpro = new Profile (ProfileBase.Create (e.Responsible));
+			Profile prpro = new Profile ();
+			prpro.Populate(e.Responsible);
 			if (!prpro.HasBankAccount)
 				throw new TemplateException ("NotBankable:" + e.Responsible);
 			if (!prpro.HasPostalAddress)
 				throw new TemplateException ("NoPostalAddress:" + e.Responsible);
 			
-			Profile prcli = new Profile (ProfileBase.Create (e.Client));
+			Profile prcli = new Profile ();
+			prcli.Populate(e.Client);
 			if (!prcli.IsBillable)
 				throw new TemplateException ("NotBillable:" + e.Client);
 

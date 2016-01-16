@@ -24,8 +24,8 @@ using Yavsc.Model;
 using Yavsc.Model.RolesAndMembers;
 using Yavsc.Model.Circles;
 using Yavsc.Model.FrontOffice;
-using YavscClientModel.Events;
-using YavscClientModel;
+using Yavsc.Client.Events;
+using Yavsc.Client;
 
 namespace Yavsc.Model.Calendar
 {

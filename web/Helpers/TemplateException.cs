@@ -18,7 +18,6 @@ using Yavsc.Model.RolesAndMembers;
 using Yavsc.Controllers;
 using Yavsc.Formatters;
 using System.Text;
-using System.Web.Profile;
 using System.Collections.Specialized;
 
 namespace Yavsc.Helpers

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Yavsc.Model.FrontOffice.Catalog;
 using Yavsc.Model.FrontOffice;
-using YavscClientModel.FrontOffice;
+using Yavsc.Client.FrontOffice;
 
 namespace Yavsc.Model.WorkFlow
 {

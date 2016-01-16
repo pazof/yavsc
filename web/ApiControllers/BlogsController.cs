@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Yavsc.Formatters;
 using Yavsc.Model;
-using YavscClientModel;
+using Yavsc.Client;
 
 namespace Yavsc.ApiControllers
 {
@@ -30,7 +30,7 @@ namespace Yavsc.ApiControllers
 			AcceptVerbs ("POST")]
 		public void Tag (PostTag model) {
 			if (ModelState.IsValid) {
-				BlogManager.GetForEditing (model.PostId);
+				BlogManager.GetForEditing (User.Identity.Name, model.PostId);
 				BlogManager.Tag (model.PostId, model.Tag);
 			}
 		}
@@ -53,7 +53,7 @@ namespace Yavsc.ApiControllers
 			AcceptVerbs ("POST")]
 		public void Untag (PostTag model) {
 			if (ModelState.IsValid) {
-				BlogManager.GetForEditing (model.PostId);
+				BlogManager.GetForEditing (User.Identity.Name, model.PostId);
 				BlogManager.Untag (model.PostId, model.Tag);
 			}
 		}
@@ -68,7 +68,7 @@ namespace Yavsc.ApiControllers
 			if (Membership.GetUser ().UserName != user)
 			if (!Roles.IsUserInRole("Admin"))
 				throw new AuthorizationDenied ();
-			BlogManager.RemoveTitle (user, title);
+			BlogManager.RemoveTitle (User.Identity.Name, user, title);
 		}
 
 		/// <summary>
@@ -104,23 +104,28 @@ namespace Yavsc.ApiControllers
 		public async Task<HttpResponseMessage> PostFile(long id) {
 			if (!(Request.Content.Headers.ContentType.MediaType=="multipart/form-data"))
 				throw new HttpRequestException ("not a multipart/form-data request");
-			if (id == 0) {
-				throw new NotImplementedException ();
-			}
-
+			if (id == 0)
+				throw new Exception ("no post id");
 			BlogEntry be = BlogManager.GetPost (id);
-			if (be.Author != Membership.GetUser ().UserName)
+			// check auth
+			if (be.Author != User.Identity.Name)
 				throw new AuthorizationDenied ();
-			string root = HttpContext.Current.Server.MapPath("~/bfiles/"+id);
-			DirectoryInfo di = new DirectoryInfo (root);
-			if (!di.Exists) di.Create ();
-
+			string root = HttpContext.Current.Server.MapPath("~/users/"+User.Identity.Name+"/bfiles/"+id);
 			var provider = new MultipartFormDataStreamProvider(root);
 			try
 			{
 				// Read the form data.
 				await Request.Content.ReadAsMultipartAsync(provider) ;
 				var invalidChars = Path.GetInvalidFileNameChars();
+				if (provider.FileData.Count<=0)
+					return Request.CreateResponse(HttpStatusCode.BadRequest);
+				// Now, get a post id
+				var result = Request.CreateResponse(HttpStatusCode.OK);
+				result.Content = new StringContent(id.ToString()) ;
+
+				DirectoryInfo di = new DirectoryInfo (root);
+				if (!di.Exists) di.Create ();
+
 				foreach (var file in provider.FileData)
 				{
 					string filename = file.LocalFileName;
@@ -133,8 +138,7 @@ namespace Yavsc.ApiControllers
 					if (fi.Exists) fi.Delete();
 					File.Move(filename, fi.FullName);
 				}
-
-				return Request.CreateResponse(HttpStatusCode.OK);
+				return result;
 			}
 			catch (System.Exception e)
 			{
@@ -143,18 +147,19 @@ namespace Yavsc.ApiControllers
 		}
 
 		/// <summary>
-		/// Create the specified blog entry.
+		/// Create or update the specified blog entry.
 		/// </summary>
 		/// <param name="be">Bp.</param>
 		[Authorize, HttpPost]
-		public long Post (BlogEntry be) 
+		public async Task<HttpResponseMessage> Post (BlogEntry be) 
 		{
 			if (be.Id == 0)
-				return BlogManager.Post (User.Identity.Name, be.Title, 
+				be.Id = BlogManager.Post (User.Identity.Name, be.Title, 
 					be.Content, be.Visible,be.AllowedCircles );
 			else
 				BlogManager.UpdatePost (be);
-			return 0;
+			
+			return await PostFile(be.Id);
 		}
 		/// <summary>
 		/// Blog entry rating.
@@ -182,7 +187,7 @@ namespace Yavsc.ApiControllers
 			if (model.Rate < 0 || model.Rate > 100)
 				ModelState.AddModelError ("Rate", "0<=Rate<=100");
 			else {
-				BlogManager.GetForEditing (model.Id);
+				BlogManager.GetForEditing (User.Identity.Name, model.Id);
 				BlogManager.Rate (model.Id, model.Rate);
 			}
 		}
@@ -205,7 +210,7 @@ namespace Yavsc.ApiControllers
 		[Authorize, HttpPost, ValidateAjaxAttribute]
 		public void SetPhoto(long id, [FromBody] string photo)
 		{
-			BlogManager.GetForEditing (id);
+			BlogManager.GetForEditing (User.Identity.Name, id);
 			BlogManager.UpdatePostPhoto (id, photo);
 		}
 

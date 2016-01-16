@@ -2,7 +2,7 @@ using System;
 using System.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
-using YavscClientModel;
+using Yavsc.Client;
 
 namespace Yavsc.Model.Blogs
 {

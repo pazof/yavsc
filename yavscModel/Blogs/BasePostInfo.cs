@@ -45,13 +45,37 @@ namespace Yavsc.Model.Blogs
 			Id = be.Id;
 			Posted = be.Posted;
 			Modified = be.Modified;
-			Intro = MarkdownHelper.MarkdownIntro (be.Content, out Truncated);
+			Intro = MarkdownIntro (be.Content, out Truncated);
 			Photo = be.Photo;
 			Tags = be.Tags;
 			AllowedCircles = be.AllowedCircles;
 			Visible = be.Visible;
 			Rate = be.Rate;
 		}
+
+		/// <summary>
+		/// Markdowns the intro.
+		/// </summary>
+		/// <returns>The intro.</returns>
+		/// <param name="markdown">Markdown.</param>
+		/// <param name="truncated">Truncated.</param>
+		public static string MarkdownIntro(string markdown, out bool truncated) { 
+			int maxLen = 250;
+			if (markdown.Length < maxLen) {
+				truncated = false;
+				return markdown;
+			}
+			string intro = markdown.Remove (maxLen);
+			truncated = true;
+			int inl = intro.LastIndexOf ("\n");
+			if (inl > 20)
+				intro = intro.Remove (inl);
+			intro += " ...";
+			return intro;
+		}
+
+
+
 	}
 	
 }

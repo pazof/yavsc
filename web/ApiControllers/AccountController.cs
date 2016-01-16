@@ -23,7 +23,6 @@ using System.Web.Http;
 using System.Net.Http;
 using Yavsc.Model.RolesAndMembers;
 using System.Web.Security;
-using System.Web.Profile;
 using Yavsc.Helpers;
 using System.Collections.Specialized;
 using Yavsc.App_Start;
@@ -40,8 +39,9 @@ using Yavsc.Providers;
 using System.Security.Cryptography;
 using System.Web;
 using Microsoft.AspNet.Identity.Owin;
-using YavscClientModel.Accounts;
+using Yavsc.Client.Accounts;
 using Yavsc.Model.Circles;
+using System.Web.Profile;
 
 namespace Yavsc.ApiControllers
 {

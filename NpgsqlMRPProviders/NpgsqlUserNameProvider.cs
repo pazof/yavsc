@@ -60,6 +60,13 @@ namespace Npgsql.Web.RolesAndMembers
 		}
 
 		#region implemented abstract members of ChangeUserNameProvider
+
+		public override Profile GetUserProfile (string name)
+		{
+			var result = new Profile (name);
+			throw new NotImplementedException ();
+		}
+
 		/// <summary>
 		/// Changes the name.
 		/// </summary>

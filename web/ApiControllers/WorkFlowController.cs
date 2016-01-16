@@ -11,7 +11,7 @@ using Yavsc.Model.RolesAndMembers;
 using Yavsc.Helpers;
 using Yavsc.Model;
 using System.Web.Http.Controllers;
-using YavscClientModel;
+using Yavsc.Client;
 
 namespace Yavsc.ApiControllers
 {

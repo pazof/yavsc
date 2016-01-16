@@ -13,7 +13,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Yavsc.Model.FrontOffice.Catalog;
-using YavscClientModel.FrontOffice;
+using Yavsc.Client.FrontOffice;
 using System.Reflection;
 
 namespace Yavsc

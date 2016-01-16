@@ -1,12 +1,12 @@
 using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Net.Http.Headers;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 using Yavsc.Model.FrontOffice;
 using Yavsc.Model.FrontOffice.Catalog;
-using System.Net.Http.Formatting;
-using Newtonsoft.Json;
 
 namespace Yavsc
 {

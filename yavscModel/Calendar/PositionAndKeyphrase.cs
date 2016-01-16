@@ -21,7 +21,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using YavscClientModel.Maps;
+using Yavsc.Client.Maps;
 
 namespace Yavsc.Model.Calendar
 {

@@ -9,7 +9,7 @@ using System.Net.Mail;
 using Yavsc;
 using System.Globalization;
 using Yavsc.Model;
-using YavscClientModel;
+using Yavsc.Client;
 
 namespace Yavsc.Helpers
 {

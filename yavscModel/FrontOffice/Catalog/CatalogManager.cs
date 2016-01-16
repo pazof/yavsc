@@ -17,9 +17,8 @@ namespace Yavsc.Model.FrontOffice.Catalog
 		/// </summary>
 		/// <returns>The catalog.</returns>
 		/// <param name="catalogUri">Catalog URI.</param>
-		public static Catalog GetCatalog ()
+		public static Catalog GetCatalog (string catalogReleaseNumber = "yavsc initial")
 		{
-			string catalogUri = HttpContext.Current.Request.Url.AbsolutePath;
 			if (defaultProvider == null) {
 				if (CatalogHelper.Config == null)
 					CatalogHelper.LoadConfig ();
@@ -31,7 +30,7 @@ namespace Yavsc.Model.FrontOffice.Catalog
 			// Sanity fixes
 			foreach (Brand b in res.Brands) {
 				if (b.DefaultForm.CatalogReference==null)
-					b.DefaultForm.CatalogReference = catalogUri;
+					b.DefaultForm.CatalogReference = catalogReleaseNumber;
 				foreach (ProductCategory pc in b.Categories) {
 					foreach (Product p in pc.Products) {
 						if (p.CommandForm == null)

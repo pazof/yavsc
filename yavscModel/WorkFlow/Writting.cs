@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Model;
-using YavscClientModel;
+using Yavsc.Client;
 
 namespace Yavsc.Model.WorkFlow
 {

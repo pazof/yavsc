@@ -2,36 +2,122 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
+
+using Yavsc.Model.Identity;
+using System.Security.Claims;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
 using System.Web;
-using System.Web.Configuration;
 using System.Web.Mvc;
-using System.Web.Profile;
-using System.Web.Security;
-using Yavsc;
-using Yavsc.Helpers;
-using Yavsc.Model;
-using Yavsc.Model.Circles;
 using Yavsc.Model.RolesAndMembers;
+using System.Web.Security;
+using Yavsc.Helpers;
+using Yavsc.Client;
 using Yavsc.Model.WorkFlow;
-using YavscClientModel;
-using YavscClientModel.Messaging;
+using System.Net;
+using System.IO;
+using System.Web.Profile;
+using System.Linq;
+using Yavsc.Model.Circles;
+using Yavsc.Client.Messaging;
 
 namespace Yavsc.Controllers
 {
+
+
+
 	/// <summary>
 	/// Account controller.
 	/// </summary>
-	public class AccountController : Controller
+	public class AccountController : BaseController
 	{
+		public void IdentitySignin(AppUserState appUserState, string providerKey = null, bool isPersistent = false)
+		{
+			var claims = new List<Claim>();
+
+			// create required claims
+			claims.Add(new Claim(ClaimTypes.NameIdentifier, appUserState.UserId));
+			claims.Add(new Claim(ClaimTypes.Name, appUserState.Name));
+
+			// custom – my serialized AppUserState object
+			claims.Add(new Claim("userState", appUserState.ToString()));
+
+			var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+
+			AuthenticationManager.SignIn(new AuthenticationProperties()
+				{
+					AllowRefresh = true,
+					IsPersistent = isPersistent,
+					ExpiresUtc = DateTime.UtcNow.AddDays(7)
+				}, identity);
+		}
+
+		public void IdentitySignout()
+		{
+			AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie,
+				DefaultAuthenticationTypes.ExternalCookie);
+		}
+
+		private IAuthenticationManager AuthenticationManager
+		{
+			get { return HttpContext.GetOwinContext().Authentication; }
+		}
+
+		/// <summary>
+		/// Register the specified model.
+		/// </summary>
+		/// <param name="model">Model.</param>
+		[AcceptVerbs(HttpVerbs.Post), ValidateAntiForgeryToken]
+		public ActionResult Register(RegisterViewModel model)
+		{
+			if (!UserManager.IsAvailable (model.UserName))
+				ModelState.AddModelError ("UserName", 
+					string.Format(LocalizedText.DuplicateUserName,
+						model.UserName));
+			
+			if (!string.IsNullOrWhiteSpace(Membership.GetUserNameByEmail (model.Email)))
+				ModelState.AddModelError ("EMail",
+					string.Format(LocalizedText.DuplicateEmail,
+						model.Email));
+
+			if (model.Password != model.ConfirmPassword)
+				ModelState.AddModelError ("ConfirmPassword", 
+					LocalizedText.PleaseConfirmYourNewPassword);
+
+			if (ModelState.IsValid) {
+				MembershipCreateStatus mcs;
+				var user = Membership.CreateUser (
+					model.UserName,
+					model.Password,
+					model.Email,
+					null,
+					null,
+					false,
+					out mcs);
+				switch (mcs) {
+				case MembershipCreateStatus.Success:
+					Url.SendActivationMessage (user);
+					ViewData ["username"] = user.UserName;
+					ViewData ["email"] = user.Email;
+					AppUserState appUserState = new AppUserState ();
+					appUserState.FromUser (user);
+					IdentitySignin (appUserState, appUserState.UserId);
+					return View ("RegistrationPending");
+				default:
+					ViewData.Notify(
+						string.Format(LocalizedText.RegistrationUnexpectedError, 
+							mcs.ToString ()));
+					break;
+				}
+			}
+			return View (model);
+		}  
+
 		/// <summary>
 		/// Avatar the specified user.
 		/// </summary>
 		/// <param name="id">User.</param>
+		// TODO let drop this code
 		[AcceptVerbs (HttpVerbs.Get)]
 		public ActionResult Avatar (string id)
 		{
@@ -69,7 +155,16 @@ namespace Yavsc.Controllers
 		{
 			if (ModelState.IsValid) {
 				if (Membership.ValidateUser (model.UserName, model.Password)) {
-					FormsAuthentication.SetAuthCookie (model.UserName, model.RememberMe);
+					var user = Membership.GetUser (model.UserName);
+					var key = user.ProviderUserKey.ToString ();
+					var userState = new AppUserState () {
+						Name= user.UserName,
+						Email = user.Email,
+						IsAdmin = Roles.IsUserInRole("Admin"),
+						Theme = ProfileBase.Create(user.UserName).GetPropertyValue("UITheme") as string,
+						UserId = key
+					};
+					IdentitySignin(userState, key, model.RememberMe);
 					if (returnUrl != null)
 						return Redirect (returnUrl);
 					else
@@ -106,6 +201,7 @@ namespace Yavsc.Controllers
 			return View ("Register",model);
 		}
 
+		#if FORMS_AUTHENTICATION
 		/// <summary>
 		/// Register the specified model and returnUrl.
 		/// </summary>
@@ -157,6 +253,8 @@ namespace Yavsc.Controllers
 			}
 			return View (model);
 		}
+
+		#endif
 
 		/// <summary>
 		/// Changes the password success.
@@ -254,18 +352,23 @@ namespace Yavsc.Controllers
 				id = Membership.GetUser ().UserName;
 			ViewData ["UserName"] = id;
 
-			ProfileEdition model = new ProfileEdition (ProfileBase.Create (id));
+			ProfileEdition model = new ProfileEdition ();
+			model.Populate (id);
+			var profile = ProfileBase.Create (id);
+
 			model.RememberMe = FormsAuthentication.GetAuthCookie (id, true) == null;
 			SetMEACodeViewData (model);
 			SetUIThemeViewData (model);
 			return View (model);
 		}
+		// TODO replace this with an Html helper method usage
 		private void SetUIThemeViewData(Profile model) {
 			ViewData ["UITheme"] = YavscHelpers.AvailableThemes.Select (
 				x => new SelectListItem () { Selected = 
 					model.UITheme == x, Text = x, Value = x }).ToArray();
 			
 		}
+		// TODO replace this with an Html helper method usage
 		private void SetMEACodeViewData(Profile model) {
 			var activities = WorkFlowManager.FindActivity ("%", false);
 			var items = new List<SelectListItem> ();
@@ -388,7 +491,7 @@ namespace Yavsc.Controllers
 		[Authorize]
 		public ActionResult Logout (string returnUrl)
 		{
-			FormsAuthentication.SignOut ();
+			IdentitySignout ();
 			return Redirect (returnUrl);
 		}
 
@@ -408,7 +511,8 @@ namespace Yavsc.Controllers
 				
 				if (user != null && ModelState.IsValid) {
 					YavscHelpers.SendNewPasswordMessage (user);
-					ViewData.Notify ( new Notification () { body = LocalizedText.NewPasswordMessageSent } );
+					ViewData.Notify ( new Notification () { 
+						body = LocalizedText.NewPasswordMessageSent } );
 				} 
 			}
 			return View (model);

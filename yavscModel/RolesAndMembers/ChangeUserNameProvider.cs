@@ -48,7 +48,9 @@ namespace Yavsc.Model.RolesAndMembers
 		/// </summary>
 		/// <returns><c>true</c> if this instance is name available the specified name; otherwise, <c>false</c>.</returns>
 		/// <param name="name">Name.</param>
-		public  abstract bool IsNameAvailable(string name);
+		public abstract bool IsNameAvailable(string name);
+
+		public abstract Profile GetUserProfile(string name);
 
 	}
 }

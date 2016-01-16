@@ -7,7 +7,8 @@ using Yavsc.Admin;
 using Yavsc.Model.Calendar;
 using Yavsc.Model.Circles;
 using System.Web.Security;
-using Yavsc.Model.Google.Api;
+using Yavsc.Helpers.Google.Api;
+using Yavsc.Helpers;
 
 
 namespace Yavsc.Controllers

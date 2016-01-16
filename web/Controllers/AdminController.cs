@@ -10,7 +10,7 @@ using Yavsc.Admin;
 using System.IO;
 using Yavsc.Model;
 using Yavsc.Helpers;
-using YavscClientModel;
+using Yavsc.Client;
 
 namespace Yavsc.Controllers
 {
