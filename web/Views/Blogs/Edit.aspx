@@ -33,7 +33,7 @@ Visible: <%= Model.Visible? "oui":"non" %> <%= Html.TranslatedActionLink("Suppri
 </div>
 <div id="attachfiles" class="ronh">
 <fieldset><legend><%= Html.Translate("AttachedFiles") %></legend>
-<%= Html.FileList("~/bfiles/"+Model.Id) %>
+<%= Html.FileList("~/users/"+Model.Author+"/bfiles/"+Model.Id) %>
 <div class="control">
 <input type="file" name="AttachedFiles" id="AttachedFiles" multiple>
 </div>
@@ -48,7 +48,7 @@ Visible: <%= Model.Visible? "oui":"non" %> <%= Html.TranslatedActionLink("Suppri
 <%= Html.TextBox("Photo") %>
 <%= Html.ValidationMessage("Photo", "*") %>
 <%= Html.Label("Content") %>:
-<%= Html.TextBox("Content") %>
+<%= Html.TextArea("Content") %>
 <%= Html.ValidationMessage("Content", "*") %>
 <input type="submit" value="Create/Update" id="Submit"/>
 
@@ -118,7 +118,9 @@ var markdownize = function(content) {
     var html = content.split("\n").map($.trim).filter(function(line) { 
       return line != "";
     }).join("\n");
-  return toMarkdown(html);
+    var md = toMarkdown(html);
+    console.log(md);
+  return md;
   };
  var htmlize = function(content) {
     return converter.makeHtml(content);

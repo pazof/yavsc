@@ -72,7 +72,6 @@
     <Reference Include="System" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.ServiceModel.Activation" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Formatting" />
   </ItemGroup>
   <ItemGroup>
@@ -85,9 +84,13 @@
       <Project>{90BF2234-7252-4CD5-B2A4-17501B19279B}</Project>
       <Name>SalesCatalog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\yavscModel\YavscModel.csproj">
+    <ProjectReference Include="..\Yavsc.Client\Yavsc.Client.csproj">
+      <Project>{5F9318D6-A994-497C-96A8-00F97642CE8E}</Project>
+      <Name>Yavsc.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\yavscModel\Yavsc.Server.csproj">
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
-      <Name>YavscModel</Name>
+      <Name>Yavsc.Server</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

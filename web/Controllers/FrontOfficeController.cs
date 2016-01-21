@@ -35,7 +35,7 @@ namespace Yavsc.Controllers
 	/// Front office controller.
 	/// Access granted to all
 	/// </summary>
-	public class FrontOfficeController : Controller
+	public class FrontOfficeController : BaseController
 	{
 		/// <summary>
 		/// Index this instance.

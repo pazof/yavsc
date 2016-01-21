@@ -1,5 +1,5 @@
 //
-//  ErrorDisplayTypes.cs
+//  ExternalLoginConfirmationViewModel.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -19,26 +19,24 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Configuration;
-
-using Yavsc.Model.Identity;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
-using System.Web;
-using System.Web.Mvc;
-using Yavsc.Model.RolesAndMembers;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Controllers
+namespace Yavsc.Models.Identity
 {
-
-	public enum ErrorDisplayTypes
+    // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
+    
+	public class ExternalLoginConfirmationViewModel
 	{
-		Error,
-		Message
+		[Required]
+		[EmailAddress]
+		[Display(Name = "Email")]
+		public string Email { get; set; }
+
 	}
-	
+    
 }

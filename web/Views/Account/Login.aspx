@@ -32,9 +32,15 @@
 <%= Html.TranslatedActionLink("S'enregistrer","GetRegister",new {returnUrl=ViewData["returnUrl"]}, new { @class="actionlink" }) %>
 </div>
 <div class="panel">
-<a href="<%= Url.RouteUrl ("Default", new { controller = "Google", action= "Login", returnUrl=ViewData["returnUrl"] }) %>" class="actionlink">
-	Identification avec un compte Google
-	<img src="/App_Themes/images/sign-in-with-google.png" style="max-height:1.5em; max-width:6em;" alt="Google sign in">
-	</a>
+
+<form method="post" action="<%=Url.RouteUrl ("Default", new { controller = "OAuth", action= "External"}) %>">
+<fieldset><legend>Authentifiez-vous avec un autre compte :</legend>
+<% foreach (var authtype in ViewBag.AuthTypes) { %>
+<input type="submit" name="submit.External.<%=authtype.AuthenticationType%>" value="<%=authtype.Caption%>"/>
+<% } %>
+<input type="hidden" name="returnUrl" value="<%=ViewData["returnUrl"]%>">
+</fieldset>
+</form>
+
 	</div>
 </asp:Content>

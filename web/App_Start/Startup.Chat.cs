@@ -14,7 +14,12 @@ namespace Yavsc.App_Start
 
 			// app.MapSignalR(); 
 
-			app.MapSignalR<MyConnection>("/signalr",new HubConfiguration());
+			app.MapSignalR<MyConnection>("/signalr",new HubConfiguration()
+				{
+					EnableDetailedErrors=true,
+					EnableJavaScriptProxies=true
+				}
+			);
 
 		} 
 	} 

@@ -35,10 +35,12 @@ namespace SignalRSelfHost
 		public override async Task GrantResourceOwnerCredentials(
 			OAuthGrantResourceOwnerCredentialsContext context)
 		{
+			Console.WriteLine ("GrantResourceOwnerCredentials");
 			// context.UserName
 			// DEMO ONLY: Pretend we are doing some sort of REAL checking here:
 			if (context.Password != "password")
 			{
+				Console.WriteLine ("invalid_grant");
 				context.SetError(
 					"invalid_grant", "The user name or password is incorrect.");
 				context.Rejected();

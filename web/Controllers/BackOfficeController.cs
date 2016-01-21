@@ -16,7 +16,7 @@ namespace Yavsc.Controllers
 	/// <summary>
 	/// Back office controller.
 	/// </summary>
-    public class BackOfficeController : Controller
+	public class BackOfficeController : BaseController
     {
 		/// <summary>
 		/// Index this instance.

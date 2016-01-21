@@ -121,9 +121,9 @@ namespace Yavsc
 				new RegisterViewModel () {
 					UserName = UserName, Email = Email,
 					Password = "tpwd", ConfirmPassword = Password, 
-					IsApprouved = true
-				}, 
-				"/testreturnurl") as ViewResult;
+					IsApprouved = true,
+					ReturnUrl = "/testreturnurl"
+				} ) as ViewResult;
 			Assert.AreSame ("",actionResult.ViewName);
 			MembershipUser u = Membership.GetUser (UserName, false);
 			Assert.NotNull (u);

@@ -25,10 +25,11 @@
 <% foreach (var p in g) {  %> 
 <div class="postpreview">
 <a href="<%= Url.RouteUrl("Titles", new { title = g.Key}) %>" >
+<h2>
 <% if (p.Photo!=null) { %>
 <img src="<%=p.Photo%>" alt="<%=g.Key%>" >
 <% } else { %> 
-<%} %><%=Html.Encode(g.Key)%></a>
+<%} %><%=Html.Encode(g.Key)%></h2></a>
 <div>
 <%= Html.Markdown(p.Intro,"/bfiles/"+p.Id+"/") %>
  <%= Html.Partial("PostActions",p)%></div>

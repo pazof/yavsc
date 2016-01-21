@@ -1,5 +1,5 @@
-//
-//  MyConnection.cs
+﻿//
+//  Pathes.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -18,27 +18,41 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using System;
 
-using Owin; 
-using Microsoft.Owin;
-using Microsoft.AspNet.SignalR;
-using System.Threading.Tasks;
- 
-public class MyConnection : PersistentConnection { 
-	protected override Task OnConnected (IRequest request, string connectionId)
+namespace Yavsc.Model
+{
+	/// <summary>
+	/// Paths.
+	/// </summary>
+	public static class Paths
 	{
-		return base.OnConnected (request, connectionId);
-	}
+		/// <summary>
+		/// The login path.
+		/// </summary>
+		public const string LoginPath = "/Account/Login";
 
-	protected override Task OnReceived (IRequest request, string connectionId, string data)
-	{
-		return Connection.Broadcast(data); 
-	}
-	protected override bool AuthorizeRequest (IRequest request)
-	{
-		var baseresult = base.AuthorizeRequest (request);
-		return request.User != null && request.User.Identity.IsAuthenticated;
-	}
-} 
+		/// <summary>
+		/// The logout path.
+		/// </summary>
+		public const string LogoutPath = "/Account/Logout";
 
+		/// <summary>
+		/// The authorize path.
+		/// </summary>
+		public const string AuthorizePath = "/OAuth/Authorize";
+
+		/// <summary>
+		/// The token path.
+		/// </summary>
+		public const string TokenPath = "/OAuth/Token";
+
+		/// <summary>
+		/// The external web login path.
+		/// </summary>
+		public const string ExternalLoginPath = "/OAuth/External";
+
+
+	}
+}
 

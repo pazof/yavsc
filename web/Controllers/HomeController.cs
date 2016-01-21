@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
 	/// <summary>
 	/// Home controller.
 	/// </summary>
-	public class HomeController : Controller
+	public class HomeController : BaseController
 	{
 		// Site name
 		private static string name = null;

@@ -1,3 +1,40 @@
+2016-01-21  Paul Schneider  <paul@pschneider.fr>
+
+	* MyHub.cs:
+	* Web.config:
+	* Yavsc.csproj:
+	* packages.config:
+	* App.master:
+	* Web.LuaDebug.config:
+	* Startup.cs:
+	* Edit.aspx:
+	* Index.aspx:
+	* YavscHelpers.cs:
+	* Global.asax.cs:
+	* Login.aspx:
+	* Startup.Chat.cs:
+	* Startup.Auth.cs:
+	* MyConnection.cs:
+	* UserPosts.aspx:
+	* Chat.aspx:
+	* HomeController.cs:
+	* BaseController.cs:
+	* AdminController.cs:
+	* ErrorController.cs:
+	* OAuthController.cs:
+	* BlogsController.cs:
+	* PayPalController.cs:
+	* jquery.signalR-2.2.0.js:
+	* GoogleController.cs:
+	* AccountController.cs:
+	* ChatController.cs:
+	* jquery.signalR-2.2.0.min.js:
+	* FileSystemController.cs:
+	* BackOfficeController.cs:
+	* AccountController.cs:
+	* FrontOfficeController.cs:
+	* ApplicationOAuthProvider.cs: 
+
 2016-01-17  Paul Schneider  <paul@pschneider.fr>
 
 	* FrontOfficeController.cs: corrige la construction des

@@ -71,5 +71,9 @@
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
       <Name>Yavsc.Server</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Yavsc.Client\Yavsc.Client.csproj">
+      <Project>{5F9318D6-A994-497C-96A8-00F97642CE8E}</Project>
+      <Name>Yavsc.Client</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -19,7 +19,10 @@ namespace SignalRSelfHost
             using (WebApp.Start(url))
             {
                 Console.WriteLine("Server running on {0}", url);
-                Console.ReadLine();
+                
+				while (true) {
+					System.Threading.Thread.Sleep (50000);
+				}
             }
         }
     }

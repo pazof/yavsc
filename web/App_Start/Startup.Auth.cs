@@ -8,12 +8,16 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
+using Microsoft.Owin.Security.Facebook;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
 using Yavsc.Models.Identity;
 using Yavsc.Providers;
 using System.Web.Configuration;
 using System.Configuration;
+using Yavsc.Model;
+using Microsoft.Owin.Security;
+using Yavsc.Helpers;
 
 namespace Yavsc.App_Start
 {
@@ -27,11 +31,6 @@ namespace Yavsc.App_Start
 		/// </summary>
 		/// <value>The O auth options.</value>
 		public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
-		/// <summary>
-		/// Gets the public client identifier.
-		/// </summary>
-		/// <value>The public client identifier.</value>
-		public static string PublicClientId { get; private set; }
 
 		// For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
 		public void ConfigureAuth(IAppBuilder app)
@@ -44,23 +43,26 @@ namespace Yavsc.App_Start
 			app.UseCookieAuthentication(new CookieAuthenticationOptions
 				{
 					AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-					LoginPath = new PathString("/Account/Login")
+					LoginPath = new PathString(Paths.LoginPath),
+					LogoutPath = new PathString(Paths.LogoutPath),
 				});
-			app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+			app.SetDefaultSignInAsAuthenticationType("External");
 
 			// Configure the application for OAuth based flow
-			PublicClientId = "self";
+			YavscHelpers.PublicClientId = ConfigurationManager.AppSettings["PUBLIC_CLIENT_ID"];
 			OAuthOptions = new OAuthAuthorizationServerOptions
 			{
-				TokenEndpointPath = new PathString("/Token"),
-				Provider = new ApplicationOAuthProvider(PublicClientId),
-				AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
+				TokenEndpointPath = new PathString(Paths.TokenPath),
+				Provider = new ApplicationOAuthProvider(YavscHelpers.PublicClientId),
+				AuthorizeEndpointPath = new PathString(Paths.AuthorizePath),
 				AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
 				AllowInsecureHttp = true
 			};
 
 			// Enable the application to use bearer tokens to authenticate users
 			app.UseOAuthBearerTokens(OAuthOptions);
+
+			app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
 			// Uncomment the following lines to enable logging in with third party login providers
 			//app.UseMicrosoftAccountAuthentication(
@@ -71,15 +73,33 @@ namespace Yavsc.App_Start
 			//    consumerKey: "",
 			//    consumerSecret: "");
 
-			//app.UseFacebookAuthentication(
-			//    appId: "",
-			//    appSecret: "");
-
-			app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-			{
-				ClientId = ConfigurationManager.AppSettings["GOOGLE_CLIENT_ID"],
-				ClientSecret = ConfigurationManager.AppSettings["GOOGLE_CLIENT_SECRET"]
-			});
+			var facebookId = ConfigurationManager.AppSettings["FACEBOOK_CLIENT_ID"];
+			if (!string.IsNullOrWhiteSpace(facebookId))
+				app.UseFacebookAuthentication(
+					new Microsoft.Owin.Security.Facebook.FacebookAuthenticationOptions() 
+					{
+						AppId = facebookId,
+						AppSecret = ConfigurationManager.AppSettings["FACEBOOK_CLIENT_SECRET"],
+						CallbackPath = new PathString(Paths.ExternalLoginPath+"Callback"),
+						Scope = { "email", "public_profile" }
+					});
+			var googleId = ConfigurationManager.AppSettings["GOOGLE_CLIENT_ID"];
+			if (!string.IsNullOrWhiteSpace(googleId))
+				app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+					{
+						ClientId = googleId,
+						ClientSecret = ConfigurationManager.AppSettings["GOOGLE_CLIENT_SECRET"],
+						CallbackPath = new PathString(Paths.ExternalLoginPath+"Callback"),
+						Provider = new GoogleOAuth2AuthenticationProvider(){
+							OnAuthenticated = async context =>
+							{
+								context.Identity.AddClaim(new Claim("picture", context.User.GetValue("picture").ToString()));
+								context.Identity.AddClaim(new Claim("profile", context.User.GetValue("profile").ToString()));
+							}
+						},
+						Scope = { "https://www.googleapis.com/auth/userinfo.email" , 
+							"https://www.googleapis.com/auth/userinfo.profile" }
+					});
 
 			AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
 

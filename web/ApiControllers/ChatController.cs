@@ -1,10 +1,10 @@
-//
-//  AccountController.cs
+﻿//
+//  ChatController.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015 GNU GPL
+//  Copyright (c) 2016 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -19,35 +19,17 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Web.Http;
-using Owin;
-using Microsoft.Owin.Extensions;
 
 namespace Yavsc.ApiControllers
 {
-	public class ChallengeResult : IHttpActionResult
+
+
+	public class ChatController : ApiController
 	{
-		public ChallengeResult(string loginProvider, ApiController controller)
+		public ChatController ()
 		{
-			LoginProvider = loginProvider;
-			Request = controller.Request;
-		}
-
-		public string LoginProvider { get; set; }
-		public HttpRequestMessage Request { get; set; }
-
-		public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
-		{
-			Request.GetOwinContext().Authentication.Challenge(LoginProvider);
-
-			HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-			response.RequestMessage = Request;
-			return Task.FromResult(response);
 		}
 	}
-
 }
+

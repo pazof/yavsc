@@ -74,15 +74,13 @@ namespace Yavsc.Providers
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
         {
-            if (context.ClientId == _publicClientId)
-            {
-                Uri expectedRootUri = new Uri(context.Request.Uri, "/");
+			if (context.ClientId == _publicClientId) {
+				Uri expectedRootUri = new Uri (context.Request.Uri, "/");
 
-                if (expectedRootUri.AbsoluteUri == context.RedirectUri)
-                {
-                    context.Validated();
-                }
-            }
+				if (expectedRootUri.AbsoluteUri == context.RedirectUri) {
+					context.Validated ();
+				}
+			}
 
             return Task.FromResult<object>(null);
         }

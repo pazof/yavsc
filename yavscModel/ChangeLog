@@ -1,3 +1,16 @@
+2016-01-21  Paul Schneider  <paul@pschneider.fr>
+
+	* Paths.cs:
+	* Yavsc.Server.csproj:
+	* MonoDataProtector.cs:
+	* AppUserState.cs:
+	* ApplicationUser.cs:
+	* MonoDataProtectionProvider.cs:
+	* UserManager.cs:
+	* ApplicationDbContext.cs:
+	* ApplicationUserManager.cs:
+	* ExternalLoginConfirmationViewModel.cs: 
+
 2016-01-17  Paul Schneider  <paul@pschneider.fr>
 
 	* CircleManager.cs:

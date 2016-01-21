@@ -27,7 +27,7 @@ namespace Yavsc.Controllers
 	/// <summary>
 	/// Blogs controller.
 	/// </summary>
-	public class BlogsController : Controller
+	public class BlogsController : BaseController
 	{
 		private string sitename =
 			WebConfigurationManager.AppSettings ["Name"];

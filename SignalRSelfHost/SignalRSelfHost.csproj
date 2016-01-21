@@ -12,7 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -104,6 +104,7 @@
     <Reference Include="System.Web.Http.Owin">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.3\lib\net45\System.Web.Http.Owin.dll</HintPath>
     </Reference>
+    <Reference Include="System.Security" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -111,6 +112,8 @@
     <Compile Include="Startup.cs" />
     <Compile Include="MyHub.cs" />
     <Compile Include="YavscOAuthServerProvider.cs" />
+    <Compile Include="ApplicationOAuthBearerAuthenticationProvider.cs" />
+    <Compile Include="AuthorizeAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -138,6 +141,10 @@
     <ProjectReference Include="..\yavscModel\Yavsc.Server.csproj">
       <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
       <Name>Yavsc.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">
+      <Project>{BBA7175D-7F92-4278-96FC-84C495A2B5A6}</Project>
+      <Name>NpgsqlMRPProviders</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

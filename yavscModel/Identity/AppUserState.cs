@@ -2,6 +2,7 @@
 using System;
 using Yavsc.Model.RolesAndMembers;
 using System.Web.Security;
+using Yavsc.Models.Identity;
 
 namespace Yavsc.Model.Identity
 {
@@ -9,10 +10,13 @@ namespace Yavsc.Model.Identity
 	{
 		public string Name = string.Empty;
 		public string Email = string.Empty;       
-		public string Theme = "visualstudio";
+		public string Theme = "clear";
 		public string UserId = string.Empty;
 		public bool IsAdmin = false;
 
+		public AppUserState()
+		{
+		}
 
 		/// <summary>
 		/// Exports a short string list of Id, Email, Name separated by |

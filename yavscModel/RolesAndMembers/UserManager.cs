@@ -2,14 +2,20 @@ using System.Configuration;
 using System.Reflection;
 using System;
 using Yavsc.Client;
+using Yavsc.Models.Identity;
+using Microsoft.AspNet.Identity;
 
 namespace Yavsc.Model.RolesAndMembers
 {
 	/// <summary>
 	/// User manager.
 	/// </summary>
-	public static class UserManager
+	public class UserNameManager
 	{
+		public UserNameManager ()
+		{
+		}
+
 		/// <summary>
 		/// Changes the name.
 		/// </summary>
@@ -65,7 +71,7 @@ namespace Yavsc.Model.RolesAndMembers
 			if (config.Providers.Count>0)
 				celt = config.Providers [0];
 			if (celt == null)
-				throw new ConfigurationErrorsException("The default username provider was not found");
+				throw new ConfigurationErrorsException("No username provider was found");
 			ConstructorInfo ci = Type.GetType (celt.Type).GetConstructor (Type.EmptyTypes);
 			provider = ci.Invoke (Type.EmptyTypes) as ChangeUserNameProvider;
 			provider.Initialize (celt.Name, celt.Parameters);

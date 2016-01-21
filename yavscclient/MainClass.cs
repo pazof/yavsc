@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using Yavsc.Model.FrontOffice;
 using Yavsc.Model.FrontOffice.Catalog;
 
 namespace Yavsc

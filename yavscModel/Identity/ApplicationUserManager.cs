@@ -5,7 +5,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Yavsc.Models.Identity;
 
-namespace Yavsc.App_Start
+namespace Yavsc.Models.Identity
 {
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
 
@@ -41,5 +41,17 @@ namespace Yavsc.App_Start
             }
             return manager;
         }
+		public override Task<ApplicationUser> FindAsync (string userName, string password)
+		{
+			return base.FindAsync (userName, password);
+		}
+		public override Task<ApplicationUser> FindByEmailAsync (string email)
+		{
+			return base.FindByEmailAsync (email);
+		}
+		public override Task<ApplicationUser> FindByIdAsync (string userId)
+		{
+			return base.FindByIdAsync (userId);
+		}
     }
 }

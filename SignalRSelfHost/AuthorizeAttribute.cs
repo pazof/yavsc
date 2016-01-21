@@ -1,5 +1,5 @@
-//
-//  MyConnection.cs
+﻿//
+//  AuthorizeAttribute.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -18,27 +18,21 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-using Owin; 
-using Microsoft.Owin;
+using System;
 using Microsoft.AspNet.SignalR;
-using System.Threading.Tasks;
- 
-public class MyConnection : PersistentConnection { 
-	protected override Task OnConnected (IRequest request, string connectionId)
-	{
-		return base.OnConnected (request, connectionId);
-	}
 
-	protected override Task OnReceived (IRequest request, string connectionId, string data)
+namespace SignalRSelfHost
+{
+	public class YaAuthorizeAttribute : AuthorizeAttribute
 	{
-		return Connection.Broadcast(data); 
+		public override bool AuthorizeHubConnection (Microsoft.AspNet.SignalR.Hubs.HubDescriptor hubDescriptor, IRequest request)
+		{
+			return base.AuthorizeHubConnection (hubDescriptor, request);
+		}
+		public override bool AuthorizeHubMethodInvocation (Microsoft.AspNet.SignalR.Hubs.IHubIncomingInvokerContext hubIncomingInvokerContext, bool appliesToMethod)
+		{
+			return base.AuthorizeHubMethodInvocation (hubIncomingInvokerContext, appliesToMethod);
+		}
 	}
-	protected override bool AuthorizeRequest (IRequest request)
-	{
-		var baseresult = base.AuthorizeRequest (request);
-		return request.User != null && request.User.Identity.IsAuthenticated;
-	}
-} 
-
+}
 

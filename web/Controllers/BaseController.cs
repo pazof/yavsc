@@ -6,18 +6,75 @@ using System.Web.Mvc;
 using Yavsc.Model.Identity;
 using System.Web.Routing;
 using System.Security.Claims;
+using Microsoft.Owin.Security;
+using Microsoft.AspNet.Identity;
+using Yavsc.Model.RolesAndMembers;
+using Yavsc.Models.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace Yavsc.Controllers
 {
     public class BaseController : Controller
     {
+		public BaseController()
+		{}
+
+		private ApplicationUserManager _userManager;
 		private  AppUserState userState = null;
+
 		protected AppUserState UserState { get { return userState; }  }
+
+		public BaseController(ApplicationUserManager userManager,
+			ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
+		{
+			UserManager = userManager;
+			AccessTokenFormat = accessTokenFormat;
+		}
+
+		public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; set; }
+
+		public IAuthenticationManager AuthenticationManager
+		{
+			get { return HttpContext.GetOwinContext().Authentication; }
+		}
+
+		public void IdentitySignin(AppUserState appUserState, string providerKey = null, bool isPersistent = false)
+		{
+			var claims = new List<Claim>();
+
+			// create required claims
+			claims.Add(new Claim(ClaimTypes.NameIdentifier, appUserState.UserId));
+			claims.Add(new Claim(ClaimTypes.Name, appUserState.Name));
+			claims.Add (new Claim (ClaimsIdentity.DefaultNameClaimType,
+				appUserState.Name, "Application"));
+			// custom – my serialized AppUserState object
+			claims.Add(new Claim("userState", appUserState.ToString()));
+
+			var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+
+			AuthenticationManager.SignIn(new AuthenticationProperties()
+				{
+					AllowRefresh = true,
+					IsPersistent = isPersistent,
+					ExpiresUtc = DateTime.UtcNow.AddDays(7)
+				}, identity);
+		}
+
+		public ApplicationUserManager UserManager
+		{
+			get
+			{
+				return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager> ();
+			}
+			private set
+			{
+				_userManager = value;
+			}
+		}
 
 		protected override void Initialize(RequestContext requestContext)
 		{
 			base.Initialize(requestContext);
-
 			// Grab the user's login information from Identity
 			AppUserState appUserState = new AppUserState();
 			if (User is ClaimsPrincipal)
@@ -36,10 +93,6 @@ namespace Yavsc.Controllers
 			ViewData["UserState"] = UserState;
 		}
 
-        public virtual ActionResult Index()
-        {
-            return View ();
-        }
 		public static string GetClaim(List<Claim> claims, string key)
 		{
 			var claim = claims.FirstOrDefault(c => c.Type == key);
@@ -47,32 +100,6 @@ namespace Yavsc.Controllers
 				return null;
 
 			return claim.Value;
-		}
-
-		/// <summary>
-		/// Allow external initialization of this controller by explicitly
-		/// passing in a request context
-		/// </summary>
-		/// <param name="requestContext"></param>
-		public void InitializeForced(RequestContext requestContext)
-		{
-			Initialize(requestContext);
-		}
-
-
-		/// <summary>
-		/// Displays a self contained error page without redirecting.
-		/// Depends on ErrorController.ShowError() to exist
-		/// </summary>
-		/// <param name="title"></param>
-		/// <param name="message"></param>
-		/// <param name="redirectTo"></param>
-		/// <returns></returns>
-		protected internal ActionResult DisplayErrorPage(string title, string message, string redirectTo = null)
-		{
-			ErrorController controller = new ErrorController();
-			controller.InitializeForced(ControllerContext.RequestContext);
-			return controller.ShowError(title, message, redirectTo);
 		}
 
     }

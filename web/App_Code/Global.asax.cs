@@ -13,6 +13,7 @@ using System.Web.WebPages.Scope;
 using System.Reflection;
 using System.Web.Configuration;
 
+
 namespace Yavsc
 {
 
@@ -21,7 +22,7 @@ namespace Yavsc
 	/// </summary>
 	public class MvcApplication : HttpApplication
 	{
-		
+		#if FALSE
 		/// <summary>
 		/// Registers the routes.
 		/// </summary>
@@ -106,11 +107,11 @@ namespace Yavsc
 		protected void Application_Start ()
 		{
 			// Microsoft.Owin.Host.SystemWeb.PreApplicationStart.Initialize ();
-			AreaRegistration.RegisterAllAreas ();
-			ModelBinders.Binders.Add(typeof(double), new DoubleModelBinder());
-			GlobalConfiguration.Configure (WebApiConfig.Register);
-			RegisterRoutes (RouteTable.Routes);
-			AjaxHelper.GlobalizationScriptPath = "~/Scripts/globalize";
+		//	AreaRegistration.RegisterAllAreas ();
+			//ModelBinders.Binders.Add(typeof(double), new DoubleModelBinder());
+		//	GlobalConfiguration.Configure (WebApiConfig.Register);
+		//	RegisterRoutes (RouteTable.Routes);
+		//	AjaxHelper.GlobalizationScriptPath = "~/Scripts/globalize";
 
 		}
 
@@ -143,6 +144,8 @@ namespace Yavsc
 			ob.SetValue(null, true, null);
 			
 		}
+		#endif
 	}
 }
+
 

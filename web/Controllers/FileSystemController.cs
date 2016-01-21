@@ -14,7 +14,7 @@ namespace Yavsc.Controllers
 	/// File system controller.
 	/// </summary>
 
-	public class FileSystemController : Controller
+	public class FileSystemController : BaseController
 	{
 
 		/// <summary>

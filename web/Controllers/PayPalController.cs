@@ -9,7 +9,7 @@ namespace Yavsc.Controllers
 	/// <summary>
 	/// Pay pal controller.
 	/// </summary>
-    public class PayPalController : Controller
+	public class PayPalController : BaseController
     {
 		/// <summary>
 		/// Index this instance.

@@ -235,8 +235,14 @@
     <Compile Include="FrontOffice\FrontOfficeHelpers.cs" />
     <Compile Include="Identity\AccountBindingModels.cs" />
     <Compile Include="Identity\AccountViewModels.cs" />
-    <Compile Include="Identity\IdentityModels.cs" />
     <Compile Include="Identity\AppUserState.cs" />
+    <Compile Include="MonoDataProtectionProvider.cs" />
+    <Compile Include="MonoDataProtector.cs" />
+    <Compile Include="Identity\ExternalLoginConfirmationViewModel.cs" />
+    <Compile Include="Identity\ApplicationUser.cs" />
+    <Compile Include="Identity\ApplicationDbContext.cs" />
+    <Compile Include="Identity\ApplicationUserManager.cs" />
+    <Compile Include="Paths.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

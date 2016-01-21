@@ -1,5 +1,5 @@
 //
-//  MyHub.cs
+//  ApplicationOAuthBearerAuthenticationProvider.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -33,38 +33,23 @@ using System.Threading.Tasks;
 
 namespace SignalRSelfHost
 {
+	public class ApplicationOAuthBearerAuthenticationProvider 
+		: OAuthBearerAuthenticationProvider
+	{
+		public override Task RequestToken(OAuthRequestTokenContext context)
+		{
+			Console.WriteLine ("ApplicationOAuthBearerAuthenticationProvider");
+			if (context == null) throw new ArgumentNullException("context");
 
-    public class MyHub : Hub
-    {
-		public override System.Threading.Tasks.Task OnConnected ()
-		{
-			/* var group = (Context.User.Identity.IsAuthenticated)?
-				"authenticated":"anonymous";
-			Console.WriteLine ("Cx: " + group);
-			Groups.Add(Context.ConnectionId, group); */
-			return base.OnConnected ();
-		}
-		public override System.Threading.Tasks.Task OnDisconnected (bool stopCalled)
-		{
-			return base.OnDisconnected (stopCalled);
-		}
-		public override System.Threading.Tasks.Task OnReconnected ()
-		{
-			return base.OnReconnected ();
+			// try to find bearer token in a cookie 
+			// (by default OAuthBearerAuthenticationHandler 
+			// only checks Authorization header)
+			var tokenCookie = context.OwinContext.Request.Cookies["BearerToken"];
+			if (!string.IsNullOrEmpty(tokenCookie))
+				context.Token = tokenCookie;
+			return Task.FromResult<object>(null);
 		}
 
-        public void Send(string name, string message)
-        {
-			Console.WriteLine (name+"> "+message);
-			Clients.All.addMessage(name,message);
-
-        }
-		[Authorize]
-		public void AuthSend (string message)
-		{
-			string name = Context.User.Identity.Name;
-			Console.WriteLine (name+"# "+message);
-			Clients.All.addMessage(name,message);
-		}
-    }
+	}
+    
 }

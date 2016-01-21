@@ -1,5 +1,5 @@
 //
-//  ErrorViewModel.cs
+//  MonoDataProtectionProvider.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
@@ -20,20 +20,36 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using Owin;
+using System.Configuration;
+using Microsoft.Owin.Security.DataProtection;
+using System.Security.Cryptography;
+using System.IO;
 
-namespace Yavsc.Controllers
+namespace Yavsc.Model
 {
-	public class ErrorViewModel
+
+	public class MonoDataProtectionProvider : IDataProtectionProvider
 	{
-		public string Title = string.Empty;
-		public string Message = string.Empty;
-		public string RedirectTo = string.Empty;
-		public int RedirectToTimeout = 10; // seconds
-		public bool MessageIsHtml = false;
+		private readonly string appName;
+
+		public MonoDataProtectionProvider()
+			: this(Guid.NewGuid().ToString())
+		{ }
+
+		public MonoDataProtectionProvider(string appName)
+		{
+			if (appName == null) { throw new ArgumentNullException("appName"); }
+
+			this.appName = appName;
+		}
+
+		public IDataProtector Create(params string[] purposes)
+		{
+			if (purposes == null) { throw new ArgumentNullException("purposes"); }
+
+			return new MonoDataProtector(appName, purposes);
+		}
 	}
     
 }

@@ -19,29 +19,28 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Web.Http;
-using System.Net.Http;
-using Yavsc.Model.RolesAndMembers;
-using System.Web.Security;
-using Yavsc.Helpers;
-using System.Collections.Specialized;
-using Yavsc.App_Start;
-using Microsoft.Owin.Security;
-using Microsoft.AspNet.Identity;
-using Yavsc.Models.Identity;
-using Microsoft.Owin.Security.Cookies;
-using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Collections.Specialized;
+using System.Net.Http;
 using System.Security.Claims;
-using Microsoft.Owin.Security.OAuth;
-using Yavsc.Providers;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Web;
-using Microsoft.AspNet.Identity.Owin;
-using Yavsc.Client.Accounts;
-using Yavsc.Model.Circles;
+using System.Web.Http;
 using System.Web.Profile;
+using System.Web.Security;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.OAuth;
+using Yavsc.Client.Accounts;
+using Yavsc.Helpers;
+using Yavsc.Model.Circles;
+using Yavsc.Model.RolesAndMembers;
+using Yavsc.Models.Identity;
+using Yavsc.Providers;
 
 namespace Yavsc.ApiControllers
 {
@@ -56,25 +55,15 @@ namespace Yavsc.ApiControllers
 		{
 		}
 
-		public AccountController(ApplicationUserManager userManager,
-			ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
+		public IAuthenticationManager AuthenticationManager
 		{
-			UserManager = userManager;
-			AccessTokenFormat = accessTokenFormat;
+			get { return Request.GetOwinContext().Authentication; }
 		}
-
-		public ApplicationUserManager UserManager
-		{
-			get
-			{
-				return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-			}
-			private set
-			{
-				_userManager = value;
+		public ApplicationUserManager UserManager {
+			get {
+				return Request.GetOwinContext ().GetUserManager<ApplicationUserManager> ();
 			}
 		}
-
 		public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
 		// GET api/Account/UserInfo
@@ -246,63 +235,6 @@ namespace Yavsc.ApiControllers
 			return Ok();
 		}
 
-		// GET api/Account/ExternalLogin
-		[OverrideAuthentication]
-		[HostAuthentication(DefaultAuthenticationTypes.ExternalCookie)]
-		[AllowAnonymous]
-		[Route("ExternalLogin", Name = "ExternalLogin")]
-		public async Task<IHttpActionResult> GetExternalLogin(string provider, string error = null)
-		{
-			if (error != null)
-			{
-				return Redirect(Url.Content("~/") + "#error=" + Uri.EscapeDataString(error));
-			}
-
-			if (!User.Identity.IsAuthenticated)
-			{
-				return new ChallengeResult(provider, this);
-			}
-
-			ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
-
-			if (externalLogin == null)
-			{
-				return InternalServerError();
-			}
-
-			if (externalLogin.LoginProvider != provider)
-			{
-				Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-				return new ChallengeResult(provider, this);
-			}
-
-			ApplicationUser user = await UserManager.FindAsync(new UserLoginInfo(externalLogin.LoginProvider,
-				externalLogin.ProviderKey));
-
-			bool hasRegistered = user != null;
-
-			if (hasRegistered)
-			{
-				Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-
-				ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-					OAuthDefaults.AuthenticationType);
-				ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
-					CookieAuthenticationDefaults.AuthenticationType);
-
-				AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName);
-				Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
-			}
-			else
-			{
-				IEnumerable<Claim> claims = externalLogin.GetClaims();
-				ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
-				Authentication.SignIn(identity);
-			}
-
-			return Ok();
-		}
-
 		// GET api/Account/ExternalLogins?returnUrl=%2F&generateState=true
 		[AllowAnonymous]
 		[Route("ExternalLogins")]
@@ -332,7 +264,7 @@ namespace Yavsc.ApiControllers
 						{
 							provider = description.AuthenticationType,
 							response_type = "token",
-							client_id = Startup.PublicClientId,
+							client_id = YavscHelpers.PublicClientId,
 							redirect_uri = new Uri(Request.RequestUri, returnUrl).AbsoluteUri,
 							state = state
 						}),

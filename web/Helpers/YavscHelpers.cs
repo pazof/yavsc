@@ -33,6 +33,7 @@ using Yavsc.Client.Maps;
 using System.Net.Configuration;
 using System.Web.Profile;
 using Yavsc.Model.Identity;
+using Yavsc.Models.Identity;
 
 namespace Yavsc.Helpers
 {
@@ -68,18 +69,20 @@ namespace Yavsc.Helpers
 			"HTTP_CACHE_CONTROL", "__RequestVerificationToken"
 		};
 
+		public static string PublicClientId { get; set; }
+
 		/// <summary>
 		/// Froms the user.
 		/// </summary>
 		/// <param name="state">State.</param>
 		/// <param name="user">User.</param>
-		public static void FromUser(this AppUserState state, MembershipUser user)
+		public static void FromUser(this AppUserState state, ApplicationUser user)
 		{
 			if (user == null) {
 				state.UserId = Guid.NewGuid ().ToString ();
 				return;
 			}
-			state.UserId = user.ProviderUserKey.ToString();
+			state.UserId = user.Id;
 			state.Name = user.UserName;
 			state.Email = user.Email;
 			state.IsAdmin = Roles.IsUserInRole ("Admin");

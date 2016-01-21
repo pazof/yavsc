@@ -18,7 +18,7 @@ namespace Yavsc.Controllers
 	/// Admin controller.
 	/// Only Admin members should be allowed to use it.
 	/// </summary>
-	public class AdminController : Controller
+	public class AdminController : BaseController
 	{
 		/// <summary>
 		/// Index this instance.
@@ -304,9 +304,23 @@ namespace Yavsc.Controllers
 		[Authorize()]
 		public ActionResult Admin (NewAdminModel model)
 		{
-			// ASSERT (Roles.RoleExists (adminRoleName)) 
+			string currentUser = User.Identity.Name;
+			// ASSERT (Roles.RoleExists (_adminRoleName)) 
 			string [] admins = Roles.GetUsersInRole (_adminRoleName);
-			string currentUser = Membership.GetUser ().UserName;
+			if (admins.Length > 0) { 
+				if (! admins.Contains (Membership.GetUser ().UserName)) {
+					ModelState.AddModelError("UserName",LocalizedText.younotadmin+"!");
+				}
+			} else {
+				// No existent admin, 
+				// give the Admin Role to the current user
+				Roles.AddUserToRole (currentUser, _adminRoleName);
+				admins = new string[] { currentUser };
+				ViewData.Notify( string.Format (
+					LocalizedText.was_added_to_the_empty_role,
+					currentUser, _adminRoleName));
+			}
+
 			List<SelectListItem> users = new List<SelectListItem> ();
 			foreach (MembershipUser u in Membership.GetAllUsers ()) {
 				var i = new SelectListItem ();
@@ -319,21 +333,7 @@ namespace Yavsc.Controllers
 			if (ModelState.IsValid) {
 				Roles.AddUserToRole (model.UserName, _adminRoleName);
 				ViewData.Notify(model.UserName + " "+LocalizedText.was_added_to_the_role+" '" + _adminRoleName + "'");
-			} else {
-				if (admins.Length > 0) { 
-					if (! admins.Contains (Membership.GetUser ().UserName)) {
-						ModelState.Remove("UserName");
-						ModelState.AddModelError("UserName",LocalizedText.younotadmin+"!");
-					}
-				} else {
-					// No admin, gives the Admin Role to the current user
-					Roles.AddUserToRole (currentUser, _adminRoleName);
-					admins = new string[] { currentUser };
-					ViewData.Notify( string.Format (
-						LocalizedText.was_added_to_the_empty_role,
-						currentUser, _adminRoleName));
-				}
-			}
+			} 
 			return View (model);
 		}
 	}

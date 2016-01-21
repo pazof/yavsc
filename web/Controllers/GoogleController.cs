@@ -28,7 +28,7 @@ namespace Yavsc.Controllers
 	/// <summary>
 	/// Google controller.
 	/// </summary>
-	public class GoogleController : Controller
+	public class GoogleController : BaseController
 	{
 		/// <summary>
 		/// Index this instance.
@@ -142,7 +142,7 @@ namespace Yavsc.Controllers
 		/// Auth this instance.
 		/// </summary>
 		[HttpGet]
-		public ActionResult Auth ()
+		public ActionResult Authorize ()
 		{
 			string msg;
 			OAuth2 oa = GoogleHelpers.CreateOAuth2 (AuthGRU);
@@ -163,7 +163,8 @@ namespace Yavsc.Controllers
 				// just set this user as logged on
 				foreach (MembershipUser u in mbrs) {
 				string username = u.UserName;
-				    FormsAuthentication.SetAuthCookie (username, true);
+				    // FormsAuthentication.SetAuthCookie (username, true);
+
 					/* var upr = ProfileBase.Create (username);
 					SaveToken (upr,gat); */
 				}
@@ -175,15 +176,19 @@ namespace Yavsc.Controllers
 			regmod.UserName = me.displayName;
 			Session ["me"] = me;
 			Session ["GoogleAuthToken"] = gat;
-			return Auth (regmod);
+			return Authorize (regmod);
 		}
+
+
+
+
 
 		/// <summary>
 		/// Creates an account using the Google authentification.
 		/// </summary>
 		/// <param name="regmod">Regmod.</param>
 		[HttpPost]
-		public ActionResult Auth (SignIn regmod)
+		public ActionResult Authorize (SignIn regmod)
 		{
 			if (ModelState.IsValid) {
 				if (Membership.GetUser (regmod.UserName) != null) {

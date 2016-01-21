@@ -31,26 +31,7 @@ namespace Yavsc.Controllers
 	/// </summary>
 	public class AccountController : BaseController
 	{
-		public void IdentitySignin(AppUserState appUserState, string providerKey = null, bool isPersistent = false)
-		{
-			var claims = new List<Claim>();
-
-			// create required claims
-			claims.Add(new Claim(ClaimTypes.NameIdentifier, appUserState.UserId));
-			claims.Add(new Claim(ClaimTypes.Name, appUserState.Name));
-
-			// custom – my serialized AppUserState object
-			claims.Add(new Claim("userState", appUserState.ToString()));
-
-			var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
-
-			AuthenticationManager.SignIn(new AuthenticationProperties()
-				{
-					AllowRefresh = true,
-					IsPersistent = isPersistent,
-					ExpiresUtc = DateTime.UtcNow.AddDays(7)
-				}, identity);
-		}
+		
 
 		public void IdentitySignout()
 		{
@@ -58,11 +39,7 @@ namespace Yavsc.Controllers
 				DefaultAuthenticationTypes.ExternalCookie);
 		}
 
-		private IAuthenticationManager AuthenticationManager
-		{
-			get { return HttpContext.GetOwinContext().Authentication; }
-		}
-
+		#if FALSE
 		/// <summary>
 		/// Register the specified model.
 		/// </summary>
@@ -70,7 +47,7 @@ namespace Yavsc.Controllers
 		[AcceptVerbs(HttpVerbs.Post), ValidateAntiForgeryToken]
 		public ActionResult Register(RegisterViewModel model)
 		{
-			if (!UserManager.IsAvailable (model.UserName))
+			if (!YaUserStore.IsAvailable (model.UserName))
 				ModelState.AddModelError ("UserName", 
 					string.Format(LocalizedText.DuplicateUserName,
 						model.UserName));
@@ -113,6 +90,7 @@ namespace Yavsc.Controllers
 			}
 			return View (model);
 		}  
+		#endif
 
 		/// <summary>
 		/// Avatar the specified user.
@@ -187,6 +165,8 @@ namespace Yavsc.Controllers
 		public ActionResult Login (string returnUrl)
 		{
 			ViewData ["returnUrl"] = returnUrl;
+			ViewBag.AuthTypes = HttpContext.GetOwinContext ().Authentication.GetAuthenticationTypes ()
+				.Where (d =>  !string.IsNullOrEmpty (d.Caption)).ToArray ();
 			return View ();
 		}
 
@@ -411,7 +391,7 @@ namespace Yavsc.Controllers
 				throw new UnauthorizedAccessException ("Your are not authorized to modify this profile");
 			// checks availability of a new username
 			if (editsTheUserName)
-			if (!UserManager.IsAvailable (model.NewUserName))
+			if (!UserNameManager.IsAvailable (model.NewUserName))
 				ModelState.AddModelError ("UserName",
 					string.Format (
 						LocalizedText.DuplicateUserName,
@@ -465,7 +445,7 @@ namespace Yavsc.Controllers
 				prf.Save ();
 
 				if (editsTheUserName) {
-					UserManager.ChangeName (id, model.NewUserName);
+					UserNameManager.ChangeName (id, model.NewUserName);
 					FormsAuthentication.SetAuthCookie (model.NewUserName, model.RememberMe);
 					model.UserName = model.NewUserName;
 				}
@@ -594,5 +574,7 @@ namespace Yavsc.Controllers
 			}
 			return View();
 		}
+
+
 	}
 }
