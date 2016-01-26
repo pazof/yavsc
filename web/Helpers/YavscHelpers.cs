@@ -474,6 +474,7 @@ namespace Yavsc.Helpers
 			Notify(ViewData, new Notification { body = message, 
 				click_action = click_action, click_action_name = clickActionName} ) ;
 		}
+		public static string PublicClientId { get; set; }
 
 		public static void Notify(this ViewDataDictionary ViewData, Notification note) {
 			

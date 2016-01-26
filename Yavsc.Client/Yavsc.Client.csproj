@@ -109,6 +109,8 @@
     <Compile Include="Google\Calendar\CalendarList.cs" />
     <Compile Include="Google\Calendar\CalendarListEntry.cs" />
     <Compile Include="Identity\AuthToken.cs" />
+    <Compile Include="Identity\SavedToken.cs" />
+    <Compile Include="Identity\BaseAuthToken.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,10 +1,10 @@
 //
-//  GoogleAuthToken.cs
+//  SavedToken.cs
 //
 //  Author:
-//       Paul Schneider <paulschneider@free.fr>
+//       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2014 Paul Schneider
+//  Copyright (c) 2016 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -36,15 +36,11 @@ namespace Yavsc.Model.Identity
 {
 
 	/// <summary>
-	/// Auth token, as they are received.
+	/// Saved token.
 	/// </summary>
-	public class AuthToken : BaseAuthToken {
-		/// <summary>
-		/// Gets or sets the expires in.
-		/// </summary>
-		/// <value>The expires in.</value>
-		public int expires_in { get; set; }
+	public class SavedToken  : BaseAuthToken, IIdentified<long> {
+		public DateTime expires { get; set; }
+		public long Id { get; set; }
 	}
-
 
 }

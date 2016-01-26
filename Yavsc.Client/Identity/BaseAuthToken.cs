@@ -1,10 +1,10 @@
 //
-//  GoogleAuthToken.cs
+//  BaseAuthToken.cs
 //
 //  Author:
-//       Paul Schneider <paulschneider@free.fr>
+//       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2014 Paul Schneider
+//  Copyright (c) 2016 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -34,17 +34,33 @@ using Yavsc.Client;
 
 namespace Yavsc.Model.Identity
 {
-
 	/// <summary>
-	/// Auth token, as they are received.
+	/// Auth token.
 	/// </summary>
-	public class AuthToken : BaseAuthToken {
-		/// <summary>
-		/// Gets or sets the expires in.
-		/// </summary>
-		/// <value>The expires in.</value>
-		public int expires_in { get; set; }
-	}
 
+	public class BaseAuthToken {
+
+		/// <summary>
+		/// Gets or sets the access token.
+		/// </summary>
+		/// <value>The access token.</value>
+		public string access_token { get; set; }
+		/// <summary>
+		/// Gets or sets the identifier token.
+		/// </summary>
+		/// <value>The identifier token.</value>
+		public string id_token { get; set; }
+		/// <summary>
+		/// Gets or sets the type of the token.
+		/// </summary>
+		/// <value>The type of the token.</value>
+		public string token_type { get; set ; }
+		/// <summary>
+		/// Gets or sets the refresh token.
+		/// </summary>
+		/// <value>The refresh token.</value>
+		public string refresh_token { get; set; }
+
+	}
 
 }
