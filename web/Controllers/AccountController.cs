@@ -133,6 +133,7 @@ namespace Yavsc.Controllers
 		public ActionResult Login (LoginModel model, string returnUrl)
 		{
 			if (ModelState.IsValid) {
+				
 				if (Membership.ValidateUser (model.UserName, model.Password)) {
 					var user = Membership.GetUser (model.UserName);
 					var key = user.ProviderUserKey.ToString ();
@@ -143,7 +144,7 @@ namespace Yavsc.Controllers
 						Theme = ProfileBase.Create(user.UserName).GetPropertyValue("UITheme") as string,
 						UserId = key
 					};
-					IdentitySignin(userState, key, model.RememberMe);
+					IdentitySignin(model.UserName, key, model.RememberMe);
 					if (returnUrl != null)
 						return Redirect (returnUrl);
 					else

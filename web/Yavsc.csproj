@@ -180,12 +180,6 @@
     <Reference Include="Microsoft.Owin.Security.Cookies">
       <HintPath>..\packages\Microsoft.Owin.Security.Cookies.3.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Owin.Security.Facebook">
-      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.3.0.1\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.Google">
-      <HintPath>..\packages\Microsoft.Owin.Security.Google.3.0.1\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Owin.Security.MicrosoftAccount">
       <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.3.0.1\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
     </Reference>
@@ -249,6 +243,12 @@
     <Reference Include="Microsoft.AspNet.SignalR.Owin">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Owin.1.2.2\lib\net45\Microsoft.AspNet.SignalR.Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin.Security.Google">
+      <HintPath>..\packages\Microsoft.Owin.Security.Google.3.0.1\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Facebook">
+      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.3.0.1\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Admin\" />
@@ -293,6 +293,11 @@
     <Folder Include="Providers\" />
     <Folder Include="Scripts\globalize\" />
     <Folder Include="Views\OAuth\" />
+    <Folder Include="Helpers\Google\" />
+    <Folder Include="Helpers\Google\Api\" />
+    <Folder Include="Helpers\Google\Api\Tracks\" />
+    <Folder Include="Helpers\Google\Api\Calendar\" />
+    <Folder Include="Helpers\Google\Api\People\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -343,34 +348,16 @@
     <Compile Include="ApiControllers\AuthorizationDenied.cs" />
     <Compile Include="ApiControllers\YavscController.cs" />
     <Compile Include="Helpers\YavscAjaxHelper.cs" />
-    <Compile Include="AuthorizeAttribute.cs" />
     <Compile Include="ApiControllers\SkillController.cs" />
     <Compile Include="Controllers\PayPalController.cs" />
     <Compile Include="ApiControllers\BackOfficeController.cs" />
-    <Compile Include="WebApiConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\Startup.Routes.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Formatters\DoubleModelBinder.cs" />
     <Compile Include="App_Start\Startup.Chat.cs" />
     <Compile Include="App_Start\MyConnection.cs" />
-    <Compile Include="Helpers\GoogleHelpers.cs" />
-    <Compile Include="Helpers\Google\Api\ApiClient.cs" />
-    <Compile Include="Helpers\Google\Api\CalendarApi.cs" />
-    <Compile Include="Helpers\Google\Api\Entity.cs" />
-    <Compile Include="Helpers\Google\Api\EntityQuery.cs" />
-    <Compile Include="Helpers\Google\Api\MapTracks.cs" />
-    <Compile Include="Helpers\Google\Api\OAuth2.cs" />
-    <Compile Include="Helpers\Google\Api\PeopleApi.cs" />
-    <Compile Include="Helpers\Google\AuthToken.cs" />
-    <Compile Include="Helpers\Google\CalendarEventList.cs" />
-    <Compile Include="Helpers\Google\CalendarList.cs" />
-    <Compile Include="Helpers\Google\CalendarListEntry.cs" />
-    <Compile Include="Helpers\Google\GCMRegisterModel.cs" />
-    <Compile Include="Helpers\Google\GDate.cs" />
-    <Compile Include="Helpers\Google\People.cs" />
-    <Compile Include="Helpers\Google\Resource.cs" />
-    <Compile Include="Helpers\Google\SignIn.cs" />
     <Compile Include="Helpers\MarkdownHelper.cs" />
     <Compile Include="Models\FileSystem\InvalidDirNameException.cs" />
     <Compile Include="Models\FileSystem\UserFileSystemManager.cs" />
@@ -381,12 +368,24 @@
     <Compile Include="MyHub.cs" />
     <Compile Include="Controllers\GoogleController.cs" />
     <Compile Include="Controllers\OAuthController.cs" />
+    <Compile Include="App_Start\SystemWebCookieManager.cs" />
+    <Compile Include="Helpers\Google\GoogleHelpers.cs" />
+    <Compile Include="Helpers\Google\Api\Calendar\CalendarApi.cs" />
+    <Compile Include="Helpers\Google\Api\Tracks\MapTracks.cs" />
+    <Compile Include="Helpers\Google\Api\People\PeopleApi.cs" />
+    <Compile Include="Controllers\SignIn.cs" />
+    <Compile Include="Helpers\OAuth\OAuthHelpers.cs" />
+    <Compile Include="Helpers\Google\Api\GoogleAuth.cs" />
+    <Compile Include="Helpers\OAuth\InvalidOAuth2RefreshToken.cs" />
+    <Compile Include="Helpers\OAuth\OAuthAccessPoint.cs" />
+    <Compile Include="App_Start\Statup.WebApi.cs" />
+    <Compile Include="Providers\ApplicationAuthenticationTokenProvider.cs" />
+    <Compile Include="AuthorizeOldAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Web.config" />
-    <Content Include="Global.asax" />
     <Content Include="Models\App.master" />
     <Content Include="Views\Account\Register.aspx" />
     <Content Include="Views\Account\ChangePassword.aspx" />
@@ -586,7 +585,6 @@
     <Content Include="Scripts\yavsc.skills.js" />
     <Content Include="Views\FrontOffice\UserSkills.aspx" />
     <Content Include="Views\FrontOffice\UserCard.ascx" />
-    <Content Include="App_Code\Global.asax.cs" />
     <Content Include="Views\FrontOffice\RateSkillControl.ascx" />
     <Content Include="Views\FrontOffice\RateUserSkillControl.ascx" />
     <Content Include="Views\PayPal\Index.aspx" />
@@ -1327,6 +1325,7 @@
     <Content Include="Scripts\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
     <Content Include="Views\OAuth\Index.aspx" />
+    <Content Include="Views\OAuth\ExternalLoginConfirmation.aspx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -1392,6 +1391,7 @@
     <None Include="lib\Microsoft.Owin.dll" />
     <None Include="lib\Microsoft.AspNet.SignalR.Redis.dll" />
     <None Include="lib\Microsoft.AspNet.SignalR.Core.dll" />
+    <None Include="App_Code\Sql\tokens.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">

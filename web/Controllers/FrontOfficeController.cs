@@ -28,6 +28,7 @@ using Yavsc.Client.FrontOffice;
 using Yavsc.Client;
 using Yavsc.Client.Skills;
 using System.Web.Profile;
+using Yavsc.Helpers.OAuth.Api;
 
 namespace Yavsc.Controllers
 {
@@ -116,7 +117,7 @@ namespace Yavsc.Controllers
 		{
 			string username = Membership.GetUser ().UserName;
 			// Obsolete, set in master page
-			ViewData ["WebApiBase"] = Url.Content (Yavsc.WebApiConfig.UrlPrefixRelative);
+			ViewData ["WebApiBase"] = Url.Content ("~/api");
 			ViewData ["WABASEWF"] = ViewData ["WebApiBase"] + "/WorkFlow";
 			if (submit == null) {
 				if (model.Id > 0) {
@@ -395,7 +396,7 @@ namespace Yavsc.Controllers
 		/// user's skills.
 		/// </summary>
 		/// <param name="id">the User name.</param>
-		[Authorize ()]
+		[System.Web.Mvc.Authorize ()]
 		public ActionResult UserSkills (string id)
 		{
 			if (id == null)

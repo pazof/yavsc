@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 namespace SignalRSelfHost
 {
 
+	[AuthorizeClaims(Users="paul")]
     public class MyHub : Hub
     {
 		public override System.Threading.Tasks.Task OnConnected ()
@@ -59,7 +60,6 @@ namespace SignalRSelfHost
 			Clients.All.addMessage(name,message);
 
         }
-		[Authorize]
 		public void AuthSend (string message)
 		{
 			string name = Context.User.Identity.Name;

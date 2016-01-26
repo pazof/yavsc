@@ -1,3 +1,21 @@
+2016-01-26  Paul Schneider  <paul@pschneider.fr>
+
+	* Paths.cs:
+	* packages.config:
+	* Yavsc.Server.csproj:
+	* UserInfoViewModel.cs:
+	* UserManager.cs:
+	* ManageInfoViewModel.cs:
+	* RegisterBindingModel.cs:
+	* ExternalLoginViewModel.cs:
+	* UserLoginInfoViewModel.cs:
+	* SetPasswordBindingModel.cs:
+	* RemoveLoginBindingModel.cs:
+	* ChangePasswordBindingModel.cs:
+	* RegisterExternalBindingModel.cs:
+	* AddExternalLoginBindingModel.cs:
+	* ChangeUserNameProvider.cs: 
+
 2016-01-21  Paul Schneider  <paul@pschneider.fr>
 
 	* Paths.cs:

@@ -1,3 +1,17 @@
+2016-01-26  Paul Schneider  <paul@pschneider.fr>
+
+	* GDate.cs:
+	* Resource.cs:
+	* Yavsc.Client.csproj:
+	* AuthToken.cs:
+	* Entity.cs:
+	* People.cs:
+	* EntityQuery.cs:
+	* CalendarList.cs:
+	* CalendarEventList.cs:
+	* CalendarListEntry.cs:
+	* GCMRegisterModel.cs: 
+
 2016-01-16  Paul Schneider  <paul@pschneider.fr>
 
 	* ITitle.cs:

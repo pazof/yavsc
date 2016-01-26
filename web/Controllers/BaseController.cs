@@ -9,7 +9,6 @@ using System.Security.Claims;
 using Microsoft.Owin.Security;
 using Microsoft.AspNet.Identity;
 using Yavsc.Model.RolesAndMembers;
-using Yavsc.Models.Identity;
 using Microsoft.AspNet.Identity.Owin;
 
 namespace Yavsc.Controllers
@@ -38,19 +37,22 @@ namespace Yavsc.Controllers
 			get { return HttpContext.GetOwinContext().Authentication; }
 		}
 
-		public void IdentitySignin(AppUserState appUserState, string providerKey = null, bool isPersistent = false)
+		public void IdentitySignin(string username, string providerKey = null, bool isPersistent = false)
 		{
 			var claims = new List<Claim>();
-
+			var appUserState = new AppUserState () {
+				UserId = providerKey,
+				Name = username
+			};
 			// create required claims
-			claims.Add(new Claim(ClaimTypes.NameIdentifier, appUserState.UserId));
-			claims.Add(new Claim(ClaimTypes.Name, appUserState.Name));
+			claims.Add(new Claim(ClaimTypes.NameIdentifier, providerKey));
+			claims.Add(new Claim(ClaimTypes.Name, username));
 			claims.Add (new Claim (ClaimsIdentity.DefaultNameClaimType,
 				appUserState.Name, "Application"));
 			// custom – my serialized AppUserState object
 			claims.Add(new Claim("userState", appUserState.ToString()));
 
-			var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
+			var identity = new ClaimsIdentity(claims, "Application");
 
 			AuthenticationManager.SignIn(new AuthenticationProperties()
 				{
@@ -83,8 +85,8 @@ namespace Yavsc.Controllers
 				var claims = user.Claims.ToList();
 
 				var userStateString = GetClaim(claims, "userState");
-				//var name = GetClaim(claims, ClaimTypes.Name);
-				//var id = GetClaim(claims, ClaimTypes.NameIdentifier);
+				var name = GetClaim(claims, ClaimTypes.Name);
+				var id = GetClaim(claims, ClaimTypes.NameIdentifier);
 
 				if (!string.IsNullOrEmpty(userStateString))
 					appUserState.FromString(userStateString);

@@ -39,8 +39,10 @@ using Yavsc.Client.Accounts;
 using Yavsc.Helpers;
 using Yavsc.Model.Circles;
 using Yavsc.Model.RolesAndMembers;
-using Yavsc.Models.Identity;
+using Yavsc.Model.Identity;
 using Yavsc.Providers;
+using Yavsc.Helpers.OAuth.Api;
+using Yavsc.Helpers.OAuth;
 
 namespace Yavsc.ApiControllers
 {
@@ -264,7 +266,7 @@ namespace Yavsc.ApiControllers
 						{
 							provider = description.AuthenticationType,
 							response_type = "token",
-							client_id = YavscHelpers.PublicClientId,
+							client_id = OAuthHelpers.ExternalAuthClientId[description.AuthenticationType],
 							redirect_uri = new Uri(Request.RequestUri, returnUrl).AbsoluteUri,
 							state = state
 						}),
@@ -587,5 +589,7 @@ namespace Yavsc.ApiControllers
 					model.Circle,
 					model.UserName);
 		}
+
+
 	}
 }

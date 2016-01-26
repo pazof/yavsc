@@ -1,6 +1,8 @@
-﻿
+﻿#if SIGNALR
 using Owin; 
 using Microsoft.Owin;
+
+
 using Microsoft.AspNet.SignalR;
 
  
@@ -24,3 +26,4 @@ namespace Yavsc.App_Start
 		} 
 	} 
 }
+#endif

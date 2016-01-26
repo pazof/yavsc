@@ -22,7 +22,7 @@ Page.StyleSheetTheme = (string) Profile.UITheme; %>
 <script src="<%=Url.Content("~/Scripts/parallax.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>
 <script type="text/javascript">
-var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
+var apiBaseUrl = '<%=Url.Content("~/api")%>';
  $(document).ready(function(){ 
   $('[data-type="rate-bill"]').rate({webTarget: 'Blogs/Rate'});
  });
@@ -58,7 +58,7 @@ else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=A
 <% } %>
 </header>
 <nav >
-<% if (Membership.GetUser()==null) { %>
+<% if (!HttpContext.Current.User.Identity.IsAuthenticated) { %>
 <a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" class="actionlink" accesskey = "C">
 <i class="fa fa-sign-in"></i> Connexion
 </a>
@@ -88,7 +88,6 @@ else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=A
 <footer>
 
 <%= Html.TranslatedActionLink("Contact","Contact","Home") %>
-<%= Html.TranslatedActionLink("Credits","Credits","Home") %>
 
 <script>
   window.fbAsyncInit = function() {

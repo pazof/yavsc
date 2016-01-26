@@ -275,8 +275,8 @@ function addRow(){
 });
     </script>
 
-    <a class="actionlink" href="<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>/FrontOffice/EstimateToTex?id=<%=Model.Id%>"><%= LocalizedText.Tex_version %></a>
-    <a class="actionlink" href="<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>/FrontOffice/EstimateToPdf?id=<%=Model.Id%>"><%= LocalizedText.Pdf_version %></a>
+    <a class="actionlink" href="<%=Url.Content("~/")%>api/FrontOffice/EstimateToTex?id=<%=Model.Id%>"><%= LocalizedText.Tex_version %></a>
+    <a class="actionlink" href="<%=Url.Content("~/")%>api/FrontOffice/EstimateToPdf?id=<%=Model.Id%>"><%= LocalizedText.Pdf_version %></a>
     </aside>
 
 <%= Html.ValidationSummary("Devis") %>

@@ -17,12 +17,12 @@ Page.StyleSheetTheme = (string) Profile.UITheme; %>
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/prettify.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/doxy.css")%>" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
-<script src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/jquery-2.2.0.min.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.min.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/parallax.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>
 <script type="text/javascript">
-var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
+var apiBaseUrl = '<%=Url.Content("~/api")%>';
  $(document).ready(function(){ 
   $('[data-type="rate-bill"]').rate({webTarget: 'Blogs/Rate'});
  });
@@ -46,9 +46,9 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
  </asp:ContentPlaceHolder>
  <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
  <div id="notifications"></div>
-<% if (ViewData ["Notifications"]!=null) { %>
+<% if (ViewData ["Notifications"] != null) { %>
 <script>
-$(document).ready(function(){
+$(document).ready(function() {
 <% foreach (Notification note in (IEnumerable<Notification>) ViewData ["Notifications"] ) { 
 if (note.click_action == null) {%> Yavsc.notice(<%=Ajax.JString(note.body)%>); <% } 
 else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=Ajax.JString(note.click_action_name)%>); <% } %>
@@ -57,7 +57,7 @@ else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=A
 </script>
 <% } %>
 </header>
-<main data-type="background" data-speed="10" data-emheight="10" data-posx="0" data-posy="22" >
+<main>
 <asp:ContentPlaceHolder ID="MainContent" runat="server">
 </asp:ContentPlaceHolder>
 </main>
@@ -65,9 +65,28 @@ else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=A
 
 <%= Html.TranslatedActionLink("Contact","Contact","Home") %>
 
-<div id="copyr">
-<a class="actionlink" href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">
-<%=Html.Encode("© 2015 GNU GENERAL PUBLIC LICENSE")%>  <i>Version 3, 29 June 2007</i></a>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '552433071604577',
+      xfbml      : true,
+      version    : 'v2.5'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+<div
+  class="fb-like"
+  data-share="true"
+  data-width="450"
+  data-show-faces="true">
 </div>
 
 </footer><div class="modal"></div>

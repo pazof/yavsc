@@ -97,7 +97,7 @@ WITH (
 
 CREATE TABLE profiledata
 (
-  uniqueid integer,
+  uniqueid integer NOT NULL,
   zipcode character varying(10),
   cityandstate character varying(255),
   blogtitle character varying(255), -- Blog Title
@@ -114,16 +114,15 @@ CREATE TABLE profiledata
   wicketcode character varying(5),
   iban character varying(33),
   bic character varying(15),
-  gtoken character varying(512), -- Google authentification token
-  grefreshtoken character varying(512), -- Google refresh token
-  gtokentype character varying(256), -- Google access token type
   gcalid character varying(255), -- Google calendar identifier
-  gtokenexpir timestamp with time zone NOT NULL DEFAULT now(), -- Google access token expiration date
   avatar character varying(512), -- url for an avatar
   gcalapi boolean NOT NULL DEFAULT false,
   gregid character varying(1024), -- Google Cloud Message registration identifier
   allowcookies boolean NOT NULL DEFAULT false,
   uitheme character varying(64),
+  meacode character varying(256), -- Code d'activité principale éxercée.
+  rate integer DEFAULT 50,
+  CONSTRAINT profiledata_pkey PRIMARY KEY (uniqueid),
   CONSTRAINT fkprofiles2 FOREIGN KEY (uniqueid)
       REFERENCES profiles (uniqueid) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE
@@ -136,13 +135,10 @@ COMMENT ON COLUMN profiledata.address IS 'Postal address';
 COMMENT ON COLUMN profiledata.accountnumber IS 'Numero de compte';
 COMMENT ON COLUMN profiledata.bankedkey IS 'clé RIB';
 COMMENT ON COLUMN profiledata.bankcode IS 'Code banque';
-COMMENT ON COLUMN profiledata.gtoken IS 'Google authentification token';
-COMMENT ON COLUMN profiledata.grefreshtoken IS 'Google refresh token';
-COMMENT ON COLUMN profiledata.gtokentype IS 'Google access token type';
 COMMENT ON COLUMN profiledata.gcalid IS 'Google calendar identifier';
-COMMENT ON COLUMN profiledata.gtokenexpir IS 'Google access token expiration date';
 COMMENT ON COLUMN profiledata.avatar IS 'url for an avatar';
 COMMENT ON COLUMN profiledata.gregid IS 'Google Cloud Message registration identifier';
+COMMENT ON COLUMN profiledata.meacode IS 'Code d''activité principale éxercée.';
 
 
 -- Index: fki_fkprofiles2
@@ -153,6 +149,8 @@ CREATE INDEX fki_fkprofiles2
   ON profiledata
   USING btree
   (uniqueid);
+
+
 
 
 
@@ -764,4 +762,35 @@ WITH (
 COMMENT ON COLUMN postheader.postid IS 'Blog post identifier, to which will be associated this head image';
 COMMENT ON COLUMN postheader.url IS 'Url for this header image, if relative, it will be on the path "~/bfiles/<postid>"';
 
+-- Table: oauthtoken
 
+-- DROP TABLE oauthtoken;
+
+CREATE TABLE oauthtoken
+(
+  _id bigserial NOT NULL,
+  profileid bigint NOT NULL,
+  authtype character varying(255) NOT NULL,
+  expiration timestamp with time zone NOT NULL,
+  refresh character varying(2048) NOT NULL, -- refresh token
+  access character varying(2048) NOT NULL, -- access token
+  CONSTRAINT oauthtoken_pkey PRIMARY KEY (_id),
+  CONSTRAINT fk_oauth_profileid FOREIGN KEY (profileid)
+      REFERENCES profiles (uniqueid) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE CASCADE
+)
+WITH (
+  OIDS=FALSE
+);
+COMMENT ON COLUMN oauthtoken.refresh IS 'refresh token';
+COMMENT ON COLUMN oauthtoken.access IS 'access token';
+
+
+-- Index: fki_oauth_profileid
+
+-- DROP INDEX fki_oauth_profileid;
+
+CREATE INDEX fki_oauth_profileid
+  ON oauthtoken
+  USING btree
+  (profileid);

@@ -52,7 +52,6 @@ INSERT INTO activity(
 'http://www.dancefair.tv/wp-content/uploads/2015/05/How-to-secure-DJ-gig.jpg'
 );
 
-
 -- Table: skill
 
 -- DROP TABLE skill;

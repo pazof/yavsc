@@ -112,6 +112,7 @@ namespace Yavsc
 //			System.Threading.Thread.Sleep(30000);
 		}
 
+#if FALSE
 		[Test ()]
 		public virtual void Register ()
 		{
@@ -135,6 +136,7 @@ namespace Yavsc
 			Membership.UpdateUser (u);
 			Assert.True (u.IsApproved);
 		}
+#endif
 
 		[Test()]
 		public virtual void Stop() {

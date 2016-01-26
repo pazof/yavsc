@@ -2,7 +2,7 @@ using System.Configuration;
 using System.Reflection;
 using System;
 using Yavsc.Client;
-using Yavsc.Models.Identity;
+using Yavsc.Model.Identity;
 using Microsoft.AspNet.Identity;
 
 namespace Yavsc.Model.RolesAndMembers
@@ -15,7 +15,10 @@ namespace Yavsc.Model.RolesAndMembers
 		public UserNameManager ()
 		{
 		}
-
+		public static SavedToken GetOAuthToken (string username, string authType)
+		{
+			return Provider.GetOAuthToken (username, authType);
+		}
 		/// <summary>
 		/// Changes the name.
 		/// </summary>
@@ -29,6 +32,17 @@ namespace Yavsc.Model.RolesAndMembers
 						newName
 					));
 			Provider.ChangeName (oldName, newName);
+		}
+
+		/// <summary>
+		/// Saves the O auth token.
+		/// </summary>
+		/// <returns>The O auth token.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="token">Token.</param>
+		public static long SaveToken(string username, AuthToken token)
+		{
+			return Provider.SaveToken (username, token);
 		}
 
 		/// <summary>

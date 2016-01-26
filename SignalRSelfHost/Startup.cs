@@ -34,6 +34,14 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using System.Collections.Concurrent;
+using System.Web.Cors;
+using System.Threading.Tasks;
+using System.Net;
+using Yavsc.Model.Identity;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security.DataHandler;
+using Microsoft.Owin.Security.DataHandler.Serializer;
+using Microsoft.Owin.Security.DataHandler.Encoder;
 
 namespace SignalRSelfHost
 {
@@ -41,13 +49,45 @@ namespace SignalRSelfHost
     class Startup
     {
         public void Configuration(IAppBuilder app)
-        {
-            app.UseCors(CorsOptions.AllowAll);
-			app.MapSignalR();
+		{
+			// Configure the db context and user manager to use a single instance per request
+			app.CreatePerOwinContext(ApplicationDbContext.Create);
+			app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+
+			app.UseCors(new CorsOptions
+				{
+					PolicyProvider = new CorsPolicyProvider
+					{
+						PolicyResolver = context =>
+						{
+							var policy = new CorsPolicy();
+							policy.AllowAnyOrigin = true;
+							policy.AllowAnyMethod = true;
+							policy.AllowAnyHeader = true;
+							policy.SupportsCredentials = false;
+							return Task.FromResult(policy);
+						}
+					}
+				}
+			);
+
+
+			app.MapSignalR(new HubConfiguration
+				{
+					EnableDetailedErrors = true,
+					EnableJSONP = true
+				}
+				
+			);
 			ConfigureSecurity (app);
 			ConfigureAuth(app);
 			var webApiConfiguration = ConfigureWebApi();
 			app.UseWebApi(webApiConfiguration);
+
+			#if DEBUG
+			app.UseErrorPage();
+			#endif
+			app.UseWelcomePage("/");
         }
 
 		public void ConfigureSecurity(IAppBuilder app)
@@ -56,23 +96,25 @@ namespace SignalRSelfHost
 		}
 
 		private void ConfigureAuth(IAppBuilder app)
+
 		{
+
+
+			// Enable the application to use a cookie to store information for the signed in user
 			app.UseCookieAuthentication(new CookieAuthenticationOptions
 				{
-					AuthenticationType = "Application",
-					AuthenticationMode = AuthenticationMode.Passive,
+					AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
 					LoginPath = new PathString(Paths.LoginPath),
 					LogoutPath = new PathString(Paths.LogoutPath),
+					CookieName = "Yavsc.Auth",
+					TicketDataFormat =
+						new SecureDataFormat<AuthenticationTicket>(DataSerializers.Ticket,
+							app.GetDataProtectionProvider().Create(), TextEncodings.Base64)
+						
 				});
-
+			
 			app.SetDefaultSignInAsAuthenticationType("External");
-			app.UseCookieAuthentication(new CookieAuthenticationOptions
-				{
-					AuthenticationType = "External",
-					AuthenticationMode = AuthenticationMode.Passive,
-					CookieName = CookieAuthenticationDefaults.CookiePrefix + "External",
-					ExpireTimeSpan = TimeSpan.FromMinutes(5),
-				});
+
 			
 			var OAuthOptions = new OAuthAuthorizationServerOptions
 			{
@@ -104,6 +146,7 @@ namespace SignalRSelfHost
 			app.UseOAuthAuthorizationServer(OAuthOptions);     
 			app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
 			{Provider = new ApplicationOAuthBearerAuthenticationProvider()});
+			
 			//app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
 		}
 
@@ -115,6 +158,8 @@ namespace SignalRSelfHost
 				"DefaultApi",
 				"api/{controller}/{id}",
 				new { id = RouteParameter.Optional });
+
+			config.MapHttpAttributeRoutes();
 			return config;
 		}
 

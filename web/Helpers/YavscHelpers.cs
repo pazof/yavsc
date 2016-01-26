@@ -33,7 +33,9 @@ using Yavsc.Client.Maps;
 using System.Net.Configuration;
 using System.Web.Profile;
 using Yavsc.Model.Identity;
-using Yavsc.Models.Identity;
+using Microsoft.Owin.Security.Google;
+using System.Collections.Concurrent;
+using Microsoft.Owin.Security;
 
 namespace Yavsc.Helpers
 {
@@ -69,7 +71,7 @@ namespace Yavsc.Helpers
 			"HTTP_CACHE_CONTROL", "__RequestVerificationToken"
 		};
 
-		public static string PublicClientId { get; set; }
+
 
 		/// <summary>
 		/// Froms the user.

@@ -21,7 +21,7 @@ namespace SignalRSelfHost
                 Console.WriteLine("Server running on {0}", url);
                 
 				while (true) {
-					System.Threading.Thread.Sleep (50000);
+					System.Threading.Thread.Sleep (500);
 				}
             }
         }

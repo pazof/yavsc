@@ -20,19 +20,42 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using Microsoft.AspNet.SignalR;
+using System.Security.Claims;
 
-namespace SignalRSelfHost
+public class AuthorizeClaimsAttribute : AuthorizeAttribute
 {
-	public class YaAuthorizeAttribute : AuthorizeAttribute
+	public override bool AuthorizeHubMethodInvocation (Microsoft.AspNet.SignalR.Hubs.IHubIncomingInvokerContext hubIncomingInvokerContext, bool appliesToMethod)
 	{
-		public override bool AuthorizeHubConnection (Microsoft.AspNet.SignalR.Hubs.HubDescriptor hubDescriptor, IRequest request)
+		return base.AuthorizeHubMethodInvocation (hubIncomingInvokerContext, appliesToMethod);
+	}
+
+	public override bool AuthorizeHubConnection (Microsoft.AspNet.SignalR.Hubs.HubDescriptor hubDescriptor, IRequest request)
+	{
+		// TODO hack request.Cookies?
+
+		 
+		if (request.User == null)
 		{
-			return base.AuthorizeHubConnection (hubDescriptor, request);
+			throw new InvalidOperationException ();
 		}
-		public override bool AuthorizeHubMethodInvocation (Microsoft.AspNet.SignalR.Hubs.IHubIncomingInvokerContext hubIncomingInvokerContext, bool appliesToMethod)
+		var principal = request.User as ClaimsPrincipal;
+
+		if (principal != null)
 		{
-			return base.AuthorizeHubMethodInvocation (hubIncomingInvokerContext, appliesToMethod);
+			Claim authenticated = principal.FindFirst(ClaimTypes.Authentication);
+			if (authenticated != null && authenticated.Value == "true")
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
+		else
+		{
+			return false;
+		}
+
 	}
 }
-

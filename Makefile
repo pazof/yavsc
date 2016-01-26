@@ -84,7 +84,7 @@ web/Web.config: dist/web/$(CONFIG)/Web.config
 	cp dist/web/$(CONFIG)/Web.config web
 
 start_xsp: 
-	(cd web; export MONO_OPTIONS=--debug; xsp4 --port 8080)
+	(cd web; MONO_OPTIONS=--debug xsp4 --port 8080)
 
 xmldoc: $(patsubst %,web/bin/%,$(DOCASSBS))
 	mdoc-update $^ $(patsubst %.dll,-i%.xml,$^) --out web/xmldoc

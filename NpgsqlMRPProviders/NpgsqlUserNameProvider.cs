@@ -21,6 +21,8 @@
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
+using Yavsc.Model.Identity;
+using System.Collections.Generic;
 
 namespace Npgsql.Web.RolesAndMembers
 {
@@ -29,9 +31,11 @@ namespace Npgsql.Web.RolesAndMembers
 	/// <summary>
 	/// Npgsql user name provider.
 	/// </summary>
-	public class NpgsqlUserNameProvider: ChangeUserNameProvider {
+	public class NpgsqlUserNameProvider: ChangeUserNameProvider
+	{
 		private string applicationName;
 		private string connectionString;
+
 		/// <summary>
 		/// Initialize the specified iname and config.
 		/// </summary>
@@ -51,20 +55,112 @@ namespace Npgsql.Web.RolesAndMembers
 			base.Initialize (iname, config);
 			
 		}
-		private string GetConfigValue (string configValue, string defaultValue)
-		{
-			if (String.IsNullOrEmpty (configValue))
-				return defaultValue;
-
-			return configValue;
-		}
 
 		#region implemented abstract members of ChangeUserNameProvider
 
-		public override Profile GetUserProfile (string name)
+		/// <summary>
+		/// Saves the token.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="token">Token.</param>
+		// TODO: in case of updating an existing token, 
+		// an Id should be given and indicate an update instead of
+		// an insertion.
+		public override long SaveToken (string username, AuthToken token)
 		{
-			var result = new Profile (name);
-			throw new NotImplementedException ();
+			long savedtokenid = 0;
+			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
+				conn.Open ();
+				using (var transact = conn.BeginTransaction ()) {
+					using (NpgsqlCommand cmd = conn.CreateCommand ()) {
+						cmd.CommandText = 
+							@"select t._id from oauthtoken t, profile p 
+where p.username = :uname 
+AND p.applicationname = :app
+AND t.authtype = :auth
+";
+						cmd.Parameters.AddWithValue ("uname", username);
+						cmd.Parameters.AddWithValue ("appname", this.applicationName);
+						cmd.Parameters.AddWithValue ("auth", token.token_type);
+						savedtokenid = (long)cmd.ExecuteScalar ();
+					}
+					if (savedtokenid > 0) {
+						using (NpgsqlCommand cmd = conn.CreateCommand ()) {
+							// do not override an existing 
+							// refresh token with null
+							if (token.refresh_token==null)
+								cmd.CommandText = @"update oauthtoken t 
+								set access = :token, externaltokenid = :etid , expiration = :exp
+where _id = :tid
+";
+							else 
+							cmd.CommandText = @"update oauthtoken t 
+								set access = :token, 
+refresh = :reft , externaltokenid = :etid , expiration = :exp
+where _id = :tid
+";
+							cmd.Parameters.AddWithValue("token",token.access_token);
+							cmd.Parameters.AddWithValue("etid",token.id_token);
+							cmd.Parameters.AddWithValue("exp",
+								DateTime.Now.AddSeconds(token.expires_in));
+							cmd.Parameters.AddWithValue("tid",savedtokenid);
+							if (token.refresh_token!=null)
+								cmd.Parameters.AddWithValue("reft",token.refresh_token);
+							cmd.ExecuteNonQuery ();
+						}
+					} else {
+						using (NpgsqlCommand cmd = conn.CreateCommand ()) {
+							cmd.CommandText = 
+								@"insert into oauthtoken 
+								(profileid,access,refresh,externaltokenid,expiration,authtype) 
+								values (
+					(select uniqueid from profile where username = :user and applicationname = :app)
+		, :token , :reft, :etid, :exp, :auth )
+								returning _id ";
+							savedtokenid = (long) cmd.ExecuteScalar ();
+						}
+							
+					}
+					transact.Commit ();
+				}
+			}
+			return savedtokenid;
+		}
+
+
+		public override SavedToken GetOAuthToken (string username, string authType)
+		{
+			SavedToken result = null;
+			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
+				conn.Open ();
+				using (NpgsqlCommand cmd = new NpgsqlCommand (
+					                           "SELECT t._id, " +
+					                           " t.expiration, " +
+					                           " t.refresh, t.access, t.externaltokenid " +
+					                           "FROM oauthtoken t, profile p " +
+					                           "WHERE t.profileid = p.uniqueid " +
+					                           "AND p.username = :uname " +
+					                           "AND p.applicationname = :app " +
+					                           "AND t.authtype = :auth ", conn)) {
+					cmd.Parameters.AddWithValue ("uname", username);
+					cmd.Parameters.AddWithValue ("appname", this.applicationName);
+					cmd.Parameters.AddWithValue ("auth", authType);
+					using (var rdr = cmd.ExecuteReader ()) {
+						if (rdr.Read ()) {
+							result = new SavedToken ();
+							result.Id = rdr.GetInt64 (0);
+							result.token_type = authType;
+							result.expires = rdr.GetDateTime (1);
+							result.refresh_token = rdr.GetString (2);
+							result.access_token = rdr.GetString (3);
+							result.id_token = rdr.GetString (4);
+						}
+					}
+				}
+				conn.Close ();
+			}
+			return result;
 		}
 
 		/// <summary>
@@ -77,9 +173,9 @@ namespace Npgsql.Web.RolesAndMembers
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
 				conn.Open ();
 				using (NpgsqlCommand cmd = new NpgsqlCommand (
-					"UPDATE users set " +
-					"username = :uname where username = :oname" +
-				    " AND ApplicationName = :appname ", conn)) {
+					                           "UPDATE users set " +
+					                           "username = :uname where username = :oname" +
+					                           " AND ApplicationName = :appname ", conn)) {
 					cmd.Parameters.AddWithValue ("uname", newName);
 					cmd.Parameters.AddWithValue ("oname", oldName);
 					cmd.Parameters.AddWithValue ("appname", this.applicationName);
@@ -87,6 +183,7 @@ namespace Npgsql.Web.RolesAndMembers
 				}
 			}
 		}
+
 		/// <summary>
 		/// Determines whether this instance is name available the specified name.
 		/// </summary>
@@ -98,14 +195,15 @@ namespace Npgsql.Web.RolesAndMembers
 			using (NpgsqlConnection conn = new NpgsqlConnection (connectionString)) {
 				conn.Open ();
 				using (NpgsqlCommand cmd = new NpgsqlCommand (
-					"SELECT count(*)=0 FROM users " +
-					"WHERE username = :uname AND ApplicationName = :appname", conn)) {
+					                           "SELECT count(*)=0 FROM users " +
+					                           "WHERE username = :uname AND ApplicationName = :appname", conn)) {
 					cmd.Parameters.AddWithValue ("uname", name);
 					cmd.Parameters.AddWithValue ("appname", this.applicationName);
-					return (bool) cmd.ExecuteScalar ();
+					return (bool)cmd.ExecuteScalar ();
 				}
 			}
 		}
+
 		#endregion
 	}
 	

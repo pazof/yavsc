@@ -7,13 +7,16 @@ using Microsoft.Owin.Security;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Yavsc.ApiControllers;
-using Yavsc.Models.Identity;
 using Microsoft.AspNet.Identity;
 using Yavsc.Model.RolesAndMembers;
 using System.Net;
 using Yavsc.Model.Identity;
 using Yavsc.Helpers;
 using Microsoft.AspNet.Identity.Owin;
+using System.Web.Security;
+using Yavsc.Model.Google;
+using Yavsc.Helpers.OAuth.Api;
+using Yavsc.Helpers.Google.Api;
 
 namespace Yavsc.Controllers
 {
@@ -34,67 +37,25 @@ namespace Yavsc.Controllers
 						var authType = key.Substring ("submit.External.".Length);
 						Session ["authType"] = authType;
 						Session ["returnUrl"] = returnUrl;
-						authentication.Challenge (authType);
+						authentication.Challenge (
+								new AuthenticationProperties() {
+									RedirectUri="/OAuth/ExternalCallback"
+								},
+								authType);
 						return new HttpUnauthorizedResult ();
 					}
 				}
 			}
-			return View ();
+			// should not occur
+			return Redirect(Session ["returnUrl"] as string);
 		}
-		/// <summary>
-		/// Externals the callback.
-		/// </summary>
-		/// <returns>The callback.</returns>
-		public ActionResult ExternalCallback ()
-		{
-			string authType = Session ["authType"] as string;
-			string returnUrl = Session ["returnUrl"] as string;
-			var authentication = HttpContext.GetOwinContext ().Authentication;
-			var authResult = authentication.AuthenticateAsync (authType).Result;
 
-			if (authResult != null) {
-				var identity = authResult.Identity;
-				if (identity != null) {
-
-					var idClaim = identity.FindFirst(ClaimTypes.NameIdentifier);
-					if (idClaim != null)
-					{
-						var loginInfo = new ExternalLoginInfo()
-						{
-							DefaultUserName = identity.Name ,
-							Login = new UserLoginInfo(idClaim.Issuer, idClaim.Value)
-						};
-					}
-
-					// var email = identity.FindFirstValue(ClaimTypes.Email);
-					var emailClaim = identity.Claims.FirstOrDefault(c => c.Type.Equals("email"));
-					var email = emailClaim.Value;
-					authentication.SignOut (authType);
-					// here, or the user already is logged and that's a profile merging intent, 
-					// or he exists and is off-line, and that's just an external login,
-					// or we create it and ask him to confirm 
-					// his registration and complete his profile.
-
-					var existingAppAuth = authentication.AuthenticateAsync("Application").Result;
-					if (existingAppAuth != null) {
-						throw new NotSupportedException ("Merge another profile is not yet possible");
-					}
-
-					UserManager.FindByEmailAsync (email);
-
-					authentication.SignIn (
-						new AuthenticationProperties { IsPersistent = true },
-							new ClaimsIdentity (identity.Claims, "Application", 
-								identity.NameClaimType, identity.RoleClaimType));
-					return Redirect (returnUrl);
-				}
-			}
-			return new HttpUnauthorizedResult ();
-		}
+	#region BADSOLUTION
 
 		/// <summary>
 		/// Authorize this instance.
 		/// </summary>
+
 		public ActionResult Authorize ()
 		{
 			if (Response.StatusCode != 200) {
@@ -129,13 +90,192 @@ namespace Yavsc.Controllers
 			return View ();
 		}
 
+
+		/// <summary>
+		/// Externals the callback.
+		/// </summary>
+		/// <returns>The callback.</returns>
+
+		public ActionResult ExternalCallback ()
+		{
+			var info =  AuthenticationManager.GetExternalLoginInfoAsync ();
+			if (info == null) {
+				return View ("ExternalLoginFailure");
+			}
+			string returnUrl = Session ["returnUrl"] as string;
+			string authType = Session ["authType"] as string;
+			var authentication = HttpContext.GetOwinContext ().Authentication;
+			var authResult = authentication.AuthenticateAsync (authType).Result;
+
+			if (authResult != null) {
+				var identity = authResult.Identity;
+				if (identity != null) {
+
+					var claim = identity.FindFirst(ClaimTypes.NameIdentifier);
+					if (claim != null)
+					{
+						var loginInfo = new ExternalLoginInfo()
+						{
+							DefaultUserName = identity.Name ,
+							Login = new UserLoginInfo(claim.Issuer, claim.Value)
+						};
+					}
+
+
+					ExternalLoginConfirmationViewModel model = new ExternalLoginConfirmationViewModel ();
+
+					if (info.Result != null) {
+						if (info.Result.Email!=null) {
+							var user = UserManager.FindByEmailAsync (info.Result.Email);
+							if (user != null && user.Result!=null) {
+								authentication.SignOut (authType);
+								IdentitySignin (user.Result.UserName, user.Result.Id, false);
+								return Redirect (returnUrl);
+							}
+						}
+					
+						model.Email = info.Result.Email;
+					}
+					authentication.SignOut (authType);
+						// here, or the user already is logged and that's a profile merging intent, 
+						// or he exists and is off-line, and that's just an external login,
+						// or we create it and ask him to confirm 
+						// his registration and complete his profile.
+
+						var existingAppAuth = authentication.AuthenticateAsync ("Application").Result;
+						if (existingAppAuth != null) {
+							throw new NotSupportedException ("Merge another profile is not yet possible");
+						}
+
+
+					ViewBag.LoginProvider = authType;
+					ViewBag.ReturnUrl = returnUrl;
+					return View("ExternalLoginConfirmation",model);
+				}
+			}
+			return new HttpUnauthorizedResult ();
+		}
+	#endregion
+		/// <summary>
+		/// Serves the external callback.
+		/// </summary>
+		/// <returns>The callback.</returns>
+		[HttpGet]
+		public ActionResult OldExternalCallback ()
+		{
+			string msg;
+			string authType = Session ["authType"] as string;
+			PeopleApi oa = GoogleHelpers.CreateOAuth2<PeopleApi>(authType);
+			AuthToken token = oa.GetToken<AuthToken> (Request, (string)Session ["state"], out msg);
+			if (token == null) {
+				ViewData.Notify(msg);
+				return View ();
+			}
+			string returnUrl = (string)Session ["returnUrl"];
+			SignIn regmod = new SignIn ();
+
+			People me = oa.GetMe (token);
+			// TODO use me.id to retreive an existing user
+			string accEmail = me.emails.Where (x => x.type == "account").First ().value;
+			MembershipUserCollection mbrs = Membership.FindUsersByEmail (accEmail);
+			if (mbrs.Count == 1) {
+				// TODO check the google id
+				// just set this user as logged on
+				foreach (MembershipUser u in mbrs) {
+					string username = u.UserName;
+					// FormsAuthentication.SetAuthCookie (username, true);
+
+					/* var upr = ProfileBase.Create (username);
+					SaveToken (upr,gat); */
+				}
+				Session ["returnUrl"] = null;
+				return Redirect (returnUrl);
+			}
+			// else create the account
+			regmod.Email = accEmail;
+			regmod.UserName = me.displayName;
+			Session ["me"] = me;
+			Session ["AuthToken"] = token;
+			return OldSiginConfirmation (regmod);
+		}
+
+		/// <summary>
+		/// Creates an account using the Google authentification.
+		/// </summary>
+		/// <param name="regmod">Regmod.</param>
+		[HttpPost]
+		public ActionResult OldSiginConfirmation (SignIn regmod)
+		{
+			if (ModelState.IsValid) {
+				if (Membership.GetUser (regmod.UserName) != null) {
+					ModelState.AddModelError ("UserName", "This user name already is in use");
+					return View ();
+				}
+				string returnUrl = (string) Session ["returnUrl"];
+				AuthToken token = (AuthToken) Session ["GoogleAuthToken"];
+				People me = (People) Session ["me"];
+				if (token == null || me == null)
+					throw new InvalidProgramException ();
+
+				Random rand = new Random ();
+				string passwd = rand.Next (100000).ToString () + rand.Next (100000).ToString ();
+
+				MembershipCreateStatus mcs;
+				Membership.CreateUser (
+					regmod.UserName,
+					passwd,
+					regmod.Email,
+					null,
+					null,
+					true,
+					out mcs);
+				switch (mcs) {
+				case MembershipCreateStatus.DuplicateEmail:
+					ModelState.AddModelError ("Email", "Cette adresse e-mail correspond " +
+						"à un compte utilisateur existant");
+					return View (regmod);
+				case MembershipCreateStatus.DuplicateUserName:
+					ModelState.AddModelError ("UserName", "Ce nom d'utilisateur est " +
+						"déjà enregistré");
+					return View (regmod);
+				case MembershipCreateStatus.Success:
+					Membership.ValidateUser (regmod.UserName, passwd);
+					FormsAuthentication.SetAuthCookie (regmod.UserName, true);
+
+					HttpContext.Profile.Initialize (regmod.UserName, true);
+					HttpContext.Profile.SetPropertyValue ("Name", me.displayName);
+					// TODO use image
+					if (me.image != null) {
+						HttpContext.Profile.SetPropertyValue ("Avatar", me.image.url);
+					}
+					if (me.placesLived != null) {
+						People.Place pplace = me.placesLived.Where (x => x.primary).First ();
+						if (pplace != null)
+							HttpContext.Profile.SetPropertyValue ("CityAndState", pplace.value);
+					}
+					if (me.url != null)
+						HttpContext.Profile.SetPropertyValue ("WebSite", me.url);
+					// Will be done in SaveToken: HttpContext.Profile.Save ();
+
+					throw new NotImplementedException ();
+					// SaveToken (HttpContext.Profile, token);
+					Session ["returnUrl"] = null;
+					return Redirect (returnUrl);
+				}
+				ViewData ["returnUrl"] = returnUrl;
+			}
+			return View (regmod);
+		}
+
+
+
 		[HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
 		public async Task<ActionResult> ExternalLoginConfirmation (ExternalLoginConfirmationViewModel model, string returnUrl)
 		{
 			if (User.Identity.IsAuthenticated) {
-				return RedirectToAction ("Manage");
+				return RedirectToAction ("Profile",new {controller="Account"});
 			}
 
 			if (ModelState.IsValid) {
@@ -156,7 +296,7 @@ namespace Yavsc.Controllers
 						await UserManager.AddToRoleAsync (user.Id, "Blogger");
 						var userState = new AppUserState ();
 						userState.FromUser (user);	
-						IdentitySignin (userState, null, false);
+						IdentitySignin (userState.Name, userState.UserId, false);
 						return Redirect (returnUrl);
 					}
 					// For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
@@ -174,5 +314,7 @@ namespace Yavsc.Controllers
 			ViewBag.ReturnUrl = returnUrl;
 			return View (model);
 		}
+
+
 	}
 }

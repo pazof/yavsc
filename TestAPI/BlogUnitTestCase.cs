@@ -31,7 +31,7 @@ namespace Yavsc
 		[TestFixtureSetUp]
 		void NeedAPost()
 		{
-			Register ();
+//			Register ();
 		}
 
 		[Test ()]

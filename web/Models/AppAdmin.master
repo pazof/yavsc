@@ -17,12 +17,12 @@ Page.StyleSheetTheme = (string) Profile.UITheme; %>
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/prettify.css")%>" />
 <link rel="stylesheet" href="<%=Url.Content("~/App_Themes/doxy.css")%>" />
 <link rel="icon" type="image/png" href="/favicon.png?v=3" />
-<script src="<%=Url.Content("~/Scripts/jquery-2.1.4.min.js")%>"></script>
+<script src="<%=Url.Content("~/Scripts/jquery-2.2.0.min.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/jquery-ui-1.11.4.min.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/parallax.js")%>"></script>
 <script src="<%=Url.Content("~/Scripts/Prettify/run_prettify.js")%>"></script>
 <script type="text/javascript">
-var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
+var apiBaseUrl = '<%=Url.Content("~/api")%>';
  $(document).ready(function(){ 
   $('[data-type="rate-bill"]').rate({webTarget: 'Blogs/Rate'});
  });
@@ -46,9 +46,9 @@ var apiBaseUrl = '<%=Url.Content(Yavsc.WebApiConfig.UrlPrefixRelative)%>';
  </asp:ContentPlaceHolder>
  <asp:ContentPlaceHolder ID="header" runat="server"></asp:ContentPlaceHolder>
  <div id="notifications"></div>
-<% if (ViewData ["Notifications"]!=null) { %>
+<% if (ViewData ["Notifications"] != null) { %>
 <script>
-$(document).ready(function(){
+$(document).ready(function() {
 <% foreach (Notification note in (IEnumerable<Notification>) ViewData ["Notifications"] ) { 
 if (note.click_action == null) {%> Yavsc.notice(<%=Ajax.JString(note.body)%>); <% } 
 else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=Ajax.JString(note.click_action_name)%>); <% } %>
@@ -58,7 +58,7 @@ else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=A
 <% } %>
 </header>
 <nav >
-<% if (Membership.GetUser()==null) { %>
+<% if (!HttpContext.Current.User.Identity.IsAuthenticated) { %>
 <a href="<%= Url.RouteUrl("Default", new { controller = "Account", action = "Login", returnUrl=Request.Url.PathAndQuery}) %>" class="actionlink" accesskey = "C">
 <i class="fa fa-sign-in"></i> Connexion
 </a>
@@ -83,7 +83,7 @@ else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=A
 <%= HttpContext.Current.User.Identity.Name %>
 <span class="hint"><%= Html.Translate("YourProfile") %></span>
 </a>
-<a href="/Blogs/Post" accesskey="P" class="actionlink">
+<a href="<%=Url.RouteUrl("BlogById",new{action="Edit"})%>" accesskey="P" class="actionlink">
 <i class="fa fa-pencil"></i>
 <%= Html.Translate("DoPost") %>
 </a>
@@ -99,6 +99,30 @@ else {%> Yavsc.notice(<%=Ajax.JString(note.body)%>, <%=note.click_action%>, <%=A
 <footer>
 
 <%= Html.TranslatedActionLink("Contact","Contact","Home") %>
+
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '552433071604577',
+      xfbml      : true,
+      version    : 'v2.5'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+<div
+  class="fb-like"
+  data-share="true"
+  data-width="450"
+  data-show-faces="true">
+</div>
 
 <div id="copyr">
 <a class="actionlink" href="http://yavsc.pschneider.fr/Blogs/UserPost/paul/License">

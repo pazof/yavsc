@@ -22,6 +22,7 @@ using System;
 using System.Configuration;
 using System.Reflection;
 using System.Configuration.Provider;
+using Yavsc.Model.Identity;
 
 namespace Yavsc.Model.RolesAndMembers
 {
@@ -51,11 +52,20 @@ namespace Yavsc.Model.RolesAndMembers
 		public abstract bool IsNameAvailable(string name);
 
 		/// <summary>
-		/// Gets the user profile.
+		/// Gets the O auth token.
 		/// </summary>
-		/// <returns>The user profile.</returns>
-		/// <param name="name">Name.</param>
-		public abstract Profile GetUserProfile(string name);
+		/// <returns>The O auth token.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="authType">Auth type.</param>
+		public abstract SavedToken GetOAuthToken(string username, string authType);
+
+		/// <summary>
+		/// Saves the token.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="token">Token.</param>
+		public abstract long SaveToken(string username, AuthToken token);
 
 	}
 }

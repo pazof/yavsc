@@ -99,6 +99,16 @@
     <Compile Include="Skills\UserSkillDeclaration.cs" />
     <Compile Include="Skills\UserSkillRating.cs" />
     <Compile Include="Skills\UserSkillReference.cs" />
+    <Compile Include="Google\Resource.cs" />
+    <Compile Include="Google\People\People.cs" />
+    <Compile Include="Google\Tracks\Entity.cs" />
+    <Compile Include="Google\Tracks\EntityQuery.cs" />
+    <Compile Include="Google\GDate.cs" />
+    <Compile Include="Google\Messaging\GCMRegisterModel.cs" />
+    <Compile Include="Google\Calendar\CalendarEventList.cs" />
+    <Compile Include="Google\Calendar\CalendarList.cs" />
+    <Compile Include="Google\Calendar\CalendarListEntry.cs" />
+    <Compile Include="Identity\AuthToken.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -114,5 +124,13 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Google\" />
+    <Folder Include="Google\People\" />
+    <Folder Include="Google\Calendar\" />
+    <Folder Include="Google\Tracks\" />
+    <Folder Include="Google\Messaging\" />
+    <Folder Include="Identity\" />
   </ItemGroup>
 </Project>

@@ -22,6 +22,9 @@ using Yavsc.Helpers.Google.Api;
 using Yavsc.Model.Skill;
 using Yavsc.Client.FrontOffice;
 using System.Web.Profile;
+using Yavsc.Helpers.OAuth.Api;
+using Yavsc.Model.Identity;
+using Yavsc.Helpers.OAuth;
 
 namespace Yavsc.Controllers
 {
@@ -36,28 +39,6 @@ namespace Yavsc.Controllers
 		public ActionResult Index()
 		{
 			return View ();
-		}
-
-		private string SetSessionSate ()
-		{
-			string state = "security_token";
-			Random rand = new Random ();
-			for (int l = 0; l < 32; l++) {
-				int r = rand.Next (62);
-				char c;
-				if (r < 10) {
-					c = (char)('0' +  r);
-				} else if (r < 36) {
-					r -= 10;
-					c = (char) ('a' + r);
-				} else {
-					r -= 36;
-					c = (char) ('A' + r);
-				}
-				state += c;
-			}
-			Session ["state"] = state;
-			return state;
 		}
 
 		private string AuthGRU {
@@ -82,7 +63,7 @@ namespace Yavsc.Controllers
 			if (string.IsNullOrWhiteSpace (returnUrl))
 				returnUrl = "/";
 			Session ["returnUrl"] = returnUrl;
-			string state = SetSessionSate ();
+			string state = Session.SetSessionSate ();
 			Response.Login (state, AuthGRU);
 		}
 		/// <summary>
@@ -94,7 +75,7 @@ namespace Yavsc.Controllers
 			if (string.IsNullOrWhiteSpace (returnUrl))
 				returnUrl = "/";
 			Session ["returnUrl"] = returnUrl;
-			Response.CalLogin (SetSessionSate (), CalendarGRU);
+			Response.CalLogin (Session.SetSessionSate (), CalendarGRU);
 		}
 
 		/// <summary>
@@ -107,8 +88,8 @@ namespace Yavsc.Controllers
 		public ActionResult CalAuth ()
 		{
 			string msg;
-			OAuth2 oa = GoogleHelpers.CreateOAuth2 (CalendarGRU);
-			AuthToken gat = oa.GetToken (Request, (string) Session ["state"], out msg);
+			CalendarApi oa = GoogleHelpers.CreateOAuth2<CalendarApi>(CalendarGRU);
+			AuthToken gat = oa.GetToken<AuthToken> (Request, (string) Session ["state"], out msg);
 			if (gat == null) {
 				ViewData.Notify( msg);
 				return View ("Auth");
@@ -130,124 +111,9 @@ namespace Yavsc.Controllers
 		/// <param name="gat">Gat.</param>
 		private void SaveToken (ProfileBase pr, AuthToken gat)
 		{	
-			pr.SetPropertyValue ("gtoken", gat.access_token);
-			if (gat.refresh_token != null)
-				pr.SetPropertyValue ("grefreshtoken", gat.refresh_token);
-			pr.SetPropertyValue ("gtokentype", gat.token_type);
-			pr.SetPropertyValue ("gtokenexpir", DateTime.Now.AddSeconds (gat.expires_in));
-			pr.Save ();
+			UserNameManager.SaveToken (pr.UserName, gat);
 		}
 
-		/// <summary>
-		/// Auth this instance.
-		/// </summary>
-		[HttpGet]
-		public ActionResult Authorize ()
-		{
-			string msg;
-			OAuth2 oa = GoogleHelpers.CreateOAuth2 (AuthGRU);
-			AuthToken gat = oa.GetToken (Request, (string)Session ["state"], out msg);
-			if (gat == null) {
-				ViewData.Notify(msg);
-				return View ();
-			}
-			string returnUrl = (string)Session ["returnUrl"];
-			SignIn regmod = new SignIn ();
-
-			People me = PeopleApi.GetMe (gat);
-			// TODO use me.id to retreive an existing user
-			string accEmail = me.emails.Where (x => x.type == "account").First ().value;
-			MembershipUserCollection mbrs = Membership.FindUsersByEmail (accEmail);
-			if (mbrs.Count == 1) {
-				// TODO check the google id
-				// just set this user as logged on
-				foreach (MembershipUser u in mbrs) {
-				string username = u.UserName;
-				    // FormsAuthentication.SetAuthCookie (username, true);
-
-					/* var upr = ProfileBase.Create (username);
-					SaveToken (upr,gat); */
-				}
-				Session ["returnUrl"] = null;
-				return Redirect (returnUrl);
-			}
-			// else create the account
-			regmod.Email = accEmail;
-			regmod.UserName = me.displayName;
-			Session ["me"] = me;
-			Session ["GoogleAuthToken"] = gat;
-			return Authorize (regmod);
-		}
-
-
-
-
-
-		/// <summary>
-		/// Creates an account using the Google authentification.
-		/// </summary>
-		/// <param name="regmod">Regmod.</param>
-		[HttpPost]
-		public ActionResult Authorize (SignIn regmod)
-		{
-			if (ModelState.IsValid) {
-				if (Membership.GetUser (regmod.UserName) != null) {
-					ModelState.AddModelError ("UserName", "This user name already is in use");
-					return View ();
-				}
-				string returnUrl = (string) Session ["returnUrl"];
-				AuthToken gat = (AuthToken) Session ["GoogleAuthToken"];
-				People me = (People)Session ["me"];
-				if (gat == null || me == null)
-					throw new InvalidDataException ();
-
-				Random rand = new Random ();
-				string passwd = rand.Next (100000).ToString () + rand.Next (100000).ToString ();
-
-				MembershipCreateStatus mcs;
-				Membership.CreateUser (
-					regmod.UserName,
-					passwd,
-					regmod.Email,
-					null,
-					null,
-					true,
-					out mcs);
-				switch (mcs) {
-				case MembershipCreateStatus.DuplicateEmail:
-					ModelState.AddModelError ("Email", "Cette adresse e-mail correspond " +
-					"à un compte utilisateur existant");
-					return View (regmod);
-				case MembershipCreateStatus.DuplicateUserName:
-					ModelState.AddModelError ("UserName", "Ce nom d'utilisateur est " +
-					"déjà enregistré");
-					return View (regmod);
-				case MembershipCreateStatus.Success:
-					Membership.ValidateUser (regmod.UserName, passwd);
-					FormsAuthentication.SetAuthCookie (regmod.UserName, true);
-
-					HttpContext.Profile.Initialize (regmod.UserName, true);
-					HttpContext.Profile.SetPropertyValue ("Name", me.displayName);
-					// TODO use image
-					if (me.image != null) {
-						HttpContext.Profile.SetPropertyValue ("Avatar", me.image.url);
-					}
-					if (me.placesLived != null) {
-						People.Place pplace = me.placesLived.Where (x => x.primary).First ();
-						if (pplace != null)
-							HttpContext.Profile.SetPropertyValue ("CityAndState", pplace.value);
-					}
-					if (me.url != null)
-						HttpContext.Profile.SetPropertyValue ("WebSite", me.url);
-					// Will be done in SaveToken: HttpContext.Profile.Save ();
-					SaveToken (HttpContext.Profile, gat);
-					Session ["returnUrl"] = null;
-					return Redirect (returnUrl);
-				}
-				ViewData ["returnUrl"] = returnUrl;
-			}
-			return View (regmod);
-		}
 
 
 		[Authorize]

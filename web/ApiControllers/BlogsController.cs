@@ -154,7 +154,7 @@ namespace Yavsc.ApiControllers
 		public async Task<HttpResponseMessage> Post (BlogEntry be) 
 		{
 			if (be.Id == 0)
-				be.Id = BlogManager.Post (User.Identity.Name, be.Title, 
+				be.Id = BlogManager.Post ( RequestContext.Principal.Identity.Name, be.Title, 
 					be.Content, be.Visible,be.AllowedCircles );
 			else
 				BlogManager.UpdatePost (be);
