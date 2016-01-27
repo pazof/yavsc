@@ -95,6 +95,10 @@ namespace Yavsc.Controllers
 		/// Externals the callback.
 		/// </summary>
 		/// <returns>The callback.</returns>
+		public ActionResult ExternalCallbackRedirect()
+		{
+			return RedirectPermanent("/OAuth/ExternalCallback");
+		}
 
 		public ActionResult ExternalCallback ()
 		{
@@ -126,10 +130,11 @@ namespace Yavsc.Controllers
 
 					if (info.Result != null) {
 						if (info.Result.Email!=null) {
-							var user = UserManager.FindByEmailAsync (info.Result.Email);
-							if (user != null && user.Result!=null) {
+							var users = Membership.FindUsersByEmail(info.Result.Email);
+
+							foreach (MembershipUser user in users) {
 								authentication.SignOut (authType);
-								IdentitySignin (user.Result.UserName, user.Result.Id, false);
+								IdentitySignin (user.UserName, user.ProviderUserKey.ToString(), false);
 								return Redirect (returnUrl);
 							}
 						}

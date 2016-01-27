@@ -26,7 +26,7 @@ namespace Yavsc.Controllers
 		public BaseController(ApplicationUserManager userManager,
 			ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
 		{
-			UserManager = userManager;
+			_userManager = userManager;
 			AccessTokenFormat = accessTokenFormat;
 		}
 
@@ -48,11 +48,11 @@ namespace Yavsc.Controllers
 			claims.Add(new Claim(ClaimTypes.NameIdentifier, providerKey));
 			claims.Add(new Claim(ClaimTypes.Name, username));
 			claims.Add (new Claim (ClaimsIdentity.DefaultNameClaimType,
-				appUserState.Name, "Application"));
+				appUserState.Name, "userName"));
 			// custom – my serialized AppUserState object
 			claims.Add(new Claim("userState", appUserState.ToString()));
 
-			var identity = new ClaimsIdentity(claims, "Application");
+			var identity = new ClaimsIdentity(claims, "Cookies");
 
 			AuthenticationManager.SignIn(new AuthenticationProperties()
 				{
@@ -66,11 +66,7 @@ namespace Yavsc.Controllers
 		{
 			get
 			{
-				return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager> ();
-			}
-			private set
-			{
-				_userManager = value;
+				return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager> ();
 			}
 		}
 
