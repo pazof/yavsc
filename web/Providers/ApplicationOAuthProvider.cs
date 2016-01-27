@@ -82,7 +82,7 @@ namespace Yavsc.Providers
 				Uri expectedRootUri = new Uri (context.Request.Uri, "/");
 
 				if (expectedRootUri.AbsoluteUri == context.RedirectUri) {
-					context.Validated ();
+					context.Validated();
 				}
 			}
 

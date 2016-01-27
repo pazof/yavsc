@@ -39,16 +39,20 @@ namespace Yavsc.Model.Identity
             {
                 manager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
+
             return manager;
         }
+
 		public override Task<ApplicationUser> FindAsync (string userName, string password)
 		{
 			return base.FindAsync (userName, password);
 		}
+
 		public override Task<ApplicationUser> FindByEmailAsync (string email)
 		{
 			return base.FindByEmailAsync (email);
 		}
+
 		public override Task<ApplicationUser> FindByIdAsync (string userId)
 		{
 			return base.FindByIdAsync (userId);

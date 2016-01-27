@@ -34,7 +34,11 @@ namespace Yavsc.Model.Identity
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
-            // Add custom user claims here
+			// Add custom user claims here
+			userIdentity.AddClaims(new Claim[] { 
+				new Claim("Name",this.UserName),
+				new Claim("EMail", this.Email)
+			});
             return userIdentity;
         }
     }

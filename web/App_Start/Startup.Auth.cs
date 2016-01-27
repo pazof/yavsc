@@ -53,20 +53,20 @@ namespace Yavsc.App_Start
 			// app.SetDefaultSignInAsAuthenticationType("External");
 
 			// Configure the application for OAuth based flow
-			// YavscHelpers.PublicClientId = ConfigurationManager.AppSettings["PUBLIC_CLIENT_ID"];
-			/* OAuthOptions = new OAuthAuthorizationServerOptions
+			YavscHelpers.PublicClientId = ConfigurationManager.AppSettings["PUBLIC_CLIENT_ID"];
+			OAuthOptions = new OAuthAuthorizationServerOptions
 			{
 				TokenEndpointPath = new PathString(Paths.TokenPath),
 				Provider = new ApplicationOAuthProvider(YavscHelpers.PublicClientId),
 				AuthorizeEndpointPath = new PathString(Paths.AuthorizePath),
 				AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
 				AllowInsecureHttp = true
-			}; */
+			}; 
 
 			// Enable the application to use bearer tokens to authenticate users
-			// app.UseOAuthBearerTokens(OAuthOptions);
+			app.UseOAuthBearerTokens(OAuthOptions);
 
-			// app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+			app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
 			//app.UseMicrosoftAccountAuthentication(
 			//    clientId: "",
@@ -90,11 +90,12 @@ namespace Yavsc.App_Start
 
 			// Enable Google authentication.
 			var googleId = ConfigurationManager.AppSettings["GOOGLE_CLIENT_ID"];
+			var googleSecret = ConfigurationManager.AppSettings["GOOGLE_CLIENT_SECRET"];
 			if (!string.IsNullOrWhiteSpace (googleId)) {
 				OAuthHelpers.ExternalAuthClientId.Add ("Google", googleId);
 				var options = new GoogleOAuth2AuthenticationOptions () {
 					ClientId = googleId,
-					ClientSecret = ConfigurationManager.AppSettings ["GOOGLE_CLIENT_SECRET"]
+					ClientSecret = googleSecret
 				};
 				OAuthHelpers.ExternalAuthOptions.Add("Google",options);
 				app.UseGoogleAuthentication (options);

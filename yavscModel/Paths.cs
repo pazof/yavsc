@@ -40,7 +40,7 @@ namespace Yavsc.Model
 		/// <summary>
 		/// The authorize path.
 		/// </summary>
-		public const string AuthorizePath = "/OAuth/ExternalCallback";
+		public const string AuthorizePath = "/OAuth/Authorize";
 
 		/// <summary>
 		/// The token path.
