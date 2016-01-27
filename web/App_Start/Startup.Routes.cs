@@ -44,7 +44,7 @@ namespace Yavsc.App_Start
 			routes.IgnoreRoute ("favicon.ico"); // favorite icon
 			routes.IgnoreRoute ("favicon.png"); // favorite icon
 			routes.IgnoreRoute ("robots.txt");  // for search engine robots
-			/*
+
 			routes.MapRoute(
 				name: "Google API Sign-in",
 				url: "signin-google",
@@ -56,7 +56,7 @@ namespace Yavsc.App_Start
 				url: "signin-facebook",
 				defaults: new { controller = "OAuth", action = "ExternalCallback" }
 			); 
-*/
+
 			routes.MapRoute (
 				"FrontOffice",
 				"do/{action}/{MEACode}/{Id}",

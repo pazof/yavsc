@@ -22,6 +22,7 @@ using System;
 using System.Web.Http;
 using Owin;
 using Microsoft.Owin.Security.OAuth;
+using Microsoft.AspNet.Identity;
 
 namespace Yavsc.App_Start
 {
@@ -34,6 +35,8 @@ namespace Yavsc.App_Start
 			// Configure Web API to use only bearer token authentication.
 			config.SuppressDefaultHostAuthentication();
 			config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+			// config.Filters.Add(new HostAuthenticationFilter(DefaultAuthenticationTypes.ApplicationCookie));
+			// config.Filters.Add(new HostAuthenticationFilter(DefaultAuthenticationTypes.ExternalCookie));
 
 			// Web API routes
 			config.MapHttpAttributeRoutes();

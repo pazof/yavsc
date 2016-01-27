@@ -31,6 +31,7 @@ using System.Runtime.Serialization.Json;
 using Yavsc.Client;
 using System.Collections.Generic;
 using Yavsc.Model.Identity;
+using System.Configuration;
 
 namespace Yavsc.Helpers.OAuth.Api
 {
@@ -57,12 +58,12 @@ namespace Yavsc.Helpers.OAuth.Api
 		protected static string[] scopeOpenid = { "openid","profile","email"};
 
 
+
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Yavsc.Helpers.Google.OAuth2"/> class.
+		/// Initializes a new instance of the <see cref="Yavsc.Helpers.OAuth.Api.GoogleAuth"/> class.
 		/// </summary>
+		/// <param name="authType">Auth type.</param>
 		/// <param name="redirectUri">Redirect URI.</param>
-		/// <param name="clientId">Client identifier.</param>
-		/// <param name="clientSecret">Client secret.</param>
 		public GoogleAuth (string authType, string redirectUri)
 		{
 			if (string.IsNullOrWhiteSpace (authType))
@@ -73,6 +74,9 @@ namespace Yavsc.Helpers.OAuth.Api
 			AuthType = authType;
 			TokenUri = "https://accounts.google.com/o/oauth2/token";
 			AuthUri = "https://accounts.google.com/o/oauth2/auth";
+			Id = ConfigurationManager.AppSettings ["GOOGLE_CLIENT_ID"];
+			Secret = ConfigurationManager.AppSettings ["GOOGLE_CLIENT_SECRET"];
+			ApiKey = ConfigurationManager.AppSettings ["GOOGLE_API_KEY"];
 		}
 
 

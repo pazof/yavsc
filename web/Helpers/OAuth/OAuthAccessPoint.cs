@@ -65,6 +65,9 @@ namespace Yavsc.Helpers.OAuth
 			get {
 				return clientSecret;
 			}
+			set {
+				clientSecret = value;
+			}
 		}
 
 		private  string clientApiKey=null;
@@ -76,6 +79,9 @@ namespace Yavsc.Helpers.OAuth
 		public  string ApiKey {
 			get {
 				return clientApiKey;
+			}
+			set {
+				clientApiKey = value;
 			}
 		}
 		/// <summary>
@@ -89,6 +95,7 @@ namespace Yavsc.Helpers.OAuth
 		/// </summary>
 		/// <value>The type of the auth.</value>
 		public string AuthType { get; set; }
+
 		/// <summary>
 		/// The URI used to get tokens.
 		/// </summary>

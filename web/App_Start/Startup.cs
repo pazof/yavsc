@@ -29,7 +29,6 @@ using Yavsc.Formatters;
 using Yavsc.Model;
 
 
-[assembly: OwinStartup(typeof(Yavsc.App_Start.Startup))]
 namespace Yavsc.App_Start
 {
 	public partial class Startup 
@@ -42,18 +41,19 @@ namespace Yavsc.App_Start
 
 			ConfigureSecurity (app);
 			ConfigureAuth(app);
-			//ConfigureChat (app);
+			// ConfigureChat (app);
 			ConfigureWebApi(app);
 
 			RegisterRoutes(RouteTable.Routes);
-			// FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-			/* RouteConfig.RegisterRoutes(RouteTable.Routes);
+			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+			/* 
 			BundleConfig.RegisterBundles(BundleTable.Bundles); */
 		}
 
 		public void ConfigureSecurity(IAppBuilder app)
 		{
-			app.SetDataProtectionProvider(new MonoDataProtectionProvider
+			app.SetDataProtectionProvider(
+				new MonoDataProtectionProvider
 				(app.Properties["host.AppName"] as string));
 			
 		}

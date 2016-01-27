@@ -33,7 +33,6 @@ using Yavsc.Client.Maps;
 using System.Net.Configuration;
 using System.Web.Profile;
 using Yavsc.Model.Identity;
-using Microsoft.Owin.Security.Google;
 using System.Collections.Concurrent;
 using Microsoft.Owin.Security;
 
