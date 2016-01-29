@@ -28,8 +28,9 @@
         <Command type="BeforeExecute" />
       </CustomCommands>
     </CustomCommands>
-    <DocumentationFile>bin\Yavsc.xml</DocumentationFile>
+    <DocumentationFile></DocumentationFile>
     <Externalconsole>true</Externalconsole>
+    <NoWarn>CS1709</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>

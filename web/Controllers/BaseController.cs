@@ -10,6 +10,7 @@ using Microsoft.Owin.Security;
 using Microsoft.AspNet.Identity;
 using Yavsc.Model.RolesAndMembers;
 using Microsoft.AspNet.Identity.Owin;
+using System.Web.Security;
 
 namespace Yavsc.Controllers
 {
@@ -19,6 +20,15 @@ namespace Yavsc.Controllers
 		{}
 
 		private ApplicationUserManager _userManager;
+
+		protected ApplicationUserManager UserManager
+		{
+			get
+			{
+				return _userManager;
+			}
+		}
+
 		private  AppUserState userState = null;
 
 		protected AppUserState UserState { get { return userState; }  }
@@ -36,38 +46,32 @@ namespace Yavsc.Controllers
 		{
 			get { return HttpContext.GetOwinContext().Authentication; }
 		}
+		public void IdentitySignin(AppUserState userState, bool isPersistent = false)
+		{
+			// create required claims
+			var claims = new List<Claim>();
+			claims.Add(new Claim(ClaimTypes.NameIdentifier, userState.UserId));
+			claims.Add(new Claim(ClaimTypes.Name, userState.Name));
+			claims.Add (new Claim (ClaimsIdentity.DefaultNameClaimType,
+			                       userState.Name,"Application"));
+			claims.Add(new Claim("userState", userState.ToString()));
+			var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie );
+
+			AuthenticationManager.SignIn(new AuthenticationProperties()
+			{
+				AllowRefresh = true,
+				IsPersistent = isPersistent,
+				ExpiresUtc = DateTime.UtcNow.AddDays(7)
+			}, identity);
+		}
 
 		public void IdentitySignin(string username, string providerKey = null, bool isPersistent = false)
 		{
-			var claims = new List<Claim>();
 			var appUserState = new AppUserState () {
 				UserId = providerKey,
 				Name = username
 			};
-			// create required claims
-			claims.Add(new Claim(ClaimTypes.NameIdentifier, providerKey));
-			claims.Add(new Claim(ClaimTypes.Name, username));
-			claims.Add (new Claim (ClaimsIdentity.DefaultNameClaimType,
-				appUserState.Name, "userName"));
-			// custom – my serialized AppUserState object
-			claims.Add(new Claim("userState", appUserState.ToString()));
-
-			var identity = new ClaimsIdentity(claims, "Cookies");
-
-			AuthenticationManager.SignIn(new AuthenticationProperties()
-				{
-					AllowRefresh = true,
-					IsPersistent = isPersistent,
-					ExpiresUtc = DateTime.UtcNow.AddDays(7)
-				}, identity);
-		}
-
-		public ApplicationUserManager UserManager
-		{
-			get
-			{
-				return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager> ();
-			}
+			IdentitySignin(appUserState, isPersistent);
 		}
 
 		protected override void Initialize(RequestContext requestContext)
@@ -86,7 +90,13 @@ namespace Yavsc.Controllers
 
 				if (!string.IsNullOrEmpty(userStateString))
 					appUserState.FromString(userStateString);
+				
+			} else if (User is RolePrincipal) {
+				var user = User as RolePrincipal;
+				appUserState.IsAdmin = user.IsInRole ("Admin");
+				appUserState.Name = user.Identity.Name;
 			}
+			
 			userState = appUserState;
 			ViewData["UserState"] = UserState;
 		}

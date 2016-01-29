@@ -45,17 +45,20 @@ namespace Yavsc.App_Start
 			routes.IgnoreRoute ("favicon.png"); // favorite icon
 			routes.IgnoreRoute ("robots.txt");  // for search engine robots
 
-			routes.MapRoute(
+
+			/*
+			 * 
+routes.MapRoute(
 				name: "Google API Sign-in",
 				url: "signin-google",
-				defaults: new { controller = "OAuth", action = "ExternalCallback" }
+				defaults: new { controller = "OAuth", action = "ExternalCallbackRedirect" }
 			);
-
 			routes.MapRoute(
 				name: "Facebook API Sign-in",
 				url: "signin-facebook",
 				defaults: new { controller = "OAuth", action = "ExternalCallback" }
 			); 
+			*/
 
 			routes.MapRoute (
 				"FrontOffice",

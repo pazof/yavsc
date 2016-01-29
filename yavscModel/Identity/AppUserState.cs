@@ -1,7 +1,6 @@
 ﻿
 using System;
 using Yavsc.Model.RolesAndMembers;
-using System.Web.Security;
 using Yavsc.Model.Identity;
 
 namespace Yavsc.Model.Identity

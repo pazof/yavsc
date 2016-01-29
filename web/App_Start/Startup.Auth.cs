@@ -14,8 +14,10 @@ using System.Security.Claims;
 using Yavsc.Helpers.OAuth;
 using Microsoft.Owin.Security.Google;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security.Facebook;
 using Yavsc.Helpers;
+using Yavsc.Model.Authentication;
 
 namespace Yavsc.App_Start
 {
@@ -31,42 +33,41 @@ namespace Yavsc.App_Start
 		/// </summary>
 		/// <value>The O auth options.</value>
 		public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
-
+		public const string ExternalCookieAuthenticationType = CookieAuthenticationDefaults.AuthenticationType;
+		public const string ExternalOAuthAuthenticationType = "ExternalToken";
 		// For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
 		public void ConfigureAuth(IAppBuilder app)
 		{
-			// Configure the db context and user manager to use a single instance per request
 			app.CreatePerOwinContext(ApplicationDbContext.Create);
 			app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
 
 			// Enable the application to use a cookie to store information for the signed in user
-			var cookieOptions = new CookieAuthenticationOptions {
-				LoginPath = new PathString (Paths.LoginPath),
-				LogoutPath = new PathString (Paths.LogoutPath),
-			};
-
-			app.UseCookieAuthentication(cookieOptions);
-
-			app.SetDefaultSignInAsAuthenticationType(cookieOptions.AuthenticationType);
-
-
-			// app.SetDefaultSignInAsAuthenticationType("External");
+			app.UseCookieAuthentication(new CookieAuthenticationOptions
+			{
+				AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+				LoginPath = new PathString(Paths.LoginPath),
+				LogoutPath = new PathString(Paths.LogoutPath),
+			});
+			app.SetDefaultSignInAsAuthenticationType(DefaultAuthenticationTypes.ExternalCookie);
+			app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
 			// Configure the application for OAuth based flow
-			YavscHelpers.PublicClientId = ConfigurationManager.AppSettings["PUBLIC_CLIENT_ID"];
+			// YavscHelpers.PublicClientId = ConfigurationManager.AppSettings["PUBLIC_CLIENT_ID"];
+			/*
 			OAuthOptions = new OAuthAuthorizationServerOptions
 			{
+				
+				AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
 				TokenEndpointPath = new PathString(Paths.TokenPath),
 				Provider = new ApplicationOAuthProvider(YavscHelpers.PublicClientId),
 				AuthorizeEndpointPath = new PathString(Paths.AuthorizePath),
 				AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
 				AllowInsecureHttp = true
-			}; 
-
+			};
 			// Enable the application to use bearer tokens to authenticate users
 			app.UseOAuthBearerTokens(OAuthOptions);
+ */
 
-			app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
 			//app.UseMicrosoftAccountAuthentication(
 			//    clientId: "",
@@ -82,7 +83,8 @@ namespace Yavsc.App_Start
 				OAuthHelpers.ExternalAuthClientId.Add ("Facebook", facebookId);
 				var options = new FacebookAuthenticationOptions () {
 					AppId = facebookId,
-					AppSecret = ConfigurationManager.AppSettings ["FACEBOOK_CLIENT_SECRET"]
+					AppSecret = ConfigurationManager.AppSettings ["FACEBOOK_CLIENT_SECRET"],
+					CallbackPath = new PathString("/OAuth/ExternalCallback/FaceBook")
 				};
 				app.UseFacebookAuthentication (options);
 				OAuthHelpers.ExternalAuthOptions.Add ("Facebook", options);
@@ -93,9 +95,11 @@ namespace Yavsc.App_Start
 			var googleSecret = ConfigurationManager.AppSettings["GOOGLE_CLIENT_SECRET"];
 			if (!string.IsNullOrWhiteSpace (googleId)) {
 				OAuthHelpers.ExternalAuthClientId.Add ("Google", googleId);
-				var options = new GoogleOAuth2AuthenticationOptions () {
+				var options = new GoogleOAuth2AuthenticationOptions()
+				{
 					ClientId = googleId,
-					ClientSecret = googleSecret
+					ClientSecret = googleSecret,
+					CallbackPath = new PathString("/OAuth/ExternalCallback/Google")
 				};
 				OAuthHelpers.ExternalAuthOptions.Add("Google",options);
 				app.UseGoogleAuthentication (options);

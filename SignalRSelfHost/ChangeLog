@@ -1,3 +1,7 @@
+2016-01-29  Paul Schneider  <paul@pschneider.fr>
+
+	* SignalRSelfHost.csproj: 
+
 2016-01-26  Paul Schneider  <paul@pschneider.fr>
 
 	* MyHub.cs:

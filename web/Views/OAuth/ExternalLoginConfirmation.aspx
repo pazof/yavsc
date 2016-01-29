@@ -4,7 +4,6 @@
 
 <asp:Content ID="MainContentContent" ContentPlaceHolderID="MainContent" runat="server">
 
- <% // Scripts.Render("~/bundles/jqueryval") %>
 <h2><%= Page.Title %></h2>
 <h3>Associate your <%=ViewBag.LoginProvider%> account.</h3>
 

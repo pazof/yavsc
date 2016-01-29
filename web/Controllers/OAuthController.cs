@@ -50,7 +50,6 @@ namespace Yavsc.Controllers
 			return Redirect(Session ["returnUrl"] as string);
 		}
 
-	#region BADSOLUTION
 
 		/// <summary>
 		/// Authorize this instance.
@@ -97,10 +96,10 @@ namespace Yavsc.Controllers
 		/// <returns>The callback.</returns>
 		public ActionResult ExternalCallbackRedirect()
 		{
-			return RedirectPermanent("/OAuth/ExternalCallback");
+			return Redirect("/OAuth/ExternalCallback");
 		}
 
-		public ActionResult ExternalCallback ()
+		public ActionResult ExternalCallback (string id)
 		{
 			var info =  AuthenticationManager.GetExternalLoginInfoAsync ();
 			if (info == null) {
@@ -124,34 +123,23 @@ namespace Yavsc.Controllers
 							Login = new UserLoginInfo(claim.Issuer, claim.Value)
 						};
 					}
-
+					claim = identity.FindFirst(ClaimTypes.Email);
+					string email = null;
+					if (claim != null)
+					{
+						email = claim.Value;
+						var users = Membership.FindUsersByEmail(email);
+						foreach (MembershipUser user in users) {
+							authentication.SignOut (authType);
+							IdentitySignin (user.UserName, user.ProviderUserKey.ToString(), false);
+							return Redirect (returnUrl);
+						}
+					}
 
 					ExternalLoginConfirmationViewModel model = new ExternalLoginConfirmationViewModel ();
-
-					if (info.Result != null) {
-						if (info.Result.Email!=null) {
-							var users = Membership.FindUsersByEmail(info.Result.Email);
-
-							foreach (MembershipUser user in users) {
-								authentication.SignOut (authType);
-								IdentitySignin (user.UserName, user.ProviderUserKey.ToString(), false);
-								return Redirect (returnUrl);
-							}
-						}
-					
-						model.Email = info.Result.Email;
-					}
+					model.Email = email;
+				
 					authentication.SignOut (authType);
-						// here, or the user already is logged and that's a profile merging intent, 
-						// or he exists and is off-line, and that's just an external login,
-						// or we create it and ask him to confirm 
-						// his registration and complete his profile.
-
-						var existingAppAuth = authentication.AuthenticateAsync ("Application").Result;
-						if (existingAppAuth != null) {
-							throw new NotSupportedException ("Merge another profile is not yet possible");
-						}
-
 
 					ViewBag.LoginProvider = authType;
 					ViewBag.ReturnUrl = returnUrl;
@@ -160,7 +148,6 @@ namespace Yavsc.Controllers
 			}
 			return new HttpUnauthorizedResult ();
 		}
-	#endregion
 		/// <summary>
 		/// Serves the external callback.
 		/// </summary>
@@ -289,11 +276,12 @@ namespace Yavsc.Controllers
 				if (info == null) {
 					return View ("ExternalLoginFailure");
 				}
+
 				var user = new ApplicationUser () {
-					UserName = model.Email, Email = model.Email
+					UserName = model.Email, 
+					Email = model.Email
 
 				};
-
 				IdentityResult result = await UserManager.CreateAsync (user);
 				if (result.Succeeded) {
 					result = await UserManager.AddLoginAsync (user.Id, info.Login);

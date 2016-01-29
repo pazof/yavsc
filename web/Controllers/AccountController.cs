@@ -144,7 +144,7 @@ namespace Yavsc.Controllers
 						Theme = ProfileBase.Create(user.UserName).GetPropertyValue("UITheme") as string,
 						UserId = key
 					};
-					IdentitySignin(model.UserName, key, model.RememberMe);
+					IdentitySignin(userState, model.RememberMe);
 					if (returnUrl != null)
 						return Redirect (returnUrl);
 					else
