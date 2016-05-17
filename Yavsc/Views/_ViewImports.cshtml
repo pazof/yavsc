@@ -1,10 +1,10 @@
-@using YavscWeb
-@using YavscWeb.Models
-@using YavscWeb.Models.Google
-@using YavscWeb.Models.Booking
-@using YavscWeb.ViewModels.Account
-@using YavscWeb.ViewModels.Manage
-@using YavscWeb.ViewModels.Calendar;
+@using Yavsc
+@using Yavsc.Models
+@using Yavsc.Models.Google
+@using Yavsc.Models.Booking
+@using Yavsc.ViewModels.Account
+@using Yavsc.ViewModels.Manage
+@using Yavsc.ViewModels.Calendar;
 @using Microsoft.AspNet.Identity
 @using Microsoft.AspNet.Mvc;
 @using Microsoft.Extensions.Localization;
@@ -15,8 +15,8 @@
 
 @inject IViewLocalizer LocString
 @addTagHelper "*, Microsoft.AspNet.Mvc.TagHelpers"
-@addTagHelper "*, yavsc"
-@inject IStringLocalizer<YavscWeb.Resources.YavscLoc> SR
+@addTagHelper "*, Yavsc"
+@inject IStringLocalizer<Yavsc.Resources.YavscLoc> SR
 @inject IAuthorizationService  AuthorizationService
 @inject IOptions<GoogleAuthSettings> GoogleSettings
 @inject IOptions<SiteSettings> SiteSettings
