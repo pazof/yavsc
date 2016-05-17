@@ -1,0 +1,13 @@
+@model UnregisterViewModel
+@{
+    ViewData["Title"] = @SR["Unregister"];
+}
+
+<h2>@ViewData["Title"].</h2>
+
+<form asp-controller="Account" asp-action="Delete" method="post" class="form-horizontal" role="form">
+
+    @Html.Hidden("ReturnUrl")
+    <input type="submit" value="@SR["Unregister"]" class="btn btn-default"/>
+</form>
+

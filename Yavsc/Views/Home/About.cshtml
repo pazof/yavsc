@@ -1,0 +1,95 @@
+@{
+    ViewData["Title"] = @SR["About"]+" "+@SiteSettings.Value.Title;
+}
+<h1>@ViewData["Title"]</h1>
+<em>@SiteSettings.Value.Slogan</em>
+
+
+<markdown>
+
+##L'objectif
+
+Cette application est construite pour mettre en relation des artistes
+du domaine musical avec leur public.
+
+##Le fonctionnement
+
+Les utilisateurs du site sont soit artiste, soit client, soit administrateur. ils ont tous droit à leur blog.
+Pour les artistes, c'est un moyen de promouvoir leur activité.
+Ils peuvent y publier des articles, truffés de vidéos et photos.
+Pour les clients, c'est un moyen de casser la glace avec leurs idoles,
+par la description détaillées de leur centres d'intérêts.
+
+L'application propulse aussi une messagerie instantanée, disponible depuis
+un navigateur Web ou depuis l'appplication mobile,
+pouvant garantir la preservation du secret sur toute information personnelle,
+du client comme du prestataire.
+
+Puis viennent (ou pas) une prise commande, un payement du client,
+la prestation, une collecte du retour du client, et un paiement du prestataire de services.
+
+Ni le client ni le prestataire ne sont anonymes pour l'applications,
+il sont même formellement authentifies par l'acquitement d'une première
+facturation en ligne, ou à l'occasion de la saisie de leur profile proféssionnel.
+
+Durant la phase de construction d'un contrat de prestation,
+le client et l'artiste peuvent profiter d'un canal de communication privé et anonyme,
+qui est fermé à la validation définitive du dit contrat.
+
+Valider un contrat, c'est:
+
+* Choisir le type de contrat
+* Se mettre d'accord sur les paramètres du contrat
+* Le faire signer des deux parties
+* Mettre en œuvre d'éventuels paiement d'arrhes
+
+Une fois validé, le contrat est publié à destination des deux parties. la facture est publiée à destination du client,
+qui peut l'honorer auprès du système, auquel cas ce client est marqué solvable, et le contrat est marqué approvisionné.
+
+En cas de défaut d'approvisionnement, le système prendra soin de marquer le contrat comme provisoire, et de prévenir l'artiste
+d'effectuer toute prestation en relation tant le paiement associé laisse à douter.
+
+Une fois sa prestation associée exécutée, les paiements relatifs sont effectués auprès de l'artiste.
+
+Pour un contrat exécuté et non honoré par le client, le processus de poursuite en recouvrement est engagé, sinon, le contrat est archivé,
+des attestations de paiement sont disponible pour l'artiste et la facture est marquée payée, puis repostée au client.
+
+###Pour l'artiste
+
+L'artiste choisit plusieurs paramètres qui vont faire son profile :
+
+* Le type d'activités qu'il veut promouvoir, le type de prestations qu'il fournit (est-ce un DJ,
+  un chanteur solo, un musicien solo, un ensemble musical classique, un groupe)
+* La tarification de sa mise en contact avec un nouveau client
+  (combien je reçois par demande client traitée sans lourdeur de plus d'une journée)
+* Le lieu où il exerce et, le cas échéant, sur combien de distance il pourrait se déplacer.
+* un agenda Google optionnel, à consulter pour établir sa disponibilité
+* Des paramètres supplémentaires en fonctions de son type d'activité par exemple, pour
+  les ensembles, leur taille, le cas échéant, leur répertoire ou des indications sur le style de leur musique)
+
+###Pour le client
+
+Il choisit un lieu et une date pour déclarer un événement avenir
+(il peut bien-sûr en programmer autant qu'il le veut).
+
+Il peut, parcourir les publications des artistes, et entamer,
+sur la base d'un de ses projets événementiel, la négociation d'un contrat de prestation.
+
+Il a accès à la connaissance des journées connues comme libres des artistes par le système.
+
+##La confidentialité
+
+À aucun moment, aucune adresse postale, aucune adresse e-mail ni aucun numéro de téléphone
+ne sont transmis ni aux clients, ni aux artistes. Seul le système a accès à ces informations.
+
+De plus, le droit de retrait est permanent et sa mise en oeuvre immédiate.
+Les artistes comme les clients peuvent demander leur désinscription,
+qui désactive immédiatement les publications associées à leurs informations,
+et programme la suppression complète de ces dites informations dans les quinze jours
+à compter de la demande, sauf demande contradictoire.
+L'opération est annulable, jusqu'à deux semaines après sa programmation.
+
+</markdown>
+
+
+

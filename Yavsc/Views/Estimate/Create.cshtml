@@ -1,0 +1,62 @@
+@model YavscWeb.Models.Estimate
+
+@{
+    ViewData["Title"] = SR["Estimate"];
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Estimate</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Description" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Status" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Title" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="AttachedGraphics" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input id="NewGraphics" type="file" multiple>
+                @Html.Hidden("AttachedGraphics")
+                <span asp-validation-for="AttachedGraphics" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="AttachedFiles" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input id="NewFiles" type="file" multiple>
+                @Html.Hidden("AttachedFiles")
+                <span asp-validation-for="AttachedFiles" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

@@ -1,5 +1,0 @@
-﻿
-( function($) {
-  $.fn.formCreateUser = function() {
-  }
-  });

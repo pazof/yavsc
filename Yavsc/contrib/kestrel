@@ -1,0 +1,103 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          kestrel
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       Script to run asp.net 5 application in background
+### END INIT INFO
+
+# Author: Ivan Derevianko aka druss <drussilla7@gmail.com>
+
+# /root/.dnx/runtimes/dnx-mono.1.0.0-rc1-update1/bin/Microsoft.Dnx.Host.Mono.dll --project approot/src/YavscWeb --configuration Release bocasta </dev/null
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+NAME=bocasta
+DESC=web
+
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+WWW_USER=paul
+DNXRUNTIME=/root/.dnx/runtimes/dnx-mono.1.0.0-rc1-update1/bin/Microsoft.Dnx.Host.Mono.dll
+PROJECT=approot/src/YavscWeb
+CONFIGURATION=Release
+ROOT=/srv/www/yavscpre
+
+DAEMON="$DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME"
+
+PIDFILE=$ROOT/kestrel.pid
+export LOGFILE=$ROOT/kestrel.log
+
+export MONO_OPTIONS="--server"
+export ASPNET_ENV="Production"
+
+# fix issue with DNX exception in case of two env vars with the same name but different case
+TMP_SAVE_runlevel_VAR=$runlevel
+unset runlevel
+
+
+running() {
+  if [ -f $PIDFILE ] && kill -0 $(cat $PIDFILE); then
+	return 0
+  fi
+  return 1
+}
+
+
+status() {
+	if running;
+	then
+		PID=$(cat $PIDFILE)
+		echo "Service running (Pid:$PID) $DESC" "$NAME"
+	else
+		echo "Service stopped $DESC" "$NAME"
+	fi
+}
+
+
+start() {
+
+  if running; then
+	echo "Service already running $DESC" "$NAME"
+    return 1
+  fi
+  log_daemon_msg "Starting service $DESC" "$NAME" 
+  start-stop-daemon -SbmCv -u www-data -p $PIDFILE -d $ROOT -x $DAEMON >$LOGFILE
+  log_end_msg 0  
+}
+
+stop() {
+  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE")  
+  then
+    echo "Service not running $DESC" "$NAME" 
+    return 1
+  fi
+  log_daemon_msg "Stopping service $DESC" "$NAME" 
+  start-stop-daemon -K -p "$PIDFILE"
+  rm -f "$PIDFILE"
+  log_end_msg 0  
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  status)
+    status
+	;;
+		
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+esac
+
+export runlevel=$TMP_SAVE_runlevel_VAR

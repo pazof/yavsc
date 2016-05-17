@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Authorization Server";
+    var identity = ViewData.Ticket != null ? ViewData.Ticket.Identity : null;
+    var scopes = (Request.QueryString.Get("scope") ?? "").Split(' ');
+}
+
+<h2>@ViewData["Title"].</h2>
+
+       <form method="POST">
+        <p>Hello, <%=identity.Name%></p>
+
+      <%if (ViewData["Message"]!=null) { %>
+      <p><%=Html.Encode(ViewData["Message"])%></p>
+      <% } %>
+        <p>A third party application want to do the following on your behalf:</p>
+        <ul>
+            <% foreach (var scope in scopes)
+            { %>
+                <li><%=scope%></li>
+           <% } %>
+        </ul>
+        <p>
+      <a href="<%=ViewData["redirect_uri"]%>">Retour</a>
+        <%=Html.Hidden("redirect_uri",ViewData["redirect_uri"])%>
+            <input type="submit" name="submit.Grant" value="Grant" />
+            <input type="submit" name="submit.Login" value="Sign in as different user" />
+        </p>
+    </form>
+
+</div>

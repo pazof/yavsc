@@ -1,0 +1,22 @@
+@model IEnumerable<YavscWeb.Models.Blog>
+
+@{
+    ViewData["Title"] = "Index des blogs";
+}
+
+<h2>Index des blogs</h2>
+
+<p>
+    <a asp-action="Create" asp-controller="Blog">Create New</a>
+</p>
+   
+@foreach (var item in Model) {
+    <h1><markdown>@item.title</markdown></h1>
+    <em>@item.Author?.UserName</em>
+    <div markdown="@item.bcontent"></div>
+     <p>
+            <a asp-action="Edit" asp-controller="Blog" asp-route-id="@item.Id">Edit</a> |
+            <a asp-action="Details" asp-controller="Blog" asp-route-id="@item.Id">Details</a> |
+            <a asp-action="Delete" asp-controller="Blog" asp-route-id="@item.Id">Delete</a>
+        </p>
+}
