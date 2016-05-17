@@ -1,0 +1,381 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="YavscStoreContainer" CdmEntityContainer="YavscEntities">
+    <EntitySetMapping Name="oauthtoken">
+      <EntityTypeMapping TypeName="Yavsc.oauthtoken">
+        <MappingFragment StoreEntitySet="oauthtoken">
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="profileid" ColumnName="profileid" />
+          <ScalarProperty Name="authtype" ColumnName="authtype" />
+          <ScalarProperty Name="expiration" ColumnName="expiration" />
+          <ScalarProperty Name="refresh" ColumnName="refresh" />
+          <ScalarProperty Name="access" ColumnName="access" />
+          <ScalarProperty Name="externaltokenid" ColumnName="externaltokenid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="histowritting">
+      <EntityTypeMapping TypeName="Yavsc.histowritting">
+        <MappingFragment StoreEntitySet="histowritting">
+          <ScalarProperty Name="datechange" ColumnName="datechange" />
+          <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="wrtid" ColumnName="wrtid" />
+          <ScalarProperty Name="username" ColumnName="username" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="id" ColumnName="_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="histoestim">
+      <EntityTypeMapping TypeName="Yavsc.histoestim">
+        <MappingFragment StoreEntitySet="histoestim">
+          <ScalarProperty Name="datechange" ColumnName="datechange" />
+          <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="estid" ColumnName="estid" />
+          <ScalarProperty Name="username" ColumnName="username" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="id" ColumnName="_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tagged">
+      <EntityTypeMapping TypeName="Yavsc.tagged">
+        <MappingFragment StoreEntitySet="tagged">
+          <ScalarProperty Name="postid" ColumnName="postid" />
+          <ScalarProperty Name="tagid" ColumnName="tagid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <!--EntitySetMapping  removed. No identical keys found.-->
+    <EntitySetMapping Name="projet">
+      <EntityTypeMapping TypeName="Yavsc.projet">
+        <MappingFragment StoreEntitySet="projet">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="prdesc" ColumnName="prdesc" />
+          <ScalarProperty Name="managerid" ColumnName="managerid" />
+          <ScalarProperty Name="ApplicationName" ColumnName="ApplicationName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="taskdeps">
+      <EntityTypeMapping TypeName="Yavsc.taskdeps">
+        <MappingFragment StoreEntitySet="taskdeps">
+          <ScalarProperty Name="taskId" ColumnName="taskId" />
+          <ScalarProperty Name="deptask" ColumnName="deptask" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="blfiles">
+      <EntityTypeMapping TypeName="Yavsc.blfiles">
+        <MappingFragment StoreEntitySet="blfiles">
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="alt_text" ColumnName="alt_text" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="comment">
+      <EntityTypeMapping TypeName="Yavsc.comment">
+        <MappingFragment StoreEntitySet="comment">
+          <ScalarProperty Name="username" ColumnName="username" />
+          <ScalarProperty Name="bcontent" ColumnName="bcontent" />
+          <ScalarProperty Name="posted" ColumnName="posted" />
+          <ScalarProperty Name="modified" ColumnName="modified" />
+          <ScalarProperty Name="visible" ColumnName="visible" />
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="postid" ColumnName="postid" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="activity">
+      <EntityTypeMapping TypeName="Yavsc.activity">
+        <MappingFragment StoreEntitySet="activity">
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="cmnt" ColumnName="cmnt" />
+          <ScalarProperty Name="meacode" ColumnName="meacode" />
+          <ScalarProperty Name="photo" ColumnName="photo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="users">
+      <EntityTypeMapping TypeName="Yavsc.users">
+        <MappingFragment StoreEntitySet="users">
+          <ScalarProperty Name="pkid" ColumnName="pkid" />
+          <ScalarProperty Name="username" ColumnName="username" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="comment" ColumnName="comment" />
+          <ScalarProperty Name="passw" ColumnName="passw" />
+          <ScalarProperty Name="passwordquestion" ColumnName="passwordquestion" />
+          <ScalarProperty Name="passwordanswer" ColumnName="passwordanswer" />
+          <ScalarProperty Name="isapproved" ColumnName="isapproved" />
+          <ScalarProperty Name="lastactivitydate" ColumnName="lastactivitydate" />
+          <ScalarProperty Name="lastlogindate" ColumnName="lastlogindate" />
+          <ScalarProperty Name="lastpasswordchangeddate" ColumnName="lastpasswordchangeddate" />
+          <ScalarProperty Name="creationdate" ColumnName="creationdate" />
+          <ScalarProperty Name="islockedout" ColumnName="islockedout" />
+          <ScalarProperty Name="lastlockedoutdate" ColumnName="lastlockedoutdate" />
+          <ScalarProperty Name="failedpasswordattemptcount" ColumnName="failedpasswordattemptcount" />
+          <ScalarProperty Name="failedpasswordattemptwindowstart" ColumnName="failedpasswordattemptwindowstart" />
+          <ScalarProperty Name="failedpasswordanswerattemptcount" ColumnName="failedpasswordanswerattemptcount" />
+          <ScalarProperty Name="failedpasswordanswerattemptwindowstart" ColumnName="failedpasswordanswerattemptwindowstart" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="writtings">
+      <EntityTypeMapping TypeName="Yavsc.writtings">
+        <MappingFragment StoreEntitySet="writtings">
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="count" ColumnName="count" />
+          <ScalarProperty Name="estimid" ColumnName="estimid" />
+          <ScalarProperty Name="description" ColumnName="description" />
+          <ScalarProperty Name="productid" ColumnName="productid" />
+          <ScalarProperty Name="ucost" ColumnName="ucost" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="hr">
+      <EntityTypeMapping TypeName="Yavsc.hr">
+        <MappingFragment StoreEntitySet="hr">
+          <ScalarProperty Name="userid" ColumnName="userid" />
+          <ScalarProperty Name="rate" ColumnName="rate" />
+          <ScalarProperty Name="comment" ColumnName="comment" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="wrtags">
+      <EntityTypeMapping TypeName="Yavsc.wrtags">
+        <MappingFragment StoreEntitySet="wrtags">
+          <ScalarProperty Name="wrid" ColumnName="wrid" />
+          <ScalarProperty Name="tagid" ColumnName="tagid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="userskills">
+      <EntityTypeMapping TypeName="Yavsc.userskills">
+        <MappingFragment StoreEntitySet="userskills">
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="username" ColumnName="username" />
+          <ScalarProperty Name="comment" ColumnName="comment" />
+          <ScalarProperty Name="skillid" ColumnName="skillid" />
+          <ScalarProperty Name="rate" ColumnName="rate" />
+          <ScalarProperty Name="id" ColumnName="_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="product">
+      <EntityTypeMapping TypeName="Yavsc.product">
+        <MappingFragment StoreEntitySet="product">
+          <ScalarProperty Name="ref" ColumnName="ref" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="wrfiles">
+      <EntityTypeMapping TypeName="Yavsc.wrfiles">
+        <MappingFragment StoreEntitySet="wrfiles">
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="wrid" ColumnName="wrid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="blog">
+      <EntityTypeMapping TypeName="Yavsc.blog">
+        <MappingFragment StoreEntitySet="blog">
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="username" ColumnName="username" />
+          <ScalarProperty Name="posted" ColumnName="posted" />
+          <ScalarProperty Name="modified" ColumnName="modified" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="bcontent" ColumnName="bcontent" />
+          <ScalarProperty Name="visible" ColumnName="visible" />
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="photo" ColumnName="photo" />
+          <ScalarProperty Name="rate" ColumnName="rate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="passwrecovery">
+      <EntityTypeMapping TypeName="Yavsc.passwrecovery">
+        <MappingFragment StoreEntitySet="passwrecovery">
+          <ScalarProperty Name="pkid" ColumnName="pkid" />
+          <ScalarProperty Name="one_time_pass" ColumnName="one_time_pass" />
+          <ScalarProperty Name="creation" ColumnName="creation" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="profiles">
+      <EntityTypeMapping TypeName="Yavsc.profiles">
+        <MappingFragment StoreEntitySet="profiles">
+          <ScalarProperty Name="uniqueid" ColumnName="uniqueid" />
+          <ScalarProperty Name="username" ColumnName="username" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="isanonymous" ColumnName="isanonymous" />
+          <ScalarProperty Name="lastactivitydate" ColumnName="lastactivitydate" />
+          <ScalarProperty Name="lastupdateddate" ColumnName="lastupdateddate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="profiledata">
+      <EntityTypeMapping TypeName="Yavsc.profiledata">
+        <MappingFragment StoreEntitySet="profiledata">
+          <ScalarProperty Name="uniqueid" ColumnName="uniqueid" />
+          <ScalarProperty Name="zipcode" ColumnName="zipcode" />
+          <ScalarProperty Name="cityandstate" ColumnName="cityandstate" />
+          <ScalarProperty Name="blogtitle" ColumnName="blogtitle" />
+          <ScalarProperty Name="address" ColumnName="address" />
+          <ScalarProperty Name="country" ColumnName="country" />
+          <ScalarProperty Name="website" ColumnName="website" />
+          <ScalarProperty Name="blogvisible" ColumnName="blogvisible" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="phone" ColumnName="phone" />
+          <ScalarProperty Name="mobile" ColumnName="mobile" />
+          <ScalarProperty Name="accountnumber" ColumnName="accountnumber" />
+          <ScalarProperty Name="bankedkey" ColumnName="bankedkey" />
+          <ScalarProperty Name="bankcode" ColumnName="bankcode" />
+          <ScalarProperty Name="wicketcode" ColumnName="wicketcode" />
+          <ScalarProperty Name="iban" ColumnName="iban" />
+          <ScalarProperty Name="bic" ColumnName="bic" />
+          <ScalarProperty Name="gcalid" ColumnName="gcalid" />
+          <ScalarProperty Name="avatar" ColumnName="avatar" />
+          <ScalarProperty Name="gcalapi" ColumnName="gcalapi" />
+          <ScalarProperty Name="gregid" ColumnName="gregid" />
+          <ScalarProperty Name="allowcookies" ColumnName="allowcookies" />
+          <ScalarProperty Name="uitheme" ColumnName="uitheme" />
+          <ScalarProperty Name="meacode" ColumnName="meacode" />
+          <ScalarProperty Name="rate" ColumnName="rate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="roles">
+      <EntityTypeMapping TypeName="Yavsc.roles">
+        <MappingFragment StoreEntitySet="roles">
+          <ScalarProperty Name="rolename" ColumnName="rolename" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="comment" ColumnName="comment" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tag">
+      <EntityTypeMapping TypeName="Yavsc.tag">
+        <MappingFragment StoreEntitySet="tag">
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="satisfaction">
+      <EntityTypeMapping TypeName="Yavsc.satisfaction">
+        <MappingFragment StoreEntitySet="satisfaction">
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="userskillid" ColumnName="userskillid" />
+          <ScalarProperty Name="rate" ColumnName="rate" />
+          <ScalarProperty Name="comnt" ColumnName="comnt" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="circle">
+      <EntityTypeMapping TypeName="Yavsc.circle">
+        <MappingFragment StoreEntitySet="circle">
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="owner" ColumnName="owner" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="public" ColumnName="public" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="circle_members">
+      <EntityTypeMapping TypeName="Yavsc.circle_members">
+        <MappingFragment StoreEntitySet="circle_members">
+          <ScalarProperty Name="circle_id" ColumnName="circle_id" />
+          <ScalarProperty Name="member" ColumnName="member" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="skill">
+      <EntityTypeMapping TypeName="Yavsc.skill">
+        <MappingFragment StoreEntitySet="skill">
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="rate" ColumnName="rate" />
+          <ScalarProperty Name="meacode" ColumnName="meacode" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="parent" ColumnName="parent" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tasks">
+      <EntityTypeMapping TypeName="Yavsc.tasks">
+        <MappingFragment StoreEntitySet="tasks">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="start" ColumnName="start" />
+          <ScalarProperty Name="endd" ColumnName="endd" />
+          <ScalarProperty Name="tdesc" ColumnName="tdesc" />
+          <ScalarProperty Name="prid" ColumnName="prid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="usersroles">
+      <EntityTypeMapping TypeName="Yavsc.usersroles">
+        <MappingFragment StoreEntitySet="usersroles">
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="rolename" ColumnName="rolename" />
+          <ScalarProperty Name="username" ColumnName="username" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="commandes">
+      <EntityTypeMapping TypeName="Yavsc.commandes">
+        <MappingFragment StoreEntitySet="commandes">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="validation" ColumnName="validation" />
+          <ScalarProperty Name="prdref" ColumnName="prdref" />
+          <ScalarProperty Name="creation" ColumnName="creation" />
+          <ScalarProperty Name="clientname" ColumnName="clientname" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="class" ColumnName="class" />
+          <!--ScalarProperty Name="params" removed. Unknown type.-->
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="blog_access">
+      <EntityTypeMapping TypeName="Yavsc.blog_access">
+        <MappingFragment StoreEntitySet="blog_access">
+          <ScalarProperty Name="post_id" ColumnName="post_id" />
+          <ScalarProperty Name="circle_id" ColumnName="circle_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="estimate">
+      <EntityTypeMapping TypeName="Yavsc.estimate">
+        <MappingFragment StoreEntitySet="estimate">
+          <ScalarProperty Name="id" ColumnName="_id" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="username" ColumnName="username" />
+          <ScalarProperty Name="applicationname" ColumnName="applicationname" />
+          <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="client" ColumnName="client" />
+          <ScalarProperty Name="description" ColumnName="description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="uuid_ns_dns" FunctionName="public.uuid_ns_dns" />
+    <FunctionImportMapping FunctionImportName="uuid_generate_v1" FunctionName="public.uuid_generate_v1" />
+    <FunctionImportMapping FunctionImportName="uuid_ns_url" FunctionName="public.uuid_ns_url" />
+    <FunctionImportMapping FunctionImportName="uuid_generate_v5" FunctionName="public.uuid_generate_v5" />
+    <FunctionImportMapping FunctionImportName="uuid_generate_v1mc" FunctionName="public.uuid_generate_v1mc" />
+    <FunctionImportMapping FunctionImportName="uuid_nil" FunctionName="public.uuid_nil" />
+    <FunctionImportMapping FunctionImportName="uuid_generate_v3" FunctionName="public.uuid_generate_v3" />
+    <FunctionImportMapping FunctionImportName="uuid_generate_v4" FunctionName="public.uuid_generate_v4" />
+    <FunctionImportMapping FunctionImportName="uuid_ns_x500" FunctionName="public.uuid_ns_x500" />
+    <FunctionImportMapping FunctionImportName="uuid_ns_oid" FunctionName="public.uuid_ns_oid" />
+  </EntityContainerMapping>
+</Mapping>

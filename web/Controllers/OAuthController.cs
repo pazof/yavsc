@@ -113,11 +113,11 @@ namespace Yavsc.Controllers
 			if (authResult != null) {
 				var identity = authResult.Identity;
 				if (identity != null) {
-
+					ExternalLoginInfo loginInfo = null;
 					var claim = identity.FindFirst(ClaimTypes.NameIdentifier);
 					if (claim != null)
 					{
-						var loginInfo = new ExternalLoginInfo()
+						loginInfo = new ExternalLoginInfo()
 						{
 							DefaultUserName = identity.Name ,
 							Login = new UserLoginInfo(claim.Issuer, claim.Value)
@@ -136,18 +136,18 @@ namespace Yavsc.Controllers
 						}
 					}
 
-					ExternalLoginConfirmationViewModel model = new ExternalLoginConfirmationViewModel ();
+					SignIn model = new SignIn ();
 					model.Email = email;
-				
+					model.UserName = loginInfo.DefaultUserName;
 					authentication.SignOut (authType);
-
-					ViewBag.LoginProvider = authType;
-					ViewBag.ReturnUrl = returnUrl;
-					return View("ExternalLoginConfirmation",model);
+					Session["ExternalLoginInfo"] = loginInfo;
+					return ExternalLoginConfirmation(model,returnUrl).Result;
 				}
 			}
 			return new HttpUnauthorizedResult ();
 		}
+		#region OLD
+
 		/// <summary>
 		/// Serves the external callback.
 		/// </summary>
@@ -249,7 +249,6 @@ namespace Yavsc.Controllers
 						HttpContext.Profile.SetPropertyValue ("WebSite", me.url);
 					// Will be done in SaveToken: HttpContext.Profile.Save ();
 
-					throw new NotImplementedException ();
 					// SaveToken (HttpContext.Profile, token);
 					Session ["returnUrl"] = null;
 					return Redirect (returnUrl);
@@ -259,53 +258,74 @@ namespace Yavsc.Controllers
 			return View (regmod);
 		}
 
-
+		#endregion
 
 		[HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public async Task<ActionResult> ExternalLoginConfirmation (ExternalLoginConfirmationViewModel model, string returnUrl)
+		public async Task<ActionResult> ExternalLoginConfirmation (SignIn regmod, string returnUrl)
 		{
 			if (User.Identity.IsAuthenticated) {
 				return RedirectToAction ("Profile",new {controller="Account"});
 			}
 
 			if (ModelState.IsValid) {
+
 				// Get the information about the user from the external login provider
-				var info = await AuthenticationManager.GetExternalLoginInfoAsync ();
+				ExternalLoginInfo info = Session["ExternalLoginInfo" ] as ExternalLoginInfo;
 				if (info == null) {
 					return View ("ExternalLoginFailure");
 				}
 
 				var user = new ApplicationUser () {
-					UserName = model.Email, 
-					Email = model.Email
-
+					UserName = regmod.DisplayName, 
+					Email = regmod.Email
 				};
-				IdentityResult result = await UserManager.CreateAsync (user);
-				if (result.Succeeded) {
-					result = await UserManager.AddLoginAsync (user.Id, info.Login);
-					if (result.Succeeded) {
-						await UserManager.AddToRoleAsync (user.Id, "Blogger");
-						var userState = new AppUserState ();
-						userState.FromUser (user);	
-						IdentitySignin (userState.Name, userState.UserId, false);
-						return Redirect (returnUrl);
-					}
-					// For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-					// Send an email with this link
-					// string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-					// var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-					// SendEmail(user.Email, callbackUrl, "Confirm your account", "Please confirm your account by clicking this link");
+
+				Random rand = new Random ();
+				string passwd = rand.Next (100000).ToString () + rand.Next (100000).ToString ();
+
+				MembershipCreateStatus mcs;
+				Membership.CreateUser (
+					regmod.UserName,
+					passwd,
+					regmod.Email,
+					null,
+					null,
+					true,
+					out mcs);
+				switch (mcs) {
+					case MembershipCreateStatus.DuplicateEmail:
+						ModelState.AddModelError ("Email", "Cette adresse e-mail correspond " +
+						                      "à un compte utilisateur existant");
+					return View (regmod);
+					case MembershipCreateStatus.DuplicateUserName:
+						ModelState.AddModelError ("UserName", "Ce nom d'utilisateur est " +
+						                      "déjà enregistré");
+					return View (regmod);
+					case MembershipCreateStatus.Success:
+						Membership.ValidateUser (regmod.UserName, passwd);
+						FormsAuthentication.SetAuthCookie (regmod.UserName, true);
+
+						HttpContext.Profile.Initialize (regmod.UserName, true);
+						HttpContext.Profile.SetPropertyValue ("Name", info.DefaultUserName);
+						// TODO use image
+						if (regmod.Avatar != null) {
+							HttpContext.Profile.SetPropertyValue ("Avatar", regmod.Avatar);
+						}
+						if (regmod.Location != null) {
+							HttpContext.Profile.SetPropertyValue ("CityAndState", regmod.Location);
+						}
+						HttpContext.Profile.Save ();
+						Session ["returnUrl"] = null;
 					return Redirect (returnUrl);
 				}
-				if (!result.Succeeded)
-					foreach (var err in result.Errors)
-						ModelState.AddModelError ("Email", err);
 			}
 
+			string authType = Session ["authType"] as string;
+			ViewBag.LoginProvider = authType;
 			ViewBag.ReturnUrl = returnUrl;
-			return View (model);
+			return View ("ExternalLoginConfirmation",regmod);
 		}
 
 

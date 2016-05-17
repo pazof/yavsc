@@ -1,0 +1,1285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Yavsc" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="YavscEntities">
+    <EntitySet Name="oauthtoken" EntityType="Yavsc.oauthtoken" />
+    <EntitySet Name="histowritting" EntityType="Yavsc.histowritting" />
+    <EntitySet Name="histoestim" EntityType="Yavsc.histoestim" />
+    <EntitySet Name="tagged" EntityType="Yavsc.tagged" />
+    <!--EntitySet Name="stocksymbols" removed. No identical keys found.-->
+    <EntitySet Name="projet" EntityType="Yavsc.projet" />
+    <EntitySet Name="taskdeps" EntityType="Yavsc.taskdeps" />
+    <EntitySet Name="blfiles" EntityType="Yavsc.blfiles" />
+    <EntitySet Name="comment" EntityType="Yavsc.comment" />
+    <EntitySet Name="activity" EntityType="Yavsc.activity" />
+    <EntitySet Name="users" EntityType="Yavsc.users" />
+    <EntitySet Name="writtings" EntityType="Yavsc.writtings" />
+    <EntitySet Name="hr" EntityType="Yavsc.hr" />
+    <EntitySet Name="wrtags" EntityType="Yavsc.wrtags" />
+    <EntitySet Name="userskills" EntityType="Yavsc.userskills" />
+    <EntitySet Name="product" EntityType="Yavsc.product" />
+    <EntitySet Name="wrfiles" EntityType="Yavsc.wrfiles" />
+    <EntitySet Name="blog" EntityType="Yavsc.blog" />
+    <EntitySet Name="passwrecovery" EntityType="Yavsc.passwrecovery" />
+    <EntitySet Name="profiles" EntityType="Yavsc.profiles" />
+    <EntitySet Name="profiledata" EntityType="Yavsc.profiledata" />
+    <EntitySet Name="roles" EntityType="Yavsc.roles" />
+    <EntitySet Name="tag" EntityType="Yavsc.tag" />
+    <EntitySet Name="satisfaction" EntityType="Yavsc.satisfaction" />
+    <EntitySet Name="circle" EntityType="Yavsc.circle" />
+    <EntitySet Name="circle_members" EntityType="Yavsc.circle_members" />
+    <EntitySet Name="skill" EntityType="Yavsc.skill" />
+    <EntitySet Name="tasks" EntityType="Yavsc.tasks" />
+    <EntitySet Name="usersroles" EntityType="Yavsc.usersroles" />
+    <EntitySet Name="commandes" EntityType="Yavsc.commandes" />
+    <EntitySet Name="blog_access" EntityType="Yavsc.blog_access" />
+    <EntitySet Name="estimate" EntityType="Yavsc.estimate" />
+    <AssociationSet Name="usersroles_fk_role" Association="Yavsc.usersroles_fk_role">
+      <End Role="roles" EntitySet="roles" />
+      <End Role="usersroles" EntitySet="usersroles" />
+      <End Role="roles" EntitySet="roles" />
+      <End Role="usersroles" EntitySet="usersroles" />
+    </AssociationSet>
+    <AssociationSet Name="usersroles_fk_user" Association="Yavsc.usersroles_fk_user">
+      <End Role="users" EntitySet="users" />
+      <End Role="usersroles" EntitySet="usersroles" />
+      <End Role="users" EntitySet="users" />
+      <End Role="usersroles" EntitySet="usersroles" />
+    </AssociationSet>
+    <AssociationSet Name="fkprofiles2" Association="Yavsc.fkprofiles2">
+      <End Role="profiles" EntitySet="profiles" />
+      <End Role="profiledata" EntitySet="profiledata" />
+    </AssociationSet>
+    <AssociationSet Name="bloguser" Association="Yavsc.bloguser">
+      <End Role="users" EntitySet="users" />
+      <End Role="blog" EntitySet="blog" />
+      <End Role="users" EntitySet="users" />
+      <End Role="blog" EntitySet="blog" />
+    </AssociationSet>
+    <AssociationSet Name="commforeignuser" Association="Yavsc.commforeignuser">
+      <End Role="users" EntitySet="users" />
+      <End Role="commandes" EntitySet="commandes" />
+      <End Role="users" EntitySet="users" />
+      <End Role="commandes" EntitySet="commandes" />
+    </AssociationSet>
+    <AssociationSet Name="estimate_client_fkey" Association="Yavsc.estimate_client_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="estimate" EntitySet="estimate" />
+      <End Role="users" EntitySet="users" />
+      <End Role="estimate" EntitySet="estimate" />
+    </AssociationSet>
+    <AssociationSet Name="estimate_username_fkey" Association="Yavsc.estimate_username_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="estimate" EntitySet="estimate" />
+      <End Role="users" EntitySet="users" />
+      <End Role="estimate" EntitySet="estimate" />
+    </AssociationSet>
+    <AssociationSet Name="histoestim_estid_fkey" Association="Yavsc.histoestim_estid_fkey">
+      <End Role="estimate" EntitySet="estimate" />
+      <End Role="histoestim" EntitySet="histoestim" />
+    </AssociationSet>
+    <AssociationSet Name="histoestim_username_fkey" Association="Yavsc.histoestim_username_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="histoestim" EntitySet="histoestim" />
+      <End Role="users" EntitySet="users" />
+      <End Role="histoestim" EntitySet="histoestim" />
+    </AssociationSet>
+    <AssociationSet Name="pk_project_manager" Association="Yavsc.pk_project_manager">
+      <End Role="users" EntitySet="users" />
+      <End Role="projet" EntitySet="projet" />
+      <End Role="users" EntitySet="users" />
+      <End Role="projet" EntitySet="projet" />
+    </AssociationSet>
+    <AssociationSet Name="fkprofiles1" Association="Yavsc.fkprofiles1">
+      <End Role="profiles" EntitySet="profiles" />
+      <End Role="stocksymbols" EntitySet="stocksymbols" />
+    </AssociationSet>
+    <AssociationSet Name="tagged_postid_fkey" Association="Yavsc.tagged_postid_fkey">
+      <End Role="blog" EntitySet="blog" />
+      <End Role="tagged" EntitySet="tagged" />
+    </AssociationSet>
+    <AssociationSet Name="tagged_tagid_fkey" Association="Yavsc.tagged_tagid_fkey">
+      <End Role="tag" EntitySet="tag" />
+      <End Role="tagged" EntitySet="tagged" />
+    </AssociationSet>
+    <AssociationSet Name="tasks_fk_new" Association="Yavsc.tasks_fk_new">
+      <End Role="projet" EntitySet="projet" />
+      <End Role="tasks" EntitySet="tasks" />
+    </AssociationSet>
+    <AssociationSet Name="pk_foreign_dep" Association="Yavsc.pk_foreign_dep">
+      <End Role="tasks" EntitySet="tasks" />
+      <End Role="taskdeps" EntitySet="taskdeps" />
+    </AssociationSet>
+    <AssociationSet Name="pk_foreign_task" Association="Yavsc.pk_foreign_task">
+      <End Role="tasks" EntitySet="tasks" />
+      <End Role="taskdeps" EntitySet="taskdeps" />
+    </AssociationSet>
+    <AssociationSet Name="writtings_estimid_fkey" Association="Yavsc.writtings_estimid_fkey">
+      <End Role="estimate" EntitySet="estimate" />
+      <End Role="writtings" EntitySet="writtings" />
+    </AssociationSet>
+    <AssociationSet Name="cstwrtagsref" Association="Yavsc.cstwrtagsref">
+      <End Role="tag" EntitySet="tag" />
+      <End Role="wrtags" EntitySet="wrtags" />
+    </AssociationSet>
+    <AssociationSet Name="wrtags_wrid_fkey1" Association="Yavsc.wrtags_wrid_fkey1">
+      <End Role="writtings" EntitySet="writtings" />
+      <End Role="wrtags" EntitySet="wrtags" />
+    </AssociationSet>
+    <AssociationSet Name="wrtags_wrid_fkey" Association="Yavsc.wrtags_wrid_fkey">
+      <End Role="writtings" EntitySet="writtings" />
+      <End Role="wrfiles" EntitySet="wrfiles" />
+    </AssociationSet>
+    <AssociationSet Name="histowritting_username_fkey" Association="Yavsc.histowritting_username_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="histowritting" EntitySet="histowritting" />
+      <End Role="users" EntitySet="users" />
+      <End Role="histowritting" EntitySet="histowritting" />
+    </AssociationSet>
+    <AssociationSet Name="histowritting_wrtid_fkey" Association="Yavsc.histowritting_wrtid_fkey">
+      <End Role="writtings" EntitySet="writtings" />
+      <End Role="histowritting" EntitySet="histowritting" />
+    </AssociationSet>
+    <AssociationSet Name="circle_owner_fkey" Association="Yavsc.circle_owner_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="circle" EntitySet="circle" />
+      <End Role="users" EntitySet="users" />
+      <End Role="circle" EntitySet="circle" />
+    </AssociationSet>
+    <AssociationSet Name="fkey_blog" Association="Yavsc.fkey_blog">
+      <End Role="blog" EntitySet="blog" />
+      <End Role="comment" EntitySet="comment" />
+    </AssociationSet>
+    <AssociationSet Name="fkey_users" Association="Yavsc.fkey_users">
+      <End Role="users" EntitySet="users" />
+      <End Role="comment" EntitySet="comment" />
+      <End Role="users" EntitySet="users" />
+      <End Role="comment" EntitySet="comment" />
+    </AssociationSet>
+    <AssociationSet Name="passwrecovery_pkid_fkey" Association="Yavsc.passwrecovery_pkid_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="passwrecovery" EntitySet="passwrecovery" />
+    </AssociationSet>
+    <AssociationSet Name="blog_access_circle_id_fkey" Association="Yavsc.blog_access_circle_id_fkey">
+      <End Role="circle" EntitySet="circle" />
+      <End Role="blog_access" EntitySet="blog_access" />
+    </AssociationSet>
+    <AssociationSet Name="blog_access_post_id_fkey" Association="Yavsc.blog_access_post_id_fkey">
+      <End Role="blog" EntitySet="blog" />
+      <End Role="blog_access" EntitySet="blog_access" />
+    </AssociationSet>
+    <AssociationSet Name="fk_circle_members_users" Association="Yavsc.fk_circle_members_users">
+      <End Role="users" EntitySet="users" />
+      <End Role="circle_members" EntitySet="circle_members" />
+      <End Role="users" EntitySet="users" />
+      <End Role="circle_members" EntitySet="circle_members" />
+    </AssociationSet>
+    <AssociationSet Name="users_applicationname_fkey" Association="Yavsc.users_applicationname_fkey">
+      <End Role="profiles" EntitySet="profiles" />
+      <End Role="users" EntitySet="users" />
+      <End Role="profiles" EntitySet="profiles" />
+      <End Role="users" EntitySet="users" />
+    </AssociationSet>
+    <AssociationSet Name="userskills_applicationname_fkey" Association="Yavsc.userskills_applicationname_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="userskills" EntitySet="userskills" />
+      <End Role="users" EntitySet="users" />
+      <End Role="userskills" EntitySet="userskills" />
+    </AssociationSet>
+    <AssociationSet Name="userskills_skillid_fkey" Association="Yavsc.userskills_skillid_fkey">
+      <End Role="skill" EntitySet="skill" />
+      <End Role="userskills" EntitySet="userskills" />
+    </AssociationSet>
+    <AssociationSet Name="satisfaction_userskillid_fkey" Association="Yavsc.satisfaction_userskillid_fkey">
+      <End Role="userskills" EntitySet="userskills" />
+      <End Role="satisfaction" EntitySet="satisfaction" />
+    </AssociationSet>
+    <AssociationSet Name="parentValid" Association="Yavsc.parentValid">
+      <End Role="skill" EntitySet="skill" />
+      <End Role="skill" EntitySet="skill" />
+    </AssociationSet>
+    <AssociationSet Name="skill_app" Association="Yavsc.skill_app">
+      <End Role="activity" EntitySet="activity" />
+      <End Role="skill" EntitySet="skill" />
+      <End Role="activity" EntitySet="activity" />
+      <End Role="skill" EntitySet="skill" />
+    </AssociationSet>
+    <AssociationSet Name="fk_oauth_profileid" Association="Yavsc.fk_oauth_profileid">
+      <End Role="profiles" EntitySet="profiles" />
+      <End Role="oauthtoken" EntitySet="oauthtoken" />
+    </AssociationSet>
+    <FunctionImport Name="uuid_ns_dns" ReturnType="Collection(Guid)" />
+    <FunctionImport Name="uuid_generate_v1" ReturnType="Collection(Guid)" />
+    <FunctionImport Name="uuid_ns_url" ReturnType="Collection(Guid)" />
+    <FunctionImport Name="uuid_generate_v5" ReturnType="Collection(Guid)">
+      <Parameter Name="namespace" Mode="In" Type="Guid" />
+      <Parameter Name="name" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="uuid_generate_v1mc" ReturnType="Collection(Guid)" />
+    <FunctionImport Name="uuid_nil" ReturnType="Collection(Guid)" />
+    <FunctionImport Name="uuid_generate_v3" ReturnType="Collection(Guid)">
+      <Parameter Name="namespace" Mode="In" Type="Guid" />
+      <Parameter Name="name" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="uuid_generate_v4" ReturnType="Collection(Guid)" />
+    <FunctionImport Name="uuid_ns_x500" ReturnType="Collection(Guid)" />
+    <FunctionImport Name="uuid_ns_oid" ReturnType="Collection(Guid)" />
+  </EntityContainer>
+  <EntityType Name="oauthtoken">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="profileid" />
+      <PropertyRef Name="authtype" />
+      <PropertyRef Name="expiration" />
+      <PropertyRef Name="refresh" />
+      <PropertyRef Name="access" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="profileid" Type="Int64" Nullable="false" />
+    <Property Name="authtype" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="expiration" Type="DateTimeOffset" Nullable="false" />
+    <Property Name="refresh" Type="String" Nullable="false" MaxLength="2048" />
+    <Property Name="access" Type="String" Nullable="false" MaxLength="2048" />
+    <Property Name="externaltokenid" Type="String" MaxLength="512" />
+    <NavigationProperty Name="profiles" Relationship="Yavsc.fk_oauth_profileid" FromRole="oauthtoken" ToRole="profiles" />
+  </EntityType>
+  <EntityType Name="histowritting">
+    <Key>
+      <PropertyRef Name="datechange" />
+      <PropertyRef Name="wrtid" />
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="datechange" Type="DateTimeOffset" Nullable="false" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="wrtid" Type="Int64" Nullable="false" />
+    <Property Name="username" Type="String" MaxLength="255" />
+    <Property Name="applicationname" Type="String" />
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <NavigationProperty Name="users" Relationship="Yavsc.histowritting_username_fkey" FromRole="histowritting" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.histowritting_username_fkey" FromRole="histowritting" ToRole="users" />
+    <NavigationProperty Name="writtings" Relationship="Yavsc.histowritting_wrtid_fkey" FromRole="histowritting" ToRole="writtings" />
+  </EntityType>
+  <EntityType Name="histoestim">
+    <Key>
+      <PropertyRef Name="datechange" />
+      <PropertyRef Name="estid" />
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="datechange" Type="DateTimeOffset" Nullable="false" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="estid" Type="Int64" Nullable="false" />
+    <Property Name="username" Type="String" MaxLength="255" />
+    <Property Name="applicationname" Type="String" MaxLength="255" />
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <NavigationProperty Name="estimate" Relationship="Yavsc.histoestim_estid_fkey" FromRole="histoestim" ToRole="estimate" />
+    <NavigationProperty Name="users" Relationship="Yavsc.histoestim_username_fkey" FromRole="histoestim" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.histoestim_username_fkey" FromRole="histoestim" ToRole="users" />
+  </EntityType>
+  <EntityType Name="tagged">
+    <Key>
+      <PropertyRef Name="postid" />
+      <PropertyRef Name="tagid" />
+    </Key>
+    <Property Name="postid" Type="Int64" Nullable="false" />
+    <Property Name="tagid" Type="Int64" Nullable="false" />
+    <NavigationProperty Name="blog" Relationship="Yavsc.tagged_postid_fkey" FromRole="tagged" ToRole="blog" />
+    <NavigationProperty Name="tag" Relationship="Yavsc.tagged_tagid_fkey" FromRole="tagged" ToRole="tag" />
+  </EntityType>
+  <!--EntityType Name="stocksymbols" removed. No identical keys found.-->
+  <EntityType Name="projet">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="name" />
+      <PropertyRef Name="managerid" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="String" Nullable="false" />
+    <Property Name="prdesc" Type="String" />
+    <Property Name="managerid" Type="String" Nullable="false" />
+    <Property Name="ApplicationName" Type="String" MaxLength="250" />
+    <NavigationProperty Name="users" Relationship="Yavsc.pk_project_manager" FromRole="projet" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.pk_project_manager" FromRole="projet" ToRole="users" />
+    <NavigationProperty Name="tasks" Relationship="Yavsc.tasks_fk_new" FromRole="projet" ToRole="tasks" />
+  </EntityType>
+  <EntityType Name="taskdeps">
+    <Key>
+      <PropertyRef Name="taskId" />
+      <PropertyRef Name="deptask" />
+    </Key>
+    <Property Name="taskId" Type="Int64" Nullable="false" />
+    <Property Name="deptask" Type="Int64" Nullable="false" />
+    <NavigationProperty Name="tasks" Relationship="Yavsc.pk_foreign_dep" FromRole="taskdeps" ToRole="tasks" />
+    <NavigationProperty Name="tasks" Relationship="Yavsc.pk_foreign_task" FromRole="taskdeps" ToRole="tasks" />
+  </EntityType>
+  <EntityType Name="blfiles">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="String" MaxLength="2048" />
+    <Property Name="alt_text" Type="String" MaxLength="512" />
+  </EntityType>
+  <EntityType Name="comment">
+    <Key>
+      <PropertyRef Name="username" />
+      <PropertyRef Name="bcontent" />
+      <PropertyRef Name="posted" />
+      <PropertyRef Name="modified" />
+      <PropertyRef Name="visible" />
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="username" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="bcontent" Type="String" Nullable="false" />
+    <Property Name="posted" Type="DateTimeOffset" Nullable="false" />
+    <Property Name="modified" Type="DateTimeOffset" Nullable="false" />
+    <Property Name="visible" Type="Boolean" Nullable="false" />
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="postid" Type="Int64" />
+    <Property Name="applicationname" Type="String" MaxLength="255" />
+    <NavigationProperty Name="blog" Relationship="Yavsc.fkey_blog" FromRole="comment" ToRole="blog" />
+    <NavigationProperty Name="users" Relationship="Yavsc.fkey_users" FromRole="comment" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.fkey_users" FromRole="comment" ToRole="users" />
+  </EntityType>
+  <EntityType Name="activity">
+    <Key>
+      <PropertyRef Name="title" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="meacode" />
+      <PropertyRef Name="photo" />
+    </Key>
+    <Property Name="title" Type="String" Nullable="false" MaxLength="2048" />
+    <Property Name="applicationname" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="cmnt" Type="String" />
+    <Property Name="meacode" Type="String" Nullable="false" MaxLength="512" />
+    <Property Name="photo" Type="String" Nullable="false" MaxLength="512" />
+    <NavigationProperty Name="skill" Relationship="Yavsc.skill_app" FromRole="activity" ToRole="skill" />
+    <NavigationProperty Name="skill" Relationship="Yavsc.skill_app" FromRole="activity" ToRole="skill" />
+  </EntityType>
+  <EntityType Name="users">
+    <Key>
+      <PropertyRef Name="pkid" />
+      <PropertyRef Name="username" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="email" />
+      <PropertyRef Name="passw" />
+    </Key>
+    <Property Name="pkid" Type="String" Nullable="false" />
+    <Property Name="username" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="email" Type="String" Nullable="false" MaxLength="128" />
+    <Property Name="comment" Type="String" MaxLength="255" />
+    <Property Name="passw" Type="String" Nullable="false" MaxLength="128" />
+    <Property Name="passwordquestion" Type="String" MaxLength="255" />
+    <Property Name="passwordanswer" Type="String" MaxLength="255" />
+    <Property Name="isapproved" Type="Boolean" />
+    <Property Name="lastactivitydate" Type="DateTimeOffset" />
+    <Property Name="lastlogindate" Type="DateTimeOffset" />
+    <Property Name="lastpasswordchangeddate" Type="DateTimeOffset" />
+    <Property Name="creationdate" Type="DateTimeOffset" />
+    <Property Name="islockedout" Type="Boolean" />
+    <Property Name="lastlockedoutdate" Type="DateTimeOffset" />
+    <Property Name="failedpasswordattemptcount" Type="Int32" />
+    <Property Name="failedpasswordattemptwindowstart" Type="DateTimeOffset" />
+    <Property Name="failedpasswordanswerattemptcount" Type="Int32" />
+    <Property Name="failedpasswordanswerattemptwindowstart" Type="DateTimeOffset" />
+    <NavigationProperty Name="usersroles" Relationship="Yavsc.usersroles_fk_user" FromRole="users" ToRole="usersroles" />
+    <NavigationProperty Name="usersroles" Relationship="Yavsc.usersroles_fk_user" FromRole="users" ToRole="usersroles" />
+    <NavigationProperty Name="blog" Relationship="Yavsc.bloguser" FromRole="users" ToRole="blog" />
+    <NavigationProperty Name="blog" Relationship="Yavsc.bloguser" FromRole="users" ToRole="blog" />
+    <NavigationProperty Name="commandes" Relationship="Yavsc.commforeignuser" FromRole="users" ToRole="commandes" />
+    <NavigationProperty Name="commandes" Relationship="Yavsc.commforeignuser" FromRole="users" ToRole="commandes" />
+    <NavigationProperty Name="estimate" Relationship="Yavsc.estimate_client_fkey" FromRole="users" ToRole="estimate" />
+    <NavigationProperty Name="estimate" Relationship="Yavsc.estimate_client_fkey" FromRole="users" ToRole="estimate" />
+    <NavigationProperty Name="estimate" Relationship="Yavsc.estimate_username_fkey" FromRole="users" ToRole="estimate" />
+    <NavigationProperty Name="estimate" Relationship="Yavsc.estimate_username_fkey" FromRole="users" ToRole="estimate" />
+    <NavigationProperty Name="histoestim" Relationship="Yavsc.histoestim_username_fkey" FromRole="users" ToRole="histoestim" />
+    <NavigationProperty Name="histoestim" Relationship="Yavsc.histoestim_username_fkey" FromRole="users" ToRole="histoestim" />
+    <NavigationProperty Name="projet" Relationship="Yavsc.pk_project_manager" FromRole="users" ToRole="projet" />
+    <NavigationProperty Name="projet" Relationship="Yavsc.pk_project_manager" FromRole="users" ToRole="projet" />
+    <NavigationProperty Name="histowritting" Relationship="Yavsc.histowritting_username_fkey" FromRole="users" ToRole="histowritting" />
+    <NavigationProperty Name="histowritting" Relationship="Yavsc.histowritting_username_fkey" FromRole="users" ToRole="histowritting" />
+    <NavigationProperty Name="circle" Relationship="Yavsc.circle_owner_fkey" FromRole="users" ToRole="circle" />
+    <NavigationProperty Name="circle" Relationship="Yavsc.circle_owner_fkey" FromRole="users" ToRole="circle" />
+    <NavigationProperty Name="comment" Relationship="Yavsc.fkey_users" FromRole="users" ToRole="comment" />
+    <NavigationProperty Name="comment" Relationship="Yavsc.fkey_users" FromRole="users" ToRole="comment" />
+    <NavigationProperty Name="passwrecovery" Relationship="Yavsc.passwrecovery_pkid_fkey" FromRole="users" ToRole="passwrecovery" />
+    <NavigationProperty Name="circle_members" Relationship="Yavsc.fk_circle_members_users" FromRole="users" ToRole="circle_members" />
+    <NavigationProperty Name="circle_members" Relationship="Yavsc.fk_circle_members_users" FromRole="users" ToRole="circle_members" />
+    <NavigationProperty Name="profiles" Relationship="Yavsc.users_applicationname_fkey" FromRole="users" ToRole="profiles" />
+    <NavigationProperty Name="profiles" Relationship="Yavsc.users_applicationname_fkey" FromRole="users" ToRole="profiles" />
+    <NavigationProperty Name="userskills" Relationship="Yavsc.userskills_applicationname_fkey" FromRole="users" ToRole="userskills" />
+    <NavigationProperty Name="userskills" Relationship="Yavsc.userskills_applicationname_fkey" FromRole="users" ToRole="userskills" />
+  </EntityType>
+  <EntityType Name="writtings">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="estimid" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="count" Type="Int32" />
+    <Property Name="estimid" Type="Int64" Nullable="false" />
+    <Property Name="description" Type="String" MaxLength="2047" />
+    <Property Name="productid" Type="String" MaxLength="512" />
+    <Property Name="ucost" Type="Decimal" />
+    <NavigationProperty Name="estimate" Relationship="Yavsc.writtings_estimid_fkey" FromRole="writtings" ToRole="estimate" />
+    <NavigationProperty Name="wrtags" Relationship="Yavsc.wrtags_wrid_fkey1" FromRole="writtings" ToRole="wrtags" />
+    <NavigationProperty Name="wrfiles" Relationship="Yavsc.wrtags_wrid_fkey" FromRole="writtings" ToRole="wrfiles" />
+    <NavigationProperty Name="histowritting" Relationship="Yavsc.histowritting_wrtid_fkey" FromRole="writtings" ToRole="histowritting" />
+  </EntityType>
+  <EntityType Name="hr">
+    <Key>
+      <PropertyRef Name="userid" />
+      <PropertyRef Name="rate" />
+      <PropertyRef Name="comment" />
+    </Key>
+    <Property Name="userid" Type="String" Nullable="false" />
+    <Property Name="rate" Type="Decimal" Nullable="false" />
+    <Property Name="comment" Type="String" Nullable="false" />
+  </EntityType>
+  <EntityType Name="wrtags">
+    <Key>
+      <PropertyRef Name="wrid" />
+      <PropertyRef Name="tagid" />
+    </Key>
+    <Property Name="wrid" Type="Int64" Nullable="false" />
+    <Property Name="tagid" Type="Int64" Nullable="false" />
+    <NavigationProperty Name="tag" Relationship="Yavsc.cstwrtagsref" FromRole="wrtags" ToRole="tag" />
+    <NavigationProperty Name="writtings" Relationship="Yavsc.wrtags_wrid_fkey1" FromRole="wrtags" ToRole="writtings" />
+  </EntityType>
+  <EntityType Name="userskills">
+    <Key>
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="username" />
+      <PropertyRef Name="skillid" />
+      <PropertyRef Name="rate" />
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="applicationname" Type="String" Nullable="false" MaxLength="512" />
+    <Property Name="username" Type="String" Nullable="false" MaxLength="512" />
+    <Property Name="comment" Type="String" />
+    <Property Name="skillid" Type="Int64" Nullable="false" />
+    <Property Name="rate" Type="Int32" Nullable="false" />
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <NavigationProperty Name="users" Relationship="Yavsc.userskills_applicationname_fkey" FromRole="userskills" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.userskills_applicationname_fkey" FromRole="userskills" ToRole="users" />
+    <NavigationProperty Name="skill" Relationship="Yavsc.userskills_skillid_fkey" FromRole="userskills" ToRole="skill" />
+    <NavigationProperty Name="satisfaction" Relationship="Yavsc.satisfaction_userskillid_fkey" FromRole="userskills" ToRole="satisfaction" />
+  </EntityType>
+  <EntityType Name="product">
+    <Key>
+      <PropertyRef Name="ref" />
+    </Key>
+    <Property Name="ref" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="Name" Type="String" MaxLength="1000" />
+    <Property Name="Description" Type="String" MaxLength="64000" />
+  </EntityType>
+  <EntityType Name="wrfiles">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="String" MaxLength="2048" />
+    <Property Name="wrid" Type="Int64" />
+    <NavigationProperty Name="writtings" Relationship="Yavsc.wrtags_wrid_fkey" FromRole="wrfiles" ToRole="writtings" />
+  </EntityType>
+  <EntityType Name="blog">
+    <Key>
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="username" />
+      <PropertyRef Name="posted" />
+      <PropertyRef Name="modified" />
+      <PropertyRef Name="title" />
+      <PropertyRef Name="bcontent" />
+      <PropertyRef Name="visible" />
+      <PropertyRef Name="id" />
+      <PropertyRef Name="rate" />
+    </Key>
+    <Property Name="applicationname" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="username" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="posted" Type="DateTimeOffset" Nullable="false" />
+    <Property Name="modified" Type="DateTimeOffset" Nullable="false" />
+    <Property Name="title" Type="String" Nullable="false" MaxLength="512" />
+    <Property Name="bcontent" Type="String" Nullable="false" />
+    <Property Name="visible" Type="Boolean" Nullable="false" />
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="photo" Type="String" MaxLength="512" />
+    <Property Name="rate" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="users" Relationship="Yavsc.bloguser" FromRole="blog" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.bloguser" FromRole="blog" ToRole="users" />
+    <NavigationProperty Name="tagged" Relationship="Yavsc.tagged_postid_fkey" FromRole="blog" ToRole="tagged" />
+    <NavigationProperty Name="comment" Relationship="Yavsc.fkey_blog" FromRole="blog" ToRole="comment" />
+    <NavigationProperty Name="blog_access" Relationship="Yavsc.blog_access_post_id_fkey" FromRole="blog" ToRole="blog_access" />
+  </EntityType>
+  <EntityType Name="passwrecovery">
+    <Key>
+      <PropertyRef Name="pkid" />
+      <PropertyRef Name="one_time_pass" />
+      <PropertyRef Name="creation" />
+    </Key>
+    <Property Name="pkid" Type="String" Nullable="false" />
+    <Property Name="one_time_pass" Type="String" Nullable="false" MaxLength="512" />
+    <Property Name="creation" Type="DateTimeOffset" Nullable="false" />
+    <NavigationProperty Name="users" Relationship="Yavsc.passwrecovery_pkid_fkey" FromRole="passwrecovery" ToRole="users" />
+  </EntityType>
+  <EntityType Name="profiles">
+    <Key>
+      <PropertyRef Name="uniqueid" />
+      <PropertyRef Name="username" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="isanonymous" />
+    </Key>
+    <Property Name="uniqueid" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="username" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="isanonymous" Type="Boolean" Nullable="false" />
+    <Property Name="lastactivitydate" Type="DateTimeOffset" />
+    <Property Name="lastupdateddate" Type="DateTimeOffset" />
+    <NavigationProperty Name="profiledata" Relationship="Yavsc.fkprofiles2" FromRole="profiles" ToRole="profiledata" />
+    <NavigationProperty Name="stocksymbols" Relationship="Yavsc.fkprofiles1" FromRole="profiles" ToRole="stocksymbols" />
+    <NavigationProperty Name="users" Relationship="Yavsc.users_applicationname_fkey" FromRole="profiles" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.users_applicationname_fkey" FromRole="profiles" ToRole="users" />
+    <NavigationProperty Name="oauthtoken" Relationship="Yavsc.fk_oauth_profileid" FromRole="profiles" ToRole="oauthtoken" />
+  </EntityType>
+  <EntityType Name="profiledata">
+    <Key>
+      <PropertyRef Name="uniqueid" />
+      <PropertyRef Name="gcalapi" />
+      <PropertyRef Name="allowcookies" />
+    </Key>
+    <Property Name="uniqueid" Type="Int32" Nullable="false" />
+    <Property Name="zipcode" Type="String" MaxLength="10" />
+    <Property Name="cityandstate" Type="String" MaxLength="255" />
+    <Property Name="blogtitle" Type="String" MaxLength="255" />
+    <Property Name="address" Type="String" MaxLength="2048" />
+    <Property Name="country" Type="String" MaxLength="100" />
+    <Property Name="website" Type="String" MaxLength="256" />
+    <Property Name="blogvisible" Type="Boolean" />
+    <Property Name="name" Type="String" MaxLength="1024" />
+    <Property Name="phone" Type="String" MaxLength="15" />
+    <Property Name="mobile" Type="String" MaxLength="15" />
+    <Property Name="accountnumber" Type="String" MaxLength="15" />
+    <Property Name="bankedkey" Type="Int32" />
+    <Property Name="bankcode" Type="String" MaxLength="5" />
+    <Property Name="wicketcode" Type="String" MaxLength="5" />
+    <Property Name="iban" Type="String" MaxLength="33" />
+    <Property Name="bic" Type="String" MaxLength="15" />
+    <Property Name="gcalid" Type="String" MaxLength="255" />
+    <Property Name="avatar" Type="String" MaxLength="512" />
+    <Property Name="gcalapi" Type="Boolean" Nullable="false" />
+    <Property Name="gregid" Type="String" MaxLength="1024" />
+    <Property Name="allowcookies" Type="Boolean" Nullable="false" />
+    <Property Name="uitheme" Type="String" MaxLength="64" />
+    <Property Name="meacode" Type="String" MaxLength="256" />
+    <Property Name="rate" Type="Int32" />
+    <NavigationProperty Name="profiles" Relationship="Yavsc.fkprofiles2" FromRole="profiledata" ToRole="profiles" />
+  </EntityType>
+  <EntityType Name="roles">
+    <Key>
+      <PropertyRef Name="rolename" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="comment" />
+    </Key>
+    <Property Name="rolename" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="comment" Type="String" Nullable="false" MaxLength="255" />
+    <NavigationProperty Name="usersroles" Relationship="Yavsc.usersroles_fk_role" FromRole="roles" ToRole="usersroles" />
+    <NavigationProperty Name="usersroles" Relationship="Yavsc.usersroles_fk_role" FromRole="roles" ToRole="usersroles" />
+  </EntityType>
+  <EntityType Name="tag">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="String" MaxLength="30" />
+    <NavigationProperty Name="tagged" Relationship="Yavsc.tagged_tagid_fkey" FromRole="tag" ToRole="tagged" />
+    <NavigationProperty Name="wrtags" Relationship="Yavsc.cstwrtagsref" FromRole="tag" ToRole="wrtags" />
+  </EntityType>
+  <EntityType Name="satisfaction">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="userskillid" Type="Int64" />
+    <Property Name="rate" Type="Int32" />
+    <Property Name="comnt" Type="String" MaxLength="8192" />
+    <NavigationProperty Name="userskills" Relationship="Yavsc.satisfaction_userskillid_fkey" FromRole="satisfaction" ToRole="userskills" />
+  </EntityType>
+  <EntityType Name="circle">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="owner" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="title" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="owner" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="title" Type="String" Nullable="false" MaxLength="512" />
+    <Property Name="public" Type="Boolean" />
+    <NavigationProperty Name="users" Relationship="Yavsc.circle_owner_fkey" FromRole="circle" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.circle_owner_fkey" FromRole="circle" ToRole="users" />
+    <NavigationProperty Name="blog_access" Relationship="Yavsc.blog_access_circle_id_fkey" FromRole="circle" ToRole="blog_access" />
+  </EntityType>
+  <EntityType Name="circle_members">
+    <Key>
+      <PropertyRef Name="circle_id" />
+      <PropertyRef Name="member" />
+    </Key>
+    <Property Name="circle_id" Type="Int64" Nullable="false" />
+    <Property Name="member" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="String" MaxLength="255" />
+    <NavigationProperty Name="users" Relationship="Yavsc.fk_circle_members_users" FromRole="circle_members" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.fk_circle_members_users" FromRole="circle_members" ToRole="users" />
+  </EntityType>
+  <EntityType Name="skill">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="name" />
+      <PropertyRef Name="rate" />
+      <PropertyRef Name="meacode" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="String" Nullable="false" MaxLength="2024" />
+    <Property Name="rate" Type="Int32" Nullable="false" />
+    <Property Name="meacode" Type="String" Nullable="false" MaxLength="256" />
+    <Property Name="applicationname" Type="String" MaxLength="255" />
+    <Property Name="parent" Type="Int64" />
+    <NavigationProperty Name="userskills" Relationship="Yavsc.userskills_skillid_fkey" FromRole="skill" ToRole="userskills" />
+    <NavigationProperty Name="skill" Relationship="Yavsc.parentValid" FromRole="skill" ToRole="skill" />
+    <NavigationProperty Name="skill" Relationship="Yavsc.parentValid" FromRole="skill" ToRole="skill" />
+    <NavigationProperty Name="activity" Relationship="Yavsc.skill_app" FromRole="skill" ToRole="activity" />
+    <NavigationProperty Name="activity" Relationship="Yavsc.skill_app" FromRole="skill" ToRole="activity" />
+  </EntityType>
+  <EntityType Name="tasks">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="name" />
+      <PropertyRef Name="start" />
+      <PropertyRef Name="endd" />
+      <PropertyRef Name="tdesc" />
+      <PropertyRef Name="prid" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="String" Nullable="false" />
+    <Property Name="start" Type="DateTime" Nullable="false" />
+    <Property Name="endd" Type="DateTime" Nullable="false" />
+    <Property Name="tdesc" Type="String" Nullable="false" />
+    <Property Name="prid" Type="Int64" Nullable="false" />
+    <NavigationProperty Name="projet" Relationship="Yavsc.tasks_fk_new" FromRole="tasks" ToRole="projet" />
+    <NavigationProperty Name="taskdeps" Relationship="Yavsc.pk_foreign_dep" FromRole="tasks" ToRole="taskdeps" />
+    <NavigationProperty Name="taskdeps" Relationship="Yavsc.pk_foreign_task" FromRole="tasks" ToRole="taskdeps" />
+  </EntityType>
+  <EntityType Name="usersroles">
+    <Key>
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="rolename" />
+      <PropertyRef Name="username" />
+    </Key>
+    <Property Name="applicationname" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="rolename" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="username" Type="String" Nullable="false" MaxLength="255" />
+    <NavigationProperty Name="roles" Relationship="Yavsc.usersroles_fk_role" FromRole="usersroles" ToRole="roles" />
+    <NavigationProperty Name="roles" Relationship="Yavsc.usersroles_fk_role" FromRole="usersroles" ToRole="roles" />
+    <NavigationProperty Name="users" Relationship="Yavsc.usersroles_fk_user" FromRole="usersroles" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.usersroles_fk_user" FromRole="usersroles" ToRole="users" />
+  </EntityType>
+  <EntityType Name="commandes">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="prdref" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="validation" Type="DateTime" />
+    <Property Name="prdref" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="creation" Type="DateTimeOffset" />
+    <Property Name="clientname" Type="String" MaxLength="255" />
+    <Property Name="applicationname" Type="String" MaxLength="255" />
+    <Property Name="class" Type="String" MaxLength="512" />
+    <!--Property Name="params" removed. Unknown type.-->
+    <NavigationProperty Name="users" Relationship="Yavsc.commforeignuser" FromRole="commandes" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.commforeignuser" FromRole="commandes" ToRole="users" />
+  </EntityType>
+  <EntityType Name="blog_access">
+    <Key>
+      <PropertyRef Name="post_id" />
+      <PropertyRef Name="circle_id" />
+    </Key>
+    <Property Name="post_id" Type="Int64" Nullable="false" />
+    <Property Name="circle_id" Type="Int64" Nullable="false" />
+    <NavigationProperty Name="circle" Relationship="Yavsc.blog_access_circle_id_fkey" FromRole="blog_access" ToRole="circle" />
+    <NavigationProperty Name="blog" Relationship="Yavsc.blog_access_post_id_fkey" FromRole="blog_access" ToRole="blog" />
+  </EntityType>
+  <EntityType Name="estimate">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="title" />
+      <PropertyRef Name="username" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="client" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="title" Type="String" Nullable="false" MaxLength="1024" />
+    <Property Name="username" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="status" Type="Int32" />
+    <Property Name="client" Type="String" Nullable="false" MaxLength="255" />
+    <Property Name="description" Type="String" MaxLength="65000" />
+    <NavigationProperty Name="users" Relationship="Yavsc.estimate_client_fkey" FromRole="estimate" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.estimate_client_fkey" FromRole="estimate" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.estimate_username_fkey" FromRole="estimate" ToRole="users" />
+    <NavigationProperty Name="users" Relationship="Yavsc.estimate_username_fkey" FromRole="estimate" ToRole="users" />
+    <NavigationProperty Name="histoestim" Relationship="Yavsc.histoestim_estid_fkey" FromRole="estimate" ToRole="histoestim" />
+    <NavigationProperty Name="writtings" Relationship="Yavsc.writtings_estimid_fkey" FromRole="estimate" ToRole="writtings" />
+  </EntityType>
+  <Association Name="usersroles_fk_role">
+    <End Role="roles" Type="Yavsc.roles" Multiplicity="1" />
+    <End Role="usersroles" Type="Yavsc.usersroles" Multiplicity="*" />
+    <End Role="roles" Type="Yavsc.roles" Multiplicity="1" />
+    <End Role="usersroles" Type="Yavsc.usersroles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="roles">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="usersroles">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="roles">
+        <PropertyRef Name="rolename" />
+      </Principal>
+      <Dependent Role="usersroles">
+        <PropertyRef Name="rolename" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="usersroles_fk_user">
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="usersroles" Type="Yavsc.usersroles" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="usersroles" Type="Yavsc.usersroles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="usersroles">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="usersroles">
+        <PropertyRef Name="username" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkprofiles2">
+    <End Role="profiles" Type="Yavsc.profiles" Multiplicity="1" />
+    <End Role="profiledata" Type="Yavsc.profiledata" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="profiles">
+        <PropertyRef Name="uniqueid" />
+      </Principal>
+      <Dependent Role="profiledata">
+        <PropertyRef Name="uniqueid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="bloguser">
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="blog" Type="Yavsc.blog" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="blog" Type="Yavsc.blog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="blog">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="blog">
+        <PropertyRef Name="username" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="commforeignuser">
+    <End Role="users" Type="Yavsc.users" Multiplicity="0..1" />
+    <End Role="commandes" Type="Yavsc.commandes" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="0..1" />
+    <End Role="commandes" Type="Yavsc.commandes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="commandes">
+        <PropertyRef Name="clientname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="commandes">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="estimate_client_fkey">
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="estimate" Type="Yavsc.estimate" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="estimate" Type="Yavsc.estimate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="estimate">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="estimate">
+        <PropertyRef Name="client" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="estimate_username_fkey">
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="estimate" Type="Yavsc.estimate" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="estimate" Type="Yavsc.estimate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="estimate">
+        <PropertyRef Name="username" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="estimate">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="histoestim_estid_fkey">
+    <End Role="estimate" Type="Yavsc.estimate" Multiplicity="1" />
+    <End Role="histoestim" Type="Yavsc.histoestim" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="estimate">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="histoestim">
+        <PropertyRef Name="estid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="histoestim_username_fkey">
+    <End Role="users" Type="Yavsc.users" Multiplicity="0..1" />
+    <End Role="histoestim" Type="Yavsc.histoestim" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="0..1" />
+    <End Role="histoestim" Type="Yavsc.histoestim" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="histoestim">
+        <PropertyRef Name="username" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="histoestim">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="pk_project_manager">
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="projet" Type="Yavsc.projet" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="0..1" />
+    <End Role="projet" Type="Yavsc.projet" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="projet">
+        <PropertyRef Name="managerid" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="projet">
+        <PropertyRef Name="ApplicationName" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkprofiles1">
+    <End Role="profiles" Type="Yavsc.profiles" Multiplicity="0..1" />
+    <End Role="stocksymbols" Type="Yavsc.stocksymbols" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="profiles">
+        <PropertyRef Name="uniqueid" />
+      </Principal>
+      <Dependent Role="stocksymbols">
+        <PropertyRef Name="uniqueid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tagged_postid_fkey">
+    <End Role="blog" Type="Yavsc.blog" Multiplicity="1" />
+    <End Role="tagged" Type="Yavsc.tagged" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="blog">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="tagged">
+        <PropertyRef Name="postid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tagged_tagid_fkey">
+    <End Role="tag" Type="Yavsc.tag" Multiplicity="1" />
+    <End Role="tagged" Type="Yavsc.tagged" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tag">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="tagged">
+        <PropertyRef Name="tagid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tasks_fk_new">
+    <End Role="projet" Type="Yavsc.projet" Multiplicity="1" />
+    <End Role="tasks" Type="Yavsc.tasks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="projet">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="tasks">
+        <PropertyRef Name="prid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="pk_foreign_dep">
+    <End Role="tasks" Type="Yavsc.tasks" Multiplicity="1" />
+    <End Role="taskdeps" Type="Yavsc.taskdeps" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tasks">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="taskdeps">
+        <PropertyRef Name="deptask" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="pk_foreign_task">
+    <End Role="tasks" Type="Yavsc.tasks" Multiplicity="1" />
+    <End Role="taskdeps" Type="Yavsc.taskdeps" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tasks">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="taskdeps">
+        <PropertyRef Name="taskId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="writtings_estimid_fkey">
+    <End Role="estimate" Type="Yavsc.estimate" Multiplicity="1" />
+    <End Role="writtings" Type="Yavsc.writtings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="estimate">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="writtings">
+        <PropertyRef Name="estimid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="cstwrtagsref">
+    <End Role="tag" Type="Yavsc.tag" Multiplicity="1" />
+    <End Role="wrtags" Type="Yavsc.wrtags" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tag">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="wrtags">
+        <PropertyRef Name="tagid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="wrtags_wrid_fkey1">
+    <End Role="writtings" Type="Yavsc.writtings" Multiplicity="1" />
+    <End Role="wrtags" Type="Yavsc.wrtags" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="writtings">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="wrtags">
+        <PropertyRef Name="wrid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="wrtags_wrid_fkey">
+    <End Role="writtings" Type="Yavsc.writtings" Multiplicity="0..1" />
+    <End Role="wrfiles" Type="Yavsc.wrfiles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="writtings">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="wrfiles">
+        <PropertyRef Name="wrid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="histowritting_username_fkey">
+    <End Role="users" Type="Yavsc.users" Multiplicity="0..1" />
+    <End Role="histowritting" Type="Yavsc.histowritting" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="0..1" />
+    <End Role="histowritting" Type="Yavsc.histowritting" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="histowritting">
+        <PropertyRef Name="username" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="histowritting">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="histowritting_wrtid_fkey">
+    <End Role="writtings" Type="Yavsc.writtings" Multiplicity="1" />
+    <End Role="histowritting" Type="Yavsc.histowritting" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="writtings">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="histowritting">
+        <PropertyRef Name="wrtid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="circle_owner_fkey">
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="circle" Type="Yavsc.circle" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="circle" Type="Yavsc.circle" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="circle">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="circle">
+        <PropertyRef Name="owner" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkey_blog">
+    <End Role="blog" Type="Yavsc.blog" Multiplicity="0..1" />
+    <End Role="comment" Type="Yavsc.comment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="blog">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="comment">
+        <PropertyRef Name="postid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkey_users">
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="comment" Type="Yavsc.comment" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="0..1" />
+    <End Role="comment" Type="Yavsc.comment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="comment">
+        <PropertyRef Name="username" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="comment">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="passwrecovery_pkid_fkey">
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="passwrecovery" Type="Yavsc.passwrecovery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="pkid" />
+      </Principal>
+      <Dependent Role="passwrecovery">
+        <PropertyRef Name="pkid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="blog_access_circle_id_fkey">
+    <End Role="circle" Type="Yavsc.circle" Multiplicity="1" />
+    <End Role="blog_access" Type="Yavsc.blog_access" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="circle">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="blog_access">
+        <PropertyRef Name="circle_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="blog_access_post_id_fkey">
+    <End Role="blog" Type="Yavsc.blog" Multiplicity="1" />
+    <End Role="blog_access" Type="Yavsc.blog_access" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="blog">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="blog_access">
+        <PropertyRef Name="post_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fk_circle_members_users">
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="circle_members" Type="Yavsc.circle_members" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="0..1" />
+    <End Role="circle_members" Type="Yavsc.circle_members" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="circle_members">
+        <PropertyRef Name="member" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="circle_members">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="users_applicationname_fkey">
+    <End Role="profiles" Type="Yavsc.profiles" Multiplicity="1" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="*" />
+    <End Role="profiles" Type="Yavsc.profiles" Multiplicity="1" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="profiles">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="users">
+        <PropertyRef Name="username" />
+      </Dependent>
+      <Principal Role="profiles">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="users">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="userskills_applicationname_fkey">
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="userskills" Type="Yavsc.userskills" Multiplicity="*" />
+    <End Role="users" Type="Yavsc.users" Multiplicity="1" />
+    <End Role="userskills" Type="Yavsc.userskills" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="userskills">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="userskills">
+        <PropertyRef Name="username" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="userskills_skillid_fkey">
+    <End Role="skill" Type="Yavsc.skill" Multiplicity="1" />
+    <End Role="userskills" Type="Yavsc.userskills" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="skill">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="userskills">
+        <PropertyRef Name="skillid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="satisfaction_userskillid_fkey">
+    <End Role="userskills" Type="Yavsc.userskills" Multiplicity="0..1" />
+    <End Role="satisfaction" Type="Yavsc.satisfaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="userskills">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="satisfaction">
+        <PropertyRef Name="userskillid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="parentValid">
+    <End Role="skill" Type="Yavsc.skill" Multiplicity="0..1" />
+    <End Role="skill" Type="Yavsc.skill" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="skill">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="skill">
+        <PropertyRef Name="parent" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="skill_app">
+    <End Role="activity" Type="Yavsc.activity" Multiplicity="1" />
+    <End Role="skill" Type="Yavsc.skill" Multiplicity="*" />
+    <End Role="activity" Type="Yavsc.activity" Multiplicity="0..1" />
+    <End Role="skill" Type="Yavsc.skill" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="activity">
+        <PropertyRef Name="meacode" />
+      </Principal>
+      <Dependent Role="skill">
+        <PropertyRef Name="meacode" />
+      </Dependent>
+      <Principal Role="activity">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="skill">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fk_oauth_profileid">
+    <End Role="profiles" Type="Yavsc.profiles" Multiplicity="1" />
+    <End Role="oauthtoken" Type="Yavsc.oauthtoken" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="profiles">
+        <PropertyRef Name="uniqueid" />
+      </Principal>
+      <Dependent Role="oauthtoken">
+        <PropertyRef Name="profileid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

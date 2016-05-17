@@ -12,7 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -148,13 +148,13 @@
       <Project>{5F9318D6-A994-497C-96A8-00F97642CE8E}</Project>
       <Name>Yavsc.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\yavscModel\Yavsc.Server.csproj">
-      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
-      <Name>Yavsc.Server</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NpgsqlMRPProviders\NpgsqlMRPProviders.csproj">
       <Project>{BBA7175D-7F92-4278-96FC-84C495A2B5A6}</Project>
       <Name>NpgsqlMRPProviders</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Yavsc.Server\Yavsc.Server.csproj">
+      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
+      <Name>Yavsc.Server</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

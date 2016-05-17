@@ -1,0 +1,1184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="public" Alias="Self" Provider="Npgsql" ProviderManifestToken="9.4.5" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="YavscStoreContainer">
+    <EntitySet Name="oauthtoken" EntityType="public.oauthtoken" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="histowritting" EntityType="public.histowritting" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="histoestim" EntityType="public.histoestim" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="tagged" EntityType="public.tagged" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <!--EntitySet Name="stocksymbols" removed. No identical keys found.-->
+    <EntitySet Name="projet" EntityType="public.projet" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="taskdeps" EntityType="public.taskdeps" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="blfiles" EntityType="public.blfiles" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="comment" EntityType="public.comment" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="activity" EntityType="public.activity" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="users" EntityType="public.users" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="writtings" EntityType="public.writtings" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="hr" EntityType="public.hr" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="wrtags" EntityType="public.wrtags" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="userskills" EntityType="public.userskills" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="product" EntityType="public.product" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="wrfiles" EntityType="public.wrfiles" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="blog" EntityType="public.blog" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="passwrecovery" EntityType="public.passwrecovery" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="profiles" EntityType="public.profiles" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="profiledata" EntityType="public.profiledata" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="roles" EntityType="public.roles" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="tag" EntityType="public.tag" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="satisfaction" EntityType="public.satisfaction" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="circle" EntityType="public.circle" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="circle_members" EntityType="public.circle_members" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="skill" EntityType="public.skill" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="tasks" EntityType="public.tasks" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="usersroles" EntityType="public.usersroles" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="commandes" EntityType="public.commandes" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="blog_access" EntityType="public.blog_access" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <EntitySet Name="estimate" EntityType="public.estimate" p3:Type="Tables" Schema="public" xmlns:p3="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+    <AssociationSet Name="usersroles_fk_role" Association="public.usersroles_fk_role">
+      <End Role="roles" EntitySet="roles" />
+      <End Role="usersroles" EntitySet="usersroles" />
+      <End Role="roles" EntitySet="roles" />
+      <End Role="usersroles" EntitySet="usersroles" />
+    </AssociationSet>
+    <AssociationSet Name="usersroles_fk_user" Association="public.usersroles_fk_user">
+      <End Role="users" EntitySet="users" />
+      <End Role="usersroles" EntitySet="usersroles" />
+      <End Role="users" EntitySet="users" />
+      <End Role="usersroles" EntitySet="usersroles" />
+    </AssociationSet>
+    <AssociationSet Name="fkprofiles2" Association="public.fkprofiles2">
+      <End Role="profiles" EntitySet="profiles" />
+      <End Role="profiledata" EntitySet="profiledata" />
+    </AssociationSet>
+    <AssociationSet Name="bloguser" Association="public.bloguser">
+      <End Role="users" EntitySet="users" />
+      <End Role="blog" EntitySet="blog" />
+      <End Role="users" EntitySet="users" />
+      <End Role="blog" EntitySet="blog" />
+    </AssociationSet>
+    <AssociationSet Name="commforeignuser" Association="public.commforeignuser">
+      <End Role="users" EntitySet="users" />
+      <End Role="commandes" EntitySet="commandes" />
+      <End Role="users" EntitySet="users" />
+      <End Role="commandes" EntitySet="commandes" />
+    </AssociationSet>
+    <AssociationSet Name="estimate_client_fkey" Association="public.estimate_client_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="estimate" EntitySet="estimate" />
+      <End Role="users" EntitySet="users" />
+      <End Role="estimate" EntitySet="estimate" />
+    </AssociationSet>
+    <AssociationSet Name="estimate_username_fkey" Association="public.estimate_username_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="estimate" EntitySet="estimate" />
+      <End Role="users" EntitySet="users" />
+      <End Role="estimate" EntitySet="estimate" />
+    </AssociationSet>
+    <AssociationSet Name="histoestim_estid_fkey" Association="public.histoestim_estid_fkey">
+      <End Role="estimate" EntitySet="estimate" />
+      <End Role="histoestim" EntitySet="histoestim" />
+    </AssociationSet>
+    <AssociationSet Name="histoestim_username_fkey" Association="public.histoestim_username_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="histoestim" EntitySet="histoestim" />
+      <End Role="users" EntitySet="users" />
+      <End Role="histoestim" EntitySet="histoestim" />
+    </AssociationSet>
+    <AssociationSet Name="pk_project_manager" Association="public.pk_project_manager">
+      <End Role="users" EntitySet="users" />
+      <End Role="projet" EntitySet="projet" />
+      <End Role="users" EntitySet="users" />
+      <End Role="projet" EntitySet="projet" />
+    </AssociationSet>
+    <AssociationSet Name="fkprofiles1" Association="public.fkprofiles1">
+      <End Role="profiles" EntitySet="profiles" />
+      <End Role="stocksymbols" EntitySet="stocksymbols" />
+    </AssociationSet>
+    <AssociationSet Name="tagged_postid_fkey" Association="public.tagged_postid_fkey">
+      <End Role="blog" EntitySet="blog" />
+      <End Role="tagged" EntitySet="tagged" />
+    </AssociationSet>
+    <AssociationSet Name="tagged_tagid_fkey" Association="public.tagged_tagid_fkey">
+      <End Role="tag" EntitySet="tag" />
+      <End Role="tagged" EntitySet="tagged" />
+    </AssociationSet>
+    <AssociationSet Name="tasks_fk_new" Association="public.tasks_fk_new">
+      <End Role="projet" EntitySet="projet" />
+      <End Role="tasks" EntitySet="tasks" />
+    </AssociationSet>
+    <AssociationSet Name="pk_foreign_dep" Association="public.pk_foreign_dep">
+      <End Role="tasks" EntitySet="tasks" />
+      <End Role="taskdeps" EntitySet="taskdeps" />
+    </AssociationSet>
+    <AssociationSet Name="pk_foreign_task" Association="public.pk_foreign_task">
+      <End Role="tasks" EntitySet="tasks" />
+      <End Role="taskdeps" EntitySet="taskdeps" />
+    </AssociationSet>
+    <AssociationSet Name="writtings_estimid_fkey" Association="public.writtings_estimid_fkey">
+      <End Role="estimate" EntitySet="estimate" />
+      <End Role="writtings" EntitySet="writtings" />
+    </AssociationSet>
+    <AssociationSet Name="cstwrtagsref" Association="public.cstwrtagsref">
+      <End Role="tag" EntitySet="tag" />
+      <End Role="wrtags" EntitySet="wrtags" />
+    </AssociationSet>
+    <AssociationSet Name="wrtags_wrid_fkey1" Association="public.wrtags_wrid_fkey1">
+      <End Role="writtings" EntitySet="writtings" />
+      <End Role="wrtags" EntitySet="wrtags" />
+    </AssociationSet>
+    <AssociationSet Name="wrtags_wrid_fkey" Association="public.wrtags_wrid_fkey">
+      <End Role="writtings" EntitySet="writtings" />
+      <End Role="wrfiles" EntitySet="wrfiles" />
+    </AssociationSet>
+    <AssociationSet Name="histowritting_username_fkey" Association="public.histowritting_username_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="histowritting" EntitySet="histowritting" />
+      <End Role="users" EntitySet="users" />
+      <End Role="histowritting" EntitySet="histowritting" />
+    </AssociationSet>
+    <AssociationSet Name="histowritting_wrtid_fkey" Association="public.histowritting_wrtid_fkey">
+      <End Role="writtings" EntitySet="writtings" />
+      <End Role="histowritting" EntitySet="histowritting" />
+    </AssociationSet>
+    <AssociationSet Name="circle_owner_fkey" Association="public.circle_owner_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="circle" EntitySet="circle" />
+      <End Role="users" EntitySet="users" />
+      <End Role="circle" EntitySet="circle" />
+    </AssociationSet>
+    <AssociationSet Name="fkey_blog" Association="public.fkey_blog">
+      <End Role="blog" EntitySet="blog" />
+      <End Role="comment" EntitySet="comment" />
+    </AssociationSet>
+    <AssociationSet Name="fkey_users" Association="public.fkey_users">
+      <End Role="users" EntitySet="users" />
+      <End Role="comment" EntitySet="comment" />
+      <End Role="users" EntitySet="users" />
+      <End Role="comment" EntitySet="comment" />
+    </AssociationSet>
+    <AssociationSet Name="passwrecovery_pkid_fkey" Association="public.passwrecovery_pkid_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="passwrecovery" EntitySet="passwrecovery" />
+    </AssociationSet>
+    <AssociationSet Name="blog_access_circle_id_fkey" Association="public.blog_access_circle_id_fkey">
+      <End Role="circle" EntitySet="circle" />
+      <End Role="blog_access" EntitySet="blog_access" />
+    </AssociationSet>
+    <AssociationSet Name="blog_access_post_id_fkey" Association="public.blog_access_post_id_fkey">
+      <End Role="blog" EntitySet="blog" />
+      <End Role="blog_access" EntitySet="blog_access" />
+    </AssociationSet>
+    <AssociationSet Name="fk_circle_members_users" Association="public.fk_circle_members_users">
+      <End Role="users" EntitySet="users" />
+      <End Role="circle_members" EntitySet="circle_members" />
+      <End Role="users" EntitySet="users" />
+      <End Role="circle_members" EntitySet="circle_members" />
+    </AssociationSet>
+    <AssociationSet Name="users_applicationname_fkey" Association="public.users_applicationname_fkey">
+      <End Role="profiles" EntitySet="profiles" />
+      <End Role="users" EntitySet="users" />
+      <End Role="profiles" EntitySet="profiles" />
+      <End Role="users" EntitySet="users" />
+    </AssociationSet>
+    <AssociationSet Name="userskills_applicationname_fkey" Association="public.userskills_applicationname_fkey">
+      <End Role="users" EntitySet="users" />
+      <End Role="userskills" EntitySet="userskills" />
+      <End Role="users" EntitySet="users" />
+      <End Role="userskills" EntitySet="userskills" />
+    </AssociationSet>
+    <AssociationSet Name="userskills_skillid_fkey" Association="public.userskills_skillid_fkey">
+      <End Role="skill" EntitySet="skill" />
+      <End Role="userskills" EntitySet="userskills" />
+    </AssociationSet>
+    <AssociationSet Name="satisfaction_userskillid_fkey" Association="public.satisfaction_userskillid_fkey">
+      <End Role="userskills" EntitySet="userskills" />
+      <End Role="satisfaction" EntitySet="satisfaction" />
+    </AssociationSet>
+    <AssociationSet Name="parentValid" Association="public.parentValid">
+      <End Role="skill" EntitySet="skill" />
+      <End Role="skill" EntitySet="skill" />
+    </AssociationSet>
+    <AssociationSet Name="skill_app" Association="public.skill_app">
+      <End Role="activity" EntitySet="activity" />
+      <End Role="skill" EntitySet="skill" />
+      <End Role="activity" EntitySet="activity" />
+      <End Role="skill" EntitySet="skill" />
+    </AssociationSet>
+    <AssociationSet Name="fk_oauth_profileid" Association="public.fk_oauth_profileid">
+      <End Role="profiles" EntitySet="profiles" />
+      <End Role="oauthtoken" EntitySet="oauthtoken" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="oauthtoken">
+    <Key>
+      <PropertyRef Name="_id" />
+      <PropertyRef Name="profileid" />
+      <PropertyRef Name="authtype" />
+      <PropertyRef Name="expiration" />
+      <PropertyRef Name="refresh" />
+      <PropertyRef Name="access" />
+    </Key>
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="profileid" Type="int8" Nullable="false" />
+    <Property Name="authtype" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="expiration" Type="timestamptz" Nullable="false" />
+    <Property Name="refresh" Type="varchar" Nullable="false" MaxLength="2048" />
+    <Property Name="access" Type="varchar" Nullable="false" MaxLength="2048" />
+    <Property Name="externaltokenid" Type="varchar" MaxLength="512" />
+  </EntityType>
+  <EntityType Name="histowritting">
+    <Key>
+      <PropertyRef Name="datechange" />
+      <PropertyRef Name="wrtid" />
+      <PropertyRef Name="_id" />
+    </Key>
+    <Property Name="datechange" Type="timestamptz" Nullable="false" />
+    <Property Name="status" Type="int4" />
+    <Property Name="wrtid" Type="int8" Nullable="false" />
+    <Property Name="username" Type="varchar" MaxLength="255" />
+    <Property Name="applicationname" Type="varchar" />
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+  </EntityType>
+  <EntityType Name="histoestim">
+    <Key>
+      <PropertyRef Name="datechange" />
+      <PropertyRef Name="estid" />
+      <PropertyRef Name="_id" />
+    </Key>
+    <Property Name="datechange" Type="timestamptz" Nullable="false" />
+    <Property Name="status" Type="int4" />
+    <Property Name="estid" Type="int8" Nullable="false" />
+    <Property Name="username" Type="varchar" MaxLength="255" />
+    <Property Name="applicationname" Type="varchar" MaxLength="255" />
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+  </EntityType>
+  <EntityType Name="tagged">
+    <Key>
+      <PropertyRef Name="postid" />
+      <PropertyRef Name="tagid" />
+    </Key>
+    <Property Name="postid" Type="int8" Nullable="false" />
+    <Property Name="tagid" Type="int8" Nullable="false" />
+  </EntityType>
+  <!--EntityType Name="stocksymbols" removed. No identical keys found.-->
+  <EntityType Name="projet">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="name" />
+      <PropertyRef Name="managerid" />
+    </Key>
+    <Property Name="id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="varchar" Nullable="false" />
+    <Property Name="prdesc" Type="text" />
+    <Property Name="managerid" Type="varchar" Nullable="false" />
+    <Property Name="ApplicationName" Type="varchar" MaxLength="250" />
+  </EntityType>
+  <EntityType Name="taskdeps">
+    <Key>
+      <PropertyRef Name="taskId" />
+      <PropertyRef Name="deptask" />
+    </Key>
+    <Property Name="taskId" Type="int8" Nullable="false" />
+    <Property Name="deptask" Type="int8" Nullable="false" />
+  </EntityType>
+  <EntityType Name="blfiles">
+    <Key>
+      <PropertyRef Name="_id" />
+    </Key>
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="varchar" MaxLength="2048" />
+    <Property Name="alt_text" Type="varchar" MaxLength="512" />
+  </EntityType>
+  <EntityType Name="comment">
+    <Key>
+      <PropertyRef Name="username" />
+      <PropertyRef Name="bcontent" />
+      <PropertyRef Name="posted" />
+      <PropertyRef Name="modified" />
+      <PropertyRef Name="visible" />
+      <PropertyRef Name="_id" />
+    </Key>
+    <Property Name="username" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="bcontent" Type="text" Nullable="false" />
+    <Property Name="posted" Type="timestamptz" Nullable="false" />
+    <Property Name="modified" Type="timestamptz" Nullable="false" />
+    <Property Name="visible" Type="bool" Nullable="false" />
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="postid" Type="int8" />
+    <Property Name="applicationname" Type="varchar" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="activity">
+    <Key>
+      <PropertyRef Name="title" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="meacode" />
+      <PropertyRef Name="photo" />
+    </Key>
+    <Property Name="title" Type="varchar" Nullable="false" MaxLength="2048" />
+    <Property Name="applicationname" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="cmnt" Type="varchar" />
+    <Property Name="meacode" Type="varchar" Nullable="false" MaxLength="512" />
+    <Property Name="photo" Type="varchar" Nullable="false" MaxLength="512" />
+  </EntityType>
+  <EntityType Name="users">
+    <Key>
+      <PropertyRef Name="pkid" />
+      <PropertyRef Name="username" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="email" />
+      <PropertyRef Name="passw" />
+    </Key>
+    <Property Name="pkid" Type="varchar" Nullable="false" />
+    <Property Name="username" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="email" Type="varchar" Nullable="false" MaxLength="128" />
+    <Property Name="comment" Type="varchar" MaxLength="255" />
+    <Property Name="passw" Type="varchar" Nullable="false" MaxLength="128" />
+    <Property Name="passwordquestion" Type="varchar" MaxLength="255" />
+    <Property Name="passwordanswer" Type="varchar" MaxLength="255" />
+    <Property Name="isapproved" Type="bool" />
+    <Property Name="lastactivitydate" Type="timestamptz" />
+    <Property Name="lastlogindate" Type="timestamptz" />
+    <Property Name="lastpasswordchangeddate" Type="timestamptz" />
+    <Property Name="creationdate" Type="timestamptz" />
+    <Property Name="islockedout" Type="bool" />
+    <Property Name="lastlockedoutdate" Type="timestamptz" />
+    <Property Name="failedpasswordattemptcount" Type="int4" />
+    <Property Name="failedpasswordattemptwindowstart" Type="timestamptz" />
+    <Property Name="failedpasswordanswerattemptcount" Type="int4" />
+    <Property Name="failedpasswordanswerattemptwindowstart" Type="timestamptz" />
+  </EntityType>
+  <EntityType Name="writtings">
+    <Key>
+      <PropertyRef Name="_id" />
+      <PropertyRef Name="estimid" />
+    </Key>
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="count" Type="int4" />
+    <Property Name="estimid" Type="int8" Nullable="false" />
+    <Property Name="description" Type="varchar" MaxLength="2047" />
+    <Property Name="productid" Type="varchar" MaxLength="512" />
+    <Property Name="ucost" Type="numeric" />
+  </EntityType>
+  <EntityType Name="hr">
+    <Key>
+      <PropertyRef Name="userid" />
+      <PropertyRef Name="rate" />
+      <PropertyRef Name="comment" />
+    </Key>
+    <Property Name="userid" Type="varchar" Nullable="false" />
+    <Property Name="rate" Type="numeric" Nullable="false" />
+    <Property Name="comment" Type="text" Nullable="false" />
+  </EntityType>
+  <EntityType Name="wrtags">
+    <Key>
+      <PropertyRef Name="wrid" />
+      <PropertyRef Name="tagid" />
+    </Key>
+    <Property Name="wrid" Type="int8" Nullable="false" />
+    <Property Name="tagid" Type="int8" Nullable="false" />
+  </EntityType>
+  <EntityType Name="userskills">
+    <Key>
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="username" />
+      <PropertyRef Name="skillid" />
+      <PropertyRef Name="rate" />
+      <PropertyRef Name="_id" />
+    </Key>
+    <Property Name="applicationname" Type="varchar" Nullable="false" MaxLength="512" />
+    <Property Name="username" Type="varchar" Nullable="false" MaxLength="512" />
+    <Property Name="comment" Type="varchar" />
+    <Property Name="skillid" Type="int8" Nullable="false" />
+    <Property Name="rate" Type="int4" Nullable="false" />
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+  </EntityType>
+  <EntityType Name="product">
+    <Key>
+      <PropertyRef Name="ref" />
+    </Key>
+    <Property Name="ref" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="Name" Type="varchar" MaxLength="1000" />
+    <Property Name="Description" Type="varchar" MaxLength="64000" />
+  </EntityType>
+  <EntityType Name="wrfiles">
+    <Key>
+      <PropertyRef Name="_id" />
+    </Key>
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="varchar" MaxLength="2048" />
+    <Property Name="wrid" Type="int8" />
+  </EntityType>
+  <EntityType Name="blog">
+    <Key>
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="username" />
+      <PropertyRef Name="posted" />
+      <PropertyRef Name="modified" />
+      <PropertyRef Name="title" />
+      <PropertyRef Name="bcontent" />
+      <PropertyRef Name="visible" />
+      <PropertyRef Name="_id" />
+      <PropertyRef Name="rate" />
+    </Key>
+    <Property Name="applicationname" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="username" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="posted" Type="timestamptz" Nullable="false" />
+    <Property Name="modified" Type="timestamptz" Nullable="false" />
+    <Property Name="title" Type="varchar" Nullable="false" MaxLength="512" />
+    <Property Name="bcontent" Type="text" Nullable="false" />
+    <Property Name="visible" Type="bool" Nullable="false" />
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="photo" Type="varchar" MaxLength="512" />
+    <Property Name="rate" Type="int4" Nullable="false" />
+  </EntityType>
+  <EntityType Name="passwrecovery">
+    <Key>
+      <PropertyRef Name="pkid" />
+      <PropertyRef Name="one_time_pass" />
+      <PropertyRef Name="creation" />
+    </Key>
+    <Property Name="pkid" Type="varchar" Nullable="false" />
+    <Property Name="one_time_pass" Type="varchar" Nullable="false" MaxLength="512" />
+    <Property Name="creation" Type="timestamptz" Nullable="false" />
+  </EntityType>
+  <EntityType Name="profiles">
+    <Key>
+      <PropertyRef Name="uniqueid" />
+      <PropertyRef Name="username" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="isanonymous" />
+    </Key>
+    <Property Name="uniqueid" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="username" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="isanonymous" Type="bool" Nullable="false" />
+    <Property Name="lastactivitydate" Type="timestamptz" />
+    <Property Name="lastupdateddate" Type="timestamptz" />
+  </EntityType>
+  <EntityType Name="profiledata">
+    <Key>
+      <PropertyRef Name="uniqueid" />
+      <PropertyRef Name="gcalapi" />
+      <PropertyRef Name="allowcookies" />
+    </Key>
+    <Property Name="uniqueid" Type="int4" Nullable="false" />
+    <Property Name="zipcode" Type="varchar" MaxLength="10" />
+    <Property Name="cityandstate" Type="varchar" MaxLength="255" />
+    <Property Name="blogtitle" Type="varchar" MaxLength="255" />
+    <Property Name="address" Type="varchar" MaxLength="2048" />
+    <Property Name="country" Type="varchar" MaxLength="100" />
+    <Property Name="website" Type="varchar" MaxLength="256" />
+    <Property Name="blogvisible" Type="bool" />
+    <Property Name="name" Type="varchar" MaxLength="1024" />
+    <Property Name="phone" Type="varchar" MaxLength="15" />
+    <Property Name="mobile" Type="varchar" MaxLength="15" />
+    <Property Name="accountnumber" Type="varchar" MaxLength="15" />
+    <Property Name="bankedkey" Type="int4" />
+    <Property Name="bankcode" Type="varchar" MaxLength="5" />
+    <Property Name="wicketcode" Type="varchar" MaxLength="5" />
+    <Property Name="iban" Type="varchar" MaxLength="33" />
+    <Property Name="bic" Type="varchar" MaxLength="15" />
+    <Property Name="gcalid" Type="varchar" MaxLength="255" />
+    <Property Name="avatar" Type="varchar" MaxLength="512" />
+    <Property Name="gcalapi" Type="bool" Nullable="false" />
+    <Property Name="gregid" Type="varchar" MaxLength="1024" />
+    <Property Name="allowcookies" Type="bool" Nullable="false" />
+    <Property Name="uitheme" Type="varchar" MaxLength="64" />
+    <Property Name="meacode" Type="varchar" MaxLength="256" />
+    <Property Name="rate" Type="int4" />
+  </EntityType>
+  <EntityType Name="roles">
+    <Key>
+      <PropertyRef Name="rolename" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="comment" />
+    </Key>
+    <Property Name="rolename" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="comment" Type="varchar" Nullable="false" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="tag">
+    <Key>
+      <PropertyRef Name="_id" />
+    </Key>
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="varchar" MaxLength="30" />
+  </EntityType>
+  <EntityType Name="satisfaction">
+    <Key>
+      <PropertyRef Name="_id" />
+    </Key>
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="userskillid" Type="int8" />
+    <Property Name="rate" Type="int4" />
+    <Property Name="comnt" Type="varchar" MaxLength="8192" />
+  </EntityType>
+  <EntityType Name="circle">
+    <Key>
+      <PropertyRef Name="_id" />
+      <PropertyRef Name="owner" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="title" />
+    </Key>
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="owner" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="title" Type="varchar" Nullable="false" MaxLength="512" />
+    <Property Name="public" Type="bool" />
+  </EntityType>
+  <EntityType Name="circle_members">
+    <Key>
+      <PropertyRef Name="circle_id" />
+      <PropertyRef Name="member" />
+    </Key>
+    <Property Name="circle_id" Type="int8" Nullable="false" />
+    <Property Name="member" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="varchar" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="skill">
+    <Key>
+      <PropertyRef Name="_id" />
+      <PropertyRef Name="name" />
+      <PropertyRef Name="rate" />
+      <PropertyRef Name="meacode" />
+    </Key>
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="varchar" Nullable="false" MaxLength="2024" />
+    <Property Name="rate" Type="int4" Nullable="false" />
+    <Property Name="meacode" Type="varchar" Nullable="false" MaxLength="256" />
+    <Property Name="applicationname" Type="varchar" MaxLength="255" />
+    <Property Name="parent" Type="int8" />
+  </EntityType>
+  <EntityType Name="tasks">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="name" />
+      <PropertyRef Name="start" />
+      <PropertyRef Name="endd" />
+      <PropertyRef Name="tdesc" />
+      <PropertyRef Name="prid" />
+    </Key>
+    <Property Name="id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="name" Type="varchar" Nullable="false" />
+    <Property Name="start" Type="date" Nullable="false" />
+    <Property Name="endd" Type="date" Nullable="false" />
+    <Property Name="tdesc" Type="text" Nullable="false" />
+    <Property Name="prid" Type="int8" Nullable="false" />
+  </EntityType>
+  <EntityType Name="usersroles">
+    <Key>
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="rolename" />
+      <PropertyRef Name="username" />
+    </Key>
+    <Property Name="applicationname" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="rolename" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="username" Type="varchar" Nullable="false" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="commandes">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="prdref" />
+    </Key>
+    <Property Name="id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="validation" Type="date" />
+    <Property Name="prdref" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="creation" Type="timestamptz" />
+    <Property Name="clientname" Type="varchar" MaxLength="255" />
+    <Property Name="applicationname" Type="varchar" MaxLength="255" />
+    <Property Name="class" Type="varchar" MaxLength="512" />
+    <!--Property Name="params" removed. Unknown type.-->
+  </EntityType>
+  <EntityType Name="blog_access">
+    <Key>
+      <PropertyRef Name="post_id" />
+      <PropertyRef Name="circle_id" />
+    </Key>
+    <Property Name="post_id" Type="int8" Nullable="false" />
+    <Property Name="circle_id" Type="int8" Nullable="false" />
+  </EntityType>
+  <EntityType Name="estimate">
+    <Key>
+      <PropertyRef Name="_id" />
+      <PropertyRef Name="title" />
+      <PropertyRef Name="username" />
+      <PropertyRef Name="applicationname" />
+      <PropertyRef Name="client" />
+    </Key>
+    <Property Name="_id" Type="int8" Nullable="false" StoreGeneratedPattern="Identity" p3:StoreGeneratedPattern="Identity" xmlns:p3="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+    <Property Name="title" Type="varchar" Nullable="false" MaxLength="1024" />
+    <Property Name="username" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="applicationname" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="status" Type="int4" />
+    <Property Name="client" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="description" Type="varchar" MaxLength="65000" />
+  </EntityType>
+  <Association Name="usersroles_fk_role">
+    <End Role="roles" Type="public.roles" Multiplicity="1" />
+    <End Role="usersroles" Type="public.usersroles" Multiplicity="*" />
+    <End Role="roles" Type="public.roles" Multiplicity="1" />
+    <End Role="usersroles" Type="public.usersroles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="roles">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="usersroles">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="roles">
+        <PropertyRef Name="rolename" />
+      </Principal>
+      <Dependent Role="usersroles">
+        <PropertyRef Name="rolename" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="usersroles_fk_user">
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="usersroles" Type="public.usersroles" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="usersroles" Type="public.usersroles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="usersroles">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="usersroles">
+        <PropertyRef Name="username" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkprofiles2">
+    <End Role="profiles" Type="public.profiles" Multiplicity="1" />
+    <End Role="profiledata" Type="public.profiledata" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="profiles">
+        <PropertyRef Name="uniqueid" />
+      </Principal>
+      <Dependent Role="profiledata">
+        <PropertyRef Name="uniqueid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="bloguser">
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="blog" Type="public.blog" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="blog" Type="public.blog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="blog">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="blog">
+        <PropertyRef Name="username" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="commforeignuser">
+    <End Role="users" Type="public.users" Multiplicity="0..1" />
+    <End Role="commandes" Type="public.commandes" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="0..1" />
+    <End Role="commandes" Type="public.commandes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="commandes">
+        <PropertyRef Name="clientname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="commandes">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="estimate_client_fkey">
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="estimate" Type="public.estimate" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="estimate" Type="public.estimate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="estimate">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="estimate">
+        <PropertyRef Name="client" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="estimate_username_fkey">
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="estimate" Type="public.estimate" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="estimate" Type="public.estimate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="estimate">
+        <PropertyRef Name="username" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="estimate">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="histoestim_estid_fkey">
+    <End Role="estimate" Type="public.estimate" Multiplicity="1" />
+    <End Role="histoestim" Type="public.histoestim" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="estimate">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="histoestim">
+        <PropertyRef Name="estid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="histoestim_username_fkey">
+    <End Role="users" Type="public.users" Multiplicity="0..1" />
+    <End Role="histoestim" Type="public.histoestim" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="0..1" />
+    <End Role="histoestim" Type="public.histoestim" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="histoestim">
+        <PropertyRef Name="username" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="histoestim">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="pk_project_manager">
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="projet" Type="public.projet" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="0..1" />
+    <End Role="projet" Type="public.projet" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="projet">
+        <PropertyRef Name="managerid" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="projet">
+        <PropertyRef Name="ApplicationName" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkprofiles1">
+    <End Role="profiles" Type="public.profiles" Multiplicity="0..1" />
+    <End Role="stocksymbols" Type="public.stocksymbols" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="profiles">
+        <PropertyRef Name="uniqueid" />
+      </Principal>
+      <Dependent Role="stocksymbols">
+        <PropertyRef Name="uniqueid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tagged_postid_fkey">
+    <End Role="blog" Type="public.blog" Multiplicity="1" />
+    <End Role="tagged" Type="public.tagged" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="blog">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="tagged">
+        <PropertyRef Name="postid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tagged_tagid_fkey">
+    <End Role="tag" Type="public.tag" Multiplicity="1" />
+    <End Role="tagged" Type="public.tagged" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tag">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="tagged">
+        <PropertyRef Name="tagid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="tasks_fk_new">
+    <End Role="projet" Type="public.projet" Multiplicity="1" />
+    <End Role="tasks" Type="public.tasks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="projet">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="tasks">
+        <PropertyRef Name="prid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="pk_foreign_dep">
+    <End Role="tasks" Type="public.tasks" Multiplicity="1" />
+    <End Role="taskdeps" Type="public.taskdeps" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tasks">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="taskdeps">
+        <PropertyRef Name="deptask" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="pk_foreign_task">
+    <End Role="tasks" Type="public.tasks" Multiplicity="1" />
+    <End Role="taskdeps" Type="public.taskdeps" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tasks">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="taskdeps">
+        <PropertyRef Name="taskId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="writtings_estimid_fkey">
+    <End Role="estimate" Type="public.estimate" Multiplicity="1" />
+    <End Role="writtings" Type="public.writtings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="estimate">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="writtings">
+        <PropertyRef Name="estimid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="cstwrtagsref">
+    <End Role="tag" Type="public.tag" Multiplicity="1" />
+    <End Role="wrtags" Type="public.wrtags" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tag">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="wrtags">
+        <PropertyRef Name="tagid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="wrtags_wrid_fkey1">
+    <End Role="writtings" Type="public.writtings" Multiplicity="1" />
+    <End Role="wrtags" Type="public.wrtags" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="writtings">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="wrtags">
+        <PropertyRef Name="wrid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="wrtags_wrid_fkey">
+    <End Role="writtings" Type="public.writtings" Multiplicity="0..1" />
+    <End Role="wrfiles" Type="public.wrfiles" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="writtings">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="wrfiles">
+        <PropertyRef Name="wrid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="histowritting_username_fkey">
+    <End Role="users" Type="public.users" Multiplicity="0..1" />
+    <End Role="histowritting" Type="public.histowritting" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="0..1" />
+    <End Role="histowritting" Type="public.histowritting" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="histowritting">
+        <PropertyRef Name="username" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="histowritting">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="histowritting_wrtid_fkey">
+    <End Role="writtings" Type="public.writtings" Multiplicity="1" />
+    <End Role="histowritting" Type="public.histowritting" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="writtings">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="histowritting">
+        <PropertyRef Name="wrtid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="circle_owner_fkey">
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="circle" Type="public.circle" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="circle" Type="public.circle" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="circle">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="circle">
+        <PropertyRef Name="owner" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkey_blog">
+    <End Role="blog" Type="public.blog" Multiplicity="0..1" />
+    <End Role="comment" Type="public.comment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="blog">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="comment">
+        <PropertyRef Name="postid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fkey_users">
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="comment" Type="public.comment" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="0..1" />
+    <End Role="comment" Type="public.comment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="comment">
+        <PropertyRef Name="username" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="comment">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="passwrecovery_pkid_fkey">
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="passwrecovery" Type="public.passwrecovery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="pkid" />
+      </Principal>
+      <Dependent Role="passwrecovery">
+        <PropertyRef Name="pkid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="blog_access_circle_id_fkey">
+    <End Role="circle" Type="public.circle" Multiplicity="1" />
+    <End Role="blog_access" Type="public.blog_access" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="circle">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="blog_access">
+        <PropertyRef Name="circle_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="blog_access_post_id_fkey">
+    <End Role="blog" Type="public.blog" Multiplicity="1" />
+    <End Role="blog_access" Type="public.blog_access" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="blog">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="blog_access">
+        <PropertyRef Name="post_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fk_circle_members_users">
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="circle_members" Type="public.circle_members" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="0..1" />
+    <End Role="circle_members" Type="public.circle_members" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="circle_members">
+        <PropertyRef Name="member" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="circle_members">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="users_applicationname_fkey">
+    <End Role="profiles" Type="public.profiles" Multiplicity="1" />
+    <End Role="users" Type="public.users" Multiplicity="*" />
+    <End Role="profiles" Type="public.profiles" Multiplicity="1" />
+    <End Role="users" Type="public.users" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="profiles">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="users">
+        <PropertyRef Name="username" />
+      </Dependent>
+      <Principal Role="profiles">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="users">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="userskills_applicationname_fkey">
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="userskills" Type="public.userskills" Multiplicity="*" />
+    <End Role="users" Type="public.users" Multiplicity="1" />
+    <End Role="userskills" Type="public.userskills" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="userskills">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+      <Principal Role="users">
+        <PropertyRef Name="username" />
+      </Principal>
+      <Dependent Role="userskills">
+        <PropertyRef Name="username" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="userskills_skillid_fkey">
+    <End Role="skill" Type="public.skill" Multiplicity="1" />
+    <End Role="userskills" Type="public.userskills" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="skill">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="userskills">
+        <PropertyRef Name="skillid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="satisfaction_userskillid_fkey">
+    <End Role="userskills" Type="public.userskills" Multiplicity="0..1" />
+    <End Role="satisfaction" Type="public.satisfaction" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="userskills">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="satisfaction">
+        <PropertyRef Name="userskillid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="parentValid">
+    <End Role="skill" Type="public.skill" Multiplicity="0..1" />
+    <End Role="skill" Type="public.skill" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="skill">
+        <PropertyRef Name="_id" />
+      </Principal>
+      <Dependent Role="skill">
+        <PropertyRef Name="parent" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="skill_app">
+    <End Role="activity" Type="public.activity" Multiplicity="1" />
+    <End Role="skill" Type="public.skill" Multiplicity="*" />
+    <End Role="activity" Type="public.activity" Multiplicity="0..1" />
+    <End Role="skill" Type="public.skill" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="activity">
+        <PropertyRef Name="meacode" />
+      </Principal>
+      <Dependent Role="skill">
+        <PropertyRef Name="meacode" />
+      </Dependent>
+      <Principal Role="activity">
+        <PropertyRef Name="applicationname" />
+      </Principal>
+      <Dependent Role="skill">
+        <PropertyRef Name="applicationname" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="fk_oauth_profileid">
+    <End Role="profiles" Type="public.profiles" Multiplicity="1" />
+    <End Role="oauthtoken" Type="public.oauthtoken" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="profiles">
+        <PropertyRef Name="uniqueid" />
+      </Principal>
+      <Dependent Role="oauthtoken">
+        <PropertyRef Name="profileid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Function Name="uuid_ns_dns" StoreFunctionName="uuid_ns_dns" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="public" BuiltIn="false" NiladicFunction="false" Aggregate="false" />
+  <Function Name="uuid_generate_v1" StoreFunctionName="uuid_generate_v1" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="public" BuiltIn="false" NiladicFunction="false" Aggregate="false" />
+  <Function Name="uuid_ns_url" StoreFunctionName="uuid_ns_url" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="public" BuiltIn="false" NiladicFunction="false" Aggregate="false" />
+  <Function Name="uuid_generate_v5" StoreFunctionName="uuid_generate_v5" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="public" BuiltIn="false" NiladicFunction="false" Aggregate="false">
+    <Parameter Name="namespace" Mode="In" Type="uuid" />
+    <Parameter Name="name" Mode="In" Type="text" />
+  </Function>
+  <Function Name="uuid_generate_v1mc" StoreFunctionName="uuid_generate_v1mc" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="public" BuiltIn="false" NiladicFunction="false" Aggregate="false" />
+  <Function Name="uuid_nil" StoreFunctionName="uuid_nil" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="public" BuiltIn="false" NiladicFunction="false" Aggregate="false" />
+  <Function Name="uuid_generate_v3" StoreFunctionName="uuid_generate_v3" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="public" BuiltIn="false" NiladicFunction="false" Aggregate="false">
+    <Parameter Name="namespace" Mode="In" Type="uuid" />
+    <Parameter Name="name" Mode="In" Type="text" />
+  </Function>
+  <Function Name="uuid_generate_v4" StoreFunctionName="uuid_generate_v4" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="public" BuiltIn="false" NiladicFunction="false" Aggregate="false" />
+  <Function Name="uuid_ns_x500" StoreFunctionName="uuid_ns_x500" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="public" BuiltIn="false" NiladicFunction="false" Aggregate="false" />
+  <Function Name="uuid_ns_oid" StoreFunctionName="uuid_ns_oid" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="public" BuiltIn="false" NiladicFunction="false" Aggregate="false" />
+</Schema>

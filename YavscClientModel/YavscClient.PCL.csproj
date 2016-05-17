@@ -6,7 +6,7 @@
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C2D2C633-E49B-4956-8FA8-EDDBA5797D98}</ProjectGuid>
+    <ProjectGuid>{E5B231A5-57BB-4307-97C3-1F6BCC917207}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>YavscClientModel</RootNamespace>
     <AssemblyName>YavscClientModel</AssemblyName>

@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Yavsc.Client</RootNamespace>
     <AssemblyName>Yavsc.Client</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

@@ -8,8 +8,6 @@ using System.Web.Routing;
 using System.Security.Claims;
 using Microsoft.Owin.Security;
 using Microsoft.AspNet.Identity;
-using Yavsc.Model.RolesAndMembers;
-using Microsoft.AspNet.Identity.Owin;
 using System.Web.Security;
 
 namespace Yavsc.Controllers
@@ -53,10 +51,9 @@ namespace Yavsc.Controllers
 			claims.Add(new Claim(ClaimTypes.NameIdentifier, userState.UserId));
 			claims.Add(new Claim(ClaimTypes.Name, userState.Name));
 			claims.Add (new Claim (ClaimsIdentity.DefaultNameClaimType,
-			                       userState.Name,"Application"));
+			                       userState.Name,"typeName"));
 			claims.Add(new Claim("userState", userState.ToString()));
-			var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie );
-
+			var identity = new ClaimsIdentity(claims, DefaultAuthenticationTypes.ApplicationCookie);
 			AuthenticationManager.SignIn(new AuthenticationProperties()
 			{
 				AllowRefresh = true,
@@ -74,7 +71,7 @@ namespace Yavsc.Controllers
 			IdentitySignin(appUserState, isPersistent);
 		}
 
-		protected override void Initialize(RequestContext requestContext)
+		/* protected override void Initialize(RequestContext requestContext)
 		{
 			base.Initialize(requestContext);
 			// Grab the user's login information from Identity
@@ -99,7 +96,7 @@ namespace Yavsc.Controllers
 			
 			userState = appUserState;
 			ViewData["UserState"] = UserState;
-		}
+		} */
 
 		public static string GetClaim(List<Claim> claims, string key)
 		{

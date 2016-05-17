@@ -32,9 +32,6 @@ namespace Yavsc.App_Start
 		/// Gets the O auth options.
 		/// </summary>
 		/// <value>The O auth options.</value>
-		public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
-		public const string ExternalCookieAuthenticationType = CookieAuthenticationDefaults.AuthenticationType;
-		public const string ExternalOAuthAuthenticationType = "ExternalToken";
 		// For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
 		public void ConfigureAuth(IAppBuilder app)
 		{
@@ -45,29 +42,15 @@ namespace Yavsc.App_Start
 			app.UseCookieAuthentication(new CookieAuthenticationOptions
 			{
 				AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+				CookieHttpOnly = true,
 				LoginPath = new PathString(Paths.LoginPath),
 				LogoutPath = new PathString(Paths.LogoutPath),
+					CookieName= "Yavsc.Auth"
 			});
-			app.SetDefaultSignInAsAuthenticationType(DefaultAuthenticationTypes.ExternalCookie);
+	
+			//app.SetDefaultSignInAsAuthenticationType("Application");
+
 			app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-
-			// Configure the application for OAuth based flow
-			// YavscHelpers.PublicClientId = ConfigurationManager.AppSettings["PUBLIC_CLIENT_ID"];
-			/*
-			OAuthOptions = new OAuthAuthorizationServerOptions
-			{
-				
-				AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-				TokenEndpointPath = new PathString(Paths.TokenPath),
-				Provider = new ApplicationOAuthProvider(YavscHelpers.PublicClientId),
-				AuthorizeEndpointPath = new PathString(Paths.AuthorizePath),
-				AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
-				AllowInsecureHttp = true
-			};
-			// Enable the application to use bearer tokens to authenticate users
-			app.UseOAuthBearerTokens(OAuthOptions);
- */
-
 
 			//app.UseMicrosoftAccountAuthentication(
 			//    clientId: "",
@@ -77,7 +60,7 @@ namespace Yavsc.App_Start
 			//    consumerKey: "",
 			//    consumerSecret: "");
 			// Enable Facebook authentication.
-			
+
 			var facebookId = ConfigurationManager.AppSettings ["FACEBOOK_CLIENT_ID"];
 			if (!string.IsNullOrWhiteSpace (facebookId)) {
 				OAuthHelpers.ExternalAuthClientId.Add ("Facebook", facebookId);
@@ -105,7 +88,7 @@ namespace Yavsc.App_Start
 				app.UseGoogleAuthentication (options);
 			}
 				
-			AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
+			// AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
 		}
 	}
 

@@ -39,24 +39,25 @@ namespace Yavsc.App_Start
 			AjaxHelper.GlobalizationScriptPath = "~/Scripts/globalize";
 			AreaRegistration.RegisterAllAreas();
 
-			ConfigureSecurity (app);
+			//ConfigureSecurity (app);
 			ConfigureAuth(app);
 			// ConfigureChat (app);
 			ConfigureWebApi(app);
 
 			RegisterRoutes(RouteTable.Routes);
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-			/* 
-			BundleConfig.RegisterBundles(BundleTable.Bundles); */
+
+			// BundleConfig.RegisterBundles(BundleTable.Bundles); 
 		}
 
 		public void ConfigureSecurity(IAppBuilder app)
 		{
-			app.SetDataProtectionProvider(
-				new MonoDataProtectionProvider
+			app.SetDataProtectionProvider
+			   (new MonoDataProtectionProvider
 				(app.Properties["host.AppName"] as string));
-			
 		}
+
+
 	}
 }
 

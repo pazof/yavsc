@@ -1,0 +1,81 @@
+//
+//  BasePostInfo.cs
+//
+//  Author:
+//       Paul Schneider <paul@pschneider.fr>
+//
+//  Copyright (c) 2015 GNU GPL
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+using System;
+using System.Configuration;
+using System.Collections.Generic;
+using Yavsc.Model.Blogs;
+using System.Linq;
+using Yavsc.Model.Circles;
+
+namespace Yavsc.Model.Blogs
+{
+	/// <summary>
+	/// Base post info.
+	/// </summary>
+	public class BasePostInfo: BasePost { 
+
+		/// <summary>
+		/// The intro.
+		/// </summary>
+		public string Intro;
+
+		public bool Truncated;
+		public BasePostInfo (BlogEntry be)
+		{
+			Title = be.Title;
+			Id = be.Id;
+			Posted = be.Posted;
+			Modified = be.Modified;
+			Intro = MarkdownIntro (be.Content, out Truncated);
+			Photo = be.Photo;
+			Tags = be.Tags;
+			AllowedCircles = be.AllowedCircles;
+			Visible = be.Visible;
+			Rate = be.Rate;
+		}
+
+		/// <summary>
+		/// Markdowns the intro.
+		/// </summary>
+		/// <returns>The intro.</returns>
+		/// <param name="markdown">Markdown.</param>
+		/// <param name="truncated">Truncated.</param>
+		public static string MarkdownIntro(string markdown, out bool truncated) { 
+			int maxLen = 250;
+			if (markdown.Length < maxLen) {
+				truncated = false;
+				return markdown;
+			}
+			string intro = markdown.Remove (maxLen);
+			truncated = true;
+			int inl = intro.LastIndexOf ("\n");
+			if (inl > 20)
+				intro = intro.Remove (inl);
+			intro += " ...";
+			return intro;
+		}
+
+
+
+	}
+	
+}

@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Presta</RootNamespace>
     <AssemblyName>Presta</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -67,13 +67,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\yavscModel\Yavsc.Server.csproj">
-      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
-      <Name>Yavsc.Server</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Yavsc.Client\Yavsc.Client.csproj">
       <Project>{5F9318D6-A994-497C-96A8-00F97642CE8E}</Project>
       <Name>Yavsc.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Yavsc.Server\Yavsc.Server.csproj">
+      <Project>{68F5B80A-616E-4C3C-91A0-828AA40000BD}</Project>
+      <Name>Yavsc.Server</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

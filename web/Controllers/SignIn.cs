@@ -30,12 +30,14 @@ namespace Yavsc.Controllers
 		/// </summary>
 		/// <value>The E mail.</value>
 		[Required]
+		[EmailAddress]
 		public string Email { get; set; }
 
 		/// <summary>
 		/// Gets or sets the display name.
 		/// </summary>
 		/// <value>The display name.</value>
+		[Required]
 		public string DisplayName { get; set; }
 
 		/// <summary>

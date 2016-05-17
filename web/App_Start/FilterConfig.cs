@@ -19,24 +19,8 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using Microsoft.Owin.Security.OAuth;
-using Owin;
-using Yavsc.Model.Identity;
-using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security;
-using Microsoft.Owin;
-using Yavsc.Model;
-using System;
-using Microsoft.Owin.Security.Infrastructure;
-using Yavsc.Providers;
-using System.Configuration;
-using System.Web.Helpers;
-using System.Security.Claims;
-using Yavsc.Helpers.OAuth;
-using Microsoft.Owin.Security.Google;
-using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security.Facebook;
-using Yavsc.Helpers;
+
+
 using System.Web.Mvc;
 
 namespace Yavsc.App_Start

@@ -1,0 +1,72 @@
+﻿//
+//  ChangeUserNameProvider.cs
+//
+//  Author:
+//       Paul Schneider <paul@pschneider.fr>
+//
+//  Copyright (c) 2015 GNU GPL
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using System;
+using System.Configuration;
+using System.Reflection;
+using System.Configuration.Provider;
+using Yavsc.Model.Identity;
+
+namespace Yavsc.Model.RolesAndMembers
+{
+	/// <summary>
+	/// Change user name provider.
+	/// </summary>
+	public abstract class ChangeUserNameProvider: ProviderBase 
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Yavsc.Model.RolesAndMembers.ChangeUserNameProvider"/> class.
+		/// </summary>
+		public ChangeUserNameProvider ()
+		{
+			
+		}
+		/// <summary>
+		/// Changes the name.
+		/// </summary>
+		/// <param name="oldName">Old name.</param>
+		/// <param name="newName">New name.</param>
+		public  abstract void ChangeName (string oldName, string newName) ;
+		/// <summary>
+		/// Determines whether this instance is name available the specified name.
+		/// </summary>
+		/// <returns><c>true</c> if this instance is name available the specified name; otherwise, <c>false</c>.</returns>
+		/// <param name="name">Name.</param>
+		public abstract bool IsNameAvailable(string name);
+
+		/// <summary>
+		/// Gets the O auth token.
+		/// </summary>
+		/// <returns>The O auth token.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="authType">Auth type.</param>
+		public abstract SavedToken GetOAuthToken(string username, string authType);
+
+		/// <summary>
+		/// Saves the token.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="username">Username.</param>
+		/// <param name="token">Token.</param>
+		public abstract long SaveToken(string username, AuthToken token);
+
+	}
+}
+
