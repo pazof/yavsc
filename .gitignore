@@ -20,7 +20,6 @@ web/Web.TotemPre.config
 web/Web.Totemprod.config
 .nuget
 .gitignore
-web/Web.YavscPre.config
-web/Web.Yavsc.config
+web/Web.*.config
 
 
