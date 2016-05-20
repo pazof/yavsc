@@ -51,7 +51,7 @@ namespace Yavsc.Controllers
         IOptions<GoogleAuthSettings> googleSettings,
         IOptions<PayPalSettings> paypalSettings,
         IOptions<CompanyInfoSettings> cinfoSettings,
-        IStringLocalizer <Yavsc.Resources.YavscLoc>SR,
+        IStringLocalizer <Yavsc.Resources.YavscLocalisation>SR,
         ILoggerFactory loggerFactory)
         {
             _dbContext = context;

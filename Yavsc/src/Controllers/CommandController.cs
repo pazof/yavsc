@@ -33,7 +33,7 @@ namespace Yavsc.Controllers
         public CommandController(ApplicationDbContext context,IOptions<GoogleAuthSettings> googleSettings,
         IGoogleCloudMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
-          IStringLocalizer<Yavsc.Resources.YavscLoc> localizer,
+          IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
           IEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
           IOptions<SiteSettings> siteSettings,

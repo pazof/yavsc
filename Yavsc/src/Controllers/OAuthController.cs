@@ -323,6 +323,7 @@ ILogger _logger;
         protected virtual Task<Application> GetApplicationAsync(string identifier, CancellationToken cancellationToken)
         {
             // Retrieve the application details corresponding to the requested client_id.
+            _logger.LogWarning($"Ap count : {_context.Applications.Count()}");
             return (from application in _context.Applications
                     where application.ApplicationID == identifier
                     select application).SingleOrDefaultAsync(cancellationToken);

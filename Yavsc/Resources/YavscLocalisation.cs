@@ -4,7 +4,7 @@ namespace Yavsc.Resources
     ///<summary>
     /// Makes possible the code injection
     ///</summary>
-    public class YavscLoc
+    public class YavscLocalisation
     {
        public  static string ChooseAnEventDate {
            get {
