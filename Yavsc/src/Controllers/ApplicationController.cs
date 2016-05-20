@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
@@ -51,6 +52,7 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
+                application.ApplicationID = Guid.NewGuid().ToString();
                 _context.Applications.Add(application);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
