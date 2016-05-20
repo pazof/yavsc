@@ -12,48 +12,6 @@
           "lib/Antlr3.Runtime.dll": {}
         }
       },
-      "AspNet.Security.OpenIdConnect.Extensions/1.0.0-beta4": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
-          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "2.0.0-rc1-211161024"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Extensions.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Extensions.dll": {}
-        }
-      },
-      "AspNet.Security.OpenIdConnect.Server/1.0.0-beta4": {
-        "type": "package",
-        "dependencies": {
-          "AspNet.Security.OpenIdConnect.Extensions": "1.0.0-beta4",
-          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
-          "Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc1-final",
-          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
-          "Newtonsoft.Json": "7.0.1"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Server.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Server.dll": {}
-        }
-      },
       "EntityFramework.Commands/7.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -260,12 +218,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.PlatformServices.dll": {},
-          "lib/net45/Google.Apis.dll": {}
+          "lib/net45/Google.Apis.dll": {},
+          "lib/net45/Google.Apis.PlatformServices.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.PlatformServices.dll": {},
-          "lib/net45/Google.Apis.dll": {}
+          "lib/net45/Google.Apis.dll": {},
+          "lib/net45/Google.Apis.PlatformServices.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -2987,48 +2945,6 @@
           "lib/Antlr3.Runtime.dll": {}
         }
       },
-      "AspNet.Security.OpenIdConnect.Extensions/1.0.0-beta4": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
-          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "2.0.0-rc1-211161024"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Extensions.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Extensions.dll": {}
-        }
-      },
-      "AspNet.Security.OpenIdConnect.Server/1.0.0-beta4": {
-        "type": "package",
-        "dependencies": {
-          "AspNet.Security.OpenIdConnect.Extensions": "1.0.0-beta4",
-          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
-          "Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc1-final",
-          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
-          "Newtonsoft.Json": "7.0.1"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Server.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Server.dll": {}
-        }
-      },
       "EntityFramework.Commands/7.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -3235,12 +3151,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.PlatformServices.dll": {},
-          "lib/net45/Google.Apis.dll": {}
+          "lib/net45/Google.Apis.dll": {},
+          "lib/net45/Google.Apis.PlatformServices.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.PlatformServices.dll": {},
-          "lib/net45/Google.Apis.dll": {}
+          "lib/net45/Google.Apis.dll": {},
+          "lib/net45/Google.Apis.PlatformServices.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -5962,48 +5878,6 @@
           "lib/Antlr3.Runtime.dll": {}
         }
       },
-      "AspNet.Security.OpenIdConnect.Extensions/1.0.0-beta4": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
-          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "2.0.0-rc1-211161024"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Extensions.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Extensions.dll": {}
-        }
-      },
-      "AspNet.Security.OpenIdConnect.Server/1.0.0-beta4": {
-        "type": "package",
-        "dependencies": {
-          "AspNet.Security.OpenIdConnect.Extensions": "1.0.0-beta4",
-          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
-          "Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc1-final",
-          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
-          "Newtonsoft.Json": "7.0.1"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Server.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/AspNet.Security.OpenIdConnect.Server.dll": {}
-        }
-      },
       "EntityFramework.Commands/7.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -6210,12 +6084,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.PlatformServices.dll": {},
-          "lib/net45/Google.Apis.dll": {}
+          "lib/net45/Google.Apis.dll": {},
+          "lib/net45/Google.Apis.PlatformServices.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.PlatformServices.dll": {},
-          "lib/net45/Google.Apis.dll": {}
+          "lib/net45/Google.Apis.dll": {},
+          "lib/net45/Google.Apis.PlatformServices.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -8938,32 +8812,6 @@
         "Antlr.nuspec",
         "lib/Antlr3.Runtime.dll",
         "lib/Antlr3.Runtime.pdb"
-      ]
-    },
-    "AspNet.Security.OpenIdConnect.Extensions/1.0.0-beta4": {
-      "type": "package",
-      "sha512": "r0r4W/922xuS06pYs5dOAN2mkpRYQ4gI9LPR6IMaDulB1LAbPNmBOj7AXc4bq50A3OZgG3Cudezn6q8RJeTscw==",
-      "files": [
-        "AspNet.Security.OpenIdConnect.Extensions.1.0.0-beta4.nupkg",
-        "AspNet.Security.OpenIdConnect.Extensions.1.0.0-beta4.nupkg.sha512",
-        "AspNet.Security.OpenIdConnect.Extensions.nuspec",
-        "lib/dnx451/AspNet.Security.OpenIdConnect.Extensions.dll",
-        "lib/dnx451/AspNet.Security.OpenIdConnect.Extensions.xml",
-        "lib/dnxcore50/AspNet.Security.OpenIdConnect.Extensions.dll",
-        "lib/dnxcore50/AspNet.Security.OpenIdConnect.Extensions.xml"
-      ]
-    },
-    "AspNet.Security.OpenIdConnect.Server/1.0.0-beta4": {
-      "type": "package",
-      "sha512": "8EvftVfasTVRD2NiIuC4WTbDAUKWJr8AbCUmEyLb78tLpyFmuI1gogmmrP2gMHDIEvJyG4oJ1iXZE/xmZt3M3w==",
-      "files": [
-        "AspNet.Security.OpenIdConnect.Server.1.0.0-beta4.nupkg",
-        "AspNet.Security.OpenIdConnect.Server.1.0.0-beta4.nupkg.sha512",
-        "AspNet.Security.OpenIdConnect.Server.nuspec",
-        "lib/dnx451/AspNet.Security.OpenIdConnect.Server.dll",
-        "lib/dnx451/AspNet.Security.OpenIdConnect.Server.xml",
-        "lib/dnxcore50/AspNet.Security.OpenIdConnect.Server.dll",
-        "lib/dnxcore50/AspNet.Security.OpenIdConnect.Server.xml"
       ]
     },
     "EntityFramework.Commands/7.0.0-rc1-final": {
@@ -12176,8 +12024,7 @@
       "Microsoft.AspNet.Authentication.JwtBearer >= 1.0.0-rc1-final",
       "System.IdentityModel.Tokens >= 5.0.0-rc1-208241120",
       "System.IdentityModel.Tokens.Jwt >= 5.0.0-rc1-208241120",
-      "Microsoft.AspNet.Authorization >= 1.0.0-rc1-final",
-      "AspNet.Security.OpenIdConnect.Server >= 1.0.0-beta4"
+      "Microsoft.AspNet.Authorization >= 1.0.0-rc1-final"
     ],
     "DNX,Version=v4.5.1": []
   }

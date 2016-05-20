@@ -8,12 +8,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Optimization;
-using AspNet.Security.OpenIdConnect.Extensions;
 using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.AspNet.Authentication.OAuth;
-using Microsoft.AspNet.Authentication.OpenIdConnect;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.DataProtection.Infrastructure;
@@ -36,13 +34,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.WebEncoders;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.Net.Http.Headers;
 using Yavsc.Auth;
 using Yavsc.Extensions;
 using Yavsc.Formatters;
 using Yavsc.Models;
-using Yavsc.Providers;
 using Yavsc.Services;
 
 
@@ -233,10 +229,6 @@ namespace Yavsc
             {
                 options.AddPolicy("AdministratorOnly", policy => policy.RequireRole(Constants.AdminGroupName));
                 options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
-                options.AddPolicy("API", policy => {
-                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-                    policy.RequireClaim(OpenIdConnectConstants.Claims.Scope, "api-resource-controller");
-                });
                 // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
                 // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
             });
@@ -354,6 +346,7 @@ namespace Yavsc
                 SaveTokensAsClaims = true,
                 UserInformationEndpoint = "https://www.googleapis.com/plus/v1/people/me",
             };
+
             var gvents = new OAuthEvents();
 
             googleOptions.Events = new OAuthEvents
@@ -374,10 +367,6 @@ namespace Yavsc
 
             googleOptions.Scope.Add("https://www.googleapis.com/auth/calendar");
 
-            app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
-
-            app.UseStaticFiles().UseWebSockets();
-
             var udirinfo = new DirectoryInfo(Configuration["Site:UserFiles:RootDir"]);
             if (!udirinfo.Exists)
                 throw new Exception($"Configuration value for Site:UserFiles:RootDir : {udirinfo.FullName}");
@@ -390,38 +379,30 @@ namespace Yavsc
                 EnableDirectoryBrowsing = true
             });
 
+            
+            app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
+
+            app.UseStaticFiles().UseWebSockets();
+
+            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
+
             app.UseIdentity();
-            app.UseWhen(context => context.Request.Path.StartsWithSegments(new PathString("/api")), branch => {
-
-                branch.UseJwtBearerAuthentication(options => {
-                    options.AutomaticAuthenticate = true;
-                    options.AutomaticChallenge = true;
-                    options.RequireHttpsMetadata = false;
-
-                    options.Audience = "http://localhost:54540/";
-                    options.Authority = "http://localhost:54540/";
-                });
-            });
 
             // Create a new branch where the registered middleware will be executed only for non API calls.
-            app.UseWhen(context => !context.Request.Path.StartsWithSegments(new PathString("/api")), branch => {
-
-                // Insert a new cookies middleware in the pipeline to store
-                // the user identity returned by the external identity provider.
-                branch.UseCookieAuthentication(options => {
+            app.UseCookieAuthentication(options => {
                     options.AutomaticAuthenticate = true;
                     options.AutomaticChallenge = true;
                     options.AuthenticationScheme = "ServerCookie";
                     options.CookieName = CookieAuthenticationDefaults.CookiePrefix + "ServerCookie";
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                    options.LoginPath = new PathString("/signin");
+                    options.LoginPath = new PathString("/Account/Login");
                 });
 
 
-                branch.UseMiddleware<GoogleMiddleware>(googleOptions);
+            app.UseMiddleware<GoogleMiddleware>(googleOptions);
 
                 // Facebook
-                branch.UseFacebookAuthentication(options =>
+            app.UseFacebookAuthentication(options =>
                 {
                     options.AppId = Configuration["Authentication:Facebook:AppId"];
                     options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
@@ -429,133 +410,6 @@ namespace Yavsc
                     options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
                 });
 
-            });
-
-/*
-            app.UseCookieAuthentication(options =>
-            {
-                options.LoginPath = "/signin";
-                options.AuthenticationScheme = "ServerCookie";
-                options.AutomaticAuthenticate = true;
-                options.AutomaticChallenge = true;
-
-                options.CookieName = CookieAuthenticationDefaults.CookiePrefix + "ServerCookie";
-
-                options.ExpireTimeSpan = TimeSpan.FromHours(
-(double)double.Parse(
-(string)Configuration[(string)"DataProtection:ExpiresInHours"])
-                );
-            }); */
-
-
-          /*  app.UseOAuthAuthentication(options => {
-                options.AutomaticAuthenticate = true;
-                options.AuthenticationScheme = "oidc" ;
-                options.ClientId = "resource_server";
-                options.ClientSecret = "875sqd4s5d748z78z7ds1ff8zz8814ff88ed8ea4z4zzd";
-                options.CallbackPath = new PathString("/signin-oidc");
-                options.Events = new OAuthEvents
-                    {
-                    OnRedirectToAuthorizationEndpoint =  context =>  {
-                        var query = QueryHelpers.AddQueryString(context.RedirectUri, "resource","https://dev.pschneider.fr");
-                            context.Response.Redirect(query);
-                            return Task.FromResult(0);
-                    }
-                };
-                options.ClaimsIssuer = "https://dev.pschneider.fr/";
-                options.AuthorizationEndpoint = "https://dev.pschneider.fr/connect/authorize/";
-                options.TokenEndpoint = "https://dev.pschneider.fr/connect/authorize/accept";
-            }); */
-
-/**/
-
-                // Alternatively, you can also use the introspection middleware.
-                // Using it is recommended if your resource server is in a
-                // different application/separated from the authorization server.
-                //
-                // branch.UseOAuthIntrospection(new OAuthIntrospectionOptions {
-                //     AutomaticAuthenticate = true,
-                //     AutomaticChallenge = true,
-                //     Authority = "http://localhost:54540/",
-                //     Audiences = { "resource_server" },
-                //     ClientId = "resource_server",
-                //     ClientSecret = "875sqd4s5d748z78z7ds1ff8zz8814ff88ed8ea4z4zzd"
-                // });
-
-
-
-            app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
-
-            app.UseStaticFiles().UseWebSockets();
-
-            app.UseOpenIdConnectServer(options => {
-                options.Provider = new OIAuthorizationProvider()
-
-           /*     {
-           OnValidateAuthorizationRequest = context => {
-            // Note: you MUST NOT validate the request if client_id is invalid or if redirect_uri
-            // doesn't correspond to a trusted URL associated with the client application.
-            // You SHOULD also strongly consider validating the type of the client application
-            // (public or confidential) to prevent code flow -> implicit flow downgrade attacks.
-            if (string.Equals(context.ClientId, "client_id", StringComparison.Ordinal)) {
-                context.Validated();
-            }
-
-            // Note: if Validate() is not explicitly called,
-            // the request is automatically rejected.
-            return Task.FromResult(0);
-        } */;
- 
-                 
-                // Register the certificate used to sign the JWT tokens.
-                /* options.SigningCredentials.AddCertificate(
-                    assembly: typeof(Startup).GetTypeInfo().Assembly,
-                    resource: "Mvc.Server.Certificate.pfx",
-                    password: "Owin.Security.OpenIdConnect.Server"); */
-
-               // options.SigningCredentials.AddKey(key);
-                // Note: see AuthorizationController.cs for more
-                // information concerning ApplicationCanDisplayErrors.
-                options.ApplicationCanDisplayErrors = true;
-                options.AllowInsecureHttp = true;
-                options.ClaimsIssuer = "http://dev.pschneider.fr";
-                options.Description.DisplayName = "DEV OIDC server";
-                options.AuthorizationEndpointPath = new PathString("/connect/authorize");
-                options.TokenEndpointPath = new PathString("/connect/token");
-                options.UseSlidingExpiration = true;
-                options.AuthenticationScheme = "oidc";
-                options.LogoutEndpointPath = new PathString("/connect/logout");
-                 /* options.ValidationEndpointPath = new PathString("/connect/introspect"); */
-
-            });
-
-          /*  app.UseOpenIdConnectAuthentication(options => {
-                options.AuthenticationScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                options.RequireHttpsMetadata = false;
-
-                // Note: these settings must match the application details
-                // inserted in the database at the server level.
-                options.ClientId = "016c5ae4-f4cd-40e3-b250-13701c871ecd";
-                options.ClientSecret = "blahblah";
-                options.PostLogoutRedirectUri = "/MobileLogout";
-
-                // Use the authorization code flow.
-                options.ResponseType = OpenIdConnectResponseTypes.Code;
-
-                // Note: setting the Authority allows the OIDC client middleware to automatically
-                // retrieve the identity provider's configuration and spare you from setting
-                // the different endpoints URIs or the token validation parameters explicitly.
-                options.Authority = "http://dev.pschneider.fr/";
-
-                // Note: the resource property represents the different endpoints the
-                // access token should be issued for (values must be space-delimited).
-                options.Resource = "http://dev.pschneider.fr/";
-                options.Scope.Add("api-resource-controller");
-            });*/
-
-            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
-
-            // app.UseMiddleware<RequiredScopesMiddleware>(new List<string>{"AspNet.Identity.SecurityStamp"});
 
 
             /* Generic OAuth (here GitHub): options.Notifications = new OAuthAuthenticationNotifications
@@ -629,6 +483,5 @@ namespace Yavsc
         // Entry point for the application.
         public static void Main(string[] args) => Microsoft.AspNet.Hosting.WebApplication.Run<Startup>(args);
     }
-
 
 }

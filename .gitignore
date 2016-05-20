@@ -10,6 +10,7 @@ bower_components/
 node_modules/
 docfx_project/
 debugcmd
+undefined/
 debugcode/
 kestrel*.pid
 kestrel*.log
