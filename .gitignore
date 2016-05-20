@@ -5,6 +5,7 @@ appsettings.*.json
 .vscode/
 YavscWeb.userprefs
 bin/
+obj/
 bower_components/
 node_modules/
 docfx_project/
