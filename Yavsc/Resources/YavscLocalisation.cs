@@ -6,10 +6,5 @@ namespace Yavsc.Resources
     ///</summary>
     public class YavscLocalisation
     {
-       public  static string ChooseAnEventDate {
-           get {
-               return "Please, choose a date for this event.";
-           }
-       }
     }
 }
