@@ -260,12 +260,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -3235,12 +3235,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -6210,12 +6210,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {

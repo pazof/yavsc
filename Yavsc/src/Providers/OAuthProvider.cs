@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Models;
 
 namespace Yavsc.Providers {
-    public sealed class AuthorizationProvider : OpenIdConnectServerProvider {
+    public sealed class OIAuthorizationProvider : OpenIdConnectServerProvider {
         public override Task MatchEndpoint(MatchEndpointContext context) {
             // Note: by default, OpenIdConnectServerHandler only handles authorization requests made to the authorization endpoint.
             // This context handler uses a more relaxed policy that allows extracting authorization requests received at

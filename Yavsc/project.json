@@ -42,7 +42,7 @@
   },
   "webroot": "wwwroot",
   "tooling": {
-    "defaultNamespace": "YavscWeb"
+    "defaultNamespace": "Yavsc"
   },
   "dependencies": {
     "EntityFramework.Core": "7.0.0-rc1-*",

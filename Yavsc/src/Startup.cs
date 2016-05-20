@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens;
 using System.IO;
 using System.Reflection;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Optimization;
 using AspNet.Security.OpenIdConnect.Extensions;
@@ -20,6 +21,7 @@ using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Localization;
@@ -174,8 +176,6 @@ namespace Yavsc
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
 
-
-
             services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
             services.AddDataProtection();
             services.Add(ServiceDescriptor.Singleton(typeof(IApplicationDiscriminator),
@@ -220,7 +220,15 @@ namespace Yavsc
             }
             */
             );
+            // Add memory cache services
+            services.AddCaching();
 
+            // Add session related services.
+            services.AddSession();
+
+            // Add the system clock service
+            services.AddSingleton<ISystemClock, SystemClock>();
+            
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("AdministratorOnly", policy => policy.RequireRole(Constants.AdminGroupName));
@@ -278,14 +286,7 @@ namespace Yavsc
                 options.ResourcesPath = "Resources";
             });
 
-            // Add memory cache services
-            services.AddCaching();
 
-            // Add session related services.
-            services.AddSession();
-
-            // Add the system clock service
-            services.AddSingleton<ISystemClock, SystemClock>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -488,8 +489,24 @@ namespace Yavsc
             app.UseStaticFiles().UseWebSockets();
 
             app.UseOpenIdConnectServer(options => {
-                options.Provider = new AuthorizationProvider();
+                options.Provider = new OIAuthorizationProvider()
 
+           /*     {
+           OnValidateAuthorizationRequest = context => {
+            // Note: you MUST NOT validate the request if client_id is invalid or if redirect_uri
+            // doesn't correspond to a trusted URL associated with the client application.
+            // You SHOULD also strongly consider validating the type of the client application
+            // (public or confidential) to prevent code flow -> implicit flow downgrade attacks.
+            if (string.Equals(context.ClientId, "client_id", StringComparison.Ordinal)) {
+                context.Validated();
+            }
+
+            // Note: if Validate() is not explicitly called,
+            // the request is automatically rejected.
+            return Task.FromResult(0);
+        } */;
+ 
+                 
                 // Register the certificate used to sign the JWT tokens.
                 /* options.SigningCredentials.AddCertificate(
                     assembly: typeof(Startup).GetTypeInfo().Assembly,
@@ -501,25 +518,26 @@ namespace Yavsc
                 // information concerning ApplicationCanDisplayErrors.
                 options.ApplicationCanDisplayErrors = true;
                 options.AllowInsecureHttp = true;
-             /*   options.AutomaticChallenge = true;
+                options.ClaimsIssuer = "http://dev.pschneider.fr";
+                options.Description.DisplayName = "DEV OIDC server";
                 options.AuthorizationEndpointPath = new PathString("/connect/authorize");
                 options.TokenEndpointPath = new PathString("/connect/token");
                 options.UseSlidingExpiration = true;
                 options.AuthenticationScheme = "oidc";
-                options.LogoutEndpointPath = new PathString("/connect/logout");*/
+                options.LogoutEndpointPath = new PathString("/connect/logout");
                  /* options.ValidationEndpointPath = new PathString("/connect/introspect"); */
 
             });
 
-            app.UseOpenIdConnectAuthentication(options => {
+          /*  app.UseOpenIdConnectAuthentication(options => {
                 options.AuthenticationScheme = OpenIdConnectDefaults.AuthenticationScheme;
                 options.RequireHttpsMetadata = false;
 
                 // Note: these settings must match the application details
                 // inserted in the database at the server level.
-                options.ClientId = "WebApiClient";
-                options.ClientSecret = "secWebApiClientret_secret";
-                options.PostLogoutRedirectUri = "http://dev.pschneider.fr/Manage";
+                options.ClientId = "016c5ae4-f4cd-40e3-b250-13701c871ecd";
+                options.ClientSecret = "blahblah";
+                options.PostLogoutRedirectUri = "/MobileLogout";
 
                 // Use the authorization code flow.
                 options.ResponseType = OpenIdConnectResponseTypes.Code;
@@ -533,7 +551,7 @@ namespace Yavsc
                 // access token should be issued for (values must be space-delimited).
                 options.Resource = "http://dev.pschneider.fr/";
                 options.Scope.Add("api-resource-controller");
-            });
+            });*/
 
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
 
