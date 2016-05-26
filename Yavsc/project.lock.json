@@ -9063,7 +9063,7 @@
     },
     "MailKit/1.3.0-beta7": {
       "type": "package",
-      "sha512": "xO66P+XLWyo3/POInJpkCsA0bFI3XmDxsdR+rSXCm9d7kbPU6kFBgvXT4AxW0TaWYUcsaxJEcZdhMgOODWu/ew==",
+      "sha512": "LalD+6uE97WdfZ9Ohmz2ZeYbPXzql4VNazGO/e9PLMENKNPwENc4eSr8v/r+mHY3EsRsAH34DCkub8rA4Zwyrw==",
       "files": [
         "lib/dotnet5.5/MailKit.dll",
         "lib/dotnet5.5/MailKit.xml",
@@ -9088,7 +9088,7 @@
     },
     "MarkdownDeep.NET/1.5.0": {
       "type": "package",
-      "sha512": "Y0vPM1u1nNtNhTVI6lZPr80W3PlTJZROmc7oqvjg85XVzVjlZX1Cp5+yOuz+qHa264JosYjzGAiBUQuWdnBeZg==",
+      "sha512": "8UPmeM6TB0ut7EKBd+uA7bY988SN+C9NxKiNqLrlUZrGZQQGiQzomeIm33uyvLJ1Umm23mdf7/fe204AOhYMMw==",
       "files": [
         "lib/net451/MarkdownDeep.dll",
         "MarkdownDeep.NET.1.5.0.nupkg",
@@ -10985,7 +10985,7 @@
     },
     "MimeKit/1.3.0-beta7": {
       "type": "package",
-      "sha512": "vWNZ2pDJXTFRHiErdZW6bOPej+sikIOjf8LlZSSiZXgYE2s4raQeHVQtvyGVpoQvx/PKXKoACzJDCkm9hr/OQQ==",
+      "sha512": "M7F4OnPXfcI4AljQUdvok29vz3DEruiqIBDIn6zGVdFQpNpaVbmrp80YLX9SH2hJO+8fSOX6/k3ScUXqZheFSQ==",
       "files": [
         "lib/dotnet5.4/MimeKit.dll",
         "lib/dotnet5.4/MimeKit.xml",

@@ -111,6 +111,10 @@ namespace Yavsc
             services.Configure<GoogleAuthSettings>(googleSettings);
             var cinfoSettings = Configuration.GetSection("Authentication").GetSection("Societeinfo");
             services.Configure<CompanyInfoSettings>(cinfoSettings);
+            var oauthLocalAppSettings = Configuration.GetSection("Authentication").GetSection("OAuth2LocalApp");
+            services.Configure<OAuth2AppSettings>(oauthLocalAppSettings);
+            var oauthFacebookSettings = Configuration.GetSection("Authentication").GetSection("Facebook");
+            services.Configure<FacebookOAuth2AppSettings>(oauthFacebookSettings);
 
             services.Configure<MvcOptions>(options =>
             {
@@ -171,6 +175,7 @@ namespace Yavsc
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
+            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<OAuth2AppSettings>), typeof(OptionsManager<OAuth2AppSettings>)));
 
             services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
             services.AddDataProtection();
@@ -229,6 +234,10 @@ namespace Yavsc
             {
                 options.AddPolicy("AdministratorOnly", policy => policy.RequireRole(Constants.AdminGroupName));
                 options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
+                options.AddPolicy("API", policy => {
+                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireClaim(OpenIdConnectConstants.Claims.Scope, "api-resource-controller");
+                });
                 // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
                 // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
             });
@@ -259,7 +268,7 @@ namespace Yavsc
             {
                 options.ResourcesPath = "Resources";
             })
-                .AddDataAnnotationsLocalization();
+                .AddDataAnnotationsLocalization( opt => opt.ResourcesPath = "Resources");
 
             services.AddScoped<LanguageActionFilter>();
             // Inject ticket formatting
@@ -284,6 +293,7 @@ namespace Yavsc
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
         IOptions<SiteSettings> siteSettings, IOptions<RequestLocalizationOptions> localizationOptions,
+        IOptions<OAuth2AppSettings> oauth2SettingsContainer,
          ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
@@ -326,7 +336,9 @@ namespace Yavsc
                 {
                     if (ex.InnerException is InvalidOperationException)
                     // nothing to do ?
-                    { }
+                    {
+// TODO Send an email to the Admin
+       }
                     else throw ex;
                 }
             }

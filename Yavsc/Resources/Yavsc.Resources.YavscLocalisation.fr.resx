@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="About"><value>À propos de</value></data>
+  <data name="About"><value>À propos de </value></data>
   <data name="About BookAStar"><value>À propos de BookAStar</value></data>
   <data name="About Message"><value>Bienvenue chez vos stars.</value></data>
   <data name="access denied"><value>Accès refusé</value></data>
