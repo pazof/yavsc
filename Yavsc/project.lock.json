@@ -322,7 +322,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep.NET/1.5.0": {
+      "MarkdownDeep-av.NET/1.5.2": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -2493,14 +2493,8 @@
           "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll": {}
         }
       },
-      "Microsoft.IdentityModel.Logging/1.0.0-rc1-211161024": {
+      "Microsoft.IdentityModel.Logging/1.0.0-rc2-305260021": {
         "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "System",
-          "System.Core",
-          "mscorlib"
-        ],
         "compile": {
           "lib/net451/Microsoft.IdentityModel.Logging.dll": {}
         },
@@ -2543,6 +2537,22 @@
         },
         "runtime": {
           "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {}
+        }
+      },
+      "Microsoft.IdentityModel.Tokens/5.0.0-rc2-305260021": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Logging": "1.0.0-rc2-305260021",
+          "Newtonsoft.Json": "8.0.3"
+        },
+        "frameworkAssemblies": [
+          "System.Xml"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.IdentityModel.Tokens.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.IdentityModel.Tokens.dll": {}
         }
       },
       "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
@@ -2655,7 +2665,7 @@
           "lib/net451/MimeKit.dll": {}
         }
       },
-      "Newtonsoft.Json/7.0.1": {
+      "Newtonsoft.Json/8.0.3": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -2810,17 +2820,11 @@
           "lib/net451/System.IdentityModel.Tokens.dll": {}
         }
       },
-      "System.IdentityModel.Tokens.Jwt/5.0.0-rc1-211161024": {
+      "System.IdentityModel.Tokens.Jwt/5.0.0-rc2-305260021": {
         "type": "package",
         "dependencies": {
-          "System.IdentityModel.Tokens": "5.0.0-rc1-211161024"
+          "Microsoft.IdentityModel.Tokens": "5.0.0-rc2-305260021"
         },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "System",
-          "System.Core",
-          "mscorlib"
-        ],
         "compile": {
           "lib/net451/System.IdentityModel.Tokens.Jwt.dll": {}
         },
@@ -3296,12 +3300,13 @@
         "lib/wpa81/MailKit.xml"
       ]
     },
-    "MarkdownDeep.NET/1.5.0": {
-      "sha512": "Jj8o7f+IbrIVFR/yrLpc8hzlINHEJ2vBV+FGXd9bSsnWck5te+wWQzpeyS6cLh70TsgO4cgWyaNQeNzqzrLyBg==",
+    "MarkdownDeep-av.NET/1.5.2": {
+      "sha512": "yhAFPv6eKhE62BgqvrpGRVbEhH9/cWypN2wwgtdCSOBnxtL/Hz7T2mlrx7UtvR+O2RXZZu6t4AmnjnN28fcZiw==",
       "type": "package",
       "files": [
-        "MarkdownDeep.NET.1.5.0.nupkg.sha512",
-        "MarkdownDeep.NET.nuspec",
+        "MarkdownDeep-av.NET.1.5.2.nupkg.sha512",
+        "MarkdownDeep-av.NET.nuspec",
+        "lib/dnxcore50/MarkdownDeep.dll",
         "lib/net451/MarkdownDeep.dll"
       ]
     },
@@ -4945,17 +4950,14 @@
         "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.xml"
       ]
     },
-    "Microsoft.IdentityModel.Logging/1.0.0-rc1-211161024": {
-      "sha512": "creXwpCysjVpRx+IsZSf8mxCT9lZ/VY1T6wR6zFFulPXV1UZysVURmLd/IgJg/p9pAtcrU5yIbRC9Az3j73+nA==",
+    "Microsoft.IdentityModel.Logging/1.0.0-rc2-305260021": {
+      "sha512": "MOCUqpYGJ2jpyDkNROEd5neGMd+Bf+xJplt/hFvBEQOAM5zyKhKtJWFlECDxDaBDR55ssSUYRBbnT0RIBqJX7A==",
       "type": "package",
       "files": [
-        "Microsoft.IdentityModel.Logging.1.0.0-rc1-211161024.nupkg",
-        "Microsoft.IdentityModel.Logging.1.0.0-rc1-211161024.nupkg.sha512",
+        "Microsoft.IdentityModel.Logging.1.0.0-rc2-305260021.nupkg.sha512",
         "Microsoft.IdentityModel.Logging.nuspec",
-        "lib/dotnet5.4/Microsoft.IdentityModel.Logging.dll",
-        "lib/dotnet5.4/Microsoft.IdentityModel.Logging.xml",
         "lib/net451/Microsoft.IdentityModel.Logging.dll",
-        "lib/net451/Microsoft.IdentityModel.Logging.xml"
+        "lib/netstandard1.4/Microsoft.IdentityModel.Logging.dll"
       ]
     },
     "Microsoft.IdentityModel.Protocols/2.0.0-rc1-211161024": {
@@ -4982,6 +4984,16 @@
         "lib/dotnet5.4/Microsoft.IdentityModel.Protocols.OpenIdConnect.xml",
         "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
         "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.xml"
+      ]
+    },
+    "Microsoft.IdentityModel.Tokens/5.0.0-rc2-305260021": {
+      "sha512": "W8rwYCaP+0oDZSE5x7/rSoHMl2zsc3ztX5OT57aZsRzfRoOyIVO85+0noeXstSHpgkc86saJe4F9/AWA6k/e+A==",
+      "type": "package",
+      "files": [
+        "Microsoft.IdentityModel.Tokens.5.0.0-rc2-305260021.nupkg.sha512",
+        "Microsoft.IdentityModel.Tokens.nuspec",
+        "lib/net451/Microsoft.IdentityModel.Tokens.dll",
+        "lib/netstandard1.4/Microsoft.IdentityModel.Tokens.dll"
       ]
     },
     "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
@@ -5116,12 +5128,11 @@
         "lib/wpa81/Portable.Text.Encoding.dll"
       ]
     },
-    "Newtonsoft.Json/7.0.1": {
-      "sha512": "q3V4KLetMLnt1gpAVWgtXnHjKs0UG/RalBc29u2ZKxd5t5Ze4JBL5WiiYIklJyK/5CRiIiNwigVQUo0FgbsuWA==",
+    "Newtonsoft.Json/8.0.3": {
+      "sha512": "KGsYQdS2zLH+H8x2cZaSI7e+YZ4SFIbyy1YJQYl6GYBWjf5o4H1A68nxyq+WTyVSOJQ4GqS/DiPE+UseUizgMg==",
       "type": "package",
       "files": [
-        "Newtonsoft.Json.7.0.1.nupkg",
-        "Newtonsoft.Json.7.0.1.nupkg.sha512",
+        "Newtonsoft.Json.8.0.3.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
@@ -5434,17 +5445,14 @@
         "lib/net451/System.IdentityModel.Tokens.xml"
       ]
     },
-    "System.IdentityModel.Tokens.Jwt/5.0.0-rc1-211161024": {
-      "sha512": "A/mqsC0pFbFnsZ6OR17PPkNz4OEu0Xt8wK83FNDLvsoWMhvKS2DDFnn9dqzUxKDLEIZUXwWWCJQJritmvXsf1g==",
+    "System.IdentityModel.Tokens.Jwt/5.0.0-rc2-305260021": {
+      "sha512": "UG49mRYcpIrGLkk2FBLzg2bH4JVEN7oAeulWfRODoyjU9FqkHHg3sdIwFZqybmbUaZxLBK05Pe2wslUrggHPAQ==",
       "type": "package",
       "files": [
-        "System.IdentityModel.Tokens.Jwt.5.0.0-rc1-211161024.nupkg",
-        "System.IdentityModel.Tokens.Jwt.5.0.0-rc1-211161024.nupkg.sha512",
+        "System.IdentityModel.Tokens.Jwt.5.0.0-rc2-305260021.nupkg.sha512",
         "System.IdentityModel.Tokens.Jwt.nuspec",
-        "lib/dotnet5.4/System.IdentityModel.Tokens.Jwt.dll",
-        "lib/dotnet5.4/System.IdentityModel.Tokens.Jwt.xml",
         "lib/net451/System.IdentityModel.Tokens.Jwt.dll",
-        "lib/net451/System.IdentityModel.Tokens.Jwt.xml"
+        "lib/netstandard1.4/System.IdentityModel.Tokens.Jwt.dll"
       ]
     },
     "System.IO/4.0.0": {
@@ -6027,7 +6035,7 @@
       "Google.Apis >= 1.11.1",
       "Google.Apis.Core >= 1.11.1",
       "MailKit >= 1.3.0-beta7",
-      "MarkdownDeep.NET >= 1.5.0",
+      "MarkdownDeep-av.NET >= 1.5.2",
       "Microsoft.AspNet.Authentication.Cookies >= 1.0.0-rc1-*",
       "Microsoft.AspNet.Authentication.Facebook >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.JwtBearer >= 1.0.0-rc1-final",
@@ -6083,8 +6091,8 @@
       "Microsoft.NETCore.Platforms >= 1.0.1-beta-23516",
       "PayPalButtonManagerSDK >= 2.10.109",
       "PayPalCoreSDK >= 1.7.1",
-      "System.IdentityModel.Tokens >= 5.0.0-rc1-208241120",
-      "System.IdentityModel.Tokens.Jwt >= 5.0.0-rc1-208241120"
+      "System.IdentityModel.Tokens >= 5.0.0-*",
+      "System.IdentityModel.Tokens.Jwt >= 5.0.0-*"
     ],
     "DNX,Version=v4.5.1": []
   },
