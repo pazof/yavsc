@@ -100,7 +100,6 @@
     "Microsoft.Framework.Configuration.Binder": "1.0.0-beta8",
     "Microsoft.AspNet.Web.Optimization": "1.1.3",
     "PayPalCoreSDK": "1.7.1",
-    "RazorEngine": "4.2.7-beta1",
     "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
     "Microsoft.AspNetCore.Authentication.OAuth": "0.0.1-alpha",
     "Microsoft.Extensions.Options": "0.0.1-alpha",
@@ -113,7 +112,8 @@
     "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
     "System.IdentityModel.Tokens": "5.0.0-rc1-208241120",
     "System.IdentityModel.Tokens.Jwt": "5.0.0-rc1-208241120",
-    "Microsoft.AspNet.Authorization": "1.0.0-rc1-final"
+    "Microsoft.AspNet.Authorization": "1.0.0-rc1-final",
+    "AspNet.Security.OpenIdConnect.Server": "1.0.0-beta4"
   },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",

@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Optimization;
+using AspNet.Security.OpenIdConnect.Extensions;
 using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Authentication.JwtBearer;
@@ -267,8 +268,7 @@ namespace Yavsc
             options =>
             {
                 options.ResourcesPath = "Resources";
-            })
-                .AddDataAnnotationsLocalization( opt => opt.ResourcesPath = "Resources");
+            }).AddDataAnnotationsLocalization();
 
             services.AddScoped<LanguageActionFilter>();
             // Inject ticket formatting
