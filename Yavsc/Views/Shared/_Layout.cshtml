@@ -44,9 +44,9 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a asp-controller="Home" asp-action="Index">@SR["Home"]</a></li>
-                        <li><a asp-controller="Home" asp-action="About">@SR["About"] @SiteSettings.Value.Title</a> </li>
-                        <li><a asp-controller="Home" asp-action="Contact">@SR["Contact"]</a></li>
+                        <li><a asp-controller="Home" asp-action="Index" class="navbar-link">@SR["Home"]</a></li>
+                        <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
+                        <li><a asp-controller="Home" asp-action="Contact" class="navbar-link">@SR["Contact"]</a></li>
                     </ul>
                     @await Html.PartialAsync("_LoginPartial")
                 </div>

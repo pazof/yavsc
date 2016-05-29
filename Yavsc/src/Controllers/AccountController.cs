@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
@@ -30,7 +31,7 @@ namespace Yavsc.Controllers
         SmtpSettings _smtpSettings;
         TwilioSettings _twilioSettings;
 
-      //  TwilioSettings _twilioSettings;
+        //  TwilioSettings _twilioSettings;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -42,22 +43,38 @@ namespace Yavsc.Controllers
         {
             _userManager = userManager;
             _signInManager = signInManager;
-           // _userManager.RegisterTokenProvider("SMS",new UserTokenProvider());
-           // _userManager.RegisterTokenProvider("Phone", new UserTokenProvider());
+            // _userManager.RegisterTokenProvider("SMS",new UserTokenProvider());
+            // _userManager.RegisterTokenProvider("Phone", new UserTokenProvider());
             _emailSender = emailSender;
             _siteSettings = siteSettings.Value;
             _smtpSettings = smtpSettings.Value;
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
-
-        //
-        // GET: /Account/Login
-        [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        [HttpGet("~/signin")]
+        public ActionResult SignIn(string returnUrl = "/")
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return View("SignIn", new LoginViewModel
+            {
+                ReturnUrl = returnUrl,
+                ExternalProviders = _signInManager.GetExternalAuthenticationSchemes()
+            });
+            /* When using an external login provider  :
+            // Request a redirect to the external login provider.
+            var redirectUrl = returnUrl ?? "/";
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(OpenIdConnectDefaults.AuthenticationScheme, redirectUrl);
+            return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme, properties);
+            */
+        }
+
+        [HttpGet("~/signout"), HttpPost("~/signout")]
+        public async Task<IActionResult> SignOut(string returnUrl = "/")
+        {
+            // Instruct the cookies middleware to delete the local cookie created when the user agent
+            // is redirected from the identity provider after a successful authorization flow and
+            // to redirect the user agent to the identity provider to sign out.
+            await _signInManager.SignOutAsync();
+            return Redirect(returnUrl);
         }
 
         public IActionResult Forbidden()
@@ -65,15 +82,45 @@ namespace Yavsc.Controllers
             return View();
         }
 
-        // POST: /Account/Login
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        [HttpPost("~/signin")]
+        public async Task<IActionResult> SignIn(string provider, string returnUrl)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+
+            // Note: the "provider" parameter corresponds to the external
+            // authentication provider choosen by the user agent.
+            if (string.IsNullOrEmpty(provider))
+            {
+                _logger.LogWarning("null provider");
+                ModelState.AddModelError("provider", "provider cannot be null");
+                return new BadRequestObjectResult(ModelState);
+            }
+
+
+            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
+            // will be redirected to after a successful authentication and not
+            // the redirect_uri of the requesting client application.
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                _logger.LogWarning($"null returnUrl ({provider}) ");
+                ModelState.AddModelError("returnUrl", "returnUrl cannot be null");
+                return new BadRequestObjectResult(ModelState);
+            }
+
+            // Instruct the middleware corresponding to the requested external identity
+            // provider to redirect the user agent to its own authorization endpoint.
+            // Note: the authenticationScheme parameter must match the value configured in Startup.cs
+            // Request a redirect to the external login provider.
+
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return new ChallengeResult(provider, properties);
+        }
+
+        [HttpPost("~/login")]
+        public async Task<IActionResult> LocalLogin(LoginViewModel model)
+        {
             if (ModelState.IsValid)
             {
-
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
@@ -81,11 +128,11 @@ namespace Yavsc.Controllers
                 {
                     _logger.LogInformation(1, "User logged in.");
 
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToLocal(model.ReturnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
-                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
                 }
                 if (result.IsLockedOut)
                 {
@@ -98,11 +145,9 @@ namespace Yavsc.Controllers
                     return View(model);
                 }
             }
-
             // If we got this far, something failed, redisplay form
             return View(model);
         }
-
         //
         // GET: /Account/Register
         [HttpGet]
@@ -127,7 +172,7 @@ namespace Yavsc.Controllers
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings,  model.Email, "Confirm your account",
+                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.Email, "Confirm your account",
                         "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
                     // await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password.");
@@ -171,7 +216,7 @@ namespace Yavsc.Controllers
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return RedirectToAction(nameof(Login));
+                return RedirectToAction(nameof(SignIn));
             }
 
             // Sign in the user with this external login provider if the user already has a login.
@@ -198,20 +243,23 @@ namespace Yavsc.Controllers
                 var email = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Email);
                 var name = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Name);
                 var avatar = info.ExternalPrincipal.FindFirstValue("urn:google:profile");
-               /* var phone = info.ExternalPrincipal.FindFirstValue(ClaimTypes.HomePhone);
-                var mobile = info.ExternalPrincipal.FindFirstValue(ClaimTypes.MobilePhone);
-                var postalcode = info.ExternalPrincipal.FindFirstValue(ClaimTypes.PostalCode);
-                var locality = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Locality);
-                var country = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Country);*/
+                /* var phone = info.ExternalPrincipal.FindFirstValue(ClaimTypes.HomePhone);
+                 var mobile = info.ExternalPrincipal.FindFirstValue(ClaimTypes.MobilePhone);
+                 var postalcode = info.ExternalPrincipal.FindFirstValue(ClaimTypes.PostalCode);
+                 var locality = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Locality);
+                 var country = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Country);*/
                 foreach (var claim in info.ExternalPrincipal.Claims)
-                   _logger.LogWarning("# {0} Claim: {1} {2}",info.LoginProvider,claim.Type,claim.Value);
+                    _logger.LogWarning("# {0} Claim: {1} {2}", info.LoginProvider, claim.Type, claim.Value);
 
                 var access_token = info.ExternalPrincipal.FindFirstValue("access_token");
                 var token_type = info.ExternalPrincipal.FindFirstValue("token_type");
                 var expires_in = info.ExternalPrincipal.FindFirstValue("expires_in");
 
-                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email,
-                Name = name });
+                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel
+                {
+                    Email = email,
+                    Name = name
+                });
             }
         }
 
@@ -358,13 +406,13 @@ namespace Yavsc.Controllers
 
         //
         // GET: /Account/SendCode
-        [HttpGet,AllowAnonymous]
+        [HttpGet, AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl = null, bool rememberMe = false)
         {
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error",new Exception("No Two factor authentication user" ));
+                return View("Error", new Exception("No Two factor authentication user"));
             }
             var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(user);
 
@@ -376,7 +424,7 @@ namespace Yavsc.Controllers
         //
         // POST: /Account/SendCode
         [HttpPost]
-        [ValidateAntiForgeryToken,AllowAnonymous]
+        [ValidateAntiForgeryToken, AllowAnonymous]
         public async Task<IActionResult> SendCode(SendCodeViewModel model)
         {
             if (!ModelState.IsValid)
@@ -386,26 +434,26 @@ namespace Yavsc.Controllers
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error",new Exception("user is null"));
+                return View("Error", new Exception("user is null"));
             }
 
             // Generate the token and send it
             var code = await _userManager.GenerateTwoFactorTokenAsync(user, model.SelectedProvider);
             if (string.IsNullOrWhiteSpace(code))
             {
-                return View("Error",new Exception("Code is empty"));
+                return View("Error", new Exception("Code is empty"));
             }
 
             var message = "Your security code is: " + code;
             if (model.SelectedProvider == Constants.MobileAppFactor)
             {
-                return View("Error",new Exception("No SMS service was activated"));
+                return View("Error", new Exception("No SMS service was activated"));
             }
             else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
             if (model.SelectedProvider == Constants.SMSFactor)
             {
-                return View("Error",new Exception("No SMS service was activated"));
-              // await _smsSender.SendSmsAsync(_twilioSettings, await _userManager.GetPhoneNumberAsync(user), message);
+                return View("Error", new Exception("No SMS service was activated"));
+                // await _smsSender.SendSmsAsync(_twilioSettings, await _userManager.GetPhoneNumberAsync(user), message);
             }
             else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
             {
@@ -423,7 +471,7 @@ namespace Yavsc.Controllers
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                return View("Error",new Exception("user is null"));
+                return View("Error", new Exception("user is null"));
             }
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
@@ -442,7 +490,7 @@ namespace Yavsc.Controllers
             // The following code protects for brute force attacks against the two factor codes.
             // If a user enters incorrect codes for a specified amount of time then the user account
             // will be locked out for a specified amount of time.
-            _logger.LogWarning("Signin with code: {0} {1}",model.Provider, model.Code);
+            _logger.LogWarning("Signin with code: {0} {1}", model.Provider, model.Code);
             var result = await _signInManager.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser);
             if (result.Succeeded)
             {
@@ -461,13 +509,13 @@ namespace Yavsc.Controllers
             }
         }
 
-        [HttpGet,Authorize]
+        [HttpGet, Authorize]
         public IActionResult Delete()
         {
             return View();
         }
 
-        [HttpPost,Authorize]
+        [HttpPost, Authorize]
         public async Task<IActionResult> Delete(UnregisterViewModel model)
         {
             if (!ModelState.IsValid)
@@ -477,13 +525,13 @@ namespace Yavsc.Controllers
             var user = await _userManager.FindByIdAsync(User.GetUserId());
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
-              {
-                  AddErrors(result);
-                  return new BadRequestObjectResult(ModelState);
-              }
+            {
+                AddErrors(result);
+                return new BadRequestObjectResult(ModelState);
+            }
             await _signInManager.SignOutAsync();
 
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
 
         #region Helpers

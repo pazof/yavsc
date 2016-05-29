@@ -6,10 +6,10 @@
          <language-layout>
              <ul class="nav navbar-nav navbar-right">
             <li>
-                <a asp-controller="Manage" asp-action="Index" title="Manage">@SR["Hello"] @User.GetUserName()!</a>
+                <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">@SR["Hello"] @User.GetUserName()!</a>
             </li>
             <li>
-                <button type="submit" class="btn btn-link navbar-btn navbar-link">@SR["Logout"]</button>
+                <button type="submit" class="navbar-link">@SR["Logout"]</button>
             </li>
         </ul>
          </language-layout>
@@ -18,8 +18,9 @@
 else
 { <language-layout>
     <ul class="nav navbar-nav navbar-right">
-        <li><a asp-controller="Account" asp-action="Register">@SR["Register"]</a></li>
-        <li><a asp-controller="Account" asp-action="Login">@SR["Login"]</a></li>
+        <li><a class="navbar-link" asp-controller="Account" asp-action="Register">@SR["Register"]</a></li>
+        <li><a class="navbar-link" asp-controller="Account" asp-action="SignIn">@SR["Login"]</a></li>
     </ul>
 </language-layout>
 }
+ 

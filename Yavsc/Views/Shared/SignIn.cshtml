@@ -1,17 +1,53 @@
 ﻿
 @using Microsoft.AspNet.Http.Authentication
-@model IEnumerable<AuthenticationDescription>
+@using Yavsc.ViewModels.Account
+@model LoginViewModel
 
 <div class="jumbotron">
     <h1>Authentication</h1>
-    <p class="lead text-left">Sign in using one of these external providers:</p>
+    <hr/>
+    <h2 class="lead text-left">Use a local account to log in</h2>
+      <form action="/login" method="post" class="form-horizontal" role="form">
 
-    @foreach (var description in Model) {
+                <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+                <div class="form-group">
+                    <label for="UserName" class="col-md-2 control-label">User name</label>
+                    <div class="col-md-10">
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="Password" class="col-md-2 control-label">Password</label>
+                    <div class="col-md-10">
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-lg btn-success">Login</button>
+                    </div>
+                </div>
+                <p>
+                    <a asp-action="Register">Register as a new user?</a>
+                </p>
+                <p>
+                    <a asp-action="ForgotPassword">Forgot your password?</a>
+                </p>
+                <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+                @Html.AntiForgeryToken()
+                
+            </form>
+
+    <hr/>
+    <h2 class="lead text-left">Sign in using one of these external providers:</h2>
+    @foreach (var description in Model.ExternalProviders) {
         <form action="/signin" method="post">
             <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
-            <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
-
+            <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
             <button class="btn btn-lg btn-success" type="submit">Connect using @description.DisplayName</button>
+            @Html.AntiForgeryToken()
         </form>
     }
 </div>

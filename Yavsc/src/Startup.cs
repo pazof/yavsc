@@ -35,8 +35,10 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.WebEncoders;
 using Microsoft.Net.Http.Headers;
 using Yavsc.Auth;
+using Yavsc.Extensions;
 using Yavsc.Formatters;
 using Yavsc.Models;
+using Yavsc.Providers;
 using Yavsc.Services;
 
 
@@ -66,8 +68,6 @@ namespace Yavsc
                 "~/bower_components/dropzone/dist/min/basic.min.css",
                 "~/bower_components/dropzone/dist/min/dropzone.min.css"
             ));
-
-
         }
     }
 
@@ -155,7 +155,8 @@ namespace Yavsc
                 RSAKeyUtils.GetKeyParameters(keyParamsFileInfo.Name) :
                 RSAKeyUtils.GenerateKeyAndSave(keyParamsFileInfo.Name);
             key = new RsaSecurityKey(keyParams);
-            services.Configure<SharedAuthenticationOptions>(options => {
+            services.Configure<SharedAuthenticationOptions>(options =>
+            {
                 options.SignInScheme = "ServerCookie";
             });
             services.Configure<TokenAuthOptions>(
@@ -187,8 +188,10 @@ namespace Yavsc
                 configure.PersistKeysToFileSystem(
                      new DirectoryInfo(Configuration["DataProtection:Keys:Dir"]));
             });
-            services.AddAuthentication();
-
+            
+            services.AddAuthentication(options => {
+                options.SignInScheme = "ServerCookie"; }
+            );
             // Add framework services.
             services.AddEntityFramework()
               .AddNpgsql()
@@ -227,12 +230,13 @@ namespace Yavsc
 
             // Add the system clock service
             services.AddSingleton<ISystemClock, SystemClock>();
-            
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("AdministratorOnly", policy => policy.RequireRole(Constants.AdminGroupName));
                 options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
-                options.AddPolicy("API", policy => {
+                options.AddPolicy("API", policy =>
+                {
                     policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                     policy.RequireClaim(OpenIdConnectConstants.Claims.Scope, "api-resource-controller");
                 });
@@ -319,7 +323,7 @@ namespace Yavsc
             {
                 // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
 
-               app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error");
                 try
                 {
                     using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
@@ -334,18 +338,12 @@ namespace Yavsc
                     if (ex.InnerException is InvalidOperationException)
                     // nothing to do ?
                     {
-// TODO Send an email to the Admin
-       }
+                        // TODO Send an email to the Admin
+                    }
                     else throw ex;
                 }
             }
 
-            // Create a new branch where the registered middleware will be executed only for API calls.
-          /*  MapWhenExtensions.MapWhen(app,(Func<Microsoft.AspNet.Http.HttpContext, bool>)(context =>
-            context.Request.Path.StartsWithSegments((PathString)new PathString((string)"/api"))),
-(Action<IApplicationBuilder>)(            branch => {            }));
-
-*/
 
             var googleOptions = new GoogleOptions
             {
@@ -376,6 +374,80 @@ namespace Yavsc
 
             googleOptions.Scope.Add("https://www.googleapis.com/auth/calendar");
 
+            app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
+
+            app.UseStaticFiles().UseWebSockets();
+
+            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
+
+            app.UseIdentity();
+
+            app.UseWhen(context => context.Request.Path.StartsWithSegments(new PathString("/api")), branch =>
+            {
+                branch.UseJwtBearerAuthentication(options =>
+                {
+                    options.AutomaticAuthenticate = true;
+                    options.AutomaticChallenge = true;
+                    options.RequireHttpsMetadata = false;
+                    options.Audience = siteSettings.Value.Audience;
+                    options.Authority = siteSettings.Value.Authority;
+                });
+            });
+
+            // Create a new branch where the registered middleware will be executed only for API calls.
+            app.UseWhen(context => !context.Request.Path.StartsWithSegments(new PathString("/api")), branch =>
+            {
+                // Create a new branch where the registered middleware will be executed only for non API calls.
+                branch.UseCookieAuthentication(options =>
+                {
+                    options.AutomaticAuthenticate = true;
+                    options.AutomaticChallenge = true;
+                    options.AuthenticationScheme = "ServerCookie";
+                    options.CookieName = CookieAuthenticationDefaults.CookiePrefix + "ServerCookie";
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                    options.LoginPath = new PathString("/signin");
+                    options.LogoutPath = new PathString("/signout");
+                });
+
+
+                branch.UseMiddleware<GoogleMiddleware>(googleOptions);
+
+                // Facebook
+                branch.UseFacebookAuthentication(options =>
+                    {
+                        options.AppId = Configuration["Authentication:Facebook:AppId"];
+                        options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+                        options.Scope.Add("email");
+                        options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
+                    });
+
+            });
+            app.UseOpenIdConnectServer(options =>
+               {
+                   options.Provider = new AuthorizationProvider(loggerFactory);
+
+                    // Register the certificate used to sign the JWT tokens.
+                    /* options.SigningCredentials.AddCertificate(
+                        assembly: typeof(Startup).GetTypeInfo().Assembly,
+                        resource: "Mvc.Server.Certificate.pfx",
+                        password: "Owin.Security.OpenIdConnect.Server"); */
+
+                    // options.SigningCredentials.AddKey(key);
+                    // Note: see AuthorizationController.cs for more
+                    // information concerning ApplicationCanDisplayErrors.
+                    options.ApplicationCanDisplayErrors = true;
+                   options.AllowInsecureHttp = true;
+                   options.AutomaticChallenge = true;
+                   options.AuthorizationEndpointPath = new PathString("/connect/authorize");
+                   options.TokenEndpointPath = new PathString("/connect/authorize/accept");
+                   options.UseSlidingExpiration = true;
+                   options.AllowInsecureHttp = true;
+                   options.AuthenticationScheme = "oidc"; // was = OpenIdConnectDefaults.AuthenticationScheme;
+                    options.LogoutEndpointPath = new PathString("/connect/logout");
+                    /* options.ValidationEndpointPath = new PathString("/connect/introspect"); */
+               });
+
+
             var udirinfo = new DirectoryInfo(Configuration["Site:UserFiles:RootDir"]);
             if (!udirinfo.Exists)
                 throw new Exception($"Configuration value for Site:UserFiles:RootDir : {udirinfo.FullName}");
@@ -387,38 +459,6 @@ namespace Yavsc
                 RequestPath = new PathString(Constants.UserFilesRequestPath),
                 EnableDirectoryBrowsing = true
             });
-
-            
-            app.UseIISPlatformHandler(options => options.AuthenticationDescriptions.Clear());
-
-            app.UseStaticFiles().UseWebSockets();
-
-            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
-
-            app.UseIdentity();
-
-            // Create a new branch where the registered middleware will be executed only for non API calls.
-            app.UseCookieAuthentication(options => {
-                    options.AutomaticAuthenticate = true;
-                    options.AutomaticChallenge = true;
-                    options.AuthenticationScheme = "ServerCookie";
-                    options.CookieName = CookieAuthenticationDefaults.CookiePrefix + "ServerCookie";
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                    options.LoginPath = new PathString("/Account/Login");
-                });
-
-
-            app.UseMiddleware<GoogleMiddleware>(googleOptions);
-
-                // Facebook
-            app.UseFacebookAuthentication(options =>
-                {
-                    options.AppId = Configuration["Authentication:Facebook:AppId"];
-                    options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-                    options.Scope.Add("email");
-                    options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
-                });
-
 
 
             /* Generic OAuth (here GitHub): options.Notifications = new OAuthAuthenticationNotifications

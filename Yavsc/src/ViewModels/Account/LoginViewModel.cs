@@ -1,5 +1,7 @@
 
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNet.Http.Authentication;
 
 namespace Yavsc.ViewModels.Account
 {
@@ -14,5 +16,8 @@ namespace Yavsc.ViewModels.Account
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
+        public string ReturnUrl { get; set; }
+        
+        public IEnumerable<AuthenticationDescription> ExternalProviders { get; set; }
     }
 }
