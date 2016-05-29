@@ -93,3 +93,7 @@ L'opération est annulable, jusqu'à deux semaines après sa programmation.
 
 
 
+@foreach (var claim in Context.User.Claims) {
+                <div>@claim.Type: <b>@claim.Value</b></div>
+            }
+            

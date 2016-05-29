@@ -10,7 +10,6 @@ using System.Web.Optimization;
 using AspNet.Security.OpenIdConnect.Extensions;
 using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authentication.Cookies;
-using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
@@ -159,16 +158,6 @@ namespace Yavsc
             {
                 options.SignInScheme = "ServerCookie";
             });
-            services.Configure<TokenAuthOptions>(
-                to =>
-                {
-                    to.Audience = Configuration["Site:Audience"];
-                    to.Issuer = Configuration["Site:Authority"];
-                    to.SigningCredentials =
-                    new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature);
-
-                }
-            );
 
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SiteSettings>), typeof(OptionsManager<SiteSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
@@ -188,9 +177,11 @@ namespace Yavsc
                 configure.PersistKeysToFileSystem(
                      new DirectoryInfo(Configuration["DataProtection:Keys:Dir"]));
             });
-            
-            services.AddAuthentication(options => {
-                options.SignInScheme = "ServerCookie"; }
+
+            services.AddAuthentication(options =>
+            {
+                options.SignInScheme = "ServerCookie";
+            }
             );
             // Add framework services.
             services.AddEntityFramework()
@@ -233,11 +224,14 @@ namespace Yavsc
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("AdministratorOnly", policy => policy.RequireRole(Constants.AdminGroupName));
+                options.AddPolicy("AdministratorOnly", policy =>
+                {
+                    policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
+                });
+                
                 options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
                 options.AddPolicy("API", policy =>
                 {
-                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                     policy.RequireClaim(OpenIdConnectConstants.Claims.Scope, "api-resource-controller");
                 });
                 // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
@@ -344,6 +338,10 @@ namespace Yavsc
                 }
             }
 
+            var udirinfo = new DirectoryInfo(Configuration["Site:UserFiles:RootDir"]);
+            if (!udirinfo.Exists)
+                throw new Exception($"Configuration value for Site:UserFiles:RootDir : {udirinfo.FullName}");
+
 
             var googleOptions = new GoogleOptions
             {
@@ -426,16 +424,16 @@ namespace Yavsc
                {
                    options.Provider = new AuthorizationProvider(loggerFactory);
 
-                    // Register the certificate used to sign the JWT tokens.
-                    /* options.SigningCredentials.AddCertificate(
-                        assembly: typeof(Startup).GetTypeInfo().Assembly,
-                        resource: "Mvc.Server.Certificate.pfx",
-                        password: "Owin.Security.OpenIdConnect.Server"); */
+                   // Register the certificate used to sign the JWT tokens.
+                   /* options.SigningCredentials.AddCertificate(
+                       assembly: typeof(Startup).GetTypeInfo().Assembly,
+                       resource: "Mvc.Server.Certificate.pfx",
+                       password: "Owin.Security.OpenIdConnect.Server"); */
 
-                    // options.SigningCredentials.AddKey(key);
-                    // Note: see AuthorizationController.cs for more
-                    // information concerning ApplicationCanDisplayErrors.
-                    options.ApplicationCanDisplayErrors = true;
+                   // options.SigningCredentials.AddKey(key);
+                   // Note: see AuthorizationController.cs for more
+                   // information concerning ApplicationCanDisplayErrors.
+                   options.ApplicationCanDisplayErrors = true;
                    options.AllowInsecureHttp = true;
                    options.AutomaticChallenge = true;
                    options.AuthorizationEndpointPath = new PathString("/connect/authorize");
@@ -443,21 +441,16 @@ namespace Yavsc
                    options.UseSlidingExpiration = true;
                    options.AllowInsecureHttp = true;
                    options.AuthenticationScheme = "oidc"; // was = OpenIdConnectDefaults.AuthenticationScheme;
-                    options.LogoutEndpointPath = new PathString("/connect/logout");
-                    /* options.ValidationEndpointPath = new PathString("/connect/introspect"); */
+                   options.LogoutEndpointPath = new PathString("/connect/logout");
+                   /* options.ValidationEndpointPath = new PathString("/connect/introspect"); */
                });
-
-
-            var udirinfo = new DirectoryInfo(Configuration["Site:UserFiles:RootDir"]);
-            if (!udirinfo.Exists)
-                throw new Exception($"Configuration value for Site:UserFiles:RootDir : {udirinfo.FullName}");
 
             app.UseFileServer(new FileServerOptions()
             {
                 FileProvider = new PhysicalFileProvider(
                      udirinfo.FullName),
                 RequestPath = new PathString(Constants.UserFilesRequestPath),
-                EnableDirectoryBrowsing = true
+                EnableDirectoryBrowsing = false
             });
 
 

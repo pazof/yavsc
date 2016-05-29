@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
@@ -51,69 +50,11 @@ namespace Yavsc.Controllers
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
-        [HttpGet("~/signin")]
-        public ActionResult SignIn(string returnUrl = "/")
-        {
-            return View("SignIn", new LoginViewModel
-            {
-                ReturnUrl = returnUrl,
-                ExternalProviders = _signInManager.GetExternalAuthenticationSchemes()
-            });
-            /* When using an external login provider  :
-            // Request a redirect to the external login provider.
-            var redirectUrl = returnUrl ?? "/";
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(OpenIdConnectDefaults.AuthenticationScheme, redirectUrl);
-            return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme, properties);
-            */
-        }
-
-        [HttpGet("~/signout"), HttpPost("~/signout")]
-        public async Task<IActionResult> SignOut(string returnUrl = "/")
-        {
-            // Instruct the cookies middleware to delete the local cookie created when the user agent
-            // is redirected from the identity provider after a successful authorization flow and
-            // to redirect the user agent to the identity provider to sign out.
-            await _signInManager.SignOutAsync();
-            return Redirect(returnUrl);
-        }
+        
 
         public IActionResult Forbidden()
         {
             return View();
-        }
-
-        [HttpPost("~/signin")]
-        public async Task<IActionResult> SignIn(string provider, string returnUrl)
-        {
-
-            // Note: the "provider" parameter corresponds to the external
-            // authentication provider choosen by the user agent.
-            if (string.IsNullOrEmpty(provider))
-            {
-                _logger.LogWarning("null provider");
-                ModelState.AddModelError("provider", "provider cannot be null");
-                return new BadRequestObjectResult(ModelState);
-            }
-
-
-            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
-            // will be redirected to after a successful authentication and not
-            // the redirect_uri of the requesting client application.
-            if (string.IsNullOrEmpty(returnUrl))
-            {
-                _logger.LogWarning($"null returnUrl ({provider}) ");
-                ModelState.AddModelError("returnUrl", "returnUrl cannot be null");
-                return new BadRequestObjectResult(ModelState);
-            }
-
-            // Instruct the middleware corresponding to the requested external identity
-            // provider to redirect the user agent to its own authorization endpoint.
-            // Note: the authenticationScheme parameter must match the value configured in Startup.cs
-            // Request a redirect to the external login provider.
-
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return new ChallengeResult(provider, properties);
         }
 
         [HttpPost("~/login")]
@@ -195,7 +136,7 @@ namespace Yavsc.Controllers
             _logger.LogInformation(4, "User logged out.");
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
-
+        
         //
         // POST: /Account/ExternalLogin
         [HttpPost]
@@ -216,7 +157,7 @@ namespace Yavsc.Controllers
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return RedirectToAction(nameof(SignIn));
+                return Redirect("~/signin"); // RedirectToAction(nameof(OAuthController.SignIn));
             }
 
             // Sign in the user with this external login provider if the user already has a login.

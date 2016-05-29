@@ -20,6 +20,12 @@ public partial class Service : BaseProduct
         /// </summary>
         /// <returns></returns>
         public decimal? Pricing { get; set; }
+        
+        /// <summary>
+        /// Associate a class of flow worker to handle with
+        /// </summary>
+        /// <returns></returns>
+        public string Specification { get; set; }
     }
 
 }
