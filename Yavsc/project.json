@@ -110,8 +110,8 @@
     "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
     "Microsoft.AspNet.DataProtection.SystemWeb": "1.0.0-rc1-final",
     "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
-    "System.IdentityModel.Tokens": "5.0.0-*",
-    "System.IdentityModel.Tokens.Jwt": "5.0.0-*",
+    "System.IdentityModel.Tokens": "5.0.0-rc1-208241120",
+    "System.IdentityModel.Tokens.Jwt": "5.0.0-rc1-208241120",
     "Microsoft.AspNet.Authorization": "1.0.0-rc1-final",
     "AspNet.Security.OpenIdConnect.Server": "1.0.0-beta4"
   },
