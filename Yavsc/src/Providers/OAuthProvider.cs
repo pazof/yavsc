@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNet.Security.OpenIdConnect.Extensions;
@@ -122,7 +123,16 @@ namespace Yavsc.Providers {
 
             context.Validated();
         }
-
-
+        
+        /// <summary>
+        /// List provided offline access tokens, to a given
+        /// user by its id
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
+        public List<string> GetOfflineTokens(string userid) {
+            
+            throw new NotImplementedException();
+        }
     }
 }

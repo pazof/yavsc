@@ -21,6 +21,9 @@ namespace Yavsc.Models
         [InverseProperty("Owner")]
         public virtual List<Contact> Book { get; set; }
 
+        [InverseProperty("DeviceOwner")]
+        public virtual List<GoogleCloudMobileDeclaration> Devices { get; set; }
+        
         [InverseProperty("Owner")]
 
         public virtual List<Circle> Circles { get; set; }
