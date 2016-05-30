@@ -22,6 +22,7 @@ namespace Yavsc
         public const string EMailFactor = "Email";
         public const string SMSFactor = "Phone";
         public const string AdminGroupName = "Administrator";
+        public const string BlogModeratorGroupName = "Moderator";
         public const string FrontOfficeGroupName = "FrontOffice";
         public const string UserBlogFilesDir= "Blog";
         public const string UserBillsFilesDir= "Bills";
