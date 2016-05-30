@@ -10,6 +10,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
+using Yavsc.Extensions;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.ViewModels.Account;
@@ -50,16 +51,21 @@ namespace Yavsc.Controllers
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
-        
 
-        public IActionResult Forbidden()
+        [HttpGet("~/login")]
+        public IActionResult Login(string returnUrl)
         {
-            return View();
+            return View("SignIn", new LoginViewModel { 
+                AfterLoginRedirectUrl = returnUrl,
+                ReturnUrl = "/Account/ExternalLoginCallback",
+                ExternalProviders = HttpContext.GetExternalProviders()
+             });
         }
-
+        
         [HttpPost("~/login")]
         public async Task<IActionResult> LocalLogin(LoginViewModel model)
         {
+            
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
@@ -67,8 +73,6 @@ namespace Yavsc.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation(1, "User logged in.");
-
                     return RedirectToLocal(model.ReturnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -86,7 +90,9 @@ namespace Yavsc.Controllers
                     return View(model);
                 }
             }
+            
             // If we got this far, something failed, redisplay form
+            ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
             return View(model);
         }
         //
@@ -130,11 +136,12 @@ namespace Yavsc.Controllers
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LogOff()
+        public async Task<IActionResult> LogOff(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            if (returnUrl==null) return RedirectToAction(nameof(HomeController.Index), "Home");
+            return Redirect(returnUrl);
         }
         
         //

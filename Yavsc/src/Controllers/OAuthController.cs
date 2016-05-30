@@ -46,7 +46,7 @@ ILogger _logger;
 
 
         [HttpGet("~/signin")]
-        public ActionResult SignIn(string returnUrl = "/Account/ExternalLoginCallback") {
+        public ActionResult SignIn(string returnUrl = null) {
             // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
             // will be redirected to after a successful authentication and not
             // the redirect_uri of the requesting client application.
@@ -62,7 +62,7 @@ ILogger _logger;
         }
 
         [HttpPost("~/signin")]
-        public IActionResult SignIn( string Provider, string ReturnUrl ) {
+        public IActionResult SignIn( string Provider, string ReturnUrl, string AfterLoginRedirectUrl) {
             // Note: the "provider" parameter corresponds to the external
             // authentication provider choosen by the user agent.
             if (string.IsNullOrEmpty(Provider)) {
@@ -86,8 +86,17 @@ ILogger _logger;
             // Instruct the middleware corresponding to the requested external identity
             // provider to redirect the user agent to its own authorization endpoint.
             // Note: the authenticationScheme parameter must match the value configured in Startup.cs
-          
+            
+            // If AfterLoginRedirectUrl is non null,
+            // This is a web interface access,
+            // and the wanted redirection
+            // after the successfull authentication
+            if (AfterLoginRedirectUrl!=null) {
+                ReturnUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = AfterLoginRedirectUrl });
+            }
+            
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(Provider, ReturnUrl);
+            
             return new ChallengeResult(Provider, properties);
         }
 
