@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
@@ -57,6 +59,28 @@ namespace Yavsc.Controllers
             }
             return Ok(new {message="you owned it."});
         }
+        public class RoleInfo {
+            public string Name { get; set; }
+            public IEnumerable<string> Users { get; set; }
+        }
+        [Authorize(Roles=Constants.AdminGroupName)]
+        [Produces("application/json")]
+        public async Task<IActionResult> Index() {
+            var adminCount = await _userManager.GetUsersInRoleAsync(
+                Constants.AdminGroupName);
+            var youAreAdmin = await _userManager.IsInRoleAsync(
+                await _userManager.FindByIdAsync(User.GetUserId()),
+                Constants.AdminGroupName);
+            var roles = _roleManager.Roles.Select(x=>
+              new RoleInfo {
+                  Name = x.Name,
+                  Users = x.Users.Select( u=>u.UserId )
+              } );
+            return Ok (new { Roles = roles, AdminCount = adminCount.Count,
+               YouAreAdmin = youAreAdmin
+            });
+        }
+        
 
         private void AddErrors(IdentityResult result)
         {

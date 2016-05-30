@@ -407,7 +407,6 @@ namespace Yavsc
                     options.LogoutPath = new PathString("/signout");
                 });
 
-
                 branch.UseMiddleware<GoogleMiddleware>(googleOptions);
 
                 // Facebook
@@ -420,10 +419,12 @@ namespace Yavsc
                     });
 
             });
+            var authProvider = new AuthorizationProvider(loggerFactory);
+            
             app.UseOpenIdConnectServer(options =>
                {
-                   options.Provider = new AuthorizationProvider(loggerFactory);
-
+                   options.Provider = authProvider;
+                   
                    // Register the certificate used to sign the JWT tokens.
                    /* options.SigningCredentials.AddCertificate(
                        assembly: typeof(Startup).GetTypeInfo().Assembly,
@@ -442,6 +443,7 @@ namespace Yavsc
                    options.AllowInsecureHttp = true;
                    options.AuthenticationScheme = "oidc"; // was = OpenIdConnectDefaults.AuthenticationScheme;
                    options.LogoutEndpointPath = new PathString("/connect/logout");
+                   
                    /* options.ValidationEndpointPath = new PathString("/connect/introspect"); */
                });
 
