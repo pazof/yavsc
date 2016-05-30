@@ -134,7 +134,7 @@
       acceptedMimeTypes: null,
       autoProcessQueue: true,
       autoQueue: true,
-      addRemoveLinks: false,
+      addRemoveLinks: true,
       previewsContainer: null,
       hiddenInputContainer: "body",
       capture: null,

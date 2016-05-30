@@ -27,7 +27,6 @@ namespace Yavsc
         public const string UserBlogFilesDir= "Blog";
         public const string UserBillsFilesDir= "Bills";
 
-        public const string UserFilesRequestPath = "/UserFiles";
         public const string GCMNotificationUrl = "https://gcm-http.googleapis.com/gcm/send";
         private static readonly string[] GoogleScopes = { "openid", "profile", "email" };
 

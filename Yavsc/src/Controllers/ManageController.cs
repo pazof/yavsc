@@ -342,14 +342,16 @@ namespace Yavsc.Controllers
 
                 if (result.Succeeded)
                 {
+                    /* Obsolete : files are no more prefixed using the user name.
+                      
                     var userdirinfo = new DirectoryInfo(
-                       Path.Combine(_siteSettings.UserFiles.RootDir,
+                       Path.Combine(_siteSettings.UserFiles.DirName,
                         oldUserName));
-                    var newdir = Path.Combine(_siteSettings.UserFiles.RootDir,
+                    var newdir = Path.Combine(_siteSettings.UserFiles.DirName,
                        model.NewUserName);
-
                     if (userdirinfo.Exists)
-                        userdirinfo.MoveTo(newdir);
+                        userdirinfo.MoveTo(newdir); 
+                    */
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User changed his user name successfully.");

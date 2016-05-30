@@ -82,6 +82,18 @@ editorcontenu.on('text-change',function(delta,source){
     $('#titletoolbar').addClass('hidden');
  })
 
+ Dropzone.options.postfiles= {
+  maxFilesize: 2, // MB
+  autoProcessQueue: true,
+  accept: function(file, done) {
+    if (file.name == "justinbieber.jpg") {
+      done("Naha, you don't.");
+    }
+    else { done(); }
+  },
+  url: "/UserFiles/Create?PostId=@Model.Id"
+};
+
   });
 </script>
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
@@ -120,8 +132,7 @@ editorcontenu.on('text-change',function(delta,source){
 </span>
 </div>
 
-<div markdown="@Model.bcontent" base="~/@Model.Author.UserName/@Model.Id"
-            site="SiteSettings.Value" id="contentcnt" ></div>
+<div markdown="@Model.bcontent" base="~/@Model.Id" site="SiteSettings.Value" id="contentcnt" ></div>
 
 <hr>
 
@@ -174,20 +185,19 @@ editorcontenu.on('text-change',function(delta,source){
 
 
 <div >
-    <form asp-action="Create" asp-controller="UserFiles" method="post" class="dropzone" enctype="multipart/form-data">
-<div class="fallback">
-    <input name="file" type="file" multiple />
+    <form id="postfiles" class="dropzone" method="post" enctype="multipart/form-data">
+  <div class="fallback">
+    <input name="File[]" type="file"/>
   </div>
-
+    <input type="hidden" name="postId" value="@Model.Id" />
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Upload" class="btn btn-default" />
+                <input type="button" value="Upload" class="btn btn-default" />
             </div>
         </div>
-
+        @Html.AntiForgeryToken()
     </form>
    </div>
-
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

@@ -72,6 +72,7 @@ namespace Yavsc
 
     public class Startup
     {
+        public static string UserFilesDirName { get; private set; }
         private RsaSecurityKey key;
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
@@ -244,6 +245,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, BlogViewHandler>();
             services.AddSingleton<IAuthorizationHandler, CommandEditHandler>();
             services.AddSingleton<IAuthorizationHandler, CommandViewHandler>();
+            services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -291,6 +293,7 @@ namespace Yavsc
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
          ILoggerFactory loggerFactory)
         {
+            Startup.UserFilesDirName = siteSettings.Value.UserFiles.DirName;
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -337,11 +340,6 @@ namespace Yavsc
                     else throw ex;
                 }
             }
-
-            var udirinfo = new DirectoryInfo(Configuration["Site:UserFiles:RootDir"]);
-            if (!udirinfo.Exists)
-                throw new Exception($"Configuration value for Site:UserFiles:RootDir : {udirinfo.FullName}");
-
 
             var googleOptions = new GoogleOptions
             {
@@ -450,8 +448,11 @@ namespace Yavsc
             app.UseFileServer(new FileServerOptions()
             {
                 FileProvider = new PhysicalFileProvider(
-                     udirinfo.FullName),
-                RequestPath = new PathString(Constants.UserFilesRequestPath),
+                    Path.Combine(
+                        env.WebRootPath,
+                        siteSettings.Value.UserFiles.DirName
+                    )),
+                RequestPath = new PathString("/"+siteSettings.Value.UserFiles.DirName),
                 EnableDirectoryBrowsing = false
             });
 

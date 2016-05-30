@@ -46,7 +46,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            ViewBag.Files = estimate.GetFileContent(_site.UserFiles.RootDir);
+            ViewBag.Files = estimate.GetFileContent(_site.UserFiles.DirName);
             return View(estimate);
         }
 
@@ -81,7 +81,7 @@ namespace Yavsc.Controllers
                 );
 
                 var userdir = Path.Combine(
-                    _site.UserFiles.RootDir,
+                    _site.UserFiles.DirName,
                     perfomerProfile.Performer.UserName
                );
 
@@ -119,7 +119,7 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.Files = estimate.GetFileContent(_site.UserFiles.RootDir);
+            ViewBag.Files = estimate.GetFileContent(_site.UserFiles.DirName);
             return View(estimate);
         }
 
