@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Metadata;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
@@ -12,21 +14,6 @@ namespace Yavsc.Migrations
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
-
-            modelBuilder.Entity("Application", b =>
-                {
-                    b.Property<string>("ApplicationID");
-
-                    b.Property<string>("DisplayName");
-
-                    b.Property<string>("LogoutRedirectUri");
-
-                    b.Property<string>("RedirectUri");
-
-                    b.Property<string>("Secret");
-
-                    b.HasKey("ApplicationID");
-                });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRole", b =>
                 {
@@ -110,7 +97,22 @@ namespace Yavsc.Migrations
                     b.HasAnnotation("Relational:TableName", "AspNetUserRoles");
                 });
 
-            modelBuilder.Entity("YavscWeb.Location", b =>
+            modelBuilder.Entity("Yavsc.Application", b =>
+                {
+                    b.Property<string>("ApplicationID");
+
+                    b.Property<string>("DisplayName");
+
+                    b.Property<string>("LogoutRedirectUri");
+
+                    b.Property<string>("RedirectUri");
+
+                    b.Property<string>("Secret");
+
+                    b.HasKey("ApplicationID");
+                });
+
+            modelBuilder.Entity("Yavsc.Location", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -125,7 +127,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.AccountBalance", b =>
+            modelBuilder.Entity("Yavsc.Models.AccountBalance", b =>
                 {
                     b.Property<string>("UserId");
 
@@ -136,7 +138,7 @@ namespace Yavsc.Migrations
                     b.HasKey("UserId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Activity", b =>
+            modelBuilder.Entity("Yavsc.Models.Activity", b =>
                 {
                     b.Property<string>("Code")
                         .HasAnnotation("MaxLength", 512);
@@ -144,6 +146,8 @@ namespace Yavsc.Migrations
                     b.Property<string>("ActorDenomination");
 
                     b.Property<string>("Description");
+
+                    b.Property<string>("ModeratorGroupName");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -154,7 +158,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Code");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Yavsc.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id");
 
@@ -208,7 +212,7 @@ namespace Yavsc.Migrations
                     b.HasAnnotation("Relational:TableName", "AspNetUsers");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.BalanceImpact", b =>
+            modelBuilder.Entity("Yavsc.Models.BalanceImpact", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -226,7 +230,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.BaseProduct", b =>
+            modelBuilder.Entity("Yavsc.Models.BaseProduct", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -240,7 +244,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Blog", b =>
+            modelBuilder.Entity("Yavsc.Models.Blog", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -265,7 +269,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Booking.BookQuery", b =>
+            modelBuilder.Entity("Yavsc.Models.Booking.BookQuery", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -293,7 +297,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Circle", b =>
+            modelBuilder.Entity("Yavsc.Models.Circle", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -305,7 +309,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.CircleMember", b =>
+            modelBuilder.Entity("Yavsc.Models.CircleMember", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -319,7 +323,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Command", b =>
+            modelBuilder.Entity("Yavsc.Models.Command", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -341,7 +345,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.CommandLine", b =>
+            modelBuilder.Entity("Yavsc.Models.CommandLine", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -363,7 +367,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Contact", b =>
+            modelBuilder.Entity("Yavsc.Models.Contact", b =>
                 {
                     b.Property<string>("OwnerId");
 
@@ -372,7 +376,7 @@ namespace Yavsc.Migrations
                     b.HasKey("OwnerId", "UserId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Estimate", b =>
+            modelBuilder.Entity("Yavsc.Models.Estimate", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -392,7 +396,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.OAuth2Tokens", b =>
+            modelBuilder.Entity("Yavsc.Models.OAuth2Tokens", b =>
                 {
                     b.Property<string>("UserId");
 
@@ -409,7 +413,7 @@ namespace Yavsc.Migrations
                     b.HasKey("UserId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.PerformerProfile", b =>
+            modelBuilder.Entity("Yavsc.Models.PerformerProfile", b =>
                 {
                     b.Property<string>("PerfomerId");
 
@@ -443,7 +447,7 @@ namespace Yavsc.Migrations
                     b.HasKey("PerfomerId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Service", b =>
+            modelBuilder.Entity("Yavsc.Models.Service", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -463,7 +467,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Skill", b =>
+            modelBuilder.Entity("Yavsc.Models.Skill", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -484,14 +488,14 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
@@ -502,138 +506,138 @@ namespace Yavsc.Migrations
                         .WithMany()
                         .HasForeignKey("RoleId");
 
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.AccountBalance", b =>
+            modelBuilder.Entity("Yavsc.Models.AccountBalance", b =>
                 {
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithOne()
-                        .HasForeignKey("YavscWeb.Models.AccountBalance", "UserId");
+                        .HasForeignKey("Yavsc.Models.AccountBalance", "UserId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Yavsc.Models.ApplicationUser", b =>
                 {
-                    b.HasOne("YavscWeb.Location")
+                    b.HasOne("Yavsc.Location")
                         .WithMany()
                         .HasForeignKey("PostalAddressId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.BalanceImpact", b =>
+            modelBuilder.Entity("Yavsc.Models.BalanceImpact", b =>
                 {
-                    b.HasOne("YavscWeb.Models.AccountBalance")
+                    b.HasOne("Yavsc.Models.AccountBalance")
                         .WithMany()
                         .HasForeignKey("BalanceId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Blog", b =>
+            modelBuilder.Entity("Yavsc.Models.Blog", b =>
                 {
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("AuthorId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Booking.BookQuery", b =>
+            modelBuilder.Entity("Yavsc.Models.Booking.BookQuery", b =>
                 {
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ClientId");
 
-                    b.HasOne("YavscWeb.Location")
+                    b.HasOne("Yavsc.Location")
                         .WithMany()
                         .HasForeignKey("LocationId");
 
-                    b.HasOne("YavscWeb.Models.PerformerProfile")
+                    b.HasOne("Yavsc.Models.PerformerProfile")
                         .WithMany()
                         .HasForeignKey("PerformerId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Circle", b =>
+            modelBuilder.Entity("Yavsc.Models.Circle", b =>
                 {
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("OwnerId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.CircleMember", b =>
+            modelBuilder.Entity("Yavsc.Models.CircleMember", b =>
                 {
-                    b.HasOne("YavscWeb.Models.Circle")
+                    b.HasOne("Yavsc.Models.Circle")
                         .WithMany()
                         .HasForeignKey("CircleId");
 
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("MemberId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Command", b =>
+            modelBuilder.Entity("Yavsc.Models.Command", b =>
                 {
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ClientId");
 
-                    b.HasOne("YavscWeb.Models.PerformerProfile")
+                    b.HasOne("Yavsc.Models.PerformerProfile")
                         .WithMany()
                         .HasForeignKey("PerformerId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.CommandLine", b =>
+            modelBuilder.Entity("Yavsc.Models.CommandLine", b =>
                 {
-                    b.HasOne("YavscWeb.Models.BaseProduct")
+                    b.HasOne("Yavsc.Models.BaseProduct")
                         .WithMany()
                         .HasForeignKey("ArticleId");
 
-                    b.HasOne("YavscWeb.Models.Booking.BookQuery")
+                    b.HasOne("Yavsc.Models.Booking.BookQuery")
                         .WithMany()
                         .HasForeignKey("BookQueryId");
 
-                    b.HasOne("YavscWeb.Models.Command")
+                    b.HasOne("Yavsc.Models.Command")
                         .WithMany()
                         .HasForeignKey("CommandId");
 
-                    b.HasOne("YavscWeb.Models.Estimate")
+                    b.HasOne("Yavsc.Models.Estimate")
                         .WithMany()
                         .HasForeignKey("EstimateId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Contact", b =>
+            modelBuilder.Entity("Yavsc.Models.Contact", b =>
                 {
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("OwnerId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Estimate", b =>
+            modelBuilder.Entity("Yavsc.Models.Estimate", b =>
                 {
-                    b.HasOne("YavscWeb.Models.Command")
+                    b.HasOne("Yavsc.Models.Command")
                         .WithMany()
                         .HasForeignKey("CommandId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.PerformerProfile", b =>
+            modelBuilder.Entity("Yavsc.Models.PerformerProfile", b =>
                 {
-                    b.HasOne("YavscWeb.Models.Activity")
+                    b.HasOne("Yavsc.Models.Activity")
                         .WithMany()
                         .HasForeignKey("ActivityCode");
 
-                    b.HasOne("YavscWeb.Models.Service")
+                    b.HasOne("Yavsc.Models.Service")
                         .WithMany()
                         .HasForeignKey("OfferId");
 
-                    b.HasOne("YavscWeb.Location")
+                    b.HasOne("Yavsc.Location")
                         .WithMany()
                         .HasForeignKey("OrganisationAddressId");
 
-                    b.HasOne("YavscWeb.Models.ApplicationUser")
+                    b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("PerfomerId");
                 });
 
-            modelBuilder.Entity("YavscWeb.Models.Service", b =>
+            modelBuilder.Entity("Yavsc.Models.Service", b =>
                 {
-                    b.HasOne("YavscWeb.Models.Activity")
+                    b.HasOne("Yavsc.Models.Activity")
                         .WithMany()
                         .HasForeignKey("ContextId");
                 });
