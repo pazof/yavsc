@@ -4,27 +4,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace  Yavsc
 {
-    public class WorkflowReference { 
-        /// <summary>
-        /// Friendly name for this kind of service
-        /// </summary>
-        /// <returns></returns>
-        string DisplayName { get; set; }
-        
-        /// <summary>
-        /// Service code found in the catalog
-        /// </summary>
-        /// <returns></returns>
-        [Key]
-        string SpecificationCode { get; set; }
-        
-        /// <summary>
-        /// Moderation settings
-        /// </summary>
-        /// <returns></returns>
-        string ModeratorGroupName { get; set; }
-    }
-
     public class SiteSettings
     {
         public string Title { get; set; }
@@ -44,11 +23,6 @@ namespace  Yavsc
         public EmailEntry Owner { get; set; }
         public EmailEntry Admin { get; set; }
         public ThirdPartyFiles UserFiles { get; set; }
-        /// <summary>
-        /// Configured services
-        /// </summary>
-        /// <returns></returns>
-        public List<WorkflowReference> WorkFlow { get; set; }
 
     }
 }

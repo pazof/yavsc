@@ -28,6 +28,12 @@ namespace Yavsc.Models
 
        [InverseProperty("Context")]
         public List<Service> Services { get; set; }
+        
+        /// <summary>
+        /// Moderation settings
+        /// </summary>
+        /// <returns></returns>
+        string ModeratorGroupName { get; set; }
 
     }
 }
