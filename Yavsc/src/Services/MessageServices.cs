@@ -12,6 +12,7 @@ using System.Net.Http;
 using Microsoft.AspNet.Identity;
 using Yavsc.Models;
 using Yavsc.Models.Google.Messaging;
+using System.Collections.Generic;
 
 namespace Yavsc.Services
 {
@@ -30,14 +31,14 @@ namespace Yavsc.Services
         /// <c>bool somethingsent = (response.failure == 0 &amp;&amp; response.success > 0)</c>
         /// </returns>
         public async Task<MessageWithPayloadResponse> 
-        NotifyAsync(GoogleAuthSettings googleSettings, string registrationId, YaEvent ev)
+        NotifyAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, YaEvent ev)
         {
             MessageWithPayloadResponse response;
             try
             {
                 using (var web = new HttpClient())
                 {
-                   response = await web.NotifyEvent(googleSettings, registrationId, ev);
+                   response = await web.NotifyEvent(googleSettings, registrationIds, ev);
                 }
             }
             catch (WebException ex)
