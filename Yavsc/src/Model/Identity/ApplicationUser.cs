@@ -10,7 +10,6 @@ namespace Yavsc.Models
     // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
-        public string GoogleRegId { get; set; }
 
         [Display(Name="AccountBalance")]
         public virtual AccountBalance AccountBalance { get; set; }

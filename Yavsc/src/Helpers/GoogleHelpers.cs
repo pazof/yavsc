@@ -49,45 +49,36 @@ namespace Yavsc.Helpers
 				//send a  MessageWithPayload<YaEvent> to circle members
                 // receive MessageWithPayloadResponse
                 // "https://gcm-http.googleapis.com/gcm/send"
-			var request = new HttpRequestMessage(HttpMethod.Get, Constants.GCMNotificationUrl);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Key", googleSettings.ApiKey);
 
             var regids = new List<string> ();
-            var to = new List<string> ();
             foreach (var c in evpub.Circles)
             foreach (var u in c.Members) {
-                    if (u.Member.GoogleRegId == null)
-                        to.Add (u.Member.Email);
-                    else
-                        regids.Add ((string)u.Member.GoogleRegId);
+                regids.AddRange (u.Member.Devices.Select(d=>d.RegistrationId));
             }
-
-            if (regids.Count == 0)
-                throw new InvalidOperationException
-                ("No recipient where found for this circle list");
-
+            if (regids.Count>0) return null;
+			var request = new HttpRequestMessage(HttpMethod.Get, Constants.GCMNotificationUrl);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Key", googleSettings.ApiKey);
             var msg = new MessageWithPayload<YaEvent> () {
                 notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "event" },
                 data = evpub , registration_ids = regids.ToArray() };
-
-                var response = await channel.SendAsync(request);
-                var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
-                return  payload.Value<MessageWithPayloadResponse>();
+            var response = await channel.SendAsync(request);
+            var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
+            return  payload.Value<MessageWithPayloadResponse>();
 		}
 
         public static async Task<MessageWithPayloadResponse> NotifyEvent<Event>
-         (this HttpClient channel, GoogleAuthSettings googleSettings, string regid, Event ev)
+         (this HttpClient channel, GoogleAuthSettings googleSettings, IEnumerable<string> regids, Event ev)
            where Event : YaEvent
 		{
-            if (regid == null)
-                throw new NotImplementedException ("Notify & No GCM reg id");
+            if (regids == null)
+                throw new NotImplementedException ("Notify & No GCM reg ids");
 			var request = new HttpRequestMessage(HttpMethod.Get, Constants.GCMNotificationUrl);
             request.Headers.Authorization = new AuthenticationHeaderValue("Key", googleSettings.ApiKey);
             var msg = new MessageWithPayload<Event> () {
                 notification = new Notification() { title = ev.Title,
                     body = ev.Description + ev.Comment==null?
                         "":"("+ev.Comment+")", icon = "icon" },
-                data = ev, registration_ids = new string[] { regid }  };
+                data = ev, registration_ids = regids.ToArray()  };
 
             var response = await channel.SendAsync(request);
             var payload = JObject.Parse(await response.Content.ReadAsStringAsync());

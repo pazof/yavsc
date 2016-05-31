@@ -133,9 +133,9 @@ namespace Yavsc.Controllers
                 _context.SaveChanges();
                 if (command.PerformerProfile.AcceptNotifications
                 && command.PerformerProfile.AcceptPublicContact
-                && command.PerformerProfile.Performer.GoogleRegId!=null) {
+                && command.PerformerProfile.Performer.Devices.Select(d=>d.RegistrationId)!=null) {
                       grep = await _GCMSender.NotifyAsync(_googleSettings,
-                     command.PerformerProfile.Performer.GoogleRegId,
+                     command.PerformerProfile.Performer.Devices.Select(d=>d.RegistrationId),
                      yaev
                       );
                  }
