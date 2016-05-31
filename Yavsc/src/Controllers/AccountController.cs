@@ -62,9 +62,8 @@ namespace Yavsc.Controllers
         }
         
         [HttpPost("~/login")]
-        public async Task<IActionResult> LocalLogin(LoginViewModel model)
+        public async Task<IActionResult> SignIn(LoginViewModel model)
         {
-            
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout

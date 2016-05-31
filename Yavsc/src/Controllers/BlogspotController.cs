@@ -36,6 +36,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: Blog
+        [AllowAnonymous]
         public IActionResult Index(string id)
         {
             if (!string.IsNullOrEmpty(id))
@@ -46,6 +47,7 @@ namespace Yavsc.Controllers
         }
 
         [Route("/Title/{id?}")]
+        [AllowAnonymous]
         public IActionResult Title(string id)
         {
             return View("Index", _context.Blogspot.Include(
@@ -54,8 +56,13 @@ namespace Yavsc.Controllers
         }
 
         [Route("/Blog/{id?}")]
+        [AllowAnonymous]
         public IActionResult UserPosts(string id)
         {
+            if (string.IsNullOrEmpty(id))
+            return View("Index",_context.Blogspot.Include(
+               b => b.Author
+            ).Where(p => p.visible));
             if (User.IsSignedIn())
                 return View("Index", _context.Blogspot.Include(
                  b => b.Author
@@ -65,6 +72,7 @@ namespace Yavsc.Controllers
                 ).Where(x => x.Author.UserName == id && x.visible).ToList());
         }
         // GET: Blog/Details/5
+        [AllowAnonymous]
         public IActionResult Details(long? id)
         {
             if (id == null)
