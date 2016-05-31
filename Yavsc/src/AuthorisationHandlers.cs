@@ -70,10 +70,11 @@ public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
                 context.Succeed(requirement);
             else if (context.User.Identity.IsAuthenticated)
             if (resource.AuthorId == context.User.GetUserId())
-                context.Succeed(requirement);
-            // TODO else if (resource.Circles && context.User belongs to
+                context.Succeed(requirement); 
+            else if (resource.visible)
+            // TODO && ( resource.Circles == null || context.User belongs to resource.Circles )
+                context.Succeed(requirement); 
         }
-
     }
 
     public class CommandViewHandler : AuthorizationHandler<ViewRequirement, Command>
@@ -136,5 +137,7 @@ public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
             context.Succeed(requirement);
         }
     }
+
+   
 
 }

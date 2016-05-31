@@ -29,7 +29,8 @@ namespace Yavsc.Services
         /// <returns>a MessageWithPayloadResponse,
         /// <c>bool somethingsent = (response.failure == 0 &amp;&amp; response.success > 0)</c>
         /// </returns>
-        public async Task<MessageWithPayloadResponse> NotifyAsync(GoogleAuthSettings googleSettings, string registrationId, YaEvent ev)
+        public async Task<MessageWithPayloadResponse> 
+        NotifyAsync(GoogleAuthSettings googleSettings, string registrationId, YaEvent ev)
         {
             MessageWithPayloadResponse response;
             try

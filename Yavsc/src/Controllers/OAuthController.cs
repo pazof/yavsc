@@ -27,7 +27,7 @@ namespace Yavsc.Controllers
         ApplicationDbContext _context;
         UserManager<ApplicationUser> _userManager;
 
-ILogger _logger;
+        ILogger _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private TokenAuthOptions _tokenOptions;
 
@@ -46,13 +46,15 @@ ILogger _logger;
 
 
         [HttpGet("~/signin")]
-        public ActionResult SignIn(string returnUrl = null) {
+        public ActionResult SignIn(string returnUrl = null, string target = null)
+        {
             // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
             // will be redirected to after a successful authentication and not
             // the redirect_uri of the requesting client application.
             return View("SignIn", new LoginViewModel
             {
                 ReturnUrl = returnUrl,
+                AfterLoginRedirectUrl = target,
                 ExternalProviders = HttpContext.GetExternalProviders()
             });
             /* Note: When using an external login provider, redirect the query  :
@@ -61,49 +63,72 @@ ILogger _logger;
             */
         }
 
+        [HttpGet("~/authenticate")]
+        public ActionResult Authenticate(string returnUrl = null)
+        {
+            return SignIn("/Account/ExternalLoginCallback",returnUrl);
+        }
+        
+        [HttpGet("~/forbidden")]
+        public ActionResult Forbidden(string returnUrl = null)
+        {
+            return SignIn("/Account/ExternalLoginCallback",returnUrl);
+        }
+        
         [HttpPost("~/signin")]
-        public IActionResult SignIn( string Provider, string ReturnUrl, string AfterLoginRedirectUrl) {
+        public IActionResult SignIn(string Provider, string ReturnUrl, string AfterLoginRedirectUrl)
+        {
             // Note: the "provider" parameter corresponds to the external
             // authentication provider choosen by the user agent.
-            if (string.IsNullOrEmpty(Provider)) {
+            if (string.IsNullOrEmpty(Provider))
+            {
                 _logger.LogWarning("Provider not specified");
                 return HttpBadRequest();
             }
 
-            if (!_signInManager.GetExternalAuthenticationSchemes().Any(x=>x.AuthenticationScheme==Provider)) {
+            if (!_signInManager.GetExternalAuthenticationSchemes().Any(x => x.AuthenticationScheme == Provider))
+            {
                 _logger.LogWarning($"Provider not found : {Provider}");
                 return HttpBadRequest();
             }
 
-            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
-            // will be redirected to after a successful authentication and not
-            // the redirect_uri of the requesting client application.
-            if (string.IsNullOrEmpty(ReturnUrl)) {
-                _logger.LogWarning("ReturnUrl not specified");
-                return HttpBadRequest();
-            }
 
             // Instruct the middleware corresponding to the requested external identity
             // provider to redirect the user agent to its own authorization endpoint.
             // Note: the authenticationScheme parameter must match the value configured in Startup.cs
-            
-            // If AfterLoginRedirectUrl is non null,
-            // This is a web interface access,
-            // and the wanted redirection
-            // after the successfull authentication
-            if (AfterLoginRedirectUrl!=null) {
-                ReturnUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = AfterLoginRedirectUrl });
+
+            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
+            // will be redirected to after a successful authentication and not
+            // the redirect_uri of the requesting client application.
+            if (string.IsNullOrEmpty(ReturnUrl))
+            {
+
+                // If AfterLoginRedirectUrl is non null,
+                // This is a web interface access,
+                /// Assert (model.ReturnUrl==null)
+                /// and the wanted redirection
+                // after the successfull authentication
+                if (AfterLoginRedirectUrl != null)
+                {
+                    ReturnUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = AfterLoginRedirectUrl });
+                }
+                else
+                {
+                    _logger.LogWarning("ReturnUrl not specified");
+                    return HttpBadRequest();
+                }
             }
-            
+
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(Provider, ReturnUrl);
-            
+
             return new ChallengeResult(Provider, properties);
         }
 
 
 
         [HttpGet("~/signout"), HttpPost("~/signout")]
-        public async Task SignOut() {
+        public async Task SignOut()
+        {
             // Instruct the cookies middleware to delete the local cookie created
             // when the user agent is redirected from the external identity provider
             // after a successful authentication flow (e.g Google or Facebook).
@@ -132,23 +157,27 @@ ILogger _logger;
         }
 
 
-         [HttpGet("~/connect/authorize"), HttpPost("~/connect/authorize")]
-        public async Task<IActionResult> Authorize(CancellationToken cancellationToken) {
+        [HttpGet("~/connect/authorize"), HttpPost("~/connect/authorize")]
+        public async Task<IActionResult> Authorize(CancellationToken cancellationToken)
+        {
             // Note: when a fatal error occurs during the request processing, an OpenID Connect response
             // is prematurely forged and added to the ASP.NET context by OpenIdConnectServerHandler.
             // You can safely remove this part and let ASOS automatically handle the unrecoverable errors
             // by switching ApplicationCanDisplayErrors to false in Startup.cs.
             var response = HttpContext.GetOpenIdConnectResponse();
-            if (response == null) {
-                 _logger.LogError("GetOpenIdConnectResponse is null");
+            if (response == null)
+            {
+                _logger.LogError("GetOpenIdConnectResponse is null");
                 return View("OidcError", response);
             }
 
             // Extract the authorization request from the ASP.NET environment.
             var request = HttpContext.GetOpenIdConnectRequest();
-            if (request == null) {
-                 _logger.LogError("An internal error has occurred, GetOpenIdConnectRequest is null");
-                return View("OidcError", new OpenIdConnectMessage {
+            if (request == null)
+            {
+                _logger.LogError("An internal error has occurred, GetOpenIdConnectRequest is null");
+                return View("OidcError", new OpenIdConnectMessage
+                {
                     Error = OpenIdConnectConstants.Errors.ServerError,
                     ErrorDescription = "An internal error has occurred"
                 });
@@ -160,10 +189,13 @@ ILogger _logger;
             // To work around this limitation, the OpenID Connect request is automatically saved in the cache and will be
             // restored by the OpenID Connect server middleware after the external authentication process has been completed.
 
-            if (!User.Identities.Any(identity => identity.IsAuthenticated)) {
-                 _logger.LogWarning("new ChallengeResult");
-                return new ChallengeResult(new AuthenticationProperties {
-                    RedirectUri = Url.Action(nameof(Authorize), new {
+            if (!User.Identities.Any(identity => identity.IsAuthenticated))
+            {
+                _logger.LogWarning("new ChallengeResult");
+                return new ChallengeResult(new AuthenticationProperties
+                {
+                    RedirectUri = Url.Action(nameof(Authorize), new
+                    {
                         request_id = request.GetUniqueIdentifier()
                     })
                 });
@@ -174,9 +206,11 @@ ILogger _logger;
             // In theory, this null check shouldn't be needed, but a race condition could occur if you
             // manually removed the application details from the database after the initial check made by ASOS.
             var application = await GetApplicationAsync(request.ClientId, cancellationToken);
-            if (application == null) {
+            if (application == null)
+            {
                 _logger.LogError("Details concerning the calling client application cannot be found in the database");
-                return View("OidcError", new OpenIdConnectMessage {
+                return View("OidcError", new OpenIdConnectMessage
+                {
                     Error = OpenIdConnectConstants.Errors.InvalidClient,
                     ErrorDescription = "Details concerning the calling client application cannot be found in the database"
                 });
@@ -187,15 +221,19 @@ ILogger _logger;
         }
 
         [Authorize, HttpPost("~/connect/authorize/accept"), ValidateAntiForgeryToken]
-        public async Task<IActionResult> Accept(CancellationToken cancellationToken) {
+        public async Task<IActionResult> Accept(CancellationToken cancellationToken)
+        {
             var response = HttpContext.GetOpenIdConnectResponse();
-            if (response != null) {
+            if (response != null)
+            {
                 return View("OidcError", response);
             }
 
             var request = HttpContext.GetOpenIdConnectRequest();
-            if (request == null) {
-                return View("OidcError", new OpenIdConnectMessage {
+            if (request == null)
+            {
+                return View("OidcError", new OpenIdConnectMessage
+                {
                     Error = OpenIdConnectConstants.Errors.ServerError,
                     ErrorDescription = "An internal error has occurred"
                 });
@@ -207,7 +245,8 @@ ILogger _logger;
 
             // Copy the claims retrieved from the external identity provider
             // (e.g Google, Facebook, a WS-Fed provider or another OIDC server).
-            foreach (var claim in HttpContext.User.Claims) {
+            foreach (var claim in HttpContext.User.Claims)
+            {
                 // Allow ClaimTypes.Name to be added in the id_token.
                 // ClaimTypes.NameIdentifier is automatically added, even if its
                 // destination is not defined or doesn't include "id_token".
@@ -218,7 +257,8 @@ ILogger _logger;
                                           OpenIdConnectConstants.Destinations.IdentityToken);
                 }
                 */
-                if (claim.Type == ClaimTypes.Name) {
+                if (claim.Type == ClaimTypes.Name)
+                {
                     claim.WithDestination("code");
                     claim.WithDestination("id_token");
                 }
@@ -226,8 +266,10 @@ ILogger _logger;
             }
 
             var application = await GetApplicationAsync(request.ClientId, cancellationToken);
-            if (application == null) {
-                return View("OidcError", new OpenIdConnectMessage {
+            if (application == null)
+            {
+                return View("OidcError", new OpenIdConnectMessage
+                {
                     Error = OpenIdConnectConstants.Errors.InvalidClient,
                     ErrorDescription = "Details concerning the calling client application cannot be found in the database"
                 });
@@ -238,7 +280,7 @@ ILogger _logger;
             // the whole delegation chain from the resource server (see ResourceController.cs).
             identity.Actor = new ClaimsIdentity(OpenIdConnectServerDefaults.AuthenticationScheme);
             identity.Actor.AddClaim(ClaimTypes.NameIdentifier, application.ApplicationID);
-            identity.Actor.AddClaim(ClaimTypes.Name, application.DisplayName,"code id_token");
+            identity.Actor.AddClaim(ClaimTypes.Name, application.DisplayName, "code id_token");
 
             var properties = new AuthenticationProperties();
 
@@ -271,15 +313,19 @@ ILogger _logger;
         }
 
         [Authorize, HttpPost("~/connect/authorize/deny"), ValidateAntiForgeryToken]
-        public IActionResult Deny(CancellationToken cancellationToken) {
+        public IActionResult Deny(CancellationToken cancellationToken)
+        {
             var response = HttpContext.GetOpenIdConnectResponse();
-            if (response != null) {
+            if (response != null)
+            {
                 return View("OidcError", response);
             }
 
             var request = HttpContext.GetOpenIdConnectRequest();
-            if (request == null) {
-                return View("OidcError", new OpenIdConnectMessage {
+            if (request == null)
+            {
+                return View("OidcError", new OpenIdConnectMessage
+                {
                     Error = OpenIdConnectConstants.Errors.ServerError,
                     ErrorDescription = "An internal error has occurred"
                 });
@@ -289,7 +335,8 @@ ILogger _logger;
             // Notify AspNet.Security.OpenIdConnect.Server that the authorization grant has been denied.
             // Note: OpenIdConnectServerHandler will automatically take care of redirecting
             // the user agent to the client application using the appropriate response_mode.
-            HttpContext.SetOpenIdConnectResponse(new OpenIdConnectMessage {
+            HttpContext.SetOpenIdConnectResponse(new OpenIdConnectMessage
+            {
                 Error = "access_denied",
                 ErrorDescription = "The authorization grant has been denied by the resource owner",
                 RedirectUri = request.RedirectUri,
@@ -301,9 +348,11 @@ ILogger _logger;
         }
 
         [HttpGet("~/connect/logout")]
-        public async Task<ActionResult> Logout() {
+        public async Task<ActionResult> Logout()
+        {
             var response = HttpContext.GetOpenIdConnectResponse();
-            if (response != null) {
+            if (response != null)
+            {
                 _logger.LogError("GetOpenIdConnectResponse is null");
                 return View("OidcError", response);
             }
@@ -314,9 +363,11 @@ ILogger _logger;
             var identity = await HttpContext.Authentication.AuthenticateAsync(OpenIdConnectServerDefaults.AuthenticationScheme);
 
             var request = HttpContext.GetOpenIdConnectRequest();
-            if (request == null) {
+            if (request == null)
+            {
                 _logger.LogError("An internal error has occurred");
-                return View("OidcError", new OpenIdConnectMessage {
+                return View("OidcError", new OpenIdConnectMessage
+                {
                     Error = OpenIdConnectConstants.Errors.ServerError,
                     ErrorDescription = "An internal error has occurred"
                 });
@@ -327,7 +378,8 @@ ILogger _logger;
 
         [HttpPost("~/connect/logout")]
         [ValidateAntiForgeryToken]
-        public async Task Logout(CancellationToken cancellationToken) {
+        public async Task Logout(CancellationToken cancellationToken)
+        {
             // Instruct the cookies middleware to delete the local cookie created
             // when the user agent is redirected from the external identity provider
             // after a successful authentication flow (e.g Google or Facebook).
@@ -348,7 +400,7 @@ ILogger _logger;
                     where application.ApplicationID == identifier
                     select application).SingleOrDefaultAsync(cancellationToken);
         }
-private async Task<ApplicationUser> GetCurrentUserAsync()
+        private async Task<ApplicationUser> GetCurrentUserAsync()
         {
             return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
         }

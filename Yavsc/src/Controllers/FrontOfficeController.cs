@@ -9,7 +9,7 @@ using Yavsc.Models.Booking;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)), AllowAnonymous,
+    [ServiceFilter(typeof(LanguageActionFilter)), 
     Route("do")]
     public class FrontOfficeController : Controller
     {

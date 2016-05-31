@@ -71,6 +71,12 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns>tokens</returns>
         public DbSet<OAuth2Tokens> Tokens { get; set; }
+        
+        /// <summary>
+        /// References all declared external GCM devices
+        /// </summary>
+        /// <returns></returns>
+        public DbSet<GoogleCloudMobileDeclaration> GCMDevices { get; set; }
 
         public Task ClearTokensAsync()
         {

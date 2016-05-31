@@ -9,6 +9,18 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
+            @Html.DisplayNameFor(model => model.title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.photo)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.photo)
+        </dd>
+        <dt>
             @SR["Author"]
         </dt>
         <dd>
@@ -18,7 +30,7 @@
           Contenu
         </dt>
         <dd>
-            <div markdown="@Model.bcontent" base="~/@Model.Author.UserName/@Model.Id"
+            <div markdown="@Model.bcontent" base="~/@Model.Id"
             site="SiteSettings.Value"></div>
         </dd>
         <dt>
@@ -27,12 +39,7 @@
         <dd>
             @Html.DisplayFor(model => model.modified)
         </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.photo)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.photo)
-        </dd>
+        
         <dt>
             @Html.DisplayNameFor(model => model.posted)
         </dt>
@@ -45,12 +52,7 @@
         <dd>
             @Html.DisplayFor(model => model.rate)
         </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.title)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.title)
-        </dd>
+        
         <dt>
             @Html.DisplayNameFor(model => model.visible)
         </dt>

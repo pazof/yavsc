@@ -24,8 +24,8 @@ namespace Yavsc
         public const string AdminGroupName = "Administrator";
         public const string BlogModeratorGroupName = "Moderator";
         public const string FrontOfficeGroupName = "FrontOffice";
-        public const string UserBlogFilesDir= "Blog";
         public const string UserBillsFilesDir= "Bills";
+        public const string UserFilesDir = "UserFiles";
 
         public const string GCMNotificationUrl = "https://gcm-http.googleapis.com/gcm/send";
         private static readonly string[] GoogleScopes = { "openid", "profile", "email" };

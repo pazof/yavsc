@@ -68,7 +68,6 @@
                     @foreach (var description in Model.ExternalProviders) {
         <form action="/signin" method="post">
             <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
-            <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
             <input type="hidden" name="AfterLoginRedirectUrl" value="@Model.AfterLoginRedirectUrl" />
             <button class="btn btn-lg btn-success" type="submit">@SR["Connect using"] @description.DisplayName</button>
             @Html.AntiForgeryToken()

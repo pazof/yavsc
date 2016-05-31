@@ -14,8 +14,7 @@ using Microsoft.Extensions.OptionsModel;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)),
-    AllowAnonymous]
+    [ServiceFilter(typeof(LanguageActionFilter))]
     public class BlogspotController : Controller
     {
         ILogger _logger;
@@ -40,31 +39,30 @@ namespace Yavsc.Controllers
         public IActionResult Index(string id)
         {
             if (!string.IsNullOrEmpty(id))
-               return UserPosts(id);
+                return UserPosts(id);
             return View(_context.Blogspot.Include(
-               b=>b.Author
-            ).Where(p=>p.visible));
+               b => b.Author
+            ).Where(p => p.visible));
         }
 
         [Route("/Title/{id?}")]
         public IActionResult Title(string id)
         {
-           return View("Index", _context.Blogspot.Include(
-               b=>b.Author
-           ).Where(x=>x.title==id).ToList());
+            return View("Index", _context.Blogspot.Include(
+                b => b.Author
+            ).Where(x => x.title == id).ToList());
         }
 
         [Route("/Blog/{id?}")]
         public IActionResult UserPosts(string id)
         {
-
             if (User.IsSignedIn())
-               return View("Index", _context.Blogspot.Include(
-                b=>b.Author
-                ).Where(x=>x.Author.UserName==id).ToList());
+                return View("Index", _context.Blogspot.Include(
+                 b => b.Author
+                 ).Where(x => x.Author.UserName == id).ToList());
             return View("Index", _context.Blogspot.Include(
-                b=>b.Author
-                ).Where(x=>x.Author.UserName==id && x.visible).ToList());
+                b => b.Author
+                ).Where(x => x.Author.UserName == id && x.visible).ToList());
         }
         // GET: Blog/Details/5
         public IActionResult Details(long? id)
@@ -75,7 +73,7 @@ namespace Yavsc.Controllers
             }
 
             Blog blog = _context.Blogspot.Include(
-               b=>b.Author
+               b => b.Author
            ).Single(m => m.Id == id);
             if (blog == null)
             {
@@ -86,19 +84,21 @@ namespace Yavsc.Controllers
         }
 
         // GET: Blog/Create
+        [Authorize("Authenticated")]
         public IActionResult Create()
         {
-            return View( new Blog { AuthorId = User.GetUserId() } );
+            return View();
         }
 
         // POST: Blog/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken,Authorize]
+        [HttpPost, Authorize("Authenticated"), ValidateAntiForgeryToken]
         public IActionResult Create(Blog blog)
         {
             blog.modified = blog.posted = DateTime.Now;
             blog.rate = 0;
-
+            blog.AuthorId = User.GetUserId();
+            _logger.LogWarning($"Post from: {blog.AuthorId}");
+            ModelState.ClearValidationState("AuthorId");
             if (ModelState.IsValid)
             {
                 blog.posted = DateTime.Now;
@@ -106,10 +106,10 @@ namespace Yavsc.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            _logger.LogWarning("Invalid Blog entry ...");
+            _logger.LogWarning("Invalid Blog posted ...");
             return View(blog);
         }
-
+        [Authorize("Authenticated")]
         // GET: Blog/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
@@ -118,7 +118,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Blog blog = _context.Blogspot.Include(x=>x.Author).Single(m => m.Id == id);
+            Blog blog = _context.Blogspot.Include(x => x.Author).Single(m => m.Id == id);
             if (blog == null)
             {
                 return HttpNotFound();
@@ -135,7 +135,7 @@ namespace Yavsc.Controllers
 
         // POST: Blog/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken,Authorize("Authenticated")]
         public IActionResult Edit(Blog blog)
         {
             if (ModelState.IsValid)
@@ -146,18 +146,19 @@ namespace Yavsc.Controllers
                     blog.modified = DateTime.Now;
                     _context.Update(blog);
                     _context.SaveChanges();
-                    ViewData["StatusMessage"]="Post modified";
+                    ViewData["StatusMessage"] = "Post modified";
                     return RedirectToAction("Index");
                 } // TODO Else hit me hard
-                else {
-                  ViewData["StatusMessage"]="Access denied ...";
+                else
+                {
+                    ViewData["StatusMessage"] = "Access denied ...";
                 }
             }
             return View(blog);
         }
 
         // GET: Blog/Delete/5
-        [ActionName("Delete")]
+        [ActionName("Delete"),Authorize("Authenticated")]
         public IActionResult Delete(long? id)
         {
             if (id == null)
@@ -166,7 +167,7 @@ namespace Yavsc.Controllers
             }
 
             Blog blog = _context.Blogspot.Include(
-               b=>b.Author
+               b => b.Author
            ).Single(m => m.Id == id);
             if (blog == null)
             {
@@ -177,13 +178,14 @@ namespace Yavsc.Controllers
         }
 
         // POST: Blog/Delete/5
-        [HttpPost, ActionName("Delete"), Authorize]
+        [HttpPost, ActionName("Delete"), Authorize("Authenticated")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(long id)
         {
             Blog blog = _context.Blogspot.Single(m => m.Id == id);
             var auth = _authorizationService.AuthorizeAsync(User, blog, new EditRequirement());
-            if (auth.Result) {
+            if (auth.Result)
+            {
                 _context.Blogspot.Remove(blog);
                 _context.SaveChanges();
             }

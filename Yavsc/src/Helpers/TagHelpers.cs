@@ -108,7 +108,7 @@ namespace Yavsc.Helpers
             var content = await GetContent(output);
             var markdown = content;
 			var basePath = Base?.StartsWith("~") ?? false ?
-            "/"+Startup.UserFilesDirName + 
+            Constants.UserFilesDir + 
 			 Base.Substring(1) : Base;
             var html = Markdown(markdown, basePath);
             output.Content.SetHtmlContent(html ?? "");

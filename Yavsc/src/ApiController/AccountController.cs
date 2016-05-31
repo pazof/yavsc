@@ -14,6 +14,7 @@ namespace Yavsc.WebApi.Controllers
     [Authorize,Route("~/api/account")]
     public class ApiAccountController : Controller
     {
+        
         private UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
