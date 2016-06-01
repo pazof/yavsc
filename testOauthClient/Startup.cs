@@ -31,15 +31,15 @@ namespace testOauthClient
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-          /*  services.Configure<SharedAuthenticationOptions>(options =>
-            {
-                options.SignInScheme = "ClientCookie";
-            }); */
-            services.AddAuthentication(options => {
+            
+            services.Configure<SharedAuthenticationOptions>(options => {
                 options.SignInScheme = "ClientCookie";
             });
-            // Add framework services.
+
+            services.AddAuthentication();
+
             services.AddMvc();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,7 +56,10 @@ namespace testOauthClient
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            
+             app.UseIISPlatformHandler(options => {
+                options.AuthenticationDescriptions.Clear();
+            });
+            app.UseStaticFiles();
              app.UseCookieAuthentication(new CookieAuthenticationOptions {
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true,
@@ -85,7 +88,6 @@ namespace testOauthClient
                 Authority = "http://dev.pschneider.fr/"
             });
 
-            app.UseStaticFiles();
 
             app.UseMvc(routes =>
             {
