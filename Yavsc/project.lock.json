@@ -8897,6 +8897,7 @@
       "type": "package",
       "sha512": "c1S+HBE+KYA5EBxtn25LEK02hHPH/tDQ6RviUTTCJpZIPoputtn8ArsQJy9lVJWZOnw37ufByO2Fmf1M8wpr8Q==",
       "files": [
+        "Antlr.3.4.1.9004.nupkg",
         "Antlr.3.4.1.9004.nupkg.sha512",
         "Antlr.nuspec",
         "lib/Antlr3.Runtime.dll",
@@ -8935,6 +8936,7 @@
         "app/ef.cmd",
         "app/project.json",
         "build/netcore50/EntityFramework.Commands.props",
+        "EntityFramework.Commands.7.0.0-rc1-final.nupkg",
         "EntityFramework.Commands.7.0.0-rc1-final.nupkg.sha512",
         "EntityFramework.Commands.nuspec",
         "lib/dnx451/EntityFramework.Commands.dll",
@@ -8956,6 +8958,7 @@
       "type": "package",
       "sha512": "afwsjOF4xM5KiwAxKMz9R0H8TigWE/jX0FwGBO/QtuA1ElEVLqlQVH4+7PyZaA35HguYRm0wOCmUq9RVTmiAfA==",
       "files": [
+        "EntityFramework.Core.7.0.0-rc1-final.nupkg",
         "EntityFramework.Core.7.0.0-rc1-final.nupkg.sha512",
         "EntityFramework.Core.nuspec",
         "lib/dnx451/EntityFramework.Core.dll",
@@ -8972,6 +8975,7 @@
       "type": "package",
       "sha512": "FMB2MgT5aXMF7qGMwf5AGcmpNFoT4s1w0QJ5h+L8W4gyMxWpYamGp9hms7rOSAWY44ZDl5ZMpxiTfu3nY3Nqeg==",
       "files": [
+        "EntityFramework.MicrosoftSqlServer.7.0.0-rc1-final.nupkg",
         "EntityFramework.MicrosoftSqlServer.7.0.0-rc1-final.nupkg.sha512",
         "EntityFramework.MicrosoftSqlServer.nuspec",
         "lib/dotnet5.4/EntityFramework.MicrosoftSqlServer.dll",
@@ -8986,6 +8990,7 @@
       "type": "package",
       "sha512": "0Feoct9mtKOIjovUgfESfVDL/odvxNXsIgK3bdlkx7Fsiqp5/tx8oiMx+qO7oNRYWsXN6XDlGKHLOzWEdUssKA==",
       "files": [
+        "EntityFramework.Relational.7.0.0-rc1-final.nupkg",
         "EntityFramework.Relational.7.0.0-rc1-final.nupkg.sha512",
         "EntityFramework.Relational.nuspec",
         "lib/dotnet5.4/EntityFramework.Relational.dll",
@@ -9001,6 +9006,7 @@
       "sha512": "sXAqOxpHmbqOELC21vAzKlsjqgNCrk3jEjyJxjGnn1+j4hazxiqgSBTl8ZofqYzLO6ias9WfeXJy8HcXOl7waw==",
       "files": [
         "build/netcore50/EntityFramework.Relational.Design.props",
+        "EntityFramework.Relational.Design.7.0.0-rc1-final.nupkg",
         "EntityFramework.Relational.Design.7.0.0-rc1-final.nupkg.sha512",
         "EntityFramework.Relational.Design.nuspec",
         "lib/dnx451/EntityFramework.Relational.Design.dll",
@@ -9016,6 +9022,7 @@
       "type": "package",
       "sha512": "B+h4HHUnCSN/d4DIxW89B6q4efcZzQjajQb1yrlALEeZuCBDIzO0nrEdRZsRSNqJaNzmxRu/OsYqrZVOORUrGw==",
       "files": [
+        "EntityFramework.Sqlite.7.0.0-rc1-final.nupkg",
         "EntityFramework.Sqlite.7.0.0-rc1-final.nupkg.sha512",
         "EntityFramework.Sqlite.nuspec",
         "lib/dotnet5.4/EntityFramework.Sqlite.dll",
@@ -9030,6 +9037,7 @@
       "type": "package",
       "sha512": "VW/pz4Luixgc9UuAXPP9vzPIrrw9sHD4ozd2HUzeI3Sd4RdCgSFQT+B3HhPw/+JGKcdAnIQ4D5/Llk43fH07hw==",
       "files": [
+        "EntityFramework7.Npgsql.3.1.0-rc1-3.nupkg",
         "EntityFramework7.Npgsql.3.1.0-rc1-3.nupkg.sha512",
         "EntityFramework7.Npgsql.nuspec",
         "lib/dnx451/EntityFramework7.Npgsql.dll",
@@ -9044,6 +9052,7 @@
       "type": "package",
       "sha512": "h7bsey+w3HBqhZQGbk6XeEMxXNCt+1hVg1Ju4QzZHUGSzWT6/ZduaPs3UjNQhpvcTRE7GYa99gYraKdNH3jEOg==",
       "files": [
+        "EntityFramework7.Npgsql.Design.3.1.0-rc1-5.nupkg",
         "EntityFramework7.Npgsql.Design.3.1.0-rc1-5.nupkg.sha512",
         "EntityFramework7.Npgsql.Design.nuspec",
         "lib/dnx451/EntityFramework7.Npgsql.Design.dll",
@@ -9058,6 +9067,7 @@
       "type": "package",
       "sha512": "GyWdeflVhu01TYh/KOoMceFYy4rc3+uGKFFw17PpABfdRM1wqCiO73asytkcMGUS91GjPwcONZF5UIjDKpeUSQ==",
       "files": [
+        "Google.Apis.1.11.1.nupkg",
         "Google.Apis.1.11.1.nupkg.sha512",
         "Google.Apis.nuspec",
         "lib/net45/Google.Apis.dll",
@@ -9094,6 +9104,7 @@
       "type": "package",
       "sha512": "0Vg/D4BhfPFrlp5iPmp2WxTm3TpgQuwsd9jiYoVXhnbecTnVhRNqY0sJTK8yoMm+otuJ4Dt1C7KSeQ0yWA1d/g==",
       "files": [
+        "Google.Apis.Core.1.11.1.nupkg",
         "Google.Apis.Core.1.11.1.nupkg.sha512",
         "Google.Apis.Core.nuspec",
         "lib/net45/Google.Apis.Core.dll",
@@ -9109,6 +9120,7 @@
       "type": "package",
       "sha512": "8EXO8q7cpDUH9G2q+UOPOO/6uZ9aN7mx/4xjFIfkp+qLWVJiYuglkRhjY8Ggs2CucXzHR8GHnovJKB5yQoYaJg==",
       "files": [
+        "Ix-Async.1.2.5.nupkg",
         "Ix-Async.1.2.5.nupkg.sha512",
         "Ix-Async.nuspec",
         "lib/net40/System.Interactive.Async.dll",
@@ -9126,6 +9138,7 @@
         "Content/Scripts/jquery-1.6.4.js",
         "Content/Scripts/jquery-1.6.4.min.js",
         "Content/Scripts/jquery-1.6.4-vsdoc.js",
+        "jQuery.1.6.4.nupkg",
         "jQuery.1.6.4.nupkg.sha512",
         "jQuery.nuspec",
         "Tools/install.ps1",
@@ -9151,6 +9164,7 @@
         "lib/net40-client/log4net.xml",
         "lib/net40-full/log4net.dll",
         "lib/net40-full/log4net.xml",
+        "log4net.2.0.3.nupkg",
         "log4net.2.0.3.nupkg.sha512",
         "log4net.nuspec"
       ]
@@ -9175,6 +9189,7 @@
         "lib/wpa81/MailKit.xml",
         "lib/Xamarin.iOS10/MailKit.dll",
         "lib/Xamarin.iOS10/MailKit.xml",
+        "MailKit.1.3.0-beta7.nupkg",
         "MailKit.1.3.0-beta7.nupkg.sha512",
         "MailKit.nuspec"
       ]
@@ -9185,6 +9200,7 @@
       "files": [
         "lib/dnxcore50/MarkdownDeep.dll",
         "lib/net451/MarkdownDeep.dll",
+        "MarkdownDeep-av.NET.1.5.2.nupkg",
         "MarkdownDeep-av.NET.1.5.2.nupkg.sha512",
         "MarkdownDeep-av.NET.nuspec"
       ]
@@ -9197,6 +9213,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Antiforgery.xml",
         "lib/net451/Microsoft.AspNet.Antiforgery.dll",
         "lib/net451/Microsoft.AspNet.Antiforgery.xml",
+        "Microsoft.AspNet.Antiforgery.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Antiforgery.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Antiforgery.nuspec"
       ]
@@ -9209,6 +9226,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Authentication.xml",
         "lib/net451/Microsoft.AspNet.Authentication.dll",
         "lib/net451/Microsoft.AspNet.Authentication.xml",
+        "Microsoft.AspNet.Authentication.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Authentication.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Authentication.nuspec"
       ]
@@ -9221,6 +9239,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Authentication.Cookies.xml",
         "lib/net451/Microsoft.AspNet.Authentication.Cookies.dll",
         "lib/net451/Microsoft.AspNet.Authentication.Cookies.xml",
+        "Microsoft.AspNet.Authentication.Cookies.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Authentication.Cookies.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Authentication.Cookies.nuspec"
       ]
@@ -9233,6 +9252,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Authentication.Facebook.xml",
         "lib/net451/Microsoft.AspNet.Authentication.Facebook.dll",
         "lib/net451/Microsoft.AspNet.Authentication.Facebook.xml",
+        "Microsoft.AspNet.Authentication.Facebook.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Authentication.Facebook.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Authentication.Facebook.nuspec"
       ]
@@ -9245,6 +9265,7 @@
         "lib/dnx451/Microsoft.AspNet.Authentication.JwtBearer.xml",
         "lib/dnxcore50/Microsoft.AspNet.Authentication.JwtBearer.dll",
         "lib/dnxcore50/Microsoft.AspNet.Authentication.JwtBearer.xml",
+        "Microsoft.AspNet.Authentication.JwtBearer.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Authentication.JwtBearer.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Authentication.JwtBearer.nuspec"
       ]
@@ -9257,6 +9278,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Authentication.OAuth.xml",
         "lib/net451/Microsoft.AspNet.Authentication.OAuth.dll",
         "lib/net451/Microsoft.AspNet.Authentication.OAuth.xml",
+        "Microsoft.AspNet.Authentication.OAuth.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Authentication.OAuth.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Authentication.OAuth.nuspec"
       ]
@@ -9269,6 +9291,7 @@
         "lib/dnx451/Microsoft.AspNet.Authentication.OpenIdConnect.xml",
         "lib/dnxcore50/Microsoft.AspNet.Authentication.OpenIdConnect.dll",
         "lib/dnxcore50/Microsoft.AspNet.Authentication.OpenIdConnect.xml",
+        "Microsoft.AspNet.Authentication.OpenIdConnect.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Authentication.OpenIdConnect.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Authentication.OpenIdConnect.nuspec"
       ]
@@ -9281,6 +9304,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Authentication.Twitter.xml",
         "lib/net451/Microsoft.AspNet.Authentication.Twitter.dll",
         "lib/net451/Microsoft.AspNet.Authentication.Twitter.xml",
+        "Microsoft.AspNet.Authentication.Twitter.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Authentication.Twitter.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Authentication.Twitter.nuspec"
       ]
@@ -9293,6 +9317,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Authorization.xml",
         "lib/net451/Microsoft.AspNet.Authorization.dll",
         "lib/net451/Microsoft.AspNet.Authorization.xml",
+        "Microsoft.AspNet.Authorization.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Authorization.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Authorization.nuspec"
       ]
@@ -9305,6 +9330,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Cors.xml",
         "lib/net451/Microsoft.AspNet.Cors.dll",
         "lib/net451/Microsoft.AspNet.Cors.xml",
+        "Microsoft.AspNet.Cors.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Cors.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Cors.nuspec"
       ]
@@ -9317,6 +9343,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Cryptography.Internal.xml",
         "lib/net451/Microsoft.AspNet.Cryptography.Internal.dll",
         "lib/net451/Microsoft.AspNet.Cryptography.Internal.xml",
+        "Microsoft.AspNet.Cryptography.Internal.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Cryptography.Internal.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Cryptography.Internal.nuspec"
       ]
@@ -9329,6 +9356,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Cryptography.KeyDerivation.xml",
         "lib/net451/Microsoft.AspNet.Cryptography.KeyDerivation.dll",
         "lib/net451/Microsoft.AspNet.Cryptography.KeyDerivation.xml",
+        "Microsoft.AspNet.Cryptography.KeyDerivation.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Cryptography.KeyDerivation.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Cryptography.KeyDerivation.nuspec"
       ]
@@ -9341,6 +9369,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.DataProtection.xml",
         "lib/net451/Microsoft.AspNet.DataProtection.dll",
         "lib/net451/Microsoft.AspNet.DataProtection.xml",
+        "Microsoft.AspNet.DataProtection.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.DataProtection.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.DataProtection.nuspec"
       ]
@@ -9353,6 +9382,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.DataProtection.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.DataProtection.Abstractions.dll",
         "lib/net451/Microsoft.AspNet.DataProtection.Abstractions.xml",
+        "Microsoft.AspNet.DataProtection.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.DataProtection.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.DataProtection.Abstractions.nuspec"
       ]
@@ -9364,6 +9394,7 @@
         "content/net451/web.config.transform",
         "lib/net451/Microsoft.AspNet.DataProtection.SystemWeb.dll",
         "lib/net451/Microsoft.AspNet.DataProtection.SystemWeb.xml",
+        "Microsoft.AspNet.DataProtection.SystemWeb.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.DataProtection.SystemWeb.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.DataProtection.SystemWeb.nuspec"
       ]
@@ -9376,6 +9407,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Diagnostics.xml",
         "lib/net451/Microsoft.AspNet.Diagnostics.dll",
         "lib/net451/Microsoft.AspNet.Diagnostics.xml",
+        "Microsoft.AspNet.Diagnostics.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Diagnostics.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Diagnostics.nuspec"
       ]
@@ -9388,6 +9420,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Diagnostics.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.Diagnostics.Abstractions.dll",
         "lib/net451/Microsoft.AspNet.Diagnostics.Abstractions.xml",
+        "Microsoft.AspNet.Diagnostics.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Diagnostics.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Diagnostics.Abstractions.nuspec"
       ]
@@ -9400,6 +9433,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Diagnostics.Entity.xml",
         "lib/net451/Microsoft.AspNet.Diagnostics.Entity.dll",
         "lib/net451/Microsoft.AspNet.Diagnostics.Entity.xml",
+        "Microsoft.AspNet.Diagnostics.Entity.7.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Diagnostics.Entity.7.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Diagnostics.Entity.nuspec"
       ]
@@ -9412,6 +9446,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.FileProviders.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.FileProviders.Abstractions.dll",
         "lib/net451/Microsoft.AspNet.FileProviders.Abstractions.xml",
+        "Microsoft.AspNet.FileProviders.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.FileProviders.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.FileProviders.Abstractions.nuspec"
       ]
@@ -9424,6 +9459,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.FileProviders.Physical.xml",
         "lib/net451/Microsoft.AspNet.FileProviders.Physical.dll",
         "lib/net451/Microsoft.AspNet.FileProviders.Physical.xml",
+        "Microsoft.AspNet.FileProviders.Physical.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.FileProviders.Physical.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.FileProviders.Physical.nuspec"
       ]
@@ -9440,6 +9476,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Hosting.xml",
         "lib/net451/Microsoft.AspNet.Hosting.dll",
         "lib/net451/Microsoft.AspNet.Hosting.xml",
+        "Microsoft.AspNet.Hosting.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Hosting.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Hosting.nuspec"
       ]
@@ -9452,6 +9489,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Hosting.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.Hosting.Abstractions.dll",
         "lib/net451/Microsoft.AspNet.Hosting.Abstractions.xml",
+        "Microsoft.AspNet.Hosting.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Hosting.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Hosting.Abstractions.nuspec"
       ]
@@ -9464,6 +9502,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Hosting.Server.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll",
         "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.xml",
+        "Microsoft.AspNet.Hosting.Server.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Hosting.Server.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Hosting.Server.Abstractions.nuspec"
       ]
@@ -9476,6 +9515,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Html.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.Html.Abstractions.dll",
         "lib/net451/Microsoft.AspNet.Html.Abstractions.xml",
+        "Microsoft.AspNet.Html.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Html.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Html.Abstractions.nuspec"
       ]
@@ -9488,6 +9528,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Http.xml",
         "lib/net451/Microsoft.AspNet.Http.dll",
         "lib/net451/Microsoft.AspNet.Http.xml",
+        "Microsoft.AspNet.Http.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Http.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Http.nuspec"
       ]
@@ -9500,6 +9541,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Http.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.Http.Abstractions.dll",
         "lib/net451/Microsoft.AspNet.Http.Abstractions.xml",
+        "Microsoft.AspNet.Http.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Http.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Http.Abstractions.nuspec"
       ]
@@ -9512,6 +9554,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Http.Extensions.xml",
         "lib/net451/Microsoft.AspNet.Http.Extensions.dll",
         "lib/net451/Microsoft.AspNet.Http.Extensions.xml",
+        "Microsoft.AspNet.Http.Extensions.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Http.Extensions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Http.Extensions.nuspec"
       ]
@@ -9524,6 +9567,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Http.Features.xml",
         "lib/net451/Microsoft.AspNet.Http.Features.dll",
         "lib/net451/Microsoft.AspNet.Http.Features.xml",
+        "Microsoft.AspNet.Http.Features.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Http.Features.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Http.Features.nuspec"
       ]
@@ -9536,6 +9580,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Identity.xml",
         "lib/net451/Microsoft.AspNet.Identity.dll",
         "lib/net451/Microsoft.AspNet.Identity.xml",
+        "Microsoft.AspNet.Identity.3.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Identity.3.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Identity.nuspec"
       ]
@@ -9548,6 +9593,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Identity.EntityFramework.xml",
         "lib/net451/Microsoft.AspNet.Identity.EntityFramework.dll",
         "lib/net451/Microsoft.AspNet.Identity.EntityFramework.xml",
+        "Microsoft.AspNet.Identity.EntityFramework.3.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Identity.EntityFramework.3.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Identity.EntityFramework.nuspec"
       ]
@@ -9560,6 +9606,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.IISPlatformHandler.xml",
         "lib/net451/Microsoft.AspNet.IISPlatformHandler.dll",
         "lib/net451/Microsoft.AspNet.IISPlatformHandler.xml",
+        "Microsoft.AspNet.IISPlatformHandler.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.IISPlatformHandler.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.IISPlatformHandler.nuspec"
       ]
@@ -9572,6 +9619,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.JsonPatch.xml",
         "lib/net451/Microsoft.AspNet.JsonPatch.dll",
         "lib/net451/Microsoft.AspNet.JsonPatch.xml",
+        "Microsoft.AspNet.JsonPatch.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.JsonPatch.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.JsonPatch.nuspec"
       ]
@@ -9584,6 +9632,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Localization.xml",
         "lib/net451/Microsoft.AspNet.Localization.dll",
         "lib/net451/Microsoft.AspNet.Localization.xml",
+        "Microsoft.AspNet.Localization.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Localization.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Localization.nuspec"
       ]
@@ -9596,6 +9645,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.xml",
         "lib/net451/Microsoft.AspNet.Mvc.dll",
         "lib/net451/Microsoft.AspNet.Mvc.xml",
+        "Microsoft.AspNet.Mvc.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.nuspec"
       ]
@@ -9608,6 +9658,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.Mvc.Abstractions.dll",
         "lib/net451/Microsoft.AspNet.Mvc.Abstractions.xml",
+        "Microsoft.AspNet.Mvc.Abstractions.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.Abstractions.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Abstractions.nuspec"
       ]
@@ -9620,6 +9671,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.ApiExplorer.xml",
         "lib/net451/Microsoft.AspNet.Mvc.ApiExplorer.dll",
         "lib/net451/Microsoft.AspNet.Mvc.ApiExplorer.xml",
+        "Microsoft.AspNet.Mvc.ApiExplorer.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.ApiExplorer.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.ApiExplorer.nuspec"
       ]
@@ -9632,6 +9684,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.Core.xml",
         "lib/net451/Microsoft.AspNet.Mvc.Core.dll",
         "lib/net451/Microsoft.AspNet.Mvc.Core.xml",
+        "Microsoft.AspNet.Mvc.Core.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.Core.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Core.nuspec"
       ]
@@ -9644,6 +9697,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.Cors.xml",
         "lib/net451/Microsoft.AspNet.Mvc.Cors.dll",
         "lib/net451/Microsoft.AspNet.Mvc.Cors.xml",
+        "Microsoft.AspNet.Mvc.Cors.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.Cors.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Cors.nuspec"
       ]
@@ -9656,6 +9710,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.DataAnnotations.xml",
         "lib/net451/Microsoft.AspNet.Mvc.DataAnnotations.dll",
         "lib/net451/Microsoft.AspNet.Mvc.DataAnnotations.xml",
+        "Microsoft.AspNet.Mvc.DataAnnotations.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.DataAnnotations.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.DataAnnotations.nuspec"
       ]
@@ -9668,6 +9723,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.Formatters.Json.xml",
         "lib/net451/Microsoft.AspNet.Mvc.Formatters.Json.dll",
         "lib/net451/Microsoft.AspNet.Mvc.Formatters.Json.xml",
+        "Microsoft.AspNet.Mvc.Formatters.Json.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.Formatters.Json.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Formatters.Json.nuspec"
       ]
@@ -9680,6 +9736,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.Localization.xml",
         "lib/net451/Microsoft.AspNet.Mvc.Localization.dll",
         "lib/net451/Microsoft.AspNet.Mvc.Localization.xml",
+        "Microsoft.AspNet.Mvc.Localization.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.Localization.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Localization.nuspec"
       ]
@@ -9692,6 +9749,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.Razor.xml",
         "lib/net451/Microsoft.AspNet.Mvc.Razor.dll",
         "lib/net451/Microsoft.AspNet.Mvc.Razor.xml",
+        "Microsoft.AspNet.Mvc.Razor.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.Razor.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Razor.nuspec"
       ]
@@ -9704,6 +9762,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.Razor.Host.xml",
         "lib/net451/Microsoft.AspNet.Mvc.Razor.Host.dll",
         "lib/net451/Microsoft.AspNet.Mvc.Razor.Host.xml",
+        "Microsoft.AspNet.Mvc.Razor.Host.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.Razor.Host.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Razor.Host.nuspec"
       ]
@@ -9716,6 +9775,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.TagHelpers.xml",
         "lib/net451/Microsoft.AspNet.Mvc.TagHelpers.dll",
         "lib/net451/Microsoft.AspNet.Mvc.TagHelpers.xml",
+        "Microsoft.AspNet.Mvc.TagHelpers.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.TagHelpers.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.TagHelpers.nuspec"
       ]
@@ -9728,6 +9788,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Mvc.ViewFeatures.xml",
         "lib/net451/Microsoft.AspNet.Mvc.ViewFeatures.dll",
         "lib/net451/Microsoft.AspNet.Mvc.ViewFeatures.xml",
+        "Microsoft.AspNet.Mvc.ViewFeatures.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.ViewFeatures.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.ViewFeatures.nuspec"
       ]
@@ -9740,6 +9801,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Owin.xml",
         "lib/net451/Microsoft.AspNet.Owin.dll",
         "lib/net451/Microsoft.AspNet.Owin.xml",
+        "Microsoft.AspNet.Owin.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Owin.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Owin.nuspec"
       ]
@@ -9752,6 +9814,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.xml",
         "lib/net451/Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.dll",
         "lib/net451/Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.xml",
+        "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.nuspec"
       ]
@@ -9764,6 +9827,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Razor.xml",
         "lib/net451/Microsoft.AspNet.Razor.dll",
         "lib/net451/Microsoft.AspNet.Razor.xml",
+        "Microsoft.AspNet.Razor.4.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Razor.4.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Razor.nuspec"
       ]
@@ -9776,6 +9840,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Razor.Runtime.xml",
         "lib/net451/Microsoft.AspNet.Razor.Runtime.dll",
         "lib/net451/Microsoft.AspNet.Razor.Runtime.xml",
+        "Microsoft.AspNet.Razor.Runtime.4.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Razor.Runtime.4.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Razor.Runtime.nuspec"
       ]
@@ -9788,6 +9853,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Razor.Runtime.Precompilation.xml",
         "lib/net451/Microsoft.AspNet.Razor.Runtime.Precompilation.dll",
         "lib/net451/Microsoft.AspNet.Razor.Runtime.Precompilation.xml",
+        "Microsoft.AspNet.Razor.Runtime.Precompilation.4.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Razor.Runtime.Precompilation.4.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Razor.Runtime.Precompilation.nuspec"
       ]
@@ -9800,6 +9866,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Routing.xml",
         "lib/net451/Microsoft.AspNet.Routing.dll",
         "lib/net451/Microsoft.AspNet.Routing.xml",
+        "Microsoft.AspNet.Routing.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Routing.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Routing.nuspec"
       ]
@@ -9816,6 +9883,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Server.Kestrel.xml",
         "lib/net451/Microsoft.AspNet.Server.Kestrel.dll",
         "lib/net451/Microsoft.AspNet.Server.Kestrel.xml",
+        "Microsoft.AspNet.Server.Kestrel.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Server.Kestrel.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Server.Kestrel.nuspec",
         "runtimes/osx/native/libuv.dylib",
@@ -9837,6 +9905,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Server.WebListener.xml",
         "lib/net451/Microsoft.AspNet.Server.WebListener.dll",
         "lib/net451/Microsoft.AspNet.Server.WebListener.xml",
+        "Microsoft.AspNet.Server.WebListener.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Server.WebListener.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Server.WebListener.nuspec"
       ]
@@ -9849,6 +9918,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Session.xml",
         "lib/net451/Microsoft.AspNet.Session.dll",
         "lib/net451/Microsoft.AspNet.Session.xml",
+        "Microsoft.AspNet.Session.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Session.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Session.nuspec"
       ]
@@ -9859,6 +9929,7 @@
       "files": [
         "lib/net45/Microsoft.AspNet.SignalR.Core.dll",
         "lib/net45/Microsoft.AspNet.SignalR.Core.xml",
+        "Microsoft.AspNet.SignalR.Core.2.2.0.nupkg",
         "Microsoft.AspNet.SignalR.Core.2.2.0.nupkg.sha512",
         "Microsoft.AspNet.SignalR.Core.nuspec"
       ]
@@ -9869,6 +9940,7 @@
       "files": [
         "content/Scripts/jquery.signalR-2.2.0.js",
         "content/Scripts/jquery.signalR-2.2.0.min.js",
+        "Microsoft.AspNet.SignalR.JS.2.2.0.nupkg",
         "Microsoft.AspNet.SignalR.JS.2.2.0.nupkg.sha512",
         "Microsoft.AspNet.SignalR.JS.nuspec"
       ]
@@ -9881,6 +9953,7 @@
         "lib/net40/Microsoft.AspNet.SignalR.Owin.xml",
         "lib/net45/Microsoft.AspNet.SignalR.Owin.dll",
         "lib/net45/Microsoft.AspNet.SignalR.Owin.xml",
+        "Microsoft.AspNet.SignalR.Owin.1.2.2.nupkg",
         "Microsoft.AspNet.SignalR.Owin.1.2.2.nupkg.sha512",
         "Microsoft.AspNet.SignalR.Owin.nuspec"
       ]
@@ -9893,6 +9966,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.StaticFiles.xml",
         "lib/net451/Microsoft.AspNet.StaticFiles.dll",
         "lib/net451/Microsoft.AspNet.StaticFiles.xml",
+        "Microsoft.AspNet.StaticFiles.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.StaticFiles.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.StaticFiles.nuspec"
       ]
@@ -9908,6 +9982,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.Tooling.Razor.xml",
         "lib/net451/Microsoft.AspNet.Tooling.Razor.dll",
         "lib/net451/Microsoft.AspNet.Tooling.Razor.xml",
+        "Microsoft.AspNet.Tooling.Razor.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Tooling.Razor.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Tooling.Razor.nuspec"
       ]
@@ -9918,6 +9993,7 @@
       "files": [
         "lib/net40/System.Web.Optimization.dll",
         "lib/net40/system.web.optimization.xml",
+        "Microsoft.AspNet.Web.Optimization.1.1.3.nupkg",
         "Microsoft.AspNet.Web.Optimization.1.1.3.nupkg.sha512",
         "Microsoft.AspNet.Web.Optimization.nuspec"
       ]
@@ -9930,6 +10006,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.WebSockets.Protocol.xml",
         "lib/net451/Microsoft.AspNet.WebSockets.Protocol.dll",
         "lib/net451/Microsoft.AspNet.WebSockets.Protocol.xml",
+        "Microsoft.AspNet.WebSockets.Protocol.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.WebSockets.Protocol.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.WebSockets.Protocol.nuspec"
       ]
@@ -9942,6 +10019,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.WebSockets.Server.xml",
         "lib/net451/Microsoft.AspNet.WebSockets.Server.dll",
         "lib/net451/Microsoft.AspNet.WebSockets.Server.xml",
+        "Microsoft.AspNet.WebSockets.Server.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.WebSockets.Server.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.WebSockets.Server.nuspec"
       ]
@@ -9954,6 +10032,7 @@
         "lib/dotnet5.4/Microsoft.AspNet.WebUtilities.xml",
         "lib/net451/Microsoft.AspNet.WebUtilities.dll",
         "lib/net451/Microsoft.AspNet.WebUtilities.xml",
+        "Microsoft.AspNet.WebUtilities.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.WebUtilities.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.WebUtilities.nuspec"
       ]
@@ -9963,6 +10042,7 @@
       "sha512": "HLC6HZEnJpRX6HFHAYngQEYSx30Py0r4Jcl2kP/KOR4Ctc1oDLoDDCKc5y7NE/Rck7Hj+2tZ0RO8cDvtyMOlRQ==",
       "files": [
         "content/Readme.txt",
+        "Microsoft.AspNetCore.Authentication.Cookies.0.0.1-alpha.nupkg",
         "Microsoft.AspNetCore.Authentication.Cookies.0.0.1-alpha.nupkg.sha512",
         "Microsoft.AspNetCore.Authentication.Cookies.nuspec"
       ]
@@ -9982,6 +10062,7 @@
       "sha512": "VYVragg1EADQIdmMzgmttXXk1wk8D054oH26fG9p/cpBzQuYf0i2TsgkVfYuA+xF0kPdBeE1r6s4pLgbMLoHNQ==",
       "files": [
         "content/Readme.txt",
+        "Microsoft.AspNetCore.Authentication.OpenIdConnect.0.0.1-alpha.nupkg",
         "Microsoft.AspNetCore.Authentication.OpenIdConnect.0.0.1-alpha.nupkg.sha512",
         "Microsoft.AspNetCore.Authentication.OpenIdConnect.nuspec"
       ]
@@ -9994,6 +10075,7 @@
         "analyzers/dotnet/cs/Microsoft.CodeAnalysis.CSharp.Analyzers.dll",
         "analyzers/dotnet/vb/Microsoft.CodeAnalysis.Analyzers.dll",
         "analyzers/dotnet/vb/Microsoft.CodeAnalysis.VisualBasic.Analyzers.dll",
+        "Microsoft.CodeAnalysis.Analyzers.1.0.0.nupkg",
         "Microsoft.CodeAnalysis.Analyzers.1.0.0.nupkg.sha512",
         "Microsoft.CodeAnalysis.Analyzers.nuspec",
         "ThirdPartyNotices.rtf",
@@ -10009,6 +10091,7 @@
         "lib/net45/Microsoft.CodeAnalysis.xml",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.dll",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.xml",
+        "Microsoft.CodeAnalysis.Common.1.1.0-rc1-20151109-01.nupkg",
         "Microsoft.CodeAnalysis.Common.1.1.0-rc1-20151109-01.nupkg.sha512",
         "Microsoft.CodeAnalysis.Common.nuspec",
         "ThirdPartyNotices.rtf"
@@ -10022,6 +10105,7 @@
         "lib/net45/Microsoft.CodeAnalysis.CSharp.xml",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.dll",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.xml",
+        "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1-20151109-01.nupkg",
         "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1-20151109-01.nupkg.sha512",
         "Microsoft.CodeAnalysis.CSharp.nuspec",
         "ThirdPartyNotices.rtf"
@@ -10042,6 +10126,7 @@
         "lib/net451/Microsoft.Data.Sqlite.xml",
         "lib/netcore50/Microsoft.Data.Sqlite.dll",
         "lib/netcore50/Microsoft.Data.Sqlite.xml",
+        "Microsoft.Data.Sqlite.1.0.0-rc1-final.nupkg",
         "Microsoft.Data.Sqlite.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Data.Sqlite.nuspec",
         "runtimes/win7-x64/native/sqlite3.dll",
@@ -10056,6 +10141,7 @@
         "lib/dotnet5.4/Microsoft.Dnx.Compilation.Abstractions.xml",
         "lib/net451/Microsoft.Dnx.Compilation.Abstractions.dll",
         "lib/net451/Microsoft.Dnx.Compilation.Abstractions.xml",
+        "Microsoft.Dnx.Compilation.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.Dnx.Compilation.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Dnx.Compilation.Abstractions.nuspec"
       ]
@@ -10068,6 +10154,7 @@
         "lib/dotnet5.4/Microsoft.Dnx.Compilation.CSharp.Abstractions.xml",
         "lib/net451/Microsoft.Dnx.Compilation.CSharp.Abstractions.dll",
         "lib/net451/Microsoft.Dnx.Compilation.CSharp.Abstractions.xml",
+        "Microsoft.Dnx.Compilation.CSharp.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.Dnx.Compilation.CSharp.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Dnx.Compilation.CSharp.Abstractions.nuspec"
       ]
@@ -10080,6 +10167,7 @@
         "lib/dotnet5.4/Microsoft.Dnx.Compilation.CSharp.Common.xml",
         "lib/net451/Microsoft.Dnx.Compilation.CSharp.Common.dll",
         "lib/net451/Microsoft.Dnx.Compilation.CSharp.Common.xml",
+        "Microsoft.Dnx.Compilation.CSharp.Common.1.0.0-rc1-final.nupkg",
         "Microsoft.Dnx.Compilation.CSharp.Common.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Dnx.Compilation.CSharp.Common.nuspec"
       ]
@@ -10094,6 +10182,7 @@
         "lib/net451/Microsoft.Extensions.Caching.Abstractions.xml",
         "lib/netcore50/Microsoft.Extensions.Caching.Abstractions.dll",
         "lib/netcore50/Microsoft.Extensions.Caching.Abstractions.xml",
+        "Microsoft.Extensions.Caching.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Caching.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Caching.Abstractions.nuspec"
       ]
@@ -10108,6 +10197,7 @@
         "lib/net451/Microsoft.Extensions.Caching.Memory.xml",
         "lib/netcore50/Microsoft.Extensions.Caching.Memory.dll",
         "lib/netcore50/Microsoft.Extensions.Caching.Memory.xml",
+        "Microsoft.Extensions.Caching.Memory.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Caching.Memory.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Caching.Memory.nuspec"
       ]
@@ -10120,6 +10210,7 @@
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.xml",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.dll",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.xml",
+        "Microsoft.Extensions.CodeGeneration.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.CodeGeneration.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.CodeGeneration.nuspec"
       ]
@@ -10132,6 +10223,7 @@
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.xml",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Core.dll",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Core.xml",
+        "Microsoft.Extensions.CodeGeneration.Core.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.CodeGeneration.Core.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.CodeGeneration.Core.nuspec"
       ]
@@ -10144,6 +10236,7 @@
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.xml",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.EntityFramework.dll",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.EntityFramework.xml",
+        "Microsoft.Extensions.CodeGeneration.EntityFramework.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.CodeGeneration.EntityFramework.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.CodeGeneration.EntityFramework.nuspec",
         "Templates/DbContext/NewLocalDbContext.cshtml"
@@ -10157,6 +10250,7 @@
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.xml",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Templating.dll",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Templating.xml",
+        "Microsoft.Extensions.CodeGeneration.Templating.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.CodeGeneration.Templating.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.CodeGeneration.Templating.nuspec"
       ]
@@ -10169,6 +10263,7 @@
         "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.xml",
         "lib/dnxcore50/Microsoft.Extensions.CodeGenerators.Mvc.dll",
         "lib/dnxcore50/Microsoft.Extensions.CodeGenerators.Mvc.xml",
+        "Microsoft.Extensions.CodeGenerators.Mvc.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.CodeGenerators.Mvc.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.CodeGenerators.Mvc.nuspec",
         "Templates/ControllerGenerator/ApiControllerWithContext.cshtml",
@@ -10214,6 +10309,7 @@
         "lib/net451/Microsoft.Extensions.Configuration.xml",
         "lib/netcore50/Microsoft.Extensions.Configuration.dll",
         "lib/netcore50/Microsoft.Extensions.Configuration.xml",
+        "Microsoft.Extensions.Configuration.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Configuration.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Configuration.nuspec"
       ]
@@ -10228,6 +10324,7 @@
         "lib/net451/Microsoft.Extensions.Configuration.Abstractions.xml",
         "lib/netcore50/Microsoft.Extensions.Configuration.Abstractions.dll",
         "lib/netcore50/Microsoft.Extensions.Configuration.Abstractions.xml",
+        "Microsoft.Extensions.Configuration.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Configuration.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Configuration.Abstractions.nuspec"
       ]
@@ -10242,6 +10339,7 @@
         "lib/net451/Microsoft.Extensions.Configuration.Binder.xml",
         "lib/netcore50/Microsoft.Extensions.Configuration.Binder.dll",
         "lib/netcore50/Microsoft.Extensions.Configuration.Binder.xml",
+        "Microsoft.Extensions.Configuration.Binder.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Configuration.Binder.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Configuration.Binder.nuspec"
       ]
@@ -10256,6 +10354,7 @@
         "lib/net451/Microsoft.Extensions.Configuration.CommandLine.xml",
         "lib/netcore50/Microsoft.Extensions.Configuration.CommandLine.dll",
         "lib/netcore50/Microsoft.Extensions.Configuration.CommandLine.xml",
+        "Microsoft.Extensions.Configuration.CommandLine.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Configuration.CommandLine.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Configuration.CommandLine.nuspec"
       ]
@@ -10270,6 +10369,7 @@
         "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.xml",
         "lib/netcore50/Microsoft.Extensions.Configuration.EnvironmentVariables.dll",
         "lib/netcore50/Microsoft.Extensions.Configuration.EnvironmentVariables.xml",
+        "Microsoft.Extensions.Configuration.EnvironmentVariables.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Configuration.EnvironmentVariables.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Configuration.EnvironmentVariables.nuspec"
       ]
@@ -10284,6 +10384,7 @@
         "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.xml",
         "lib/netcore50/Microsoft.Extensions.Configuration.FileExtensions.dll",
         "lib/netcore50/Microsoft.Extensions.Configuration.FileExtensions.xml",
+        "Microsoft.Extensions.Configuration.FileExtensions.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Configuration.FileExtensions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Configuration.FileExtensions.nuspec"
       ]
@@ -10298,6 +10399,7 @@
         "lib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.xml",
         "lib/netcore50/Microsoft.Extensions.Configuration.FileProviderExtensions.dll",
         "lib/netcore50/Microsoft.Extensions.Configuration.FileProviderExtensions.xml",
+        "Microsoft.Extensions.Configuration.FileProviderExtensions.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Configuration.FileProviderExtensions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Configuration.FileProviderExtensions.nuspec"
       ]
@@ -10312,6 +10414,7 @@
         "lib/net451/Microsoft.Extensions.Configuration.Json.xml",
         "lib/netcore50/Microsoft.Extensions.Configuration.Json.dll",
         "lib/netcore50/Microsoft.Extensions.Configuration.Json.xml",
+        "Microsoft.Extensions.Configuration.Json.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Configuration.Json.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Configuration.Json.nuspec"
       ]
@@ -10324,6 +10427,7 @@
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.UserSecrets.xml",
         "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll",
         "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.xml",
+        "Microsoft.Extensions.Configuration.UserSecrets.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Configuration.UserSecrets.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Configuration.UserSecrets.nuspec"
       ]
@@ -10338,6 +10442,7 @@
         "lib/net451/Microsoft.Extensions.DependencyInjection.xml",
         "lib/netcore50/Microsoft.Extensions.DependencyInjection.dll",
         "lib/netcore50/Microsoft.Extensions.DependencyInjection.xml",
+        "Microsoft.Extensions.DependencyInjection.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.DependencyInjection.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.DependencyInjection.nuspec"
       ]
@@ -10352,6 +10457,7 @@
         "lib/net451/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
         "lib/netcore50/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
         "lib/netcore50/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
+        "Microsoft.Extensions.DependencyInjection.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.DependencyInjection.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.DependencyInjection.Abstractions.nuspec"
       ]
@@ -10364,6 +10470,7 @@
         "lib/dotnet5.4/Microsoft.Extensions.FileSystemGlobbing.xml",
         "lib/net451/Microsoft.Extensions.FileSystemGlobbing.dll",
         "lib/net451/Microsoft.Extensions.FileSystemGlobbing.xml",
+        "Microsoft.Extensions.FileSystemGlobbing.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.FileSystemGlobbing.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.FileSystemGlobbing.nuspec"
       ]
@@ -10376,6 +10483,7 @@
         "lib/dotnet5.4/Microsoft.Extensions.Globalization.CultureInfoCache.xml",
         "lib/net451/Microsoft.Extensions.Globalization.CultureInfoCache.dll",
         "lib/net451/Microsoft.Extensions.Globalization.CultureInfoCache.xml",
+        "Microsoft.Extensions.Globalization.CultureInfoCache.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Globalization.CultureInfoCache.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Globalization.CultureInfoCache.nuspec"
       ]
@@ -10388,6 +10496,7 @@
         "lib/dotnet5.4/Microsoft.Extensions.Localization.xml",
         "lib/net451/Microsoft.Extensions.Localization.dll",
         "lib/net451/Microsoft.Extensions.Localization.xml",
+        "Microsoft.Extensions.Localization.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Localization.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Localization.nuspec"
       ]
@@ -10400,6 +10509,7 @@
         "lib/dotnet5.4/Microsoft.Extensions.Localization.Abstractions.xml",
         "lib/net451/Microsoft.Extensions.Localization.Abstractions.dll",
         "lib/net451/Microsoft.Extensions.Localization.Abstractions.xml",
+        "Microsoft.Extensions.Localization.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Localization.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Localization.Abstractions.nuspec"
       ]
@@ -10414,6 +10524,7 @@
         "lib/net451/Microsoft.Extensions.Logging.xml",
         "lib/netcore50/Microsoft.Extensions.Logging.dll",
         "lib/netcore50/Microsoft.Extensions.Logging.xml",
+        "Microsoft.Extensions.Logging.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Logging.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Logging.nuspec"
       ]
@@ -10443,6 +10554,7 @@
         "lib/net451/Microsoft.Extensions.Logging.Console.xml",
         "lib/netcore50/Microsoft.Extensions.Logging.Console.dll",
         "lib/netcore50/Microsoft.Extensions.Logging.Console.xml",
+        "Microsoft.Extensions.Logging.Console.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Logging.Console.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Logging.Console.nuspec"
       ]
@@ -10457,6 +10569,7 @@
         "lib/net451/Microsoft.Extensions.Logging.Debug.xml",
         "lib/netcore50/Microsoft.Extensions.Logging.Debug.dll",
         "lib/netcore50/Microsoft.Extensions.Logging.Debug.xml",
+        "Microsoft.Extensions.Logging.Debug.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Logging.Debug.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Logging.Debug.nuspec"
       ]
@@ -10469,6 +10582,7 @@
         "lib/dotnet5.4/Microsoft.Extensions.MemoryPool.xml",
         "lib/net451/Microsoft.Extensions.MemoryPool.dll",
         "lib/net451/Microsoft.Extensions.MemoryPool.xml",
+        "Microsoft.Extensions.MemoryPool.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.MemoryPool.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.MemoryPool.nuspec"
       ]
@@ -10478,6 +10592,7 @@
       "sha512": "5zH0KTUqMzt66T9dcJy2x7imjsAHgqctudJGWDKHtNtyKsedyv0xAc7PLStFfrkZQjlqtn/X8QpHnsGEl+fMwQ==",
       "files": [
         "content/Readme.txt",
+        "Microsoft.Extensions.Options.0.0.1-alpha.nupkg",
         "Microsoft.Extensions.Options.0.0.1-alpha.nupkg.sha512",
         "Microsoft.Extensions.Options.nuspec"
       ]
@@ -10492,6 +10607,7 @@
         "lib/net451/Microsoft.Extensions.OptionsModel.xml",
         "lib/netcore50/Microsoft.Extensions.OptionsModel.dll",
         "lib/netcore50/Microsoft.Extensions.OptionsModel.xml",
+        "Microsoft.Extensions.OptionsModel.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.OptionsModel.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.OptionsModel.nuspec"
       ]
@@ -10504,6 +10620,7 @@
         "lib/dotnet5.4/Microsoft.Extensions.PlatformAbstractions.xml",
         "lib/net451/Microsoft.Extensions.PlatformAbstractions.dll",
         "lib/net451/Microsoft.Extensions.PlatformAbstractions.xml",
+        "Microsoft.Extensions.PlatformAbstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.PlatformAbstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.PlatformAbstractions.nuspec"
       ]
@@ -10531,6 +10648,7 @@
         "lib/dotnet5.4/Microsoft.Extensions.WebEncoders.xml",
         "lib/net451/Microsoft.Extensions.WebEncoders.dll",
         "lib/net451/Microsoft.Extensions.WebEncoders.xml",
+        "Microsoft.Extensions.WebEncoders.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.WebEncoders.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.WebEncoders.nuspec"
       ]
@@ -10543,6 +10661,7 @@
         "lib/dotnet5.4/Microsoft.Extensions.WebEncoders.Core.xml",
         "lib/net451/Microsoft.Extensions.WebEncoders.Core.dll",
         "lib/net451/Microsoft.Extensions.WebEncoders.Core.xml",
+        "Microsoft.Extensions.WebEncoders.Core.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.WebEncoders.Core.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.WebEncoders.Core.nuspec"
       ]
@@ -10559,6 +10678,7 @@
         "lib/dotnet/Microsoft.Framework.Configuration.xml",
         "lib/net45/Microsoft.Framework.Configuration.dll",
         "lib/net45/Microsoft.Framework.Configuration.xml",
+        "Microsoft.Framework.Configuration.1.0.0-beta8.nupkg",
         "Microsoft.Framework.Configuration.1.0.0-beta8.nupkg.sha512",
         "Microsoft.Framework.Configuration.nuspec"
       ]
@@ -10575,6 +10695,7 @@
         "lib/dotnet/Microsoft.Framework.Configuration.Abstractions.xml",
         "lib/net45/Microsoft.Framework.Configuration.Abstractions.dll",
         "lib/net45/Microsoft.Framework.Configuration.Abstractions.xml",
+        "Microsoft.Framework.Configuration.Abstractions.1.0.0-beta8.nupkg",
         "Microsoft.Framework.Configuration.Abstractions.1.0.0-beta8.nupkg.sha512",
         "Microsoft.Framework.Configuration.Abstractions.nuspec"
       ]
@@ -10591,6 +10712,7 @@
         "lib/dotnet/Microsoft.Framework.Configuration.Binder.xml",
         "lib/net45/Microsoft.Framework.Configuration.Binder.dll",
         "lib/net45/Microsoft.Framework.Configuration.Binder.xml",
+        "Microsoft.Framework.Configuration.Binder.1.0.0-beta8.nupkg",
         "Microsoft.Framework.Configuration.Binder.1.0.0-beta8.nupkg.sha512",
         "Microsoft.Framework.Configuration.Binder.nuspec"
       ]
@@ -10605,6 +10727,7 @@
         "lib/dotnet/Microsoft.Framework.Configuration.FileExtensions.xml",
         "lib/net45/Microsoft.Framework.Configuration.FileExtensions.dll",
         "lib/net45/Microsoft.Framework.Configuration.FileExtensions.xml",
+        "Microsoft.Framework.Configuration.FileExtensions.1.0.0-beta8.nupkg",
         "Microsoft.Framework.Configuration.FileExtensions.1.0.0-beta8.nupkg.sha512",
         "Microsoft.Framework.Configuration.FileExtensions.nuspec"
       ]
@@ -10621,6 +10744,7 @@
         "lib/dotnet/Microsoft.Framework.Configuration.Json.xml",
         "lib/net45/Microsoft.Framework.Configuration.Json.dll",
         "lib/net45/Microsoft.Framework.Configuration.Json.xml",
+        "Microsoft.Framework.Configuration.Json.1.0.0-beta8.nupkg",
         "Microsoft.Framework.Configuration.Json.1.0.0-beta8.nupkg.sha512",
         "Microsoft.Framework.Configuration.Json.nuspec"
       ]
@@ -10637,6 +10761,7 @@
         "lib/net45/Microsoft.Framework.ConfigurationModel.xml",
         "lib/portable-net451+win81+wpa81/Microsoft.Framework.ConfigurationModel.dll",
         "lib/portable-net451+win81+wpa81/Microsoft.Framework.ConfigurationModel.xml",
+        "Microsoft.Framework.ConfigurationModel.1.0.0-beta4.nupkg",
         "Microsoft.Framework.ConfigurationModel.1.0.0-beta4.nupkg.sha512",
         "Microsoft.Framework.ConfigurationModel.nuspec"
       ]
@@ -10653,6 +10778,7 @@
         "lib/net45/Microsoft.Framework.ConfigurationModel.Interfaces.xml",
         "lib/portable-net451+win81+wpa81/Microsoft.Framework.ConfigurationModel.Interfaces.dll",
         "lib/portable-net451+win81+wpa81/Microsoft.Framework.ConfigurationModel.Interfaces.xml",
+        "Microsoft.Framework.ConfigurationModel.Interfaces.1.0.0-beta4.nupkg",
         "Microsoft.Framework.ConfigurationModel.Interfaces.1.0.0-beta4.nupkg.sha512",
         "Microsoft.Framework.ConfigurationModel.Interfaces.nuspec"
       ]
@@ -10667,6 +10793,7 @@
         "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Json.xml",
         "lib/net45/Microsoft.Framework.ConfigurationModel.Json.dll",
         "lib/net45/Microsoft.Framework.ConfigurationModel.Json.xml",
+        "Microsoft.Framework.ConfigurationModel.Json.1.0.0-beta4.nupkg",
         "Microsoft.Framework.ConfigurationModel.Json.1.0.0-beta4.nupkg.sha512",
         "Microsoft.Framework.ConfigurationModel.Json.nuspec"
       ]
@@ -10683,6 +10810,7 @@
         "lib/dotnet/Microsoft.Framework.DependencyInjection.xml",
         "lib/net45/Microsoft.Framework.DependencyInjection.dll",
         "lib/net45/Microsoft.Framework.DependencyInjection.xml",
+        "Microsoft.Framework.DependencyInjection.1.0.0-beta8.nupkg",
         "Microsoft.Framework.DependencyInjection.1.0.0-beta8.nupkg.sha512",
         "Microsoft.Framework.DependencyInjection.nuspec"
       ]
@@ -10699,6 +10827,7 @@
         "lib/dotnet/Microsoft.Framework.DependencyInjection.Abstractions.xml",
         "lib/net45/Microsoft.Framework.DependencyInjection.Abstractions.dll",
         "lib/net45/Microsoft.Framework.DependencyInjection.Abstractions.xml",
+        "Microsoft.Framework.DependencyInjection.Abstractions.1.0.0-beta8.nupkg",
         "Microsoft.Framework.DependencyInjection.Abstractions.1.0.0-beta8.nupkg.sha512",
         "Microsoft.Framework.DependencyInjection.Abstractions.nuspec"
       ]
@@ -10711,6 +10840,7 @@
         "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.xml",
         "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.dll",
         "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.xml",
+        "Microsoft.Framework.Runtime.Interfaces.1.0.0-beta4.nupkg",
         "Microsoft.Framework.Runtime.Interfaces.1.0.0-beta4.nupkg.sha512",
         "Microsoft.Framework.Runtime.Interfaces.nuspec"
       ]
@@ -10723,6 +10853,7 @@
         "lib/dotnet5.4/Microsoft.IdentityModel.Logging.xml",
         "lib/net451/Microsoft.IdentityModel.Logging.dll",
         "lib/net451/Microsoft.IdentityModel.Logging.xml",
+        "Microsoft.IdentityModel.Logging.1.0.0-rc1-211161024.nupkg",
         "Microsoft.IdentityModel.Logging.1.0.0-rc1-211161024.nupkg.sha512",
         "Microsoft.IdentityModel.Logging.nuspec"
       ]
@@ -10735,6 +10866,7 @@
         "lib/dotnet5.4/Microsoft.IdentityModel.Protocols.xml",
         "lib/net451/Microsoft.IdentityModel.Protocols.dll",
         "lib/net451/Microsoft.IdentityModel.Protocols.xml",
+        "Microsoft.IdentityModel.Protocols.2.0.0-rc1-211161024.nupkg",
         "Microsoft.IdentityModel.Protocols.2.0.0-rc1-211161024.nupkg.sha512",
         "Microsoft.IdentityModel.Protocols.nuspec"
       ]
@@ -10747,6 +10879,7 @@
         "lib/dotnet5.4/Microsoft.IdentityModel.Protocols.OpenIdConnect.xml",
         "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
         "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.xml",
+        "Microsoft.IdentityModel.Protocols.OpenIdConnect.2.0.0-rc1-211161024.nupkg",
         "Microsoft.IdentityModel.Protocols.OpenIdConnect.2.0.0-rc1-211161024.nupkg.sha512",
         "Microsoft.IdentityModel.Protocols.OpenIdConnect.nuspec"
       ]
@@ -10772,6 +10905,7 @@
         "lib/dotnet5.4/Microsoft.Net.Http.Server.xml",
         "lib/net451/Microsoft.Net.Http.Server.dll",
         "lib/net451/Microsoft.Net.Http.Server.xml",
+        "Microsoft.Net.Http.Server.1.0.0-rc1-final.nupkg",
         "Microsoft.Net.Http.Server.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Net.Http.Server.nuspec"
       ]
@@ -10784,6 +10918,7 @@
         "lib/dotnet5.4/Microsoft.Net.WebSockets.xml",
         "lib/net451/Microsoft.Net.WebSockets.dll",
         "lib/net451/Microsoft.Net.WebSockets.xml",
+        "Microsoft.Net.WebSockets.1.0.0-rc1-final.nupkg",
         "Microsoft.Net.WebSockets.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Net.WebSockets.nuspec"
       ]
@@ -10792,6 +10927,7 @@
       "type": "package",
       "sha512": "YPVzF1z1qhI3am4/I3EWEjn5hxm1wnIbHTRp6nrfKOoj0NBGtubVTTQmC3l5VZIbwmygiMVbWdbFhzJwWJXNEw==",
       "files": [
+        "Microsoft.NETCore.Platforms.1.0.1-beta-23516.nupkg",
         "Microsoft.NETCore.Platforms.1.0.1-beta-23516.nupkg.sha512",
         "Microsoft.NETCore.Platforms.nuspec",
         "runtime.json"
@@ -10801,6 +10937,7 @@
       "type": "package",
       "sha512": "11J+6atPf0UYQnpr8aKy6Xx+O9rAf/46OyODFY8gFbKkW/PVIh7iSHziukpvWZ+hI/ieFklGMopDU1MiUELutQ==",
       "files": [
+        "Microsoft.NETCore.Targets.1.0.1-beta-23516.nupkg",
         "Microsoft.NETCore.Targets.1.0.1-beta-23516.nupkg.sha512",
         "Microsoft.NETCore.Targets.nuspec",
         "runtime.json"
@@ -10814,6 +10951,7 @@
         "lib/net40/Microsoft.Owin.XML",
         "lib/net45/Microsoft.Owin.dll",
         "lib/net45/Microsoft.Owin.XML",
+        "Microsoft.Owin.2.1.0.nupkg",
         "Microsoft.Owin.2.1.0.nupkg.sha512",
         "Microsoft.Owin.nuspec"
       ]
@@ -10824,6 +10962,7 @@
       "files": [
         "lib/net45/Microsoft.Owin.Security.dll",
         "lib/net45/Microsoft.Owin.Security.XML",
+        "Microsoft.Owin.Security.2.1.0.nupkg",
         "Microsoft.Owin.Security.2.1.0.nupkg.sha512",
         "Microsoft.Owin.Security.nuspec"
       ]
@@ -10833,6 +10972,7 @@
       "sha512": "FNmvLn5m2LTU/Rs2KWVo0SIIh9Ek+U0ojex7xeDaSHw/zgEP77A8vY5cVWgUtBGS8MJfDGNn8rpXJWEIQaPwTg==",
       "files": [
         "lib/net40/Microsoft.Web.Infrastructure.dll",
+        "Microsoft.Web.Infrastructure.1.0.0.nupkg",
         "Microsoft.Web.Infrastructure.1.0.0.nupkg.sha512",
         "Microsoft.Web.Infrastructure.nuspec"
       ]
@@ -10871,6 +11011,7 @@
         "lib/Xamarin.iOS10/BouncyCastle.dll",
         "lib/Xamarin.iOS10/MimeKit.dll",
         "lib/Xamarin.iOS10/MimeKit.xml",
+        "MimeKit.1.3.0-beta7.nupkg",
         "MimeKit.1.3.0-beta7.nupkg.sha512",
         "MimeKit.nuspec"
       ]
@@ -10891,6 +11032,7 @@
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
         "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll",
         "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.xml",
+        "Newtonsoft.Json.7.0.1.nupkg",
         "Newtonsoft.Json.7.0.1.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
         "tools/install.ps1"
@@ -10911,6 +11053,7 @@
         "lib/net45/Npgsql.xml",
         "lib/net452/Npgsql.dll",
         "lib/net452/Npgsql.xml",
+        "Npgsql.3.1.0-alpha6.nupkg",
         "Npgsql.3.1.0-alpha6.nupkg.sha512",
         "Npgsql.nuspec"
       ]
@@ -10920,6 +11063,7 @@
       "sha512": "OseTFniKmyp76mEzOBwIKGBRS5eMoYNkMKaMXOpxx9jv88+b6mh1rSaw43vjBOItNhaLFG3d0a20PfHyibH5sw==",
       "files": [
         "lib/net40/Owin.dll",
+        "Owin.1.0.0.nupkg",
         "Owin.1.0.0.nupkg.sha512",
         "Owin.nuspec"
       ]
@@ -10929,6 +11073,7 @@
       "sha512": "6l95DlflMld+OmzOGaw3T6Mb9rZrywO1pR8jbafyvu34FId4osC1oo5RfgQVY0rwHkeTG359U+X3BPL6vVRT8Q==",
       "files": [
         "lib/net20/PayPalButtonManagerSDK.dll",
+        "PayPalButtonManagerSDK.2.10.109.nupkg",
         "PayPalButtonManagerSDK.2.10.109.nupkg.sha512",
         "PayPalButtonManagerSDK.nuspec"
       ]
@@ -10942,6 +11087,7 @@
         "lib/net40/PayPalCoreSDK.dll",
         "lib/net45/PayPalCoreSDK.dll",
         "lib/net451/PayPalCoreSDK.dll",
+        "PayPalCoreSDK.1.7.1.nupkg",
         "PayPalCoreSDK.1.7.1.nupkg.sha512",
         "PayPalCoreSDK.nuspec"
       ]
@@ -10958,6 +11104,7 @@
         "lib/net45/Remotion.Linq.xml",
         "lib/portable-net45+win+wpa81+wp80/Remotion.Linq.dll",
         "lib/portable-net45+win+wpa81+wp80/Remotion.Linq.xml",
+        "Remotion.Linq.2.0.1.nupkg",
         "Remotion.Linq.2.0.1.nupkg.sha512",
         "Remotion.Linq.nuspec"
       ]
@@ -11018,6 +11165,7 @@
         "lib/dotnet/System.Collections.Immutable.xml",
         "lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll",
         "lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.xml",
+        "System.Collections.Immutable.1.1.37.nupkg",
         "System.Collections.Immutable.1.1.37.nupkg.sha512",
         "System.Collections.Immutable.nuspec"
       ]
@@ -11125,6 +11273,7 @@
         "ref/wpa81/_._",
         "ref/xamarinios10/_._",
         "ref/xamarinmac20/_._",
+        "System.Diagnostics.Tracing.4.0.0.nupkg",
         "System.Diagnostics.Tracing.4.0.0.nupkg.sha512",
         "System.Diagnostics.Tracing.nuspec"
       ]
@@ -11185,6 +11334,7 @@
         "lib/dotnet5.4/System.IdentityModel.Tokens.xml",
         "lib/net451/System.IdentityModel.Tokens.dll",
         "lib/net451/System.IdentityModel.Tokens.xml",
+        "System.IdentityModel.Tokens.5.0.0-rc1-211161024.nupkg",
         "System.IdentityModel.Tokens.5.0.0-rc1-211161024.nupkg.sha512",
         "System.IdentityModel.Tokens.nuspec"
       ]
@@ -11197,6 +11347,7 @@
         "lib/dotnet5.4/System.IdentityModel.Tokens.Jwt.xml",
         "lib/net451/System.IdentityModel.Tokens.Jwt.dll",
         "lib/net451/System.IdentityModel.Tokens.Jwt.xml",
+        "System.IdentityModel.Tokens.Jwt.5.0.0-rc1-211161024.nupkg",
         "System.IdentityModel.Tokens.Jwt.5.0.0-rc1-211161024.nupkg.sha512",
         "System.IdentityModel.Tokens.Jwt.nuspec"
       ]
@@ -11382,6 +11533,7 @@
         "ref/wp80/_._",
         "ref/wpa81/_._",
         "runtimes/win8-aot/lib/netcore50/System.Reflection.Extensions.dll",
+        "System.Reflection.Extensions.4.0.0.nupkg",
         "System.Reflection.Extensions.4.0.0.nupkg.sha512",
         "System.Reflection.Extensions.nuspec"
       ]
@@ -11428,6 +11580,7 @@
         "ref/wp80/_._",
         "ref/wpa81/_._",
         "runtimes/win8-aot/lib/netcore50/System.Reflection.Primitives.dll",
+        "System.Reflection.Primitives.4.0.0.nupkg",
         "System.Reflection.Primitives.4.0.0.nupkg.sha512",
         "System.Reflection.Primitives.nuspec"
       ]
@@ -11698,6 +11851,7 @@
         "ref/wpa81/_._",
         "ref/xamarinios10/_._",
         "ref/xamarinmac20/_._",
+        "System.Text.Encoding.Extensions.4.0.0.nupkg",
         "System.Text.Encoding.Extensions.4.0.0.nupkg.sha512",
         "System.Text.Encoding.Extensions.nuspec"
       ]
@@ -11758,6 +11912,7 @@
         "tools/install.ps1",
         "tools/uninstall.ps1",
         "tools/WG.exe",
+        "WebGrease.1.5.2.nupkg",
         "WebGrease.1.5.2.nupkg.sha512",
         "WebGrease.nuspec"
       ]
@@ -11768,6 +11923,7 @@
       "files": [
         "lib/portable-net4+sl5+wp8+win8+wpa81+MonoTouch+MonoAndroid/Zlib.Portable.dll",
         "lib/portable-net4+sl5+wp8+win8+wpa81+MonoTouch+MonoAndroid/Zlib.Portable.xml",
+        "Zlib.Portable.Signed.1.11.0.nupkg",
         "Zlib.Portable.Signed.1.11.0.nupkg.sha512",
         "Zlib.Portable.Signed.nuspec"
       ]
@@ -11788,15 +11944,15 @@
       "Microsoft.AspNet.IISPlatformHandler >= 1.0.0-rc1-*",
       "Microsoft.AspNet.Mvc >= 6.0.0-rc1-*",
       "Microsoft.AspNet.Mvc.TagHelpers >= 6.0.0-rc1-*",
-      "Microsoft.AspNet.Server.Kestrel >= 1.0.0-rc1-*",
+      "Microsoft.AspNet.Server.Kestrel >= 1.0.0-rc1-final",
       "Microsoft.AspNet.StaticFiles >= 1.0.0-rc1-*",
       "Microsoft.AspNet.Tooling.Razor >= 1.0.0-rc1-*",
       "Microsoft.Extensions.Configuration.FileProviderExtensions >= 1.0.0-rc1-*",
       "Microsoft.Extensions.Configuration.Json >= 1.0.0-rc1-*",
       "Microsoft.Extensions.Configuration.Abstractions >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Configuration.UserSecrets >= 1.0.0-rc1-*",
-      "Microsoft.Extensions.Logging >= 1.0.0-rc1-*",
-      "Microsoft.Extensions.Logging.Console >= 1.0.0-rc1-*",
+      "Microsoft.Extensions.Logging >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Logging.Console >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Logging.Debug >= 1.0.0-rc1-final",
       "Microsoft.Framework.DependencyInjection >= 1.0.0-beta8",
       "Microsoft.Extensions.DependencyInjection.Abstractions >= 1.0.0-rc1-final",
@@ -11840,8 +11996,8 @@
       "Microsoft.AspNet.DataProtection >= 1.0.0-rc1-final",
       "Microsoft.AspNet.DataProtection.SystemWeb >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.JwtBearer >= 1.0.0-rc1-final",
-      "System.IdentityModel.Tokens >= 5.0.0-rc1-208241120",
-      "System.IdentityModel.Tokens.Jwt >= 5.0.0-rc1-208241120",
+      "System.IdentityModel.Tokens >= 5.0.0-rc1-211161024",
+      "System.IdentityModel.Tokens.Jwt >= 5.0.0-rc1-211161024",
       "Microsoft.AspNet.Authorization >= 1.0.0-rc1-final",
       "AspNet.Security.OpenIdConnect.Server >= 1.0.0-beta4"
     ],

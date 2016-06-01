@@ -1,18 +1,18 @@
 ﻿@using AspNet.Security.OpenIdConnect.Extensions
 @using Microsoft.IdentityModel.Protocols.OpenIdConnect
-@using Mvc.Server.Models
 
-@model Tuple<OpenIdConnectMessage, Application>
+
+@model AuthorisationView
 
 <div class="jumbotron">
     <h1>Authorization</h1>
 
-    <p class="lead text-left">Do you wanna grant <strong>@Model.Item2.DisplayName</strong> an access to your resources? (scopes requested: @Model.Item1.Scope)</p>
+    <p class="lead text-left">Do you wanna grant <strong>@Model.Application.DisplayName</strong> an access to your resources? (scopes requested: @Model.Message.Scope)</p>
 
     <form enctype="application/x-www-form-urlencoded" method="post">
         @Html.AntiForgeryToken()
 
-        @foreach (var parameter in Model.Item1.Parameters) {
+        @foreach (var parameter in Model.Message.Parameters) {
             <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
         }
 

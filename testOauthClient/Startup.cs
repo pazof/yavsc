@@ -1,0 +1,101 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNet.Authentication.OpenIdConnect;
+using Microsoft.AspNet.Authentication;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Authentication.Cookies;
+
+namespace testOauthClient
+{
+    public class Startup
+    {
+        public Startup(IHostingEnvironment env)
+        {
+            // Set up configuration sources.
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
+        }
+
+        public IConfigurationRoot Configuration { get; set; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+          /*  services.Configure<SharedAuthenticationOptions>(options =>
+            {
+                options.SignInScheme = "ClientCookie";
+            }); */
+            services.AddAuthentication(options => {
+                options.SignInScheme = "ClientCookie";
+            });
+            // Add framework services.
+            services.AddMvc();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+            
+             app.UseCookieAuthentication(new CookieAuthenticationOptions {
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                AuthenticationScheme = "ClientCookie",
+                CookieName = CookieAuthenticationDefaults.CookiePrefix + "ClientCookie",
+                ExpireTimeSpan = TimeSpan.FromMinutes(5),
+                LoginPath = new PathString("/signin"),
+                LogoutPath = new PathString("/signout")
+            });
+
+            app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions {
+                RequireHttpsMetadata = false,
+
+                // Note: these settings must match the application details
+                // inserted in the database at the server level.
+                ClientId = "016c5ae4-f4cd-40e3-b250-13701c871ecd",
+                ClientSecret = "blahblah",
+                PostLogoutRedirectUri = "http://dev.pschneider.fr/",
+
+                // Use the authorization code flow.
+                ResponseType = OpenIdConnectResponseTypes.Code,
+
+                // Note: setting the Authority allows the OIDC client middleware to automatically
+                // retrieve the identity provider's configuration and spare you from setting
+                // the different endpoints URIs or the token validation parameters explicitly.
+                Authority = "http://dev.pschneider.fr/"
+            });
+
+            app.UseStaticFiles();
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
+        }
+
+        // Entry point for the application.
+        public static void Main(string[] args) => Microsoft.AspNet.Hosting.WebApplication.Run<Startup>(args);
+    }
+}

@@ -156,10 +156,12 @@ namespace Yavsc
                 RSAKeyUtils.GetKeyParameters(keyParamsFileInfo.Name) :
                 RSAKeyUtils.GenerateKeyAndSave(keyParamsFileInfo.Name);
             key = new RsaSecurityKey(keyParams);
+            
             services.Configure<SharedAuthenticationOptions>(options =>
             {
                 options.SignInScheme = "ServerCookie";
-            });
+            }); 
+            /*
             services.Configure<TokenAuthOptions>(
                 to =>
                 {
@@ -169,7 +171,7 @@ namespace Yavsc
                     new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature);
 
                 }
-            );
+            );*/
 
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SiteSettings>), typeof(OptionsManager<SiteSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
@@ -202,10 +204,6 @@ namespace Yavsc
                 {
                     option.User.AllowedUserNameCharacters += " ";
                     option.User.RequireUniqueEmail = true;
-                    option.Cookies.ApplicationCookie.LoginPath = "/authenticate";
-                    option.Cookies.ApplicationCookie.LogoutPath = "/signout"; 
-                    option.Cookies.ApplicationCookie.AccessDeniedPath = "/forbidden"; // TODO /forbidden
-                // FIXME option.Cookies.ApplicationCookie.ReturnUrlParameter = "target";
                 }
             ).AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
@@ -249,7 +247,7 @@ namespace Yavsc
                 });
                 // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
                 // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
-                options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
+                // options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
             });
 
             services.AddSingleton<IAuthorizationHandler, HasBadgeHandler>();
@@ -404,8 +402,7 @@ namespace Yavsc
                 EnableDirectoryBrowsing = false
             });
             app.UseStaticFiles().UseWebSockets();
-            app.UseIdentity();
-
+          
             app.UseOpenIdConnectServer(options =>
                {
                    options.Provider = new AuthorizationProvider(loggerFactory);
@@ -426,7 +423,7 @@ namespace Yavsc
                    options.TokenEndpointPath = new PathString("/connect/authorize/accept");
                    options.UseSlidingExpiration = true;
                    options.AllowInsecureHttp = true;
-                   options.AuthenticationScheme = "oidc"; // was = OpenIdConnectDefaults.AuthenticationScheme;
+                   options.AuthenticationScheme = "ServerCookie"; // was = OpenIdConnectDefaults.AuthenticationScheme || "oidc";
                    options.LogoutEndpointPath = new PathString("/connect/logout");
 
                    /* options.ValidationEndpointPath = new PathString("/connect/introspect"); */
@@ -434,6 +431,8 @@ namespace Yavsc
                
             app.UseWhen(context => context.Request.Path.StartsWithSegments(new PathString("/api")), branch =>
             {
+                branch.UseIdentity();
+
                 branch.UseJwtBearerAuthentication(options =>
                 {
                     options.AutomaticAuthenticate = true;
@@ -441,13 +440,15 @@ namespace Yavsc
                     options.RequireHttpsMetadata = false;
                     options.Audience = siteSettings.Value.Audience;
                     options.Authority = siteSettings.Value.Authority;
+                    
                 });
             });
 
+            
             // Create a new branch where the registered middleware will be executed only for API calls.
             app.UseWhen(context => !context.Request.Path.StartsWithSegments(new PathString("/api")), branch =>
             {
-                // Create a new branch where the registered middleware will be executed only for non API calls.
+                branch.UseIdentity();
                 branch.UseCookieAuthentication(options =>
                 {
                     options.AutomaticAuthenticate = true;
@@ -455,8 +456,9 @@ namespace Yavsc
                     options.AuthenticationScheme = "ServerCookie";
                     options.CookieName = CookieAuthenticationDefaults.CookiePrefix + "ServerCookie";
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                    options.LoginPath = new PathString("/authenticate");
+                    options.LoginPath = new PathString("/signin");
                     options.LogoutPath = new PathString("/signout");
+                    options.ReturnUrlParameter = "target";
                 });
 
                 branch.UseMiddleware<GoogleMiddleware>(googleOptions);
@@ -471,8 +473,6 @@ namespace Yavsc
                     });
 
             });
-
-            
 
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
 
@@ -519,9 +519,6 @@ namespace Yavsc
                                    context.Identity = identity;
                                }
                            }; */
-
-
-
 
 
             app.UseMvc(routes =>

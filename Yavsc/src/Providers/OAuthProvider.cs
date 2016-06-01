@@ -43,11 +43,11 @@ namespace Yavsc.Providers {
             }
 
             var database = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
-            _logger.LogInformation($"Searching fo app id {context.ClientId}");
+            _logger.LogInformation($"Searching fo app id {context.Request.ClientId}");
 
             // Retrieve the application details corresponding to the requested client_id.
             var application = await (from entity in database.Applications
-                                     where entity.ApplicationID == context.ClientId
+                                     where entity.ApplicationID == context.Request.ClientId
                                      select entity).SingleOrDefaultAsync(context.HttpContext.RequestAborted);
 
             if (application == null) {
@@ -66,7 +66,7 @@ namespace Yavsc.Providers {
 
                 return;
             }
-
+            _logger.LogInformation("do Validate Authorization!");
             context.Validated();
         }
 
@@ -120,19 +120,14 @@ namespace Yavsc.Providers {
 
                 return;
             }
-
+            _logger.LogInformation("do Validate Token request!");
             context.Validated();
         }
         
-        /// <summary>
-        /// List provided offline access tokens, to a given
-        /// user by its id
-        /// </summary>
-        /// <param name="userid"></param>
-        /// <returns></returns>
-        public List<string> GetOfflineTokens(string userid) {
-            
-            throw new NotImplementedException();
+        public override Task TokenEndpoint (TokenEndpointContext context)
+        {
+            _logger.LogWarning($"OIDC success : IsAccessToken: {context.AuthenticationTicket.IsAccessToken()}");
+            return Task.FromResult(0);
         }
     }
 }

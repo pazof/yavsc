@@ -26,6 +26,8 @@ namespace Yavsc.Controllers
     {
         ApplicationDbContext _context;
         UserManager<ApplicationUser> _userManager;
+        
+        SiteSettings _siteSettings;
 
         ILogger _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -34,9 +36,11 @@ namespace Yavsc.Controllers
         public OAuthController(ApplicationDbContext context, SignInManager<ApplicationUser> signInManager, IKeyManager keyManager,
         IOptions<TokenAuthOptions> tokenOptions,
         UserManager<ApplicationUser> userManager,
+        IOptions<SiteSettings> siteSettings,
         ILoggerFactory loggerFactory
         )
         {
+            _siteSettings = siteSettings.Value;
             _context = context;
             _signInManager = signInManager;
             _tokenOptions = tokenOptions.Value;
@@ -48,6 +52,7 @@ namespace Yavsc.Controllers
         [HttpGet("~/signin")]
         public ActionResult SignIn(string returnUrl = null, string target = null)
         {
+            _logger.LogWarning($"Singin wanted: returnUrl: {returnUrl} target: {target}");
             // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
             // will be redirected to after a successful authentication and not
             // the redirect_uri of the requesting client application.
@@ -72,7 +77,7 @@ namespace Yavsc.Controllers
         [HttpGet("~/forbidden")]
         public ActionResult Forbidden(string returnUrl = null)
         {
-            return SignIn("/Account/ExternalLoginCallback",returnUrl);
+            return View(returnUrl);
         }
         
         [HttpPost("~/signin")]
@@ -200,11 +205,12 @@ namespace Yavsc.Controllers
                     })
                 });
             }
-
             // Note: ASOS automatically ensures that an application corresponds to the client_id specified
             // in the authorization request by calling IOpenIdConnectServerProvider.ValidateAuthorizationRequest.
             // In theory, this null check shouldn't be needed, but a race condition could occur if you
             // manually removed the application details from the database after the initial check made by ASOS.
+            /* FIXME response.ClientId && request.ClientId are null or empty here */
+            _logger.LogInformation($"ensures that an application corresponds to the client_id specified ({request.ClientId})");
             var application = await GetApplicationAsync(request.ClientId, cancellationToken);
             if (application == null)
             {
@@ -217,10 +223,10 @@ namespace Yavsc.Controllers
             }
 
             // Note: in a real world application, you'd probably prefer creating a specific view model.
-            return View("Authorize", Tuple.Create(request, application));
+            return View("Authorize", new AuthorisationView { Message = request, Application = application});
         }
 
-        [Authorize, HttpPost("~/connect/authorize/accept"), ValidateAntiForgeryToken]
+        [HttpPost("~/connect/authorize/accept"), ValidateAntiForgeryToken]
         public async Task<IActionResult> Accept(CancellationToken cancellationToken)
         {
             var response = HttpContext.GetOpenIdConnectResponse();
@@ -268,6 +274,7 @@ namespace Yavsc.Controllers
             var application = await GetApplicationAsync(request.ClientId, cancellationToken);
             if (application == null)
             {
+                _logger.LogError($"OidcError: {request.ClientId} {response.ClientId} ");
                 return View("OidcError", new OpenIdConnectMessage
                 {
                     Error = OpenIdConnectConstants.Errors.InvalidClient,
@@ -296,7 +303,7 @@ namespace Yavsc.Controllers
             // You can also limit the resources endpoints
             // the access token should be issued for:
             properties.SetResources(new[] {
-                "http://localhost:54540/"
+                _siteSettings.Audience
             });
 
             // This call will instruct AspNet.Security.OpenIdConnect.Server to serialize
@@ -312,7 +319,7 @@ namespace Yavsc.Controllers
             return new EmptyResult();
         }
 
-        [Authorize, HttpPost("~/connect/authorize/deny"), ValidateAntiForgeryToken]
+        [HttpPost("~/connect/authorize/deny"), ValidateAntiForgeryToken]
         public IActionResult Deny(CancellationToken cancellationToken)
         {
             var response = HttpContext.GetOpenIdConnectResponse();

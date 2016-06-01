@@ -92,14 +92,14 @@ namespace Yavsc.Controllers
         }
 
         // GET: Blog/Create
-        [Authorize("Authenticated")]
+        [Authorize()]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Blog/Create
-        [HttpPost, Authorize("Authenticated"), ValidateAntiForgeryToken]
+        [HttpPost, Authorize(), ValidateAntiForgeryToken]
         public IActionResult Create(Blog blog)
         {
             blog.modified = blog.posted = DateTime.Now;
@@ -117,7 +117,7 @@ namespace Yavsc.Controllers
             _logger.LogWarning("Invalid Blog posted ...");
             return View(blog);
         }
-        [Authorize("Authenticated")]
+        [Authorize()]
         // GET: Blog/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
@@ -143,7 +143,7 @@ namespace Yavsc.Controllers
 
         // POST: Blog/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken,Authorize("Authenticated")]
+        [ValidateAntiForgeryToken,Authorize()]
         public IActionResult Edit(Blog blog)
         {
             if (ModelState.IsValid)
@@ -166,7 +166,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: Blog/Delete/5
-        [ActionName("Delete"),Authorize("Authenticated")]
+        [ActionName("Delete"),Authorize()]
         public IActionResult Delete(long? id)
         {
             if (id == null)
@@ -186,7 +186,7 @@ namespace Yavsc.Controllers
         }
 
         // POST: Blog/Delete/5
-        [HttpPost, ActionName("Delete"), Authorize("Authenticated")]
+        [HttpPost, ActionName("Delete"), Authorize()]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(long id)
         {
