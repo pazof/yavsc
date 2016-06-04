@@ -11,7 +11,7 @@ namespace Mvc.Client.Controllers {
         public ActionResult SignIn(string returnUrl) {
             // Instruct the OIDC client middleware to redirect the user agent to the identity provider.
             // Note: the authenticationType parameter must match the value configured in Startup.cs
-            var properties = new AuthenticationProperties { RedirectUri = "http://localhost:5002/" };
+            var properties = new AuthenticationProperties { RedirectUri = "/" };
             return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme, properties);
         }
 
