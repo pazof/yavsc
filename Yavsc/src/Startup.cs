@@ -186,7 +186,7 @@ namespace Yavsc
 
             services.ConfigureDataProtection(configure =>
             {
-                configure.SetApplicationName("Yavsc");
+                configure.SetApplicationName(Configuration["Site:Title"]);
                 configure.SetDefaultKeyLifetime(TimeSpan.FromDays(45));
                 configure.PersistKeysToFileSystem(
                      new DirectoryInfo(Configuration["DataProtection:Keys:Dir"]));
@@ -204,6 +204,8 @@ namespace Yavsc
                 {
                     option.User.AllowedUserNameCharacters += " ";
                     option.User.RequireUniqueEmail = true;
+                    option.Cookies.ApplicationCookie.DataProtectionProvider =
+          new  MonoDataProtectionProvider(Configuration["Site:Title"]);
                 }
             ).AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
