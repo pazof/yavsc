@@ -196,13 +196,9 @@ namespace Yavsc.Controllers
 
             if (!User.Identities.Any(identity => identity.IsAuthenticated))
             {
-                _logger.LogWarning("new ChallengeResult");
                 return new ChallengeResult(new AuthenticationProperties
                 {
-                    RedirectUri = Url.Action(nameof(Authorize), new
-                    {
-                        request_id = request.GetUniqueIdentifier()
-                    })
+                    RedirectUri = request.BuildRedirectUrl()
                 });
             }
             // Note: ASOS automatically ensures that an application corresponds to the client_id specified
