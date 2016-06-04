@@ -78,7 +78,6 @@ namespace testOauthClient
                 ClientId = "016c5ae4-f4cd-40e3-b250-13701c871ecd",
                 ClientSecret = "blahblah",
                 PostLogoutRedirectUri = "http://dev.pschneider.fr/",
-
                 // Use the authorization code flow.
                 ResponseType = OpenIdConnectResponseTypes.Code,
 
