@@ -195,7 +195,9 @@ namespace Yavsc
                      new DirectoryInfo(Configuration["DataProtection:Keys:Dir"]));
             });
 
-            services.AddAuthentication();
+            services.AddAuthentication(
+                op=>op.SignInScheme = "ServerCookie"
+            );
             // Add framework services.
             services.AddEntityFramework()
               .AddNpgsql()
@@ -241,6 +243,7 @@ namespace Yavsc
 
             services.AddAuthorization(options =>
             {
+                
                 options.AddPolicy("AdministratorOnly", policy =>
                 {
                     policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
