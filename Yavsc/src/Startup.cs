@@ -432,7 +432,7 @@ namespace Yavsc
                    options.TokenEndpointPath = new PathString("/connect/authorize/accept");
                    options.UseSlidingExpiration = true;
                    options.AllowInsecureHttp = true;
-                   options.AuthenticationScheme = "ServerCookie"; // was = OpenIdConnectDefaults.AuthenticationScheme || "oidc";
+                   options.AuthenticationScheme = "oidc-server"; // was = OpenIdConnectDefaults.AuthenticationScheme || "oidc";
                    options.LogoutEndpointPath = new PathString("/connect/logout");
 
                    // options.ValidationEndpointPath = new PathString("/connect/introspect");

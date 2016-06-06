@@ -24,11 +24,9 @@ namespace Yavsc.Controllers
         UserManager<ApplicationUser> manager;
         SignInManager<ApplicationUser> signInManager;
         public class TokenResponse { 
-            public bool authenticated { get; set; }
-            public string user_id { get; set; }
             public string access_token { get; set; }
             public int expires_in { get; set; }
-            public int entity_id { get; set; }
+            public string grant_type { get; set; }
         }
         UserTokenProvider tokenProvider;
         
@@ -51,7 +49,7 @@ namespace Yavsc.Controllers
         /// the user is authenticated, which will reset the expiry.
         /// </summary>
         /// <returns></returns>
-        [HttpGet,Authorize]
+        [HttpGet,HttpPost,Authorize]
         [Route("~/api/token/get")]
         public async Task<dynamic> Get()
         {
@@ -72,12 +70,12 @@ namespace Yavsc.Controllers
                     foreach (Claim c in currentUser.Claims) if (c.Type == "EntityID") entityId = Convert.ToInt32(c.Value);
                   
                     tokenExpires = DateTime.UtcNow.AddMinutes(2);
-                     token = await GetToken(user, tokenExpires);
-                    return new TokenResponse { authenticated = authenticated, user_id = user, entity_id = entityId, access_token = token, expires_in = 3400 };
+                     token = await GetToken("id_token", user, tokenExpires);
+                    return new TokenResponse { access_token = token, expires_in = 3400, grant_type="id_token" };
      
                 }
             }
-             return new { authenticated = false };
+             return new { authenticated = false, grant_type="id_token" };
         }
 
         public class AuthRequest
@@ -102,20 +100,19 @@ namespace Yavsc.Controllers
             if (signResult.Succeeded)
             {
                 DateTime? expires = DateTime.UtcNow.AddMinutes(tokenOptions.ExpiresIn);
-                var token = await GetToken(User.GetUserId(), expires);
-                return Ok(new TokenResponse { authenticated = true, user_id = User.GetUserId(), access_token = token });
+                var token = await GetToken("id_token",User.GetUserId(), expires);
+                return Ok(new TokenResponse {access_token = token, expires_in = 3400, grant_type="id_token" });
             }
-            return  Ok(new TokenResponse { authenticated = false });
+            return new BadRequestObjectResult(new { authenticated = false } ) ;
         }
 
-        private async Task<string> GetToken(string userid, DateTime? expires)
+        private async Task<string> GetToken(string purpose, string userid, DateTime? expires)
         {
             // Here, you should create or look up an identity for the user which is being authenticated.
             // For now, just creating a simple generic identity.
             var identuser = await manager.FindByIdAsync(userid);
             
-            return await tokenProvider.GenerateAsync("id_token",manager,identuser);
-            
+            return await tokenProvider.GenerateAsync(purpose,manager,identuser);
         }
     }
 }

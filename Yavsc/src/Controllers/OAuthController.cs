@@ -182,9 +182,7 @@ namespace Yavsc.Controllers
             if (!User.Identities.Any(identity => identity.IsAuthenticated))
             {
                 return new ChallengeResult(new AuthenticationProperties {
-                    RedirectUri = Url.Action(nameof(Authorize), new {
-                        unique_id = request.GetUniqueIdentifier()
-                    })});
+                    RedirectUri = Url.Action(nameof(Authorize), request.BuildRedirectUrl())});
             }
             // Note: ASOS automatically ensures that an application corresponds to the client_id specified
             // in the authorization request by calling IOpenIdConnectServerProvider.ValidateAuthorizationRequest.
@@ -204,18 +202,13 @@ namespace Yavsc.Controllers
             }
 
             // Note: in a real world application, you'd probably prefer creating a specific view model.
-            return View("Authorize", new AuthorisationView { Message = request, Application = application});
+            return View("Authorize", new AuthorisationView { Message = request, 
+            Application = application});
         }
 
-        [HttpPost("~/connect/authorize/accept"), ValidateAntiForgeryToken]
+        [HttpPost("~/connect/authorize/accept"),Authorize]
         public async Task<IActionResult> Accept(CancellationToken cancellationToken)
         {
-            var response = HttpContext.GetOpenIdConnectResponse();
-            if (response != null)
-            {
-                return View("OidcError", response);
-            }
-
             var request = HttpContext.GetOpenIdConnectRequest();
             if (request == null)
             {
@@ -230,18 +223,24 @@ namespace Yavsc.Controllers
             // will be used to create an id_token, a token or a code.
             var identity = new ClaimsIdentity(OpenIdConnectServerDefaults.AuthenticationScheme);
 
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier,"name",User.GetUserId()));
+            if (User.IsInRole(Constants.AdminGroupName))
+                identity.AddClaim(new Claim(ClaimTypes.Actor,"role",Constants.AdminGroupName));
+           
             // Copy the claims retrieved from the external identity provider
             // (e.g Google, Facebook, a WS-Fed provider or another OIDC server).
-            foreach (var claim in HttpContext.User.Claims)
+            foreach (var claim in User.Claims)
             {
                 // Allow ClaimTypes.Name to be added in the id_token.
                 // ClaimTypes.NameIdentifier is automatically added, even if its
                 // destination is not defined or doesn't include "id_token".
                 // The other claims won't be visible for the client application.
                 
-                if (claim.Type == ClaimTypes.Name) {
+                if (claim.Type == ClaimTypes.Role
+                || claim.Type == ClaimTypes.Email
+                || claim.Type == ClaimTypes.NameIdentifier ) {
+                    claim.WithDestination( "code" );
                     claim.WithDestination( "id_token" );
-                    claim.WithDestination( "access_token" );
                 }
                
                 identity.AddClaim(claim);
@@ -250,14 +249,12 @@ namespace Yavsc.Controllers
             var application = await GetApplicationAsync(request.ClientId, cancellationToken);
             if (application == null)
             {
-                _logger.LogError($"OidcError: {request.ClientId} {response.ClientId} ");
                 return View("OidcError", new OpenIdConnectMessage
                 {
                     Error = OpenIdConnectConstants.Errors.InvalidClient,
                     ErrorDescription = "Details concerning the calling client application cannot be found in the database"
                 });
             }
-
             // Create a new ClaimsIdentity containing the claims associated with the application.
             // Note: setting identity.Actor is not mandatory but can be useful to access
             // the whole delegation chain from the resource server (see ResourceController.cs).
@@ -281,6 +278,7 @@ namespace Yavsc.Controllers
             properties.SetResources(new[] {
                 _siteSettings.Audience
             });
+            
 
             // This call will instruct AspNet.Security.OpenIdConnect.Server to serialize
             // the specified identity to build appropriate tokens (id_token and token).
@@ -289,7 +287,7 @@ namespace Yavsc.Controllers
             // identities always contain the name identifier returned by the external provider.
             // Note: the authenticationScheme parameter must match the value configured in Startup.cs.
             await HttpContext.Authentication.SignInAsync(
-                OpenIdConnectServerDefaults.AuthenticationScheme,
+                "oidc-server",
                 new ClaimsPrincipal(identity), properties);
 
             return new EmptyResult();
@@ -298,12 +296,6 @@ namespace Yavsc.Controllers
         [HttpPost("~/connect/authorize/deny"), ValidateAntiForgeryToken]
         public IActionResult Deny(CancellationToken cancellationToken)
         {
-            var response = HttpContext.GetOpenIdConnectResponse();
-            if (response != null)
-            {
-                return View("OidcError", response);
-            }
-
             var request = HttpContext.GetOpenIdConnectRequest();
             if (request == null)
             {
@@ -325,7 +317,6 @@ namespace Yavsc.Controllers
                 RedirectUri = request.RedirectUri,
                 State = request.State
             });
-
 
             return new EmptyResult();
         }
@@ -382,10 +373,6 @@ namespace Yavsc.Controllers
             return (from application in _context.Applications
                     where application.ApplicationID == identifier
                     select application).SingleOrDefaultAsync(cancellationToken);
-        }
-        private async Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
         }
 
         private IActionResult RedirectToLocal(string returnUrl)

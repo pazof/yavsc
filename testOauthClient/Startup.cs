@@ -94,7 +94,9 @@ namespace testOauthClient
                 // Note: the resource property represents the different endpoints the
                 // access token should be issued for (values must be space-delimited).
                 options.Resource = "http://dev.pschneider.fr/";
-               //  options.Scope.Add("api-resource-controller");
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                // .Add("api-resource-controller");
             });
 
 
