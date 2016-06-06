@@ -27,6 +27,8 @@ namespace Yavsc.Controllers
             public string access_token { get; set; }
             public int expires_in { get; set; }
             public string grant_type { get; set; }
+
+            public int entity_id { get; set; }
         }
         UserTokenProvider tokenProvider;
         
@@ -70,12 +72,11 @@ namespace Yavsc.Controllers
                     foreach (Claim c in currentUser.Claims) if (c.Type == "EntityID") entityId = Convert.ToInt32(c.Value);
                   
                     tokenExpires = DateTime.UtcNow.AddMinutes(2);
-                     token = await GetToken("id_token", user, tokenExpires);
-                    return new TokenResponse { access_token = token, expires_in = 3400, grant_type="id_token" };
-     
+                    token = await GetToken("id_token", user, tokenExpires);
+                    return new TokenResponse { access_token = token, expires_in = 3400, entity_id = entityId };
                 }
             }
-             return new { authenticated = false, grant_type="id_token" };
+             return new { authenticated = false };
         }
 
         public class AuthRequest
