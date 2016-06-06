@@ -210,6 +210,7 @@ namespace Yavsc
                     option.Cookies.ApplicationCookie.DataProtectionProvider =
           new  MonoDataProtectionProvider(Configuration["Site:Title"]);
           option.Cookies.ApplicationCookie.CookieName = "Bearer";
+          
                 }
             ).AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
@@ -247,7 +248,7 @@ namespace Yavsc
 
                 options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
                 options.AddPolicy("Bearer",new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
+                    .AddAuthenticationSchemes("ServerCookie")
                     .RequireAuthenticatedUser().Build());
                 // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
                 // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
@@ -358,18 +359,13 @@ namespace Yavsc
                 }
             }
 
-            app.UseIISPlatformHandler(
-                options => options.AuthenticationDescriptions.Clear()
-            );
-
             var googleOptions = new YavscGoogleOptions
             {
                 ClientId = Configuration["Authentication:Google:ClientId"],
                 ClientSecret = Configuration["Authentication:Google:ClientSecret"],
-       /*         AccessType = "offline",
+                AccessType = "offline",
                 SaveTokensAsClaims = true,
-                UserInformationEndpoint = "https://www.googleapis.com/plus/v1/people/me",*/
-                AutomaticAuthenticate=true,
+                UserInformationEndpoint = "https://www.googleapis.com/plus/v1/people/me",
                 AutomaticChallenge=true
             };
             var gvents = new OAuthEvents();
@@ -392,6 +388,12 @@ namespace Yavsc
 
             googleOptions.Scope.Add("https://www.googleapis.com/auth/calendar");
 
+            app.UseIISPlatformHandler(options =>
+            {
+                options.AuthenticationDescriptions.Clear();
+                options.AutomaticAuthentication = true;
+            });
+            
             app.UseFileServer(new FileServerOptions()
             {
                 FileProvider = new PhysicalFileProvider(
@@ -406,7 +408,30 @@ namespace Yavsc
                 EnableDirectoryBrowsing = false
             });
             app.UseStaticFiles().UseWebSockets();
+            
             app.UseIdentity();
+            
+             app.UseCookieAuthentication(options =>
+                {
+                    options.AutomaticAuthenticate = true;
+                    options.AutomaticChallenge = true;
+                    options.AuthenticationScheme = "ServerCookie";
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                   options.LoginPath = new PathString("/signin");
+                   options.LogoutPath = new PathString("/signout");
+             //      options.CookieName = "Bearer";
+                }); 
+
+                app.UseMiddleware<Yavsc.Auth.GoogleMiddleware>(googleOptions);
+
+                // Facebook
+                app.UseFacebookAuthentication(options =>
+                    {
+                        options.AppId = Configuration["Authentication:Facebook:AppId"];
+                        options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+                        options.Scope.Add("email");
+                        options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
+                    });
             app.UseOpenIdConnectServer(options =>
                {
                    options.Provider = new AuthorizationProvider(loggerFactory, 
@@ -424,6 +449,8 @@ namespace Yavsc
                    options.ApplicationCanDisplayErrors = true;
                    options.AllowInsecureHttp = true;
                    options.AutomaticChallenge = true;
+                 //  options.AutomaticAuthenticate=true;
+
                    
                    options.AuthorizationEndpointPath = new PathString("/connect/authorize");
                    options.TokenEndpointPath = new PathString("/connect/authorize/accept");
@@ -434,30 +461,6 @@ namespace Yavsc
 
                    // options.ValidationEndpointPath = new PathString("/connect/introspect");
                }); /**/
-               
-           
-            
-                app.UseCookieAuthentication(options =>
-                {
-                    options.AutomaticAuthenticate = true;
-                    options.AutomaticChallenge = true;
-                    options.AuthenticationScheme = "ServerCookie";
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                    options.LoginPath = new PathString("/signin");
-                    options.LogoutPath = new PathString("/signout");
-                });
-
-                app.UseMiddleware<Yavsc.Auth.GoogleMiddleware>(googleOptions);
-
-                // Facebook
-                app.UseFacebookAuthentication(options =>
-                    {
-                        options.AppId = Configuration["Authentication:Facebook:AppId"];
-                        options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-                        options.Scope.Add("email");
-                        options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
-                    });
-            
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
 
             /* Generic OAuth (here GitHub): options.Notifications = new OAuthAuthenticationNotifications

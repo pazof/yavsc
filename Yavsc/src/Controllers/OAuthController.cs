@@ -108,10 +108,10 @@ namespace Yavsc.Controllers
                     _logger.LogWarning("ReturnUrl not specified");
                     return HttpBadRequest();
             }
-            
-            return new ChallengeResult(Provider, new AuthenticationProperties {
-                RedirectUri = Url.Action("ExternalLoginCallback","Account", new {returnUrl= ReturnUrl})
-            });
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = ReturnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(Provider, redirectUrl);
+            //  var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
+            return new ChallengeResult(Provider,properties);
         }
 
 
@@ -181,10 +181,10 @@ namespace Yavsc.Controllers
 
             if (!User.Identities.Any(identity => identity.IsAuthenticated))
             {
-                return new ChallengeResult(new AuthenticationProperties
-                {
-                    RedirectUri = Url.Action("ExternalLoginCallback","Account",new {returnUrl=request.BuildRedirectUrl()})
-                });
+                return new ChallengeResult(new AuthenticationProperties {
+                    RedirectUri = Url.Action(nameof(Authorize), new {
+                        unique_id = request.GetUniqueIdentifier()
+                    })});
             }
             // Note: ASOS automatically ensures that an application corresponds to the client_id specified
             // in the authorization request by calling IOpenIdConnectServerProvider.ValidateAuthorizationRequest.
