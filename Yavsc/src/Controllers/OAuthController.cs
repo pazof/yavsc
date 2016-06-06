@@ -50,16 +50,15 @@ namespace Yavsc.Controllers
 
 
         [HttpGet("~/signin")]
-        public ActionResult SignIn(string returnUrl = null, string target = null)
+        public ActionResult SignIn(string returnUrl = null)
         {
-            _logger.LogWarning($"Singin wanted: returnUrl: {returnUrl} target: {target}");
+            _logger.LogWarning($"Singin wanted: returnUrl: {returnUrl} ");
             // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
             // will be redirected to after a successful authentication and not
             // the redirect_uri of the requesting client application.
             return View("SignIn", new LoginViewModel
             {
                 ReturnUrl = returnUrl,
-                AfterLoginRedirectUrl = target,
                 ExternalProviders = HttpContext.GetExternalProviders()
             });
             /* Note: When using an external login provider, redirect the query  :
@@ -71,7 +70,7 @@ namespace Yavsc.Controllers
         [HttpGet("~/authenticate")]
         public ActionResult Authenticate(string returnUrl = null)
         {
-            return SignIn("/Account/ExternalLoginCallback",returnUrl);
+            return SignIn(returnUrl);
         }
         
         [HttpGet("~/forbidden")]
@@ -81,7 +80,7 @@ namespace Yavsc.Controllers
         }
         
         [HttpPost("~/signin")]
-        public IActionResult SignIn(string Provider, string ReturnUrl, string AfterLoginRedirectUrl)
+        public IActionResult SignIn(string Provider, string ReturnUrl)
         {
             // Note: the "provider" parameter corresponds to the external
             // authentication provider choosen by the user agent.
@@ -97,7 +96,6 @@ namespace Yavsc.Controllers
                 return HttpBadRequest();
             }
 
-
             // Instruct the middleware corresponding to the requested external identity
             // provider to redirect the user agent to its own authorization endpoint.
             // Note: the authenticationScheme parameter must match the value configured in Startup.cs
@@ -107,26 +105,13 @@ namespace Yavsc.Controllers
             // the redirect_uri of the requesting client application.
             if (string.IsNullOrEmpty(ReturnUrl))
             {
-
-                // If AfterLoginRedirectUrl is non null,
-                // This is a web interface access,
-                /// Assert (model.ReturnUrl==null)
-                /// and the wanted redirection
-                // after the successfull authentication
-                if (AfterLoginRedirectUrl != null)
-                {
-                    ReturnUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = AfterLoginRedirectUrl });
-                }
-                else
-                {
                     _logger.LogWarning("ReturnUrl not specified");
                     return HttpBadRequest();
-                }
             }
-
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(Provider, ReturnUrl);
-
-            return new ChallengeResult(Provider, properties);
+            
+            return new ChallengeResult(Provider, new AuthenticationProperties {
+                RedirectUri = Url.Action("ExternalLoginCallback","Account", new {returnUrl= ReturnUrl})
+            });
         }
 
 
@@ -198,7 +183,7 @@ namespace Yavsc.Controllers
             {
                 return new ChallengeResult(new AuthenticationProperties
                 {
-                    RedirectUri = request.BuildRedirectUrl()
+                    RedirectUri = Url.Action("ExternalLoginCallback","Account",new {returnUrl=request.BuildRedirectUrl()})
                 });
             }
             // Note: ASOS automatically ensures that an application corresponds to the client_id specified
@@ -253,17 +238,13 @@ namespace Yavsc.Controllers
                 // ClaimTypes.NameIdentifier is automatically added, even if its
                 // destination is not defined or doesn't include "id_token".
                 // The other claims won't be visible for the client application.
-                /*
+                
                 if (claim.Type == ClaimTypes.Name) {
-                    claim.SetDestinations(OpenIdConnectConstants.Destinations.AccessToken,
-                                          OpenIdConnectConstants.Destinations.IdentityToken);
-                }
-                */
-                if (claim.Type == ClaimTypes.Name)
-                {
-                    claim.WithDestination("code");
+                    claim.WithDestination(OpenIdConnectConstants.TokenTypes.Bearer);
+                    claim.WithDestination( "code");
                     claim.WithDestination("id_token");
                 }
+               
                 identity.AddClaim(claim);
             }
 

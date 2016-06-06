@@ -69,22 +69,32 @@ namespace testOauthClient
                 LoginPath = new PathString("/signin"),
                 LogoutPath = new PathString("/signout")
             });
+            
+          
 
-            app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions {
-                RequireHttpsMetadata = false,
+            app.UseOpenIdConnectAuthentication(
+                options => {
+                options.AuthenticationScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                options.RequireHttpsMetadata = false;
 
                 // Note: these settings must match the application details
                 // inserted in the database at the server level.
-                ClientId = "016c5ae4-f4cd-40e3-b250-13701c871ecd",
-                ClientSecret = "blahblah",
-                PostLogoutRedirectUri = "http://dev.pschneider.fr/",
+                options.ClientId = "016c5ae4-f4cd-40e3-b250-13701c871ecd";
+                options.ClientSecret = "blahblah";
+                options.PostLogoutRedirectUri = "http://dev.pschneider.fr/";
+
                 // Use the authorization code flow.
-                ResponseType = OpenIdConnectResponseTypes.Code,
+                options.ResponseType = OpenIdConnectResponseTypes.Code;
 
                 // Note: setting the Authority allows the OIDC client middleware to automatically
                 // retrieve the identity provider's configuration and spare you from setting
                 // the different endpoints URIs or the token validation parameters explicitly.
-                Authority = "http://dev.pschneider.fr/"
+                options.Authority = "http://dev.pschneider.fr/";
+
+                // Note: the resource property represents the different endpoints the
+                // access token should be issued for (values must be space-delimited).
+                options.Resource = "http://dev.pschneider.fr/";
+               //  options.Scope.Add("api-resource-controller");
             });
 
 

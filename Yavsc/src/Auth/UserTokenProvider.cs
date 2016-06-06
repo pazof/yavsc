@@ -1,4 +1,5 @@
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNet.DataProtection;
 using Microsoft.AspNet.Identity;
@@ -16,6 +17,7 @@ namespace Yavsc.Auth  {
 
         public Task<string> GenerateAsync(string purpose, UserManager<ApplicationUser> manager, ApplicationUser user)
         {
+            if ( user==null ) throw new InvalidOperationException("no user");
             var por = new MonoDataProtector(Constants.ApplicationName,new string[] { purpose } );
 
             return Task.FromResult(por.Protect(UserStamp(user)));
@@ -29,7 +31,7 @@ namespace Yavsc.Auth  {
             return Task.FromResult ( user.Id == values[0] && user.Email == values[1] && user.UserName == values[2]);
         }
 
-         public  string UserStamp(ApplicationUser user) {
+         public static string UserStamp(ApplicationUser user) {
             return $"{user.Id} {user.Email} {user.UserName}";
         }
     }

@@ -1,0 +1,16 @@
+﻿@using AspNet.Security.OpenIdConnect.Extensions
+@using Microsoft.IdentityModel.Protocols.OpenIdConnect
+
+
+@model AuthorisationView
+
+<div class="jumbotron">
+    <h1>Authorization</h1>
+
+    <p class="lead text-left">Get a token</p>
+
+    <form enctype="application/x-www-form-urlencoded" method="post">
+        @Html.AntiForgeryToken()
+        <input formaction="/api/token/get" class="btn btn-lg btn-success" name="Getatoken" type="submit" value="Getatoken" />
+     </form>
+</div>

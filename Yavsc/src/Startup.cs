@@ -10,6 +10,7 @@ using System.Web.Optimization;
 using AspNet.Security.OpenIdConnect.Extensions;
 using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authentication.Cookies;
+using Microsoft.AspNet.Authentication.Google;
 using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Authorization;
@@ -35,7 +36,6 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.WebEncoders;
 using Microsoft.Net.Http.Headers;
 using Yavsc.Auth;
-using Yavsc.Extensions;
 using Yavsc.Formatters;
 using Yavsc.Models;
 using Yavsc.Providers;
@@ -161,7 +161,7 @@ namespace Yavsc
             {
                 options.SignInScheme = "ServerCookie";
             }); 
-            /*
+            
             services.Configure<TokenAuthOptions>(
                 to =>
                 {
@@ -169,15 +169,18 @@ namespace Yavsc
                     to.Issuer = Configuration["Site:Authority"];
                     to.SigningCredentials =
                     new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature);
-
                 }
-            );*/
+            );
+            
 
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SiteSettings>), typeof(OptionsManager<SiteSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<OAuth2AppSettings>), typeof(OptionsManager<OAuth2AppSettings>)));
+
+            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<TokenAuthOptions>), typeof(OptionsManager<TokenAuthOptions>)));
+
 
             services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
             services.AddDataProtection();
@@ -206,6 +209,7 @@ namespace Yavsc
                     option.User.RequireUniqueEmail = true;
                     option.Cookies.ApplicationCookie.DataProtectionProvider =
           new  MonoDataProtectionProvider(Configuration["Site:Title"]);
+          option.Cookies.ApplicationCookie.CookieName = "Bearer";
                 }
             ).AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
@@ -213,7 +217,7 @@ namespace Yavsc
                 ;
             //  .AddTokenProvider<UserTokenProvider>(Constants.SMSFactor)
             //
-
+               
             services.AddCors(
             /*
             options =>
@@ -242,11 +246,9 @@ namespace Yavsc
                 });
 
                 options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
-                options.AddPolicy("API", policy =>
-                {
-                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-                    policy.RequireClaim(OpenIdConnectConstants.Claims.Scope, "api-resource-controller");
-                });
+                options.AddPolicy("Bearer",new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
+                    .RequireAuthenticatedUser().Build());
                 // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
                 // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
                 // options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
@@ -259,6 +261,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, CommandEditHandler>();
             services.AddSingleton<IAuthorizationHandler, CommandViewHandler>();
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
+            
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -302,8 +305,9 @@ namespace Yavsc
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
-        IOptions<SiteSettings> siteSettings, IOptions<RequestLocalizationOptions> localizationOptions,
-        IOptions<OAuth2AppSettings> oauth2SettingsContainer,
+        IOptions<SiteSettings> siteSettings, 
+        IOptions<RequestLocalizationOptions> localizationOptions,
+        IOptions<OAuth2AppSettings> oauth2SettingsContainer, 
          ILoggerFactory loggerFactory)
         {
             Startup.UserFilesDirName = siteSettings.Value.UserFiles.DirName;
@@ -354,16 +358,20 @@ namespace Yavsc
                 }
             }
 
+            app.UseIISPlatformHandler(
+                options => options.AuthenticationDescriptions.Clear()
+            );
 
-            var googleOptions = new GoogleOptions
+            var googleOptions = new YavscGoogleOptions
             {
                 ClientId = Configuration["Authentication:Google:ClientId"],
                 ClientSecret = Configuration["Authentication:Google:ClientSecret"],
-                AccessType = "offline",
+       /*         AccessType = "offline",
                 SaveTokensAsClaims = true,
-                UserInformationEndpoint = "https://www.googleapis.com/plus/v1/people/me",
+                UserInformationEndpoint = "https://www.googleapis.com/plus/v1/people/me",*/
+                AutomaticAuthenticate=true,
+                AutomaticChallenge=true
             };
-
             var gvents = new OAuthEvents();
 
             googleOptions.Events = new OAuthEvents
@@ -384,12 +392,6 @@ namespace Yavsc
 
             googleOptions.Scope.Add("https://www.googleapis.com/auth/calendar");
 
-            app.UseIISPlatformHandler(options =>
-            {
-                options.AuthenticationDescriptions.Clear();
-                options.AutomaticAuthentication = true;
-            });
-
             app.UseFileServer(new FileServerOptions()
             {
                 FileProvider = new PhysicalFileProvider(
@@ -404,16 +406,17 @@ namespace Yavsc
                 EnableDirectoryBrowsing = false
             });
             app.UseStaticFiles().UseWebSockets();
-          
+            app.UseIdentity();
             app.UseOpenIdConnectServer(options =>
                {
-                   options.Provider = new AuthorizationProvider(loggerFactory);
+                   options.Provider = new AuthorizationProvider(loggerFactory, 
+                   new UserTokenProvider());
 
                    // Register the certificate used to sign the JWT tokens.
-                   /* options.SigningCredentials.AddCertificate(
-                       assembly: typeof(Startup).GetTypeInfo().Assembly,
-                       resource: "Mvc.Server.Certificate.pfx",
-                       password: "Owin.Security.OpenIdConnect.Server"); */
+                   // options.SigningCredentials.AddCertificate(
+                   //   assembly: typeof(Startup).GetTypeInfo().Assembly,
+                   //   resource: "Mvc.Server.Certificate.pfx",
+                   //   password: "Owin.Security.OpenIdConnect.Server"); 
 
                    // options.SigningCredentials.AddKey(key);
                    // Note: see AuthorizationController.cs for more
@@ -421,6 +424,7 @@ namespace Yavsc
                    options.ApplicationCanDisplayErrors = true;
                    options.AllowInsecureHttp = true;
                    options.AutomaticChallenge = true;
+                   
                    options.AuthorizationEndpointPath = new PathString("/connect/authorize");
                    options.TokenEndpointPath = new PathString("/connect/authorize/accept");
                    options.UseSlidingExpiration = true;
@@ -428,54 +432,32 @@ namespace Yavsc
                    options.AuthenticationScheme = "ServerCookie"; // was = OpenIdConnectDefaults.AuthenticationScheme || "oidc";
                    options.LogoutEndpointPath = new PathString("/connect/logout");
 
-                   /* options.ValidationEndpointPath = new PathString("/connect/introspect"); */
-               });
+                   // options.ValidationEndpointPath = new PathString("/connect/introspect");
+               }); /**/
                
-            app.UseWhen(context => context.Request.Path.StartsWithSegments(new PathString("/api")), branch =>
-            {
-                branch.UseIdentity();
-
-                branch.UseJwtBearerAuthentication(options =>
-                {
-                    options.AutomaticAuthenticate = true;
-                    options.AutomaticChallenge = true;
-                    options.RequireHttpsMetadata = false;
-                    options.Audience = siteSettings.Value.Audience;
-                    options.Authority = siteSettings.Value.Authority;
-                    
-                });
-            });
-
+           
             
-            // Create a new branch where the registered middleware will be executed only for API calls.
-            app.UseWhen(context => !context.Request.Path.StartsWithSegments(new PathString("/api")), branch =>
-            {
-                branch.UseIdentity();
-                branch.UseCookieAuthentication(options =>
+                app.UseCookieAuthentication(options =>
                 {
                     options.AutomaticAuthenticate = true;
                     options.AutomaticChallenge = true;
                     options.AuthenticationScheme = "ServerCookie";
-                    options.CookieName = CookieAuthenticationDefaults.CookiePrefix + "ServerCookie";
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                     options.LoginPath = new PathString("/signin");
                     options.LogoutPath = new PathString("/signout");
-                    options.ReturnUrlParameter = "target";
                 });
 
-                branch.UseMiddleware<GoogleMiddleware>(googleOptions);
+                app.UseMiddleware<Yavsc.Auth.GoogleMiddleware>(googleOptions);
 
                 // Facebook
-                branch.UseFacebookAuthentication(options =>
+                app.UseFacebookAuthentication(options =>
                     {
                         options.AppId = Configuration["Authentication:Facebook:AppId"];
                         options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
                         options.Scope.Add("email");
                         options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
                     });
-
-            });
-
+            
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
 
             /* Generic OAuth (here GitHub): options.Notifications = new OAuthAuthenticationNotifications

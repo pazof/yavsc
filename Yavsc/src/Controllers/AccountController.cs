@@ -55,8 +55,7 @@ namespace Yavsc.Controllers
         public IActionResult Login(string returnUrl)
         {
             return View("SignIn", new LoginViewModel { 
-                AfterLoginRedirectUrl = returnUrl,
-                ReturnUrl = "/Account/ExternalLoginCallback",
+                ReturnUrl = returnUrl,
                 ExternalProviders = HttpContext.GetExternalProviders()
              });
         }

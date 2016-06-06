@@ -14,7 +14,7 @@ namespace Yavsc.Auth
     /// <summary>
     /// An ASP.NET Core middleware for authenticating users using Google OAuth 2.0.
     /// </summary>
-    public class GoogleMiddleware : OAuthMiddleware<GoogleOptions>
+    public class GoogleMiddleware : OAuthMiddleware<YavscGoogleOptions>
     {
         private RequestDelegate _next;
         private ILogger _logger;
@@ -34,7 +34,7 @@ namespace Yavsc.Auth
             ILoggerFactory loggerFactory,
             UrlEncoder encoder,
             IOptions<SharedAuthenticationOptions> sharedOptions,
-            GoogleOptions options)
+            YavscGoogleOptions options)
             : base(next, dataProtectionProvider, loggerFactory, encoder, sharedOptions, options)
         {
             if (next == null)
@@ -71,7 +71,7 @@ namespace Yavsc.Auth
 
         }
 
-        protected override AuthenticationHandler<GoogleOptions> CreateHandler()
+        protected override AuthenticationHandler<YavscGoogleOptions> CreateHandler()
         {
             return new GoogleHandler(Backchannel,_logger);
         }

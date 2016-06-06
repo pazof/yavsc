@@ -9,6 +9,7 @@
 <div class="jumbotron">
     <h1>@ViewData["Title"]</h1>
     <hr/>
+    
     <h2 class="lead text-left">@SR["Use a local account to log in"]</h2>
       <form action="/login" method="post" class="form-horizontal" role="form">
 
@@ -46,8 +47,8 @@
                 <p>
                     <a asp-action="ForgotPassword" asp-controller="Account">@SR["Forgot your password"]?</a>
                 </p>
-                
-                <input type="hidden" name="ReturnUrl" value="@Model.AfterLoginRedirectUrl" />
+                 <input type="hidden" name="Provider" value="LOCAL" />
+                <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
                 
                 @Html.AntiForgeryToken()
             </form>
@@ -68,7 +69,7 @@
                     @foreach (var description in Model.ExternalProviders) {
         <form action="/signin" method="post">
             <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
-            <input type="hidden" name="AfterLoginRedirectUrl" value="@Model.AfterLoginRedirectUrl" />
+            <input type="hidden" name="ReturnUrl" value="@Url.Action("ExternalLoginCallback","Account", new { returnUrl = Model.ReturnUrl })" />
             <button class="btn btn-lg btn-success" type="submit">@SR["Connect using"] @description.DisplayName</button>
             @Html.AntiForgeryToken()
         </form>

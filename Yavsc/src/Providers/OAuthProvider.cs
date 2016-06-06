@@ -1,21 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNet.Security.OpenIdConnect.Extensions;
 using AspNet.Security.OpenIdConnect.Server;
+using Microsoft.AspNet.Identity;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Yavsc.Auth;
 using Yavsc.Models;
 
 namespace Yavsc.Providers {
     public sealed class AuthorizationProvider : OpenIdConnectServerProvider {
 
         private ILogger _logger;
+        UserTokenProvider tokenProvider;
+        UserManager<ApplicationUser> userManager;
+        
+        SignInManager<ApplicationUser> signInManager;
 
-        public AuthorizationProvider(ILoggerFactory loggerFactory) {
+        public AuthorizationProvider(ILoggerFactory loggerFactory, UserTokenProvider tokenProvider) {
             _logger = loggerFactory.CreateLogger<AuthorizationProvider>();
+            this.tokenProvider = tokenProvider;
         }
         public override Task MatchEndpoint(MatchEndpointContext context) {
             // Note: by default, OpenIdConnectServerHandler only handles authorization requests made to the authorization endpoint.
@@ -129,5 +137,14 @@ namespace Yavsc.Providers {
             _logger.LogWarning($"OIDC success : IsAccessToken: {context.AuthenticationTicket.IsAccessToken()}");
             return Task.FromResult(0);
         }
+        /*
+        
+        public override async Task SerializeAccessToken(SerializeAccessTokenContext context)
+        {
+            var user = await userManager.FindByIdAsync(context.HttpContext.User.GetUserId());
+            context.AccessToken = await tokenProvider.GenerateAsync("id_token",userManager,user);
+            context.HandleResponse();
+            return ;
+        } */
     }
 }

@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Yavsc.Auth
 {
-    internal class GoogleHandler : OAuthHandler<GoogleOptions>
+    internal class GoogleHandler : OAuthHandler<YavscGoogleOptions>
     {
         private ILogger _logger;
         public GoogleHandler(HttpClient httpClient,ILogger logger)

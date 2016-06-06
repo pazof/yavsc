@@ -23,12 +23,6 @@ namespace Yavsc.ViewModels.Account
         /// </summary>
         /// <returns></returns>
         public string ReturnUrl { get; set; }
-        /// <summary>
-        /// This is the Url redirection used after a successfull resource grant
-        /// to a legacy web browser client.
-        /// </summary>
-        /// <returns></returns>
-        public string AfterLoginRedirectUrl { get; set; }
         
         public IEnumerable<AuthenticationDescription> ExternalProviders { get; set; }
     }

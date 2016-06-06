@@ -3,7 +3,7 @@ using Microsoft.AspNet.Http;
 
 namespace Yavsc.Auth
 {
-    public static class GoogleDefaults
+    public static class YavscGoogleDefaults
     {
         public const string AuthenticationScheme = "Google";
 
@@ -17,19 +17,19 @@ namespace Yavsc.Auth
     /// <summary>
     /// Configuration options for <see cref="GoogleMiddleware"/>.
     /// </summary>
-    public class GoogleOptions : OAuthOptions
+    public class YavscGoogleOptions : OAuthOptions
     {
         /// <summary>
-        /// Initializes a new <see cref="GoogleOptions"/>.
+        /// Initializes a new <see cref="YavscGoogleOptions"/>.
         /// </summary>
-        public GoogleOptions()
+        public YavscGoogleOptions()
         {
-            AuthenticationScheme = GoogleDefaults.AuthenticationScheme;
+            AuthenticationScheme = YavscGoogleDefaults.AuthenticationScheme;
             DisplayName = AuthenticationScheme;
             CallbackPath = new PathString("/signin-google");
-            AuthorizationEndpoint = GoogleDefaults.AuthorizationEndpoint;
-            TokenEndpoint = GoogleDefaults.TokenEndpoint;
-            UserInformationEndpoint = GoogleDefaults.UserInformationEndpoint;
+            AuthorizationEndpoint = YavscGoogleDefaults.AuthorizationEndpoint;
+            TokenEndpoint = YavscGoogleDefaults.TokenEndpoint;
+            UserInformationEndpoint = YavscGoogleDefaults.UserInformationEndpoint;
             Scope.Add("openid");
             Scope.Add("profile");
             Scope.Add("email");
