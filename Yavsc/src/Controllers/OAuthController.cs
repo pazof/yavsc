@@ -240,9 +240,8 @@ namespace Yavsc.Controllers
                 // The other claims won't be visible for the client application.
                 
                 if (claim.Type == ClaimTypes.Name) {
-                    claim.WithDestination(OpenIdConnectConstants.TokenTypes.Bearer);
-                    claim.WithDestination( "code");
-                    claim.WithDestination("id_token");
+                    claim.WithDestination( "id_token" );
+                    claim.WithDestination( "access_token" );
                 }
                
                 identity.AddClaim(claim);
