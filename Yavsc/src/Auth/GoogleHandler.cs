@@ -26,7 +26,6 @@ namespace Yavsc.Auth
         AuthenticationProperties properties, OAuthTokenResponse tokens
 )
         {
-            // TODO use Options.AuthenticationType instead of Bearer ?
             // Get the Google user
             var request = new HttpRequestMessage(HttpMethod.Get, Options.UserInformationEndpoint);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokens.AccessToken);

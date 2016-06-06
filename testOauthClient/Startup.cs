@@ -12,6 +12,8 @@ using Microsoft.AspNet.Authentication;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Authentication.Cookies;
+using Yavsc.Auth;
+using Microsoft.Extensions.WebEncoders;
 
 namespace testOauthClient
 {
@@ -35,6 +37,8 @@ namespace testOauthClient
             services.Configure<SharedAuthenticationOptions>(options => {
                 options.SignInScheme = "ClientCookie";
             });
+
+            services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
 
             services.AddAuthentication();
 
@@ -60,6 +64,20 @@ namespace testOauthClient
                 options.AuthenticationDescriptions.Clear();
             });
             app.UseStaticFiles();
+            app.UseOAuthAuthentication(
+                options => { 
+                    options.AuthenticationScheme="yavsc";
+                    options.AuthorizationEndpoint="http://dev.pschneider.fr/signin";
+                    options.TokenEndpoint="http://dev.pschneider.fr/token";
+                    options.AutomaticAuthenticate=true;
+                    options.AutomaticChallenge=true;
+                    options.CallbackPath=new PathString("/signin-yavsc");
+                    options.ClaimsIssuer="http://dev.pschneider.fr";
+                    options.ClientId="016c5ae4-f4cd-40e3-b250-13701c871ecd";
+                    options.ClientSecret="blahblah";
+                }
+            );
+
              app.UseCookieAuthentication(new CookieAuthenticationOptions {
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true,
@@ -70,9 +88,8 @@ namespace testOauthClient
                 LogoutPath = new PathString("/signout")
             });
             
-          
 
-            app.UseOpenIdConnectAuthentication(
+         /*   app.UseOpenIdConnectAuthentication(
                 options => {
                 options.AuthenticationScheme = OpenIdConnectDefaults.AuthenticationScheme;
                 options.RequireHttpsMetadata = false;
@@ -97,7 +114,7 @@ namespace testOauthClient
                 options.Scope.Clear();
                 options.Scope.Add("openid");
                 // .Add("api-resource-controller");
-            });
+            }); */
 
 
             app.UseMvc(routes =>

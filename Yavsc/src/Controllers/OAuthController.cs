@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AspNet.Security.OpenIdConnect.Extensions;
 using AspNet.Security.OpenIdConnect.Server;
+using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.DataProtection.KeyManagement;
@@ -241,6 +242,7 @@ namespace Yavsc.Controllers
                 || claim.Type == ClaimTypes.NameIdentifier ) {
                     claim.WithDestination( "code" );
                     claim.WithDestination( "id_token" );
+                    claim.WithDestination( "token" );
                 }
                
                 identity.AddClaim(claim);
@@ -260,7 +262,7 @@ namespace Yavsc.Controllers
             // the whole delegation chain from the resource server (see ResourceController.cs).
             identity.Actor = new ClaimsIdentity(OpenIdConnectServerDefaults.AuthenticationScheme);
             identity.Actor.AddClaim(ClaimTypes.NameIdentifier, application.ApplicationID);
-            identity.Actor.AddClaim(ClaimTypes.Name, application.DisplayName, "code id_token");
+            identity.Actor.AddClaim(ClaimTypes.Name, application.DisplayName);
 
             var properties = new AuthenticationProperties();
 
@@ -278,8 +280,6 @@ namespace Yavsc.Controllers
             properties.SetResources(new[] {
                 _siteSettings.Audience
             });
-            
-
             // This call will instruct AspNet.Security.OpenIdConnect.Server to serialize
             // the specified identity to build appropriate tokens (id_token and token).
             // Note: you should always make sure the identities you return contain either
@@ -288,9 +288,43 @@ namespace Yavsc.Controllers
             // Note: the authenticationScheme parameter must match the value configured in Startup.cs.
             await HttpContext.Authentication.SignInAsync(
                 "oidc-server",
-                new ClaimsPrincipal(identity), properties);
+                new ClaimsPrincipal(identity), properties); 
+                 _logger.LogInformation($"request.GrantType: {request.GrantType}");
+                 _logger.LogInformation($"request.Code: {request.Code}");
+                if (request.GrantType == "authorisation_code") {
+                    var reduri=request.BuildRedirectUrl();
+                _logger.LogInformation($"{reduri}");
+             return Redirect(reduri);
+                }
+                if (request.GrantType == "token") {
+                    
+                }
+              return new EmptyResult();
+           //   return new EmptyResult();
+            // Create a new authentication ticket holding the user identity.
+            /*var ticket = new AuthenticationTicket(
+                new ClaimsPrincipal(identity),
+                new AuthenticationProperties(),
+                OpenIdConnectServerDefaults.AuthenticationScheme);*/
 
-            return new EmptyResult();
+            // Set the list of scopes granted to the client application.
+            // Note: this sample always grants the "openid", "email" and "profile" scopes
+            // when they are requested by the client application: a real world application
+            // would probably display a form allowing to select the scopes to grant.
+           /* ticket.SetScopes(new[] {
+                OpenIdConnectConstants.Scopes.OpenId,
+                 OpenIdConnectConstants.Scopes.Email,
+                 OpenIdConnectConstants.Scopes.Profile,
+                 OpenIdConnectConstants.Scopes.OfflineAccess
+            }.Intersect(request.GetScopes())); */
+
+            // Set the resources servers the access token should be issued for.
+          //  ticket.SetResources(new string[]{"resource_server"});
+
+            //var response = HttpContext.GetOpenIdConnectResponse();
+            
+
+            
         }
 
         [HttpPost("~/connect/authorize/deny"), ValidateAntiForgeryToken]
