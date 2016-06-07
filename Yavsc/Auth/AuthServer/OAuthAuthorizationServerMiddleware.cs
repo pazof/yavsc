@@ -4,7 +4,6 @@ using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.DataProtection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace OAuth.AspNet.AuthServer

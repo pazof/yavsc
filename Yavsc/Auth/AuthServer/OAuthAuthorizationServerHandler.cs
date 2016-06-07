@@ -22,7 +22,6 @@ namespace OAuth.AspNet.AuthServer
         {
             ApplicationStore = applicationStore;
         }
-        IServiceScope serviceScope;
 
         public IApplicationStore ApplicationStore { get; private set;}
         #region non-Public Members

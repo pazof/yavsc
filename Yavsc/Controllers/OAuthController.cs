@@ -51,10 +51,10 @@ namespace Yavsc.Controllers
         [HttpGet("~/signin")]
         public ActionResult SignIn(string returnUrl = null)
         {
-            _logger.LogWarning($"Singin wanted: returnUrl: {returnUrl} ");
             // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
             // will be redirected to after a successful authentication and not
-            // the redirect_uri of the requesting client application.
+            // the redirect_uri of the requesting client application against the third
+            // party identity provider.
             return View("SignIn", new LoginViewModel
             {
                 ReturnUrl = returnUrl,

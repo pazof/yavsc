@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
+using Microsoft.Data.Entity.Infrastructure;
 using Yavsc.Models.Booking;
 
 namespace Yavsc.Models
@@ -21,6 +22,11 @@ namespace Yavsc.Models
             builder.Entity<Contact>().HasKey(x => new { x.OwnerId, x.UserId });
             builder.Entity<BookQuery>().Property(x=>x.CreationDate).HasDefaultValueSql("LOCALTIMESTAMP");
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql(Startup.ConnectionString);
+        }
+
         public DbSet<Application> Applications { get; set; }
         /// <summary>
         /// Activities referenced on this site
