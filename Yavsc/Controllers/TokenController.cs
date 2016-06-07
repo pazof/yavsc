@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.AspNet.Mvc;
-using System.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
-using System.Security.Principal;
-using Microsoft.AspNet.Authentication.JwtBearer;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Yavsc.Auth;

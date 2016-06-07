@@ -21,7 +21,6 @@ using Microsoft.AspNet.Localization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.AspNet.Mvc.Razor;
-using Microsoft.AspNet.StaticFiles;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -51,4 +51,4 @@ gulp.task("min", ["min:js", "min:css"]);
 gulp.task('watch', shell.task(['MONO_OPTIONS=--debug ASPNET_ENV=Development dnx-watch web --configuration=Debug']))
 
 gulp.task('build', shell.task(['dnu build --configuration=Debug']))
-gulp.task('publish', shell.task(['dnu publish']))
+gulp.task('publish', shell.task(['dnu publish -o ../build']))

@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
 using Yavsc.Models;
 
 namespace Yavsc.Controllers
