@@ -39,5 +39,11 @@ namespace Yavsc
         public const string CompanyClaimType = "https://schemas.pschneider.fr/identity/claims/Company";
 
         public const string UserNameRegExp = @"^[a-zA-Z][a-zA-Z0-9 ]*$";
+
+        public const string AuthenticationEndPath = "/signin";
+        public const string TokenEndPath = "/token";
+
+        public const string KeyProtectorPurpose = "OAuth.AspNet.AuthServer"; 
+
     }
 }

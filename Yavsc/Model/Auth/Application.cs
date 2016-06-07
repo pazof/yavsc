@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc
 {
-    public class Application
+    public class Application : IApplication
     {
         [Key]
         public string ApplicationID { get; set; }

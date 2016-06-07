@@ -34,11 +34,8 @@ using Microsoft.Net.Http.Headers;
 using Yavsc.Auth;
 using Yavsc.Formatters;
 using Yavsc.Models;
-using Yavsc.Providers;
 using Yavsc.Services;
-
-
-
+using OAuth.AspNet.AuthServer;
 
 namespace Yavsc
 {
@@ -67,7 +64,7 @@ namespace Yavsc
         }
     }
 
-    public class Startup
+    public partial class Startup
     {
         public static string UserFilesDirName { get; private set; }
         private RsaSecurityKey key;
@@ -152,12 +149,12 @@ namespace Yavsc
                 RSAKeyUtils.GetKeyParameters(keyParamsFileInfo.Name) :
                 RSAKeyUtils.GenerateKeyAndSave(keyParamsFileInfo.Name);
             key = new RsaSecurityKey(keyParams);
-            
+
             services.Configure<SharedAuthenticationOptions>(options =>
             {
                 options.SignInScheme = "ServerCookie";
-            }); 
-            
+            });
+
             services.Configure<TokenAuthOptions>(
                 to =>
                 {
@@ -167,7 +164,7 @@ namespace Yavsc
                     new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature);
                 }
             );
-            
+
 
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SiteSettings>), typeof(OptionsManager<SiteSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
@@ -192,7 +189,7 @@ namespace Yavsc
             });
 
             services.AddAuthentication(
-                op=>op.SignInScheme = "ServerCookie"
+                op => op.SignInScheme = "ServerCookie"
             );
             // Add framework services.
             services.AddEntityFramework()
@@ -206,9 +203,9 @@ namespace Yavsc
                     option.User.AllowedUserNameCharacters += " ";
                     option.User.RequireUniqueEmail = true;
                     option.Cookies.ApplicationCookie.DataProtectionProvider =
-          new  MonoDataProtectionProvider(Configuration["Site:Title"]);
-          option.Cookies.ApplicationCookie.CookieName = "Bearer";
-          
+          new MonoDataProtectionProvider(Configuration["Site:Title"]);
+                    option.Cookies.ApplicationCookie.CookieName = "Bearer";
+
                 }
             ).AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
@@ -216,7 +213,7 @@ namespace Yavsc
                 ;
             //  .AddTokenProvider<UserTokenProvider>(Constants.SMSFactor)
             //
-               
+
             services.AddCors(
             /*
             options =>
@@ -239,14 +236,14 @@ namespace Yavsc
 
             services.AddAuthorization(options =>
             {
-                
+
                 options.AddPolicy("AdministratorOnly", policy =>
                 {
                     policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
                 });
 
                 options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
-                options.AddPolicy("Bearer",new AuthorizationPolicyBuilder()
+                options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
                     .AddAuthenticationSchemes("ServerCookie")
                     .RequireAuthenticatedUser().Build());
                 // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
@@ -261,7 +258,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, CommandEditHandler>();
             services.AddSingleton<IAuthorizationHandler, CommandViewHandler>();
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
-            
+
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -290,6 +287,8 @@ namespace Yavsc
             services.AddTransient<Microsoft.AspNet.Authentication.ISecureDataFormat<AuthenticationTicket>, Microsoft.AspNet.Authentication.SecureDataFormat<AuthenticationTicket>>();
             services.AddTransient<ISecureDataFormat<AuthenticationTicket>, TicketDataFormat>();
 
+            services.AddTransient<IApplicationStore,ApplicationDbContext>();
+
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<IGoogleCloudMessageSender, AuthMessageSender>();
@@ -299,15 +298,13 @@ namespace Yavsc
             {
                 options.ResourcesPath = "Resources";
             });
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
-        IOptions<SiteSettings> siteSettings, 
+        IOptions<SiteSettings> siteSettings,
         IOptions<RequestLocalizationOptions> localizationOptions,
-        IOptions<OAuth2AppSettings> oauth2SettingsContainer, 
+        IOptions<OAuth2AppSettings> oauth2SettingsContainer,
          ILoggerFactory loggerFactory)
         {
             Startup.UserFilesDirName = siteSettings.Value.UserFiles.DirName;
@@ -391,7 +388,7 @@ namespace Yavsc
                 options.AuthenticationDescriptions.Clear();
                 options.AutomaticAuthentication = true;
             });
-            
+
             app.UseFileServer(new FileServerOptions()
             {
                 FileProvider = new PhysicalFileProvider(
@@ -406,59 +403,98 @@ namespace Yavsc
                 EnableDirectoryBrowsing = false
             });
             app.UseStaticFiles().UseWebSockets();
-            
+
             app.UseIdentity();
-            app.UseOpenIdConnectServer(options =>
-               {
-                   options.Provider = new AuthorizationProvider(loggerFactory, 
-                   new UserTokenProvider());
 
-                   // Register the certificate used to sign the JWT tokens.
-                   // options.SigningCredentials.AddCertificate(
-                   //   assembly: typeof(Startup).GetTypeInfo().Assembly,
-                   //   resource: "Mvc.Server.Certificate.pfx",
-                   //   password: "Owin.Security.OpenIdConnect.Server"); 
 
-                   // options.SigningCredentials.AddKey(key);
-                   // Note: see AuthorizationController.cs for more
-                   // information concerning ApplicationCanDisplayErrors.
-                   options.ApplicationCanDisplayErrors = true;
-                   options.AllowInsecureHttp = true;
-                   options.AutomaticChallenge = true;
-                 //  options.AutomaticAuthenticate=true;
-
-                   
-                   options.AuthorizationEndpointPath = new PathString("/connect/authorize");
-                   options.TokenEndpointPath = new PathString("/connect/authorize/accept");
-                   options.UseSlidingExpiration = true;
-                   options.AllowInsecureHttp = true;
-                   options.AuthenticationScheme = "oidc-server"; // was = OpenIdConnectDefaults.AuthenticationScheme || "oidc";
-                   options.LogoutEndpointPath = new PathString("/connect/logout");
-
-                   // options.ValidationEndpointPath = new PathString("/connect/introspect");
-               }); /**/
-             app.UseCookieAuthentication(options =>
+            /* app.UseOpenIdConnectServer(options =>
                 {
-                    options.AutomaticAuthenticate = true;
+                    options.Provider = new AuthorizationProvider(loggerFactory, 
+                    new UserTokenProvider());
+
+                    // Register the certificate used to sign the JWT tokens.
+                    // options.SigningCredentials.AddCertificate(
+                    //   assembly: typeof(Startup).GetTypeInfo().Assembly,
+                    //   resource: "Mvc.Server.Certificate.pfx",
+                    //   password: "Owin.Security.OpenIdConnect.Server"); 
+
+                    // options.SigningCredentials.AddKey(key);
+                    // Note: see AuthorizationController.cs for more
+                    // information concerning ApplicationCanDisplayErrors.
+                    options.ApplicationCanDisplayErrors = true;
+                    options.AllowInsecureHttp = true;
                     options.AutomaticChallenge = true;
-                    options.AuthenticationScheme = "ServerCookie";
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                  //  options.AutomaticAuthenticate=true;
+
+
+                    options.AuthorizationEndpointPath = new PathString("/connect/authorize");
+                    options.TokenEndpointPath = new PathString("/connect/authorize/accept");
+                    options.UseSlidingExpiration = true;
+                    options.AllowInsecureHttp = true;
+                    options.AuthenticationScheme = "oidc-server"; // was = OpenIdConnectDefaults.AuthenticationScheme || "oidc";
+                    options.LogoutEndpointPath = new PathString("/connect/logout");
+
+                    // options.ValidationEndpointPath = new PathString("/connect/introspect");
+                }); */
+
+            app.UseCookieAuthentication(options =>
+               {
+                   options.AutomaticAuthenticate = true;
+                   options.AutomaticChallenge = true;
+                   options.AuthenticationScheme = "ServerCookie";
+                   options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                    options.LoginPath = new PathString("/signin");
                    options.LogoutPath = new PathString("/signout");
                    options.CookieName = "Bearer";
-                }); 
+               });
 
-                app.UseMiddleware<Yavsc.Auth.GoogleMiddleware>(googleOptions);
+            app.UseMiddleware<Yavsc.Auth.GoogleMiddleware>(googleOptions);
 
-                // Facebook
-                app.UseFacebookAuthentication(options =>
-                    {
-                        options.AppId = Configuration["Authentication:Facebook:AppId"];
-                        options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-                        options.Scope.Add("email");
-                        options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
-                    });
+            // Facebook
+            app.UseFacebookAuthentication(options =>
+                {
+                    options.AppId = Configuration["Authentication:Facebook:AppId"];
+                    options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+                    options.Scope.Add("email");
+                    options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
+                });
+                
+            app.UseOAuthAuthorizationServer(
             
+                options =>
+                {
+                    options.AuthorizeEndpointPath = new PathString("/signin");
+                    options.TokenEndpointPath = new PathString("/token");
+                    options.ApplicationCanDisplayErrors = true;
+
+#if DEBUG
+                    options.AllowInsecureHttp = true;
+#endif
+
+                    options.Provider = new OAuthAuthorizationServerProvider
+                    {
+                        OnValidateClientRedirectUri = ValidateClientRedirectUri,
+                        OnValidateClientAuthentication = ValidateClientAuthentication,
+                        OnGrantResourceOwnerCredentials = GrantResourceOwnerCredentials,
+                        OnGrantClientCredentials = GrantClientCredetails
+                    };
+
+                    options.AuthorizationCodeProvider = new AuthenticationTokenProvider
+                    {
+                        OnCreate = CreateAuthenticationCode,
+                        OnReceive = ReceiveAuthenticationCode,
+                    };
+
+                    options.RefreshTokenProvider = new AuthenticationTokenProvider
+                    {
+                        OnCreate = CreateRefreshToken,
+                        OnReceive = ReceiveRefreshToken,
+                    };
+
+                    options.AutomaticAuthenticate = false;
+                }
+            );
+
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
 
             /* Generic OAuth (here GitHub): options.Notifications = new OAuthAuthenticationNotifications
