@@ -13,7 +13,6 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.DataProtection.Infrastructure;
 using Microsoft.AspNet.Diagnostics;
-using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity;
@@ -40,33 +39,9 @@ using OAuth.AspNet.AuthServer;
 namespace Yavsc
 {
 
-
-    public class BundleConfig
-    {
-        public static void RegisterBundles(BundleCollection bundles)
-        {
-            bundles.Add(new ScriptBundle("~/bundles/bootjq").Include(
-                "~/bower_components/bootstrap/dist/js",
-            "~/bower_components/jquery/dist/js",
-            "~/bower_components/jquery.validation/dist/js",
-            "~/bower_components/jquery-validation-unobtrusive/dist/js",
-            "~/bower_components/bootstrap-datepicker/dist/js"));
-            bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
-            ));
-            bundles.Add(new ScriptBundle("~/bundles/markdown").Include(
-                "~/bower_components/dropzone/dist/min/dropzone-amd-module.min.js",
-                "~/bower_components/dropzone/dist/min/dropzone.min.js"
-            ));
-            bundles.Add(new StyleBundle("~/Content/markdown").Include(
-                "~/bower_components/dropzone/dist/min/basic.min.css",
-                "~/bower_components/dropzone/dist/min/dropzone.min.css"
-            ));
-        }
-    }
-
     public partial class Startup
     {
-        public static string UserFilesDirName { get; private set; }
+        public static string ConnectionString { get; private set; }
         private RsaSecurityKey key;
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
@@ -87,6 +62,7 @@ namespace Yavsc
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+            ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
         }
 
         public IConfigurationRoot Configuration { get; set; }
@@ -194,7 +170,7 @@ namespace Yavsc
             // Add framework services.
             services.AddEntityFramework()
               .AddNpgsql()
-              .AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration["Data:DefaultConnection:ConnectionString"]))
+              .AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(ConnectionString))
               ;
 
             services.AddIdentity<ApplicationUser, IdentityRole>(
@@ -203,14 +179,15 @@ namespace Yavsc
                     option.User.AllowedUserNameCharacters += " ";
                     option.User.RequireUniqueEmail = true;
                     option.Cookies.ApplicationCookie.DataProtectionProvider =
-          new MonoDataProtectionProvider(Configuration["Site:Title"]);
-                    option.Cookies.ApplicationCookie.CookieName = "Bearer";
-
+                        new MonoDataProtectionProvider(Configuration["Site:Title"]);
                 }
             ).AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
                  .AddTokenProvider<UserTokenProvider>(Constants.DefaultFactor)
                 ;
+
+          
+
             //  .AddTokenProvider<UserTokenProvider>(Constants.SMSFactor)
             //
 
@@ -244,7 +221,7 @@ namespace Yavsc
 
                 options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
                 options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes("ServerCookie")
+                    .AddAuthenticationSchemes("yavsc")
                     .RequireAuthenticatedUser().Build());
                 // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
                 // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
@@ -388,21 +365,10 @@ namespace Yavsc
                 options.AuthenticationDescriptions.Clear();
                 options.AutomaticAuthentication = true;
             });
+            
+            ConfigureFileServerApp(app,siteSettings.Value,env);
 
-            app.UseFileServer(new FileServerOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(
-                        env.WebRootPath,
-                        // TODO: add a ressource serveur id here, 
-                        // or remove the blog entry id usage, to use the userid instead
-                        // and an user defined optional subdir.
-                        siteSettings.Value.UserFiles.DirName
-                    )),
-                RequestPath = new PathString("/" + siteSettings.Value.UserFiles.DirName),
-                EnableDirectoryBrowsing = false
-            });
-            app.UseStaticFiles().UseWebSockets();
+            app.UseWebSockets();
 
             app.UseIdentity();
 
@@ -445,7 +411,6 @@ namespace Yavsc
                    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                    options.LoginPath = new PathString("/signin");
                    options.LogoutPath = new PathString("/signout");
-                   options.CookieName = "Bearer";
                });
 
             app.UseMiddleware<Yavsc.Auth.GoogleMiddleware>(googleOptions);
