@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.IdentityModel.Logging</id>
+    <version>1.0.0-rc1-211161024</version>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet/blob/master/LICENSE.txt</licenseUrl>
+    <description>Includes Event Source based logging support.</description>
+    <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+    <dependencies>
+      <group targetFramework=".NETPlatform5.4">
+        <dependency id="System.Diagnostics.Tracing" version="4.0.21-beta-23516" />
+        <dependency id="System.Globalization" version="4.0.11-beta-23516" />
+        <dependency id="System.IO" version="4.0.11-beta-23516" />
+        <dependency id="System.IO.FileSystem" version="4.0.1-beta-23516" />
+      </group>
+      <group targetFramework=".NETFramework4.5.1" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.5.1" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5.1" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5.1" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework=".NETFramework4.5.1" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

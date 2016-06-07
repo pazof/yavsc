@@ -1,0 +1,56 @@
+@model IEnumerable<Yavsc.Application>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ApplicationID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DisplayName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LogoutRedirectUri)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RedirectUri)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Secret)
+        </th>
+        <th></th>
+    </tr>
+    
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ApplicationID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DisplayName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LogoutRedirectUri)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RedirectUri)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Secret)
+        </td>
+        <td>
+            <a asp-action="Edit" asp-route-id="@item.ApplicationID">Edit</a> |
+            <a asp-action="Details" asp-route-id="@item.ApplicationID">Details</a> |
+            <a asp-action="Delete" asp-route-id="@item.ApplicationID">Delete</a>
+        </td>
+    </tr>
+}
+</table>

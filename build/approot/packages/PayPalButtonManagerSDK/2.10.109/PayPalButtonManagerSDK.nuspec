@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>PayPalButtonManagerSDK</id>
+    <version>2.10.109</version>
+    <title>PayPal Button Manager SDK for .NET</title>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <authors>PayPal</authors>
+    <owners>PayPal</owners>
+    <licenseUrl>https://github.com/paypal/buttonmanager-sdk-dotnet/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/paypal/buttonmanager-sdk-dotnet</projectUrl>
+    <iconUrl>https://avatars3.githubusercontent.com/u/476675?v=2&amp;s=100</iconUrl>
+    <description>The PayPal Button Manager SDK provides the following methods:
+
+BMButtonSearch API Operation (NVP/SOAP): Use the BMButtonSearch API operation to obtain a list of your hosted Website Payments Standard buttons.
+
+BMCreateButton API Operation (NVP/SOAP): Use the BMCreateButton API operation to create a Website Payments Standard button.
+
+BMGetButtonDetails API Operation (NVP/SOAP): Use the BMGetButtonDetails API operation to obtain information about a hosted Website Payments Standard button.
+
+BMGetInventory API Operation (NVP/SOAP): Use the BMGetInventory API operation to determine the inventory levels and other inventory-related information for a button and menu items associated with the button.
+
+BMManageButtonStatus API Operation (NVP/SOAP): Use the BMManageButtonStatus API operation to change the status of a hosted button. Currently, you can only delete a button.
+
+BMSetInventory API Operation (NVP/SOAP): Use the BMSetInventory API operation to set the inventory level and inventory management features for the specified button.
+
+BMUpdateButton API Operation (NVP/SOAP): Use the BMUpdateButton API operation to modify a Website Payments Standard button that is hosted on PayPal.</description>
+    <summary>The PayPal Button Manager SDK enables you to dynamically create, manage, and edit large numbers of PayPal Payments Standard buttons.</summary>
+    <releaseNotes>https://github.com/paypal/buttonmanager-sdk-dotnet/blob/master/Changelog.txt</releaseNotes>
+    <copyright>Copyright © 2009-2015 PayPal</copyright>
+    <tags>PayPal SDK .NET C# Button Manager</tags>
+    <dependencies>
+      <dependency id="PayPalCoreSDK" version="1.7.0" />
+    </dependencies>
+  </metadata>
+</package>

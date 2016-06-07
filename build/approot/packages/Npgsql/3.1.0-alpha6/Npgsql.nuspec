@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Npgsql</id>
+    <version>3.1.0-alpha6</version>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <authors>Shay Rojansky,Emil Lenngren,Francisco Figueiredo Jr.,Kenji Uno,Jon Asher,Josh Cooley,Federico Di Gregorio,Jon Hanna,Chris Morgan,Dave Page,Glen Parker,Brar Piening,Hiroshi Saito</authors>
+    <owners>Shay Rojansky,Emil Lenngren,Francisco Figueiredo Jr.,Kenji Uno</owners>
+    <iconUrl>http://www.npgsql.org/img/postgresql.gif</iconUrl>
+    <description>Npgsql is a .NET data provider for PostgreSQL, 100% implemented in C# code. PostgreSQL 9.x and above is officially supported, other versions may work.</description>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5" />
+      <group targetFramework=".NETFramework4.5.2" />
+      <group targetFramework="DNX4.5.2" />
+      <group targetFramework="DNXCore5.0">
+        <dependency id="System.Collections.Concurrent" version="4.0.11-beta-23516" />
+        <dependency id="System.Console" version="4.0.0-beta-23516" />
+        <dependency id="System.ComponentModel" version="4.0.1-beta-23516" />
+        <dependency id="System.ComponentModel.TypeConverter" version="4.0.1-beta-23516" />
+        <dependency id="System.Data.Common" version="4.0.1-beta-23516" />
+        <dependency id="System.Diagnostics.Contracts" version="4.0.1-beta-23516" />
+        <dependency id="System.Diagnostics.Tools" version="4.0.1-beta-23516" />
+        <dependency id="System.Globalization" version="4.0.11-beta-23516" />
+        <dependency id="System.Globalization.Extensions" version="4.0.1-beta-23516" />
+        <dependency id="System.Linq" version="4.0.1-beta-23516" />
+        <dependency id="System.Net.NameResolution" version="4.0.0-beta-23516" />
+        <dependency id="System.Net.Primitives" version="4.0.11-beta-23516" />
+        <dependency id="System.Net.Sockets" version="4.1.0-beta-23516" />
+        <dependency id="System.Net.Security" version="4.0.0-beta-23516" />
+        <dependency id="System.Net.NetworkInformation" version="4.1.0-beta-23516" />
+        <dependency id="System.Runtime" version="4.0.21-beta-23516" />
+        <dependency id="System.Runtime.Extensions" version="4.0.11-beta-23516" />
+        <dependency id="System.Runtime.InteropServices" version="4.0.21-beta-23516" />
+        <dependency id="System.Runtime.Numerics" version="4.0.1-beta-23516" />
+        <dependency id="System.Reflection" version="4.1.0-beta-23516" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.0.1-beta-23409" />
+        <dependency id="System.Security.Cryptography.Primitives" version="4.0.0-beta-23516" />
+        <dependency id="System.Security.Cryptography.Algorithms" version="4.0.0-beta-23516" />
+        <dependency id="System.Security.Cryptography.X509Certificates" version="4.0.0-beta-23516" />
+        <dependency id="System.Security.Principal" version="4.0.1-beta-23516" />
+        <dependency id="System.Text.Encoding.Extensions" version="4.0.11-beta-23516" />
+        <dependency id="System.Text.RegularExpressions" version="4.0.11-beta-23516" />
+        <dependency id="System.Threading" version="4.0.11-beta-23516" />
+        <dependency id="System.Threading.Thread" version="4.0.0-beta-23516" />
+        <dependency id="System.Threading.Timer" version="4.0.1-beta-23516" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.5.2" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5.2" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5.2" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework=".NETFramework4.5.2" />
+      <frameworkAssembly assemblyName="System.Collections" targetFramework="DNX4.5.2" />
+      <frameworkAssembly assemblyName="System.Diagnostics.Contracts" targetFramework="DNX4.5.2" />
+      <frameworkAssembly assemblyName="System.Transactions" targetFramework="DNX4.5.2" />
+      <frameworkAssembly assemblyName="System.DirectoryServices" targetFramework="DNX4.5.2" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework="DNX4.5.2" />
+      <frameworkAssembly assemblyName="System.Numerics" targetFramework="DNX4.5.2" />
+      <frameworkAssembly assemblyName="System.Xml" targetFramework="DNX4.5.2" />
+      <frameworkAssembly assemblyName="mscorlib" targetFramework="DNX4.5.2" />
+      <frameworkAssembly assemblyName="System" targetFramework="DNX4.5.2" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="DNX4.5.2" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="DNX4.5.2" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

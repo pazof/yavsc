@@ -1,0 +1,205 @@
+@model Yavsc.Models.Blog
+
+@{
+   ViewData["Title"] = SR["Blog post edition"];
+}
+
+@section header{
+<link href="~/css/quill.snow.css" rel="stylesheet">
+<link href="~/css/dropzone.css" rel="stylesheet">
+
+<style>
+ .box__dragndrop,
+.box__uploading,
+.box__success,
+.box__error {
+  display: none;
+}
+.box.has-advanced-upload {
+  background-color: white;
+  outline: 2px dashed black;
+  outline-offset: -10px;
+}
+.box.has-advanced-upload .box__dragndrop {
+  display: inline;
+}
+.box.is-dragover {
+  background-color: grey;
+}
+.ql-snow.ql-toolbar {
+    border: outset grey 2px;
+}
+
+</style>
+
+
+}
+
+@section scripts{
+<script src="~/js/dropzone.js"></script>
+<script src="~/js/quill.js"></script>
+<script src="~/js/showdown.js"></script>
+<script src="~/js/to-markdown.js"></script>
+<script src="~/js/md-helpers.js"></script>
+<script>
+ $(document).ready(function() {
+
+  var editortitre = new Quill('#titlecnt', {
+    modules: { toolbar: '#titletoolbar' },
+    theme: 'snow'
+  });
+  var editorcontenu = new Quill('#contentcnt', {
+    modules: { toolbar: '#contentbar' },
+    theme: 'snow'
+  });
+  editortitre.on('selection-change', function(range) {
+  if (range) {
+    $('#contentbar').addClass('hidden');
+    $('#titletoolbar').removeClass('hidden');
+  }
+});
+editortitre.on('text-change',function(delta,source){
+    if (source=='user')
+    {
+        updateMD('title',$('#titlecnt').html())
+    }
+});
+ editorcontenu.on('selection-change', function(range) {
+  if (range) {
+    $('#contentbar').removeClass('hidden');
+    $('#titletoolbar').addClass('hidden');
+  }
+});
+editorcontenu.on('text-change',function(delta,source){
+    if (source=='user')
+    {
+        updateMD('bcontent',$('#contentcnt').html())
+    }
+});
+
+ $('#contentcnt').focus(function(){
+    $('#contentbar').removeClass('hidden');
+    $('#titletoolbar').addClass('hidden');
+ })
+
+ Dropzone.options.postfiles= {
+  maxFilesize: 2, // MB
+  autoProcessQueue: true,
+  accept: function(file, done) {
+    if (file.name == "justinbieber.jpg") {
+      done("Naha, you don't.");
+    }
+    else { done(); }
+  },
+  url: "/UserFiles/Create?PostId=@Model.Id"
+};
+
+  });
+</script>
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+<h2 > @SR["Blog post edition"] </h2>
+
+<div id="titletoolbar" class="hidden ql-snow ql-toolbar">
+  <button class="ql-format-button ql-bold"></button>
+  <button class="ql-format-button ql-italic"></button>
+  <button class="ql-format-button ql-strike"></button>
+</div>
+
+<h2 id="titlecnt"><markdown>@Model.title</markdown></h2>
+
+<div id="contentbar" class="hidden ql-snow ql-toolbar">
+  <button class="ql-format-button ql-bold"></button>
+  <button class="ql-format-button ql-italic"></button>
+  <button class="ql-format-button ql-underline"></button>
+  <button class="ql-format-button ql-strike"></button>
+
+<span class="ql-format-group">
+  <button class="ql-format-button ql-image"></button>
+  <button class="ql-format-button ql-link"></button>
+ </span>
+<span class="ql-format-group">
+<span title="List" class="ql-format-button ql-list"></span>
+<span class="ql-format-separator"></span>
+<span title="Bullet" class="ql-format-button ql-bullet"></span>
+<span class="ql-format-separator"></span>
+<select title="Text Alignment" class="ql-align">
+<option value="left" label="Left" selected=""></option>
+<option value="center" label="Center"></option>
+<option value="right" label="Right"></option>
+<option value="justify" label="Justify"></option>
+</select>
+</span>
+</div>
+
+<div markdown="@Model.bcontent" base="~/@Model.Id" site="SiteSettings.Value" id="contentcnt" ></div>
+
+<hr>
+
+
+<form asp-action="Edit" >
+    <div class="form-horizontal">
+
+        <hr />
+ <p class="text-success">@ViewData["StatusMessage"]</p>
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="AuthorId" />
+        <div class="form-group">
+            <label asp-for="title" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="title" class="form-control" />
+                <span asp-validation-for="title" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="photo" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="photo" class="form-control" />
+                <span asp-validation-for="photo" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="bcontent" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea asp-for="bcontent" class="form-control" >
+                </textarea>
+                <span asp-validation-for="bcontent" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="visible" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                    <input asp-for="visible" class="form-control"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+
+</form>
+<div>
+    
+</div>
+<div >
+    <form id="postfiles" class="dropzone" method="post" enctype="multipart/form-data">
+  <div class="fallback">
+    <input name="File[]" type="file"/>
+  </div>
+    <input type="hidden" name="postId" value="@Model.Id" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="button" value="Upload" class="btn btn-default" />
+            </div>
+        </div>
+        @Html.AntiForgeryToken()
+    </form>
+   </div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

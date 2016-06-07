@@ -1,0 +1,796 @@
+Microsoft .NET Development Utility Mono-x64-1.0.0-rc1-16609
+
+
+Building Yavsc for [1m[33mDNX,Version=v4.5.1[39m[22m
+Executing script 'prebuild' in project.json
+before building
+  Using Project dependency Yavsc 1.0.0
+    Source: [1m/home/paul/workspace/yavsc/Yavsc/project.json[22m
+
+  Using Package dependency Antlr 3.4.1.9004
+    Source: /home/paul/.dnx/packages/Antlr/3.4.1.9004
+    File: [1mlib/Antlr3.Runtime.dll[22m
+
+  Using Package dependency EntityFramework.Commands 7.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/EntityFramework.Commands/7.0.0-rc1-final
+    File: [1mlib/dnx451/EntityFramework.Commands.dll[22m
+
+  Using Package dependency EntityFramework.Core 7.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/EntityFramework.Core/7.0.0-rc1-final
+    File: [1mlib/dnx451/EntityFramework.Core.dll[22m
+
+  Using Package dependency EntityFramework.MicrosoftSqlServer 7.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/EntityFramework.MicrosoftSqlServer/7.0.0-rc1-final
+    File: [1mlib/net451/EntityFramework.MicrosoftSqlServer.dll[22m
+
+  Using Package dependency EntityFramework.Relational 7.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/EntityFramework.Relational/7.0.0-rc1-final
+    File: [1mlib/net451/EntityFramework.Relational.dll[22m
+
+  Using Package dependency EntityFramework.Relational.Design 7.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/EntityFramework.Relational.Design/7.0.0-rc1-final
+    File: [1mlib/dnx451/EntityFramework.Relational.Design.dll[22m
+
+  Using Package dependency EntityFramework.Sqlite 7.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/EntityFramework.Sqlite/7.0.0-rc1-final
+    File: [1mlib/net451/EntityFramework.Sqlite.dll[22m
+
+  Using Package dependency EntityFramework7.Npgsql 3.1.0-rc1-3
+    Source: /home/paul/.dnx/packages/EntityFramework7.Npgsql/3.1.0-rc1-3
+    File: [1mlib/dnx451/EntityFramework7.Npgsql.dll[22m
+
+  Using Package dependency EntityFramework7.Npgsql.Design 3.1.0-rc1-5
+    Source: /home/paul/.dnx/packages/EntityFramework7.Npgsql.Design/3.1.0-rc1-5
+    File: [1mlib/dnx451/EntityFramework7.Npgsql.Design.dll[22m
+
+  Using Package dependency Google.Apis 1.11.1
+    Source: /home/paul/.dnx/packages/Google.Apis/1.11.1
+    File: [1mlib/net45/Google.Apis.dll[22m
+    File: [1mlib/net45/Google.Apis.PlatformServices.dll[22m
+
+  Using Package dependency Google.Apis.Core 1.11.1
+    Source: /home/paul/.dnx/packages/Google.Apis.Core/1.11.1
+    File: [1mlib/net45/Google.Apis.Core.dll[22m
+
+  Using Package dependency Ix-Async 1.2.5
+    Source: /home/paul/.dnx/packages/Ix-Async/1.2.5
+    File: [1mlib/net45/System.Interactive.Async.dll[22m
+
+  Using Package dependency jQuery 1.6.4
+    Source: /home/paul/.dnx/packages/jQuery/1.6.4
+
+  Using Package dependency log4net 2.0.3
+    Source: /home/paul/.dnx/packages/log4net/2.0.3
+    File: [1mlib/net40-full/log4net.dll[22m
+
+  Using Package dependency MailKit 1.3.0-beta7
+    Source: /home/paul/.dnx/packages/MailKit/1.3.0-beta7
+    File: [1mlib/net451/MailKit.dll[22m
+
+  Using Package dependency MarkdownDeep.NET 1.5.0
+    Source: /home/paul/.dnx/packages/MarkdownDeep.NET/1.5.0
+    File: [1mlib/net451/MarkdownDeep.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Antiforgery 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Antiforgery/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Antiforgery.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Authentication 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Authentication/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Authentication.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Authentication.Cookies 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Authentication.Cookies/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Authentication.Cookies.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Authentication.Facebook 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Authentication.Facebook/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Authentication.Facebook.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Authentication.JwtBearer 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Authentication.JwtBearer/1.0.0-rc1-final
+    File: [1mlib/dnx451/Microsoft.AspNet.Authentication.JwtBearer.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Authentication.OAuth 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Authentication.OAuth/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Authentication.OAuth.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Authentication.OpenIdConnect 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Authentication.OpenIdConnect/1.0.0-rc1-final
+    File: [1mlib/dnx451/Microsoft.AspNet.Authentication.OpenIdConnect.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Authentication.Twitter 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Authentication.Twitter/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Authentication.Twitter.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Authorization 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Authorization/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Authorization.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Cors 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Cors/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Cors.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Cryptography.Internal 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Cryptography.Internal.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Cryptography.KeyDerivation 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Cryptography.KeyDerivation/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Cryptography.KeyDerivation.dll[22m
+
+  Using Package dependency Microsoft.AspNet.DataProtection 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.DataProtection/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.DataProtection.dll[22m
+
+  Using Package dependency Microsoft.AspNet.DataProtection.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.DataProtection.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.DataProtection.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.AspNet.DataProtection.SystemWeb 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.DataProtection.SystemWeb/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.DataProtection.SystemWeb.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Diagnostics 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Diagnostics/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Diagnostics.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Diagnostics.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Diagnostics.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Diagnostics.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Diagnostics.Entity 7.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Diagnostics.Entity/7.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Diagnostics.Entity.dll[22m
+
+  Using Package dependency Microsoft.AspNet.FileProviders.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.FileProviders.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.FileProviders.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.AspNet.FileProviders.Physical 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.FileProviders.Physical/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.FileProviders.Physical.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Hosting 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Hosting/1.0.0-rc1-final
+    File: [1mlib/dnx451/Microsoft.AspNet.Hosting.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Hosting.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Hosting.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Hosting.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Hosting.Server.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Html.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Html.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Html.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Http 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Http/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Http.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Http.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Http.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Http.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Http.Extensions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Http.Extensions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Http.Extensions.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Http.Features 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Http.Features/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Http.Features.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Identity 3.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Identity/3.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Identity.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Identity.EntityFramework 3.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Identity.EntityFramework/3.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Identity.EntityFramework.dll[22m
+
+  Using Package dependency Microsoft.AspNet.IISPlatformHandler 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.IISPlatformHandler/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.IISPlatformHandler.dll[22m
+
+  Using Package dependency Microsoft.AspNet.JsonPatch 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.JsonPatch/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.JsonPatch.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Localization 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Localization/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Localization.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.Abstractions 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.Abstractions/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.ApiExplorer 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.ApiExplorer/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.ApiExplorer.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.Core 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.Core/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.Core.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.Cors 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.Cors/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.Cors.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.DataAnnotations 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.DataAnnotations/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.DataAnnotations.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.Formatters.Json 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.Formatters.Json/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.Formatters.Json.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.Localization 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.Localization/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.Localization.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.Razor 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.Razor/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.Razor.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.Razor.Host 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.Razor.Host/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.Razor.Host.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.TagHelpers 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.TagHelpers/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.TagHelpers.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Mvc.ViewFeatures 6.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Mvc.ViewFeatures/6.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Mvc.ViewFeatures.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Owin 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Owin/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Owin.dll[22m
+
+  Using Package dependency Microsoft.AspNet.PageExecutionInstrumentation.Interfaces 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Razor 4.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Razor/4.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Razor.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Razor.Runtime 4.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Razor.Runtime/4.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Razor.Runtime.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Razor.Runtime.Precompilation 4.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Razor.Runtime.Precompilation/4.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Razor.Runtime.Precompilation.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Routing 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Routing/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Routing.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Server.Kestrel 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Server.Kestrel/1.0.0-rc1-final
+    File: [1mlib/dnx451/Microsoft.AspNet.Server.Kestrel.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Server.WebListener 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Server.WebListener/1.0.0-rc1-final
+    File: [1mlib/dnx451/Microsoft.AspNet.Server.WebListener.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Session 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Session/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Session.dll[22m
+
+  Using Package dependency Microsoft.AspNet.SignalR.Core 2.2.0
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.SignalR.Core/2.2.0
+    File: [1mlib/net45/Microsoft.AspNet.SignalR.Core.dll[22m
+
+  Using Package dependency Microsoft.AspNet.SignalR.JS 2.2.0
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.SignalR.JS/2.2.0
+
+  Using Package dependency Microsoft.AspNet.SignalR.Owin 1.2.2
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.SignalR.Owin/1.2.2
+    File: [1mlib/net45/Microsoft.AspNet.SignalR.Owin.dll[22m
+
+  Using Package dependency Microsoft.AspNet.StaticFiles 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.StaticFiles/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.StaticFiles.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Tooling.Razor 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Tooling.Razor/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.Tooling.Razor.dll[22m
+
+  Using Package dependency Microsoft.AspNet.Web.Optimization 1.1.3
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.Web.Optimization/1.1.3
+    File: [1mlib/net40/System.Web.Optimization.dll[22m
+
+  Using Package dependency Microsoft.AspNet.WebSockets.Protocol 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.WebSockets.Protocol/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.WebSockets.Protocol.dll[22m
+
+  Using Package dependency Microsoft.AspNet.WebSockets.Server 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.WebSockets.Server/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.WebSockets.Server.dll[22m
+
+  Using Package dependency Microsoft.AspNet.WebUtilities 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.AspNet.WebUtilities/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.AspNet.WebUtilities.dll[22m
+
+  Using Package dependency Microsoft.AspNetCore.Authentication.Cookies 0.0.1-alpha
+    Source: /home/paul/.dnx/packages/Microsoft.AspNetCore.Authentication.Cookies/0.0.1-alpha
+
+  Using Package dependency Microsoft.AspNetCore.Authentication.OAuth 0.0.1-alpha
+    Source: /home/paul/.dnx/packages/Microsoft.AspNetCore.Authentication.OAuth/0.0.1-alpha
+
+  Using Package dependency Microsoft.AspNetCore.Authentication.OpenIdConnect 0.0.1-alpha
+    Source: /home/paul/.dnx/packages/Microsoft.AspNetCore.Authentication.OpenIdConnect/0.0.1-alpha
+
+  Using Package dependency Microsoft.CodeAnalysis.Analyzers 1.0.0
+    Source: /home/paul/.dnx/packages/Microsoft.CodeAnalysis.Analyzers/1.0.0
+
+  Using Package dependency Microsoft.CodeAnalysis.Common 1.1.0-rc1-20151109-01
+    Source: /home/paul/.dnx/packages/Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01
+    File: [1mlib/net45/Microsoft.CodeAnalysis.dll[22m
+
+  Using Package dependency Microsoft.CodeAnalysis.CSharp 1.1.0-rc1-20151109-01
+    Source: /home/paul/.dnx/packages/Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01
+    File: [1mlib/net45/Microsoft.CodeAnalysis.CSharp.dll[22m
+
+  Using Package dependency Microsoft.Data.Sqlite 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Data.Sqlite/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Data.Sqlite.dll[22m
+
+  Using Package dependency Microsoft.Dnx.Compilation.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Dnx.Compilation.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.Dnx.Compilation.CSharp.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Dnx.Compilation.CSharp.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Dnx.Compilation.CSharp.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.Dnx.Compilation.CSharp.Common 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Dnx.Compilation.CSharp.Common/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Dnx.Compilation.CSharp.Common.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Caching.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Caching.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Caching.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Caching.Memory 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Caching.Memory/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Caching.Memory.dll[22m
+
+  Using Package dependency Microsoft.Extensions.CodeGeneration 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.CodeGeneration/1.0.0-rc1-final
+    File: [1mlib/dnx451/Microsoft.Extensions.CodeGeneration.dll[22m
+
+  Using Package dependency Microsoft.Extensions.CodeGeneration.Core 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.CodeGeneration.Core/1.0.0-rc1-final
+    File: [1mlib/dnx451/Microsoft.Extensions.CodeGeneration.Core.dll[22m
+
+  Using Package dependency Microsoft.Extensions.CodeGeneration.EntityFramework 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.CodeGeneration.EntityFramework/1.0.0-rc1-final
+    File: [1mlib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.dll[22m
+
+  Using Package dependency Microsoft.Extensions.CodeGeneration.Templating 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.CodeGeneration.Templating/1.0.0-rc1-final
+    File: [1mlib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.dll[22m
+
+  Using Package dependency Microsoft.Extensions.CodeGenerators.Mvc 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.CodeGenerators.Mvc/1.0.0-rc1-final
+    File: [1mlib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Configuration 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Configuration/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Configuration.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Configuration.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Configuration.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Configuration.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Configuration.Binder 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Configuration.Binder/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Configuration.Binder.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Configuration.CommandLine 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Configuration.CommandLine/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Configuration.CommandLine.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Configuration.EnvironmentVariables 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Configuration.EnvironmentVariables/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Configuration.FileExtensions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Configuration.FileExtensions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Configuration.FileProviderExtensions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Configuration.FileProviderExtensions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Configuration.Json 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Configuration.Json.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Configuration.UserSecrets 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Configuration.UserSecrets/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll[22m
+
+  Using Package dependency Microsoft.Extensions.DependencyInjection 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.DependencyInjection.dll[22m
+
+  Using Package dependency Microsoft.Extensions.DependencyInjection.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.DependencyInjection.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.DependencyInjection.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.Extensions.FileSystemGlobbing 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.FileSystemGlobbing/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.FileSystemGlobbing.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Globalization.CultureInfoCache 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Globalization.CultureInfoCache/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Globalization.CultureInfoCache.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Localization 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Localization/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Localization.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Localization.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Localization.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Localization.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Logging 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Logging/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Logging.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Logging.Abstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Logging.Abstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Logging.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Logging.Console 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Logging.Console/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Logging.Console.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Logging.Debug 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Logging.Debug/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Logging.Debug.dll[22m
+
+  Using Package dependency Microsoft.Extensions.MemoryPool 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.MemoryPool/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.MemoryPool.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Options 0.0.1-alpha
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Options/0.0.1-alpha
+
+  Using Package dependency Microsoft.Extensions.OptionsModel 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.OptionsModel/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.OptionsModel.dll[22m
+
+  Using Package dependency Microsoft.Extensions.PlatformAbstractions 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.PlatformAbstractions/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.PlatformAbstractions.dll[22m
+
+  Using Package dependency Microsoft.Extensions.Primitives 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.Primitives/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.Primitives.dll[22m
+
+  Using Package dependency Microsoft.Extensions.WebEncoders 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.WebEncoders/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.WebEncoders.dll[22m
+
+  Using Package dependency Microsoft.Extensions.WebEncoders.Core 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Extensions.WebEncoders.Core/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Extensions.WebEncoders.Core.dll[22m
+
+  Using Package dependency Microsoft.Framework.Configuration 1.0.0-beta8
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.Configuration/1.0.0-beta8
+    File: [1mlib/dnx451/Microsoft.Framework.Configuration.dll[22m
+
+  Using Package dependency Microsoft.Framework.Configuration.Abstractions 1.0.0-beta8
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.Configuration.Abstractions/1.0.0-beta8
+    File: [1mlib/dnx451/Microsoft.Framework.Configuration.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.Framework.Configuration.Binder 1.0.0-beta8
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.Configuration.Binder/1.0.0-beta8
+    File: [1mlib/dnx451/Microsoft.Framework.Configuration.Binder.dll[22m
+
+  Using Package dependency Microsoft.Framework.Configuration.FileExtensions 1.0.0-beta8
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.Configuration.FileExtensions/1.0.0-beta8
+    File: [1mlib/dnx451/Microsoft.Framework.Configuration.FileExtensions.dll[22m
+
+  Using Package dependency Microsoft.Framework.Configuration.Json 1.0.0-beta8
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.Configuration.Json/1.0.0-beta8
+    File: [1mlib/dnx451/Microsoft.Framework.Configuration.Json.dll[22m
+
+  Using Package dependency Microsoft.Framework.ConfigurationModel 1.0.0-beta4
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.ConfigurationModel/1.0.0-beta4
+    File: [1mlib/dnx451/Microsoft.Framework.ConfigurationModel.dll[22m
+
+  Using Package dependency Microsoft.Framework.ConfigurationModel.Interfaces 1.0.0-beta4
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.ConfigurationModel.Interfaces/1.0.0-beta4
+    File: [1mlib/dnx451/Microsoft.Framework.ConfigurationModel.Interfaces.dll[22m
+
+  Using Package dependency Microsoft.Framework.ConfigurationModel.Json 1.0.0-beta4
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.ConfigurationModel.Json/1.0.0-beta4
+    File: [1mlib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll[22m
+
+  Using Package dependency Microsoft.Framework.DependencyInjection 1.0.0-beta8
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.DependencyInjection/1.0.0-beta8
+    File: [1mlib/dnx451/Microsoft.Framework.DependencyInjection.dll[22m
+
+  Using Package dependency Microsoft.Framework.DependencyInjection.Abstractions 1.0.0-beta8
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.DependencyInjection.Abstractions/1.0.0-beta8
+    File: [1mlib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.dll[22m
+
+  Using Package dependency Microsoft.Framework.Runtime.Interfaces 1.0.0-beta4
+    Source: /home/paul/.dnx/packages/Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4
+    File: [1mlib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll[22m
+
+  Using Package dependency Microsoft.IdentityModel.Logging 1.0.0-rc1-211161024
+    Source: /home/paul/.dnx/packages/Microsoft.IdentityModel.Logging/1.0.0-rc1-211161024
+    File: [1mlib/net451/Microsoft.IdentityModel.Logging.dll[22m
+
+  Using Package dependency Microsoft.IdentityModel.Protocols 2.0.0-rc1-211161024
+    Source: /home/paul/.dnx/packages/Microsoft.IdentityModel.Protocols/2.0.0-rc1-211161024
+    File: [1mlib/net451/Microsoft.IdentityModel.Protocols.dll[22m
+
+  Using Package dependency Microsoft.IdentityModel.Protocols.OpenIdConnect 2.0.0-rc1-211161024
+    Source: /home/paul/.dnx/packages/Microsoft.IdentityModel.Protocols.OpenIdConnect/2.0.0-rc1-211161024
+    File: [1mlib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll[22m
+
+  Using Package dependency Microsoft.Net.Http.Headers 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Net.Http.Headers/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Net.Http.Headers.dll[22m
+
+  Using Package dependency Microsoft.Net.Http.Server 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Net.Http.Server/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Net.Http.Server.dll[22m
+
+  Using Package dependency Microsoft.Net.WebSockets 1.0.0-rc1-final
+    Source: /home/paul/.dnx/packages/Microsoft.Net.WebSockets/1.0.0-rc1-final
+    File: [1mlib/net451/Microsoft.Net.WebSockets.dll[22m
+
+  Using Package dependency Microsoft.NETCore.Platforms 1.0.1-beta-23516
+    Source: /home/paul/.dnx/packages/Microsoft.NETCore.Platforms/1.0.1-beta-23516
+
+  Using Package dependency Microsoft.NETCore.Targets 1.0.1-beta-23516
+    Source: /home/paul/.dnx/packages/Microsoft.NETCore.Targets/1.0.1-beta-23516
+
+  Using Package dependency Microsoft.Owin 2.1.0
+    Source: /home/paul/.dnx/packages/Microsoft.Owin/2.1.0
+    File: [1mlib/net45/Microsoft.Owin.dll[22m
+
+  Using Package dependency Microsoft.Owin.Security 2.1.0
+    Source: /home/paul/.dnx/packages/Microsoft.Owin.Security/2.1.0
+    File: [1mlib/net45/Microsoft.Owin.Security.dll[22m
+
+  Using Package dependency Microsoft.Web.Infrastructure 1.0.0
+    Source: /home/paul/.dnx/packages/Microsoft.Web.Infrastructure/1.0.0
+    File: [1mlib/net40/Microsoft.Web.Infrastructure.dll[22m
+
+  Using Package dependency MimeKit 1.3.0-beta7
+    Source: /home/paul/.dnx/packages/MimeKit/1.3.0-beta7
+    File: [1mlib/net451/BouncyCastle.dll[22m
+    File: [1mlib/net451/MimeKit.dll[22m
+
+  Using Package dependency Newtonsoft.Json 7.0.1
+    Source: /home/paul/.dnx/packages/Newtonsoft.Json/7.0.1
+    File: [1mlib/net45/Newtonsoft.Json.dll[22m
+
+  Using Package dependency Npgsql 3.1.0-alpha6
+    Source: /home/paul/.dnx/packages/Npgsql/3.1.0-alpha6
+    File: [1mlib/net45/Npgsql.dll[22m
+
+  Using Package dependency Owin 1.0.0
+    Source: /home/paul/.dnx/packages/Owin/1.0.0
+    File: [1mlib/net40/Owin.dll[22m
+
+  Using Package dependency PayPalButtonManagerSDK 2.10.109
+    Source: /home/paul/.dnx/packages/PayPalButtonManagerSDK/2.10.109
+    File: [1mlib/net20/PayPalButtonManagerSDK.dll[22m
+
+  Using Package dependency PayPalCoreSDK 1.7.1
+    Source: /home/paul/.dnx/packages/PayPalCoreSDK/1.7.1
+    File: [1mlib/net451/PayPalCoreSDK.dll[22m
+
+  Using Package dependency RazorEngine 4.2.7-beta1
+    Source: /home/paul/.dnx/packages/RazorEngine/4.2.7-beta1
+    File: [1mlib/net45/RazorEngine.dll[22m
+
+  Using Package dependency Remotion.Linq 2.0.1
+    Source: /home/paul/.dnx/packages/Remotion.Linq/2.0.1
+    File: [1mlib/net45/Remotion.Linq.dll[22m
+
+  Using Package dependency System.Collections 4.0.0
+    Source: /home/paul/.dnx/packages/System.Collections/4.0.0
+
+  Using Package dependency System.Collections.Immutable 1.1.37
+    Source: /home/paul/.dnx/packages/System.Collections.Immutable/1.1.37
+    File: [1mlib/dotnet/System.Collections.Immutable.dll[22m
+
+  Using Package dependency System.Diagnostics.Debug 4.0.0
+    Source: /home/paul/.dnx/packages/System.Diagnostics.Debug/4.0.0
+
+  Using Package dependency System.Diagnostics.DiagnosticSource 4.0.0-beta-23516
+    Source: /home/paul/.dnx/packages/System.Diagnostics.DiagnosticSource/4.0.0-beta-23516
+    File: [1mlib/dotnet5.2/System.Diagnostics.DiagnosticSource.dll[22m
+
+  Using Package dependency System.Diagnostics.Tracing 4.0.0
+    Source: /home/paul/.dnx/packages/System.Diagnostics.Tracing/4.0.0
+
+  Using Package dependency System.Globalization 4.0.0
+    Source: /home/paul/.dnx/packages/System.Globalization/4.0.0
+
+  Using Package dependency System.IdentityModel.Tokens 5.0.0-rc1-211161024
+    Source: /home/paul/.dnx/packages/System.IdentityModel.Tokens/5.0.0-rc1-211161024
+    File: [1mlib/net451/System.IdentityModel.Tokens.dll[22m
+
+  Using Package dependency System.IdentityModel.Tokens.Jwt 5.0.0-rc1-211161024
+    Source: /home/paul/.dnx/packages/System.IdentityModel.Tokens.Jwt/5.0.0-rc1-211161024
+    File: [1mlib/net451/System.IdentityModel.Tokens.Jwt.dll[22m
+
+  Using Package dependency System.IO 4.0.0
+    Source: /home/paul/.dnx/packages/System.IO/4.0.0
+
+  Using Package dependency System.Linq 4.0.0
+    Source: /home/paul/.dnx/packages/System.Linq/4.0.0
+
+  Using Package dependency System.Numerics.Vectors 4.1.1-beta-23516
+    Source: /home/paul/.dnx/packages/System.Numerics.Vectors/4.1.1-beta-23516
+    File: [1mlib/portable-net45+win8/System.Numerics.Vectors.dll[22m
+
+  Using Package dependency System.Reflection 4.0.0
+    Source: /home/paul/.dnx/packages/System.Reflection/4.0.0
+
+  Using Package dependency System.Reflection.Extensions 4.0.0
+    Source: /home/paul/.dnx/packages/System.Reflection.Extensions/4.0.0
+
+  Using Package dependency System.Reflection.Metadata 1.1.0
+    Source: /home/paul/.dnx/packages/System.Reflection.Metadata/1.1.0
+    File: [1mlib/dotnet5.2/System.Reflection.Metadata.dll[22m
+
+  Using Package dependency System.Reflection.Primitives 4.0.0
+    Source: /home/paul/.dnx/packages/System.Reflection.Primitives/4.0.0
+
+  Using Package dependency System.Resources.ResourceManager 4.0.0
+    Source: /home/paul/.dnx/packages/System.Resources.ResourceManager/4.0.0
+
+  Using Package dependency System.Runtime 4.0.0
+    Source: /home/paul/.dnx/packages/System.Runtime/4.0.0
+
+  Using Package dependency System.Runtime.Extensions 4.0.0
+    Source: /home/paul/.dnx/packages/System.Runtime.Extensions/4.0.0
+
+  Using Package dependency System.Runtime.InteropServices 4.0.0
+    Source: /home/paul/.dnx/packages/System.Runtime.InteropServices/4.0.0
+
+  Using Package dependency System.Text.Encoding 4.0.0
+    Source: /home/paul/.dnx/packages/System.Text.Encoding/4.0.0
+
+  Using Package dependency System.Text.Encoding.Extensions 4.0.0
+    Source: /home/paul/.dnx/packages/System.Text.Encoding.Extensions/4.0.0
+
+  Using Package dependency System.Threading 4.0.0
+    Source: /home/paul/.dnx/packages/System.Threading/4.0.0
+
+  Using Package dependency WebGrease 1.5.2
+    Source: /home/paul/.dnx/packages/WebGrease/1.5.2
+    File: [1mlib/WebGrease.dll[22m
+
+  Using Package dependency Zlib.Portable.Signed 1.11.0
+    Source: /home/paul/.dnx/packages/Zlib.Portable.Signed/1.11.0
+    File: [1mlib/portable-net4+sl5+wp8+win8+wpa81+MonoTouch+MonoAndroid/Zlib.Portable.dll[22m
+
+  Using Assembly dependency fx/mscorlib 4.0.0
+    Source: [1m/usr/lib/mono/4.5/mscorlib.dll[22m
+
+  Using Assembly dependency fx/System 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.dll[22m
+
+  Using Assembly dependency fx/System.Core 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.Core.dll[22m
+
+  Using Assembly dependency fx/Microsoft.CSharp 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Microsoft.CSharp.dll[22m
+
+  Using Assembly dependency fx/System.Collections 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Collections.dll[22m
+
+  Using Assembly dependency fx/System.ComponentModel.DataAnnotations 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.ComponentModel.DataAnnotations.dll[22m
+
+  Using Assembly dependency fx/System.Diagnostics.Debug 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Diagnostics.Debug.dll[22m
+
+  Using Assembly dependency fx/System.Diagnostics.Tools 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Diagnostics.Tools.dll[22m
+
+  Using Assembly dependency fx/System.Globalization 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Globalization.dll[22m
+
+  Using Assembly dependency fx/System.Linq 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Linq.dll[22m
+
+  Using Assembly dependency fx/System.Linq.Expressions 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Linq.Expressions.dll[22m
+
+  Using Assembly dependency fx/System.Linq.Queryable 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Linq.Queryable.dll[22m
+
+  Using Assembly dependency fx/System.ObjectModel 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.ObjectModel.dll[22m
+
+  Using Assembly dependency fx/System.Reflection 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Reflection.dll[22m
+
+  Using Assembly dependency fx/System.Reflection.Extensions 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Reflection.Extensions.dll[22m
+
+  Using Assembly dependency fx/System.Resources.ResourceManager 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Resources.ResourceManager.dll[22m
+
+  Using Assembly dependency fx/System.Runtime 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Runtime.dll[22m
+
+  Using Assembly dependency fx/System.Runtime.Extensions 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Runtime.Extensions.dll[22m
+
+  Using Assembly dependency fx/System.Threading 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Threading.dll[22m
+
+  Using Assembly dependency fx/System.Data 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.Data.dll[22m
+
+  Using Assembly dependency fx/System.Transactions 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.Transactions.dll[22m
+
+  Using Assembly dependency fx/System.IO 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.IO.dll[22m
+
+  Using Assembly dependency fx/System.Text.Encoding 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Text.Encoding.dll[22m
+
+  Using Assembly dependency fx/System.Threading.Tasks 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Threading.Tasks.dll[22m
+
+  Using Assembly dependency fx/System.Diagnostics.Contracts 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Diagnostics.Contracts.dll[22m
+
+  Using Assembly dependency fx/System.Net.Http 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.Net.Http.dll[22m
+
+  Using Assembly dependency fx/System.Security 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.Security.dll[22m
+
+  Using Assembly dependency fx/System.Xml 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.Xml.dll[22m
+
+  Using Assembly dependency fx/System.Xml.Linq 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.Xml.Linq.dll[22m
+
+  Using Assembly dependency fx/System.Configuration 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.Configuration.dll[22m
+
+  Using Assembly dependency fx/System.Web 4.0.0
+    Source: [1m/usr/lib/mono/4.5/System.Web.dll[22m
+
+  Using Assembly dependency fx/System.Collections.Concurrent 4.0.0
+    Source: [1m/usr/lib/mono/4.5/Facades/System.Collections.Concurrent.dll[22m
+
+Executing script 'postbuild' in project.json
+after building
+
+[32mBuild succeeded.[39m
+    0 Warning(s)
+    0 Error(s)
+
+Time elapsed 00:00:02.4735119
+Total build time elapsed: 00:00:02.4910582
+Total projects built: 1

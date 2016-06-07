@@ -1,0 +1,82 @@
+@model IEnumerable<Yavsc.Models.Blog>
+@{
+    ViewData["Title"] = "Title";
+}
+
+<h2>Index</h2>
+<p class="text-success">@ViewData["StatusMessage"]</p>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @SR["Author"]
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.bcontent)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.modified)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.photo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.posted)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.rate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.visible)
+        </th>
+        <th></th>
+    </tr>
+    
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @item.Author?.UserName
+        </td>
+        <td>
+            <div md-content="@item.bcontent"/>@item.bcontent
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.modified)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.photo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.posted)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.rate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.visible)
+        </td>
+        <td>
+            <ul class="actiongroup">
+                <li>
+            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+            </li><li>
+            <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+            </li><li>
+            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </li>
+            </ul>
+        </td>
+    </tr>
+}
+</table>
+
+
+

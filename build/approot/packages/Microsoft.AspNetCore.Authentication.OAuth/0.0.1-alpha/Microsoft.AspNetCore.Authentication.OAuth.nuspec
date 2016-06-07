@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.AspNetCore.Authentication.OAuth</id>
+    <version>0.0.1-alpha</version>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <authors>aspnet</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm</licenseUrl>
+    <projectUrl>http://www.asp.net/</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
+    <description>Microsoft.AspNetCore.Authentication.OAuth</description>
+  </metadata>
+</package>

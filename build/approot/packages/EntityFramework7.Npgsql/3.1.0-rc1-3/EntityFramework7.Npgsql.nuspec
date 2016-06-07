@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>EntityFramework7.Npgsql</id>
+    <version>3.1.0-rc1-3</version>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <authors>Shay Rojansky</authors>
+    <owners>Shay Rojansky</owners>
+    <iconUrl>http://www.npgsql.org/img/postgresql.gif</iconUrl>
+    <description>PostgreSQL provider for Entity Framework 7</description>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5.1">
+        <dependency id="EntityFramework.Core" version="7.0.0-rc1-final" />
+        <dependency id="EntityFramework.Relational" version="7.0.0-rc1-final" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="1.0.0-rc1-final" />
+        <dependency id="Microsoft.Extensions.DependencyInjection" version="1.0.0-rc1-final" />
+        <dependency id="Npgsql" version="3.1.0-alpha6" />
+      </group>
+      <group targetFramework="DNX4.5.1">
+        <dependency id="EntityFramework.Core" version="7.0.0-rc1-final" />
+        <dependency id="EntityFramework.Relational" version="7.0.0-rc1-final" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="1.0.0-rc1-final" />
+        <dependency id="Microsoft.Extensions.DependencyInjection" version="1.0.0-rc1-final" />
+        <dependency id="Npgsql" version="3.1.0-alpha6" />
+      </group>
+      <group targetFramework="DNXCore5.0">
+        <dependency id="EntityFramework.Core" version="7.0.0-rc1-final" />
+        <dependency id="EntityFramework.Relational" version="7.0.0-rc1-final" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="1.0.0-rc1-final" />
+        <dependency id="Microsoft.Extensions.DependencyInjection" version="1.0.0-rc1-final" />
+        <dependency id="Npgsql" version="3.1.0-alpha6" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="mscorlib" targetFramework=".NETFramework4.5.1" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5.1" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5.1" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework=".NETFramework4.5.1" />
+      <frameworkAssembly assemblyName="System.Collections" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System.Reflection" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System.Diagnostics.Contracts" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System.Linq.Expressions" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System.Runtime" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="mscorlib" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="DNX4.5.1" />
+      <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="DNX4.5.1" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

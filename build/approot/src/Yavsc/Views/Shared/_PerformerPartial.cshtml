@@ -1,0 +1,33 @@
+@model Yavsc.Models.PerformerProfile
+
+<div class="performer @(Model.Active?"active":"inactive")">
+    @Model.Performer?.UserName (rating: @Model.Rate%)
+     <ul>
+        @if (Model.MinDailyCost != null) {
+            <li>@SR["MinDailyCost"]: @Model.MinDailyCost&euro;</li>
+        }
+        @if (Model.MinDailyCost != null) {
+            <li>@SR["MaxDailyCost"]: @Model.MaxDailyCost&euro;</li>
+        }
+        @if (Model.WebSite!=null) { 
+            <li>@SR["WebSite"]: @Model.WebSite</li>
+        }
+        @if (Model.DoesBlog) {
+            <li>  <a asp-controller="Blogspot" asp-action="UserPosts" 
+            asp-route-id="@Model.Performer.UserName">@SR["His blog"]</a>
+            </li>
+        }
+        @if (!string.IsNullOrEmpty(
+            Model.Performer?.DedicatedGoogleCalendar))
+            {
+            <li>   @SR["Exposes his Google calendar!"]
+            </li>
+            }
+        @if (!string.IsNullOrEmpty(
+            Model.Performer?.GoogleRegId))
+            {
+            <li>   @SR["Uses the mobile application, and receives push notifications"]
+            </li>
+            }
+    </ul>
+</div>

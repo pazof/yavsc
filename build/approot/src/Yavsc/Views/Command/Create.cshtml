@@ -1,0 +1,149 @@
+@model BookQuery
+@{
+    ViewData["Title"] = SR["Book "+Model.PerformerProfile.ActivityCode];
+}
+@section header{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script src="~/lib/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="~/lib/bootstrap-datepicker/bootstrap-datepicker-locales/bootstrap-datepicker.fr.min.js" charset="UTF-8"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
+
+    <link rel="stylesheet" href="~/css/bootstrap-datepicker/bootstrap-datepicker3.standalone.min.css">    
+    <style>
+      #map {
+        width: 100%;
+        height: 250px;
+      }
+      #Location_combo li {
+          cursor: pointer;
+      }
+      #Location_combo li:hover {
+          text-decoration: underline;
+      }
+    </style>
+}
+@section scripts{
+<script>
+$(document).ready(function(){
+    
+     $.validator.setDefaults({
+       messages: {
+        remote:  "Ce lieu n'est pas identifié par les services de géo-localisation Google",
+        required: "Veuillez renseigner ce champ"
+       }
+   });
+    var gmap = new google.maps.Map(document.getElementById('map'), {
+	    zoom: 16,
+	    center: { lat: 48.862854, lng: 2.2056466 }
+	  });
+    var marker;
+    function chooseLoc(loc) {
+        $('#Location_Address').val(loc.formatted_address);
+        var pos = loc.geometry.location;
+        var lat = new Number(pos.lat);
+        var lng = new Number(pos.lng);
+        $('#Location_Latitude').val(lat.toLocaleString());
+        $('#Location_Longitude').val(lng.toLocaleString());
+        gmap.setCenter(pos);
+        if (marker) { 
+            marker.setMap(null);
+        }
+        marker = new google.maps.Marker({
+            map: gmap,
+            draggable: true,
+            animation: google.maps.Animation.DROP,
+            position: pos
+            });
+        google.maps.event.addListener(marker, 'dragend', function() {
+            // TODO reverse geo code
+            var pos = marker.getPosition();
+                $('#Location_Latitude').val(pos.lat);
+                $('#Location_Longitude').val(pos.lng);
+        });
+        $('#Location_Address').valid();
+        return true;
+    }
+                
+    $('#EventDate').datepicker({language:'fr'});
+
+    $('#Location_Address').rules("add",
+    {
+        remote: {
+            url: 'http://maps.googleapis.com/maps/api/geocode/json',
+            type: 'get',
+            data: {
+                sensor: false,
+                address: function () { return $('#Location_Address').val() }
+                },
+            dataType: 'json',
+            dataFilter: function(datastr,type) {
+                $('#Location_combo').html("");
+                var data = JSON.parse(datastr);
+                data.results.forEach(function(element) {
+                    if (element.formatted_address !== $('#Location_Address').val()) {
+                        $('<li>'+element.formatted_address+'</li>')
+                        .data("geoloc",element)
+                        .click(function() { chooseLoc($(this).data("geoloc")) })
+                        .appendTo($('#Location_combo'));}});
+                return (data.status === 'OK') && (data.results.length == 1);
+                },
+            error: function(xhr, textStatus, errorThrown)
+                {
+                console.log('ajax loading error ... '+textStatus+' ... '+ errorThrown);
+                return false;
+                }
+         }
+    });
+});
+</script>
+}
+<h2>@ViewData["Title"]</h2>
+<form asp-action="Create" id="FrmComCre" role="form">
+    <div class="form-horizontal">
+        <h4>@SR["Fill in your book query"]</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+        <div class="form-group" has-feedback>
+             <fieldset>
+<legend><label for="EventDate" class="col-md-2 control-label" >
+    @SR["EventDate"]
+</label></legend>
+            <div class="col-md-10">
+                <input asp-for="EventDate" class="form-control" type="date" id="EventDate"
+                data-val-required=@SR["ChooseAnEventDate"]
+                 />
+                <span asp-validation-for="EventDate" class="text-danger" >
+                </span>
+            </div>
+            </fieldset>
+        </div>
+        <div class="form-group" has-feedback>
+            <fieldset>
+            <legend><label for="Location_Address" class="col-md-2 control-label">
+                @SR["Location"]
+                </label>
+            </legend>
+            <div class="col-md-10">
+            <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address"
+             class="form-control" data-val-required=@SR["SpecifyPlace"] 
+             data-val-remote=@SR["GoogleDidntGeoLocalized"]>
+            <span asp-validation-for="Location.Address" class="text-danger" ></span>
+            <ul id="Location_combo" >
+            </ul>
+            <div id="map"></div>
+            </div>
+            @Html.HiddenFor(model=>model.Location.Latitude)
+            @Html.HiddenFor(model=>model.Location.Longitude)
+           </fieldset>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SR["Create"]" class="btn btn-default" />
+            </div>
+        </div>
+        @Html.HiddenFor(model=>model.Client.Id)
+        @Html.HiddenFor(model=>model.PerformerId)
+    </div>
+</form>
+
+

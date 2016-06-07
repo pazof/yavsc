@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>MailKit</id>
+    <version>1.3.0-beta7</version>
+    <title>MailKit</title>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <authors>Jeffrey Stedfast</authors>
+    <owners>Jeffrey Stedfast</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>http://github.com/jstedfast/MailKit</projectUrl>
+    <iconUrl>https://raw.github.com/jstedfast/MailKit/master/nuget/mailkit-50.png</iconUrl>
+    <description>MailKit is an Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.
+
+Features include:
+* SASL Authentication via SCRAM-SHA-256, SCRAM-SHA-1, NTLM, DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN, and XOAUTH2.
+* A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME, ENHANCEDSTATUSCODES, SIZE, DSN, PIPELINING and SMTPUTF8.
+* A fully-cancellable Pop3Client with support for STLS, UIDL, APOP, PIPELINING, UTF8, and LANG.
+* A fully-cancellable ImapClient with support for ACL, QUOTA, LITERAL+, IDLE, NAMESPACE, ID, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, WITHIN, ENABLE, QRESYNC, SORT, THREAD, ESORT, METADATA, LIST-STATUS, SPECIAL-USE, CREATE-SPECIAL-USE, MOVE, SORT=DISPLAY, SEARCH=FUZZY, UTF8=ACCEPT, UTF8=ONLY, XLIST, and X-GM-EXT1.
+* Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
+* Asynchronous versions of all methods that hit the network.
+* S/MIME, OpenPGP and DKIM signature support via MimeKit.
+* Microsoft TNEF support via MimeKit.</description>
+    <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
+    <releaseNotes>* Added a work-around for GoDaddy's ASP.NET web host which does not support the iso-8859-1
+  System.Text.Encoding (used as a fallback encoding within MailKit) by falling back to
+  Windows-1252 instead.
+* Improved NTLM support.
+* Added support for the SMTP VRFY and EXPN commands.
+* If the IMAP server sends a `* ID NIL` response, return null for ImapClient.Identify().
+* Allow developers to override the charset used when authenticating. (issue #292)</releaseNotes>
+    <copyright>Xamarin Inc.</copyright>
+    <language>en-US</language>
+    <tags>smtp pop3 imap mime security dkim smime s/mime openpgp pgp mbox mail email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81 dnxcore50</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.0">
+        <dependency id="MimeKit" version="1.3.0-beta7" />
+      </group>
+      <group targetFramework=".NETFramework4.5">
+        <dependency id="MimeKit" version="1.3.0-beta7" />
+      </group>
+      <group targetFramework=".NETFramework4.5.1">
+        <dependency id="MimeKit" version="1.3.0-beta7" />
+      </group>
+      <group targetFramework="MonoAndroid1.0">
+        <dependency id="MimeKit" version="1.3.0-beta7" />
+      </group>
+      <group targetFramework="Unsupported0.0">
+        <dependency id="MimeKit" version="1.3.0-beta7" />
+      </group>
+      <group targetFramework=".NETPlatform5.5">
+        <dependency id="System.Security.Cryptography.Algorithms" version="4.0.0-beta-23516" />
+        <dependency id="System.Security.Cryptography.Primitives" version="4.0.0-beta-23516" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.1.0-beta-23516" />
+        <dependency id="System.Text.Encoding.Extensions" version="4.0.11-beta-23516" />
+        <dependency id="System.Text.Encoding.CodePages" version="4.0.1-beta-23516" />
+        <dependency id="System.Text.Encoding" version="4.0.11-beta-23516" />
+        <dependency id="System.Net.NameResolution" version="4.0.0-beta-23516" />
+        <dependency id="System.Net.NetworkInformation" version="4.1.0-beta-23516" />
+        <dependency id="System.Net.Primitives" version="4.0.11-beta-23516" />
+        <dependency id="System.Net.Security" version="4.0.0-beta-23516" />
+        <dependency id="System.Net.Sockets" version="4.1.0-beta-23516" />
+        <dependency id="System.IO.Compression" version="4.1.0-beta-23516" />
+        <dependency id="System.Collections" version="4.0.11-beta-23516" />
+        <dependency id="System.Data.Common" version="4.0.1-beta-23516" />
+        <dependency id="System.Reflection" version="4.1.0-beta-23516" />
+        <dependency id="System.Threading" version="4.0.11-beta-23516" />
+        <dependency id="System.Runtime" version="4.0.21-beta-23516" />
+        <dependency id="System.Linq" version="4.0.1-beta-23516" />
+        <dependency id="Microsoft.CSharp" version="4.0.1-beta-23516" />
+        <dependency id="Portable.BouncyCastle" version="1.8.0" />
+        <dependency id="MimeKit" version="1.3.0-beta7" />
+      </group>
+      <group targetFramework="WindowsPhoneApp8.1">
+        <dependency id="Portable.BouncyCastle" version="1.8.0" />
+        <dependency id="MimeKit" version="1.3.0-beta7" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.0" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System" targetFramework="MonoAndroid1.0" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="MonoAndroid1.0" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework="MonoAndroid1.0" />
+      <frameworkAssembly assemblyName="System" targetFramework="Unsupported0.0" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework="Unsupported0.0" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework="Unsupported0.0" />
+    </frameworkAssemblies>
+  </metadata>
+</package>
