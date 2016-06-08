@@ -67,7 +67,7 @@ namespace testOauthClient
             app.UseOAuthAuthentication(
                 options => { 
                     options.AuthenticationScheme="yavsc";
-                    options.AuthorizationEndpoint="http://dev.pschneider.fr/signin";
+                    options.AuthorizationEndpoint="http://dev.pschneider.fr/authorize";
                     options.TokenEndpoint="http://dev.pschneider.fr/token";
                     options.AutomaticAuthenticate=true;
                     options.AutomaticChallenge=true;

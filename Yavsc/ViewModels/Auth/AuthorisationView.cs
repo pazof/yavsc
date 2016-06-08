@@ -1,11 +1,12 @@
-
-
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Collections.Generic;
 
 namespace Yavsc
 {
     public class AuthorisationView { 
-        public OpenIdConnectMessage Message { get; set; }
         public Application Application { get; set; }
+        public IEnumerable<string> Scopes { get; set; }
+        public string RedirectUrl { get; set; }
+        public string Message { get; set; }
+
     }
 }

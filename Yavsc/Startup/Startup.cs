@@ -1,17 +1,11 @@
 
 using System;
 using System.Globalization;
-using System.IdentityModel.Tokens;
-using System.IO;
 using System.Reflection;
-using System.Security.Claims;
-using System.Web;
 using System.Web.Optimization;
 using Microsoft.AspNet.Authentication;
-using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.DataProtection.Infrastructure;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
@@ -27,13 +21,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.PlatformAbstractions;
-using Microsoft.Extensions.WebEncoders;
 using Microsoft.Net.Http.Headers;
 using Yavsc.Auth;
 using Yavsc.Formatters;
 using Yavsc.Models;
 using Yavsc.Services;
-using OAuth.AspNet.AuthServer;
 
 namespace Yavsc
 {
@@ -41,8 +33,6 @@ namespace Yavsc
     public partial class Startup
     {
         public static string ConnectionString { get; private set; }
-        private RsaSecurityKey key;
-
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             // Set up configuration sources.
@@ -97,7 +87,6 @@ namespace Yavsc
                     new CultureInfo("fr")
                 };
 
-
                 // You must explicitly state which cultures your application supports.
                 // These are the cultures the app supports for formatting numbers, dates, etc.
                 options.SupportedCultures = supportedCultures;
@@ -118,54 +107,17 @@ namespace Yavsc
                 //  return new ProviderCultureResult("en");
                 //}));
             });
-            var keyParamsFileInfo =
-                new FileInfo(Configuration["DataProtection:RSAParamFile"]);
-            var keyParams = (keyParamsFileInfo.Exists) ?
-                RSAKeyUtils.GetKeyParameters(keyParamsFileInfo.Name) :
-                RSAKeyUtils.GenerateKeyAndSave(keyParamsFileInfo.Name);
-            key = new RsaSecurityKey(keyParams);
 
-            services.Configure<SharedAuthenticationOptions>(options =>
-            {
-                options.SignInScheme = "ServerCookie";
-            });
-
-            services.Configure<TokenAuthOptions>(
-                to =>
-                {
-                    to.Audience = Configuration["Site:Audience"];
-                    to.Issuer = Configuration["Site:Authority"];
-                    to.SigningCredentials =
-                    new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature);
-                }
-            );
-
+            ConfigureOAuthServices(services);
 
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SiteSettings>), typeof(OptionsManager<SiteSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
-            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<OAuth2AppSettings>), typeof(OptionsManager<OAuth2AppSettings>)));
 
-            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<TokenAuthOptions>), typeof(OptionsManager<TokenAuthOptions>)));
+           // DataProtection
+           ConfigureProtectionServices(services);
 
-
-            services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
-            services.AddDataProtection();
-            services.Add(ServiceDescriptor.Singleton(typeof(IApplicationDiscriminator),
-                typeof(SystemWebApplicationDiscriminator)));
-
-            services.ConfigureDataProtection(configure =>
-            {
-                configure.SetApplicationName(Configuration["Site:Title"]);
-                configure.SetDefaultKeyLifetime(TimeSpan.FromDays(45));
-                configure.PersistKeysToFileSystem(
-                     new DirectoryInfo(Configuration["DataProtection:Keys:Dir"]));
-            });
-
-            services.AddAuthentication(
-                op => op.SignInScheme = "ServerCookie"
-            );
             // Add framework services.
             services.AddEntityFramework()
               .AddNpgsql()
@@ -179,6 +131,8 @@ namespace Yavsc
                     option.User.RequireUniqueEmail = true;
                     option.Cookies.ApplicationCookie.DataProtectionProvider =
                         new MonoDataProtectionProvider(Configuration["Site:Title"]);
+                    option.Cookies.ApplicationCookie.LoginPath = new PathString(Constants.LoginPath.Substring(1));
+                    option.Cookies.ApplicationCookie.AccessDeniedPath = new PathString(Constants.AccessDeniedPath.Substring(1));
                 }
             ).AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
@@ -331,180 +285,20 @@ namespace Yavsc
                 }
             }
 
-            var googleOptions = new YavscGoogleOptions
-            {
-                ClientId = Configuration["Authentication:Google:ClientId"],
-                ClientSecret = Configuration["Authentication:Google:ClientSecret"],
-                AccessType = "offline",
-                SaveTokensAsClaims = true,
-                UserInformationEndpoint = "https://www.googleapis.com/plus/v1/people/me"
-            };
-            var gvents = new OAuthEvents();
-
-            googleOptions.Events = new OAuthEvents
-            {
-                OnCreatingTicket = async context =>
-                {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
-                            .CreateScope())
-                    {
-                        var gcontext = context as GoogleOAuthCreatingTicketContext;
-                        context.Identity.AddClaim(new Claim(YavscClaimTypes.GoogleUserId, gcontext.GoogleUserId));
-                        var service =
-                         serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-                        await service.StoreTokenAsync(gcontext.GoogleUserId, context.TokenResponse);
-                    }
-                }
-            };
-
-            googleOptions.Scope.Add("https://www.googleapis.com/auth/calendar");
 
             app.UseIISPlatformHandler(options =>
             {
                 options.AuthenticationDescriptions.Clear();
                 options.AutomaticAuthentication = true;
             });
+
+            ConfigureOAuthApp(app);
             
             ConfigureFileServerApp(app,siteSettings.Value,env);
 
             app.UseWebSockets();
 
-            app.UseIdentity();
-
-
-            /* app.UseOpenIdConnectServer(options =>
-                {
-                    options.Provider = new AuthorizationProvider(loggerFactory, 
-                    new UserTokenProvider());
-
-                    // Register the certificate used to sign the JWT tokens.
-                    // options.SigningCredentials.AddCertificate(
-                    //   assembly: typeof(Startup).GetTypeInfo().Assembly,
-                    //   resource: "Mvc.Server.Certificate.pfx",
-                    //   password: "Owin.Security.OpenIdConnect.Server"); 
-
-                    // options.SigningCredentials.AddKey(key);
-                    // Note: see AuthorizationController.cs for more
-                    // information concerning ApplicationCanDisplayErrors.
-                    options.ApplicationCanDisplayErrors = true;
-                    options.AllowInsecureHttp = true;
-                    options.AutomaticChallenge = true;
-                  //  options.AutomaticAuthenticate=true;
-
-
-                    options.AuthorizationEndpointPath = new PathString("/connect/authorize");
-                    options.TokenEndpointPath = new PathString("/connect/authorize/accept");
-                    options.UseSlidingExpiration = true;
-                    options.AllowInsecureHttp = true;
-                    options.AuthenticationScheme = "oidc-server"; // was = OpenIdConnectDefaults.AuthenticationScheme || "oidc";
-                    options.LogoutEndpointPath = new PathString("/connect/logout");
-
-                    // options.ValidationEndpointPath = new PathString("/connect/introspect");
-                }); */
-
-            app.UseCookieAuthentication(options =>
-               {
-                   options.AutomaticAuthenticate = true;
-                   options.AutomaticChallenge = true;
-                   options.AuthenticationScheme = "ServerCookie";
-                   options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                   options.LoginPath = new PathString("/signin");
-                   options.LogoutPath = new PathString("/signout");
-               });
-
-            app.UseMiddleware<Yavsc.Auth.GoogleMiddleware>(googleOptions);
-
-            // Facebook
-            app.UseFacebookAuthentication(options =>
-                {
-                    options.AppId = Configuration["Authentication:Facebook:AppId"];
-                    options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-                    options.Scope.Add("email");
-                    options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
-                });
-                
-            app.UseOAuthAuthorizationServer(
-            
-                options =>
-                {
-                    options.AuthorizeEndpointPath = new PathString("/signin");
-                    options.TokenEndpointPath = new PathString("/token");
-                    options.ApplicationCanDisplayErrors = true;
-
-#if DEBUG
-                    options.AllowInsecureHttp = true;
-#endif
-
-                    options.Provider = new OAuthAuthorizationServerProvider
-                    {
-                        OnValidateClientRedirectUri = ValidateClientRedirectUri,
-                        OnValidateClientAuthentication = ValidateClientAuthentication,
-                        OnGrantResourceOwnerCredentials = GrantResourceOwnerCredentials,
-                        OnGrantClientCredentials = GrantClientCredetails
-                    };
-
-                    options.AuthorizationCodeProvider = new AuthenticationTokenProvider
-                    {
-                        OnCreate = CreateAuthenticationCode,
-                        OnReceive = ReceiveAuthenticationCode,
-                    };
-
-                    options.RefreshTokenProvider = new AuthenticationTokenProvider
-                    {
-                        OnCreate = CreateRefreshToken,
-                        OnReceive = ReceiveRefreshToken,
-                    };
-
-                    options.AutomaticAuthenticate = false;
-                }
-            );
-
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
-
-            /* Generic OAuth (here GitHub): options.Notifications = new OAuthAuthenticationNotifications
-                           {
-                               OnGetUserInformationAsync = async context =>
-                               {
-                        // Get the GitHub user
-                        HttpRequestMessage userRequest = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-                                   userRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
-                                   userRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                                   HttpResponseMessage userResponse = await context.Backchannel.SendAsync(userRequest, context.HttpContext.RequestAborted);
-                                   userResponse.EnsureSuccessStatusCode();
-                                   var text = await userResponse.Content.ReadAsStringAsync();
-                                   JObject user = JObject.Parse(text);
-
-                                   var identity = new ClaimsIdentity(
-                                       context.Options.AuthenticationType,
-                                       ClaimsIdentity.DefaultNameClaimType,
-                                       ClaimsIdentity.DefaultRoleClaimType);
-
-                                   JToken value;
-                                   var id = user.TryGetValue("id", out value) ? value.ToString() : null;
-                                   if (!string.IsNullOrEmpty(id))
-                                   {
-                                       identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, id, ClaimValueTypes.String, context.Options.AuthenticationType));
-                                   }
-                                   var userName = user.TryGetValue("login", out value) ? value.ToString() : null;
-                                   if (!string.IsNullOrEmpty(userName))
-                                   {
-                                       identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, userName, ClaimValueTypes.String, context.Options.AuthenticationType));
-                                   }
-                                   var name = user.TryGetValue("name", out value) ? value.ToString() : null;
-                                   if (!string.IsNullOrEmpty(name))
-                                   {
-                                       identity.AddClaim(new Claim("urn:github:name", name, ClaimValueTypes.String, context.Options.AuthenticationType));
-                                   }
-                                   var link = user.TryGetValue("url", out value) ? value.ToString() : null;
-                                   if (!string.IsNullOrEmpty(link))
-                                   {
-                                       identity.AddClaim(new Claim("urn:github:url", link, ClaimValueTypes.String, context.Options.AuthenticationType));
-                                   }
-
-                                   context.Identity = identity;
-                               }
-                           }; */
-
 
             app.UseMvc(routes =>
             {
@@ -515,17 +309,7 @@ namespace Yavsc
 
             app.UseSignalR();
         }
-        private sealed class SystemWebApplicationDiscriminator : IApplicationDiscriminator
-        {
-            private readonly Lazy<string> _lazyDiscriminator = new Lazy<string>(GetAppDiscriminatorCore);
-
-            public string Discriminator => _lazyDiscriminator.Value;
-
-            private static string GetAppDiscriminatorCore()
-            {
-                return HttpRuntime.AppDomainAppId;
-            }
-        }
+        
         // Entry point for the application.
         public static void Main(string[] args) => Microsoft.AspNet.Hosting.WebApplication.Run<Startup>(args);
     }

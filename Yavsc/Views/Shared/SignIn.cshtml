@@ -11,7 +11,7 @@
     <hr/>
     
     <h2 class="lead text-left">@SR["Use a local account to log in"]</h2>
-      <form action="/login" method="post" class="form-horizontal" role="form">
+      <form action="@Constants.LoginPath" method="post" class="form-horizontal" role="form">
 
                 <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
                 <div class="form-group">
@@ -67,7 +67,7 @@
                 else
                 {
                     @foreach (var description in Model.ExternalProviders) {
-        <form action="/signin" method="post">
+        <form action="@Constants.LoginPath" method="post">
             <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
             <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
             <button class="btn btn-lg btn-success" type="submit">@SR["Connect using"] @description.DisplayName</button>
