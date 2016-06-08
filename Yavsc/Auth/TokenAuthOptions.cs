@@ -1,7 +1,9 @@
+using System;
 using System.IdentityModel.Tokens;
 
 namespace Yavsc
 {
+    [Obsolete("Use OAuth2AppSettings instead")]
     public class TokenAuthOptions
     {
         /// <summary>

@@ -2,9 +2,17 @@ namespace Yavsc
 {
     using Yavsc.Models.Auth;
 
-     public static class Constants
+    public static class Constants
     {
-        public const string RememberMeCookieName = "Berme";
+        public const string AccessDeniedPath = "~/forbidden";
+        public const string AuthorizePath = "~/authorize";
+        public const string TokenPath = "~/token";
+        public const string LoginPath = "~/signin";
+        public const string LogoutPath = "~/signout";
+        public const string MePath = "~/api/Me";
+
+        public const string ExternalAuthenticationSheme = "External";
+        public const string ApplicationAuthenticationSheme = "Server";
         public static readonly Scope[] SiteScopes = { 
             new Scope { Id = "profile", Description = "Your profile informations" },  
             new Scope { Id = "book" , Description ="Your booking interface"},  
@@ -40,8 +48,6 @@ namespace Yavsc
 
         public const string UserNameRegExp = @"^[a-zA-Z][a-zA-Z0-9 ]*$";
 
-        public const string AuthenticationEndPath = "/signin";
-        public const string TokenEndPath = "/token";
 
         public const string KeyProtectorPurpose = "OAuth.AspNet.AuthServer"; 
 

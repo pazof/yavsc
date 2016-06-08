@@ -50,18 +50,62 @@ namespace Yavsc.Controllers
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
-
-        [HttpGet("~/login")]
-        public IActionResult Login(string returnUrl)
+        [HttpGet(Constants.LoginPath)]
+        public ActionResult Login(string returnUrl = null)
         {
-            return View("SignIn", new LoginViewModel { 
+            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
+            // will be redirected to after a successful authentication and not
+            // the redirect_uri of the requesting client application against the third
+            // party identity provider.
+            return View("Login", new LoginViewModel
+            {
                 ReturnUrl = returnUrl,
                 ExternalProviders = HttpContext.GetExternalProviders()
-             });
+            });
+            /* Note: When using an external login provider, redirect the query  :
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(OpenIdConnectDefaults.AuthenticationScheme, returnUrl);
+            return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme, properties);
+            */
         }
         
-        [HttpPost("~/login")]
-        public async Task<IActionResult> SignIn(LoginViewModel model)
+
+         public IActionResult ExternalLogin(string Provider, string ReturnUrl)
+         {
+            // Note: the "provider" parameter corresponds to the external
+            // authentication provider choosen by the user agent.
+            if (string.IsNullOrEmpty(Provider))
+            {
+                _logger.LogWarning("Provider not specified");
+                return HttpBadRequest();
+            }
+
+            if (!_signInManager.GetExternalAuthenticationSchemes().Any(x => x.AuthenticationScheme == Provider))
+            {
+                _logger.LogWarning($"Provider not found : {Provider}");
+                return HttpBadRequest();
+            }
+
+            // Instruct the middleware corresponding to the requested external identity
+            // provider to redirect the user agent to its own authorization endpoint.
+            // Note: the authenticationScheme parameter must match the value configured in Startup.cs
+
+            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
+            // will be redirected to after a successful authentication and not
+            // the redirect_uri of the requesting client application.
+            if (string.IsNullOrEmpty(ReturnUrl))
+            {
+                _logger.LogWarning("ReturnUrl not specified");
+                return HttpBadRequest();
+            }
+            // Note: this still is not the redirect uri given to the third party provider, at building the challenge.
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = ReturnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(Provider, redirectUrl);
+            // var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
+            return new ChallengeResult(Provider, properties);
+        }
+
+        [HttpPost(Constants.LoginPath)]
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -92,6 +136,7 @@ namespace Yavsc.Controllers
             ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
             return View(model);
         }
+
         //
         // GET: /Account/Register
         [HttpGet]
@@ -131,7 +176,7 @@ namespace Yavsc.Controllers
 
         //
         // POST: /Account/LogOff
-        [HttpPost]
+        [HttpPost(Constants.LogoutPath)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff(string returnUrl = null)
         {
@@ -139,18 +184,6 @@ namespace Yavsc.Controllers
             _logger.LogInformation(4, "User logged out.");
             if (returnUrl==null) return RedirectToAction(nameof(HomeController.Index), "Home");
             return Redirect(returnUrl);
-        }
-        
-        //
-        // POST: /Account/ExternalLogin
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult ExternalLogin(string provider, string returnUrl = null)
-        {
-            // Request a redirect to the external login provider.
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return new ChallengeResult(provider, properties);
         }
 
         //

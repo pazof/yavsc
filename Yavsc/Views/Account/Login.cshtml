@@ -1,20 +1,18 @@
-@using System.Collections.Generic
-@using Microsoft.AspNet.Http
-@using Microsoft.AspNet.Http.Authentication
-@model LoginViewModel
-@inject SignInManager<ApplicationUser> SignInManager
 
+@using Microsoft.AspNet.Http.Authentication
+@using Yavsc.ViewModels.Account
+@model LoginViewModel
 @{
     ViewData["Title"] = SR["Log in"];
 }
 
-<h2>@ViewData["Title"]</h2>
-<div class="row">
-    <div class="col-md-8">
-        <section>
-            <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
-                <h4>@SR["Use a local account to log in."]</h4>
-                <hr />
+<div class="jumbotron">
+    <h1>@ViewData["Title"]</h1>
+    <hr/>
+    
+    <h2 class="lead text-left">@SR["Use a local account to log in"]</h2>
+      <form action="@Constants.LoginPath" method="post" class="form-horizontal" role="form">
+
                 <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
                 <div class="form-group">
                     <label for="UserName" class="col-md-2 control-label">@SR["UserName"]</label>
@@ -40,25 +38,24 @@
                 </div>
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
-                        <button type="submit" class="btn btn-default">@SR["Login"]</button>
+                        <button type="submit" class="btn btn-lg btn-success">@SR["Login"]</button>
                     </div>
                 </div>
                 <p>
-                    <a asp-action="Register">@SR["Register as a new user?"]</a>
+                    <a asp-action="Register" asp-controller="Account">@SR["Register as a new user"]?</a>
                 </p>
                 <p>
-                    <a asp-action="ForgotPassword">@SR["Forgot your password?"]</a>
+                    <a asp-action="ForgotPassword" asp-controller="Account">@SR["Forgot your password"]?</a>
                 </p>
+                 <input type="hidden" name="Provider" value="LOCAL" />
+                <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+                
+                @Html.AntiForgeryToken()
             </form>
-        </section>
-    </div>
-    <div class="col-md-4">
-        <section>
-            <h4>@SR["Use another service to log in."]</h4>
-            <hr />
-            @{
-                var loginProviders = SignInManager.GetExternalAuthenticationSchemes().ToList();
-                if (loginProviders.Count == 0)
+
+    <hr/>
+    <h2 class="lead text-left">@SR["Use another service to log in"]:</h2>
+    @if (Model.ExternalProviders?.Count() == 0)
                 {
                     <div>
                         <p>
@@ -69,22 +66,13 @@
                 }
                 else
                 {
-                    <form asp-controller="Account" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
-                        <div>
-                            <p>
-                                @foreach (var provider in loginProviders)
-                                {
-                                    <button type="submit" class="btn btn-default" name="provider" value="@provider.AuthenticationScheme" title="Log in using your @provider.DisplayName account">@provider.AuthenticationScheme</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
+                    @foreach (var description in Model.ExternalProviders) {
+        <form action="@Constants.LoginPath" method="post">
+            <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
+            <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+            <button class="btn btn-lg btn-success" type="submit">@SR["Connect using"] @description.DisplayName</button>
+            @Html.AntiForgeryToken()
+        </form>
                 }
-            }
-        </section>
-    </div>
+    }
 </div>
-
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}
