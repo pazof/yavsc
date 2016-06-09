@@ -10,7 +10,7 @@ using Yavsc.Models.Booking;
 namespace Yavsc.Models
 {
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationStore
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -151,7 +151,7 @@ namespace Yavsc.Models
             return Task.FromResult(0);
         }
 
-        IApplication IApplicationStore.FindApplication(string clientId)
+        Application FindApplication(string clientId)
         {
             return Applications.FirstOrDefault(
                 app=>app.ApplicationID == clientId);

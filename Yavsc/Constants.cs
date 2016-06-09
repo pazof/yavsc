@@ -4,15 +4,17 @@ namespace Yavsc
 
     public static class Constants
     {
-        public const string AccessDeniedPath = "~/forbidden";
+        public const string AccessDeniedPath = "~/signin";
         public const string AuthorizePath = "~/authorize";
         public const string TokenPath = "~/token";
+        
+        public const string LocalLoginPath = "~/login";
         public const string LoginPath = "~/signin";
+        public const string ExternalLoginPath = "~/extsign";
         public const string LogoutPath = "~/signout";
         public const string MePath = "~/api/Me";
-
-        public const string ExternalAuthenticationSheme = "External";
-        public const string ApplicationAuthenticationSheme = "Server";
+        public const string ExternalAuthenticationSheme = "ExternalCookie";
+        public const string ApplicationAuthenticationSheme = "ServerCookie";
         public static readonly Scope[] SiteScopes = { 
             new Scope { Id = "profile", Description = "Your profile informations" },  
             new Scope { Id = "book" , Description ="Your booking interface"},  

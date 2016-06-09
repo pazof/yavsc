@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNet.Http
-﻿@using System
+@using System
 @using System.Security.Claims
 @{
     var error = Context.Items["oauth.Error"];
@@ -12,7 +12,7 @@
     <title>Authorize Error</title>
 </head>
 <body>
-    <h1>Katana.Sandbox.WebServer</h1>
+    <h1>Identification & Authentication server</h1>
     <h2>OAuth2 Authorize Error</h2>
     <p>Error: @error</p>
     <p>@errorDescription</p>

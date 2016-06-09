@@ -4,21 +4,29 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using OAuth.AspNet.AuthServer;
+using Yavsc.Models;
 
 namespace Yavsc
 {
     public partial class Startup
     {
+        private Application GetApplication(string clientId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var app = dbContext.Applications.FirstOrDefault(x=>x.ApplicationID == clientId);
+            return app;
+        }
         private readonly ConcurrentDictionary<string, string> _authenticationCodes = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
 
         private Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
         {
-            var app = context.ApplicationStore.FindApplication(context.ClientId);
-            if (app!=null)
-            {
-                context.Validated(app.RedirectUri);
-            }
+            if (context==null) throw new InvalidOperationException("context == null");
+            var app = GetApplication(context.ClientId);
+            if (app == null) return Task.FromResult(0);
+            Startup.logger.LogInformation($"ValidateClientRedirectUri: Validated ({app.RedirectUri})");
+            context.Validated(app.RedirectUri);
             return Task.FromResult(0);
         }
 
@@ -28,22 +36,15 @@ namespace Yavsc
             if (context.TryGetBasicCredentials(out clientId, out clientSecret) ||
                 context.TryGetFormCredentials(out clientId, out clientSecret))
             {
-                if (ValidateClientCredentials(
-                new OAuthValidateClientCredentialsContext(clientId,clientSecret,context.ApplicationStore)
-                ))
+                var app = GetApplication(clientId);
+                if (app != null && app.Secret == clientSecret)
                 {
+                    Startup.logger.LogInformation($"ValidateClientAuthentication: Validated ({clientId})");
                     context.Validated();
-                }
+                } else Startup.logger.LogInformation($"ValidateClientAuthentication: KO ({clientId})");
             }
+            else Startup.logger.LogInformation($"ValidateClientAuthentication: nor Basic neither Form credential found");
             return Task.FromResult(0);
-        }
-
-        private bool ValidateClientCredentials(OAuthValidateClientCredentialsContext context)
-        {
-            var authapp = context.ApplicationStore.FindApplication(context.ClientId);
-            if (authapp == null) return false;
-            if (authapp.Secret == context.ClientSecret) return true;
-            return false;
         }
 
         private Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
@@ -66,6 +67,7 @@ namespace Yavsc
 
         private void CreateAuthenticationCode(AuthenticationTokenCreateContext context)
         {
+            Startup.logger.LogInformation("CreateAuthenticationCode");
             context.SetToken(Guid.NewGuid().ToString("n") + Guid.NewGuid().ToString("n"));
             _authenticationCodes[context.Token] = context.SerializeTicket();
         }
@@ -81,11 +83,15 @@ namespace Yavsc
 
         private void CreateRefreshToken(AuthenticationTokenCreateContext context)
         {
+            var uid = context.Ticket.Principal.GetUserId();
+            Startup.logger.LogInformation($"CreateRefreshToken for {uid}");
             context.SetToken(context.SerializeTicket());
         }
 
         private void ReceiveRefreshToken(AuthenticationTokenReceiveContext context)
         {
+            var uid = context.Ticket.Principal.GetUserId();
+            Startup.logger.LogInformation($"ReceiveRefreshToken for {uid}");
             context.DeserializeTicket(context.Token);
         }
     }

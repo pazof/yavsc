@@ -4,6 +4,8 @@ using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.WebEncoders;
@@ -19,30 +21,61 @@ namespace Yavsc
         private void ConfigureOAuthServices(IServiceCollection services)
         {
             services.Configure<SharedAuthenticationOptions>(options => options.SignInScheme = Constants.ExternalAuthenticationSheme);
-            services.AddAuthentication(options => 
-            {
-                options.SignInScheme = Constants.ExternalAuthenticationSheme;
-            });
+            
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<OAuth2AppSettings>), typeof(OptionsManager<OAuth2AppSettings>)));
             // used by the YavscGoogleOAuth middelware (TODO drop it)
             services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
             /* Obsolete:
-                        var keyParamsFileInfo =
-                            new FileInfo(Configuration["DataProtection:RSAParamFile"]);
-                        var keyParams = (keyParamsFileInfo.Exists) ?
-                            RSAKeyUtils.GetKeyParameters(keyParamsFileInfo.Name) :
-                            RSAKeyUtils.GenerateKeyAndSave(keyParamsFileInfo.Name);
-                        key = new RsaSecurityKey(keyParams);
+            var keyParamsFileInfo =
+                new FileInfo(Configuration["DataProtection:RSAParamFile"]);
+            var keyParams = (keyParamsFileInfo.Exists) ?
+                RSAKeyUtils.GetKeyParameters(keyParamsFileInfo.Name) :
+                RSAKeyUtils.GenerateKeyAndSave(keyParamsFileInfo.Name);
+            key = new RsaSecurityKey(keyParams);
 
-                        services.Configure<TokenAuthOptions>(
-                            to =>
-                            {
-                                to.Audience = Configuration["Site:Audience"];
-                                to.Issuer = Configuration["Site:Authority"];
-                                to.SigningCredentials =
-                                new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature);
-                            }
-                        ); */
+            services.Configure<TokenAuthOptions>(
+                to =>
+                {
+                    to.Audience = Configuration["Site:Audience"];
+                    to.Issuer = Configuration["Site:Authority"];
+                    to.SigningCredentials =
+                    new SigningCredentials(key, SecurityAlgorithms.RsaSha256Signature);
+                }
+            ); */
+            services.AddAuthentication(options => 
+            {
+                options.SignInScheme = Constants.ApplicationAuthenticationSheme;
+            });
+
+            var protector = new MonoDataProtectionProvider(Configuration["Site:Title"]);;
+            services.AddInstance<MonoDataProtectionProvider>(
+                protector 
+            );
+
+            services.AddIdentity<ApplicationUser, IdentityRole>(
+                option =>
+                {
+                    option.User.AllowedUserNameCharacters += " ";
+                    option.User.RequireUniqueEmail = true;
+                    option.Cookies.ApplicationCookie.DataProtectionProvider = protector;
+                        
+                    option.Cookies.ApplicationCookie.LoginPath = new PathString(Constants.LoginPath.Substring(1));
+                    option.Cookies.ApplicationCookie.AccessDeniedPath = new PathString(Constants.AccessDeniedPath.Substring(1));
+                    option.Cookies.ApplicationCookie.AutomaticAuthenticate = true;
+                    option.Cookies.ApplicationCookie.AuthenticationScheme = Constants.ApplicationAuthenticationSheme;
+                    option.Cookies.ApplicationCookieAuthenticationScheme = Constants.ApplicationAuthenticationSheme;
+                    option.Cookies.TwoFactorRememberMeCookie.ExpireTimeSpan = TimeSpan.FromDays(30);
+                    option.Cookies.TwoFactorRememberMeCookie.DataProtectionProvider = protector;
+                    option.Cookies.ExternalCookieAuthenticationScheme = Constants.ExternalAuthenticationSheme;
+                    option.Cookies.ExternalCookie.AutomaticAuthenticate = true;
+                    option.Cookies.ExternalCookie.AuthenticationScheme = Constants.ExternalAuthenticationSheme;
+                    option.Cookies.ExternalCookie.DataProtectionProvider = protector;
+                }
+            ).AddEntityFrameworkStores<ApplicationDbContext>()
+                 .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
+                 .AddTokenProvider<UserTokenProvider>(Constants.DefaultFactor)
+                ;
+                
         }
         private void ConfigureOAuthApp(IApplicationBuilder app)
         {
@@ -51,9 +84,10 @@ namespace Yavsc
             app.UseCookieAuthentication(options =>
             {
                 options.AuthenticationScheme = Constants.ExternalAuthenticationSheme;
-                options.AutomaticAuthenticate = false;
+                options.AutomaticAuthenticate = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                 options.LoginPath = new PathString(Constants.LoginPath.Substring(1));
+                options.AccessDeniedPath = new PathString(Constants.AccessDeniedPath.Substring(1));
             });
 
             var gvents = new OAuthEvents();
@@ -134,6 +168,7 @@ namespace Yavsc
                               context.Identity = identity;
                           }
                       }; */
+                      /*
             app.UseOAuthAuthorizationServer(
 
                 options =>
@@ -141,10 +176,8 @@ namespace Yavsc
                     options.AuthorizeEndpointPath = new PathString(Constants.AuthorizePath.Substring(1));
                     options.TokenEndpointPath = new PathString(Constants.TokenPath.Substring(1));
                     options.ApplicationCanDisplayErrors = true;
-
-#if DEBUG
                     options.AllowInsecureHttp = true;
-#endif
+                    options.AuthenticationScheme = Constants.ApplicationAuthenticationSheme;
 
                     options.Provider = new OAuthAuthorizationServerProvider
                     {
@@ -166,9 +199,10 @@ namespace Yavsc
                         OnReceive = ReceiveRefreshToken,
                     };
 
-                    options.AutomaticAuthenticate = false;
-                }
-            );
+                    options.AutomaticAuthenticate = true;
+                    options.AutomaticChallenge = true;
+                } 
+            );*/
         }
     }
 }

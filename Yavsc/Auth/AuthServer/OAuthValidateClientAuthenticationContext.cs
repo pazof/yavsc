@@ -16,13 +16,10 @@ namespace OAuth.AspNet.AuthServer
         /// <param name="context"></param>
         /// <param name="options"></param>
         /// <param name="parameters"></param>
-        public OAuthValidateClientAuthenticationContext(HttpContext context, OAuthAuthorizationServerOptions options, IReadableStringCollection parameters, IApplicationStore applicationStore) : base(context, options, null)
+        public OAuthValidateClientAuthenticationContext(HttpContext context, OAuthAuthorizationServerOptions options, IReadableStringCollection parameters) : base(context, options, null)
         {
             Parameters = parameters;
-            ApplicationStore = applicationStore;
         }
-
-        public IApplicationStore ApplicationStore { get; private set;}
 
         /// <summary>
         /// Gets the set of form parameters from the request.

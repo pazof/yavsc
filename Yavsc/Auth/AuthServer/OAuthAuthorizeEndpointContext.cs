@@ -1,3 +1,4 @@
+using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Http;
 
 namespace OAuth.AspNet.AuthServer

@@ -2,6 +2,7 @@
 
 
 using System;
+using System.IO;
 using Microsoft.AspNet.DataProtection;
 namespace Yavsc.Auth
 {
@@ -13,10 +14,14 @@ public class MonoDataProtectionProvider : IDataProtectionProvider
       : this(Guid.NewGuid().ToString())
     { }
 
+    public MonoDataProtectionProvider(DirectoryInfo dataProtectionDirInfo) 
+    : this(Guid.NewGuid().ToString())
+    {
+      
+    }
     public MonoDataProtectionProvider(string appName)
     {
       if (appName == null) { throw new ArgumentNullException("appName"); }
-
       this.appName = appName;
     }
 

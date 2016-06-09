@@ -1,7 +1,7 @@
 ﻿
 @using Microsoft.AspNet.Http.Authentication
 @using Yavsc.ViewModels.Account
-@model LoginViewModel
+@model SignInViewModel
 @{
     ViewData["Title"] = SR["Log in"];
 }
@@ -38,7 +38,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
-                        <button type="submit" class="btn btn-lg btn-success">@SR["Login"]</button>
+                        <button type="submit" class="btn btn-lg btn-success" name="submit.Signin">@SR["Login"]</button>
                     </div>
                 </div>
                 <p>
@@ -47,7 +47,7 @@
                 <p>
                     <a asp-action="ForgotPassword" asp-controller="Account">@SR["Forgot your password"]?</a>
                 </p>
-                 <input type="hidden" name="Provider" value="LOCAL" />
+                <input type="hidden" name="Provider" value="LOCAL" />
                 <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
                 
                 @Html.AntiForgeryToken()
@@ -67,10 +67,10 @@
                 else
                 {
                     @foreach (var description in Model.ExternalProviders) {
-        <form action="@Constants.LoginPath" method="post">
+        <form action="@Constants.ExternalLoginPath" method="post">
             <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
             <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
-            <button class="btn btn-lg btn-success" type="submit">@SR["Connect using"] @description.DisplayName</button>
+            <button class="btn btn-lg btn-success" type="submit" name="Submit.Login">@SR["Connect using"] @description.DisplayName</button>
             @Html.AntiForgeryToken()
         </form>
                 }

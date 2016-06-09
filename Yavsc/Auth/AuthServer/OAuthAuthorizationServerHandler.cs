@@ -17,12 +17,6 @@ namespace OAuth.AspNet.AuthServer
 
     public class OAuthAuthorizationServerHandler : AuthenticationHandler<OAuthAuthorizationServerOptions>
     {
-        public OAuthAuthorizationServerHandler(IApplicationStore applicationStore)
-        {
-            ApplicationStore = applicationStore;
-        }
-
-        public IApplicationStore ApplicationStore { get; private set;}
         #region non-Public Members
 
         private AuthorizeEndpointRequest _authorizeEndpointRequest;
@@ -335,7 +329,7 @@ namespace OAuth.AspNet.AuthServer
         {
             var authorizeRequest = new AuthorizeEndpointRequest(Request.Query);
 
-            var clientContext = new OAuthValidateClientRedirectUriContext(ApplicationStore,Context, Options, authorizeRequest.ClientId, authorizeRequest.RedirectUri);
+            var clientContext = new OAuthValidateClientRedirectUriContext(Context, Options, authorizeRequest.ClientId, authorizeRequest.RedirectUri);
 
             if (!string.IsNullOrEmpty(authorizeRequest.RedirectUri))
             {
@@ -423,7 +417,7 @@ namespace OAuth.AspNet.AuthServer
 
             IFormCollection form = await Request.ReadFormAsync();
 
-            var clientContext = new OAuthValidateClientAuthenticationContext(Context, Options, form, ApplicationStore);
+            var clientContext = new OAuthValidateClientAuthenticationContext(Context, Options, form);
 
             await Options.Provider.ValidateClientAuthentication(clientContext);
 
@@ -808,7 +802,7 @@ namespace OAuth.AspNet.AuthServer
             }
         }
 
-        #endregion
+        #endregion        
     }
 
 }
