@@ -35,7 +35,7 @@ namespace testOauthClient
         {
             
             services.Configure<SharedAuthenticationOptions>(options => {
-                options.SignInScheme = "ClientCookie";
+                options.SignInScheme = "Bearer";
             });
 
             services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
@@ -64,9 +64,20 @@ namespace testOauthClient
                 options.AuthenticationDescriptions.Clear();
             });
             app.UseStaticFiles();
+
+             app.UseCookieAuthentication(new CookieAuthenticationOptions {
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                AuthenticationScheme = "Bearer",
+                CookieName = CookieAuthenticationDefaults.CookiePrefix + "Bearer",
+                ExpireTimeSpan = TimeSpan.FromMinutes(5),
+                LoginPath = new PathString("/signin"),
+                LogoutPath = new PathString("/signout")
+            });
+            
             app.UseOAuthAuthentication(
                 options => { 
-                    options.AuthenticationScheme="yavsc";
+                    options.AuthenticationScheme = "yavsc";
                     options.AuthorizationEndpoint="http://dev.pschneider.fr/authorize";
                     options.TokenEndpoint="http://dev.pschneider.fr/token";
                     options.AutomaticAuthenticate=true;
@@ -75,47 +86,9 @@ namespace testOauthClient
                     options.ClaimsIssuer="http://dev.pschneider.fr";
                     options.ClientId="016c5ae4-f4cd-40e3-b250-13701c871ecd";
                     options.ClientSecret="blahblah";
+                    options.SignInScheme="Bearer";
                 }
             );
-
-             app.UseCookieAuthentication(new CookieAuthenticationOptions {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
-                AuthenticationScheme = "ClientCookie",
-                CookieName = CookieAuthenticationDefaults.CookiePrefix + "ClientCookie",
-                ExpireTimeSpan = TimeSpan.FromMinutes(5),
-                LoginPath = new PathString("/signin"),
-                LogoutPath = new PathString("/signout")
-            });
-            
-
-         /*   app.UseOpenIdConnectAuthentication(
-                options => {
-                options.AuthenticationScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                options.RequireHttpsMetadata = false;
-
-                // Note: these settings must match the application details
-                // inserted in the database at the server level.
-                options.ClientId = "016c5ae4-f4cd-40e3-b250-13701c871ecd";
-                options.ClientSecret = "blahblah";
-                options.PostLogoutRedirectUri = "http://dev.pschneider.fr/";
-
-                // Use the authorization code flow.
-                options.ResponseType = OpenIdConnectResponseTypes.Code;
-
-                // Note: setting the Authority allows the OIDC client middleware to automatically
-                // retrieve the identity provider's configuration and spare you from setting
-                // the different endpoints URIs or the token validation parameters explicitly.
-                options.Authority = "http://dev.pschneider.fr/";
-
-                // Note: the resource property represents the different endpoints the
-                // access token should be issued for (values must be space-delimited).
-                options.Resource = "http://dev.pschneider.fr/";
-                options.Scope.Clear();
-                options.Scope.Add("openid");
-                // .Add("api-resource-controller");
-            }); */
-
 
             app.UseMvc(routes =>
             {
