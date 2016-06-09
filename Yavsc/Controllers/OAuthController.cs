@@ -47,14 +47,6 @@ namespace Yavsc.Controllers
             _logger = loggerFactory.CreateLogger<OAuthController>();
         }
 
-        
-
-        [HttpGet(Constants.AccessDeniedPath)]
-        public ActionResult Forbidden(string returnUrl = null)
-        {
-            return View("Forbidden", returnUrl);
-        }
-
         /*
         private async Task<string> GetToken(string purpose, string userid, DateTime? expires)
         {

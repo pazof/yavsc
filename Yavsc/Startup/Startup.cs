@@ -33,6 +33,7 @@ namespace Yavsc
     public partial class Startup
     {
         public static string ConnectionString { get; private set; }
+        private static ILogger logger;
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             // Set up configuration sources.
@@ -108,7 +109,7 @@ namespace Yavsc
                 //}));
             });
 
-            ConfigureOAuthServices(services);
+            
 
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SiteSettings>), typeof(OptionsManager<SiteSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
@@ -124,22 +125,9 @@ namespace Yavsc
               .AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(ConnectionString))
               ;
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(
-                option =>
-                {
-                    option.User.AllowedUserNameCharacters += " ";
-                    option.User.RequireUniqueEmail = true;
-                    option.Cookies.ApplicationCookie.DataProtectionProvider =
-                        new MonoDataProtectionProvider(Configuration["Site:Title"]);
-                    option.Cookies.ApplicationCookie.LoginPath = new PathString(Constants.LoginPath.Substring(1));
-                    option.Cookies.ApplicationCookie.AccessDeniedPath = new PathString(Constants.AccessDeniedPath.Substring(1));
-                }
-            ).AddEntityFrameworkStores<ApplicationDbContext>()
-                 .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
-                 .AddTokenProvider<UserTokenProvider>(Constants.DefaultFactor)
-                ;
+            
 
-          
+          ConfigureOAuthServices(services);
 
             //  .AddTokenProvider<UserTokenProvider>(Constants.SMSFactor)
             //
@@ -217,8 +205,6 @@ namespace Yavsc
             services.AddTransient<Microsoft.AspNet.Authentication.ISecureDataFormat<AuthenticationTicket>, Microsoft.AspNet.Authentication.SecureDataFormat<AuthenticationTicket>>();
             services.AddTransient<ISecureDataFormat<AuthenticationTicket>, TicketDataFormat>();
 
-            services.AddTransient<IApplicationStore,ApplicationDbContext>();
-
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<IGoogleCloudMessageSender, AuthMessageSender>();
@@ -240,12 +226,13 @@ namespace Yavsc
             Startup.UserFilesDirName = siteSettings.Value.UserFiles.DirName;
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            logger = loggerFactory.CreateLogger<Startup>();
+            app.UseStatusCodePagesWithReExecute("/Home/Status/{0}");
 
             if (env.IsDevelopment())
             {
                 loggerFactory.MinimumLevel = LogLevel.Debug;
                 app.UseDeveloperExceptionPage();
-                app.UseStatusCodePagesWithReExecute("/Home/Status/{0}");
                 app.UseRuntimeInfoPage();
                 var epo = new ErrorPageOptions();
                 epo.SourceCodeLineCount = 20;
@@ -289,7 +276,7 @@ namespace Yavsc
             app.UseIISPlatformHandler(options =>
             {
                 options.AuthenticationDescriptions.Clear();
-                options.AutomaticAuthentication = true;
+                options.AutomaticAuthentication = false;
             });
 
             ConfigureOAuthApp(app);
@@ -306,8 +293,9 @@ namespace Yavsc
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
+#if OWIN
             app.UseSignalR();
+#endif
         }
         
         // Entry point for the application.

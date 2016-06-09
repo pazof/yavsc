@@ -10,11 +10,12 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
+using Microsoft.AspNet.Http;
 using Yavsc.Extensions;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.ViewModels.Account;
-
+using Microsoft.AspNet.Http.Authentication;
 
 namespace Yavsc.Controllers
 {
@@ -50,14 +51,15 @@ namespace Yavsc.Controllers
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
+
         [HttpGet(Constants.LoginPath)]
-        public ActionResult Login(string returnUrl = null)
+        public ActionResult SignIn(string returnUrl = null)
         {
             // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
             // will be redirected to after a successful authentication and not
             // the redirect_uri of the requesting client application against the third
             // party identity provider.
-            return View("Login", new LoginViewModel
+            return View(new SignInViewModel
             {
                 ReturnUrl = returnUrl,
                 ExternalProviders = HttpContext.GetExternalProviders()
@@ -68,7 +70,21 @@ namespace Yavsc.Controllers
             */
         }
         
+        [HttpPost(Constants.LoginPath)]
+        public async Task<IActionResult> SignIn(SignInViewModel model)
+        {
+            if (Request.Method == "POST")
+            {
+                if (model.Provider=="LOCAL")
+                {
+                    return await Login(model);
+                }
+            }
+            model.ExternalProviders = HttpContext.GetExternalProviders();
+            return View(model);
+        }
 
+        [HttpPost(Constants.ExternalLoginPath)]
          public IActionResult ExternalLogin(string Provider, string ReturnUrl)
          {
             // Note: the "provider" parameter corresponds to the external
@@ -104,8 +120,7 @@ namespace Yavsc.Controllers
             return new ChallengeResult(Provider, properties);
         }
 
-        [HttpPost(Constants.LoginPath)]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(SignInViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -136,7 +151,7 @@ namespace Yavsc.Controllers
             ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
             return View(model);
         }
-
+        
         //
         // GET: /Account/Register
         [HttpGet]
@@ -194,6 +209,7 @@ namespace Yavsc.Controllers
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
+                _logger.LogWarning("No external provider info found.");
                 return Redirect("~/signin"); // RedirectToAction(nameof(OAuthController.SignIn));
             }
 

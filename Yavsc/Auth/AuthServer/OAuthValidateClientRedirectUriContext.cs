@@ -17,10 +17,9 @@ namespace OAuth.AspNet.AuthServer
         /// <param name="clientId"></param>
         /// <param name="redirectUri"></param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "3#", Justification = "redirect_uri is a string parameter")]
-        public OAuthValidateClientRedirectUriContext(IApplicationStore applicationStore, HttpContext context, OAuthAuthorizationServerOptions options, string clientId, string redirectUri) : base(context, options, clientId)
+        public OAuthValidateClientRedirectUriContext(HttpContext context, OAuthAuthorizationServerOptions options, string clientId, string redirectUri) : base(context, options, clientId)
         {
             RedirectUri = redirectUri;
-            ApplicationStore = applicationStore;
         }
 
         /// <summary>
@@ -28,8 +27,6 @@ namespace OAuth.AspNet.AuthServer
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "redirect_uri is a string parameter")]
         public string RedirectUri { get; private set; }
-
-        public IApplicationStore ApplicationStore { get; private set;}
 
         /// <summary>
         /// Marks this context as validated by the application. IsValidated becomes true and HasError becomes false as a result of calling.
