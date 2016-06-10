@@ -129,7 +129,7 @@ namespace Yavsc.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return RedirectToLocal(model.ReturnUrl);
+                    return Redirect(model.ReturnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -219,7 +219,7 @@ namespace Yavsc.Controllers
             {
                 _logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
 
-                return RedirectToLocal(returnUrl);
+                return Redirect(returnUrl);
             }
             if (result.RequiresTwoFactor)
             {
@@ -286,7 +286,7 @@ namespace Yavsc.Controllers
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
 
-                        return RedirectToLocal(returnUrl);
+                        return Redirect(returnUrl);
                     }
                 }
                 AddErrors(result);
@@ -489,7 +489,8 @@ namespace Yavsc.Controllers
             if (result.Succeeded)
             {
                 ViewData["StatusMessage"] = "Your code was verified";
-                return RedirectToLocal(model.ReturnUrl);
+                _logger.LogInformation($"Signed in. returning to {model.ReturnUrl}");
+                return Redirect(model.ReturnUrl);
             }
             if (result.IsLockedOut)
             {
@@ -543,17 +544,7 @@ namespace Yavsc.Controllers
             return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
         }
 
-        private IActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
-        }
+       
 
         #endregion
     }
