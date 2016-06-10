@@ -118,5 +118,22 @@ namespace Yavsc.WebApi.Controllers
             base.Dispose(disposing);
         }
 
+        [HttpGet("~/api/me"),Produces("application/json")]
+        public async Task<IActionResult> Me ()
+        {
+            
+            if (User==null) return new BadRequestObjectResult(
+                    new {
+                        error = "no user" 
+                    });
+            var uid = User.GetUserId();
+            if (uid == null) 
+                return new BadRequestObjectResult(
+                    new {
+                        error = "not identified" 
+                    });
+            return Ok(await UserManager.FindByIdAsync(uid));
+        }
+
     }
 }

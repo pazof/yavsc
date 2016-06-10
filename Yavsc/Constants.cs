@@ -13,7 +13,7 @@ namespace Yavsc
         public const string ExternalLoginPath = "~/extsign";
         public const string LogoutPath = "~/signout";
         public const string MePath = "~/api/Me";
-        public const string ExternalAuthenticationSheme = "ExternalCookie";
+        
         public const string ApplicationAuthenticationSheme = "ServerCookie";
         public static readonly Scope[] SiteScopes = { 
             new Scope { Id = "profile", Description = "Your profile informations" },  

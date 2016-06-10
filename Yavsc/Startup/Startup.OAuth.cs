@@ -20,7 +20,7 @@ namespace Yavsc
     {
         private void ConfigureOAuthServices(IServiceCollection services)
         {
-            services.Configure<SharedAuthenticationOptions>(options => options.SignInScheme = Constants.ExternalAuthenticationSheme);
+            services.Configure<SharedAuthenticationOptions>(options => options.SignInScheme = Constants.ApplicationAuthenticationSheme);
             
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<OAuth2AppSettings>), typeof(OptionsManager<OAuth2AppSettings>)));
             // used by the YavscGoogleOAuth middelware (TODO drop it)
@@ -62,14 +62,14 @@ namespace Yavsc
                     option.Cookies.ApplicationCookie.LoginPath = new PathString(Constants.LoginPath.Substring(1));
                     option.Cookies.ApplicationCookie.AccessDeniedPath = new PathString(Constants.AccessDeniedPath.Substring(1));
                     option.Cookies.ApplicationCookie.AutomaticAuthenticate = true;
-                    option.Cookies.ApplicationCookie.AuthenticationScheme = Constants.ApplicationAuthenticationSheme;
-                    option.Cookies.ApplicationCookieAuthenticationScheme = Constants.ApplicationAuthenticationSheme;
-                    option.Cookies.TwoFactorRememberMeCookie.ExpireTimeSpan = TimeSpan.FromDays(30);
-                    option.Cookies.TwoFactorRememberMeCookie.DataProtectionProvider = protector;
-                    option.Cookies.ExternalCookieAuthenticationScheme = Constants.ExternalAuthenticationSheme;
-                    option.Cookies.ExternalCookie.AutomaticAuthenticate = true;
-                    option.Cookies.ExternalCookie.AuthenticationScheme = Constants.ExternalAuthenticationSheme;
-                    option.Cookies.ExternalCookie.DataProtectionProvider = protector;
+                  //  option.AuthenticationScheme = Constants.ApplicationAuthenticationSheme;
+                 //   option.Cookies.ApplicationCookieAuthenticationScheme = Constants.ApplicationAuthenticationSheme;
+                   // option.Cookies.TwoFactorRememberMeCookie.ExpireTimeSpan = TimeSpan.FromDays(30);
+                   // option.Cookies.TwoFactorRememberMeCookie.DataProtectionProvider = protector;
+                    //option.Cookies.ExternalCookieAuthenticationScheme = Constants.ExternalAuthenticationSheme;
+                  //  option.Cookies.ExternalCookie.AutomaticAuthenticate = true;
+                    //option.Cookies.ExternalCookie.AuthenticationScheme = Constants.ExternalAuthenticationSheme;
+                  //  option.Cookies.ExternalCookie.DataProtectionProvider = protector;
                 }
             ).AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
@@ -83,11 +83,12 @@ namespace Yavsc
             // External authentication shared cookie:
             app.UseCookieAuthentication(options =>
             {
-                options.AuthenticationScheme = Constants.ExternalAuthenticationSheme;
+                //options.AuthenticationScheme = Constants.ExternalAuthenticationSheme;
                 options.AutomaticAuthenticate = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                 options.LoginPath = new PathString(Constants.LoginPath.Substring(1));
                 options.AccessDeniedPath = new PathString(Constants.AccessDeniedPath.Substring(1));
+                options.AuthenticationScheme = Constants.ApplicationAuthenticationSheme;
             });
 
             var gvents = new OAuthEvents();
@@ -168,7 +169,7 @@ namespace Yavsc
                               context.Identity = identity;
                           }
                       }; */
-                      /*
+                      
             app.UseOAuthAuthorizationServer(
 
                 options =>
@@ -177,8 +178,7 @@ namespace Yavsc
                     options.TokenEndpointPath = new PathString(Constants.TokenPath.Substring(1));
                     options.ApplicationCanDisplayErrors = true;
                     options.AllowInsecureHttp = true;
-                    options.AuthenticationScheme = Constants.ApplicationAuthenticationSheme;
-
+                    
                     options.Provider = new OAuthAuthorizationServerProvider
                     {
                         OnValidateClientRedirectUri = ValidateClientRedirectUri,
@@ -202,7 +202,7 @@ namespace Yavsc
                     options.AutomaticAuthenticate = true;
                     options.AutomaticChallenge = true;
                 } 
-            );*/
+            );
         }
     }
 }
