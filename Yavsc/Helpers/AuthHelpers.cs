@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Authentication;
 
-namespace Yavsc.Extensions {
+namespace Yavsc.Helpers {
     public static class HttpContextExtensions {
         public static IEnumerable<AuthenticationDescription> GetExternalProviders(this HttpContext context) {
             if (context == null) {
@@ -26,4 +26,6 @@ namespace Yavsc.Extensions {
                     select description).Any();
         }
     }
+
+
 }

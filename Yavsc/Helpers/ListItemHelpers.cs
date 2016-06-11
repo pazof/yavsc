@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.AspNet.Mvc.Rendering;
 using Yavsc.Models;
 
-namespace Yavsc {
+namespace Yavsc.Helpers {
     public static class ListItemHelpers {
 
         public static List<SelectListItem> ActivityItems(

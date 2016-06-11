@@ -33,6 +33,7 @@ namespace Yavsc.Auth
             Scope.Add("openid");
             Scope.Add("profile");
             Scope.Add("email");
+
         }
 
         /// <summary>
@@ -40,5 +41,6 @@ namespace Yavsc.Auth
         /// </summary>
         public string AccessType { get; set; }
 
+        
     }
 }

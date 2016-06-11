@@ -11,11 +11,10 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.AspNet.Http;
-using Yavsc.Extensions;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.ViewModels.Account;
-using Microsoft.AspNet.Http.Authentication;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -50,6 +49,7 @@ namespace Yavsc.Controllers
             _smtpSettings = smtpSettings.Value;
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
+            
         }
 
         [HttpGet(Constants.LoginPath)]
@@ -127,6 +127,7 @@ namespace Yavsc.Controllers
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+               
                 if (result.Succeeded)
                 {
                     return Redirect(model.ReturnUrl);

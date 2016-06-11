@@ -62,6 +62,10 @@ namespace OAuth.AspNet.AuthServer
                     Parameters = parameters,
                 };
             }
+            else
+            {
+                throw new ArgumentException("No grant type found in the request");
+            }
         }
 
         /// <summary>

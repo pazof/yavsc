@@ -10,7 +10,7 @@ namespace Mvc.Client.Controllers {
             // Instruct the OIDC client middleware to redirect the user agent to the identity provider.
             // Note: the authenticationType parameter must match the value configured in Startup.cs
             var properties = new AuthenticationProperties { RedirectUri = "http://localhost:5002/signin-yavsc" };
-            return new ChallengeResult("yavsc", properties);
+            return new ChallengeResult("Yavsc", properties);
         }
 
     }

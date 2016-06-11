@@ -4,7 +4,7 @@ using Owin;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-#if OWIN
+
 namespace Yavsc
 {
     using Microsoft.AspNet.SignalR;
@@ -43,4 +43,3 @@ namespace Yavsc
         }
     }
 }
-#endif

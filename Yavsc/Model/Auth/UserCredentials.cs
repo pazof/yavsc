@@ -1,4 +1,6 @@
 
+using Yavsc.Models.OAuth;
+
 namespace Yavsc.Models.Auth {
 
     public class UserCredential {

@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
 using Yavsc.Models.Booking;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {

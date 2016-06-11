@@ -1,18 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNet.Authentication.OpenIdConnect;
 using Microsoft.AspNet.Authentication;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Authentication.Cookies;
-using Yavsc.Auth;
 using Microsoft.Extensions.WebEncoders;
 
 namespace testOauthClient
@@ -77,16 +71,15 @@ namespace testOauthClient
             
             app.UseOAuthAuthentication(
                 options => { 
-                    options.AuthenticationScheme = "yavsc";
-                    options.AuthorizationEndpoint="http://dev.pschneider.fr/authorize";
-                    options.TokenEndpoint="http://dev.pschneider.fr/token";
-                    options.AutomaticAuthenticate=true;
-                    options.AutomaticChallenge=true;
-                    options.CallbackPath=new PathString("/signin-yavsc");
-                    options.ClaimsIssuer="http://dev.pschneider.fr";
-                    options.ClientId="016c5ae4-f4cd-40e3-b250-13701c871ecd";
-                    options.ClientSecret="blahblah";
-                    options.SignInScheme="Bearer";
+                    options.AuthenticationScheme = "Yavsc";
+                    options.AuthorizationEndpoint = "http://dev.pschneider.fr/authorize";
+                    options.TokenEndpoint = "http://dev.pschneider.fr/token";
+                    options.CallbackPath = new PathString("/signin-yavsc");
+                    options.ClientId="21d8bd1b-4aed-4fcb-9ed9-00b43f6a8169";
+                    options.ClientSecret="blih";
+                    options.Scope.Add("profile");
+                    options.SaveTokensAsClaims = true;
+                    options.UserInformationEndpoint = "http://dev.pschneider.fr/api/me";
                 }
             );
 

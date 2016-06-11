@@ -104,7 +104,8 @@
     "Microsoft.AspNet.DataProtection.SystemWeb": "1.0.0-rc1-final",
     "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
     "PayPalCoreSDK": "1.7.1",
-    "PayPalButtonManagerSDK": "2.10.109"
+    "PayPalButtonManagerSDK": "2.10.109",
+    "Microsoft.AspNet.Owin": "1.0.0-rc1-final"
   },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
