@@ -3,8 +3,6 @@ using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.DataProtection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders;
-using System;
-using System.IO;
 using Yavsc.Auth;
 
 namespace OAuth.AspNet.AuthServer

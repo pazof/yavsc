@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
@@ -9,8 +10,10 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Primitives;
 using OAuth.AspNet.AuthServer;
 using Yavsc.Models;
+using Yavsc.Models.Auth;
 
 namespace Yavsc.Controllers
 {
@@ -109,7 +112,7 @@ namespace Yavsc.Controllers
             return Ok(claims);
         }
 
-        [HttpGet(Constants.AuthorizePath)]
+        [HttpGet(Constants.AuthorizePath),HttpPost(Constants.AuthorizePath)]
         public async Task<ActionResult> Authorize()
         {
             if (Response.StatusCode != 200)
@@ -118,12 +121,13 @@ namespace Yavsc.Controllers
             }
 
             AuthenticationManager authentication = Request.HttpContext.Authentication;
+            var appAuthSheme = Startup.IdentityAppOptions.Cookies.ApplicationCookieAuthenticationScheme;
 
-            ClaimsPrincipal principal = await authentication.AuthenticateAsync(Constants.ApplicationAuthenticationSheme);
+            ClaimsPrincipal principal = await authentication.AuthenticateAsync(appAuthSheme);
 
             if (principal == null)
             {
-                await authentication.ChallengeAsync(Constants.ApplicationAuthenticationSheme);
+                await authentication.ChallengeAsync(appAuthSheme);
 
                 if (Response.StatusCode == 200)
                     return new HttpUnauthorizedResult();
@@ -132,14 +136,35 @@ namespace Yavsc.Controllers
             }
 
             string[] scopes = { };
+            string redirect_uri = null;
+            string client_id = null;
+            string state = null;
+
+            IDictionary<string,StringValues> queryStringComponents = null;
 
             if (Request.QueryString.HasValue)
             {
-                var queryStringComponents = QueryHelpers.ParseQuery(Request.QueryString.Value);
+                 queryStringComponents = QueryHelpers.ParseQuery(Request.QueryString.Value);
 
                 if (queryStringComponents.ContainsKey("scope"))
                     scopes = queryStringComponents["scope"];
+                if (queryStringComponents.ContainsKey("redirect_uri"))
+                    redirect_uri = queryStringComponents["redirect_uri"];
+                if (queryStringComponents.ContainsKey("client_id"))
+                    client_id = queryStringComponents["client_id"];
+                if (queryStringComponents.ContainsKey("state"))
+                    state = queryStringComponents["state"];
             }
+
+            var model = new AuthorisationView { 
+                Scopes = Constants.SiteScopes.Where(s=> scopes.Contains(s.Id)).ToArray(),
+                RedirectUrl = redirect_uri,
+                Message = "Welcome.",
+                QueryStringComponents = queryStringComponents,
+                ClientId = client_id,
+                State = state,
+                ResponseType="code"
+                } ;
 
             if (Request.Method == "POST")
             {
@@ -153,21 +178,19 @@ namespace Yavsc.Controllers
                     {
                         primaryIdentity.AddClaim(new Claim("urn:oauth:scope", scope));
                     }
-
+                    _logger.LogWarning("Logging user {principal} against {OAuthDefaults.AuthenticationType}");
                     await authentication.SignInAsync(OAuthDefaults.AuthenticationType, principal);
                 }
 
                 if (!string.IsNullOrEmpty(Request.Form["submit.Login"]))
                 {
-                    await authentication.SignOutAsync(Constants.ApplicationAuthenticationSheme);
-
-                    await authentication.ChallengeAsync(Constants.ApplicationAuthenticationSheme);
-
+                    await authentication.SignOutAsync(appAuthSheme);
+                    await authentication.ChallengeAsync(appAuthSheme);
                     return new HttpUnauthorizedResult();
                 }
             }
 
-            return View(new AuthorisationView { Scopes = scopes } );
+            return View(model);
         }
 
     }

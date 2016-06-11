@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNet.Http.Authentication
+@using Microsoft.AspNet.WebUtilities
+@using System.Security.Claims
+@using Microsoft.Extensions.Primitives
+@model Yavsc.Models.Auth.AuthorisationView
+@{
+    ViewBag.Title = @SR["Authorize"];
+}
+<h1>Authorization Server</h1>
+<h2>OAuth2 Authorize</h2>
+<form method="POST" asp-action="Authorize" asp-controller="OAuth">
+    <p>Hello, @User.Identity.Name</p>
+    <p>@Model.Message</p>
+    <p>A third party application want to do the following on your behalf:</p>
+    <ul>
+        @foreach (var scope in Model.Scopes)
+        {
+            <li><em>@scope.Id</em>: @scope.Description</li>
+        }
+    </ul>
+    <p>
+        <input type="submit" class="btn btn-lg btn-success" name="submit.Grant" value="Grant" />
+        <input type="submit" class="btn btn-lg btn-danger" name="submit.Deny" value="Deny" />
+        <input type="submit" class="btn btn-lg btn-success" name="submit.Login" value="Sign in as different user" />
+    </p>
+    @if (Model.QueryStringComponents!=null) {
+        @foreach (var key in Model.QueryStringComponents.Keys) {
+            @Html.Hidden(key,Model.QueryStringComponents[key])
+        }
+    
+    }
+</form>

@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
+using Yavsc.Models.Auth;
 using Yavsc.Models.Booking;
+using Yavsc.Models.OAuth;
 
 namespace Yavsc.Models
 {
@@ -26,7 +28,9 @@ namespace Yavsc.Models
             optionsBuilder.UseNpgsql(Startup.ConnectionString);
         }
 
-        public DbSet<Application> Applications { get; set; }
+        public DbSet<Client> Applications { get; set; }
+        
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         /// <summary>
         /// Activities referenced on this site
         /// </summary>
@@ -151,10 +155,12 @@ namespace Yavsc.Models
             return Task.FromResult(0);
         }
 
-        Application FindApplication(string clientId)
+        Client FindApplication(string clientId)
         {
             return Applications.FirstOrDefault(
-                app=>app.ApplicationID == clientId);
+                app=>app.Id == clientId);
         }
+
+        
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Metadata;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
@@ -12,6 +14,17 @@ namespace Yavsc.Migrations
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
+
+            modelBuilder.Entity("GoogleCloudMobileDeclaration", b =>
+                {
+                    b.Property<string>("RegistrationId");
+
+                    b.Property<string>("DeviceOwnerId");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("RegistrationId");
+                });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRole", b =>
                 {
@@ -95,21 +108,6 @@ namespace Yavsc.Migrations
                     b.HasAnnotation("Relational:TableName", "AspNetUserRoles");
                 });
 
-            modelBuilder.Entity("Yavsc.Application", b =>
-                {
-                    b.Property<string>("ApplicationID");
-
-                    b.Property<string>("DisplayName");
-
-                    b.Property<string>("LogoutRedirectUri");
-
-                    b.Property<string>("RedirectUri");
-
-                    b.Property<string>("Secret");
-
-                    b.HasKey("ApplicationID");
-                });
-
             modelBuilder.Entity("Yavsc.Location", b =>
                 {
                     b.Property<long>("Id")
@@ -172,8 +170,6 @@ namespace Yavsc.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
-                    b.Property<string>("GoogleRegId");
-
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
@@ -208,6 +204,52 @@ namespace Yavsc.Migrations
                         .HasAnnotation("Relational:Name", "UserNameIndex");
 
                     b.HasAnnotation("Relational:TableName", "AspNetUsers");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Auth.Client", b =>
+                {
+                    b.Property<string>("Id");
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("AllowedOrigin")
+                        .HasAnnotation("MaxLength", 100);
+
+                    b.Property<string>("DisplayName");
+
+                    b.Property<string>("LogoutRedirectUri");
+
+                    b.Property<string>("RedirectUri");
+
+                    b.Property<int>("RefreshTokenLifeTime");
+
+                    b.Property<string>("Secret");
+
+                    b.Property<int>("Type");
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Auth.RefreshToken", b =>
+                {
+                    b.Property<string>("Id");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<DateTime>("ExpiresUtc");
+
+                    b.Property<DateTime>("IssuedUtc");
+
+                    b.Property<string>("ProtectedTicket")
+                        .IsRequired();
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.HasKey("Id");
                 });
 
             modelBuilder.Entity("Yavsc.Models.BalanceImpact", b =>
@@ -394,7 +436,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.OAuth2Tokens", b =>
+            modelBuilder.Entity("Yavsc.Models.OAuth.OAuth2Tokens", b =>
                 {
                     b.Property<string>("UserId");
 
@@ -475,6 +517,13 @@ namespace Yavsc.Migrations
                     b.Property<int>("Rate");
 
                     b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("GoogleCloudMobileDeclaration", b =>
+                {
+                    b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("DeviceOwnerId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
