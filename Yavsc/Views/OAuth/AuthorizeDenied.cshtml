@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNet.Http
+@using System
+@using System.Security.Claims
+@{
+    var error = Context.Items["oauth.Error"];
+    var errorDescription = Context.Items["oauth.ErrorDescription"];
+    var errorUri = Context.Items["oauth.ErrorUri"];
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Authorization Denied</title>
+</head>
+<body>
+    <h1>Authorization denied</h1>
+</body>
+</html>
