@@ -136,9 +136,7 @@ namespace Yavsc.Controllers
             }
 
             string[] scopes = { };
-            string redirect_uri = null;
-            string client_id = null;
-            string state = null;
+            string redirect_uri=null;
 
             IDictionary<string,StringValues> queryStringComponents = null;
 
@@ -150,20 +148,11 @@ namespace Yavsc.Controllers
                     scopes = queryStringComponents["scope"];
                 if (queryStringComponents.ContainsKey("redirect_uri"))
                     redirect_uri = queryStringComponents["redirect_uri"];
-                if (queryStringComponents.ContainsKey("client_id"))
-                    client_id = queryStringComponents["client_id"];
-                if (queryStringComponents.ContainsKey("state"))
-                    state = queryStringComponents["state"];
             }
 
             var model = new AuthorisationView { 
                 Scopes = Constants.SiteScopes.Where(s=> scopes.Contains(s.Id)).ToArray(),
-                RedirectUrl = redirect_uri,
-                Message = "Welcome.",
-                QueryStringComponents = queryStringComponents,
-                ClientId = client_id,
-                State = state,
-                ResponseType="code"
+                Message = "Welcome."
                 } ;
 
             if (Request.Method == "POST")
@@ -181,7 +170,13 @@ namespace Yavsc.Controllers
                     _logger.LogWarning("Logging user {principal} against {OAuthDefaults.AuthenticationType}");
                     await authentication.SignInAsync(OAuthDefaults.AuthenticationType, principal);
                 }
-
+                if (!string.IsNullOrEmpty(Request.Form["submit.Deny"]))
+                {
+                    await authentication.SignOutAsync(appAuthSheme);
+                    if (redirect_uri!=null)
+                        return Redirect(redirect_uri+"?error=scope-denied");
+                    return Redirect("/");
+                }
                 if (!string.IsNullOrEmpty(Request.Form["submit.Login"]))
                 {
                     await authentication.SignOutAsync(appAuthSheme);

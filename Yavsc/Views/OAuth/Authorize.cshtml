@@ -8,12 +8,7 @@
 <h1>Authorization Server</h1>
 <h2>OAuth2 Authorize</h2>
 
-<form method="POST" asp-action="Authorize" asp-controller="OAuth"
- asp-route-client_id="@Model.ClientId"
- asp-route-redirect_url="@Model.RedirectUrl"
- asp-route-state="@Model.State"
- asp-route-response_type="@Model.ResponseType"
- >
+<form method="POST">
     <p>Hello, @User.Identity.Name</p>
     <p>@Model.Message</p>
     <p>A third party application want to do the following on your behalf:</p>
