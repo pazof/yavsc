@@ -14,8 +14,7 @@ namespace Yavsc.Models.Booking
         /// Event date
         /// </summary>
         /// <returns></returns>
-        [Required(ErrorMessageResourceName="ChooseAnEventDate",
-        ErrorMessageResourceType=typeof(Resources.YavscLocalisation)),Display(Name="EventDate")]
+        [Required(),Display(Name="EventDate")]
         public DateTime EventDate { get; set; }
 
         /// <summary>
