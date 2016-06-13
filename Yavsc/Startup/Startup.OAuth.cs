@@ -86,43 +86,6 @@ namespace Yavsc
         private void ConfigureOAuthApp(IApplicationBuilder app, SiteSettings settings)
         {
             app.UseIdentity();
-            app.UseOAuthAuthorizationServer(
-
-                       options =>
-                       {
-                           OAuthServerAppOptions = options;
-                           options.AuthorizeEndpointPath = new PathString(Constants.AuthorizePath.Substring(1));
-                           options.TokenEndpointPath = new PathString(Constants.TokenPath.Substring(1));
-                           options.ApplicationCanDisplayErrors = true;
-                           options.AllowInsecureHttp = true;
-                           options.AuthenticationScheme = OAuthDefaults.AuthenticationType;
-                           options.TokenDataProtector = ProtectionProvider.CreateProtector("Bearer protection");
-
-                           options.Provider = new OAuthAuthorizationServerProvider
-                           {
-                               OnValidateClientRedirectUri = ValidateClientRedirectUri,
-                               OnValidateClientAuthentication = ValidateClientAuthentication,
-                               OnGrantResourceOwnerCredentials = GrantResourceOwnerCredentials,
-                               OnGrantClientCredentials = GrantClientCredetails
-                           };
-
-                           options.AuthorizationCodeProvider = new AuthenticationTokenProvider
-                           {
-                               OnCreate = CreateAuthenticationCode,
-                               OnReceive = ReceiveAuthenticationCode,
-                           };
-
-                           options.RefreshTokenProvider = new AuthenticationTokenProvider
-                           {
-                               OnCreate = CreateRefreshToken,
-                               OnReceive = ReceiveRefreshToken,
-                           };
-
-                           options.AutomaticAuthenticate = true;
-                           options.AutomaticChallenge = true;
-                       }
-                   );
-
             app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
                branch =>
                {
@@ -192,6 +155,43 @@ namespace Yavsc
                            options.Scope.Add("email");
                            options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
                        });
+
+                   branch.UseOAuthAuthorizationServer(
+
+                       options =>
+                       {
+                           OAuthServerAppOptions = options;
+                           options.AuthorizeEndpointPath = new PathString(Constants.AuthorizePath.Substring(1));
+                           options.TokenEndpointPath = new PathString(Constants.TokenPath.Substring(1));
+                           options.ApplicationCanDisplayErrors = true;
+                           options.AllowInsecureHttp = true;
+                           options.AuthenticationScheme = OAuthDefaults.AuthenticationType;
+                           options.TokenDataProtector = ProtectionProvider.CreateProtector("Bearer protection");
+
+                           options.Provider = new OAuthAuthorizationServerProvider
+                           {
+                               OnValidateClientRedirectUri = ValidateClientRedirectUri,
+                               OnValidateClientAuthentication = ValidateClientAuthentication,
+                               OnGrantResourceOwnerCredentials = GrantResourceOwnerCredentials,
+                               OnGrantClientCredentials = GrantClientCredetails
+                           };
+
+                           options.AuthorizationCodeProvider = new AuthenticationTokenProvider
+                           {
+                               OnCreate = CreateAuthenticationCode,
+                               OnReceive = ReceiveAuthenticationCode,
+                           };
+
+                           options.RefreshTokenProvider = new AuthenticationTokenProvider
+                           {
+                               OnCreate = CreateRefreshToken,
+                               OnReceive = ReceiveRefreshToken,
+                           };
+
+                           options.AutomaticAuthenticate = true;
+                           options.AutomaticChallenge = true;
+                       }
+                   );
                });
 
 
