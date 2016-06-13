@@ -29,6 +29,9 @@ namespace Yavsc
     public partial class Startup
     {
         public static string ConnectionString { get; private set; }
+        public static string Authority { get; private set; }
+        public static string Audience { get; private set; }
+
         private static ILogger logger;
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
@@ -268,14 +271,16 @@ namespace Yavsc
                 }
             }
 
-
             app.UseIISPlatformHandler(options =>
             {
                 options.AuthenticationDescriptions.Clear();
                 options.AutomaticAuthentication = false;
             });
 
-            ConfigureOAuthApp(app);
+            Authority = siteSettings.Value.Authority;
+            Audience = siteSettings.Value.Audience;
+
+            ConfigureOAuthApp(app,siteSettings.Value);
             
             ConfigureFileServerApp(app,siteSettings.Value,env);
 

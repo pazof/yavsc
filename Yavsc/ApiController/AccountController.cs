@@ -7,6 +7,7 @@ using Microsoft.AspNet.Mvc;
 using Yavsc.ViewModels.Account;
 using System.Security.Claims;
 using Microsoft.Extensions.Logging;
+using Yavsc.Models.Auth;
 
 namespace Yavsc.WebApi.Controllers
 {
@@ -121,18 +122,14 @@ namespace Yavsc.WebApi.Controllers
         [HttpGet("~/api/me"),Produces("application/json")]
         public async Task<IActionResult> Me ()
         {
-            
-            if (User==null) return new BadRequestObjectResult(
-                    new {
-                        error = "no user" 
-                    });
+            if (User==null) 
+            return new BadRequestObjectResult(
+                    new { error = "user not found" });
             var uid = User.GetUserId();
             if (uid == null) 
                 return new BadRequestObjectResult(
-                    new {
-                        error = "not identified" 
-                    });
-            return Ok(await UserManager.FindByIdAsync(uid));
+                    new { error = "user not identified" });
+            return Ok(new Me(await UserManager.FindByIdAsync(uid)));
         }
 
     }

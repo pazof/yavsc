@@ -78,7 +78,7 @@ namespace testOauthClient
                     options.ClientId="21d8bd1b-4aed-4fcb-9ed9-00b43f6a8169";
                     options.ClientSecret="blih";
                     options.Scope.Add("profile");
-                    options.SaveTokensAsClaims = true;
+                 //   options.SaveTokensAsClaims = true;
                     options.UserInformationEndpoint = "http://dev.pschneider.fr/api/me";
                 }
             );

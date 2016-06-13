@@ -167,7 +167,6 @@ namespace Yavsc.Controllers
                     {
                         primaryIdentity.AddClaim(new Claim("urn:oauth:scope", scope));
                     }
-                    _logger.LogWarning("Logging user {principal} against {OAuthDefaults.AuthenticationType}");
                     await authentication.SignInAsync(OAuthDefaults.AuthenticationType, principal);
                 }
                 if (!string.IsNullOrEmpty(Request.Form["submit.Deny"]))

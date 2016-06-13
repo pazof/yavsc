@@ -108,7 +108,7 @@ public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
         protected override void Handle(AuthorizationContext context, PrivateChatEntryRequirement requirement)
         {
             if (!context.User.HasClaim(c => c.Type == "TemporaryBadgeExpiry" &&
-                                            c.Issuer == Constants.Issuer))
+                                            c.Issuer == Startup.Authority))
             {
                 return;
             }
@@ -116,7 +116,7 @@ public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
             var temporaryBadgeExpiry =
                 Convert.ToDateTime(context.User.FindFirst(
                                        c => c.Type == "TemporaryBadgeExpiry" &&
-                                       c.Issuer == Constants.Issuer).Value);
+                                       c.Issuer == Startup.Authority).Value);
 
             if (temporaryBadgeExpiry > DateTime.Now)
             {
@@ -130,7 +130,7 @@ public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
         protected override void Handle(AuthorizationContext context, PrivateChatEntryRequirement requirement)
         {
             if (!context.User.HasClaim(c => c.Type == "BadgeNumber" &&
-                                            c.Issuer == Constants.Issuer))
+                                            c.Issuer == Startup.Authority))
             {
                 return;
             }
