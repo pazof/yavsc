@@ -18,13 +18,12 @@
             </li>
         }
         @if (!string.IsNullOrEmpty(
-            Model.Performer?.DedicatedGoogleCalendar))
+            Model.Performer.DedicatedGoogleCalendar))
             {
             <li>   @SR["Exposes his Google calendar!"]
             </li>
             }
-        @if (!string.IsNullOrEmpty(
-            Model.Performer?.GoogleRegId))
+        @if (Model.Performer.Devices?.Count>0)
             {
             <li>   @SR["Uses the mobile application, and receives push notifications"]
             </li>
