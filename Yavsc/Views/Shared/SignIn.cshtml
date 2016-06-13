@@ -56,23 +56,23 @@
     <hr/>
     <h2 class="lead text-left">@SR["Use another service to log in"]:</h2>
     @if (Model.ExternalProviders.Count() == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See <a href="http://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                            for details on setting up this ASP.NET application to support logging in via external services.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    @foreach (var description in Model.ExternalProviders) {
-        <form action="@Constants.ExternalLoginPath" method="post">
+    {
+        <div>
+            <p>
+                There are no external authentication services configured. See <a href="http://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                for details on setting up this ASP.NET application to support logging in via external services.
+            </p>
+        </div>
+    }
+    else
+    {
+        @foreach (var description in Model.ExternalProviders) {
+        <form action="@Constants.LoginPath" method="post">
             <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
             <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
             <button class="btn btn-lg btn-success" type="submit" name="Submit.Login">@SR["Connect using"] @description.DisplayName</button>
             @Html.AntiForgeryToken()
         </form>
-                }
+        }
     }
 </div>

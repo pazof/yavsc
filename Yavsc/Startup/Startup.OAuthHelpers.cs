@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OAuth.AspNet.AuthServer;
 using Yavsc.Helpers;
@@ -73,17 +76,37 @@ namespace Yavsc
             return Task.FromResult(0);
         }
 
-        private Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
+        private async Task<Task> GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
+            ApplicationUser user = null;
             logger.LogWarning($"GrantResourceOwnerCredentials task ... {context.UserName}");
-            
-            // var user =  ValidateUser(context.UserName, context.Password)
 
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new GenericIdentity(context.UserName, OAuthDefaults.AuthenticationType), context.Scope.Select(x => new Claim("urn:oauth:scope", x))));
+             using (var usermanager = context.HttpContext.ApplicationServices.GetRequiredService<UserManager<ApplicationUser>>())
+                    {
+                        user = await usermanager.FindByNameAsync(context.UserName);
+                        if (await usermanager.CheckPasswordAsync(user,context.Password))
+                        {
+
+            var claims = new List<Claim>(
+                    context.Scope.Select(x => new Claim("urn:oauth:scope", x))
+            );
+            claims.Add(new Claim(ClaimTypes.NameIdentifier,user.Id));
+            claims.Add(new Claim(ClaimTypes.Email,user.Email));
+            claims.AddRange((await usermanager.GetRolesAsync(user)).Select(
+                r => new Claim(ClaimTypes.Role,r)
+            ) );
+            ClaimsPrincipal principal = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new GenericIdentity(context.UserName, OAuthDefaults.AuthenticationType), 
+                    claims)
+                    );
             // TODO set a NameIdentifier, roles and scopes claims
+            context.HttpContext.User = principal;
 
             context.Validated(principal);
-
+                        }
+                    }
+             
             return Task.FromResult(0);
         }
 
@@ -117,6 +140,9 @@ namespace Yavsc
         {
             var uid = context.Ticket.Principal.GetUserId();
             logger.LogInformation($"CreateRefreshToken for {uid}");
+            foreach (var c in context.Ticket.Principal.Claims)
+                logger.LogInformation($"| User claim: {c.Type} {c.Value}");
+
             context.SetToken(context.SerializeTicket());
         }
 
@@ -124,6 +150,8 @@ namespace Yavsc
         {
             var uid = context.Ticket.Principal.GetUserId();
             logger.LogInformation($"ReceiveRefreshToken for {uid}");
+            foreach (var c in context.Ticket.Principal.Claims)
+                logger.LogInformation($"| User claim: {c.Type} {c.Value}");
             context.DeserializeTicket(context.Token);
         }
     }

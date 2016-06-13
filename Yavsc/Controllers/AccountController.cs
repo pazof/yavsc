@@ -18,7 +18,7 @@ using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)),AllowAnonymous]
+    [ServiceFilter(typeof(LanguageActionFilter)), AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -49,7 +49,7 @@ namespace Yavsc.Controllers
             _smtpSettings = smtpSettings.Value;
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
-            
+
         }
 
         [HttpGet(Constants.LoginPath)]
@@ -69,90 +69,84 @@ namespace Yavsc.Controllers
             return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme, properties);
             */
         }
-        
+
         [HttpPost(Constants.LoginPath)]
         public async Task<IActionResult> SignIn(SignInViewModel model)
         {
             if (Request.Method == "POST")
             {
-                if (model.Provider=="LOCAL")
+                if (model.Provider == "LOCAL")
                 {
-                    return await Login(model);
+                    if (ModelState.IsValid)
+                    {
+                        // This doesn't count login failures towards account lockout
+                        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+
+                        if (result.Succeeded)
+                        {
+                            return Redirect(model.ReturnUrl);
+                        }
+                        if (result.RequiresTwoFactor)
+                        {
+                            return RedirectToAction(nameof(SendCode), new { ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+                        }
+                        if (result.IsLockedOut)
+                        {
+                            _logger.LogWarning(2, "User account locked out.");
+                            return View("Lockout");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                            return View(model);
+                        }
+                    }
+
+                    // If we got this far, something failed, redisplay form
+                    ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
+                }
+                else
+                {
+
+                    // Note: the "provider" parameter corresponds to the external
+                    // authentication provider choosen by the user agent.
+                    if (string.IsNullOrEmpty(model.Provider))
+                    {
+                        _logger.LogWarning("Provider not specified");
+                        return HttpBadRequest();
+                    }
+
+                    if (!_signInManager.GetExternalAuthenticationSchemes().Any(x => x.AuthenticationScheme == model.Provider))
+                    {
+                        _logger.LogWarning($"Provider not found : {model.Provider}");
+                        return HttpBadRequest();
+                    }
+
+                    // Instruct the middleware corresponding to the requested external identity
+                    // provider to redirect the user agent to its own authorization endpoint.
+                    // Note: the authenticationScheme parameter must match the value configured in Startup.cs
+
+                    // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
+                    // will be redirected to after a successful authentication and not
+                    // the redirect_uri of the requesting client application.
+                    if (string.IsNullOrEmpty(model.ReturnUrl))
+                    {
+                        _logger.LogWarning("ReturnUrl not specified");
+                        return HttpBadRequest();
+                    }
+                    // Note: this still is not the redirect uri given to the third party provider, at building the challenge.
+                    var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = model.ReturnUrl });
+                    var properties = _signInManager.ConfigureExternalAuthenticationProperties(model.Provider, redirectUrl);
+                    // var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
+                    return new ChallengeResult(model.Provider, properties);
+
                 }
             }
             model.ExternalProviders = HttpContext.GetExternalProviders();
             return View(model);
         }
 
-        [HttpPost(Constants.ExternalLoginPath)]
-         public IActionResult ExternalLogin(string Provider, string ReturnUrl)
-         {
-            // Note: the "provider" parameter corresponds to the external
-            // authentication provider choosen by the user agent.
-            if (string.IsNullOrEmpty(Provider))
-            {
-                _logger.LogWarning("Provider not specified");
-                return HttpBadRequest();
-            }
-
-            if (!_signInManager.GetExternalAuthenticationSchemes().Any(x => x.AuthenticationScheme == Provider))
-            {
-                _logger.LogWarning($"Provider not found : {Provider}");
-                return HttpBadRequest();
-            }
-
-            // Instruct the middleware corresponding to the requested external identity
-            // provider to redirect the user agent to its own authorization endpoint.
-            // Note: the authenticationScheme parameter must match the value configured in Startup.cs
-
-            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
-            // will be redirected to after a successful authentication and not
-            // the redirect_uri of the requesting client application.
-            if (string.IsNullOrEmpty(ReturnUrl))
-            {
-                _logger.LogWarning("ReturnUrl not specified");
-                return HttpBadRequest();
-            }
-            // Note: this still is not the redirect uri given to the third party provider, at building the challenge.
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = ReturnUrl });
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(Provider, redirectUrl);
-            // var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
-            return new ChallengeResult(Provider, properties);
-        }
-
-        public async Task<IActionResult> Login(SignInViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
-               
-                if (result.Succeeded)
-                {
-                    return Redirect(model.ReturnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning(2, "User account locked out.");
-                    return View("Lockout");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
-                }
-            }
-            
-            // If we got this far, something failed, redisplay form
-            ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
-            return View(model);
-        }
-        
         //
         // GET: /Account/Register
         [HttpGet]
@@ -198,7 +192,7 @@ namespace Yavsc.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            if (returnUrl==null) return RedirectToAction(nameof(HomeController.Index), "Home");
+            if (returnUrl == null) return RedirectToAction(nameof(HomeController.Index), "Home");
             return Redirect(returnUrl);
         }
 
@@ -545,7 +539,7 @@ namespace Yavsc.Controllers
             return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
         }
 
-       
+
 
         #endregion
     }
