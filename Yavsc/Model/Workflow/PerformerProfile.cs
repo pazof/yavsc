@@ -55,6 +55,6 @@ namespace Yavsc.Models {
         public bool DoesBlog { get {
             return Performer?.Posts != null ? Performer.Posts.Count > 0 : false;
         } }
-
+        
     }
 }
