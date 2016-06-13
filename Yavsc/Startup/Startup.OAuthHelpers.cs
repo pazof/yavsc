@@ -78,9 +78,9 @@ namespace Yavsc
 
         private async Task<Task> GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            ApplicationUser user = null;
             logger.LogWarning($"GrantResourceOwnerCredentials task ... {context.UserName}");
 
+            ApplicationUser user = null;
              using (var usermanager = context.HttpContext.ApplicationServices.GetRequiredService<UserManager<ApplicationUser>>())
                     {
                         user = await usermanager.FindByNameAsync(context.UserName);
