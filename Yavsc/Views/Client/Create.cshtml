@@ -57,10 +57,7 @@
         <div class="form-group">
             <label asp-for="Type" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select name="Type" class="form-control">
-                   <option value="0" >JavaScript</option>
-                   <option value="1" >NativeConfidential</option>
-                </select>
+                @Html.DropDownList("Type")
                 <span asp-validation-for="Type" class="text-danger" />
             </div>
         </div>
