@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Yavsc.Models.Booking;
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Billing
 {
-    public partial class Estimate
+    public partial class RDVEstimate
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
@@ -19,7 +20,7 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         [ForeignKey("CommandId")]
-        public virtual Command Command { get; set; }
+        public BookQuery Query { get; set; }  
         public string Description { get; set; }
         public int? Status { get; set; }
         public string Title { get; set; }

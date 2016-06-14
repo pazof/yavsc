@@ -1,9 +1,9 @@
 
-
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Models.Market;
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Billing
 {
 
  public class CommandLine {

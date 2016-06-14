@@ -6,8 +6,10 @@ using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using Yavsc.Models.Auth;
+using Yavsc.Models.Billing;
 using Yavsc.Models.Booking;
 using Yavsc.Models.OAuth;
+using Yavsc.Models.Workflow;
 
 namespace Yavsc.Models
 {
@@ -61,15 +63,15 @@ namespace Yavsc.Models
         /// on his profile).
         /// </summary>
         /// <returns></returns>
-        public DbSet<Command> Commands { get; set; }
+        public DbSet<BookQuery> Commands { get; set; }
         /// <summary>
         /// Special commands, talking about
         /// a given place and date.
         /// </summary>
         /// <returns></returns>
-        public DbSet<Booking.BookQuery> BookQueries { get; set; }
+        public DbSet<BookQuery> BookQueries { get; set; }
         public DbSet<PerformerProfile> Performers { get; set; }
-        public DbSet<Estimate> Estimates { get; set; }
+        public DbSet<RDVEstimate> Estimates { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
         public DbSet<BalanceImpact> BankBook { get; set; }
         public DbSet<Location> Map { get; set; }

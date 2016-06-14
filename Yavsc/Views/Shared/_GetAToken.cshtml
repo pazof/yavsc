@@ -1,7 +1,0 @@
-
-    <form enctype="application/x-www-form-urlencoded" method="post" class="navbar-right">
-        @Html.AntiForgeryToken()
-        <label for="username">username:</label><input name="username" placeholder="(Votre Nom d'utilisateur)"/>
-        <label for="password">password:</label><input name="password" placeholder="(Votre mot de passe)" type="password"/>
-        <input formaction="/api/token/post" class="btn btn-lg btn-success" name="Getatoken" type="submit" value="Getatoken" />
-     </form>

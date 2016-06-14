@@ -3,17 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Models.Market;
+using Yavsc.Models.Workflow;
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Billing
 {
 
- public class Command {
-
-    /// <summary>
-    /// The command identifier
-    /// </summary>
-    [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id {get; set; }
+ public class NominativeServiceCommand : Command<Service> {
 
     public string ClientId { get; set; }
 
@@ -40,6 +36,10 @@ namespace Yavsc.Models
     public DateTime CreationDate {get; set;}
 
     public decimal? Previsional { get; set; }
+    /// <summary>
+    /// The bill
+    /// </summary>
+    /// <returns></returns>
     public List<CommandLine> Bill { get; set; }
 
     ///<summary>

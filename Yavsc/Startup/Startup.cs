@@ -294,9 +294,7 @@ namespace Yavsc
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-#if OWIN
             app.UseSignalR();
-#endif
         }
         
         // Entry point for the application.

@@ -102,7 +102,9 @@ $(document).ready(function(){
     <div class="form-horizontal">
         <h4>@SR["Fill in your book query"]</h4>
         <hr />
+
         <div class="form-group" has-feedback>
+        @Html.ValidationSummary()
              <fieldset>
 <legend><label for="EventDate" class="col-md-2 control-label" >
     @SR["EventDate"]
@@ -142,6 +144,7 @@ $(document).ready(function(){
         </div>
         @Html.HiddenFor(model=>model.Client.Id)
         @Html.HiddenFor(model=>model.PerformerId)
+        
     </div>
 </form>
 

@@ -7,6 +7,7 @@ using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
 using Yavsc.Models.Booking;
 using Yavsc.Helpers;
+using Yavsc.Models.Billing;
 
 namespace Yavsc.Controllers
 {
@@ -94,11 +95,11 @@ namespace Yavsc.Controllers
 
         [Produces("text/x-tex"), Authorize,
         Route("Release/Estimate-{id}.tex")]
-        public Estimate Estimate(long id)
+        public RDVEstimate Estimate(long id)
         {
-            var estimate = _context.Estimates.Include(x=>x.Command).
-            Include(x=>x.Command.Client).FirstOrDefault(x=>x.Id==id);
-            var adc = estimate.Command.Client.UserName;
+            var estimate = _context.Estimates.Include(x=>x.Query).
+            Include(x=>x.Query.Client).FirstOrDefault(x=>x.Id==id);
+            var adc = estimate.Query.Client.UserName;
             return estimate;
         }
     }

@@ -30,7 +30,7 @@ namespace Yavsc.Controllers
         SmtpSettings _smtpSettings;
 
         private readonly ILogger _logger;
-        public CommandController(ApplicationDbContext context,IOptions<GoogleAuthSettings> googleSettings,
+        public CommandController(ApplicationDbContext context, IOptions<GoogleAuthSettings> googleSettings,
         IGoogleCloudMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
           IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
@@ -54,11 +54,11 @@ namespace Yavsc.Controllers
         public IActionResult Index()
         {
             return View(_context.BookQueries
-            .Include(x=>x.Client)
-            .Include(x=>x.PerformerProfile)
-            .Include(x=>x.PerformerProfile.Performer)
-            .Include(x=>x.Location)
-            .Include(x=>x.Bill).ToList());
+            .Include(x => x.Client)
+            .Include(x => x.PerformerProfile)
+            .Include(x => x.PerformerProfile.Performer)
+            .Include(x => x.Location)
+            .Include(x => x.Bill).ToList());
         }
 
         // GET: Command/Details/5
@@ -70,8 +70,8 @@ namespace Yavsc.Controllers
             }
 
             BookQuery command = _context.BookQueries
-            .Include(x=>x.Location)
-            .Include(x=>x.PerformerProfile)
+            .Include(x => x.Location)
+            .Include(x => x.PerformerProfile)
             .Single(m => m.Id == id);
             if (command == null)
             {
@@ -90,66 +90,79 @@ namespace Yavsc.Controllers
         /// <returns></returns>
         public IActionResult Create(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                throw new InvalidOperationException(
+                    "This method needs a performer id"
+                );
             var pro = _context.Performers.Include(
-                x=>x.Performer).FirstOrDefault(
-                x=>x.PerfomerId == id
+                x => x.Performer).FirstOrDefault(
+                x => x.PerfomerId == id
             );
-            if (pro==null)
+            if (pro == null)
                 return HttpNotFound();
 
             ViewBag.GoogleSettings = _googleSettings;
             var userid = User.GetUserId();
-            var user =  _userManager.FindByIdAsync(userid).Result;
-            return View(new BookQuery{
+            var user = _userManager.FindByIdAsync(userid).Result;
+            return View(new BookQuery(new Location(),DateTime.Now.AddHours(4))
+            {
                 PerformerProfile = pro,
                 PerformerId = pro.PerfomerId,
                 ClientId = userid,
-                Client = user,
-                Location = new Location(),
-                EventDate = DateTime.Now.AddHours(4)
+                Client = user
             });
         }
 
         // POST: Command/Create
-        [HttpPost]
+        [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookQuery command)
         {
-            var pro = _context.Performers.FirstOrDefault(
-                x=>x.PerfomerId == command.PerformerId
+            var uid = User.GetUserId();
+            var prid = command.PerformerId;
+            if (string.IsNullOrWhiteSpace(uid)
+            || string.IsNullOrWhiteSpace(prid))
+                throw new InvalidOperationException(
+                    "This method needs a prid and uid"
+                );
+            var pro = _context.Performers.Include(
+                u => u.Performer
+            ).Include( u => u.Performer.Devices)
+            .FirstOrDefault(
+                x => x.PerfomerId == command.PerformerId
             );
             command.PerformerProfile = pro;
-             var user =  _userManager.FindByIdAsync(
-                User.GetUserId()
-            ).Result;
+            var user = await _userManager.FindByIdAsync(
+               User.GetUserId()
+           );
             command.Client = user;
             if (ModelState.IsValid)
             {
                 var yaev = command.CreateEvent(_localizer);
-                MessageWithPayloadResponse grep=null;
+                MessageWithPayloadResponse grep = null;
 
                 _context.Attach<Location>(command.Location);
-                _context.BookQueries.Add(command,GraphBehavior.IncludeDependents);
+                _context.BookQueries.Add(command, GraphBehavior.IncludeDependents);
                 _context.SaveChanges();
-                if (command.PerformerProfile.AcceptNotifications
-                && command.PerformerProfile.AcceptPublicContact
-                && command.PerformerProfile.Performer.Devices.Select(d=>d.RegistrationId)!=null) {
-                      grep = await _GCMSender.NotifyAsync(_googleSettings,
-                     command.PerformerProfile.Performer.Devices.Select(d=>d.RegistrationId),
-                     yaev
-                      );
-                 }
-                // TODO setup a profile choice to allow notifications
-                // both on mailbox and mobile
-                // if (grep==null || grep.success<=0 || grep.failure>0)
+
+                if (pro.AcceptNotifications
+                && pro.AcceptPublicContact)
                 {
+                    if (pro.Performer.Devices.Count > 0)
+                        grep = await _GCMSender.NotifyAsync(_googleSettings,
+                         command.PerformerProfile.Performer.Devices.Select(d => d.RegistrationId),
+                         yaev
+                          );
+                    // TODO setup a profile choice to allow notifications
+                    // both on mailbox and mobile
+                    // if (grep==null || grep.success<=0 || grep.failure>0)
+
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
                         command.PerformerProfile.Performer.Email,
                         yaev.Title,
                         $"{yaev.Description}\r\n-- \r\n{yaev.Comment}\r\n"
                     );
-
                 }
                 return RedirectToAction("Index");
             }
