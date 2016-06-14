@@ -8,6 +8,7 @@ using Microsoft.Data.Entity;
 using Microsoft.Extensions.OptionsModel;
 using Yavsc.Helpers;
 using Yavsc.Models;
+using Yavsc.Models.Billing;
 
 namespace Yavsc.Controllers
 {
@@ -36,10 +37,10 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Estimate estimate = _context.Estimates
-            .Include(e => e.Command)
-            .Include(e => e.Command.PerformerProfile)
-            .Include(e => e.Command.PerformerProfile.Performer)
+            RDVEstimate estimate = _context.Estimates
+            .Include(e => e.Query)
+            .Include(e => e.Query.PerformerProfile)
+            .Include(e => e.Query.PerformerProfile.Performer)
             .Single(m => m.Id == id);
             if (estimate == null)
             {
@@ -60,7 +61,7 @@ namespace Yavsc.Controllers
         // POST: Estimate/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Estimate estimate,
+        public IActionResult Create(RDVEstimate estimate,
          ICollection<IFormFile> newGraphics,
          ICollection<IFormFile> newFiles
          )
@@ -74,9 +75,9 @@ namespace Yavsc.Controllers
                 var perfomerProfile = _context.Performers
                 .Include(
                     perpr => perpr.Performer).FirstOrDefault(
-                    x=>x.PerfomerId == estimate.Command.PerformerId
+                    x=>x.PerfomerId == estimate.Query.PerformerId
                 );
-                var command = _context.Commands.FirstOrDefault(
+                var command = _context.BookQueries.FirstOrDefault(
                     cmd => cmd.Id == estimate.CommandId
                 );
 
@@ -114,7 +115,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Estimate estimate = _context.Estimates.Single(m => m.Id == id);
+            RDVEstimate estimate = _context.Estimates.Single(m => m.Id == id);
             if (estimate == null)
             {
                 return HttpNotFound();
@@ -126,7 +127,7 @@ namespace Yavsc.Controllers
         // POST: Estimate/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Estimate estimate)
+        public IActionResult Edit(RDVEstimate estimate)
         {
             if (ModelState.IsValid)
             {
@@ -146,7 +147,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Estimate estimate = _context.Estimates.Single(m => m.Id == id);
+            RDVEstimate estimate = _context.Estimates.Single(m => m.Id == id);
             if (estimate == null)
             {
                 return HttpNotFound();
@@ -160,7 +161,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(long id)
         {
-            Estimate estimate = _context.Estimates.Single(m => m.Id == id);
+            RDVEstimate estimate = _context.Estimates.Single(m => m.Id == id);
             _context.Estimates.Remove(estimate);
             _context.SaveChanges();
             return RedirectToAction("Index");

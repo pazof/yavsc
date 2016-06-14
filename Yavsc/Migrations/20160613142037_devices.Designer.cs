@@ -1,16 +1,16 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160613142037_devices")]
+    partial class devices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -281,14 +281,16 @@ namespace Yavsc.Migrations
 
                     b.Property<int>("Count");
 
-                    b.Property<long?>("RDVEstimateId");
+                    b.Property<long?>("EstimateId");
+
+                    b.Property<long?>("NominativeCommandId");
 
                     b.Property<decimal>("UnitaryCost");
 
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Billing.RDVEstimate", b =>
+            modelBuilder.Entity("Yavsc.Models.Billing.Estimate", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -304,6 +306,28 @@ namespace Yavsc.Migrations
                     b.Property<int?>("Status");
 
                     b.Property<string>("Title");
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Billing.NominativeCommand", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ClientId")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<int>("Lag");
+
+                    b.Property<string>("PerformerId")
+                        .IsRequired();
+
+                    b.Property<decimal?>("Previsional");
+
+                    b.Property<DateTime?>("ValidationDate");
 
                     b.HasKey("Id");
                 });
@@ -349,7 +373,7 @@ namespace Yavsc.Migrations
 
                     b.Property<int>("Lag");
 
-                    b.Property<long?>("LocationId");
+                    b.Property<long>("LocationId");
 
                     b.Property<string>("PerformerId")
                         .IsRequired();
@@ -406,6 +430,20 @@ namespace Yavsc.Migrations
                     b.Property<string>("Name");
 
                     b.Property<bool>("Public");
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Market.CommandSpecification", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ModelType");
+
+                    b.Property<string>("QueryViewName");
+
+                    b.Property<long?>("ServiceId");
 
                     b.HasKey("Id");
                 });
@@ -563,16 +601,31 @@ namespace Yavsc.Migrations
                         .WithMany()
                         .HasForeignKey("BookQueryId");
 
-                    b.HasOne("Yavsc.Models.Billing.RDVEstimate")
+                    b.HasOne("Yavsc.Models.Billing.Estimate")
                         .WithMany()
-                        .HasForeignKey("RDVEstimateId");
+                        .HasForeignKey("EstimateId");
+
+                    b.HasOne("Yavsc.Models.Billing.NominativeCommand")
+                        .WithMany()
+                        .HasForeignKey("NominativeCommandId");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Billing.RDVEstimate", b =>
+            modelBuilder.Entity("Yavsc.Models.Billing.Estimate", b =>
                 {
-                    b.HasOne("Yavsc.Models.Booking.BookQuery")
+                    b.HasOne("Yavsc.Models.Billing.NominativeCommand")
                         .WithMany()
                         .HasForeignKey("CommandId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Billing.NominativeCommand", b =>
+                {
+                    b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ClientId");
+
+                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile")
+                        .WithMany()
+                        .HasForeignKey("PerformerId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Blog", b =>
@@ -620,6 +673,13 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("OwnerId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Market.CommandSpecification", b =>
+                {
+                    b.HasOne("Yavsc.Models.Market.Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Market.Service", b =>

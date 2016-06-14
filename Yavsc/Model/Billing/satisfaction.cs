@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Billing
 {
     public partial class satisfaction
     {

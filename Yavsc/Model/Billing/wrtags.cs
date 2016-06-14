@@ -1,5 +1,5 @@
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Billing
 {
     public partial class wrtags
     {

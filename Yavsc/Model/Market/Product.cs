@@ -1,6 +1,6 @@
 
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Market
 {
     public partial class Product : BaseProduct
     {
