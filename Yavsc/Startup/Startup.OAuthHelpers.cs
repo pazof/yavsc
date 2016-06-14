@@ -72,7 +72,7 @@ namespace Yavsc
                 }
                 else Startup.logger.LogInformation($"ValidateClientAuthentication: KO ({clientId})");
             }
-            else Startup.logger.LogInformation($"ValidateClientAuthentication: nor Basic neither Form credential found");
+            else Startup.logger.LogWarning($"ValidateClientAuthentication: neither Basic nor Form credential were found");
             return Task.FromResult(0);
         }
 

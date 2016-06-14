@@ -187,5 +187,11 @@ namespace Yavsc.Controllers
             return View(model);
         }
 
+        [HttpGet("~/oauth/success")]
+        public IActionResult NativeAuthSuccess ()
+        {
+            return RedirectToAction("Index","Home");
+        }
+
     }
 }
