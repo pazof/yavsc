@@ -90,6 +90,7 @@ namespace OAuth.AspNet.AuthServer
         public bool TryGetFormCredentials(out string clientId, out string clientSecret)
         {
             clientId = Parameters[Constants.Parameters.ClientId];
+            
             if (!string.IsNullOrEmpty(clientId))
             {
                 clientSecret = Parameters[Constants.Parameters.ClientSecret];

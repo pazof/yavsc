@@ -119,7 +119,7 @@ namespace Yavsc.WebApi.Controllers
             base.Dispose(disposing);
         }
 
-        [HttpGet("~/api/me"),Produces("application/json")]
+        [HttpGet("~/api/me")]
         public async Task<IActionResult> Me ()
         {
             if (User==null) 

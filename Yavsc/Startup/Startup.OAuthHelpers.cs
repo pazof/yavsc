@@ -38,9 +38,11 @@ namespace Yavsc
         private Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             string clientId, clientSecret;
+            
             if (context.TryGetBasicCredentials(out clientId, out clientSecret) ||
                 context.TryGetFormCredentials(out clientId, out clientSecret))
             {
+                logger.LogInformation($"ValidateClientAuthentication: Got id&secret: ({clientId} {clientSecret})");
                 var client = GetApplication(clientId);
                 if (client.Type == ApplicationTypes.NativeConfidential)
                 {
@@ -51,7 +53,9 @@ namespace Yavsc
                     }
                     else
                     {
-                        if (client.Secret != Helper.GetHash(clientSecret))
+                       //  if (client.Secret != Helper.GetHash(clientSecret))
+                       // TODO store a hash in db, not the pass
+                       if (client.Secret != clientSecret)
                         {
                             context.SetError("invalid_clientId", "Client secret is invalid.");
                             return Task.FromResult<object>(null);
@@ -70,7 +74,7 @@ namespace Yavsc
                     logger.LogInformation($"\\o/ ValidateClientAuthentication: Validated ({clientId})");
                     context.Validated();
                 }
-                else Startup.logger.LogInformation($"ValidateClientAuthentication: KO ({clientId})");
+                else Startup.logger.LogInformation($":'( ValidateClientAuthentication: KO ({clientId})");
             }
             else Startup.logger.LogWarning($"ValidateClientAuthentication: neither Basic nor Form credential were found");
             return Task.FromResult(0);

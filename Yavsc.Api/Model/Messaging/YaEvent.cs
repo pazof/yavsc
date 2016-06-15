@@ -32,7 +32,7 @@ namespace Yavsc.Models.Messaging
 		/// The name of the NF provider.
 		/// </summary>
 		[Display(Name="ProviderName")]
-		public string ProviderName { get; set; } = Constants.ApplicationName;
+		public string ProviderName { get; set; } 
 		/// <summary>
 		/// The NF provider identifier.
 		/// </summary>

@@ -182,6 +182,7 @@ namespace Yavsc
                   .RequireAuthenticatedUser()
                     .Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
+                config.Filters.Add(new ProducesAttribute("application/json"));
                 config.OutputFormatters.Add(new PdfFormatter());
 
             }).AddFormatterMappings(

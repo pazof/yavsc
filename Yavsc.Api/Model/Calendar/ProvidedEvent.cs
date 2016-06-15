@@ -1,5 +1,5 @@
 //
-//  Publishing.cs
+//  ProvidedEvent.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
@@ -19,32 +19,22 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System.ComponentModel.DataAnnotations;
+using Yavsc.Models.Messaging;
+using Yavsc.Models.Access;
 
-
-namespace Yavsc.Models
+namespace Yavsc.Models.Calendar
 {
 
 	/// <summary>
-	/// Publishing.
+	/// Provided event.
 	/// </summary>
-	public enum Publishing {
+	public class ProvidedEvent : YaEvent {
 		/// <summary>
-		/// In the context of immediate use, with no related stored content.
+		/// The privacy.
 		/// </summary>
-        None,
-
-		/// <summary>
-		/// In the context of private use of an uploaded content.
-		/// </summary>
-		Private,
-		/// <summary>
-		/// In the context of restricted access areas, like circle members views.
-		/// </summary>
-        Restricted,
-		/// <summary>
-		/// Publishing a content in a public access area.
-		/// </summary>
-		Public
+		[Required]
+		public Publishing Privacy;
 	}
 
 }
