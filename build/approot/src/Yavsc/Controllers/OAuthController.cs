@@ -1,34 +1,43 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.DataProtection.KeyManagement;
+using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNet.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
-using Yavsc.Extensions;
+using Microsoft.Extensions.Primitives;
+using OAuth.AspNet.AuthServer;
 using Yavsc.Models;
-using Yavsc.ViewModels.Account;
+using Yavsc.Models.Auth;
 
 namespace Yavsc.Controllers
 {
+    public class TokenResponse
+    {
+        public string access_token { get; set; }
+        public int expires_in { get; set; }
+        public string grant_type { get; set; }
+
+        public int entity_id { get; set; }
+    }
+
     [AllowAnonymous]
     public class OAuthController : Controller
     {
         ApplicationDbContext _context;
         UserManager<ApplicationUser> _userManager;
-        
+
         SiteSettings _siteSettings;
 
         ILogger _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private TokenAuthOptions _tokenOptions;
 
         public OAuthController(ApplicationDbContext context, SignInManager<ApplicationUser> signInManager, IKeyManager keyManager,
-        IOptions<TokenAuthOptions> tokenOptions,
         UserManager<ApplicationUser> userManager,
         IOptions<SiteSettings> siteSettings,
         ILoggerFactory loggerFactory
@@ -37,90 +46,53 @@ namespace Yavsc.Controllers
             _siteSettings = siteSettings.Value;
             _context = context;
             _signInManager = signInManager;
-            _tokenOptions = tokenOptions.Value;
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<OAuthController>();
         }
 
-
-        [HttpGet("~/signin")]
-        public ActionResult SignIn(string returnUrl = null)
+        /*
+        private async Task<string> GetToken(string purpose, string userid, DateTime? expires)
         {
-            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
-            // will be redirected to after a successful authentication and not
-            // the redirect_uri of the requesting client application against the third
-            // party identity provider.
-            return View("SignIn", new LoginViewModel
-            {
-                ReturnUrl = returnUrl,
-                ExternalProviders = HttpContext.GetExternalProviders()
-            });
-            /* Note: When using an external login provider, redirect the query  :
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(OpenIdConnectDefaults.AuthenticationScheme, returnUrl);
-            return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme, properties);
-            */
+            // Here, you should create or look up an identity for the user which is being authenticated.
+            // For now, just creating a simple generic identity.
+            var identuser = await _userManager.FindByIdAsync(userid);
+
+            return await _tokenProvider.GenerateAsync(purpose, _userManager, identuser);
         }
 
-        [HttpGet("~/authenticate")]
-        public ActionResult Authenticate(string returnUrl = null)
+        /// <summary>
+        /// Check if currently authenticated. Will throw an exception of some sort which shoudl be caught by a general
+        /// exception handler and returned to the user as a 401, if not authenticated. Will return a fresh token if
+        /// the user is authenticated, which will reset the expiry.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet, HttpPost, Authorize]
+        [Route("~/oauth/token")]
+        public async Task<dynamic> Get()
         {
-            return SignIn(returnUrl);
-        }
-        
-        [HttpGet("~/forbidden")]
-        public ActionResult Forbidden(string returnUrl = null)
-        {
-            return View("Forbidden",returnUrl);
-        }
-        
-        [HttpPost("~/signin")]
-        public IActionResult SignIn(string Provider, string ReturnUrl)
-        {
-            // Note: the "provider" parameter corresponds to the external
-            // authentication provider choosen by the user agent.
-            if (string.IsNullOrEmpty(Provider))
+            bool authenticated = false;
+            string user = null;
+            int entityId = -1;
+            string token = null;
+            DateTime? tokenExpires = default(DateTime?);
+            var currentUser = User;
+            if (currentUser != null)
             {
-                _logger.LogWarning("Provider not specified");
-                return HttpBadRequest();
+                authenticated = currentUser.Identity.IsAuthenticated;
+                if (authenticated)
+                {
+                    user = User.GetUserId();
+                    _logger.LogInformation($"authenticated user:{user}");
+
+                    foreach (Claim c in currentUser.Claims) if (c.Type == "EntityID") entityId = Convert.ToInt32(c.Value);
+
+                    tokenExpires = DateTime.UtcNow.AddMinutes(2);
+                    token = await GetToken("id_token", user, tokenExpires);
+                    return new TokenResponse { access_token = token, expires_in = 3400, entity_id = entityId };
+                }
             }
-
-            if (!_signInManager.GetExternalAuthenticationSchemes().Any(x => x.AuthenticationScheme == Provider))
-            {
-                _logger.LogWarning($"Provider not found : {Provider}");
-                return HttpBadRequest();
-            }
-
-            // Instruct the middleware corresponding to the requested external identity
-            // provider to redirect the user agent to its own authorization endpoint.
-            // Note: the authenticationScheme parameter must match the value configured in Startup.cs
-
-            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
-            // will be redirected to after a successful authentication and not
-            // the redirect_uri of the requesting client application.
-            if (string.IsNullOrEmpty(ReturnUrl))
-            {
-                    _logger.LogWarning("ReturnUrl not specified");
-                    return HttpBadRequest();
-            }
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = ReturnUrl });
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(Provider, redirectUrl);
-            //  var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
-            return new ChallengeResult(Provider,properties);
-        }
-
-
-
-        [HttpGet("~/signout"), HttpPost("~/signout")]
-        public async Task SignOut()
-        {
-            // Instruct the cookies middleware to delete the local cookie created
-            // when the user agent is redirected from the external identity provider
-            // after a successful authentication flow (e.g Google or Facebook).
-
-            await HttpContext.Authentication.SignOutAsync("ServerCookie");
-        }
-
-
+            return new { authenticated = false };
+        } */
 
 
         [HttpGet("~/api/getclaims"), Produces("application/json")]
@@ -140,14 +112,86 @@ namespace Yavsc.Controllers
             return Ok(claims);
         }
 
-        protected virtual Task<Application> GetApplicationAsync(string identifier, CancellationToken cancellationToken)
+        [HttpGet(Constants.AuthorizePath),HttpPost(Constants.AuthorizePath)]
+        public async Task<ActionResult> Authorize()
         {
-            // Retrieve the application details corresponding to the requested client_id.
-            return (from application in _context.Applications
-                    where application.ApplicationID == identifier
-                    select application).SingleOrDefaultAsync(cancellationToken);
+            if (Response.StatusCode != 200)
+            {
+                return View("AuthorizeError");
+            }
+
+            AuthenticationManager authentication = Request.HttpContext.Authentication;
+            var appAuthSheme = Startup.IdentityAppOptions.Cookies.ApplicationCookieAuthenticationScheme;
+
+            ClaimsPrincipal principal = await authentication.AuthenticateAsync(appAuthSheme);
+
+            if (principal == null)
+            {
+                await authentication.ChallengeAsync(appAuthSheme);
+
+                if (Response.StatusCode == 200)
+                    return new HttpUnauthorizedResult();
+
+                return new HttpStatusCodeResult(Response.StatusCode);
+            }
+
+            string[] scopes = { };
+            string redirect_uri=null;
+
+            IDictionary<string,StringValues> queryStringComponents = null;
+
+            if (Request.QueryString.HasValue)
+            {
+                 queryStringComponents = QueryHelpers.ParseQuery(Request.QueryString.Value);
+
+                if (queryStringComponents.ContainsKey("scope"))
+                    scopes = queryStringComponents["scope"];
+                if (queryStringComponents.ContainsKey("redirect_uri"))
+                    redirect_uri = queryStringComponents["redirect_uri"];
+            }
+
+            var model = new AuthorisationView { 
+                Scopes = Constants.SiteScopes.Where(s=> scopes.Contains(s.Id)).ToArray(),
+                Message = "Welcome."
+                } ;
+
+            if (Request.Method == "POST")
+            {
+                if (!string.IsNullOrEmpty(Request.Form["submit.Grant"]))
+                {
+                    principal = new ClaimsPrincipal(principal.Identities);
+
+                    ClaimsIdentity primaryIdentity = (ClaimsIdentity)principal.Identity;
+
+                    foreach (var scope in scopes)
+                    {
+                        primaryIdentity.AddClaim(new Claim("urn:oauth:scope", scope));
+                    }
+                    await authentication.SignInAsync(OAuthDefaults.AuthenticationType, principal);
+                }
+                if (!string.IsNullOrEmpty(Request.Form["submit.Deny"]))
+                {
+                    await authentication.SignOutAsync(appAuthSheme);
+                    if (redirect_uri!=null)
+                        return Redirect(redirect_uri+"?error=scope-denied");
+                    return Redirect("/");
+                }
+                if (!string.IsNullOrEmpty(Request.Form["submit.Login"]))
+                {
+                    await authentication.SignOutAsync(appAuthSheme);
+                    await authentication.ChallengeAsync(appAuthSheme);
+                    return new HttpUnauthorizedResult();
+                }
+            }
+
+            return View(model);
         }
 
-   
+        [HttpGet("~/oauth/success")]
+        public IActionResult NativeAuthSuccess ()
+        {
+            return RedirectToAction("Index","Home");
+        }
+
     }
 }

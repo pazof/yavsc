@@ -1,57 +1,116 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OAuth.AspNet.AuthServer;
+using Yavsc.Helpers;
+using Yavsc.Models;
+using Yavsc.Models.Auth;
 
 namespace Yavsc
 {
     public partial class Startup
     {
+        private Client GetApplication(string clientId)
+        {
+            var dbContext = new ApplicationDbContext();
+            var app = dbContext.Applications.FirstOrDefault(x => x.Id == clientId);
+            return app;
+        }
         private readonly ConcurrentDictionary<string, string> _authenticationCodes = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
 
         private Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
         {
-            var app = context.ApplicationStore.FindApplication(context.ClientId);
-            if (app!=null)
-            {
-                context.Validated(app.RedirectUri);
-            }
+            if (context == null) throw new InvalidOperationException("context == null");
+            var app = GetApplication(context.ClientId);
+            if (app == null) return Task.FromResult(0);
+            Startup.logger.LogInformation($"ValidateClientRedirectUri: Validated ({app.RedirectUri})");
+            context.Validated(app.RedirectUri);
             return Task.FromResult(0);
         }
 
         private Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
-            string clientId,clientSecret;
+            string clientId, clientSecret;
+            
             if (context.TryGetBasicCredentials(out clientId, out clientSecret) ||
                 context.TryGetFormCredentials(out clientId, out clientSecret))
             {
-                if (ValidateClientCredentials(
-                new OAuthValidateClientCredentialsContext(clientId,clientSecret,context.ApplicationStore)
-                ))
+                logger.LogInformation($"ValidateClientAuthentication: Got id&secret: ({clientId} {clientSecret})");
+                var client = GetApplication(clientId);
+                if (client.Type == ApplicationTypes.NativeConfidential)
                 {
+                    if (string.IsNullOrWhiteSpace(clientSecret))
+                    {
+                        context.SetError("invalid_clientId", "Client secret should be sent.");
+                        return Task.FromResult<object>(null);
+                    }
+                    else
+                    {
+                       //  if (client.Secret != Helper.GetHash(clientSecret))
+                       // TODO store a hash in db, not the pass
+                       if (client.Secret != clientSecret)
+                        {
+                            context.SetError("invalid_clientId", "Client secret is invalid.");
+                            return Task.FromResult<object>(null);
+                        }
+                    }
+                }
+
+                if (!client.Active)
+                {
+                    context.SetError("invalid_clientId", "Client is inactive.");
+                    return Task.FromResult<object>(null);
+                }
+
+                if (client != null && client.Secret == clientSecret)
+                {
+                    logger.LogInformation($"\\o/ ValidateClientAuthentication: Validated ({clientId})");
                     context.Validated();
                 }
+                else Startup.logger.LogInformation($":'( ValidateClientAuthentication: KO ({clientId})");
             }
+            else Startup.logger.LogWarning($"ValidateClientAuthentication: neither Basic nor Form credential were found");
             return Task.FromResult(0);
         }
 
-        private bool ValidateClientCredentials(OAuthValidateClientCredentialsContext context)
+        private async Task<Task> GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var authapp = context.ApplicationStore.FindApplication(context.ClientId);
-            if (authapp == null) return false;
-            if (authapp.Secret == context.ClientSecret) return true;
-            return false;
-        }
+            logger.LogWarning($"GrantResourceOwnerCredentials task ... {context.UserName}");
 
-        private Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
-        {
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new GenericIdentity(context.UserName, OAuthDefaults.AuthenticationType), context.Scope.Select(x => new Claim("urn:oauth:scope", x))));
+            ApplicationUser user = null;
+             using (var usermanager = context.HttpContext.ApplicationServices.GetRequiredService<UserManager<ApplicationUser>>())
+                    {
+                        user = await usermanager.FindByNameAsync(context.UserName);
+                        if (await usermanager.CheckPasswordAsync(user,context.Password))
+                        {
+
+            var claims = new List<Claim>(
+                    context.Scope.Select(x => new Claim("urn:oauth:scope", x))
+            );
+            claims.Add(new Claim(ClaimTypes.NameIdentifier,user.Id));
+            claims.Add(new Claim(ClaimTypes.Email,user.Email));
+            claims.AddRange((await usermanager.GetRolesAsync(user)).Select(
+                r => new Claim(ClaimTypes.Role,r)
+            ) );
+            ClaimsPrincipal principal = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new GenericIdentity(context.UserName, OAuthDefaults.AuthenticationType), 
+                    claims)
+                    );
+            // TODO set a NameIdentifier, roles and scopes claims
+            context.HttpContext.User = principal;
 
             context.Validated(principal);
-
+                        }
+                    }
+             
             return Task.FromResult(0);
         }
 
@@ -66,6 +125,7 @@ namespace Yavsc
 
         private void CreateAuthenticationCode(AuthenticationTokenCreateContext context)
         {
+            logger.LogInformation("CreateAuthenticationCode");
             context.SetToken(Guid.NewGuid().ToString("n") + Guid.NewGuid().ToString("n"));
             _authenticationCodes[context.Token] = context.SerializeTicket();
         }
@@ -76,16 +136,26 @@ namespace Yavsc
             if (_authenticationCodes.TryRemove(context.Token, out value))
             {
                 context.DeserializeTicket(value);
+                logger.LogInformation("ReceiveAuthenticationCode: Success");
             }
         }
 
         private void CreateRefreshToken(AuthenticationTokenCreateContext context)
         {
+            var uid = context.Ticket.Principal.GetUserId();
+            logger.LogInformation($"CreateRefreshToken for {uid}");
+            foreach (var c in context.Ticket.Principal.Claims)
+                logger.LogInformation($"| User claim: {c.Type} {c.Value}");
+
             context.SetToken(context.SerializeTicket());
         }
 
         private void ReceiveRefreshToken(AuthenticationTokenReceiveContext context)
         {
+            var uid = context.Ticket.Principal.GetUserId();
+            logger.LogInformation($"ReceiveRefreshToken for {uid}");
+            foreach (var c in context.Ticket.Principal.Claims)
+                logger.LogInformation($"| User claim: {c.Type} {c.Value}");
             context.DeserializeTicket(context.Token);
         }
     }

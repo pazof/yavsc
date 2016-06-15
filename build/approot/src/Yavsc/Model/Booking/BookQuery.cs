@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Models.Billing;
 
 namespace Yavsc.Models.Booking
 {
@@ -8,29 +9,24 @@ namespace Yavsc.Models.Booking
     /// Query, for a date, with a given perfomer, at this given place.
     /// </summary>
 
-    public class BookQuery : Command {
-
-        /// <summary>
-        /// Event date
-        /// </summary>
-        /// <returns></returns>
-        [Required(ErrorMessageResourceName="ChooseAnEventDate",
-        ErrorMessageResourceType=typeof(Resources.YavscLocalisation)),Display(Name="EventDate")]
-        public DateTime EventDate { get; set; }
-
-        /// <summary>
-        /// Location identifier
-        /// </summary>
-        /// <returns></returns>
-        [Required]
-        public long LocationId { get; set; }
-
-        /// <summary>
-        /// A Location for this event
-        /// </summary>
-        /// <returns></returns>
-        [Required(ErrorMessage="SpecifyPlace"),Display(Name="Location"),ForeignKey("LocationId")]
+    public class BookQuery : NominativeServiceCommand {
+    /// <summary>
+    /// The command identifier
+    /// </summary>
+    [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public long Id {get; set; }
+        public DateTime EventDate{get; set; }
         public Location Location { get; set; }
 
+        public BookQuery()
+        {
+            
+        }
+
+       public BookQuery(Location eventLocation, DateTime eventDate)
+       {
+           Location = eventLocation;
+           EventDate = eventDate;
+       }
     }
 }

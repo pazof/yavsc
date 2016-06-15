@@ -99,6 +99,7 @@ namespace Yavsc.Controllers
                         else
                         {
                             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                            model.ExternalProviders = HttpContext.GetExternalProviders();
                             return View(model);
                         }
                     }

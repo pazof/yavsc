@@ -7,6 +7,7 @@ using Microsoft.AspNet.Mvc;
 using Yavsc.ViewModels.Account;
 using System.Security.Claims;
 using Microsoft.Extensions.Logging;
+using Yavsc.Models.Auth;
 
 namespace Yavsc.WebApi.Controllers
 {
@@ -116,6 +117,19 @@ namespace Yavsc.WebApi.Controllers
             }
 
             base.Dispose(disposing);
+        }
+
+        [HttpGet("~/api/me")]
+        public async Task<IActionResult> Me ()
+        {
+            if (User==null) 
+            return new BadRequestObjectResult(
+                    new { error = "user not found" });
+            var uid = User.GetUserId();
+            if (uid == null) 
+                return new BadRequestObjectResult(
+                    new { error = "user not identified" });
+            return Ok(new Me(await UserManager.FindByIdAsync(uid)));
         }
 
     }

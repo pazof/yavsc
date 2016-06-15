@@ -29,7 +29,7 @@ namespace Yavsc.Auth
 {
 	public class MonoDataProtector : IDataProtector
 	{
-		private const string PRIMARY_PURPOSE = "Microsoft.Owin.Security.IDataProtector";
+		private const string PRIMARY_PURPOSE = "IDataProtector";
 
 		private readonly string appName;
 		private readonly DataProtectionScope dataProtectionScope;

@@ -3,6 +3,8 @@ using System.IO;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Models;
+using Yavsc.Models.Billing;
+using Yavsc.Models.Booking;
 
 namespace Yavsc {
     public class PrivateChatEntryRequirement : IAuthorizationRequirement
@@ -77,9 +79,9 @@ public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
         }
     }
 
-    public class CommandViewHandler : AuthorizationHandler<ViewRequirement, Command>
+    public class CommandViewHandler : AuthorizationHandler<ViewRequirement, BookQuery>
     {
-        protected override void Handle(AuthorizationContext context, ViewRequirement requirement, Command resource)
+        protected override void Handle(AuthorizationContext context, ViewRequirement requirement, BookQuery resource)
         {
             if (context.User.IsInRole("FrontOffice"))
                 context.Succeed(requirement);
@@ -91,9 +93,9 @@ public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
         }
 
     }
-    public class CommandEditHandler : AuthorizationHandler<EditRequirement, Command>
+    public class CommandEditHandler : AuthorizationHandler<EditRequirement, BookQuery>
     {
-        protected override void Handle(AuthorizationContext context, EditRequirement requirement, Command resource)
+        protected override void Handle(AuthorizationContext context, EditRequirement requirement, BookQuery resource)
         {
             if (context.User.IsInRole("FrontOffice"))
                 context.Succeed(requirement);
@@ -108,7 +110,7 @@ public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
         protected override void Handle(AuthorizationContext context, PrivateChatEntryRequirement requirement)
         {
             if (!context.User.HasClaim(c => c.Type == "TemporaryBadgeExpiry" &&
-                                            c.Issuer == Constants.Issuer))
+                                            c.Issuer == Startup.Authority))
             {
                 return;
             }
@@ -116,7 +118,7 @@ public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
             var temporaryBadgeExpiry =
                 Convert.ToDateTime(context.User.FindFirst(
                                        c => c.Type == "TemporaryBadgeExpiry" &&
-                                       c.Issuer == Constants.Issuer).Value);
+                                       c.Issuer == Startup.Authority).Value);
 
             if (temporaryBadgeExpiry > DateTime.Now)
             {
@@ -130,7 +132,7 @@ public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
         protected override void Handle(AuthorizationContext context, PrivateChatEntryRequirement requirement)
         {
             if (!context.User.HasClaim(c => c.Type == "BadgeNumber" &&
-                                            c.Issuer == Constants.Issuer))
+                                            c.Issuer == Startup.Authority))
             {
                 return;
             }

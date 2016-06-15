@@ -45,11 +45,11 @@
     "defaultNamespace": "Yavsc"
   },
   "dependencies": {
+      "Yavsc.Api":"1.0.0",
     "EntityFramework.Commands": "7.0.0-rc1-*",
     "EntityFramework.Core": "7.0.0-rc1-*",
     "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-*",
     "EntityFramework.Relational": "7.0.0-rc1-*",
-    "EntityFramework.Sqlite": "7.0.0-rc1-*",
     "EntityFramework7.Npgsql": "3.1.0-*",
     "EntityFramework7.Npgsql.Design": "3.1.0-*",
     "Google.Apis.Core": "1.11.1",

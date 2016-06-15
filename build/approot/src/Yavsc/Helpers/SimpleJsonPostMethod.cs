@@ -23,7 +23,7 @@ using System.Net;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace Yavsc.Model
+namespace Yavsc.Helpers
 {
     /// <summary>
     /// Simple json post method.

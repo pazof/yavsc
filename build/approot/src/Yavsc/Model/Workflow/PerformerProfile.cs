@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Models.Market;
 
-namespace Yavsc.Models {
+namespace Yavsc.Models.Workflow 
+{
 
     public class PerformerProfile {
 
@@ -55,6 +57,6 @@ namespace Yavsc.Models {
         public bool DoesBlog { get {
             return Performer?.Posts != null ? Performer.Posts.Count > 0 : false;
         } }
-
+        
     }
 }

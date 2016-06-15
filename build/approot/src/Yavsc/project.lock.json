@@ -415,26 +415,6 @@
           "lib/net451/Microsoft.AspNet.Authentication.OAuth.dll": {}
         }
       },
-      "Microsoft.AspNet.Authentication.OpenIdConnect/1.0.0-rc1-final": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
-          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "2.0.0-rc1-211161024"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core",
-          "System.Net.Http"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.AspNet.Authentication.OpenIdConnect.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.AspNet.Authentication.OpenIdConnect.dll": {}
-        }
-      },
       "Microsoft.AspNet.Authentication.Twitter/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -1407,19 +1387,6 @@
           "jQuery": "1.6.4"
         }
       },
-      "Microsoft.AspNet.SignalR.Owin/1.2.2": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.SignalR.Core": "1.2.2",
-          "Owin": "1.0.0"
-        },
-        "compile": {
-          "lib/net45/Microsoft.AspNet.SignalR.Owin.dll": {}
-        },
-        "runtime": {
-          "lib/net45/Microsoft.AspNet.SignalR.Owin.dll": {}
-        }
-      },
       "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -2367,39 +2334,6 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll": {}
-        }
-      },
-      "Microsoft.Framework.DependencyInjection/1.0.0-beta8": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta8"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.dll": {}
-        }
-      },
-      "Microsoft.Framework.DependencyInjection.Abstractions/1.0.0-beta8": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.dll": {}
         }
       },
       "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
@@ -3330,26 +3264,6 @@
           "lib/net451/Microsoft.AspNet.Authentication.OAuth.dll": {}
         }
       },
-      "Microsoft.AspNet.Authentication.OpenIdConnect/1.0.0-rc1-final": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
-          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "2.0.0-rc1-211161024"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core",
-          "System.Net.Http"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.AspNet.Authentication.OpenIdConnect.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.AspNet.Authentication.OpenIdConnect.dll": {}
-        }
-      },
       "Microsoft.AspNet.Authentication.Twitter/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -4322,19 +4236,6 @@
           "jQuery": "1.6.4"
         }
       },
-      "Microsoft.AspNet.SignalR.Owin/1.2.2": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.SignalR.Core": "1.2.2",
-          "Owin": "1.0.0"
-        },
-        "compile": {
-          "lib/net45/Microsoft.AspNet.SignalR.Owin.dll": {}
-        },
-        "runtime": {
-          "lib/net45/Microsoft.AspNet.SignalR.Owin.dll": {}
-        }
-      },
       "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -5282,39 +5183,6 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll": {}
-        }
-      },
-      "Microsoft.Framework.DependencyInjection/1.0.0-beta8": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta8"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.dll": {}
-        }
-      },
-      "Microsoft.Framework.DependencyInjection.Abstractions/1.0.0-beta8": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.dll": {}
         }
       },
       "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
@@ -6245,26 +6113,6 @@
           "lib/net451/Microsoft.AspNet.Authentication.OAuth.dll": {}
         }
       },
-      "Microsoft.AspNet.Authentication.OpenIdConnect/1.0.0-rc1-final": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
-          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "2.0.0-rc1-211161024"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core",
-          "System.Net.Http"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.AspNet.Authentication.OpenIdConnect.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.AspNet.Authentication.OpenIdConnect.dll": {}
-        }
-      },
       "Microsoft.AspNet.Authentication.Twitter/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -7237,19 +7085,6 @@
           "jQuery": "1.6.4"
         }
       },
-      "Microsoft.AspNet.SignalR.Owin/1.2.2": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.SignalR.Core": "1.2.2",
-          "Owin": "1.0.0"
-        },
-        "compile": {
-          "lib/net45/Microsoft.AspNet.SignalR.Owin.dll": {}
-        },
-        "runtime": {
-          "lib/net45/Microsoft.AspNet.SignalR.Owin.dll": {}
-        }
-      },
       "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -8199,39 +8034,6 @@
           "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll": {}
         }
       },
-      "Microsoft.Framework.DependencyInjection/1.0.0-beta8": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta8"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.dll": {}
-        }
-      },
-      "Microsoft.Framework.DependencyInjection.Abstractions/1.0.0-beta8": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.dll": {}
-        }
-      },
       "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
         "type": "package",
         "frameworkAssemblies": [
@@ -9115,19 +8917,6 @@
         "Microsoft.AspNet.Authentication.OAuth.nuspec"
       ]
     },
-    "Microsoft.AspNet.Authentication.OpenIdConnect/1.0.0-rc1-final": {
-      "type": "package",
-      "sha512": "t23VFfjomKBH7bbm0aT8Ht0QqvU5ECclpdID4lBGJ2YGEVz4t1lqxIeOO59VaSnae8LHZtoRywqOwFssF/1OQA==",
-      "files": [
-        "lib/dnx451/Microsoft.AspNet.Authentication.OpenIdConnect.dll",
-        "lib/dnx451/Microsoft.AspNet.Authentication.OpenIdConnect.xml",
-        "lib/dnxcore50/Microsoft.AspNet.Authentication.OpenIdConnect.dll",
-        "lib/dnxcore50/Microsoft.AspNet.Authentication.OpenIdConnect.xml",
-        "Microsoft.AspNet.Authentication.OpenIdConnect.1.0.0-rc1-final.nupkg",
-        "Microsoft.AspNet.Authentication.OpenIdConnect.1.0.0-rc1-final.nupkg.sha512",
-        "Microsoft.AspNet.Authentication.OpenIdConnect.nuspec"
-      ]
-    },
     "Microsoft.AspNet.Authentication.Twitter/1.0.0-rc1-final": {
       "type": "package",
       "sha512": "kp0mcXaj0Vx+XY5Fwr/rDZBqs9yjzcwS6+KY3Dtk7UnmAuzVJ1Ld7/gLKkXXFzDyIh++lWfckRFQtVvV4kuydA==",
@@ -9775,19 +9564,6 @@
         "Microsoft.AspNet.SignalR.JS.2.2.0.nupkg",
         "Microsoft.AspNet.SignalR.JS.2.2.0.nupkg.sha512",
         "Microsoft.AspNet.SignalR.JS.nuspec"
-      ]
-    },
-    "Microsoft.AspNet.SignalR.Owin/1.2.2": {
-      "type": "package",
-      "sha512": "LmR0YFPkuBq9MG4NkyL9UR8rMaiBwrjgjc0L+ttsGoAKU5VXfPD+dBWhbZJedUZjvIDwgcEuKCePkNnvvqLetg==",
-      "files": [
-        "lib/net40/Microsoft.AspNet.SignalR.Owin.dll",
-        "lib/net40/Microsoft.AspNet.SignalR.Owin.xml",
-        "lib/net45/Microsoft.AspNet.SignalR.Owin.dll",
-        "lib/net45/Microsoft.AspNet.SignalR.Owin.xml",
-        "Microsoft.AspNet.SignalR.Owin.1.2.2.nupkg",
-        "Microsoft.AspNet.SignalR.Owin.1.2.2.nupkg.sha512",
-        "Microsoft.AspNet.SignalR.Owin.nuspec"
       ]
     },
     "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
@@ -10610,40 +10386,6 @@
         "Microsoft.Framework.ConfigurationModel.Json.nuspec"
       ]
     },
-    "Microsoft.Framework.DependencyInjection/1.0.0-beta8": {
-      "type": "package",
-      "sha512": "6TmUFq/mt2l7QKoDyCuJOrDFcJ9A3ljZ/P3SBQMb+IYJ9J7XivUb47E+E9dQXhIjs5FpFHUGAE5Mxj2oKpxkfA==",
-      "files": [
-        "lib/dnx451/Microsoft.Framework.DependencyInjection.dll",
-        "lib/dnx451/Microsoft.Framework.DependencyInjection.xml",
-        "lib/dnxcore50/Microsoft.Framework.DependencyInjection.dll",
-        "lib/dnxcore50/Microsoft.Framework.DependencyInjection.xml",
-        "lib/dotnet/Microsoft.Framework.DependencyInjection.dll",
-        "lib/dotnet/Microsoft.Framework.DependencyInjection.xml",
-        "lib/net45/Microsoft.Framework.DependencyInjection.dll",
-        "lib/net45/Microsoft.Framework.DependencyInjection.xml",
-        "Microsoft.Framework.DependencyInjection.1.0.0-beta8.nupkg",
-        "Microsoft.Framework.DependencyInjection.1.0.0-beta8.nupkg.sha512",
-        "Microsoft.Framework.DependencyInjection.nuspec"
-      ]
-    },
-    "Microsoft.Framework.DependencyInjection.Abstractions/1.0.0-beta8": {
-      "type": "package",
-      "sha512": "7WL9hy+7bYDyBtIrrW5tw57dChBcizjSyuD0p5pVkay+gSseLqvAk72a4KldMmRgH//7t74d/YVrTvLhw83b7w==",
-      "files": [
-        "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.dll",
-        "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.xml",
-        "lib/dnxcore50/Microsoft.Framework.DependencyInjection.Abstractions.dll",
-        "lib/dnxcore50/Microsoft.Framework.DependencyInjection.Abstractions.xml",
-        "lib/dotnet/Microsoft.Framework.DependencyInjection.Abstractions.dll",
-        "lib/dotnet/Microsoft.Framework.DependencyInjection.Abstractions.xml",
-        "lib/net45/Microsoft.Framework.DependencyInjection.Abstractions.dll",
-        "lib/net45/Microsoft.Framework.DependencyInjection.Abstractions.xml",
-        "Microsoft.Framework.DependencyInjection.Abstractions.1.0.0-beta8.nupkg",
-        "Microsoft.Framework.DependencyInjection.Abstractions.1.0.0-beta8.nupkg.sha512",
-        "Microsoft.Framework.DependencyInjection.Abstractions.nuspec"
-      ]
-    },
     "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
       "type": "package",
       "sha512": "RrZdqvUm8QbgxnZQuafYGo6NezoKx7VqAfAtHVzoKBm3GSV8xlPh90u1fsGhNCv37xJNk5PuRCa4Mq27ko7pLw==",
@@ -10874,7 +10616,6 @@
       "sha512": "OseTFniKmyp76mEzOBwIKGBRS5eMoYNkMKaMXOpxx9jv88+b6mh1rSaw43vjBOItNhaLFG3d0a20PfHyibH5sw==",
       "files": [
         "lib/net40/Owin.dll",
-        "Owin.1.0.0.nupkg",
         "Owin.1.0.0.nupkg.sha512",
         "Owin.nuspec"
       ]
@@ -11764,16 +11505,13 @@
       "Microsoft.AspNet.Localization >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Mvc >= 6.0.0-rc1-*",
       "Microsoft.AspNet.Mvc.TagHelpers >= 6.0.0-rc1-*",
-      "Microsoft.AspNet.Owin >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Server.Kestrel >= 1.0.0-rc1-final",
-      "Microsoft.AspNet.SignalR.Owin >= 1.2.2",
       "Microsoft.AspNet.SignalR.Core >= 2.2.0",
       "Microsoft.AspNet.Server.WebListener >= 1.0.0-rc1-final",
       "Microsoft.AspNet.StaticFiles >= 1.0.0-rc1-*",
       "Microsoft.AspNet.SignalR.JS >= 2.2.0",
       "Microsoft.AspNet.Tooling.Razor >= 1.0.0-rc1-*",
       "Microsoft.AspNet.WebSockets.Server >= 1.0.0-rc1-final",
-      "Microsoft.AspNet.Authentication.OpenIdConnect >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Configuration.Abstractions >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Configuration.FileProviderExtensions >= 1.0.0-rc1-*",
       "Microsoft.Extensions.Configuration.Json >= 1.0.0-rc1-*",
@@ -11785,17 +11523,15 @@
       "Microsoft.Extensions.Globalization.CultureInfoCache >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Localization >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Localization.Abstractions >= 1.0.0-rc1-final",
-      "Microsoft.Framework.ConfigurationModel.Json >= 1.0.0-beta4",
-      "Microsoft.Framework.DependencyInjection >= 1.0.0-beta8",
       "Microsoft.Extensions.CodeGeneration >= 1.0.0-rc1-final",
       "Microsoft.Extensions.PlatformAbstractions >= 1.0.0-rc1-final",
       "Microsoft.Extensions.CodeGenerators.Mvc >= 1.0.0-rc1-final",
+      "Microsoft.Framework.ConfigurationModel.Json >= 1.0.0-beta4",
+      "Microsoft.Framework.Configuration.Abstractions >= 1.0.0-beta8",
+      "Microsoft.Framework.Configuration.Binder >= 1.0.0-beta8",
+      "Microsoft.Framework.Configuration.Json >= 1.0.0-beta8",
       "Microsoft.AspNet.Session >= 1.0.0-rc1-final",
       "Microsoft.NETCore.Platforms >= 1.0.1-beta-23516",
-      "Microsoft.Framework.Configuration.Abstractions >= 1.0.0-beta8",
-      "Microsoft.Framework.Configuration.Json >= 1.0.0-beta8",
-      "Microsoft.Framework.DependencyInjection.Abstractions >= 1.0.0-beta8",
-      "Microsoft.Framework.Configuration.Binder >= 1.0.0-beta8",
       "Microsoft.AspNet.Web.Optimization >= 1.1.3",
       "Microsoft.Extensions.WebEncoders.Core >= 1.0.0-rc1-final",
       "Microsoft.AspNetCore.Authentication.OAuth >= 0.0.1-alpha",
@@ -11805,7 +11541,9 @@
       "Microsoft.AspNet.DataProtection.SystemWeb >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.JwtBearer >= 1.0.0-rc1-final",
       "PayPalCoreSDK >= 1.7.1",
-      "PayPalButtonManagerSDK >= 2.10.109"
+      "PayPalButtonManagerSDK >= 2.10.109",
+      "Microsoft.AspNet.Owin >= 1.0.0-rc1-final",
+      "Microsoft.AspNet.Authentication.OAuth >= 1.0.0-rc1-final"
     ],
     "DNX,Version=v4.5.1": []
   }

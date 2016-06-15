@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0-*",
+  "description": "Api Class Library",
+  "authors": [ "Class Library template" ],
+  "tags": [""],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "tooling": {
+    "defaultNamespace": "Yavsc"
+  },
+ "dependencies": {
+    "EntityFramework.Commands": "7.0.0-rc1-*",
+    "EntityFramework.Core": "7.0.0-rc1-*",
+    "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-*",
+    "EntityFramework.Relational": "7.0.0-rc1-*",
+    "EntityFramework7.Npgsql": "3.1.0-*",
+    "EntityFramework7.Npgsql.Design": "3.1.0-*",
+    "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-*"
+ },
+  "frameworks": {
+    "net451": { }
+ }
+}

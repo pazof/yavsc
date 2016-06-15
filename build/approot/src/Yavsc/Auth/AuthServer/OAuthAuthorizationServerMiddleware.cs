@@ -1,10 +1,9 @@
-﻿
-using Microsoft.AspNet.Authentication;
+﻿using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.DataProtection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WebEncoders;
-using System;
+using Yavsc.Auth;
 
 namespace OAuth.AspNet.AuthServer
 {
@@ -21,21 +20,8 @@ namespace OAuth.AspNet.AuthServer
         /// called by application code directly, instead it is added by calling the the IAppBuilder UseOAuthAuthorizationServer 
         /// extension method.
         /// </summary>
-        public OAuthAuthorizationServerMiddleware(
-            RequestDelegate next,
-            OAuthAuthorizationServerOptions options,
-            ILoggerFactory loggerFactory,
-            IDataProtectionProvider dataProtectionProvider,
-            IUrlEncoder encoder,
-            IApplicationStore applicationStore
-         ) : base(next, options, loggerFactory, encoder)
+        public OAuthAuthorizationServerMiddleware(RequestDelegate next, OAuthAuthorizationServerOptions options, ILoggerFactory loggerFactory, IDataProtectionProvider dataProtectionProvider, IUrlEncoder encoder) : base(next, options, loggerFactory, encoder)
         {
-            if (applicationStore == null )
-            {
-                throw new InvalidOperationException("No application store");
-            }
-            ApplicationStore = applicationStore;
-
             if (Options.Provider == null)
             {
                 Options.Provider = new OAuthAuthorizationServerProvider();
@@ -57,8 +43,11 @@ namespace OAuth.AspNet.AuthServer
 
             if (Options.TokenDataProtector == null)
             {
-                Options.TokenDataProtector = dataProtectionProvider.CreateProtector("OAuth.AspNet.AuthServer");
-
+               #if DNXCORE50
+                Options.TokenDataProtector = new DataProtectionProvider(new DirectoryInfo(Environment.GetEnvironmentVariable("Temp"))).CreateProtector("OAuth.AspNet.AuthServer");
+               #else
+                Options.TokenDataProtector = new MonoDataProtectionProvider("OAuth.AspNet.AuthServer").CreateProtector("OAuth.Data.Protector");
+               #endif
             }
 
             if (Options.AccessTokenFormat == null)
@@ -82,17 +71,15 @@ namespace OAuth.AspNet.AuthServer
             {
                 Options.RefreshTokenProvider = new AuthenticationTokenProvider();
             }
-
         }
 
-        private IApplicationStore ApplicationStore { get; set; }
         /// <summary>
         /// Called by the AuthenticationMiddleware base class to create a per-request handler. 
         /// </summary>
         /// <returns>A new instance of the request handler</returns>
         protected override AuthenticationHandler<OAuthAuthorizationServerOptions> CreateHandler()
         {
-            return new OAuthAuthorizationServerHandler(ApplicationStore);
+            return new OAuthAuthorizationServerHandler();
         }
     }
 

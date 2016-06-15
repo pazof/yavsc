@@ -1,5 +1,5 @@
 
-namespace Yavsc.Models {
+namespace Yavsc.Models.Market {
     using System.ComponentModel.DataAnnotations.Schema;
 
     public enum BillingMode { 

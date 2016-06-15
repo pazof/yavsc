@@ -10,15 +10,15 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
-using Yavsc.Extensions;
+using Microsoft.AspNet.Http;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.ViewModels.Account;
-
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)),AllowAnonymous]
+    [ServiceFilter(typeof(LanguageActionFilter)), AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -49,49 +49,105 @@ namespace Yavsc.Controllers
             _smtpSettings = smtpSettings.Value;
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
+
         }
 
-        [HttpGet("~/login")]
-        public IActionResult Login(string returnUrl)
+        [HttpGet(Constants.LoginPath)]
+        public ActionResult SignIn(string returnUrl = null)
         {
-            return View("SignIn", new LoginViewModel { 
+            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
+            // will be redirected to after a successful authentication and not
+            // the redirect_uri of the requesting client application against the third
+            // party identity provider.
+            return View(new SignInViewModel
+            {
                 ReturnUrl = returnUrl,
                 ExternalProviders = HttpContext.GetExternalProviders()
-             });
+            });
+            /* Note: When using an external login provider, redirect the query  :
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(OpenIdConnectDefaults.AuthenticationScheme, returnUrl);
+            return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme, properties);
+            */
         }
-        
-        [HttpPost("~/login")]
-        public async Task<IActionResult> SignIn(LoginViewModel model)
+
+        [HttpPost(Constants.LoginPath)]
+        public async Task<IActionResult> SignIn(SignInViewModel model)
         {
-            if (ModelState.IsValid)
+            if (Request.Method == "POST")
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
+                if (model.Provider == "LOCAL")
                 {
-                    return RedirectToLocal(model.ReturnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning(2, "User account locked out.");
-                    return View("Lockout");
+                    if (ModelState.IsValid)
+                    {
+                        // This doesn't count login failures towards account lockout
+                        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+
+                        if (result.Succeeded)
+                        {
+                            return Redirect(model.ReturnUrl);
+                        }
+                        if (result.RequiresTwoFactor)
+                        {
+                            return RedirectToAction(nameof(SendCode), new { ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+                        }
+                        if (result.IsLockedOut)
+                        {
+                            _logger.LogWarning(2, "User account locked out.");
+                            return View("Lockout");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                            model.ExternalProviders = HttpContext.GetExternalProviders();
+                            return View(model);
+                        }
+                    }
+
+                    // If we got this far, something failed, redisplay form
+                    ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
+
+                    // Note: the "provider" parameter corresponds to the external
+                    // authentication provider choosen by the user agent.
+                    if (string.IsNullOrEmpty(model.Provider))
+                    {
+                        _logger.LogWarning("Provider not specified");
+                        return HttpBadRequest();
+                    }
+
+                    if (!_signInManager.GetExternalAuthenticationSchemes().Any(x => x.AuthenticationScheme == model.Provider))
+                    {
+                        _logger.LogWarning($"Provider not found : {model.Provider}");
+                        return HttpBadRequest();
+                    }
+
+                    // Instruct the middleware corresponding to the requested external identity
+                    // provider to redirect the user agent to its own authorization endpoint.
+                    // Note: the authenticationScheme parameter must match the value configured in Startup.cs
+
+                    // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
+                    // will be redirected to after a successful authentication and not
+                    // the redirect_uri of the requesting client application.
+                    if (string.IsNullOrEmpty(model.ReturnUrl))
+                    {
+                        _logger.LogWarning("ReturnUrl not specified");
+                        return HttpBadRequest();
+                    }
+                    // Note: this still is not the redirect uri given to the third party provider, at building the challenge.
+                    var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = model.ReturnUrl });
+                    var properties = _signInManager.ConfigureExternalAuthenticationProperties(model.Provider, redirectUrl);
+                    // var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
+                    return new ChallengeResult(model.Provider, properties);
+
                 }
             }
-            
-            // If we got this far, something failed, redisplay form
-            ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
+            model.ExternalProviders = HttpContext.GetExternalProviders();
             return View(model);
         }
+
         //
         // GET: /Account/Register
         [HttpGet]
@@ -131,26 +187,14 @@ namespace Yavsc.Controllers
 
         //
         // POST: /Account/LogOff
-        [HttpPost]
+        [HttpPost(Constants.LogoutPath)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            if (returnUrl==null) return RedirectToAction(nameof(HomeController.Index), "Home");
+            if (returnUrl == null) return RedirectToAction(nameof(HomeController.Index), "Home");
             return Redirect(returnUrl);
-        }
-        
-        //
-        // POST: /Account/ExternalLogin
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult ExternalLogin(string provider, string returnUrl = null)
-        {
-            // Request a redirect to the external login provider.
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return new ChallengeResult(provider, properties);
         }
 
         //
@@ -161,6 +205,7 @@ namespace Yavsc.Controllers
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
+                _logger.LogWarning("No external provider info found.");
                 return Redirect("~/signin"); // RedirectToAction(nameof(OAuthController.SignIn));
             }
 
@@ -170,7 +215,7 @@ namespace Yavsc.Controllers
             {
                 _logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
 
-                return RedirectToLocal(returnUrl);
+                return Redirect(returnUrl);
             }
             if (result.RequiresTwoFactor)
             {
@@ -237,7 +282,7 @@ namespace Yavsc.Controllers
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
 
-                        return RedirectToLocal(returnUrl);
+                        return Redirect(returnUrl);
                     }
                 }
                 AddErrors(result);
@@ -440,7 +485,8 @@ namespace Yavsc.Controllers
             if (result.Succeeded)
             {
                 ViewData["StatusMessage"] = "Your code was verified";
-                return RedirectToLocal(model.ReturnUrl);
+                _logger.LogInformation($"Signed in. returning to {model.ReturnUrl}");
+                return Redirect(model.ReturnUrl);
             }
             if (result.IsLockedOut)
             {
@@ -494,17 +540,7 @@ namespace Yavsc.Controllers
             return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
         }
 
-        private IActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
-        }
+
 
         #endregion
     }
