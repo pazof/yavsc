@@ -129,7 +129,15 @@ namespace Yavsc.WebApi.Controllers
             if (uid == null) 
                 return new BadRequestObjectResult(
                     new { error = "user not identified" });
-            return Ok(new Me(await UserManager.FindByIdAsync(uid)));
+
+            var iduser = await UserManager.FindByIdAsync(uid);
+
+            var user = new Me(iduser.Id,iduser.UserName,
+                new string [] { iduser.Email },
+                await UserManager.GetRolesAsync(iduser),
+                null // TODO better (an avatar, or Web site url)
+            );
+            return Ok(user);
         }
 
     }
