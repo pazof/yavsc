@@ -99,20 +99,20 @@ namespace testOauthClient
                                 response.EnsureSuccessStatusCode();
 
                                 var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
-                                var identifier = payload.Value<string>("id");
-                                var givenName = payload.Value<string>("givenName");
-                                var emails = payload.Value<JArray>("emails");
+                                var identifier = payload.Value<string>("Id");
+                                var givenName = payload.Value<string>("UserName");
+                                var emails = payload.Value<JArray>("EMails");
+                                var roles = payload.Value<JArray>("Roles");
                                 string email = null;
                                 if (emails !=null)
                                   email = emails.First?.Value<string>();
-                                var url = payload.Value<string>("url");
-
                                 context.Identity.AddClaim(
                                     new Claim( ClaimTypes.NameIdentifier,identifier));
                                 context.Identity.AddClaim(
                                     new Claim( ClaimTypes.Name,givenName));
                                 context.Identity.AddClaim(
                                     new Claim( ClaimTypes.Email,email));
+                                    // TODO add all emails and roles
 
                             }
                     };
