@@ -73,11 +73,11 @@ namespace Yavsc
             var oauthFacebookSettings = Configuration.GetSection("Authentication").GetSection("Facebook");
             services.Configure<FacebookOAuth2AppSettings>(oauthFacebookSettings);
 
-            services.Configure<MvcOptions>(options =>
+        /*    services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add(new ProducesAttribute("text/x-tex"));
                 options.Filters.Add(new ProducesAttribute("text/pdf"));
-            });
+            });*/
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
