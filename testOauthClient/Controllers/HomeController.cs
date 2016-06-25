@@ -34,7 +34,7 @@ namespace testOauthClient.Controllers
             get {
                 var claim = HttpContext.User?.FindFirst("access_token");
                 if (claim == null) {
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("no access_token");
                 }
 
                 return claim.Value;
