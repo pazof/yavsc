@@ -98,7 +98,8 @@ namespace Yavsc.Controllers
                 PostsCounter = pc,
                 Balance = user.AccountBalance,
                 ActiveCommandCount = _dbContext.BookQueries.Count(x => (x.ClientId == user.Id) && (x.EventDate > DateTime.Now)),
-                HasDedicatedCalendar = !string.IsNullOrEmpty(user.DedicatedGoogleCalendar)
+                HasDedicatedCalendar = !string.IsNullOrEmpty(user.DedicatedGoogleCalendar),
+                Roles = await _userManager.GetRolesAsync (user)
             };
             if (_dbContext.Performers.Any(x => x.PerfomerId == user.Id))
             {
