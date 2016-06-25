@@ -27,5 +27,7 @@ namespace Yavsc.ViewModels.Manage
         public long ActiveCommandCount { get; set; }
 
         public bool HasDedicatedCalendar { get; set; }
+
+        public IEnumerable<string> Roles { get; set; }
     }
 }
