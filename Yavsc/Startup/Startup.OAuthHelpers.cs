@@ -9,7 +9,6 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OAuth.AspNet.AuthServer;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Auth;
 
