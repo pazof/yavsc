@@ -150,7 +150,7 @@ namespace Yavsc.Controllers
                 {
                     if (pro.Performer.Devices.Count > 0)
                         grep = await _GCMSender.NotifyAsync(_googleSettings,
-                         command.PerformerProfile.Performer.Devices.Select(d => d.RegistrationId),
+                         command.PerformerProfile.Performer.Devices.Select(d => d.GCMRegistrationId),
                          yaev
                           );
                     // TODO setup a profile choice to allow notifications
