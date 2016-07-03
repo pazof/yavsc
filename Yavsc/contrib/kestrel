@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 ### BEGIN INIT INFO
 # Provides:          kestrel
 # Required-Start:    $local_fs $network $named $time $syslog
@@ -9,76 +9,96 @@
 ### END INIT INFO
 
 # Author: Ivan Derevianko aka druss <drussilla7@gmail.com>
-
-# /root/.dnx/runtimes/dnx-mono.1.0.0-rc1-update1/bin/Microsoft.Dnx.Host.Mono.dll --project approot/src/YavscWeb --configuration Release bocasta </dev/null
-
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-NAME=bocasta
-DESC=web
-
+# Modified by: Paul Schneider <redienhcs.luap@gmail.com>
 
 . /lib/init/vars.sh
 . /lib/lsb/init-functions
 
-WWW_USER=paul
-DNXRUNTIME=/root/.dnx/runtimes/dnx-mono.1.0.0-rc1-update1/bin/Microsoft.Dnx.Host.Mono.dll
-PROJECT=approot/src/YavscWeb
-CONFIGURATION=Release
-ROOT=/srv/www/yavscpre
-
-DAEMON="$DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME"
-
-PIDFILE=$ROOT/kestrel.pid
-export LOGFILE=$ROOT/kestrel.log
-
-export MONO_OPTIONS="--server"
-export ASPNET_ENV="Production"
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+CONFIGS="/etc/kestrel/*.webenv"
+DNX_USER_HOME=/srv/www/dnx
+DNXRUNTIMEVERSION=$(cat /srv/www/dnx/alias/default.alias)
 
 # fix issue with DNX exception in case of two env vars with the same name but different case
 TMP_SAVE_runlevel_VAR=$runlevel
 unset runlevel
 
-
 running() {
-  if [ -f $PIDFILE ] && kill -0 $(cat $PIDFILE); then
-	return 0
+  if [ -f $PIDFILE ]
+  then
+    DNXPID=$(cat $PIDFILE)
+    if kill -0 $DNXPID 2>/dev/null
+      then
+	    return 0
+    fi
   fi
   return 1
 }
 
 
+setdnxenv() {
+    env=$1
+    . $env
+    # reset all except the name to default values
+	export ASPNET_ENV=$NAME
+	WWW_USER=www-data
+	DNXRUNTIME=${DNX_USER_HOME}/runtimes/${DNXRUNTIMEVERSION}/bin/Microsoft.Dnx.Host.Mono.dll
+	PROJECT=approot/Web
+	CONFIGURATION=Release
+	ROOT=/srv/www/yavsc
+    DESC="$NAME"
+    PIDFILE=/var/run/kestrel-${NAME}.pid
+	export LOGFILE="${ROOT}/kestrel-${NAME}.log"
+	export MONO_OPTIONS="--server"
+    # reset to specified values
+    . $env
+}
+
 status() {
+  for env in $CONFIGS
+  do
+    setdnxenv "$env"
 	if running;
 	then
-		PID=$(cat $PIDFILE)
-		echo "Service running (Pid:$PID) $DESC" "$NAME"
+		echo "Service running $DESC (pid: $DNXPID)"
 	else
-		echo "Service stopped $DESC" "$NAME"
+		echo "Service stopped ($DESC)"
 	fi
+  done
 }
 
 
 start() {
+  for env in $CONFIGS
+  do
+    setdnxenv "$env"
+	if running; then
+		echo "Service already running $DESC" "$NAME"
+		log_end_msg 1  
+	else
+		log_daemon_msg "Starting service $DESC" "$ASPNET_ENV" 
+		start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -x $DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME >$LOGFILE
+		log_end_msg 0  
+	fi
+  done
 
-  if running; then
-	echo "Service already running $DESC" "$NAME"
-    return 1
-  fi
-  log_daemon_msg "Starting service $DESC" "$NAME" 
-  start-stop-daemon -SbmCv -u www-data -p $PIDFILE -d $ROOT -x $DAEMON >$LOGFILE
-  log_end_msg 0  
 }
 
 stop() {
-  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE")  
-  then
-    echo "Service not running $DESC" "$NAME" 
-    return 1
-  fi
-  log_daemon_msg "Stopping service $DESC" "$NAME" 
-  start-stop-daemon -K -p "$PIDFILE"
-  rm -f "$PIDFILE"
-  log_end_msg 0  
+  for env in $CONFIGS
+  do
+    setdnxenv "$env"
+	if ! running
+	then
+		echo Service not running $DESC
+	    log_end_msg 1  
+	else
+		log_daemon_msg "Stopping service $DESC" "$NAME" 
+		start-stop-daemon -K -p "$PIDFILE"
+		rm -f "$PIDFILE"
+		log_end_msg 0  
+	fi
+  done
 }
 
 case "$1" in
@@ -101,3 +121,5 @@ case "$1" in
 esac
 
 export runlevel=$TMP_SAVE_runlevel_VAR
+
+
