@@ -53,7 +53,7 @@ namespace Yavsc.Helpers
             var regids = new List<string> ();
             foreach (var c in evpub.Circles)
             foreach (var u in c.Members) {
-                regids.AddRange (u.Member.Devices.Select(d=>d.RegistrationId));
+                regids.AddRange (u.Member.Devices.Select(d=>d.GCMRegistrationId));
             }
             if (regids.Count>0) return null;
 			var request = new HttpRequestMessage(HttpMethod.Get, Constants.GCMNotificationUrl);
