@@ -17,13 +17,19 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("GoogleCloudMobileDeclaration", b =>
                 {
-                    b.Property<string>("RegistrationId");
+                    b.Property<string>("DeviceId");
 
                     b.Property<string>("DeviceOwnerId");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("GCMRegistrationId");
 
-                    b.HasKey("RegistrationId");
+                    b.Property<string>("Model");
+
+                    b.Property<string>("Platform");
+
+                    b.Property<string>("Version");
+
+                    b.HasKey("DeviceId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRole", b =>

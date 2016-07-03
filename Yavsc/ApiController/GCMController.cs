@@ -16,7 +16,12 @@ public class GCMController : Controller {
         _logger = loggerFactory.CreateLogger<GCMController>();
         _context = context;
     }
-    
+    /// <summary>
+    /// This is not a method supporting user creation.
+    /// It only registers Google Clood Messaging id.
+    /// </summary>
+    /// <param name="declaration"></param>
+    /// <returns></returns>
     public IActionResult Register (GoogleCloudMobileDeclaration declaration)
     {
         if (declaration.DeviceOwnerId!=null)
@@ -25,9 +30,9 @@ public class GCMController : Controller {
                     new { error = "you're not allowed to register for another user" } 
                 );
         declaration.DeviceOwnerId = User.GetUserId();
-        if (_context.GCMDevices.Any(d => d.RegistrationId == declaration.RegistrationId))
+        if (_context.GCMDevices.Any(d => d.DeviceId == declaration.DeviceId))
         { 
-            var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.RegistrationId == declaration.RegistrationId);
+            var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
             // Assert alreadyRegisteredDevice != null
             if (alreadyRegisteredDevice != declaration) {
                 _context.GCMDevices.Update(declaration);
