@@ -3,7 +3,6 @@ using System.IO;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Models;
-using Yavsc.Models.Billing;
 using Yavsc.Models.Booking;
 
 namespace Yavsc {

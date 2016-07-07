@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Models;
 
 public class GoogleCloudMobileDeclaration {
+
+    public GoogleCloudMobileDeclaration() {
+
+    }
 
     public string GCMRegistrationId { get; set; }
     
@@ -14,7 +16,7 @@ public class GoogleCloudMobileDeclaration {
     public string Model { get; set; }
     public string Platform { get; set; }
     public string Version { get; set; }
-    
+    /*
     [ForeignKeyAttribute("DeviceOwnerId")]
-    public virtual ApplicationUser DeviceOwner { get; set; }
+    public virtual ApplicationUser DeviceOwner { get; set; } */
 }
