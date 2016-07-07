@@ -198,6 +198,8 @@ namespace Yavsc
                 options.ResourcesPath = "Resources";
             }).AddDataAnnotationsLocalization();
 
+    
+
             services.AddScoped<LanguageActionFilter>();
             // Inject ticket formatting
 
@@ -277,7 +279,7 @@ namespace Yavsc
                 options.AuthenticationDescriptions.Clear();
                 options.AutomaticAuthentication = false;
             });
-
+             
             Authority = siteSettings.Value.Authority;
             Audience = siteSettings.Value.Audience;
 
