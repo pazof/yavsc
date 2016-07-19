@@ -1,22 +1,28 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
-public class GoogleCloudMobileDeclaration {
+namespace Yavsc.Models.Identity
+{
+   [JsonObject]
 
-    public GoogleCloudMobileDeclaration() {
-
-    }
-
+  public class GoogleCloudMobileDeclaration {
+    
+    [Required]
     public string GCMRegistrationId { get; set; }
     
-    public string DeviceOwnerId { get; set; }
-
-    [Key]
+    [Key,Required]
     public string DeviceId { get; set; }
-    
+
     public string Model { get; set; }
     public string Platform { get; set; }
     public string Version { get; set; }
-    /*
+    public string DeviceOwnerId { get; set; }
+
+     [JsonIgnore]
+
     [ForeignKeyAttribute("DeviceOwnerId")]
-    public virtual ApplicationUser DeviceOwner { get; set; } */
+    public virtual ApplicationUser DeviceOwner { get; set; } 
+  }
+
 }
