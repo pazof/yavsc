@@ -10,6 +10,7 @@ using Yavsc.Models.Billing;
 using Yavsc.Models.Booking;
 using Yavsc.Models.OAuth;
 using Yavsc.Models.Workflow;
+using Yavsc.Models.Identity;
 
 namespace Yavsc.Models
 {
