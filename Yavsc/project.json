@@ -45,7 +45,7 @@
     "defaultNamespace": "Yavsc"
   },
   "dependencies": {
-      "Yavsc.Api":"1.0.0",
+    "Yavsc.Api": "1.0.0",
     "EntityFramework.Commands": "7.0.0-rc1-*",
     "EntityFramework.Core": "7.0.0-rc1-*",
     "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-*",
@@ -68,10 +68,10 @@
     "Microsoft.AspNet.Mvc": "6.0.0-rc1-*",
     "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-*",
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
-    "Microsoft.AspNet.SignalR.Core": "2.2.0",
     "Microsoft.AspNet.Server.WebListener": "1.0.0-rc1-final",
-    "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-*",
+    "Microsoft.AspNet.SignalR.Core": "2.2.0",
     "Microsoft.AspNet.SignalR.JS": "2.2.0",
+    "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-*",
     "Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1-*",
     "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1-final",
     "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
@@ -104,8 +104,9 @@
     "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
     "PayPalCoreSDK": "1.7.1",
     "PayPalButtonManagerSDK": "2.10.109",
-    "Microsoft.AspNet.Owin": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final"
+    "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
+    "Microsoft.AspNet.OWin": "1.0.0-rc1-final"
   },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
