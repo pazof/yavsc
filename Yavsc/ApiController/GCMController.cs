@@ -4,14 +4,16 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Logging;
 using Yavsc.Models;
+using Yavsc.Models.Identity;
 
-[Authorize,Route("~/api/gcm")]
-public class GCMController : Controller {
+[Authorize, Route("~/api/gcm")]
+public class GCMController : Controller
+{
     ILogger _logger;
     ApplicationDbContext _context;
-    
-    public GCMController (ApplicationDbContext context,
-     ILoggerFactory loggerFactory) 
+
+    public GCMController(ApplicationDbContext context,
+     ILoggerFactory loggerFactory)
     {
         _logger = loggerFactory.CreateLogger<GCMController>();
         _context = context;
@@ -22,29 +24,37 @@ public class GCMController : Controller {
     /// </summary>
     /// <param name="declaration"></param>
     /// <returns></returns>
-    public IActionResult Register (GoogleCloudMobileDeclaration declaration)
+    [Authorize, HttpPost("register")]
+    public IActionResult Register(
+        [FromBody] GoogleCloudMobileDeclaration declaration)
     {
-        if (declaration.DeviceOwnerId!=null)
-            if (User.GetUserId() != declaration.DeviceOwnerId)
-                return new BadRequestObjectResult(
-                    new { error = "you're not allowed to register for another user" } 
-                );
-        declaration.DeviceOwnerId = User.GetUserId();
-        if (_context.GCMDevices.Any(d => d.DeviceId == declaration.DeviceId))
-        { 
-            var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
-            // Assert alreadyRegisteredDevice != null
-            if (alreadyRegisteredDevice != declaration) {
-                _context.GCMDevices.Update(declaration);
-                _context.SaveChanges();
-            } // else nothing to do.
-        }
-        else 
+        var uid = User.GetUserId();
+        _logger.LogWarning($"Registering device with id:{declaration.DeviceId} for {uid}");
+        if (ModelState.IsValid)
         {
-            _context.GCMDevices.Add(declaration);
-            _context.SaveChanges();
+            if (_context.GCMDevices.Any(d => d.DeviceId == declaration.DeviceId))
+            {
+                var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
+                if (alreadyRegisteredDevice.DeviceOwnerId != uid)
+                {
+                    return new BadRequestObjectResult(new { error = $"Device owned by someone else {declaration.DeviceId}" });
+                }
+                alreadyRegisteredDevice.GCMRegistrationId = declaration.GCMRegistrationId;
+                alreadyRegisteredDevice.Model = declaration.Model;
+                alreadyRegisteredDevice.Platform = declaration.Platform;
+                alreadyRegisteredDevice.Version = declaration.Version;
+                _context.Update(alreadyRegisteredDevice);
+                _context.SaveChanges();
+            }
+            else
+            {
+                declaration.DeviceOwnerId = uid;
+                _context.GCMDevices.Add(declaration);
+                _context.SaveChanges();
+            }
+            return Ok();
         }
-        return Ok();
+        return new BadRequestObjectResult(ModelState);
     }
 
 }
