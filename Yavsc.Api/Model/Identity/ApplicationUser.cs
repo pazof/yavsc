@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Models.Identity;
 
 namespace Yavsc.Models
 {
