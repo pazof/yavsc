@@ -18,61 +18,48 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
 using System.Net;
 using System.IO;
+using System.Json;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System;
 
 namespace Yavsc.Helpers
 {
     /// <summary>
     /// Simple json post method.
     /// </summary>
-    public class SimpleJsonPostMethod<TQuery,TAnswer>: IDisposable
+    public class SimpleJsonPostMethod : IDisposable
 	{
-		internal HttpWebRequest request = null;
-		internal HttpWebRequest Request { get { return request; } }
-
-		string CharSet  {
-			get { return Request.TransferEncoding; }
-			set { Request.TransferEncoding=value;}
-		}
-		string Method { get { return Request.Method; } }
-		/// <summary>
-		/// Gets the path.
-		/// </summary>
-		/// <value>The path.</value>
-		public string Path {
-			get{ return Request.RequestUri.ToString(); }
-		}
-		/// <summary>
-		/// Sets the credential.
-		/// </summary>
-		/// <param name="cred">Cred.</param>
-		public void SetCredential(string cred) {
-			Request.Headers.Set(HttpRequestHeader.Authorization,cred);
-		}
+    private HttpWebRequest request=null;
 
 		/// <summary>
 		/// Initializes a new instance of the Yavsc.Helpers.SimpleJsonPostMethod class.
 		/// </summary>
 		/// <param name="pathToMethod">Path to method.</param>
-		public SimpleJsonPostMethod (string pathToMethod)
+		public SimpleJsonPostMethod (string pathToMethod, string authorizationHeader = null)
 		{
-			// ASSERT Request == null
 			request = (HttpWebRequest) WebRequest.Create (pathToMethod);
-
-			Request.Method = "POST";
-			Request.Accept = "application/json";
-			Request.ContentType = "application/json";
-			Request.SendChunked = true;
-			Request.TransferEncoding = "UTF-8";
+			request.Method = "POST";
+			request.Accept = "application/json";
+			request.ContentType = "application/json";
+			request.SendChunked = true;
+			request.TransferEncoding = "UTF-8";
+            if (authorizationHeader!=null)
+                request.Headers.Add(authorizationHeader);
 		}
-		/// <summary>
-		/// Invoke the specified query.
-		/// </summary>
-		/// <param name="query">Query.</param>
-		public TAnswer Invoke(TQuery query)
+
+        public void Dispose()
+        {
+            request.Abort();
+        }
+
+        /// <summary>
+        /// Invoke the specified query.
+        /// </summary>
+        /// <param name="query">Query.</param>
+        public TAnswer Invoke<TAnswer>(object query)
 		{
 
 			using (Stream streamQuery = request.GetRequestStream()) {
@@ -80,7 +67,7 @@ namespace Yavsc.Helpers
 					writer.Write (JsonConvert.SerializeObject(query));
 				}}
 			TAnswer ans = default (TAnswer);
-			using (WebResponse response = Request.GetResponse ()) {
+			using (WebResponse response = request.GetResponse ()) {
 				using (Stream responseStream = response.GetResponseStream ()) {
 					using (StreamReader rdr = new StreamReader (responseStream)) {
 						ans = (TAnswer) JsonConvert.DeserializeObject<TAnswer> (rdr.ReadToEnd ());
@@ -91,16 +78,23 @@ namespace Yavsc.Helpers
 			return ans;
 		}
 
-		#region IDisposable implementation
-
-		/// <summary>
-		/// Releases all resource used by the Yavsc.Helpers.SimpleJsonPostMethod object.
-		/// </summary>
-		public void Dispose ()
+		public async Task<JsonValue> InvokeJson(object query)
 		{
-			if (Request != null) Request.Abort ();
+
+      JsonValue jsonDoc=null;
+			using (Stream streamQuery = request.GetRequestStream()) {
+				using (StreamWriter writer = new StreamWriter(streamQuery)) {
+					writer.Write (JsonConvert.SerializeObject(query));
+				}}
+			using (WebResponse response = request.GetResponse ()) {
+				using (Stream stream = response.GetResponseStream ()) {
+                    if (stream.Length>0)
+		      jsonDoc = await Task.Run (() => JsonObject.Load (stream));			
+				}
+				response.Close();
+			}
+			return jsonDoc;
 		}
-		#endregion
 	}
 }
 
