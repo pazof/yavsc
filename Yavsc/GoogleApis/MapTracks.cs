@@ -55,10 +55,11 @@ namespace Yavsc.GoogleApis
 		/// <param name="entities">Entities.</param>
 		public static string [] CreateEntity( Entity[] entities ) {
 			string [] ans = null;
-			using (SimpleJsonPostMethod< Entity[] ,string []> wr =
-				new SimpleJsonPostMethod< Entity[] ,string[]> (googleMapTracksPath + "entities/create"))
+            
+			using (SimpleJsonPostMethod wr =
+				new SimpleJsonPostMethod (googleMapTracksPath + "entities/create"))
 			{
-				ans = wr.Invoke (entities);
+				ans =  wr.Invoke<string[]> (entities);
 			}
 			return ans;
 		}
@@ -71,10 +72,10 @@ namespace Yavsc.GoogleApis
 		static Entity[] ListEntities (EntityQuery eq)
 		{
 			Entity [] ans = null;
-			using (SimpleJsonPostMethod<EntityQuery,Entity[]> wr =
-				new SimpleJsonPostMethod<EntityQuery,Entity[]> (googleMapTracksPath + "entities/create"))
+			using (SimpleJsonPostMethod wr =
+				new SimpleJsonPostMethod (googleMapTracksPath + "entities/create"))
 				{
-					ans = wr.Invoke (eq);
+					ans = wr.Invoke <Entity[]> (eq);
 				}
 				return ans;
 		}
