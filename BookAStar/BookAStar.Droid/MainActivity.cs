@@ -267,11 +267,14 @@ namespace BookAStar.Droid
                 Model = devinfo.Model,
                 Platform = devinfo.Platform.ToString(),
                 Version = devinfo.Version,
-                GCMRegistrationId = MainSettings.GoogleRegId,
-                DeviceOwnerId = MainSettings.CurrentUser?.Id
+                GCMRegistrationId = MainSettings.GoogleRegId
             };
         }
 
+        public void PostDeviceInfo()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

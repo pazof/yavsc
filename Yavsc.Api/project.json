@@ -17,13 +17,15 @@
     "EntityFramework.Core": "7.0.0-rc1-*",
     "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-*",
     "EntityFramework.Relational": "7.0.0-rc1-*",
-    "EntityFramework7.Npgsql": "3.1.0-*",
-    "EntityFramework7.Npgsql.Design": "3.1.0-*",
     "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-*",
     "Newtonsoft.Json": "9.0.1",
     "System.Json": "4.0.20126.16343"
   },
   "frameworks": {
-    "net451": {}
+    "net451": {
+      "dependencies": {
+        "Yavsc.Client": "1.0.0-*"
+      }
+    }
   }
 }

@@ -3,6 +3,7 @@
 appsettings.*.json
 .idea/
 .vscode/
+.vs/
 YavscWeb.userprefs
 bin/
 obj/

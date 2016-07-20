@@ -18,7 +18,7 @@ namespace BookAStar
 
         GoogleCloudMobileDeclaration GetDeviceInfo();
 
-       // void RegisterThisDevice();
+        void PostDeviceInfo();
         
     }
 }

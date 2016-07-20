@@ -182,6 +182,9 @@
       <HintPath>..\..\packages\Xamarin.GooglePlayServices.Measurement.29.0.0.2\lib\MonoAndroid41\Xamarin.GooglePlayServices.Measurement.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Yavsc.Api">
+      <HintPath>..\..\Yavsc.Api\bin\Debug\net451\Yavsc.Api.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\Settings.cs" />
@@ -212,6 +215,10 @@
     <AndroidResource Include="Resources\values\styles.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Yavsc.Client\Yavsc.Client.csproj">
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
+      <Name>Yavsc.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BookAStar\BookAStar.csproj">
       <Project>{A0815650-0A0A-47B0-8826-771F0E1AD137}</Project>
       <Name>BookAStar</Name>
@@ -224,7 +231,7 @@
     </XamarinComponentReference>
     <XamarinComponentReference Include="GeolocatorPlugin">
       <Visible>False</Visible>
-      <Version>1.0.0</Version>
+      <Version>1.0.3</Version>
     </XamarinComponentReference>
     <XamarinComponentReference Include="json.net">
       <Visible>False</Visible>
