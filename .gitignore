@@ -17,4 +17,7 @@ kestrel*.log
 scaffold.cmds
 DataProtection-Keys
 RSA-Params.json
+Components/
+packages/
+
 
