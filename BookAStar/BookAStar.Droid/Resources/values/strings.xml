@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Booking star</string>
+  <string name="yavscIdentRemoved">Identification supprimée</string>
+  <string name="yavscAccountTypeName">Booking star</string>
+  <string name="cancel">Annuler</string>
+  <string name="Settings">Paramètres</string>
+	<string name="Title">Title</string>
+	<string name="Description">Description</string>
+	<string name="Date">Date</string>
+	<string name="Location">Location</string>
+	<string name="Pricing">Pricing</string>
+	<string name="url">url</string>
+	<string name="url_hint">url_hint</string>
+	<string name="picture">picture</string>
+	<string name="GoogleSenderId">AA325408689282</string>
+</resources>

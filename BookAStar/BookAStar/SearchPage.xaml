@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BookAStar;Assembly:BookAStar"
+             x:Class="BookAStar.SearchPage" Title="Page de recherche"
+             Padding="10,40,10,10" >
+	<ContentPage.Content>
+	<StackLayout>
+	<StackLayout Orientation="Horizontal">
+	<Label Text="Utiliser ma position" />
+	<Switch x:Name="use_my_pos" HorizontalOptions="End" />
+	</StackLayout>
+    
+	<StackLayout Orientation="Horizontal">
+	<Editor x:Name="search_phrase" HorizontalOptions="FillAndExpand"/>
+	<Button x:Name="btn_update" HorizontalOptions="End" />
+	</StackLayout>
+	<DatePicker x:Name="search_date" />
+
+	<ListView x:Name="list" ItemsSource="{x:Static local:Manager.Events}" 
+	 HasUnevenRows="true">
+    s
+				<ListView.ItemTemplate>
+					<DataTemplate>
+					<ViewCell>
+					<ViewCell.View>
+					<StackLayout Orientation="Horizontal">
+					<Image Source="{Binding ImgLocator}" HeightRequest="80" />
+					<StackLayout Orientation="Vertical">
+					 <Label Text="{Binding Title}"/>
+					 <StackLayout Orientation="Horizontal">
+					<StackLayout><Label Text="Heure:" FontAttributes="Italic" FontSize="9" />
+					   <Label Text="{Binding StartDate, StringFormat='{0:H:mm}'}" VerticalOptions="End"/>
+					   </StackLayout>
+					  <StackLayout><Label Text="Lieu:" FontAttributes="Italic" FontSize="9"  VerticalOptions="End"/>
+					  <Label Text="{Binding Location.Name}"/></StackLayout>
+					   
+					   <Label Text="{Binding Promotion}" FontSize="20" TextColor="Yellow" BackgroundColor="#102030"/>
+					 </StackLayout>
+					</StackLayout>
+					</StackLayout>
+					</ViewCell.View>
+					</ViewCell>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+	</StackLayout>
+	</ContentPage.Content>
+</ContentPage>
