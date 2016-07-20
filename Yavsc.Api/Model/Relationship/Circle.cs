@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models
 {
-    public partial class Circle {
+    public partial class Circle: ICircle {
         [Key, DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
@@ -13,9 +13,9 @@ namespace Yavsc.Models
         public string OwnerId { get; set; }
 
         [ForeignKey("OwnerId")]
-        public virtual ApplicationUser Owner { get; set; }
+        public virtual IApplicationUser Owner { get; set; }
 
         [InverseProperty("Circle")]
-        public virtual List<CircleMember> Members { get; set; }
+        public virtual IList<ICircleMember> Members { get; set; }
     }
 }

@@ -5,12 +5,12 @@ namespace Yavsc.Models
 {
 
 
-    public partial class AccountBalance {
+    public partial class AccountBalance: IAccountBalance {
         [Key]
         public string UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual ApplicationUser Owner { get; set; }
+        public virtual IApplicationUser Owner { get; set; }
 
         [Required,Display(Name="Credits in €")]
         public decimal Credits { get; set; }
