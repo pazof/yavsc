@@ -47,7 +47,7 @@ namespace Yavsc.Helpers
 			request.SendChunked = true;
 			request.TransferEncoding = "UTF-8";
             if (authorizationHeader!=null)
-                request.Headers.Add(authorizationHeader);
+                request.Headers["Authorization"]=authorizationHeader;
 		}
 
         public void Dispose()

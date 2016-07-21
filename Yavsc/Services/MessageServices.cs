@@ -2,13 +2,10 @@
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MimeKit;
-using System.IO;
 using MailKit.Security;
 using System;
 using Yavsc.Models.Messaging;
 using Yavsc.Helpers;
-using System.Net;
-using System.Net.Http;
 using Microsoft.AspNet.Identity;
 using Yavsc.Models;
 using Yavsc.Models.Google.Messaging;
@@ -30,40 +27,20 @@ namespace Yavsc.Services
         /// <returns>a MessageWithPayloadResponse,
         /// <c>bool somethingsent = (response.failure == 0 &amp;&amp; response.success > 0)</c>
         /// </returns>
-        public async Task<MessageWithPayloadResponse> 
+        public async Task<MessageWithPayloadResponse>
         NotifyAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, YaEvent ev)
         {
-            MessageWithPayloadResponse response;
-            try
-            {
-                using (var web = new HttpClient())
-                {
-                   response = await web.NotifyEvent(googleSettings, registrationIds, ev);
-                }
-            }
-            catch (WebException ex)
-            {
-                string errorMsgGCM;
-                using (var respstream = ex.Response.GetResponseStream())
-                {
-                    using (StreamReader rdr = new StreamReader(respstream))
-                    {
-                        errorMsgGCM = rdr.ReadToEnd();
-                        rdr.Close();
-                    }
-                    respstream.Close();
-                }
-                if (errorMsgGCM == null)
-                    throw;
-
-                throw new Exception(errorMsgGCM, ex);
-            }
+            MessageWithPayloadResponse response = null;
+            await Task.Run(()=>{
+                response = googleSettings.NotifyEvent(registrationIds, ev);
+            });
             return response;
         }
 
-        public  Task<bool> SendEmailAsync(SiteSettings siteSettings, SmtpSettings smtpSettings, string email, string subject, string message)
+        public Task<bool> SendEmailAsync(SiteSettings siteSettings, SmtpSettings smtpSettings, string email, string subject, string message)
         {
-            try {
+            try
+            {
                 MimeMessage msg = new MimeMessage();
                 msg.From.Add(new MailboxAddress(
                     siteSettings.Owner.Name,
@@ -83,7 +60,8 @@ namespace Yavsc.Services
                     sc.Send(msg);
                 }
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return Task.FromResult(false);
             }
             return Task.FromResult(true);
