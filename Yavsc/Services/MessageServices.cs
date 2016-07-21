@@ -2,13 +2,10 @@
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MimeKit;
-using System.IO;
 using MailKit.Security;
 using System;
 using Yavsc.Models.Messaging;
 using Yavsc.Helpers;
-using System.Net;
-using System.Net.Http;
 using Microsoft.AspNet.Identity;
 using Yavsc.Models;
 using Yavsc.Models.Google.Messaging;
