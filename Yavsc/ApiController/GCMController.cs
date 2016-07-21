@@ -35,10 +35,8 @@ public class GCMController : Controller
             if (_context.GCMDevices.Any(d => d.DeviceId == declaration.DeviceId))
             {
                 var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
-                if (alreadyRegisteredDevice.DeviceOwnerId != uid)
-                {
-                    return new BadRequestObjectResult(new { error = $"Device owned by someone else {declaration.DeviceId}" });
-                }
+                // Override an exiting owner
+                alreadyRegisteredDevice.DeviceOwnerId = uid;
                 alreadyRegisteredDevice.GCMRegistrationId = declaration.GCMRegistrationId;
                 alreadyRegisteredDevice.Model = declaration.Model;
                 alreadyRegisteredDevice.Platform = declaration.Platform;
