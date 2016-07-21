@@ -8,11 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Yavsc.Helpers;
 /*
 Glyphish icons from
-	http://www.glyphish.com/
+http://www.glyphish.com/
 under 
-	http://creativecommons.org/licenses/by/3.0/us/
+http://creativecommons.org/licenses/by/3.0/us/
 support them by buying the full set / Retina versions
 */
 
@@ -82,34 +83,11 @@ namespace BookAStar
             else deviceInfoPage.Focus();
         }
 
-        public async void RegisterThisDevice()
+        public async Task PostDeviceInfo()
         {
-            HttpClient client = new HttpClient();
-            // var request = new HttpRequestMessage(HttpMethod.Post, MainSettings.MobileRegistrationUrl);
-            // request.Headers.Authorization
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
-           /* client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
-                );*/
-            
-            var info =PlateformSpecificInstance.GetDeviceInfo();
-
-            /* var serSettings = new JsonSerializerSettings(); serSettings.Formatting = Formatting.None; serSettings.StringEscapeHandling = StringEscapeHandling.EscapeNonAscii;*/
-
-            client.MaxResponseContentBufferSize = 256000;
-            using ( client)
-            {
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(info);
-                /*
-                var dataString = JsonConvert.SerializeObject(info,serSettings); */
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(MainSettings.MobileRegistrationUrl, content);
-                if (response.IsSuccessStatusCode)
-                    Debug.WriteLine(@"Device info successfully saved.");
-                    
-            }
+            var res = PlateformSpecificInstance.InvokeApi(
+                "gcm/register", PlateformSpecificInstance.GetDeviceInfo());
         }
-
 
     }
 }

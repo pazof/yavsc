@@ -20,6 +20,8 @@ using System.Net.Http;
 using System.Text;
 using BookAStar.Model.Auth.Account;
 using BookAStar.Droid.OAuth;
+using Yavsc.Helpers;
+using Yavsc.Models.Identity;
 
 namespace BookAStar.Droid
 {
@@ -256,24 +258,58 @@ namespace BookAStar.Droid
         {
             throw new NotImplementedException("Auth_Error");
         }
-        
 
-        public GoogleCloudMobileDeclaration GetDeviceInfo()
+        public class GCMDeclaration : IGCMDeclaration
+        {
+            public string DeviceId
+            { get; set; }
+
+            public string GCMRegistrationId
+            { get; set; }
+
+            public string Model
+            { get; set; }
+
+            public string Platform
+            { get; set; }
+
+            public string Version
+            { get; set; }
+        }
+
+        public IGCMDeclaration GetDeviceInfo()
         {
             var devinfo = DeviceInfo.Plugin.CrossDeviceInfo.Current;
-            return new GoogleCloudMobileDeclaration
+            return new GCMDeclaration
             {
                 DeviceId = devinfo.Id,
+                GCMRegistrationId = MainSettings.GoogleRegId,
                 Model = devinfo.Model,
                 Platform = devinfo.Platform.ToString(),
-                Version = devinfo.Version,
-                GCMRegistrationId = MainSettings.GoogleRegId
+                Version = devinfo.Version
             };
         }
 
-        public void PostDeviceInfo()
+        public TAnswer InvokeApi<TAnswer>(string method, object arg)
         {
-            throw new NotImplementedException();
+            using (var m =
+                new SimpleJsonPostMethod(method,
+                MainSettings.CurrentUser.YavscTokens.AccessToken
+                ))
+            {
+                return  m.Invoke<TAnswer>(arg);
+            }
+        }
+
+        public object InvokeApi(string method, object arg)
+        {
+            using (var m =
+                new SimpleJsonPostMethod(method,
+                MainSettings.CurrentUser.YavscTokens.AccessToken
+                ))
+            {
+                return m.InvokeJson(arg);
+            }
         }
     }
 }

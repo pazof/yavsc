@@ -1,13 +1,18 @@
 ﻿namespace Yavsc.Models.Identity
 {
-    public interface IGoogleCloudMobileDeclaration
+    public interface IGCMDeclaration
     {
         string DeviceId { get; set; }
-        IApplicationUser DeviceOwner { get; set; }
-        string DeviceOwnerId { get; set; }
         string GCMRegistrationId { get; set; }
         string Model { get; set; }
         string Platform { get; set; }
         string Version { get; set; }
+
+    }
+
+    public interface IGoogleCloudMobileDeclaration: IGCMDeclaration
+    {
+        IApplicationUser DeviceOwner { get; set; }
+        string DeviceOwnerId { get; set; }
     }
 }
