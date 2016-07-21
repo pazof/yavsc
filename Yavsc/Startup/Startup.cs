@@ -233,7 +233,7 @@ namespace Yavsc
 
             if (env.IsDevelopment())
             {
-                loggerFactory.MinimumLevel = LogLevel.Debug;
+                loggerFactory.MinimumLevel = LogLevel.Verbose;
                 app.UseDeveloperExceptionPage();
                 app.UseRuntimeInfoPage();
                 var epo = new ErrorPageOptions();
