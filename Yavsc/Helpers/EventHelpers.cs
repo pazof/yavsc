@@ -11,7 +11,7 @@ namespace Yavsc.Helpers
         {
             var yaev = new YaEvent
             {
-                Title = query.Client.UserName + SR["is asking you for a date"],
+                Title = query.Client.UserName + " "+ SR["is asking you for a date"]+".",
                 Comment = (query.Previsional != null) ?
                 SR["Deposit"] + string.Format(": {0:00}",
                     query.Previsional) : SR["No deposit."],

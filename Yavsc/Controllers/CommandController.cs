@@ -148,11 +148,13 @@ namespace Yavsc.Controllers
                 if (pro.AcceptNotifications
                 && pro.AcceptPublicContact)
                 {
-                    if (pro.Performer.Devices.Count > 0)
-                        grep = await _GCMSender.NotifyAsync(_googleSettings,
-                         command.PerformerProfile.Performer.Devices.Select(d => d.GCMRegistrationId),
-                         yaev
-                          );
+                    if (pro.Performer.Devices.Count > 0) {
+                        var regids = command.PerformerProfile.Performer
+                        .Devices.Select(d => d.GCMRegistrationId);
+                        var sregids = string.Join(",",regids);
+                        _logger.LogWarning($"ApiKey: {_googleSettings.ApiKey} {sregids}");
+                        grep = await _GCMSender.NotifyAsync(_googleSettings,regids,yaev);
+                    }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile
                     // if (grep==null || grep.success<=0 || grep.failure>0)
