@@ -36,54 +36,64 @@ namespace Yavsc.Helpers
     /// Google helpers.
     /// </summary>
     public static class GoogleHelpers
-	{
+    {
 
-		/// <summary>
-		/// Notifies the event.
-		/// </summary>
-		/// <returns>The event.</returns>
-		/// <param name="evpub">Evpub.</param>
-		public static async Task<MessageWithPayloadResponse> NotifyEvent
-        (this HttpClient channel, GoogleAuthSettings googleSettings, CircleEvent evpub) {
-    // ASSERT ModelState.IsValid implies evpub.Circles != null
-				//send a  MessageWithPayload<YaEvent> to circle members
-                // receive MessageWithPayloadResponse
-                // "https://gcm-http.googleapis.com/gcm/send"
+        /// <summary>
+        /// Notifies the event.
+        /// </summary>
+        /// <returns>The event.</returns>
+        /// <param name="evpub">Evpub.</param>
+        public static async Task<MessageWithPayloadResponse> NotifyEvent
+        (this HttpClient channel, GoogleAuthSettings googleSettings, CircleEvent evpub)
+        {
+            // ASSERT ModelState.IsValid implies evpub.Circles != null
+            //send a  MessageWithPayload<YaEvent> to circle members
+            // receive MessageWithPayloadResponse
+            // "https://gcm-http.googleapis.com/gcm/send"
 
-            var regids = new List<string> ();
+            var regids = new List<string>();
             foreach (var c in evpub.Circles)
-            foreach (var u in c.Members) {
-                regids.AddRange (u.Member.Devices.Select(d=>d.GCMRegistrationId));
-            }
-            if (regids.Count>0) return null;
-			var request = new HttpRequestMessage(HttpMethod.Get, Constants.GCMNotificationUrl);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Key", googleSettings.ApiKey);
-            var msg = new MessageWithPayload<YaEvent> () {
+                foreach (var u in c.Members)
+                {
+                    regids.AddRange(u.Member.Devices.Select(d => d.GCMRegistrationId));
+                }
+            if (regids.Count > 0) return null;
+            var request = new HttpRequestMessage(HttpMethod.Get, Constants.GCMNotificationUrl);
+            request.Headers.Authorization = new AuthenticationHeaderValue("key", googleSettings.ApiKey);
+            var msg = new MessageWithPayload<YaEvent>()
+            {
                 notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "event" },
-                data = evpub , registration_ids = regids.ToArray() };
+                data = evpub,
+                registration_ids = regids.ToArray()
+            };
             var response = await channel.SendAsync(request);
             var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
-            return  payload.Value<MessageWithPayloadResponse>();
-		}
+            return payload.Value<MessageWithPayloadResponse>();
+        }
 
-        public static async Task<MessageWithPayloadResponse> NotifyEvent<Event>
-         (this HttpClient channel, GoogleAuthSettings googleSettings, IEnumerable<string> regids, Event ev)
+        public static MessageWithPayloadResponse NotifyEvent<Event>
+         (this GoogleAuthSettings googleSettings, IEnumerable<string> regids, Event ev)
            where Event : YaEvent
-		{
-            if (regids == null)
-                throw new NotImplementedException ("Notify & No GCM reg ids");
-			var request = new HttpRequestMessage(HttpMethod.Get, Constants.GCMNotificationUrl);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Key", googleSettings.ApiKey);
-            var msg = new MessageWithPayload<Event> () {
-                notification = new Notification() { title = ev.Title,
-                    body = ev.Description + ev.Comment==null?
-                        "":"("+ev.Comment+")", icon = "icon" },
-                data = ev, registration_ids = regids.ToArray()  };
+        {
+            var msg = new MessageWithPayload<Event>()
+            {
+                notification = new Notification()
+                {
+                    title = ev.Title,
+                    body = ev.Description + ev.Comment == null ?
+                        "" : "(" + ev.Comment + ")",
+                    icon = "icon"
+                },
+                data = ev,
+                registration_ids = regids.ToArray()
+            };
 
-            var response = await channel.SendAsync(request);
-            var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
-            return  payload.Value<MessageWithPayloadResponse>();
-		}
+            if (regids == null)
+                throw new NotImplementedException("Notify & No GCM reg ids");
+            using (var m = new SimpleJsonPostMethod("https://gcm-http.googleapis.com/gcm/send",$"key={googleSettings.ApiKey}")) {
+                return m.Invoke<MessageWithPayloadResponse>(msg);
+            }
+        }
         public static async Task<UserCredential> GetCredentialForGoogleApiAsync(this UserManager<ApplicationUser> userManager, ApplicationDbContext context, string uid)
         {
             var user = await userManager.FindByIdAsync(uid);
@@ -91,11 +101,11 @@ namespace Yavsc.Helpers
                 x => x.UserId == uid
             ).ProviderKey;
             if (string.IsNullOrEmpty(googleId))
-             throw new InvalidOperationException("No Google login");
+                throw new InvalidOperationException("No Google login");
             var token = await context.GetTokensAsync(googleId);
             return new UserCredential(uid, token);
         }
 
-	}
+    }
 }
 
