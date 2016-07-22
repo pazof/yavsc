@@ -6,7 +6,7 @@ using Plugin.Settings.Abstractions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace BookAStar
@@ -69,14 +69,19 @@ namespace BookAStar
 			}
 		}
 
-        public static string GoogleRegId
+        public  static string GoogleRegId
         {
-            set {
+             set {
                 var oldregid = GoogleRegId;
                 AppSettings.AddOrUpdateValue<string>(GoogleRegIdKey, value);
                 // TODO If it changed, and there's an identified user,
                 // Inform the server of it.
-                if (oldregid != value) App.CurrentApp.RegisterThisDevice();
+                if (oldregid != value)
+                {
+                    Task.Run( async () => {
+                        await App.CurrentApp.PostDeviceInfo();
+                    });
+                }
             }
             get { return AppSettings.GetValueOrDefault<string>(GoogleRegIdKey);  }
         }
@@ -126,7 +131,9 @@ namespace BookAStar
                 {
                     if (olduserid != value.Id)
                     {
-                        App.CurrentApp.RegisterThisDevice();
+                        Task.Run(async () => {
+                            await App.CurrentApp.PostDeviceInfo();
+                        });
                     }
                 }
             }

@@ -8,25 +8,25 @@ using Yavsc.Models.Identity;
 namespace Yavsc.Models
 {
 
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser, IApplicationUser
     {
 
         [Display(Name="AccountBalance")]
-        public virtual AccountBalance AccountBalance { get; set; }
+        public virtual IAccountBalance AccountBalance { get; set; }
 
         [InverseProperty("Author")]
-        public virtual List<Blog> Posts { get; set; }
+        public virtual IList<IBlog> Posts { get; set; }
 
         [InverseProperty("Owner")]
-        public virtual List<Contact> Book { get; set; }
+        public virtual IList<IContact> Book { get; set; }
 
         [InverseProperty("DeviceOwner")]
-        public virtual List<GoogleCloudMobileDeclaration> Devices { get; set; }
+        public virtual IList<IGoogleCloudMobileDeclaration> Devices { get; set; }
         
         [InverseProperty("Owner")]
 
-        public virtual List<Circle> Circles { get; set; }
-        public virtual Location PostalAddress { get; set; }
+        public virtual IList<ICircle> Circles { get; set; }
+        public virtual ILocation PostalAddress { get; set; }
 
         public string DedicatedGoogleCalendar { get; set; }
 
