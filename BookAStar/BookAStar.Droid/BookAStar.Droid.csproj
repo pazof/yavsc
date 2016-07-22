@@ -191,6 +191,7 @@
     <Compile Include="OAuth2\YaOAuth2Authenticator.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\GcmListenerService.cs" />
     <Compile Include="Services\GcmRegistrationIntentService.cs" />
     <Compile Include="Services\MyGcmIntentService.cs" />
     <Compile Include="Services\MyInstanceIdListener.cs" />
