@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models
 {
-    public partial class Blog
+    public partial class Blog: IBlog
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
@@ -19,7 +19,7 @@ namespace Yavsc.Models
         [Required]
         public string AuthorId { get; set; }
         [ForeignKey("AuthorId")]
-        public ApplicationUser Author { set; get; }
+        public IApplicationUser Author { set; get; }
         public bool visible { get; set; }
     }
 }

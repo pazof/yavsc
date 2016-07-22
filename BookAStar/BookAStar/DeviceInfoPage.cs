@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 
 using Xamarin.Forms;
+using Yavsc.Models.Identity;
 
 namespace BookAStar
 {
     public class DeviceInfoPage : ContentPage
     {
-        public DeviceInfoPage(GoogleCloudMobileDeclaration infos)
+        public DeviceInfoPage(IGCMDeclaration infos)
         {
             Content = new StackLayout
             {

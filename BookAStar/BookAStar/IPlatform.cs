@@ -1,4 +1,5 @@
 using BookAStar.Model.Auth.Account;
+using Yavsc.Models.Identity;
 
 namespace BookAStar
 {
@@ -16,10 +17,11 @@ namespace BookAStar
         
         void RevokeAccount(string userName);
 
-        GoogleCloudMobileDeclaration GetDeviceInfo();
+        IGCMDeclaration GetDeviceInfo();
 
-       // void RegisterThisDevice();
-        
+        TAnswer InvokeApi<TAnswer>(string method, object arg);
+
+        object InvokeApi(string method, object arg);
     }
 }
 

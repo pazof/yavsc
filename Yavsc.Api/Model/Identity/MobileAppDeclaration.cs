@@ -19,9 +19,7 @@ namespace Yavsc.Models.Identity
     public string Version { get; set; }
     public string DeviceOwnerId { get; set; }
 
-     [JsonIgnore]
-
-    [ForeignKeyAttribute("DeviceOwnerId")]
+    [JsonIgnore,ForeignKey("DeviceOwnerId")]
     public virtual ApplicationUser DeviceOwner { get; set; } 
   }
 
