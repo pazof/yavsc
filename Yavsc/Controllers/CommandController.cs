@@ -152,12 +152,16 @@ namespace Yavsc.Controllers
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
                         var sregids = string.Join(",",regids);
-                        _logger.LogWarning($"ApiKey: {_googleSettings.ApiKey} {sregids}");
+                        _logger.LogWarning($"ApiKey: {_googleSettings.ApiKey}"); 
+                        _logger.LogWarning($"RegIds: {sregids}");
                         grep = await _GCMSender.NotifyAsync(_googleSettings,regids,yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile
                     // if (grep==null || grep.success<=0 || grep.failure>0)
+                    ViewBag.GooglePayload=grep;
+                    if (grep!=null)
+                      _logger.LogWarning($"Performer: {command.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
@@ -166,7 +170,8 @@ namespace Yavsc.Controllers
                         $"{yaev.Description}\r\n-- \r\n{yaev.Comment}\r\n"
                     );
                 }
-                return RedirectToAction("Index");
+                ViewBag.GoogleSettings = _googleSettings;
+                return View("CommandConfirmation",command);
             }
             ViewBag.GoogleSettings = _googleSettings;
             return View(command);
