@@ -44,9 +44,23 @@ namespace BookAStar.Droid
 				Log.Info ("RegistrationIntentService", "Calling InstanceID.GetToken");
 				lock (locker)
 				{
-                    
-                    var instanceID = InstanceID.GetInstance (this);
-					var senderid = MainSettings.GoogleSenderId;
+
+                    var instanceID = InstanceID.GetInstance(this);
+
+#if DEBUG
+                    try
+                    {
+                        instanceID.DeleteInstanceID();
+
+                    }
+                    catch(Exception ex)
+                    {
+                        Debug.WaitForDebugger();
+                        Log.Debug("bas.GCM", ex.StackTrace.ToString());
+                    }
+#endif
+
+                    var senderid = MainSettings.GoogleSenderId;
 					var token = instanceID.GetToken ( senderid,
 						 GoogleCloudMessaging.InstanceIdScope, null);
 

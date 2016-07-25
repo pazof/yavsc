@@ -58,7 +58,7 @@ namespace BookAStar
 			};
         private static readonly Dictionary<string, double> environ = new Dictionary<string, double>();
 
-        public static readonly string YavscApiUrl = "dev.pschneider.fr";
+        public static readonly string YavscApiUrl = "http://dev.pschneider.fr/api";
 
 		#endregion
 

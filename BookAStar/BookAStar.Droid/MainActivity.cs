@@ -293,7 +293,8 @@ namespace BookAStar.Droid
         public TAnswer InvokeApi<TAnswer>(string method, object arg)
         {
             using (var m =
-                new SimpleJsonPostMethod(method,
+                new SimpleJsonPostMethod(
+                    method, "Bearer "+
                 MainSettings.CurrentUser.YavscTokens.AccessToken
                 ))
             {
@@ -304,9 +305,10 @@ namespace BookAStar.Droid
         public object InvokeApi(string method, object arg)
         {
             using (var m =
-                new SimpleJsonPostMethod(method,
+                new SimpleJsonPostMethod(
+                    method, "Bearer " +
                 MainSettings.CurrentUser.YavscTokens.AccessToken
-                ))
+                )) 
             {
                 return m.InvokeJson(arg);
             }

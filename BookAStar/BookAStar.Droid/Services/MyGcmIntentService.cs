@@ -99,7 +99,7 @@ namespace BookAStar.Droid
 		void SubscribeGCM ()
 		{
 			Context context = this.ApplicationContext;
-			string senders = "325408689282"; 
+			string senders = MainSettings.GoogleSenderId; 
 			// Resources.GetString(GoogleSenderId);
 			Intent intent = new Intent ("com.google.android.c2dm.intent.REGISTER");
 			intent.SetPackage ("com.google.android.gsf");
