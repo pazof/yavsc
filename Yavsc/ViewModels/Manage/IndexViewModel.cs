@@ -22,7 +22,7 @@ namespace Yavsc.ViewModels.Manage
 
         public long PostsCounter { get; set; }
 
-        public AccountBalance Balance { get; set; }
+        public IAccountBalance Balance { get; set; }
 
         public long ActiveCommandCount { get; set; }
 
