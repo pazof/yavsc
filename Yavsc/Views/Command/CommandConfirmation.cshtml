@@ -43,22 +43,16 @@ $(document).ready(function(){
         <hr />
         @Html.DisplayFor(m => m.EventDate)
         @Html.DisplayFor(m => m.Location)
-        <h4>@SR["Notifications sent to its devices"]</h4>
-        <hr />
         @if (ViewBag.GooglePayload !=null) 
         {
-           
-            @if (ViewBag.GooglePayload.results !=null) {
-              @:success:  @ViewBag.GooglePayload.success
-              @:failure:  @ViewBag.GooglePayload.failure
-              <br/>
-               
-                    @foreach (MessageWithPayloadResponse.Result mr in ViewBag.GooglePayload.results) {
-                   @:message_id: @mr.message_id
-                   @:registration_id: @mr.registration_id
-                   @:error: @mr.error
-                   <br/>
-                }
+            @if (ViewBag.GooglePayload.success>0) {
+        <h4>@SR["GCM Notifications sent"]</h4>
+            }
+            else {
+                if (ViewBag.GooglePayload.failure>0)
+                    {
+                        <h4>@SR["GCM Notification sending failed"]</h4>
+                    }
             }
         }
 </div>

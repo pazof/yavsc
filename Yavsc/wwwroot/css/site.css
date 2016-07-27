@@ -15,13 +15,12 @@ textarea {
 
 /* Set widths on image and video, since otherwise they use their native resolution */
 
-img, 
-video {
-    max-width: 100%;
-}
 /* .navbar-reac */
  
 /* Carousel */
+.carousel, .carousel img {
+    min-height: 15em;
+}
 .carousel-caption p {    
     font-family: "jubilat";
     font-weight: 600;
