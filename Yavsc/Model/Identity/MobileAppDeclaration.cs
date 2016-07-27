@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace Yavsc.Models.Identity
     public string Platform { get; set; }
     public string Version { get; set; }
     public string DeviceOwnerId { get; set; }
-
+    public DateTime DeclarationDate { get; set; }
     [JsonIgnore,ForeignKey("DeviceOwnerId")]
     public virtual ApplicationUser DeviceOwner { get; set; } 
   }

@@ -4,22 +4,28 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models
 {
-    public partial class Blog: IBlog
+    public partial class Blog
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
+
+        [Display(Name="Content")]
         public string bcontent { get; set; }
 
-        [DisplayAttribute(Name="Modified")]
+        [Display(Name="Modified")]
         public DateTime modified { get; set; }
+        [Display(Name="Photo")]
         public string photo { get; set; }
+        [Display(Name="Posted")]
         public DateTime posted { get; set; }
+        [Display(Name="Rate")]
         public int rate { get; set; }
+        [Display(Name="Title")]
         public string title { get; set; }
-        [Required]
         public string AuthorId { get; set; }
         [ForeignKey("AuthorId")]
-        public IApplicationUser Author { set; get; }
+        public ApplicationUser Author { set; get; }
+        [Display(Name="Visible")]
         public bool visible { get; set; }
     }
 }

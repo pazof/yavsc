@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models
 {
-    public class Contact: IContact
+    public class Contact
     {
         [Required()]
         public string UserId { get; set; }
@@ -13,6 +13,6 @@ namespace Yavsc.Models
         public string OwnerId { get; set; }
 
         [ForeignKeyAttribute("OwnerId")]
-        public virtual IApplicationUser Owner { get; set; }
+        public virtual ApplicationUser Owner { get; set; }
     }
 }

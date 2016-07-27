@@ -10,7 +10,7 @@ namespace Yavsc.Models
         public string UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual IApplicationUser Owner { get; set; }
+        public virtual ApplicationUser Owner { get; set; }
 
         [Required,Display(Name="Credits in €")]
         public decimal Credits { get; set; }

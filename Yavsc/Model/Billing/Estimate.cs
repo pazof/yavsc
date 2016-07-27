@@ -7,7 +7,7 @@ using Yavsc.Models.Booking;
 
 namespace Yavsc.Models.Billing
 {
-    public partial class RDVEstimate
+    public partial class Estimate
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
