@@ -52,7 +52,7 @@ namespace Yavsc.Controllers
         IOptions<GoogleAuthSettings> googleSettings,
         IOptions<PayPalSettings> paypalSettings,
         IOptions<CompanyInfoSettings> cinfoSettings,
-        IStringLocalizer <Yavsc.Resources.YavscLocalisation>SR,
+        IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR,
         ILoggerFactory loggerFactory)
         {
             _dbContext = context;
@@ -87,7 +87,7 @@ namespace Yavsc.Controllers
 
             var user = await GetCurrentUserAsync();
             long pc = _dbContext.Blogspot.Count(x => x.AuthorId == user.Id);
-            
+
             var model = new IndexViewModel
             {
                 HasPassword = await _userManager.HasPasswordAsync(user),
@@ -100,7 +100,7 @@ namespace Yavsc.Controllers
                 Balance = user.AccountBalance,
                 ActiveCommandCount = _dbContext.BookQueries.Count(x => (x.ClientId == user.Id) && (x.EventDate > DateTime.Now)),
                 HasDedicatedCalendar = !string.IsNullOrEmpty(user.DedicatedGoogleCalendar),
-                Roles = await _userManager.GetRolesAsync (user)
+                Roles = await _userManager.GetRolesAsync(user)
             };
             if (_dbContext.Performers.Any(x => x.PerformerId == user.Id))
             {
@@ -259,30 +259,31 @@ namespace Yavsc.Controllers
         {
             var credential = await _userManager.GetCredentialForGoogleApiAsync(
                 _dbContext, User.GetUserId());
-           if (credential==null)
-                return RedirectToAction("LinkLogin",new { provider = "Google" });
+            if (credential == null)
+                return RedirectToAction("LinkLogin", new { provider = "Google" });
 
-                try {
-            ViewBag.Calendars = new GoogleApis.CalendarApi(_googleSettings.ApiKey)
-            .GetCalendars(credential);
-                }
-                catch (WebException ex)
+            try
+            {
+                ViewBag.Calendars = new GoogleApis.CalendarApi(_googleSettings.ApiKey)
+                .GetCalendars(credential);
+            }
+            catch (WebException ex)
+            {
+                // a bug
+                _logger.LogError("Google token, an Forbidden calendar");
+                if (ex.HResult == (int)HttpStatusCode.Forbidden)
                 {
-                    // a bug
-                    _logger.LogError("Google token, an Forbidden calendar");
-                    if (ex.HResult == (int) HttpStatusCode.Forbidden)
-                    {
-                        return RedirectToAction("LinkLogin",new { provider = "Google" });
-                    }
+                    return RedirectToAction("LinkLogin", new { provider = "Google" });
                 }
-            return View(new SetGoogleCalendarViewModel { ReturnUrl=returnUrl });
+            }
+            return View(new SetGoogleCalendarViewModel { ReturnUrl = returnUrl });
         }
 
-        [HttpPost,ValidateAntiForgeryToken,
+        [HttpPost, ValidateAntiForgeryToken,
         Authorize]
         public async Task<IActionResult> SetGoogleCalendar(SetGoogleCalendarViewModel model)
         {
-            var user = _dbContext.Users.FirstOrDefault(u=>u.Id == User.GetUserId());
+            var user = _dbContext.Users.FirstOrDefault(u => u.Id == User.GetUserId());
             user.DedicatedGoogleCalendar = model.GoogleCalendarId;
             await _dbContext.SaveChangesAsync();
             if (string.IsNullOrEmpty(model.ReturnUrl))
@@ -485,16 +486,28 @@ namespace Yavsc.Controllers
         {
             var user = GetCurrentUserAsync().Result;
             var uid = user.Id;
-            try { 
+            try
+            {
                 if (ModelState.IsValid)
                 {
-                    var taskCheck = await _cchecker.CheckAsync(model.SIREN);
-                    if (!taskCheck.success) {
-                        ModelState.AddModelError(
-                            "SIREN",
-                            _SR["Invalid company number"]+" ("+taskCheck.errorCode+")"
-                        );
-                        _logger.LogWarning("Invalid company number, using key:"+_cinfoSettings.ApiKey);
+                    var exSiren = await _dbContext.ExceptionsSIREN.FirstOrDefaultAsync(
+                        ex => ex.SIREN == model.SIREN
+                    );
+                    if (exSiren != null)
+                    {
+                        _logger.LogInformation("Exception SIREN:"+exSiren);
+                    }
+                    else
+                    {
+                        var taskCheck = await _cchecker.CheckAsync(model.SIREN);
+                        if (!taskCheck.success)
+                        {
+                            ModelState.AddModelError(
+                                "SIREN",
+                                _SR["Invalid company number"] + " (" + taskCheck.errorCode + ")"
+                            );
+                            _logger.LogInformation("Invalid company number, using key:" + _cinfoSettings.ApiKey);
+                        }
                     }
                 }
             }
