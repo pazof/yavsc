@@ -9,13 +9,13 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.title)
+            @SR[Html.DisplayNameFor(model => model.title)]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.title)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.photo)
+            @SR[Html.DisplayNameFor(model => model.photo)]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.photo)
@@ -27,34 +27,34 @@
             @Model.Author.UserName
         </dd>
         <dt>
-          Contenu
+          @SR["Content"]
         </dt>
         <dd>
             <div markdown="@Model.bcontent" base="~/@Model.Id"
             site="SiteSettings.Value"></div>
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.modified)
+            @SR[Html.DisplayNameFor(model => model.modified)]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.modified)
         </dd>
         
         <dt>
-            @Html.DisplayNameFor(model => model.posted)
+            @SR[Html.DisplayNameFor(model => model.posted)]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.posted)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.rate)
+            @SR[Html.DisplayNameFor(model => model.rate)]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.rate)
         </dd>
         
         <dt>
-            @Html.DisplayNameFor(model => model.visible)
+            @SR[Html.DisplayNameFor(model => model.visible)]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.visible)
@@ -64,10 +64,10 @@
     <ul>
     @if (await AuthorizationService.AuthorizeAsync(User, Model, new EditRequirement())) {
     <li>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a>
     </li>
     }
     <li>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@SR["Back to List"]</a>
     </li>
     </ul>
