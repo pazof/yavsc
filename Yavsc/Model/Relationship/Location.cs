@@ -7,7 +7,7 @@ namespace Yavsc
     /// <summary>
     /// Position.
     /// </summary>
-    public class Position: IPosition
+    public class Position
 	{
 		/// <summary>
 		/// The longitude.
@@ -27,7 +27,7 @@ namespace Yavsc
 
 	}
 
-    public class Location : Position, ILocation {
+    public class Location : Position {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         [Required(),

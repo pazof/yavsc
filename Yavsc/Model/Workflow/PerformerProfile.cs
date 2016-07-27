@@ -8,8 +8,8 @@ namespace Yavsc.Models.Workflow
     public class PerformerProfile {
 
         [Key]
-        public string PerfomerId { get; set; }
-        [ForeignKey("PerfomerId"),Display(Name="Performer")]
+        public string PerformerId { get; set; }
+        [ForeignKey("PerformerId"),Display(Name="Performer")]
         public virtual ApplicationUser Performer { get; set; }
 
         [Display(Name="Activity"),Required]
@@ -21,10 +21,10 @@ namespace Yavsc.Models.Workflow
         RegularExpression(@"^[0-9]{9,14}$", ErrorMessage = "Only numbers are allowed here")]
         public string SIREN { get; set; }
 
-        public long OrganisationAddressId { get; set; }
+        public long OrganizationAddressId { get; set; }
 
-        [Required,Display(Name="Organisation address"),ForeignKey("OrganisationAddressId")]
-        public virtual Location OrganisationAddress { get; set; }
+        [Required,Display(Name="Organization address"),ForeignKey("OrganizationAddressId")]
+        public virtual Location OrganizationAddress { get; set; }
 
         [ForeignKey("ActivityCode"),Display(Name="Activity")]
         public virtual Activity Activity { get; set; }
@@ -35,8 +35,8 @@ namespace Yavsc.Models.Workflow
         [Display(Name="Accept notifications from non-VIP users")]
         public bool AcceptPublicContact { get; set; }
 
-        [Display(Name="Allow my geolocatisation, nearby my clients")]
-        public bool AcceptGeoLocalisation { get; set; }
+        [Display(Name="Allow my geo-localization, nearby my clients")]
+        public bool AcceptGeoLocalization { get; set; }
 
         [Display(Name="Web site")]
         public string WebSite { get; set; }

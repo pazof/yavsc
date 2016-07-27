@@ -751,13 +751,9 @@
         "runtime": {
           "lib/net45/_._": {}
         }
-      },
-      "Yavsc.Client/1.0.0": {
-        "type": "project",
-        "framework": ".NETPortable,Version=v4.5,Profile=Profile111"
       }
     },
-    ".NETFramework,Version=v4.5.1/win7-x86": {
+    ".NETFramework,Version=v4.5.1/debian.8-x86": {
       "EntityFramework.Commands/7.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -1506,13 +1502,9 @@
         "runtime": {
           "lib/net45/_._": {}
         }
-      },
-      "Yavsc.Client/1.0.0": {
-        "type": "project",
-        "framework": ".NETPortable,Version=v4.5,Profile=Profile111"
       }
     },
-    ".NETFramework,Version=v4.5.1/win7-x64": {
+    ".NETFramework,Version=v4.5.1/debian.8-x64": {
       "EntityFramework.Commands/7.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -2261,18 +2253,10 @@
         "runtime": {
           "lib/net45/_._": {}
         }
-      },
-      "Yavsc.Client/1.0.0": {
-        "type": "project",
-        "framework": ".NETPortable,Version=v4.5,Profile=Profile111"
       }
     }
   },
   "libraries": {
-    "Yavsc.Client/1.0.0": {
-      "type": "project",
-      "path": "../wrap/Yavsc.Client/project.json"
-    },
     "EntityFramework.Commands/7.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
@@ -3057,8 +3041,6 @@
       "Newtonsoft.Json >= 9.0.1",
       "System.Json >= 4.0.20126.16343"
     ],
-    ".NETFramework,Version=v4.5.1": [
-      "Yavsc.Client >= 1.0.0-*"
-    ]
+    ".NETFramework,Version=v4.5.1": []
   }
 }

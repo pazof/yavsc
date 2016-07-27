@@ -36,7 +36,5 @@ namespace Yavsc.Models
         /// <returns></returns>
         string ModeratorGroupName { get; set; }
 
-        
-
     }
 }
