@@ -96,7 +96,7 @@ namespace Yavsc.Controllers
                 );
             var pro = _context.Performers.Include(
                 x => x.Performer).FirstOrDefault(
-                x => x.PerfomerId == id
+                x => x.PerformerId == id
             );
             if (pro == null)
                 return HttpNotFound();
@@ -107,7 +107,7 @@ namespace Yavsc.Controllers
             return View(new BookQuery(new Location(),DateTime.Now.AddHours(4))
             {
                 PerformerProfile = pro,
-                PerformerId = pro.PerfomerId,
+                PerformerId = pro.PerformerId,
                 ClientId = userid,
                 Client = user
             });
@@ -129,7 +129,7 @@ namespace Yavsc.Controllers
                 u => u.Performer
             ).Include( u => u.Performer.Devices)
             .FirstOrDefault(
-                x => x.PerfomerId == command.PerformerId
+                x => x.PerformerId == command.PerformerId
             );
             command.PerformerProfile = pro;
             var user = await _userManager.FindByIdAsync(
