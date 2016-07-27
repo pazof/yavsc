@@ -1,14 +1,16 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160725145306_estimates")]
+    partial class estimates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -295,13 +297,6 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Billing.ExceptionSIREN", b =>
-                {
-                    b.Property<string>("SIREN");
-
-                    b.HasKey("SIREN");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Blog", b =>
                 {
                     b.Property<long>("Id")
@@ -478,9 +473,9 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Workflow.PerformerProfile", b =>
                 {
-                    b.Property<string>("PerformerId");
+                    b.Property<string>("PerfomerId");
 
-                    b.Property<bool>("AcceptGeoLocalization");
+                    b.Property<bool>("AcceptGeoLocalisation");
 
                     b.Property<bool>("AcceptNotifications");
 
@@ -497,7 +492,7 @@ namespace Yavsc.Migrations
 
                     b.Property<long?>("OfferId");
 
-                    b.Property<long>("OrganizationAddressId");
+                    b.Property<long>("OrganisationAddressId");
 
                     b.Property<int>("Rate");
 
@@ -507,7 +502,7 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("WebSite");
 
-                    b.HasKey("PerformerId");
+                    b.HasKey("PerfomerId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
@@ -658,11 +653,11 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Location")
                         .WithMany()
-                        .HasForeignKey("OrganizationAddressId");
+                        .HasForeignKey("OrganisationAddressId");
 
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("PerformerId");
+                        .HasForeignKey("PerfomerId");
                 });
         }
     }

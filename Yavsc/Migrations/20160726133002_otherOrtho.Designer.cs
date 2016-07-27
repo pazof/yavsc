@@ -1,14 +1,16 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160726133002_otherOrtho")]
+    partial class otherOrtho
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -293,13 +295,6 @@ namespace Yavsc.Migrations
                     b.Property<string>("Title");
 
                     b.HasKey("Id");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Billing.ExceptionSIREN", b =>
-                {
-                    b.Property<string>("SIREN");
-
-                    b.HasKey("SIREN");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Blog", b =>
