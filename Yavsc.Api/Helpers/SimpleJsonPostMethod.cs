@@ -20,10 +20,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Net;
 using System.IO;
-using System.Json;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
+using System.Json;
 
 namespace Yavsc.Helpers
 {
@@ -32,7 +32,7 @@ namespace Yavsc.Helpers
     /// </summary>
     public class SimpleJsonPostMethod : IDisposable
 	{
-    private HttpWebRequest request=null;
+        private HttpWebRequest request=null;
 
 		/// <summary>
 		/// Initializes a new instance of the Yavsc.Helpers.SimpleJsonPostMethod class.
@@ -80,8 +80,7 @@ namespace Yavsc.Helpers
 
 		public async Task<JsonValue> InvokeJson(object query)
 		{
-
-      JsonValue jsonDoc=null;
+            JsonValue jsonDoc=null;
 			using (Stream streamQuery = request.GetRequestStream()) {
 				using (StreamWriter writer = new StreamWriter(streamQuery)) {
 					writer.Write (JsonConvert.SerializeObject(query));
