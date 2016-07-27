@@ -102,9 +102,9 @@ namespace Yavsc.Controllers
                 HasDedicatedCalendar = !string.IsNullOrEmpty(user.DedicatedGoogleCalendar),
                 Roles = await _userManager.GetRolesAsync (user)
             };
-            if (_dbContext.Performers.Any(x => x.PerfomerId == user.Id))
+            if (_dbContext.Performers.Any(x => x.PerformerId == user.Id))
             {
-                var code = _dbContext.Performers.First(x => x.PerfomerId == user.Id).ActivityCode;
+                var code = _dbContext.Performers.First(x => x.PerformerId == user.Id).ActivityCode;
                 model.Activity = _dbContext.Activities.First(x => x.Code == code);
             }
             return View(model);
@@ -461,52 +461,57 @@ namespace Yavsc.Controllers
         {
             var user = GetCurrentUserAsync().Result;
             var uid = user.Id;
-            bool existing = _dbContext.Performers.Any(x => x.PerfomerId == uid);
+            bool existing = _dbContext.Performers.Any(x => x.PerformerId == uid);
             ViewBag.Activities = _dbContext.ActivityItems(null);
             ViewBag.GoogleSettings = _googleSettings;
             if (existing)
             {
-                var currentProfile = _dbContext.Performers.Include(x => x.OrganisationAddress)
-                .First(x => x.PerfomerId == uid);
+                var currentProfile = _dbContext.Performers.Include(x => x.OrganizationAddress)
+                .First(x => x.PerformerId == uid);
                 string currentCode = currentProfile.ActivityCode;
                 return View(currentProfile);
             }
             return View(new PerformerProfile
             {
-                PerfomerId = user.Id,
-                OrganisationAddress = new Location()
+                PerformerId = user.Id,
+                OrganizationAddress = new Location()
             });
         }
 
 
         [HttpPost]
-        [ValidateAntiForgeryToken, Authorize]
+        [Authorize]
         public async Task<IActionResult> SetActivity(PerformerProfile model)
         {
             var user = GetCurrentUserAsync().Result;
             var uid = user.Id;
-
-            if (ModelState.IsValid)
-            {
-                var taskCheck = await _cchecker.CheckAsync(model.SIREN);
-                if (!taskCheck.success) {
-                    ModelState.AddModelError(
-                        "SIREN",
-                        _SR["Invalid company number"]+" ("+taskCheck.errorCode+")"
-                    );
-                    _logger.LogWarning("Invalid company number, using key:"+_cinfoSettings.ApiKey);
+            try { 
+                if (ModelState.IsValid)
+                {
+                    var taskCheck = await _cchecker.CheckAsync(model.SIREN);
+                    if (!taskCheck.success) {
+                        ModelState.AddModelError(
+                            "SIREN",
+                            _SR["Invalid company number"]+" ("+taskCheck.errorCode+")"
+                        );
+                        _logger.LogWarning("Invalid company number, using key:"+_cinfoSettings.ApiKey);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
             }
             if (ModelState.IsValid)
             {
-                if (uid == model.PerfomerId)
+                if (uid == model.PerformerId)
                 {
-                    bool addrexists = _dbContext.Map.Any(x => model.OrganisationAddress.Id == x.Id);
+                    bool addrexists = _dbContext.Map.Any(x => model.OrganizationAddress.Id == x.Id);
                     if (!addrexists)
                     {
-                        _dbContext.Map.Add(model.OrganisationAddress);
+                        _dbContext.Map.Add(model.OrganizationAddress);
                     }
-                    bool existing = _dbContext.Performers.Any(x => x.PerfomerId == uid);
+                    bool existing = _dbContext.Performers.Any(x => x.PerformerId == uid);
                     if (existing)
                     {
                         _dbContext.Update(model);
@@ -518,7 +523,7 @@ namespace Yavsc.Controllers
                     return RedirectToAction(nameof(Index), new { Message = message });
 
                 }
-                else ModelState.AddModelError(string.Empty, "Acces denied");
+                else ModelState.AddModelError(string.Empty, $"Access denied ({uid} vs {model.PerformerId})");
             }
             ViewBag.GoogleSettings = _googleSettings;
             ViewBag.Activities = _dbContext.ActivityItems(model.ActivityCode);
@@ -530,11 +535,11 @@ namespace Yavsc.Controllers
         {
             var user = GetCurrentUserAsync().Result;
             var uid = user.Id;
-            bool existing = _dbContext.Performers.Any(x => x.PerfomerId == uid);
+            bool existing = _dbContext.Performers.Any(x => x.PerformerId == uid);
             if (existing)
             {
                 _dbContext.Performers.Remove(
-                    _dbContext.Performers.First(x => x.PerfomerId == uid)
+                    _dbContext.Performers.First(x => x.PerformerId == uid)
                 );
                 _dbContext.SaveChanges();
             }
