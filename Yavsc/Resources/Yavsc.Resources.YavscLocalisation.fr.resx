@@ -198,7 +198,7 @@
   <data name="Estimate"><value>Estimer</value></data>
   <data name="Estimate_not_found"><value>Devis non trouvé</value></data>
   <data name="EstimateWanted"><value>Demande de devis</value></data>
-  <data name="EventDate"><value>Date de l'évennement</value></data>
+  <data name="Event date"><value>Date de l'évennement</value></data>
   <data name="EventWebPage"><value>Page web de l'événement</value></data>
   <data name="ExistantDB"><value>Base de données éxistante</value></data>
   <data name="External Logins"><value>Inscriptions externes</value></data>
@@ -348,6 +348,7 @@
   <data name="YouNeedToBeAuthenticatedIOToContact"><value>Vous devez vous authentifier pour pouvoir demander un devis
       à un préstataire.</value></data>
   <data name="younotadmin"><value>Vous n'êtes pas administrateur</value></data>
+  <data name="Your book query"><value>Votre demande de rendez-vous</value></data>
   <data name="YourEstimates"><value>Vos Devis</value></data>
   <data name="YourMEACode"><value>Votre activité</value></data>
   <data name="YourNeed"><value>Votre besoin</value></data>
