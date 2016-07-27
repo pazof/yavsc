@@ -1,14 +1,16 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160723164231_GCMRedDate")]
+    partial class GCMRedDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -268,14 +270,14 @@ namespace Yavsc.Migrations
 
                     b.Property<int>("Count");
 
-                    b.Property<long?>("EstimateId");
+                    b.Property<long?>("RDVEstimateId");
 
                     b.Property<decimal>("UnitaryCost");
 
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Billing.Estimate", b =>
+            modelBuilder.Entity("Yavsc.Models.Billing.RDVEstimate", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -295,19 +297,13 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Billing.ExceptionSIREN", b =>
-                {
-                    b.Property<string>("SIREN");
-
-                    b.HasKey("SIREN");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Blog", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AuthorId");
+                    b.Property<string>("AuthorId")
+                        .IsRequired();
 
                     b.Property<string>("bcontent");
 
@@ -315,9 +311,7 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("photo");
 
-                    b.Property<DateTime>("posted")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("Relational:GeneratedValueSql", "LOCALTIMESTAMP");
+                    b.Property<DateTime>("posted");
 
                     b.Property<int>("rate");
 
@@ -478,9 +472,9 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Workflow.PerformerProfile", b =>
                 {
-                    b.Property<string>("PerformerId");
+                    b.Property<string>("PerfomerId");
 
-                    b.Property<bool>("AcceptGeoLocalization");
+                    b.Property<bool>("AcceptGeoLocalisation");
 
                     b.Property<bool>("AcceptNotifications");
 
@@ -497,7 +491,7 @@ namespace Yavsc.Migrations
 
                     b.Property<long?>("OfferId");
 
-                    b.Property<long>("OrganizationAddressId");
+                    b.Property<long>("OrganisationAddressId");
 
                     b.Property<int>("Rate");
 
@@ -507,7 +501,7 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("WebSite");
 
-                    b.HasKey("PerformerId");
+                    b.HasKey("PerfomerId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
@@ -573,12 +567,12 @@ namespace Yavsc.Migrations
                         .WithMany()
                         .HasForeignKey("BookQueryId");
 
-                    b.HasOne("Yavsc.Models.Billing.Estimate")
+                    b.HasOne("Yavsc.Models.Billing.RDVEstimate")
                         .WithMany()
-                        .HasForeignKey("EstimateId");
+                        .HasForeignKey("RDVEstimateId");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Billing.Estimate", b =>
+            modelBuilder.Entity("Yavsc.Models.Billing.RDVEstimate", b =>
                 {
                     b.HasOne("Yavsc.Models.Booking.BookQuery")
                         .WithMany()
@@ -658,11 +652,11 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Location")
                         .WithMany()
-                        .HasForeignKey("OrganizationAddressId");
+                        .HasForeignKey("OrganisationAddressId");
 
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("PerformerId");
+                        .HasForeignKey("PerfomerId");
                 });
         }
     }

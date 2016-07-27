@@ -1,0 +1,22 @@
+@model Yavsc.Models.Billing.ExceptionSIREN
+
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Exception SIREN</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+              @Html.TextBox("SIREN") 
+              <div class="col-md-offset-1 col-md-10">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+                 </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
