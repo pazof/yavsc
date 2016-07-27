@@ -1,52 +1,22 @@
 @model BookQuery
 @using Yavsc.Models.Google.Messaging
 @{
-    ViewData["Title"] = SR["Book "+Model.PerformerProfile.ActivityCode];
-}
-@section header{
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
-
-    <link rel="stylesheet" href="~/css/bootstrap-datepicker/bootstrap-datepicker3.standalone.min.css">    
-    <style>
-      #map {
-        width: 100%;
-        height: 250px;
-      }
-      #Location_combo li {
-          cursor: pointer;
-      }
-      #Location_combo li:hover {
-          text-decoration: underline;
-      }
-    </style>
-}
-@section scripts{
-<script>
-$(document).ready(function(){
-    
-    
-    var gmap = new google.maps.Map(document.getElementById('map'), {
-	    zoom: 16,
-	    center: { lat: @Model.Location.Latitude, lng: @Model.Location.Longitude }
-	  });
-    var marker;
-    
-                
-  
-});
-</script>
+    ViewData["Title"] = SR["Command confirmation"]+" "+SR[Model.PerformerProfile.ActivityCode];
 }
 <h2>@ViewData["Title"]</h2>
     <div class="form-horizontal">
         <h4>@SR["Your book query"]</h4>
         <hr />
-        @Html.DisplayFor(m => m.EventDate)
-        @Html.DisplayFor(m => m.Location)
+        <label for="EventDate">@SR["Event date"]</label>: @Html.DisplayFor(m => m.EventDate)
+        <br/>
+
+        <label for="Location">@SR["Location"]</label>: @Html.DisplayFor(m => m.Location)
+        <br/>
+
         @if (ViewBag.GooglePayload !=null) 
         {
             @if (ViewBag.GooglePayload.success>0) {
-        <h4>@SR["GCM Notifications sent"]</h4>
+                <h4>@SR["GCM Notifications sent"]</h4>
             }
             else {
                 if (ViewBag.GooglePayload.failure>0)
