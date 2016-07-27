@@ -14,12 +14,27 @@ namespace MessageSender
 
         static void Main(string[] args)
         {
+            var reg_id= "eRSVBXTxiyk:APA91bE1NRs6LWBq9O3ACBV5g4B8D2ANwS9UjpPkwYFYWtv6NeTuSzBb6ZBhOFx_gbh9AbSgZ7uHETOPp26ahhJY74i55f7gULgaQR7-MV5CeaBYANfKcVgqQ5GTsb2zMCS_2MIUVy3Q";
             var jGcmData = new JObject();
-            var jData = new JObject();
+            var jNotification = new JObject();
+            jNotification.Add("body","a body");
+            jNotification.Add("title",MESSAGE);
+            jNotification.Add("icon","icon");
+            jGcmData.Add("to",reg_id);
+            jGcmData.Add("notification",jNotification);
 
-            jData.Add("message", MESSAGE);
+/* "to" : "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1...",
+    "notification" : {
+      "body" : "great match!",
+      "title" : "Portugal vs. Denmark",
+      "icon" : "myicon"
+    }
+            var jData = new JObject();
+    jData.Add("message", MESSAGE);
             jGcmData.Add("to", "/topics/global");
             jGcmData.Add("data", jData);
+    */
+            
 
             var url = new Uri("https://gcm-http.googleapis.com/gcm/send");
             try
@@ -33,7 +48,7 @@ namespace MessageSender
                         "Authorization", "key=" + API_KEY);
 
                     Task.WaitAll(client.PostAsync(url,
-                        new StringContent(jGcmData.ToString(), Encoding.Default, "application/json"))
+                        new StringContent(jGcmData.ToString(), Encoding.UTF8, "application/json"))
                             .ContinueWith(response =>
                             {
                                 Task.Run ( async () => {
