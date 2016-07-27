@@ -5,7 +5,7 @@ using Yavsc.Models.Billing;
 namespace Yavsc.Helpers
 {
     public static class FileSystemHelpers {
-      public static IDirectoryContents GetFileContent(this RDVEstimate estimate, string userFileDir)
+      public static IDirectoryContents GetFileContent(this Estimate estimate, string userFileDir)
         {
             if (estimate?.Query?.PerformerProfile?.Performer == null)
                 return null;

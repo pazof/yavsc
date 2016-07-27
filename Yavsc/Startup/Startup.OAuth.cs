@@ -29,7 +29,6 @@ namespace Yavsc
         public static FacebookOptions FacebookAppOptions { get; private set; }
         public static OAuthAuthorizationServerOptions OAuthServerAppOptions { get; private set; }
 
-        public static OAuthOptions OAuthClientOptions { get; set; }
 
         public static YavscGoogleOptions YavscGoogleAppOptions { get; private set; }
         public static MonoDataProtectionProvider ProtectionProvider { get; private set; }
