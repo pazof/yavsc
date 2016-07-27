@@ -10,7 +10,7 @@ namespace Yavsc.Models.Messaging
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015 GNU GPL
+//  Copyright (c) 2015-2016 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -44,6 +44,8 @@ public class BookQueryEvent: YaEvent
 		/// <value>The end date.</value>
 		[Display(Name="EndDate")]
 		public DateTime EndDate { get; set; }
+
+        public long CommandId { get; set; }
 	}
 
 }
