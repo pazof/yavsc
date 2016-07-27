@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = SR["Forbidden"];
+}
+
+L'accès à cette ressource est protégé.
+
+@if (ViewBag.UserIsSignedIn) {
+
+@:Vous ne possédez pas les droits suffisants pour y acceder.
+
+<a class="btn btn-lg btn-success" asp-controller="Account" asp-action="SignIn" asp-route-returnurl="@Model" >@SR["Login"] avec un autre compte</a>
+
+}
+else {
+
+    <a class="btn btn-lg btn-success" class="success" asp-controller="Account" asp-action="SignIn" asp-route-returnurl="@Model" >@SR["Login"]</a>
+}
