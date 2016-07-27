@@ -15,6 +15,8 @@ namespace Yavsc.Models.Booking
     /// </summary>
     [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id {get; set; }
+
+        [Display(Name="Event date")]
         public DateTime EventDate{get; set; }
         public Location Location { get; set; }
 
