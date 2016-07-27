@@ -70,6 +70,16 @@ namespace Yavsc.Controllers
             */
         }
 
+        public ActionResult AccessDenied(string requestUrl = null)
+        {
+            ViewBag.UserIsSignedIn = User.IsSignedIn();
+            if (string.IsNullOrWhiteSpace(requestUrl))
+            if (string.IsNullOrWhiteSpace(Request.Headers["Referer"]))
+                requestUrl = "/";
+                else requestUrl = Request.Headers["Referer"];
+            return View("AccessDenied",requestUrl);
+        }
+
         [HttpPost(Constants.LoginPath)]
         public async Task<IActionResult> SignIn(SignInViewModel model)
         {
