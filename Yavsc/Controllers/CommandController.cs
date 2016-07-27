@@ -152,8 +152,6 @@ namespace Yavsc.Controllers
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
                         var sregids = string.Join(",",regids);
-                        _logger.LogWarning($"ApiKey: {_googleSettings.ApiKey}"); 
-                        _logger.LogWarning($"RegIds: {sregids}");
                         grep = await _GCMSender.NotifyAsync(_googleSettings,regids,yaev);
                     }
                     // TODO setup a profile choice to allow notifications
