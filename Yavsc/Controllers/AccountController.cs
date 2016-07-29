@@ -42,7 +42,7 @@ namespace Yavsc.Controllers
         IOptions<SiteSettings> siteSettings,
        IOptions<SmtpSettings> smtpSettings,
             ILoggerFactory loggerFactory, IOptions<TwilioSettings> twilioSettings,
-            IStringLocalizer localizer)
+            IStringLocalizer<Yavsc.Resources.YavscLocalisation>  localizer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -356,7 +356,7 @@ namespace Yavsc.Controllers
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                 await _emailSender.SendEmailAsync(_siteSettings,_smtpSettings,model.Email, _localizer["Reset Password"],
-                   _localizer["Please reset your password by followin this link:"] + callbackUrl );
+                   _localizer["Please reset your password by following this link:"] + callbackUrl );
                 return View("ForgotPasswordConfirmation");
             }
 
