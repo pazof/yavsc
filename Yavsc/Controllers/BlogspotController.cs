@@ -1,14 +1,15 @@
+
+using System;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Logging;
-using Yavsc.Models;
-using System;
 using Microsoft.AspNet.Authorization;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.OptionsModel;
+using Yavsc.Models;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
