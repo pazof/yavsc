@@ -17,6 +17,9 @@
         <th>
             @SR["Author"]
         </th>
+        <th>
+            @SR["Date"]
+        </th>
         <th></th>
     </tr>
     
@@ -27,13 +30,18 @@
            <markdown>@item.title</markdown>
         </td>
         <td>
-            <em>@item.Author?.UserName</em>
-            <hr>
-            <i>@Html.DisplayFor(modelItem => item.posted)</i>
-            <i>@Html.DisplayFor(modelItem => item.modified)</i>
-            <i>@Html.DisplayFor(modelItem => item.rate)</i>
+            @item.Author.UserName
         </td>
         <td>
+            <span style="font-size:x-small;">
+            posté le @item.posted.ToString("dddd d MMM yyyy à H:mm")
+            @if ((item.modified - item.posted).Minutes > 10)
+             { 
+                @:- Modifié le @item.modified.ToString("dddd d MMM yyyy à H:mm")
+             }
+            </span>
+        </td>
+        <td> 
             <ul class="actiongroup">
                 <li><a asp-action="Details" asp-route-id="@item.Id">Details</a>
             </li>
