@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Yavsc.Models
+namespace Yavsc.Interfaces
 {
     public interface ICircle
     {

@@ -1,4 +1,4 @@
-﻿namespace Yavsc.Models.Identity
+﻿namespace Yavsc.Interfaces
 {
     public interface IGCMDeclaration
     {

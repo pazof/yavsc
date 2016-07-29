@@ -1,17 +1,11 @@
-﻿using System;
-
-namespace Yavsc.Models
+﻿namespace Yavsc.Interfaces
 {
-    public interface IBlog
+    public interface IBlog: IIdentified<long>, IRating<long>, ITitle, ILifeTime
+
     {
         string AuthorId { get; set; }
-        string bcontent { get; set; }
-        long Id { get; set; }
-        DateTime modified { get; set; }
-        string photo { get; set; }
-        DateTime posted { get; set; }
-        int rate { get; set; }
-        string title { get; set; }
-        bool visible { get; set; }
+        string Content { get; set; }
+        string Photo { get; set; }
+        bool Visible { get; set; }
     }
 }
