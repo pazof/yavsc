@@ -24,7 +24,7 @@ namespace Yavsc.Interfaces
 	/// <summary>
 	/// I rating.
 	/// </summary>
-	public interface IRating: IIdentified<long>
+	public interface IRating<TK>: IIdentified<TK>
 	{
 		/// <summary>
 		/// Gets or sets the rate.

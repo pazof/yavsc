@@ -1,4 +1,4 @@
-﻿namespace Yavsc
+﻿namespace Yavsc.Interfaces
 {
     public interface ILocation
     {

@@ -1,4 +1,4 @@
-﻿namespace Yavsc.Models
+﻿namespace Yavsc.Interfaces
 {
     public interface IContact
     {

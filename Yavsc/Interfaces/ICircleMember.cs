@@ -1,9 +1,8 @@
-﻿namespace Yavsc.Models
+﻿namespace Yavsc.Interfaces
 {
-    public interface ICircleMember
+    public interface ICircleMember: IIdentified<long>
     {
         ICircle Circle { get; set; }
-        long Id { get; set; }
         IApplicationUser Member { get; set; }
     }
 }
