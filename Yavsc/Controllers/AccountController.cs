@@ -15,6 +15,7 @@ using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.ViewModels.Account;
 using Yavsc.Helpers;
+using Microsoft.Extensions.Localization;
 
 namespace Yavsc.Controllers
 {
@@ -30,6 +31,8 @@ namespace Yavsc.Controllers
         SmtpSettings _smtpSettings;
         TwilioSettings _twilioSettings;
 
+        IStringLocalizer _localizer;
+
         //  TwilioSettings _twilioSettings;
 
         public AccountController(
@@ -38,7 +41,8 @@ namespace Yavsc.Controllers
             IEmailSender emailSender,
         IOptions<SiteSettings> siteSettings,
        IOptions<SmtpSettings> smtpSettings,
-            ILoggerFactory loggerFactory, IOptions<TwilioSettings> twilioSettings)
+            ILoggerFactory loggerFactory, IOptions<TwilioSettings> twilioSettings,
+            IStringLocalizer localizer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -49,6 +53,7 @@ namespace Yavsc.Controllers
             _smtpSettings = smtpSettings.Value;
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
+            _localizer = localizer;
 
         }
 
@@ -335,10 +340,14 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(model.Email);
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
+                    if (user == null)
+                    _logger.LogWarning($"ForgotPassword: Email {model.Email} not found");
+                    else 
+                    _logger.LogWarning($"ForgotPassword: Email {model.Email} not confirmed");
                     return View("ForgotPasswordConfirmation");
                 }
 
@@ -346,8 +355,8 @@ namespace Yavsc.Controllers
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                await _emailSender.SendEmailAsync(_siteSettings,_smtpSettings,model.Email, "Reset Password",
-                   "Please reset your password by clicking here: <a href=\"" + callbackUrl + "\">link</a>");
+                await _emailSender.SendEmailAsync(_siteSettings,_smtpSettings,model.Email, _localizer["Reset Password"],
+                   _localizer["Please reset your password by followin this link:"] + callbackUrl );
                 return View("ForgotPasswordConfirmation");
             }
 
@@ -366,7 +375,7 @@ namespace Yavsc.Controllers
         //
         // GET: /Account/ResetPassword
         [HttpGet]
-        public IActionResult ResetPassword(string code = null)
+        public IActionResult ResetPassword(string UserId, string code = null)
         {
             return code == null ? View("Error") : View();
         }
@@ -381,7 +390,7 @@ namespace Yavsc.Controllers
             {
                 return View(model);
             }
-            var user = await _userManager.FindByNameAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
