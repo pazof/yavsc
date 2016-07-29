@@ -162,6 +162,8 @@
   <data name="Ciffer"><value>Chiffre</value></data>
   <data name="Circles"><value>Cercles</value></data>
   <data name="Click action"><value>Action sur click</value></data>
+  <data name="Click here to log in"><value>Cliquez ici pour vous identifier</value></data>
+  
   <data name="Comment"><value>Commentaire</value></data>
   <data name="Consultant"><value>Consultant</value></data>
   <data name="ContactAPerformer"><value>Contactez un préstataire</value></data>
@@ -274,6 +276,7 @@
   <data name="Person"><value>Personne</value></data>
   <data name="Photo"><value>Photo</value></data>
   <data name="PhotoUpdated"><value>Photo mise à jour</value></data>
+  <data name="Please"><value>S'il vous plait</value></data>
   <data name="PleaseCheckYourEmail"><value>S'il vous plait, veuillez verifier votre boite au lettres, pour pouvoir ré-initialiser votre mot de passe.</value></data>
   <data name="PleaseConfirmYourNewPassword"><value>S'il vous plait, veuillez confirmer votre nouveau mot de passe.</value></data>
   <data name="PleaseFillInABody"><value>S'il vous plait, saisissez un corps de message</value></data>
@@ -301,6 +304,7 @@
   <data name="Remove my professional profile"><value>Supprimer mon profile professionnel</value></data>
   <data name="Role"><value>Rôle</value></data>
   <data name="Reset Password"><value>Ré-initialiser votre mot de passe</value></data>
+  <data name="Reset password confirmation"><value>Confirmation de ré-initialiser du mot de passe</value></data>
   <data name="role created"><value>Rôle créé</value></data>
   <data name="RoleName"><value>Nom du rôle </value></data>
   <data name="Save these settings"><value>Save these settings</value></data>
@@ -352,6 +356,8 @@
       à un préstataire.</value></data>
   <data name="younotadmin"><value>Vous n'êtes pas administrateur</value></data>
   <data name="Your book query"><value>Votre demande de rendez-vous</value></data>
+  <data name="Your password has been reset."><value>Votre mote de passe a été mis à jour.</value></data>
+  
   <data name="YourEstimates"><value>Vos Devis</value></data>
   <data name="YourMEACode"><value>Votre activité</value></data>
   <data name="YourNeed"><value>Votre besoin</value></data>
