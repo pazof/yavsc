@@ -44,9 +44,26 @@ namespace BookAStar.Droid
 				Log.Info ("RegistrationIntentService", "Calling InstanceID.GetToken");
 				lock (locker)
 				{
-                    
-                    var instanceID = InstanceID.GetInstance (this);
-					var senderid = MainSettings.GoogleSenderId;
+
+                    var instanceID = InstanceID.GetInstance(this);
+
+#if DEBUG
+                    // When debugging, and application data/cache is preserved, 
+                    // a previous instance comes from another application installation
+                    // and the old registration against GCM fails,
+                    // until one delete it.
+                    try
+                    {
+                        instanceID.DeleteInstanceID();
+                    }
+                    catch(Exception ex)
+                    {
+                        Debug.WaitForDebugger();
+                        Log.Debug("bas.GCM", ex.StackTrace.ToString());
+                    }
+#endif
+
+                    var senderid = MainSettings.GoogleSenderId;
 					var token = instanceID.GetToken ( senderid,
 						 GoogleCloudMessaging.InstanceIdScope, null);
 
@@ -83,7 +100,11 @@ namespace BookAStar.Droid
 		{
 			var pubSub = GcmPubSub.GetInstance(this);
 			pubSub.Subscribe(token, "/topics/global", null);
-			pubSub.Subscribe (token, "/topics/jobs", null);
+           
+            // TODO if a Activity is specified,
+            // and general annonces in this activity are accepted:
+            // 
+            // pubSub.Subscribe(token, "/topics/jobs/"+ActivityCode, null);
 		}
 	}
 	

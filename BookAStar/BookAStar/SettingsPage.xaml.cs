@@ -24,6 +24,7 @@ namespace BookAStar
 
             this.Musical = MainSettings.Musical;
             this.Environ = MainSettings.Environ;
+            this.BindingContext = this;
 
             AddAccountBtn.Clicked += AddAccountBtn_Clicked;
 

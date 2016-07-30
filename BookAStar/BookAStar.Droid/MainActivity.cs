@@ -22,6 +22,7 @@ using BookAStar.Model.Auth.Account;
 using BookAStar.Droid.OAuth;
 using Yavsc.Helpers;
 using Yavsc.Models.Identity;
+using static Android.Content.Res.Resources;
 
 namespace BookAStar.Droid
 {
@@ -37,8 +38,11 @@ namespace BookAStar.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             global::Xamarin.FormsMaps.Init(this, bundle);
             LoadApplication(new App(this));
+          /*  var x = typeof(Themes.DarkThemeResources);
+            x = typeof(Themes.LightThemeResources);
+            x = typeof(Themes.Android.UnderlineEffect); */
         }
-
+        
 
         public bool EnablePushNotifications(bool enable)
         {
@@ -293,7 +297,8 @@ namespace BookAStar.Droid
         public TAnswer InvokeApi<TAnswer>(string method, object arg)
         {
             using (var m =
-                new SimpleJsonPostMethod(method,
+                new SimpleJsonPostMethod(
+                    method, "Bearer "+
                 MainSettings.CurrentUser.YavscTokens.AccessToken
                 ))
             {
@@ -304,9 +309,10 @@ namespace BookAStar.Droid
         public object InvokeApi(string method, object arg)
         {
             using (var m =
-                new SimpleJsonPostMethod(method,
+                new SimpleJsonPostMethod(
+                    method, "Bearer " +
                 MainSettings.CurrentUser.YavscTokens.AccessToken
-                ))
+                )) 
             {
                 return m.InvokeJson(arg);
             }
