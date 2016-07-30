@@ -96,7 +96,7 @@ namespace Yavsc.Controllers
                 );
             var pro = _context.Performers.Include(
                 x => x.Performer).FirstOrDefault(
-                x => x.PerfomerId == id
+                x => x.PerformerId == id
             );
             if (pro == null)
                 return HttpNotFound();
@@ -107,7 +107,7 @@ namespace Yavsc.Controllers
             return View(new BookQuery(new Location(),DateTime.Now.AddHours(4))
             {
                 PerformerProfile = pro,
-                PerformerId = pro.PerfomerId,
+                PerformerId = pro.PerformerId,
                 ClientId = userid,
                 Client = user
             });
@@ -129,7 +129,7 @@ namespace Yavsc.Controllers
                 u => u.Performer
             ).Include( u => u.Performer.Devices)
             .FirstOrDefault(
-                x => x.PerfomerId == command.PerformerId
+                x => x.PerformerId == command.PerformerId
             );
             command.PerformerProfile = pro;
             var user = await _userManager.FindByIdAsync(
@@ -152,12 +152,14 @@ namespace Yavsc.Controllers
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
                         var sregids = string.Join(",",regids);
-                        _logger.LogWarning($"ApiKey: {_googleSettings.ApiKey} {sregids}");
                         grep = await _GCMSender.NotifyAsync(_googleSettings,regids,yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile
                     // if (grep==null || grep.success<=0 || grep.failure>0)
+                    ViewBag.GooglePayload=grep;
+                    if (grep!=null)
+                      _logger.LogWarning($"Performer: {command.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
@@ -166,7 +168,8 @@ namespace Yavsc.Controllers
                         $"{yaev.Description}\r\n-- \r\n{yaev.Comment}\r\n"
                     );
                 }
-                return RedirectToAction("Index");
+                ViewBag.GoogleSettings = _googleSettings;
+                return View("CommandConfirmation",command);
             }
             ViewBag.GoogleSettings = _googleSettings;
             return View(command);

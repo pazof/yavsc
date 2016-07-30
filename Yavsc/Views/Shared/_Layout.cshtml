@@ -39,12 +39,14 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
                     </button>
                     <a asp-controller="Home" asp-action="Index" class="navbar-brand">@SiteSettings.Value.Title</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a asp-controller="Home" asp-action="Index" class="navbar-link">@SR["Home"]</a></li>
+                        <li><a asp-controller="Blogspot" asp-action="Index" class="navbar-link">@SR["Blogs"]</a></li>
                         <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
                         <li><a asp-controller="Home" asp-action="Contact" class="navbar-link">@SR["Contact"]</a></li>
                     </ul>

@@ -48,10 +48,13 @@ namespace BookAStar.Droid
                     var instanceID = InstanceID.GetInstance(this);
 
 #if DEBUG
+                    // When debugging, and application data/cache is preserved, 
+                    // a previous instance comes from another application installation
+                    // and the old registration against GCM fails,
+                    // until one delete it.
                     try
                     {
                         instanceID.DeleteInstanceID();
-
                     }
                     catch(Exception ex)
                     {
@@ -97,7 +100,11 @@ namespace BookAStar.Droid
 		{
 			var pubSub = GcmPubSub.GetInstance(this);
 			pubSub.Subscribe(token, "/topics/global", null);
-			pubSub.Subscribe (token, "/topics/jobs", null);
+           
+            // TODO if a Activity is specified,
+            // and general annonces in this activity are accepted:
+            // 
+            // pubSub.Subscribe(token, "/topics/jobs/"+ActivityCode, null);
 		}
 	}
 	

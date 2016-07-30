@@ -1,20 +1,18 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
-             xmlns:local="clr-namespace:BookAStar.Views;assembly=BookAStar"
+             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
 x:Class="BookAStar.SettingsPage" 
-Title="Paramètres Booking star">
+Title="Paramètres Booking star"
+BindingContext="." >
 <ContentPage.Resources>
   <ResourceDictionary>
-    <Style TargetType="Label">
-      <Setter Property="FontSize" Value="Large"/>
-    </Style>
+      
 </ResourceDictionary>
   </ContentPage.Resources> 
   
 <StackLayout>
-      <Label Text="Compte utilisateur" />
-      <Label x:Name="UserNameLabel" Text="{Binding ActiveUserName}"  />
+      <Label Text="Compte utilisateur" StyleClass="Header"/>
   
       <ListView x:Name="AccountListView"
                 SeparatorVisibility="Default"
@@ -44,57 +42,17 @@ Title="Paramètres Booking star">
 
       </ListView>
       
-      <StackLayout Orientation="Horizontal">
-        <Label Text="Status" VerticalOptions="Start"
-          XAlign="Center" IsVisible="true"
-          FontSize="Large" FontAttributes="Bold" TextColor="Yellow" />
-        <Label Text="Recevoir les notifications push"/>
+      <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+        <Label Text="Recevoir les notifications push" StyleClass="Header"/>
         <Switch x:Name="pushstatus" />
       </StackLayout>
+  
+  <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+    <Label Text="Recevoir les demandes de devis de la part de professionnels uniquement"
+           StyleClass="Header"/>
+    <Switch x:Name="restrictToPro" />
+  </StackLayout>
 
-      <Label Text="Genres Musicaux"/>
-
-      <ListView VerticalOptions="Start" x:Name="MusicalListView" 
-        ItemsSource="{Binding Musical}" 
-        >
-      <ListView.Header><StackLayout></StackLayout></ListView.Header>
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <ViewCell>
-					<ViewCell.View>
-              <StackLayout Orientation="Horizontal">
-                <Label Text="{Binding Key}" TextColor="Silver" FontAttributes="Italic"></Label>
-                <Slider Value="{Binding Value}" HorizontalOptions="FillAndExpand" ></Slider>
-              </StackLayout>
-					</ViewCell.View>
-            </ViewCell>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      <ListView.Footer><StackLayout></StackLayout></ListView.Footer>
-      </ListView>
-
-      <Label Text="Lieux de prédileciton" />
-  <ListView x:Name="EnvironListView"
-    ItemsSource="{Binding Environ}"         >
-    <ListView.Header>
-      <StackLayout></StackLayout>
-    </ListView.Header>
-    <ListView.ItemTemplate>
-      <DataTemplate>
-        <ViewCell>
-          <ViewCell.View>
-            <StackLayout Orientation="Horizontal">
-              <Label Text="{Binding Key}" TextColor="Silver" FontAttributes="Italic"></Label>
-              <Slider Value="{Binding Value}" HorizontalOptions="FillAndExpand" ></Slider>
-            </StackLayout>
-          </ViewCell.View>
-        </ViewCell>
-      </DataTemplate>
-    </ListView.ItemTemplate>
-    <ListView.Footer>
-      <StackLayout></StackLayout>
-    </ListView.Footer>  
-  </ListView>
-  <Button x:Name="BtnViewDeviceInfo" Text="Device info"></Button>
+  <Button x:Name="BtnViewDeviceInfo" Text="Device info" StyleClass="Info"></Button>
 </StackLayout>
 </ContentPage>

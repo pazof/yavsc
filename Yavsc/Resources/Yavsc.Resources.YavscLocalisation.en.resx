@@ -251,9 +251,11 @@
   <data name="Person"><value>Person</value></data>
   <data name="Photo"><value>Photo</value></data>
   <data name="PhotoUpdated"><value>Photo updated</value></data>
+  <data name="PleaseCheckYourEmail"><value>Please check your email to reset your password.</value></data>
   <data name="PleaseConfirmYourNewPassword"><value>Please confirm your new password</value></data>
   <data name="PleaseFillInABody"><value>Please fill in a body</value></data>
   <data name="PleaseFillInAReason"><value>Please, fill in a reason</value></data>
+  
   <data name="Posted"><value>Posted</value></data>
   <data name="PreferedDate"><value>Prefered date</value></data>
   <data name="prestation"><value>prestation</value></data>

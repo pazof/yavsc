@@ -23,10 +23,41 @@
     <script>
 
      $(document).ready(function(){
+var gmap = new google.maps.Map(document.getElementById('map'), {
+	    zoom: 16,
+	    center: { lat: 48.862854, lng: 2.2056466 }
+	  });
+    var marker;
+    function chooseLoc(loc) {
+        $('#Location_Address').val(loc.formatted_address);
+        var pos = loc.geometry.location;
+        var lat = new Number(pos.lat);
+        var lng = new Number(pos.lng);
+        $('#OrganizationAddress_Latitude').val(lat.toLocaleString());
+        $('#OrganizationAddress_Longitude').val(lng.toLocaleString());
+        gmap.setCenter(pos);
+        if (marker) { 
+            marker.setMap(null);
+        }
+        marker = new google.maps.Marker({
+            map: gmap,
+            draggable: true,
+            animation: google.maps.Animation.DROP,
+            position: pos
+            });
+        google.maps.event.addListener(marker, 'dragend', function() {
+            // TODO reverse geo code
+            var pos = marker.getPosition();
+                $('#OrganizationAddress_Latitude').val(pos.lat);
+                $('#OrganizationAddress_Longitude').val(pos.lng);
+        });
+        $('#Location_Address').valid();
+        return true;
+    };
 
           $('#Location_Address').geocode( { submit: 'btngeocode' ,
-          inputLatitude: 'Location_Longitude',
-          inputLongitude: 'Location_Latitude',
+          inputLatitude: 'OrganizationAddress_Longitude',
+          inputLongitude: 'OrganizationAddress_Latitude',
           combo: 'dropdownItems1',
           onValidated: function (e) {
               if (e.success) {
@@ -44,15 +75,35 @@
    } } );
 
 
-          $.validator.addMethod("geocode", function(value, element) {
-             console.log("here"); return $(element).geocodeAddress();});
-          $("#FrmSetAct").validator({options: {
-              errors: {
-                 match: 'Non conforme.',
-                 minlength: 'Pas assez long.',
-                 geocode: 'Adresse non reconnue par Google.'
-              }
-          }})
+          $('#OrganizationAddress').rules("add",
+    {
+        remote: {
+            url: 'http://maps.googleapis.com/maps/api/geocode/json',
+            type: 'get',
+            data: {
+                sensor: false,
+                address: function () { return $('#Location_Address').val() }
+                },
+            dataType: 'json',
+            dataFilter: function(datastr,type) {
+                $('#Location_combo').html("");
+                var data = JSON.parse(datastr);
+                data.results.forEach(function(element) {
+                    if (element.formatted_address !== $('#Location_Address').val()) {
+                        $('<li>'+element.formatted_address+'</li>')
+                        .data("geoloc",element)
+                        .click(function() { chooseLoc($(this).data("geoloc")) })
+                        .appendTo($('#Location_combo'));}});
+                return (data.status === 'OK') && (data.results.length == 1);
+                },
+            error: function(xhr, textStatus, errorThrown)
+                {
+                console.log('ajax loading error ... '+textStatus+' ... '+ errorThrown);
+                return false;
+                }
+         }
+    });
+
     });
     </script>
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
@@ -63,7 +114,7 @@
 @{ await Html.RenderPartialAsync("_PerformerPartial", Model) ; }
 
 <form id="FrmSetAct" asp-controller="Manage" asp-action="SetActivity" method="post" class="form-horizontal" role="form">
-    <h4>Choose below your main activity:</h4>
+    <h4>@SR["Choose below your main activity"]:</h4>
     <hr />
     <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
     <div class="form-group">
@@ -92,11 +143,11 @@
      </div>
      <div class="form-group">
 
-        <label asp-for="AcceptGeoLocalisation" class="col-md-2 control-label"></label>
+        <label asp-for="AcceptGeoLocalization" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="AcceptGeoLocalisation" class="form-control" />
+            <input asp-for="AcceptGeoLocalization" class="form-control" />
 
-            <span asp-validation-for="AcceptGeoLocalisation" class="text-danger"></span>
+            <span asp-validation-for="AcceptGeoLocalization" class="text-danger"></span>
         </div>
      </div>
      <div class="form-group">
@@ -146,17 +197,17 @@
      </div>
      <div class="form-group">
 
-        <label asp-for="OrganisationAddress.Address" class="col-md-2 control-label"></label>
+        <label asp-for="OrganizationAddress.Address" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="OrganisationAddress.Address" asp-items=@ViewBag.Activities class="form-control" type="text" />
+            <input asp-for="OrganizationAddress.Address" class="form-control" type="text" />
 
-            <span asp-validation-for="OrganisationAddress.Address" class="text-danger"></span>
+            <span id="AddressError" asp-validation-for="OrganizationAddress.Address" class="text-danger"></span>
             <div id="map"></div>
         </div>
      </div>
-        @Html.Hidden("OrganisationAddress.Latitude")
-        @Html.Hidden("OrganisationAddress.Longitude")
-        @Html.Hidden("PerfomerId")
+        @Html.Hidden("OrganizationAddress.Latitude")
+        @Html.Hidden("OrganizationAddress.Longitude")
+        @Html.Hidden("PerformerId")
     <button type="submit" class="btn btn-default">Save these settings</button>
 
 </form>

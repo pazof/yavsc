@@ -1,3 +1,5 @@
+
+using System;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
@@ -29,13 +31,16 @@ public class GCMController : Controller
         [FromBody] GoogleCloudMobileDeclaration declaration)
     {
         var uid = User.GetUserId();
+        
         _logger.LogWarning($"Registering device with id:{declaration.DeviceId} for {uid}");
         if (ModelState.IsValid)
         {
-            if (_context.GCMDevices.Any(d => d.DeviceId == declaration.DeviceId))
+            var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
+            var deviceAlreadyRegistered = (alreadyRegisteredDevice!=null);
+            if (deviceAlreadyRegistered)
             {
-                var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
                 // Override an exiting owner
+                alreadyRegisteredDevice.DeclarationDate = DateTime.Now;
                 alreadyRegisteredDevice.DeviceOwnerId = uid;
                 alreadyRegisteredDevice.GCMRegistrationId = declaration.GCMRegistrationId;
                 alreadyRegisteredDevice.Model = declaration.Model;
@@ -46,11 +51,12 @@ public class GCMController : Controller
             }
             else
             {
+                declaration.DeclarationDate = DateTime.Now;
                 declaration.DeviceOwnerId = uid;
                 _context.GCMDevices.Add(declaration);
                 _context.SaveChanges();
             }
-            return Ok();
+            return Json(new { IsAnUpdate = deviceAlreadyRegistered });
         }
         return new BadRequestObjectResult(ModelState);
     }

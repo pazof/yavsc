@@ -1,0 +1,21 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "Yavsc Client Api",
+  "authors": [
+    "Paul Schneider"
+  ],
+  "tags": [
+    ""
+  ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "tooling": {
+    "defaultNamespace": "Yavsc"
+  },
+  "dependencies": {
+    "Microsoft.AspNet.SignalR.Client.Portable": "2.0.1"
+  },
+  "frameworks": {
+    "net451": {}
+  }
+}

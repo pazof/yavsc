@@ -132,8 +132,9 @@
   <data name="AskForAnEstimate"><value>Demander un devis</value></data>
   <data name="AttachedFiles"><value>Fichiers attachées</value></data>
   <data name="AuthenticatedOnly"><value>Seuls les utilisateurs authentifiés peuvent accèder à cette information.</value></data>
-  <data name="Author"><value>Author</value></data>
+  <data name="Author"><value>Auteur</value></data>
   <data name="available"><value>disponible</value></data>
+  <data name="Back to List"><value>Retour à la liste</value></data>
   <data name="Basket"><value>Panier</value></data>
   <data name="Bill edition"><value>Édition d'un article</value></data>
   <data name="Bill removal"><value>Suppression d'un article</value></data>
@@ -153,6 +154,7 @@
   <data name="Change user name form"><value>Formulaire de changement de pseudonyme (avatar, le nom publique de ce compte utilisateur ici)</value></data>
   <data name="Change your account settings"><value>Modifiez les paramètres de votre compte</value></data>
   <data name="Connect using"><value>Se connecter en utilisant</value></data>
+  <data name="Choose below your main activity"><value>Choisissez ci-après votre activité principale</value></data>
   <data name="ChooseADescription"><value>S'il vous plait, choisissez une description.</value></data>
   <data name="ChooseATitle"><value>S'il vous plait, choisissez un titre.</value></data>
   <data name="ChooseADateInTheFutur"><value>S'il vous plait, choisissez une date dans le futur.</value></data>
@@ -160,12 +162,16 @@
   <data name="Ciffer"><value>Chiffre</value></data>
   <data name="Circles"><value>Cercles</value></data>
   <data name="Click action"><value>Action sur click</value></data>
+  <data name="Click here to log in"><value>Cliquez ici pour vous identifier</value></data>
+  
   <data name="Comment"><value>Commentaire</value></data>
   <data name="Consultant"><value>Consultant</value></data>
   <data name="ContactAPerformer"><value>Contactez un préstataire</value></data>
+  <data name="Content"><value>Contenu</value></data>
   <data name="Count"><value>Nombre</value></data>
   <data name="CouldNotConvertVToDouble"><value>La convertion de '{0}' en 'double' a été impossible.</value></data>
   <data name="Create"><value>Créer</value></data>
+  <data name="Create a new article"><value>Créer un nouvel article</value></data>
   <data name="Create a new account"><value>Créer un nouveau compte</value></data>
   <data name="Credits"><value>Crédits</value></data>
   <data name="Date search"><value>Demande de rendez-vous</value></data>
@@ -190,20 +196,23 @@
   <data name="EndDate"><value>Date de fin</value></data>
   <data name="EndHour"><value>Heure de fin</value></data>
   <data name="email"><value>e-mail</value></data>
+  <data name="Enter your email."><value>Saisissez votre email.</value></data>
   <data name="entries"><value>entrées</value></data>
   <data name="Estimate"><value>Estimer</value></data>
   <data name="Estimate_not_found"><value>Devis non trouvé</value></data>
   <data name="EstimateWanted"><value>Demande de devis</value></data>
-  <data name="EventDate"><value>Date de l'évennement</value></data>
+  <data name="Event date"><value>Date de l'évennement</value></data>
   <data name="EventWebPage"><value>Page web de l'événement</value></data>
   <data name="ExistantDB"><value>Base de données éxistante</value></data>
   <data name="External Logins"><value>Inscriptions externes</value></data>
   <data name="FillInAFutureDate"><value>Veuillez, s'il vous plait, utiliser une date future.</value></data>
   <data name="Fill in your book query"><value>Saisissez votre demande de rendez-vous</value></data>
   <data name="Forbidden"><value>Contenu à accès restreint</value></data>
-
-  <data name="Forgot your password"><value>Mot de passe oublié</value></data>
+  <data name="Forgot your password?"><value>Mot de passe perdu?</value></data>
+  <data name="Forgot Password Confirmation."><value>Confirmation mot de passe perdu.</value></data>
   <data name="from"><value>provenant de</value></data>
+  <data name="GCM Notification sending failed"><value>L'envoi du message push a échoué</value></data>
+  <data name="GCM Notifications sent"><value>Message push envoyé</value></data>
   <data name="GoogleDidntGeoLocalized"><value>Google n'a pas pu identifier ce lieu</value></data>
   <data name="Google calendar"><value>Agenda Google</value></data>
   <data name="Google error"><value>Erreur Google : {0}</value></data>
@@ -235,6 +244,7 @@
   <data name="Members"><value>Membres</value></data>
   <data name="Message sent"><value>Votre message a été envoyé</value></data>
   <data name="MinDate"><value>Date minimale du rendez-vous</value></data>
+  <data name="Modified"><value>Modifié</value></data>
   <data name="Modify"><value>Modifier</value></data>
   <data name="Modify settings"><value>Modifier les paramètres</value></data>
 
@@ -266,9 +276,12 @@
   <data name="Person"><value>Personne</value></data>
   <data name="Photo"><value>Photo</value></data>
   <data name="PhotoUpdated"><value>Photo mise à jour</value></data>
+  <data name="Please"><value>S'il vous plait</value></data>
+  <data name="PleaseCheckYourEmail"><value>S'il vous plait, veuillez verifier votre boite au lettres, pour pouvoir ré-initialiser votre mot de passe.</value></data>
   <data name="PleaseConfirmYourNewPassword"><value>S'il vous plait, veuillez confirmer votre nouveau mot de passe.</value></data>
   <data name="PleaseFillInABody"><value>S'il vous plait, saisissez un corps de message</value></data>
   <data name="PleaseFillInAReason"><value>S'il vous plait, saisissez une réson, un sujet pour votre message</value></data>
+  <data name="Please reset your password by following this link:"><value>Veuillez s'il vous plait utiliser le lien suivant pour ré-initialiser votre mot de passe:</value></data>
   <data name="Posted"><value>Posté</value></data>
   <data name="PreferedDate"><value>Date souhaitée</value></data>
   <data name="PresationLocation"><value>Lieu de la présation: {0}.\n</value></data>
@@ -278,6 +291,7 @@
   <data name="prestation"><value>prestation</value></data>
   <data name="ProviderId"><value>Identifiant du fournisseur</value></data>
   <data name="ProviderName"><value>Nom du fournisseur</value></data>
+  <data name="Rate"><value>Cote</value></data>
   <data name="ReadMore"><value>Lire la suite ...</value></data>
   <data name="reason"><value>raison</value></data>
   <data name="Register"><value>S'inscrire</value></data>
@@ -289,7 +303,8 @@
   <data name="Remove"><value>Supprimer</value></data>
   <data name="Remove my professional profile"><value>Supprimer mon profile professionnel</value></data>
   <data name="Role"><value>Rôle</value></data>
-  <data name="ResetPassword"><value>Ré-initialiser votre mot de passe</value></data>
+  <data name="Reset Password"><value>Ré-initialiser votre mot de passe</value></data>
+  <data name="Reset password confirmation"><value>Confirmation de ré-initialiser du mot de passe</value></data>
   <data name="role created"><value>Rôle créé</value></data>
   <data name="RoleName"><value>Nom du rôle </value></data>
   <data name="Save these settings"><value>Save these settings</value></data>
@@ -340,6 +355,9 @@
   <data name="YouNeedToBeAuthenticatedIOToContact"><value>Vous devez vous authentifier pour pouvoir demander un devis
       à un préstataire.</value></data>
   <data name="younotadmin"><value>Vous n'êtes pas administrateur</value></data>
+  <data name="Your book query"><value>Votre demande de rendez-vous</value></data>
+  <data name="Your password has been reset."><value>Votre mote de passe a été mis à jour.</value></data>
+  
   <data name="YourEstimates"><value>Vos Devis</value></data>
   <data name="YourMEACode"><value>Votre activité</value></data>
   <data name="YourNeed"><value>Votre besoin</value></data>
@@ -348,5 +366,4 @@
   <data name="YourPosts"><value>Vos publications</value></data>
   <data name="YourProfile"><value>Votre profile</value></data>
   <data name="YourMessageHasBeenSent"><value>Votre messge a été envoyé</value></data>
-
 </root>
