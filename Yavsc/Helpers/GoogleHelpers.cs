@@ -62,7 +62,7 @@ namespace Yavsc.Helpers
             request.Headers.Authorization = new AuthenticationHeaderValue("key", googleSettings.ApiKey);
             var msg = new MessageWithPayload<YaEvent>()
             {
-                notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "event" },
+                notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "icon" },
                 data = evpub,
                 registration_ids = regids.ToArray()
             };
