@@ -4,12 +4,13 @@
 }
 @section header{
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    <script src="~/lib/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
-    <script src="~/lib/bootstrap-datepicker/bootstrap-datepicker-locales/bootstrap-datepicker.fr.min.js" charset="UTF-8"></script>
+    
     <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
+    <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
 
-    <link rel="stylesheet" href="~/css/bootstrap-datepicker/bootstrap-datepicker3.standalone.min.css">    
-    <style>
+<style>
       #map {
         width: 100%;
         height: 250px;
@@ -42,8 +43,8 @@ $(document).ready(function(){
         var pos = loc.geometry.location;
         var lat = new Number(pos.lat);
         var lng = new Number(pos.lng);
-        $('#Location_Latitude').val(lat.toLocaleString());
-        $('#Location_Longitude').val(lng.toLocaleString());
+        $('#Location_Latitude').val(lat.toLocaleString('en'));
+        $('#Location_Longitude').val(lng.toLocaleString('en'));
         gmap.setCenter(pos);
         if (marker) { 
             marker.setMap(null);
@@ -84,8 +85,15 @@ $(document).ready(function(){
                         $('<li>'+element.formatted_address+'</li>')
                         .data("geoloc",element)
                         .click(function() { chooseLoc($(this).data("geoloc")) })
-                        .appendTo($('#Location_combo'));}});
-                return (data.status === 'OK') && (data.results.length == 1);
+                        .appendTo($('#Location_combo'));}
+                    else {  }
+                });
+                if  ((data.status === 'OK') && (data.results.length == 1))
+                { 
+                    chooseLoc(data.results[0]);
+                    return true;
+                }
+                return false;
                 },
             error: function(xhr, textStatus, errorThrown)
                 {
@@ -110,11 +118,29 @@ $(document).ready(function(){
     @SR["EventDate"]
 </label></legend>
             <div class="col-md-10">
-                <input asp-for="EventDate" class="form-control" type="date" id="EventDate"
-                data-val-required=@SR["ChooseAnEventDate"]
-                 />
-                <span asp-validation-for="EventDate" class="text-danger" >
-                </span>
+                <div class="container">
+    <div class="row">
+        <div class='col-sm-6'>
+                <div class='input-group date' id='datetimepicker2'>
+                    <input type='text' class="form-control" name="EventDate" id="EventDate"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                $('#datetimepicker2').datetimepicker({
+                    locale: 'fr',
+                    format : "YYYY/MM/DD hh:mm"
+                });
+            });
+        </script>
+         <span asp-validation-for="EventDate" class="text-danger" >
+         </span>
+    </div>
+</div>
+               
             </div>
             </fieldset>
         </div>
