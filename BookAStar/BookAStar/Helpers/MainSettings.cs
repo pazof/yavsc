@@ -58,7 +58,7 @@ namespace BookAStar
 			};
         private static readonly Dictionary<string, double> environ = new Dictionary<string, double>();
 
-        public static readonly string YavscApiUrl = "dev.pschneider.fr";
+        public static readonly string YavscApiUrl = "http://dev.pschneider.fr/api";
 
 		#endregion
 
@@ -78,9 +78,7 @@ namespace BookAStar
                 // Inform the server of it.
                 if (oldregid != value)
                 {
-                    Task.Run( async () => {
-                        await App.CurrentApp.PostDeviceInfo();
-                    });
+                    App.CurrentApp.PostDeviceInfo();
                 }
             }
             get { return AppSettings.GetValueOrDefault<string>(GoogleRegIdKey);  }
@@ -109,8 +107,7 @@ namespace BookAStar
                 return accountList;
             }
         }
-
-        private static User currentUser = null;
+        
         public static User CurrentUser { get
             {
                 var uname = UserName;
@@ -121,8 +118,7 @@ namespace BookAStar
             }
             set
             {
-                var olduserid = currentUser?.Id;
-                currentUser = value;
+                var olduserid = CurrentUser?.Id;
                 AppSettings.AddOrUpdateValue<string>(userNameKey, value?.UserName);
                 // TODO if it changes, for a valid 
                 // ident, and we've got a GoogleRedId, inform the server
@@ -131,11 +127,10 @@ namespace BookAStar
                 {
                     if (olduserid != value.Id)
                     {
-                        Task.Run(async () => {
-                            await App.CurrentApp.PostDeviceInfo();
-                        });
+                        App.CurrentApp.PostDeviceInfo();
                     }
                 }
+                // TODO else Unregister the device
             }
         }
 

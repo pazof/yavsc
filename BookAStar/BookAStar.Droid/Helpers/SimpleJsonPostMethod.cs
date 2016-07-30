@@ -48,7 +48,7 @@ namespace Yavsc.Helpers
 			request.SendChunked = true;
 			request.TransferEncoding = "UTF-8";
             if (authorizationHeader!=null) 
-                request.Headers.Add($"Authorization: Bearer {authorizationHeader}");
+                request.Headers.Add($"Authorization: {authorizationHeader}");
         }
 
         public static string BasePath { get; private set; } = "http://dev.pschneider.fr/api/";
