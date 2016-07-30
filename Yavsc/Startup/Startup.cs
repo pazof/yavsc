@@ -83,7 +83,11 @@ namespace Yavsc
             {
                 var supportedCultures = new[]
                 {
-                    new CultureInfo("en-US"),
+                    new CultureInfo("en")
+                };
+                var supportedUICultures = new[]
+                {
+                    new CultureInfo("en"),
                     new CultureInfo("fr")
                 };
 
@@ -92,7 +96,7 @@ namespace Yavsc
                 options.SupportedCultures = supportedCultures;
 
                 // These are the cultures the app supports for UI strings, i.e. we have localized resources for.
-                options.SupportedUICultures = supportedCultures;
+                options.SupportedUICultures = supportedUICultures;
 
                 // You can change which providers are configured to determine the culture for requests, or even add a custom
                 // provider with your own logic. The providers will be asked in order to provide a culture for each request,
@@ -289,7 +293,7 @@ namespace Yavsc
 
             app.UseWebSockets();
 
-            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"fr"));
+            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"en"));
 
             app.UseMvc(routes =>
             {
