@@ -3,4 +3,7 @@
   <PropertyGroup>
     <AndroidDesignerPreferredDevice>Nexus 4</AndroidDesignerPreferredDevice>
   </PropertyGroup>
+  <PropertyGroup>
+    <ReferencePath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\MonoAndroid\v6.0\</ReferencePath>
+  </PropertyGroup>
 </Project>

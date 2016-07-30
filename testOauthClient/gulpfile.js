@@ -48,3 +48,17 @@ gulp.task("min:css", function () {
 gulp.task("min", ["min:js", "min:css"]);
 gulp.task('watch', shell.task(['MONO_OPTIONS=--debug ASPNET_ENV=Development dnx-watch web --configuration=Debug --server.urls=http://*:5002']))
 
+var program = "testOauthClient";
+var port = 55555;
+
+gulp.task('default', ['debug']);
+
+gulp.task('build', function() {
+    return gulp
+        .src('./**/*.cs')
+        .pipe(msc(['-fullpaths', '-debug', '-target:exe', '-out:' + program]));
+});
+
+gulp.task('debug', ['build'], function(done) {
+    return mono.debug({ port: port, program: program}, done);
+});

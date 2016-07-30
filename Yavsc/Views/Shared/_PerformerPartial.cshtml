@@ -1,8 +1,10 @@
 @model PerformerProfile
 
 <div class="performer @(Model.Active?"active":"inactive")">
-    @Model.Performer?.UserName (rating: @Model.Rate%)
+     @if (Model.Performer != null) {
+    
      <ul>
+         <li>@Model.Performer.UserName (rating: @Model.Rate%)</li>
         @if (Model.MinDailyCost != null) {
             <li>@SR["MinDailyCost"]: @Model.MinDailyCost&euro;</li>
         }
@@ -29,4 +31,5 @@
             </li>
             }
     </ul>
+     }
 </div>

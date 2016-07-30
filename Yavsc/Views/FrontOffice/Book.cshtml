@@ -8,7 +8,7 @@
 @foreach (var profile in Model) {
     await Html.RenderPartialAsync("_PerformerPartial", profile) ; 
     <form action="~/Command/Create" >
-        <input type="hidden" name="id" value="@profile.PerfomerId" />
+        <input type="hidden" name="id" value="@profile.PerformerId" />
    <input type="submit" value="@SR["Book this performer"]"/>
         </form>
 }

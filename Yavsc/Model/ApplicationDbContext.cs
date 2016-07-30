@@ -25,7 +25,10 @@ namespace Yavsc.Models
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.Entity<Contact>().HasKey(x => new { x.OwnerId, x.UserId });
             builder.Entity<BookQuery>().Property(x=>x.CreationDate).HasDefaultValueSql("LOCALTIMESTAMP");
+            builder.Entity<Blog>().Property(x=>x.posted).HasDefaultValueSql("LOCALTIMESTAMP");
+            builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
         }
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(Startup.ConnectionString);
@@ -72,7 +75,7 @@ namespace Yavsc.Models
         /// <returns></returns>
         public DbSet<BookQuery> BookQueries { get; set; }
         public DbSet<PerformerProfile> Performers { get; set; }
-        public DbSet<RDVEstimate> Estimates { get; set; }
+        public DbSet<Estimate> Estimates { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
         public DbSet<BalanceImpact> BankBook { get; set; }
         public DbSet<Location> Map { get; set; }
@@ -164,6 +167,6 @@ namespace Yavsc.Models
                 app=>app.Id == clientId);
         }
 
-        
+        public DbSet<ExceptionSIREN> ExceptionsSIREN { get; set; }
     }
 }

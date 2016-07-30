@@ -83,7 +83,7 @@ namespace BookAStar
             else deviceInfoPage.Focus();
         }
 
-        public async Task PostDeviceInfo()
+        public void PostDeviceInfo()
         {
             var res = PlateformSpecificInstance.InvokeApi(
                 "gcm/register", 

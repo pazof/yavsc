@@ -13,23 +13,6 @@ namespace Yavsc.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
 
-            modelBuilder.Entity("GoogleCloudMobileDeclaration", b =>
-                {
-                    b.Property<string>("DeviceId");
-
-                    b.Property<string>("DeviceOwnerId");
-
-                    b.Property<string>("GCMRegistrationId");
-
-                    b.Property<string>("Model");
-
-                    b.Property<string>("Platform");
-
-                    b.Property<string>("Version");
-
-                    b.HasKey("DeviceId");
-                });
-
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRole", b =>
                 {
                     b.Property<string>("Id");
@@ -285,14 +268,14 @@ namespace Yavsc.Migrations
 
                     b.Property<int>("Count");
 
-                    b.Property<long?>("RDVEstimateId");
+                    b.Property<long?>("EstimateId");
 
                     b.Property<decimal>("UnitaryCost");
 
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Billing.RDVEstimate", b =>
+            modelBuilder.Entity("Yavsc.Models.Billing.Estimate", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
@@ -312,13 +295,19 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Billing.ExceptionSIREN", b =>
+                {
+                    b.Property<string>("SIREN");
+
+                    b.HasKey("SIREN");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Blog", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AuthorId")
-                        .IsRequired();
+                    b.Property<string>("AuthorId");
 
                     b.Property<string>("bcontent");
 
@@ -326,7 +315,9 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("photo");
 
-                    b.Property<DateTime>("posted");
+                    b.Property<DateTime>("posted")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("Relational:GeneratedValueSql", "LOCALTIMESTAMP");
 
                     b.Property<int>("rate");
 
@@ -400,6 +391,28 @@ namespace Yavsc.Migrations
                     b.HasKey("OwnerId", "UserId");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Identity.GoogleCloudMobileDeclaration", b =>
+                {
+                    b.Property<string>("DeviceId");
+
+                    b.Property<DateTime>("DeclarationDate")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("Relational:GeneratedValueSql", "LOCALTIMESTAMP");
+
+                    b.Property<string>("DeviceOwnerId");
+
+                    b.Property<string>("GCMRegistrationId")
+                        .IsRequired();
+
+                    b.Property<string>("Model");
+
+                    b.Property<string>("Platform");
+
+                    b.Property<string>("Version");
+
+                    b.HasKey("DeviceId");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Market.BaseProduct", b =>
                 {
                     b.Property<long>("Id")
@@ -465,9 +478,9 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Workflow.PerformerProfile", b =>
                 {
-                    b.Property<string>("PerfomerId");
+                    b.Property<string>("PerformerId");
 
-                    b.Property<bool>("AcceptGeoLocalisation");
+                    b.Property<bool>("AcceptGeoLocalization");
 
                     b.Property<bool>("AcceptNotifications");
 
@@ -484,7 +497,7 @@ namespace Yavsc.Migrations
 
                     b.Property<long?>("OfferId");
 
-                    b.Property<long>("OrganisationAddressId");
+                    b.Property<long>("OrganizationAddressId");
 
                     b.Property<int>("Rate");
 
@@ -494,14 +507,7 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("WebSite");
 
-                    b.HasKey("PerfomerId");
-                });
-
-            modelBuilder.Entity("GoogleCloudMobileDeclaration", b =>
-                {
-                    b.HasOne("Yavsc.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("DeviceOwnerId");
+                    b.HasKey("PerformerId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
@@ -567,12 +573,12 @@ namespace Yavsc.Migrations
                         .WithMany()
                         .HasForeignKey("BookQueryId");
 
-                    b.HasOne("Yavsc.Models.Billing.RDVEstimate")
+                    b.HasOne("Yavsc.Models.Billing.Estimate")
                         .WithMany()
-                        .HasForeignKey("RDVEstimateId");
+                        .HasForeignKey("EstimateId");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Billing.RDVEstimate", b =>
+            modelBuilder.Entity("Yavsc.Models.Billing.Estimate", b =>
                 {
                     b.HasOne("Yavsc.Models.Booking.BookQuery")
                         .WithMany()
@@ -626,6 +632,13 @@ namespace Yavsc.Migrations
                         .HasForeignKey("OwnerId");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Identity.GoogleCloudMobileDeclaration", b =>
+                {
+                    b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("DeviceOwnerId");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Market.Service", b =>
                 {
                     b.HasOne("Yavsc.Models.Activity")
@@ -645,11 +658,11 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Location")
                         .WithMany()
-                        .HasForeignKey("OrganisationAddressId");
+                        .HasForeignKey("OrganizationAddressId");
 
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("PerfomerId");
+                        .HasForeignKey("PerformerId");
                 });
         }
     }

@@ -9,6 +9,10 @@ namespace Yavsc.Auth  {
 
     public class UserTokenProvider : Microsoft.AspNet.Identity.IUserTokenProvider<ApplicationUser>
     {
+        private MonoDataProtector protector=null;
+        public MonoDataProtector Protector {
+            get { return protector; } 
+        }
 
         public Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<ApplicationUser> manager, ApplicationUser user)
         {
@@ -27,12 +31,13 @@ namespace Yavsc.Auth  {
         {
             var por = new MonoDataProtector(Constants.ApplicationName,new string[] { purpose } );
             var userStamp = por.Unprotect(token);
-            string [] values = userStamp.Split(' ');
+            Console.WriteLine ("Unprotected: "+userStamp);
+            string [] values = userStamp.Split(';');
             return Task.FromResult ( user.Id == values[0] && user.Email == values[1] && user.UserName == values[2]);
         }
 
          public static string UserStamp(ApplicationUser user) {
-            return $"{user.Id} {user.Email} {user.UserName}";
+            return $"{user.Id};{user.Email};{user.UserName}";
         }
     }
 }

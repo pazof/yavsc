@@ -69,7 +69,7 @@ namespace Yavsc.Controllers
                 var pro = _context.Performers.Include(
                     pr => pr.Performer
                 ).FirstOrDefault(
-                    x=>x.PerfomerId == bookQuery.PerformerId
+                    x=>x.PerformerId == bookQuery.PerformerId
                 );
                 if (pro==null)
                     return HttpNotFound();
@@ -95,7 +95,7 @@ namespace Yavsc.Controllers
 
         [Produces("text/x-tex"), Authorize,
         Route("Release/Estimate-{id}.tex")]
-        public RDVEstimate Estimate(long id)
+        public Estimate Estimate(long id)
         {
             var estimate = _context.Estimates.Include(x=>x.Query).
             Include(x=>x.Query.Client).FirstOrDefault(x=>x.Id==id);

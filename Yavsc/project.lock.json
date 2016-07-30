@@ -2472,7 +2472,7 @@
           "lib/net451/MimeKit.dll": {}
         }
       },
-      "Newtonsoft.Json/9.0.1": {
+      "Newtonsoft.Json/7.0.1": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -2807,21 +2807,6 @@
         },
         "runtime": {
           "lib/WebGrease.dll": {}
-        }
-      },
-      "Yavsc.Api/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1",
-        "dependencies": {
-          "EntityFramework.Commands": "7.0.0-rc1",
-          "EntityFramework.Core": "7.0.0-rc1",
-          "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1",
-          "EntityFramework.Relational": "7.0.0-rc1",
-          "EntityFramework7.Npgsql": "3.1.0",
-          "EntityFramework7.Npgsql.Design": "3.1.0",
-          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1",
-          "Newtonsoft.Json": "9.0.1",
-          "System.Json": "4.0.20126.16343"
         }
       },
       "Zlib.Portable.Signed/1.11.0": {
@@ -5304,7 +5289,7 @@
           "lib/net451/MimeKit.dll": {}
         }
       },
-      "Newtonsoft.Json/9.0.1": {
+      "Newtonsoft.Json/7.0.1": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -5639,21 +5624,6 @@
         },
         "runtime": {
           "lib/WebGrease.dll": {}
-        }
-      },
-      "Yavsc.Api/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1",
-        "dependencies": {
-          "EntityFramework.Commands": "7.0.0-rc1",
-          "EntityFramework.Core": "7.0.0-rc1",
-          "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1",
-          "EntityFramework.Relational": "7.0.0-rc1",
-          "EntityFramework7.Npgsql": "3.1.0",
-          "EntityFramework7.Npgsql.Design": "3.1.0",
-          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1",
-          "Newtonsoft.Json": "9.0.1",
-          "System.Json": "4.0.20126.16343"
         }
       },
       "Zlib.Portable.Signed/1.11.0": {
@@ -8136,7 +8106,7 @@
           "lib/net451/MimeKit.dll": {}
         }
       },
-      "Newtonsoft.Json/9.0.1": {
+      "Newtonsoft.Json/7.0.1": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -8473,21 +8443,6 @@
           "lib/WebGrease.dll": {}
         }
       },
-      "Yavsc.Api/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1",
-        "dependencies": {
-          "EntityFramework.Commands": "7.0.0-rc1",
-          "EntityFramework.Core": "7.0.0-rc1",
-          "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1",
-          "EntityFramework.Relational": "7.0.0-rc1",
-          "EntityFramework7.Npgsql": "3.1.0",
-          "EntityFramework7.Npgsql.Design": "3.1.0",
-          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1",
-          "Newtonsoft.Json": "9.0.1",
-          "System.Json": "4.0.20126.16343"
-        }
-      },
       "Zlib.Portable.Signed/1.11.0": {
         "type": "package",
         "compile": {
@@ -8500,10 +8455,6 @@
     }
   },
   "libraries": {
-    "Yavsc.Api/1.0.0": {
-      "type": "project",
-      "path": "../Yavsc.Api/project.json"
-    },
     "Antlr/3.4.1.9004": {
       "type": "package",
       "sha512": "c1S+HBE+KYA5EBxtn25LEK02hHPH/tDQ6RviUTTCJpZIPoputtn8ArsQJy9lVJWZOnw37ufByO2Fmf1M8wpr8Q==",
@@ -10482,9 +10433,9 @@
         "MimeKit.nuspec"
       ]
     },
-    "Newtonsoft.Json/9.0.1": {
+    "Newtonsoft.Json/7.0.1": {
       "type": "package",
-      "sha512": "U82mHQSKaIk+lpSVCbWYKNavmNH1i5xrExDEquU1i6I5pV6UMOqRnJRSlKO3cMPfcpp0RgDY+8jUXHdQ4IfXvw==",
+      "sha512": "q3V4KLetMLnt1gpAVWgtXnHjKs0UG/RalBc29u2ZKxd5t5Ze4JBL5WiiYIklJyK/5CRiIiNwigVQUo0FgbsuWA==",
       "files": [
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
@@ -10494,14 +10445,12 @@
         "lib/net40/Newtonsoft.Json.xml",
         "lib/net45/Newtonsoft.Json.dll",
         "lib/net45/Newtonsoft.Json.xml",
-        "lib/netstandard1.0/Newtonsoft.Json.dll",
-        "lib/netstandard1.0/Newtonsoft.Json.xml",
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.dll",
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
-        "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll",
-        "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.xml",
-        "Newtonsoft.Json.9.0.1.nupkg",
-        "Newtonsoft.Json.9.0.1.nupkg.sha512",
+        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll",
+        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.xml",
+        "Newtonsoft.Json.7.0.1.nupkg",
+        "Newtonsoft.Json.7.0.1.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
         "tools/install.ps1"
       ]
@@ -10531,6 +10480,7 @@
       "sha512": "OseTFniKmyp76mEzOBwIKGBRS5eMoYNkMKaMXOpxx9jv88+b6mh1rSaw43vjBOItNhaLFG3d0a20PfHyibH5sw==",
       "files": [
         "lib/net40/Owin.dll",
+        "Owin.1.0.0.nupkg",
         "Owin.1.0.0.nupkg.sha512",
         "Owin.nuspec"
       ]
@@ -11409,7 +11359,6 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Yavsc.Api >= 1.0.0",
       "EntityFramework.Commands >= 7.0.0-rc1-*",
       "EntityFramework.Core >= 7.0.0-rc1-*",
       "EntityFramework.MicrosoftSqlServer >= 7.0.0-rc1-*",
@@ -11469,7 +11418,8 @@
       "PayPalButtonManagerSDK >= 2.10.109",
       "Microsoft.AspNet.Authentication.OAuth >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Mvc.Formatters.Json >= 6.0.0-rc1-final",
-      "Microsoft.AspNet.OWin >= 1.0.0-rc1-final"
+      "Microsoft.AspNet.OWin >= 1.0.0-rc1-final",
+      "System.Json >= 4.0.20126.16343"
     ],
     "DNX,Version=v4.5.1": []
   }

@@ -1,0 +1,30 @@
+@model BookQuery
+@using Yavsc.Models.Google.Messaging
+@{
+    ViewData["Title"] = SR["Command confirmation"]+" "+SR[Model.PerformerProfile.ActivityCode];
+}
+<h2>@ViewData["Title"]</h2>
+    <div class="form-horizontal">
+        <h4>@SR["Your book query"]</h4>
+        <hr />
+        <label for="EventDate">@SR["Event date"]</label>: @Html.DisplayFor(m => m.EventDate)
+        <br/>
+
+        <label for="Location">@SR["Location"]</label>: @Html.DisplayFor(m => m.Location)
+        <br/>
+
+        @if (ViewBag.GooglePayload !=null) 
+        {
+            @if (ViewBag.GooglePayload.success>0) {
+                <h4>@SR["GCM Notifications sent"]</h4>
+            }
+            else {
+                if (ViewBag.GooglePayload.failure>0)
+                    {
+                        <h4>@SR["GCM Notification sending failed"]</h4>
+                    }
+            }
+        }
+</div>
+
+
