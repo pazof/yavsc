@@ -50,3 +50,16 @@ footer {
     vertical-align: bottom;
     padding: 1.5em;
 }
+.display-field {
+    font-kerning: 2em;
+    display: inline-flex;
+}
+
+.display-label {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-stretch: condensed;
+    display: inline-flex;
+    color: rgb(127,127,127);
+    background-color: rgba(200,256,200,.4);
+
+}
