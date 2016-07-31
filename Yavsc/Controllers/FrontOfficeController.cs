@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Yavsc.Models.Booking;
 using Yavsc.Helpers;
 using Yavsc.Models.Billing;
+using System;
 
 namespace Yavsc.Controllers
 {
@@ -39,11 +40,13 @@ namespace Yavsc.Controllers
 
         public ActionResult Book(string id)
         {
-            if (id != null) {
+            if (id == null) {
+                throw new NotImplementedException("No Activity code");
+            }
+            
             ViewBag.Activities = _context.ActivityItems(id);
             ViewBag.Activity =  _context.Activities.FirstOrDefault(
-                a => a.Code == id
-            );
+                a => a.Code == id );
 
             return View(
                 _context.Performers.Include(p=>p.Performer).Where
@@ -51,14 +54,6 @@ namespace Yavsc.Controllers
                     x=>x.MinDailyCost
                 )
             );
-            }
-            ViewBag.Activities = _context.ActivityItems(null);
-
-            return View (
-                _context.Performers.Include(p=>p.Performer).Where
-                (p => p.Active).OrderBy(
-                    x=>x.MinDailyCost
-                ));
         }
 
         [Route("Book/{id}"),HttpPost]
