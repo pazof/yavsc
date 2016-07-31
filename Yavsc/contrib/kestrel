@@ -48,7 +48,6 @@ setdnxenv() {
 	ROOT=/srv/www/yavsc
     DESC="$NAME"
     PIDFILE=/var/run/kestrel-${NAME}.pid
-	export LOGFILE="${ROOT}/kestrel-${NAME}.log"
 	export MONO_OPTIONS="--server"
     # reset to specified values
     . $env
@@ -76,8 +75,9 @@ start() {
 		echo "Service already running $DESC" "$NAME"
 		log_end_msg 1  
 	else
-		log_daemon_msg "Starting service $DESC" "$ASPNET_ENV" 
-		start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -x $DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME >$LOGFILE
+		log_daemon_msg "Starting service $DESC"
+		start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -x $DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME >${ROOT}/kestrel-${NAME}.log
+		log_daemon_msg "Service $DESC started"
 		log_end_msg 0  
 	fi
   done
@@ -93,9 +93,10 @@ stop() {
 		echo Service not running $DESC
 	    log_end_msg 1  
 	else
-		log_daemon_msg "Stopping service $DESC" "$NAME" 
+		log_daemon_msg "Stopping service $DESC"
 		start-stop-daemon -K -p "$PIDFILE"
 		rm -f "$PIDFILE"
+		log_daemon_msg "$DESC stopped."
 		log_end_msg 0  
 	fi
   done
