@@ -27,10 +27,9 @@ textarea {
     font-size: large;
     line-height: 1.1;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    -webkit-text-shadow: inset 0 3px 5px rgb(0, 0, 0);
     color: white;
     background-color: rgba(0,0,0,.5); 
-  -webkit-text-shadow: inset 0 3px 5px rgb(0, 0, 0);
-          text-shadow: inset 0 3px 5px rgb(0, 0, 0);
     margin:0;
     padding:.5em;
 }
@@ -51,7 +50,7 @@ footer {
     padding: 1.5em;
 }
 .display-field {
-    font-kerning: 2em;
+    font-kerning: none;
     display: inline-flex;
 }
 
@@ -62,4 +61,8 @@ footer {
     color: rgb(127,127,127);
     background-color: rgba(200,256,200,.4);
 
+}
+
+nav {
+    background: url('/images/booking/musique-2.jpg') 0% 50%;
 }
