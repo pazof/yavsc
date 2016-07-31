@@ -20,5 +20,5 @@ DataProtection-Keys
 RSA-Params.json
 Components/
 packages/
-
+build/
 
