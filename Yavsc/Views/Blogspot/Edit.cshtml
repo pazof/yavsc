@@ -44,8 +44,8 @@
 <script>
  $(document).ready(function() {
 
-  var editortitre = new Quill('#titlecnt', {
-    modules: { toolbar: '#titletoolbar' },
+  var editortitre = new Quill('#Titlecnt', {
+    modules: { toolbar: '#Titletoolbar' },
     theme: 'snow'
   });
   var editorcontenu = new Quill('#contentcnt', {
@@ -55,31 +55,31 @@
   editortitre.on('selection-change', function(range) {
   if (range) {
     $('#contentbar').addClass('hidden');
-    $('#titletoolbar').removeClass('hidden');
+    $('#Titletoolbar').removeClass('hidden');
   }
 });
 editortitre.on('text-change',function(delta,source){
     if (source=='user')
     {
-        updateMD('title',$('#titlecnt').html())
+        updateMD('Title',$('#Titlecnt').html())
     }
 });
  editorcontenu.on('selection-change', function(range) {
   if (range) {
     $('#contentbar').removeClass('hidden');
-    $('#titletoolbar').addClass('hidden');
+    $('#Titletoolbar').addClass('hidden');
   }
 });
 editorcontenu.on('text-change',function(delta,source){
     if (source=='user')
     {
-        updateMD('bcontent',$('#contentcnt').html())
+        updateMD('Content',$('#contentcnt').html())
     }
 });
 
  $('#contentcnt').focus(function(){
     $('#contentbar').removeClass('hidden');
-    $('#titletoolbar').addClass('hidden');
+    $('#Titletoolbar').addClass('hidden');
  })
 
  Dropzone.options.postfiles= {
@@ -100,13 +100,13 @@ editorcontenu.on('text-change',function(delta,source){
 }
 <h2 > @SR["Blog post edition"] </h2>
 
-<div id="titletoolbar" class="hidden ql-snow ql-toolbar">
+<div id="Titletoolbar" class="hidden ql-snow ql-toolbar">
   <button class="ql-format-button ql-bold"></button>
   <button class="ql-format-button ql-italic"></button>
   <button class="ql-format-button ql-strike"></button>
 </div>
 
-<h2 id="titlecnt"><markdown>@Model.title</markdown></h2>
+<h2 id="Titlecnt"><markdown>@Model.Title</markdown></h2>
 
 <div id="contentbar" class="hidden ql-snow ql-toolbar">
   <button class="ql-format-button ql-bold"></button>
@@ -132,7 +132,7 @@ editorcontenu.on('text-change',function(delta,source){
 </span>
 </div>
 
-<div markdown="@Model.bcontent" base="~/@Model.Id" site="SiteSettings.Value" id="contentcnt" ></div>
+<div markdown="@Model.Content" base="~/@Model.Id" site="SiteSettings.Value" id="contentcnt" ></div>
 
 <hr>
 
@@ -146,10 +146,10 @@ editorcontenu.on('text-change',function(delta,source){
         <input type="hidden" asp-for="Id" />
         <input type="hidden" asp-for="AuthorId" />
         <div class="form-group">
-            <label asp-for="title" class="col-md-2 control-label"></label>
+            <label asp-for="Title" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="title" class="form-control" />
-                <span asp-validation-for="title" class="text-danger" />
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
@@ -160,17 +160,17 @@ editorcontenu.on('text-change',function(delta,source){
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="bcontent" class="col-md-2 control-label"></label>
+            <label asp-for="Content" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <textarea asp-for="bcontent" class="form-control" >
+                <textarea asp-for="Content" class="form-control" >
                 </textarea>
-                <span asp-validation-for="bcontent" class="text-danger" />
+                <span asp-validation-for="Content" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="visible" class="col-md-2 control-label"></label>
+            <label asp-for="Visible" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                    <input asp-for="visible" class="form-control"/>
+                    <input asp-for="Visible" class="form-control"/>
             </div>
         </div>
 

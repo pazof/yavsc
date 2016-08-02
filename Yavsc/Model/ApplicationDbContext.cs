@@ -25,7 +25,7 @@ namespace Yavsc.Models
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.Entity<Contact>().HasKey(x => new { x.OwnerId, x.UserId });
             builder.Entity<BookQuery>().Property(x=>x.CreationDate).HasDefaultValueSql("LOCALTIMESTAMP");
-            builder.Entity<Blog>().Property(x=>x.posted).HasDefaultValueSql("LOCALTIMESTAMP");
+            builder.Entity<Blog>().Property(x=>x.Posted).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
         }
         

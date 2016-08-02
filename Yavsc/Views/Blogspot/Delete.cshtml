@@ -1,13 +1,10 @@
 @model Yavsc.Models.Blog
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Delete</title>
-</head>
-<body>
+@{
+    ViewData["Title"] = "Delete";
+}
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
@@ -21,46 +18,46 @@
             @Model.Author
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.bcontent)
+            @Html.DisplayNameFor(model => model.Content)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.bcontent)
+            @Html.DisplayFor(model => model.Content)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.modified)
+            @Html.DisplayNameFor(model => model.Modified)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.modified)
+            @Html.DisplayFor(model => model.Modified)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.photo)
+            @Html.DisplayNameFor(model => model.Photo)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.photo)
+            @Html.DisplayFor(model => model.Photo)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.posted)
+            @Html.DisplayNameFor(model => model.Posted)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.posted)
+            @Html.DisplayFor(model => model.Posted)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.rate)
+            @Html.DisplayNameFor(model => model.Rate)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.rate)
+            @Html.DisplayFor(model => model.Rate)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.title)
+            @Html.DisplayNameFor(model => model.Title)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.title)
+            @Html.DisplayFor(model => model.Title)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.visible)
+            @Html.DisplayNameFor(model => model.Visible)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.visible)
+            @Html.DisplayFor(model => model.Visible)
         </dd>
     </dl>
     
@@ -71,8 +68,3 @@
         </div>
     </form>
 </div>
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}
-</body>
-</html>

@@ -12,7 +12,7 @@
 <table class="table">
     <tr>
         <th>
-            @SR[Html.DisplayNameFor(model => model.title)]
+            @SR[Html.DisplayNameFor(model => model.Title)]
         </th>
         <th>
             @SR["Author"]
@@ -26,18 +26,18 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-       @Html.DisplayFor(modelItem => item.photo)
-           <markdown>@item.title</markdown>
+       @Html.DisplayFor(modelItem => item.Photo)
+           <markdown>@item.Title</markdown>
         </td>
         <td>
             @item.Author.UserName
         </td>
         <td>
             <span style="font-size:x-small;">
-            posté le @item.posted.ToString("dddd d MMM yyyy à H:mm")
-            @if ((item.modified - item.posted).Minutes > 10)
+            posté le @item.Posted.ToString("dddd d MMM yyyy à H:mm")
+            @if ((item.Modified - item.Posted).Minutes > 10)
              { 
-                @:- Modifié le @item.modified.ToString("dddd d MMM yyyy à H:mm")
+                @:- Modifié le @item.Modified.ToString("dddd d MMM yyyy à H:mm")
              }
             </span>
         </td>
