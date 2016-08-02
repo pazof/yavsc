@@ -28,11 +28,14 @@ namespace Yavsc.Models.Messaging
 	/// </summary>
 	public class YaEvent : BaseEvent
 	{
+        public YaEvent(string topic)
+        {
+            Topic = topic;
+        }
 		/// <summary>
-		/// The name of the NF provider.
+		/// The topic.
 		/// </summary>
-		[Display(Name="ProviderName")]
-		public string ProviderName { get; set; } 
+		public string Topic { get; set; } 
 		/// <summary>
 		/// The NF provider identifier.
 		/// </summary>
