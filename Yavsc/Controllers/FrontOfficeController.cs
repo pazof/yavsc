@@ -31,8 +31,8 @@ namespace Yavsc.Controllers
         public ActionResult Index()
         {
             var latestPosts = _context.Blogspot.Where(
-                x => x.visible == true
-            ).OrderBy(x => x.modified).Take(25).ToArray();
+                x => x.Visible == true
+            ).OrderBy(x => x.Modified).Take(25).ToArray();
             return View(latestPosts);
         }
 

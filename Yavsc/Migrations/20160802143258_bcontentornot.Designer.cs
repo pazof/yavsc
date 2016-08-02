@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160802143258_bcontentornot")]
+    partial class bcontentornot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -313,19 +314,19 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("Content");
 
-                    b.Property<DateTime>("Modified");
+                    b.Property<DateTime>("modified");
 
-                    b.Property<string>("Photo");
+                    b.Property<string>("photo");
 
-                    b.Property<DateTime>("Posted")
+                    b.Property<DateTime>("posted")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("Relational:GeneratedValueSql", "LOCALTIMESTAMP");
 
-                    b.Property<int>("Rate");
+                    b.Property<int>("rate");
 
-                    b.Property<string>("Title");
+                    b.Property<string>("title");
 
-                    b.Property<bool>("Visible");
+                    b.Property<bool>("visible");
 
                     b.HasKey("Id");
                 });

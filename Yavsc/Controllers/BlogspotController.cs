@@ -44,7 +44,7 @@ namespace Yavsc.Controllers
                 return UserPosts(id);
             return View(_context.Blogspot.Include(
                b => b.Author
-            ).Where(p => p.visible));
+            ).Where(p => p.Visible));
         }
 
         [Route("/Title/{id?}")]
@@ -53,7 +53,7 @@ namespace Yavsc.Controllers
         {
             return View("Index", _context.Blogspot.Include(
                 b => b.Author
-            ).Where(x => x.title == id).ToList());
+            ).Where(x => x.Title == id).ToList());
         }
 
         [Route("/Blog/{id?}")]
@@ -63,14 +63,14 @@ namespace Yavsc.Controllers
             if (string.IsNullOrEmpty(id))
             return View("Index",_context.Blogspot.Include(
                b => b.Author
-            ).Where(p => p.visible));
+            ).Where(p => p.Visible));
             if (User.IsSignedIn())
                 return View("Index", _context.Blogspot.Include(
                  b => b.Author
                  ).Where(x => x.Author.UserName == id).ToList());
             return View("Index", _context.Blogspot.Include(
                 b => b.Author
-                ).Where(x => x.Author.UserName == id && x.visible).ToList());
+                ).Where(x => x.Author.UserName == id && x.Visible).ToList());
         }
         // GET: Blog/Details/5
         [AllowAnonymous]
@@ -103,14 +103,14 @@ namespace Yavsc.Controllers
         [HttpPost, Authorize(), ValidateAntiForgeryToken]
         public IActionResult Create(Blog blog)
         {
-            blog.modified = blog.posted = DateTime.Now;
-            blog.rate = 0;
+            blog.Modified = blog.Posted = DateTime.Now;
+            blog.Rate = 0;
             blog.AuthorId = User.GetUserId();
             _logger.LogWarning($"Post from: {blog.AuthorId}");
             ModelState.ClearValidationState("AuthorId");
             if (ModelState.IsValid)
             {
-                blog.posted = DateTime.Now;
+                blog.Posted = DateTime.Now;
                 _context.Blogspot.Add(blog);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
@@ -152,7 +152,7 @@ namespace Yavsc.Controllers
                 var auth = _authorizationService.AuthorizeAsync(User, blog, new EditRequirement());
                 if (auth.Result)
                 {
-                    blog.modified = DateTime.Now;
+                    blog.Modified = DateTime.Now;
                     _context.Update(blog);
                     _context.SaveChanges();
                     ViewData["StatusMessage"] = "Post modified";
