@@ -168,5 +168,7 @@ namespace Yavsc.Models
         }
 
         public DbSet<ExceptionSIREN> ExceptionsSIREN { get; set; }
+
+        public DbSet<Location> Locations { get; set; }
     }
 }
