@@ -51,14 +51,18 @@ namespace Yavsc.Controllers
         }
 
         // GET: Command
+        [Authorize]
         public IActionResult Index()
         {
+            var uid = User.GetUserId();
             return View(_context.BookQueries
             .Include(x => x.Client)
             .Include(x => x.PerformerProfile)
             .Include(x => x.PerformerProfile.Performer)
             .Include(x => x.Location)
-            .Include(x => x.Bill).ToList());
+            .Include(x => x.Bill)
+            .Where(x=> x.ClientId == uid || x.PerformerId == uid)
+            .ToList());
         }
 
         // GET: Command/Details/5
@@ -138,12 +142,18 @@ namespace Yavsc.Controllers
             command.Client = user;
             if (ModelState.IsValid)
             {
-                var yaev = command.CreateEvent(_localizer);
-                MessageWithPayloadResponse grep = null;
+                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address 
+                && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
 
-                _context.Attach<Location>(command.Location);
+                if (existingLocation!=null) {
+                    command.Location=existingLocation;
+                }
+                else _context.Attach<Location>(command.Location);
                 _context.BookQueries.Add(command, GraphBehavior.IncludeDependents);
                 _context.SaveChanges();
+
+                var yaev = command.CreateEvent(_localizer);
+                MessageWithPayloadResponse grep = null;
 
                 if (pro.AcceptNotifications
                 && pro.AcceptPublicContact)
