@@ -30,6 +30,13 @@ namespace Yavsc.Models.Calendar
 	/// Provided event.
 	/// </summary>
 	public class ProvidedEvent : YaEvent {
+
+        public ProvidedEvent(string topic) : base(topic)
+        {
+            
+        }
+
+
 		/// <summary>
 		/// The privacy.
 		/// </summary>

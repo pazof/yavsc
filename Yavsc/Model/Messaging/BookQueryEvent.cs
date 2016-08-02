@@ -27,6 +27,10 @@ namespace Yavsc.Models.Messaging
 
 public class BookQueryEvent: YaEvent
 	{
+        public BookQueryEvent() : base("BookQuery")
+        {
+            
+        }
 		/// <summary>
 		/// The location.
 		/// </summary>
