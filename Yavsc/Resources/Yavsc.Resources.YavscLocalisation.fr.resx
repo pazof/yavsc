@@ -177,6 +177,8 @@
   <data name="Credits"><value>Crédits</value></data>
   <data name="Date search"><value>Demande de rendez-vous</value></data>
   <data name="DB"><value>Base de données</value></data>
+  <data name="Details"><value>Détails</value></data>
+  <data name="Delete"><value>Supprimer</value></data>
   <data name="Deposit"><value>Arrhes</value></data>
   <data name="Description"><value>Description</value></data>
   <data name="DoAnEstimate"><value>Faire un devis</value></data>
