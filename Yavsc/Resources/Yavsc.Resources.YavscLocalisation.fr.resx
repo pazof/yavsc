@@ -125,6 +125,7 @@
   <data name="Activity"><value>Activité</value></data>
   <data name="Activities"><value>Activités</value></data>
   <data name="additionally"><value>de plus</value></data>
+  <data name="Address"><value>Adresse</value></data>
   <data name="Allow my geolocatisation, nearby the clients"><value>Autoriser ma geolocatisation, auprès de mes clients</value></data>
   <data name="AnIMessageHasbeenSent"><value>Un message instantané a été envoyé à {0},
   lui présentant votre demande. Vous devriez être contacté très rapidement.</value></data>
