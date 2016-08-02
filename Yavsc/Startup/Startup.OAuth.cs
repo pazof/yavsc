@@ -78,7 +78,7 @@ namespace Yavsc
                 }
             ).AddEntityFrameworkStores<ApplicationDbContext>()
                  .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.EMailFactor)
-                 .AddTokenProvider<UserTokenProvider>(Constants.DefaultFactor)
+                // .AddTokenProvider<UserTokenProvider>(Constants.DefaultFactor)
                 ;
 
         }
