@@ -5,6 +5,7 @@
 }
 
 @section header{
+
 <link href="~/css/quill.snow.css" rel="stylesheet">
 <link href="~/css/dropzone.css" rel="stylesheet">
 
@@ -32,16 +33,13 @@
 
 </style>
 
-
-}
-
-@section scripts{
 <script src="~/js/dropzone.js"></script>
 <script src="~/js/quill.js"></script>
 <script src="~/js/showdown.js"></script>
 <script src="~/js/to-markdown.js"></script>
 <script src="~/js/md-helpers.js"></script>
 <script>
+
  $(document).ready(function() {
 
   var editortitre = new Quill('#Titlecnt', {
@@ -96,27 +94,30 @@ editorcontenu.on('text-change',function(delta,source){
 
   });
 </script>
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @Html.Partial("_ValidationScriptsPartial")
 }
+
 <h2 > @SR["Blog post edition"] </h2>
 
 <div id="Titletoolbar" class="hidden ql-snow ql-toolbar">
   <button class="ql-format-button ql-bold"></button>
   <button class="ql-format-button ql-italic"></button>
+  <button class="ql-format-button ql-underline"></button>
   <button class="ql-format-button ql-strike"></button>
 </div>
 
 <h2 id="Titlecnt"><markdown>@Model.Title</markdown></h2>
 
 <div id="contentbar" class="hidden ql-snow ql-toolbar">
+<span class="ql-format-group">
   <button class="ql-format-button ql-bold"></button>
   <button class="ql-format-button ql-italic"></button>
   <button class="ql-format-button ql-underline"></button>
   <button class="ql-format-button ql-strike"></button>
-
-<span class="ql-format-group">
-  <button class="ql-format-button ql-image"></button>
+  <environment names="Development">
   <button class="ql-format-button ql-link"></button>
+  <button class="ql-format-button ql-image"></button>
+  </environment>
  </span>
 <span class="ql-format-group">
 <span title="List" class="ql-format-button ql-list"></span>

@@ -54,7 +54,7 @@
     "Google.Apis.Core": "1.11.1",
     "Google.Apis": "1.11.1",
     "MailKit": "1.3.0-beta7",
-    "MarkdownDeep-av.NET": "1.5.2",
+    "MarkdownDeep-av.NET": "1.5.3",
     "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-*",
     "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
     "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",

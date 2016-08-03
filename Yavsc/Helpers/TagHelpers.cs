@@ -16,10 +16,8 @@ namespace Yavsc.Helpers
     {
         private const string MarkdownContentAttributeName = "markdown";
         private const string MarkdownMarkAttributeName = "ismarkdown";
-
 		[HtmlAttributeName("site")]
         public SiteSettings Site { get; set; }
-
         [HtmlAttributeName("base")]
         public string Base { get; set; }
 
@@ -107,10 +105,12 @@ namespace Yavsc.Helpers
 
             var content = await GetContent(output);
             var markdown = content;
-			var basePath = Base?.StartsWith("~") ?? false ?
-            Constants.UserFilesDir + 
-			 Base.Substring(1) : Base;
-            var html = Markdown(markdown, basePath);
+
+            var htbase = Base;
+            
+
+            var html = Markdown(markdown, htbase);
+
             output.Content.SetHtmlContent(html ?? "");
         }
         private async Task<string> GetContent(TagHelperOutput output)
