@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Yavsc.Models
 {
@@ -12,7 +13,7 @@ namespace Yavsc.Models
         public string Name { get; set; }
         public string OwnerId { get; set; }
 
-        [ForeignKey("OwnerId")]
+        [ForeignKey("OwnerId"),JsonIgnore]
         public virtual ApplicationUser Owner { get; set; }
 
         [InverseProperty("Circle")]

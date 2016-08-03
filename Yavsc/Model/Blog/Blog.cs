@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Yavsc.Models
 {
@@ -16,7 +17,8 @@ namespace Yavsc.Models
         public int Rate { get; set; }
         public string Title { get; set; }
         public string AuthorId { get; set; }
-        [ForeignKey("AuthorId")]
+        
+        [ForeignKey("AuthorId"),JsonIgnore]
         public ApplicationUser Author { set; get; }
         public bool Visible { get; set; }
     }
