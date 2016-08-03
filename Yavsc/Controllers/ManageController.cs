@@ -531,6 +531,9 @@ namespace Yavsc.Controllers
                     }
                     else _dbContext.Performers.Add(model);
                     _dbContext.SaveChanges();
+
+                    // Give this user the Performer role
+                    await _userManager.AddToRoleAsync(user,"Performer");
                     var message = ManageMessageId.SetActivitySuccess;
 
                     return RedirectToAction(nameof(Index), new { Message = message });
@@ -544,7 +547,7 @@ namespace Yavsc.Controllers
         }
 
         [HttpPost, Authorize]
-        public IActionResult UnsetActivity()
+        public async Task<IActionResult> UnsetActivity()
         {
             var user = GetCurrentUserAsync().Result;
             var uid = user.Id;
@@ -555,6 +558,7 @@ namespace Yavsc.Controllers
                     _dbContext.Performers.First(x => x.PerformerId == uid)
                 );
                 _dbContext.SaveChanges();
+                await _userManager.RemoveFromRoleAsync(user,"Performer");
             }
             var message = ManageMessageId.UnsetActivitySuccess;
             return RedirectToAction(nameof(Index), new { Message = message });
