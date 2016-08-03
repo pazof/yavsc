@@ -132,8 +132,6 @@ namespace Yavsc
 
           ConfigureOAuthServices(services);
 
-            //  .AddTokenProvider<UserTokenProvider>(Constants.SMSFactor)
-            //
 
             services.AddCors(
             /*
