@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
@@ -9,7 +10,7 @@ using Yavsc.Models.Billing;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Estimate")]
+    [Route("api/do"),Authorize(Roles="Performer,Administrator")]
     public class EstimateApiController : Controller
     {
         private ApplicationDbContext _context;
