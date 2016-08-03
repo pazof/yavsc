@@ -407,7 +407,7 @@ module.exports = [
   {
     filter: 'div',
     replacement: function (content) {
-      return '\n\n' + content + '\n\n';
+      return content + '\n';
     }
   },
   {
@@ -439,6 +439,13 @@ module.exports = [
   {
     filter: ['em', 'i'],
     replacement: function (content) {
+      return '*' + content + '*';
+    }
+  },
+
+  {
+    filter: ['u'],
+    replacement: function (content) {
       return '_' + content + '_';
     }
   },
@@ -451,7 +458,7 @@ module.exports = [
   },
 
   {
-    filter: ['s'],
+    filter: ['strike','s'],
     replacement: function (content) {
       return '~~' + content + '~~';
     }

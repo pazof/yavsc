@@ -29,7 +29,7 @@ namespace Yavsc
             {
                 FileProvider = new PhysicalFileProvider(rootPath),
                 RequestPath = new PathString("/" + siteSettings.UserFiles.DirName),
-                EnableDirectoryBrowsing = false
+                EnableDirectoryBrowsing = env.IsDevelopment()
             });
             app.UseStaticFiles();
         }
