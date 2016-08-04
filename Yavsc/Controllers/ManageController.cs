@@ -533,6 +533,7 @@ namespace Yavsc.Controllers
                     _dbContext.SaveChanges();
 
                     // Give this user the Performer role
+                    if (!User.IsInRole("Performer"))
                     await _userManager.AddToRoleAsync(user,"Performer");
                     var message = ManageMessageId.SetActivitySuccess;
 
