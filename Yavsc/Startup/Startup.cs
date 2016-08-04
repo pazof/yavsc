@@ -2,12 +2,15 @@
 using System;
 using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web.Optimization;
 using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Localization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
@@ -225,6 +228,7 @@ namespace Yavsc
         IOptions<SiteSettings> siteSettings,
         IOptions<RequestLocalizationOptions> localizationOptions,
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
+        RoleManager<IdentityRole> _roleManager,
          ILoggerFactory loggerFactory)
         {
             Startup.UserFilesDirName = siteSettings.Value.UserFiles.DirName;
@@ -275,7 +279,23 @@ namespace Yavsc
                     else throw ex;
                 }
             }
-
+            Task.Run(async ()=>{
+                foreach (string roleName in new string[] {Constants.AdminGroupName,
+                Constants.StarGroupName, Constants.PerformerGroupName, 
+                Constants.StarHunterGroupName
+                })
+                if (!await _roleManager.RoleExistsAsync(roleName))
+            {
+                var role = new IdentityRole { Name = roleName };
+                var resultCreate = await _roleManager.CreateAsync(role);
+                if (!resultCreate.Succeeded)
+                {
+                    throw new Exception("The role '{roleName}' does not exist and could not be created.");
+                }
+            }
+            });
+ 
+            
             app.UseIISPlatformHandler(options =>
             {
                 options.AuthenticationDescriptions.Clear();
