@@ -40,17 +40,7 @@ namespace Yavsc.Controllers
             var user = await _userManager.FindByIdAsync(User.GetUserId());
 
             IdentityRole adminRole;
-            if (!await _roleManager.RoleExistsAsync(Constants.AdminGroupName))
-            {
-                adminRole = new IdentityRole { Name = Constants.AdminGroupName };
-                var resultCreate = await _roleManager.CreateAsync(adminRole);
-                if (!resultCreate.Succeeded)
-                {
-                    AddErrors(resultCreate);
-                    return new BadRequestObjectResult(ModelState);
-                }
-            }
-            else adminRole = await _roleManager.FindByNameAsync(Constants.AdminGroupName);
+            adminRole = await _roleManager.FindByNameAsync(Constants.AdminGroupName);
             var addToRoleResult = await _userManager.AddToRoleAsync(user, Constants.AdminGroupName);
             if (!addToRoleResult.Succeeded)
             {
@@ -81,7 +71,6 @@ namespace Yavsc.Controllers
             });
         }
         
-
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
