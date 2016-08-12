@@ -44,7 +44,7 @@ namespace Yavsc.Controllers
                 return UserPosts(id);
             return View(_context.Blogspot.Include(
                b => b.Author
-            ).Where(p => p.Visible));
+            ).Where(p => p.Visible).Take(10));
         }
 
         [Route("/Title/{id?}")]
@@ -53,7 +53,7 @@ namespace Yavsc.Controllers
         {
             return View("Index", _context.Blogspot.Include(
                 b => b.Author
-            ).Where(x => x.Title == id).ToList());
+            ).Where(x => x.Title == id && x.Visible).ToList());
         }
 
         [Route("/Blog/{id?}")]
