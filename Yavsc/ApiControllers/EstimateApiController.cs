@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -19,12 +19,26 @@ namespace Yavsc.Controllers
         {
             _context = context;
         }
-
-        // GET: api/Estimate
-        [HttpGet]
-        public IEnumerable<Estimate> GetEstimates()
+        bool UserIsAdminOrThis(string uid)
         {
-            return _context.Estimates;
+            if (User.IsInRole(Constants.AdminGroupName)) return true;
+            return uid == User.GetUserId();
+        }
+        bool UserIsAdminOrInThese (string oid, string uid)
+        {
+            if (User.IsInRole(Constants.AdminGroupName)) return true;
+            var cuid = User.GetUserId();
+            return cuid == uid || cuid == oid;
+        }
+        // GET: api/Estimate{?ownerId=User.GetUserId()}
+        [HttpGet]
+        public IActionResult GetEstimates(string ownerId=null)
+        {
+            if ( ownerId == null ) ownerId = User.GetUserId();
+            else if (!UserIsAdminOrThis(ownerId)) // throw new Exception("Not authorized") ;
+            // or just do nothing
+            return new HttpStatusCodeResult(StatusCodes.Status403Forbidden);
+            return Ok(_context.Estimates.Where(e=>e.OwnerId == ownerId));
         }
 
         // GET: api/Estimate/5
@@ -43,7 +57,9 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
+            if (UserIsAdminOrInThese(estimate.ClientId,estimate.OwnerId))
             return Ok(estimate);
+            return new HttpStatusCodeResult(StatusCodes.Status403Forbidden);
         }
 
         // PUT: api/Estimate/5
@@ -59,7 +75,15 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest();
             }
-
+            var uid = User.GetUserId();
+            if (!User.IsInRole(Constants.AdminGroupName))
+            {
+                if (uid != estimate.OwnerId)
+                {
+                    ModelState.AddModelError("OwnerId","You can only modify your own estimates");
+                    return HttpBadRequest(ModelState);
+                }
+            }
             _context.Entry(estimate).State = EntityState.Modified;
 
             try
@@ -89,7 +113,15 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest(ModelState);
             }
-
+            var uid = User.GetUserId();
+            if (!User.IsInRole(Constants.AdminGroupName))
+            {
+                if (uid != estimate.OwnerId)
+                {
+                    ModelState.AddModelError("OwnerId","You can only create your own estimates");
+                    return HttpBadRequest(ModelState);
+                }
+            }
             _context.Estimates.Add(estimate);
             try
             {
@@ -120,11 +152,20 @@ namespace Yavsc.Controllers
             }
 
             Estimate estimate = _context.Estimates.Single(m => m.Id == id);
+           
             if (estimate == null)
             {
                 return HttpNotFound();
             }
-
+            var uid = User.GetUserId();
+            if (!User.IsInRole(Constants.AdminGroupName))
+            {
+                if (uid != estimate.OwnerId)
+                {
+                    ModelState.AddModelError("OwnerId","You can only create your own estimates");
+                    return HttpBadRequest(ModelState);
+                }
+            }
             _context.Estimates.Remove(estimate);
             _context.SaveChanges();
 
