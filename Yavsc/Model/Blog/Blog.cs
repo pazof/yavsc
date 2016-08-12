@@ -2,10 +2,11 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using Yavsc.Interfaces;
 
 namespace Yavsc.Models
 {
-    public partial class Blog
+    public partial class Blog : IBlog
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
