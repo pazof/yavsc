@@ -35,8 +35,10 @@ namespace Yavsc.Models.Billing
         [NotMapped]
         public List<string> AttachedGraphics { get; set; }
 
-        public string AttachedGraphicsString { get { return string.Join(":", AttachedGraphics); }
-    set { AttachedGraphics = value.Split(':').ToList(); } }
+        public string AttachedGraphicsString { 
+            get { return string.Join(":", AttachedGraphics); }
+            set { AttachedGraphics = value.Split(':').ToList(); } 
+        }
         /// <summary>
         /// List of attached files
         /// to this estimate, as relative pathes to
@@ -46,7 +48,15 @@ namespace Yavsc.Models.Billing
         /// <returns></returns>
         [NotMapped]
         public List<string> AttachedFiles { get; set; }
-        public string AttachedFilesString { get { return string.Join(":", AttachedFiles); }
-    set { AttachedFiles = value.Split(':').ToList(); } }
+        public string AttachedFilesString {
+            get { return string.Join(":", AttachedFiles); }
+            set { AttachedFiles = value.Split(':').ToList(); } 
+        }
+
+        [Required]
+        public string OwnerId { get; set; }
+
+        [Required]
+        public string ClientId { get; set; }
     }
 }
