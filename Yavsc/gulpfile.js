@@ -53,5 +53,4 @@ gulp.task('watch', shell.task(['ASPNET_ENV=Development dnx-watch web --configura
 gulp.task('build', shell.task(['dnu build --configuration=Debug']))
 gulp.task('publish', shell.task(['dnu publish -o ../build']))
 
-// dnx gen controller -outDir ApiControllers -api -dc ApplicationDbContext -m {model} -name {name}ApiController
-// dnx gen controller -outDir Controllers -dc ApplicationDbContext -udl -m {model} -name {name}Controller
+
