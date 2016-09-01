@@ -11,6 +11,7 @@ using Yavsc.Models.Booking;
 using Yavsc.Models.OAuth;
 using Yavsc.Models.Workflow;
 using Yavsc.Models.Identity;
+using Yavsc.Models.Market;
 
 namespace Yavsc.Models
 {
@@ -93,6 +94,8 @@ namespace Yavsc.Models
         /// <returns></returns>
         public DbSet<GoogleCloudMobileDeclaration> GCMDevices { get; set; }
 
+        public DbSet<Service> Services { get; set; }
+        public DbSet<Product> Products { get; set; }
         public Task ClearTokensAsync()
         {
             Tokens.RemoveRange(this.Tokens);
