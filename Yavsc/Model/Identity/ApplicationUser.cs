@@ -7,7 +7,6 @@ using Yavsc.Models.Identity;
 
 namespace Yavsc.Models
 {
-
     public class ApplicationUser : IdentityUser
     {
 
