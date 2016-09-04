@@ -9,11 +9,13 @@ namespace Yavsc.Helpers
         {
             if (estimate?.Query?.PerformerProfile?.Performer == null)
                 return null;
-            var fsp = new PhysicalFileProvider(
-                Path.Combine(
+            var di = new DirectoryInfo(Path.Combine(
                     userFileDir,
                     estimate.Query.PerformerProfile.Performer.UserName
                ));
+            if (!di.Exists) return null;
+
+            var fsp = new PhysicalFileProvider(di.FullName);
             return fsp.GetDirectoryContents(
                 Path.Combine(Constants.UserBillsFilesDir, estimate.Id.ToString())
                 );
