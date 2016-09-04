@@ -30,5 +30,8 @@ namespace Yavsc.Models.Booking
            Location = eventLocation;
            EventDate = eventDate;
        }
+       public string GetDescription() {
+           return $"{Location?.Address} {EventDate.ToString()}";
+       }
     }
 }
