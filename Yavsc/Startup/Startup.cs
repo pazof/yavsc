@@ -34,7 +34,6 @@ namespace Yavsc
         public static string ConnectionString { get; private set; }
         public static string Authority { get; private set; }
         public static string Audience { get; private set; }
-
         private static ILogger logger;
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
@@ -131,10 +130,7 @@ namespace Yavsc
               .AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(ConnectionString))
               ;
 
-            
-
           ConfigureOAuthServices(services);
-
 
             services.AddCors(
             /*
@@ -203,11 +199,9 @@ namespace Yavsc
                 options.ResourcesPath = "Resources";
             }).AddDataAnnotationsLocalization();
 
-    
-
             services.AddScoped<LanguageActionFilter>();
-            // Inject ticket formatting
 
+            // Inject ticket formatting
             services.AddTransient(typeof(ISecureDataFormat<>), typeof(SecureDataFormat<>));
             services.AddTransient<Microsoft.AspNet.Authentication.ISecureDataFormat<AuthenticationTicket>, Microsoft.AspNet.Authentication.SecureDataFormat<AuthenticationTicket>>();
             services.AddTransient<ISecureDataFormat<AuthenticationTicket>, TicketDataFormat>();
@@ -282,6 +276,7 @@ namespace Yavsc
             Task.Run(async ()=>{
                 foreach (string roleName in new string[] {Constants.AdminGroupName,
                 Constants.StarGroupName, Constants.PerformerGroupName, 
+                Constants.FrontOfficeGroupName,
                 Constants.StarHunterGroupName
                 })
                 if (!await _roleManager.RoleExistsAsync(roleName))
