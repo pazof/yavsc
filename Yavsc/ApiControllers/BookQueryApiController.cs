@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -21,22 +22,25 @@ namespace Yavsc.Controllers
         }
 
         // GET: api/BookQueryApi
-        [HttpGet]
+        [HttpGet]                                               
         public IEnumerable<BookQuery> GetCommands()
         {
-            return _context.Commands;
+            var uid = User.GetUserId();
+            return _context.Commands.Where(c=>c.ClientId == uid || c.PerformerId == uid);
         }
 
         // GET: api/BookQueryApi/5
         [HttpGet("{id}", Name = "GetBookQuery")]
         public IActionResult GetBookQuery([FromRoute] long id)
         {
+            
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
+            var uid = User.GetUserId();
 
-            BookQuery bookQuery = _context.Commands.Single(m => m.Id == id);
+            BookQuery bookQuery = _context.Commands.Where(c=>c.ClientId == uid || c.PerformerId == uid).Single(m => m.Id == id);
 
             if (bookQuery == null)
             {
@@ -59,6 +63,9 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest();
             }
+            var uid = User.GetUserId();
+            if (bookQuery.ClientId != uid)
+            return HttpNotFound();
 
             _context.Entry(bookQuery).State = EntityState.Modified;
 
@@ -89,7 +96,11 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest(ModelState);
             }
-
+            var uid = User.GetUserId();
+            if (bookQuery.ClientId != uid) {
+                ModelState.AddModelError("ClientId","You must be the client at creating a book query");
+                return new BadRequestObjectResult(ModelState);
+            }
             _context.Commands.Add(bookQuery);
             try
             {
@@ -118,12 +129,14 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest(ModelState);
             }
-
+            var uid = User.GetUserId();
             BookQuery bookQuery = _context.Commands.Single(m => m.Id == id);
+
             if (bookQuery == null)
             {
                 return HttpNotFound();
             }
+            if (bookQuery.ClientId != uid) return HttpNotFound();
 
             _context.Commands.Remove(bookQuery);
             _context.SaveChanges();
