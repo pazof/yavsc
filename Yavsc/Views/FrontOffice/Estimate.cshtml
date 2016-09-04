@@ -76,7 +76,8 @@
  if (!string.IsNullOrWhiteSpace(@Model.Command.Client.PhoneNumber)) {
    Téléphone fixe:  @Model.Command.Client.PhoneNumber \\
  } 
-  if (!string.IsNullOrWhiteSpace(eto)) { 
+
+if (!string.IsNullOrWhiteSpace(eto)) { 
    E-mail:  @Model.Command.Client.Email  } 
 }
 
@@ -98,13 +99,13 @@
 
 \renewcommand{\headrulewidth}{0pt}
 \cfoot{
-  if (!string.IsNullOrWhiteSpace(from.Name)) {  from.Name   } 
-  if (!string.IsNullOrWhiteSpace(from.Address)) {  -  from.Address  }  
-  if (!string.IsNullOrWhiteSpace(from.CityAndState)) {  -  from.CityAndState  }  \newline
+  @if (!string.IsNullOrWhiteSpace(from.Name)) {  from.Name   } 
+  @if (!string.IsNullOrWhiteSpace(from.Address)) {  @"-"  @from.Address  }  
+  @if (!string.IsNullOrWhiteSpace(from.CityAndState)) {  @"-"  @from.CityAndState  }  \newline
     \small{
-     if (!string.IsNullOrWhiteSpace(efrom)) { E-mail:  efrom  } 
-     if (!string.IsNullOrWhiteSpace(from.Mobile)) {  - Téléphone mobile:  from.Mobile  } 
-     if (!string.IsNullOrWhiteSpace(from.Phone)) {  - Téléphone fixe:  from.Phone  } 
+     @if (!string.IsNullOrWhiteSpace(efrom)) { E-mail:  efrom  } 
+     @if (!string.IsNullOrWhiteSpace(from.Mobile)) {  @"-" Téléphone mobile:  @from.Mobile  } 
+     @if (!string.IsNullOrWhiteSpace(from.Phone)) {  @"-" Téléphone fixe:  @from.Phone  } 
     }
 }
 
