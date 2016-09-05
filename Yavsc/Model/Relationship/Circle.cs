@@ -13,7 +13,7 @@ namespace Yavsc.Models
         public string Name { get; set; }
         public string OwnerId { get; set; }
 
-        [ForeignKey("OwnerId"),JsonIgnore]
+        [ForeignKey("OwnerId"),JsonIgnore,NotMapped]
         public virtual ApplicationUser Owner { get; set; }
 
         [InverseProperty("Circle")]
