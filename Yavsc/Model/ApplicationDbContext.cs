@@ -178,5 +178,9 @@ namespace Yavsc.Models
         public DbSet<Tag> Tags { get; set; }
 
         public DbSet<PostTag> TagsDomain { get; set; }
+
+        public DbSet<EstimateTemplate> EstimateTemplates { get; set; }
+
+        
     }
 }

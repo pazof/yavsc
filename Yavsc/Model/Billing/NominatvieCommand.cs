@@ -40,7 +40,7 @@ namespace Yavsc.Models.Billing
     /// The bill
     /// </summary>
     /// <returns></returns>
-    public List<CommandLine> Bill { get; set; }
+    public List<Service> Bill { get; set; } = new List<Service>();
 
     ///<summary>
     /// Time span in seconds in which
