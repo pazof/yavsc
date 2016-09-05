@@ -17,18 +17,27 @@ namespace Yavsc.Models.Booking
     public long Id {get; set; }
 
         [Display(Name="Event date")]
-        public DateTime EventDate{get; set; }
-        public Location Location { get; set; }
+        public DateTime EventDate{ 
+            get
+                { return ((RendezVous)Bill[0]).EventDate; }
+            set { ((RendezVous)Bill[0]).EventDate = value; }
+         }
+        public Location Location {
+            get
+                { return ((RendezVous)Bill[0]).Location; }
+            set { ((RendezVous)Bill[0]).Location = value; }}
 
         public BookQuery()
         {
-            
+            this.Bill.Add(new RendezVous());
         }
 
        public BookQuery(Location eventLocation, DateTime eventDate)
        {
-           Location = eventLocation;
-           EventDate = eventDate;
+           this.Bill.Add(new RendezVous{
+               Location = eventLocation,
+               EventDate = eventDate
+           });
        }
        public string GetDescription() {
            return $"{Location?.Address} {EventDate.ToString()}";

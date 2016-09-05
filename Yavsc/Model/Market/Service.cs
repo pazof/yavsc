@@ -2,6 +2,7 @@
 namespace Yavsc.Models.Market {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations.Schema;
+    using Billing;
 
     public partial class Service : BaseProduct
     {
