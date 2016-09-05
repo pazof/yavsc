@@ -28,6 +28,7 @@ namespace Yavsc.Models
             builder.Entity<BookQuery>().Property(x=>x.CreationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<Blog>().Property(x=>x.Posted).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
+            builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -173,5 +174,9 @@ namespace Yavsc.Models
         public DbSet<ExceptionSIREN> ExceptionsSIREN { get; set; }
 
         public DbSet<Location> Locations { get; set; }
+
+        public DbSet<Tag> Tags { get; set; }
+
+        public DbSet<PostTag> TagsDomain { get; set; }
     }
 }
