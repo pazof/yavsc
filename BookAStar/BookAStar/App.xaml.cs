@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Yavsc.Helpers;
 /*
 Glyphish icons from
 http://www.glyphish.com/
@@ -29,8 +28,12 @@ namespace BookAStar
         public static IPlatform PlateformSpecificInstance { get; set; }
         public static string AppName { get; set; }
         public static App CurrentApp { get { return Current as App; } }
+
+        public DataManager DataManager { get; set; }
+
         public App (IPlatform instance)
 		{
+            DataManager = new DataManager();
             deviceInfoPage = new DeviceInfoPage(instance.GetDeviceInfo());
 
             PlateformSpecificInstance = instance;
@@ -60,7 +63,15 @@ namespace BookAStar
                     settingsPage.Focus();
                 }
 			};
-			ToolbarItem tiMap = new ToolbarItem { Text = "Carte",
+            ToolbarItem tiQueries = new ToolbarItem
+            {
+                Text = "Demandes"
+            };
+            tiQueries.Clicked += (object sender, EventArgs e) => {
+                mp.Navigation.PushAsync(new Pages.MakeAnEstimatePage());
+            };
+                mp.ToolbarItems.Add(tiQueries);
+            ToolbarItem tiMap = new ToolbarItem { Text = "Carte",
 				 Icon = "glyphish_07_map_marker.png" 
 			};
 			mp.ToolbarItems.Add (tiMap);
@@ -73,7 +84,7 @@ namespace BookAStar
                 else pinPage.Focus();
 
             };
-
+            
         }
 
         public void ShowDeviceInfo()
@@ -90,6 +101,10 @@ namespace BookAStar
                 PlateformSpecificInstance.GetDeviceInfo());
         }
 
+        public void ShowBookQuery(long queryId)
+        {
+            mp.Navigation.PushAsync(new BookQueryPage(queryId));
+        }
     }
 }
 

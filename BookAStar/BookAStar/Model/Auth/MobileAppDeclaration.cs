@@ -5,7 +5,7 @@ using Yavsc.Models.Identity;
 
 namespace BookAStar.Model.Auth.Account
 {
-    public class GoogleCloudMobileDeclaration : IGoogleCloudMobileDeclaration
+    public class GoogleCloudMobileDeclaration 
     {
         public string GCMRegistrationId { get; set; }
         public string DeviceId { get; set; }

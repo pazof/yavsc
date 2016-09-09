@@ -10,9 +10,6 @@ namespace BookAStar
 {
 	public partial class EventDetail : ContentPage
 	{
-		
-		public ObservableCollection<YaEvent> Events 
-		{ get; private set; }
 		public EventDetail (YaEvent ev)
 		{
             InitializeComponent();
@@ -21,13 +18,6 @@ namespace BookAStar
 				App.PlateformSpecificInstance.OpenWeb(ev.EventWebPage);
 			};
 		}
-		///protected override void OnDisappearing ()
-
-		// { Navigation.PopAsync (); }
-
-		//private async void Close() {
-			//await Navigation.PopAsync ();
-		//}
 
 	}
 }
