@@ -3310,9 +3310,6 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f06004b
 			public const int Description = 2131099723;
 			
-			// aapt resource value: 0x7f060052
-			public const int GoogleSenderId = 2131099730;
-			
 			// aapt resource value: 0x7f06004d
 			public const int Location = 2131099725;
 			

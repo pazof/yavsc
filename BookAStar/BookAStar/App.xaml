@@ -34,10 +34,6 @@
         <Setter Property="WidthRequest" Value="200" />
         <Setter Property="TextColor" Value="Teal" />
       </Style>
-      <Style TargetType="Label">
-        <Setter Property="FontSize" Value="Large" />
-        <Setter Property="FontAttributes" Value="Bold" />
-      </Style>
     </ResourceDictionary>
   </Application.Resources>
 
