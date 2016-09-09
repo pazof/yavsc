@@ -23,6 +23,11 @@ using BookAStar.Droid.OAuth;
 using Yavsc.Helpers;
 using Yavsc.Models.Identity;
 using static Android.Content.Res.Resources;
+using Android.Webkit;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
+using Android.Views;
+
 
 namespace BookAStar.Droid
 {
@@ -38,9 +43,12 @@ namespace BookAStar.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             global::Xamarin.FormsMaps.Init(this, bundle);
             LoadApplication(new App(this));
-          /*  var x = typeof(Themes.DarkThemeResources);
-            x = typeof(Themes.LightThemeResources);
-            x = typeof(Themes.Android.UnderlineEffect); */
+            /*  var x = typeof(Themes.DarkThemeResources);
+              x = typeof(Themes.LightThemeResources);
+              x = typeof(Themes.Android.UnderlineEffect); */
+              
+            long cmdid = Intent.GetLongExtra("BookQueryId",0) ;
+            if (cmdid > 0) App.CurrentApp.ShowBookQuery(cmdid);
         }
         
 
@@ -105,6 +113,10 @@ namespace BookAStar.Droid
             base.OnStart();
             if (MainSettings.PushNotifications)
                 StartNotifications();
+            long queryId = Intent.GetLongExtra("BookQueryId",0);
+
+            if (queryId > 0)
+                App.CurrentApp.ShowBookQuery(queryId);
         }
 
 
@@ -317,6 +329,33 @@ namespace BookAStar.Droid
                 return m.InvokeJson(arg);
             }
         }
+
+        public Xamarin.Forms.View CreateMarkdownView(string markdown)
+        {
+            var md = new MarkdownDeep.Markdown();
+            var view = new Android.Webkit.WebView(Forms.Context);
+            //view.SetWebViewClient(new MarkdownRazorWebViewClient(Forms.Context));
+            var mde = new MarkdownEditor();
+            mde.Model = md.Transform(markdown);
+            var html = mde.GenerateString();
+            
+            view.Settings.JavaScriptEnabled = true;
+            view.Settings.LoadsImagesAutomatically = true;
+            view.Settings.SetAppCacheEnabled(true);
+            view.Settings.AllowContentAccess = true;
+            view.Settings.AllowFileAccess = true;
+            view.Settings.AllowFileAccessFromFileURLs = true;
+            view.Settings.AllowUniversalAccessFromFileURLs = true;
+            view.Settings.BlockNetworkImage = false;
+            view.Settings.BlockNetworkLoads = false;
+            view.LoadDataWithBaseURL("file:///android_asset/",
+                html, "text/html", "utf-8",null);
+            //view.LoadData(html, "text/html", "UTF-8");
+            // 
+            
+            return view.ToView();
+        }
+        
     }
 }
 

@@ -16,7 +16,7 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
+    <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v6.0</TargetFrameworkVersion>
     <AndroidSupportedAbis>armeabi,armeabi-v7a,x86</AndroidSupportedAbis>
     <AndroidStoreUncompressedFileExtensions />
@@ -35,7 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
-    <AndroidLinkMode>Full</AndroidLinkMode>
+    <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
@@ -51,7 +51,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
@@ -89,6 +89,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Android" />
+    <Reference Include="Mono.Data.Sqlite" />
     <Reference Include="mscorlib" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
@@ -104,12 +105,14 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1\System.Drawing.dll</HintPath>
     </Reference>
     <Reference Include="System.Json" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="Xamarin.Android.Support.Animated.Vector.Drawable, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Android.Support.Animated.Vector.Drawable.23.3.0\lib\MonoAndroid403\Xamarin.Android.Support.Animated.Vector.Drawable.dll</HintPath>
       <Private>True</Private>
@@ -193,7 +196,14 @@
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\SimpleJsonPostMethod.cs" />
     <Compile Include="Helpers\YavscHelpers.cs" />
+    <Compile Include="Html.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="MarkdownEditor.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MarkdownEditor.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="MarkdownRazorWebViewClient.cs" />
     <Compile Include="OAuth2\YaOAuth2Authenticator.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -205,6 +215,11 @@
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="MarkdownEditor.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>MarkdownEditor.cs</LastGenOutput>
+      <SubType>None</SubType>
     </None>
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
@@ -223,7 +238,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Yavsc.Client\Yavsc.Client.csproj">
-      <Project>{67F9D3A8-F71E-4428-913F-C37AE82CDB24}</Project>
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
       <Name>Yavsc.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\BookAStar\BookAStar.csproj">
@@ -258,6 +273,19 @@
     </XamarinComponentReference>
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\bootstrap.js" />
+    <AndroidAsset Include="Assets\jquery.js" />
+    <AndroidAsset Include="Assets\jquery-ui.js" />
+    <AndroidAsset Include="Assets\md-helpers.js" />
+    <AndroidAsset Include="Assets\quill.js" />
+    <AndroidAsset Include="Assets\showdown.js" />
+    <AndroidAsset Include="Assets\to-markdown.js" />
+    <AndroidAsset Include="Assets\quill.snow.css" />
+    <AndroidAsset Include="Assets\highlight.min.js" />
+    <AndroidAsset Include="Assets\katex.min.js" />
+    <AndroidAsset Include="Assets\katex.min.css" />
+    <AndroidAsset Include="Assets\monokai-sublime.min.css" />
+    <AndroidAsset Include="Assets\quill.min.js" />
     <Content Include="PluginsHelp\ConnectivityReadme.txt" />
     <Content Include="PluginsHelp\GeolocatorReadme.txt" />
     <AndroidResource Include="Resources\values\colors.xml" />

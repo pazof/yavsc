@@ -1,0 +1,48 @@
+﻿@model string
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" href="katex.min.css" />
+
+    <link rel="stylesheet" href="monokai-sublime.min.css" />
+
+    <link rel="stylesheet" href="quill.snow.css" />
+
+    <style>
+        .standalone-container {
+            margin: 20px auto;
+            width: 100%;
+        }
+
+        #snow-container {
+            height: 100%;
+        }
+    </style>
+
+
+</head>
+<body>
+
+    <div class="standalone-container">
+        <div id="snow-container">@Html.Write(Model)</div>
+    </div>
+
+    <script type="text/javascript" src="katex.min.js"></script>
+
+    <script type="text/javascript" src="highlight.min.js"></script>
+
+    <script type="text/javascript" src="quill.min.js"></script>
+
+    <script type="text/javascript">
+  var quill = new Quill('#snow-container', {
+    placeholder: 'Compose an epic...',
+    theme: 'snow'
+  });
+    </script>
+
+
+</body>
+</html>
