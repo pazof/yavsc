@@ -37,11 +37,19 @@
 
 <script type="text/javascript" src="quill.min.js"></script>
 
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="showdown.js"></script>
+    <script type="text/javascript" src="to-markdown.js"></script>
+    <script type="text/javascript" src="md-helpers.js"></script>
 <script type="text/javascript">
   var quill = new Quill('#snow-container', {
     placeholder: 'Compose an epic...',
     theme: 'snow'
   });
+
+  function GetMD() {
+      return markdownize($('#snow-container div.ql-editor').html())
+  }
 </script>
 
 
