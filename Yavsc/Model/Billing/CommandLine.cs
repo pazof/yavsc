@@ -10,7 +10,9 @@ namespace Yavsc.Models.Billing
 
      [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
      public long Id { get; set; }
-     public string Comment { get; set; }
+     
+     [Required]
+     public string Description { get; set; }
      public BaseProduct Article { get; set; }
      public int Count { get; set; }
      public decimal UnitaryCost { get; set; }
