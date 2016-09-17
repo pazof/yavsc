@@ -1,4 +1,5 @@
 using BookAStar.Model.Auth.Account;
+using System;
 using Xamarin.Forms;
 using Yavsc.Models.Identity;
 
@@ -24,7 +25,7 @@ namespace BookAStar
 
         object InvokeApi(string method, object arg);
 
-        View CreateMarkdownView(string markdown);
+        View CreateMarkdownView(string markdown, Action<string> update);
     }
 }
 
