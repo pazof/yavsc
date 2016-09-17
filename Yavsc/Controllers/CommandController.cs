@@ -60,7 +60,6 @@ namespace Yavsc.Controllers
             .Include(x => x.PerformerProfile)
             .Include(x => x.PerformerProfile.Performer)
             .Include(x => x.Location)
-            .Include(x => x.Bill)
             .Where(x=> x.ClientId == uid || x.PerformerId == uid)
             .ToList());
         }
@@ -135,6 +134,7 @@ namespace Yavsc.Controllers
             .FirstOrDefault(
                 x => x.PerformerId == command.PerformerId
             );
+            _logger.LogDebug($"Pro: {pro}");
             command.PerformerProfile = pro;
             var user = await _userManager.FindByIdAsync(
                User.GetUserId()
@@ -162,7 +162,7 @@ namespace Yavsc.Controllers
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
                         var sregids = string.Join(",",regids);
-                        grep = await _GCMSender.NotifyAsync(_googleSettings,regids,yaev);
+                        grep = await _GCMSender.NotifyBookQueryAsync(_googleSettings,regids,yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile
@@ -174,8 +174,8 @@ namespace Yavsc.Controllers
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
                         command.PerformerProfile.Performer.Email,
-                        yaev.Title,
-                        $"{yaev.Description}\r\n-- \r\n{yaev.Comment}\r\n"
+                        yaev.Topic+" "+yaev.Client.UserName,
+                        $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n"
                     );
                 }
                 ViewBag.GoogleSettings = _googleSettings;

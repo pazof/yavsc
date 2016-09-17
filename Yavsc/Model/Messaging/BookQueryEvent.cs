@@ -1,8 +1,7 @@
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Messaging
 {
+using Yavsc.Model;
 
 //
 //  BookQueryEvent.cs
@@ -25,31 +24,27 @@ namespace Yavsc.Models.Messaging
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-public class BookQueryEvent: YaEvent
+public class BookQueryEvent: BookQueryProviderView, IEvent
 	{
-        public BookQueryEvent() : base("BookQuery")
+        public BookQueryEvent()
         {
-            
+            Topic = "BookQuery";
         }
-		/// <summary>
-		/// The location.
-		/// </summary>
-		[Display(Name="Location")]
-		public Location Location { get; set; }
-		/// <summary>
-		/// The start date.
-		/// </summary>
-		[Display(Name="StartDate")]
-		public DateTime StartDate { get; set; }
 
-		/// <summary>
-		/// Gets or sets the end date.
-		/// </summary>
-		/// <value>The end date.</value>
-		[Display(Name="EndDate")]
-		public DateTime EndDate { get; set; }
+        public string Message
+        {
+            get; set;
+        }
 
-        public long CommandId { get; set; }
-	}
+        public string Sender
+        {
+            get; set;
+        }
+
+        public string Topic
+        {
+            get; set;
+        }
+    }
 
 }
