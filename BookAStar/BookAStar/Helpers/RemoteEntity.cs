@@ -9,28 +9,25 @@ using System.Threading.Tasks;
 
 namespace BookAStar
 {
-    public class RemoteEntity<V,K> : ICommand where K : IEquatable<K>
+    public class RemoteEntity<V,K> : ObservableCollection<V>, ICommand where K : IEquatable<K>
     {
         private string _controller;
         public event EventHandler CanExecuteChanged;
         public bool IsExecuting { get; private set; }
-        public ObservableCollection<V> LocalData;
-        private Func<V, K> _getKey ;
         private HttpClient client;
         private Uri controllerUri;
-
+        protected Func<V, K> GetKey { get; set; }
         public bool CanExecute(object parameter)
         {
             return !IsExecuting;
         }
 
-        public RemoteEntity(string controllerName, Func<V,K> getKey)
+        public RemoteEntity(string controllerName, Func<V,K> getKey):base()
         {
             if (string.IsNullOrWhiteSpace(controllerName) || getKey == null)
                 throw new InvalidOperationException();
             _controller = controllerName;
-            _getKey = getKey;
-            LocalData = new ObservableCollection<V>();
+            GetKey = getKey;
             client = new HttpClient();
             controllerUri = new Uri(MainSettings.YavscApiUrl + "/" + _controller);
         }
@@ -51,6 +48,9 @@ namespace BookAStar
         public async void Execute(object parameter)
         {
             BeforeExecute();
+            // Update credentials 
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
+                "Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
             // Get the whole data
   
             var response = await client.GetAsync(controllerUri);
@@ -61,25 +61,25 @@ namespace BookAStar
                 // LocalData.Clear();
                 foreach (var item in col)
                 {
-                    Update(item);
+                    UpdateOrAdd(item);
                 }
             }
 
             AfterExecuting();
         }
-        private void Update (V item)
+        protected virtual void UpdateOrAdd (V item)
         {
-            var key = _getKey(item);
-            if (LocalData.Any(x => _getKey(x).Equals(key)))
+            var key = GetKey(item);
+            if (this.Any(x => GetKey(x).Equals(key)))
             {
-                LocalData.Remove(LocalGet(key));
+                Remove(LocalGet(key));
             }
-            LocalData.Add(item);
+            Add(item);
         }
 
         public V LocalGet(K key)
         {
-            return LocalData.Single(x => _getKey(x).Equals(key));
+            return this.Single(x => GetKey(x).Equals(key));
         }
 
         private void AfterExecuting()
@@ -102,7 +102,7 @@ namespace BookAStar
                 var content = await response.Content.ReadAsStringAsync();
                 item = JsonConvert.DeserializeObject<V>(content);
                 // LocalData.Clear();
-                    Update(item);
+                    UpdateOrAdd(item);
             }
 
             AfterExecuting();

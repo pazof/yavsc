@@ -43,26 +43,18 @@ namespace BookAStar.Droid.Services
                 var topic = data.GetString("Topic");
                 if (topic == "BookQuery")
                 {
-                    DateTime startdate,enddate;
+                    DateTime eventdate,enddate;
                     
-                    var sdatestr = data.GetString("StartDate");
-                    DateTime.TryParse(sdatestr, out startdate);
-
-                    var enddatestr = data.GetString("EndDate");
-                    DateTime.TryParse(enddatestr, out enddate);
+                    var sdatestr = data.GetString("EventDate");
+                    DateTime.TryParse(sdatestr, out eventdate);
 
                     var locationJson = data.GetString("Location");
                     var location = JsonConvert.DeserializeObject<Location>(locationJson);
-                    var cid = long.Parse(data.GetString("CommandId"));
+                    var cid = long.Parse(data.GetString("Id"));
                     var bq = new BookQueryData
                     {
-                        Title = data.GetString("Title"),
-                        Description = data.GetString("Description"),
-                        Comment = data.GetString("Comment"),
-                        StartDate = startdate,
-                        EndDate = enddate,
-                        CommandId = cid,
-                        Address = location
+                        Id = cid,
+                        Location = location
                     };
 
                     SendBookQueryNotification(bq);
@@ -96,19 +88,19 @@ namespace BookAStar.Droid.Services
                 var count = bookquerynotifications.Length;
                 var multiple = count > 1;
                 var title =
-                multiple ? $"{count} demandes" : bquery.Title;
-                var message = bquery.Description;
+                multiple ? $"{count} demandes" : bquery.Client.UserName;
+                var message = $"{bquery.EventDate} {bquery.Client.UserName} {bquery.Location.Address}";
 
                 var intent = new Intent(this, typeof(MainActivity));
                 intent.AddFlags(ActivityFlags.ClearTop);
-                intent.PutExtra("BookQueryId", bquery.CommandId);
+                intent.PutExtra("BookQueryId", bquery.Id);
                
                 var pendingIntent = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.OneShot);
                 Notification.InboxStyle inboxStyle = new Notification.InboxStyle();
                 int maxil = 5;
                 for (int cn = 0; cn < count && cn < maxil; cn++)
                 {
-                    inboxStyle.AddLine(bookquerynotifications[cn].Description);
+                    inboxStyle.AddLine(bookquerynotifications[cn].Client.UserName);
                 }
                 if (count > maxil)
                     inboxStyle.SetSummaryText($"Plus {count - maxil} autres");

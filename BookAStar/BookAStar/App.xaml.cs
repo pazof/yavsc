@@ -1,4 +1,6 @@
-﻿using BookAStar.Model.Auth.Account;
+﻿using BookAStar.Model;
+using BookAStar.Model.Auth.Account;
+using BookAStar.Pages;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -25,25 +27,32 @@ namespace BookAStar
         SettingsPage settingsPage;
         PinPage pinPage;
         ContentPage deviceInfoPage;
+        BookQueryPage bookQueryPage;
+        BookQueriesPage bookQueriesPage;
         public static IPlatform PlateformSpecificInstance { get; set; }
         public static string AppName { get; set; }
         public static App CurrentApp { get { return Current as App; } }
 
         public DataManager DataManager { get; set; }
 
-        public App (IPlatform instance)
-		{
+        public App(IPlatform instance)
+        {
             DataManager = new DataManager();
             deviceInfoPage = new DeviceInfoPage(instance.GetDeviceInfo());
+            bookQueriesPage = new BookQueriesPage();
 
             PlateformSpecificInstance = instance;
-			searchPage = new SearchPage { Title = "Trouvez votre artiste"
-					 , Icon = "glyphish_07_map_marker.png"
-			};
-			mp = new NavigationPage (searchPage);
-			settingsPage = new SettingsPage { Title = "Settings"
-					,  Icon = "ic_corp_icon.png"
-			};
+            searchPage = new SearchPage
+            {
+                Title = "Trouvez votre artiste",
+                Icon = "glyphish_07_map_marker.png"
+            };
+            mp = new NavigationPage(searchPage);
+            settingsPage = new SettingsPage
+            {
+                Title = "Settings",
+                Icon = "ic_corp_icon.png"
+            };
 
             var r = this.Resources;
             //var hasLabelStyle = r.ContainsKey("labelStyle");
@@ -52,39 +61,53 @@ namespace BookAStar
             // null var appsstyle = settingsPage.Style;
             // appsstyle.CanCascade = true;
             MainPage = mp;
-			ToolbarItem tiSetts = new ToolbarItem () { Text = "Settings"
-					, Icon = "ic_corp_icon.png"
+            ToolbarItem tiSetts = new ToolbarItem()
+            {
+                Text = "Settings",
+                Icon = "ic_corp_icon.png"
             };
-			mp.ToolbarItems.Add (tiSetts);
-			tiSetts.Clicked += (object sender, EventArgs e) => {
-				if (settingsPage.Parent==null)	
-				mp.Navigation.PushAsync(settingsPage);
-				else {
+            mp.ToolbarItems.Add(tiSetts);
+            tiSetts.Clicked += (object sender, EventArgs e) =>
+            {
+                if (settingsPage.Parent == null)
+                    mp.Navigation.PushAsync(settingsPage);
+                else
+                {
                     settingsPage.Focus();
                 }
-			};
+            };
             ToolbarItem tiQueries = new ToolbarItem
             {
                 Text = "Demandes"
             };
-            tiQueries.Clicked += (object sender, EventArgs e) => {
-                mp.Navigation.PushAsync(new Pages.MakeAnEstimatePage());
+
+
+            tiQueries.Clicked += (object sender, EventArgs e) =>
+            {
+                if (bookQueriesPage.Parent == null)
+                    mp.Navigation.PushAsync(bookQueriesPage);
+                else bookQueriesPage.Focus();
             };
-                mp.ToolbarItems.Add(tiQueries);
-            ToolbarItem tiMap = new ToolbarItem { Text = "Carte",
-				 Icon = "glyphish_07_map_marker.png" 
-			};
-			mp.ToolbarItems.Add (tiMap);
-			pinPage = new PinPage { Title = "Carte",  
-				 Icon = "glyphish_07_map_marker.png"
-			};
-			tiMap.Clicked += (object sender, EventArgs e) => {
+            mp.ToolbarItems.Add(tiQueries);
+            ToolbarItem tiMap = new ToolbarItem
+            {
+                Text = "Carte",
+                Icon = "glyphish_07_map_marker.png"
+            };
+            mp.ToolbarItems.Add(tiMap);
+            pinPage = new PinPage
+            {
+                Title = "Carte",
+                Icon = "glyphish_07_map_marker.png"
+            };
+            tiMap.Clicked += (object sender, EventArgs e) =>
+            {
                 if (pinPage.Parent == null)
                     mp.Navigation.PushAsync(pinPage);
                 else pinPage.Focus();
 
             };
-            
+
         }
 
         public void ShowDeviceInfo()
@@ -97,13 +120,19 @@ namespace BookAStar
         public void PostDeviceInfo()
         {
             var res = PlateformSpecificInstance.InvokeApi(
-                "gcm/register", 
+                "gcm/register",
                 PlateformSpecificInstance.GetDeviceInfo());
         }
 
-        public void ShowBookQuery(long queryId)
+        public void ShowBookQuery(BookQueryData data)
         {
-            mp.Navigation.PushAsync(new BookQueryPage(queryId));
+            bookQueriesPage.BindingContext = data;
+            mp.Navigation.PushAsync(bookQueriesPage);
+        }
+
+        public void CloseWindow()
+        {
+            mp.Navigation.PopAsync();
         }
     }
 }
