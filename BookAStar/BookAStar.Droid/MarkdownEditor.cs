@@ -32,77 +32,150 @@ public string Model { get; set; }
 
 public override void Execute()
 {
-WriteLiteral("<!DOCTYPE html>\r\n<html>\r\n<head>\r\n    <meta");
+WriteLiteral("<!DOCTYPE html>\r\n<html>\r\n<head>\r\n   \r\n    <meta");
 
 WriteLiteral(" charset=\"utf-8\"");
-
-WriteLiteral(">\r\n    <meta");
-
-WriteLiteral(" name=\"viewport\"");
-
-WriteLiteral(" content=\"width=device-width\"");
 
 WriteLiteral(">\r\n\r\n    <link");
 
 WriteLiteral(" rel=\"stylesheet\"");
 
-WriteLiteral(" href=\"katex.min.css\"");
-
-WriteLiteral(" />\r\n\r\n    <link");
-
-WriteLiteral(" rel=\"stylesheet\"");
-
-WriteLiteral(" href=\"monokai-sublime.min.css\"");
-
-WriteLiteral(" />\r\n\r\n    <link");
-
-WriteLiteral(" rel=\"stylesheet\"");
-
 WriteLiteral(" href=\"quill.snow.css\"");
 
-WriteLiteral(" />\r\n\r\n    <style>\r\n        .standalone-container {\r\n            margin: 20px aut" +
-"o;\r\n            width: 100%;\r\n        }\r\n\r\n        #snow-container {\r\n          " +
-"  height: 100%;\r\n        }\r\n    </style>\r\n\r\n\r\n</head>\r\n<body>\r\n\r\n    <div");
+WriteLiteral(@" />
+
+    <style>
+        .standalone-container {
+            margin: 0;
+            width: 100%;
+        }
+
+        #bubble-container {
+           height: 100%;
+        }
+
+        #bubble-container div.ql-editor {
+            margin-top:3em;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div");
 
 WriteLiteral(" class=\"standalone-container\"");
 
 WriteLiteral(">\r\n        <div");
 
-WriteLiteral(" id=\"snow-container\"");
+WriteLiteral(" id=\"bubble-container\"");
 
 WriteLiteral(">");
 
 
-#line 30 "MarkdownEditor.cshtml"
-                            Write(Html.Write(Model));
+#line 33 "MarkdownEditor.cshtml"
+                              Write(Html.Write(Model));
 
 
 #line default
 #line hidden
-WriteLiteral("</div>\r\n    </div>\r\n\r\n    <script");
+WriteLiteral("</div>\r\n    </div>\r\n    <form><input");
 
-WriteLiteral(" type=\"text/javascript\"");
+WriteLiteral(" type=\"hidden\"");
 
-WriteLiteral(" src=\"katex.min.js\"");
+WriteLiteral(" name=\"md\"");
 
-WriteLiteral("></script>\r\n\r\n    <script");
+WriteLiteral(" id=\"md\"");
 
-WriteLiteral(" type=\"text/javascript\"");
+WriteLiteral(" />\r\n    <input");
 
-WriteLiteral(" src=\"highlight.min.js\"");
+WriteLiteral(" id=\"btnSubmit\"");
 
-WriteLiteral("></script>\r\n\r\n    <script");
+WriteLiteral(" type=\"button\"");
+
+WriteLiteral(" value=\"Valider\"");
+
+WriteLiteral(" class=\"hidden\"");
+
+WriteLiteral(" /></form>\r\n    <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
 WriteLiteral(" src=\"quill.min.js\"");
 
+WriteLiteral("></script>\r\n    <script");
+
+WriteLiteral(" type=\"text/javascript\"");
+
+WriteLiteral(" src=\"jquery.js\"");
+
+WriteLiteral("></script>\r\n    <script");
+
+WriteLiteral(" type=\"text/javascript\"");
+
+WriteLiteral(" src=\"showdown.js\"");
+
+WriteLiteral("></script>\r\n    <script");
+
+WriteLiteral(" type=\"text/javascript\"");
+
+WriteLiteral(" src=\"to-markdown.js\"");
+
+WriteLiteral("></script>\r\n    <script");
+
+WriteLiteral(" type=\"text/javascript\"");
+
+WriteLiteral(" src=\"md-helpers.js\"");
+
 WriteLiteral("></script>\r\n\r\n    <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
-WriteLiteral(">\r\n  var quill = new Quill(\'#snow-container\', {\r\n    placeholder: \'Compose an epi" +
-"c...\',\r\n    theme: \'snow\'\r\n  });\r\n    </script>\r\n\r\n\r\n</body>\r\n</html>\r\n");
+WriteLiteral(@">
+        var toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  ['blockquote', 'code-block'],
+
+  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+  [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+  
+  ['clean']                                         // remove formatting button
+        ];
+
+        var quill = new Quill('#bubble-container', {
+            modules: {
+                toolbar: toolbarOptions
+            },
+    placeholder: 'Composez votre texte ...',
+    theme: 'snow'
+  });
+
+  function getMD() {
+      return markdownize($('#bubble-container div.ql-editor').html())
+  }
+  quill.on('text-change', function (delta, oldDelta, source)
+  {
+      if (source === ""user"") {
+          $('#md').val(getMD());
+          $('#btnSubmit').removeClass('hidden');
+      }
+  });
+  $(document).ready(function () {
+      $('#btnSubmit').on('click', function () {
+          $.get(""file:validate?md="" + encodeURIComponent(getMD()),
+       function (data, stat, jqXHR) { $('#result').html(""Okay"") })
+      })
+  });
+    </script>
+
+</body>
+</html>
+");
 
 }
 }
