@@ -29,11 +29,6 @@ namespace Yavsc.Models.Messaging
 	/// </summary>
 	public class CircleEvent: YaEvent
 	{
-        public CircleEvent(string topic) : base(topic)
-        {
-            
-        }
-
 		/// <summary>
 		/// Gets or sets the circles.
 		/// </summary>
