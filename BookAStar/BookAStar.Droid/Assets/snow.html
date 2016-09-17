@@ -1,57 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Snow Theme - Quill</title>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width">
- 
-<link rel="stylesheet" href="katex.min.css" />
+    <title>Quill</title>
+    <meta charset="utf-8">
 
-<link rel="stylesheet" href="monokai-sublime.min.css" />
+    <link rel="stylesheet" href="quill.snow.css" />
 
-<link rel="stylesheet" href="quill.snow.css" />
+    <style>
+        .standalone-container {
+            margin: 0;
+            width: 100%;
+        }
 
-<style>
-  .standalone-container {
-    margin: 50px auto;
-    width: 720px;
-  }
-  #snow-container {
-    height: 350px;
-  }
-</style>
+        #bubble-container {
+           height: 100%;
+        }
 
+        #bubble-container div.ql-editor {
+            margin-top:3em;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 
 </head>
 <body>
-  
-<div class="standalone-container">
-  <div id="snow-container"></div>
-</div>
 
-  
-  
-<script type="text/javascript" src="katex.min.js"></script>
+    <div class="standalone-container">
+        <div id="bubble-container"></div>
+    </div>
+    <form><input type="hidden" name="md" id="md" />
+    <input id="btnSubmit" type="button" value="Valider" class="hidden" />
 
-<script type="text/javascript" src="highlight.min.js"></script>
-
-<script type="text/javascript" src="quill.min.js"></script>
-
+</form>
+<div id="result"></div>
+    <script type="text/javascript" src="quill.min.js"></script>
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="showdown.js"></script>
     <script type="text/javascript" src="to-markdown.js"></script>
     <script type="text/javascript" src="md-helpers.js"></script>
-<script type="text/javascript">
-  var quill = new Quill('#snow-container', {
-    placeholder: 'Compose an epic...',
+
+    <script type="text/javascript">
+        var toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  ['blockquote', 'code-block'],
+
+  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+  [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+  
+  ['clean']                                         // remove formatting button
+        ];
+
+        var quill = new Quill('#bubble-container', {
+            modules: {
+                toolbar: toolbarOptions
+            },
+    placeholder: 'Composez votre texte ...',
     theme: 'snow'
   });
 
-  function GetMD() {
-      return markdownize($('#snow-container div.ql-editor').html())
+  function getMD() {
+      return markdownize($('#bubble-container div.ql-editor').html())
   }
-</script>
-
+  quill.on('text-change', function (delta, oldDelta, source)
+  {
+      if (source === "user") {
+          $('#md').val(getMD());
+          $('#btnSubmit').removeClass('hidden');
+      }
+  });
+$( document ).ready(function() {
+  $('#btnSubmit').on('click', function () {
+	  $.get("hybrid:validate?md=" + encodeURIComponent(getMD()),
+   function(data,stat,jqXHR) { $('#result').html("Okay") })
+  })
+});
+    </script>
 
 </body>
 </html>
+
