@@ -4,23 +4,39 @@ Da road to the hell
 
 ## Jalon 1
 
-✔ Acces (publique) aux Blogs @done (August 13th 2016, 0:51)
-✔ Accès aux profiles des intervenants @done (August 13th 2016, 0:57)
-✔ Demande de devis, spécifiant une date et un lieu, envers un pro (ou "BookQuery", ou "demande de rendez-vous") @done (August 13th 2016, 0:57)
-☐ Proposition de devis sur BookQuery
-☐ Signature de contrat
+	✔ Acces (publique) aux Blogs @done (August 13th 2016, 0:51)
+	✔ Accès aux profiles des intervenants @done (August 13th 2016, 0:57)
+	✔ Demande de devis, spécifiant une date et un lieu, envers un pro (ou "BookQuery", ou "demande de rendez-vous") @done (August 13th 2016, 0:57)
+	✔ Notifications commande @done (September 15th 2016, 15:00)
+	☐ Proposition de devis sur BookQuery
+	☐ Signature de contrat
 
 ## Jalon 2
 
-☐ Paiement client
-☐ Login Twitter
-☐ Notifications commande
-☐ Saisie du devis sur commande générique
+	☐ Paiement client d'un approvisionnement pour une demande de prestation définie
+	☐ Login Twitter
+	☐ Notifications et Twits de blogs, d'entées d'artiste, de success stories
 
-## Jalon 3
+## Jalon 3
 
-☐ Aide à la rencontre
-☐ activités secondaires
+	☐ Saisie du devis sur commande générique
+	☐ Saisie d'un devis à destination d'un invité [email]
+	☐ Paiement d'Arrhes
 
-☐ Arrhes
-☐ conciliation
+## Jalon 4
+
+	☐ Aide à la rencontre
+	☐ Activités secondaires
+
+## Jalon 5
+
+	☐ Conciliation
+
+---------------------------
+Hotkeys
+
+Alt-Enter: add a new todo item below the current
+Alt-Shift-Enter: add a new todo item above the current
+Alt-D: toggle completion for current task
+Alt-A: cancel current task
+Alt-C: convert current task
