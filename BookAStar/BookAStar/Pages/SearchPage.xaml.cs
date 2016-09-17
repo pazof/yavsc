@@ -3,6 +3,7 @@ using Xamarin.Forms;
 using System.Collections.ObjectModel;
 using BookAStar.Model.Social;
 using BookAStar.Model.Workflow.Messaging;
+using BookAStar.Pages;
 
 namespace BookAStar
 {

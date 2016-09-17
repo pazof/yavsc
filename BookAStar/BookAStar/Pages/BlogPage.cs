@@ -1,17 +1,9 @@
 ﻿using BookAStar.Model.Blog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
 
 using Xamarin.Forms;
-using Yavsc.Models;
 
-namespace BookAStar
+namespace BookAStar.Pages
 {
-
-
     public class BlogPage : ContentPage
     {
         HtmlWebViewSource _source;
