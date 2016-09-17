@@ -10,6 +10,10 @@ namespace BookAStar.Views
 {
     public partial class MarkdownView : ContentView
     {
+        public static readonly BindableProperty MarkdownProperty = BindableProperty.Create(
+            "Markdown", typeof(string), typeof(MarkdownView), null, BindingMode.TwoWay
+            );
+
         private string markdown;
 
         public string Markdown
@@ -18,15 +22,26 @@ namespace BookAStar.Views
             {
                 return markdown;
             }
-            set { markdown = value; }
+            set {
+                markdown = value;
+                Content = App.PlateformSpecificInstance.CreateMarkdownView(
+                    markdown,
+                    e => {
+                        Markdown = e;
+                        if (Validated != null)
+                            Validated.Invoke(this, new EventArgs());
+                    }
+                    );
+
+            }
         }
 
         public MarkdownView() : base()
         {
-            markdown = "**Hello** _world_";
-            Content = App.PlateformSpecificInstance.CreateMarkdownView(markdown);
             
         }
-        
+
+        public event EventHandler Validated;
+
     }
 }
