@@ -4,53 +4,61 @@ using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
-namespace BookAStar
+namespace BookAStar.Pages
 {
     using Model;
     using System.Threading.Tasks;
 
     public partial class BookQueryPage : ContentPage
     {
-        private Map map;
-        public BookQueryPage(long bookQueryId)
+
+        public BookQueryData BookQuery
+        {
+            get
+            {
+                return BindingContext as BookQueryData;
+            }
+            set
+            {
+                BindingContext = value;
+            }
+        }
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+            map.Pins.Clear();
+            if (BookQuery != null)
+            {
+                var lat = BookQuery.Location.Latitude;
+                var lon = BookQuery.Location.Longitude;
+                var pin = new Pin
+                {
+                    Type = PinType.SavedPin,
+                    Position = new Position(
+                        lat, lon),
+                    Label = BookQuery.Client.UserName,
+                    Address = BookQuery.Location.Address
+                };
+                map.Pins.Add(pin);
+                map.MoveToRegion(MapSpan.FromCenterAndRadius(
+                    new Position(lat, lon), Distance.FromMeters(100)));
+            }
+        }
+        public BookQueryPage(BookQueryData bookQuery)
         {
             
             InitializeComponent();
-            if (bookQueryId == 0)
-                throw new InvalidOperationException("No id");
-            BookQueryData bquery = null;
-            Task.Run( async () => { bquery = await App.CurrentApp.DataManager.BookQueries.Get(bookQueryId); });
-            
-            BindingContext = bquery;
-            if (bquery==null)
-                throw new InvalidOperationException("No data");
 
-            var lat = bquery.Address.Latitude;
-            var lon = bquery.Address.Longitude;
-            var pin = new Pin
-            {
-                Type = PinType.SearchResult,
-                Position = new Position(
-                    lat   , lon ),
-                Label = bquery.Title,
-                Address = bquery.Address.Address
-            };
-            pin.BindingContext = bquery;
-            map.Pins.Add(pin);
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                new Position(lat, lon), Distance.FromMeters(100)));
-            bookQueryLayout.Children.Add(map);
+            // Task.Run( async () => { bookQuery = await App.CurrentApp.DataManager.BookQueries.Get(bookQueryId); });
+            
+            BookQuery = bookQuery;
+            
         }
 
         private void MakeAnEstimate(object sender, EventArgs e)
         {
             throw new NotImplementedException();
         }
-
-        protected override void OnBindingContextChanged()
-        {
-            base.OnBindingContextChanged();
-
-        }
+        
     }
 }

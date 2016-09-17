@@ -1,4 +1,5 @@
-﻿using BookAStar.Views;
+﻿using BookAStar.Model.Workflow;
+using BookAStar.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,17 @@ namespace BookAStar.Pages
 {
     public partial class MakeAnEstimatePage : ContentPage
     {
-        public MakeAnEstimatePage()
+        public Estimate Estimate { get { return BindingContext as Estimate;  } set {
+                BindingContext = value;
+            } }
+
+        public static readonly BindableProperty MarkdownProperty =
+            BindableProperty.Create("Description", typeof(string), typeof(Estimate),
+                null, BindingMode.TwoWay);
+        
+        public MakeAnEstimatePage(string clientId,long bookQueryId)
         {
-            var m = new MarkdownView();
             InitializeComponent();
-            var md = this.mdview.Markdown;
         }
     }
 }

@@ -3,14 +3,18 @@ using System;
 
 namespace BookAStar.Model
 {
+    public class ClientProviderInfo
+    {
+        public string UserName { get; set; }
+        public string UserId { get; set;  }
+        public int Rate { get; set; }
+    }
     public class BookQueryData
     {
-        public string Title { get; set; }
-        public string Description { set; get; }
-        public string Comment { get; set; }
-        public long CommandId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public Location Address { get; set; }
+        public ClientProviderInfo Client { get; set; }
+        public Location Location { get; set; }
+        public long Id { get; set; }
+        public DateTime EventDate { get; set; }
+        public decimal? Previsionnal { get; set; }
     }
 }

@@ -39,7 +39,11 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataManager.cs" />
+    <Compile Include="Helpers\RemoteEntityRO.cs" />
     <Compile Include="Pages\BlogPage.cs" />
+    <Compile Include="Pages\BookQueriesPage.xaml.cs">
+      <DependentUpon>BookQueriesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\BookQueryPage.xaml.cs">
       <DependentUpon>BookQueryPage.xaml</DependentUpon>
     </Compile>
@@ -208,6 +212,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\MakeAnEstimatePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\BookQueriesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
