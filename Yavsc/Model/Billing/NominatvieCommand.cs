@@ -1,6 +1,5 @@
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Market;
@@ -40,12 +39,7 @@ namespace Yavsc.Models.Billing
     /// The bill
     /// </summary>
     /// <returns></returns>
-    public List<Service> Bill { get; set; } = new List<Service>();
 
-    ///<summary>
-    /// Time span in seconds in which
-    /// Validation will be considered as definitive
-    ///</summary>
-    public int Lag { get; set; }
+
  }
 }
