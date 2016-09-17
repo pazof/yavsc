@@ -10,7 +10,7 @@ using Yavsc.Models.Billing;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/do"),Authorize()]
+    [Route("api/estimate"),Authorize()]
     public class EstimateApiController : Controller
     {
         private ApplicationDbContext _context;
@@ -40,7 +40,6 @@ namespace Yavsc.Controllers
             return new HttpStatusCodeResult(StatusCodes.Status403Forbidden);
             return Ok(_context.Estimates.Where(e=>e.OwnerId == ownerId));
         }
-
         // GET: api/Estimate/5
         [HttpGet("{id}", Name = "GetEstimate")]
         public IActionResult GetEstimate([FromRoute] long id)
