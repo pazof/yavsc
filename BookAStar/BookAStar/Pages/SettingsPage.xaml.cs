@@ -51,11 +51,6 @@ namespace BookAStar
         public Dictionary<string, double> Musical { get; private set; }
         public Dictionary<string, double> Environ { get; private set; }
 
-        private void PlateformSpecificInstance_IdentificationChanged(object sender, IdentificationChangedEventArgs e)
-        {
-           // Assert AccountListView.SelectedItem == e.NewIdentification;
-        }
-
         private void Accounts_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             var user = e.SelectedItem as User;

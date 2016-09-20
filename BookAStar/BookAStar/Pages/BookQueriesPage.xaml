@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BookAStar.Views;assembly=BookAStar"
+             x:Class="BookAStar.Pages.BookQueriesPage">
+  <StackLayout>
+
+  <ListView x:Name="list"
+	 HasUnevenRows="true" ItemTapped="OnViewDetail">
+    <ListView.ItemTemplate>
+      <DataTemplate>
+        <ViewCell>
+          <ViewCell.View>
+            <StackLayout Orientation="Horizontal">
+              <StackLayout Orientation="Vertical">
+                <Label Text="{Binding Title}" FontSize="12"/>
+                <Label Text="{Binding Description}"/>
+                <Label Text="{Binding Comment}"/>
+                <Label Text="{Binding CommandId}"/>
+                
+                <StackLayout Orientation="Horizontal">
+                  
+                  <StackLayout>
+                    <Label Text="Date:" FontAttributes="Italic"/>
+                    <Label Text="{Binding StartDate, StringFormat='{0:jj/MM/yyyy}'}" VerticalOptions="End"/>
+                  </StackLayout>
+                  <StackLayout>
+                    <Label Text="Heure:" FontAttributes="Italic" />
+                    <Label Text="{Binding StartDate, StringFormat='{0:H:mm}'}" VerticalOptions="End"/>
+                  </StackLayout>
+                  <StackLayout>
+                    <Label Text="Lieu:" FontAttributes="Italic"   VerticalOptions="End"/>
+                    <Label Text="{Binding Location.Address}"/>
+                  </StackLayout>
+
+                </StackLayout>
+              </StackLayout>
+            </StackLayout>
+          </ViewCell.View>
+        </ViewCell>
+      </DataTemplate>
+    </ListView.ItemTemplate>
+  </ListView>
+  </StackLayout>
+  
+</ContentPage>

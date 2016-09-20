@@ -21,4 +21,7 @@ RSA-Params.json
 Components/
 packages/
 build/
+*.user
+*.bak
+*~
 

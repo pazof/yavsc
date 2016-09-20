@@ -1,24 +1,30 @@
 ﻿using BookAStar.Model.Social;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace BookAStar
 {
+
+   
+   
+
+       
     public static class Manager
 	{
 	    static Manager ()
 		{
 		}
-
-
-
+        public static ICommand RefreshBookQueries;
         // TODO WIP TEST rop this
-		private static Location[] _places = new Location[] {
-			new Location(48.8626458, 2.2065559, "2 bd Aristide Briand - Suresnes" ),
-			new Location(48.8632757, 2.2023099, "Théatre Jean Villard - Suresnes" ),
-			new Location(48.8647120, 2.2054588, "Place de la Paix - Suresnes" ),
-			new Location(48.8640133, 2.2056573, "Restaurant" ),
-			new Location(48.8634839, 2.2064137, "Square" ),
-			new Location(48.8653649, 2.2014945, "Stade de foot" ),
+        private static Location[] _places = new Location[] {
+			new Location { Latitude = 48.8626458, Longitude = 2.2065559, Address = "2 bd Aristide Briand - Suresnes" },
+			new Location{ Latitude =48.8632757, Longitude =2.2023099, Address ="Théatre Jean Villard - Suresnes" },
+			new Location{ Latitude =48.8647120, Longitude =2.2054588,Address = "Place de la Paix - Suresnes" },
+			new Location{ Latitude =48.8640133, Longitude =2.2056573, Address ="Restaurant" },
+			new Location{ Latitude =48.8634839, Longitude =2.2064137,Address = "Square" },
+			new Location{ Latitude =48.8653649, Longitude =2.2014945,Address = "Stade de foot" },
 		};
         // TODO WIP TEST rop this
         private static ObservableCollection<LocalizedEvent> _your_events = new ObservableCollection<LocalizedEvent> {

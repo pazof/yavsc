@@ -7,7 +7,7 @@ using System.Text;
 using Xamarin.Forms;
 using Yavsc.Models.Identity;
 
-namespace BookAStar
+namespace BookAStar.Pages
 {
     public class DeviceInfoPage : ContentPage
     {

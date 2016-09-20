@@ -1,4 +1,5 @@
 // Helpers/Settings.cs
+using BookAStar.Model;
 using BookAStar.Model.Auth.Account;
 using Newtonsoft.Json;
 using Plugin.Settings;
@@ -58,7 +59,6 @@ namespace BookAStar
 			};
         private static readonly Dictionary<string, double> environ = new Dictionary<string, double>();
 
-        public static readonly string YavscApiUrl = "http://dev.pschneider.fr/api";
 
 		#endregion
 
@@ -68,6 +68,25 @@ namespace BookAStar
 				return AppSettings.GetValueOrDefault<string>(userNameKey, null);
 			}
 		}
+        public const string bookQueryNotificationsKey = "BookQueryNotifications";
+        public static BookQueryData[] GetBookQueryNotifications()
+        {
+            // Do not return any null List
+            var json = AppSettings.GetValueOrDefault<string>(bookQueryNotificationsKey);
+            if (!string.IsNullOrWhiteSpace(json))
+                return JsonConvert.DeserializeObject<BookQueryData[]>(json);
+            return new BookQueryData[] {};
+        }
+
+        public static BookQueryData[] AddBookQueryNotification(BookQueryData query)
+        {
+            var existing = new List<BookQueryData>(GetBookQueryNotifications());
+            existing.Add(query);
+            var result = existing.ToArray();
+            AppSettings.AddOrUpdateValue(bookQueryNotificationsKey,
+                JsonConvert.SerializeObject(result));
+            return result;
+        }
 
         public  static string GoogleRegId
         {
@@ -185,10 +204,11 @@ namespace BookAStar
                 return environ;
             }
         }
-
-        public const string MobileRegistrationUrl = "http://dev.pschneider.fr/api/gcm/register";
-
+        public const string YavscHomeUrl = "http://dev.pschneider.fr";
+        public static readonly string YavscApiUrl = "http://dev.pschneider.fr/api";
+        public static readonly string MobileRegistrationUrl = YavscApiUrl + "/gcm/register";
+        public static readonly string UserInfoUrl = YavscApiUrl + "/me";
+        public static readonly string BlogUrl = YavscApiUrl + "/blogs";
         public const string ApplicationName = "BookAStar";
-        public static readonly string UserInfoUrl = "http://dev.pschneider.fr/api/me";
     }
 }
