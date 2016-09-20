@@ -23,6 +23,11 @@ using BookAStar.Droid.OAuth;
 using Yavsc.Helpers;
 using Yavsc.Models.Identity;
 using static Android.Content.Res.Resources;
+using Android.Webkit;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
+using Android.Views;
+
 
 namespace BookAStar.Droid
 {
@@ -38,11 +43,11 @@ namespace BookAStar.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             global::Xamarin.FormsMaps.Init(this, bundle);
             LoadApplication(new App(this));
-          /*  var x = typeof(Themes.DarkThemeResources);
-            x = typeof(Themes.LightThemeResources);
-            x = typeof(Themes.Android.UnderlineEffect); */
+            /* var x = typeof(Themes.DarkThemeResources);
+             x = typeof(Themes.LightThemeResources);
+             x = typeof(Themes.Android.UnderlineEffect); */
         }
-        
+
 
         public bool EnablePushNotifications(bool enable)
         {
@@ -105,6 +110,16 @@ namespace BookAStar.Droid
             base.OnStart();
             if (MainSettings.PushNotifications)
                 StartNotifications();
+            long queryId = Intent.GetLongExtra("BookQueryId",0);
+
+            if (queryId > 0)
+            {
+                Task.Run(async () =>
+                {
+                    App.CurrentApp.ShowBookQuery(
+                       await DataManager.Current.BookQueries.Get(queryId));
+                });
+            }
         }
 
 
@@ -168,17 +183,15 @@ namespace BookAStar.Droid
                 return manager.FindAccountsForService(MainSettings.ApplicationName);
             });
         }
-
-        public void AddAccount()
-        {
-            var auth = new YaOAuth2Authenticator(
+        YaOAuth2Authenticator auth = new YaOAuth2Authenticator(
                             clientId: "d9be5e97-c19d-42e4-b444-0e65863b19e1",
                             clientSecret: "blouh",
                             scope: "profile",
                             authorizeUrl: new Uri("http://dev.pschneider.fr/authorize"),
                             redirectUrl: new Uri("http://dev.pschneider.fr/oauth/success"),
                             accessTokenUrl: new Uri("http://dev.pschneider.fr/token"));
-            auth.AllowCancel = false;
+        public void AddAccount()
+        {
             Intent loginIntent = auth.GetUI(this);
             var accStore = AccountStore.Create(this);
             auth.Completed += (sender, eventArgs) =>
@@ -260,7 +273,7 @@ namespace BookAStar.Droid
 
         private void Auth_Error(object sender, AuthenticatorErrorEventArgs e)
         {
-            throw new NotImplementedException("Auth_Error");
+            // TODO handle
         }
 
         public class GCMDeclaration : IGCMDeclaration
@@ -294,6 +307,7 @@ namespace BookAStar.Droid
             };
         }
 
+        [Obsolete("Use RemoteEntity to manage entities from API")]
         public TAnswer InvokeApi<TAnswer>(string method, object arg)
         {
             using (var m =
@@ -317,6 +331,35 @@ namespace BookAStar.Droid
                 return m.InvokeJson(arg);
             }
         }
+
+        public Xamarin.Forms.View CreateMarkdownView(string markdown, Action<string> update)
+        {
+            var view = new Android.Webkit.WebView(Forms.Context);
+            var viewclient = new MarkdownWebViewClient(update);
+            view.SetWebViewClient(viewclient);
+            var mde = new MarkdownEditor();
+            if (markdown!=null)
+            {
+                var md = new MarkdownDeep.Markdown();
+                mde.Model = md.Transform(markdown);
+            }
+            var html = mde.GenerateString();
+            view.Settings.BuiltInZoomControls = true;
+            view.Settings.JavaScriptEnabled = true;
+            view.Settings.LoadsImagesAutomatically = true;
+            view.Settings.SetAppCacheEnabled(true);
+            view.Settings.AllowContentAccess = true;
+            view.Settings.AllowFileAccess = true;
+            view.Settings.AllowFileAccessFromFileURLs = true;
+            view.Settings.AllowUniversalAccessFromFileURLs = true;
+            view.Settings.BlockNetworkImage = false;
+            view.Settings.BlockNetworkLoads = false;
+            view.LoadDataWithBaseURL("file:///android_asset/",
+                html, "text/html", "utf-8",null);
+            
+            return view.ToView();
+        }
+        
     }
 }
 

@@ -38,18 +38,30 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DeviceInfoPage.cs" />
-    <Compile Include="EventDetail.xaml.cs">
+    <Compile Include="DataManager.cs" />
+    <Compile Include="Helpers\RemoteEntityRO.cs" />
+    <Compile Include="Pages\BlogPage.cs" />
+    <Compile Include="Pages\BookQueriesPage.xaml.cs">
+      <DependentUpon>BookQueriesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\BookQueryPage.xaml.cs">
+      <DependentUpon>BookQueryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\DeviceInfoPage.cs" />
+    <Compile Include="Pages\EventDetail.xaml.cs">
       <DependentUpon>EventDetail.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\MainSettings.cs" />
-    <Compile Include="IdentificationChangedEventArgs.cs" />
+    <Compile Include="Helpers\RemoteEntity.cs" />
     <Compile Include="IPlatform.cs" />
-    <Compile Include="MainPage.xaml.cs">
+    <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Blog\Blog.cs" />
     <Compile Include="Model\Blog\BlogTag.cs" />
+    <Compile Include="Model\BookQueryData.cs" />
+    <Compile Include="Model\Market\BaseProduct.cs" />
+    <Compile Include="Model\Workflow\CommandLine.cs" />
     <Compile Include="Model\Manager.cs" />
     <Compile Include="Model\Auth\MobileAppDeclaration.cs" />
     <Compile Include="Model\Auth\passwrecovery.cs" />
@@ -83,18 +95,29 @@
     <Compile Include="Model\Social\Messaging\YaEvent.cs" />
     <Compile Include="Model\Auth\Tokens.cs" />
     <Compile Include="Model\Auth\User.cs" />
-    <Compile Include="PinPage.cs" />
+    <Compile Include="Model\Workflow\Estimate.cs" />
+    <Compile Include="Pages\MakeAnEstimatePage.xaml.cs">
+      <DependentUpon>MakeAnEstimatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MarkdownEditorPage.xaml.cs">
+      <DependentUpon>MarkdownEditorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PinPage.cs" />
+    <Compile Include="Views\MarkdownView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SearchPage.xaml.cs">
+    <Compile Include="Pages\QueriesPage.xaml.cs">
+      <DependentUpon>QueriesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SettingsPage.xaml.cs">
+    <Compile Include="Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Tag.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MainPage.xaml">
+    <EmbeddedResource Include="Pages\MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -109,25 +132,28 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="EventDetail.xaml">
+    <EmbeddedResource Include="Pages\EventDetail.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SearchPage.xaml">
+    <EmbeddedResource Include="Pages\SearchPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SettingsPage.xaml">
+    <EmbeddedResource Include="Pages\SettingsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\Workflow\" />
+    <Folder Include="Model\Billing\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Json.NET.Web">
       <HintPath>..\..\packages\Json.NET.Web.1.0.49\lib\portable45-net45+win8+wpa81\Json.NET.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="MarkdownDeep">
+      <HintPath>..\..\packages\MarkdownDeep-av.NET.1.5.2\lib\net451\MarkdownDeep.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Android">
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\MonoAndroid\v6.0\Mono.Android.dll</HintPath>
@@ -161,10 +187,40 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Pages\BookQueryPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Yavsc.Client\Yavsc.Client.csproj">
-      <Project>{67F9D3A8-F71E-4428-913F-C37AE82CDB24}</Project>
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
       <Name>Yavsc.Client</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\QueriesPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\MarkdownEditorPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\MakeAnEstimatePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\BookQueriesPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.0.107\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.0.107\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

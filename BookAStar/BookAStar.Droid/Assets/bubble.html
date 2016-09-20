@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bubble Theme - Quill</title>
+  <meta charset="utf-8">
+  
+<link rel="stylesheet" href="quill.bubble.css" />
+
+<style>
+  .standalone-container {
+    margin: 50px auto;
+    width: 720px;
+  }
+  #bubble-container {
+    height: 350px;
+  }
+  </style>
+
+
+</head>
+<body>
+  
+<div class="standalone-container">
+  <div id="bubble-container"></div>
+</div>
+
+<form><input type="hidden" name="md" id="md" />
+    <input id="btnSubmit" type="submit" value="Valider" class="ql-hidden"/></form>
+    <script type="text/javascript" src="quill.min.js"></script>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="showdown.js"></script>
+    <script type="text/javascript" src="to-markdown.js"></script>
+    <script type="text/javascript" src="md-helpers.js"></script>
+
+    <script type="text/javascript">
+        var toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  ['blockquote', 'code-block'],
+
+  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+  [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+  
+  ['clean']                                         // remove formatting button
+        ];
+
+        var quill = new Quill('#bubble-container', {
+            modules: {
+                toolbar: toolbarOptions
+            },
+    placeholder: 'Composez votre texte ...',
+    theme: 'bubble'
+  });
+  function getMD() {
+      return markdownize($('#bubble-container div.ql-editor').html())
+  }
+  quill.on('text-change', function (delta, oldDelta, source)
+  {
+      if (source === "user") {
+          $('#md').val(getMD());
+          $('#btnSubmit').removeClass('ql-hidden');
+      };
+  });
+
+    </script>
+
+
+</body>
+</html>

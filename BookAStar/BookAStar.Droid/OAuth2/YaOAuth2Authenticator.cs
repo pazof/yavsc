@@ -71,6 +71,7 @@ public class YaOAuth2Authenticator : WebRedirectAuthenticator
     {
         get { return this.redirectUrl; }
     }
+
     /// <summary>
     /// Initializes a new <see cref="Xamarin.Auth.OAuth2Authenticator"/>
     /// that authenticates using implicit granting (token).

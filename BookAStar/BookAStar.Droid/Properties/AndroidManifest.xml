@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="fr.pschneider.bas" android:installLocation="auto">
-	<uses-sdk android:minSdkVersion="17" android:targetSdkVersion="23" />
+	<uses-sdk android:minSdkVersion="15" />
 	<application android:label="BookAStar" android:icon="@drawable/icon" android:theme="@style/MainTheme">
 		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBLSEDhZixwpHDsWmO2pKwgGDJReoTuQ7A" />
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />

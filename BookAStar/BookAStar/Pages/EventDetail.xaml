@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 xmlns:local="clr-namespace:BookAStar;Assembly:BookAStar"
- x:Class="BookAStar.EventDetail">
+ x:Class="BookAStar.Pages.EventDetail">
 	<ContentPage.Content>
 	<ScrollView>
 	<StackLayout>

@@ -4,7 +4,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Yavsc;
 
-namespace BookAStar
+namespace BookAStar.Pages
 {
 	public class PinPage : ContentPage
 	{
