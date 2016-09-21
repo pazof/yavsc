@@ -15,10 +15,11 @@ namespace BookAStar.Pages
         public BookQueriesPage()
         {
             InitializeComponent();
-            BindingContext = App.CurrentApp.DataManager.BookQueries;
+        }
+        protected override void OnBindingContextChanged()
+        {
             list.ItemsSource = BindingContext as ObservableCollection<BookQueryData>;
-            list.RefreshCommand = BindingContext as ICommand;
-            list.IsPullToRefreshEnabled = true;
+            base.OnBindingContextChanged();
         }
 
         public RemoteEntity<BookQueryData,long> Queries
@@ -40,7 +41,6 @@ namespace BookAStar.Pages
         {
             BookQueryData data = e.Item as BookQueryData;
             App.CurrentApp.ShowBookQuery(data);
-            throw new NotImplementedException();
         }
     }
 }

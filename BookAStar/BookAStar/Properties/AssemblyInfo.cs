@@ -9,11 +9,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("BookAStar")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Paul Schneider")]
 [assembly: AssemblyProduct("BookAStar")]
 [assembly: AssemblyCopyright("Copyright © Paul Albert Schneider 2016")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyTrademark("Yavsc")]
+[assembly: AssemblyCulture("fr")]
 [assembly: NeutralResourcesLanguage("fr")]
 
 // Version information for an assembly consists of the following four values:

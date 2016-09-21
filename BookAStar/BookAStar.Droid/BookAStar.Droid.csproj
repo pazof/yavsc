@@ -88,7 +88,8 @@
       <HintPath>..\..\packages\Xam.Plugin.Media.1.0.1\lib\MonoAndroid10\Media.Plugin.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Mono.Android" />
+    <Reference Include="Mono.Android, Version=0.0.0.0, Culture=neutral, PublicKeyToken=84e04ff9cfb79065, processorArchitecture=MSIL" />
+    <Reference Include="Mono.Android.Export, Version=1.0.6099.33544, Culture=neutral, PublicKeyToken=84e04ff9cfb79065, processorArchitecture=MSIL" />
     <Reference Include="Mono.Data.Sqlite" />
     <Reference Include="mscorlib" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -203,6 +204,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MarkdownEditor.cshtml</DependentUpon>
     </Compile>
+    <Compile Include="MarkdownViewRenderer.cs" />
     <Compile Include="MarkdownWebViewClient.cs" />
     <Compile Include="OAuth2\YaOAuth2Authenticator.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -224,6 +226,9 @@
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <AndroidAsset Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\layout\EditEstimate.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\icon.png" />
@@ -301,6 +306,7 @@
     <AndroidResource Include="Resources\drawable\nfqrcode.png" />
     <AndroidResource Include="Resources\drawable\visuel_sexion.jpg" />
     <AndroidResource Include="Resources\values\values-21\styles.xml" />
+    <AndroidResource Include="Resources\drawable\icon-anon.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable-hdpi\" />

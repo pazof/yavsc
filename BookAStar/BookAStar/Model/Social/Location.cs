@@ -27,18 +27,16 @@ namespace BookAStar.Model.Social
     }
 
 
-    public class Location : Position {
-             
+    public class Location : Position
+    {
+
         public long Id { get; set; }
         public string Address { get; set; }
 
     }
 
-    public class  LocalizedEvent : YaEvent
+    public class LocalizedEvent : YaEvent
     {
-       
-
         public Location Location { get; set; }
-
-        }
+    }
 }
