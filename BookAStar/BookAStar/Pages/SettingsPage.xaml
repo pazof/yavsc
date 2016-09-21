@@ -30,9 +30,10 @@ BindingContext="." >
         <ListView.ItemTemplate HeightRequest="60" VerticalOptions="StartAndExpand">
           <DataTemplate>
             <ViewCell>
-                <Grid Padding="0"
+                <Grid Padding="5"
                           ColumnSpacing="10"
-                          RowSpacing="0">
+                          RowSpacing="2">
+                  <Image Source="{Binding Avatar}" HeightRequest="80" />
                   <Label Grid.Column="0" Text="{Binding UserName}" />
                 </Grid>
             </ViewCell>
@@ -42,10 +43,18 @@ BindingContext="." >
 
       </ListView>
       
+  
+  
       <StackLayout Orientation="Horizontal" VerticalOptions="Start">
-        <Label Text="Recevoir les notifications push" StyleClass="Header"/>
+        <Label Text="Recevoir les notifications push" />
         <Switch x:Name="pushstatus" />
       </StackLayout>
+
+  <StackLayout Orientation="Horizontal">
+    <Label Text="Utiliser ma position" />
+    <Switch x:Name="use_my_pos" HorizontalOptions="End" />
+  </StackLayout>
+  
   
   <StackLayout Orientation="Horizontal" VerticalOptions="Start">
     <Label Text="Recevoir les demandes de devis de la part de professionnels uniquement"
@@ -53,6 +62,5 @@ BindingContext="." >
     <Switch x:Name="restrictToPro" />
   </StackLayout>
 
-  <Button x:Name="BtnViewDeviceInfo" Text="Device info" StyleClass="Info"></Button>
 </StackLayout>
 </ContentPage>

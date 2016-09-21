@@ -204,11 +204,5 @@ namespace BookAStar
                 return environ;
             }
         }
-        public const string YavscHomeUrl = "http://dev.pschneider.fr";
-        public static readonly string YavscApiUrl = "http://dev.pschneider.fr/api";
-        public static readonly string MobileRegistrationUrl = YavscApiUrl + "/gcm/register";
-        public static readonly string UserInfoUrl = YavscApiUrl + "/me";
-        public static readonly string BlogUrl = YavscApiUrl + "/blogs";
-        public const string ApplicationName = "BookAStar";
     }
 }

@@ -1,15 +1,11 @@
-﻿using BookAStar.Model;
-using BookAStar.Model.Auth.Account;
+﻿using BookAStar.Helpers;
+using BookAStar.Interfaces;
+using BookAStar.Model;
+using BookAStar.Model.Workflow;
 using BookAStar.Pages;
 using System;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 /*
 Glyphish icons from
 http://www.glyphish.com/
@@ -22,41 +18,47 @@ namespace BookAStar
 {
     public partial class App : Application // superclass new in 1.3
     {
-        SearchPage searchPage;
-        NavigationPage mp;
-        SettingsPage settingsPage;
-        PinPage pinPage;
         ContentPage deviceInfoPage;
-        BookQueryPage bookQueryPage;
-        BookQueriesPage bookQueriesPage;
-        public static IPlatform PlateformSpecificInstance { get; set; }
+        SearchPage searchPage = new SearchPage
+        {
+            Title = "Trouvez votre artiste",
+            Icon = "glyphish_07_map_marker.png"
+        };
+        NavigationPage mp;
+        SettingsPage settingsPage = new SettingsPage
+            {
+                Title = "Paramètres",
+                Icon = "ic_corp_icon.png"
+            };
+        PinPage pinPage = new PinPage
+        {
+            Title = "Carte",
+            Icon = "glyphish_07_map_marker.png"
+        };
+        BookQueryPage bookQueryPage = new BookQueryPage {
+            Title = "Demande de devis"
+        };
+        BookQueriesPage bookQueriesPage = new BookQueriesPage
+        {
+            Title = "Demandes de devis"
+        };
+
+        EditEstimatePage editEstimate = new EditEstimatePage
+        {
+            Title = "Création d'un devis"
+        };
+        public static IPlatform PlatformSpecificInstance { get; set; }
         public static string AppName { get; set; }
         public static App CurrentApp { get { return Current as App; } }
 
-        public DataManager DataManager { get; set; }
-
+        public DataManager DataManager { get; set; } = new DataManager();
+        
         public App(IPlatform instance)
         {
-            DataManager = new DataManager();
             deviceInfoPage = new DeviceInfoPage(instance.GetDeviceInfo());
-            bookQueriesPage = new BookQueriesPage();
-
-            PlateformSpecificInstance = instance;
-            searchPage = new SearchPage
-            {
-                Title = "Trouvez votre artiste",
-                Icon = "glyphish_07_map_marker.png"
-            };
+            PlatformSpecificInstance = instance;
             mp = new NavigationPage(searchPage);
-            settingsPage = new SettingsPage
-            {
-                Title = "Settings",
-                Icon = "ic_corp_icon.png"
-            };
-
-            var r = this.Resources;
             //var hasLabelStyle = r.ContainsKey("labelStyle");
-
             // var stid = this.StyleId;
             // null var appsstyle = settingsPage.Style;
             // appsstyle.CanCascade = true;
@@ -69,24 +71,16 @@ namespace BookAStar
             mp.ToolbarItems.Add(tiSetts);
             tiSetts.Clicked += (object sender, EventArgs e) =>
             {
-                if (settingsPage.Parent == null)
-                    mp.Navigation.PushAsync(settingsPage);
-                else
-                {
-                    settingsPage.Focus();
-                }
+                ShowPage (settingsPage);
             };
             ToolbarItem tiQueries = new ToolbarItem
             {
                 Text = "Demandes"
             };
 
-
             tiQueries.Clicked += (object sender, EventArgs e) =>
             {
-                if (bookQueriesPage.Parent == null)
-                    mp.Navigation.PushAsync(bookQueriesPage);
-                else bookQueriesPage.Focus();
+                ShowPage (bookQueriesPage);
             };
             mp.ToolbarItems.Add(tiQueries);
             ToolbarItem tiMap = new ToolbarItem
@@ -95,41 +89,46 @@ namespace BookAStar
                 Icon = "glyphish_07_map_marker.png"
             };
             mp.ToolbarItems.Add(tiMap);
-            pinPage = new PinPage
-            {
-                Title = "Carte",
-                Icon = "glyphish_07_map_marker.png"
-            };
             tiMap.Clicked += (object sender, EventArgs e) =>
             {
-                if (pinPage.Parent == null)
-                    mp.Navigation.PushAsync(pinPage);
-                else pinPage.Focus();
-
+                ShowPage(pinPage);
             };
 
+            bookQueriesPage.BindingContext = DataManager.BookQueries;
+
+           
         }
 
         public void ShowDeviceInfo()
         {
-            if (deviceInfoPage.Parent == null)
-                mp.Navigation.PushAsync(deviceInfoPage);
-            else deviceInfoPage.Focus();
+            ShowPage(deviceInfoPage);
         }
 
         public void PostDeviceInfo()
         {
-            var res = PlateformSpecificInstance.InvokeApi(
+            var res = PlatformSpecificInstance.InvokeApi(
                 "gcm/register",
-                PlateformSpecificInstance.GetDeviceInfo());
+                PlatformSpecificInstance.GetDeviceInfo());
         }
 
         public void ShowBookQuery(BookQueryData data)
         {
-            bookQueriesPage.BindingContext = data;
-            mp.Navigation.PushAsync(bookQueriesPage);
+            bookQueryPage.BindingContext = data;
+            ShowPage(bookQueryPage);
         }
 
+        public void EditEstimate(Estimate data)
+        {
+            editEstimate.Estimate = data;
+            ShowPage(editEstimate);
+        }
+
+        private void ShowPage(Page p)
+        {
+            if (p.Parent == null)
+                mp.Navigation.PushAsync(p);
+            else p.Focus();
+        }
         public void CloseWindow()
         {
             mp.Navigation.PopAsync();

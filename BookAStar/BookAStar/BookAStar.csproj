@@ -38,8 +38,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataManager.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Helpers\AvatarImageSource.cs" />
+    <Compile Include="Helpers\DataManager.cs" />
     <Compile Include="Helpers\RemoteEntityRO.cs" />
+    <Compile Include="Interfaces\IMDEditor.cs" />
+    <Compile Include="Model\ClientProviderInfo.cs" />
     <Compile Include="Pages\BlogPage.cs" />
     <Compile Include="Pages\BookQueriesPage.xaml.cs">
       <DependentUpon>BookQueriesPage.xaml</DependentUpon>
@@ -53,7 +57,7 @@
     </Compile>
     <Compile Include="Helpers\MainSettings.cs" />
     <Compile Include="Helpers\RemoteEntity.cs" />
-    <Compile Include="IPlatform.cs" />
+    <Compile Include="Interfaces\IPlatform.cs" />
     <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -96,8 +100,8 @@
     <Compile Include="Model\Auth\Tokens.cs" />
     <Compile Include="Model\Auth\User.cs" />
     <Compile Include="Model\Workflow\Estimate.cs" />
-    <Compile Include="Pages\MakeAnEstimatePage.xaml.cs">
-      <DependentUpon>MakeAnEstimatePage.xaml</DependentUpon>
+    <Compile Include="Pages\EditEstimatePage.xaml.cs">
+      <DependentUpon>EditEstimatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\MarkdownEditorPage.xaml.cs">
       <DependentUpon>MarkdownEditorPage.xaml</DependentUpon>
@@ -105,9 +109,6 @@
     <Compile Include="Pages\PinPage.cs" />
     <Compile Include="Views\MarkdownView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pages\QueriesPage.xaml.cs">
-      <DependentUpon>QueriesPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
@@ -199,19 +200,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\QueriesPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Pages\MarkdownEditorPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\MakeAnEstimatePage.xaml">
+    <EmbeddedResource Include="Pages\EditEstimatePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -221,6 +216,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icon-anon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.0.107\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.0.107\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

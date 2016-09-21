@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using BookAStar.Helpers;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookAStar.Model.Workflow
 {
     public partial class Estimate
     {
         public long Id { get; set; }
-        
         public long? CommandId { get; set; }
+        public string CommandType { get; set; }
+        // Markdown expected
         public string Description { get; set; }
         public int? Status { get; set; }
         public string Title { get; set; }
@@ -23,7 +27,7 @@ namespace BookAStar.Model.Workflow
 
         public string AttachedGraphicsString
         {
-            get { return string.Join(":", AttachedGraphicList); }
+            get { return AttachedGraphicList==null?null:string.Join(":", AttachedGraphicList); }
             set { AttachedGraphicList = value.Split(':').ToList(); }
         }
         /// <summary>
@@ -36,12 +40,32 @@ namespace BookAStar.Model.Workflow
         public List<string> AttachedFiles { get; set; }
         public string AttachedFilesString
         {
-            get { return string.Join(":", AttachedFiles); }
+            get { return AttachedFiles == null ? null : string.Join(":", AttachedFiles); }
             set { AttachedFiles = value.Split(':').ToList(); }
         }
         
         public string OwnerId { get; set; }
         
         public string ClientId { get; set; }
+        
+        public BookQueryData Query
+        {
+            get
+            {
+                if (CommandId.HasValue)
+                {
+                    return DataManager.Current.BookQueries.LocalGet(CommandId.Value);
+                }
+                return null;
+            }
+        }
+
+        public ClientProviderInfo Client
+        {
+            get
+            {
+                return DataManager.Current.Contacts.LocalGet(ClientId);
+            }
+        }
     }
 }

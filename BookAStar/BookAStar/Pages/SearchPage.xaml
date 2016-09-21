@@ -6,10 +6,7 @@
              Padding="10,40,10,10" >
 	<ContentPage.Content>
 	<StackLayout>
-	<StackLayout Orientation="Horizontal">
-	<Label Text="Utiliser ma position" />
-	<Switch x:Name="use_my_pos" HorizontalOptions="End" />
-	</StackLayout>
+
     
 	<StackLayout Orientation="Horizontal">
 	<Editor x:Name="search_phrase" HorizontalOptions="FillAndExpand"/>
@@ -19,7 +16,6 @@
 
 	<ListView x:Name="list" ItemsSource="{x:Static local:Manager.Events}" 
 	 HasUnevenRows="true">
-    s
 				<ListView.ItemTemplate>
 					<DataTemplate>
 					<ViewCell>

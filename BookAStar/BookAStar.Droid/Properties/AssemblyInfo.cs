@@ -13,7 +13,7 @@ using Android.App;
 [assembly: AssemblyProduct("BookAStar.Droid")]
 [assembly: AssemblyCopyright("Copyright © Paul Albert Schneider 2016")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCulture("fr")]
 [assembly: ComVisible(false)]
 
 // Version information for an assembly consists of the following four values:

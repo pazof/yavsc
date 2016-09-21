@@ -16,6 +16,7 @@ using Android.Content.Res;
 
 namespace BookAStar.Droid
 {
+
     class MarkdownWebViewClient : WebViewClient
     {
         Action<string> update;
@@ -25,7 +26,7 @@ namespace BookAStar.Droid
         }
         private static Activity getActivity ()
         {
-            return (Activity)App.PlateformSpecificInstance;
+            return (Activity)App.PlatformSpecificInstance;
         }
         public string Markdown { get; private set; }
         public override WebResourceResponse ShouldInterceptRequest(WebView view, IWebResourceRequest request)
@@ -34,6 +35,8 @@ namespace BookAStar.Droid
             {
                 if (request.Url.Path=="/android_asset/validate")
                 {
+                    // TODO Better,
+                    // by inspecting the form entries from the view
                     Markdown = request.Url.GetQueryParameter("md");
                     update(Markdown);
                     return new WebResourceResponse("application/json", "utf-8" ,200, "Ok", null, null);
@@ -41,5 +44,6 @@ namespace BookAStar.Droid
             }
             return base.ShouldInterceptRequest(view, request);
         }
+        
     }
 }

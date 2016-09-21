@@ -33,13 +33,7 @@ namespace BookAStar
             AccountListView.ItemSelected += Accounts_ItemSelected;
            
             pushstatus.Toggled += Pushstatus_Toggled;
-
-            BtnViewDeviceInfo.Clicked += BtnDeviceInfo_Clicked;
-        }
-
-        private void BtnDeviceInfo_Clicked(object sender, EventArgs e)
-        {
-           ((BookAStar.App) App.Current).ShowDeviceInfo();
+            
         }
 
         protected void Pushstatus_Toggled(object sender, ToggledEventArgs e)
@@ -64,7 +58,7 @@ namespace BookAStar
             var doIt = await Confirm("Suppression de l'identification",
                 $"Vous êtes sur le point de supprimer votre identification pour ce compte : {user.UserName}\nContinuer ?");
             if (doIt)
-                App.PlateformSpecificInstance.RevokeAccount(user.UserName);
+                App.PlatformSpecificInstance.RevokeAccount(user.UserName);
         }
 
         async Task<bool> Confirm(string title, string procedure)
@@ -84,7 +78,7 @@ namespace BookAStar
 
         private void AddAccountBtn_Clicked(object sender, EventArgs e)
         {
-            App.PlateformSpecificInstance.AddAccount();
+            App.PlatformSpecificInstance.AddAccount();
         }
 
        

@@ -27,7 +27,8 @@ using Android.Webkit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using Android.Views;
-
+using BookAStar.Helpers;
+using BookAStar.Interfaces;
 
 namespace BookAStar.Droid
 {
@@ -87,11 +88,11 @@ namespace BookAStar.Droid
         {
 
             var accStore = AccountStore.Create(this);
-            var accounts = accStore.FindAccountsForService(MainSettings.ApplicationName);
+            var accounts = accStore.FindAccountsForService(Constants.ApplicationName);
 
             accStore.Delete(
                     accounts.Where(a => a.Username == userName).FirstOrDefault()
-                    , MainSettings.ApplicationName);
+                    , Constants.ApplicationName);
             Toast.MakeText(this,
                 Resource.String.yavscIdentRemoved
                 , ToastLength.Short);
@@ -160,7 +161,7 @@ namespace BookAStar.Droid
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {
                         responseText = reader.ReadToEnd();
-                        Log.Debug(MainSettings.ApplicationName, responseText);
+                        Log.Debug(Constants.ApplicationName, responseText);
                     }
                 }
             }
@@ -180,7 +181,7 @@ namespace BookAStar.Droid
         {
             return await Task.Run(() => {
                 var manager = AccountStore.Create(this);
-                return manager.FindAccountsForService(MainSettings.ApplicationName);
+                return manager.FindAccountsForService(Constants.ApplicationName);
             });
         }
         YaOAuth2Authenticator auth = new YaOAuth2Authenticator(
@@ -215,7 +216,7 @@ namespace BookAStar.Droid
 
                                // get me
                                // var request = new OAuth2Request("GET", new Uri(Constants.UserInfoUrl), null, eventArgs.Account);
-                               var request = new HttpRequestMessage(HttpMethod.Get, MainSettings.UserInfoUrl);
+                               var request = new HttpRequestMessage(HttpMethod.Get, Constants.UserInfoUrl);
 
                                request.Headers.Authorization =
                                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokens.AccessToken);
@@ -244,7 +245,7 @@ namespace BookAStar.Droid
                                };
                                
                                MainSettings.SaveUser(newuser);
-                               accStore.Save(acc, MainSettings.ApplicationName);
+                               accStore.Save(acc, Constants.ApplicationName);
                            }
                        }
 
@@ -330,34 +331,6 @@ namespace BookAStar.Droid
             {
                 return m.InvokeJson(arg);
             }
-        }
-
-        public Xamarin.Forms.View CreateMarkdownView(string markdown, Action<string> update)
-        {
-            var view = new Android.Webkit.WebView(Forms.Context);
-            var viewclient = new MarkdownWebViewClient(update);
-            view.SetWebViewClient(viewclient);
-            var mde = new MarkdownEditor();
-            if (markdown!=null)
-            {
-                var md = new MarkdownDeep.Markdown();
-                mde.Model = md.Transform(markdown);
-            }
-            var html = mde.GenerateString();
-            view.Settings.BuiltInZoomControls = true;
-            view.Settings.JavaScriptEnabled = true;
-            view.Settings.LoadsImagesAutomatically = true;
-            view.Settings.SetAppCacheEnabled(true);
-            view.Settings.AllowContentAccess = true;
-            view.Settings.AllowFileAccess = true;
-            view.Settings.AllowFileAccessFromFileURLs = true;
-            view.Settings.AllowUniversalAccessFromFileURLs = true;
-            view.Settings.BlockNetworkImage = false;
-            view.Settings.BlockNetworkLoads = false;
-            view.LoadDataWithBaseURL("file:///android_asset/",
-                html, "text/html", "utf-8",null);
-            
-            return view.ToView();
         }
         
     }
