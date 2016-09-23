@@ -55,7 +55,7 @@ namespace Yavsc.WebApi.Controllers
 
                 if (!result.Succeeded)
                 {
-                    AddErrors(result);
+                    AddErrors("NewPassword",result);
                     return new BadRequestObjectResult(ModelState);
                 }
             }
@@ -74,7 +74,7 @@ namespace Yavsc.WebApi.Controllers
                 IdentityResult result = await UserManager.AddPasswordAsync(user, model.NewPassword);
                 if (!result.Succeeded)
                 {
-                    AddErrors (result);
+                    AddErrors ("NewPassword",result);
                     return new BadRequestObjectResult(ModelState);
                 }
             }
@@ -96,17 +96,17 @@ namespace Yavsc.WebApi.Controllers
 
             if (!result.Succeeded)
             {
-                AddErrors (result);
+                AddErrors ("Register",result);
                 return new BadRequestObjectResult(ModelState);
             }
             await _signInManager.SignInAsync(user, isPersistent: false);
             return Ok();
         }
-        private void AddErrors(IdentityResult result)
+        private void AddErrors(string key, IdentityResult result)
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                ModelState.AddModelError(key, error.Description);
             }
         }
         protected override void Dispose(bool disposing)
@@ -126,18 +126,38 @@ namespace Yavsc.WebApi.Controllers
             return new BadRequestObjectResult(
                     new { error = "user not found" });
             var uid = User.GetUserId();
-            if (uid == null) 
-                return new BadRequestObjectResult(
-                    new { error = "user not identified" });
 
             var iduser = await UserManager.FindByIdAsync(uid);
 
             var user = new Me(iduser.Id,iduser.UserName,
                 new string [] { iduser.Email },
                 await UserManager.GetRolesAsync(iduser),
-                null // TODO better (an avatar, or Web site url)
+                iduser.Avatar, iduser.PostalAddress?.Address
             );
             return Ok(user);
+        }
+        [HttpPut("~/api/me")]
+        public async Task<IActionResult> UpdateMe(MyUpdate me)
+        {
+            var ko = new BadRequestObjectResult(
+                    new { error = "Specify some valid update request." });
+            if (me==null) return ko;
+            if (me.Avatar==null && me.UserName == null) return ko;
+            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            
+            if (me.UserName !=null) {
+                var result = await _userManager.SetUserNameAsync(user, me.UserName);
+            }
+            if (me.Avatar!=null) {
+                user.Avatar = me.Avatar;
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    AddErrors("Avatar", result);
+                    return new BadRequestObjectResult(ModelState);
+                }
+            }
+            return Ok();
         }
 
     }
