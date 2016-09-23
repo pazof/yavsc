@@ -12,7 +12,10 @@ namespace Yavsc.Models
         [Required()]
         public string OwnerId { get; set; }
 
-        [ForeignKeyAttribute("OwnerId"),JsonIgnore]
+        [ForeignKeyAttribute("OwnerId"),NotMapped]
         public virtual ApplicationUser Owner { get; set; }
+
+        [ForeignKeyAttribute("UserId"),NotMapped]
+        public virtual ApplicationUser User { get; set; }
     }
 }
