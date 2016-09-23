@@ -8,13 +8,15 @@ namespace  Yavsc.Models.Auth
         string username, 
         IEnumerable<string> emails, 
         IEnumerable<string> roles,
-        string avatar)
+        string avatar,
+        string address)
         {
            Id = useruserid;
            UserName = username;
            EMails = emails.ToArray();
            Roles = roles.ToArray();
            Avatar = avatar;
+           Address = address;
         }
         public string Id { get;  set; }
         public string UserName { get; set; }
@@ -25,7 +27,11 @@ namespace  Yavsc.Models.Auth
         /// </summary>
         /// <returns></returns>
         public string Avatar { get; set; }
-        
+        public string Address { get; set; }
     }
 
+public class MyUpdate {
+        public string UserName { get; set; }
+        public string Avatar { get; set; }
+}
 }
