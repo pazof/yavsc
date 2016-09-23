@@ -8,7 +8,7 @@ using Yavsc.Models;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/PostTagsApi")]
+    [Route("~/api/PostTagsApi")]
     public class PostTagsApiController : Controller
     {
         private ApplicationDbContext _context;
