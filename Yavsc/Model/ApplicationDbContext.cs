@@ -181,6 +181,6 @@ namespace Yavsc.Models
 
         public DbSet<EstimateTemplate> EstimateTemplates { get; set; }
 
-        
+        public DbSet<Contact> Contacts { get; set; }
     }
 }
