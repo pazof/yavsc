@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Hosting;
@@ -42,8 +43,11 @@ namespace Yavsc.Controllers
             if (!ModelState.IsValid)
                 return new BadRequestObjectResult(ModelState);
             var results = new List<string>();
-            var uploads = Path.Combine(_environment.WebRootPath, _siteSettings.UserFiles.DirName);
-            uploads = Path.Combine(uploads, model.PostId.ToString());
+            var uploads = Path.Combine(
+            Path.Combine(_environment.WebRootPath, _siteSettings.UserFiles.DirName),
+            User.GetUserId()
+            );
+          //  uploads = Path.Combine(uploads, model.PostId.ToString());
             var spot = new FileSpotInfo(uploads, blogEntry);
             if (!await _authorizationService.AuthorizeAsync(User, spot, new EditRequirement()))
             {
