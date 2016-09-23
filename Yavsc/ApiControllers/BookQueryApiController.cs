@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Yavsc.Controllers
 {
+    using System;
     using Yavsc.Model;
     using Yavsc.Models;
     using Yavsc.Models.Booking;
@@ -26,13 +27,20 @@ namespace Yavsc.Controllers
             _logger = loggerFactory.CreateLogger<BookQueryApiController>();
         }
 
-        // GET: api/BookQueryApi
+         // GET: api/BookQueryApi
+         /// <summary>
+        /// Book queries, by creation order
+        /// </summary>
+        /// <param name="maxId">returned Ids must be lower than this value</param>
+        /// <returns>book queries</returns>
         [HttpGet]
-        public IEnumerable<BookQueryProviderView> GetCommands()
+        public IEnumerable<BookQueryProviderView> GetCommands(long maxId=long.MaxValue)
         {
             var uid = User.GetUserId();
-            var result = _context.Commands.Include(c => c.Location)
-            .Include(c => c.Client).Where(c => c.PerformerId == uid).
+            var now = DateTime.Now;
+            
+            var result = _context.Commands.Include(c => c.Location).
+            Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now).
             Select(c => new BookQueryProviderView
             {
                 Client = new ClientProviderView { UserName = c.Client.UserName, UserId = c.ClientId },
@@ -40,7 +48,9 @@ namespace Yavsc.Controllers
                 EventDate = c.EventDate,
                 Id = c.Id,
                 Previsional = c.Previsional
-            });
+            }).
+            OrderBy(c=>c.Id).
+            Take(25);
             return result;
         }
 
