@@ -9,7 +9,6 @@ using Android.Gms.Common;
 using Android.Util;
 
 using Xamarin.Auth;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.IO;
@@ -17,16 +16,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
-using System.Text;
 using BookAStar.Model.Auth.Account;
 using BookAStar.Droid.OAuth;
 using Yavsc.Helpers;
 using Yavsc.Models.Identity;
-using static Android.Content.Res.Resources;
-using Android.Webkit;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
-using Android.Views;
 using BookAStar.Helpers;
 using BookAStar.Interfaces;
 
