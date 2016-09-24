@@ -1,16 +1,16 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160916075415_estimateFreeFromCatalog")]
+    partial class estimateFreeFromCatalog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -148,8 +148,6 @@ namespace Yavsc.Migrations
                     b.Property<string>("Id");
 
                     b.Property<int>("AccessFailedCount");
-
-                    b.Property<string>("Avatar");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -368,6 +366,8 @@ namespace Yavsc.Migrations
 
                     b.Property<DateTime>("EventDate");
 
+                    b.Property<int>("Lag");
+
                     b.Property<long?>("LocationId");
 
                     b.Property<string>("PerformerId")
@@ -463,6 +463,8 @@ namespace Yavsc.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<long?>("BookQueryId");
 
                     b.Property<string>("ContextId");
 
@@ -706,6 +708,10 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Market.Service", b =>
                 {
+                    b.HasOne("Yavsc.Models.Booking.BookQuery")
+                        .WithMany()
+                        .HasForeignKey("BookQueryId");
+
                     b.HasOne("Yavsc.Models.Activity")
                         .WithMany()
                         .HasForeignKey("ContextId");

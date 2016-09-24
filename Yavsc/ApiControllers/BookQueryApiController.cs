@@ -5,42 +5,67 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
-using Yavsc.Models;
-using Yavsc.Models.Booking;
+using Microsoft.Extensions.Logging;
 
 namespace Yavsc.Controllers
 {
+    using System;
+    using Yavsc.Model;
+    using Yavsc.Models;
+    using Yavsc.Models.Booking;
+
     [Produces("application/json")]
-    [Route("api/bookquery"),Authorize(Roles="Performer,Administrator")]
+    [Route("api/bookquery"), Authorize(Roles = "Performer,Administrator")]
     public class BookQueryApiController : Controller
     {
         private ApplicationDbContext _context;
+        private ILogger _logger;
 
-        public BookQueryApiController(ApplicationDbContext context)
+        public BookQueryApiController(ApplicationDbContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
+            _logger = loggerFactory.CreateLogger<BookQueryApiController>();
         }
 
-        // GET: api/BookQueryApi
-        [HttpGet]                                               
-        public IEnumerable<BookQuery> GetCommands()
+         // GET: api/BookQueryApi
+         /// <summary>
+        /// Book queries, by creation order
+        /// </summary>
+        /// <param name="maxId">returned Ids must be lower than this value</param>
+        /// <returns>book queries</returns>
+        [HttpGet]
+        public IEnumerable<BookQueryProviderView> GetCommands(long maxId=long.MaxValue)
         {
             var uid = User.GetUserId();
-            return _context.Commands.Where(c=>c.ClientId == uid || c.PerformerId == uid);
+            var now = DateTime.Now;
+            
+            var result = _context.Commands.Include(c => c.Location).
+            Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now).
+            Select(c => new BookQueryProviderView
+            {
+                Client = new ClientProviderView { UserName = c.Client.UserName, UserId = c.ClientId },
+                Location = c.Location,
+                EventDate = c.EventDate,
+                Id = c.Id,
+                Previsional = c.Previsional
+            }).
+            OrderBy(c=>c.Id).
+            Take(25);
+            return result;
         }
 
         // GET: api/BookQueryApi/5
         [HttpGet("{id}", Name = "GetBookQuery")]
         public IActionResult GetBookQuery([FromRoute] long id)
         {
-            
+
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
             var uid = User.GetUserId();
 
-            BookQuery bookQuery = _context.Commands.Where(c=>c.ClientId == uid || c.PerformerId == uid).Single(m => m.Id == id);
+            BookQuery bookQuery = _context.Commands.Where(c => c.ClientId == uid || c.PerformerId == uid).Single(m => m.Id == id);
 
             if (bookQuery == null)
             {
@@ -65,7 +90,7 @@ namespace Yavsc.Controllers
             }
             var uid = User.GetUserId();
             if (bookQuery.ClientId != uid)
-            return HttpNotFound();
+                return HttpNotFound();
 
             _context.Entry(bookQuery).State = EntityState.Modified;
 
@@ -97,8 +122,9 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
             var uid = User.GetUserId();
-            if (bookQuery.ClientId != uid) {
-                ModelState.AddModelError("ClientId","You must be the client at creating a book query");
+            if (bookQuery.ClientId != uid)
+            {
+                ModelState.AddModelError("ClientId", "You must be the client at creating a book query");
                 return new BadRequestObjectResult(ModelState);
             }
             _context.Commands.Add(bookQuery);

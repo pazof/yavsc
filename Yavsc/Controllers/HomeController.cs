@@ -4,6 +4,10 @@ using Microsoft.AspNet.Http.Features;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Hosting;
+using Yavsc.Models;
+using Microsoft.AspNet.Identity;
+using System.Linq;
+using System.Security.Claims;
 
 namespace Yavsc.Controllers
 {
@@ -12,12 +16,16 @@ namespace Yavsc.Controllers
     {
         public IHostingEnvironment Hosting { get; set; }
 
+        private ApplicationDbContext DbContext;
+
         private readonly IHtmlLocalizer _localizer;
 
-        public HomeController(IHtmlLocalizer<Startup> localizer, IHostingEnvironment hosting)
+        public HomeController(IHtmlLocalizer<Startup> localizer, IHostingEnvironment hosting,
+        ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _localizer = localizer;
             Hosting = hosting;
+            DbContext = context;
         }
 
         public IActionResult Index()
@@ -42,6 +50,11 @@ namespace Yavsc.Controllers
 
         public ActionResult Chat()
         {
+            if (User.Identity.IsAuthenticated) {
+                string uid = User.GetUserId();
+                ViewBag.Contacts = DbContext.Contacts.Where(c=>c.OwnerId == uid)
+                ;
+            } 
             return View();
         }
 

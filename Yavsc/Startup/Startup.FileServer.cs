@@ -11,26 +11,24 @@ namespace Yavsc
     public partial class Startup
     {
         public static string UserFilesDirName { get; private set; }
+        public static FileServerOptions UserFilesOptions { get; private set; }
         public void ConfigureFileServerApp(IApplicationBuilder app,
                 SiteSettings siteSettings, IHostingEnvironment env)
         {
-            var rootPath = Path.Combine(
+            UserFilesDirName =  Path.Combine(
                         env.WebRootPath,
-                        // TODO: add a ressource serveur id here, 
-                        // or remove the blog entry id usage, to use the userid instead
-                        // and an user defined optional subdir.
-                        siteSettings.UserFiles.DirName
-                    );
-            var rootInfo = new DirectoryInfo(rootPath);
+                        siteSettings.UserFiles.DirName);
+
+            var rootInfo = new DirectoryInfo(UserFilesDirName);
             if (!rootInfo.Exists) rootInfo.Create();
 
-
-            app.UseFileServer(new FileServerOptions()
+            UserFilesOptions = new FileServerOptions()
             {
-                FileProvider = new PhysicalFileProvider(rootPath),
+                FileProvider = new PhysicalFileProvider(UserFilesDirName),
                 RequestPath = new PathString("/" + siteSettings.UserFiles.DirName),
                 EnableDirectoryBrowsing = env.IsDevelopment()
-            });
+            };
+            app.UseFileServer(UserFilesOptions);
             app.UseStaticFiles();
         }
     }

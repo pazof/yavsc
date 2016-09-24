@@ -28,24 +28,12 @@ namespace Yavsc.Models.Messaging
 	/// </summary>
 	public class YaEvent : BaseEvent
 	{
-        public YaEvent(string topic)
-        {
-            Topic = topic;
-        }
-		/// <summary>
-		/// The topic.
-		/// </summary>
-		public string Topic { get; set; } 
 		/// <summary>
 		/// The NF provider identifier.
 		/// </summary>
-		[Display(Name="ProviderId")]
-		public string ProviderId { get; set; }
-		/// <summary>
-		/// The promotion code.
-		/// </summary>
-		[Display(Name="Comment")]
-		public string Comment { get; set; }
+		[Display(Name="From")]
+		public string FromUserName { get; set; }
+
 		/// <summary>
 		/// The event web page.
 		/// </summary>

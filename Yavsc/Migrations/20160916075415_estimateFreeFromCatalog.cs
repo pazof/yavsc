@@ -2,7 +2,7 @@ using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class tags : Migration
+    public partial class estimateFreeFromCatalog : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,47 +13,44 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_ApplicationUser_UserId", table: "AspNetUserRoles");
             migrationBuilder.DropForeignKey(name: "FK_AccountBalance_ApplicationUser_UserId", table: "AccountBalance");
             migrationBuilder.DropForeignKey(name: "FK_BalanceImpact_AccountBalance_BalanceId", table: "BalanceImpact");
+            migrationBuilder.DropForeignKey(name: "FK_CommandLine_BookQuery_BookQueryId", table: "CommandLine");
             migrationBuilder.DropForeignKey(name: "FK_BookQuery_ApplicationUser_ClientId", table: "BookQuery");
             migrationBuilder.DropForeignKey(name: "FK_BookQuery_PerformerProfile_PerformerId", table: "BookQuery");
-            migrationBuilder.DropForeignKey(name: "FK_Circle_ApplicationUser_OwnerId", table: "Circle");
             migrationBuilder.DropForeignKey(name: "FK_CircleMember_Circle_CircleId", table: "CircleMember");
             migrationBuilder.DropForeignKey(name: "FK_CircleMember_ApplicationUser_MemberId", table: "CircleMember");
             migrationBuilder.DropForeignKey(name: "FK_Contact_ApplicationUser_OwnerId", table: "Contact");
+            migrationBuilder.DropForeignKey(name: "FK_PostTag_Blog_PostId", table: "PostTag");
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_Activity_ActivityCode", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_Location_OrganizationAddressId", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_ApplicationUser_PerformerId", table: "PerformerProfile");
+            migrationBuilder.DropColumn(name: "BookQueryId", table: "CommandLine");
+            migrationBuilder.DropColumn(name: "Comment", table: "CommandLine");
             migrationBuilder.CreateTable(
-                name: "PostTag",
-                columns: table => new
-                {
-                    PostId = table.Column<long>(nullable: false),
-                    TagId = table.Column<long>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PostTag", x => new { x.PostId, x.TagId });
-                    table.ForeignKey(
-                        name: "FK_PostTag_Blog_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Blog",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-            migrationBuilder.CreateTable(
-                name: "Tag",
+                name: "EstimateTemplate",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:Serial", true),
-                    Name = table.Column<string>(nullable: false)
+                    Description = table.Column<string>(nullable: true),
+                    OwnerId = table.Column<string>(nullable: false),
+                    Title = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tag", x => x.Id);
+                    table.PrimaryKey("PK_EstimateTemplate", x => x.Id);
                 });
+            migrationBuilder.AddColumn<long>(
+                name: "BookQueryId",
+                table: "Service",
+                nullable: true);
             migrationBuilder.AddColumn<string>(
-                name: "ApplicationUserId",
-                table: "Circle",
+                name: "Description",
+                table: "CommandLine",
+                nullable: false,
+                defaultValue: "");
+            migrationBuilder.AddColumn<long>(
+                name: "EstimateTemplateId",
+                table: "CommandLine",
                 nullable: true);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
@@ -105,6 +102,13 @@ namespace Yavsc.Migrations
                 principalColumn: "UserId",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
+                name: "FK_CommandLine_EstimateTemplate_EstimateTemplateId",
+                table: "CommandLine",
+                column: "EstimateTemplateId",
+                principalTable: "EstimateTemplate",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
                 name: "FK_BookQuery_ApplicationUser_ClientId",
                 table: "BookQuery",
                 column: "ClientId",
@@ -118,13 +122,6 @@ namespace Yavsc.Migrations
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
                 onDelete: ReferentialAction.Cascade);
-            migrationBuilder.AddForeignKey(
-                name: "FK_Circle_ApplicationUser_ApplicationUserId",
-                table: "Circle",
-                column: "ApplicationUserId",
-                principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
                 name: "FK_CircleMember_Circle_CircleId",
                 table: "CircleMember",
@@ -144,6 +141,20 @@ namespace Yavsc.Migrations
                 table: "Contact",
                 column: "OwnerId",
                 principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_Service_BookQuery_BookQueryId",
+                table: "Service",
+                column: "BookQueryId",
+                principalTable: "BookQuery",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
+                name: "FK_PostTag_Blog_PostId",
+                table: "PostTag",
+                column: "PostId",
+                principalTable: "Blog",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
@@ -178,18 +189,29 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_ApplicationUser_UserId", table: "AspNetUserRoles");
             migrationBuilder.DropForeignKey(name: "FK_AccountBalance_ApplicationUser_UserId", table: "AccountBalance");
             migrationBuilder.DropForeignKey(name: "FK_BalanceImpact_AccountBalance_BalanceId", table: "BalanceImpact");
+            migrationBuilder.DropForeignKey(name: "FK_CommandLine_EstimateTemplate_EstimateTemplateId", table: "CommandLine");
             migrationBuilder.DropForeignKey(name: "FK_BookQuery_ApplicationUser_ClientId", table: "BookQuery");
             migrationBuilder.DropForeignKey(name: "FK_BookQuery_PerformerProfile_PerformerId", table: "BookQuery");
-            migrationBuilder.DropForeignKey(name: "FK_Circle_ApplicationUser_ApplicationUserId", table: "Circle");
             migrationBuilder.DropForeignKey(name: "FK_CircleMember_Circle_CircleId", table: "CircleMember");
             migrationBuilder.DropForeignKey(name: "FK_CircleMember_ApplicationUser_MemberId", table: "CircleMember");
             migrationBuilder.DropForeignKey(name: "FK_Contact_ApplicationUser_OwnerId", table: "Contact");
+            migrationBuilder.DropForeignKey(name: "FK_Service_BookQuery_BookQueryId", table: "Service");
+            migrationBuilder.DropForeignKey(name: "FK_PostTag_Blog_PostId", table: "PostTag");
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_Activity_ActivityCode", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_Location_OrganizationAddressId", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_ApplicationUser_PerformerId", table: "PerformerProfile");
-            migrationBuilder.DropColumn(name: "ApplicationUserId", table: "Circle");
-            migrationBuilder.DropTable("PostTag");
-            migrationBuilder.DropTable("Tag");
+            migrationBuilder.DropColumn(name: "BookQueryId", table: "Service");
+            migrationBuilder.DropColumn(name: "Description", table: "CommandLine");
+            migrationBuilder.DropColumn(name: "EstimateTemplateId", table: "CommandLine");
+            migrationBuilder.DropTable("EstimateTemplate");
+            migrationBuilder.AddColumn<long>(
+                name: "BookQueryId",
+                table: "CommandLine",
+                nullable: true);
+            migrationBuilder.AddColumn<string>(
+                name: "Comment",
+                table: "CommandLine",
+                nullable: true);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -240,6 +262,13 @@ namespace Yavsc.Migrations
                 principalColumn: "UserId",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
+                name: "FK_CommandLine_BookQuery_BookQueryId",
+                table: "CommandLine",
+                column: "BookQueryId",
+                principalTable: "BookQuery",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
                 name: "FK_BookQuery_ApplicationUser_ClientId",
                 table: "BookQuery",
                 column: "ClientId",
@@ -252,13 +281,6 @@ namespace Yavsc.Migrations
                 column: "PerformerId",
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
-                onDelete: ReferentialAction.Restrict);
-            migrationBuilder.AddForeignKey(
-                name: "FK_Circle_ApplicationUser_OwnerId",
-                table: "Circle",
-                column: "OwnerId",
-                principalTable: "AspNetUsers",
-                principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
                 name: "FK_CircleMember_Circle_CircleId",
@@ -279,6 +301,13 @@ namespace Yavsc.Migrations
                 table: "Contact",
                 column: "OwnerId",
                 principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
+                name: "FK_PostTag_Blog_PostId",
+                table: "PostTag",
+                column: "PostId",
+                principalTable: "Blog",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
