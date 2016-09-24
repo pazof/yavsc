@@ -3,20 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
 
-namespace BookAStar.Pages
+namespace BookAStar.Views 
 {
-    public partial class MarkdownEditorPage : ContentPage
+    public partial class CommandLineEditor : ContentView
     {
-        public MarkdownEditorPage()
+        public CommandLineEditor()
         {
             InitializeComponent();
-        }
-
-        public void GetText()
-        {
 
         }
     }

@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -51,16 +53,15 @@
     <Compile Include="Pages\BookQueryPage.xaml.cs">
       <DependentUpon>BookQueryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\DeviceInfoPage.cs" />
+    <Compile Include="Pages\CommandLineEditorPage.xaml.cs">
+      <DependentUpon>CommandLineEditorPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\EventDetail.xaml.cs">
       <DependentUpon>EventDetail.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\MainSettings.cs" />
     <Compile Include="Helpers\RemoteEntity.cs" />
     <Compile Include="Interfaces\IPlatform.cs" />
-    <Compile Include="Pages\MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Model\Blog\Blog.cs" />
     <Compile Include="Model\Blog\BlogTag.cs" />
     <Compile Include="Model\BookQueryData.cs" />
@@ -103,10 +104,10 @@
     <Compile Include="Pages\EditEstimatePage.xaml.cs">
       <DependentUpon>EditEstimatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\MarkdownEditorPage.xaml.cs">
-      <DependentUpon>MarkdownEditorPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\PinPage.cs" />
+    <Compile Include="Views\CommandLineEditor.xaml.cs">
+      <DependentUpon>CommandLineEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MarkdownView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pages\SearchPage.xaml.cs">
@@ -118,10 +119,6 @@
     <Compile Include="Model\Tag.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\MainPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Include="App.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
@@ -200,12 +197,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\MarkdownEditorPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Pages\EditEstimatePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
@@ -219,6 +210,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="icon-anon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\CommandLineEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\CommandLineEditorPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.0.107\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.0.107\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

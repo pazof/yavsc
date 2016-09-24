@@ -4,36 +4,63 @@
              x:Class="BookAStar.App" >
   <Application.Resources>
     <ResourceDictionary>
-      <OnPlatform x:TypeArguments="Font" Android="Large" iOS="Large" WinPhone="Large" x:Key="HeaderFont" />
-      <OnPlatform x:TypeArguments="Color" Android="Black" iOS="Black" WinPhone="Black" x:Key="PrimaryTextColor" />
-      <OnPlatform x:TypeArguments="Color" Android="Red" iOS="Red" WinPhone="Red" x:Key="EmphasisTextColor" />
-      <OnPlatform x:TypeArguments="Font" Android="40" iOS="60" WinPhone="60" x:Key="LargeFontSize" />
-      <OnPlatform x:TypeArguments="Font" Android="30" iOS="60" WinPhone="60" x:Key="MediumFontSize" />
       
-      <Color x:key="backgroundColor">#30FAFAFA</Color>
-      <Color x:key="oddColor">#207AFAFA</Color>
-      <Color x:key="textColor">#FF103010</Color>
-      <Color x:key="labelColor">#FF303010</Color>
-      <Style x:Key="BigEntry" TargetType="Entry">
-        <Setter Property="FontSize" Value="{DynamicResource LargeFontSize}" />
+      <Color x:Key="PageBackgroundColor">#f0f0ff</Color>
+      <Color x:Key="HeadingTextColor">Black</Color>
+      <Color x:Key="NormalTextColor">Blue</Color>
+      <Color x:Key="GroupingTextColor">#5050ff</Color>
+      
+      <OnPlatform x:TypeArguments="Font" Android="Large" iOS="Large" WinPhone="Large" x:Key="HeaderFont" />
+      <OnPlatform x:TypeArguments="Color" Android="Red" iOS="Red" WinPhone="Red" x:Key="EmphasisTextColor" />
+      <OnPlatform x:TypeArguments="Font" Android="60" iOS="60" WinPhone="60" x:Key="LargeFontSize" />
+      <OnPlatform x:TypeArguments="Font" Android="50" iOS="50" WinPhone="50" x:Key="MediumFontSize" />
+      <OnPlatform x:TypeArguments="Font" Android="40" iOS="40" WinPhone="40" x:Key="SmallFontSize" />
+
+
+      <Color x:Key="BackgroundColor">#30FAFAFA</Color>
+      <Color x:Key="OddColor">#207AFAFA</Color>
+      <Color x:Key="TextColor">#FF103010</Color>
+      <Color x:Key="LabelColor">#FF303010</Color>
+      
+      <Style x:Key="LabelPageHeadingStyle" TargetType="Label">
         <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="TextColor" Value="{StaticResource HeadingTextColor}" />
+        <Setter Property="FontSize" Value="{StaticResource LargeFontSize}" />
       </Style>
-      <Style x:Key="labelStyle" TargetType="Label">
-        <Setter Property="TextColor" Value="{DynamicResource EmphasisTextColor}" />
+      
+      <Style x:Key="InputLabelStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="{StaticResource SmallFontSize}" />
+        <Setter Property="FontAttributes" Value="Italic" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="TextColor" Value="{StaticResource GroupingTextColor}" />
+      </Style>
+      
+      <Style x:Key="LabelStyle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource TextColor}" />
         <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="FontSize" Value="{DynamicResource LargeFontSize}" />
+        <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
         <Setter Property="VerticalOptions" Value="Start" />
+        <Setter Property="HorizontalOptions" Value="Start" />
         <Setter Property="LineBreakMode" Value="WordWrap" />
-        
       </Style>
-      <Style x:Key="entryStyle" TargetType="Entry">
-        <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+
+      <Style x:Key="BigLabel"  BasedOn="{StaticResource LabelStyle}" TargetType="Label">
+        <Setter Property="FontSize" Value="Large" />
       </Style>
-      <Style x:key="backbroundStyle" TargetType="VisualElement">
-        <Setter Property="BackgoundColor" Value="{StaticResource backgroundColor}" />
-        <Setter Property="TextColor" Value="{StaticResource textColor}" />
+      
+      <Style x:Key="EntryStyle" TargetType="Entry">
+        <Setter Property="HorizontalOptions" Value="CenterAndExpand"/>
       </Style>
-      <Style x:Key="buttonStyle" TargetType="Button">
+      <Style x:Key="PickerStyle" TargetType="Picker">
+        <Setter Property="HorizontalOptions" Value="CenterAndExpand"/>
+      </Style>
+      <Style x:Key="BigEntry" TargetType="Entry" BasedOn="{StaticResource EntryStyle}">
+        <Setter Property="FontSize" Value="{StaticResource LargeFontSize}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+      </Style>
+      
+      <Style x:Key="ButtonStyle" TargetType="Button">
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="VerticalOptions" Value="CenterAndExpand" />
         <Setter Property="BorderColor" Value="Lime" />
@@ -42,7 +69,8 @@
         <Setter Property="WidthRequest" Value="200" />
         <Setter Property="TextColor" Value="Teal" />
       </Style>
+      <Style x:Key="PageStyle" TargetType="Page">
+      </Style>
     </ResourceDictionary>
   </Application.Resources>
-
 </Application>
