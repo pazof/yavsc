@@ -122,7 +122,7 @@ WriteLiteral(@">
   [{ 'header': 1 }, { 'header': 2 }],               // custom button values
   [{ 'list': 'ordered' }, { 'list': 'bullet' }],
   [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-  ['link', 'image'],
+  ['link', 'image', 'video'],
   ['clean']                                         // remove formatting button
         ];
 
