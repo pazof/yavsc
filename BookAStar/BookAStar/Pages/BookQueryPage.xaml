@@ -9,27 +9,21 @@
              >
   <ContentPage.Resources>
     <ResourceDictionary>
-
-      <Style x:Key="labelStyle" TargetType="Label">
-        <Setter Property="TextColor" Value="{DynamicResource EmphasisTextColor}" />
-        <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="FontSize" Value="{DynamicResource LargeFontSize}" />
-        <Setter Property="VerticalOptions" Value="Start" />
-        <Setter Property="LineBreakMode" Value="WordWrap" />
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource LabelStyle}" />
       </Style>
-
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
     </ResourceDictionary>
   </ContentPage.Resources>
 
   <StackLayout x:Name="bookQueryLayout">
-    <Label Text="{Binding Client.UserName}" Style="{StaticResource labelStyle}"
-         VerticalOptions="Start" HorizontalOptions="Center" />
-    <Label Text="{Binding Location.Address}" VerticalOptions="FillAndExpand" HorizontalOptions="Center" />
-    <Label Text="{Binding Previsional}" VerticalOptions="Center" HorizontalOptions="Center" />
-
-    <Label Text="{Binding EventDate}" VerticalOptions="Center" HorizontalOptions="Center" />
-    <Label Text="{Binding Location.Address}" VerticalOptions="Center" HorizontalOptions="Center" />
+    <Label Text="{Binding Client.UserName}"/>
+    <Label Text="{Binding EventDate}"  />
+    <Label Text="{Binding Location.Address}" />
+    <Label Text="{Binding Previsional}" />
     <maps:Map x:Name="map"></maps:Map>
-    <Button Text="Faire un devis" Clicked="MakeAnEstimate" VerticalOptions="Center" HorizontalOptions="End"/>
+    <Button Text="Faire un devis" Clicked="MakeAnEstimate" />
   </StackLayout>
 </ContentPage>

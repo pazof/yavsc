@@ -18,46 +18,56 @@ namespace BookAStar
 {
     public partial class App : Application // superclass new in 1.3
     {
-        ContentPage deviceInfoPage;
         SearchPage searchPage = new SearchPage
         {
             Title = "Trouvez votre artiste",
             Icon = "glyphish_07_map_marker.png"
         };
         NavigationPage mp;
+
         SettingsPage settingsPage = new SettingsPage
             {
                 Title = "Paramètres",
                 Icon = "ic_corp_icon.png"
             };
+
         PinPage pinPage = new PinPage
         {
             Title = "Carte",
             Icon = "glyphish_07_map_marker.png"
         };
-        BookQueryPage bookQueryPage = new BookQueryPage {
-            Title = "Demande de devis"
-        };
-        BookQueriesPage bookQueriesPage = new BookQueriesPage
-        {
-            Title = "Demandes de devis"
-        };
+        
 
-        EditEstimatePage editEstimate = new EditEstimatePage
-        {
-            Title = "Création d'un devis"
-        };
+        
+
+        
+
         public static IPlatform PlatformSpecificInstance { get; set; }
         public static string AppName { get; set; }
         public static App CurrentApp { get { return Current as App; } }
 
         public DataManager DataManager { get; set; } = new DataManager();
-        
+
+        internal void EditCommandLine(CommandLine com)
+        {
+            CommandLineEditorPage editCommandLine = new CommandLineEditorPage
+            {
+                Title = "Edition d'une ligne de facture",
+                BindingContext = com
+            };
+            mp.Navigation.PushAsync(editCommandLine);
+        }
+
         public App(IPlatform instance)
         {
-            deviceInfoPage = new DeviceInfoPage(instance.GetDeviceInfo());
+            InitializeComponent();
+
             PlatformSpecificInstance = instance;
-            mp = new NavigationPage(searchPage);
+            mp = new NavigationPage(searchPage)
+            {
+                BackgroundColor = (Color)Application.Current.Resources["PageBackgroundColor"]
+            };
+            var color = Application.Current.Resources["PageBackgroundColor"];
             //var hasLabelStyle = r.ContainsKey("labelStyle");
             // var stid = this.StyleId;
             // null var appsstyle = settingsPage.Style;
@@ -80,7 +90,12 @@ namespace BookAStar
 
             tiQueries.Clicked += (object sender, EventArgs e) =>
             {
-                ShowPage (bookQueriesPage);
+                BookQueriesPage bookQueriesPage = new BookQueriesPage
+                {
+                    Title = "Demandes de devis"
+                };
+                bookQueriesPage.BindingContext = DataManager.BookQueries;
+                ShowPage(bookQueriesPage);
             };
             mp.ToolbarItems.Add(tiQueries);
             ToolbarItem tiMap = new ToolbarItem
@@ -93,15 +108,7 @@ namespace BookAStar
             {
                 ShowPage(pinPage);
             };
-
-            bookQueriesPage.BindingContext = DataManager.BookQueries;
-
            
-        }
-
-        public void ShowDeviceInfo()
-        {
-            ShowPage(deviceInfoPage);
         }
 
         public void PostDeviceInfo()
@@ -113,25 +120,33 @@ namespace BookAStar
 
         public void ShowBookQuery(BookQueryData data)
         {
+            BookQueryPage bookQueryPage = new BookQueryPage
+            {
+                Title = "Demande de devis"
+            };
             bookQueryPage.BindingContext = data;
             ShowPage(bookQueryPage);
         }
 
         public void EditEstimate(Estimate data)
         {
+            EditEstimatePage editEstimate = new EditEstimatePage
+            {
+                Title = "Création d'un devis"
+            };
             editEstimate.Estimate = data;
             ShowPage(editEstimate);
         }
 
-        private void ShowPage(Page p)
+        // TODO système de persistance de l'état de l'appli
+        private void ShowPage(Page p) 
         {
-            if (p.Parent == null)
-                mp.Navigation.PushAsync(p);
-            else p.Focus();
-        }
-        public void CloseWindow()
-        {
-            mp.Navigation.PopAsync();
+            if (p.Parent!=null)
+            {
+                mp.Navigation.RemovePage(p);
+                p.Parent = null;
+            }
+            mp.Navigation.PushAsync(p);
         }
     }
 }

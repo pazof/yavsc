@@ -2,41 +2,32 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BookAStar.Pages.EditEstimatePage"
-             xmlns:local="clr-namespace:BookAStar.Views;assembly=BookAStar"
-             >
-  <StackLayout Padding="10,10,10,10">
-    
+             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
+             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar">
+  <StackLayout Padding="10,10,10,10" BindingContext="{Binding .}">
     <StackLayout Orientation="Horizontal" Padding="10,10,10,10">
-       <Label Text="{Binding Client.UserName}"
-        LineBreakMode="WordWrap"></Label>
-    <Label Text="{Binding Query.Location.Address}"
-         LineBreakMode="WordWrap"  ></Label>
-    <Label Text="{Binding Query.EventDate, StringFormat='{0:dddd d MMMM yyyy à hh:mm}'}"
-         LineBreakMode="WordWrap"  ></Label>
+      <Label Text="{Binding Client.UserName}" LineBreakMode="WordWrap"></Label>
+      <Label Text="{Binding Query.Location.Address}" LineBreakMode="WordWrap"></Label>
+      <Label Text="{Binding Query.EventDate, StringFormat='{0:dddd d MMMM yyyy à hh:mm}'}" LineBreakMode="WordWrap"></Label>
     </StackLayout>
-    
-    <local:MarkdownView x:Name="mdview" Markdown="{Binding Description}"
-         Edited="OnDescriptionChanged" HorizontalOptions="FillAndExpand"
-                        VerticalOptions="FillAndExpand">
-      
-    </local:MarkdownView>
 
-   <!-- <ListView >
+    <views:MarkdownView x:Name="mdview"
+                        Edited="OnDescriptionChanged" HorizontalOptions="FillAndExpand"
+         HeightRequest="120"  VerticalOptions="FillAndExpand"
+    Markdown="{Binding Description}"></views:MarkdownView>
+
+    <ListView HeightRequest="160">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
-            <ViewCell.View>
-              <StackLayout Orientation="Horizontal">
-                <Entry Placeholder="Ligne de facture"></Entry>
-                <Entry Placeholder="Compte"></Entry>
-                <Entry Placeholder="Prix unitaire" ></Entry>
-              </StackLayout>
+            <ViewCell.View HeightRequest="80">
             </ViewCell.View>
           </ViewCell>
         </DataTemplate>
       </ListView.ItemTemplate>
-    </ListView> -->
-    <Label Text="Total TTC:"></Label>
+    </ListView>
+    <Button Text="Ajouter une ligne de facture" Clicked="OnNewCommanLine"></Button>
+    <Label FormattedText="{Binding FormattedTotal}"/>
     <Button Text="Valider ce devis"></Button>
   </StackLayout>
 </ContentPage>

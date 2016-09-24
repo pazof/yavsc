@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
+             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
+             x:Class="BookAStar.Pages.CommandLineEditorPage"
+             Style="{StaticResource PageStyle}">
+  <StackLayout>
+    <Label Text="Description de la ligne de facture" Style="{StaticResource InputLabelStyle}"></Label>
+    <Editor VerticalOptions="FillAndExpand"></Editor>
+    <Label Text="Durée de la prestation" 
+           Style="{StaticResource InputLabelStyle}"></Label>
+    <StackLayout Orientation="Horizontal">
+      <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}"/>
+      <Picker SelectedIndex="1" Style="{StaticResource PickerStyle}">
+        <Picker.Items>
+          <x:String>Heures</x:String>
+          <x:String>Jours</x:String>
+          <x:String>Minutes</x:String>
+        </Picker.Items>
+      </Picker>
+    </StackLayout>
+    <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
+    <Entry Placeholder="Quantité" Text="1" Keyboard="Numeric"  Style="{StaticResource BigEntry}"/>
+    <Label Text="Prix unitaire" Style="{StaticResource InputLabelStyle}"></Label>
+    <StackLayout Orientation="Horizontal">
+      <Entry Placeholder="Prix" Keyboard="Numeric" Style="{StaticResource BigEntry}"></Entry>
+      <Label Text="€" Style="{StaticResource BigLabel}" HorizontalTextAlignment="Start"/>
+    </StackLayout>
+    <Button Text="Valider cette ligne de facture"></Button>
+  </StackLayout>
+</ContentPage>
