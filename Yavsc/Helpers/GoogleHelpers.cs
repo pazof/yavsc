@@ -21,11 +21,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
-using Newtonsoft.Json.Linq;
 using Yavsc.Models;
 using Yavsc.Models.Auth;
 using Yavsc.Models.Google.Messaging;
@@ -37,7 +34,7 @@ namespace Yavsc.Helpers
     /// </summary>
     public static class GoogleHelpers
     {
-
+/* WAZA
         /// <summary>
         /// Notifies the event.
         /// </summary>
@@ -70,18 +67,17 @@ namespace Yavsc.Helpers
             var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
             return payload.Value<MessageWithPayloadResponse>();
         }
-
+*/
         public static MessageWithPayloadResponse NotifyEvent<Event>
          (this GoogleAuthSettings googleSettings, IEnumerable<string> regids, Event ev)
-           where Event : YaEvent
+           where Event : IEvent
         {
             var msg = new MessageWithPayload<Event>()
             {
                 notification = new Notification()
                 {
-                    title = ev.Title,
-                    body = ev.Description + ev.Comment == null ?
-                        "" : "(" + ev.Comment + ")",
+                    title = ev.Topic+" "+ev.Sender,
+                    body =  ev.Message,
                     icon = "icon"
                 },
                 data = ev,

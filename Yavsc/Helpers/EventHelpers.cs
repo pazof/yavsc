@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Localization;
+using Yavsc.Model;
 using Yavsc.Models.Booking;
 using Yavsc.Models.Messaging;
 
@@ -11,17 +12,14 @@ namespace Yavsc.Helpers
         {
             var yaev = new BookQueryEvent
             {
-                Title = query.Client.UserName + " "+ SR["is asking you for a date"]+".",
-                Comment = (query.Previsional != null) ?
-                SR["Deposit"] + string.Format(": {0:00}",
-                    query.Previsional) : SR["No deposit."],
-                Description = SR["Address"] + ": " + query.Location.Address + "\n" +
-                SR["Date"] + ": " + query.EventDate.ToString("D"),
-                StartDate = query.EventDate,
+                Client =  new ClientProviderView { UserName = query.Client.UserName , UserId = query.ClientId }  ,
+                Previsional = query.Previsional,
+                EventDate = query.EventDate,
                 Location = query.Location,
-                CommandId = query.Id
+                Id = query.Id
             };
             return yaev;
         }
+
     }
 }

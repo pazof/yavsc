@@ -83,6 +83,7 @@ namespace Yavsc.Controllers
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
                 : message == ManageMessageId.ChangeNameSuccess ? "Your name was updated."
                 : message == ManageMessageId.SetActivitySuccess ? "Your activity was set."
+                : message == ManageMessageId.AvatarUpdateSuccess ? "Your avatar was updated."
                 : "";
 
             var user = await GetCurrentUserAsync();
@@ -600,6 +601,7 @@ namespace Yavsc.Controllers
             RemovePhoneSuccess,
             SetActivitySuccess,
             UnsetActivitySuccess,
+            AvatarUpdateSuccess,
             Error
         }
 

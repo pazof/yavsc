@@ -27,7 +27,23 @@ namespace Yavsc.Models.Messaging
 	/// <summary>
 	/// Base event.
 	/// </summary>
-	public class BaseEvent: ITitle
+    
+    public class BaseEvent : IEvent {
+         public BaseEvent()
+         {
+             Topic = GetType().Name;
+         }
+         public BaseEvent(string topic)
+        {
+            Topic = topic;
+        }
+        public string Topic { get; set; }
+        public string Sender { get; set; }
+
+        public string Message { get; set; }
+    }
+
+	public class GeneralEvent: BaseEvent, ITitle
 	{
 		/// <summary>
 		/// The title.

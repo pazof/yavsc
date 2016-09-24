@@ -58,6 +58,16 @@ namespace Yavsc
 			Clients.All.addMessage("#"+name,message);
 		}
 
-
+        [Authorize]
+        public void PV (string userId, string message)
+        {
+            var sender = Context.User.Identity.Name;
+            // TODO personal black|white list +
+            // Contact list allowed only + 
+            // only pro
+            var hubCxContext = Clients.User(userId);
+            var cli = Clients.Client(hubCxContext.ConnectionId);
+            cli.addPV(sender,message);
+        }
     }
 }
