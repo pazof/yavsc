@@ -24,6 +24,7 @@ using System.Json;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 
 namespace Yavsc.Helpers
 {
@@ -84,18 +85,27 @@ namespace Yavsc.Helpers
 		public async Task<JsonValue> InvokeJson(object query)
 		{
 
-      JsonValue jsonDoc=null;
+           JsonValue jsonDoc=null;
 			using (Stream streamQuery = request.GetRequestStream()) {
 				using (StreamWriter writer = new StreamWriter(streamQuery)) {
 					writer.Write (JsonConvert.SerializeObject(query));
 				}}
-			using (WebResponse response = request.GetResponse ()) {
-				using (Stream stream = response.GetResponseStream ()) {
-                    if (stream.Length>0)
-		      jsonDoc = await Task.Run (() => JsonObject.Load (stream));			
-				}
-				response.Close();
-			}
+            try
+            {
+                using (WebResponse response = request.GetResponse())
+                {
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        if (stream.Length > 0)
+                            jsonDoc = await Task.Run(() => JsonObject.Load(stream));
+                    }
+                    response.Close();
+                }
+            }
+            catch (WebException ex)
+            {
+                Debug.Print($"Web request failed: {request.ToString()}\n" + ex.ToString());
+            }
 			return jsonDoc;
 		}
 	}

@@ -52,7 +52,7 @@ namespace BookAStar.Pages
         protected void OnNewCommanLine(object sender, EventArgs e)
         {
             var com = new CommandLine();
-            App.CurrentApp.EditCommandLine(com);
+            App.CurrentApp.EditCommandLine(this,com);
         }
        
     }

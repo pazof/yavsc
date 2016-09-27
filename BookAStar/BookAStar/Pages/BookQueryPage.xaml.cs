@@ -47,6 +47,7 @@ namespace BookAStar.Pages
             }
             
         }
+        
         public BookQueryPage(BookQueryData bookQuery=null)
         {
             

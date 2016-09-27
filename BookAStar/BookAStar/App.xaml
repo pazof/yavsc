@@ -1,11 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BookAStar.App" >
+             x:Class="BookAStar.App"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  
   <Application.Resources>
+    
     <ResourceDictionary>
       
-      <Color x:Key="PageBackgroundColor">#f0f0ff</Color>
+      <Color x:Key="PageBackgroundColor">#30FAFAFA</Color>
+      <Color x:Key="ContentBackgroundColor">#ffffff</Color>
+      <Color x:Key="PageForegroundColor">#000000</Color>
       <Color x:Key="HeadingTextColor">Black</Color>
       <Color x:Key="NormalTextColor">Blue</Color>
       <Color x:Key="GroupingTextColor">#5050ff</Color>
@@ -15,9 +20,10 @@
       <OnPlatform x:TypeArguments="Font" Android="60" iOS="60" WinPhone="60" x:Key="LargeFontSize" />
       <OnPlatform x:TypeArguments="Font" Android="50" iOS="50" WinPhone="50" x:Key="MediumFontSize" />
       <OnPlatform x:TypeArguments="Font" Android="40" iOS="40" WinPhone="40" x:Key="SmallFontSize" />
+      <OnPlatform x:TypeArguments="x:Double" Android="130" iOS="130" WinPhone="130" x:Key="BigUserAvatarSize" />
+      
 
-
-      <Color x:Key="BackgroundColor">#30FAFAFA</Color>
+      <Color x:Key="BackgroundColor">#30AAAAFA</Color>
       <Color x:Key="OddColor">#207AFAFA</Color>
       <Color x:Key="TextColor">#FF103010</Color>
       <Color x:Key="LabelColor">#FF303010</Color>
@@ -47,6 +53,10 @@
 
       <Style x:Key="BigLabel"  BasedOn="{StaticResource LabelStyle}" TargetType="Label">
         <Setter Property="FontSize" Value="Large" />
+      </Style>      
+      <Style x:Key="ContentLabelStyle"  BasedOn="{StaticResource LabelStyle}" TargetType="Label">
+        <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
+        <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
       </Style>
       
       <Style x:Key="EntryStyle" TargetType="Entry">
@@ -69,7 +79,10 @@
         <Setter Property="WidthRequest" Value="200" />
         <Setter Property="TextColor" Value="Teal" />
       </Style>
-      <Style x:Key="PageStyle" TargetType="Page">
+      
+      <Style x:Key="PageStyle" TargetType="ContentPage">
+        <Setter Property="Padding" Value="5,5,5,5" />
+        <Setter Property="BackgroundColor" Value="{StaticResource PageBackgroundColor}" />
       </Style>
     </ResourceDictionary>
   </Application.Resources>

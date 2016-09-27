@@ -6,11 +6,24 @@ using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace BookAStar
 {
+
+    public class NotIdentifiedException : Exception {
+        public NotIdentifiedException(string message) : base(message) { }
+    }
+
+    public class ServiceNotAvailable : Exception
+    {
+        public ServiceNotAvailable(string message, Exception innerException) : base(message, innerException) { }
+
+    }
+
     public class LocalEntity<V, K> : ObservableCollection<V> where K : IEquatable<K>
     {
+        public V CurrentItem { get; protected set; }
         protected Func<V, K> GetKey { get; set; }
         public LocalEntity(Func<V, K> getKey) : base()
         {
@@ -25,10 +38,12 @@ namespace BookAStar
                 Remove(LocalGet(key));
             }
             Add(item);
+            CurrentItem = item;
         }
         public V LocalGet(K key)
         {
-            return this.Single(x => GetKey(x).Equals(key));
+            CurrentItem = this.Single(x => GetKey(x).Equals(key));
+            return CurrentItem;
         }
     }
 
@@ -41,7 +56,7 @@ namespace BookAStar
         private Uri controllerUri;
         public bool CanExecute(object parameter)
         {
-            return !IsExecuting;
+            return !IsExecuting && (MainSettings.CurrentUser != null);
         }
 
         public RemoteEntity(string controllerName, Func<V,K> getKey):base(getKey)
@@ -60,6 +75,8 @@ namespace BookAStar
             if (CanExecuteChanged != null)
                 CanExecuteChanged.Invoke(this, new EventArgs());
         }
+        
+       
 
         /// <summary>
         /// Refresh the collection
@@ -68,26 +85,33 @@ namespace BookAStar
         public async void Execute(object parameter)
         {
             BeforeExecute();
-            // Update credentials 
             using (HttpClient client = new HttpClient())
             {
+
+                // Update credentials 
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
                     "Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
                 // Get the whole data
-
-                using (var response = await client.GetAsync(controllerUri))
+                try
                 {
-                    if (response.IsSuccessStatusCode)
+                    using (var response = await client.GetAsync(controllerUri))
                     {
-                        var content = await response.Content.ReadAsStringAsync();
-                        List<V> col = JsonConvert.DeserializeObject<List<V>>(content);
-                        // LocalData.Clear();
-                        foreach (var item in col)
+                        if (response.IsSuccessStatusCode)
                         {
-                            Merge(item);
+                            var content = await response.Content.ReadAsStringAsync();
+                            List<V> col = JsonConvert.DeserializeObject<List<V>>(content);
+                            // LocalData.Clear();
+                            foreach (var item in col)
+                            {
+                                Merge(item);
+                            }
                         }
                     }
                 }
+                catch (WebException webex) {
+                    throw new ServiceNotAvailable("No remote entity", webex);
+                }
+
             }
             AfterExecuting();
         }
@@ -100,8 +124,15 @@ namespace BookAStar
             if (CanExecuteChanged != null)
                 CanExecuteChanged.Invoke(this, new EventArgs());
         }
-
         public async Task<V> Get(K key)
+        {
+            var item = LocalGet(key);
+            if (item==null) item = await RemoteGet(key);
+            CurrentItem = item;
+            return CurrentItem;
+        }
+
+        public async Task<V> RemoteGet(K key)
         {
            V item = default(V);
            BeforeExecute();
@@ -123,6 +154,7 @@ namespace BookAStar
             }
 
             AfterExecuting();
+            CurrentItem = item;
             return item;
         }
         

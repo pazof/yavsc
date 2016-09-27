@@ -9,6 +9,13 @@ using Android.Gms.Common;
 using Android.Util;
 
 using Xamarin.Auth;
+using XLabs.Forms;
+using XLabs.Platform.Device;
+using XLabs.Forms.Services;
+using XLabs.Platform.Services.Email;
+using XLabs.Platform.Services.Media;
+using XLabs.Serialization;
+
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.IO;
@@ -22,17 +29,71 @@ using Yavsc.Helpers;
 using Yavsc.Models.Identity;
 using BookAStar.Helpers;
 using BookAStar.Interfaces;
+using Plugin.DeviceInfo;
+using Android.Speech.Tts;
+using XLabs.Platform.Services;
+using XLabs.Caching.SQLite;
+using SQLite.Net.Platform.XamarinAndroid;
+using SQLite.Net;
+using XLabs.Ioc;
+using XLabs.Platform.Mvvm;
+using XLabs.Caching;
 
 namespace BookAStar.Droid
 {
     [Activity(Name="fr.pschneider.bas.MainActivity", Label = "BookAStar", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
-        IPlatform
+    public class MainActivity :
+        XFormsApplicationDroid,
+        // was global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
+        IPlatform, IComponentContext
     {
         protected override void OnCreate(Bundle bundle)
         {
-            TabLayoutResource = Resource.Layout.Tabbar;
-            ToolbarResource = Resource.Layout.Toolbar;
+            base.OnCreate(bundle);
+
+           // Window.RequestFeature(Android.Views.WindowFeatures.ActionBar);
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {
+                Android.Webkit.WebView.SetWebContentsDebuggingEnabled(true);
+            }
+
+            // no Resolver.IsSet
+            if (!Resolver.IsSet)
+            {
+                this.SetIoc();
+            }
+            else
+            {
+                var app = Resolver.Resolve<IXFormsApp>() as IXFormsApp<XFormsApplicationDroid>;
+                if (app != null) app.AppContext = this;
+            }
+            global::Xamarin.Forms.Forms.Init(this, bundle);
+            global::Xamarin.FormsMaps.Init(this, bundle);
+
+            Xamarin.Forms.Forms.ViewInitialized += (sender, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.View.StyleId))
+                {
+                    e.NativeView.ContentDescription = e.View.StyleId;
+                }
+            };
+
+            //TabLayoutResource = Resource.Layout.Tabbar;
+            //ToolbarResource = Resource.Layout.Toolbar;
+
+            // Theme.Resources.FinishPreloading();
+            // Theme.ApplyStyle(Resource.Style.MainTheme, false);
+
+            // XmlREader tb = Resources.GetLayout(Resource.Layout.Toolbar);
+            var tb = new Toolbar(this.BaseContext);
+
+            this.SetActionBar(tb);
+            
+            LoadApplication(new BookAStar.App(this));
+            /*
+            // TabLayoutResource = Resource.Layout.Tabbar;
+            // ToolbarResource = Resource.Layout.Toolbar;
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             global::Xamarin.FormsMaps.Init(this, bundle);
@@ -40,8 +101,36 @@ namespace BookAStar.Droid
             /* var x = typeof(Themes.DarkThemeResources);
              x = typeof(Themes.LightThemeResources);
              x = typeof(Themes.Android.UnderlineEffect); */
+
         }
 
+        private void SetIoc()
+        {
+            var resolverContainer = new SimpleContainer();
+
+            var app = new XFormsAppDroid();
+
+            app.Init(this);
+
+            var documents = app.AppDataDirectory;
+            var pathToDatabase = Path.Combine(documents, "xforms.db");
+
+            resolverContainer.Register<IDevice>(t => AndroidDevice.CurrentDevice)
+                .Register<IDisplay>(t => t.Resolve<IDevice>().Display)
+                .Register<IFontManager>(t => new FontManager(t.Resolve<IDisplay>()))
+                .Register<IEmailService, EmailService>()
+                .Register<IMediaPicker, MediaPicker>()
+                .Register<ITextToSpeechService, XLabs.Platform.Services.TextToSpeechService>()
+                .Register<IDependencyContainer>(resolverContainer)
+                .Register<IXFormsApp>(app)
+                .Register<ISecureStorage>(t => new KeyVaultStorage(t.Resolve<IDevice>().Id.ToCharArray()))
+                .Register<ICacheProvider>(
+                    t => new SQLiteSimpleCache(new SQLitePlatformAndroid(),
+                        new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()));
+
+
+            Resolver.SetResolver(resolverContainer.GetResolver());
+        }
 
         public bool EnablePushNotifications(bool enable)
         {
@@ -290,7 +379,7 @@ namespace BookAStar.Droid
 
         public IGCMDeclaration GetDeviceInfo()
         {
-            var devinfo = DeviceInfo.Plugin.CrossDeviceInfo.Current;
+            var devinfo = CrossDeviceInfo.Current;
             return new GCMDeclaration
             {
                 DeviceId = devinfo.Id,
@@ -325,7 +414,17 @@ namespace BookAStar.Droid
                 return m.InvokeJson(arg);
             }
         }
-        
+
+        public T Resolve<T>()
+        {
+
+            throw new NotImplementedException();
+        }
+
+        public object Resolve(Type t)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 
