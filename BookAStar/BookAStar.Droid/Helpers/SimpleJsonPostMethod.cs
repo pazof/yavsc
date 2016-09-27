@@ -41,8 +41,7 @@ namespace Yavsc.Helpers
 		/// <param name="pathToMethod">Path to method.</param>
 		public SimpleJsonPostMethod (string pathToMethod, string authorizationHeader = null)
 		{
-			request = (HttpWebRequest) WebRequest.Create (
-                BasePath + pathToMethod);
+			request = (HttpWebRequest) WebRequest.Create (BasePath + pathToMethod);
 			request.Method = "POST";
 			request.Accept = "application/json";
 			request.ContentType = "application/json";
@@ -104,10 +103,10 @@ namespace Yavsc.Helpers
             }
             catch (WebException ex)
             {
+                // TODO err logging
                 Debug.Print($"Web request failed: {request.ToString()}\n" + ex.ToString());
             }
 			return jsonDoc;
 		}
 	}
 }
-
