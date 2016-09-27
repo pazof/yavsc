@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace BookAStar.Model
 {
@@ -19,5 +20,12 @@ namespace BookAStar.Model
         public string EMail { get; set; }
         public string Phone { get; set; }
         public Location BillingAddress { get; set; }
+        public ImageSource AvatarOrNot
+        {
+            get
+            {
+                return Avatar ?? ImageSource.FromResource("BookAStar.icon-anon.png");
+            }
+        }
     }
 }

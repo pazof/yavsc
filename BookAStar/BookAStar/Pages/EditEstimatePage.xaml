@@ -13,10 +13,24 @@
 
     <views:MarkdownView x:Name="mdview"
                         Edited="OnDescriptionChanged" HorizontalOptions="FillAndExpand"
-         HeightRequest="120"  VerticalOptions="FillAndExpand"
-    Markdown="{Binding Description}"></views:MarkdownView>
+           VerticalOptions="FillAndExpand"
+    Markdown="{Binding Description}"
+             RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,
+                                                                             Property=Height,
+                                                                             Factor=.4}"
+                      RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,
+                                                                            Property=Width,
+                                                                            Factor=1}"
+                        ></views:MarkdownView>
 
-    <ListView HeightRequest="160">
+    <ListView 
+              RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,
+                                                                             Property=Height,
+                                                                             Factor=.4}"
+                      RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,
+                                                                            Property=Width,
+                                                                            Factor=1}"
+              >
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>

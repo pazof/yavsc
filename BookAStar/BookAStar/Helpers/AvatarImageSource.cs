@@ -9,7 +9,7 @@ using Xamarin.Forms.Xaml;
 namespace BookAStar
 {
     [ContentProperty("Source")]
-    public class AvatarImageSourceExtension : IMarkupExtension
+    public class MyExtension : IMarkupExtension
     {
         public string Source { get; set; }
 
@@ -20,6 +20,8 @@ namespace BookAStar
             
             if (Source != null)
             {
+                if (Source.StartsWith("res://"))
+                    return ImageSource.FromResource(Source.Substring(6));
                 return ImageSource.FromUri(new Uri(Source));
             }
             return ImageSource.FromResource("BookAStar.icon-anon.png");

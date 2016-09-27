@@ -1,4 +1,5 @@
-﻿using BookAStar.Model;
+﻿using BookAStar.Helpers;
+using BookAStar.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,8 @@ namespace BookAStar.Pages
         public BookQueriesPage()
         {
             InitializeComponent();
+
+            BindingContext = DataManager.Current.BookQueries;
         }
         protected override void OnBindingContextChanged()
         {
@@ -33,8 +36,7 @@ namespace BookAStar.Pages
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            if (!Queries.IsExecuting)
-            Queries.Execute(null);
+            if (Queries.CanExecute(null)) Queries.Execute(null);
         }
 
         private void OnViewDetail(object sender, ItemTappedEventArgs e)

@@ -1,9 +1,8 @@
-
-// Helpers/Settings.cs This file was automatically added when you installed the Settings Plugin. If you are not using a PCL then comment this file back in to use it.
+// Helpers/Settings.cs
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 
-namespace BookAStar.Droid.Helpers
+namespace BookAStar.Helpers
 {
   /// <summary>
   /// This is the Settings static class that can be used in your Core solution or in any

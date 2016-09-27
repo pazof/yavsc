@@ -10,7 +10,7 @@
   <ContentPage.Resources>
     <ResourceDictionary>
       <Style TargetType="Label">
-        <Setter Property="Style" Value="{StaticResource LabelStyle}" />
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
       </Style>
       <Style TargetType="Button">
         <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
@@ -19,8 +19,10 @@
   </ContentPage.Resources>
 
   <StackLayout x:Name="bookQueryLayout">
+    
+    <Image Source="{Binding Client.AvatarOrNot}" Aspect="AspectFit" VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}"/>
     <Label Text="{Binding Client.UserName}"/>
-    <Label Text="{Binding EventDate}"  />
+    <Label Text="{Binding EventDate, StringFormat='le {0:dddd d MMMM yyyy à hh:mm}'}"  />
     <Label Text="{Binding Location.Address}" />
     <Label Text="{Binding Previsional}" />
     <maps:Map x:Name="map"></maps:Map>

@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
-
+  
   <style name="MainTheme" parent="MainTheme.Base">
+    <item name="android:windowBackground">@color/windowBackground</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:statusBarColor">@color/primaryDark</item>
+    <item name="android:colorPrimaryDark">@color/primaryDark</item>
   </style>
+  
   <!-- Base theme applied no matter what API -->
   <style name="MainTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
     <!--If you are using revision 22.1 please use just windowNoTitle. Without android:-->
@@ -21,13 +26,18 @@
          colorControlHighlight and colorSwitchThumbNormal. -->
     <item name="windowActionModeOverlay">true</item>
 
-    
     <item name="android:datePickerDialogTheme">@style/AppCompatDialogStyle</item>
-    <!--If you are using revision 22.1 please use just windowNoTitle. Without android:-->
-  
+    <!--We will be using the toolbar so no need to show ActionBar-->
+   <!-- <item name="android:actionBarStyle">@style/MyActionBar</item> -->
+    
   </style>
 
   <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
     <item name="colorAccent">#FF4081</item>
   </style>
+  <!--  
+  <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+    <item name="android:background">#A97946</item>
+  </style> -->
+
 </resources>

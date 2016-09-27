@@ -95,5 +95,6 @@ namespace BookAStar.Model.Workflow
                 return Bill?.Aggregate((decimal)0, (t, l) => t + l.Count * l.UnitaryCost) ?? (decimal)0;
             }
         }
+        
     }
 }

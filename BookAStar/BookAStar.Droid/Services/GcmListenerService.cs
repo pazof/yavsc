@@ -43,7 +43,7 @@ namespace BookAStar.Droid.Services
                 var topic = data.GetString("Topic");
                 if (topic == "BookQuery")
                 {
-                    DateTime eventdate,enddate;
+                    DateTime eventdate;
                     
                     var sdatestr = data.GetString("EventDate");
                     DateTime.TryParse(sdatestr, out eventdate);
