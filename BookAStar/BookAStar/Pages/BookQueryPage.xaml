@@ -4,8 +4,7 @@
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps.dll"
              x:Class="BookAStar.Pages.BookQueryPage"
-             BackgroundColor="{x:Static local:Constants.BackgroundColor}"
-             Padding="{x:Static local:Constants.PagePadding}"
+             Style ="{StaticResource PageStyle}"
              >
   <ContentPage.Resources>
     <ResourceDictionary>

@@ -8,12 +8,11 @@ using Xamarin.Forms;
 
 namespace BookAStar.Pages
 {
-    public partial class CommandLineEditorPage : ContentPage
+    public partial class EditBillingLinePage : ContentPage
     {
-        public CommandLineEditorPage()
+        public EditBillingLinePage()
         {
             InitializeComponent();
-            
         }
     }
 }

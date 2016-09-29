@@ -1,9 +1,10 @@
-﻿using BookAStar.Model.Social;
+﻿using BookAStar.Interfaces;
+using BookAStar.Model.Social;
 using System;
 
 namespace BookAStar.Model
 {
-    public class BookQueryData
+    public class BookQueryData : IBookQueryData
     {
         public ClientProviderInfo Client { get; set; }
         public Location Location { get; set; }

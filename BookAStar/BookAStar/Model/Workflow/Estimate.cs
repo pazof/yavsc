@@ -1,4 +1,5 @@
 ﻿using BookAStar.Helpers;
+using BookAStar.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using Xamarin.Forms;
 
 namespace BookAStar.Model.Workflow
 {
-    public partial class Estimate
+    public partial class Estimate : IEstimate
     {
         public long Id { get; set; }
         public long? CommandId { get; set; }
@@ -16,7 +17,7 @@ namespace BookAStar.Model.Workflow
         public string Description { get; set; }
         public int? Status { get; set; }
         public string Title { get; set; }
-        public List<CommandLine> Bill { get; set; }
+        public List<BillingLine> Bill { get; set; }
         /// <summary>
         /// List of attached graphic files
         /// to this estimate, as relative pathes to

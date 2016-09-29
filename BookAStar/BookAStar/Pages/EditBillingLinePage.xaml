@@ -3,8 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
              xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
-             x:Class="BookAStar.Pages.CommandLineEditorPage"
+             x:Class="BookAStar.Pages.EditBillingLinePage"
              Style="{StaticResource PageStyle}">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
   <StackLayout>
     <Label Text="Description de la ligne de facture" Style="{StaticResource InputLabelStyle}"></Label>
     <Editor VerticalOptions="FillAndExpand"></Editor>

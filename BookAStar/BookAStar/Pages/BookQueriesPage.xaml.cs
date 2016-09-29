@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
+using XLabs.Ioc;
+using XLabs.Platform.Services;
 
 namespace BookAStar.Pages
 {
@@ -42,7 +44,7 @@ namespace BookAStar.Pages
         private void OnViewDetail(object sender, ItemTappedEventArgs e)
         {
             BookQueryData data = e.Item as BookQueryData;
-            App.CurrentApp.ShowBookQuery(data);
+            Resolver.Resolve<INavigationService>().NavigateTo<BookQueryPage>(true,data);
         }
     }
 }

@@ -31,9 +31,10 @@ namespace BookAStar
 
 		private const string userNameKey = "user_id";
 		private const string PushNotificationsKey = "pushNotifs";
+        private const string AllowGPSUsageKey = "allowGPSUsage";
         private const string UserListsKey = "userList";
         private const string GoogleRegIdKey = "googleRedId";
-
+        private const string AllowProBookingOnlyKey = "allowProBookingOnly";
         
 
         private static readonly string UserIdDefault = 
@@ -149,7 +150,7 @@ namespace BookAStar
                         App.CurrentApp.PostDeviceInfo();
                     }
                 }
-                // TODO else Unregister the device
+                // TODO else Unregister this device
             }
         }
 
@@ -175,13 +176,45 @@ namespace BookAStar
 					PushNotificationsDefault);
 			}
 			set { 
+                // TODO Stop Broadcast receiver
 				AppSettings.AddOrUpdateValue<bool> (
 					PushNotificationsKey,
 					value);
             }
 		}
 
-		public static void SetMusical (string key, double value)
+        public static bool AllowGPSUsage
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault<bool>(
+                    AllowGPSUsageKey,
+                    PushNotificationsDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue<bool>(
+                    AllowGPSUsageKey,
+                    value);
+            }
+        }
+        // TODO make it a server side user's parameter
+        public static bool AllowProBookingOnly
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault<bool>(
+                    AllowProBookingOnlyKey,
+                    PushNotificationsDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue<bool>(
+                    AllowProBookingOnlyKey,
+                    value);
+            }
+        }
+        public static void SetMusical (string key, double value)
 		{
 			AppSettings.AddOrUpdateValue <double> (MusicalKey + key, value);
 		}
