@@ -51,7 +51,7 @@ namespace BookAStar.Pages
         }
         protected void OnNewCommanLine(object sender, EventArgs e)
         {
-            var com = new CommandLine();
+            var com = new BillingLine();
             App.CurrentApp.EditCommandLine(this,com);
         }
        

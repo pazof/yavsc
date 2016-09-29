@@ -17,12 +17,12 @@ namespace BookAStar.Helpers
         public RemoteEntity<Estimate, long> Estimates { get; set; }
         public RemoteEntity<Blog, long> Blogspot { get; set; }
         public LocalEntity<ClientProviderInfo,string> Contacts { get; set; }
-        
-        public static DataManager Current
+        protected static DataManager current = new DataManager();
+        public static DataManager Current 
         {
             get
             {
-                return App.CurrentApp.DataManager;
+                return current;
             }
         }
 

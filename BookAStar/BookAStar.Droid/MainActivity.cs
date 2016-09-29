@@ -41,7 +41,7 @@ using XLabs.Caching;
 
 namespace BookAStar.Droid
 {
-    [Activity(Name="fr.pschneider.bas.MainActivity", Label = "BookAStar", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Name="fr.pschneider.bas.MainActivity", Label = "BookAStar", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity :
         XFormsApplicationDroid,
         // was global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
@@ -51,23 +51,23 @@ namespace BookAStar.Droid
         {
             base.OnCreate(bundle);
 
-           // Window.RequestFeature(Android.Views.WindowFeatures.ActionBar);
-
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
                 Android.Webkit.WebView.SetWebContentsDebuggingEnabled(true);
             }
 
-            // no Resolver.IsSet
+            IXFormsApp<XFormsApplicationDroid> app =null;
             if (!Resolver.IsSet)
             {
                 this.SetIoc();
             }
             else
             {
-                var app = Resolver.Resolve<IXFormsApp>() as IXFormsApp<XFormsApplicationDroid>;
-                if (app != null) app.AppContext = this;
+                app = Resolver.Resolve<IXFormsApp>() as IXFormsApp<XFormsApplicationDroid>;
+                if (app != null)
+                    app.AppContext = this;
             }
+
             global::Xamarin.Forms.Forms.Init(this, bundle);
             global::Xamarin.FormsMaps.Init(this, bundle);
 
@@ -86,14 +86,14 @@ namespace BookAStar.Droid
             // Theme.ApplyStyle(Resource.Style.MainTheme, false);
 
             // XmlREader tb = Resources.GetLayout(Resource.Layout.Toolbar);
-            var tb = new Toolbar(this.BaseContext);
-
-            this.SetActionBar(tb);
+            // FIXME Why does Forms try to theme this toolbar?
+             var tb = new Toolbar(this.BaseContext);
+             this.SetActionBar(tb);
             
             LoadApplication(new BookAStar.App(this));
-            /*
             // TabLayoutResource = Resource.Layout.Tabbar;
             // ToolbarResource = Resource.Layout.Toolbar;
+            /*
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             global::Xamarin.FormsMaps.Init(this, bundle);
@@ -112,8 +112,8 @@ namespace BookAStar.Droid
 
             app.Init(this);
 
-            var documents = app.AppDataDirectory;
-            var pathToDatabase = Path.Combine(documents, "xforms.db");
+           var documents = app.AppDataDirectory;
+           var pathToDatabase = Path.Combine(documents, "xforms.db");
 
             resolverContainer.Register<IDevice>(t => AndroidDevice.CurrentDevice)
                 .Register<IDisplay>(t => t.Resolve<IDevice>().Display)
@@ -127,8 +127,6 @@ namespace BookAStar.Droid
                 .Register<ICacheProvider>(
                     t => new SQLiteSimpleCache(new SQLitePlatformAndroid(),
                         new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()));
-
-
             Resolver.SetResolver(resolverContainer.GetResolver());
         }
 
@@ -199,7 +197,7 @@ namespace BookAStar.Droid
             {
                 Task.Run(async () =>
                 {
-                    App.CurrentApp.ShowBookQuery(
+                    App.ShowBookQuery(
                        await DataManager.Current.BookQueries.Get(queryId));
                 });
             }

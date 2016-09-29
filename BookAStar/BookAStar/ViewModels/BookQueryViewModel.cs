@@ -1,4 +1,5 @@
-﻿using BookAStar.Model;
+﻿using BookAStar.Interfaces;
+using BookAStar.Model;
 using BookAStar.Model.Social;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BookAStar.ViewModels
 {
-    class BookQueryViewModel : XLabs.Forms.Mvvm.ViewModel
+    class BookQueryViewModel : XLabs.Forms.Mvvm.ViewModel, IBookQueryData
     {
         public BookQueryViewModel()
         {

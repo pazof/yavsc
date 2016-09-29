@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace BookAStar.ViewModels
 {
+    [Obsolete("Use legacy XLabs ViewModel")]
     public class ViewModelBase : IModelViewModel
     {
         public string Title { get; set; }

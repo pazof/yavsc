@@ -10,6 +10,9 @@ namespace BookAStar.Pages
     using Model;
     using Model.Workflow;
     using System.Threading.Tasks;
+    using XLabs.Forms.Mvvm;
+    using XLabs.Ioc;
+    using XLabs.Platform.Services;
 
     public partial class BookQueryPage : ContentPage
     {
@@ -70,7 +73,7 @@ namespace BookAStar.Pages
                 Id = 0,
                 Description = "# **Hello Estimate!**"
             };
-            App.CurrentApp.EditEstimate(e);
+            Resolver.Resolve<INavigationService>().NavigateTo<EditEstimatePage>(true, e);
         }
         
     }

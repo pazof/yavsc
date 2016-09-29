@@ -3,7 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BookAStar.Pages.EditEstimatePage"
              xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
-             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar">
+             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
+             Style="{StaticResource PageStyle}">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
   <StackLayout Padding="10,10,10,10" BindingContext="{Binding .}">
     <StackLayout Orientation="Horizontal" Padding="10,10,10,10">
       <Label Text="{Binding Client.UserName}" LineBreakMode="WordWrap"></Label>
