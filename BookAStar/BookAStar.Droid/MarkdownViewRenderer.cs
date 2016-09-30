@@ -5,6 +5,7 @@ using Xamarin.Forms.Platform.Android;
 using BookAStar.Droid;
 using System;
 using Java.Interop;
+using System.ComponentModel;
 
 [assembly: Xamarin.Forms.ExportRenderer(typeof(MarkdownView), typeof(MarkdownViewRenderer))]
 namespace BookAStar.Droid
@@ -30,6 +31,7 @@ namespace BookAStar.Droid
             }
         }
     }
+
     public class MarkdownViewRenderer : ViewRenderer<MarkdownView, WebView>
     {
         private WebView editorView;
@@ -50,20 +52,7 @@ namespace BookAStar.Droid
             base.OnElementChanged(e);
             if (Control == null)
             {
-                editorView = new WebView(Context);
-                editorView.Settings.BuiltInZoomControls = true;
-                editorView.Settings.JavaScriptEnabled = true;
-                editorView.Settings.LoadsImagesAutomatically = true;
-                editorView.Settings.SetAppCacheEnabled(true);
-                editorView.Settings.AllowContentAccess = true;
-                editorView.Settings.AllowFileAccess = true;
-                editorView.Settings.AllowFileAccessFromFileURLs = true;
-                editorView.Settings.AllowUniversalAccessFromFileURLs = true;
-                editorView.Settings.BlockNetworkImage = false;
-                editorView.Settings.BlockNetworkLoads = false;
-                editorView.Settings.DomStorageEnabled = true;
-              //  editorView.SetMinimumHeight(300);
-                SetNativeControl(editorView);
+                SetNativeControl(CreateNativeControl());
             }
             if (e.OldElement != null)
             {
@@ -80,7 +69,6 @@ namespace BookAStar.Droid
                 InjectJS(JavaScriptFunction);
             }
         }
-        
 
         void InjectJS(string script)
         {
@@ -89,6 +77,34 @@ namespace BookAStar.Droid
                 Control.LoadUrl(string.Format("javascript: {0}", script));
             }
         }
+
+        private WebView CreateNativeControl()
+        {
+            editorView = new WebView(Context);
+            editorView.Settings.BuiltInZoomControls = true;
+            editorView.Settings.JavaScriptEnabled = true;
+            editorView.Settings.LoadsImagesAutomatically = true;
+            editorView.Settings.SetAppCacheEnabled(true);
+            editorView.Settings.AllowContentAccess = true;
+            editorView.Settings.AllowFileAccess = true;
+            editorView.Settings.AllowFileAccessFromFileURLs = true;
+            editorView.Settings.AllowUniversalAccessFromFileURLs = true;
+            editorView.Settings.BlockNetworkImage = false;
+            editorView.Settings.BlockNetworkLoads = false;
+            editorView.Settings.DomStorageEnabled = true;
+            //  editorView.SetMinimumHeight(300);
+            return editorView;
+        }
+
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Markdown")
+            {
+                SetMDEditorText(((MarkdownView)Element).Markdown);
+            }
+            base.OnElementPropertyChanged(sender, e);
+        }
+
 
     }
 }
