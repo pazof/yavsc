@@ -10,6 +10,7 @@ namespace BookAStar.Pages
     using Model;
     using Model.Workflow;
     using System.Threading.Tasks;
+    using ViewModels;
     using XLabs.Forms.Mvvm;
     using XLabs.Ioc;
     using XLabs.Platform.Services;
@@ -50,7 +51,10 @@ namespace BookAStar.Pages
             }
             
         }
-        
+        public BookQueryPage()
+        {
+            InitializeComponent();
+        }
         public BookQueryPage(BookQueryData bookQuery=null)
         {
             
@@ -73,7 +77,8 @@ namespace BookAStar.Pages
                 Id = 0,
                 Description = "# **Hello Estimate!**"
             };
-            Resolver.Resolve<INavigationService>().NavigateTo<EditEstimatePage>(true, e);
+            Resolver.Resolve<INavigationService>().NavigateTo<EditEstimatePage>(true,
+                new EstimateViewModel(e));
         }
         
     }
