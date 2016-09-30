@@ -55,8 +55,17 @@ namespace BookAStar.Droid
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
-
+            
             base.OnCreate(bundle);
+
+            global::Xamarin.Forms.Forms.SetTitleBarVisibility(Xamarin.Forms.AndroidTitleBarVisibility.Never);
+
+            //var tb = FindViewById<Android.Support.V7.Widget.Toolbar>(ToolbarResource);
+            // FIXME tb is null
+            var stb = new Android.Support.V7.Widget.Toolbar(this);
+            SetSupportActionBar(stb);
+            var tb = new Toolbar(this);
+            SetActionBar(tb);
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
@@ -87,14 +96,6 @@ namespace BookAStar.Droid
             };
 
 
-            // Theme.Resources.FinishPreloading();
-            // Theme.ApplyStyle(Resource.Style.MainTheme, false);
-
-            // XmlREader tb = Resources.GetLayout(Resource.Layout.Toolbar);
-            // FIXME Why does Forms try to theme this toolbar?
-            var tb = new Toolbar(this);
-            this.SetActionBar(tb);
-            // this.SetTheme(Resource.Style.MainTheme);
             LoadApplication(new BookAStar.App(this));
             // TabLayoutResource = Resource.Layout.Tabbar;
             // ToolbarResource = Resource.Layout.Toolbar;
