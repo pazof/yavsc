@@ -48,7 +48,7 @@ namespace BookAStar
         // by Views resolution, and then, drop it
         public static App CurrentApp { get { return Current as App; } }
 
-        public static void Init()
+        public void Init()
         {
             var app = Resolver.Resolve<IXFormsApp>();
             
@@ -56,7 +56,7 @@ namespace BookAStar
             {
                 return;
             }
-
+            Configure(app);
             app.Closing += (o, e) => Debug.WriteLine("Application Closing");
             app.Error += (o, e) => Debug.WriteLine("Application Error");
             app.Initialize += (o, e) => Debug.WriteLine("Application Initialized");
@@ -64,9 +64,9 @@ namespace BookAStar
             app.Rotation += (o, e) => Debug.WriteLine("Application Rotated");
             app.Startup += (o, e) => Debug.WriteLine("Application Startup");
             app.Suspended += (o, e) => Debug.WriteLine("Application Suspended");
-
         }
-        public void Configure(IXFormsApp app)
+
+        private void Configure(IXFormsApp app)
         {
             ViewFactory.EnableCache = true;
             ViewFactory.Register<DashboardPage, DashboardViewModel>(
@@ -85,6 +85,9 @@ namespace BookAStar
             InitializeComponent();
             Init();
             BuildMainPage();
+
+            NavigationPage.SetHasNavigationBar(MainPage, true);
+            NavigationPage.SetHasBackButton(MainPage, true);
         }
         BookQueriesPage bQueriesPage;
         AccountChooserPage accChooserPage;
@@ -97,13 +100,14 @@ namespace BookAStar
             bQueriesPage = new BookQueriesPage
             {
                 BindingContext = DataManager.Current.BookQueries,
-                Title = "Demandes"
+                Title = "Demandes",
+                Icon = "icon.png"
             };
 
-            home = new HomePage() { Title = "Accueil" };
+            home = new HomePage() { Title = "Accueil", Icon = "icon.png" };
 
             // var mainPage = new NavigationPage(bQueriesPage);
-            /*
+            
             masterDetail = new ExtendedMasterDetailPage() {
                 Title="MainPAge"
             };
@@ -111,9 +115,10 @@ namespace BookAStar
             masterDetail.Master = new DashboardPage {
                 Title = "Bookingstar",
                 BindingContext = new DashboardViewModel() };
-            masterDetail.Detail = new HomePage { Title = "Accueil" };
 
-            */
+            masterDetail.Detail = home;
+
+            
             ToolbarItem tiSetts = new ToolbarItem()
             {
                 Text = "Paramètres",
@@ -125,75 +130,9 @@ namespace BookAStar
                 Text = "Accueil",
                 Icon = "icon.png"
             };
-
           
-
-
-
-
-            /*     searchPage = new SearchPage
-                 {
-                     Title = "Trouvez votre artiste",
-                     Icon = "glyphish_07_map_marker.png"
-                 };
-
-                  settingsPage = new SettingsPage
-                 {
-                     Title = "Paramètres",
-                     Icon = "ic_corp_icon.png"
-                 };
-
-                  pinPage = new PinPage
-                 {
-                     Title = "Carte",
-                     Icon = "glyphish_07_map_marker.png"
-                 };
-                 PlatformSpecificInstance = instance;
-                 Navigation = new NavigationPage(searchPage);
-
-                 //var hasLabelStyle = r.ContainsKey("labelStyle");
-                 // var stid = this.StyleId;
-                 // null var appsstyle = settingsPage.Style;
-                 // appsstyle.CanCascade = true;
-                 MainPage = Navigation;
-                 ToolbarItem tiSetts = new ToolbarItem()
-                 {
-                     Text = "Settings",
-                     Icon = "ic_corp_icon.png"
-                 };
-                 Navigation.ToolbarItems.Add(tiSetts);
-                 tiSetts.Clicked += (object sender, EventArgs e) =>
-                 {
-                     ShowPage (settingsPage);
-                 };
-                 ToolbarItem tiQueries = new ToolbarItem
-                 {
-                     Text = "Demandes"
-                 };
-
-                 tiQueries.Clicked += (object sender, EventArgs e) =>
-                 {
-                     BookQueriesPage bookQueriesPage = new BookQueriesPage
-                     {
-                         Title = "Demandes de devis"
-                     };
-                     bookQueriesPage.BindingContext = DataManager.BookQueries;
-                     ShowPage(bookQueriesPage);
-                 };
-                 Navigation.ToolbarItems.Add(tiQueries);
-                 ToolbarItem tiMap = new ToolbarItem
-                 {
-                     Text = "Carte",
-                     Icon = "glyphish_07_map_marker.png"
-                 };
-                 Navigation.ToolbarItems.Add(tiMap);
-                 tiMap.Clicked += (object sender, EventArgs e) =>
-                 {
-                     ShowPage(pinPage);
-                 };
-                 MainPage = Navigation;
-                 */
-            var mainTab = new ExtendedTabbedPage()
+          // FIXME  "Tabs not supported in this configuration"
+             var mainTab = new ExtendedTabbedPage()
             {
                 Title = "XLabs",
                 SwipeEnabled = true,
@@ -203,8 +142,10 @@ namespace BookAStar
                 TabBarBackgroundImage = "visuel_sexion.png",
                 TabBarSelectedImage = "icon.png",
             };
-
-            var navPage = new NavigationPage(bQueriesPage);
+            var navPage = new NavigationPage(masterDetail) {
+                Title = "Navigation",
+                Icon = "icon.png"
+            } ;
             //var navPage = new NavigationPage(mainTab);
             
             navPage.ToolbarItems.Add(tiHome);
@@ -237,7 +178,7 @@ namespace BookAStar
         public static void ShowBookQuery (BookQueryData query)
         {
            var page = ViewFactory.CreatePage<BookQueryViewModel
-                , BookQueryPage>(null, new BookQueryViewModel(query));
+                , BookQueryPage>((b,p)=> p.BindingContext = new BookQueryViewModel(query));
            App.Current.MainPage.Navigation.PushAsync(page as Page);
         }
 

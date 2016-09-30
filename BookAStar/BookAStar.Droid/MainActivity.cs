@@ -38,17 +38,24 @@ using SQLite.Net;
 using XLabs.Ioc;
 using XLabs.Platform.Mvvm;
 using XLabs.Caching;
+using XLabs;
+using XLabs.Enums;
 
 namespace BookAStar.Droid
 {
     [Activity(Name="fr.pschneider.bas.MainActivity", Label = "BookAStar", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity :
-        XFormsApplicationDroid,
-        // was global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
+
+        // global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
+        XFormsCompatApplicationDroid,
         IPlatform, IComponentContext
     {
         protected override void OnCreate(Bundle bundle)
         {
+
+            TabLayoutResource = Resource.Layout.Tabbar;
+            ToolbarResource = Resource.Layout.Toolbar;
+
             base.OnCreate(bundle);
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
@@ -56,14 +63,14 @@ namespace BookAStar.Droid
                 Android.Webkit.WebView.SetWebContentsDebuggingEnabled(true);
             }
 
-            IXFormsApp<XFormsApplicationDroid> app =null;
+            IXFormsApp<XFormsCompatApplicationDroid> app =null;
             if (!Resolver.IsSet)
             {
                 this.SetIoc();
             }
             else
             {
-                app = Resolver.Resolve<IXFormsApp>() as IXFormsApp<XFormsApplicationDroid>;
+                app = Resolver.Resolve<IXFormsApp>() as IXFormsApp<XFormsCompatApplicationDroid>;
                 if (app != null)
                     app.AppContext = this;
             }
@@ -79,17 +86,15 @@ namespace BookAStar.Droid
                 }
             };
 
-            //TabLayoutResource = Resource.Layout.Tabbar;
-            //ToolbarResource = Resource.Layout.Toolbar;
 
             // Theme.Resources.FinishPreloading();
             // Theme.ApplyStyle(Resource.Style.MainTheme, false);
 
             // XmlREader tb = Resources.GetLayout(Resource.Layout.Toolbar);
             // FIXME Why does Forms try to theme this toolbar?
-             var tb = new Toolbar(this.BaseContext);
-             this.SetActionBar(tb);
-            
+            var tb = new Toolbar(this);
+            this.SetActionBar(tb);
+            // this.SetTheme(Resource.Style.MainTheme);
             LoadApplication(new BookAStar.App(this));
             // TabLayoutResource = Resource.Layout.Tabbar;
             // ToolbarResource = Resource.Layout.Toolbar;
@@ -108,7 +113,7 @@ namespace BookAStar.Droid
         {
             var resolverContainer = new SimpleContainer();
 
-            var app = new XFormsAppDroid();
+            var app = new XFormsCompatAppDroid();
 
             app.Init(this);
 
@@ -124,9 +129,14 @@ namespace BookAStar.Droid
                 .Register<IDependencyContainer>(resolverContainer)
                 .Register<IXFormsApp>(app)
                 .Register<ISecureStorage>(t => new KeyVaultStorage(t.Resolve<IDevice>().Id.ToCharArray()))
+               
+                /*
                 .Register<ICacheProvider>(
                     t => new SQLiteSimpleCache(new SQLitePlatformAndroid(),
-                        new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()));
+                        new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()))
+                        
+            */
+                        ;
             Resolver.SetResolver(resolverContainer.GetResolver());
         }
 
@@ -145,6 +155,11 @@ namespace BookAStar.Droid
             {
                 return gCMStatusMessage;
             }
+        }
+
+        public App AppContext
+        {
+            get;set;
         }
 
         bool StartNotifications()
@@ -420,6 +435,11 @@ namespace BookAStar.Droid
         }
 
         public object Resolve(Type t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Init(App context, bool initServices = true)
         {
             throw new NotImplementedException();
         }
