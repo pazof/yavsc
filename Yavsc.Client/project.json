@@ -12,9 +12,7 @@
   "tooling": {
     "defaultNamespace": "Yavsc"
   },
-  "dependencies": {
-    "Xamarin.Forms": "2.3.2.127"
-  },
+  "dependencies": {},
   "frameworks": {
     "net451": {},
     ".NETPortable,Version=v4.5,Profile=Profile111": {}
