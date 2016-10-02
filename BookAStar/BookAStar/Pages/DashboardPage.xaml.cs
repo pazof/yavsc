@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BookAStar.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,15 +32,19 @@ namespace BookAStar.Pages
 
         public void OnViewPerformerStatus(object sender, EventArgs e)
         {
-            App.CurrentApp.ShowAccounts();
+            ShowPage<AccountChooserPage>(null, true);
         }
 
         public void OnViewUserQueries(object sender, EventArgs e)
         {
-            App.CurrentApp.ShowQueries();
-
+            ShowPage<BookQueriesPage>(null, true);
         }
 
+        private void ShowPage<T>(object [] args, bool animate=false) where T:Page
+        {
+            Resolver.Resolve<INavigationService>().NavigateTo<T>(animate, args);
+            App.MasterPresented = false;
+        }
 
     }
 }
