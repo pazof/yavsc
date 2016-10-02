@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BookAStar.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +11,10 @@ namespace BookAStar.Pages
 {
     public partial class EditBillingLinePage : ContentPage
     {
-        public EditBillingLinePage()
+        public EditBillingLinePage(BillingLineViewModel model)
         {
             InitializeComponent();
+            BindingContext = model;
         }
     }
 }

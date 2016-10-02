@@ -1,5 +1,6 @@
 ﻿using BookAStar.Model;
 using BookAStar.Model.Workflow;
+using BookAStar.ViewModels;
 using BookAStar.Views;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
+using XLabs.Forms.Services;
+using XLabs.Ioc;
+using XLabs.Platform.Services;
 
 namespace BookAStar.Pages
 {
@@ -16,43 +20,33 @@ namespace BookAStar.Pages
         public Estimate Estimate { get { return BindingContext as Estimate;  } set {
                 BindingContext = value;
             } }
-        public static readonly BindableProperty TotalProperty =
-            BindableProperty.Create("Total", typeof(decimal), typeof(EditEstimatePage),
-               (decimal) 0, BindingMode.OneWay);
-        public static readonly BindableProperty DescriptionProperty =
-            BindableProperty.Create("Description", typeof(string), typeof(Estimate),
-                null, BindingMode.TwoWay);
-        public static readonly BindableProperty ClientProperty =
-            BindableProperty.Create("Client", typeof(ClientProviderInfo), typeof(Estimate),
-                null, BindingMode.OneWay);
-        public static readonly BindableProperty QueryProperty =
-            BindableProperty.Create("Query", typeof(BookQueryData), typeof(Estimate),
-                null, BindingMode.OneWay);
 
-        
-
-        public EditEstimatePage()
+        public EditEstimatePage(EstimateViewModel model)
         {
             InitializeComponent();
+            BindingContext = model;
         }
 
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
-            // FIXME Why the Binding don't work?
-            mdview.Markdown = Estimate.Description;
-
+            // FIXME WAZA
+           if (BindingContext != null)
+                mdview.Markdown = ((EstimateViewModel)BindingContext).Description; 
         }
 
         protected void OnDescriptionChanged (object sender, EventArgs e)
         {
             // FIXME Why the Binding don't work?
-            Estimate.Description = mdview.Markdown;
+            ((EstimateViewModel)BindingContext).Description = mdview.Markdown;
         }
+
         protected void OnNewCommanLine(object sender, EventArgs e)
         {
             var com = new BillingLine();
-            App.CurrentApp.EditCommandLine(this,com);
+            Resolver.Resolve<INavigationService>().NavigateTo<EditBillingLinePage>(
+                true,
+                new object[] { new BillingLineViewModel(com) } );
         }
        
     }
