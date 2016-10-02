@@ -5,19 +5,18 @@ using BookAStar.Model.Workflow;
 using BookAStar.Pages;
 using BookAStar.ViewModels;
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using XLabs.Forms.Controls;
 using XLabs.Forms.Mvvm;
 using XLabs.Forms.Pages;
 using XLabs.Forms.Services;
 using XLabs.Ioc;
 using XLabs.Platform.Mvvm;
 using XLabs.Platform.Services;
+
 /*
 Glyphish icons from
 http://www.glyphish.com/
@@ -33,20 +32,18 @@ namespace BookAStar
         public static IPlatform PlatformSpecificInstance { get; set; }
         public static string AppName { get; set; }
 
-        public void ShowQueries()
-        {
-            masterDetail.Detail = bQueriesPage;
-            masterDetail.SendBackButtonPressed();
-        }
-        public void ShowAccounts()
-        {
-            masterDetail.Detail = accChooserPage;
-            masterDetail.SendBackButtonPressed();
-        }
+        
         // Exists in order to dispose of a static instance strongly typed
         // TODO : replace all references to this field
         // by Views resolution, and then, drop it
         public static App CurrentApp { get { return Current as App; } }
+
+        public static bool MasterPresented {
+            get
+            { return CurrentApp.masterDetail.IsPresented; }
+            internal set
+            { CurrentApp.masterDetail.IsPresented = value; }
+        }
 
         public void Init()
         {
@@ -72,10 +69,10 @@ namespace BookAStar
             ViewFactory.Register<DashboardPage, DashboardViewModel>(
                  resolver => new DashboardViewModel());
             ViewFactory.Register<BookQueryPage, BookQueryViewModel>();
+            ViewFactory.Register<BookQueriesPage, BookQueriesViewModel>();
             ViewFactory.Register<EditBillingLinePage, BillingLineViewModel>();
             ViewFactory.Register<EditEstimatePage, EstimateViewModel>();
         }
-
 
         ExtendedMasterDetailPage masterDetail;
 
@@ -86,8 +83,8 @@ namespace BookAStar
             Init();
             BuildMainPage();
 
-            NavigationPage.SetHasNavigationBar(MainPage, true);
-            NavigationPage.SetHasBackButton(MainPage, true);
+            NavigationPage.SetHasNavigationBar(MainPage, false);
+            NavigationPage.SetHasBackButton(MainPage, false);
         }
         BookQueriesPage bQueriesPage;
         AccountChooserPage accChooserPage;
@@ -99,9 +96,9 @@ namespace BookAStar
 
             bQueriesPage = new BookQueriesPage
             {
-                BindingContext = DataManager.Current.BookQueries,
                 Title = "Demandes",
-                Icon = "icon.png"
+                Icon = "icon.png",
+                BindingContext = new BookQueriesViewModel()
             };
 
             home = new HomePage() { Title = "Accueil", Icon = "icon.png" };
@@ -109,16 +106,16 @@ namespace BookAStar
             // var mainPage = new NavigationPage(bQueriesPage);
             
             masterDetail = new ExtendedMasterDetailPage() {
-                Title="MainPAge"
+                Title="MainPage"
             };
 
             masterDetail.Master = new DashboardPage {
                 Title = "Bookingstar",
                 BindingContext = new DashboardViewModel() };
 
-            masterDetail.Detail = home;
+            // masterDetail.Detail = home;
 
-            
+            masterDetail.Detail = new NavigationPage(home);
             ToolbarItem tiSetts = new ToolbarItem()
             {
                 Text = "Paramètres",
@@ -131,17 +128,7 @@ namespace BookAStar
                 Icon = "icon.png"
             };
           
-          // FIXME  "Tabs not supported in this configuration"
-             var mainTab = new ExtendedTabbedPage()
-            {
-                Title = "XLabs",
-                SwipeEnabled = true,
-                TintColor = Color.White,
-                BarTintColor = Color.Blue,
-                Badges = { "1", "2", "3" },
-                TabBarBackgroundImage = "visuel_sexion.png",
-                TabBarSelectedImage = "icon.png",
-            };
+            /* 
             var navPage = new NavigationPage(masterDetail) {
                 Title = "Navigation",
                 Icon = "icon.png"
@@ -150,23 +137,14 @@ namespace BookAStar
             
             navPage.ToolbarItems.Add(tiHome);
             navPage.ToolbarItems.Add(tiSetts);
-
-            this.MainPage = navPage;
-
+            */
+            this.MainPage = masterDetail;
+            
             Resolver.Resolve<IDependencyContainer>()
-                .Register<INavigationService>(t => new NavigationService(navPage.Navigation))
-                ;
+                .Register<INavigationService>(t => new NavigationService(masterDetail.Detail.Navigation))
+                ; 
         }
 
-        internal void EditCommandLine(Page parentPage, BillingLine com)
-        {
-            EditBillingLinePage editCommandLine = new EditBillingLinePage
-            {
-                Title = "Edition d'une ligne de facture",
-                BindingContext = com
-            };
-            parentPage.Navigation.PushAsync(editCommandLine);
-        }
 
         public void PostDeviceInfo()
         {
