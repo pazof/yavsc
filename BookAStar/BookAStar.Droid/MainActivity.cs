@@ -131,13 +131,10 @@ namespace BookAStar.Droid
                 .Register<IXFormsApp>(app)
                 .Register<ISecureStorage>(t => new KeyVaultStorage(t.Resolve<IDevice>().Id.ToCharArray()))
                
-                /*
+             
                 .Register<ICacheProvider>(
                     t => new SQLiteSimpleCache(new SQLitePlatformAndroid(),
-                        new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()))
-                        
-            */
-                        ;
+                        new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()));
             Resolver.SetResolver(resolverContainer.GetResolver());
         }
 
