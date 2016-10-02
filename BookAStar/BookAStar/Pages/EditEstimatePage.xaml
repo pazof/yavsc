@@ -15,7 +15,7 @@
       </Style>
     </ResourceDictionary>
   </ContentPage.Resources>
-  <StackLayout Padding="10,10,10,10" BindingContext="{Binding .}">
+  <StackLayout Padding="10,10,10,10">
     <StackLayout Orientation="Horizontal" Padding="10,10,10,10">
       <Label Text="{Binding Client.UserName}" LineBreakMode="WordWrap"></Label>
       <Label Text="{Binding Query.Location.Address}" LineBreakMode="WordWrap"></Label>
@@ -23,9 +23,10 @@
     </StackLayout>
 
     <views:MarkdownView x:Name="mdview"
-                        Edited="OnDescriptionChanged" HorizontalOptions="FillAndExpand"
-           VerticalOptions="FillAndExpand"
-    Markdown="{Binding Description}"
+                        Edited="OnDescriptionChanged"
+                        HorizontalOptions="FillAndExpand"
+           VerticalOptions="FillAndExpand" MinimumHeightRequest="160" HeightRequest="250"
+    Markdown="{Binding Description, Mode=TwoWay}"
              RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,
                                                                              Property=Height,
                                                                              Factor=.4}"
@@ -34,14 +35,8 @@
                                                                             Factor=1}"
                         ></views:MarkdownView>
 
-    <ListView 
-              RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,
-                                                                             Property=Height,
-                                                                             Factor=.4}"
-                      RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,
-                                                                            Property=Width,
-                                                                            Factor=1}"
-              >
+    <ListView RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=.2}"
+          RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
