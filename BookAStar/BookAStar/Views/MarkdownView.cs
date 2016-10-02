@@ -38,6 +38,20 @@ namespace BookAStar.Views
         
         public event EventHandler<EventArgs> Edited;
         
+        protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
+        {
+            double width = widthConstraint;
+            double height = heightConstraint;
+
+            if (MinimumWidthRequest>0)
+                width = widthConstraint > 80 ? widthConstraint < double.MaxValue ? widthConstraint : MinimumWidthRequest : MinimumWidthRequest;
+
+            if (MinimumHeightRequest > 0)
+                height = heightConstraint > 160 ? heightConstraint < double.MaxValue ? heightConstraint : MinimumHeightRequest : MinimumHeightRequest;
+
+            return base.OnMeasure(width, height);
+        }
+
     }
 
 }
