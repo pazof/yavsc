@@ -1,16 +1,11 @@
 ﻿using BookAStar.Interfaces;
 using BookAStar.Model.Workflow;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using XLabs.Forms.Mvvm;
 
 namespace BookAStar.ViewModels
 {
-    class BillingLineViewModel : ViewModel, IBillingLine
+    public class BillingLineViewModel : ViewModel, IBillingLine
     {
         public BillingLineViewModel(BillingLine data)
         {
