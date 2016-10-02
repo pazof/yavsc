@@ -1,9 +1,4 @@
-﻿using BookAStar.Model.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using XLabs.Forms.Mvvm;
 using BookAStar.Model.Workflow;
 using System.Collections.ObjectModel;
@@ -11,11 +6,15 @@ using BookAStar.Model;
 
 namespace BookAStar.ViewModels
 {
-    class EstimateViewModel : ViewModel
+    public class EstimateViewModel : ViewModel
     {
         public EstimateViewModel(Estimate data)
         {
             estimate = data;
+            
+            if (data.AttachedFiles == null) data.AttachedFiles = new List<string>();
+            if (data.AttachedGraphicList == null) data.AttachedGraphicList = new List<string>();
+            if (data.Bill == null) data.Bill = new List<BillingLine>();
             AttachedFiles = new ObservableCollection<string>(data.AttachedFiles);
             AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphicList);
             Bill = new ObservableCollection<BillingLine>(data.Bill);
