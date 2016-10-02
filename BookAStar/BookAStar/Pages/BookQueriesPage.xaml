@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
              x:Class="BookAStar.Pages.BookQueriesPage"
              Style="{StaticResource PageStyle}"
+             Page.Title="Les Demandes"
              >
   <ContentPage.Resources>
     <ResourceDictionary>
@@ -27,7 +28,8 @@
 
   <StackLayout Padding="10,10,10,10">
 
-  <ListView x:Name="list" ItemTapped="OnViewDetail" HasUnevenRows="true" RowHeight="80">
+  <ListView RefreshCommand="{Binding RefreshQueries}"  IsPullToRefreshEnabled="True"
+            ItemsSource="{Binding Queries}" x:Name="list" ItemTapped="OnViewDetail" HasUnevenRows="true" RowHeight="80">
     <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
       <DataTemplate>
         <ViewCell>
