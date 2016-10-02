@@ -25,7 +25,7 @@ namespace BookAStar.Model.Workflow
         /// In db, they are separated by <c>:</c>
         /// </summary>
         /// <returns></returns>
-        public List<string> AttachedGraphicList { get; private set; }
+        public List<string> AttachedGraphicList { get; set; }
 
         public string AttachedGraphicsString
         {
