@@ -11,7 +11,7 @@ namespace BookAStar.Helpers
   /// </summary>
   public static class Settings
   {
-    private static ISettings AppSettings
+    public static ISettings AppSettings
     {
       get
       {
@@ -22,12 +22,13 @@ namespace BookAStar.Helpers
     #region Setting Constants
 
     private const string SettingsKey = "settings_key";
-    private static readonly string SettingsDefault = string.Empty;
+    public static readonly string SettingsDefault = string.Empty;
+        public static readonly string XLabsSettingsPrefix = "_XLABS_";
 
-    #endregion
+        #endregion
 
 
-    public static string GeneralSettings
+        public static string GeneralSettings
     {
       get
       {
