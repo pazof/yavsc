@@ -43,9 +43,12 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Factories\ViewFactory.cs" />
     <Compile Include="Helpers\DataManager.cs" />
+    <Compile Include="Helpers\LocaLEntity.cs" />
+    <Compile Include="Helpers\NotIdentifiedException.cs" />
     <Compile Include="Helpers\PageHelpers.cs" />
     <Compile Include="Helpers\PropertySupport.cs" />
     <Compile Include="Helpers\RemoteEntityRO.cs" />
+    <Compile Include="Helpers\ServiceNotAvailable1.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\UserHelpers.cs" />
     <Compile Include="Interfaces\IComponentContext.cs" />
