@@ -17,9 +17,6 @@ namespace BookAStar.Pages
 {
     public partial class EditEstimatePage : ContentPage
     {
-        public Estimate Estimate { get { return BindingContext as Estimate;  } set {
-                BindingContext = value;
-            } }
 
         public EditEstimatePage(EstimateViewModel model)
         {
@@ -46,7 +43,7 @@ namespace BookAStar.Pages
             var com = new BillingLine();
             Resolver.Resolve<INavigationService>().NavigateTo<EditBillingLinePage>(
                 true,
-                new object[] { new BillingLineViewModel(com) } );
+                new object[] { new BillingLineViewModel((Estimate)this.BindingContext,com) } );
         }
        
     }
