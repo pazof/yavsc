@@ -18,6 +18,7 @@ namespace BookAStar
         public static readonly string MobileRegistrationUrl = YavscApiUrl + "/gcm/register";
         public static readonly string UserInfoUrl = YavscApiUrl + "/me";
         public static readonly string BlogUrl = YavscApiUrl + "/blogs";
+        public static readonly string FsUrl = YavscApiUrl + "/fs";
 
         #endregion
 
