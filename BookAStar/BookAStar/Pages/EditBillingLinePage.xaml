@@ -15,14 +15,14 @@
       </Style>
     </ResourceDictionary>
   </ContentPage.Resources>
-  <StackLayout>
+  <StackLayout x:Name="mainStackLayout">
     <Label Text="Description de la ligne de facture" Style="{StaticResource InputLabelStyle}"></Label>
     <Editor VerticalOptions="FillAndExpand"></Editor>
     <Label Text="Durée de la prestation" 
            Style="{StaticResource InputLabelStyle}"></Label>
     <StackLayout Orientation="Horizontal">
-      <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}"/>
-      <Picker SelectedIndex="1" Style="{StaticResource PickerStyle}">
+      <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}" />
+      <Picker x:Name="picker" SelectedIndex="1" Style="{StaticResource PickerStyle}" Title="Unité de temps">
         <Picker.Items>
           <x:String>Heures</x:String>
           <x:String>Jours</x:String>
@@ -37,6 +37,6 @@
       <Entry Placeholder="Prix" Keyboard="Numeric" Style="{StaticResource BigEntry}"></Entry>
       <Label Text="€" Style="{StaticResource BigLabel}" HorizontalTextAlignment="Start"/>
     </StackLayout>
-    <Button Text="Valider cette ligne de facture"></Button>
+    <Button Text="Valider cette ligne de facture" Command="{Binding ValidateCommand}"></Button>
   </StackLayout>
 </ContentPage>
