@@ -1,19 +1,27 @@
 ﻿using BookAStar.Interfaces;
 using BookAStar.Model.Workflow;
 using System;
+using System.Windows.Input;
+using Xamarin.Forms;
 using XLabs.Forms.Mvvm;
 
 namespace BookAStar.ViewModels
 {
     public class BillingLineViewModel : ViewModel, IBillingLine
     {
-        public BillingLineViewModel(BillingLine data)
+        BillingLine data;
+        public Estimate Billing { protected set; get; }
+
+        public BillingLineViewModel(Estimate billing, BillingLine data)
         {
-            if (data == null) data = new BillingLine();
-            count = data.Count;
-            description = data.Description;
-            unitaryCost = data.UnitaryCost;
-            duration = data.Duration;
+            this.data = (data == null) ? new BillingLine() : data;
+            Billing = billing;
+            ValidateCommand = 
+                new Command(
+                () => {
+                    Billing.Bill.Add(data);
+                    Validated.Invoke(this, new EventArgs());
+                });
         }
 
         protected int count;
@@ -69,5 +77,10 @@ namespace BookAStar.ViewModels
                 SetProperty<decimal>(ref unitaryCost, value, "UnitaryCost");
             }
         }
+
+        public ICommand ValidateCommand { protected set; get; }
+
+        public event EventHandler<EventArgs> Validated;
+
     }
 }
