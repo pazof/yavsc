@@ -29,7 +29,7 @@
     Markdown="{Binding Description, Mode=TwoWay}"
              RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,
                                                                              Property=Height,
-                                                                             Factor=.4}"
+                                                                             Factor=.6}"
                       RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,
                                                                             Property=Width,
                                                                             Factor=1}"
