@@ -298,6 +298,10 @@
       <HintPath>..\..\packages\XLabs.Serialization.2.3.0-pre02\lib\portable-net45+netcore45+wpa81+wp8+monoandroid+monotouch+xamarinios10+xamarinmac\XLabs.Serialization.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="XLabs.Serialization.Json.NET, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\XLabs.Serialization.JSON.2.3.0-pre02\lib\portable-net45+netcore45+wpa81+wp8+monoandroid+monotouch+xamarinios10+xamarinmac\XLabs.Serialization.Json.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="XLabs.Settings, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\XLabs.Settings.2.3.0-pre02\lib\portable-net45+netcore45+wpa81+wp8+monoandroid+monotouch+xamarinios10+xamarinmac\XLabs.Settings.dll</HintPath>
       <Private>True</Private>
