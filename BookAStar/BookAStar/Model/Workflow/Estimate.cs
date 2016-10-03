@@ -1,10 +1,7 @@
 ﻿using BookAStar.Helpers;
 using BookAStar.Model.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace BookAStar.Model.Workflow
 {
@@ -70,27 +67,7 @@ namespace BookAStar.Model.Workflow
             }
         }
 
-        public FormattedString FormattedTotal
-        {
-            get
-            {
-                OnPlatform<Font> lfs = (OnPlatform < Font >) App.Current.Resources["LargeFontSize"];
-                OnPlatform<Color> etc = (OnPlatform<Color>)App.Current.Resources["EmphasisTextColor"];
-                
-                return new FormattedString
-                {
-
-                    Spans = {
-                        new Span { Text = "Total TTC: " },
-                        new Span { Text = Total.ToString(),
-                            ForegroundColor = etc.Android  ,
-                            FontSize = (double) lfs.Android.FontSize },
-                        new Span { Text = "€", FontSize = (double) lfs.Android.FontSize }
-                    }
-                };
-            }
-            set { }
-        }
+        
         public decimal Total { get
             {
                 return Bill?.Aggregate((decimal)0, (t, l) => t + l.Count * l.UnitaryCost) ?? (decimal)0;
