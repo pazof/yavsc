@@ -56,13 +56,14 @@
       <Style x:Key="ContentLabelStyle"  BasedOn="{StaticResource LabelStyle}" TargetType="Label">
         <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
         <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
+        <Setter Property="VerticalOptions" Value="CenterAndExpand" />
       </Style>
       
       <Style x:Key="EntryStyle" TargetType="Entry">
         <Setter Property="HorizontalOptions" Value="CenterAndExpand"/>
       </Style>
       <Style x:Key="PickerStyle" TargetType="Picker">
-        <Setter Property="HorizontalOptions" Value="CenterAndExpand"/>
+        <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
       </Style>
       <Style x:Key="BigEntry" TargetType="Entry" BasedOn="{StaticResource EntryStyle}">
         <Setter Property="FontSize" Value="{StaticResource LargeFontSize}" />
