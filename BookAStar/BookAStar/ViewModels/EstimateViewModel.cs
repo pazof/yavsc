@@ -3,6 +3,7 @@ using XLabs.Forms.Mvvm;
 using BookAStar.Model.Workflow;
 using System.Collections.ObjectModel;
 using BookAStar.Model;
+using Xamarin.Forms;
 
 namespace BookAStar.ViewModels
 {
@@ -10,21 +11,17 @@ namespace BookAStar.ViewModels
     {
         public EstimateViewModel(Estimate data)
         {
-            estimate = data;
-            
+            Data = data;
             if (data.AttachedFiles == null) data.AttachedFiles = new List<string>();
             if (data.AttachedGraphicList == null) data.AttachedGraphicList = new List<string>();
             if (data.Bill == null) data.Bill = new List<BillingLine>();
             AttachedFiles = new ObservableCollection<string>(data.AttachedFiles);
             AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphicList);
             Bill = new ObservableCollection<BillingLine>(data.Bill);
-            description = data.Description;
-            title = data.Title;
-            status = data.Status;
         }
 
-        Estimate estimate;
-        
+        public Estimate Data { get; protected set; }
+
         public ObservableCollection<string> AttachedFiles
         {
             get; protected set;
@@ -41,17 +38,18 @@ namespace BookAStar.ViewModels
         }
 
 
-        private string description;
+        string newDesc;
         public string Description
         {
             get
             {
-                return description;
+                return Data.Description;
             }
 
             set
             {
-                SetProperty<string>(ref description, value, "Description");
+                SetProperty<string>(ref newDesc, value, "Description");
+                Data.Description = newDesc;
             }
         }
 
@@ -60,12 +58,13 @@ namespace BookAStar.ViewModels
         {
             get
             {
-                return status;
+                return Data.Status;
             }
 
             set
             {
                 SetProperty<int?>(ref status, value, "Status");
+                Data.Status = status;
             }
         }
         private string title;
@@ -73,18 +72,40 @@ namespace BookAStar.ViewModels
         {
             get
             {
-                return title;
+                return Data.Title;
             }
 
             set
             {
                 SetProperty<string>(ref title, value, "Title");
+                Data.Title = title;
             }
         }
 
-        public ClientProviderInfo Client {  get { return estimate.Client; } }
+        public ClientProviderInfo Client {  get { return Data.Client; } }
 
-        public BookQueryData Query { get { return estimate.Query; } }
+        public BookQueryData Query { get { return Data.Query; } }
 
+        public FormattedString FormattedTotal
+        {
+            get
+            {
+                OnPlatform<Font> lfs = (OnPlatform<Font>)App.Current.Resources["LargeFontSize"];
+                OnPlatform<Color> etc = (OnPlatform<Color>)App.Current.Resources["EmphasisTextColor"];
+
+                return new FormattedString
+                {
+
+                    Spans = {
+                        new Span { Text = "Total TTC: " },
+                        new Span { Text = Data.Total.ToString(),
+                            ForegroundColor = etc.Android  ,
+                            FontSize = (double) lfs.Android.FontSize },
+                        new Span { Text = "€", FontSize = (double) lfs.Android.FontSize }
+                    }
+                };
+            }
+            set { }
+        }
     }
 }
