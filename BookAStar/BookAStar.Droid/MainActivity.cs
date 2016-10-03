@@ -1,45 +1,43 @@
-﻿using System;
-
-using Android.App;
-using Android.Content.PM;
-using Android.Widget;
-using Android.OS;
+﻿using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Gms.Common;
+using Android.OS;
+using Android.Speech.Tts;
 using Android.Util;
-
+using Android.Widget;
+using BookAStar.Droid.OAuth;
+using BookAStar.Helpers;
+using BookAStar.Interfaces;
+using BookAStar.Model.Auth.Account;
+using Newtonsoft.Json.Linq;
+using Plugin.DeviceInfo;
+using SQLite.Net;
+using SQLite.Net.Platform.XamarinAndroid;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xamarin.Auth;
+using XLabs;
+using XLabs.Caching;
+using XLabs.Caching.SQLite;
+using XLabs.Enums;
 using XLabs.Forms;
-using XLabs.Platform.Device;
 using XLabs.Forms.Services;
+using XLabs.Ioc;
+using XLabs.Platform.Device;
+using XLabs.Platform.Mvvm;
+using XLabs.Platform.Services;
 using XLabs.Platform.Services.Email;
 using XLabs.Platform.Services.Media;
 using XLabs.Serialization;
-
-using Newtonsoft.Json.Linq;
-using System.Net;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net.Http;
-using BookAStar.Model.Auth.Account;
-using BookAStar.Droid.OAuth;
+using XLabs.Serialization.JsonNET;
 using Yavsc.Helpers;
 using Yavsc.Models.Identity;
-using BookAStar.Helpers;
-using BookAStar.Interfaces;
-using Plugin.DeviceInfo;
-using Android.Speech.Tts;
-using XLabs.Platform.Services;
-using XLabs.Caching.SQLite;
-using SQLite.Net.Platform.XamarinAndroid;
-using SQLite.Net;
-using XLabs.Ioc;
-using XLabs.Platform.Mvvm;
-using XLabs.Caching;
-using XLabs;
-using XLabs.Enums;
 
 namespace BookAStar.Droid
 {
@@ -130,8 +128,7 @@ namespace BookAStar.Droid
                 .Register<IDependencyContainer>(resolverContainer)
                 .Register<IXFormsApp>(app)
                 .Register<ISecureStorage>(t => new KeyVaultStorage(t.Resolve<IDevice>().Id.ToCharArray()))
-               
-             
+                .Register<IJsonSerializer, JsonSerializer>()
                 .Register<ICacheProvider>(
                     t => new SQLiteSimpleCache(new SQLitePlatformAndroid(),
                         new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()));
