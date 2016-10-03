@@ -16,6 +16,7 @@ using XLabs.Forms.Services;
 using XLabs.Ioc;
 using XLabs.Platform.Mvvm;
 using XLabs.Platform.Services;
+using XLabs.Settings;
 
 /*
 Glyphish icons from
@@ -62,6 +63,7 @@ namespace BookAStar
             app.Startup += (o, e) => Debug.WriteLine("Application Startup");
             app.Suspended += (o, e) => Debug.WriteLine("Application Suspended");
         }
+        public static GenericConfigSettingsMgr ConfigManager { protected set; get; }
 
         private void Configure(IXFormsApp app)
         {
@@ -72,8 +74,11 @@ namespace BookAStar
             ViewFactory.Register<BookQueriesPage, BookQueriesViewModel>();
             ViewFactory.Register<EditBillingLinePage, BillingLineViewModel>();
             ViewFactory.Register<EditEstimatePage, EstimateViewModel>();
-        }
 
+            ConfigManager = new XLabs.Settings.GenericConfigSettingsMgr(s =>
+               Settings.AppSettings.GetValueOrDefault<string>(s, Settings.SettingsDefault), null);
+        }
+         
         ExtendedMasterDetailPage masterDetail;
 
         public App(IPlatform instance)
@@ -86,6 +91,7 @@ namespace BookAStar
             NavigationPage.SetHasNavigationBar(MainPage, false);
             NavigationPage.SetHasBackButton(MainPage, false);
         }
+
         BookQueriesPage bQueriesPage;
         AccountChooserPage accChooserPage;
         HomePage home;
