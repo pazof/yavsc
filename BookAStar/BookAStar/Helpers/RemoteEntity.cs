@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Linq;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
@@ -10,42 +8,6 @@ using System.Net;
 
 namespace BookAStar
 {
-
-    public class NotIdentifiedException : Exception {
-        public NotIdentifiedException(string message) : base(message) { }
-    }
-
-    public class ServiceNotAvailable : Exception
-    {
-        public ServiceNotAvailable(string message, Exception innerException) : base(message, innerException) { }
-
-    }
-
-    public class LocalEntity<V, K> : ObservableCollection<V> where K : IEquatable<K>
-    {
-        public V CurrentItem { get; protected set; }
-        protected Func<V, K> GetKey { get; set; }
-        public LocalEntity(Func<V, K> getKey) : base()
-        {
-            if (getKey == null) throw new InvalidOperationException();
-            GetKey = getKey;
-        }
-        public virtual void Merge(V item)
-        {
-            var key = GetKey(item);
-            if (this.Any(x => GetKey(x).Equals(key)))
-            {
-                Remove(LocalGet(key));
-            }
-            Add(item);
-            CurrentItem = item;
-        }
-        public V LocalGet(K key)
-        {
-            CurrentItem = this.Single(x => GetKey(x).Equals(key));
-            return CurrentItem;
-        }
-    }
 
     public class RemoteEntity<V,K> : LocalEntity<V, K>, ICommand where K : IEquatable<K>
     {
@@ -75,8 +37,6 @@ namespace BookAStar
             if (CanExecuteChanged != null)
                 CanExecuteChanged.Invoke(this, new EventArgs());
         }
-        
-       
 
         /// <summary>
         /// Refresh the collection
@@ -85,12 +45,8 @@ namespace BookAStar
         public async void Execute(object parameter)
         {
             BeforeExecute();
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = CreateClient())
             {
-
-                // Update credentials 
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
-                    "Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
                 // Get the whole data
                 try
                 {
@@ -116,14 +72,13 @@ namespace BookAStar
             AfterExecuting();
         }
 
-        
-
         private void AfterExecuting()
         {
             IsExecuting = false;
             if (CanExecuteChanged != null)
                 CanExecuteChanged.Invoke(this, new EventArgs());
         }
+
         public async Task<V> Get(K key)
         {
             var item = LocalGet(key);
@@ -147,7 +102,6 @@ namespace BookAStar
                     {
                         var content = await response.Content.ReadAsStringAsync();
                         item = JsonConvert.DeserializeObject<V>(content);
-                        // LocalData.Clear();
                         Merge(item);
                     }
                 }
