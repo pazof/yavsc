@@ -24,7 +24,7 @@
     <Label Text="{Binding EventDate, StringFormat='le {0:dddd d MMMM yyyy à hh:mm}'}"  />
     <Label Text="{Binding Location.Address}" />
     <Label Text="{Binding Previsional}" />
-    <maps:Map x:Name="map"></maps:Map>
+    <maps:Map x:Name="map" VerticalOptions="FillAndExpand"></maps:Map>
     <Button Text="Faire un devis" Clicked="MakeAnEstimate" />
   </StackLayout>
 </ContentPage>
