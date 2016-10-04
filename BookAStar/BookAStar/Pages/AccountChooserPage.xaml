@@ -24,7 +24,6 @@
       <ListView.ItemTemplate HeightRequest="60" VerticalOptions="StartAndExpand">
         <DataTemplate>
           <ViewCell>
-            <lc:GesturesContentView>
               <Grid Padding="5"
                         ColumnSpacing="10"
                         RowSpacing="2" >
@@ -34,12 +33,6 @@
 
                 </Label>
               </Grid>
-              <lb:Gestures.Interests>
-                <lb:GestureCollection>
-                  <lb:GestureInterest GestureType="Swipe" Direction="Left" GestureCommand="{Binding DumpParam}" GestureParameter="{Binding UserName}"/>
-                </lb:GestureCollection>
-              </lb:Gestures.Interests>
-            </lc:GesturesContentView>
           </ViewCell>
         </DataTemplate>
       </ListView.ItemTemplate>

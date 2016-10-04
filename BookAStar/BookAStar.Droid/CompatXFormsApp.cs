@@ -297,6 +297,7 @@ namespace XLabs.Forms
 
             base.OnStop();
         }
+
     }
 
     /// <summary>
@@ -334,8 +335,10 @@ namespace XLabs.Forms
             this.AppContext.Stop += (o, e) => this.OnClosing();
             this.AppContext.Pause += (o, e) => this.OnSuspended();
             this.AppContext.Resume += (o, e) => this.OnResumed();
+            
             this.AppDataDirectory = Environment.ExternalStorageDirectory.AbsolutePath;
-
+            this.Orientation = AppContext.RequestedOrientation == Android.Content.PM.ScreenOrientation.Portrait ?
+                Enums.Orientation.Portrait : Enums.Orientation.None;
             if (initServices)
             {
                 DependencyService.Register<TextToSpeechService>();

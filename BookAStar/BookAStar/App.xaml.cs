@@ -1,14 +1,8 @@
-﻿using BookAStar.Helpers;
-using BookAStar.Interfaces;
+﻿using BookAStar.Interfaces;
 using BookAStar.Model;
-using BookAStar.Model.Workflow;
 using BookAStar.Pages;
 using BookAStar.ViewModels;
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using XLabs.Forms.Mvvm;
 using XLabs.Forms.Pages;
@@ -17,6 +11,8 @@ using XLabs.Ioc;
 using XLabs.Platform.Mvvm;
 using XLabs.Platform.Services;
 using XLabs.Settings;
+using XLabs;
+using XLabs.Enums;
 
 /*
 Glyphish icons from
@@ -56,14 +52,59 @@ namespace BookAStar
                 return;
             }
             Configure(app);
-            app.Closing += (o, e) => Debug.WriteLine("Application Closing");
-            app.Error += (o, e) => Debug.WriteLine("Application Error");
-            app.Initialize += (o, e) => Debug.WriteLine("Application Initialized");
-            app.Resumed += (o, e) => Debug.WriteLine("Application Resumed");
-            app.Rotation += (o, e) => Debug.WriteLine("Application Rotated");
-            app.Startup += (o, e) => Debug.WriteLine("Application Startup");
-            app.Suspended += (o, e) => Debug.WriteLine("Application Suspended");
+            app.Closing += OnClosing;
+            app.Error += OnError;
+            app.Initialize += OnInitialize;
+            app.Resumed += OnAppResumed;
+            app.Rotation += OnRotation;
+            app.Startup += OnStartup;
+            app.Suspended += OnSuspended;
         }
+
+        // omg
+        private void OnError(object sender, EventArgs e)
+        {
+            
+        }
+        
+        // Called on rotation after OnSuspended
+        private void OnClosing(object sender, EventArgs e)
+        {
+            
+        }
+
+        // FIXME Not called
+        private void OnInitialize(object sender, EventArgs e)
+        {
+           
+        }
+
+        // called on app startup, not on rotation
+        private void OnStartup(object sender, EventArgs e)
+        {
+            // TODO special starup pages as
+            // notification details or wizard setup page
+        }
+
+        // Called on rotation
+        private void OnSuspended(object sender, EventArgs e)
+        {
+            // TODO the navigation stack persistence (save)
+        }
+
+        // called on app startup, after OnStartup, not on rotation
+        private void OnAppResumed(object sender, EventArgs e)
+        {
+            // TODO the navigation stack persistence (restore)
+            base.OnResume();
+        }
+
+        // FIXME Not called ... see OnSuspended
+        private void OnRotation(object sender, EventArgs<Orientation> e)
+        {
+            // TODO the navigation stack persistence (restore?)
+        }
+
         public static GenericConfigSettingsMgr ConfigManager { protected set; get; }
 
         private void Configure(IXFormsApp app)
@@ -84,13 +125,19 @@ namespace BookAStar
 
         public App(IPlatform instance)
         {
+            // This declaration became obsolete by introduction
+            // of the XLabs App that 
+            // refers this instance with
+            // its application context property
+            // and is obtained using the `Resolver`
             PlatformSpecificInstance = instance;
+            // Xaml
             InitializeComponent();
+            // Static properties construction
             Init();
+            // Builds the Main page
             BuildMainPage();
-
-            NavigationPage.SetHasNavigationBar(MainPage, false);
-            NavigationPage.SetHasBackButton(MainPage, false);
+            
         }
 
         BookQueriesPage bQueriesPage;
@@ -149,12 +196,10 @@ namespace BookAStar
             navPage.ToolbarItems.Add(tiSetts);
             */
             this.MainPage = masterDetail;
-
             Resolver.Resolve<IDependencyContainer>()
                 .Register<INavigationService>(t => new NavigationService(masterDetail.Detail.Navigation))
                 ;
         }
-
 
         public void PostDeviceInfo()
         {
@@ -171,7 +216,7 @@ namespace BookAStar
         }
 
         // TODO système de persistance de l'état de l'appli
-
+        /*
         /// <summary>
         /// Shows a page asynchronously by locating the default constructor, creating the page,
         /// the pushing it onto the navigation stack.
@@ -192,7 +237,7 @@ namespace BookAStar
                 await parentPage.Navigation.PushAsync(page);
                 break;
             }
-        }
+        }*/
     }
 }
 

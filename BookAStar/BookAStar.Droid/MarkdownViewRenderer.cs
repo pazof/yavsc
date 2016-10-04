@@ -6,6 +6,7 @@ using BookAStar.Droid;
 using System;
 using Java.Interop;
 using System.ComponentModel;
+using Android.Views;
 
 [assembly: Xamarin.Forms.ExportRenderer(typeof(MarkdownView), typeof(MarkdownViewRenderer))]
 namespace BookAStar.Droid
@@ -27,9 +28,13 @@ namespace BookAStar.Droid
 
             if (hybridWebViewRenderer != null && hybridWebViewRenderer.TryGetTarget(out hybridRenderer))
             {
-                hybridRenderer.Element.Markdown=data;
+                hybridRenderer.Element.Markdown = data;
+                MarkdownViewRenderer.OnPageFinished(hybridRenderer.Element,
+                    hybridRenderer.EditorView);
             }
         }
+
+
     }
 
     public class MarkdownViewRenderer : ViewRenderer<MarkdownView, WebView>
@@ -39,12 +44,30 @@ namespace BookAStar.Droid
         private MarkdownDeep.Markdown markdown = new MarkdownDeep.Markdown();
         const string JavaScriptFunction = "function invokeCSharpAction(data){jsBridge.invokeAction(data);}";
 
+        public WebView EditorView
+        {
+            get
+            {
+                return editorView;
+            }
+        }
+
+        public static async void OnPageFinished(MarkdownView xview, WebView view)
+        {
+            int i = 10;
+            while (view.ContentHeight == 0 && i-- > 0) // wait here till content is rendered
+                await System.Threading.Tasks.Task.Delay(100);
+            xview.BatchBegin();
+            xview.HeightRequest = view.ContentHeight;
+            xview.BatchCommit();
+        }
         private void SetMDEditorText(string text)
         {
             editorTemplate.Model = (text == null) ? null : markdown.Transform(text);
             var html = editorTemplate.GenerateString();
-            editorView.LoadDataWithBaseURL("file:///android_asset/",
+            EditorView.LoadDataWithBaseURL("file:///android_asset/",
             html, "text/html", "utf-8", null);
+            OnPageFinished(Element, editorView);
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<MarkdownView> e)
@@ -63,7 +86,7 @@ namespace BookAStar.Droid
                 // Subscribe
                 var viewclient = new MarkdownWebViewClient(
                 md => { e.NewElement.Markdown = md; });
-                editorView.SetWebViewClient(viewclient);
+                EditorView.SetWebViewClient(viewclient);
                 Control.AddJavascriptInterface(new JSBridge(this), "jsBridge");
                 SetMDEditorText(e.NewElement.Markdown);
                 InjectJS(JavaScriptFunction);
@@ -81,33 +104,40 @@ namespace BookAStar.Droid
         private WebView CreateNativeControl()
         {
             editorView = new WebView(Context);
-            editorView.Settings.BuiltInZoomControls = true;
-            editorView.Settings.JavaScriptEnabled = true;
-            editorView.Settings.LoadsImagesAutomatically = true;
-            editorView.Settings.SetAppCacheEnabled(true);
-            editorView.Settings.AllowContentAccess = true;
-            editorView.Settings.AllowFileAccess = true;
-            editorView.Settings.AllowFileAccessFromFileURLs = true;
-            editorView.Settings.AllowUniversalAccessFromFileURLs = true;
-            editorView.Settings.BlockNetworkImage = false;
-            editorView.Settings.BlockNetworkLoads = false;
-            editorView.Settings.DomStorageEnabled = true;
+            EditorView.Settings.BuiltInZoomControls = false;
+            EditorView.Settings.JavaScriptEnabled = true;
+            EditorView.Settings.LoadsImagesAutomatically = true;
+            EditorView.Settings.SetAppCacheEnabled(true);
+            EditorView.Settings.AllowContentAccess = true;
+            EditorView.Settings.AllowFileAccess = true;
+            EditorView.Settings.AllowFileAccessFromFileURLs = true;
+            EditorView.Settings.AllowUniversalAccessFromFileURLs = true;
+            EditorView.Settings.BlockNetworkImage = false;
+            EditorView.Settings.BlockNetworkLoads = false;
+            EditorView.Settings.DomStorageEnabled = true;
+            
             //  editorView.SetMinimumHeight(300);
-            return editorView;
+            return EditorView;
         }
-
-        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Markdown")
-            {
-                SetMDEditorText(((MarkdownView)Element).Markdown);
-            }
-            base.OnElementPropertyChanged(sender, e);
-        }
-
+        // FIXME no impact...
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
-            base.OnMeasure(widthMeasureSpec, editorView.ContentHeight);
+            MeasureSpecMode widthMode = MeasureSpec.GetMode(widthMeasureSpec);
+            MeasureSpecMode heightMode = MeasureSpec.GetMode(heightMeasureSpec);
+            int widthSize = MeasureSpec.GetSize(widthMeasureSpec);
+            int heightSize = MeasureSpec.GetSize(heightMeasureSpec);
+            int pxHeight = (int)ContextExtensions.ToPixels(Context, Element.HeightRequest);
+            int pxWidth = (int)ContextExtensions.ToPixels(Context, Element.WidthRequest);
+            var measuredWidth = widthMode != MeasureSpecMode.Exactly ? (widthMode != MeasureSpecMode.AtMost ? pxHeight : Math.Min(pxHeight, widthSize)) : widthSize;
+            var measuredHeight = heightMode != MeasureSpecMode.Exactly ? (heightMode != MeasureSpecMode.AtMost ? pxWidth : Math.Min(pxWidth, heightSize)) : heightSize;
+            SetMeasuredDimension(measuredWidth, measuredHeight< Element.HeightRequest ? (int) Element.HeightRequest : measuredHeight);
         }
+        /*
+        protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
+        {
+            Element.Layout(new Xamarin.Forms.Rectangle(0, 0, ContextExtensions.FromPixels(Context, right - left), ContextExtensions.FromPixels(Context, bottom - top)));
+            base.OnLayout(changed, left, top, right, bottom);
+        }
+        */
     }
 }
