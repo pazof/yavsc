@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Net;
 
-namespace BookAStar
+namespace BookAStar.Helpers
 {
 
     public class RemoteEntity<V,K> : LocalEntity<V, K>, ICommand where K : IEquatable<K>
@@ -34,8 +34,7 @@ namespace BookAStar
             if (IsExecuting)
                 throw new InvalidOperationException("Already executing");
             IsExecuting = true;
-            if (CanExecuteChanged != null)
-                CanExecuteChanged.Invoke(this, new EventArgs());
+            CanExecuteChanged.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -45,7 +44,7 @@ namespace BookAStar
         public async void Execute(object parameter)
         {
             BeforeExecute();
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = UserHelpers.CreateClient())
             {
                 // Get the whole data
                 try
@@ -61,6 +60,7 @@ namespace BookAStar
                             {
                                 Merge(item);
                             }
+                            this.SaveCollection();
                         }
                     }
                 }
@@ -75,8 +75,7 @@ namespace BookAStar
         private void AfterExecuting()
         {
             IsExecuting = false;
-            if (CanExecuteChanged != null)
-                CanExecuteChanged.Invoke(this, new EventArgs());
+            CanExecuteChanged.Invoke(this, new EventArgs());
         }
 
         public async Task<V> Get(K key)
