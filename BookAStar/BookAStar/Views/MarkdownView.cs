@@ -23,20 +23,21 @@ namespace BookAStar.Views
             {
                 return markdown;
             }
-            set {
+            set
+            {
                 if (markdown != value)
-                    if (Edited != null)
+                {
+                    markdown = value;
+                    if (Modified != null)
                     {
-                        markdown = value;
-                        Edited.Invoke(this, new EventArgs());
+                        Modified.Invoke(this, new EventArgs());
                         return;
                     }
-                
-                markdown = value;
+                }
             }
         }
         
-        public event EventHandler<EventArgs> Edited;
+        public event EventHandler<EventArgs> Modified;
         
         protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
         {

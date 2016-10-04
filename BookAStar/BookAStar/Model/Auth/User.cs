@@ -1,4 +1,5 @@
 ﻿using BookAStar.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -80,6 +81,7 @@ namespace BookAStar.Model.Auth.Account
                 OnPropertyChanged("Avatar");
             }
         }
+        [JsonIgnore]
         public ImageSource AvatarSource
         {
             get

@@ -15,18 +15,20 @@
       </Style>
     </ResourceDictionary>
   </ContentPage.Resources>
+  <ScrollView>
   <StackLayout Padding="10,10,10,10">
-    <StackLayout Orientation="Horizontal" Padding="10,10,10,10">
-      <Label Text="{Binding Client.UserName}" LineBreakMode="WordWrap"></Label>
-      <Label Text="{Binding Query.Location.Address}" LineBreakMode="WordWrap"></Label>
-      <Label Text="{Binding Query.EventDate, StringFormat='{0:dddd d MMMM yyyy à hh:mm}'}" LineBreakMode="WordWrap"></Label>
+    <StackLayout Orientation="Horizontal" Padding="10,10,10,10" View.VerticalOptions="CenterAndExpand">
+      <Label Text="{Binding Client.UserName}" LineBreakMode="WordWrap" View.VerticalOptions="CenterAndExpand"></Label>
+      <Label Text="{Binding Query.Location.Address}" LineBreakMode="WordWrap" View.VerticalOptions="CenterAndExpand"></Label>
+      <Label Text="{Binding Query.EventDate, StringFormat='{0:dddd d MMMM yyyy à hh:mm}'}" LineBreakMode="WordWrap" View.VerticalOptions="CenterAndExpand"></Label>
     </StackLayout>
 
     <views:MarkdownView x:Name="mdview"
-                        Edited="OnDescriptionChanged"
+                        Modified="OnDescriptionChanged"
                         HorizontalOptions="FillAndExpand"
-           VerticalOptions="FillAndExpand" MinimumHeightRequest="160" HeightRequest="250"
+                        View.VerticalOptions="CenterAndExpand"
     Markdown="{Binding Description, Mode=TwoWay}"
+                        MinimumHeightRequest="160"
              RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,
                                                                              Property=Height,
                                                                              Factor=.6}"
@@ -35,8 +37,7 @@
                                                                             Factor=1}"
                         ></views:MarkdownView>
 
-    <ListView RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=.2}"
-          RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
+    <ListView HeightRequest="80" View.VerticalOptions="End">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
@@ -50,4 +51,5 @@
     <Label FormattedText="{Binding FormattedTotal}"/>
     <Button Text="Valider ce devis"></Button>
   </StackLayout>
+    </ScrollView>
 </ContentPage>

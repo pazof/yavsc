@@ -4952,8 +4952,8 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f0c00b3
 			public const int subtitles = 2131493043;
 			
-			// aapt resource value: 0x7f0c00b6
-			public const int surface_view = 2131493046;
+			// aapt resource value: 0x7f0c00b5
+			public const int surface_view = 2131493045;
 			
 			// aapt resource value: 0x7f0c0019
 			public const int tabMode = 2131492889;
@@ -4984,9 +4984,6 @@ namespace BookAStar.Droid
 			
 			// aapt resource value: 0x7f0c0053
 			public const int title_template = 2131492947;
-			
-			// aapt resource value: 0x7f0c00b5
-			public const int toolbar = 2131493045;
 			
 			// aapt resource value: 0x7f0c003d
 			public const int top = 2131492925;

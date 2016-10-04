@@ -55,8 +55,8 @@ namespace BookAStar.Droid
             ToolbarResource = Resource.Layout.Toolbar;
             
             base.OnCreate(bundle);
-
-            global::Xamarin.Forms.Forms.SetTitleBarVisibility(Xamarin.Forms.AndroidTitleBarVisibility.Never);
+            SetPersistent(true);
+            // global::Xamarin.Forms.Forms.SetTitleBarVisibility(Xamarin.Forms.AndroidTitleBarVisibility.Never);
 
             //var tb = FindViewById<Android.Support.V7.Widget.Toolbar>(ToolbarResource);
             // FIXME tb is null
@@ -73,7 +73,8 @@ namespace BookAStar.Droid
             IXFormsApp<XFormsCompatApplicationDroid> app =null;
             if (!Resolver.IsSet)
             {
-                this.SetIoc();
+                var xfapp = new XFormsCompatAppDroid();
+                this.SetIoc(xfapp);
             }
             else
             {
@@ -93,8 +94,8 @@ namespace BookAStar.Droid
                 }
             };
 
-
-            LoadApplication(new BookAStar.App(this));
+            var fapp = new BookAStar.App(this);
+            LoadApplication(fapp);
             // TabLayoutResource = Resource.Layout.Tabbar;
             // ToolbarResource = Resource.Layout.Toolbar;
             /*
@@ -108,11 +109,10 @@ namespace BookAStar.Droid
 
         }
 
-        private void SetIoc()
+        private SimpleContainer SetIoc(XFormsCompatAppDroid app)
         {
             var resolverContainer = new SimpleContainer();
 
-            var app = new XFormsCompatAppDroid();
 
             app.Init(this);
 
@@ -133,6 +133,7 @@ namespace BookAStar.Droid
                     t => new SQLiteSimpleCache(new SQLitePlatformAndroid(),
                         new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()));
             Resolver.SetResolver(resolverContainer.GetResolver());
+            return resolverContainer;
         }
 
         public bool EnablePushNotifications(bool enable)
@@ -425,18 +426,25 @@ namespace BookAStar.Droid
 
         public T Resolve<T>()
         {
-
-            throw new NotImplementedException();
+            return (T) Resolver.Resolve(typeof(T));
         }
 
         public object Resolve(Type t)
         {
-            throw new NotImplementedException();
+            return Resolver.Resolve(t);
         }
 
-        public void Init(App context, bool initServices = true)
+        protected override void OnSaveInstanceState(Bundle outState)
         {
-            throw new NotImplementedException();
+            base.OnSaveInstanceState(outState);
+        }
+        public override void OnStateNotSaved()
+        {
+            base.OnStateNotSaved();
+        }
+        public override void OnRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState)
+        {
+            base.OnRestoreInstanceState(savedInstanceState, persistentState);
         }
     }
 }

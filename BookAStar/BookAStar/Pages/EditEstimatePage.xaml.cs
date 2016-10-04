@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using XLabs.Forms.Services;
 using XLabs.Ioc;
 using XLabs.Platform.Services;
@@ -28,14 +29,16 @@ namespace BookAStar.Pages
         {
             base.OnBindingContextChanged();
             // FIXME WAZA
-           if (BindingContext != null)
-                mdview.Markdown = ((EstimateViewModel)BindingContext).Description; 
+           if (BindingContext != null) { 
+                mdview.Markdown = ((EstimateViewModel)BindingContext).Description;
+            }
         }
 
         protected void OnDescriptionChanged (object sender, EventArgs e)
         {
             // FIXME Why the Binding don't work?
             ((EstimateViewModel)BindingContext).Description = mdview.Markdown;
+            InvalidateMeasure();
         }
 
         protected void OnNewCommanLine(object sender, EventArgs e)
@@ -43,7 +46,7 @@ namespace BookAStar.Pages
             var com = new BillingLine();
             Resolver.Resolve<INavigationService>().NavigateTo<EditBillingLinePage>(
                 true,
-                new object[] { new BillingLineViewModel((Estimate)this.BindingContext,com) } );
+                new object[] { new BillingLineViewModel(((EstimateViewModel)this.BindingContext).Data,com) } );
         }
        
     }
