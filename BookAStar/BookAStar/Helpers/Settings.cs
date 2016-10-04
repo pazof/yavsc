@@ -1,6 +1,5 @@
 // Helpers/Settings.cs
-using Plugin.Settings;
-using Plugin.Settings.Abstractions;
+#if USELESS_but_makes_the_component_removable // this file must exist ^^
 
 namespace BookAStar.Helpers
 {
@@ -23,7 +22,6 @@ namespace BookAStar.Helpers
 
     private const string SettingsKey = "settings_key";
     public static readonly string SettingsDefault = string.Empty;
-        public static readonly string XLabsSettingsPrefix = "_XLABS_";
 
         #endregion
 
@@ -39,6 +37,7 @@ namespace BookAStar.Helpers
         AppSettings.AddOrUpdateValue<string>(SettingsKey, value);
       }
     }
-
   }
 }
+
+#endif 

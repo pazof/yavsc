@@ -4,6 +4,7 @@ using BookAStar.Model.Auth.Account;
 using Newtonsoft.Json;
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,63 +13,68 @@ using Xamarin.Forms;
 
 namespace BookAStar
 {
-	
-	/// <summary>
-	/// This is the Settings static class that can be used in your Core solution or in any
-	/// of your client applications. All settings are laid out the same exact way with getters
-	/// and setters. 
-	/// </summary>
-	public static class MainSettings
-	{
-		
-		private static ISettings AppSettings {
-			get {
-				return CrossSettings.Current;
-			}
-		}
 
-		#region Setting Constants
+    /// <summary>
+    /// This is the Settings static class that can be used in your Core solution or in any
+    /// of your client applications. All settings are laid out the same exact way with getters
+    /// and setters. 
+    /// </summary>
+    public static class MainSettings
+    {
 
-		private const string userNameKey = "user_id";
-		private const string PushNotificationsKey = "pushNotifs";
+        public static ISettings AppSettings
+        {
+            get
+            {
+                return CrossSettings.Current;
+            }
+        }
+
+        #region Setting Constants
+        public static readonly string SettingsDefault = string.Empty;
+        public static readonly string EntityDataSettingsPrefix = "Ed";
+        public static readonly string EntityCursorSettingsPrefix = "Ec";
+        private const string userNameKey = "user_id";
+        private const string PushNotificationsKey = "pushNotifs";
         private const string AllowGPSUsageKey = "allowGPSUsage";
         private const string UserListsKey = "userList";
         private const string GoogleRegIdKey = "googleRedId";
         private const string AllowProBookingOnlyKey = "allowProBookingOnly";
-        
 
-        private static readonly string UserIdDefault = 
-			string.Empty;
-		private static readonly bool PushNotificationsDefault = false;
 
-		public static readonly string GoogleSenderId = "325408689282";
+        private static readonly string UserIdDefault =
+            string.Empty;
+        private static readonly bool PushNotificationsDefault = false;
 
-		private const string MusicalKey = "musical_prefs";
-		private const string EnvironKey = "environ_prefs";
-		private static readonly Dictionary<string,double> MusicalDefault =
-			new Dictionary<string, double> {
-				{ "Pop", 0.5 }, { "Hip Hop" , 0.5 }, { "Rock" , 0.5 }, { "Funk", 0.5 }, 
-				{ "R&B", 0.5 }, { "Jazz", 0.5 }
-			};
+        public static readonly string GoogleSenderId = "325408689282";
+
+        private const string MusicalKey = "musical_prefs";
+        private const string EnvironKey = "environ_prefs";
+        private static readonly Dictionary<string, double> MusicalDefault =
+            new Dictionary<string, double> {
+                { "Pop", 0.5 }, { "Hip Hop" , 0.5 }, { "Rock" , 0.5 }, { "Funk", 0.5 },
+                { "R&B", 0.5 }, { "Jazz", 0.5 }
+            };
         private static readonly Dictionary<string, double> musical = new Dictionary<string, double>();
-        private static readonly Dictionary<string,double> EnvironDefault =
-			new Dictionary<string, double> {
-				{ "Discothèque", 0.5 }, { "Salles de concert", 0.5 }, 
-				{ "Piano bar", 0.5 }, { "Bar", 0.5 }, { "Cinema", 0.5 }, 
-				{ "Théatre", 0.5 }, { "Salles des fêtes", 0.5 },
-				{ "Espace publique", 0.5 }
-			};
+        private static readonly Dictionary<string, double> EnvironDefault =
+            new Dictionary<string, double> {
+                { "Discothèque", 0.5 }, { "Salles de concert", 0.5 },
+                { "Piano bar", 0.5 }, { "Bar", 0.5 }, { "Cinema", 0.5 },
+                { "Théatre", 0.5 }, { "Salles des fêtes", 0.5 },
+                { "Espace publique", 0.5 }
+            };
         private static readonly Dictionary<string, double> environ = new Dictionary<string, double>();
 
 
-		#endregion
+        #endregion
 
-		public static string UserName
+        public static string UserName
         {
-			get {
-				return AppSettings.GetValueOrDefault<string>(userNameKey, null);
-			}
-		}
+            get
+            {
+                return AppSettings.GetValueOrDefault<string>(userNameKey, null);
+            }
+        }
         public const string bookQueryNotificationsKey = "BookQueryNotifications";
         public static BookQueryData[] GetBookQueryNotifications()
         {
@@ -76,7 +82,7 @@ namespace BookAStar
             var json = AppSettings.GetValueOrDefault<string>(bookQueryNotificationsKey);
             if (!string.IsNullOrWhiteSpace(json))
                 return JsonConvert.DeserializeObject<BookQueryData[]>(json);
-            return new BookQueryData[] {};
+            return new BookQueryData[] { };
         }
 
         public static BookQueryData[] AddBookQueryNotification(BookQueryData query)
@@ -89,9 +95,10 @@ namespace BookAStar
             return result;
         }
 
-        public  static string GoogleRegId
+        public static string GoogleRegId
         {
-             set {
+            set
+            {
                 var oldregid = GoogleRegId;
                 AppSettings.AddOrUpdateValue<string>(GoogleRegIdKey, value);
                 // TODO If it changed, and there's an identified user,
@@ -101,10 +108,10 @@ namespace BookAStar
                     App.CurrentApp.PostDeviceInfo();
                 }
             }
-            get { return AppSettings.GetValueOrDefault<string>(GoogleRegIdKey);  }
+            get { return AppSettings.GetValueOrDefault<string>(GoogleRegIdKey); }
         }
 
-        private static ObservableCollection<User> accountList=null;
+        private static ObservableCollection<User> accountList = null;
         public static ObservableCollection<User> AccountList
         {
             get
@@ -118,17 +125,19 @@ namespace BookAStar
                     {
                         var users = JsonConvert.DeserializeObject<User[]>(json);
                         if (users != null)
-                        foreach (User user in users)
-                        {
-                            accountList.Add(user);
-                        }
+                            foreach (User user in users)
+                            {
+                                accountList.Add(user);
+                            }
                     }
                 }
                 return accountList;
             }
         }
-        
-        public static User CurrentUser { get
+
+        public static User CurrentUser
+        {
+            get
             {
                 var uname = UserName;
                 if (uname == null) return null;
@@ -166,22 +175,25 @@ namespace BookAStar
 
         public static User GetUser(string username)
         {
-            return AccountList.FirstOrDefault(a=>a.UserName == username);
+            return AccountList.FirstOrDefault(a => a.UserName == username);
         }
 
-        public static bool PushNotifications { 
-			get { 
-				return AppSettings.GetValueOrDefault<bool>(
-					PushNotificationsKey,
-					PushNotificationsDefault);
-			}
-			set { 
-                // TODO Stop Broadcast receiver
-				AppSettings.AddOrUpdateValue<bool> (
-					PushNotificationsKey,
-					value);
+        public static bool PushNotifications
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault<bool>(
+                    PushNotificationsKey,
+                    PushNotificationsDefault);
             }
-		}
+            set
+            {
+                // TODO Stop Broadcast receiver
+                AppSettings.AddOrUpdateValue<bool>(
+                    PushNotificationsKey,
+                    value);
+            }
+        }
 
         public static bool AllowGPSUsage
         {
@@ -214,28 +226,61 @@ namespace BookAStar
                     value);
             }
         }
-        public static void SetMusical (string key, double value)
-		{
-			AppSettings.AddOrUpdateValue <double> (MusicalKey + key, value);
-		}
+        public static void SetMusical(string key, double value)
+        {
+            AppSettings.AddOrUpdateValue<double>(MusicalKey + key, value);
+        }
 
-		public static double GetMusical (string key)
-		{
-			return AppSettings.GetValueOrDefault <double> (MusicalKey + key, MusicalDefault [key]);
-		}
+        public static double GetMusical(string key)
+        {
+            return AppSettings.GetValueOrDefault<double>(MusicalKey + key, MusicalDefault[key]);
+        }
 
-		public static Dictionary<string,double> Musical {
-			get {
-				return musical;
-			}
-		}
+        public static Dictionary<string, double> Musical
+        {
+            get
+            {
+                return musical;
+            }
+        }
 
-		public static Dictionary<string, double> Environ
+        public static Dictionary<string, double> Environ
         {
             get
             {
                 return environ;
             }
+        }
+        /// <summary>
+        /// Use a sub-key to make persist different tables with the same definition.
+        /// </summary>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="subKey"></param>
+        public static void Populate<V>(this IList<V> collection, string subKey = null)
+        {
+            var key = $"{EntityDataSettingsPrefix}/{subKey}/{typeof(V).FullName}";
+            var data = AppSettings.GetValueOrDefault<string>(key, null);
+            if (data != null)
+            {
+                var items = JsonConvert.DeserializeObject<IList<V>>(data);
+                if (items != null)
+                foreach (var item in items)
+                    collection.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// Saves a list
+        /// </summary>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="collection"></param>
+        /// <param name="subKey"></param>
+        public static void SaveCollection<V>(this IList<V> collection, string subKey=null)
+        {
+            if (collection == null) return;
+            var key = $"{EntityDataSettingsPrefix}/{subKey}/{typeof(V).FullName}";
+            AppSettings.AddOrUpdateValue(key, JsonConvert.SerializeObject(collection));
         }
     }
 }
