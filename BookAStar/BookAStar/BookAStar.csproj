@@ -43,6 +43,8 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Factories\ViewFactory.cs" />
     <Compile Include="Helpers\DataManager.cs" />
+    <Compile Include="Helpers\ObservableString.cs" />
+    <Compile Include="Interfaces\ILocalEntity.cs" />
     <Compile Include="Helpers\LocaLEntity.cs" />
     <Compile Include="Helpers\NotIdentifiedException.cs" />
     <Compile Include="Helpers\PageHelpers.cs" />
