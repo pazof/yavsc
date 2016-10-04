@@ -33,13 +33,14 @@ namespace BookAStar
         public static IPlatform PlatformSpecificInstance { get; set; }
         public static string AppName { get; set; }
 
-        
+
         // Exists in order to dispose of a static instance strongly typed
         // TODO : replace all references to this field
         // by Views resolution, and then, drop it
         public static App CurrentApp { get { return Current as App; } }
 
-        public static bool MasterPresented {
+        public static bool MasterPresented
+        {
             get
             { return CurrentApp.masterDetail.IsPresented; }
             internal set
@@ -49,7 +50,7 @@ namespace BookAStar
         public void Init()
         {
             var app = Resolver.Resolve<IXFormsApp>();
-            
+
             if (app == null)
             {
                 return;
@@ -74,11 +75,11 @@ namespace BookAStar
             ViewFactory.Register<BookQueriesPage, BookQueriesViewModel>();
             ViewFactory.Register<EditBillingLinePage, BillingLineViewModel>();
             ViewFactory.Register<EditEstimatePage, EstimateViewModel>();
-
             ConfigManager = new XLabs.Settings.GenericConfigSettingsMgr(s =>
-               Settings.AppSettings.GetValueOrDefault<string>(s, Settings.SettingsDefault), null);
+           MainSettings.AppSettings.GetValueOrDefault<string>(s, MainSettings.SettingsDefault), null);
+            
         }
-         
+
         ExtendedMasterDetailPage masterDetail;
 
         public App(IPlatform instance)
@@ -110,14 +111,17 @@ namespace BookAStar
             home = new HomePage() { Title = "Accueil", Icon = "icon.png" };
 
             // var mainPage = new NavigationPage(bQueriesPage);
-            
-            masterDetail = new ExtendedMasterDetailPage() {
-                Title="MainPage"
+
+            masterDetail = new ExtendedMasterDetailPage()
+            {
+                Title = "MainPage"
             };
 
-            masterDetail.Master = new DashboardPage {
+            masterDetail.Master = new DashboardPage
+            {
                 Title = "Bookingstar",
-                BindingContext = new DashboardViewModel() };
+                BindingContext = new DashboardViewModel()
+            };
 
             // masterDetail.Detail = home;
 
@@ -133,7 +137,7 @@ namespace BookAStar
                 Text = "Accueil",
                 Icon = "icon.png"
             };
-          
+
             /* 
             var navPage = new NavigationPage(masterDetail) {
                 Title = "Navigation",
@@ -145,10 +149,10 @@ namespace BookAStar
             navPage.ToolbarItems.Add(tiSetts);
             */
             this.MainPage = masterDetail;
-            
+
             Resolver.Resolve<IDependencyContainer>()
                 .Register<INavigationService>(t => new NavigationService(masterDetail.Detail.Navigation))
-                ; 
+                ;
         }
 
 
@@ -158,12 +162,12 @@ namespace BookAStar
                 "gcm/register",
                 PlatformSpecificInstance.GetDeviceInfo());
         }
-        
+
         public static void ShowBookQuery (BookQueryData query)
         {
-           var page = ViewFactory.CreatePage<BookQueryViewModel
-                , BookQueryPage>((b,p)=> p.BindingContext = new BookQueryViewModel(query));
-           App.Current.MainPage.Navigation.PushAsync(page as Page);
+            var page = ViewFactory.CreatePage<BookQueryViewModel
+                 , BookQueryPage>((b, p) => p.BindingContext = new BookQueryViewModel(query));
+            App.Current.MainPage.Navigation.PushAsync(page as Page);
         }
 
         // TODO système de persistance de l'état de l'appli
