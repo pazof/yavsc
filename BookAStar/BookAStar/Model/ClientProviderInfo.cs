@@ -1,10 +1,6 @@
 ﻿using BookAStar.Helpers;
 using BookAStar.Model.Social;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Xamarin.Forms;
 
 namespace BookAStar.Model
@@ -21,6 +17,7 @@ namespace BookAStar.Model
         public Location BillingAddress { get; set; }
         // TODO Get User Professional status existence as a boolean
         // And hack the avatar with
+        [JsonIgnore]
         public ImageSource AvatarOrNot
         {
             get
