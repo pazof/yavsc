@@ -45,8 +45,6 @@
       
       <Style x:Key="LabelStyle" TargetType="Label">
         <Setter Property="TextColor" Value="{StaticResource TextColor}" />
-        <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
         <Setter Property="LineBreakMode" Value="WordWrap" />
       </Style>
 
@@ -56,7 +54,6 @@
       <Style x:Key="ContentLabelStyle"  BasedOn="{StaticResource LabelStyle}" TargetType="Label">
         <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
         <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
-        <Setter Property="VerticalOptions" Value="CenterAndExpand" />
       </Style>
       
       <Style x:Key="EntryStyle" TargetType="Entry">
