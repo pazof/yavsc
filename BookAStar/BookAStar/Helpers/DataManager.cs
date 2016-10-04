@@ -35,6 +35,10 @@ namespace BookAStar.Helpers
             Blogspot = new RemoteEntity<Blog, long>("blog", 
                 x=>x.Id);
             Contacts = new LocalEntity<ClientProviderInfo, string>(c => c.UserId);
+            BookQueries.Load();
+            Estimates.Load();
+            Blogspot.Load();
+            Contacts.Load();
         }
 
         public async Task<BookQueryData> GetBookQuery(long bookQueryId)
