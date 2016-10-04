@@ -105,6 +105,9 @@ namespace BookAStar.Droid
             base.OnElementPropertyChanged(sender, e);
         }
 
-
+        protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
+        {
+            base.OnMeasure(widthMeasureSpec, editorView.ContentHeight);
+        }
     }
 }
