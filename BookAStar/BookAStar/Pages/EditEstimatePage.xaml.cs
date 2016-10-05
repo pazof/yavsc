@@ -44,7 +44,7 @@ namespace BookAStar.Pages
         protected void OnNewCommanLine(object sender, EventArgs e)
         {
             var com = new BillingLine();
-            Resolver.Resolve<INavigationService>().NavigateTo<EditBillingLinePage>(
+            App.CurrentApp.NavigationService.NavigateTo<EditBillingLinePage>(
                 true,
                 new object[] { new BillingLineViewModel(((EstimateViewModel)this.BindingContext).Data,com) } );
         }

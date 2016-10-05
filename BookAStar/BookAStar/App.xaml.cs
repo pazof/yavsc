@@ -196,11 +196,11 @@ namespace BookAStar
             navPage.ToolbarItems.Add(tiSetts);
             */
             this.MainPage = masterDetail;
-            Resolver.Resolve<IDependencyContainer>()
-                .Register<INavigationService>(t => new NavigationService(masterDetail.Detail.Navigation))
-                ;
+            masterDetail.ToolbarItems.Add(tiHome);
+            masterDetail.ToolbarItems.Add(tiSetts);
+            NavigationService = new NavigationService(masterDetail.Detail.Navigation);
         }
-
+        public INavigationService NavigationService { protected set; get; }
         public void PostDeviceInfo()
         {
             var res = PlatformSpecificInstance.InvokeApi(
