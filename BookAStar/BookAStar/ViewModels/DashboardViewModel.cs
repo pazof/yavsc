@@ -46,6 +46,17 @@ namespace BookAStar.ViewModels
             }
         }
 
+        public bool ReceivePushNotifications
+        {
+            get
+            {
+                return MainSettings.PushNotifications;
+            }
+            set
+            {
+                MainSettings.PushNotifications = value;
+            }
+        }
         private long queryCount;
         private User user;
 
