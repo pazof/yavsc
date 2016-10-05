@@ -16,18 +16,11 @@ namespace BookAStar.Pages
 {
     public partial class DashboardPage : ContentPage
     {
-        public RelayGesture UserNameGesture { get; set; }
+        
 
         public DashboardPage()
         {
             InitializeComponent();
-            UserNameGesture = new RelayGesture((g, x) =>
-            {
-                if (g.GestureType == GestureType.LongPress)
-                {
-                    Resolver.Resolve<INavigationService>().NavigateTo<AccountChooserPage>(true);
-                }
-            });
         }
 
         public void OnViewPerformerStatus(object sender, EventArgs e)

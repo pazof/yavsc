@@ -1,9 +1,14 @@
 ﻿using BookAStar.Helpers;
 using BookAStar.Model.Auth.Account;
+using BookAStar.Pages;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Xamarin.Forms;
+using XLabs.Forms.Behaviors;
+using XLabs.Forms.Controls;
 using XLabs.Forms.Mvvm;
+using XLabs.Ioc;
+using XLabs.Platform.Services;
 
 namespace BookAStar.ViewModels
 {
@@ -98,6 +103,22 @@ namespace BookAStar.ViewModels
             Accounts = MainSettings.AccountList;
             User = MainSettings.CurrentUser;
             UpdateUserMeta();
+
+            UserNameGesture = new RelayGesture((g, x) =>
+            {
+                if (g.GestureType == GestureType.LongPress)
+                {
+                    Resolver.Resolve<INavigationService>().NavigateTo<AccountChooserPage>(true);
+                }
+            });
+            MainSettings.UserChanged += MainSettings_UserChanged;
+
+        }
+
+        private void MainSettings_UserChanged(object sender, System.EventArgs e)
+        {
+            User = MainSettings.CurrentUser;
+            UpdateUserMeta();
         }
 
         private void UpdateUserMeta ()
@@ -117,9 +138,9 @@ namespace BookAStar.ViewModels
             {
                 newUserIsPro = User.Roles?.Contains("Performer") ?? false;
 
-                newQueryCount = userIsPro ? DataManager.Current.BookQueries.Count : 0;
+                newQueryCount = newUserIsPro ? DataManager.Current.BookQueries.Count : 0;
 
-                newStatusString = userIsPro ?
+                newStatusString = newUserIsPro ?
                      $"Profile professionel renseigné,\n{newQueryCount} demandes valides en cours" :
                     "Profile professionel non renseigné";
                 newAvatar = UserHelpers.Avatar(user.Avatar);
@@ -133,5 +154,8 @@ namespace BookAStar.ViewModels
         {
             UpdateUserMeta();
         }
+
+        public RelayGesture UserNameGesture { get; set; }
+
     }
 }

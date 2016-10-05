@@ -157,11 +157,18 @@ namespace BookAStar
                     if (olduserid != value.Id)
                     {
                         App.CurrentApp.PostDeviceInfo();
+                        UserChanged.Invoke(App.CurrentApp, new EventArgs());
                     }
                 }
-                // TODO else Unregister this device
+                else if (olduserid != null)
+                {
+                    UserChanged.Invoke(App.CurrentApp, new EventArgs());
+                    // TODO else Unregister this device
+                }
             }
         }
+
+        public static event EventHandler<EventArgs> UserChanged;
 
         public static void SaveUser(User user)
         {
