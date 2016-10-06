@@ -10,12 +10,19 @@ Da road to the hell
 	✔ Notifications commande @done (September 15th 2016, 15:00)
 	☐ Proposition de devis sur BookQuery
 	☐ Signature de contrat
+    ☐ Chat privé
+    ✔ Salon public @done (September 28th 2016, 17:58)
+	☐ Accès mobile au salon public
+	☐ Accès Web au chat privé
 
 ## Jalon 2
 
+	☐ Quota fs utilisateur
 	☐ Paiement client d'un approvisionnement pour une demande de prestation définie
 	☐ Login Twitter
 	☐ Notifications et Twits de blogs, d'entées d'artiste, de success stories
+	☐ Restrictions d'accès au chat privé
+	☐ Monétarisations
 
 ## Jalon 3
 
@@ -31,12 +38,3 @@ Da road to the hell
 ## Jalon 5
 
 	☐ Conciliation
-
----------------------------
-Hotkeys
-
-Alt-Enter: add a new todo item below the current
-Alt-Shift-Enter: add a new todo item above the current
-Alt-D: toggle completion for current task
-Alt-A: cancel current task
-Alt-C: convert current task
