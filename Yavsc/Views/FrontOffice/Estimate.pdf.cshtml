@@ -12,7 +12,7 @@
    ViewBag.Pdf = "";
    ViewBag.TeX = "";
    var writer = new System.IO.StringWriter();
-   var content = await Html.PartialAsync("TestTex", Model );
+   var content = await Html.PartialAsync("Estimate.tex", Model );
     content.WriteTo(writer, new TexEncoder());
     var contentStr = writer.ToString();
     string name = $"tmpestimtex-{Model.Id}";
