@@ -1,40 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:BookAStar.Views;assembly=BookAStar"
-             x:Class="BookAStar.Pages.BookQueriesPage">
-  <StackLayout>
+             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
+             x:Class="BookAStar.Pages.BookQueriesPage"
+             Style="{StaticResource PageStyle}"
+             Page.Title="Les Demandes"
+             >
+  <ContentPage.Resources>
+    <ResourceDictionary>
 
-  <ListView x:Name="list"
-	 HasUnevenRows="true" ItemTapped="OnViewDetail">
-    <ListView.ItemTemplate>
+      <Style x:Key="labelStyle" TargetType="Label">
+        <Setter Property="TextColor" Value="{DynamicResource EmphasisTextColor}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="{DynamicResource LargeFontSize}" />
+        <Setter Property="VerticalOptions" Value="Start" />
+        <Setter Property="LineBreakMode" Value="WordWrap" />
+
+      </Style>
+          <Style TargetType="Label">
+            <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+          </Style>
+          <Style TargetType="Button">
+            <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+          </Style>
+    </ResourceDictionary> 
+  </ContentPage.Resources>
+
+  <StackLayout Padding="10,10,10,10">
+
+  <ListView RefreshCommand="{Binding RefreshQueries}"  IsPullToRefreshEnabled="True"
+            ItemsSource="{Binding Queries}" x:Name="list" ItemTapped="OnViewDetail" HasUnevenRows="true" RowHeight="80">
+    <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
       <DataTemplate>
         <ViewCell>
           <ViewCell.View>
-            <StackLayout Orientation="Horizontal">
-              <StackLayout Orientation="Vertical">
-                <Label Text="{Binding Title}" FontSize="12"/>
-                <Label Text="{Binding Description}"/>
-                <Label Text="{Binding Comment}"/>
-                <Label Text="{Binding CommandId}"/>
-                
-                <StackLayout Orientation="Horizontal">
-                  
-                  <StackLayout>
-                    <Label Text="Date:" FontAttributes="Italic"/>
-                    <Label Text="{Binding StartDate, StringFormat='{0:jj/MM/yyyy}'}" VerticalOptions="End"/>
-                  </StackLayout>
-                  <StackLayout>
-                    <Label Text="Heure:" FontAttributes="Italic" />
-                    <Label Text="{Binding StartDate, StringFormat='{0:H:mm}'}" VerticalOptions="End"/>
-                  </StackLayout>
-                  <StackLayout>
-                    <Label Text="Lieu:" FontAttributes="Italic"   VerticalOptions="End"/>
-                    <Label Text="{Binding Location.Address}"/>
-                  </StackLayout>
+            <StackLayout Orientation="Horizontal" Padding="10,10,10,10" VerticalOptions="StartAndExpand">
+                <StackLayout Orientation="Vertical" 
+                             HeightRequest="80" VerticalOptions="StartAndExpand">
 
+                  <StackLayout Orientation="Vertical" >
+                    <Image Source="{Binding Client.Avatar}" />
+                    <Label Text="{Binding Client.UserName}"
+                      Style="{StaticResource labelStyle}"></Label>
+                  </StackLayout>
+                  
+                  <Label LineBreakMode="WordWrap" Text="{Binding EventDate, StringFormat='{0:dddd d MMMM à HH:mm}'}" FontSize="12" FontFamily="Italic"/>
                 </StackLayout>
-              </StackLayout>
+                <StackLayout Orientation="Vertical" VerticalOptions="StartAndExpand">
+                  <Label LineBreakMode="WordWrap" Text="{Binding Location.Address}"/>
+                  <Label Text="{Binding Previsionnal}"/>
+                  <Label Text="{Binding Id}" HorizontalTextAlignment="End"/>
+                </StackLayout>
             </StackLayout>
           </ViewCell.View>
         </ViewCell>

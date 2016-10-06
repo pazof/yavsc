@@ -1,15 +1,19 @@
-﻿using BookAStar.Model;
-using BookAStar.Model.Auth.Account;
+﻿using BookAStar.Interfaces;
+using BookAStar.Model;
 using BookAStar.Pages;
+using BookAStar.ViewModels;
 using System;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+using XLabs.Forms.Mvvm;
+using XLabs.Forms.Pages;
+using XLabs.Forms.Services;
+using XLabs.Ioc;
+using XLabs.Platform.Mvvm;
+using XLabs.Platform.Services;
+using XLabs.Settings;
+using XLabs;
+using XLabs.Enums;
+
 /*
 Glyphish icons from
 http://www.glyphish.com/
@@ -22,118 +26,218 @@ namespace BookAStar
 {
     public partial class App : Application // superclass new in 1.3
     {
-        SearchPage searchPage;
-        NavigationPage mp;
-        SettingsPage settingsPage;
-        PinPage pinPage;
-        ContentPage deviceInfoPage;
-        BookQueryPage bookQueryPage;
-        BookQueriesPage bookQueriesPage;
-        public static IPlatform PlateformSpecificInstance { get; set; }
+        public static IPlatform PlatformSpecificInstance { get; set; }
         public static string AppName { get; set; }
+
+
+        // Exists in order to dispose of a static instance strongly typed
+        // TODO : replace all references to this field
+        // by Views resolution, and then, drop it
         public static App CurrentApp { get { return Current as App; } }
 
-        public DataManager DataManager { get; set; }
+        public static bool MasterPresented
+        {
+            get
+            { return CurrentApp.masterDetail.IsPresented; }
+            internal set
+            { CurrentApp.masterDetail.IsPresented = value; }
+        }
+
+        public void Init()
+        {
+            var app = Resolver.Resolve<IXFormsApp>();
+
+            if (app == null)
+            {
+                return;
+            }
+            Configure(app);
+            app.Closing += OnClosing;
+            app.Error += OnError;
+            app.Initialize += OnInitialize;
+            app.Resumed += OnAppResumed;
+            app.Rotation += OnRotation;
+            app.Startup += OnStartup;
+            app.Suspended += OnSuspended;
+        }
+
+        // omg
+        private void OnError(object sender, EventArgs e)
+        {
+            
+        }
+        
+        // Called on rotation after OnSuspended
+        private void OnClosing(object sender, EventArgs e)
+        {
+            
+        }
+
+        // FIXME Not called
+        private void OnInitialize(object sender, EventArgs e)
+        {
+           
+        }
+
+        // called on app startup, not on rotation
+        private void OnStartup(object sender, EventArgs e)
+        {
+            // TODO special starup pages as
+            // notification details or wizard setup page
+        }
+
+        // Called on rotation
+        private void OnSuspended(object sender, EventArgs e)
+        {
+            // TODO the navigation stack persistence (save)
+        }
+
+        // called on app startup, after OnStartup, not on rotation
+        private void OnAppResumed(object sender, EventArgs e)
+        {
+            // TODO the navigation stack persistence (restore)
+            base.OnResume();
+        }
+
+        // FIXME Not called ... see OnSuspended
+        private void OnRotation(object sender, EventArgs<Orientation> e)
+        {
+            // TODO the navigation stack persistence (restore?)
+        }
+
+        public static GenericConfigSettingsMgr ConfigManager { protected set; get; }
+
+        private void Configure(IXFormsApp app)
+        {
+            ViewFactory.EnableCache = true;
+            ViewFactory.Register<DashboardPage, DashboardViewModel>(
+                 resolver => new DashboardViewModel());
+            ViewFactory.Register<BookQueryPage, BookQueryViewModel>();
+            ViewFactory.Register<BookQueriesPage, BookQueriesViewModel>();
+            ViewFactory.Register<EditBillingLinePage, BillingLineViewModel>();
+            ViewFactory.Register<EditEstimatePage, EstimateViewModel>();
+            ConfigManager = new XLabs.Settings.GenericConfigSettingsMgr(s =>
+           MainSettings.AppSettings.GetValueOrDefault<string>(s, MainSettings.SettingsDefault), null);
+            
+        }
+
+        ExtendedMasterDetailPage masterDetail;
 
         public App(IPlatform instance)
         {
-            DataManager = new DataManager();
-            deviceInfoPage = new DeviceInfoPage(instance.GetDeviceInfo());
-            bookQueriesPage = new BookQueriesPage();
+            // This declaration became obsolete by introduction
+            // of the XLabs App that 
+            // refers this instance with
+            // its application context property
+            // and is obtained using the `Resolver`
+            PlatformSpecificInstance = instance;
+            // Xaml
+            InitializeComponent();
+            // Static properties construction
+            Init();
+            // Builds the Main page
+            BuildMainPage();
+            
+        }
 
-            PlateformSpecificInstance = instance;
-            searchPage = new SearchPage
+        BookQueriesPage bQueriesPage;
+        AccountChooserPage accChooserPage;
+        HomePage home;
+
+        private void BuildMainPage()
+        {
+            accChooserPage = new AccountChooserPage();
+
+            bQueriesPage = new BookQueriesPage
             {
-                Title = "Trouvez votre artiste",
-                Icon = "glyphish_07_map_marker.png"
+                Title = "Demandes",
+                Icon = "icon.png",
+                BindingContext = new BookQueriesViewModel()
             };
-            mp = new NavigationPage(searchPage);
-            settingsPage = new SettingsPage
+
+            home = new HomePage() { Title = "Accueil", Icon = "icon.png" };
+
+            // var mainPage = new NavigationPage(bQueriesPage);
+
+            masterDetail = new ExtendedMasterDetailPage()
             {
-                Title = "Settings",
-                Icon = "ic_corp_icon.png"
+                Title = "MainPage"
             };
 
-            var r = this.Resources;
-            //var hasLabelStyle = r.ContainsKey("labelStyle");
+            masterDetail.Master = new DashboardPage
+            {
+                Title = "Bookingstar",
+                BindingContext = new DashboardViewModel()
+            };
 
-            // var stid = this.StyleId;
-            // null var appsstyle = settingsPage.Style;
-            // appsstyle.CanCascade = true;
-            MainPage = mp;
+            // masterDetail.Detail = home;
+
+            masterDetail.Detail = new NavigationPage(home);
             ToolbarItem tiSetts = new ToolbarItem()
             {
-                Text = "Settings",
+                Text = "Paramètres",
                 Icon = "ic_corp_icon.png"
             };
-            mp.ToolbarItems.Add(tiSetts);
-            tiSetts.Clicked += (object sender, EventArgs e) =>
+
+            ToolbarItem tiHome = new ToolbarItem()
             {
-                if (settingsPage.Parent == null)
-                    mp.Navigation.PushAsync(settingsPage);
-                else
-                {
-                    settingsPage.Focus();
-                }
-            };
-            ToolbarItem tiQueries = new ToolbarItem
-            {
-                Text = "Demandes"
+                Text = "Accueil",
+                Icon = "icon.png"
             };
 
-
-            tiQueries.Clicked += (object sender, EventArgs e) =>
-            {
-                if (bookQueriesPage.Parent == null)
-                    mp.Navigation.PushAsync(bookQueriesPage);
-                else bookQueriesPage.Focus();
-            };
-            mp.ToolbarItems.Add(tiQueries);
-            ToolbarItem tiMap = new ToolbarItem
-            {
-                Text = "Carte",
-                Icon = "glyphish_07_map_marker.png"
-            };
-            mp.ToolbarItems.Add(tiMap);
-            pinPage = new PinPage
-            {
-                Title = "Carte",
-                Icon = "glyphish_07_map_marker.png"
-            };
-            tiMap.Clicked += (object sender, EventArgs e) =>
-            {
-                if (pinPage.Parent == null)
-                    mp.Navigation.PushAsync(pinPage);
-                else pinPage.Focus();
-
-            };
-
+            /* 
+            var navPage = new NavigationPage(masterDetail) {
+                Title = "Navigation",
+                Icon = "icon.png"
+            } ;
+            //var navPage = new NavigationPage(mainTab);
+            
+            navPage.ToolbarItems.Add(tiHome);
+            navPage.ToolbarItems.Add(tiSetts);
+            */
+            this.MainPage = masterDetail;
+            masterDetail.ToolbarItems.Add(tiHome);
+            masterDetail.ToolbarItems.Add(tiSetts);
+            NavigationService = new NavigationService(masterDetail.Detail.Navigation);
         }
-
-        public void ShowDeviceInfo()
-        {
-            if (deviceInfoPage.Parent == null)
-                mp.Navigation.PushAsync(deviceInfoPage);
-            else deviceInfoPage.Focus();
-        }
-
+        public INavigationService NavigationService { protected set; get; }
         public void PostDeviceInfo()
         {
-            var res = PlateformSpecificInstance.InvokeApi(
+            var res = PlatformSpecificInstance.InvokeApi(
                 "gcm/register",
-                PlateformSpecificInstance.GetDeviceInfo());
+                PlatformSpecificInstance.GetDeviceInfo());
         }
 
-        public void ShowBookQuery(BookQueryData data)
+        public static void ShowBookQuery (BookQueryData query)
         {
-            bookQueriesPage.BindingContext = data;
-            mp.Navigation.PushAsync(bookQueriesPage);
+            var page = ViewFactory.CreatePage<BookQueryViewModel
+                 , BookQueryPage>((b, p) => p.BindingContext = new BookQueryViewModel(query));
+            App.Current.MainPage.Navigation.PushAsync(page as Page);
         }
 
-        public void CloseWindow()
+        // TODO système de persistance de l'état de l'appli
+        /*
+        /// <summary>
+        /// Shows a page asynchronously by locating the default constructor, creating the page,
+        /// the pushing it onto the navigation stack.
+        /// </summary>
+        /// <param name="parentPage">Parent Page</param>
+        /// <param name="pageType">Type of page to show</param>
+        /// <returns></returns>
+        public static async Task ShowPage(VisualElement parentPage, Type pageType)
         {
-            mp.Navigation.PopAsync();
-        }
+            // Get all the constructors of the page type.
+            var constructors = pageType.GetTypeInfo().DeclaredConstructors;
+
+            foreach (var page in
+                    from constructor in constructors
+                    where constructor.GetParameters().Length == 0
+                    select (Page)constructor.Invoke(null))
+            {
+                await parentPage.Navigation.PushAsync(page);
+                break;
+            }
+        }*/
     }
 }
 

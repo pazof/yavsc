@@ -2,25 +2,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-   
     <meta charset="utf-8">
-
     <link rel="stylesheet" href="quill.snow.css" />
-
     <style>
         .standalone-container {
             margin: 0;
             width: 100%;
+            height: 100%;
         }
-
         #bubble-container {
+            width:100%;
            height: 100%;
         }
-
         #bubble-container div.ql-editor {
             margin-top:3em;
         }
-
         .hidden {
             display: none;
         }
@@ -28,12 +24,10 @@
 
 </head>
 <body>
-
     <div class="standalone-container">
         <div id="bubble-container">@Html.Write(Model)</div>
     </div>
-    <form><input type="hidden" name="md" id="md" />
-    <input id="btnSubmit" type="button" value="Valider" class="hidden" /></form>
+    
     <script type="text/javascript" src="quill.min.js"></script>
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="showdown.js"></script>
@@ -48,7 +42,7 @@
   [{ 'header': 1 }, { 'header': 2 }],               // custom button values
   [{ 'list': 'ordered' }, { 'list': 'bullet' }],
   [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-  
+  ['link', 'image', 'video'],
   ['clean']                                         // remove formatting button
         ];
 
@@ -56,26 +50,19 @@
             modules: {
                 toolbar: toolbarOptions
             },
-    placeholder: 'Composez votre texte ...',
-    theme: 'snow'
-  });
+            placeholder: 'Composez votre texte ...',
+            theme: 'snow'
+        });
 
-  function getMD() {
-      return markdownize($('#bubble-container div.ql-editor').html())
-  }
-  quill.on('text-change', function (delta, oldDelta, source)
-  {
-      if (source === "user") {
-          $('#md').val(getMD());
-          $('#btnSubmit').removeClass('hidden');
+      function getMD() {
+          return markdownize($('#bubble-container div.ql-editor').html())
       }
-  });
-  $(document).ready(function () {
-      $('#btnSubmit').on('click', function () {
-          $.get("file:validate?md=" + encodeURIComponent(getMD()),
-       function (data, stat, jqXHR) { $('#result').html("Okay") })
-      })
-  });
+      quill.on('text-change', function (delta, oldDelta, source)
+      {
+          if (source === "user") {
+              invokeCSharpAction(getMD());
+          }
+      });
     </script>
 
 </body>

@@ -1,14 +1,15 @@
-﻿using System;
+﻿using BookAStar.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 
 using Xamarin.Forms;
-          
+
 namespace BookAStar.Views
 {
-    public partial class MarkdownView : ContentView
+    public class MarkdownView : View
     {
         public static readonly BindableProperty MarkdownProperty = BindableProperty.Create(
             "Markdown", typeof(string), typeof(MarkdownView), null, BindingMode.TwoWay
@@ -22,26 +23,36 @@ namespace BookAStar.Views
             {
                 return markdown;
             }
-            set {
-                markdown = value;
-                Content = App.PlateformSpecificInstance.CreateMarkdownView(
-                    markdown,
-                    e => {
-                        Markdown = e;
-                        if (Validated != null)
-                            Validated.Invoke(this, new EventArgs());
+            set
+            {
+                if (markdown != value)
+                {
+                    markdown = value;
+                    if (Modified != null)
+                    {
+                        Modified.Invoke(this, new EventArgs());
+                        return;
                     }
-                    );
-
+                }
             }
         }
-
-        public MarkdownView() : base()
+        
+        public event EventHandler<EventArgs> Modified;
+        
+        protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
         {
-            
+            double width = widthConstraint;
+            double height = heightConstraint;
+
+            if (MinimumWidthRequest>0)
+                width = widthConstraint > 80 ? widthConstraint < double.MaxValue ? widthConstraint : MinimumWidthRequest : MinimumWidthRequest;
+
+            if (MinimumHeightRequest > 0)
+                height = heightConstraint > 160 ? heightConstraint < double.MaxValue ? heightConstraint : MinimumHeightRequest : MinimumHeightRequest;
+
+            return base.OnMeasure(width, height);
         }
 
-        public event EventHandler Validated;
-
     }
+
 }

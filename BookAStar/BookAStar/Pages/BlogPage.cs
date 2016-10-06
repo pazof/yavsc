@@ -17,7 +17,7 @@ namespace BookAStar.Pages
             _source = new HtmlWebViewSource();
             _sourceTitle = new HtmlWebViewSource();
             _md = new MarkdownDeep.Markdown();
-            _sourceTitle.BaseUrl = _source.BaseUrl = MainSettings.YavscHomeUrl;
+            _sourceTitle.BaseUrl = _source.BaseUrl = Constants.YavscHomeUrl;
             _sourceTitle.Html = "Hello";
             titleLabel = new WebView { Source = _sourceTitle };
             contentView = new WebView { Source = _source };

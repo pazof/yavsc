@@ -6,8 +6,14 @@ using Xamarin.Forms.Maps;
 
 namespace BookAStar.Pages
 {
+    using Helpers;
     using Model;
+    using Model.Workflow;
     using System.Threading.Tasks;
+    using ViewModels;
+    using XLabs.Forms.Mvvm;
+    using XLabs.Ioc;
+    using XLabs.Platform.Services;
 
     public partial class BookQueryPage : ContentPage
     {
@@ -43,8 +49,13 @@ namespace BookAStar.Pages
                 map.MoveToRegion(MapSpan.FromCenterAndRadius(
                     new Position(lat, lon), Distance.FromMeters(100)));
             }
+            
         }
-        public BookQueryPage(BookQueryData bookQuery)
+        public BookQueryPage()
+        {
+            InitializeComponent();
+        }
+        public BookQueryPage(BookQueryData bookQuery=null)
         {
             
             InitializeComponent();
@@ -55,9 +66,19 @@ namespace BookAStar.Pages
             
         }
 
-        private void MakeAnEstimate(object sender, EventArgs e)
+        private void MakeAnEstimate(object sender, EventArgs ev)
         {
-            throw new NotImplementedException();
+            DataManager.Current.Contacts.Merge(BookQuery.Client);
+            var e = new Estimate()
+            {
+                ClientId = BookQuery.Client.UserId,
+                CommandId = BookQuery.Id,
+                OwnerId = MainSettings.CurrentUser.Id,
+                Id = 0,
+                Description = "# **Hello Estimate!**"
+            };
+            App.CurrentApp.NavigationService.NavigateTo<EditEstimatePage>(true,
+                new EstimateViewModel(e));
         }
         
     }

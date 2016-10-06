@@ -24,6 +24,7 @@ using System.Json;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 
 namespace Yavsc.Helpers
 {
@@ -40,8 +41,7 @@ namespace Yavsc.Helpers
 		/// <param name="pathToMethod">Path to method.</param>
 		public SimpleJsonPostMethod (string pathToMethod, string authorizationHeader = null)
 		{
-			request = (HttpWebRequest) WebRequest.Create (
-                BasePath + pathToMethod);
+			request = (HttpWebRequest) WebRequest.Create (BasePath + pathToMethod);
 			request.Method = "POST";
 			request.Accept = "application/json";
 			request.ContentType = "application/json";
@@ -84,20 +84,29 @@ namespace Yavsc.Helpers
 		public async Task<JsonValue> InvokeJson(object query)
 		{
 
-      JsonValue jsonDoc=null;
+           JsonValue jsonDoc=null;
 			using (Stream streamQuery = request.GetRequestStream()) {
 				using (StreamWriter writer = new StreamWriter(streamQuery)) {
 					writer.Write (JsonConvert.SerializeObject(query));
 				}}
-			using (WebResponse response = request.GetResponse ()) {
-				using (Stream stream = response.GetResponseStream ()) {
-                    if (stream.Length>0)
-		      jsonDoc = await Task.Run (() => JsonObject.Load (stream));			
-				}
-				response.Close();
-			}
+            try
+            {
+                using (WebResponse response = request.GetResponse())
+                {
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        if (stream.Length > 0)
+                            jsonDoc = await Task.Run(() => JsonObject.Load(stream));
+                    }
+                    response.Close();
+                }
+            }
+            catch (WebException ex)
+            {
+                // TODO err logging
+                Debug.Print($"Web request failed: {request.ToString()}\n" + ex.ToString());
+            }
 			return jsonDoc;
 		}
 	}
 }
-

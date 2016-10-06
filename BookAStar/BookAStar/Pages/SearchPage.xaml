@@ -3,13 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:BookAStar;Assembly:BookAStar"
              x:Class="BookAStar.SearchPage" Title="Page de recherche"
-             Padding="10,40,10,10" >
+             Style="{StaticResource PageStyle}">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
 	<ContentPage.Content>
 	<StackLayout>
-	<StackLayout Orientation="Horizontal">
-	<Label Text="Utiliser ma position" />
-	<Switch x:Name="use_my_pos" HorizontalOptions="End" />
-	</StackLayout>
+
     
 	<StackLayout Orientation="Horizontal">
 	<Editor x:Name="search_phrase" HorizontalOptions="FillAndExpand"/>
@@ -19,7 +26,6 @@
 
 	<ListView x:Name="list" ItemsSource="{x:Static local:Manager.Events}" 
 	 HasUnevenRows="true">
-    s
 				<ListView.ItemTemplate>
 					<DataTemplate>
 					<ViewCell>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="quill.snow.css" />
+    <style>
+        .standalone-container {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #bubble-container {
+            width:100%;
+           height: 100%;
+        }
+        #bubble-container div.ql-editor {
+            margin-top:0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Title</h1>
+    <div class="standalone-container">
+        <div id="bubble-container"><h1><strong>Hello Estimate!</strong></h1>
+</div>
+    </div>
+    
+    <script type="text/javascript" src="quill.min.js"></script>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="showdown.js"></script>
+    <script type="text/javascript" src="to-markdown.js"></script>
+    <script type="text/javascript" src="md-helpers.js"></script>
+
+    <script type="text/javascript">
+        var toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  ['blockquote', 'code-block'],
+
+  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+  [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+  
+  ['clean']                                         // remove formatting button
+        ];
+
+        var quill = new Quill('#bubble-container', {
+            modules: {
+                toolbar: toolbarOptions
+            },
+            placeholder: 'Composez votre texte ...',
+            theme: 'snow'
+        });
+
+      function getMD() {
+          return markdownize($('#bubble-container div.ql-editor').html())
+      }
+      quill.on('text-change', function (delta, oldDelta, source)
+      {
+          if (source === "user") {
+              $.get("file:validate?md=" + encodeURIComponent(getMD()));
+          }
+      });
+    </script>
+
+</body>
+</html>
+

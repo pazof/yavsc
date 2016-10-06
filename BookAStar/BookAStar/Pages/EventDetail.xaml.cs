@@ -15,7 +15,7 @@ namespace BookAStar
                 BindingContext = ev;
                 btn_webpage.Clicked += (object sender, EventArgs e) =>
                 {
-                    App.PlateformSpecificInstance.OpenWeb(ev.EventWebPage);
+                    App.PlatformSpecificInstance.OpenWeb(ev.EventWebPage);
                 };
             }
 

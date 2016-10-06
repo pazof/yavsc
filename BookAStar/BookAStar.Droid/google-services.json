@@ -1,0 +1,78 @@
+{
+  "project_info": {
+    "project_number": "325408689282",
+    "project_id": "yavsc-001"
+  },
+  "client": [
+    {
+      "client_info": {
+        "android_client_info": {
+          "package_name": "fr.pschneider.android.wearable.speedtracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCAE_pc6lrxLf8_Vyho0KSxLsqjxecPFk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:325408689282:android:50a2328516f10af3",
+        "android_client_info": {
+          "package_name": "fr.pschneider.bas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "325408689282-emdeucmt5pr9jg7170t0q9gnndacsqqf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fr.pschneider.bas",
+            "certificate_hash": "E97A345457861B8E2E7BA79BB814BB1ACC0471A6"
+          }
+        },
+        {
+          "client_id": "325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCAE_pc6lrxLf8_Vyho0KSxLsqjxecPFk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
