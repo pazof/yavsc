@@ -13,4 +13,5 @@
 	<string name="url">url</string>
 	<string name="url_hint">url_hint</string>
 	<string name="picture">picture</string>
+	<string name="google_app_id">325408689282</string>
 </resources>

@@ -5,17 +5,14 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace BookAStar
-{
-
-   
-   
-
-       
+{      
+    [Obsolete("Use Helpers.DataManager")]
     public static class Manager
 	{
 	    static Manager ()
 		{
 		}
+
         public static ICommand RefreshBookQueries;
         // TODO WIP TEST rop this
         private static Location[] _places = new Location[] {

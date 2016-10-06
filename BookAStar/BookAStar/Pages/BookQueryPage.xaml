@@ -1,19 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps.dll"
-             x:Class="BookAStar.Pages.BookQueryPage">
+             x:Class="BookAStar.Pages.BookQueryPage"
+             Style ="{StaticResource PageStyle}"
+             >
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
   <StackLayout x:Name="bookQueryLayout">
     
-    
-  <Label Text="{Binding Title}" VerticalOptions="Start" HorizontalOptions="Center" />
-   <Label Text="{Binding Description}" VerticalOptions="FillAndExpand" HorizontalOptions="Center" />
-   <Label Text="{Binding CommandId}" VerticalOptions="Center" HorizontalOptions="Center" />
-   <Label Text="{Binding Comment}" VerticalOptions="Center" HorizontalOptions="Center" />
-   <Label Text="{Binding StartDate}" VerticalOptions="Center" HorizontalOptions="Center" />
-   <Label Text="{Binding EndDate}" VerticalOptions="Center" HorizontalOptions="Center" />
-   <Label Text="{Binding Location}" VerticalOptions="Center" HorizontalOptions="Center" />
-    <maps:Map x:Name="map"></maps:Map>
-   <Button Text="Faire un devis" Clicked="MakeAnEstimate" VerticalOptions="Center" HorizontalOptions="End"/>
-</StackLayout>
+    <Image Source="{Binding Client.AvatarOrNot}" Aspect="AspectFit" VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}"/>
+    <Label Text="{Binding Client.UserName}"/>
+    <Label Text="{Binding EventDate, StringFormat='le {0:dddd d MMMM yyyy à hh:mm}'}"  />
+    <Label Text="{Binding Location.Address}" />
+    <Label Text="{Binding Previsional}" />
+    <maps:Map x:Name="map" VerticalOptions="FillAndExpand"></maps:Map>
+    <Button Text="Faire un devis" Clicked="MakeAnEstimate" />
+  </StackLayout>
 </ContentPage>

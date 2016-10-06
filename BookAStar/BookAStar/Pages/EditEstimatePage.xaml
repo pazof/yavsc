@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BookAStar.Pages.EditEstimatePage"
+             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
+             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
+             Style="{StaticResource PageStyle}">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+  <ScrollView>
+  <StackLayout Padding="10,10,10,10">
+    <StackLayout Orientation="Horizontal" Padding="10,10,10,10" View.VerticalOptions="CenterAndExpand">
+      <Label Text="{Binding Client.UserName}" LineBreakMode="WordWrap" View.VerticalOptions="CenterAndExpand"></Label>
+      <Label Text="{Binding Query.Location.Address}" LineBreakMode="WordWrap" View.VerticalOptions="CenterAndExpand"></Label>
+      <Label Text="{Binding Query.EventDate, StringFormat='{0:dddd d MMMM yyyy à hh:mm}'}" LineBreakMode="WordWrap" View.VerticalOptions="CenterAndExpand"></Label>
+    </StackLayout>
+
+    <views:MarkdownView x:Name="mdview"
+                        Modified="OnDescriptionChanged"
+                        HorizontalOptions="FillAndExpand"
+                        View.VerticalOptions="CenterAndExpand"
+    Markdown="{Binding Description, Mode=TwoWay}"
+                        MinimumHeightRequest="160"
+             RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,
+                                                                             Property=Height,
+                                                                             Factor=.6}"
+                      RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,
+                                                                            Property=Width,
+                                                                            Factor=1}"
+                        ></views:MarkdownView>
+
+    <ListView HeightRequest="80" View.VerticalOptions="End">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View HeightRequest="80">
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+    <Button Text="Ajouter une ligne de facture" Clicked="OnNewCommanLine"></Button>
+    <Label FormattedText="{Binding FormattedTotal}"/>
+    <Button Text="Valider ce devis"></Button>
+  </StackLayout>
+    </ScrollView>
+</ContentPage>

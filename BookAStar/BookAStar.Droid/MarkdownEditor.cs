@@ -17,7 +17,7 @@ using System.Linq;
 using System.Text;
 
 
-[System.CodeDom.Compiler.GeneratedCodeAttribute("RazorTemplatePreprocessor", "4.1.2.18")]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("RazorTemplatePreprocessor", "4.2.0.680")]
 public partial class MarkdownEditor : MarkdownEditorBase
 {
 
@@ -32,32 +32,30 @@ public string Model { get; set; }
 
 public override void Execute()
 {
-WriteLiteral("<!DOCTYPE html>\r\n<html>\r\n<head>\r\n   \r\n    <meta");
+WriteLiteral("<!DOCTYPE html>\r\n<html>\r\n<head>\r\n    <meta");
 
 WriteLiteral(" charset=\"utf-8\"");
 
-WriteLiteral(">\r\n\r\n    <link");
+WriteLiteral(">\r\n    <link");
 
 WriteLiteral(" rel=\"stylesheet\"");
 
 WriteLiteral(" href=\"quill.snow.css\"");
 
 WriteLiteral(@" />
-
     <style>
         .standalone-container {
             margin: 0;
             width: 100%;
+            height: 100%;
         }
-
         #bubble-container {
+            width:100%;
            height: 100%;
         }
-
         #bubble-container div.ql-editor {
             margin-top:3em;
         }
-
         .hidden {
             display: none;
         }
@@ -65,7 +63,6 @@ WriteLiteral(@" />
 
 </head>
 <body>
-
     <div");
 
 WriteLiteral(" class=\"standalone-container\"");
@@ -77,31 +74,13 @@ WriteLiteral(" id=\"bubble-container\"");
 WriteLiteral(">");
 
 
-#line 33 "MarkdownEditor.cshtml"
+#line 28 "MarkdownEditor.cshtml"
                               Write(Html.Write(Model));
 
 
 #line default
 #line hidden
-WriteLiteral("</div>\r\n    </div>\r\n    <form><input");
-
-WriteLiteral(" type=\"hidden\"");
-
-WriteLiteral(" name=\"md\"");
-
-WriteLiteral(" id=\"md\"");
-
-WriteLiteral(" />\r\n    <input");
-
-WriteLiteral(" id=\"btnSubmit\"");
-
-WriteLiteral(" type=\"button\"");
-
-WriteLiteral(" value=\"Valider\"");
-
-WriteLiteral(" class=\"hidden\"");
-
-WriteLiteral(" /></form>\r\n    <script");
+WriteLiteral("</div>\r\n    </div>\r\n    \r\n    <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
@@ -143,7 +122,7 @@ WriteLiteral(@">
   [{ 'header': 1 }, { 'header': 2 }],               // custom button values
   [{ 'list': 'ordered' }, { 'list': 'bullet' }],
   [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-  
+  ['link', 'image', 'video'],
   ['clean']                                         // remove formatting button
         ];
 
@@ -151,26 +130,19 @@ WriteLiteral(@">
             modules: {
                 toolbar: toolbarOptions
             },
-    placeholder: 'Composez votre texte ...',
-    theme: 'snow'
-  });
+            placeholder: 'Composez votre texte ...',
+            theme: 'snow'
+        });
 
-  function getMD() {
-      return markdownize($('#bubble-container div.ql-editor').html())
-  }
-  quill.on('text-change', function (delta, oldDelta, source)
-  {
-      if (source === ""user"") {
-          $('#md').val(getMD());
-          $('#btnSubmit').removeClass('hidden');
+      function getMD() {
+          return markdownize($('#bubble-container div.ql-editor').html())
       }
-  });
-  $(document).ready(function () {
-      $('#btnSubmit').on('click', function () {
-          $.get(""file:validate?md="" + encodeURIComponent(getMD()),
-       function (data, stat, jqXHR) { $('#result').html(""Okay"") })
-      })
-  });
+      quill.on('text-change', function (delta, oldDelta, source)
+      {
+          if (source === ""user"") {
+              invokeCSharpAction(getMD());
+          }
+      });
     </script>
 
 </body>

@@ -1,44 +1,104 @@
-﻿using System;
-
-using Android.App;
-using Android.Content.PM;
-using Android.Widget;
-using Android.OS;
+﻿using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Gms.Common;
+using Android.OS;
+using Android.Speech.Tts;
 using Android.Util;
-
-using Xamarin.Auth;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Net;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net.Http;
-using System.Text;
-using BookAStar.Model.Auth.Account;
+using Android.Widget;
 using BookAStar.Droid.OAuth;
+using BookAStar.Helpers;
+using BookAStar.Interfaces;
+using BookAStar.Model.Auth.Account;
+using Newtonsoft.Json.Linq;
+using Plugin.DeviceInfo;
+using SQLite.Net;
+using SQLite.Net.Platform.XamarinAndroid;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Xamarin.Auth;
+using XLabs;
+using XLabs.Caching;
+using XLabs.Caching.SQLite;
+using XLabs.Enums;
+using XLabs.Forms;
+using XLabs.Forms.Services;
+using XLabs.Ioc;
+using XLabs.Platform.Device;
+using XLabs.Platform.Mvvm;
+using XLabs.Platform.Services;
+using XLabs.Platform.Services.Email;
+using XLabs.Platform.Services.Media;
+using XLabs.Serialization;
+using XLabs.Serialization.JsonNET;
 using Yavsc.Helpers;
 using Yavsc.Models.Identity;
-using static Android.Content.Res.Resources;
-using Android.Webkit;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
-using Android.Views;
-
 
 namespace BookAStar.Droid
 {
-    [Activity(Name="fr.pschneider.bas.MainActivity", Label = "BookAStar", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
-        IPlatform
+    [Activity(Name="fr.pschneider.bas.MainActivity", Label = "BookAStar", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    public class MainActivity :
+
+        // global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
+        XFormsCompatApplicationDroid,
+        IPlatform, IComponentContext
     {
         protected override void OnCreate(Bundle bundle)
         {
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
+            
+            base.OnCreate(bundle);
+            SetPersistent(true);
+            // global::Xamarin.Forms.Forms.SetTitleBarVisibility(Xamarin.Forms.AndroidTitleBarVisibility.Never);
+
+            //var tb = FindViewById<Android.Support.V7.Widget.Toolbar>(ToolbarResource);
+            // FIXME tb is null
+            var stb = new Android.Support.V7.Widget.Toolbar(this);
+            SetSupportActionBar(stb);
+            var tb = new Toolbar(this);
+            SetActionBar(tb);
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {
+                Android.Webkit.WebView.SetWebContentsDebuggingEnabled(true);
+            }
+
+            IXFormsApp<XFormsCompatApplicationDroid> app =null;
+            if (!Resolver.IsSet)
+            {
+                var xfapp = new XFormsCompatAppDroid();
+                this.SetIoc(xfapp);
+            }
+            else
+            {
+                app = Resolver.Resolve<IXFormsApp>() as IXFormsApp<XFormsCompatApplicationDroid>;
+                if (app != null)
+                    app.AppContext = this;
+            }
+
+            global::Xamarin.Forms.Forms.Init(this, bundle);
+            global::Xamarin.FormsMaps.Init(this, bundle);
+
+            Xamarin.Forms.Forms.ViewInitialized += (sender, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.View.StyleId))
+                {
+                    e.NativeView.ContentDescription = e.View.StyleId;
+                }
+            };
+
+            var fapp = new BookAStar.App(this);
+            LoadApplication(fapp);
+            // TabLayoutResource = Resource.Layout.Tabbar;
+            // ToolbarResource = Resource.Layout.Toolbar;
+            /*
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             global::Xamarin.FormsMaps.Init(this, bundle);
@@ -46,8 +106,35 @@ namespace BookAStar.Droid
             /* var x = typeof(Themes.DarkThemeResources);
              x = typeof(Themes.LightThemeResources);
              x = typeof(Themes.Android.UnderlineEffect); */
+
         }
 
+        private SimpleContainer SetIoc(XFormsCompatAppDroid app)
+        {
+            var resolverContainer = new SimpleContainer();
+
+
+            app.Init(this);
+
+           var documents = app.AppDataDirectory;
+           var pathToDatabase = Path.Combine(documents, "xforms.db");
+
+            resolverContainer.Register<IDevice>(t => AndroidDevice.CurrentDevice)
+                .Register<IDisplay>(t => t.Resolve<IDevice>().Display)
+                .Register<IFontManager>(t => new FontManager(t.Resolve<IDisplay>()))
+                .Register<IEmailService, EmailService>()
+                .Register<IMediaPicker, MediaPicker>()
+                .Register<ITextToSpeechService, XLabs.Platform.Services.TextToSpeechService>()
+                .Register<IDependencyContainer>(resolverContainer)
+                .Register<IXFormsApp>(app)
+                .Register<ISecureStorage>(t => new KeyVaultStorage(t.Resolve<IDevice>().Id.ToCharArray()))
+                .Register<IJsonSerializer, JsonSerializer>()
+                .Register<ICacheProvider>(
+                    t => new SQLiteSimpleCache(new SQLitePlatformAndroid(),
+                        new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()));
+            Resolver.SetResolver(resolverContainer.GetResolver());
+            return resolverContainer;
+        }
 
         public bool EnablePushNotifications(bool enable)
         {
@@ -64,6 +151,11 @@ namespace BookAStar.Droid
             {
                 return gCMStatusMessage;
             }
+        }
+
+        public App AppContext
+        {
+            get;set;
         }
 
         bool StartNotifications()
@@ -87,11 +179,11 @@ namespace BookAStar.Droid
         {
 
             var accStore = AccountStore.Create(this);
-            var accounts = accStore.FindAccountsForService(MainSettings.ApplicationName);
+            var accounts = accStore.FindAccountsForService(Constants.ApplicationName);
 
             accStore.Delete(
                     accounts.Where(a => a.Username == userName).FirstOrDefault()
-                    , MainSettings.ApplicationName);
+                    , Constants.ApplicationName);
             Toast.MakeText(this,
                 Resource.String.yavscIdentRemoved
                 , ToastLength.Short);
@@ -116,7 +208,7 @@ namespace BookAStar.Droid
             {
                 Task.Run(async () =>
                 {
-                    App.CurrentApp.ShowBookQuery(
+                    App.ShowBookQuery(
                        await DataManager.Current.BookQueries.Get(queryId));
                 });
             }
@@ -160,7 +252,7 @@ namespace BookAStar.Droid
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {
                         responseText = reader.ReadToEnd();
-                        Log.Debug(MainSettings.ApplicationName, responseText);
+                        Log.Debug(Constants.ApplicationName, responseText);
                     }
                 }
             }
@@ -180,7 +272,7 @@ namespace BookAStar.Droid
         {
             return await Task.Run(() => {
                 var manager = AccountStore.Create(this);
-                return manager.FindAccountsForService(MainSettings.ApplicationName);
+                return manager.FindAccountsForService(Constants.ApplicationName);
             });
         }
         YaOAuth2Authenticator auth = new YaOAuth2Authenticator(
@@ -215,7 +307,7 @@ namespace BookAStar.Droid
 
                                // get me
                                // var request = new OAuth2Request("GET", new Uri(Constants.UserInfoUrl), null, eventArgs.Account);
-                               var request = new HttpRequestMessage(HttpMethod.Get, MainSettings.UserInfoUrl);
+                               var request = new HttpRequestMessage(HttpMethod.Get, Constants.UserInfoUrl);
 
                                request.Headers.Authorization =
                                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokens.AccessToken);
@@ -244,7 +336,7 @@ namespace BookAStar.Droid
                                };
                                
                                MainSettings.SaveUser(newuser);
-                               accStore.Save(acc, MainSettings.ApplicationName);
+                               accStore.Save(acc, Constants.ApplicationName);
                            }
                        }
 
@@ -296,7 +388,7 @@ namespace BookAStar.Droid
 
         public IGCMDeclaration GetDeviceInfo()
         {
-            var devinfo = DeviceInfo.Plugin.CrossDeviceInfo.Current;
+            var devinfo = CrossDeviceInfo.Current;
             return new GCMDeclaration
             {
                 DeviceId = devinfo.Id,
@@ -332,34 +424,28 @@ namespace BookAStar.Droid
             }
         }
 
-        public Xamarin.Forms.View CreateMarkdownView(string markdown, Action<string> update)
+        public T Resolve<T>()
         {
-            var view = new Android.Webkit.WebView(Forms.Context);
-            var viewclient = new MarkdownWebViewClient(update);
-            view.SetWebViewClient(viewclient);
-            var mde = new MarkdownEditor();
-            if (markdown!=null)
-            {
-                var md = new MarkdownDeep.Markdown();
-                mde.Model = md.Transform(markdown);
-            }
-            var html = mde.GenerateString();
-            view.Settings.BuiltInZoomControls = true;
-            view.Settings.JavaScriptEnabled = true;
-            view.Settings.LoadsImagesAutomatically = true;
-            view.Settings.SetAppCacheEnabled(true);
-            view.Settings.AllowContentAccess = true;
-            view.Settings.AllowFileAccess = true;
-            view.Settings.AllowFileAccessFromFileURLs = true;
-            view.Settings.AllowUniversalAccessFromFileURLs = true;
-            view.Settings.BlockNetworkImage = false;
-            view.Settings.BlockNetworkLoads = false;
-            view.LoadDataWithBaseURL("file:///android_asset/",
-                html, "text/html", "utf-8",null);
-            
-            return view.ToView();
+            return (T) Resolver.Resolve(typeof(T));
         }
-        
+
+        public object Resolve(Type t)
+        {
+            return Resolver.Resolve(t);
+        }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            base.OnSaveInstanceState(outState);
+        }
+        public override void OnStateNotSaved()
+        {
+            base.OnStateNotSaved();
+        }
+        public override void OnRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState)
+        {
+            base.OnRestoreInstanceState(savedInstanceState, persistentState);
+        }
     }
 }
 

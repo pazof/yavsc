@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BookAStar.Pages.AccountChooserPage"
+             Title="Paramètres Booking star" Style="{StaticResource PageStyle}"
+             xmlns:lc="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
+             xmlns:lb="clr-namespace:XLabs.Forms.Behaviors;assembly=XLabs.Forms">
+
+  <StackLayout>
+    <Label Text="Compte utilisateur" StyleClass="Header"/>
+
+    <ListView x:Name="AccountListView"
+              SeparatorVisibility="Default"
+              VerticalOptions="FillAndExpand"
+        >
+      <ListView.Header>
+        <StackLayout Orientation="Horizontal">
+
+          <Button x:Name="AddAccountBtn" Text="Connection, ou création d'un compte" />
+        </StackLayout>
+      </ListView.Header>
+
+      <ListView.ItemTemplate HeightRequest="60" VerticalOptions="StartAndExpand">
+        <DataTemplate>
+          <ViewCell>
+              <Grid Padding="5"
+                        ColumnSpacing="10"
+                        RowSpacing="2" >
+                <Image Source="{Binding AvatarSource}" HeightRequest="80"
+                       x:Name="avatarImage"/>
+                <Label Grid.Column="0" Text="{Binding UserName}" >
+
+                </Label>
+              </Grid>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+      <ListView.Footer>
+        <StackLayout></StackLayout>
+      </ListView.Footer>
+
+    </ListView>
+
+  </StackLayout>
+</ContentPage>
