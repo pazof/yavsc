@@ -169,7 +169,10 @@ namespace BookAStar
             ToolbarItem tiSetts = new ToolbarItem()
             {
                 Text = "Paramètres",
-                Icon = "ic_corp_icon.png"
+                Icon = "ic_corp_icon.png",
+                Command = new Command(
+                    () => { NavigationService.NavigateTo<AccountChooserPage>(); }
+                    ) 
             };
 
             ToolbarItem tiHome = new ToolbarItem()
@@ -179,7 +182,6 @@ namespace BookAStar
             };
             masterDetail.ToolbarItems.Add(tiHome);
             masterDetail.ToolbarItems.Add(tiSetts);
-            
             this.MainPage = masterDetail;
             NavigationService = new NavigationService(masterDetail.Detail.Navigation);
         }
