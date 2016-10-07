@@ -12,11 +12,10 @@ namespace BookAStar.Helpers
         public static ImageSource Avatar(string avatarPath)
         {
             var result = avatarPath == null ?
-                ImageSource.FromResource( "BookAStar.Images.icon_user.png") :
+                ImageSource.FromResource( "BookAStar.Images.Users.icon_user.png") :
                 avatarPath.StartsWith("res://") ?
                  ImageSource.FromResource(avatarPath.Substring(6)) :
                  ImageSource.FromUri(new Uri(avatarPath));
-            var test = ImageSource.FromResource("none.resource.png");
             return result;
         }
 
