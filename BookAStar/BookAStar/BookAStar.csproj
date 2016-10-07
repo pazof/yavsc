@@ -314,10 +314,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\Validation\error.png" />
-    <Content Include="Images\Validation\star_outline.png" />
-    <Content Include="Images\Validation\star_selected.png" />
-    <Content Include="Images\Validation\success.png" />
+    <EmbeddedResource Include="Images\Validation\error.png" />
+    <EmbeddedResource Include="Images\Validation\star_outline.png" />
+    <EmbeddedResource Include="Images\Validation\star_selected.png" />
+    <EmbeddedResource Include="Images\Validation\success.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\RatingView.xaml">

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
              xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
+             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
              x:Class="BookAStar.Pages.DashboardPage"
              xmlns:lc="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
              xmlns:lb="clr-namespace:XLabs.Forms.Behaviors;assembly=XLabs.Forms"
@@ -19,25 +20,34 @@
   </ContentPage.Resources>
   <ScrollView>
     <StackLayout Orientation="Vertical" >
+
+      <Label Text="Compte utilisateur" StyleClass="Header">
+      </Label>
       <lc:GesturesContentView>
-        <Frame>
-          <Label Text="Compte utilisateur" StyleClass="Header">
-          </Label>
-          <lb:Gestures.Interests>
-            <lb:GestureCollection>
-              <lb:GestureInterest GestureType="LongPress"
-                                  GestureCommand="{Binding UserNameGesture}"
-                                  GestureParameter="LongPress" />
-            </lb:GestureCollection>
+        <StackLayout>
+          <Frame>
+            <lb:Gestures.Interests>
+              <lb:GestureCollection>
+                <lb:GestureInterest GestureType="LongPress"
+                                    GestureCommand="{Binding UserNameGesture}"
+                                    />
+              </lb:GestureCollection>
+            </lb:Gestures.Interests>
+            <StackLayout>
+              
             <Image Source="{Binding Avatar}" Aspect="AspectFit" VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}" />
+
             <Label Text="{Binding UserName}" Style="{StaticResource LabelPageHeadingStyle}"
                        HorizontalTextAlignment="Center"
                        LineBreakMode="WordWrap" XAlign="Center"
            ></Label>
-            <views:RatingView Rating="{Binding Rating}"/>
-          </lb:Gestures.Interests>
-        </Frame>
+            </StackLayout>
+          </Frame>
+          <views:RatingView Rating="{Binding Rating}"/>
+        </StackLayout>
+
       </lc:GesturesContentView>
+
 
       <Button Text="{Binding PerformerStatus}" Clicked="OnViewPerformerStatus" />
       <Button Text="{Binding UserQueries}" Clicked="OnViewUserQueries" />

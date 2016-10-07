@@ -15,6 +15,8 @@ namespace BookAStar.ViewModels
     
     internal class DashboardViewModel : ViewModel
     {
+        public int Rating { get; set; }
+
         public string UserId
         {
             get

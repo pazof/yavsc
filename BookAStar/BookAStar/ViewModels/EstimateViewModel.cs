@@ -13,10 +13,10 @@ namespace BookAStar.ViewModels
         {
             Data = data;
             if (data.AttachedFiles == null) data.AttachedFiles = new List<string>();
-            if (data.AttachedGraphicList == null) data.AttachedGraphicList = new List<string>();
+            if (data.AttachedGraphics == null) data.AttachedGraphics = new List<string>();
             if (data.Bill == null) data.Bill = new List<BillingLine>();
             AttachedFiles = new ObservableCollection<string>(data.AttachedFiles);
-            AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphicList);
+            AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphics);
             Bill = new ObservableCollection<BillingLine>(data.Bill);
         }
 

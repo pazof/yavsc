@@ -47,6 +47,20 @@ namespace BookAStar.ViewModels
                 data.Description = value;
             }
         }
+        public decimal UnitaryCost
+        {
+            get
+            {
+                return data.UnitaryCost;
+            }
+
+            set
+            {
+                SetProperty<decimal>(ref unitaryCost, value, "UnitaryCost");
+                data.UnitaryCost = value;
+                UnitaryCostText = value.ToString(unitCostFormat, CultureInfo.InvariantCulture);
+            }
+        }
         protected int durationValue;
         public int DurationValue
         {
