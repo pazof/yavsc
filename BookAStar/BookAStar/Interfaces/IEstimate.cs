@@ -6,7 +6,7 @@ namespace BookAStar.Model.Interfaces
     public interface IEstimate
     {
         List<string> AttachedFiles { get; set; }
-        List<string> AttachedGraphicList { get; }
+        List<string> AttachedGraphics { get; }
         List<BillingLine> Bill { get; set; }
         string ClientId { get; set; }
         long? CommandId { get; set; }
