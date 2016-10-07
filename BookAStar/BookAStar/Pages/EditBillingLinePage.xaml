@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
              xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
+             xmlns:behaviors="clr-namespace:BookAStar.Behaviors;assembly=BookAStar"
+             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
              x:Class="BookAStar.Pages.EditBillingLinePage"
              Style="{StaticResource PageStyle}">
   <ContentPage.Resources>
@@ -13,6 +15,23 @@
       <Style TargetType="Button">
         <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
       </Style>
+      <local:BooleanToObjectConverter x:Key="boolToStyleImage" x:TypeArguments="Style">
+        
+        <local:BooleanToObjectConverter.FalseObject>
+          <Style TargetType="Image">
+            <Setter Property="HeightRequest" Value="20" />
+            <Setter Property="Source" Value="{extensions:ImageResource Samples.Images.error.png}" />
+          </Style>
+        </local:BooleanToObjectConverter.FalseObject>
+
+        <local:BooleanToObjectConverter.TrueObject>
+          <Style TargetType="Image">
+            <Setter Property="HeightRequest" Value="20" />
+            <Setter Property="Source" Value="{extensions:ImageResource Samples.Images.success.png}" />
+          </Style>
+        </local:BooleanToObjectConverter.TrueObject>
+      </local:BooleanToObjectConverter>
+      
     </ResourceDictionary>
   </ContentPage.Resources>
   <StackLayout x:Name="mainStackLayout">
@@ -22,7 +41,8 @@
            Style="{StaticResource InputLabelStyle}"></Label>
     <StackLayout Orientation="Horizontal">
       <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}" />
-      <Picker x:Name="picker" SelectedIndex="{Binding UnitaryCost, Mode=TwoWay}" Style="{StaticResource PickerStyle}" Title="Unité de temps">
+      <Picker x:Name="picker" SelectedIndex="{Binding UnitaryCost, Mode=TwoWay}"
+              Style="{StaticResource PickerStyle}" Title="Unité de temps">
         <Picker.Items>
           <x:String>Jours</x:String>
           <x:String>Heures</x:String>
@@ -31,12 +51,24 @@
       </Picker>
     </StackLayout>
     <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
-    <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric"  Style="{StaticResource BigEntry}"/>
+    <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric" 
+           Style="{StaticResource BigEntry}"/>
     <Label Text="Prix unitaire" Style="{StaticResource InputLabelStyle}"></Label>
     <StackLayout Orientation="Horizontal">
-      <Entry Text="{Binding UnitaryCostText, Mode=TwoWay}" Placeholder="Prix" Keyboard="Numeric" Style="{StaticResource BigEntry}"></Entry>
+      
+      <Entry Text="{Binding UnitaryCostText, Mode=TwoWay}" Placeholder="Prix" 
+             Keyboard="Numeric" Style="{StaticResource BigEntry}" >
+        <Entry.Behaviors>
+          <behaviors:DecimalValidatorBehavior x:Name="unitCostValidator" />
+        </Entry.Behaviors>
+        <Image  x:Name="unitaryCostSuccessErrorImage"
+                  Style="{Binding Source={x:Reference unitCostValidator}, 
+                                Path=IsValid, 
+                                Converter={StaticResource boolToStyleImage}}" />
+      </Entry>
       <Label Text="€" Style="{StaticResource BigLabel}" HorizontalTextAlignment="Start"/>
     </StackLayout>
-    <Button Text="Valider cette ligne de facture" Command="{Binding ValidateCommand}" Clicked="OnValidateClicked"></Button>
+    <Button Text="Valider cette ligne de facture" Command="{Binding ValidateCommand}" 
+            Clicked="OnValidateClicked"></Button>
   </StackLayout>
 </ContentPage>

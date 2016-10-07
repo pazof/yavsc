@@ -83,25 +83,30 @@ namespace BookAStar.ViewModels
 
         protected decimal unitaryCost;
         public static readonly string unitCostFormat = "0,.00";
+        string unitaryCostText;
         public string UnitaryCostText
         {
             get
             {
-                return unitaryCost.ToString(unitCostFormat, CultureInfo.InvariantCulture);
+                return unitaryCostText;
             }
 
             set
             {
-                decimal newValue;
-                if (decimal.TryParse(value, NumberStyles.Currency,
-                    CultureInfo.InvariantCulture,
-                    out newValue))
+                if (unitaryCostText != value)
                 {
-                    SetProperty<decimal>(ref unitaryCost, newValue, "UnitaryCostText");
-                    SetProperty<bool>(ref invalidCost, false, "InvalidCost");
+                    try
+                    {
+                        data.UnitaryCost = decimal.Parse(value, CultureInfo.InvariantCulture);
+                    }
+                    catch (Exception)
+                    {
+                        // TODO Error model
+                        // UI should shoud entry as wearing a wrong value
+                        // thanks to its `Behaviors`
+                    }
                 }
-                else
-                    SetProperty<bool>(ref invalidCost, true, "InvalidCost");
+                SetProperty<string>(ref unitaryCostText, value, "UnitaryCostText");
             }
         }
         bool invalidCost;
@@ -149,18 +154,6 @@ namespace BookAStar.ViewModels
                 DurationUnit = DurationUnits.Minutes;
             }
         }
-
-        public decimal UnitaryCost
-        {
-            get
-            {
-                return decimal.Parse(this.UnitaryCostText,CultureInfo.InvariantCulture);
-            }
-
-            set
-            {
-                UnitaryCostText = value.ToString(unitCostFormat, CultureInfo.InvariantCulture);
-            }
-        }
+        
     }
 }
