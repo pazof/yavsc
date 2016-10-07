@@ -40,7 +40,16 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Behaviors\EmailValidatorBehavior.cs" />
+    <Compile Include="Behaviors\MaxLengthValidator.cs" />
+    <Compile Include="Behaviors\DecimalValidatorBehavior.cs" />
+    <Compile Include="Behaviors\PickerBehavior.cs" />
+    <Compile Include="Behaviors\StarBehavior.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Converters\BooleanToObjectConverter.cs" />
+    <Compile Include="Converters\GenderConverter.cs" />
+    <Compile Include="Converters\RatingText.cs" />
+    <Compile Include="Extensions\ImageResourceExtension.cs" />
     <Compile Include="Factories\ViewFactory.cs" />
     <Compile Include="Helpers\DataManager.cs" />
     <Compile Include="Helpers\ObservableString.cs" />
@@ -50,7 +59,7 @@
     <Compile Include="Helpers\PageHelpers.cs" />
     <Compile Include="Helpers\PropertySupport.cs" />
     <Compile Include="Helpers\RemoteEntityRO.cs" />
-    <Compile Include="Helpers\ServiceNotAvailable1.cs" />
+    <Compile Include="Helpers\ServiceNotAvailable.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\UserHelpers.cs" />
     <Compile Include="Interfaces\IComponentContext.cs" />
@@ -133,9 +142,6 @@
     <Compile Include="ViewModels\EstimateViewModel.cs" />
     <Compile Include="ViewModels\UserLoginViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="Views\CommandLineEditor.xaml.cs">
-      <DependentUpon>CommandLineEditor.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MarkdownView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pages\SearchPage.xaml.cs">
@@ -145,6 +151,9 @@
       <DependentUpon>AccountChooserPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Tag.cs" />
+    <Compile Include="Views\RatingView.xaml.cs">
+      <DependentUpon>RatingView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -279,12 +288,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Views\CommandLineEditor.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Pages\EditBillingLinePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
@@ -297,15 +300,27 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Images\icon_add_user.png" />
-    <EmbeddedResource Include="Images\icon_anon_user.png" />
-    <EmbeddedResource Include="Images\icon_block_user.png" />
-    <EmbeddedResource Include="Images\icon_remove_user.png" />
-    <EmbeddedResource Include="Images\icon_user.png" />
-    <EmbeddedResource Include="Images\icon_user_settings.png" />
+    <EmbeddedResource Include="Images\Users\icon_add_user.png" />
+    <EmbeddedResource Include="Images\Users\icon_anon_user.png" />
+    <EmbeddedResource Include="Images\Users\icon_block_user.png" />
+    <EmbeddedResource Include="Images\Users\icon_remove_user.png" />
+    <EmbeddedResource Include="Images\Users\icon_user.png" />
+    <EmbeddedResource Include="Images\Users\icon_user_settings.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\HomePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\Validation\error.png" />
+    <Content Include="Images\Validation\star_outline.png" />
+    <Content Include="Images\Validation\star_selected.png" />
+    <Content Include="Images\Validation\success.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\RatingView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

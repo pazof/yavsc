@@ -77,7 +77,7 @@ namespace BookAStar.Pages
                 Id = 0,
                 Description = "# **Hello Estimate!**"
             };
-            App.CurrentApp.NavigationService.NavigateTo<EditEstimatePage>(true,
+            App.NavigationService.NavigateTo<EditEstimatePage>(true,
                 new EstimateViewModel(e));
         }
         

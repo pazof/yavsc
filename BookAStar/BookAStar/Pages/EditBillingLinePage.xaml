@@ -22,21 +22,21 @@
            Style="{StaticResource InputLabelStyle}"></Label>
     <StackLayout Orientation="Horizontal">
       <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}" />
-      <Picker x:Name="picker" SelectedIndex="1" Style="{StaticResource PickerStyle}" Title="Unité de temps">
+      <Picker x:Name="picker" SelectedIndex="{Binding UnitaryCost, Mode=TwoWay}" Style="{StaticResource PickerStyle}" Title="Unité de temps">
         <Picker.Items>
-          <x:String>Heures</x:String>
           <x:String>Jours</x:String>
+          <x:String>Heures</x:String>
           <x:String>Minutes</x:String>
         </Picker.Items>
       </Picker>
     </StackLayout>
     <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
-    <Entry Placeholder="Quantité" Text="1" Keyboard="Numeric"  Style="{StaticResource BigEntry}"/>
+    <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric"  Style="{StaticResource BigEntry}"/>
     <Label Text="Prix unitaire" Style="{StaticResource InputLabelStyle}"></Label>
     <StackLayout Orientation="Horizontal">
-      <Entry Placeholder="Prix" Keyboard="Numeric" Style="{StaticResource BigEntry}"></Entry>
+      <Entry Text="{Binding UnitaryCostText, Mode=TwoWay}" Placeholder="Prix" Keyboard="Numeric" Style="{StaticResource BigEntry}"></Entry>
       <Label Text="€" Style="{StaticResource BigLabel}" HorizontalTextAlignment="Start"/>
     </StackLayout>
-    <Button Text="Valider cette ligne de facture" Command="{Binding ValidateCommand}"></Button>
+    <Button Text="Valider cette ligne de facture" Command="{Binding ValidateCommand}" Clicked="OnValidateClicked"></Button>
   </StackLayout>
 </ContentPage>

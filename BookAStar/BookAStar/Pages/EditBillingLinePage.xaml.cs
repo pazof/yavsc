@@ -13,9 +13,12 @@ namespace BookAStar.Pages
     {
         public EditBillingLinePage(BillingLineViewModel model)
         {
-            InitializeComponent();
             BindingContext = model;
-            InvalidateMeasure();
+            InitializeComponent();
+        } 
+        public void OnValidateClicked (object sender, EventArgs e)
+        {
+            OnBackButtonPressed();
         }
     }
 }

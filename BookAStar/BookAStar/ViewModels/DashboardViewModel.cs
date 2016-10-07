@@ -12,6 +12,7 @@ using XLabs.Platform.Services;
 
 namespace BookAStar.ViewModels
 {
+    
     internal class DashboardViewModel : ViewModel
     {
         public string UserId

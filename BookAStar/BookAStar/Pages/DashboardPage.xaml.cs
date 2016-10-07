@@ -35,7 +35,7 @@ namespace BookAStar.Pages
 
         private void ShowPage<T>(object [] args, bool animate=false) where T:Page
         {
-            App.CurrentApp.NavigationService.NavigateTo<T>(animate, args);
+            App.NavigationService.NavigateTo<T>(animate, args);
             App.MasterPresented = false;
         }
 

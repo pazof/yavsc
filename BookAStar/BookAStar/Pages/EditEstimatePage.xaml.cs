@@ -43,11 +43,19 @@ namespace BookAStar.Pages
 
         protected void OnNewCommanLine(object sender, EventArgs e)
         {
-            var com = new BillingLine();
-            App.CurrentApp.NavigationService.NavigateTo<EditBillingLinePage>(
+            var com = new BillingLine() { Count = 1, UnitaryCost = 0.01m };
+            var lineView = new BillingLineViewModel(com)
+            {
+                ValidateCommand = new Command(() => {
+                    ((EstimateViewModel)BindingContext).Bill.
+                    Add(com);
+                })
+            };
+
+            App.NavigationService.NavigateTo<EditBillingLinePage>(
                 true,
-                new object[] { new BillingLineViewModel(((EstimateViewModel)this.BindingContext).Data,com) } );
+                new object[] { lineView } );
         }
-       
+        
     }
 }
