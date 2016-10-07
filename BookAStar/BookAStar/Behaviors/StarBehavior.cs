@@ -164,10 +164,8 @@ namespace BookAStar.Behaviors
         
         void OnTapRecognizerTapped(object sender, EventArgs args)
         {
-            // TODO HACK: PropertyChange does not fire, if the value is not changed :-(
             bool currentIsStarred = (bool) GetValue(IsStarredProperty);
             SetValue(IsStarredProperty, !currentIsStarred);
-            // does not lead to the call of:
             OnIsStarredChanged(this,currentIsStarred,!currentIsStarred);
         }
     }
