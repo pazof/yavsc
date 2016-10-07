@@ -87,8 +87,7 @@ namespace BookAStar.Behaviors
             BindableProperty.Create("IsStarred", 
                                     typeof(bool), 
                                     typeof(StarBehavior), 
-                                    false,
-                                    propertyChanged: OnIsStarredChanged);
+                                    false);
 
         public bool IsStarred
         {
@@ -100,8 +99,7 @@ namespace BookAStar.Behaviors
         {
              StarBehavior behavior = (StarBehavior)bindable;
 
-             if ((bool)newValue)
-             {
+             
                  string groupName = behavior.GroupName;
                  List<StarBehavior> behaviors = null;
 
@@ -126,8 +124,14 @@ namespace BookAStar.Behaviors
                      if (item == behavior)
                      {
                          itemReached = true;
-                         item.IsStarred = true;
-                         position = count;
+                        // whould try to call this method again
+                        // Assert  item.IsStarred == newValue;
+
+                    // There are **6** positions, from 0 to five stars.
+                        if ((bool)newValue)
+                            position = count;
+                        else position = count - 1;
+
                      }
                      if (item != behavior && itemReached)
                          item.IsStarred = false;
@@ -135,8 +139,7 @@ namespace BookAStar.Behaviors
                      item.Rating = position;
                      count++;
                  }
-                 
-             }
+               
 
             
         }
@@ -158,12 +161,14 @@ namespace BookAStar.Behaviors
             view.GestureRecognizers.Remove(tapRecognizer);
             tapRecognizer.Tapped -= OnTapRecognizerTapped;
         }
-
+        
         void OnTapRecognizerTapped(object sender, EventArgs args)
         {
             // TODO HACK: PropertyChange does not fire, if the value is not changed :-(
-            IsStarred = false;
-            IsStarred = true;
+            bool currentIsStarred = (bool) GetValue(IsStarredProperty);
+            SetValue(IsStarredProperty, !currentIsStarred);
+            // does not lead to the call of:
+            OnIsStarredChanged(this,currentIsStarred,!currentIsStarred);
         }
     }
 }

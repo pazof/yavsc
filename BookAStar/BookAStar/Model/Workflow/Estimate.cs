@@ -22,12 +22,12 @@ namespace BookAStar.Model.Workflow
         /// In db, they are separated by <c>:</c>
         /// </summary>
         /// <returns></returns>
-        public List<string> AttachedGraphicList { get; set; }
+        public List<string> AttachedGraphics { get; set; }
 
         public string AttachedGraphicsString
         {
-            get { return AttachedGraphicList==null?null:string.Join(":", AttachedGraphicList); }
-            set { AttachedGraphicList = value.Split(':').ToList(); }
+            get { return AttachedGraphics==null?null:string.Join(":", AttachedGraphics); }
+            set { AttachedGraphics = value.Split(':').ToList(); }
         }
         /// <summary>
         /// List of attached files
