@@ -8,21 +8,28 @@ Da road to the hell
 	✔ Accès aux profiles des intervenants @done (August 13th 2016, 0:57)
 	✔ Demande de devis, spécifiant une date et un lieu, envers un pro (ou "BookQuery", ou "demande de rendez-vous") @done (August 13th 2016, 0:57)
 	✔ Notifications commande @done (September 15th 2016, 15:00)
+	✔ Rendu html du format Markdown-av (+audio&video) @done (October 6th 2016, 14:32)
+	✔ Rendu Android, via WebKit WebView @done (October 6th 2016, 14:32)
+    ✔ Salon public @done (September 28th 2016, 17:58)
+
+	☐ Saisie basique du devis
+	☐ Devis au formats TeX et Pdf en ligne à accès restreint
 	☐ Proposition de devis sur BookQuery
 	☐ Signature de contrat
     ☐ Chat privé
-    ✔ Salon public @done (September 28th 2016, 17:58)
 	☐ Accès mobile au salon public
 	☐ Accès Web au chat privé
 
 ## Jalon 2
 
 	☐ Quota fs utilisateur
+	☐ Gestion de contenu des pages du site, au fromat Markdown-av
 	☐ Paiement client d'un approvisionnement pour une demande de prestation définie
 	☐ Login Twitter
 	☐ Notifications et Twits de blogs, d'entées d'artiste, de success stories
 	☐ Restrictions d'accès au chat privé
 	☐ Monétarisations
+	☐ Support multi-lanque de l'app mobile
 
 ## Jalon 3
 

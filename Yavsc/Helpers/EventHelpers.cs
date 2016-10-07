@@ -12,7 +12,7 @@ namespace Yavsc.Helpers
         {
             var yaev = new BookQueryEvent
             {
-                Client =  new ClientProviderView { UserName = query.Client.UserName , UserId = query.ClientId }  ,
+                Client =  new ClientProviderInfo { UserName = query.Client.UserName , UserId = query.ClientId }  ,
                 Previsional = query.Previsional,
                 EventDate = query.EventDate,
                 Location = query.Location,

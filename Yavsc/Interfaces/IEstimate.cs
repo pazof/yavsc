@@ -1,13 +1,12 @@
-﻿using BookAStar.Model.Workflow;
-using System.Collections.Generic;
-
-namespace BookAStar.Model.Interfaces
+﻿namespace Yavsc.Interfaces
 {
+    using System.Collections.Generic;
+    using Yavsc.Models.Billing;
     public interface IEstimate
     {
         List<string> AttachedFiles { get; set; }
         List<string> AttachedGraphics { get; }
-        List<BillingLine> Bill { get; set; }
+        List<CommandLine> Bill { get; set; }
         string ClientId { get; set; }
         long? CommandId { get; set; }
         string CommandType { get; set; }
