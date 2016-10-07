@@ -1,13 +1,12 @@
-
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using Yavsc.Models.Booking;
-
 namespace Yavsc.Models.Billing
 {
-    public partial class Estimate
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Linq;
+    using Yavsc.Interfaces;
+    using Yavsc.Models.Booking;
+    public partial class Estimate : IEstimate
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
@@ -20,7 +19,7 @@ namespace Yavsc.Models.Billing
         /// </summary>
         /// <returns></returns>
         [ForeignKey("CommandId")]
-        public BookQuery Query { get; set; }  
+        public BookQuery Query { get; set; }
         public string Description { get; set; }
         public int? Status { get; set; }
         public string Title { get; set; }
@@ -35,9 +34,10 @@ namespace Yavsc.Models.Billing
         [NotMapped]
         public List<string> AttachedGraphics { get; set; }
 
-        public string AttachedGraphicsString { 
+        public string AttachedGraphicsString
+        {
             get { return string.Join(":", AttachedGraphics); }
-            set { AttachedGraphics = value.Split(':').ToList(); } 
+            set { AttachedGraphics = value.Split(':').ToList(); }
         }
         /// <summary>
         /// List of attached files
@@ -48,9 +48,10 @@ namespace Yavsc.Models.Billing
         /// <returns></returns>
         [NotMapped]
         public List<string> AttachedFiles { get; set; }
-        public string AttachedFilesString {
+        public string AttachedFilesString
+        {
             get { return string.Join(":", AttachedFiles); }
-            set { AttachedFiles = value.Split(':').ToList(); } 
+            set { AttachedFiles = value.Split(':').ToList(); }
         }
 
         [Required]
@@ -58,5 +59,10 @@ namespace Yavsc.Models.Billing
 
         [Required]
         public string ClientId { get; set; }
+
+        public string CommandType
+        {
+            get; set;
+        }
     }
 }

@@ -2,6 +2,7 @@
   "projects": [
     "Yavsc",
     "Yavsc.Api",
+    "Yavsc.Client",
     "wrap"
   ],
   "sdk": {
