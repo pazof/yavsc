@@ -34,16 +34,16 @@ namespace Yavsc.Controllers
         /// <param name="maxId">returned Ids must be lower than this value</param>
         /// <returns>book queries</returns>
         [HttpGet]
-        public IEnumerable<BookQueryProviderView> GetCommands(long maxId=long.MaxValue)
+        public IEnumerable<BookQueryProviderInfo> GetCommands(long maxId=long.MaxValue)
         {
             var uid = User.GetUserId();
             var now = DateTime.Now;
             
             var result = _context.Commands.Include(c => c.Location).
             Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now).
-            Select(c => new BookQueryProviderView
+            Select(c => new BookQueryProviderInfo
             {
-                Client = new ClientProviderView { UserName = c.Client.UserName, UserId = c.ClientId },
+                Client = new ClientProviderInfo { UserName = c.Client.UserName, UserId = c.ClientId },
                 Location = c.Location,
                 EventDate = c.EventDate,
                 Id = c.Id,
