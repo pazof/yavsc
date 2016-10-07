@@ -12,16 +12,18 @@ namespace BookAStar.Converters
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             var rating = (int)value;
+            if (rating == 0)
+                return "Nul!";
             if (rating == 1)
-                return "Disappointed!";
+                return "Décevant!";
             if (rating == 2)
-                return "Not a fan!";
+                return "Pas terrible!";
             if (rating == 3)
-                return "It's Ok!";
+                return "Bien!";
             if (rating == 4)
-                return "Like it!";
+                return "J'aime!";
             if (rating == 5)
-                return "Love it!";
+                return "J'adore";
 
             return string.Empty;
         }
