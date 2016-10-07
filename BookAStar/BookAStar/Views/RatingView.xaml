@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
+             xmlns:behaviors="clr-namespace:BookAStar.Behaviors;assembly=BookAStar"
+             xmlns:converters="clr-namespace:BookAStar.Converters;assembly=BookAStar"
+             x:Class="BookAStar.Views.RatingView">
+  <ContentView.Content>
+    <StackLayout>
+      <StackLayout Orientation="Horizontal" HeightRequest="70">
+        <Grid>
+          <Grid.Behaviors>
+            <behaviors:StarBehavior x:Name="starOne" GroupName="myStar"/>
+          </Grid.Behaviors>
+          <Image x:Name="starBlankOne"
+                  Source="{local:ImageResource BookAStar.Images.star_outline.png}" />
+
+          <Image x:Name="starSelectedOne"
+                  Source="{local:ImageResource BookAStar.Images.star_selected.png}"
+                  IsVisible="{Binding Source={x:Reference starOne},
+                                    Path=IsStarred}"/>
+        </Grid>
+        <Grid >
+          <Grid.Behaviors>
+            <behaviors:StarBehavior x:Name="starTwo" GroupName="myStar"/>
+          </Grid.Behaviors>
+          <Image x:Name="starBlankTwo"
+                  Source="{local:ImageResource BookAStar.Images.star_outline.png}" />
+
+          <Image x:Name="starSelectedTwo"
+                  Source="{local:ImageResource BookAStar.Images.star_selected.png}"
+                  IsVisible="{Binding Source={x:Reference starTwo},
+                                    Path=IsStarred}"/>
+        </Grid>
+        <Grid >
+          <Grid.Behaviors>
+            <behaviors:StarBehavior x:Name="starThree" GroupName="myStar"/>
+          </Grid.Behaviors>
+          <Image x:Name="starBlankThree"
+                  Source="{local:ImageResource BookAStar.Images.star_outline.png}" />
+
+          <Image x:Name="starSelectedThree"
+                  Source="{local:ImageResource BookAStar.Images.star_selected.png}"
+                  IsVisible="{Binding Source={x:Reference starThree},
+                                    Path=IsStarred}"/>
+        </Grid>
+        <Grid >
+          <Grid.Behaviors>
+            <behaviors:StarBehavior x:Name="starFour" GroupName="myStar"/>
+          </Grid.Behaviors>
+          <Image x:Name="starBlankFour"
+                  Source="{local:ImageResource BookAStar.Images.star_outline.png}" />
+
+          <Image x:Name="starSelectedFour"
+                  Source="{local:ImageResource BookAStar.Images.star_selected.png}"
+                  IsVisible="{Binding Source={x:Reference starFour},
+                                    Path=IsStarred}"/>
+        </Grid>
+        <Grid >
+          <Grid.Behaviors>
+            <behaviors:StarBehavior x:Name="starFive" GroupName="myStar"/>
+          </Grid.Behaviors>
+          <Image x:Name="starBlankFive"
+                  Source="{local:ImageResource BookAStar.Images.star_outline.png}" />
+
+          <Image x:Name="starSelectedFive"
+                  Source="{local:ImageResource BookAStar.Images.star_selected.png}"
+                  IsVisible="{Binding Source={x:Reference starFive},
+                                    Path=IsStarred}"/>
+        </Grid>
+      </StackLayout>
+      <StackLayout>
+        <StackLayout.Resources>
+          <ResourceDictionary>
+            <local:RatingText x:Key="ratingText" />
+            <Style TargetType="Label" BasedOn="{StaticResource baseStyle}">
+              <Setter Property="TextColor" Value="#4CAF50" />
+            </Style>
+          </ResourceDictionary>
+        </StackLayout.Resources>
+        <Label Text="{Binding Source={x:Reference starFive},
+                                    Path=Rating, Converter={StaticResource ratingText}}" ></Label>
+      </StackLayout>
+      <Button Text="Submit"/>
+    </StackLayout>
+      
+  </ContentView.Content>
+</ContentView>
