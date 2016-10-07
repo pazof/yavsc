@@ -436,6 +436,7 @@ namespace BookAStar.Droid
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
+            // TODO Save instance
             base.OnSaveInstanceState(outState);
         }
         public override void OnStateNotSaved()
