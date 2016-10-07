@@ -20,5 +20,11 @@ namespace Yavsc
         public EmailEntry Admin { get; set; }
         public ThirdPartyFiles UserFiles { get; set; }
 
+        public string BusinessName { get; set; } 
+        public string Street { get; set; } 
+        public string PostalCode { get; set; } 
+        public string CountryCode { get; set; } 
+
+
     }
 }
