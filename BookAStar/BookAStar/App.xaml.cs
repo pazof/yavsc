@@ -14,14 +14,6 @@ using XLabs.Settings;
 using XLabs;
 using XLabs.Enums;
 
-/*
-Glyphish icons from
-http://www.glyphish.com/
-under 
-http://creativecommons.org/licenses/by/3.0/us/
-support them by buying the full set / Retina versions
-*/
-
 namespace BookAStar
 {
     public partial class App : Application // superclass new in 1.3
@@ -90,6 +82,7 @@ namespace BookAStar
         private void OnSuspended(object sender, EventArgs e)
         {
             // TODO the navigation stack persistence (save)
+            
         }
 
         // called on app startup, after OnStartup, not on rotation
@@ -184,23 +177,14 @@ namespace BookAStar
                 Text = "Accueil",
                 Icon = "icon.png"
             };
-
-            /* 
-            var navPage = new NavigationPage(masterDetail) {
-                Title = "Navigation",
-                Icon = "icon.png"
-            } ;
-            //var navPage = new NavigationPage(mainTab);
-            
-            navPage.ToolbarItems.Add(tiHome);
-            navPage.ToolbarItems.Add(tiSetts);
-            */
-            this.MainPage = masterDetail;
             masterDetail.ToolbarItems.Add(tiHome);
             masterDetail.ToolbarItems.Add(tiSetts);
+            
+            this.MainPage = masterDetail;
             NavigationService = new NavigationService(masterDetail.Detail.Navigation);
         }
-        public INavigationService NavigationService { protected set; get; }
+
+        public static INavigationService NavigationService { protected set; get; }
         public void PostDeviceInfo()
         {
             var res = PlatformSpecificInstance.InvokeApi(
