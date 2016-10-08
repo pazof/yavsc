@@ -43,15 +43,15 @@
            ></Label>
             </StackLayout>
           </Frame>
-          <views:RatingView Rating="{Binding Rating}"/>
+          <views:RatingView Rating="{Binding Rating, Mode=TwoWay}" x:Name="ratingView"/>
         </StackLayout>
 
       </lc:GesturesContentView>
 
 
       <Button Text="{Binding PerformerStatus}" Clicked="OnViewPerformerStatus" />
-      <Button Text="{Binding UserQueries}" Clicked="OnViewUserQueries" />
-      <StackLayout Orientation="Horizontal" >
+      <Button Text="{Binding UserQueries}" Clicked="OnViewUserQueries" VisualElement.IsVisible="{Binding UserIsPro}"/>
+      <StackLayout Orientation="Horizontal" VisualElement.IsVisible="{Binding HaveAnUser}">
         <Label Text="Recevoir les notifications push" StyleClass="Header" />
         <Switch IsToggled="{Binding ReceivePushNotifications, Mode=TwoWay}"
                 HorizontalOptions="End" />
@@ -60,7 +60,7 @@
         <Label Text="Utiliser ma position" StyleClass="Header" />
         <Switch HorizontalOptions="End" IsToggled="{Binding AllowUseMyPosition, Mode=TwoWay}"/>
       </StackLayout>
-      <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+      <StackLayout Orientation="Horizontal" VerticalOptions="Start" VisualElement.IsVisible="{Binding UserIsPro}">
         <Label Text="Ne recevoir de demande de devis que de la part de professionnels uniquement" StyleClass="Header"/>
         <Switch HorizontalOptions="End" IsToggled="{Binding AllowProBookingOnly, Mode=TwoWay}"/>
       </StackLayout>

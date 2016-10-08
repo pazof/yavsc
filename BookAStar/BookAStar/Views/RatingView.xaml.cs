@@ -11,66 +11,25 @@ namespace BookAStar.Views
 {
     public partial class RatingView : ContentView
     {
-        protected int rating;
+        public static BindableProperty RatingProperty = BindableProperty.Create(
+            "Rating", typeof(int), typeof(RatingView), 0, BindingMode.TwoWay,
+            propertyChanged: OnRatingChanged);
 
-        public int Rating {
-            get
-            {
-                return rating;
-            }
-            set
-            {
-                if (value != rating)
-                {
-                    if (value < 0 || value > 5)
-                    {
-                        SetValue(RatingProperty, 0);
-                        rating = 0;
-                    }
-                    else
-                    {
-                        SetValue(RatingProperty, value);
-                        rating = value;
-                    }
-                    starBehaviors[4].SetValue(StarBehavior.RatingProperty, rating);
-                    for (int i = 0; i < rating && i < 5; i++)
-                        starBehaviors[i].SetValue(StarBehavior.IsStarredProperty, true);
-                    for (int i = rating; i < 5 && i >= 0; i++)
-                        starBehaviors[i].SetValue(StarBehavior.IsStarredProperty, false);
-                }
-            }
-        }
-
-        private bool isStarred;
-        public bool IsStarred
+        private static void OnRatingChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            get
+            var view = (RatingView) bindable;
+            int newValueInt = (int)newValue;
+            if (oldValue!=newValue)
             {
-                return isStarred;
-            }
-            set
-            {
-                SetValue(IsStarredProperty, value);
+                // This will set starBehaviors[4].Rating, five times
+                for (int i = 0; i < 5 && i < newValueInt; i++)
+                    view.starBehaviors[i].IsStarred = true;
+                for (int i = newValueInt; i < 5; i++)
+                    view.starBehaviors[i].IsStarred = false;
             }
         }
-
 
         StarBehavior[] starBehaviors;
-        public static BindableProperty IsStarredProperty = BindableProperty.Create(
-            propertyName: "IsStarred",
-            returnType: typeof(bool),
-            declaringType: typeof(RatingView),
-            defaultValue: false,
-            defaultBindingMode: BindingMode.TwoWay
-                );
-
-        public static BindableProperty RatingProperty = BindableProperty.Create(
-            propertyName: "Rating",
-            returnType: typeof(int),
-            declaringType: typeof(RatingView),
-            defaultValue: 0,
-            defaultBindingMode: BindingMode.TwoWay
-                );
 
         public RatingView()
         {
@@ -79,7 +38,13 @@ namespace BookAStar.Views
             {
                 starOne, starTwo, starThree, starFour, starFive
             };
+            StarBehavior.StarTapped += StarBehavior_StarTapped;
+        }
 
+        private void StarBehavior_StarTapped(object sender, EventArgs e)
+        {
+            if (starBehaviors.Contains(sender))
+             SetValue(RatingProperty, starFive.Rating);
         }
     }
 }
