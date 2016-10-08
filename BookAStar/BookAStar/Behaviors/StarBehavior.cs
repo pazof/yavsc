@@ -31,6 +31,9 @@ namespace BookAStar.Behaviors
                                    typeof(int),
                                    typeof(StarBehavior), default(int),
                                    BindingMode.TwoWay);
+        
+
+        public static event EventHandler<EventArgs> StarTapped;
 
         public int Rating
         {
@@ -87,7 +90,8 @@ namespace BookAStar.Behaviors
             BindableProperty.Create("IsStarred", 
                                     typeof(bool), 
                                     typeof(StarBehavior), 
-                                    false);
+                                    false,
+                                    propertyChanged: OnIsStarredChanged);
 
         public bool IsStarred
         {
@@ -113,11 +117,12 @@ namespace BookAStar.Behaviors
                  }
 
                  bool itemReached = false;
-                 int count = 1, position = 0;
+                 int count = 0, position = 0;
                  // all positions to left IsStarred = true and all position to the right is false
                  foreach (var item in behaviors)
-                 {
-                     if (item != behavior && !itemReached)
+            {
+                count++;
+                if (item != behavior && !itemReached)
                      {
                          item.IsStarred = true;
                      }
@@ -131,16 +136,14 @@ namespace BookAStar.Behaviors
                         if ((bool)newValue)
                             position = count;
                         else position = count - 1;
-
                      }
                      if (item != behavior && itemReached)
                          item.IsStarred = false;
                      
                      item.Rating = position;
-                     count++;
                  }
-               
-
+            // Assert count > 0
+            behaviors[count - 1].Rating = position;
             
         }
 
@@ -164,9 +167,11 @@ namespace BookAStar.Behaviors
         
         void OnTapRecognizerTapped(object sender, EventArgs args)
         {
+           // Assert sender is mine
             bool currentIsStarred = (bool) GetValue(IsStarredProperty);
-            SetValue(IsStarredProperty, !currentIsStarred);
-            OnIsStarredChanged(this,currentIsStarred,!currentIsStarred);
+            IsStarred = !currentIsStarred;
+            if (StarTapped!=null)
+                StarTapped.Invoke(this, new EventArgs());
         }
     }
 }

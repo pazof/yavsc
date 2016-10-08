@@ -15,7 +15,18 @@ namespace BookAStar.ViewModels
     
     internal class DashboardViewModel : ViewModel
     {
-        public int Rating { get; set; }
+        int rating;
+        public int Rating
+        {
+            get
+            {
+                return rating;
+            }
+            set 
+            {
+                SetProperty<int>(ref rating, value, "Rating");
+            }
+        }
 
         public string UserId
         {
@@ -101,7 +112,14 @@ namespace BookAStar.ViewModels
                 return performerStatus;
             }
         }
-
+        string userQueries;
+        public string UserQueries
+        {
+            get
+            {
+                return userQueries;
+            }
+        }
         public string UserName
         {
             get
@@ -117,7 +135,7 @@ namespace BookAStar.ViewModels
             Accounts = MainSettings.AccountList;
             User = MainSettings.CurrentUser;
             UpdateUserMeta();
-
+            Rating = 2;
             UserNameGesture = new RelayGesture((g, x) =>
             {
                 if (g.GestureType == GestureType.LongPress)
@@ -135,31 +153,51 @@ namespace BookAStar.ViewModels
             UpdateUserMeta();
         }
 
+        bool haveAnUser;
+
+        public bool HaveAnUser
+        {
+            get { return User!=null; }
+        }
+
+        public bool UserIsPro
+        {
+            get { return User?.Roles?.Contains("Performer") ?? false ; }
+        }
+
         private void UpdateUserMeta ()
         {
             string newStatusString;
             long newQueryCount;
             bool newUserIsPro;
             ImageSource newAvatar;
-            if (user==null)
-            {
+            string newQueriesButtonText;
+            bool newHaveAnUser = user == null;
+            if (newHaveAnUser) {
                 newQueryCount = 0;
                 newUserIsPro = false;
                 newStatusString = null;
                 newAvatar = null;
+                newQueriesButtonText = null;
             }
             else
             {
-                newUserIsPro = User.Roles?.Contains("Performer") ?? false;
+                newUserIsPro = UserIsPro;
 
                 newQueryCount = newUserIsPro ? DataManager.Current.BookQueries.Count : 0;
 
                 newStatusString = newUserIsPro ?
-                     $"Profile professionel renseigné,\n{newQueryCount} demandes valides en cours" :
+                     $"Profile professionel renseigné" :
+                    "Profile professionel non renseigné";
+                newQueriesButtonText = newUserIsPro ?
+                     $"{newQueryCount} demandes valides en cours" :
                     "Profile professionel non renseigné";
                 newAvatar = UserHelpers.Avatar(user.Avatar);
             }
+            SetProperty<bool>(ref haveAnUser, newHaveAnUser, "UserIsPro");
+            SetProperty<bool>(ref userIsPro, newUserIsPro, "UserIsPro");
             SetProperty<string>(ref performerStatus, newStatusString, "PerformerStatus");
+            SetProperty<string>(ref userQueries, newQueriesButtonText, "PerformerStatus");
             SetProperty<long>(ref queryCount, newQueryCount, "QueryCount");
             SetProperty<ImageSource>(ref avatar, newAvatar, "Avatar");
         }
