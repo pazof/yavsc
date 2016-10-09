@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,9 +30,8 @@ namespace BookAStar.Behaviors
         private void bindable_TextChanged(object sender, TextChangedEventArgs e)
         {
             decimal result;
-            IsValid = decimal.TryParse(e.NewTextValue, out result);
+            IsValid = decimal.TryParse(e.NewTextValue, NumberStyles.Currency,CultureInfo.InvariantCulture, out result);
             ((Entry)sender).TextColor = IsValid ? Color.Default : Color.Red;
-
         }
 
         protected override void OnDetachingFrom(Entry bindable)
