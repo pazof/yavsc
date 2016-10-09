@@ -65,6 +65,8 @@
       <Style x:Key="BigEntry" TargetType="Entry" BasedOn="{StaticResource EntryStyle}">
         <Setter Property="FontSize" Value="{StaticResource LargeFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+        <Setter Property="HorizontalTextAlignment" Value="Center"/>
       </Style>
       
       <Style x:Key="ButtonStyle" TargetType="Button">
