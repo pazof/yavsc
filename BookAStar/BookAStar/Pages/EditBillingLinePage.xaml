@@ -21,25 +21,26 @@
         <converters:BooleanToObjectConverter.FalseObject>
           <Style TargetType="Image">
             <Setter Property="HeightRequest" Value="20" />
-            <Setter Property="Source" Value="{extensions:ImageResource BookAStar.Images.Validation.error.png}" />
+            <Setter Property="Source" 
+                    Value="{extensions:ImageResource BookAStar.Images.Validation.error.png}" />
           </Style>
         </converters:BooleanToObjectConverter.FalseObject>
 
         <converters:BooleanToObjectConverter.TrueObject>
           <Style TargetType="Image">
             <Setter Property="HeightRequest" Value="20" />
-            <Setter Property="Source" Value="{extensions:ImageResource BookAStar.Images.Validation.success.png}" />
+            <Setter Property="Source" 
+                    Value="{extensions:ImageResource BookAStar.Images.Validation.success.png}" />
           </Style>
         </converters:BooleanToObjectConverter.TrueObject>
       </converters:BooleanToObjectConverter>
-      
-    
-  </ResourceDictionary>
+    </ResourceDictionary>
   </ContentPage.Resources>
   <StackLayout x:Name="mainStackLayout">
-    <Label Text="Description de la ligne de facture" Style="{StaticResource InputLabelStyle}"></Label>
+    <Label Text="Description de la ligne de facture" 
+           Style="{StaticResource InputLabelStyle}"></Label>
     <Editor VerticalOptions="FillAndExpand"></Editor>
-    <Label Text="Durée de la prestation" 
+    <Label Text="Durée de la prestation"
            Style="{StaticResource InputLabelStyle}"></Label>
     <StackLayout Orientation="Horizontal">
       <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}" />
@@ -53,13 +54,12 @@
       </Picker>
     </StackLayout>
     <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
-    <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric" 
+    <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric"
            Style="{StaticResource BigEntry}"/>
     <Label Text="Prix unitaire" Style="{StaticResource InputLabelStyle}"></Label>
     <StackLayout Orientation="Horizontal">
-      
-      <Entry Text="{Binding UnitaryCostText, Mode=TwoWay}" Placeholder="Prix" 
-             Keyboard="Numeric" Style="{StaticResource BigEntry}" >
+      <Entry Text="{Binding UnitaryCostText, Mode=TwoWay}" Placeholder="Prix"
+             Keyboard="Numeric" Style="{StaticResource BigEntry}">
         <Entry.Behaviors>
           <behaviors:DecimalValidatorBehavior x:Name="unitCostValidator" />
         </Entry.Behaviors>
@@ -70,7 +70,7 @@
       </Entry>
       <Label Text="€" Style="{StaticResource BigLabel}" HorizontalTextAlignment="Start"/>
     </StackLayout>
-    <Button Text="Valider cette ligne de facture" Command="{Binding ValidateCommand}" 
+    <Button Text="Valider cette ligne de facture" Command="{Binding ValidateCommand}"
             Clicked="OnValidateClicked"></Button>
   </StackLayout>
 </ContentPage>
