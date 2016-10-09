@@ -23,6 +23,15 @@ namespace BookAStar.Pages
             InitializeComponent();
         }
 
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+            // Assert ((DashboardViewModel)BindingContext!=null)
+            ((DashboardViewModel)BindingContext).UserNameGesture
+                = new RelayGesture( (gesture,arg) => {
+                        ShowPage<AccountChooserPage>(null, true);
+                    });
+        }
         public void OnViewPerformerStatus(object sender, EventArgs e)
         {
             ShowPage<AccountChooserPage>(null, true);
