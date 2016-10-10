@@ -47,6 +47,7 @@
     <Compile Include="Behaviors\StarBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\BooleanToObjectConverter.cs" />
+    <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\GenderConverter.cs" />
     <Compile Include="Converters\RatingText.cs" />
     <Compile Include="Extensions\ImageResourceExtension.cs" />
@@ -143,7 +144,7 @@
     <Compile Include="ViewModels\BillingLineViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\DashboardViewModel.cs" />
-    <Compile Include="ViewModels\EstimateViewModel.cs" />
+    <Compile Include="ViewModels\EditEstimateViewModel.cs" />
     <Compile Include="ViewModels\UserLoginViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\MarkdownView.cs" />
