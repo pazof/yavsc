@@ -1,10 +1,11 @@
 /* jquery.signalR.core.js */
 /*global window:false */
 /*!
- * ASP.NET SignalR JavaScript Library v2.2.0
+ * ASP.NET SignalR JavaScript Library v2.2.1
  * http://signalr.net/
  *
- * Copyright (C) Microsoft Corporation. All rights reserved.
+ * Copyright (c) .NET Foundation. All rights reserved.
+ * Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  *
  */
 
@@ -246,7 +247,14 @@
         }
     };
 
-    _pageWindow.load(function () { _pageLoaded = true; });
+    // .on() was added in version 1.7.0, .load() was removed in version 3.0.0 so we fallback to .load() if .on() does
+    // not exist to not break existing applications
+    if (typeof _pageWindow.on == "function") {
+        _pageWindow.on("load", function () { _pageLoaded = true; });
+    }
+    else {
+        _pageWindow.load(function () { _pageLoaded = true; });
+    }
 
     function validateTransport(requestedTransport, connection) {
         /// <summary>Validates the requested transport by cross checking it with the pre-defined signalR.transports</summary>
@@ -902,8 +910,6 @@
 
             connection.log("Stopping connection.");
 
-            changeState(connection, connection.state, signalR.connectionState.disconnected);
-
             // Clear this no matter what
             window.clearTimeout(connection._.beatHandle);
             window.clearInterval(connection._.pingIntervalId);
@@ -933,9 +939,6 @@
                 connection._.initHandler.stop();
             }
 
-            // Trigger the disconnect event
-            $(connection).triggerHandler(events.onDisconnect);
-
             delete connection._deferral;
             delete connection.messageId;
             delete connection.groupsToken;
@@ -946,6 +949,10 @@
 
             // Clear out our message buffer
             connection._.connectingMessageBuffer.clear();
+
+            // Trigger the disconnect event
+            changeState(connection, connection.state, signalR.connectionState.disconnected);
+            $(connection).triggerHandler(events.onDisconnect);
 
             return connection;
         },
@@ -974,7 +981,8 @@
 
 }(window.jQuery, window));
 /* jquery.signalR.transports.common.js */
-// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 /*global window:false */
 /// <reference path="jquery.signalR.core.js" />
@@ -1060,14 +1068,6 @@
 
             connection.log(transport.name + " transport starting.");
 
-            that.transportTimeoutHandle = window.setTimeout(function () {
-                if (!failCalled) {
-                    failCalled = true;
-                    connection.log(transport.name + " transport timed out when trying to connect.");
-                    that.transportFailed(transport, undefined, onFallback);
-                }
-            }, connection._.totalTransportConnectTimeout);
-
             transport.start(connection, function () {
                 if (!failCalled) {
                     that.initReceived(transport, onSuccess);
@@ -1083,6 +1083,14 @@
                 // false if it should attempt to reconnect
                 return !that.startCompleted || that.connectionStopped;
             });
+
+            that.transportTimeoutHandle = window.setTimeout(function () {
+                if (!failCalled) {
+                    failCalled = true;
+                    connection.log(transport.name + " transport timed out when trying to connect.");
+                    that.transportFailed(transport, undefined, onFallback);
+                }
+            }, connection._.totalTransportConnectTimeout);
         },
 
         stop: function () {
@@ -1478,10 +1486,13 @@
             }
         },
 
-        tryInitialize: function (persistentResponse, onInitialized) {
-            if (persistentResponse.Initialized) {
+        tryInitialize: function (connection, persistentResponse, onInitialized) {
+            if (persistentResponse.Initialized && onInitialized) {
                 onInitialized();
+            } else if (persistentResponse.Initialized) {
+                connection.log("WARNING! The client received an init message after reconnecting.");
             }
+
         },
 
         triggerReceived: function (connection, data) {
@@ -1510,7 +1521,7 @@
                         transportLogic.triggerReceived(connection, message);
                     });
 
-                    transportLogic.tryInitialize(data, onInitialized);
+                    transportLogic.tryInitialize(connection, data, onInitialized);
                 }
             }
         },
@@ -1661,7 +1672,9 @@
 
 }(window.jQuery, window));
 /* jquery.signalR.transports.webSockets.js */
-// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 
 /*global window:false */
 /// <reference path="jquery.signalR.transports.common.js" />
@@ -1816,7 +1829,9 @@
 
 }(window.jQuery, window));
 /* jquery.signalR.transports.serverSentEvents.js */
-// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 
 /*global window:false */
 /// <reference path="jquery.signalR.transports.common.js" />
@@ -1998,7 +2013,9 @@
 
 }(window.jQuery, window));
 /* jquery.signalR.transports.foreverFrame.js */
-// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 
 /*global window:false */
 /// <reference path="jquery.signalR.transports.common.js" />
@@ -2204,7 +2221,7 @@
                         }
                     }
                     catch (e) {
-                        connection.log("Error occured when stopping foreverFrame transport. Message = " + e.message + ".");
+                        connection.log("Error occurred when stopping foreverFrame transport. Message = " + e.message + ".");
                     }
                 }
 
@@ -2244,7 +2261,9 @@
 
 }(window.jQuery, window));
 /* jquery.signalR.transports.longPolling.js */
-// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 
 /*global window:false */
 /// <reference path="jquery.signalR.transports.common.js" />
@@ -2274,7 +2293,12 @@
                     fireConnect = $.noop;
 
                     connection.log("LongPolling connected.");
-                    onSuccess();
+
+                    if (onSuccess) {
+                        onSuccess();
+                    } else {
+                        connection.log("WARNING! The client received an init message after reconnecting.");
+                    }
                 },
                 tryFailConnect = function (error) {
                     if (onFailed(error)) {
@@ -2452,7 +2476,7 @@
                         }
                     });
 
-                    // This will only ever pass after an error has occured via the poll ajax procedure.
+                    // This will only ever pass after an error has occurred via the poll ajax procedure.
                     if (reconnecting && raiseReconnect === true) {
                         // We wait to reconnect depending on how many times we've failed to reconnect.
                         // This is essentially a heuristic that will exponentially increase in wait time before
@@ -2499,7 +2523,8 @@
 
 }(window.jQuery, window));
 /* jquery.signalR.hubs.js */
-// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 /*global window:false */
 /// <reference path="jquery.signalR.core.js" />
@@ -2918,10 +2943,12 @@
 
 }(window.jQuery, window));
 /* jquery.signalR.version.js */
-// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.md in the project root for license information.
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 
 /*global window:false */
 /// <reference path="jquery.signalR.core.js" />
 (function ($, undefined) {
-    $.signalR.version = "2.2.0";
+    $.signalR.version = "2.2.1";
 }(window.jQuery));
