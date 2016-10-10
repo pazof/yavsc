@@ -199,12 +199,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -1347,7 +1347,7 @@
           "lib/net451/Microsoft.AspNet.Session.dll": {}
         }
       },
-      "Microsoft.AspNet.SignalR.Core/2.2.0": {
+      "Microsoft.AspNet.SignalR.Core/2.2.1": {
         "type": "package",
         "dependencies": {
           "Microsoft.Owin": "2.1.0",
@@ -1362,7 +1362,7 @@
           "lib/net45/Microsoft.AspNet.SignalR.Core.dll": {}
         }
       },
-      "Microsoft.AspNet.SignalR.JS/2.2.0": {
+      "Microsoft.AspNet.SignalR.JS/2.2.1": {
         "type": "package",
         "dependencies": {
           "jQuery": "1.6.4"
@@ -3016,12 +3016,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -4164,7 +4164,7 @@
           "lib/net451/Microsoft.AspNet.Session.dll": {}
         }
       },
-      "Microsoft.AspNet.SignalR.Core/2.2.0": {
+      "Microsoft.AspNet.SignalR.Core/2.2.1": {
         "type": "package",
         "dependencies": {
           "Microsoft.Owin": "2.1.0",
@@ -4179,7 +4179,7 @@
           "lib/net45/Microsoft.AspNet.SignalR.Core.dll": {}
         }
       },
-      "Microsoft.AspNet.SignalR.JS/2.2.0": {
+      "Microsoft.AspNet.SignalR.JS/2.2.1": {
         "type": "package",
         "dependencies": {
           "jQuery": "1.6.4"
@@ -5833,12 +5833,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -6981,7 +6981,7 @@
           "lib/net451/Microsoft.AspNet.Session.dll": {}
         }
       },
-      "Microsoft.AspNet.SignalR.Core/2.2.0": {
+      "Microsoft.AspNet.SignalR.Core/2.2.1": {
         "type": "package",
         "dependencies": {
           "Microsoft.Owin": "2.1.0",
@@ -6996,7 +6996,7 @@
           "lib/net45/Microsoft.AspNet.SignalR.Core.dll": {}
         }
       },
-      "Microsoft.AspNet.SignalR.JS/2.2.0": {
+      "Microsoft.AspNet.SignalR.JS/2.2.1": {
         "type": "package",
         "dependencies": {
           "jQuery": "1.6.4"
@@ -9434,25 +9434,25 @@
         "Microsoft.AspNet.Session.nuspec"
       ]
     },
-    "Microsoft.AspNet.SignalR.Core/2.2.0": {
+    "Microsoft.AspNet.SignalR.Core/2.2.1": {
       "type": "package",
-      "sha512": "y+gx2iv3Da2YIkh/m8BSitF63PAs7sDJY9td9blvgrXzCvKAb664sc/2D7kNSwEiFDLDGCoax6pqe3pRRDSDHQ==",
+      "sha512": "EUZlRTmUZ3di6hxCiyyhnUld/8AKTOuX1DAGhNLv+ocTfmnOJyS42AEzgxdIk1jRAlEpUEuoicVBBI07A2FU2g==",
       "files": [
         "lib/net45/Microsoft.AspNet.SignalR.Core.dll",
         "lib/net45/Microsoft.AspNet.SignalR.Core.xml",
-        "Microsoft.AspNet.SignalR.Core.2.2.0.nupkg",
-        "Microsoft.AspNet.SignalR.Core.2.2.0.nupkg.sha512",
+        "Microsoft.AspNet.SignalR.Core.2.2.1.nupkg",
+        "Microsoft.AspNet.SignalR.Core.2.2.1.nupkg.sha512",
         "Microsoft.AspNet.SignalR.Core.nuspec"
       ]
     },
-    "Microsoft.AspNet.SignalR.JS/2.2.0": {
+    "Microsoft.AspNet.SignalR.JS/2.2.1": {
       "type": "package",
-      "sha512": "VjALldAdg3AiBPSmP9HUmqFTOQVRhl/jZI9Sq5AZAEbiPPfDK1FRjqtVia35OXyC+wGW2n20M5QNRKFuflSUsA==",
+      "sha512": "IKzTOfXjhN7kaGX47BATuTqP/mjVCDb9ivAVvBBrJoaomLT0Puj4f7fnHepByRkT7IGpm6hLbPO3afws5rlFdw==",
       "files": [
-        "content/Scripts/jquery.signalR-2.2.0.js",
-        "content/Scripts/jquery.signalR-2.2.0.min.js",
-        "Microsoft.AspNet.SignalR.JS.2.2.0.nupkg",
-        "Microsoft.AspNet.SignalR.JS.2.2.0.nupkg.sha512",
+        "content/Scripts/jquery.signalR-2.2.1.js",
+        "content/Scripts/jquery.signalR-2.2.1.min.js",
+        "Microsoft.AspNet.SignalR.JS.2.2.1.nupkg",
+        "Microsoft.AspNet.SignalR.JS.2.2.1.nupkg.sha512",
         "Microsoft.AspNet.SignalR.JS.nuspec"
       ]
     },
@@ -11384,8 +11384,8 @@
       "Microsoft.AspNet.Mvc.TagHelpers >= 6.0.0-rc1-*",
       "Microsoft.AspNet.Server.Kestrel >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Server.WebListener >= 1.0.0-rc1-final",
-      "Microsoft.AspNet.SignalR.Core >= 2.2.0",
-      "Microsoft.AspNet.SignalR.JS >= 2.2.0",
+      "Microsoft.AspNet.SignalR.Core >= 2.2.1",
+      "Microsoft.AspNet.SignalR.JS >= 2.2.1",
       "Microsoft.AspNet.StaticFiles >= 1.0.0-rc1-*",
       "Microsoft.AspNet.Tooling.Razor >= 1.0.0-rc1-*",
       "Microsoft.AspNet.WebSockets.Server >= 1.0.0-rc1-final",
