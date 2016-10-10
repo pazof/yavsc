@@ -63,12 +63,12 @@
         <Entry.Behaviors>
           <behaviors:DecimalValidatorBehavior x:Name="unitCostValidator" />
         </Entry.Behaviors>
-        <Image  x:Name="unitaryCostSuccessErrorImage"
-                  Style="{Binding Source={x:Reference unitCostValidator}, 
+      </Entry>
+      <Label Text="€" Style="{StaticResource BigLabel}" />
+      <Image  x:Name="unitaryCostSuccessErrorImage"
+                Style="{Binding Source={x:Reference unitCostValidator}, 
                                 Path=IsValid, 
                                 Converter={StaticResource boolToStyleImage}}" />
-      </Entry>
-      <Label Text="€" Style="{StaticResource BigLabel}" HorizontalTextAlignment="Start"/>
     </StackLayout>
     <Button Text="Valider cette ligne de facture" Command="{Binding ValidateCommand}"
             Clicked="OnValidateClicked"></Button>

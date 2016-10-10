@@ -58,7 +58,6 @@ namespace BookAStar.ViewModels
             {
                 SetProperty<decimal>(ref unitaryCost, value, "UnitaryCost");
                 data.UnitaryCost = value;
-                UnitaryCostText = value.ToString(unitCostFormat, CultureInfo.InvariantCulture);
             }
         }
         protected int durationValue;
@@ -107,20 +106,9 @@ namespace BookAStar.ViewModels
 
             set
             {
-                if (unitaryCostText != value)
-                {
-                    try
-                    {
-                        data.UnitaryCost = decimal.Parse(value, CultureInfo.InvariantCulture);
-                    }
-                    catch (Exception)
-                    {
-                        // TODO Error model
-                        // UI should shoud entry as wearing a wrong value
-                        // thanks to its `Behaviors`
-                    }
-                }
                 SetProperty<string>(ref unitaryCostText, value, "UnitaryCostText");
+                // TODO update behavior
+
             }
         }
         bool invalidCost;
