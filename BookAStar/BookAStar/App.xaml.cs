@@ -103,6 +103,9 @@ namespace BookAStar
         private void Configure(IXFormsApp app)
         {
             ViewFactory.EnableCache = true;
+            ViewFactory.Register<ChatPage, ChatViewModel>(
+                r=> new ChatViewModel { UserName = MainSettings.UserName }
+                );
             ViewFactory.Register<DashboardPage, DashboardViewModel>(
                  resolver => new DashboardViewModel());
             ViewFactory.Register<BookQueryPage, BookQueryViewModel>();
@@ -180,10 +183,22 @@ namespace BookAStar
                 Text = "Accueil",
                 Icon = "icon.png"
             };
+            ToolbarItem tiPubChat= new ToolbarItem()
+            {
+                Text = "Chat",
+                Icon = "chat_icon_s.png"
+            };
+            tiPubChat.Clicked += TiPubChat_Clicked;
             masterDetail.ToolbarItems.Add(tiHome);
             masterDetail.ToolbarItems.Add(tiSetts);
+            masterDetail.ToolbarItems.Add(tiPubChat);
             this.MainPage = masterDetail;
             NavigationService = new NavigationService(masterDetail.Detail.Navigation);
+        }
+
+        private void TiPubChat_Clicked(object sender, EventArgs e)
+        {
+            NavigationService.NavigateTo<ChatPage>();
         }
 
         public static INavigationService NavigationService { protected set; get; }
