@@ -19,7 +19,7 @@ namespace BookAStar.Pages
     public partial class EditEstimatePage : ContentPage
     {
 
-        public EditEstimatePage(EstimateViewModel model)
+        public EditEstimatePage(EditEstimateViewModel model)
         {
             InitializeComponent();
             BindingContext = model;
@@ -29,15 +29,17 @@ namespace BookAStar.Pages
         {
             base.OnBindingContextChanged();
             // FIXME WAZA
-           if (BindingContext != null) { 
-                mdview.Markdown = ((EstimateViewModel)BindingContext).Description;
+           if (BindingContext != null) {
+                var e = ((EditEstimateViewModel)BindingContext);
+                mdview.Markdown = e.Description;
+              //  BillListView.ItemsSource = e.Bill;
             }
         }
 
         protected void OnDescriptionChanged (object sender, EventArgs e)
         {
             // FIXME Why the Binding don't work?
-            ((EstimateViewModel)BindingContext).Description = mdview.Markdown;
+            ((EditEstimateViewModel)BindingContext).Description = mdview.Markdown;
             InvalidateMeasure();
         }
 
@@ -47,7 +49,7 @@ namespace BookAStar.Pages
             var lineView = new BillingLineViewModel(com)
             {
                 ValidateCommand = new Command(() => {
-                    ((EstimateViewModel)BindingContext).Bill.
+                    ((EditEstimateViewModel)BindingContext).Bill.
                     Add(com);
                 })
             };

@@ -1,4 +1,5 @@
-﻿using BookAStar.Interfaces;
+﻿using BookAStar.Attributes;
+using BookAStar.Interfaces;
 using BookAStar.Model.Workflow;
 using System;
 using System.Globalization;
@@ -14,12 +15,12 @@ namespace BookAStar.ViewModels
 
         public BillingLineViewModel( BillingLine data)
         {
-            this.data = (data == null) ? new BillingLine() : data;
-            // sets durationValue & unit
+            this.data = data ?? new BillingLine();
+            // sets durationValue & durationUnit
             Duration = data.Duration;
+            unitaryCostText = data.UnitaryCost.ToString("G",CultureInfo.InvariantCulture);
         }
 
-        protected int count;
         public int Count
         {
             get
@@ -29,11 +30,9 @@ namespace BookAStar.ViewModels
 
             set
             {
-                SetProperty<int>(ref count, value, "Count");
-                data.Count = count;
+                data.Count = value;
             }
         }
-        protected string description;
         public string Description
         {
             get
@@ -43,7 +42,6 @@ namespace BookAStar.ViewModels
 
             set
             {
-                SetProperty<string>(ref description, value, "Description");
                 data.Description = value;
             }
         }
@@ -56,11 +54,10 @@ namespace BookAStar.ViewModels
 
             set
             {
-                SetProperty<decimal>(ref unitaryCost, value, "UnitaryCost");
                 data.UnitaryCost = value;
-                UnitaryCostText = value.ToString(unitCostFormat, CultureInfo.InvariantCulture);
             }
         }
+
         protected int durationValue;
         public int DurationValue
         {
@@ -75,7 +72,7 @@ namespace BookAStar.ViewModels
                 data.Duration = this.Duration;
             }
         }
-
+        
         public enum DurationUnits:int
         {
             Jours=0,
@@ -83,6 +80,9 @@ namespace BookAStar.ViewModels
             Minutes=2
         }
         private DurationUnits durationUnit;
+
+        [Display(Name = "Unité de temps", Description = @"Unité de temps utiliée
+pour décrire la quantité de travail associée à ce type de service")]
         public DurationUnits DurationUnit
         {
             get {
@@ -90,8 +90,8 @@ namespace BookAStar.ViewModels
             }
             set
             {
-                SetProperty<DurationUnits>(ref durationUnit, value, "DurationUnit");
-                data.Duration = this.Duration;
+               SetProperty<DurationUnits>(ref durationUnit, value, "DurationUnit");
+               data.Duration = this.Duration;
             }
         }
 
@@ -106,28 +106,18 @@ namespace BookAStar.ViewModels
             }
 
             set
+
             {
-                if (unitaryCostText != value)
-                {
-                    try
-                    {
-                        data.UnitaryCost = decimal.Parse(value, CultureInfo.InvariantCulture);
-                    }
-                    catch (Exception)
-                    {
-                        // TODO Error model
-                        // UI should shoud entry as wearing a wrong value
-                        // thanks to its `Behaviors`
-                    }
-                }
                 SetProperty<string>(ref unitaryCostText, value, "UnitaryCostText");
+                // TODO update behavior
+                decimal test;
+                if (decimal.TryParse(value, NumberStyles.Currency, CultureInfo.InvariantCulture, out test))
+                {
+                    this.UnitaryCost = test;
+                }
             }
         }
-        bool invalidCost;
-        public bool InvalidCost
-        {
-            get { return invalidCost; } 
-        }
+
         public ICommand ValidateCommand { set; get; }
 
         public TimeSpan Duration

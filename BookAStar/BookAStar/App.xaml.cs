@@ -111,7 +111,7 @@ namespace BookAStar
             ViewFactory.Register<BookQueryPage, BookQueryViewModel>();
             ViewFactory.Register<BookQueriesPage, BookQueriesViewModel>();
             ViewFactory.Register<EditBillingLinePage, BillingLineViewModel>();
-            ViewFactory.Register<EditEstimatePage, EstimateViewModel>();
+            ViewFactory.Register<EditEstimatePage, EditEstimateViewModel>();
             ConfigManager = new XLabs.Settings.GenericConfigSettingsMgr(s =>
            MainSettings.AppSettings.GetValueOrDefault<string>(s, MainSettings.SettingsDefault), null);
             

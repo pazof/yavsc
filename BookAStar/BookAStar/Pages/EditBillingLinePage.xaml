@@ -16,8 +16,9 @@
       <Style TargetType="Button">
         <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
       </Style>
+      <converters:EnumConverter x:Key="enumToInt" />
       <converters:BooleanToObjectConverter x:Key="boolToStyleImage" x:TypeArguments="Style">
-
+        
         <converters:BooleanToObjectConverter.FalseObject>
           <Style TargetType="Image">
             <Setter Property="HeightRequest" Value="20" />
@@ -33,26 +34,29 @@
                     Value="{extensions:ImageResource BookAStar.Images.Validation.success.png}" />
           </Style>
         </converters:BooleanToObjectConverter.TrueObject>
+        
       </converters:BooleanToObjectConverter>
+      
     </ResourceDictionary>
   </ContentPage.Resources>
   <StackLayout x:Name="mainStackLayout">
+    
     <Label Text="Description de la ligne de facture" 
            Style="{StaticResource InputLabelStyle}"></Label>
-    <Editor VerticalOptions="FillAndExpand"></Editor>
+    <Editor VerticalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}" ></Editor>
+    
     <Label Text="Durée de la prestation"
            Style="{StaticResource InputLabelStyle}"></Label>
     <StackLayout Orientation="Horizontal">
-      <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}" />
-      <Picker x:Name="picker" SelectedIndex="{Binding UnitaryCost, Mode=TwoWay}"
-              Style="{StaticResource PickerStyle}" Title="Unité de temps">
-        <Picker.Items>
-          <x:String>Jours</x:String>
-          <x:String>Heures</x:String>
-          <x:String>Minutes</x:String>
-        </Picker.Items>
-      </Picker>
+      <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}"
+            Text="{Binding DurationValue, Mode=TwoWay}" />
+      <views:EnumPicker x:Name="picker" Style="{StaticResource PickerStyle}" 
+                               EnumSource="{Binding DurationUnit}"
+              Title="Unité de temps" 
+              SelectedItem="{Binding DurationUnit, Mode=TwoWay}">
+      </views:EnumPicker>
     </StackLayout>
+    
     <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
     <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric"
            Style="{StaticResource BigEntry}"/>
@@ -63,14 +67,15 @@
         <Entry.Behaviors>
           <behaviors:DecimalValidatorBehavior x:Name="unitCostValidator" />
         </Entry.Behaviors>
-        <Image  x:Name="unitaryCostSuccessErrorImage"
-                  Style="{Binding Source={x:Reference unitCostValidator}, 
+      </Entry>
+      <Label Text="€" Style="{StaticResource BigLabel}" />
+      <Image  x:Name="unitaryCostSuccessErrorImage"
+                Style="{Binding Source={x:Reference unitCostValidator}, 
                                 Path=IsValid, 
                                 Converter={StaticResource boolToStyleImage}}" />
-      </Entry>
-      <Label Text="€" Style="{StaticResource BigLabel}" HorizontalTextAlignment="Start"/>
     </StackLayout>
-    <Button Text="Valider cette ligne de facture" Command="{Binding ValidateCommand}"
+    <Button Text="Valider cette ligne de devis"
+            Command="{Binding ValidateCommand}"
             Clicked="OnValidateClicked"></Button>
   </StackLayout>
 </ContentPage>
