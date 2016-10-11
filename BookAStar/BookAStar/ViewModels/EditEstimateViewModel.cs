@@ -7,9 +7,9 @@ using Xamarin.Forms;
 
 namespace BookAStar.ViewModels
 {
-    public class EstimateViewModel : ViewModel
+    public class EditEstimateViewModel : ViewModel
     {
-        public EstimateViewModel(Estimate data)
+        public EditEstimateViewModel(Estimate data)
         {
             Data = data;
             if (data.AttachedFiles == null) data.AttachedFiles = new List<string>();
@@ -105,7 +105,6 @@ namespace BookAStar.ViewModels
                     }
                 };
             }
-            set { }
         }
     }
 }

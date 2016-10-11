@@ -1,10 +1,6 @@
 ﻿using BookAStar.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace BookAStar.Pages
@@ -13,12 +9,17 @@ namespace BookAStar.Pages
     {
         public EditBillingLinePage(BillingLineViewModel model)
         {
-            BindingContext = model;
             InitializeComponent();
-        } 
+            foreach
+                (string du in Enum.GetNames(typeof(BillingLineViewModel.DurationUnits)))
+                picker.Items.Add(du);
+            BindingContext = model;
+        }
+        
         public void OnValidateClicked (object sender, EventArgs e)
         {
-            OnBackButtonPressed();
+
+            this.Navigation.PopAsync();
         }
     }
 }

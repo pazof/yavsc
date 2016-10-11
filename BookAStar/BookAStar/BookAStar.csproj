@@ -40,16 +40,20 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Attributes\CurrencyAttribute.cs" />
+    <Compile Include="Attributes\DisplayAttribute.cs" />
     <Compile Include="Behaviors\EmailValidatorBehavior.cs" />
     <Compile Include="Behaviors\MaxLengthValidator.cs" />
     <Compile Include="Behaviors\DecimalValidatorBehavior.cs" />
     <Compile Include="Behaviors\PickerBehavior.cs" />
     <Compile Include="Behaviors\StarBehavior.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Views\EnumPicker.cs" />
     <Compile Include="Converters\BooleanToObjectConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
     <Compile Include="Converters\GenderConverter.cs" />
     <Compile Include="Converters\RatingText.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\ImageResourceExtension.cs" />
     <Compile Include="Factories\ViewFactory.cs" />
     <Compile Include="Helpers\DataManager.cs" />
