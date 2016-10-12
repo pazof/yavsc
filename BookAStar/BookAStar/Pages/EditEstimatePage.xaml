@@ -38,7 +38,7 @@
                         ></views:MarkdownView>
     
     
-    <ListView x:Name="BillListView" >
+    <ListView x:Name="BillListView" ItemsSource="{Binding Bill}" >
       <ListView.ItemTemplate RowHeight="20">
                 <DataTemplate >
           <ViewCell>
