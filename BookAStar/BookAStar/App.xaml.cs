@@ -217,28 +217,7 @@ namespace BookAStar
         }
 
         // TODO système de persistance de l'état de l'appli
-        /*
-        /// <summary>
-        /// Shows a page asynchronously by locating the default constructor, creating the page,
-        /// the pushing it onto the navigation stack.
-        /// </summary>
-        /// <param name="parentPage">Parent Page</param>
-        /// <param name="pageType">Type of page to show</param>
-        /// <returns></returns>
-        public static async Task ShowPage(VisualElement parentPage, Type pageType)
-        {
-            // Get all the constructors of the page type.
-            var constructors = pageType.GetTypeInfo().DeclaredConstructors;
 
-            foreach (var page in
-                    from constructor in constructors
-                    where constructor.GetParameters().Length == 0
-                    select (Page)constructor.Invoke(null))
-            {
-                await parentPage.Navigation.PushAsync(page);
-                break;
-            }
-        }*/
     }
 }
 
