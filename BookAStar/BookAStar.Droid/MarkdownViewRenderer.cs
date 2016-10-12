@@ -29,7 +29,7 @@ namespace BookAStar.Droid
             if (hybridWebViewRenderer != null && hybridWebViewRenderer.TryGetTarget(out hybridRenderer))
             {
                 hybridRenderer.Element.Markdown = data;
-                MarkdownViewRenderer.ProperOnPageFinished(hybridRenderer.Element,
+                MarkdownViewRenderer.AdjustHeightRequest(hybridRenderer.Element,
                     hybridRenderer.EditorView);
             }
         }
@@ -58,8 +58,10 @@ namespace BookAStar.Droid
         /// <param name="view"></param>
         public static async void AdjustHeightRequest(MarkdownView xview, WebView view)
         {
+           
             xview.BatchBegin();
-            xview.HeightRequest = view.ContentHeight;
+            var vch = view.ContentHeight; // FIXME why not 3?
+            xview.HeightRequest = vch > xview.MinimumHeightRequest ? vch : xview.MinimumHeightRequest;
             xview.BatchCommit();
         }
 
@@ -69,7 +71,6 @@ namespace BookAStar.Droid
             var html = editorTemplate.GenerateString();
             EditorView.LoadDataWithBaseURL("file:///android_asset/",
             html, "text/html", "utf-8", null);
-            OnPageFinished(Element, editorView);
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<MarkdownView> e)
@@ -78,6 +79,7 @@ namespace BookAStar.Droid
             if (Control == null)
             {
                 SetNativeControl(CreateNativeControl());
+                InjectJS(JavaScriptFunction);
             }
             if (e.OldElement != null)
             {
@@ -91,7 +93,6 @@ namespace BookAStar.Droid
                 EditorView.SetWebViewClient(viewclient);
                 Control.AddJavascriptInterface(new JsBridgeMarkdown(this), "jsBridge");
                 SetMDEditorText(e.NewElement.Markdown);
-                InjectJS(JavaScriptFunction);
             }
         }
 

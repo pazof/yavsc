@@ -46,24 +46,24 @@
   ['clean']                                         // remove formatting button
         ];
 
-        var quill = new Quill('#bubble-container', {
-            modules: {
-                toolbar: toolbarOptions
-            },
-            placeholder: 'Composez votre texte ...',
-            theme: 'snow'
-        });
+       
+        $(document).ready(function () {
+            var quill = new Quill('#bubble-container', {
+                modules: {
+                    toolbar: toolbarOptions
+                },
+                placeholder: 'Composez votre texte ...',
+                theme: 'snow'
+            });
 
-      function getMD() {
-          return markdownize($('#bubble-container div.ql-editor').html())
-      }
-      quill.on('text-change', function (delta, oldDelta, source)
-      {
-          if (source === "user") {
-              invokeCSharpAction(getMD());
-          }
-      });
-      $(document).ready(function () {
+            function getMD() {
+                return markdownize($('#bubble-container div.ql-editor').html())
+            }
+            quill.on('text-change', function (delta, oldDelta, source) {
+                if (source === "user") {
+                    invokeCSharpAction(getMD());
+                }
+            });
           // TODO implement a dedicated injection
           invokeCSharpAction(getMD());
       });
