@@ -24,7 +24,6 @@
     </StackLayout>
 
     <views:MarkdownView x:Name="mdview"
-                        Modified="OnDescriptionChanged"
                         HorizontalOptions="FillAndExpand"
                         View.VerticalOptions="CenterAndExpand"
     Markdown="{Binding Description, Mode=TwoWay}"

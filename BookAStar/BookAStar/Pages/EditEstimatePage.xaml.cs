@@ -25,24 +25,6 @@ namespace BookAStar.Pages
             BindingContext = model;
         }
 
-        protected override void OnBindingContextChanged()
-        {
-            base.OnBindingContextChanged();
-            // FIXME WAZA
-           if (BindingContext != null) {
-                var e = ((EditEstimateViewModel)BindingContext);
-                mdview.Markdown = e.Description;
-              //  BillListView.ItemsSource = e.Bill;
-            }
-        }
-
-        protected void OnDescriptionChanged (object sender, EventArgs e)
-        {
-            // FIXME Why the Binding don't work?
-            ((EditEstimateViewModel)BindingContext).Description = mdview.Markdown;
-            InvalidateMeasure();
-        }
-
         protected void OnNewCommanLine(object sender, EventArgs e)
         {
             var com = new BillingLine() { Count = 1, UnitaryCost = 0.01m };
