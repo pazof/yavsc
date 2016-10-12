@@ -43,8 +43,14 @@
     
     <Label Text="Description de la ligne de facture" 
            Style="{StaticResource InputLabelStyle}"></Label>
-    <Editor VerticalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}" ></Editor>
-    
+    <Editor VerticalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}">
+      <Editor.Behaviors>
+        <behaviors:EditorMaxLengthValidator x:Name="descriptionValidator" MaxLength="512" />
+      </Editor.Behaviors>
+    </Editor>
+    <Image Style="{Binding Source={x:Reference descriptionValidator}, 
+                                Path=IsValid, 
+                                Converter={StaticResource boolToStyleImage}}" />
     <Label Text="Durée de la prestation"
            Style="{StaticResource InputLabelStyle}"></Label>
     <StackLayout Orientation="Horizontal">
