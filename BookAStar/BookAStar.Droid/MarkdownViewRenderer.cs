@@ -11,11 +11,11 @@ using Android.Views;
 [assembly: Xamarin.Forms.ExportRenderer(typeof(MarkdownView), typeof(MarkdownViewRenderer))]
 namespace BookAStar.Droid
 {
-    public class JSBridge : Java.Lang.Object
+    public class JsBridgeMarkdown : Java.Lang.Object
     {
         readonly WeakReference<MarkdownViewRenderer> hybridWebViewRenderer;
 
-        public JSBridge(MarkdownViewRenderer hybridRenderer)
+        public JsBridgeMarkdown(MarkdownViewRenderer hybridRenderer)
         {
             hybridWebViewRenderer = new WeakReference<MarkdownViewRenderer>(hybridRenderer);
         }
@@ -29,7 +29,7 @@ namespace BookAStar.Droid
             if (hybridWebViewRenderer != null && hybridWebViewRenderer.TryGetTarget(out hybridRenderer))
             {
                 hybridRenderer.Element.Markdown = data;
-                MarkdownViewRenderer.OnPageFinished(hybridRenderer.Element,
+                MarkdownViewRenderer.ProperOnPageFinished(hybridRenderer.Element,
                     hybridRenderer.EditorView);
             }
         }
@@ -51,16 +51,18 @@ namespace BookAStar.Droid
                 return editorView;
             }
         }
-
-        public static async void OnPageFinished(MarkdownView xview, WebView view)
+        /// <summary>
+        /// To be called once document finished loading
+        /// </summary>
+        /// <param name="xview"></param>
+        /// <param name="view"></param>
+        public static async void AdjustHeightRequest(MarkdownView xview, WebView view)
         {
-            int i = 10;
-            while (view.ContentHeight == 0 && i-- > 0) // wait here till content is rendered
-                await System.Threading.Tasks.Task.Delay(100);
             xview.BatchBegin();
             xview.HeightRequest = view.ContentHeight;
             xview.BatchCommit();
         }
+
         private void SetMDEditorText(string text)
         {
             editorTemplate.Model = (text == null) ? null : markdown.Transform(text);
@@ -87,7 +89,7 @@ namespace BookAStar.Droid
                 var viewclient = new MarkdownWebViewClient(
                 md => { e.NewElement.Markdown = md; });
                 EditorView.SetWebViewClient(viewclient);
-                Control.AddJavascriptInterface(new JSBridge(this), "jsBridge");
+                Control.AddJavascriptInterface(new JsBridgeMarkdown(this), "jsBridge");
                 SetMDEditorText(e.NewElement.Markdown);
                 InjectJS(JavaScriptFunction);
             }

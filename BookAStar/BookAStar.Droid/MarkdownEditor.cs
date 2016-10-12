@@ -17,7 +17,7 @@ using System.Linq;
 using System.Text;
 
 
-[System.CodeDom.Compiler.GeneratedCodeAttribute("RazorTemplatePreprocessor", "4.2.0.680")]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("RazorTemplatePreprocessor", "4.2.0.703")]
 public partial class MarkdownEditor : MarkdownEditorBase
 {
 
@@ -142,6 +142,10 @@ WriteLiteral(@">
           if (source === ""user"") {
               invokeCSharpAction(getMD());
           }
+      });
+      $(document).ready(function () {
+          // TODO implement a dedicated injection
+          invokeCSharpAction(getMD());
       });
     </script>
 
