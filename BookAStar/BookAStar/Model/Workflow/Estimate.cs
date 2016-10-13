@@ -14,7 +14,7 @@ namespace BookAStar.Model.Workflow
         public string Description { get; set; }
         public int? Status { get; set; }
         public string Title { get; set; }
-        public List<BillingLine> Bill { get; set; }
+        public IList<BillingLine> Bill { get; set; }
         /// <summary>
         /// List of attached graphic files
         /// to this estimate, as relative pathes to
@@ -22,7 +22,7 @@ namespace BookAStar.Model.Workflow
         /// In db, they are separated by <c>:</c>
         /// </summary>
         /// <returns></returns>
-        public List<string> AttachedGraphics { get; set; }
+        public IList<string> AttachedGraphics { get; set; }
 
         public string AttachedGraphicsString
         {
@@ -36,7 +36,7 @@ namespace BookAStar.Model.Workflow
         /// In db, they are separated by <c>:</c>
         /// </summary>
         /// <returns></returns>
-        public List<string> AttachedFiles { get; set; }
+        public IList<string> AttachedFiles { get; set; }
         public string AttachedFilesString
         {
             get { return AttachedFiles == null ? null : string.Join(":", AttachedFiles); }

@@ -24,6 +24,7 @@
       
 
       <Color x:Key="BackgroundColor">#30AAAAFA</Color>
+      <Color x:Key="LabelBackgroundColor">#30FAFAFA</Color>
       <Color x:Key="OddColor">#207AFAFA</Color>
       <Color x:Key="TextColor">#FF103010</Color>
       <Color x:Key="LabelColor">#FF303010</Color>
@@ -44,8 +45,11 @@
       </Style>
       
       <Style x:Key="LabelStyle" TargetType="Label">
-        <Setter Property="TextColor" Value="{StaticResource TextColor}" />
+        <Setter Property="TextColor" Value="{StaticResource LabelColor}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource LabelBackgroundColor}" />
+        
         <Setter Property="LineBreakMode" Value="WordWrap" />
+        <Setter Property="Margin" Value="2,4,2,4" />
       </Style>
 
       <Style x:Key="BigLabel"  BasedOn="{StaticResource LabelStyle}" TargetType="Label">
@@ -73,8 +77,8 @@
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="VerticalOptions" Value="CenterAndExpand" />
         <Setter Property="BorderColor" Value="Lime" />
-        <Setter Property="BorderRadius" Value="5" />
-        <Setter Property="BorderWidth" Value="5" />
+        <Setter Property="BorderRadius" Value="15" />
+        <Setter Property="BorderWidth" Value="10" />
         <Setter Property="WidthRequest" Value="200" />
         <Setter Property="TextColor" Value="Teal" />
       </Style>
@@ -83,6 +87,8 @@
         <Setter Property="Padding" Value="5,5,5,5" />
         <Setter Property="BackgroundColor" Value="{StaticResource PageBackgroundColor}" />
       </Style>
+      
+      
     </ResourceDictionary>
   </Application.Resources>
 </Application>

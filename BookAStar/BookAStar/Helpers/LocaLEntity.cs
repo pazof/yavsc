@@ -10,7 +10,9 @@ namespace BookAStar
     public class LocalEntity<V, K> : ObservableCollection<V>, ILocalEntity<V, K> where K : IEquatable<K>
     {
         public V CurrentItem { get; protected set; }
+
         public Func<V, K> GetKey { get; set; }
+
         public LocalEntity(Func<V, K> getKey) : base()
         {
             if (getKey == null) throw new InvalidOperationException();
@@ -28,6 +30,7 @@ namespace BookAStar
             Add(item);
             CurrentItem = item;
         }
+
         public V LocalGet(K key)
         {
             CurrentItem = this.Single(x => GetKey(x).Equals(key));
@@ -37,6 +40,11 @@ namespace BookAStar
         public void Load()
         {
             this.Populate<V>();
+        }
+
+        public void Load(string subKey)
+        {
+            this.Populate<V>(subKey);
         }
     }
 
