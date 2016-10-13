@@ -7,6 +7,11 @@ namespace BookAStar
         void Load();
     }
 
+    public interface IPersistentOnDemand : ILoadable
+    {
+        void Save();
+    }
+
     public interface ILocalEntity<V, K> : ILoadable where K : IEquatable<K>
     {
         V CurrentItem { get; }

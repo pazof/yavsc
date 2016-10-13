@@ -18,6 +18,13 @@ namespace BookAStar.ViewModels
             AttachedFiles = new ObservableCollection<string>(data.AttachedFiles);
             AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphics);
             Bill = new ObservableCollection<BillingLine>(data.Bill);
+            Bill.CollectionChanged += Bill_CollectionChanged;
+        }
+
+        private void Bill_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Data.Bill = Bill;
+            NotifyPropertyChanged("FormattedTotal");
         }
 
         public Estimate Data { get; protected set; }

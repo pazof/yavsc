@@ -37,8 +37,9 @@
                         ></views:MarkdownView>
     
     
-    <ListView x:Name="BillListView" ItemsSource="{Binding Bill}" >
-      <ListView.ItemTemplate RowHeight="20">
+    <ListView x:Name="BillListView" ItemsSource="{Binding Bill}" 
+           VerticalOptions="End" MinimumHeightRequest="30" >
+      <ListView.ItemTemplate>
                 <DataTemplate >
           <ViewCell>
             <ViewCell.View>
@@ -54,51 +55,20 @@
                 </Grid.ColumnDefinitions>
                 <Label Text="{Binding Description}"
                        Grid.Row="0" Grid.Column="0" ></Label>
-                <Label Text="{Binding Duration}"
+                <Label Text="{Binding Duration, StringFormat=\{0\}}"
                        Grid.Row="0" Grid.Column="1" ></Label>
                 <Label Text="{Binding Count}"
                        Grid.Row="0" Grid.Column="2" ></Label>
                 <Label Text="{Binding UnitaryCost}"
-                       Grid.Row="0" Grid.Column="3" ></Label>
+                       Grid.Row="0" Grid.Column="3"
+                       FontFamily="Monospace"></Label>
               </Grid> 
               </ViewCell.View>
           </ViewCell>
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
- <!-- 
-    <ListView x:Name="BillListView" View.VerticalOptions="End"
-      RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height Factor=.4}"
-      RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}">
-      <ListView.ItemTemplate RowHeight="20">
-        <DataTemplate >
-          <ViewCell>
-            <ViewCell.View>
-            <Grid>
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="*" />
-                  <ColumnDefinition Width="*" />
-                  <ColumnDefinition Width="30" />
-                  <ColumnDefinition Width="90" />
-                </Grid.ColumnDefinitions>
-                <Label Text="{Binding Description}"
-                       Grid.Row="0" Grid.Column="0" ></Label>
-                <Label Text="{Binding Duration}"
-                       Grid.Row="0" Grid.Column="1" ></Label>
-                <Label Text="{Binding Count}"
-                       Grid.Row="0" Grid.Column="2" ></Label>
-                <Label Text="{Binding UnitaryCost}"
-                       Grid.Row="0" Grid.Column="3" ></Label>
-              </Grid> 
-              
-            </ViewCell.View>
-          </ViewCell>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView> -->
+ 
     <Button Text="Ajouter une ligne de facture" Clicked="OnNewCommanLine"></Button>
     <Label FormattedText="{Binding FormattedTotal}"/>
     <Button Text="Valider ce devis"></Button>

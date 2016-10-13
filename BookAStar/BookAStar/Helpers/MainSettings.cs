@@ -33,7 +33,6 @@ namespace BookAStar
         #region Setting Constants
         public static readonly string SettingsDefault = string.Empty;
         public static readonly string EntityDataSettingsPrefix = "Ed";
-        public static readonly string EntityCursorSettingsPrefix = "Ec";
         private const string userNameKey = "user_id";
         private const string PushNotificationsKey = "pushNotifs";
         private const string AllowGPSUsageKey = "allowGPSUsage";

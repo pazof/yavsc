@@ -25,6 +25,18 @@ namespace BookAStar.Pages
             BindingContext = model;
         }
 
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+            ((EditEstimateViewModel)BindingContext).PropertyChanged += EditEstimatePage_PropertyChanged;
+
+        }
+
+        private void EditEstimatePage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            
+        }
+
         protected void OnNewCommanLine(object sender, EventArgs e)
         {
             var com = new BillingLine() { Count = 1, UnitaryCost = 0.01m };
