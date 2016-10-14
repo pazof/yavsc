@@ -1,11 +1,10 @@
 ﻿
-using BookAStar.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace BookAStar
+namespace BookAStar.Data
 {
     public class LocalEntity<V, K> : ObservableCollection<V>, ILocalEntity<V, K> where K : IEquatable<K>
     {

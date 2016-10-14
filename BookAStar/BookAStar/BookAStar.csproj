@@ -56,14 +56,14 @@
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\ImageResourceExtension.cs" />
     <Compile Include="Factories\ViewFactory.cs" />
-    <Compile Include="Helpers\DataManager.cs" />
+    <Compile Include="Data\DataManager.cs" />
     <Compile Include="Helpers\ObservableString.cs" />
     <Compile Include="Interfaces\ILocalEntity.cs" />
-    <Compile Include="Helpers\LocaLEntity.cs" />
+    <Compile Include="Data\LocaLEntity.cs" />
     <Compile Include="Helpers\NotIdentifiedException.cs" />
     <Compile Include="Helpers\PageHelpers.cs" />
     <Compile Include="Helpers\PropertySupport.cs" />
-    <Compile Include="Helpers\RemoteEntityRO.cs" />
+    <Compile Include="Data\RemoteEntityRO.cs" />
     <Compile Include="Helpers\ServiceNotAvailable.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\UserHelpers.cs" />
@@ -95,7 +95,7 @@
       <DependentUpon>EventDetail.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\MainSettings.cs" />
-    <Compile Include="Helpers\RemoteEntity.cs" />
+    <Compile Include="Data\RemoteEntity.cs" />
     <Compile Include="Interfaces\IPlatform.cs" />
     <Compile Include="Model\Blog\Blog.cs" />
     <Compile Include="Model\Blog\BlogTag.cs" />

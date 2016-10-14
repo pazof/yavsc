@@ -16,62 +16,67 @@
     </ResourceDictionary>
   </ContentPage.Resources>
   <ScrollView>
-  <StackLayout Padding="10,10,10,10">
-    <StackLayout Orientation="Horizontal" Padding="10,10,10,10" View.VerticalOptions="CenterAndExpand">
-      <Label Text="{Binding Client.UserName}" LineBreakMode="WordWrap" View.VerticalOptions="CenterAndExpand"></Label>
-      <Label Text="{Binding Query.Location.Address}" LineBreakMode="WordWrap" View.VerticalOptions="CenterAndExpand"></Label>
-      <Label Text="{Binding Query.EventDate, StringFormat='{0:dddd d MMMM yyyy à hh:mm}'}" LineBreakMode="WordWrap" View.VerticalOptions="CenterAndExpand"></Label>
-    </StackLayout>
+    <StackLayout Padding="10,10,10,10" x:Name="mainLayout">
 
-    <views:MarkdownView x:Name="mdview"
-                        HorizontalOptions="FillAndExpand"
-                        View.VerticalOptions="CenterAndExpand"
-    Markdown="{Binding Description, Mode=TwoWay}"
-                        MinimumHeightRequest="160"
-             RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,
-                                                                             Property=Height,
-                                                                             Factor=.6}"
-                      RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,
-                                                                            Property=Width,
-                                                                            Factor=1}"
-                        ></views:MarkdownView>
-    
-    
-    <ListView x:Name="BillListView" ItemsSource="{Binding Bill}" 
-           VerticalOptions="End" MinimumHeightRequest="30" >
-      <ListView.ItemTemplate>
-                <DataTemplate >
-          <ViewCell>
-            <ViewCell.View>
-              <Grid>
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="*" />
-                  <ColumnDefinition Width="*" />
-                  <ColumnDefinition Width="30" />
-                  <ColumnDefinition Width="90" />
-                </Grid.ColumnDefinitions>
-                <Label Text="{Binding Description}"
-                       Grid.Row="0" Grid.Column="0" ></Label>
-                <Label Text="{Binding Duration, StringFormat=\{0\}}"
-                       Grid.Row="0" Grid.Column="1" ></Label>
-                <Label Text="{Binding Count}"
-                       Grid.Row="0" Grid.Column="2" ></Label>
-                <Label Text="{Binding UnitaryCost}"
-                       Grid.Row="0" Grid.Column="3"
-                       FontFamily="Monospace"></Label>
-              </Grid> 
+      <Grid MinimumHeightRequest="12">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="2*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Text="{Binding Client.UserName}" ></Label>
+        <Label Grid.Row="0" Grid.Column="1" Text="{Binding Query.Location.Address}" ></Label>
+        <Label Grid.Row="0" Grid.Column="2" Text="{Binding Query.EventDate, StringFormat='{0:dddd d MMMM yyyy à hh:mm}'}" ></Label>
+      </Grid>
+
+      <views:MarkdownView x:Name="mdview"
+                          Editable="True"
+                          HorizontalOptions="FillAndExpand"
+      Markdown="{Binding Description, Mode=TwoWay}"
+                          VerticalOptions="Start"
+                        />
+<StackLayout x:Name="biAnVaLayout">
+      <ListView x:Name="BillListView" ItemsSource="{Binding Bill}"
+         MinimumHeightRequest="40" HasUnevenRows="true" VerticalOptions="FillAndExpand"
+                          HeightRequest="40">
+        <ListView.ItemTemplate>
+          <DataTemplate >
+            <ViewCell>
+              <ViewCell.View>
+                <Grid MinimumHeightRequest="12">
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                  </Grid.RowDefinitions>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="90" />
+                  </Grid.ColumnDefinitions>
+                  <Label Text="{Binding Description}"
+                         Grid.Row="0" Grid.Column="0" ></Label>
+                  <Label Text="{Binding Duration, StringFormat=\{0\}}"
+                         Grid.Row="0" Grid.Column="1" ></Label>
+                  <Label Text="{Binding Count}"
+                         Grid.Row="0" Grid.Column="2" ></Label>
+                  <Label Text="{Binding UnitaryCost}"
+                         Grid.Row="0" Grid.Column="3"
+                         FontFamily="Monospace"></Label>
+                </Grid>
               </ViewCell.View>
-          </ViewCell>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
- 
-    <Button Text="Ajouter une ligne de facture" Clicked="OnNewCommanLine"></Button>
-    <Label FormattedText="{Binding FormattedTotal}"/>
-    <Button Text="Valider ce devis"></Button>
-  </StackLayout>
-    </ScrollView>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+<StackLayout Orientation="Vertical">
+      <Button Text="Ajouter une ligne de facture" Clicked="OnNewCommanLine"></Button>
+      <Label FormattedText="{Binding FormattedTotal}"/>
+      <Button Text="Valider ce devis" Clicked="OnEstimateValidated" ></Button>
+</StackLayout>
+    </StackLayout>
+    </StackLayout>
+  </ScrollView>
 </ContentPage>

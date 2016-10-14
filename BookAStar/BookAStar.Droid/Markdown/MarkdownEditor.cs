@@ -9,7 +9,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BookAStar.Droid
+namespace BookAStar.Droid.Markdown
 {
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ public partial class MarkdownEditor : MarkdownEditorBase
 #line hidden
 
 #line 1 "MarkdownEditor.cshtml"
-public string Model { get; set; }
+public MarkdownViewModel Model { get; set; }
 
 #line default
 #line hidden
@@ -36,34 +36,55 @@ WriteLiteral("<!DOCTYPE html>\r\n<html>\r\n<head>\r\n    <meta");
 
 WriteLiteral(" charset=\"utf-8\"");
 
-WriteLiteral(">\r\n    <link");
+WriteLiteral(">\r\n    <style>\r\n        .standalone-container {\r\n            margin: 0;\r\n        " +
+"    width: 100%;\r\n            height: 100%;\r\n        }\r\n    </style>\r\n");
+
+
+#line 13 "MarkdownEditor.cshtml"
+    
+
+#line default
+#line hidden
+
+#line 13 "MarkdownEditor.cshtml"
+     if (Model.Editable)
+    {
+
+
+#line default
+#line hidden
+WriteLiteral("    <link");
 
 WriteLiteral(" rel=\"stylesheet\"");
 
 WriteLiteral(" href=\"quill.snow.css\"");
 
-WriteLiteral(@" />
-    <style>
-        .standalone-container {
-            margin: 0;
+WriteLiteral(" />\r\n");
+
+WriteLiteral(@"    <style>
+        #bubble-container {
             width: 100%;
             height: 100%;
         }
-        #bubble-container {
-            width:100%;
-           height: 100%;
-        }
+
         #bubble-container div.ql-editor {
-            margin-top:3em;
+            padding-top:3em;
         }
+
         .hidden {
             display: none;
         }
     </style>
+");
 
-</head>
-<body>
-    <div");
+
+#line 30 "MarkdownEditor.cshtml"
+    }
+
+
+#line default
+#line hidden
+WriteLiteral("</head>\r\n<body>\r\n    <div");
 
 WriteLiteral(" class=\"standalone-container\"");
 
@@ -74,84 +95,124 @@ WriteLiteral(" id=\"bubble-container\"");
 WriteLiteral(">");
 
 
-#line 28 "MarkdownEditor.cshtml"
-                              Write(Html.Write(Model));
+#line 34 "MarkdownEditor.cshtml"
+                              Write(Html.Write(Model.GetHtml()));
 
 
 #line default
 #line hidden
-WriteLiteral("</div>\r\n    </div>\r\n    \r\n    <script");
-
-WriteLiteral(" type=\"text/javascript\"");
-
-WriteLiteral(" src=\"quill.min.js\"");
-
-WriteLiteral("></script>\r\n    <script");
+WriteLiteral("</div>\r\n    </div>\r\n    <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
 WriteLiteral(" src=\"jquery.js\"");
 
-WriteLiteral("></script>\r\n    <script");
+WriteLiteral("></script>\r\n");
+
+
+#line 37 "MarkdownEditor.cshtml"
+    
+
+#line default
+#line hidden
+
+#line 37 "MarkdownEditor.cshtml"
+     if (Model.Editable)
+    {
+
+
+#line default
+#line hidden
+WriteLiteral("        <script");
+
+WriteLiteral(" type=\"text/javascript\"");
+
+WriteLiteral(" src=\"quill.min.js\"");
+
+WriteLiteral("></script>\r\n");
+
+WriteLiteral("        <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
 WriteLiteral(" src=\"showdown.js\"");
 
-WriteLiteral("></script>\r\n    <script");
+WriteLiteral("></script>\r\n");
+
+WriteLiteral("        <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
 WriteLiteral(" src=\"to-markdown.js\"");
 
-WriteLiteral("></script>\r\n    <script");
+WriteLiteral("></script>\r\n");
+
+WriteLiteral("        <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
 WriteLiteral(" src=\"md-helpers.js\"");
 
-WriteLiteral("></script>\r\n\r\n    <script");
+WriteLiteral("></script>\r\n");
+
+
+#line 43 "MarkdownEditor.cshtml"
+
+
+
+#line default
+#line hidden
+WriteLiteral("        <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
-WriteLiteral(@">
-        var toolbarOptions = [
-  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-  ['blockquote', 'code-block'],
+WriteLiteral(">\r\n            var toolbarOptions = [\r\n      [\'bold\', \'italic\', \'underline\', \'str" +
+"ike\'],        // toggled buttons\r\n      [\'blockquote\', \'code-block\'],\r\n      [{ " +
+"\'header\': 1 }, { \'header\': 2 }, { \'header\': 3 }],               // custom button" +
+" values\r\n      [{ \'list\': \'ordered\' }, { \'list\': \'bullet\' }],\r\n      [{ \'indent\'" +
+": \'-1\' }, { \'indent\': \'+1\' }],          // outdent/indent\r\n      [\'link\', \'image" +
+"\', \'video\'],\r\n      [\'clean\']                                         // remove " +
+"formatting button\r\n            ];\r\n\r\n            var showImageUI = function (val" +
+"ue) {\r\n                if (value) {\r\n                    var href = prompt(\'Ente" +
+"r the URL\');\r\n                    this.quill.format(\'image\', href);\r\n           " +
+"     } else {\r\n                    this.quill.format(\'image\', false);\r\n         " +
+"       }\r\n            };\r\n\r\n            $(document).ready(function () {\r\n       " +
+"         var quill = new Quill(\'#bubble-container\', {\r\n                    modul" +
+"es: {\r\n                        toolbar: toolbarOptions\r\n                    },\r\n" +
+"                    placeholder: \'Composez votre texte ...\',\r\n                  " +
+"  theme: \'snow\'\r\n                });\r\n\r\n                function getMD() {\r\n    " +
+"                return markdownize($(\'#bubble-container div.ql-editor\').html())\r" +
+"\n                }\r\n                quill.on(\'text-change\', function (delta, old" +
+"Delta, source) {\r\n                    if (source === \"user\") {\r\n                " +
+"        contentEdited(getMD());\r\n                    }\r\n                });\r\n   " +
+"             var toolbar = quill.getModule(\'toolbar\');\r\n                toolbar." +
+"addHandler(\'image\', showImageUI);\r\n                jsLoaded();\r\n            });\r" +
+"\n        </script>\r\n");
 
-  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-  [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-  ['link', 'image', 'video'],
-  ['clean']                                         // remove formatting button
-        ];
 
-       
-        $(document).ready(function () {
-            var quill = new Quill('#bubble-container', {
-                modules: {
-                    toolbar: toolbarOptions
-                },
-                placeholder: 'Composez votre texte ...',
-                theme: 'snow'
-            });
+#line 86 "MarkdownEditor.cshtml"
+    }
+    else
+    {
 
-            function getMD() {
-                return markdownize($('#bubble-container div.ql-editor').html())
-            }
-            quill.on('text-change', function (delta, oldDelta, source) {
-                if (source === ""user"") {
-                    invokeCSharpAction(getMD());
-                }
-            });
-          // TODO implement a dedicated injection
-          invokeCSharpAction(getMD());
-      });
-    </script>
 
-</body>
-</html>
-");
+#line default
+#line hidden
+WriteLiteral("        <script");
+
+WriteLiteral(" type=\"text/javascript\"");
+
+WriteLiteral(">\r\n        $(document).ready(function() {\r\n            jsLoaded();\r\n        });\r\n" +
+"        </script>\r\n");
+
+
+#line 94 "MarkdownEditor.cshtml"
+    }
+
+
+#line default
+#line hidden
+WriteLiteral("</body>\r\n</html>\r\n");
 
 }
 }

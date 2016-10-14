@@ -20,5 +20,18 @@ namespace BookAStar.Pages
             BookQueryData data = e.Item as BookQueryData;
             App.NavigationService.NavigateTo<BookQueryPage>(true,data);
         }
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            /* TODO find a responsive layout
+            if (width > height)
+             {
+                 mainLayout.Orientation = StackOrientation.Horizontal;
+             }
+             else
+             {
+                 mainLayout.Orientation = StackOrientation.Vertical;
+             } */
+            base.OnSizeAllocated(width, height);
+        }
     }
 }

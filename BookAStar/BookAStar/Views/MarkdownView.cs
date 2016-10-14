@@ -15,7 +15,9 @@ namespace BookAStar.Views
         public static readonly BindableProperty MarkdownProperty = BindableProperty.Create(
             "Markdown", typeof(string), typeof(MarkdownView), null, BindingMode.TwoWay
             );
-
+        public static readonly BindableProperty EditableProperty = BindableProperty.Create(
+            "Editable", typeof(bool), typeof(MarkdownView), false, BindingMode.OneWay
+            );
         public string Markdown
         {
             get
@@ -35,6 +37,14 @@ namespace BookAStar.Views
                     }
                 }
             }
+        }
+        private bool editable;
+        public bool Editable
+        {
+            get {
+                return (bool) GetValue(EditableProperty);
+            }
+            set { SetValue (EditableProperty, value); }
         }
         
         public event EventHandler<EventArgs> Modified;
