@@ -26,8 +26,8 @@
     </ResourceDictionary> 
   </ContentPage.Resources>
 
-  <StackLayout Padding="10,10,10,10">
-
+  <ScrollView>
+  <StackLayout Padding="10,10,10,10" x:Name="mainLayout">
   <ListView RefreshCommand="{Binding RefreshQueries}"  IsPullToRefreshEnabled="True"
             ItemsSource="{Binding Queries}" x:Name="list" ItemTapped="OnViewDetail" HasUnevenRows="true" RowHeight="80">
     <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
@@ -46,7 +46,7 @@
                   
                   <Label LineBreakMode="WordWrap" Text="{Binding EventDate, StringFormat='{0:dddd d MMMM à HH:mm}'}" FontSize="12" FontFamily="Italic"/>
                 </StackLayout>
-                <StackLayout Orientation="Vertical" VerticalOptions="StartAndExpand">
+                <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand">
                   <Label LineBreakMode="WordWrap" Text="{Binding Location.Address}"/>
                   <Label Text="{Binding Previsionnal}"/>
                   <Label Text="{Binding Id}" HorizontalTextAlignment="End"/>
@@ -58,5 +58,6 @@
     </ListView.ItemTemplate>
   </ListView>
   </StackLayout>
+  </ScrollView>
   
 </ContentPage>

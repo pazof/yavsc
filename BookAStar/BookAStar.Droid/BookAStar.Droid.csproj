@@ -317,13 +317,15 @@
     <Compile Include="Helpers\YavscHelpers.cs" />
     <Compile Include="Html.cs" />
     <Compile Include="MainActivity.cs" />
-    <Compile Include="MarkdownEditor.cs">
+    <Compile Include="Markdown\JsBridgeMarkdown.cs" />
+    <Compile Include="Markdown\MarkdownEditor.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MarkdownEditor.cshtml</DependentUpon>
     </Compile>
-    <Compile Include="MarkdownViewRenderer.cs" />
-    <Compile Include="MarkdownWebViewClient.cs" />
+    <Compile Include="Markdown\MarkdownViewModel.cs" />
+    <Compile Include="Markdown\MarkdownViewRenderer.cs" />
+    <Compile Include="Markdown\MarkdownWebChromeClient.cs" />
     <Compile Include="OAuth2\YaOAuth2Authenticator.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -338,7 +340,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="google-services.json" />
-    <None Include="MarkdownEditor.cshtml">
+    <None Include="Markdown\MarkdownEditor.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>MarkdownEditor.cs</LastGenOutput>
       <SubType>None</SubType>

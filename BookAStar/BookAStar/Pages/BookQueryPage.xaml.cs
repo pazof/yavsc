@@ -80,6 +80,18 @@ namespace BookAStar.Pages
             App.NavigationService.NavigateTo<EditEstimatePage>(true,
                 new EditEstimateViewModel(e));
         }
-        
+
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            if (width > height)
+            {
+                bookQueryLayout.Orientation = StackOrientation.Horizontal;
+            }
+            else
+            {
+                bookQueryLayout.Orientation = StackOrientation.Vertical;
+            }
+            base.OnSizeAllocated(width, height);
+        }
     }
 }

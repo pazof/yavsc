@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Net;
 
-namespace BookAStar.Helpers
+namespace BookAStar.Data
 {
 
     public class RemoteEntity<V,K> : LocalEntity<V, K>, ICommand where K : IEquatable<K>

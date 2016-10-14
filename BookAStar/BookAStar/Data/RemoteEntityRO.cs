@@ -1,11 +1,7 @@
-﻿using BookAStar;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BookAStar.Helpers
+namespace BookAStar.Data
 {
     public class RemoteEntityRO<V,K>: RemoteEntity<V,K> where K: IEquatable<K>
     {

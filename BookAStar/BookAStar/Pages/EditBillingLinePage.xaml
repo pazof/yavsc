@@ -18,11 +18,11 @@
       </Style>
       <converters:EnumConverter x:Key="enumToInt" />
       <converters:BooleanToObjectConverter x:Key="boolToStyleImage" x:TypeArguments="Style">
-        
+
         <converters:BooleanToObjectConverter.FalseObject>
           <Style TargetType="Image">
             <Setter Property="HeightRequest" Value="20" />
-            <Setter Property="Source" 
+            <Setter Property="Source"
                     Value="{extensions:ImageResource BookAStar.Images.Validation.error.png}" />
           </Style>
         </converters:BooleanToObjectConverter.FalseObject>
@@ -30,58 +30,73 @@
         <converters:BooleanToObjectConverter.TrueObject>
           <Style TargetType="Image">
             <Setter Property="HeightRequest" Value="20" />
-            <Setter Property="Source" 
+            <Setter Property="Source"
                     Value="{extensions:ImageResource BookAStar.Images.Validation.success.png}" />
           </Style>
         </converters:BooleanToObjectConverter.TrueObject>
-        
+
       </converters:BooleanToObjectConverter>
-      
+
     </ResourceDictionary>
   </ContentPage.Resources>
+    <ScrollView>
+
   <StackLayout x:Name="mainStackLayout">
-    
-    <Label Text="Description de la ligne de facture" 
-           Style="{StaticResource InputLabelStyle}"></Label>
-    <Editor VerticalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}">
-      <Editor.Behaviors>
-        <behaviors:EditorMaxLengthValidator x:Name="descriptionValidator" MaxLength="512" />
-      </Editor.Behaviors>
-    </Editor>
-    <Image Style="{Binding Source={x:Reference descriptionValidator}, 
+      <Label Text="Description de la ligne de facture"
+             Style="{StaticResource InputLabelStyle}"></Label>
+      <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand">
+        <Editor  HorizontalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}">
+          <Editor.Behaviors>
+            <behaviors:EditorMaxLengthValidator x:Name="descriptionValidator" MaxLength="512" />
+          </Editor.Behaviors>
+        </Editor>
+        <Image HorizontalOptions="End" Style="{Binding Source={x:Reference descriptionValidator}, 
                                 Path=IsValid, 
                                 Converter={StaticResource boolToStyleImage}}" />
-    <Label Text="Durée de la prestation"
-           Style="{StaticResource InputLabelStyle}"></Label>
-    <StackLayout Orientation="Horizontal">
-      <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}"
-            Text="{Binding DurationValue, Mode=TwoWay}" />
-      <views:EnumPicker x:Name="picker" Style="{StaticResource PickerStyle}" 
-                               EnumSource="{Binding DurationUnit}"
-              Title="Unité de temps" 
-              SelectedItem="{Binding DurationUnit, Mode=TwoWay}">
-      </views:EnumPicker>
-    </StackLayout>
-    
-    <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
-    <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric"
-           Style="{StaticResource BigEntry}"/>
-    <Label Text="Prix unitaire" Style="{StaticResource InputLabelStyle}"></Label>
-    <StackLayout Orientation="Horizontal">
-      <Entry Text="{Binding UnitaryCostText, Mode=TwoWay}" Placeholder="Prix"
-             Keyboard="Numeric" Style="{StaticResource BigEntry}">
-        <Entry.Behaviors>
-          <behaviors:DecimalValidatorBehavior x:Name="unitCostValidator" />
-        </Entry.Behaviors>
-      </Entry>
-      <Label Text="€" Style="{StaticResource BigLabel}" />
-      <Image  x:Name="unitaryCostSuccessErrorImage"
-                Style="{Binding Source={x:Reference unitCostValidator}, 
+      </StackLayout>
+
+      <Label Text="Durée de la prestation"
+             Style="{StaticResource InputLabelStyle}">
+      </Label>
+      <StackLayout Orientation="Horizontal">
+        <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}"
+              Text="{Binding DurationValue, Mode=TwoWay, StringFormat='{0}'}" >
+          <Entry.Behaviors>
+            <behaviors:DecimalValidatorBehavior x:Name="durationValidator" />
+          </Entry.Behaviors>
+        </Entry>
+        <views:EnumPicker x:Name="picker" Style="{StaticResource PickerStyle}"
+                                 EnumSource="{Binding DurationUnit}"
+                Title="Unité de temps"
+                SelectedItem="{Binding DurationUnit, Mode=TwoWay}">
+        </views:EnumPicker>
+        <Image  x:Name="durationSuccessErrorImage"
+                  Style="{Binding Source={x:Reference durationValidator}, 
                                 Path=IsValid, 
                                 Converter={StaticResource boolToStyleImage}}" />
-    </StackLayout>
-    <Button Text="Valider cette ligne de devis"
-            Command="{Binding ValidateCommand}"
-            Clicked="OnValidateClicked"></Button>
+      </StackLayout>
+
+      <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
+      <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric"
+             Style="{StaticResource BigEntry}"/>
+      <Label Text="Prix unitaire" Style="{StaticResource InputLabelStyle}"></Label>
+      <StackLayout Orientation="Horizontal">
+        <Entry Text="{Binding UnitaryCostText, Mode=TwoWay}" Placeholder="Prix"
+               Keyboard="Numeric" Style="{StaticResource BigEntry}">
+          <Entry.Behaviors>
+            <behaviors:DecimalValidatorBehavior x:Name="unitCostValidator" />
+          </Entry.Behaviors>
+        </Entry>
+        <Label Text="€" Style="{StaticResource BigLabel}" />
+        <Image  x:Name="unitaryCostSuccessErrorImage"
+                  Style="{Binding Source={x:Reference unitCostValidator}, 
+                                Path=IsValid, 
+                                Converter={StaticResource boolToStyleImage}}" />
+      </StackLayout>
+
+        <Button Text="Valider cette ligne de devis"
+                Command="{Binding ValidateCommand}"
+                Clicked="OnValidateClicked"></Button>
   </StackLayout>
+    </ScrollView>
 </ContentPage>

@@ -1,8 +1,4 @@
-﻿using BookAStar.Interfaces;
-using BookAStar.Model;
-using BookAStar.Pages;
-using BookAStar.ViewModels;
-using System;
+﻿using System;
 using Xamarin.Forms;
 using XLabs.Forms.Mvvm;
 using XLabs.Forms.Pages;
@@ -16,17 +12,20 @@ using XLabs.Enums;
 
 namespace BookAStar
 {
+    using Interfaces;
+    using Model;
+    using Pages;
+    using ViewModels;
     public partial class App : Application // superclass new in 1.3
     {
         public static IPlatform PlatformSpecificInstance { get; set; }
         public static string AppName { get; set; }
 
 
-        // Exists in order to dispose of a static instance strongly typed
-        // TODO : replace all references to this field
-        // by Views resolution, and then, drop it
+        // Exists in order to dispose of a static instance strongly typed,
+        // It Makes smaller code.
         public static App CurrentApp { get { return Current as App; } }
-
+       
         public static bool MasterPresented
         {
             get
@@ -65,7 +64,7 @@ namespace BookAStar
             
         }
 
-        // FIXME Not called
+        // Called Once, at app init
         private void OnInitialize(object sender, EventArgs e)
         {
            
@@ -81,21 +80,20 @@ namespace BookAStar
         // Called on rotation
         private void OnSuspended(object sender, EventArgs e)
         {
-            // TODO the navigation stack persistence (save)
-            
+            // TODO save the navigation stack
         }
 
         // called on app startup, after OnStartup, not on rotation
         private void OnAppResumed(object sender, EventArgs e)
         {
-            // TODO the navigation stack persistence (restore)
+            // TODO restore the navigation stack 
             base.OnResume();
         }
 
-        // FIXME Not called ... see OnSuspended
+        // FIXME Not called? 
         private void OnRotation(object sender, EventArgs<Orientation> e)
         {
-            // TODO the navigation stack persistence (restore?)
+            
         }
 
         public static GenericConfigSettingsMgr ConfigManager { protected set; get; }
@@ -215,9 +213,6 @@ namespace BookAStar
                  , BookQueryPage>((b, p) => p.BindingContext = new BookQueryViewModel(query));
             App.Current.MainPage.Navigation.PushAsync(page as Page);
         }
-
-        // TODO système de persistance de l'état de l'appli
-
     }
 }
 

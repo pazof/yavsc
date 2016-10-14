@@ -1,21 +1,10 @@
-﻿using BookAStar.Model;
-using BookAStar.Model.Workflow;
-using BookAStar.ViewModels;
-using BookAStar.Views;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
-using XLabs.Forms.Services;
-using XLabs.Ioc;
-using XLabs.Platform.Services;
 
 namespace BookAStar.Pages
 {
+    using Model.Workflow;
+    using ViewModels;
     public partial class EditEstimatePage : ContentPage
     {
 
@@ -25,16 +14,17 @@ namespace BookAStar.Pages
             BindingContext = model;
         }
 
-        protected override void OnBindingContextChanged()
+        protected override void OnSizeAllocated(double width, double height)
         {
-            base.OnBindingContextChanged();
-            ((EditEstimateViewModel)BindingContext).PropertyChanged += EditEstimatePage_PropertyChanged;
-
-        }
-
-        private void EditEstimatePage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            
+             if (width > height)
+             {
+                 biAnVaLayout.Orientation = StackOrientation.Horizontal;
+             }
+             else
+             {
+                 biAnVaLayout.Orientation = StackOrientation.Vertical;
+             }
+            base.OnSizeAllocated(width, height);
         }
 
         protected void OnNewCommanLine(object sender, EventArgs e)
@@ -52,6 +42,10 @@ namespace BookAStar.Pages
                 true,
                 new object[] { lineView } );
         }
-        
+
+        protected void OnEstimateValidated(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
