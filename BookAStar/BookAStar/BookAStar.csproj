@@ -48,6 +48,7 @@
     <Compile Include="Behaviors\PickerBehavior.cs" />
     <Compile Include="Behaviors\StarBehavior.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Model\UI\PageState.cs" />
     <Compile Include="Views\EnumPicker.cs" />
     <Compile Include="Converters\BooleanToObjectConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />

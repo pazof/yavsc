@@ -6,10 +6,6 @@ using Android.OS;
 using Android.Speech.Tts;
 using Android.Util;
 using Android.Widget;
-using BookAStar.Droid.OAuth;
-using BookAStar.Helpers;
-using BookAStar.Interfaces;
-using BookAStar.Model.Auth.Account;
 using Newtonsoft.Json.Linq;
 using Plugin.DeviceInfo;
 using SQLite.Net;
@@ -41,6 +37,11 @@ using Yavsc.Models.Identity;
 
 namespace BookAStar.Droid
 {
+    using Data;
+    using Droid.OAuth;
+    using Helpers;
+    using Interfaces;
+    using Model.Auth.Account;       
     [Activity(Name="fr.pschneider.bas.MainActivity", Label = "BookAStar", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity :
 

@@ -12,10 +12,13 @@ using XLabs.Enums;
 
 namespace BookAStar
 {
+    using Data;
     using Interfaces;
     using Model;
+    using Model.UI;
     using Pages;
     using ViewModels;
+
     public partial class App : Application // superclass new in 1.3
     {
         public static IPlatform PlatformSpecificInstance { get; set; }
@@ -73,7 +76,7 @@ namespace BookAStar
         // called on app startup, not on rotation
         private void OnStartup(object sender, EventArgs e)
         {
-            // TODO special starup pages as
+            // TODO special startup pages as
             // notification details or wizard setup page
         }
 
@@ -81,6 +84,19 @@ namespace BookAStar
         private void OnSuspended(object sender, EventArgs e)
         {
             // TODO save the navigation stack
+            int position = 0;
+            foreach (Page page in MainPage.Navigation.NavigationStack)
+            {
+
+                DataManager.Current.AppState.Add(
+                    new PageState
+                    {
+                        Position = position++,
+                        PageType = page.GetType().FullName,
+                        BindingContext = page.BindingContext
+                    });
+            }
+            DataManager.Current.AppState.SaveCollection();
         }
 
         // called on app startup, after OnStartup, not on rotation
@@ -88,6 +104,14 @@ namespace BookAStar
         {
             // TODO restore the navigation stack 
             base.OnResume();
+            foreach (var pageState in DataManager.Current.AppState)
+            {
+                var pageType = Type.GetType(pageState.PageType);
+                NavigationService.NavigateTo(
+                    pageType, true, pageState.BindingContext);
+            }
+            DataManager.Current.AppState.Clear();
+            DataManager.Current.AppState.SaveCollection();
         }
 
         // FIXME Not called? 

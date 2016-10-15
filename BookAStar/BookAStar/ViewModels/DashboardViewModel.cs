@@ -1,7 +1,4 @@
-﻿using BookAStar.Helpers;
-using BookAStar.Model.Auth.Account;
-using BookAStar.Pages;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Xamarin.Forms;
 using XLabs.Forms.Behaviors;
@@ -12,7 +9,11 @@ using XLabs.Platform.Services;
 
 namespace BookAStar.ViewModels
 {
-    
+    using Data;
+    using Helpers;
+    using Model.Auth.Account;
+    using Pages;
+
     internal class DashboardViewModel : ViewModel
     {
         int rating;

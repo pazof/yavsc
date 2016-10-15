@@ -5,14 +5,16 @@ namespace BookAStar.Data
     using Model;
     using Model.Blog;
     using Model.Workflow;
-
+    using Model.UI;
+    
     public class DataManager
     {
-        // TODO userinfo estimatetemplate rating service product tag   
+        // TODO estimatetemplate rating service product tag   
         public RemoteEntityRO<BookQueryData, long> BookQueries { get; set; }
         public RemoteEntity<Estimate, long> Estimates { get; set; }
         public RemoteEntity<Blog, long> Blogspot { get; set; }
         public LocalEntity<ClientProviderInfo,string> Contacts { get; set; }
+        internal LocalEntity<PageState, int> AppState { get; set; }
         protected static DataManager current = new DataManager();
         public static DataManager Current 
         {
@@ -31,10 +33,13 @@ namespace BookAStar.Data
             Blogspot = new RemoteEntity<Blog, long>("blog", 
                 x=>x.Id);
             Contacts = new LocalEntity<ClientProviderInfo, string>(c => c.UserId);
+            AppState = new LocalEntity<PageState, int>(s => s.Position);
+
             BookQueries.Load();
             Estimates.Load();
             Blogspot.Load();
             Contacts.Load();
+            AppState.Load();
         }
 
         public async Task<BookQueryData> GetBookQuery(long bookQueryId)
