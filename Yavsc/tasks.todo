@@ -11,18 +11,21 @@ Da road to the hell
 	✔ Rendu html du format Markdown-av (+audio&video) @done (October 6th 2016, 14:32)
 	✔ Rendu Android, via WebKit WebView @done (October 6th 2016, 14:32)
     ✔ Salon public @done (September 28th 2016, 17:58)
-
-	☐ Saisie basique du devis
+	☐ Saisie et soumission basique du devis
 	☐ Devis au formats TeX et Pdf en ligne à accès restreint
-	☐ Proposition de devis sur BookQuery
 	☐ Signature de contrat
-    ☐ Chat privé
-	☐ Accès mobile au salon public
+    ✔ Chat privé (coté serveur) @done (October 13th 2016, 16:27)
+	✔ Accès mobile au salon public @done (October 13th 2016, 16:27)
 	☐ Accès Web au chat privé
+	☐ Accès mobile au chat privé
 
 ## Jalon 2
 
 	☐ Quota fs utilisateur
+	☐ Sécurisation des formulaires
+	(à base de clés anti-forge, limitation en taille de chaines de caratères)
+		☐ web
+		☐ mobile
 	☐ Gestion de contenu des pages du site, au fromat Markdown-av
 	☐ Paiement client d'un approvisionnement pour une demande de prestation définie
 	☐ Login Twitter
@@ -30,6 +33,7 @@ Da road to the hell
 	☐ Restrictions d'accès au chat privé
 	☐ Monétarisations
 	☐ Support multi-lanque de l'app mobile
+	☐ Paiement client du reste de la prestation
 
 ## Jalon 3
 
