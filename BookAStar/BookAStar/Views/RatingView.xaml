@@ -6,6 +6,13 @@
              xmlns:behaviors="clr-namespace:BookAStar.Behaviors;assembly=BookAStar"
              xmlns:converters="clr-namespace:BookAStar.Converters;assembly=BookAStar"
              x:Class="BookAStar.Views.RatingView">
+  <ContentView.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource LabelStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentView.Resources>
   <ContentView.Content>
     <StackLayout>
       <StackLayout Orientation="Horizontal" HeightRequest="70">
@@ -74,9 +81,6 @@
         <StackLayout.Resources>
           <ResourceDictionary>
             <converters:RatingText x:Key="ratingText" />
-            <Style TargetType="Label" BasedOn="{StaticResource LabelStyle}">
-              <Setter Property="TextColor" Value="#4CAF50" />
-            </Style>
           </ResourceDictionary>
         </StackLayout.Resources>
         <Label Text="{Binding Source={x:Reference starFive}, Path=Rating, Converter={StaticResource ratingText}}" ></Label>

@@ -1,19 +1,13 @@
-﻿
-using System;
-
+﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
 namespace BookAStar.Pages
 {
-    using Helpers;
+    using Data;
     using Model;
     using Model.Workflow;
-    using System.Threading.Tasks;
     using ViewModels;
-    using XLabs.Forms.Mvvm;
-    using XLabs.Ioc;
-    using XLabs.Platform.Services;
 
     public partial class BookQueryPage : ContentPage
     {

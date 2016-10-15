@@ -25,9 +25,9 @@
     <Label Text="{Binding Location.Address}" />
     <Label Text="{Binding Previsional}" />
     </StackLayout>
-    <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand">
+    <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
     <maps:Map x:Name="map" VerticalOptions="FillAndExpand"></maps:Map>
-    <Button Text="Faire un devis" Clicked="MakeAnEstimate" />
+    <Button Text="Faire un devis" Clicked="MakeAnEstimate"  VerticalOptions="End" />
     </StackLayout>
   </StackLayout>
 </ContentPage>
