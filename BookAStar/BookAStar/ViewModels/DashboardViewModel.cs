@@ -195,10 +195,10 @@ namespace BookAStar.ViewModels
                     "Profile professionel non renseigné";
                 newAvatar = UserHelpers.Avatar(user.Avatar);
             }
-            SetProperty<bool>(ref haveAnUser, newHaveAnUser, "UserIsPro");
+            SetProperty<bool>(ref haveAnUser, newHaveAnUser, "HaveAnUser");
             SetProperty<bool>(ref userIsPro, newUserIsPro, "UserIsPro");
             SetProperty<string>(ref performerStatus, newStatusString, "PerformerStatus");
-            SetProperty<string>(ref userQueries, newQueriesButtonText, "PerformerStatus");
+            SetProperty<string>(ref userQueries, newQueriesButtonText, "UserQueries");
             SetProperty<long>(ref queryCount, newQueryCount, "QueryCount");
             SetProperty<ImageSource>(ref avatar, newAvatar, "Avatar");
         }
