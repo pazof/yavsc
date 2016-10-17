@@ -20,7 +20,7 @@
   <StackLayout x:Name="bookQueryLayout">
     <StackLayout Orientation="Vertical">
     <Image Source="{Binding Client.AvatarOrNot}" Aspect="AspectFit" VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}"/>
-    <Label Text="{Binding Client.UserName}"/>
+    <Label Text="{Binding Client.UserName}" />
     <Label Text="{Binding EventDate, StringFormat='le {0:dddd d MMMM yyyy à hh:mm}'}"  />
     <Label Text="{Binding Location.Address}" />
     <Label Text="{Binding Previsional}" />
