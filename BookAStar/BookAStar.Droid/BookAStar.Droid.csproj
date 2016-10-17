@@ -337,12 +337,13 @@
     <Compile Include="OAuth2\YaOAuth2Authenticator.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SendFilesActivity.cs" />
+    <Compile Include="Services\YavscChooserTargetService.cs" />
     <Compile Include="Services\GcmListenerService.cs" />
     <Compile Include="Services\GcmRegistrationIntentService.cs" />
     <Compile Include="Services\MyGcmIntentService.cs" />
     <Compile Include="Services\MyInstanceIdListener.cs" />
     <Compile Include="CompatXFormsApp.cs" />
-    <Compile Include="YavscShareActionProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

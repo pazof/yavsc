@@ -22,5 +22,8 @@ namespace BookAStar
         public static readonly string SignalRHubsUrl = YavscHomeUrl + "/signalr/hubs";
         #endregion
 
+        #region Permissions ids
+        public static int AllowBeATarget = 1;
+        #endregion
     }
 }

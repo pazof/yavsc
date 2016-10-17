@@ -37,12 +37,17 @@ using Yavsc.Models.Identity;
 
 namespace BookAStar.Droid
 {
+    using Android.Runtime;
+    using Android.Support.V4.App;
+    using Android.Support.V4.Content;
     using Data;
     using Droid.OAuth;
     using Helpers;
     using Interfaces;
-    using Model.Auth.Account;       
-    [Activity(Name="fr.pschneider.bas.MainActivity", Label = "BookAStar", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    using Model.Auth.Account;
+    using static Android.Manifest;
+
+    [Activity(Name = "fr.pschneider.bas.MainActivity", Label = "BookAStar", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity :
 
         // global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
@@ -54,8 +59,10 @@ namespace BookAStar.Droid
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
-            
+
             base.OnCreate(bundle);
+
+            // FIXME usefull?
             SetPersistent(true);
             // global::Xamarin.Forms.Forms.SetTitleBarVisibility(Xamarin.Forms.AndroidTitleBarVisibility.Never);
 
@@ -71,7 +78,7 @@ namespace BookAStar.Droid
                 Android.Webkit.WebView.SetWebContentsDebuggingEnabled(true);
             }
 
-            IXFormsApp<XFormsCompatApplicationDroid> app =null;
+            IXFormsApp<XFormsCompatApplicationDroid> app = null;
             if (!Resolver.IsSet)
             {
                 var xfapp = new XFormsCompatAppDroid();
@@ -96,7 +103,12 @@ namespace BookAStar.Droid
             };
 
             var fapp = new BookAStar.App(this);
+
+
             LoadApplication(fapp);
+
+            CheckSharing();
+
             // TabLayoutResource = Resource.Layout.Tabbar;
             // ToolbarResource = Resource.Layout.Toolbar;
             /*
@@ -109,7 +121,37 @@ namespace BookAStar.Droid
              x = typeof(Themes.Android.UnderlineEffect); */
 
         }
-
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
+        {
+            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            if (requestCode == Constants.AllowBeATarget) {
+                if (grantResults.Length > 0)
+                {
+                    if (grantResults[0] == Android.Content.PM.Permission.Granted)
+                    {
+                        // yay!
+                    }
+                    else
+                    {
+                        // Should we show an explanation?
+                        if (ActivityCompat.ShouldShowRequestPermissionRationale(this,
+                                Permission.BindChooserTargetService))
+                        {
+                            //Show permission explanation dialog...
+                            // Show an expanation to the user *asynchronously* -- don't block
+                            // this thread waiting for the user's response! After the user
+                            // sees the explanation, try again to request the permission.
+                            throw new NotImplementedException();
+                        }
+                        else
+                        {
+                            //Never ask again selected, or device policy prohibits the app from having that permission.
+                            //So, disable that feature, or fall back to another situation...
+                        }
+                    }
+                }
+            }
+        }
         private SimpleContainer SetIoc(XFormsCompatAppDroid app)
         {
             var resolverContainer = new SimpleContainer();
@@ -117,8 +159,8 @@ namespace BookAStar.Droid
 
             app.Init(this);
 
-           var documents = app.AppDataDirectory;
-           var pathToDatabase = Path.Combine(documents, "xforms.db");
+            var documents = app.AppDataDirectory;
+            var pathToDatabase = Path.Combine(documents, "xforms.db");
 
             resolverContainer.Register<IDevice>(t => AndroidDevice.CurrentDevice)
                 .Register<IDisplay>(t => t.Resolve<IDevice>().Display)
@@ -156,7 +198,7 @@ namespace BookAStar.Droid
 
         public App AppContext
         {
-            get;set;
+            get; set;
         }
 
         bool StartNotifications()
@@ -203,7 +245,7 @@ namespace BookAStar.Droid
             base.OnStart();
             if (MainSettings.PushNotifications)
                 StartNotifications();
-            long queryId = Intent.GetLongExtra("BookQueryId",0);
+            long queryId = Intent.GetLongExtra("BookQueryId", 0);
 
             if (queryId > 0)
             {
@@ -271,7 +313,8 @@ namespace BookAStar.Droid
 
         public async Task<IEnumerable<Account>> GetAndroidAccounts()
         {
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
                 var manager = AccountStore.Create(this);
                 return manager.FindAccountsForService(Constants.ApplicationName);
             });
@@ -335,7 +378,7 @@ namespace BookAStar.Droid
                                    Id = uid,
                                    YavscTokens = tokens
                                };
-                               
+
                                MainSettings.SaveUser(newuser);
                                accStore.Save(acc, Constants.ApplicationName);
                            }
@@ -405,11 +448,11 @@ namespace BookAStar.Droid
         {
             using (var m =
                 new SimpleJsonPostMethod(
-                    method, "Bearer "+
+                    method, "Bearer " +
                 MainSettings.CurrentUser.YavscTokens.AccessToken
                 ))
             {
-                return  m.Invoke<TAnswer>(arg);
+                return m.Invoke<TAnswer>(arg);
             }
         }
 
@@ -419,7 +462,7 @@ namespace BookAStar.Droid
                 new SimpleJsonPostMethod(
                     method, "Bearer " +
                 MainSettings.CurrentUser.YavscTokens.AccessToken
-                )) 
+                ))
             {
                 return m.InvokeJson(arg);
             }
@@ -427,7 +470,7 @@ namespace BookAStar.Droid
 
         public T Resolve<T>()
         {
-            return (T) Resolver.Resolve(typeof(T));
+            return (T)Resolver.Resolve(typeof(T));
         }
 
         public object Resolve(Type t)
@@ -447,6 +490,27 @@ namespace BookAStar.Droid
         public override void OnRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState)
         {
             base.OnRestoreInstanceState(savedInstanceState, persistentState);
+        }
+
+        private void CheckSharing()
+        {
+            // .BIND_CHOOSER_TARGET_SERVICE
+
+            // Here, thisActivity is the current activity
+            if (ContextCompat.CheckSelfPermission(this,
+                           Permission.BindChooserTargetService) != Android.Content.PM.Permission.Granted)
+            {
+
+
+                ActivityCompat.RequestPermissions(this,
+                        new String[] { Permission.BindChooserTargetService },
+                        Constants.AllowBeATarget);
+
+                // Constants.AllowReadContacts is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+
+            }
         }
     }
 }
