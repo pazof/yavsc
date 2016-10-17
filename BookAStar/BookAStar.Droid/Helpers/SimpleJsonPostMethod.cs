@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using BookAStar;
 
 namespace Yavsc.Helpers
 {
@@ -51,7 +52,7 @@ namespace Yavsc.Helpers
                 request.Headers.Add($"Authorization: {authorizationHeader}");
         }
 
-        public static string BasePath { get; private set; } = "http://dev.pschneider.fr/api/";
+        public static string BasePath { get; private set; } = Constants.YavscApiUrl;
 
         public void Dispose()
         {
