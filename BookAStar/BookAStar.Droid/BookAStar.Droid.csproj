@@ -150,6 +150,14 @@
       <HintPath>..\..\packages\Xam.Plugins.Settings.2.5.1.0\lib\MonoAndroid10\Plugin.Settings.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Plugin.Share, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Plugin.Share.3.0.1\lib\MonoAndroid10\Plugin.Share.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Plugin.Share.Abstractions, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Plugin.Share.3.0.1\lib\MonoAndroid10\Plugin.Share.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SignaturePad, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Controls.SignaturePad.1.4.0\lib\MonoAndroid\SignaturePad.dll</HintPath>
       <Private>True</Private>
@@ -334,6 +342,7 @@
     <Compile Include="Services\MyGcmIntentService.cs" />
     <Compile Include="Services\MyInstanceIdListener.cs" />
     <Compile Include="CompatXFormsApp.cs" />
+    <Compile Include="YavscShareActionProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -398,6 +407,10 @@
       <Visible>False</Visible>
       <Version>22.0.0.0</Version>
     </XamarinComponentReference>
+    <XamarinComponentReference Include="googleplayservices-appinvite">
+      <Visible>False</Visible>
+      <Version>29.0.0.2</Version>
+    </XamarinComponentReference>
     <XamarinComponentReference Include="json.net">
       <Visible>False</Visible>
       <Version>7.0.1</Version>
@@ -410,17 +423,21 @@
       <Visible>False</Visible>
       <Version>1.5.2</Version>
     </XamarinComponentReference>
+    <XamarinComponentReference Include="SharePlugin">
+      <Visible>False</Visible>
+      <Version>3.0.1</Version>
+    </XamarinComponentReference>
     <XamarinComponentReference Include="signature-pad">
       <Visible>False</Visible>
       <Version>1.4.0.0</Version>
     </XamarinComponentReference>
     <XamarinComponentReference Include="xamandroidsupportv4-18">
       <Visible>False</Visible>
-      <Version>21.0.3.0</Version>
+      <Version>23.4.0.1</Version>
     </XamarinComponentReference>
     <XamarinComponentReference Include="xamandroidsupportv7appcompat">
       <Visible>False</Visible>
-      <Version>23.1.1.1</Version>
+      <Version>24.2.1.0</Version>
     </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.auth">
       <Visible>False</Visible>
