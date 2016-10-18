@@ -42,7 +42,7 @@ namespace Yavsc.Helpers
 		/// <param name="pathToMethod">Path to method.</param>
 		public SimpleJsonPostMethod (string pathToMethod, string authorizationHeader = null)
 		{
-			request = (HttpWebRequest) WebRequest.Create (BasePath + pathToMethod);
+			request = (HttpWebRequest) WebRequest.Create ($"{BasePath}/{pathToMethod}");
 			request.Method = "POST";
 			request.Accept = "application/json";
 			request.ContentType = "application/json";
