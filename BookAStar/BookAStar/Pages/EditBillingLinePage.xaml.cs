@@ -1,4 +1,5 @@
-﻿using BookAStar.ViewModels;
+﻿using BookAStar.Data;
+using BookAStar.ViewModels;
 using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
@@ -18,7 +19,6 @@ namespace BookAStar.Pages
         
         public void OnValidateClicked (object sender, EventArgs e)
         {
-
             this.Navigation.PopAsync();
         }
     }

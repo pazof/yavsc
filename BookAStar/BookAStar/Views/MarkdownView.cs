@@ -33,12 +33,11 @@ namespace BookAStar.Views
                     if (Modified != null)
                     {
                         Modified.Invoke(this, new EventArgs());
-                        return;
                     }
                 }
             }
         }
-        private bool editable;
+
         public bool Editable
         {
             get {

@@ -31,13 +31,12 @@
         <Label Grid.Row="0" Grid.Column="1" Text="{Binding Query.Location.Address}" ></Label>
         <Label Grid.Row="0" Grid.Column="2" Text="{Binding Query.EventDate, StringFormat='{0:dddd d MMMM yyyy à hh:mm}'}" ></Label>
       </Grid>
-
+      <Entry Placeholder="Saisissez un titre pour ce devis" Text="{Binding Title, Mode=TwoWay}" />
       <views:MarkdownView x:Name="mdview"
                           Editable="True"
                           HorizontalOptions="FillAndExpand"
       Markdown="{Binding Description, Mode=TwoWay}"
-                          VerticalOptions="Start"
-                        />
+        VerticalOptions="Start" />
 <StackLayout x:Name="biAnVaLayout">
       <ListView x:Name="BillListView" ItemsSource="{Binding Bill}"
          MinimumHeightRequest="40" HasUnevenRows="true" VerticalOptions="FillAndExpand"

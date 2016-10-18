@@ -1,24 +1,32 @@
 ﻿using System.Collections.Generic;
-using XLabs.Forms.Mvvm;
 using BookAStar.Model.Workflow;
 using System.Collections.ObjectModel;
 using BookAStar.Model;
 using Xamarin.Forms;
+using BookAStar.Data;
+using Newtonsoft.Json;
 
 namespace BookAStar.ViewModels
 {
-    public class EditEstimateViewModel : ViewModel
+    public class EditEstimateViewModel : EditingViewModel
     {
-        public EditEstimateViewModel(Estimate data)
+        /// <summary>
+        /// For deserialization
+        /// </summary>
+        public EditEstimateViewModel()
+        {
+
+        }
+        /// <summary>
+        /// Builds a new view model on estimate,
+        /// sets <c>Data</c> with given value parameter
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="localState"></param>
+        public EditEstimateViewModel(Estimate data, LocalState localState )
         {
             Data = data;
-            if (data.AttachedFiles == null) data.AttachedFiles = new List<string>();
-            if (data.AttachedGraphics == null) data.AttachedGraphics = new List<string>();
-            if (data.Bill == null) data.Bill = new List<BillingLine>();
-            AttachedFiles = new ObservableCollection<string>(data.AttachedFiles);
-            AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphics);
-            Bill = new ObservableCollection<BillingLine>(data.Bill);
-            Bill.CollectionChanged += Bill_CollectionChanged;
+            State = localState;
         }
 
         private void Bill_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -26,19 +34,31 @@ namespace BookAStar.ViewModels
             Data.Bill = Bill;
             NotifyPropertyChanged("FormattedTotal");
         }
+        private Estimate data;
+        public Estimate Data { get { return data; } set {
+                data = value;
+                if (data.AttachedFiles == null) data.AttachedFiles = new List<string>();
+                if (data.AttachedGraphics == null) data.AttachedGraphics = new List<string>();
+                if (data.Bill == null) data.Bill = new List<BillingLine>();
+                AttachedFiles = new ObservableCollection<string>(data.AttachedFiles);
+                AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphics);
+                Bill = new ObservableCollection<BillingLine>(data.Bill);
+                Bill.CollectionChanged += Bill_CollectionChanged;
+            } }
 
-        public Estimate Data { get; protected set; }
-
+        [JsonIgnore]
         public ObservableCollection<string> AttachedFiles
         {
             get; protected set;
         }
 
+        [JsonIgnore]
         public ObservableCollection<string> AttachedGraphicList
         {
             get; protected set;
         }
 
+        [JsonIgnore]
         public ObservableCollection<BillingLine> Bill
         {
             get; protected set;
@@ -46,6 +66,7 @@ namespace BookAStar.ViewModels
 
 
         string newDesc;
+        [JsonIgnore]
         public string Description
         {
             get
@@ -61,6 +82,7 @@ namespace BookAStar.ViewModels
         }
 
         private int? status;
+        [JsonIgnore]
         public int? Status
         {
             get
@@ -75,6 +97,7 @@ namespace BookAStar.ViewModels
             }
         }
         private string title;
+        [JsonIgnore]
         public string Title
         {
             get
@@ -89,10 +112,13 @@ namespace BookAStar.ViewModels
             }
         }
 
+        [JsonIgnore]
         public ClientProviderInfo Client {  get { return Data.Client; } }
 
+        [JsonIgnore]
         public BookQueryData Query { get { return Data.Query; } }
 
+        [JsonIgnore]
         public FormattedString FormattedTotal
         {
             get

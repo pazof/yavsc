@@ -21,10 +21,15 @@
   <ScrollView>
     <StackLayout Orientation="Vertical" >
       <StackLayout>
-        <StackLayout>
+        <lc:GesturesContentView ExcludeChildren="false" VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}">
+            <StackLayout>
+          <Label Text="{Binding UserName}" Style="{StaticResource LabelPageHeadingStyle}"
+                                             HorizontalTextAlignment="Center"
+                                             LineBreakMode="WordWrap" XAlign="Center"
+           ></Label>
+          
           <Frame VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}">
-            <lc:GesturesContentView ExcludeChildren="false" VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}">
-
+              
               <lb:Gestures.Interests>
                 <lb:GestureCollection>
                   <lb:GestureInterest GestureType="LongPress"
@@ -35,15 +40,13 @@
               <Image Source="{Binding Avatar}" Aspect="AspectFit"
                      VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}" />
 
-            </lc:GesturesContentView>
+            
           </Frame>
         </StackLayout>
+        </lc:GesturesContentView>
         <views:RatingView Rating="{Binding Rating, Mode=TwoWay}" x:Name="ratingView"/>
 
-        <Label Text="{Binding UserName}" Style="{StaticResource LabelPageHeadingStyle}"
-                               HorizontalTextAlignment="Center"
-                               LineBreakMode="WordWrap" XAlign="Center"
-           ></Label>
+        
       </StackLayout>
 
       <Button Text="{Binding PerformerStatus}" Clicked="OnViewPerformerStatus" />

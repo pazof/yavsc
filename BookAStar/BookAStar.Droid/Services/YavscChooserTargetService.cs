@@ -10,10 +10,19 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Service.Chooser;
+using static Android.Manifest;
 
 namespace BookAStar.Droid
 {
-    [Service(Name = "fr.pschneider.bas.YavscChooserTargetService", Label = "Yavsc share service", Permission = "android.permission.BIND_CHOOSER_TARGET_SERVICE", Icon = "@drawable/icon", Exported = true)]
+    [Service(
+        Name = "fr.pschneider.bas.YavscChooserTargetService", 
+        Label = "Yavsc share service", 
+        Permission = Permission.BindChooserTargetService, 
+        Icon = "@drawable/icon", 
+        Exported = true,
+        Enabled = true
+        )]
+    [IntentFilter(new String[] { "android.service.chooser.ChooserTargetService" })]
     class YavscChooserTargetService : ChooserTargetService
     {
         public override IList<ChooserTarget> OnGetChooserTargets(ComponentName targetActivityName, IntentFilter matchedFilter)
@@ -24,7 +33,7 @@ namespace BookAStar.Droid
             ChooserTarget t = new ChooserTarget(
                 new Java.Lang.String(
                 "BookingStar"), i,
-                .5f, new ComponentName(this.BaseContext, ".SendFilesActivity"),
+                .5f, new ComponentName(this, "BookAStar.SendFilesActivity"),
                 null);
             var res = new List<ChooserTarget>();
             res.Add(t);
@@ -34,11 +43,6 @@ namespace BookAStar.Droid
         public override IBinder OnBind(Intent intent)
         {
             return base.OnBind(intent);
-        }
-
-        public override void OnCreate()
-        {
-            base.OnCreate();
         }
     }
 }

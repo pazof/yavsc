@@ -32,6 +32,8 @@ namespace BookAStar.Data
 
         public V LocalGet(K key)
         {
+            if (!this.Any(x => GetKey(x).Equals(key)))
+                return default(V);
             CurrentItem = this.Single(x => GetKey(x).Equals(key));
             return CurrentItem;
         }

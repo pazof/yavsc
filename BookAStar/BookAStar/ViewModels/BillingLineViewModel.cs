@@ -9,7 +9,7 @@ using XLabs.Forms.Mvvm;
 
 namespace BookAStar.ViewModels
 {
-    public class BillingLineViewModel : ViewModel, IBillingLine
+    public class BillingLineViewModel : EditingViewModel, IBillingLine
     {
         BillingLine data;
 

@@ -107,8 +107,8 @@ namespace BookAStar.Droid
 
             LoadApplication(fapp);
 
-            CheckSharing();
-
+            var componentName = StartService(new Intent(this, typeof(YavscChooserTargetService)));
+            
             // TabLayoutResource = Resource.Layout.Tabbar;
             // ToolbarResource = Resource.Layout.Toolbar;
             /*
