@@ -1,6 +1,7 @@
 ﻿using BookAStar.Data;
 using BookAStar.Helpers;
 using BookAStar.Model.Interfaces;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,7 +25,7 @@ namespace BookAStar.Model.Workflow
         /// </summary>
         /// <returns></returns>
         public IList<string> AttachedGraphics { get; set; }
-
+        [JsonIgnore]
         public string AttachedGraphicsString
         {
             get { return AttachedGraphics==null?null:string.Join(":", AttachedGraphics); }
@@ -38,6 +39,7 @@ namespace BookAStar.Model.Workflow
         /// </summary>
         /// <returns></returns>
         public IList<string> AttachedFiles { get; set; }
+        [JsonIgnore]
         public string AttachedFilesString
         {
             get { return AttachedFiles == null ? null : string.Join(":", AttachedFiles); }
@@ -47,19 +49,20 @@ namespace BookAStar.Model.Workflow
         public string OwnerId { get; set; }
         
         public string ClientId { get; set; }
-        
+        [JsonIgnore]
         public BookQueryData Query
         {
             get
             {
                 if (CommandId.HasValue)
                 {
-                    return DataManager.Current.BookQueries.LocalGet(CommandId.Value);
+                    var dm = DataManager.Current;
+                    return dm.BookQueries.LocalGet(CommandId.Value);
                 }
                 return null;
             }
         }
-
+        [JsonIgnore]
         public ClientProviderInfo Client
         {
             get
@@ -68,7 +71,7 @@ namespace BookAStar.Model.Workflow
             }
         }
 
-        
+        [JsonIgnore]
         public decimal Total { get
             {
                 return Bill?.Aggregate((decimal)0, (t, l) => t + l.Count * l.UnitaryCost) ?? (decimal)0;

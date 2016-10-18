@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="fr.pschneider.bas" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="15" />
-	<application android:label="BookAStar" android:icon="@drawable/icon" android:theme="@style/MainTheme">
+	<application android:allowBackup="true" android:label="Booking Star" android:icon="@drawable/icon" android:theme="@style/MainTheme">
 		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBLSEDhZixwpHDsWmO2pKwgGDJReoTuQ7A" />
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		<receiver android:name="com.google.android.gms.gcm.GcmReceiver" android:exported="true" android:permission="com.google.android.c2dm.permission.SEND">
@@ -17,21 +17,19 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<service android:name="fr.pschneider.bas.YavscChooserTargetService" 
-             android:label="@string/app_name" 
-             android:permission="android.permission.BIND_CHOOSER_TARGET_SERVICE">
-			<intent-filter>
-				<action android:name="android.service.chooser.ChooserTargetService" />
-			</intent-filter>
-		</service>
 		<activity android:name="fr.pschneider.bas.SendFilesActivity" android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />
-				<data android:mimeType="text/plain" />
+				<!-- <data android:mimeType="text/plain" /> -->
 			</intent-filter>
 			<meta-data android:name="android.service.chooser.chooser_target_service" android:value="fr.pschneider.bas.YavscChooserTargetService" />
 		</activity>
+		<service android:name="fr.pschneider.bas.YavscChooserTargetService" android:label="@string/app_name" android:permission="android.permission.BIND_CHOOSER_TARGET_SERVICE">
+			<intent-filter>
+				<action android:name="android.service.chooser.ChooserTargetService" />
+			</intent-filter>
+		</service>
 	</application>
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WAVE_LOCK" />

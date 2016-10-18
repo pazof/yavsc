@@ -23,7 +23,7 @@
       
       <OnPlatform x:TypeArguments="Font" Android="Large" iOS="Large" WinPhone="Large" x:Key="HeaderFont" />
       <OnPlatform x:TypeArguments="Color" Android="Red" iOS="Red" WinPhone="Red" x:Key="EmphasisTextColor" />
-      <OnPlatform x:TypeArguments="Font" Android="60" iOS="60" WinPhone="60" x:Key="LargeFontSize" />
+      <OnPlatform x:TypeArguments="Font" Android="90" iOS="90" WinPhone="90" x:Key="LargeFontSize" />
       <OnPlatform x:TypeArguments="Font" Android="50" iOS="50" WinPhone="50" x:Key="MediumFontSize" />
       <OnPlatform x:TypeArguments="Font" Android="40" iOS="40" WinPhone="40" x:Key="SmallFontSize" />
       <OnPlatform x:TypeArguments="x:Double" Android="130" iOS="130" WinPhone="130" x:Key="BigUserAvatarSize" />

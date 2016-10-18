@@ -156,12 +156,14 @@ namespace BookAStar
                     if (olduserid != value.Id)
                     {
                         App.CurrentApp.PostDeviceInfo();
-                        UserChanged.Invoke(App.CurrentApp, new EventArgs());
+                        if (UserChanged!=null)
+                            UserChanged.Invoke(App.CurrentApp, new EventArgs());
                     }
                 }
                 else if (olduserid != null)
                 {
-                    UserChanged.Invoke(App.CurrentApp, new EventArgs());
+                    if (UserChanged != null)
+                        UserChanged.Invoke(App.CurrentApp, new EventArgs());
                     // TODO else Unregister this device
                 }
             }
@@ -267,7 +269,7 @@ namespace BookAStar
         {
             var key = $"{EntityDataSettingsPrefix}/{subKey}/{typeof(V).FullName}";
             var data = AppSettings.GetValueOrDefault<string>(key, null);
-            if (data != null)
+            if (!string.IsNullOrWhiteSpace(data))
             {
                 var items = JsonConvert.DeserializeObject<IList<V>>(data);
                 if (items != null)

@@ -10,19 +10,19 @@ namespace BookAStar.Data
 {
     using Helpers;
 
-    public class RemoteEntity<V,K> : LocalEntity<V, K>, ICommand where K : IEquatable<K>
+    public class RemoteEntity<V, K> : LocalEntity<V, K>, ICommand where K : IEquatable<K>
     {
         private string _controller;
         public event EventHandler CanExecuteChanged;
         public bool IsExecuting { get; private set; }
-        
+
         private Uri controllerUri;
         public bool CanExecute(object parameter)
         {
             return !IsExecuting && (MainSettings.CurrentUser != null);
         }
 
-        public RemoteEntity(string controllerName, Func<V,K> getKey):base(getKey)
+        public RemoteEntity(string controllerName, Func<V, K> getKey) : base(getKey)
         {
             if (string.IsNullOrWhiteSpace(controllerName))
                 throw new InvalidOperationException();
@@ -35,7 +35,8 @@ namespace BookAStar.Data
             if (IsExecuting)
                 throw new InvalidOperationException("Already executing");
             IsExecuting = true;
-            CanExecuteChanged.Invoke(this, new EventArgs());
+            if (CanExecuteChanged != null)
+                CanExecuteChanged.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -65,7 +66,8 @@ namespace BookAStar.Data
                         }
                     }
                 }
-                catch (WebException webex) {
+                catch (WebException webex)
+                {
                     throw new ServiceNotAvailable("No remote entity", webex);
                 }
 
@@ -76,25 +78,26 @@ namespace BookAStar.Data
         private void AfterExecuting()
         {
             IsExecuting = false;
-            CanExecuteChanged.Invoke(this, new EventArgs());
+            if (CanExecuteChanged!=null)
+                CanExecuteChanged.Invoke(this, new EventArgs());
         }
 
         public async Task<V> Get(K key)
         {
             var item = LocalGet(key);
-            if (item==null) item = await RemoteGet(key);
+            if (item == null) item = await RemoteGet(key);
             CurrentItem = item;
             return CurrentItem;
         }
 
         public async Task<V> RemoteGet(K key)
         {
-           V item = default(V);
-           BeforeExecute();
+            V item = default(V);
+            BeforeExecute();
             // Get the whole data
-            var uri = new Uri(controllerUri.AbsolutePath+"/"+key.ToString());
+            var uri = new Uri(controllerUri.AbsoluteUri + "/" + key.ToString());
 
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = UserHelpers.CreateClient())
             {
                 using (var response = await client.GetAsync(uri))
                 {
@@ -111,6 +114,30 @@ namespace BookAStar.Data
             CurrentItem = item;
             return item;
         }
-        
+
+        public async void Create(V item)
+        {
+            BeforeExecute();
+
+            using (HttpClient client = UserHelpers.CreateClient())
+            {
+                HttpContent content = new StringContent(
+                    JsonConvert.SerializeObject(item)
+                    );
+                using (var response = await client.PostAsync(controllerUri, content))
+                {
+                    if (!response.IsSuccessStatusCode)
+                        // TODO throw custom exception, and catch to inform user
+                        throw new Exception($"Create failed posting {item} @ {controllerUri.AbsolutePath}");
+                    var recontent = await response.Content.ReadAsStringAsync();
+                    JsonConvert.PopulateObject(recontent, item);
+
+                }
+            }
+
+            AfterExecuting();
+            CurrentItem = item;
+        }
+
     }
 }

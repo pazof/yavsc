@@ -16,11 +16,7 @@ namespace BookAStar.Pages
         {
             get
             {
-                return BindingContext as BookQueryData;
-            }
-            set
-            {
-                BindingContext = value;
+                return (BindingContext as BookQueryViewModel).Data;
             }
         }
         protected override void OnBindingContextChanged()
@@ -55,24 +51,29 @@ namespace BookAStar.Pages
             InitializeComponent();
 
             // Task.Run( async () => { bookQuery = await App.CurrentApp.DataManager.BookQueries.Get(bookQueryId); });
-            
-            BookQuery = bookQuery;
-            
+
+            BindingContext = new BookQueryViewModel(bookQuery);
         }
 
-        private void MakeAnEstimate(object sender, EventArgs ev)
+        private void OnEditEstimate(object sender, EventArgs ev)
         {
-            DataManager.Current.Contacts.Merge(BookQuery.Client);
-            var e = new Estimate()
+            var viewModel = ((BookQueryViewModel)BindingContext).DraftEstimate;
+            if (viewModel == null)
             {
-                ClientId = BookQuery.Client.UserId,
-                CommandId = BookQuery.Id,
-                OwnerId = MainSettings.CurrentUser.Id,
-                Id = 0,
-                Description = "# **Hello Estimate!**"
-            };
+                DataManager.Current.Contacts.Merge(BookQuery.Client);
+                var e = new Estimate()
+                {
+                    ClientId = BookQuery.Client.UserId,
+                    CommandId = BookQuery.Id,
+                    OwnerId = MainSettings.CurrentUser.Id,
+                    Id = 0,
+                    Description = "# **Hello Estimate!**"
+                };
+                viewModel = new EditEstimateViewModel(e, LocalState.New);
+                DataManager.Current.EstimationCache.Add(viewModel);
+            }
             App.NavigationService.NavigateTo<EditEstimatePage>(true,
-                new EditEstimateViewModel(e));
+             viewModel);
         }
 
         protected override void OnSizeAllocated(double width, double height)

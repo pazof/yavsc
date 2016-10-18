@@ -1,12 +1,11 @@
-﻿using System.Threading.Tasks;
-
-namespace BookAStar.Data
+﻿namespace BookAStar.Data
 {
     using Model;
     using Model.Blog;
     using Model.Workflow;
     using Model.UI;
-    
+    using ViewModels;
+
     public class DataManager
     {
         // TODO estimatetemplate rating service product tag   
@@ -15,11 +14,20 @@ namespace BookAStar.Data
         public RemoteEntity<Blog, long> Blogspot { get; set; }
         public LocalEntity<ClientProviderInfo,string> Contacts { get; set; }
         internal LocalEntity<PageState, int> AppState { get; set; }
-        protected static DataManager current = new DataManager();
+        /// <summary>
+        /// They have no remote exisence ...
+        /// </summary>
+        internal LocalEntity<EditEstimateViewModel, long> EstimationCache { get; set; }
+        internal LocalEntity<BillingLine, string> EstimateLinesTemplates { get; set; }
+
+        protected static DataManager current ;
+
         public static DataManager Current 
         {
             get
             {
+                if (current == null)
+                    current = new DataManager();
                 return current;
             }
         }
@@ -34,17 +42,17 @@ namespace BookAStar.Data
                 x=>x.Id);
             Contacts = new LocalEntity<ClientProviderInfo, string>(c => c.UserId);
             AppState = new LocalEntity<PageState, int>(s => s.Position);
-
+            EstimationCache = new LocalEntity<EditEstimateViewModel, long>(
+                e => e.Query.Id);
+            EstimateLinesTemplates = new LocalEntity<BillingLine, string>(
+                l => l.Description);
             BookQueries.Load();
             Estimates.Load();
             Blogspot.Load();
             Contacts.Load();
             AppState.Load();
-        }
-
-        public async Task<BookQueryData> GetBookQuery(long bookQueryId)
-        {
-            return await BookQueries.Get(bookQueryId);
+            EstimationCache.Load();
+            EstimateLinesTemplates.Load();
         }
     }
 }

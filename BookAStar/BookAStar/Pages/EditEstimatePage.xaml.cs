@@ -3,6 +3,7 @@ using Xamarin.Forms;
 
 namespace BookAStar.Pages
 {
+    using Data;
     using Model.Workflow;
     using ViewModels;
     public partial class EditEstimatePage : ContentPage
@@ -12,6 +13,16 @@ namespace BookAStar.Pages
         {
             InitializeComponent();
             BindingContext = model;
+        }
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+            ((EditEstimateViewModel)BindingContext).PropertyChanged += EditEstimatePage_PropertyChanged;
+        }
+
+        private void EditEstimatePage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            DataManager.Current.EstimationCache.SaveCollection();
         }
 
         protected override void OnSizeAllocated(double width, double height)
@@ -37,7 +48,7 @@ namespace BookAStar.Pages
                     Add(com);
                 })
             };
-
+            
             App.NavigationService.NavigateTo<EditBillingLinePage>(
                 true,
                 new object[] { lineView } );
@@ -45,7 +56,16 @@ namespace BookAStar.Pages
 
         protected void OnEstimateValidated(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var evm = (EditEstimateViewModel)BindingContext;
+            if (evm.State == LocalState.New)
+            {
+                DataManager.Current.Estimates.Create(evm.Data);
+                // we have to manually add this item in our local collection,
+                // since we could prefer to update the whole collection
+                // from server, or whatever other scenario
+                DataManager.Current.Estimates.Add(evm.Data);
+                evm.State = LocalState.UpToDate;
+            }
         }
     }
 }

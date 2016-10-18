@@ -85,6 +85,7 @@ namespace BookAStar
         {
             // TODO save the navigation stack
             int position = 0;
+            
             foreach (Page page in MainPage.Navigation.NavigationStack)
             {
 
