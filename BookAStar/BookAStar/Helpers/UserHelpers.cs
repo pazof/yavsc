@@ -25,6 +25,7 @@ namespace BookAStar.Helpers
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue(
                     "Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
             return client;
         }
 
