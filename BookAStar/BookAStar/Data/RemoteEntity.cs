@@ -9,6 +9,7 @@ using System.Net;
 namespace BookAStar.Data
 {
     using Helpers;
+    using System.Text;
 
     public class RemoteEntity<V, K> : LocalEntity<V, K>, ICommand where K : IEquatable<K>
     {
@@ -110,8 +111,8 @@ namespace BookAStar.Data
                 }
             }
 
-            AfterExecuting();
             CurrentItem = item;
+            AfterExecuting();
             return item;
         }
 
@@ -121,22 +122,45 @@ namespace BookAStar.Data
 
             using (HttpClient client = UserHelpers.CreateClient())
             {
+                var stringContent = JsonConvert.SerializeObject(item);
                 HttpContent content = new StringContent(
-                    JsonConvert.SerializeObject(item)
+                    stringContent, Encoding.UTF8, "application/json"
                     );
                 using (var response = await client.PostAsync(controllerUri, content))
                 {
                     if (!response.IsSuccessStatusCode)
+                    {
+                        var errcontent = await response.Content.ReadAsStringAsync();
                         // TODO throw custom exception, and catch to inform user
-                        throw new Exception($"Create failed posting {item} @ {controllerUri.AbsolutePath}");
+                        throw new Exception($"Create failed posting {stringContent} @ {controllerUri.AbsoluteUri}");
+                    }
                     var recontent = await response.Content.ReadAsStringAsync();
                     JsonConvert.PopulateObject(recontent, item);
-
                 }
             }
 
-            AfterExecuting();
             CurrentItem = item;
+            AfterExecuting();
+        }
+        public async void Update (V item)
+        {
+            BeforeExecute();
+
+            using (HttpClient client = UserHelpers.CreateClient())
+            {
+                HttpContent content = new StringContent(
+                    JsonConvert.SerializeObject(item)
+                    );
+                using (var response = await client.PutAsync(controllerUri, content))
+                {
+                    if (!response.IsSuccessStatusCode)
+                        // TODO throw custom exception, and catch to inform user
+                        throw new Exception($"Update failed puting {item} @ {controllerUri.AbsolutePath}");
+                }
+            }
+
+            CurrentItem = item;
+            AfterExecuting();
         }
 
     }
