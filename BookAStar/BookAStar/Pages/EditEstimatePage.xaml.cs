@@ -41,31 +41,34 @@ namespace BookAStar.Pages
         protected void OnNewCommanLine(object sender, EventArgs e)
         {
             var com = new BillingLine() { Count = 1, UnitaryCost = 0.01m };
-            var lineView = new BillingLineViewModel(com)
-            {
-                ValidateCommand = new Command(() => {
-                    ((EditEstimateViewModel)BindingContext).Bill.
-                    Add(com);
-                })
-            };
-            
+            var lineView = new BillingLineViewModel(com);
+            var bill =
+            ((EditEstimateViewModel)BindingContext).Bill;
+            bill.Add(com);
+            bill.SaveCollection();
+            lineView.PropertyChanged += (s,f) => bill.SaveCollection();
             App.NavigationService.NavigateTo<EditBillingLinePage>(
                 true,
                 new object[] { lineView } );
         }
 
+
         protected void OnEstimateValidated(object sender, EventArgs e)
         {
             var evm = (EditEstimateViewModel)BindingContext;
-            if (evm.State == LocalState.New)
+            if (evm.Data.Id == 0)
             {
                 DataManager.Current.Estimates.Create(evm.Data);
                 // we have to manually add this item in our local collection,
                 // since we could prefer to update the whole collection
                 // from server, or whatever other scenario
                 DataManager.Current.Estimates.Add(evm.Data);
-                evm.State = LocalState.UpToDate;
+            } else
+            {
+                DataManager.Current.Estimates.Update(evm.Data);
             }
+            DataManager.Current.Estimates.SaveCollection();
+            evm.State = LocalState.UpToDate;
         }
     }
 }
