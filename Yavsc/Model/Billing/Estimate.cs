@@ -1,5 +1,6 @@
 namespace Yavsc.Models.Billing
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
@@ -64,5 +65,9 @@ namespace Yavsc.Models.Billing
         {
             get; set;
         }
+
+        public DateTime LatestValidationDate { get; set; }
+        
+        public DateTime ClientApprouvalDate { get; set; }
     }
 }

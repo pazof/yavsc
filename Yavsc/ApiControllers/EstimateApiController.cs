@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
@@ -83,6 +84,7 @@ namespace Yavsc.Controllers
                     return HttpBadRequest(ModelState);
                 }
             }
+            estimate.LatestValidationDate = DateTime.Now;
             _context.Entry(estimate).State = EntityState.Modified;
 
             try
@@ -121,7 +123,9 @@ namespace Yavsc.Controllers
                     return HttpBadRequest(ModelState);
                 }
             }
+            estimate.LatestValidationDate = DateTime.Now;
             _context.Estimates.Add(estimate);
+            foreach (var l in estimate.Bill) _context.Attach<CommandLine>(l);
             try
             {
                 _context.SaveChanges();
@@ -138,7 +142,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return CreatedAtRoute("GetEstimate", new { id = estimate.Id }, estimate);
+            return CreatedAtRoute("GetEstimate", new { Id = estimate.Id }, estimate);
         }
 
         // DELETE: api/Estimate/5
