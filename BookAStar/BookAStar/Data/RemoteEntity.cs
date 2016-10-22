@@ -90,13 +90,17 @@ namespace BookAStar.Data
             CurrentItem = item;
             return CurrentItem;
         }
+        private Uri GetUri(K key)
+        {
+            return new Uri(controllerUri.AbsoluteUri + "/" + key.ToString());
+        }
 
         public async Task<V> RemoteGet(K key)
         {
             V item = default(V);
             BeforeExecute();
             // Get the whole data
-            var uri = new Uri(controllerUri.AbsoluteUri + "/" + key.ToString());
+            var uri = GetUri(key);
 
             using (HttpClient client = UserHelpers.CreateClient())
             {
@@ -146,16 +150,17 @@ namespace BookAStar.Data
         {
             BeforeExecute();
 
+            var uri = GetUri(GetKey(item));
             using (HttpClient client = UserHelpers.CreateClient())
             {
                 HttpContent content = new StringContent(
                     JsonConvert.SerializeObject(item)
                     );
-                using (var response = await client.PutAsync(controllerUri, content))
+                using (var response = await client.PutAsync(uri, content))
                 {
                     if (!response.IsSuccessStatusCode)
                         // TODO throw custom exception, and catch to inform user
-                        throw new Exception($"Update failed puting {item} @ {controllerUri.AbsolutePath}");
+                        throw new Exception($"Update failed puting {item} @ {uri.AbsolutePath}");
                 }
             }
 
@@ -163,5 +168,21 @@ namespace BookAStar.Data
             AfterExecuting();
         }
 
+        public async void Delete(K key)
+        {
+            BeforeExecute();
+            var uri = GetUri(key);
+            using (HttpClient client = UserHelpers.CreateClient())
+            {
+                using (var response = await client.DeleteAsync(uri))
+                {
+                    if (!response.IsSuccessStatusCode)
+                        // TODO throw custom exception, and catch to inform user
+                        throw new Exception($"Delete failed @ {uri.AbsolutePath}");
+                }
+            }
+            CurrentItem = default(V);
+            AfterExecuting();
+        }
     }
 }
