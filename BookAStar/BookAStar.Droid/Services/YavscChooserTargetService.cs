@@ -32,7 +32,7 @@ namespace BookAStar.Droid
                 Resource.Drawable.icon);
             ChooserTarget t = new ChooserTarget(
                 new Java.Lang.String(
-                "BookingStar"), i,
+                Constants.ApplicationName), i,
                 .5f, new ComponentName(this, "BookAStar.SendFilesActivity"),
                 null);
             var res = new List<ChooserTarget>();
