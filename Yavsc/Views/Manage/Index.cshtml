@@ -32,6 +32,24 @@
         <dd>
             @Model.Logins.Count [<a asp-controller="Manage" asp-action="ManageLogins">@SR["Manage"]</a>]
         </dd>
+       
+       
+
+        <dt>@SR["Full name"]:</dt>
+        <dd>@Model.FullName  [<a asp-controller="Manage" asp-action="SetFullName"
+            >@SR[@Model.FullName==null?"Set":"Modify"]</a>]</dd>
+
+        <dt>@SR["Address"]:</dt>
+        <dd>@Model.PostalAddress
+            [<a asp-controller="Manage" asp-action="SetAddress"
+            >@SR[@Model.PostalAddress==null?"Set":"Modify"]</a>]
+        </dd>
+        
+        <dt>@SR["Avatar"]:</dt>
+        <dd>@Model.Avatar
+            [<a asp-controller="Manage" asp-action="SetAvatar"
+            >@SR[@Model.Avatar==null?"Set":"Modify"]</a>]
+        </dd> 
 
         <dt>@SR["Activity"]:</dt>
         <dd>@Model.Activity?.Name 

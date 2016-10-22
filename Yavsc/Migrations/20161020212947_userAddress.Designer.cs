@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161020212947_userAddress")]
+    partial class userAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -276,7 +277,7 @@ namespace Yavsc.Migrations
                     b.Property<string>("Description")
                         .IsRequired();
 
-                    b.Property<long>("EstimateId");
+                    b.Property<long?>("EstimateId");
 
                     b.Property<long?>("EstimateTemplateId");
 

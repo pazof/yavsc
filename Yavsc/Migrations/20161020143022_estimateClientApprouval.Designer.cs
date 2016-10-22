@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161020143022_estimateClientApprouval")]
+    partial class estimateClientApprouval
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -103,8 +104,7 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Address")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 512);
+                        .IsRequired();
 
                     b.Property<double>("Latitude");
 
@@ -150,8 +150,7 @@ namespace Yavsc.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<string>("Avatar")
-                        .HasAnnotation("MaxLength", 512);
+                    b.Property<string>("Avatar");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -162,9 +161,6 @@ namespace Yavsc.Migrations
                         .HasAnnotation("MaxLength", 256);
 
                     b.Property<bool>("EmailConfirmed");
-
-                    b.Property<string>("FullName")
-                        .HasAnnotation("MaxLength", 512);
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -276,7 +272,7 @@ namespace Yavsc.Migrations
                     b.Property<string>("Description")
                         .IsRequired();
 
-                    b.Property<long>("EstimateId");
+                    b.Property<long?>("EstimateId");
 
                     b.Property<long?>("EstimateTemplateId");
 

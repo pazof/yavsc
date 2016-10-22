@@ -1,5 +1,6 @@
 namespace Yavsc.Models.Billing
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
@@ -23,7 +24,9 @@ namespace Yavsc.Models.Billing
         public string Description { get; set; }
         public int? Status { get; set; }
         public string Title { get; set; }
-        public List<CommandLine> Bill { get; set; }
+
+        [InverseProperty("Estimate")]
+        public virtual List<CommandLine> Bill { get; set; }
         /// <summary>
         /// List of attached graphic files
         /// to this estimate, as relative pathes to
@@ -64,5 +67,9 @@ namespace Yavsc.Models.Billing
         {
             get; set;
         }
+
+        public DateTime LatestValidationDate { get; set; }
+        
+        public DateTime ClientApprouvalDate { get; set; }
     }
 }

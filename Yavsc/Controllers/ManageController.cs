@@ -84,6 +84,7 @@ namespace Yavsc.Controllers
                 : message == ManageMessageId.ChangeNameSuccess ? "Your name was updated."
                 : message == ManageMessageId.SetActivitySuccess ? "Your activity was set."
                 : message == ManageMessageId.AvatarUpdateSuccess ? "Your avatar was updated."
+                : message == ManageMessageId.IdentityUpdateSuccess ? "Your identity was updated."
                 : "";
 
             var user = await GetCurrentUserAsync();
@@ -101,7 +102,10 @@ namespace Yavsc.Controllers
                 Balance = user.AccountBalance,
                 ActiveCommandCount = _dbContext.BookQueries.Count(x => (x.ClientId == user.Id) && (x.EventDate > DateTime.Now)),
                 HasDedicatedCalendar = !string.IsNullOrEmpty(user.DedicatedGoogleCalendar),
-                Roles = await _userManager.GetRolesAsync(user)
+                Roles = await _userManager.GetRolesAsync(user),
+                PostalAddress = user.PostalAddress?.Address,
+                FullName = user.FullName,
+                Avatar = user.Avatar
             };
             if (_dbContext.Performers.Any(x => x.PerformerId == user.Id))
             {
@@ -459,6 +463,12 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet, Authorize]
+        public IActionResult SetAvatar()
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpGet, Authorize]
         public IActionResult SetActivity()
         {
             var user = GetCurrentUserAsync().Result;
@@ -496,7 +506,7 @@ namespace Yavsc.Controllers
                     );
                     if (exSiren != null)
                     {
-                        _logger.LogInformation("Exception SIREN:"+exSiren);
+                        _logger.LogInformation("Exception SIREN:" + exSiren);
                     }
                     else
                     {
@@ -535,7 +545,7 @@ namespace Yavsc.Controllers
 
                     // Give this user the Performer role
                     if (!User.IsInRole("Performer"))
-                    await _userManager.AddToRoleAsync(user,"Performer");
+                        await _userManager.AddToRoleAsync(user, "Performer");
                     var message = ManageMessageId.SetActivitySuccess;
 
                     return RedirectToAction(nameof(Index), new { Message = message });
@@ -560,7 +570,7 @@ namespace Yavsc.Controllers
                     _dbContext.Performers.First(x => x.PerformerId == uid)
                 );
                 _dbContext.SaveChanges();
-                await _userManager.RemoveFromRoleAsync(user,"Performer");
+                await _userManager.RemoveFromRoleAsync(user, "Performer");
             }
             var message = ManageMessageId.UnsetActivitySuccess;
             return RedirectToAction(nameof(Index), new { Message = message });
@@ -602,6 +612,7 @@ namespace Yavsc.Controllers
             SetActivitySuccess,
             UnsetActivitySuccess,
             AvatarUpdateSuccess,
+            IdentityUpdateSuccess,
             Error
         }
 
