@@ -31,8 +31,8 @@ namespace Yavsc
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         [Required(),
-        Display(Name="Address")]
+        Display(Name="Address"),
+        MaxLength(512)]
         public string Address { get; set; }
-
     }
 }
