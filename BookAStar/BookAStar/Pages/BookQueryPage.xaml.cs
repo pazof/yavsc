@@ -7,6 +7,7 @@ namespace BookAStar.Pages
     using Data;
     using Model;
     using Model.Workflow;
+    using System.Linq;
     using ViewModels;
 
     public partial class BookQueryPage : ContentPage
@@ -57,23 +58,35 @@ namespace BookAStar.Pages
 
         private void OnEditEstimate(object sender, EventArgs ev)
         {
-            var viewModel = ((BookQueryViewModel)BindingContext).DraftEstimate;
-            if (viewModel == null)
+            var bookQueryViewModel = (BookQueryViewModel)BindingContext;
+
+            var editEstimateViewModel = bookQueryViewModel.DraftEstimate;
+            if (editEstimateViewModel == null)
             {
-                DataManager.Current.Contacts.Merge(BookQuery.Client);
-                var e = new Estimate()
+                // First search for an existing estimate
+                var estimateToEdit = DataManager.Current.Estimates.FirstOrDefault(
+                    estimate=> estimate.CommandId == bookQueryViewModel.Id
+                    );
+                if (estimateToEdit == null)
                 {
-                    ClientId = BookQuery.Client.UserId,
-                    CommandId = BookQuery.Id,
-                    OwnerId = MainSettings.CurrentUser.Id,
-                    Id = 0,
-                    Description = "# **Hello Estimate!**"
-                };
-                viewModel = new EditEstimateViewModel(e, LocalState.New);
-                DataManager.Current.EstimationCache.Add(viewModel);
+                    DataManager.Current.Contacts.Merge(BookQuery.Client);
+                    estimateToEdit = new Estimate()
+                    {
+                        ClientId = BookQuery.Client.UserId,
+                        CommandId = BookQuery.Id,
+                        OwnerId = MainSettings.CurrentUser.Id,
+                        Id = 0,
+                        Description = "# **Hello Estimate!**"
+                    };
+                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit, LocalState.New);
+                }
+                else
+                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit, LocalState.UpToDate);
+
+                DataManager.Current.EstimationCache.Add(editEstimateViewModel);
             }
             App.NavigationService.NavigateTo<EditEstimatePage>(true,
-             viewModel);
+             editEstimateViewModel);
         }
 
         protected override void OnSizeAllocated(double width, double height)

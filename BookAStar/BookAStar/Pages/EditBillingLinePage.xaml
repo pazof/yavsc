@@ -93,8 +93,10 @@
                                 Path=IsValid, 
                                 Converter={StaticResource boolToStyleImage}}" />
       </StackLayout>
-
-        <Button Text="Valider cette ligne de devis"
+        <Button Text="Términé"
+                    Command="{Binding DeleteCommand}"
+                    Clicked="OnValidateClicked"></Button>
+        <Button Text="Términé"
                 Command="{Binding ValidateCommand}"
                 Clicked="OnValidateClicked"></Button>
   </StackLayout>

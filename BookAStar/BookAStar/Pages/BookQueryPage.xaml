@@ -26,9 +26,8 @@
     <Label Text="{Binding Previsional}" />
     </StackLayout>
     <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-    <maps:Map x:Name="map" VerticalOptions="FillAndExpand"></maps:Map>
-    
-    <Button Text="{Binding EditEstimateButtonText}" Clicked="OnEditEstimate" />
+    <maps:Map x:Name="map" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"></maps:Map>
+    <Button Text="{Binding EditEstimateButtonText}" Clicked="OnEditEstimate" VerticalOptions="End"/>
     </StackLayout>
   </StackLayout>
 </ContentPage>
