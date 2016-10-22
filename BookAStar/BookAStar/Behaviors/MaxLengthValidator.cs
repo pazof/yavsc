@@ -26,8 +26,8 @@ namespace BookAStar.Behaviors
 
         private void bindable_TextChanged(object sender, TextChangedEventArgs e)
         {
-            IsValid = e.NewTextValue.Length <= 0 || e.NewTextValue.Length <= MaxLength;
-            if (!IsValid && e.NewTextValue.Length > MaxLength)
+            IsValid = e.NewTextValue == null? false : ( e.NewTextValue.Length > 0 && e.NewTextValue.Length <= MaxLength ) ;
+            if (!IsValid) if (e.NewTextValue!=null) if (e.NewTextValue.Length > MaxLength)
                 ((Editor)sender).Text = e.NewTextValue.Substring(0, MaxLength);
         }
 
