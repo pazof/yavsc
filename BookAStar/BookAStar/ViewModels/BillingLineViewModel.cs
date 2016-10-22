@@ -13,48 +13,57 @@ namespace BookAStar.ViewModels
     {
         BillingLine data;
 
-        public BillingLineViewModel( BillingLine data)
+        public BillingLineViewModel(BillingLine data)
         {
             this.data = data ?? new BillingLine();
             // sets durationValue & durationUnit
+            count = data.Count;
+            description = data.Description;
+
             Duration = data.Duration;
-            unitaryCostText = data.UnitaryCost.ToString("G",CultureInfo.InvariantCulture);
+            unitaryCostText = data.UnitaryCost.ToString("G", CultureInfo.InvariantCulture);
         }
 
+        private int count;
         public int Count
         {
             get
             {
-                return data.Count;
+                return count;
             }
 
             set
             {
-                data.Count = value;
+                SetProperty<int>(ref count, value);
+                data.Count = count;
             }
         }
+        private string description;
         public string Description
         {
             get
             {
-                return data.Description;
+                return description;
             }
 
             set
             {
-                data.Description = value;
+                SetProperty<string>(ref description, value);
+                data.Description = description;
             }
         }
+        decimal unitaryCost;
         public decimal UnitaryCost
         {
             get
             {
-                return data.UnitaryCost;
+                return unitaryCost;
             }
 
             set
             {
-                data.UnitaryCost = value;
+                SetProperty<decimal>(ref unitaryCost, value);
+                data.UnitaryCost = unitaryCost;
             }
         }
 
@@ -72,12 +81,12 @@ namespace BookAStar.ViewModels
                 data.Duration = this.Duration;
             }
         }
-        
-        public enum DurationUnits:int
+
+        public enum DurationUnits : int
         {
-            Jours=0,
-            Heures=1,
-            Minutes=2
+            Jours = 0,
+            Heures = 1,
+            Minutes = 2
         }
         private DurationUnits durationUnit;
 
@@ -85,17 +94,17 @@ namespace BookAStar.ViewModels
 pour décrire la quantité de travail associée à ce type de service")]
         public DurationUnits DurationUnit
         {
-            get {
+            get
+            {
                 return durationUnit;
             }
             set
             {
-               SetProperty<DurationUnits>(ref durationUnit, value, "DurationUnit");
-               data.Duration = this.Duration;
+                SetProperty<DurationUnits>(ref durationUnit, value, "DurationUnit");
+                data.Duration = this.Duration;
             }
         }
-
-        protected decimal unitaryCost;
+        
         public static readonly string unitCostFormat = "0,.00";
         string unitaryCostText;
         public string UnitaryCostText
@@ -129,7 +138,7 @@ pour décrire la quantité de travail associée à ce type de service")]
                     case DurationUnits.Heures:
                         return new TimeSpan(DurationValue, 0, 0);
                     case DurationUnits.Jours:
-                        return new TimeSpan(DurationValue*24, 0, 0);
+                        return new TimeSpan(DurationValue * 24, 0, 0);
                     case DurationUnits.Minutes:
                         return new TimeSpan(0, DurationValue, 0);
                     // Assert(false); since all units are treated bellow
@@ -143,21 +152,21 @@ pour décrire la quantité de travail associée à ce type de service")]
                 double days = value.TotalDays;
                 if (days >= 1.0)
                 {
-                    DurationValue = (int) days;
+                    DurationValue = (int)days;
                     DurationUnit = DurationUnits.Jours;
                     return;
                 }
                 double hours = value.TotalHours;
                 if (hours >= 1.0)
                 {
-                    DurationValue = (int) hours;
+                    DurationValue = (int)hours;
                     DurationUnit = DurationUnits.Jours;
                     return;
                 }
-                DurationValue = (int) value.TotalMinutes;
+                DurationValue = (int)value.TotalMinutes;
                 DurationUnit = DurationUnits.Minutes;
             }
         }
-        
+
     }
 }
