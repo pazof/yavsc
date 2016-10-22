@@ -1,9 +1,11 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
+using Microsoft.Extensions.Logging;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
 
@@ -14,10 +16,11 @@ namespace Yavsc.Controllers
     public class EstimateApiController : Controller
     {
         private ApplicationDbContext _context;
-
-        public EstimateApiController(ApplicationDbContext context)
+        private ILogger _logger;
+        public EstimateApiController(ApplicationDbContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
+            _logger = loggerFactory.CreateLogger<EstimateApiController>();
         }
         bool UserIsAdminOrThis(string uid)
         {
@@ -38,7 +41,7 @@ namespace Yavsc.Controllers
             else if (!UserIsAdminOrThis(ownerId)) // throw new Exception("Not authorized") ;
             // or just do nothing
             return new HttpStatusCodeResult(StatusCodes.Status403Forbidden);
-            return Ok(_context.Estimates.Where(e=>e.OwnerId == ownerId));
+            return Ok(_context.Estimates.Include(e=>e.Bill).Where(e=>e.OwnerId == ownerId));
         }
         // GET: api/Estimate/5
         [HttpGet("{id}", Name = "GetEstimate")]
@@ -49,7 +52,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            Estimate estimate = _context.Estimates.Single(m => m.Id == id);
+            Estimate estimate = _context.Estimates.Include(e=>e.Bill).Single(m => m.Id == id);
 
             if (estimate == null)
             {
@@ -83,8 +86,9 @@ namespace Yavsc.Controllers
                     return HttpBadRequest(ModelState);
                 }
             }
-            _context.Entry(estimate).State = EntityState.Modified;
-
+            
+            var entry = _context.Attach(estimate);
+            estimate.LatestValidationDate = DateTime.Now;
             try
             {
                 _context.SaveChanges();
@@ -101,7 +105,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return Ok( new { Id = estimate.Id, LatestValidationDate = estimate.LatestValidationDate });
         }
 
         // POST: api/Estimate
@@ -121,7 +125,15 @@ namespace Yavsc.Controllers
                     return HttpBadRequest(ModelState);
                 }
             }
+            estimate.LatestValidationDate = DateTime.Now;
             _context.Estimates.Add(estimate);
+           /* _context.AttachRange(estimate.Bill);
+            _context.Attach(estimate);
+            _context.Entry(estimate).State = EntityState.Added;
+            foreach (var line in estimate.Bill)
+                _context.Entry(line).State = EntityState.Added;
+            // foreach (var l in estimate.Bill) _context.Attach<CommandLine>(l);
+           */
             try
             {
                 _context.SaveChanges();
@@ -137,8 +149,7 @@ namespace Yavsc.Controllers
                     throw;
                 }
             }
-
-            return CreatedAtRoute("GetEstimate", new { id = estimate.Id }, estimate);
+            return Ok( new { Id = estimate.Id, Bill = estimate.Bill , LatestValidationDate = estimate.LatestValidationDate });
         }
 
         // DELETE: api/Estimate/5
@@ -150,7 +161,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            Estimate estimate = _context.Estimates.Single(m => m.Id == id);
+            Estimate estimate = _context.Estimates.Include(e=>e.Bill).Single(m => m.Id == id);
            
             if (estimate == null)
             {

@@ -18,7 +18,13 @@ namespace Yavsc.Models
         /// <see>Startup.UserFilesOptions</see>
         /// </summary>
         /// <returns></returns>
+        [MaxLength(512)]
         public string Avatar { get; set; }
+
+        [MaxLength(512)]
+        public string FullName { get; set; }
+
+        
         /// <summary>
         /// WIP Paypal
         /// </summary>

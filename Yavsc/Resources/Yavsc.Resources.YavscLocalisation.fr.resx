@@ -214,6 +214,7 @@
   <data name="Forgot your password?"><value>Mot de passe perdu?</value></data>
   <data name="Forgot Password Confirmation."><value>Confirmation mot de passe perdu.</value></data>
   <data name="from"><value>provenant de</value></data>
+  <data name="Full name"><value>Nom complet</value></data>
   <data name="GCM Notification sending failed"><value>L'envoi du message push a échoué</value></data>
   <data name="GCM Notifications sent"><value>Message push envoyé</value></data>
   <data name="GoogleDidntGeoLocalized"><value>Google n'a pas pu identifier ce lieu</value></data>
@@ -227,6 +228,8 @@
   <data name="I understood"><value>J'ai compris</value></data>
   <data name="Icon"><value>Icône</value></data>
   <data name="Icons made by"><value>Les icônes fabriqués par</value></data>
+  <data name="Identity"><value>Identité</value></data>
+  
   <data name="ImgLocator"><value>URI de l'image</value></data>
   <data name="ImportException"><value>Exception à l'import</value></data>
   <data name="InternalServerError"><value>Erreur serveur interne</value></data>

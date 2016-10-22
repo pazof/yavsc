@@ -314,7 +314,7 @@ namespace Yavsc
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseSignalR();
+            app.UseSignalR("/api/signalr");
         }
         
         // Entry point for the application.

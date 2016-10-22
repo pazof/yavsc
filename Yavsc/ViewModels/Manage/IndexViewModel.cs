@@ -8,6 +8,8 @@ namespace Yavsc.ViewModels.Manage
     {
         public string UserName {get; set; }
 
+        public string Avatar { get; set; }
+
         public bool HasPassword { get; set; }
 
         public IList<UserLoginInfo> Logins { get; set; }
@@ -29,5 +31,9 @@ namespace Yavsc.ViewModels.Manage
         public bool HasDedicatedCalendar { get; set; }
 
         public IEnumerable<string> Roles { get; set; }
+
+        public string FullName { get; set; }
+
+        public string PostalAddress { get; set; }
     }
 }
