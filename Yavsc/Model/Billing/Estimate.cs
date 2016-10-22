@@ -24,7 +24,9 @@ namespace Yavsc.Models.Billing
         public string Description { get; set; }
         public int? Status { get; set; }
         public string Title { get; set; }
-        public List<CommandLine> Bill { get; set; }
+
+        [InverseProperty("Estimate")]
+        public virtual List<CommandLine> Bill { get; set; }
         /// <summary>
         /// List of attached graphic files
         /// to this estimate, as relative pathes to

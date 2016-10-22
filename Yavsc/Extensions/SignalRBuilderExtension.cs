@@ -32,9 +32,10 @@ namespace Yavsc
             return app;
         }
 
-        public static void UseSignalR(this IApplicationBuilder app)
+        public static void UseSignalR(this IApplicationBuilder app, string path = "/signalr")
         {
             app.UseAppBuilder(appBuilder => appBuilder.MapSignalR(
+                path,
                new HubConfiguration() {
                   EnableDetailedErrors = true,
                   EnableJSONP = true
