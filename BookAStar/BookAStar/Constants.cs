@@ -19,11 +19,13 @@ namespace BookAStar
         public static readonly string UserInfoUrl = YavscApiUrl + "/me";
         public static readonly string BlogUrl = YavscApiUrl + "/blogs";
         public static readonly string FsUrl = YavscApiUrl + "/fs";
-        public static readonly string SignalRHubsUrl = YavscHomeUrl + "/signalr/hubs";
+        public static readonly string SignalRHubsUrl = YavscHomeUrl + "/api/signalr/hubs";
         #endregion
 
         #region Permissions ids
         public static int AllowBeATarget = 1;
         #endregion
+
+        public static int CloudTimeout = 400;
     }
 }

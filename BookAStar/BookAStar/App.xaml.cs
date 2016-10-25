@@ -12,12 +12,15 @@ using XLabs.Enums;
 
 namespace BookAStar
 {
+    using System.Threading.Tasks;
     using Data;
     using Interfaces;
     using Model;
     using Model.UI;
     using Pages;
+    using Plugin.Connectivity;
     using ViewModels;
+    using Microsoft.AspNet.SignalR.Client;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -70,7 +73,10 @@ namespace BookAStar
         // Called Once, at app init
         private void OnInitialize(object sender, EventArgs e)
         {
-           
+            CrossConnectivity.Current.ConnectivityChanged += (conSender, args) =>
+            {
+                App.IsConnected = args.IsConnected;
+           };
         }
 
         // called on app startup, not on rotation
@@ -225,6 +231,44 @@ namespace BookAStar
         }
 
         public static INavigationService NavigationService { protected set; get; }
+        public static bool isConnected;
+        public static bool IsConnected { get { return isConnected; }
+            private set
+            {
+                if (isConnected != value)
+                {
+                    isConnected = value;
+                    if (isConnected)
+                    {
+                        // TODO Start all cloud related stuff 
+                        
+
+                    }
+                }
+            }
+        }
+
+        // Start the Hub connection
+        private async void StartHubConnection ()
+        {
+            chatHubConnection = new HubConnection(Constants.SignalRHubsUrl);
+            if (MainSettings.CurrentUser != null)
+                chatHubConnection.Headers.Add("Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
+            chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
+            chatHubProxy.On<string, string>("AddMessage", (n, m) => {
+                Messages.Add(string.Format("{0} says: {1}", n, m));
+            });
+            await chatHubConnection.Start();
+        }
+        private HubConnection chatHubConnection=null;
+        private IHubProxy chatHubProxy = null;
+        public static Task<bool> HasSomeCloud {
+            get
+            {
+                return CrossConnectivity.Current.IsReachable(Constants.YavscHomeUrl, Constants.CloudTimeout);
+            }
+        }
+
         public void PostDeviceInfo()
         {
             var res = PlatformSpecificInstance.InvokeApi(
