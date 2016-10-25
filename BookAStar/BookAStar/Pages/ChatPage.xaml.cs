@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace BookAStar.Pages
 {
-    public partial class ChatPage : ContentPage
+    public partial class ChatPage : TabbedPage
     {
         public ObservableCollection<string> Messages { get; set; }
         public string ChatUser { get; set; }
@@ -42,7 +42,9 @@ namespace BookAStar.Pages
         {
             IsBusy = true;
             chatHubConnection = new HubConnection(Constants.SignalRHubsUrl);
+            
             chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
+            
             chatHubProxy.On<string, string>("AddMessage", (n, m) => {
                 Messages.Add(string.Format("{0} says: {1}", n, m));
             });

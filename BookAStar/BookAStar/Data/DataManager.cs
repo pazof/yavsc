@@ -5,6 +5,7 @@
     using Model.Workflow;
     using Model.UI;
     using ViewModels;
+    using Model.Social;
 
     public class DataManager
     {
@@ -19,7 +20,7 @@
         /// </summary>
         internal LocalEntity<EditEstimateViewModel, long> EstimationCache { get; set; }
         internal LocalEntity<BillingLine, string> EstimateLinesTemplates { get; set; }
-
+        internal LocalEntity<PrivateMessage, int> PrivateMessages { get; set; }
         protected static DataManager current ;
 
         public static DataManager Current 
@@ -34,18 +35,16 @@
 
         public DataManager()
         {
-            BookQueries = new RemoteEntityRO<BookQueryData, long>("bookquery",
-                q => q.Id);
-            Estimates = new RemoteEntity<Estimate, long>("estimate",
-                x => x.Id);
-            Blogspot = new RemoteEntity<Blog, long>("blog", 
-                x=>x.Id);
+            BookQueries = new RemoteEntityRO<BookQueryData, long>("bookquery", q => q.Id);
+            Estimates = new RemoteEntity<Estimate, long>("estimate", x => x.Id);
+            Blogspot = new RemoteEntity<Blog, long>("blog", x=>x.Id);
             Contacts = new LocalEntity<ClientProviderInfo, string>(c => c.UserId);
             AppState = new LocalEntity<PageState, int>(s => s.Position);
-            EstimationCache = new LocalEntity<EditEstimateViewModel, long>(
-                e => e.Query.Id);
-            EstimateLinesTemplates = new LocalEntity<BillingLine, string>(
-                l => l.Description);
+            EstimationCache = new LocalEntity<EditEstimateViewModel, long>(e => e.Query.Id);
+            EstimateLinesTemplates = new LocalEntity<BillingLine, string>(l => l.Description);
+            PrivateMessages = new LocalEntity<PrivateMessage, int>(m=> m.GetHashCode());
+
+            PrivateMessages.Load();
             BookQueries.Load();
             Estimates.Load();
             Blogspot.Load();
