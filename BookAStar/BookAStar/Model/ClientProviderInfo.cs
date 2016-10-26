@@ -25,5 +25,9 @@ namespace BookAStar.Model
                 return UserHelpers.Avatar(Avatar);
             }
         }
+        public override string ToString()
+        {
+            return UserName;
+        }
     }
 }

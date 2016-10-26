@@ -2,28 +2,95 @@
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BookAStar.Pages.ChatPage"
+             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
+             xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
+            xmlns:toolkit="clr-namespace:XLabs.Forms.Mvvm;assembly=XLabs.Forms"
              >
-<TabbedPage.Children>
-  <ContentPage Title="Public" Icon="chat.png" >
-  <StackLayout Padding="5, 5, 5, 5">
-    <StackLayout Spacing = "12"
-                  Orientation = "Horizontal"
-                  Padding="5, 0, 5, 0">
-      <Entry x:Name="messageEntry" Placeholder = "enter your Message"
-             VerticalOptions = "Center"
-                  HorizontalOptions = "FillAndExpand"></Entry>
-      <Button x:Name="sendButton" Text = "Send" HorizontalOptions = "End"
-              VerticalOptions = "Center"></Button>
-
-      <Label Text="{Binding MainText}" VerticalOptions="Center" HorizontalOptions="Center" />
-
+  <TabbedPage.Children>
+    <ContentPage Title="Public" Icon="chat_icon_s.png" >
+      <StackLayout Padding="5, 5, 5, 5">
+        <StackLayout Spacing = "12"
+                      Orientation = "Horizontal"
+                      Padding="5, 0, 5, 0">
+          <Entry x:Name="messageEntry" Placeholder = "enter your Message"
+                 VerticalOptions = "Center" 
+                      HorizontalOptions = "FillAndExpand"></Entry>
+          <Button x:Name="sendButton" Text = "Send" HorizontalOptions = "End"
+                  VerticalOptions = "Center"></Button>
+        </StackLayout>
+        <ListView x:Name="messageList" HasUnevenRows="true">
+          <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
+            <DataTemplate>
+              <ViewCell>
+                <ViewCell.View>
+                  <StackLayout Orientation="Horizontal" VerticalOptions="StartAndExpand">
+                      <Label Text="{Binding Date, StringFormat='{0:HH:mm}'}" FontAttributes="Italic" />
+                      <Label Text="{Binding SenderId}" FontFamily="monospace" FontAttributes="Italic" />
+                      <BoxView WidthRequest="1" HeightRequest="15" Color="#000090"/>
+                      <Label Text="{Binding Message}" FontFamily="monospace" />
+                  </StackLayout>
+                </ViewCell.View>
+              </ViewCell>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+      </StackLayout>
+    </ContentPage>
+   <ContentPage Title="Notifications" Icon="exclam.png" >
+     <StackLayout Padding="5, 5, 5, 5">
+     <ListView x:Name="notifList" HasUnevenRows="true">
+          <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
+            <DataTemplate>
+              <ViewCell>
+                <ViewCell.View>
+                  <StackLayout Orientation="Horizontal" VerticalOptions="StartAndExpand">
+                      <Label Text="{Binding Date, StringFormat='{0:hh:mm}'}" FontAttributes="Italic" />
+                      <Label Text="{Binding SenderId}" FontFamily="monospace" FontAttributes="Italic" />
+                      <BoxView Color="#000090" WidthRequest="1" HeightRequest="15" />
+                      <Label Text="{Binding Message}" FontFamily="monospace" />
+                  </StackLayout>
+                </ViewCell.View>
+              </ViewCell>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+       </StackLayout>
+    </ContentPage>
+  
+    <ContentPage Title="Contacts" Icon="peer_to_peer.png" >
+      <StackLayout Padding="5, 5, 5, 5">
+      <StackLayout Spacing = "12"
+                      Orientation = "Horizontal"
+                      Padding="5, 0, 5, 0">
+          <Entry x:Name="pvEntry" Placeholder = "enter your private message"
+                 VerticalOptions = "Center"
+                      HorizontalOptions = "FillAndExpand"></Entry>
+         <!--
+         <controls:ExtendedPicker x:Name="contactPicker" Display="{Binding UserName}"></controls:ExtendedPicker>
+        --> 
+<controls:ExtendedPicker x:Name="contactPicker" />
+ <Button x:Name="sendPVButton" Text = "Send" HorizontalOptions = "End"
+                  VerticalOptions = "Center"></Button>
+        </StackLayout>
+        <ListView x:Name="PVList" HasUnevenRows="true">
+          <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
+            <DataTemplate>
+              <ViewCell>
+                <ViewCell.View>
+                  <StackLayout Orientation="Horizontal" VerticalOptions="StartAndExpand">
+                      <Label Text="{Binding Date, StringFormat='{0:hh:mm}'}" FontAttributes="Italic" />
+                      <Label Text="{Binding SenderId}" FontFamily="monospace" FontAttributes="Italic" />
+                      <BoxView Color="#000090" WidthRequest="1" HeightRequest="15" />
+                      <Label Text="{Binding Message}" FontFamily="monospace" />
+                  </StackLayout>
+                </ViewCell.View>
+              </ViewCell>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+       <!-- <views:UserListView ItemsSource="" /> -->
     </StackLayout>
-  <ListView x:Name="messageList"></ListView>
-  </StackLayout>
- </ContentPage>
-  <ContentPage Title="Notifications" Icon="exclam.png" >
- </ContentPage>
-  <ContentPage Title="Privé" Icon="nicubunu-Peer-to-peer.png" >
- </ContentPage>
-</TabbedPage.Children>
+    
+    </ContentPage> 
+  </TabbedPage.Children>
 </TabbedPage>
