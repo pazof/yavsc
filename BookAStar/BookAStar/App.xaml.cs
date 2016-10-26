@@ -21,6 +21,7 @@ namespace BookAStar
     using Plugin.Connectivity;
     using ViewModels;
     using Microsoft.AspNet.SignalR.Client;
+    using Model.Social.Messaging;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -56,6 +57,14 @@ namespace BookAStar
             app.Rotation += OnRotation;
             app.Startup += OnStartup;
             app.Suspended += OnSuspended;
+            MainSettings.UserChanged += MainSettings_UserChanged;
+            CrossConnectivity.Current.ConnectivityChanged += (conSender, args) =>
+            {
+                App.IsConnected = args.IsConnected;
+            };
+            SetupHubConnection();
+            if (CrossConnectivity.Current.IsConnected)
+                StartHubConnection();
         }
 
         // omg
@@ -70,13 +79,10 @@ namespace BookAStar
             
         }
 
-        // Called Once, at app init
+        // FIXME Never called.
         private void OnInitialize(object sender, EventArgs e)
         {
-            CrossConnectivity.Current.ConnectivityChanged += (conSender, args) =>
-            {
-                App.IsConnected = args.IsConnected;
-           };
+           
         }
 
         // called on app startup, not on rotation
@@ -243,23 +249,33 @@ namespace BookAStar
                         // TODO Start all cloud related stuff 
                         CurrentApp.StartHubConnection();
                     }
+                    
                 }
             }
         }
-
+        private HubConnection chatHubConnection = null;
+        public HubConnection ChatHubConnection
+        {
+            get
+            {
+                return chatHubConnection;
+            }
+        }
         // Start the Hub connection
         public async void StartHubConnection ()
         {
-            if (chatHubConnection != null)
-                chatHubConnection.Dispose();
+            await chatHubConnection.Start();
+        }
+
+        public void SetupHubConnection()
+        {
             chatHubConnection = new HubConnection(Constants.SignalRHubsUrl);
-            if (MainSettings.CurrentUser != null)
-                chatHubConnection.Headers.Add("Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
-            
+            chatHubConnection.Error += ChatHubConnection_Error;
+
             chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
             chatHubProxy.On<string, string>("PV", (n, m) => {
                 DataManager.Current.PrivateMessages.Add(
-                    new Model.Social.PrivateMessage
+                    new UserMessage
                     {
                         Message = m,
                         SenderId = n,
@@ -267,11 +283,32 @@ namespace BookAStar
                     }
                     );
             });
-            await chatHubConnection.Start();
-            
         }
-        private HubConnection chatHubConnection=null;
+
+        private void MainSettings_UserChanged(object sender, EventArgs e)
+        {
+            if (MainSettings.CurrentUser != null)
+            {
+                if (chatHubConnection.Headers.ContainsKey("Bearer"))
+                    chatHubConnection.Headers.Remove("Bearer");
+                chatHubConnection.Headers.Add("Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
+            }
+            else chatHubConnection.Headers.Remove("Bearer");
+        }
+
+        private void ChatHubConnection_Error(Exception obj)
+        {
+            // TODO log in debug binaries
+        }
+
         private IHubProxy chatHubProxy = null;
+        public IHubProxy ChatHubProxy
+        {
+            get
+            {
+                return chatHubProxy;
+            }
+        }
         public static Task<bool> HasSomeCloud {
             get
             {
@@ -281,9 +318,9 @@ namespace BookAStar
 
         public void PostDeviceInfo()
         {
-            var res = PlatformSpecificInstance.InvokeApi(
-                "gcm/register",
-                PlatformSpecificInstance.GetDeviceInfo());
+            var info = PlatformSpecificInstance.GetDeviceInfo();
+            if (!string.IsNullOrWhiteSpace(info.GCMRegistrationId))
+                PlatformSpecificInstance.InvokeApi("gcm/register", info);
         }
 
         public static void ShowBookQuery (BookQueryData query)

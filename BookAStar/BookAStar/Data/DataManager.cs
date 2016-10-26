@@ -5,7 +5,7 @@
     using Model.Workflow;
     using Model.UI;
     using ViewModels;
-    using Model.Social;
+    using Model.Social.Messaging;
 
     public class DataManager
     {
@@ -20,7 +20,7 @@
         /// </summary>
         internal LocalEntity<EditEstimateViewModel, long> EstimationCache { get; set; }
         internal LocalEntity<BillingLine, string> EstimateLinesTemplates { get; set; }
-        internal LocalEntity<PrivateMessage, int> PrivateMessages { get; set; }
+        internal LocalEntity<UserMessage, int> PrivateMessages { get; set; }
         protected static DataManager current ;
 
         public static DataManager Current 
@@ -42,7 +42,7 @@
             AppState = new LocalEntity<PageState, int>(s => s.Position);
             EstimationCache = new LocalEntity<EditEstimateViewModel, long>(e => e.Query.Id);
             EstimateLinesTemplates = new LocalEntity<BillingLine, string>(l => l.Description);
-            PrivateMessages = new LocalEntity<PrivateMessage, int>(m=> m.GetHashCode());
+            PrivateMessages = new LocalEntity<UserMessage, int>(m=> m.GetHashCode());
 
             PrivateMessages.Load();
             BookQueries.Load();

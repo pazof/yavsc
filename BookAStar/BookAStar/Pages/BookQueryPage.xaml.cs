@@ -70,6 +70,7 @@ namespace BookAStar.Pages
                 if (estimateToEdit == null)
                 {
                     DataManager.Current.Contacts.Merge(BookQuery.Client);
+                    DataManager.Current.Contacts.SaveCollection();
                     estimateToEdit = new Estimate()
                     {
                         ClientId = BookQuery.Client.UserId,

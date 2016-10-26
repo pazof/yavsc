@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="BookAStar.Views.UserListView"
+             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
+             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar">
+  <ContentView.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentView.Resources>
+  <ContentView.Content>
+    <ListView x:Name="list" ItemTapped="OnViewDetail" HasUnevenRows="true" RowHeight="80">
+      <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <StackLayout Orientation="Horizontal" Padding="10,10,10,10" VerticalOptions="StartAndExpand">
+                <Image Source="{Binding AvatarOrNot}" Aspect="AspectFit" />
+                <Label Text="{Binding UserName}" />
+                <Label Text="{Binding EMail}" />
+                
+              </StackLayout>
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </ContentView.Content>
+</ContentView>

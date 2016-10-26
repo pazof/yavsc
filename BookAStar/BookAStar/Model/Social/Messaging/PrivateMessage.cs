@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookAStar.Model.Social
+namespace BookAStar.Model.Social.Messaging
 {
-    class PrivateMessage
+    public class UserMessage
     {
         public DateTime Date { get; set; }
         public string SenderId { get; set; }
