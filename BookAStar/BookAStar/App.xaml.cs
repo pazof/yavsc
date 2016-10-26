@@ -241,24 +241,34 @@ namespace BookAStar
                     if (isConnected)
                     {
                         // TODO Start all cloud related stuff 
-                        
-
+                        CurrentApp.StartHubConnection();
                     }
                 }
             }
         }
 
         // Start the Hub connection
-        private async void StartHubConnection ()
+        public async void StartHubConnection ()
         {
+            if (chatHubConnection != null)
+                chatHubConnection.Dispose();
             chatHubConnection = new HubConnection(Constants.SignalRHubsUrl);
             if (MainSettings.CurrentUser != null)
                 chatHubConnection.Headers.Add("Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
+            
             chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
-            chatHubProxy.On<string, string>("AddMessage", (n, m) => {
-                Messages.Add(string.Format("{0} says: {1}", n, m));
+            chatHubProxy.On<string, string>("PV", (n, m) => {
+                DataManager.Current.PrivateMessages.Add(
+                    new Model.Social.PrivateMessage
+                    {
+                        Message = m,
+                        SenderId = n,
+                        Date = DateTime.Now
+                    }
+                    );
             });
             await chatHubConnection.Start();
+            
         }
         private HubConnection chatHubConnection=null;
         private IHubProxy chatHubProxy = null;
