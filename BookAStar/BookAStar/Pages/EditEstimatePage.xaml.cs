@@ -14,6 +14,7 @@ namespace BookAStar.Pages
             InitializeComponent();
             BindingContext = model;
         }
+
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
@@ -41,17 +42,36 @@ namespace BookAStar.Pages
         protected void OnNewCommanLine(object sender, EventArgs e)
         {
             var com = new BillingLine() { Count = 1, UnitaryCost = 0.01m };
-            var lineView = new BillingLineViewModel(com);
-            var bill =
-            ((EditEstimateViewModel)BindingContext).Bill;
-            bill.Add(com);
-            bill.SaveCollection();
-            lineView.PropertyChanged += (s,f) => bill.SaveCollection();
+            var bill = ((EditEstimateViewModel)BindingContext).Bill;
+            var lineView = new BillingLineViewModel(com)
+            { ValidateCommand = new Command(() => {
+                bill.Add(com);
+                bill.SaveCollection();
+            })};
             App.NavigationService.NavigateTo<EditBillingLinePage>(
                 true,
                 new object[] { lineView } );
         }
+        protected void OnEditLine(object sender, ItemTappedEventArgs e)
+        {
+            var line = (BillingLine)e.Item;
+            var bill = ((EditEstimateViewModel)BindingContext).Bill;
+            var lineView = new BillingLineViewModel(line)
+            {
+                ValidateCommand = new Command(() => {
+                    bill.SaveCollection();
+                })
+            };
+            lineView.PropertyChanged += LineView_PropertyChanged;
+            App.NavigationService.NavigateTo<EditBillingLinePage>(
+                true,
+                new object[] { lineView });
+        }
 
+        private void LineView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            DataManager.Current.EstimationCache.SaveCollection();
+        }
 
         protected void OnEstimateValidated(object sender, EventArgs e)
         {
@@ -68,7 +88,9 @@ namespace BookAStar.Pages
                 DataManager.Current.Estimates.Update(evm.Data);
             }
             DataManager.Current.Estimates.SaveCollection();
-            evm.State = LocalState.UpToDate;
+            DataManager.Current.EstimationCache.Remove(evm);
+            DataManager.Current.EstimationCache.SaveCollection();
+            Navigation.PopAsync();
         }
     }
 }

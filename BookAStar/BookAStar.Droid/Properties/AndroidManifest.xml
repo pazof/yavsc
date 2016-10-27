@@ -21,7 +21,7 @@
 			<intent-filter>
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />
-				<!-- <data android:mimeType="text/plain" /> -->
+				  <data android:mimeType="*/*" />
 			</intent-filter>
 			<meta-data android:name="android.service.chooser.chooser_target_service" android:value="fr.pschneider.bas.YavscChooserTargetService" />
 		</activity>

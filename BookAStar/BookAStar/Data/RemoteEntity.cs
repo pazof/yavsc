@@ -9,6 +9,7 @@ using System.Net;
 namespace BookAStar.Data
 {
     using Helpers;
+    using System.Diagnostics;
     using System.Text;
 
     public class RemoteEntity<V, K> : LocalEntity<V, K>, ICommand where K : IEquatable<K>
@@ -79,7 +80,7 @@ namespace BookAStar.Data
         private void AfterExecuting()
         {
             IsExecuting = false;
-            if (CanExecuteChanged!=null)
+            if (CanExecuteChanged != null)
                 CanExecuteChanged.Invoke(this, new EventArgs());
         }
 
@@ -134,19 +135,24 @@ namespace BookAStar.Data
                 {
                     if (!response.IsSuccessStatusCode)
                     {
-                        var errcontent = await response.Content.ReadAsStringAsync();
                         // TODO throw custom exception, and catch to inform user
-                        throw new Exception($"Create failed posting {stringContent} @ {controllerUri.AbsoluteUri}");
+                        var errcontent = await response.Content.ReadAsStringAsync();
+                        Debug.WriteLine($"Create failed posting {stringContent} @ {controllerUri.AbsoluteUri}");
                     }
-                    var recontent = await response.Content.ReadAsStringAsync();
-                    JsonConvert.PopulateObject(recontent, item);
+                    else
+                    {
+                        var recontent = await response.Content.ReadAsStringAsync();
+                        JsonSerializerSettings sett = new JsonSerializerSettings();
+                        JsonConvert.PopulateObject(recontent, item);
+                    }
                 }
+
             }
 
             CurrentItem = item;
             AfterExecuting();
         }
-        public async void Update (V item)
+        public async void Update(V item)
         {
             BeforeExecute();
 
@@ -154,13 +160,27 @@ namespace BookAStar.Data
             using (HttpClient client = UserHelpers.CreateClient())
             {
                 HttpContent content = new StringContent(
-                    JsonConvert.SerializeObject(item)
+                    JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json"
                     );
                 using (var response = await client.PutAsync(uri, content))
                 {
                     if (!response.IsSuccessStatusCode)
-                        // TODO throw custom exception, and catch to inform user
-                        throw new Exception($"Update failed puting {item} @ {uri.AbsolutePath}");
+                    {// TODO throw custom exception, and catch to inform user
+                        if (response.StatusCode == HttpStatusCode.BadRequest)
+                        {
+                            var recontent = await response.Content.ReadAsStringAsync();
+                        }
+                        
+                        else Debug.WriteLine($"Update failed ({item} @ {uri.AbsolutePath} )");
+
+                    }
+                    else
+                    {
+                        // TODO implement an handler of string content (json)
+                        // in most of cases, nothing to do
+                        var recontent = await response.Content.ReadAsStringAsync();
+                        JsonConvert.PopulateObject(recontent, item);
+                    }
                 }
             }
 
