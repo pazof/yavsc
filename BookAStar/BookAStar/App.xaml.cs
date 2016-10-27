@@ -275,7 +275,7 @@ namespace BookAStar
             chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
             chatHubProxy.On<string, string>("PV", (n, m) => {
                 DataManager.Current.PrivateMessages.Add(
-                    new UserMessage
+                    new ChatMessage
                     {
                         Message = m,
                         SenderId = n,
