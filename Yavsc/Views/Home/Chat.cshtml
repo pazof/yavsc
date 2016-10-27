@@ -19,6 +19,8 @@
     </ul>
     <ul id="private">
     </ul>
+    <ul id="chatnotifs">
+    </ul>
 </div>
 @section scripts {
     <!--Script references. -->
@@ -42,6 +44,11 @@
                 // Add the pv to the page.
                 $('#private').append('<li><strong>' + htmlEncode(name)
                     + '</strong>: ' + htmlEncode(message) + '</li>');
+            };
+            chat.client.notify = function (tag, message) {
+                // Add the pv to the page.
+                $('#chatnotifs').append('<li><i>' + htmlEncode(tag)
+                    + '</i> ' + htmlEncode(message) + '</li>');
             };
             // Get the user name and store it to prepend to messages.
             $('#displayname').val(prompt('Enter your name:', ''));
