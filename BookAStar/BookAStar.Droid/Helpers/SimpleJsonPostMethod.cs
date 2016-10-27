@@ -84,7 +84,6 @@ namespace Yavsc.Helpers
 
 		public async Task<JsonValue> InvokeJson(object query)
 		{
-
            JsonValue jsonDoc=null;
 			using (Stream streamQuery = request.GetRequestStream()) {
 				using (StreamWriter writer = new StreamWriter(streamQuery)) {

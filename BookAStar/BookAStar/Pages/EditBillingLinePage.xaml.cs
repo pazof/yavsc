@@ -21,5 +21,11 @@ namespace BookAStar.Pages
         {
             this.Navigation.PopAsync();
         }
+        protected override bool OnBackButtonPressed()
+        {
+            var bvm = (BillingLineViewModel)BindingContext;
+            bvm.ValidateCommand?.Execute(null);
+            return base.OnBackButtonPressed();
+        }
     }
 }

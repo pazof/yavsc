@@ -40,7 +40,7 @@
 <StackLayout x:Name="biAnVaLayout">
       <ListView x:Name="BillListView" ItemsSource="{Binding Bill}"
          MinimumHeightRequest="40" HasUnevenRows="true" VerticalOptions="FillAndExpand"
-                          HeightRequest="40">
+                          HeightRequest="40" ItemTapped="OnEditLine">
         <ListView.ItemTemplate>
           <DataTemplate >
             <ViewCell>

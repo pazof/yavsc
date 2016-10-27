@@ -14,7 +14,9 @@ namespace BookAStar.Data
 
         public LocalEntity(Func<V, K> getKey) : base()
         {
-            if (getKey == null) throw new InvalidOperationException();
+            if (getKey == null)
+                // choose please, because of the genesis 
+                throw new InvalidOperationException ("A key must be defined");
             GetKey = getKey;
             IList<V> l = this;
         }

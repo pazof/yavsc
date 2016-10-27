@@ -49,7 +49,10 @@
     <Compile Include="Behaviors\StarBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Data\LocalState.cs" />
+    <Compile Include="Model\Social\Messaging\ChatStatus.cs" />
+    <Compile Include="Model\Social\Messaging\PrivateMessage.cs" />
     <Compile Include="Model\UI\PageState.cs" />
+    <Compile Include="Settings\ChatSettings.cs" />
     <Compile Include="ViewModels\EditingViewModel.cs" />
     <Compile Include="Views\EnumPicker.cs" />
     <Compile Include="Converters\BooleanToObjectConverter.cs" />
@@ -97,7 +100,7 @@
     <Compile Include="Pages\EventDetail.xaml.cs">
       <DependentUpon>EventDetail.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\MainSettings.cs" />
+    <Compile Include="Settings\MainSettings.cs" />
     <Compile Include="Data\RemoteEntity.cs" />
     <Compile Include="Interfaces\IPlatform.cs" />
     <Compile Include="Model\Blog\Blog.cs" />
@@ -166,6 +169,9 @@
     <Compile Include="Views\RatingView.xaml.cs">
       <DependentUpon>RatingView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserListView.xaml.cs">
+      <DependentUpon>UserListView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="App.xaml">
@@ -217,6 +223,12 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Connectivity">
+      <HintPath>..\..\packages\Xam.Plugin.Connectivity.2.2.12\lib\MonoAndroid10\Plugin.Connectivity.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Connectivity.Abstractions">
+      <HintPath>..\..\packages\Xam.Plugin.Connectivity.2.2.12\lib\MonoAndroid10\Plugin.Connectivity.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Plugin.Settings, Version=2.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xam.Plugins.Settings.2.5.1.0\lib\portable-net45+wp80+win8+wpa81\Plugin.Settings.dll</HintPath>
@@ -357,6 +369,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\Chat\chat_icon_s.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\UserListView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
