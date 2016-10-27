@@ -13,7 +13,8 @@ namespace BookAStar.Pages
 {
     public partial class ChatPage : TabbedPage
     {
-        public ObservableCollection<UserMessage> Messages { get; set; }
+        public ObservableCollection<ChatMessage> Messages { get; set; }
+        public ObservableCollection<ChatMessage> Notifs { get; set; }
         public string ChatUser { get; set; }
 
         public ChatPage()
@@ -40,7 +41,7 @@ namespace BookAStar.Pages
             };
             // contactPicker.DisplayProperty = "UserName";
             
-            messageList.ItemsSource = Messages = new ObservableCollection<UserMessage>();
+            messageList.ItemsSource = Messages = new ObservableCollection<ChatMessage>();
             PVList.ItemsSource = DataManager.Current.PrivateMessages;
             App.CurrentApp.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
             // DataManager.Current.Contacts 
@@ -50,7 +51,7 @@ namespace BookAStar.Pages
 
             App.CurrentApp.ChatHubProxy.On<string, string>("addMessage", (n, m) =>
             {
-                Messages.Add(new UserMessage
+                Messages.Add(new ChatMessage
                 {
                     Message = m,
                     SenderId = n,
@@ -58,9 +59,9 @@ namespace BookAStar.Pages
                 });
             });
 
-            App.CurrentApp.ChatHubProxy.On<string, string>("addMessage", (n, m) =>
+            App.CurrentApp.ChatHubProxy.On<string, string>("notify", (n, m) =>
             {
-                Messages.Add(new UserMessage
+                Notifs.Add(new ChatMessage
                 {
                     Message = m,
                     SenderId = n,
