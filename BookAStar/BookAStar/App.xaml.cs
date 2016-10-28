@@ -273,7 +273,7 @@ namespace BookAStar
             chatHubConnection.Error += ChatHubConnection_Error;
 
             chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
-            chatHubProxy.On<string, string>("PV", (n, m) => {
+            chatHubProxy.On<string, string>("addPV", (n, m) => {
                 DataManager.Current.PrivateMessages.Add(
                     new ChatMessage
                     {
@@ -283,17 +283,21 @@ namespace BookAStar
                     }
                     );
             });
+            MainSettings_UserChanged(this, null);
         }
 
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
-            if (MainSettings.CurrentUser != null)
+            if (MainSettings.CurrentUser == null)
             {
-                if (chatHubConnection.Headers.ContainsKey("Bearer"))
-                    chatHubConnection.Headers.Remove("Bearer");
-                chatHubConnection.Headers.Add("Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
+                chatHubConnection.Headers.Clear();
             }
-            else chatHubConnection.Headers.Remove("Bearer");
+            else
+            {
+                var token = MainSettings.CurrentUser.YavscTokens.AccessToken;
+                chatHubConnection.Headers.Add(
+                    "Authorization", $"Bearer {token}");
+            }
         }
 
         private void ChatHubConnection_Error(Exception obj)

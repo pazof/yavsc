@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace BookAStar.Converters
 {
-    class BooleanToObjectConverter<T> : IValueConverter
+    public class BooleanToObjectConverter<T> : IValueConverter
     {
         public T FalseObject { set; get; }
 
