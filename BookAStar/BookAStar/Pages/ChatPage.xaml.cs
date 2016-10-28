@@ -29,6 +29,8 @@ namespace BookAStar.Pages
 
                 try
                 {
+                     ConnectionState cs = App.CurrentApp.ChatHubConnection.State;
+
                     await App.CurrentApp.ChatHubProxy.Invoke<string>("Send", ChatUser, messageEntry.Text);
                     messageEntry.Text = null;
                 }
@@ -39,13 +41,25 @@ namespace BookAStar.Pages
 
                 IsBusy = false;
             };
-            // contactPicker.DisplayProperty = "UserName";
-            
-            messageList.ItemsSource = Messages = new ObservableCollection<ChatMessage>();
-            PVList.ItemsSource = DataManager.Current.PrivateMessages;
-            App.CurrentApp.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
-            // DataManager.Current.Contacts 
 
+            sendPVButton.Clicked += async (sender, args) =>
+            {
+                IsBusy = true;
+
+                try
+                {
+                    await App.CurrentApp.ChatHubProxy.Invoke<string>("SendPV", ChatUser, messageEntry.Text);
+                    messageEntry.Text = null;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+
+                IsBusy = false;
+            };
+            messageList.ItemsSource = Messages = new ObservableCollection<ChatMessage>();
+            App.CurrentApp.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
             MainSettings.UserChanged += MainSettings_UserChanged;
             MainSettings_UserChanged(this, null);
 
@@ -70,15 +84,26 @@ namespace BookAStar.Pages
             });
         }
 
+        private void ReconnectButton_Clicked(object sender, EventArgs e)
+        {
+            App.CurrentApp.ChatHubConnection.Stop();
+            App.CurrentApp.ChatHubConnection.Start();
+        }
+
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
             ChatUser = MainSettings.UserName;
             contactPicker.ItemsSource = DataManager.Current.Contacts;
+            PVList.ItemsSource = DataManager.Current.PrivateMessages;
         }
 
         private void ChatHubConnection_StateChanged(StateChange obj)
         {
-            sendButton.IsEnabled = obj.NewState == ConnectionState.Connected;
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(
+                () => {
+                    sendButton.IsEnabled = obj.NewState == ConnectionState.Connected;
+                    reconnectButton.IsEnabled = obj.NewState != ConnectionState.Connected;
+                });
         }
     }
 }
