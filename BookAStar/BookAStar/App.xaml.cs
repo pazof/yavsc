@@ -29,8 +29,7 @@ namespace BookAStar
         public static string AppName { get; set; }
 
 
-        // Exists in order to dispose of a static instance strongly typed,
-        // It Makes smaller code.
+        [Obsolete("Instead using this, use new static properties.")]
         public static App CurrentApp { get { return Current as App; } }
        
         public static bool MasterPresented
@@ -253,8 +252,8 @@ namespace BookAStar
                 }
             }
         }
-        private HubConnection chatHubConnection = null;
-        public HubConnection ChatHubConnection
+        private static HubConnection chatHubConnection = null;
+        public static HubConnection ChatHubConnection
         {
             get
             {
