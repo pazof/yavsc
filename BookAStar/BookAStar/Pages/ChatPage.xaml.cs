@@ -29,7 +29,7 @@ namespace BookAStar.Pages
 
                 try
                 {
-                     ConnectionState cs = App.CurrentApp.ChatHubConnection.State;
+                     ConnectionState cs = App.ChatHubConnection.State;
 
                     await App.CurrentApp.ChatHubProxy.Invoke<string>("Send", ChatUser, messageEntry.Text);
                     messageEntry.Text = null;
@@ -48,8 +48,8 @@ namespace BookAStar.Pages
 
                 try
                 {
-                    await App.CurrentApp.ChatHubProxy.Invoke<string>("SendPV", ChatUser, messageEntry.Text);
-                    messageEntry.Text = null;
+                    await App.CurrentApp.ChatHubProxy.Invoke<string>("SendPV", ChatUser, pvEntry.Text);
+                    pvEntry.Text = null;
                 }
                 catch (Exception ex)
                 {
@@ -59,7 +59,8 @@ namespace BookAStar.Pages
                 IsBusy = false;
             };
             messageList.ItemsSource = Messages = new ObservableCollection<ChatMessage>();
-            App.CurrentApp.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
+            notifList.ItemsSource = Notifs = new ObservableCollection<ChatMessage>();
+            App.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
             MainSettings.UserChanged += MainSettings_UserChanged;
             MainSettings_UserChanged(this, null);
 
@@ -86,8 +87,8 @@ namespace BookAStar.Pages
 
         private void ReconnectButton_Clicked(object sender, EventArgs e)
         {
-            App.CurrentApp.ChatHubConnection.Stop();
-            App.CurrentApp.ChatHubConnection.Start();
+            App.ChatHubConnection.Stop();
+            App.ChatHubConnection.Start();
         }
 
         private void MainSettings_UserChanged(object sender, EventArgs e)
@@ -102,7 +103,6 @@ namespace BookAStar.Pages
             Xamarin.Forms.Device.BeginInvokeOnMainThread(
                 () => {
                     sendButton.IsEnabled = obj.NewState == ConnectionState.Connected;
-                    reconnectButton.IsEnabled = obj.NewState != ConnectionState.Connected;
                 });
         }
     }

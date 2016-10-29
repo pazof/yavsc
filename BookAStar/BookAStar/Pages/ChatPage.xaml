@@ -1,60 +1,61 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BookAStar.Pages.ChatPage"
-             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
-             xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
-             xmlns:toolkit="clr-namespace:XLabs.Forms.Mvvm;assembly=XLabs.Forms"
-             xmlns:converters="clr-namespace:BookAStar.Converters;assembly=BookAStar"
-             xmlns:local="clr-namespace:BookAStar;Assembly:BookAStar"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            x:Class="BookAStar.Pages.ChatPage"
+            xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
+            xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
+            xmlns:toolkit="clr-namespace:XLabs.Forms.Mvvm;assembly=XLabs.Forms"
+            xmlns:converters="clr-namespace:BookAStar.Converters;assembly=BookAStar"
+            xmlns:local="clr-namespace:BookAStar;Assembly:BookAStar"
+            xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
              >
   
-    <!-- 
+   
   <TabbedPage.Resources>
     <ResourceDictionary>
-  <converters:SignalRConnectionStateToObject x:Key="cxToStyleButton" x:TypeArguments="Style">
+  <converters:SignalRConnectionStateToObject x:Key="cxToStyleImage" x:TypeArguments="Style">
 
         <converters:SignalRConnectionStateToObject.DisconnectedObject>
-          <Style TargetType="Button">
-            <Setter Property="Image"
+          <Style TargetType="Image">
+            <Setter Property="Source"
                     Value="{extensions:ImageResource BookAStar.Images.Chat.disconnected.png}" />
           </Style>
         </converters:SignalRConnectionStateToObject.DisconnectedObject>
 
         <converters:SignalRConnectionStateToObject.ConnectedObject>
-          <Style TargetType="Button">
-            <Setter Property="Image"
+          <Style TargetType="Image">
+            <Setter Property="Source"
                     Value="{extensions:ImageResource BookAStar.Images.Chat.connected.png}" />
           </Style>
         </converters:SignalRConnectionStateToObject.ConnectedObject>
     
         <converters:SignalRConnectionStateToObject.ConnectingObject>
-          <Style TargetType="Button">
+          <Style TargetType="Image">
             <Setter Property="Source"
                     Value="{extensions:ImageResource BookAStar.Images.Chat.connecting.png}" />
           </Style>
         </converters:SignalRConnectionStateToObject.ConnectingObject>
 
         <converters:SignalRConnectionStateToObject.ReconnectingObject>
-          <Style TargetType="Button">
+          <Style TargetType="Image">
             <Setter Property="Source"
                     Value="{extensions:ImageResource BookAStar.Images.Chat.reconnecting.png}" />
           </Style>
         </converters:SignalRConnectionStateToObject.ReconnectingObject>
       </converters:SignalRConnectionStateToObject>
     </ResourceDictionary>
-  </TabbedPage.Resources> -->
+  </TabbedPage.Resources> 
   <TabbedPage.Children>
     <ContentPage Title="Public" Icon="chat_icon_s.png" >
       <StackLayout Padding="5, 5, 5, 5">
         <StackLayout Spacing = "12"
                       Orientation = "Horizontal"
                       Padding="5, 0, 5, 0">
-          
-        <Button x:Name="reconnectButton" Clicked="ReconnectButton_Clicked"/>
-       <!--   Style="{Binding Source={x:Static local:App.CurrentApp.ChatHubConnection}, 
+          <Image 
+       x:Name="reconnectImage" 
+        Style="{Binding Source={x:Static local:App.ChatHubConnection}, 
                                 Path=State, 
-                                Converter={StaticResource cxToStyleButton}}" -->
+                                Converter={StaticResource cxToStyleImage}}" />
           <Entry x:Name="messageEntry" Placeholder = "enter your Message"
                  VerticalOptions = "Center"
                       HorizontalOptions = "FillAndExpand"></Entry>
