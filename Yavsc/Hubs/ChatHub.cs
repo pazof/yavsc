@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using System.Security.Principal;
 using Microsoft.AspNet.SignalR;
+using System;
+// using Microsoft.AspNet.Authorization;
 
 namespace Yavsc
 {
@@ -58,18 +60,15 @@ namespace Yavsc
 
     public void Send(string name, string message)
     {
-
-      Clients.All.addMessage(name,message);
+      string uname = (Context.User!=null) ? 
+        $"[{Context.User.Identity.Name}]":
+        $"(anony{name})";
+      Clients.All.addMessage(uname,message);
     }
 
-    [Authorize]
-      public void AuthSend (string name, string message)
-      {
-        Clients.All.addMessage("#"+name,message);
-      }
 
     [Authorize]
-      public void PV (string connectionId, string message)
+      public void SendPV (string connectionId, string message)
       {
         var sender = Context.User.Identity.Name;
         // TODO personal black|white list +
