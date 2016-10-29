@@ -2,6 +2,24 @@
     ViewBag.Title = "Chat";
 }
 <h2>Chat</h2>
+
+<style>
+.discussion {
+  color: black;
+  font-family: monospace;
+}
+.notif {
+  color: black;
+  font-family: monospace;
+  font-style: italic;
+}
+.pv {
+  color: black;
+  font-family: monospace;
+  font-style: bold;
+}
+ 
+</style>
 <div class="container">
     <input type="text" id="message" />
     <input type="button" id="sendmessage" value="Send" />
@@ -16,10 +34,6 @@
 </select>
 }
     <ul id="discussion">
-    </ul>
-    <ul id="private">
-    </ul>
-    <ul id="chatnotifs">
     </ul>
 </div>
 @section scripts {
@@ -37,18 +51,18 @@
             // Create a function that the hub can call back to display messages.
             chat.client.addMessage = function (name, message) {
                 // Add the message to the page.
-                $('#discussion').append('<li><strong>' + htmlEncode(name)
+                $('#discussion').append('<li class="discussion"><strong>' + htmlEncode(name)
                     + '</strong>: ' + htmlEncode(message) + '</li>');
             };
-            chat.client.PV = function (name, message) {
+            chat.client.addPV = function (name, message) {
                 // Add the pv to the page.
-                $('#private').append('<li><strong>' + htmlEncode(name)
+                $('#discussion').append('<li class="pv"><strong>' + htmlEncode(name)
                     + '</strong>: ' + htmlEncode(message) + '</li>');
             };
-            chat.client.notify = function (tag, message) {
+            chat.client.notify = function (tag, message, data) {
                 // Add the pv to the page.
-                $('#chatnotifs').append('<li><i>' + htmlEncode(tag)
-                    + '</i> ' + htmlEncode(message) + '</li>');
+                $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
+                    + '</i> ' + htmlEncode(message) +' '+ htmlEncode(data) +'</li>');
             };
             // Get the user name and store it to prepend to messages.
             $('#displayname').val(prompt('Enter your name:', ''));
