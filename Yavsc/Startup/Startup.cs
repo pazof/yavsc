@@ -302,6 +302,8 @@ namespace Yavsc
 
             ConfigureOAuthApp(app,siteSettings.Value);
             
+            app.UseSignalR("/api/signalr");
+
             ConfigureFileServerApp(app,siteSettings.Value,env);
 
             app.UseWebSockets();
@@ -314,7 +316,6 @@ namespace Yavsc
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseSignalR("/api/signalr");
         }
         
         // Entry point for the application.
