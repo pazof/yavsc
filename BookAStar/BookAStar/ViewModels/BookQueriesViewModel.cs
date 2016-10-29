@@ -22,7 +22,7 @@ namespace BookAStar.ViewModels
 
         public ICommand RefreshQueries
         {
-            get { return DataManager.Current.BookQueries; }
+            get; set;
         }
     }
 }

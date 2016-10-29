@@ -29,8 +29,7 @@ namespace BookAStar
         public static string AppName { get; set; }
 
 
-        // Exists in order to dispose of a static instance strongly typed,
-        // It Makes smaller code.
+        [Obsolete("Instead using this, use new static properties.")]
         public static App CurrentApp { get { return Current as App; } }
        
         public static bool MasterPresented
@@ -253,8 +252,8 @@ namespace BookAStar
                 }
             }
         }
-        private HubConnection chatHubConnection = null;
-        public HubConnection ChatHubConnection
+        private static HubConnection chatHubConnection = null;
+        public static HubConnection ChatHubConnection
         {
             get
             {
@@ -273,9 +272,9 @@ namespace BookAStar
             chatHubConnection.Error += ChatHubConnection_Error;
 
             chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
-            chatHubProxy.On<string, string>("PV", (n, m) => {
+            chatHubProxy.On<string, string>("addPV", (n, m) => {
                 DataManager.Current.PrivateMessages.Add(
-                    new UserMessage
+                    new ChatMessage
                     {
                         Message = m,
                         SenderId = n,
@@ -283,17 +282,21 @@ namespace BookAStar
                     }
                     );
             });
+            MainSettings_UserChanged(this, null);
         }
 
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
-            if (MainSettings.CurrentUser != null)
+            if (MainSettings.CurrentUser == null)
             {
-                if (chatHubConnection.Headers.ContainsKey("Bearer"))
-                    chatHubConnection.Headers.Remove("Bearer");
-                chatHubConnection.Headers.Add("Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
+                chatHubConnection.Headers.Clear();
             }
-            else chatHubConnection.Headers.Remove("Bearer");
+            else
+            {
+                var token = MainSettings.CurrentUser.YavscTokens.AccessToken;
+                chatHubConnection.Headers.Add(
+                    "Authorization", $"Bearer {token}");
+            }
         }
 
         private void ChatHubConnection_Error(Exception obj)
