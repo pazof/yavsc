@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BookAStar.Model.Social.Messaging
 {
-    public class UserMessage
+    public class ChatMessage
     {
         public DateTime Date { get; set; }
         public string SenderId { get; set; }
