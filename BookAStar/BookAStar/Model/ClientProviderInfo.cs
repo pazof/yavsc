@@ -25,6 +25,9 @@ namespace BookAStar.Model
                 return UserHelpers.Avatar(Avatar);
             }
         }
+
+        public string ChatHubConnectionId { get; set; }
+
         public override string ToString()
         {
             return UserName;
