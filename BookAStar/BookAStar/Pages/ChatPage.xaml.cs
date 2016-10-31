@@ -1,20 +1,16 @@
-﻿using BookAStar.Data;
-using BookAStar.Model.Social.Messaging;
-using Microsoft.AspNet.SignalR.Client;
-using System;
-using System.Collections.ObjectModel;
+﻿using System;
 using System.Diagnostics;
+using Microsoft.AspNet.SignalR.Client;
 using Xamarin.Forms;
-using XLabs.Caching;
-using XLabs.Forms.Controls;
-using XLabs.Ioc;
 
 namespace BookAStar.Pages
 {
+    using Data;
+    using Model;
+    using System.Linq;
+    using ViewModels;
     public partial class ChatPage : TabbedPage
     {
-        public ObservableCollection<ChatMessage> Messages { get; set; }
-        public ObservableCollection<ChatMessage> Notifs { get; set; }
         public string ChatUser { get; set; }
 
         public ChatPage()
@@ -22,6 +18,7 @@ namespace BookAStar.Pages
             InitializeComponent();
 
             Title = "Chat";
+            BindingContext = new ChatViewModel();
 
             sendButton.Clicked += async (sender, args) =>
             {
@@ -31,7 +28,7 @@ namespace BookAStar.Pages
                 {
                      ConnectionState cs = App.ChatHubConnection.State;
 
-                    await App.CurrentApp.ChatHubProxy.Invoke<string>("Send", ChatUser, messageEntry.Text);
+                    await App.ChatHubProxy.Invoke<string>("Send", ChatUser, messageEntry.Text);
                     messageEntry.Text = null;
                 }
                 catch (Exception ex)
@@ -44,45 +41,24 @@ namespace BookAStar.Pages
 
             sendPVButton.Clicked += async (sender, args) =>
             {
+                string userName = contactPicker.SelectedItem as string;
+                if (string.IsNullOrEmpty(userName)) return;
+                var user = DataManager.Current.Contacts.Single(
+                    c => c.UserName == userName);
+                if (string.IsNullOrEmpty(user.ChatHubConnectionId)) return;
                 IsBusy = true;
-
                 try
                 {
-                    await App.CurrentApp.ChatHubProxy.Invoke<string>("SendPV", ChatUser, pvEntry.Text);
+                    await App.ChatHubProxy.Invoke<string>("SendPV", user.ChatHubConnectionId, pvEntry.Text);
                     pvEntry.Text = null;
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex);
                 }
-
                 IsBusy = false;
             };
-            messageList.ItemsSource = Messages = new ObservableCollection<ChatMessage>();
-            notifList.ItemsSource = Notifs = new ObservableCollection<ChatMessage>();
-            App.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
-            MainSettings.UserChanged += MainSettings_UserChanged;
-            MainSettings_UserChanged(this, null);
-
-            App.CurrentApp.ChatHubProxy.On<string, string>("addMessage", (n, m) =>
-            {
-                Messages.Add(new ChatMessage
-                {
-                    Message = m,
-                    SenderId = n,
-                    Date = DateTime.Now
-                });
-            });
-
-            App.CurrentApp.ChatHubProxy.On<string, string>("notify", (n, m) =>
-            {
-                Notifs.Add(new ChatMessage
-                {
-                    Message = m,
-                    SenderId = n,
-                    Date = DateTime.Now
-                });
-            });
+            
         }
 
         private void ReconnectButton_Clicked(object sender, EventArgs e)
@@ -91,12 +67,6 @@ namespace BookAStar.Pages
             App.ChatHubConnection.Start();
         }
 
-        private void MainSettings_UserChanged(object sender, EventArgs e)
-        {
-            ChatUser = MainSettings.UserName;
-            contactPicker.ItemsSource = DataManager.Current.Contacts;
-            PVList.ItemsSource = DataManager.Current.PrivateMessages;
-        }
 
         private void ChatHubConnection_StateChanged(StateChange obj)
         {

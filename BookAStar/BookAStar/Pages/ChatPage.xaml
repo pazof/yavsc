@@ -9,7 +9,6 @@
             xmlns:local="clr-namespace:BookAStar;Assembly:BookAStar"
             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
              >
-  
    
   <TabbedPage.Resources>
     <ResourceDictionary>
@@ -51,19 +50,15 @@
         <StackLayout Spacing = "12"
                       Orientation = "Horizontal"
                       Padding="5, 0, 5, 0">
-          <Image 
-       x:Name="reconnectImage" 
-        Style="{Binding Source={x:Static local:App.ChatHubConnection}, 
-                                Path=State, 
-                                Converter={StaticResource cxToStyleImage}}" />
+          <Image Style="{Binding Path=State, Converter={StaticResource cxToStyleImage}}" />
+           
           <Entry x:Name="messageEntry" Placeholder = "enter your Message"
                  VerticalOptions = "Center"
                       HorizontalOptions = "FillAndExpand"></Entry>
           <Button x:Name="sendButton" Text = "Send" HorizontalOptions = "End"
                   VerticalOptions = "Center"></Button>
         </StackLayout>
-        <ListView x:Name="messageList" HasUnevenRows="true"
-                  >
+        <ListView x:Name="messageList" HasUnevenRows="true" ItemsSource="{Binding Messages}">
           <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
             <DataTemplate>
               <ViewCell>
@@ -83,7 +78,7 @@
     </ContentPage>
     <ContentPage Title="Notifications" Icon="exclam.png" >
       <StackLayout Padding="5, 5, 5, 5">
-        <ListView x:Name="notifList" HasUnevenRows="true">
+        <ListView x:Name="notifList" HasUnevenRows="true" ItemsSource="{Binding Notifs}"> 
           <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
             <DataTemplate>
               <ViewCell>
@@ -113,11 +108,11 @@
           <!--
          <controls:ExtendedPicker x:Name="contactPicker" Display="{Binding UserName}"></controls:ExtendedPicker>
         -->
-          <controls:ExtendedPicker x:Name="contactPicker" />
+          <controls:ExtendedPicker x:Name="contactPicker" ItemsSource="{Binding Contacts}" />
           <Button x:Name="sendPVButton" Text = "Send" HorizontalOptions = "End"
                            VerticalOptions = "Center"></Button>
         </StackLayout>
-        <ListView x:Name="PVList" HasUnevenRows="true">
+        <ListView x:Name="PVList" HasUnevenRows="true" ItemsSource="{Binding PVs}">
           <ListView.ItemTemplate HeightRequest="80" 
                                  VerticalOptions="StartAndExpand">
             <DataTemplate>

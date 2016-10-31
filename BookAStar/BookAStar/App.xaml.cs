@@ -138,7 +138,7 @@ namespace BookAStar
         {
             ViewFactory.EnableCache = true;
             ViewFactory.Register<ChatPage, ChatViewModel>(
-                r=> new ChatViewModel { UserName = MainSettings.UserName }
+                r=> new ChatViewModel { ChatUser = MainSettings.UserName }
                 );
             ViewFactory.Register<DashboardPage, DashboardViewModel>(
                  resolver => new DashboardViewModel());
@@ -304,8 +304,8 @@ namespace BookAStar
             // TODO log in debug binaries
         }
 
-        private IHubProxy chatHubProxy = null;
-        public IHubProxy ChatHubProxy
+        private static IHubProxy chatHubProxy = null;
+        public static IHubProxy ChatHubProxy
         {
             get
             {
