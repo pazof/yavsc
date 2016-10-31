@@ -17,7 +17,6 @@
   </ContentPage.Resources>
   <ScrollView>
     <StackLayout Padding="10,10,10,10" x:Name="mainLayout">
-
       <Grid MinimumHeightRequest="12">
         <Grid.RowDefinitions>
           <RowDefinition Height="*" />
