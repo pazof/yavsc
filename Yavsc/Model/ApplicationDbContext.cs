@@ -12,6 +12,7 @@ using Yavsc.Models.OAuth;
 using Yavsc.Models.Workflow;
 using Yavsc.Models.Identity;
 using Yavsc.Models.Market;
+using Yavsc.Model;
 
 namespace Yavsc.Models
 {
@@ -182,5 +183,7 @@ namespace Yavsc.Models
         public DbSet<EstimateTemplate> EstimateTemplates { get; set; }
 
         public DbSet<Contact> Contacts { get; set; }
+
+        public DbSet<ClientProviderInfo> ClientProviderInfo { get; set; }
     }
 }

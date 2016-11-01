@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Identity;
+using Yavsc.Model.Chat;
 
 namespace Yavsc.Models
 {
@@ -53,6 +54,9 @@ namespace Yavsc.Models
         [InverseProperty("DeviceOwner")]
         public virtual List<GoogleCloudMobileDeclaration> Devices { get; set; }
         
+        public ICollection<Connection> Connections { get; set; }
+
+
         /// <summary>
         /// User's circles
         /// </summary>
