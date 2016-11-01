@@ -9,9 +9,8 @@
   font-family: monospace;
 }
 .notif {
-  color: black;
+  color: grey;
   font-family: monospace;
-  font-style: italic;
 }
 .pv {
   color: black;
@@ -33,9 +32,14 @@
     }
 </select>
 }
+    <ul id="userlist">
+    </ul>
     <ul id="discussion">
     </ul>
 </div>
+<environment names="Development">
+<button id="GetUsersBtn">Users</button>
+</environment>
 @section scripts {
     <!--Script references. -->
     <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
@@ -46,6 +50,10 @@
     <!--SignalR script to update the chat page and send messages.-->
     <script>
         $(function () {
+
+
+            
+
             // Reference the auto-generated proxy for the hub.
             var chat = $.connection.chatHub;
             // Create a function that the hub can call back to display messages.
@@ -59,13 +67,40 @@
                 $('#discussion').append('<li class="pv"><strong>' + htmlEncode(name)
                     + '</strong>: ' + htmlEncode(message) + '</li>');
             };
-            chat.client.notify = function (tag, message, data) {
-                // Add the pv to the page.
-                $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
-                    + '</i> ' + htmlEncode(message) +' '+ htmlEncode(data) +'</li>');
+            var onUserConnected =  function (cxid, username) {
+                 $('#userlist').append('<li class="user">'+username+'</li>')
             };
+            var onUserDisconnected = function (cxid, username) {
+                 $('#userlist li[data-uid='+cxid+']').remove();
+            };
+            chat.client.notify = function (tag, message, data) {
+                if (data) {
+                // Add the pv to the page.
+                
+                if (tag === 'connected') {
+onUserConnected(message, data);
+$('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
+                    + '</i> ' + htmlEncode(data) +'</li>');
+                } 
+                else if (tag === 'disconnected') 
+                { 
+                    onUserDisconnected(message, data);
+$('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
+                    + '</i> ' + htmlEncode(data) +'</li>');
+                }
+                else {
+                    $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
+                    + '</i> ' + htmlEncode(message) + ' : ' + htmlEncode(data) + '</li>');
+                }
+                }
+            };
+            @if (!ViewBag.IsAuthenticated) {
             // Get the user name and store it to prepend to messages.
-            $('#displayname').val(prompt('Enter your name:', ''));
+            <text>
+                $('#displayname').val(prompt('Enter your name:', ''));
+            </text>
+            }
+
             // Set initial focus to message input box.
             $('#message').focus();
             // Start the connection.
@@ -82,7 +117,24 @@
                     // Clear text box and reset focus for next comment.
                     $('#message').val('').focus();
                 });
+
+                var getUsers = function() {
+                    $('#userlist').empty();
+                    chat.server.getUserList().done(
+                        function(users) {
+                            $.each(users, function () {
+                                var user = this;
+                                $('#userlist').append('<li class="user"><i>' + htmlEncode(user.UserName)
+                    + '</i> ' + htmlEncode(user.ConnectionId) + '</li>');
+                            });
+                        }
+                    );
+                    console.log(res);
+                };
+                $("#GetUsersBtn").click(getUsers);
             });
+            
+               
         });
         // This optional function html-encodes messages for display in the page.
         function htmlEncode(value) {
