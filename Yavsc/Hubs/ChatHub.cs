@@ -19,64 +19,89 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Threading.Tasks;
-using System.Security.Claims;
-using System.Security.Principal;
 using Microsoft.AspNet.SignalR;
-using System;
-// using Microsoft.AspNet.Authorization;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Yavsc
 {
 
-  public class ChatHub : Hub
-  {
-    public override Task OnConnected()
+    public class ChatHub : Hub
     {
-      bool isAuth = false;
-      string userId = null;
-      if (Context.User!=null) {
-        isAuth = Context.User.Identity.IsAuthenticated;
-        userId = Context.User.Identity.Name;
-        var group = isAuth ?
-          "authenticated":"anonymous";
-        // Log ("Cx: " + group);
-        Groups.Add(Context.ConnectionId, group);
-      } else Groups.Add(Context.ConnectionId, "anonymous");
+        public override Task OnConnected()
+        {
+            bool isAuth = false;
+            string userId = null;
+            if (Context.User != null)
+            {
+                isAuth = Context.User.Identity.IsAuthenticated;
+                userId = Context.User.Identity.Name;
+                var group = isAuth ?
+                  "authenticated" : "anonymous";
+                // Log ("Cx: " + group);
+                Groups.Add(Context.ConnectionId, group);
+            }
+            else Groups.Add(Context.ConnectionId, "anonymous");
 
-      Clients.Group("authenticated").notify("connected",  Context.ConnectionId, userId);
-      return base.OnConnected ();
+            Clients.Group("authenticated").notify("connected", Context.ConnectionId, userId);
+
+              list.Add(new UserInfo
+                {
+                    ConnectionId = Context.ConnectionId,
+                    UserName = userId
+                });
+
+            return base.OnConnected();
+        }
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            string userId = Context.User?.Identity.Name;
+            Clients.Group("authenticated").notify("disconnected", Context.ConnectionId, userId);
+            list.Remove(list.Single(c=>c.ConnectionId==Context.ConnectionId));
+            return base.OnDisconnected(stopCalled);
+        }
+
+        public override Task OnReconnected()
+        {
+            return base.OnReconnected();
+        }
+
+        public void Send(string name, string message)
+        {
+            string uname = (Context.User != null) ?
+              $"[{Context.User.Identity.Name}]" :
+              $"(anony{name})";
+            Clients.All.addMessage(uname, message);
+        }
+
+
+        [Authorize]
+        public void SendPV(string connectionId, string message)
+        {
+            var sender = Context.User.Identity.Name;
+            // TODO personal black|white list +
+            // Contact list allowed only + 
+            // only pro
+            var hubCxContext = Clients.User(connectionId);
+            var cli = Clients.Client(connectionId);
+            cli.addPV(sender, message);
+        }
+        public class UserInfo
+        {
+
+            public string ConnectionId { get; set; }
+
+            public string UserId { get; set; }
+
+            public string UserName { get; set; }
+
+        }
+
+       static List<UserInfo> list = new List<UserInfo>();
+        [Authorize]
+        public IEnumerable<UserInfo> GetUserList()
+        {
+            return list;
+        }
     }
-    public override Task OnDisconnected (bool stopCalled)
-    {
-      string userId = Context.User?.Identity.Name;
-      Clients.Group("authenticated").notify("disconnected",  Context.ConnectionId, userId);
-      return base.OnDisconnected (stopCalled);
-    }
-
-    public override Task OnReconnected ()
-    {
-      return base.OnReconnected ();
-    }
-
-    public void Send(string name, string message)
-    {
-      string uname = (Context.User!=null) ? 
-        $"[{Context.User.Identity.Name}]":
-        $"(anony{name})";
-      Clients.All.addMessage(uname,message);
-    }
-
-
-    [Authorize]
-      public void SendPV (string connectionId, string message)
-      {
-        var sender = Context.User.Identity.Name;
-        // TODO personal black|white list +
-        // Contact list allowed only + 
-        // only pro
-        var hubCxContext = Clients.User(connectionId);
-        var cli = Clients.Client(connectionId);
-        cli.addPV(sender,message);
-      }
-  }
 }
