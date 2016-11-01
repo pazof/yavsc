@@ -8,6 +8,7 @@ using Yavsc.Models;
 using Microsoft.AspNet.Identity;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
@@ -53,7 +54,7 @@ namespace Yavsc.Controllers
             if (User.Identity.IsAuthenticated) {
                 ViewBag.IsAuthenticated=true;
                 string uid = User.GetUserId();
-                ViewBag.Contacts = DbContext.Contacts.Where(c=>c.OwnerId == uid)
+                ViewBag.Contacts = DbContext.Contacts.Include(c=>c.User).Where(c=>c.OwnerId == uid)
                 ;
             } else ViewBag.IsAuthenticated=false;
             return View();
