@@ -37,9 +37,7 @@
     <ul id="discussion">
     </ul>
 </div>
-<environment names="Development">
-<button id="GetUsersBtn">Users</button>
-</environment>
+
 @section scripts {
     <!--Script references. -->
     <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
@@ -131,7 +129,7 @@ $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
                     );
                     console.log(res);
                 };
-                $("#GetUsersBtn").click(getUsers);
+                getUsers();
             });
             
                
