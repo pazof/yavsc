@@ -22,47 +22,103 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using System.Collections.Generic;
 using System.Linq;
+using Yavsc.Models;
+using Yavsc.Model.Chat;
+using System;
 
 namespace Yavsc
 {
 
     public class ChatHub : Hub
     {
+
         public override Task OnConnected()
         {
             bool isAuth = false;
-            string userId = null;
+            string userName = null;
             if (Context.User != null)
             {
                 isAuth = Context.User.Identity.IsAuthenticated;
-                userId = Context.User.Identity.Name;
+                userName = Context.User.Identity.Name;
                 var group = isAuth ?
                   "authenticated" : "anonymous";
                 // Log ("Cx: " + group);
                 Groups.Add(Context.ConnectionId, group);
+                if (isAuth)
+                {
+                    using (var db = new ApplicationDbContext()) {
+                        var user = db.Users.Single(u => u.UserName == userName);
+                        if (user.Connections==null)
+                            user.Connections = new List<Connection>();
+                        user.Connections.Add(new Connection
+                        {
+                            ConnectionID = Context.ConnectionId,
+                            UserAgent = Context.Request.Headers["User-Agent"],
+                            Connected = true
+                        });
+                        db.SaveChanges();
+                    }
+                    
+                }
             }
             else Groups.Add(Context.ConnectionId, "anonymous");
 
-            Clients.Group("authenticated").notify("connected", Context.ConnectionId, userId);
+            Clients.Group("authenticated").notify("connected", Context.ConnectionId, userName);
 
-              list.Add(new UserInfo
-                {
-                    ConnectionId = Context.ConnectionId,
-                    UserName = userId
-                });
+            list.Add(new UserInfo
+            {
+                ConnectionId = Context.ConnectionId,
+                UserName = userName
+            });
 
             return base.OnConnected();
         }
+
         public override Task OnDisconnected(bool stopCalled)
         {
-            string userId = Context.User?.Identity.Name;
-            Clients.Group("authenticated").notify("disconnected", Context.ConnectionId, userId);
-            list.Remove(list.Single(c=>c.ConnectionId==Context.ConnectionId));
+            string userName = Context.User?.Identity.Name;
+            if (userName != null)
+            {
+                using (var db = new ApplicationDbContext()) {
+                    var user = db.Users.Single(u => u.UserName == userName);
+                    var cx = user.Connections.SingleOrDefault(c => c.ConnectionID == Context.ConnectionId);
+                    if (cx != null)
+                    {
+                        if (stopCalled)
+                        {
+                            user.Connections.Remove(cx);
+                        }
+                        else
+                        {
+                            cx.Connected = false;
+                        }
+                        db.SaveChanges();
+                    }
+                }
+            }
+            Clients.Group("authenticated").notify("disconnected", Context.ConnectionId, userName);
+            list.Remove(list.Single(c => c.ConnectionId == Context.ConnectionId));
             return base.OnDisconnected(stopCalled);
         }
 
         public override Task OnReconnected()
         {
+            string userName = Context.User?.Identity.Name;
+            if (userName != null)
+            {
+                using (var db = new ApplicationDbContext()) {
+                    var user = db.Users.Single(u => u.UserName == userName);
+                    if (user.Connections!=null) {
+                        var cx = user.Connections.SingleOrDefault(c => c.ConnectionID == Context.ConnectionId);
+                        if (cx != null)
+                        {
+                            cx.Connected = true;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+
             return base.OnReconnected();
         }
 
@@ -95,9 +151,11 @@ namespace Yavsc
 
             public string UserName { get; set; }
 
+            public string Avatar { get; set; }
+
         }
 
-       static List<UserInfo> list = new List<UserInfo>();
+        static List<UserInfo> list = new List<UserInfo>();
         [Authorize]
         public IEnumerable<UserInfo> GetUserList()
         {

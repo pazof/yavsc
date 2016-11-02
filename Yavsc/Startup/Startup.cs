@@ -222,7 +222,7 @@ namespace Yavsc
         IOptions<SiteSettings> siteSettings,
         IOptions<RequestLocalizationOptions> localizationOptions,
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
-        RoleManager<IdentityRole> _roleManager,
+        RoleManager<IdentityRole> roleManager,
          ILoggerFactory loggerFactory)
         {
             Startup.UserFilesDirName = siteSettings.Value.UserFiles.DirName;
@@ -279,10 +279,10 @@ namespace Yavsc
                 Constants.FrontOfficeGroupName,
                 Constants.StarHunterGroupName
                 })
-                if (!await _roleManager.RoleExistsAsync(roleName))
+                if (!await roleManager.RoleExistsAsync(roleName))
             {
                 var role = new IdentityRole { Name = roleName };
-                var resultCreate = await _roleManager.CreateAsync(role);
+                var resultCreate = await roleManager.CreateAsync(role);
                 if (!resultCreate.Succeeded)
                 {
                     throw new Exception("The role '{roleName}' does not exist and could not be created.");
