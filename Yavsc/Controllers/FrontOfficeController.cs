@@ -98,12 +98,9 @@ namespace Yavsc.Controllers
             .Include(x=>x.Query.PerformerProfile.OrganizationAddress)
             .Include(x=>x.Query.PerformerProfile.Performer)
             .Include(e=>e.Bill).FirstOrDefault(x=>x.Id==id);
-            // var poa = estimate.Query.PerformerProfile.OrganizationAddress;
-            // var adc = estimate.Query.Client.UserName;
             ViewBag.From = estimate.Query.PerformerProfile.Performer;
             ViewBag.To = estimate.Query.Client;
             Response.ContentType = "text/x-tex";
-            // estimate.Query.Client.PostalAddress.
             return View("Estimate.tex", estimate);
         }
     }
