@@ -54,7 +54,8 @@ namespace Yavsc.Models
         [InverseProperty("DeviceOwner")]
         public virtual List<GoogleCloudMobileDeclaration> Devices { get; set; }
         
-        public ICollection<Connection> Connections { get; set; }
+        [InverseProperty("Owner")]
+        public virtual List<Connection> Connections { get; set; }
 
 
         /// <summary>

@@ -22,12 +22,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using System.Collections.Generic;
 using System.Linq;
-using Yavsc.Models;
-using Yavsc.Model.Chat;
 using System;
+using Microsoft.Data.Entity;
 
 namespace Yavsc
 {
+    using Models;
+    using Model.Chat;
+    using ViewModels.Chat;
 
     public class ChatHub : Hub
     {
@@ -52,7 +54,7 @@ namespace Yavsc
                             user.Connections = new List<Connection>();
                         user.Connections.Add(new Connection
                         {
-                            ConnectionID = Context.ConnectionId,
+                            ConnectionId = Context.ConnectionId,
                             UserAgent = Context.Request.Headers["User-Agent"],
                             Connected = true
                         });
@@ -65,27 +67,23 @@ namespace Yavsc
 
             Clients.Group("authenticated").notify("connected", Context.ConnectionId, userName);
 
-            list.Add(new UserInfo
-            {
-                ConnectionId = Context.ConnectionId,
-                UserName = userName
-            });
-
             return base.OnConnected();
         }
 
         public override Task OnDisconnected(bool stopCalled)
         {
+            
             string userName = Context.User?.Identity.Name;
+            Clients.Group("authenticated").notify("disconnected", Context.ConnectionId, userName);
             if (userName != null)
             {
                 using (var db = new ApplicationDbContext()) {
-                    var user = db.Users.Single(u => u.UserName == userName);
-                    var cx = user.Connections.SingleOrDefault(c => c.ConnectionID == Context.ConnectionId);
+                    var cx = db.Connections.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
                     if (cx != null)
                     {
                         if (stopCalled)
                         {
+                            var user = db.Users.Single(u => u.UserName == userName);
                             user.Connections.Remove(cx);
                         }
                         else
@@ -96,8 +94,7 @@ namespace Yavsc
                     }
                 }
             }
-            Clients.Group("authenticated").notify("disconnected", Context.ConnectionId, userName);
-            list.Remove(list.Single(c => c.ConnectionId == Context.ConnectionId));
+            
             return base.OnDisconnected(stopCalled);
         }
 
@@ -108,14 +105,19 @@ namespace Yavsc
             {
                 using (var db = new ApplicationDbContext()) {
                     var user = db.Users.Single(u => u.UserName == userName);
-                    if (user.Connections!=null) {
-                        var cx = user.Connections.SingleOrDefault(c => c.ConnectionID == Context.ConnectionId);
+
+                    if (user.Connections==null) user.Connections = new List<Connection>();
+
+                    
+                        var cx = user.Connections.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
                         if (cx != null)
                         {
                             cx.Connected = true;
                             db.SaveChanges();
                         }
-                    }
+                        else cx = new Connection { ConnectionId = Context.ConnectionId,
+                            UserAgent = Context.Request.Headers["User-Agent"],
+                            Connected = true };
                 }
             }
 
@@ -142,24 +144,38 @@ namespace Yavsc
             var cli = Clients.Client(connectionId);
             cli.addPV(sender, message);
         }
-        public class UserInfo
+        public void Abort()
         {
-
-            public string ConnectionId { get; set; }
-
-            public string UserId { get; set; }
-
-            public string UserName { get; set; }
-
-            public string Avatar { get; set; }
-
+            using (var db = new ApplicationDbContext()) {
+                var cx = db.Connections.SingleOrDefault(c=>c.ConnectionId == Context.ConnectionId);
+                if (cx!=null) {
+                    db.Connections.Remove(cx);
+                    db.SaveChanges(); 
+                }
+            }
+                
         }
 
-        static List<UserInfo> list = new List<UserInfo>();
-        [Authorize]
-        public IEnumerable<UserInfo> GetUserList()
+        public List<ChatUserInfo> GetUserList()
         {
-            return list;
+            using (var db = new ApplicationDbContext()) {
+
+                var cxsQuery = db.Connections.Include(c=>c.Owner).GroupBy( c => c.ApplicationUserId );
+
+                List<ChatUserInfo> result = new List<ChatUserInfo>();
+
+                foreach (var g in cxsQuery) {
+
+                    var uid = g.Key;
+                    var cxs = g.ToList();
+                    var user = cxs.First().Owner;
+
+                    result.Add(new ChatUserInfo { UserName = user.UserName,
+                    UserId = user.Id, Avatar = user.Avatar, Connections = cxs } );
+
+                }
+               return result;
+            }
         }
     }
 }

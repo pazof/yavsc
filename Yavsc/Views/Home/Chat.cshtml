@@ -20,22 +20,22 @@
  
 </style>
 <div class="container">
-    <input type="text" id="message" />
-    <input type="button" id="sendmessage" value="Send" />
-    
     <input type="hidden" id="displayname" />
-    @if (ViewBag.Contacts!=null) {
-<select id="to" >
-    
-    @foreach (var contact in ViewBag.Contacts) {
-        <option>@contact.UserName</option>
-    }
-</select>
-}
-    <ul id="userlist">
+   
+    <ul id="userlist" style="float:right;">
     </ul>
     <ul id="discussion">
     </ul>
+     <input type="text" id="message" />
+    <div style="display: inline-block;">
+    <input type="button" id="sendmessage" value="@SR["Send"]" />
+    @if (ViewBag.IsAuthenticated) {
+        <br/>
+        <input type="button" id="sendpv" value="@SR["Send a private message"] @SR["to"]" />
+        <select id="to" />
+        <input type="button" id="btnDebug" Value="RUL"/>
+    }
+    </div>
 </div>
 
 @section scripts {
@@ -47,11 +47,26 @@
     <script src="~/api/signalr/hubs"></script>
     <!--SignalR script to update the chat page and send messages.-->
     <script>
+                
         $(function () {
+            var getUsers = function() {
+                    $('#userlist').empty();
+                    $('#to').empty();
+                    chat.server.getUserList().done(
+                        function(users) {
+                            $.each(users, function () {
+                                var user = this;
+                                document.userList[user.UserId]=user;
+                                $('#userlist').append('<li class="user">' + htmlEncode(user.UserName) + '</li>');
 
+                                $('#to').append('<option value="'+user.UserId+'">'+user.UserName+'</option>');
 
-            
+                            });
+                        }
+                    );
+                };
 
+            document.userList = {};
             // Reference the auto-generated proxy for the hub.
             var chat = $.connection.chatHub;
             // Create a function that the hub can call back to display messages.
@@ -111,33 +126,33 @@ $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
                 });
                 $('#sendpv').click(function () {
                     // Call the Send method on the hub.
-                    chat.server.sendPV($('#to').val(), $('#message').val());
+                    var user = document.userList[$('#to').val()];
+                    $.each(user.Connections,function () { 
+                        chat.server.sendPV( this.ConnectionId, $('#message').val());
+                     });
                     // Clear text box and reset focus for next comment.
                     $('#message').val('').focus();
                 });
-
-                var getUsers = function() {
-                    $('#userlist').empty();
-                    chat.server.getUserList().done(
-                        function(users) {
-                            $.each(users, function () {
-                                var user = this;
-                                $('#userlist').append('<li class="user"><i>' + htmlEncode(user.UserName)
-                    + '</i> ' + htmlEncode(user.ConnectionId) + '</li>');
-                            });
-                        }
-                    );
-                    console.log(res);
-                };
+                
                 getUsers();
             });
-            
-               
+
+            $("#btnDebug").click(getUsers);
+            $.connection.hub.disconnected(function () { 
+                setTimeout(function () {
+                    $.connection.hub.start().done(function () {
+                        $("#mySignalRConnectionIdHidden").val($.connection.hub.id);
+                    }, 3000); // Re-start connection after 3 seconds
+                    }); 
+            });
+            $( window ).unload(function() { chat.server.abort(); }); 
         });
         // This optional function html-encodes messages for display in the page.
+        
         function htmlEncode(value) {
             var encodedValue = $('<div />').text(value).html();
             return encodedValue;
         }
+
     </script>
 }

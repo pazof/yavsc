@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161102132129_fixCxOwner")]
+    partial class fixCxOwner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -115,7 +116,7 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Model.Chat.Connection", b =>
                 {
-                    b.Property<string>("ConnectionId");
+                    b.Property<string>("ConnectionID");
 
                     b.Property<string>("ApplicationUserId");
 
@@ -123,7 +124,7 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("UserAgent");
 
-                    b.HasKey("ConnectionId");
+                    b.HasKey("ConnectionID");
                 });
 
             modelBuilder.Entity("Yavsc.Model.ClientProviderInfo", b =>
