@@ -17,11 +17,15 @@ Da road to the hell
     ✔ Chat privé (coté serveur) @done (October 13th 2016, 16:27)
 	✔ Accès mobile au salon public @done (October 13th 2016, 16:27)
 	☐ Accès Web au chat privé
-	☐ Accès mobile au chat privé
+	✔ Accès mobile au chat privé @done (November 3rd 2016, 11:15)
 
 ## Jalon 2
 
 	☐ Quota fs utilisateur
+	☐ Droit au message privé, spécifié par le destinataire 
+	et/ou par accréditation administrative, à un utilisateur spécifié, ou
+	à un cercle ou à un groupe, de manière temporaire ou définitive, par une plage de temps spécifié
+	ou par la validité d'une demande de devis ou une intervention en cours ou récente ou à venir
 	☐ Sécurisation des formulaires
 	(à base de clés anti-forge, limitation en taille de chaines de caratères)
 		☐ web
@@ -30,15 +34,24 @@ Da road to the hell
 	☐ Paiement client d'un approvisionnement pour une demande de prestation définie
 	☐ Login Twitter
 	☐ Notifications et Twits de blogs, d'entées d'artiste, de success stories
-	☐ Restrictions d'accès au chat privé
 	☐ Monétarisations
 	☐ Support multi-lanque de l'app mobile
 	☐ Paiement client du reste de la prestation
 
 ## Jalon 3
 
-	☐ Saisie du devis sur commande générique
-	☐ Saisie d'un devis à destination d'un invité [email]
+	☐ Saisie du devis sur commande générique: les commandes sont des projets utilisateur associés
+	à une liste de formulaire de prise de commande auprès de services que le producteur peut spécialiser,
+	par l'ajout de groupes de champs de saisie complètement définis : 
+	☐ Chaque champ possède:
+		☐ Un label
+		☐ Un type pour la valeur
+		☐ Un type de controle
+		☐ Une liste de validateurs
+		☐ Une invitation à la saisie
+		 
+	☐ Chaque champ apparait dans un groupe de champ possèdant un titre
+	☐ Saisie d'un devis à destination d'un invité (envoi par email, contact local)
 	☐ Paiement d'Arrhes
 
 ## Jalon 4

@@ -8,6 +8,10 @@ using Yavsc.ViewModels.Account;
 using System.Security.Claims;
 using Microsoft.Extensions.Logging;
 using Yavsc.Models.Auth;
+using System.Collections.Generic;
+using static Yavsc.ChatHub;
+using Microsoft.Data.Entity;
+using System.Linq;
 
 namespace Yavsc.WebApi.Controllers
 {
@@ -159,6 +163,8 @@ namespace Yavsc.WebApi.Controllers
             }
             return Ok();
         }
+        
+       
 
     }
 }

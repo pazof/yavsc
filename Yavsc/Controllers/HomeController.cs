@@ -8,7 +8,6 @@ using Yavsc.Models;
 using Microsoft.AspNet.Identity;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {

@@ -317,6 +317,9 @@
   <data name="Search"><value>Chercher</value></data>
   <data name="Set"><value>Positioner</value></data>
   <data name="Select a Google calendar"><value>Selectioner un calendrier Google</value></data>
+  <data name="Send"><value>Envoyer</value></data>
+  <data name="Send a private message"><value>Envoyer un message privé</value></data>
+  <data name="Send a public message"><value>Envoyer un message publique</value></data>
   <data name="SiteSkills"><value>Talents/Compétences/Spécialités gérés sur ce site</value></data>
   <data name="Skill"><value>Compétence</value></data>
   <data name="Skills"><value>Talents/Compétences/Spécialités</value></data>
@@ -339,7 +342,7 @@
   <data name="ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis"><value>Selon son calendier Google, ce perstataire pourrait ne pas être disponible ce</value></data>
   <data name="ThisPerformerDoesntGiveAccessToHisCalendar"><value>Ce prestataire n'a pas mis de calendrier à disposition.</value></data>
   <data name="Title"><value>Titre</value></data>
-  <data name="to"><value>pour</value></data>
+  <data name="to"><value>à</value></data>
   <data name="TwoFactorAuthentication"><value>Double identification</value></data>
   <data name="Unitary_cost"><value>Coût unitaire</value></data>
   <data name="Unregister"><value>Se désinscrire</value></data>
