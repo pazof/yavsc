@@ -6,6 +6,7 @@ namespace Yavsc.Models.Billing
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using Yavsc.Interfaces;
+    using Yavsc.Interfaces.Workflow;
     using Yavsc.Models.Booking;
     public partial class Estimate : IEstimate
     {
@@ -22,7 +23,6 @@ namespace Yavsc.Models.Billing
         [ForeignKey("CommandId")]
         public BookQuery Query { get; set; }
         public string Description { get; set; }
-        public int? Status { get; set; }
         public string Title { get; set; }
 
         [InverseProperty("Estimate")]

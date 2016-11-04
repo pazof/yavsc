@@ -81,21 +81,6 @@ namespace BookAStar.ViewModels
             }
         }
 
-        private int? status;
-        [JsonIgnore]
-        public int? Status
-        {
-            get
-            {
-                return Data.Status;
-            }
-
-            set
-            {
-                SetProperty<int?>(ref status, value, "Status");
-                Data.Status = status;
-            }
-        }
         private string title;
         [JsonIgnore]
         public string Title

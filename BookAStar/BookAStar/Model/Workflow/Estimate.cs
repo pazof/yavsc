@@ -14,7 +14,6 @@ namespace BookAStar.Model.Workflow
         public string CommandType { get; set; }
         // Markdown expected
         public string Description { get; set; }
-        public int? Status { get; set; }
         public string Title { get; set; }
         public IList<BillingLine> Bill { get; set; }
         /// <summary>
