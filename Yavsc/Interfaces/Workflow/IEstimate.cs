@@ -1,6 +1,7 @@
 ﻿namespace Yavsc.Interfaces
 {
     using System.Collections.Generic;
+    using Yavsc.Interfaces.Workflow;
     using Yavsc.Models.Billing;
     public interface IEstimate
     {
@@ -13,7 +14,6 @@
         string Description { get; set; }
         long Id { get; set; }
         string OwnerId { get; set; }
-        int? Status { get; set; }
         string Title { get; set; }
     }
 }

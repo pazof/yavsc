@@ -14,7 +14,6 @@ namespace BookAStar.Model.Interfaces
         string Description { get; set; }
         long Id { get; set; }
         string OwnerId { get; set; }
-        int? Status { get; set; }
         string Title { get; set; }
     }
 }

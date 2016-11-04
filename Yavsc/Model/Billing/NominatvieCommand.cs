@@ -8,7 +8,7 @@ using Yavsc.Models.Workflow;
 namespace Yavsc.Models.Billing
 {
 
- public class NominativeServiceCommand : Command<Service> {
+ public class NominativeServiceCommand : Query<Service> {
 
     public string ClientId { get; set; }
 
