@@ -7,7 +7,6 @@ using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
 using Yavsc.Models.Booking;
 using Yavsc.Helpers;
-using Yavsc.Models.Billing;
 using System;
 
 namespace Yavsc.Controllers

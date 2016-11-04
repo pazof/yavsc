@@ -1,6 +1,5 @@
 
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 namespace Yavsc.Model
 {
     public class ClientProviderInfo
