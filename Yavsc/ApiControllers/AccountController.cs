@@ -1,20 +1,16 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Authorization;
-using Yavsc.Models;
-using Yavsc.Models.Account;
 using Microsoft.AspNet.Mvc;
-using Yavsc.ViewModels.Account;
-using System.Security.Claims;
 using Microsoft.Extensions.Logging;
-using Yavsc.Models.Auth;
-using System.Collections.Generic;
-using static Yavsc.ChatHub;
-using Microsoft.Data.Entity;
-using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Yavsc.WebApi.Controllers
 {
+    using Models;
+    using Models.Account;
+    using ViewModels.Account;
+    using Models.Auth;
 
     [Authorize,Route("~/api/account")]
     public class ApiAccountController : Controller
