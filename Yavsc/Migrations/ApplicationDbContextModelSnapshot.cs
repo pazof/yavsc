@@ -372,8 +372,6 @@ namespace Yavsc.Migrations
                     b.Property<string>("OwnerId")
                         .IsRequired();
 
-                    b.Property<int?>("Status");
-
                     b.Property<string>("Title");
 
                     b.HasKey("Id");

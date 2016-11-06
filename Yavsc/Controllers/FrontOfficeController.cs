@@ -87,9 +87,8 @@ namespace Yavsc.Controllers
                 ));
         }
 
-        [Produces("text/x-tex"), Authorize,
-        Route("estimate-{id}.tex")]
-        public ViewResult Estimate(long id)
+        [Produces("text/x-tex"), Authorize, Route("estimate-{id}.tex")]
+        public ViewResult EstimateTex(long id)
         {
             var estimate = _context.Estimates.Include(x=>x.Query)
             .Include(x=>x.Query.Client)
@@ -97,10 +96,21 @@ namespace Yavsc.Controllers
             .Include(x=>x.Query.PerformerProfile.OrganizationAddress)
             .Include(x=>x.Query.PerformerProfile.Performer)
             .Include(e=>e.Bill).FirstOrDefault(x=>x.Id==id);
-            ViewBag.From = estimate.Query.PerformerProfile.Performer;
-            ViewBag.To = estimate.Query.Client;
             Response.ContentType = "text/x-tex";
             return View("Estimate.tex", estimate);
+        }
+                
+                
+        [Produces("application/x-pdf"), Authorize, Route("estimate-{id}.pdf")]
+        public ViewResult EstimatePdf(long id)
+        {
+            var estimate = _context.Estimates.Include(x=>x.Query)
+            .Include(x=>x.Query.Client)
+            .Include(x=>x.Query.PerformerProfile)
+            .Include(x=>x.Query.PerformerProfile.OrganizationAddress)
+            .Include(x=>x.Query.PerformerProfile.Performer)
+            .Include(e=>e.Bill).FirstOrDefault(x=>x.Id==id);
+            return View("Estimate.pdf", estimate);
         }
     }
 }

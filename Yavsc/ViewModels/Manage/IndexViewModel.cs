@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNet.Identity;
+using Yavsc.Model.Bank;
 using Yavsc.Models;
 
 namespace Yavsc.ViewModels.Manage
@@ -35,5 +36,7 @@ namespace Yavsc.ViewModels.Manage
         public string FullName { get; set; }
 
         public string PostalAddress { get; set; }
+
+        public BankIdentity BankInfo { get; set; }
     }
 }
