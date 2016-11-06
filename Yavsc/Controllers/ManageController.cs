@@ -105,7 +105,8 @@ namespace Yavsc.Controllers
                 Roles = await _userManager.GetRolesAsync(user),
                 PostalAddress = user.PostalAddress?.Address,
                 FullName = user.FullName,
-                Avatar = user.Avatar
+                Avatar = user.Avatar,
+                BankInfo = user.BankInfo
             };
             if (_dbContext.Performers.Any(x => x.PerformerId == user.Id))
             {
@@ -296,6 +297,21 @@ namespace Yavsc.Controllers
             else return Redirect(model.ReturnUrl);
         }
 
+        [HttpGet,Authorize]
+        public async Task<IActionResult> AddBankInfo()
+        {
+            var user = await _userManager.FindByIdAsync(User.GetUserId());
+
+            return View(new AddBankInfoViewModel(
+                user.BankInfo));
+        }
+
+        [HttpGet,Authorize]
+        public async Task<IActionResult> SetFullName()
+        {
+            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            return View(user.FullName);
+        }
         //
         // POST: /Manage/ChangePassword
         [HttpPost]

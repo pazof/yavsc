@@ -209,6 +209,7 @@
   <data name="ExistantDB"><value>Base de données éxistante</value></data>
   <data name="External Logins"><value>Inscriptions externes</value></data>
   <data name="FillInAFutureDate"><value>Veuillez, s'il vous plait, utiliser une date future.</value></data>
+  <data name="Fill in your Bank Info"><value>Saisir vos coordonées bancaires</value></data>
   <data name="Fill in your book query"><value>Saisissez votre demande de rendez-vous</value></data>
   <data name="Forbidden"><value>Contenu à accès restreint</value></data>
   <data name="Forgot your password?"><value>Mot de passe perdu?</value></data>

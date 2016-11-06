@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class estimateClientApprouval : Migration
+    public partial class dropEstimateStatus : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,6 +15,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_ApplicationUser_UserId", table: "AspNetUserRoles");
             migrationBuilder.DropForeignKey(name: "FK_AccountBalance_ApplicationUser_UserId", table: "AccountBalance");
             migrationBuilder.DropForeignKey(name: "FK_BalanceImpact_AccountBalance_BalanceId", table: "BalanceImpact");
+            migrationBuilder.DropForeignKey(name: "FK_CommandLine_Estimate_EstimateId", table: "CommandLine");
             migrationBuilder.DropForeignKey(name: "FK_BookQuery_ApplicationUser_ClientId", table: "BookQuery");
             migrationBuilder.DropForeignKey(name: "FK_BookQuery_PerformerProfile_PerformerId", table: "BookQuery");
             migrationBuilder.DropForeignKey(name: "FK_CircleMember_Circle_CircleId", table: "CircleMember");
@@ -22,16 +24,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_Activity_ActivityCode", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_Location_OrganizationAddressId", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_ApplicationUser_PerformerId", table: "PerformerProfile");
-            migrationBuilder.AddColumn<DateTime>(
-                name: "ClientApprouvalDate",
-                table: "Estimate",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-            migrationBuilder.AddColumn<DateTime>(
-                name: "LatestValidationDate",
-                table: "Estimate",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            migrationBuilder.DropColumn(name: "Status", table: "Estimate");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -80,6 +73,13 @@ namespace Yavsc.Migrations
                 column: "BalanceId",
                 principalTable: "AccountBalance",
                 principalColumn: "UserId",
+                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_CommandLine_Estimate_EstimateId",
+                table: "CommandLine",
+                column: "EstimateId",
+                principalTable: "Estimate",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
                 name: "FK_BookQuery_ApplicationUser_ClientId",
@@ -148,6 +148,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_IdentityUserRole<string>_ApplicationUser_UserId", table: "AspNetUserRoles");
             migrationBuilder.DropForeignKey(name: "FK_AccountBalance_ApplicationUser_UserId", table: "AccountBalance");
             migrationBuilder.DropForeignKey(name: "FK_BalanceImpact_AccountBalance_BalanceId", table: "BalanceImpact");
+            migrationBuilder.DropForeignKey(name: "FK_CommandLine_Estimate_EstimateId", table: "CommandLine");
             migrationBuilder.DropForeignKey(name: "FK_BookQuery_ApplicationUser_ClientId", table: "BookQuery");
             migrationBuilder.DropForeignKey(name: "FK_BookQuery_PerformerProfile_PerformerId", table: "BookQuery");
             migrationBuilder.DropForeignKey(name: "FK_CircleMember_Circle_CircleId", table: "CircleMember");
@@ -156,8 +157,10 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_Activity_ActivityCode", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_Location_OrganizationAddressId", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_ApplicationUser_PerformerId", table: "PerformerProfile");
-            migrationBuilder.DropColumn(name: "ClientApprouvalDate", table: "Estimate");
-            migrationBuilder.DropColumn(name: "LatestValidationDate", table: "Estimate");
+            migrationBuilder.AddColumn<int>(
+                name: "Status",
+                table: "Estimate",
+                nullable: true);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -206,6 +209,13 @@ namespace Yavsc.Migrations
                 column: "BalanceId",
                 principalTable: "AccountBalance",
                 principalColumn: "UserId",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
+                name: "FK_CommandLine_Estimate_EstimateId",
+                table: "CommandLine",
+                column: "EstimateId",
+                principalTable: "Estimate",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
                 name: "FK_BookQuery_ApplicationUser_ClientId",

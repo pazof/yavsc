@@ -1,13 +1,14 @@
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+
 namespace Yavsc.Models.Billing
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-    using Yavsc.Interfaces;
-    using Yavsc.Interfaces.Workflow;
-    using Yavsc.Models.Booking;
+    using Interfaces;
+    using Models.Booking;
     public partial class Estimate : IEstimate
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]

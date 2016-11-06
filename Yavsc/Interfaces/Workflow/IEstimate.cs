@@ -1,7 +1,6 @@
 ﻿namespace Yavsc.Interfaces
 {
     using System.Collections.Generic;
-    using Yavsc.Interfaces.Workflow;
     using Yavsc.Models.Billing;
     public interface IEstimate
     {
