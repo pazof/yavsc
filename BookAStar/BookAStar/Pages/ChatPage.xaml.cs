@@ -48,6 +48,7 @@ namespace BookAStar.Pages
                 if (string.IsNullOrEmpty(user.ChatHubConnectionId)) return;
                 IsBusy = true;
                 try
+
                 {
                     await App.ChatHubProxy.Invoke<string>("SendPV", user.ChatHubConnectionId, pvEntry.Text);
                     pvEntry.Text = null;
@@ -60,14 +61,7 @@ namespace BookAStar.Pages
             };
             
         }
-
-        private void ReconnectButton_Clicked(object sender, EventArgs e)
-        {
-            App.ChatHubConnection.Stop();
-            App.ChatHubConnection.Start();
-        }
-
-
+        
         private void ChatHubConnection_StateChanged(StateChange obj)
         {
             Xamarin.Forms.Device.BeginInvokeOnMainThread(
