@@ -39,9 +39,9 @@
 
     </ResourceDictionary>
   </ContentPage.Resources>
-    <ScrollView>
+  <ScrollView>
 
-  <StackLayout x:Name="mainStackLayout">
+    <StackLayout x:Name="mainStackLayout">
       <Label Text="Description de la ligne de facture"
              Style="{StaticResource InputLabelStyle}"></Label>
       <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand">
@@ -93,12 +93,14 @@
                                 Path=IsValid, 
                                 Converter={StaticResource boolToStyleImage}}" />
       </StackLayout>
-        <Button Text="Términé"
+      <StackLayout Orientation="Horizontal">
+        <Button Text="Supprimer"
                     Command="{Binding DeleteCommand}"
-                    Clicked="OnValidateClicked"></Button>
+                    Clicked="OnDeleteClicked"></Button>
         <Button Text="Términé"
                 Command="{Binding ValidateCommand}"
                 Clicked="OnValidateClicked"></Button>
-  </StackLayout>
-    </ScrollView>
+      </StackLayout>
+    </StackLayout>
+  </ScrollView>
 </ContentPage>
