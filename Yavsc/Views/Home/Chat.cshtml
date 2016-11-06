@@ -9,9 +9,8 @@
   font-family: monospace;
 }
 .notif {
-  color: black;
+  color: grey;
   font-family: monospace;
-  font-style: italic;
 }
 .pv {
   color: black;
@@ -21,21 +20,24 @@
  
 </style>
 <div class="container">
-    <input type="text" id="message" />
-    <input type="button" id="sendmessage" value="Send" />
-    
     <input type="hidden" id="displayname" />
-    @if (ViewBag.Contacts!=null) {
-<select id="to" >
-    
-    @foreach (var contact in ViewBag.Contacts) {
-        <option>@contact.UserName</option>
-    }
-</select>
-}
+   
+    <ul id="userlist" style="float:right;">
+    </ul>
     <ul id="discussion">
     </ul>
+     <input type="text" id="message" />
+    <div style="display: inline-block;">
+    <input type="button" id="sendmessage" value="@SR["Send"]" />
+    @if (ViewBag.IsAuthenticated) {
+        <br/>
+        <input type="button" id="sendpv" value="@SR["Send a private message"] @SR["to"]" />
+        <select id="to" />
+        <input type="button" id="btnDebug" Value="RUL"/>
+    }
+    </div>
 </div>
+
 @section scripts {
     <!--Script references. -->
     <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
@@ -45,7 +47,26 @@
     <script src="~/api/signalr/hubs"></script>
     <!--SignalR script to update the chat page and send messages.-->
     <script>
+                
         $(function () {
+            var getUsers = function() {
+                    $('#userlist').empty();
+                    $('#to').empty();
+                    chat.server.getUserList().done(
+                        function(users) {
+                            $.each(users, function () {
+                                var user = this;
+                                document.userList[user.UserId]=user;
+                                $('#userlist').append('<li class="user">' + htmlEncode(user.UserName) + '</li>');
+
+                                $('#to').append('<option value="'+user.UserId+'">'+user.UserName+'</option>');
+
+                            });
+                        }
+                    );
+                };
+
+            document.userList = {};
             // Reference the auto-generated proxy for the hub.
             var chat = $.connection.chatHub;
             // Create a function that the hub can call back to display messages.
@@ -59,13 +80,40 @@
                 $('#discussion').append('<li class="pv"><strong>' + htmlEncode(name)
                     + '</strong>: ' + htmlEncode(message) + '</li>');
             };
-            chat.client.notify = function (tag, message, data) {
-                // Add the pv to the page.
-                $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
-                    + '</i> ' + htmlEncode(message) +' '+ htmlEncode(data) +'</li>');
+            var onUserConnected =  function (cxid, username) {
+                 $('#userlist').append('<li class="user">'+username+'</li>')
             };
+            var onUserDisconnected = function (cxid, username) {
+                 $('#userlist li[data-uid='+cxid+']').remove();
+            };
+            chat.client.notify = function (tag, message, data) {
+                if (data) {
+                // Add the pv to the page.
+                
+                if (tag === 'connected') {
+onUserConnected(message, data);
+$('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
+                    + '</i> ' + htmlEncode(data) +'</li>');
+                } 
+                else if (tag === 'disconnected') 
+                { 
+                    onUserDisconnected(message, data);
+$('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
+                    + '</i> ' + htmlEncode(data) +'</li>');
+                }
+                else {
+                    $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
+                    + '</i> ' + htmlEncode(message) + ' : ' + htmlEncode(data) + '</li>');
+                }
+                }
+            };
+            @if (!ViewBag.IsAuthenticated) {
             // Get the user name and store it to prepend to messages.
-            $('#displayname').val(prompt('Enter your name:', ''));
+            <text>
+                $('#displayname').val(prompt('Enter your name:', ''));
+            </text>
+            }
+
             // Set initial focus to message input box.
             $('#message').focus();
             // Start the connection.
@@ -78,16 +126,33 @@
                 });
                 $('#sendpv').click(function () {
                     // Call the Send method on the hub.
-                    chat.server.sendPV($('#to').val(), $('#message').val());
+                    var user = document.userList[$('#to').val()];
+                    $.each(user.Connections,function () { 
+                        chat.server.sendPV( this.ConnectionId, $('#message').val());
+                     });
                     // Clear text box and reset focus for next comment.
                     $('#message').val('').focus();
                 });
+                
+                getUsers();
             });
+
+            $("#btnDebug").click(getUsers);
+            $.connection.hub.disconnected(function () { 
+                setTimeout(function () {
+                    $.connection.hub.start().done(function () {
+                        $("#mySignalRConnectionIdHidden").val($.connection.hub.id);
+                    }, 3000); // Re-start connection after 3 seconds
+                    }); 
+            });
+            $( window ).unload(function() { chat.server.abort(); }); 
         });
         // This optional function html-encodes messages for display in the page.
+        
         function htmlEncode(value) {
             var encodedValue = $('<div />').text(value).html();
             return encodedValue;
         }
+
     </script>
 }

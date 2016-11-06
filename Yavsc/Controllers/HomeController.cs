@@ -51,10 +51,11 @@ namespace Yavsc.Controllers
         public ActionResult Chat()
         {
             if (User.Identity.IsAuthenticated) {
+                ViewBag.IsAuthenticated=true;
                 string uid = User.GetUserId();
                 ViewBag.Contacts = DbContext.Contacts.Where(c=>c.OwnerId == uid)
                 ;
-            } 
+            } else ViewBag.IsAuthenticated=false;
             return View();
         }
 

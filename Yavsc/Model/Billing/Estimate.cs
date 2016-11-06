@@ -1,12 +1,14 @@
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+
 namespace Yavsc.Models.Billing
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-    using Yavsc.Interfaces;
-    using Yavsc.Models.Booking;
+    using Interfaces;
+    using Models.Booking;
     public partial class Estimate : IEstimate
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -22,7 +24,6 @@ namespace Yavsc.Models.Billing
         [ForeignKey("CommandId")]
         public BookQuery Query { get; set; }
         public string Description { get; set; }
-        public int? Status { get; set; }
         public string Title { get; set; }
 
         [InverseProperty("Estimate")]

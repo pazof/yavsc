@@ -1,5 +1,15 @@
 @model Estimate
-
+@using Yavsc.Helpers
+@{
+    Layout = null;
+    var pro = Model.Query.PerformerProfile;
+    var from = Model.Query.PerformerProfile.Performer;
+    var to = Model.Query.Client;
+    var PostalAddress = (to.PostalAddress!=null) ? to.PostalAddress.Address.Replace("\n","\\\\\n") : null ;
+    var proaddr = Model.Query?.PerformerProfile.OrganizationAddress.Address;
+    var proaddrn = (proaddr!=null) ? proaddr.NewLinesWith("\\\\\n") : null ;
+    var proaddrm = (proaddr!=null) ? proaddr.NewLinesWith(" - ") : null ;
+}
 \documentclass[french,11pt]{article}
 \usepackage{babel}
 \usepackage[T1]{fontenc}
@@ -53,14 +63,11 @@
 
 \newcommand{\ListeProduits}{}
 
-
-
-
 %%%%%%%%%%%%%%%%%%%%% A MODIFIER DANS LA FACTURE %%%%%%%%%%%%%%%%%%%%%
 
 \def\FactureNum            {@Model.Id.ToString()}    % Numéro de facture
 \def\FactureAcquittee    {non}        % Facture acquittée : oui/non
-\def\FactureLieu    {@Model.Command.Performer.PostalAddress}    % Lieu de l'édition de la facture
+\def\FactureLieu    {@proaddrn}    % Lieu de l'édition de la facture
 \def\FactureObjet    {Facture : @Model.Title}    % Objet du document
 % Description de la facture
 \def\FactureDescr    {
@@ -68,26 +75,30 @@
 }
 
 % Infos Client
-\def\ClientNom{@Model.Command.Client.Name}    % Nom du client
-\def\ClientAdresse{%                    % Adresse du client
-   @if (!string.IsNullOrWhiteSpace(Model.Command.Client.PostalAddress.Address)) { 
-   @string.Split("\n",Model.Command.Client.PostalAddress.Address).Join("\\\\\n") 
-   }
- if (!string.IsNullOrWhiteSpace(@Model.Command.Client.PhoneNumber)) {
-   Téléphone fixe:  @Model.Command.Client.PhoneNumber \\
- } 
+\def\ClientNom{@to.UserName}    % Nom du client
 
-if (!string.IsNullOrWhiteSpace(eto)) { 
-   E-mail:  @Model.Command.Client.Email  } 
+\def\ClientAdresse{                    
+% Adresse du client
+@if (!string.IsNullOrWhiteSpace(PostalAddress)) {
+ <text>   @PostalAddress\\</text> }
+ @if (!string.IsNullOrWhiteSpace(to.PhoneNumber)) {<text>
+  @to.PhoneNumber <text>\\</text>
+   </text>} 
+  E-mail:  @to.Email
 }
 
 % Liste des produits facturés : Désignation, prix
 
-@foreach (CommandLine line in Model.Command.Bill) {
-\AjouterService    { @line.Article.Name - @line.Comment (Ref:YPR@line.Article.Id) } {@line.Count} {@line.UnitaryCost} 
-}
+@if (Model.Bill!=null) { 
+    foreach (CommandLine line in Model.Bill) {
+<text>
+\AjouterService    {@line.Description} {@line.Count} {@line.UnitaryCost} 
+</text>
+} }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 \geometry{verbose,tmargin=4em,bmargin=8em,lmargin=6em,rmargin=6em}
 \setlength{\parindent}{0pt}
@@ -98,26 +109,24 @@ if (!string.IsNullOrWhiteSpace(eto)) {
 \setlength{\parindent}{0pt}
 
 \renewcommand{\headrulewidth}{0pt}
-\cfoot{
-  @if (!string.IsNullOrWhiteSpace(from.Name)) {  from.Name   } 
-  @if (!string.IsNullOrWhiteSpace(from.Address)) {  @"-"  @from.Address  }  
-  @if (!string.IsNullOrWhiteSpace(from.CityAndState)) {  @"-"  @from.CityAndState  }  \newline
-    \small{
-     @if (!string.IsNullOrWhiteSpace(efrom)) { E-mail:  efrom  } 
-     @if (!string.IsNullOrWhiteSpace(from.Mobile)) {  @"-" Téléphone mobile:  @from.Mobile  } 
-     @if (!string.IsNullOrWhiteSpace(from.Phone)) {  @"-" Téléphone fixe:  @from.Phone  } 
+\cfoot{ @if (!string.IsNullOrWhiteSpace(from.UserName)) {  @from.UserName   } 
+  @if (!string.IsNullOrWhiteSpace(proaddrm)) { <text> - @proaddrm </text> }    \newline
+    \small{ E-mail:  @from.Email 
+     @if (!string.IsNullOrWhiteSpace(from.PhoneNumber)) {  <text> - Téléphone fixe:  @from.PhoneNumber </text>  } 
     }
 }
 
 \begin{document}
 
 % Logo de la société
-%\includegraphics{logo.jpg}
-
+@if (from.Avatar != null) {<text>
+\includegraphics{@from.Avatar}</text>
+} else { <text>
+%\includegraphics{logo.png}</text>
+}
 % Nom et adresse de la société
- from.Name \\
- from.Address \\
-from.ZipCode  from.CityAndState\\
+ @from.UserName \\
+ @proaddrn
 
 Facture n°\FactureNum
 
@@ -157,22 +166,30 @@ Facture n°\FactureNum
 \ifthenelse{\equal{\FactureAcquittee}{oui}}{
     Facture acquittée.
 }{
-
-    À régler par chèque ou par virement bancaire :
+@{ 
+    var bi = from.BankInfo;
+    if (bi!=null) {
+        <text>À régler par chèque ou par virement bancaire :
 
     \begin{center}
         \begin{tabular}{|c c c c|}
-         if (!string.IsNullOrWhiteSpace(from.BankCode) && !string.IsNullOrWhiteSpace(from.WicketCode)
-        && !string.IsNullOrWhiteSpace(from.AccountNumber) ) { 
-            \hline     \textbf{Code banque}    & \textbf{Code guichet}    & \textbf{N° de Compte}        & \textbf{Clé RIB}    \\
-                     from.BankCode                     &  from.WicketCode                      & from.AccountNumber                 & from.BankedKey               \\
+@if (!string.IsNullOrWhiteSpace(bi.BankCode) && !string.IsNullOrWhiteSpace(bi.WicketCode)
+        && !string.IsNullOrWhiteSpace(bi.AccountNumber) ) { 
+<text>\hline \textbf{Code banque} & \textbf{Code guichet} & \textbf{N° de Compte} & \textbf{Clé RIB} \\
+@bi.BankCode                      &  @bi.WicketCode       & @bi.AccountNumber     & @bi.BankedKey   \\
+</text>
          }
-        if (!string.IsNullOrWhiteSpace(from.IBAN) && !string.IsNullOrWhiteSpace(from.BIC)) { 
-               \hline     \textbf{IBAN N°}        & \multicolumn{3}{|l|}{  from.IBAN  }         \\
-            \hline     \textbf{Code BIC}        & \multicolumn{3}{|l|}{  from.BIC  }
+        @if (!string.IsNullOrWhiteSpace(@bi.IBAN) && !string.IsNullOrWhiteSpace(@bi.BIC)) { 
+            <text>
+               \hline     \textbf{IBAN N°}        & \multicolumn{3}{|l|}{  @bi.IBAN  }         \\
+            \hline     \textbf{Code BIC}        & \multicolumn{3}{|l|}{  @bi.BIC  }
+            </text>
          }          \\
             \hline
         \end{tabular}
-    \end{center}
+    \end{center}</text>
+    }
+}
+
 }
 \end{document}
