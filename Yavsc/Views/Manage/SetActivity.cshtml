@@ -1,42 +1,50 @@
-@model PerformerProfile
-@{
-    ViewData["Title"] = "Setup your performer profile";
-}
-
-@section header{
-    <script src="~/js/jquery-ui.js"></script>
-    <script src="~/lib/jquery-validation/jquery.validate.js"></script>
-    <script src="~/lib/jquery-validation/additional-methods.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
-    <script src="~/js/validator.js"></script>
+@model PerformerProfile 
+@{ ViewData["Title"] = "Setup your performer profile"; } 
+@section header{ 
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
-    <script src="~/js/google.geocode.js"></script>
-    <style>
-      #map {
+}
+<style>
+    #map {
         width: 100%;
         height: 250px;
-      }
-    </style>
-}
-
+    }
+</style>
+} 
 @section scripts{
-    <script>
-
+<script>
      $(document).ready(function(){
-var gmap = new google.maps.Map(document.getElementById('map'), {
+         var config = {
+        mapId: 'map',
+        addrId: 'OrganizationAddress_Address',
+        longId: 'OrganizationAddress_Longitude',
+        latId: 'OrganizationAddress_Latitude',
+        addrValidationId: 'AddressError',
+        formValidId: 'valsum',
+        locComboId: 'loccomb'
+    };
+     $.validator.setDefaults({
+       messages: {
+        remote:  "Ce lieu n'est pas identifié par les services de géo-localisation Google",
+        required: "Veuillez renseigner ce champ"
+       }
+   });
+
+    var gmap = new google.maps.Map(document.getElementById('map'), {
 	    zoom: 16,
 	    center: { lat: 48.862854, lng: 2.2056466 }
 	  });
     var marker;
-    function chooseLoc(loc) {
-        $('#Location_Address').val(loc.formatted_address);
+
+   function chooseLoc(sender,loc) {
+        if (sender === 'user') $('#'+config.addrId).val(loc.formatted_address);
         var pos = loc.geometry.location;
         var lat = new Number(pos.lat);
         var lng = new Number(pos.lng);
-        $('#OrganizationAddress_Latitude').val(lat.toLocaleString());
-        $('#OrganizationAddress_Longitude').val(lng.toLocaleString());
+        $('#'+config.latId).val(lat.toLocaleString('en'));
+        $('#'+config.longId).val(lng.toLocaleString('en'));
         gmap.setCenter(pos);
-        if (marker) { 
+        if (marker) { 
             marker.setMap(null);
         }
         marker = new google.maps.Marker({
@@ -48,53 +56,42 @@ var gmap = new google.maps.Map(document.getElementById('map'), {
         google.maps.event.addListener(marker, 'dragend', function() {
             // TODO reverse geo code
             var pos = marker.getPosition();
-                $('#OrganizationAddress_Latitude').val(pos.lat);
-                $('#OrganizationAddress_Longitude').val(pos.lng);
+                $('#'+config.latId).val(pos.lat);
+                $('#'+config.longId).val(pos.lng);
         });
-        $('#Location_Address').valid();
+        $('#'+config.addrId).valid();
+        $('#'+config.addrValidationId).empty();
+        $('#'+config.formValidId).empty();
         return true;
-    };
+    }
 
-          $('#Location_Address').geocode( { submit: 'btngeocode' ,
-          inputLatitude: 'OrganizationAddress_Longitude',
-          inputLongitude: 'OrganizationAddress_Latitude',
-          combo: 'dropdownItems1',
-          onValidated: function (e) {
-              if (e.success) {
-                  var firstres = e.results[0];
-                  console.log(firstres);
-                  console.log(firstres.geometry);
-                $('#AddressError').html("");
-              }
-              else {
-                 if (e.status=="ZERO_RESULTS") {
-                    $('#AddressError').html("aucun résultat");
-                  }
-                  else  $('#AddressError').html(e.status);
-              }
-   } } );
-
-
-          $('#OrganizationAddress').rules("add",
+    $('#'+config.addrId).rules("add",
     {
         remote: {
-            url: 'http://maps.googleapis.com/maps/api/geocode/json',
+            url: 'https://maps.googleapis.com/maps/api/geocode/json',
             type: 'get',
             data: {
                 sensor: false,
-                address: function () { return $('#Location_Address').val() }
+                address: function () { return $('#'+config.addrId).val() }
                 },
             dataType: 'json',
             dataFilter: function(datastr,type) {
-                $('#Location_combo').html("");
+                $('#'+config.locComboId).html("");
                 var data = JSON.parse(datastr);
                 data.results.forEach(function(element) {
-                    if (element.formatted_address !== $('#Location_Address').val()) {
+                    if (element.formatted_address !== $('#'+config.addrId).val()) {
                         $('<li>'+element.formatted_address+'</li>')
                         .data("geoloc",element)
-                        .click(function() { chooseLoc($(this).data("geoloc")) })
-                        .appendTo($('#Location_combo'));}});
-                return (data.status === 'OK') && (data.results.length == 1);
+                        .click(function() { chooseLoc('user',$(this).data("geoloc")) })
+                        .appendTo($('#'+config.locComboId));}
+                    else {  }
+                });
+               if  ((data.status === 'OK') && (data.results.length == 1))
+                { 
+                    chooseLoc('google',data.results[0]);
+                    return true;
+                } 
+                return false;
                 },
             error: function(xhr, textStatus, errorThrown)
                 {
@@ -102,12 +99,9 @@ var gmap = new google.maps.Map(document.getElementById('map'), {
                 return false;
                 }
          }
+        });
     });
-
-    });
-    </script>
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
- }
+    </script> @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); } }
 
 <h2>@ViewData["Title"].</h2>
 
@@ -116,23 +110,23 @@ var gmap = new google.maps.Map(document.getElementById('map'), {
 <form id="FrmSetAct" asp-controller="Manage" asp-action="SetActivity" method="post" class="form-horizontal" role="form">
     <h4>@SR["Choose below your main activity"]:</h4>
     <hr />
-    <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+    <div asp-validation-summary="ValidationSummary.All" class="text-danger" id="valsum"></div>
     <div class="form-group">
         <label asp-for="ActivityCode" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <select asp-for="ActivityCode" asp-items=@ViewBag.Activities class="form-control" >
+            <select asp-for="ActivityCode" asp-items=@ViewBag.Activities class="form-control">
             </select>
             <span asp-validation-for="ActivityCode" class="text-danger"></span>
         </div>
-     </div>
-     <div class="form-group">
+    </div>
+    <div class="form-group">
         <label asp-for="AcceptNotifications" class="col-md-2 control-label"></label>
         <div class="col-md-10">
             <input asp-for="AcceptNotifications" class="form-control" />
             <span asp-validation-for="AcceptNotifications" class="text-danger"></span>
         </div>
-     </div>
-     <div class="form-group">
+    </div>
+    <div class="form-group">
 
         <label asp-for="AcceptPublicContact" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -140,8 +134,8 @@ var gmap = new google.maps.Map(document.getElementById('map'), {
 
             <span asp-validation-for="AcceptPublicContact" class="text-danger"></span>
         </div>
-     </div>
-     <div class="form-group">
+    </div>
+    <div class="form-group">
 
         <label asp-for="AcceptGeoLocalization" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -149,8 +143,8 @@ var gmap = new google.maps.Map(document.getElementById('map'), {
 
             <span asp-validation-for="AcceptGeoLocalization" class="text-danger"></span>
         </div>
-     </div>
-     <div class="form-group">
+    </div>
+    <div class="form-group">
 
         <label asp-for="WebSite" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -158,8 +152,8 @@ var gmap = new google.maps.Map(document.getElementById('map'), {
 
             <span asp-validation-for="WebSite" class="text-danger"></span>
         </div>
-     </div>
-     <div class="form-group">
+    </div>
+    <div class="form-group">
 
         <label asp-for="MinDailyCost" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -167,8 +161,8 @@ var gmap = new google.maps.Map(document.getElementById('map'), {
 
             <span asp-validation-for="MinDailyCost" class="text-danger"></span>
         </div>
-     </div>
-     <div class="form-group">
+    </div>
+    <div class="form-group">
 
         <label asp-for="MaxDailyCost" class="col-md-2 control-label"></label>
         <div class="col-md-10">
@@ -176,38 +170,38 @@ var gmap = new google.maps.Map(document.getElementById('map'), {
 
             <span asp-validation-for="MaxDailyCost" class="text-danger"></span>
         </div>
-     </div>
-     <div class="form-group">
+    </div>
+    <div class="form-group">
 
         <label asp-for="Active" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="Active"  class="form-control" />
+            <input asp-for="Active" class="form-control" />
 
             <span asp-validation-for="Active" class="text-danger"></span>
         </div>
-     </div>
-     <div class="form-group">
+    </div>
+    <div class="form-group">
 
         <label asp-for="SIREN" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="SIREN"  class="form-control" />
+            <input asp-for="SIREN" class="form-control" />
 
             <span asp-validation-for="SIREN" class="text-danger"></span>
         </div>
-     </div>
-     <div class="form-group">
+    </div>
+    <div class="form-group">
 
         <label asp-for="OrganizationAddress.Address" class="col-md-2 control-label"></label>
         <div class="col-md-10">
             <input asp-for="OrganizationAddress.Address" class="form-control" type="text" />
 
             <span id="AddressError" asp-validation-for="OrganizationAddress.Address" class="text-danger"></span>
+            <ul id="loccomb" >
+            </ul>
             <div id="map"></div>
         </div>
-     </div>
-        @Html.Hidden("OrganizationAddress.Latitude")
-        @Html.Hidden("OrganizationAddress.Longitude")
-        @Html.Hidden("PerformerId")
+    </div>
+    @Html.Hidden("OrganizationAddress.Latitude") @Html.Hidden("OrganizationAddress.Longitude") @Html.Hidden("PerformerId")
     <button type="submit" class="btn btn-default">Save these settings</button>
 
 </form>

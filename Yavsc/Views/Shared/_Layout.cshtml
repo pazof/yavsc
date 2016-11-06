@@ -49,6 +49,7 @@
                         <li><a asp-controller="Home" asp-action="Index" class="navbar-link">@SR["Home"]</a></li>
                         <li><a asp-controller="Blogspot" asp-action="Index" class="navbar-link">@SR["Blogs"]</a></li>
                         <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
+                        <li><a asp-controller="Home" asp-action="Chat" class="navbar-link">@SR["Chat"]</a></li>
                         <li><a asp-controller="Home" asp-action="Contact" class="navbar-link">@SR["Contact"]</a></li>
                     </ul>
                     @await Html.PartialAsync("_LoginPartial")

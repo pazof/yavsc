@@ -12,6 +12,8 @@ using Yavsc.Models.OAuth;
 using Yavsc.Models.Workflow;
 using Yavsc.Models.Identity;
 using Yavsc.Models.Market;
+using Yavsc.Model;
+using Yavsc.Model.Chat;
 
 namespace Yavsc.Models
 {
@@ -29,6 +31,7 @@ namespace Yavsc.Models
             builder.Entity<Blog>().Property(x=>x.Posted).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
+            builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -182,5 +185,10 @@ namespace Yavsc.Models
         public DbSet<EstimateTemplate> EstimateTemplates { get; set; }
 
         public DbSet<Contact> Contacts { get; set; }
+
+        public DbSet<ClientProviderInfo> ClientProviderInfo { get; set; }
+
+        public DbSet<Connection> Connections { get; set; }
+        
     }
 }

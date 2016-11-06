@@ -1,0 +1,65 @@
+@model Yavsc.ViewModels.Manage.AddBankInfoViewModel
+@{
+    ViewData["Title"] = SR["Fill in your Bank Info"];
+}
+
+<h2>@ViewData["Title"].</h2>
+<form asp-controller="Manage" asp-action="AddBankInfo" method="post" class="form-horizontal" role="form">
+    <h4>Vous pouvez valider vos coordonnée bancaire ci après.</h4>
+    
+    <hr />
+    <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+
+    <fieldset>
+    <div class="form-group">
+        <label asp-for="Data.BIC" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Data.BIC" class="form-control" />
+            <span asp-validation-for="Data.BIC" class="text-danger"></span>
+        </div>
+        <label asp-for="Data.IBAN" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Data.IBAN" class="form-control" />
+            <span asp-validation-for="Data.IBAN" class="text-danger"></span>
+        </div>
+    </div>
+    </fieldset>
+    <fieldset>
+    <div class="form-group">
+
+        <label asp-for="Data.AccountNumber" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Data.AccountNumber" class="form-control" />
+            <span asp-validation-for="Data.AccountNumber" class="text-danger"></span>
+        </div>
+
+        <label asp-for="Data.BankCode" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Data.BankCode" class="form-control" />
+            <span asp-validation-for="Data.BankCode" class="text-danger"></span>
+        </div>
+
+        <label asp-for="Data.WicketCode" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Data.WicketCode" class="form-control" />
+            <span asp-validation-for="Data.WicketCode" class="text-danger"></span>
+        </div>
+
+        <label asp-for="Data.BankedKey" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Data.BankedKey" class="form-control" />
+            <span asp-validation-for="Data.BankedKey" class="text-danger"></span>
+        </div>
+
+    </div>
+    </fieldset>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-default">Enregistrer ces informations bancaires</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

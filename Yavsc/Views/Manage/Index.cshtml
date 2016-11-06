@@ -28,12 +28,11 @@
             else
             {<a asp-controller="Manage" 
             asp-action="SetPassword">@SR["Create"]</a>}]</dd>
+
         <dt>@SR["External Logins"]:</dt>
         <dd>
             @Model.Logins.Count [<a asp-controller="Manage" asp-action="ManageLogins">@SR["Manage"]</a>]
         </dd>
-       
-       
 
         <dt>@SR["Full name"]:</dt>
         <dd>@Model.FullName  [<a asp-controller="Manage" asp-action="SetFullName"
@@ -56,7 +55,11 @@
             [<a asp-controller="Manage" asp-action="SetActivity"
             >@SR[@Model.Activity==null?"Set":"Modify settings"]</a>]
         </dd>
-        
+
+        <dt>@SR["Bank info"]:</dt>
+        <dd>@Html.DisplayFor(m => m.BankInfo)  [<a asp-controller="Manage" asp-action="AddBankInfo"
+            >@SR[@Model.BankInfo==null?"Set":"Modify"]</a>]</dd>
+
         <dt>@SR["YourPosts"]:</dt>
         <dd>@Model.PostsCounter
             [<a asp-controller="Blogspot" asp-action="UserPosts" 

@@ -32,7 +32,10 @@ namespace Yavsc.Controllers
         public IActionResult Index()
         {
             var uid = User.GetUserId();
-            return View(_context.Estimates.Where(
+            return View(_context.Estimates.Include(e=>e.Query)
+            .Include(e=>e.Query.PerformerProfile)
+            .Include(e=>e.Query.PerformerProfile.Performer)
+            .Where(
                 e=>e.OwnerId == uid || e.ClientId == uid
             ).ToList());
         }
@@ -50,6 +53,7 @@ namespace Yavsc.Controllers
             .Include(e => e.Query)
             .Include(e => e.Query.PerformerProfile)
             .Include(e => e.Query.PerformerProfile.Performer)
+            .Include(e=> e.Bill)
             .Where(
                 e=>e.OwnerId == uid || e.ClientId == uid
             )

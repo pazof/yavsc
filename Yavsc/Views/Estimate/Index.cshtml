@@ -15,10 +15,16 @@
             @Html.DisplayNameFor(model => model.Description)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Status)
+            @Html.DisplayNameFor(model => model.Title)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => model.Query.Client)
+        </th>
+        <th>
+            @SR["Performer"]
+        </th>
+        <th>
+            @SR["Id"]
         </th>
         <th></th>
     </tr>
@@ -29,10 +35,16 @@
             @Html.DisplayFor(modelItem => item.Description)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Status)
+            @Html.DisplayFor(modelItem => item.Title)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Title)
+            @Html.DisplayFor(modelItem => item.Query.Client.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Query.PerformerProfile.Performer.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Id)
         </td>
         <td>
             <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

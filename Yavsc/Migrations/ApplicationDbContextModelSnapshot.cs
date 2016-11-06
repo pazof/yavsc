@@ -1,8 +1,6 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
-using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
@@ -113,6 +111,65 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
+            modelBuilder.Entity("Yavsc.Model.Bank.BankIdentity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AccountNumber")
+                        .HasAnnotation("MaxLength", 15);
+
+                    b.Property<string>("BIC")
+                        .HasAnnotation("MaxLength", 15);
+
+                    b.Property<string>("BankCode")
+                        .HasAnnotation("MaxLength", 5);
+
+                    b.Property<int>("BankedKey");
+
+                    b.Property<string>("IBAN")
+                        .HasAnnotation("MaxLength", 33);
+
+                    b.Property<string>("WicketCode")
+                        .HasAnnotation("MaxLength", 5);
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("Yavsc.Model.Chat.Connection", b =>
+                {
+                    b.Property<string>("ConnectionId");
+
+                    b.Property<string>("ApplicationUserId");
+
+                    b.Property<bool>("Connected");
+
+                    b.Property<string>("UserAgent");
+
+                    b.HasKey("ConnectionId");
+                });
+
+            modelBuilder.Entity("Yavsc.Model.ClientProviderInfo", b =>
+                {
+                    b.Property<string>("UserId");
+
+                    b.Property<string>("Avatar");
+
+                    b.Property<long?>("BillingAddressId");
+
+                    b.Property<string>("ChatHubConnectionId");
+
+                    b.Property<string>("EMail");
+
+                    b.Property<string>("Phone");
+
+                    b.Property<int>("Rate");
+
+                    b.Property<string>("UserName");
+
+                    b.HasKey("UserId");
+                });
+
             modelBuilder.Entity("Yavsc.Models.AccountBalance", b =>
                 {
                     b.Property<string>("UserId");
@@ -152,6 +209,8 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("Avatar")
                         .HasAnnotation("MaxLength", 512);
+
+                    b.Property<long?>("BankInfoId");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -274,7 +333,8 @@ namespace Yavsc.Migrations
                     b.Property<int>("Count");
 
                     b.Property<string>("Description")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 512);
 
                     b.Property<long>("EstimateId");
 
@@ -309,8 +369,6 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("OwnerId")
                         .IsRequired();
-
-                    b.Property<int?>("Status");
 
                     b.Property<string>("Title");
 
@@ -620,6 +678,20 @@ namespace Yavsc.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("Yavsc.Model.Chat.Connection", b =>
+                {
+                    b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("Yavsc.Model.ClientProviderInfo", b =>
+                {
+                    b.HasOne("Yavsc.Location")
+                        .WithMany()
+                        .HasForeignKey("BillingAddressId");
+                });
+
             modelBuilder.Entity("Yavsc.Models.AccountBalance", b =>
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser")
@@ -629,6 +701,10 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.ApplicationUser", b =>
                 {
+                    b.HasOne("Yavsc.Model.Bank.BankIdentity")
+                        .WithMany()
+                        .HasForeignKey("BankInfoId");
+
                     b.HasOne("Yavsc.Location")
                         .WithMany()
                         .HasForeignKey("PostalAddressId");
