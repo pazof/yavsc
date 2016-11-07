@@ -1,6 +1,7 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Optimization;
@@ -32,8 +33,11 @@ namespace Yavsc
     public partial class Startup
     {
         public static string ConnectionString { get; private set; }
+        public static string UserBillsDirName { private set; get; }
         public static string Authority { get; private set; }
         public static string Audience { get; private set; }
+        public static SiteSettings SiteSetup { get; private set; }
+
         private static ILogger logger;
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
@@ -225,7 +229,11 @@ namespace Yavsc
         RoleManager<IdentityRole> roleManager,
          ILoggerFactory loggerFactory)
         {
+            SiteSetup = siteSettings.Value;
+            var tempdi = new DirectoryInfo(SiteSetup.TempDir);
+            if (!tempdi.Exists) tempdi.Create();
             Startup.UserFilesDirName = siteSettings.Value.UserFiles.DirName;
+            Startup.UserBillsDirName = siteSettings.Value.UserFiles.Bills;
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             logger = loggerFactory.CreateLogger<Startup>();
