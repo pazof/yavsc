@@ -1,26 +1,27 @@
-
-@using System.Reflection
-@using System.IO
-@using Microsoft.Extensions.WebEncoders
-@using System.Diagnostics
-@using System.Text
-@using Yavsc.Formatters
-
+@using System.Reflection;
+@using System.IO;
+@using Microsoft.Extensions.WebEncoders;
+@using System.Diagnostics;
+@using System.Text;
+@using Yavsc.Formatters;
 @model Estimate
 @{
-   Layout = null;
-   ViewBag.Pdf = "";
-   ViewBag.TeX = "";
-   var writer = new System.IO.StringWriter();
-   var content = await Html.PartialAsync("Estimate.tex", Model );
+    if (ViewBag.TempDir==null) { throw new InvalidOperationException(); }
+
+    ViewBag.Pdf = "";
+    ViewBag.TeX = "";
+    var writer = new System.IO.StringWriter();
+    var content = await Html.PartialAsync("Estimate.tex", Model );
     content.WriteTo(writer, new TexEncoder());
     var contentStr = writer.ToString();
-    string name = $"tmpestimtex-{Model.Id}";
-     string fullname = new FileInfo(
+    string name = $"estimate-{Model.Id}";
+    string fullname = new FileInfo(
          System.IO.Path.Combine(ViewBag.TempDir,name)).FullName;
+    string ofullname = new FileInfo(
+         System.IO.Path.Combine(ViewBag.BillsDir,name)).FullName;
 
       FileInfo fi = new FileInfo(fullname + ".tex");
-      FileInfo fo = new FileInfo(fullname + ".pdf");
+      FileInfo fo = new FileInfo(ofullname + ".pdf");
       using (StreamWriter sw = new StreamWriter (fi.FullName))
       {
         sw.Write (contentStr);
@@ -41,15 +42,10 @@
           throw new Exception ("Pdf generation failed with exit code:" + p.ExitCode);
           }
       }
-      if (fo.Exists) {
-        UTF8Encoding utf8 = new UTF8Encoding();
-
-      using (StreamReader sr = new StreamReader (fo.FullName)) {
-        byte[] buffer = File.ReadAllBytes (fo.FullName);
-        ViewBag.Pdf = utf8.GetString(buffer,0,buffer.Length);
-      }
-      fo.Delete();
-      }
+      ViewBag.Success = fo.Exists; 
       fi.Delete();
+      var uri = $"~/api/pdfestimate/{Model.Id}";
+
 }
-@ViewBag.Pdf
+
+<a href="@uri" >@uri</a>
