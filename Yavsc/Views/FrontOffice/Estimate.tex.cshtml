@@ -1,5 +1,6 @@
 @model Estimate
 @using Yavsc.Helpers
+@using System.Globalization
 @{
     Layout = null;
     var pro = Model.Query.PerformerProfile;
@@ -11,6 +12,7 @@
     var proaddrm = (proaddr!=null) ? proaddr.NewLinesWith(" - ") : null ;
 }
 \documentclass[french,11pt]{article}
+\usepackage{eurosym}
 \usepackage{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -88,13 +90,9 @@
 }
 
 % Liste des produits facturés : Désignation, prix
-
-@if (Model.Bill!=null) { 
-    foreach (CommandLine line in Model.Bill) {
-<text>
-\AjouterService    {@line.Description} {@line.Count} {@line.UnitaryCost} 
-</text>
-} }
+@if (Model.Bill!=null) { foreach (CommandLine line in Model.Bill) {
+<text>\AjouterService{@line.Description}{@line.Count}{@line.UnitaryCost.ToString("F2",CultureInfo.InvariantCulture)}
+</text>} }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -151,7 +149,7 @@ Facture n°\FactureNum
 
 \begin{center}
     \begin{tabular}{lrrr}
-        \textbf{Désignation ~~~~~~}  & \textbf{Prix unitaire} & \textbf{Quantité} & \textbf{Montant (EUR)}    \\
+        \textbf{Désignation ~~~~~~}  & \textbf{Prix unitaire} & \textbf{Quantité} & \textbf{Montant (\euro)}    \\
         \hline
         \AfficheResultat{}
     \end{tabular}
