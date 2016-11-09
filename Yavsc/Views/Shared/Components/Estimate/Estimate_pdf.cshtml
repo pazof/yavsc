@@ -1,0 +1,50 @@
+@using System.Reflection
+@using System.IO
+@using Microsoft.Extensions.WebEncoders
+@using System.Diagnostics
+@using System.Text
+@using Yavsc.Formatters
+@model Yavsc.ViewModels.Gen.PdfGenerationViewModel
+@{
+    string errorMsg = null;
+    var billdir = Model.DestDir;
+    var tempdir = Startup.SiteSetup.TempDir;
+    string name = Model.BaseFileName;
+    string fullname = new FileInfo(
+         System.IO.Path.Combine(tempdir,name)).FullName;
+    string ofullname = new FileInfo(
+         System.IO.Path.Combine(billdir,name)).FullName;
+
+      FileInfo fi = new FileInfo(fullname + ".tex");
+      FileInfo fo = new FileInfo(ofullname + ".pdf");
+      using (StreamWriter sw = new StreamWriter (fi.FullName))
+      {
+        sw.Write (Model.TeXSource);
+      }
+      if (!fi.Exists)
+      {
+          errorMsg = "Source write failed";
+      }
+      else {
+      using (Process p = new Process ()) {
+        p.StartInfo.WorkingDirectory = tempdir;
+        p.StartInfo = new ProcessStartInfo ();
+        p.StartInfo.UseShellExecute = false;
+        p.StartInfo.FileName = "/usr/bin/texi2pdf";
+        p.StartInfo.Arguments = $"--batch --build-dir=. -o {fo.FullName} {fi.FullName}";
+        p.Start ();
+        p.WaitForExit ();
+        if (p.ExitCode != 0) {
+            errorMsg = $"Pdf generation failed with exit code: {p.ExitCode}";
+          }
+      }
+      fi.Delete();
+      }
+      ViewBag.GenSuccess = fo.Exists; 
+}
+@if (ViewBag.GenSuccess) {
+  @($"{name}.pdf")
+} else {
+  @errorMsg
+  <text>Something went wrong ...</text>
+}
