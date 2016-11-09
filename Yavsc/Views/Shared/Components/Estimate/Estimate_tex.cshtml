@@ -1,6 +1,6 @@
-@model Estimate
 @using Yavsc.Helpers
 @using System.Globalization
+@model Estimate
 @{
     Layout = null;
     var pro = Model.Query.PerformerProfile;
@@ -10,8 +10,7 @@
     var proaddr = Model.Query?.PerformerProfile.OrganizationAddress.Address;
     var proaddrn = (proaddr!=null) ? proaddr.NewLinesWith("\\\\\n") : null ;
     var proaddrm = (proaddr!=null) ? proaddr.NewLinesWith(" - ") : null ;
-}
-\documentclass[french,11pt]{article}
+}\documentclass[french,11pt]{article}
 \usepackage{eurosym}
 \usepackage{babel}
 \usepackage[T1]{fontenc}
