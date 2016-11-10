@@ -230,10 +230,17 @@ namespace Yavsc
          ILoggerFactory loggerFactory)
         {
             SiteSetup = siteSettings.Value;
-            var tempdi = new DirectoryInfo(SiteSetup.TempDir);
-            if (!tempdi.Exists) tempdi.Create();
             Startup.UserFilesDirName = siteSettings.Value.UserFiles.DirName;
             Startup.UserBillsDirName = siteSettings.Value.UserFiles.Bills;
+
+            // TODO implement an installation & upgrade procedure
+            // Create required directories
+            foreach (string dir in new string[] { Startup.UserFilesDirName, Startup.UserBillsDirName, SiteSetup.TempDir })
+            {
+                DirectoryInfo di = new DirectoryInfo(dir);
+                if (!di.Exists) di.Create();
+            }
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             logger = loggerFactory.CreateLogger<Startup>();
