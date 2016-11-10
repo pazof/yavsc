@@ -137,7 +137,7 @@ namespace BookAStar.Data
                     {
                         // TODO throw custom exception, and catch to inform user
                         var errcontent = await response.Content.ReadAsStringAsync();
-                        Debug.WriteLine($"Create failed posting {stringContent} @ {controllerUri.AbsoluteUri}");
+                        Debug.WriteLine($"Create failed posting {stringContent} @ {controllerUri.AbsoluteUri}: {errcontent}");
                     }
                     else
                     {
