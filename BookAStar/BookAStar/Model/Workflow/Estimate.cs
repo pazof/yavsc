@@ -15,7 +15,7 @@ namespace BookAStar.Model.Workflow
         // Markdown expected
         public string Description { get; set; }
         public string Title { get; set; }
-        public IList<BillingLine> Bill { get; set; }
+        public List<BillingLine> Bill { get; set; }
         /// <summary>
         /// List of attached graphic files
         /// to this estimate, as relative pathes to
@@ -23,7 +23,7 @@ namespace BookAStar.Model.Workflow
         /// In db, they are separated by <c>:</c>
         /// </summary>
         /// <returns></returns>
-        public IList<string> AttachedGraphics { get; set; }
+        public List<string> AttachedGraphics { get; set; }
         [JsonIgnore]
         public string AttachedGraphicsString
         {
@@ -37,7 +37,7 @@ namespace BookAStar.Model.Workflow
         /// In db, they are separated by <c>:</c>
         /// </summary>
         /// <returns></returns>
-        public IList<string> AttachedFiles { get; set; }
+        public List<string> AttachedFiles { get; set; }
         [JsonIgnore]
         public string AttachedFilesString
         {
