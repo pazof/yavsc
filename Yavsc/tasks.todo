@@ -28,7 +28,9 @@ Da road to the hell
 
 	☐ Login Twitter
 	☐ Paiement client d'un approvisionnement pour une demande de prestation définie
-	☐ Notifications et Twits de blogs, d'entées d'artiste, de success stories
+	☐ Notifications structurelles (liste de notifications impératives, relatives au site, 
+	spécifiées par groupe d'utilisateurs)
+	☐ Notifications aux posts, à l'entée d'un artiste, à la conclusion d'une success story
 	☐ Construction du droit à l'envoi d'un message privé, spécifié par le destinataire 
 	et/ou par accréditation administrative, à un utilisateur spécifié, ou
 	à un cercle ou à un groupe, de manière temporaire ou définitive, par une plage de temps spécifié
@@ -76,6 +78,8 @@ Da road to the hell
 	en l'enregistrant comme activité fille. Par ailleurs, l'utilisateur peut déclarer plusieurs activités,
 	sous la forme d'une liste, dont le premier élément indique l'activité principale 
 	(pour laquelle un code APE doit correspondre).
+	☐ Le streaming video, de pair à pair
+	☐ Le streaming vidéo public.
 
 ## Jalon 5
 
