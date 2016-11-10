@@ -12,6 +12,7 @@ namespace Yavsc
     {
         public static string UserFilesDirName { get; private set; }
         public static FileServerOptions UserFilesOptions { get; private set; }
+
         public void ConfigureFileServerApp(IApplicationBuilder app,
                 SiteSettings siteSettings, IHostingEnvironment env)
         {

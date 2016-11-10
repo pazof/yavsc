@@ -11,7 +11,7 @@ using System;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)), 
+    [ServiceFilter(typeof(LanguageActionFilter)),
     Route("do")]
     public class FrontOfficeController : Controller
     {
@@ -35,44 +35,45 @@ namespace Yavsc.Controllers
             return View(latestPosts);
         }
 
-        [Route("Book/{id?}"),HttpGet]
-
+        [Route("Book/{id?}"), HttpGet]
         public ActionResult Book(string id)
         {
-            if (id == null) {
+            if (id == null)
+            {
                 throw new NotImplementedException("No Activity code");
             }
-            
+
             ViewBag.Activities = _context.ActivityItems(id);
-            ViewBag.Activity =  _context.Activities.FirstOrDefault(
-                a => a.Code == id );
+            ViewBag.Activity = _context.Activities.FirstOrDefault(
+                a => a.Code == id);
 
             return View(
-                _context.Performers.Include(p=>p.Performer).Where
+                _context.Performers.Include(p => p.Performer).Where
                 (p => p.ActivityCode == id && p.Active).OrderBy(
-                    x=>x.MinDailyCost
+                    x => x.MinDailyCost
                 )
             );
         }
 
-        [Route("Book/{id}"),HttpPost]
-
+        [Route("Book/{id}"), HttpPost]
         public ActionResult Book(BookQuery bookQuery)
         {
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 var pro = _context.Performers.Include(
                     pr => pr.Performer
                 ).FirstOrDefault(
-                    x=>x.PerformerId == bookQuery.PerformerId
+                    x => x.PerformerId == bookQuery.PerformerId
                 );
-                if (pro==null)
+                if (pro == null)
                     return HttpNotFound();
                 // Let's create a command
-                if (bookQuery.Id==0)
+                if (bookQuery.Id == 0)
                 {
                     _context.BookQueries.Add(bookQuery);
                 }
-                else {
+                else
+                {
                     _context.BookQueries.Update(bookQuery);
                 }
                 _context.SaveChanges();
@@ -81,36 +82,39 @@ namespace Yavsc.Controllers
                 return View("Index");
             }
             ViewBag.Activities = _context.ActivityItems(null);
-            return View( _context.Performers.Include(p=>p.Performer).Where
+            return View(_context.Performers.Include(p => p.Performer).Where
                 (p => p.Active).OrderBy(
-                    x=>x.MinDailyCost
+                    x => x.MinDailyCost
                 ));
         }
 
         [Produces("text/x-tex"), Authorize, Route("estimate-{id}.tex")]
         public ViewResult EstimateTex(long id)
         {
-            var estimate = _context.Estimates.Include(x=>x.Query)
-            .Include(x=>x.Query.Client)
-            .Include(x=>x.Query.PerformerProfile)
-            .Include(x=>x.Query.PerformerProfile.OrganizationAddress)
-            .Include(x=>x.Query.PerformerProfile.Performer)
-            .Include(e=>e.Bill).FirstOrDefault(x=>x.Id==id);
+            var estimate = _context.Estimates.Include(x => x.Query)
+            .Include(x => x.Query.Client)
+            .Include(x => x.Query.PerformerProfile)
+            .Include(x => x.Query.PerformerProfile.OrganizationAddress)
+            .Include(x => x.Query.PerformerProfile.Performer)
+            .Include(e => e.Bill).FirstOrDefault(x => x.Id == id);
             Response.ContentType = "text/x-tex";
             return View("Estimate.tex", estimate);
         }
-                
-                
-        [Produces("application/x-pdf"), Authorize, Route("estimate-{id}.pdf")]
-        public ViewResult EstimatePdf(long id)
+
+        [Authorize,Route("Estimate-{id}.pdf")]
+        public IActionResult EstimatePdf(long id)
         {
-            var estimate = _context.Estimates.Include(x=>x.Query)
-            .Include(x=>x.Query.Client)
-            .Include(x=>x.Query.PerformerProfile)
-            .Include(x=>x.Query.PerformerProfile.OrganizationAddress)
-            .Include(x=>x.Query.PerformerProfile.Performer)
-            .Include(e=>e.Bill).FirstOrDefault(x=>x.Id==id);
-            return View("Estimate.pdf", estimate);
+            ViewBag.TempDir = Startup.SiteSetup.TempDir;
+            ViewBag.BillsDir = Startup.UserBillsDirName;
+            var estimate = _context.Estimates.Include(x => x.Query)
+            .Include(x => x.Query.Client)
+            .Include(x => x.Query.PerformerProfile)
+            .Include(x => x.Query.PerformerProfile.OrganizationAddress)
+            .Include(x => x.Query.PerformerProfile.Performer)
+            .Include(e => e.Bill).FirstOrDefault(x => x.Id == id); 
+            if (estimate==null)
+                throw new Exception("No data");
+            return View("Estimate.pdf",estimate);
         }
-    }
+    } 
 }

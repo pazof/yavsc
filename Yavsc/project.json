@@ -140,5 +140,6 @@
     "postrestore": "echo after restoring packages",
     "prepublish": "gulp min",
     "postpublish": "echo \"  . ./contrib/postPublish.sh # to push in prod.\""
-  }
+  },
+   "embed": "Views/**/*.cshtml"
 }
