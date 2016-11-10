@@ -76,36 +76,16 @@ namespace Yavsc.ApiControllers
             return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }
 
-        [HttpGet("GetComponents", Name = "GetComponents")]
-        public IActionResult GetComponents()
-        {
-            return Ok(provider);
-        }
-
         [HttpGet("estimate-{id}.tex", Name = "GetTex"), Authorize]
         public IActionResult GetTex(long id)
         {
             Response.ContentType = "text/x-tex";
-
             return ViewComponent("Estimate",new object[] { id, false });
         }
 
-        [HttpGet("gen/{id}")]
+        [HttpPost("gen/{id}")]
         public async Task<IActionResult> GeneratePdf(long id)
         {
-             /*
-
-             using (TextWriter wr = new StringWriter()) {
-             ViewComponentContext ctx = new ViewComponentContext(
-                 selector.SelectComponent("Estimate"), new object[]{id}, 
-                 new ViewContext(),
-                 wr
-             );
-
-             }
-
-             */
-
             return ViewComponent("Estimate",new object[] { id, true } );
         }
     }
