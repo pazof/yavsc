@@ -68,7 +68,6 @@ namespace Yavsc.Helpers
         /// <summary>
         /// Transforms a string of Markdown into HTML.
         /// </summary>
-        /// <param name="helper">HtmlHelper - Not used, but required to make this an extension method.</param>
         /// <param name="text">The Markdown that should be transformed.</param>
         /// <param name="urlBaseLocation">The url Base Location.</param>
         /// <returns>The HTML representation of the supplied Markdown.</returns>

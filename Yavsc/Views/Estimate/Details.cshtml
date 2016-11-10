@@ -39,6 +39,12 @@
     <a asp-action="Index">@SR["Back to List"]</a> |
     @{ var filenametex = $"estimate-{Model.Id}.tex" ; 
     var filenamepdf = $"estimate-{Model.Id}.pdf" ;}
-    <a href="~/do/@filenametex" >Export au format LaTeX</a>
-    <a href="~/do/@filenamepdf" >Export au format LaTeX</a>
+    <a href="~/api/pdfestimate/estimate-@(Model.Id).tex" >Export au format LaTeX</a>
+
+
+<form action="~/api/pdfestimate/gen/@Model.Id" method="POST">
+    <input type="submit" value="Générer le Pdf"/>
+</form>
+    <a href="~/api/pdfestimate/get/@(Model.Id)" >Télécharger le document</a>
+   
 </p>
