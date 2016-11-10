@@ -16,7 +16,10 @@ namespace BookAStar.Pages
                 picker.Items.Add(du);
             BindingContext = model;
         }
-        
+        public void OnDeleteClicked(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
         public void OnValidateClicked (object sender, EventArgs e)
         {
             this.Navigation.PopAsync();

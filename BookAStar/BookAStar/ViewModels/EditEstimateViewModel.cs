@@ -31,7 +31,7 @@ namespace BookAStar.ViewModels
 
         private void Bill_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Data.Bill = Bill;
+            Data.Bill = new List<BillingLine>( Bill );
             NotifyPropertyChanged("FormattedTotal");
         }
         private Estimate data;
