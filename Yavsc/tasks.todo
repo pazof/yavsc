@@ -13,31 +13,45 @@ Da road to the hell
     ✔ Salon public @done (September 28th 2016, 17:58)
 	✔ Saisie et soumission basique du devis @done (October 30th 2016, 21:50)
 	✔ Devis au formats TeX et Pdf en ligne à accès restreint @done (November 6th 2016, 2:10)
+	✔ Idem depuis l'API web @done (November 10th 2016, 10:00)
 	☐ Signature de contrat
     ✔ Chat privé (coté serveur) @done (October 13th 2016, 16:27)
 	✔ Accès mobile au salon public @done (October 13th 2016, 16:27)
 	✔ Accès Web au chat privé @done (November 3rd 2016, 14:57)
 	✔ Accès mobile au chat privé @done (November 3rd 2016, 11:15)
+	☐ Envoi de l'avatar
+	☐ Envoi de fichier depuis le mobile
+	☐ Envoi de fichiers depuis de Web
+	☐ Évaluation de la prestation
 
 ## Jalon 2
 
-	☐ Quota fs utilisateur
-	☐ Droit au message privé, spécifié par le destinataire 
+	☐ Login Twitter
+	☐ Paiement client d'un approvisionnement pour une demande de prestation définie
+	☐ Notifications et Twits de blogs, d'entées d'artiste, de success stories
+	☐ Construction du droit à l'envoi d'un message privé, spécifié par le destinataire 
 	et/ou par accréditation administrative, à un utilisateur spécifié, ou
 	à un cercle ou à un groupe, de manière temporaire ou définitive, par une plage de temps spécifié
 	ou par la validité d'une demande de devis ou une intervention en cours ou récente ou à venir
-	☐ Sécurisation des formulaires
-	(à base de clés anti-forge, limitation en taille de chaines de caratères)
-		☐ web
-		☐ mobile
-	☐ Gestion de contenu des pages du site, au fromat Markdown-av
-	☐ Paiement client d'un approvisionnement pour une demande de prestation définie
-	☐ Login Twitter
-	☐ Notifications et Twits de blogs, d'entées d'artiste, de success stories
-	☐ Monétarisations
-	☐ Support multi-lanque de l'app mobile
 	☐ Paiement client du reste de la prestation
+	☐ Monétarisations
+	
+	### Réécritures prévues : 
 
+	☐ Eviter la création de fichier TeX inutile à la génération du Pdf
+	
+	### Accessibilité :
+	☐ Support multi-lanque de l'app mobile
+	☐ Correction des libéllés manquant et/ou en anglais relevés avant le jalon 2 
+	
+	### Sécurité
+	☐ Quota fs utilisateur
+	☐ Usage de clés anti-forge coté interfaces Web 
+	☐ Fixer "là où ça manque" les limitations en taille des chaines de caratères du modèle 
+	
+	### Configurabilité
+	☐ Gestion de contenu des pages du site, au format interne (NRLD: i.e. non exposé, absent du code livré aux clients Web) Markdown-av (`@Html.SiteContent<AccessRules>(id).Responsible`)
+	
 ## Jalon 3
 
 	☐ Saisie du devis sur commande générique: les commandes sont des projets utilisateur associés
@@ -56,8 +70,12 @@ Da road to the hell
 
 ## Jalon 4
 
-	☐ Aide à la rencontre
-	☐ Activités secondaires
+	☐ Aide à la rencontre physique, avec une carte interactive des positions 
+	des participants, du geofencing pour les alerter de la rencontre, et plus si affinités. 
+	☐ Activités secondaires: Une activité peut se spécialiser, on le materialise dans le modèle
+	en l'enregistrant comme activité fille. Par ailleurs, l'utilisateur peut déclarer plusieurs activités,
+	sous la forme d'une liste, dont le premier élément indique l'activité principale 
+	(pour laquelle un code APE doit correspondre).
 
 ## Jalon 5
 
