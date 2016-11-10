@@ -235,7 +235,7 @@ namespace Yavsc
 
             // TODO implement an installation & upgrade procedure
             // Create required directories
-            foreach (string dir in new string[] { Startup.UserFilesDirName, Startup.UserBillsDirName, SiteSetup.TempDir })
+            foreach (string dir in new string[] { UserFilesDirName, UserBillsDirName, SiteSetup.TempDir })
             {
                 DirectoryInfo di = new DirectoryInfo(dir);
                 if (!di.Exists) di.Create();

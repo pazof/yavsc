@@ -30,7 +30,7 @@ namespace Yavsc
         /// User's files directory
         /// </summary>
         /// <returns></returns>
-        public ThirdPartyFiles UserFiles { get; set; }
+        public ThirdPartyFiles UserFiles { get; set; } 
 
         public string BusinessName { get; set; } 
         public string Street { get; set; } 
