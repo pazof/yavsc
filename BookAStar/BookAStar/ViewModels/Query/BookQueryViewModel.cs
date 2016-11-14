@@ -1,17 +1,15 @@
-﻿using BookAStar.Data;
-using BookAStar.Interfaces;
-using BookAStar.Model;
-using BookAStar.Model.Social;
+﻿
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using XLabs.Forms.Mvvm;
 
 namespace BookAStar.ViewModels
 {
-    class BookQueryViewModel : XLabs.Forms.Mvvm.ViewModel, IBookQueryData
+    using Data;
+    using Interfaces;
+    using Model;
+    using Model.Social;
+    class BookQueryViewModel : ViewModel, IBookQueryData
     {
         public BookQueryViewModel()
         {

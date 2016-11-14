@@ -9,6 +9,7 @@ namespace BookAStar.ViewModels
 {
     class UserLoginViewModel : ViewModel
     {
-
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
 }
