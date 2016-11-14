@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="BookAStar.Views.MDSigningView"
+             xmlns:signature="clr-namespace:SignaturePad.Forms;assembly=SignaturePad.Forms"
+             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar">
+  <ContentView.Content>
+    <views:MarkdownView Markdown="{Binging Doc}" Editable="false" />
+    <signature:SignaturePadView x:Name="padView"
+                                HeightRequest="150" WidthRequest="240"
+                                BackgroundColor="White"
+                                CaptionText="Caption This" CaptionTextColor="Black"
+                                ClearText="Efface moi!" ClearTextColor="Red"
+                                PromptText="Prompt Here" PromptTextColor="Red"
+                                SignatureLineColor="Aqua" StrokeColor="Black" StrokeWidth="2" />
+    <Button Clicked="OnChangeTheme" Text="Changer le Theme" />
+    <Button Clicked="OnGetStats" Text="Obtenir les stats de la signature " />
+  </ContentView.Content>
+</ContentView>
