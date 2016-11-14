@@ -16,12 +16,10 @@ namespace Yavsc
         public void ConfigureFileServerApp(IApplicationBuilder app,
                 SiteSettings siteSettings, IHostingEnvironment env)
         {
-            UserFilesDirName =  Path.Combine(
-                        env.WebRootPath,
-                        siteSettings.UserFiles.DirName);
+            var userFilesDirInfo = new DirectoryInfo( siteSettings.UserFiles.DirName );
+            UserFilesDirName =  userFilesDirInfo.FullName;
 
-            var rootInfo = new DirectoryInfo(UserFilesDirName);
-            if (!rootInfo.Exists) rootInfo.Create();
+            if (!userFilesDirInfo.Exists) userFilesDirInfo.Create();
 
             UserFilesOptions = new FileServerOptions()
             {

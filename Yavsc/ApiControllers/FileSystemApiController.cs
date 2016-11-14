@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
+using Yavsc.Helpers;
 using Yavsc.Models;
 
 namespace Yavsc.ApiControllers
@@ -26,14 +25,13 @@ namespace Yavsc.ApiControllers
         }
 
         [HttpGet("{subdir}")]
-        public IActionResult GetDir(string subdir)
+        public IActionResult GetDir(string subdir="")
         {
-            var path = User.GetUserId();
-            if (subdir!=null) path = Path.Combine(path,subdir);
-            var result = Startup.UserFilesOptions.FileProvider.GetDirectoryContents(path);
-            return Ok(result.Select(
-                c => new { Name = c.Name, IdDir = c.IsDirectory }
-            ));
+            if (subdir !=null)
+                if (!FileSystemHelpers.IsValidPath(subdir))
+                    return new BadRequestResult();
+            var files = User.GetUserFiles(subdir);
+            return Ok(files);
         }
 
         public class FileRecievedInfo
@@ -43,9 +41,13 @@ namespace Yavsc.ApiControllers
             public bool Overriden { get; set; }
         }
         [HttpPost]
-        public IEnumerable<FileRecievedInfo> Post()
+        public IEnumerable<FileRecievedInfo> Post(string subdir="")
         {
-            var root = Path.Combine(Startup.UserFilesDirName, User.GetUserId());
+            var root = Path.Combine(Startup.UserFilesDirName, User.Identity.Name);
+            // TOSO secure this path  
+            // if (subdir!=null) root = Path.Combine(root, subdir);
+            var diRoot = new DirectoryInfo(root);
+            if (!diRoot.Exists) diRoot.Create();
 
             foreach (var f in Request.Form.Files.GetFiles("Files"))
             {
