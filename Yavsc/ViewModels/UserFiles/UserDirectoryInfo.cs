@@ -8,6 +8,7 @@ namespace Yavsc.ViewModels.UserFiles
 {
     public class UserDirectoryInfo
     {
+        public string UserName { get; private set; }
         public string SubPath { get; private set; }
         public UserFileInfo [] Files {
             get; private set;
@@ -18,13 +19,14 @@ namespace Yavsc.ViewModels.UserFiles
         private DirectoryInfo dInfo;
         public UserDirectoryInfo(string username, string path)
         {
-            SubPath = (path==null) ? username : username +  Path.DirectorySeparatorChar + path;
-            if ( !SubPath.IsValidPath() )
+            UserName = username;
+            var finalPath = (path==null) ? username : username +  Path.DirectorySeparatorChar + path;
+            if ( !finalPath.IsValidPath() )
                 throw new InvalidOperationException(
                     $"File name contains invalid chars, using path {SubPath}");
             
             dInfo = new DirectoryInfo(
-                Path.Combine(Startup.UserFilesDirName,SubPath));
+                Path.Combine(Startup.UserFilesDirName,finalPath));
             Files = dInfo.GetFiles().Select
              ( entry => new UserFileInfo { Name = entry.Name, Size = entry.Length, 
              CreationTime = entry.CreationTime, LastModified = entry.LastWriteTime  }).ToArray();
