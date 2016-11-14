@@ -58,9 +58,7 @@ namespace BookAStar
             app.Suspended += OnSuspended;
             MainSettings.UserChanged += MainSettings_UserChanged;
             CrossConnectivity.Current.ConnectivityChanged += (conSender, args) =>
-            {
-                App.IsConnected = args.IsConnected;
-            };
+            { App.IsConnected = args.IsConnected; };
             SetupHubConnection();
             if (CrossConnectivity.Current.IsConnected)
                 StartHubConnection();
@@ -229,6 +227,26 @@ namespace BookAStar
             this.MainPage = masterDetail;
             NavigationService = new NavigationService(masterDetail.Detail.Navigation);
         }
+        public static Task<string> DisplayActionSheet(string title, string cancel, string destruction, string [] buttons)
+        {
+            var currentPage = ((NavigationPage)Current.MainPage).CurrentPage;
+            return currentPage.DisplayActionSheet(title, cancel, destruction, buttons);
+        }
+
+        public static Task<bool> DisplayAlert(string title, string message, string yes = "OK", string no = null)
+        {
+            var currentPage = ((NavigationPage)Current.MainPage).CurrentPage;
+            if (no == null)
+            {
+                return currentPage.DisplayAlert(title, message, yes).ContinueWith(task => true);
+            }
+            else
+            {
+                return currentPage.DisplayAlert(title, message, yes, no);
+            }
+
+        }
+
 
         private void TiPubChat_Clicked(object sender, EventArgs e)
         {
