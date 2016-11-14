@@ -29,14 +29,13 @@ using Yavsc.Services;
 
 namespace Yavsc
 {
-
     public partial class Startup
     {
         public static string ConnectionString { get; private set; }
-        public static string UserBillsDirName { private set; get; }
+        public static string UserBillsDirName { private set; get; }
         public static string Authority { get; private set; }
         public static string Audience { get; private set; }
-        public static SiteSettings SiteSetup { get; private set; }
+        public static SiteSettings SiteSetup { get; private set; }
 
         private static ILogger logger;
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
@@ -326,12 +325,8 @@ namespace Yavsc
             Audience = siteSettings.Value.Audience;
 
             ConfigureOAuthApp(app, siteSettings.Value);
-
-            app.UseWebSockets();
-
-            app.UseSignalR("/api/signalr");
-
             ConfigureFileServerApp(app, siteSettings.Value, env);
+            ConfigureWebSocketsApp(app, siteSettings.Value, env);
 
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"en"));
 
@@ -348,3 +343,4 @@ namespace Yavsc
     }
 
 }
+// 
