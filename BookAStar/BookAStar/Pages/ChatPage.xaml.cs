@@ -6,9 +6,9 @@ using Xamarin.Forms;
 namespace BookAStar.Pages
 {
     using Data;
-    using Model;
     using System.Linq;
-    using ViewModels;
+    using ViewModels.Messaging;
+
     public partial class ChatPage : TabbedPage
     {
         public string ChatUser { get; set; }

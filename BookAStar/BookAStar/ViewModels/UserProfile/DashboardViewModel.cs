@@ -7,15 +7,20 @@ using XLabs.Forms.Mvvm;
 using XLabs.Ioc;
 using XLabs.Platform.Services;
 
-namespace BookAStar.ViewModels
+namespace BookAStar.ViewModels.UserProfile
 {
     using Data;
     using Helpers;
     using Model.Auth.Account;
-    using Pages;
+    using Pages.UserProfile;
 
     internal class DashboardViewModel : ViewModel
     {
+        public string UserFilesLabel
+        {
+            get; set;
+        }
+
         int rating;
         public int Rating
         {

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using XLabs.Forms.Mvvm;
 
-namespace BookAStar.ViewModels
+namespace BookAStar.ViewModels.Messaging
 {
     using Data;
     using Model;

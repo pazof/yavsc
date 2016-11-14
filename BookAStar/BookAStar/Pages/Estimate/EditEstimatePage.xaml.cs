@@ -5,7 +5,8 @@ namespace BookAStar.Pages
 {
     using Data;
     using Model.Workflow;
-    using ViewModels;
+    using ViewModels.EstimateAndBilling;
+
     public partial class EditEstimatePage : ContentPage
     {
 

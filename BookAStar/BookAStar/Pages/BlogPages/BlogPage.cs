@@ -2,7 +2,7 @@
 
 using Xamarin.Forms;
 
-namespace BookAStar.Pages
+namespace BookAStar.Pages.BlogPages
 {
     public class BlogPage : ContentPage
     {

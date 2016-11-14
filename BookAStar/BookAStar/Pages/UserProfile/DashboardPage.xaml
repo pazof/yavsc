@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
              xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
              xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
-             x:Class="BookAStar.Pages.DashboardPage"
+             x:Class="BookAStar.Pages.UserProfile.DashboardPage"
              xmlns:lc="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
              xmlns:lb="clr-namespace:XLabs.Forms.Behaviors;assembly=XLabs.Forms"
              Style="{StaticResource PageStyle}">
@@ -52,6 +52,7 @@
       <Button Text="{Binding PerformerStatus}" Clicked="OnViewPerformerStatus" />
       <Button Text="{Binding UserQueries}" Clicked="OnViewUserQueries"
               VisualElement.IsVisible="{Binding UserIsPro}"/>
+      <Button Text="{Binding UserFilesLabel}" Clicked="OnManageFiles" />
       <StackLayout Orientation="Horizontal" VisualElement.IsVisible="{Binding HaveAnUser}">
         <Label Text="Recevoir les notifications push" StyleClass="Header" />
         <Switch IsToggled="{Binding ReceivePushNotifications, Mode=TwoWay}"

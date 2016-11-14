@@ -1,22 +1,13 @@
-﻿using BookAStar.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System;
 using Xamarin.Forms;
 using XLabs.Forms.Behaviors;
-using XLabs.Forms.Controls;
-using XLabs.Forms.Mvvm;
-using XLabs.Ioc;
-using XLabs.Platform.Services;
 
-namespace BookAStar.Pages
+namespace BookAStar.Pages.UserProfile
 {
+    using Data;
+    using ViewModels.UserProfile;
     public partial class DashboardPage : ContentPage
     {
-        
 
         public DashboardPage()
         {
@@ -31,6 +22,10 @@ namespace BookAStar.Pages
                 = new RelayGesture( (gesture,arg) => {
                         ShowPage<AccountChooserPage>(null, true);
                     });
+        }
+        public void OnManageFiles(object sender, EventArgs e)
+        {
+            ShowPage<UserFiles>(new object[] { new DirectoryInfoViewModel() }, true);
         }
         public void OnViewPerformerStatus(object sender, EventArgs e)
         {
