@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DEV</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet />
@@ -48,13 +48,27 @@
     <Compile Include="Behaviors\PickerBehavior.cs" />
     <Compile Include="Behaviors\StarBehavior.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Converters\NotValueConverter.cs" />
     <Compile Include="Converters\SignalRConnectionStateToObject.cs" />
     <Compile Include="Data\LocalState.cs" />
+    <Compile Include="Data\NonCrUD\RemoteFiles.cs" />
+    <Compile Include="Model\FileSystem\UserDirectoryInfo.cs" />
+    <Compile Include="Model\FileSystem\UserFileInfo.cs" />
+    <Compile Include="Model\Settings\SignatureSettings.cs" />
     <Compile Include="Model\Social\Messaging\ChatStatus.cs" />
     <Compile Include="Model\Social\Messaging\PrivateMessage.cs" />
     <Compile Include="Model\UI\PageState.cs" />
+    <Compile Include="Pages\UserProfile\UserFiles.xaml.cs">
+      <DependentUpon>UserFiles.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\ChatSettings.cs" />
     <Compile Include="ViewModels\EditingViewModel.cs" />
+    <Compile Include="Pages\DocSigning.xaml.cs">
+      <DependentUpon>DocSigning.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Signing\EstimateSignaturePad.cs" />
+    <Compile Include="ViewModels\Signing\SignaturePadConfigViewModel.cs" />
+    <Compile Include="ViewModels\UserProfile\DirectoryInfoViewModel.cs" />
     <Compile Include="Views\EnumPicker.cs" />
     <Compile Include="Converters\BooleanToObjectConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
@@ -82,23 +96,23 @@
     <Compile Include="Interfaces\IBookQueryData.cs" />
     <Compile Include="Interfaces\IBillingLine.cs" />
     <Compile Include="Interfaces\IEstimate.cs" />
-    <Compile Include="Pages\BlogPage.cs" />
-    <Compile Include="Pages\BookQueriesPage.xaml.cs">
+    <Compile Include="Pages\BlogPages\BlogPage.cs" />
+    <Compile Include="Pages\Estimate\BookQueriesPage.xaml.cs">
       <DependentUpon>BookQueriesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\BookQueryPage.xaml.cs">
+    <Compile Include="Pages\Estimate\BookQueryPage.xaml.cs">
       <DependentUpon>BookQueryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\EditBillingLinePage.xaml.cs">
+    <Compile Include="Pages\Estimate\EditBillingLinePage.xaml.cs">
       <DependentUpon>EditBillingLinePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\DashboardPage.xaml.cs">
+    <Compile Include="Pages\UserProfile\DashboardPage.xaml.cs">
       <DependentUpon>DashboardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\EventDetail.xaml.cs">
+    <Compile Include="Pages\Oooops\EventDetail.xaml.cs">
       <DependentUpon>EventDetail.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\MainSettings.cs" />
@@ -143,30 +157,33 @@
     <Compile Include="Model\Auth\Tokens.cs" />
     <Compile Include="Model\Auth\User.cs" />
     <Compile Include="Model\Workflow\Estimate.cs" />
-    <Compile Include="Pages\EditEstimatePage.xaml.cs">
+    <Compile Include="Pages\Estimate\EditEstimatePage.xaml.cs">
       <DependentUpon>EditEstimatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\HomePage.xaml.cs">
+    <Compile Include="Pages\Oooops\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\PinPage.cs" />
-    <Compile Include="ViewModels\BookQueriesViewModel.cs" />
-    <Compile Include="ViewModels\BookQueryViewModel.cs" />
-    <Compile Include="ViewModels\BillingLineViewModel.cs" />
-    <Compile Include="ViewModels\ChatViewModel.cs" />
-    <Compile Include="ViewModels\DashboardViewModel.cs" />
-    <Compile Include="ViewModels\EditEstimateViewModel.cs" />
-    <Compile Include="ViewModels\UserLoginViewModel.cs" />
+    <Compile Include="Pages\Oooops\PinPage.cs" />
+    <Compile Include="ViewModels\EstimateAndBilling\BookQueriesViewModel.cs" />
+    <Compile Include="ViewModels\EstimateAndBilling\BookQueryViewModel.cs" />
+    <Compile Include="ViewModels\EstimateAndBilling\BillingLineViewModel.cs" />
+    <Compile Include="ViewModels\Messaging\ChatViewModel.cs" />
+    <Compile Include="ViewModels\UserProfile\DashboardViewModel.cs" />
+    <Compile Include="ViewModels\EstimateAndBilling\EditEstimateViewModel.cs" />
+    <Compile Include="ViewModels\UserProfile\UserLoginViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\MarkdownView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pages\SearchPage.xaml.cs">
+    <Compile Include="Pages\Oooops\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\AccountChooserPage.xaml.cs">
+    <Compile Include="Pages\UserProfile\AccountChooserPage.xaml.cs">
       <DependentUpon>AccountChooserPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Tag.cs" />
+    <Compile Include="Views\MDSigningView.xaml.cs">
+      <DependentUpon>MDSigningView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\RatingView.xaml.cs">
       <DependentUpon>RatingView.xaml</DependentUpon>
     </Compile>
@@ -188,15 +205,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\EventDetail.xaml">
+    <EmbeddedResource Include="Pages\Oooops\EventDetail.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\SearchPage.xaml">
+    <EmbeddedResource Include="Pages\Oooops\SearchPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\AccountChooserPage.xaml">
+    <EmbeddedResource Include="Pages\UserProfile\AccountChooserPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -237,6 +254,10 @@
     </Reference>
     <Reference Include="Plugin.Settings.Abstractions, Version=2.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xam.Plugins.Settings.2.5.1.0\lib\portable-net45+wp80+win8+wpa81\Plugin.Settings.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SignaturePad.Forms, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.Controls.SignaturePad.Forms.1.4.0\lib\portable-net45+win+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\SignaturePad.Forms.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SQLite.Net, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -301,7 +322,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\BookQueryPage.xaml">
+    <EmbeddedResource Include="Pages\Estimate\BookQueryPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -313,25 +334,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\EditEstimatePage.xaml">
+    <EmbeddedResource Include="Pages\Estimate\EditEstimatePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\BookQueriesPage.xaml">
+    <EmbeddedResource Include="Pages\Estimate\BookQueriesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\EditBillingLinePage.xaml">
+    <EmbeddedResource Include="Pages\Estimate\EditBillingLinePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\DashboardPage.xaml">
+    <EmbeddedResource Include="Pages\UserProfile\DashboardPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -345,7 +366,7 @@
     <EmbeddedResource Include="Images\Users\icon_user_settings.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\HomePage.xaml">
+    <EmbeddedResource Include="Pages\Oooops\HomePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -382,6 +403,24 @@
     <EmbeddedResource Include="Images\Chat\connecting.png" />
     <EmbeddedResource Include="Images\Chat\disconnected.png" />
     <EmbeddedResource Include="Images\Chat\reconnecting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\DocSigning.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\MDSigningView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\UserProfile\UserFiles.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

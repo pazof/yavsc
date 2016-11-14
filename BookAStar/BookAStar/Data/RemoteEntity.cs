@@ -14,11 +14,12 @@ namespace BookAStar.Data
 
     public class RemoteEntity<V, K> : LocalEntity<V, K>, ICommand where K : IEquatable<K>
     {
-        private string _controller;
+        public string ControllerName { protected set; get; }
         public event EventHandler CanExecuteChanged;
         public bool IsExecuting { get; private set; }
 
-        private Uri controllerUri;
+        public Uri ControllerUri { get; protected set; }
+
         public bool CanExecute(object parameter)
         {
             return !IsExecuting && (MainSettings.CurrentUser != null);
@@ -28,11 +29,11 @@ namespace BookAStar.Data
         {
             if (string.IsNullOrWhiteSpace(controllerName))
                 throw new InvalidOperationException();
-            _controller = controllerName;
-            controllerUri = new Uri(Constants.YavscApiUrl + "/" + _controller);
+            ControllerName = controllerName;
+            ControllerUri = new Uri(Constants.YavscApiUrl + "/" + ControllerName);
         }
 
-        private void BeforeExecute()
+        protected void BeforeExecute()
         {
             if (IsExecuting)
                 throw new InvalidOperationException("Already executing");
@@ -45,7 +46,7 @@ namespace BookAStar.Data
         /// Refresh the collection
         /// </summary>
         /// <param name="parameter"></param>
-        public async void Execute(object parameter)
+        public virtual async void Execute(object parameter)
         {
             BeforeExecute();
             using (HttpClient client = UserHelpers.CreateClient())
@@ -53,7 +54,7 @@ namespace BookAStar.Data
                 // Get the whole data
                 try
                 {
-                    using (var response = await client.GetAsync(controllerUri))
+                    using (var response = await client.GetAsync(ControllerUri))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -77,26 +78,27 @@ namespace BookAStar.Data
             AfterExecuting();
         }
 
-        private void AfterExecuting()
+        protected void AfterExecuting()
         {
             IsExecuting = false;
             if (CanExecuteChanged != null)
                 CanExecuteChanged.Invoke(this, new EventArgs());
         }
 
-        public async Task<V> Get(K key)
+        public virtual async Task<V> Get(K key)
         {
             var item = LocalGet(key);
             if (item == null) item = await RemoteGet(key);
             CurrentItem = item;
             return CurrentItem;
         }
-        private Uri GetUri(K key)
+
+        protected Uri GetUri(K key)
         {
-            return new Uri(controllerUri.AbsoluteUri + "/" + key.ToString());
+            return new Uri(ControllerUri.AbsoluteUri + "/" + key.ToString());
         }
 
-        public async Task<V> RemoteGet(K key)
+        public virtual async Task<V> RemoteGet(K key)
         {
             V item = default(V);
             BeforeExecute();
@@ -121,7 +123,7 @@ namespace BookAStar.Data
             return item;
         }
 
-        public async void Create(V item)
+        public virtual async void Create(V item)
         {
             BeforeExecute();
 
@@ -131,13 +133,13 @@ namespace BookAStar.Data
                 HttpContent content = new StringContent(
                     stringContent, Encoding.UTF8, "application/json"
                     );
-                using (var response = await client.PostAsync(controllerUri, content))
+                using (var response = await client.PostAsync(ControllerUri, content))
                 {
                     if (!response.IsSuccessStatusCode)
                     {
                         // TODO throw custom exception, and catch to inform user
                         var errcontent = await response.Content.ReadAsStringAsync();
-                        Debug.WriteLine($"Create failed posting {stringContent} @ {controllerUri.AbsoluteUri}: {errcontent}");
+                        Debug.WriteLine($"Create failed posting {stringContent} @ {ControllerUri.AbsoluteUri}: {errcontent}");
                     }
                     else
                     {
@@ -152,7 +154,7 @@ namespace BookAStar.Data
             CurrentItem = item;
             AfterExecuting();
         }
-        public async void Update(V item)
+        public virtual async void Update(V item)
         {
             BeforeExecute();
 
@@ -188,7 +190,7 @@ namespace BookAStar.Data
             AfterExecuting();
         }
 
-        public async void Delete(K key)
+        public virtual async void Delete(K key)
         {
             BeforeExecute();
             var uri = GetUri(key);

@@ -4,8 +4,9 @@
     using Model.Blog;
     using Model.Workflow;
     using Model.UI;
-    using ViewModels;
     using Model.Social.Messaging;
+    using Model.FileSystem;
+    using ViewModels.EstimateAndBilling;
 
     public class DataManager
     {
@@ -13,8 +14,11 @@
         public RemoteEntityRO<BookQueryData, long> BookQueries { get; set; }
         public RemoteEntity<Estimate, long> Estimates { get; set; }
         public RemoteEntity<Blog, long> Blogspot { get; set; }
+        internal RemoteEntity<UserDirectoryInfo, string> RemoteFiles { get; set; }
+
         public LocalEntity<ClientProviderInfo,string> Contacts { get; set; }
         internal LocalEntity<PageState, int> AppState { get; set; }
+        
         /// <summary>
         /// They have no remote exisence ...
         /// </summary>
@@ -38,11 +42,13 @@
             BookQueries = new RemoteEntityRO<BookQueryData, long>("bookquery", q => q.Id);
             Estimates = new RemoteEntity<Estimate, long>("estimate", x => x.Id);
             Blogspot = new RemoteEntity<Blog, long>("blog", x=>x.Id);
+
             Contacts = new LocalEntity<ClientProviderInfo, string>(c => c.UserId);
             AppState = new LocalEntity<PageState, int>(s => s.Position);
             EstimationCache = new LocalEntity<EditEstimateViewModel, long>(e => e.Query.Id);
             EstimateLinesTemplates = new LocalEntity<BillingLine, string>(l => l.Description);
             PrivateMessages = new LocalEntity<ChatMessage, int>(m=> m.GetHashCode());
+            RemoteFiles = new RemoteEntity<UserDirectoryInfo, string> ("fs", d => d.SubPath);
 
             PrivateMessages.Load();
             BookQueries.Load();
@@ -52,6 +58,7 @@
             AppState.Load();
             EstimationCache.Load();
             EstimateLinesTemplates.Load();
+            RemoteFiles.Load();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace BookAStar
         #region Uri
 
 #if DEV
-        public const string YavscHomeUrl = "https://dev.pschneider.fr";
+        public const string YavscHomeUrl = "http://dev.pschneider.fr";
 #else
 #if YAVSC
         public const string YavscHomeUrl = "https://yavsc.pschneider.fr";
