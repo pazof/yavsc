@@ -1,17 +1,15 @@
-﻿using BookAStar.Model.Auth.Account;
+﻿
 using System;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.ComponentModel;
 using BookAStar.Helpers;
 using XLabs.Forms.Behaviors;
-using System.Diagnostics;
 using XLabs.Forms.Controls;
+using BookAStar.Model.Auth.Account;
 
-namespace BookAStar.Pages
+namespace BookAStar.Pages.UserProfile
 {
    
     public partial class AccountChooserPage : ContentPage

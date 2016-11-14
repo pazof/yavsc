@@ -6,7 +6,7 @@ using Xamarin.Forms;
 using BookAStar.Data;
 using Newtonsoft.Json;
 
-namespace BookAStar.ViewModels
+namespace BookAStar.ViewModels.EstimateAndBilling
 {
     public class EditEstimateViewModel : EditingViewModel
     {

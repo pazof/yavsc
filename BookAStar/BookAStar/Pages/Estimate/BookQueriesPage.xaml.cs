@@ -7,6 +7,8 @@ using XLabs.Platform.Services;
 namespace BookAStar.Pages
 {
     using Data;
+    using ViewModels.EstimateAndBilling;
+
     public partial class BookQueriesPage : ContentPage
     {
         public BookQueriesPage()

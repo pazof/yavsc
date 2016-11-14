@@ -8,7 +8,7 @@ namespace BookAStar.Pages
     using Model;
     using Model.Workflow;
     using System.Linq;
-    using ViewModels;
+    using ViewModels.EstimateAndBilling;
 
     public partial class BookQueryPage : ContentPage
     {

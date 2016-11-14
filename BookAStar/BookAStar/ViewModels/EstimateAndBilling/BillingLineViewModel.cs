@@ -4,10 +4,8 @@ using BookAStar.Model.Workflow;
 using System;
 using System.Globalization;
 using System.Windows.Input;
-using Xamarin.Forms;
-using XLabs.Forms.Mvvm;
 
-namespace BookAStar.ViewModels
+namespace BookAStar.ViewModels.EstimateAndBilling
 {
     public class BillingLineViewModel : EditingViewModel, IBillingLine
     {

@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BookAStar.Pages.AccountChooserPage"
+             x:Class="BookAStar.Pages.UserProfile.AccountChooserPage"
              Title="Paramètres Booking star" Style="{StaticResource PageStyle}"
              xmlns:lc="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
              xmlns:lb="clr-namespace:XLabs.Forms.Behaviors;assembly=XLabs.Forms">
@@ -16,7 +16,6 @@
         >
       <ListView.Header>
         <StackLayout Orientation="Horizontal">
-
           <Button x:Name="AddAccountBtn" Text="Connection, ou création d'un compte" />
         </StackLayout>
       </ListView.Header>
