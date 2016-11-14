@@ -19,9 +19,12 @@ namespace BookAStar
     using Model.UI;
     using Pages;
     using Plugin.Connectivity;
-    using ViewModels;
     using Microsoft.AspNet.SignalR.Client;
     using Model.Social.Messaging;
+    using ViewModels.Messaging;
+    using ViewModels.UserProfile;
+    using Pages.UserProfile;
+    using ViewModels.EstimateAndBilling;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -144,9 +147,9 @@ namespace BookAStar
             ViewFactory.Register<BookQueriesPage, BookQueriesViewModel>();
             ViewFactory.Register<EditBillingLinePage, BillingLineViewModel>();
             ViewFactory.Register<EditEstimatePage, EditEstimateViewModel>();
-            ConfigManager = new XLabs.Settings.GenericConfigSettingsMgr(s =>
+            ViewFactory.Register<UserFiles, DirectoryInfoViewModel>();
+            ConfigManager = new GenericConfigSettingsMgr(s =>
            MainSettings.AppSettings.GetValueOrDefault<string>(s, MainSettings.SettingsDefault), null);
-            
         }
 
         ExtendedMasterDetailPage masterDetail;
@@ -213,14 +216,20 @@ namespace BookAStar
             ToolbarItem tiHome = new ToolbarItem()
             {
                 Text = "Accueil",
-                Icon = "icon.png"
+                Icon = "icon.png",
+                Command = new Command(
+                    () => { NavigationService.NavigateTo<ChatPage>(); }
+                    )
             };
+
             ToolbarItem tiPubChat= new ToolbarItem()
             {
                 Text = "Chat",
-                Icon = "chat_icon_s.png"
+                Icon = "chat_icon_s.png",
+                Command = new Command(
+                    () => { NavigationService.NavigateTo<ChatPage>(); }
+                    )
             };
-            tiPubChat.Clicked += TiPubChat_Clicked;
             masterDetail.ToolbarItems.Add(tiHome);
             masterDetail.ToolbarItems.Add(tiSetts);
             masterDetail.ToolbarItems.Add(tiPubChat);
@@ -250,7 +259,7 @@ namespace BookAStar
 
         private void TiPubChat_Clicked(object sender, EventArgs e)
         {
-            NavigationService.NavigateTo<ChatPage>();
+            
         }
 
         public static INavigationService NavigationService { protected set; get; }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
@@ -7,8 +8,12 @@ using Xamarin.Forms;
 
 namespace BookAStar.Helpers
 {
+    using Data.NonCrUD;
+    using Model.FileSystem;
+
     public static class UserHelpers
     {
+
         public static ImageSource Avatar(string avatarPath)
         {
             var result = avatarPath == null ?
