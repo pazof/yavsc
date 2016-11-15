@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 
 namespace BookAStar
 {
     public interface ILoadable
     {
-        void Load();
+        bool Load();
     }
 
     public interface IPersistentOnDemand : ILoadable
@@ -12,7 +13,7 @@ namespace BookAStar
         void Save();
     }
 
-    public interface ILocalEntity<V, K> : ILoadable where K : IEquatable<K>
+    public interface ILocalEntity<V, K> : IList, ILoadable where K : IEquatable<K>
     {
         V CurrentItem { get; }
 
@@ -22,5 +23,6 @@ namespace BookAStar
 
         void Merge(V item);
 
+        bool Seek(int index);
     }
 }

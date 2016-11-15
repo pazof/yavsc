@@ -58,7 +58,7 @@ namespace BookAStar.Pages
 
         private void OnEditEstimate(object sender, EventArgs ev)
         {
-            var bookQueryViewModel = (BookQueryViewModel)BindingContext;
+            var bookQueryViewModel = (BookQueryViewModel) BindingContext;
 
             var editEstimateViewModel = bookQueryViewModel.DraftEstimate;
             if (editEstimateViewModel == null)
@@ -70,7 +70,7 @@ namespace BookAStar.Pages
                 if (estimateToEdit == null)
                 {
                     DataManager.Current.Contacts.Merge(BookQuery.Client);
-                    DataManager.Current.Contacts.SaveCollection();
+                    DataManager.Current.Contacts.SaveEntity();
                     estimateToEdit = new Estimate()
                     {
                         ClientId = BookQuery.Client.UserId,

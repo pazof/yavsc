@@ -6,6 +6,7 @@ namespace BookAStar.Pages.UserProfile
 {
     using Data;
     using ViewModels.UserProfile;
+
     public partial class DashboardPage : ContentPage
     {
 
@@ -23,10 +24,12 @@ namespace BookAStar.Pages.UserProfile
                         ShowPage<AccountChooserPage>(null, true);
                     });
         }
+
         public void OnManageFiles(object sender, EventArgs e)
         {
-            ShowPage<UserFiles>(new object[] { new DirectoryInfoViewModel() }, true);
+            ShowPage<UserFiles>(null, true);
         }
+
         public void OnViewPerformerStatus(object sender, EventArgs e)
         {
             ShowPage<AccountChooserPage>(null, true);
