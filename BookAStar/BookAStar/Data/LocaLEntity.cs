@@ -40,14 +40,24 @@ namespace BookAStar.Data
             return CurrentItem;
         }
 
-        public void Load()
+        public virtual bool Load()
         {
-            this.Populate<V>();
+            return this.Populate<V,K>();
         }
 
-        public void Load(string subKey)
+        public virtual bool Load(string subKey)
         {
-            this.Populate<V>(subKey);
+            return (this.Populate<V,K>(subKey));
+        }
+        public virtual bool Seek(int index)
+        {
+            
+            if (this.Count>index && index >=0)
+            {
+                CurrentItem = this[index];
+                return true;
+            }
+            return false;
         }
     }
 

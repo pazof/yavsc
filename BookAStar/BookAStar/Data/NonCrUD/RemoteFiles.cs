@@ -6,10 +6,17 @@ namespace BookAStar.Data.NonCrUD
 {
     using Helpers;
     using Model.FileSystem;
-
-    public class RemoteFiles : RemoteEntity<UserDirectoryInfo, FileAddress>
+    using System.Linq;
+    /*
+    public class DirectoryEntryChangingEvent : EventArgs
     {
-        public RemoteFiles() : base("fs", d => d)
+        public UserDirectoryInfo OldItem { get; set; }
+        public UserDirectoryInfo NewItem { get; set; }
+    }*/
+
+    public class RemoteFilesEntity : RemoteEntity<UserDirectoryInfo, FileAddress>
+    {
+        public RemoteFilesEntity() : base("fs", d => d)
         {
 
         }
@@ -23,14 +30,15 @@ namespace BookAStar.Data.NonCrUD
                 try
                 {
                     var subpath = parameter as string;
-                    string path = ControllerUri.AbsolutePath + ((subpath != null) ? "/" + subpath : null);
-                    using (var response = await client.GetAsync(ControllerUri))
+                    string path = ControllerUri.AbsoluteUri + ((subpath != null) ? "/" + subpath : null);
+                    using (var response = await client.GetAsync(path))
                     {
                         if (response.IsSuccessStatusCode)
                         {
                             var content = await response.Content.ReadAsStringAsync();
                             var di = JsonConvert.DeserializeObject<UserDirectoryInfo>(content);
                             this.Merge(di);
+                            this.SaveEntity();
                         }
                         else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                             throw new Exception("Bad request");
@@ -43,8 +51,32 @@ namespace BookAStar.Data.NonCrUD
                     throw new Exception("Remote call failed", ex);
                 }
             }
+            AfterExecuting();
         }
 
-       
+        /*
+        public override void Merge(UserDirectoryInfo item)
+        {
+            var key = GetKey(item);
+            DirectoryEntryChangingEvent itemChanged = null;
+            if (this.Any(x => GetKey(x).Equals(key)))
+            {
+                var old = LocalGet(key);
+                itemChanged = new DirectoryEntryChangingEvent
+                {
+                    OldItem = old,
+                    NewItem = item
+                };
+                Remove(old);
+            }
+            Add(item);
+            CurrentItem = item;
+            if (DirectoryEntryChanged != null && itemChanged != null)
+                DirectoryEntryChanged.Invoke(this, itemChanged);
+        }
+
+        public event EventHandler<DirectoryEntryChangingEvent> DirectoryEntryChanged;
+        */
+
     }
 }

@@ -4,31 +4,49 @@ namespace BookAStar.Pages.UserProfile
 {
     using ViewModels.UserProfile;
     using Data;
+    using System.Windows.Input;
+
     public partial class UserFiles : ContentPage
     {
         protected DirectoryInfoViewModel model;
-
         public UserFiles()
         {
             InitializeComponent();
-
-            var currentDir = DataManager.Current.RemoteFiles.CurrentItem;
-
-            BindingContext = new DirectoryInfoViewModel(currentDir)
+            var current = DataManager.Current.RemoteFiles.CurrentItem;
+            if (current != null)
+                BindingContext = new DirectoryInfoViewModel(current);
+            else BindingContext = new DirectoryInfoViewModel
             {
-                RefreshCommand = new Command(() =>
-                {
-                    DataManager.Current.RemoteFiles.Execute(null);
-
-                    this.dirlist.EndRefresh();
-                    this.filelist.EndRefresh();
-                })
+                UserName = MainSettings.UserName
             };
+        }
+
+        public UserFiles(DirectoryInfoViewModel model)
+        {
+            InitializeComponent();
+            BindingContext = model;
         }
 
         protected override void OnBindingContextChanged()
         {
+            model = BindingContext as DirectoryInfoViewModel;
+            if (model != null)
+                model.RefreshCommand = new Command(() =>
+            {
+                DataManager.Current.RemoteFiles.Execute(null);
+                var item = DataManager.Current.RemoteFiles.CurrentItem;
+                if (item != null)
+                    model.InnerModel = item;
+           //     this.dirlist.EndRefresh();
+           //     this.filelist.EndRefresh();
+            });
             base.OnBindingContextChanged();
         }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            model.RefreshCommand.Execute(model.SubPath);
+        }
+
     }
 }

@@ -24,7 +24,7 @@ namespace BookAStar.Pages
 
         private void EditEstimatePage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            DataManager.Current.EstimationCache.SaveCollection();
+            DataManager.Current.EstimationCache.SaveEntity();
         }
 
         protected override void OnSizeAllocated(double width, double height)
@@ -47,7 +47,7 @@ namespace BookAStar.Pages
             var lineView = new BillingLineViewModel(com)
             { ValidateCommand = new Command(() => {
                 bill.Add(com);
-                bill.SaveCollection();
+                DataManager.Current.EstimationCache.SaveEntity();
             })};
             App.NavigationService.NavigateTo<EditBillingLinePage>(
                 true,
@@ -60,7 +60,7 @@ namespace BookAStar.Pages
             var lineView = new BillingLineViewModel(line)
             {
                 ValidateCommand = new Command(() => {
-                    bill.SaveCollection();
+                    DataManager.Current.EstimationCache.SaveEntity();
                 })
             };
             lineView.PropertyChanged += LineView_PropertyChanged;
@@ -71,7 +71,7 @@ namespace BookAStar.Pages
 
         private void LineView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            DataManager.Current.EstimationCache.SaveCollection();
+            DataManager.Current.EstimationCache.SaveEntity();
         }
 
         protected void OnEstimateValidated(object sender, EventArgs e)
@@ -88,9 +88,9 @@ namespace BookAStar.Pages
             {
                 DataManager.Current.Estimates.Update(evm.Data);
             }
-            DataManager.Current.Estimates.SaveCollection();
+            DataManager.Current.Estimates.SaveEntity();
             DataManager.Current.EstimationCache.Remove(evm);
-            DataManager.Current.EstimationCache.SaveCollection();
+            DataManager.Current.EstimationCache.SaveEntity();
             Navigation.PopAsync();
         }
     }

@@ -78,7 +78,6 @@
     <Compile Include="Extensions\ImageResourceExtension.cs" />
     <Compile Include="Factories\ViewFactory.cs" />
     <Compile Include="Data\DataManager.cs" />
-    <Compile Include="Helpers\ObservableString.cs" />
     <Compile Include="Interfaces\ILocalEntity.cs" />
     <Compile Include="Data\LocaLEntity.cs" />
     <Compile Include="Helpers\NotIdentifiedException.cs" />

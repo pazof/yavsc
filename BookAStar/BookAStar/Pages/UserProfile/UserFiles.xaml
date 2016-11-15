@@ -1,35 +1,81 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BookAStar.Pages.UserProfile.UserFiles">
-  <Label Text="{Binding SubPath}" VerticalOptions="Center" HorizontalOptions="Center" />
-  <ListView x:Name="dirlist" ItemsSource="{Binding SubDirectories}"
-          RefreshCommand="{Binding RefreshCommand}" >
-    <ListView.ItemTemplate >
-      <DataTemplate>
-        <ViewCell>
-          <ViewCell.View>
-            <StackLayout Orientation="Horizontal">
-              <Label Text="{Binding Name}" />
-              <Label Text="{Binding Size}" />
-              <Label Text="{Binding CreationTime, StringFormat='créé {0:dddd d MMMM à HH:mm}'}" />
-              <Label Text="{Binding LastModified, StringFormat='modifié {0:dddd d MMMM à HH:mm}'}" />
-            </StackLayout>
-          </ViewCell.View>
-        </ViewCell>
-      </DataTemplate>
-    </ListView.ItemTemplate>
-  </ListView>
-  <ListView x:Name="filelist" ItemsSource="{Binding FileInfo}"
-            RefreshCommand="{Binding RefreshCommand}">
-    <ListView.ItemTemplate >
-      <DataTemplate>
-        <ViewCell>
-          <ViewCell.View>
-            <Label Text="{Binding .}" />
-          </ViewCell.View>
-        </ViewCell>
-      </DataTemplate>
-    </ListView.ItemTemplate>
-  </ListView>
+             x:Class="BookAStar.Pages.UserProfile.UserFiles"
+             Style="{StaticResource PageStyle}">
+  <ScrollView>
+  <StackLayout>
+    <Label Text="Dossiers:" />
+    <ListView x:Name="filelist" ItemsSource="{Binding SubDirectories}"
+              RefreshCommand="{Binding RefreshCommand}"
+              SeparatorVisibility="Default"
+              VerticalOptions="Start">
+      <ListView.ItemTemplate >
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <Label Text="{Binding .}" />
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+    <ListView x:Name="dirlist" ItemsSource="{Binding FileInfo}"
+            RefreshCommand="{Binding RefreshCommand}"
+              SeparatorVisibility="Default"
+              VerticalOptions="Start" >
+      <ListView.ItemTemplate >
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <StackLayout Orientation="Horizontal">
+                <Label Text="{Binding Name}" />
+                <Label Text="{Binding Size, StringFormat='{0}b'}" /> 
+                <Label Text="{Binding CreationTime, StringFormat='créé {0:dddd d MMMM à HH:mm}'}" />
+                <Label Text="{Binding LastModified, StringFormat='modifié {0:dddd d MMMM à HH:mm}'}" />
+              </StackLayout>
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView> 
+    <!--  
+    <StackLayout Orientation="Horizontal">
+      <Label Text="{Binding UserName}" FontSize="{StaticResource LargeFontSize}" HorizontalOptions="Start"/>
+      <Label Text="{Binding SubPath}" VerticalOptions="Center" HorizontalOptions="Start" />
+    </StackLayout>
+
+    <ListView x:Name="filelist" ItemsSource="{Binding SubDirectories}"
+              RefreshCommand="{Binding RefreshCommand}">
+      <ListView.ItemTemplate >
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <Label Text="{Binding .}" />
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+    <ListView x:Name="dirlist" ItemsSource="{Binding FileInfo}"
+            RefreshCommand="{Binding RefreshCommand}" >
+      <ListView.ItemTemplate >
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <StackLayout Orientation="Horizontal">
+                <Label Text="{Binding Name}" />
+                <Label Text="{Binding Size, StringFormat='{0}b'}" /> 
+                <Label Text="{Binding CreationTime, StringFormat='créé {0:dddd d MMMM à HH:mm}'}" />
+                <Label Text="{Binding LastModified, StringFormat='modifié {0:dddd d MMMM à HH:mm}'}" />
+              </StackLayout>
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView> 
+    -->
+    
+  </StackLayout>
+    </ScrollView>
 </ContentPage>

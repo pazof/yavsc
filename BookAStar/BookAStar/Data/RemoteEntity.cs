@@ -65,7 +65,7 @@ namespace BookAStar.Data
                             {
                                 Merge(item);
                             }
-                            this.SaveCollection();
+                            this.SaveEntity();
                         }
                     }
                 }
