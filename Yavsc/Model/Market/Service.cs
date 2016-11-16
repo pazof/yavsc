@@ -25,6 +25,7 @@ namespace Yavsc.Models.Market {
         [NotMapped]
         public List<IBillingClause> Billing { get; set; }
         
+        
     }
 
 }
