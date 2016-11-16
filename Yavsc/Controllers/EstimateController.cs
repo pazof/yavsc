@@ -65,7 +65,6 @@ namespace Yavsc.Controllers
             DirectoryInfo di = new DirectoryInfo(_site.UserFiles.DirName);
            
 
-            ViewBag.Files = estimate.GetFileContent(di.FullName);
             return View(estimate);
         }
 
@@ -148,7 +147,9 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.Files = estimate.GetFileContent(_site.UserFiles.DirName);
+            
+            ViewBag.Files = User.GetUserFiles(null);
+
             return View(estimate);
         }
 
