@@ -25,6 +25,8 @@ namespace Yavsc.Models.Market
         /// </summary>
         /// <returns></returns>
         public decimal? Price { get; set; }
+
+       // TODO make use of public Money Money { get; set; }
     }
 
 }

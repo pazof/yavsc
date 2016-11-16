@@ -1,6 +1,9 @@
 using System;
 
 namespace Yavsc.Models.Market {
+    /// <summary>
+ /// Not yet used!
+ /// </summary>
  public class Money : IUnit<decimal>
     {
         public Money(string name, decimal euroExchangeRate)
