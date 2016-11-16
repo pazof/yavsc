@@ -25,7 +25,7 @@ namespace Yavsc.Helpers
             }
         }
 
-        public readonly static Replacement[] SpecialCharsToCommands = 
+        public readonly static Replacement[] SpecialCharsRendering = 
         {
             new Replacement("<","\\textless"),
             new Replacement(">","\\textgreater"),
@@ -53,7 +53,7 @@ namespace Yavsc.Helpers
         string data;
         public TeXString(string str) {
             data = str;
-            foreach (var r in SpecialCharsToCommands) {
+            foreach (var r in SpecialCharsRendering) {
                 data = r.Execute(data);
             }
         }
