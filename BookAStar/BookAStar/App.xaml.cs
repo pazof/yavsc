@@ -25,6 +25,7 @@ namespace BookAStar
     using ViewModels.UserProfile;
     using Pages.UserProfile;
     using ViewModels.EstimateAndBilling;
+    using System.Net;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -109,7 +110,7 @@ namespace BookAStar
                         BindingContext = page.BindingContext
                     });
             }
-            DataManager.Current.AppState.SaveCollection();
+            DataManager.Current.AppState.SaveEntity();
         }
 
         // called on app startup, after OnStartup, not on rotation
@@ -124,7 +125,7 @@ namespace BookAStar
                     pageType, true, pageState.BindingContext);
             }
             DataManager.Current.AppState.Clear();
-            DataManager.Current.AppState.SaveCollection();
+            DataManager.Current.AppState.SaveEntity();
         }
 
         // FIXME Not called? 
@@ -206,6 +207,7 @@ namespace BookAStar
             masterDetail.Detail = new NavigationPage(home);
             ToolbarItem tiSetts = new ToolbarItem()
             {
+                // FIXME what for? Priority = 0, 
                 Text = "Paramètres",
                 Icon = "ic_corp_icon.png",
                 Command = new Command(
@@ -290,7 +292,19 @@ namespace BookAStar
         // Start the Hub connection
         public async void StartHubConnection ()
         {
-            await chatHubConnection.Start();
+            try
+            {
+                await chatHubConnection.Start();
+            }
+            catch (WebException webex )
+            {
+                // TODO use webex, set this cx down status somewhere,
+                // & display it & maybe try again later.
+            }
+            catch (Exception ex)
+            {
+                // TODO use ex
+            }
         }
 
         public void SetupHubConnection()

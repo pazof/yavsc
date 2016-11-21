@@ -265,9 +265,9 @@ namespace BookAStar
         /// <typeparam name="V"></typeparam>
         /// <param name="collection"></param>
         /// <param name="subKey"></param>
-        public static void Populate<V>(this IList<V> collection, string subKey = null)
+        public static bool Populate<V,K>(this ILocalEntity<V, K> collection, string subKey = null) where K : IEquatable<K>
         {
-            var key = $"{EntityDataSettingsPrefix}/{subKey}/{typeof(V).FullName}";
+            var key = GetCollectionKey<V>(subKey);
             var data = AppSettings.GetValueOrDefault<string>(key, null);
             if (!string.IsNullOrWhiteSpace(data))
             {
@@ -275,7 +275,15 @@ namespace BookAStar
                 if (items != null)
                 foreach (var item in items)
                     collection.Add(item);
+                var cursorKey = GetCursorKey<V>(subKey);
+                var index = AppSettings.GetValueOrDefault<int>(cursorKey, -1);
+                if (index>=0)
+                {
+                    collection.Seek(index);
+                }
+                return true;
             }
+            return false;
         }
 
         /// <summary>
@@ -284,11 +292,25 @@ namespace BookAStar
         /// <typeparam name="V"></typeparam>
         /// <param name="collection"></param>
         /// <param name="subKey"></param>
-        public static void SaveCollection<V>(this IList<V> collection, string subKey=null)
+        public static void SaveEntity<V,K>(this ILocalEntity<V, K> collection, string subKey=null) where K : IEquatable<K>
         {
             if (collection == null) return;
-            var key = $"{EntityDataSettingsPrefix}/{subKey}/{typeof(V).FullName}";
+            var key = GetCollectionKey<V>(subKey);
+            var cursorKey = GetCursorKey<V>(subKey);
             AppSettings.AddOrUpdateValue(key, JsonConvert.SerializeObject(collection));
+            if (collection.CurrentItem!=null)
+            {
+                int index =  collection.IndexOf(collection.CurrentItem) ;
+                AppSettings.AddOrUpdateValue<int>(cursorKey, index);
+            }
+        }
+        private static string GetCursorKey<V>(string subKey)
+        {
+            return $"{EntityDataSettingsPrefix}/{subKey}/{typeof(V).FullName}/c";
+        }
+        private static string GetCollectionKey<V>(string subKey)
+        {
+            return $"{EntityDataSettingsPrefix}/{subKey}/{typeof(V).FullName}";
         }
     }
 }
