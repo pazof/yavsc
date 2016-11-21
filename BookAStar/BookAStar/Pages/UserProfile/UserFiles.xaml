@@ -35,8 +35,6 @@
               <StackLayout Orientation="Horizontal">
                 <Label Text="{Binding Name}" />
                 <Label Text="{Binding Size, StringFormat='{0}b'}" /> 
-                <Label Text="{Binding CreationTime, StringFormat='créé {0:dddd d MMMM à HH:mm}'}" />
-                <Label Text="{Binding LastModified, StringFormat='modifié {0:dddd d MMMM à HH:mm}'}" />
               </StackLayout>
             </ViewCell.View>
           </ViewCell>
