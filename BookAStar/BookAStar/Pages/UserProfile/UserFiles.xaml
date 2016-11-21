@@ -43,42 +43,6 @@
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView> 
-    <!--  
-    <StackLayout Orientation="Horizontal">
-      <Label Text="{Binding UserName}" FontSize="{StaticResource LargeFontSize}" HorizontalOptions="Start"/>
-      <Label Text="{Binding SubPath}" VerticalOptions="Center" HorizontalOptions="Start" />
-    </StackLayout>
-
-    <ListView x:Name="filelist" ItemsSource="{Binding SubDirectories}"
-              RefreshCommand="{Binding RefreshCommand}">
-      <ListView.ItemTemplate >
-        <DataTemplate>
-          <ViewCell>
-            <ViewCell.View>
-              <Label Text="{Binding .}" />
-            </ViewCell.View>
-          </ViewCell>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView>
-    <ListView x:Name="dirlist" ItemsSource="{Binding FileInfo}"
-            RefreshCommand="{Binding RefreshCommand}" >
-      <ListView.ItemTemplate >
-        <DataTemplate>
-          <ViewCell>
-            <ViewCell.View>
-              <StackLayout Orientation="Horizontal">
-                <Label Text="{Binding Name}" />
-                <Label Text="{Binding Size, StringFormat='{0}b'}" /> 
-                <Label Text="{Binding CreationTime, StringFormat='créé {0:dddd d MMMM à HH:mm}'}" />
-                <Label Text="{Binding LastModified, StringFormat='modifié {0:dddd d MMMM à HH:mm}'}" />
-              </StackLayout>
-            </ViewCell.View>
-          </ViewCell>
-        </DataTemplate>
-      </ListView.ItemTemplate>
-    </ListView> 
-    -->
     
   </StackLayout>
     </ScrollView>
