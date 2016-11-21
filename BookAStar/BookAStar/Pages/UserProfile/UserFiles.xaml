@@ -5,7 +5,11 @@
              Style="{StaticResource PageStyle}">
   <ScrollView>
   <StackLayout>
-    <Label Text="Dossiers:" />
+    <StackLayout Orientation="Horizontal">
+      <Label Text="Dossiers:" />
+      <Label Text="{Binding UserName}" HorizontalOptions="Start" />
+      <Label Text="{Binding SubPath}" HorizontalOptions="Start" />
+    </StackLayout>
     <ListView x:Name="filelist" ItemsSource="{Binding SubDirectories}"
               RefreshCommand="{Binding RefreshCommand}"
               SeparatorVisibility="Default"
