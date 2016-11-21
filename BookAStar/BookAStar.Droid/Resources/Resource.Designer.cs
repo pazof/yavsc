@@ -5341,26 +5341,26 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f07004c
 			public const int ApplicationName = 2131165260;
 			
-			// aapt resource value: 0x7f070061
-			public const int Date = 2131165281;
+			// aapt resource value: 0x7f070062
+			public const int Date = 2131165282;
 			
-			// aapt resource value: 0x7f070060
-			public const int Description = 2131165280;
+			// aapt resource value: 0x7f070061
+			public const int Description = 2131165281;
 			
 			// aapt resource value: 0x7f07004b
 			public const int Hello = 2131165259;
 			
-			// aapt resource value: 0x7f070062
-			public const int Location = 2131165282;
-			
 			// aapt resource value: 0x7f070063
-			public const int Pricing = 2131165283;
+			public const int Location = 2131165283;
 			
-			// aapt resource value: 0x7f07005e
-			public const int Settings = 2131165278;
+			// aapt resource value: 0x7f070064
+			public const int Pricing = 2131165284;
 			
 			// aapt resource value: 0x7f07005f
-			public const int Title = 2131165279;
+			public const int Settings = 2131165279;
+			
+			// aapt resource value: 0x7f070060
+			public const int Title = 2131165280;
 			
 			// aapt resource value: 0x7f070034
 			public const int abc_action_bar_home_description = 2131165236;
@@ -5437,8 +5437,8 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f070049
 			public const int bottom_sheet_behavior = 2131165257;
 			
-			// aapt resource value: 0x7f07005d
-			public const int cancel = 2131165277;
+			// aapt resource value: 0x7f07005e
+			public const int cancel = 2131165278;
 			
 			// aapt resource value: 0x7f07004a
 			public const int character_counter_pattern = 2131165258;
@@ -5548,8 +5548,8 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f070052
 			public const int fullscreen_button = 2131165266;
 			
-			// aapt resource value: 0x7f070067
-			public const int google_app_id = 2131165287;
+			// aapt resource value: 0x7f070068
+			public const int google_app_id = 2131165288;
 			
 			// aapt resource value: 0x7f07004f
 			public const int invalid_date = 2131165263;
@@ -5614,14 +5614,17 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f070055
 			public const int pause = 2131165269;
 			
-			// aapt resource value: 0x7f070066
-			public const int picture = 2131165286;
+			// aapt resource value: 0x7f070067
+			public const int picture = 2131165287;
 			
 			// aapt resource value: 0x7f070056
 			public const int seekbar = 2131165270;
 			
 			// aapt resource value: 0x7f070057
 			public const int select_an_action = 2131165271;
+			
+			// aapt resource value: 0x7f07005b
+			public const int send_to_app_name = 2131165275;
 			
 			// aapt resource value: 0x7f070047
 			public const int status_bar_notification_info_overflow = 2131165255;
@@ -5638,17 +5641,17 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f070059
 			public const int time_duration = 2131165273;
 			
-			// aapt resource value: 0x7f070064
-			public const int url = 2131165284;
-			
 			// aapt resource value: 0x7f070065
-			public const int url_hint = 2131165285;
+			public const int url = 2131165285;
+			
+			// aapt resource value: 0x7f070066
+			public const int url_hint = 2131165286;
+			
+			// aapt resource value: 0x7f07005d
+			public const int yavscAccountTypeName = 2131165277;
 			
 			// aapt resource value: 0x7f07005c
-			public const int yavscAccountTypeName = 2131165276;
-			
-			// aapt resource value: 0x7f07005b
-			public const int yavscIdentRemoved = 2131165275;
+			public const int yavscIdentRemoved = 2131165276;
 			
 			static String()
 			{
