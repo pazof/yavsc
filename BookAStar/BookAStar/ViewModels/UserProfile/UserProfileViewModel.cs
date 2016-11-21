@@ -16,6 +16,14 @@ namespace BookAStar.ViewModels.UserProfile
 
     internal class UserProfileViewModel : ViewModel
     {
+        public bool IsAPerformer
+        {
+            get
+            {
+                return User?.Roles.Contains("Performer") ?? false;
+            }
+            
+        }
         public string UserFilesLabel
         {
             get; set;
