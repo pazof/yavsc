@@ -13,17 +13,17 @@ namespace BookAStar.Converters
         {
             var rating = (int)value;
             if (rating == 0)
-                return "Nul!";
+                return Strings.NoStar;
             if (rating == 1)
-                return "Décevant!";
+                return Strings.OneStar;
             if (rating == 2)
-                return "Pas terrible!";
+                return Strings.TwoStars;
             if (rating == 3)
-                return "Bien!";
+                return Strings.ThreeStars;
             if (rating == 4)
-                return "J'aime!";
+                return Strings.ForStars;
             if (rating == 5)
-                return "J'adore";
+                return Strings.FiveStars;
 
             return string.Empty;
         }
