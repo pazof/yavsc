@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Model.Forms
 {
+    using Interfaces;
+    
     public class Form
     {
         [Key]
