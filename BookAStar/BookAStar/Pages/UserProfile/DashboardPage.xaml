@@ -18,36 +18,18 @@
       </Style>
     </ResourceDictionary>
   </ContentPage.Resources>
-  <ScrollView>
-    <StackLayout Orientation="Vertical" >
-      <StackLayout>
-        <lc:GesturesContentView ExcludeChildren="false" VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}">
-            <StackLayout>
-          <Label Text="{Binding UserName}" Style="{StaticResource LabelPageHeadingStyle}"
-                                             HorizontalTextAlignment="Center"
-                                             LineBreakMode="WordWrap" XAlign="Center"
+  <ContentPage.Content>
+    <ScrollView>
+    <StackLayout BoxView.Color="{StaticResource ContentBackgroundColor}">
+      <Label Text="{Binding UserName}" Style="{StaticResource LabelPageHeadingStyle}"
+                                         HorizontalTextAlignment="Center"
+                                         LineBreakMode="WordWrap" XAlign="Center"
            ></Label>
-          
-          <Frame VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}">
-              
-              <lb:Gestures.Interests>
-                <lb:GestureCollection>
-                  <lb:GestureInterest GestureType="LongPress"
-                                      GestureCommand="{Binding UserNameGesture}"
-                                    />
-                </lb:GestureCollection>
-              </lb:Gestures.Interests>
-              <Image Source="{Binding Avatar}" Aspect="AspectFit"
+
+
+       <Image Source="{Binding Avatar}"
                      VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}" />
-
-            
-          </Frame>
-        </StackLayout>
-        </lc:GesturesContentView>
-        <views:RatingView Rating="{Binding Rating, Mode=TwoWay}" x:Name="ratingView"/>
-
-        
-      </StackLayout>
+       <views:RatingView Rating="{Binding Rating, Mode=TwoWay}" x:Name="ratingView" />
 
       <Button Text="{Binding PerformerStatus}" Clicked="OnViewPerformerStatus" />
       <Button Text="{Binding UserQueries}" Clicked="OnViewUserQueries"
@@ -63,11 +45,11 @@
         <Switch HorizontalOptions="End" IsToggled="{Binding AllowUseMyPosition, Mode=TwoWay}"/>
       </StackLayout>
       <StackLayout Orientation="Horizontal" VerticalOptions="Start"
-                   VisualElement.IsVisible="{Binding UserIsPro}">
-        <Label Text="Ne recevoir de demande de devis que de la part de professionnels uniquement"
-               StyleClass="Header"/>
+                   VisualElement.IsVisible="{Binding UserIsPro}" >
+        <Label Text="Ne recevoir de demande de devis que de la part de professionnels uniquement" />
         <Switch HorizontalOptions="End" IsToggled="{Binding AllowProBookingOnly, Mode=TwoWay}"/>
       </StackLayout>
     </StackLayout>
   </ScrollView>
+    </ContentPage.Content>
 </ContentPage>
