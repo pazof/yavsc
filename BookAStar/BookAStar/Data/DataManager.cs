@@ -7,6 +7,7 @@
     using Model.Social.Messaging;
     using Model.FileSystem;
     using ViewModels.EstimateAndBilling;
+    using NonCrUD;
 
     public class DataManager
     {
@@ -14,7 +15,7 @@
         public RemoteEntityRO<BookQueryData, long> BookQueries { get; set; }
         public RemoteEntity<Estimate, long> Estimates { get; set; }
         public RemoteEntity<Blog, long> Blogspot { get; set; }
-        internal RemoteEntity<UserDirectoryInfo, string> RemoteFiles { get; set; }
+        internal RemoteFilesEntity RemoteFiles { get; set; }
 
         public LocalEntity<ClientProviderInfo,string> Contacts { get; set; }
         internal LocalEntity<PageState, int> AppState { get; set; }
@@ -48,7 +49,7 @@
             EstimationCache = new LocalEntity<EditEstimateViewModel, long>(e => e.Query.Id);
             EstimateLinesTemplates = new LocalEntity<BillingLine, string>(l => l.Description);
             PrivateMessages = new LocalEntity<ChatMessage, int>(m=> m.GetHashCode());
-            RemoteFiles = new RemoteEntity<UserDirectoryInfo, string> ("fs", d => d.SubPath);
+            RemoteFiles = new RemoteFilesEntity ();
 
             PrivateMessages.Load();
             BookQueries.Load();

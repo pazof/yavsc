@@ -14,8 +14,8 @@
     </ResourceDictionary>
   </ContentView.Resources>
   <ContentView.Content>
-    <StackLayout>
-      <StackLayout Orientation="Horizontal" HeightRequest="70">
+      <StackLayout>
+        <StackLayout Orientation="Horizontal"  >
         <Grid>
           <Grid.Behaviors>
             <behaviors:StarBehavior x:Name="starOne" GroupName="myStar"/>
@@ -61,8 +61,7 @@
 
           <Image x:Name="starSelectedFour"
                   Source="{extensions:ImageResource BookAStar.Images.Validation.star_selected.png}"
-                  IsVisible="{Binding Source={x:Reference starFour},
-                                    Path=IsStarred}"/>
+                  IsVisible="{Binding Source={x:Reference starFour},  Path=IsStarred}" />
         </Grid>
         <Grid >
           <Grid.Behaviors>
@@ -73,9 +72,9 @@
 
           <Image x:Name="starSelectedFive"
                   Source="{extensions:ImageResource BookAStar.Images.Validation.star_selected.png}"
-                  IsVisible="{Binding Source={x:Reference starFive},
-                                    Path=IsStarred}"/>
+                  IsVisible="{Binding Source={x:Reference starFive}, Path=IsStarred}" />
         </Grid>
+          
       </StackLayout>
       <StackLayout>
         <StackLayout.Resources>
@@ -85,7 +84,7 @@
         </StackLayout.Resources>
         <Label Text="{Binding Source={x:Reference starFive}, Path=Rating, Converter={StaticResource ratingText}}" ></Label>
       </StackLayout>
-    </StackLayout>
+      </StackLayout>
       
   </ContentView.Content>
 </ContentView>
