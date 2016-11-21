@@ -33,7 +33,6 @@ namespace BookAStar
         public static IPlatform PlatformSpecificInstance { get; set; }
         public static string AppName { get; set; }
 
-
         [Obsolete("Instead using this, use new static properties.")]
         public static App CurrentApp { get { return Current as App; } }
        
@@ -64,7 +63,7 @@ namespace BookAStar
             MainSettings.UserChanged += MainSettings_UserChanged;
             CrossConnectivity.Current.ConnectivityChanged += (conSender, args) =>
             { App.IsConnected = args.IsConnected; };
-            SetupHubConnection();
+            MainSettings_UserChanged(this, null);
             if (CrossConnectivity.Current.IsConnected)
                 StartHubConnection();
         }
@@ -341,20 +340,21 @@ namespace BookAStar
                     }
                     );
             });
-            MainSettings_UserChanged(this, null);
         }
 
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
             if (MainSettings.CurrentUser == null)
             {
-                chatHubConnection.Headers.Clear();
+                chatHubConnection.Dispose();
+                chatHubConnection = null;
+                chatHubProxy = null;
             }
             else
             {
                 var token = MainSettings.CurrentUser.YavscTokens.AccessToken;
-                chatHubConnection.Headers.Add(
-                    "Authorization", $"Bearer {token}");
+                SetupHubConnection();
+                chatHubConnection.Headers.Add("Authorization", $"Bearer {token}");
             }
         }
 

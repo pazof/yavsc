@@ -18,6 +18,9 @@
                                          HorizontalTextAlignment="Center"
                                          LineBreakMode="WordWrap" XAlign="Center"
            ></Label>
+        <Image Source="{Binding User.AvatarSource}"></Image>
+        <!--
+        
         <controls:ImageButton
           x:Name="AvatarButton"
           BackgroundColor="#01abdf"
@@ -28,7 +31,8 @@
           Text="{Binding UserName}"
           TextColor="#ffffff"
           WidthRequest="175"
-          Source="{Binding Avatar}" />
+          Source="{Binding User.AvatarSource}" />
+        -->
         <StackLayout Orientation="Horizontal">
           <Label Text="Recevoir les notifications push" StyleClass="Header" />
           <Switch IsToggled="{Binding ReceivePushNotifications, Mode=TwoWay}"
