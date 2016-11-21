@@ -1,4 +1,8 @@
 ﻿using System;
+using Microsoft.AspNet.SignalR.Client;
+using System.Net;
+using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using XLabs.Forms.Mvvm;
 using XLabs.Forms.Pages;
@@ -12,20 +16,17 @@ using XLabs.Enums;
 
 namespace BookAStar
 {
-    using System.Threading.Tasks;
     using Data;
     using Interfaces;
     using Model;
     using Model.UI;
     using Pages;
     using Plugin.Connectivity;
-    using Microsoft.AspNet.SignalR.Client;
     using Model.Social.Messaging;
     using ViewModels.Messaging;
     using ViewModels.UserProfile;
     using Pages.UserProfile;
     using ViewModels.EstimateAndBilling;
-    using System.Net;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -149,6 +150,7 @@ namespace BookAStar
             ViewFactory.Register<EditBillingLinePage, BillingLineViewModel>();
             ViewFactory.Register<EditEstimatePage, EditEstimateViewModel>();
             ViewFactory.Register<UserFiles, DirectoryInfoViewModel>();
+            ViewFactory.Register<UserProfilePage, UserProfileViewModel>();
             ConfigManager = new GenericConfigSettingsMgr(s =>
            MainSettings.AppSettings.GetValueOrDefault<string>(s, MainSettings.SettingsDefault), null);
         }
@@ -174,7 +176,20 @@ namespace BookAStar
 
         BookQueriesPage bQueriesPage;
         AccountChooserPage accChooserPage;
-        HomePage home;
+        HomePage homePage;
+        UserProfilePage userProfilePage;
+        ChatPage chatPage;
+
+        private void ShowPage(Page page)
+        {
+            if (masterDetail.Detail.Navigation.NavigationStack.Contains(page))
+            {
+                if (masterDetail.Detail.Navigation.NavigationStack.Last() == page) return;
+                masterDetail.Detail.Navigation.RemovePage(page);
+                page.Parent = null;
+            }
+            masterDetail.Detail.Navigation.PushAsync(page);
+        }
 
         private void BuildMainPage()
         {
@@ -186,9 +201,15 @@ namespace BookAStar
                 Icon = "icon.png",
                 BindingContext = new BookQueriesViewModel()
             };
-
-            home = new HomePage() { Title = "Accueil", Icon = "icon.png" };
-
+            homePage = new HomePage() { Title = "Accueil", Icon = "icon.png" };
+            userProfilePage = new UserProfilePage { Title = "Profile utilisateur", Icon = "ic_corp_icon.png",
+                BindingContext = new UserProfileViewModel() };
+            chatPage = new ChatPage
+            {
+                Title = "Chat",
+                Icon = "",
+                BindingContext = new ChatViewModel()
+            };
             // var mainPage = new NavigationPage(bQueriesPage);
 
             masterDetail = new ExtendedMasterDetailPage()
@@ -202,17 +223,18 @@ namespace BookAStar
                 BindingContext = new DashboardViewModel()
             };
 
-            // masterDetail.Detail = home;
 
-            masterDetail.Detail = new NavigationPage(home);
+            masterDetail.Detail = new NavigationPage(homePage);
             ToolbarItem tiSetts = new ToolbarItem()
             {
                 // FIXME what for? Priority = 0, 
                 Text = "Paramètres",
                 Icon = "ic_corp_icon.png",
                 Command = new Command(
-                    () => { NavigationService.NavigateTo<AccountChooserPage>(); }
-                    ) 
+                    () =>
+                    {
+                        ShowPage(userProfilePage);
+                    } ) 
             };
 
             ToolbarItem tiHome = new ToolbarItem()
@@ -220,8 +242,9 @@ namespace BookAStar
                 Text = "Accueil",
                 Icon = "icon.png",
                 Command = new Command(
-                    () => { NavigationService.NavigateTo<ChatPage>(); }
-                    )
+                    () => {
+                        ShowPage(homePage);
+                    })
             };
 
             ToolbarItem tiPubChat= new ToolbarItem()
@@ -229,7 +252,7 @@ namespace BookAStar
                 Text = "Chat",
                 Icon = "chat_icon_s.png",
                 Command = new Command(
-                    () => { NavigationService.NavigateTo<ChatPage>(); }
+                    () => { ShowPage(chatPage); }
                     )
             };
             masterDetail.ToolbarItems.Add(tiHome);
@@ -258,11 +281,6 @@ namespace BookAStar
 
         }
 
-
-        private void TiPubChat_Clicked(object sender, EventArgs e)
-        {
-            
-        }
 
         public static INavigationService NavigationService { protected set; get; }
         public static bool isConnected;
