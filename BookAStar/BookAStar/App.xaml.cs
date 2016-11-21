@@ -207,7 +207,7 @@ namespace BookAStar
             masterDetail.Detail = new NavigationPage(home);
             ToolbarItem tiSetts = new ToolbarItem()
             {
-                Priority = 0,
+                // FIXME what for? Priority = 0, 
                 Text = "Paramètres",
                 Icon = "ic_corp_icon.png",
                 Command = new Command(
@@ -217,7 +217,6 @@ namespace BookAStar
 
             ToolbarItem tiHome = new ToolbarItem()
             {
-                Priority = -1,
                 Text = "Accueil",
                 Icon = "icon.png",
                 Command = new Command(
@@ -227,7 +226,6 @@ namespace BookAStar
 
             ToolbarItem tiPubChat= new ToolbarItem()
             {
-                Priority = 1,
                 Text = "Chat",
                 Icon = "chat_icon_s.png",
                 Command = new Command(
@@ -237,7 +235,6 @@ namespace BookAStar
             masterDetail.ToolbarItems.Add(tiHome);
             masterDetail.ToolbarItems.Add(tiSetts);
             masterDetail.ToolbarItems.Add(tiPubChat);
-            
             this.MainPage = masterDetail;
             NavigationService = new NavigationService(masterDetail.Detail.Navigation);
         }
