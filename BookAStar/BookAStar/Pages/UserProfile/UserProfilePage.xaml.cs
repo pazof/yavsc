@@ -11,8 +11,7 @@ namespace BookAStar.Pages.UserProfile
         public UserProfilePage()
         {
             InitializeComponent();
-          // AvatarButton.Clicked += AvatarButton_Clicked;
-           
+            AvatarButton.Clicked += AvatarButton_Clicked;
         }
 
         private void AvatarButton_Clicked (object sender, EventArgs e)

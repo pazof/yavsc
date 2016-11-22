@@ -185,6 +185,7 @@
     <Compile Include="ViewModels\EstimateAndBilling\EditEstimateViewModel.cs" />
     <Compile Include="ViewModels\UserProfile\UserLoginViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\ImageButton.cs" />
     <Compile Include="Views\MarkdownView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pages\Oooops\SearchPage.xaml.cs">
