@@ -10,15 +10,26 @@
 
 
   <ScrollView>
+    <ScrollView.Padding>
+      <OnPlatform x:TypeArguments="Thickness"
+                  Android="20,20,20,20"
+                  WinPhone="20,20,20,20"
+                  iOS="20,40,20,20" />
+    </ScrollView.Padding>
     <StackLayout BoxView.Color="{StaticResource ContentBackgroundColor}" Spacing="10,10,10,10" >
 
       <StackLayout VisualElement.IsVisible="{Binding HaveAnUser}">
-
-        <Label Text="{Binding UserName}" Style="{StaticResource LabelPageHeadingStyle}"
-                                         HorizontalTextAlignment="Center"
-                                         LineBreakMode="WordWrap" XAlign="Center"
-           ></Label>
-        <Image Source="{Binding User.AvatarSource}"></Image>
+       
+        <views:ImageButton
+          x:Name="AvatarButton" 
+          ImageHeightRequest="80"
+          ImageWidthRequest="80"
+          Source="{Binding Avatar}"
+          IsEnabled="true"
+          BackgroundColor="#01abdf"
+          Orientation="ImageToLeft"
+          Text="{Binding UserName}"
+          TextColor="#ffffff"></views:ImageButton>
         <!--
         
         <controls:ImageButton

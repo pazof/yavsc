@@ -343,6 +343,7 @@
     <Compile Include="Markdown\MarkdownViewRenderer.cs" />
     <Compile Include="Markdown\MarkdownWebChromeClient.cs" />
     <Compile Include="OAuth2\YaOAuth2Authenticator.cs" />
+    <Compile Include="Rendering\ImageButtonRenderer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendFilesActivity.cs" />
