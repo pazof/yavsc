@@ -85,7 +85,28 @@ namespace BookAStar.Rendering
                 Control.Dispose ();
             }
         }
-            
+
+        int imageWitdh = 0;
+        int imageHeight = 0;
+        int imageWitdhRequest = 0;
+        int imageHeightRequest = 0;
+
+        // this is called before OnElementChanged ...
+        /*
+        public override SizeRequest GetDesiredSize(int widthConstraint, int heightConstraint)
+        {
+            switch (ImageButton.Orientation)
+            {
+                case ImageOrientation.ImageOnBottom:
+                case ImageOrientation.ImageOnTop:
+                    return base.GetDesiredSize(widthConstraint, heightConstraint+ imageHeightRequest);
+                case ImageOrientation.ImageToRight:
+                case ImageOrientation.ImageToLeft:
+                    return base.GetDesiredSize(widthConstraint + imageWitdhRequest, heightConstraint);
+                default:
+                    return base.GetDesiredSize(widthConstraint, heightConstraint);
+            }
+        }*/
 
         /// <summary>
         /// Sets the image source.
@@ -113,8 +134,15 @@ namespace BookAStar.Rendering
                         drawable.SetTint(tintColor.ToAndroid());
                         drawable.SetTintMode(PorterDuff.Mode.SrcIn);
                     }
+                    imageWitdh = drawable.Bitmap.Width;
+                    imageHeight = drawable.Bitmap.Height;
+                    imageWitdhRequest = (int)model.ImageWidthRequest;
+                    imageHeightRequest = (int)model.ImageHeightRequest;
 
-                    using (var scaledDrawable = GetScaleDrawable(drawable, (int) model.ImageWidthRequest, (int) model.ImageHeightRequest))
+                    if (imageHeightRequest <= 0) imageHeightRequest = imageHeight;
+                    if (imageWitdhRequest <= 0) imageWitdhRequest = imageWitdh;
+
+                    using (var scaledDrawable = GetScaleDrawable(drawable, imageWitdh, imageHeight))
                     {
                         Drawable left = null;
                         Drawable right = null;
@@ -127,18 +155,30 @@ namespace BookAStar.Rendering
                         {
                             case ImageOrientation.ImageToLeft:
                                 left = scaledDrawable;
+                                if (ImageButton.HeightRequest < imageHeightRequest)
+                                    ImageButton.HeightRequest = imageHeightRequest;
                                 break;
                             case ImageOrientation.ImageToRight:
                                 right = scaledDrawable;
+                                if (ImageButton.HeightRequest < imageHeightRequest)
+                                    ImageButton.HeightRequest = imageHeightRequest;
                                 break;
                             case ImageOrientation.ImageOnTop:
                                 top = scaledDrawable;
+                                if (ImageButton.WidthRequest < imageWitdhRequest)
+                                    ImageButton.WidthRequest = imageWitdhRequest;
                                 break;
                             case ImageOrientation.ImageOnBottom:
                                 bottom = scaledDrawable;
+                                if (ImageButton.WidthRequest < imageWitdhRequest)
+                                    ImageButton.WidthRequest = imageWitdhRequest;
                                 break;
                             case ImageOrientation.ImageCentered:
                                 top = scaledDrawable;
+                                if (ImageButton.HeightRequest < imageHeightRequest)
+                                    ImageButton.HeightRequest = imageHeightRequest;
+                                if (ImageButton.WidthRequest < imageWitdhRequest)
+                                    ImageButton.WidthRequest = imageWitdhRequest;
                                 break;
                         }
 
@@ -185,7 +225,6 @@ namespace BookAStar.Rendering
         /// <param name="e">The event arguments.</param>
         protected override async void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            base.OnElementPropertyChanged(sender, e);
 
             if (e.PropertyName == ImageButton.SourceProperty.PropertyName ||
                 e.PropertyName == ImageButton.DisabledSourceProperty.PropertyName ||
@@ -195,6 +234,7 @@ namespace BookAStar.Rendering
             {
                 await SetImageSourceAsync(Control, ImageButton).ConfigureAwait(false);
             }
+            base.OnElementPropertyChanged(sender, e);
         }
 
         /// <summary>
