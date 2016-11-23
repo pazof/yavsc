@@ -22,28 +22,14 @@
        
         <views:ImageButton
           x:Name="AvatarButton" 
-          ImageHeightRequest="80"
-          ImageWidthRequest="80"
           Source="{Binding Avatar}"
           IsEnabled="true"
           BackgroundColor="#01abdf"
           Orientation="ImageToLeft"
           Text="{Binding UserName}"
-          TextColor="#ffffff"></views:ImageButton>
-        <!--
-        
-        <controls:ImageButton
-          x:Name="AvatarButton"
-          BackgroundColor="#01abdf"
-          HeightRequest="75"
-          ImageHeightRequest="50"
-          ImageWidthRequest="50"
-          Orientation="ImageToLeft"
-          Text="{Binding UserName}"
           TextColor="#ffffff"
-          WidthRequest="175"
-          Source="{Binding User.AvatarSource}" />
-        -->
+          ></views:ImageButton>
+        
         <StackLayout Orientation="Horizontal">
           <Label Text="Recevoir les notifications push" StyleClass="Header" />
           <Switch IsToggled="{Binding ReceivePushNotifications, Mode=TwoWay}"
