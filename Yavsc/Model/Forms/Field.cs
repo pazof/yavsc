@@ -10,11 +10,14 @@ namespace Yavsc.Model.Forms
         public long Id {  get; set; }
         public abstract Method [] ValidationMethods ();
 
+        [Required]
         public string Name { get; set; }
 
         public string Label { get; set; }
+        
         public string PlaceHolder { get; set; }
-
+        
+        [Required]
         public string ValueType { get; set; }
 
     }

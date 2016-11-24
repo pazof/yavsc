@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
@@ -17,7 +16,7 @@ namespace Yavsc.ViewComponents
         {
             this.dbContext = dbContext;
         }
-        public async Task<IViewComponentResult> InvokeAsync(long id, bool toPdf = false)
+        public IViewComponentResult InvokeAsync(long id, bool toPdf = false)
         {
             Estimate estimate =
             dbContext.Estimates.Include(x => x.Query)
