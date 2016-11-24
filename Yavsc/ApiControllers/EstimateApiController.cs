@@ -68,6 +68,8 @@ namespace Yavsc.Controllers
         [HttpPut("{id}")]
         public IActionResult PutEstimate(long id, [FromBody] Estimate estimate)
         {
+            var valdate = DateTime.Now;
+
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
@@ -88,7 +90,7 @@ namespace Yavsc.Controllers
             }
             
             var entry = _context.Attach(estimate);
-            estimate.LatestValidationDate = DateTime.Now;
+            estimate.ProviderValidationDate = valdate;
             try
             {
                 _context.SaveChanges();
@@ -105,7 +107,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return Ok( new { Id = estimate.Id, LatestValidationDate = estimate.LatestValidationDate });
+            return Ok( new { Id = estimate.Id, LatestValidationDate = valdate });
         }
 
         // POST: api/Estimate
@@ -125,7 +127,9 @@ namespace Yavsc.Controllers
                     return HttpBadRequest(ModelState);
                 }
             }
-            estimate.LatestValidationDate = DateTime.Now;
+            var valdate = DateTime.Now;
+            estimate.ProviderValidationDate = valdate;
+
             _context.Estimates.Add(estimate);
            /* _context.AttachRange(estimate.Bill);
             _context.Attach(estimate);
@@ -149,7 +153,7 @@ namespace Yavsc.Controllers
                     throw;
                 }
             }
-            return Ok( new { Id = estimate.Id, Bill = estimate.Bill , LatestValidationDate = estimate.LatestValidationDate });
+            return Ok( new { Id = estimate.Id, Bill = estimate.Bill , LatestValidationDate = valdate });
         }
 
         // DELETE: api/Estimate/5
@@ -182,7 +186,7 @@ namespace Yavsc.Controllers
             return Ok(estimate);
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void Dispose (bool disposing)
         {
             if (disposing)
             {

@@ -1,7 +1,6 @@
 using System.IO;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
-using System.Threading.Tasks;
 using System.Web.Routing;
 using Microsoft.AspNet.Mvc.ViewComponents;
 using Microsoft.AspNet.Razor;
@@ -84,7 +83,7 @@ namespace Yavsc.ApiControllers
         }
 
         [HttpPost("gen/{id}")]
-        public async Task<IActionResult> GeneratePdf(long id)
+        public IActionResult GeneratePdf(long id)
         {
             return ViewComponent("Estimate",new object[] { id, true } );
         }

@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNet.FileProviders;
 using Yavsc.ViewModels.UserFiles;
 
 namespace Yavsc.Helpers
