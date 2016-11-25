@@ -92,11 +92,18 @@ namespace BookAStar.Pages
 
         }
 
-        private void OnViewEstimate(object sender, EventArgs ev)
+        private async void OnViewEstimate(object sender, EventArgs ev)
         {
             var bookQueryViewModel = (BookQueryViewModel) BindingContext;
-            App.NavigationService.NavigateTo<ViewEstimatePage>(true,
-                new EditEstimateViewModel(bookQueryViewModel.Estimate));
+            var buttons = bookQueryViewModel.Estimates.Select(e => $"{e.Id} / {e.Title} / {e.Total}").ToArray();
+            var action = await App.DisplayActionSheet("Estimations validées", "Annuler", null, buttons);
+            if (buttons.Contains(action))
+            {
+                var index = Array.IndexOf(buttons,action);
+                var estimate = bookQueryViewModel.Estimates[index];
+                App.NavigationService.NavigateTo<ViewEstimatePage>(true,
+                new EditEstimateViewModel(estimate));
+            }
         }
 
         protected override void OnSizeAllocated(double width, double height)

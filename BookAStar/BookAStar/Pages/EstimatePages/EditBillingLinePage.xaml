@@ -102,12 +102,12 @@
                                 Converter={StaticResource boolToStyleImage}}" />
       </StackLayout>
       <StackLayout Orientation="Horizontal">
-        <Button Text="Supprimer"
-                    Command="{Binding DeleteCommand}"
-                    Clicked="OnDeleteClicked"></Button>
         <Button Text="Términé"
                 Command="{Binding ValidateCommand}"
                 Clicked="OnValidateClicked"></Button>
+        <Button Text="Supprimer"
+                    Command="{Binding DeleteCommand}"
+                    Clicked="OnDeleteClicked"></Button>
       </StackLayout>
     </StackLayout>
   </ScrollView>
