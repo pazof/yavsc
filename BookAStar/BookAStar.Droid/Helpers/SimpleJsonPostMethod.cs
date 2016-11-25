@@ -86,6 +86,8 @@ namespace Yavsc.Helpers
         {
             JsonValue jsonDoc = null;
 
+            try
+            {
                 using (Stream streamQuery = request.GetRequestStream())
                 {
                     using (StreamWriter writer = new StreamWriter(streamQuery))
@@ -101,16 +103,19 @@ namespace Yavsc.Helpers
                             jsonDoc = await Task.Run(() => JsonObject.Load(stream));
                     }
                     response.Close();
-            }
-            try
-            {
+                }
             }
             catch (WebException ex)
             {
                 // TODO err logging
                 Debug.Print($"Web request failed: {request.ToString()}\n" + ex.ToString());
             }
-			return jsonDoc;
+            catch (Exception ex)
+            {
+                Debug.Print($"Web request failed: {request.ToString()}\n" + ex.ToString());
+            }
+
+            return jsonDoc;
 		}
 	}
 }
