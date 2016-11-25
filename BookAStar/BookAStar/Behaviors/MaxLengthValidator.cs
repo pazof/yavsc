@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace BookAStar.Behaviors
 {
@@ -54,7 +49,7 @@ namespace BookAStar.Behaviors
         private void bindable_TextChanged(object sender, TextChangedEventArgs e)
         {
             //if (MaxLength != null && MaxLength.HasValue)
-            if (e.NewTextValue.Length > 0 && e.NewTextValue.Length > MaxLength)
+            if (e.NewTextValue.Length > MaxLength)
                 ((Entry)sender).Text = e.NewTextValue.Substring(0, MaxLength);
         }
 
@@ -63,5 +58,6 @@ namespace BookAStar.Behaviors
             bindable.TextChanged -= bindable_TextChanged;
             
         }
+        
     }
 }

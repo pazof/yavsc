@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
 namespace BookAStar.Pages
 {
     using Data;
+    using EstimatePages;
     using Model;
     using Model.Workflow;
-    using System.Linq;
     using ViewModels.EstimateAndBilling;
 
     public partial class BookQueryPage : ContentPage
@@ -71,23 +72,38 @@ namespace BookAStar.Pages
                 {
                     DataManager.Current.Contacts.Merge(BookQuery.Client);
                     DataManager.Current.Contacts.SaveEntity();
-                    estimateToEdit = new Estimate()
+                    estimateToEdit = new Estimate
                     {
                         ClientId = BookQuery.Client.UserId,
                         CommandId = BookQuery.Id,
                         OwnerId = MainSettings.CurrentUser.Id,
-                        Id = 0,
-                        Description = "# **Hello Estimate!**"
+                        Id = 0
                     };
-                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit, LocalState.New);
+                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit);
                 }
                 else
-                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit, LocalState.UpToDate);
+                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit);
 
                 DataManager.Current.EstimationCache.Add(editEstimateViewModel);
             }
             App.NavigationService.NavigateTo<EditEstimatePage>(true,
              editEstimateViewModel);
+
+
+        }
+
+        private async void OnViewEstimate(object sender, EventArgs ev)
+        {
+            var bookQueryViewModel = (BookQueryViewModel) BindingContext;
+            var buttons = bookQueryViewModel.Estimates.Select(e => $"{e.Id} / {e.Title} / {e.Total}").ToArray();
+            var action = await App.DisplayActionSheet("Estimations validées", "Annuler", null, buttons);
+            if (buttons.Contains(action))
+            {
+                var index = Array.IndexOf(buttons,action);
+                var estimate = bookQueryViewModel.Estimates[index];
+                App.NavigationService.NavigateTo<ViewEstimatePage>(true,
+                new EditEstimateViewModel(estimate));
+            }
         }
 
         protected override void OnSizeAllocated(double width, double height)

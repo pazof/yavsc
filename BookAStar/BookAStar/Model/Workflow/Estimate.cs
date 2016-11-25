@@ -2,6 +2,7 @@
 using BookAStar.Helpers;
 using BookAStar.Model.Interfaces;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -76,6 +77,9 @@ namespace BookAStar.Model.Workflow
                 return Bill?.Aggregate((decimal)0, (t, l) => t + l.Count * l.UnitaryCost) ?? (decimal)0;
             }
         }
-        
+
+        public DateTime LatestValidationDate { get; set; }
+
+        public DateTime ClientApprouvalDate { get; set; }
     }
 }

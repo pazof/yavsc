@@ -7,8 +7,11 @@ using XLabs.Forms.Mvvm;
 
 namespace BookAStar.ViewModels.Signing
 {
-    class EstimateSignaturePad: ViewModel
+    class DocSigningViewModel: ViewModel
     {
-
+        /// <summary>
+        /// The doc to sign, in Markdown format 
+        /// </summary>
+        public string Document { get; set;  }
     }
 }

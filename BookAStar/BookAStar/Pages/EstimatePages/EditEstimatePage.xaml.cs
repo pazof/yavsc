@@ -49,9 +49,9 @@ namespace BookAStar.Pages
                 bill.Add(com);
                 DataManager.Current.EstimationCache.SaveEntity();
             })};
+            lineView.PropertyChanged += LineView_PropertyChanged;
             App.NavigationService.NavigateTo<EditBillingLinePage>(
-                true,
-                new object[] { lineView } );
+                true, lineView );
         }
         protected void OnEditLine(object sender, ItemTappedEventArgs e)
         {
@@ -64,10 +64,12 @@ namespace BookAStar.Pages
                 })
             };
             lineView.PropertyChanged += LineView_PropertyChanged;
+
+            lineView.PropertyChanged += LineView_PropertyChanged;
             App.NavigationService.NavigateTo<EditBillingLinePage>(
-                true,
-                new object[] { lineView });
+                true, lineView );
         }
+
 
         private void LineView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

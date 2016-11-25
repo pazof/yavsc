@@ -1,4 +1,8 @@
 ﻿using System;
+using Microsoft.AspNet.SignalR.Client;
+using System.Net;
+using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using XLabs.Forms.Mvvm;
 using XLabs.Forms.Pages;
@@ -12,26 +16,22 @@ using XLabs.Enums;
 
 namespace BookAStar
 {
-    using System.Threading.Tasks;
     using Data;
     using Interfaces;
     using Model;
     using Model.UI;
     using Pages;
     using Plugin.Connectivity;
-    using Microsoft.AspNet.SignalR.Client;
     using Model.Social.Messaging;
     using ViewModels.Messaging;
     using ViewModels.UserProfile;
     using Pages.UserProfile;
     using ViewModels.EstimateAndBilling;
-    using System.Net;
 
     public partial class App : Application // superclass new in 1.3
     {
         public static IPlatform PlatformSpecificInstance { get; set; }
         public static string AppName { get; set; }
-
 
         [Obsolete("Instead using this, use new static properties.")]
         public static App CurrentApp { get { return Current as App; } }
@@ -63,7 +63,7 @@ namespace BookAStar
             MainSettings.UserChanged += MainSettings_UserChanged;
             CrossConnectivity.Current.ConnectivityChanged += (conSender, args) =>
             { App.IsConnected = args.IsConnected; };
-            SetupHubConnection();
+            MainSettings_UserChanged(this, null);
             if (CrossConnectivity.Current.IsConnected)
                 StartHubConnection();
         }
@@ -149,6 +149,7 @@ namespace BookAStar
             ViewFactory.Register<EditBillingLinePage, BillingLineViewModel>();
             ViewFactory.Register<EditEstimatePage, EditEstimateViewModel>();
             ViewFactory.Register<UserFiles, DirectoryInfoViewModel>();
+            ViewFactory.Register<UserProfilePage, UserProfileViewModel>();
             ConfigManager = new GenericConfigSettingsMgr(s =>
            MainSettings.AppSettings.GetValueOrDefault<string>(s, MainSettings.SettingsDefault), null);
         }
@@ -174,7 +175,20 @@ namespace BookAStar
 
         BookQueriesPage bQueriesPage;
         AccountChooserPage accChooserPage;
-        HomePage home;
+        HomePage homePage;
+        UserProfilePage userProfilePage;
+        ChatPage chatPage;
+
+        private void ShowPage(Page page)
+        {
+            if (masterDetail.Detail.Navigation.NavigationStack.Contains(page))
+            {
+                if (masterDetail.Detail.Navigation.NavigationStack.Last() == page) return;
+                masterDetail.Detail.Navigation.RemovePage(page);
+                page.Parent = null;
+            }
+            masterDetail.Detail.Navigation.PushAsync(page);
+        }
 
         private void BuildMainPage()
         {
@@ -186,9 +200,15 @@ namespace BookAStar
                 Icon = "icon.png",
                 BindingContext = new BookQueriesViewModel()
             };
-
-            home = new HomePage() { Title = "Accueil", Icon = "icon.png" };
-
+            homePage = new HomePage() { Title = "Accueil", Icon = "icon.png" };
+            userProfilePage = new UserProfilePage { Title = "Profile utilisateur", Icon = "ic_corp_icon.png",
+                BindingContext = new UserProfileViewModel() };
+            chatPage = new ChatPage
+            {
+                Title = "Chat",
+                Icon = "",
+                BindingContext = new ChatViewModel()
+            };
             // var mainPage = new NavigationPage(bQueriesPage);
 
             masterDetail = new ExtendedMasterDetailPage()
@@ -202,17 +222,18 @@ namespace BookAStar
                 BindingContext = new DashboardViewModel()
             };
 
-            // masterDetail.Detail = home;
 
-            masterDetail.Detail = new NavigationPage(home);
+            masterDetail.Detail = new NavigationPage(homePage);
             ToolbarItem tiSetts = new ToolbarItem()
             {
                 // FIXME what for? Priority = 0, 
                 Text = "Paramètres",
                 Icon = "ic_corp_icon.png",
                 Command = new Command(
-                    () => { NavigationService.NavigateTo<AccountChooserPage>(); }
-                    ) 
+                    () =>
+                    {
+                        ShowPage(userProfilePage);
+                    } ) 
             };
 
             ToolbarItem tiHome = new ToolbarItem()
@@ -220,8 +241,9 @@ namespace BookAStar
                 Text = "Accueil",
                 Icon = "icon.png",
                 Command = new Command(
-                    () => { NavigationService.NavigateTo<ChatPage>(); }
-                    )
+                    () => {
+                        ShowPage(homePage);
+                    })
             };
 
             ToolbarItem tiPubChat= new ToolbarItem()
@@ -229,18 +251,19 @@ namespace BookAStar
                 Text = "Chat",
                 Icon = "chat_icon_s.png",
                 Command = new Command(
-                    () => { NavigationService.NavigateTo<ChatPage>(); }
+                    () => { ShowPage(chatPage); }
                     )
             };
             masterDetail.ToolbarItems.Add(tiHome);
             masterDetail.ToolbarItems.Add(tiSetts);
             masterDetail.ToolbarItems.Add(tiPubChat);
             this.MainPage = masterDetail;
+            
             NavigationService = new NavigationService(masterDetail.Detail.Navigation);
         }
         public static Task<string> DisplayActionSheet(string title, string cancel, string destruction, string [] buttons)
         {
-            var currentPage = ((NavigationPage)Current.MainPage).CurrentPage;
+            var currentPage = CurrentApp.masterDetail.Detail.Navigation.NavigationStack.Last();
             return currentPage.DisplayActionSheet(title, cancel, destruction, buttons);
         }
 
@@ -258,11 +281,6 @@ namespace BookAStar
 
         }
 
-
-        private void TiPubChat_Clicked(object sender, EventArgs e)
-        {
-            
-        }
 
         public static INavigationService NavigationService { protected set; get; }
         public static bool isConnected;
@@ -323,20 +341,21 @@ namespace BookAStar
                     }
                     );
             });
-            MainSettings_UserChanged(this, null);
         }
 
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
             if (MainSettings.CurrentUser == null)
             {
-                chatHubConnection.Headers.Clear();
+                chatHubConnection.Dispose();
+                chatHubConnection = null;
+                chatHubProxy = null;
             }
             else
             {
                 var token = MainSettings.CurrentUser.YavscTokens.AccessToken;
-                chatHubConnection.Headers.Add(
-                    "Authorization", $"Bearer {token}");
+                SetupHubConnection();
+                chatHubConnection.Headers.Add("Authorization", $"Bearer {token}");
             }
         }
 

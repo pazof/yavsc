@@ -13,7 +13,6 @@ namespace BookAStar.Helpers
 
     public static class UserHelpers
     {
-
         public static ImageSource Avatar(string avatarPath)
         {
             var result = avatarPath == null ?

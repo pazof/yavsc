@@ -15,6 +15,7 @@
       </Style>
     </ResourceDictionary>
   </ContentPage.Resources>
+  <ContentPage.Content>
   <ScrollView>
     <StackLayout Padding="10,10,10,10" x:Name="mainLayout">
       <Grid MinimumHeightRequest="12">
@@ -77,4 +78,5 @@
     </StackLayout>
     </StackLayout>
   </ScrollView>
+  </ContentPage.Content>
 </ContentPage>

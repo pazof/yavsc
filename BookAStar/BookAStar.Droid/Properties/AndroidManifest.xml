@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="fr.pschneider.bas" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="15" />
-	<application android:allowBackup="true" android:label="Booking Star" android:icon="@drawable/icon" android:theme="@style/MainTheme">
+	<application android:allowBackup="true" android:label="Booking Star" android:icon="@drawable/icon" android:theme="@style/MainTheme" android:configChanges="navigation|screenLayout|orientation|screenSize|smallestScreenSize">
 		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBLSEDhZixwpHDsWmO2pKwgGDJReoTuQ7A" />
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		<receiver android:name="com.google.android.gms.gcm.GcmReceiver" android:exported="true" android:permission="com.google.android.c2dm.permission.SEND">
@@ -11,13 +11,13 @@
 				<category android:name="fr.pschneider.bas" />
 			</intent-filter>
 		</receiver>
-		<activity android:name="fr.pschneider.bas.MainActivity" android:label="Book a Star">
+		<activity android:name="fr.pschneider.bas.MainActivity" android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name="fr.pschneider.bas.SendFilesActivity" android:label="@string/app_name">
+		<activity android:name="fr.pschneider.bas.SendFilesActivity" android:label="@string/send_to_app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.SEND" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -63,4 +63,8 @@
 	<uses-permission android:name="android.permission.PERSISTENT_ACTIVITY" />
 	<uses-permission android:name="android.permission.READ_CONTACTS" />
 	<uses-permission android:name="android.permission.RECORD_AUDIO" />
+	<uses-permission android:name="android.permission.BLUETOOTH" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.WRITE_SOCIAL_STREAM" />
 </manifest>
