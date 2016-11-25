@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
 namespace BookAStar.Pages
 {
     using Data;
+    using EstimatePages;
     using Model;
     using Model.Workflow;
-    using System.Linq;
     using ViewModels.EstimateAndBilling;
 
     public partial class BookQueryPage : ContentPage
@@ -71,23 +72,31 @@ namespace BookAStar.Pages
                 {
                     DataManager.Current.Contacts.Merge(BookQuery.Client);
                     DataManager.Current.Contacts.SaveEntity();
-                    estimateToEdit = new Estimate()
+                    estimateToEdit = new Estimate
                     {
                         ClientId = BookQuery.Client.UserId,
                         CommandId = BookQuery.Id,
                         OwnerId = MainSettings.CurrentUser.Id,
-                        Id = 0,
-                        Description = "# **Hello Estimate!**"
+                        Id = 0
                     };
-                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit, LocalState.New);
+                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit);
                 }
                 else
-                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit, LocalState.UpToDate);
+                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit);
 
                 DataManager.Current.EstimationCache.Add(editEstimateViewModel);
             }
             App.NavigationService.NavigateTo<EditEstimatePage>(true,
              editEstimateViewModel);
+
+
+        }
+
+        private void OnViewEstimate(object sender, EventArgs ev)
+        {
+            var bookQueryViewModel = (BookQueryViewModel) BindingContext;
+            App.NavigationService.NavigateTo<ViewEstimatePage>(true,
+                new EditEstimateViewModel(bookQueryViewModel.Estimate));
         }
 
         protected override void OnSizeAllocated(double width, double height)

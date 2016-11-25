@@ -23,10 +23,9 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         /// </summary>
         /// <param name="data"></param>
         /// <param name="localState"></param>
-        public EditEstimateViewModel(Estimate data, LocalState localState )
+        public EditEstimateViewModel(Estimate data)
         {
             Data = data;
-            State = localState;
         }
 
         private void Bill_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -65,19 +64,20 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         }
 
 
-        string newDesc;
+       
         [JsonIgnore]
+        private string description;
         public string Description
         {
             get
             {
-                return Data.Description;
+                return description;
             }
 
             set
             {
-                SetProperty<string>(ref newDesc, value, "Description");
-                Data.Description = newDesc;
+                SetProperty<string>(ref description, value);
+                Data.Description = description;
             }
         }
 
@@ -87,7 +87,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         {
             get
             {
-                return Data.Title;
+                return title;
             }
 
             set
