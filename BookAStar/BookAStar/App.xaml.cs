@@ -258,11 +258,12 @@ namespace BookAStar
             masterDetail.ToolbarItems.Add(tiSetts);
             masterDetail.ToolbarItems.Add(tiPubChat);
             this.MainPage = masterDetail;
+            
             NavigationService = new NavigationService(masterDetail.Detail.Navigation);
         }
         public static Task<string> DisplayActionSheet(string title, string cancel, string destruction, string [] buttons)
         {
-            var currentPage = ((NavigationPage)Current.MainPage).CurrentPage;
+            var currentPage = CurrentApp.masterDetail.Detail.Navigation.NavigationStack.Last();
             return currentPage.DisplayActionSheet(title, cancel, destruction, buttons);
         }
 

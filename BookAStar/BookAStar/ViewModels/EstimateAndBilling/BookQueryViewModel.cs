@@ -10,6 +10,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
     using Model;
     using Model.Social;
     using Model.Workflow;
+    using System.Collections.ObjectModel;
     using System.Linq;
 
     class BookQueryViewModel : ViewModel, IBookQueryData
@@ -26,6 +27,10 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             EventDate = data.EventDate;
             Previsionnal = data.Previsionnal;
             Id = data.Id;
+            estimates = new ObservableCollection<Estimate>(
+                    DataManager.Current.Estimates.Where(
+                    e => e.Query.Id == Id
+                    ));
             this.data = data;
         }
         private BookQueryData data;
@@ -47,19 +52,17 @@ namespace BookAStar.ViewModels.EstimateAndBilling
                 return DataManager.Current.EstimationCache.LocalGet(this.Id);
             }
         }
-        public Estimate Estimate { get
-            {
-                return DataManager.Current.Estimates.FirstOrDefault(
-                    e=>e.Query.Id == Id
-                    );
+        private ObservableCollection<Estimate> estimates;
+        public ObservableCollection<Estimate> Estimates {
+            get {
+                return estimates;
             } }
-
 
         public bool EstimationDone
         {
             get
             {
-                return Estimate != null;
+                return Estimates != null && Estimates.Count>0;
             }
         }
 
