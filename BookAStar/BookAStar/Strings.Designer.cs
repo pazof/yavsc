@@ -62,6 +62,24 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Faire un devis.
+        /// </summary>
+        public static string DoEstimate {
+            get {
+                return ResourceManager.GetString("DoEstimate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Editer le devis.
+        /// </summary>
+        public static string EditEstimate {
+            get {
+                return ResourceManager.GetString("EditEstimate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Star.
         /// </summary>
         public static string FiveStars {
@@ -98,15 +116,6 @@ namespace BookAStar {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à sc.
-        /// </summary>
-        public static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Incontournable.
         /// </summary>
         public static string ThreeStars {
@@ -121,6 +130,15 @@ namespace BookAStar {
         public static string TwoStars {
             get {
                 return ResourceManager.GetString("TwoStars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Voir le devis.
+        /// </summary>
+        public static string ViewEstimate {
+            get {
+                return ResourceManager.GetString("ViewEstimate", resourceCulture);
             }
         }
     }

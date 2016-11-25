@@ -1,6 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:signature="clr-namespace:SignaturePad.Forms;assembly=SignaturePad.Forms"
+             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
              x:Class="BookAStar.ViewModels.Signing.DocSigning">
-  <Label Text="{Binding MainText}" VerticalOptions="Center" HorizontalOptions="Center" />
+  <StackLayout>
+    <views:MarkdownView x:Name="mdView"
+                              Editable="False"
+                              HorizontalOptions="FillAndExpand"
+          Markdown="{Binding Document}"
+            VerticalOptions="Start" />
+  <signature:SignaturePadView x:Name="padView"
+                            HeightRequest="150" WidthRequest="240"
+                            BackgroundColor="White"
+                            CaptionText="Caption This" CaptionTextColor="Black"
+                            ClearText="Clear Me!" ClearTextColor="Red"
+                            PromptText="Prompt Here" PromptTextColor="Red"
+                            SignatureLineColor="Aqua" StrokeColor="Black" StrokeWidth="2" />
+  <Button Clicked="OnGetStats" Text="Get Signature Stats" />
+  </StackLayout>
 </ContentPage>
