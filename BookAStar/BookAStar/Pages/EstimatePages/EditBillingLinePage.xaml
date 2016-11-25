@@ -50,9 +50,6 @@
             <behaviors:EditorMaxLengthValidator x:Name="descriptionValidator" MaxLength="512" />
           </Editor.Behaviors>
         </Editor>
-        <Image HorizontalOptions="End" Style="{Binding Source={x:Reference descriptionValidator}, 
-                                Path=IsValid, 
-                                Converter={StaticResource boolToStyleImage}}" />
       </StackLayout>
 
       <Label Text="Durée de la prestation"
@@ -77,8 +74,19 @@
       </StackLayout>
 
       <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
+      <StackLayout Orientation="Horizontal">
       <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric"
-             Style="{StaticResource BigEntry}"/>
+             Style="{StaticResource BigEntry}">
+        <Entry.Behaviors>
+          <behaviors:IntegerEntryBehavior x:Name="countValidator" Min="0" Max="10" />
+        </Entry.Behaviors>
+      </Entry>
+      <Image  x:Name="countSuccessErrorImage"
+                 Style="{Binding Source={x:Reference countValidator}, 
+                                Path=IsValid, 
+                                Converter={StaticResource boolToStyleImage}}" />
+      </StackLayout>
+      
       <Label Text="Prix unitaire" Style="{StaticResource InputLabelStyle}"></Label>
       <StackLayout Orientation="Horizontal">
         <Entry Text="{Binding UnitaryCostText, Mode=TwoWay}" Placeholder="Prix"
@@ -94,12 +102,12 @@
                                 Converter={StaticResource boolToStyleImage}}" />
       </StackLayout>
       <StackLayout Orientation="Horizontal">
-        <Button Text="Supprimer"
-                    Command="{Binding DeleteCommand}"
-                    Clicked="OnDeleteClicked"></Button>
         <Button Text="Términé"
                 Command="{Binding ValidateCommand}"
                 Clicked="OnValidateClicked"></Button>
+        <Button Text="Supprimer"
+                    Command="{Binding DeleteCommand}"
+                    Clicked="OnDeleteClicked"></Button>
       </StackLayout>
     </StackLayout>
   </ScrollView>

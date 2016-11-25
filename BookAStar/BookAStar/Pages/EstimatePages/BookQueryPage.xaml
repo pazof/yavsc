@@ -27,7 +27,13 @@
     </StackLayout>
     <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
     <maps:Map x:Name="map" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"></maps:Map>
-    <Button Text="{Binding EditEstimateButtonText}" Clicked="OnEditEstimate" VerticalOptions="End"/>
+      <StackLayout Orientation="Horizontal">
+        <Button Text="{x:Static local:Strings.ViewEstimate}" 
+                BorderRadius="50" BorderWidth="2" BorderColor="Aqua" x:Name ="btn"
+                IsEnabled="{Binding EstimationDone}"
+                Clicked="OnViewEstimate" Image="exclam.png" />
+        <Button Text="{Binding EditEstimateButtonText}" Clicked="OnEditEstimate" />
+      </StackLayout>
     </StackLayout>
   </StackLayout>
 </ContentPage>

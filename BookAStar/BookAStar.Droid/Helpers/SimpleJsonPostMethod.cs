@@ -85,6 +85,7 @@ namespace Yavsc.Helpers
 		public async Task<JsonValue> InvokeJson(object query)
         {
             JsonValue jsonDoc = null;
+
             try
             {
                 using (Stream streamQuery = request.GetRequestStream())
@@ -109,7 +110,12 @@ namespace Yavsc.Helpers
                 // TODO err logging
                 Debug.Print($"Web request failed: {request.ToString()}\n" + ex.ToString());
             }
-			return jsonDoc;
+            catch (Exception ex)
+            {
+                Debug.Print($"Web request failed: {request.ToString()}\n" + ex.ToString());
+            }
+
+            return jsonDoc;
 		}
 	}
 }

@@ -23,20 +23,20 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         /// </summary>
         /// <param name="data"></param>
         /// <param name="localState"></param>
-        public EditEstimateViewModel(Estimate data, LocalState localState )
+        public EditEstimateViewModel(Estimate data)
         {
             Data = data;
-            State = localState;
         }
 
         private void Bill_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Data.Bill = new List<BillingLine>( Bill );
             NotifyPropertyChanged("FormattedTotal");
+            NotifyPropertyChanged("Bill");
         }
         private Estimate data;
         public Estimate Data { get { return data; } set {
-                data = value;
+                SetProperty<Estimate>(ref data, value);
                 if (data.AttachedFiles == null) data.AttachedFiles = new List<string>();
                 if (data.AttachedGraphics == null) data.AttachedGraphics = new List<string>();
                 if (data.Bill == null) data.Bill = new List<BillingLine>();
@@ -44,6 +44,11 @@ namespace BookAStar.ViewModels.EstimateAndBilling
                 AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphics);
                 Bill = new ObservableCollection<BillingLine>(data.Bill);
                 Bill.CollectionChanged += Bill_CollectionChanged;
+                Title = Data.Title;
+                Description = Data.Description;
+                NotifyPropertyChanged("FormattedTotal");
+                NotifyPropertyChanged("Query");
+                NotifyPropertyChanged("CLient");
             } }
 
         [JsonIgnore]
@@ -65,19 +70,20 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         }
 
 
-        string newDesc;
+       
         [JsonIgnore]
+        private string description;
         public string Description
         {
             get
             {
-                return Data.Description;
+                return description;
             }
 
             set
             {
-                SetProperty<string>(ref newDesc, value, "Description");
-                Data.Description = newDesc;
+                SetProperty<string>(ref description, value);
+                Data.Description = description;
             }
         }
 
@@ -87,7 +93,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         {
             get
             {
-                return Data.Title;
+                return title;
             }
 
             set
