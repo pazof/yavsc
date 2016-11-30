@@ -11,6 +11,7 @@ namespace Yavsc.WebApi.Controllers
     using Models.Account;
     using ViewModels.Account;
     using Models.Auth;
+    using Yavsc.Helpers;
 
     [Authorize,Route("~/api/account")]
     public class ApiAccountController : Controller
@@ -136,6 +137,7 @@ namespace Yavsc.WebApi.Controllers
             );
             return Ok(user);
         }
+
         [HttpPut("~/api/me")]
         public async Task<IActionResult> UpdateMe(MyUpdate me)
         {
@@ -160,7 +162,18 @@ namespace Yavsc.WebApi.Controllers
             return Ok();
         }
         
-       
-
+        [HttpPost("~/api/setavatar")]
+        public async Task<IActionResult> SetAvatar()
+        {
+            var root = User.InitPostToFileSystem(null);
+            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            long usage = user.DiskUsage;
+            if (Request.Form.Files.Count!=1)
+                return new BadRequestResult();
+            var info = user.ReceiveUserFile(root, user.DiskQuota, ref usage, Request.Form.Files[0]);
+            user.DiskUsage = usage;
+            await _userManager.UpdateAsync(user);
+            return Ok(info);
+        }
     }
 }
