@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Interfaces;
 
 namespace Yavsc.Models
 {
-
+    using Interfaces;
 
     public partial class AccountBalance: IAccountBalance {
         [Key]
