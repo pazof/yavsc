@@ -38,5 +38,7 @@ namespace Yavsc.ViewModels.Manage
         public string PostalAddress { get; set; }
 
         public BankIdentity BankInfo { get; set; }
+        public long DiskQuota { get; set; }
+        public long DiskUsage { get; set; }
     }
 }
