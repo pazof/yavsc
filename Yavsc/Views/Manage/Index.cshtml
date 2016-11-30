@@ -99,6 +99,18 @@
           @(Model.Balance?.Credits ?? 0) &euro;
               [<a asp-action="Credits">@SR["Manage"]</a>]
       </dd>
+      <dt>Usage disque</dt>
+      <dd>
+          @if (Model.DiskQuota>0)
+          {
+            <text>
+                @((Model.DiskUsage/Model.DiskQuota).ToString("%#0")) : 
+            </text>
+          } 
+          <text>
+          @(Model.DiskUsage.ToString("0,#")) / @(Model.DiskQuota.ToString("0,#"))
+          </text>
+      </dd>
     </dl>
     <h4>
       <a asp-controller="Account" asp-action="Delete" >@SR["Unregister"]</a>
