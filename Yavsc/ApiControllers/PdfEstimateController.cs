@@ -79,13 +79,13 @@ namespace Yavsc.ApiControllers
         public IActionResult GetTex(long id)
         {
             Response.ContentType = "text/x-tex";
-            return ViewComponent("Estimate",new object[] { id, false });
+            return ViewComponent("Estimate",new object[] { id, "LaTeX" });
         }
 
         [HttpPost("gen/{id}")]
         public IActionResult GeneratePdf(long id)
         {
-            return ViewComponent("Estimate",new object[] { id, true } );
+            return ViewComponent("Estimate",new object[] { id, "Pdf" } );
         }
     }
 }
