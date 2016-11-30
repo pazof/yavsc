@@ -23,12 +23,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
-using Yavsc.Models;
-using Yavsc.Models.Auth;
-using Yavsc.Models.Google.Messaging;
-using Yavsc.Models.Messaging;
 namespace Yavsc.Helpers
 {
+    using Models.Auth;
+    using Models.Google.Messaging;
+    using Models.Messaging;
+    using Models;
+
     /// <summary>
     /// Google helpers.
     /// </summary>
