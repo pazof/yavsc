@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Mime;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Yavsc.Helpers;
 using Yavsc.Models;
+using Yavsc.Models.FileSystem;
 
 namespace Yavsc.ApiControllers
 {
@@ -45,20 +44,11 @@ namespace Yavsc.ApiControllers
             return Ok(files);
         }
 
-        public class FileRecievedInfo
-        {
-            public string DestDir { get; set; }
-            public string FileName { get; set; }
-            public bool Overriden { get; set; }
-        }
+
         [HttpPost]
         public IEnumerable<FileRecievedInfo> Post(string subdir="")
         {
-            var root = Path.Combine(Startup.UserFilesDirName, User.Identity.Name);
-            // TOSO secure this path  
-            // if (subdir!=null) root = Path.Combine(root, subdir);
-            var diRoot = new DirectoryInfo(root);
-            if (!diRoot.Exists) diRoot.Create();
+            var root = User.InitPostToFileSystem(subdir);
 
             var user = dbContext.Users.Single(
                 u => u.Id == User.GetUserId()
@@ -68,31 +58,8 @@ namespace Yavsc.ApiControllers
 
             foreach (var f in Request.Form.Files)
             {
-                var item = new FileRecievedInfo();
-                // form-data; name="file"; filename="capt0008.jpg"
-                ContentDisposition contentDisposition = new ContentDisposition(f.ContentDisposition);
-                item.FileName = contentDisposition.FileName;
-                var fi = new FileInfo(Path.Combine(root, item.FileName));
-                if (fi.Exists) item.Overriden = true;
-                using (var dest = fi.OpenWrite())
-                {
-                    using (var org = f.OpenReadStream())
-                    {
-                        byte[] buffer = new byte[1024];
-                        long len = org.Length;
-                        user.DiskUsage += len;
-                        if (len> (quota-usage)) throw new FSQuotaException();
-
-                        while (len>0) {
-                            int blen = len>1024?1024:(int)len;
-                            org.Read(buffer, 0, blen);
-                            dest.Write(buffer,0,blen);
-                            len-=blen;
-                        }
-                        dest.Close();
-                        org.Close();
-                    }
-                }
+                var item = user.ReceiveUserFile(root,quota,ref usage,f);
+                user.DiskUsage = usage;
                 dbContext.SaveChanges();
                 yield return item;
             };
