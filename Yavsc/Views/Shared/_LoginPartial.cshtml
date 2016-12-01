@@ -5,7 +5,9 @@
     <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="navbar-right">
         <ul class="nav navbar-nav navbar-right">
             <li>
-                <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">@SR["Hello"] @User.GetUserName()!</a>
+                <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">
+                    <img src="~/Avatars/@(User.Identity.Name).xs.png" />
+                    @SR["Hello"] @User.GetUserName()!</a>
             </li>
             <li>
                 <button type="submit" class="btn btn-link navbar-btn navbar-link" >@SR["Logout"]</button>

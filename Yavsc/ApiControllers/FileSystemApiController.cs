@@ -53,13 +53,10 @@ namespace Yavsc.ApiControllers
             var user = dbContext.Users.Single(
                 u => u.Id == User.GetUserId()
             );
-            var quota = user.DiskQuota;
-            var usage = user.DiskUsage;
 
             foreach (var f in Request.Form.Files)
             {
-                var item = user.ReceiveUserFile(root,quota,ref usage,f);
-                user.DiskUsage = usage;
+                var item = user.ReceiveUserFile(root, f);
                 dbContext.SaveChanges();
                 yield return item;
             };
