@@ -16,6 +16,7 @@
             [<a asp-controller="Manage" 
             asp-action="CHUN">@SR["Change"]</a>]
         </dd>
+
         @if (Model.Roles.Count()>0) {
         <dt>@SR["Roles"]:</dt>
         <dd> 
@@ -45,7 +46,9 @@
         </dd>
         
         <dt>@SR["Avatar"]:</dt>
-        <dd>@Model.Avatar
+        <dd>
+            <img src="~/Avatars/@(User.Identity.Name).png">
+            @Model.Avatar
             [<a asp-controller="Manage" asp-action="SetAvatar"
             >@SR[@Model.Avatar==null?"Set":"Modify"]</a>]
         </dd> 

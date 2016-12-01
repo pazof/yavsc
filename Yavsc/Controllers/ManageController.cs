@@ -483,7 +483,7 @@ namespace Yavsc.Controllers
         [HttpGet, Authorize]
         public IActionResult SetAvatar()
         {
-            throw new NotImplementedException();
+            return View();
         }
 
         [HttpGet, Authorize]

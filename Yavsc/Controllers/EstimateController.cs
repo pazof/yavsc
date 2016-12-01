@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
@@ -62,9 +62,6 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            DirectoryInfo di = new DirectoryInfo(_site.UserFiles.DirName);
-           
-
             return View(estimate);
         }
 
@@ -106,21 +103,26 @@ namespace Yavsc.Controllers
                     cmd => cmd.Id == estimate.CommandId
                 );
 
-                var userdir = Path.Combine(
-                    _site.UserFiles.DirName,
+                var billsdir = Path.Combine(
+                    _site.UserFiles.Bills,
                     perfomerProfile.Performer.UserName
                );
 
-                var fsp = new PhysicalFileProvider(userdir);
-                var billsdir = Path.Combine(userdir,
-                Constants.UserBillsFilesDir);
-
                 foreach (var gr in newGraphics)
                 {
+                    ContentDisposition contentDisposition = new ContentDisposition(gr.ContentDisposition);
                     gr.SaveAs(
                         Path.Combine(
                         Path.Combine(billsdir, estimate.Id.ToString()),
-                        gr.ContentDisposition));
+                        contentDisposition.FileName));
+                }
+                foreach (var formFile in newFiles)
+                {
+                    ContentDisposition contentDisposition = new ContentDisposition(formFile.ContentDisposition);
+                    formFile.SaveAs(
+                        Path.Combine(
+                        Path.Combine(billsdir, estimate.Id.ToString()),
+                        contentDisposition.FileName));
                 }
                 return RedirectToAction("Index");
             }

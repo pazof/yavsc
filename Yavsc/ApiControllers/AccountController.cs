@@ -138,40 +138,34 @@ namespace Yavsc.WebApi.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// Actually only updates the user's name.
+        /// </summary>
+        /// <param name="me">MyUpdate containing the new user name </param>
+        /// <returns>Ok when all is ok.</returns>
         [HttpPut("~/api/me")]
         public async Task<IActionResult> UpdateMe(MyUpdate me)
         {
-            var ko = new BadRequestObjectResult(
-                    new { error = "Specify some valid update request." });
-            if (me==null) return ko;
-            if (me.Avatar==null && me.UserName == null) return ko;
+            if (!ModelState.IsValid) return new BadRequestObjectResult(
+                    new { error = "Specify some valid user update request." });
             var user = await _userManager.FindByIdAsync(User.GetUserId());
-            
-            if (me.UserName !=null) {
-                var result = await _userManager.SetUserNameAsync(user, me.UserName);
-            }
-            if (me.Avatar!=null) {
-                user.Avatar = me.Avatar;
-                var result = await _userManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    AddErrors("Avatar", result);
-                    return new BadRequestObjectResult(ModelState);
-                }
-            }
-            return Ok();
+            var result = await _userManager.SetUserNameAsync(user, me.UserName);
+            if (result.Succeeded)
+                return Ok();
+            else return new BadRequestObjectResult(result);
         }
-        
+        /// <summary>
+        /// Updates the avatar
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("~/api/setavatar")]
         public async Task<IActionResult> SetAvatar()
         {
             var root = User.InitPostToFileSystem(null);
             var user = await _userManager.FindByIdAsync(User.GetUserId());
-            long usage = user.DiskUsage;
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            var info = user.ReceiveUserFile(root, user.DiskQuota, ref usage, Request.Form.Files[0]);
-            user.DiskUsage = usage;
+            var info = user.ReceiveAvatar(Request.Form.Files[0]);
             await _userManager.UpdateAsync(user);
             return Ok(info);
         }
