@@ -1,5 +1,6 @@
 
 
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -101,10 +102,6 @@ namespace Yavsc.Helpers
             item.FileName = user.UserName + ".png";
             var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Avatars, item.FileName);
 
-            ImageProcessor.ImageFactory f = new ImageProcessor.ImageFactory();
-
-            ImageProcessor.Web.Processors.Resize r = new ImageProcessor.Web.Processors.Resize();
-
             var fi = new FileInfo(destFileName);
             if (fi.Exists) item.Overriden = true;
             Rectangle cropRect = new Rectangle();
@@ -165,6 +162,26 @@ namespace Yavsc.Helpers
                 newBMP.Save(Path.Combine(
                     dir, xsmallname), ImageFormat.Png);
             }
+        }
+
+        public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, long estimateId, IFormFile formFile)
+        { 
+            var item = new FileRecievedInfo();
+            item.FileName = $"estimate-prosign-{estimateId}.png";
+            var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Blog, item.FileName);
+
+            var fi = new FileInfo(destFileName);
+            if (fi.Exists) item.Overriden = true;
+
+            using (var org = formFile.OpenReadStream())
+            {
+                Image i = Image.FromStream(org);
+                using (Bitmap source = new Bitmap(i))
+                {
+                    source.Save(destFileName, ImageFormat.Png);
+                }
+            }
+            throw new NotImplementedException();
         }
     }
 }

@@ -11423,6 +11423,8 @@
       "Microsoft.AspNet.OWin >= 1.0.0-rc1-final",
       "System.Json >= 4.0.20126.16343"
     ],
-    "DNX,Version=v4.5.1": []
+    "DNX,Version=v4.5.1": [
+      "fx/System.Drawing >= 4.0.0"
+    ]
   }
 }
