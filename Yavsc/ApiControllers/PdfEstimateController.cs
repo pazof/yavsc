@@ -3,7 +3,6 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System.Web.Routing;
 using Microsoft.AspNet.Mvc.ViewComponents;
-using Microsoft.AspNet.Razor;
 
 namespace Yavsc.ApiControllers
 {
@@ -14,13 +13,6 @@ namespace Yavsc.ApiControllers
     public class PdfEstimateController : Controller
     {
         ApplicationDbContext dbContext;
-        DefaultViewComponentHelper helper;
-        IViewComponentDescriptorCollectionProvider provider;
-        IViewComponentInvokerFactory factory;
-        RazorEngineHost host;
-        RazorTemplateEngine engine;
-        IViewComponentSelector selector;
-
 
         public PdfEstimateController(
             IViewComponentDescriptorCollectionProvider provider,
@@ -29,30 +21,7 @@ namespace Yavsc.ApiControllers
          ApplicationDbContext context)
         {
             
-            this.selector = selector;
-            this.provider = provider;
-            this.factory = factory;
-            helper = new DefaultViewComponentHelper(provider, selector, factory);
             dbContext = context;
-
-            var language = new CSharpRazorCodeLanguage();
-            host = new RazorEngineHost(language)
-            {
-                DefaultBaseClass = "RazorPage",
-                DefaultClassName = "Estimate",
-                DefaultNamespace = "Yavsc",
-            };
-
-            // Everyone needs the System namespace, right?
-            host.NamespaceImports.Add("System");
-            engine = new RazorTemplateEngine(host);
-
-            
-            /*
-            GeneratorResults razorResult =
-   engine.GenerateCode(
-
-   ) */
         }
 
 
