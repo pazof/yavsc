@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CancelValidation" xml:space="preserve">
+    <value>Annuler la validation</value>
+  </data>
   <data name="DoEstimate" xml:space="preserve">
     <value>Faire un devis</value>
+  </data>
+  <data name="DonotsignEstimate" xml:space="preserve">
+    <value>Valider le devis sans signer</value>
   </data>
   <data name="EditEstimate" xml:space="preserve">
     <value>Editer le devis</value>
@@ -137,6 +143,12 @@
   <data name="OneStar" xml:space="preserve">
     <value>Étoile montante</value>
   </data>
+  <data name="Sign" xml:space="preserve">
+    <value>Signer</value>
+  </data>
+  <data name="SignOrNot" xml:space="preserve">
+    <value>Signer le devis?</value>
+  </data>
   <data name="ThreeStars" xml:space="preserve">
     <value>Incontournable</value>
   </data>
@@ -144,6 +156,6 @@
     <value>À ne manquer sous aucun prétexte</value>
   </data>
   <data name="ViewEstimate" xml:space="preserve">
-    <value>Voir le devis</value>
+    <value>Voir les devis validés</value>
   </data>
 </root>
