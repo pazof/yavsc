@@ -181,6 +181,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, CommandEditHandler>();
             services.AddSingleton<IAuthorizationHandler, CommandViewHandler>();
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
+            services.AddSingleton<IAuthorizationHandler, EstimateViewHandler>();
 
             services.AddMvc(config =>
             {

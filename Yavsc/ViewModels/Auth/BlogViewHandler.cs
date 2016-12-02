@@ -8,7 +8,8 @@ namespace Yavsc.ViewModels.Auth
     {
         protected override void Handle(AuthorizationContext context, ViewRequirement requirement, Blog resource)
         {
-            if (context.User.IsInRole("Moderator"))
+            if (context.User.IsInRole(Constants.BlogModeratorGroupName)
+            || context.User.IsInRole(Constants.AdminGroupName))
                 context.Succeed(requirement);
             else if (context.User.Identity.IsAuthenticated)
             if (resource.AuthorId == context.User.GetUserId())

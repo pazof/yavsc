@@ -1,3 +1,11 @@
+
+@using Microsoft.AspNet.Identity;
+@using Microsoft.AspNet.Mvc;
+@using Microsoft.Extensions.Localization;
+@using Microsoft.AspNet.Mvc.Localization;
+@using Microsoft.AspNet.Authorization;
+@using Microsoft.Extensions.OptionsModel;
+@using System.Web.Optimization;
 @using Yavsc;
 @using Yavsc.Models;
 @using Yavsc.Models.Google;
@@ -8,13 +16,7 @@
 @using Yavsc.ViewModels.Account;
 @using Yavsc.ViewModels.Manage;
 @using Yavsc.ViewModels.Calendar;
-@using Microsoft.AspNet.Identity;
-@using Microsoft.AspNet.Mvc;
-@using Microsoft.Extensions.Localization;
-@using Microsoft.AspNet.Mvc.Localization;
-@using Microsoft.AspNet.Authorization;
-@using Microsoft.Extensions.OptionsModel;
-@using System.Web.Optimization;
+@using Yavsc.ViewModels.Auth;
 
 @inject IViewLocalizer LocString
 @addTagHelper "*, Microsoft.AspNet.Mvc.TagHelpers"

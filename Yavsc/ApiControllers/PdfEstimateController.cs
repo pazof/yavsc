@@ -2,32 +2,47 @@ using System.IO;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System.Web.Routing;
-using Microsoft.AspNet.Mvc.ViewComponents;
 
 namespace Yavsc.ApiControllers
 {
     using Models;
     using Helpers;
+    using System.Linq;
+    using Microsoft.Data.Entity;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
 
     [Route("api/pdfestimate"), Authorize]
     public class PdfEstimateController : Controller
     {
         ApplicationDbContext dbContext;
+        private IAuthorizationService authorizationService;
+
+        private ILogger logger;
 
         public PdfEstimateController(
-            IViewComponentDescriptorCollectionProvider provider,
-            IViewComponentSelector selector,
-        IViewComponentInvokerFactory factory,
+            IAuthorizationService authorizationService,
+            ILoggerFactory loggerFactory,
          ApplicationDbContext context)
         {
-            
+            this.authorizationService = authorizationService;
             dbContext = context;
+            logger = loggerFactory.CreateLogger<PdfEstimateController>();
         }
 
 
         [HttpGet("get/{id}", Name = "Get"), Authorize]
-        public IActionResult Get(long id)
+        public async Task<IActionResult> Get(long id)
         {
+            var estimate = dbContext.Estimates.Include(
+                e=>e.Query
+            ).FirstOrDefault(e=>e.Id == id);
+            logger.LogWarning($"#######ESTIMATE OWNER ID {estimate.OwnerId} ########");
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
+
             var filename = $"estimate-{id}.pdf";
 
             var cd = new System.Net.Mime.ContentDisposition
