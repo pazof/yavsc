@@ -10,6 +10,7 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.OptionsModel;
 using Yavsc.Models;
+using Yavsc.ViewModels.Auth;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 

@@ -26,6 +26,7 @@ using Microsoft.Net.Http.Headers;
 using Yavsc.Formatters;
 using Yavsc.Models;
 using Yavsc.Services;
+using Yavsc.ViewModels.Auth;
 
 namespace Yavsc
 {
