@@ -11,6 +11,7 @@ namespace Yavsc.ApiControllers
     using Microsoft.Data.Entity;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
+    using System;
 
     [Route("api/pdfestimate"), Authorize]
     public class PdfEstimateController : Controller
@@ -37,23 +38,12 @@ namespace Yavsc.ApiControllers
             var estimate = dbContext.Estimates.Include(
                 e=>e.Query
             ).FirstOrDefault(e=>e.Id == id);
-            logger.LogWarning($"#######ESTIMATE OWNER ID {estimate.OwnerId} ########");
             if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
             {
                 return new ChallengeResult();
             }
-
+ 
             var filename = $"estimate-{id}.pdf";
-
-            var cd = new System.Net.Mime.ContentDisposition
-            {
-                // for example foo.bak
-                FileName = filename,
-
-                // always prompt the user for downloading, set to true if you want 
-                // the browser to try to show the file inline
-                Inline = false,
-            };
 
             FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
             if (!fi.Exists) return Ok(new { Error = "Not generated" });
@@ -61,24 +51,49 @@ namespace Yavsc.ApiControllers
         }
 
         [HttpGet("estimate-{id}.tex", Name = "GetTex"), Authorize]
-        public IActionResult GetTex(long id)
+        public async Task<IActionResult> GetTex(long id)
         {
+            var estimate = dbContext.Estimates.Include(
+                e=>e.Query
+            ).FirstOrDefault(e=>e.Id == id);
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
             Response.ContentType = "text/x-tex";
             return ViewComponent("Estimate",new object[] { id, "LaTeX" });
         }
 
         [HttpPost("gen/{id}")]
-        public IActionResult GeneratePdf(long id)
+        public async Task<IActionResult> GeneratePdf(long id)
         {
+            var estimate = dbContext.Estimates.Include(
+                e=>e.Query
+            ).FirstOrDefault(e=>e.Id == id);
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
             return ViewComponent("Estimate",new object[] { id, "Pdf" } );
         }
 
         [HttpPost("prosign/{id}")]
-        public IActionResult ProSign(long id)
+        public async Task<IActionResult> ProSign(long id)
         {
+            var estimate = dbContext.Estimates.Include(
+                e=>e.Query
+            ).FirstOrDefault(e=>e.Id == id);
+            logger.LogWarning("I Was here");
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            return Ok (User.ReceiveProSignature(id,Request.Form.Files[0]));
+            User.ReceiveProSignature(id,Request.Form.Files[0]);
+            estimate.ProviderValidationDate = DateTime.Now;
+            dbContext.SaveChanges();
+            return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate });
         }
     }
 }
