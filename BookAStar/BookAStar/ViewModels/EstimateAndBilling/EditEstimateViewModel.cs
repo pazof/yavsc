@@ -5,6 +5,7 @@ using BookAStar.Model;
 using Xamarin.Forms;
 using BookAStar.Data;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace BookAStar.ViewModels.EstimateAndBilling
 {
@@ -17,6 +18,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         {
 
         }
+
         /// <summary>
         /// Builds a new view model on estimate,
         /// sets <c>Data</c> with given value parameter
@@ -28,12 +30,18 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             Data = data;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Bill_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Data.Bill = new List<BillingLine>( Bill );
+            Data.Bill = Bill.Select(l => l.Data).ToList();
             NotifyPropertyChanged("FormattedTotal");
             NotifyPropertyChanged("Bill");
         }
+
         private Estimate data;
         public Estimate Data { get { return data; } set {
                 SetProperty<Estimate>(ref data, value);
@@ -42,7 +50,9 @@ namespace BookAStar.ViewModels.EstimateAndBilling
                 if (data.Bill == null) data.Bill = new List<BillingLine>();
                 AttachedFiles = new ObservableCollection<string>(data.AttachedFiles);
                 AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphics);
-                Bill = new ObservableCollection<BillingLine>(data.Bill);
+                Bill = new ObservableCollection<BillingLineViewModel>(data.Bill.Select(
+                    l => new BillingLineViewModel(l)
+                    ));
                 Bill.CollectionChanged += Bill_CollectionChanged;
                 Title = Data.Title;
                 Description = Data.Description;
@@ -64,7 +74,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         }
 
         [JsonIgnore]
-        public ObservableCollection<BillingLine> Bill
+        public ObservableCollection<BillingLineViewModel> Bill
         {
             get; protected set;
         }

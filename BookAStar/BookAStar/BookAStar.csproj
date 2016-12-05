@@ -44,14 +44,17 @@
     <Compile Include="Attributes\DisplayAttribute.cs" />
     <Compile Include="Behaviors\EmailValidatorBehavior.cs" />
     <Compile Include="Behaviors\IntegerEntryBehavior.cs" />
-    <Compile Include="Behaviors\MaxLengthValidator.cs" />
+    <Compile Include="Behaviors\EditorMaxLengthValidator.cs" />
     <Compile Include="Behaviors\DecimalValidatorBehavior.cs" />
+    <Compile Include="Behaviors\MarkdownViewLengthValidator.cs" />
     <Compile Include="Behaviors\PickerBehavior.cs" />
+    <Compile Include="Behaviors\RegexValidatorBehavior.cs" />
     <Compile Include="Behaviors\StarBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\NotValueConverter.cs" />
     <Compile Include="Converters\SignalRConnectionStateToObject.cs" />
-    <Compile Include="Data\LocalState.cs" />
+    <Compile Include="Data\ApiCallFailedException.cs" />
+    <Compile Include="Data\EstimateEntity.cs" />
     <Compile Include="Data\NonCrUD\RemoteFiles.cs" />
     <Compile Include="Model\FileSystem\UserDirectoryInfo.cs" />
     <Compile Include="Model\FileSystem\UserFileInfo.cs" />
@@ -59,6 +62,9 @@
     <Compile Include="Model\Social\Messaging\ChatStatus.cs" />
     <Compile Include="Model\Social\Messaging\PrivateMessage.cs" />
     <Compile Include="Model\UI\PageState.cs" />
+    <Compile Include="Pages\EstimatePages\EstimateSigningPage.xaml.cs">
+      <DependentUpon>EstimateSigningPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\EstimatePages\EstimatesClientPage.xaml.cs">
       <DependentUpon>EstimatesClientPage.xaml</DependentUpon>
     </Compile>
@@ -89,7 +95,7 @@
     <Compile Include="Pages\DocSigning.xaml.cs">
       <DependentUpon>DocSigning.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\Signing\DocSigningViewModel.cs" />
+    <Compile Include="ViewModels\Signing\EstimateSigningViewModel.cs" />
     <Compile Include="ViewModels\Signing\SignaturePadConfigViewModel.cs" />
     <Compile Include="ViewModels\UserProfile\UserProfileViewModel.cs" />
     <Compile Include="ViewModels\UserProfile\DirectoryInfoViewModel.cs" />
@@ -271,6 +277,12 @@
     </Reference>
     <Reference Include="Plugin.Connectivity.Abstractions">
       <HintPath>..\..\packages\Xam.Plugin.Connectivity.2.2.12\lib\MonoAndroid10\Plugin.Connectivity.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media">
+      <HintPath>..\..\packages\Xam.Plugin.Media.2.3.0\lib\portable-net45+wp8+wpa81+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Plugin.Media.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media.Abstractions">
+      <HintPath>..\..\packages\Xam.Plugin.Media.2.3.0\lib\portable-net45+wp8+wpa81+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Plugin.Media.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Plugin.Settings, Version=2.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xam.Plugins.Settings.2.5.1.0\lib\portable-net45+wp80+win8+wpa81\Plugin.Settings.dll</HintPath>
@@ -474,6 +486,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\EstimatePages\ViewEstimatePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\EstimatePages\EstimateSigningPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

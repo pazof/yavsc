@@ -9,9 +9,9 @@ using Xamarin.Forms;
 
 namespace BookAStar.ViewModels.Signing
 {
-    public partial class DocSigning : ContentPage
+    public partial class Signing : ContentPage
     {
-        public DocSigning()
+        public Signing()
         {
             InitializeComponent();
         }

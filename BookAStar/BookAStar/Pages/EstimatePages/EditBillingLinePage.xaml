@@ -45,9 +45,9 @@
       <Label Text="Description de la ligne de facture"
              Style="{StaticResource InputLabelStyle}"></Label>
       <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand">
-        <Editor  HorizontalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}">
+        <Editor HorizontalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}">
           <Editor.Behaviors>
-            <behaviors:EditorMaxLengthValidator x:Name="descriptionValidator" MaxLength="512" />
+            <behaviors:EditorMaxLengthValidator x:Name="descriptionLenValidator" MaxLength="512" MinLength="3" />
           </Editor.Behaviors>
         </Editor>
       </StackLayout>

@@ -13,7 +13,7 @@
     {
         // TODO estimatetemplate rating service product tag   
         public RemoteEntityRO<BookQueryData, long> BookQueries { get; set; }
-        public RemoteEntity<Estimate, long> Estimates { get; set; }
+        public EstimateEntity Estimates { get; set; }
         public RemoteEntity<Blog, long> Blogspot { get; set; }
         internal RemoteFilesEntity RemoteFiles { get; set; }
 
@@ -41,7 +41,7 @@
         public DataManager()
         {
             BookQueries = new RemoteEntityRO<BookQueryData, long>("bookquery", q => q.Id);
-            Estimates = new RemoteEntity<Estimate, long>("estimate", x => x.Id);
+            Estimates = new EstimateEntity();
             Blogspot = new RemoteEntity<Blog, long>("blog", x=>x.Id);
 
             Contacts = new LocalEntity<ClientProviderInfo, string>(c => c.UserId);

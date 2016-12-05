@@ -4,8 +4,10 @@ using Xamarin.Forms;
 namespace BookAStar.Pages
 {
     using Data;
+    using EstimatePages;
     using Model.Workflow;
     using ViewModels.EstimateAndBilling;
+    using ViewModels.Signing;
 
     public partial class EditEstimatePage : ContentPage
     {
@@ -46,54 +48,46 @@ namespace BookAStar.Pages
             var bill = ((EditEstimateViewModel)BindingContext).Bill;
             var lineView = new BillingLineViewModel(com)
             { ValidateCommand = new Command(() => {
-                bill.Add(com);
+                bill.Add(new BillingLineViewModel(com));
                 DataManager.Current.EstimationCache.SaveEntity();
             })};
-            lineView.PropertyChanged += LineView_PropertyChanged;
             App.NavigationService.NavigateTo<EditBillingLinePage>(
                 true, lineView );
         }
         protected void OnEditLine(object sender, ItemTappedEventArgs e)
         {
-            var line = (BillingLine)e.Item;
-            var bill = ((EditEstimateViewModel)BindingContext).Bill;
-            var lineView = new BillingLineViewModel(line)
+            var line = (BillingLineViewModel)e.Item;
+            line.ValidateCommand = new Command(() =>
             {
-                ValidateCommand = new Command(() => {
-                    DataManager.Current.EstimationCache.SaveEntity();
-                })
-            };
-            lineView.PropertyChanged += LineView_PropertyChanged;
+                DataManager.Current.EstimationCache.SaveEntity();
+            });
 
-            lineView.PropertyChanged += LineView_PropertyChanged;
             App.NavigationService.NavigateTo<EditBillingLinePage>(
-                true, lineView );
+                true, line );
         }
 
-
-        private void LineView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected async void OnEstimateValidated(object sender, EventArgs e)
         {
-            DataManager.Current.EstimationCache.SaveEntity();
-        }
-
-        protected void OnEstimateValidated(object sender, EventArgs e)
-        {
-            var evm = (EditEstimateViewModel)BindingContext;
-            if (evm.Data.Id == 0)
+            var thisPage = this;
+            var evm = (EditEstimateViewModel) BindingContext;
+            var cmd = new Command<bool>( async (validated) =>
             {
-                DataManager.Current.Estimates.Create(evm.Data);
-                // we have to manually add this item in our local collection,
-                // since we could prefer to update the whole collection
-                // from server, or whatever other scenario
-                DataManager.Current.Estimates.Add(evm.Data);
-            } else
+                if (validated) { 
+                    DataManager.Current.EstimationCache.Remove(evm);
+                    DataManager.Current.EstimationCache.SaveEntity();
+                }
+                await thisPage.Navigation.PopAsync();
+            });
+            var response = await App.DisplayActionSheet(Strings.SignOrNot, Strings.DonotsignEstimate, Strings.CancelValidation, new string[] { Strings.Sign  });
+            if (response == Strings.Sign)
             {
-                DataManager.Current.Estimates.Update(evm.Data);
+                App.NavigationService.NavigateTo<EstimateSigningPage>(true, 
+                    new EstimateSigningViewModel(evm.Data) { ValidationCommand = cmd });
             }
-            DataManager.Current.Estimates.SaveEntity();
-            DataManager.Current.EstimationCache.Remove(evm);
-            DataManager.Current.EstimationCache.SaveEntity();
-            Navigation.PopAsync();
+            else if (response == Strings.CancelValidation)
+                return;
+            else cmd.Execute(true);
+            
         }
     }
 }
