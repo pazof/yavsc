@@ -85,5 +85,7 @@ namespace Yavsc.Models
 
         public BankIdentity BankInfo { get; set; }
         
+        public long DiskQuota { get; set; } = 512*1024*1024;
+        public long DiskUsage { get; set; } = 0;
     }
 }

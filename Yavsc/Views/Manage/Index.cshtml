@@ -16,6 +16,7 @@
             [<a asp-controller="Manage" 
             asp-action="CHUN">@SR["Change"]</a>]
         </dd>
+
         @if (Model.Roles.Count()>0) {
         <dt>@SR["Roles"]:</dt>
         <dd> 
@@ -45,7 +46,9 @@
         </dd>
         
         <dt>@SR["Avatar"]:</dt>
-        <dd>@Model.Avatar
+        <dd>
+            <img src="~/Avatars/@(User.Identity.Name).png">
+            @Model.Avatar
             [<a asp-controller="Manage" asp-action="SetAvatar"
             >@SR[@Model.Avatar==null?"Set":"Modify"]</a>]
         </dd> 
@@ -98,6 +101,18 @@
       <dd> 
           @(Model.Balance?.Credits ?? 0) &euro;
               [<a asp-action="Credits">@SR["Manage"]</a>]
+      </dd>
+      <dt>Usage disque</dt>
+      <dd>
+          @if (Model.DiskQuota>0)
+          {
+            <text>
+                @((Model.DiskUsage/Model.DiskQuota).ToString("%#0")) : 
+            </text>
+          } 
+          <text>
+          @(Model.DiskUsage.ToString("0,#")) / @(Model.DiskQuota.ToString("0,#"))
+          </text>
       </dd>
     </dl>
     <h4>

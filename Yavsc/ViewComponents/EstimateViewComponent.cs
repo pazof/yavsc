@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
@@ -16,9 +17,15 @@ namespace Yavsc.ViewComponents
         {
             this.dbContext = dbContext;
         }
-        public IViewComponentResult InvokeAsync(long id, bool toPdf = false)
+        public async Task<IViewComponentResult> InvokeAsync(long id)
         {
-            Estimate estimate =
+            return await InvokeAsync(id,"Html");
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync(long id, string outputFormat ="Html")
+        {
+            return await Task.Run( ()=> {
+             Estimate estimate =
             dbContext.Estimates.Include(x => x.Query)
                    .Include(x => x.Query.Client)
                    .Include(x => x.Query.PerformerProfile)
@@ -27,11 +34,15 @@ namespace Yavsc.ViewComponents
                    .Include(e => e.Bill).FirstOrDefault(x => x.Id == id);
             if (estimate == null)
                 throw new Exception("No data");
-            if (toPdf)
+
+            if (outputFormat == "LaTeX") {
+                return this.View("Estimate_tex", estimate);
+            }
+            else if (outputFormat == "Pdf") 
             {
+                // Sorry for this code
                 string tex = null;
                 var oldWriter = ViewComponentContext.ViewContext.Writer;
-
                 using (var writer = new StringWriter())
                 {
                     this.ViewComponentContext.ViewContext.Writer = writer;
@@ -50,7 +61,9 @@ namespace Yavsc.ViewComponents
                             BaseFileName = $"estimate-{id}"
                         } );
             }
-            return this.View("Estimate_tex", estimate);
+            return View("Default",estimate);
+                }
+            );
         }
 
     }

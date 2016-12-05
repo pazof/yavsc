@@ -23,10 +23,10 @@ namespace Yavsc
             StarHunterGroupName = "StarHunter",
             BlogModeratorGroupName = "Moderator",
             FrontOfficeGroupName = "FrontOffice",
-            UserBillsFilesDir= "Bills",
-            UserFilesDir = "UserFiles",
             GCMNotificationUrl = "https://gcm-http.googleapis.com/gcm/send",
-        	KeyProtectorPurpose = "OAuth.AspNet.AuthServer"; 
+        	KeyProtectorPurpose = "OAuth.AspNet.AuthServer",
+            UserFilesPath = "/UserFiles",
+            AvatarsPath = "/Avatars" ; 
         public static readonly Scope[] SiteScopes = { 
             new Scope { Id = "profile", Description = "Your profile informations" },  
             new Scope { Id = "book" , Description ="Your booking interface"},  
