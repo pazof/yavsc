@@ -6,13 +6,6 @@ namespace BookAStar.Data.NonCrUD
 {
     using Helpers;
     using Model.FileSystem;
-    using System.Linq;
-    /*
-    public class DirectoryEntryChangingEvent : EventArgs
-    {
-        public UserDirectoryInfo OldItem { get; set; }
-        public UserDirectoryInfo NewItem { get; set; }
-    }*/
 
     public class RemoteFilesEntity : RemoteEntity<UserDirectoryInfo, FileAddress>
     {

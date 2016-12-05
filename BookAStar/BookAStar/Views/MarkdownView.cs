@@ -26,13 +26,14 @@ namespace BookAStar.Views
             }
             set
             {
+                var oldValue = Markdown;
                 if (Markdown != value)
                 {
                     SetValue(MarkdownProperty, value);
                     
                     if (Modified != null)
                     {
-                        Modified.Invoke(this, new EventArgs());
+                        Modified.Invoke(this, new TextChangedEventArgs(oldValue, Markdown));
                     }
                 }
             }
@@ -46,7 +47,7 @@ namespace BookAStar.Views
             set { SetValue (EditableProperty, value); }
         }
         
-        public event EventHandler<EventArgs> Modified;
+        public event EventHandler<TextChangedEventArgs> Modified;
         
         protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
         {

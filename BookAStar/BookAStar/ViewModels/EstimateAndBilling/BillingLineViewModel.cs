@@ -13,13 +13,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
 
         public BillingLineViewModel(BillingLine data)
         {
-            this.data = data ?? new BillingLine();
-            // sets durationValue & durationUnit
-            count = data.Count;
-            description = data.Description;
-
-            Duration = data.Duration;
-            unitaryCostText = data.UnitaryCost.ToString("G", CultureInfo.InvariantCulture);
+            this.Data = data;
         }
 
         private int count;
@@ -48,6 +42,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             {
                 SetProperty<string>(ref description, value);
                 data.Description = description;
+                IsValid = !string.IsNullOrWhiteSpace(description);
             }
         }
         decimal unitaryCost;
@@ -166,5 +161,26 @@ pour décrire la quantité de travail associée à ce type de service")]
             }
         }
 
+        public BillingLine Data
+        {
+            get
+            {
+                return data;
+            }
+
+            set
+            {
+                SetProperty<BillingLine>(ref data, value);
+                if (data != null)
+                {
+                    // sets durationValue & durationUnit
+                    count = data.Count;
+                    description = data.Description;
+
+                    Duration = data.Duration;
+                    unitaryCostText = data.UnitaryCost.ToString("G", CultureInfo.InvariantCulture);
+                }
+            }
+        }
     }
 }

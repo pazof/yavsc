@@ -27,6 +27,7 @@ namespace BookAStar
     using ViewModels.UserProfile;
     using Pages.UserProfile;
     using ViewModels.EstimateAndBilling;
+    using Pages.EstimatePages;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -150,6 +151,7 @@ namespace BookAStar
             ViewFactory.Register<EditEstimatePage, EditEstimateViewModel>();
             ViewFactory.Register<UserFiles, DirectoryInfoViewModel>();
             ViewFactory.Register<UserProfilePage, UserProfileViewModel>();
+            ViewFactory.Register<EstimateSigningPage, EditEstimateViewModel>();
             ConfigManager = new GenericConfigSettingsMgr(s =>
            MainSettings.AppSettings.GetValueOrDefault<string>(s, MainSettings.SettingsDefault), null);
         }

@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlreadyExecuting" xml:space="preserve">
+    <value>Une execution est déjà en cours</value>
+  </data>
   <data name="CancelValidation" xml:space="preserve">
     <value>Annuler la validation</value>
+  </data>
+  <data name="CreationFailed" xml:space="preserve">
+    <value>La création a échoué, contenu envoyé: {stringContent} @ Uri: {ControllerUri.AbsoluteUri}: Erreur : {errcontent}</value>
   </data>
   <data name="DoEstimate" xml:space="preserve">
     <value>Faire un devis</value>
@@ -128,6 +134,9 @@
   </data>
   <data name="EditEstimate" xml:space="preserve">
     <value>Editer le devis</value>
+  </data>
+  <data name="ENoRemoteEntity" xml:space="preserve">
+    <value>Erreur d'accès aux données distantes</value>
   </data>
   <data name="FiveStars" xml:space="preserve">
     <value>Star</value>
@@ -143,6 +152,12 @@
   <data name="OneStar" xml:space="preserve">
     <value>Étoile montante</value>
   </data>
+  <data name="OperationPending" xml:space="preserve">
+    <value>Opération en cours</value>
+  </data>
+  <data name="oups" xml:space="preserve">
+    <value>oups.</value>
+  </data>
   <data name="Sign" xml:space="preserve">
     <value>Signer</value>
   </data>
@@ -157,5 +172,8 @@
   </data>
   <data name="ViewEstimate" xml:space="preserve">
     <value>Voir les devis validés</value>
+  </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>La mise à jour a échoué.</value>
   </data>
 </root>

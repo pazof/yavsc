@@ -62,6 +62,33 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Une execution est déjà en cours.
+        /// </summary>
+        public static string AlreadyExecuting {
+            get {
+                return ResourceManager.GetString("AlreadyExecuting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Annuler la validation.
+        /// </summary>
+        public static string CancelValidation {
+            get {
+                return ResourceManager.GetString("CancelValidation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à La création a échoué, contenu envoyé: {stringContent} @ Uri: {ControllerUri.AbsoluteUri}: Erreur : {errcontent}.
+        /// </summary>
+        public static string CreationFailed {
+            get {
+                return ResourceManager.GetString("CreationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Faire un devis.
         /// </summary>
         public static string DoEstimate {
@@ -71,11 +98,29 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Valider le devis sans signer.
+        /// </summary>
+        public static string DonotsignEstimate {
+            get {
+                return ResourceManager.GetString("DonotsignEstimate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Editer le devis.
         /// </summary>
         public static string EditEstimate {
             get {
                 return ResourceManager.GetString("EditEstimate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Erreur d&apos;accès aux données distantes.
+        /// </summary>
+        public static string ENoRemoteEntity {
+            get {
+                return ResourceManager.GetString("ENoRemoteEntity", resourceCulture);
             }
         }
         
@@ -116,6 +161,42 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Opération en cours.
+        /// </summary>
+        public static string OperationPending {
+            get {
+                return ResourceManager.GetString("OperationPending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à oups..
+        /// </summary>
+        public static string oups {
+            get {
+                return ResourceManager.GetString("oups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Signer.
+        /// </summary>
+        public static string Sign {
+            get {
+                return ResourceManager.GetString("Sign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Signer le devis?.
+        /// </summary>
+        public static string SignOrNot {
+            get {
+                return ResourceManager.GetString("SignOrNot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Incontournable.
         /// </summary>
         public static string ThreeStars {
@@ -134,7 +215,16 @@ namespace BookAStar {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Voir le devis.
+        ///   Recherche une chaîne localisée semblable à La mise à jour a échoué..
+        /// </summary>
+        public static string UpdateFailed {
+            get {
+                return ResourceManager.GetString("UpdateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Voir les devis validés.
         /// </summary>
         public static string ViewEstimate {
             get {
