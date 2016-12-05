@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Graphics;
 
 namespace BookAStar.Droid.Markdown
 {
@@ -17,6 +18,7 @@ namespace BookAStar.Droid.Markdown
         protected static MarkdownDeep.Markdown markdown = new MarkdownDeep.Markdown();
         public string Content { get; set; }
         public bool Editable { get; set; }
+
         public string GetHtml()
         {
             return markdown.Transform(Content);

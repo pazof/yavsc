@@ -14,16 +14,43 @@ namespace BookAStar.ViewModels
     /// </summary>
     public class EditingViewModel: ViewModel
     {
-        private LocalState state;
-        public LocalState State {
+        bool existsRemotely;
+        public bool ExistsRemotely
+        {
             get
             {
-                return state;
+                return existsRemotely;
             }
             set
             {
-                base.SetProperty<LocalState>(ref state, value);
+                base.SetProperty<bool>(ref existsRemotely, value);
             }
-        } 
+        }
+
+        bool isValid;
+        public bool IsValid
+        {
+            get
+            {
+                return isValid;
+            }
+            set
+            {
+                base.SetProperty<bool>(ref isValid, value);
+            }
+        }
+
+        bool isDirty;
+        public bool IsDirty
+        {
+            get
+            {
+                return isDirty;
+            }
+            set
+            {
+                base.SetProperty<bool>(ref isDirty, value);
+            }
+        }
     }
 }

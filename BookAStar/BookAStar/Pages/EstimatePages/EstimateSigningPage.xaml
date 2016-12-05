@@ -1,23 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BookAStar.Pages.EstimatePages.ViewEstimatePage"
+             xmlns:signature="clr-namespace:SignaturePad.Forms;assembly=SignaturePad.Forms"
              xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
-             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
-             Style="{StaticResource PageStyle}">
-  <ContentPage.Resources>
-    <ResourceDictionary>
-      <Style TargetType="Label">
-        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
-      </Style>
-      <Style TargetType="Button">
-        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
-      </Style>
-    </ResourceDictionary>
-  </ContentPage.Resources>
+             x:Class="BookAStar.Pages.EstimatePages.EstimateSigningPage">
+
+
   <ContentPage.Content>
-    <ScrollView>
       <StackLayout Padding="10,10,10,10" x:Name="mainLayout">
+    <ScrollView>
+    <StackLayout>
         <Grid MinimumHeightRequest="12">
           <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -33,7 +25,8 @@
         </Grid>
 
         <Label Text="{Binding Title}" />
-        <views:MarkdownView x:Name="mdview"
+
+        <views:MarkdownView x:Name="mdview" 
            HorizontalOptions="FillAndExpand"
     Markdown="{Binding Description}"
      />
@@ -70,7 +63,18 @@
           </ListView.ItemTemplate>
         </ListView>
         <Label FormattedText="{Binding FormattedTotal}"/>
+</StackLayout>  
+    </ScrollView> 
+         <signature:SignaturePadView x:Name="padView"
+                                    VerticalOptions="FillAndExpand"
+                                    HorizontalOptions="FillAndExpand"
+                          BackgroundColor="White"
+                          CaptionText="Caption This" CaptionTextColor="Black"
+                          ClearText="Clear Me!" ClearTextColor="Red"
+                          PromptText="Prompt Here" PromptTextColor="Red"
+                          SignatureLineColor="Aqua" StrokeColor="Black" StrokeWidth="2" />
+        <Button Clicked="OnValidate" Text="Valider cette signature" x:Name="btnValidate" />
+       
       </StackLayout>
-    </ScrollView>
   </ContentPage.Content>
 </ContentPage>

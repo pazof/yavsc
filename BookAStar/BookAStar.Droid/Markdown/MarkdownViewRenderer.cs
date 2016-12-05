@@ -55,10 +55,14 @@ namespace BookAStar.Droid
             {
                 // Subscribe
                 editorTemplate.Model = new Markdown.MarkdownViewModel
-                { Content = e.NewElement.Markdown, Editable = e.NewElement.Editable };
+                {
+                    Content = e.NewElement.Markdown, Editable = e.NewElement.Editable
+                };
                 var html = editorTemplate.GenerateString();
                 EditorView.LoadDataWithBaseURL("file:///android_asset/",
                 html, "text/html", "utf-8", null);
+                EditorView.SetBackgroundColor(e.NewElement.BackgroundColor.ToAndroid());
+                
             }
         }
 
