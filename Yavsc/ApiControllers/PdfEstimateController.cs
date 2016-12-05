@@ -8,6 +8,7 @@ using Microsoft.AspNet.Razor;
 namespace Yavsc.ApiControllers
 {
     using Models;
+    using Helpers;
 
     [Route("api/pdfestimate"), Authorize]
     public class PdfEstimateController : Controller
@@ -79,13 +80,21 @@ namespace Yavsc.ApiControllers
         public IActionResult GetTex(long id)
         {
             Response.ContentType = "text/x-tex";
-            return ViewComponent("Estimate",new object[] { id, false });
+            return ViewComponent("Estimate",new object[] { id, "LaTeX" });
         }
 
         [HttpPost("gen/{id}")]
         public IActionResult GeneratePdf(long id)
         {
-            return ViewComponent("Estimate",new object[] { id, true } );
+            return ViewComponent("Estimate",new object[] { id, "Pdf" } );
+        }
+
+        [HttpPost("prosign/{id}")]
+        public IActionResult ProSign(long id)
+        {
+            if (Request.Form.Files.Count!=1)
+                return new BadRequestResult();
+            return Ok (User.ReceiveProSignature(id,Request.Form.Files[0]));
         }
     }
 }

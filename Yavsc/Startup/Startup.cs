@@ -33,6 +33,7 @@ namespace Yavsc
     {
         public static string ConnectionString { get; private set; }
         public static string UserBillsDirName { private set; get; }
+        public static string AvatarsDirName { private set; get; }
         public static string Authority { get; private set; }
         public static string Audience { get; private set; }
         public static SiteSettings SiteSetup { get; private set; }
@@ -229,8 +230,8 @@ namespace Yavsc
          ILoggerFactory loggerFactory)
         {
             SiteSetup = siteSettings.Value;
-            Startup.UserFilesDirName = siteSettings.Value.UserFiles.DirName;
-            Startup.UserBillsDirName = siteSettings.Value.UserFiles.Bills;
+            Startup.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
+            Startup.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
 
             // TODO implement an installation & upgrade procedure
             // Create required directories

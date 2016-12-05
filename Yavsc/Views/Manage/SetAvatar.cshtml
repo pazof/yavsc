@@ -1,0 +1,32 @@
+@model PerformerProfile 
+@{ ViewData["Title"] = SR["Edit your avatar"]; } 
+@section header{
+<link href="~/css/dropzone.css" rel="stylesheet"> 
+} 
+@section scripts{
+<script src="~/js/dropzone.js"></script> 
+<script>
+$(document).ready(function() {
+    Dropzone.options.postavatar= {
+        maxFilesize: 2, // MB
+        autoProcessQueue: true,
+        accept: function(file, done) {
+            if (file.name == "justinbieber.jpg") {
+                done("Naha, you don't.");
+            }
+            else { done(); }
+        },
+        url: "/api/setavatar"
+        };
+  });
+</script>
+}
+<img src="~/Avatars/@(User.Identity.Name).png">
+
+<form id="postavatar" class="dropzone" method="post" enctype="multipart/form-data">
+    <div class="fallback">
+        <input name="Avatar" type="file" id="Avatar" />
+    </div>
+
+    @Html.AntiForgeryToken()
+</form>

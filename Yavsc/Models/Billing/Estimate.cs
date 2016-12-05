@@ -68,9 +68,6 @@ namespace Yavsc.Models.Billing
         {
             get; set;
         }
-
-        public Byte [] ProviderSignature { get; set; }
-        public Byte [] ClientSignature { get; set; }
         public DateTime ProviderValidationDate { get; set; }
         public DateTime ClientValidationDate { get; set; }
 

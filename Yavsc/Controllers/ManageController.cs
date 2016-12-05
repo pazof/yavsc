@@ -106,7 +106,9 @@ namespace Yavsc.Controllers
                 PostalAddress = user.PostalAddress?.Address,
                 FullName = user.FullName,
                 Avatar = user.Avatar,
-                BankInfo = user.BankInfo
+                BankInfo = user.BankInfo,
+                DiskUsage = user.DiskUsage,
+                DiskQuota = user.DiskQuota
             };
             if (_dbContext.Performers.Any(x => x.PerformerId == user.Id))
             {
@@ -481,7 +483,7 @@ namespace Yavsc.Controllers
         [HttpGet, Authorize]
         public IActionResult SetAvatar()
         {
-            throw new NotImplementedException();
+            return View();
         }
 
         [HttpGet, Authorize]

@@ -1,0 +1,11 @@
+
+@model Estimate
+
+<a href="~/api/pdfestimate/estimate-@(Model.Id).tex" >Export au format LaTeX</a>
+
+
+<form action="~/api/pdfestimate/gen/@Model.Id" method="POST">
+    <input type="submit" value="Générer le Pdf"/>
+</form>
+
+<a href="~/api/pdfestimate/get/@(Model.Id)" >Télécharger le document généré</a>

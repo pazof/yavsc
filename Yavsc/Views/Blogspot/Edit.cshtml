@@ -75,6 +75,7 @@ editorcontenu.on('text-change',function(delta,source){
     }
 });
 
+
  $('#contentcnt').focus(function(){
     $('#contentbar').removeClass('hidden');
     $('#Titletoolbar').addClass('hidden');
@@ -89,7 +90,7 @@ editorcontenu.on('text-change',function(delta,source){
     }
     else { done(); }
   },
-  url: "/UserFiles/Create?PostId=@Model.Id"
+  url: "/api/fs"
 };
 
   });
@@ -187,14 +188,9 @@ editorcontenu.on('text-change',function(delta,source){
 <div >
     <form id="postfiles" class="dropzone" method="post" enctype="multipart/form-data">
   <div class="fallback">
-    <input name="File[]" type="file"/>
+    <input name="File[]" type="file" id="filesinput"/>
   </div>
     <input type="hidden" name="postId" value="@Model.Id" />
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="button" value="Upload" class="btn btn-default" />
-            </div>
-        </div>
         @Html.AntiForgeryToken()
     </form>
    </div>
