@@ -1,6 +1,5 @@
 
 
-using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -168,7 +167,7 @@ namespace Yavsc.Helpers
         { 
             var item = new FileRecievedInfo();
             item.FileName = $"estimate-prosign-{estimateId}.png";
-            var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Blog, item.FileName);
+            var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Bills, item.FileName);
 
             var fi = new FileInfo(destFileName);
             if (fi.Exists) item.Overriden = true;
@@ -181,7 +180,7 @@ namespace Yavsc.Helpers
                     source.Save(destFileName, ImageFormat.Png);
                 }
             }
-            throw new NotImplementedException();
+            return item;
         }
     }
 }
