@@ -77,9 +77,14 @@ namespace BookAStar.Model.Workflow
                 return Bill?.Aggregate((decimal)0, (t, l) => t + l.Count * l.UnitaryCost) ?? (decimal)0;
             }
         }
-
-        public DateTime LatestValidationDate { get; set; }
+        /// <summary>
+        /// This validation comes from the provider.
+        /// As long as it's an estimate, no client validation
+        /// is formaly needed 
+        /// </summary>
+        public DateTime ProviderValidationDate { get; set; }
 
         public DateTime ClientApprouvalDate { get; set; }
+
     }
 }

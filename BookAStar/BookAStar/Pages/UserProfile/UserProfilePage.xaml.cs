@@ -1,5 +1,7 @@
 ﻿
 using BookAStar.ViewModels.UserProfile;
+using Plugin.Media;
+using Plugin.Media.Abstractions;
 using System;
 
 using Xamarin.Forms;
@@ -14,9 +16,31 @@ namespace BookAStar.Pages.UserProfile
             AvatarButton.Clicked += AvatarButton_Clicked;
         }
 
-        private void AvatarButton_Clicked (object sender, EventArgs e)
+        private async void AvatarButton_Clicked (object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
+            {
+                DisplayAlert("No Camera", ":( No camera avaialble.", "OK");
+                return;
+            }
+
+            var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+            {
+                Directory = "Sample",
+                Name = "test.jpg"
+            });
+
+            if (file == null)
+                return;
+
+            await DisplayAlert("File Location", file.Path, "OK");
+            AvatarButton.Image.File = file.Path;
+            /* ImageSource.FromStream(() =>
+            {
+                var stream = file.GetStream();
+                file.Dispose();
+                return stream;
+            }); */
         }
 
         public void OnManageFiles(object sender, EventArgs e)
