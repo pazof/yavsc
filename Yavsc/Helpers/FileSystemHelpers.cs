@@ -169,11 +169,10 @@ namespace Yavsc.Helpers
                     dir, xsmallname), ImageFormat.Png);
             }
         }
-
-        public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, long estimateId, IFormFile formFile)
+        public static FileRecievedInfo ReceiveSignature(this ClaimsPrincipal user, long estimateId, IFormFile formFile, string signtype)
         { 
             var item = new FileRecievedInfo();
-            item.FileName = $"estimate-prosign-{estimateId}.png";
+            item.FileName = $"estimate-{signtype}sign-{estimateId}.png";
             var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Bills, item.FileName);
 
             var fi = new FileInfo(destFileName);

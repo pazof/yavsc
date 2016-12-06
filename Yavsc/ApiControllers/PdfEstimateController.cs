@@ -12,6 +12,7 @@ namespace Yavsc.ApiControllers
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
     using System;
+    using System.Security.Claims;
 
     [Route("api/pdfestimate"), Authorize]
     public class PdfEstimateController : Controller
@@ -80,20 +81,39 @@ namespace Yavsc.ApiControllers
         [HttpPost("prosign/{id}")]
         public async Task<IActionResult> ProSign(long id)
         {
+            var uid = User.GetUserId();
             var estimate = dbContext.Estimates.Include(
                 e=>e.Query
-            ).FirstOrDefault(e=>e.Id == id);
-            logger.LogWarning("I Was here");
+            ).FirstOrDefault(e=>e.Id == id && e.OwnerId == uid );
             if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
             {
                 return new ChallengeResult();
             }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            User.ReceiveProSignature(id,Request.Form.Files[0]);
+            User.ReceiveSignature(id,Request.Form.Files[0],"pro");
             estimate.ProviderValidationDate = DateTime.Now;
             dbContext.SaveChanges();
             return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate });
         }
+
+        [HttpPost("clisign/{id}")]
+        public async Task<IActionResult> CliSign(long id)
+        {
+            var uid = User.GetUserId();
+            var estimate = dbContext.Estimates.Include( e=>e.Query
+            ).FirstOrDefault( e=> e.Id == id && e.Query.ClientId == uid );
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
+            if (Request.Form.Files.Count!=1)
+                return new BadRequestResult();
+            User.ReceiveSignature(id,Request.Form.Files[0],"cli");
+            estimate.ClientValidationDate = DateTime.Now;
+            dbContext.SaveChanges();
+            return Ok (new { ClientValidationDate = estimate.ClientValidationDate });
+        }
+
     }
 }
