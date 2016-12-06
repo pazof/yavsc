@@ -1,4 +1,5 @@
 @using Yavsc.Helpers
+@using System.IO
 @using System.Globalization
 @model Estimate
 @{
@@ -9,8 +10,8 @@
     var PostalAddress = to.PostalAddress?.Address.SplitAddressToTeX();
     var proaddr = Model.Query.PerformerProfile.OrganizationAddress.Address.SplitAddressToTeX();
     var proaddrm = new HtmlString(Model.Query.PerformerProfile.OrganizationAddress.Address);
-    var isestimate = true;
-    var ack = false;
+    var isestimate = !ViewBag.AsBill;
+    var prosign = new FileInfo($"{ViewBag.BillsDir}/estimate-prosign-{Model.Id}.png");
 
 }
 \documentclass[french,11pt]{article}
@@ -65,7 +66,7 @@
 %%%%%%%%%%%%%%%%%%%%% A MODIFIER DANS LA FACTURE %%%%%%%%%%%%%%%%%%%%%
 
 \def\FactureNum            {@Model.Id.ToString()}    % Numéro de facture
-\def\FactureAcquittee    {non}        % Facture acquittée : oui/non
+\def\FactureAcquittee    {@ViewBag.Acquitted?"oui":"non"}        % Facture acquittée : oui/non
 \def\FactureLieu    {@proaddrm}    % Lieu de l'édition de la facture
 \def\FactureObjet    {@(new HtmlString(isestimate?"Devis":"Facture")) @TeXHelpers.ToTeX(Model.Title)}    % Objet du document
 % Description de la facture
@@ -193,11 +194,14 @@
   @(new HtmlString(isestimate?"Devis validé":"Facture validée")) le @TeXHelpers.ToTeX(Model.ProviderValidationDate.ToString("dddd dd MMMM yyyy",
                   CultureInfo.CreateSpecificCulture("fr-FR"))).ToHtmlString()
 \end{flushright}
+@if (prosign.Exists) {
+<text>
 \begin{center}
 	\hspace{263pt}
     \includegraphics[height=60pt]{@(ViewBag.BillsDir)/estimate-prosign-@(Model.Id).png}
 \end{center}
-
+</text>
+}
     </text>
 }
 \end{document}

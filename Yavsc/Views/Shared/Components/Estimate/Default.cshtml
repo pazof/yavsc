@@ -1,5 +1,6 @@
 
 @model Estimate
+<div class="estimate">
 
 <a href="~/api/pdfestimate/estimate-@(Model.Id).tex" >Export au format LaTeX</a>
 
@@ -9,3 +10,4 @@
 </form>
 
 <a href="~/api/pdfestimate/get/@(Model.Id)" >Télécharger le document généré</a>
+</div>

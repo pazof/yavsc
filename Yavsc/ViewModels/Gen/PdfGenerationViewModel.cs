@@ -14,5 +14,6 @@ namespace Yavsc.ViewModels.Gen
         public string DestDir { get; set; }
         public bool Generated { get; set; }
         public HtmlString GenerationErrorMessage { get; set; }
+        public string Temp { get; set; }
     }
 }

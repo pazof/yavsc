@@ -7,7 +7,6 @@ using Microsoft.AspNet.StaticFiles;
 
 namespace Yavsc
 {
-
     public partial class Startup
     {
         public static string UserFilesDirName { get; private set; }
