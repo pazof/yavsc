@@ -37,6 +37,7 @@ namespace Yavsc
         public static string AvatarsDirName { private set; get; }
         public static string Authority { get; private set; }
         public static string Audience { get; private set; }
+        public static string Temp { get; set; }
         public static SiteSettings SiteSetup { get; private set; }
 
         private static ILogger logger;
@@ -234,6 +235,7 @@ namespace Yavsc
             SiteSetup = siteSettings.Value;
             Startup.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
             Startup.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
+            Startup.Temp = siteSettings.Value.TempDir;
 
             // TODO implement an installation & upgrade procedure
             // Create required directories
@@ -285,7 +287,7 @@ namespace Yavsc
                     if (ex.InnerException is InvalidOperationException)
                     // nothing to do ?
                     {
-                        // TODO Send an email to the Admin
+                        // TODO (or not) Hit the developper
                     }
                     else throw ex;
                 }

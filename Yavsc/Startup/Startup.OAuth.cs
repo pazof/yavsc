@@ -20,7 +20,6 @@ using Yavsc.Models;
 
 namespace Yavsc
 {
-
     public partial class Startup
     {
         public static CookieAuthenticationOptions ExternalCookieAppOptions { get; private set; }

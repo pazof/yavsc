@@ -21,8 +21,11 @@ namespace Yavsc.ViewComponents
         {
             return await InvokeAsync(id,"Html");
         }
-
-        public async Task<IViewComponentResult> InvokeAsync(long id, string outputFormat ="Html")
+ public async Task<IViewComponentResult> InvokeAsync(long id, string outputFormat ="Html")
+ {
+     return await InvokeAsync(id,outputFormat,false,false);
+ }
+        public async Task<IViewComponentResult> InvokeAsync(long id, string outputFormat ="Html", bool asBill = false, bool acquitted = false)
         {
             return await Task.Run( ()=> {
              Estimate estimate =
@@ -38,6 +41,8 @@ namespace Yavsc.ViewComponents
             var dia = new DirectoryInfo(Startup.SiteSetup.UserFiles.Avatars); 
             ViewBag.BillsDir = di.FullName;
             ViewBag.AvatarsDir = dia.FullName;
+            ViewBag.AsBill = asBill;
+            ViewBag.Acquitted = acquitted;
             if (outputFormat == "LaTeX") {
                 return this.View("Estimate_tex", estimate);
             }
@@ -59,6 +64,7 @@ namespace Yavsc.ViewComponents
                 
                 return this.View("Estimate_pdf", 
                         new PdfGenerationViewModel{ 
+                            Temp = Startup.Temp,
                             TeXSource = tex, 
                             DestDir = Startup.UserBillsDirName,
                             BaseFileName = $"estimate-{id}"
