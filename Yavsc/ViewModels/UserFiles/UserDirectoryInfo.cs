@@ -9,7 +9,7 @@ namespace Yavsc.ViewModels.UserFiles
     {
         public string UserName { get; private set; }
         public string SubPath { get; private set; }
-        public UserFileInfo [] Files {
+        public DefaultFileInfo [] Files {
             get; private set;
         }
         public string [] SubDirectories { 
@@ -27,7 +27,7 @@ namespace Yavsc.ViewModels.UserFiles
             dInfo = new DirectoryInfo(
                 Path.Combine(Startup.UserFilesDirName,finalPath));
             Files = dInfo.GetFiles().Select
-             ( entry => new UserFileInfo { Name = entry.Name, Size = entry.Length, 
+             ( entry => new DefaultFileInfo { Name = entry.Name, Size = entry.Length, 
              CreationTime = entry.CreationTime, LastModified = entry.LastWriteTime  }).ToArray();
              SubDirectories = dInfo.GetDirectories().Select 
              ( d=> d.Name ).ToArray();
