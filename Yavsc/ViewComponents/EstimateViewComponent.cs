@@ -34,7 +34,10 @@ namespace Yavsc.ViewComponents
                    .Include(e => e.Bill).FirstOrDefault(x => x.Id == id);
             if (estimate == null)
                 throw new Exception("No data");
-
+            var di = new DirectoryInfo(Startup.SiteSetup.UserFiles.Bills); 
+            var dia = new DirectoryInfo(Startup.SiteSetup.UserFiles.Avatars); 
+            ViewBag.BillsDir = di.FullName;
+            ViewBag.AvatarsDir = dia.FullName;
             if (outputFormat == "LaTeX") {
                 return this.View("Estimate_tex", estimate);
             }
