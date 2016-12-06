@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
@@ -67,6 +68,13 @@ namespace Yavsc.Helpers
         {
             return data;
         }
+        public HtmlString ToHtmlString()
+        {
+            return new HtmlString(ToString());
+        }
+
+
+
     }
     public static class TeXHelpers
     {
@@ -78,11 +86,24 @@ namespace Yavsc.Helpers
             return string.Join(separator, items);
         }
 
-        public static TeXString ToTeX(string target, string lineSeparator = "\n\\\\")
+        public static TeXString ToTeX(this string target, string lineSeparator = "\n\\\\")
         {
             if (target == null) return null;
             return new TeXString(target.NewLinesWith(lineSeparator));
         }
+
+        public static HtmlString SplitAddressToTeX (this string target)
+        {
+            var alines = target.Split(',');
+            var texlines = alines.Select(l=>new TeXString(l));
+            StringBuilder sb = new StringBuilder();
+            foreach (var l in texlines)
+            {
+                sb.AppendFormat("{0}\\\\\n",l.ToString());
+            }
+            return new HtmlString(sb.ToString());
+        }
+
         public static bool GenerateEstimatePdf(this PdfGenerationViewModel Model)
         {
             string errorMsg = null;
