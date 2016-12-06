@@ -6,10 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Security.Claims;
+using System.Web;
 using Microsoft.AspNet.Http;
 using Yavsc.ApiControllers;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
+using Yavsc.ViewModels;
 using Yavsc.ViewModels.UserFiles;
 
 namespace Yavsc.Helpers
@@ -94,6 +96,11 @@ namespace Yavsc.Helpers
             }
             user.DiskUsage = usage;
             return item;
+        }
+        public static HtmlString FileLink(this DefaultFileInfo info, string username, string subpath)
+        {
+            return new HtmlString( Startup.UserFilesOptions.RequestPath+"/"+ username + "/" + subpath + "/" +
+             HttpUtility.UrlEncode(info.Name) );
         }
         public static FileRecievedInfo ReceiveAvatar(this ApplicationUser user, IFormFile formFile)
         {
