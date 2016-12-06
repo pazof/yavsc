@@ -9,8 +9,11 @@
     var PostalAddress = to.PostalAddress?.Address.SplitAddressToTeX();
     var proaddr = Model.Query.PerformerProfile.OrganizationAddress.Address.SplitAddressToTeX();
     var proaddrm = new HtmlString(Model.Query.PerformerProfile.OrganizationAddress.Address);
+    var isestimate = true;
+    var ack = false;
 
-}\documentclass[french,11pt]{article}
+}
+\documentclass[french,11pt]{article}
 \usepackage{eurosym}
 \usepackage{babel}
 \usepackage[T1]{fontenc}
@@ -32,14 +35,11 @@
     \FPeval{\montant}{#2 * #3}
     \FPround{\montant}{\montant}{2}
     \FPadd{\TotalHT}{\TotalHT}{\montant}
-   
     \eaddto\ListeProduits{#1    &    \prix    &    #2    &    \montant    \cr}
 }
 
-
 \newcommand{\AfficheResultat}{%
     \ListeProduits
-   
     \FPeval{\TotalTVA}{\TotalHT * \TVA / 100}
     \FPadd{\TotalTTC}{\TotalHT}{\TotalTVA}
     \FPround{\TotalHT}{\TotalHT}{2}
@@ -48,8 +48,6 @@
     \global\let\TotalHT\TotalHT
     \global\let\TotalTVA\TotalTVA
     \global\let\TotalTTC\TotalTTC
-   
-
     \cr 
     \hline
     \textbf{Total}    & & &    \TotalHT
@@ -69,7 +67,7 @@
 \def\FactureNum            {@Model.Id.ToString()}    % Numéro de facture
 \def\FactureAcquittee    {non}        % Facture acquittée : oui/non
 \def\FactureLieu    {@proaddrm}    % Lieu de l'édition de la facture
-\def\FactureObjet    {Facture : @TeXHelpers.ToTeX(Model.Title)}    % Objet du document
+\def\FactureObjet    {@(new HtmlString(isestimate?"Devis":"Facture")) @TeXHelpers.ToTeX(Model.Title)}    % Objet du document
 % Description de la facture
 \def\FactureDescr    {
    @TeXHelpers.ToTeX(Model.Description)
@@ -124,7 +122,7 @@
  @TeXHelpers.ToTeX(from.UserName) \\
  @proaddr
 
-Facture n°\FactureNum
+@(isestimate?"Devis":"Facture") n°\FactureNum
 
 
 {\addtolength{\leftskip}{10.5cm} %in ERT
@@ -158,11 +156,12 @@ Facture n°\FactureNum
 
 \end{flushright}
 ~\\
-
+@if (!isestimate) {
+    <text>
 \ifthenelse{\equal{\FactureAcquittee}{oui}}{
     Facture acquittée.
-}{
-@{ 
+}{ </text>
+
     var bi = from.BankInfo;
     if (bi!=null) {
         <text>À régler par chèque ou par virement bancaire :
@@ -187,11 +186,11 @@ Facture n°\FactureNum
     }
 }
 
-}
+
 @if (!(Model.ProviderValidationDate==null)) {
     <text>
 \begin{flushright}
-    Facture validée le @TeXHelpers.ToTeX(Model.ProviderValidationDate.ToString("dddd dd MMMM yyyy",
+  @(new HtmlString(isestimate?"Devis validé":"Facture validée")) le @TeXHelpers.ToTeX(Model.ProviderValidationDate.ToString("dddd dd MMMM yyyy",
                   CultureInfo.CreateSpecificCulture("fr-FR"))).ToHtmlString()
 \end{flushright}
 \begin{center}
