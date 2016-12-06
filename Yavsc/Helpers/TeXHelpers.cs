@@ -132,6 +132,7 @@ namespace Yavsc.Helpers
                     p.StartInfo.WorkingDirectory = tempdir;
                     p.StartInfo = new ProcessStartInfo();
                     p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.WorkingDirectory = tempdir;
                     p.StartInfo.FileName = "/usr/bin/texi2pdf";
                     p.StartInfo.Arguments = $"--batch --build-dir=. -o {fo.FullName} {fi.FullName}";
                     p.Start();
@@ -142,6 +143,8 @@ namespace Yavsc.Helpers
                     }
                 }
                 fi.Delete();
+                var di = new DirectoryInfo(Path.Combine(tempdir,$"{Model.BaseFileName}.t2d"));
+                di.Delete(true);
             }
             Model.Generated = fo.Exists;
             Model.GenerationErrorMessage = new HtmlString(errorMsg);
