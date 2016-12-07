@@ -2,50 +2,63 @@
 
 Da road to the hell
 
+Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, ou à oublier ...
+
 ## Jalon 1
 
-	✔ Acces (publique) aux Blogs @done (August 13th 2016, 0:51)
-	✔ Accès aux profiles des intervenants @done (August 13th 2016, 0:57)
-	✔ Demande de devis, spécifiant une date et un lieu, envers un pro (ou "BookQuery", ou "demande de rendez-vous") @done (August 13th 2016, 0:57)
-	✔ Notifications commande @done (September 15th 2016, 15:00)
-	✔ Rendu html du format Markdown-av (+audio&video) @done (October 6th 2016, 14:32)
-	✔ Rendu Android, via WebKit WebView @done (October 6th 2016, 14:32)
-    ✔ Salon public @done (September 28th 2016, 17:58)
-	✔ Saisie et soumission basique du devis @done (October 30th 2016, 21:50)
-	✔ Devis au formats TeX et Pdf en ligne à accès restreint @done (November 6th 2016, 2:10)
-	✔ Idem depuis l'API web @done (November 10th 2016, 10:00)
-	☐ Signature de contrat
-    ✔ Chat privé (coté serveur) @done (October 13th 2016, 16:27)
-	✔ Accès mobile au salon public @done (October 13th 2016, 16:27)
-	✔ Accès Web au chat privé @done (November 3rd 2016, 14:57)
-	✔ Accès mobile au chat privé @done (November 3rd 2016, 11:15)
-	☐ Envoi de l'avatar
-	☐ Envoi de fichier depuis le mobile
-	☐ Envoi de fichiers depuis de Web
-	☐ Évaluation de la prestation
+	✔ Acces (publique) aux Blogs. @done (August 13th 2016, 0:51)
+	✔ Accès aux profiles des intervenants. @done (August 13th 2016, 0:57)
+	✔ Demande de devis, spécifiant une date et un lieu, envers un pro (ou "BookQuery", ou "demande de rendez-vous"). @done (August 13th 2016, 0:57)
+	✔ Notifications commande. @done (September 15th 2016, 15:00)
+	✔ Rendu html du format Markdown-av (+audio&video). @done (October 6th 2016, 14:32)
+	✔ Rendu Android, via WebKit WebView. @done (October 6th 2016, 14:32)
+    ✔ Salon public. @done (September 28th 2016, 17:58)
+	✔ Saisie et soumission basique du devis. @done (October 30th 2016, 21:50)
+	✔ Devis au formats TeX et Pdf en ligne à accès restreint. @done (November 6th 2016, 2:10)
+	✔ Idem depuis l'API web. @done (November 10th 2016, 10:00)
+	✔ Signature du devis par le fournisseur (l'arstiste), depuis le mobile. @done (December 7th 2016, 10:45)
+	☐ Au devis validé par le fournisseur pour le client : Envoi d'une notification au client et mise à disposition du devis signé.
+	à l'accord du client sur le devis :
+		☐ Envoi d'une notification au fournisseur et mise à disposition de la signature client et d'un commentaire.
+		☐ Edition de la facture non aquittée depuis le mobile.
+		☐ Edition de contrat depuis le mobile.
+		☐ Notification et mise à disposition du contrat pour le client.
+		☐ Signature de contrat par le client.
+		☐ Notification au client de la facture non aquittée.
+		(+ ☐ Paiement du client?)
+		☐ Edition de la facture marquée aquitée et signée par le fournisseur.
+		☐ Notification au client de la facture aquittée signée.
+    ✔ Chat privé (coté serveur). @done (October 13th 2016, 16:27)
+	✔ Accès mobile au salon public. @done (October 13th 2016, 16:27)
+	✔ Accès Web au chat privé. @done (November 3rd 2016, 14:57)
+	✔ Accès mobile au chat privé. @done (November 3rd 2016, 11:15)
+	✔ Envoi de l'avatar. @done (December 7th 2016, 10:45)
+	☐ Envoi de fichier depuis le mobile.
+	✔ Envoi de fichiers depuis de Web. @done (December 7th 2016, 10:45)
+	☐ Évaluation de la prestation.
 
 ## Jalon 2
 
-	☐ Login Twitter
-	☐ Paiement client d'un approvisionnement pour une demande de prestation définie
+	☐ Login Twitter.
+	☐ Paiement client d'un approvisionnement pour une demande de prestation définie.
 	☐ Notifications structurelles (liste de notifications impératives, relatives au site, 
-	spécifiées par groupe d'utilisateurs)
-	☐ Notifications aux posts, à l'entée d'un artiste, à la conclusion d'une success story
+	spécifiées par groupe d'utilisateurs).
+	☐ Notifications aux posts, à l'entée d'un artiste, à la conclusion d'une success story.
 	☐ Construction du droit à l'envoi d'un message privé, spécifié par le destinataire 
 	et/ou par accréditation administrative, à un utilisateur spécifié, ou
 	à un cercle ou à un groupe, de manière temporaire ou définitive, par une plage de temps spécifié
-	ou par la validité d'une demande de devis ou une intervention en cours ou récente ou à venir
-	☐ Paiement client du reste de la prestation
-	☐ Podcasts
-	☐ Personalisation des blogs
-	☐ Monétarisations
+	ou par la validité d'une demande de devis ou une intervention en cours ou récente ou à venir.
+	☐ Paiement client du reste de la prestation.
+	☐ Podcasts.
+	☐ Personalisation des blogs.
+	☐ Monétarisations.
 	
 	### Réécritures prévues : 
 
 	☐ Eviter la création de fichier TeX inutile à la génération du Pdf
 	
 	### Accessibilité :
-	☐ Support multi-lanque de l'app mobile
+	✔ Support multi-lanque de l'app mobile @done (December 7th 2016, 10:58)
 	☐ Correction des libéllés manquant et/ou en anglais relevés avant le jalon 2 
 	
 	### Sécurité
@@ -54,7 +67,8 @@ Da road to the hell
 	☐ Fixer "là où ça manque" les limitations en taille des chaines de caratères du modèle 
 	
 	### Configurabilité
-	☐ Gestion de contenu des pages du site, au format interne (NRLD: i.e. non exposé, absent du code livré aux clients Web) Markdown-av (`@Html.SiteContent<AccessRules>(id).Responsible`)
+	☐ Gestion de contenu des pages du site, au format interne (NRLD: i.e. non exposé,
+	absent du code livré aux clients Web) Markdown-av (`@Html.SiteContent<AccessRules>(id).Responsible`)
 	
 ## Jalon 3
 
