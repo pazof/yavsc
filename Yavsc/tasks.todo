@@ -33,7 +33,18 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	✔ Accès Web au chat privé. @done (November 3rd 2016, 14:57)
 	✔ Accès mobile au chat privé. @done (November 3rd 2016, 11:15)
 	✔ Envoi de l'avatar. @done (December 7th 2016, 10:45)
-	☐ Envoi de fichier depuis le mobile.
+	☐ Envoi de l'avatar depuis le mobile.
+	Gestion du profile utilisateur:
+		☐ Simple [Web]
+		☐ Prestataire [Web]
+		☐ Simple [Android]
+		☐ Prestataire [Android]
+	Gestion de l'espace de stockage personnel: 
+		☐ Depuis le Web.
+		☐ Depuis l'API web.
+		☐ Depuis le Mobile.
+	☐ Gestion de l'espace de stockage personnel, depuis l'API Web. 
+	☐ Envoi de fichier depuis le mobile, vers l'espace de stockage personnel.
 	✔ Envoi de fichiers depuis de Web. @done (December 7th 2016, 10:45)
 	☐ Évaluation de la prestation.
 
