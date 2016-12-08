@@ -176,4 +176,19 @@
   <data name="UpdateFailed" xml:space="preserve">
     <value>La mise à jour a échoué.</value>
   </data>
+  <data name="MinMaxStringValidationError" xml:space="preserve">
+    <value>Veuillez saisir une description (entre {0} et {1} caractères).</value>
+  </data>
+  <data name="YourTextWasTooLong" xml:space="preserve">
+    <value>Votre texte a été taillé car il était trop long.</value>
+  </data>
+  <data name="NoDescription" xml:space="preserve">
+    <value>Pas de description</value>
+  </data>
+  <data name="InvalidValue" xml:space="preserve">
+    <value>Valeur invalide</value>
+  </data>
+  <data name="MinMaxIntError" xml:space="preserve">
+    <value>Veuillez saisir une valeur entre {0} et {1}.</value>
+  </data>
 </root>
