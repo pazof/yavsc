@@ -143,6 +143,42 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Valeur invalide.
+        /// </summary>
+        public static string InvalidValue {
+            get {
+                return ResourceManager.GetString("InvalidValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Veuillez saisir une valeur entre {0} et {1}..
+        /// </summary>
+        public static string MinMaxIntError {
+            get {
+                return ResourceManager.GetString("MinMaxIntError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Veuillez saisir une description (entre {0} et {1} caractères)..
+        /// </summary>
+        public static string MinMaxStringValidationError {
+            get {
+                return ResourceManager.GetString("MinMaxStringValidationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Pas de description.
+        /// </summary>
+        public static string NoDescription {
+            get {
+                return ResourceManager.GetString("NoDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Un artiste.
         /// </summary>
         public static string NoStar {
@@ -229,6 +265,15 @@ namespace BookAStar {
         public static string ViewEstimate {
             get {
                 return ResourceManager.GetString("ViewEstimate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Votre texte a été taillé car il était trop long..
+        /// </summary>
+        public static string YourTextWasTooLong {
+            get {
+                return ResourceManager.GetString("YourTextWasTooLong", resourceCulture);
             }
         }
     }
