@@ -57,11 +57,20 @@ namespace BookAStar.Pages
         protected void OnEditLine(object sender, ItemTappedEventArgs e)
         {
             var line = (BillingLineViewModel)e.Item;
+            // update the validation command, that 
+            // was creating a new line in the bill at creation time,
+            // now one only wants to update the line
             line.ValidateCommand = new Command(() =>
             {
                 DataManager.Current.EstimationCache.SaveEntity();
             });
-
+            // and setup a removal command, that was not expected at creation time
+            var evm = (EditEstimateViewModel)BindingContext;
+            line.RemoveCommand = new Command(() =>
+            {
+                evm.Bill.Remove(line);
+                DataManager.Current.EstimationCache.SaveEntity();
+            });
             App.NavigationService.NavigateTo<EditBillingLinePage>(
                 true, line );
         }
@@ -78,7 +87,9 @@ namespace BookAStar.Pages
                 }
                 await thisPage.Navigation.PopAsync();
             });
-            var response = await App.DisplayActionSheet(Strings.SignOrNot, Strings.DonotsignEstimate, Strings.CancelValidation, new string[] { Strings.Sign  });
+            var response = await App.DisplayActionSheet(
+                Strings.SignOrNot, Strings.DonotsignEstimate, 
+                Strings.CancelValidation, new string[] { Strings.Sign  });
             if (response == Strings.Sign)
             {
                 App.NavigationService.NavigateTo<EstimateSigningPage>(true, 

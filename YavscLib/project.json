@@ -14,6 +14,7 @@
   },
   "dependencies": {},
   "frameworks": {
-    "net451": {}
+    "net451": {},
+    ".NETPortable,Version=v4.5,Profile=Profile111": {}
   }
 }

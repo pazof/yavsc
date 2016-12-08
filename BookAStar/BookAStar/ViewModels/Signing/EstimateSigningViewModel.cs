@@ -6,9 +6,8 @@ namespace BookAStar.ViewModels.Signing
 {
     public class EstimateSigningViewModel: EditEstimateViewModel
     {
-        public EstimateSigningViewModel(Estimate document)
+        public EstimateSigningViewModel(Estimate document): base(document)
         {
-            Data = document;
         }
         public Command<bool> ValidationCommand { get; set; }
     }

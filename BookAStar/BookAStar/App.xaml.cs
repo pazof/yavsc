@@ -19,7 +19,6 @@ namespace BookAStar
     using Data;
     using Interfaces;
     using Model;
-    using Model.UI;
     using Pages;
     using Plugin.Connectivity;
     using Model.Social.Messaging;
@@ -28,6 +27,7 @@ namespace BookAStar
     using Pages.UserProfile;
     using ViewModels.EstimateAndBilling;
     using Pages.EstimatePages;
+    using ViewModels;
 
     public partial class App : Application // superclass new in 1.3
     {
