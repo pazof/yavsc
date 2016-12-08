@@ -11,7 +11,7 @@ using Yavsc.ViewModels.Gen;
 
 namespace Yavsc.Helpers
 {
-    public class TeXString
+    public class TeXString : HtmlString
     {
 
         public class Replacement
@@ -54,28 +54,24 @@ namespace Yavsc.Helpers
             new Replacement("†","\\dag"),
             new Replacement("–","\\textendash")
         };
-        string data;
-        public TeXString(string str)
+        
+        public TeXString(string str) : base(TR(str))
         {
-            data = str;
+           
+            
+        }
+        private static string TR(string source)
+        {
+            string result=source;
             foreach (var r in SpecialCharsRendering)
             {
-                data = r.Execute(data);
+                result = r.Execute(result);
             }
+            return result;
         }
-
-        override public string ToString()
-        {
-            return data;
-        }
-        public HtmlString ToHtmlString()
-        {
-            return new HtmlString(ToString());
-        }
-
-
 
     }
+
     public static class TeXHelpers
     {
         public static string NewLinesWith(this string target, string separator)
