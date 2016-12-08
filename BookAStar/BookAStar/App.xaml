@@ -16,6 +16,8 @@
       <Color x:Key="PageForegroundColor">#000000</Color>
       <Color x:Key="TextColor">#000000</Color>
       <Color x:Key="LabelColor">#000000</Color>
+      <Color x:Key="ErrorTextColor">#500000</Color>
+      
       <Color x:Key="HeadingTextColor">Black</Color>
       <Color x:Key="NormalTextColor">Blue</Color>
       <Color x:Key="GroupingTextColor">#5050ff</Color>
@@ -43,9 +45,16 @@
         <Setter Property="VerticalOptions" Value="Start" />
       </Style>
       
+      <Style x:Key="ErrorLabelStyle"  BasedOn="{StaticResource InputLabelStyle}" TargetType="Label">
+        <Setter Property="FontSize" Value="Large" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{StaticResource ErrorTextColor}" />
+      </Style>
+      
       <Style x:Key="LabelStyle" TargetType="Label">
         <Setter Property="TextColor" Value="{StaticResource LabelColor}" />
         <Setter Property="LineBreakMode" Value="WordWrap" />
+        <Setter Property="HorizontalOptions" Value="FillAndExpand" />
       </Style>
 
       <Style x:Key="BigLabel"  BasedOn="{StaticResource LabelStyle}" TargetType="Label">

@@ -6,7 +6,10 @@ namespace BookAStar.Behaviors
     {
         public static readonly BindableProperty MinProperty = BindableProperty.Create("Min", typeof(int), typeof(IntegerEntryBehavior), 0);
         public static readonly BindableProperty MaxProperty = BindableProperty.Create("Max", typeof(int), typeof(IntegerEntryBehavior), 0);
-
+        public static readonly BindableProperty IsValidProperty =
+            BindableProperty.Create("IsValid", typeof(bool), typeof(IntegerEntryBehavior), false);
+        public static readonly BindableProperty ErrorProperty =
+            BindableProperty.Create("Error", typeof(string), typeof(IntegerEntryBehavior), null);
         public int Min
         {
             get { return (int)GetValue(MinProperty); }
@@ -30,8 +33,13 @@ namespace BookAStar.Behaviors
             if (int.TryParse(e.NewTextValue, out val))
             {
                 IsValid = (Min > Max) || (Max >= val && val >= Min);
+                Error = string.Format(Strings.MinMaxIntError, Min, Max);
             }
-            else IsValid = false;
+            else
+            {
+                IsValid = false;
+                Error = "";
+            }
         }
 
         protected override void OnDetachingFrom(Entry bindable)
@@ -39,6 +47,26 @@ namespace BookAStar.Behaviors
             bindable.TextChanged -= bindable_TextChanged;
 
         }
-        public bool IsValid { get; private set; }
+        public bool IsValid
+        {
+            get {
+                return (bool) GetValue(IsValidProperty);
+            }
+            set
+            {
+                SetValue(IsValidProperty, value);
+            }
+        }
+        public string Error
+        {
+            get
+            {
+                return (string) GetValue(ErrorProperty);
+            }
+            set
+            {
+                SetValue(ErrorProperty, value);
+            }
+        }
     }
 }

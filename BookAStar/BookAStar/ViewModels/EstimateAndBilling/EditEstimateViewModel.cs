@@ -6,18 +6,13 @@ using Xamarin.Forms;
 using BookAStar.Data;
 using Newtonsoft.Json;
 using System.Linq;
+using BookAStar.ViewModels.Validation;
+using System.ComponentModel;
 
 namespace BookAStar.ViewModels.EstimateAndBilling
 {
-    public class EditEstimateViewModel : EditingViewModel
+    public class EditEstimateViewModel : EditingViewModel<Estimate>
     {
-        /// <summary>
-        /// For deserialization
-        /// </summary>
-        public EditEstimateViewModel()
-        {
-
-        }
 
         /// <summary>
         /// Builds a new view model on estimate,
@@ -25,11 +20,37 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         /// </summary>
         /// <param name="data"></param>
         /// <param name="localState"></param>
-        public EditEstimateViewModel(Estimate data)
+        public EditEstimateViewModel(Estimate data) : base(data)
         {
-            Data = data;
+            SyncData();
         }
 
+        private void SyncData()
+        {
+            if (Data.AttachedFiles == null) Data.AttachedFiles = new List<string>();
+            if (Data.AttachedGraphics == null) Data.AttachedGraphics = new List<string>();
+            if (Data.Bill == null) Data.Bill = new List<BillingLine>();
+            AttachedFiles = new ObservableCollection<string>(Data.AttachedFiles);
+            AttachedGraphicList = new ObservableCollection<string>(Data.AttachedGraphics);
+            Bill = new ObservableCollection<BillingLineViewModel>(Data.Bill.Select(
+                l => new BillingLineViewModel(l)
+                ));
+            Bill.CollectionChanged += Bill_CollectionChanged;
+            Title = Data.Title;
+            Description = Data.Description;
+            NotifyPropertyChanged("FormattedTotal");
+            NotifyPropertyChanged("Query");
+            NotifyPropertyChanged("CLient");
+        }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName == "Data")
+            {
+                SyncData();
+            }
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -41,25 +62,6 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             NotifyPropertyChanged("FormattedTotal");
             NotifyPropertyChanged("Bill");
         }
-
-        private Estimate data;
-        public Estimate Data { get { return data; } set {
-                SetProperty<Estimate>(ref data, value);
-                if (data.AttachedFiles == null) data.AttachedFiles = new List<string>();
-                if (data.AttachedGraphics == null) data.AttachedGraphics = new List<string>();
-                if (data.Bill == null) data.Bill = new List<BillingLine>();
-                AttachedFiles = new ObservableCollection<string>(data.AttachedFiles);
-                AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphics);
-                Bill = new ObservableCollection<BillingLineViewModel>(data.Bill.Select(
-                    l => new BillingLineViewModel(l)
-                    ));
-                Bill.CollectionChanged += Bill_CollectionChanged;
-                Title = Data.Title;
-                Description = Data.Description;
-                NotifyPropertyChanged("FormattedTotal");
-                NotifyPropertyChanged("Query");
-                NotifyPropertyChanged("CLient");
-            } }
 
         [JsonIgnore]
         public ObservableCollection<string> AttachedFiles
@@ -124,7 +126,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         {
             get
             {
-                OnPlatform<Font> lfs = (OnPlatform<Font>)App.Current.Resources["LargeFontSize"];
+                OnPlatform<Font> lfs = (OnPlatform<Font>)App.Current.Resources["MediumFontSize"];
                 OnPlatform<Color> etc = (OnPlatform<Color>)App.Current.Resources["EmphasisTextColor"];
 
                 return new FormattedString

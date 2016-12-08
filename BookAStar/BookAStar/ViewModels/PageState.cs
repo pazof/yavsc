@@ -1,6 +1,6 @@
 ﻿using XLabs.Forms.Mvvm;
 
-namespace BookAStar.Model.UI
+namespace BookAStar.ViewModels
 {
     internal class PageState
     {

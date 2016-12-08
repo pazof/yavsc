@@ -3,11 +3,10 @@
     using Model;
     using Model.Blog;
     using Model.Workflow;
-    using Model.UI;
     using Model.Social.Messaging;
-    using Model.FileSystem;
     using ViewModels.EstimateAndBilling;
     using NonCrUD;
+    using ViewModels;
 
     public class DataManager
     {

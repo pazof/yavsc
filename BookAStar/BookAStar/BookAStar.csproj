@@ -61,7 +61,9 @@
     <Compile Include="Model\Settings\SignatureSettings.cs" />
     <Compile Include="Model\Social\Messaging\ChatStatus.cs" />
     <Compile Include="Model\Social\Messaging\PrivateMessage.cs" />
-    <Compile Include="Model\UI\PageState.cs" />
+    <Compile Include="ViewModels\Validation\Error.cs" />
+    <Compile Include="ViewModels\Validation\ModelState.cs" />
+    <Compile Include="ViewModels\PageState.cs" />
     <Compile Include="Pages\EstimatePages\EstimateSigningPage.xaml.cs">
       <DependentUpon>EstimateSigningPage.xaml</DependentUpon>
     </Compile>
@@ -91,7 +93,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.en.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\EditingViewModel.cs" />
+    <Compile Include="ViewModels\Validation\EditingViewModel.cs" />
     <Compile Include="Pages\DocSigning.xaml.cs">
       <DependentUpon>DocSigning.xaml</DependentUpon>
     </Compile>
@@ -99,6 +101,7 @@
     <Compile Include="ViewModels\Signing\SignaturePadConfigViewModel.cs" />
     <Compile Include="ViewModels\UserProfile\UserProfileViewModel.cs" />
     <Compile Include="ViewModels\UserProfile\DirectoryInfoViewModel.cs" />
+    <Compile Include="ViewModels\Validation\ErrorSeverity.cs" />
     <Compile Include="Views\EnumPicker.cs" />
     <Compile Include="Converters\BooleanToObjectConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
@@ -250,6 +253,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\Billing\" />
+    <Folder Include="Model\UI\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ExifLib, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -362,12 +366,6 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Yavsc.Client\Yavsc.Client.csproj">
-      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
-      <Name>Yavsc.Client</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\EstimatePages\EditEstimatePage.xaml">
@@ -495,6 +493,12 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\YavscLib\YavscLib.csproj">
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
+      <Name>YavscLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
