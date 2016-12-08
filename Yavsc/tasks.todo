@@ -18,7 +18,7 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	✔ Idem depuis l'API web. @done (November 10th 2016, 10:00)
 	✔ Signature du devis par le fournisseur (l'arstiste), depuis le mobile. @done (December 7th 2016, 10:45)
 	☐ Au devis validé par le fournisseur pour le client : Envoi d'une notification au client et mise à disposition du devis signé.
-	à l'accord du client sur le devis :
+	* à l'accord du client sur le devis :
 		☐ Envoi d'une notification au fournisseur et mise à disposition de la signature client et d'un commentaire.
 		☐ Edition de la facture non aquittée depuis le mobile.
 		☐ Edition de contrat depuis le mobile.
@@ -34,12 +34,12 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	✔ Accès mobile au chat privé. @done (November 3rd 2016, 11:15)
 	✔ Envoi de l'avatar. @done (December 7th 2016, 10:45)
 	☐ Envoi de l'avatar depuis le mobile.
-	Gestion du profile utilisateur:
+	* Gestion du profile utilisateur:
 		☐ Simple [Web]
 		☐ Prestataire [Web]
 		☐ Simple [Android]
 		☐ Prestataire [Android]
-	Gestion de l'espace de stockage personnel: 
+	* Gestion de l'espace de stockage personnel: 
 		☐ Depuis le Web.
 		☐ Depuis l'API web.
 		☐ Depuis le Mobile.
@@ -47,6 +47,20 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	☐ Envoi de fichier depuis le mobile, vers l'espace de stockage personnel.
 	✔ Envoi de fichiers depuis de Web. @done (December 7th 2016, 10:45)
 	☐ Évaluation de la prestation.
+	☐ Page d'accueil du mobile: Les alertes, et les derniers événements, donc, les derniers post, les 
+	dernières inscriptions de prestataire, les annonces corporate
+	* La selection d'une star: pas de notation à afficher + idem chanteur
+	☐ depuis le mobile
+	☐ depuis le Web
+	* La selection d'un DJ: (rechercher dans / afficher) les samples + idem chanteur
+	☐ depuis le mobile
+	☐ depuis le Web
+	* La selection d'un chanteur: (rechercher dans / afficher) les titres du répértoire
+	☐ depuis le mobile
+	☐ depuis le Web
+	* La selection d'une formation musicale: idem chanteur + (rechercher/afficher) la taille de la formation
+	☐ depuis le mobile
+	☐ depuis le Web
 
 ## Jalon 2
 
