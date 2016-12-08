@@ -68,7 +68,7 @@
 \def\FactureNum            {@Model.Id.ToString()}    % Numéro de facture
 \def\FactureAcquittee    {@ViewBag.Acquitted?"oui":"non"}        % Facture acquittée : oui/non
 \def\FactureLieu    {@proaddrm}    % Lieu de l'édition de la facture
-\def\FactureObjet    {@(new HtmlString(isestimate?"Devis":"Facture")) @TeXHelpers.ToTeX(Model.Title)}    % Objet du document
+\def\FactureObjet    {@(new HtmlString(isestimate?"Devis":"Facture")) : @TeXHelpers.ToTeX(Model.Title)}    % Objet du document
 % Description de la facture
 \def\FactureDescr    {
    @TeXHelpers.ToTeX(Model.Description)
@@ -192,7 +192,7 @@
     <text>
 \begin{flushright}
   @(new HtmlString(isestimate?"Devis validé":"Facture validée")) le @TeXHelpers.ToTeX(Model.ProviderValidationDate.ToString("dddd dd MMMM yyyy",
-                  CultureInfo.CreateSpecificCulture("fr-FR"))).ToHtmlString()
+                  CultureInfo.CreateSpecificCulture("fr-FR")))
 \end{flushright}
 @if (prosign.Exists) {
 <text>
