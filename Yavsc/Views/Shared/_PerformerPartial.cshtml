@@ -2,9 +2,14 @@
 
 <div class="performer @(Model.Active?"active":"inactive")">
      @if (Model.Performer != null) {
-    
+    @if (Model.Performer.Avatar != null) {
+               <img src="~/Avatars/@Model.Performer.Avatar" alt="avatar"> 
+         }
+             @Model.Performer.UserName 
+
      <ul>
-         <li>@Model.Performer.UserName (rating: @Model.Rate%)</li>
+         
+         <li> @SR["Rating"]: @Model.Rate % </li>
         @if (Model.MinDailyCost != null) {
             <li>@SR["MinDailyCost"]: @Model.MinDailyCost&euro;</li>
         }
