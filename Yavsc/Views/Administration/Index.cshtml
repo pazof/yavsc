@@ -1,0 +1,22 @@
+@model AdminViewModel
+
+@{ 
+    ViewBag.Title = SR["Administration"];
+}
+
+<h2>@ViewBag.Title</h2>
+<p>
+Rôles : 
+<ul>
+@foreach (var role in Model.Roles) {
+<li>@Html.ActionLink(role.Name,"Role",new { id=role.Id }) (@role.Users.Length membres)</li>
+}
+</ul>
+</p>
+<p>
+Nombre d'administrateurs :
+@Model.AdminCount
+</p>
+<p>
+Vous êtes administrateur: @(Model.YouAreAdmin?"Oui":"Non")
+</p>
