@@ -25,7 +25,9 @@ namespace Yavsc.Models.Booking
             get;
             set;
             }
-
+        
+        public string Reason { get; set; }
+        
         public BookQuery()
         {
         }
