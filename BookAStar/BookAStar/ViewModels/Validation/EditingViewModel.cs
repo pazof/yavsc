@@ -1,12 +1,7 @@
-﻿using BookAStar.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System;
 using XLabs.Forms.Mvvm;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace BookAStar.ViewModels.Validation
 {
@@ -16,7 +11,7 @@ namespace BookAStar.ViewModels.Validation
     /// </summary>
     public class EditingViewModel<DataType>: ViewModel
     {
-
+        [JsonIgnore]
         public Action<DataType, ModelState> CheckCommand { set; get; }
 
         public DataType Data { get; set; }
@@ -44,13 +39,16 @@ namespace BookAStar.ViewModels.Validation
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
+            Check();
+        }
+        public virtual void Check()
+        {
             if (CheckCommand != null)
             {
                 ViewModelState.Clear();
                 CheckCommand(Data, ViewModelState);
             }
         }
-
         /* NOTE : I had a dream.
 
 bool existsRemotely;

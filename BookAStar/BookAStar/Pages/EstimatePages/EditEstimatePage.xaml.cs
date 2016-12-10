@@ -11,11 +11,29 @@ namespace BookAStar.Pages
 
     public partial class EditEstimatePage : ContentPage
     {
-
+        public EditEstimateViewModel Model
+        {
+            get
+            {
+                return (EditEstimateViewModel)BindingContext;
+            }
+        }
         public EditEstimatePage(EditEstimateViewModel model)
         {
-            InitializeComponent();
             BindingContext = model;
+            Model.CheckCommand = new Action<Estimate, ViewModels.Validation.ModelState>(
+                (e, m) =>
+                {
+                    foreach (var line in model.Bill)
+                    {
+                        line.Check();
+                        if (!line.ViewModelState.IsValid)
+                            model.ViewModelState.AddError("Bill", "invalid line");
+                    }
+                });
+
+            InitializeComponent();
+            Model.Check();
         }
 
         protected override void OnBindingContextChanged()
@@ -56,27 +74,32 @@ namespace BookAStar.Pages
         }
         protected void OnEditLine(object sender, ItemTappedEventArgs e)
         {
+
             var line = (BillingLineViewModel)e.Item;
+            var evm = ((EditEstimateViewModel)BindingContext);
             // update the validation command, that 
             // was creating a new line in the bill at creation time,
             // now one only wants to update the line
             line.ValidateCommand = new Command(() =>
             {
+                evm.Check();
                 DataManager.Current.EstimationCache.SaveEntity();
             });
             // and setup a removal command, that was not expected at creation time
-            var evm = (EditEstimateViewModel)BindingContext;
             line.RemoveCommand = new Command(() =>
             {
                 evm.Bill.Remove(line);
+                evm.Check();
                 DataManager.Current.EstimationCache.SaveEntity();
             });
             App.NavigationService.NavigateTo<EditBillingLinePage>(
                 true, line );
+            BillListView.SelectedItem = null;
         }
 
         protected async void OnEstimateValidated(object sender, EventArgs e)
         {
+            
             var thisPage = this;
             var evm = (EditEstimateViewModel) BindingContext;
             var cmd = new Command<bool>( async (validated) =>
