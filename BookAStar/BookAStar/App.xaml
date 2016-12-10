@@ -22,9 +22,9 @@
       <Color x:Key="NormalTextColor">Blue</Color>
       <Color x:Key="GroupingTextColor">#5050ff</Color>
       <Color x:Key="OddColor">#207AFAFA</Color>
+      <Color x:Key="EmphasisTextColor">#800080</Color>
       
       <OnPlatform x:TypeArguments="Font" Android="Large" iOS="Large" WinPhone="Large" x:Key="HeaderFont" />
-      <OnPlatform x:TypeArguments="Color" Android="Red" iOS="Red" WinPhone="Red" x:Key="EmphasisTextColor" />
       <OnPlatform x:TypeArguments="Font" Android="90" iOS="90" WinPhone="90" x:Key="LargeFontSize" />
       <OnPlatform x:TypeArguments="Font" Android="50" iOS="50" WinPhone="50" x:Key="MediumFontSize" />
       <OnPlatform x:TypeArguments="Font" Android="40" iOS="40" WinPhone="40" x:Key="SmallFontSize" />
