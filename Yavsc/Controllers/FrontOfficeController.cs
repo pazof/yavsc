@@ -48,7 +48,8 @@ namespace Yavsc.Controllers
                 a => a.Code == id);
 
             return View(
-                _context.Performers.Include(p => p.Performer).Where
+                _context.Performers.Include(p => p.Performer)
+                .Include(p=>p.Performer.Devices).Where
                 (p => p.ActivityCode == id && p.Active).OrderBy(
                     x => x.MinDailyCost
                 )
