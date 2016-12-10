@@ -100,7 +100,7 @@
 <StackLayout Orientation="Vertical">
       <Button Text="Ajouter une ligne de facture" Clicked="OnNewCommanLine"></Button>
       <Label FormattedText="{Binding FormattedTotal}"/>
-      <Button Text="Valider ce devis" Clicked="OnEstimateValidated" ></Button>
+      <Button x:Name="btnValidate" Text="Valider ce devis" Clicked="OnEstimateValidated" IsEnabled="{Binding ViewModelState.IsValid}" ></Button>
 </StackLayout>
     </StackLayout>
     </StackLayout>

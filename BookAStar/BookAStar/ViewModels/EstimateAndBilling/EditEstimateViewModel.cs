@@ -24,7 +24,15 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         {
             SyncData();
         }
-
+        public override void OnViewAppearing()
+        {
+            base.OnViewAppearing();
+            SyncData();
+        }
+        /// <summary>
+        /// Called to synchronyze this view on target model,
+        /// at accepting a new representation for this model
+        /// </summary>
         private void SyncData()
         {
             if (Data.AttachedFiles == null) Data.AttachedFiles = new List<string>();
@@ -41,12 +49,13 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             NotifyPropertyChanged("FormattedTotal");
             NotifyPropertyChanged("Query");
             NotifyPropertyChanged("CLient");
+            NotifyPropertyChanged("ModelState");
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
-            if (e.PropertyName == "Data")
+            if (e.PropertyName.StartsWith("Data"))
             {
                 SyncData();
             }
@@ -61,6 +70,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             Data.Bill = Bill.Select(l => l.Data).ToList();
             NotifyPropertyChanged("FormattedTotal");
             NotifyPropertyChanged("Bill");
+            NotifyPropertyChanged("ViewModelState");
         }
 
         [JsonIgnore]
@@ -127,7 +137,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             get
             {
                 OnPlatform<Font> lfs = (OnPlatform<Font>)App.Current.Resources["MediumFontSize"];
-                OnPlatform<Color> etc = (OnPlatform<Color>)App.Current.Resources["EmphasisTextColor"];
+                Color  etc = (Color) App.Current.Resources["EmphasisTextColor"];
 
                 return new FormattedString
                 {
@@ -135,7 +145,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
                     Spans = {
                         new Span { Text = "Total TTC: " },
                         new Span { Text = Data.Total.ToString(),
-                            ForegroundColor = etc.Android  ,
+                            ForegroundColor = etc,
                             FontSize = (double) lfs.Android.FontSize },
                         new Span { Text = "€", FontSize = (double) lfs.Android.FontSize }
                     }
