@@ -1,0 +1,14 @@
+@model RoleUserCollection
+@{ 
+    ViewBag.Title = SR["Role"]+" "+Model.Name;
+}
+
+<h2>@ViewBag.Title</h2>
+
+<ul>
+@foreach (var user in Model.Users) {
+   <li> <img src="~/Avatars/@(user.UserName).xs.png" alt="avatar"/>
+    @user.UserName
+   </li>
+}
+</ul>

@@ -144,7 +144,7 @@ namespace Yavsc.WebApi.Controllers
         /// <param name="me">MyUpdate containing the new user name </param>
         /// <returns>Ok when all is ok.</returns>
         [HttpPut("~/api/me")]
-        public async Task<IActionResult> UpdateMe(MyUpdate me)
+        public async Task<IActionResult> UpdateMe(UserInfo me)
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(
                     new { error = "Specify some valid user update request." });

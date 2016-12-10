@@ -12,5 +12,7 @@ namespace Yavsc.Model
 
         public DateTime EventDate { get; set; }
         public decimal? Previsional { get; set; }
+
+        public string Reason { get; set; }
     }
 }
