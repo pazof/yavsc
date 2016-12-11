@@ -2,13 +2,18 @@
 
 public interface IEvent {
     /// <summary>
-    /// An acceptable topic for this event to be.
-    /// Should return something like the class name
-    /// of this object
+    /// <c>/topic/(bookquery|estimate)</c>
     /// </summary>
     /// <returns></returns>
     string Topic { get; set ; }
+    /// <summary>
+    /// Should be the user's name
+    /// </summary>
+    /// <returns></returns>
     string Sender { get; set ; }
-
+    /// <summary>
+    /// The message 
+    /// </summary>
+    /// <returns></returns>
     string Message { get; set; }
 }

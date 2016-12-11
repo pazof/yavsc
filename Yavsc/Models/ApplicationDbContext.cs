@@ -12,8 +12,8 @@ using Yavsc.Models.OAuth;
 using Yavsc.Models.Workflow;
 using Yavsc.Models.Identity;
 using Yavsc.Models.Market;
-using Yavsc.Model;
 using Yavsc.Model.Chat;
+using Yavsc.Models.Messaging;
 
 namespace Yavsc.Models
 {
