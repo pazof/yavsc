@@ -203,6 +203,8 @@
   <data name="entries"><value>entrées</value></data>
   <data name="Estimate"><value>Estimer</value></data>
   <data name="Estimate_not_found"><value>Devis non trouvé</value></data>
+  <data name="EstimationMessageToClient"><value>{0} a validé un devis pour vous : {1}\nAu total : {2} €
+  Il attend maintenant votre signature.</value></data>
   <data name="EstimateWanted"><value>Demande de devis</value></data>
   <data name="Event date"><value>Date de l'évennement</value></data>
   <data name="EventWebPage"><value>Page web de l'événement</value></data>
