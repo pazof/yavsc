@@ -61,6 +61,10 @@
     <Compile Include="Model\Settings\SignatureSettings.cs" />
     <Compile Include="Model\Social\Messaging\ChatStatus.cs" />
     <Compile Include="Model\Social\Messaging\PrivateMessage.cs" />
+    <Compile Include="Pages\Chat\PrivateChatPage.xaml.cs">
+      <DependentUpon>PrivateChatPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Messaging\UserViewModel.cs" />
     <Compile Include="ViewModels\Validation\Error.cs" />
     <Compile Include="ViewModels\Validation\ModelState.cs" />
     <Compile Include="ViewModels\PageState.cs" />
@@ -135,7 +139,7 @@
     <Compile Include="Pages\EstimatePages\BookQueryPage.xaml.cs">
       <DependentUpon>BookQueryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ChatPage.xaml.cs">
+    <Compile Include="Pages\Chat\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\EstimatePages\EditBillingLinePage.xaml.cs">
@@ -426,7 +430,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\ChatPage.xaml">
+    <EmbeddedResource Include="Pages\Chat\ChatPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -499,6 +503,12 @@
       <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
       <Name>YavscLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\Chat\PrivateChatPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

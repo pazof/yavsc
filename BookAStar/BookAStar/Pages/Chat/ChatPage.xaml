@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-            x:Class="BookAStar.Pages.ChatPage"
+            x:Class="BookAStar.Pages.Chat.ChatPage"
             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
             xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
             xmlns:toolkit="clr-namespace:XLabs.Forms.Mvvm;assembly=XLabs.Forms"
@@ -105,10 +105,8 @@
           <Entry x:Name="pvEntry" Placeholder = "enter your private message"
                  VerticalOptions = "Center"
                       HorizontalOptions = "FillAndExpand"></Entry>
-          <!--
-         <controls:ExtendedPicker x:Name="contactPicker" Display="{Binding UserName}"></controls:ExtendedPicker>
-        -->
-          <controls:ExtendedPicker x:Name="contactPicker" ItemsSource="{Binding Contacts}" />
+
+          
           <Button x:Name="sendPVButton" Text = "Send" HorizontalOptions = "End"
                            VerticalOptions = "Center"></Button>
         </StackLayout>

@@ -200,7 +200,7 @@ namespace BookAStar.Rendering
             var uriImageLoader = imagesource as UriImageSource;
             if (uriImageLoader != null && uriImageLoader.Uri != null)
             {
-                using (var client = UserHelpers.CreateClient())
+                using (var client = UserHelpers.CreateJsonClient())
                 {
                     using (var response = await client.GetAsync(uriImageLoader.Uri))
                     {

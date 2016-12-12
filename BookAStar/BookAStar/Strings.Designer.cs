@@ -215,6 +215,15 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Profile professionnel.
+        /// </summary>
+        public static string Profprof {
+            get {
+                return ResourceManager.GetString("Profprof", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Signer.
         /// </summary>
         public static string Sign {
@@ -265,6 +274,15 @@ namespace BookAStar {
         public static string ViewEstimate {
             get {
                 return ResourceManager.GetString("ViewEstimate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Vos fichiers .
+        /// </summary>
+        public static string YourFiles {
+            get {
+                return ResourceManager.GetString("YourFiles", resourceCulture);
             }
         }
         

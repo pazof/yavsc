@@ -5,6 +5,10 @@ using XLabs.Forms.Behaviors;
 namespace BookAStar.Pages.UserProfile
 {
     using Data;
+    using Helpers;
+    using Newtonsoft.Json.Linq;
+    using System.Linq;
+    using System.Net.Http;
     using ViewModels.UserProfile;
 
     public partial class DashboardPage : ContentPage
@@ -18,11 +22,36 @@ namespace BookAStar.Pages.UserProfile
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
-            // Assert ((DashboardViewModel)BindingContext!=null)
-            ((DashboardViewModel)BindingContext).UserNameGesture
-                = new RelayGesture( (gesture,arg) => {
-                        ShowPage<AccountChooserPage>(null, true);
-                    });
+        }
+
+        public async void OnRefreshQuery(object sender, EventArgs e)
+        {
+            IsBusy = true;
+            using (var client = UserHelpers.CreateJsonClient())
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, Constants.UserInfoUrl))
+                {
+                    using (var response = await client.SendAsync(request))
+                    {
+                        response.EnsureSuccessStatusCode();
+                        string userJson = await response.Content.ReadAsStringAsync();
+                        JObject jactiveUser = JObject.Parse(userJson);
+                        var username = jactiveUser["UserName"].Value<string>();
+                        var roles = jactiveUser["Roles"].Values<string>().ToList();
+                        var emails = jactiveUser["EMails"].Values<string>().ToList();
+                        var avatar = jactiveUser["Avatar"].Value<string>();
+                        var address = jactiveUser["Avatar"].Value<string>();
+                        var me = MainSettings.CurrentUser;
+                        me.Address = address;
+                        me.Avatar = avatar;
+                        me.EMails = emails;
+                        me.UserName = username;
+                        me.Roles = roles;
+                        MainSettings.SaveUser(me);
+                    }
+                }
+            }
+            IsBusy = false;
         }
 
         public void OnManageFiles(object sender, EventArgs e)
