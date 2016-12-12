@@ -53,5 +53,23 @@ namespace BookAStar.ViewModels.Messaging
                 return UserHelpers.Avatar(Data.Avatar);
             }
         }
+
+        [JsonIgnore]
+        public ImageSource SmallAvatar
+        {
+            get
+            {
+                return UserHelpers.SmallAvatar(Data.Avatar, Data.UserName);
+            }
+        }
+
+        [JsonIgnore]
+        public ImageSource ExtraSmallAvatar
+        {
+            get
+            {
+                return UserHelpers.ExtraSmallAvatar(Data.Avatar, Data.UserName);
+            }
+        }
     }
 }

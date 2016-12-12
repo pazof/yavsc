@@ -5,18 +5,24 @@ namespace BookAStar.ViewModels.EstimateAndBilling
 {
     using Data;
     using Model;
+    using System.Linq;
+
     public class BookQueriesViewModel : XLabs.Forms.Mvvm.ViewModel
     {
         public BookQueriesViewModel()
         {
-
+            queries = new ObservableCollection<BookQueryViewModel>
+                (DataManager.Current.BookQueries.Select(
+                    q =>
+                    new BookQueryViewModel(q)));
         }
+        private ObservableCollection<BookQueryViewModel> queries;
 
-        public ObservableCollection<BookQueryData> Queries
+        public ObservableCollection<BookQueryViewModel> Queries
         {
             get
             {
-                return DataManager.Current.BookQueries;
+                return queries;
             }
         }
 
