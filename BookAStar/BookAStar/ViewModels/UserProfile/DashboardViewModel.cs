@@ -13,6 +13,7 @@ namespace BookAStar.ViewModels.UserProfile
     using Helpers;
     using Model.Auth.Account;
     using Pages.UserProfile;
+    using System.Threading.Tasks;
 
     internal class DashboardViewModel : ViewModel
     {
@@ -97,7 +98,6 @@ namespace BookAStar.ViewModels.UserProfile
                 if (user!=null)
                 {
                     user.PropertyChanged += User_PropertyChanged;
-
                 }
 
                 UpdateUserMeta();
@@ -173,39 +173,53 @@ namespace BookAStar.ViewModels.UserProfile
 
         private void UpdateUserMeta ()
         {
-            string newStatusString;
-            long newQueryCount;
-            bool newUserIsPro;
-            ImageSource newAvatar;
-            string newQueriesButtonText;
-            bool newHaveAnUser = user == null;
-            if (newHaveAnUser) {
-                newQueryCount = 0;
-                newUserIsPro = false;
-                newStatusString = null;
-                newAvatar = null;
-                newQueriesButtonText = null;
-            }
-            else
-            {
-                newUserIsPro = UserIsPro;
+            Task.Run( ()=> {
+                string newStatusString;
+                long newQueryCount;
+                bool newUserIsPro;
+                ImageSource newAvatar;
+                string newQueriesButtonText;
+                bool newHaveAnUser = user == null;
+                if (newHaveAnUser)
+                {
+                    newQueryCount = 0;
+                    newUserIsPro = false;
+                    newStatusString = null;
+                    newAvatar = null;
+                    newQueriesButtonText = null;
+                }
+                else
+                {
+                    newUserIsPro = UserIsPro;
 
-                newQueryCount = newUserIsPro ? DataManager.Current.BookQueries.Count : 0;
+                    newQueryCount = newUserIsPro ? DataManager.Current.BookQueries.Count : 0;
 
-                newStatusString = newUserIsPro ?
-                     $"Profile professionel renseigné" :
-                    "Profile professionel non renseigné";
-                newQueriesButtonText = newUserIsPro ?
-                     $"{newQueryCount} demandes valides en cours" :
-                    "Profile professionel non renseigné";
-                newAvatar = UserHelpers.Avatar(user.Avatar);
-            }
-            SetProperty<bool>(ref haveAnUser, newHaveAnUser, "HaveAnUser");
-            SetProperty<bool>(ref userIsPro, newUserIsPro, "UserIsPro");
-            SetProperty<string>(ref performerStatus, newStatusString, "PerformerStatus");
-            SetProperty<string>(ref userQueries, newQueriesButtonText, "UserQueries");
-            SetProperty<long>(ref queryCount, newQueryCount, "QueryCount");
-            SetProperty<ImageSource>(ref avatar, newAvatar, "Avatar");
+                    newStatusString = newUserIsPro ?
+                         $"Profile professionel renseigné" :
+                        "Profile professionel non renseigné";
+                    newQueriesButtonText = newUserIsPro ?
+                         $"{newQueryCount} demandes valides en cours" :
+                        "Profile professionel non renseigné";
+                    newAvatar = UserHelpers.Avatar(user.Avatar);
+                }
+                SetProperty<bool>(ref haveAnUser, newHaveAnUser, "HaveAnUser");
+                SetProperty<bool>(ref userIsPro, newUserIsPro, "UserIsPro");
+                SetProperty<string>(ref performerStatus, newStatusString, "PerformerStatus");
+                SetProperty<string>(ref userQueries, newQueriesButtonText, "UserQueries");
+                SetProperty<long>(ref queryCount, newQueryCount, "QueryCount");
+                try
+                {
+                    SetProperty<ImageSource>(ref avatar, newAvatar, "Avatar");
+                }
+                catch (TaskCanceledException)
+                { }
+
+                NotifyPropertyChanged("UserName");
+                NotifyPropertyChanged("UserId");
+                NotifyPropertyChanged("HaveAnUser");
+                NotifyPropertyChanged("UserIsPro");
+            });
+            
         }
 
         private void User_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -214,6 +228,12 @@ namespace BookAStar.ViewModels.UserProfile
         }
 
         public RelayGesture UserNameGesture { get; set; }
-
+        public string UserFilesText
+        {
+            get
+            {
+                return Strings.YourFiles;
+            }
+        }
     }
 }

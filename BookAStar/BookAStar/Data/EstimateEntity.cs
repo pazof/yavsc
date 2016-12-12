@@ -28,7 +28,7 @@ namespace BookAStar.Data
                 }
                 this.Add(estimate);
             }
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 try
                 {

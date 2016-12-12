@@ -28,6 +28,8 @@ namespace BookAStar
     using ViewModels.EstimateAndBilling;
     using Pages.EstimatePages;
     using ViewModels;
+    using Pages.Chat;
+    using System.Collections.Generic;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -93,16 +95,21 @@ namespace BookAStar
             // TODO special startup pages as
             // notification details or wizard setup page
         }
-
+        private INavigation Navigation
+        {
+            get
+            {
+                return masterDetail.Detail.Navigation;
+            }
+        }
         // Called on rotation
         private void OnSuspended(object sender, EventArgs e)
         {
             // TODO save the navigation stack
             int position = 0;
-            
-            foreach (Page page in MainPage.Navigation.NavigationStack)
+            DataManager.Current.AppState.Clear();
+            foreach (Page page in Navigation.NavigationStack)
             {
-
                 DataManager.Current.AppState.Add(
                     new PageState
                     {
@@ -141,7 +148,7 @@ namespace BookAStar
         {
             ViewFactory.EnableCache = true;
             ViewFactory.Register<ChatPage, ChatViewModel>(
-                r=> new ChatViewModel { ChatUser = MainSettings.UserName }
+                r=> new ChatViewModel { }
                 );
             ViewFactory.Register<DashboardPage, DashboardViewModel>(
                  resolver => new DashboardViewModel());
@@ -183,13 +190,14 @@ namespace BookAStar
 
         private void ShowPage(Page page)
         {
-            if (masterDetail.Detail.Navigation.NavigationStack.Contains(page))
+            
+            if (Navigation.NavigationStack.Contains(page))
             {
-                if (masterDetail.Detail.Navigation.NavigationStack.Last() == page) return;
-                masterDetail.Detail.Navigation.RemovePage(page);
+                if (Navigation.NavigationStack.Last() == page) return;
+                Navigation.RemovePage(page);
                 page.Parent = null;
             }
-            masterDetail.Detail.Navigation.PushAsync(page);
+            Navigation.PushAsync(page);
         }
 
         private void BuildMainPage()
@@ -261,11 +269,11 @@ namespace BookAStar
             masterDetail.ToolbarItems.Add(tiPubChat);
             this.MainPage = masterDetail;
             
-            NavigationService = new NavigationService(masterDetail.Detail.Navigation);
+            NavigationService = new NavigationService(Navigation);
         }
         public static Task<string> DisplayActionSheet(string title, string cancel, string destruction, string [] buttons)
         {
-            var currentPage = CurrentApp.masterDetail.Detail.Navigation.NavigationStack.Last();
+            var currentPage = App.CurrentApp.Navigation.NavigationStack.Last();
             return currentPage.DisplayActionSheet(title, cancel, destruction, buttons);
         }
 
@@ -347,13 +355,13 @@ namespace BookAStar
 
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
-            if (MainSettings.CurrentUser == null)
+            if (chatHubConnection != null)
             {
                 chatHubConnection.Dispose();
                 chatHubConnection = null;
                 chatHubProxy = null;
             }
-            else
+            if (MainSettings.CurrentUser != null)
             {
                 var token = MainSettings.CurrentUser.YavscTokens.AccessToken;
                 SetupHubConnection();

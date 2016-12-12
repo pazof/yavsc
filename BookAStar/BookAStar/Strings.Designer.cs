@@ -71,6 +71,15 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Bloquer cet utilisateur.
+        /// </summary>
+        public static string BlockThisUser {
+            get {
+                return ResourceManager.GetString("BlockThisUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Annuler la validation.
         /// </summary>
         public static string CancelValidation {
@@ -80,11 +89,29 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Restreindre la demande aux clients professionnels.
+        /// </summary>
+        public static string ClientProRequest {
+            get {
+                return ResourceManager.GetString("ClientProRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à La création a échoué, contenu envoyé: {stringContent} @ Uri: {ControllerUri.AbsoluteUri}: Erreur : {errcontent}.
         /// </summary>
         public static string CreationFailed {
             get {
                 return ResourceManager.GetString("CreationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Décliner cette proposition (envoyer un refus, et archiver la demande).
+        /// </summary>
+        public static string DeclineQuery {
+            get {
+                return ResourceManager.GetString("DeclineQuery", resourceCulture);
             }
         }
         
@@ -215,6 +242,15 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Profile professionnel.
+        /// </summary>
+        public static string Profprof {
+            get {
+                return ResourceManager.GetString("Profprof", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Signer.
         /// </summary>
         public static string Sign {
@@ -260,11 +296,29 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Comptes utilisateur.
+        /// </summary>
+        public static string UserAccounts {
+            get {
+                return ResourceManager.GetString("UserAccounts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Voir les devis validés.
         /// </summary>
         public static string ViewEstimate {
             get {
                 return ResourceManager.GetString("ViewEstimate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Vos fichiers .
+        /// </summary>
+        public static string YourFiles {
+            get {
+                return ResourceManager.GetString("YourFiles", resourceCulture);
             }
         }
         

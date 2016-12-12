@@ -6,14 +6,16 @@ using XLabs.Forms.Mvvm;
 namespace BookAStar.ViewModels.EstimateAndBilling
 {
     using Data;
+    using Helpers;
     using Interfaces;
     using Model;
     using Model.Social;
     using Model.Workflow;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using Xamarin.Forms;
 
-    class BookQueryViewModel : ViewModel, IBookQueryData
+    public class BookQueryViewModel : ViewModel, IBookQueryData
     {
         public BookQueryViewModel()
         {
@@ -41,6 +43,20 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             }
         }
         public ClientProviderInfo Client { get; set; }
+        public ImageSource Avatar
+        {
+            get
+            {
+                return UserHelpers.Avatar(Client.Avatar);
+            }
+        }
+        public ImageSource SmallAvatar
+        {
+            get
+            {
+                return UserHelpers.SmallAvatar(Client.Avatar, Client.UserName);
+            }
+        }
         public Location Location { get; set; }
         public long Id { get; set; }
         public DateTime EventDate { get; set; }

@@ -26,8 +26,8 @@ namespace BookAStar.Pages
 
         private void OnViewDetail(object sender, ItemTappedEventArgs e)
         {
-            BookQueryData data = e.Item as BookQueryData;
-            App.NavigationService.NavigateTo<BookQueryPage>(true,data);
+            var item = e.Item as BookQueryViewModel;
+            App.NavigationService.NavigateTo<BookQueryPage>(true,item);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Microsoft.AspNet.SignalR.Client;
 using Xamarin.Forms;
 
-namespace BookAStar.Pages
+namespace BookAStar.Pages.Chat
 {
     using Data;
     using System.Linq;
@@ -19,7 +19,7 @@ namespace BookAStar.Pages
 
             Title = "Chat";
             BindingContext = new ChatViewModel();
-
+            App.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
             sendButton.Clicked += async (sender, args) =>
             {
                 IsBusy = true;
@@ -38,17 +38,15 @@ namespace BookAStar.Pages
 
                 IsBusy = false;
             };
-
+            /*
             sendPVButton.Clicked += async (sender, args) =>
             {
                 string userName = contactPicker.SelectedItem as string;
                 if (string.IsNullOrEmpty(userName)) return;
                 var user = DataManager.Current.Contacts.Single(
                     c => c.UserName == userName);
-                if (string.IsNullOrEmpty(user.ChatHubConnectionId)) return;
                 IsBusy = true;
                 try
-
                 {
                     await App.ChatHubProxy.Invoke<string>("SendPV", user.ChatHubConnectionId, pvEntry.Text);
                     pvEntry.Text = null;
@@ -58,10 +56,10 @@ namespace BookAStar.Pages
                     Debug.WriteLine(ex);
                 }
                 IsBusy = false;
-            };
+            };*/
             
         }
-        
+
         private void ChatHubConnection_StateChanged(StateChange obj)
         {
             Xamarin.Forms.Device.BeginInvokeOnMainThread(
