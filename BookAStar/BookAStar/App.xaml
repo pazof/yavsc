@@ -9,7 +9,7 @@
     <ResourceDictionary>
       
       <Color x:Key="PageBackgroundColor">#FFAAAAFF</Color>
-      <Color x:Key="ContentBackgroundColor">#80AFAFAF</Color>
+      <Color x:Key="ContentBackgroundColor">#80FFFFFF</Color>
       <Color x:Key="BackgroundColor">#FFFFFFFF</Color>
       <Color x:Key="LabelBackgroundColor">#FFFFFFFF</Color>
       
@@ -25,9 +25,9 @@
       <Color x:Key="EmphasisTextColor">#800080</Color>
       
       <OnPlatform x:TypeArguments="Font" Android="Large" iOS="Large" WinPhone="Large" x:Key="HeaderFont" />
-      <OnPlatform x:TypeArguments="Font" Android="90" iOS="90" WinPhone="90" x:Key="LargeFontSize" />
-      <OnPlatform x:TypeArguments="Font" Android="50" iOS="50" WinPhone="50" x:Key="MediumFontSize" />
-      <OnPlatform x:TypeArguments="Font" Android="40" iOS="40" WinPhone="40" x:Key="SmallFontSize" />
+      <OnPlatform x:TypeArguments="x:Double" Android="22" iOS="22" WinPhone="22" x:Key="LargeFontSize" />
+      <OnPlatform x:TypeArguments="x:Double" Android="16" iOS="16" WinPhone="16" x:Key="MediumFontSize" />
+      <OnPlatform x:TypeArguments="x:Double" Android="14" iOS="14" WinPhone="14" x:Key="SmallFontSize" />
       <OnPlatform x:TypeArguments="x:Double" Android="130" iOS="130" WinPhone="130" x:Key="BigUserAvatarSize" />
       
       <Style x:Key="LabelPageHeadingStyle" TargetType="Label">

@@ -136,18 +136,20 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         {
             get
             {
+                /* 
                 OnPlatform<Font> lfs = (OnPlatform<Font>)App.Current.Resources["MediumFontSize"];
+                */
+                OnPlatform<double> mfs = (OnPlatform < double > ) App.Current.Resources["MediumFontSize"];
                 Color  etc = (Color) App.Current.Resources["EmphasisTextColor"];
 
                 return new FormattedString
                 {
-
                     Spans = {
                         new Span { Text = "Total TTC: " },
                         new Span { Text = Data.Total.ToString(),
                             ForegroundColor = etc,
-                            FontSize = (double) lfs.Android.FontSize },
-                        new Span { Text = "€", FontSize = (double) lfs.Android.FontSize }
+                            FontSize = mfs },
+                        new Span { Text = "€", FontSize = mfs }
                     }
                 };
             }

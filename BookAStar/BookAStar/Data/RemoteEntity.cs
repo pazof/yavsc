@@ -49,7 +49,7 @@ namespace BookAStar.Data
         public virtual async void Execute(object parameter)
         {
             BeforeExecute();
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 // Get the whole data
                 try
@@ -105,7 +105,7 @@ namespace BookAStar.Data
             // Get the whole data
             var uri = GetUri(key);
 
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 using (var response = await client.GetAsync(uri))
                 {
@@ -128,7 +128,7 @@ namespace BookAStar.Data
             bool created = false;
             BeforeExecute();
 
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 var stringContent = JsonConvert.SerializeObject(item);
                 
@@ -164,7 +164,7 @@ namespace BookAStar.Data
             BeforeExecute();
 
             var uri = GetUri(GetKey(item));
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 HttpContent content = new StringContent(
                     JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json"
@@ -203,7 +203,7 @@ namespace BookAStar.Data
         {
             BeforeExecute();
             var uri = GetUri(key);
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 using (var response = await client.DeleteAsync(uri))
                 {

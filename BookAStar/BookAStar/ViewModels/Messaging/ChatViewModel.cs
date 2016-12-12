@@ -7,7 +7,6 @@ using XLabs.Forms.Mvvm;
 namespace BookAStar.ViewModels.Messaging
 {
     using Data;
-    using Model;
     using Model.Social.Messaging;
 
     class ChatViewModel: ViewModel
@@ -15,19 +14,8 @@ namespace BookAStar.ViewModels.Messaging
         public ObservableCollection<ChatMessage> Messages { get; set; }
         public ObservableCollection<ChatMessage> Notifs { get; set; }
         public ObservableCollection<ChatMessage> PVs { get; set; }
-        public ObservableCollection<ClientProviderInfo> Contacts { get; set; }
-        private string chatUser;
-        public string ChatUser
-        {
-            get
-            {
-                return chatUser;
-            }
-            set
-            {
-                SetProperty<string>(ref chatUser, value);
-            }
-        }
+        public ObservableCollection<UserViewModel> Contacts { get; set; }
+
         private ConnectionState state;
         public ConnectionState State
         {
@@ -41,7 +29,9 @@ namespace BookAStar.ViewModels.Messaging
             Messages = new ObservableCollection<ChatMessage>();
             Notifs = new ObservableCollection<ChatMessage>();
             PVs = DataManager.Current.PrivateMessages;
-            Contacts = DataManager.Current.Contacts;
+            Contacts = 
+                new ObservableCollection<UserViewModel>(
+                DataManager.Current.Contacts.Select(c=>new UserViewModel { Data = c }));
             App.ChatHubProxy.On<string, string>("addMessage", (n, m) =>
             {
                 Messages.Add(new ChatMessage
@@ -54,45 +44,44 @@ namespace BookAStar.ViewModels.Messaging
 
             App.ChatHubProxy.On<string, string, string>("notify", (eventId, cxId, userName) =>
             {
+                var msg = new ChatMessage
+                {
+                    Message = eventId,
+                    SenderId = userName,
+                    Date = DateTime.Now
+                };
                 // TODO make admin possible 
                 // by assigning a server side username to anonymous.
-                // From now, don't log anonymous
-                if (!string.IsNullOrEmpty(userName))
+                if (string.IsNullOrEmpty(userName))
                 {
-                    Notifs.Add(new ChatMessage
-                    {
-                        Message = eventId,
-                        SenderId = userName,
-                        Date = DateTime.Now
-                    });
-                    if (eventId == "connected")
-                        OnUserConnected(cxId, userName);
-                    else if (eventId == "disconnected")
-                        OnUserDisconnected(userName);
+                    msg.SenderId = $"({cxId})";
                 }
+                Notifs.Add(msg);
+                if (eventId == "connected")
+                    OnUserConnected(cxId, userName);
+                else if (eventId == "disconnected")
+                    OnUserDisconnected(userName);
             });
-            ChatUser = MainSettings.UserName;
         }
 
         private void OnUserConnected(string cxId, string userName)
         {
             var user = Contacts.SingleOrDefault(
-                c => c.UserName == userName);
+                c => c.Data.UserName == userName);
             if (user != null)
-                user.ChatHubConnectionId = cxId;
+                user.ConnexionId = cxId;
         }
 
         private void OnUserDisconnected (string userName)
         {
             var user = Contacts.SingleOrDefault(
-                c => c.UserName == userName);
+                c => c.Data.UserName == userName);
             if (user != null)
-                user.ChatHubConnectionId = null;
+                user.ConnexionId = null;
         }
 
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
-            ChatUser = MainSettings.UserName;
         }
 
         private void ChatHubConnection_StateChanged(StateChange obj)

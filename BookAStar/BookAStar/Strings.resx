@@ -191,4 +191,10 @@
   <data name="MinMaxIntError" xml:space="preserve">
     <value>Veuillez saisir une valeur entre {0} et {1}.</value>
   </data>
+  <data name="YourFiles" xml:space="preserve">
+    <value>Vos fichiers </value>
+  </data>
+  <data name="Profprof" xml:space="preserve">
+    <value>Profile professionnel</value>
+  </data>
 </root>
