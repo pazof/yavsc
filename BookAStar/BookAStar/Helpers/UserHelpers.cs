@@ -21,6 +21,20 @@ namespace BookAStar.Helpers
             return result;
         }
 
+        public static ImageSource SmallAvatar(string avatarPath, string username)
+        {
+            return avatarPath == null ?
+                ImageSource.FromResource("BookAStar.Images.Users.icon_user.png") :
+             ImageSource.FromUri(new Uri($"{Constants.YavscHomeUrl}/Avatars/{username}.s.png"));
+        }
+
+        public static ImageSource ExtraSmallAvatar(string avatarPath, string username)
+        {
+            return avatarPath == null ?
+                   ImageSource.FromResource("BookAStar.Images.Users.icon_user.png") :
+             ImageSource.FromUri(new Uri($"{Constants.YavscHomeUrl}/Avatars/{username}.xs.png"));
+        }
+
         public static HttpClient CreateJsonClient()
         {
             return CreateJsonClient(MainSettings.CurrentUser.YavscTokens.AccessToken);
@@ -35,8 +49,6 @@ namespace BookAStar.Helpers
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             return client;
         }
-
-
 
         /// <summary>
         /// Uploads the given stream to

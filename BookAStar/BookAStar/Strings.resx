@@ -197,4 +197,16 @@
   <data name="Profprof" xml:space="preserve">
     <value>Profile professionnel</value>
   </data>
+  <data name="ClientProRequest" xml:space="preserve">
+    <value>Restreindre la demande aux clients professionnels</value>
+  </data>
+  <data name="UserAccounts" xml:space="preserve">
+    <value>Comptes utilisateur</value>
+  </data>
+  <data name="BlockThisUser" xml:space="preserve">
+    <value>Bloquer cet utilisateur</value>
+  </data>
+  <data name="DeclineQuery" xml:space="preserve">
+    <value>Décliner cette proposition (envoyer un refus, et archiver la demande)</value>
+  </data>
 </root>
