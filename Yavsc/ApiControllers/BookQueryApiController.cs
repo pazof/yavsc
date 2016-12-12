@@ -41,7 +41,8 @@ namespace Yavsc.Controllers
             var now = DateTime.Now;
             
             var result = _context.Commands.Include(c => c.Location).
-            Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now).
+            Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now
+            && c.ValidationDate == null).
             Select(c => new BookQueryProviderInfo
             {
                 Client = new ClientProviderInfo {
