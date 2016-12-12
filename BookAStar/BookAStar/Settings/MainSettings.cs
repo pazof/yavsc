@@ -171,21 +171,34 @@ namespace BookAStar
 
         public static event EventHandler<EventArgs> UserChanged;
 
+        /// <summary>
+        /// Saves the given user account in the account list.
+        /// An existent presenting the same Id will be dropped.
+        /// </summary>
+        /// <param name="user"></param>
         public static void SaveUser(User user)
         {
-            var existent = AccountList.FirstOrDefault(u => u.UserName == user.UserName);
+            var existent = AccountList.FirstOrDefault(u => u.Id == user.Id);
             if (existent != null)
                 AccountList.Remove(existent);
             AccountList.Add(user);
             var json = JsonConvert.SerializeObject(AccountList.ToArray());
             AppSettings.AddOrUpdateValue(UserListsKey, json);
         }
-
+        /// <summary>
+        /// Gets an account connection info, given its name
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         public static User GetUser(string username)
         {
             return AccountList.FirstOrDefault(a => a.UserName == username);
         }
 
+        // FIXME real time usage
+        /// <summary>
+        /// Enables/disables push notifications
+        /// </summary>
         public static bool PushNotifications
         {
             get
@@ -203,6 +216,10 @@ namespace BookAStar
             }
         }
 
+        // FIXME real time usage
+        /// <summary>
+        /// Enables/disables GPS usage
+        /// </summary>
         public static bool AllowGPSUsage
         {
             get
@@ -218,7 +235,11 @@ namespace BookAStar
                     value);
             }
         }
+
         // TODO make it a server side user's parameter
+        /// <summary>
+        /// Only allow professionals to ask for user's services
+        /// </summary>
         public static bool AllowProBookingOnly
         {
             get

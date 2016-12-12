@@ -17,7 +17,7 @@ namespace BookAStar.Data.NonCrUD
         public override async void Execute(object parameter)
         {
             BeforeExecute();
-            using (var client = UserHelpers.CreateClient())
+            using (var client = UserHelpers.CreateJsonClient())
             {
                 // Get the whole data
                 try

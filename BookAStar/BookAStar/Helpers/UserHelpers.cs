@@ -17,18 +17,35 @@ namespace BookAStar.Helpers
         {
             var result = avatarPath == null ?
                 ImageSource.FromResource( "BookAStar.Images.Users.icon_user.png") :
-                avatarPath.StartsWith("res://") ?
-                 ImageSource.FromResource(avatarPath.Substring(6)) :
-                 ImageSource.FromUri(new Uri(avatarPath));
+                ImageSource.FromUri(new Uri(Constants.YavscHomeUrl+"/Avatars/"+avatarPath)) ;
             return result;
         }
 
-        public static HttpClient CreateClient()
+        public static ImageSource SmallAvatar(string avatarPath, string username)
+        {
+            return avatarPath == null ?
+                ImageSource.FromResource("BookAStar.Images.Users.icon_user.png") :
+             ImageSource.FromUri(new Uri($"{Constants.YavscHomeUrl}/Avatars/{username}.s.png"));
+        }
+
+        public static ImageSource ExtraSmallAvatar(string avatarPath, string username)
+        {
+            return avatarPath == null ?
+                   ImageSource.FromResource("BookAStar.Images.Users.icon_user.png") :
+             ImageSource.FromUri(new Uri($"{Constants.YavscHomeUrl}/Avatars/{username}.xs.png"));
+        }
+
+        public static HttpClient CreateJsonClient()
+        {
+            return CreateJsonClient(MainSettings.CurrentUser.YavscTokens.AccessToken);
+        }
+
+        public static HttpClient CreateJsonClient(string accessToken)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue(
-                    "Bearer", MainSettings.CurrentUser.YavscTokens.AccessToken);
+                    "Bearer", accessToken);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             return client;
         }
@@ -42,7 +59,7 @@ namespace BookAStar.Helpers
         /// <returns></returns>
         public static async Task<bool> Upload(Stream inputStream, string fileName)
         {
-            using (var client = CreateClient())
+            using (var client = CreateJsonClient())
             {
                 using (var content =
                     new MultipartFormDataContent("Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)))

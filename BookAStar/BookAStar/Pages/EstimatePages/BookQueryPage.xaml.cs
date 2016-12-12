@@ -47,14 +47,14 @@ namespace BookAStar.Pages
         {
             InitializeComponent();
         }
-        public BookQueryPage(BookQueryData bookQuery=null)
+        public BookQueryPage(BookQueryViewModel bookQuery =null)
         {
             
             InitializeComponent();
-
+            // when TODO update?
             // Task.Run( async () => { bookQuery = await App.CurrentApp.DataManager.BookQueries.Get(bookQueryId); });
 
-            BindingContext = new BookQueryViewModel(bookQuery);
+            BindingContext = bookQuery;
         }
 
         private void OnEditEstimate(object sender, EventArgs ev)
@@ -111,6 +111,14 @@ namespace BookAStar.Pages
                 bookQueryLayout.Orientation = StackOrientation.Vertical;
             }
             base.OnSizeAllocated(width, height);
+        }
+        private void OnBlockThisUser(object sender, EventArgs ev)
+        {
+            throw new NotImplementedException();
+        }
+        private void OnDropQuery(object sender, EventArgs ev)
+        {
+            throw new NotImplementedException();
         }
     }
 }

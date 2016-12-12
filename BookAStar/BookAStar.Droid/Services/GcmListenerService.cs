@@ -44,19 +44,21 @@ namespace BookAStar.Droid.Services
                 if (topic == "BookQuery")
                 {
                     DateTime eventdate;
-                    
                     var sdatestr = data.GetString("EventDate");
                     DateTime.TryParse(sdatestr, out eventdate);
 
                     var locationJson = data.GetString("Location");
                     var location = JsonConvert.DeserializeObject<Location>(locationJson);
                     var cid = long.Parse(data.GetString("Id"));
+                    var clientJson = data.GetString("Client");
+                    var client = JsonConvert.DeserializeObject<ClientProviderInfo>(clientJson);
                     var bq = new BookQueryData
                     {
                         Id = cid,
-                        Location = location
+                        Location = location,
+                        Client = client,
+                        Reason = data.GetString("Reason")
                     };
-
                     SendBookQueryNotification(bq);
                 }
                 else
@@ -89,7 +91,7 @@ namespace BookAStar.Droid.Services
                 var multiple = count > 1;
                 var title =
                 multiple ? $"{count} demandes" : bquery.Client.UserName;
-                var message = $"{bquery.EventDate} {bquery.Client.UserName} {bquery.Location.Address}";
+                var message = $"{bquery.EventDate} {bquery.Client.UserName} {bquery.Location.Address}\n {bquery.Reason}";
 
                 var intent = new Intent(this, typeof(MainActivity));
                 intent.AddFlags(ActivityFlags.ClearTop);

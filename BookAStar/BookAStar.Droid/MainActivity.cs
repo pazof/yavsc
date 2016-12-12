@@ -323,7 +323,7 @@ namespace BookAStar.Droid
                             clientId: "d9be5e97-c19d-42e4-b444-0e65863b19e1",
                             clientSecret: "blouh",
                             scope: "profile",
-                            authorizeUrl: new Uri("http://dev.pschneider.fr/authorize"),
+                            authorizeUrl: new Uri(Constants.AuthorizeUrl),
                             redirectUrl: new Uri("http://dev.pschneider.fr/oauth/success"),
                             accessTokenUrl: new Uri("http://dev.pschneider.fr/token"));
         public void AddAccount()
@@ -348,63 +348,46 @@ namespace BookAStar.Droid
                        {
                            using (var client = new HttpClient())
                            {
-
                                // get me
-                               // var request = new OAuth2Request("GET", new Uri(Constants.UserInfoUrl), null, eventArgs.Account);
-                               var request = new HttpRequestMessage(HttpMethod.Get, Constants.UserInfoUrl);
-
-                               request.Headers.Authorization =
-                               new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokens.AccessToken);
-
-                               var response = await client.SendAsync(request);
-
-                               response.EnsureSuccessStatusCode();
-
-                               string userJson = await response.Content.ReadAsStringAsync();
-                               JObject jactiveUser = JObject.Parse(userJson);
-                               Account acc = eventArgs.Account;
-
-                               var uid = jactiveUser["Id"].Value<string>();
-                               var username = jactiveUser["UserName"].Value<string>();
-                               var roles = jactiveUser["Roles"].Values<string>().ToList();
-                               var emails = jactiveUser["EMails"].Values<string>().ToList();
-
-
-                               var newuser = new User
+                               using (var request = new HttpRequestMessage(HttpMethod.Get, Constants.UserInfoUrl))
                                {
-                                   UserName = username,
-                                   EMails = emails,
-                                   Roles = roles,
-                                   Id = uid,
-                                   YavscTokens = tokens
-                               };
+                                   request.Headers.Authorization =
+                                   new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokens.AccessToken);
 
-                               MainSettings.SaveUser(newuser);
-                               accStore.Save(acc, Constants.ApplicationName);
+                                   using (var response = await client.SendAsync(request))
+                                   {
+                                       response.EnsureSuccessStatusCode();
+                                       string userJson = await response.Content.ReadAsStringAsync();
+                                       JObject jactiveUser = JObject.Parse(userJson);
+                                       Account acc = eventArgs.Account;
+
+                                       var uid = jactiveUser["Id"].Value<string>();
+                                       var username = jactiveUser["UserName"].Value<string>();
+                                       var roles = jactiveUser["Roles"].Values<string>().ToList();
+                                       var emails = jactiveUser["EMails"].Values<string>().ToList();
+                                       var avatar = jactiveUser["Avatar"].Value<string>();
+                                       var address = jactiveUser["Avatar"].Value<string>();
+                                       var newuser = new User
+                                       {
+                                           UserName = username,
+                                           EMails = emails,
+                                           Roles = roles,
+                                           Id = uid,
+                                           YavscTokens = tokens,
+                                           Avatar = avatar,
+                                           Address = address
+                                       };
+
+                                       MainSettings.SaveUser(newuser);
+                                       accStore.Save(acc, Constants.ApplicationName);
+                                   }
+                               }
                            }
-                       }
-
-                        );
-
+                       });
                 }
             };
             auth.Error += Auth_Error;
             StartActivity(loginIntent);
-        }
-
-        public static void PopulateUserWithAccount(User u, Account a)
-        {
-            u.YavscTokens = new Model.Auth.Account.Tokens
-            {
-                AccessToken =
-                        a.Properties["access_token"],
-                RefreshToken =
-                           a.Properties["refresh_token"],
-                ExpiresIn =
-                    int.Parse(a.Properties["expires_in"]),
-                TokenType = a.Properties["token_type"]
-            };
-            u.UserName = a.Username;
         }
 
         private void Auth_Error(object sender, AuthenticatorErrorEventArgs e)
