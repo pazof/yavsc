@@ -56,7 +56,7 @@ namespace BookAStar.Model.Workflow
             {
                 if (CommandId.HasValue)
                 {
-                    var dm = DataManager.Current;
+                    var dm = DataManager.Instance;
                     return dm.BookQueries.LocalGet(CommandId.Value);
                 }
                 return null;
@@ -67,7 +67,7 @@ namespace BookAStar.Model.Workflow
         {
             get
             {
-                return DataManager.Current.Contacts.LocalGet(ClientId);
+                return DataManager.Instance.Contacts.LocalGet(ClientId);
             }
         }
 

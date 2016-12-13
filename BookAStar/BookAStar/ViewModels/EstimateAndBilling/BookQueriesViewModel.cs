@@ -12,7 +12,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         public BookQueriesViewModel()
         {
             queries = new ObservableCollection<BookQueryViewModel>
-                (DataManager.Current.BookQueries.Select(
+                (DataManager.Instance.BookQueries.Select(
                     q =>
                     new BookQueryViewModel(q)));
         }

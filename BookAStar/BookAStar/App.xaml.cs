@@ -107,10 +107,10 @@ namespace BookAStar
         {
             // TODO save the navigation stack
             int position = 0;
-            DataManager.Current.AppState.Clear();
+            DataManager.Instance.AppState.Clear();
             foreach (Page page in Navigation.NavigationStack)
             {
-                DataManager.Current.AppState.Add(
+                DataManager.Instance.AppState.Add(
                     new PageState
                     {
                         Position = position++,
@@ -118,7 +118,7 @@ namespace BookAStar
                         BindingContext = page.BindingContext
                     });
             }
-            DataManager.Current.AppState.SaveEntity();
+            DataManager.Instance.AppState.SaveEntity();
         }
 
         // called on app startup, after OnStartup, not on rotation
@@ -126,14 +126,20 @@ namespace BookAStar
         {
             // TODO restore the navigation stack 
             base.OnResume();
-            foreach (var pageState in DataManager.Current.AppState)
+            foreach (var pageState in DataManager.Instance.AppState)
             {
-                var pageType = Type.GetType(pageState.PageType);
-                NavigationService.NavigateTo(
-                    pageType, true, pageState.BindingContext);
+                if (pageState.PageType != null)
+                {
+                    var pageType = Type.GetType(pageState.PageType);
+                    if (pageState.BindingContext != null)
+                        NavigationService.NavigateTo(
+                           pageType, false, pageState.BindingContext);
+                    else NavigationService.NavigateTo(
+                        pageType, false);
+                }
             }
-            DataManager.Current.AppState.Clear();
-            DataManager.Current.AppState.SaveEntity();
+            DataManager.Instance.AppState.Clear();
+            DataManager.Instance.AppState.SaveEntity();
         }
 
         // FIXME Not called? 
@@ -342,7 +348,7 @@ namespace BookAStar
 
             chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
             chatHubProxy.On<string, string>("addPV", (n, m) => {
-                DataManager.Current.PrivateMessages.Add(
+                DataManager.Instance.PrivateMessages.Add(
                     new ChatMessage
                     {
                         Message = m,

@@ -12,7 +12,7 @@ namespace BookAStar.Pages.UserProfile
         public UserFiles()
         {
             InitializeComponent();
-            var current = DataManager.Current.RemoteFiles.CurrentItem;
+            var current = DataManager.Instance.RemoteFiles.CurrentItem;
             if (current != null)
                 BindingContext = new DirectoryInfoViewModel(current);
             else BindingContext = new DirectoryInfoViewModel
@@ -33,8 +33,8 @@ namespace BookAStar.Pages.UserProfile
             if (model != null)
                 model.RefreshCommand = new Command(() =>
             {
-                DataManager.Current.RemoteFiles.Execute(null);
-                var item = DataManager.Current.RemoteFiles.CurrentItem;
+                DataManager.Instance.RemoteFiles.Execute(null);
+                var item = DataManager.Instance.RemoteFiles.CurrentItem;
                 if (item != null)
                     model.InnerModel = item;
            //     this.dirlist.EndRefresh();
