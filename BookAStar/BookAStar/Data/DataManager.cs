@@ -16,9 +16,9 @@
         public RemoteEntity<Blog, long> Blogspot { get; set; }
         internal RemoteFilesEntity RemoteFiles { get; set; }
 
-        public LocalEntity<ClientProviderInfo,string> Contacts { get; set; }
+        public LocalEntity<ClientProviderInfo, string> Contacts { get; set; }
         internal LocalEntity<PageState, int> AppState { get; set; }
-        
+       // TODO internal RemoteEntity<Blacklisted, long> { get; set; }
         /// <summary>
         /// They have no remote exisence ...
         /// </summary>
