@@ -2809,6 +2809,10 @@
           "lib/WebGrease.dll": {}
         }
       },
+      "YavscLib/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1"
+      },
       "Zlib.Portable.Signed/1.11.0": {
         "type": "package",
         "compile": {
@@ -5625,6 +5629,10 @@
         "runtime": {
           "lib/WebGrease.dll": {}
         }
+      },
+      "YavscLib/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1"
       },
       "Zlib.Portable.Signed/1.11.0": {
         "type": "package",
@@ -8443,6 +8451,10 @@
           "lib/WebGrease.dll": {}
         }
       },
+      "YavscLib/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1"
+      },
       "Zlib.Portable.Signed/1.11.0": {
         "type": "package",
         "compile": {
@@ -8455,6 +8467,10 @@
     }
   },
   "libraries": {
+    "YavscLib/1.0.0": {
+      "type": "project",
+      "path": "../YavscLib/project.json"
+    },
     "Antlr/3.4.1.9004": {
       "type": "package",
       "sha512": "c1S+HBE+KYA5EBxtn25LEK02hHPH/tDQ6RviUTTCJpZIPoputtn8ArsQJy9lVJWZOnw37ufByO2Fmf1M8wpr8Q==",
@@ -11421,7 +11437,8 @@
       "Microsoft.AspNet.Authentication.OAuth >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Mvc.Formatters.Json >= 6.0.0-rc1-final",
       "Microsoft.AspNet.OWin >= 1.0.0-rc1-final",
-      "System.Json >= 4.0.20126.16343"
+      "System.Json >= 4.0.20126.16343",
+      "YavscLib >= 1.0.0-*"
     ],
     "DNX,Version=v4.5.1": [
       "fx/System.Drawing >= 4.0.0"
