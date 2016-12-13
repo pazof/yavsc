@@ -28,10 +28,10 @@ namespace BookAStar.ViewModels.Messaging
             MainSettings.UserChanged += MainSettings_UserChanged;
             Messages = new ObservableCollection<ChatMessage>();
             Notifs = new ObservableCollection<ChatMessage>();
-            PVs = DataManager.Current.PrivateMessages;
+            PVs = DataManager.Instance.PrivateMessages;
             Contacts = 
                 new ObservableCollection<UserViewModel>(
-                DataManager.Current.Contacts.Select(c=>new UserViewModel { Data = c }));
+                DataManager.Instance.Contacts.Select(c=>new UserViewModel { Data = c }));
             App.ChatHubProxy.On<string, string>("addMessage", (n, m) =>
             {
                 Messages.Add(new ChatMessage

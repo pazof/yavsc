@@ -65,13 +65,13 @@ namespace BookAStar.Pages
             if (editEstimateViewModel == null)
             {
                 // First search for an existing estimate
-                editEstimateViewModel = DataManager.Current.EstimationCache.FirstOrDefault(
+                editEstimateViewModel = DataManager.Instance.EstimationCache.FirstOrDefault(
                     estimate=> estimate.Query.Id == bookQueryViewModel.Id
                     );
                 if (editEstimateViewModel == null)
                 {
-                    DataManager.Current.Contacts.Merge(BookQuery.Client);
-                    DataManager.Current.Contacts.SaveEntity();
+                    DataManager.Instance.Contacts.Merge(BookQuery.Client);
+                    DataManager.Instance.Contacts.SaveEntity();
                     editEstimateViewModel = new EditEstimateViewModel( new Estimate
                     {
                         ClientId = BookQuery.Client.UserId,
@@ -79,7 +79,7 @@ namespace BookAStar.Pages
                         OwnerId = MainSettings.CurrentUser.Id,
                         Id = 0
                     });
-                    DataManager.Current.EstimationCache.Add(editEstimateViewModel);
+                    DataManager.Instance.EstimationCache.Add(editEstimateViewModel);
                 }
             }
             App.NavigationService.NavigateTo<EditEstimatePage>(true,

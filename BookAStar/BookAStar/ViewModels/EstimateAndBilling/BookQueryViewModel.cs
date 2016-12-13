@@ -30,7 +30,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             Previsionnal = data.Previsionnal;
             Id = data.Id;
             estimates = new ObservableCollection<Estimate>(
-                    DataManager.Current.Estimates.Where(
+                    DataManager.Instance.Estimates.Where(
                     e => e.Query.Id == Id
                     ));
             this.data = data;
@@ -65,7 +65,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         {
             get
             {
-                return DataManager.Current.EstimationCache.LocalGet(this.Id);
+                return DataManager.Instance.EstimationCache.LocalGet(this.Id);
             }
         }
         private ObservableCollection<Estimate> estimates;

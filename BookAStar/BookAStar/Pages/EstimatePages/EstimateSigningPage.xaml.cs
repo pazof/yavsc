@@ -22,7 +22,7 @@ namespace BookAStar.Pages.EstimatePages
        private async void OnValidate (object sender, EventArgs ev)
        {
             btnValidate.IsEnabled = false;
-            if (DataManager.Current.Estimates.IsExecuting)
+            if (DataManager.Instance.Estimates.IsExecuting)
             {
                 await App.DisplayAlert(Strings.OperationPending, Strings.oups);
                 return;
@@ -32,8 +32,8 @@ namespace BookAStar.Pages.EstimatePages
             var estimate = evm.Data;
             var pngStream = await padView.GetImageStreamAsync(SignatureImageFormat.Png);
             pngStream.Seek(0, SeekOrigin.Begin);
-            DataManager.Current.Estimates.SignAsProvider(estimate, pngStream);
-            DataManager.Current.Estimates.SaveEntity();
+            DataManager.Instance.Estimates.SignAsProvider(estimate, pngStream);
+            DataManager.Instance.Estimates.SaveEntity();
             await Navigation.PopAsync();
 
             var ParentValidationCommand = ((EstimateSigningViewModel)BindingContext).ValidationCommand;
