@@ -26,7 +26,7 @@ namespace Yavsc.Helpers
 
             return di;
         }
-        static char[] ValidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_~.".ToCharArray();
+        static char[] ValidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_~. ".ToCharArray();
 
         public static bool IsValidDirectoryName(this string name)
         {
