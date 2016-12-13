@@ -22,7 +22,7 @@ namespace Yavsc.ViewModels.UserFiles
             var finalPath = (path==null) ? username : username +  Path.DirectorySeparatorChar + path;
             if ( !finalPath.IsValidPath() )
                 throw new InvalidOperationException(
-                    $"File name contains invalid chars, using path {SubPath}");
+                    $"File name contains invalid chars, using path {finalPath}");
             
             dInfo = new DirectoryInfo(
                 Path.Combine(Startup.UserFilesDirName,finalPath));

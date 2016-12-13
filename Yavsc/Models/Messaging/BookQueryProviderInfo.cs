@@ -2,6 +2,7 @@ using System;
 
 namespace Yavsc.Model
 {
+    using Models.Messaging;
 
     public class BookQueryProviderInfo
     {
@@ -15,4 +16,5 @@ namespace Yavsc.Model
 
         public string Reason { get; set; }
     }
+    
 }

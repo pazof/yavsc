@@ -12,8 +12,9 @@ using Yavsc.Models.OAuth;
 using Yavsc.Models.Workflow;
 using Yavsc.Models.Identity;
 using Yavsc.Models.Market;
-using Yavsc.Model;
 using Yavsc.Model.Chat;
+using Yavsc.Models.Messaging;
+using Yavsc.Models.Access;
 
 namespace Yavsc.Models
 {
@@ -189,6 +190,8 @@ namespace Yavsc.Models
         public DbSet<ClientProviderInfo> ClientProviderInfo { get; set; }
 
         public DbSet<Connection> Connections { get; set; }
+
+        public DbSet<BlackListed> BlackListed { get; set; }
         
     }
 }

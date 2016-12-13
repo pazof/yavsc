@@ -11,6 +11,7 @@ namespace Yavsc.Controllers
 {
     using System;
     using Yavsc.Model;
+    using Yavsc.Models.Messaging;
     using Yavsc.Models;
     using Yavsc.Models.Booking;
 
@@ -40,10 +41,14 @@ namespace Yavsc.Controllers
             var now = DateTime.Now;
             
             var result = _context.Commands.Include(c => c.Location).
-            Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now).
+            Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now
+            && c.ValidationDate == null).
             Select(c => new BookQueryProviderInfo
             {
-                Client = new ClientProviderInfo { UserName = c.Client.UserName, UserId = c.ClientId },
+                Client = new ClientProviderInfo {
+                     UserName = c.Client.UserName,
+                     UserId = c.ClientId, 
+                     Avatar = c.Client.Avatar },
                 Location = c.Location,
                 EventDate = c.EventDate,
                 Id = c.Id,

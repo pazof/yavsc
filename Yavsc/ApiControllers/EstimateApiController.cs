@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
@@ -124,8 +125,15 @@ namespace Yavsc.Controllers
                     return HttpBadRequest(ModelState);
                 }
             }
-
+            if (estimate.CommandId!=null) {
+                var query = _context.BookQueries.FirstOrDefault(q => q.Id == estimate.CommandId);
+                if (query == null || query.PerformerId!= uid)
+                    throw new InvalidOperationException();
+                query.ValidationDate = DateTime.Now;
+            }
             _context.Estimates.Add(estimate);
+            
+            
            /* _context.AttachRange(estimate.Bill);
             _context.Attach(estimate);
             _context.Entry(estimate).State = EntityState.Added;

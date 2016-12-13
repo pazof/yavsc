@@ -27,12 +27,20 @@ namespace Yavsc.Services
         /// <returns>a MessageWithPayloadResponse,
         /// <c>bool somethingsent = (response.failure == 0 &amp;&amp; response.success > 0)</c>
         /// </returns>
-        public async Task<MessageWithPayloadResponse>
-        NotifyBookQueryAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, BookQueryEvent ev)
+        public async Task<MessageWithPayloadResponse> NotifyBookQueryAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, BookQueryEvent ev)
         {
             MessageWithPayloadResponse response = null;
             await Task.Run(()=>{
                 response = googleSettings.NotifyEvent<BookQueryEvent>(registrationIds, ev);
+            });
+            return response;
+        }
+
+        public async Task<MessageWithPayloadResponse> NotifyEstimateAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, EstimationEvent ev)
+        {
+            MessageWithPayloadResponse response = null;
+            await Task.Run(()=>{
+                response = googleSettings.NotifyEvent<EstimationEvent>(registrationIds, ev);
             });
             return response;
         }
