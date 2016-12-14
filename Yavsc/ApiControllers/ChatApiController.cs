@@ -34,6 +34,7 @@ namespace Yavsc.Controllers
 
                 var uid = g.Key;
                 var cxs = g.ToList();
+                if (cxs !=null)
                 if (cxs.Count>0) {
                     var user = cxs.First().Owner;
                     
