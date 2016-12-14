@@ -56,6 +56,8 @@
                         function(users) {
                             $.each(users, function () {
                                 var user = this;
+                                var existent = $('#userlist li').filterByData("name",user.UserName);
+                                if (existent.length>0) existent.remove();
                                 var li = $('<li class="user">'+htmlEncode(user.UserName)+'</li>');
                                 var cxids = [];
                                 $.each(user.Connections,function() {
@@ -102,9 +104,7 @@
             var onUserConnected =  function (cxid, username) {
                 var connected = $('#userlist li').filterByData("name",username);
                 if (connected.length>0) {
-                    console.log(connected);
                     var ids = connected.data("cxids");
-                    console.log(ids);
                     ids.push(cxid);
                     connected.data("cxids",ids);
                 } else {
