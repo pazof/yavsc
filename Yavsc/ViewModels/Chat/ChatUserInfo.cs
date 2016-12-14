@@ -13,5 +13,7 @@ public class ChatUserInfo
 
             public string Avatar { get; set; }
 
+            public string[] Roles { get; set; }
+
         }
 }
