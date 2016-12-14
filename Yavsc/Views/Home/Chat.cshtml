@@ -52,14 +52,18 @@
             var getUsers = function() {
                     $('#userlist').empty();
                     $('#to').empty();
-                    chat.server.getUserList().done(
+                    $.get("/api/chat/users").done(
                         function(users) {
                             $.each(users, function () {
                                 var user = this;
-                                document.userList[user.UserId]=user;
-                                $('#userlist').append('<li class="user">' + htmlEncode(user.UserName) + '</li>');
-
-                                $('#to').append('<option value="'+user.UserId+'">'+user.UserName+'</option>');
+                                var li = $('<li class="user">'+htmlEncode(user.UserName)+'</li>');
+                                var cxids = [];
+                                $.each(user.Connections,function() {
+                                    cxids.push(this.ConnectionId);
+                                });
+                                li.data("name",user.UserName);
+                                li.data("cxids",cxids);
+                                li.appendTo('#userlist');
 
                             });
                         }
@@ -80,11 +84,35 @@
                 $('#discussion').append('<li class="pv"><strong>' + htmlEncode(name)
                     + '</strong>: ' + htmlEncode(message) + '</li>');
             };
-            var onUserConnected =  function (cxid, username) {
-                 $('#userlist').append('<li class="user">'+username+'</li>')
-            };
+            $.fn.filterByData = function(prop, val) {
+                return this.filter(
+                    function() { return $(this).data(prop)==val; }
+                );
+            }
+
             var onUserDisconnected = function (cxid, username) {
-                 $('#userlist li[data-uid='+cxid+']').remove();
+                 $('#userlist li').filter (function() { 
+                     var nids = $(this).data("cxids").filter(function() { 
+                         return $(this) !== cxid
+                     });
+                     if (nids.Length==0) $(this).remove();
+                     else $(this).data("cxids",nids)
+                     });
+            };
+            var onUserConnected =  function (cxid, username) {
+                var connected = $('#userlist li').filterByData("name",username);
+                if (connected.length>0) {
+                    console.log(connected);
+                    var ids = connected.data("cxids");
+                    console.log(ids);
+                    ids.push(cxid);
+                    connected.data("cxids",ids);
+                } else {
+                    var li = $('<li class="user">'+username+'</li>');
+                    li.data("name",username);
+                    li.data("cxids",[cxid]);
+                    li.appendTo('#userlist');
+                }
             };
             chat.client.notify = function (tag, message, data) {
                 if (data) {
