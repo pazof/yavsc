@@ -38,13 +38,14 @@ namespace BookAStar
 
         [Obsolete("Instead using this, use new static properties.")]
         public static App CurrentApp { get { return Current as App; } }
-       
+
+        private static ExtendedMasterDetailPage masterDetail;
         public static bool MasterPresented
         {
             get
-            { return CurrentApp.masterDetail.IsPresented; }
+            { return App.masterDetail.IsPresented; }
             internal set
-            { CurrentApp.masterDetail.IsPresented = value; }
+            { masterDetail.IsPresented = value; }
         }
 
         public void Init()
@@ -95,7 +96,7 @@ namespace BookAStar
             // TODO special startup pages as
             // notification details or wizard setup page
         }
-        private INavigation Navigation
+        private static INavigation Navigation
         {
             get
             {
@@ -168,8 +169,6 @@ namespace BookAStar
             ConfigManager = new GenericConfigSettingsMgr(s =>
            MainSettings.AppSettings.GetValueOrDefault<string>(s, MainSettings.SettingsDefault), null);
         }
-
-        ExtendedMasterDetailPage masterDetail;
 
         public App(IPlatform instance)
         {
@@ -279,7 +278,7 @@ namespace BookAStar
         }
         public static Task<string> DisplayActionSheet(string title, string cancel, string destruction, string [] buttons)
         {
-            var currentPage = App.CurrentApp.Navigation.NavigationStack.Last();
+            var currentPage = Navigation.NavigationStack.Last();
             return currentPage.DisplayActionSheet(title, cancel, destruction, buttons);
         }
 
@@ -309,7 +308,7 @@ namespace BookAStar
                     if (isConnected)
                     {
                         // TODO Start all cloud related stuff 
-                        CurrentApp.StartHubConnection();
+                        StartHubConnection();
                     }
                     
                 }
@@ -324,18 +323,18 @@ namespace BookAStar
             }
         }
         // Start the Hub connection
-        public async void StartHubConnection ()
+        public static async void StartHubConnection ()
         {
             try
             {
                 await chatHubConnection.Start();
             }
-            catch (WebException webex )
+            catch (WebException  )
             {
                 // TODO use webex, set this cx down status somewhere,
                 // & display it & maybe try again later.
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 // TODO use ex
             }
@@ -395,7 +394,7 @@ namespace BookAStar
             }
         }
 
-        public void PostDeviceInfo()
+        public static void PostDeviceInfo()
         {
             var info = PlatformSpecificInstance.GetDeviceInfo();
             if (!string.IsNullOrWhiteSpace(info.GCMRegistrationId))
