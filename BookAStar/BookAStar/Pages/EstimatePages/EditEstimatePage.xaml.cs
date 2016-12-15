@@ -44,7 +44,7 @@ namespace BookAStar.Pages
 
         private void EditEstimatePage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            DataManager.Current.EstimationCache.SaveEntity();
+            DataManager.Instance.EstimationCache.SaveEntity();
         }
 
         protected override void OnSizeAllocated(double width, double height)
@@ -67,7 +67,7 @@ namespace BookAStar.Pages
             var lineView = new BillingLineViewModel(com)
             { ValidateCommand = new Command(() => {
                 bill.Add(new BillingLineViewModel(com));
-                DataManager.Current.EstimationCache.SaveEntity();
+                DataManager.Instance.EstimationCache.SaveEntity();
             })};
             App.NavigationService.NavigateTo<EditBillingLinePage>(
                 true, lineView );
@@ -83,14 +83,14 @@ namespace BookAStar.Pages
             line.ValidateCommand = new Command(() =>
             {
                 evm.Check();
-                DataManager.Current.EstimationCache.SaveEntity();
+                DataManager.Instance.EstimationCache.SaveEntity();
             });
             // and setup a removal command, that was not expected at creation time
             line.RemoveCommand = new Command(() =>
             {
                 evm.Bill.Remove(line);
                 evm.Check();
-                DataManager.Current.EstimationCache.SaveEntity();
+                DataManager.Instance.EstimationCache.SaveEntity();
             });
             App.NavigationService.NavigateTo<EditBillingLinePage>(
                 true, line );
@@ -105,8 +105,8 @@ namespace BookAStar.Pages
             var cmd = new Command<bool>( async (validated) =>
             {
                 if (validated) { 
-                    DataManager.Current.EstimationCache.Remove(evm);
-                    DataManager.Current.EstimationCache.SaveEntity();
+                    DataManager.Instance.EstimationCache.Remove(evm);
+                    DataManager.Instance.EstimationCache.SaveEntity();
                 }
                 await thisPage.Navigation.PopAsync();
             });

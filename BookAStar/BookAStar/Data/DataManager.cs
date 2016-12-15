@@ -7,6 +7,7 @@
     using ViewModels.EstimateAndBilling;
     using NonCrUD;
     using ViewModels;
+    using Model.Access;
 
     public class DataManager
     {
@@ -17,23 +18,22 @@
         internal RemoteFilesEntity RemoteFiles { get; set; }
 
         public LocalEntity<ClientProviderInfo, string> Contacts { get; set; }
-        internal LocalEntity<PageState, int> AppState { get; set; }
-       // TODO internal RemoteEntity<Blacklisted, long> { get; set; }
+        internal RemoteEntity<BlackListed, long> BlackList { get; set; }
         /// <summary>
-        /// They have no remote exisence ...
+        /// They've got no remote existence ...
         /// </summary>
         internal LocalEntity<EditEstimateViewModel, long> EstimationCache { get; set; }
         internal LocalEntity<BillingLine, string> EstimateLinesTemplates { get; set; }
         internal LocalEntity<ChatMessage, int> PrivateMessages { get; set; }
-        protected static DataManager current ;
+        internal LocalEntity<PageState, int> AppState { get; set; }
 
-        public static DataManager Current 
+        protected static DataManager instance = new DataManager();
+
+        public static DataManager Instance 
         {
             get
             {
-                if (current == null)
-                    current = new DataManager();
-                return current;
+                return instance;
             }
         }
 
