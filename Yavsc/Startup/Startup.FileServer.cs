@@ -1,9 +1,12 @@
 using System.IO;
+using System.Security.Claims;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.StaticFiles;
+using Yavsc.ViewModels.Auth;
 
 namespace Yavsc
 {
@@ -14,7 +17,7 @@ namespace Yavsc
 
         public static FileServerOptions AvatarsOptions { get; set; }
         public void ConfigureFileServerApp(IApplicationBuilder app,
-                SiteSettings siteSettings, IHostingEnvironment env)
+                SiteSettings siteSettings, IHostingEnvironment env, IAuthorizationService authorizationService)
         {
             var userFilesDirInfo = new DirectoryInfo( siteSettings.UserFiles.Blog );
             UserFilesDirName =  userFilesDirInfo.FullName;
@@ -27,6 +30,14 @@ namespace Yavsc
                 RequestPath = new PathString(Constants.UserFilesPath),
                 EnableDirectoryBrowsing = env.IsDevelopment()
             };
+
+            UserFilesOptions.StaticFileOptions.OnPrepareResponse += async context =>
+             {
+                 var uname = context.Context.User.GetUserName();
+                 var path = context.Context.Request.Path;
+                 var result = await authorizationService.AuthorizeAsync(context.Context.User, new ViewFileContext 
+                 { UserName = uname, File = context.File, Path = path } , new ViewRequirement());
+             };
             var avatarsDirInfo = new DirectoryInfo(Startup.SiteSetup.UserFiles.Avatars);
             if (!avatarsDirInfo.Exists) avatarsDirInfo.Create();
             AvatarsDirName = avatarsDirInfo.FullName;

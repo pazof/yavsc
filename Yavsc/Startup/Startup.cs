@@ -183,6 +183,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, CommandViewHandler>();
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
             services.AddSingleton<IAuthorizationHandler, EstimateViewHandler>();
+            services.AddSingleton<IAuthorizationHandler, ViewFileHandler>();
 
             services.AddMvc(config =>
             {
@@ -230,6 +231,7 @@ namespace Yavsc
         IOptions<RequestLocalizationOptions> localizationOptions,
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
         RoleManager<IdentityRole> roleManager,
+        IAuthorizationService authorizationService,
          ILoggerFactory loggerFactory)
         {
             SiteSetup = siteSettings.Value;
@@ -330,7 +332,7 @@ namespace Yavsc
             Audience = siteSettings.Value.Audience;
 
             ConfigureOAuthApp(app, siteSettings.Value);
-            ConfigureFileServerApp(app, siteSettings.Value, env);
+            ConfigureFileServerApp(app, siteSettings.Value, env, authorizationService);
             ConfigureWebSocketsApp(app, siteSettings.Value, env);
 
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"en"));
