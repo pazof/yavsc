@@ -15,7 +15,7 @@ namespace Yavsc
             app.UseWebSockets();
 
             app.UseSignalR("/api/signalr");
-
+/*
             var _sockets = new ConcurrentBag<WebSocket>();
 
             app.Use(
@@ -56,7 +56,7 @@ namespace Yavsc
                        await next();
                    }
                }
-            );
+            ); */
         }
     }
 }
