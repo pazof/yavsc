@@ -15,26 +15,29 @@ namespace BookAStar.Pages.UserProfile
             InitializeComponent();
             AvatarButton.Clicked += AvatarButton_Clicked;
         }
-
+        public UserProfilePage(UserProfileViewModel model)
+        {
+            InitializeComponent();
+            AvatarButton.Clicked += AvatarButton_Clicked;
+            BindingContext = model;
+        }
         private async void AvatarButton_Clicked (object sender, EventArgs e)
         {
             if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
             {
-                DisplayAlert("No Camera", ":( No camera avaialble.", "OK");
+                await DisplayAlert("No Camera", ":( No camera avaialble.", "OK");
                 return;
             }
 
             var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
             {
-                Directory = "Sample",
-                Name = "test.jpg"
+                Directory = "Avatars",
+                Name = "me.jpg"
             });
 
             if (file == null)
                 return;
-
-            await DisplayAlert("File Location", file.Path, "OK");
-            AvatarButton.Image.File = file.Path;
+                  // ImageSource.FromFile(file.Path);
             /* ImageSource.FromStream(() =>
             {
                 var stream = file.GetStream();
