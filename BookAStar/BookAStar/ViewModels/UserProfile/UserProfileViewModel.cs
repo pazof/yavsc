@@ -14,7 +14,7 @@ namespace BookAStar.ViewModels.UserProfile
     using Model.Auth.Account;
     using Pages.UserProfile;
 
-    internal class UserProfileViewModel : ViewModel
+    public class UserProfileViewModel : ViewModel
     {
         public bool IsAPerformer
         {
