@@ -15,7 +15,7 @@
   </ContentView.Resources>
   <ContentView.Content>
       <StackLayout>
-        <StackLayout Orientation="Horizontal" VisualElement.HeightRequest="{StaticResource SmallFontSize}" >
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VisualElement.HeightRequest="{StaticResource MediumFontSize}" >
         <Grid>
           <Grid.Behaviors>
             <behaviors:StarBehavior x:Name="starOne" GroupName="myStar"/>

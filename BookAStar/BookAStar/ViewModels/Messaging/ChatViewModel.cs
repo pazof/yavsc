@@ -7,6 +7,7 @@ using XLabs.Forms.Mvvm;
 namespace BookAStar.ViewModels.Messaging
 {
     using Data;
+    using Model.Social.Chat;
     using Model.Social.Messaging;
 
     class ChatViewModel: ViewModel
@@ -14,7 +15,7 @@ namespace BookAStar.ViewModels.Messaging
         public ObservableCollection<ChatMessage> Messages { get; set; }
         public ObservableCollection<ChatMessage> Notifs { get; set; }
         public ObservableCollection<ChatMessage> PVs { get; set; }
-        public ObservableCollection<UserViewModel> Contacts { get; set; }
+        public ChatUserCollection ChatUsers { get; set; }
 
         private ConnectionState state;
         public ConnectionState State
@@ -29,9 +30,7 @@ namespace BookAStar.ViewModels.Messaging
             Messages = new ObservableCollection<ChatMessage>();
             Notifs = new ObservableCollection<ChatMessage>();
             PVs = DataManager.Instance.PrivateMessages;
-            Contacts = 
-                new ObservableCollection<UserViewModel>(
-                DataManager.Instance.Contacts.Select(c=>new UserViewModel { Data = c }));
+            ChatUsers = DataManager.Instance.ChatUsers;
             App.ChatHubProxy.On<string, string>("addMessage", (n, m) =>
             {
                 Messages.Add(new ChatMessage
@@ -60,24 +59,33 @@ namespace BookAStar.ViewModels.Messaging
                 if (eventId == "connected")
                     OnUserConnected(cxId, userName);
                 else if (eventId == "disconnected")
-                    OnUserDisconnected(userName);
+                    OnUserDisconnected(cxId, userName);
             });
         }
 
         private void OnUserConnected(string cxId, string userName)
         {
-            var user = Contacts.SingleOrDefault(
-                c => c.Data.UserName == userName);
-            if (user != null)
-                user.ConnexionId = cxId;
+            var user = ChatUsers.SingleOrDefault(
+                c => c.UserName == userName);
+            if (user == null)
+            {
+                user = new ChatUserInfo {
+                    UserName = userName
+                };
+                ChatUsers.Add(user);
+            }
+            user.OnConnected(cxId);
         }
 
-        private void OnUserDisconnected (string userName)
+        private void OnUserDisconnected (string cxId, string userName)
         {
-            var user = Contacts.SingleOrDefault(
-                c => c.Data.UserName == userName);
-            if (user != null)
-                user.ConnexionId = null;
+            var user = ChatUsers.SingleOrDefault(
+                c => c.UserName == userName);
+            if (user == null)
+            {
+                return;
+            }
+            user.OnDisconnected(cxId);
         }
 
         private void MainSettings_UserChanged(object sender, EventArgs e)
