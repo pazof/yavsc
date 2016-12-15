@@ -60,8 +60,10 @@
     <Compile Include="Model\FileSystem\UserDirectoryInfo.cs" />
     <Compile Include="Model\FileSystem\UserFileInfo.cs" />
     <Compile Include="Model\Settings\SignatureSettings.cs" />
-    <Compile Include="Model\Social\Messaging\ChatStatus.cs" />
-    <Compile Include="Model\Social\Messaging\PrivateMessage.cs" />
+    <Compile Include="Model\Social\Chat\ChatStatus.cs" />
+    <Compile Include="Model\Social\Chat\ChatMessage.cs" />
+    <Compile Include="Model\Social\Chat\ChatUserInfo.cs" />
+    <Compile Include="Model\Social\Chat\Connection.cs" />
     <Compile Include="Pages\Chat\PrivateChatPage.xaml.cs">
       <DependentUpon>PrivateChatPage.xaml</DependentUpon>
     </Compile>

@@ -1,26 +1,25 @@
-﻿using BookAStar.Model.Access;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Yavsc.Models;
+using YavscLib;
 
-namespace BookAStar.Model.Access
+namespace BookAStar.Model.Social.Chat
 {
-    public class BlackListed : IBlackListed
+    public class Connection : IConnection
     {
-        public long Id
+        public bool Connected
         {
             get; set;
         }
 
-        public string OwnerId
+        public string ConnectionId
         {
             get; set;
         }
 
-        public string UserId
+        public string UserAgent
         {
             get; set;
         }
