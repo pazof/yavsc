@@ -197,7 +197,7 @@
     <Compile Include="Pages\EstimatePages\EditEstimatePage.xaml.cs">
       <DependentUpon>EditEstimatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Oooops\HomePage.xaml.cs">
+    <Compile Include="Pages\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Oooops\PinPage.cs" />
@@ -212,7 +212,7 @@
     <Compile Include="Views\ImageButton.cs" />
     <Compile Include="Views\MarkdownView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pages\Oooops\SearchPage.xaml.cs">
+    <Compile Include="Pages\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\UserProfile\AccountChooserPage.xaml.cs">
@@ -247,7 +247,7 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\Oooops\SearchPage.xaml">
+    <EmbeddedResource Include="Pages\SearchPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -405,7 +405,7 @@
     <EmbeddedResource Include="Images\Users\icon_user_settings.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\Oooops\HomePage.xaml">
+    <EmbeddedResource Include="Pages\HomePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
