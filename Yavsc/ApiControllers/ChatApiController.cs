@@ -23,13 +23,13 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet("users")]
-        public async Task<List<ChatUserInfo>> GetUserList()
+        public IEnumerable<ChatUserInfo> GetUserList()
         {
       
-            var cxsQuery = dbContext.Connections.Include(c=>c.Owner).GroupBy( c => c.ApplicationUserId );
+            var cxsQuery = dbContext.Connections?.Include(c=>c.Owner).GroupBy( c => c.ApplicationUserId );
 
-            List<ChatUserInfo> result = new List<ChatUserInfo>();
-
+            // List<ChatUserInfo> result = new List<ChatUserInfo>();
+            if (cxsQuery!=null)
             foreach (var g in cxsQuery) {
 
                 var uid = g.Key;
@@ -38,12 +38,12 @@ namespace Yavsc.Controllers
                 if (cxs.Count>0) {
                     var user = cxs.First().Owner;
                     
-                    result.Add(new ChatUserInfo { UserName = user.UserName,
+                    yield return new ChatUserInfo { UserName = user.UserName,
                     UserId = user.Id, Avatar = user.Avatar, Connections = cxs,
-                    Roles = ( await userManager.GetRolesAsync(user) ).ToArray() } );
+                    Roles = (  userManager.GetRolesAsync(user) ).Result.ToArray() };
                 }
             }
-            return result;
+            
         }
     }
 }
