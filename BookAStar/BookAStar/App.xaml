@@ -23,6 +23,7 @@
       <Color x:Key="GroupingTextColor">#5050ff</Color>
       <Color x:Key="OddColor">#207AFAFA</Color>
       <Color x:Key="EmphasisTextColor">#800080</Color>
+      <Color x:Key="QuietTextColor">#404040</Color>
       
       <OnPlatform x:TypeArguments="Font" Android="Large" iOS="Large" WinPhone="Large" x:Key="HeaderFont" />
       <OnPlatform x:TypeArguments="x:Double" Android="22" iOS="22" WinPhone="22" x:Key="LargeFontSize" />
