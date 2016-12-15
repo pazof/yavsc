@@ -17,7 +17,7 @@ namespace BookAStar.Pages
             var model = new BookQueriesViewModel();
             model.RefreshQueries =
                 new Command( () => {
-                    DataManager.Current.BookQueries.Execute(null);
+                    DataManager.Instance.BookQueries.Execute(null);
                     this.list.EndRefresh();
                 });
             

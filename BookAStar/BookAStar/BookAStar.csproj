@@ -56,6 +56,7 @@
     <Compile Include="Data\ApiCallFailedException.cs" />
     <Compile Include="Data\EstimateEntity.cs" />
     <Compile Include="Data\NonCrUD\RemoteFiles.cs" />
+    <Compile Include="Model\Access\BlackListed.cs" />
     <Compile Include="Model\FileSystem\UserDirectoryInfo.cs" />
     <Compile Include="Model\FileSystem\UserFileInfo.cs" />
     <Compile Include="Model\Settings\SignatureSettings.cs" />

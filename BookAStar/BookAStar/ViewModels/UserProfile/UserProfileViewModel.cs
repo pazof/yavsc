@@ -198,7 +198,7 @@ namespace BookAStar.ViewModels.UserProfile
             {
                 newUserIsPro = UserIsPro;
 
-                newQueryCount = newUserIsPro ? DataManager.Current.BookQueries.Count : 0;
+                newQueryCount = newUserIsPro ? DataManager.Instance.BookQueries.Count : 0;
 
                 newStatusString = newUserIsPro ?
                      $"Profile professionel renseigné" :

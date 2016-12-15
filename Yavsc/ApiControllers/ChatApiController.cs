@@ -6,7 +6,6 @@ using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
-    using System.Threading.Tasks;
     using Microsoft.AspNet.Identity;
     using Models;
     using ViewModels.Chat;

@@ -57,8 +57,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="project.json" />
-    <Content Include="IBlackListed.cs" />
-    <Content Include="IChatUserInfo.cs" />
+    <Compile Include="IChatUserInfo.cs" />
+    <Compile Include="IBlackListed.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
