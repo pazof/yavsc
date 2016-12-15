@@ -14,7 +14,6 @@ namespace BookAStar.ViewModels.Messaging
     {
         public ObservableCollection<ChatMessage> Messages { get; set; }
         public ObservableCollection<ChatMessage> Notifs { get; set; }
-        public ObservableCollection<ChatMessage> PVs { get; set; }
         public ChatUserCollection ChatUsers { get; set; }
 
         private ConnectionState state;
@@ -29,7 +28,6 @@ namespace BookAStar.ViewModels.Messaging
             MainSettings.UserChanged += MainSettings_UserChanged;
             Messages = new ObservableCollection<ChatMessage>();
             Notifs = new ObservableCollection<ChatMessage>();
-            PVs = DataManager.Instance.PrivateMessages;
             ChatUsers = DataManager.Instance.ChatUsers;
             App.ChatHubProxy.On<string, string>("addMessage", (n, m) =>
             {
