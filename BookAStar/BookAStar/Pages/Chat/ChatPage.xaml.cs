@@ -18,10 +18,11 @@ namespace BookAStar.Pages.Chat
             InitializeComponent();
 
             Title = "Chat";
+            /*
             ToolbarItems.Add(new ToolbarItem(
                 name: "...",
                 icon: null,
-                activated: () => { }));
+                activated: () => { })); */
             BindingContext = new ChatViewModel();
             App.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
             sendButton.Clicked += async (sender, args) =>

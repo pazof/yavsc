@@ -13,10 +13,11 @@ namespace BookAStar.Pages.Chat
         public PrivateChatPage()
         {
             InitializeComponent();
+            /*
             ToolbarItems.Add(new ToolbarItem(
                 name: "...",
                 icon: null,
-                activated: () => { }));
+                activated: () => { }));*/
         }
     }
 }
