@@ -7,6 +7,7 @@ using XLabs.Forms.Mvvm;
 using YavscLib;
 using System;
 using Newtonsoft.Json;
+using BookAStar.Model.Social.Messaging;
 
 namespace BookAStar.Model.Social.Chat
 {
@@ -131,7 +132,15 @@ namespace BookAStar.Model.Social.Chat
                 throw new NotImplementedException();
             }
         }
-
+        ObservableCollection<ChatMessage> privateMessages ;
+        [JsonIgnore]
+        public ObservableCollection<ChatMessage> PrivateMessages
+        {
+            get
+            {
+                return privateMessages;
+            }
+        }
 
         public void OnConnected(string cxId)
         {

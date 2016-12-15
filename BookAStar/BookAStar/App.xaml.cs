@@ -347,14 +347,17 @@ namespace BookAStar
 
             chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
             chatHubProxy.On<string, string>("addPV", (n, m) => {
+                var msg = new ChatMessage
+                {
+                    Message = m,
+                    SenderId = n,
+                    Date = DateTime.Now
+                };
                 DataManager.Instance.PrivateMessages.Add(
-                    new ChatMessage
-                    {
-                        Message = m,
-                        SenderId = n,
-                        Date = DateTime.Now
-                    }
+                    msg
                     );
+                DataManager.Instance.ChatUsers.OnPrivateMessage(msg);
+
             });
         }
 

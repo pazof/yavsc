@@ -1,5 +1,6 @@
 ﻿using BookAStar.Data;
 using BookAStar.Model.Social.Chat;
+using BookAStar.Model.Social.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,20 @@ namespace BookAStar.ViewModels.Messaging
         {
 
         }
-
+        public void OnPrivateMessage(ChatMessage msg)
+        {
+            var sender = this.FirstOrDefault(user => user.Connections.Any(
+                cx => cx.ConnectionId == msg.SenderId
+                ));
+            if (sender != null)
+            {
+                sender.PrivateMessages.Add(msg);
+            } else
+            {
+                // TODO alert? or else get chat user info
+                // or else just display this message ...
+            }
+        }
         public override void Merge(ChatUserInfo item)
         {
             var key = GetKey(item);
