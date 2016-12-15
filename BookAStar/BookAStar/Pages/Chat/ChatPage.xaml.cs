@@ -23,7 +23,6 @@ namespace BookAStar.Pages.Chat
                 name: "...",
                 icon: null,
                 activated: () => { })); */
-            BindingContext = new ChatViewModel();
             App.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
             sendButton.Clicked += async (sender, args) =>
             {
@@ -43,6 +42,8 @@ namespace BookAStar.Pages.Chat
 
                 IsBusy = false;
             };
+            chatUserList.BindingContext = DataManager.Instance.ChatUsers;
+            
             /*
             sendPVButton.Clicked += async (sender, args) =>
             {
@@ -62,7 +63,7 @@ namespace BookAStar.Pages.Chat
                 }
                 IsBusy = false;
             };*/
-            
+
         }
 
         private void ChatHubConnection_StateChanged(StateChange obj)

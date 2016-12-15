@@ -8,13 +8,13 @@
     using NonCrUD;
     using ViewModels;
     using Model.Access;
-    using Model.Social.Chat;
+    using ViewModels.Messaging;
 
     public class DataManager
     {
         // TODO estimatetemplate rating service product tag   
         public RemoteEntityRO<BookQueryData, long> BookQueries { get; set; }
-        public RemoteEntityRO<ChatUserInfo, long> ChatUsers { get; set; }
+        public ChatUserCollection ChatUsers { get; set; }
         public EstimateEntity Estimates { get; set; }
         public RemoteEntity<Blog, long> Blogspot { get; set; }
         internal RemoteFilesEntity RemoteFiles { get; set; }
@@ -52,8 +52,7 @@
             PrivateMessages = new LocalEntity<ChatMessage, int>(m=> m.GetHashCode());
             RemoteFiles = new RemoteFilesEntity ();
             BlackList = new RemoteEntity<BlackListed, long>("blacklist",u => u.Id);
-            ChatUsers = new RemoteEntityRO<ChatUserInfo, long>
-                ("chat/users", u => u.UserId);
+            ChatUsers = new ChatUserCollection();
             PrivateMessages.Load();
             BookQueries.Load();
             Estimates.Load();
@@ -63,6 +62,8 @@
             EstimationCache.Load();
             EstimateLinesTemplates.Load();
             RemoteFiles.Load();
+            BlackList.Load();
+            ChatUsers.Load();
             BlackList.Load();
         }
     }

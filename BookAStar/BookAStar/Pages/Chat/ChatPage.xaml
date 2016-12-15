@@ -110,7 +110,7 @@
           <Button x:Name="sendPVButton" Text = "Send" HorizontalOptions = "End"
                            VerticalOptions = "Center"></Button>
         </StackLayout>
-        <ListView x:Name="PVList" HasUnevenRows="true" ItemsSource="{Binding PVs}">
+        <!--  <ListView x:Name="PVList" HasUnevenRows="true" ItemsSource="{Binding PVs}">
           <ListView.ItemTemplate HeightRequest="80" 
                                  VerticalOptions="StartAndExpand">
             <DataTemplate>
@@ -126,8 +126,8 @@
               </ViewCell>
             </DataTemplate>
           </ListView.ItemTemplate>
-        </ListView>
-        <!-- <views:UserListView ItemsSource="" /> -->
+        </ListView>  -->
+         <views:UserListView x:Name="chatUserList" />
       </StackLayout>
 
     </ContentPage>
