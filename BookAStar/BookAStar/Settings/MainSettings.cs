@@ -104,7 +104,7 @@ namespace BookAStar
                 // Inform the server of it.
                 if (oldregid != value)
                 {
-                    App.CurrentApp.PostDeviceInfo();
+                    App.PostDeviceInfo();
                 }
             }
             get { return AppSettings.GetValueOrDefault<string>(GoogleRegIdKey); }
@@ -155,15 +155,15 @@ namespace BookAStar
                 {
                     if (olduserid != value.Id)
                     {
-                        App.CurrentApp.PostDeviceInfo();
+                        App.PostDeviceInfo();
                         if (UserChanged!=null)
-                            UserChanged.Invoke(App.CurrentApp, new EventArgs());
+                            UserChanged.Invoke(App.Current, new EventArgs());
                     }
                 }
                 else if (olduserid != null)
                 {
                     if (UserChanged != null)
-                        UserChanged.Invoke(App.CurrentApp, new EventArgs());
+                        UserChanged.Invoke(App.Current, new EventArgs());
                     // TODO else Unregister this device
                 }
             }
