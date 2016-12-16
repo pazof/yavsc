@@ -26,15 +26,18 @@
     </ul>
     <ul id="discussion">
     </ul>
-     <input type="text" id="message" />
     <div style="display: inline-block;">
+        <div id="sendmessagebox">
+     <input type="text" id="message" />
     <input type="button" id="sendmessage" value="@SR["Send"]" />
+        </div>
     @if (ViewBag.IsAuthenticated) {
-        <br/>
-        <input type="button" id="sendpv" value="@SR["Send a private message"] @SR["to"]" />
-        <select id="to" />
-        <input type="button" id="btnDebug" Value="RUL"/>
+        <div id="sendpvbox">
+            <input type="text" id="pv" />
+            <button type="submit" id="sendpv">@SR["Send a private message"] @SR["to"] <div id="sendpvdest" /> </button>
+        </div>
     }
+    <input type="hidden" id="mySignalRConnectionIdHidden" value="" />
     </div>
 </div>
 
@@ -49,6 +52,24 @@
     <script>
                 
         $(function () {
+            
+            document.userList = [];
+            var setPrivate = function(li) 
+            {
+                $("#sendmessagebox").addClass("hidden");
+                $("#sendpvbox").removeClass("hidden");
+                document.privateChatter = document.userList[$(li).data("usernum")];
+
+                $('#sendpvdest').html(document.privateChatter.UserName)
+            }
+            var setPublic = function()
+            {
+                $("#sendmessagebox").removeClass("hidden");
+                $("#sendpvbox").addClass("hidden");
+                document.privateChatter = {};
+            }
+            setPublic();
+
             var getUsers = function() {
                     $('#userlist').empty();
                     $('#to').empty();
@@ -63,16 +84,20 @@
                                 $.each(user.Connections,function() {
                                     cxids.push(this.ConnectionId);
                                 });
-                                li.data("name",user.UserName);
-                                li.data("cxids",cxids);
+                                $(li).data("name",user.UserName);
+                                $(li).data("cxids",cxids);
+                                document.userList.push(user);
+                                $(li).data("usernum",document.userList.length-1);
+                                $(li).css('cursor','pointer');
+                                $(li).click(function(){
+                                    setPrivate(this);
+                                });
                                 li.appendTo('#userlist');
-
                             });
                         }
                     );
                 };
 
-            document.userList = {};
             // Reference the auto-generated proxy for the hub.
             var chat = $.connection.chatHub;
             // Create a function that the hub can call back to display messages.
@@ -112,6 +137,8 @@
                     li.data("name",username);
                     li.data("cxids",[cxid]);
                     li.appendTo('#userlist');
+                    li.css('cursor','pointer');
+                    li.click(function(){ setPrivate(this); });
                 }
             };
             chat.client.notify = function (tag, message, data) {
@@ -153,13 +180,13 @@ $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
                     $('#message').val('').focus();
                 });
                 $('#sendpv').click(function () {
+
                     // Call the Send method on the hub.
-                    var user = document.userList[$('#to').val()];
-                    $.each(user.Connections,function () { 
-                        chat.server.sendPV( this.ConnectionId, $('#message').val());
+                    $.each(document.privateChatter.Connections,function () { 
+                        chat.server.sendPV( this.ConnectionId, $('#pv').val());
                      });
                     // Clear text box and reset focus for next comment.
-                    $('#message').val('').focus();
+                    $('#pv').val('').focus();
                 });
                 
                 getUsers();
