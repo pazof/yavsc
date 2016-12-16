@@ -16,17 +16,19 @@
   color: black;
   font-family: monospace;
   font-style: bold;
+  background-color: yellow;
 }
  
 </style>
 <div class="container">
     <input type="hidden" id="displayname" />
-   <div style="float:right;">
+   <div style="float:right; background-color: grey; padding:1em; margin:1em;">
     <h3>Salons</h3>
     <ul><li id="pubChan">Public</li></ul>
     <h3>Utilisateurs</h3>
-    <ul id="userlist" >
+    <ul id="userlist" style="list-style-type:none;">
     </ul>
+
     </div>
     <ul id="discussion">
     </ul>
@@ -75,15 +77,17 @@
             setPublic();
 
             var getUsers = function() {
+                console.log("Try and get user list ...");
                     $('#userlist').empty();
                     $('#to').empty();
                     $.get("/api/chat/users").done(
                         function(users) {
                             $.each(users, function () {
                                 var user = this;
+                                console.log(user);
                                 var existent = $('#userlist li').filterByData("name",user.UserName);
                                 if (existent.length>0) existent.remove();
-                                var li = $('<li class="user"><img src="/Avatars/'+user.UserName+'.xs.png">'+htmlEncode(user.UserName)+'</li>');
+                                var li = $('<li class="user"><img src="/Avatars/'+user.UserName+'.xs.png"> '+htmlEncode(user.UserName)+'</li>');
                                 
                                 var cxids = [];
                                 $.each(user.Connections,function() {
@@ -136,7 +140,7 @@
                     ids.push(cxid);
                     connected.data("cxids",ids);
                 } else {
-                    var li = $('<li class="user"><img src="/Avatars/'+username+'.xs.png">'+username+'</li>');
+                    var li = $('<li class="user"><img src="/Avatars/'+username+'.xs.png"> '+username+'</li>');
                     li.data("name",username);
                     li.data("cxids",[cxid]);
                     li.appendTo('#userlist');
