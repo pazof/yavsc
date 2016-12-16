@@ -56,20 +56,19 @@
     <script>
                 
         $(function () {
-            var pvuser;
+            var pvuis;
 
             var setPrivate = function(li) 
             {
                 $("#sendmessagebox").addClass("hidden");
                 $("#sendpvbox").removeClass("hidden");
-                pvuser = $(li).data("user");
-                $('#sendpvdest').html(pvuser.UserName)
+                pvuis = { CXs: $(li).data("cxids"), UserName: $(li).data("name")};
+                $('#sendpvdest').html(pvuis.UserName)
             }
             var setPublic = function()
             {
                 $("#sendmessagebox").removeClass("hidden");
                 $("#sendpvbox").addClass("hidden");
-                document.privateChatter = {};
             }
             $('#pubChan').css('cursor','pointer');
             $('#pubChan').click(setPublic);
@@ -84,14 +83,14 @@
                                 var user = this;
                                 var existent = $('#userlist li').filterByData("name",user.UserName);
                                 if (existent.length>0) existent.remove();
-                                var li = $('<li class="user">'+htmlEncode(user.UserName)+'</li>');
+                                var li = $('<li class="user"><img src="/Avatars/'+user.UserName+'.xs.png">'+htmlEncode(user.UserName)+'</li>');
+                                
                                 var cxids = [];
                                 $.each(user.Connections,function() {
                                     cxids.push(this.ConnectionId);
                                 });
                                 $(li).data("name",user.UserName);
                                 $(li).data("cxids",cxids);
-                                $(li).data("user",user);
                                 $(li).css('cursor','pointer');
                                 $(li).click(function(){
                                     setPrivate(this);
@@ -137,7 +136,7 @@
                     ids.push(cxid);
                     connected.data("cxids",ids);
                 } else {
-                    var li = $('<li class="user">'+username+'</li>');
+                    var li = $('<li class="user"><img src="/Avatars/'+username+'.xs.png">'+username+'</li>');
                     li.data("name",username);
                     li.data("cxids",[cxid]);
                     li.appendTo('#userlist');
@@ -186,8 +185,8 @@ $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
                 $('#sendpv').click(function () {
 
                     // Call the Send method on the hub.
-                    $.each(pvuser.Connections,function () { 
-                        chat.server.sendPV( this.ConnectionId, $('#pv').val());
+                    $.each(pvuis.CXs,function () { 
+                        chat.server.sendPV( this, $('#pv').val());
                      });
                     // Clear text box and reset focus for next comment.
                     $('#pv').val('').focus();
