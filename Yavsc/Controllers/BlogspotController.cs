@@ -39,13 +39,17 @@ namespace Yavsc.Controllers
 
         // GET: Blog
         [AllowAnonymous]
-        public IActionResult Index(string id)
+        public IActionResult Index(string id, int skip=0, int maxLen=25)
         {
+            string uid = null;
+            if (User.IsSignedIn())
+                uid = User.GetUserId();
             if (!string.IsNullOrEmpty(id))
                 return UserPosts(id);
             return View(_context.Blogspot.Include(
                b => b.Author
-            ).Where(p => p.Visible).Take(10));
+            ).Where(p => p.Visible || p.AuthorId == uid ).OrderByDescending(p => p.Posted)
+            .Skip(skip).Take(maxLen));
         }
 
         [Route("/Title/{id?}")]
@@ -116,7 +120,7 @@ namespace Yavsc.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            _logger.LogWarning("Invalid Blog posted ...");
+            ModelState.AddModelError("Unknown","Invalid Blog posted ...");
             return View(blog);
         }
         [Authorize()]
