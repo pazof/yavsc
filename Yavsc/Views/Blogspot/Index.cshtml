@@ -9,6 +9,7 @@
 <p>
     <a asp-action="Create">@SR["Create a new article"]</a>
 </p>
+
 <table class="table">
     <tr>
         <th colspan="3">
@@ -17,10 +18,12 @@
     </tr>
     
 @foreach (var item in Model) {
-    <tr>
-        <td>
-       @Html.DisplayFor(modelItem => item.Photo)
-           <markdown>@item.Title</markdown>
+    var trclass = (item.Visible)?"vpost":"ipost";
+
+    <tr class="@trclass">
+        <td><a asp-action="Details" asp-route-id="@item.Id">
+       <img src="@item.Photo" >
+           <markdown>@item.Title</markdown></a>
         </td>
         <td>
             <span style="font-size:x-small;"> @item.Author.UserName </span> <br>
@@ -47,5 +50,27 @@
 }
 </table>
 
+<style>
+    tr.vpost {
+        background-color: #80A050;
+        max-height: 3em;
+    }
+    tr.ipost {
+        background-color: #303030;
+        color: #b0b0b0;
+        font-size: smaller;
+        max-height: 3em;
+    }
+    tr.vpost a {
+        font-weight: bold;
+        color: white;
+        text-shadow: 3px 3px 8px black; 
+    }
+    tr.ipost a {
+        font-style: bold;
+        color: #b0b0b0;
+        text-shadow: 3px 3px 5px #505050; 
+    }
+    </style>
 
 
