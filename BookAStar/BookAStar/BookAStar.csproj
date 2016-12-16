@@ -65,9 +65,6 @@
     <Compile Include="ViewModels\Messaging\ChatUserCollection.cs" />
     <Compile Include="ViewModels\Messaging\ChatUserInfo.cs" />
     <Compile Include="Model\Social\Chat\Connection.cs" />
-    <Compile Include="Pages\Chat\PrivateChatPage.xaml.cs">
-      <DependentUpon>PrivateChatPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModels\Validation\Error.cs" />
     <Compile Include="ViewModels\Validation\ModelState.cs" />
     <Compile Include="ViewModels\PageState.cs" />
@@ -506,12 +503,6 @@
       <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
       <Name>YavscLib</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Pages\Chat\PrivateChatPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\Chat\talk.png" />
