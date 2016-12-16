@@ -19,9 +19,7 @@ namespace BookAStar.ViewModels.Messaging
         }
         public void OnPrivateMessage(ChatMessage msg)
         {
-            var sender = this.FirstOrDefault(user => user.Connections.Any(
-                cx => cx.ConnectionId == msg.SenderId
-                ));
+            var sender = this.FirstOrDefault(user => user.UserName == msg.SenderId);
             if (sender != null)
             {
                 sender.PrivateMessages.Add(msg);

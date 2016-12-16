@@ -11,10 +11,5 @@ namespace BookAStar.Model.Social.Messaging
         public string SenderId { get; set; }
         public string Message { get; set; }
         public bool Read { get; set; }
-        [JsonIgnore]
-        public bool FromMe { get
-            {
-                return App.ChatHubConnection?.ConnectionId == SenderId;
-            } }
     }
 }
