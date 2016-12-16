@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              x:Class="BookAStar.Views.UserListView"
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
-             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar">
+             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
+             xmlns:converters="clr-namespace:BookAStar.Converters;assembly=BookAStar"
+            >
   <ContentView.Resources>
     <ResourceDictionary>
       <Style TargetType="Label">
@@ -12,21 +14,45 @@
       <Style TargetType="Button">
         <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
       </Style>
+     
+      <converters:BooleanToObjectConverter x:Key="cxtdToBck" x:TypeArguments="Style">
+
+        <converters:BooleanToObjectConverter.FalseObject>
+          <Style TargetType="StackLayout">
+            <Setter Property="BackgroundColor" Value="{StaticResource DisconnectedUserBgColor}" />
+          </Style>
+        </converters:BooleanToObjectConverter.FalseObject>
+
+        <converters:BooleanToObjectConverter.TrueObject>
+          <Style TargetType="StackLayout">
+            <Setter Property="BackgroundColor" Value="{StaticResource ConnectedUserBgColor}" />
+          </Style>
+        </converters:BooleanToObjectConverter.TrueObject>
+
+      </converters:BooleanToObjectConverter>
+      
     </ResourceDictionary>
   </ContentView.Resources>
   <ContentView.Content>
     <ListView x:Name="list" IsPullToRefreshEnabled="True" 
               HasUnevenRows="true" RowHeight="80" ItemsSource="{Binding .}"
               SeparatorVisibility="Default" SeparatorColor="Black">
-      <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
+      <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand" >
         <DataTemplate>
           <ViewCell>
             <ViewCell.View>
-              <StackLayout Orientation="Horizontal" Padding="10,10,10,10" VerticalOptions="StartAndExpand">
-                <Image Source="{Binding AvatarSource}" Aspect="AspectFit" />
-                <Label Text="{Binding UserName}" />
+              <StackLayout 
+                Orientation="Horizontal" Padding="3,3,3,3" VerticalOptions="StartAndExpand">
+                <StackLayout Orientation="Horizontal" Padding="5,5,5,5"
+                             Style="{Binding IsConnected, Converter={StaticResource cxtdToBck}}" >
+                             
+                  <Image Source="{Binding AvatarSource}" Aspect="AspectFit" />
+                  <Image Source="{Binding MessagesBadge}" Aspect="AspectFit" />
+                  <Label Text="{Binding UserName}"  />
+                </StackLayout>
                 <Label Text="{Binding RolesAsAString}" TextColor="{StaticResource QuietTextColor}" 
-                       FontSize="{StaticResource SmallFontSize}"/>
+                       FontSize="{StaticResource SmallFontSize}" />
+            
               </StackLayout>
             </ViewCell.View>
           </ViewCell>

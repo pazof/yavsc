@@ -44,25 +44,29 @@ namespace BookAStar.Pages.Chat
             };
             chatUserList.BindingContext = DataManager.Instance.ChatUsers;
             
-            /*
+            
             sendPVButton.Clicked += async (sender, args) =>
             {
-                string userName = contactPicker.SelectedItem as string;
-                if (string.IsNullOrEmpty(userName)) return;
-                var user = DataManager.Current.Contacts.Single(
-                    c => c.UserName == userName);
-                IsBusy = true;
-                try
+                var dest = chatUserList.SelectedUser;
+                if (dest!=null)
                 {
-                    await App.ChatHubProxy.Invoke<string>("SendPV", user.ChatHubConnectionId, pvEntry.Text);
-                    pvEntry.Text = null;
+                    IsBusy = true;
+                    try
+                    {
+                        foreach (var cx in dest.ObservableConnections)
+                        {
+                            if (cx.Connected)
+                                await App.ChatHubProxy.Invoke<string>("SendPV", cx.ConnectionId, pvEntry.Text);
+                        }
+                        pvEntry.Text = null;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex);
+                    }
+                    IsBusy = false;
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
-                IsBusy = false;
-            };*/
+            };
 
         }
 

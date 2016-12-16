@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BookAStar.Data;
+using Newtonsoft.Json;
+using System;
+using System.Linq;
 
 namespace BookAStar.Model.Social.Messaging
 {
@@ -7,5 +10,11 @@ namespace BookAStar.Model.Social.Messaging
         public DateTime Date { get; set; }
         public string SenderId { get; set; }
         public string Message { get; set; }
+        public bool Read { get; set; }
+        [JsonIgnore]
+        public bool FromMe { get
+            {
+                return App.ChatHubConnection?.ConnectionId == SenderId;
+            } }
     }
 }

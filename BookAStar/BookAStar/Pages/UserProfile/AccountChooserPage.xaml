@@ -3,7 +3,8 @@
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BookAStar.Pages.UserProfile.AccountChooserPage"
-             Title="{x:Static local:Strings.UserAccounts}" Style="{StaticResource PageStyle}"
+             Title="{x:Static local:Strings.UserAccounts}" 
+             Style="{StaticResource PageStyle}"
              xmlns:lc="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
              xmlns:lb="clr-namespace:XLabs.Forms.Behaviors;assembly=XLabs.Forms">
 
