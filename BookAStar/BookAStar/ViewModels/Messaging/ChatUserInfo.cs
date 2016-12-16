@@ -13,6 +13,15 @@ namespace BookAStar.Model.Social.Chat
 {
     public class ChatUserInfo : ViewModel, IChatUserInfo
     {
+        public ChatUserInfo()
+        {
+            PrivateMessages.CollectionChanged += PrivateMessages_CollectionChanged;
+        }
+
+        private void PrivateMessages_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            NotifyPropertyChanged("Unread");
+        }
 
         public string avatar;
         public string Avatar
@@ -132,7 +141,7 @@ namespace BookAStar.Model.Social.Chat
                 throw new NotImplementedException();
             }
         }
-        ObservableCollection<ChatMessage> privateMessages ;
+        ObservableCollection<ChatMessage> privateMessages = new ObservableCollection<ChatMessage>();
         [JsonIgnore]
         public ObservableCollection<ChatMessage> PrivateMessages
         {
@@ -142,6 +151,21 @@ namespace BookAStar.Model.Social.Chat
             }
         }
 
+        public bool Unread
+        {
+            get
+            {
+                return PrivateMessages==null?false: PrivateMessages.Any(
+                    m => !m.Read);
+            }
+        }
+        public ImageSource MessagesBadge
+        {
+            get
+            {
+                return Unread ? ImageSource.FromResource("BookAStar.Images.Chat.talk.png") :null;
+            }
+        }
         public void OnConnected(string cxId)
         {
             // We do assume this cxId dosn't already exist in this list.

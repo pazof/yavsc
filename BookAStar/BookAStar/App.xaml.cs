@@ -357,7 +357,6 @@ namespace BookAStar
                     msg
                     );
                 DataManager.Instance.ChatUsers.OnPrivateMessage(msg);
-
             });
         }
 

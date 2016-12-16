@@ -7,7 +7,7 @@
              x:Class="BookAStar.Pages.UserProfile.DashboardPage"
              xmlns:lc="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
              xmlns:lb="clr-namespace:XLabs.Forms.Behaviors;assembly=XLabs.Forms"
-             Style="{StaticResource PageStyle}">
+             Style="{StaticResource DashboardPageStyle}">
   <ContentPage.Resources>
     <ResourceDictionary>
       <Style TargetType="Label">
