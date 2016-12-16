@@ -56,15 +56,14 @@
     <script>
                 
         $(function () {
-            
-            document.userList = [];
+            var pvuser;
+
             var setPrivate = function(li) 
             {
                 $("#sendmessagebox").addClass("hidden");
                 $("#sendpvbox").removeClass("hidden");
-                document.privateChatter = document.userList[$(li).data("usernum")];
-
-                $('#sendpvdest').html(document.privateChatter.UserName)
+                pvuser = $(li).data("user");
+                $('#sendpvdest').html(pvuser.UserName)
             }
             var setPublic = function()
             {
@@ -92,8 +91,7 @@
                                 });
                                 $(li).data("name",user.UserName);
                                 $(li).data("cxids",cxids);
-                                document.userList.push(user);
-                                $(li).data("usernum",document.userList.length-1);
+                                $(li).data("user",user);
                                 $(li).css('cursor','pointer');
                                 $(li).click(function(){
                                     setPrivate(this);
@@ -188,7 +186,7 @@ $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
                 $('#sendpv').click(function () {
 
                     // Call the Send method on the hub.
-                    $.each(document.privateChatter.Connections,function () { 
+                    $.each(pvuser.Connections,function () { 
                         chat.server.sendPV( this.ConnectionId, $('#pv').val());
                      });
                     // Clear text box and reset focus for next comment.
