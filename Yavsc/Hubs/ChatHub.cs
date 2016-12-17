@@ -127,7 +127,7 @@ namespace Yavsc
         {
             string uname = (Context.User != null) ?
               $"[{Context.User.Identity.Name}]" :
-              $"(anony{name})";
+              $"({name})";
             Clients.All.addMessage(uname, message);
         }
 
@@ -155,26 +155,5 @@ namespace Yavsc
                 
         }
 
-        public List<ChatUserInfo> GetUserList()
-        {
-            using (var db = new ApplicationDbContext()) {
-
-                var cxsQuery = db.Connections.Include(c=>c.Owner).GroupBy( c => c.ApplicationUserId );
-
-                List<ChatUserInfo> result = new List<ChatUserInfo>();
-
-                foreach (var g in cxsQuery) {
-
-                    var uid = g.Key;
-                    var cxs = g.ToList();
-                    var user = cxs.First().Owner;
-
-                    result.Add(new ChatUserInfo { UserName = user.UserName,
-                    UserId = user.Id, Avatar = user.Avatar, Connections = cxs } );
-
-                }
-               return result;
-            }
-        }
     }
 }

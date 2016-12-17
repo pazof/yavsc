@@ -6,6 +6,7 @@ using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
+    using System.Threading.Tasks;
     using Microsoft.AspNet.Identity;
     using Models;
     using ViewModels.Chat;
@@ -22,7 +23,7 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet("users")]
-        public IEnumerable<ChatUserInfo> GetUserList()
+        public async Task<IEnumerable<ChatUserInfo>> GetUserList()
         {
             List<ChatUserInfo> result = new List<ChatUserInfo>();
             var cxsQuery = dbContext.Connections?.Include(c=>c.Owner).GroupBy( c => c.ApplicationUserId );
@@ -36,10 +37,13 @@ namespace Yavsc.Controllers
                 if (cxs !=null)
                 if (cxs.Count>0) {
                     var user = cxs.First().Owner;
-                    
+                    if (user!=null) {
+                    var roles = await userManager.GetRolesAsync(user);
+
                     result.Add(new ChatUserInfo { UserName = user.UserName,
                     UserId = user.Id, Avatar = user.Avatar, Connections = cxs,
-                    Roles = (  userManager.GetRolesAsync(user) ).Result.ToArray() });
+                    Roles = roles?.ToArray() });
+                    }
                 }
             }
             return result;

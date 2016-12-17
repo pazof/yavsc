@@ -56,9 +56,10 @@ namespace Yavsc.Controllers
         [AllowAnonymous]
         public IActionResult Title(string id)
         {
+            var uid = User.GetUserId();
             return View("Index", _context.Blogspot.Include(
                 b => b.Author
-            ).Where(x => x.Title == id && x.Visible).ToList());
+            ).Where(x => x.Title == id && (x.Visible || x.AuthorId == uid )).ToList());
         }
 
         [Route("/Blog/{id?}")]
@@ -93,7 +94,7 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-
+            
             return View(blog);
         }
 
