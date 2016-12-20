@@ -21,7 +21,18 @@
   <ContentPage.Content>
     <ScrollView>
     <StackLayout BoxView.Color="{StaticResource ContentBackgroundColor}">
-      <Image Source="{Binding Avatar}"  HeightRequest="{StaticResource BigUserAvatarSize}" />
+      <lc:GesturesContentView>
+        <Image Source="{Binding Avatar}"  HeightRequest="{StaticResource BigUserAvatarSize}" >
+          <lb:Gestures.Interests>
+            <lb:GestureCollection>
+              <lb:GestureInterest GestureType="SingleTap" GestureCommand="{Binding AvatarCommand}" GestureParameter="{Binding Ready}"/>
+              <lb:GestureInterest GestureType="LongPress" GestureCommand="{Binding AvatarCommand}" GestureParameter="{Binding Ready}"/>
+              <lb:GestureInterest GestureType="Swipe" Direction="Left" GestureCommand="{Binding AvatarCommand}" GestureParameter="{Binding Ready}"/>
+              <lb:GestureInterest GestureType="Swipe" Direction="Right" GestureCommand="{Binding AvatarCommand}" GestureParameter="{Binding Ready}"/>
+            </lb:GestureCollection>
+          </lb:Gestures.Interests>
+        </Image>
+      </lc:GesturesContentView>
       <Button Text="{Binding UserName}"  Clicked="OnRefreshQuery" />
       
       <Button Text="{Binding UserFilesText}" Clicked="OnManageFiles" />

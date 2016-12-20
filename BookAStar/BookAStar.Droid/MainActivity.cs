@@ -319,15 +319,16 @@ namespace BookAStar.Droid
                 return manager.FindAccountsForService(Constants.ApplicationName);
             });
         }
-        YaOAuth2Authenticator auth = new YaOAuth2Authenticator(
-                            clientId: "d9be5e97-c19d-42e4-b444-0e65863b19e1",
-                            clientSecret: "blouh",
-                            scope: "profile",
-                            authorizeUrl: new Uri(Constants.AuthorizeUrl),
-                            redirectUrl: new Uri("http://dev.pschneider.fr/oauth/success"),
-                            accessTokenUrl: new Uri("http://dev.pschneider.fr/token"));
+        
         public void AddAccount()
         {
+            var auth = new YaOAuth2Authenticator(
+                                clientId: "d9be5e97-c19d-42e4-b444-0e65863b19e1",
+                                clientSecret: "blouh",
+                                scope: "profile",
+                                authorizeUrl: new Uri(Constants.AuthorizeUrl),
+                                redirectUrl: new Uri("http://dev.pschneider.fr/oauth/success"),
+                                accessTokenUrl: new Uri("http://dev.pschneider.fr/token"));
             Intent loginIntent = auth.GetUI(this);
             var accStore = AccountStore.Create(this);
             auth.Completed += (sender, eventArgs) =>

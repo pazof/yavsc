@@ -146,7 +146,7 @@ namespace BookAStar.ViewModels.UserProfile
             {
                 if (g.GestureType == GestureType.LongPress)
                 {
-                    Resolver.Resolve<INavigationService>().NavigateTo<AccountChooserPage>(true);
+                    Navigation.PushAsync(App.UserProfilePage);
                 }
             });
             MainSettings.UserChanged += MainSettings_UserChanged;
@@ -179,14 +179,14 @@ namespace BookAStar.ViewModels.UserProfile
                 bool newUserIsPro;
                 ImageSource newAvatar;
                 string newQueriesButtonText;
-                bool newHaveAnUser = user == null;
-                if (newHaveAnUser)
+                bool userIsNull = user == null;
+                if (userIsNull)
                 {
                     newQueryCount = 0;
                     newUserIsPro = false;
-                    newStatusString = null;
+                    newStatusString = "no user selected";
                     newAvatar = null;
-                    newQueriesButtonText = null;
+                    newQueriesButtonText = "no user selected";
                 }
                 else
                 {
@@ -202,7 +202,7 @@ namespace BookAStar.ViewModels.UserProfile
                         "Profile professionel non renseigné";
                     newAvatar = UserHelpers.Avatar(user.Avatar);
                 }
-                SetProperty<bool>(ref haveAnUser, newHaveAnUser, "HaveAnUser");
+                SetProperty<bool>(ref haveAnUser, userIsNull, "HaveAnUser");
                 SetProperty<bool>(ref userIsPro, newUserIsPro, "UserIsPro");
                 SetProperty<string>(ref performerStatus, newStatusString, "PerformerStatus");
                 SetProperty<string>(ref userQueries, newQueriesButtonText, "UserQueries");
@@ -216,8 +216,6 @@ namespace BookAStar.ViewModels.UserProfile
 
                 NotifyPropertyChanged("UserName");
                 NotifyPropertyChanged("UserId");
-                NotifyPropertyChanged("HaveAnUser");
-                NotifyPropertyChanged("UserIsPro");
             });
             
         }

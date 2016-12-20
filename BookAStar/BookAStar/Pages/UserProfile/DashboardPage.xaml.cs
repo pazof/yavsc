@@ -10,6 +10,7 @@ namespace BookAStar.Pages.UserProfile
     using System.Linq;
     using System.Net.Http;
     using ViewModels.UserProfile;
+    using XLabs.Forms.Controls;
 
     public partial class DashboardPage : ContentPage
     {
