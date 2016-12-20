@@ -62,6 +62,9 @@
     <Compile Include="Model\Settings\SignatureSettings.cs" />
     <Compile Include="Model\Social\Chat\ChatStatus.cs" />
     <Compile Include="Model\Social\Chat\ChatMessage.cs" />
+    <Compile Include="Pages\ClientPages\SearchPage.xaml.cs">
+      <DependentUpon>SearchPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\Messaging\ChatUserCollection.cs" />
     <Compile Include="ViewModels\Messaging\ChatUserInfo.cs" />
     <Compile Include="Model\Social\Chat\Connection.cs" />
@@ -211,9 +214,6 @@
     <Compile Include="Views\ImageButton.cs" />
     <Compile Include="Views\MarkdownView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pages\SearchPage.xaml.cs">
-      <DependentUpon>SearchPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\UserProfile\AccountChooserPage.xaml.cs">
       <DependentUpon>AccountChooserPage.xaml</DependentUpon>
     </Compile>
@@ -246,17 +246,12 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\SearchPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Pages\UserProfile\AccountChooserPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\Billing\" />
     <Folder Include="Model\UI\" />
   </ItemGroup>
   <ItemGroup>
@@ -506,6 +501,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\Chat\talk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\ClientPages\SearchPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.2.127\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

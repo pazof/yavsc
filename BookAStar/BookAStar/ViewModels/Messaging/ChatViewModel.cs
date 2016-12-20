@@ -10,7 +10,7 @@ namespace BookAStar.ViewModels.Messaging
     using Model.Social.Chat;
     using Model.Social.Messaging;
 
-    class ChatViewModel: ViewModel
+    public class ChatViewModel: ViewModel
     {
         public ObservableCollection<ChatMessage> Messages { get; set; }
         public ObservableCollection<ChatMessage> Notifs { get; set; }
