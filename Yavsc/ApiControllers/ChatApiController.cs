@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
         [HttpGet("users")]
         public IEnumerable<ChatUserInfo> GetUserList()
         {
-      
+            List<ChatUserInfo> result = new List<ChatUserInfo>();
             var cxsQuery = dbContext.Connections?.Include(c=>c.Owner).GroupBy( c => c.ApplicationUserId );
 
             // List<ChatUserInfo> result = new List<ChatUserInfo>();
@@ -37,12 +37,12 @@ namespace Yavsc.Controllers
                 if (cxs.Count>0) {
                     var user = cxs.First().Owner;
                     
-                    yield return new ChatUserInfo { UserName = user.UserName,
+                    result.Add(new ChatUserInfo { UserName = user.UserName,
                     UserId = user.Id, Avatar = user.Avatar, Connections = cxs,
-                    Roles = (  userManager.GetRolesAsync(user) ).Result.ToArray() };
+                    Roles = (  userManager.GetRolesAsync(user) ).Result.ToArray() });
                 }
             }
-            
+            return result;
         }
     }
 }

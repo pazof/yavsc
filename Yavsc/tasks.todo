@@ -10,7 +10,7 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	✔ Accès aux profiles des intervenants. @done (August 13th 2016, 0:57)
 	✔ Demande de devis, spécifiant une date et un lieu, envers un pro (ou "BookQuery", ou "demande de rendez-vous"). @done (August 13th 2016, 0:57)
 	✔ Notifications commande. @done (September 15th 2016, 15:00)
-	✔ Rendu html du format Markdown-av (+audio&video). @done (October 6th 2016, 14:32)
+	✔ Rendu Html du format Markdown-av (+audio&video). @done (October 6th 2016, 14:32)
 	✔ Rendu Android, via WebKit WebView. @done (October 6th 2016, 14:32)
     ✔ Salon public. @done (September 28th 2016, 17:58)
 	✔ Saisie et soumission basique du devis. @done (October 30th 2016, 21:50)
@@ -49,16 +49,18 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	☐ Évaluation de la prestation.
 	☐ Page d'accueil du mobile: Les alertes, et les derniers événements, donc, les derniers post, les 
 	dernières inscriptions de prestataire, les annonces corporate
-	* La selection d'une star: pas de notation à afficher + idem chanteur
+	* La sélection d'une star: pas de notation à afficher + idem chanteur,
+	  les critères : la date, les champs du formulaire de commande: le message, le lieu
 	☐ depuis le mobile
 	☐ depuis le Web
-	* La selection d'un DJ: (rechercher dans / afficher) les samples + idem chanteur
+	* La sélection d'un DJ: (rechercher dans / afficher) les samples + idem chanteur
+	  les critères : la date, les champs du formulaire de commande: le message, le lieu, la tendance musicale
 	☐ depuis le mobile
 	☐ depuis le Web
-	* La selection d'un chanteur: (rechercher dans / afficher) les titres du répértoire
+	* La sélection d'un chanteur: (rechercher dans / afficher) les titres du répertoire
 	☐ depuis le mobile
 	☐ depuis le Web
-	* La selection d'une formation musicale: idem chanteur + (rechercher/afficher) la taille de la formation
+	* La sélection d'une formation musicale: idem chanteur + (rechercher/afficher) la taille de la formation
 	☐ depuis le mobile
 	☐ depuis le Web
 
@@ -125,9 +127,11 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	en l'enregistrant comme activité fille. Par ailleurs, l'utilisateur peut déclarer plusieurs activités,
 	sous la forme d'une liste, dont le premier élément indique l'activité principale 
 	(pour laquelle un code APE doit correspondre).
-	☐ Le streaming video, de pair à pair
+	☐ Le streaming vidéo, de pair à pair
 	☐ Le streaming vidéo public.
 
 ## Jalon 5
 
 	☐ Conciliation
+	☐ Le réseau pro : on a des sous-traitants, on leur transmet des demandes de devis en tant que dépendance
+	d'une demande en cours,cette dernière n'est validable qu'une fois seulement que tous les devis dont elle dépend sont validés.

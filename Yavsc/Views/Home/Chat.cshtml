@@ -16,14 +16,20 @@
   color: black;
   font-family: monospace;
   font-style: bold;
+  background-color: yellow;
 }
  
 </style>
 <div class="container">
     <input type="hidden" id="displayname" />
-   
-    <ul id="userlist" style="float:right;">
+   <div style="float:right; background-color: grey; padding:1em; margin:1em;">
+    <h3>Salons</h3>
+    <ul><li id="pubChan">Public</li></ul>
+    <h3>Utilisateurs</h3>
+    <ul id="userlist" style="list-style-type:none;">
     </ul>
+
+    </div>
     <ul id="discussion">
     </ul>
     <div style="display: inline-block;">
@@ -52,42 +58,43 @@
     <script>
                 
         $(function () {
-            
-            document.userList = [];
+            var pvuis;
+
             var setPrivate = function(li) 
             {
                 $("#sendmessagebox").addClass("hidden");
                 $("#sendpvbox").removeClass("hidden");
-                document.privateChatter = document.userList[$(li).data("usernum")];
-
-                $('#sendpvdest').html(document.privateChatter.UserName)
+                pvuis = { CXs: $(li).data("cxids"), UserName: $(li).data("name")};
+                $('#sendpvdest').html(pvuis.UserName)
             }
             var setPublic = function()
             {
                 $("#sendmessagebox").removeClass("hidden");
                 $("#sendpvbox").addClass("hidden");
-                document.privateChatter = {};
             }
+            $('#pubChan').css('cursor','pointer');
+            $('#pubChan').click(setPublic);
             setPublic();
 
             var getUsers = function() {
+                console.log("Try and get user list ...");
                     $('#userlist').empty();
                     $('#to').empty();
                     $.get("/api/chat/users").done(
                         function(users) {
                             $.each(users, function () {
                                 var user = this;
+                                console.log(user);
                                 var existent = $('#userlist li').filterByData("name",user.UserName);
                                 if (existent.length>0) existent.remove();
-                                var li = $('<li class="user">'+htmlEncode(user.UserName)+'</li>');
+                                var li = $('<li class="user"><img src="/Avatars/'+user.UserName+'.xs.png"> '+htmlEncode(user.UserName)+'</li>');
+                                
                                 var cxids = [];
                                 $.each(user.Connections,function() {
                                     cxids.push(this.ConnectionId);
                                 });
                                 $(li).data("name",user.UserName);
                                 $(li).data("cxids",cxids);
-                                document.userList.push(user);
-                                $(li).data("usernum",document.userList.length-1);
                                 $(li).css('cursor','pointer');
                                 $(li).click(function(){
                                     setPrivate(this);
@@ -133,7 +140,7 @@
                     ids.push(cxid);
                     connected.data("cxids",ids);
                 } else {
-                    var li = $('<li class="user">'+username+'</li>');
+                    var li = $('<li class="user"><img src="/Avatars/'+username+'.xs.png"> '+username+'</li>');
                     li.data("name",username);
                     li.data("cxids",[cxid]);
                     li.appendTo('#userlist');
@@ -182,8 +189,8 @@ $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
                 $('#sendpv').click(function () {
 
                     // Call the Send method on the hub.
-                    $.each(document.privateChatter.Connections,function () { 
-                        chat.server.sendPV( this.ConnectionId, $('#pv').val());
+                    $.each(pvuis.CXs,function () { 
+                        chat.server.sendPV( this, $('#pv').val());
                      });
                     // Clear text box and reset focus for next comment.
                     $('#pv').val('').focus();
