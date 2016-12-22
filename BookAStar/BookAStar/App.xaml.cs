@@ -67,9 +67,10 @@ namespace BookAStar
             MainSettings.UserChanged += MainSettings_UserChanged;
             CrossConnectivity.Current.ConnectivityChanged += (conSender, args) =>
             { App.IsConnected = args.IsConnected; };
+            SetupHubConnection();
             MainSettings_UserChanged(this, null);
-            if (CrossConnectivity.Current.IsConnected)
-                StartHubConnection();
+            
+                StartConnexion();
         }
 
         // omg
@@ -106,7 +107,7 @@ namespace BookAStar
         // Called on rotation
         private void OnSuspended(object sender, EventArgs e)
         {
-            StopHubConnection();
+            StopConnection();
             int position = 0;
             DataManager.Instance.AppState.Clear();
             foreach (Page page in Navigation.NavigationStack)
@@ -125,7 +126,7 @@ namespace BookAStar
         // called on app startup, after OnStartup, not on rotation
         private void OnAppResumed(object sender, EventArgs e)
         {
-            StartHubConnection();
+            StartConnexion();
             // TODO restore the navigation stack 
             base.OnResume();
             foreach (var pageState in DataManager.Instance.AppState)
@@ -316,7 +317,7 @@ namespace BookAStar
                     if (isConnected)
                     {
                         // TODO Start all cloud related stuff 
-                        StartHubConnection();
+                        StartConnexion();
                     }
                     
                 }
@@ -331,9 +332,10 @@ namespace BookAStar
             }
         }
         // Start the Hub connection
-        public static async void StartHubConnection ()
+        public static async void StartConnexion ()
         {
-            try
+            if (CrossConnectivity.Current.IsConnected)
+                try
             {
                 await chatHubConnection.Start();
             }
@@ -350,6 +352,8 @@ namespace BookAStar
 
         public void SetupHubConnection()
         {
+            if (chatHubConnection != null)
+                chatHubConnection.Dispose();
             chatHubConnection = new HubConnection(Constants.SignalRHubsUrl);
             chatHubConnection.Error += ChatHubConnection_Error;
 
@@ -367,11 +371,11 @@ namespace BookAStar
                 DataManager.Instance.ChatUsers.OnPrivateMessage(msg);
             });
         }
-        public static  void StopHubConnection()
+        public static  void StopConnection()
         {
             try
             {
-                 chatHubConnection.Stop();
+                chatHubConnection.Stop();
             }
             catch (WebException)
             {
@@ -385,18 +389,13 @@ namespace BookAStar
         }
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
-            if (chatHubConnection != null)
-            {
-                chatHubConnection.Dispose();
-                chatHubConnection = null;
-                chatHubProxy = null;
-            }
+            StopConnection();
             if (MainSettings.CurrentUser != null)
             {
                 var token = MainSettings.CurrentUser.YavscTokens.AccessToken;
-                SetupHubConnection();
                 chatHubConnection.Headers.Add("Authorization", $"Bearer {token}");
             }
+            StartConnexion();
         }
 
         private void ChatHubConnection_Error(Exception obj)
