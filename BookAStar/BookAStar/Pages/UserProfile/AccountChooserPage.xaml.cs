@@ -14,37 +14,24 @@ namespace BookAStar.Pages.UserProfile
    
     public partial class AccountChooserPage : ContentPage
 	{
-        public ICommand RemoteSettingsRefreshCommand { get; private set; }
-
+        
         public AccountChooserPage ()
 		{
 			InitializeComponent ();
 
-            AccountListView.ItemsSource = MainSettings.AccountList;
-
-            this.Musical = MainSettings.Musical;
-            this.Environ = MainSettings.Environ;
-            this.BindingContext = this;
-
             AddAccountBtn.Clicked += AddAccountBtn_Clicked;
 
-             // avatarImage.
             //RemoveAccountBouton.Clicked += RemoveAccountBouton_Clicked;
 
             AccountListView.ItemSelected += Accounts_ItemSelected;
-            DumpParam = new RelayGesture((g, x) =>
-            {
-                if (g.GestureType == GestureType.Swipe && g.Direction == Directionality.Left)
-                {
-                    RemoveAccount();
-                }
-            }); 
+            // MainSettings.UserChanged += MainSettings_UserChanged;
         }
-
-        public RelayGesture DumpParam { get; set; }
-        public ObservableCollection<User> Accounts { get; private set; }
-        public Dictionary<string, double> Musical { get; private set; }
-        public Dictionary<string, double> Environ { get; private set; }
+        // Should be useless
+        private void MainSettings_UserChanged(object sender, EventArgs e)
+        {
+            AccountListView.SelectedItem = MainSettings.CurrentUser;
+            throw new NotImplementedException();
+        }
 
         private void Accounts_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
@@ -68,7 +55,6 @@ namespace BookAStar.Pages.UserProfile
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            AccountListView.SelectedItem = MainSettings.CurrentUser;
         }
 
         private void AddAccountBtn_Clicked(object sender, EventArgs e)
