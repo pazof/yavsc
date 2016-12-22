@@ -11,10 +11,12 @@ namespace BookAStar
     {
         public const string ApplicationName = "Booking Star";
 
-        #region Uri
 
 #if DEV
         public const string YavscHomeUrl = "http://dev.pschneider.fr";
+#else
+#if WDEV 
+        public const string YavscHomeUrl = "http://192.168.0.39:5000";
 #else
 #if YAVSC
         public const string YavscHomeUrl = "https://yavsc.pschneider.fr";
@@ -23,6 +25,7 @@ namespace BookAStar
         public const string YavscHomeUrl = "https://lua.pschneider.fr";
 #else
         public const string YavscHomeUrl = "https://booking.pschneider.fr";
+#endif
 #endif
 #endif
 #endif
@@ -36,11 +39,8 @@ namespace BookAStar
         public static readonly string BlogUrl = YavscApiUrl + "/blogs";
         public static readonly string FsUrl = YavscApiUrl + "/fs";
         public static readonly string SignalRHubsUrl = YavscHomeUrl + "/api/signalr/hubs";
-#endregion
 
-#region Permissions ids
         public static int AllowBeATarget = 1;
-#endregion
 
         public static int CloudTimeout = 400;
     }
