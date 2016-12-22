@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
+using System.Collections.Generic;
 using Yavsc.Models;
 using Yavsc.Models.Auth;
 
@@ -42,6 +43,7 @@ namespace Yavsc.Controllers
         // GET: Client/Create
         public IActionResult Create()
         {
+            SetAppTypesInputValues();
             return View();
         }
 
@@ -62,8 +64,7 @@ namespace Yavsc.Controllers
         }
         private void SetAppTypesInputValues()
         {
-            ViewData["Type"] = 
-             new SelectListItem[] { 
+            IEnumerable<SelectListItem> types =  new SelectListItem[] {
                  new SelectListItem {
                      Text = ApplicationTypes.JavaScript.ToString(),
                      Value = ((int) ApplicationTypes.JavaScript).ToString() },
@@ -72,6 +73,7 @@ namespace Yavsc.Controllers
                      Value = ((int) ApplicationTypes.NativeConfidential).ToString() 
                      }
              };
+            ViewData["Type"] = types;
         }
         // GET: Client/Edit/5
         public async Task<IActionResult> Edit(string id)
