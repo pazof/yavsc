@@ -82,7 +82,6 @@ namespace BookAStar
         // Called on rotation after OnSuspended
         private void OnClosing(object sender, EventArgs e)
         {
-            ChatHubConnection.Dispose();
         }
 
         // FIXME Never called.
@@ -337,6 +336,7 @@ namespace BookAStar
             if (CrossConnectivity.Current.IsConnected)
                 try
             {
+                    if (chatHubConnection.State == ConnectionState.Disconnected)
                 await chatHubConnection.Start();
             }
             catch (WebException  )
@@ -375,6 +375,7 @@ namespace BookAStar
         {
             try
             {
+                if (chatHubConnection.State != ConnectionState.Disconnected)
                 chatHubConnection.Stop();
             }
             catch (WebException)
