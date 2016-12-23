@@ -67,27 +67,28 @@ namespace BookAStar
             MainSettings.UserChanged += MainSettings_UserChanged;
             CrossConnectivity.Current.ConnectivityChanged += (conSender, args) =>
             { App.IsConnected = args.IsConnected; };
+            SetupHubConnection();
             MainSettings_UserChanged(this, null);
-            if (CrossConnectivity.Current.IsConnected)
-                StartHubConnection();
+            
+                StartConnexion();
         }
 
         // omg
         private void OnError(object sender, EventArgs e)
         {
-            
+
         }
-        
+
         // Called on rotation after OnSuspended
         private void OnClosing(object sender, EventArgs e)
         {
-            
+            ChatHubConnection.Dispose();
         }
 
         // FIXME Never called.
         private void OnInitialize(object sender, EventArgs e)
         {
-           
+
         }
 
         // called on app startup, not on rotation
@@ -106,7 +107,7 @@ namespace BookAStar
         // Called on rotation
         private void OnSuspended(object sender, EventArgs e)
         {
-            // TODO save the navigation stack
+            StopConnection();
             int position = 0;
             DataManager.Instance.AppState.Clear();
             foreach (Page page in Navigation.NavigationStack)
@@ -125,6 +126,7 @@ namespace BookAStar
         // called on app startup, after OnStartup, not on rotation
         private void OnAppResumed(object sender, EventArgs e)
         {
+            StartConnexion();
             // TODO restore the navigation stack 
             base.OnResume();
             foreach (var pageState in DataManager.Instance.AppState)
@@ -146,7 +148,7 @@ namespace BookAStar
         // FIXME Not called? 
         private void OnRotation(object sender, EventArgs<Orientation> e)
         {
-            
+
         }
 
         public static GenericConfigSettingsMgr ConfigManager { protected set; get; }
@@ -154,9 +156,6 @@ namespace BookAStar
         private void Configure(IXFormsApp app)
         {
             ViewFactory.EnableCache = true;
-            ViewFactory.Register<ChatPage, ChatViewModel>(
-                r=> new ChatViewModel { }
-                );
             ViewFactory.Register<DashboardPage, DashboardViewModel>(
                  resolver => new DashboardViewModel());
             ViewFactory.Register<BookQueryPage, BookQueryViewModel>();
@@ -184,13 +183,18 @@ namespace BookAStar
             Init();
             // Builds the Main page
             BuildMainPage();
-            
+
         }
 
         BookQueriesPage bQueriesPage;
         AccountChooserPage accChooserPage;
         HomePage homePage;
-        UserProfilePage userProfilePage;
+
+        private static UserProfilePage userProfilePage;
+
+        public static UserProfilePage UserProfilePage
+           { get { return userProfilePage; } }
+
         ChatPage chatPage;
 
         private void ShowPage(Page page)
@@ -207,6 +211,10 @@ namespace BookAStar
 
         private void BuildMainPage()
         {
+            // TODO
+            // in case of App resume, 
+            // do not create new BindingContext's,
+            // but use those from the AppState property
             accChooserPage = new AccountChooserPage();
 
             bQueriesPage = new BookQueriesPage
@@ -218,6 +226,7 @@ namespace BookAStar
             homePage = new HomePage() { Title = "Accueil", Icon = "icon.png" };
             userProfilePage = new UserProfilePage { Title = "Profile utilisateur", Icon = "ic_corp_icon.png",
                 BindingContext = new UserProfileViewModel() };
+
             chatPage = new ChatPage
             {
                 Title = "Chat",
@@ -308,7 +317,7 @@ namespace BookAStar
                     if (isConnected)
                     {
                         // TODO Start all cloud related stuff 
-                        StartHubConnection();
+                        StartConnexion();
                     }
                     
                 }
@@ -323,9 +332,10 @@ namespace BookAStar
             }
         }
         // Start the Hub connection
-        public static async void StartHubConnection ()
+        public static async void StartConnexion ()
         {
-            try
+            if (CrossConnectivity.Current.IsConnected)
+                try
             {
                 await chatHubConnection.Start();
             }
@@ -342,6 +352,8 @@ namespace BookAStar
 
         public void SetupHubConnection()
         {
+            if (chatHubConnection != null)
+                chatHubConnection.Dispose();
             chatHubConnection = new HubConnection(Constants.SignalRHubsUrl);
             chatHubConnection.Error += ChatHubConnection_Error;
 
@@ -359,21 +371,31 @@ namespace BookAStar
                 DataManager.Instance.ChatUsers.OnPrivateMessage(msg);
             });
         }
-
+        public static  void StopConnection()
+        {
+            try
+            {
+                chatHubConnection.Stop();
+            }
+            catch (WebException)
+            {
+                // TODO use webex, set this cx down status somewhere,
+                // & display it & maybe try again later.
+            }
+            catch (Exception)
+            {
+                // TODO use ex
+            }
+        }
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
-            if (chatHubConnection != null)
-            {
-                chatHubConnection.Dispose();
-                chatHubConnection = null;
-                chatHubProxy = null;
-            }
+            StopConnection();
             if (MainSettings.CurrentUser != null)
             {
                 var token = MainSettings.CurrentUser.YavscTokens.AccessToken;
-                SetupHubConnection();
                 chatHubConnection.Headers.Add("Authorization", $"Bearer {token}");
             }
+            StartConnexion();
         }
 
         private void ChatHubConnection_Error(Exception obj)

@@ -9,7 +9,6 @@
             xmlns:local="clr-namespace:BookAStar;Assembly:BookAStar"
             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
             Style="{StaticResource PageStyle}" >
-   
   <TabbedPage.Resources>
     <ResourceDictionary>
   <converters:SignalRConnectionStateToObject x:Key="cxToStyleImage" x:TypeArguments="Style">

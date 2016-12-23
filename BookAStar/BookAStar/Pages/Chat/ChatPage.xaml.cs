@@ -12,8 +12,18 @@ namespace BookAStar.Pages.Chat
     public partial class ChatPage : TabbedPage
     {
         public string ChatUser { get; set; }
+        public ChatPage(ChatViewModel model)
+        {
+            Init();
+            BindingContext = model;
+        }
 
         public ChatPage()
+        {
+            Init();
+        }
+
+        private void Init()
         {
             InitializeComponent();
 
@@ -45,7 +55,7 @@ namespace BookAStar.Pages.Chat
             chatUserList.BindingContext = DataManager.Instance.ChatUsers;
             
             
-            sendPVButton.Clicked += async (sender, args) =>
+            sendPVButton.Clicked +=  (sender, args) =>
             {
                 var dest = chatUserList.SelectedUser;
                 if (dest!=null)
@@ -56,7 +66,7 @@ namespace BookAStar.Pages.Chat
                         foreach (var cx in dest.ObservableConnections)
                         {
                             if (cx.Connected)
-                                await App.ChatHubProxy.Invoke<string>("SendPV", cx.ConnectionId, pvEntry.Text);
+                                App.ChatHubProxy.Invoke<string>("SendPV", cx.ConnectionId, pvEntry.Text);
                         }
                         pvEntry.Text = null;
                     }

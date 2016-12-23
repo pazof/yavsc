@@ -10,6 +10,7 @@ namespace BookAStar.Pages.UserProfile
     using System.Linq;
     using System.Net.Http;
     using ViewModels.UserProfile;
+    using XLabs.Forms.Controls;
 
     public partial class DashboardPage : ContentPage
     {
@@ -26,32 +27,39 @@ namespace BookAStar.Pages.UserProfile
 
         public async void OnRefreshQuery(object sender, EventArgs e)
         {
-            IsBusy = true;
-            using (var client = UserHelpers.CreateJsonClient())
+            // TODO disable the button when current user is not registered
+            if (MainSettings.CurrentUser==null)
+                ShowPage<AccountChooserPage>(null, true);
+            else
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Get, Constants.UserInfoUrl))
+                IsBusy = true;
+                using (var client = UserHelpers.CreateJsonClient())
                 {
-                    using (var response = await client.SendAsync(request))
+                    using (var request = new HttpRequestMessage(HttpMethod.Get, Constants.UserInfoUrl))
                     {
-                        response.EnsureSuccessStatusCode();
-                        string userJson = await response.Content.ReadAsStringAsync();
-                        JObject jactiveUser = JObject.Parse(userJson);
-                        var username = jactiveUser["UserName"].Value<string>();
-                        var roles = jactiveUser["Roles"].Values<string>().ToList();
-                        var emails = jactiveUser["EMails"].Values<string>().ToList();
-                        var avatar = jactiveUser["Avatar"].Value<string>();
-                        var address = jactiveUser["Avatar"].Value<string>();
-                        var me = MainSettings.CurrentUser;
-                        me.Address = address;
-                        me.Avatar = avatar;
-                        me.EMails = emails;
-                        me.UserName = username;
-                        me.Roles = roles;
-                        MainSettings.SaveUser(me);
+                        using (var response = await client.SendAsync(request))
+                        {
+                            response.EnsureSuccessStatusCode();
+                            string userJson = await response.Content.ReadAsStringAsync();
+                            JObject jactiveUser = JObject.Parse(userJson);
+                            var username = jactiveUser["UserName"].Value<string>();
+                            var roles = jactiveUser["Roles"].Values<string>().ToList();
+                            var emails = jactiveUser["EMails"].Values<string>().ToList();
+                            var avatar = jactiveUser["Avatar"].Value<string>();
+                            var address = jactiveUser["Avatar"].Value<string>();
+                            var me = MainSettings.CurrentUser;
+                            me.Address = address;
+                            me.Avatar = avatar;
+                            me.EMails = emails;
+                            me.UserName = username;
+                            me.Roles = roles;
+                            MainSettings.SaveUser(me);
+                        }
                     }
                 }
+                IsBusy = false;
             }
-            IsBusy = false;
+            
         }
 
         public void OnManageFiles(object sender, EventArgs e)
