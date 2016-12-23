@@ -93,7 +93,7 @@ namespace BookAStar.Model.Social.Chat
         {
             get
             {
-                return string.Join(", ", Roles);
+                return Roles == null? "": string.Join(", ", Roles);
             }
         }
 
@@ -151,6 +151,7 @@ namespace BookAStar.Model.Social.Chat
             }
         }
 
+        [JsonIgnore]
         public bool Unread
         {
             get
@@ -159,6 +160,8 @@ namespace BookAStar.Model.Social.Chat
                     m => !m.Read);
             }
         }
+
+        [JsonIgnore]
         public ImageSource MessagesBadge
         {
             get
@@ -166,6 +169,7 @@ namespace BookAStar.Model.Social.Chat
                 return Unread ? ImageSource.FromResource("BookAStar.Images.Chat.talk.png") :null;
             }
         }
+
         public void OnConnected(string cxId)
         {
             // We do assume this cxId dosn't already exist in this list.

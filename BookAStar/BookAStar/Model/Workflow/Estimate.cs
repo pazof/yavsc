@@ -47,7 +47,19 @@ namespace BookAStar.Model.Workflow
         }
         
         public string OwnerId { get; set; }
-        
+        [JsonIgnore]
+        public ClientProviderInfo Owner
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(OwnerId))
+                {
+                    var dm = DataManager.Instance;
+                    return dm.Contacts.LocalGet(OwnerId);
+                }
+                return null;
+            }
+        }
         public string ClientId { get; set; }
         [JsonIgnore]
         public BookQueryData Query
