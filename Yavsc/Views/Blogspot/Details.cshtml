@@ -5,68 +5,35 @@
 }
 
 <div>
-    <h4>Blog</h4>
+    <img alt="" src="@Model.Photo">
+    <h1>
+<div markdown="@Model.Title" site="SiteSettings.Value"></div>
+
+    </h1>
     <hr />
-    <dl class="dl-horizo qntal">
-        <dt>
-           <a href="/Title/@Model.Title" > @SR[Html.DisplayNameFor(model => model.Title)] </a>
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt>
-            @SR[Html.DisplayNameFor(model => model.Photo)]
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Photo)
-        </dd>
-        <dt>
-            @SR["Author"]
-        </dt>
-        <dd>
-            @Model.Author.UserName
-        </dd>
-        <dt>
-          @SR["Content"]
-        </dt>
-        <dd>
-            <div markdown="@Model.Content" site="SiteSettings.Value"></div>
-        </dd>
-        <dt>
-            @SR[Html.DisplayNameFor(model => model.Modified)]
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Modified)
-        </dd>
+    <div markdown="@Model.Content" site="SiteSettings.Value"></div>
+   <hr/>
+
+<div class="meta"> 
+    @SR["Author"] :  @Model.Author.UserName -
+       
+            @SR["Modified"] :
+
+            @Html.DisplayFor(model => model.Modified) -
         
-        <dt>
-            @SR[Html.DisplayNameFor(model => model.Posted)]
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Posted)
-        </dd>
-        <dt>
-            @SR[Html.DisplayNameFor(model => model.Rate)]
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Rate)
-        </dd>
-        
-        <dt>
-            @SR[Html.DisplayNameFor(model => model.Visible)]
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Visible)
-        </dd>
-    </dl>
+            @SR[Html.DisplayNameFor(model => model.Posted)] :
+       
+            @Html.DisplayFor(model => model.Posted) 
+ </div>
+     
 </div>
-    <ul>
-    @if (await AuthorizationService.AuthorizeAsync(User, Model, new EditRequirement())) {
-    <li>
-    <a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a>
-    </li>
-    }
-    <li>
-    <a asp-action="Index">@SR["Back to List"]</a>
-    </li>
-    </ul>
+<ul>
+@if (await AuthorizationService.AuthorizeAsync(User, Model, new EditRequirement())) {
+<li>
+<a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a>
+</li>
+}
+<li>
+<a asp-action="Index">@SR["Back to List"]</a>
+</li>
+</ul>
