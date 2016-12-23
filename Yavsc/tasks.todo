@@ -67,7 +67,10 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 ## Jalon 2
 
 	☐ Login Twitter.
+	☐ Login SoundCloud?.
+
 	☐ Paiement client d'un approvisionnement pour une demande de prestation définie.
+	☐ La saisie et l'usage des disonibilités, les ponctuelles, les réccurentes, et les périodes de congé.
 	☐ Notifications structurelles (liste de notifications impératives, relatives au site, 
 	spécifiées par groupe d'utilisateurs).
 	☐ Notifications aux posts, à l'entée d'un artiste, à la conclusion d'une success story.
