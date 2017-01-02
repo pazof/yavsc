@@ -5,20 +5,22 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
-using Yavsc.Models.Auth;
-using Yavsc.Models.Billing;
 using Yavsc.Models.Booking;
-using Yavsc.Models.OAuth;
-using Yavsc.Models.Workflow;
-using Yavsc.Models.Identity;
-using Yavsc.Models.Market;
-using Yavsc.Model.Chat;
-using Yavsc.Models.Messaging;
-using Yavsc.Models.Access;
+using Yavsc.Models.Relationship;
 
 namespace Yavsc.Models
 {
 
+    using Auth;
+    using Billing;
+    using Booking;
+    using OAuth;
+    using Workflow;
+    using Identity;
+    using Market;
+    using Chat;
+    using Messaging;
+    using Access;
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         protected override void OnModelCreating(ModelBuilder builder)
@@ -192,6 +194,12 @@ namespace Yavsc.Models
         public DbSet<Connection> Connections { get; set; }
 
         public DbSet<BlackListed> BlackListed { get; set; }
+
+        public DbSet<MusicalPreference> MusicalPreferences { get; set; }
+
+        public DbSet<MusicalTendency> MusicalTendency { get; set; }
+
+        public DbSet<LocationType> LocationType { get; set; }
         
     }
 }

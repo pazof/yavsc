@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Billing;
+using Yavsc.Models.Relationship;
 
 namespace Yavsc.Models.Booking
 {
@@ -26,6 +27,10 @@ namespace Yavsc.Models.Booking
             set;
             }
         
+        public LocationType LocationType {
+            set; 
+            get;
+        }
         public string Reason { get; set; }
         
         public BookQuery()
