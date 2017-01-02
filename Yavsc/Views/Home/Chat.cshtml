@@ -18,7 +18,10 @@
   font-style: bold;
   background-color: yellow;
 }
- 
+
+#targets { 
+    display:inline-block;
+}
 </style>
 <div class="container">
     <input type="hidden" id="displayname" />
@@ -26,13 +29,13 @@
     <h3>Salons</h3>
     <ul><li id="pubChan">Public</li></ul>
     <h3>Utilisateurs</h3>
-    <ul id="userlist" style="list-style-type:none;">
+    <ul id="userlist" style="list-style:none; padding: 1em; margin:1em;sqc">
     </ul>
 
     </div>
     <ul id="discussion">
     </ul>
-    <div style="display: inline-block;">
+    <div id="targets">
         <div id="sendmessagebox">
      <input type="text" id="message" />
     <input type="button" id="sendmessage" value="@SR["Send"]" />
@@ -176,15 +179,27 @@ $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
             </text>
             }
 
+
+            var sendMessage = function() {
+                chat.server.send($('#displayname').val(), $('#message').val());
+                    // Clear text box and reset focus for next comment.
+                $('#message').val('')
+            };
+
             // Set initial focus to message input box.
             $('#message').focus();
+
+
             // Start the connection.
             $.connection.hub.start().done(function () {
                 $('#sendmessage').click(function () {
                     // Call the Send method on the hub.
-                    chat.server.send($('#displayname').val(), $('#message').val());
-                    // Clear text box and reset focus for next comment.
-                    $('#message').val('').focus();
+                    sendMessage().focus();
+                });
+                $( "#message" ).keydown(function( event ) {
+                    if ( event.which == 13 ) {
+                        sendMessage()
+                        }
                 });
                 $('#sendpv').click(function () {
 

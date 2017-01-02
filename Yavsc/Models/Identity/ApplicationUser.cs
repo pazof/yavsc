@@ -4,7 +4,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Identity;
-using Yavsc.Model.Chat;
+using Yavsc.Models.Chat;
 using Yavsc.Model.Bank;
 using Yavsc.Models.Access;
 
