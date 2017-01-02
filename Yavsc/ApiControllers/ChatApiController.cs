@@ -36,11 +36,15 @@ namespace Yavsc.Controllers
                 if (cxs !=null)
                 if (cxs.Count>0) {
                     var user = cxs.First().Owner;
-                    
-                    result.Add(new ChatUserInfo { UserName = user.UserName,
-                    UserId = user.Id, Avatar = user.Avatar, Connections = cxs,
-                    Roles = (  userManager.GetRolesAsync(user) ).Result.ToArray() });
-                }
+                    if (user!=null ) {
+                        result.Add(new ChatUserInfo { UserName = user.UserName,
+                        UserId = user.Id, Avatar = user.Avatar, Connections = cxs,
+                        Roles = (  userManager.GetRolesAsync(user) ).Result.ToArray() });
+                        }
+                        else {
+                            result.Add(new ChatUserInfo {  Connections = cxs });
+                        }
+                   }
             }
             return result;
         }

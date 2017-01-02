@@ -170,6 +170,15 @@ namespace BookAStar {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Géographiquement proche.
+        /// </summary>
+        public static string GeographicalyNear {
+            get {
+                return ResourceManager.GetString("GeographicalyNear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Valeur invalide.
         /// </summary>
         public static string InvalidValue {
@@ -247,6 +256,15 @@ namespace BookAStar {
         public static string Profprof {
             get {
                 return ResourceManager.GetString("Profprof", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rechercher un artiste.
+        /// </summary>
+        public static string SearchForAPro {
+            get {
+                return ResourceManager.GetString("SearchForAPro", resourceCulture);
             }
         }
         

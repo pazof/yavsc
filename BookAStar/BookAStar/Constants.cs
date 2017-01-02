@@ -16,7 +16,7 @@ namespace BookAStar
         public const string YavscHomeUrl = "http://dev.pschneider.fr";
 #else
 #if WDEV 
-        public const string YavscHomeUrl = "http://192.168.0.39:5000";
+        public const string YavscHomeUrl = "http://192.168.0.29:5000";
 #else
 #if YAVSC
         public const string YavscHomeUrl = "https://yavsc.pschneider.fr";

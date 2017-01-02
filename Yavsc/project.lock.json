@@ -199,12 +199,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -2823,7 +2823,7 @@
         }
       }
     },
-    "DNX,Version=v4.5.1/debian.8-x86": {
+    "DNX,Version=v4.5.1/win7-x86": {
       "Antlr/3.4.1.9004": {
         "type": "package",
         "compile": {
@@ -3020,12 +3020,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -4125,6 +4125,9 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
+        },
+        "native": {
+          "runtimes/win7-x86/native/libuv.dll": {}
         }
       },
       "Microsoft.AspNet.Server.WebListener/1.0.0-rc1-final": {
@@ -5644,7 +5647,7 @@
         }
       }
     },
-    "DNX,Version=v4.5.1/debian.8-x64": {
+    "DNX,Version=v4.5.1/win7-x64": {
       "Antlr/3.4.1.9004": {
         "type": "package",
         "compile": {
@@ -5841,12 +5844,12 @@
           "Zlib.Portable.Signed": "1.11.0"
         },
         "compile": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         },
         "runtime": {
-          "lib/net45/Google.Apis.dll": {},
-          "lib/net45/Google.Apis.PlatformServices.dll": {}
+          "lib/net45/Google.Apis.PlatformServices.dll": {},
+          "lib/net45/Google.Apis.dll": {}
         }
       },
       "Google.Apis.Core/1.11.1": {
@@ -6946,6 +6949,9 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
+        },
+        "native": {
+          "runtimes/win7-x64/native/libuv.dll": {}
         }
       },
       "Microsoft.AspNet.Server.WebListener/1.0.0-rc1-final": {
@@ -8735,7 +8741,7 @@
     },
     "MarkdownDeep-av.NET/1.5.4": {
       "type": "package",
-      "sha512": "89nafNRqR3hqKU0rQzHb+BGpoxjImo7pfOQj8vNALB3MloBye0jqMv9eqpKP+QIDLtMS8gHf7uP1kAIkhsOg+Q==",
+      "sha512": "vefP0tYO2IGOw0iuZt5mtTuu+IFaqjMaoo+GLk4nyhHibfYGFr4glG8JxvxIpHialgwtmeK4F+9HUiKnBXIhbA==",
       "files": [
         "lib/dnxcore50/MarkdownDeep.dll",
         "lib/MonoAndroid10/MarkdownDeep.dll",
@@ -10654,7 +10660,6 @@
     },
     "System.Diagnostics.DiagnosticSource/4.0.0-beta-23516": {
       "type": "package",
-      "serviceable": true,
       "sha512": "0uDR/UOmFCNPDCyHEPHhCrk6c1iRnDp00YqwSZ8Qf5aaaJjm4WXnf4Q9xZw4OoApsSiODSypDMdpQU24IxR16A==",
       "files": [
         "lib/dotnet5.2/System.Diagnostics.DiagnosticSource.dll",
@@ -10879,7 +10884,6 @@
     },
     "System.Numerics.Vectors/4.1.1-beta-23516": {
       "type": "package",
-      "serviceable": true,
       "sha512": "FCYCEjc3BXBTpVZTxMqf2m/sGYyDzLwICy5lNKgZzT8WfshJhsTGjJuETwsh1Cwi6bksw9YiTB6yeeWBBJDnTA==",
       "files": [
         "lib/dotnet5.4/System.Numerics.Vectors.dll",
@@ -10986,7 +10990,7 @@
     "System.Reflection.Metadata/1.1.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "a8VsRm/B0Ik1o5FumSMWmpwbG7cvIIajAYhzTTy9VB9XItByJDQHGZkQTIAdsvVJ6MI5O3uH/lb0izgQDlDIWA==",
+      "sha512": "RLIE4sSt2zngMLuqM6YmxBH99mTumtT4DNZE4+msfEaInUP5iCLQT+BHPl+2cjSAP1pdALyAjLB8RtCB+WGGWQ==",
       "files": [
         "lib/dotnet5.2/System.Reflection.Metadata.dll",
         "lib/dotnet5.2/System.Reflection.Metadata.xml",

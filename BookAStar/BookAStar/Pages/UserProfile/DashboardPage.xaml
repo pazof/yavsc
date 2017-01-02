@@ -39,7 +39,7 @@
       <StackLayout VisualElement.IsVisible="{Binding HaveAnUser}">
         <Button Text="{Binding PerformerStatus}" Clicked="OnViewPerformerStatus" />
         <Button Text="{Binding UserQueries}" Clicked="OnViewUserQueries"
-                VisualElement.IsVisible="{Binding UserIsPro}"/>
+                VisualElement.IsVisible="{Binding IsAPerformer}"/>
 
         <StackLayout Orientation="Horizontal">
         <Label Text="Recevoir les notifications push" StyleClass="Header" />
@@ -51,7 +51,7 @@
         <Label Text="Utiliser ma position" StyleClass="Header" />
         <Switch HorizontalOptions="End" IsToggled="{Binding AllowUseMyPosition, Mode=TwoWay}"/>
       </StackLayout>
-      <StackLayout  VisualElement.IsVisible="{Binding UserIsPro}" >
+      <StackLayout  VisualElement.IsVisible="{Binding IsAPerformer}" >
         <Label Text="{x:Static local:Strings.Profprof}" Style="{StaticResource LabelStyle}"/>
         <views:RatingView Rating="{Binding Rating, Mode=TwoWay}" x:Name="ratingView" />
         <StackLayout Orientation="Horizontal" VerticalOptions="Start">
