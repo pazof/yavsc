@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Yavsc.Models;
 using YavscLib;
 
-namespace Yavsc.Model.Chat
+namespace Yavsc.Models.Chat
 {
 
     public class Connection : IConnection
