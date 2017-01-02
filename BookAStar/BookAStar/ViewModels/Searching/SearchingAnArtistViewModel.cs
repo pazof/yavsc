@@ -9,5 +9,6 @@ namespace BookAStar.ViewModels.Searching
 {
     class SearchingAnArtistViewModel: ViewModel
     {
+
     }
 }

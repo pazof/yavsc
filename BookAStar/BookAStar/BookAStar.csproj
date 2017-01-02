@@ -42,14 +42,14 @@
     </Compile>
     <Compile Include="Attributes\CurrencyAttribute.cs" />
     <Compile Include="Attributes\DisplayAttribute.cs" />
-    <Compile Include="Behaviors\EmailValidatorBehavior.cs" />
-    <Compile Include="Behaviors\IntegerEntryBehavior.cs" />
-    <Compile Include="Behaviors\EditorMaxLengthValidator.cs" />
-    <Compile Include="Behaviors\DecimalValidatorBehavior.cs" />
-    <Compile Include="Behaviors\MarkdownViewLengthValidator.cs" />
-    <Compile Include="Behaviors\PickerBehavior.cs" />
-    <Compile Include="Behaviors\RegexValidatorBehavior.cs" />
-    <Compile Include="Behaviors\StarBehavior.cs" />
+    <Compile Include="Converters\Behaviors\EmailValidatorBehavior.cs" />
+    <Compile Include="Converters\Behaviors\IntegerEntryBehavior.cs" />
+    <Compile Include="Converters\Behaviors\EditorMaxLengthValidator.cs" />
+    <Compile Include="Converters\Behaviors\DecimalValidatorBehavior.cs" />
+    <Compile Include="Converters\Behaviors\MarkdownViewLengthValidator.cs" />
+    <Compile Include="Converters\Behaviors\PickerBehavior.cs" />
+    <Compile Include="Converters\Behaviors\RegexValidatorBehavior.cs" />
+    <Compile Include="Converters\Behaviors\StarBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\NotValueConverter.cs" />
     <Compile Include="Converters\SignalRConnectionStateToObject.cs" />
