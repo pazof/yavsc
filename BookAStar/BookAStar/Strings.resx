@@ -209,4 +209,10 @@
   <data name="DeclineQuery" xml:space="preserve">
     <value>Décliner cette proposition (envoyer un refus, et archiver la demande)</value>
   </data>
+  <data name="GeographicalyNear" xml:space="preserve">
+    <value>Géographiquement proche</value>
+  </data>
+  <data name="SearchForAPro" xml:space="preserve">
+    <value>Rechercher un artiste</value>
+  </data>
 </root>

@@ -43,7 +43,7 @@
 
         <StackLayout VisualElement.IsVisible="{Binding IsAPerformer}">
           <StackLayout Orientation="Horizontal" VerticalOptions="Start"
-                       VisualElement.IsVisible="{Binding UserIsPro}" >
+                       VisualElement.IsVisible="{Binding IsAPerformer}" >
             <Label Text="Ne recevoir de demande de devis que de la part de professionnels uniquement" />
             <Switch HorizontalOptions="End" IsToggled="{Binding AllowProBookingOnly, Mode=TwoWay}"/>
           </StackLayout>

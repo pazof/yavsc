@@ -11,6 +11,7 @@ namespace BookAStar.Data
     using Helpers;
     using System.Diagnostics;
     using System.Text;
+    using System.Web;
 
     public class RemoteEntity<V, K> : LocalEntity<V, K>, ICommand where K : IEquatable<K>
     {
@@ -95,7 +96,7 @@ namespace BookAStar.Data
 
         protected Uri GetUri(K key)
         {
-            return new Uri(ControllerUri.AbsoluteUri + "/" + key.ToString());
+            return new Uri(ControllerUri.AbsoluteUri + "/" + HttpUtility.UrlEncode(key.ToString()));
         }
 
         public virtual async Task<V> RemoteGet(K key)

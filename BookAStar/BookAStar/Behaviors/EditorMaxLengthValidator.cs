@@ -6,21 +6,26 @@ namespace BookAStar.Behaviors
     public class EditorMaxLengthValidator : Behavior<Editor>
     {
         public static readonly BindableProperty MaxLengthProperty = 
-            BindableProperty.Create("MaxLength", typeof(int), typeof(EditorMaxLengthValidator), 0);
+            BindableProperty.Create("MaxLength", typeof(int), typeof(EditorMaxLengthValidator), int.MaxValue);
+
         public static readonly BindableProperty MinLengthProperty = 
             BindableProperty.Create("MinLength", typeof(int), typeof(EditorMaxLengthValidator), 0);
+
         public static readonly BindableProperty IsValidProperty = 
             BindableProperty.Create("IsValid", typeof(bool), typeof(EditorMaxLengthValidator), false);
+
         public static readonly BindableProperty ErrorProperty = 
             BindableProperty.Create("Error", typeof(string), typeof(EditorMaxLengthValidator), null);
+
         public int MaxLength
         {
             get { return (int) GetValue(MaxLengthProperty); }
             set { SetValue(MaxLengthProperty, value); }
         }
+
         public int MinLength
         {
-            get { return (int)GetValue(MinLengthProperty); }
+            get { return (int) GetValue(MinLengthProperty); }
             set { SetValue(MinLengthProperty, value); }
         }
 
@@ -30,15 +35,16 @@ namespace BookAStar.Behaviors
         }
 
         public bool IsValid {
-            get { return (bool)GetValue(IsValidProperty); }
+            get { return (bool) GetValue(IsValidProperty); }
             set { SetValue(IsValidProperty, value);
             }
         }
 
         public string Error
         {
-            get {
-                return (string)GetValue(ErrorProperty);
+            get
+            {
+                return (string) GetValue(ErrorProperty);
             }
             set
             {

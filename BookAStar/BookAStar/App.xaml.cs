@@ -216,15 +216,30 @@ namespace BookAStar
             // but use those from the AppState property
             accChooserPage = new AccountChooserPage();
 
+            var bookQueries = new BookQueriesViewModel();
+
+            var userprofile = new UserProfileViewModel();
+
             bQueriesPage = new BookQueriesPage
             {
                 Title = "Demandes",
                 Icon = "icon.png",
-                BindingContext = new BookQueriesViewModel()
+                BindingContext = bookQueries
             };
-            homePage = new HomePage() { Title = "Accueil", Icon = "icon.png" };
-            userProfilePage = new UserProfilePage { Title = "Profile utilisateur", Icon = "ic_corp_icon.png",
-                BindingContext = new UserProfileViewModel() };
+
+            homePage = new HomePage() {
+                Title = "Accueil",
+                Icon = "icon.png" };
+
+            homePage.BindingContext = new HomeViewModel {
+                BookQueries = bookQueries,
+                UserProfile = userprofile };
+
+            userProfilePage = new UserProfilePage {
+                Title = "Profile utilisateur",
+                Icon = "ic_corp_icon.png",
+                BindingContext = userprofile
+            };
 
             chatPage = new ChatPage
             {
@@ -394,6 +409,8 @@ namespace BookAStar
             if (MainSettings.CurrentUser != null)
             {
                 var token = MainSettings.CurrentUser.YavscTokens.AccessToken;
+                if (chatHubConnection.Headers.ContainsKey("Authorization"))
+                    chatHubConnection.Headers.Remove("Authorization");
                 chatHubConnection.Headers.Add("Authorization", $"Bearer {token}");
             }
             StartConnexion();

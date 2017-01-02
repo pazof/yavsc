@@ -327,8 +327,8 @@ namespace BookAStar.Droid
                                 clientSecret: "blouh",
                                 scope: "profile",
                                 authorizeUrl: new Uri(Constants.AuthorizeUrl),
-                                redirectUrl: new Uri("http://dev.pschneider.fr/oauth/success"),
-                                accessTokenUrl: new Uri("http://dev.pschneider.fr/token"));
+                                redirectUrl: new Uri(Constants.RedirectUrl),
+                                accessTokenUrl: new Uri(Constants.AccessTokenUrl));
             Intent loginIntent = auth.GetUI(this);
             var accStore = AccountStore.Create(this);
             auth.Completed += (sender, eventArgs) =>

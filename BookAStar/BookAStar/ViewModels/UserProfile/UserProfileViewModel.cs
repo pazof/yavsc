@@ -16,20 +16,18 @@ namespace BookAStar.ViewModels.UserProfile
 
     public class UserProfileViewModel : ViewModel
     {
+
         public bool IsAPerformer
         {
-            get
-            {
-                return User?.Roles.Contains("Performer") ?? false;
-            }
-            
+            get { return User?.Roles?.Contains("Performer") ?? false; }
         }
+
         public string UserFilesLabel
         {
             get; set;
         }
-
-        int rating;
+        // TODO implementation
+        int rating ;
         public int Rating
         {
             get
@@ -42,47 +40,44 @@ namespace BookAStar.ViewModels.UserProfile
             }
         }
 
-        public string UserId
-        {
-            get
-            {
-                return User?.Id;
-            }
-        }
-
+        private bool allowUseMyPosition = MainSettings.AllowGPSUsage;
         public bool AllowUseMyPosition
         {
             get
             {
-                return MainSettings.AllowGPSUsage;
+                return allowUseMyPosition;
             }
             set
             {
                 MainSettings.AllowGPSUsage = value;
+                SetProperty<bool>(ref allowUseMyPosition, value);
             }
         }
 
+        private bool allowProBookingOnly = MainSettings.AllowProBookingOnly;
         public bool AllowProBookingOnly
         {
             get
             {
-                return MainSettings.AllowProBookingOnly;
+                return allowProBookingOnly;
             }
             set
             {
                 MainSettings.AllowProBookingOnly = value;
+                SetProperty<bool>(ref allowUseMyPosition, value);
             }
         }
-
+        bool receivePushNotifications = MainSettings.PushNotifications;
         public bool ReceivePushNotifications
         {
             get
             {
-                return MainSettings.PushNotifications;
+                return receivePushNotifications;
             }
             set
             {
                 MainSettings.PushNotifications = value;
+                SetProperty<bool>(ref receivePushNotifications, value);
             }
         }
         private long queryCount;
@@ -174,10 +169,6 @@ namespace BookAStar.ViewModels.UserProfile
             get { return User!=null; }
         }
 
-        public bool UserIsPro
-        {
-            get { return User?.Roles?.Contains("Performer") ?? false ; }
-        }
 
         private void UpdateUserMeta ()
         {
@@ -196,7 +187,7 @@ namespace BookAStar.ViewModels.UserProfile
             }
             else
             {
-                newUserIsPro = UserIsPro;
+                newUserIsPro = IsAPerformer;
 
                 newQueryCount = newUserIsPro ? DataManager.Instance.BookQueries.Count : 0;
 
@@ -209,14 +200,21 @@ namespace BookAStar.ViewModels.UserProfile
                 newAvatar = UserHelpers.Avatar(user.Avatar);
             }
             SetProperty<bool>(ref haveAnUser, newHaveAnUser, "HaveAnUser");
-            SetProperty<bool>(ref userIsPro, newUserIsPro, "UserIsPro");
             SetProperty<string>(ref performerStatus, newStatusString, "PerformerStatus");
             SetProperty<string>(ref userQueries, newQueriesButtonText, "UserQueries");
             SetProperty<long>(ref queryCount, newQueryCount, "QueryCount");
             SetProperty<ImageSource>(ref avatar, newAvatar, "Avatar");
+
+            NotifyPropertyChanged("UserName");
+            NotifyPropertyChanged("AllowProBookingOnly");
+            NotifyPropertyChanged("AllowUseMyPosition");
+            NotifyPropertyChanged("ReceivePushNotifications");
+            NotifyPropertyChanged("AllowUseMyPosition");
+            NotifyPropertyChanged("IsAPerformer");
         }
 
-        private void User_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void User_PropertyChanged(object sender, 
+            System.ComponentModel.PropertyChangedEventArgs e)
         {
             UpdateUserMeta();
         }
