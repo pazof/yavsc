@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161231163016_musicalPreferences")]
+    partial class musicalPreferences
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -423,8 +424,6 @@ namespace Yavsc.Migrations
 
                     b.Property<long?>("LocationId");
 
-                    b.Property<long?>("LocationTypeId");
-
                     b.Property<string>("PerformerId")
                         .IsRequired();
 
@@ -449,18 +448,6 @@ namespace Yavsc.Migrations
                     b.Property<long>("OwnerId");
 
                     b.Property<int>("Rate");
-
-                    b.HasKey("Id");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Booking.MusicalTendency", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 255);
 
                     b.HasKey("Id");
                 });
@@ -616,16 +603,6 @@ namespace Yavsc.Migrations
                     b.Property<long>("TagId");
 
                     b.HasKey("PostId", "TagId");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Relationship.LocationType", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Skill", b =>
@@ -804,10 +781,6 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Location")
                         .WithMany()
                         .HasForeignKey("LocationId");
-
-                    b.HasOne("Yavsc.Models.Relationship.LocationType")
-                        .WithMany()
-                        .HasForeignKey("LocationTypeId");
 
                     b.HasOne("Yavsc.Models.Workflow.PerformerProfile")
                         .WithMany()

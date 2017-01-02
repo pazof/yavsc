@@ -27,7 +27,7 @@ using System.Linq;
 namespace Yavsc
 {
     using Models;
-    using Model.Chat;
+    using Models.Chat;
     using ViewModels.Chat;
 
     public class ChatHub : Hub

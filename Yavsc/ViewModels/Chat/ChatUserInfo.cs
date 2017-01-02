@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Yavsc.Model.Chat;
+using Yavsc.Models.Chat;
 
 namespace Yavsc.ViewModels.Chat { 
 public class ChatUserInfo : IChatUserInfo
