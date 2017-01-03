@@ -9,6 +9,9 @@ namespace BookAStar.Droid.Services
     using Model.Social;
     using Newtonsoft.Json;
     using Model;
+    using Model.Social;
+    using Data;
+    using System.Linq;
 
     namespace ClientApp
     {
@@ -52,13 +55,20 @@ namespace BookAStar.Droid.Services
                     var cid = long.Parse(data.GetString("Id"));
                     var clientJson = data.GetString("Client");
                     var client = JsonConvert.DeserializeObject<ClientProviderInfo>(clientJson);
-                    var bq = new BookQueryData
+                    var bq = new BookQuery
                     {
                         Id = cid,
                         Location = location,
                         Client = client,
                         Reason = data.GetString("Reason")
                     };
+                    var dateString = data.GetString("EventDate");
+                    DateTime evDate;
+                    if (DateTime.TryParse(dateString, out evDate))
+                    {
+                        bq.EventDate = evDate;
+                    }
+
                     SendBookQueryNotification(bq);
                 }
                 else
@@ -84,9 +94,12 @@ namespace BookAStar.Droid.Services
                 notificationManager.Notify(0, notificationBuilder.Build());
             }
 
-            void SendBookQueryNotification(BookQueryData bquery)
+            void SendBookQueryNotification(BookQuery bquery)
             {
-                var bookquerynotifications = MainSettings.AddBookQueryNotification(bquery);
+                DataManager.Instance.BookQueries.Merge(bquery);
+                var bookquerynotifications = DataManager.Instance.BookQueries.Where(
+                    q=> ! q.Read && q.EventDate > DateTime.Now 
+                    ).ToArray();
                 var count = bookquerynotifications.Length;
                 var multiple = count > 1;
                 var title =

@@ -9,11 +9,12 @@
     using ViewModels;
     using Model.Access;
     using ViewModels.Messaging;
+    using Model.Social;
 
     public class DataManager
     {
         // TODO estimatetemplate rating service product tag   
-        public RemoteEntityRO<BookQueryData, long> BookQueries { get; set; }
+        public RemoteEntityRO<BookQuery, long> BookQueries { get; set; }
         public ChatUserCollection ChatUsers { get; set; }
         public EstimateEntity Estimates { get; set; }
         public RemoteEntity<Blog, long> Blogspot { get; set; }
@@ -41,7 +42,7 @@
 
         public DataManager()
         {
-            BookQueries = new RemoteEntityRO<BookQueryData, long>("bookquery", q => q.Id);
+            BookQueries = new RemoteEntityRO<BookQuery, long>("bookquery", q => q.Id);
             Estimates = new EstimateEntity();
             Blogspot = new RemoteEntity<Blog, long>("blog", x=>x.Id);
 

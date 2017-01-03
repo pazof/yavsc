@@ -1,6 +1,4 @@
 // Helpers/Settings.cs
-using BookAStar.Model;
-using BookAStar.Model.Auth.Account;
 using Newtonsoft.Json;
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
@@ -8,11 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace BookAStar
 {
+    using Model.Social;
+    using Model.Auth.Account;
+    using Data;
 
     /// <summary>
     /// This is the Settings static class that can be used in your Core solution or in any
@@ -75,23 +74,13 @@ namespace BookAStar
             }
         }
         public const string bookQueryNotificationsKey = "BookQueryNotifications";
-        public static BookQueryData[] GetBookQueryNotifications()
+        public static BookQuery[] GetBookQueryNotifications()
         {
             // Do not return any null List
             var json = AppSettings.GetValueOrDefault<string>(bookQueryNotificationsKey);
             if (!string.IsNullOrWhiteSpace(json))
-                return JsonConvert.DeserializeObject<BookQueryData[]>(json);
-            return new BookQueryData[] { };
-        }
-
-        public static BookQueryData[] AddBookQueryNotification(BookQueryData query)
-        {
-            var existing = new List<BookQueryData>(GetBookQueryNotifications());
-            existing.Add(query);
-            var result = existing.ToArray();
-            AppSettings.AddOrUpdateValue(bookQueryNotificationsKey,
-                JsonConvert.SerializeObject(result));
-            return result;
+                return JsonConvert.DeserializeObject<BookQuery[]>(json);
+            return new BookQuery[] { };
         }
 
         public static string GoogleRegId

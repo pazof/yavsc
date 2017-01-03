@@ -1,6 +1,4 @@
-﻿using BookAStar.Data;
-using BookAStar.Helpers;
-using BookAStar.Model.Interfaces;
+﻿
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,6 +6,10 @@ using System.Linq;
 
 namespace BookAStar.Model.Workflow
 {
+    using Data;
+    using Interfaces;
+    using Social;
+
     public partial class Estimate : IEstimate
     {
         public long Id { get; set; }
@@ -62,7 +64,7 @@ namespace BookAStar.Model.Workflow
         }
         public string ClientId { get; set; }
         [JsonIgnore]
-        public BookQueryData Query
+        public BookQuery Query
         {
             get
             {

@@ -7,14 +7,14 @@ namespace BookAStar.Pages
 {
     using Data;
     using EstimatePages;
-    using Model;
+    using Model.Social;
     using Model.Workflow;
     using ViewModels.EstimateAndBilling;
 
     public partial class BookQueryPage : ContentPage
     {
 
-        public BookQueryData BookQuery
+        public BookQuery BookQuery
         {
             get
             {
@@ -32,14 +32,14 @@ namespace BookAStar.Pages
                 var pin = new Pin
                 {
                     Type = PinType.SavedPin,
-                    Position = new Position(
-                        lat, lon),
+                    Position = new Xamarin.Forms.Maps.Position
+                    (lat, lon),
                     Label = BookQuery.Client.UserName,
                     Address = BookQuery.Location.Address
                 };
                 map.Pins.Add(pin);
                 map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                    new Position(lat, lon), Distance.FromMeters(100)));
+                    new Xamarin.Forms.Maps.Position(lat, lon), Distance.FromMeters(100)));
             }
             
         }

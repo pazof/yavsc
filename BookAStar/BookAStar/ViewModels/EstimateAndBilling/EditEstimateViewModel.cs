@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
-using BookAStar.Model.Workflow;
 using System.Collections.ObjectModel;
-using BookAStar.Model;
 using Xamarin.Forms;
-using BookAStar.Data;
 using Newtonsoft.Json;
 using System.Linq;
-using BookAStar.ViewModels.Validation;
 using System.ComponentModel;
 
 namespace BookAStar.ViewModels.EstimateAndBilling
 {
+    using Model;
+    using Model.Workflow;
+    using Model.Social;
+    using Validation;
     public class EditEstimateViewModel : EditingViewModel<Estimate>
     {
 
@@ -129,7 +129,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         public ClientProviderInfo Client {  get { return Data.Client; } }
 
         [JsonIgnore]
-        public BookQueryData Query { get { return Data.Query; } }
+        public BookQuery Query { get { return Data.Query; } }
 
         [JsonIgnore]
         public FormattedString FormattedTotal
