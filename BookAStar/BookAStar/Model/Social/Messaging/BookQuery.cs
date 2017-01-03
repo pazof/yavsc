@@ -7,7 +7,6 @@ namespace BookAStar.Model.Workflow.Messaging
     /// <summary>
     /// Query, for a date, with a given perfomer, at this given place.
     /// </summary>
-
     public class BookQuery  {
     /// <summary>
     /// The command identifier

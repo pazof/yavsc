@@ -30,6 +30,7 @@ namespace BookAStar
     using ViewModels;
     using Pages.Chat;
     using System.Collections.Generic;
+    using Model.Social;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -196,9 +197,8 @@ namespace BookAStar
 
         ChatPage chatPage;
 
-        private void ShowPage(Page page)
+        public static void ShowPage(Page page)
         {
-            
             if (Navigation.NavigationStack.Contains(page))
             {
                 if (Navigation.NavigationStack.Last() == page) return;
@@ -443,11 +443,11 @@ namespace BookAStar
                 PlatformSpecificInstance.InvokeApi("gcm/register", info);
         }
 
-        public static void ShowBookQuery (BookQueryData query)
+        public static void ShowBookQuery (BookQuery query)
         {
-            var page = ViewFactory.CreatePage<BookQueryViewModel
-                 , BookQueryPage>((b, p) => p.BindingContext = new BookQueryViewModel(query));
-            App.Current.MainPage.Navigation.PushAsync(page as Page);
+            var page = new BookQueryPage
+            { BindingContext = new BookQueryViewModel(query) };
+            ShowPage(page);
         }
     }
 }
