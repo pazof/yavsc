@@ -200,6 +200,8 @@ namespace Yavsc.Models
         public DbSet<MusicalTendency> MusicalTendency { get; set; }
 
         public DbSet<LocationType> LocationType { get; set; }
+
+        public DbSet<Instrument> Instrument { get; set; }
         
     }
 }

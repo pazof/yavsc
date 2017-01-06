@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170106113614_ownerProfile")]
+    partial class ownerProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -436,18 +437,6 @@ namespace Yavsc.Migrations
                     b.Property<string>("Reason");
 
                     b.Property<DateTime?>("ValidationDate");
-
-                    b.HasKey("Id");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Booking.Instrument", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 255);
 
                     b.HasKey("Id");
                 });

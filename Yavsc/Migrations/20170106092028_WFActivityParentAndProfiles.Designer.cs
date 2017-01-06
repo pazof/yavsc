@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170106092028_WFActivityParentAndProfiles")]
+    partial class WFActivityParentAndProfiles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -440,18 +441,6 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Booking.Instrument", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 255);
-
-                    b.HasKey("Id");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Booking.MusicalPreference", b =>
                 {
                     b.Property<long>("Id")
@@ -461,7 +450,7 @@ namespace Yavsc.Migrations
                         .IsRequired()
                         .HasAnnotation("MaxLength", 255);
 
-                    b.Property<string>("OwnerProfileId");
+                    b.Property<long>("OwnerId");
 
                     b.Property<int>("Rate");
 
@@ -834,13 +823,6 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.Workflow.PerformerProfile")
                         .WithMany()
                         .HasForeignKey("PerformerId");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Booking.MusicalPreference", b =>
-                {
-                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile")
-                        .WithMany()
-                        .HasForeignKey("OwnerProfileId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Chat.Connection", b =>
