@@ -1,11 +1,9 @@
-using System.Linq;
-using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
-using Yavsc.Models;
-using Yavsc.Models.Workflow;
 
 namespace Yavsc.ApiControllers
 {
+    using Models;
+    using Models.Workflow;
     [Produces("application/json"),Route("api/profile")]
     public abstract class ProfileApiController<T> : Controller  where T : PerformerProfile
     {
@@ -14,7 +12,6 @@ namespace Yavsc.ApiControllers
         {
             dbContext = context;
         }
-
 
     }
 }

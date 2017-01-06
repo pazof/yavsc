@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace YavscLib
 {
     public interface IConnection

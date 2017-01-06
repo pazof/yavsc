@@ -2,15 +2,14 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.AspNet.Mvc.ViewEngines;
-using Yavsc.ViewModels.Gen;
 
 namespace Yavsc.Helpers
 {
+    using ViewModels.Gen;
     public class TeXString : HtmlString
     {
 

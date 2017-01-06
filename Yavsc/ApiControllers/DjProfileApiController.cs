@@ -1,9 +1,9 @@
-using Yavsc.Models;
-using Yavsc.Models.Booking;
-using Yavsc.Models.Workflow;
 
 namespace Yavsc.ApiControllers
 {
+    using Models;
+    using Models.Booking;
+
     public class DjProfileApiController : ProfileApiController<DjPerformerProfile>
     {
         public DjProfileApiController(ApplicationDbContext context) : base(context)
