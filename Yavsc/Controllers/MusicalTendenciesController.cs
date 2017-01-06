@@ -1,12 +1,10 @@
 using System.Linq;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
-using Yavsc.Models;
-using Yavsc.Models.Booking;
 
 namespace Yavsc.Controllers
 {
+    using Models;
+    using Models.Booking;
     public class MusicalTendenciesController : Controller
     {
         private ApplicationDbContext _context;

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
-using Yavsc.Models.Booking;
 using Yavsc.Models.Relationship;
 
 namespace Yavsc.Models

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Concurrent;
-using System.Net.WebSockets;
-using System.Threading;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 
