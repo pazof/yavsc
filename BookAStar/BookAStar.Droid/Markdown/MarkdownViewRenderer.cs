@@ -12,6 +12,11 @@ using Android.Views;
 namespace BookAStar.Droid
 {
     using Markdown;
+    using XLabs.Forms;
+    using XLabs.Ioc;
+    using XLabs.Platform.Mvvm;
+    using static View;
+
     public class MarkdownViewRenderer : ViewRenderer<MarkdownView, WebView>
     {
         private WebView editorView;
@@ -35,7 +40,9 @@ namespace BookAStar.Droid
         {
             if (view == null || xview == null) return;
             var vch = view.ContentHeight;
-            xview.HeightRequest = vch > xview.MinimumHeightRequest ? vch : xview.MinimumHeightRequest;
+       //   var oldH = xview.Height;
+            var newH  = vch > xview.MinimumHeightRequest ? vch : xview.MinimumHeightRequest;
+            xview.HeightRequest = newH;
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<MarkdownView> e)
@@ -73,7 +80,7 @@ namespace BookAStar.Droid
                 Control.LoadUrl(string.Format("javascript: {0}", script));
             }
         }
-
+        MDContextMenu contextMenu;
         private WebView CreateNativeControl()
         {
             editorView = new WebView(Context);
@@ -93,7 +100,16 @@ namespace BookAStar.Droid
             EditorView.Settings.DomStorageEnabled = true;
             EditorView.AddJavascriptInterface(new JsBridgeMarkdown(this), "jsBridge");
             EditorView.ViewTreeObserver.PreDraw += ViewTreeObserver_PreDraw;
+            //var app = Resolver.Resolve<IXFormsApp>() as IXFormsApp<XFormsCompatApplicationDroid>;
+            //contextMenu = new MDContextMenu(app.AppContext);
+            //EditorView.SetOnCreateContextMenuListener(contextMenu);
+            
             return EditorView;
+        }
+
+        private void EditorView_Touch(object sender, TouchEventArgs e)
+        {
+            
         }
 
         private void ViewTreeObserver_PreDraw(object sender, ViewTreeObserver.PreDrawEventArgs e)
