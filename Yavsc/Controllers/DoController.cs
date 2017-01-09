@@ -19,8 +19,8 @@ namespace Yavsc.Controllers
             _context = context;    
         }
 
-        // GET: Do
-        [HttpGet,ActionName("Index")]
+        // GET: /Do/Index
+        [HttpGet]
         public IActionResult Index(string id)
         {
             if (id == null)

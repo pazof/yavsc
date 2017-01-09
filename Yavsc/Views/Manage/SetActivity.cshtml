@@ -105,22 +105,13 @@
 }
 <h2>@ViewData["Title"].</h2>
 
-@{ await Html.RenderPartialAsync("_PerformerPartial", Model) ; }
+@Html.DisplayFor(model => model)
 
 <form id="FrmSetAct" asp-controller="Manage" asp-action="SetActivity" method="post" class="form-horizontal" role="form">
     <h4>@SR["Choose below your main activity"]:</h4>
     <hr />
     <div asp-validation-summary="ValidationSummary.All" class="text-danger" id="valsum"></div>
-    <div class="form-group">
-        <label asp-for="Activity" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <select asp-for="Activity" asp-items=@ViewBag.Activities class="form-control" multiple>
-
-            </select>
-
-            <span asp-validation-for="Activity" class="text-danger"></span>
-        </div>
-    </div>
+    
     <div class="form-group">
         <label asp-for="AcceptNotifications" class="col-md-2 control-label"></label>
         <div class="col-md-10">

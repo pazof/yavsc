@@ -1,4 +1,5 @@
 @model IndexViewModel
+@using System.Security.Claims
 @{
     ViewData["Title"] = @SR["Manage your account"];
 }
@@ -53,21 +54,27 @@
             >@SR[@Model.Avatar==null?"Set":"Modify"]</a>]
         </dd> 
 
-        <dt>@SR["Activity"]:</dt>
-        <dd>@Html.DisplayFor(model => model.Activity)
+        <dt>@SR["Professional settings"]:</dt>
+        <dd>
+            @Html.DisplayFor(model => model.HaveProfessionalSettings)
             [<a asp-controller="Manage" asp-action="SetActivity"
+            >@SR[Model.HaveProfessionalSettings?"Modify settings":"Set"]</a>]
+        </dd>
+@if (Model.HaveProfessionalSettings) {
+        <dt>@SR["Activities"]:</dt>
+        <dd>
+           @string.Join(", ",Model.Activity.Select( u=> u.Does.Name ).ToArray())
+            [<a asp-controller="Do" asp-action="Index"
             >@SR[@Model.Activity==null?"Set":"Modify settings"]</a>]
         </dd>
-
+}
         <dt>@SR["Bank info"]:</dt>
         <dd>@Html.DisplayFor(m => m.BankInfo)  [<a asp-controller="Manage" asp-action="AddBankInfo"
             >@SR[@Model.BankInfo==null?"Set":"Modify"]</a>]</dd>
 
-        <dt>@SR["YourPosts"]:</dt>
-        <dd>@Model.PostsCounter
-            [<a asp-controller="Blogspot" asp-action="UserPosts" 
-            asp-route-id="@Model.UserName">@SR["YourPosts"]</a>]
-        </dd>
+        <dt><a asp-controller="Blogspot" asp-action="UserPosts" 
+            asp-route-id="@Model.UserName">@SR["Your posts"]:</a></dt>
+        <dd>@Model.PostsCounter</dd>
        
       <dt>@SR["TwoFactorAuthentication"]:</dt> 
       <dd>
@@ -113,6 +120,10 @@
           <text>
           @(Model.DiskUsage.ToString("0,#")) / @(Model.DiskQuota.ToString("0,#"))
           </text>
+      </dd>
+      <dt>Identifiant utilisateur</dt>
+      <dd>
+          @User.GetUserId()
       </dd>
     </dl>
     <h4>
