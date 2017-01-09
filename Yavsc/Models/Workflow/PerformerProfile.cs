@@ -13,7 +13,7 @@ namespace Yavsc.Models.Workflow
         public virtual ApplicationUser Performer { get; set; }
 
         [InverseProperty("User")]
-        [Display(Name="Activity"),Required]
+        [Display(Name="Activity")]
         public virtual List<UserActivity> Activity { get; set; }
 
         [Required,StringLength(14),Display(Name="SIREN"),

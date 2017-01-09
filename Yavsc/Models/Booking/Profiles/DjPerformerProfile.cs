@@ -4,7 +4,7 @@ using Yavsc.Models.Workflow;
 
 namespace Yavsc.Models.Booking
 {
-    public class DjPerformerProfile : PerformerProfile
+    public class DjPerformerProfile : SpecializationSettings
     {
         public string SoundCloudId { get; set; }
 

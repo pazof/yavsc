@@ -34,6 +34,7 @@ namespace Yavsc.Models
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
             builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
+            builder.Entity<UserActivity>().HasKey(u=> new { u.DoesCode, u.UserId});
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

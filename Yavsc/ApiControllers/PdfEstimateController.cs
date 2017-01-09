@@ -13,11 +13,17 @@ namespace Yavsc.ApiControllers
     using Microsoft.Extensions.Logging;
     using System;
     using System.Security.Claims;
+    using Microsoft.Extensions.Localization;
+    using Yavsc.Services;
+    using Yavsc.Models.Messaging;
 
     [Route("api/pdfestimate"), Authorize]
     public class PdfEstimateController : Controller
     {
         ApplicationDbContext dbContext;
+        private IStringLocalizer _localizer;
+        private GoogleAuthSettings _googleSettings;
+        private IGoogleCloudMessageSender _GCMSender;
         private IAuthorizationService authorizationService;
 
         private ILogger logger;
@@ -94,7 +100,11 @@ namespace Yavsc.ApiControllers
             User.ReceiveSignature(id,Request.Form.Files[0],"pro");
             estimate.ProviderValidationDate = DateTime.Now;
             dbContext.SaveChanges();
-            return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate });
+            // Notify the client
+            var yaev = new EstimationEvent(dbContext,estimate,_localizer);
+            var regids = estimate.Client.Devices.Select(d => d.GCMRegistrationId);
+            var grep = await _GCMSender.NotifyEstimateAsync(_googleSettings,regids,yaev);
+            return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = grep.success });
         }
 
         [HttpPost("clisign/{id}")]

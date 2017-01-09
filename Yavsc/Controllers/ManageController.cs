@@ -110,11 +110,9 @@ namespace Yavsc.Controllers
                 DiskUsage = user.DiskUsage,
                 DiskQuota = user.DiskQuota
             };
-            if (_dbContext.Performers.Any(x => x.PerformerId == user.Id))
-            {
-                model.Activity = _dbContext.Performers.First(x => x.PerformerId == user.Id).Activity;
-                
-            }
+            model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
+            model.Activity = _dbContext.UserActivities.Include(a=>a.Does).Where(u=>u.UserId == user.Id)
+            .ToList();
             return View(model);
         }
 
@@ -522,6 +520,7 @@ namespace Yavsc.Controllers
             {
                 if (ModelState.IsValid)
                 {
+            
                     var exSiren = await _dbContext.ExceptionsSIREN.FirstOrDefaultAsync(
                         ex => ex.SIREN == model.SIREN
                     );
@@ -574,8 +573,8 @@ namespace Yavsc.Controllers
                 }
                 else ModelState.AddModelError(string.Empty, $"Access denied ({uid} vs {model.PerformerId})");
             }
+            
             ViewBag.GoogleSettings = _googleSettings;
-            ViewBag.Activities = _dbContext.ActivityItems(model.Activity);
             return View(model);
         }
 
