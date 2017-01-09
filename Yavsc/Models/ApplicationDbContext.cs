@@ -49,7 +49,7 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         public DbSet<Activity> Activities { get; set; }
-
+        public DbSet<UserActivity> UserActivities { get; set; }
         /// <summary>
         /// Users posts
         /// </summary>

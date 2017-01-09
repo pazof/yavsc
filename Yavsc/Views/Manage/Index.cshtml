@@ -54,7 +54,7 @@
         </dd> 
 
         <dt>@SR["Activity"]:</dt>
-        <dd>@Model.Activity?.Name 
+        <dd>@Html.DisplayFor(model => model.Activity)
             [<a asp-controller="Manage" asp-action="SetActivity"
             >@SR[@Model.Activity==null?"Set":"Modify settings"]</a>]
         </dd>

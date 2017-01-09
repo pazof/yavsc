@@ -8,11 +8,15 @@ namespace Yavsc.Models
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
-        [ForeignKeyAttribute("AspNetUsers.Id")]
         public string UserId { get; set; }
 
-        [ForeignKeyAttribute("Skill.Id")]
+        [ForeignKey("UserId")]
+        public virtual ApplicationUser User { get; set; }
+
         public long SkillId { get; set; }
+
+        [ForeignKey("SkillId")]
+        public virtual Skill Skill { get; set; }
 
         public string Comment { get; set; }
         public int Rate { get; set; }

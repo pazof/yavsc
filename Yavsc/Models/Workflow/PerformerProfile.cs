@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Models.Market;
 
 namespace Yavsc.Models.Workflow 
 {
@@ -12,10 +12,9 @@ namespace Yavsc.Models.Workflow
         [ForeignKey("PerformerId"),Display(Name="Performer")]
         public virtual ApplicationUser Performer { get; set; }
 
+        [InverseProperty("User")]
         [Display(Name="Activity"),Required]
-        public string ActivityCode { get; set; }
-
-        public Service Offer { get; set; }
+        public virtual List<UserActivity> Activity { get; set; }
 
         [Required,StringLength(14),Display(Name="SIREN"),
         RegularExpression(@"^[0-9]{9,14}$", ErrorMessage = "Only numbers are allowed here")]
@@ -25,9 +24,6 @@ namespace Yavsc.Models.Workflow
 
         [Required,Display(Name="Organization address"),ForeignKey("OrganizationAddressId")]
         public virtual Location OrganizationAddress { get; set; }
-
-        [ForeignKey("ActivityCode"),Display(Name="Activity")]
-        public virtual Activity Activity { get; set; }
 
         [Display(Name="Accept notifications on client query")]
         public bool AcceptNotifications { get; set; }
