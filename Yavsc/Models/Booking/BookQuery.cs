@@ -10,7 +10,7 @@ namespace Yavsc.Models.Booking
     /// Query, for a date, with a given perfomer, at this given place.
     /// </summary>
 
-    public class BookQuery : NominativeServiceCommand {
+    public class BookQuery : NominativeServiceCommand<RendezVous> {
     /// <summary>
     /// The command identifier
     /// </summary>

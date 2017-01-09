@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
-using Yavsc.Models.Booking;
 using Yavsc.Models.Relationship;
 
 namespace Yavsc.Models
@@ -35,6 +34,7 @@ namespace Yavsc.Models
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
             builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
+            builder.Entity<UserActivity>().HasKey(u=> new { u.DoesCode, u.UserId});
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -50,7 +50,7 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         public DbSet<Activity> Activities { get; set; }
-
+        public DbSet<UserActivity> UserActivities { get; set; }
         /// <summary>
         /// Users posts
         /// </summary>
@@ -200,6 +200,8 @@ namespace Yavsc.Models
         public DbSet<MusicalTendency> MusicalTendency { get; set; }
 
         public DbSet<LocationType> LocationType { get; set; }
+
+        public DbSet<Instrument> Instrument { get; set; }
         
     }
 }

@@ -1,12 +1,10 @@
 using System.Linq;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
-using Yavsc.Models;
-using Yavsc.Models.Relationship;
 
 namespace Yavsc.Controllers
 {
+    using Models;
+    using Models.Relationship;
     public class LocationTypesController : Controller
     {
         private ApplicationDbContext _context;

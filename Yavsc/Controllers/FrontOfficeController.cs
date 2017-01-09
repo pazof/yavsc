@@ -11,8 +11,6 @@ using System;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)),
-    Route("do")]
     public class FrontOfficeController : Controller
     {
         ApplicationDbContext _context;
@@ -42,18 +40,11 @@ namespace Yavsc.Controllers
             {
                 throw new NotImplementedException("No Activity code");
             }
-
-            ViewBag.Activities = _context.ActivityItems(id);
-            ViewBag.Activity = _context.Activities.FirstOrDefault(
-                a => a.Code == id);
-
-            return View(
-                _context.Performers.Include(p => p.Performer)
-                .Include(p=>p.Performer.Devices).Where
-                (p => p.ActivityCode == id && p.Active).OrderBy(
-                    x => x.MinDailyCost
-                )
-            );
+            ViewBag.Activity = _context.Activities.FirstOrDefault(a=>a.Code == id);
+           var result = _context.Performers
+           .Include(p=>p.Performer).Where(p => p.Activity.Any(u=>u.DoesCode==id)).OrderBy( x => x.MinDailyCost );
+           
+            return View(result);
         }
 
         [Route("Book/{id}"), HttpPost]

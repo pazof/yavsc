@@ -2,19 +2,30 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.AspNet.Mvc.ViewEngines;
-using Yavsc.ViewModels.Gen;
 
 namespace Yavsc.Helpers
 {
+    using ViewModels.Gen;
     public class TeXString : HtmlString
     {
 
-        public class Replacement
+        public TeXString(TeXString teXString): base(teXString.ToString())
+        {
+        }
+
+        public TeXString(string str) : base(str)
+        {
+           
+            
+        }
+       
+
+    }
+    public class Replacement
         {
             string target;
             string replacement;
@@ -28,8 +39,9 @@ namespace Yavsc.Helpers
                 return source.Replace(target, replacement);
             }
         }
-
-        public readonly static Replacement[] SpecialCharsRendering =
+    public static class TeXHelpers
+    {
+        public static readonly  Replacement[] SpecialCharsRendering =
         {
             new Replacement("<","\\textless"),
             new Replacement(">","\\textgreater"),
@@ -54,26 +66,16 @@ namespace Yavsc.Helpers
             new Replacement("†","\\dag"),
             new Replacement("–","\\textendash")
         };
-        
-        public TeXString(string str) : base(TR(str))
-        {
-           
-            
-        }
-        private static string TR(string source)
+
+         public static TeXString ToTeX(this string source)
         {
             string result=source;
             foreach (var r in SpecialCharsRendering)
             {
                 result = r.Execute(result);
             }
-            return result;
+            return new TeXString(result);
         }
-
-    }
-
-    public static class TeXHelpers
-    {
         public static string NewLinesWith(this string target, string separator)
         {
             var items = target.Split(new char[] { '\n' }).Where(
@@ -85,19 +87,14 @@ namespace Yavsc.Helpers
         public static TeXString ToTeX(this string target, string lineSeparator = "\n\\\\")
         {
             if (target == null) return null;
-            return new TeXString(target.NewLinesWith(lineSeparator));
+            return new TeXString( target.ToTeX().ToString().NewLinesWith(lineSeparator) );
         }
 
-        public static HtmlString SplitAddressToTeX (this string target)
+        public static TeXString SplitAddressToTeX (this string target)
         {
             var alines = target.Split(',');
-            var texlines = alines.Select(l=>new TeXString(l));
-            StringBuilder sb = new StringBuilder();
-            foreach (var l in texlines)
-            {
-                sb.AppendFormat("{0}\\\\\n",l.ToString());
-            }
-            return new HtmlString(sb.ToString());
+            var texlines = alines.Select(l=>l.ToTeX().ToString());
+            return new TeXString(string.Join("\\\\\n",texlines));
         }
 
         public static bool GenerateEstimatePdf(this PdfGenerationViewModel Model)
