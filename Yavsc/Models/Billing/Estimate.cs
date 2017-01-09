@@ -9,6 +9,8 @@ namespace Yavsc.Models.Billing
 {
     using Interfaces;
     using Models.Booking;
+    using Yavsc.Models.Workflow;
+
     public partial class Estimate : IEstimate
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -61,8 +63,13 @@ namespace Yavsc.Models.Billing
         [Required]
         public string OwnerId { get; set; }
 
+        [ForeignKey("OwnerId")]
+        public virtual PerformerProfile Owner { get; set; }
+
         [Required]
         public string ClientId { get; set; }
+        [ForeignKey("ClientId")]
+        public virtual ApplicationUser Client { get; set; }
 
         public string CommandType
         {

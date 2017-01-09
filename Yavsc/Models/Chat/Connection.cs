@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
-using Yavsc.Models;
-using YavscLib;
 
 namespace Yavsc.Models.Chat
 {
+    using YavscLib; 
 
     public class Connection : IConnection
     {

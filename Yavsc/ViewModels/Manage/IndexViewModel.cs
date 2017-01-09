@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using Microsoft.AspNet.Identity;
-using Yavsc.Model.Bank;
-using Yavsc.Models;
 
 namespace Yavsc.ViewModels.Manage
 {
+    using Model.Bank;
+    using Models;
+    using Models.Workflow;
     public class IndexViewModel
     {
         public string UserName {get; set; }
@@ -21,7 +22,9 @@ namespace Yavsc.ViewModels.Manage
 
         public bool BrowserRemembered { get; set; }
 
-        public Activity Activity { get; set; }
+        public List<UserActivity> Activity { get; set; }
+
+        public bool HaveProfessionalSettings { get; set; }
 
         public long PostsCounter { get; set; }
 
