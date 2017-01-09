@@ -29,9 +29,11 @@ namespace BookAStar.Pages
 
         protected override void OnBindingContextChanged()
         {
-            base.OnBindingContextChanged();
+            // this technique make this view model
+            // non-sharable between view or pages
             if (Model != null)
             {
+                // set the refresh command before using it
                 Model.BookQueries.RefreshQueries =
                     new Command(() =>
                     {
@@ -39,6 +41,9 @@ namespace BookAStar.Pages
                         this.querylist.EndRefresh();
                     });
             }
+            // Use the new refresh command
+            base.OnBindingContextChanged();
+
         }
 
         private void OnViewBookQueryDetail(object sender, ItemTappedEventArgs e)

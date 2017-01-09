@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BookAStar.Pages.HomePage"
-             Style="{StaticResource PageStyle}"
-             Title="Accueil">
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
+            x:Class="BookAStar.Pages.HomePage"
+            Style="{StaticResource PageStyle}"
+            Title="Accueil">
   <ContentPage.Resources>
     <ResourceDictionary>
       <Style TargetType="Label">
@@ -19,28 +20,29 @@
   <TabbedPage.Children>
     <TabbedPage Title="{x:Static local:Strings.SearchForAPro}" >
       <TabbedPage.Children>
-      <ContentPage Title="Les stars">
-      <StackLayout Orientation="Horizontal">
-        <Editor HorizontalOptions="FillAndExpand"/>
-        <Button HorizontalOptions="End" />
-      </StackLayout>
-      <StackLayout Orientation="Horizontal">
-          <Label Text="{x:Static local:Strings.GeographicalyNear}" />
-          <Switch HorizontalOptions="End" IsToggled="{Binding ByLocation, Mode=TwoWay}" />
-       
-      </StackLayout>
-      
-      </ContentPage>
-      <ContentPage Title="">
-      <StackLayout Orientation="Horizontal">
-        <Editor HorizontalOptions="FillAndExpand"/>
-        <Button HorizontalOptions="End" />
-      </StackLayout>
-      </ContentPage>
-        </TabbedPage.Children>
+        <ContentPage Title="Les stars, musiciens, chanteurs DJ">
+          <StackLayout Orientation="Horizontal">
+            <Editor HorizontalOptions="FillAndExpand"/>
+            <Button HorizontalOptions="End" />
+          </StackLayout>
+          <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+            <Label Text="{x:Static local:Strings.GeographicalyNear}" />
+            <Switch HorizontalOptions="End" VerticalOptions="Start"
+                    IsToggled="{Binding ByLocation, Mode=TwoWay}" />
+
+          </StackLayout>
+
+        </ContentPage>
+        <ContentPage Title="Les formations musicales">
+          <StackLayout Orientation="Horizontal">
+            <Editor HorizontalOptions="FillAndExpand"/>
+            <Button HorizontalOptions="End" />
+          </StackLayout>
+        </ContentPage>
+      </TabbedPage.Children>
     </TabbedPage>
-  
-  <!-- 
+
+    <!-- 
   les derniers sons/videos/articles postés  
   <TabbedPage.Children>
     <ContentPage Title="Blogspot">
@@ -51,67 +53,70 @@
     </ContentPage>
   </TabbedPage.Children>
    -->
-    
-   <!-- 
+
+    <!-- 
   Les demandes devis en attente de réponse (pro)
   -->
-    <ContentPage Title="Demandes de devis" BindingContext="{Binding BookQueries}"
-                 IsVisible="{BindingContext UserProfile.IsAPerformer}">
-      <ListView x:Name="querylist"
-                RefreshCommand="{Binding RefreshQueries}"
-                IsPullToRefreshEnabled="True"
-                ItemsSource="{Binding Queries}"
-                ItemTapped="OnViewBookQueryDetail"
-                HasUnevenRows="true"
-                SeparatorVisibility="Default"
-                SeparatorColor="Black">
-        <ListView.ItemTemplate VerticalOptions="StartAndExpand" >
-          <DataTemplate>
-            <ViewCell>
-              <ViewCell.View>
-                <Grid>
-                  <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                  </Grid.RowDefinitions>
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                  </Grid.ColumnDefinitions>
-                  <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Source="{Binding Avatar}" />
-                  <Label Grid.Row="0" Grid.Column="1" Text="{Binding Client.UserName}"  Style="{StaticResource LabelStyle}"></Label>
-                  <Label Grid.Row="1" Grid.Column="1" Text="{Binding Data.Reason}"></Label>
-                  <Label Grid.Row="2" Grid.Column="1" LineBreakMode="WordWrap" Text="{Binding EventDate, StringFormat='{0:dddd d MMMM à HH:mm}'}" FontFamily="Italic"/>
-                  <Label Grid.Row="3" Grid.Column="1" LineBreakMode="WordWrap" Text="{Binding Location.Address}" />
-                </Grid>
-              </ViewCell.View>
-            </ViewCell>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
+    <ContentPage Title="Demandes de devis"
+      IsVisible="{Binding UserProfile.IsAPerformer}">
+      <StackLayout  BindingContext="{Binding BookQueries}">
+
+        <ListView x:Name="querylist"
+                  RefreshCommand="{Binding RefreshQueries}"
+                  IsPullToRefreshEnabled="True"
+                  ItemsSource="{Binding Queries}"
+                  ItemTapped="OnViewBookQueryDetail"
+                  HasUnevenRows="true"
+                  SeparatorVisibility="Default"
+                  SeparatorColor="Black">
+          <ListView.ItemTemplate VerticalOptions="StartAndExpand" >
+            <DataTemplate>
+              <ViewCell>
+                <ViewCell.View>
+                  <Grid>
+                    <Grid.RowDefinitions>
+                      <RowDefinition Height="*" />
+                      <RowDefinition Height="*" />
+                      <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Source="{Binding Avatar}" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding Client.UserName}"  Style="{StaticResource LabelStyle}"></Label>
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Data.Reason}"></Label>
+                    <Label Grid.Row="2" Grid.Column="1" LineBreakMode="WordWrap" Text="{Binding EventDate, StringFormat='{0:dddd d MMMM à HH:mm}'}" FontFamily="Italic"/>
+                    <Label Grid.Row="3" Grid.Column="1" LineBreakMode="WordWrap" Text="{Binding Location.Address}" />
+                  </Grid>
+                </ViewCell.View>
+              </ViewCell>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+      </StackLayout>
     </ContentPage>
-  
+
 
     <!-- Les signatures de contrat en souffreances (pro) -->
-    <ContentPage Title="Contrats à signer" IsVisible="{BindingContext UserProfile.IsAPerformer}">
+    <ContentPage Title="Contrats à signer" IsVisible="{Binding UserProfile.IsAPerformer}">
     </ContentPage>
 
     <!-- Les annonces pro (pro) -->
-    <ContentPage Title="Annonces pro" IsVisible="{BindingContext UserProfile.IsAPerformer}">
-     <StackLayout Orientation="Horizontal" >
+    <ContentPage Title="Annonces pro" IsVisible="{Binding UserProfile.IsAPerformer}">
+      <StackLayout Orientation="Horizontal" >
         <Editor x:Name="search_pub_pro_phrase" HorizontalOptions="FillAndExpand"/>
         <Button x:Name="btn_pro_pub" HorizontalOptions="End" />
       </StackLayout>
     </ContentPage>
 
-  <!-- les petites annonces des clients (pro)  -->
-    <ContentPage Title="Annonces client" Icon="" IsVisible="{BindingContext UserProfile.IsAPerformer}">
+    <!-- les petites annonces des clients (pro)  -->
+    <ContentPage Title="Annonces client" Icon="" IsVisible="{Binding UserProfile.IsAPerformer}">
       <StackLayout Orientation="Horizontal" >
         <Editor x:Name="search_pub_cli_phrase" HorizontalOptions="FillAndExpand"/>
         <Button x:Name="btn_cli_pub" HorizontalOptions="End" />
       </StackLayout>
     </ContentPage>
-  </TabbedPage.Children>  
+  </TabbedPage.Children>
 
 </TabbedPage>

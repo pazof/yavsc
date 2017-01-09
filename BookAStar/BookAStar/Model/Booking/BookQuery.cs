@@ -1,10 +1,9 @@
-﻿using BookAStar.Interfaces;
-using BookAStar.Model.Social;
+﻿
 using System;
 
-namespace BookAStar.Model
+namespace BookAStar.Model.Social
 {
-    public class BookQueryData 
+    public class BookQuery 
     {
         public ClientProviderInfo Client { get; set; }
         public Location Location { get; set; }
@@ -12,5 +11,6 @@ namespace BookAStar.Model
         public DateTime EventDate { get; set; }
         public decimal? Previsionnal { get; set; }
         public string Reason { get; set; }
+        public bool Read { get; set; }
     }
 }

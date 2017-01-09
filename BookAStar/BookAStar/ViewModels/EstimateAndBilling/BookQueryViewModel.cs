@@ -21,7 +21,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         {
             
         }
-        public BookQueryViewModel(BookQueryData data)
+        public BookQueryViewModel(BookQuery data)
         {
             Debug.Assert(data != null);
             Client=data.Client;
@@ -35,8 +35,8 @@ namespace BookAStar.ViewModels.EstimateAndBilling
                     ));
             this.data = data;
         }
-        private BookQueryData data;
-        public BookQueryData Data {
+        private BookQuery data;
+        public BookQuery Data {
             get
             {
                 return data;

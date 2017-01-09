@@ -42,14 +42,14 @@
     </Compile>
     <Compile Include="Attributes\CurrencyAttribute.cs" />
     <Compile Include="Attributes\DisplayAttribute.cs" />
-    <Compile Include="Behaviors\EmailValidatorBehavior.cs" />
-    <Compile Include="Behaviors\IntegerEntryBehavior.cs" />
-    <Compile Include="Behaviors\EditorMaxLengthValidator.cs" />
-    <Compile Include="Behaviors\DecimalValidatorBehavior.cs" />
-    <Compile Include="Behaviors\MarkdownViewLengthValidator.cs" />
-    <Compile Include="Behaviors\PickerBehavior.cs" />
-    <Compile Include="Behaviors\RegexValidatorBehavior.cs" />
-    <Compile Include="Behaviors\StarBehavior.cs" />
+    <Compile Include="Converters\Behaviors\EmailValidatorBehavior.cs" />
+    <Compile Include="Converters\Behaviors\IntegerEntryBehavior.cs" />
+    <Compile Include="Converters\Behaviors\EditorMaxLengthValidator.cs" />
+    <Compile Include="Converters\Behaviors\DecimalValidatorBehavior.cs" />
+    <Compile Include="Converters\Behaviors\MarkdownViewLengthValidator.cs" />
+    <Compile Include="Converters\Behaviors\PickerBehavior.cs" />
+    <Compile Include="Converters\Behaviors\RegexValidatorBehavior.cs" />
+    <Compile Include="Converters\Behaviors\StarBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\NotValueConverter.cs" />
     <Compile Include="Converters\SignalRConnectionStateToObject.cs" />
@@ -57,11 +57,14 @@
     <Compile Include="Data\EstimateEntity.cs" />
     <Compile Include="Data\NonCrUD\RemoteFiles.cs" />
     <Compile Include="Model\Access\BlackListed.cs" />
+    <Compile Include="Model\Booking\MusicalPreference.cs" />
+    <Compile Include="Model\Booking\MusicalTendency.cs" />
     <Compile Include="Model\FileSystem\UserDirectoryInfo.cs" />
     <Compile Include="Model\FileSystem\UserFileInfo.cs" />
     <Compile Include="Model\Settings\SignatureSettings.cs" />
     <Compile Include="Model\Social\Chat\ChatStatus.cs" />
     <Compile Include="Model\Social\Chat\ChatMessage.cs" />
+    <Compile Include="Model\Social\LocationType.cs" />
     <Compile Include="Pages\ClientPages\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
@@ -161,7 +164,7 @@
     <Compile Include="Interfaces\IPlatform.cs" />
     <Compile Include="Model\Blog\Blog.cs" />
     <Compile Include="Model\Blog\BlogTag.cs" />
-    <Compile Include="Model\BookQueryData.cs" />
+    <Compile Include="Model\Booking\BookQuery.cs" />
     <Compile Include="Model\Market\BaseProduct.cs" />
     <Compile Include="Model\Workflow\BillingLine.cs" />
     <Compile Include="Model\Manager.cs" />

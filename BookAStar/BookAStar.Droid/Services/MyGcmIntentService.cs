@@ -7,7 +7,6 @@ using Android.Widget;
 
 namespace BookAStar.Droid
 {
-
 	[Service]
 	public class MyGcmIntentService : IntentService
 	{
@@ -31,6 +30,7 @@ namespace BookAStar.Droid
 			intent.SetClass(context, typeof(MyGcmIntentService));
 			context.StartService(intent);
 		}
+
 		static object locker = new object();
 
 		protected override void OnHandleIntent(Intent intent)
@@ -74,16 +74,28 @@ namespace BookAStar.Droid
 
 		void SendNotification (string message)
 		{
-			var intent = new Intent (this, typeof(MainActivity));
+           /* Bundle valuesForActivity = new Bundle();
+            valuesForActivity.PutInt("count", count); */
+
+            var intent = new Intent (this, typeof(MainActivity));
 			intent.AddFlags (ActivityFlags.ClearTop);
 			var pendingIntent = PendingIntent.GetActivity (this, 0, intent, PendingIntentFlags.OneShot);
+            // Construct a back stack for cross-task navigation:
+            TaskStackBuilder stackBuilder = TaskStackBuilder.Create(this);
+            stackBuilder.AddParentStack(Java.Lang.Class.FromType(typeof(MainActivity)));
+            stackBuilder.AddNextIntent(intent);
 
-			var notificationBuilder = new Notification.Builder(this)
+            // Create the PendingIntent with the back stack:            
+            PendingIntent resultPendingIntent =
+                stackBuilder.GetPendingIntent(0, PendingIntentFlags.UpdateCurrent);
+
+            var notificationBuilder = new Notification.Builder(this)
+                .SetAutoCancel(true)
 				.SetSmallIcon (Resource.Drawable.icon)
 				.SetContentTitle ("GCM Message")
 				.SetContentText (message)
-				.SetAutoCancel (true)
-				.SetContentIntent (pendingIntent);
+                .SetContentIntent(resultPendingIntent)  // Start 2nd activity when the intent is clicked.
+                ;
 
 			var notificationManager = (NotificationManager) GetSystemService(Context.NotificationService);
 			notificationManager.Notify (0, notificationBuilder.Build());

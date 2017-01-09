@@ -251,8 +251,8 @@ namespace BookAStar.Droid
             {
                 Task.Run(async () =>
                 {
-                    App.ShowBookQuery(
-                       await DataManager.Instance.BookQueries.Get(queryId));
+                    var query =  DataManager.Instance.BookQueries.LocalGet(queryId);
+                    App.ShowBookQuery(query);
                 });
             }
         }
