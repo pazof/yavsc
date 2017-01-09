@@ -70,7 +70,7 @@
                                     HorizontalOptions="FillAndExpand"
                           BackgroundColor="White"
                           CaptionText="Caption This" CaptionTextColor="Black"
-                          ClearText="Clear Me!" ClearTextColor="Red"
+                          ClearText="Effacer!" ClearTextColor="Red"
                           PromptText="Prompt Here" PromptTextColor="Red"
                           SignatureLineColor="Aqua" StrokeColor="Black" StrokeWidth="2" />
         <Button Clicked="OnValidate" Text="Valider cette signature" x:Name="btnValidate" />
