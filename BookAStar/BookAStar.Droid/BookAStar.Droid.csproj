@@ -343,6 +343,8 @@
     <Compile Include="Markdown\MarkdownViewModel.cs" />
     <Compile Include="Markdown\MarkdownViewRenderer.cs" />
     <Compile Include="Markdown\MarkdownWebChromeClient.cs" />
+    <Compile Include="Markdown\MDContextMenu.cs" />
+    <Compile Include="Markdown\MDWebView.cs" />
     <Compile Include="OAuth2\YaOAuth2Authenticator.cs" />
     <Compile Include="Rendering\ImageButtonRenderer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -374,6 +376,9 @@
     <AndroidResource Include="Resources\layout\EditEstimate.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\menu\md_menu.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\icon.png" />
@@ -383,7 +388,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Tabbar.axml" />
-    <AndroidResource Include="Resources\layout\Toolbar.axml" />
+    <AndroidResource Include="Resources\layout\Toolbar.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\values\styles.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
