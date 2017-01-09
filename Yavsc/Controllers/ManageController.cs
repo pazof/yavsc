@@ -112,8 +112,8 @@ namespace Yavsc.Controllers
             };
             if (_dbContext.Performers.Any(x => x.PerformerId == user.Id))
             {
-                var code = _dbContext.Performers.First(x => x.PerformerId == user.Id).ActivityCode;
-                model.Activity = _dbContext.Activities.First(x => x.Code == code);
+                model.Activity = _dbContext.Performers.First(x => x.PerformerId == user.Id).Activity;
+                
             }
             return View(model);
         }
@@ -491,16 +491,19 @@ namespace Yavsc.Controllers
         {
             var user = GetCurrentUserAsync().Result;
             var uid = user.Id;
-            bool existing = _dbContext.Performers.Any(x => x.PerformerId == uid);
-            ViewBag.Activities = _dbContext.ActivityItems(null);
+            var existing = _dbContext.Performers.Include(x => x.OrganizationAddress)
+            .Include(p=>p.Activity).FirstOrDefault(x => x.PerformerId == uid);
+
             ViewBag.GoogleSettings = _googleSettings;
-            if (existing)
+            if (existing!=null)
             {
                 var currentProfile = _dbContext.Performers.Include(x => x.OrganizationAddress)
                 .First(x => x.PerformerId == uid);
-                string currentCode = currentProfile.ActivityCode;
+                ViewBag.Activities = _dbContext.ActivityItems(existing.Activity);
                 return View(currentProfile);
             }
+
+            ViewBag.Activities = _dbContext.ActivityItems(new List<UserActivity>());
             return View(new PerformerProfile
             {
                 PerformerId = user.Id,
@@ -535,7 +538,7 @@ namespace Yavsc.Controllers
                                 "SIREN",
                                 _SR["Invalid company number"] + " (" + taskCheck.errorCode + ")"
                             );
-                            _logger.LogInformation("Invalid company number, using key:" + _cinfoSettings.ApiKey);
+                            _logger.LogInformation($"Invalid company number: {model.SIREN}/{taskCheck.errorType}/{taskCheck.errorCode}/{taskCheck.errorMessage}" );
                         }
                     }
                 }
@@ -543,6 +546,7 @@ namespace Yavsc.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
+                ModelState.AddModelError("SIREN", ex.Message);
             }
             if (ModelState.IsValid)
             {
@@ -553,13 +557,12 @@ namespace Yavsc.Controllers
                     {
                         _dbContext.Map.Add(model.OrganizationAddress);
                     }
-                    bool existing = _dbContext.Performers.Any(x => x.PerformerId == uid);
-                    if (existing)
+
+                    if (_dbContext.Performers.Any(p=>p.PerformerId == uid))
                     {
                         _dbContext.Update(model);
                     }
                     else _dbContext.Performers.Add(model);
-                    _dbContext.SaveChanges();
 
                     // Give this user the Performer role
                     if (!User.IsInRole("Performer"))
@@ -572,7 +575,7 @@ namespace Yavsc.Controllers
                 else ModelState.AddModelError(string.Empty, $"Access denied ({uid} vs {model.PerformerId})");
             }
             ViewBag.GoogleSettings = _googleSettings;
-            ViewBag.Activities = _dbContext.ActivityItems(model.ActivityCode);
+            ViewBag.Activities = _dbContext.ActivityItems(model.Activity);
             return View(model);
         }
 

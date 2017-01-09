@@ -43,14 +43,13 @@ namespace Yavsc.Controllers
                 throw new NotImplementedException("No Activity code");
             }
 
-            ViewBag.Activities = _context.ActivityItems(id);
             ViewBag.Activity = _context.Activities.FirstOrDefault(
                 a => a.Code == id);
 
             return View(
                 _context.Performers.Include(p => p.Performer)
                 .Include(p=>p.Performer.Devices).Where
-                (p => p.ActivityCode == id && p.Active).OrderBy(
+                (p => p.Activity.Any( a => a.DoesCode == id) && p.Active).OrderBy(
                     x => x.MinDailyCost
                 )
             );

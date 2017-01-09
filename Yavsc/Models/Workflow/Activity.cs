@@ -45,5 +45,13 @@ namespace Yavsc.Models
         /// <returns></returns>
         string ModeratorGroupName { get; set; }
 
+        /// <summary>
+        /// indice de recherche de cette activité
+        /// rendu par le système.
+        /// Valide entre 0 et 100,
+        /// Il démarre à 0.
+        /// </summary>
+        [Range(0,100)]
+        public int Rate { get; set; }
     }
 }

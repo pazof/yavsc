@@ -112,11 +112,13 @@
     <hr />
     <div asp-validation-summary="ValidationSummary.All" class="text-danger" id="valsum"></div>
     <div class="form-group">
-        <label asp-for="ActivityCode" class="col-md-2 control-label"></label>
+        <label asp-for="Activity" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <select asp-for="ActivityCode" asp-items=@ViewBag.Activities class="form-control">
+            <select asp-for="Activity" asp-items=@ViewBag.Activities class="form-control" multiple>
+
             </select>
-            <span asp-validation-for="ActivityCode" class="text-danger"></span>
+
+            <span asp-validation-for="Activity" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
