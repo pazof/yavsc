@@ -16,43 +16,20 @@
     </ResourceDictionary>
   </ContentPage.Resources>
 
-  <!-- La recherche d'un pro    -->
   <TabbedPage.Children>
+    <!-- La recherche d'un pro    -->
     <TabbedPage Title="{x:Static local:Strings.SearchForAPro}" >
-      <TabbedPage.Children>
-        <ContentPage Title="Les stars, musiciens, chanteurs DJ">
-          <StackLayout Orientation="Horizontal">
-            <Editor HorizontalOptions="FillAndExpand"/>
-            <Button HorizontalOptions="End" />
-          </StackLayout>
-          <StackLayout Orientation="Horizontal" VerticalOptions="Start">
-            <Label Text="{x:Static local:Strings.GeographicalyNear}" />
-            <Switch HorizontalOptions="End" VerticalOptions="Start"
-                    IsToggled="{Binding ByLocation, Mode=TwoWay}" />
-
-          </StackLayout>
-
-        </ContentPage>
-        <ContentPage Title="Les formations musicales">
-          <StackLayout Orientation="Horizontal">
-            <Editor HorizontalOptions="FillAndExpand"/>
-            <Button HorizontalOptions="End" />
-          </StackLayout>
-        </ContentPage>
-      </TabbedPage.Children>
     </TabbedPage>
 
     <!-- 
   les derniers sons/videos/articles postés  
-  <TabbedPage.Children>
+     -->
     <ContentPage Title="Blogspot">
       <StackLayout Orientation="Horizontal">
         <Editor x:Name="search_blog_phrase" HorizontalOptions="FillAndExpand"/>
         <Button x:Name="btn_blog_update" HorizontalOptions="End" />
       </StackLayout>
     </ContentPage>
-  </TabbedPage.Children>
-   -->
 
     <!-- 
   Les demandes devis en attente de réponse (pro)
@@ -99,22 +76,26 @@
 
 
     <!-- Les signatures de contrat en souffreances (pro) -->
-    <ContentPage Title="Contrats à signer" IsVisible="{Binding UserProfile.IsAPerformer}">
+    <ContentPage Title="Contrats fournisseur" IsVisible="{Binding UserProfile.IsAPerformer}">
+    </ContentPage>
+
+    <!-- Les signatures de contrat en souffreances (client) -->
+    <ContentPage Title="Contrats client" IsVisible="{Binding UserProfile.IsAPerformer}">
     </ContentPage>
 
     <!-- Les annonces pro (pro) -->
     <ContentPage Title="Annonces pro" IsVisible="{Binding UserProfile.IsAPerformer}">
       <StackLayout Orientation="Horizontal" >
-        <Editor x:Name="search_pub_pro_phrase" HorizontalOptions="FillAndExpand"/>
-        <Button x:Name="btn_pro_pub" HorizontalOptions="End" />
+        <Editor x:Name="search_pub_pro_phrase" HorizontalOptions="FillAndExpand" VerticalOptions="Start"/>
+        <Button x:Name="btn_pro_pub" HorizontalOptions="End" VerticalOptions="Start" Text="Chercher"/>
       </StackLayout>
     </ContentPage>
 
     <!-- les petites annonces des clients (pro)  -->
     <ContentPage Title="Annonces client" Icon="" IsVisible="{Binding UserProfile.IsAPerformer}">
       <StackLayout Orientation="Horizontal" >
-        <Editor x:Name="search_pub_cli_phrase" HorizontalOptions="FillAndExpand"/>
-        <Button x:Name="btn_cli_pub" HorizontalOptions="End" />
+        <Editor x:Name="search_pub_cli_phrase" HorizontalOptions="FillAndExpand" VerticalOptions="Start"/>
+        <Button x:Name="btn_cli_pub" HorizontalOptions="End" VerticalOptions="Start"  Text="Chercher"/>
       </StackLayout>
     </ContentPage>
   </TabbedPage.Children>
