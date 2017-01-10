@@ -50,6 +50,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             NotifyPropertyChanged("Query");
             NotifyPropertyChanged("CLient");
             NotifyPropertyChanged("ModelState");
+            
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)

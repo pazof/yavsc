@@ -102,7 +102,7 @@
             <behaviors:DecimalValidatorBehavior x:Name="unitCostValidator" />
           </Entry.Behaviors>
         </Entry>
-        <Label Text="€" Style="{StaticResource BigLabel}" />
+        <Label Text="€" Style="{StaticResource BigLabelStyle}" />
         <Image  x:Name="unitaryCostSuccessErrorImage"
                   Style="{Binding Source={x:Reference unitCostValidator}, 
                                 Path=IsValid, 
