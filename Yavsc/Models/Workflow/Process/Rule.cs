@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Process
 {
     /// <summary>
     /// An abstract, identified rule
