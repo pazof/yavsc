@@ -4553,6 +4553,9 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f0d0026
 			public const int beginning = 2131558438;
 			
+			// aapt resource value: 0x7f0d00ba
+			public const int bold = 2131558586;
+			
 			// aapt resource value: 0x7f0d0035
 			public const int bottom = 2131558453;
 			
@@ -4600,6 +4603,9 @@ namespace BookAStar.Droid
 			
 			// aapt resource value: 0x7f0d0055
 			public const int contentPanel = 2131558485;
+			
+			// aapt resource value: 0x7f0d00b6
+			public const int copy = 2131558582;
 			
 			// aapt resource value: 0x7f0d005b
 			public const int custom = 2131558491;
@@ -4673,6 +4679,15 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f0d00b2
 			public const int fullscreen = 2131558578;
 			
+			// aapt resource value: 0x7f0d00b7
+			public const int group = 2131558583;
+			
+			// aapt resource value: 0x7f0d00be
+			public const int header1 = 2131558590;
+			
+			// aapt resource value: 0x7f0d00bf
+			public const int header2 = 2131558591;
+			
 			// aapt resource value: 0x7f0d0005
 			public const int home = 2131558405;
 			
@@ -4696,6 +4711,9 @@ namespace BookAStar.Droid
 			
 			// aapt resource value: 0x7f0d00a6
 			public const int info = 2131558566;
+			
+			// aapt resource value: 0x7f0d00bb
+			public const int italic = 2131558587;
 			
 			// aapt resource value: 0x7f0d0000
 			public const int item_touch_helper_previous_elevation = 2131558400;
@@ -4832,6 +4850,9 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f0d0051
 			public const int parentPanel = 2131558481;
 			
+			// aapt resource value: 0x7f0d00b8
+			public const int past = 2131558584;
+			
 			// aapt resource value: 0x7f0d00ad
 			public const int pause = 2131558573;
 			
@@ -4955,6 +4976,12 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f0d009d
 			public const int status_bar_latest_event_content = 2131558557;
 			
+			// aapt resource value: 0x7f0d00b9
+			public const int submenu_character = 2131558585;
+			
+			// aapt resource value: 0x7f0d00bd
+			public const int submenu_paragraph = 2131558589;
+			
 			// aapt resource value: 0x7f0d0070
 			public const int submit_area = 2131558512;
 			
@@ -5005,6 +5032,9 @@ namespace BookAStar.Droid
 			
 			// aapt resource value: 0x7f0d0078
 			public const int touch_outside = 2131558520;
+			
+			// aapt resource value: 0x7f0d00bc
+			public const int underline = 2131558588;
 			
 			// aapt resource value: 0x7f0d0009
 			public const int up = 2131558409;
@@ -5319,6 +5349,22 @@ namespace BookAStar.Droid
 			}
 		}
 		
+		public partial class Menu
+		{
+			
+			// aapt resource value: 0x7f100000
+			public const int md_menu = 2131755008;
+			
+			static Menu()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Menu()
+			{
+			}
+		}
+		
 		public partial class Raw
 		{
 			
@@ -5425,8 +5471,8 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f08006a
 			public const int account_authenticator_label = 2131230826;
 			
-			// aapt resource value: 0x7f08006b
-			public const int accounts = 2131230827;
+			// aapt resource value: 0x7f080074
+			public const int accounts = 2131230836;
 			
 			// aapt resource value: 0x7f08005a
 			public const int app_name = 2131230810;
@@ -5440,14 +5486,20 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f080000
 			public const int auth_google_play_services_client_google_display_name = 2131230720;
 			
-			// aapt resource value: 0x7f08006c
-			public const int bookingstar_accounts_pref_screen_summary = 2131230828;
+			// aapt resource value: 0x7f08006e
+			public const int bold = 2131230830;
+			
+			// aapt resource value: 0x7f080075
+			public const int bookingstar_accounts_pref_screen_summary = 2131230837;
 			
 			// aapt resource value: 0x7f080049
 			public const int bottom_sheet_behavior = 2131230793;
 			
 			// aapt resource value: 0x7f08005e
 			public const int cancel = 2131230814;
+			
+			// aapt resource value: 0x7f08006d
+			public const int character = 2131230829;
 			
 			// aapt resource value: 0x7f08004a
 			public const int character_counter_pattern = 2131230794;
@@ -5539,6 +5591,9 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f08001e
 			public const int common_signin_button_text_long = 2131230750;
 			
+			// aapt resource value: 0x7f08006b
+			public const int copy = 2131230827;
+			
 			// aapt resource value: 0x7f080024
 			public const int create_calendar_message = 2131230756;
 			
@@ -5560,8 +5615,17 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f080068
 			public const int google_app_id = 2131230824;
 			
+			// aapt resource value: 0x7f080072
+			public const int header1 = 2131230834;
+			
+			// aapt resource value: 0x7f080073
+			public const int header2 = 2131230835;
+			
 			// aapt resource value: 0x7f08004f
 			public const int invalid_date = 2131230799;
+			
+			// aapt resource value: 0x7f08006f
+			public const int italic = 2131230831;
 			
 			// aapt resource value: 0x7f08004d
 			public const int library_name = 2131230797;
@@ -5620,6 +5684,12 @@ namespace BookAStar.Droid
 			// aapt resource value: 0x7f080054
 			public const int overflow = 2131230804;
 			
+			// aapt resource value: 0x7f080071
+			public const int paragraph = 2131230833;
+			
+			// aapt resource value: 0x7f08006c
+			public const int past = 2131230828;
+			
 			// aapt resource value: 0x7f080055
 			public const int pause = 2131230805;
 			
@@ -5652,6 +5722,9 @@ namespace BookAStar.Droid
 			
 			// aapt resource value: 0x7f080059
 			public const int time_duration = 2131230809;
+			
+			// aapt resource value: 0x7f080070
+			public const int underline = 2131230832;
 			
 			// aapt resource value: 0x7f080065
 			public const int url = 2131230821;
