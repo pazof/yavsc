@@ -84,6 +84,7 @@ namespace Yavsc.ApiControllers
             return ViewComponent("Estimate",new object[] { id, "Pdf" } );
         }
 
+
         [HttpPost("prosign/{id}")]
         public async Task<IActionResult> ProSign(long id)
         {
@@ -97,7 +98,7 @@ namespace Yavsc.ApiControllers
             }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            User.ReceiveSignature(id,Request.Form.Files[0],"pro");
+            User.ReceiveProSignature(id,Request.Form.Files[0],"pro");
             estimate.ProviderValidationDate = DateTime.Now;
             dbContext.SaveChanges();
             // Notify the client
@@ -105,6 +106,22 @@ namespace Yavsc.ApiControllers
             var regids = estimate.Client.Devices.Select(d => d.GCMRegistrationId);
             var grep = await _GCMSender.NotifyEstimateAsync(_googleSettings,regids,yaev);
             return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = grep.success });
+        }
+
+        [HttpGet("prosign/{id}")]
+        public async Task<IActionResult> GetProSign(long id)
+        {
+            // For authorization purpose
+            var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
+
+            var filename = FileSystemHelpers.SignFileNameFormat("pro",id);
+            FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
+            if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
+            return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }
 
         [HttpPost("clisign/{id}")]
@@ -119,11 +136,26 @@ namespace Yavsc.ApiControllers
             }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            User.ReceiveSignature(id,Request.Form.Files[0],"cli");
+            User.ReceiveProSignature(id,Request.Form.Files[0],"cli");
             estimate.ClientValidationDate = DateTime.Now;
             dbContext.SaveChanges();
             return Ok (new { ClientValidationDate = estimate.ClientValidationDate });
         }
 
+        [HttpGet("clisign/{id}")]
+        public async Task<IActionResult> GetCliSign(long id)
+        {
+            // For authorization purpose
+            var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
+            
+            var filename = FileSystemHelpers.SignFileNameFormat("pro",id);
+            FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
+            if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
+            return File(fi.OpenRead(), "application/x-pdf", filename); ;
+        }
     }
 }
