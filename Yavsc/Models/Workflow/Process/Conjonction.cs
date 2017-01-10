@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Process
 {
     public class Conjonction : List<IRequisition>, IRequisition
     {

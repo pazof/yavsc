@@ -1,5 +1,6 @@
 
 
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -169,10 +170,13 @@ namespace Yavsc.Helpers
                     dir, xsmallname), ImageFormat.Png);
             }
         }
-        public static FileRecievedInfo ReceiveSignature(this ClaimsPrincipal user, long estimateId, IFormFile formFile, string signtype)
+        public static Func<string,long,string>
+          SignFileNameFormat = new Func<string,long,string> ((signType,estimateId) => $"estimate-{signType}sign-{estimateId}.png");
+
+        public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, long estimateId, IFormFile formFile, string signtype)
         { 
             var item = new FileRecievedInfo();
-            item.FileName = $"estimate-{signtype}sign-{estimateId}.png";
+            item.FileName = SignFileNameFormat("pro",estimateId);
             var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Bills, item.FileName);
 
             var fi = new FileInfo(destFileName);
