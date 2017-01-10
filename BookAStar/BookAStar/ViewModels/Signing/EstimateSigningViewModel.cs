@@ -10,5 +10,18 @@ namespace BookAStar.ViewModels.Signing
         {
         }
         public Command<bool> ValidationCommand { get; set; }
+        public ImageSource ProSignImage {
+            get
+            {
+                return new FileImageSource();
+            }
+        }
+        public ImageSource CliSignImage
+        {
+            get
+            {
+                return new FileImageSource();
+            }
+        }
     }
 }
