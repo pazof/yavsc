@@ -63,7 +63,7 @@
         <Setter Property="HorizontalOptions" Value="FillAndExpand" />
       </Style>
 
-      <Style x:Key="BigLabel"  BasedOn="{StaticResource LabelStyle}" TargetType="Label">
+      <Style x:Key="BigLabelStyle"  BasedOn="{StaticResource LabelStyle}" TargetType="Label">
         <Setter Property="FontSize" Value="Large" />
       </Style>      
       <Style x:Key="ContentLabelStyle"  BasedOn="{StaticResource LabelStyle}" TargetType="Label">
