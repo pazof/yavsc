@@ -203,6 +203,13 @@
   <data name="entries"><value>entrées</value></data>
   <data name="Estimate"><value>Estimer</value></data>
   <data name="Estimate_not_found"><value>Devis non trouvé</value></data>
+  <data name="EstimateToProduce"><value>Demandes de Devis en souffrance</value></data>
+  <data name="EstimateToSignAsPro"><value>Devis à valider</value></data>
+  <data name="EstimateToSignAsCli"><value>Devis à accèpter ou refuser</value></data>
+  <data name="BillToSignAsPro"><value>Factures à produire</value></data>
+  <data name="BillToSignAsCli"><value>Factures à honnorer</value></data>
+  <data name="PayementsDone"><value>Paiements effectués</value></data>
+
   <data name="EstimationMessageToClient"><value>{0} a validé un devis pour vous : {1}\nAu total : {2} €
   Il attend maintenant votre signature.</value></data>
   <data name="EstimateWanted"><value>Demande de devis</value></data>
