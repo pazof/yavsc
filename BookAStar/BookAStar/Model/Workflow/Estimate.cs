@@ -9,7 +9,6 @@ namespace BookAStar.Model.Workflow
     using Data;
     using Interfaces;
     using Social;
-
     public partial class Estimate : IEstimate
     {
         public long Id { get; set; }
@@ -28,6 +27,7 @@ namespace BookAStar.Model.Workflow
         /// <returns></returns>
         public List<string> AttachedGraphics { get; set; }
         [JsonIgnore]
+        // form in db
         public string AttachedGraphicsString
         {
             get { return AttachedGraphics==null?null:string.Join(":", AttachedGraphics); }
@@ -41,6 +41,7 @@ namespace BookAStar.Model.Workflow
         /// </summary>
         /// <returns></returns>
         public List<string> AttachedFiles { get; set; }
+        // form in db
         [JsonIgnore]
         public string AttachedFilesString
         {
@@ -92,12 +93,12 @@ namespace BookAStar.Model.Workflow
             }
         }
         /// <summary>
-        /// This validation comes from the provider.
-        /// As long as it's an estimate, no client validation
-        /// is formaly needed 
+        /// This validation comes first from the provider.
         /// </summary>
         public DateTime ProviderValidationDate { get; set; }
-
+        /// <summary>
+        /// Date for the agreement from the client
+        /// </summary>
         public DateTime ClientApprouvalDate { get; set; }
 
     }

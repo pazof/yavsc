@@ -29,6 +29,8 @@
         internal LocalEntity<BillingLine, string> EstimateLinesTemplates { get; set; }
         internal LocalEntity<ChatMessage, int> PrivateMessages { get; set; }
         internal LocalEntity<PageState, int> AppState { get; set; }
+        internal LocalEntity<string,string> ClientSignatures { get; set; }
+        internal LocalEntity<string, string> ProviderSignatures { get; set; }
 
         protected static DataManager instance = new DataManager();
 

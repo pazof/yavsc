@@ -5,7 +5,16 @@
              xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
              x:Class="BookAStar.Pages.EstimatePages.EstimateSigningPage">
 
-
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
   <ContentPage.Content>
       <StackLayout Padding="10,10,10,10" x:Name="mainLayout">
     <ScrollView>
@@ -20,11 +29,11 @@
             <ColumnDefinition Width="*" />
           </Grid.ColumnDefinitions>
           <Label Grid.Row="0" Grid.Column="0" Text="{Binding Client.UserName}" ></Label>
-          <Label Grid.Row="0" Grid.Column="1" Text="{Binding Query.Location.Address}" ></Label>
+          <Label Grid.Row="0" Grid.Column="1" Text="{Binding Query.Location.Address}"  ></Label>
           <Label Grid.Row="0" Grid.Column="2" Text="{Binding Query.EventDate, StringFormat='{0:dddd d MMMM yyyy à hh:mm}'}" ></Label>
         </Grid>
 
-        <Label Text="{Binding Title}" />
+        <Label Text="{Binding Title}"  Style="{StaticResource BigLabelStyle}" />
 
         <views:MarkdownView x:Name="mdview" 
            HorizontalOptions="FillAndExpand"
@@ -63,13 +72,17 @@
           </ListView.ItemTemplate>
         </ListView>
         <Label FormattedText="{Binding FormattedTotal}"/>
+      <StackLayout Orientation="Horizontal">
+        <Image Source="{Binding ProSignImage}" HorizontalOptions="Start"></Image>
+        <Image Source="{Binding CliSignImage}" HorizontalOptions="End"></Image>
+      </StackLayout>
 </StackLayout>  
     </ScrollView> 
          <signature:SignaturePadView x:Name="padView"
                                     VerticalOptions="FillAndExpand"
                                     HorizontalOptions="FillAndExpand"
                           BackgroundColor="White"
-                          CaptionText="Caption This" CaptionTextColor="Black"
+                          CaptionText="{Binding Data.Owner.UserName}" CaptionTextColor="Black"
                           ClearText="Effacer!" ClearTextColor="Red"
                           PromptText="Prompt Here" PromptTextColor="Red"
                           SignatureLineColor="Aqua" StrokeColor="Black" StrokeWidth="2" />
