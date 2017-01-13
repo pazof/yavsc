@@ -3,7 +3,8 @@
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BookAStar.Pages.UserProfile.AccountChooserPage"
-             Title="Paramètres Booking star" Style="{StaticResource PageStyle}"
+             Title="{x:Static local:Strings.UserAccounts}" 
+             Style="{StaticResource PageStyle}"
              xmlns:lc="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
              xmlns:lb="clr-namespace:XLabs.Forms.Behaviors;assembly=XLabs.Forms">
 
@@ -13,6 +14,7 @@
     <ListView x:Name="AccountListView"
               SeparatorVisibility="Default"
               VerticalOptions="FillAndExpand"
+              ItemsSource="{x:Static local:MainSettings.AccountList}"
         >
       <ListView.Header>
         <StackLayout Orientation="Horizontal">
@@ -20,17 +22,18 @@
         </StackLayout>
       </ListView.Header>
 
-      <ListView.ItemTemplate HeightRequest="60" VerticalOptions="StartAndExpand">
+      <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
               <Grid Padding="5"
                         ColumnSpacing="10"
                         RowSpacing="2" >
-                <Image Source="{Binding AvatarSource}" HeightRequest="80"
-                       x:Name="avatarImage"/>
-                <Label Grid.Column="0" Text="{Binding UserName}" >
-
+                <Image Grid.Column="0" Source="{Binding AvatarSource}" HeightRequest="80" />
+                <Label Grid.Column="1" Text="{Binding UserName}" >
                 </Label>
+                <Label Grid.Column="2" Text="{Binding EMails.ToString()}" />
+                <Label Grid.Column="3" Text="{Binding Roles.ToString()}" />
+                <Label Grid.Column="4" Text="{Binding Address}" />
               </Grid>
           </ViewCell>
         </DataTemplate>

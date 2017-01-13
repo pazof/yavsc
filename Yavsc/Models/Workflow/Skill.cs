@@ -11,7 +11,7 @@ namespace Yavsc.Models {
         public long Id { get; set; }
 
         /// <summary>
-        /// indice de recherche de cette capacité
+        /// indice de recherche de ce talent
         /// rendu par le système.
         /// Valide entre 0 et 100,
         /// Il démarre à 0.

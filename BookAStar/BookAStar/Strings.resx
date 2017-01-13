@@ -117,11 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlreadyExecuting" xml:space="preserve">
+    <value>Une execution est déjà en cours</value>
+  </data>
+  <data name="CancelValidation" xml:space="preserve">
+    <value>Annuler la validation</value>
+  </data>
+  <data name="CreationFailed" xml:space="preserve">
+    <value>La création a échoué, contenu envoyé: {stringContent} @ Uri: {ControllerUri.AbsoluteUri}: Erreur : {errcontent}</value>
+  </data>
   <data name="DoEstimate" xml:space="preserve">
     <value>Faire un devis</value>
   </data>
+  <data name="DonotsignEstimate" xml:space="preserve">
+    <value>Valider le devis sans signer</value>
+  </data>
   <data name="EditEstimate" xml:space="preserve">
     <value>Editer le devis</value>
+  </data>
+  <data name="ENoRemoteEntity" xml:space="preserve">
+    <value>Erreur d'accès aux données distantes</value>
   </data>
   <data name="FiveStars" xml:space="preserve">
     <value>Star</value>
@@ -137,6 +152,18 @@
   <data name="OneStar" xml:space="preserve">
     <value>Étoile montante</value>
   </data>
+  <data name="OperationPending" xml:space="preserve">
+    <value>Opération en cours</value>
+  </data>
+  <data name="oups" xml:space="preserve">
+    <value>oups.</value>
+  </data>
+  <data name="Sign" xml:space="preserve">
+    <value>Signer</value>
+  </data>
+  <data name="SignOrNot" xml:space="preserve">
+    <value>Signer le devis?</value>
+  </data>
   <data name="ThreeStars" xml:space="preserve">
     <value>Incontournable</value>
   </data>
@@ -144,6 +171,48 @@
     <value>À ne manquer sous aucun prétexte</value>
   </data>
   <data name="ViewEstimate" xml:space="preserve">
-    <value>Voir le devis</value>
+    <value>Voir les devis validés</value>
+  </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>La mise à jour a échoué.</value>
+  </data>
+  <data name="MinMaxStringValidationError" xml:space="preserve">
+    <value>Veuillez saisir une description (entre {0} et {1} caractères).</value>
+  </data>
+  <data name="YourTextWasTooLong" xml:space="preserve">
+    <value>Votre texte a été taillé car il était trop long.</value>
+  </data>
+  <data name="NoDescription" xml:space="preserve">
+    <value>Pas de description</value>
+  </data>
+  <data name="InvalidValue" xml:space="preserve">
+    <value>Valeur invalide</value>
+  </data>
+  <data name="MinMaxIntError" xml:space="preserve">
+    <value>Veuillez saisir une valeur entre {0} et {1}.</value>
+  </data>
+  <data name="YourFiles" xml:space="preserve">
+    <value>Vos fichiers </value>
+  </data>
+  <data name="Profprof" xml:space="preserve">
+    <value>Profile professionnel</value>
+  </data>
+  <data name="ClientProRequest" xml:space="preserve">
+    <value>Restreindre la demande aux clients professionnels</value>
+  </data>
+  <data name="UserAccounts" xml:space="preserve">
+    <value>Comptes utilisateur</value>
+  </data>
+  <data name="BlockThisUser" xml:space="preserve">
+    <value>Bloquer cet utilisateur</value>
+  </data>
+  <data name="DeclineQuery" xml:space="preserve">
+    <value>Décliner cette proposition (envoyer un refus, et archiver la demande)</value>
+  </data>
+  <data name="GeographicalyNear" xml:space="preserve">
+    <value>Géographiquement proche</value>
+  </data>
+  <data name="SearchForAPro" xml:space="preserve">
+    <value>Rechercher un artiste</value>
   </data>
 </root>

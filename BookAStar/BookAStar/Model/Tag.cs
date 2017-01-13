@@ -1,5 +1,5 @@
 
-namespace Yavsc.Models
+namespace Yavsc.Model
 {
     public partial class Tag
     {

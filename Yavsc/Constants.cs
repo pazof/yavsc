@@ -42,5 +42,7 @@ namespace Yavsc
         private static readonly string[] GoogleScopes = { "openid", "profile", "email" };
         public static readonly string[] GoogleCalendarScopes =
         { "openid", "profile", "email", "https://www.googleapis.com/auth/calendar" };
+
+        public static readonly string NoneCode = "none";
     }
 }

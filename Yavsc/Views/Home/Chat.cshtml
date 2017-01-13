@@ -16,25 +16,37 @@
   color: black;
   font-family: monospace;
   font-style: bold;
+  background-color: yellow;
 }
- 
+
+#targets { 
+    display:inline-block;
+}
 </style>
 <div class="container">
     <input type="hidden" id="displayname" />
-   
-    <ul id="userlist" style="float:right;">
+   <div style="float:right; background-color: grey; padding:1em; margin:1em;">
+    <h3>Salons</h3>
+    <ul><li id="pubChan">Public</li></ul>
+    <h3>Utilisateurs</h3>
+    <ul id="userlist" style="list-style:none; padding: 1em; margin:1em;sqc">
     </ul>
+
+    </div>
     <ul id="discussion">
     </ul>
+    <div id="targets">
+        <div id="sendmessagebox">
      <input type="text" id="message" />
-    <div style="display: inline-block;">
     <input type="button" id="sendmessage" value="@SR["Send"]" />
+        </div>
     @if (ViewBag.IsAuthenticated) {
-        <br/>
-        <input type="button" id="sendpv" value="@SR["Send a private message"] @SR["to"]" />
-        <select id="to" />
-        <input type="button" id="btnDebug" Value="RUL"/>
+        <div id="sendpvbox">
+            <input type="text" id="pv" />
+            <button type="submit" id="sendpv">@SR["Send a private message"] @SR["to"] <div id="sendpvdest" /> </button>
+        </div>
     }
+    <input type="hidden" id="mySignalRConnectionIdHidden" value="" />
     </div>
 </div>
 
@@ -49,24 +61,53 @@
     <script>
                 
         $(function () {
+            var pvuis;
+
+            var setPrivate = function(li) 
+            {
+                $("#sendmessagebox").addClass("hidden");
+                $("#sendpvbox").removeClass("hidden");
+                pvuis = { CXs: $(li).data("cxids"), UserName: $(li).data("name")};
+                $('#sendpvdest').html(pvuis.UserName)
+            }
+            var setPublic = function()
+            {
+                $("#sendmessagebox").removeClass("hidden");
+                $("#sendpvbox").addClass("hidden");
+            }
+            $('#pubChan').css('cursor','pointer');
+            $('#pubChan').click(setPublic);
+            setPublic();
+
             var getUsers = function() {
+                console.log("Try and get user list ...");
                     $('#userlist').empty();
                     $('#to').empty();
-                    chat.server.getUserList().done(
+                    $.get("/api/chat/users").done(
                         function(users) {
                             $.each(users, function () {
                                 var user = this;
-                                document.userList[user.UserId]=user;
-                                $('#userlist').append('<li class="user">' + htmlEncode(user.UserName) + '</li>');
-
-                                $('#to').append('<option value="'+user.UserId+'">'+user.UserName+'</option>');
-
+                                console.log(user);
+                                var existent = $('#userlist li').filterByData("name",user.UserName);
+                                if (existent.length>0) existent.remove();
+                                var li = $('<li class="user"><img src="/Avatars/'+user.UserName+'.xs.png"> '+htmlEncode(user.UserName)+'</li>');
+                                
+                                var cxids = [];
+                                $.each(user.Connections,function() {
+                                    cxids.push(this.ConnectionId);
+                                });
+                                $(li).data("name",user.UserName);
+                                $(li).data("cxids",cxids);
+                                $(li).css('cursor','pointer');
+                                $(li).click(function(){
+                                    setPrivate(this);
+                                });
+                                li.appendTo('#userlist');
                             });
                         }
                     );
                 };
 
-            document.userList = {};
             // Reference the auto-generated proxy for the hub.
             var chat = $.connection.chatHub;
             // Create a function that the hub can call back to display messages.
@@ -80,11 +121,35 @@
                 $('#discussion').append('<li class="pv"><strong>' + htmlEncode(name)
                     + '</strong>: ' + htmlEncode(message) + '</li>');
             };
-            var onUserConnected =  function (cxid, username) {
-                 $('#userlist').append('<li class="user">'+username+'</li>')
-            };
+            $.fn.filterByData = function(prop, val) {
+                return this.filter(
+                    function() { return $(this).data(prop)==val; }
+                );
+            }
+
             var onUserDisconnected = function (cxid, username) {
-                 $('#userlist li[data-uid='+cxid+']').remove();
+                 $('#userlist li').filter (function() { 
+                     var nids = $(this).data("cxids").filter(function() { 
+                         return $(this) !== cxid
+                     });
+                     if (nids.Length==0) $(this).remove();
+                     else $(this).data("cxids",nids)
+                     });
+            };
+            var onUserConnected =  function (cxid, username) {
+                var connected = $('#userlist li').filterByData("name",username);
+                if (connected.length>0) {
+                    var ids = connected.data("cxids");
+                    ids.push(cxid);
+                    connected.data("cxids",ids);
+                } else {
+                    var li = $('<li class="user"><img src="/Avatars/'+username+'.xs.png"> '+username+'</li>');
+                    li.data("name",username);
+                    li.data("cxids",[cxid]);
+                    li.appendTo('#userlist');
+                    li.css('cursor','pointer');
+                    li.click(function(){ setPrivate(this); });
+                }
             };
             chat.client.notify = function (tag, message, data) {
                 if (data) {
@@ -114,24 +179,36 @@ $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
             </text>
             }
 
+
+            var sendMessage = function() {
+                chat.server.send($('#displayname').val(), $('#message').val());
+                    // Clear text box and reset focus for next comment.
+                $('#message').val('')
+            };
+
             // Set initial focus to message input box.
             $('#message').focus();
+
+
             // Start the connection.
             $.connection.hub.start().done(function () {
                 $('#sendmessage').click(function () {
                     // Call the Send method on the hub.
-                    chat.server.send($('#displayname').val(), $('#message').val());
-                    // Clear text box and reset focus for next comment.
-                    $('#message').val('').focus();
+                    sendMessage().focus();
+                });
+                $( "#message" ).keydown(function( event ) {
+                    if ( event.which == 13 ) {
+                        sendMessage()
+                        }
                 });
                 $('#sendpv').click(function () {
+
                     // Call the Send method on the hub.
-                    var user = document.userList[$('#to').val()];
-                    $.each(user.Connections,function () { 
-                        chat.server.sendPV( this.ConnectionId, $('#message').val());
+                    $.each(pvuis.CXs,function () { 
+                        chat.server.sendPV( this, $('#pv').val());
                      });
                     // Clear text box and reset focus for next comment.
-                    $('#message').val('').focus();
+                    $('#pv').val('').focus();
                 });
                 
                 getUsers();

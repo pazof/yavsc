@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Localization;
-using Yavsc.Model;
 using Yavsc.Models.Booking;
 using Yavsc.Models.Messaging;
 
@@ -12,14 +11,18 @@ namespace Yavsc.Helpers
         {
             var yaev = new BookQueryEvent
             {
-                Client =  new ClientProviderInfo { UserName = query.Client.UserName , UserId = query.ClientId }  ,
+                Client =  new ClientProviderInfo { 
+                    UserName = query.Client.UserName , 
+                    UserId = query.ClientId, 
+                    Avatar = query.Client.Avatar }  ,
                 Previsional = query.Previsional,
                 EventDate = query.EventDate,
                 Location = query.Location,
-                Id = query.Id
+                Id = query.Id,
+                Reason = query.Reason
             };
             return yaev;
         }
-
+        
     }
 }

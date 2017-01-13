@@ -30,29 +30,34 @@
   <ScrollView>
   <StackLayout Padding="10,10,10,10" x:Name="mainLayout">
   <ListView RefreshCommand="{Binding RefreshQueries}"  IsPullToRefreshEnabled="True"
-            ItemsSource="{Binding Queries}" x:Name="list" ItemTapped="OnViewDetail" HasUnevenRows="true" RowHeight="80">
-    <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
+            ItemsSource="{Binding Queries}" x:Name="list" ItemTapped="OnViewDetail" HasUnevenRows="true"
+            SeparatorVisibility="Default" SeparatorColor="Black">
+    <ListView.ItemTemplate VerticalOptions="StartAndExpand">
       <DataTemplate>
         <ViewCell>
           <ViewCell.View>
-            <StackLayout Orientation="Horizontal" Padding="10,10,10,10" VerticalOptions="StartAndExpand">
-                <StackLayout Orientation="Vertical" 
-                             HeightRequest="80" VerticalOptions="StartAndExpand">
-
-                  <StackLayout Orientation="Vertical" >
-                    <Image Source="{Binding Client.Avatar}" />
-                    <Label Text="{Binding Client.UserName}"
-                      Style="{StaticResource labelStyle}"></Label>
-                  </StackLayout>
-                  
-                  <Label LineBreakMode="WordWrap" Text="{Binding EventDate, StringFormat='{0:dddd d MMMM à HH:mm}'}" FontSize="12" FontFamily="Italic"/>
-                </StackLayout>
-                <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand">
-                  <Label LineBreakMode="WordWrap" Text="{Binding Location.Address}"/>
-                  <Label Text="{Binding Previsionnal}" />
-                  <Label Text="{Binding Id}" HorizontalTextAlignment="End"/>
-                </StackLayout>
-            </StackLayout>
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Source="{Binding Avatar}" />
+              <Label Grid.Row="3" Grid.Column="0" Grid.RowSpan="2" Text="{Binding Client.UserName}"  Style="{StaticResource labelStyle}"></Label>
+              <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2" Text="{Binding Data.Reason}"></Label>
+              <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" LineBreakMode="WordWrap" Text="{Binding EventDate, StringFormat='{0:dddd d MMMM à HH:mm}'}" FontFamily="Italic"/>
+              <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" LineBreakMode="WordWrap" Text="{Binding Location.Address}"/>
+              <Label Grid.Row="4" Grid.Column="1" Text="{Binding Previsionnal}" />
+              <Label Grid.Row="4" Grid.Column="2" Text="{Binding Id}" />
+            </Grid>
+               
           </ViewCell.View>
         </ViewCell>
       </DataTemplate>

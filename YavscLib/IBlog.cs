@@ -4,15 +4,14 @@ namespace Yavsc.Models
 {
     public interface IBlog
     {
-        IApplicationUser Author { get; set; }
         string AuthorId { get; set; }
-        string bcontent { get; set; }
+        string Content { get; set; }
         long Id { get; set; }
-        DateTime modified { get; set; }
-        string photo { get; set; }
-        DateTime posted { get; set; }
-        int rate { get; set; }
-        string title { get; set; }
-        bool visible { get; set; }
+        DateTime Modified { get; set; }
+        string Photo { get; set; }
+        DateTime Posted { get; set; }
+        int Rate { get; set; }
+        string Title { get; set; }
+        bool Visible { get; set; }
     }
 }

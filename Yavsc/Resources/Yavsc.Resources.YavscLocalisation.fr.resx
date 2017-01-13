@@ -203,6 +203,15 @@
   <data name="entries"><value>entrées</value></data>
   <data name="Estimate"><value>Estimer</value></data>
   <data name="Estimate_not_found"><value>Devis non trouvé</value></data>
+  <data name="EstimateToProduce"><value>Demandes de Devis en souffrance</value></data>
+  <data name="EstimateToSignAsPro"><value>Devis à valider</value></data>
+  <data name="EstimateToSignAsCli"><value>Devis à accèpter ou refuser</value></data>
+  <data name="BillToSignAsPro"><value>Factures à produire</value></data>
+  <data name="BillToSignAsCli"><value>Factures à honnorer</value></data>
+  <data name="PayementsDone"><value>Paiements effectués</value></data>
+
+  <data name="EstimationMessageToClient"><value>{0} a validé un devis pour vous : {1}\nAu total : {2} €
+  Il attend maintenant votre signature.</value></data>
   <data name="EstimateWanted"><value>Demande de devis</value></data>
   <data name="Event date"><value>Date de l'évennement</value></data>
   <data name="EventWebPage"><value>Page web de l'événement</value></data>
@@ -218,6 +227,7 @@
   <data name="Full name"><value>Nom complet</value></data>
   <data name="GCM Notification sending failed"><value>L'envoi du message push a échoué</value></data>
   <data name="GCM Notifications sent"><value>Message push envoyé</value></data>
+  <data name="GiveAnExplicitReason"><value>Dites en plus, ci àprès, à propos de cet évennement</value></data>
   <data name="GoogleDidntGeoLocalized"><value>Google n'a pas pu identifier ce lieu</value></data>
   <data name="Google calendar"><value>Agenda Google</value></data>
   <data name="Google error"><value>Erreur Google : {0}</value></data>
@@ -264,13 +274,13 @@
   <data name="NewPasswordMessageSent"><value>Un e-mail vient de vous être envoyé, il contient le lien à suivre
   pour pouvoir mettre à jour votre mot de passe.</value></data>
   <data name="No"><value>Non</value></data>
+  <data name="No calendar for this user"><value>Le préstataire n'a pas de calendrier associé.</value></data>
   <data name="no content"><value>pas de contenu</value></data>
   <data name="No deposit"><value>Aucune arrhes n'a été prévue</value></data>
-  <data name="NoSkillforthisactivity"><value>Aucune compétence n'a été enregistrée par aucun préstataire pour cette activité.</value></data>
-  <data name="none"><value>aucun(e)</value></data>
+  <data name="none"><value>aucun</value></data>
   <data name="Non existent user"><value>Non existent user</value></data>
+  <data name="NoSkillforthisactivity"><value>Aucune compétence n'a été enregistrée par aucun préstataire pour cette activité.</value></data>
   <data name="Not Approuved"><value>Non approuvé</value></data>
-  <data name="No calendar for this user"><value>Le préstataire n'a pas de calendrier associé.</value></data>
   <data name="Offline"><value>Hors ligne</value></data>
   <data name="Online"><value>En ligne</value></data>
   <data name="OnlyAuthorizedMayContact"><value>Seuls les utilisateurs authorisés peuvent contacter un préstataire par courrier.</value></data>
@@ -296,6 +306,8 @@
   <data name="Profile edition"><value>Édition du profile</value></data>
   <data name="Product reference"><value>Référence produit</value></data>
   <data name="prestation"><value>prestation</value></data>
+  <data name="Professional settings"><value>Paramètres professionels</value></data>
+
   <data name="ProviderId"><value>Identifiant du fournisseur</value></data>
   <data name="ProviderName"><value>Nom du fournisseur</value></data>
   <data name="Rate"><value>Cote</value></data>
@@ -316,11 +328,12 @@
   <data name="RoleName"><value>Nom du rôle </value></data>
   <data name="Save these settings"><value>Save these settings</value></data>
   <data name="Search"><value>Chercher</value></data>
-  <data name="Set"><value>Positioner</value></data>
   <data name="Select a Google calendar"><value>Selectioner un calendrier Google</value></data>
   <data name="Send"><value>Envoyer</value></data>
   <data name="Send a private message"><value>Envoyer un message privé</value></data>
   <data name="Send a public message"><value>Envoyer un message publique</value></data>
+  <data name="Set"><value>Positioner</value></data>
+  <data name="SettingsClass"><value>Classe du paramétrage</value></data>
   <data name="SiteSkills"><value>Talents/Compétences/Spécialités gérés sur ce site</value></data>
   <data name="Skill"><value>Compétence</value></data>
   <data name="Skills"><value>Talents/Compétences/Spécialités</value></data>
@@ -361,6 +374,10 @@
   <data name="XHasBeenNotified"><value>{0} à été notifié de votre demande, vous devriez être contacté rapidement</value></data>
   <data name="Xshouldbeavailable"><value>Au vu de son calendrier,
   {0} devrait être disponible pour ce rendez-vous</value></data>
+  <data name="Yavsc.Models.Booking.Profiles.Instrumentation"><value>Paramètres musicien (l'instrument)</value></data>
+  <data name="Yavsc.Models.Booking.Profiles.DjSettings"><value>Paramètres Dj (le compte SoundCloud.com)</value></data>
+  <data name="Yavsc.Models.Booking.Profiles.FormationSettings"><value>Paramètres formation (les partenaires)</value></data>
+  <data name="Yavsc.Models.Booking.Profiles.GeneralSettings"><value>Paramètres généraux: une couleur musicale</value></data>
   <data name="Yes"><value>Oui</value></data>
   <data name="YouNeedToBeAuthenticatedIOToContact"><value>Vous devez vous authentifier pour pouvoir demander un devis
       à un préstataire.</value></data>
@@ -373,7 +390,9 @@
   <data name="YourNeed"><value>Votre besoin</value></data>
   <data name="yourquerytransmitted"><value>Votre demande a été transmise</value></data>
   <data name="YourSkills"><value>Vos talents, vos spécialités, le domaine de vos activités</value></data>
-  <data name="YourPosts"><value>Vos publications</value></data>
-  <data name="YourProfile"><value>Votre profile</value></data>
+  <data name="Your posts"><value>Vos publications</value></data>
+  <data name="Your profile"><value>Votre profile</value></data>
   <data name="YourMessageHasBeenSent"><value>Votre messge a été envoyé</value></data>
+  <data name="Tell more, below, about your query"><value>Dites en plus, ci àprès, à propos de cet évennement</value></data>
+  
 </root>

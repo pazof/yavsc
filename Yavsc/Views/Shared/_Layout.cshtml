@@ -21,13 +21,12 @@
         <environment names="Staging,Production,yavsc,yavscpre,booking,lua">
             <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
                     asp-fallback-src="~/bower_components/jquery/dist/jquery.min.js"
-                    asp-fallback-test="window.jQuery">
+                    asp-fallback-test="window.jQuery" >
             </script>
             <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js"
                     asp-fallback-src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"
                     asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
             </script>
-            <script src="~/js/site.min.js" asp-append-version="true"></script>
         </environment>
         @RenderSection("header", required: false)
     </head>
@@ -46,11 +45,10 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a asp-controller="Home" asp-action="Index" class="navbar-link">@SR["Home"]</a></li>
                         <li><a asp-controller="Blogspot" asp-action="Index" class="navbar-link">@SR["Blogs"]</a></li>
-                        <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
                         <li><a asp-controller="Home" asp-action="Chat" class="navbar-link">@SR["Chat"]</a></li>
                         <li><a asp-controller="Home" asp-action="Contact" class="navbar-link">@SR["Contact"]</a></li>
+                        <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
                     </ul>
                     @await Html.PartialAsync("_LoginPartial")
                 </div>
@@ -61,8 +59,35 @@
         </main>
         <hr />
         <footer>
-            <p>Yavsc - Copyright &copy; 2016  Paul Schneider</p>
+                <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '552433071604577',
+      xfbml      : true,
+      version    : 'v2.5'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/fr_FR/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+<div
+  class="fb-like"
+  data-share="true"
+  data-width="450"
+  data-show-faces="true">
+</div>
+
+
+            <p>Yavsc - Copyright &copy; 2016 - 2017 Paul Schneider</p>
         </footer>
         @RenderSection("scripts", required: false)
+
+
     </body>
 </html>

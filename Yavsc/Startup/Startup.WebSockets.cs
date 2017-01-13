@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Concurrent;
-using System.Net.WebSockets;
-using System.Threading;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 
@@ -15,7 +11,7 @@ namespace Yavsc
             app.UseWebSockets();
 
             app.UseSignalR("/api/signalr");
-
+/*
             var _sockets = new ConcurrentBag<WebSocket>();
 
             app.Use(
@@ -56,7 +52,7 @@ namespace Yavsc
                        await next();
                    }
                }
-            );
+            ); */
         }
     }
 }

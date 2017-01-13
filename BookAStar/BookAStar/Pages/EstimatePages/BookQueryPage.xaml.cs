@@ -7,14 +7,14 @@ namespace BookAStar.Pages
 {
     using Data;
     using EstimatePages;
-    using Model;
+    using Model.Social;
     using Model.Workflow;
     using ViewModels.EstimateAndBilling;
 
     public partial class BookQueryPage : ContentPage
     {
 
-        public BookQueryData BookQuery
+        public BookQuery BookQuery
         {
             get
             {
@@ -32,14 +32,14 @@ namespace BookAStar.Pages
                 var pin = new Pin
                 {
                     Type = PinType.SavedPin,
-                    Position = new Position(
-                        lat, lon),
+                    Position = new Xamarin.Forms.Maps.Position
+                    (lat, lon),
                     Label = BookQuery.Client.UserName,
                     Address = BookQuery.Location.Address
                 };
                 map.Pins.Add(pin);
                 map.MoveToRegion(MapSpan.FromCenterAndRadius(
-                    new Position(lat, lon), Distance.FromMeters(100)));
+                    new Xamarin.Forms.Maps.Position(lat, lon), Distance.FromMeters(100)));
             }
             
         }
@@ -47,14 +47,14 @@ namespace BookAStar.Pages
         {
             InitializeComponent();
         }
-        public BookQueryPage(BookQueryData bookQuery=null)
+        public BookQueryPage(BookQueryViewModel bookQuery =null)
         {
             
             InitializeComponent();
-
+            // when TODO update?
             // Task.Run( async () => { bookQuery = await App.CurrentApp.DataManager.BookQueries.Get(bookQueryId); });
 
-            BindingContext = new BookQueryViewModel(bookQuery);
+            BindingContext = bookQuery;
         }
 
         private void OnEditEstimate(object sender, EventArgs ev)
@@ -65,31 +65,25 @@ namespace BookAStar.Pages
             if (editEstimateViewModel == null)
             {
                 // First search for an existing estimate
-                var estimateToEdit = DataManager.Current.Estimates.FirstOrDefault(
-                    estimate=> estimate.CommandId == bookQueryViewModel.Id
+                editEstimateViewModel = DataManager.Instance.EstimationCache.FirstOrDefault(
+                    estimate=> estimate.Query.Id == bookQueryViewModel.Id
                     );
-                if (estimateToEdit == null)
+                if (editEstimateViewModel == null)
                 {
-                    DataManager.Current.Contacts.Merge(BookQuery.Client);
-                    DataManager.Current.Contacts.SaveEntity();
-                    estimateToEdit = new Estimate
+                    DataManager.Instance.Contacts.Merge(BookQuery.Client);
+                    DataManager.Instance.Contacts.SaveEntity();
+                    editEstimateViewModel = new EditEstimateViewModel( new Estimate
                     {
                         ClientId = BookQuery.Client.UserId,
                         CommandId = BookQuery.Id,
                         OwnerId = MainSettings.CurrentUser.Id,
                         Id = 0
-                    };
-                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit);
+                    });
+                    DataManager.Instance.EstimationCache.Add(editEstimateViewModel);
                 }
-                else
-                    editEstimateViewModel = new EditEstimateViewModel(estimateToEdit);
-
-                DataManager.Current.EstimationCache.Add(editEstimateViewModel);
             }
             App.NavigationService.NavigateTo<EditEstimatePage>(true,
              editEstimateViewModel);
-
-
         }
 
         private async void OnViewEstimate(object sender, EventArgs ev)
@@ -117,6 +111,14 @@ namespace BookAStar.Pages
                 bookQueryLayout.Orientation = StackOrientation.Vertical;
             }
             base.OnSizeAllocated(width, height);
+        }
+        private void OnBlockThisUser(object sender, EventArgs ev)
+        {
+            throw new NotImplementedException();
+        }
+        private void OnDropQuery(object sender, EventArgs ev)
+        {
+            throw new NotImplementedException();
         }
     }
 }

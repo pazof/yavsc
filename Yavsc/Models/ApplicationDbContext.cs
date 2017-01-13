@@ -5,18 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
-using Yavsc.Models.Auth;
-using Yavsc.Models.Billing;
-using Yavsc.Models.Booking;
-using Yavsc.Models.OAuth;
-using Yavsc.Models.Workflow;
-using Yavsc.Models.Identity;
-using Yavsc.Models.Market;
-using Yavsc.Model;
-using Yavsc.Model.Chat;
+using Yavsc.Models.Relationship;
 
 namespace Yavsc.Models
 {
+
+    using Auth;
+    using Billing;
+    using Booking;
+    using OAuth;
+    using Workflow;
+    using Identity;
+    using Market;
+    using Chat;
+    using Messaging;
+    using Access;
+    using Yavsc.Models.Booking.Profiles;
+    using System.Collections.Generic;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -32,6 +37,8 @@ namespace Yavsc.Models
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
             builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
+            builder.Entity<UserActivity>().HasKey(u=> new { u.DoesCode, u.UserId});
+            builder.Entity<Instrumentation>().HasKey(u=> new { u.InstrumentId, u.UserId});
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -47,7 +54,7 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         public DbSet<Activity> Activities { get; set; }
-
+        public DbSet<UserActivity> UserActivities { get; set; }
         /// <summary>
         /// Users posts
         /// </summary>
@@ -189,6 +196,20 @@ namespace Yavsc.Models
         public DbSet<ClientProviderInfo> ClientProviderInfo { get; set; }
 
         public DbSet<Connection> Connections { get; set; }
-        
+
+        public DbSet<BlackListed> BlackListed { get; set; }
+
+        public DbSet<MusicalPreference> MusicalPreferences { get; set; }
+
+        public DbSet<MusicalTendency> MusicalTendency { get; set; }
+
+        public DbSet<LocationType> LocationType { get; set; }
+
+        public DbSet<Instrument> Instrument { get; set; }        
+        public DbSet<DjSettings> DjSettings { get; set; }
+        public DbSet<Instrumentation> Instrumentation { get; set; }
+        public DbSet<FormationSettings> FormationSettings { get; set; }
+        public DbSet<GeneralSettings> GeneralSettings { get; set; }
+        public DbSet<CoWorking> WorkflowProviders { get; set; }
     }
 }

@@ -4,18 +4,9 @@ using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Models;
 using Yavsc.Models.Booking;
+using Yavsc.ViewModels.Auth;
 
 namespace Yavsc {
-    public class PrivateChatEntryRequirement : IAuthorizationRequirement
-    {
-    }
-
-    public class EditRequirement : IAuthorizationRequirement
-    {
-        public EditRequirement()
-        {
-        }
-    }
 
     public class FileSpotInfo : IAuthorizationRequirement
     {
@@ -63,18 +54,16 @@ namespace Yavsc {
 
     }
     
-public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
+    public class ViewFileHandler : AuthorizationHandler<ViewRequirement, ViewFileContext>
     {
-        protected override void Handle(AuthorizationContext context, ViewRequirement requirement, Blog resource)
+        protected override void Handle(AuthorizationContext context, ViewRequirement requirement,  ViewFileContext fileContext)
         {
-            if (context.User.IsInRole("Moderator"))
+            // TODO file access rules
+            if (fileContext.Path.StartsWith("/pub/"))
                 context.Succeed(requirement);
-            else if (context.User.Identity.IsAuthenticated)
-            if (resource.AuthorId == context.User.GetUserId())
-                context.Succeed(requirement); 
-            else if (resource.Visible)
-            // TODO && ( resource.Circles == null || context.User belongs to resource.Circles )
-                context.Succeed(requirement); 
+            else {
+                context.Succeed(requirement);
+            }
         }
     }
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:id="@+id/copy"
+        android:title="@string/copy"/>
+  <group android:id="@+id/group">
+  <item android:id="@+id/past"
+        android:title="@string/past"
+        android:showAsAction="ifRoom|withText"/>
+  </group>
+  <item android:id="@+id/submenu_character"
+        android:title="@string/character" >
+    <menu>
+      <item android:id="@+id/bold"
+            android:title="@string/bold" />
+      <item android:id="@+id/italic"
+            android:title="@string/italic" />
+      <item android:id="@+id/underline"
+            android:title="@string/underline" />
+    </menu>
+  </item>
+<item android:id="@+id/submenu_paragraph"
+        android:title="@string/paragraph" >
+    <menu>
+      
+    <item android:id="@+id/header1"
+          android:onClick="onGroupItemClick"
+          android:title="@string/header1" />
+    <item android:id="@+id/header2"
+          android:onClick="onGroupItemClick"
+          android:title="@string/header2" />
+    </menu>
+  </item>
+</menu>

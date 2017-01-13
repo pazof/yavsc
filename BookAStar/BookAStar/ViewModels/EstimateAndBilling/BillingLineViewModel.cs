@@ -1,25 +1,54 @@
 ﻿using BookAStar.Attributes;
 using BookAStar.Interfaces;
 using BookAStar.Model.Workflow;
+using BookAStar.ViewModels.Validation;
 using System;
 using System.Globalization;
 using System.Windows.Input;
+using System.ComponentModel;
 
 namespace BookAStar.ViewModels.EstimateAndBilling
 {
-    public class BillingLineViewModel : EditingViewModel, IBillingLine
+    public class BillingLineViewModel : EditingViewModel<BillingLine>, IBillingLine
     {
-        BillingLine data;
+        public ICommand RemoveCommand { get; set; }
+        public ICommand ValidateCommand { set; get; }
 
-        public BillingLineViewModel(BillingLine data)
+        public BillingLineViewModel(BillingLine data): base(data)
         {
-            this.data = data ?? new BillingLine();
-            // sets durationValue & durationUnit
-            count = data.Count;
-            description = data.Description;
+            CheckCommand = new Action<BillingLine, ModelState>(
+                (l,s) => {
+                    if (string.IsNullOrWhiteSpace(l.Description))
+                    {
+                        s.AddError("Description",Strings.NoDescription);
+                    }
+                    if (l.UnitaryCost < 0) { s.AddError("UnitaryCost", Strings.InvalidValue); }
+                    if (l.Count < 0) { s.AddError("Count", Strings.InvalidValue); }
+                });
+            SyncData();
+        }
 
-            Duration = data.Duration;
-            unitaryCostText = data.UnitaryCost.ToString("G", CultureInfo.InvariantCulture);
+        private void SyncData()
+        {
+            if (Data != null)
+            {
+                // set durationValue, durationUnit
+                Duration = Data.Duration;
+                // other redondant representation
+                count = Data.Count;
+                description = Data.Description;
+                unitaryCostText = Data.UnitaryCost.ToString("G", CultureInfo.InvariantCulture);
+            }
+            CheckCommand(Data, ViewModelState);
+        }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName=="Data")
+            {
+                SyncData();
+            }
         }
 
         private int count;
@@ -33,7 +62,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             set
             {
                 SetProperty<int>(ref count, value);
-                data.Count = count;
+                Data.Count = count;
             }
         }
         private string description;
@@ -47,9 +76,10 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             set
             {
                 SetProperty<string>(ref description, value);
-                data.Description = description;
+                Data.Description = description;
             }
         }
+
         decimal unitaryCost;
         public decimal UnitaryCost
         {
@@ -61,7 +91,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             set
             {
                 SetProperty<decimal>(ref unitaryCost, value);
-                data.UnitaryCost = unitaryCost;
+                Data.UnitaryCost = unitaryCost;
             }
         }
 
@@ -76,7 +106,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             set
             {
                 SetProperty<int>(ref durationValue, value, "DurationValue");
-                data.Duration = this.Duration;
+                Data.Duration = this.Duration;
             }
         }
 
@@ -99,7 +129,7 @@ pour décrire la quantité de travail associée à ce type de service")]
             set
             {
                 SetProperty<DurationUnits>(ref durationUnit, value, "DurationUnit");
-                data.Duration = this.Duration;
+                Data.Duration = this.Duration;
             }
         }
         
@@ -125,7 +155,6 @@ pour décrire la quantité de travail associée à ce type de service")]
             }
         }
 
-        public ICommand ValidateCommand { set; get; }
 
         public TimeSpan Duration
         {

@@ -3,45 +3,49 @@
     using Model;
     using Model.Blog;
     using Model.Workflow;
-    using Model.UI;
     using Model.Social.Messaging;
-    using Model.FileSystem;
     using ViewModels.EstimateAndBilling;
     using NonCrUD;
+    using ViewModels;
+    using Model.Access;
+    using ViewModels.Messaging;
+    using Model.Social;
 
     public class DataManager
     {
         // TODO estimatetemplate rating service product tag   
-        public RemoteEntityRO<BookQueryData, long> BookQueries { get; set; }
-        public RemoteEntity<Estimate, long> Estimates { get; set; }
+        public RemoteEntityRO<BookQuery, long> BookQueries { get; set; }
+        public ChatUserCollection ChatUsers { get; set; }
+        public EstimateEntity Estimates { get; set; }
         public RemoteEntity<Blog, long> Blogspot { get; set; }
         internal RemoteFilesEntity RemoteFiles { get; set; }
 
-        public LocalEntity<ClientProviderInfo,string> Contacts { get; set; }
-        internal LocalEntity<PageState, int> AppState { get; set; }
-        
+        public LocalEntity<ClientProviderInfo, string> Contacts { get; set; }
+        internal RemoteEntity<BlackListed, long> BlackList { get; set; }
         /// <summary>
-        /// They have no remote exisence ...
+        /// They've got no remote existence ...
         /// </summary>
         internal LocalEntity<EditEstimateViewModel, long> EstimationCache { get; set; }
         internal LocalEntity<BillingLine, string> EstimateLinesTemplates { get; set; }
         internal LocalEntity<ChatMessage, int> PrivateMessages { get; set; }
-        protected static DataManager current ;
+        internal LocalEntity<PageState, int> AppState { get; set; }
+        internal LocalEntity<string,string> ClientSignatures { get; set; }
+        internal LocalEntity<string, string> ProviderSignatures { get; set; }
 
-        public static DataManager Current 
+        protected static DataManager instance = new DataManager();
+
+        public static DataManager Instance 
         {
             get
             {
-                if (current == null)
-                    current = new DataManager();
-                return current;
+                return instance;
             }
         }
 
         public DataManager()
         {
-            BookQueries = new RemoteEntityRO<BookQueryData, long>("bookquery", q => q.Id);
-            Estimates = new RemoteEntity<Estimate, long>("estimate", x => x.Id);
+            BookQueries = new RemoteEntityRO<BookQuery, long>("bookquery", q => q.Id);
+            Estimates = new EstimateEntity();
             Blogspot = new RemoteEntity<Blog, long>("blog", x=>x.Id);
 
             Contacts = new LocalEntity<ClientProviderInfo, string>(c => c.UserId);
@@ -50,7 +54,8 @@
             EstimateLinesTemplates = new LocalEntity<BillingLine, string>(l => l.Description);
             PrivateMessages = new LocalEntity<ChatMessage, int>(m=> m.GetHashCode());
             RemoteFiles = new RemoteFilesEntity ();
-
+            BlackList = new RemoteEntity<BlackListed, long>("blacklist",u => u.Id);
+            ChatUsers = new ChatUserCollection();
             PrivateMessages.Load();
             BookQueries.Load();
             Estimates.Load();
@@ -60,6 +65,9 @@
             EstimationCache.Load();
             EstimateLinesTemplates.Load();
             RemoteFiles.Load();
+            BlackList.Load();
+            ChatUsers.Load();
+            BlackList.Load();
         }
     }
 }

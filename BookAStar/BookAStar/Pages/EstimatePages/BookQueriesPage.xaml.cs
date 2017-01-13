@@ -14,20 +14,34 @@ namespace BookAStar.Pages
         public BookQueriesPage()
         {
             InitializeComponent();
-            var model = new BookQueriesViewModel();
-            model.RefreshQueries =
-                new Command( () => {
-                    DataManager.Current.BookQueries.Execute(null);
-                    this.list.EndRefresh();
-                });
-            
+            BindingContext = new BookQueriesViewModel();
+        }
+
+        public BookQueriesPage(BookQueriesViewModel model)
+        {
+            InitializeComponent();
             BindingContext = model;
+        }
+
+        protected override void OnBindingContextChanged()
+        {
+            BookQueriesViewModel model = (BookQueriesViewModel) BindingContext;
+            if (model!=null)
+            {
+                model.RefreshQueries =
+                    new Command(() =>
+                    {
+                        DataManager.Instance.BookQueries.Execute(null);
+                        this.list.EndRefresh();
+                    });
+            }
+            base.OnBindingContextChanged();
         }
 
         private void OnViewDetail(object sender, ItemTappedEventArgs e)
         {
-            BookQueryData data = e.Item as BookQueryData;
-            App.NavigationService.NavigateTo<BookQueryPage>(true,data);
+            var item = e.Item as BookQueryViewModel;
+            App.NavigationService.NavigateTo<BookQueryPage>(true,item);
         }
     }
 }

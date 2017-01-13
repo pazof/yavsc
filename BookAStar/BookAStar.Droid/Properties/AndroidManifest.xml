@@ -30,6 +30,12 @@
 				<action android:name="android.service.chooser.ChooserTargetService" />
 			</intent-filter>
 		</service>
+		<service android:name="fr.pschneider.bas.AccountChooserService">
+			<intent-filter>
+				<action android:name="android.accounts.AccountAuthenticator" />
+			</intent-filter>
+			<meta-data android:name="android.accounts.AccountAuthenticator" android:resource="@xml/authenticator" />
+		</service>
 	</application>
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WAVE_LOCK" />

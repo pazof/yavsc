@@ -368,7 +368,7 @@ public class YaOAuth2Authenticator : WebRedirectAuthenticator
         var query = queryValues.FormEncode();
 
         var req = WebRequest.Create(accessTokenUrl);
-       //     (req as HttpWebRequest).Accept = "application/json";
+            (req as HttpWebRequest).Accept = "application/json";
             req.Method = "POST";
             var body = Encoding.UTF8.GetBytes(query);
             req.ContentLength = body.Length;

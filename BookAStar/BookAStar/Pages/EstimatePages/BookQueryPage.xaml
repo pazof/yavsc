@@ -19,20 +19,24 @@
 
   <StackLayout x:Name="bookQueryLayout">
     <StackLayout Orientation="Vertical">
-    <Image Source="{Binding Client.AvatarOrNot}" Aspect="AspectFit" VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}"/>
+    <Image Source="{Binding Avatar}" Aspect="AspectFit" VisualElement.HeightRequest="{StaticResource BigUserAvatarSize}"/>
     <Label Text="{Binding Client.UserName}" />
     <Label Text="{Binding EventDate, StringFormat='le {0:dddd d MMMM yyyy à hh:mm}'}"  />
+    <Label Text="{Binding Data.Reason}" />
     <Label Text="{Binding Location.Address}" />
     <Label Text="{Binding Previsional}" />
     </StackLayout>
     <StackLayout Orientation="Vertical"  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
     <maps:Map x:Name="map" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"></maps:Map>
       <StackLayout Orientation="Horizontal">
-        <Button Text="{x:Static local:Strings.ViewEstimate}" 
-                BorderRadius="50" BorderWidth="2" BorderColor="Aqua" x:Name ="btn"
-                IsEnabled="{Binding EstimationDone}"
-                Clicked="OnViewEstimate" Image="exclam.png" />
+        
         <Button Text="{Binding EditEstimateButtonText}" Clicked="OnEditEstimate" />
+        <Button Text="{x:Static local:Strings.DeclineQuery}" Clicked="OnDropQuery" />
+        <Button Text="{x:Static local:Strings.BlockThisUser}" Clicked="OnBlockThisUser" />
+        <Button Text="{x:Static local:Strings.ViewEstimate}"
+                BorderRadius="50" BorderWidth="2" BorderColor="Aqua" x:Name ="btn"
+                VisualElement.IsVisible="{Binding EstimationDone}"
+                Clicked="OnViewEstimate" Image="exclam.png" />
       </StackLayout>
     </StackLayout>
   </StackLayout>

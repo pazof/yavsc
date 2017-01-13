@@ -1,5 +1,4 @@
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -7,7 +6,10 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Data.Entity;
 using Yavsc.Models;
+using Yavsc.Models.Auth;
+using Yavsc.ViewModels.Administration;
 
 namespace Yavsc.Controllers
 {
@@ -17,11 +19,15 @@ namespace Yavsc.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        private readonly ApplicationDbContext context;
+
         public AdministrationController(UserManager<ApplicationUser> userManager,
-         RoleManager<IdentityRole> roleManager)
+         RoleManager<IdentityRole> roleManager,
+         ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            this.context = context;
         }
 
         /// <summary>
@@ -47,30 +53,53 @@ namespace Yavsc.Controllers
                 AddErrors(addToRoleResult);
                 return new BadRequestObjectResult(ModelState);
             }
-            return Ok(new {message="you owned it."});
+            return Ok(new { message = "you owned it." });
         }
-        public class RoleInfo {
-            public string Name { get; set; }
-            public IEnumerable<string> Users { get; set; }
-        }
-        [Authorize(Roles=Constants.AdminGroupName)]
+        
+        [Authorize(Roles = Constants.AdminGroupName)]
         [Produces("application/json")]
-        public async Task<IActionResult> Index() {
+        public async Task<IActionResult> Index()
+        {
             var adminCount = await _userManager.GetUsersInRoleAsync(
                 Constants.AdminGroupName);
             var youAreAdmin = await _userManager.IsInRoleAsync(
                 await _userManager.FindByIdAsync(User.GetUserId()),
                 Constants.AdminGroupName);
-            var roles = _roleManager.Roles.Select(x=>
-              new RoleInfo {
-                  Name = x.Name,
-                  Users = x.Users.Select( u=>u.UserId )
-              } );
-            return Ok (new { Roles = roles, AdminCount = adminCount.Count,
-               YouAreAdmin = youAreAdmin
+            var roles = _roleManager.Roles.Include(
+                x => x.Users
+            ).Select(x => new RoleInfo {
+                Id = x.Id,
+                Name = x.Name,
+                Users = x.Users.Select(u=>u.UserId).ToArray()
+            });
+            return View(new AdminViewModel
+            {
+                Roles = roles.ToArray(),
+                AdminCount = adminCount.Count,
+                YouAreAdmin = youAreAdmin
             });
         }
         
+        public IActionResult Role(string id)
+        {
+            IdentityRole role = _roleManager.Roles
+            .Include(r=>r.Users).FirstOrDefault
+                ( r=> r.Id == id );
+            var ri = GetRoleUserCollection(role);
+            return View("Role",ri);
+        }
+
+        public RoleUserCollection GetRoleUserCollection(IdentityRole role)
+        {
+            var result = new RoleUserCollection {
+                Id = role.Id,
+                Name = role.Name,
+                Users = context.Users.Where(u=>role.Users.Any(ru => u.Id == ru.UserId))
+                .Select( u => new UserInfo { UserName = u.UserName, Avatar = u.Avatar, UserId = u.Id } )
+                .ToArray()
+            };
+            return result;
+        }
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)

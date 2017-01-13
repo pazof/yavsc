@@ -39,9 +39,7 @@
 <script src="~/js/to-markdown.js"></script>
 <script src="~/js/md-helpers.js"></script>
 <script>
-
  $(document).ready(function() {
-
   var editortitre = new Quill('#Titlecnt', {
     modules: { toolbar: '#Titletoolbar' },
     theme: 'snow'
@@ -185,6 +183,7 @@ editorcontenu.on('text-change',function(delta,source){
 <div>
     
 </div>
+@await Component.InvokeAsync("Directory","")
 <div >
     <form id="postfiles" class="dropzone" method="post" enctype="multipart/form-data">
   <div class="fallback">

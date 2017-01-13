@@ -33,9 +33,6 @@
         </Grid>
 
         <Label Text="{Binding Title}" />
-        
-        <Label Text="{Binding Description}" />
-
         <views:MarkdownView x:Name="mdview"
            HorizontalOptions="FillAndExpand"
     Markdown="{Binding Description}"

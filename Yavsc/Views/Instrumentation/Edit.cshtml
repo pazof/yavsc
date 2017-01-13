@@ -1,0 +1,30 @@
+@model Yavsc.Models.Booking.Profiles.Instrumentation
+@{
+ 
+    ViewBag.SettingLabel = SR["Yavsc.Models.Booking.Profiles.Instrumentation"];
+    ViewData["Title"] = SR[ViewBag.SettingLabel] + "[" +SR["Edit"] + "]" ;
+ }
+<h2>Edit</h2>
+
+<form asp-action="Edit">
+    <div class="form-horizontal">
+        <h4>MusicianSettings</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="UserId" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

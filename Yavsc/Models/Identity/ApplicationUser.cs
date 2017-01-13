@@ -4,8 +4,9 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Identity;
-using Yavsc.Model.Chat;
+using Yavsc.Models.Chat;
 using Yavsc.Model.Bank;
+using Yavsc.Models.Access;
 
 namespace Yavsc.Models
 {
@@ -87,5 +88,7 @@ namespace Yavsc.Models
         
         public long DiskQuota { get; set; } = 512*1024*1024;
         public long DiskUsage { get; set; } = 0;
+
+        public virtual List<BlackListed> BlackList { get; set; }
     }
 }

@@ -19,7 +19,6 @@ namespace BookAStar
     using Data;
     using Interfaces;
     using Model;
-    using Model.UI;
     using Pages;
     using Plugin.Connectivity;
     using Model.Social.Messaging;
@@ -27,6 +26,11 @@ namespace BookAStar
     using ViewModels.UserProfile;
     using Pages.UserProfile;
     using ViewModels.EstimateAndBilling;
+    using Pages.EstimatePages;
+    using ViewModels;
+    using Pages.Chat;
+    using System.Collections.Generic;
+    using Model.Social;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -35,13 +39,14 @@ namespace BookAStar
 
         [Obsolete("Instead using this, use new static properties.")]
         public static App CurrentApp { get { return Current as App; } }
-       
+
+        private static ExtendedMasterDetailPage masterDetail;
         public static bool MasterPresented
         {
             get
-            { return CurrentApp.masterDetail.IsPresented; }
+            { return App.masterDetail.IsPresented; }
             internal set
-            { CurrentApp.masterDetail.IsPresented = value; }
+            { masterDetail.IsPresented = value; }
         }
 
         public void Init()
@@ -63,27 +68,27 @@ namespace BookAStar
             MainSettings.UserChanged += MainSettings_UserChanged;
             CrossConnectivity.Current.ConnectivityChanged += (conSender, args) =>
             { App.IsConnected = args.IsConnected; };
+            SetupHubConnection();
             MainSettings_UserChanged(this, null);
-            if (CrossConnectivity.Current.IsConnected)
-                StartHubConnection();
+            
+                StartConnexion();
         }
 
         // omg
         private void OnError(object sender, EventArgs e)
         {
-            
+
         }
-        
+
         // Called on rotation after OnSuspended
         private void OnClosing(object sender, EventArgs e)
         {
-            
         }
 
         // FIXME Never called.
         private void OnInitialize(object sender, EventArgs e)
         {
-           
+
         }
 
         // called on app startup, not on rotation
@@ -92,17 +97,22 @@ namespace BookAStar
             // TODO special startup pages as
             // notification details or wizard setup page
         }
-
+        private static INavigation Navigation
+        {
+            get
+            {
+                return masterDetail.Detail.Navigation;
+            }
+        }
         // Called on rotation
         private void OnSuspended(object sender, EventArgs e)
         {
-            // TODO save the navigation stack
+            StopConnection();
             int position = 0;
-            
-            foreach (Page page in MainPage.Navigation.NavigationStack)
+            DataManager.Instance.AppState.Clear();
+            foreach (Page page in Navigation.NavigationStack)
             {
-
-                DataManager.Current.AppState.Add(
+                DataManager.Instance.AppState.Add(
                     new PageState
                     {
                         Position = position++,
@@ -110,28 +120,35 @@ namespace BookAStar
                         BindingContext = page.BindingContext
                     });
             }
-            DataManager.Current.AppState.SaveEntity();
+            DataManager.Instance.AppState.SaveEntity();
         }
 
         // called on app startup, after OnStartup, not on rotation
         private void OnAppResumed(object sender, EventArgs e)
         {
+            StartConnexion();
             // TODO restore the navigation stack 
             base.OnResume();
-            foreach (var pageState in DataManager.Current.AppState)
+            foreach (var pageState in DataManager.Instance.AppState)
             {
-                var pageType = Type.GetType(pageState.PageType);
-                NavigationService.NavigateTo(
-                    pageType, true, pageState.BindingContext);
+                if (pageState.PageType != null)
+                {
+                    var pageType = Type.GetType(pageState.PageType);
+                    if (pageState.BindingContext != null)
+                        NavigationService.NavigateTo(
+                           pageType, false, pageState.BindingContext);
+                    else NavigationService.NavigateTo(
+                        pageType, false);
+                }
             }
-            DataManager.Current.AppState.Clear();
-            DataManager.Current.AppState.SaveEntity();
+            DataManager.Instance.AppState.Clear();
+            DataManager.Instance.AppState.SaveEntity();
         }
 
         // FIXME Not called? 
         private void OnRotation(object sender, EventArgs<Orientation> e)
         {
-            
+
         }
 
         public static GenericConfigSettingsMgr ConfigManager { protected set; get; }
@@ -139,9 +156,6 @@ namespace BookAStar
         private void Configure(IXFormsApp app)
         {
             ViewFactory.EnableCache = true;
-            ViewFactory.Register<ChatPage, ChatViewModel>(
-                r=> new ChatViewModel { ChatUser = MainSettings.UserName }
-                );
             ViewFactory.Register<DashboardPage, DashboardViewModel>(
                  resolver => new DashboardViewModel());
             ViewFactory.Register<BookQueryPage, BookQueryViewModel>();
@@ -150,11 +164,10 @@ namespace BookAStar
             ViewFactory.Register<EditEstimatePage, EditEstimateViewModel>();
             ViewFactory.Register<UserFiles, DirectoryInfoViewModel>();
             ViewFactory.Register<UserProfilePage, UserProfileViewModel>();
+            ViewFactory.Register<EstimateSigningPage, EditEstimateViewModel>();
             ConfigManager = new GenericConfigSettingsMgr(s =>
            MainSettings.AppSettings.GetValueOrDefault<string>(s, MainSettings.SettingsDefault), null);
         }
-
-        ExtendedMasterDetailPage masterDetail;
 
         public App(IPlatform instance)
         {
@@ -170,39 +183,64 @@ namespace BookAStar
             Init();
             // Builds the Main page
             BuildMainPage();
-            
+
         }
 
         BookQueriesPage bQueriesPage;
         AccountChooserPage accChooserPage;
         HomePage homePage;
-        UserProfilePage userProfilePage;
+
+        private static UserProfilePage userProfilePage;
+
+        public static UserProfilePage UserProfilePage
+           { get { return userProfilePage; } }
+
         ChatPage chatPage;
 
-        private void ShowPage(Page page)
+        public static void ShowPage(Page page)
         {
-            if (masterDetail.Detail.Navigation.NavigationStack.Contains(page))
+            if (Navigation.NavigationStack.Contains(page))
             {
-                if (masterDetail.Detail.Navigation.NavigationStack.Last() == page) return;
-                masterDetail.Detail.Navigation.RemovePage(page);
+                if (Navigation.NavigationStack.Last() == page) return;
+                Navigation.RemovePage(page);
                 page.Parent = null;
             }
-            masterDetail.Detail.Navigation.PushAsync(page);
+            Navigation.PushAsync(page);
         }
 
         private void BuildMainPage()
         {
+            // TODO
+            // in case of App resume, 
+            // do not create new BindingContext's,
+            // but use those from the AppState property
             accChooserPage = new AccountChooserPage();
+
+            var bookQueries = new BookQueriesViewModel();
+
+            var userprofile = new UserProfileViewModel();
 
             bQueriesPage = new BookQueriesPage
             {
                 Title = "Demandes",
                 Icon = "icon.png",
-                BindingContext = new BookQueriesViewModel()
+                BindingContext = bookQueries
             };
-            homePage = new HomePage() { Title = "Accueil", Icon = "icon.png" };
-            userProfilePage = new UserProfilePage { Title = "Profile utilisateur", Icon = "ic_corp_icon.png",
-                BindingContext = new UserProfileViewModel() };
+
+            homePage = new HomePage() {
+                Title = "Accueil",
+                Icon = "icon.png" };
+
+            homePage.BindingContext = new HomeViewModel {
+                BookQueries = bookQueries,
+                UserProfile = userprofile };
+
+            userProfilePage = new UserProfilePage {
+                Title = "Profile utilisateur",
+                Icon = "ic_corp_icon.png",
+                BindingContext = userprofile
+            };
+
             chatPage = new ChatPage
             {
                 Title = "Chat",
@@ -259,11 +297,11 @@ namespace BookAStar
             masterDetail.ToolbarItems.Add(tiPubChat);
             this.MainPage = masterDetail;
             
-            NavigationService = new NavigationService(masterDetail.Detail.Navigation);
+            NavigationService = new NavigationService(Navigation);
         }
         public static Task<string> DisplayActionSheet(string title, string cancel, string destruction, string [] buttons)
         {
-            var currentPage = CurrentApp.masterDetail.Detail.Navigation.NavigationStack.Last();
+            var currentPage = Navigation.NavigationStack.Last();
             return currentPage.DisplayActionSheet(title, cancel, destruction, buttons);
         }
 
@@ -293,7 +331,7 @@ namespace BookAStar
                     if (isConnected)
                     {
                         // TODO Start all cloud related stuff 
-                        CurrentApp.StartHubConnection();
+                        StartConnexion();
                     }
                     
                 }
@@ -308,18 +346,20 @@ namespace BookAStar
             }
         }
         // Start the Hub connection
-        public async void StartHubConnection ()
+        public static async void StartConnexion ()
         {
-            try
+            if (CrossConnectivity.Current.IsConnected)
+                try
             {
+                    if (chatHubConnection.State == ConnectionState.Disconnected)
                 await chatHubConnection.Start();
             }
-            catch (WebException webex )
+            catch (WebException  )
             {
                 // TODO use webex, set this cx down status somewhere,
                 // & display it & maybe try again later.
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 // TODO use ex
             }
@@ -327,36 +367,53 @@ namespace BookAStar
 
         public void SetupHubConnection()
         {
+            if (chatHubConnection != null)
+                chatHubConnection.Dispose();
             chatHubConnection = new HubConnection(Constants.SignalRHubsUrl);
             chatHubConnection.Error += ChatHubConnection_Error;
 
             chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
             chatHubProxy.On<string, string>("addPV", (n, m) => {
-                DataManager.Current.PrivateMessages.Add(
-                    new ChatMessage
-                    {
-                        Message = m,
-                        SenderId = n,
-                        Date = DateTime.Now
-                    }
+                var msg = new ChatMessage
+                {
+                    Message = m,
+                    SenderId = n,
+                    Date = DateTime.Now
+                };
+                DataManager.Instance.PrivateMessages.Add(
+                    msg
                     );
+                DataManager.Instance.ChatUsers.OnPrivateMessage(msg);
             });
         }
-
+        public static  void StopConnection()
+        {
+            try
+            {
+                if (chatHubConnection.State != ConnectionState.Disconnected)
+                chatHubConnection.Stop();
+            }
+            catch (WebException)
+            {
+                // TODO use webex, set this cx down status somewhere,
+                // & display it & maybe try again later.
+            }
+            catch (Exception)
+            {
+                // TODO use ex
+            }
+        }
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
-            if (MainSettings.CurrentUser == null)
-            {
-                chatHubConnection.Dispose();
-                chatHubConnection = null;
-                chatHubProxy = null;
-            }
-            else
+            StopConnection();
+            if (MainSettings.CurrentUser != null)
             {
                 var token = MainSettings.CurrentUser.YavscTokens.AccessToken;
-                SetupHubConnection();
+                if (chatHubConnection.Headers.ContainsKey("Authorization"))
+                    chatHubConnection.Headers.Remove("Authorization");
                 chatHubConnection.Headers.Add("Authorization", $"Bearer {token}");
             }
+            StartConnexion();
         }
 
         private void ChatHubConnection_Error(Exception obj)
@@ -379,18 +436,18 @@ namespace BookAStar
             }
         }
 
-        public void PostDeviceInfo()
+        public static void PostDeviceInfo()
         {
             var info = PlatformSpecificInstance.GetDeviceInfo();
             if (!string.IsNullOrWhiteSpace(info.GCMRegistrationId))
                 PlatformSpecificInstance.InvokeApi("gcm/register", info);
         }
 
-        public static void ShowBookQuery (BookQueryData query)
+        public static void ShowBookQuery (BookQuery query)
         {
-            var page = ViewFactory.CreatePage<BookQueryViewModel
-                 , BookQueryPage>((b, p) => p.BindingContext = new BookQueryViewModel(query));
-            App.Current.MainPage.Navigation.PushAsync(page as Page);
+            var page = new BookQueryPage
+            { BindingContext = new BookQueryViewModel(query) };
+            ShowPage(page);
         }
     }
 }

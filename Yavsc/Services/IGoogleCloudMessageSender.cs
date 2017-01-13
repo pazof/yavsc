@@ -8,6 +8,15 @@ namespace Yavsc.Services
 {
     public interface IGoogleCloudMessageSender
     {
-        Task<MessageWithPayloadResponse> NotifyBookQueryAsync(GoogleAuthSettings googlesettings, IEnumerable<string> registrationId, BookQueryEvent ev);
+        Task<MessageWithPayloadResponse> NotifyBookQueryAsync(
+            GoogleAuthSettings googlesettings, 
+            IEnumerable<string> registrationId, 
+            BookQueryEvent ev);
+
+            Task<MessageWithPayloadResponse> NotifyEstimateAsync(
+            GoogleAuthSettings googlesettings, 
+            IEnumerable<string> registrationId, 
+            EstimationEvent ev);
+
     }
 }

@@ -18,6 +18,15 @@ namespace Yavsc.Models
         [StringLength(512),Required()]
         public string Name {get; set;}
 
+        [StringLength(512)]
+        public string ParentCode { get; set; }
+
+        [ForeignKey("ParentCode")]
+        public virtual Activity Parent { get; set; }
+
+        [InverseProperty("Parent")]
+        public virtual List<Activity> Children { get; set; }
+
         public string Description {get; set;}
         /// <summary>
         /// Name to associate to a performer in this activity domain
@@ -36,5 +45,16 @@ namespace Yavsc.Models
         /// <returns></returns>
         string ModeratorGroupName { get; set; }
 
+        /// <summary>
+        /// indice de recherche de cette activité
+        /// rendu par le système.
+        /// Valide entre 0 et 100,
+        /// Il démarre à 0.
+        /// </summary>
+        [Range(0,100)]
+        public int Rate { get; set; }
+
+        [DisplayAttribute(Name="SettingsClass")]
+        public string SettingsClassName { get; set; }
     }
 }

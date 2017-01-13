@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -21,10 +22,13 @@ namespace Yavsc.Controllers
         private ApplicationDbContext _context;
         private SiteSettings _site;
 
-        public EstimateController(ApplicationDbContext context, IOptions<SiteSettings> siteSettings)
+        IAuthorizationService authorizationService;
+
+        public EstimateController(ApplicationDbContext context, IAuthorizationService authorizationService, IOptions<SiteSettings> siteSettings)
         {
             _context = context;
             _site = siteSettings.Value;
+            this.authorizationService = authorizationService;
         }
 
         // GET: Estimate
@@ -41,7 +45,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: Estimate/Details/5
-        public IActionResult Details(long? id)
+        public async Task<IActionResult> Details(long? id)
         {
             var uid = User.GetUserId();
             if (id == null)
@@ -61,6 +65,10 @@ namespace Yavsc.Controllers
             if (estimate == null)
             {
                 return HttpNotFound();
+            }
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
             }
             return View(estimate);
         }

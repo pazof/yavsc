@@ -5,14 +5,13 @@
 </p>
 <table class="table">
     <tr>
-        <th>Exceptions à la validation des code SIREN</th>
+        <th>Exceptions à la validation des codes SIREN</th>
     </tr>
     
 @foreach (var item in Model) {
     <tr>
         <td>@item.SIREN</td>
         <td>
-            <a asp-action="Edit" asp-route-id="@item.SIREN">Edit</a> |
             <a asp-action="Details" asp-route-id="@item.SIREN">Details</a> |
             <a asp-action="Delete" asp-route-id="@item.SIREN">Delete</a>
         </td>

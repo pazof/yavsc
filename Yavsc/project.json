@@ -18,6 +18,9 @@
   "resource": [
     "Resources/**/*.resx"
   ],
+  "namedResource": {
+      "Localisation": "Resources/Yavsc.Resources.YavscLocalisation.resx"
+  },
   "configurations": {
     "Debug": {
       "compilationOptions": {
@@ -105,7 +108,8 @@
     "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
     "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
     "Microsoft.AspNet.OWin": "1.0.0-rc1-final",
-    "System.Json": "4.0.20126.16343"
+    "System.Json": "4.0.20126.16343",
+    "YavscLib": "1.0.0-*"
   },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
@@ -118,7 +122,11 @@
     "gen": "Microsoft.Extensions.CodeGeneration"
   },
   "frameworks": {
-    "dnx451": {}
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Drawing": "4.0.0.0"
+      }
+    }
   },
   "exclude": [
     "wwwroot",
@@ -141,5 +149,9 @@
     "prepublish": "gulp min",
     "postpublish": "echo \"  . ./contrib/postPublish.sh # to push in prod.\""
   },
-  "embed": "Views/**/*.cshtml"
+  "embed": "Views/**/*.cshtml",
+  "buildOptions": {
+    "warningsAsErrors": false,
+    "emitEntryPoint": true
+  }
 }

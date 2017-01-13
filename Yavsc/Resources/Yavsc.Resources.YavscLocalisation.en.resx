@@ -197,6 +197,7 @@
   <data name="FillInAFutureDate"><value>Please, use a date in the future as starting date.</value></data>
   <data name="Forbidden"><value>Restricted area</value></data>
   <data name="from"><value>from</value></data>
+  <data name="GiveAnExplicitReason"><value>Tell more, below, about your query</value></data>
   <data name="GoogleDidntGeoLocalized"><value>Google could'nt identify this place</value></data>
   <data name="Google calendar"><value>Google calendar</value></data>
   <data name="Google error"><value>Google error : {0}</value></data>
@@ -229,6 +230,8 @@
   <data name="Name"><value>Name</value></data>
   <data name="Needs"><value>Needs</value></data>
   <data name="Need"><value>Need</value></data>
+  <data name="nouvel instrument"><value>new instrument</value></data>
+  
   <data name="UserName"><value>New display name</value></data>
   <data name="New user name"><value>New display name</value></data>
   <data name="New Tag"><value>New Tag</value></data>

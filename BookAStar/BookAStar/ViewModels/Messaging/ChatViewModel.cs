@@ -7,27 +7,15 @@ using XLabs.Forms.Mvvm;
 namespace BookAStar.ViewModels.Messaging
 {
     using Data;
-    using Model;
+    using Model.Social.Chat;
     using Model.Social.Messaging;
 
-    class ChatViewModel: ViewModel
+    public class ChatViewModel: ViewModel
     {
         public ObservableCollection<ChatMessage> Messages { get; set; }
         public ObservableCollection<ChatMessage> Notifs { get; set; }
-        public ObservableCollection<ChatMessage> PVs { get; set; }
-        public ObservableCollection<ClientProviderInfo> Contacts { get; set; }
-        private string chatUser;
-        public string ChatUser
-        {
-            get
-            {
-                return chatUser;
-            }
-            set
-            {
-                SetProperty<string>(ref chatUser, value);
-            }
-        }
+        public ChatUserCollection ChatUsers { get; set; }
+
         private ConnectionState state;
         public ConnectionState State
         {
@@ -40,8 +28,7 @@ namespace BookAStar.ViewModels.Messaging
             MainSettings.UserChanged += MainSettings_UserChanged;
             Messages = new ObservableCollection<ChatMessage>();
             Notifs = new ObservableCollection<ChatMessage>();
-            PVs = DataManager.Current.PrivateMessages;
-            Contacts = DataManager.Current.Contacts;
+            ChatUsers = DataManager.Instance.ChatUsers;
             App.ChatHubProxy.On<string, string>("addMessage", (n, m) =>
             {
                 Messages.Add(new ChatMessage
@@ -54,45 +41,53 @@ namespace BookAStar.ViewModels.Messaging
 
             App.ChatHubProxy.On<string, string, string>("notify", (eventId, cxId, userName) =>
             {
+                var msg = new ChatMessage
+                {
+                    Message = eventId,
+                    SenderId = userName,
+                    Date = DateTime.Now
+                };
                 // TODO make admin possible 
                 // by assigning a server side username to anonymous.
-                // From now, don't log anonymous
-                if (!string.IsNullOrEmpty(userName))
+                if (string.IsNullOrEmpty(userName))
                 {
-                    Notifs.Add(new ChatMessage
-                    {
-                        Message = eventId,
-                        SenderId = userName,
-                        Date = DateTime.Now
-                    });
-                    if (eventId == "connected")
-                        OnUserConnected(cxId, userName);
-                    else if (eventId == "disconnected")
-                        OnUserDisconnected(userName);
+                    msg.SenderId = $"({cxId})";
                 }
+                Notifs.Add(msg);
+                if (eventId == "connected")
+                    OnUserConnected(cxId, userName);
+                else if (eventId == "disconnected")
+                    OnUserDisconnected(cxId, userName);
             });
-            ChatUser = MainSettings.UserName;
         }
 
         private void OnUserConnected(string cxId, string userName)
         {
-            var user = Contacts.SingleOrDefault(
+            var user = ChatUsers.SingleOrDefault(
                 c => c.UserName == userName);
-            if (user != null)
-                user.ChatHubConnectionId = cxId;
+            if (user == null)
+            {
+                user = new ChatUserInfo {
+                    UserName = userName
+                };
+                ChatUsers.Add(user);
+            }
+            user.OnConnected(cxId);
         }
 
-        private void OnUserDisconnected (string userName)
+        private void OnUserDisconnected (string cxId, string userName)
         {
-            var user = Contacts.SingleOrDefault(
+            var user = ChatUsers.SingleOrDefault(
                 c => c.UserName == userName);
-            if (user != null)
-                user.ChatHubConnectionId = null;
+            if (user == null)
+            {
+                return;
+            }
+            user.OnDisconnected(cxId);
         }
 
         private void MainSettings_UserChanged(object sender, EventArgs e)
         {
-            ChatUser = MainSettings.UserName;
         }
 
         private void ChatHubConnection_StateChanged(StateChange obj)

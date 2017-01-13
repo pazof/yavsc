@@ -1,55 +1,78 @@
 ﻿using System.Collections.Generic;
-using BookAStar.Model.Workflow;
 using System.Collections.ObjectModel;
-using BookAStar.Model;
 using Xamarin.Forms;
-using BookAStar.Data;
 using Newtonsoft.Json;
+using System.Linq;
+using System.ComponentModel;
 
 namespace BookAStar.ViewModels.EstimateAndBilling
 {
-    public class EditEstimateViewModel : EditingViewModel
+    using Model;
+    using Model.Workflow;
+    using Model.Social;
+    using Validation;
+    public class EditEstimateViewModel : EditingViewModel<Estimate>
     {
-        /// <summary>
-        /// For deserialization
-        /// </summary>
-        public EditEstimateViewModel()
-        {
 
-        }
         /// <summary>
         /// Builds a new view model on estimate,
         /// sets <c>Data</c> with given value parameter
         /// </summary>
         /// <param name="data"></param>
         /// <param name="localState"></param>
-        public EditEstimateViewModel(Estimate data)
+        public EditEstimateViewModel(Estimate data) : base(data)
         {
-            Data = data;
+            SyncData();
+        }
+        public override void OnViewAppearing()
+        {
+            base.OnViewAppearing();
+            SyncData();
+        }
+        /// <summary>
+        /// Called to synchronyze this view on target model,
+        /// at accepting a new representation for this model
+        /// </summary>
+        private void SyncData()
+        {
+            if (Data.AttachedFiles == null) Data.AttachedFiles = new List<string>();
+            if (Data.AttachedGraphics == null) Data.AttachedGraphics = new List<string>();
+            if (Data.Bill == null) Data.Bill = new List<BillingLine>();
+            AttachedFiles = new ObservableCollection<string>(Data.AttachedFiles);
+            AttachedGraphicList = new ObservableCollection<string>(Data.AttachedGraphics);
+            Bill = new ObservableCollection<BillingLineViewModel>(Data.Bill.Select(
+                l => new BillingLineViewModel(l)
+                ));
+            Bill.CollectionChanged += Bill_CollectionChanged;
+            Title = Data.Title;
+            Description = Data.Description;
+            NotifyPropertyChanged("FormattedTotal");
+            NotifyPropertyChanged("Query");
+            NotifyPropertyChanged("CLient");
+            NotifyPropertyChanged("ModelState");
+            
         }
 
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName.StartsWith("Data"))
+            {
+                SyncData();
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Bill_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            Data.Bill = new List<BillingLine>( Bill );
+            Data.Bill = Bill.Select(l => l.Data).ToList();
             NotifyPropertyChanged("FormattedTotal");
             NotifyPropertyChanged("Bill");
+            NotifyPropertyChanged("ViewModelState");
         }
-        private Estimate data;
-        public Estimate Data { get { return data; } set {
-                SetProperty<Estimate>(ref data, value);
-                if (data.AttachedFiles == null) data.AttachedFiles = new List<string>();
-                if (data.AttachedGraphics == null) data.AttachedGraphics = new List<string>();
-                if (data.Bill == null) data.Bill = new List<BillingLine>();
-                AttachedFiles = new ObservableCollection<string>(data.AttachedFiles);
-                AttachedGraphicList = new ObservableCollection<string>(data.AttachedGraphics);
-                Bill = new ObservableCollection<BillingLine>(data.Bill);
-                Bill.CollectionChanged += Bill_CollectionChanged;
-                Title = Data.Title;
-                Description = Data.Description;
-                NotifyPropertyChanged("FormattedTotal");
-                NotifyPropertyChanged("Query");
-                NotifyPropertyChanged("CLient");
-            } }
 
         [JsonIgnore]
         public ObservableCollection<string> AttachedFiles
@@ -64,7 +87,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         }
 
         [JsonIgnore]
-        public ObservableCollection<BillingLine> Bill
+        public ObservableCollection<BillingLineViewModel> Bill
         {
             get; protected set;
         }
@@ -107,25 +130,27 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         public ClientProviderInfo Client {  get { return Data.Client; } }
 
         [JsonIgnore]
-        public BookQueryData Query { get { return Data.Query; } }
+        public BookQuery Query { get { return Data.Query; } }
 
         [JsonIgnore]
         public FormattedString FormattedTotal
         {
             get
             {
-                OnPlatform<Font> lfs = (OnPlatform<Font>)App.Current.Resources["LargeFontSize"];
-                OnPlatform<Color> etc = (OnPlatform<Color>)App.Current.Resources["EmphasisTextColor"];
+                /* 
+                OnPlatform<Font> lfs = (OnPlatform<Font>)App.Current.Resources["MediumFontSize"];
+                */
+                OnPlatform<double> mfs = (OnPlatform < double > ) App.Current.Resources["MediumFontSize"];
+                Color  etc = (Color) App.Current.Resources["EmphasisTextColor"];
 
                 return new FormattedString
                 {
-
                     Spans = {
                         new Span { Text = "Total TTC: " },
                         new Span { Text = Data.Total.ToString(),
-                            ForegroundColor = etc.Android  ,
-                            FontSize = (double) lfs.Android.FontSize },
-                        new Span { Text = "€", FontSize = (double) lfs.Android.FontSize }
+                            ForegroundColor = etc,
+                            FontSize = mfs },
+                        new Span { Text = "€", FontSize = mfs }
                     }
                 };
             }

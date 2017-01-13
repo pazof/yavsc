@@ -42,23 +42,43 @@
     </Compile>
     <Compile Include="Attributes\CurrencyAttribute.cs" />
     <Compile Include="Attributes\DisplayAttribute.cs" />
-    <Compile Include="Behaviors\EmailValidatorBehavior.cs" />
-    <Compile Include="Behaviors\IntegerEntryBehavior.cs" />
-    <Compile Include="Behaviors\MaxLengthValidator.cs" />
-    <Compile Include="Behaviors\DecimalValidatorBehavior.cs" />
-    <Compile Include="Behaviors\PickerBehavior.cs" />
-    <Compile Include="Behaviors\StarBehavior.cs" />
+    <Compile Include="Converters\Behaviors\EmailValidatorBehavior.cs" />
+    <Compile Include="Converters\Behaviors\IntegerEntryBehavior.cs" />
+    <Compile Include="Converters\Behaviors\EditorMaxLengthValidator.cs" />
+    <Compile Include="Converters\Behaviors\DecimalValidatorBehavior.cs" />
+    <Compile Include="Converters\Behaviors\MarkdownViewLengthValidator.cs" />
+    <Compile Include="Converters\Behaviors\PickerBehavior.cs" />
+    <Compile Include="Converters\Behaviors\RegexValidatorBehavior.cs" />
+    <Compile Include="Converters\Behaviors\StarBehavior.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\NotValueConverter.cs" />
     <Compile Include="Converters\SignalRConnectionStateToObject.cs" />
-    <Compile Include="Data\LocalState.cs" />
+    <Compile Include="Data\ApiCallFailedException.cs" />
+    <Compile Include="Data\EstimateEntity.cs" />
     <Compile Include="Data\NonCrUD\RemoteFiles.cs" />
+    <Compile Include="Model\Access\BlackListed.cs" />
+    <Compile Include="Model\Booking\MusicalPreference.cs" />
+    <Compile Include="Model\Booking\MusicalTendency.cs" />
     <Compile Include="Model\FileSystem\UserDirectoryInfo.cs" />
     <Compile Include="Model\FileSystem\UserFileInfo.cs" />
     <Compile Include="Model\Settings\SignatureSettings.cs" />
-    <Compile Include="Model\Social\Messaging\ChatStatus.cs" />
-    <Compile Include="Model\Social\Messaging\PrivateMessage.cs" />
-    <Compile Include="Model\UI\PageState.cs" />
+    <Compile Include="Model\Social\Chat\ChatStatus.cs" />
+    <Compile Include="Model\Social\Chat\ChatMessage.cs" />
+    <Compile Include="Model\Social\LocationType.cs" />
+    <Compile Include="Pages\ClientPages\SearchPage.xaml.cs">
+      <DependentUpon>SearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\Messaging\ChatUserCollection.cs" />
+    <Compile Include="ViewModels\Messaging\ChatUserInfo.cs" />
+    <Compile Include="Model\Social\Chat\Connection.cs" />
+    <Compile Include="ViewModels\Searching\SearchingAnArtistViewModel.cs" />
+    <Compile Include="ViewModels\Validation\Error.cs" />
+    <Compile Include="ViewModels\Validation\ModelState.cs" />
+    <Compile Include="ViewModels\PageState.cs" />
+    <Compile Include="Pages\EstimatePages\EstimateSigningPage.xaml.cs">
+      <DependentUpon>EstimateSigningPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\EstimatePages\EstimatesClientPage.xaml.cs">
       <DependentUpon>EstimatesClientPage.xaml</DependentUpon>
     </Compile>
@@ -85,14 +105,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.en.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\EditingViewModel.cs" />
+    <Compile Include="ViewModels\Validation\EditingViewModel.cs" />
     <Compile Include="Pages\DocSigning.xaml.cs">
       <DependentUpon>DocSigning.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\Signing\DocSigningViewModel.cs" />
+    <Compile Include="ViewModels\Signing\EstimateSigningViewModel.cs" />
     <Compile Include="ViewModels\Signing\SignaturePadConfigViewModel.cs" />
     <Compile Include="ViewModels\UserProfile\UserProfileViewModel.cs" />
     <Compile Include="ViewModels\UserProfile\DirectoryInfoViewModel.cs" />
+    <Compile Include="ViewModels\Validation\ErrorSeverity.cs" />
     <Compile Include="Views\EnumPicker.cs" />
     <Compile Include="Converters\BooleanToObjectConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
@@ -126,7 +147,7 @@
     <Compile Include="Pages\EstimatePages\BookQueryPage.xaml.cs">
       <DependentUpon>BookQueryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ChatPage.xaml.cs">
+    <Compile Include="Pages\Chat\ChatPage.xaml.cs">
       <DependentUpon>ChatPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\EstimatePages\EditBillingLinePage.xaml.cs">
@@ -143,7 +164,7 @@
     <Compile Include="Interfaces\IPlatform.cs" />
     <Compile Include="Model\Blog\Blog.cs" />
     <Compile Include="Model\Blog\BlogTag.cs" />
-    <Compile Include="Model\BookQueryData.cs" />
+    <Compile Include="Model\Booking\BookQuery.cs" />
     <Compile Include="Model\Market\BaseProduct.cs" />
     <Compile Include="Model\Workflow\BillingLine.cs" />
     <Compile Include="Model\Manager.cs" />
@@ -183,7 +204,7 @@
     <Compile Include="Pages\EstimatePages\EditEstimatePage.xaml.cs">
       <DependentUpon>EditEstimatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Oooops\HomePage.xaml.cs">
+    <Compile Include="Pages\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Oooops\PinPage.cs" />
@@ -198,9 +219,6 @@
     <Compile Include="Views\ImageButton.cs" />
     <Compile Include="Views\MarkdownView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pages\Oooops\SearchPage.xaml.cs">
-      <DependentUpon>SearchPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\UserProfile\AccountChooserPage.xaml.cs">
       <DependentUpon>AccountChooserPage.xaml</DependentUpon>
     </Compile>
@@ -233,17 +251,13 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\Oooops\SearchPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Pages\UserProfile\AccountChooserPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\Billing\" />
+    <Folder Include="Model\UI\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ExifLib, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -272,6 +286,12 @@
     <Reference Include="Plugin.Connectivity.Abstractions">
       <HintPath>..\..\packages\Xam.Plugin.Connectivity.2.2.12\lib\MonoAndroid10\Plugin.Connectivity.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Plugin.Media">
+      <HintPath>..\..\packages\Xam.Plugin.Media.2.3.0\lib\portable-net45+wp8+wpa81+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Plugin.Media.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media.Abstractions">
+      <HintPath>..\..\packages\Xam.Plugin.Media.2.3.0\lib\portable-net45+wp8+wpa81+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Plugin.Media.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="Plugin.Settings, Version=2.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xam.Plugins.Settings.2.5.1.0\lib\portable-net45+wp80+win8+wpa81\Plugin.Settings.dll</HintPath>
       <Private>True</Private>
@@ -295,6 +315,9 @@
     <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Net.Http.2.2.29\lib\portable-net45+win8+wpa81\System.Net.Http.Primitives.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\MonoAndroid\v1.0\System.Web.Services.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Forms.2.3.2.127\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
@@ -352,12 +375,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Yavsc.Client\Yavsc.Client.csproj">
-      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
-      <Name>Yavsc.Client</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Pages\EstimatePages\EditEstimatePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
@@ -390,7 +407,7 @@
     <EmbeddedResource Include="Images\Users\icon_user_settings.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\Oooops\HomePage.xaml">
+    <EmbeddedResource Include="Pages\HomePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -416,7 +433,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pages\ChatPage.xaml">
+    <EmbeddedResource Include="Pages\Chat\ChatPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -474,6 +491,27 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\EstimatePages\ViewEstimatePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\EstimatePages\EstimateSigningPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\YavscLib\YavscLib.csproj">
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
+      <Name>YavscLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\Chat\talk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\ClientPages\SearchPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

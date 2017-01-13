@@ -2,8 +2,11 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BookAStar.Pages.EditEstimatePage"
+             xmlns:converters="clr-namespace:BookAStar.Converters;assembly=BookAStar"
              xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
              xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
+             xmlns:behaviors="clr-namespace:BookAStar.Behaviors;assembly=BookAStar"
+             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
              Style="{StaticResource PageStyle}">
   <ContentPage.Resources>
     <ResourceDictionary>
@@ -13,14 +16,32 @@
       <Style TargetType="Button">
         <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
       </Style>
+      <converters:BooleanToObjectConverter x:Key="boolToStyleImage" x:TypeArguments="Style">
+
+        <converters:BooleanToObjectConverter.FalseObject>
+          <Style TargetType="Image">
+            <Setter Property="HeightRequest" Value="20" />
+            <Setter Property="Source"
+                    Value="{extensions:ImageResource BookAStar.Images.Validation.error.png}" />
+          </Style>
+        </converters:BooleanToObjectConverter.FalseObject>
+
+        <converters:BooleanToObjectConverter.TrueObject>
+          <Style TargetType="Image">
+            <Setter Property="HeightRequest" Value="20" />
+            <Setter Property="Source"
+                    Value="{extensions:ImageResource BookAStar.Images.Validation.success.png}" />
+          </Style>
+        </converters:BooleanToObjectConverter.TrueObject>
+
+      </converters:BooleanToObjectConverter>
     </ResourceDictionary>
   </ContentPage.Resources>
   <ContentPage.Content>
-  <ScrollView>
     <StackLayout Padding="10,10,10,10" x:Name="mainLayout">
-      <Grid MinimumHeightRequest="12">
+      <Grid HeightRequest="120">
         <Grid.RowDefinitions>
-          <RowDefinition Height="*" />
+          <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*" />
@@ -34,18 +55,20 @@
       <Entry Placeholder="Saisissez un titre pour ce devis" Text="{Binding Title, Mode=TwoWay}" />
       <views:MarkdownView x:Name="mdview"
                           Editable="True"
-                          HorizontalOptions="FillAndExpand"
-      Markdown="{Binding Description, Mode=TwoWay}"
-        VerticalOptions="Start" />
+      Markdown="{Binding Description, Mode=TwoWay}">
+        <views:MarkdownView.Behaviors>
+          <behaviors:MarkdownViewLengthValidator x:Name="descriptionLenValidator" MaxLength="512" MinLength="3" />
+
+        </views:MarkdownView.Behaviors>
+      </views:MarkdownView>
 <StackLayout x:Name="biAnVaLayout">
       <ListView x:Name="BillListView" ItemsSource="{Binding Bill}"
-         MinimumHeightRequest="40" HasUnevenRows="true" VerticalOptions="FillAndExpand"
-                          HeightRequest="40" ItemTapped="OnEditLine">
+         HasUnevenRows="true" ItemTapped="OnEditLine">
         <ListView.ItemTemplate>
           <DataTemplate >
             <ViewCell>
-              <ViewCell.View>
-                <Grid MinimumHeightRequest="12">
+              <ViewCell.View Padding="5,5,5,5" >
+                <Grid>
                   <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                   </Grid.RowDefinitions>
@@ -54,6 +77,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="30" />
                     <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="16" />
                   </Grid.ColumnDefinitions>
                   <Label Text="{Binding Description}"
                          Grid.Row="0" Grid.Column="0" ></Label>
@@ -64,6 +88,9 @@
                   <Label Text="{Binding UnitaryCost}"
                          Grid.Row="0" Grid.Column="3"
                          FontFamily="Monospace"></Label>
+                  <Image Grid.Row="0" Grid.Column="4" Style="{Binding 
+                                Path=ViewModelState.IsValid, 
+                                Converter={StaticResource boolToStyleImage}}" ></Image>
                 </Grid>
               </ViewCell.View>
             </ViewCell>
@@ -73,10 +100,9 @@
 <StackLayout Orientation="Vertical">
       <Button Text="Ajouter une ligne de facture" Clicked="OnNewCommanLine"></Button>
       <Label FormattedText="{Binding FormattedTotal}"/>
-      <Button Text="Valider ce devis" Clicked="OnEstimateValidated" ></Button>
+      <Button x:Name="btnValidate" Text="Valider ce devis" Clicked="OnEstimateValidated" IsEnabled="{Binding ViewModelState.IsValid}" ></Button>
 </StackLayout>
     </StackLayout>
     </StackLayout>
-  </ScrollView>
   </ContentPage.Content>
 </ContentPage>

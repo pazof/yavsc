@@ -20,7 +20,6 @@ using Yavsc.Models;
 
 namespace Yavsc
 {
-
     public partial class Startup
     {
         public static CookieAuthenticationOptions ExternalCookieAppOptions { get; private set; }
@@ -151,8 +150,8 @@ namespace Yavsc
                    branch.UseFacebookAuthentication(options =>
                        {
                            FacebookAppOptions = options;
-                           options.AppId = Configuration["Authentication:Facebook:AppId"];
-                           options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+                           options.AppId = Configuration["Authentication:Facebook:ClientId"];
+                           options.AppSecret = Configuration["Authentication:Facebook:ClientSecret"];
                            options.Scope.Add("email");
                            options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
                        });
