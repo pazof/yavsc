@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Process
 {
      public abstract class Action<TResult,TInput>
     {

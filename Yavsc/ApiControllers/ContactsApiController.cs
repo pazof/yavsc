@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
-using Yavsc.Model;
 using Yavsc.Models;
+using Yavsc.Models.Messaging;
 
 namespace Yavsc.Controllers
 {
@@ -20,29 +19,10 @@ namespace Yavsc.Controllers
         }
 
         // GET: api/ContactsApi
-        [HttpGet]
-        public IEnumerable<ClientProviderInfo> GetClientProviderInfo()
+        [HttpGet("{id}")]
+        public ClientProviderInfo GetClientProviderInfo(string id)
         {
-            return _context.ClientProviderInfo;
-        }
-
-        // GET: api/ContactsApi/5
-        [HttpGet("{id}", Name = "GetClientProviderInfo")]
-        public IActionResult GetClientProviderInfo([FromRoute] string id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelState);
-            }
-
-            ClientProviderInfo clientProviderInfo = _context.ClientProviderInfo.Single(m => m.UserId == id);
-
-            if (clientProviderInfo == null)
-            {
-                return HttpNotFound();
-            }
-
-            return Ok(clientProviderInfo);
+            return _context.ClientProviderInfo.FirstOrDefault(c=>c.UserId == id);
         }
 
         // PUT: api/ContactsApi/5

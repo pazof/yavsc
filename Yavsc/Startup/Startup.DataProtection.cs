@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Yavsc
 {
-
     public partial class Startup
     {
         public void ConfigureProtectionServices(IServiceCollection services)

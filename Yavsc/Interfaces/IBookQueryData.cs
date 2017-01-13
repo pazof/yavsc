@@ -1,8 +1,8 @@
 ﻿using System;
-using Yavsc.Model;
 
 namespace Yavsc.Interfaces
 {
+    using Yavsc.Models.Messaging;
     public interface IBookQueryData
     {
         ClientProviderInfo Client { get; set; }

@@ -71,3 +71,13 @@ footer {
     font-weight: bolder;
     font-size: x-small;
 }
+
+.meta { 
+    color : #A0A0A0;
+    font-style: italic;
+    font-size: smaller;
+}
+
+.activity {
+    border-style: groove none none groove;
+}

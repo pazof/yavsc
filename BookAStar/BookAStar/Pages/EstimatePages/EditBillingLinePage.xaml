@@ -44,12 +44,16 @@
     <StackLayout x:Name="mainStackLayout">
       <Label Text="Description de la ligne de facture"
              Style="{StaticResource InputLabelStyle}"></Label>
-      <StackLayout Orientation="Horizontal" VerticalOptions="FillAndExpand">
-        <Editor  HorizontalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}">
+        <Editor HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}">
           <Editor.Behaviors>
-            <behaviors:EditorMaxLengthValidator x:Name="descriptionValidator" MaxLength="512" />
+            <behaviors:EditorMaxLengthValidator x:Name="descriptionLenValidator" MaxLength="12" MinLength="3" />
           </Editor.Behaviors>
         </Editor>
+      <StackLayout Orientation="Horizontal">
+        <Image  x:Name="descriptionSuccessErrorImage"
+           Style="{Binding Source={x:Reference descriptionLenValidator}, Path=IsValid, Converter={StaticResource boolToStyleImage}}" />
+        <Label Text="{Binding Source={x:Reference descriptionLenValidator}, Path=Error}"
+             Style="{StaticResource ErrorLabelStyle}"></Label>
       </StackLayout>
 
       <Label Text="Durée de la prestation"
@@ -74,18 +78,21 @@
       </StackLayout>
 
       <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
-      <StackLayout Orientation="Horizontal">
+      
       <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric"
              Style="{StaticResource BigEntry}">
         <Entry.Behaviors>
           <behaviors:IntegerEntryBehavior x:Name="countValidator" Min="0" Max="10" />
         </Entry.Behaviors>
       </Entry>
-      <Image  x:Name="countSuccessErrorImage"
+        <StackLayout Orientation="Horizontal">
+           <Image  x:Name="countSuccessErrorImage"
                  Style="{Binding Source={x:Reference countValidator}, 
                                 Path=IsValid, 
                                 Converter={StaticResource boolToStyleImage}}" />
-      </StackLayout>
+          <Label Text="{Binding Source={x:Reference countValidator}, Path=Error}"
+             Style="{StaticResource ErrorLabelStyle}"></Label>
+        </StackLayout>
       
       <Label Text="Prix unitaire" Style="{StaticResource InputLabelStyle}"></Label>
       <StackLayout Orientation="Horizontal">
@@ -95,7 +102,7 @@
             <behaviors:DecimalValidatorBehavior x:Name="unitCostValidator" />
           </Entry.Behaviors>
         </Entry>
-        <Label Text="€" Style="{StaticResource BigLabel}" />
+        <Label Text="€" Style="{StaticResource BigLabelStyle}" />
         <Image  x:Name="unitaryCostSuccessErrorImage"
                   Style="{Binding Source={x:Reference unitCostValidator}, 
                                 Path=IsValid, 
@@ -106,7 +113,7 @@
                 Command="{Binding ValidateCommand}"
                 Clicked="OnValidateClicked"></Button>
         <Button Text="Supprimer"
-                    Command="{Binding DeleteCommand}"
+                    Command="{Binding RemoveCommand}"
                     Clicked="OnDeleteClicked"></Button>
       </StackLayout>
     </StackLayout>

@@ -6,20 +6,22 @@ using XLabs.Forms.Mvvm;
 namespace BookAStar.ViewModels.EstimateAndBilling
 {
     using Data;
+    using Helpers;
     using Interfaces;
     using Model;
     using Model.Social;
     using Model.Workflow;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using Xamarin.Forms;
 
-    class BookQueryViewModel : ViewModel, IBookQueryData
+    public class BookQueryViewModel : ViewModel, IBookQueryData
     {
         public BookQueryViewModel()
         {
             
         }
-        public BookQueryViewModel(BookQueryData data)
+        public BookQueryViewModel(BookQuery data)
         {
             Debug.Assert(data != null);
             Client=data.Client;
@@ -28,19 +30,33 @@ namespace BookAStar.ViewModels.EstimateAndBilling
             Previsionnal = data.Previsionnal;
             Id = data.Id;
             estimates = new ObservableCollection<Estimate>(
-                    DataManager.Current.Estimates.Where(
+                    DataManager.Instance.Estimates.Where(
                     e => e.Query.Id == Id
                     ));
             this.data = data;
         }
-        private BookQueryData data;
-        public BookQueryData Data {
+        private BookQuery data;
+        public BookQuery Data {
             get
             {
                 return data;
             }
         }
         public ClientProviderInfo Client { get; set; }
+        public ImageSource Avatar
+        {
+            get
+            {
+                return UserHelpers.Avatar(Client.Avatar);
+            }
+        }
+        public ImageSource SmallAvatar
+        {
+            get
+            {
+                return UserHelpers.SmallAvatar(Client.Avatar, Client.UserName);
+            }
+        }
         public Location Location { get; set; }
         public long Id { get; set; }
         public DateTime EventDate { get; set; }
@@ -49,7 +65,7 @@ namespace BookAStar.ViewModels.EstimateAndBilling
         {
             get
             {
-                return DataManager.Current.EstimationCache.LocalGet(this.Id);
+                return DataManager.Instance.EstimationCache.LocalGet(this.Id);
             }
         }
         private ObservableCollection<Estimate> estimates;

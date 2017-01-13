@@ -1,15 +1,18 @@
 
 
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Security.Claims;
+using System.Web;
 using Microsoft.AspNet.Http;
 using Yavsc.ApiControllers;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
+using Yavsc.ViewModels;
 using Yavsc.ViewModels.UserFiles;
 
 namespace Yavsc.Helpers
@@ -24,7 +27,7 @@ namespace Yavsc.Helpers
 
             return di;
         }
-        static char[] ValidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_~.".ToCharArray();
+        static char[] ValidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_~. ".ToCharArray();
 
         public static bool IsValidDirectoryName(this string name)
         {
@@ -95,15 +98,16 @@ namespace Yavsc.Helpers
             user.DiskUsage = usage;
             return item;
         }
+        public static HtmlString FileLink(this DefaultFileInfo info, string username, string subpath)
+        {
+            return new HtmlString( Startup.UserFilesOptions.RequestPath+"/"+ username + "/" + subpath + "/" +
+             HttpUtility.UrlEncode(info.Name) );
+        }
         public static FileRecievedInfo ReceiveAvatar(this ApplicationUser user, IFormFile formFile)
         {
             var item = new FileRecievedInfo();
             item.FileName = user.UserName + ".png";
             var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Avatars, item.FileName);
-
-            ImageProcessor.ImageFactory f = new ImageProcessor.ImageFactory();
-
-            ImageProcessor.Web.Processors.Resize r = new ImageProcessor.Web.Processors.Resize();
 
             var fi = new FileInfo(destFileName);
             if (fi.Exists) item.Overriden = true;
@@ -165,6 +169,28 @@ namespace Yavsc.Helpers
                 newBMP.Save(Path.Combine(
                     dir, xsmallname), ImageFormat.Png);
             }
+        }
+        public static Func<string,long,string>
+          SignFileNameFormat = new Func<string,long,string> ((signType,estimateId) => $"estimate-{signType}sign-{estimateId}.png");
+
+        public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, long estimateId, IFormFile formFile, string signtype)
+        { 
+            var item = new FileRecievedInfo();
+            item.FileName = SignFileNameFormat("pro",estimateId);
+            var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Bills, item.FileName);
+
+            var fi = new FileInfo(destFileName);
+            if (fi.Exists) item.Overriden = true;
+
+            using (var org = formFile.OpenReadStream())
+            {
+                Image i = Image.FromStream(org);
+                using (Bitmap source = new Bitmap(i))
+                {
+                    source.Save(destFileName, ImageFormat.Png);
+                }
+            }
+            return item;
         }
     }
 }

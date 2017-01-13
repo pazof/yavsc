@@ -26,6 +26,7 @@ using Microsoft.Net.Http.Headers;
 using Yavsc.Formatters;
 using Yavsc.Models;
 using Yavsc.Services;
+using Yavsc.ViewModels.Auth;
 
 namespace Yavsc
 {
@@ -36,6 +37,7 @@ namespace Yavsc
         public static string AvatarsDirName { private set; get; }
         public static string Authority { get; private set; }
         public static string Audience { get; private set; }
+        public static string Temp { get; set; }
         public static SiteSettings SiteSetup { get; private set; }
 
         private static ILogger logger;
@@ -93,8 +95,8 @@ namespace Yavsc
                 };
                 var supportedUICultures = new[]
                 {
-                    new CultureInfo("en"),
-                    new CultureInfo("fr")
+                    new CultureInfo("fr"),
+                    new CultureInfo("en")
                 };
 
                 // You must explicitly state which cultures your application supports.
@@ -180,6 +182,8 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, CommandEditHandler>();
             services.AddSingleton<IAuthorizationHandler, CommandViewHandler>();
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
+            services.AddSingleton<IAuthorizationHandler, EstimateViewHandler>();
+            services.AddSingleton<IAuthorizationHandler, ViewFileHandler>();
 
             services.AddMvc(config =>
             {
@@ -227,11 +231,15 @@ namespace Yavsc
         IOptions<RequestLocalizationOptions> localizationOptions,
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
         RoleManager<IdentityRole> roleManager,
+        IAuthorizationService authorizationService,
          ILoggerFactory loggerFactory)
         {
             SiteSetup = siteSettings.Value;
+            Authority = siteSettings.Value.Authority;
+            Audience = siteSettings.Value.Audience;
             Startup.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
             Startup.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
+            Startup.Temp = siteSettings.Value.TempDir;
 
             // TODO implement an installation & upgrade procedure
             // Create required directories
@@ -283,7 +291,7 @@ namespace Yavsc
                     if (ex.InnerException is InvalidOperationException)
                     // nothing to do ?
                     {
-                        // TODO Send an email to the Admin
+                        // TODO (or not) Hit the developper
                     }
                     else throw ex;
                 }
@@ -322,14 +330,13 @@ namespace Yavsc
                 options.AutomaticAuthentication = false;
             });
 
-            Authority = siteSettings.Value.Authority;
-            Audience = siteSettings.Value.Audience;
 
-            ConfigureOAuthApp(app, siteSettings.Value);
-            ConfigureFileServerApp(app, siteSettings.Value, env);
-            ConfigureWebSocketsApp(app, siteSettings.Value, env);
 
-            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"en"));
+            ConfigureOAuthApp(app, SiteSetup);
+            ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
+            ConfigureWebSocketsApp(app, SiteSetup, env);
+            ConfigureWorkflow(app, SiteSetup);
+            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"en"));
 
             app.UseMvc(routes =>
             {

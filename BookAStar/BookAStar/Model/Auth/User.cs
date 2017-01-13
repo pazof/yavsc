@@ -1,16 +1,11 @@
 ﻿using BookAStar.Helpers;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace BookAStar.Model.Auth.Account
-{ 
+{
     public class User : INotifyPropertyChanged
     {
         private string id;
@@ -79,6 +74,20 @@ namespace BookAStar.Model.Auth.Account
             {
                 avatar = value;
                 OnPropertyChanged("Avatar");
+            }
+        }
+        private string address;
+        public string Address
+        {
+            get
+            {
+                return address;
+            }
+
+            set
+            {
+                address = value;
+                OnPropertyChanged("Address");
             }
         }
         [JsonIgnore]

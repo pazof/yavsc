@@ -8,11 +8,11 @@ using Microsoft.Extensions.Logging;
 using Yavsc.Models.Booking;
 using Yavsc.Helpers;
 using System;
+using Yavsc.ViewModels.FrontOffice;
+using System.Security.Claims;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)),
-    Route("do")]
     public class FrontOfficeController : Controller
     {
         ApplicationDbContext _context;
@@ -29,10 +29,20 @@ namespace Yavsc.Controllers
         }
         public ActionResult Index()
         {
-            var latestPosts = _context.Blogspot.Where(
-                x => x.Visible == true
-            ).OrderBy(x => x.Modified).Take(25).ToArray();
-            return View(latestPosts);
+            var uid = User.GetUserId();
+            var now = DateTime.Now;
+            
+            var model = new FrontOfficeIndexViewModel{
+                EstimateToProduceCount =  _context.Commands.Where(c => c.PerformerId == uid &&  c.EventDate > now
+                && c.ValidationDate == null && !_context.Estimates.Any(e=>(e.CommandId == c.Id && e.ProviderValidationDate != null))).Count(),
+                EstimateToSignAsProCount = _context.Commands.Where(c => ( c.PerformerId == uid &&  c.EventDate > now
+                && c.ValidationDate == null && _context.Estimates.Any(e=>(e.CommandId == c.Id && e.ProviderValidationDate != null)))).Count(),
+                EstimateToSignAsCliCount = _context.Estimates.Where(e=>e.ClientId == uid && e.ClientValidationDate == null) .Count(),
+                BillToSignAsProCount = 0,
+                BillToSignAsCliCount = 0,
+                NewPayementsCount = 0
+            };
+            return View(model);
         }
 
         [Route("Book/{id?}"), HttpGet]
@@ -42,17 +52,11 @@ namespace Yavsc.Controllers
             {
                 throw new NotImplementedException("No Activity code");
             }
-
-            ViewBag.Activities = _context.ActivityItems(id);
-            ViewBag.Activity = _context.Activities.FirstOrDefault(
-                a => a.Code == id);
-
-            return View(
-                _context.Performers.Include(p => p.Performer).Where
-                (p => p.ActivityCode == id && p.Active).OrderBy(
-                    x => x.MinDailyCost
-                )
-            );
+            ViewBag.Activity = _context.Activities.FirstOrDefault(a=>a.Code == id);
+           var result = _context.Performers
+           .Include(p=>p.Performer).Where(p => p.Activity.Any(u=>u.DoesCode==id)).OrderBy( x => x.MinDailyCost );
+           
+            return View(result);
         }
 
         [Route("Book/{id}"), HttpPost]

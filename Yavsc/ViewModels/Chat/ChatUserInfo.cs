@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Yavsc.Model.Chat;
+using Yavsc.Models.Chat;
 
 namespace Yavsc.ViewModels.Chat { 
-public class ChatUserInfo
+public class ChatUserInfo : IChatUserInfo
         {
 
             public List<Connection> Connections { get; set; }
@@ -13,5 +13,19 @@ public class ChatUserInfo
 
             public string Avatar { get; set; }
 
+            public string[] Roles { get; set; }
+
         }
+
+    public interface IChatUserInfo
+    {
+        List<Connection> Connections { get; set; }
+        string UserId { get; set; }
+
+        string UserName { get; set; }
+
+        string Avatar { get; set; }
+
+        string[] Roles { get; set; }
+    }
 }

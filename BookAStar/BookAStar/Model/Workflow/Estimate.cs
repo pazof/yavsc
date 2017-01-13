@@ -1,6 +1,4 @@
-﻿using BookAStar.Data;
-using BookAStar.Helpers;
-using BookAStar.Model.Interfaces;
+﻿
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,6 +6,9 @@ using System.Linq;
 
 namespace BookAStar.Model.Workflow
 {
+    using Data;
+    using Interfaces;
+    using Social;
     public partial class Estimate : IEstimate
     {
         public long Id { get; set; }
@@ -26,6 +27,7 @@ namespace BookAStar.Model.Workflow
         /// <returns></returns>
         public List<string> AttachedGraphics { get; set; }
         [JsonIgnore]
+        // form in db
         public string AttachedGraphicsString
         {
             get { return AttachedGraphics==null?null:string.Join(":", AttachedGraphics); }
@@ -39,6 +41,7 @@ namespace BookAStar.Model.Workflow
         /// </summary>
         /// <returns></returns>
         public List<string> AttachedFiles { get; set; }
+        // form in db
         [JsonIgnore]
         public string AttachedFilesString
         {
@@ -47,16 +50,28 @@ namespace BookAStar.Model.Workflow
         }
         
         public string OwnerId { get; set; }
-        
+        [JsonIgnore]
+        public ClientProviderInfo Owner
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(OwnerId))
+                {
+                    var dm = DataManager.Instance;
+                    return dm.Contacts.LocalGet(OwnerId);
+                }
+                return null;
+            }
+        }
         public string ClientId { get; set; }
         [JsonIgnore]
-        public BookQueryData Query
+        public BookQuery Query
         {
             get
             {
                 if (CommandId.HasValue)
                 {
-                    var dm = DataManager.Current;
+                    var dm = DataManager.Instance;
                     return dm.BookQueries.LocalGet(CommandId.Value);
                 }
                 return null;
@@ -67,7 +82,7 @@ namespace BookAStar.Model.Workflow
         {
             get
             {
-                return DataManager.Current.Contacts.LocalGet(ClientId);
+                return DataManager.Instance.Contacts.LocalGet(ClientId);
             }
         }
 
@@ -77,9 +92,14 @@ namespace BookAStar.Model.Workflow
                 return Bill?.Aggregate((decimal)0, (t, l) => t + l.Count * l.UnitaryCost) ?? (decimal)0;
             }
         }
-
-        public DateTime LatestValidationDate { get; set; }
-
+        /// <summary>
+        /// This validation comes first from the provider.
+        /// </summary>
+        public DateTime ProviderValidationDate { get; set; }
+        /// <summary>
+        /// Date for the agreement from the client
+        /// </summary>
         public DateTime ClientApprouvalDate { get; set; }
+
     }
 }

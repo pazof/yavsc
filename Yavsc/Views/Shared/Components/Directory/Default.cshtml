@@ -1,0 +1,44 @@
+@using Yavsc.ViewModels.UserFiles
+@model UserDirectoryInfo
+<div class="dirinfo">
+<strong>@Model.UserName / @Model.SubPath</strong>
+<div class="subdirs">
+@foreach (string subdir in Model.SubDirectories) {
+<a href="@subdir" class="subdir">@subdir</a> 
+}
+</div>
+<style> 
+tr.fileheaders th {
+    border-bottom: 1px solid #ddd; 
+    font-style: italic;
+}
+tr.fileinfo td {
+    padding: 1em;
+    border-bottom: 1px solid #ddd;
+}
+  tr.fileinfo:nth-child(even) {background-color: #f2f2f2}
+  tr.fileinfo:hover {background-color: #f5f5f5}
+
+</style>
+<table >
+    <tr class="fileheaders">
+        <th>Nom
+        </th>
+        <th>Taille
+        </th>
+        <th>Modification
+        </th>
+   </tr>
+@foreach (var fileinfo in Model.Files) {
+<tr class="fileinfo">
+    <td class="filename">
+        <a href="@fileinfo.FileLink(Model.UserName,Model.SubPath)">
+        @fileinfo.Name
+        </a></td> 
+    <td class="filesize">@fileinfo.Size</td> 
+    <td class="filemdate">@fileinfo.LastModified</td> 
+</tr>
+}
+</table>
+</div>
+

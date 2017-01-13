@@ -161,7 +161,6 @@ namespace Yavsc.Controllers
                     if (pro.Performer.Devices.Count > 0) {
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
-                        var sregids = string.Join(",",regids);
                         grep = await _GCMSender.NotifyBookQueryAsync(_googleSettings,regids,yaev);
                     }
                     // TODO setup a profile choice to allow notifications
@@ -175,7 +174,7 @@ namespace Yavsc.Controllers
                         _siteSettings, _smtpSettings,
                         command.PerformerProfile.Performer.Email,
                         yaev.Topic+" "+yaev.Client.UserName,
-                        $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n"
+                        $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
                 ViewBag.GoogleSettings = _googleSettings;

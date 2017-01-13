@@ -68,7 +68,6 @@ namespace Yavsc.Controllers
         [HttpPut("{id}")]
         public IActionResult PutEstimate(long id, [FromBody] Estimate estimate)
         {
-            var valdate = DateTime.Now;
 
             if (!ModelState.IsValid)
             {
@@ -90,7 +89,6 @@ namespace Yavsc.Controllers
             }
             
             var entry = _context.Attach(estimate);
-            estimate.ProviderValidationDate = valdate;
             try
             {
                 _context.SaveChanges();
@@ -107,7 +105,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return Ok( new { Id = estimate.Id, LatestValidationDate = valdate });
+            return Ok( new { Id = estimate.Id });
         }
 
         // POST: api/Estimate
@@ -127,10 +125,15 @@ namespace Yavsc.Controllers
                     return HttpBadRequest(ModelState);
                 }
             }
-            var valdate = DateTime.Now;
-            estimate.ProviderValidationDate = valdate;
-
+            if (estimate.CommandId!=null) {
+                var query = _context.BookQueries.FirstOrDefault(q => q.Id == estimate.CommandId);
+                if (query == null || query.PerformerId!= uid)
+                    throw new InvalidOperationException();
+                query.ValidationDate = DateTime.Now;
+            }
             _context.Estimates.Add(estimate);
+            
+            
            /* _context.AttachRange(estimate.Bill);
             _context.Attach(estimate);
             _context.Entry(estimate).State = EntityState.Added;
@@ -153,7 +156,7 @@ namespace Yavsc.Controllers
                     throw;
                 }
             }
-            return Ok( new { Id = estimate.Id, Bill = estimate.Bill , LatestValidationDate = valdate });
+            return Ok( new { Id = estimate.Id, Bill = estimate.Bill  });
         }
 
         // DELETE: api/Estimate/5

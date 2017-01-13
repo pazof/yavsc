@@ -31,7 +31,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DEV</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>0</WarningLevel>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
@@ -328,6 +328,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Accounts\YavscAccountAuthenticator.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Helpers\SimpleJsonPostMethod.cs" />
     <Compile Include="Helpers\YavscHelpers.cs" />
@@ -342,11 +343,14 @@
     <Compile Include="Markdown\MarkdownViewModel.cs" />
     <Compile Include="Markdown\MarkdownViewRenderer.cs" />
     <Compile Include="Markdown\MarkdownWebChromeClient.cs" />
+    <Compile Include="Markdown\MDContextMenu.cs" />
+    <Compile Include="Markdown\MDWebView.cs" />
     <Compile Include="OAuth2\YaOAuth2Authenticator.cs" />
     <Compile Include="Rendering\ImageButtonRenderer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendFilesActivity.cs" />
+    <Compile Include="Services\AccountChooserService.cs" />
     <Compile Include="Services\YavscChooserTargetService.cs" />
     <Compile Include="Services\GcmListenerService.cs" />
     <Compile Include="Services\GcmRegistrationIntentService.cs" />
@@ -372,6 +376,9 @@
     <AndroidResource Include="Resources\layout\EditEstimate.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\menu\md_menu.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\icon.png" />
@@ -381,15 +388,17 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Tabbar.axml" />
-    <AndroidResource Include="Resources\layout\Toolbar.axml" />
+    <AndroidResource Include="Resources\layout\Toolbar.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\values\styles.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Yavsc.Client\Yavsc.Client.csproj">
+    <ProjectReference Include="..\..\YavscLib\YavscLib.csproj">
       <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
-      <Name>Yavsc.Client</Name>
+      <Name>YavscLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\BookAStar\BookAStar.csproj">
       <Project>{A0815650-0A0A-47B0-8826-771F0E1AD137}</Project>
@@ -474,7 +483,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\values\dimens.xml" />
-    <AndroidResource Include="Resources\values\strings.xml" />
+    <AndroidResource Include="Resources\values\strings.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\drawable\glyphish_07_map_marker.png" />
     <AndroidResource Include="Resources\drawable\glyphish_13_target.png" />
     <AndroidResource Include="Resources\drawable\glyphish_74_location.png" />
@@ -498,6 +509,14 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\peer_to_peer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\authenticator.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\account_preferences.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

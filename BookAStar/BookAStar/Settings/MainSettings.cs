@@ -1,6 +1,4 @@
 // Helpers/Settings.cs
-using BookAStar.Model;
-using BookAStar.Model.Auth.Account;
 using Newtonsoft.Json;
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
@@ -8,11 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
-using Xamarin.Forms;
 
 namespace BookAStar
 {
+    using Model.Social;
+    using Model.Auth.Account;
+    using Data;
 
     /// <summary>
     /// This is the Settings static class that can be used in your Core solution or in any
@@ -32,7 +31,7 @@ namespace BookAStar
 
         #region Setting Constants
         public static readonly string SettingsDefault = string.Empty;
-        public static readonly string EntityDataSettingsPrefix = "Ed";
+        public static readonly string EntityDataSettingsPrefix = Constants.YavscApiUrl;
         private const string userNameKey = "user_id";
         private const string PushNotificationsKey = "pushNotifs";
         private const string AllowGPSUsageKey = "allowGPSUsage";
@@ -75,23 +74,13 @@ namespace BookAStar
             }
         }
         public const string bookQueryNotificationsKey = "BookQueryNotifications";
-        public static BookQueryData[] GetBookQueryNotifications()
+        public static BookQuery[] GetBookQueryNotifications()
         {
             // Do not return any null List
             var json = AppSettings.GetValueOrDefault<string>(bookQueryNotificationsKey);
             if (!string.IsNullOrWhiteSpace(json))
-                return JsonConvert.DeserializeObject<BookQueryData[]>(json);
-            return new BookQueryData[] { };
-        }
-
-        public static BookQueryData[] AddBookQueryNotification(BookQueryData query)
-        {
-            var existing = new List<BookQueryData>(GetBookQueryNotifications());
-            existing.Add(query);
-            var result = existing.ToArray();
-            AppSettings.AddOrUpdateValue(bookQueryNotificationsKey,
-                JsonConvert.SerializeObject(result));
-            return result;
+                return JsonConvert.DeserializeObject<BookQuery[]>(json);
+            return new BookQuery[] { };
         }
 
         public static string GoogleRegId
@@ -104,7 +93,7 @@ namespace BookAStar
                 // Inform the server of it.
                 if (oldregid != value)
                 {
-                    App.CurrentApp.PostDeviceInfo();
+                    App.PostDeviceInfo();
                 }
             }
             get { return AppSettings.GetValueOrDefault<string>(GoogleRegIdKey); }
@@ -155,15 +144,15 @@ namespace BookAStar
                 {
                     if (olduserid != value.Id)
                     {
-                        App.CurrentApp.PostDeviceInfo();
+                        App.PostDeviceInfo();
                         if (UserChanged!=null)
-                            UserChanged.Invoke(App.CurrentApp, new EventArgs());
+                            UserChanged.Invoke(App.Current, new EventArgs());
                     }
                 }
                 else if (olduserid != null)
                 {
                     if (UserChanged != null)
-                        UserChanged.Invoke(App.CurrentApp, new EventArgs());
+                        UserChanged.Invoke(App.Current, new EventArgs());
                     // TODO else Unregister this device
                 }
             }
@@ -171,21 +160,34 @@ namespace BookAStar
 
         public static event EventHandler<EventArgs> UserChanged;
 
+        /// <summary>
+        /// Saves the given user account in the account list.
+        /// An existent presenting the same Id will be dropped.
+        /// </summary>
+        /// <param name="user"></param>
         public static void SaveUser(User user)
         {
-            var existent = AccountList.FirstOrDefault(u => u.UserName == user.UserName);
+            var existent = AccountList.FirstOrDefault(u => u.Id == user.Id);
             if (existent != null)
                 AccountList.Remove(existent);
             AccountList.Add(user);
             var json = JsonConvert.SerializeObject(AccountList.ToArray());
             AppSettings.AddOrUpdateValue(UserListsKey, json);
         }
-
+        /// <summary>
+        /// Gets an account connection info, given its name
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         public static User GetUser(string username)
         {
             return AccountList.FirstOrDefault(a => a.UserName == username);
         }
 
+        // FIXME real time usage
+        /// <summary>
+        /// Enables/disables push notifications
+        /// </summary>
         public static bool PushNotifications
         {
             get
@@ -203,6 +205,10 @@ namespace BookAStar
             }
         }
 
+        // FIXME real time usage
+        /// <summary>
+        /// Enables/disables GPS usage
+        /// </summary>
         public static bool AllowGPSUsage
         {
             get
@@ -218,7 +224,11 @@ namespace BookAStar
                     value);
             }
         }
+
         // TODO make it a server side user's parameter
+        /// <summary>
+        /// Only allow professionals to ask for user's services
+        /// </summary>
         public static bool AllowProBookingOnly
         {
             get

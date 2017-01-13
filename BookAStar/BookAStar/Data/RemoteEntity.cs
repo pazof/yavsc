@@ -11,6 +11,7 @@ namespace BookAStar.Data
     using Helpers;
     using System.Diagnostics;
     using System.Text;
+    using System.Web;
 
     public class RemoteEntity<V, K> : LocalEntity<V, K>, ICommand where K : IEquatable<K>
     {
@@ -22,7 +23,7 @@ namespace BookAStar.Data
 
         public bool CanExecute(object parameter)
         {
-            return !IsExecuting && (MainSettings.CurrentUser != null);
+            return !IsExecuting;
         }
 
         public RemoteEntity(string controllerName, Func<V, K> getKey) : base(getKey)
@@ -36,7 +37,7 @@ namespace BookAStar.Data
         protected void BeforeExecute()
         {
             if (IsExecuting)
-                throw new InvalidOperationException("Already executing");
+                throw new InvalidOperationException(Strings.AlreadyExecuting);
             IsExecuting = true;
             if (CanExecuteChanged != null)
                 CanExecuteChanged.Invoke(this, new EventArgs());
@@ -49,7 +50,7 @@ namespace BookAStar.Data
         public virtual async void Execute(object parameter)
         {
             BeforeExecute();
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 // Get the whole data
                 try
@@ -71,7 +72,7 @@ namespace BookAStar.Data
                 }
                 catch (WebException webex)
                 {
-                    throw new ServiceNotAvailable("No remote entity", webex);
+                    throw new ServiceNotAvailable(Strings.ENoRemoteEntity, webex);
                 }
 
             }
@@ -95,7 +96,7 @@ namespace BookAStar.Data
 
         protected Uri GetUri(K key)
         {
-            return new Uri(ControllerUri.AbsoluteUri + "/" + key.ToString());
+            return new Uri(ControllerUri.AbsoluteUri + "/" + HttpUtility.UrlEncode(key.ToString()));
         }
 
         public virtual async Task<V> RemoteGet(K key)
@@ -105,7 +106,7 @@ namespace BookAStar.Data
             // Get the whole data
             var uri = GetUri(key);
 
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 using (var response = await client.GetAsync(uri))
                 {
@@ -123,23 +124,27 @@ namespace BookAStar.Data
             return item;
         }
 
-        public virtual async void Create(V item)
+        public virtual async Task<bool> Create(V item)
         {
+            bool created = false;
             BeforeExecute();
 
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 var stringContent = JsonConvert.SerializeObject(item);
+                
                 HttpContent content = new StringContent(
                     stringContent, Encoding.UTF8, "application/json"
                     );
                 using (var response = await client.PostAsync(ControllerUri, content))
                 {
-                    if (!response.IsSuccessStatusCode)
+                    created = response.IsSuccessStatusCode;
+                    if (!created)
                     {
                         // TODO throw custom exception, and catch to inform user
                         var errcontent = await response.Content.ReadAsStringAsync();
-                        Debug.WriteLine($"Create failed posting {stringContent} @ {ControllerUri.AbsoluteUri}: {errcontent}");
+                        Debug.WriteLine(string.Format(Strings.CreationFailed));
+                        Debug.WriteLine(errcontent);
                     }
                     else
                     {
@@ -148,31 +153,35 @@ namespace BookAStar.Data
                         JsonConvert.PopulateObject(recontent, item);
                     }
                 }
-
             }
 
             CurrentItem = item;
             AfterExecuting();
+            return created;
         }
-        public virtual async void Update(V item)
+        public virtual async Task<bool> Update(V item)
         {
+            var updated = false;
             BeforeExecute();
 
             var uri = GetUri(GetKey(item));
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 HttpContent content = new StringContent(
                     JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json"
                     );
                 using (var response = await client.PutAsync(uri, content))
                 {
-                    if (!response.IsSuccessStatusCode)
+                    updated = response.IsSuccessStatusCode;
+                    if (!updated)
                     {// TODO throw custom exception, and catch to inform user
                         if (response.StatusCode == HttpStatusCode.BadRequest)
                         {
-                            var recontent = await response.Content.ReadAsStringAsync();
+                            var errorcontent = await response.Content.ReadAsStringAsync();
+                            Debug.WriteLine(string.Format(Strings.UpdateFailed));
+                            Debug.WriteLine(errorcontent);
+
                         }
-                        
                         else Debug.WriteLine($"Update failed ({item} @ {uri.AbsolutePath} )");
 
                     }
@@ -188,13 +197,14 @@ namespace BookAStar.Data
 
             CurrentItem = item;
             AfterExecuting();
+            return updated;
         }
 
         public virtual async void Delete(K key)
         {
             BeforeExecute();
             var uri = GetUri(key);
-            using (HttpClient client = UserHelpers.CreateClient())
+            using (HttpClient client = UserHelpers.CreateJsonClient())
             {
                 using (var response = await client.DeleteAsync(uri))
                 {

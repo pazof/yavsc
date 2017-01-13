@@ -1,5 +1,5 @@
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Process
 {
     public abstract class NamedRequisition : IRequisition
     {

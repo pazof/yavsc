@@ -1456,18 +1456,21 @@ dd {
   margin-left: 0;
 }
 @media (min-width: 768px) {
+  
   .dl-horizontal dt {
     float: left;
-    width: 160px;
+    width: 45%;
     overflow: hidden;
     clear: left;
     text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
+    margin-right: 2em;
   }
   .dl-horizontal dd {
-    margin-left: 180px;
+    margin-left: 10%;
   }
+  
 }
 abbr[title],
 abbr[data-original-title] {

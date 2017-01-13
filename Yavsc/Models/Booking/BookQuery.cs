@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Billing;
+using Yavsc.Models.Relationship;
 
 namespace Yavsc.Models.Booking
 {
@@ -9,7 +10,7 @@ namespace Yavsc.Models.Booking
     /// Query, for a date, with a given perfomer, at this given place.
     /// </summary>
 
-    public class BookQuery : NominativeServiceCommand {
+    public class BookQuery : NominativeServiceCommand<RendezVous> {
     /// <summary>
     /// The command identifier
     /// </summary>
@@ -25,7 +26,13 @@ namespace Yavsc.Models.Booking
             get;
             set;
             }
-
+        
+        public LocationType LocationType {
+            set; 
+            get;
+        }
+        public string Reason { get; set; }
+        
         public BookQuery()
         {
         }

@@ -2,73 +2,55 @@ using System.IO;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System.Web.Routing;
-using Microsoft.AspNet.Mvc.ViewComponents;
-using Microsoft.AspNet.Razor;
 
 namespace Yavsc.ApiControllers
 {
     using Models;
+    using Helpers;
+    using System.Linq;
+    using Microsoft.Data.Entity;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
+    using System;
+    using System.Security.Claims;
+    using Microsoft.Extensions.Localization;
+    using Yavsc.Services;
+    using Yavsc.Models.Messaging;
 
     [Route("api/pdfestimate"), Authorize]
     public class PdfEstimateController : Controller
     {
         ApplicationDbContext dbContext;
-        DefaultViewComponentHelper helper;
-        IViewComponentDescriptorCollectionProvider provider;
-        IViewComponentInvokerFactory factory;
-        RazorEngineHost host;
-        RazorTemplateEngine engine;
-        IViewComponentSelector selector;
+        private IStringLocalizer _localizer;
+        private GoogleAuthSettings _googleSettings;
+        private IGoogleCloudMessageSender _GCMSender;
+        private IAuthorizationService authorizationService;
 
+        private ILogger logger;
 
         public PdfEstimateController(
-            IViewComponentDescriptorCollectionProvider provider,
-            IViewComponentSelector selector,
-        IViewComponentInvokerFactory factory,
+            IAuthorizationService authorizationService,
+            ILoggerFactory loggerFactory,
          ApplicationDbContext context)
         {
-            
-            this.selector = selector;
-            this.provider = provider;
-            this.factory = factory;
-            helper = new DefaultViewComponentHelper(provider, selector, factory);
+            this.authorizationService = authorizationService;
             dbContext = context;
-
-            var language = new CSharpRazorCodeLanguage();
-            host = new RazorEngineHost(language)
-            {
-                DefaultBaseClass = "RazorPage",
-                DefaultClassName = "Estimate",
-                DefaultNamespace = "Yavsc",
-            };
-
-            // Everyone needs the System namespace, right?
-            host.NamespaceImports.Add("System");
-            engine = new RazorTemplateEngine(host);
-
-            
-            /*
-            GeneratorResults razorResult =
-   engine.GenerateCode(
-
-   ) */
+            logger = loggerFactory.CreateLogger<PdfEstimateController>();
         }
 
 
         [HttpGet("get/{id}", Name = "Get"), Authorize]
-        public IActionResult Get(long id)
+        public async Task<IActionResult> Get(long id)
         {
-            var filename = $"estimate-{id}.pdf";
-
-            var cd = new System.Net.Mime.ContentDisposition
+            var estimate = dbContext.Estimates.Include(
+                e=>e.Query
+            ).FirstOrDefault(e=>e.Id == id);
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
             {
-                // for example foo.bak
-                FileName = filename,
-
-                // always prompt the user for downloading, set to true if you want 
-                // the browser to try to show the file inline
-                Inline = false,
-            };
+                return new ChallengeResult();
+            }
+ 
+            var filename = $"estimate-{id}.pdf";
 
             FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
             if (!fi.Exists) return Ok(new { Error = "Not generated" });
@@ -76,16 +58,104 @@ namespace Yavsc.ApiControllers
         }
 
         [HttpGet("estimate-{id}.tex", Name = "GetTex"), Authorize]
-        public IActionResult GetTex(long id)
+        public async Task<IActionResult> GetTex(long id)
         {
+            var estimate = dbContext.Estimates.Include(
+                e=>e.Query
+            ).FirstOrDefault(e=>e.Id == id);
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
             Response.ContentType = "text/x-tex";
             return ViewComponent("Estimate",new object[] { id, "LaTeX" });
         }
 
         [HttpPost("gen/{id}")]
-        public IActionResult GeneratePdf(long id)
+        public async Task<IActionResult> GeneratePdf(long id)
         {
+            var estimate = dbContext.Estimates.Include(
+                e=>e.Query
+            ).FirstOrDefault(e=>e.Id == id);
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
             return ViewComponent("Estimate",new object[] { id, "Pdf" } );
+        }
+
+
+        [HttpPost("prosign/{id}")]
+        public async Task<IActionResult> ProSign(long id)
+        {
+            var uid = User.GetUserId();
+            var estimate = dbContext.Estimates.Include(
+                e=>e.Query
+            ).FirstOrDefault(e=>e.Id == id && e.OwnerId == uid );
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
+            if (Request.Form.Files.Count!=1)
+                return new BadRequestResult();
+            User.ReceiveProSignature(id,Request.Form.Files[0],"pro");
+            estimate.ProviderValidationDate = DateTime.Now;
+            dbContext.SaveChanges();
+            // Notify the client
+            var yaev = new EstimationEvent(dbContext,estimate,_localizer);
+            var regids = estimate.Client.Devices.Select(d => d.GCMRegistrationId);
+            var grep = await _GCMSender.NotifyEstimateAsync(_googleSettings,regids,yaev);
+            return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = grep.success });
+        }
+
+        [HttpGet("prosign/{id}")]
+        public async Task<IActionResult> GetProSign(long id)
+        {
+            // For authorization purpose
+            var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
+
+            var filename = FileSystemHelpers.SignFileNameFormat("pro",id);
+            FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
+            if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
+            return File(fi.OpenRead(), "application/x-pdf", filename); ;
+        }
+
+        [HttpPost("clisign/{id}")]
+        public async Task<IActionResult> CliSign(long id)
+        {
+            var uid = User.GetUserId();
+            var estimate = dbContext.Estimates.Include( e=>e.Query
+            ).FirstOrDefault( e=> e.Id == id && e.Query.ClientId == uid );
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
+            if (Request.Form.Files.Count!=1)
+                return new BadRequestResult();
+            User.ReceiveProSignature(id,Request.Form.Files[0],"cli");
+            estimate.ClientValidationDate = DateTime.Now;
+            dbContext.SaveChanges();
+            return Ok (new { ClientValidationDate = estimate.ClientValidationDate });
+        }
+
+        [HttpGet("clisign/{id}")]
+        public async Task<IActionResult> GetCliSign(long id)
+        {
+            // For authorization purpose
+            var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
+            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            {
+                return new ChallengeResult();
+            }
+            
+            var filename = FileSystemHelpers.SignFileNameFormat("pro",id);
+            FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
+            if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
+            return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }
     }
 }

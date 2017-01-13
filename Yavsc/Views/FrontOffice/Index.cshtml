@@ -1,8 +1,38 @@
-
+@model Yavsc.ViewModels.FrontOffice.FrontOfficeIndexViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Front office";
 }
 
 <h2>Index</h2>
+<dl class="dl-horizontal">
+    <dt>@SR["EstimateToProduce"]
+    </dt>
+    <dd>@Html.DisplayFor(m=>m.EstimateToProduceCount)
+    </dd>
 
+    <dt>@SR["EstimateToSignAsPro"]
+    </dt>
+    <dd>@Html.DisplayFor(m=>m.EstimateToSignAsProCount)
+    </dd>
+
+    <dt>@SR["EstimateToSignAsCli"]
+    </dt>
+    <dd>@Html.DisplayFor(m=>m.EstimateToSignAsCliCount)
+    </dd>
+
+    <dt>@SR["BillToSignAsPro"]
+    </dt>
+    <dd>@Html.DisplayFor(m=>m.BillToSignAsProCount)
+    </dd>
+
+    <dt>@SR["BillToSignAsCli"]
+    </dt>
+    <dd>@Html.DisplayFor(m=>m.BillToSignAsCliCount)
+    </dd>
+
+    <dt>@SR["PayementsDone"]
+    </dt>
+    <dd>@Html.DisplayFor(m=>m.NewPayementsCount)
+    </dd>
+</dl>

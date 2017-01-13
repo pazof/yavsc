@@ -4,7 +4,7 @@ namespace Yavsc.Models.Billing
 {
     public class ExceptionSIREN {
         
-        [Key]
+        [Key,MinLength(9)]
         public string SIREN { get; set; }
     }
 }

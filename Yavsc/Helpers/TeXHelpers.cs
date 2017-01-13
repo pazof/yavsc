@@ -6,14 +6,26 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.AspNet.Mvc.ViewEngines;
-using Yavsc.ViewModels.Gen;
 
 namespace Yavsc.Helpers
 {
-    public class TeXString
+    using ViewModels.Gen;
+    public class TeXString : HtmlString
     {
 
-        public class Replacement
+        public TeXString(TeXString teXString): base(teXString.ToString())
+        {
+        }
+
+        public TeXString(string str) : base(str)
+        {
+           
+            
+        }
+       
+
+    }
+    public class Replacement
         {
             string target;
             string replacement;
@@ -27,8 +39,9 @@ namespace Yavsc.Helpers
                 return source.Replace(target, replacement);
             }
         }
-
-        public readonly static Replacement[] SpecialCharsRendering =
+    public static class TeXHelpers
+    {
+        public static readonly  Replacement[] SpecialCharsRendering =
         {
             new Replacement("<","\\textless"),
             new Replacement(">","\\textgreater"),
@@ -53,23 +66,16 @@ namespace Yavsc.Helpers
             new Replacement("†","\\dag"),
             new Replacement("–","\\textendash")
         };
-        string data;
-        public TeXString(string str)
+
+         public static TeXString ToTeX(this string source)
         {
-            data = str;
+            string result=source;
             foreach (var r in SpecialCharsRendering)
             {
-                data = r.Execute(data);
+                result = r.Execute(result);
             }
+            return new TeXString(result);
         }
-
-        override public string ToString()
-        {
-            return data;
-        }
-    }
-    public static class TeXHelpers
-    {
         public static string NewLinesWith(this string target, string separator)
         {
             var items = target.Split(new char[] { '\n' }).Where(
@@ -78,11 +84,19 @@ namespace Yavsc.Helpers
             return string.Join(separator, items);
         }
 
-        public static TeXString ToTeX(string target, string lineSeparator = "\n\\\\")
+        public static TeXString ToTeX(this string target, string lineSeparator = "\n\\\\")
         {
             if (target == null) return null;
-            return new TeXString(target.NewLinesWith(lineSeparator));
+            return new TeXString( target.ToTeX().ToString().NewLinesWith(lineSeparator) );
         }
+
+        public static TeXString SplitAddressToTeX (this string target)
+        {
+            var alines = target.Split(',');
+            var texlines = alines.Select(l=>l.ToTeX().ToString());
+            return new TeXString(string.Join("\\\\\n",texlines));
+        }
+
         public static bool GenerateEstimatePdf(this PdfGenerationViewModel Model)
         {
             string errorMsg = null;
@@ -111,6 +125,7 @@ namespace Yavsc.Helpers
                     p.StartInfo.WorkingDirectory = tempdir;
                     p.StartInfo = new ProcessStartInfo();
                     p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.WorkingDirectory = tempdir;
                     p.StartInfo.FileName = "/usr/bin/texi2pdf";
                     p.StartInfo.Arguments = $"--batch --build-dir=. -o {fo.FullName} {fi.FullName}";
                     p.Start();
@@ -121,6 +136,8 @@ namespace Yavsc.Helpers
                     }
                 }
                 fi.Delete();
+                var di = new DirectoryInfo(Path.Combine(tempdir,$"{Model.BaseFileName}.t2d"));
+                di.Delete(true);
             }
             Model.Generated = fo.Exists;
             Model.GenerationErrorMessage = new HtmlString(errorMsg);

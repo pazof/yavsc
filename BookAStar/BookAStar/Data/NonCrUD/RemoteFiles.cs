@@ -6,13 +6,6 @@ namespace BookAStar.Data.NonCrUD
 {
     using Helpers;
     using Model.FileSystem;
-    using System.Linq;
-    /*
-    public class DirectoryEntryChangingEvent : EventArgs
-    {
-        public UserDirectoryInfo OldItem { get; set; }
-        public UserDirectoryInfo NewItem { get; set; }
-    }*/
 
     public class RemoteFilesEntity : RemoteEntity<UserDirectoryInfo, FileAddress>
     {
@@ -24,7 +17,7 @@ namespace BookAStar.Data.NonCrUD
         public override async void Execute(object parameter)
         {
             BeforeExecute();
-            using (var client = UserHelpers.CreateClient())
+            using (var client = UserHelpers.CreateJsonClient())
             {
                 // Get the whole data
                 try

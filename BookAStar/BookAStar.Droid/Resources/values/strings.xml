@@ -14,5 +14,25 @@
 	<string name="url">url</string>
 	<string name="url_hint">url_hint</string>
 	<string name="picture">picture</string>
-	<string name="google_app_id">325408689282</string>
+  <string name="google_app_id">325408689282</string>
+  <string name="pref_screen_title">Comptes Booking Star</string>
+  <string name="account_authenticator_label">Comptes Booking Star</string>
+
+  <string name="copy">Copier</string>
+  <string name="past">Coller</string>
+
+  <string name="character">Caractère</string>
+  <string name="bold">Gras</string>
+  <string name="italic">Italique</string>
+  <string name="underline">Sousligné</string>
+
+  <string name="paragraph">Paragraphe</string>
+  <string name="header1">Titre</string>
+  <string name="header2">Sous-titre</string>
+  
+  
+  <string name="accounts">Comptes</string>
+  <string name="bookingstar_accounts_pref_screen_summary">
+    Préférences des comptes Booking Star
+  </string>
 </resources>

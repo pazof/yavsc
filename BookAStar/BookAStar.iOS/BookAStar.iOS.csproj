@@ -171,10 +171,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Yavsc.Client\Yavsc.Client.csproj">
-      <Project>{67F9D3A8-F71E-4428-913F-C37AE82CDB24}</Project>
-      <Name>Yavsc.Client</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BookAStar\BookAStar.csproj">
       <Project>{A0815650-0A0A-47B0-8826-771F0E1AD137}</Project>
       <Name>BookAStar</Name>

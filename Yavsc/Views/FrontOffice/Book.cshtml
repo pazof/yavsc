@@ -6,9 +6,10 @@
 <em>@ViewBag.Activity.Description</em>
 
 @foreach (var profile in Model) {
-    await Html.RenderPartialAsync("_PerformerPartial", profile) ; 
+    <hr/>
+    await Html.RenderPartialAsync("PerformerProfile", profile) ; 
     <form action="~/Command/Create" >
         <input type="hidden" name="id" value="@profile.PerformerId" />
-   <input type="submit" value="@SR["Book "+ViewBag.Activity.Code]"/>
-        </form>
+             <input type="submit" value="@SR["Book "+ViewBag.Activity.Code]"/>
+    </form>
 }
