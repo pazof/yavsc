@@ -1,5 +1,4 @@
 using Yavsc.Models;
-using Yavsc.Models.Workflow;
 using YavscLib;
 
 namespace Yavsc.Helpers
