@@ -21,7 +21,6 @@ namespace Yavsc.Models
     using Messaging;
     using Access;
     using Yavsc.Models.Booking.Profiles;
-    using System.Collections.Generic;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

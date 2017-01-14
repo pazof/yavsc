@@ -1,11 +1,10 @@
 
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Models.Workflow;
 
-namespace Yavsc.Models.Booking {
+namespace Yavsc.Models.Booking
+{
 
-  public class MusicalPreference   {
+    public class MusicalPreference   {
     
     [Key]
     public string OwnerProfileId
