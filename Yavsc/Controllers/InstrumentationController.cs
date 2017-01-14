@@ -56,7 +56,6 @@ namespace Yavsc.Controllers
             ViewBag.YetAvailableInstruments = _context.Instrument.Select(k=>new SelectListItem 
             { Text = k.Name, Value = k.Id.ToString(), Disabled = ownedArray.Contains(k.Id) });
 
-
             return View(new Instrumentation { UserId = uid });
         }
 
