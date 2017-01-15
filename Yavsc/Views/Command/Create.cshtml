@@ -1,6 +1,6 @@
 @model BookQuery
 @{
-    ViewData["Title"] = SR["Book "+Model.PerformerProfile.ActivityCode];
+    ViewData["Title"] = SR["Book "+ViewBag.Activity.Code];
 }
 @section header{
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
