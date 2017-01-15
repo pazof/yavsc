@@ -17,9 +17,6 @@ namespace Yavsc.Models.Booking
     
     [Required]
     public long TendencyId {get; set; }
-    
-
-
   } 
 
 }

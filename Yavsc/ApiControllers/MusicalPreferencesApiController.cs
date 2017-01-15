@@ -46,7 +46,6 @@ namespace Yavsc.Controllers
         }
 
         // PUT: api/MusicalPreferencesApi/5
-        [HttpPut("{id}")]
         public IActionResult PutMusicalPreference(string id, [FromBody] MusicalPreference musicalPreference)
         {
             if (!ModelState.IsValid)

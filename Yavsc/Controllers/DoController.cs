@@ -49,7 +49,6 @@ namespace Yavsc.Controllers
             ViewBag.HasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
             if (ViewBag.HasConfigurableSettings) 
             ViewBag.SettingsClassControllerName = Startup.ProfileTypes[userActivity.Does.SettingsClassName].Name;
-        
             return View(userActivity);
         }
 
