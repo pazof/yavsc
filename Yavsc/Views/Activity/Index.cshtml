@@ -62,6 +62,9 @@
         }
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.Children)
+        </td>
+        <td>
             <a asp-action="Edit" asp-route-id="@item.Code">Edit</a> |
             <a asp-action="Details" asp-route-id="@item.Code">Details</a> |
             <a asp-action="Delete" asp-route-id="@item.Code">Delete</a>

@@ -1,5 +1,3 @@
-
-
 namespace Yavsc.ApiControllers
 {
     using Models;

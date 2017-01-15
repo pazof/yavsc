@@ -19,6 +19,5 @@ namespace Yavsc.Models.Workflow
 
         [Range(0,100)]
         public int Weight { get; set; }
-
     }
 }

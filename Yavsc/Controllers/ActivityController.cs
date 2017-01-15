@@ -94,6 +94,9 @@ namespace Yavsc.Controllers
             }
         }
 
+      
+
+
         // GET: Activity/Details/5
         public IActionResult Details(string id)
         {

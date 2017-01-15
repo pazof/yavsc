@@ -17,6 +17,7 @@
             <label asp-for="DoesCode" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <select asp-for="DoesCode" asp-items=@ViewBag.DoesCode class ="form-control"></select>
+
                 <span asp-validation-for="DoesCode" class="text-danger" />
             </div>
         </div>
