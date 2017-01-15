@@ -91,11 +91,15 @@ namespace Yavsc.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public IActionResult Create(string id)
+        public IActionResult Create(string id, string activityCode)
         {
             if (string.IsNullOrWhiteSpace(id))
                 throw new InvalidOperationException(
                     "This method needs a performer id"
+                );
+             if (string.IsNullOrWhiteSpace(activityCode))
+                throw new InvalidOperationException(
+                    "This method needs an activity code"
                 );
             var pro = _context.Performers.Include(
                 x => x.Performer).FirstOrDefault(
@@ -103,7 +107,7 @@ namespace Yavsc.Controllers
             );
             if (pro == null)
                 return HttpNotFound();
-
+            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == activityCode);
             ViewBag.GoogleSettings = _googleSettings;
             var userid = User.GetUserId();
             var user = _userManager.FindByIdAsync(userid).Result;
