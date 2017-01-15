@@ -2,7 +2,7 @@
 
 <div class="performer @(Model.Active?"active":"inactive")">
      
-              <img src="~/Avatars/@(Model.Performer.UserName).xs.png" alt="avatar"> 
+              <img src="~/Avatars/@(Model.Performer?.UserName).xs.png" alt="avatar"> 
      
              @Model.Performer?.UserName 
 
@@ -17,23 +17,23 @@
         @if (Model.WebSite!=null) { 
             <li>@SR["WebSite"]: @Model.WebSite</li>
         }
-        @if (Model.Performer.Posts!=null) {
+        @if (Model.Performer != null) {
+            @if (Model.Performer.Posts!=null) {
             <li>  <a asp-controller="Blogspot" asp-action="UserPosts" 
             asp-route-id="@Model.Performer.UserName">@SR["His blog"]</a>
             </li>
-        }
-        @if (Model.Performer != null) {
-        @if (!string.IsNullOrEmpty(
-            Model.Performer.DedicatedGoogleCalendar))
-            {
+            }
+            @if (!string.IsNullOrEmpty(
+                Model.Performer.DedicatedGoogleCalendar))
+                {
             <li>   @SR["Exposes his Google calendar!"]
             </li>
-            }
-        @if (Model.Performer.Devices?.Count>0)
-            {
+                }
+            @if (Model.Performer.Devices?.Count>0)
+                {
             <li>   @SR["Uses the mobile application, and receives push notifications"]
             </li>
-            }
+                }
      }
 
     </ul>
