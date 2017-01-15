@@ -125,9 +125,10 @@ $(document).ready(function(){
 <div asp-validation-summary="ValidationSummary.All" class="text-danger" id="valsum"></div>
         <div class="form-group" has-feedback>
              <fieldset>
-<legend><label for="EventDate" class="col-md-2 control-label" >
+<legend>Votre évennement</legend>
+<label for="EventDate" class="col-md-2 control-label" >
     @SR["Event date"]
-</label></legend>
+</label>
             <div class="col-md-10">
                 <div class="container">
     <div class="row">
@@ -153,14 +154,9 @@ $(document).ready(function(){
 </div>
                
             </div>
-            </fieldset>
-        </div>
-        <div class="form-group" has-feedback>
-            <fieldset>
-            <legend><label for="Location_Address" class="col-md-2 control-label">
+            <label for="Location_Address" class="col-md-2 control-label">
                 @SR["Location"]
                 </label>
-            </legend>
             <div class="col-md-10">
             <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address"
              class="form-control" data-val-required=@SR["SpecifyPlace"] 
@@ -170,6 +166,14 @@ $(document).ready(function(){
             </ul>
             <div id="map"></div>
             </div>
+
+             <label for="Reason" class="col-md-2 control-label">
+                @SR["GiveAnExplicitReason"]
+                </label>
+            <textarea rows="15" asp-for="Reason" type="text" name="Reason" id="Reason" maxlength="4096" class="form-control"></textarea>
+            <span asp-validation-for="Reason" class="text-danger"></span>
+
+            
             @Html.HiddenFor(model=>model.Location.Latitude)
             @Html.HiddenFor(model=>model.Location.Longitude)
            </fieldset>
@@ -183,17 +187,8 @@ $(document).ready(function(){
         @Html.HiddenFor(model=>model.PerformerId)
         
     </div>
-    <div class="form-group" has-feedback>
-            <fieldset>
-            <legend>
-                <label for="Reason" class="col-md-2 control-label">
-                @SR["GiveAnExplicitReason"]
-                </label>
-            </legend>
-            <textarea rows="15" asp-for="Reason" type="text" name="Reason" id="Reason" maxlength="4096"
-            style="width:100%"></textarea>
-            <span asp-validation-for="Reason" class="text-danger"></span>
-     </fieldset>
+   
+               
 </form>
 
 
