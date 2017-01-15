@@ -146,7 +146,7 @@
     "postpack": "echo after packing",
     "prerestore": "echo before restoring packages",
     "postrestore": "echo after restoring packages",
-    "prepublish": "gulp min",
+    "prepublish": "echo before publishing",
     "postpublish": "echo \"  . ./contrib/postPublish.sh # to push in prod.\""
   },
   "embed": "Views/**/*.cshtml",
