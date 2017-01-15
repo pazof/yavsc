@@ -505,6 +505,7 @@ namespace Yavsc.Controllers
             return View(new PerformerProfile
             {
                 PerformerId = user.Id,
+                Performer = user,
                 OrganizationAddress = new Location()
             });
         }
