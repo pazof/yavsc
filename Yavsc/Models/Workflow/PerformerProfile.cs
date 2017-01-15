@@ -51,7 +51,7 @@ namespace Yavsc.Models.Workflow
 
         [NotMapped]
         public bool DoesBlog { get {
-            return Performer.Posts?.Count > 0 ;
+            return Performer?.Posts?.Count > 0 ;
         } }
         
     }
