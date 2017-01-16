@@ -120,5 +120,30 @@ namespace Yavsc.Controllers
                 throw new Exception("No data");
             return View("Estimate.pdf",estimate);
         }
+
+        [Authorize]
+        public IActionResult EstimateProValidation()
+        {
+            throw new NotImplementedException();
+
+        }
+
+        [Authorize]
+        public IActionResult EstimateClientValidation()
+        {
+            throw new NotImplementedException();
+            
+        }
+        [Authorize]
+        public IActionResult BillValidation()
+        {
+            throw new NotImplementedException();
+            
+        }
+        [Authorize]
+        public IActionResult BillAcquitment()
+        {
+            throw new NotImplementedException();
+        }
     } 
 }

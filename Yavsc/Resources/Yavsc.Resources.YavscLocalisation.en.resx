@@ -323,6 +323,10 @@
   <data name="XHasBeenNotified"><value>{0} has been notified of your query, you should be fast contacted</value></data>
   <data name="Xshouldbeavailable"><value>regarding his calendar, 
 {0} should be available for this booking</value></data>
+  <data name="Yavsc.Models.Booking.Profiles.Instrumentation"><value>Paramètres musicien (l'instrument)</value></data>
+  <data name="Yavsc.Models.Booking.Profiles.DjSettings"><value>Paramètres Dj (le compte SoundCloud.com)</value></data>
+  <data name="Yavsc.Models.Booking.Profiles.FormationSettings"><value>Paramètres formation (les partenaires)</value></data>
+  <data name="Yavsc.Models.Booking.Profiles.GeneralSettings"><value>Paramètres généraux: une couleur musicale</value></data>
   <data name="YouNeedToBeAuthenticatedIOToContact"><value>You need to be authenticated in order to 
 contact a performer</value></data>
   <data name="younotadmin"><value>You're not administrator</value></data>
