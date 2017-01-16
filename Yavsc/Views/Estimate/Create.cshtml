@@ -27,7 +27,7 @@
             <div class="col-md-10">
                 <select name="CommandId" id="CommandId">
                     @foreach (var query in ViewBag.Queries) {
-                    <option value="@query.Id" data-clientid="@query.ClientId">@query.GetDescription()</option>
+                    <option value="@query.Id" data-clientid="@query.ClientId">@Html.DisplayFor(m=> query)</option>
                     }
                 </select>
                 <span asp-validation-for="ClientId" class="text-danger" />
