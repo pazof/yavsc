@@ -116,7 +116,8 @@ namespace Yavsc.Controllers
                 PerformerProfile = pro,
                 PerformerId = pro.PerformerId,
                 ClientId = userid,
-                Client = user
+                Client = user,
+                ActivityCode = activityCode
             });
         }
 
@@ -182,7 +183,7 @@ namespace Yavsc.Controllers
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
-            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
+                ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
                 return View("CommandConfirmation",command);
             }
