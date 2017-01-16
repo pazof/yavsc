@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Model.Forms.Validation;
 
-namespace Yavsc.Model.Forms
+namespace Yavsc.Models.Forms
 {
+    using Validation;
     public abstract class Field
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -111,7 +111,7 @@ namespace Yavsc.Controllers
             ViewBag.GoogleSettings = _googleSettings;
             var userid = User.GetUserId();
             var user = _userManager.FindByIdAsync(userid).Result;
-            return View(new BookQuery(new Location(),DateTime.Now.AddHours(4))
+            return View(new BookQuery(activityCode,new Location(),DateTime.Now.AddHours(4))
             {
                 PerformerProfile = pro,
                 PerformerId = pro.PerformerId,
@@ -125,6 +125,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookQuery command)
         {
+            
             var uid = User.GetUserId();
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
@@ -181,6 +182,7 @@ namespace Yavsc.Controllers
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
+            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
                 return View("CommandConfirmation",command);
             }
