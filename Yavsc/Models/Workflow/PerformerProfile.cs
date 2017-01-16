@@ -31,8 +31,8 @@ namespace Yavsc.Models.Workflow
         [Display(Name="Accept notifications from non-VIP users")]
         public bool AcceptPublicContact { get; set; }
 
-        [Display(Name="Allow my geo-localization, nearby my clients")]
-        public bool AcceptGeoLocalization { get; set; }
+        [Display(Name="Use my geo-localization, and give me clients near by me")]
+        public bool UseGeoLocalizationToReduceDistanceWithClients { get; set; }
 
         [Display(Name="Web site")]
         public string WebSite { get; set; }
