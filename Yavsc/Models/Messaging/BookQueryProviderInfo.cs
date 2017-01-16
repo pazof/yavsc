@@ -15,6 +15,8 @@ namespace Yavsc.Model
         public decimal? Previsional { get; set; }
 
         public string Reason { get; set; }
+
+        public string ActivityCode { get; set; } 
     }
     
 }

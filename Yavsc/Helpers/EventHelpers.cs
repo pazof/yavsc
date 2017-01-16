@@ -19,7 +19,8 @@ namespace Yavsc.Helpers
                 EventDate = query.EventDate,
                 Location = query.Location,
                 Id = query.Id,
-                Reason = query.Reason
+                Reason = query.Reason,
+                ActivityCode = query.ActivityCode
             };
             return yaev;
         }

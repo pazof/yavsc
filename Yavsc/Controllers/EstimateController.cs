@@ -101,11 +101,13 @@ namespace Yavsc.Controllers
                 _context.Estimates
                 .Add(estimate);
                 _context.SaveChanges();
-
+                var query = _context.BookQueries.FirstOrDefault(
+                    q=>q.Id == estimate.CommandId
+                );
                 var perfomerProfile = _context.Performers
                 .Include(
                     perpr => perpr.Performer).FirstOrDefault(
-                    x=>x.PerformerId == estimate.Query.PerformerId
+                    x=>x.PerformerId == query.PerformerId
                 );
                 var command = _context.BookQueries.FirstOrDefault(
                     cmd => cmd.Id == estimate.CommandId
