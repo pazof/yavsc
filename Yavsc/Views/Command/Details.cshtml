@@ -9,49 +9,7 @@
 <div>
     <h4>Command</h4>
     <hr />
-    <dl class="dl-horizontal">
-        
-        <dt>
-            @Html.DisplayNameFor(model => model.EventDate)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.EventDate)
-        </dd>
-        
-        <dt>
-             @Html.DisplayNameFor(model => model.Client)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Client.UserName)
-        </dd>
-       
-        <dt>
-            @Html.DisplayNameFor(model => model.Location.Address)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Location.Address)
-        </dd>
-        
-        <dt>
-            @Html.DisplayNameFor(model => model.PerformerProfile)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.PerformerProfile.Performer.UserName)
-        </dd>
-        
-        <dt>
-            @Html.DisplayNameFor(model => model.ValidationDate)
-        </dt>
-        <dd>
-            @if (Model.ValidationDate==null) {
-                @SR["NotValidated"]
-            }
-            else { 
-                @Html.DisplayFor(model => model.ValidationDate)
-            }
-        </dd>
-        
-    </dl>
+    @Html.DisplayFor(m=>m)
 </div>
 <p>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

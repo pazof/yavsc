@@ -1,13 +1,13 @@
 @model Yavsc.Models.Workflow.UserActivity
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = SR["Details"];
 }
 
-<h2>Details</h2>
+<h2>@ViewData["Title"]</h2>
 
 <div>
-    <h4>UserActivity</h4>
+    <h4>Détails de votre activité @Model.DoesCode</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>@SR["Activity"]</dt>
