@@ -121,7 +121,10 @@
   <data name="About BookAStar"><value>À propos de BookAStar</value></data>
   <data name="About Message"><value>Bienvenue chez vos stars.</value></data>
   <data name="access denied"><value>Accès refusé</value></data>
+  <data name="AcceptNotifications"><value>Accepter la notification d'une demande de rendez-vous</value></data>
+  <data name="AcceptPublicContact"><value>Accepter les prises de contact de la part de particuliers</value></data>
   <data name="AccountBalance"><value>Balance du compte</value></data>
+  <data name="ActivateMyProSettings"><value>Activer mon profile professionnel</value></data>
   <data name="Activity"><value>Activité</value></data>
   <data name="Activities"><value>Activités</value></data>
   <data name="additionally"><value>de plus</value></data>
@@ -257,10 +260,13 @@
   <data name="Manage your account"><value>Gérez votre inscription</value></data>
   <data name="ManagedSiteSkills"><value>Compétences gérée sur ce site</value></data>
   <data name="MaxDate"><value>Date maximale du rendez-vous</value></data>
+  <data name="MaxDailyCost"><value>Coût maximal journalier</value></data>
   <data name="MEACode"><value>Code d'Activité Principalement Exercée</value></data>
   <data name="Members"><value>Membres</value></data>
   <data name="Message sent"><value>Votre message a été envoyé</value></data>
   <data name="MinDate"><value>Date minimale du rendez-vous</value></data>
+  <data name="MinDailyCost"><value>Coût minimal journalier</value></data>
+  MinDailyCost
   <data name="Modified"><value>Modifié</value></data>
   <data name="Modify"><value>Modifier</value></data>
   <data name="Modify settings"><value>Modifier les paramètres</value></data>
@@ -326,7 +332,7 @@
   <data name="Reset password confirmation"><value>Confirmation de ré-initialiser du mot de passe</value></data>
   <data name="role created"><value>Rôle créé</value></data>
   <data name="RoleName"><value>Nom du rôle </value></data>
-  <data name="Save these settings"><value>Save these settings</value></data>
+  <data name="Save these settings"><value>Enregistrer ces paramètres</value></data>
   <data name="Search"><value>Chercher</value></data>
   <data name="Select a Google calendar"><value>Selectioner un calendrier Google</value></data>
   <data name="Send"><value>Envoyer</value></data>
@@ -334,6 +340,9 @@
   <data name="Send a public message"><value>Envoyer un message publique</value></data>
   <data name="Set"><value>Positioner</value></data>
   <data name="SettingsClass"><value>Classe du paramétrage</value></data>
+  <data name="Your performer profile"><value>Votre profile professionel</value></data>
+  
+  <data name="Setup below your activity parameters"><value>Positionnez ci-après vos les paramêtre de votre activité</value></data>
   <data name="SiteSkills"><value>Talents/Compétences/Spécialités gérés sur ce site</value></data>
   <data name="Skill"><value>Compétence</value></data>
   <data name="Skills"><value>Talents/Compétences/Spécialités</value></data>
@@ -362,6 +371,7 @@
   <data name="Unregister"><value>Se désinscrire</value></data>
   <data name="Use a local account to log in"><value>Utiliser un compte local pour se connecter</value></data>
   <data name="Use another service to log in"><value>Utiliser un autre service pour se connecter</value></data>
+  <data name="UseGeoLocalizationToReduceDistanceWithClients"><value>Utiliser ma position pour avoir des clients plus proches</value></data>
   <data name="User List"><value>Liste des utilisateurs</value><comment></comment></data>
   <data name="UserName"><value>Nom d'utilisateur</value></data>
   <data name="UsersInRole"><value>Liste des utilisateurs assumant le rôle "{0}"</value></data>
@@ -370,6 +380,7 @@
   <data name="View_source"><value>Voir le texte source de l'article</value></data>
   <data name="was_added_to_the_role"><value>a été ajouté au rôle</value></data>
   <data name="was_added_to_the_empty_role"><value>Il n'y avait pas d'utilisateur dans le rôle "{1}". Vous ({0}) avez été ajouté au rôle "{1}".</value></data>
+  <data name="WebSite"><value>Site Web</value><comment></comment></data>
   <data name="Welcome"><value>Bienvenue</value><comment></comment></data>
   <data name="XHasBeenNotified"><value>{0} à été notifié de votre demande, vous devriez être contacté rapidement</value></data>
   <data name="Xshouldbeavailable"><value>Au vu de son calendrier,
@@ -394,5 +405,5 @@
   <data name="Your profile"><value>Votre profile</value></data>
   <data name="YourMessageHasBeenSent"><value>Votre messge a été envoyé</value></data>
   <data name="Tell more, below, about your query"><value>Dites en plus, ci àprès, à propos de cet évennement</value></data>
-  
+  <data name="UnsetActivity"><value>Supprimer mon profile professionel</value></data>
 </root>
