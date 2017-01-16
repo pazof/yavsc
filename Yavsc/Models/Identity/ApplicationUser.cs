@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Identity;
 using Yavsc.Models.Chat;
-using Yavsc.Model.Bank;
+using Yavsc.Models.Bank;
 using Yavsc.Models.Access;
 
 namespace Yavsc.Models

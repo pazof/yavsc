@@ -1,4 +1,4 @@
-namespace Yavsc.Model.Forms.Validation
+namespace Yavsc.Models.Forms.Validation
 {
     public class Required : Method
     {
