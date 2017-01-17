@@ -28,9 +28,9 @@
         <td>
             <span style="font-size:x-small;"> @item.Author.UserName </span> <br>
             <span style="font-size:xx-small;">
-            posté le @item.Posted.ToString("dddd d MMM yyyy à H:mm")
-            @if ((item.Modified - item.Posted).Minutes > 10){ 
-                @:- Modifié le @item.Modified.ToString("dddd d MMM yyyy à H:mm")
+            posté le @item.DateCreated.ToString("dddd d MMM yyyy à H:mm")
+            @if ((item.DateModified - item.DateCreated).Minutes > 10){ 
+                @:- Modifié le @item.DateModified.ToString("dddd d MMM yyyy à H:mm")
              }
             </span>
         </td>

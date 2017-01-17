@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class refactPrproAllowGeo : Migration
+    public partial class entityTracking : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,12 +29,20 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_ApplicationUser_PerformerId", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.DropColumn(name: "AcceptGeoLocalization", table: "PerformerProfile");
-            migrationBuilder.AddColumn<bool>(
-                name: "UseGeoLocalizationToReduceDistanceWithClients",
-                table: "PerformerProfile",
-                nullable: false,
-                defaultValue: false);
+            
+            
+            
+            migrationBuilder.RenameColumn(name: "Modified", table: "Blog", newName: "DateModified");
+            migrationBuilder.RenameColumn(name: "Posted", table: "Blog", newName: "DateCreated");
+            
+            migrationBuilder.AddColumn<string>(
+                name: "UserCreated",
+                table: "Blog",
+                nullable: true);
+            migrationBuilder.AddColumn<string>(
+                name: "UserModified",
+                table: "Blog",
+                nullable: true);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -205,12 +215,20 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_ApplicationUser_PerformerId", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.DropColumn(name: "UseGeoLocalizationToReduceDistanceWithClients", table: "PerformerProfile");
-            migrationBuilder.AddColumn<bool>(
-                name: "AcceptGeoLocalization",
-                table: "PerformerProfile",
+            migrationBuilder.DropColumn(name: "DateCreated", table: "Blog");
+            migrationBuilder.DropColumn(name: "DateModified", table: "Blog");
+            migrationBuilder.DropColumn(name: "UserCreated", table: "Blog");
+            migrationBuilder.DropColumn(name: "UserModified", table: "Blog");
+            migrationBuilder.AddColumn<DateTime>(
+                name: "Modified",
+                table: "Blog",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            migrationBuilder.AddColumn<DateTime>(
+                name: "Posted",
+                table: "Blog",
+                nullable: false,
+                defaultValueSql: "LOCALTIMESTAMP");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",

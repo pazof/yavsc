@@ -21,6 +21,8 @@ namespace Yavsc.Models
     using Messaging;
     using Access;
     using Yavsc.Models.Booking.Profiles;
+    using System.Web;
+    using System.Threading;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -32,7 +34,6 @@ namespace Yavsc.Models
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.Entity<Contact>().HasKey(x => new { x.OwnerId, x.UserId });
             builder.Entity<BookQuery>().Property(x=>x.CreationDate).HasDefaultValueSql("LOCALTIMESTAMP");
-            builder.Entity<Blog>().Property(x=>x.Posted).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
             builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
@@ -210,5 +211,37 @@ namespace Yavsc.Models
         public DbSet<FormationSettings> FormationSettings { get; set; }
         public DbSet<GeneralSettings> GeneralSettings { get; set; }
         public DbSet<CoWorking> WorkflowProviders { get; set; }
+
+        private void AddTimestamps()
+    {
+        var entities = ChangeTracker.Entries().Where(x => x.Entity.GetType().GetInterface("IBaseTrackedEntity")!=null && (x.State == EntityState.Added || x.State == EntityState.Modified));
+
+        var currentUsername = !string.IsNullOrEmpty(System.Web.HttpContext.Current?.User?.Identity?.Name)
+            ? HttpContext.Current.User.Identity.Name
+            : "Anonymous";
+
+        foreach (var entity in entities)
+        {
+            if (entity.State == EntityState.Added)
+            {
+                ((IBaseTrackedEntity)entity.Entity).DateCreated = DateTime.UtcNow;
+                ((IBaseTrackedEntity)entity.Entity).UserCreated = currentUsername;
+            }
+
+            ((IBaseTrackedEntity)entity.Entity).DateModified = DateTime.UtcNow;
+            ((IBaseTrackedEntity)entity.Entity).UserModified = currentUsername;
+        }
+    }
+        
+
+        override public int SaveChanges() {
+            AddTimestamps();
+            return base.SaveChanges();
+        }
+        
+         public override async Task<int> SaveChangesAsync(CancellationToken ctoken = default(CancellationToken)) {
+            AddTimestamps();
+            return await base.SaveChangesAsync();
+        }
     }
 }
