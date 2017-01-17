@@ -22,7 +22,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<Blog> GetBlogspot()
         {
-            return _context.Blogspot.Where(b=>b.Visible).OrderByDescending(b=>b.Modified);
+            return _context.Blogspot.Where(b=>b.Visible).OrderByDescending(b=>b.UserModified);
         }
 
         // GET: api/BlogApi/5

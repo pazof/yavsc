@@ -11,9 +11,7 @@ namespace Yavsc.Models
         public long Id { get; set; }
 
         public string Content { get; set; }
-        public DateTime Modified { get; set; }
         public string Photo { get; set; }
-        public DateTime Posted { get; set; }
         public int Rate { get; set; }
         public string Title { get; set; }
         public string AuthorId { get; set; }
@@ -21,5 +19,25 @@ namespace Yavsc.Models
         [ForeignKey("AuthorId"),JsonIgnore]
         public ApplicationUser Author { set; get; }
         public bool Visible { get; set; }
+
+        public DateTime DateCreated
+        {
+            get; set;
+        }
+
+        public string UserCreated
+        {
+            get; set;
+        }
+
+        public DateTime DateModified
+        {
+            get; set;
+        }
+
+        public string UserModified
+        {
+            get; set;
+        }
     }
 }

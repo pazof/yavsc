@@ -397,17 +397,19 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("Content");
 
-                    b.Property<DateTime>("Modified");
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateModified");
 
                     b.Property<string>("Photo");
-
-                    b.Property<DateTime>("Posted")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("Relational:GeneratedValueSql", "LOCALTIMESTAMP");
 
                     b.Property<int>("Rate");
 
                     b.Property<string>("Title");
+
+                    b.Property<string>("UserCreated");
+
+                    b.Property<string>("UserModified");
 
                     b.Property<bool>("Visible");
 

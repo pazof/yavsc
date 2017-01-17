@@ -1,14 +1,15 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170116154735_refactPrproAllowGeo")]
-    partial class refactPrproAllowGeo
+    [Migration("20170117134339_entityTracking")]
+    partial class entityTracking
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -397,17 +398,19 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("Content");
 
-                    b.Property<DateTime>("Modified");
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateModified");
 
                     b.Property<string>("Photo");
-
-                    b.Property<DateTime>("Posted")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("Relational:GeneratedValueSql", "LOCALTIMESTAMP");
 
                     b.Property<int>("Rate");
 
                     b.Property<string>("Title");
+
+                    b.Property<string>("UserCreated");
+
+                    b.Property<string>("UserModified");
 
                     b.Property<bool>("Visible");
 

@@ -1,5 +1,4 @@
 
-using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -48,7 +47,7 @@ namespace Yavsc.Controllers
                 return UserPosts(id);
             return View(_context.Blogspot.Include(
                b => b.Author
-            ).Where(p => p.Visible || p.AuthorId == uid ).OrderByDescending(p => p.Posted)
+            ).Where(p => p.Visible || p.AuthorId == uid ).OrderByDescending(p => p.UserCreated)
             .Skip(skip).Take(maxLen));
         }
 
@@ -109,14 +108,11 @@ namespace Yavsc.Controllers
         [HttpPost, Authorize(), ValidateAntiForgeryToken]
         public IActionResult Create(Blog blog)
         {
-            blog.Modified = blog.Posted = DateTime.Now;
             blog.Rate = 0;
             blog.AuthorId = User.GetUserId();
-            _logger.LogWarning($"Post from: {blog.AuthorId}");
             ModelState.ClearValidationState("AuthorId");
             if (ModelState.IsValid)
             {
-                blog.Posted = DateTime.Now;
                 _context.Blogspot.Add(blog);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
@@ -134,6 +130,8 @@ namespace Yavsc.Controllers
             }
 
             Blog blog = _context.Blogspot.Include(x => x.Author).Single(m => m.Id == id);
+
+
             if (blog == null)
             {
                 return HttpNotFound();
@@ -158,7 +156,6 @@ namespace Yavsc.Controllers
                 var auth = _authorizationService.AuthorizeAsync(User, blog, new EditRequirement());
                 if (auth.Result)
                 {
-                    blog.Modified = DateTime.Now;
                     _context.Update(blog);
                     _context.SaveChanges();
                     ViewData["StatusMessage"] = "Post modified";
