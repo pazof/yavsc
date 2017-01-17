@@ -46,10 +46,10 @@ namespace Yavsc
             }
             if (culture != null) {
 #if DNX451
-            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
+  //          System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo(culture);
             System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo(culture);
 #else
-            CultureInfo.CurrentCulture = new CultureInfo(culture);
+   //         CultureInfo.CurrentCulture = new CultureInfo(culture);
             CultureInfo.CurrentUICulture = new CultureInfo(culture);
 #endif
 }

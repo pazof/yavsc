@@ -4,11 +4,11 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
-using Yavsc.Models;
-using Yavsc.Models.Workflow;
 
 namespace Yavsc.Controllers
 {
+    using Models;
+    using Models.Workflow;
     [Authorize]
     public class DoController : Controller
     {
@@ -26,24 +26,29 @@ namespace Yavsc.Controllers
             if (id == null)
                 id = User.GetUserId();
 
-            var applicationDbContext = _context.UserActivities.Include(u => u.Does).Include(u => u.User).Where(u=> u.UserId == id);
-            return View(applicationDbContext.ToList());
+            var userActivities = _context.UserActivities.Include(u => u.Does)
+            .Include(u => u.User).Where(u=> u.UserId == id)
+            .OrderByDescending(u => u.Weight);
+            return View(userActivities.ToList());
         }
 
         // GET: Do/Details/5
-        public IActionResult Details(long? id)
+        public IActionResult Details(string id, string activityCode)
         {
-            if (id == null)
+            if (id == null || activityCode == null)
             {
                 return HttpNotFound();
             }
 
-            UserActivity userActivity = _context.UserActivities.Single(m => m.Id == id);
+            UserActivity userActivity = _context.UserActivities.Include(m=>m.Does)
+            .Include(m=>m.User).Single(m => m.DoesCode == activityCode && m.UserId == id);
             if (userActivity == null)
             {
                 return HttpNotFound();
             }
-
+            ViewBag.HasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
+            if (ViewBag.HasConfigurableSettings) 
+            ViewBag.SettingsClassControllerName = Startup.ProfileTypes[userActivity.Does.SettingsClassName].Name;
             return View(userActivity);
         }
 
@@ -53,10 +58,11 @@ namespace Yavsc.Controllers
         {
             if (userId==null)
                 userId = User.GetUserId();
+            var model = new UserActivity { UserId = userId };
             ViewBag.DoesCode = new SelectList(_context.Activities, "Code", "Name");
             //ViewData["UserId"] = userId;
             ViewBag.UserId = new SelectList(_context.Performers.Include(p=>p.Performer), "PerformerId", "Performer", userId);
-            return View();
+            return View(model);
         }
 
         // POST: Do/Create
@@ -82,14 +88,18 @@ namespace Yavsc.Controllers
 
         // GET: Do/Edit/5
         [Authorize]
-        public IActionResult Edit(long? id)
+        public IActionResult Edit(string id, string activityCode)
         {
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            UserActivity userActivity = _context.UserActivities.Single(m => m.Id == id);
+            UserActivity userActivity = _context.UserActivities.Include(
+                u=>u.Does
+            ).Include(
+                u=>u.User
+             ).Single(m => m.DoesCode == activityCode && m.UserId == id);
             if (userActivity == null)
             {
                 return HttpNotFound();
@@ -120,14 +130,14 @@ namespace Yavsc.Controllers
 
         // GET: Do/Delete/5
         [ActionName("Delete"),Authorize]
-        public IActionResult Delete(long? id)
+        public IActionResult Delete(string id, string activityCode)
         {
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            UserActivity userActivity = _context.UserActivities.Single(m => m.Id == id);
+            UserActivity userActivity = _context.UserActivities.Single(m => m.UserId == id && m.DoesCode == activityCode);
 
             if (userActivity == null)
             {
@@ -142,9 +152,9 @@ namespace Yavsc.Controllers
         // POST: Do/Delete/5
         [HttpPost, ActionName("Delete"),Authorize]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(long id)
+        public IActionResult DeleteConfirmed(string id, string activityCode)
         {
-            UserActivity userActivity = _context.UserActivities.Single(m => m.Id == id);
+            UserActivity userActivity = _context.UserActivities.Single(m => m.UserId == id && m.DoesCode == activityCode);
             if (!User.IsInRole("Administrator"))
                if (User.GetUserId() != userActivity.UserId) {
                     ModelState.AddModelError("User","You're not admin.");

@@ -5,26 +5,45 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Yavsc.Models;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)), Authorize("AdministratorOnly")]
+    [Authorize("AdministratorOnly")]
     public class ActivityController : Controller
     {
         private ApplicationDbContext _context;
         IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR;
+        ILogger logger;
 
-        public ActivityController(ApplicationDbContext context, IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR)
+        public ActivityController(ApplicationDbContext context, 
+        IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR,
+        ILoggerFactory loggerFactory)
         {
             _context = context;
             this.SR = SR;
+            logger=loggerFactory.CreateLogger<ActivityController>();
         }
 
         // GET: Activity
         public IActionResult Index()
         {
-            return View(_context.Activities.ToList());
+            SetSettingClasseInfo();
+            return View(_context.Activities.Include(a=>a.Parent).ToList());
+        }
+
+        private void SetSettingClasseInfo(string currentCode = null)
+        {
+            var items = Startup.ProfileTypes.Select(
+                pt => new SelectListItem
+                {
+                    Text = SR[pt.Key],
+                    Value = pt.Key,
+                    Selected = currentCode == pt.Key
+                }).ToList();
+            items.Add(new SelectListItem { Text = SR[Constants.NoneCode], Value = Constants.NoneCode, Selected = currentCode == null});
+            ViewBag.SettingsClassName = items;
         }
 
         private List<SelectListItem> GetEligibleParent(string code)
@@ -34,20 +53,21 @@ namespace Yavsc.Controllers
 
             //
             var acts = _context.Activities.Where(
-                a=> a.Code != code
+                a => a.Code != code
             ).Select(a => new SelectListItem
             {
                 Text = a.Name,
                 Value = a.Code
             }).ToList();
-            acts.Add(new SelectListItem { Text=SR["aucun"], Value=null } );
+            var nullItem = new SelectListItem { Text = SR[Constants.NoneCode], Value = Constants.NoneCode };
+            acts.Add(nullItem);
             if (code == null) return acts;
             var existing = _context.Activities.Include(a => a.Children).FirstOrDefault(a => a.Code == code);
             if (existing == null) return acts;
-            var pi =  acts.FirstOrDefault(i=>i.Value==existing.ParentCode);
-            // Assert(pi!=null)
-            pi.Selected=true;
-            RecFilterChild(acts, existing);
+            var pi = acts.FirstOrDefault(i => i.Value == existing.ParentCode);
+            if (pi!=null) pi.Selected = true; 
+            else nullItem.Selected = true;
+            RecFilterChild(acts, existing); 
             return acts;
         }
 
@@ -65,7 +85,7 @@ namespace Yavsc.Controllers
         {
             if (activity == null) return;
             if (activity.Children == null) return;
-            if (list.Count==0) return;
+            if (list.Count == 0) return;
             foreach (var child in activity.Children)
             {
                 RecFilterChild(list, child);
@@ -73,6 +93,9 @@ namespace Yavsc.Controllers
                 if (rem != null) list.Remove(rem);
             }
         }
+
+      
+
 
         // GET: Activity/Details/5
         public IActionResult Details(string id)
@@ -94,6 +117,7 @@ namespace Yavsc.Controllers
         // GET: Activity/Create
         public IActionResult Create()
         {
+            SetSettingClasseInfo();
             ViewBag.ParentCode = GetEligibleParent(null);
             return View();
         }
@@ -103,12 +127,18 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Activity activity)
         {
+            if (activity.ParentCode==Constants.NoneCode)
+                activity.ParentCode=null;
+            if (activity.SettingsClassName==Constants.NoneCode)
+                activity.SettingsClassName=null;
+
             if (ModelState.IsValid)
             {
                 _context.Activities.Add(activity);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
+            SetSettingClasseInfo();
             return View(activity);
         }
 
@@ -126,6 +156,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
             ViewBag.ParentCode = GetEligibleParent(id);
+            SetSettingClasseInfo();
             return View(activity);
         }
 
@@ -134,6 +165,10 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Activity activity)
         {
+            if (activity.ParentCode==Constants.NoneCode)
+                activity.ParentCode=null;
+            if (activity.SettingsClassName==Constants.NoneCode)
+                activity.SettingsClassName=null;
             if (ModelState.IsValid)
             {
                 _context.Update(activity);

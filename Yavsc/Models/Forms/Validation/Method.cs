@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Model.Forms.Validation
+namespace Yavsc.Models.Forms.Validation
 {
     public class Method
     {

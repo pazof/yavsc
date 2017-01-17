@@ -3,7 +3,7 @@ using Microsoft.AspNet.Identity;
 
 namespace Yavsc.ViewModels.Manage
 {
-    using Model.Bank;
+    using Models.Bank;
     using Models;
     using Models.Workflow;
     public class IndexViewModel

@@ -235,6 +235,8 @@ namespace Yavsc
          ILoggerFactory loggerFactory)
         {
             SiteSetup = siteSettings.Value;
+            Authority = siteSettings.Value.Authority;
+            Audience = siteSettings.Value.Audience;
             Startup.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
             Startup.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
             Startup.Temp = siteSettings.Value.TempDir;
@@ -328,13 +330,12 @@ namespace Yavsc
                 options.AutomaticAuthentication = false;
             });
 
-            Authority = siteSettings.Value.Authority;
-            Audience = siteSettings.Value.Audience;
 
-            ConfigureOAuthApp(app, siteSettings.Value);
-            ConfigureFileServerApp(app, siteSettings.Value, env, authorizationService);
-            ConfigureWebSocketsApp(app, siteSettings.Value, env);
 
+            ConfigureOAuthApp(app, SiteSetup);
+            ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
+            ConfigureWebSocketsApp(app, SiteSetup, env);
+            ConfigureWorkflow(app, SiteSetup);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"en"));
 
             app.UseMvc(routes =>

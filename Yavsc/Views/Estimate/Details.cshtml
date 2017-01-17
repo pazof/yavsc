@@ -9,35 +9,9 @@
 <div>
     <h4>Estimate</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Bill)
-        </dt>
-        <dd>
-            @foreach (var cl in Model.Bill) {
-                @await Html.PartialAsync("BillingLine", cl);
-            }
-        </dd>
-    </dl>
-</div>
+    
+            @Html.DisplayNameFor(model => model)
 <p>
     <a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a> |
     <a asp-action="Index">@SR["Back to List"]</a> 
 </p>
-<div>
-@await Component.InvokeAsync("Estimate",Model.Id)
-</div>

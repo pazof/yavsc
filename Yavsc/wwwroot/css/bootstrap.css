@@ -1456,18 +1456,21 @@ dd {
   margin-left: 0;
 }
 @media (min-width: 768px) {
+  
   .dl-horizontal dt {
     float: left;
-    width: 160px;
+    width: 45%;
     overflow: hidden;
     clear: left;
     text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
+    margin-right: 2em;
   }
   .dl-horizontal dd {
-    margin-left: 180px;
+    margin-left: 10%;
   }
+  
 }
 abbr[title],
 abbr[data-original-title] {
@@ -6455,7 +6458,6 @@ button.close {
   margin: 1px;
   text-indent: -999px;
   cursor: pointer;
-  background-color: #000 \9;
   background-color: rgba(0, 0, 0, 0);
   border: 1px solid #fff;
   border-radius: 10px;

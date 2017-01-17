@@ -91,11 +91,15 @@ namespace Yavsc.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public IActionResult Create(string id)
+        public IActionResult Create(string id, string activityCode)
         {
             if (string.IsNullOrWhiteSpace(id))
                 throw new InvalidOperationException(
                     "This method needs a performer id"
+                );
+             if (string.IsNullOrWhiteSpace(activityCode))
+                throw new InvalidOperationException(
+                    "This method needs an activity code"
                 );
             var pro = _context.Performers.Include(
                 x => x.Performer).FirstOrDefault(
@@ -103,16 +107,17 @@ namespace Yavsc.Controllers
             );
             if (pro == null)
                 return HttpNotFound();
-
+            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == activityCode);
             ViewBag.GoogleSettings = _googleSettings;
             var userid = User.GetUserId();
             var user = _userManager.FindByIdAsync(userid).Result;
-            return View(new BookQuery(new Location(),DateTime.Now.AddHours(4))
+            return View(new BookQuery(activityCode,new Location(),DateTime.Now.AddHours(4))
             {
                 PerformerProfile = pro,
                 PerformerId = pro.PerformerId,
                 ClientId = userid,
-                Client = user
+                Client = user,
+                ActivityCode = activityCode
             });
         }
 
@@ -121,6 +126,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookQuery command)
         {
+            
             var uid = User.GetUserId();
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
@@ -177,6 +183,7 @@ namespace Yavsc.Controllers
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
+                ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
                 return View("CommandConfirmation",command);
             }

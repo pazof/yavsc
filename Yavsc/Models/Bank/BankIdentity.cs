@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Yavsc.Model.Bank
+namespace Yavsc.Models.Bank
 {
     public class BankIdentity
     {

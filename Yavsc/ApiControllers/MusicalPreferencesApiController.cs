@@ -28,14 +28,14 @@ namespace Yavsc.Controllers
 
         // GET: api/MusicalPreferencesApi/5
         [HttpGet("{id}", Name = "GetMusicalPreference")]
-        public IActionResult GetMusicalPreference([FromRoute] long id)
+        public IActionResult GetMusicalPreference([FromRoute] string id)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            MusicalPreference musicalPreference = _context.MusicalPreferences.Single(m => m.Id == id);
+            MusicalPreference musicalPreference = _context.MusicalPreferences.Single(m => m.OwnerProfileId == id);
 
             if (musicalPreference == null)
             {
@@ -46,15 +46,14 @@ namespace Yavsc.Controllers
         }
 
         // PUT: api/MusicalPreferencesApi/5
-        [HttpPut("{id}")]
-        public IActionResult PutMusicalPreference(long id, [FromBody] MusicalPreference musicalPreference)
+        public IActionResult PutMusicalPreference(string id, [FromBody] MusicalPreference musicalPreference)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            if (id != musicalPreference.Id)
+            if (id != musicalPreference.OwnerProfileId)
             {
                 return HttpBadRequest();
             }
@@ -96,7 +95,7 @@ namespace Yavsc.Controllers
             }
             catch (DbUpdateException)
             {
-                if (MusicalPreferenceExists(musicalPreference.Id))
+                if (MusicalPreferenceExists(musicalPreference.OwnerProfileId))
                 {
                     return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -106,19 +105,19 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return CreatedAtRoute("GetMusicalPreference", new { id = musicalPreference.Id }, musicalPreference);
+            return CreatedAtRoute("GetMusicalPreference", new { id = musicalPreference.OwnerProfileId }, musicalPreference);
         }
 
         // DELETE: api/MusicalPreferencesApi/5
         [HttpDelete("{id}")]
-        public IActionResult DeleteMusicalPreference(long id)
+        public IActionResult DeleteMusicalPreference(string id)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            MusicalPreference musicalPreference = _context.MusicalPreferences.Single(m => m.Id == id);
+            MusicalPreference musicalPreference = _context.MusicalPreferences.Single(m => m.OwnerProfileId == id);
             if (musicalPreference == null)
             {
                 return HttpNotFound();
@@ -139,9 +138,9 @@ namespace Yavsc.Controllers
             base.Dispose(disposing);
         }
 
-        private bool MusicalPreferenceExists(long id)
+        private bool MusicalPreferenceExists(string id)
         {
-            return _context.MusicalPreferences.Count(e => e.Id == id) > 0;
+            return _context.MusicalPreferences.Count(e => e.OwnerProfileId == id) > 0;
         }
     }
 }

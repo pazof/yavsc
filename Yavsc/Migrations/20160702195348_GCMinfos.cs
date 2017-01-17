@@ -193,6 +193,7 @@ namespace Yavsc.Migrations
                 table: "GoogleCloudMobileDeclaration",
                 nullable: false,
                 defaultValue: "");
+            migrationBuilder.Sql("delete from \"GoogleCloudMobileDeclaration\"");
             migrationBuilder.AddColumn<string>(
                 name: "Name",
                 table: "GoogleCloudMobileDeclaration",
