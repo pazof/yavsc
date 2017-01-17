@@ -10,6 +10,7 @@
     await Html.RenderPartialAsync("PerformerProfile", profile) ; 
     <form action="~/Command/Create" >
         <input type="hidden" name="id" value="@profile.PerformerId" />
+        <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
              <input type="submit" value="@SR["Book "+ViewBag.Activity.Code]"/>
     </form>
 }

@@ -1,17 +1,22 @@
 
-using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Models.Workflow;
+using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Models.Booking {
+namespace Yavsc.Models.Booking
+{
 
-  public class MusicalPreference : MusicalTendency {
+    public class MusicalPreference   {
+    
+    [Key]
+    public string OwnerProfileId
+    {
+        get; set;
+    }
 
-    public string OwnerProfileId { get; set; }  
 
-    [ForeignKey("OwnerProfileId")]
-    public virtual PerformerProfile OwnerProfile { get; set; }
     public int Rate { get; set; }
-
+    
+    [Required]
+    public long TendencyId {get; set; }
   } 
 
 }

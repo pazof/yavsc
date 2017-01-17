@@ -53,5 +53,7 @@ namespace Yavsc.Models
         /// </summary>
         [Range(0,100)]
         public int Rate { get; set; }
+        [DisplayAttribute(Name="SettingsClass")]
+        public string SettingsClassName { get; set; }
     }
 }

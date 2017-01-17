@@ -1,8 +1,5 @@
-@model Yavsc.Models.Workflow.UserActivity
-
-@{
-    ViewData["Title"] = "Edit";
-}
+@model Yavsc.Models.Workflow.UserActivity 
+@{ ViewData["Title"] = "Edit"; }
 
 <h2>Edit</h2>
 
@@ -10,19 +7,14 @@
     <div class="form-horizontal">
         <h4>UserActivity</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Id" />
-        <div class="form-group">
-            <label asp-for="DoesCode" class="control-label col-md-2">DoesCode</label>
-            <div class="col-md-10">
-                <select asp-for="DoesCode" class="form-control" />
-                <span asp-validation-for="DoesCode" class="text-danger" />
-            </div>
+        <input type="hidden" asp-for="UserId" />
+        <input type="hidden" asp-for="DoesCode" />
+        <div class="text-danger"> @Html.ValidationSummary()
         </div>
         <div class="form-group">
             <label asp-for="Weight" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="Weight" class ="form-control"></select>
+                <input asp-for="Weight" class="form-control"></input>
             </div>
         </div>
         <div class="form-group">
@@ -36,4 +28,3 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-

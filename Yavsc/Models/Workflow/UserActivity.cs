@@ -5,9 +5,6 @@ namespace Yavsc.Models.Workflow
 {
     public class UserActivity
     {
-        [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
-
         [Required]
         public string UserId { get; set; }
 

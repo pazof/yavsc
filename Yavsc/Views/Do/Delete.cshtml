@@ -14,6 +14,8 @@
     </dl>
     
     <form asp-action="Delete">
+         <input type="hidden" asp-for="UserId" />
+          <input type="hidden" asp-for="DoesCode" />
         <div class="form-actions no-color">
             <input type="submit" value="Delete" class="btn btn-default" /> |
             <a asp-action="Index">Back to List</a>

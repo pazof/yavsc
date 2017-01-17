@@ -30,7 +30,7 @@ namespace Yavsc.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View(DbContext.Activities);
         }
 
         public IActionResult About()

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Yavsc.Model.Forms
+namespace Yavsc.Models.Forms
 {
     public class FieldSet
     {

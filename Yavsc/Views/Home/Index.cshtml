@@ -4,61 +4,39 @@
 
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
     <ol class="carousel-indicators">
+        @{
+            int i=0;
+            
+            foreach (var act in Model) { 
+                if (i==0) {
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-        <li data-target="#myCarousel" data-slide-to="3"></li>
+                } else {
+        <li data-target="#myCarousel" data-slide-to="@i"></li>
+                }
+                i++;
+            }
+        }
     </ol>
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="~/images/booking/groupe_b2.jpg" alt="ASP.NET" class="img-responsive" />
+    <div class="carousel-inner" role="listbox"> 
+        @{
+            i=0;
+            foreach (var act in Model) { 
+                string cls = (i==0) ? "item active":"item";
+        <div class="@cls">
+            <img src="@act.Photo" alt="@act.Name" class="img-responsive" />
             <div class="carousel-caption">
+                
+                <p><em>@act.Name</em><br/>
+                @act.Description </p>
                 <p>
-                Invitez un groupe musical à animer votre événement </p>
-                <p>
-                    <a class="btn btn-default" asp-controller="FrontOffice" asp-action="Book" asp-route-id="IT">
+                    <a class="btn btn-default" asp-controller="FrontOffice" asp-action="Book" asp-route-id="@act.Code">
                         En savoir plus
                     </a>
                 </p>
             </div>
         </div>
-        <div class="item">
-            <img src="~/images/booking/concert_b2.jpg" alt="Visual Studio" class="img-responsive" />
-            <div class="carousel-caption">
-                <p>
-                    Organisez un concert. </p>
-                <p>
-                    <a class="btn btn-default" asp-controller="FrontOffice" asp-action="Book" asp-route-id="IT">
-                        En savoir plus
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/booking/dj_b2.jpg" alt="Package Management" class="img-responsive" />
-            <div class="carousel-caption">
-                <p> Offrez-vous un anniversaire, un mariage Hip Hop </p>
-                <p>
-
-                    <a class="btn btn-default" asp-controller="FrontOffice" asp-action="Book" asp-route-id="IT">
-                        En savoir plus
-
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/booking/mike_b2.jpg" alt="Microsoft Azure" class="img-responsive" />
-            <div class="carousel-caption">
-                <p>
-                    Invitez votre chanteur à la fête </p>
-                <p>
-                    <a class="btn btn-default" asp-controller="FrontOffice" asp-route-id="Book" >
-                        En savoir plus
-                    </a>
-                </p>
-            </div>
-        </div>
+            i++; }
+        }
     </div>
     <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>

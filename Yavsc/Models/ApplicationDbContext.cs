@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +20,8 @@ namespace Yavsc.Models
     using Chat;
     using Messaging;
     using Access;
+    using Yavsc.Models.Booking.Profiles;
+
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         protected override void OnModelCreating(ModelBuilder builder)
@@ -35,6 +37,7 @@ namespace Yavsc.Models
             builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
             builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
             builder.Entity<UserActivity>().HasKey(u=> new { u.DoesCode, u.UserId});
+            builder.Entity<Instrumentation>().HasKey(u=> new { u.InstrumentId, u.UserId});
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -201,7 +204,11 @@ namespace Yavsc.Models
 
         public DbSet<LocationType> LocationType { get; set; }
 
-        public DbSet<Instrument> Instrument { get; set; }
-        
+        public DbSet<Instrument> Instrument { get; set; }        
+        public DbSet<DjSettings> DjSettings { get; set; }
+        public DbSet<Instrumentation> Instrumentation { get; set; }
+        public DbSet<FormationSettings> FormationSettings { get; set; }
+        public DbSet<GeneralSettings> GeneralSettings { get; set; }
+        public DbSet<CoWorking> WorkflowProviders { get; set; }
     }
 }

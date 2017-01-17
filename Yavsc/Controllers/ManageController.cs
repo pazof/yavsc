@@ -505,6 +505,7 @@ namespace Yavsc.Controllers
             return View(new PerformerProfile
             {
                 PerformerId = user.Id,
+                Performer = user,
                 OrganizationAddress = new Location()
             });
         }
@@ -562,7 +563,7 @@ namespace Yavsc.Controllers
                         _dbContext.Update(model);
                     }
                     else _dbContext.Performers.Add(model);
-
+                    _dbContext.SaveChanges();
                     // Give this user the Performer role
                     if (!User.IsInRole("Performer"))
                         await _userManager.AddToRoleAsync(user, "Performer");

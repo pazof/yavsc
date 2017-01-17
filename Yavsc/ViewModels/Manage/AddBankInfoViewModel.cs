@@ -1,6 +1,6 @@
 namespace Yavsc.ViewModels.Manage
 {
-    using Model.Bank;
+    using Models.Bank;
     public class AddBankInfoViewModel
     {
         public BankIdentity Data{get; private set; }

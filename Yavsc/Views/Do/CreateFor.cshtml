@@ -11,16 +11,31 @@
         <h4>UserActivity</h4>
         <hr />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="DoesCode" class="col-md-2 control-label"></label>
+
+        
+    <!--    <div class="form-group">
+            <label asp-for="UserId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="DoesCode" class ="form-control"></select>
+                <select asp-for="UserId" asp-items=@ViewBag.UserId class ="form-control"></select>
             </div>
-        </div>
+        </div> -->
+
         <div class="form-group">
             <label asp-for="UserId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="UserId" class ="form-control"></select>
+                <select asp-for="UserId" asp-items=@ViewBag.UserId class ="form-control"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="DoesCode" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="DoesCode" asp-items=@ViewBag.DoesCode class ="form-control"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Weight" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Weight" class ="form-control" />
             </div>
         </div>
         <div class="form-group">

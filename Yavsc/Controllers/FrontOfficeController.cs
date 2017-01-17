@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using Yavsc.Models.Booking;
 using Yavsc.Helpers;
 using System;
+using Yavsc.ViewModels.FrontOffice;
+using System.Security.Claims;
 
 namespace Yavsc.Controllers
 {
@@ -27,10 +29,20 @@ namespace Yavsc.Controllers
         }
         public ActionResult Index()
         {
-            var latestPosts = _context.Blogspot.Where(
-                x => x.Visible == true
-            ).OrderBy(x => x.Modified).Take(25).ToArray();
-            return View(latestPosts);
+            var uid = User.GetUserId();
+            var now = DateTime.Now;
+            
+            var model = new FrontOfficeIndexViewModel{
+                EstimateToProduceCount =  _context.Commands.Where(c => c.PerformerId == uid &&  c.EventDate > now
+                && c.ValidationDate == null && !_context.Estimates.Any(e=>(e.CommandId == c.Id && e.ProviderValidationDate != null))).Count(),
+                EstimateToSignAsProCount = _context.Commands.Where(c => ( c.PerformerId == uid &&  c.EventDate > now
+                && c.ValidationDate == null && _context.Estimates.Any(e=>(e.CommandId == c.Id && e.ProviderValidationDate != null)))).Count(),
+                EstimateToSignAsCliCount = _context.Estimates.Where(e=>e.ClientId == uid && e.ClientValidationDate == null) .Count(),
+                BillToSignAsProCount = 0,
+                BillToSignAsCliCount = 0,
+                NewPayementsCount = 0
+            };
+            return View(model);
         }
 
         [Route("Book/{id?}"), HttpGet]
@@ -107,6 +119,31 @@ namespace Yavsc.Controllers
             if (estimate==null)
                 throw new Exception("No data");
             return View("Estimate.pdf",estimate);
+        }
+
+        [Authorize]
+        public IActionResult EstimateProValidation()
+        {
+            throw new NotImplementedException();
+
+        }
+
+        [Authorize]
+        public IActionResult EstimateClientValidation()
+        {
+            throw new NotImplementedException();
+            
+        }
+        [Authorize]
+        public IActionResult BillValidation()
+        {
+            throw new NotImplementedException();
+            
+        }
+        [Authorize]
+        public IActionResult BillAcquitment()
+        {
+            throw new NotImplementedException();
         }
     } 
 }

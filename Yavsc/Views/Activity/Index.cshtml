@@ -15,7 +15,7 @@
           @Html.DisplayNameFor(model => model.Code)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+           @SR["Name"]
         </th>
 
         <th>
@@ -25,9 +25,11 @@
             @Html.DisplayNameFor(model => model.Photo)
         </th>
         <th>
-             @Html.DisplayNameFor(model => model.Children)
+             @Html.DisplayNameFor(model => model.Parent)
         </th>
-        <th></th>
+        <th>
+            @SR["SettingsClass"]
+        </th>
     </tr>
     
 @foreach (var item in Model) {
@@ -41,8 +43,23 @@
         <td>
             @Html.DisplayFor(modelItem => item.Description)
         </td>
+        <td>@if (item.Photo!=null) {
+            <img src="@item.Photo" style="max-height: 4em;" />
+        }
+        </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Photo)
+            @if (item.Parent!=null) {
+                <text>
+            @Html.DisplayFor(modelItem => item.Parent)
+            </text>
+            }
+        </td>
+        <td>
+         @if (item.SettingsClassName!=null) {
+                <text>
+            @SR[item.SettingsClassName]
+                </text>
+        }
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Children)
