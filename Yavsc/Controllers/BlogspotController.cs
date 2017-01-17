@@ -47,7 +47,7 @@ namespace Yavsc.Controllers
                 return UserPosts(id);
             return View(_context.Blogspot.Include(
                b => b.Author
-            ).Where(p => p.Visible || p.AuthorId == uid ).OrderByDescending(p => p.UserCreated)
+            ).Where(p => p.Visible || p.AuthorId == uid ).OrderByDescending(p => p.DateCreated)
             .Skip(skip).Take(maxLen));
         }
 
