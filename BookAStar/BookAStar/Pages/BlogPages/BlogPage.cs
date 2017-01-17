@@ -41,8 +41,8 @@ namespace BookAStar.Pages.BlogPages
             }
             else
             {
-                _sourceTitle.Html = _md.Transform(blog.bcontent);
-                _source.Html = _md.Transform(blog.bcontent);
+                _sourceTitle.Html = _md.Transform(blog.Title);
+                _source.Html = _md.Transform(blog.Content);
             }
         }
     }

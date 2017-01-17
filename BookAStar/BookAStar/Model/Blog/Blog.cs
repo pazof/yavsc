@@ -1,26 +1,53 @@
 using System;
+using Yavsc.Models;
 
 namespace BookAStar.Model.Blog
 {
-    public partial class Blog
+    public partial class Blog : IBlog
     {
+        public string AuthorId
+        {
+            get; set;
+        }
 
-        public long Id { get; set; }
+        public string Content
+        {
+            get; set;
+        }
 
-        public string bcontent { get; set; }
-        
-        public DateTime modified { get; set; }
+        public long Id
+        {
+            get; set;
+        }
 
-        public string photo { get; set; }
+        public DateTime Modified
+        {
+            get; set;
+        }
 
-        public DateTime posted { get; set; }
+        public string Photo
+        {
+            get; set;
+        }
 
-        public int rate { get; set; }
+        public DateTime Posted
+        {
+            get; set;
+        }
 
-        public string title { get; set; }
+        public int Rate
+        {
+            get; set;
+        }
 
-        public string AuthorId { get; set; }
+        public string Title
+        {
+            get; set;
+        }
 
-        public bool visible { get; set; }
+        public bool Visible
+        {
+            get; set;
+        }
     }
 }
