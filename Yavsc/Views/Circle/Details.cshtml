@@ -1,4 +1,4 @@
-@model Yavsc.Models.CircleMember
+@model Yavsc.Models.Relationship.Circle
 
 @{
     ViewData["Title"] = "Details";
@@ -7,9 +7,21 @@
 <h2>Details</h2>
 
 <div>
-    <h4>CircleMember</h4>
+    <h4>Circle</h4>
     <hr />
     <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.OwnerId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.OwnerId)
+        </dd>
     </dl>
 </div>
 <p>

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Yavsc
+namespace Yavsc.Models.Relationship
 {
 
     /// <summary>

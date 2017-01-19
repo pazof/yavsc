@@ -13,6 +13,7 @@ using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Booking;
+using Yavsc.ViewModels;
 
 namespace Yavsc.Controllers
 {

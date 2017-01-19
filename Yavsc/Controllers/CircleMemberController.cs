@@ -8,22 +8,22 @@ using Yavsc.Models.Relationship;
 
 namespace Yavsc.Controllers
 {
-    public class CircleController : Controller
+    public class CircleMemberController : Controller
     {
         private ApplicationDbContext _context;
 
-        public CircleController(ApplicationDbContext context)
+        public CircleMemberController(ApplicationDbContext context)
         {
             _context = context;    
         }
 
-        // GET: Circle
+        // GET: CircleMember
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Circle.ToListAsync());
+            return View(await _context.CircleMembers.ToListAsync());
         }
 
-        // GET: Circle/Details/5
+        // GET: CircleMember/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -31,36 +31,36 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
-            if (circle == null)
+            CircleMember circleMember = await _context.CircleMembers.SingleAsync(m => m.Id == id);
+            if (circleMember == null)
             {
                 return HttpNotFound();
             }
 
-            return View(circle);
+            return View(circleMember);
         }
 
-        // GET: Circle/Create
+        // GET: CircleMember/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Circle/Create
+        // POST: CircleMember/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Circle circle)
+        public async Task<IActionResult> Create(CircleMember circleMember)
         {
             if (ModelState.IsValid)
             {
-                _context.Circle.Add(circle);
+                _context.CircleMembers.Add(circleMember);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(circle);
+            return View(circleMember);
         }
 
-        // GET: Circle/Edit/5
+        // GET: CircleMember/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -68,29 +68,29 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
-            if (circle == null)
+            CircleMember circleMember = await _context.CircleMembers.SingleAsync(m => m.Id == id);
+            if (circleMember == null)
             {
                 return HttpNotFound();
             }
-            return View(circle);
+            return View(circleMember);
         }
 
-        // POST: Circle/Edit/5
+        // POST: CircleMember/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Circle circle)
+        public async Task<IActionResult> Edit(CircleMember circleMember)
         {
             if (ModelState.IsValid)
             {
-                _context.Update(circle);
+                _context.Update(circleMember);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(circle);
+            return View(circleMember);
         }
 
-        // GET: Circle/Delete/5
+        // GET: CircleMember/Delete/5
         [ActionName("Delete")]
         public async Task<IActionResult> Delete(long? id)
         {
@@ -99,22 +99,22 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
-            if (circle == null)
+            CircleMember circleMember = await _context.CircleMembers.SingleAsync(m => m.Id == id);
+            if (circleMember == null)
             {
                 return HttpNotFound();
             }
 
-            return View(circle);
+            return View(circleMember);
         }
 
-        // POST: Circle/Delete/5
+        // POST: CircleMember/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
-            _context.Circle.Remove(circle);
+            CircleMember circleMember = await _context.CircleMembers.SingleAsync(m => m.Id == id);
+            _context.CircleMembers.Remove(circleMember);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }

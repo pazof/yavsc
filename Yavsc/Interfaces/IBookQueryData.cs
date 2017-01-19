@@ -2,7 +2,8 @@
 
 namespace Yavsc.Interfaces
 {
-    using Yavsc.Models.Messaging;
+    using Models.Relationship;
+    using Models.Messaging;
     public interface IBookQueryData
     {
         ClientProviderInfo Client { get; set; }

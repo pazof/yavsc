@@ -16,6 +16,7 @@ namespace Yavsc.ApiControllers
     using Microsoft.Extensions.Localization;
     using Yavsc.Services;
     using Yavsc.Models.Messaging;
+    using Yavsc.ViewModels;
 
     [Route("api/pdfestimate"), Authorize]
     public class PdfEstimateController : Controller

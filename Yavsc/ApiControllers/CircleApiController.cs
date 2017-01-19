@@ -1,73 +1,74 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
+using Yavsc.Models.Relationship;
 
 namespace Yavsc.Controllers
 {
-    using Models.Relationship;
     [Produces("application/json")]
-    [Route("api/TagsApi")]
-    public class TagsApiController : Controller
+    [Route("api/cirle")]
+    public class CircleApiController : Controller
     {
         private ApplicationDbContext _context;
 
-        public TagsApiController(ApplicationDbContext context)
+        public CircleApiController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/TagsApi
+        // GET: api/CircleApi
         [HttpGet]
-        public IEnumerable<Tag> GetTag()
+        public IEnumerable<Circle> GetCircle()
         {
-            return _context.Tags;
+            return _context.Circle;
         }
 
-        // GET: api/TagsApi/5
-        [HttpGet("{id}", Name = "GetTag")]
-        public IActionResult GetTag([FromRoute] long id)
+        // GET: api/CircleApi/5
+        [HttpGet("{id}", Name = "GetCircle")]
+        public async Task<IActionResult> GetCircle([FromRoute] long id)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            Tag tag = _context.Tags.Single(m => m.Id == id);
+            Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
 
-            if (tag == null)
+            if (circle == null)
             {
                 return HttpNotFound();
             }
 
-            return Ok(tag);
+            return Ok(circle);
         }
 
-        // PUT: api/TagsApi/5
+        // PUT: api/CircleApi/5
         [HttpPut("{id}")]
-        public IActionResult PutTag(long id, [FromBody] Tag tag)
+        public async Task<IActionResult> PutCircle([FromRoute] long id, [FromBody] Circle circle)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            if (id != tag.Id)
+            if (id != circle.Id)
             {
                 return HttpBadRequest();
             }
 
-            _context.Entry(tag).State = EntityState.Modified;
+            _context.Entry(circle).State = EntityState.Modified;
 
             try
             {
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TagExists(id))
+                if (!CircleExists(id))
                 {
                     return HttpNotFound();
                 }
@@ -80,23 +81,23 @@ namespace Yavsc.Controllers
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
         }
 
-        // POST: api/TagsApi
+        // POST: api/CircleApi
         [HttpPost]
-        public IActionResult PostTag([FromBody] Tag tag)
+        public async Task<IActionResult> PostCircle([FromBody] Circle circle)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            _context.Tags.Add(tag);
+            _context.Circle.Add(circle);
             try
             {
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (TagExists(tag.Id))
+                if (CircleExists(circle.Id))
                 {
                     return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -106,28 +107,28 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return CreatedAtRoute("GetTag", new { id = tag.Id }, tag);
+            return CreatedAtRoute("GetCircle", new { id = circle.Id }, circle);
         }
 
-        // DELETE: api/TagsApi/5
+        // DELETE: api/CircleApi/5
         [HttpDelete("{id}")]
-        public IActionResult DeleteTag(long id)
+        public async Task<IActionResult> DeleteCircle([FromRoute] long id)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            Tag tag = _context.Tags.Single(m => m.Id == id);
-            if (tag == null)
+            Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
+            if (circle == null)
             {
                 return HttpNotFound();
             }
 
-            _context.Tags.Remove(tag);
-            _context.SaveChanges();
+            _context.Circle.Remove(circle);
+            await _context.SaveChangesAsync();
 
-            return Ok(tag);
+            return Ok(circle);
         }
 
         protected override void Dispose(bool disposing)
@@ -139,9 +140,9 @@ namespace Yavsc.Controllers
             base.Dispose(disposing);
         }
 
-        private bool TagExists(long id)
+        private bool CircleExists(long id)
         {
-            return _context.Tags.Count(e => e.Id == id) > 0;
+            return _context.Circle.Count(e => e.Id == id) > 0;
         }
     }
 }

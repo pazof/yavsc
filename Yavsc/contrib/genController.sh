@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dnx gen controller -async -outDir ApiControllers -api -dc ApplicationDbContext -m "$1" -name "$2ApiController"
+dnx gen controller -async -udl -outDir Controllers -dc ApplicationDbContext -m "$1" -name "$2Controller"
 
 # dnx gen controller -outDir Controllers -dc ApplicationDbContext -udl -m {model} -name {name}Controller
 

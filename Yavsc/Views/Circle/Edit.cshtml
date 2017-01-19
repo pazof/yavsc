@@ -1,4 +1,4 @@
-@model Yavsc.Models.CircleMember
+@model Yavsc.Models.Relationship.Circle
 
 @{
     ViewData["Title"] = "Edit";
@@ -8,10 +8,24 @@
 
 <form asp-action="Edit">
     <div class="form-horizontal">
-        <h4>CircleMember</h4>
+        <h4>Circle</h4>
         <hr />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="Name" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="OwnerId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="OwnerId" class="form-control" />
+                <span asp-validation-for="OwnerId" class="text-danger" />
+            </div>
+        </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />

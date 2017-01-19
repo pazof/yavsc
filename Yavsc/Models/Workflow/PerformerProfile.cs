@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Workflow 
 {
+    using Models.Relationship;
 
     public class PerformerProfile {
 
