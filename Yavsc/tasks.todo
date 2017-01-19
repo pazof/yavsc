@@ -63,6 +63,7 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	* La sélection d'une formation musicale: idem chanteur + (rechercher/afficher) la taille de la formation
 	☐ depuis le mobile
 	☐ depuis le Web
+	☐ Des spécifications détaillées du coeur de l'application 
 
 ## Jalon 2
 
@@ -138,6 +139,9 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 
 ## Jalon 5
 
-	☐ Conciliation
-	☐ Le réseau pro : on a des sous-traitants, on leur transmet des demandes de devis en tant que dépendance
-	d'une demande en cours,cette dernière n'est validable qu'une fois seulement que tous les devis dont elle dépend sont validés.
+	☐ Conciliation: Une aide à la décision en cas de conflit entre fournisseur et client: 
+	à partir du dossier de la commande, on peut aider, en tant que personne du milieu, qui a accès aux deux vues du dossier, 
+	celle du client et celle du fournisseur, des indicateurs peuvent aider un membre de l'équipe commerciale (du groupe "FrontOffice")
+	à choisir où se place la part de chacun dans l'échec du projet, et à en faire part au bélligérants dans l'espoir d'un accord.
+	☐ Le réseau pro : on a des sous-traitants, on leur transmet des demandes de devis en tant que sous-traitance
+	d'une demande en cours, cette dernière n'est validable qu'une fois seulement que tous les devis dont elle dépend sont validés.
