@@ -166,7 +166,7 @@
     <Compile Include="Model\Blog\BlogTag.cs" />
     <Compile Include="Model\Booking\BookQuery.cs" />
     <Compile Include="Model\Market\BaseProduct.cs" />
-    <Compile Include="Model\Workflow\BillingLine.cs" />
+    <Compile Include="Pages\EstimatePages\BillingLine.cs" />
     <Compile Include="Model\Manager.cs" />
     <Compile Include="Model\Auth\MobileAppDeclaration.cs" />
     <Compile Include="Model\Auth\passwrecovery.cs" />
