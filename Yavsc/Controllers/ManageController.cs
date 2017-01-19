@@ -491,8 +491,11 @@ namespace Yavsc.Controllers
         {
             var user = GetCurrentUserAsync().Result;
             var uid = user.Id;
-            var existing = _dbContext.Performers.Include(x => x.OrganizationAddress)
-            .Include(p=>p.Activity).FirstOrDefault(x => x.PerformerId == uid);
+            var existing = _dbContext.Performers
+            .Include(p=>p.Performer)
+            .Include(x => x.OrganizationAddress)
+            .Include(p=>p.Activity)
+            .FirstOrDefault(x => x.PerformerId == uid);
 
             ViewBag.GoogleSettings = _googleSettings;
             if (existing!=null)
