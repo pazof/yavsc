@@ -388,7 +388,7 @@
   <data name="Yavsc.Models.Booking.Profiles.Instrumentation"><value>Paramètres musicien (l'instrument)</value></data>
   <data name="Yavsc.Models.Booking.Profiles.DjSettings"><value>Paramètres Dj (le compte SoundCloud.com)</value></data>
   <data name="Yavsc.Models.Booking.Profiles.FormationSettings"><value>Paramètres formation (les partenaires)</value></data>
-  <data name="Yavsc.Models.Booking.Profiles.GeneralSettings"><value>Paramètres généraux: une couleur musicale</value></data>
+  <data name="Yavsc.Models.Booking.Profiles.GeneralSettings"><value>Paramètres généraux (visibilité et présentation)</value></data>
   <data name="Yes"><value>Oui</value></data>
   <data name="YouNeedToBeAuthenticatedIOToContact"><value>Vous devez vous authentifier pour pouvoir demander un devis
       à un préstataire.</value></data>
