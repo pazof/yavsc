@@ -1,7 +1,6 @@
 
 namespace Yavsc.Models.Messaging
 {
-using Yavsc.Model;
 
 //
 //  BookQueryEvent.cs

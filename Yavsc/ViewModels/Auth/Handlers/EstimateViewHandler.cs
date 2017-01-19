@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Models.Billing;
 
-namespace Yavsc.ViewModels.Auth
+namespace Yavsc.ViewModels.Auth.Handlers
 {
     public class EstimateViewHandler : AuthorizationHandler<ViewRequirement, Estimate>
     {

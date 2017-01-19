@@ -1,9 +1,9 @@
-using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
-using Yavsc.Models;
 
-namespace Yavsc.ViewModels.Auth
+namespace Yavsc.ViewModels.Auth.Handlers
 {
+    using System.Security.Claims;
+    using Models;
     public class BlogEditHandler : AuthorizationHandler<EditRequirement, Blog>
     {
         protected override void Handle(AuthorizationContext context, EditRequirement requirement, Blog resource)

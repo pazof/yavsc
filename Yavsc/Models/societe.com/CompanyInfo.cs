@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Model.societe.com
+namespace Yavsc.Models.societe.com
 {
 
     public class CompanyInfoMessage

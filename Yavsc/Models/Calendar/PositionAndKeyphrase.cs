@@ -23,6 +23,7 @@
 
 namespace Yavsc.Models.Calendar
 {
+    using Models.Relationship;
 	/// <summary>
 	/// Position and keyphrase.
 	/// </summary>

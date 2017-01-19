@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Models.Identity;
-using Yavsc.Models.Chat;
-using Yavsc.Models.Bank;
-using Yavsc.Models.Access;
 
 namespace Yavsc.Models
 {
+    using Models.Relationship;
+    using Models.Identity;
+    using Models.Chat;
+    using Models.Bank;
+    using Models.Access;
     public class ApplicationUser : IdentityUser
     {
         /// <summary>

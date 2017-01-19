@@ -1,4 +1,4 @@
-
+﻿
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -243,5 +243,7 @@ namespace Yavsc.Models
             AddTimestamps();
             return await base.SaveChangesAsync();
         }
+        
+         public DbSet<Circle> Circle { get; set; }
     }
 }

@@ -17,6 +17,8 @@ using Yavsc.Services;
 
 namespace Yavsc.Controllers
 {
+    using Models.Relationship;
+    
     [ServiceFilter(typeof(LanguageActionFilter))]
     public class CommandController : Controller
     {

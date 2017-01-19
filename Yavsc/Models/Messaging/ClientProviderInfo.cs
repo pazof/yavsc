@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace Yavsc.Models.Messaging
 {
+    using Models.Relationship;
     public class ClientProviderInfo
     {
         public string UserName { get; set; }

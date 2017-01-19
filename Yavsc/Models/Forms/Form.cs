@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Model.Forms
+namespace Yavsc.Models.Forms
 {
     using Interfaces;
     

@@ -1,10 +1,10 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using Yavsc.Model.societe.com;
 
 namespace  Yavsc.Helpers
 {
+    using Models.societe.com;
     public static class ComapnyInfoHelpers { 
         public static async Task<CompanyInfoMessage> CheckSiren(this HttpClient web,
         string siren, CompanyInfoSettings api)

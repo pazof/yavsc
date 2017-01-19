@@ -24,6 +24,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Messaging
 {
+    using Models.Relationship;
 	/// <summary>
 	/// Event pub.
 	/// </summary>

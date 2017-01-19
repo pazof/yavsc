@@ -1,8 +1,9 @@
 using System;
 
-namespace Yavsc.Model
+namespace Yavsc.Models
 {
     using Models.Messaging;
+    using Models.Relationship;
 
     public class BookQueryProviderInfo
     {

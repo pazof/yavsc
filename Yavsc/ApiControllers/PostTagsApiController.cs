@@ -3,10 +3,12 @@ using System.Linq;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
-using Yavsc.Models;
 
 namespace Yavsc.Controllers
 {
+    using Models;
+    using Models.Relationship;
+    
     [Produces("application/json")]
     [Route("~/api/PostTagsApi")]
     public class PostTagsApiController : Controller

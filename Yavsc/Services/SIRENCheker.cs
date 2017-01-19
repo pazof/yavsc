@@ -1,10 +1,10 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Yavsc.Helpers;
-using Yavsc.Model.societe.com;
 
 namespace Yavsc.Services
 {
+    using Models.societe.com;
     public class SIRENChecker
     {
         private CompanyInfoSettings _settings;

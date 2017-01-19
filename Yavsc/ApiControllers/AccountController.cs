@@ -12,8 +12,9 @@ namespace Yavsc.WebApi.Controllers
     using ViewModels.Account;
     using Models.Auth;
     using Yavsc.Helpers;
+    using System;
 
-    [Authorize,Route("~/api/account")]
+    [Authorize,Route("~/api/account"),Obsolete]
     public class ApiAccountController : Controller
     {
         

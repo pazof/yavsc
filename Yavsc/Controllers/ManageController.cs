@@ -23,6 +23,8 @@ using Yavsc.Models.Identity;
 
 namespace Yavsc.Controllers
 {
+    using Models.Relationship;
+    
     [Authorize, ServiceFilter(typeof(LanguageActionFilter))]
     public class ManageController : Controller
     {

@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 namespace Yavsc.Controllers
 {
     using System;
-    using Yavsc.Model;
     using Yavsc.Models.Messaging;
     using Yavsc.Models;
     using Yavsc.Models.Booking;

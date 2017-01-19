@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Relationship
 {
     public partial class PostTag
     {

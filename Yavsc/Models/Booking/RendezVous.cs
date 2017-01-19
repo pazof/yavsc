@@ -5,10 +5,10 @@ using Yavsc.Models.Market;
 
 namespace Yavsc.Models.Booking
 {
+    using Models.Relationship;
     /// <summary>
     /// A date, between two persons
     /// </summary>
-
     public class RendezVous: Service {
         // Haut les mains.
 
