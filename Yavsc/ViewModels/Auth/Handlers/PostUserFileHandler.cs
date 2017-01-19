@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
+using Yavsc.ViewModel.Auth;
 
 namespace Yavsc.ViewModels.Auth.Handlers
 {
