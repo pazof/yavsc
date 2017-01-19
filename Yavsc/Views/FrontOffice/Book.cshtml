@@ -7,7 +7,7 @@
 
 @foreach (var profile in Model) {
     <hr/>
-    await Html.RenderPartialAsync("PerformerProfile", profile) ; 
+    @Html.DisplayFor(m=>m)
     <form action="~/Command/Create" >
         <input type="hidden" name="id" value="@profile.PerformerId" />
         <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />

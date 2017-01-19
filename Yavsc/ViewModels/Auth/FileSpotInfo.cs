@@ -3,11 +3,12 @@ using System.IO;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Models;
 
-namespace Yavsc {
+namespace Yavsc.ViewModel.Auth {
 
     public class FileSpotInfo : IAuthorizationRequirement
     {
-        public DirectoryInfo PathInfo { get; private set; } 
+        public DirectoryInfo PathInfo { get; private set; }
+
         public FileSpotInfo(string path, Blog b) {
             PathInfo = new DirectoryInfo(path);
             AuthorId = b.AuthorId;
