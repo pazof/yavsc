@@ -72,6 +72,7 @@ namespace Yavsc.Controllers
                 Name = x.Name,
                 Users = x.Users.Select(u=>u.UserId).ToArray()
             });
+            
             return View(new AdminViewModel
             {
                 Roles = roles.ToArray(),
