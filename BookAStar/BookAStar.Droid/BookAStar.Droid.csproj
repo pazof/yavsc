@@ -333,6 +333,7 @@
     <Compile Include="Helpers\SimpleJsonPostMethod.cs" />
     <Compile Include="Helpers\YavscHelpers.cs" />
     <Compile Include="Html.cs" />
+    <Compile Include="Interfaces\IGCMessageHandler.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Markdown\JsBridgeMarkdown.cs" />
     <Compile Include="Markdown\MarkdownEditor.cs">
@@ -351,6 +352,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendFilesActivity.cs" />
     <Compile Include="Services\AccountChooserService.cs" />
+    <Compile Include="Services\GCMHandlers\BookQueryGCMHandler.cs" />
+    <Compile Include="Services\GCMHandlers\GCMessageHandler.cs" />
     <Compile Include="Services\YavscChooserTargetService.cs" />
     <Compile Include="Services\GcmListenerService.cs" />
     <Compile Include="Services\GcmRegistrationIntentService.cs" />

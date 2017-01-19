@@ -115,8 +115,9 @@ namespace BookAStar.Pages
                 Strings.CancelValidation, new string[] { Strings.Sign  });
             if (response == Strings.Sign)
             {
-                App.NavigationService.NavigateTo<EstimateSigningPage>(true, 
-                    new EstimateSigningViewModel(evm.Data) { ValidationCommand = cmd });
+                App.NavigationService.NavigateTo<EstimateSigningPage>(true,
+                    new EstimateSigningViewModel(evm.Data) { ValidationCommand = cmd,
+                        IsProviderView = true });
             }
             else if (response == Strings.CancelValidation)
                 return;
