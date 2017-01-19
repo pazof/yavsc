@@ -52,10 +52,13 @@ namespace Yavsc.Controllers
             {
                 throw new NotImplementedException("No Activity code");
             }
-            ViewBag.Activity = _context.Activities.FirstOrDefault(a=>a.Code == id);
-           var result = _context.Performers
-           .Include(p=>p.Performer).Where(p => p.Activity.Any(u=>u.DoesCode==id)).OrderBy( x => x.MinDailyCost );
-           
+           ViewBag.Activity = _context.Activities.FirstOrDefault(a=>a.Code == id);
+          var result = _context.Performers
+           .Include(p=>p.Activity)
+           .Include(p=>p.Performer)
+           .Include(p=>p.Performer.Posts)
+           .Include(p=>p.Performer.Devices)
+           .Where(p => p.Active && p.Activity.Any(u=>u.DoesCode==id)).OrderBy( x => x.Rate ).ToList(); 
             return View(result);
         }
 

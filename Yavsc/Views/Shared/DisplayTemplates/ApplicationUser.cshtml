@@ -1,4 +1,5 @@
 @model ApplicationUser
+
 <img src="~/Avatars/@(Model.UserName).xs.png" alt="avatar"> 
 @Model.UserName 
      <ul>
@@ -18,5 +19,4 @@ asp-route-id="@Model.UserName">@SR["His blog"]</a>
 <li>   @SR["Uses the mobile application, and receives push notifications"]
 </li>
     }
-     </ul>
-
+</ul>

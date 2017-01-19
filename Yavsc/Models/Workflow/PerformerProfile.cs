@@ -10,7 +10,7 @@ namespace Yavsc.Models.Workflow
 
         [Key]
         public string PerformerId { get; set; }
-        [ForeignKey("PerformerId"),Display(Name="Performer")]
+        [ForeignKey("PerformerId")]
         public virtual ApplicationUser Performer { get; set; }
 
         [InverseProperty("User")]
