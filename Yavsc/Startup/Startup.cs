@@ -91,7 +91,7 @@ namespace Yavsc
             {
                 var supportedCultures = new[]
                 {
-                    new CultureInfo("en")
+                    new CultureInfo("fr")
                 };
                 var supportedUICultures = new[]
                 {
@@ -336,7 +336,7 @@ namespace Yavsc
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
             ConfigureWebSocketsApp(app, SiteSetup, env);
             ConfigureWorkflow(app, SiteSetup);
-            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"en"));
+            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"fr"));
 
             app.UseMvc(routes =>
             {
