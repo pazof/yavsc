@@ -11,7 +11,7 @@ namespace Yavsc.Models.Booking
     /// Query, for a date, with a given perfomer, at this given place.
     /// </summary>
 
-    public class BookQuery : NominativeServiceCommand<RendezVous>
+    public class BookQuery : NominativeServiceCommand<RendezVous>, IBaseTrackedEntity
     {
         /// <summary>
         /// The command identifier

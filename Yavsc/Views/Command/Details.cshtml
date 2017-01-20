@@ -1,13 +1,13 @@
 @model BookQuery
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = @SR["Details"];
 }
 
-<h2>Details</h2>
+<h2>@ViewData["Title"]</h2>
 
 <div>
-    <h4>Command</h4>
+    <h4>@SR["Command"]</h4>
     <hr />
     @Html.DisplayFor(m=>m)
 </div>

@@ -12,22 +12,22 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CreationDate)
+            @SR["DateCreated"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.EventDate)
+            @SR["EventDate"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Location)
+            @SR["Location"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Client)
+            @SR["Client"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PerformerProfile)
+            @SR["Performer"]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ValidationDate)
+            @SR["ValidationDate"]
         </th>
         <th></th>
     </tr>
@@ -35,7 +35,7 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.CreationDate)
+            @Html.DisplayFor(modelItem => item.DateCreated)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.EventDate)
