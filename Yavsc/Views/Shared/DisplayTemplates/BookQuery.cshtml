@@ -3,39 +3,39 @@
 <dl class="dl-horizontal">
         
         <dt>
-            @Html.DisplayNameFor(model => model.EventDate)
+            @SR["EventDate"]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.EventDate)
         </dd>
         
         <dt>
-             @Html.DisplayNameFor(model => model.Client)
+            @SR["Client"]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Client.UserName)
         </dd>
        
         <dt>
-            @Html.DisplayNameFor(model => model.Location.Address)
+            @SR["Address"]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Location.Address)
         </dd>
         
         <dt>
-            @Html.DisplayNameFor(model => model.PerformerProfile)
+            @SR["Provider"]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.PerformerProfile.Performer.UserName)
         </dd>
         
         <dt>
-            @Html.DisplayNameFor(model => model.ValidationDate)
+            @SR["ValidationDate"]
         </dt>
         <dd>
             @if (Model.ValidationDate==null) {
-                @SR["NotValidated"]
+                @SR["NonValidee"]
             }
             else { 
                 @Html.DisplayFor(model => model.ValidationDate)
