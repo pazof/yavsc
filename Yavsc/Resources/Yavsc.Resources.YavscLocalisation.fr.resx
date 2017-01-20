@@ -167,6 +167,7 @@
   <data name="Circles"><value>Cercles</value></data>
   <data name="Click action"><value>Action sur click</value></data>
   <data name="Click here to log in"><value>Cliquez ici pour vous identifier</value></data>
+  <data name="Command"><value>Commande</value></data>
   <data name="Command confirmation"><value>Confirmation de commande</value></data>
   <data name="Comment"><value>Commentaire</value></data>
   <data name="Consultant"><value>Consultant</value></data>
@@ -179,6 +180,8 @@
   <data name="Create a new account"><value>Créer un nouveau compte</value></data>
   <data name="Credits"><value>Crédits</value></data>
   <data name="Date search"><value>Demande de rendez-vous</value></data>
+  <data name="DateCreated"><value>Date de création</value></data>
+  <data name="DateModified"><value>Date de dernière modification</value></data>
   <data name="DB"><value>Base de données</value></data>
   <data name="Details"><value>Détails</value></data>
   <data name="Delete"><value>Supprimer</value></data>
@@ -209,6 +212,8 @@
   <data name="EstimateToProduce"><value>Demandes de Devis en souffrance</value></data>
   <data name="EstimateToSignAsPro"><value>Devis à valider</value></data>
   <data name="EstimateToSignAsCli"><value>Devis à accèpter ou refuser</value></data>
+  <data name="EventDate"><value>Date de l'évennement</value></data>
+  
   <data name="BillToSignAsPro"><value>Factures à produire</value></data>
   <data name="BillToSignAsCli"><value>Factures à honnorer</value></data>
   <data name="PayementsDone"><value>Paiements effectués</value></data>
@@ -287,6 +292,8 @@
   <data name="Non existent user"><value>Non existent user</value></data>
   <data name="NoSkillforthisactivity"><value>Aucune compétence n'a été enregistrée par aucun préstataire pour cette activité.</value></data>
   <data name="Not Approuved"><value>Non approuvé</value></data>
+  <data name="NonValidee"><value>Non validée</value></data>
+  <data name="NonValide"><value>Non validé</value></data>
   <data name="Offline"><value>Hors ligne</value></data>
   <data name="Online"><value>En ligne</value></data>
   <data name="OnlyAuthorizedMayContact"><value>Seuls les utilisateurs authorisés peuvent contacter un préstataire par courrier.</value></data>
@@ -296,6 +303,7 @@
   <data name="PerformancePlace"><value>Lieu de la pestation</value></data>
   <data name="Performers"><value>Perstataires</value></data>
   <data name="Performer"><value>Préstataire</value></data>
+  <data name="PerformerProfile"><value>Profile préstataire</value></data>
   <data name="Person"><value>Personne</value></data>
   <data name="Photo"><value>Photo</value></data>
   <data name="PhotoUpdated"><value>Photo mise à jour</value></data>
@@ -314,6 +322,7 @@
   <data name="prestation"><value>prestation</value></data>
   <data name="Professional settings"><value>Paramètres professionels</value></data>
 
+  <data name="Provider"><value>Fournisseur</value></data>
   <data name="ProviderId"><value>Identifiant du fournisseur</value></data>
   <data name="ProviderName"><value>Nom du fournisseur</value></data>
   <data name="Rate"><value>Cote</value></data>
@@ -377,6 +386,8 @@
   <data name="UsersInRole"><value>Liste des utilisateurs assumant le rôle "{0}"</value></data>
   <data name="UserSkills"><value>Talents/compétences/spécialités utilisateur</value></data>
   <data name="UserNotInThisRole"><value>Le rôle demandé n'est pas assumé par ce préstataire</value></data>
+  <data name="ValidationDate"><value>Date de validation</value></data>
+  
   <data name="View_source"><value>Voir le texte source de l'article</value></data>
   <data name="was_added_to_the_role"><value>a été ajouté au rôle</value></data>
   <data name="was_added_to_the_empty_role"><value>Il n'y avait pas d'utilisateur dans le rôle "{1}". Vous ({0}) avez été ajouté au rôle "{1}".</value></data>

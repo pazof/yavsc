@@ -19,7 +19,7 @@
     "Resources/**/*.resx"
   ],
   "namedResource": {
-      "Localisation": "Resources/Yavsc.Resources.YavscLocalisation.resx"
+      "Localisation.fr": "Resources/Yavsc.Resources.YavscLocalisation.fr.resx"
   },
   "configurations": {
     "Debug": {
