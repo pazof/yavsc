@@ -10,6 +10,7 @@ using Microsoft.Data.Entity;
 using Microsoft.Extensions.OptionsModel;
 using Yavsc.Models;
 using Yavsc.ViewModels.Auth;
+using Microsoft.AspNet.Mvc.Rendering;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -129,7 +130,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Blog blog = _context.Blogspot.Include(x => x.Author).Single(m => m.Id == id);
+            Blog blog = _context.Blogspot.Include(x => x.Author).Include(x => x.ACL).Single(m => m.Id == id);
 
 
             if (blog == null)
@@ -138,6 +139,16 @@ namespace Yavsc.Controllers
             }
             if (await _authorizationService.AuthorizeAsync(User, blog, new EditRequirement()))
             {
+                ViewBag.ACL = _context.Circle.Where(
+                c=>c.OwnerId == blog.AuthorId)
+                .Select(
+                    c => new SelectListItem  
+                    { 
+                        Text = c.Name, 
+                        Value = c.Id.ToString(), 
+                        Selected = blog.ACL.Any(a=>a.CircleId==c.Id) 
+                    } 
+                );
                 return View(blog);
             }
             else
@@ -156,6 +167,7 @@ namespace Yavsc.Controllers
                 var auth = _authorizationService.AuthorizeAsync(User, blog, new EditRequirement());
                 if (auth.Result)
                 {
+                    // saves the change
                     _context.Update(blog);
                     _context.SaveChanges();
                     ViewData["StatusMessage"] = "Post modified";
