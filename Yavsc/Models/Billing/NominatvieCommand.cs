@@ -8,7 +8,7 @@ using Yavsc.Models.Workflow;
 namespace Yavsc.Models.Billing
 {
 
- public class NominativeServiceCommand<T> : Query<T> where T:Service
+ public class NominativeServiceCommand<T> : Query<T> where T:Service 
   {
 
     public string ClientId { get; set; }
@@ -29,11 +29,7 @@ namespace Yavsc.Models.Billing
 
     public DateTime? ValidationDate {get; set;}
 
-    /// <summary>
-    /// Command creation Date & time
-    /// </summary>
-    /// <returns></returns>
-    public DateTime CreationDate {get; set;}
+
 
     public decimal? Previsional { get; set; }
     /// <summary>

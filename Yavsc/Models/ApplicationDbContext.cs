@@ -33,12 +33,16 @@ namespace Yavsc.Models
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.Entity<Contact>().HasKey(x => new { x.OwnerId, x.UserId });
-            builder.Entity<BookQuery>().Property(x=>x.CreationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
             builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
             builder.Entity<UserActivity>().HasKey(u=> new { u.DoesCode, u.UserId});
             builder.Entity<Instrumentation>().HasKey(u=> new { u.InstrumentId, u.UserId});
+            builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a=> new { a.CircleId, a.BlogPostId});
+            foreach (var et in builder.Model.GetEntityTypes()) {
+                if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
+                et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
+            }
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -224,11 +228,11 @@ namespace Yavsc.Models
         {
             if (entity.State == EntityState.Added)
             {
-                ((IBaseTrackedEntity)entity.Entity).DateCreated = DateTime.UtcNow;
+                ((IBaseTrackedEntity)entity.Entity).DateCreated = DateTime.Now;
                 ((IBaseTrackedEntity)entity.Entity).UserCreated = currentUsername;
             }
 
-            ((IBaseTrackedEntity)entity.Entity).DateModified = DateTime.UtcNow;
+            ((IBaseTrackedEntity)entity.Entity).DateModified = DateTime.Now;
             ((IBaseTrackedEntity)entity.Entity).UserModified = currentUsername;
         }
     }
@@ -245,5 +249,8 @@ namespace Yavsc.Models
         }
         
          public DbSet<Circle> Circle { get; set; }
+
+         public DbSet<CircleAuthorizationToBlogPost> BlogACL { get; set; }
+
     }
 }
