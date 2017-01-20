@@ -98,6 +98,9 @@ editorcontenu.on('text-change',function(delta,source){
 
 <h2 > @SR["Blog post edition"] </h2>
 
+@Html.ValidationSummary()
+
+
 <div id="Titletoolbar" class="hidden ql-snow ql-toolbar">
   <button class="ql-format-button ql-bold"></button>
   <button class="ql-format-button ql-italic"></button>
@@ -171,6 +174,13 @@ editorcontenu.on('text-change',function(delta,source){
                     <input asp-for="Visible" class="form-control"/>
             </div>
         </div>
+        <div class="form-group">
+            <label asp-for="ACL" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="ACL" asp-items=@ViewBag.ACL multiple>
+                </select>
+            </div>
+        </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
@@ -178,7 +188,6 @@ editorcontenu.on('text-change',function(delta,source){
             </div>
         </div>
     </div>
-    @Html.HiddenFor(m=>m.DateCreated)
 </form>
 <div>
     

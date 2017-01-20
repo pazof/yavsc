@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170120095258_blogAcl")]
+    partial class blogAcl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -420,9 +421,9 @@ namespace Yavsc.Migrations
                     b.Property<string>("ClientId")
                         .IsRequired();
 
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<DateTime>("DateModified");
+                    b.Property<DateTime>("CreationDate")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("Relational:GeneratedValueSql", "LOCALTIMESTAMP");
 
                     b.Property<DateTime>("EventDate");
 
@@ -436,10 +437,6 @@ namespace Yavsc.Migrations
                     b.Property<decimal?>("Previsional");
 
                     b.Property<string>("Reason");
-
-                    b.Property<string>("UserCreated");
-
-                    b.Property<string>("UserModified");
 
                     b.Property<DateTime?>("ValidationDate");
 

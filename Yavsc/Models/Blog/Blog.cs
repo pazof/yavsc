@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using Yavsc.Models.Access;
 
 namespace Yavsc.Models
 {
@@ -39,5 +41,8 @@ namespace Yavsc.Models
         {
             get; set;
         }
+        
+        [InverseProperty("Post")]
+        public virtual List<CircleAuthorizationToBlogPost> ACL { get; set; }
     }
 }

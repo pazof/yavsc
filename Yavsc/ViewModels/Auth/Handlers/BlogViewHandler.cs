@@ -14,9 +14,12 @@ namespace Yavsc.ViewModels.Auth.Handlers
             else if (context.User.Identity.IsAuthenticated)
             if (resource.AuthorId == context.User.GetUserId())
                 context.Succeed(requirement); 
-            else if (resource.Visible)
+            else if (resource.Visible) {
+                
             // TODO && ( resource.Circles == null || context.User belongs to resource.Circles )
                 context.Succeed(requirement); 
+
+            }
         }
     }
 }
