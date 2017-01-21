@@ -150,14 +150,16 @@ editorcontenu.on('text-change',function(delta,source){
             <label asp-for="Title" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger" />
+                <span asp-validation-for="Title" class="text-danger" >
+                </span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="Photo" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Photo" class="form-control" />
-                <span asp-validation-for="Photo" class="text-danger" />
+                <span asp-validation-for="Photo" class="text-danger" >
+                </span>
             </div>
         </div>
         <div class="form-group">
@@ -165,7 +167,8 @@ editorcontenu.on('text-change',function(delta,source){
             <div class="col-md-10">
                 <textarea asp-for="Content" class="form-control" >
                 </textarea>
-                <span asp-validation-for="Content" class="text-danger" />
+                <span asp-validation-for="Content" class="text-danger" >
+                </span>
             </div>
         </div>
         <div class="form-group">
@@ -177,8 +180,7 @@ editorcontenu.on('text-change',function(delta,source){
         <div class="form-group">
             <label asp-for="ACL" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="ACL" asp-items=@ViewBag.ACL multiple>
-                </select>
+               @await Component.InvokeAsync("CirclesControl",Model)
             </div>
         </div>
 

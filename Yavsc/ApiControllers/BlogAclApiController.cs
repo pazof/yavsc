@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -35,8 +36,9 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest(ModelState);
             }
-
-            CircleAuthorizationToBlogPost circleAuthorizationToBlogPost = await _context.BlogACL.SingleAsync(m => m.CircleId == id);
+            var uid = User.GetUserId();
+            CircleAuthorizationToBlogPost circleAuthorizationToBlogPost = await _context.BlogACL.SingleAsync(
+                m => m.CircleId == id && m.Allowed.OwnerId == uid );
 
             if (circleAuthorizationToBlogPost == null)
             {
@@ -60,6 +62,10 @@ namespace Yavsc.Controllers
                 return HttpBadRequest();
             }
 
+            if (!CheckOwner(circleAuthorizationToBlogPost.CircleId))
+            {
+                return new ChallengeResult();
+            }
             _context.Entry(circleAuthorizationToBlogPost).State = EntityState.Modified;
 
             try
@@ -80,7 +86,14 @@ namespace Yavsc.Controllers
 
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
         }
-
+        private bool CheckOwner (long circleId)
+        {
+            
+            var uid = User.GetUserId();
+            var circle = _context.Circle.First(c=>c.Id==circleId);
+            _context.Entry(circle).State = EntityState.Detached;
+            return (circle.OwnerId == uid);
+        }
         // POST: api/BlogAclApi
         [HttpPost]
         public async Task<IActionResult> PostCircleAuthorizationToBlogPost([FromBody] CircleAuthorizationToBlogPost circleAuthorizationToBlogPost)
@@ -89,7 +102,10 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest(ModelState);
             }
-
+            if (!CheckOwner(circleAuthorizationToBlogPost.CircleId))
+            {
+                return new ChallengeResult();
+            }
             _context.BlogACL.Add(circleAuthorizationToBlogPost);
             try
             {
@@ -118,13 +134,16 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest(ModelState);
             }
+            var uid = User.GetUserId();
 
-            CircleAuthorizationToBlogPost circleAuthorizationToBlogPost = await _context.BlogACL.SingleAsync(m => m.CircleId == id);
+            CircleAuthorizationToBlogPost circleAuthorizationToBlogPost = await _context.BlogACL.Include(
+                a=>a.Allowed
+            ).SingleAsync(m => m.CircleId == id
+            && m.Allowed.OwnerId == uid);
             if (circleAuthorizationToBlogPost == null)
             {
                 return HttpNotFound();
             }
-
             _context.BlogACL.Remove(circleAuthorizationToBlogPost);
             await _context.SaveChangesAsync();
 
