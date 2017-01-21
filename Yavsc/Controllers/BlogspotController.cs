@@ -146,7 +146,7 @@ namespace Yavsc.Controllers
                     { 
                         Text = c.Name, 
                         Value = c.Id.ToString(), 
-                        Selected = blog.ACL.Any(a=>a.CircleId==c.Id) 
+                        Selected = blog.AuthorizeCircle(c.Id) 
                     } 
                 );
                 return View(blog);
