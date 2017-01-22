@@ -7,13 +7,16 @@ namespace Yavsc.Models.Relationship
 
     public partial class CircleMember
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
-
+      
         [Required]
+        public long CircleId { get; set; }      
+
+        [ForeignKey("CircleId")]
         public virtual Circle Circle { get; set; }
-
         [Required]
+        public string MemberId { get; set; }
+
+        [ForeignKey("MemberId")]
         public virtual ApplicationUser Member { get; set; }
     }
 }
