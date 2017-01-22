@@ -39,6 +39,7 @@ namespace Yavsc.Models
             builder.Entity<UserActivity>().HasKey(u=> new { u.DoesCode, u.UserId});
             builder.Entity<Instrumentation>().HasKey(u=> new { u.InstrumentId, u.UserId});
             builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a=> new { a.CircleId, a.BlogPostId});
+            builder.Entity<CircleMember>().HasKey(c=> new { MemberId = c.MemberId, CircleId = c.CircleId });
             foreach (var et in builder.Model.GetEntityTypes()) {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
