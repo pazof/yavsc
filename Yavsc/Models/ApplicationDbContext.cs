@@ -253,5 +253,7 @@ namespace Yavsc.Models
 
          public DbSet<CircleAuthorizationToBlogPost> BlogACL { get; set; }
 
+         public DbSet<CommandForm> CommandForm { get; set; }
+
     }
 }
