@@ -45,7 +45,7 @@ namespace Yavsc.Controllers
             return View(model);
         }
 
-        [Route("Book/{id?}"), HttpGet]
+        [Route("Book/{id?}"), HttpGet, AllowAnonymous]
         public ActionResult Book(string id)
         {
             if (id == null)
@@ -62,7 +62,7 @@ namespace Yavsc.Controllers
             return View(result);
         }
 
-        [Route("Book/{id}"), HttpPost]
+        [Route("Book/{id}"), HttpPost, AllowAnonymous]
         public ActionResult Book(BookQuery bookQuery)
         {
             if (ModelState.IsValid)
