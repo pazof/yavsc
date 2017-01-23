@@ -189,6 +189,7 @@ namespace Yavsc.Controllers
                 ViewBag.GoogleSettings = _googleSettings;
                 return View("CommandConfirmation",command);
             }
+            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
             return View(command);
         }
