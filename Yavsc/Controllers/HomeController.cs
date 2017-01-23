@@ -30,7 +30,7 @@ namespace Yavsc.Controllers
 
         public IActionResult Index()
         {
-            return View(DbContext.Activities);
+            return View(DbContext.Activities.OrderByDescending(a=>a.Rate));
         }
 
         public IActionResult About()
