@@ -18,9 +18,6 @@ textarea {
 /* .navbar-reac */
  
 /* Carousel */
-.carousel, .carousel img {
-    height: 15em;
-}
 
 .carousel-caption p {    
     font-family: "jubilat";
