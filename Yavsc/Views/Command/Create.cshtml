@@ -49,8 +49,8 @@
             var pos = loc.geometry.location;
             var lat = new Number(pos.lat);
             var lng = new Number(pos.lng);
-            $('#' + config.latId).val(lat.toLocaleString('en'));
-            $('#' + config.longId).val(lng.toLocaleString('en'));
+            $('#' + config.latId).val(lat.toLocaleString('fr'));
+            $('#' + config.longId).val(lng.toLocaleString('fr'));
             gmap.setCenter(pos);
             if (marker) {
                 marker.setMap(null);
@@ -191,7 +191,9 @@
         <input type="submit" value="@SR[" Create "]" class="btn btn-default" />
     </div>
 </div>
-@Html.HiddenFor(model=>model.Client.Id) @Html.HiddenFor(model=>model.PerformerId) @Html.HiddenFor(model=>model.ActivityCode)
+@Html.HiddenFor(model=>model.Client.Id) 
+@Html.HiddenFor(model=>model.PerformerId) 
+@Html.HiddenFor(model=>model.ActivityCode)
 </div>
 
 
