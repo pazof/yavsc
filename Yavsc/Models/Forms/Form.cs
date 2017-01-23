@@ -9,8 +9,6 @@ namespace Yavsc.Models.Forms
     {
         [Key]
         public string Id {get; set;}
-
         public string Summary { get; set; } 
-        public List<IFormNode> Content { get; set; }
     }
 }
