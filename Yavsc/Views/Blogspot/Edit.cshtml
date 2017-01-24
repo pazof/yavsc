@@ -52,7 +52,8 @@
     var onchange = function(){
         var nv = $(this).val();
         var tid = $(this).data('from');
-       $('#'+tid).html(htmlize(nv))
+       $('#'+tid).html(htmlize(nv));
+        initQuill();
     };
     $("#Content").change(onchange);
     $("#Title").change(onchange);
@@ -68,44 +69,42 @@
             $(".mdcoding").addClass('hidden');
         }
     });
-  var editortitre = new Quill('#titleview', {
-    modules: { toolbar: '#Titletoolbar' },
-    theme: 'snow'
-  });
-  var editorcontenu = new Quill('#contentview', {
-    modules: { toolbar: '#contentbar' },
-    theme: 'snow'
-  });
-  editortitre.on('selection-change', function(range) {
-  if (range) {
-    $('#contentbar').addClass('hidden');
-    $('#Titletoolbar').removeClass('hidden');
-  }
-});
-editortitre.on('text-change',function(delta,source){
-    if (source=='user')
-    {
-        updateMD('Title',$('#titleview').html())
-    }
-});
- editorcontenu.on('selection-change', function(range) {
-  if (range) {
-    $('#contentbar').removeClass('hidden');
-    $('#Titletoolbar').addClass('hidden');
-  }
-});
-editorcontenu.on('text-change',function(delta,source){
-    if (source=='user')
-    {
-        updateMD('Content',$('#contentview').html())
-    }
-});
- 
 
- $('#contentview').focus(function(){
-    $('#contentbar').removeClass('hidden');
-    $('#Titletoolbar').addClass('hidden');
- })
+    var initQuill = function() {
+        var editortitre = new Quill('#titleview', {
+            modules: { toolbar: '#Titletoolbar' },
+            theme: 'snow'
+        });
+        var editorcontenu = new Quill('#contentview', {
+            modules: { toolbar: '#contentbar' },
+            theme: 'snow'
+        });
+        editortitre.on('selection-change', function(range) {
+            if (range) {
+                $('#contentbar').addClass('hidden');
+                $('#Titletoolbar').removeClass('hidden');
+            }
+        });
+        editortitre.on('text-change',function(delta,source){
+            if (source=='user')
+            {
+                updateMD('Title',$('#titleview').html())
+            }
+        });
+        editorcontenu.on('selection-change', function(range) {
+            if (range) {
+                $('#contentbar').removeClass('hidden');
+                $('#Titletoolbar').addClass('hidden');
+            }
+        });
+        editorcontenu.on('text-change',function(delta,source){
+            if (source=='user')
+            {
+                updateMD('Content',$('#contentview').html())
+            }
+        });
+    };
+ initQuill();
 
  Dropzone.options.postfiles= {
   maxFilesize: 2, // MB
