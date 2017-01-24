@@ -9,7 +9,14 @@ using Microsoft.AspNet.Razor.TagHelpers;
 namespace Yavsc.Helpers
 {
     [HtmlTargetElement("div", Attributes = MarkdownContentAttributeName)]
+    [HtmlTargetElement("h1", Attributes = MarkdownContentAttributeName)]
+    [HtmlTargetElement("h2", Attributes = MarkdownContentAttributeName)]
+    [HtmlTargetElement("h3", Attributes = MarkdownContentAttributeName)]
     [HtmlTargetElement("p", Attributes = "ismarkdown")]
+    [HtmlTargetElement("div", Attributes = "ismarkdown")]
+    [HtmlTargetElement("h1", Attributes = "ismarkdown")]
+    [HtmlTargetElement("h2", Attributes = "ismarkdown")]
+    [HtmlTargetElement("h3", Attributes = "ismarkdown")]
     [HtmlTargetElement("markdown")]
     [OutputElementHint("p")]
     public class MarkdownTagHelper : TagHelper
