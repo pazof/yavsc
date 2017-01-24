@@ -65,11 +65,13 @@
                 $("#sendpvbox").removeClass("hidden");
                 pvuis = { CXs: $(li).data("cxids"), UserName: $(li).data("name")};
                 $('#sendpvdest').html(pvuis.UserName)
+                $('#pv').focus();
             }
             var setPublic = function()
             {
                 $("#sendmessagebox").removeClass("hidden");
                 $("#sendpvbox").addClass("hidden");
+                $('#message').focus();
             }
             $('#pubChan').css('cursor','pointer');
             $('#pubChan').click(setPublic);
@@ -175,9 +177,17 @@ $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
                     // Clear text box and reset focus for next comment.
                 $('#message').val('')
             };
-
-            // Set initial focus to message input box.
-            $('#message').focus();
+            var sendPV = function () {
+                    var msg = $('#pv').val();
+                    // Call the Send method on the hub.
+                    $.each(pvuis.CXs,function () { 
+                        chat.server.sendPV( this, msg);
+                     });
+                     $('#discussion').append('<li class="pv">' + htmlEncode(pvuis.UserName)
+                    + '<< ' + htmlEncode(msg) + '</li>');
+                    // Clear text box and reset focus for next comment.
+                    $('#pv').val('');
+                }
 
             @if (!ViewBag.IsAuthenticated) {
             // Get the user name and store it to prepend to messages.
@@ -198,14 +208,14 @@ $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
                         sendMessage()
                         }
                 });
+                $( "#pv" ).keydown(function( event ) {
+                    if ( event.which == 13 ) {
+                        sendPV()
+                        }
+                });
                 $('#sendpv').click(function () {
-
                     // Call the Send method on the hub.
-                    $.each(pvuis.CXs,function () { 
-                        chat.server.sendPV( this, $('#pv').val());
-                     });
-                    // Clear text box and reset focus for next comment.
-                    $('#pv').val('').focus();
+                    SendPV().focus();
                 });
                 
                 getUsers();
