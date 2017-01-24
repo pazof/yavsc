@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Metadata;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
@@ -528,6 +530,15 @@ namespace Yavsc.Migrations
                     b.HasKey("ConnectionId");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Forms.Form", b =>
+                {
+                    b.Property<string>("Id");
+
+                    b.Property<string>("Summary");
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Identity.GoogleCloudMobileDeclaration", b =>
                 {
                     b.Property<string>("DeviceId");
@@ -715,14 +726,15 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Workflow.CommandForm", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ActivityCode")
                         .IsRequired();
 
-                    b.Property<string>("Summary");
-
                     b.Property<string>("Title");
+
+                    b.Property<string>("ViewName");
 
                     b.HasKey("Id");
                 });

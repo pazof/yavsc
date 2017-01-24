@@ -29,9 +29,11 @@
                 <p><em>@act.Name</em><br/>
                 @act.Description </p>
                 <p>
-                    <a class="btn btn-default" asp-controller="FrontOffice" asp-action="Book" asp-route-id="@act.Code">
-                        En savoir plus
+                @foreach (var form in act.Forms) {
+                    <a class="btn btn-default" asp-controller="FrontOffice" asp-action="@form.ViewName" asp-route-id="@act.Code">
+                    @form.Title
                     </a>
+                }
                 </p>
             </div>
         </div>

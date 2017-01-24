@@ -4,6 +4,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
+using Yavsc.Models.Forms;
 using Yavsc.Models.Workflow;
 
 namespace Yavsc.Controllers
@@ -25,7 +26,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: CommandForms/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
             {
@@ -44,7 +45,8 @@ namespace Yavsc.Controllers
         // GET: CommandForms/Create
         public IActionResult Create()
         {
-            ViewData["ActivityCode"] = new SelectList(_context.Activities, "Code", "Context");
+            ViewBag.ActivityCode = new SelectList(_context.Activities, "Code", "Name");
+            ViewBag.ViewName = YavscLib.YavscConstants.Forms.Select( c => new SelectListItem { Text = c } );
             return View();
         }
 
@@ -60,11 +62,12 @@ namespace Yavsc.Controllers
                 return RedirectToAction("Index");
             }
             ViewData["ActivityCode"] = new SelectList(_context.Activities, "Code", "Context", commandForm.ActivityCode);
+            ViewData["FormId"] = new SelectList(_context.Set<Form>(), "Id", "Form", commandForm.ViewName);
             return View(commandForm);
         }
 
         // GET: CommandForms/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
             {
@@ -77,6 +80,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
             ViewData["ActivityCode"] = new SelectList(_context.Activities, "Code", "Context", commandForm.ActivityCode);
+            ViewData["FormId"] = new SelectList(_context.Set<Form>(), "Id", "Form", commandForm.ViewName);
             return View(commandForm);
         }
 
@@ -91,13 +95,14 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["ActivityCode"] = new SelectList(_context.Activities, "Code", "Context", commandForm.ActivityCode);
+            ViewBag.ActivityCode = new SelectList(_context.Activities, "Code", "Context", commandForm.ActivityCode);
+            ViewBag.ViewName = YavscLib.YavscConstants.Forms.Select( c => new SelectListItem { Text = c } );
             return View(commandForm);
         }
 
         // GET: CommandForms/Delete/5
         [ActionName("Delete")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
             {
@@ -116,7 +121,7 @@ namespace Yavsc.Controllers
         // POST: CommandForms/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
             CommandForm commandForm = await _context.CommandForm.SingleAsync(m => m.Id == id);
             _context.CommandForm.Remove(commandForm);

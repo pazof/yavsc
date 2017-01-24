@@ -6,6 +6,7 @@ using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using Yavsc.Models.Relationship;
+using Yavsc.Models.Forms;
 
 namespace Yavsc.Models
 {
@@ -254,6 +255,8 @@ namespace Yavsc.Models
          public DbSet<CircleAuthorizationToBlogPost> BlogACL { get; set; }
 
          public DbSet<CommandForm> CommandForm { get; set; }
+
+         public DbSet<Form> Form { get; set; }
 
     }
 }
