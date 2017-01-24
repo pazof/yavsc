@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Yavsc.Models;
@@ -15,7 +16,7 @@ namespace Yavsc.ViewComponents
         {
             this.dbContext = dbContext;
         }
-        public IViewComponentResult InvokeAsync (ICircleAuthorized target)
+        public async Task<IViewComponentResult> InvokeAsync (ICircleAuthorized target)
         {
             var oid = target.GetOwnerId();
             ViewBag.ACL = dbContext.Circle.Where(
