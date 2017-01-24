@@ -8,6 +8,7 @@ using Yavsc.Models;
 using Microsoft.AspNet.Identity;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
@@ -30,7 +31,7 @@ namespace Yavsc.Controllers
 
         public IActionResult Index()
         {
-            return View(DbContext.Activities.OrderByDescending(a=>a.Rate));
+            return View(DbContext.Activities.Include(a=>a.Forms).OrderByDescending(a=>a.Rate));
         }
 
         public IActionResult About()

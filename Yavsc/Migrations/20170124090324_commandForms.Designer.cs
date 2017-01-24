@@ -8,8 +8,8 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170123085316_commandForm")]
-    partial class commandForm
+    [Migration("20170124090324_commandForms")]
+    partial class commandForms
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -531,6 +531,15 @@ namespace Yavsc.Migrations
                     b.HasKey("ConnectionId");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Forms.Form", b =>
+                {
+                    b.Property<string>("Id");
+
+                    b.Property<string>("Summary");
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Identity.GoogleCloudMobileDeclaration", b =>
                 {
                     b.Property<string>("DeviceId");
@@ -718,14 +727,15 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Workflow.CommandForm", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ActivityCode")
                         .IsRequired();
 
-                    b.Property<string>("Summary");
-
                     b.Property<string>("Title");
+
+                    b.Property<string>("ViewName");
 
                     b.HasKey("Id");
                 });

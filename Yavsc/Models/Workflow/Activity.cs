@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Market;
+using Yavsc.Models.Workflow;
 
 namespace Yavsc.Models
 {
@@ -55,5 +56,8 @@ namespace Yavsc.Models
         public int Rate { get; set; }
         [DisplayAttribute(Name="SettingsClass")]
         public string SettingsClassName { get; set; }
+
+        [InverseProperty("Context")]
+        public virtual List<CommandForm> Forms { get; set; }
     }
 }

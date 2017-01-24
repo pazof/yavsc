@@ -4,7 +4,7 @@ using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class commandForm : Migration
+    public partial class commandForms : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,13 +32,25 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
             migrationBuilder.CreateTable(
-                name: "CommandForm",
+                name: "Form",
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    Summary = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Form", x => x.Id);
+                });
+            migrationBuilder.CreateTable(
+                name: "CommandForm",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:Serial", true),
                     ActivityCode = table.Column<string>(nullable: false),
-                    Summary = table.Column<string>(nullable: true),
-                    Title = table.Column<string>(nullable: true)
+                    Title = table.Column<string>(nullable: true),
+                    ViewName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -238,6 +250,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_ApplicationUser_PerformerId", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
+            migrationBuilder.DropTable("Form");
             migrationBuilder.DropTable("CommandForm");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",

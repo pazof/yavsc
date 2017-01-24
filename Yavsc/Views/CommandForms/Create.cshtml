@@ -14,14 +14,13 @@
         <div class="form-group">
             <label asp-for="ActivityCode" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="ActivityCode" class ="form-control"></select>
+                <select asp-for="ActivityCode" asp-items="@ViewBag.ActivityCode" class ="form-control"></select>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Summary" class="col-md-2 control-label"></label>
+            <label asp-for="ViewName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="Summary" class="form-control" />
-                <span asp-validation-for="Summary" class="text-danger" />
+                <select asp-for="ViewName" asp-items="@ViewBag.ViewName" class ="form-control"></select>
             </div>
         </div>
         <div class="form-group">
