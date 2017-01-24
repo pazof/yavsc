@@ -32,19 +32,47 @@
 }
 
 </style>
+<environment names="Development">
 
-<script src="~/js/dropzone.js"></script>
-<script src="~/js/quill.js"></script>
-<script src="~/js/showdown.js"></script>
-<script src="~/js/to-markdown.js"></script>
-<script src="~/js/md-helpers.js"></script>
+    <script src="~/js/dropzone.js"></script>
+    <script src="~/js/quill.js"></script>
+    <script src="~/js/showdown.js"></script>
+    <script src="~/js/to-markdown.js"></script>
+    <script src="~/js/md-helpers.js"></script>
+
+</environment>
+
 <script>
  $(document).ready(function() {
-  var editortitre = new Quill('#Titlecnt', {
+    $(".mdcoding").addClass('hidden');
+    var converter = new showdown.Converter();
+    var htmlize = function(content) {
+      return converter.makeHtml(content);
+    };
+    var onchange = function(){
+        var nv = $(this).val();
+        var tid = $(this).data('from');
+       $('#'+tid).html(htmlize(nv))
+    };
+    $("#Content").change(onchange);
+    $("#Title").change(onchange);
+    $('#vcbtn').change(function(){
+        var vc = $(this).prop('checked');
+        if (vc) {
+            $("#contentview").addClass('hidden');
+            $("#titleview").addClass('hidden');
+            $(".mdcoding").removeClass('hidden');
+        } else {
+            $("#contentview").removeClass('hidden');
+            $("#titleview").removeClass('hidden');
+            $(".mdcoding").addClass('hidden');
+        }
+    });
+  var editortitre = new Quill('#titleview', {
     modules: { toolbar: '#Titletoolbar' },
     theme: 'snow'
   });
-  var editorcontenu = new Quill('#contentcnt', {
+  var editorcontenu = new Quill('#contentview', {
     modules: { toolbar: '#contentbar' },
     theme: 'snow'
   });
@@ -57,7 +85,7 @@
 editortitre.on('text-change',function(delta,source){
     if (source=='user')
     {
-        updateMD('Title',$('#Titlecnt').html())
+        updateMD('Title',$('#titleview').html())
     }
 });
  editorcontenu.on('selection-change', function(range) {
@@ -69,12 +97,12 @@ editortitre.on('text-change',function(delta,source){
 editorcontenu.on('text-change',function(delta,source){
     if (source=='user')
     {
-        updateMD('Content',$('#contentcnt').html())
+        updateMD('Content',$('#contentview').html())
     }
 });
+ 
 
-
- $('#contentcnt').focus(function(){
+ $('#contentview').focus(function(){
     $('#contentbar').removeClass('hidden');
     $('#Titletoolbar').addClass('hidden');
  })
@@ -97,6 +125,7 @@ editorcontenu.on('text-change',function(delta,source){
 }
 
 <h2 > @SR["Blog post edition"] </h2>
+                <label><input type="checkbox" id="vcbtn" />Editer le code source Markdown</label>
 
 @Html.ValidationSummary()
 
@@ -108,7 +137,7 @@ editorcontenu.on('text-change',function(delta,source){
   <button class="ql-format-button ql-strike"></button>
 </div>
 
-<h2 id="Titlecnt"><markdown>@Model.Title</markdown></h2>
+<h2 id="titleview" ismarkdown>@Model.Title</h2>
 
 <div id="contentbar" class="hidden ql-snow ql-toolbar">
 <span class="ql-format-group">
@@ -135,7 +164,7 @@ editorcontenu.on('text-change',function(delta,source){
 </span>
 </div>
 
-<div markdown="@Model.Content" base="~/@Model.Id" site="SiteSettings.Value" id="contentcnt" ></div>
+<div markdown="@Model.Content" base="~/@Model.Id" site="SiteSettings.Value" id="contentview" ></div>
 
 <hr>
 <form asp-action="Edit" >
@@ -146,10 +175,12 @@ editorcontenu.on('text-change',function(delta,source){
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
         <input type="hidden" asp-for="AuthorId" />
-        <div class="form-group">
+      
+
+        <div class="form-group mdcoding">
             <label asp-for="Title" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="Title" class="form-control" />
+                <input asp-for="Title" class="form-control" data-from="titleview"/>
                 <span asp-validation-for="Title" class="text-danger" >
                 </span>
             </div>
@@ -162,10 +193,10 @@ editorcontenu.on('text-change',function(delta,source){
                 </span>
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="Content" class="col-md-2 control-label"></label>
+        <div class="form-group mdcoding">
+            <label asp-for="Content" class="col-md-2 control-label" ></label>
             <div class="col-md-10">
-                <textarea asp-for="Content" class="form-control" >
+                <textarea asp-for="Content" class="form-control" id="Content" data-from="contentview">
                 </textarea>
                 <span asp-validation-for="Content" class="text-danger" >
                 </span>
