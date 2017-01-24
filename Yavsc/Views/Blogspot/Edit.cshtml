@@ -45,10 +45,7 @@
 <script>
  $(document).ready(function() {
     $(".mdcoding").addClass('hidden');
-    var converter = new showdown.Converter();
-    var htmlize = function(content) {
-      return converter.makeHtml(content);
-    };
+
     var onchange = function(){
         var nv = $(this).val();
         var tid = $(this).data('from');
