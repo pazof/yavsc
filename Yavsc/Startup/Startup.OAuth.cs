@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Authentication.Facebook;
+using Microsoft.AspNet.Authentication.Twitter;
 using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Builder;
@@ -17,6 +18,7 @@ using OAuth.AspNet.Tokens;
 using Yavsc.Auth;
 using Yavsc.Extensions;
 using Yavsc.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Yavsc
 {
@@ -26,6 +28,8 @@ namespace Yavsc
 
         public static IdentityOptions IdentityAppOptions { get; set; }
         public static FacebookOptions FacebookAppOptions { get; private set; }
+
+        public static TwitterOptions TwitterAppOptions { get; private set; }
         public static OAuthAuthorizationServerOptions OAuthServerAppOptions { get; private set; }
 
 
@@ -155,6 +159,14 @@ namespace Yavsc
                            options.Scope.Add("email");
                            options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
                        });
+                
+                branch.UseTwitterAuthentication(options=>
+                {
+                        TwitterAppOptions = options;
+                        options.ConsumerKey = Configuration["Authentication:Twitter:ClientId"];
+                        options.ConsumerSecret = Configuration["Authentication:Twitter:ClientSecret"];
+                });
+                
 
                    branch.UseOAuthAuthorizationServer(
 
