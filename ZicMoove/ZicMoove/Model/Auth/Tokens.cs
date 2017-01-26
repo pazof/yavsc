@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookAStar.Model.Auth.Account
+namespace ZicMoove.Model.Auth.Account
 {
     public class Tokens
     {

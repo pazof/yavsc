@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 
-namespace BookAStar.Pages.UserProfile
+namespace ZicMoove.Pages.UserProfile
 {
     using ViewModels.UserProfile;
     using Data;

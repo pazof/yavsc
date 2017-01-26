@@ -1,4 +1,4 @@
-﻿using BookAStar.Interfaces;
+﻿using ZicMoove.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace BookAStar.Factories
+namespace ZicMoove.Factories
 {
     public class ViewFactory : IViewFactory
     {

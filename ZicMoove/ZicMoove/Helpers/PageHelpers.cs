@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace BookAStar.Helpers
+namespace ZicMoove.Helpers
 {
     public  static class PageHelpers
     {

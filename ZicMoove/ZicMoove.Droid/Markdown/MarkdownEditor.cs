@@ -9,7 +9,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BookAStar.Droid.Markdown
+namespace ZicMoove.Droid.Markdown
 {
 using System;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ using System.Linq;
 using System.Text;
 
 
-[System.CodeDom.Compiler.GeneratedCodeAttribute("RazorTemplatePreprocessor", "4.2.1.62")]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("RazorTemplatePreprocessor", "4.2.2.11")]
 public partial class MarkdownEditor : MarkdownEditorBase
 {
 
@@ -171,23 +171,23 @@ WriteLiteral(">\r\n            var toolbarOptions = [\r\n      [\'bold\', \'ital
 "\'header\': 1 }, { \'header\': 2 }, { \'header\': 3 }],               // custom button" +
 " values\r\n      [{ \'list\': \'ordered\' }, { \'list\': \'bullet\' }],\r\n      [{ \'indent\'" +
 ": \'-1\' }, { \'indent\': \'+1\' }],          // outdent/indent\r\n      [\'link\', \'image" +
-"\', \'video\'],\r\n      [\'clean\']                                         // remove " +
-"formatting button\r\n            ];\r\n\r\n            var showImageUI = function (val" +
-"ue) {\r\n                if (value) {\r\n                    var href = prompt(\'Ente" +
-"r the URL\');\r\n                    this.quill.format(\'image\', href);\r\n           " +
-"     } else {\r\n                    this.quill.format(\'image\', false);\r\n         " +
-"       }\r\n            };\r\n\r\n            $(document).ready(function () {\r\n       " +
-"         var quill = new Quill(\'#bubble-container\', {\r\n                    modul" +
-"es: {\r\n                        toolbar: toolbarOptions\r\n                    },\r\n" +
-"                    placeholder: \'Composez votre texte ...\',\r\n                  " +
-"  theme: \'snow\'\r\n                });\r\n\r\n                function getMD() {\r\n    " +
-"                return markdownize($(\'#bubble-container div.ql-editor\').html())\r" +
-"\n                }\r\n                quill.on(\'text-change\', function (delta, old" +
-"Delta, source) {\r\n                    if (source === \"user\") {\r\n                " +
-"        contentEdited(getMD());\r\n                    }\r\n                });\r\n   " +
-"             var toolbar = quill.getModule(\'toolbar\');\r\n                toolbar." +
-"addHandler(\'image\', showImageUI);\r\n                jsLoaded();\r\n            });\r" +
-"\n        </script>\r\n");
+"\', \'audio\', \'video\'],\r\n      [\'clean\']                                         /" +
+"/ remove formatting button\r\n            ];\r\n\r\n            var showImageUI = func" +
+"tion (value) {\r\n                if (value) {\r\n                    var href = pro" +
+"mpt(\'Enter the URL\');\r\n                    this.quill.format(\'image\', href);\r\n  " +
+"              } else {\r\n                    this.quill.format(\'image\', false);\r\n" +
+"                }\r\n            };\r\n\r\n            $(document).ready(function () {" +
+"\r\n                var quill = new Quill(\'#bubble-container\', {\r\n                " +
+"    modules: {\r\n                        toolbar: toolbarOptions\r\n               " +
+"     },\r\n                    placeholder: \'Composez votre texte ...\',\r\n         " +
+"           theme: \'snow\'\r\n                });\r\n\r\n                function getMD(" +
+") {\r\n                    return markdownize($(\'#bubble-container div.ql-editor\')" +
+".html())\r\n                }\r\n                quill.on(\'text-change\', function (d" +
+"elta, oldDelta, source) {\r\n                    if (source === \"user\") {\r\n       " +
+"                 contentEdited(getMD());\r\n                    }\r\n               " +
+" });\r\n                var toolbar = quill.getModule(\'toolbar\');\r\n               " +
+" toolbar.addHandler(\'image\', showImageUI);\r\n                jsLoaded();\r\n       " +
+"     });\r\n        </script>\r\n");
 
 
 #line 86 "MarkdownEditor.cshtml"

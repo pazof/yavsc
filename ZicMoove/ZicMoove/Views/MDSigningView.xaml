@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-             x:Class="BookAStar.Views.MDSigningView"
+             x:Class="ZicMoove.Views.MDSigningView"
              xmlns:signature="clr-namespace:SignaturePad.Forms;assembly=SignaturePad.Forms"
-             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar">
+             xmlns:views="clr-namespace:ZicMoove.Views;assembly=ZicMoove">
   <ContentView.Content>
     <views:MarkdownView Markdown="{Binging Doc}" Editable="false" />
     <signature:SignaturePadView x:Name="padView"

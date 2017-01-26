@@ -1,7 +1,7 @@
-using BookAStar.Model.Social;
+using ZicMoove.Model.Social;
 using System;
 
-namespace BookAStar.Model.Workflow.Messaging
+namespace ZicMoove.Model.Workflow.Messaging
 {
 
 //

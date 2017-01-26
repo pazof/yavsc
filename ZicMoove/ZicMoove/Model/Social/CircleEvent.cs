@@ -19,10 +19,10 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using BookAStar.Model.Workflow.Messaging;
+using ZicMoove.Model.Workflow.Messaging;
 using System.Collections.Generic;
 
-namespace BookAStar.Model.Social
+namespace ZicMoove.Model.Social
 {
 	/// <summary>
 	/// Event pub.

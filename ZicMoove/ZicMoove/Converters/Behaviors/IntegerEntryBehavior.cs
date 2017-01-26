@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 
-namespace BookAStar.Behaviors
+namespace ZicMoove.Behaviors
 {
     public class IntegerEntryBehavior : Behavior<Entry>
     {

@@ -3,7 +3,7 @@ using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
-namespace BookAStar.Pages
+namespace ZicMoove.Pages
 {
     using Data;
     using EstimatePages;

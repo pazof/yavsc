@@ -1,7 +1,7 @@
 
 using System;
 
-namespace BookAStar.Model.Auth.Account
+namespace ZicMoove.Model.Auth.Account
 {
     using Yavsc.Models;
 

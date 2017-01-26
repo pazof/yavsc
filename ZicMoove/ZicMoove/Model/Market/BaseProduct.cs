@@ -1,5 +1,5 @@
 ﻿
-namespace BookAStar.Model.Workflow
+namespace ZicMoove.Model.Workflow
 {
     public partial class BaseProduct
     {

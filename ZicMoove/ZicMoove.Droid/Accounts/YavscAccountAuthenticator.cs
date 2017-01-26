@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Accounts;
 
-namespace BookAStar.Droid.Accounts
+namespace ZicMoove.Droid.Accounts
 {
     class YavscAccountAuthenticator : AbstractAccountAuthenticator
     {

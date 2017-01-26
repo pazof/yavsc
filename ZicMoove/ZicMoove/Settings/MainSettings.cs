@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace BookAStar
+namespace ZicMoove
 {
     using Model.Social;
     using Model.Auth.Account;

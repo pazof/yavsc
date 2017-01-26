@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookAStar.Attributes
+namespace ZicMoove.Attributes
 {
     class CurrencyAttribute: Attribute
     {

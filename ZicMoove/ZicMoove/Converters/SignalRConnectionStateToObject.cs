@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace BookAStar.Converters
+namespace ZicMoove.Converters
 {
     public class SignalRConnectionStateToObject<T> : IValueConverter
     {

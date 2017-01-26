@@ -1,4 +1,4 @@
-﻿using BookAStar.Extensions;
+﻿using ZicMoove.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace BookAStar.Views
+namespace ZicMoove.Views
 {
     /// <summary>
     ///     A control for picking an element from an enumerated type.

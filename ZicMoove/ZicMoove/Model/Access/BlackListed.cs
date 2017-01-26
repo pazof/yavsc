@@ -1,4 +1,4 @@
-﻿using BookAStar.Model.Access;
+﻿using ZicMoove.Model.Access;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Yavsc.Models;
 
-namespace BookAStar.Model.Access
+namespace ZicMoove.Model.Access
 {
     public class BlackListed : IBlackListed
     {

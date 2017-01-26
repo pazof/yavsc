@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-            x:Class="BookAStar.Pages.Chat.ChatPage"
-            xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
+            x:Class="ZicMoove.Pages.Chat.ChatPage"
+            xmlns:views="clr-namespace:ZicMoove.Views;assembly=ZicMoove"
             xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
             xmlns:toolkit="clr-namespace:XLabs.Forms.Mvvm;assembly=XLabs.Forms"
-            xmlns:converters="clr-namespace:BookAStar.Converters;assembly=BookAStar"
-            xmlns:local="clr-namespace:BookAStar;Assembly:BookAStar"
-            xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
+            xmlns:converters="clr-namespace:ZicMoove.Converters;assembly=ZicMoove"
+            xmlns:local="clr-namespace:ZicMoove;Assembly:ZicMoove"
+            xmlns:extensions="clr-namespace:ZicMoove.Extensions;assembly=ZicMoove"
             Style="{StaticResource PageStyle}" >
   <TabbedPage.Resources>
     <ResourceDictionary>
@@ -16,28 +16,28 @@
         <converters:SignalRConnectionStateToObject.DisconnectedObject>
           <Style TargetType="Image">
             <Setter Property="Source"
-                    Value="{extensions:ImageResource BookAStar.Images.Chat.disconnected.png}" />
+                    Value="{extensions:ImageResource ZicMoove.Images.Chat.disconnected.png}" />
           </Style>
         </converters:SignalRConnectionStateToObject.DisconnectedObject>
 
         <converters:SignalRConnectionStateToObject.ConnectedObject>
           <Style TargetType="Image">
             <Setter Property="Source"
-                    Value="{extensions:ImageResource BookAStar.Images.Chat.connected.png}" />
+                    Value="{extensions:ImageResource ZicMoove.Images.Chat.connected.png}" />
           </Style>
         </converters:SignalRConnectionStateToObject.ConnectedObject>
     
         <converters:SignalRConnectionStateToObject.ConnectingObject>
           <Style TargetType="Image">
             <Setter Property="Source"
-                    Value="{extensions:ImageResource BookAStar.Images.Chat.connecting.png}" />
+                    Value="{extensions:ImageResource ZicMoove.Images.Chat.connecting.png}" />
           </Style>
         </converters:SignalRConnectionStateToObject.ConnectingObject>
 
         <converters:SignalRConnectionStateToObject.ReconnectingObject>
           <Style TargetType="Image">
             <Setter Property="Source"
-                    Value="{extensions:ImageResource BookAStar.Images.Chat.reconnecting.png}" />
+                    Value="{extensions:ImageResource ZicMoove.Images.Chat.reconnecting.png}" />
           </Style>
         </converters:SignalRConnectionStateToObject.ReconnectingObject>
       </converters:SignalRConnectionStateToObject>

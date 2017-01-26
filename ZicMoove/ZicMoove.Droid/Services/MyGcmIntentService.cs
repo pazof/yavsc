@@ -5,7 +5,7 @@ using Android.Content;
 using Android.Util;
 using Android.Widget;
 
-namespace BookAStar.Droid
+namespace ZicMoove.Droid
 {
 	[Service]
 	public class MyGcmIntentService : IntentService

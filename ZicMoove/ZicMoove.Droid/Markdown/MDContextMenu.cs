@@ -15,7 +15,7 @@ using XLabs.Platform.Mvvm;
 using XLabs.Forms;
 using static Android.Views.View;
 
-namespace BookAStar.Droid.Markdown
+namespace ZicMoove.Droid.Markdown
 {
     class MDContextMenu : AppCompatDialog
     {

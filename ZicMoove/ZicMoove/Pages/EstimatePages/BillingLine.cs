@@ -1,8 +1,8 @@
 ﻿
-using BookAStar.Interfaces;
+using ZicMoove.Interfaces;
 using System;
 
-namespace BookAStar.Model.Workflow
+namespace ZicMoove.Model.Workflow
 {
     public class BillingLine : IBillingLine
     {

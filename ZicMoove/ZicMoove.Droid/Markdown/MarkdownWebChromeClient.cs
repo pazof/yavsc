@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Webkit;
 
-namespace BookAStar.Droid.Markdown
+namespace ZicMoove.Droid.Markdown
 {
     class MarkdownWebChromeClient : WebChromeClient
     {

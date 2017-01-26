@@ -2,7 +2,7 @@
 using System.Globalization;
 using Xamarin.Forms;
 
-namespace BookAStar.Converters
+namespace ZicMoove.Converters
 {
     public class NotValueConverter : IValueConverter
     {

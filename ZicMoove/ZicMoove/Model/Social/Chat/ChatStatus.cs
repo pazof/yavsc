@@ -1,4 +1,4 @@
-﻿namespace BookAStar.Model.Workflow.Messaging
+﻿namespace ZicMoove.Model.Workflow.Messaging
 {
     public enum ChatStatus
     {

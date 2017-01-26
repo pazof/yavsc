@@ -12,7 +12,7 @@ using Android.Widget;
 using Android.Webkit;
 using Java.Interop;
 
-namespace BookAStar.Droid.Markdown
+namespace ZicMoove.Droid.Markdown
 {
     public class JsBridgeMarkdown : Java.Lang.Object
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace BookAStar.Model.Social
+namespace ZicMoove.Model.Social
 {
     public partial class Circle {
         public long Id { get; set; }

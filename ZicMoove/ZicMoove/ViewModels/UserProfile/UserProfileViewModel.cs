@@ -7,7 +7,7 @@ using XLabs.Forms.Mvvm;
 using XLabs.Ioc;
 using XLabs.Platform.Services;
 
-namespace BookAStar.ViewModels.UserProfile
+namespace ZicMoove.ViewModels.UserProfile
 {
     using Data;
     using Helpers;

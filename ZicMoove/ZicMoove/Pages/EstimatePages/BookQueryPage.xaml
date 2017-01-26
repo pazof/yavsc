@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
+             xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps.dll"
-             x:Class="BookAStar.Pages.BookQueryPage"
+             x:Class="ZicMoove.Pages.BookQueryPage"
              Style ="{StaticResource PageStyle}"
              >
   <ContentPage.Resources>

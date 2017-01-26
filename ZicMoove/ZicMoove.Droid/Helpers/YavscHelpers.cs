@@ -5,9 +5,9 @@ using System.Collections.Specialized;
 using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
-using BookAStar.Model.Auth.Account;
+using ZicMoove.Model.Auth.Account;
 
-namespace BookAStar.Droid
+namespace ZicMoove.Droid
 {
 
 	public static class YavscHelpers

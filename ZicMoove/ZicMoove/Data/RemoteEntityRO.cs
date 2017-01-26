@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace BookAStar.Data
+namespace ZicMoove.Data
 {
     public class RemoteEntityRO<V,K>: RemoteEntity<V,K> where K: IEquatable<K>
     {

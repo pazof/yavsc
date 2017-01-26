@@ -1,8 +1,8 @@
-﻿using BookAStar.Model.Blog;
+﻿using ZicMoove.Model.Blog;
 
 using Xamarin.Forms;
 
-namespace BookAStar.Pages.BlogPages
+namespace ZicMoove.Pages.BlogPages
 {
     public class BlogPage : ContentPage
     {

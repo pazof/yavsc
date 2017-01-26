@@ -1,10 +1,10 @@
-﻿using BookAStar.Helpers;
+﻿using ZicMoove.Helpers;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Xamarin.Forms;
 
-namespace BookAStar.Model.Auth.Account
+namespace ZicMoove.Model.Auth.Account
 {
     public class User : INotifyPropertyChanged
     {

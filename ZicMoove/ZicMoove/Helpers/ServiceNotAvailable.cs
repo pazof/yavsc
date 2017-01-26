@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BookAStar
+namespace ZicMoove
 {
     public class ServiceNotAvailable : Exception
     {

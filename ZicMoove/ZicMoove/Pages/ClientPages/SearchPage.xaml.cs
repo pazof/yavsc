@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 
-namespace BookAStar.Pages.ClientPages
+namespace ZicMoove.Pages.ClientPages
 {
     public partial class SearchPage : TabbedPage
     {

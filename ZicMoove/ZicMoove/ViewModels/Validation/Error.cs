@@ -1,4 +1,4 @@
-﻿namespace BookAStar.ViewModels.Validation
+﻿namespace ZicMoove.ViewModels.Validation
 {
     public class InputError
     {

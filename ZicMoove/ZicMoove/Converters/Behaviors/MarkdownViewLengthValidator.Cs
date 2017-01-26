@@ -1,7 +1,7 @@
-﻿using BookAStar.Views;
+﻿using ZicMoove.Views;
 using Xamarin.Forms;
 
-namespace BookAStar.Behaviors
+namespace ZicMoove.Behaviors
 {
     public class MarkdownViewLengthValidator : Behavior<MarkdownView>
     {

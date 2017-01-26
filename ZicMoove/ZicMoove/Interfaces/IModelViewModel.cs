@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookAStar.Interfaces
+namespace ZicMoove.Interfaces
 {
     public interface IModelViewModel : INotifyPropertyChanged
     {

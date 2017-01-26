@@ -1,6 +1,6 @@
 
 
-namespace BookAStar.Model.Workflow.Messaging
+namespace ZicMoove.Model.Workflow.Messaging
 {
     /// <summary>
     /// A Notification, that mocks the one sent to Google,

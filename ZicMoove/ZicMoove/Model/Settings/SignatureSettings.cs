@@ -2,7 +2,7 @@
 using System.Linq;
 using Xamarin.Forms;
 
-namespace BookAStar.Model.Settings
+namespace ZicMoove.Model.Settings
 {
     class SignatureSettings 
     {

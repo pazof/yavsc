@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace BookAStar.ViewModels.Validation
+namespace ZicMoove.ViewModels.Validation
 {
     public class ModelState : BindableObject
     {

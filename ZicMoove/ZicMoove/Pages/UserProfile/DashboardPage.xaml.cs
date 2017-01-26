@@ -2,7 +2,7 @@
 using Xamarin.Forms;
 using XLabs.Forms.Behaviors;
 
-namespace BookAStar.Pages.UserProfile
+namespace ZicMoove.Pages.UserProfile
 {
     using Data;
     using Helpers;

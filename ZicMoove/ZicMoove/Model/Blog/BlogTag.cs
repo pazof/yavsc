@@ -1,7 +1,7 @@
 
 
 
-namespace BookAStar.Model.Blog
+namespace ZicMoove.Model.Blog
 {
     public partial class BlogTag
     {

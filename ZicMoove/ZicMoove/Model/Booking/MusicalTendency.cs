@@ -1,5 +1,5 @@
 
-namespace BookAStar.Model.Social
+namespace ZicMoove.Model.Social
 {
 
   public class MusicalTendency {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 
-namespace BookAStar.Pages.EstimatePages
+namespace ZicMoove.Pages.EstimatePages
 {
     using ViewModels.EstimateAndBilling;
 

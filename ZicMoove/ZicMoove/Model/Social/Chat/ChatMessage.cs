@@ -1,9 +1,9 @@
-﻿using BookAStar.Data;
+﻿using ZicMoove.Data;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 
-namespace BookAStar.Model.Social.Messaging
+namespace ZicMoove.Model.Social.Messaging
 {
     public class ChatMessage
     {

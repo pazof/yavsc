@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using XLabs.Enums;
 
-namespace BookAStar.Views
+namespace ZicMoove.Views
 {
     public class ImageButton : Button
     {

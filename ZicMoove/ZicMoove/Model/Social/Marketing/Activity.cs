@@ -1,4 +1,4 @@
-namespace BookAStar.Model.Workflow.Marketing
+namespace ZicMoove.Model.Workflow.Marketing
 {
     public class Activity
     {

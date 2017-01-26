@@ -1,5 +1,5 @@
 ﻿
-namespace BookAStar.Data
+namespace ZicMoove.Data
 {
     using Helpers;
     using Model.Workflow;

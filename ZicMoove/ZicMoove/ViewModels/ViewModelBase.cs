@@ -1,5 +1,5 @@
-﻿using BookAStar.Helpers;
-using BookAStar.Interfaces;
+﻿using ZicMoove.Helpers;
+using ZicMoove.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookAStar.ViewModels
+namespace ZicMoove.ViewModels
 {
     [Obsolete("Use legacy XLabs ViewModel")]
     public class ViewModelBase : IModelViewModel

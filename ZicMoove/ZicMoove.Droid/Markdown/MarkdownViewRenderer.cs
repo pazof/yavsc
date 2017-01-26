@@ -1,15 +1,15 @@
 
-using BookAStar.Views;
+using ZicMoove.Views;
 using Android.Webkit;
 using Xamarin.Forms.Platform.Android;
-using BookAStar.Droid;
+using ZicMoove.Droid;
 using System;
 using Java.Interop;
 using System.ComponentModel;
 using Android.Views;
 
 [assembly: Xamarin.Forms.ExportRenderer(typeof(MarkdownView), typeof(MarkdownViewRenderer))]
-namespace BookAStar.Droid
+namespace ZicMoove.Droid
 {
     using Markdown;
     using XLabs.Forms;

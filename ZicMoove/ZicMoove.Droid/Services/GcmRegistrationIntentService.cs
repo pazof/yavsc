@@ -9,7 +9,7 @@ using Android.Gms.Gcm.Iid;
 using Android.OS;
 using Android;
 
-namespace BookAStar.Droid
+namespace ZicMoove.Droid
 {
 
 	[Service(Exported = false)]
@@ -29,7 +29,7 @@ namespace BookAStar.Droid
         {
             base.OnCreate();
             sWakeLock = PowerManager.FromContext(this).NewWakeLock(WakeLockFlags.Partial,
-                "BookAStar");
+                "ZicMoove");
             sWakeLock.Acquire();
         }
         public override void OnDestroy()

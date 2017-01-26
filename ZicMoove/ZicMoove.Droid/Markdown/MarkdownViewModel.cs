@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Graphics;
 
-namespace BookAStar.Droid.Markdown
+namespace ZicMoove.Droid.Markdown
 {
     public class MarkdownViewModel
     {

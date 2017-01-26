@@ -1,12 +1,12 @@
 ﻿
-using BookAStar.ViewModels.UserProfile;
+using ZicMoove.ViewModels.UserProfile;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System;
 
 using Xamarin.Forms;
 
-namespace BookAStar.Pages.UserProfile
+namespace ZicMoove.Pages.UserProfile
 {
     public partial class UserProfilePage : ContentPage
     {

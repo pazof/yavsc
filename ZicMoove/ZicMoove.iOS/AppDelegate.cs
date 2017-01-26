@@ -4,8 +4,8 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
-using BookAStar;
-using BookAStar.Interfaces;
+using ZicMoove;
+using ZicMoove.Interfaces;
 using Yavsc.Models.Identity;
 
 namespace App2.iOS

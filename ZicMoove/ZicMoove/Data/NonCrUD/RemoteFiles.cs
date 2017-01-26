@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System;
 
-namespace BookAStar.Data.NonCrUD
+namespace ZicMoove.Data.NonCrUD
 {
     using Helpers;
     using Model.FileSystem;

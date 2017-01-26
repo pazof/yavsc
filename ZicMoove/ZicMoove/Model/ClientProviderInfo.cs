@@ -1,9 +1,9 @@
-﻿using BookAStar.Helpers;
-using BookAStar.Model.Social;
+﻿using ZicMoove.Helpers;
+using ZicMoove.Model.Social;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 
-namespace BookAStar.Model
+namespace ZicMoove.Model
 {
     public class ClientProviderInfo
     {

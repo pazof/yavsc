@@ -35,12 +35,12 @@ using XLabs.Serialization.JsonNET;
 using Yavsc.Helpers;
 using Yavsc.Models.Identity;
 
-namespace BookAStar.Droid
+namespace ZicMoove.Droid
 {
     using Android.Runtime;
     using Android.Support.V4.App;
     using Android.Support.V4.Content;
-    using BookAStar.Interfaces;
+    using ZicMoove.Interfaces;
     using Data;
     using Droid.OAuth;
     using Helpers;
@@ -48,7 +48,7 @@ namespace BookAStar.Droid
     using Model.Auth.Account;
     using static Android.Manifest;
 
-    [Activity(Name = "fr.pschneider.bas.MainActivity", Label = "BookAStar", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Name = "fr.pschneider.bas.MainActivity", Label = "ZicMoove", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity :
 
         // global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
@@ -103,7 +103,7 @@ namespace BookAStar.Droid
                 }
             };
 
-            var fapp = new BookAStar.App(this);
+            var fapp = new ZicMoove.App(this);
 
 
             LoadApplication(fapp);
@@ -307,7 +307,7 @@ namespace BookAStar.Droid
                 using (var reader = new StreamReader(exception.Response.GetResponseStream()))
                 {
                     responseText = reader.ReadToEnd();
-                    Log.Debug("BookAStar", responseText);
+                    Log.Debug("ZicMoove", responseText);
                 }
             }
         }

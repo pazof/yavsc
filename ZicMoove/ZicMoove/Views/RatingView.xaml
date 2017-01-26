@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
-             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
-             xmlns:behaviors="clr-namespace:BookAStar.Behaviors;assembly=BookAStar"
-             xmlns:converters="clr-namespace:BookAStar.Converters;assembly=BookAStar"
-             x:Class="BookAStar.Views.RatingView">
+             xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
+             xmlns:extensions="clr-namespace:ZicMoove.Extensions;assembly=ZicMoove"
+             xmlns:behaviors="clr-namespace:ZicMoove.Behaviors;assembly=ZicMoove"
+             xmlns:converters="clr-namespace:ZicMoove.Converters;assembly=ZicMoove"
+             x:Class="ZicMoove.Views.RatingView">
   <ContentView.Resources>
     <ResourceDictionary>
       <Style TargetType="Label">
@@ -21,10 +21,10 @@
             <behaviors:StarBehavior x:Name="starOne" GroupName="myStar"/>
           </Grid.Behaviors>
           <Image x:Name="starBlankOne"
-                  Source="{extensions:ImageResource BookAStar.Images.Validation.star_outline.png}" />
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_outline.png}" />
 
           <Image x:Name="starSelectedOne"
-                  Source="{extensions:ImageResource BookAStar.Images.Validation.star_selected.png}"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_selected.png}"
                   IsVisible="{Binding Source={x:Reference starOne},
                                     Path=IsStarred}"/>
         </Grid>
@@ -33,10 +33,10 @@
             <behaviors:StarBehavior x:Name="starTwo" GroupName="myStar"/>
           </Grid.Behaviors>
           <Image x:Name="starBlankTwo"
-                  Source="{extensions:ImageResource BookAStar.Images.Validation.star_outline.png}" />
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_outline.png}" />
 
           <Image x:Name="starSelectedTwo"
-                  Source="{extensions:ImageResource BookAStar.Images.Validation.star_selected.png}"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_selected.png}"
                   IsVisible="{Binding Source={x:Reference starTwo},
                                     Path=IsStarred}"/>
         </Grid>
@@ -45,10 +45,10 @@
             <behaviors:StarBehavior x:Name="starThree" GroupName="myStar"/>
           </Grid.Behaviors>
           <Image x:Name="starBlankThree"
-                  Source="{extensions:ImageResource BookAStar.Images.Validation.star_outline.png}" />
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_outline.png}" />
 
           <Image x:Name="starSelectedThree"
-                  Source="{extensions:ImageResource BookAStar.Images.Validation.star_selected.png}"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_selected.png}"
                   IsVisible="{Binding Source={x:Reference starThree},
                                     Path=IsStarred}"/>
         </Grid>
@@ -57,10 +57,10 @@
             <behaviors:StarBehavior x:Name="starFour" GroupName="myStar"/>
           </Grid.Behaviors>
           <Image x:Name="starBlankFour"
-                  Source="{extensions:ImageResource BookAStar.Images.Validation.star_outline.png}" />
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_outline.png}" />
 
           <Image x:Name="starSelectedFour"
-                  Source="{extensions:ImageResource BookAStar.Images.Validation.star_selected.png}"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_selected.png}"
                   IsVisible="{Binding Source={x:Reference starFour},  Path=IsStarred}" />
         </Grid>
         <Grid >
@@ -68,10 +68,10 @@
             <behaviors:StarBehavior x:Name="starFive" GroupName="myStar"/>
           </Grid.Behaviors>
           <Image x:Name="starBlankFive"
-                  Source="{extensions:ImageResource BookAStar.Images.Validation.star_outline.png}" />
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_outline.png}" />
 
           <Image x:Name="starSelectedFive"
-                  Source="{extensions:ImageResource BookAStar.Images.Validation.star_selected.png}"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_selected.png}"
                   IsVisible="{Binding Source={x:Reference starFive}, Path=IsStarred}" />
         </Grid>
           
