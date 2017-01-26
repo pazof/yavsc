@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace BookAStar.Interfaces
+namespace ZicMoove.Interfaces
 {
     public interface IComponentContext
     {

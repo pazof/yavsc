@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace BookAStar.Behaviors
+namespace ZicMoove.Behaviors
 {
     public class PickerBehavior : Behavior<Picker>
     {

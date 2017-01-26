@@ -1,8 +1,8 @@
-﻿using BookAStar.Model.Workflow;
-using BookAStar.ViewModels.EstimateAndBilling;
+﻿using ZicMoove.Model.Workflow;
+using ZicMoove.ViewModels.EstimateAndBilling;
 using Xamarin.Forms;
 
-namespace BookAStar.ViewModels.Signing
+namespace ZicMoove.ViewModels.Signing
 {
     public class EstimateSigningViewModel: EditEstimateViewModel
     {

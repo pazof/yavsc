@@ -20,7 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-namespace BookAStar.Model.Workflow.Marketing
+namespace ZicMoove.Model.Workflow.Marketing
 {
     using Social;
     using System;

@@ -1,4 +1,4 @@
-﻿namespace BookAStar.Data
+﻿namespace ZicMoove.Data
 {
     using Model;
     using Model.Blog;

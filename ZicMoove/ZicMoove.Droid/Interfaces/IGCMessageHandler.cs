@@ -10,7 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace BookAStar.Droid.Interfaces
+namespace ZicMoove.Droid.Interfaces
 {
     interface IGCMessageHandler
     {

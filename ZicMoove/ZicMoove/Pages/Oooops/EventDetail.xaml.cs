@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 
-namespace BookAStar
+namespace ZicMoove
 {
     using Model.Workflow.Messaging;
 

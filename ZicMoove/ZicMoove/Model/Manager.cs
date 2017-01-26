@@ -1,10 +1,10 @@
-﻿using BookAStar.Model.Social;
+﻿using ZicMoove.Model.Social;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace BookAStar
+namespace ZicMoove
 {      
     [Obsolete("Use Helpers.DataManager")]
     public static class Manager
@@ -28,7 +28,7 @@ namespace BookAStar
             new LocalizedEvent {
 
                 Title = "Yavsc Party",
-                Description = "Lancement en fanfare de la version 1.0 de BookAStar, l'appli des fétards",
+                Description = "Lancement en fanfare de la version 1.0 de ZicMoove, l'appli des fétards",
                 ProviderId = "paul",
                 ProviderName = "Yavsc Fondation",
                 EventWebPage = "http://lua.pschneider.fr/",

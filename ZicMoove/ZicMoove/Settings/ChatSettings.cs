@@ -1,9 +1,9 @@
-﻿using BookAStar.Model.Workflow.Messaging;
+﻿using ZicMoove.Model.Workflow.Messaging;
 using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 using System.Collections.Generic;
 
-namespace BookAStar.Settings
+namespace ZicMoove.Settings
 {
     public static class ChatSettings
     {

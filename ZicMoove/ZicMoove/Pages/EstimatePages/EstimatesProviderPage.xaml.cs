@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 
-namespace BookAStar.Pages
+namespace ZicMoove.Pages
 {
     using Model.Workflow;
     using ViewModels.EstimateAndBilling;

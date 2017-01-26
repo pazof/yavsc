@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace BookAStar.Helpers
+namespace ZicMoove.Helpers
 {
     using Data.NonCrUD;
     using Model.FileSystem;
@@ -16,7 +16,7 @@ namespace BookAStar.Helpers
         public static ImageSource Avatar(string avatarPath)
         {
             var result = avatarPath == null ?
-                ImageSource.FromResource( "BookAStar.Images.Users.icon_user.png") :
+                ImageSource.FromResource( "ZicMoove.Images.Users.icon_user.png") :
                 ImageSource.FromUri(new Uri(Constants.YavscHomeUrl+"/Avatars/"+avatarPath)) ;
             return result;
         }
@@ -24,14 +24,14 @@ namespace BookAStar.Helpers
         public static ImageSource SmallAvatar(string avatarPath, string username)
         {
             return avatarPath == null ?
-                ImageSource.FromResource("BookAStar.Images.Users.icon_user.png") :
+                ImageSource.FromResource("ZicMoove.Images.Users.icon_user.png") :
              ImageSource.FromUri(new Uri($"{Constants.YavscHomeUrl}/Avatars/{username}.s.png"));
         }
 
         public static ImageSource ExtraSmallAvatar(string avatarPath, string username)
         {
             return avatarPath == null ?
-                   ImageSource.FromResource("BookAStar.Images.Users.icon_user.png") :
+                   ImageSource.FromResource("ZicMoove.Images.Users.icon_user.png") :
              ImageSource.FromUri(new Uri($"{Constants.YavscHomeUrl}/Avatars/{username}.xs.png"));
         }
 

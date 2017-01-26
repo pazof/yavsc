@@ -14,7 +14,7 @@ using XLabs.Settings;
 using XLabs;
 using XLabs.Enums;
 
-namespace BookAStar
+namespace ZicMoove
 {
     using Data;
     using Interfaces;

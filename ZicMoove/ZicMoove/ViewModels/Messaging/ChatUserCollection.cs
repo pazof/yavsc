@@ -1,6 +1,6 @@
-﻿using BookAStar.Data;
-using BookAStar.Model.Social.Chat;
-using BookAStar.Model.Social.Messaging;
+﻿using ZicMoove.Data;
+using ZicMoove.Model.Social.Chat;
+using ZicMoove.Model.Social.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
-namespace BookAStar.ViewModels.Messaging
+namespace ZicMoove.ViewModels.Messaging
 {
     public class ChatUserCollection : RemoteEntityRO<ChatUserInfo, string>
     {

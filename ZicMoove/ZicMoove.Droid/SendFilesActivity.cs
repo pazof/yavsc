@@ -10,7 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace BookAStar.Droid
+namespace ZicMoove.Droid
 {
     [Activity(Name= "fr.pschneider.bas.SendFilesActivity", Label = "SendFilesActivity")]
     public class SendFilesActivity : Activity

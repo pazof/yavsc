@@ -5,32 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace BookAStar
+namespace ZicMoove
 {
     public static class Constants
     {
 
-
 #if DEV
         public const string ApplicationName = "yadev";
         public const string YavscHomeUrl = "http://dev.pschneider.fr";
-#else
-#if WDEV 
+#endif
+#if WDEV
+        // against a Windows local API
         public const string ApplicationName = "yawindev";
         public const string YavscHomeUrl = "http://192.168.0.29:5000";
-#else
+#endif
 #if YAVSC
         public const string ApplicationName = "yavsc";
         public const string YavscHomeUrl = "https://yavsc.pschneider.fr";
-#else
+#endif
 #if LUA
         public const string ApplicationName = "Luap";
         public const string YavscHomeUrl = "https://lua.pschneider.fr";
-#else
-        public const string YavscHomeUrl = "https://booking.pschneider.fr";
 #endif
-#endif
-#endif
+#if ZICMOOVE
+        public const string ApplicationName = "ZicMoove";
+        public const string YavscHomeUrl = "https://zicmoove.pschneider.fr";
 #endif
         public static readonly string AuthorizeUrl = YavscHomeUrl + "/authorize";
         public static readonly string RedirectUrl = YavscHomeUrl + "/oauth/success";

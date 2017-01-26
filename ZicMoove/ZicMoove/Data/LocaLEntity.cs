@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace BookAStar.Data
+namespace ZicMoove.Data
 {
     public class LocalEntity<V, K> : ObservableCollection<V>, ILocalEntity<V, K> where K : IEquatable<K>
     {

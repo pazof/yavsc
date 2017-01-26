@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 
-namespace BookAStar.Pages
+namespace ZicMoove.Pages
 {
     using Data;
     using EstimatePages;

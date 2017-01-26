@@ -29,18 +29,18 @@ using XLabs.Enums;
 using XLabs.Forms.Extensions;
 using Color = Xamarin.Forms.Color;
 using View = Android.Views.View;
-using BookAStar.Rendering;
-using BookAStar.Views;
+using ZicMoove.Rendering;
+using ZicMoove.Views;
 using Xamarin.Forms.Platform.Android.AppCompat;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using System.IO;
-using BookAStar.Helpers;
+using ZicMoove.Helpers;
 using System.Reflection;
 using System.Threading;
 
 [assembly: ExportRenderer(typeof(ImageButton), typeof(ImageButtonRenderer))]
-namespace BookAStar.Rendering
+namespace ZicMoove.Rendering
 {
     /// <summary>
     /// Draws a button on the Android platform with the image shown in the right 

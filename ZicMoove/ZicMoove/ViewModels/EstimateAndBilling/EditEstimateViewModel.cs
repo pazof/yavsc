@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.ComponentModel;
 
-namespace BookAStar.ViewModels.EstimateAndBilling
+namespace ZicMoove.ViewModels.EstimateAndBilling
 {
     using Model;
     using Model.Workflow;

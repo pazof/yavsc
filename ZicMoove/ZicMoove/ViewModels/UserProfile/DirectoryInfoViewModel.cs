@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using XLabs.Forms.Mvvm;
 
-namespace BookAStar.ViewModels.UserProfile
+namespace ZicMoove.ViewModels.UserProfile
 {
     using System.ComponentModel;
     using Model.FileSystem;

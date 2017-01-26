@@ -1,6 +1,6 @@
-using BookAStar.Model.Social;
+using ZicMoove.Model.Social;
 
-namespace BookAStar.Model.Workflow.Marketing
+namespace ZicMoove.Model.Workflow.Marketing
 {
 
     public class PerformerProfile {

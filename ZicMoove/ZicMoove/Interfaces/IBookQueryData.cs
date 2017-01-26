@@ -1,8 +1,8 @@
 ﻿using System;
-using BookAStar.Model.Social;
-using BookAStar.Model;
+using ZicMoove.Model.Social;
+using ZicMoove.Model;
 
-namespace BookAStar.Interfaces
+namespace ZicMoove.Interfaces
 {
     public interface IBookQueryData
     {

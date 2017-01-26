@@ -1,6 +1,6 @@
 ﻿using XLabs.Forms.Mvvm;
 
-namespace BookAStar.ViewModels
+namespace ZicMoove.ViewModels
 {
     using EstimateAndBilling;
     using UserProfile;

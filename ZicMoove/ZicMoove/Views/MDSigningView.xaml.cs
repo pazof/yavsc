@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 
-namespace BookAStar.Views
+namespace ZicMoove.Views
 {
     public partial class MDSigningView : ContentView
     {

@@ -9,9 +9,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using BookAStar.Droid.Interfaces;
+using ZicMoove.Droid.Interfaces;
 
-namespace BookAStar.Droid.Services.GCMHandlers
+namespace ZicMoove.Droid.Services.GCMHandlers
 {
     abstract class GCMessageHandler : IGCMessageHandler
     {

@@ -3,7 +3,7 @@ using XLabs.Forms.Mvvm;
 using System.ComponentModel;
 using Newtonsoft.Json;
 
-namespace BookAStar.ViewModels.Validation
+namespace ZicMoove.ViewModels.Validation
 {
     /// <summary>
     /// Used to make the DataManager know how

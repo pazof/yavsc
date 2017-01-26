@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Microsoft.AspNet.SignalR.Client;
 using Xamarin.Forms;
 
-namespace BookAStar.Pages.Chat
+namespace ZicMoove.Pages.Chat
 {
     using Data;
     using System.Linq;

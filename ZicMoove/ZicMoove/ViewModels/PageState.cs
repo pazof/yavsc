@@ -1,6 +1,6 @@
 ﻿using XLabs.Forms.Mvvm;
 
-namespace BookAStar.ViewModels
+namespace ZicMoove.ViewModels
 {
     internal class PageState
     {

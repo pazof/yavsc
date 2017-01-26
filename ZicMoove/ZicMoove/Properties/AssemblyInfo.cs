@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("BookAStar")]
+[assembly: AssemblyTitle("ZicMoove")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Paul Schneider")]
-[assembly: AssemblyProduct("BookAStar")]
+[assembly: AssemblyProduct("ZicMoove")]
 [assembly: AssemblyCopyright("Copyright © Paul Albert Schneider 2016")]
 [assembly: AssemblyTrademark("Yavsc")]
 [assembly: AssemblyCulture("fr")]

@@ -12,7 +12,7 @@ using Android.Widget;
 using Android.Service.Chooser;
 using static Android.Manifest;
 
-namespace BookAStar.Droid
+namespace ZicMoove.Droid
 {
     [Service(
         Name = "fr.pschneider.bas.YavscChooserTargetService", 
@@ -33,7 +33,7 @@ namespace BookAStar.Droid
             ChooserTarget t = new ChooserTarget(
                 new Java.Lang.String(
                 Constants.ApplicationName), i,
-                .5f, new ComponentName(this, "BookAStar.SendFilesActivity"),
+                .5f, new ComponentName(this, "ZicMoove.SendFilesActivity"),
                 null);
             var res = new List<ChooserTarget>();
             res.Add(t);

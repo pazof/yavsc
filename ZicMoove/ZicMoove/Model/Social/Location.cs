@@ -2,9 +2,9 @@
 
 using System;
 using Android.Runtime;
-using BookAStar.Model.Workflow.Messaging;
+using ZicMoove.Model.Workflow.Messaging;
 
-namespace BookAStar.Model.Social
+namespace ZicMoove.Model.Social
 {
 
     /// <summary>

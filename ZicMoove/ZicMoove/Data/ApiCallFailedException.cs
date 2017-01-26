@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookAStar.Data
+namespace ZicMoove.Data
 {
     class ApiCallFailedException : Exception
     {

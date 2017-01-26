@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BookAStar.Pages.UserProfile.UserProfilePage"
-             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
-             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
-             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
+             x:Class="ZicMoove.Pages.UserProfile.UserProfilePage"
+             xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
+             xmlns:views="clr-namespace:ZicMoove.Views;assembly=ZicMoove"
+             xmlns:extensions="clr-namespace:ZicMoove.Extensions;assembly=ZicMoove"
              xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
               Style="{StaticResource PageStyle}">
 

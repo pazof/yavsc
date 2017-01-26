@@ -1,7 +1,7 @@
 ﻿
 using XLabs.Forms.Mvvm;
 
-namespace BookAStar.ViewModels.Searching
+namespace ZicMoove.ViewModels.Searching
 {
     class SearchingAnArtistViewModel: ViewModel
     {

@@ -1,5 +1,5 @@
 ﻿
-using BookAStar.Helpers;
+using ZicMoove.Helpers;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Xamarin.Forms;
@@ -7,9 +7,9 @@ using XLabs.Forms.Mvvm;
 using YavscLib;
 using System;
 using Newtonsoft.Json;
-using BookAStar.Model.Social.Messaging;
+using ZicMoove.Model.Social.Messaging;
 
-namespace BookAStar.Model.Social.Chat
+namespace ZicMoove.Model.Social.Chat
 {
     public class ChatUserInfo : ViewModel, IChatUserInfo
     {
@@ -166,7 +166,7 @@ namespace BookAStar.Model.Social.Chat
         {
             get
             {
-                return Unread ? ImageSource.FromResource("BookAStar.Images.Chat.talk.png") :null;
+                return Unread ? ImageSource.FromResource("ZicMoove.Images.Chat.talk.png") :null;
             }
         }
 

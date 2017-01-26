@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:BookAStar;assembly=BookAStar"
-             xmlns:converters="clr-namespace:BookAStar.Converters;assembly=BookAStar"
-             xmlns:views="clr-namespace:BookAStar.Views;assembly=BookAStar"
-             xmlns:behaviors="clr-namespace:BookAStar.Behaviors;assembly=BookAStar"
-             xmlns:extensions="clr-namespace:BookAStar.Extensions;assembly=BookAStar"
-             x:Class="BookAStar.Pages.EditBillingLinePage"
+             xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
+             xmlns:converters="clr-namespace:ZicMoove.Converters;assembly=ZicMoove"
+             xmlns:views="clr-namespace:ZicMoove.Views;assembly=ZicMoove"
+             xmlns:behaviors="clr-namespace:ZicMoove.Behaviors;assembly=ZicMoove"
+             xmlns:extensions="clr-namespace:ZicMoove.Extensions;assembly=ZicMoove"
+             x:Class="ZicMoove.Pages.EditBillingLinePage"
              Style="{StaticResource PageStyle}">
   <ContentPage.Resources>
     <ResourceDictionary>
@@ -23,7 +23,7 @@
           <Style TargetType="Image">
             <Setter Property="HeightRequest" Value="20" />
             <Setter Property="Source"
-                    Value="{extensions:ImageResource BookAStar.Images.Validation.error.png}" />
+                    Value="{extensions:ImageResource ZicMoove.Images.Validation.error.png}" />
           </Style>
         </converters:BooleanToObjectConverter.FalseObject>
 
@@ -31,7 +31,7 @@
           <Style TargetType="Image">
             <Setter Property="HeightRequest" Value="20" />
             <Setter Property="Source"
-                    Value="{extensions:ImageResource BookAStar.Images.Validation.success.png}" />
+                    Value="{extensions:ImageResource ZicMoove.Images.Validation.success.png}" />
           </Style>
         </converters:BooleanToObjectConverter.TrueObject>
 

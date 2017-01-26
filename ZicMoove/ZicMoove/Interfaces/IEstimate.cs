@@ -1,7 +1,7 @@
-﻿using BookAStar.Model.Workflow;
+﻿using ZicMoove.Model.Workflow;
 using System.Collections.Generic;
 
-namespace BookAStar.Model.Interfaces
+namespace ZicMoove.Model.Interfaces
 {
     public interface IEstimate
     {

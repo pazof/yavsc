@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookAStar.Helpers
+namespace ZicMoove.Helpers
 {
     public static class PropertySupport
     {

@@ -21,9 +21,9 @@
 
 
 
-using BookAStar.Model.Social;
+using ZicMoove.Model.Social;
 
-namespace BookAStar.Model.Workflow.Messaging
+namespace ZicMoove.Model.Workflow.Messaging
 {
 	/// <summary>
 	/// Position and keyphrase.

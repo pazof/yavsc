@@ -1,8 +1,8 @@
-using BookAStar.Model.Social;
-using BookAStar.Model.Workflow.Marketing;
+using ZicMoove.Model.Social;
+using ZicMoove.Model.Workflow.Marketing;
 using System;
 
-namespace BookAStar.Model.Workflow.Calendar
+namespace ZicMoove.Model.Workflow.Calendar
 {
     /// <summary>
     /// A date, between two persons

@@ -9,9 +9,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using BookAStar.Droid.OAuth;
+using ZicMoove.Droid.OAuth;
 
-namespace BookAStar.Droid.Services
+namespace ZicMoove.Droid.Services
 {
     [Service(
           Name = "fr.pschneider.bas.AccountChooserService",

@@ -1,9 +1,9 @@
-using BookAStar.Model.Auth.Account;
+using ZicMoove.Model.Auth.Account;
 using System;
 using Xamarin.Forms;
 using Yavsc.Models.Identity;
 
-namespace BookAStar.Interfaces
+namespace ZicMoove.Interfaces
 {
     public interface IPlatform
 	{

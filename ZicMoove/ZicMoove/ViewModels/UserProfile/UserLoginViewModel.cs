@@ -1,6 +1,6 @@
 ﻿using XLabs.Forms.Mvvm;
 
-namespace BookAStar.ViewModels.UserProfile
+namespace ZicMoove.ViewModels.UserProfile
 {
     class UserLoginViewModel : ViewModel
     {

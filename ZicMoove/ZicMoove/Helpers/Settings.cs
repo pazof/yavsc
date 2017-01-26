@@ -1,7 +1,7 @@
 // Helpers/Settings.cs
 #if USELESS_but_makes_the_component_removable // this file must exist ^^
 
-namespace BookAStar.Helpers
+namespace ZicMoove.Helpers
 {
   /// <summary>
   /// This is the Settings static class that can be used in your Core solution or in any

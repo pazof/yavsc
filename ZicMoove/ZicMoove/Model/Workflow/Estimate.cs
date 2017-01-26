@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BookAStar.Model.Workflow
+namespace ZicMoove.Model.Workflow
 {
     using Data;
     using Interfaces;

@@ -1,4 +1,4 @@
-namespace BookAStar.Model.Social
+namespace ZicMoove.Model.Social
 {
 
     public partial class CircleMember

@@ -4,12 +4,12 @@ using Xamarin.Forms;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using BookAStar.Helpers;
+using ZicMoove.Helpers;
 using XLabs.Forms.Behaviors;
 using XLabs.Forms.Controls;
-using BookAStar.Model.Auth.Account;
+using ZicMoove.Model.Auth.Account;
 
-namespace BookAStar.Pages.UserProfile
+namespace ZicMoove.Pages.UserProfile
 {
    
     public partial class AccountChooserPage : ContentPage

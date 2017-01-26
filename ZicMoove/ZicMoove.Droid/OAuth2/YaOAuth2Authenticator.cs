@@ -6,8 +6,8 @@ using Xamarin.Utilities;
 using System.Net;
 using System.Text;
 using Xamarin.Auth;
-using BookAStar.Droid.OAuth.Xamarin.Utilities;
-namespace BookAStar.Droid.OAuth { 
+using ZicMoove.Droid.OAuth.Xamarin.Utilities;
+namespace ZicMoove.Droid.OAuth { 
 public class YaOAuth2Authenticator : WebRedirectAuthenticator
 {
 

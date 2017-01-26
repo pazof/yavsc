@@ -1,10 +1,10 @@
-﻿using BookAStar.Model.Social;
+﻿using ZicMoove.Model.Social;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Yavsc;
 
-namespace BookAStar.Pages
+namespace ZicMoove.Pages
 {
 	public class PinPage : ContentPage
 	{

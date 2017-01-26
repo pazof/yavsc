@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace BookAStar
+namespace ZicMoove
 {
     public interface ILoadable
     {

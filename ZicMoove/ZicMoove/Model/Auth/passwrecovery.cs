@@ -1,6 +1,6 @@
 using System;
 
-namespace BookAStar.Model.Auth.Account
+namespace ZicMoove.Model.Auth.Account
 {
     public partial class passwrecovery
     {

@@ -1,4 +1,4 @@
-﻿using BookAStar.Interfaces;
+﻿using ZicMoove.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +8,7 @@ using System.Text;
 
 using Xamarin.Forms;
 
-namespace BookAStar.Views
+namespace ZicMoove.Views
 {
     public class MarkdownView : View
     {

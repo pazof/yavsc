@@ -1,11 +1,11 @@
-﻿using BookAStar.Data;
-using BookAStar.ViewModels;
-using BookAStar.ViewModels.EstimateAndBilling;
+﻿using ZicMoove.Data;
+using ZicMoove.ViewModels;
+using ZicMoove.ViewModels.EstimateAndBilling;
 using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
 
-namespace BookAStar.Pages
+namespace ZicMoove.Pages
 {
     public partial class EditBillingLinePage : ContentPage
     {

@@ -1,7 +1,7 @@
 using System;
 using Yavsc.Models;
 
-namespace BookAStar.Model.Blog
+namespace ZicMoove.Model.Blog
 {
     public partial class Blog : IBlog
     {

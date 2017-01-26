@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Net;
 
-namespace BookAStar.Data
+namespace ZicMoove.Data
 {
     using Helpers;
     using System.Diagnostics;

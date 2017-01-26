@@ -21,7 +21,7 @@
 
 using System;
 
-namespace BookAStar.Model.Workflow.Calendar
+namespace ZicMoove.Model.Workflow.Calendar
 {
 
 	/// <summary>

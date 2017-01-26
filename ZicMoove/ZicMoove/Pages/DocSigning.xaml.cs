@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 
-namespace BookAStar.ViewModels.Signing
+namespace ZicMoove.ViewModels.Signing
 {
     public partial class Signing : ContentPage
     {

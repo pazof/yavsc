@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookAStar.Model.FileSystem
+namespace ZicMoove.Model.FileSystem
 {
     public class UserFileInfo
     {

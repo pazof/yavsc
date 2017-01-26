@@ -1,13 +1,13 @@
-﻿using BookAStar.Attributes;
-using BookAStar.Interfaces;
-using BookAStar.Model.Workflow;
-using BookAStar.ViewModels.Validation;
+﻿using ZicMoove.Attributes;
+using ZicMoove.Interfaces;
+using ZicMoove.Model.Workflow;
+using ZicMoove.ViewModels.Validation;
 using System;
 using System.Globalization;
 using System.Windows.Input;
 using System.ComponentModel;
 
-namespace BookAStar.ViewModels.EstimateAndBilling
+namespace ZicMoove.ViewModels.EstimateAndBilling
 {
     public class BillingLineViewModel : EditingViewModel<BillingLine>, IBillingLine
     {

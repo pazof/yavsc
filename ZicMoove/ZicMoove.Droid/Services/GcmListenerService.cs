@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BookAStar.Droid.Services
+namespace ZicMoove.Droid.Services
 {
     using Model.Social;
     using Model;

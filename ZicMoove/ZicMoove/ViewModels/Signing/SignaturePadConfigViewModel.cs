@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using XLabs.Forms.Mvvm;
 
-namespace BookAStar.ViewModels.Signing
+namespace ZicMoove.ViewModels.Signing
 {
     using Model.Settings;
     public class SignaturePadConfigViewModel : ViewModel

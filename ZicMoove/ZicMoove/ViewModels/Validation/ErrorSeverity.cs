@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookAStar.ViewModels.Validation
+namespace ZicMoove.ViewModels.Validation
 {
     public enum ErrorSeverity
     {

@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
-namespace BookAStar.Behaviors
+namespace ZicMoove.Behaviors
 {
     public class RegexValidatorBehavior : Behavior<Entry>
     {

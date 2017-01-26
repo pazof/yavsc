@@ -1,7 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 
-namespace BookAStar.Behaviors
+namespace ZicMoove.Behaviors
 {
     public class EditorMaxLengthValidator : Behavior<Editor>
     {

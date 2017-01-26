@@ -22,7 +22,7 @@
 
 
 
-namespace BookAStar.Model.Workflow.Messaging
+namespace ZicMoove.Model.Workflow.Messaging
 {
 	/// <summary>
 	/// Base event.

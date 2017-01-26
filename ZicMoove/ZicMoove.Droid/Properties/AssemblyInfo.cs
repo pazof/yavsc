@@ -6,11 +6,11 @@ using Android.App;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("BookAStar.Droid")]
+[assembly: AssemblyTitle("ZicMoove.Droid")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("BookAStar.Droid")]
+[assembly: AssemblyProduct("ZicMoove.Droid")]
 [assembly: AssemblyCopyright("Copyright © Paul Albert Schneider 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("fr")]

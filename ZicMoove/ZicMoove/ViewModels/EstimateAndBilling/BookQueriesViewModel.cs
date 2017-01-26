@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace BookAStar.ViewModels.EstimateAndBilling
+namespace ZicMoove.ViewModels.EstimateAndBilling
 {
     using Data;
     using Model;

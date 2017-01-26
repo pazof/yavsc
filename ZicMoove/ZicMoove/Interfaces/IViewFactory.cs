@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace BookAStar.Interfaces
+namespace ZicMoove.Interfaces
 {
     public interface IViewFactory
     {

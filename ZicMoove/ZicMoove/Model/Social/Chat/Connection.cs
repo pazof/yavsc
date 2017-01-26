@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YavscLib;
 
-namespace BookAStar.Model.Social.Chat
+namespace ZicMoove.Model.Social.Chat
 {
     public class Connection : IConnection
     {

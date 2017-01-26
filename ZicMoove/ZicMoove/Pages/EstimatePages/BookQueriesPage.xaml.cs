@@ -1,10 +1,10 @@
-﻿using BookAStar.Model;
-using BookAStar.ViewModels;
+﻿using ZicMoove.Model;
+using ZicMoove.ViewModels;
 using Xamarin.Forms;
 using XLabs.Ioc;
 using XLabs.Platform.Services;
 
-namespace BookAStar.Pages
+namespace ZicMoove.Pages
 {
     using Data;
     using ViewModels.EstimateAndBilling;

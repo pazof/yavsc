@@ -1,6 +1,6 @@
-﻿using BookAStar.Model;
-using BookAStar.Model.Social.Chat;
-using BookAStar.ViewModels.Messaging;
+﻿using ZicMoove.Model;
+using ZicMoove.Model.Social.Chat;
+using ZicMoove.ViewModels.Messaging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
-namespace BookAStar.Views
+namespace ZicMoove.Views
 {
     public partial class UserListView : ContentView
     {

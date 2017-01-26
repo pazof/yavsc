@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using XLabs.Forms.Mvvm;
 
-namespace BookAStar.ViewModels.EstimateAndBilling
+namespace ZicMoove.ViewModels.EstimateAndBilling
 {
     using Data;
     using Helpers;

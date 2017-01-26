@@ -10,12 +10,12 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
-using BookAStar.Model.Social;
-using BookAStar.Model;
-using BookAStar.Model.Workflow;
-using BookAStar.Data;
+using ZicMoove.Model.Social;
+using ZicMoove.Model;
+using ZicMoove.Model.Workflow;
+using ZicMoove.Data;
 
-namespace BookAStar.Droid.Services.GCMHandlers
+namespace ZicMoove.Droid.Services.GCMHandlers
 {
     class EstimateGCMHandler: GCMessageHandler
     {
