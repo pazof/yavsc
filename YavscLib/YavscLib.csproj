@@ -36,9 +36,19 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Lua|AnyCPU'">
+    <OutputPath>bin\Lua\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="IAccountBalance.cs" />
     <Compile Include="IApplicationUser.cs" />
+    <Compile Include="IBaseTrackedEntity.cs" />
     <Compile Include="IBlog.cs" />
     <Compile Include="ICircle.cs" />
     <Compile Include="ICircleMember.cs" />
