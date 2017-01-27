@@ -13,6 +13,7 @@ namespace ZicMoove.ViewModels.UserProfile
     using Helpers;
     using Model.Auth.Account;
     using Pages.UserProfile;
+    using Settings;
     using System.Threading.Tasks;
 
     internal class DashboardViewModel : ViewModel
@@ -200,7 +201,7 @@ namespace ZicMoove.ViewModels.UserProfile
                     newQueriesButtonText = newUserIsPro ?
                          $"{newQueryCount} demandes valides en cours" :
                         "Profile professionel non renseigné";
-                    newAvatar = UserHelpers.Avatar(user.Avatar);
+                    newAvatar = UserHelpers.Avatar(user.UserName);
                 }
                 SetProperty<bool>(ref haveAnUser, userIsNull, "HaveAnUser");
                 SetProperty<bool>(ref userIsPro, newUserIsPro, "UserIsPro");

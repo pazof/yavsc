@@ -13,11 +13,11 @@ namespace ZicMoove.Helpers
 
     public static class UserHelpers
     {
-        public static ImageSource Avatar(string avatarPath)
+        public static ImageSource Avatar(string username)
         {
-            var result = avatarPath == null ?
+            var result = username == null ?
                 ImageSource.FromResource( "ZicMoove.Images.Users.icon_user.png") :
-                ImageSource.FromUri(new Uri(Constants.YavscHomeUrl+"/Avatars/"+avatarPath)) ;
+                ImageSource.FromUri(new Uri(Constants.YavscHomeUrl+ $"/Avatars/{username}.png")) ;
             return result;
         }
 

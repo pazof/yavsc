@@ -63,12 +63,27 @@ namespace ZicMoove.Pages.Chat
                     IsBusy = true;
                     try
                     {
+                        bool sent = false;
                         foreach (var cx in dest.ObservableConnections)
                         {
                             if (cx.Connected)
+                            {
                                 App.ChatHubProxy.Invoke<string>("SendPV", cx.ConnectionId, pvEntry.Text);
+                                sent = true;
+                            }
                         }
-                        pvEntry.Text = null;
+                        if (sent)
+                        {
+                            chatUserList.SelectedUser.PrivateMessages.Add(
+                                new Model.Social.Messaging.ChatMessage
+                                {
+                                    Date = DateTime.Now,
+                                    Message = pvEntry.Text,
+                                    Read = true,
+                                    SenderId = MainSettings.CurrentUser.UserName
+                                });
+                            pvEntry.Text = null;
+                        }
                     }
                     catch (Exception ex)
                     {

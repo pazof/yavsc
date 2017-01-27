@@ -47,7 +47,7 @@ namespace ZicMoove.ViewModels.EstimateAndBilling
         {
             get
             {
-                return UserHelpers.Avatar(Client.Avatar);
+                return UserHelpers.Avatar(Client.UserName);
             }
         }
         public ImageSource SmallAvatar
