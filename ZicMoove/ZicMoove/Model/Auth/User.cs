@@ -95,7 +95,7 @@ namespace ZicMoove.Model.Auth.Account
         {
             get
             {
-                return UserHelpers.Avatar(avatar);
+                return UserHelpers.Avatar(UserName);
             }
         }
         private Tokens yavscTokens;

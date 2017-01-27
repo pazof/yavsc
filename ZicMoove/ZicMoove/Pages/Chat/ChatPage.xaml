@@ -11,6 +11,13 @@
             Style="{StaticResource PageStyle}" >
   <TabbedPage.Resources>
     <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+        <Setter Property="HorizontalOptions" Value="Start" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
   <converters:SignalRConnectionStateToObject x:Key="cxToStyleImage" x:TypeArguments="Style">
 
         <converters:SignalRConnectionStateToObject.DisconnectedObject>
@@ -46,6 +53,17 @@
   <TabbedPage.Children>
     <ContentPage Title="Public" Icon="chat_icon_s.png" >
       <StackLayout Padding="5, 5, 5, 5">
+        <StackLayout.Resources>
+          <ResourceDictionary>
+            <Style TargetType="Label">
+              <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+              <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+            <Style TargetType="Button">
+              <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+            </Style>
+          </ResourceDictionary>
+        </StackLayout.Resources>
         <StackLayout Spacing = "12"
                       Orientation = "Horizontal"
                       Padding="5, 0, 5, 0">
@@ -63,10 +81,13 @@
               <ViewCell>
                 <ViewCell.View>
                   <StackLayout Orientation="Horizontal" VerticalOptions="StartAndExpand">
-                    <Label Text="{Binding Date, StringFormat='{0:HH:mm}'}" FontAttributes="Italic" />
-                    <Label Text="{Binding SenderId}" FontFamily="monospace" FontAttributes="Italic" />
+                    <Label Text="{Binding Date, StringFormat='{0:HH:mm}'}" FontAttributes="Italic" 
+                            HorizontalOptions="Start" />
+                    <Label Text="{Binding SenderId}" FontFamily="monospace" FontAttributes="Italic"
+                            HorizontalOptions="Start"/>
                     <BoxView WidthRequest="1" HeightRequest="15" Color="#000090"/>
-                    <Label Text="{Binding Message}" FontFamily="monospace" />
+                    <Label Text="{Binding Message}" FontFamily="monospace" 
+                            HorizontalOptions="Start"  />
                   </StackLayout>
                 </ViewCell.View>
               </ViewCell>
@@ -77,16 +98,27 @@
     </ContentPage>
     <ContentPage Title="Notifications" Icon="exclam.png" >
       <StackLayout Padding="5, 5, 5, 5">
+        <StackLayout.Resources>
+          <ResourceDictionary>
+            <Style TargetType="Label">
+              <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+              <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+            <Style TargetType="Button">
+              <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+            </Style>
+          </ResourceDictionary>
+        </StackLayout.Resources>
         <ListView x:Name="notifList" HasUnevenRows="true" ItemsSource="{Binding Notifs}"> 
           <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
             <DataTemplate>
               <ViewCell>
                 <ViewCell.View>
                   <StackLayout Orientation="Horizontal" VerticalOptions="StartAndExpand">
-                    <Label Text="{Binding Date, StringFormat='{0:hh:mm}'}" FontAttributes="Italic" />
-                    <Label Text="{Binding SenderId}" FontFamily="monospace" FontAttributes="Italic" />
+                    <Label Text="{Binding Date, StringFormat='{0:hh:mm}'}" FontAttributes="Italic"  HorizontalOptions="Start"/>
+                    <Label Text="{Binding SenderId}" FontFamily="monospace" FontAttributes="Italic" HorizontalOptions="Start" />
                     <BoxView Color="#000090" WidthRequest="1" HeightRequest="15" />
-                    <Label Text="{Binding Message}" FontFamily="monospace" />
+                    <Label Text="{Binding Message}" FontFamily="monospace" HorizontalOptions="Start" />
                   </StackLayout>
                 </ViewCell.View>
               </ViewCell>
@@ -106,7 +138,18 @@
          <views:UserListView x:Name="chatUserList" />
 
         <StackLayout BindingContext="{x:Reference Name=chatUserList}" IsVisible="{Binding HasASelection}">
-        <ListView x:Name="pvList" HasUnevenRows="true" ItemsSource="{Binding SelectedUser.PrivateMessages}" BindingContext="{x:Reference Name=chatUserList}">
+          <StackLayout.Resources>
+            <ResourceDictionary>
+              <Style TargetType="Label">
+                <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+              </Style>
+              <Style TargetType="Button">
+                <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+              </Style>
+            </ResourceDictionary>
+          </StackLayout.Resources>
+          <ListView x:Name="pvList" HasUnevenRows="true" ItemsSource="{Binding SelectedUser.PrivateMessages}" BindingContext="{x:Reference Name=chatUserList}">
           <ListView.ItemTemplate HeightRequest="80"
                                  VerticalOptions="StartAndExpand">
             <DataTemplate>

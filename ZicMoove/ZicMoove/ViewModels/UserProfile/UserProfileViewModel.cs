@@ -197,7 +197,7 @@ namespace ZicMoove.ViewModels.UserProfile
                 newQueriesButtonText = newUserIsPro ?
                      $"{newQueryCount} demandes valides en cours" :
                     "Profile professionel non renseigné";
-                newAvatar = UserHelpers.Avatar(user.Avatar);
+                newAvatar = UserHelpers.Avatar(user.UserName);
             }
             SetProperty<bool>(ref haveAnUser, newHaveAnUser, "HaveAnUser");
             SetProperty<string>(ref performerStatus, newStatusString, "PerformerStatus");

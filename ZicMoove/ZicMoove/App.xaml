@@ -8,7 +8,7 @@
     
     <ResourceDictionary>
       
-      <Color x:Key="PageBackgroundColor">#FFAAAAFF</Color>
+      <Color x:Key="PageBackgroundColor">#20AAAAFF</Color>
       <Color x:Key="DashboardPageBackgroundColor">#FFCCCCFF</Color>
       
       <Color x:Key="ContentBackgroundColor">#80FFFFFF</Color>

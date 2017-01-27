@@ -36,7 +36,7 @@ namespace ZicMoove.ViewModels.Messaging
             if (existent != null) {
                 existent.UserName = item.UserName;
                 existent.Roles = item.Roles;
-                existent.Avatar = item.Avatar;
+                existent.Avatar = item.UserName;
                 existent.Connections = item.Connections;
             }
             else Add(item);

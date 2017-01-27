@@ -382,7 +382,9 @@ namespace ZicMoove
                 };
                 DataManager.Instance.PrivateMessages.Add(
                     msg
+
                     );
+                DataManager.Instance.PrivateMessages.SaveEntity();
                 DataManager.Instance.ChatUsers.OnPrivateMessage(msg);
             });
         }

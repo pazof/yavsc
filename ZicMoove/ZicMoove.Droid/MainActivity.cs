@@ -324,7 +324,7 @@ namespace ZicMoove.Droid
         public void AddAccount()
         {
             var auth = new YaOAuth2Authenticator(
-                                clientId: "d9be5e97-c19d-42e4-b444-0e65863b19e1",
+                                clientId: Constants.APIKey,
                                 clientSecret: "blouh",
                                 scope: "profile",
                                 authorizeUrl: new Uri(Constants.AuthorizeUrl),

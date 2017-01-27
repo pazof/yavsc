@@ -53,6 +53,7 @@
     </Compile>
     <Compile Include="Attributes\CurrencyAttribute.cs" />
     <Compile Include="Attributes\DisplayAttribute.cs" />
+    <Compile Include="Constants.Private.cs" />
     <Compile Include="Converters\Behaviors\EmailValidatorBehavior.cs" />
     <Compile Include="Converters\Behaviors\IntegerEntryBehavior.cs" />
     <Compile Include="Converters\Behaviors\EditorMaxLengthValidator.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Pages\ClientPages\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\MainSettings.Private.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\Messaging\ChatUserCollection.cs" />
     <Compile Include="ViewModels\Messaging\ChatUserInfo.cs" />

@@ -7,18 +7,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace ZicMoove
+namespace ZicMoove.Settings
 {
     using Model.Social;
     using Model.Auth.Account;
-    using Data;
 
     /// <summary>
     /// This is the Settings static class that can be used in your Core solution or in any
     /// of your client applications. All settings are laid out the same exact way with getters
     /// and setters. 
     /// </summary>
-    public static class MainSettings
+    public static partial class MainSettings
     {
 
         public static ISettings AppSettings

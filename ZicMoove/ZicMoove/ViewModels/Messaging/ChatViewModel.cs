@@ -51,7 +51,7 @@ namespace ZicMoove.ViewModels.Messaging
                 // by assigning a server side username to anonymous.
                 if (string.IsNullOrEmpty(userName))
                 {
-                    msg.SenderId = $"({cxId})";
+                    msg.SenderId = $"[{cxId}]";
                 }
                 Notifs.Add(msg);
                 if (eventId == "connected")
