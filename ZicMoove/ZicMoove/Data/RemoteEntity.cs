@@ -9,6 +9,7 @@ using System.Net;
 namespace ZicMoove.Data
 {
     using Helpers;
+    using Settings;
     using System.Diagnostics;
     using System.Text;
     using System.Web;

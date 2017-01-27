@@ -8,6 +8,7 @@ using ZicMoove.Helpers;
 using XLabs.Forms.Behaviors;
 using XLabs.Forms.Controls;
 using ZicMoove.Model.Auth.Account;
+using ZicMoove.Settings;
 
 namespace ZicMoove.Pages.UserProfile
 {

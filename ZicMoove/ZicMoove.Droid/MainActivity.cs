@@ -47,6 +47,7 @@ namespace ZicMoove.Droid
     using Interfaces;
     using Model.Auth.Account;
     using static Android.Manifest;
+    using Settings;
 
     [Activity(Name = "fr.pschneider.bas.MainActivity", Label = "ZicMoove", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity :

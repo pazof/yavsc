@@ -31,6 +31,7 @@ namespace ZicMoove
     using Pages.Chat;
     using System.Collections.Generic;
     using Model.Social;
+    using Settings;
 
     public partial class App : Application // superclass new in 1.3
     {
