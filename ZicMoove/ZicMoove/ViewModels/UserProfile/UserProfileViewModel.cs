@@ -13,6 +13,7 @@ namespace ZicMoove.ViewModels.UserProfile
     using Helpers;
     using Model.Auth.Account;
     using Pages.UserProfile;
+    using Settings;
 
     public class UserProfileViewModel : ViewModel
     {

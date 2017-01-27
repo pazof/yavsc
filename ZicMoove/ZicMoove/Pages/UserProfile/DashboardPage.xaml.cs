@@ -7,6 +7,7 @@ namespace ZicMoove.Pages.UserProfile
     using Data;
     using Helpers;
     using Newtonsoft.Json.Linq;
+    using Settings;
     using System.Linq;
     using System.Net.Http;
     using ViewModels.UserProfile;

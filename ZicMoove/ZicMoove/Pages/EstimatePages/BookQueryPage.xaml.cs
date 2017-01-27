@@ -9,6 +9,7 @@ namespace ZicMoove.Pages
     using EstimatePages;
     using Model.Social;
     using Model.Workflow;
+    using Settings;
     using ViewModels.EstimateAndBilling;
 
     public partial class BookQueryPage : ContentPage

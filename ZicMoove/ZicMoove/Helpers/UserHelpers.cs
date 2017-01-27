@@ -10,6 +10,7 @@ namespace ZicMoove.Helpers
 {
     using Data.NonCrUD;
     using Model.FileSystem;
+    using Settings;
 
     public static class UserHelpers
     {

@@ -6,6 +6,7 @@ namespace ZicMoove.Data.NonCrUD
 {
     using Helpers;
     using Model.FileSystem;
+    using Settings;
 
     public class RemoteFilesEntity : RemoteEntity<UserDirectoryInfo, FileAddress>
     {

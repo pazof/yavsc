@@ -6,6 +6,7 @@ using Xamarin.Forms;
 namespace ZicMoove.Pages.Chat
 {
     using Data;
+    using Settings;
     using System.Linq;
     using ViewModels.Messaging;
 

@@ -7,6 +7,7 @@ using Xamarin.Forms;
 namespace ZicMoove.Pages.EstimatePages
 {
     using Data;
+    using Settings;
     using ViewModels.EstimateAndBilling;
     using ViewModels.Signing;
 

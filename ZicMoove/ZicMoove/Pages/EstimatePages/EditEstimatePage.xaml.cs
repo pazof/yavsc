@@ -6,6 +6,7 @@ namespace ZicMoove.Pages
     using Data;
     using EstimatePages;
     using Model.Workflow;
+    using Settings;
     using ViewModels.EstimateAndBilling;
     using ViewModels.Signing;
 

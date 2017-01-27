@@ -5,6 +5,7 @@ namespace ZicMoove.Pages.UserProfile
     using ViewModels.UserProfile;
     using Data;
     using System.Windows.Input;
+    using Settings;
 
     public partial class UserFiles : ContentPage
     {

@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Content;
 using Android.Util;
 using Android.Widget;
+using ZicMoove.Settings;
 
 namespace ZicMoove.Droid
 {

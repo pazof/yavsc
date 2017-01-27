@@ -9,6 +9,7 @@ namespace ZicMoove.ViewModels.Messaging
     using Data;
     using Model.Social.Chat;
     using Model.Social.Messaging;
+    using Settings;
 
     public class ChatViewModel: ViewModel
     {

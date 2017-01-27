@@ -14,6 +14,7 @@ using ZicMoove.Model.Social;
 using ZicMoove.Model;
 using ZicMoove.Model.Workflow;
 using ZicMoove.Data;
+using ZicMoove.Settings;
 
 namespace ZicMoove.Droid.Services.GCMHandlers
 {

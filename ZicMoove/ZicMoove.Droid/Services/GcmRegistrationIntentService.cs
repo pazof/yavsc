@@ -8,6 +8,7 @@ using Android.Gms.Gcm;
 using Android.Gms.Gcm.Iid;
 using Android.OS;
 using Android;
+using ZicMoove.Settings;
 
 namespace ZicMoove.Droid
 {
