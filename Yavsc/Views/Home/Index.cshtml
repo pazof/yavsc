@@ -30,7 +30,7 @@
                 @act.Description </p>
                 <p>
                 @foreach (var form in act.Forms) {
-                    <a class="btn btn-default" asp-controller="FrontOffice" asp-action="@form.ViewName" asp-route-id="@act.Code">
+                    <a class="btn btn-default" asp-controller="FrontOffice" asp-action="@form.Action" asp-route-id="@act.Code">
                     @form.Title
                     </a>
                 }

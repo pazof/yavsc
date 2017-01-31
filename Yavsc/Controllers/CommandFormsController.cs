@@ -4,7 +4,6 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
-using Yavsc.Models.Forms;
 using Yavsc.Models.Workflow;
 
 namespace Yavsc.Controllers
@@ -45,11 +44,13 @@ namespace Yavsc.Controllers
         // GET: CommandForms/Create
         public IActionResult Create()
         {
-            ViewBag.ActivityCode = new SelectList(_context.Activities, "Code", "Name");
-            ViewBag.ViewName = YavscLib.YavscConstants.Forms.Select( c => new SelectListItem { Text = c } );
+            SetViewBag();
             return View();
         }
-
+        private void SetViewBag(CommandForm commandForm=null) {
+            ViewBag.ActivityCode = new SelectList(_context.Activities, "Code", "Name", commandForm?.ActivityCode);
+            ViewBag.Action = YavscLib.YavscConstants.Forms.Select( c => new SelectListItem { Text = c, Selected = commandForm?.Action == c } );
+        }
         // POST: CommandForms/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -61,8 +62,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["ActivityCode"] = new SelectList(_context.Activities, "Code", "Context", commandForm.ActivityCode);
-            ViewData["FormId"] = new SelectList(_context.Set<Form>(), "Id", "Form", commandForm.ViewName);
+            SetViewBag(commandForm);
             return View(commandForm);
         }
 
@@ -79,8 +79,7 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            ViewData["ActivityCode"] = new SelectList(_context.Activities, "Code", "Context", commandForm.ActivityCode);
-            ViewData["FormId"] = new SelectList(_context.Set<Form>(), "Id", "Form", commandForm.ViewName);
+            SetViewBag(commandForm);
             return View(commandForm);
         }
 
@@ -95,8 +94,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.ActivityCode = new SelectList(_context.Activities, "Code", "Context", commandForm.ActivityCode);
-            ViewBag.ViewName = YavscLib.YavscConstants.Forms.Select( c => new SelectListItem { Text = c } );
+            SetViewBag(commandForm);
             return View(commandForm);
         }
 

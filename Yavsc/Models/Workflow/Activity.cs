@@ -1,13 +1,14 @@
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using Yavsc.Models.Market;
-using Yavsc.Models.Workflow;
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Workflow
 {
-    public class Activity
+    public class Activity : IBaseTrackedEntity
     {
 
         [StringLength(512),Required,Key]
@@ -22,10 +23,10 @@ namespace Yavsc.Models
         [StringLength(512)]
         public string ParentCode { get; set; }
 
-        [ForeignKey("ParentCode")]
+        [ForeignKey("ParentCode"),JsonIgnore]
         public virtual Activity Parent { get; set; }
 
-        [InverseProperty("Parent")]
+        [InverseProperty("Parent"),JsonIgnore]
         public virtual List<Activity> Children { get; set; }
 
         public string Description {get; set;}
@@ -59,5 +60,25 @@ namespace Yavsc.Models
 
         [InverseProperty("Context")]
         public virtual List<CommandForm> Forms { get; set; }
+
+        public DateTime DateCreated
+        {
+            get; set; 
+        }
+
+        public string UserCreated
+        {
+            get; set; 
+        }
+
+        public DateTime DateModified
+        {
+            get; set; 
+        }
+
+        public string UserModified
+        {
+            get; set; 
+        }
     }
 }
