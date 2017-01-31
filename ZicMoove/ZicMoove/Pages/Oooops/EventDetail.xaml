@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+xmlns:local="clr-namespace:ZicMoove;Assembly:ZicMoove"
+ x:Class="ZicMoove.Pages.EventDetail" Style="{StaticResource PageStyle}">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+	<ContentPage.Content>
+	<ScrollView>
+	<StackLayout>
+	<Label HorizontalOptions="Center" Text="{Binding EventType}" FontAttributes="Italic" FontSize="10"/>
+	<Image Source="{Binding ImgLocator}"/>
+	<Label Text="{Binding Title}" FontSize="20"/>
+	<Label FontSize="16" Text="{Binding Description}"/>
+	<StackLayout Orientation="Horizontal">
+	<Label FontAttributes="Italic" FontSize="10" Text="Lieu:" />
+	<Label Text="{Binding Location.Name}" />
+	</StackLayout>
+	<StackLayout Orientation="Horizontal">
+	<Label FontAttributes="Italic" FontSize="10" Text="Date:" />
+	<Label Text="{Binding StartDate, StringFormat='{0:dddd dd MMMM yyyy}'}" /> <Label Text="{Binding StartDate, StringFormat='{0:H:mm}'}" />
+	</StackLayout>
+	<StackLayout Orientation="Horizontal" IsVisible="{Binding Promotted}">
+	<Label FontAttributes="Italic" FontSize="10" Text="Code promotion:"/>
+	<Label FontSize="15" TextColor="Yellow" BackgroundColor="#102030" Text="{Binding PromotionCode}"/>
+	</StackLayout>
+	<Button Text="{Binding EventWebPage, StringFormat='Sur le web:{0}'}" x:Name="btn_webpage" />
+	</StackLayout>
+	</ScrollView>
+	</ContentPage.Content>
+</ContentPage>

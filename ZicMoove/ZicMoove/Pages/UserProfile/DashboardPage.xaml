@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
+             xmlns:views="clr-namespace:ZicMoove.Views;assembly=ZicMoove"
+             xmlns:extensions="clr-namespace:ZicMoove.Extensions;assembly=ZicMoove"
+             x:Class="ZicMoove.Pages.UserProfile.DashboardPage"
+             xmlns:lc="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
+             xmlns:lb="clr-namespace:XLabs.Forms.Behaviors;assembly=XLabs.Forms"
+             Style="{StaticResource DashboardPageStyle}">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+  <ContentPage.Content>
+    <ScrollView>
+    <StackLayout BoxView.Color="{StaticResource ContentBackgroundColor}">
+      <lc:GesturesContentView>
+        <Image Source="{Binding Avatar}"  HeightRequest="{StaticResource BigUserAvatarSize}" >
+          <lb:Gestures.Interests>
+            <lb:GestureCollection>
+              <lb:GestureInterest GestureType="SingleTap" GestureCommand="{Binding AvatarCommand}" GestureParameter="{Binding Ready}"/>
+              <lb:GestureInterest GestureType="LongPress" GestureCommand="{Binding AvatarCommand}" GestureParameter="{Binding Ready}"/>
+              <lb:GestureInterest GestureType="Swipe" Direction="Left" GestureCommand="{Binding AvatarCommand}" GestureParameter="{Binding Ready}"/>
+              <lb:GestureInterest GestureType="Swipe" Direction="Right" GestureCommand="{Binding AvatarCommand}" GestureParameter="{Binding Ready}"/>
+            </lb:GestureCollection>
+          </lb:Gestures.Interests>
+        </Image>
+      </lc:GesturesContentView>
+      <Button Text="{Binding UserName}"  Clicked="OnRefreshQuery" />
+      
+      <Button Text="{Binding UserFilesText}" Clicked="OnManageFiles" />
+      <StackLayout VisualElement.IsVisible="{Binding HaveAnUser}">
+        <Button Text="{Binding PerformerStatus}" Clicked="OnViewPerformerStatus" />
+        <Button Text="{Binding UserQueries}" Clicked="OnViewUserQueries"
+                VisualElement.IsVisible="{Binding IsAPerformer}"/>
+
+        <StackLayout Orientation="Horizontal">
+        <Label Text="Recevoir les notifications push" StyleClass="Header" />
+        <Switch IsToggled="{Binding ReceivePushNotifications, Mode=TwoWay}"
+                HorizontalOptions="End" />
+        </StackLayout>
+      </StackLayout>
+      <StackLayout Orientation="Horizontal">
+        <Label Text="Utiliser ma position" StyleClass="Header" />
+        <Switch HorizontalOptions="End" IsToggled="{Binding AllowUseMyPosition, Mode=TwoWay}"/>
+      </StackLayout>
+      <StackLayout  VisualElement.IsVisible="{Binding IsAPerformer}" >
+        <Label Text="{x:Static local:Strings.Profprof}" Style="{StaticResource LabelStyle}"/>
+        <views:RatingView Rating="{Binding Rating, Mode=TwoWay}" x:Name="ratingView" />
+        <StackLayout Orientation="Horizontal" VerticalOptions="Start">
+          <Label Text="{x:Static local:Strings.ClientProRequest}" />
+          <Switch HorizontalOptions="End" IsToggled="{Binding AllowProBookingOnly, Mode=TwoWay}" />
+        </StackLayout>
+      </StackLayout>
+    </StackLayout>
+  </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

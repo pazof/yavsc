@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
+            x:Class="ZicMoove.Pages.HomePage"
+            Style="{StaticResource PageStyle}"
+            Title="Accueil">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <TabbedPage.Children>
+    <!-- La recherche d'un pro    -->
+    <TabbedPage Title="{x:Static local:Strings.SearchForAPro}" >
+    </TabbedPage>
+
+    <!-- 
+  les derniers sons/videos/articles postés  
+     -->
+    <ContentPage Title="Blogspot">
+      <StackLayout Orientation="Horizontal">
+        <Editor x:Name="search_blog_phrase" HorizontalOptions="FillAndExpand"/>
+        <Button x:Name="btn_blog_update" HorizontalOptions="End" />
+      </StackLayout>
+    </ContentPage>
+
+    <!-- 
+  Les demandes devis en attente de réponse (pro)
+  -->
+    <ContentPage Title="Demandes de devis"
+      IsVisible="{Binding UserProfile.IsAPerformer}">
+      <StackLayout  BindingContext="{Binding BookQueries}">
+
+        <ListView x:Name="querylist"
+                  RefreshCommand="{Binding RefreshQueries}"
+                  IsPullToRefreshEnabled="True"
+                  ItemsSource="{Binding Queries}"
+                  ItemTapped="OnViewBookQueryDetail"
+                  HasUnevenRows="true"
+                  SeparatorVisibility="Default"
+                  SeparatorColor="Black">
+          <ListView.ItemTemplate VerticalOptions="StartAndExpand" >
+            <DataTemplate>
+              <ViewCell>
+                <ViewCell.View>
+                  <Grid>
+                    <Grid.RowDefinitions>
+                      <RowDefinition Height="*" />
+                      <RowDefinition Height="*" />
+                      <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Source="{Binding Avatar}" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding Client.UserName}"  Style="{StaticResource LabelStyle}"></Label>
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Data.Reason}"></Label>
+                    <Label Grid.Row="2" Grid.Column="1" LineBreakMode="WordWrap" Text="{Binding EventDate, StringFormat='{0:dddd d MMMM à HH:mm}'}" FontFamily="Italic"/>
+                    <Label Grid.Row="3" Grid.Column="1" LineBreakMode="WordWrap" Text="{Binding Location.Address}" />
+                  </Grid>
+                </ViewCell.View>
+              </ViewCell>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+      </StackLayout>
+    </ContentPage>
+
+
+    <!-- Les signatures de contrat en souffreances (pro) -->
+    <ContentPage Title="Contrats fournisseur" IsVisible="{Binding UserProfile.IsAPerformer}">
+    </ContentPage>
+
+    <!-- Les signatures de contrat en souffreances (client) -->
+    <ContentPage Title="Contrats client" IsVisible="{Binding UserProfile.IsAPerformer}">
+    </ContentPage>
+
+    <!-- Les annonces pro (pro) -->
+    <ContentPage Title="Annonces pro" IsVisible="{Binding UserProfile.IsAPerformer}">
+      <StackLayout Orientation="Horizontal" >
+        <Editor x:Name="search_pub_pro_phrase" HorizontalOptions="FillAndExpand" VerticalOptions="Start"/>
+        <Button x:Name="btn_pro_pub" HorizontalOptions="End" VerticalOptions="Start" Text="Chercher"/>
+      </StackLayout>
+    </ContentPage>
+
+    <!-- les petites annonces des clients (pro)  -->
+    <ContentPage Title="Annonces client" Icon="" IsVisible="{Binding UserProfile.IsAPerformer}">
+      <StackLayout Orientation="Horizontal" >
+        <Editor x:Name="search_pub_cli_phrase" HorizontalOptions="FillAndExpand" VerticalOptions="Start"/>
+        <Button x:Name="btn_cli_pub" HorizontalOptions="End" VerticalOptions="Start"  Text="Chercher"/>
+      </StackLayout>
+    </ContentPage>
+  </TabbedPage.Children>
+
+</TabbedPage>
