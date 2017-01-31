@@ -18,7 +18,6 @@ using OAuth.AspNet.Tokens;
 using Yavsc.Auth;
 using Yavsc.Extensions;
 using Yavsc.Models;
-using Microsoft.Extensions.Logging;
 
 namespace Yavsc
 {
