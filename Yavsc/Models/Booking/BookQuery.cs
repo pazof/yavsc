@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Relationship;
+using Yavsc.Models.Workflow;
 
 namespace Yavsc.Models.Booking
 {

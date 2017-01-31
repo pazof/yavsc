@@ -1,8 +1,9 @@
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Market {
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations.Schema;
     using Billing;
+    using Workflow;
 
     public partial class Service : BaseProduct
     {

@@ -6,10 +6,12 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using Yavsc.Models;
 
 namespace Yavsc.Controllers
 {
+    using Models;
+    using Models.Workflow;
+
     [Authorize("AdministratorOnly")]
     public class ActivityController : Controller
     {

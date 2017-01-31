@@ -1,8 +1,9 @@
-using Yavsc.Models;
-using YavscLib;
+
 
 namespace Yavsc.Helpers
 {
+    using Models.Workflow;
+    using YavscLib;
     public static class WorkflowHelpers
     {
         public static ISpecializationSettings  CreateSettings (this Activity activity) {

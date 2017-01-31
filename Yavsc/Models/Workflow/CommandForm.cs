@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Yavsc.Models.Workflow
 {
@@ -8,14 +9,14 @@ namespace Yavsc.Models.Workflow
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        public string ViewName { get; set; }
+        public string Action { get; set; }
 
         public string Title { get; set; } 
         
         [Required]
         public string ActivityCode { get; set; }
 
-        [ForeignKey("ActivityCode")]
+        [ForeignKey("ActivityCode"),JsonIgnore]
         public virtual Activity Context { get; set; }
     }
 }
