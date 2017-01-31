@@ -14,7 +14,7 @@
     <ListView x:Name="AccountListView"
               SeparatorVisibility="Default"
               VerticalOptions="FillAndExpand"
-              ItemsSource="{x:Static local:MainSettings.AccountList}"
+              ItemsSource="{x:Static local:Settings.MainSettings.AccountList}"
         >
       <ListView.Header>
         <StackLayout Orientation="Horizontal">
