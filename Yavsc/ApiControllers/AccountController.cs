@@ -14,7 +14,7 @@ namespace Yavsc.WebApi.Controllers
     using Yavsc.Helpers;
     using System;
 
-    [Authorize,Route("~/api/account"),Obsolete]
+    [Authorize("AdministratorOnly"),Route("~/api/account"),Obsolete]
     public class ApiAccountController : Controller
     {
         
