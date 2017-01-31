@@ -48,6 +48,7 @@ namespace ZicMoove.Droid
     using Model.Auth.Account;
     using static Android.Manifest;
     using Settings;
+    using Model.Auth;
 
     [Activity(Name = "fr.pschneider.bas.MainActivity", Label = "ZicMoove", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity :
@@ -398,28 +399,12 @@ namespace ZicMoove.Droid
             // TODO handle
         }
 
-        public class GCMDeclaration : IGCMDeclaration
-        {
-            public string DeviceId
-            { get; set; }
-
-            public string GCMRegistrationId
-            { get; set; }
-
-            public string Model
-            { get; set; }
-
-            public string Platform
-            { get; set; }
-
-            public string Version
-            { get; set; }
-        }
+        
 
         public IGCMDeclaration GetDeviceInfo()
         {
             var devinfo = CrossDeviceInfo.Current;
-            return new GCMDeclaration
+            return new GCMRegIdDeclaration
             {
                 DeviceId = devinfo.Id,
                 GCMRegistrationId = MainSettings.GoogleRegId,
