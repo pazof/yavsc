@@ -95,3 +95,16 @@ footer {
 .activity {
     border-style: groove none none groove;
 }
+
+.blogtitle { 
+    font-size: x-large;
+}
+
+.blogtext { 
+    font-feature-settings: "valt"
+}
+
+.blogphoto {
+    float: left;
+    margin: 1em;
+}
