@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
+             x:Class="ZicMoove.Pages.BookQueriesPage"
+             Style="{StaticResource PageStyle}"
+             Page.Title="Les Demandes"
+             >
+  <ContentPage.Resources>
+    <ResourceDictionary>
+
+      <Style x:Key="labelStyle" TargetType="Label">
+        <Setter Property="TextColor" Value="{DynamicResource EmphasisTextColor}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="{DynamicResource LargeFontSize}" />
+        <Setter Property="VerticalOptions" Value="Start" />
+        <Setter Property="LineBreakMode" Value="WordWrap" />
+
+      </Style>
+          <Style TargetType="Label">
+            <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+          </Style>
+          <Style TargetType="Button">
+            <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+          </Style>
+    </ResourceDictionary> 
+  </ContentPage.Resources>
+  <ContentPage.Content>
+    
+  <ScrollView>
+  <StackLayout Padding="10,10,10,10" x:Name="mainLayout">
+  <ListView RefreshCommand="{Binding RefreshQueries}"  IsPullToRefreshEnabled="True"
+            ItemsSource="{Binding Queries}" x:Name="list" ItemTapped="OnViewDetail" HasUnevenRows="true"
+            SeparatorVisibility="Default" SeparatorColor="Black">
+    <ListView.ItemTemplate VerticalOptions="StartAndExpand">
+      <DataTemplate>
+        <ViewCell>
+          <ViewCell.View>
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Source="{Binding Avatar}" />
+              <Label Grid.Row="3" Grid.Column="0" Grid.RowSpan="2" Text="{Binding Client.UserName}"  Style="{StaticResource labelStyle}"></Label>
+              <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="2" Text="{Binding Data.Reason}"></Label>
+              <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" LineBreakMode="WordWrap" Text="{Binding EventDate, StringFormat='{0:dddd d MMMM à HH:mm}'}" FontFamily="Italic"/>
+              <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" LineBreakMode="WordWrap" Text="{Binding Location.Address}"/>
+              <Label Grid.Row="4" Grid.Column="1" Text="{Binding Previsionnal}" />
+              <Label Grid.Row="4" Grid.Column="2" Text="{Binding Id}" />
+            </Grid>
+               
+          </ViewCell.View>
+        </ViewCell>
+      </DataTemplate>
+    </ListView.ItemTemplate>
+  </ListView>
+  </StackLayout>
+  </ScrollView>
+
+  </ContentPage.Content>
+</ContentPage>

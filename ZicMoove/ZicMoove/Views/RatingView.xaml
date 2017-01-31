@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
+             xmlns:extensions="clr-namespace:ZicMoove.Extensions;assembly=ZicMoove"
+             xmlns:behaviors="clr-namespace:ZicMoove.Behaviors;assembly=ZicMoove"
+             xmlns:converters="clr-namespace:ZicMoove.Converters;assembly=ZicMoove"
+             x:Class="ZicMoove.Views.RatingView">
+  <ContentView.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource LabelStyle}" />
+      </Style>
+    </ResourceDictionary>
+  </ContentView.Resources>
+  <ContentView.Content>
+      <StackLayout>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VisualElement.HeightRequest="{StaticResource MediumFontSize}" >
+        <Grid>
+          <Grid.Behaviors>
+            <behaviors:StarBehavior x:Name="starOne" GroupName="myStar"/>
+          </Grid.Behaviors>
+          <Image x:Name="starBlankOne"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_outline.png}" />
+
+          <Image x:Name="starSelectedOne"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_selected.png}"
+                  IsVisible="{Binding Source={x:Reference starOne},
+                                    Path=IsStarred}"/>
+        </Grid>
+        <Grid >
+          <Grid.Behaviors>
+            <behaviors:StarBehavior x:Name="starTwo" GroupName="myStar"/>
+          </Grid.Behaviors>
+          <Image x:Name="starBlankTwo"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_outline.png}" />
+
+          <Image x:Name="starSelectedTwo"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_selected.png}"
+                  IsVisible="{Binding Source={x:Reference starTwo},
+                                    Path=IsStarred}"/>
+        </Grid>
+        <Grid >
+          <Grid.Behaviors>
+            <behaviors:StarBehavior x:Name="starThree" GroupName="myStar"/>
+          </Grid.Behaviors>
+          <Image x:Name="starBlankThree"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_outline.png}" />
+
+          <Image x:Name="starSelectedThree"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_selected.png}"
+                  IsVisible="{Binding Source={x:Reference starThree},
+                                    Path=IsStarred}"/>
+        </Grid>
+        <Grid >
+          <Grid.Behaviors>
+            <behaviors:StarBehavior x:Name="starFour" GroupName="myStar"/>
+          </Grid.Behaviors>
+          <Image x:Name="starBlankFour"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_outline.png}" />
+
+          <Image x:Name="starSelectedFour"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_selected.png}"
+                  IsVisible="{Binding Source={x:Reference starFour},  Path=IsStarred}" />
+        </Grid>
+        <Grid >
+          <Grid.Behaviors>
+            <behaviors:StarBehavior x:Name="starFive" GroupName="myStar"/>
+          </Grid.Behaviors>
+          <Image x:Name="starBlankFive"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_outline.png}" />
+
+          <Image x:Name="starSelectedFive"
+                  Source="{extensions:ImageResource ZicMoove.Images.Validation.star_selected.png}"
+                  IsVisible="{Binding Source={x:Reference starFive}, Path=IsStarred}" />
+        </Grid>
+          
+      </StackLayout>
+      <StackLayout>
+        <StackLayout.Resources>
+          <ResourceDictionary>
+            <converters:RatingText x:Key="ratingText" />
+          </ResourceDictionary>
+        </StackLayout.Resources>
+        <Label Text="{Binding Source={x:Reference starFive}, Path=Rating, Converter={StaticResource ratingText}}" ></Label>
+      </StackLayout>
+      </StackLayout>
+      
+  </ContentView.Content>
+</ContentView>

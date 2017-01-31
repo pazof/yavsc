@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            x:Class="ZicMoove.Pages.Chat.ChatPage"
+            xmlns:views="clr-namespace:ZicMoove.Views;assembly=ZicMoove"
+            xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
+            xmlns:toolkit="clr-namespace:XLabs.Forms.Mvvm;assembly=XLabs.Forms"
+            xmlns:converters="clr-namespace:ZicMoove.Converters;assembly=ZicMoove"
+            xmlns:local="clr-namespace:ZicMoove;Assembly:ZicMoove"
+            xmlns:extensions="clr-namespace:ZicMoove.Extensions;assembly=ZicMoove"
+            Style="{StaticResource PageStyle}" >
+  <TabbedPage.Resources>
+    <ResourceDictionary>
+      <Style TargetType="Label">
+        <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+        <Setter Property="HorizontalOptions" Value="Start" />
+      </Style>
+      <Style TargetType="Button">
+        <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+      </Style>
+  <converters:SignalRConnectionStateToObject x:Key="cxToStyleImage" x:TypeArguments="Style">
+
+        <converters:SignalRConnectionStateToObject.DisconnectedObject>
+          <Style TargetType="Image">
+            <Setter Property="Source"
+                    Value="{extensions:ImageResource ZicMoove.Images.Chat.disconnected.png}" />
+          </Style>
+        </converters:SignalRConnectionStateToObject.DisconnectedObject>
+
+        <converters:SignalRConnectionStateToObject.ConnectedObject>
+          <Style TargetType="Image">
+            <Setter Property="Source"
+                    Value="{extensions:ImageResource ZicMoove.Images.Chat.connected.png}" />
+          </Style>
+        </converters:SignalRConnectionStateToObject.ConnectedObject>
+    
+        <converters:SignalRConnectionStateToObject.ConnectingObject>
+          <Style TargetType="Image">
+            <Setter Property="Source"
+                    Value="{extensions:ImageResource ZicMoove.Images.Chat.connecting.png}" />
+          </Style>
+        </converters:SignalRConnectionStateToObject.ConnectingObject>
+
+        <converters:SignalRConnectionStateToObject.ReconnectingObject>
+          <Style TargetType="Image">
+            <Setter Property="Source"
+                    Value="{extensions:ImageResource ZicMoove.Images.Chat.reconnecting.png}" />
+          </Style>
+        </converters:SignalRConnectionStateToObject.ReconnectingObject>
+      </converters:SignalRConnectionStateToObject>
+    </ResourceDictionary>
+  </TabbedPage.Resources> 
+  <TabbedPage.Children>
+    <ContentPage Title="Public" Icon="chat_icon_s.png" >
+      <StackLayout Padding="5, 5, 5, 5">
+        <StackLayout.Resources>
+          <ResourceDictionary>
+            <Style TargetType="Label">
+              <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+              <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+            <Style TargetType="Button">
+              <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+            </Style>
+          </ResourceDictionary>
+        </StackLayout.Resources>
+        <StackLayout Spacing = "12"
+                      Orientation = "Horizontal"
+                      Padding="5, 0, 5, 0">
+          <Image Style="{Binding Path=State, Converter={StaticResource cxToStyleImage}}" />
+           
+          <Entry x:Name="messageEntry" Placeholder = "enter your Message"
+                 VerticalOptions = "Center"
+                      HorizontalOptions = "FillAndExpand"></Entry>
+          <Button x:Name="sendButton" Text = "Send" HorizontalOptions = "End"
+                  VerticalOptions = "Center"></Button>
+        </StackLayout>
+        <ListView x:Name="messageList" HasUnevenRows="true" ItemsSource="{Binding Messages}">
+          <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
+            <DataTemplate>
+              <ViewCell>
+                <ViewCell.View>
+                  <StackLayout Orientation="Horizontal" VerticalOptions="StartAndExpand">
+                    <Label Text="{Binding Date, StringFormat='{0:HH:mm}'}" FontAttributes="Italic" 
+                            HorizontalOptions="Start" />
+                    <Label Text="{Binding SenderId}" FontFamily="monospace" FontAttributes="Italic"
+                            HorizontalOptions="Start"/>
+                    <BoxView WidthRequest="1" HeightRequest="15" Color="#000090"/>
+                    <Label Text="{Binding Message}" FontFamily="monospace" 
+                            HorizontalOptions="Start"  />
+                  </StackLayout>
+                </ViewCell.View>
+              </ViewCell>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+      </StackLayout>
+    </ContentPage>
+    <ContentPage Title="Notifications" Icon="exclam.png" >
+      <StackLayout Padding="5, 5, 5, 5">
+        <StackLayout.Resources>
+          <ResourceDictionary>
+            <Style TargetType="Label">
+              <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+              <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+            <Style TargetType="Button">
+              <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+            </Style>
+          </ResourceDictionary>
+        </StackLayout.Resources>
+        <ListView x:Name="notifList" HasUnevenRows="true" ItemsSource="{Binding Notifs}"> 
+          <ListView.ItemTemplate HeightRequest="80" VerticalOptions="StartAndExpand">
+            <DataTemplate>
+              <ViewCell>
+                <ViewCell.View>
+                  <StackLayout Orientation="Horizontal" VerticalOptions="StartAndExpand">
+                    <Label Text="{Binding Date, StringFormat='{0:hh:mm}'}" FontAttributes="Italic"  HorizontalOptions="Start"/>
+                    <Label Text="{Binding SenderId}" FontFamily="monospace" FontAttributes="Italic" HorizontalOptions="Start" />
+                    <BoxView Color="#000090" WidthRequest="1" HeightRequest="15" />
+                    <Label Text="{Binding Message}" FontFamily="monospace" HorizontalOptions="Start" />
+                  </StackLayout>
+                </ViewCell.View>
+              </ViewCell>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+      </StackLayout>
+    </ContentPage>
+
+    <ContentPage Title="Contacts" Icon="peer_to_peer.png" >
+      <StackLayout Padding="5, 5, 5, 5">
+        <StackLayout Spacing = "12"
+                        Orientation = "Horizontal">
+          
+        </StackLayout>
+        
+         <views:UserListView x:Name="chatUserList" />
+
+        <StackLayout BindingContext="{x:Reference Name=chatUserList}" IsVisible="{Binding HasASelection}">
+          <StackLayout.Resources>
+            <ResourceDictionary>
+              <Style TargetType="Label">
+                <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+              </Style>
+              <Style TargetType="Button">
+                <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
+              </Style>
+            </ResourceDictionary>
+          </StackLayout.Resources>
+          <ListView x:Name="pvList" HasUnevenRows="true" ItemsSource="{Binding SelectedUser.PrivateMessages}" BindingContext="{x:Reference Name=chatUserList}">
+          <ListView.ItemTemplate HeightRequest="80"
+                                 VerticalOptions="StartAndExpand">
+            <DataTemplate>
+              <ViewCell>
+                <ViewCell.View>
+                  <StackLayout Orientation="Horizontal" VerticalOptions="StartAndExpand">
+                    <Label Text="{Binding Date, StringFormat='{0:hh:mm}'}" FontAttributes="Italic" />
+                    <Label Text="{Binding SenderId}" FontFamily="monospace" FontAttributes="Italic" />
+                    <BoxView Color="#000090" WidthRequest="1" HeightRequest="15" />
+                    <Label Text="{Binding Message}" FontFamily="monospace" />
+                  </StackLayout>
+                </ViewCell.View>
+              </ViewCell>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+
+        <Entry x:Name="pvEntry" Placeholder = "enter your private message"
+                 VerticalOptions = "Center" HorizontalOptions = "FillAndExpand"></Entry>
+
+        <Button x:Name="sendPVButton" Text = "Send" HorizontalOptions = "End"
+                         VerticalOptions = "Center"></Button>
+        </StackLayout>
+      </StackLayout>
+
+    </ContentPage>
+  </TabbedPage.Children>
+</TabbedPage>
