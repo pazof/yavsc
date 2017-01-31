@@ -14,7 +14,7 @@ namespace Yavsc.WebApi.Controllers
     using Yavsc.Helpers;
     using System;
 
-    [Authorize("AdministratorOnly"),Route("~/api/account"),Obsolete]
+    [Authorize(),Route("~/api/account"),Obsolete]
     public class ApiAccountController : Controller
     {
         
@@ -44,6 +44,7 @@ namespace Yavsc.WebApi.Controllers
         }
 
         // POST api/Account/ChangePassword
+        [Authorize]
 		public async Task<IActionResult> ChangePassword(ChangePasswordBindingModel model)
         {
             if (!ModelState.IsValid)
@@ -65,6 +66,7 @@ namespace Yavsc.WebApi.Controllers
         }
 
         // POST api/Account/SetPassword
+        [Authorize]
 		public async Task<IActionResult> SetPassword(SetPasswordBindingModel model)
         {
             if (!ModelState.IsValid)
@@ -121,7 +123,7 @@ namespace Yavsc.WebApi.Controllers
             base.Dispose(disposing);
         }
 
-        [HttpGet("~/api/me")]
+        [HttpGet("~/api/me"),Authorize]
         public async Task<IActionResult> Me ()
         {
             if (User==null) 
@@ -144,7 +146,7 @@ namespace Yavsc.WebApi.Controllers
         /// </summary>
         /// <param name="me">MyUpdate containing the new user name </param>
         /// <returns>Ok when all is ok.</returns>
-        [HttpPut("~/api/me")]
+        [HttpPut("~/api/me"),Authorize]
         public async Task<IActionResult> UpdateMe(UserInfo me)
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(
@@ -159,7 +161,7 @@ namespace Yavsc.WebApi.Controllers
         /// Updates the avatar
         /// </summary>
         /// <returns></returns>
-        [HttpPost("~/api/setavatar")]
+        [HttpPost("~/api/setavatar"),Authorize]
         public async Task<IActionResult> SetAvatar()
         {
             var root = User.InitPostToFileSystem(null);
