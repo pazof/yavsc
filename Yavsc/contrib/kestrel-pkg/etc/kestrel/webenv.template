@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Dnx command for this web app 
+NAME=[myWebAppName]
+
+# root path to the server assets
+ROOT=[/srv/www/[myRootDir]]
+
+# relative path to the project source tree,
+# from the above root path
+PROJECT=[approot/src/[projectName]]
+
