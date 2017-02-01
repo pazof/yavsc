@@ -22,7 +22,7 @@ namespace Yavsc.Models
         /// <see>Startup.UserFilesOptions</see>
         /// </summary>
         /// <returns></returns>
-        [MaxLength(512)]
+        [MaxLength(512),Required]
         public string Avatar { get; set; }
 
         [MaxLength(512)]

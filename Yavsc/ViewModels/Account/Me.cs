@@ -30,10 +30,4 @@ namespace  Yavsc.Models.Auth
         public string Address { get; set; }
     }
 
-public class UserInfo {
-        public string UserId { get; set; }
-    
-        public string UserName { get; set; }
-        public string Avatar { get; set; }
-}
 }
