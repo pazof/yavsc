@@ -253,10 +253,10 @@ namespace Yavsc.Controllers
                  var mobile = info.ExternalPrincipal.FindFirstValue(ClaimTypes.MobilePhone);
                  var postalcode = info.ExternalPrincipal.FindFirstValue(ClaimTypes.PostalCode);
                  var locality = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Locality);
-                 var country = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Country);*/
+                 var country = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Country);
                 foreach (var claim in info.ExternalPrincipal.Claims)
                     _logger.LogWarning("# {0} Claim: {1} {2}", info.LoginProvider, claim.Type, claim.Value);
-
+*/
                 var access_token = info.ExternalPrincipal.FindFirstValue("access_token");
                 var token_type = info.ExternalPrincipal.FindFirstValue("token_type");
                 var expires_in = info.ExternalPrincipal.FindFirstValue("expires_in");
@@ -292,6 +292,8 @@ namespace Yavsc.Controllers
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
+                    info.ProviderDisplayName = info.ExternalPrincipal.Claims.First(c=>c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
