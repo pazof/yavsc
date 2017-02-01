@@ -145,12 +145,6 @@ namespace Yavsc
                                    var service =
                                    serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
                                    await service.StoreTokenAsync(gcontext.GoogleUserId, context.TokenResponse);
-                                  // var user = service.Users.First(u=>u.Id == gcontext.Principal.GetUserId());
-                                  // logger.LogWarning(user.UserName);
-                                  // logger.LogWarning(context.User.ToString());
-                                    logger.LogWarning(
-                                        string.Join(" ",
-                                    gcontext.Identity.Claims.Select(c=>c.Value).ToArray()));
                                }
                            }
                        }
