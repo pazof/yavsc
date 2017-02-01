@@ -13,6 +13,7 @@ namespace Yavsc.WebApi.Controllers
     using Models.Auth;
     using Yavsc.Helpers;
     using System;
+    using System.Linq;
 
     [Authorize(),Route("~/api/account"),Obsolete]
     public class ApiAccountController : Controller
@@ -139,6 +140,24 @@ namespace Yavsc.WebApi.Controllers
                 iduser.Avatar, iduser.PostalAddress?.Address
             );
             return Ok(user);
+        }
+
+        [HttpGet("~/api/myip"),Authorize]
+        public async Task<IActionResult> MyIp ()
+        {
+            string ip = null;
+
+            ip = Request.Headers["X-Forwarded-For"];
+
+            if (string.IsNullOrEmpty(ip)) {
+                ip = Request.Host.Value;
+            } else { // Using X-Forwarded-For last address
+                ip = ip.Split(',')
+                    .Last()
+                    .Trim();
+            }
+
+            return Ok(ip);
         }
 
         /// <summary>
