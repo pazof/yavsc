@@ -16,6 +16,7 @@ using Yavsc.Services;
 using Yavsc.ViewModels.Account;
 using Yavsc.Helpers;
 using Microsoft.Extensions.Localization;
+using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
@@ -35,6 +36,8 @@ namespace Yavsc.Controllers
 
         //  TwilioSettings _twilioSettings;
 
+        ApplicationDbContext _dbContext;
+
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -42,7 +45,8 @@ namespace Yavsc.Controllers
         IOptions<SiteSettings> siteSettings,
        IOptions<SmtpSettings> smtpSettings,
             ILoggerFactory loggerFactory, IOptions<TwilioSettings> twilioSettings,
-            IStringLocalizer<Yavsc.Resources.YavscLocalisation>  localizer)
+            IStringLocalizer<Yavsc.Resources.YavscLocalisation>  localizer,
+            ApplicationDbContext dbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -54,7 +58,7 @@ namespace Yavsc.Controllers
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
             _localizer = localizer;
-
+            _dbContext = dbContext;
         }
 
         [HttpGet(Constants.LoginPath)]
@@ -226,10 +230,18 @@ namespace Yavsc.Controllers
             }
 
             // Sign in the user with this external login provider if the user already has a login.
+            info.ProviderDisplayName = info.ExternalPrincipal.Claims.First(c=>c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+                
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (result.Succeeded)
             {
-                _logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
+                _logger.LogInformation(5, $"User logged in with {info.LoginProvider} provider, as {info.ProviderDisplayName} ({info.ProviderKey})." );
+                
+
+                var ninfo = _dbContext.UserLogins.First(l=>l.ProviderKey == info.ProviderKey && l.LoginProvider == info.LoginProvider);
+                ninfo.ProviderDisplayName = info.ProviderDisplayName;
+                _dbContext.Entry(ninfo).State = EntityState.Modified;
+                _dbContext.SaveChanges();
 
                 return Redirect(returnUrl);
             }
