@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Metadata;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
@@ -95,14 +97,32 @@ namespace Yavsc.Migrations
                     b.HasAnnotation("Relational:TableName", "AspNetUserRoles");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Access.Ban", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateModified");
+
+                    b.Property<string>("UserCreated");
+
+                    b.Property<string>("UserModified");
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Access.BlackListed", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("OwnerId");
+                    b.Property<string>("OwnerId")
+                        .IsRequired();
 
-                    b.Property<string>("UserId");
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
                     b.HasKey("Id");
                 });
@@ -735,12 +755,12 @@ namespace Yavsc.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Action");
+
                     b.Property<string>("ActivityCode")
                         .IsRequired();
 
                     b.Property<string>("Title");
-
-                    b.Property<string>("ViewName");
 
                     b.HasKey("Id");
                 });
