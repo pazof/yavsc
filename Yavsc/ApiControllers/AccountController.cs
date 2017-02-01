@@ -143,7 +143,7 @@ namespace Yavsc.WebApi.Controllers
         }
 
         [HttpGet("~/api/myip"),Authorize]
-        public async Task<IActionResult> MyIp ()
+        public IActionResult MyIp ()
         {
             string ip = null;
 
