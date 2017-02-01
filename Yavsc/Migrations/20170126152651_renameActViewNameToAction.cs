@@ -229,6 +229,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_ApplicationUser_PerformerId", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
+            migrationBuilder.RenameColumn(name:"Action",table:"CommandForm",newName:"ViewName");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
