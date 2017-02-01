@@ -48,10 +48,10 @@
         
         <dt>@SR["Avatar"]:</dt>
         <dd>
-            <img src="~/Avatars/@(User.Identity.Name).png">
-            @Model.Avatar
+            
+            @await Component.InvokeAsync("Avatar", User.GetUserId(), ".s")
             [<a asp-controller="Manage" asp-action="SetAvatar"
-            >@SR[@Model.Avatar==null?"Set":"Modify"]</a>]
+            >@SR["Modify"]</a>]
         </dd> 
 
         <dt>@SR["Professional settings"]:</dt>

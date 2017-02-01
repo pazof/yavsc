@@ -26,7 +26,10 @@ namespace Yavsc
             GCMNotificationUrl = "https://gcm-http.googleapis.com/gcm/send",
         	KeyProtectorPurpose = "OAuth.AspNet.AuthServer",
             UserFilesPath = "/UserFiles",
-            AvatarsPath = "/Avatars" ; 
+            AvatarsPath = "/Avatars", 
+            DefaultAvatar = "/images/Users/icon_user.png", 
+            AnonAvatar = "/images/Users/icon_anon_user.png"; 
+            
         public static readonly Scope[] SiteScopes = { 
             new Scope { Id = "profile", Description = "Your profile informations" },  
             new Scope { Id = "book" , Description ="Your booking interface"},  

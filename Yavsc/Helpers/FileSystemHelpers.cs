@@ -107,6 +107,7 @@ namespace Yavsc.Helpers
         {
             var item = new FileRecievedInfo();
             item.FileName = user.UserName + ".png";
+            
             var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Avatars, item.FileName);
 
             var fi = new FileInfo(destFileName);
@@ -143,8 +144,9 @@ namespace Yavsc.Helpers
                 }
 
             }
-            item.DestDir = "/Avatars";
-            user.Avatar = item.FileName;
+            item.DestDir = Startup.AvatarsOptions.RequestPath.ToUriComponent();
+            user.Avatar = $"{item.DestDir}/{item.FileName}";
+            
             return item;
         }
 

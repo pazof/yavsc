@@ -6,7 +6,7 @@
         <ul class="nav navbar-nav navbar-right">
             <li>
                 <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">
-                    <img src="~/Avatars/@(User.Identity.Name).xs.png" />
+                   @await Component.InvokeAsync("Avatar", User.GetUserId(), ".xs")
                     @SR["Hello"] @User.GetUserName()!</a>
             </li>
             <li>
