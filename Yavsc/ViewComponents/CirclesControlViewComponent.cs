@@ -16,6 +16,8 @@ namespace Yavsc.ViewComponents
         {
             this.dbContext = dbContext;
         }
+
+        
         public async Task<IViewComponentResult> InvokeAsync (ICircleAuthorized target)
         {
             var oid = target.GetOwnerId();

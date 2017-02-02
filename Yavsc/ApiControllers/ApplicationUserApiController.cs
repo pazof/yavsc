@@ -23,7 +23,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<ApplicationUser> GetApplicationUser()
         {
-            return _context.Users;
+            return _context.Users.Include(u=>u.Roles).Include(u=>u.Logins).Include(u=>u.Claims);
         }
 
         // GET: api/ApplicationUserApi/5
