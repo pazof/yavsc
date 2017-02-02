@@ -81,7 +81,10 @@ namespace Yavsc.Helpers
                 {
                     byte[] buffer = new byte[1024];
                     long len = org.Length;
-                    if (len > (user.DiskQuota - usage)) throw new FSQuotaException();
+                    if (len > (user.DiskQuota - usage)) {
+                        
+                        return item;
+                    }
                     usage += len;
 
                     while (len > 0)
@@ -93,6 +96,7 @@ namespace Yavsc.Helpers
                     }
                     dest.Close();
                     org.Close();
+                    item.Success=true;
                 }
             }
             user.DiskUsage = usage;
@@ -146,7 +150,7 @@ namespace Yavsc.Helpers
             }
             item.DestDir = Startup.AvatarsOptions.RequestPath.ToUriComponent();
             user.Avatar = $"{item.DestDir}/{item.FileName}";
-            
+            item.Success = true;
             return item;
         }
 
@@ -192,6 +196,7 @@ namespace Yavsc.Helpers
                     source.Save(destFileName, ImageFormat.Png);
                 }
             }
+            item.Success=true;
             return item;
         }
     }

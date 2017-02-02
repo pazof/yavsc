@@ -38,6 +38,7 @@ namespace Yavsc.Models
             builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
             builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
             builder.Entity<ApplicationUser>().Property(u=>u.Avatar).HasDefaultValue(Constants.DefaultAvatar);
+            builder.Entity<ApplicationUser>().Property(u=>u.DiskQuota).HasDefaultValue(Constants.DefaultFSQ);
             builder.Entity<UserActivity>().HasKey(u=> new { u.DoesCode, u.UserId});
             builder.Entity<Instrumentation>().HasKey(u=> new { u.InstrumentId, u.UserId});
             builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a=> new { a.CircleId, a.BlogPostId});

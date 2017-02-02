@@ -29,6 +29,7 @@ namespace Yavsc
             AvatarsPath = "/Avatars", 
             DefaultAvatar = "/images/Users/icon_user.png", 
             AnonAvatar = "/images/Users/icon_anon_user.png"; 
+        public static readonly long DefaultFSQ = 1024*1024*500;
             
         public static readonly Scope[] SiteScopes = { 
             new Scope { Id = "profile", Description = "Your profile informations" },  
