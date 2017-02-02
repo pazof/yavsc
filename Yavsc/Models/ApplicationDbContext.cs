@@ -258,5 +258,8 @@ namespace Yavsc.Models
 
          public DbSet<Form> Form { get; set; }
 
+         public DbSet<Ban> Banlist { get ; set; }
+         
+
     }
 }
