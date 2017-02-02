@@ -4,7 +4,8 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Workflow
 {
-    public class CommandForm 
+        using YavscLib;
+    public class CommandForm : ICommandForm
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
