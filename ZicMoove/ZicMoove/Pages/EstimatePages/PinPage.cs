@@ -3,23 +3,27 @@ using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Yavsc;
+using ZicMoove.Data;
+using System.Threading.Tasks;
+using XLabs.Platform.Services.Geolocation;
+using Plugin.Geolocator;
 
 namespace ZicMoove.Pages
 {
 	public class PinPage : ContentPage
 	{
 		Map map;
-		/*
-		protected async Task<Geolocator.Plugin.Abstractions.Position> GetPos() {
+		
+		protected async Task<Plugin.Geolocator.Abstractions.Position> GetPos() {
 			var locator = CrossGeolocator.Current;
 			locator.DesiredAccuracy = 50;
 
-			return await locator.GetPositionAsync (timeout: 10000);
+			return await locator.GetPositionAsync (10000);
 		}
 
 		
-		private Position _pos;
-		public Position MyPosition {
+		private Model.Social.Position _pos;
+		public Model.Social.Position MyPosition {
 			get {
 				return _pos;
 			}
@@ -28,9 +32,9 @@ namespace ZicMoove.Pages
 		public async Task UpdateMyPos()
 		{
 			var pos = await GetPos();
-			_pos = new Position(pos.Latitude,pos.Longitude);
+			_pos = new Model.Social.Position(pos.Latitude,pos.Longitude);
 		}
-*/
+
 		protected override void OnAppearing ()
 		{
 			base.OnAppearing ();
@@ -49,19 +53,20 @@ namespace ZicMoove.Pages
 			double lat=0;
 			double lon=0;
 			int pc = 0;
-			foreach (LocalizedEvent ev in Manager.Events) {
-				var pin = new Pin {
+			foreach (var query in DataManager.Instance.BookQueries)
+            {
+                var pin = new Pin {
 					Type = PinType.SearchResult,
 					Position = new Xamarin.Forms.Maps.Position(
-						ev.Location.Latitude, ev.Location.Longitude),
-					Label = ev.Title,
-					Address = ev.Location.Address
+                        query.Location.Latitude, query.Location.Longitude),
+					Label = query.Reason,
+					Address = query.Location.Address
 				};
-				pin.BindingContext = ev;
+				pin.BindingContext = query;
 				map.Pins.Add (pin);
                 // TODO find a true solution
-				lat = (lat * pc + ev.Location.Latitude) / (pc + 1);
-				lon = (lon * pc + ev.Location.Longitude) / (pc + 1);
+				lat = (lat * pc + query.Location.Latitude) / (pc + 1);
+				lon = (lon * pc + query.Location.Longitude) / (pc + 1);
 				pc++;
 			}
 			// TODO build a MapSpan covering events
