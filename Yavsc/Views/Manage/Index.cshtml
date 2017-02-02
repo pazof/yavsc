@@ -49,10 +49,15 @@
         <dt>@SR["Avatar"]:</dt>
         <dd>
             
-            @await Component.InvokeAsync("Avatar", User.GetUserId(), ".s")
+            @Component.Invoke("Avatar", User.GetUserId(), ".s")
             [<a asp-controller="Manage" asp-action="SetAvatar"
             >@SR["Modify"]</a>]
         </dd> 
+
+        <dt>@SR["Vos cercles"]</dt>
+        <dd> (WIP) <a asp-action="Index" asp-controller="Circle">[@SR["Ajouter suprimer des cercles"]]</a>
+            <a asp-action="Index" asp-controller="CircleMembers">[@SR["Gérer les membres de vos cercles"]]</a>
+        </dd>
 
         <dt>@SR["Professional settings"]:</dt>
         <dd>

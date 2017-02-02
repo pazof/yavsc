@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Yavsc.Helpers;
 using Yavsc.Models;
@@ -13,7 +12,7 @@ namespace Yavsc.ViewComponents
             this.dbContext = dbContext;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync ( string userId, string imgFmt )
+        public IViewComponentResult Invoke ( string userId, string imgFmt )
         {
             return View ( "Default", dbContext.AvatarUri(userId, imgFmt));
         }
