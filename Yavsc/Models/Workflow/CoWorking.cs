@@ -3,7 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Workflow
 {
-    public class CoWorking
+    using YavscLib;
+
+    public class CoWorking: ICoWorking
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id {get; set; }
