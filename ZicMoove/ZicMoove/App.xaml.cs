@@ -197,6 +197,7 @@ namespace ZicMoove
            { get { return userProfilePage; } }
 
         ChatPage chatPage;
+        PinPage pinPage;
 
         public static void ShowPage(Page page)
         {
@@ -248,6 +249,9 @@ namespace ZicMoove
                 Icon = "",
                 BindingContext = new ChatViewModel()
             };
+
+            pinPage = new PinPage();
+
             // var mainPage = new NavigationPage(bQueriesPage);
 
             masterDetail = new ExtendedMasterDetailPage()
@@ -291,6 +295,14 @@ namespace ZicMoove
                 Icon = "chat_icon_s.png",
                 Command = new Command(
                     () => { ShowPage(chatPage); }
+                    )
+            };
+            ToolbarItem tiPinPage = new ToolbarItem()
+            {
+                Text = "Map",
+                Icon = "glyphish_103_map.png",
+                Command = new Command(
+                    () => { ShowPage(pinPage); }
                     )
             };
             masterDetail.ToolbarItems.Add(tiHome);

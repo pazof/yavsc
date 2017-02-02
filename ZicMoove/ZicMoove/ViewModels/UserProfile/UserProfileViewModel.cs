@@ -4,8 +4,6 @@ using Xamarin.Forms;
 using XLabs.Forms.Behaviors;
 using XLabs.Forms.Controls;
 using XLabs.Forms.Mvvm;
-using XLabs.Ioc;
-using XLabs.Platform.Services;
 
 namespace ZicMoove.ViewModels.UserProfile
 {
@@ -137,8 +135,6 @@ namespace ZicMoove.ViewModels.UserProfile
                 return User?.UserName;
             }
         }
-
-        private bool userIsPro = false;
 
         public UserProfileViewModel()
         {

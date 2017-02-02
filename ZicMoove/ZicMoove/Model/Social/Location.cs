@@ -12,10 +12,19 @@ namespace ZicMoove.Model.Social
     /// </summary>
     public class Position
     {
+        public Position()
+        {
+        }
+
+        public Position(double lat, double lon)
+        {
+            Latitude = lat;
+            Longitude = lon;
+        }
+
         /// <summary>
         /// The longitude.
         /// </summary>
-
         public double Longitude { get; set; }
 
         /// <summary>
