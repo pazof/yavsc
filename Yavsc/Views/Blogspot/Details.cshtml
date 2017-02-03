@@ -1,4 +1,4 @@
-@model Yavsc.Models.Blog
+@model Blog
 
 @{
     ViewData["Title"]=Model.Title;
@@ -18,13 +18,13 @@
 <div class="meta"> 
     @SR["Author"] :  @Model.Author.UserName -
        
-            @SR["Modified"] :
+    @SR["Modified"] :
 
-            @Html.DisplayFor(model => model.DateModified) -
-        
-            @SR["Created"] :
-       
-            @Html.DisplayFor(model => model.DateCreated) 
+    @Html.DisplayFor(model => model.DateModified) -
+
+    @SR["Created"] :
+
+    @Html.DisplayFor(model => model.DateCreated) 
  </div>
      
 </div>
