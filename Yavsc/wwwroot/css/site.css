@@ -96,7 +96,8 @@ footer {
     border-style: groove none none groove;
 }
 
-.blogtitle { 
+.blogtitle  { 
+    display: inline-block;
     font-size: x-large;
 }
 
