@@ -1,18 +1,18 @@
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Authorization;
-using Yavsc.Models;
-using System.Linq;
 using Microsoft.AspNet.Identity;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
-using Yavsc.Models.Booking;
-using Yavsc.Helpers;
 using System;
-using Yavsc.ViewModels.FrontOffice;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Yavsc.Controllers
 {
+    using Helpers;
+    using Models;
+    using Models.Booking;
+    using ViewModels.FrontOffice;
     public class FrontOfficeController : Controller
     {
         ApplicationDbContext _context;
@@ -31,13 +31,14 @@ namespace Yavsc.Controllers
         {
             var uid = User.GetUserId();
             var now = DateTime.Now;
-            
-            var model = new FrontOfficeIndexViewModel{
-                EstimateToProduceCount =  _context.Commands.Where(c => c.PerformerId == uid &&  c.EventDate > now
-                && c.ValidationDate == null && !_context.Estimates.Any(e=>(e.CommandId == c.Id && e.ProviderValidationDate != null))).Count(),
-                EstimateToSignAsProCount = _context.Commands.Where(c => ( c.PerformerId == uid &&  c.EventDate > now
-                && c.ValidationDate == null && _context.Estimates.Any(e=>(e.CommandId == c.Id && e.ProviderValidationDate != null)))).Count(),
-                EstimateToSignAsCliCount = _context.Estimates.Where(e=>e.ClientId == uid && e.ClientValidationDate == null) .Count(),
+
+            var model = new FrontOfficeIndexViewModel
+            {
+                EstimateToProduceCount = _context.Commands.Where(c => c.PerformerId == uid && c.EventDate > now
+               && c.ValidationDate == null && !_context.Estimates.Any(e => (e.CommandId == c.Id && e.ProviderValidationDate != null))).Count(),
+                EstimateToSignAsProCount = _context.Commands.Where(c => (c.PerformerId == uid && c.EventDate > now
+                && c.ValidationDate == null && _context.Estimates.Any(e => (e.CommandId == c.Id && e.ProviderValidationDate != null)))).Count(),
+                EstimateToSignAsCliCount = _context.Estimates.Where(e => e.ClientId == uid && e.ClientValidationDate == null).Count(),
                 BillToSignAsProCount = 0,
                 BillToSignAsCliCount = 0,
                 NewPayementsCount = 0
@@ -52,13 +53,8 @@ namespace Yavsc.Controllers
             {
                 throw new NotImplementedException("No Activity code");
             }
-           ViewBag.Activity = _context.Activities.FirstOrDefault(a=>a.Code == id);
-          var result = _context.Performers
-           .Include(p=>p.Activity)
-           .Include(p=>p.Performer)
-           .Include(p=>p.Performer.Posts)
-           .Include(p=>p.Performer.Devices)
-           .Where(p => p.Active && p.Activity.Any(u=>u.DoesCode==id)).OrderBy( x => x.Rate ).ToList(); 
+            ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == id);
+            var result = _context.ListPerformers(id);
             return View(result);
         }
 
@@ -89,7 +85,7 @@ namespace Yavsc.Controllers
                 return View("Index");
             }
             ViewBag.Activities = _context.ActivityItems(null);
-            return View("Book",_context.Performers.Include(p => p.Performer).Where
+            return View("Book", _context.Performers.Include(p => p.Performer).Where
                 (p => p.Active).OrderBy(
                     x => x.MinDailyCost
                 ));
@@ -108,7 +104,7 @@ namespace Yavsc.Controllers
             return View("Estimate.tex", estimate);
         }
 
-        [Authorize,Route("Estimate-{id}.pdf")]
+        [Authorize, Route("Estimate-{id}.pdf")]
         public IActionResult EstimatePdf(long id)
         {
             ViewBag.TempDir = Startup.SiteSetup.TempDir;
@@ -118,10 +114,10 @@ namespace Yavsc.Controllers
             .Include(x => x.Query.PerformerProfile)
             .Include(x => x.Query.PerformerProfile.OrganizationAddress)
             .Include(x => x.Query.PerformerProfile.Performer)
-            .Include(e => e.Bill).FirstOrDefault(x => x.Id == id); 
-            if (estimate==null)
+            .Include(e => e.Bill).FirstOrDefault(x => x.Id == id);
+            if (estimate == null)
                 throw new Exception("No data");
-            return View("Estimate.pdf",estimate);
+            return View("Estimate.pdf", estimate);
         }
 
         [Authorize]
@@ -135,18 +131,18 @@ namespace Yavsc.Controllers
         public IActionResult EstimateClientValidation()
         {
             throw new NotImplementedException();
-            
+
         }
         [Authorize]
         public IActionResult BillValidation()
         {
             throw new NotImplementedException();
-            
+
         }
         [Authorize]
         public IActionResult BillAcquitment()
         {
             throw new NotImplementedException();
         }
-    } 
+    }
 }
