@@ -134,22 +134,26 @@ namespace Yavsc.Controllers
             if (string.IsNullOrWhiteSpace(uid)
             || string.IsNullOrWhiteSpace(prid))
                 throw new InvalidOperationException(
-                    "This method needs a prid and uid"
+                    "This method needs a PerformerId"
                 );
             var pro = _context.Performers.Include(
                 u => u.Performer
-            ).Include( u => u.Performer.Devices)
+            ).Include(u => u.Performer.Devices)
             .FirstOrDefault(
                 x => x.PerformerId == command.PerformerId
             );
-            _logger.LogDebug($"Pro: {pro}");
-            command.PerformerProfile = pro;
-            var user = await _userManager.FindByIdAsync(
-               User.GetUserId()
-           );
+            var user = await _userManager.FindByIdAsync(uid);
             command.Client = user;
+            command.ClientId = uid;
+            command.PerformerProfile = pro;
+            // FIXME Why!!
+            // ModelState.ClearValidationState("PerformerProfile.Avatar");
+            // ModelState.ClearValidationState("Client.Avatar");
+            // ModelState.ClearValidationState("ClientId");
+            ModelState.MarkFieldSkipped("ClientId");
+            
             if (ModelState.IsValid)
-            {
+                {
                 var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address 
                 && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
 

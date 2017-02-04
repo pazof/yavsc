@@ -10,13 +10,13 @@ namespace Yavsc.Models.Billing
 
  public class NominativeServiceCommand<T> : Query<T> where T:Service 
   {
-
+    [Required]
     public string ClientId { get; set; }
 
     /// <summary>
     /// The client
     /// </summary>
-    [Required,ForeignKey("ClientId")]
+    [ForeignKey("ClientId")]
     public ApplicationUser Client { get; set; }
 
     [Required]
