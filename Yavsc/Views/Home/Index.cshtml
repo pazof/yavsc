@@ -22,19 +22,21 @@
             i=0;
             foreach (var act in Model) { 
                 string cls = (i==0) ? "item active":"item";
-        <div class="@cls">
-            <img src="@act.Photo" alt="@act.Name" class="img-responsive" />
-            <div class="carousel-caption">
+        <div class="@cls"  style="background-image: url('@act.Photo');  ">
+          <!-- <img src="@act.Photo" alt="@act.Name" class="img-responsive" />  -->
+            <div class="carousel-caption-s" >
                 
                 <p><em>@act.Name</em><br/>
                 @act.Description </p>
-                <p>
+
+                 <p>
                 @foreach (var form in act.Forms) {
                     <a class="btn btn-default" asp-controller="FrontOffice" asp-action="@form.Action" asp-route-id="@act.Code">
                     @form.Title
                     </a>
                 }
-                </p>
+            </p>
+                
             </div>
         </div>
             i++; }
@@ -49,3 +51,7 @@
         <span class="sr-only">Suivant</span>
     </a>
 </div>
+<environment names="Lua,Development">
+<div class="change-embed-petition" data-petition-id="9084164"></div>
+<script src="https://static.change.org/product/embeds/v1/change-embeds.js" type="text/javascript"></script>
+</environment>

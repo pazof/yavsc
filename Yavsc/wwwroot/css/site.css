@@ -19,7 +19,7 @@ textarea {
  
 /* Carousel */
 
-.carousel-caption p {    
+.carousel-caption-s p {    
     font-family: "jubilat";
     font-weight: 600;
     font-size: large;
@@ -33,6 +33,31 @@ textarea {
     padding:.5em;
     animation: mymove 3s infinite;
 }
+
+.carousel-caption-s {
+  right: 3em;
+  top: 1em;
+  left: 3em;
+  z-index: 10;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, .6);
+}
+.carousel-caption-s .btn {
+  text-shadow: none;
+}
+.carousel-indicators {
+    position: absolute;
+    z-index: 15;
+    padding-left: 0;
+    text-align: center;
+    list-style: none;
+    top: .2em;
+    bottom: initial;
+}
+
 @-webkit-keyframes mymove {
     from {text-decoration-color: red;}
     50% {text-decoration-color: blue;}
@@ -52,10 +77,6 @@ ul.actiongroup li {
 ul.actiongroup li a:hover {
     background-color: rgba(128,128,128,.2);
     color: red;
-}
-
-input, select, textarea {
-    max-width: 100%;
 }
 
 footer {
@@ -109,3 +130,7 @@ footer {
     float: left;
     margin: 1em;
 }
+
+
+
+
