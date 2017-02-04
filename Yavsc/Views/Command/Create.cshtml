@@ -178,7 +178,9 @@
                             <div class='col-sm-6'>
                                 <div id='reason1'>
 <textarea rows="15" asp-for="Reason" type="text" name="Reason" id="Reason" maxlength="4096" class="form-control"></textarea>
-<span asp-validation-for="Reason" class="text-danger"></span> @Html.HiddenFor(model=>model.Location.Latitude) @Html.HiddenFor(model=>model.Location.Longitude)
+<span asp-validation-for="Reason" class="text-danger"></span> 
+@Html.HiddenFor(model=>model.Location.Latitude)
+ @Html.HiddenFor(model=>model.Location.Longitude)
 </div>
         </div>
         </div>
@@ -191,7 +193,7 @@
         <input type="submit" value="@SR[" Create "]" class="btn btn-default" />
     </div>
 </div>
-@Html.HiddenFor(model=>model.Client.Id) 
+@Html.HiddenFor(model=>model.ClientId) 
 @Html.HiddenFor(model=>model.PerformerId) 
 @Html.HiddenFor(model=>model.ActivityCode)
 </div>
