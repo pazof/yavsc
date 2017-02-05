@@ -47,12 +47,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="IAccountBalance.cs" />
+    <Compile Include="IActivity.cs" />
     <Compile Include="IApplicationUser.cs" />
     <Compile Include="IBaseTrackedEntity.cs" />
     <Compile Include="IBlog.cs" />
     <Compile Include="ICircle.cs" />
     <Compile Include="ICircleMember.cs" />
+    <Compile Include="ICommandForm.cs" />
     <Compile Include="IContact.cs" />
+    <Compile Include="ICoWorking.cs" />
     <Compile Include="IGoogleCloudMobileDeclaration.cs" />
     <Compile Include="ILocation.cs" />
     <Compile Include="IPosition.cs" />
