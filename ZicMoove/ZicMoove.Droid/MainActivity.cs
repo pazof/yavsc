@@ -327,8 +327,8 @@ namespace ZicMoove.Droid
         {
             var auth = new YaOAuth2Authenticator(
                                 clientId: Constants.APIKey,
-                                clientSecret: "blouh",
-                                scope: "profile",
+                                clientSecret: Constants.APISecret,
+                                scope: Constants.Scope,
                                 authorizeUrl: new Uri(Constants.AuthorizeUrl),
                                 redirectUrl: new Uri(Constants.RedirectUrl),
                                 accessTokenUrl: new Uri(Constants.AccessTokenUrl));

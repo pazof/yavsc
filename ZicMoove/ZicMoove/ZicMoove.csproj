@@ -77,6 +77,8 @@
     <Compile Include="Model\Social\Chat\ChatStatus.cs" />
     <Compile Include="Model\Social\Chat\ChatMessage.cs" />
     <Compile Include="Model\Social\LocationType.cs" />
+    <Compile Include="Model\Workflow\Activity.cs" />
+    <Compile Include="Model\Workflow\CommandForm.cs" />
     <Compile Include="Pages\ClientPages\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
@@ -180,7 +182,6 @@
     <Compile Include="Model\Booking\BookQuery.cs" />
     <Compile Include="Model\Market\BaseProduct.cs" />
     <Compile Include="Pages\EstimatePages\BillingLine.cs" />
-    <Compile Include="Model\Manager.cs" />
     <Compile Include="Model\Auth\MobileAppDeclaration.cs" />
     <Compile Include="Model\Auth\passwrecovery.cs" />
     <Compile Include="Model\Social\Calendar\OpenDay.cs" />

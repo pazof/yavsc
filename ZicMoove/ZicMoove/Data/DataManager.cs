@@ -15,6 +15,7 @@
     {
         // TODO estimatetemplate rating service product tag   
         public RemoteEntityRO<BookQuery, long> BookQueries { get; set; }
+        public RemoteEntityRO<Activity, string> Activities { get; set; }
         public ChatUserCollection ChatUsers { get; set; }
         public EstimateEntity Estimates { get; set; }
         public RemoteEntity<Blog, long> Blogspot { get; set; }
@@ -67,6 +68,7 @@
             RemoteFiles.Load();
             BlackList.Load();
             ChatUsers.Load();
+            Activities.Load();
         }
     }
 }
