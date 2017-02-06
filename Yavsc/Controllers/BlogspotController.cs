@@ -41,14 +41,30 @@ namespace Yavsc.Controllers
         [AllowAnonymous]
         public IActionResult Index(string id, int skip=0, int maxLen=25)
         {
-            string uid = null;
-            if (User.IsSignedIn())
-                uid = User.GetUserId();
+            
             if (!string.IsNullOrEmpty(id))
                 return UserPosts(id);
-            return View(_context.Blogspot.Include(
-               b => b.Author
-            ).Where(p => p.Visible || p.AuthorId == uid ).OrderByDescending(p => p.DateCreated)
+            string uid = User.GetUserId();
+            long[] usercircles = _context.Circle.Include(c=>c.Members).Where(c=>c.Members.Any(m=>m.MemberId == uid))
+            .Select(c=>c.Id).ToArray();
+            IQueryable<Blog> posts ;
+            if (usercircles != null) {
+                posts = _context.Blogspot.Include(
+                            b => b.Author
+                            ).Include(p=>p.ACL).Where(p=>p.Visible && (p.ACL.Count == 0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId))));
+               /* posts = _context.Blogspot.Include(
+                            b => b.Author
+                            ).Include(p=>p.ACL).Where(p=>p.Visible || p.ACL.Any(a => usercircles.Contains(a.Allowed)
+                            )); */
+            }
+            else {
+                posts = _context.Blogspot.Include(
+                            b => b.Author
+                            ).Include(p=>p.ACL).Where(p=>p.Visible && p.ACL.Count == 0);
+            }
+
+            return View(posts
+            .OrderByDescending(p => p.DateCreated)
             .Skip(skip).Take(maxLen));
         }
 
