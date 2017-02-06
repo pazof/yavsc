@@ -22,6 +22,8 @@ namespace Yavsc.Models.Identity
     public DateTime DeclarationDate { get; set; }
     [JsonIgnore,ForeignKey("DeviceOwnerId")]
     public virtual ApplicationUser DeviceOwner { get; set; } 
+
+    public DateTime LatestActivityUpdate { get; set; }
   }
 
 }
