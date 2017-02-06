@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Models;
@@ -15,11 +16,16 @@ namespace Yavsc.ViewModels.Auth.Handlers
             if (resource.AuthorId == context.User.GetUserId())
                 context.Succeed(requirement); 
             else if (resource.Visible) {
-                
-            // TODO && ( resource.Circles == null || context.User belongs to resource.Circles )
-                context.Succeed(requirement); 
-
+                if (resource.ACL.Count>0)
+                    {
+                        var uid = context.User.GetUserId();
+                        if (resource.ACL.Any(a=>a.Allowed.Members.Any(m=>m.MemberId == uid )))
+                            context.Succeed(requirement); 
+                        else context.Fail();
+                    }
+                else context.Succeed(requirement); 
             }
+            else context.Fail();
         }
     }
 }
