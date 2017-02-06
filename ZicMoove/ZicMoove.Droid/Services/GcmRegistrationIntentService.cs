@@ -64,7 +64,7 @@ namespace ZicMoove.Droid
                     }
 #endif
 
-                    var senderid = MainSettings.GoogleSenderId;
+                    var senderid = Constants.GoogleSenderId;
 					var token = instanceID.GetToken ( senderid,
 						 GoogleCloudMessaging.InstanceIdScope, null);
 
