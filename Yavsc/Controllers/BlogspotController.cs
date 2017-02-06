@@ -11,6 +11,7 @@ using Microsoft.Extensions.OptionsModel;
 using Yavsc.Models;
 using Yavsc.ViewModels.Auth;
 using Microsoft.AspNet.Mvc.Rendering;
+using Yavsc.ViewModels;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -96,7 +97,7 @@ namespace Yavsc.Controllers
         }
         // GET: Blog/Details/5
         [AllowAnonymous]
-        public IActionResult Details(long? id)
+        public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
             {
@@ -110,7 +111,10 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            
+            if (!await _authorizationService.AuthorizeAsync(User, blog, new ViewRequirement()))
+            {
+                return new ChallengeResult();   
+            }
             return View(blog);
         }
 
