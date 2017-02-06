@@ -27,7 +27,7 @@ using System;
 using System.Diagnostics;
 using ZicMoove;
 
-namespace Yavsc.Helpers
+namespace ZicMoove.Helpers
 {
     /// <summary>
     /// Simple json post method.
@@ -46,10 +46,9 @@ namespace Yavsc.Helpers
 			request.Method = "POST";
 			request.Accept = "application/json";
 			request.ContentType = "application/json";
-			request.SendChunked = true;
-			request.TransferEncoding = "UTF-8";
-            if (authorizationHeader!=null) 
-                request.Headers.Add($"Authorization: {authorizationHeader}");
+
+            if (authorizationHeader != null)
+                request.Headers["Authorization"] = authorizationHeader;
         }
 
         public static string BasePath { get; private set; } = Constants.YavscApiUrl;
@@ -63,21 +62,20 @@ namespace Yavsc.Helpers
         /// Invoke the specified query.
         /// </summary>
         /// <param name="query">Query.</param>
-        public TAnswer Invoke<TAnswer>(object query)
+        public async Task<TAnswer> Invoke<TAnswer>(object query)
 		{
 
-			using (Stream streamQuery = request.GetRequestStream()) {
+            using (Stream streamQuery = await request.GetRequestStreamAsync()) {
 				using (StreamWriter writer = new StreamWriter(streamQuery)) {
 					writer.Write (JsonConvert.SerializeObject(query));
 				}}
 			TAnswer ans = default (TAnswer);
-			using (WebResponse response = request.GetResponse ()) {
+			using (WebResponse response = await request.GetResponseAsync ()) {
 				using (Stream responseStream = response.GetResponseStream ()) {
 					using (StreamReader rdr = new StreamReader (responseStream)) {
 						ans = (TAnswer) JsonConvert.DeserializeObject<TAnswer> (rdr.ReadToEnd ());
 					}
 				}
-				response.Close();
 			}
 			return ans;
 		}
@@ -88,31 +86,30 @@ namespace Yavsc.Helpers
 
             try
             {
-                using (Stream streamQuery = request.GetRequestStream())
+                using (Stream streamQuery = await request.GetRequestStreamAsync())
                 {
                     using (StreamWriter writer = new StreamWriter(streamQuery))
                     {
                         writer.Write(JsonConvert.SerializeObject(query));
                     }
                 }
-                using (WebResponse response = request.GetResponse())
+                using (WebResponse response = await request.GetResponseAsync())
                 {
                     using (Stream stream = response.GetResponseStream())
                     {
                         if (stream.Length > 0)
                             jsonDoc = await Task.Run(() => JsonObject.Load(stream));
                     }
-                    response.Close();
                 }
             }
             catch (WebException ex)
             {
                 // TODO err logging
-                Debug.Print($"Web request failed: {request.ToString()}\n" + ex.ToString());
+                Debug.WriteLine($"Web request failed: {request.ToString()}\n" + ex.ToString());
             }
             catch (Exception ex)
             {
-                Debug.Print($"Web request failed: {request.ToString()}\n" + ex.ToString());
+                Debug.WriteLine($"Web request failed: {request.ToString()}\n" + ex.ToString());
             }
 
             return jsonDoc;

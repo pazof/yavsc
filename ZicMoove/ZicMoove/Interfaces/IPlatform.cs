@@ -17,12 +17,6 @@ namespace ZicMoove.Interfaces
         void AddAccount();
         
         void RevokeAccount(string userName);
-
-        IGCMDeclaration GetDeviceInfo();
-
-        TAnswer InvokeApi<TAnswer>(string method, object arg);
-
-        object InvokeApi(string method, object arg);
     }
 }
 
