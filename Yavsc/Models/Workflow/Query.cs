@@ -2,7 +2,7 @@ using System;
 using Yavsc.Interfaces.Workflow;
 using Yavsc.Models.Market;
 
-namespace Yavsc.Models.Billing
+namespace Yavsc.Models.Workflow
 {
 
     public class Query<P>: IBaseTrackedEntity  where P : BaseProduct

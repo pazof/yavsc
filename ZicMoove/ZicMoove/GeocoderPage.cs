@@ -2,7 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
-namespace NightFlash
+namespace ZicMoove
 {
 	public class GeocoderPage : ContentPage
 	{
