@@ -48,7 +48,6 @@
             BookQueries = new RemoteEntityRO<BookQuery, long>("bookquery", q => q.Id);
             Estimates = new EstimateEntity();
             Blogspot = new RemoteEntity<Blog, long>("blog", x=>x.Id);
-
             Contacts = new LocalEntity<ClientProviderInfo, string>(c => c.UserId);
             AppState = new LocalEntity<PageState, int>(s => s.Position);
             EstimationCache = new LocalEntity<EditEstimateViewModel, long>(e => e.Query.Id);
@@ -57,6 +56,7 @@
             RemoteFiles = new RemoteFilesEntity ();
             BlackList = new RemoteEntity<BlackListed, long>("blacklist",u => u.Id);
             ChatUsers = new ChatUserCollection();
+            Activities = new RemoteEntityRO<Activity,string>("activity",a=>a.Code);
             PrivateMessages.Load();
             BookQueries.Load();
             Estimates.Load();
