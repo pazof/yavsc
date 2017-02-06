@@ -16,6 +16,8 @@
 // along with yavsc.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+using System;
+
 namespace Yavsc.Models.Identity
 {
     public interface IGCMDeclaration
@@ -25,7 +27,7 @@ namespace Yavsc.Models.Identity
         string Model { get; set; }
         string Platform { get; set; }
         string Version { get; set; }
-
+        DateTime LatestActivityUpdate { get; set; }
     }
 
     public interface IGoogleCloudMobileDeclaration: IGCMDeclaration

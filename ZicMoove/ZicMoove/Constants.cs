@@ -11,7 +11,6 @@ namespace ZicMoove
     {
 
         public static readonly string AuthorizeUrl = YavscHomeUrl + "/authorize";
-        public static readonly string RedirectUrl = YavscHomeUrl + "/oauth/success";
         public static readonly string AccessTokenUrl = YavscHomeUrl + "/token";
 
         public static readonly string YavscApiUrl = YavscHomeUrl + "/api";

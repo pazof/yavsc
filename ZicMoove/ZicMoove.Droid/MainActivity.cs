@@ -32,7 +32,6 @@ using XLabs.Platform.Services.Email;
 using XLabs.Platform.Services.Media;
 using XLabs.Serialization;
 using XLabs.Serialization.JsonNET;
-using Yavsc.Helpers;
 using Yavsc.Models.Identity;
 
 namespace ZicMoove.Droid
@@ -327,8 +326,8 @@ namespace ZicMoove.Droid
         {
             var auth = new YaOAuth2Authenticator(
                                 clientId: Constants.APIKey,
-                                clientSecret: "blouh",
-                                scope: "profile",
+                                clientSecret: Constants.APISecret,
+                                scope: Constants.Scope,
                                 authorizeUrl: new Uri(Constants.AuthorizeUrl),
                                 redirectUrl: new Uri(Constants.RedirectUrl),
                                 accessTokenUrl: new Uri(Constants.AccessTokenUrl));
@@ -401,43 +400,7 @@ namespace ZicMoove.Droid
 
         
 
-        public IGCMDeclaration GetDeviceInfo()
-        {
-            var devinfo = CrossDeviceInfo.Current;
-            return new GCMRegIdDeclaration
-            {
-                DeviceId = devinfo.Id,
-                GCMRegistrationId = MainSettings.GoogleRegId,
-                Model = devinfo.Model,
-                Platform = devinfo.Platform.ToString(),
-                Version = devinfo.Version
-            };
-        }
-
-        [Obsolete("Use RemoteEntity to manage entities from API")]
-        public TAnswer InvokeApi<TAnswer>(string method, object arg)
-        {
-            using (var m =
-                new SimpleJsonPostMethod(
-                    method, "Bearer " +
-                MainSettings.CurrentUser.YavscTokens.AccessToken
-                ))
-            {
-                return m.Invoke<TAnswer>(arg);
-            }
-        }
-
-        public object InvokeApi(string method, object arg)
-        {
-            using (var m =
-                new SimpleJsonPostMethod(
-                    method, "Bearer " +
-                MainSettings.CurrentUser.YavscTokens.AccessToken
-                ))
-            {
-                return m.InvokeJson(arg);
-            }
-        }
+        
 
         public T Resolve<T>()
         {

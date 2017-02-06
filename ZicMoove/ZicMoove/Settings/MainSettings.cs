@@ -43,7 +43,6 @@ namespace ZicMoove.Settings
             string.Empty;
         private static readonly bool PushNotificationsDefault = false;
 
-        public static readonly string GoogleSenderId = "325408689282";
 
         private const string MusicalKey = "musical_prefs";
         private const string EnvironKey = "environ_prefs";

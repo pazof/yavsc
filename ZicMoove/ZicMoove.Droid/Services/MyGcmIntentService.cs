@@ -112,8 +112,7 @@ namespace ZicMoove.Droid
 		void SubscribeGCM ()
 		{
 			Context context = this.ApplicationContext;
-			string senders = MainSettings.GoogleSenderId; 
-			// Resources.GetString(GoogleSenderId);
+			string senders = Constants.GoogleSenderId; 
 			Intent intent = new Intent ("com.google.android.c2dm.intent.REGISTER");
 			intent.SetPackage ("com.google.android.gsf");
 			intent.PutExtra ("app", PendingIntent.GetBroadcast (context, 0, new Intent (), 0));

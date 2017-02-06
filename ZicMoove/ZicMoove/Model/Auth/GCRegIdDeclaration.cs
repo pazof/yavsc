@@ -15,6 +15,9 @@ namespace ZicMoove.Model.Auth
         public string GCMRegistrationId
         { get; set; }
 
+        public DateTime LatestActivityUpdate
+        { get; set; }
+
         public string Model
         { get; set; }
 

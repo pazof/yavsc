@@ -352,7 +352,6 @@
   <ItemGroup>
     <Compile Include="Accounts\YavscAccountAuthenticator.cs" />
     <Compile Include="Helpers\Settings.cs" />
-    <Compile Include="Helpers\SimpleJsonPostMethod.cs" />
     <Compile Include="Helpers\YavscHelpers.cs" />
     <Compile Include="Html.cs" />
     <Compile Include="Interfaces\IGCMessageHandler.cs" />

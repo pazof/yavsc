@@ -32,6 +32,10 @@ namespace ZicMoove
     using System.Collections.Generic;
     using Model.Social;
     using Settings;
+    using Helpers;
+    using Model.Auth;
+    using Plugin.DeviceInfo;
+    using Yavsc.Models.Identity;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -67,12 +71,10 @@ namespace ZicMoove
             app.Startup += OnStartup;
             app.Suspended += OnSuspended;
             MainSettings.UserChanged += MainSettings_UserChanged;
-            CrossConnectivity.Current.ConnectivityChanged += (conSender, args) =>
-            { App.IsConnected = args.IsConnected; };
+
             SetupHubConnection();
             MainSettings_UserChanged(this, null);
-            
-                StartConnexion();
+            StartConnexion();
         }
 
         // omg
@@ -334,22 +336,7 @@ namespace ZicMoove
 
 
         public static INavigationService NavigationService { protected set; get; }
-        public static bool isConnected;
-        public static bool IsConnected { get { return isConnected; }
-            private set
-            {
-                if (isConnected != value)
-                {
-                    isConnected = value;
-                    if (isConnected)
-                    {
-                        // TODO Start all cloud related stuff 
-                        StartConnexion();
-                    }
-                    
-                }
-            }
-        }
+        public static bool IsConnected { get { return CrossConnectivity.Current.IsConnected; } }
         private static HubConnection chatHubConnection = null;
         public static HubConnection ChatHubConnection
         {
@@ -453,11 +440,57 @@ namespace ZicMoove
 
         public static void PostDeviceInfo()
         {
-            var info = PlatformSpecificInstance.GetDeviceInfo();
+            var info = GetDeviceInfo();
             if (!string.IsNullOrWhiteSpace(info.GCMRegistrationId))
-                PlatformSpecificInstance.InvokeApi("gcm/register", info);
+            {
+                if (MainSettings.CurrentUser != null)
+                {
+                    InvokeApi("gcm/register", info);
+                    DataManager.Instance.Activities.Execute(null);
+                }
+
+            }
+        }
+        public static IGCMDeclaration GetDeviceInfo()
+        {
+            var devinfo = CrossDeviceInfo.Current;
+            return new GCMRegIdDeclaration
+            {
+                DeviceId = devinfo.Id,
+                GCMRegistrationId = MainSettings.GoogleRegId,
+                Model = devinfo.Model,
+                Platform = devinfo.Platform.ToString(),
+                Version = devinfo.Version,
+                LatestActivityUpdate = DataManager.Instance.Activities.Aggregate(
+                    (a,b)=> a.DateModified > b.DateModified ? a : b
+                    ).DateModified
+            };
         }
 
+        [Obsolete("Use RemoteEntity to manage entities from API")]
+        public async Task<TAnswer> InvokeApi<TAnswer>(string method, object arg)
+        {
+            using (var m =
+                new SimpleJsonPostMethod(
+                    method, "Bearer " +
+                MainSettings.CurrentUser.YavscTokens.AccessToken
+                ))
+            {
+                return await m.Invoke<TAnswer>(arg);
+            }
+        }
+
+        public static object InvokeApi(string method, object arg)
+        {
+            using (var m =
+                new SimpleJsonPostMethod(
+                    method, "Bearer " +
+                MainSettings.CurrentUser.YavscTokens.AccessToken
+                ))
+            {
+                return m.InvokeJson(arg);
+            }
+        }
         public static void ShowBookQuery (BookQuery query)
         {
             var page = new BookQueryPage
