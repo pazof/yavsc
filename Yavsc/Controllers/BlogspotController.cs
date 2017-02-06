@@ -192,10 +192,11 @@ namespace Yavsc.Controllers
                     _context.SaveChanges();
                     ViewData["StatusMessage"] = "Post modified";
                     return RedirectToAction("Index");
-                } // TODO Else hit me hard
+                } 
                 else
                 {
-                    ViewData["StatusMessage"] = "Access denied ...";
+                    ViewData["StatusMessage"] = "Accès restreint";
+                    return new ChallengeResult();
                 }
             }
             return View(blog);
