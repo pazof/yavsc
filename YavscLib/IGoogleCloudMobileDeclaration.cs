@@ -18,7 +18,7 @@
 
 using System;
 
-namespace Yavsc.Models.Identity
+namespace YavscLib
 {
     public interface IGCMDeclaration
     {

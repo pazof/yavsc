@@ -1,5 +1,5 @@
 ﻿
-namespace Yavsc.Models
+namespace YavscLib
 {
     public interface IBlog : IBaseTrackedEntity
     {

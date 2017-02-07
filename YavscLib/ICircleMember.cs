@@ -1,4 +1,4 @@
-﻿namespace Yavsc.Models
+﻿namespace YavscLib
 {
     public interface ICircleMember
     {

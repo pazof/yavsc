@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
-using Yavsc.Models.Relationship;
-using Yavsc.Models.Forms;
+using System.Web;
+using System.Threading;
 
 namespace Yavsc.Models
 {
-
+  using Relationship;
+  using Forms;
+    using YavscLib;
     using Auth;
     using Billing;
     using Booking;
@@ -21,9 +23,7 @@ namespace Yavsc.Models
     using Chat;
     using Messaging;
     using Access;
-    using Yavsc.Models.Booking.Profiles;
-    using System.Web;
-    using System.Threading;
+    using Booking.Profiles;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
