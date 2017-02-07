@@ -80,11 +80,38 @@ namespace ZicMoove {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Blog spot.
+        /// </summary>
+        public static string Blogspot {
+            get {
+                return ResourceManager.GetString("Blogspot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Annuler la validation.
         /// </summary>
         public static string CancelValidation {
             get {
                 return ResourceManager.GetString("CancelValidation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Annonces client.
+        /// </summary>
+        public static string ClientAnounces {
+            get {
+                return ResourceManager.GetString("ClientAnounces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Contrats client.
+        /// </summary>
+        public static string CLientContracts {
+            get {
+                return ResourceManager.GetString("CLientContracts", resourceCulture);
             }
         }
         
@@ -148,6 +175,15 @@ namespace ZicMoove {
         public static string ENoRemoteEntity {
             get {
                 return ResourceManager.GetString("ENoRemoteEntity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Demandes de devis.
+        /// </summary>
+        public static string EstimateQueries {
+            get {
+                return ResourceManager.GetString("EstimateQueries", resourceCulture);
             }
         }
         
@@ -251,11 +287,29 @@ namespace ZicMoove {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Annonces pro.
+        /// </summary>
+        public static string ProAnounces {
+            get {
+                return ResourceManager.GetString("ProAnounces", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Profile professionnel.
         /// </summary>
         public static string Profprof {
             get {
                 return ResourceManager.GetString("Profprof", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Contrats fournisseur.
+        /// </summary>
+        public static string ProviderContracts {
+            get {
+                return ResourceManager.GetString("ProviderContracts", resourceCulture);
             }
         }
         

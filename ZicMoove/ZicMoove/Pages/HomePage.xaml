@@ -16,15 +16,14 @@
     </ResourceDictionary>
   </CarouselPage.Resources>
 
-    <!-- La recherche d'un pro    -->
-    <ContentPage Title="{x:Static local:Strings.SearchForAPro}" >
-    </ContentPage>
+
 
     <!-- 
   les derniers sons/videos/articles postés  
      -->
-    <ContentPage Title="Blogspot">
+    <ContentPage >
       <StackLayout Orientation="Horizontal">
+      <Label Text="{x:Static local:Strings.Blogspot}" Style="{StaticResource BigLabelStyle}"/>
         <Editor x:Name="search_blog_phrase" HorizontalOptions="FillAndExpand"/>
         <Button x:Name="btn_blog_update" HorizontalOptions="End" />
       </StackLayout>
@@ -33,10 +32,11 @@
     <!-- 
   Les demandes devis en attente de réponse (pro)
   -->
-    <ContentPage Title="Demandes de devis"
+    <ContentPage 
       IsVisible="{Binding UserProfile.IsAPerformer}">
-      <StackLayout  BindingContext="{Binding BookQueries}">
-
+      <StackLayout  BindingContext="{Binding BookQueries}" Padding="5,5,5,5">
+        <Label Text="{x:Static local:Strings.EstimateQueries}" Style="{StaticResource BigLabelStyle}"/>
+      
         <ListView x:Name="querylist"
                   RefreshCommand="{Binding RefreshQueries}"
                   IsPullToRefreshEnabled="True"
@@ -75,25 +75,29 @@
 
 
     <!-- Les signatures de contrat en souffreances (pro) -->
-    <ContentPage Title="Contrats fournisseur" IsVisible="{Binding UserProfile.IsAPerformer}">
-    </ContentPage>
+    <ContentPage IsVisible="{Binding UserProfile.IsAPerformer}">
+    <Label Text="{x:Static local:Strings.ProviderContracts}" Style="{StaticResource BigLabelStyle}"/>
+      </ContentPage>
 
     <!-- Les signatures de contrat en souffreances (client) -->
-    <ContentPage Title="Contrats client" IsVisible="{Binding UserProfile.IsAPerformer}">
-    </ContentPage>
+    <ContentPage IsVisible="{Binding UserProfile.IsAPerformer}">
+    <Label Text="{x:Static local:Strings.CLientContracts}" Style="{StaticResource BigLabelStyle}"/>
+      </ContentPage>
 
     <!-- Les annonces pro (pro) -->
     <ContentPage Title="Annonces pro" IsVisible="{Binding UserProfile.IsAPerformer}">
       <StackLayout Orientation="Horizontal" >
-        <Editor x:Name="search_pub_pro_phrase" HorizontalOptions="FillAndExpand" VerticalOptions="Start"/>
+        <Label Text="{x:Static local:Strings.ProAnounces}" Style="{StaticResource BigLabelStyle}"/>
+      <Editor x:Name="search_pub_pro_phrase" HorizontalOptions="FillAndExpand" VerticalOptions="Start"/>
         <Button x:Name="btn_pro_pub" HorizontalOptions="End" VerticalOptions="Start" Text="Chercher"/>
       </StackLayout>
     </ContentPage>
 
     <!-- les petites annonces des clients (pro)  -->
-    <ContentPage Title="Annonces client" Icon="" IsVisible="{Binding UserProfile.IsAPerformer}">
+    <ContentPage Icon="icon" IsVisible="{Binding UserProfile.IsAPerformer}">
       <StackLayout Orientation="Horizontal" >
-        <Editor x:Name="search_pub_cli_phrase" HorizontalOptions="FillAndExpand" VerticalOptions="Start"/>
+        <Label Text="{x:Static local:Strings.ClientAnounces}" Style="{StaticResource BigLabelStyle}"/>
+      <Editor x:Name="search_pub_cli_phrase" HorizontalOptions="FillAndExpand" VerticalOptions="Start"/>
         <Button x:Name="btn_cli_pub" HorizontalOptions="End" VerticalOptions="Start"  Text="Chercher"/>
       </StackLayout>
     </ContentPage>
