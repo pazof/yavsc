@@ -8,7 +8,7 @@ namespace YavscLib
         string Name { get; set; }
         string ParentCode { get; set; }
         string Photo { get; set; }
-
+        string Description { get; set; }
         string ModeratorGroupName { get; set; }
         int Rate { get; set; }
         string SettingsClassName { get; set; }
