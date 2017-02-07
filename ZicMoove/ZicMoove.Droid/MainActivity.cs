@@ -280,38 +280,6 @@ namespace ZicMoove.Droid
                 return true;
             }
         }
-        public void UploadJson(string data)
-        {
-            try
-            {
-                string url = "http://lua.pschneider.fr/api/BackOffice/SetRegistrationId";
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = "POST";
-                //using GET - request.Headers.Add ("Authorization","Authorizaation value");
-                request.ContentType = "application/json";
-                HttpWebResponse myResp = (HttpWebResponse)request.GetResponse();
-                string responseText;
-
-                using (var response = request.GetResponse())
-                {
-                    using (var reader = new StreamReader(response.GetResponseStream()))
-                    {
-                        responseText = reader.ReadToEnd();
-                        Log.Debug(Constants.ApplicationName, responseText);
-                    }
-                }
-            }
-
-            catch (WebException exception)
-            {
-                string responseText;
-                using (var reader = new StreamReader(exception.Response.GetResponseStream()))
-                {
-                    responseText = reader.ReadToEnd();
-                    Log.Debug("ZicMoove", responseText);
-                }
-            }
-        }
 
         public async Task<IEnumerable<Account>> GetAndroidAccounts()
         {

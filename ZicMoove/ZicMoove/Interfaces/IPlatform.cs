@@ -11,8 +11,6 @@ namespace ZicMoove.Interfaces
         
         // TODO Better
 		string GCMStatusMessage { get; }
-
-        bool EnablePushNotifications (bool enable);
         
         void AddAccount();
         

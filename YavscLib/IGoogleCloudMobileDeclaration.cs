@@ -27,7 +27,7 @@ namespace Yavsc.Models.Identity
         string Model { get; set; }
         string Platform { get; set; }
         string Version { get; set; }
-        DateTime LatestActivityUpdate { get; set; }
+        DateTime? LatestActivityUpdate { get; set; }
     }
 
     public interface IGoogleCloudMobileDeclaration: IGCMDeclaration
