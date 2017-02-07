@@ -215,4 +215,22 @@
   <data name="SearchForAPro" xml:space="preserve">
     <value>Rechercher un artiste</value>
   </data>
+  <data name="Blogspot" xml:space="preserve">
+    <value>Blog spot</value>
+  </data>
+  <data name="ClientAnounces" xml:space="preserve">
+    <value>Annonces client</value>
+  </data>
+  <data name="CLientContracts" xml:space="preserve">
+    <value>Contrats client</value>
+  </data>
+  <data name="EstimateQueries" xml:space="preserve">
+    <value>Demandes de devis</value>
+  </data>
+  <data name="ProAnounces" xml:space="preserve">
+    <value>Annonces pro</value>
+  </data>
+  <data name="ProviderContracts" xml:space="preserve">
+    <value>Contrats fournisseur</value>
+  </data>
 </root>
