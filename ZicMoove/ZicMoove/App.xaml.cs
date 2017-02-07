@@ -36,6 +36,10 @@ namespace ZicMoove
     using Model.Auth;
     using Plugin.DeviceInfo;
     using Yavsc.Models.Identity;
+    using System.Json;
+    using Newtonsoft.Json;
+    using System.Net.Http;
+    using System.Text;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -196,7 +200,7 @@ namespace ZicMoove
         private static UserProfilePage userProfilePage;
 
         public static UserProfilePage UserProfilePage
-           { get { return userProfilePage; } }
+        { get { return userProfilePage; } }
 
         ChatPage chatPage;
         PinPage pinPage;
@@ -231,15 +235,20 @@ namespace ZicMoove
                 BindingContext = bookQueries
             };
 
-            homePage = new HomePage() {
+            homePage = new HomePage()
+            {
                 Title = "Accueil",
-                Icon = "icon.png" };
+                Icon = "icon.png"
+            };
 
-            homePage.BindingContext = new HomeViewModel {
+            homePage.BindingContext = new HomeViewModel
+            {
                 BookQueries = bookQueries,
-                UserProfile = userprofile };
+                UserProfile = userprofile
+            };
 
-            userProfilePage = new UserProfilePage {
+            userProfilePage = new UserProfilePage
+            {
                 Title = "Profile utilisateur",
                 Icon = "ic_corp_icon.png",
                 BindingContext = userprofile
@@ -278,7 +287,7 @@ namespace ZicMoove
                     () =>
                     {
                         ShowPage(userProfilePage);
-                    } ) 
+                    })
             };
 
             ToolbarItem tiHome = new ToolbarItem()
@@ -286,12 +295,13 @@ namespace ZicMoove
                 Text = "Accueil",
                 Icon = "icon.png",
                 Command = new Command(
-                    () => {
+                    () =>
+                    {
                         ShowPage(homePage);
                     })
             };
 
-            ToolbarItem tiPubChat= new ToolbarItem()
+            ToolbarItem tiPubChat = new ToolbarItem()
             {
                 Text = "Chat",
                 Icon = "chat_icon_s.png",
@@ -311,10 +321,10 @@ namespace ZicMoove
             masterDetail.ToolbarItems.Add(tiSetts);
             masterDetail.ToolbarItems.Add(tiPubChat);
             this.MainPage = masterDetail;
-            
+
             NavigationService = new NavigationService(Navigation);
         }
-        public static Task<string> DisplayActionSheet(string title, string cancel, string destruction, string [] buttons)
+        public static Task<string> DisplayActionSheet(string title, string cancel, string destruction, string[] buttons)
         {
             var currentPage = Navigation.NavigationStack.Last();
             return currentPage.DisplayActionSheet(title, cancel, destruction, buttons);
@@ -346,23 +356,23 @@ namespace ZicMoove
             }
         }
         // Start the Hub connection
-        public static async void StartConnexion ()
+        public static async void StartConnexion()
         {
             if (CrossConnectivity.Current.IsConnected)
                 try
-            {
+                {
                     if (chatHubConnection.State == ConnectionState.Disconnected)
-                await chatHubConnection.Start();
-            }
-            catch (WebException  )
-            {
-                // TODO use webex, set this cx down status somewhere,
-                // & display it & maybe try again later.
-            }
-            catch (Exception )
-            {
-                // TODO use ex
-            }
+                        await chatHubConnection.Start();
+                }
+                catch (WebException)
+                {
+                    // TODO use webex, set this cx down status somewhere,
+                    // & display it & maybe try again later.
+                }
+                catch (Exception)
+                {
+                    // TODO use ex
+                }
         }
 
         public void SetupHubConnection()
@@ -373,7 +383,8 @@ namespace ZicMoove
             chatHubConnection.Error += ChatHubConnection_Error;
 
             chatHubProxy = chatHubConnection.CreateHubProxy("ChatHub");
-            chatHubProxy.On<string, string>("addPV", (n, m) => {
+            chatHubProxy.On<string, string>("addPV", (n, m) =>
+            {
                 var msg = new ChatMessage
                 {
                     Message = m,
@@ -388,12 +399,12 @@ namespace ZicMoove
                 DataManager.Instance.ChatUsers.OnPrivateMessage(msg);
             });
         }
-        public static  void StopConnection()
+        public static void StopConnection()
         {
             try
             {
                 if (chatHubConnection.State != ConnectionState.Disconnected)
-                chatHubConnection.Stop();
+                    chatHubConnection.Stop();
             }
             catch (WebException)
             {
@@ -431,24 +442,52 @@ namespace ZicMoove
                 return chatHubProxy;
             }
         }
-        public static Task<bool> HasSomeCloud {
+        public static Task<bool> HasSomeCloud
+        {
             get
             {
                 return CrossConnectivity.Current.IsReachable(Constants.YavscHomeUrl, Constants.CloudTimeout);
             }
         }
 
-        public static void PostDeviceInfo()
+        public static async Task PostDeviceInfo()
         {
             var info = GetDeviceInfo();
             if (!string.IsNullOrWhiteSpace(info.GCMRegistrationId))
             {
                 if (MainSettings.CurrentUser != null)
                 {
-                    InvokeApi("gcm/register", info);
-                    DataManager.Instance.Activities.Execute(null);
-                }
+                    using (var client = UserHelpers.CreateJsonClient())
+                    {
+                        try
+                        {
+                            var stringContent = JsonConvert.SerializeObject(info);
+                            HttpContent content = new StringContent(
+                                stringContent, Encoding.UTF8, "application/json"
+                                );
 
+                            using (var response = await client.PostAsync(Constants.MobileRegistrationUrl, content))
+                            {
+                                if (response.IsSuccessStatusCode)
+                                {
+                                    var rcontent = await response.Content.ReadAsStringAsync();
+                                    var jvalue = JsonValue.Parse(rcontent);
+                                    if (jvalue != null)
+                                        if (jvalue.ContainsKey("UpdateActivities"))
+                                            if ((bool)jvalue["UpdateActivities"])
+                                            {
+                                                DataManager.Instance.Activities.Execute(null);
+                                                DataManager.Instance.Activities.SaveEntity();
+                                            }
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // TODO err reporting
+                        }
+                    }
+                }
             }
         }
         public static IGCMDeclaration GetDeviceInfo()
@@ -457,7 +496,7 @@ namespace ZicMoove
             DateTime? lupdate = DataManager.Instance.Activities.Count > 0 ?
                 DataManager.Instance.Activities.Aggregate(
                     (a, b) => a.DateModified > b.DateModified ? a : b
-                    ).DateModified : (DateTime ?) null;
+                    ).DateModified : (DateTime?)null;
 
             return new GCMRegIdDeclaration
             {
@@ -470,31 +509,8 @@ namespace ZicMoove
             };
         }
 
-        [Obsolete("Use RemoteEntity to manage entities from API")]
-        public async Task<TAnswer> InvokeApi<TAnswer>(string method, object arg)
-        {
-            using (var m =
-                new SimpleJsonPostMethod(
-                    method, "Bearer " +
-                MainSettings.CurrentUser.YavscTokens.AccessToken
-                ))
-            {
-                return await m.Invoke<TAnswer>(arg);
-            }
-        }
-
-        public static object InvokeApi(string method, object arg)
-        {
-            using (var m =
-                new SimpleJsonPostMethod(
-                    method, "Bearer " +
-                MainSettings.CurrentUser.YavscTokens.AccessToken
-                ))
-            {
-                return m.InvokeJson(arg);
-            }
-        }
-        public static void ShowBookQuery (BookQuery query)
+        
+        public static void ShowBookQuery(BookQuery query)
         {
             var page = new BookQueryPage
             { BindingContext = new BookQueryViewModel(query) };
