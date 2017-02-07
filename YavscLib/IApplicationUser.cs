@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Yavsc.Models.Identity;
 
-namespace Yavsc.Models
+namespace YavscLib
 {
     public interface IApplicationUser
     {

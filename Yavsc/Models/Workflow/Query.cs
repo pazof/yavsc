@@ -1,11 +1,12 @@
 using System;
-using Yavsc.Interfaces.Workflow;
-using Yavsc.Models.Market;
 
 namespace Yavsc.Models.Workflow
 {
+  using Interfaces.Workflow;
+  using Models.Market;
+  using YavscLib;
 
-    public class Query<P>: IBaseTrackedEntity  where P : BaseProduct
+    public class Query<P>: IBaseTrackedEntity where P : BaseProduct
     {
         public DateTime DateCreated
         {

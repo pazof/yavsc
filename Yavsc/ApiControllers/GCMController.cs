@@ -28,17 +28,18 @@ public class GCMController : Controller
     /// <returns></returns>
     [Authorize, HttpPost("register")]
     public IActionResult Register(
-        [FromBody] GoogleCloudMobileDeclaration declaration)
+        [FromBody] GivenGoogleCloudMobileDeclaration declaration)
     {
         var uid = User.GetUserId();
         
-        _logger.LogWarning($"Registering device with id:{declaration.DeviceId} for {uid}");
+        _logger.LogInformation($"Registering device with id:{declaration.DeviceId} for {uid}");
         if (ModelState.IsValid)
         {
             var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
             var deviceAlreadyRegistered = (alreadyRegisteredDevice!=null);
             if (deviceAlreadyRegistered)
             {
+                 _logger.LogInformation($"deviceAlreadyRegistered");
                 // Override an exiting owner
                 alreadyRegisteredDevice.DeclarationDate = DateTime.Now;
                 alreadyRegisteredDevice.DeviceOwnerId = uid;
@@ -51,17 +52,16 @@ public class GCMController : Controller
             }
             else
             {
+                 _logger.LogInformation($"new device");
                 declaration.DeclarationDate = DateTime.Now;
                 declaration.DeviceOwnerId = uid;
-                _context.GCMDevices.Add(declaration);
+                _context.GCMDevices.Add(declaration as GoogleCloudMobileDeclaration);
                 _context.SaveChanges();
             }
-            var latestActivityUpdate = _context.Activities.Aggregate(
-                (a,b)=>a.DateModified>b.DateModified?a:b
-            ).DateModified;
+            var latestActivityUpdate = _context.Activities.Max(a=>a.DateModified);
             return Json(new { 
                 IsAnUpdate = deviceAlreadyRegistered, 
-                UpdateActivities = latestActivityUpdate>declaration.LatestActivityUpdate 
+                UpdateActivities = latestActivityUpdate > declaration.LatestActivityUpdate 
                 });
         }
         return new BadRequestObjectResult(ModelState);

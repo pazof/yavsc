@@ -1,6 +1,6 @@
 using System;
 
-namespace Yavsc.Models
+namespace YavscLib
 {
     public interface IBaseTrackedEntity
     {

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models
 {
+  using YavscLib;
 
     public partial class AccountBalance: IAccountBalance {
         [Key]

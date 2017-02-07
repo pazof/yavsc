@@ -2,12 +2,13 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
-using Yavsc.Models.Billing;
-using Yavsc.Models.Relationship;
-using Yavsc.Models.Workflow;
 
 namespace Yavsc.Models.Booking
 {
+  using YavscLib;
+  using Yavsc.Models.Billing;
+  using Yavsc.Models.Relationship;
+  using Yavsc.Models.Workflow;
     /// <summary>
     /// Query, for a date, with a given perfomer, at this given place.
     /// </summary>
