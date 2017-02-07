@@ -67,7 +67,6 @@
     <Compile Include="Data\ApiCallFailedException.cs" />
     <Compile Include="Data\EstimateEntity.cs" />
     <Compile Include="Data\NonCrUD\RemoteFiles.cs" />
-    <Compile Include="Helpers\SimpleJsonPostMethod.cs" />
     <Compile Include="Model\Access\BlackListed.cs" />
     <Compile Include="Model\Auth\GCRegIdDeclaration.cs" />
     <Compile Include="Model\Booking\MusicalPreference.cs" />
@@ -130,6 +129,7 @@
     <Compile Include="ViewModels\UserProfile\UserProfileViewModel.cs" />
     <Compile Include="ViewModels\UserProfile\DirectoryInfoViewModel.cs" />
     <Compile Include="ViewModels\Validation\ErrorSeverity.cs" />
+    <Compile Include="Views\CommandFormView.cs" />
     <Compile Include="Views\EnumPicker.cs" />
     <Compile Include="Converters\BooleanToObjectConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
