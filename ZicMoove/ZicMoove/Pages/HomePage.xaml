@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
             x:Class="ZicMoove.Pages.HomePage"
             Style="{StaticResource PageStyle}"
             Title="Accueil">
-  <ContentPage.Resources>
+  <CarouselPage.Resources>
     <ResourceDictionary>
       <Style TargetType="Label">
         <Setter Property="Style" Value="{StaticResource ContentLabelStyle}" />
@@ -14,12 +14,11 @@
         <Setter Property="Style" Value="{StaticResource ButtonStyle}" />
       </Style>
     </ResourceDictionary>
-  </ContentPage.Resources>
+  </CarouselPage.Resources>
 
-  <TabbedPage.Children>
     <!-- La recherche d'un pro    -->
-    <TabbedPage Title="{x:Static local:Strings.SearchForAPro}" >
-    </TabbedPage>
+    <ContentPage Title="{x:Static local:Strings.SearchForAPro}" >
+    </ContentPage>
 
     <!-- 
   les derniers sons/videos/articles postés  
@@ -98,6 +97,5 @@
         <Button x:Name="btn_cli_pub" HorizontalOptions="End" VerticalOptions="Start"  Text="Chercher"/>
       </StackLayout>
     </ContentPage>
-  </TabbedPage.Children>
 
-</TabbedPage>
+</CarouselPage>
