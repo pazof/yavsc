@@ -454,6 +454,11 @@ namespace ZicMoove
         public static IGCMDeclaration GetDeviceInfo()
         {
             var devinfo = CrossDeviceInfo.Current;
+            DateTime? lupdate = DataManager.Instance.Activities.Count > 0 ?
+                DataManager.Instance.Activities.Aggregate(
+                    (a, b) => a.DateModified > b.DateModified ? a : b
+                    ).DateModified : (DateTime ?) null;
+
             return new GCMRegIdDeclaration
             {
                 DeviceId = devinfo.Id,
@@ -461,9 +466,7 @@ namespace ZicMoove
                 Model = devinfo.Model,
                 Platform = devinfo.Platform.ToString(),
                 Version = devinfo.Version,
-                LatestActivityUpdate = DataManager.Instance.Activities.Aggregate(
-                    (a,b)=> a.DateModified > b.DateModified ? a : b
-                    ).DateModified
+                LatestActivityUpdate = lupdate
             };
         }
 
