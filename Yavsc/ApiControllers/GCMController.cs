@@ -56,17 +56,13 @@ public class GCMController : Controller
                 _context.GCMDevices.Add(declaration);
                 _context.SaveChanges();
             }
-            if (declaration.LatestActivityUpdate > default(DateTime))
-            {
-                var latestActivityUpdate = _context.Activities.Aggregate(
-                    (a,b)=>a.DateModified>b.DateModified?a:b
-                ).DateModified;
-                return Json(new { 
-                    IsAnUpdate = deviceAlreadyRegistered, 
-                    UpdateActivities = latestActivityUpdate>declaration.LatestActivityUpdate?true:false 
-                    });
-            }
-            return Json(new { IsAnUpdate = deviceAlreadyRegistered });
+            var latestActivityUpdate = _context.Activities.Aggregate(
+                (a,b)=>a.DateModified>b.DateModified?a:b
+            ).DateModified;
+            return Json(new { 
+                IsAnUpdate = deviceAlreadyRegistered, 
+                UpdateActivities = latestActivityUpdate>declaration.LatestActivityUpdate 
+                });
         }
         return new BadRequestObjectResult(ModelState);
     }
