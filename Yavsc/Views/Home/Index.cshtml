@@ -22,20 +22,18 @@
             i=0;
             foreach (var act in Model) { 
                 string cls = (i==0) ? "item active":"item";
-        <div class="@cls"  style="background-image: url('@act.Photo');  ">
+        <div class="@cls"  style="background-image: url('@act.Photo'); background-repeat: no-repeat; ">
           <!-- <img src="@act.Photo" alt="@act.Name" class="img-responsive" />  -->
             <div class="carousel-caption-s" >
                 
                 <p><em>@act.Name</em><br/>
                 @act.Description </p>
 
-                 <p>
                 @foreach (var form in act.Forms) {
                     <a class="btn btn-default" asp-controller="FrontOffice" asp-action="@form.Action" asp-route-id="@act.Code">
                     @form.Title
                     </a>
                 }
-            </p>
                 
             </div>
         </div>
