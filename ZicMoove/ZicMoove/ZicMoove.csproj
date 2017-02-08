@@ -129,7 +129,7 @@
     <Compile Include="ViewModels\UserProfile\UserProfileViewModel.cs" />
     <Compile Include="ViewModels\UserProfile\DirectoryInfoViewModel.cs" />
     <Compile Include="ViewModels\Validation\ErrorSeverity.cs" />
-    <Compile Include="Views\CommandFormView.cs" />
+    <Compile Include="Views\ActivityView.cs" />
     <Compile Include="Views\EnumPicker.cs" />
     <Compile Include="Converters\BooleanToObjectConverter.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
