@@ -61,5 +61,11 @@ namespace ZicMoove.Model.Workflow
         }
 
         public CommandForm[] Forms { get; set; }
+
+        public string Description
+        {
+            get;
+            set;
+        }
     }
 }
