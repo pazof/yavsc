@@ -3,15 +3,15 @@
 /* Set some basic padding to keep content from hitting the edges */
 
 body {
-  color: #fff;
   background-color: #210912;
+  color:#777;
 }
-
+h1,h2,h3{color:#fff;}
 .blog {
-    padding-left: 15px;
-    padding-right: 15px;
-  color: #000;
-  background-color: #fff;
+    padding: 1em;
+    color: #999;
+    background-color: rgb(0,0,0);
+
 }
 /* Set widths on the form inputs since otherwise they're 100% wide */
  input,
@@ -23,13 +23,25 @@ select,
 }
 
 a {
-  color: #9ff;
   font-weight: 900;
+  color: #9f9;
 }
 a:active,
 a:hover {
   outline: 0;
-  color: #a05050;
+  color: #6C6;
+}
+.blog a {
+  color: #9f9;
+  font-weight: 900;
+}
+.blog a:active,
+.blog a:hover {
+  outline: 0;
+  color: #6C6;
+}
+.jumbotron {
+    background-color: #502020;
 }
 /* Set widths on image and video, since otherwise they use their native resolution */
 
@@ -141,10 +153,6 @@ footer {
 .blogtitle  { 
     display: inline-block;
     font-size: x-large;
-}
-
-.blogtext { 
-    font-feature-settings: "valt"
 }
 
 .blogphoto {
