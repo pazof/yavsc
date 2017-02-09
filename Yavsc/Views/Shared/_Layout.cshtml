@@ -9,7 +9,7 @@
             <link rel="stylesheet" href="~/css/bootstrap.css" />
             <link rel="stylesheet" href="~/css/site.css" />
         </environment>
-        <environment names="Staging,Production,yavsc,yavscpre,booking,lua">
+        <environment names="Staging,Production,yavsc,yavscpre,zicmoove,lua">
             <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true"/>
             <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
         </environment>
@@ -19,7 +19,7 @@
             <script src="~/js/site.js"></script>
             <script src="~/js/jquery.signalR-2.2.1.js"></script>
         </environment>
-        <environment names="Staging,Production,yavsc,yavscpre,booking,lua">
+        <environment names="Staging,Production,yavsc,yavscpre,zicmoove,lua">
             <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
                     asp-fallback-src="~/bower_components/jquery/dist/jquery.min.js"
                     asp-fallback-test="window.jQuery" >
@@ -62,8 +62,14 @@
         </main>
         <hr />
         <footer>
-<environment names="Lua,Development">
+<environment names="Development">
     <p><em>Site de développement</em></p>
+</environment>
+<environment names="Lua">
+    <i>Get up.</i>
+</environment>
+<environment names="ZicMoove">
+    <i>Get up.</i>
 </environment>
 
 <script>

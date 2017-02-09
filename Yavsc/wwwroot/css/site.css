@@ -42,6 +42,7 @@ a:hover {
 }
 .jumbotron {
     background-color: #502020;
+    padding: .5em;
 }
 /* Set widths on image and video, since otherwise they use their native resolution */
 
