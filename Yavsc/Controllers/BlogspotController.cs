@@ -52,7 +52,7 @@ namespace Yavsc.Controllers
             if (usercircles != null) {
                 posts = _context.Blogspot.Include(
                             b => b.Author
-                            ).Include(p=>p.ACL).Where(p=>p.Visible && (p.ACL.Count == 0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId))));
+                            ).Include(p=>p.ACL).Where(p=> p.AuthorId == uid || p.Visible && (p.ACL.Count == 0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId))));
                /* posts = _context.Blogspot.Include(
                             b => b.Author
                             ).Include(p=>p.ACL).Where(p=>p.Visible || p.ACL.Any(a => usercircles.Contains(a.Allowed)
@@ -61,7 +61,7 @@ namespace Yavsc.Controllers
             else {
                 posts = _context.Blogspot.Include(
                             b => b.Author
-                            ).Include(p=>p.ACL).Where(p=>p.Visible && p.ACL.Count == 0);
+                            ).Include(p=>p.ACL).Where(p=>p.AuthorId == uid || p.Visible && p.ACL.Count == 0);
             }
 
             return View(posts
