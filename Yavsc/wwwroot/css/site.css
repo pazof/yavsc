@@ -4,14 +4,47 @@
 
 body {
   background-color: #210912;
-  color:#777;
+  color:#999;
 }
 h1,h2,h3{color:#fff;}
 .blog {
     padding: 1em;
-    color: #999;
-    background-color: rgb(0,0,0);
+}
+.blog a {
+  color: #9f9;
+  font-weight: 900;
+}
+.blog a:active,
+.blog a:hover {
+  outline: 0;
+  color: #6C6;
+}
 
+tr.vpost {
+    background-color: #306020;
+    max-height: 3em;
+}
+tr.ipost {
+    background-color: #303030;
+    font-size: smaller;
+    max-height: 2em;
+}
+tr.vpost a {
+    font-weight: bold;
+    color: white;
+    text-shadow: 3px 3px 8px black; 
+}
+tr.ipost a {
+    font-style: bold;
+    color: #b0b0b0;
+    text-shadow: 3px 3px 5px #505050; 
+}
+.panel{
+   float: left;
+   padding:1em;
+   margin:1em;
+   color: white;
+   background-color: #421824;
 }
 /* Set widths on the form inputs since otherwise they're 100% wide */
  input,
@@ -28,15 +61,6 @@ a {
 }
 a:active,
 a:hover {
-  outline: 0;
-  color: #6C6;
-}
-.blog a {
-  color: #9f9;
-  font-weight: 900;
-}
-.blog a:active,
-.blog a:hover {
   outline: 0;
   color: #6C6;
 }
