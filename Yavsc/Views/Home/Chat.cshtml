@@ -3,42 +3,43 @@
 <label><input type="checkbox" id="mute" />Muet</label>
 <style>
 .discussion {
-  color: black;
+  color: white;
   font-family: monospace;
 }
 .notif {
-  color: grey;
+  color: #aaf;
   font-family: monospace;
 }
 .pv {
-  color: black;
+  color: yellow;
   font-family: monospace;
   font-style: bold;
-  background-color: yellow;
 }
 
 #targets { 
     display:inline-block;
 }
 </style>
+
+
+
 <div class="container">
     <input type="hidden" id="displayname" />
-    <div style="float:right; background-color: grey; padding:1em; margin:1em;">
-<h3>Salons</h3>
-<ul>
-    <li id="pubChan">Public</li>
-</ul>
-<h3>Utilisateurs</h3>
-<ul id="userlist" style="list-style:none; padding: 1em; margin:1em;">
-</ul>
-
-</div>
+    <div class="panel">
+    <em>Salons</em>
+    <ul>
+        <li id="pubChan">Public</li>
+    </ul>
+    <em>Utilisateurs</em>
+    <ul id="userlist" style="list-style:none;">
+    </ul>
+    </div>
 <ul id="discussion">
 </ul>
 <div id="targets">
     <div id="sendmessagebox">
         <input type="text" id="message" />
-        <input type="button" id="sendmessage" value="@SR[" Send "]" />
+        <input type="button" id="sendmessage" value="@SR["Send"]" />
     </div>
     @if (ViewBag.IsAuthenticated) {
     <div id="sendpvbox">
