@@ -9,14 +9,14 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.OptionsModel;
-using Yavsc.Helpers;
-using Yavsc.Models;
-using Yavsc.Models.Billing;
-using Yavsc.Models.Booking;
-using Yavsc.ViewModels;
 
 namespace Yavsc.Controllers
 {
+    using Helpers;
+    using Models;
+    using Models.Billing;
+    using Models.Workflow;
+    using ViewModels;
     [Authorize]
     public class EstimateController : Controller
     {

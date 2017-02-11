@@ -20,11 +20,11 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-using Yavsc.Models.Booking;
-using Yavsc.Models.Messaging;
 
 namespace Yavsc.Models.Calendar
 {
+	using Models.Workflow;
+	using Models.Messaging;
 	/// <summary>
 	/// I calendar manager.
 	/// </summary>

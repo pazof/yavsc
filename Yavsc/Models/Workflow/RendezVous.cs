@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Market;
 
-namespace Yavsc.Models.Booking
+namespace Yavsc.Models.Workflow
 {
     using Models.Relationship;
     /// <summary>
