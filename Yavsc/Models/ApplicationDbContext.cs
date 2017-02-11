@@ -10,8 +10,8 @@ using System.Threading;
 
 namespace Yavsc.Models
 {
-  using Relationship;
-  using Forms;
+    using Relationship;
+    using Forms;
     using YavscLib;
     using Auth;
     using Billing;
@@ -24,6 +24,7 @@ namespace Yavsc.Models
     using Messaging;
     using Access;
     using Booking.Profiles;
+    using Yavsc.Models.Workflow.Profiles;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

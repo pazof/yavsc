@@ -11,7 +11,7 @@ namespace Yavsc.Controllers
 {
     using Helpers;
     using Models;
-    using Models.Booking;
+    using Models.Workflow;
     using ViewModels.FrontOffice;
     public class FrontOfficeController : Controller
     {

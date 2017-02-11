@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Models.Booking.Profiles
+namespace Yavsc.Models.Workflow.Profiles
 {
     using Models.Workflow;
     using YavscLib;
