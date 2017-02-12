@@ -2,14 +2,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Workflow;
 
-namespace Yavsc.Models.Booking
+namespace Yavsc.Models.Musical.Profiles
 {
-    public class DjPerformerProfile : SpecializationSettings
+    public class StarPerformerProfile : PerformerProfile
     {
-        public string SoundCloudId { get; set; }
-
         [InverseProperty("OwnerProfile")]
         public virtual List<MusicalPreference> SoundColor { get; set; }
-        
     }
 }

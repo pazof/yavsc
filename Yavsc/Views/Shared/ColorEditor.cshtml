@@ -18,8 +18,23 @@
             var green = @Model.Green;
             var blue = @Model.Blue;
 
-            $(".slider").slider(
+            $("#sred").slider(
                 {
+                    value: red,
+                    min: 0, 
+                    max: 255, 
+                    animate: "fast"
+                });
+            $("#sgreen").slider(
+                {
+                    value: green,
+                    min: 0, 
+                    max: 255, 
+                    animate: "fast"
+                });
+            $("#sblue").slider(
+                {
+                    value: blue,
                     min: 0, 
                     max: 255, 
                     animate: "fast"
@@ -43,6 +58,7 @@
                 blue=ui.value; 
                 updateColor();
             });
+            updateColor();
         });
 
 </script>

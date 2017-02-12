@@ -17,7 +17,7 @@ namespace Yavsc.Models
     using YavscLib;
     using Auth;
     using Billing;
-    using Booking;
+    using Musical;
     using OAuth;
     using Workflow;
     using Identity;
@@ -25,7 +25,7 @@ namespace Yavsc.Models
     using Chat;
     using Messaging;
     using Access;
-    using Booking.Profiles;
+    using Musical.Profiles;
     using Workflow.Profiles;
     using Drawing;
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

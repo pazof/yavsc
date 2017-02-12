@@ -1,7 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Models.Booking
+namespace Yavsc.Models.Musical
 {
 
     public class MusicalPreference   {

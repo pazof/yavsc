@@ -22,6 +22,15 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-md-2 control-label">
+                Indication de couleur
+            </label>
+            <div class="col-md-10">
+               @await Html.PartialAsync("ColorEditor",Model)
+            </div>
+        </div>
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
