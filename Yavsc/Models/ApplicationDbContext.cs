@@ -7,6 +7,8 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using System.Web;
 using System.Threading;
+using Yavsc.Models.Haircut;
+using Yavsc.Models.Drawing;
 
 namespace Yavsc.Models
 {
@@ -24,8 +26,8 @@ namespace Yavsc.Models
     using Messaging;
     using Access;
     using Booking.Profiles;
-    using Yavsc.Models.Workflow.Profiles;
-
+    using Workflow.Profiles;
+    using Drawing;
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         protected override void OnModelCreating(ModelBuilder builder)
@@ -263,6 +265,10 @@ namespace Yavsc.Models
          public DbSet<Form> Form { get; set; }
 
          public DbSet<Ban> Banlist { get ; set; }
+
+         public DbSet<HairTaint> HairTaint { get; set; }
+
+         public DbSet<Color> Color { get; set; }
          
 
     }

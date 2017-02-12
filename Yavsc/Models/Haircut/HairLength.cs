@@ -1,4 +1,4 @@
-namespace Yavsc.Models.haircut
+namespace Yavsc.Models.Haircut
 {
     public enum HairLength : int
     {
