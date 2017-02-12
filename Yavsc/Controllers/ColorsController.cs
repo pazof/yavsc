@@ -24,14 +24,14 @@ namespace Yavsc.Controllers
         }
 
         // GET: Colors/Details/5
-        public async Task<IActionResult> Details(byte? id)
+        public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            Color color = await _context.Color.SingleAsync(m => m.Red == id);
+            Color color = await _context.Color.SingleAsync(m => m.Id == id);
             if (color == null)
             {
                 return HttpNotFound();
@@ -61,14 +61,14 @@ namespace Yavsc.Controllers
         }
 
         // GET: Colors/Edit/5
-        public async Task<IActionResult> Edit(byte? id)
+        public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            Color color = await _context.Color.SingleAsync(m => m.Red == id);
+            Color color = await _context.Color.SingleAsync(m => m.Id == id);
             if (color == null)
             {
                 return HttpNotFound();
@@ -92,14 +92,14 @@ namespace Yavsc.Controllers
 
         // GET: Colors/Delete/5
         [ActionName("Delete")]
-        public async Task<IActionResult> Delete(byte? id)
+        public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            Color color = await _context.Color.SingleAsync(m => m.Red == id);
+            Color color = await _context.Color.SingleAsync(m => m.Id == id);
             if (color == null)
             {
                 return HttpNotFound();
@@ -111,9 +111,9 @@ namespace Yavsc.Controllers
         // POST: Colors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(byte id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            Color color = await _context.Color.SingleAsync(m => m.Red == id);
+            Color color = await _context.Color.SingleAsync(m => m.Id == id);
             _context.Color.Remove(color);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");

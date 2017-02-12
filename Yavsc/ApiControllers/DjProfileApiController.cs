@@ -1,7 +1,7 @@
 namespace Yavsc.ApiControllers
 {
     using Models;
-    using Models.Booking.Profiles;
+    using Models.Musical.Profiles;
 
     public class DjProfileApiController : ProfileApiController<DjSettings>
     {

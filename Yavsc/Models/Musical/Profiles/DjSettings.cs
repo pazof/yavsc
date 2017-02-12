@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using YavscLib;
 
-namespace Yavsc.Models.Booking.Profiles
+namespace Yavsc.Models.Musical.Profiles
 {
     public class DjSettings : ISpecializationSettings
     {
