@@ -8,7 +8,6 @@ using Microsoft.Data.Entity;
 using System.Web;
 using System.Threading;
 using Yavsc.Models.Haircut;
-using Yavsc.Models.Drawing;
 
 namespace Yavsc.Models
 {
