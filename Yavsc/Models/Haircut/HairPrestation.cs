@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Yavsc.Models.haircut
+namespace Yavsc.Models.Haircut
 {
     public class HairPrestation
     { 
