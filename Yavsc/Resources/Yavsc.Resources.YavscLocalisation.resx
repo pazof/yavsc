@@ -396,10 +396,10 @@
   <data name="XHasBeenNotified"><value>{0} à été notifié de votre demande, vous devriez être contacté rapidement</value></data>
   <data name="Xshouldbeavailable"><value>Au vu de son calendrier,
   {0} devrait être disponible pour ce rendez-vous</value></data>
-  <data name="Yavsc.Models.Booking.Profiles.Instrumentation"><value>Paramètres musicien (l'instrument)</value></data>
-  <data name="Yavsc.Models.Booking.Profiles.DjSettings"><value>Paramètres Dj (le compte SoundCloud.com)</value></data>
-  <data name="Yavsc.Models.Booking.Profiles.FormationSettings"><value>Paramètres formation (les partenaires)</value></data>
-  <data name="Yavsc.Models.Booking.Profiles.GeneralSettings"><value>Paramètres généraux (visibilité et présentation)</value></data>
+  <data name="Yavsc.Models.Musical.Profiles.Instrumentation"><value>Paramètres musicien (l'instrument)</value></data>
+  <data name="Yavsc.Models.Musical.Profiles.DjSettings"><value>Paramètres Dj (le compte SoundCloud.com)</value></data>
+  <data name="Yavsc.Models.Musical.Profiles.FormationSettings"><value>Paramètres formation (les partenaires)</value></data>
+  <data name="Yavsc.Models.Musical.Profiles.GeneralSettings"><value>Paramètres généraux (visibilité et présentation)</value></data>
   <data name="Yes"><value>Oui</value></data>
   <data name="YouNeedToBeAuthenticatedIOToContact"><value>Vous devez vous authentifier pour pouvoir demander un devis
       à un préstataire.</value></data>

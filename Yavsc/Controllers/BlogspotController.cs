@@ -42,7 +42,6 @@ namespace Yavsc.Controllers
         [AllowAnonymous]
         public IActionResult Index(string id, int skip=0, int maxLen=25)
         {
-            
             if (!string.IsNullOrEmpty(id))
                 return UserPosts(id);
             string uid = User.GetUserId();

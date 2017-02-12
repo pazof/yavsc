@@ -46,8 +46,8 @@ namespace Yavsc.Controllers
             return View(model);
         }
 
-        [Route("Book/{id?}"), HttpGet, AllowAnonymous]
-        public ActionResult Book(string id)
+        [Route("Profiles/{id?}"), HttpGet, AllowAnonymous]
+        public ActionResult Profiles(string id)
         {
             if (id == null)
             {
