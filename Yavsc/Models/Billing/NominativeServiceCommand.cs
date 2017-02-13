@@ -2,14 +2,38 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Interfaces.Workflow;
 using Yavsc.Models.Market;
 using Yavsc.Models.Workflow;
+using YavscLib;
 
 namespace Yavsc.Models.Billing
 {
 
- public class NominativeServiceCommand<T> : Query<T> where T:Service 
+ public abstract class NominativeServiceCommand : IBaseTrackedEntity, IQuery
   {
+        public DateTime DateCreated
+        {
+            get; set;
+        }
+
+        public DateTime DateModified
+        {
+             get; set;
+        }
+
+        public string UserCreated
+        {
+             get; set;
+        }
+
+        public string UserModified
+        {
+             get; set;
+        }
+
+        public QueryStatus Status { get; set; }
+
     [Required]
     public string ClientId { get; set; }
 

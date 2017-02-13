@@ -12,7 +12,7 @@ namespace Yavsc.Models.Workflow
     /// Query, for a date, with a given perfomer, at this given place.
     /// </summary>
 
-    public class BookQuery : NominativeServiceCommand<RendezVous>, IBaseTrackedEntity
+    public class BookQuery : NominativeServiceCommand
     {
         /// <summary>
         /// The command identifier

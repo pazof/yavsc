@@ -1,5 +1,7 @@
 @model BookQuery 
-@{ ViewData["Title"] = SR["Book "+ViewBag.Activity.Code]; } 
+@{ ViewData["Title"] = "Proposition de rendez-vous "+
+@SR["to"]+" "+ Model.PerformerProfile.Performer.UserName
++" ["+SR[ViewBag.Activity.Code]+"]"; } 
 
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
 <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
