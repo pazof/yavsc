@@ -1,4 +1,4 @@
-namespace Yavsc.Models.Messaging
+namespace Yavsc.Models.Haircut
 {
     public class HairCutQueryEvent : BookQueryProviderInfo, IEvent
     {
@@ -27,5 +27,7 @@ namespace Yavsc.Models.Messaging
 
             set;
         }
+        
+        HairCutQuery Data { get; set; }
     }
 }

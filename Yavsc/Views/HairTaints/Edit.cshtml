@@ -20,6 +20,13 @@
             </div>
         </div>
         <div class="form-group">
+            <label asp-for="ColorId" class="control-label col-md-2">ColorId</label>
+            <div class="col-md-10">
+                <select asp-for="ColorId" asp-items=@ViewBag.ColorId class="form-control"></select>
+                <span asp-validation-for="ColorId" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>

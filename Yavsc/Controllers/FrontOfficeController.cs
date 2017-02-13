@@ -58,8 +58,8 @@ namespace Yavsc.Controllers
             return View(result);
         }
 
-        [Route("Book/{id}"), HttpPost, AllowAnonymous]
-        public ActionResult Book(BookQuery bookQuery)
+        [Route("Profiles/{id}"), HttpPost, AllowAnonymous]
+        public ActionResult Profiles(BookQuery bookQuery)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace Yavsc.Controllers
                 return View("Index");
             }
             ViewBag.Activities = _context.ActivityItems(null);
-            return View("Book", _context.Performers.Include(p => p.Performer).Where
+            return View("Profiles", _context.Performers.Include(p => p.Performer).Where
                 (p => p.Active).OrderBy(
                     x => x.MinDailyCost
                 ));

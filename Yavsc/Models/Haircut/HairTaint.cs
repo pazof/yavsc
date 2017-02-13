@@ -13,6 +13,9 @@ namespace Yavsc.Models.Haircut
         public string Brand { get; set; }
 
         [Required]
-        public Color Color {get; set;}
+        public long ColorId { get; set; }
+
+        [ForeignKeyAttribute("ColorId")]
+        public virtual Color Color {get; set;}
     }
 }

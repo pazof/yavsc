@@ -1,12 +1,13 @@
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
+using Yavsc.Models;
+using Yavsc.Models.Haircut;
 
 namespace Yavsc.Controllers
 {
-    using Models;
-    using Models.Haircut;
     [Authorize("AdministratorOnly")]
     public class HairTaintsController : Controller
     {
@@ -14,13 +15,14 @@ namespace Yavsc.Controllers
 
         public HairTaintsController(ApplicationDbContext context)
         {
-            _context = context;
+            _context = context;    
         }
 
         // GET: HairTaints
         public async Task<IActionResult> Index()
         {
-            return View(await _context.HairTaint.ToListAsync());
+            var applicationDbContext = _context.HairTaint.Include(h => h.Color);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: HairTaints/Details/5
@@ -43,6 +45,7 @@ namespace Yavsc.Controllers
         // GET: HairTaints/Create
         public IActionResult Create()
         {
+            ViewBag.ColorId = new SelectList(_context.Color, "Id", "Name");
             return View();
         }
 
@@ -57,6 +60,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
+            ViewBag.ColorId = new SelectList(_context.Color, "Id", "Name", hairTaint.ColorId);
             return View(hairTaint);
         }
 
@@ -73,6 +77,7 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.ColorId = new SelectList(_context.Color, "Id", "Name",hairTaint.ColorId);
             return View(hairTaint);
         }
 
@@ -87,6 +92,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
+            ViewBag.ColorId = new SelectList(_context.Color, "Id", "Name", hairTaint.ColorId);
             return View(hairTaint);
         }
 

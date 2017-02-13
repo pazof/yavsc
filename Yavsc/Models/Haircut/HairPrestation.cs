@@ -1,13 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Models.Market;
 
 namespace Yavsc.Models.Haircut
 {
-    public class HairPrestation
+    public class HairPrestation : Service
     { 
-        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set;} 
-
         public HairLength Length { get; set; } 
         public HairCutGenders Gender { get; set; } 
         public bool Cut { get; set; } 
