@@ -7,6 +7,7 @@ namespace ZicMoove.Pages
 {
     using Data;
     using EstimatePages;
+    using Model.Musical;
     using Model.Social;
     using Model.Workflow;
     using Settings;

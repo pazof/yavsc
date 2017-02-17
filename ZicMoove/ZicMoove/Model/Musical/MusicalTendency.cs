@@ -1,5 +1,5 @@
 
-namespace ZicMoove.Model.Social
+namespace ZicMoove.Model.Musical
 {
 
   public class MusicalTendency {

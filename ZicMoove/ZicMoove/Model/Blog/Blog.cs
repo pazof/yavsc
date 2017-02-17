@@ -1,5 +1,5 @@
 using System;
-using Yavsc.Models;
+using YavscLib;
 
 namespace ZicMoove.Model.Blog
 {

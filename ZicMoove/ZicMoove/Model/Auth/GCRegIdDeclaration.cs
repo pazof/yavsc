@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Yavsc.Models.Identity;
+using YavscLib;
 
 namespace ZicMoove.Model.Auth
 {

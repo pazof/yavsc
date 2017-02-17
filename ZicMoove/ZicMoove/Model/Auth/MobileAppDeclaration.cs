@@ -4,6 +4,7 @@ using System;
 namespace ZicMoove.Model.Auth.Account
 {
     using Yavsc.Models;
+    using YavscLib;
 
     public class GoogleCloudMobileDeclaration 
     {

@@ -8,7 +8,6 @@
             xmlns:converters="clr-namespace:ZicMoove.Converters;assembly=ZicMoove"
             xmlns:local="clr-namespace:ZicMoove;Assembly:ZicMoove"
             xmlns:extensions="clr-namespace:ZicMoove.Extensions;assembly=ZicMoove"
-
             Style="{StaticResource PageStyle}" >
 
   <TabbedPage.Children>
