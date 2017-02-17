@@ -74,15 +74,14 @@ namespace ZicMoove.Droid
             .LanguageOrLocale("fr")
             .RememberUser(true)
             .AcceptCreditCards(true) // needs card.io
-       //     .MerchantPrivacyPolicyUri(new Uri("http://"))
-       //     .MerchantUserAgreementUri(new Uri("http://"))
+            // TODO   .MerchantPrivacyPolicyUri(new Uri("http://"))
+            // TODO  .MerchantUserAgreementUri(new Uri("http://"))
             .ClientId(Constants.PaypalClientId)
             .SandboxUserPassword(Constants.PaypalClientSecret)
             ;
 
         protected override void OnCreate(Bundle bundle)
         {
-            
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
             base.OnCreate(bundle);
