@@ -3,7 +3,7 @@ using Microsoft.AspNet.Authorization;
 
 namespace Yavsc.ViewModels.Auth.Handlers
 {
-    using Models.Booking;
+    using Models.Workflow;
     public class CommandViewHandler : AuthorizationHandler<ViewRequirement, BookQuery>
     {
         protected override void Handle(AuthorizationContext context, ViewRequirement requirement, BookQuery resource)

@@ -10,6 +10,8 @@ namespace Yavsc
         /// Lists Available user profile classes.
         /// </summary>
         public static  Dictionary<string,Type> ProfileTypes = new Dictionary<string,Type>() ;
+        public static readonly string [] Forms = new string [] { "Profiles" };
+
         private void ConfigureWorkflow(IApplicationBuilder app, SiteSettings settings)
         {
             System.AppDomain.CurrentDomain.ResourceResolve += OnYavscResourceResolve;

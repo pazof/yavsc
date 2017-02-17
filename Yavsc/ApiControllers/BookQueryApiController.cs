@@ -12,7 +12,7 @@ namespace Yavsc.Controllers
     using System;
     using Yavsc.Models.Messaging;
     using Yavsc.Models;
-    using Yavsc.Models.Booking;
+    using Yavsc.Models.Workflow;
 
     [Produces("application/json")]
     [Route("api/bookquery"), Authorize(Roles = "Performer,Administrator")]

@@ -6,7 +6,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
-using Yavsc.Models.Booking.Profiles;
+using Yavsc.Models.Musical.Profiles;
 
 namespace Yavsc.Controllers
 {

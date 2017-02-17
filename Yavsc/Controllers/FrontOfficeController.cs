@@ -11,7 +11,7 @@ namespace Yavsc.Controllers
 {
     using Helpers;
     using Models;
-    using Models.Booking;
+    using Models.Workflow;
     using ViewModels.FrontOffice;
     public class FrontOfficeController : Controller
     {
@@ -46,8 +46,8 @@ namespace Yavsc.Controllers
             return View(model);
         }
 
-        [Route("Book/{id?}"), HttpGet, AllowAnonymous]
-        public ActionResult Book(string id)
+        [Route("Profiles/{id?}"), HttpGet, AllowAnonymous]
+        public ActionResult Profiles(string id)
         {
             if (id == null)
             {
@@ -58,8 +58,8 @@ namespace Yavsc.Controllers
             return View(result);
         }
 
-        [Route("Book/{id}"), HttpPost, AllowAnonymous]
-        public ActionResult Book(BookQuery bookQuery)
+        [Route("Profiles/{id}"), HttpPost, AllowAnonymous]
+        public ActionResult Profiles(BookQuery bookQuery)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace Yavsc.Controllers
                 return View("Index");
             }
             ViewBag.Activities = _context.ActivityItems(null);
-            return View("Book", _context.Performers.Include(p => p.Performer).Where
+            return View("Profiles", _context.Performers.Include(p => p.Performer).Where
                 (p => p.Active).OrderBy(
                     x => x.MinDailyCost
                 ));

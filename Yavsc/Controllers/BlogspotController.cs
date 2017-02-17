@@ -42,7 +42,6 @@ namespace Yavsc.Controllers
         [AllowAnonymous]
         public IActionResult Index(string id, int skip=0, int maxLen=25)
         {
-            
             if (!string.IsNullOrEmpty(id))
                 return UserPosts(id);
             string uid = User.GetUserId();
@@ -52,7 +51,7 @@ namespace Yavsc.Controllers
             if (usercircles != null) {
                 posts = _context.Blogspot.Include(
                             b => b.Author
-                            ).Include(p=>p.ACL).Where(p=>p.Visible && (p.ACL.Count == 0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId))));
+                            ).Include(p=>p.ACL).Where(p=> p.AuthorId == uid || p.Visible && (p.ACL.Count == 0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId))));
                /* posts = _context.Blogspot.Include(
                             b => b.Author
                             ).Include(p=>p.ACL).Where(p=>p.Visible || p.ACL.Any(a => usercircles.Contains(a.Allowed)
@@ -61,7 +60,7 @@ namespace Yavsc.Controllers
             else {
                 posts = _context.Blogspot.Include(
                             b => b.Author
-                            ).Include(p=>p.ACL).Where(p=>p.Visible && p.ACL.Count == 0);
+                            ).Include(p=>p.ACL).Where(p=>p.AuthorId == uid || p.Visible && p.ACL.Count == 0);
             }
 
             return View(posts
@@ -106,7 +105,7 @@ namespace Yavsc.Controllers
 
             Blog blog = _context.Blogspot.Include(
                b => b.Author
-           ).Single(m => m.Id == id);
+           ).Include(p => p.ACL).Single(m => m.Id == id);
             if (blog == null)
             {
                 return HttpNotFound();

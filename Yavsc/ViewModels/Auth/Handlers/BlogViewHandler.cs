@@ -16,10 +16,12 @@ namespace Yavsc.ViewModels.Auth.Handlers
             if (resource.AuthorId == context.User.GetUserId())
                 context.Succeed(requirement); 
             else if (resource.Visible) {
-                if (resource.ACL.Count>0)
+                if (resource.ACL==null)
+                    context.Succeed(requirement);
+                else if (resource.ACL.Count>0)
                     {
                         var uid = context.User.GetUserId();
-                        if (resource.ACL.Any(a=>a.Allowed.Members.Any(m=>m.MemberId == uid )))
+                        if (resource.ACL.Any(a=>a.Allowed!=null && a.Allowed.Members.Any(m=>m.MemberId == uid )))
                             context.Succeed(requirement); 
                         else context.Fail();
                     }

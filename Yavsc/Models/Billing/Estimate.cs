@@ -8,8 +8,7 @@ using System.Linq;
 namespace Yavsc.Models.Billing
 {
     using Interfaces;
-    using Models.Booking;
-    using Yavsc.Models.Workflow;
+    using Models.Workflow;
 
     public partial class Estimate : IEstimate
     {
