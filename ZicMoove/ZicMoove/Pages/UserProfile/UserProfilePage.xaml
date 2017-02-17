@@ -6,8 +6,7 @@
              xmlns:views="clr-namespace:ZicMoove.Views;assembly=ZicMoove"
              xmlns:extensions="clr-namespace:ZicMoove.Extensions;assembly=ZicMoove"
              xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
-              Style="{StaticResource PageStyle}">
-
+             Style="{StaticResource PageStyle}">
 
   <ScrollView>
     <ScrollView.Padding>
@@ -50,6 +49,8 @@
 
           <Button Text="{Binding PerformerStatus}" Clicked="OnViewPerformerStatus" />
         </StackLayout>
+
+        <Button Text="Payer" x:Name="btnPay"/>
       </StackLayout>
     </StackLayout>
   </ScrollView>

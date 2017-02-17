@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ZicMoove.Pages.ClientPages.ActivityPage"
+             xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
+             >
+  <CarouselPage.ItemTemplate>
+    <DataTemplate>
+      <ContentPage>
+        <ContentPage.Padding>
+          <OnPlatform x:TypeArguments="Thickness" iOS="0,40,0,0" Android="0,40,0,0" />
+        </ContentPage.Padding>
+        <ScrollView>
+          
+        <StackLayout>
+          <Label Text="{Binding Name}" FontSize="Medium" HorizontalOptions="Center" />
+          <Image Source="{Binding PhotoUri}" Margin="10,10,10,10" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+          <Label Text="{Binding Descrition}" HorizontalOptions="Center" />
+          <ListView ItemsSource="{Binding Forms}">
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <ViewCell>
+                  <ViewCell.View>
+                    <StackLayout>
+                      <Button Text="{Binding Title}" CommandParameter="{Binding Action}"/>
+                    </StackLayout>
+                  </ViewCell.View>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+        </StackLayout>
+        </ScrollView>
+      </ContentPage>
+    </DataTemplate>
+  </CarouselPage.ItemTemplate>
+
+</CarouselPage>

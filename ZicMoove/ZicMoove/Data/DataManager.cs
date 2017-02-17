@@ -10,6 +10,7 @@
     using Model.Access;
     using ViewModels.Messaging;
     using Model.Social;
+    using Model.Musical;
 
     public class DataManager
     {

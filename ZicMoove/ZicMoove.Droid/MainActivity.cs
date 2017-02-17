@@ -32,7 +32,6 @@ using XLabs.Platform.Services.Email;
 using XLabs.Platform.Services.Media;
 using XLabs.Serialization;
 using XLabs.Serialization.JsonNET;
-using Yavsc.Models.Identity;
 
 namespace ZicMoove.Droid
 {
@@ -48,20 +47,44 @@ namespace ZicMoove.Droid
     using static Android.Manifest;
     using Settings;
     using Model.Auth;
+    using Com.Paypal.Android.Sdk.Payments;
+    using Java.Math;
+    using Org.Json;
+    using Xamarin.Forms;
 
-    [Activity(Name = "fr.pschneider.bas.MainActivity", Label = "ZicMoove", Theme = "@style/MainTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(
+        Name = Constants.ApplicationName+".MainActivity", 
+        Label = Constants.ApplicationLabel, 
+        Theme = "@style/MainTheme", 
+        Icon = "@drawable/icon",
+        MainLauncher = true,
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [IntentFilter(new[] { Intent.ActionMain },
+    Categories = new[] { Intent.CategoryLauncher },
+    Icon = "@drawable/icon")]
     public class MainActivity :
 
         // global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity,
         XFormsCompatApplicationDroid,
         IPlatform, IComponentContext
     {
+        private PayPalConfiguration config = new PayPalConfiguration()
+         .Environment(PayPalConfiguration.EnvironmentSandbox)
+            .MerchantName("Yavsc")
+            .LanguageOrLocale("fr")
+            .RememberUser(true)
+            .AcceptCreditCards(true) // needs card.io
+       //     .MerchantPrivacyPolicyUri(new Uri("http://"))
+       //     .MerchantUserAgreementUri(new Uri("http://"))
+            .ClientId(Constants.PaypalClientId)
+            .SandboxUserPassword(Constants.PaypalClientSecret)
+            ;
+
         protected override void OnCreate(Bundle bundle)
         {
-
+            
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
-
             base.OnCreate(bundle);
 
             // FIXME usefull?
@@ -110,7 +133,7 @@ namespace ZicMoove.Droid
             LoadApplication(fapp);
 
             var componentName = StartService(new Intent(this, typeof(YavscChooserTargetService)));
-            
+
             // TabLayoutResource = Resource.Layout.Tabbar;
             // ToolbarResource = Resource.Layout.Toolbar;
             /*
@@ -121,6 +144,10 @@ namespace ZicMoove.Droid
             /* var x = typeof(Themes.DarkThemeResources);
              x = typeof(Themes.LightThemeResources);
              x = typeof(Themes.Android.UnderlineEffect); */
+
+            var intent = new Intent(this, typeof(PayPalService));
+            intent.PutExtra(PayPalService.ExtraPaypalConfiguration, config);
+            this.StartService(intent);
 
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -224,11 +251,11 @@ namespace ZicMoove.Droid
         {
 
             var accStore = AccountStore.Create(this);
-            var accounts = accStore.FindAccountsForService(Constants.ApplicationName);
+            var accounts = accStore.FindAccountsForService(Constants.ApplicationLabel);
 
             accStore.Delete(
                     accounts.Where(a => a.Username == userName).FirstOrDefault()
-                    , Constants.ApplicationName);
+                    , Constants.ApplicationLabel);
             Toast.MakeText(this,
                 Resource.String.yavscIdentRemoved
                 , ToastLength.Short);
@@ -286,7 +313,7 @@ namespace ZicMoove.Droid
             return await Task.Run(() =>
             {
                 var manager = AccountStore.Create(this);
-                return manager.FindAccountsForService(Constants.ApplicationName);
+                return manager.FindAccountsForService(Constants.ApplicationLabel);
             });
         }
         
@@ -350,7 +377,7 @@ namespace ZicMoove.Droid
                                        };
 
                                        MainSettings.SaveUser(newuser);
-                                       accStore.Save(acc, Constants.ApplicationName);
+                                       accStore.Save(acc, Constants.ApplicationLabel);
                                    }
                                }
                            }
@@ -414,6 +441,64 @@ namespace ZicMoove.Droid
 
             }
         }
+
+        public void Pay(double amount, PayMethod method, string name= null )
+        {
+            if (name == null) name = $"Votre commande {Constants.ApplicationLabel}";
+            var payment = new PayPalPayment(new BigDecimal(amount), "EUR", "the item",
+                PayPalPayment.PaymentIntentOrder);
+
+            var intent = new Intent(this, typeof(PaymentActivity));
+            intent.PutExtra(PayPalService.ExtraPaypalConfiguration, config);
+            intent.PutExtra(PaymentActivity.ExtraPayment, payment);
+            this.StartActivityForResult(intent, (int) RequestCode.PayImmediate);
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            if (requestCode == (int) RequestCode.PayDelayed)
+            if (resultCode == Result.Ok)
+            {
+                var confirm = data.GetParcelableExtra(PaymentActivity.ExtraResultConfirmation);
+                if (confirm != null)
+                {
+                    try
+                    {
+                        Log.Info("xam.paypal.test", confirm.ToString());
+
+                        // TODO: send 'confirm' to your server for verification.
+                        // see https://developer.paypal.com/webapps/developer/docs/integration/mobile/verify-mobile-payment/
+                        // for more details.
+
+                    }
+                    catch (JSONException e)
+                    {
+                        Log.Error("xam.paypal.test", "something went really wrong here: ", e);
+                    }
+                }
+            }
+            else if (resultCode == Result.Canceled)
+            {
+                Log.Info("xam.paypal.test", "Canceled.");
+            }
+            else if ((int)resultCode == PaymentActivity.ResultExtrasInvalid)
+            {
+                Log.Info("xam.paypal.test", "Invalid Payment or PayPalConfiguration.");
+            }
+        }
+
+
+        protected override void OnDestroy()
+        {
+            this.StopService(new Intent(this, typeof(PayPalService)));
+            base.OnDestroy();
+        }
+
+        enum RequestCode : int {
+            PayImmediate = 1,
+            PayDelayed
+        }
+         
     }
 }
 

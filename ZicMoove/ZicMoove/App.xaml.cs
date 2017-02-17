@@ -35,11 +35,13 @@ namespace ZicMoove
     using Helpers;
     using Model.Auth;
     using Plugin.DeviceInfo;
-    using Yavsc.Models.Identity;
     using System.Json;
     using Newtonsoft.Json;
     using System.Net.Http;
     using System.Text;
+    using Pages.ClientPages;
+    using YavscLib;
+    using Model.Musical;
 
     public partial class App : Application // superclass new in 1.3
     {
@@ -195,7 +197,7 @@ namespace ZicMoove
 
         BookQueriesPage bQueriesPage;
         AccountChooserPage accChooserPage;
-        HomePage homePage;
+        ActivityPage homePage;
 
         private static UserProfilePage userProfilePage;
 
@@ -235,13 +237,13 @@ namespace ZicMoove
                 BindingContext = bookQueries
             };
 
-            homePage = new HomePage()
+            homePage = new ActivityPage()
             {
                 Title = "Accueil",
                 Icon = "icon.png"
             };
 
-            homePage.BindingContext = new HomeViewModel
+            homePage.BindingContext = new WorkflowViewModel
             {
                 BookQueries = bookQueries,
                 UserProfile = userprofile
@@ -490,7 +492,7 @@ namespace ZicMoove
                 }
             }
         }
-        public static IGCMDeclaration GetDeviceInfo()
+        public static GCMRegIdDeclaration GetDeviceInfo()
         {
             var devinfo = CrossDeviceInfo.Current;
             DateTime? lupdate = DataManager.Instance.Activities.Count > 0 ?
