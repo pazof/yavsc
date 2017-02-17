@@ -102,13 +102,13 @@
     "Microsoft.AspNet.DataProtection.SystemWeb": "1.0.0-rc1-final",
     "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
     "PayPalCoreSDK": "1.7.1",
-    "PayPalButtonManagerSDK": "2.10.109",
     "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
     "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
     "Microsoft.AspNet.OWin": "1.0.0-rc1-final",
     "System.Json": "4.0.20126.16343",
     "YavscLib": "1.0.0-*",
-    "Extensions.AspNet.Authentication.Instagram": "1.0.0-t150809211713"
+    "Extensions.AspNet.Authentication.Instagram": "1.0.0-t150809211713",
+    "PayPalMerchantSDK": "2.16.204"
   },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",

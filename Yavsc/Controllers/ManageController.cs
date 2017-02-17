@@ -12,7 +12,6 @@ using Yavsc.ViewModels.Manage;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Data.Entity;
 using System;
-using PayPal.PayPalAPIInterfaceService;
 using System.Collections.Generic;
 using Yavsc.Helpers;
 using Yavsc.ViewModels.Calendar;
@@ -24,7 +23,10 @@ using Yavsc.Models.Identity;
 namespace Yavsc.Controllers
 {
     using Models.Relationship;
-    
+    using PayPal.PayPalAPIInterfaceService;
+    using PayPal.PayPalAPIInterfaceService.Model;
+    using PayPal.PayPalAPIInterfaceService.Model;
+
     [Authorize, ServiceFilter(typeof(LanguageActionFilter))]
     public class ManageController : Controller
     {
@@ -605,16 +607,157 @@ namespace Yavsc.Controllers
         [HttpGet, Route("/Manage/Credits")]
         public IActionResult Credits()
         {
-            Dictionary<string, string> config = new Dictionary<string, string>();
+           
+            return View();
+        }
+        public  Dictionary<string, string> PaypalConfig { 
+            get { 
+                var config = 
+                new Dictionary<string, string>();
             config.Add("mode", "sandbox");
             config.Add("account1.apiUsername", _payPalSettings.UserId);
             config.Add("account1.apiPassword", _payPalSettings.Secret);
             config.Add("account1.apiSignature", _payPalSettings.Signature);
-            PayPalAPIInterfaceServiceService s = new PayPalAPIInterfaceServiceService(config);
+            return config;
+            }
+        } 
 
-            return View();
+
+        protected IActionResult DoDirectCredit(DoDirectCreditViewModel model)
+        {
+            // Create request object
+            DoDirectPaymentRequestType request = new DoDirectPaymentRequestType();
+            DoDirectPaymentRequestDetailsType requestDetails = new DoDirectPaymentRequestDetailsType();
+            request.DoDirectPaymentRequestDetails = requestDetails;
+
+            // (Optional) How you want to obtain payment. It is one of the following values:
+            // * Authorization – This payment is a basic authorization subject to settlement with PayPal Authorization and Capture.
+            // * Sale – This is a final sale for which you are requesting payment (default).
+            // Note: Order is not allowed for Direct Payment.
+            requestDetails.PaymentAction = (PaymentActionCodeType)
+                Enum.Parse(typeof(PaymentActionCodeType), model.PaymentType);
+
+            // (Required) Information about the credit card to be charged.
+            CreditCardDetailsType creditCard = new CreditCardDetailsType();
+            requestDetails.CreditCard = creditCard;
+            PayerInfoType payer = new PayerInfoType();
+            // (Optional) First and last name of buyer.
+            PersonNameType name = new PersonNameType();
+            name.FirstName = model.FirstName;
+            name.LastName = model.LastName;
+            payer.PayerName = name;
+            // (Required) Details about the owner of the credit card.
+            creditCard.CardOwner = payer;
+
+            // (Required) Credit card number.
+            creditCard.CreditCardNumber = model.CreditCardNumber;
+            // (Optional) Type of credit card. For UK, only Maestro, MasterCard, Discover, and Visa are allowable. For Canada, only MasterCard and Visa are allowable and Interac debit cards are not supported. It is one of the following values:
+            // * Visa
+            // * MasterCard
+            // * Discover
+            // * Amex
+            // * Maestro: See note.
+            // Note: If the credit card type is Maestro, you must set currencyId to GBP. In addition, you must specify either StartMonth and StartYear or IssueNumber.
+            creditCard.CreditCardType = (CreditCardTypeType)
+                Enum.Parse(typeof(CreditCardTypeType), model.CreditCardType);
+            // Card Verification Value, version 2. Your Merchant Account settings determine whether this field is required. To comply with credit card processing regulations, you must not store this value after a transaction has been completed.
+            // Character length and limitations: For Visa, MasterCard, and Discover, the value is exactly 3 digits. For American Express, the value is exactly 4 digits.
+            creditCard.CVV2 = model.Cvv2Number;
+            string[] cardExpiryDetails = model.CardExpiryDate.Split(new char[] { '/' });
+            if (cardExpiryDetails.Length == 2)
+            {
+                // (Required) Credit card expiration month.
+                creditCard.ExpMonth = Convert.ToInt32(cardExpiryDetails[0]);
+                // (Required) Credit card expiration year.
+                creditCard.ExpYear = Convert.ToInt32(cardExpiryDetails[1]);
+            }
+
+            requestDetails.PaymentDetails = new PaymentDetailsType();
+            // (Optional) Your URL for receiving Instant Payment Notification (IPN) about this transaction. If you do not specify this value in the request, the notification URL from your Merchant Profile is used, if one exists.
+            // Important: The notify URL applies only to DoExpressCheckoutPayment. This value is ignored when set in SetExpressCheckout or GetExpressCheckoutDetails.
+            requestDetails.PaymentDetails.NotifyURL = model.IpnNotificationUrl.Trim();
+
+            // (Optional) Buyer's shipping address information. 
+            AddressType billingAddr = new AddressType();
+            if (model.FirstName != string.Empty && model.LastName != string.Empty
+                && model.Street1 != string.Empty && model.Country != string.Empty)
+            {
+                billingAddr.Name = model.PayerName;
+                // (Required) First street address.
+                billingAddr.Street1 = model.Street1;
+                // (Optional) Second street address.
+                billingAddr.Street2 = model.Street2;
+                // (Required) Name of city.
+                billingAddr.CityName = model.City;
+                // (Required) State or province.
+                billingAddr.StateOrProvince = model.State;
+                // (Required) Country code.
+                billingAddr.Country = (CountryCodeType)Enum.Parse(typeof(CountryCodeType), model.Country);
+                // (Required) U.S. ZIP code or other country-specific postal code.
+                billingAddr.PostalCode = model.PostalCode;
+
+                // (Optional) Phone number.
+                billingAddr.Phone = model.Phone;
+
+                payer.Address = billingAddr;
+            }
+
+            // (Required) The total cost of the transaction to the buyer. If shipping cost and tax charges are known, include them in this value. If not, this value should be the current subtotal of the order. If the transaction includes one or more one-time purchases, this field must be equal to the sum of the purchases. This field must be set to a value greater than 0.
+            // Note: You must set the currencyID attribute to one of the 3-character currency codes for any of the supported PayPal currencies.
+            CurrencyCodeType currency = (CurrencyCodeType)
+                Enum.Parse(typeof(CurrencyCodeType), model.CurrencyCode);
+            BasicAmountType paymentAmount = new BasicAmountType(currency, model.Amount);            
+            requestDetails.PaymentDetails.OrderTotal = paymentAmount;
+
+            // Invoke the API
+            DoDirectPaymentReq wrapper = new DoDirectPaymentReq();
+            wrapper.DoDirectPaymentRequest = request;
+
+            // Configuration map containing signature credentials and other required configuration.
+            // For a full list of configuration parameters refer in wiki page 
+            // [https://github.com/paypal/sdk-core-dotnet/wiki/SDK-Configuration-Parameters]
+            //// TODO clean Dictionary<string, string> configurationMap = Configuration.GetAcctAndConfig();
+
+            // Create the PayPalAPIInterfaceServiceService service object to make the API call
+            PayPalAPIInterfaceServiceService service = new PayPalAPIInterfaceServiceService(PaypalConfig);
+
+            // # API call 
+            // Invoke the DoDirectPayment method in service wrapper object  
+            DoDirectPaymentResponseType response = service.DoDirectPayment(wrapper);
+         
+            // Check for API return status
+            return setKeyResponseObjects(service, response);
         }
 
+        private IActionResult setKeyResponseObjects(PayPalAPIInterfaceServiceService service, DoDirectPaymentResponseType response)
+        {
+            HttpContext.Items.Add("Response_apiName", "DoDirectPayment");
+            HttpContext.Items.Add("Response_redirectURL", null);
+            HttpContext.Items.Add("Response_requestPayload", service.getLastRequest());
+            HttpContext.Items.Add("Response_responsePayload", service.getLastResponse());
+
+            Dictionary<string, string> responseParams = new Dictionary<string, string>();
+            responseParams.Add("Correlation Id", response.CorrelationID);
+            responseParams.Add("API Result", response.Ack.ToString());
+
+            if (response.Ack.Equals(AckCodeType.FAILURE) ||
+                (response.Errors != null && response.Errors.Count > 0))
+            {
+                HttpContext.Items.Add("Response_error", response.Errors);
+            }
+            else
+            {
+                HttpContext.Items.Add("Response_error", null);                
+                responseParams.Add("Transaction Id", response.TransactionID);
+                responseParams.Add("Payment status", response.PaymentStatus.ToString());
+                if(response.PendingReason != null) {
+                    responseParams.Add("Pending reason", response.PendingReason.ToString());
+                }
+            }
+            HttpContext.Items.Add("Response_keyResponseObject", responseParams);
+            return View("APIResponse");
+        }
+        
         #region Helpers
 
         private void AddErrors(IdentityResult result)
