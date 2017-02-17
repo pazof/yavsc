@@ -15,8 +15,8 @@ namespace Yavsc.ApiControllers
             dbContext = context;
         }
 
-        [HttpGet,Route("Book/{actCode}")]
-        IEnumerable<PerformerProfile> Book (string actCode)
+	[HttpGet,Route("Profiles/{actCode}")]
+        IEnumerable<PerformerProfile> Profiles (string actCode)
         {
             return dbContext.ListPerformers(actCode);
         }
