@@ -1,0 +1,16 @@
+@model IEnumerable<PerformerProfile>
+  
+@{
+    ViewData["Title"] = "Book - " + (ViewBag.Activity?.Name ?? SR["Any"]);
+}
+<em>@ViewBag.Activity.Description</em>
+
+@foreach (var profile in Model) {
+    <hr/>
+   @Html.DisplayFor(m=>m)
+    <form action="~/Command/HArts" >
+        <input type="hidden" name="id" value="@profile.PerformerId" />
+        <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
+             <input type="submit" value="@SR["Prennez un rendez-vous avec"] @profile.Performer.UserName"/>
+    </form> 
+}

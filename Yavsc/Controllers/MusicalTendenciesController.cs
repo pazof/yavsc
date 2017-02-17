@@ -4,7 +4,7 @@ using Microsoft.AspNet.Mvc;
 namespace Yavsc.Controllers
 {
     using Models;
-    using Models.Booking;
+    using Models.Musical;
     public class MusicalTendenciesController : Controller
     {
         private ApplicationDbContext _context;

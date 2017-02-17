@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Localization;
-using Yavsc.Models.Booking;
-using Yavsc.Models.Messaging;
 
 namespace Yavsc.Helpers
 {
+    using Models.Workflow;
+    using Models.Messaging;
     public static class EventHelpers
     {
         public static BookQueryEvent CreateEvent(this BookQuery query,

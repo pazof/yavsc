@@ -403,43 +403,6 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Booking.BookQuery", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("ActivityCode")
-                        .IsRequired();
-
-                    b.Property<string>("ClientId")
-                        .IsRequired();
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<DateTime>("DateModified");
-
-                    b.Property<DateTime>("EventDate");
-
-                    b.Property<long?>("LocationId");
-
-                    b.Property<long?>("LocationTypeId");
-
-                    b.Property<string>("PerformerId")
-                        .IsRequired();
-
-                    b.Property<decimal?>("Previsional");
-
-                    b.Property<string>("Reason");
-
-                    b.Property<string>("UserCreated");
-
-                    b.Property<string>("UserModified");
-
-                    b.Property<DateTime?>("ValidationDate");
-
-                    b.HasKey("Id");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Booking.Instrument", b =>
                 {
                     b.Property<long>("Id")
@@ -488,13 +451,6 @@ namespace Yavsc.Migrations
                     b.HasKey("UserId");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Booking.Profiles.FormationSettings", b =>
-                {
-                    b.Property<string>("UserId");
-
-                    b.HasKey("UserId");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Booking.Profiles.GeneralSettings", b =>
                 {
                     b.Property<string>("UserId");
@@ -524,11 +480,40 @@ namespace Yavsc.Migrations
                     b.HasKey("ConnectionId");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Drawing.Color", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<byte>("Blue");
+
+                    b.Property<byte>("Green");
+
+                    b.Property<string>("Name");
+
+                    b.Property<byte>("Red");
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Forms.Form", b =>
                 {
                     b.Property<string>("Id");
 
                     b.Property<string>("Summary");
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairTaint", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Brand");
+
+                    b.Property<long?>("ColorId")
+                        .IsRequired();
 
                     b.HasKey("Id");
                 });
@@ -753,6 +738,43 @@ namespace Yavsc.Migrations
                     b.HasKey("Code");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Workflow.BookQuery", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ActivityCode")
+                        .IsRequired();
+
+                    b.Property<string>("ClientId")
+                        .IsRequired();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateModified");
+
+                    b.Property<DateTime>("EventDate");
+
+                    b.Property<long?>("LocationId");
+
+                    b.Property<long?>("LocationTypeId");
+
+                    b.Property<string>("PerformerId")
+                        .IsRequired();
+
+                    b.Property<decimal?>("Previsional");
+
+                    b.Property<string>("Reason");
+
+                    b.Property<string>("UserCreated");
+
+                    b.Property<string>("UserModified");
+
+                    b.Property<DateTime?>("ValidationDate");
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Workflow.CommandForm", b =>
                 {
                     b.Property<long>("Id")
@@ -809,6 +831,13 @@ namespace Yavsc.Migrations
                     b.Property<string>("WebSite");
 
                     b.HasKey("PerformerId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Workflow.Profiles.FormationSettings", b =>
+                {
+                    b.Property<string>("UserId");
+
+                    b.HasKey("UserId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Workflow.UserActivity", b =>
@@ -935,7 +964,7 @@ namespace Yavsc.Migrations
                         .WithMany()
                         .HasForeignKey("ClientId");
 
-                    b.HasOne("Yavsc.Models.Booking.BookQuery")
+                    b.HasOne("Yavsc.Models.Workflow.BookQuery")
                         .WithMany()
                         .HasForeignKey("CommandId");
 
@@ -949,29 +978,6 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("AuthorId");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Booking.BookQuery", b =>
-                {
-                    b.HasOne("Yavsc.Models.Workflow.Activity")
-                        .WithMany()
-                        .HasForeignKey("ActivityCode");
-
-                    b.HasOne("Yavsc.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ClientId");
-
-                    b.HasOne("Yavsc.Models.Relationship.Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId");
-
-                    b.HasOne("Yavsc.Models.Relationship.LocationType")
-                        .WithMany()
-                        .HasForeignKey("LocationTypeId");
-
-                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile")
-                        .WithMany()
-                        .HasForeignKey("PerformerId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Booking.MusicalPreference", b =>
@@ -1001,6 +1007,13 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairTaint", b =>
+                {
+                    b.HasOne("Yavsc.Models.Drawing.Color")
+                        .WithMany()
+                        .HasForeignKey("ColorId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Identity.GoogleCloudMobileDeclaration", b =>
@@ -1063,6 +1076,29 @@ namespace Yavsc.Migrations
                         .HasForeignKey("ParentCode");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Workflow.BookQuery", b =>
+                {
+                    b.HasOne("Yavsc.Models.Workflow.Activity")
+                        .WithMany()
+                        .HasForeignKey("ActivityCode");
+
+                    b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ClientId");
+
+                    b.HasOne("Yavsc.Models.Relationship.Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("Yavsc.Models.Relationship.LocationType")
+                        .WithMany()
+                        .HasForeignKey("LocationTypeId");
+
+                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile")
+                        .WithMany()
+                        .HasForeignKey("PerformerId");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Workflow.CommandForm", b =>
                 {
                     b.HasOne("Yavsc.Models.Workflow.Activity")
@@ -1072,7 +1108,7 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Workflow.CoWorking", b =>
                 {
-                    b.HasOne("Yavsc.Models.Booking.Profiles.FormationSettings")
+                    b.HasOne("Yavsc.Models.Workflow.Profiles.FormationSettings")
                         .WithMany()
                         .HasForeignKey("FormationSettingsUserId");
 

@@ -9,15 +9,15 @@ using Microsoft.Data.Entity;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
-using Yavsc.Helpers;
-using Yavsc.Models;
-using Yavsc.Models.Booking;
-using Yavsc.Models.Google.Messaging;
-using Yavsc.Services;
 
 namespace Yavsc.Controllers
 {
+    using Helpers;
+    using Models;
+    using Models.Google.Messaging;
     using Models.Relationship;
+    using Models.Workflow;
+    using Services;
     
     [ServiceFilter(typeof(LanguageActionFilter))]
     public class CommandController : Controller
@@ -185,7 +185,7 @@ namespace Yavsc.Controllers
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
                         command.PerformerProfile.Performer.Email,
-                        yaev.Topic+" "+yaev.Client.UserName,
+                        yaev.Topic+" "+yaev.Sender,
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }

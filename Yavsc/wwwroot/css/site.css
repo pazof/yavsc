@@ -1,18 +1,73 @@
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+
+body {
+  background-color: #210912;
+  color:#999;
+}
+h1,h2,h3{color:#fff;}
+.blog {
+    padding: 1em;
+}
+.blog a {
+  color: #9f9;
+  font-weight: 900;
+}
+.blog a:active,
+.blog a:hover {
+  outline: 0;
+  color: #6C6;
 }
 
+tr.vpost {
+    background-color: #306020;
+    max-height: 3em;
+}
+tr.ipost {
+    background-color: #303030;
+    font-size: smaller;
+    max-height: 2em;
+}
+tr.vpost a {
+    font-weight: bold;
+    color: white;
+    text-shadow: 3px 3px 8px black; 
+}
+tr.ipost a {
+    font-style: bold;
+    color: #b0b0b0;
+    text-shadow: 3px 3px 5px #505050; 
+}
+.panel{
+   float: left;
+   padding:1em;
+   margin:1em;
+   color: white;
+   background-color: #421824;
+}
 /* Set widths on the form inputs since otherwise they're 100% wide */
-input,
+ input,
 select,
-textarea {
-    max-width: 90%;
+ button,
+ textarea {
+  background-color: #999;
+  color: #333;
 }
 
+a {
+  font-weight: 900;
+  color: #9f9;
+}
+a:active,
+a:hover {
+  outline: 0;
+  color: #6C6;
+}
+.jumbotron {
+    background-color: #502020;
+    padding: .5em;
+}
 /* Set widths on image and video, since otherwise they use their native resolution */
 
 /* .navbar-reac */
@@ -28,10 +83,11 @@ textarea {
     text-decoration-line: overline;
     text-shadow: 3px 3px 7px rgba(0, 0, 0, 0.8);
     -webkit-text-shadow: inset 0 3px 5px rgb(0, 0, 0);
-    color: aliceblue;
-    margin:0;
+    color: black;
+    margin:0.5em;
     padding:.5em;
     animation: mymove 3s infinite;
+    background-color: rgba(256,256,256,.4);
 }
 
 .carousel-caption-s {
@@ -41,14 +97,14 @@ textarea {
   z-index: 10;
   padding-top: 20px;
   padding-bottom: 20px;
-  color: #fff;
   text-align: center;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, .6);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, .6);
   height: 16em;
   overflow: auto;
 }
-.carousel-caption-s .btn {
-  text-shadow: none;
+.carousel-inner .item {
+    background-color: #301010;
+    color: #FF8;
 }
 .carousel-indicators {
     position: absolute;
@@ -100,7 +156,7 @@ footer {
 }
 
 nav {
-    background: url('/images/booking/musique-2.jpg') 0% 50%;
+    background: url('/images/arts/musique-3.jpg') 0% 50%;
 }
 
 footer {
@@ -122,10 +178,6 @@ footer {
 .blogtitle  { 
     display: inline-block;
     font-size: x-large;
-}
-
-.blogtext { 
-    font-feature-settings: "valt"
 }
 
 .blogphoto {

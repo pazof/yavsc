@@ -4,7 +4,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
-using Yavsc.Models.Booking;
+using Yavsc.Models.Musical;
 
 namespace Yavsc.Controllers
 {

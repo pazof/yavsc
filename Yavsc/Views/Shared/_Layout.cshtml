@@ -8,18 +8,18 @@
         <environment names="Development">
             <link rel="stylesheet" href="~/css/bootstrap.css" />
             <link rel="stylesheet" href="~/css/site.css" />
+            <link rel="stylesheet" href="~/css/jquery-ui.css" />
         </environment>
-        <environment names="Staging,Production,yavsc,yavscpre,booking,lua">
-            <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true"/>
+        <environment names="Staging,Production,yavsc,yavscpre,zicmoove,lua">
             <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
         </environment>
         <environment names="Development">
             <script src="~/js/jquery.js"></script>
+            <script src="~/js/jquery-ui.js"></script>
             <script src="~/js/bootstrap.js"></script>
             <script src="~/js/site.js"></script>
-            <script src="~/js/jquery.signalR-2.2.1.js"></script>
         </environment>
-        <environment names="Staging,Production,yavsc,yavscpre,booking,lua">
+        <environment names="Staging,Production,yavsc,yavscpre,zicmoove,lua">
             <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
                     asp-fallback-src="~/bower_components/jquery/dist/jquery.min.js"
                     asp-fallback-test="window.jQuery" >
@@ -28,9 +28,10 @@
                     asp-fallback-src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"
                     asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
             </script>
+            <script src="~/js/jquery-ui.js"></script>
             <script src="~/js/site.js"></script>
-            <script src="~/js/jquery.signalR-2.2.1.js"></script>
         </environment>
+            <script src="~/js/jquery.signalR-2.2.1.js"></script>
         @RenderSection("header", required: false)
     </head>
     <body>
@@ -62,7 +63,17 @@
         </main>
         <hr />
         <footer>
-                <script>
+<environment names="Development">
+    <p><em>Site de développement</em></p>
+</environment>
+<environment names="Lua">
+    <i>Get up.</i>
+</environment>
+<environment names="ZicMoove">
+    <i>Get up.</i>
+</environment>
+
+<script>
   window.fbAsyncInit = function() {
     FB.init({
       appId      : '552433071604577',
@@ -85,12 +96,8 @@
   data-width="450"
   data-show-faces="true">
 </div>
-
-
             <p>Yavsc - Copyright &copy; 2016 - 2017 Paul Schneider</p>
         </footer>
         @RenderSection("scripts", required: false)
-
-
     </body>
 </html>

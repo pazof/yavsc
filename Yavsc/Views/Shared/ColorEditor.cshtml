@@ -1,0 +1,64 @@
+@model Color
+<div>
+
+<div id="clrprv" style="border:solid grey 1px; width:1em; height:1em; display: inline-block; height:3em;  width:5em;"></div>
+
+<div style="display: inline-block; width:15em; margin:.3em;">
+        <div id="sred" class="slider" style="background-color:red;"></div>
+        <div id="sgreen" class="slider" style="background-color:green;"></div>
+        <div id="sblue" class="slider" style="background-color:blue;"></div> 
+</div>
+</div>
+<input type="hidden" id="Red" name="Red" />
+<input type="hidden" id="Green" name="Green" />
+<input type="hidden" id="Blue" name="Blue" />
+ <script>
+        $(document).ready(function(){
+            var red = @Model.Red;
+            var green = @Model.Green;
+            var blue = @Model.Blue;
+
+            $("#sred").slider(
+                {
+                    value: red,
+                    min: 0, 
+                    max: 255, 
+                    animate: "fast"
+                });
+            $("#sgreen").slider(
+                {
+                    value: green,
+                    min: 0, 
+                    max: 255, 
+                    animate: "fast"
+                });
+            $("#sblue").slider(
+                {
+                    value: blue,
+                    min: 0, 
+                    max: 255, 
+                    animate: "fast"
+                });
+            var updateColor = function() {
+                $("#clrprv").css("background-color","rgb("+red+","+green+","+blue+")");
+                $("#Red").val(red);
+                $("#Green").val(green);
+                $("#Blue").val(blue);
+                console.log($("#Blue").val());
+            };
+            $("#sred").on("slide",function(event, ui){
+                red=ui.value; 
+                updateColor();
+            });
+            $("#sgreen").on("slide",function(event, ui){
+                green=ui.value; 
+                updateColor();
+            });
+            $("#sblue").on("slide",function(event, ui){
+                blue=ui.value; 
+                updateColor();
+            });
+            updateColor();
+        });
+
+</script>
