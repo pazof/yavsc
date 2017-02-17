@@ -5,15 +5,20 @@ using Plugin.Media.Abstractions;
 using System;
 
 using Xamarin.Forms;
+using ZicMoove.Settings;
+using ZicMoove.Helpers;
+using System.Net.Http;
 
 namespace ZicMoove.Pages.UserProfile
 {
-    public partial class UserProfilePage : ContentPage
+    public partial class UserProfilePage 
     {
         public UserProfilePage()
         {
             InitializeComponent();
             AvatarButton.Clicked += AvatarButton_Clicked;
+            btnPay.Clicked += BtnPay_Clicked;
+
         }
         public UserProfilePage(UserProfileViewModel model)
         {
@@ -21,14 +26,23 @@ namespace ZicMoove.Pages.UserProfile
             AvatarButton.Clicked += AvatarButton_Clicked;
             BindingContext = model;
         }
-        private async void AvatarButton_Clicked (object sender, EventArgs e)
+
+        
+        private async void BtnPay_Clicked(object sender, EventArgs e)
+        {
+            App.PlatformSpecificInstance.Pay(0.1, Interfaces.PayMethod.Immediate, "test payment");
+
+        }
+
+
+        private async void AvatarButton_Clicked(object sender, EventArgs e)
         {
             if (!CrossMedia.Current.IsCameraAvailable || !CrossMedia.Current.IsTakePhotoSupported)
             {
                 await DisplayAlert("No Camera", ":( No camera avaialble.", "OK");
                 return;
             }
-
+            IsBusy = true;
             var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
             {
                 Directory = "Avatars",
@@ -37,13 +51,31 @@ namespace ZicMoove.Pages.UserProfile
 
             if (file == null)
                 return;
-                  // ImageSource.FromFile(file.Path);
-            /* ImageSource.FromStream(() =>
+            using (var client = UserHelpers.CreateJsonClient())
             {
-                var stream = file.GetStream();
-                file.Dispose();
-                return stream;
-            }); */
+                // Get the whole data
+                try
+                {
+                    using (var stream = file.GetStream())
+                    {
+                        var content = new StreamContent(stream);
+
+                        using (var response = await client.PostAsync(Constants.YavscApiUrl + "/setavatar", content))
+                        {
+                            if (response.IsSuccessStatusCode)
+                            {
+                                // TODO image update
+                                var recnt = await response.Content.ReadAsStringAsync();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // TODO error report
+                }
+             }
+            IsBusy = false;
         }
 
         public void OnManageFiles(object sender, EventArgs e)
