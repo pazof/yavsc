@@ -2523,18 +2523,6 @@
           "lib/net40/Owin.dll": {}
         }
       },
-      "PayPalButtonManagerSDK/2.10.109": {
-        "type": "package",
-        "dependencies": {
-          "PayPalCoreSDK": "1.7.0"
-        },
-        "compile": {
-          "lib/net20/PayPalButtonManagerSDK.dll": {}
-        },
-        "runtime": {
-          "lib/net20/PayPalButtonManagerSDK.dll": {}
-        }
-      },
       "PayPalCoreSDK/1.7.1": {
         "type": "package",
         "dependencies": {
@@ -2545,6 +2533,18 @@
         },
         "runtime": {
           "lib/net451/PayPalCoreSDK.dll": {}
+        }
+      },
+      "PayPalMerchantSDK/2.16.204": {
+        "type": "package",
+        "dependencies": {
+          "PayPalCoreSDK": "1.7.1"
+        },
+        "compile": {
+          "lib/net20/PayPalMerchantSDK.dll": {}
+        },
+        "runtime": {
+          "lib/net20/PayPalMerchantSDK.dll": {}
         }
       },
       "Remotion.Linq/2.0.1": {
@@ -5362,18 +5362,6 @@
           "lib/net40/Owin.dll": {}
         }
       },
-      "PayPalButtonManagerSDK/2.10.109": {
-        "type": "package",
-        "dependencies": {
-          "PayPalCoreSDK": "1.7.0"
-        },
-        "compile": {
-          "lib/net20/PayPalButtonManagerSDK.dll": {}
-        },
-        "runtime": {
-          "lib/net20/PayPalButtonManagerSDK.dll": {}
-        }
-      },
       "PayPalCoreSDK/1.7.1": {
         "type": "package",
         "dependencies": {
@@ -5384,6 +5372,18 @@
         },
         "runtime": {
           "lib/net451/PayPalCoreSDK.dll": {}
+        }
+      },
+      "PayPalMerchantSDK/2.16.204": {
+        "type": "package",
+        "dependencies": {
+          "PayPalCoreSDK": "1.7.1"
+        },
+        "compile": {
+          "lib/net20/PayPalMerchantSDK.dll": {}
+        },
+        "runtime": {
+          "lib/net20/PayPalMerchantSDK.dll": {}
         }
       },
       "Remotion.Linq/2.0.1": {
@@ -8201,18 +8201,6 @@
           "lib/net40/Owin.dll": {}
         }
       },
-      "PayPalButtonManagerSDK/2.10.109": {
-        "type": "package",
-        "dependencies": {
-          "PayPalCoreSDK": "1.7.0"
-        },
-        "compile": {
-          "lib/net20/PayPalButtonManagerSDK.dll": {}
-        },
-        "runtime": {
-          "lib/net20/PayPalButtonManagerSDK.dll": {}
-        }
-      },
       "PayPalCoreSDK/1.7.1": {
         "type": "package",
         "dependencies": {
@@ -8223,6 +8211,18 @@
         },
         "runtime": {
           "lib/net451/PayPalCoreSDK.dll": {}
+        }
+      },
+      "PayPalMerchantSDK/2.16.204": {
+        "type": "package",
+        "dependencies": {
+          "PayPalCoreSDK": "1.7.1"
+        },
+        "compile": {
+          "lib/net20/PayPalMerchantSDK.dll": {}
+        },
+        "runtime": {
+          "lib/net20/PayPalMerchantSDK.dll": {}
         }
       },
       "Remotion.Linq/2.0.1": {
@@ -10570,16 +10570,6 @@
         "Owin.nuspec"
       ]
     },
-    "PayPalButtonManagerSDK/2.10.109": {
-      "type": "package",
-      "sha512": "6l95DlflMld+OmzOGaw3T6Mb9rZrywO1pR8jbafyvu34FId4osC1oo5RfgQVY0rwHkeTG359U+X3BPL6vVRT8Q==",
-      "files": [
-        "lib/net20/PayPalButtonManagerSDK.dll",
-        "PayPalButtonManagerSDK.2.10.109.nupkg",
-        "PayPalButtonManagerSDK.2.10.109.nupkg.sha512",
-        "PayPalButtonManagerSDK.nuspec"
-      ]
-    },
     "PayPalCoreSDK/1.7.1": {
       "type": "package",
       "sha512": "hGOLo3X2vgOpOWJI91+vlBgr/Dchk3xZAF0bdIpKiAwjlRKMjzSC4zuT1eGwmQ8uVL1IaGBZwNGklyRHDniYlQ==",
@@ -10592,6 +10582,17 @@
         "PayPalCoreSDK.1.7.1.nupkg",
         "PayPalCoreSDK.1.7.1.nupkg.sha512",
         "PayPalCoreSDK.nuspec"
+      ]
+    },
+    "PayPalMerchantSDK/2.16.204": {
+      "type": "package",
+      "sha512": "uqn99kb71EYWbdYz3dIXTeTzbh5buhfa7uvSemZXDFW1BRnDi8CGAdbK2AX7ZT1JsH3GuQZqxqC0/KpWKML9Wg==",
+      "files": [
+        "lib/net20/PayPalMerchantSDK.dll",
+        "lib/net20/PayPalMerchantSDK.xml",
+        "PayPalMerchantSDK.2.16.204.nupkg",
+        "PayPalMerchantSDK.2.16.204.nupkg.sha512",
+        "PayPalMerchantSDK.nuspec"
       ]
     },
     "Remotion.Linq/2.0.1": {
@@ -11499,13 +11500,13 @@
       "Microsoft.AspNet.DataProtection.SystemWeb >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.JwtBearer >= 1.0.0-rc1-final",
       "PayPalCoreSDK >= 1.7.1",
-      "PayPalButtonManagerSDK >= 2.10.109",
       "Microsoft.AspNet.Authentication.OAuth >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Mvc.Formatters.Json >= 6.0.0-rc1-final",
       "Microsoft.AspNet.OWin >= 1.0.0-rc1-final",
       "System.Json >= 4.0.20126.16343",
       "YavscLib >= 1.0.0-*",
-      "Extensions.AspNet.Authentication.Instagram >= 1.0.0-t150809211713"
+      "Extensions.AspNet.Authentication.Instagram >= 1.0.0-t150809211713",
+      "PayPalMerchantSDK >= 2.16.204"
     ],
     "DNX,Version=v4.5.1": [
       "fx/System.Drawing >= 4.0.0"
