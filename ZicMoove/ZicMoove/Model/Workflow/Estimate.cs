@@ -8,6 +8,7 @@ namespace ZicMoove.Model.Workflow
 {
     using Data;
     using Interfaces;
+    using Musical;
     using Social;
     public partial class Estimate : IEstimate
     {

@@ -2,7 +2,7 @@
 <CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
-            x:Class="ZicMoove.Pages.HomePage"
+            x:Class="ZicMoove.Pages.WorkflowPage"
             Style="{StaticResource PageStyle}"
             Title="Accueil">
   <CarouselPage.Resources>

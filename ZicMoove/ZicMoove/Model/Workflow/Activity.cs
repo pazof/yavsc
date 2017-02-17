@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using YavscLib;
 
 namespace ZicMoove.Model.Workflow
@@ -38,6 +39,12 @@ namespace ZicMoove.Model.Workflow
         public string Photo
         {
             get; set;
+        }
+
+        [JsonIgnore]
+        public string PhotoUri
+        {
+            get { return Constants.YavscHomeUrl + Photo; }
         }
 
         public int Rate

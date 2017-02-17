@@ -9,6 +9,7 @@ namespace ZicMoove.ViewModels.EstimateAndBilling
     using Helpers;
     using Interfaces;
     using Model;
+    using Model.Musical;
     using Model.Social;
     using Model.Workflow;
     using System.Collections.ObjectModel;

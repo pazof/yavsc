@@ -11,6 +11,8 @@ namespace ZicMoove.ViewModels.EstimateAndBilling
     using Model.Workflow;
     using Model.Social;
     using Validation;
+    using Model.Musical;
+
     public class EditEstimateViewModel : EditingViewModel<Estimate>
     {
 

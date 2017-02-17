@@ -5,21 +5,21 @@ namespace ZicMoove.Pages
     using Data;
     using ViewModels;
     using ViewModels.EstimateAndBilling;
-    public partial class HomePage 
+    public partial class WorkflowPage 
     {
-        public HomePage()
+        public WorkflowPage()
         {
             InitializeComponent();
         }
 
-        public HomePage(HomeViewModel model)
+        public WorkflowPage(WorkflowViewModel model)
         {
             BindingContext = model;
         }
 
-        public HomeViewModel Model {
+        public WorkflowViewModel Model {
             get {
-                return (HomeViewModel) BindingContext;
+                return (WorkflowViewModel) BindingContext;
             }
             set
             {

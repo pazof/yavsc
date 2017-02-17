@@ -32,7 +32,7 @@ namespace ZicMoove.Droid
                 Resource.Drawable.icon);
             ChooserTarget t = new ChooserTarget(
                 new Java.Lang.String(
-                Constants.ApplicationName), i,
+                Constants.ApplicationLabel), i,
                 .5f, new ComponentName(this, "ZicMoove.SendFilesActivity"),
                 null);
             var res = new List<ChooserTarget>();

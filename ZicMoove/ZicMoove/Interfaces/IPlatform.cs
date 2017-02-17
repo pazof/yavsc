@@ -1,10 +1,13 @@
-using ZicMoove.Model.Auth.Account;
-using System;
-using Xamarin.Forms;
-using Yavsc.Models.Identity;
+
 
 namespace ZicMoove.Interfaces
 {
+    public enum PayMethod
+    {
+        Immediate,
+        Delayed
+    }
+
     public interface IPlatform
 	{
         void OpenWeb (string Uri);
@@ -15,6 +18,9 @@ namespace ZicMoove.Interfaces
         void AddAccount();
         
         void RevokeAccount(string userName);
+
+        void Pay(double amount, PayMethod method, string paymentName);
+
     }
 }
 

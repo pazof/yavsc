@@ -1,22 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using ZicMoove.Droid.Interfaces;
 using Newtonsoft.Json;
-using ZicMoove.Model.Social;
-using ZicMoove.Data;
-using ZicMoove.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace ZicMoove.Droid.Services.GCMHandlers
 {
+    using Interfaces;
+    using Model.Social;
+    using Data;
+    using Model;
+    using Model.Musical;
+
     class BookQueryGCMHandler : GCMessageHandler
     {
         public BookQueryGCMHandler(Context context,
@@ -66,8 +67,7 @@ namespace ZicMoove.Droid.Services.GCMHandlers
                 ).ToArray();
             var count = bookquerynotifications.Length;
             var multiple = count > 1;
-            var title =
-            multiple ? $"{count} demandes" : bquery.Client.UserName;
+            var title = multiple ? $"{count} demandes" : bquery.Client.UserName;
             var message = $"{bquery.EventDate} {bquery.Client.UserName} {bquery.Location.Address}\n {bquery.Reason}";
 
             var intent = new Intent(context, typeof(MainActivity));

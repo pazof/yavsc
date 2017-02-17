@@ -1,7 +1,8 @@
 ﻿
 using System;
+using ZicMoove.Model.Social;
 
-namespace ZicMoove.Model.Social
+namespace ZicMoove.Model.Musical
 {
     public class BookQuery 
     {
