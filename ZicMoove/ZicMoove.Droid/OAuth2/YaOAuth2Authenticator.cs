@@ -381,22 +381,33 @@ public class YaOAuth2Authenticator : WebRedirectAuthenticator
 
             var auth = req.GetResponseAsync().ContinueWith(task =>
             {
-                var text = task.Result.GetResponseText();
-                req.Abort();
-                // Parse the response
-                var data = text.Contains("{") ? WebEx.JsonDecode(text) : WebEx.FormDecode(text);
+                if (task.IsCompleted)
+                {
+                    var text = task.Result.GetResponseText();
+                    req.Abort();
+                    // Parse the response
+                    var data = text.Contains("{") ? WebEx.JsonDecode(text) : WebEx.FormDecode(text);
 
-                if (data.ContainsKey("error"))
-                {
-                    throw new AuthException("Error authenticating: " + data["error"]);
+                    if (data.ContainsKey("error"))
+                    {
+                        throw new AuthException("Error authenticating: " + data["error"]);
+                    }
+                    else if (data.ContainsKey("access_token"))
+                    {
+                        return data;
+                    }
+                    else
+                    {
+                        throw new AuthException("Expected access_token in access token response, but did not receive one.");
+                    }
                 }
-                else if (data.ContainsKey("access_token"))
+                else if (task.IsFaulted)
                 {
-                    return data;
+                    throw new AuthException("Unexpected fault");
                 }
                 else
                 {
-                    throw new AuthException("Expected access_token in access token response, but did not receive one.");
+                    throw new AuthException($"Ended: {task.Status}");
                 }
             });
 
