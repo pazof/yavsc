@@ -77,6 +77,7 @@ using ZicMoove;
       AllowBackup = true, Icon =  "@drawable/icon" )]
 [assembly: MetaData("com.google.android.maps.v2.API_KEY", Value = Constants.MapsV2APIKey)]
 [assembly: MetaData("com.google.android.gms.version", Value = "@integer/google_play_services_version")]
+[assembly: MetaData("android.service.chooser.chooser_target_service", Value = Constants.ApplicationName+".YavscChooserTargetService")]
 
 [assembly: Permission(Name= Constants.PermissionMapReceive, ProtectionLevel = Android.Content.PM.Protection.Signature)]
 [assembly: Permission(Name = Constants.PermissionC2DMessage, ProtectionLevel = Android.Content.PM.Protection.Signature)]
