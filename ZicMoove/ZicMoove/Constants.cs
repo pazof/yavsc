@@ -12,6 +12,8 @@ namespace ZicMoove
 
         public static readonly string AuthorizeUrl = YavscHomeUrl + "/authorize";
         public static readonly string AccessTokenUrl = YavscHomeUrl + "/token";
+        public const string RedirectUrl = YavscHomeUrl + "/oauth/success";
+        public static readonly string Scope = "profile";
 
         public static readonly string YavscApiUrl = YavscHomeUrl + "/api";
         public static readonly string MobileRegistrationUrl = YavscApiUrl + "/gcm/register";
@@ -23,5 +25,9 @@ namespace ZicMoove
         public static int AllowBeATarget = 1;
 
         public static int CloudTimeout = 400;
+
+        public  const string PermissionMapReceive = Constants.ApplicationName + ".permission.MAPS_RECEIVE";
+        public  const string PermissionC2DMessage = Constants.ApplicationName + ".permission.C2D_MESSAGE";
+        
     }
 }

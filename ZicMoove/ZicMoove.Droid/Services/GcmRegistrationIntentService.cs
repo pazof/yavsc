@@ -13,7 +13,7 @@ using ZicMoove.Settings;
 namespace ZicMoove.Droid
 {
 
-	[Service(Exported = false)]
+	[Service(Exported = false), IntentFilter(new[] { "com.google.android.c2dm.intent.REGISTRATION" })]
 	class GcmRegistrationIntentService : IntentService
 	{
 		static object locker = new object();

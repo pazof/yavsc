@@ -15,8 +15,8 @@ using static Android.Manifest;
 namespace ZicMoove.Droid
 {
     [Service(
-        Name = "fr.pschneider.bas.YavscChooserTargetService", 
-        Label = "Yavsc share service", 
+        Name = Constants.ApplicationName + ".YavscChooserTargetService", 
+        Label = Constants.ApplicationLabel + " share service", 
         Permission = Permission.BindChooserTargetService, 
         Icon = "@drawable/icon", 
         Exported = true,
