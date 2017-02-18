@@ -2,6 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" android:installLocation="auto" package="fr.pschneider.bas">
 	<uses-sdk android:minSdkVersion="15" />
 	<application android:label="fr.pschneider.bas" android:icon="@drawable/icon">
+    <receiver android:name="com.google.android.gms.gcm.GcmReceiver" android:exported="true" android:permission="com.google.android.c2dm.permission.SEND">
+      <intent-filter>
+        <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+        <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+        <category android:name="fr.pschneider.bas" />
+      </intent-filter>
+    </receiver>
+    <activity android:name="fr.pschneider.bas.SendFilesActivity" android:label="@string/send_to_app_name">
+      <intent-filter>
+        <action android:name="android.intent.action.SEND" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:mimeType="*/*" />
+      </intent-filter>
+    </activity>
 		<service android:name="com.paypal.android.sdk.payments.PayPalService" android:exported="false" />
 		<activity android:name="com.paypal.android.sdk.payments.PaymentActivity" />
 	</application>
