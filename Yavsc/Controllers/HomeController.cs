@@ -29,11 +29,11 @@ namespace Yavsc.Controllers
             DbContext = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string id)
         {
-            return View(DbContext.Activities.Include(a=>a.Forms).OrderByDescending(a=>a.Rate));
+            return View(DbContext.Activities.Where(a=>a.ParentCode==id).Include(a=>a.Forms).Include(a=>a.Children)
+            .OrderByDescending(a=>a.Rate));
         }
-
         public IActionResult About()
         {
             return View();
@@ -45,7 +45,6 @@ namespace Yavsc.Controllers
 
         public IActionResult Contact()
         {
-
             return View();
         }
 
