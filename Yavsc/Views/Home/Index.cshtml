@@ -25,16 +25,28 @@
         <div class="@cls"  style="background-image: url('@act.Photo'); background-repeat: no-repeat; ">
           <!-- <img src="@act.Photo" alt="@act.Name" class="img-responsive" />  -->
             <div class="carousel-caption-s" >
-                
+
+                @if (act.Children.Count>0) {
+                <p><em><a asp-route-id="@act.Code">@act.Name</a></em><br/>
+                @act.Description </p>
+                    <a asp-route-id="@act.Code">
+                        @foreach (var c in act.Children) {
+                            @(c.Name+" ")
+                            Html.DisplayFor(subact=>c);
+                        }
+                </a>
+                    }
+                    else {
                 <p><em>@act.Name</em><br/>
                 @act.Description </p>
+
+                    }
 
                 @foreach (var form in act.Forms) {
                     <a class="btn btn-default" asp-controller="FrontOffice" asp-action="@form.Action" asp-route-id="@act.Code">
                     @form.Title
                     </a>
                 }
-                
             </div>
         </div>
             i++; }
