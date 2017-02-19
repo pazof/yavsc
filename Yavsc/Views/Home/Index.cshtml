@@ -30,9 +30,8 @@
                 <p><em><a asp-route-id="@act.Code">@act.Name</a></em><br/>
                 @act.Description </p>
                     <a asp-route-id="@act.Code">
-                        @foreach (var c in act.Children) {
-                            @(c.Name+" ")
-                            Html.DisplayFor(subact=>c);
+                        @foreach (Activity c in act.Children) {
+                            @Html.DisplayFor(subact=>c);
                         }
                 </a>
                     }
