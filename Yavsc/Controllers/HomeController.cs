@@ -31,7 +31,8 @@ namespace Yavsc.Controllers
 
         public IActionResult Index(string id)
         {
-            return View(DbContext.Activities.Where(a=>a.ParentCode==id).Include(a=>a.Forms).Include(a=>a.Children)
+            // TDOD ViewData["Notify"] = 
+            return View(DbContext.Activities.Where(a=>a.ParentCode==id && !a.Hidden).Include(a=>a.Forms).Include(a=>a.Children)
             .OrderByDescending(a=>a.Rate));
         }
         public IActionResult About()

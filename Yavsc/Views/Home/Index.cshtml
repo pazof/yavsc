@@ -31,7 +31,7 @@
                 @act.Description </p>
                     <a asp-route-id="@act.Code">
                         @foreach (Activity c in act.Children) {
-                            @Html.DisplayFor(subact=>c);
+                            @if (!c.Hidden) { @Html.DisplayFor(subact=>c) }
                         }
                 </a>
                     }
@@ -60,4 +60,3 @@
         <span class="sr-only">Suivant</span>
     </a>
 </div>
-

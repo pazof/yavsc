@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170220125518_dimissclick")]
+    partial class dimissclick
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -750,8 +751,6 @@ namespace Yavsc.Migrations
                     b.Property<DateTime>("DateModified");
 
                     b.Property<string>("Description");
-
-                    b.Property<bool>("Hidden");
 
                     b.Property<string>("ModeratorGroupName");
 

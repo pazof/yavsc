@@ -1,0 +1,74 @@
+@model Yavsc.Models.Messaging.Notification
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Notification</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="body" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="body" class="form-control" />
+                <span asp-validation-for="body" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="click_action" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="click_action" class="form-control" />
+                <span asp-validation-for="click_action" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="color" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="color" class="form-control" />
+                <span asp-validation-for="color" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="icon" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="icon" class="form-control" />
+                <span asp-validation-for="icon" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="sound" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="sound" class="form-control" />
+                <span asp-validation-for="sound" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="tag" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="tag" class="form-control" />
+                <span asp-validation-for="tag" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="title" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="title" class="form-control" />
+                <span asp-validation-for="title" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

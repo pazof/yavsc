@@ -8,6 +8,7 @@ using Microsoft.Data.Entity;
 using System.Web;
 using System.Threading;
 using Yavsc.Models.Haircut;
+using Yavsc.Models.Messaging;
 
 namespace Yavsc.Models
 {
@@ -45,7 +46,8 @@ namespace Yavsc.Models
             builder.Entity<Instrumentation>().HasKey(u=> new { u.InstrumentId, u.UserId});
             builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a=> new { a.CircleId, a.BlogPostId});
             builder.Entity<CircleMember>().HasKey(c=> new { MemberId = c.MemberId, CircleId = c.CircleId });
-
+            builder.Entity<DimissClicked>().HasKey(c=>new { uid = c.UserId, notid = c.NotificationId});
+            
             foreach (var et in builder.Model.GetEntityTypes()) {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
@@ -268,6 +270,10 @@ namespace Yavsc.Models
          public DbSet<HairTaint> HairTaint { get; set; }
 
          public DbSet<Color> Color { get; set; }
+
+         public DbSet<Notification> Notification { get; set; }
+
+         public DbSet<DimissClicked> DimissClicked { get; set; }
          
 
     }
