@@ -14,22 +14,22 @@ namespace Yavsc.Models.Messaging
         /// <summary>
         /// The title.
         /// </summary>
-        [Required, Display(Name = "Title")]
+        [Required, Display(Name = "Titre")]
         public string title { get; set; }
         /// <summary>
         /// The body.
         /// </summary>
-        [Required, Display(Name = "Title")]
+        [Required, Display(Name = "Corps")]
         public string body { get; set; }
         /// <summary>
         /// The icon.
         /// </summary>
-        [Display(Name = "Icon")]
+        [Display(Name = "Icône")]
         public string icon { get; set; }
         /// <summary>
         /// The sound.
         /// </summary>
-        [Display(Name = "Sound")]
+        [Display(Name = "Son")]
         public string sound { get; set; }
         /// <summary>
         /// The tag.
@@ -39,12 +39,12 @@ namespace Yavsc.Models.Messaging
         /// <summary>
         /// The color.
         /// </summary>
-        [Display(Name = "Color")]
+        [Display(Name = "Couleur")]
         public string color { get; set; }
         /// <summary>
         /// The click action.
         /// </summary>
-        [Required, Display(Name = "Click action")]
+        [Required, Display(Name = "Label du click")]
         public string click_action { get; set; }
     }
 }

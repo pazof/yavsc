@@ -82,5 +82,8 @@ namespace Yavsc.Models.Workflow
         {
             get; set;
         }
+
+        public bool Hidden { get; set; }
+
     }
 }
