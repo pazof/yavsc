@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
         <link rel="icon" href="/favicon.ico?v2" />
         <title>@ViewData["Title"] - @SiteSettings.Value.Title</title>
+
         <environment names="Development">
             <link rel="stylesheet" href="~/css/bootstrap.css" />
             <link rel="stylesheet" href="~/css/site.css" />
@@ -32,13 +33,18 @@
             <script src="~/js/site.js"></script>
         </environment>
             <script src="~/js/jquery.signalR-2.2.1.js"></script>
+            <style>
+nav {
+    background: url(@Startup.SiteSetup.Banner) 0% 50%;
+}
+            </style>
         @RenderSection("header", required: false)
     </head>
     <body>
         @if (ViewData ["Notify"] != null) {
             foreach (Notification n in ViewData ["Notify"] as IEnumerable<Notification>) {
             <div class="alert alert-info alert-dismissable">
-  <em><strong>@n.title</strong></em><br>
+  <h1>@n.title</h1><em></em>
   @n.body
   <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action==null)?SR["Fermer"]:SR[n.click_action])</a>
 </div>
@@ -75,12 +81,7 @@
 <environment names="Development">
     <p><em>Site de développement</em></p>
 </environment>
-<environment names="Lua">
-    <i>Get up.</i>
-</environment>
-<environment names="ZicMoove">
-    <i>Get up.</i>
-</environment>
+<i>@SiteSettings.Value.Slogan</i>
 
 <script>
   window.fbAsyncInit = function() {
