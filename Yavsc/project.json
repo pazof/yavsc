@@ -108,7 +108,8 @@
     "System.Json": "4.0.20126.16343",
     "YavscLib": "1.0.0-*",
     "Extensions.AspNet.Authentication.Instagram": "1.0.0-t150809211713",
-    "PayPalMerchantSDK": "2.16.204"
+    "PayPalMerchantSDK": "2.16.204",
+    "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final"
   },
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",

@@ -9,6 +9,9 @@ using Microsoft.AspNet.Identity;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.Data.Entity;
+using System.Collections.Generic;
+using Microsoft.AspNet.Http;
+using System.Threading.Tasks;
 
 namespace Yavsc.Controllers
 {
@@ -29,9 +32,22 @@ namespace Yavsc.Controllers
             DbContext = context;
         }
 
-        public IActionResult Index(string id)
+        public async Task<IActionResult> Index(string id)
         {
-            // TDOD ViewData["Notify"] = 
+
+            var uid = User.GetUserId();
+            long [] clicked=null;
+            if (uid==null) {
+                await HttpContext.Session.LoadAsync();
+                var strclicked = HttpContext.Session.GetString("clicked");
+                if (strclicked!=null) clicked = strclicked.Split(':').Select(c=>long.Parse(c)).ToArray();
+              if (clicked==null) clicked = new long [0];
+            }
+            else clicked = DbContext.DimissClicked.Where(d=>d.UserId == uid).Select(d=>d.NotificationId).ToArray();
+            var notes = DbContext.Notification.Where(
+                n=> !clicked.Any(c=>n.Id==c)
+            );
+            ViewData["Notify"] = notes;
             return View(DbContext.Activities.Where(a=>a.ParentCode==id && !a.Hidden).Include(a=>a.Forms).Include(a=>a.Children)
             .OrderByDescending(a=>a.Rate));
         }
