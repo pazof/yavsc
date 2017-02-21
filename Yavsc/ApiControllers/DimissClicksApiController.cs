@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
@@ -11,7 +12,7 @@ using Yavsc.Models.Messaging;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/DimissClicksApi")]
+    [Route("api/dimiss")]
     public class DimissClicksApiController : Controller
     {
         private ApplicationDbContext _context;
@@ -29,12 +30,24 @@ namespace Yavsc.Controllers
             return _context.DimissClicked.Where(d=>d.UserId == uid);
         }
 
+        [HttpGet("click/{noteid}"),AllowAnonymous]
+        public async Task<IActionResult> Click(long noteid )
+        {
+            if (User.IsSignedIn())
+            return await PostDimissClicked(new DimissClicked { NotificationId= noteid, UserId = User.GetUserId()});
+            await HttpContext.Session.LoadAsync();
+            var clicked = HttpContext.Session.GetString("clicked");
+            if (clicked == null) {
+                HttpContext.Session.SetString("clicked",noteid.ToString());
+            } else HttpContext.Session.SetString("clicked",$"{clicked}:{noteid}");
+            await HttpContext.Session.CommitAsync();
+            return Ok();
+        }
         // GET: api/DimissClicksApi/5
         [HttpGet("{id}", Name = "GetDimissClicked")]
         public async Task<IActionResult> GetDimissClicked([FromRoute] string id)
         {
             var uid = User.GetUserId();
-            if (!User.IsInRole("Administrator"))
             if (uid != id) return new ChallengeResult();
 
             if (!ModelState.IsValid)
@@ -57,9 +70,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> PutDimissClicked([FromRoute] string id, [FromBody] DimissClicked dimissClicked)
         {
             var uid = User.GetUserId();
-            if (!User.IsInRole("Administrator"))
             if (uid != id || uid != dimissClicked.UserId) return new ChallengeResult();
-
 
             if (!ModelState.IsValid)
             {
@@ -97,7 +108,6 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> PostDimissClicked([FromBody] DimissClicked dimissClicked)
         {
             var uid = User.GetUserId();
-            if (!User.IsInRole("Administrator"))
             if (uid != dimissClicked.UserId) return new ChallengeResult();
 
             if (!ModelState.IsValid)
