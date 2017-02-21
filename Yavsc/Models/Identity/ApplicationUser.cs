@@ -11,6 +11,8 @@ namespace Yavsc.Models
     using Models.Chat;
     using Models.Bank;
     using Models.Access;
+    using Newtonsoft.Json;
+
     public class ApplicationUser : IdentityUser
     {
         /// <summary>
@@ -40,24 +42,24 @@ namespace Yavsc.Models
         /// User's posts
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("Author")]
+        [InverseProperty("Author"),JsonIgnore]
         public virtual List<Blog> Posts { get; set; }
 
         /// <summary>
         /// User's contact list
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("Owner")]
+        [InverseProperty("Owner"),JsonIgnore]
         public virtual List<Contact> Book { get; set; }
 
         /// <summary>
         /// External devices using the API
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("DeviceOwner")]
+        [InverseProperty("DeviceOwner"),JsonIgnore]
         public virtual List<GoogleCloudMobileDeclaration> Devices { get; set; }
         
-        [InverseProperty("Owner")]
+        [InverseProperty("Owner"),JsonIgnore]
         public virtual List<Connection> Connections { get; set; }
 
 
@@ -65,7 +67,7 @@ namespace Yavsc.Models
         /// User's circles
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("Owner")]
+        [InverseProperty("Owner"),JsonIgnore]
 
         public virtual List<Circle> Circles { get; set; }
 
@@ -90,6 +92,7 @@ namespace Yavsc.Models
         public long DiskQuota { get; set; } = 512*1024*1024;
         public long DiskUsage { get; set; } = 0;
 
+        [JsonIgnore]
         public virtual List<BlackListed> BlackList { get; set; }
     }
 }

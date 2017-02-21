@@ -27,7 +27,7 @@
             <div class="carousel-caption-s" >
 
                 @if (act.Children.Count>0) {
-                <p><em><a asp-route-id="@act.Code">@act.Name</a></em><br/>
+                <p><em>@act.Name</em><br/>
                 @act.Description </p>
                     <a asp-route-id="@act.Code">
                         @foreach (Activity c in act.Children) {
