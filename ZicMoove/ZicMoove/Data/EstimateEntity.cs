@@ -10,6 +10,7 @@ namespace ZicMoove.Data
     using System.IO;
     using System.Linq;
     using System.Net.Http;
+    using System.Threading.Tasks;
 
     public class EstimateEntity : RemoteEntity<Estimate, long> 
     {
@@ -17,18 +18,15 @@ namespace ZicMoove.Data
         {
         }
 
-        public async void SignAsProvider(Estimate estimate, Stream stream)
+        public async Task SignAsProvider(Estimate estimate, Stream stream)
         {
 
             if (estimate.Id == 0)
             {
-                var ok = await this.Create(estimate);
-                if (!ok)
-                {
-                    await App.DisplayAlert("Erreur d'accès au serveur", "Echec de l'envoi de l'estimation");
-                    return;
-                }
-                this.Add(estimate);
+                    if (!await this.Create(estimate))
+                    {
+                       await App.DisplayAlert("Erreur d'accès au serveur", "Echec de l'envoi de l'estimation");
+                    }
             }
             using (HttpClient client = UserHelpers.CreateJsonClient())
             {
@@ -40,24 +38,29 @@ namespace ZicMoove.Data
                     content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
                     content.Headers.Add("Content-Disposition", $"form-data; name=\"file\"; filename=\"{filename}\"");
                     requestContent.Add(content, "file", filename);
+                   
                     using (var response = await client.PostAsync(
-                        Constants.YavscApiUrl + $"/pdfestimate/prosign/{estimate.Id}", requestContent))
+                    Constants.YavscApiUrl + $"/pdfestimate/prosign/{estimate.Id}", requestContent))
                     {
                         if (!response.IsSuccessStatusCode)
-                        { 
+                        {
                             var errContent = await response.Content.ReadAsStringAsync();
-                            throw new ApiCallFailedException($"SignAsProvider: {response.StatusCode} / {errContent}");
+                            await App.DisplayAlert("SignAsProvider", $"{response.StatusCode}: {errContent}");
                         }
-                        var json = await response.Content.ReadAsStringAsync();
-                        JsonConvert.PopulateObject(json, estimate);
+                        else
+                        {
+                            var json = await response.Content.ReadAsStringAsync();
+                            JsonConvert.PopulateObject(json, estimate);
+                            this.Add(estimate);
+                            this.SaveEntity();
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex.ToString());
+                    await App.DisplayAlert("SignAsProvider", ex.Message);
                 }
             }
-            this.SaveEntity();
         }
 
         // TODO Check we don't loose nothing here
