@@ -42,7 +42,8 @@ namespace Yavsc.Controllers
             .Include(e=>e.Query.PerformerProfile.Performer)
             .Where(
                 e=>e.OwnerId == uid || e.ClientId == uid
-            ).ToList());
+            ).OrderByDescending(e=>e.ProviderValidationDate)
+            .ToList());
         }
 
         // GET: Estimate/Details/5
