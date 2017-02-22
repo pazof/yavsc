@@ -334,7 +334,7 @@ namespace ZicMoove
 
         public static Task<bool> DisplayAlert(string title, string message, string yes = "OK", string no = null)
         {
-            var currentPage = ((NavigationPage)Current.MainPage).CurrentPage;
+            var currentPage = Navigation.NavigationStack.Last();
             if (no == null)
             {
                 return currentPage.DisplayAlert(title, message, yes).ContinueWith(task => true);

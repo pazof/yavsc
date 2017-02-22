@@ -20,6 +20,7 @@ namespace ZicMoove.Pages.UserProfile
             btnPay.Clicked += BtnPay_Clicked;
 
         }
+
         public UserProfilePage(UserProfileViewModel model)
         {
             InitializeComponent();
@@ -58,9 +59,14 @@ namespace ZicMoove.Pages.UserProfile
                 {
                     using (var stream = file.GetStream())
                     {
+                        var requestContent = new MultipartFormDataContent();
                         var content = new StreamContent(stream);
+                        var filename = "me.jpg";
+                        content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+                        content.Headers.Add("Content-Disposition", $"form-data; name=\"file\"; filename=\"{filename}\"");
+                        requestContent.Add(content, "file", filename);
 
-                        using (var response = await client.PostAsync(Constants.YavscApiUrl + "/setavatar", content))
+                        using (var response = await client.PostAsync(Constants.YavscApiUrl + "/setavatar", requestContent))
                         {
                             if (response.IsSuccessStatusCode)
                             {
