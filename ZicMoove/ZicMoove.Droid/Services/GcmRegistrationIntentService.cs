@@ -9,6 +9,7 @@ using Android.Gms.Gcm.Iid;
 using Android.OS;
 using Android;
 using ZicMoove.Settings;
+using System.Linq;
 
 namespace ZicMoove.Droid
 {
@@ -101,12 +102,14 @@ namespace ZicMoove.Droid
 		{
 			var pubSub = GcmPubSub.GetInstance(this);
 			pubSub.Subscribe(token, "/topics/global", null);
-           
+            if (MainSettings.CurrentUser.Roles.Contains("Performer"))
+            // TODO add activity codes in the bundle
+                pubSub.Subscribe(token, "/topics/jobs", null);
             // TODO if a Activity is specified,
             // and general annonces in this activity are accepted:
-            // 
             // pubSub.Subscribe(token, "/topics/jobs/"+ActivityCode, null);
-		}
+            
+        }
 	}
 	
 }
