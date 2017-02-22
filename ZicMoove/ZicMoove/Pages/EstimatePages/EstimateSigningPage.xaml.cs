@@ -48,7 +48,7 @@ namespace ZicMoove.Pages.EstimatePages
             */
 
                 stream.Seek(0, SeekOrigin.Begin);
-                DataManager.Instance.Estimates.SignAsProvider(estimate, stream);
+                await DataManager.Instance.Estimates.SignAsProvider(estimate, stream);
                 DataManager.Instance.Estimates.SaveEntity();
             }
             IsBusy = false;

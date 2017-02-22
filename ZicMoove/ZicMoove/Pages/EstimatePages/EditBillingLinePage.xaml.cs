@@ -4,17 +4,28 @@ using ZicMoove.ViewModels.EstimateAndBilling;
 using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
+using ZicMoove.Model.Workflow;
 
 namespace ZicMoove.Pages
 {
     public partial class EditBillingLinePage : ContentPage
     {
-        public EditBillingLinePage(BillingLineViewModel model)
+        public void Initialize()
         {
             InitializeComponent();
-            foreach
-                (string du in Enum.GetNames(typeof(BillingLineViewModel.DurationUnits)))
+            foreach (string du in Enum.GetNames(typeof(BillingLineViewModel.DurationUnits)))
                 picker.Items.Add(du);
+            BindingContext = new BillingLineViewModel(new BillingLine());
+        }
+
+        public EditBillingLinePage()
+        {
+            Initialize();
+        }
+
+        public EditBillingLinePage(BillingLineViewModel model)
+        {
+            Initialize();
             BindingContext = model;
         }
 

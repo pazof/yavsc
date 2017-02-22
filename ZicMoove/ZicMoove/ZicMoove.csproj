@@ -104,6 +104,7 @@
     <Compile Include="Model\Social\Chat\ChatStatus.cs" />
     <Compile Include="Model\Social\Chat\ChatMessage.cs" />
     <Compile Include="Model\Social\LocationType.cs" />
+    <Compile Include="Model\UI\AppEvent.cs" />
     <Compile Include="Model\Workflow\Activity.cs" />
     <Compile Include="Model\Workflow\CommandForm.cs" />
     <Compile Include="Pages\ClientPages\ActivityPage.xaml.cs">
@@ -119,8 +120,8 @@
     <Compile Include="ViewModels\Messaging\ChatUserInfo.cs" />
     <Compile Include="Model\Social\Chat\Connection.cs" />
     <Compile Include="ViewModels\Searching\SearchingAnArtistViewModel.cs" />
-    <Compile Include="ViewModels\Validation\Error.cs" />
-    <Compile Include="ViewModels\Validation\ModelState.cs" />
+    <Compile Include="ViewModels\Validation\InputError.cs" />
+    <Compile Include="ViewModels\Validation\ViewModelState.cs" />
     <Compile Include="ViewModels\PageState.cs" />
     <Compile Include="Pages\EstimatePages\EstimateSigningPage.xaml.cs">
       <DependentUpon>EstimateSigningPage.xaml</DependentUpon>
@@ -184,7 +185,7 @@
     <Compile Include="Interfaces\IMDEditor.cs" />
     <Compile Include="Interfaces\IModelViewModel.cs" />
     <Compile Include="Interfaces\IViewFactory.cs" />
-    <Compile Include="Model\ClientProviderInfo.cs" />
+    <Compile Include="Model\Workflow\ClientProviderInfo.cs" />
     <Compile Include="Interfaces\IBookQueryData.cs" />
     <Compile Include="Interfaces\IBillingLine.cs" />
     <Compile Include="Interfaces\IEstimate.cs" />
@@ -304,9 +305,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\UI\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Reference Include="ExifLib, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ExifLib.PCL.1.0.1\lib\portable-net45+sl50+win+WindowsPhoneApp81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10\ExifLib.dll</HintPath>

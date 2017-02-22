@@ -9,16 +9,14 @@ namespace ZicMoove.ViewModels.Validation
     /// Used to make the DataManager know how
     /// to sync local and remote data
     /// </summary>
-    public class EditingViewModel<DataType>: ViewModel
+    public abstract class EditingViewModel<DataType>: ViewModel
     {
-        [JsonIgnore]
-        public Action<DataType, ModelState> CheckCommand { set; get; }
 
         public DataType Data { get; set; }
 
-        private ModelState viewModelState = new ModelState();
+        private ViewModelState viewModelState = new ViewModelState();
 
-        public ModelState ViewModelState
+        public ViewModelState ModelState
         {
             get
             {
@@ -26,29 +24,28 @@ namespace ZicMoove.ViewModels.Validation
             }
             set
             {
-                base.SetProperty<ModelState>(ref viewModelState, value);
+                base.SetProperty<ViewModelState>(ref viewModelState, value);
             }
         }
 
         public EditingViewModel(DataType data)
         {
             this.Data = data;
-            ViewModelState = new ModelState();
+            ModelState = new ViewModelState();
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
-            Check();
+            if (e.PropertyName != "ModelState")
+                Check();
         }
-        public virtual void Check()
-        {
-            if (CheckCommand != null)
-            {
-                ViewModelState.Clear();
-                CheckCommand(Data, ViewModelState);
-            }
-        }
+        /// <summary>
+        /// Must compute the ModelState property
+        /// from the Data one.
+        /// </summary>
+        public abstract void Check();
+
         /* NOTE : I had a dream.
 
 bool existsRemotely;

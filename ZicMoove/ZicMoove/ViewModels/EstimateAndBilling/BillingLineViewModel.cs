@@ -16,15 +16,6 @@ namespace ZicMoove.ViewModels.EstimateAndBilling
 
         public BillingLineViewModel(BillingLine data): base(data)
         {
-            CheckCommand = new Action<BillingLine, ModelState>(
-                (l,s) => {
-                    if (string.IsNullOrWhiteSpace(l.Description))
-                    {
-                        s.AddError("Description",Strings.NoDescription);
-                    }
-                    if (l.UnitaryCost < 0) { s.AddError("UnitaryCost", Strings.InvalidValue); }
-                    if (l.Count < 0) { s.AddError("Count", Strings.InvalidValue); }
-                });
             SyncData();
         }
 
@@ -39,7 +30,7 @@ namespace ZicMoove.ViewModels.EstimateAndBilling
                 description = Data.Description;
                 unitaryCostText = Data.UnitaryCost.ToString("G", CultureInfo.InvariantCulture);
             }
-            CheckCommand(Data, ViewModelState);
+            Check();
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -49,6 +40,17 @@ namespace ZicMoove.ViewModels.EstimateAndBilling
             {
                 SyncData();
             }
+        }
+
+        public override void Check()
+        {
+            ModelState.Clear();
+            if (string.IsNullOrWhiteSpace(Data.Description))
+            {
+                ModelState.AddError("Description", Strings.NoDescription);
+            }
+            if (Data.UnitaryCost < 0) { ModelState.AddError("UnitaryCost", Strings.InvalidValue); }
+            if (Data.Count < 0) { ModelState.AddError("Count", Strings.InvalidValue); }
         }
 
         private int count;

@@ -12,6 +12,7 @@ namespace ZicMoove.ViewModels.EstimateAndBilling
     using Model.Social;
     using Validation;
     using Model.Musical;
+    using System;
 
     public class EditEstimateViewModel : EditingViewModel<Estimate>
     {
@@ -52,7 +53,7 @@ namespace ZicMoove.ViewModels.EstimateAndBilling
             NotifyPropertyChanged("Query");
             NotifyPropertyChanged("CLient");
             NotifyPropertyChanged("ModelState");
-            
+            Check();
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -74,6 +75,30 @@ namespace ZicMoove.ViewModels.EstimateAndBilling
             NotifyPropertyChanged("FormattedTotal");
             NotifyPropertyChanged("Bill");
             NotifyPropertyChanged("ViewModelState");
+        }
+
+        public override void Check()
+        {
+            ModelState.Clear();
+            if (Data == null) return;
+            if (string.IsNullOrWhiteSpace(Data.Title))
+                ModelState.AddError("Title", "Spécifier un titre");
+            if (string.IsNullOrWhiteSpace(Data.Description))
+                ModelState.AddError("Description", "Veuillez décrire l'objet de cette facture");
+            if (Data.Bill==null)
+                ModelState.AddError("Bill", "Veuillez ajouter au moins une ligne de facture");
+            else
+            {
+                if (Data.Bill.Count==0)
+                    ModelState.AddError("Bill", "Veuillez ajouter au moins une ligne de facture");
+                var ilc = (Bill.Count(l => !l.ModelState.IsValid));
+                if (ilc > 0)
+                {
+                    var pluriel = (ilc > 1) ? "les lignes" : "la ligne";
+                    ModelState.AddError("Bill", "Veuillez corriger {pluriel} de facture");
+                }
+            }
+            NotifyPropertyChanged("ModelState");
         }
 
         [JsonIgnore]
