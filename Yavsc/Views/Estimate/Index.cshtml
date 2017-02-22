@@ -12,16 +12,19 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Description)
+            @Html.DisplayNameFor(model => model.Title)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => model.Description)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Query.Client)
         </th>
         <th>
             @SR["Performer"]
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProviderValidationDate)
         </th>
         <th>
             @SR["Id"]
@@ -32,16 +35,19 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Description)
+            @Html.DisplayFor(modelItem => item.Title)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Title)
+            @Html.DisplayFor(modelItem => item.Description)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Query.Client.UserName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Query.PerformerProfile.Performer.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProviderValidationDate)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Id)
