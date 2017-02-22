@@ -20,6 +20,7 @@ namespace ZicMoove.Pages.UserProfile
             btnPay.Clicked += BtnPay_Clicked;
 
         }
+
         public UserProfilePage(UserProfileViewModel model)
         {
             InitializeComponent();
