@@ -16,6 +16,7 @@ using Microsoft.AspNet.Localization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.AspNet.Mvc.Razor;
+using Microsoft.AspNet.Http.Extensions;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -184,7 +185,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
             services.AddSingleton<IAuthorizationHandler, EstimateViewHandler>();
             services.AddSingleton<IAuthorizationHandler, ViewFileHandler>();
-
+  
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -337,7 +338,8 @@ namespace Yavsc
             ConfigureWebSocketsApp(app, SiteSetup, env);
             ConfigureWorkflow(app, SiteSetup);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"fr"));
-
+            app.UseSession();
+  
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

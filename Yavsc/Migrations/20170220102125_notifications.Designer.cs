@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170220102125_notifications")]
+    partial class notifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -531,15 +532,6 @@ namespace Yavsc.Migrations
                     b.HasKey("UserId");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Messaging.DimissClicked", b =>
-                {
-                    b.Property<string>("UserId");
-
-                    b.Property<long>("NotificationId");
-
-                    b.HasKey("UserId", "NotificationId");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Messaging.Notification", b =>
                 {
                     b.Property<long>("Id")
@@ -750,8 +742,6 @@ namespace Yavsc.Migrations
                     b.Property<DateTime>("DateModified");
 
                     b.Property<string>("Description");
-
-                    b.Property<bool>("Hidden");
 
                     b.Property<string>("ModeratorGroupName");
 
@@ -1052,17 +1042,6 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.Relationship.Location")
                         .WithMany()
                         .HasForeignKey("BillingAddressId");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Messaging.DimissClicked", b =>
-                {
-                    b.HasOne("Yavsc.Models.Messaging.Notification")
-                        .WithMany()
-                        .HasForeignKey("NotificationId");
-
-                    b.HasOne("Yavsc.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Musical.MusicalPreference", b =>

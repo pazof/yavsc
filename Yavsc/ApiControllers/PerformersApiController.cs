@@ -4,6 +4,8 @@ using Microsoft.AspNet.Mvc;
 using System.Linq;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
+using System.Security.Claims;
+using Microsoft.AspNet.Authorization;
 
 namespace Yavsc.Controllers
 {
@@ -16,9 +18,21 @@ namespace Yavsc.Controllers
         {
             dbContext = context;
         }
-        public IEnumerable<PerformerProfile> Get()
+
+        /// <summary>
+        /// Lists profiles on an activity code
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize(Roles="Performer")]
+        public IActionResult Get(string id)
         {
-            return dbContext.Performers.Where(p=>p.Active && p.AcceptPublicContact);
+            if (id==null)
+            {
+                ModelState.AddModelError("id","Specifier un code activité");
+                return new BadRequestObjectResult(ModelState);
+            }
+            return Ok(dbContext.Performers.Where(p=>p.Active && p.PerformerId == id));
         }
     }
 }

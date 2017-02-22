@@ -35,6 +35,15 @@
         @RenderSection("header", required: false)
     </head>
     <body>
+        @if (ViewData ["Notify"] != null) {
+            foreach (Notification n in ViewData ["Notify"] as IEnumerable<Notification>) {
+            <div class="alert alert-info alert-dismissable">
+  <em><strong>@n.title</strong></em><br>
+  @n.body
+  <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action==null)?SR["Fermer"]:SR[n.click_action])</a>
+</div>
+            }
+        }
         <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -45,7 +54,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a asp-controller="Home" asp-action="Index" class="navbar-brand">@SiteSettings.Value.Title</a>
+                    <a asp-controller="Home" asp-action="Index" asp-route-id="" class="navbar-brand">@SiteSettings.Value.Title</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
