@@ -42,23 +42,29 @@
   <ScrollView>
 
     <StackLayout x:Name="mainStackLayout">
-      <Label Text="Description de la ligne de facture"
-             Style="{StaticResource InputLabelStyle}"></Label>
-        <Editor HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}">
-          <Editor.Behaviors>
-            <behaviors:EditorMaxLengthValidator x:Name="descriptionLenValidator" MaxLength="12" MinLength="3" />
-          </Editor.Behaviors>
-        </Editor>
       <StackLayout Orientation="Horizontal">
+        <Label Text="Description de la ligne de facture"
+               Style="{StaticResource InputLabelStyle}"></Label>
         <Image  x:Name="descriptionSuccessErrorImage"
-           Style="{Binding Source={x:Reference descriptionLenValidator}, Path=IsValid, Converter={StaticResource boolToStyleImage}}" />
-        <Label Text="{Binding Source={x:Reference descriptionLenValidator}, Path=Error}"
-             Style="{StaticResource ErrorLabelStyle}"></Label>
+             Style="{Binding Source={x:Reference descriptionLenValidator}, Path=IsValid, Converter={StaticResource boolToStyleImage}}" />
       </StackLayout>
+          <Editor HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Text="{Binding Description, Mode=TwoWay}">
+            <Editor.Behaviors>
+              <behaviors:EditorMaxLengthValidator x:Name="descriptionLenValidator" MaxLength="12" MinLength="3" />
+            </Editor.Behaviors>
+          </Editor>
+      <Label Text="{Binding Source={x:Reference descriptionLenValidator}, Path=Error}"
+               Style="{StaticResource ErrorLabelStyle}"></Label>
 
-      <Label Text="Durée de la prestation"
-             Style="{StaticResource InputLabelStyle}">
-      </Label>
+      <StackLayout Orientation="Horizontal">
+        <Label Text="Durée de la prestation"
+               Style="{StaticResource InputLabelStyle}">
+        </Label>
+        <Image  x:Name="durationSuccessErrorImage"
+                  Style="{Binding Source={x:Reference durationValidator}, 
+                                Path=IsValid, 
+                                Converter={StaticResource boolToStyleImage}}" />
+      </StackLayout>
       <StackLayout Orientation="Horizontal">
         <Entry Placeholder="Durée" Keyboard="Numeric" Style="{StaticResource BigEntry}"
               Text="{Binding DurationValue, Mode=TwoWay, StringFormat='{0}'}" >
@@ -71,13 +77,15 @@
                 Title="Unité de temps"
                 SelectedItem="{Binding DurationUnit, Mode=TwoWay}">
         </views:EnumPicker>
-        <Image  x:Name="durationSuccessErrorImage"
-                  Style="{Binding Source={x:Reference durationValidator}, 
+        
+      </StackLayout>
+      <StackLayout Orientation="Horizontal">
+      <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
+        <Image  x:Name="countSuccessErrorImage"
+                 Style="{Binding Source={x:Reference countValidator}, 
                                 Path=IsValid, 
                                 Converter={StaticResource boolToStyleImage}}" />
       </StackLayout>
-
-      <Label Text="Quantité facturée" Style="{StaticResource InputLabelStyle}"></Label>
       
       <Entry Text="{Binding Count, Mode=TwoWay}" Placeholder="Quantité" Keyboard="Numeric"
              Style="{StaticResource BigEntry}">
@@ -86,15 +94,18 @@
         </Entry.Behaviors>
       </Entry>
         <StackLayout Orientation="Horizontal">
-           <Image  x:Name="countSuccessErrorImage"
-                 Style="{Binding Source={x:Reference countValidator}, 
-                                Path=IsValid, 
-                                Converter={StaticResource boolToStyleImage}}" />
           <Label Text="{Binding Source={x:Reference countValidator}, Path=Error}"
              Style="{StaticResource ErrorLabelStyle}"></Label>
         </StackLayout>
       
-      <Label Text="Prix unitaire" Style="{StaticResource InputLabelStyle}"></Label>
+      <StackLayout Orientation="Horizontal">
+      <Label Text="Prix unitaire" Style="{StaticResource InputLabelStyle}">
+      </Label>
+      <Image  x:Name="unitaryCostSuccessErrorImage"
+                Style="{Binding Source={x:Reference unitCostValidator}, 
+                                Path=IsValid, 
+                                Converter={StaticResource boolToStyleImage}}" />
+      </StackLayout>
       <StackLayout Orientation="Horizontal">
         <Entry Text="{Binding UnitaryCostText, Mode=TwoWay}" Placeholder="Prix"
                Keyboard="Numeric" Style="{StaticResource BigEntry}">
@@ -103,15 +114,13 @@
           </Entry.Behaviors>
         </Entry>
         <Label Text="€" Style="{StaticResource BigLabelStyle}" />
-        <Image  x:Name="unitaryCostSuccessErrorImage"
-                  Style="{Binding Source={x:Reference unitCostValidator}, 
-                                Path=IsValid, 
-                                Converter={StaticResource boolToStyleImage}}" />
       </StackLayout>
+      
       <StackLayout Orientation="Horizontal">
         <Button Text="Términé"
                 Command="{Binding ValidateCommand}"
-                Clicked="OnValidateClicked"></Button>
+                Clicked="OnValidateClicked"
+                IsEnabled="{Binding ModelState.IsValid}"></Button>
         <Button Text="Supprimer"
                     Command="{Binding RemoveCommand}"
                     Clicked="OnDeleteClicked"></Button>
