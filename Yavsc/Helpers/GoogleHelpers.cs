@@ -29,6 +29,8 @@ namespace Yavsc.Helpers
     using Models.Google.Messaging;
     using Models.Messaging;
     using Models;
+    using Interfaces.Workflow;
+
 
     /// <summary>
     /// Google helpers.
@@ -73,6 +75,16 @@ namespace Yavsc.Helpers
          (this GoogleAuthSettings googleSettings, IEnumerable<string> regids, Event ev)
            where Event : IEvent
         {
+            if (ev == null)
+                throw new Exception("Spécifier un évènement");
+            if (ev.Message == null)
+                throw new Exception("Spécifier un message");
+            if (ev.Sender == null)
+                throw new Exception("Spécifier un expéditeur");
+
+            if (regids == null)
+                throw new NotImplementedException("Notify & No GCM reg ids");
+
             var msg = new MessageWithPayload<Event>()
             {
                 notification = new Notification()
@@ -84,11 +96,13 @@ namespace Yavsc.Helpers
                 data = ev,
                 registration_ids = regids.ToArray()
             };
-
-            if (regids == null)
-                throw new NotImplementedException("Notify & No GCM reg ids");
+            try {
             using (var m = new SimpleJsonPostMethod("https://gcm-http.googleapis.com/gcm/send",$"key={googleSettings.ApiKey}")) {
                 return m.Invoke<MessageWithPayloadResponse>(msg);
+            }
+            }
+            catch (Exception ex) {
+                throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
             }
         }
         public static async Task<UserCredential> GetCredentialForGoogleApiAsync(this UserManager<ApplicationUser> userManager, ApplicationDbContext context, string uid)
