@@ -22,25 +22,16 @@ namespace ZicMoove.Pages
         public EditEstimatePage(EditEstimateViewModel model)
         {
             BindingContext = model;
-            Model.CheckCommand = new Action<Estimate, ViewModels.Validation.ModelState>(
-                (e, m) =>
-                {
-                    foreach (var line in model.Bill)
-                    {
-                        line.Check();
-                        if (!line.ViewModelState.IsValid)
-                            model.ViewModelState.AddError("Bill", "invalid line");
-                    }
-                });
 
             InitializeComponent();
-            Model.Check();
         }
 
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
-            ((EditEstimateViewModel)BindingContext).PropertyChanged += EditEstimatePage_PropertyChanged;
+            if (Model == null) return;
+            Model.PropertyChanged += EditEstimatePage_PropertyChanged;
+            Model.Check();
         }
 
         private void EditEstimatePage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -8,15 +8,15 @@ using Xamarin.Forms;
 
 namespace ZicMoove.ViewModels.Validation
 {
-    public class ModelState : BindableObject
+    public class ViewModelState : BindableObject
     {
         public static readonly BindableProperty IsValidProperty =
-            BindableProperty.Create("IsValid", typeof(bool), typeof(ModelState), false);
+            BindableProperty.Create("IsValid", typeof(bool), typeof(ViewModelState), false);
 
         public static readonly BindableProperty ErrorsProperty =
-           BindableProperty.Create("Errors", typeof(Dictionary<string,List<InputError>>), typeof(ModelState), null);
+           BindableProperty.Create("Errors", typeof(Dictionary<string,List<InputError>>), typeof(ViewModelState), null);
 
-        public ModelState()
+        public ViewModelState()
         {
            Errors = new Dictionary<string, List<InputError>>();
         }

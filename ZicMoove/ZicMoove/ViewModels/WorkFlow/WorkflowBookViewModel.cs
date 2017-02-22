@@ -15,5 +15,10 @@ namespace ZicMoove.ViewModels.WorkFlow
         public WorkflowBookViewModel(BookQuery data) : base(data)
         {
         }
+
+        public override void Check()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
