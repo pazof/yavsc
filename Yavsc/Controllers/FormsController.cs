@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
@@ -52,7 +53,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Form.Add(form);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(form);
@@ -82,7 +83,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(form);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(form);
@@ -113,7 +114,7 @@ namespace Yavsc.Controllers
         {
             Form form = await _context.Form.SingleAsync(m => m.Id == id);
             _context.Form.Remove(form);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

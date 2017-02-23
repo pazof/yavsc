@@ -39,7 +39,7 @@ namespace Yavsc.Controllers
                     return HttpBadRequest();
 
             blogpost.Rate = rate;
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
 
             return Ok();
         }

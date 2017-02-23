@@ -134,7 +134,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Blogspot.Add(blog);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ModelState.AddModelError("Unknown","Invalid Blog posted ...");
@@ -188,7 +188,7 @@ namespace Yavsc.Controllers
                 {
                     // saves the change
                     _context.Update(blog);
-                    _context.SaveChanges();
+                    _context.SaveChanges(User.GetUserId());
                     ViewData["StatusMessage"] = "Post modified";
                     return RedirectToAction("Index");
                 } 
@@ -231,7 +231,7 @@ namespace Yavsc.Controllers
             if (auth.Result)
             {
                 _context.Blogspot.Remove(blog);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             return RedirectToAction("Index");
         }

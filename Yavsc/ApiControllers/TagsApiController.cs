@@ -7,6 +7,7 @@ using Yavsc.Models;
 
 namespace Yavsc.Controllers
 {
+    using System.Security.Claims;
     using Models.Relationship;
     [Produces("application/json")]
     [Route("api/TagsApi")]
@@ -63,7 +64,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -92,7 +93,7 @@ namespace Yavsc.Controllers
             _context.Tags.Add(tag);
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -125,7 +126,7 @@ namespace Yavsc.Controllers
             }
 
             _context.Tags.Remove(tag);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
 
             return Ok(tag);
         }

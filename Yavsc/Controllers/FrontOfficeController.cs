@@ -79,7 +79,7 @@ namespace Yavsc.Controllers
                 {
                     _context.BookQueries.Update(bookQuery);
                 }
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 // TODO Send sys notifications &
                 // notify the user (make him a basket badge)
                 return View("Index");

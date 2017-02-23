@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Yavsc.Models;
@@ -53,7 +54,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.ExceptionsSIREN.Add(exceptionSIREN);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(exceptionSIREN);
@@ -83,7 +84,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(exceptionSIREN);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(exceptionSIREN);
@@ -114,7 +115,7 @@ namespace Yavsc.Controllers
         {
             ExceptionSIREN exceptionSIREN = _context.ExceptionsSIREN.Single(m => m.SIREN == id);
             _context.ExceptionsSIREN.Remove(exceptionSIREN);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

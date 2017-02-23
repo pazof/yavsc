@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -64,7 +65,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -93,7 +94,7 @@ namespace Yavsc.Controllers
             _context.Circle.Add(circle);
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -126,7 +127,7 @@ namespace Yavsc.Controllers
             }
 
             _context.Circle.Remove(circle);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
 
             return Ok(circle);
         }

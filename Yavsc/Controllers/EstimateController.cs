@@ -102,7 +102,7 @@ namespace Yavsc.Controllers
             {
                 _context.Estimates
                 .Add(estimate);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 var query = _context.BookQueries.FirstOrDefault(
                     q=>q.Id == estimate.CommandId
                 );
@@ -178,7 +178,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(estimate);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(estimate);
@@ -211,7 +211,7 @@ namespace Yavsc.Controllers
         {
             Estimate estimate = _context.Estimates.Single(m => m.Id == id);
             _context.Estimates.Remove(estimate);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

@@ -48,7 +48,7 @@ public class GCMController : Controller
                 alreadyRegisteredDevice.Platform = declaration.Platform;
                 alreadyRegisteredDevice.Version = declaration.Version;
                 _context.Update(alreadyRegisteredDevice);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             else
             {
@@ -56,7 +56,7 @@ public class GCMController : Controller
                 declaration.DeclarationDate = DateTime.Now;
                 declaration.DeviceOwnerId = uid;
                 _context.GCMDevices.Add(declaration as GoogleCloudMobileDeclaration);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             var latestActivityUpdate = _context.Activities.Max(a=>a.DateModified);
             return Json(new { 
