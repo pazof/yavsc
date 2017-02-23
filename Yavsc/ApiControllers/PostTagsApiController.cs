@@ -6,9 +6,10 @@ using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
+    using System.Security.Claims;
     using Models;
     using Models.Relationship;
-    
+
     [Produces("application/json")]
     [Route("~/api/PostTagsApi")]
     public class PostTagsApiController : Controller
@@ -64,7 +65,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -93,7 +94,7 @@ namespace Yavsc.Controllers
             _context.TagsDomain.Add(postTag);
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -126,7 +127,7 @@ namespace Yavsc.Controllers
             }
 
             _context.TagsDomain.Remove(postTag);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
 
             return Ok(postTag);
         }

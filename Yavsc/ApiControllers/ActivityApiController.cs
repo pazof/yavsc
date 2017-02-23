@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
@@ -47,7 +49,7 @@ namespace Yavsc.Controllers
         }
 
         // PUT: api/ActivityApi/5
-        [HttpPut("{id}")]
+        [HttpPut("{id}"),Authorize("AdministratorOnly")]
         public async Task<IActionResult> PutActivity([FromRoute] string id, [FromBody] Activity activity)
         {
             if (!ModelState.IsValid)
@@ -64,7 +66,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -82,7 +84,7 @@ namespace Yavsc.Controllers
         }
 
         // POST: api/ActivityApi
-        [HttpPost]
+        [HttpPost,Authorize("AdministratorOnly")]
         public async Task<IActionResult> PostActivity([FromBody] Activity activity)
         {
             if (!ModelState.IsValid)
@@ -93,7 +95,7 @@ namespace Yavsc.Controllers
             _context.Activities.Add(activity);
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -111,7 +113,7 @@ namespace Yavsc.Controllers
         }
 
         // DELETE: api/ActivityApi/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"),Authorize("AdministratorOnly")]
         public async Task<IActionResult> DeleteActivity([FromRoute] string id)
         {
             if (!ModelState.IsValid)
@@ -126,7 +128,7 @@ namespace Yavsc.Controllers
             }
 
             _context.Activities.Remove(activity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
 
             return Ok(activity);
         }

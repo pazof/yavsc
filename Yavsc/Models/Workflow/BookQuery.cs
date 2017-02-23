@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Workflow
 {
-  using YavscLib;
   using Yavsc.Models.Billing;
   using Yavsc.Models.Relationship;
     /// <summary>

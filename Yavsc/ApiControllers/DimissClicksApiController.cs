@@ -86,7 +86,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -118,7 +118,7 @@ namespace Yavsc.Controllers
             _context.DimissClicked.Add(dimissClicked);
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -155,7 +155,7 @@ namespace Yavsc.Controllers
             }
 
             _context.DimissClicked.Remove(dimissClicked);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
 
             return Ok(dimissClicked);
         }

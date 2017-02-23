@@ -3,6 +3,7 @@ using Microsoft.AspNet.Mvc;
 
 namespace Yavsc.Controllers
 {
+    using System.Security.Claims;
     using Models;
     using Models.Musical;
     public class MusicalTendenciesController : Controller
@@ -51,7 +52,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.MusicalTendency.Add(musicalTendency);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(musicalTendency);
@@ -81,7 +82,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(musicalTendency);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(musicalTendency);
@@ -112,7 +113,7 @@ namespace Yavsc.Controllers
         {
             MusicalTendency musicalTendency = _context.MusicalTendency.Single(m => m.Id == id);
             _context.MusicalTendency.Remove(musicalTendency);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

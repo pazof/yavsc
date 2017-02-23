@@ -2,13 +2,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Interfaces.Workflow;
-using Yavsc.Models.Market;
-using Yavsc.Models.Workflow;
-using YavscLib;
 
 namespace Yavsc.Models.Billing
 {
+using Interfaces.Workflow;
+using Workflow;
+using YavscLib;
 
  public abstract class NominativeServiceCommand : IBaseTrackedEntity, IQuery
   {

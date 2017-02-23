@@ -4,17 +4,17 @@ using Microsoft.AspNet.Http.Features;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Hosting;
-using Yavsc.Models;
 using Microsoft.AspNet.Identity;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.Data.Entity;
-using System.Collections.Generic;
 using Microsoft.AspNet.Http;
 using System.Threading.Tasks;
 
 namespace Yavsc.Controllers
 {
+    using Models;
+    
     [ServiceFilter(typeof(LanguageActionFilter)),AllowAnonymous]
     public class HomeController : Controller
     {
