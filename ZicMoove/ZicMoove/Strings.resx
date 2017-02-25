@@ -233,4 +233,10 @@
   <data name="ProviderContracts" xml:space="preserve">
     <value>Contrats fournisseur</value>
   </data>
+  <data name="EstimateSigningCaption" xml:space="preserve">
+    <value>Bon pour accord et execution</value>
+  </data>
+  <data name="EstimateSigningPrompt" xml:space="preserve">
+    <value>Signez ici</value>
+  </data>
 </root>

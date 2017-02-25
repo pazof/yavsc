@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ZicMoove.Pages.ClientPages.ActivityPage"
              xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
+              xmlns:views="clr-namespace:ZicMoove.Views;assembly=ZicMoove"
              >
   <CarouselPage.ItemTemplate>
     <DataTemplate>
@@ -13,22 +14,32 @@
         <ScrollView>
           
         <StackLayout>
-          <Label Text="{Binding Name}" FontSize="Medium" HorizontalOptions="Center" />
-          <Image Source="{Binding PhotoUri}" Margin="10,10,10,10" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
-          <Label Text="{Binding Descrition}" HorizontalOptions="Center" />
-          <ListView ItemsSource="{Binding Forms}">
-            <ListView.ItemTemplate>
-              <DataTemplate>
-                <ViewCell>
-                  <ViewCell.View>
-                    <StackLayout>
-                      <Button Text="{Binding Title}" CommandParameter="{Binding Action}"/>
-                    </StackLayout>
-                  </ViewCell.View>
-                </ViewCell>
-              </DataTemplate>
-            </ListView.ItemTemplate>
-          </ListView>
+          <Frame HasShadow="True">
+            <StackLayout>
+              <StackLayout Orientation="Horizontal">
+              <views:SvgImage Svg="{Binding LocalPhoto}" HorizontalOptions="Start" HeightRequest="100" WidthRequest="100"/>
+
+              <Label Text="{Binding Name}" FontSize="Medium" HorizontalOptions="Center" />
+              </StackLayout>
+              <Label Text="{Binding Description}" HorizontalOptions="Center" />
+
+              
+              <ListView ItemsSource="{Binding Forms}">
+                <ListView.ItemTemplate>
+                  <DataTemplate>
+                    <ViewCell>
+                      <ViewCell.View>
+                        <StackLayout>
+                          <Button Text="{Binding Title}" CommandParameter="{Binding Action}"/>
+                        </StackLayout>
+                      </ViewCell.View>
+                    </ViewCell>
+                  </DataTemplate>
+                </ListView.ItemTemplate>
+              </ListView>
+            </StackLayout>
+          </Frame>
+         
         </StackLayout>
         </ScrollView>
       </ContentPage>

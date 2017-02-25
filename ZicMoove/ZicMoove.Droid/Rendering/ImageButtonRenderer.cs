@@ -67,7 +67,7 @@ namespace ZicMoove.Rendering
             _density = Resources.DisplayMetrics.Density;
 
             var targetButton = Control;
-            if (targetButton != null) targetButton.SetOnTouchListener(TouchListener.Instance.Value);
+            if (targetButton != null) targetButton.SetOnTouchListener(ImageButtonTouchListener.Instance.Value);
 
             if (Element != null && Element.Font != Font.Default && targetButton != null) targetButton.Typeface = Element.Font.ToExtendedTypeface(Context);
 
@@ -274,14 +274,14 @@ namespace ZicMoove.Rendering
     }
 
     //Hot fix for the layout positioning issue on Android as described in http://forums.xamarin.com/discussion/20608/fix-for-button-layout-bug-on-android
-    class TouchListener : Java.Lang.Object, View.IOnTouchListener
+    class ImageButtonTouchListener : Java.Lang.Object, View.IOnTouchListener
     {
-        public static readonly Lazy<TouchListener> Instance = new Lazy<TouchListener>(() => new TouchListener());
+        public static readonly Lazy<ImageButtonTouchListener> Instance = new Lazy<ImageButtonTouchListener>(() => new ImageButtonTouchListener());
 
         /// <summary>
         /// Make TouchListener a singleton.
         /// </summary>
-        private TouchListener()
+        private ImageButtonTouchListener()
         { }
 
         public bool OnTouch(View v, MotionEvent e)
