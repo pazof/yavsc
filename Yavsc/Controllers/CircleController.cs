@@ -1,4 +1,5 @@
 
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
@@ -53,7 +54,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Circle.Add(circle);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(circle);
@@ -83,7 +84,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(circle);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(circle);
@@ -114,7 +115,7 @@ namespace Yavsc.Controllers
         {
             Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
             _context.Circle.Remove(circle);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

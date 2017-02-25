@@ -6,6 +6,7 @@ using Microsoft.Data.Entity;
 using System.Collections.Generic;
 using Yavsc.Models;
 using Yavsc.Models.Auth;
+using System.Security.Claims;
 
 namespace Yavsc.Controllers
 {
@@ -56,7 +57,7 @@ namespace Yavsc.Controllers
             {
                 client.Id = Guid.NewGuid().ToString();
                 _context.Applications.Add(client);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             SetAppTypesInputValues();
@@ -100,7 +101,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(client);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(client);
@@ -131,7 +132,7 @@ namespace Yavsc.Controllers
         {
             Client client = await _context.Applications.SingleAsync(m => m.Id == id);
             _context.Applications.Remove(client);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

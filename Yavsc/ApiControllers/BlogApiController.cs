@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
@@ -62,7 +63,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -91,7 +92,7 @@ namespace Yavsc.Controllers
             _context.Blogspot.Add(blog);
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -124,7 +125,7 @@ namespace Yavsc.Controllers
             }
 
             _context.Blogspot.Remove(blog);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
 
             return Ok(blog);
         }

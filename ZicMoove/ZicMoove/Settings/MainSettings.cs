@@ -12,6 +12,7 @@ namespace ZicMoove.Settings
     using Model.Social;
     using Model.Auth.Account;
     using Model.Musical;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// This is the Settings static class that can be used in your Core solution or in any
@@ -92,7 +93,13 @@ namespace ZicMoove.Settings
                 // Inform the server of it.
                 if (oldregid != value)
                 {
-                    App.PostDeviceInfo();
+                    var dit = App.PostDeviceInfo();
+                    dit.Wait();
+                    if (dit.IsCompleted)
+                    {
+                        if (dit.Result)
+                            App.PlatformSpecificInstance.UpdateAppImages();
+                    }
                 }
             }
             get { return AppSettings.GetValueOrDefault<string>(GoogleRegIdKey); }

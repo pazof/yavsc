@@ -91,7 +91,7 @@ namespace Yavsc.Controllers
             var entry = _context.Attach(estimate);
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -143,7 +143,7 @@ namespace Yavsc.Controllers
            */
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -184,7 +184,7 @@ namespace Yavsc.Controllers
                 }
             }
             _context.Estimates.Remove(estimate);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
 
             return Ok(estimate);
         }

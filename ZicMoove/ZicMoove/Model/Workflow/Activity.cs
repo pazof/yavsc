@@ -74,5 +74,6 @@ namespace ZicMoove.Model.Workflow
             get;
             set;
         }
+        public string LocalPhoto { get; set; }
     }
 }

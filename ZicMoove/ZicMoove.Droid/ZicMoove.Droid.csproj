@@ -394,6 +394,14 @@
       <HintPath>..\..\packages\Xamarin.PayPal.Android.CardIO.1.0.0\lib\MonoAndroid10\Xamarin.PayPal.Android.CardIO.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="XamSvg.Droid, Version=2.3.2.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Softlion.XamSvg.Free.2.3.2.5\lib\MonoAndroid44\XamSvg.Droid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="XamSvg.Shared, Version=2.3.2.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Softlion.XamSvg.Free.2.3.2.5\lib\MonoAndroid44\XamSvg.Shared.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="XLabs.Caching, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\XLabs.Caching.2.3.0-pre02\lib\portable-net45+netcore45+wpa81+wp8+monoandroid+monotouch+xamarinios10+xamarinmac\XLabs.Caching.dll</HintPath>
       <Private>True</Private>
@@ -463,6 +471,8 @@
     <Compile Include="Markdown\MDWebView.cs" />
     <Compile Include="OAuth2\YaOAuth2Authenticator.cs" />
     <Compile Include="Rendering\ImageButtonRenderer.cs" />
+    <Compile Include="Rendering\YaSvgImageView.cs" />
+    <Compile Include="Rendering\SvgRenderer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendFileActivity.cs" />
@@ -645,6 +655,7 @@
   <ItemGroup>
     <Content Include="GeofenceAppStarter.txt" />
     <Content Include="Helpers\GeofenceService.txt" />
+    <AndroidResource Include="Resources\raw\it.svg" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

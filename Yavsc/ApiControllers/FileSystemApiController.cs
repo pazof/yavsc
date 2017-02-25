@@ -57,7 +57,7 @@ namespace Yavsc.ApiControllers
             foreach (var f in Request.Form.Files)
             {
                 var item = user.ReceiveUserFile(root, f);
-                dbContext.SaveChanges();
+                dbContext.SaveChanges(User.GetUserId());
                 yield return item;
             };
         }
