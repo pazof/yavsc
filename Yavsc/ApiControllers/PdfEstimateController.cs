@@ -104,7 +104,7 @@ namespace Yavsc.ApiControllers
                 return new BadRequestResult();
             User.ReceiveProSignature(id,Request.Form.Files[0],"pro");
             estimate.ProviderValidationDate = DateTime.Now;
-            dbContext.SaveChanges();
+            dbContext.SaveChanges(User.GetUserId());
             // Notify the client
             var locstr = _localizer["EstimationMessageToClient"];
 
@@ -148,7 +148,7 @@ namespace Yavsc.ApiControllers
                 return new BadRequestResult();
             User.ReceiveProSignature(id,Request.Form.Files[0],"cli");
             estimate.ClientValidationDate = DateTime.Now;
-            dbContext.SaveChanges();
+            dbContext.SaveChanges(User.GetUserId());
             return Ok (new { ClientValidationDate = estimate.ClientValidationDate });
         }
 

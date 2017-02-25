@@ -29,6 +29,17 @@ namespace ZicMoove.Droid
 			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.ApplicationName = global::ZicMoove.Droid.Resource.String.ApplicationName;
 			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.Hello = global::ZicMoove.Droid.Resource.String.Hello;
 			global::Xamarin.Forms.Platform.Android.Resource.Attribute.actionBarSize = global::ZicMoove.Droid.Resource.Attribute.actionBarSize;
+			global::XamSvg.Resource.Attribute.colorMapping = global::ZicMoove.Droid.Resource.Attribute.colorMapping;
+			global::XamSvg.Resource.Attribute.colorMappingSelected = global::ZicMoove.Droid.Resource.Attribute.colorMappingSelected;
+			global::XamSvg.Resource.Attribute.loadAsync = global::ZicMoove.Droid.Resource.Attribute.loadAsync;
+			global::XamSvg.Resource.Attribute.svg = global::ZicMoove.Droid.Resource.Attribute.svg;
+			global::XamSvg.Resource.Attribute.traceEnabled = global::ZicMoove.Droid.Resource.Attribute.traceEnabled;
+			global::XamSvg.Resource.Styleable.SvgImageView = global::ZicMoove.Droid.Resource.Styleable.SvgImageView;
+			global::XamSvg.Resource.Styleable.SvgImageView_colorMapping = global::ZicMoove.Droid.Resource.Styleable.SvgImageView_colorMapping;
+			global::XamSvg.Resource.Styleable.SvgImageView_colorMappingSelected = global::ZicMoove.Droid.Resource.Styleable.SvgImageView_colorMappingSelected;
+			global::XamSvg.Resource.Styleable.SvgImageView_loadAsync = global::ZicMoove.Droid.Resource.Styleable.SvgImageView_loadAsync;
+			global::XamSvg.Resource.Styleable.SvgImageView_svg = global::ZicMoove.Droid.Resource.Styleable.SvgImageView_svg;
+			global::XamSvg.Resource.Styleable.SvgImageView_traceEnabled = global::ZicMoove.Droid.Resource.Styleable.SvgImageView_traceEnabled;
 			global::XLabs.Forms.Droid.Resource.Animation.abc_fade_in = global::ZicMoove.Droid.Resource.Animation.abc_fade_in;
 			global::XLabs.Forms.Droid.Resource.Animation.abc_fade_out = global::ZicMoove.Droid.Resource.Animation.abc_fade_out;
 			global::XLabs.Forms.Droid.Resource.Animation.abc_grow_fade_in_from_bottom = global::ZicMoove.Droid.Resource.Animation.abc_grow_fade_in_from_bottom;
@@ -2229,6 +2240,12 @@ namespace ZicMoove.Droid
 			// aapt resource value: 0x7f0100b9
 			public const int colorControlNormal = 2130772153;
 			
+			// aapt resource value: 0x7f010157
+			public const int colorMapping = 2130772311;
+			
+			// aapt resource value: 0x7f010158
+			public const int colorMappingSelected = 2130772312;
+			
 			// aapt resource value: 0x7f0100b6
 			public const int colorPrimary = 2130772150;
 			
@@ -2520,6 +2537,9 @@ namespace ZicMoove.Droid
 			// aapt resource value: 0x7f010006
 			public const int liteMode = 2130771974;
 			
+			// aapt resource value: 0x7f01015a
+			public const int loadAsync = 2130772314;
+			
 			// aapt resource value: 0x7f01004a
 			public const int logo = 2130772042;
 			
@@ -2760,6 +2780,9 @@ namespace ZicMoove.Droid
 			// aapt resource value: 0x7f0100f3
 			public const int suggestionRowLayout = 2130772211;
 			
+			// aapt resource value: 0x7f010156
+			public const int svg = 2130772310;
+			
 			// aapt resource value: 0x7f0100f9
 			public const int switchMinWidth = 2130772217;
 			
@@ -2897,6 +2920,9 @@ namespace ZicMoove.Droid
 			
 			// aapt resource value: 0x7f01009e
 			public const int toolbarStyle = 2130772126;
+			
+			// aapt resource value: 0x7f010159
+			public const int traceEnabled = 2130772313;
 			
 			// aapt resource value: 0x7f0100f6
 			public const int track = 2130772214;
@@ -5481,6 +5507,9 @@ namespace ZicMoove.Droid
 			
 			// aapt resource value: 0x7f070000
 			public const int gtm_analytics = 2131165184;
+			
+			// aapt resource value: 0x7f070001
+			public const int it = 2131165185;
 			
 			static Raw()
 			{
@@ -8522,6 +8551,28 @@ namespace ZicMoove.Droid
 			
 			// aapt resource value: 4
 			public const int Spinner_popupTheme = 4;
+			
+			public static int[] SvgImageView = new int[] {
+					2130772310,
+					2130772311,
+					2130772312,
+					2130772313,
+					2130772314};
+			
+			// aapt resource value: 1
+			public const int SvgImageView_colorMapping = 1;
+			
+			// aapt resource value: 2
+			public const int SvgImageView_colorMappingSelected = 2;
+			
+			// aapt resource value: 4
+			public const int SvgImageView_loadAsync = 4;
+			
+			// aapt resource value: 0
+			public const int SvgImageView_svg = 0;
+			
+			// aapt resource value: 3
+			public const int SvgImageView_traceEnabled = 3;
 			
 			public static int[] SwitchCompat = new int[] {
 					16843044,

@@ -1,7 +1,6 @@
-using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
 using Yavsc.Models.Messaging;
@@ -54,7 +53,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Notification.Add(notification);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(notification);
@@ -84,7 +83,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(notification);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(notification);
@@ -115,7 +114,7 @@ namespace Yavsc.Controllers
         {
             Notification notification = await _context.Notification.SingleAsync(m => m.Id == id);
             _context.Notification.Remove(notification);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

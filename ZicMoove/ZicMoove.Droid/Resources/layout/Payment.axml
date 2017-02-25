@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/relativeLayout1" />
     <TextView
-        android:text="Validation de votre solvabilité (le retrait n'est effectué qu'un fois la préstation executée et validée par vos soins)"
+        android:text="Validation de votre solvabilité (le retrait n'est effectué qu'une fois la préstation executée et validée par vos soins)"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,15 +1,13 @@
 
-using System.Collections.Generic;
 using Microsoft.AspNet.Mvc;
 using System.Linq;
-using Yavsc.Models;
-using Yavsc.Models.Workflow;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
+    using Models;
     [Produces("application/json")]
     [Route("api/performers")]
     public class PerformersApiController : Controller

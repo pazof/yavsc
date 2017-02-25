@@ -3,6 +3,7 @@ using Microsoft.AspNet.Mvc;
 
 namespace Yavsc.Controllers
 {
+    using System.Security.Claims;
     using Models;
     using Models.Relationship;
     public class LocationTypesController : Controller
@@ -51,7 +52,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.LocationType.Add(locationType);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(locationType);
@@ -81,7 +82,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(locationType);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(locationType);
@@ -112,7 +113,7 @@ namespace Yavsc.Controllers
         {
             LocationType locationType = _context.LocationType.Single(m => m.Id == id);
             _context.LocationType.Remove(locationType);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

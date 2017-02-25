@@ -7,7 +7,6 @@ namespace Yavsc.Models.Messaging
     using Interfaces.Workflow;
     using Billing;
     using Yavsc.Helpers;
-    using System;
 
     public class EstimationEvent: IEvent
     {

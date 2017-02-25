@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -63,7 +64,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -92,7 +93,7 @@ namespace Yavsc.Controllers
             _context.Users.Add(applicationUser);
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -125,7 +126,7 @@ namespace Yavsc.Controllers
             }
 
             _context.Users.Remove(applicationUser);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
 
             return Ok(applicationUser);
         }

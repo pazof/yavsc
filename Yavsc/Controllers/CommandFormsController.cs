@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
@@ -59,7 +60,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.CommandForm.Add(commandForm);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             SetViewBag(commandForm);
@@ -91,7 +92,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(commandForm);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             SetViewBag(commandForm);
@@ -123,7 +124,7 @@ namespace Yavsc.Controllers
         {
             CommandForm commandForm = await _context.CommandForm.SingleAsync(m => m.Id == id);
             _context.CommandForm.Remove(commandForm);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

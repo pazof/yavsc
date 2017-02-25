@@ -21,6 +21,7 @@ namespace ZicMoove.Interfaces
 
         void Pay(double amount, PayMethod method, string paymentName);
 
+        void UpdateAppImages();
     }
 }
 

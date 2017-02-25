@@ -75,7 +75,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -107,7 +107,7 @@ namespace Yavsc.Controllers
             _context.BlackListed.Add(blackListed);
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -143,7 +143,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest();
                 
             _context.BlackListed.Remove(blackListed);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
 
             return Ok(blackListed);
         }

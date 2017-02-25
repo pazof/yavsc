@@ -379,8 +379,6 @@ namespace ZicMoove
 
         public void SetupHubConnection()
         {
-            if (chatHubConnection != null)
-                chatHubConnection.Dispose();
             chatHubConnection = new HubConnection(Constants.SignalRHubsUrl);
             chatHubConnection.Error += ChatHubConnection_Error;
 
@@ -452,9 +450,11 @@ namespace ZicMoove
             }
         }
 
-        public static async Task PostDeviceInfo()
+
+        public static async Task<bool> PostDeviceInfo()
         {
             var info = GetDeviceInfo();
+            bool updateImages = false;
             if (!string.IsNullOrWhiteSpace(info.GCMRegistrationId))
             {
                 if (MainSettings.CurrentUser != null)
@@ -479,7 +479,7 @@ namespace ZicMoove
                                             if ((bool)jvalue["UpdateActivities"])
                                             {
                                                 DataManager.Instance.Activities.Execute(null);
-                                                DataManager.Instance.Activities.SaveEntity();
+                                                updateImages = true;
                                             }
                                 }
                             }
@@ -491,7 +491,9 @@ namespace ZicMoove
                     }
                 }
             }
+            return (updateImages);
         }
+
         public static GCMRegIdDeclaration GetDeviceInfo()
         {
             var devinfo = CrossDeviceInfo.Current;
@@ -511,7 +513,6 @@ namespace ZicMoove
             };
         }
 
-        
         public static void ShowBookQuery(BookQuery query)
         {
             var page = new BookQueryPage

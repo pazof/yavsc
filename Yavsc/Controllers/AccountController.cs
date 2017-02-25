@@ -241,7 +241,7 @@ namespace Yavsc.Controllers
                 var ninfo = _dbContext.UserLogins.First(l=>l.ProviderKey == info.ProviderKey && l.LoginProvider == info.LoginProvider);
                 ninfo.ProviderDisplayName = info.ProviderDisplayName;
                 _dbContext.Entry(ninfo).State = EntityState.Modified;
-                _dbContext.SaveChanges();
+                _dbContext.SaveChanges(User.GetUserId());
 
                 return Redirect(returnUrl);
             }
