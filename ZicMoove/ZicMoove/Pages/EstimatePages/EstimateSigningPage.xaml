@@ -17,7 +17,7 @@
   </ContentPage.Resources>
   <ContentPage.Content>
       <StackLayout Padding="10,10,10,10" x:Name="mainLayout">
-    <ScrollView>
+    <ScrollView VerticalOptions="Start">
     <StackLayout>
         <Grid MinimumHeightRequest="12">
           <Grid.RowDefinitions>
@@ -82,11 +82,11 @@
                                     VerticalOptions="FillAndExpand"
                                     HorizontalOptions="FillAndExpand"
                           BackgroundColor="White"
-                          CaptionText="{Binding Data.Owner?.UserName}" CaptionTextColor="Black"
+                          CaptionText="{Binding CaptionText}" CaptionTextColor="Black"
                           ClearText="Effacer!" ClearTextColor="Red"
-                          PromptText="Prompt Here" PromptTextColor="Red"
-                          SignatureLineColor="Aqua" StrokeColor="Black" StrokeWidth="2" />
-        <Button Clicked="OnValidate" Text="Valider cette signature" x:Name="btnValidate" />
+                          PromptText="{Binding PromptText}" PromptTextColor="Red"
+                          SignatureLineColor="Green" StrokeColor="Black" StrokeWidth="3" />
+        <Button Clicked="OnValidate" Text="Valider cette signature" x:Name="btnValidate" VerticalOptions="End" />
        
       </StackLayout>
   </ContentPage.Content>

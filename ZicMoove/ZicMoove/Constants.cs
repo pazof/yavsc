@@ -28,6 +28,6 @@ namespace ZicMoove
 
         public  const string PermissionMapReceive = Constants.ApplicationName + ".permission.MAPS_RECEIVE";
         public  const string PermissionC2DMessage = Constants.ApplicationName + ".permission.C2D_MESSAGE";
-        
+        public const string ImagePath = "images";
     }
 }

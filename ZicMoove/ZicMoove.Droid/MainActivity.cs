@@ -53,9 +53,9 @@ namespace ZicMoove.Droid
     using Xamarin.Forms;
 
     [Activity(
-        Name = Constants.ApplicationName+".MainActivity", 
-        Label = Constants.ApplicationLabel, 
-        Theme = "@style/MainTheme", 
+        Name = Constants.ApplicationName + ".MainActivity",
+        Label = Constants.ApplicationLabel,
+        Theme = "@style/MainTheme",
         Icon = "@drawable/icon",
         MainLauncher = true,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
@@ -74,8 +74,8 @@ namespace ZicMoove.Droid
             .LanguageOrLocale("fr")
             .RememberUser(true)
             .AcceptCreditCards(true) // needs card.io
-            // TODO   .MerchantPrivacyPolicyUri(new Uri("http://"))
-            // TODO  .MerchantUserAgreementUri(new Uri("http://"))
+                                     // TODO   .MerchantPrivacyPolicyUri(new Uri("http://"))
+                                     // TODO  .MerchantUserAgreementUri(new Uri("http://"))
             .ClientId(Constants.PaypalClientId)
             .SandboxUserPassword(Constants.PaypalClientSecret)
             ;
@@ -85,7 +85,7 @@ namespace ZicMoove.Droid
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
             base.OnCreate(bundle);
-
+            XamSvg.Setup.InitSvgLib();
             // FIXME usefull?
             SetPersistent(true);
             // global::Xamarin.Forms.Forms.SetTitleBarVisibility(Xamarin.Forms.AndroidTitleBarVisibility.Never);
@@ -152,7 +152,8 @@ namespace ZicMoove.Droid
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-            if (requestCode == Constants.AllowBeATarget) {
+            if (requestCode == Constants.AllowBeATarget)
+            {
                 if (grantResults.Length > 0)
                 {
                     if (grantResults[0] == Android.Content.PM.Permission.Granted)
@@ -279,7 +280,7 @@ namespace ZicMoove.Droid
             {
                 Task.Run(async () =>
                 {
-                    var query =  DataManager.Instance.BookQueries.LocalGet(queryId);
+                    var query = DataManager.Instance.BookQueries.LocalGet(queryId);
                     App.ShowBookQuery(query);
                 });
             }
@@ -315,7 +316,7 @@ namespace ZicMoove.Droid
                 return manager.FindAccountsForService(Constants.ApplicationLabel);
             });
         }
-        
+
         public void AddAccount()
         {
             var auth = new YaOAuth2Authenticator(
@@ -392,9 +393,9 @@ namespace ZicMoove.Droid
             // TODO handle
         }
 
-        
 
-        
+
+
 
         public T Resolve<T>()
         {
@@ -441,7 +442,7 @@ namespace ZicMoove.Droid
             }
         }
 
-        public void Pay(double amount, PayMethod method, string name= null )
+        public void Pay(double amount, PayMethod method, string name = null)
         {
             if (name == null) name = $"Votre commande {Constants.ApplicationLabel}";
             var payment = new PayPalPayment(new BigDecimal(amount), "EUR", "the item",
@@ -450,40 +451,40 @@ namespace ZicMoove.Droid
             var intent = new Intent(this, typeof(PaymentActivity));
             intent.PutExtra(PayPalService.ExtraPaypalConfiguration, config);
             intent.PutExtra(PaymentActivity.ExtraPayment, payment);
-            this.StartActivityForResult(intent, (int) RequestCode.PayImmediate);
+            this.StartActivityForResult(intent, (int)RequestCode.PayImmediate);
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
-            if (requestCode == (int) RequestCode.PayDelayed)
-            if (resultCode == Result.Ok)
-            {
-                var confirm = data.GetParcelableExtra(PaymentActivity.ExtraResultConfirmation);
-                if (confirm != null)
+            if (requestCode == (int)RequestCode.PayDelayed)
+                if (resultCode == Result.Ok)
                 {
-                    try
+                    var confirm = data.GetParcelableExtra(PaymentActivity.ExtraResultConfirmation);
+                    if (confirm != null)
                     {
-                        Log.Info("xam.paypal.test", confirm.ToString());
+                        try
+                        {
+                            Log.Info("xam.paypal.test", confirm.ToString());
 
-                        // TODO: send 'confirm' to your server for verification.
-                        // see https://developer.paypal.com/webapps/developer/docs/integration/mobile/verify-mobile-payment/
-                        // for more details.
+                            // TODO: send 'confirm' to your server for verification.
+                            // see https://developer.paypal.com/webapps/developer/docs/integration/mobile/verify-mobile-payment/
+                            // for more details.
 
-                    }
-                    catch (JSONException e)
-                    {
-                        Log.Error("xam.paypal.test", "something went really wrong here: ", e);
+                        }
+                        catch (JSONException e)
+                        {
+                            Log.Error("xam.paypal.test", "something went really wrong here: ", e);
+                        }
                     }
                 }
-            }
-            else if (resultCode == Result.Canceled)
-            {
-                Log.Info("xam.paypal.test", "Canceled.");
-            }
-            else if ((int)resultCode == PaymentActivity.ResultExtrasInvalid)
-            {
-                Log.Info("xam.paypal.test", "Invalid Payment or PayPalConfiguration.");
-            }
+                else if (resultCode == Result.Canceled)
+                {
+                    Log.Info("xam.paypal.test", "Canceled.");
+                }
+                else if ((int)resultCode == PaymentActivity.ResultExtrasInvalid)
+                {
+                    Log.Info("xam.paypal.test", "Invalid Payment or PayPalConfiguration.");
+                }
         }
 
 
@@ -493,11 +494,61 @@ namespace ZicMoove.Droid
             base.OnDestroy();
         }
 
-        enum RequestCode : int {
+        enum RequestCode : int
+        {
             PayImmediate = 1,
             PayDelayed
         }
-         
+        private static string imagesFolder = null;
+        public static string ImagesFolder
+        {
+            get
+            {
+                if (imagesFolder != null) return imagesFolder;
+                var appData =
+ System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
+                imagesFolder = System.IO.Path.Combine(appData, Constants.ImagePath);
+                DirectoryInfo di = new DirectoryInfo(imagesFolder);
+                if (!di.Exists) di.Create();
+                return imagesFolder;
+            }
+        }
+
+        public void UpdateAppImages()
+        {
+            var images = ImagesFolder;
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(Constants.YavscHomeUrl);
+                var targets = DataManager.Instance.Activities.Select(
+                    a => new string[2] { a.Photo, a.Code }
+                    ).ToArray();
+                foreach (var photo in targets)
+                {
+                    if (photo[0] != null)
+                    {
+                        var streamtask = client.GetStreamAsync(photo[0]);
+                        streamtask.Wait();
+                        if (streamtask.IsCompleted)
+                        {
+                            using (streamtask.Result)
+                            {
+                                FileInfo fi = new FileInfo(Path.Combine(images, $"{photo[1]}.svg"));
+                                using (var ostr = fi.OpenWrite())
+                                {
+                                    streamtask.Result.CopyTo(ostr);
+                                }
+                            }
+                        }
+                        
+                    }
+                }
+                foreach (var act in DataManager.Instance.Activities)
+                { act.LocalPhoto = Path.Combine(images, $"{act.Code}.svg"); }
+                DataManager.Instance.Activities.SaveEntity();
+            }
+        }
     }
 }
 

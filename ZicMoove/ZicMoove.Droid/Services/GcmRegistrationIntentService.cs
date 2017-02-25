@@ -20,9 +20,7 @@ namespace ZicMoove.Droid
 		static object locker = new object();
 
 		public GcmRegistrationIntentService() : base("RegistrationIntentService") {
-			
 		}
-
 
 		static PowerManager.WakeLock sWakeLock;
 		static object LOCK = new object();
@@ -102,9 +100,9 @@ namespace ZicMoove.Droid
 		{
 			var pubSub = GcmPubSub.GetInstance(this);
 			pubSub.Subscribe(token, "/topics/global", null);
-            if (MainSettings.CurrentUser.Roles.Contains("Performer"))
+            ///if (MainSettings.CurrentUser.Roles.Contains("Performer"))
             // TODO add activity codes in the bundle
-                pubSub.Subscribe(token, "/topics/jobs", null);
+                //pubSub.Subscribe(token, "/topics/jobs", null);
             // TODO if a Activity is specified,
             // and general annonces in this activity are accepted:
             // pubSub.Subscribe(token, "/topics/jobs/"+ActivityCode, null);

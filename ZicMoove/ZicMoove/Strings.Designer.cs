@@ -188,6 +188,24 @@ namespace ZicMoove {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Bon pour accord et execution.
+        /// </summary>
+        public static string EstimateSigningCaption {
+            get {
+                return ResourceManager.GetString("EstimateSigningCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Signez ici.
+        /// </summary>
+        public static string EstimateSigningPrompt {
+            get {
+                return ResourceManager.GetString("EstimateSigningPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Star.
         /// </summary>
         public static string FiveStars {

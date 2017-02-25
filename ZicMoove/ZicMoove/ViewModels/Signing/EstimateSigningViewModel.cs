@@ -64,5 +64,20 @@ namespace ZicMoove.ViewModels.Signing
                 }
             }
         }
+        public string CaptionText
+        {
+            get
+            {
+                return Strings.EstimateSigningCaption;
+            }
+        }
+
+        public string PromptText
+        {
+            get
+            {
+                return Strings.EstimateSigningPrompt;
+            }
+        }
     }
 }
