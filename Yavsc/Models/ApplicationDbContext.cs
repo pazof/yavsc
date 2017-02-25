@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
-using System.Web;
 using System.Threading;
 using Yavsc.Models.Haircut;
-using Yavsc.Models.Messaging;
 
 namespace Yavsc.Models
 {
@@ -28,6 +26,7 @@ namespace Yavsc.Models
     using Musical.Profiles;
     using Workflow.Profiles;
     using Drawing;
+
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         protected override void OnModelCreating(ModelBuilder builder)
@@ -123,7 +122,7 @@ namespace Yavsc.Models
         public Task ClearTokensAsync()
         {
             Tokens.RemoveRange(this.Tokens);
-            SaveChanges();
+            SaveChanges(null);
             return Task.FromResult(0);
         }
 
@@ -138,7 +137,7 @@ namespace Yavsc.Models
             if (item != null)
             {
                 Tokens.Remove(item);
-                SaveChanges();
+                SaveChanges(email);
             }
             return Task.FromResult(0);
         }
@@ -184,7 +183,7 @@ namespace Yavsc.Models
                     item.RefreshToken = value.RefreshToken;
                 Tokens.Update(item);
             }
-            SaveChanges();
+            SaveChanges(googleUserId);
             return Task.FromResult(0);
         }
 
@@ -225,13 +224,11 @@ namespace Yavsc.Models
         public DbSet<GeneralSettings> GeneralSettings { get; set; }
         public DbSet<CoWorking> WorkflowProviders { get; set; }
 
-        private void AddTimestamps()
+        private void AddTimestamps(string currentUsername)
     {
         var entities = ChangeTracker.Entries().Where(x => x.Entity.GetType().GetInterface("IBaseTrackedEntity")!=null && (x.State == EntityState.Added || x.State == EntityState.Modified));
 
-        var currentUsername = !string.IsNullOrEmpty(System.Web.HttpContext.Current?.User?.Identity?.Name)
-            ? HttpContext.Current.User.Identity.Name
-            : "Anonymous";
+        // Microsoft.AspNet.Identity;
 
         foreach (var entity in entities)
         {
@@ -245,15 +242,13 @@ namespace Yavsc.Models
             ((IBaseTrackedEntity)entity.Entity).UserModified = currentUsername;
         }
     }
-        
-
-        override public int SaveChanges() {
-            AddTimestamps();
+        public int SaveChanges(string userId) {
+            AddTimestamps(userId);
             return base.SaveChanges();
         }
-        
-         public override async Task<int> SaveChangesAsync(CancellationToken ctoken = default(CancellationToken)) {
-            AddTimestamps();
+
+        public  async Task<int> SaveChangesAsync(string userId, CancellationToken ctoken = default(CancellationToken)) {
+            AddTimestamps(userId);
             return await base.SaveChangesAsync();
         }
         
