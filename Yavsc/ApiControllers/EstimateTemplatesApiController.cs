@@ -70,7 +70,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -100,7 +100,7 @@ namespace Yavsc.Controllers
             _context.EstimateTemplates.Add(estimateTemplate);
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -137,7 +137,7 @@ namespace Yavsc.Controllers
             return new HttpStatusCodeResult(StatusCodes.Status403Forbidden);
 
             _context.EstimateTemplates.Remove(estimateTemplate);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
 
             return Ok(estimateTemplate);
         }

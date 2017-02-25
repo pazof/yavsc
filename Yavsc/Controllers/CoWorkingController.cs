@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
@@ -57,7 +58,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.WorkflowProviders.Add(coWorking);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ViewData["PerformerId"] = new SelectList(_context.Performers, "PerformerId", "Performer", coWorking.PerformerId);
@@ -91,7 +92,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(coWorking);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ViewData["PerformerId"] = new SelectList(_context.Performers, "PerformerId", "Performer", coWorking.PerformerId);
@@ -124,7 +125,7 @@ namespace Yavsc.Controllers
         {
             CoWorking coWorking = await _context.WorkflowProviders.SingleAsync(m => m.Id == id);
             _context.WorkflowProviders.Remove(coWorking);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

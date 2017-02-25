@@ -32,13 +32,14 @@ namespace Yavsc.ApiControllers
         public PdfEstimateController(
             IAuthorizationService authorizationService,
             ILoggerFactory loggerFactory,
-         ApplicationDbContext context)
+            IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR,
+            ApplicationDbContext context)
         {
             this.authorizationService = authorizationService;
             dbContext = context;
             logger = loggerFactory.CreateLogger<PdfEstimateController>();
+            this._localizer = SR;
         }
-
 
         [HttpGet("get/{id}", Name = "Get"), Authorize]
         public async Task<IActionResult> Get(long id)
@@ -89,10 +90,12 @@ namespace Yavsc.ApiControllers
         [HttpPost("prosign/{id}")]
         public async Task<IActionResult> ProSign(long id)
         {
-            var uid = User.GetUserId();
-            var estimate = dbContext.Estimates.Include(
-                e=>e.Query
-            ).FirstOrDefault(e=>e.Id == id && e.OwnerId == uid );
+            var estimate = dbContext.Estimates.
+            Include(e=>e.Client).Include(e=>e.Client.Devices)
+            .Include(e=>e.Bill).Include(e=>e.Owner).Include(e=>e.Owner.Performer)
+            .FirstOrDefault(e=>e.Id == id);
+            if (estimate == null)
+                return new BadRequestResult();
             if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
             {
                 return new ChallengeResult();
@@ -101,11 +104,16 @@ namespace Yavsc.ApiControllers
                 return new BadRequestResult();
             User.ReceiveProSignature(id,Request.Form.Files[0],"pro");
             estimate.ProviderValidationDate = DateTime.Now;
-            dbContext.SaveChanges();
+            dbContext.SaveChanges(User.GetUserId());
             // Notify the client
+            var locstr = _localizer["EstimationMessageToClient"];
+
             var yaev = new EstimationEvent(dbContext,estimate,_localizer);
-            var regids = estimate.Client.Devices.Select(d => d.GCMRegistrationId);
+            
+            var regids = estimate.Client.Devices.Select(d => d.GCMRegistrationId).ToArray();
+            logger.LogWarning($"new regids: {regids}");
             var grep = await _GCMSender.NotifyEstimateAsync(_googleSettings,regids,yaev);
+            logger.LogWarning($"grep: {grep}");
             return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = grep.success });
         }
 
@@ -130,7 +138,8 @@ namespace Yavsc.ApiControllers
         {
             var uid = User.GetUserId();
             var estimate = dbContext.Estimates.Include( e=>e.Query
-            ).FirstOrDefault( e=> e.Id == id && e.Query.ClientId == uid );
+            ).Include(e=>e.Owner).Include(e=>e.Owner.Performer).Include(e=>e.Client)
+            .FirstOrDefault( e=> e.Id == id && e.Query.ClientId == uid );
             if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
             {
                 return new ChallengeResult();
@@ -139,7 +148,7 @@ namespace Yavsc.ApiControllers
                 return new BadRequestResult();
             User.ReceiveProSignature(id,Request.Form.Files[0],"cli");
             estimate.ClientValidationDate = DateTime.Now;
-            dbContext.SaveChanges();
+            dbContext.SaveChanges(User.GetUserId());
             return Ok (new { ClientValidationDate = estimate.ClientValidationDate });
         }
 

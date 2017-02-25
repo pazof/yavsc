@@ -25,7 +25,6 @@ namespace Yavsc.Controllers
     using Models.Relationship;
     using PayPal.PayPalAPIInterfaceService;
     using PayPal.PayPalAPIInterfaceService.Model;
-    using PayPal.PayPalAPIInterfaceService.Model;
 
     [Authorize, ServiceFilter(typeof(LanguageActionFilter))]
     public class ManageController : Controller
@@ -295,7 +294,7 @@ namespace Yavsc.Controllers
         {
             var user = _dbContext.Users.FirstOrDefault(u => u.Id == User.GetUserId());
             user.DedicatedGoogleCalendar = model.GoogleCalendarId;
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(User.GetUserId());
             if (string.IsNullOrEmpty(model.ReturnUrl))
                 return RedirectToAction("Index");
             else return Redirect(model.ReturnUrl);
@@ -570,7 +569,7 @@ namespace Yavsc.Controllers
                         _dbContext.Update(model);
                     }
                     else _dbContext.Performers.Add(model);
-                    _dbContext.SaveChanges();
+                    _dbContext.SaveChanges(User.GetUserId());
                     // Give this user the Performer role
                     if (!User.IsInRole("Performer"))
                         await _userManager.AddToRoleAsync(user, "Performer");
@@ -597,7 +596,7 @@ namespace Yavsc.Controllers
                 _dbContext.Performers.Remove(
                     _dbContext.Performers.First(x => x.PerformerId == uid)
                 );
-                _dbContext.SaveChanges();
+                _dbContext.SaveChanges(User.GetUserId());
                 await _userManager.RemoveFromRoleAsync(user, "Performer");
             }
             var message = ManageMessageId.UnsetActivitySuccess;

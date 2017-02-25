@@ -78,7 +78,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.UserActivities.Add(userActivity);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ViewBag.DoesCode = new SelectList(_context.Activities, "Code", "Name", userActivity.DoesCode);
@@ -120,7 +120,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(userActivity);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ViewData["DoesCode"] = new SelectList(_context.Activities, "Code", "Does", userActivity.DoesCode);
@@ -161,7 +161,7 @@ namespace Yavsc.Controllers
                     return RedirectToAction("Index");
                }
             _context.UserActivities.Remove(userActivity);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

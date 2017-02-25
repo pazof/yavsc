@@ -70,7 +70,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -109,7 +109,7 @@ namespace Yavsc.Controllers
             _context.BlogACL.Add(circleAuthorizationToBlogPost);
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -145,7 +145,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
             _context.BlogACL.Remove(circleAuthorizationToBlogPost);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
 
             return Ok(circleAuthorizationToBlogPost);
         }

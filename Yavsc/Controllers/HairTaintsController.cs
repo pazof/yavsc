@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
@@ -57,7 +58,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.HairTaint.Add(hairTaint);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ViewBag.ColorId = new SelectList(_context.Color, "Id", "Name", hairTaint.ColorId);
@@ -89,7 +90,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(hairTaint);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ViewBag.ColorId = new SelectList(_context.Color, "Id", "Name", hairTaint.ColorId);
@@ -121,7 +122,7 @@ namespace Yavsc.Controllers
         {
             HairTaint hairTaint = await _context.HairTaint.SingleAsync(m => m.Id == id);
             _context.HairTaint.Remove(hairTaint);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

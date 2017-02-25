@@ -1,7 +1,3 @@
-
-namespace Yavsc.Models.Messaging
-{
-
 //
 //  BookQueryEvent.cs
 //
@@ -22,6 +18,12 @@ namespace Yavsc.Models.Messaging
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace Yavsc.Models.Messaging
+{
+using Interfaces.Workflow;
+
+
 
 public class BookQueryEvent: BookQueryProviderInfo, IEvent
 	{

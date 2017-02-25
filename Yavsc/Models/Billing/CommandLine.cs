@@ -16,6 +16,8 @@ namespace Yavsc.Models.Billing
      public string Description { get; set; }
      public BaseProduct Article { get; set; }
      public int Count { get; set; }
+
+     [DisplayFormat(DataFormatString="{0:C}")]
      public decimal UnitaryCost { get; set; }
 
      public long EstimateId { get; set; }

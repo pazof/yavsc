@@ -1,5 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 using Yavsc.Models.Market;
 
 namespace Yavsc.Models.Haircut

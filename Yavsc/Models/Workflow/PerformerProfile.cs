@@ -5,8 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Yavsc.Models.Workflow 
 {
     using Models.Relationship;
-
-    public class PerformerProfile {
+    using YavscLib.Workflow;
+    
+    public class PerformerProfile : IPerformerProfile {
 
         [Key]
         public string PerformerId { get; set; }
