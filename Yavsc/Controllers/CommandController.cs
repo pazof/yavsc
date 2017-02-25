@@ -162,7 +162,7 @@ namespace Yavsc.Controllers
                 }
                 else _context.Attach<Location>(command.Location);
                 _context.BookQueries.Add(command, GraphBehavior.IncludeDependents);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
 
                 var yaev = command.CreateEvent(_localizer);
                 MessageWithPayloadResponse grep = null;
@@ -222,7 +222,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(command);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(command);
@@ -253,7 +253,7 @@ namespace Yavsc.Controllers
         {
             BookQuery command = _context.BookQueries.Single(m => m.Id == id);
             _context.BookQueries.Remove(command);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

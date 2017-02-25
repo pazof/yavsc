@@ -3,6 +3,7 @@ using Microsoft.AspNet.Mvc;
 
 namespace Yavsc.Controllers
 {
+    using System.Security.Claims;
     using Models;
     using Models.Musical;
     public class InstrumentsController : Controller
@@ -51,7 +52,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Instrument.Add(instrument);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(instrument);
@@ -81,7 +82,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(instrument);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(instrument);
@@ -112,7 +113,7 @@ namespace Yavsc.Controllers
         {
             Instrument instrument = _context.Instrument.Single(m => m.Id == id);
             _context.Instrument.Remove(instrument);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

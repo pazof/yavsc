@@ -68,7 +68,7 @@ namespace Yavsc.Controllers
                     return new ChallengeResult();
 
                 _context.Instrumentation.Add(model);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(model);
@@ -103,7 +103,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(musicianSettings);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(musicianSettings);
@@ -142,7 +142,7 @@ namespace Yavsc.Controllers
 
             
             _context.Instrumentation.Remove(musicianSettings);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

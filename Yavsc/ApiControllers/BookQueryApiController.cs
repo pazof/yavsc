@@ -102,7 +102,7 @@ namespace Yavsc.Controllers
 
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -136,7 +136,7 @@ namespace Yavsc.Controllers
             _context.Commands.Add(bookQuery);
             try
             {
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
             }
             catch (DbUpdateException)
             {
@@ -171,7 +171,7 @@ namespace Yavsc.Controllers
             if (bookQuery.ClientId != uid) return HttpNotFound();
 
             _context.Commands.Remove(bookQuery);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
 
             return Ok(bookQuery);
         }

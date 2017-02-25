@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Yavsc.Controllers
 {
+    using System.Security.Claims;
     using Models;
     using Models.Workflow;
 
@@ -137,7 +138,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Activities.Add(activity);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             SetSettingClasseInfo();
@@ -174,7 +175,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(activity);
-                _context.SaveChanges();
+                _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             return View(activity);
@@ -205,7 +206,7 @@ namespace Yavsc.Controllers
         {
             Activity activity = _context.Activities.Single(m => m.Code == id);
             _context.Activities.Remove(activity);
-            _context.SaveChanges();
+            _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

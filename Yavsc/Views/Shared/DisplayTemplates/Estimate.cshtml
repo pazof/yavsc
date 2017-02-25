@@ -1,4 +1,5 @@
 @model Estimate
+
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Title)
@@ -23,5 +24,8 @@
             }
         </dd>
     </dl>
-</div>
+    <label>Signature fournisseur : 
+     <img src="/api/pdfestimate/prosign/@Model.Id" alt="" style="height:100px; background-color: white;">
+    </label>
+    
 @await Component.InvokeAsync("Estimate",Model.Id)

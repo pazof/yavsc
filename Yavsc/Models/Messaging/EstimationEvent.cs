@@ -1,16 +1,22 @@
 using System.Linq;
+using Microsoft.Data.Entity;
 using Microsoft.Extensions.Localization;
-using Yavsc.Helpers;
-using Yavsc.Models.Billing;
 
 namespace Yavsc.Models.Messaging
 {
+    using Interfaces.Workflow;
+    using Billing;
+    using Yavsc.Helpers;
+
     public class EstimationEvent: IEvent
     {
         public EstimationEvent(ApplicationDbContext context, Estimate estimate, IStringLocalizer SR)
         {
+            Topic = "Estimation";
             Estimation = estimate;
-            var perfer = context.Performers.FirstOrDefault(
+            var perfer = context.Performers.Include(
+                p=>p.Performer
+            ).FirstOrDefault(
                 p => p.PerformerId == estimate.OwnerId
             );
             // Use estimate.OwnerId;
@@ -27,28 +33,19 @@ namespace Yavsc.Models.Messaging
         ProviderClientInfo ProviderInfo { get; set; }
         Estimate Estimation { get; set; }
 
-        private string subtopic = null;
-        string IEvent.Topic
-        {
-            get
-            {
-                return "/topic/estimate"+subtopic!=null?"/"+subtopic:"";
-            }
-
-            set
-            {
-                subtopic = value;
-            }
-        }
-
-        string IEvent.Sender
-        {
-           get; set;
-        }
-
-        string IEvent.Message
+        public string Topic
         {
             get; set;
+        }
+
+        public string Sender
+        {
+            get; set;
+        }
+
+        public string Message
+        {
+             get; set;
         }
     }
 }

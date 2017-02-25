@@ -68,7 +68,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.CircleMembers.Add(circleMember);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ViewData["CircleId"] = new SelectList(_context.Circle, "Id", "Name", circleMember.CircleId);
@@ -102,7 +102,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(circleMember);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ViewData["CircleId"] = new SelectList(_context.Circle, "Id", "Circle", circleMember.CircleId);
@@ -135,7 +135,7 @@ namespace Yavsc.Controllers
         {
             CircleMember circleMember = await _context.CircleMembers.SingleAsync(m => m.MemberId == id);
             _context.CircleMembers.Remove(circleMember);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

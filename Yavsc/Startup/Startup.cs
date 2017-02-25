@@ -16,7 +16,6 @@ using Microsoft.AspNet.Localization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.AspNet.Mvc.Razor;
-using Microsoft.AspNet.Http.Extensions;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -232,6 +231,7 @@ namespace Yavsc
         IOptions<RequestLocalizationOptions> localizationOptions,
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
         RoleManager<IdentityRole> roleManager,
+        UserManager<ApplicationUser> userManager,
         IAuthorizationService authorizationService,
          ILoggerFactory loggerFactory)
         {
@@ -320,7 +320,7 @@ namespace Yavsc
                 {
                     foreach (var c in db.Connections)
                         db.Connections.Remove(c);
-                    db.SaveChanges();
+                    db.SaveChanges("Startup");
                 }
             });
 
@@ -339,13 +339,13 @@ namespace Yavsc
             ConfigureWorkflow(app, SiteSetup);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"fr"));
             app.UseSession();
-  
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            
         }
 
         // Entry point for the application.

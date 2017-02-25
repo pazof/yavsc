@@ -1,3 +1,5 @@
+using Yavsc.Interfaces.Workflow;
+
 namespace Yavsc.Models.Haircut
 {
     public class HairCutQueryEvent : BookQueryProviderInfo, IEvent
