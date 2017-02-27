@@ -5,7 +5,7 @@ namespace Yavsc.Models
     using Models.Messaging;
     using Models.Relationship;
 
-    public class BookQueryProviderInfo
+    public class RdvQueryProviderInfo
     {
         public ClientProviderInfo Client { get; set; }
         public Location Location { get; set; }

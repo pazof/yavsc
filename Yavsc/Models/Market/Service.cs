@@ -2,11 +2,19 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Market {
+    using System.ComponentModel.DataAnnotations;
     using Billing;
     using Workflow;
 
-    public partial class Service : BaseProduct
+    public class Service : BaseProduct
     {
+                /// <summary>
+        /// An unique product identifier.
+        /// </summary>
+        /// <returns></returns>
+        [Key(),DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Id { get; set; }
+        
         public string ContextId { get; set; }
         [ForeignKey("ContextId")]
         public virtual Activity Context { get; set; }

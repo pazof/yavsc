@@ -4,9 +4,9 @@ using Microsoft.AspNet.Authorization;
 namespace Yavsc.ViewModels.Auth.Handlers
 {
     using Models.Workflow;
-    public class CommandEditHandler : AuthorizationHandler<EditRequirement, BookQuery>
+    public class CommandEditHandler : AuthorizationHandler<EditRequirement, RdvQuery>
     {
-        protected override void Handle(AuthorizationContext context, EditRequirement requirement, BookQuery resource)
+        protected override void Handle(AuthorizationContext context, EditRequirement requirement, RdvQuery resource)
         {
             if (context.User.IsInRole("FrontOffice"))
                 context.Succeed(requirement);

@@ -22,16 +22,16 @@ namespace Yavsc.Controllers
     [ServiceFilter(typeof(LanguageActionFilter))]
     public class CommandController : Controller
     {
-        private UserManager<ApplicationUser> _userManager;
-        private ApplicationDbContext _context;
-        private GoogleAuthSettings _googleSettings;
-        private IGoogleCloudMessageSender _GCMSender;
-        private IEmailSender _emailSender;
-        private IStringLocalizer _localizer;
-        SiteSettings _siteSettings;
-        SmtpSettings _smtpSettings;
+        protected UserManager<ApplicationUser> _userManager;
+        protected ApplicationDbContext _context;
+        protected GoogleAuthSettings _googleSettings;
+        protected IGoogleCloudMessageSender _GCMSender;
+        protected IEmailSender _emailSender;
+        protected IStringLocalizer _localizer;
+        protected SiteSettings _siteSettings;
+        protected SmtpSettings _smtpSettings;
 
-        private readonly ILogger _logger;
+        protected readonly ILogger _logger;
         public CommandController(ApplicationDbContext context, IOptions<GoogleAuthSettings> googleSettings,
         IGoogleCloudMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
@@ -57,7 +57,7 @@ namespace Yavsc.Controllers
         public IActionResult Index()
         {
             var uid = User.GetUserId();
-            return View(_context.BookQueries
+            return View(_context.RdvQueries
             .Include(x => x.Client)
             .Include(x => x.PerformerProfile)
             .Include(x => x.PerformerProfile.Performer)
@@ -74,7 +74,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            BookQuery command = _context.BookQueries
+            RdvQuery command = _context.RdvQueries
             .Include(x => x.Location)
             .Include(x => x.PerformerProfile)
             .Single(m => m.Id == id);
@@ -113,7 +113,7 @@ namespace Yavsc.Controllers
             ViewBag.GoogleSettings = _googleSettings;
             var userid = User.GetUserId();
             var user = _userManager.FindByIdAsync(userid).Result;
-            return View(new BookQuery(activityCode,new Location(),DateTime.Now.AddHours(4))
+            return View(new RdvQuery(activityCode,new Location(),DateTime.Now.AddHours(4))
             {
                 PerformerProfile = pro,
                 PerformerId = pro.PerformerId,
@@ -126,7 +126,7 @@ namespace Yavsc.Controllers
         // POST: Command/Create
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BookQuery command)
+        public async Task<IActionResult> Create(RdvQuery command)
         {
             
             var uid = User.GetUserId();
@@ -161,7 +161,7 @@ namespace Yavsc.Controllers
                     command.Location=existingLocation;
                 }
                 else _context.Attach<Location>(command.Location);
-                _context.BookQueries.Add(command, GraphBehavior.IncludeDependents);
+                _context.RdvQueries.Add(command, GraphBehavior.IncludeDependents);
                 _context.SaveChanges(User.GetUserId());
 
                 var yaev = command.CreateEvent(_localizer);
@@ -206,7 +206,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            BookQuery command = _context.BookQueries.Single(m => m.Id == id);
+            RdvQuery command = _context.RdvQueries.Single(m => m.Id == id);
             if (command == null)
             {
                 return HttpNotFound();
@@ -217,7 +217,7 @@ namespace Yavsc.Controllers
         // POST: Command/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(BookQuery command)
+        public IActionResult Edit(RdvQuery command)
         {
             if (ModelState.IsValid)
             {
@@ -237,7 +237,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            BookQuery command = _context.BookQueries.Single(m => m.Id == id);
+            RdvQuery command = _context.RdvQueries.Single(m => m.Id == id);
             if (command == null)
             {
                 return HttpNotFound();
@@ -251,8 +251,8 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(long id)
         {
-            BookQuery command = _context.BookQueries.Single(m => m.Id == id);
-            _context.BookQueries.Remove(command);
+            RdvQuery command = _context.RdvQueries.Single(m => m.Id == id);
+            _context.RdvQueries.Remove(command);
             _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }

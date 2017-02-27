@@ -35,7 +35,7 @@ namespace Yavsc.Models.Calendar
 		/// <returns>The free dates.</returns>
 		/// <param name="username">Username.</param>
 		/// <param name="req">Req.</param>
-		IFreeDateSet GetFreeDates(string username, BookQuery req);
+		IFreeDateSet GetFreeDates(string username, RdvQuery req);
 		/// <summary>
 		/// Book the specified username and ev.
 		/// </summary>

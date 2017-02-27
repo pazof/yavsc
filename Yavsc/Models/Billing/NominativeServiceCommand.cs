@@ -5,11 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Billing
 {
-using Interfaces.Workflow;
-using Workflow;
-using YavscLib;
+    using Interfaces.Workflow;
+    using Newtonsoft.Json;
+    using Workflow;
+    using YavscLib;
 
- public abstract class NominativeServiceCommand : IBaseTrackedEntity, IQuery
+    public abstract class NominativeServiceCommand : IBaseTrackedEntity, IQuery
   {
         public DateTime DateCreated
         {
@@ -60,6 +61,10 @@ using YavscLib;
     /// </summary>
     /// <returns></returns>
 
+        [Required]
+        public string ActivityCode { get; set; }
 
+        [ForeignKey("ActivityCode"),JsonIgnore]
+        public virtual Activity Context  { get; set ; }
  }
 }

@@ -34,7 +34,7 @@ namespace Yavsc.Controllers
         /// <param name="maxId">returned Ids must be lower than this value</param>
         /// <returns>book queries</returns>
         [HttpGet]
-        public IEnumerable<BookQueryProviderInfo> GetCommands(long maxId=long.MaxValue)
+        public IEnumerable<RdvQueryProviderInfo> GetCommands(long maxId=long.MaxValue)
         {
             var uid = User.GetUserId();
             var now = DateTime.Now;
@@ -42,7 +42,7 @@ namespace Yavsc.Controllers
             var result = _context.Commands.Include(c => c.Location).
             Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now
             && c.ValidationDate == null).
-            Select(c => new BookQueryProviderInfo
+            Select(c => new RdvQueryProviderInfo
             {
                 Client = new ClientProviderInfo {
                      UserName = c.Client.UserName,
@@ -71,7 +71,7 @@ namespace Yavsc.Controllers
             }
             var uid = User.GetUserId();
 
-            BookQuery bookQuery = _context.Commands.Where(c => c.ClientId == uid || c.PerformerId == uid).Single(m => m.Id == id);
+            RdvQuery bookQuery = _context.Commands.Where(c => c.ClientId == uid || c.PerformerId == uid).Single(m => m.Id == id);
 
             if (bookQuery == null)
             {
@@ -83,7 +83,7 @@ namespace Yavsc.Controllers
 
         // PUT: api/BookQueryApi/5
         [HttpPut("{id}")]
-        public IActionResult PutBookQuery(long id, [FromBody] BookQuery bookQuery)
+        public IActionResult PutBookQuery(long id, [FromBody] RdvQuery bookQuery)
         {
             if (!ModelState.IsValid)
             {
@@ -121,7 +121,7 @@ namespace Yavsc.Controllers
 
         // POST: api/BookQueryApi
         [HttpPost]
-        public IActionResult PostBookQuery([FromBody] BookQuery bookQuery)
+        public IActionResult PostBookQuery([FromBody] RdvQuery bookQuery)
         {
             if (!ModelState.IsValid)
             {
@@ -162,7 +162,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
             var uid = User.GetUserId();
-            BookQuery bookQuery = _context.Commands.Single(m => m.Id == id);
+            RdvQuery bookQuery = _context.Commands.Single(m => m.Id == id);
 
             if (bookQuery == null)
             {

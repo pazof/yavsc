@@ -126,7 +126,7 @@ namespace Yavsc.Controllers
                 }
             }
             if (estimate.CommandId!=null) {
-                var query = _context.BookQueries.FirstOrDefault(q => q.Id == estimate.CommandId);
+                var query = _context.RdvQueries.FirstOrDefault(q => q.Id == estimate.CommandId);
                 if (query == null || query.PerformerId!= uid)
                     throw new InvalidOperationException();
                 query.ValidationDate = DateTime.Now;

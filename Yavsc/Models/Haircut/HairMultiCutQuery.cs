@@ -1,4 +1,3 @@
-
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,11 +6,11 @@ using Yavsc.Models.Relationship;
 
 namespace Yavsc.Models.Haircut
 {
-    public class HairCutQuery : NominativeServiceCommand
+    public class HairMultiCutQuery : NominativeServiceCommand
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
-        HairPrestation  Prestation { get; set; }
+        HairPrestation [] Prestations { get; set; }
 
         public Location Location { get; set; }
 

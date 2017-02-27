@@ -338,5 +338,5 @@ contact a performer</value></data>
   <data name="YourPosts"><value>You posts</value></data>
   <data name="YourProfile"><value>Your profile</value></data>
   <data name="YourMessageHasBeenSent"><value>Your message has been sent</value></data>
-
+  <data name="Longueur de cheveux"><value>Hair Length</value></data>
 </root>

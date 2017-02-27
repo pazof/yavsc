@@ -325,6 +325,7 @@
   <data name="ProviderId"><value>Identifiant du fournisseur</value></data>
   <data name="ProviderName"><value>Nom du fournisseur</value></data>
   <data name="Rate"><value>Cote</value></data>
+  <data name="RdvToPerf"><value>{0} vous demande une intervention le {1} à {2} ({3})</value></data>
   <data name="ReadMore"><value>Lire la suite ...</value></data>
   <data name="reason"><value>raison</value></data>
   <data name="Register"><value>S'inscrire</value></data>
