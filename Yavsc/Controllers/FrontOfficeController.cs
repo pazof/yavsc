@@ -10,9 +10,13 @@ using System.Security.Claims;
 namespace Yavsc.Controllers
 {
     using Helpers;
+    using Microsoft.AspNet.Http;
     using Models;
-    using Models.Workflow;
+    using Newtonsoft.Json;
     using ViewModels.FrontOffice;
+    using Yavsc.Models.Haircut;
+    using Yavsc.ViewModels.Haircut;
+
     public class FrontOfficeController : Controller
     {
         ApplicationDbContext _context;
@@ -46,7 +50,7 @@ namespace Yavsc.Controllers
             return View(model);
         }
 
-        [Route("Profiles/{id?}"), HttpGet, AllowAnonymous]
+        [AllowAnonymous]
         public ActionResult Profiles(string id)
         {
             if (id == null)
@@ -57,39 +61,27 @@ namespace Yavsc.Controllers
             var result = _context.ListPerformers(id);
             return View(result);
         }
-
-        [Route("Profiles/{id}"), HttpPost, AllowAnonymous]
-        public ActionResult Profiles(BookQuery bookQuery)
+        
+        [AllowAnonymous]
+        public ActionResult HairCut(string id)
         {
-            if (ModelState.IsValid)
-            {
-                var pro = _context.Performers.Include(
-                    pr => pr.Performer
-                ).FirstOrDefault(
-                    x => x.PerformerId == bookQuery.PerformerId
-                );
-                if (pro == null)
-                    return HttpNotFound();
-                // Let's create a command
-                if (bookQuery.Id == 0)
-                {
-                    _context.BookQueries.Add(bookQuery);
-                }
-                else
-                {
-                    _context.BookQueries.Update(bookQuery);
-                }
-                _context.SaveChanges(User.GetUserId());
-                // TODO Send sys notifications &
-                // notify the user (make him a basket badge)
-                return View("Index");
+            HairPrestation pPrestation=null;
+            var prestaJson = HttpContext.Session.GetString("HairCutPresta") ;
+            if (prestaJson!=null) {
+                pPrestation = JsonConvert.DeserializeObject<HairPrestation>(prestaJson);
             }
-            ViewBag.Activities = _context.ActivityItems(null);
-            return View("Profiles", _context.Performers.Include(p => p.Performer).Where
-                (p => p.Active).OrderBy(
-                    x => x.MinDailyCost
-                ));
+            else pPrestation = new HairPrestation {
+
+            };
+
+            ViewBag.Activity = _context.Activities.First(a => a.Code == id);
+            var result = new HairCutView {
+                HairBrushers = _context.ListPerformers(id),
+                Topic = pPrestation
+            } ;
+            return View(result);
         }
+
 
         [Produces("text/x-tex"), Authorize, Route("estimate-{id}.tex")]
         public ViewResult EstimateTex(long id)

@@ -1,16 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace Yavsc.Models.Market
 {
-    public partial class BaseProduct
+    public class BaseProduct
     {
-        /// <summary>
-        /// An unique product identifier.
-        /// </summary>
-        /// <returns></returns>
-        [Key(),DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+
         public string Name { get; set; }
         /// <summary>
         /// A contractual description for this product.

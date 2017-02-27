@@ -1,3 +1,5 @@
+@model IEnumerable<Activity>
+
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -41,9 +43,9 @@
 
                     }
 
-                @foreach (var form in act.Forms) {
-                    <a class="btn btn-default" asp-controller="FrontOffice" asp-action="@form.Action" asp-route-id="@act.Code">
-                    @form.Title
+                @foreach (var frm in act.Forms) {
+                    <a class="btn btn-success" asp-controller="FrontOffice" asp-action="@frm.Action" asp-route-id="@act.Code">
+                    @frm.Title
                     </a>
                 }
             </div>

@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
-using Yavsc.Models.Market;
 
 namespace Yavsc.Models.Billing
 {
@@ -14,7 +13,7 @@ namespace Yavsc.Models.Billing
      
      [Required,MaxLength(512)]
      public string Description { get; set; }
-     public BaseProduct Article { get; set; }
+
      public int Count { get; set; }
 
      [DisplayFormat(DataFormatString="{0:C}")]

@@ -81,7 +81,7 @@ namespace Yavsc.Controllers
         public IActionResult Create()
         {
             var uid = User.GetUserId();
-            IQueryable<BookQuery> queries = _context.BookQueries.Include(q=>q.Location).Where(bq=>bq.PerformerId == uid);
+            IQueryable<RdvQuery> queries = _context.RdvQueries.Include(q=>q.Location).Where(bq=>bq.PerformerId == uid);
             //.Select(bq=>new SelectListItem{ Text = bq.Client.UserName, Value = bq.Client.Id });
             ViewBag.Clients = queries.Select(q=>q.Client).Distinct();
             ViewBag.Queries = queries;
@@ -103,7 +103,7 @@ namespace Yavsc.Controllers
                 _context.Estimates
                 .Add(estimate);
                 _context.SaveChanges(User.GetUserId());
-                var query = _context.BookQueries.FirstOrDefault(
+                var query = _context.RdvQueries.FirstOrDefault(
                     q=>q.Id == estimate.CommandId
                 );
                 var perfomerProfile = _context.Performers
@@ -111,7 +111,7 @@ namespace Yavsc.Controllers
                     perpr => perpr.Performer).FirstOrDefault(
                     x=>x.PerformerId == query.PerformerId
                 );
-                var command = _context.BookQueries.FirstOrDefault(
+                var command = _context.RdvQueries.FirstOrDefault(
                     cmd => cmd.Id == estimate.CommandId
                 );
 

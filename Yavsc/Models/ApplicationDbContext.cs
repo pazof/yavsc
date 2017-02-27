@@ -91,13 +91,15 @@ namespace Yavsc.Models
         /// on his profile).
         /// </summary>
         /// <returns></returns>
-        public DbSet<BookQuery> Commands { get; set; }
+        public DbSet<RdvQuery> Commands { get; set; }
         /// <summary>
         /// Special commands, talking about
         /// a given place and date.
         /// </summary>
         /// <returns></returns>
-        public DbSet<BookQuery> BookQueries { get; set; }
+        public DbSet<RdvQuery> RdvQueries { get; set; }
+        public DbSet<HairCutQuery> HairCutQueries { get; set; }
+        public DbSet<HairMultiCutQuery> HairMultiCutQueries { get; set; }
         public DbSet<PerformerProfile> Performers { get; set; }
         public DbSet<Estimate> Estimates { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
@@ -269,6 +271,8 @@ namespace Yavsc.Models
          public DbSet<Notification> Notification { get; set; }
 
          public DbSet<DimissClicked> DimissClicked { get; set; }
+
+         public DbSet<HairPrestation> HairPrestation { get; set; }
          
 
     }

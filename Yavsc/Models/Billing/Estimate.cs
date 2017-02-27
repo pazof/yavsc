@@ -24,7 +24,7 @@ namespace Yavsc.Models.Billing
         /// </summary>
         /// <returns></returns>
         [ForeignKey("CommandId"),JsonIgnore]
-        public BookQuery Query { get; set; }
+        public RdvQuery Query { get; set; }
         public string Description { get; set; }
         public string Title { get; set; }
 
