@@ -11,9 +11,11 @@ namespace Yavsc.Controllers
 {
     using Helpers;
     using Microsoft.AspNet.Http;
+    using Microsoft.Extensions.Localization;
     using Models;
     using Newtonsoft.Json;
     using ViewModels.FrontOffice;
+    using Yavsc.Extensions;
     using Yavsc.Models.Haircut;
     using Yavsc.ViewModels.Haircut;
 
@@ -23,13 +25,17 @@ namespace Yavsc.Controllers
         UserManager<ApplicationUser> _userManager;
 
         ILogger _logger;
+
+        IStringLocalizer _SR;
         public FrontOfficeController(ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+        IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR)
         {
             _context = context;
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<FrontOfficeController>();
+            _SR = SR;
         }
         public ActionResult Index()
         {
@@ -70,11 +76,13 @@ namespace Yavsc.Controllers
             if (prestaJson!=null) {
                 pPrestation = JsonConvert.DeserializeObject<HairPrestation>(prestaJson);
             }
-            else pPrestation = new HairPrestation {
-
-            };
-
+            else pPrestation = new HairPrestation {};
+            ViewBag.HairTaints = _context.HairTaint.Include(t=>t.Color);
+            ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos),_SR);
+            ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength),_SR);
             ViewBag.Activity = _context.Activities.First(a => a.Code == id);
+            ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders),_SR);
+            ViewBag.HairDressings = EnumExtensions.GetSelectList(typeof(HairDressings),_SR);
             var result = new HairCutView {
                 HairBrushers = _context.ListPerformers(id),
                 Topic = pPrestation

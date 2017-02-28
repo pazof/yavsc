@@ -23,7 +23,7 @@ namespace Yavsc.Models.Haircut
 
         public HairDressings Dressing { get; set; } 
 
-         [Display(Name="Technique")]
+        [Display(Name="Technique")]
         public HairTechnos Tech { get; set; } 
 
         [Display(Name="Shampoing")]

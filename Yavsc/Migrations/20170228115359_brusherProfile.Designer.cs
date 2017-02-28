@@ -1,14 +1,15 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170227151759_hairPrestations")]
-    partial class hairPrestations
+    [Migration("20170228115359_brusherProfile")]
+    partial class brusherProfile
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -439,6 +440,73 @@ namespace Yavsc.Migrations
                     b.Property<string>("Summary");
 
                     b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.BrusherProfile", b =>
+                {
+                    b.Property<string>("UserId");
+
+                    b.Property<decimal>("CarePrice");
+
+                    b.Property<int>("EndOfTheDay");
+
+                    b.Property<decimal>("HalfBalayagePrice");
+
+                    b.Property<decimal>("HalfBrushingPrice");
+
+                    b.Property<decimal>("HalfColorPrice");
+
+                    b.Property<decimal>("HalfDefrisPrice");
+
+                    b.Property<decimal>("HalfMechPrice");
+
+                    b.Property<decimal>("HalfMultiColorPrice");
+
+                    b.Property<decimal>("HalfPermanentPrice");
+
+                    b.Property<decimal>("KidCutPrice");
+
+                    b.Property<decimal>("LongBalayagePrice");
+
+                    b.Property<decimal>("LongBrushingPrice");
+
+                    b.Property<decimal>("LongColorPrice");
+
+                    b.Property<decimal>("LongDefrisPrice");
+
+                    b.Property<decimal>("LongMechPrice");
+
+                    b.Property<decimal>("LongMultiColorPrice");
+
+                    b.Property<decimal>("LongPermanentPrice");
+
+                    b.Property<decimal>("ManCutPrice");
+
+                    b.Property<decimal>("ShampooPrice");
+
+                    b.Property<decimal>("ShortBalayagePrice");
+
+                    b.Property<decimal>("ShortBrushingPrice");
+
+                    b.Property<decimal>("ShortColorPrice");
+
+                    b.Property<decimal>("ShortDefrisPrice");
+
+                    b.Property<decimal>("ShortMechPrice");
+
+                    b.Property<decimal>("ShortMultiColorPrice");
+
+                    b.Property<decimal>("ShortPermanentPrice");
+
+                    b.Property<int>("StartOfTheDay");
+
+                    b.Property<decimal>("WomenHalfCutPrice");
+
+                    b.Property<decimal>("WomenLongCutPrice");
+
+                    b.Property<decimal>("WomenShortCutPrice");
+
+                    b.HasKey("UserId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Haircut.HairCutQuery", b =>
