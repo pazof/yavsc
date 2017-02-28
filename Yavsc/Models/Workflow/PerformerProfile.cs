@@ -42,10 +42,10 @@ namespace Yavsc.Models.Workflow
         [Display(Name="Active")]
         public bool Active { get; set; }
 
-        [Display(Name="Maximal Daily Cost (euro/day)")]
+        [Display(Name="Maximal Daily Cost (euro/day)"),DisplayFormat(DataFormatString="{0:C}")]
         public int? MaxDailyCost { get; set; }
 
-        [Display(Name="Minimal Daily Cost (euro/day)")]
+        [Display(Name="Minimal Daily Cost (euro/day)"),DisplayFormat(DataFormatString="{0:C}")]
         public int? MinDailyCost { get; set; }
 
         [Display(Name="Rate from clients")]

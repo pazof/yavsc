@@ -9,6 +9,11 @@
 <div>
     <hr />
     @if (Model!=null) {
+
+        <fieldset>
+<legend>Disponibilités</legend>
+
+      
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.EndOfTheDay)
@@ -22,6 +27,19 @@
         <dd>
             @Html.Partial("HourFromMinutes", Model.StartOfTheDay)
         </dd>
+    </dl>
+  </fieldset>
+  <fieldset>
+<legend>Tarifs hors coiffure ou coupe</legend>
+
+      
+    <dl class="dl-horizontal">
+         <dt>
+            @Html.DisplayNameFor(model => model.ShampooPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ShampooPrice)
+        </dd>
 
         <dt>
             @Html.DisplayNameFor(model => model.CarePrice)
@@ -29,71 +47,49 @@
         <dd>
             @Html.DisplayFor(model => model.CarePrice)
         </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.HalfBalayagePrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.HalfBalayagePrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.HalfBrushingPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.HalfBrushingPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.HalfColorPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.HalfColorPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.HalfDefrisPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.HalfDefrisPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.HalfMechPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.HalfMechPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.HalfMultiColorPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.HalfMultiColorPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.HalfPermanentPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.HalfPermanentPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.KidCutPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.KidCutPrice)
-        </dd>
+
+        </dl>
+  </fieldset>
+
+  <fieldset>
+<legend>Tarifs balayages</legend>
+
+      
+    <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.LongBalayagePrice)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.LongBalayagePrice)
         </dd>
+
         <dt>
-            @Html.DisplayNameFor(model => model.LongBrushingPrice)
+            @Html.DisplayNameFor(model => model.HalfBalayagePrice)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.LongBrushingPrice)
+            @Html.DisplayFor(model => model.HalfBalayagePrice)
         </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.LongColorPrice)
+
+         <dt>
+            @Html.DisplayNameFor(model => model.ShortBalayagePrice)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.LongColorPrice)
+            @Html.DisplayFor(model => model.ShortBalayagePrice)
+        </dd>
+        </dl>
+  </fieldset>
+
+  <fieldset>
+<legend>Tarifs défrisage</legend>
+
+      
+    <dl class="dl-horizontal">
+        
+        <dt>
+            @Html.DisplayNameFor(model => model.HalfDefrisPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HalfDefrisPrice)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.LongDefrisPrice)
@@ -102,58 +98,30 @@
             @Html.DisplayFor(model => model.LongDefrisPrice)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.LongMechPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.LongMechPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.LongMultiColorPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.LongMultiColorPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.LongPermanentPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.LongPermanentPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ManCutPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ManCutPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ShampooPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ShampooPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ShortBalayagePrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ShortBalayagePrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ShortBrushingPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ShortBrushingPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ShortColorPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ShortColorPrice)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.ShortDefrisPrice)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.ShortDefrisPrice)
+        </dd>
+</dl>
+  </fieldset>
+
+  <fieldset>
+<legend>Tarifs mèches</legend>
+
+      
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.HalfMechPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HalfMechPrice)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LongMechPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LongMechPrice)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.ShortMechPrice)
@@ -161,6 +129,83 @@
         <dd>
             @Html.DisplayFor(model => model.ShortMechPrice)
         </dd>
+
+
+        
+
+        </dl>
+  </fieldset>
+  <fieldset>
+<legend>Tarifs coupes</legend>
+
+      
+    <dl class="dl-horizontal">
+
+     
+  <dt>
+            @Html.DisplayNameFor(model => model.WomenHalfCutPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.WomenHalfCutPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.WomenLongCutPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.WomenLongCutPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.WomenShortCutPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.WomenShortCutPrice)
+        </dd>
+
+        
+        <dt>
+            @Html.DisplayNameFor(model => model.ManCutPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ManCutPrice)
+        </dd>
+
+           <dt>
+            @Html.DisplayNameFor(model => model.KidCutPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.KidCutPrice)
+        </dd>
+
+</dl>
+  </fieldset>
+  <fieldset>
+<legend>Tarifs couleurs</legend>
+
+      
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.LongColorPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LongColorPrice)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.HalfColorPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HalfColorPrice)
+        </dd>
+        
+        <dt>
+            @Html.DisplayNameFor(model => model.ShortColorPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ShortColorPrice)
+        </dd>
+    </dl>
+        <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.ShortMultiColorPrice)
         </dt>
@@ -168,31 +213,84 @@
             @Html.DisplayFor(model => model.ShortMultiColorPrice)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.HalfMultiColorPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HalfMultiColorPrice)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LongMultiColorPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LongMultiColorPrice)
+        </dd>
+
+</dl>
+  </fieldset>
+  <fieldset>
+<legend>Tarifs burshing</legend>
+
+      
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LongBrushingPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LongBrushingPrice)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.HalfBrushingPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HalfBrushingPrice)
+        </dd>
+       
+        <dt>
+            @Html.DisplayNameFor(model => model.ShortBrushingPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ShortBrushingPrice)
+        </dd>
+
+
+         
+</dl>
+  </fieldset>
+  <fieldset>
+<legend>Tarifs permanentes</legend>
+
+      
+    <dl class="dl-horizontal">
+        
+        <dt>
+            @Html.DisplayNameFor(model => model.LongPermanentPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LongPermanentPrice)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.HalfPermanentPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HalfPermanentPrice)
+        </dd>
+
+
+        <dt>
             @Html.DisplayNameFor(model => model.ShortPermanentPrice)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.ShortPermanentPrice)
         </dd>
         
-        <dt>
-            @Html.DisplayNameFor(model => model.WomenHalfCutPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.WomenHalfCutPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.WomenLongCutPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.WomenLongCutPrice)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.WomenShortCutPrice)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.WomenShortCutPrice)
-        </dd>
-    </dl>}
+      
+
+    </dl>
+  </fieldset>
+
+
+    }
     else {
         @SR["Aucun profile renseigné"]
     }
