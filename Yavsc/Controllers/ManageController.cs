@@ -580,8 +580,9 @@ namespace Yavsc.Controllers
                 }
                 else ModelState.AddModelError(string.Empty, $"Access denied ({uid} vs {model.PerformerId})");
             }
-            
+            ViewBag.Activities = _dbContext.ActivityItems(new List<UserActivity>());
             ViewBag.GoogleSettings = _googleSettings;
+            model.Performer = _dbContext.Users.Single(u=>u.Id == model.PerformerId);
             return View(model);
         }
 
