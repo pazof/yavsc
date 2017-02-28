@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using System.Security.Claims;
@@ -6,7 +5,6 @@ using Microsoft.Data.Entity;
 using Yavsc.Models;
 using Yavsc.Models.Haircut;
 using Microsoft.AspNet.Authorization;
-using System;
 
 namespace Yavsc.Controllers
 {
