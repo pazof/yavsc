@@ -5,6 +5,10 @@ namespace Yavsc.Models.Haircut
     
     public enum HairTechnos
     {
+        [Display(Name="Aucune technique spécifique")]
+        None,
+
+        [Display(Name="Couleur")]
         Color,
 
         [Display(Name="Permantante")]

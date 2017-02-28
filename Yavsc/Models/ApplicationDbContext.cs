@@ -273,6 +273,8 @@ namespace Yavsc.Models
          public DbSet<DimissClicked> DimissClicked { get; set; }
 
          public DbSet<HairPrestation> HairPrestation { get; set; }
+
+         public DbSet<BrusherProfile> BrusherProfile { get; set; }
          
 
     }

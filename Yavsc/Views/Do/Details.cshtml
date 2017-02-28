@@ -13,7 +13,7 @@
         <dt>@SR["Activity"]</dt>
         <dd>   @Html.DisplayFor(m=>m.Does)
           @if (ViewBag.HasConfigurableSettings) {
-              <a asp-controller="@ViewBag.SettingsClassControllerName" asp-action="Index" >
+              <a asp-controller="@ViewBag.SettingsControllerName" asp-action="Index" >
                   [@SR["Manage"] @SR[Model.Does.SettingsClassName]]
               </a>
             }
