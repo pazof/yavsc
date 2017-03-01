@@ -10,14 +10,9 @@ using System.Security.Claims;
 namespace Yavsc.Controllers
 {
     using Helpers;
-    using Microsoft.AspNet.Http;
     using Microsoft.Extensions.Localization;
     using Models;
-    using Newtonsoft.Json;
     using ViewModels.FrontOffice;
-    using Yavsc.Extensions;
-    using Yavsc.Models.Haircut;
-    using Yavsc.ViewModels.Haircut;
 
     public class FrontOfficeController : Controller
     {
@@ -67,28 +62,18 @@ namespace Yavsc.Controllers
             var result = _context.ListPerformers(id);
             return View(result);
         }
-        
         [AllowAnonymous]
         public ActionResult HairCut(string id)
         {
-            HairPrestation pPrestation=null;
-            var prestaJson = HttpContext.Session.GetString("HairCutPresta") ;
-            if (prestaJson!=null) {
-                pPrestation = JsonConvert.DeserializeObject<HairPrestation>(prestaJson);
+            if (id == null)
+            {
+                throw new NotImplementedException("No Activity code");
             }
-            else pPrestation = new HairPrestation {};
-            ViewBag.HairTaints = _context.HairTaint.Include(t=>t.Color);
-            ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos),_SR);
-            ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength),_SR);
-            ViewBag.Activity = _context.Activities.First(a => a.Code == id);
-            ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders),_SR);
-            ViewBag.HairDressings = EnumExtensions.GetSelectList(typeof(HairDressings),_SR);
-            var result = new HairCutView {
-                HairBrushers = _context.ListPerformers(id),
-                Topic = pPrestation
-            } ;
+            ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == id);
+            var result = _context.ListPerformers(id);
             return View(result);
         }
+        
 
 
         [Produces("text/x-tex"), Authorize, Route("estimate-{id}.tex")]

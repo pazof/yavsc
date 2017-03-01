@@ -9,15 +9,20 @@ using Microsoft.Data.Entity;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
-using Yavsc.Helpers;
-using Yavsc.Models;
-using Yavsc.Models.Google.Messaging;
-using Yavsc.Models.Haircut;
-using Yavsc.Models.Relationship;
-using Yavsc.Services;
 
 namespace Yavsc.Controllers
 {
+    using Yavsc.Helpers;
+    using Yavsc.Models;
+    using Yavsc.Models.Google.Messaging;
+    using Yavsc.Models.Relationship;
+    using Yavsc.Services;
+    using Newtonsoft.Json;
+    using Microsoft.AspNet.Http;
+    using Yavsc.Extensions;
+    using Yavsc.Models.Haircut;
+    using Yavsc.ViewModels.Haircut;
+
     public class HairCutCommandController : CommandController
     {
         public HairCutCommandController(ApplicationDbContext context, 
@@ -111,6 +116,28 @@ namespace Yavsc.Controllers
        
         }
 
+        [AllowAnonymous]
+        public ActionResult HairCut(string performerId, string activityCode)
+        {
+            HairPrestation pPrestation=null;
+            var prestaJson = HttpContext.Session.GetString("HairCutPresta") ;
+            if (prestaJson!=null) {
+                pPrestation = JsonConvert.DeserializeObject<HairPrestation>(prestaJson);
+            }
+            else pPrestation = new HairPrestation {};
+           
+            ViewBag.HairTaints = _context.HairTaint.Include(t=>t.Color);
+            ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos),_localizer);
+            ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength),_localizer);
+            ViewBag.Activity = _context.Activities.First(a => a.Code == activityCode);
+            ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders),_localizer);
+            ViewBag.HairDressings = EnumExtensions.GetSelectList(typeof(HairDressings),_localizer);
+            var result = new HairCutView {
+                HairBrusher = _context.Performers.Single(p=>p.PerformerId == performerId),
+                Topic = pPrestation
+            } ;
+            return View(result);
+        }
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateHairMultiCutQuery(HairMultiCutQuery command)
