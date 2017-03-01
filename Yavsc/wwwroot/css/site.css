@@ -109,11 +109,11 @@ a:hover {
 .carousel-indicators {
     position: absolute;
     z-index: 15;
-    padding-left: 0;
+    padding: 0;
     text-align: center;
     list-style: none;
-    bottom: 1em;
-    top: initial;
+    top: .1em;
+    height: 1em;
 }
 
 @-webkit-keyframes mymove {

@@ -44,7 +44,7 @@
                     }
 
                 @foreach (var frm in act.Forms) {
-                    <a class="btn btn-success" asp-controller="FrontOffice" asp-action="@frm.Action" asp-route-id="@act.Code">
+                    <a class="btn btn-success" asp-controller="FrontOffice" asp-action="@frm.ActionName" asp-route-id="@act.Code">
                     @frm.Title
                     </a>
                 }

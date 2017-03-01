@@ -1,86 +1,18 @@
-@model HairCutView
+@model IEnumerable<PerformerProfile>
   
 @{
-    ViewData["Title"] = $"{ViewBag.Activity.Name}: Votre commande";
+    ViewData["Title"] = "Les profiles - " + (ViewBag.Activity?.Name ?? SR["Any"]);
 }
+<h1>@ViewData["Title"]</h1>
 <em>@ViewBag.Activity.Description</em>
 
-
-   @Html.DisplayFor(m=>m)
-    <form asp-controller="HairCutCommand" asp-action="HairCutProfiles" >
-
-
-    <div class="form-horizontal">
-        <h1>@ViewData["Title"]</h1>
-        <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="Topic.Gender" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select asp-for="Topic.Gender" asp-items="@ViewBag.Gender" class="form-control"></select>
-                <span asp-validation-for="Topic.Gender" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Topic.Length" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select asp-for="Topic.Length" asp-items="@ViewBag.HairLength" class="form-control"></select>
-                <span asp-validation-for="Topic.Length" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <div class="checkbox">
-                    <input asp-for="Topic.Cut" />
-                    <label asp-for="Topic.Cut"></label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Topic.Dressing" asp-items="@ViewBag.Dressing" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select asp-for="Topic.Dressing" class="form-control" asp-items="@ViewBag.HairDressings"></select>
-                <span asp-validation-for="Topic.Dressing" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Topic.Tech" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select asp-for="Topic.Tech" asp-items="@ViewBag.HairTechnos" class="form-control"></select>
-                <span asp-validation-for="Topic.Tech" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Topic.Taints" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-               
-@foreach (HairTaint color in ViewBag.HairTaints) {
-    <label>
-     <input type="checkbox" value="@color.Id" name="Topic.Taints[]"/>
-     @await Html.PartialAsync("HairTaint",color)
-     </label>
-     }
-                 <input type="hidden" asp-for="Topic.Taints" />
-                <span asp-validation-for="Topic.Taints" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <div class="checkbox">
-                    <input asp-for="Topic.Shampoo" />
-                    <label asp-for="Topic.Shampoo"></label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <div class="checkbox">
-                    <input asp-for="Topic.Cares" />
-                    <label asp-for="Topic.Cares"></label>
-                </div>
-            </div>
-        </div>
-
+@foreach (var profile in Model) {
+    <hr/>
+   @Html.DisplayFor(m=>profile)
+    <form asp-controller="HairCutCommand" asp-action="HairCut">
+        <input type="hidden" name="performerId" value="@profile.PerformerId" />
         <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
-             <input type="submit" value="@SR["Selectionnez maintenant votre prestataire"]"/>
-    </form>
+             <input type="submit" value="@SR["Proposer un rendez-vous à"] @profile.Performer.UserName"/>
+    </form> 
+}
+
