@@ -38,6 +38,7 @@ namespace Yavsc
             if (Context.User != null)
             {
                 isAuth = Context.User.Identity.IsAuthenticated;
+                userName = Context.User.Identity.Name;
                 var group = isAuth ?
                   "authenticated" : "anonymous";
                 // Log ("Cx: " + group);
@@ -54,8 +55,9 @@ namespace Yavsc
                             UserAgent = Context.Request.Headers["User-Agent"],
                             Connected = true
                         });
-                        db.SaveChanges(user.Id);
+                        db.SaveChanges();
                     }
+                    
                 }
             }
             else Groups.Add(Context.ConnectionId, "anonymous");
@@ -76,16 +78,16 @@ namespace Yavsc
                     var cx = db.Connections.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
                     if (cx != null)
                     {
-                        var user = db.Users.Single(u => u.UserName == userName);
                         if (stopCalled)
                         {
+                            var user = db.Users.Single(u => u.UserName == userName);
                             user.Connections.Remove(cx);
                         }
                         else
                         {
                             cx.Connected = false;
                         }
-                        db.SaveChanges(user.Id);
+                        db.SaveChanges();
                     }
                 }
             }
@@ -108,7 +110,7 @@ namespace Yavsc
                         if (cx != null)
                         {
                             cx.Connected = true;
-                            db.SaveChanges(user.Id);
+                            db.SaveChanges();
                         }
                         else cx = new Connection { ConnectionId = Context.ConnectionId,
                             UserAgent = Context.Request.Headers["User-Agent"],
@@ -145,9 +147,10 @@ namespace Yavsc
                 var cx = db.Connections.SingleOrDefault(c=>c.ConnectionId == Context.ConnectionId);
                 if (cx!=null) {
                     db.Connections.Remove(cx);
-                    db.SaveChanges(cx.ApplicationUserId); 
+                    db.SaveChanges(); 
                 }
             }
+                
         }
 
     }

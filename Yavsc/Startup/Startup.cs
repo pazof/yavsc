@@ -16,6 +16,7 @@ using Microsoft.AspNet.Localization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.AspNet.Mvc.Razor;
+using Microsoft.AspNet.Http.Extensions;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +24,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Net.Http.Headers;
-using Yavsc.Extensions;
 using Yavsc.Formatters;
 using Yavsc.Models;
 using Yavsc.Services;
@@ -232,7 +232,6 @@ namespace Yavsc
         IOptions<RequestLocalizationOptions> localizationOptions,
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
         RoleManager<IdentityRole> roleManager,
-        UserManager<ApplicationUser> userManager,
         IAuthorizationService authorizationService,
          ILoggerFactory loggerFactory)
         {
@@ -321,7 +320,7 @@ namespace Yavsc
                 {
                     foreach (var c in db.Connections)
                         db.Connections.Remove(c);
-                    db.SaveChanges("Startup");
+                    db.SaveChanges();
                 }
             });
 
@@ -336,14 +335,11 @@ namespace Yavsc
 
             ConfigureOAuthApp(app, SiteSetup);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
-             app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
-               branch =>
-               {
-                ConfigureWebSocketsApp(app, SiteSetup, env);
-               });
+            ConfigureWebSocketsApp(app, SiteSetup, env);
             ConfigureWorkflow(app, SiteSetup);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"fr"));
             app.UseSession();
+  
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
