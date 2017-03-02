@@ -31,7 +31,7 @@
                 @if (act.Children.Count>0) {
                 <p><em>@act.Name</em><br/>
                 @act.Description </p>
-                    <a asp-route-id="@act.Code">
+                    <a asp-route-id="@act.Code" class="btn btn-default">
                         @foreach (Activity c in act.Children) {
                             @if (!c.Hidden) { @Html.DisplayFor(subact=>c) }
                         }
