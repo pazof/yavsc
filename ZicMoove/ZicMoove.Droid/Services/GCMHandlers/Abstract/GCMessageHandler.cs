@@ -13,7 +13,7 @@ using ZicMoove.Droid.Interfaces;
 
 namespace ZicMoove.Droid.Services.GCMHandlers
 {
-    abstract class GCMessageHandler : IGCMessageHandler
+    public abstract class GCMessageHandler : IGCMessageHandler
     {
         protected Context context;
         protected NotificationManager notificationManager;

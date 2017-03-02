@@ -18,9 +18,10 @@ namespace ZicMoove.Droid.Services.GCMHandlers
     using Model;
     using Model.Musical;
 
-    class BookQueryGCMHandler : GCMessageHandler
+    public class BookQueryGCMHandler : GCMessageHandler
     {
-        public BookQueryGCMHandler(Context context,
+        public BookQueryGCMHandler(
+            Context context,
             NotificationManager manager,
             Notification.Builder builder) : base(context,manager,builder)
         {
