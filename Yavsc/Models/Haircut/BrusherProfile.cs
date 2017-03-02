@@ -11,6 +11,9 @@ namespace Yavsc.Models.Haircut
            get; set;
         }
 
+        [Display(Name="Rayon d'action"),DisplayFormat(DataFormatString="{0} km")]
+
+        public int ActionDistance { get; set; }
         /// <summary>
         /// StartOfTheDay In munutes
         /// </summary>
@@ -37,6 +40,11 @@ namespace Yavsc.Models.Haircut
         [Display(Name="Coupe homme"),DisplayFormat(DataFormatString="{0:C}")]
         public decimal ManCutPrice { get; set; }
 
+        [Display(Name="brushing homme"),DisplayFormat(DataFormatString="{0:C}")]
+        public decimal ManBrushPrice { get; set; }
+
+
+
         [Display(Name="Coupe enfant"),DisplayFormat(DataFormatString="{0:C}")]
         public decimal KidCutPrice { get; set; }
 
@@ -48,14 +56,6 @@ namespace Yavsc.Models.Haircut
 
         [Display(Name="Brushing cheveux courts"),DisplayFormat(DataFormatString="{0:C}")]
         public decimal ShortBrushingPrice { get; set; }
-
-        [Display(Name="Shampoing"),DisplayFormat(DataFormatString="{0:C}")]
-
-        public decimal ShampooPrice { get; set; }
-
-        [Display(Name="Soin"),DisplayFormat(DataFormatString="{0:C}")]
-
-        public decimal CarePrice { get; set; }
 
         [Display(Name="couleur cheveux longs"),DisplayFormat(DataFormatString="{0:C}")]
         public decimal LongColorPrice { get; set; }
@@ -112,6 +112,25 @@ namespace Yavsc.Models.Haircut
 
         [Display(Name="balayage cheveux courts"),DisplayFormat(DataFormatString="{0:C}")]
         public decimal ShortBalayagePrice { get; set; }
+
+
+        [Display(Name="Mise en plis cheveux longs"),DisplayFormat(DataFormatString="{0:C}")]
+
+        public decimal LongFoldingPrice { get; set; }
+
+        [Display(Name="Mise en plis cheveux mi-longs"),DisplayFormat(DataFormatString="{0:C}")]
+        public decimal HalfFoldingPrice { get; set; }
+
+        [Display(Name="Mise en plis cheveux courts"),DisplayFormat(DataFormatString="{0:C}")]
+        public decimal ShortFoldingPrice { get; set; }
+
+        [Display(Name="Shampoing"),DisplayFormat(DataFormatString="{0:C}")]
+
+        public decimal ShampooPrice { get; set; }
+
+        [Display(Name="Soin"),DisplayFormat(DataFormatString="{0:C}")]
+
+        public decimal CarePrice { get; set; }
 
     }
 }

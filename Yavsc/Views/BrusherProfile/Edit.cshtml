@@ -25,6 +25,13 @@
                 <span asp-validation-for="EndOfTheDay" class="text-danger" />
             </div>
         </div>
+        <div class="form-group">
+            <label asp-for="ActionDistance" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ActionDistance" class="form-control" />
+                <span asp-validation-for="ActionDistance" class="text-danger" />
+            </div>
+        </div>
         </fieldset>
 
         <fieldset><legend>Grille tarifaire</legend>
@@ -226,6 +233,36 @@
                 <span asp-validation-for="WomenShortCutPrice" class="text-danger" />
             </div>
         </div>
+        <div class="form-group">
+            <label asp-for="ManBrushPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ManBrushPrice" class="form-control" />
+                <span asp-validation-for="ManBrushPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="LongFoldingPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="LongFoldingPrice" class="form-control" />
+                <span asp-validation-for="LongFoldingPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="HalfFoldingPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="HalfFoldingPrice" class="form-control" />
+                <span asp-validation-for="HalfFoldingPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ShortFoldingPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ShortFoldingPrice" class="form-control" />
+                <span asp-validation-for="ShortFoldingPrice" class="text-danger" />
+            </div>
+        </div>
+        
+model.ShortFoldingPrice
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />

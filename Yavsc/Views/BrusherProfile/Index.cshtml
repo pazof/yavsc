@@ -27,6 +27,12 @@
         <dd>
             @Html.Partial("HourFromMinutes", Model.StartOfTheDay)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ActionDistance)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ActionDistance)
+        </dd>
     </dl>
   </fieldset>
   <fieldset>
@@ -288,7 +294,51 @@
 
     </dl>
   </fieldset>
+  <fieldset>
+<legend>Tarifs mise en plis</legend>
 
+      
+    <dl class="dl-horizontal">
+        
+        <dt>
+            @Html.DisplayNameFor(model => model.LongFoldingPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LongFoldingPrice)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.HalfFoldingPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HalfFoldingPrice)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShortFoldingPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ShortFoldingPrice)
+        </dd>
+        
+      
+
+    </dl>
+  </fieldset>
+ <fieldset>
+<legend>Spécialités homme</legend>
+
+      
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ManBrushPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ManBrushPrice)
+        </dd>
+
+    </dl>
+  </fieldset>
 
     }
     else {

@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170301124608_brusherActiondistance")]
+    partial class brusherActiondistance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -459,8 +460,6 @@ namespace Yavsc.Migrations
 
                     b.Property<decimal>("HalfDefrisPrice");
 
-                    b.Property<decimal>("HalfFoldingPrice");
-
                     b.Property<decimal>("HalfMechPrice");
 
                     b.Property<decimal>("HalfMultiColorPrice");
@@ -477,15 +476,11 @@ namespace Yavsc.Migrations
 
                     b.Property<decimal>("LongDefrisPrice");
 
-                    b.Property<decimal>("LongFoldingPrice");
-
                     b.Property<decimal>("LongMechPrice");
 
                     b.Property<decimal>("LongMultiColorPrice");
 
                     b.Property<decimal>("LongPermanentPrice");
-
-                    b.Property<decimal>("ManBrushPrice");
 
                     b.Property<decimal>("ManCutPrice");
 
@@ -498,8 +493,6 @@ namespace Yavsc.Migrations
                     b.Property<decimal>("ShortColorPrice");
 
                     b.Property<decimal>("ShortDefrisPrice");
-
-                    b.Property<decimal>("ShortFoldingPrice");
 
                     b.Property<decimal>("ShortMechPrice");
 
