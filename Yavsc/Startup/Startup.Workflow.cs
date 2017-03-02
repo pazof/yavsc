@@ -7,10 +7,16 @@ namespace Yavsc
     public partial class Startup
     {
         /// <summary>
-        /// Lists Available user profile classes.
+        /// Lists Available user profile classes,
+        /// populated at startup, using reflexion.
         /// </summary>
         public static  Dictionary<string,Type> ProfileTypes = new Dictionary<string,Type>() ;
-        public static readonly string [] Forms = new string [] { "Profiles" };
+        
+        /// <summary>
+        /// Lists available command forms. 
+        /// This is hard coded.
+        /// </summary>
+        public static readonly string [] Forms = new string [] { "Profiles" , "HairCut" };
 
         private void ConfigureWorkflow(IApplicationBuilder app, SiteSettings settings)
         {
@@ -30,6 +36,5 @@ namespace Yavsc
             return AppDomain.CurrentDomain.GetAssemblies()[0];
         } 
     }
-
     
 }

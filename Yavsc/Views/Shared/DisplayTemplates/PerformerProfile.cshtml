@@ -5,14 +5,8 @@
 
      <ul>
          <li> @SR["Rating"]: @Model.Rate % </li>
-        @if (Model.MinDailyCost != null) {
-            <li>@SR["MinDailyCost"]: @Model.MinDailyCost&euro;</li>
-        }
-        @if (Model.MinDailyCost != null) {
-            <li>@SR["MaxDailyCost"]: @Model.MaxDailyCost&euro;</li>
-        }
         @if (Model.WebSite!=null) { 
-            <li>@SR["WebSite"]: @Model.WebSite</li>
+            <li>@SR["WebSite"]: <a target="yaext" href="@Model.WebSite">@Model.WebSite</a></li>
         }
         
     </ul>

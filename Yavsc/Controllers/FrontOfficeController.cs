@@ -10,22 +10,27 @@ using System.Security.Claims;
 namespace Yavsc.Controllers
 {
     using Helpers;
+    using Microsoft.Extensions.Localization;
     using Models;
-    using Models.Workflow;
     using ViewModels.FrontOffice;
+
     public class FrontOfficeController : Controller
     {
         ApplicationDbContext _context;
         UserManager<ApplicationUser> _userManager;
 
         ILogger _logger;
+
+        IStringLocalizer _SR;
         public FrontOfficeController(ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+        IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR)
         {
             _context = context;
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<FrontOfficeController>();
+            _SR = SR;
         }
         public ActionResult Index()
         {
@@ -46,7 +51,7 @@ namespace Yavsc.Controllers
             return View(model);
         }
 
-        [Route("Profiles/{id?}"), HttpGet, AllowAnonymous]
+        [AllowAnonymous]
         public ActionResult Profiles(string id)
         {
             if (id == null)
@@ -57,39 +62,19 @@ namespace Yavsc.Controllers
             var result = _context.ListPerformers(id);
             return View(result);
         }
-
-        [Route("Profiles/{id}"), HttpPost, AllowAnonymous]
-        public ActionResult Profiles(BookQuery bookQuery)
+        [AllowAnonymous]
+        public ActionResult HairCut(string id)
         {
-            if (ModelState.IsValid)
+            if (id == null)
             {
-                var pro = _context.Performers.Include(
-                    pr => pr.Performer
-                ).FirstOrDefault(
-                    x => x.PerformerId == bookQuery.PerformerId
-                );
-                if (pro == null)
-                    return HttpNotFound();
-                // Let's create a command
-                if (bookQuery.Id == 0)
-                {
-                    _context.BookQueries.Add(bookQuery);
-                }
-                else
-                {
-                    _context.BookQueries.Update(bookQuery);
-                }
-                _context.SaveChanges(User.GetUserId());
-                // TODO Send sys notifications &
-                // notify the user (make him a basket badge)
-                return View("Index");
+                throw new NotImplementedException("No Activity code");
             }
-            ViewBag.Activities = _context.ActivityItems(null);
-            return View("Profiles", _context.Performers.Include(p => p.Performer).Where
-                (p => p.Active).OrderBy(
-                    x => x.MinDailyCost
-                ));
+            ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == id);
+            var result = _context.ListPerformers(id);
+            return View(result);
         }
+        
+
 
         [Produces("text/x-tex"), Authorize, Route("estimate-{id}.tex")]
         public ViewResult EstimateTex(long id)

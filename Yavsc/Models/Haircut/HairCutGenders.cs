@@ -1,9 +1,17 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Yavsc.Models.Haircut
 {
     public enum HairCutGenders : int
     {
-        Kid = 1,
+        [Display(Name="Femme")]
+        Women,
+
+        [Display(Name="Homme")]
         Man,
-        Women
+
+        [Display(Name="Enfant")]
+        Kid 
+        
     }
 }

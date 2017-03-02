@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
 
 namespace Yavsc.Models.Workflow
 {
@@ -11,7 +10,7 @@ namespace Yavsc.Models.Workflow
     /// Query, for a date, with a given perfomer, at this given place.
     /// </summary>
 
-    public class BookQuery : NominativeServiceCommand
+    public class RdvQuery : NominativeServiceCommand
     {
         /// <summary>
         /// The command identifier
@@ -38,22 +37,18 @@ namespace Yavsc.Models.Workflow
         }
         public string Reason { get; set; }
 
-        public BookQuery()
+        public RdvQuery()
         {
         }
 
-        public BookQuery(string activityCode, Location eventLocation, DateTime eventDate)
+        public RdvQuery(string activityCode, Location eventLocation, DateTime eventDate)
         {
             Location = eventLocation;
             EventDate = eventDate;
             ActivityCode = activityCode;
         }
 
-        [Required]
-        public string ActivityCode { get; set; }
 
-        [ForeignKey("ActivityCode"),JsonIgnore]
-        public virtual Activity Context  { get; set ; }
 
     }
 }

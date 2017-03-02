@@ -1,9 +1,15 @@
 
 
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Yavsc.Models.Market
 {
-    public partial class Product : BaseProduct
+    public  class Product : BaseProduct
     {
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Id { get; set; }
+
         /// <summary>
         /// Weight in gram
         /// </summary>

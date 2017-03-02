@@ -103,7 +103,7 @@ namespace Yavsc.Controllers
                 UserName = user.UserName,
                 PostsCounter = pc,
                 Balance = user.AccountBalance,
-                ActiveCommandCount = _dbContext.BookQueries.Count(x => (x.ClientId == user.Id) && (x.EventDate > DateTime.Now)),
+                ActiveCommandCount = _dbContext.RdvQueries.Count(x => (x.ClientId == user.Id) && (x.EventDate > DateTime.Now)),
                 HasDedicatedCalendar = !string.IsNullOrEmpty(user.DedicatedGoogleCalendar),
                 Roles = await _userManager.GetRolesAsync(user),
                 PostalAddress = user.PostalAddress?.Address,
@@ -580,8 +580,9 @@ namespace Yavsc.Controllers
                 }
                 else ModelState.AddModelError(string.Empty, $"Access denied ({uid} vs {model.PerformerId})");
             }
-            
+            ViewBag.Activities = _dbContext.ActivityItems(new List<UserActivity>());
             ViewBag.GoogleSettings = _googleSettings;
+            model.Performer = _dbContext.Users.Single(u=>u.Id == model.PerformerId);
             return View(model);
         }
 

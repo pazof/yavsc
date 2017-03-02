@@ -2,7 +2,7 @@ using Yavsc.Interfaces.Workflow;
 
 namespace Yavsc.Models.Haircut
 {
-    public class HairCutQueryEvent : BookQueryProviderInfo, IEvent
+    public class HairCutQueryEvent : RdvQueryProviderInfo, IEvent
     {
         public HairCutQueryEvent()
         {
