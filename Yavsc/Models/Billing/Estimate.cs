@@ -7,9 +7,9 @@ using System.Linq;
 
 namespace Yavsc.Models.Billing
 {
-    using Interfaces;
     using Models.Workflow;
     using Newtonsoft.Json;
+    using YavscLib.Workflow;
 
     public partial class Estimate : IEstimate
     {
