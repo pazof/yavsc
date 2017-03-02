@@ -67,8 +67,8 @@ namespace ZicMoove.Pages
             if (editEstimateViewModel == null)
             {
                 // First search for an existing estimate
-                editEstimateViewModel = DataManager.Instance.EstimationCache.FirstOrDefault(
-                    estimate=> estimate.Query.Id == bookQueryViewModel.Id
+                editEstimateViewModel = DataManager.Instance.EstimationCache.LocalGet(
+                     bookQueryViewModel.Id
                     );
                 if (editEstimateViewModel == null)
                 {

@@ -471,7 +471,6 @@
     <Compile Include="Markdown\MDWebView.cs" />
     <Compile Include="OAuth2\YaOAuth2Authenticator.cs" />
     <Compile Include="Rendering\ImageButtonRenderer.cs" />
-    <Compile Include="Rendering\YaSvgImageView.cs" />
     <Compile Include="Rendering\SvgRenderer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -479,7 +478,8 @@
     <Compile Include="Services\AccountChooserService.cs" />
     <Compile Include="Services\GCMHandlers\BookQueryGCMHandler.cs" />
     <Compile Include="Services\GCMHandlers\EstimateGCMHandler.cs" />
-    <Compile Include="Services\GCMHandlers\GCMessageHandler.cs" />
+    <Compile Include="Services\GCMHandlers\Abstract\GCMessageHandler.cs" />
+    <Compile Include="Services\GCMHandlers\HairCutQueryGCMHandler.cs" />
     <Compile Include="Services\YavscChooserTargetService.cs" />
     <Compile Include="Services\GcmListenerService.cs" />
     <Compile Include="Services\GcmRegistrationIntentService.cs" />
