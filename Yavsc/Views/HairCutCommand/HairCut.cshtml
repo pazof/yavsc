@@ -25,7 +25,7 @@
             var cutprice = (gen==0) ? gtarif.cut[len] : gtarif.cut[0];
             total += cutprice;
             displayTarif('CutPrice', cutprice);
-        }
+        } else displayTarif('CutPrice',0);
         if (gen==0) {
             if (tech>0) { 
                 var techprice =  gtarif.tech[tech-1][len]; 
@@ -120,30 +120,6 @@
 </script>
 
 }
-@section header {
-<style>
-.price { 
-    font-weight: bold;
-    font-size: x-large;
-    color: #fff;
-    border: solid white 1px;
-    border-radius: 1em;
-    padding: .2em;
-    margin: .2em;
-}
-.total { 
-    float: left;
-    font-weight: bold;
-    font-size: xx-large;
-    color: #fff;
-    background-color: #1f1c58;
-    border: solid white 1px;
-    border-radius: 1em;
-    padding: .2em;
-    margin: .2em;
-}
-</style>
-}
 <em>@ViewBag.Activity.Description</em> 
 
 <h2>@ViewData["Title"]</h2>
@@ -151,8 +127,6 @@
 @Html.DisplayFor(m=>m.HairBrusher)
 
 <form asp-controller="HairCutCommand" asp-action="HairCut">
-
-
     <div class="form-horizontal">
         <hr />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
@@ -233,10 +207,10 @@
                 </div>
             </div>
         </div>
-        <div id="Total" class="total"></div>
-        <input type="hidden" name="performerId" value="@Model.HairBrusher.PerformerId" />
-        <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
-        <input type="submit" class="btn btn-success" value="@SR["Validez ce choix, et prendre rendez-vous"]"/>
-    </div>
-
+        <label>Total: <span id="Total" class="total"></span>
+        <input type="submit" class="btn btn-success " value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.HairBrusher.Performer.UserName"/>
+        </label>
+   </div>
+    <input type="hidden" name="performerId" value="@Model.HairBrusher.PerformerId" />
+    <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
 </form>
