@@ -51,7 +51,7 @@
             Blogspot = new RemoteEntity<Blog, long>("blog", x=>x.Id);
             Contacts = new LocalEntity<ClientProviderInfo, string>(c => c.UserId);
             AppState = new LocalEntity<PageState, int>(s => s.Position);
-            EstimationCache = new LocalEntity<EditEstimateViewModel, long>(e => e.Query.Id);
+            EstimationCache = new LocalEntity<EditEstimateViewModel, long>(e => e.Data.Id);
             EstimateLinesTemplates = new LocalEntity<BillingLine, string>(l => l.Description);
             PrivateMessages = new LocalEntity<ChatMessage, int>(m=> m.GetHashCode());
             RemoteFiles = new RemoteFilesEntity ();
