@@ -7,6 +7,27 @@ body {
   color:#999;
 }
 h1,h2,h3{color:#fff;}
+
+.price {
+    font-weight: bold;
+    font-size: x-large;
+    color: #fff;
+    border: solid white 1px;
+    border-radius: 1em;
+    padding: .2em;
+    margin: .2em;
+}
+.total {
+    font-weight: bold;
+    font-size: xx-large;
+    color: #fff;
+    background-color: #1f1c58;
+    border: solid white 1px;
+    border-radius: 1em;
+    padding: .2em;
+    margin: .2em;
+}
+
 .blog {
     padding: 1em;
 }
