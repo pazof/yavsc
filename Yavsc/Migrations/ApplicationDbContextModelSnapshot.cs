@@ -306,8 +306,6 @@ namespace Yavsc.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<long?>("ArticleId");
-
                     b.Property<int>("Count");
 
                     b.Property<string>("Description")
@@ -441,6 +439,182 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Haircut.BrusherProfile", b =>
+                {
+                    b.Property<string>("UserId");
+
+                    b.Property<int>("ActionDistance");
+
+                    b.Property<decimal>("CarePrice");
+
+                    b.Property<int>("EndOfTheDay");
+
+                    b.Property<decimal>("FlatFeeDiscount");
+
+                    b.Property<decimal>("HalfBalayagePrice");
+
+                    b.Property<decimal>("HalfBrushingPrice");
+
+                    b.Property<decimal>("HalfColorPrice");
+
+                    b.Property<decimal>("HalfDefrisPrice");
+
+                    b.Property<decimal>("HalfFoldingPrice");
+
+                    b.Property<decimal>("HalfMechPrice");
+
+                    b.Property<decimal>("HalfMultiColorPrice");
+
+                    b.Property<decimal>("HalfPermanentPrice");
+
+                    b.Property<decimal>("KidCutPrice");
+
+                    b.Property<decimal>("LongBalayagePrice");
+
+                    b.Property<decimal>("LongBrushingPrice");
+
+                    b.Property<decimal>("LongColorPrice");
+
+                    b.Property<decimal>("LongDefrisPrice");
+
+                    b.Property<decimal>("LongFoldingPrice");
+
+                    b.Property<decimal>("LongMechPrice");
+
+                    b.Property<decimal>("LongMultiColorPrice");
+
+                    b.Property<decimal>("LongPermanentPrice");
+
+                    b.Property<decimal>("ManBrushPrice");
+
+                    b.Property<decimal>("ManCutPrice");
+
+                    b.Property<decimal>("ShampooPrice");
+
+                    b.Property<decimal>("ShortBalayagePrice");
+
+                    b.Property<decimal>("ShortBrushingPrice");
+
+                    b.Property<decimal>("ShortColorPrice");
+
+                    b.Property<decimal>("ShortDefrisPrice");
+
+                    b.Property<decimal>("ShortFoldingPrice");
+
+                    b.Property<decimal>("ShortMechPrice");
+
+                    b.Property<decimal>("ShortMultiColorPrice");
+
+                    b.Property<decimal>("ShortPermanentPrice");
+
+                    b.Property<int>("StartOfTheDay");
+
+                    b.Property<decimal>("WomenHalfCutPrice");
+
+                    b.Property<decimal>("WomenLongCutPrice");
+
+                    b.Property<decimal>("WomenShortCutPrice");
+
+                    b.HasKey("UserId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairCutQuery", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ActivityCode")
+                        .IsRequired();
+
+                    b.Property<string>("ClientId")
+                        .IsRequired();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateModified");
+
+                    b.Property<DateTime>("EventDate");
+
+                    b.Property<long?>("LocationId")
+                        .IsRequired();
+
+                    b.Property<string>("PerformerId")
+                        .IsRequired();
+
+                    b.Property<long>("PrestationId");
+
+                    b.Property<decimal?>("Previsional");
+
+                    b.Property<int>("Status");
+
+                    b.Property<string>("UserCreated");
+
+                    b.Property<string>("UserModified");
+
+                    b.Property<DateTime?>("ValidationDate");
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairMultiCutQuery", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ActivityCode")
+                        .IsRequired();
+
+                    b.Property<string>("ClientId")
+                        .IsRequired();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateModified");
+
+                    b.Property<DateTime>("EventDate");
+
+                    b.Property<long?>("LocationId");
+
+                    b.Property<string>("PerformerId")
+                        .IsRequired();
+
+                    b.Property<decimal?>("Previsional");
+
+                    b.Property<int>("Status");
+
+                    b.Property<string>("UserCreated");
+
+                    b.Property<string>("UserModified");
+
+                    b.Property<DateTime?>("ValidationDate");
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairPrestation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Cares");
+
+                    b.Property<bool>("Cut");
+
+                    b.Property<int>("Dressing");
+
+                    b.Property<int>("Gender");
+
+                    b.Property<long?>("HairMultiCutQueryId");
+
+                    b.Property<int>("Length");
+
+                    b.Property<bool>("Shampoo");
+
+                    b.Property<int>("Tech");
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Haircut.HairTaint", b =>
                 {
                     b.Property<long>("Id")
@@ -449,6 +623,8 @@ namespace Yavsc.Migrations
                     b.Property<string>("Brand");
 
                     b.Property<long>("ColorId");
+
+                    b.Property<long?>("HairPrestationId");
 
                     b.HasKey("Id");
                 });
@@ -475,25 +651,28 @@ namespace Yavsc.Migrations
                     b.HasKey("DeviceId");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Market.BaseProduct", b =>
+            modelBuilder.Entity("Yavsc.Models.Market.Product", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<decimal>("Depth");
+
                     b.Property<string>("Description");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
+                    b.Property<decimal>("Height");
 
                     b.Property<string>("Name");
 
+                    b.Property<decimal?>("Price");
+
                     b.Property<bool>("Public");
 
+                    b.Property<decimal>("Weight");
+
+                    b.Property<decimal>("Width");
+
                     b.HasKey("Id");
-
-                    b.HasAnnotation("Relational:DiscriminatorProperty", "Discriminator");
-
-                    b.HasAnnotation("Relational:DiscriminatorValue", "BaseProduct");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Market.Service", b =>
@@ -773,51 +952,12 @@ namespace Yavsc.Migrations
                     b.HasKey("Code");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Workflow.BookQuery", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("ActivityCode")
-                        .IsRequired();
-
-                    b.Property<string>("ClientId")
-                        .IsRequired();
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<DateTime>("DateModified");
-
-                    b.Property<DateTime>("EventDate");
-
-                    b.Property<long?>("LocationId");
-
-                    b.Property<long?>("LocationTypeId");
-
-                    b.Property<string>("PerformerId")
-                        .IsRequired();
-
-                    b.Property<decimal?>("Previsional");
-
-                    b.Property<string>("Reason");
-
-                    b.Property<int>("Status");
-
-                    b.Property<string>("UserCreated");
-
-                    b.Property<string>("UserModified");
-
-                    b.Property<DateTime?>("ValidationDate");
-
-                    b.HasKey("Id");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Workflow.CommandForm", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Action");
+                    b.Property<string>("ActionName");
 
                     b.Property<string>("ActivityCode")
                         .IsRequired();
@@ -877,6 +1017,45 @@ namespace Yavsc.Migrations
                     b.HasKey("UserId");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Workflow.RdvQuery", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ActivityCode")
+                        .IsRequired();
+
+                    b.Property<string>("ClientId")
+                        .IsRequired();
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("DateModified");
+
+                    b.Property<DateTime>("EventDate");
+
+                    b.Property<long?>("LocationId");
+
+                    b.Property<long?>("LocationTypeId");
+
+                    b.Property<string>("PerformerId")
+                        .IsRequired();
+
+                    b.Property<decimal?>("Previsional");
+
+                    b.Property<string>("Reason");
+
+                    b.Property<int>("Status");
+
+                    b.Property<string>("UserCreated");
+
+                    b.Property<string>("UserModified");
+
+                    b.Property<DateTime?>("ValidationDate");
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Workflow.UserActivity", b =>
                 {
                     b.Property<string>("DoesCode");
@@ -886,23 +1065,6 @@ namespace Yavsc.Migrations
                     b.Property<int>("Weight");
 
                     b.HasKey("DoesCode", "UserId");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Market.Product", b =>
-                {
-                    b.HasBaseType("Yavsc.Models.Market.BaseProduct");
-
-                    b.Property<decimal>("Depth");
-
-                    b.Property<decimal>("Height");
-
-                    b.Property<decimal?>("Price");
-
-                    b.Property<decimal>("Weight");
-
-                    b.Property<decimal>("Width");
-
-                    b.HasAnnotation("Relational:DiscriminatorValue", "Product");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
@@ -982,10 +1144,6 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Billing.CommandLine", b =>
                 {
-                    b.HasOne("Yavsc.Models.Market.BaseProduct")
-                        .WithMany()
-                        .HasForeignKey("ArticleId");
-
                     b.HasOne("Yavsc.Models.Billing.Estimate")
                         .WithMany()
                         .HasForeignKey("EstimateId");
@@ -1001,7 +1159,7 @@ namespace Yavsc.Migrations
                         .WithMany()
                         .HasForeignKey("ClientId");
 
-                    b.HasOne("Yavsc.Models.Workflow.BookQuery")
+                    b.HasOne("Yavsc.Models.Workflow.RdvQuery")
                         .WithMany()
                         .HasForeignKey("CommandId");
 
@@ -1024,11 +1182,64 @@ namespace Yavsc.Migrations
                         .HasForeignKey("ApplicationUserId");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairCutQuery", b =>
+                {
+                    b.HasOne("Yavsc.Models.Workflow.Activity")
+                        .WithMany()
+                        .HasForeignKey("ActivityCode");
+
+                    b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ClientId");
+
+                    b.HasOne("Yavsc.Models.Relationship.Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile")
+                        .WithMany()
+                        .HasForeignKey("PerformerId");
+
+                    b.HasOne("Yavsc.Models.Haircut.HairPrestation")
+                        .WithMany()
+                        .HasForeignKey("PrestationId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairMultiCutQuery", b =>
+                {
+                    b.HasOne("Yavsc.Models.Workflow.Activity")
+                        .WithMany()
+                        .HasForeignKey("ActivityCode");
+
+                    b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ClientId");
+
+                    b.HasOne("Yavsc.Models.Relationship.Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile")
+                        .WithMany()
+                        .HasForeignKey("PerformerId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairPrestation", b =>
+                {
+                    b.HasOne("Yavsc.Models.Haircut.HairMultiCutQuery")
+                        .WithMany()
+                        .HasForeignKey("HairMultiCutQueryId");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Haircut.HairTaint", b =>
                 {
                     b.HasOne("Yavsc.Models.Drawing.Color")
                         .WithMany()
                         .HasForeignKey("ColorId");
+
+                    b.HasOne("Yavsc.Models.Haircut.HairPrestation")
+                        .WithMany()
+                        .HasForeignKey("HairPrestationId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Identity.GoogleCloudMobileDeclaration", b =>
@@ -1124,29 +1335,6 @@ namespace Yavsc.Migrations
                         .HasForeignKey("ParentCode");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Workflow.BookQuery", b =>
-                {
-                    b.HasOne("Yavsc.Models.Workflow.Activity")
-                        .WithMany()
-                        .HasForeignKey("ActivityCode");
-
-                    b.HasOne("Yavsc.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ClientId");
-
-                    b.HasOne("Yavsc.Models.Relationship.Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId");
-
-                    b.HasOne("Yavsc.Models.Relationship.LocationType")
-                        .WithMany()
-                        .HasForeignKey("LocationTypeId");
-
-                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile")
-                        .WithMany()
-                        .HasForeignKey("PerformerId");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Workflow.CommandForm", b =>
                 {
                     b.HasOne("Yavsc.Models.Workflow.Activity")
@@ -1176,6 +1364,29 @@ namespace Yavsc.Migrations
                         .HasForeignKey("OrganizationAddressId");
 
                     b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("PerformerId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Workflow.RdvQuery", b =>
+                {
+                    b.HasOne("Yavsc.Models.Workflow.Activity")
+                        .WithMany()
+                        .HasForeignKey("ActivityCode");
+
+                    b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ClientId");
+
+                    b.HasOne("Yavsc.Models.Relationship.Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("Yavsc.Models.Relationship.LocationType")
+                        .WithMany()
+                        .HasForeignKey("LocationTypeId");
+
+                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile")
                         .WithMany()
                         .HasForeignKey("PerformerId");
                 });

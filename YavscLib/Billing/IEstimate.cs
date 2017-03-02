@@ -1,12 +1,10 @@
-﻿namespace Yavsc.Interfaces
+﻿namespace YavscLib.Workflow
 {
     using System.Collections.Generic;
-    using Yavsc.Models.Billing;
     public interface IEstimate
     {
         List<string> AttachedFiles { get; set; }
         List<string> AttachedGraphics { get; }
-        List<CommandLine> Bill { get; set; }
         string ClientId { get; set; }
         long? CommandId { get; set; }
         string CommandType { get; set; }

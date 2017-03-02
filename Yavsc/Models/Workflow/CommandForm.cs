@@ -10,7 +10,7 @@ namespace Yavsc.Models.Workflow
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        public string Action { get; set; }
+        public string ActionName { get; set; }
 
         public string Title { get; set; } 
         

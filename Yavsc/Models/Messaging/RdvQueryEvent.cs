@@ -25,11 +25,11 @@ using Interfaces.Workflow;
 
 
 
-public class BookQueryEvent: BookQueryProviderInfo, IEvent
+public class RdvQueryEvent: RdvQueryProviderInfo, IEvent
 	{
-        public BookQueryEvent()
+        public RdvQueryEvent()
         {
-            Topic = "BookQuery";
+            Topic = "RdvQuery";
         }
 
         public string Message

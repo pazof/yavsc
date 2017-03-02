@@ -1,0 +1,218 @@
+@model HairCutQuery 
+@{ ViewData["Title"] = $"{ViewBag.Activity.Name}: Votre commande"; } 
+@await Html.PartialAsync("BrusherProfileScript",ViewData["PerfPrefs"])
+@section scripts {
+<script>
+    var gtarif=tarifs[0];
+    var cutprice;
+    var techprice;
+    var dressprice;
+    var total;
+
+    function displayTarif(dn,price)
+    {
+        $('#'+dn).html( price+"€" );
+    }
+
+    function updateTarif () {
+        var len = $('#Prestation_Length').prop('selectedIndex');
+
+        var gen = $("#Prestation_Gender").prop('selectedIndex');
+        var tech = $("#Prestation_Tech").prop('selectedIndex');
+        var dress = $("#Prestation_Dressing").prop('selectedIndex');
+        total = 0;
+        if ($('#Prestation_Cut').prop('checked')) {
+            var cutprice = (gen==0) ? gtarif.cut[len] : gtarif.cut[0];
+            total += cutprice;
+            displayTarif('CutPrice', cutprice);
+        } else displayTarif('CutPrice',0);
+        if (gen==0) {
+            if (tech>0) { 
+                var techprice =  gtarif.tech[tech-1][len]; 
+                total += techprice;
+                displayTarif('TechPrice', techprice);
+                } else displayTarif('TechPrice',0); 
+            if (dress>0) { 
+                var dressprice = gtarif.brush[dress-1];
+                total += dressprice;
+                displayTarif('DressPrice', dressprice);
+                } else displayTarif('DressPrice',0); 
+            
+        } else if (gen==1) {
+            if (dress>0) { total += gtarif.brush[0];  displayTarif('DressPrice', gtarif.brush[0]) }
+            else displayTarif('DressPrice',0); 
+        }
+        if ($('#Prestation_Shampoo').prop('checked')) {
+             total += gtarif.shampoo; 
+            displayTarif('ShampooPrice', gtarif.shampoo);
+        } else displayTarif('ShampooPrice', 0);
+        if ($('#Prestation_Cares').prop('checked')) {
+             total += gtarif.care;
+            displayTarif('CaresPrice', gtarif.care);
+        } else displayTarif('CaresPrice', 0);
+        $('.btn-submit').prop('disabled', (total==0));
+        $('#Total').html( total+"€" );
+    }
+
+    function onTarif(tarif)
+    {
+        gtarif = tarif;
+        updateTarif();
+    }
+    // pas de coupe => technique
+    $(document).ready(function () {
+        
+        $("#Prestation_Tech").on("change", function (ev) {
+            var nv = $(this).val();
+            if (nv == 'Color' || nv == 'Mech') { $("#taintsfs").removeClass('hidden') }
+            else { $("#taintsfs").addClass('hidden') }
+        });
+        $("#Prestation_Gender").on("change", function(ev) {
+            var nv = $(this).val();
+            if(nv=='Women') {
+                onTarif(tarifs[0]);
+                $("#techfs").removeClass('hidden');
+                $("#lenfs").removeClass('hidden');
+                $('#Prestation_Cut').prop('disabled', false);
+                $('#optbrush').prop('disabled', false);
+                $('#optfold').prop('disabled', false);
+            }
+            else {
+                var cv = $('#Prestation_Dressing').val();
+                if (nv=='Man') {
+                    $('#optfold').prop('disabled', true);
+                    $('#optbrush').prop('disabled', false);
+                    onTarif(tarifs[1]); 
+                    if (cv=='Folding') { $('#Prestation_Dressing').val('Coiffage'); }
+                } 
+                if (nv=='Kid') { 
+                    onTarif(tarifs[2]);
+                    $('#optbrush').prop('disabled', true);
+                    $('#optfold').prop('disabled', true);
+                    if (cv=='Folding' || cv == 'Brushing') { $('#Prestation_Dressing').val('Coiffage'); }
+                }
+
+                $("#techfs").addClass('hidden');
+                $("#lenfs").addClass('hidden');
+                $('#Prestation_Cut').val(true);
+                $('#Prestation_Cut').prop('checked', true);
+                $('#Prestation_Cut').prop('disabled', true);
+            }
+
+            });
+            $(".imptarif").on("change", function(ev) {
+                updateTarif();
+            });
+
+            var curgen = $("#Prestation_Gender").val();
+            if (curgen=='Women') { 
+                gtarif=tarifs[0]; 
+                } else {
+                $("#techfs").addClass('hidden');
+                $("#lenfs").addClass('hidden');
+                if (curgen=='Man') { 
+                    gtarif=tarifs[1]; 
+                    } else gtarif=tarifs[2];
+                } 
+            updateTarif();
+
+        });
+</script>
+
+}
+<em>@ViewBag.Activity.Description</em> 
+
+<h2>@ViewData["Title"]</h2>
+
+@Html.DisplayFor(m=>m.PerformerProfile)
+
+<form asp-controller="HairCutCommand" asp-action="HairCut">
+    <div class="form-horizontal">
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Prestation.Gender" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="Prestation.Gender" asp-items="@ViewBag.Gender" class="form-control imptarif"></select>
+                <span asp-validation-for="Prestation.Gender" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group @ViewBag.TechClass" id="lenfs">
+            <label asp-for="Prestation.Length" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="Prestation.Length" asp-items="@ViewBag.HairLength" class="form-control imptarif"></select>
+                <span asp-validation-for="Prestation.Length" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="checkbox">
+                    <input asp-for="Prestation.Cut" class="imptarif"/>
+                    <label asp-for="Prestation.Cut"></label>
+                    <span id="CutPrice" class="price"></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group @ViewBag.TechClass" id="techfs">
+            <label asp-for="Prestation.Tech" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="Prestation.Tech" asp-items="@ViewBag.HairTechnos" class="form-control imptarif"></select>
+                <span asp-validation-for="Prestation.Tech" class="text-danger"></span>
+
+                <div class="form-group @ViewBag.ColorsClass" id="taintsfs">
+                    <label asp-for="Prestation.Taints" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+
+                        @foreach (HairTaint color in ViewBag.HairTaints) {
+                        <label>
+     <input type="checkbox" value="@color.Id" name="Prestation.Taints[]" class="imptarif"/>
+     @await Html.PartialAsync("HairTaint",color)
+     </label> }
+                        <input type="hidden" asp-for="Prestation.Taints" />
+                        <span asp-validation-for="Prestation.Taints" class="text-danger"></span>
+
+                    </div>
+                </div>
+                <span id="TechPrice" class="price"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Prestation.Dressing" asp-items="@ViewBag.Dressing" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select class="form-control imptarif" data-val="true" data-val-required="The Coiffage field is required." id="Prestation_Dressing" name="Prestation.Dressing">
+                    <option selected="selected" value="Coiffage">Coiffage</option>
+<option value="Brushing" id="optbrush">Brushing</option>
+<option value="Folding" id="optfold">Mise en plis</option>
+</select>
+               <span asp-validation-for="Prestation.Dressing" class="text-danger"></span>
+                <span id="DressPrice" class="price"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="checkbox">
+                    <input asp-for="Prestation.Shampoo" class="imptarif"/>
+                    <label asp-for="Prestation.Shampoo"></label>
+                    <span id="ShampooPrice" class="price"></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="checkbox">
+                    <input asp-for="Prestation.Cares" class="imptarif"/>
+                    <label asp-for="Prestation.Cares"></label>
+                    <span id="CaresPrice" class="price"></span>
+                </div>
+            </div>
+        </div>
+        <span>Total: <span id="Total" class="total"></span>
+      </span>
+             <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName, sans préciser ni lieu ni date (pour prendre rendez-vous la prise de contact)"/>
+        <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
+    
+   </div>
+    <input type="hidden" name="performerId" value="@Model.PerformerProfile.PerformerId" />
+    <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
+</form>

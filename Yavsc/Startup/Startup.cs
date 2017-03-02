@@ -231,7 +231,6 @@ namespace Yavsc
         IOptions<RequestLocalizationOptions> localizationOptions,
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
         RoleManager<IdentityRole> roleManager,
-        UserManager<ApplicationUser> userManager,
         IAuthorizationService authorizationService,
          ILoggerFactory loggerFactory)
         {
@@ -320,7 +319,7 @@ namespace Yavsc
                 {
                     foreach (var c in db.Connections)
                         db.Connections.Remove(c);
-                    db.SaveChanges("Startup");
+                    db.SaveChanges();
                 }
             });
 
@@ -339,6 +338,7 @@ namespace Yavsc
             ConfigureWorkflow(app, SiteSetup);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"fr"));
             app.UseSession();
+  
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
