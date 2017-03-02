@@ -5119,9 +5119,9 @@ a.thumbnail.active {
   color: #2b542c;
 }
 .alert-info {
-  color: #31708f;
-  background-color: #d9edf7;
-  border-color: #bce8f1;
+  color: #f4ebc9;
+  background-color: #1d698f;
+  border-color: #0a4563;
 }
 .alert-info hr {
   border-top-color: #a6e1ec;
