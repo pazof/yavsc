@@ -34,7 +34,10 @@ namespace ZicMoove.Droid.Services
                 notificationManager = (NotificationManager)GetSystemService(Context.NotificationService);
                 Handlers = new Dictionary<string, IGCMessageHandler>
                 {
-                    {"BookQuery", new BookQueryGCMHandler(this,notificationManager,notificationBuilder) }
+                    {"RdvQuery", new BookQueryGCMHandler(this,notificationManager,notificationBuilder) },
+                    {"Estimation", new EstimateGCMHandler(this,notificationManager,notificationBuilder) },
+                    {"HairCutQuery", new HairCutQueryGCMHandler(this,notificationManager,notificationBuilder) },
+
                 };
             }
 
