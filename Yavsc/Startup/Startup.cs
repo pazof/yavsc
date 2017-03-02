@@ -23,6 +23,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Net.Http.Headers;
+using Yavsc.Extensions;
 using Yavsc.Formatters;
 using Yavsc.Models;
 using Yavsc.Services;
@@ -335,7 +336,11 @@ namespace Yavsc
 
             ConfigureOAuthApp(app, SiteSetup);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
-            ConfigureWebSocketsApp(app, SiteSetup, env);
+             app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
+               branch =>
+               {
+                ConfigureWebSocketsApp(app, SiteSetup, env);
+               });
             ConfigureWorkflow(app, SiteSetup);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"fr"));
             app.UseSession();

@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class manbrushing : Migration
+    public partial class brusherProfileDiscount : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,7 +23,9 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_Estimate_PerformerProfile_OwnerId", table: "Estimate");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Activity_ActivityCode", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_ApplicationUser_ClientId", table: "HairCutQuery");
+            migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Location_LocationId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_PerformerProfile_PerformerId", table: "HairCutQuery");
+            migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_HairPrestation_PrestationId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_Activity_ActivityCode", table: "HairMultiCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_ApplicationUser_ClientId", table: "HairMultiCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_PerformerProfile_PerformerId", table: "HairMultiCutQuery");
@@ -40,8 +44,16 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
+            migrationBuilder.AlterColumn<long>(
+                name: "PrestationId",
+                table: "HairCutQuery",
+                nullable: false);
+            migrationBuilder.AlterColumn<long>(
+                name: "LocationId",
+                table: "HairCutQuery",
+                nullable: false);
             migrationBuilder.AddColumn<decimal>(
-                name: "ManBrushPrice",
+                name: "FlatFeeDiscount",
                 table: "BrusherProfile",
                 nullable: false,
                 defaultValue: 0m);
@@ -151,11 +163,25 @@ namespace Yavsc.Migrations
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
+                name: "FK_HairCutQuery_Location_LocationId",
+                table: "HairCutQuery",
+                column: "LocationId",
+                principalTable: "Location",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
                 name: "FK_HairCutQuery_PerformerProfile_PerformerId",
                 table: "HairCutQuery",
                 column: "PerformerId",
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
+                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_HairCutQuery_HairPrestation_PrestationId",
+                table: "HairCutQuery",
+                column: "PrestationId",
+                principalTable: "HairPrestation",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
                 name: "FK_HairMultiCutQuery_Activity_ActivityCode",
@@ -302,7 +328,9 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_Estimate_PerformerProfile_OwnerId", table: "Estimate");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Activity_ActivityCode", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_ApplicationUser_ClientId", table: "HairCutQuery");
+            migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Location_LocationId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_PerformerProfile_PerformerId", table: "HairCutQuery");
+            migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_HairPrestation_PrestationId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_Activity_ActivityCode", table: "HairMultiCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_ApplicationUser_ClientId", table: "HairMultiCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_PerformerProfile_PerformerId", table: "HairMultiCutQuery");
@@ -321,7 +349,15 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.DropColumn(name: "ManBrushPrice", table: "BrusherProfile");
+            migrationBuilder.DropColumn(name: "FlatFeeDiscount", table: "BrusherProfile");
+            migrationBuilder.AlterColumn<long>(
+                name: "PrestationId",
+                table: "HairCutQuery",
+                nullable: true);
+            migrationBuilder.AlterColumn<long>(
+                name: "LocationId",
+                table: "HairCutQuery",
+                nullable: true);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -428,11 +464,25 @@ namespace Yavsc.Migrations
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
+                name: "FK_HairCutQuery_Location_LocationId",
+                table: "HairCutQuery",
+                column: "LocationId",
+                principalTable: "Location",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
                 name: "FK_HairCutQuery_PerformerProfile_PerformerId",
                 table: "HairCutQuery",
                 column: "PerformerId",
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
+                name: "FK_HairCutQuery_HairPrestation_PrestationId",
+                table: "HairCutQuery",
+                column: "PrestationId",
+                principalTable: "HairPrestation",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
                 name: "FK_HairMultiCutQuery_Activity_ActivityCode",

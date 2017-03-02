@@ -9,7 +9,6 @@ namespace Yavsc
                 SiteSettings siteSettings, IHostingEnvironment env)
         {
             app.UseWebSockets();
-
             app.UseSignalR("/api/signalr");
 /*
             var _sockets = new ConcurrentBag<WebSocket>();
