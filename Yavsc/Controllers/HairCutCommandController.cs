@@ -21,7 +21,6 @@ namespace Yavsc.Controllers
     using Microsoft.AspNet.Http;
     using Yavsc.Extensions;
     using Yavsc.Models.Haircut;
-    using Yavsc.ViewModels.Haircut;
 
     public class HairCutCommandController : CommandController
     {
