@@ -12,8 +12,8 @@ namespace ZicMoove.Pages
 {
 	public class PinPage : ContentPage
 	{
-		Map map;
-		
+		protected Map map;
+        
 		protected async Task<Plugin.Geolocator.Abstractions.Position> GetPos() {
 			var locator = CrossGeolocator.Current;
 			locator.DesiredAccuracy = 50;
@@ -39,8 +39,35 @@ namespace ZicMoove.Pages
 		{
 			base.OnAppearing ();
 		}
+        protected virtual void OnInitMap ()
+        {
+            double lat = 0;
+            double lon = 0;
+            int pc = 0;
+            foreach (var query in DataManager.Instance.BookQueries)
+            {
+                var pin = new Pin
+                {
+                    Type = PinType.Generic,
+                    Position = new Xamarin.Forms.Maps.Position(
+                        query.Location.Latitude, query.Location.Longitude),
+                    Label = query.Reason,
+                    Address = query.Location.Address
+                };
+                pin.BindingContext = query;
+                map.Pins.Add(pin);
+                // TODO find a true solution :-/
+                lat = (lat * pc + query.Location.Latitude) / (pc + 1);
+                lon = (lon * pc + query.Location.Longitude) / (pc + 1);
+                pc++;
+            }
+            // TODO build a MapSpan covering events
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(
+                new Xamarin.Forms.Maps.Position(lat, lon), Distance.FromMeters(100)));
 
-		public PinPage ()
+        }
+
+        public PinPage ()
 		{
 
 			map = new Map { 
@@ -50,29 +77,8 @@ namespace ZicMoove.Pages
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				VerticalOptions = LayoutOptions.FillAndExpand
 			};
-			double lat=0;
-			double lon=0;
-			int pc = 0;
-			foreach (var query in DataManager.Instance.BookQueries)
-            {
-                var pin = new Pin {
-					Type = PinType.SearchResult,
-					Position = new Xamarin.Forms.Maps.Position(
-                        query.Location.Latitude, query.Location.Longitude),
-					Label = query.Reason,
-					Address = query.Location.Address
-				};
-				pin.BindingContext = query;
-				map.Pins.Add (pin);
-                // TODO find a true solution
-				lat = (lat * pc + query.Location.Latitude) / (pc + 1);
-				lon = (lon * pc + query.Location.Longitude) / (pc + 1);
-				pc++;
-			}
-			// TODO build a MapSpan covering events
-			map.MoveToRegion(MapSpan.FromCenterAndRadius (
-				new Xamarin.Forms.Maps.Position(lat,lon), Distance.FromMeters(100)));
-			/*
+            OnInitMap();
+            /*
 			// A "relocate" button : useless, since it yet exists
 
 			var reLocate = new Button { Text = "Re-centrer" };
@@ -89,10 +95,10 @@ namespace ZicMoove.Pages
 				}
 			};
 			*/
-			// create map style buttons
-			var street = new Button { Text = "Street" };
-			var hybrid = new Button { Text = "Hybrid" };
-			var satellite = new Button { Text = "Satellite" };
+            // create map style buttons
+            var street = new Button { Text = Strings.Street };
+			var hybrid = new Button { Text = Strings.Hybrid };
+			var satellite = new Button { Text = Strings.Satellite };
 
 			street.Clicked += HandleMapStyleClicked;
 			hybrid.Clicked += HandleMapStyleClicked;
@@ -111,21 +117,21 @@ namespace ZicMoove.Pages
 					segments
 				}};
 		}
+        protected StackLayout StackLayout
+        { get
+            {
+                return Content as StackLayout;
+            } }
 
-		void HandleMapStyleClicked (object sender, EventArgs e)
+        void HandleMapStyleClicked (object sender, EventArgs e)
 		{
 			var b = sender as Button;
-			switch (b.Text) {
-			case "Street":
+			if (b.Text== Strings.Street)
 				map.MapType = MapType.Street;
-				break;
-			case "Hybrid":
-				map.MapType = MapType.Hybrid;
-				break;
-			case "Satellite":
-				map.MapType = MapType.Satellite;
-				break;
-			}
+            else if (b.Text == Strings.Hybrid)
+                map.MapType = MapType.Hybrid;
+            else if (b.Text == Strings.Satellite)
+                map.MapType = MapType.Satellite;
 		}
 	}
 }
