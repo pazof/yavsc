@@ -5,8 +5,9 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Billing
 {
+    using YavscLib.Billing;
 
- public class CommandLine {
+    public class CommandLine : ICommandLine {
 
      [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
      public long Id { get; set; }

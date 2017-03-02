@@ -26,8 +26,8 @@ namespace Yavsc.Models.Messaging
                 Avatar = perfer.Performer.Avatar,
                 UserId = perfer.PerformerId
             };
-           ((IEvent)this).Sender = perfer.Performer.UserName;
-            ((IEvent)this).Message = string.Format(SR["EstimationMessageToClient"],perfer.Performer.UserName,
+           Sender = perfer.Performer.UserName;
+           Message = string.Format(SR["EstimationMessageToClient"],perfer.Performer.UserName,
             estimate.Title,estimate.GetTotal());
         }
         ProviderClientInfo ProviderInfo { get; set; }
