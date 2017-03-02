@@ -1,0 +1,27 @@
+@model BrusherProfile
+<script>
+var tarifs = 
+    [
+       { 
+           cut: [ @Model.WomenLongCutPrice, @Model.WomenHalfCutPrice, @Model.WomenShortCutPrice ],
+           tech: [ 
+            [@Model.LongColorPrice, @Model.HalfColorPrice, @Model.ShortColorPrice],
+            [@Model.LongPermanentPrice, @Model.HalfPermanentPrice, @Model.ShortPermanentPrice],
+            [@Model.LongDefrisPrice, @Model.HalfDefrisPrice, @Model.ShortDefrisPrice],
+            [@Model.LongMechPrice, @Model.HalfMechPrice, @Model.ShortMechPrice],
+            [@Model.LongBalayagePrice, @Model.HalfBalayagePrice, @Model.ShortBalayagePrice],
+            ],
+            brush: [@Model.LongBrushingPrice, @Model.HalfBrushingPrice, @Model.ShortBrushingPrice],
+            multicolor: [@Model.LongMultiColorPrice, @Model.HalfMultiColorPrice, @Model.ShortMultiColorPrice],
+            shampoo: @Model.ShampooPrice,
+            care: @Model.CarePrice
+        },
+       { cut: [@Model.ManCutPrice], brush: [@Model.ManBrushPrice],
+            shampoo: @Model.ShampooPrice,
+            care: @Model.CarePrice },
+       { cut: [@Model.KidCutPrice] ,
+            shampoo: @Model.ShampooPrice,
+            care: @Model.CarePrice }
+    ];
+
+</script>

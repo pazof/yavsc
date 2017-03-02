@@ -9,7 +9,8 @@ namespace Yavsc.Models.Haircut
     { 
         // Homme ou enfant => Coupe seule
         // Couleur => Shampoing 
-        // Forfaits : Coupe - Technique
+        // Forfaits : Coupe + Technique
+        // pas de coupe => technique
 
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }

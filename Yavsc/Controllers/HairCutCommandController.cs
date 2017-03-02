@@ -116,7 +116,7 @@ namespace Yavsc.Controllers
        
         }
 
-        [AllowAnonymous]
+        [AllowAnonymous,ValidateAntiForgeryToken]
         public ActionResult HairCut(string performerId, string activityCode)
         {
             HairPrestation pPrestation=null;
@@ -132,12 +132,19 @@ namespace Yavsc.Controllers
             ViewBag.Activity = _context.Activities.First(a => a.Code == activityCode);
             ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders),_localizer);
             ViewBag.HairDressings = EnumExtensions.GetSelectList(typeof(HairDressings),_localizer);
+            ViewBag.ColorsClass = ( pPrestation.Tech == HairTechnos.Color 
+            || pPrestation.Tech == HairTechnos.Mech ) ? "":"hidden";
+            ViewBag.TechClass = ( pPrestation.Gender == HairCutGenders.Women ) ? "":"hidden";
+            ViewData["PerfPrefs"] = _context.BrusherProfile.Single(p=>p.UserId == performerId);
             var result = new HairCutView {
-                HairBrusher = _context.Performers.Single(p=>p.PerformerId == performerId),
+                HairBrusher = _context.Performers.Include(
+                    p=>p.Performer
+                ).Single(p=>p.PerformerId == performerId),
                 Topic = pPrestation
             } ;
             return View(result);
         }
+
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateHairMultiCutQuery(HairMultiCutQuery command)

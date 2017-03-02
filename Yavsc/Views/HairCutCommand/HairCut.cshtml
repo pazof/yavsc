@@ -1,89 +1,242 @@
-@model HairCutView
-  
-@{
-    ViewData["Title"] = $"{ViewBag.Activity.Name}: Votre commande";
+@model HairCutView 
+@{ ViewData["Title"] = $"{ViewBag.Activity.Name}: Votre commande"; } 
+@await Html.PartialAsync("BrusherProfileScript",ViewData["PerfPrefs"])
+@section scripts {
+<script>
+    var gtarif=tarifs[0];
+    var cutprice;
+    var techprice;
+    var dressprice;
+    var total;
+
+    function displayTarif(dn,price)
+    {
+        $('#'+dn).html( price+"€" );
+    }
+
+    function updateTarif () {
+        var len = $('#Topic_Length').prop('selectedIndex');
+
+        var gen = $("#Topic_Gender").prop('selectedIndex');
+        var tech = $("#Topic_Tech").prop('selectedIndex');
+        var dress = $("#Topic_Dressing").prop('selectedIndex');
+        total = 0;
+        if ($('#Topic_Cut').prop('checked')) {
+            var cutprice = (gen==0) ? gtarif.cut[len] : gtarif.cut[0];
+            total += cutprice;
+            displayTarif('CutPrice', cutprice);
+        }
+        if (gen==0) {
+            if (tech>0) { 
+                var techprice =  gtarif.tech[tech-1][len]; 
+                total += techprice;
+                displayTarif('TechPrice', techprice);
+                } else displayTarif('TechPrice',0); 
+            if (dress>0) { 
+                var dressprice = gtarif.brush[dress-1];
+                total += dressprice;
+                displayTarif('DressPrice', dressprice);
+                } else displayTarif('DressPrice',0); 
+            
+        } else if (gen==1) {
+            if (dress>0) { total += gtarif.brush[0];  displayTarif('DressPrice', gtarif.brush[0]) }
+            else displayTarif('DressPrice',0); 
+        }
+        if ($('#Topic_Shampoo').prop('checked')) {
+             total += gtarif.shampoo; 
+            displayTarif('ShampooPrice', gtarif.shampoo);
+        } else displayTarif('ShampooPrice', 0);
+        if ($('#Topic_Cares').prop('checked')) {
+             total += gtarif.care;
+            displayTarif('CaresPrice', gtarif.care);
+        } else displayTarif('CaresPrice', 0);
+
+        $('#Total').html( total+"€" );
+    }
+
+    function onTarif(tarif)
+    {
+        gtarif = tarif;
+        updateTarif();
+    }
+    // pas de coupe => technique
+    $(document).ready(function () {
+        
+        $("#Topic_Tech").on("change", function (ev) {
+            var nv = $(this).val();
+            if (nv == 'Color' || nv == 'Mech') { $("#taintsfs").removeClass('hidden') }
+            else { $("#taintsfs").addClass('hidden') }
+        });
+        $("#Topic_Gender").on("change", function(ev) {
+            var nv = $(this).val();
+            if(nv=='Women') {
+                onTarif(tarifs[0]);
+                $("#techfs").removeClass('hidden');
+                $("#lenfs").removeClass('hidden');
+                $('#Topic_Cut').prop('disabled', false);
+                $('#optbrush').prop('disabled', false);
+                $('#optfold').prop('disabled', false);
+            }
+            else {
+                var cv = $('#Topic_Dressing').val();
+                if (nv=='Man') {
+                    $('#optfold').prop('disabled', true);
+                    $('#optbrush').prop('disabled', false);
+                    onTarif(tarifs[1]); 
+                    if (cv=='Folding') { $('#Topic_Dressing').val('Coiffage'); }
+                } 
+                if (nv=='Kid') { 
+                    onTarif(tarifs[2]);
+                    $('#optbrush').prop('disabled', true);
+                    $('#optfold').prop('disabled', true);
+                    if (cv=='Folding' || cv == 'Brushing') { $('#Topic_Dressing').val('Coiffage'); }
+                }
+
+                $("#techfs").addClass('hidden');
+                $("#lenfs").addClass('hidden');
+                $('#Topic_Cut').val(true);
+                $('#Topic_Cut').prop('checked', true);
+                $('#Topic_Cut').prop('disabled', true);
+            }
+
+            });
+            $(".imptarif").on("change", function(ev) {
+                updateTarif();
+            });
+
+            var curgen = $("#Topic_Gender").val();
+            if (curgen=='Women') { 
+                gtarif=tarifs[0]; 
+                } else {
+                $("#techfs").addClass('hidden');
+                $("#lenfs").addClass('hidden');
+                if (curgen=='Man') { 
+                    gtarif=tarifs[1]; 
+                    } else gtarif=tarifs[2];
+                } 
+            updateTarif();
+
+        });
+</script>
+
 }
-<em>@ViewBag.Activity.Description</em>
+@section header {
+<style>
+.price { 
+    font-weight: bold;
+    font-size: x-large;
+    color: #fff;
+    border: solid white 1px;
+    border-radius: 1em;
+    padding: .2em;
+    margin: .2em;
+}
+.total { 
+    float: left;
+    font-weight: bold;
+    font-size: xx-large;
+    color: #fff;
+    background-color: #1f1c58;
+    border: solid white 1px;
+    border-radius: 1em;
+    padding: .2em;
+    margin: .2em;
+}
+</style>
+}
+<em>@ViewBag.Activity.Description</em> 
 
+<h2>@ViewData["Title"]</h2>
 
-   @Html.DisplayFor(m=>m)
-    <form asp-controller="HairCutCommand" asp-action="HairCut" >
+@Html.DisplayFor(m=>m.HairBrusher)
+
+<form asp-controller="HairCutCommand" asp-action="HairCut">
 
 
     <div class="form-horizontal">
-        <h2>@ViewData["Title"]</h2>
         <hr />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="Topic.Gender" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="Topic.Gender" asp-items="@ViewBag.Gender" class="form-control"></select>
-                <span asp-validation-for="Topic.Gender" class="text-danger" ></span>
+                <select asp-for="Topic.Gender" asp-items="@ViewBag.Gender" class="form-control imptarif"></select>
+                <span asp-validation-for="Topic.Gender" class="text-danger"></span>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group @ViewBag.TechClass" id="lenfs">
             <label asp-for="Topic.Length" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="Topic.Length" asp-items="@ViewBag.HairLength" class="form-control"></select>
-                <span asp-validation-for="Topic.Length" class="text-danger"  ></span>
+                <select asp-for="Topic.Length" asp-items="@ViewBag.HairLength" class="form-control imptarif"></select>
+                <span asp-validation-for="Topic.Length" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <div class="checkbox">
-                    <input asp-for="Topic.Cut" />
+                    <input asp-for="Topic.Cut" class="imptarif"/>
                     <label asp-for="Topic.Cut"></label>
+                    <span id="CutPrice" class="price"></span>
                 </div>
+            </div>
+        </div>
+        <div class="form-group @ViewBag.TechClass" id="techfs">
+            <label asp-for="Topic.Tech" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="Topic.Tech" asp-items="@ViewBag.HairTechnos" class="form-control imptarif"></select>
+                <span asp-validation-for="Topic.Tech" class="text-danger"></span>
+
+                <div class="form-group @ViewBag.ColorsClass" id="taintsfs">
+                    <label asp-for="Topic.Taints" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+
+                        @foreach (HairTaint color in ViewBag.HairTaints) {
+                        <label>
+     <input type="checkbox" value="@color.Id" name="Topic.Taints[]" class="imptarif"/>
+     @await Html.PartialAsync("HairTaint",color)
+     </label> }
+                        <input type="hidden" asp-for="Topic.Taints" />
+                        <span asp-validation-for="Topic.Taints" class="text-danger"></span>
+
+                    </div>
+                </div>
+                <span id="TechPrice" class="price"></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="Topic.Dressing" asp-items="@ViewBag.Dressing" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="Topic.Dressing" class="form-control" asp-items="@ViewBag.HairDressings"></select>
-                <span asp-validation-for="Topic.Dressing" class="text-danger"  ></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Topic.Tech" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select asp-for="Topic.Tech" asp-items="@ViewBag.HairTechnos" class="form-control"></select>
-                <span asp-validation-for="Topic.Tech" class="text-danger" ></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Topic.Taints" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-               
-@foreach (HairTaint color in ViewBag.HairTaints) {
-    <label>
-     <input type="checkbox" value="@color.Id" name="Topic.Taints[]"/>
-     @await Html.PartialAsync("HairTaint",color)
-     </label>
-     }
-                 <input type="hidden" asp-for="Topic.Taints" />
-                <span asp-validation-for="Topic.Taints" class="text-danger"  ></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <div class="checkbox">
-                    <input asp-for="Topic.Shampoo" />
-                    <label asp-for="Topic.Shampoo"></label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <div class="checkbox">
-                    <input asp-for="Topic.Cares" />
-                    <label asp-for="Topic.Cares"></label>
-                </div>
+                <select class="form-control imptarif" data-val="true" data-val-required="The Coiffage field is required." id="Topic_Dressing" name="Topic.Dressing">
+                    <option selected="selected" value="Coiffage">Coiffage</option>
+<option value="Brushing" id="optbrush">Brushing</option>
+<option value="Folding" id="optfold">Mise en plis</option>
+</select>
+               <span asp-validation-for="Topic.Dressing" class="text-danger"></span>
+                <span id="DressPrice" class="price"></span>
             </div>
         </div>
 
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="checkbox">
+                    <input asp-for="Topic.Shampoo" class="imptarif"/>
+                    <label asp-for="Topic.Shampoo"></label>
+                    <span id="ShampooPrice" class="price"></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="checkbox">
+                    <input asp-for="Topic.Cares" class="imptarif"/>
+                    <label asp-for="Topic.Cares"></label>
+                    <span id="CaresPrice" class="price"></span>
+                </div>
+            </div>
+        </div>
+        <div id="Total" class="total"></div>
         <input type="hidden" name="performerId" value="@Model.HairBrusher.PerformerId" />
         <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
-             <input type="submit" value="@SR["Selectionnez maintenant votre prestataire"]"/>
+        <input type="submit" class="btn btn-success" value="@SR["Validez ce choix, et prendre rendez-vous"]"/>
     </div>
-    
-    </form>
+
+</form>
