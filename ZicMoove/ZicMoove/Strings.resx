@@ -239,4 +239,13 @@
   <data name="EstimateSigningPrompt" xml:space="preserve">
     <value>Signez ici</value>
   </data>
+  <data name="Hybrid" xml:space="preserve">
+    <value>Hybride</value>
+  </data>
+  <data name="Satellite" xml:space="preserve">
+    <value>Satellite</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Rue</value>
+  </data>
 </root>

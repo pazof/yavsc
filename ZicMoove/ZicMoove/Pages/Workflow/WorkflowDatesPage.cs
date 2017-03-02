@@ -10,7 +10,7 @@ using Plugin.Geolocator;
 
 namespace ZicMoove.Pages.ClientPages
 {
-	public class WorkflowBookPage : PinPage
+	public class DatesPage : PinPage
     {
 		
 

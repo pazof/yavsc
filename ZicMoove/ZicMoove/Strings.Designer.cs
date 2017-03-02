@@ -233,6 +233,15 @@ namespace ZicMoove {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hybride.
+        /// </summary>
+        public static string Hybrid {
+            get {
+                return ResourceManager.GetString("Hybrid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Valeur invalide.
         /// </summary>
         public static string InvalidValue {
@@ -332,6 +341,15 @@ namespace ZicMoove {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Satellite.
+        /// </summary>
+        public static string Satellite {
+            get {
+                return ResourceManager.GetString("Satellite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Rechercher un artiste.
         /// </summary>
         public static string SearchForAPro {
@@ -355,6 +373,15 @@ namespace ZicMoove {
         public static string SignOrNot {
             get {
                 return ResourceManager.GetString("SignOrNot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Rue.
+        /// </summary>
+        public static string Street {
+            get {
+                return ResourceManager.GetString("Street", resourceCulture);
             }
         }
         
