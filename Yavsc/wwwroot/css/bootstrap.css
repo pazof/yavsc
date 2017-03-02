@@ -6060,8 +6060,7 @@ button.close {
   white-space: normal;
   filter: alpha(opacity=0);
   opacity: 0;
-
-  line-break: auto;
+  line-break: auto; /* experimental */
 }
 .tooltip.in {
   filter: alpha(opacity=90);
@@ -6185,8 +6184,7 @@ button.close {
   border-radius: 6px;
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
           box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
-
-  line-break: auto;
+  line-break: auto; /* experimental */
 }
 .popover.top {
   margin-top: -10px;
