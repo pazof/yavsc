@@ -8,7 +8,7 @@
 
 @foreach (var profile in Model) {
     <hr/>
-   @Html.DisplayFor(m=>m)
+   @Html.DisplayFor(m=>profile)
     <form action="~/Command/Create" >
         <input type="hidden" name="id" value="@profile.PerformerId" />
         <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />

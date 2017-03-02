@@ -29,7 +29,7 @@ public class RdvQueryEvent: RdvQueryProviderInfo, IEvent
 	{
         public RdvQueryEvent()
         {
-            Topic = "BookQuery";
+            Topic = "RdvQuery";
         }
 
         public string Message
