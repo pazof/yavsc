@@ -36,9 +36,7 @@
     </dl>
   </fieldset>
   <fieldset>
-<legend>Tarifs hors coiffure ou coupe</legend>
-
-      
+<legend>Tarifs divers</legend>
     <dl class="dl-horizontal">
          <dt>
             @Html.DisplayNameFor(model => model.ShampooPrice)
@@ -53,7 +51,12 @@
         <dd>
             @Html.DisplayFor(model => model.CarePrice)
         </dd>
-
+        <dt>
+            @Html.DisplayNameFor(model => model.FlatFeeDiscount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FlatFeeDiscount)
+        </dd>
         </dl>
   </fieldset>
 

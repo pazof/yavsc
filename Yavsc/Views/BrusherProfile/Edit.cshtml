@@ -261,13 +261,21 @@
                 <span asp-validation-for="ShortFoldingPrice" class="text-danger" />
             </div>
         </div>
+        <div class="form-group">
+            <label asp-for="FlatFeeDiscount" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="FlatFeeDiscount" class="form-control" />
+                <span asp-validation-for="FlatFeeDiscount" class="text-danger" />
+            </div>
+        </div>
         
-model.ShortFoldingPrice
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
+
+        
         </fieldset>
     </div>
 </form>

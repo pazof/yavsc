@@ -1,4 +1,4 @@
-@model HairCutView 
+@model HairCutQuery 
 @{ ViewData["Title"] = $"{ViewBag.Activity.Name}: Votre commande"; } 
 @await Html.PartialAsync("BrusherProfileScript",ViewData["PerfPrefs"])
 @section scripts {
@@ -124,7 +124,7 @@
 
 <h2>@ViewData["Title"]</h2>
 
-@Html.DisplayFor(m=>m.HairBrusher)
+@Html.DisplayFor(m=>m.PerformerProfile)
 
 <form asp-controller="HairCutCommand" asp-action="HairCut">
     <div class="form-horizontal">

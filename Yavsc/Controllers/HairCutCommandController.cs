@@ -116,7 +116,7 @@ namespace Yavsc.Controllers
        
         }
 
-        [AllowAnonymous,ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public ActionResult HairCut(string performerId, string activityCode)
         {
             HairPrestation pPrestation=null;
@@ -136,12 +136,15 @@ namespace Yavsc.Controllers
             || pPrestation.Tech == HairTechnos.Mech ) ? "":"hidden";
             ViewBag.TechClass = ( pPrestation.Gender == HairCutGenders.Women ) ? "":"hidden";
             ViewData["PerfPrefs"] = _context.BrusherProfile.Single(p=>p.UserId == performerId);
-            var result = new HairCutView {
-                HairBrusher = _context.Performers.Include(
+            var perfer = _context.Performers.Include(
                     p=>p.Performer
-                ).Single(p=>p.PerformerId == performerId),
-                Topic = pPrestation
-            } ;
+                ).Single(p=>p.PerformerId == performerId);
+            var result = new HairCutQuery {
+                PerformerProfile = perfer,
+                PerformerId = perfer.PerformerId,
+                ClientId = User.GetUserId(),
+                Prestation = pPrestation
+            };
             return View(result);
         }
 

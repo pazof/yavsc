@@ -11,7 +11,14 @@ namespace Yavsc.Models.Haircut
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
-        HairPrestation  Prestation { get; set; }
+
+        [Required]
+        public long PrestationId { get; set; }
+
+        [ForeignKey("PrestationId")]
+        public virtual HairPrestation  Prestation { get; set; }
+
+        [Required]
 
         public Location Location { get; set; }
 
