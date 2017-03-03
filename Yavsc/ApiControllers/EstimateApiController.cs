@@ -6,6 +6,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
 
@@ -123,13 +124,17 @@ namespace Yavsc.Controllers
             }
             if (estimate.CommandId!=null) {
                 var query = _context.RdvQueries.FirstOrDefault(q => q.Id == estimate.CommandId);
-                if (query == null || query.PerformerId!= uid)
+                if (query == null) {
                     return HttpBadRequest(ModelState);
+                }
                 query.ValidationDate = DateTime.Now;
+                _context.SaveChanges(User.GetUserId());
+                _context.Entry(query).State = EntityState.Detached;
             }
             if (!ModelState.IsValid)
             {
-                 return new BadRequestObjectResult(ModelState);
+                _logger.LogError(JsonConvert.SerializeObject(ModelState));
+                 return Json(ModelState);
             }
             _context.Estimates.Add(estimate);
             
