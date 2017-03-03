@@ -152,9 +152,10 @@ namespace Yavsc.Controllers
         // POST: Do/Delete/5
         [HttpPost, ActionName("Delete"),Authorize]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id, string activityCode)
+        public IActionResult DeleteConfirmed(UserActivity userActivity)
         {
-            UserActivity userActivity = _context.UserActivities.Single(m => m.UserId == id && m.DoesCode == activityCode);
+            if (!ModelState.IsValid)
+                return new BadRequestObjectResult(ModelState);
             if (!User.IsInRole("Administrator"))
                if (User.GetUserId() != userActivity.UserId) {
                     ModelState.AddModelError("User","You're not admin.");
