@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Yavsc.Models.Workflow
 {
@@ -19,5 +20,8 @@ namespace Yavsc.Models.Workflow
 
         [Range(0,100)]
         public int Weight { get; set; }
+
+        [NotMapped,JsonIgnore]
+        public object Settings { get; internal set; }
     }
 }

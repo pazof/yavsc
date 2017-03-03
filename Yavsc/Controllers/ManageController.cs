@@ -78,16 +78,16 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Index(ManageMessageId? message = null)
         {
             ViewData["StatusMessage"] =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
-                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
-                : message == ManageMessageId.ChangeNameSuccess ? "Your name was updated."
-                : message == ManageMessageId.SetActivitySuccess ? "Your activity was set."
-                : message == ManageMessageId.AvatarUpdateSuccess ? "Your avatar was updated."
-                : message == ManageMessageId.IdentityUpdateSuccess ? "Your identity was updated."
+                message == ManageMessageId.ChangePasswordSuccess ? _SR["Your password has been changed."]
+                : message == ManageMessageId.SetPasswordSuccess ? _SR["Your password has been set."]
+                : message == ManageMessageId.SetTwoFactorSuccess ? _SR["Your two-factor authentication provider has been set."]
+                : message == ManageMessageId.Error ? _SR["An error has occurred."]
+                : message == ManageMessageId.AddPhoneSuccess ? _SR["Your phone number was added."]
+                : message == ManageMessageId.RemovePhoneSuccess ? _SR["Your phone number was removed."]
+                : message == ManageMessageId.ChangeNameSuccess ? _SR["Your name was updated."]
+                : message == ManageMessageId.SetActivitySuccess ? _SR["Your activity was set."]
+                : message == ManageMessageId.AvatarUpdateSuccess ? _SR["Your avatar was updated."]
+                : message == ManageMessageId.IdentityUpdateSuccess ? _SR["Your identity was updated."]
                 : "";
 
             var user = await GetCurrentUserAsync();
@@ -114,6 +114,13 @@ namespace Yavsc.Controllers
                 DiskQuota = user.DiskQuota
             };
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
+            var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id);
+            
+            await usrActs.Where(u=>u.Does.SettingsClassName!=null).ForEachAsync(
+                a=>{ a.Settings = a.Does.CreateSettings(User.GetUserId()); }
+            );
+
+            model.HaveActivityToConfigure = usrActs.Any( a=> a.Settings == null && a.Does.SettingsClassName!=null );
             model.Activity = _dbContext.UserActivities.Include(a=>a.Does).Where(u=>u.UserId == user.Id)
             .ToList();
             return View(model);

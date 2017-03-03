@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using YavscLib;
 
 namespace Yavsc.Models.Haircut
@@ -135,5 +136,10 @@ namespace Yavsc.Models.Haircut
         [Display(Name="Remise au forfait coupe+technique"),DisplayFormat(DataFormatString="{0:C}")]
 
         public decimal FlatFeeDiscount { get; set; }
+
+        public bool ExistsInDb(object dbContext)
+        {
+            return ((ApplicationDbContext)dbContext).BrusherProfile.Any(p=>p.UserId==UserId);
+        }
     }
 }

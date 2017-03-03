@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Yavsc.Models.Workflow;
 using YavscLib;
 
@@ -17,6 +18,10 @@ namespace Yavsc.Models.Musical.Profiles
 
         [ForeignKeyAttribute("InstrumentId")]
         public virtual Instrument Tool { get; set; }
-        
+
+        public bool ExistsInDb(object dbContext)
+        {
+             return ((ApplicationDbContext)dbContext).Instrumentation.Any(p=>p.UserId==UserId);
+        }
     }
 }
