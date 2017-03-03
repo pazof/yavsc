@@ -65,13 +65,13 @@ namespace Yavsc.Controllers
         }
 
         // PUT: api/Estimate/5
-        [HttpPut("{id}")]
+        [HttpPut("{id}"),Produces("application/json")]
         public IActionResult PutEstimate(long id, [FromBody] Estimate estimate)
         {
 
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return new BadRequestObjectResult(ModelState);
             }
 
             if (id != estimate.Id)
@@ -109,13 +109,9 @@ namespace Yavsc.Controllers
         }
 
         // POST: api/Estimate
-        [HttpPost]
+        [HttpPost,Produces("application/json")]
         public IActionResult PostEstimate([FromBody] Estimate estimate)
         {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelState);
-            }
             var uid = User.GetUserId();
             if (!User.IsInRole(Constants.AdminGroupName))
             {
@@ -128,8 +124,12 @@ namespace Yavsc.Controllers
             if (estimate.CommandId!=null) {
                 var query = _context.RdvQueries.FirstOrDefault(q => q.Id == estimate.CommandId);
                 if (query == null || query.PerformerId!= uid)
-                    throw new InvalidOperationException();
+                    return HttpBadRequest(ModelState);
                 query.ValidationDate = DateTime.Now;
+            }
+            if (!ModelState.IsValid)
+            {
+                 return new BadRequestObjectResult(ModelState);
             }
             _context.Estimates.Add(estimate);
             
