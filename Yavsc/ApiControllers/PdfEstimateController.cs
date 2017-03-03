@@ -111,10 +111,12 @@ namespace Yavsc.ApiControllers
             var yaev = new EstimationEvent(dbContext,estimate,_localizer);
             
             var regids = estimate.Client.Devices.Select(d => d.GCMRegistrationId).ToArray();
-            logger.LogWarning($"new regids: {regids}");
-            var grep = await _GCMSender.NotifyEstimateAsync(_googleSettings,regids,yaev);
-            logger.LogWarning($"grep: {grep}");
-            return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = grep.success });
+            bool gcmSent = false;
+            if (regids.Length>0) {
+                var grep = await _GCMSender.NotifyEstimateAsync(_googleSettings,regids,yaev);
+                gcmSent = grep.success>0;
+            }
+            return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = gcmSent });
         }
 
         [HttpGet("prosign/{id}")]
