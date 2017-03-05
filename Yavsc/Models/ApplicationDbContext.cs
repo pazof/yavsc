@@ -229,8 +229,14 @@ namespace Yavsc.Models
 
         public DbSet<Instrument> Instrument { get; set; }        
         public DbSet<DjSettings> DjSettings { get; set; }
+        
+        [ActivitySettings]
         public DbSet<Instrumentation> Instrumentation { get; set; }
+
+        [ActivitySettings]
         public DbSet<FormationSettings> FormationSettings { get; set; }
+        
+        [ActivitySettings]
         public DbSet<GeneralSettings> GeneralSettings { get; set; }
         public DbSet<CoWorking> WorkflowProviders { get; set; }
 
@@ -282,7 +288,7 @@ namespace Yavsc.Models
 
          public DbSet<HairPrestation> HairPrestation { get; set; }
 
-         [ActivitySetting]
+         [ActivitySettings]
          public DbSet<BrusherProfile> BrusherProfile { get; set; }
          
 
