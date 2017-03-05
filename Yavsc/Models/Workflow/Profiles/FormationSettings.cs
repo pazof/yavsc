@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Workflow.Profiles
 {
-    using System.Linq;
     using Models.Workflow;
     using YavscLib;
     public class FormationSettings : ISpecializationSettings
