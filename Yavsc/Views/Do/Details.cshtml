@@ -11,13 +11,13 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>@SR["Activity"]</dt>
-        <dd>   @Html.DisplayFor(m=>m.Declaration.Does)
-          @if (ViewBag.HasConfigurableSettings) {
-              <a asp-controller="@ViewBag.SettingsControllerName" asp-action="Index" class="btn btn-default">
+        <dd>@Html.DisplayFor(m=>m.Declaration.Does)
+          @if (Model.NeedsSettings) {
+              <a asp-controller="@ViewBag.ProfileType.Name" asp-action="Index" class="btn btn-default">
                   @SR[Model.Declaration.Does.SettingsClassName]
-
-                NeedsSettings: @Model.NeedsSettings
-                HasSettings:  @Model.HasSettings
+                @if (!Model.HasSettings) {
+                    <span class="badge">Non renseigné: Cliquez vite<br/> ici pour positionner les<br/> paramêtres de cette activité</span>
+                }
 
               </a>
             }

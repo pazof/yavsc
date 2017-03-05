@@ -10,6 +10,7 @@ namespace Yavsc.Controllers
     using Microsoft.Extensions.Logging;
     using Models;
     using Models.Workflow;
+    using Yavsc.Exceptions;
     using Yavsc.ViewModels.Workflow;
 
     [Authorize]
@@ -40,6 +41,7 @@ namespace Yavsc.Controllers
         // GET: Do/Details/5
         public IActionResult Details(string id, string activityCode)
         {
+            
             if (id == null || activityCode == null)
             {
                 return HttpNotFound();
@@ -51,16 +53,25 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.HasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
-            if (ViewBag.HasConfigurableSettings) 
-            ViewBag.SettingsControllerName = Startup.ProfileTypes.Single(t=>t.FullName==userActivity.Does.SettingsClassName).Name;
-            _logger.LogWarning(userActivity.Does.SettingsClassName);
-            var dbset = _context.GetDbSet(userActivity.Does.SettingsClassName);
-            _logger.LogWarning(dbset.Any(i=>i.UserId == id).ToString());
-            return View(new UserActivityViewModel { 
+            
+            bool hasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
+            if (hasConfigurableSettings) {
+
+                ViewBag.ProfileType = Startup.ProfileTypes.Single(t=>t.FullName==userActivity.Does.SettingsClassName);
+            
+
+                var dbset = _context.GetDbSet(userActivity.Does.SettingsClassName);
+                if (dbset == null) throw new InvalidWorkflowModelException($"pas de db set pour {userActivity.Does.SettingsClassName}, vous avez peut-être besoin de décorer votre propriété avec l'attribut [ActivitySettings]");
+                return View(new UserActivityViewModel { 
                 Declaration = userActivity, 
                 HasSettings = dbset?.Any(ua=>ua.UserId==id) ?? false,
-                NeedsSettings =  userActivity.Does.SettingsClassName != null
+                NeedsSettings =  hasConfigurableSettings
+                } );
+            }
+            return View(new UserActivityViewModel { 
+                Declaration = userActivity, 
+                HasSettings = false,
+                NeedsSettings =  hasConfigurableSettings
                 } );
         }
 

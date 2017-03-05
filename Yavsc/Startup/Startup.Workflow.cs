@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNet.Builder;
 using Microsoft.Extensions.Logging;
+using Yavsc.Exceptions;
 using Yavsc.Models;
 using YavscLib;
 
@@ -38,22 +39,23 @@ namespace Yavsc
             }
                 foreach (var propinfo in typeof(ApplicationDbContext).GetProperties()) {
                     foreach (var attr in propinfo.CustomAttributes) {
-                        if (attr.AttributeType.FullName == "Yavsc.Attributes.ActivitySettingAttribute") {
+                        if (attr.AttributeType == typeof(Yavsc.Attributes.ActivitySettingsAttribute)) {
                             // bingo
                             if (typeof(IQueryable<ISpecializationSettings>).IsAssignableFrom(propinfo.PropertyType))
                             {
                                 logger.LogInformation($"Paramêtres utilisateur déclaré: {propinfo.Name}");
                                 UserSettings.Add(propinfo);
-                                
                             } else 
                                 // Design time error
                                 {
-                                    logger.LogCritical(
-$@"la propriété {propinfo.Name} du contexte de la
-base de donnée déclare être un refuge de paramêtre utilisateur
-du workflow, mais l'implemente pas l'interface IQueryable<ISpecializationSettings>,
-Elle est du type {propinfo.MemberType.GetType()}");
-                                    throw new NotSupportedException("invalid ActivitySettingAttribute on property from dbcontext");
+                                    var msg = 
+$@"La propriété {propinfo.Name} du contexte de la
+base de donnée porte l'attribut [ActivitySetting], 
+mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
+({propinfo.MemberType.GetType()})";
+                                    logger.LogCritical(msg);
+
+                                    throw new InvalidWorkflowModelException(msg);
                                 }
                         }
                     }
