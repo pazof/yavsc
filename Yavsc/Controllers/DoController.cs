@@ -7,16 +7,21 @@ using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
+    using Microsoft.Extensions.Logging;
     using Models;
     using Models.Workflow;
+    using Yavsc.ViewModels.Workflow;
+
     [Authorize]
     public class DoController : Controller
     {
         private ApplicationDbContext _context;
+        ILogger _logger;
 
-        public DoController(ApplicationDbContext context)
+        public DoController(ApplicationDbContext context,ILogger<DoController> logger)
         {
             _context = context;    
+            _logger = logger;
         }
 
         // GET: /Do/Index
@@ -48,8 +53,15 @@ namespace Yavsc.Controllers
             }
             ViewBag.HasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
             if (ViewBag.HasConfigurableSettings) 
-            ViewBag.SettingsControllerName = Startup.ProfileTypes[userActivity.Does.SettingsClassName].Name;
-            return View(userActivity);
+            ViewBag.SettingsControllerName = Startup.ProfileTypes.Single(t=>t.FullName==userActivity.Does.SettingsClassName).Name;
+            _logger.LogWarning(userActivity.Does.SettingsClassName);
+            var dbset = _context.GetDbSet(userActivity.Does.SettingsClassName);
+            _logger.LogWarning(dbset.Any(i=>i.UserId == id).ToString());
+            return View(new UserActivityViewModel { 
+                Declaration = userActivity, 
+                HasSettings = dbset?.Any(ua=>ua.UserId==id) ?? false,
+                NeedsSettings =  userActivity.Does.SettingsClassName != null
+                } );
         }
 
         // GET: Do/Create

@@ -12,16 +12,13 @@ namespace Yavsc.Helpers
     {
         public static ISpecializationSettings  CreateSettings (this Activity activity, string userId) {
             if (activity.SettingsClassName==null) return null;
-            var ctor = Startup.ProfileTypes[activity.SettingsClassName].GetConstructor(System.Type.EmptyTypes);
+            var ctor = Startup.ProfileTypes.Single(t=>t.FullName==activity.SettingsClassName).GetConstructor(System.Type.EmptyTypes);
             if (ctor==null) return null;
             ISpecializationSettings result = (ISpecializationSettings) ctor.Invoke(null);
             result.UserId = userId;
             return result;
         }
-        public static bool HasSettings (this UserActivity useract, ApplicationDbContext dbContext) {
-            ISpecializationSettings candidate = CreateSettings(useract.Does,useract.UserId);
-            return candidate.ExistsInDb(dbContext);
-        }
+
         public static List<PerformerProfile> ListPerformers(this ApplicationDbContext context, string actCode)
         {
             return context.Performers

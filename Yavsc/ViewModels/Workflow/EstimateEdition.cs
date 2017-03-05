@@ -1,6 +1,6 @@
 using Yavsc.Models.Billing;
 
-namespace Yavsc.ViewModels.WorkFlow
+namespace Yavsc.ViewModels.Workflow
 {
     public class EstimateEdition
     {
