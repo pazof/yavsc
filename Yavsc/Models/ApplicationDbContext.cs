@@ -26,7 +26,6 @@ namespace Yavsc.Models
     using Musical.Profiles;
     using Workflow.Profiles;
     using Drawing;
-    using System.Collections.Generic;
     using Yavsc.Attributes;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
