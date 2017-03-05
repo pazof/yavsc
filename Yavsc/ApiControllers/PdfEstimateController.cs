@@ -17,6 +17,7 @@ namespace Yavsc.ApiControllers
     using Yavsc.Services;
     using Yavsc.Models.Messaging;
     using Yavsc.ViewModels;
+    using Microsoft.Extensions.OptionsModel;
 
     [Route("api/pdfestimate"), Authorize]
     public class PdfEstimateController : Controller
@@ -33,12 +34,17 @@ namespace Yavsc.ApiControllers
             IAuthorizationService authorizationService,
             ILoggerFactory loggerFactory,
             IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IOptions<GoogleAuthSettings> googleSettings,
+            IGoogleCloudMessageSender GCMSender
+            )
         {
+            _googleSettings=googleSettings.Value;
             this.authorizationService = authorizationService;
             dbContext = context;
             logger = loggerFactory.CreateLogger<PdfEstimateController>();
             this._localizer = SR;
+            _GCMSender=GCMSender;
         }
 
         [HttpGet("get/{id}", Name = "Get"), Authorize]

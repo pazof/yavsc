@@ -7,18 +7,8 @@ namespace Yavsc.Helpers
     using Microsoft.Data.Entity;
     using Models.Workflow;
     using Yavsc.Models;
-    using YavscLib;
     public static class WorkflowHelpers
     {
-        public static ISpecializationSettings  CreateSettings (this Activity activity, string userId) {
-            if (activity.SettingsClassName==null) return null;
-            var ctor = Startup.ProfileTypes.Single(t=>t.FullName==activity.SettingsClassName).GetConstructor(System.Type.EmptyTypes);
-            if (ctor==null) return null;
-            ISpecializationSettings result = (ISpecializationSettings) ctor.Invoke(null);
-            result.UserId = userId;
-            return result;
-        }
-
         public static List<PerformerProfile> ListPerformers(this ApplicationDbContext context, string actCode)
         {
             return context.Performers

@@ -115,14 +115,9 @@ namespace Yavsc.Controllers
             };
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
             var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id);
-            
-            await usrActs.Where(u=>u.Does.SettingsClassName!=null).ForEachAsync(
-                a=>{ a.Settings = a.Does.CreateSettings(User.GetUserId()); }
-            );
 
             model.HaveActivityToConfigure = usrActs.Any( a=> a.Settings == null && a.Does.SettingsClassName!=null );
-            model.Activity = _dbContext.UserActivities.Include(a=>a.Does).Where(u=>u.UserId == user.Id)
-            .ToList();
+            model.Activity = _dbContext.UserActivities.Include(a=>a.Does).Where(u=>u.UserId == user.Id).ToList();
             return View(model);
         }
 
