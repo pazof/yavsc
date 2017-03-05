@@ -400,6 +400,8 @@
   <data name="Yavsc.Models.Musical.Profiles.DjSettings"><value>Paramètres Dj (le compte SoundCloud.com)</value></data>
   <data name="Yavsc.Models.Musical.Profiles.FormationSettings"><value>Paramètres formation (les partenaires)</value></data>
   <data name="Yavsc.Models.Musical.Profiles.GeneralSettings"><value>Paramètres généraux (visibilité et présentation)</value></data>
+  <data name="Yavsc.Models.Haircut.BrusherProfile"><value>Paramètres coiffeur: tarifs, disponibilité</value></data>
+  
   <data name="Yes"><value>Oui</value></data>
   <data name="YouNeedToBeAuthenticatedIOToContact"><value>Vous devez vous authentifier pour pouvoir demander un devis
       à un préstataire.</value></data>

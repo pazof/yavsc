@@ -26,6 +26,8 @@ namespace Yavsc.Models
     using Musical.Profiles;
     using Workflow.Profiles;
     using Drawing;
+    using System.Collections.Generic;
+    using Yavsc.Attributes;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -51,8 +53,15 @@ namespace Yavsc.Models
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
+                
         }
         
+        public IQueryable<ISpecializationSettings> GetDbSet(string settingsClassName)
+        {
+            var dbSetPropInfo = Startup.UserSettings.SingleOrDefault(s => s.PropertyType.GenericTypeArguments[0].FullName == settingsClassName ) ;
+            if (dbSetPropInfo == null) return null;
+            return (IQueryable<ISpecializationSettings>) dbSetPropInfo.GetValue(this);
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(Startup.ConnectionString);
@@ -274,6 +283,7 @@ namespace Yavsc.Models
 
          public DbSet<HairPrestation> HairPrestation { get; set; }
 
+         [ActivitySetting]
          public DbSet<BrusherProfile> BrusherProfile { get; set; }
          
 
