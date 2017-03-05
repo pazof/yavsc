@@ -16,9 +16,5 @@ namespace Yavsc.Models.Workflow.Profiles
             get; set;
         }
 
-        public bool ExistsInDb(object dbContext)
-        {
-            return ((ApplicationDbContext)dbContext).FormationSettings.Any(p=>p.UserId==UserId);
-        }
     }
 }

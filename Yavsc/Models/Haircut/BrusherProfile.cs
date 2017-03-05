@@ -137,9 +137,5 @@ namespace Yavsc.Models.Haircut
 
         public decimal FlatFeeDiscount { get; set; }
 
-        public bool ExistsInDb(object dbContext)
-        {
-            return ((ApplicationDbContext)dbContext).BrusherProfile.Any(p=>p.UserId==UserId);
-        }
     }
 }

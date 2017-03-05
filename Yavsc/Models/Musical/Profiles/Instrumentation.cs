@@ -18,10 +18,5 @@ namespace Yavsc.Models.Musical.Profiles
 
         [ForeignKeyAttribute("InstrumentId")]
         public virtual Instrument Tool { get; set; }
-
-        public bool ExistsInDb(object dbContext)
-        {
-             return ((ApplicationDbContext)dbContext).Instrumentation.Any(p=>p.UserId==UserId);
-        }
     }
 }
