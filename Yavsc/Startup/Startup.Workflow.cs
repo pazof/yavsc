@@ -25,6 +25,11 @@ namespace Yavsc
         /// </summary>
         public static readonly string [] Forms = new string [] { "Profiles" , "HairCut" };
 
+        public static PropertyInfo GetUserSettingPropertyInfo(string settingsClassName)
+        {
+            return UserSettings.SingleOrDefault(s => s.PropertyType.GenericTypeArguments[0].FullName == settingsClassName ) ;
+        }
+        
         private void ConfigureWorkflow(IApplicationBuilder app, SiteSettings settings, ILogger logger)
         {
             System.AppDomain.CurrentDomain.ResourceResolve += OnYavscResourceResolve;

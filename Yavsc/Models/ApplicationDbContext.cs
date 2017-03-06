@@ -27,6 +27,7 @@ namespace Yavsc.Models
     using Workflow.Profiles;
     using Drawing;
     using Yavsc.Attributes;
+    using System.Collections.Generic;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -54,11 +55,19 @@ namespace Yavsc.Models
             }
                 
         }
-        
+        public ISet<TSettings> GetDbSet<TSettings>() where TSettings : class,  ISpecializationSettings
+
+        {
+            return (ISet<TSettings>) GetDbSet(typeof(TSettings).FullName);
+        }
         public IQueryable<ISpecializationSettings> GetDbSet(string settingsClassName)
         {
-            var dbSetPropInfo = Startup.UserSettings.SingleOrDefault(s => s.PropertyType.GenericTypeArguments[0].FullName == settingsClassName ) ;
+            var dbSetPropInfo = Startup.GetUserSettingPropertyInfo(settingsClassName);
             if (dbSetPropInfo == null) return null;
+            // var settingType = dbSetPropInfo.PropertyType;
+            // var dbSetType = typeof(DbSet<>).MakeGenericType(new Type[] { settingType } );
+            // avec une info method Remove et Update, ça le ferait ...
+
             return (IQueryable<ISpecializationSettings>) dbSetPropInfo.GetValue(this);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -242,9 +251,11 @@ namespace Yavsc.Models
 
         private void AddTimestamps(string currentUsername)
     {
-        var entities = ChangeTracker.Entries().Where(x => x.Entity.GetType().GetInterface("IBaseTrackedEntity")!=null && (x.State == EntityState.Added || x.State == EntityState.Modified));
+        var entities = 
+        ChangeTracker.Entries()
+        .Where(x => x.Entity.GetType().GetInterface("IBaseTrackedEntity")!=null 
+        && (x.State == EntityState.Added || x.State == EntityState.Modified));
 
-        // Microsoft.AspNet.Identity;
 
         foreach (var entity in entities)
         {
