@@ -235,7 +235,9 @@ namespace Yavsc.Models
 
         public DbSet<LocationType> LocationType { get; set; }
 
-        public DbSet<Instrument> Instrument { get; set; }        
+        public DbSet<Instrument> Instrument { get; set; }
+
+        [ActivitySettings]   
         public DbSet<DjSettings> DjSettings { get; set; }
         
         [ActivitySettings]
