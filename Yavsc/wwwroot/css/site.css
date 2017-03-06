@@ -140,12 +140,18 @@ a:hover {
 }
 
 main.container {
-    padding-right: 0;
-    padding-left: 0;
-    margin-right: 0;
-    margin-left: 0;
+    padding-right: 0em;
+    padding-left: 0em;
+    margin-left: 0em;
+    margin-right: 0em;
     width:100%;
 }
+
+main h1, main h2, main h3, main h4, main h5, main h6, main p, main dl, main fieldset, div.performer, main form {
+    margin-left:5%;
+    margin-right:5%;
+}
+
 @-webkit-keyframes mymove {
     from {text-decoration-color: red;}
     50% {text-decoration-color: blue;}
