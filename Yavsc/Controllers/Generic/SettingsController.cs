@@ -1,12 +1,15 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
+using Yavsc.Exceptions;
 using Yavsc.Models;
 using YavscLib;
 
 namespace Yavsc.Controllers.Generic
 {
+    [Authorize]
     public abstract class SettingsController<TSettings> : Controller where TSettings : class, ISpecializationSettings, new()
     {
         protected ApplicationDbContext _context;
@@ -20,6 +23,7 @@ namespace Yavsc.Controllers.Generic
         {
             _context = context;
             dbSet=_context.GetDbSet<TSettings>();
+            if (dbSet==null) throw new InvalidWorkflowModelException(this.GetType().Name);
         }
 
         public async Task<IActionResult> Index()
