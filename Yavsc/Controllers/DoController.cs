@@ -12,6 +12,7 @@ namespace Yavsc.Controllers
     using Models.Workflow;
     using Yavsc.Exceptions;
     using Yavsc.ViewModels.Workflow;
+    using YavscLib;
 
     [Authorize]
     public class DoController : Controller
@@ -56,16 +57,13 @@ namespace Yavsc.Controllers
             
             bool hasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
             if (hasConfigurableSettings) {
-
                 ViewBag.ProfileType = Startup.ProfileTypes.Single(t=>t.FullName==userActivity.Does.SettingsClassName);
-            
-
-                var dbset = _context.GetDbSet(userActivity.Does.SettingsClassName);
+                var dbset = (IQueryable<ISpecializationSettings>) _context.GetDbSet(userActivity.Does.SettingsClassName);
                 if (dbset == null) throw new InvalidWorkflowModelException($"pas de db set pour {userActivity.Does.SettingsClassName}, vous avez peut-être besoin de décorer votre propriété avec l'attribut [ActivitySettings]");
                 return View(new UserActivityViewModel { 
-                Declaration = userActivity, 
-                HasSettings = dbset?.Any(ua=>ua.UserId==id) ?? false,
-                NeedsSettings =  hasConfigurableSettings
+                    Declaration = userActivity, 
+                    HasSettings = dbset.Any(ua=>ua.UserId==id),
+                    NeedsSettings =  hasConfigurableSettings
                 } );
             }
             return View(new UserActivityViewModel { 
