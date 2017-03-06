@@ -124,8 +124,10 @@ a:hover {
   overflow: auto;
 }
 .carousel-inner .item {
-    background-color: #301010;
+    /* background-color: #301010; */
     color: #FF8;
+    margin-left:15%; /* la taille du carousel-control */
+    margin-right:15%; /* la taille du carousel-control */
 }
 .carousel-indicators {
     position: absolute;
@@ -137,6 +139,13 @@ a:hover {
     height: 1em;
 }
 
+main.container {
+    padding-right: 0;
+    padding-left: 0;
+    margin-right: 0;
+    margin-left: 0;
+    width:100%;
+}
 @-webkit-keyframes mymove {
     from {text-decoration-color: red;}
     50% {text-decoration-color: blue;}
