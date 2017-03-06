@@ -1,4 +1,4 @@
-@model IEnumerable<Yavsc.Models.Workflow.Profiles.FormationSettings>
+@model Yavsc.Models.Workflow.Profiles.FormationSettings
 
 @{
     ViewData["Title"] = "Index";
@@ -6,21 +6,14 @@
 
 <h2>Index</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <tr>
-        <th></th>
-    </tr>
-    
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
-            <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
-            <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
-        </td>
-    </tr>
+@if (Model == null) {
+    <a asp-action="Create" class="btn btn-default">Positionner les paramêtres</a>
+} else {
+            <a asp-action="Edit" class="btn btn-default">Edit</a> 
+            <a asp-action="Delete" asp-route-id="@Model.UserId" class="btn btn-default">Delete</a>
+<div>
+    <h4>FormationSettings</h4>
+    <hr />
+</div>
 }
-</table>
+
