@@ -1,24 +1,19 @@
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
 using YavscLib;
-using System.Linq;
 
 namespace Yavsc.Controllers.Generic
 {
     public abstract class SettingsController<TSettings> : Controller where TSettings : class, ISpecializationSettings, new()
     {
         protected ApplicationDbContext _context;
-        protected object dbSet;
+        private object dbSet;
 
-        protected IQueryable<TSettings> QueryableDbSet { get { 
-            return (IQueryable<TSettings>) dbSet;
-        } }
-        protected ISet<TSettings> RwDbSet { get { 
-            return (ISet<TSettings>) dbSet;
+        protected DbSet<TSettings> Settings { get { 
+            return (DbSet<TSettings>) dbSet;
         } }
 
         public SettingsController(ApplicationDbContext context)
@@ -29,7 +24,7 @@ namespace Yavsc.Controllers.Generic
 
         public async Task<IActionResult> Index()
         {
-            var existing = await this.QueryableDbSet.SingleOrDefaultAsync(p=>p.UserId == User.GetUserId());
+            var existing = await this.Settings.SingleOrDefaultAsync(p=>p.UserId == User.GetUserId());
             return View(existing);
         }
         // GET: BrusherProfile/Details/5
@@ -40,7 +35,7 @@ namespace Yavsc.Controllers.Generic
                 id = User.GetUserId();
             }
 
-            var profile = await QueryableDbSet.SingleAsync(m => m.UserId == id);
+            var profile = await Settings.SingleAsync(m => m.UserId == id);
             if (profile == null)
             {
                 return HttpNotFound();
@@ -53,7 +48,7 @@ namespace Yavsc.Controllers.Generic
         // GET: BrusherProfile/Create
         public IActionResult Create()
         {
-            return View();
+            return View("Edit", new TSettings());
         }
 
         // GET: BrusherProfile/Edit/5
@@ -64,7 +59,7 @@ namespace Yavsc.Controllers.Generic
                 id = User.GetUserId();
             }
 
-            TSettings setting = await QueryableDbSet.SingleOrDefaultAsync(m => m.UserId == id);
+            TSettings setting = await Settings.SingleOrDefaultAsync(m => m.UserId == id);
             if (setting == null)
             {
                 setting = new TSettings { };
@@ -83,7 +78,7 @@ namespace Yavsc.Controllers.Generic
                 return HttpNotFound();
             }
 
-            var brusherProfile = await QueryableDbSet.SingleAsync(m => m.UserId == id);
+            var brusherProfile = await Settings.SingleAsync(m => m.UserId == id);
             if (brusherProfile == null)
             {
                 return HttpNotFound();
@@ -92,13 +87,50 @@ namespace Yavsc.Controllers.Generic
             return View(brusherProfile);
         }
 
-        // POST: BrusherProfile/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public abstract Task<IActionResult> DeleteConfirmed(string id);
-        // POST: BrusherProfile/Edit/5
+        // POST: FormationSettings/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public abstract Task<IActionResult> Edit(TSettings profile);
+        public async Task<IActionResult> Create(TSettings settings)
+        {
+            if (settings.UserId == null) settings.UserId = User.GetUserId();
+
+            if (ModelState.IsValid)
+            {
+                Settings.Add(settings);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View("Edit",settings);
+        }
+        
+        // POST: FormationSettings/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(TSettings settings)
+        {
+            if (settings.UserId == null) {
+                settings.UserId = User.GetUserId();
+                Settings.Add(settings);
+            } else 
+                _context.Update(settings);
+            if (ModelState.IsValid)
+            {
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+            return View(settings);
+        }
+        
+        // POST: FormationSettings/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public  async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            TSettings formationSettings = await Settings.SingleAsync(m => m.UserId == id);
+            Settings.Remove(formationSettings);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
     }
 }
