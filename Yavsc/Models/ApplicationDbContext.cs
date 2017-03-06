@@ -27,7 +27,6 @@ namespace Yavsc.Models
     using Workflow.Profiles;
     using Drawing;
     using Yavsc.Attributes;
-    using System.Collections.Generic;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -55,10 +54,10 @@ namespace Yavsc.Models
             }
                 
         }
-        public ISet<TSettings> GetDbSet<TSettings>() where TSettings : class,  ISpecializationSettings
+        public DbSet<TSettings> GetDbSet<TSettings>() where TSettings : class,  ISpecializationSettings
 
         {
-            return (ISet<TSettings>) GetDbSet(typeof(TSettings).FullName);
+            return (DbSet<TSettings>) GetDbSet(typeof(TSettings).FullName);
         }
         public IQueryable<ISpecializationSettings> GetDbSet(string settingsClassName)
         {
