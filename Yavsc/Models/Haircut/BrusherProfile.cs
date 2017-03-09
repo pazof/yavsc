@@ -135,5 +135,6 @@ namespace Yavsc.Models.Haircut
         [Display(Name="Remise au forfait coupe+technique"),DisplayFormat(DataFormatString="{0:C}")]
 
         public decimal FlatFeeDiscount { get; set; }
+
     }
 }

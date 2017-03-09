@@ -26,6 +26,7 @@ namespace Yavsc.Models
     using Musical.Profiles;
     using Workflow.Profiles;
     using Drawing;
+    using Yavsc.Attributes;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -51,8 +52,23 @@ namespace Yavsc.Models
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
+                
         }
-        
+        public DbSet<TSettings> GetDbSet<TSettings>() where TSettings : class,  ISpecializationSettings
+
+        {
+            return (DbSet<TSettings>) GetDbSet(typeof(TSettings).FullName);
+        }
+        public IQueryable<ISpecializationSettings> GetDbSet(string settingsClassName)
+        {
+            var dbSetPropInfo = Startup.GetUserSettingPropertyInfo(settingsClassName);
+            if (dbSetPropInfo == null) return null;
+            // var settingType = dbSetPropInfo.PropertyType;
+            // var dbSetType = typeof(DbSet<>).MakeGenericType(new Type[] { settingType } );
+            // avec une info method Remove et Update, ça le ferait ...
+
+            return (IQueryable<ISpecializationSettings>) dbSetPropInfo.GetValue(this);
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(Startup.ConnectionString);
@@ -219,18 +235,28 @@ namespace Yavsc.Models
 
         public DbSet<LocationType> LocationType { get; set; }
 
-        public DbSet<Instrument> Instrument { get; set; }        
+        public DbSet<Instrument> Instrument { get; set; }
+
+        [ActivitySettings]   
         public DbSet<DjSettings> DjSettings { get; set; }
+        
+        [ActivitySettings]
         public DbSet<Instrumentation> Instrumentation { get; set; }
+
+        [ActivitySettings]
         public DbSet<FormationSettings> FormationSettings { get; set; }
+        
+        [ActivitySettings]
         public DbSet<GeneralSettings> GeneralSettings { get; set; }
         public DbSet<CoWorking> WorkflowProviders { get; set; }
 
         private void AddTimestamps(string currentUsername)
     {
-        var entities = ChangeTracker.Entries().Where(x => x.Entity.GetType().GetInterface("IBaseTrackedEntity")!=null && (x.State == EntityState.Added || x.State == EntityState.Modified));
+        var entities = 
+        ChangeTracker.Entries()
+        .Where(x => x.Entity.GetType().GetInterface("IBaseTrackedEntity")!=null 
+        && (x.State == EntityState.Added || x.State == EntityState.Modified));
 
-        // Microsoft.AspNet.Identity;
 
         foreach (var entity in entities)
         {
@@ -274,6 +300,7 @@ namespace Yavsc.Models
 
          public DbSet<HairPrestation> HairPrestation { get; set; }
 
+         [ActivitySettings]
          public DbSet<BrusherProfile> BrusherProfile { get; set; }
          
 

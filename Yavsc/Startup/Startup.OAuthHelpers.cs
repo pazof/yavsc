@@ -18,8 +18,10 @@ namespace Yavsc
     {
         private Client GetApplication(string clientId)
         {
-            var dbContext = new ApplicationDbContext();
-            var app = dbContext.Applications.FirstOrDefault(x => x.Id == clientId);
+            Client app=null;
+            using (var dbContext = new ApplicationDbContext()) {
+             app = dbContext.Applications.FirstOrDefault(x => x.Id == clientId);
+            }
             return app;
         }
         private readonly ConcurrentDictionary<string, string> _authenticationCodes = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);

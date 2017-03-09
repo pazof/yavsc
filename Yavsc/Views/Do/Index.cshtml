@@ -13,6 +13,7 @@
     <tr>
         <th>@SR["Activity"]</th>
         <th>@SR["Weight"]</th>
+        <th>@SR["Settings"]</th>
     </tr>
     
 @foreach (var item in Model) {
@@ -21,6 +22,8 @@
         </td>
         <td> @item.Weight
         </td>
+        <dt>
+        </dt>
         <td>
             <a asp-action="Edit" asp-route-id="@item.UserId" asp-route-activityCode="@item.DoesCode">Edit</a> |
             <a asp-action="Details" asp-route-id="@item.UserId" asp-route-activityCode="@item.DoesCode">Details</a> |

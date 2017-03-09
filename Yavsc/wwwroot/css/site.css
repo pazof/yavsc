@@ -124,8 +124,10 @@ a:hover {
   overflow: auto;
 }
 .carousel-inner .item {
-    background-color: #301010;
+    /* background-color: #301010; */
     color: #FF8;
+    margin-left:15%; /* la taille du carousel-control */
+    margin-right:15%; /* la taille du carousel-control */
 }
 .carousel-indicators {
     position: absolute;
@@ -136,6 +138,14 @@ a:hover {
     top: .1em;
     height: 1em;
 }
+
+main.container {
+    padding-right: 1em;
+    padding-left: 1em;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
 
 @-webkit-keyframes mymove {
     from {text-decoration-color: red;}
@@ -166,14 +176,16 @@ footer {
 .display-field {
     font-kerning: none;
     display: inline-flex;
+    color: #FF8;
+    background-color: #502020;
 }
 
 .display-label {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-stretch: condensed;
     display: inline-flex;
-    color: rgb(127,127,127);
-    background-color: rgba(200,256,200,.4);
+    color: #A0A0A0;
+    background-color: #210912;
 }
 
 footer {

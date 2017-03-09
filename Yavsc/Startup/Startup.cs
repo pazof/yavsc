@@ -335,7 +335,7 @@ namespace Yavsc
             ConfigureOAuthApp(app, SiteSetup);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
             ConfigureWebSocketsApp(app, SiteSetup, env);
-            ConfigureWorkflow(app, SiteSetup);
+            ConfigureWorkflow(app, SiteSetup, logger);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"fr"));
             app.UseSession();
   
