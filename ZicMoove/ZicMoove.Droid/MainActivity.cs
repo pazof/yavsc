@@ -541,11 +541,11 @@ namespace ZicMoove.Droid
                                 }
                             }
                         }
-                        
+                        var acode = photo[1];
+                        var act = DataManager.Instance.Activities.LocalGet(acode);
+                        act.LocalPhoto = Path.Combine(images, $"{acode}.svg");
                     }
                 }
-                foreach (var act in DataManager.Instance.Activities)
-                { act.LocalPhoto = Path.Combine(images, $"{act.Code}.svg"); }
                 DataManager.Instance.Activities.SaveEntity();
             }
         }

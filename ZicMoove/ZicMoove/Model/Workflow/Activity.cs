@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
-using YavscLib;
+using XLabs.Forms.Mvvm;
 
 namespace ZicMoove.Model.Workflow
 {
-    public class Activity : IActivity
+    using YavscLib;
+    public class Activity : ViewModel, IActivity
     {
         public string Code
         {
@@ -74,6 +75,11 @@ namespace ZicMoove.Model.Workflow
             get;
             set;
         }
-        public string LocalPhoto { get; set; }
+        private string photo;
+
+        public string LocalPhoto {
+            get { return photo; }
+               set { SetProperty<string>(ref photo, value);
+            } }
     }
 }
