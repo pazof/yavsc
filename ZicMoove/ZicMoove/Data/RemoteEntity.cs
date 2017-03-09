@@ -142,9 +142,10 @@ namespace ZicMoove.Data
                     created = response.IsSuccessStatusCode;
                     if (!created)
                     {
+
                         // TODO throw custom exception, and catch to inform user
                         var errcontent = await response.Content.ReadAsStringAsync();
-                        Debug.WriteLine(string.Format(Strings.CreationFailed));
+                        Debug.WriteLine(string.Format(Strings.CreationFailed,stringContent,ControllerUri.AbsoluteUri));
                         Debug.WriteLine(errcontent);
                     }
                     else
