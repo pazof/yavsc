@@ -61,7 +61,7 @@ public class GCMController : Controller
             var latestActivityUpdate = _context.Activities.Max(a=>a.DateModified);
             return Json(new { 
                 IsAnUpdate = deviceAlreadyRegistered, 
-                UpdateActivities = latestActivityUpdate > declaration.LatestActivityUpdate 
+                UpdateActivities = (latestActivityUpdate != declaration.LatestActivityUpdate)
                 });
         }
         return new BadRequestObjectResult(ModelState);
