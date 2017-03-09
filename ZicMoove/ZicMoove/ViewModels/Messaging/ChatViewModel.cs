@@ -21,15 +21,20 @@ namespace ZicMoove.ViewModels.Messaging
         public ConnectionState State
         {
             get { return state; }
+            set
+            {
+                SetProperty<ConnectionState>(ref state, value);
+            }
         }
 
         public ChatViewModel()
         {
-            App.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
-            MainSettings.UserChanged += MainSettings_UserChanged;
             Messages = new ObservableCollection<ChatMessage>();
             Notifs = new ObservableCollection<ChatMessage>();
             ChatUsers = DataManager.Instance.ChatUsers;
+            State = App.ChatHubConnection.State;
+            App.ChatHubConnection.StateChanged += ChatHubConnection_StateChanged;
+            MainSettings.UserChanged += MainSettings_UserChanged;
             App.ChatHubProxy.On<string, string>("addMessage", (n, m) =>
             {
                 Messages.Add(new ChatMessage
@@ -93,7 +98,7 @@ namespace ZicMoove.ViewModels.Messaging
 
         private void ChatHubConnection_StateChanged(StateChange obj)
         {
-            SetProperty<ConnectionState>(ref state, obj.NewState, "State");
+            State = obj.NewState;
         }
     }
 }
