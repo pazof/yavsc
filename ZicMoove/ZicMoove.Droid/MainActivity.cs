@@ -505,11 +505,7 @@ namespace ZicMoove.Droid
             get
             {
                 if (imagesFolder != null) return imagesFolder;
-                var appData =
- System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
-                imagesFolder = System.IO.Path.Combine(appData, Constants.ImagePath);
-                DirectoryInfo di = new DirectoryInfo(imagesFolder);
-                if (!di.Exists) di.Create();
+                imagesFolder = Constants.ImagePath.GetSpecialFolder();
                 return imagesFolder;
             }
         }
