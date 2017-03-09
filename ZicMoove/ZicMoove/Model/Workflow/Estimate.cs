@@ -7,9 +7,9 @@ using System.Linq;
 namespace ZicMoove.Model.Workflow
 {
     using Data;
-    using Interfaces;
     using Musical;
-    using Social;
+    using YavscLib.Workflow;
+
     public partial class Estimate : IEstimate
     {
         public long Id { get; set; }
