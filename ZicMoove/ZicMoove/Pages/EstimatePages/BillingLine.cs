@@ -1,15 +1,20 @@
-﻿
-using ZicMoove.Interfaces;
-using System;
+﻿using System;
 
 namespace ZicMoove.Model.Workflow
 {
-    public class BillingLine : IBillingLine
+    using YavscLib.Billing;
+    public class BillingLine : ICommandLine
     {
         public long Id { get; set; }
+
         public string Description { get; set; }
+
         public TimeSpan Duration { get; set; }
+
         public int Count { get; set; } = 1;
+
         public decimal UnitaryCost { get; set; }
+
+        public long EstimateId { get; set; }
     }
 }
