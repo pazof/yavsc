@@ -54,8 +54,9 @@ namespace ZicMoove.Pages
 
         protected void OnNewCommanLine(object sender, EventArgs e)
         {
-            var com = new BillingLine() { Count = 1, UnitaryCost = 0.01m };
-            var bill = ((EditEstimateViewModel)BindingContext).Bill;
+            var model = (EditEstimateViewModel)BindingContext;
+            var com = new BillingLine() { Count = 1, UnitaryCost = 0.01m, EstimateId = model.Data.Id };
+            var bill = model.Bill;
             var lineView = new BillingLineViewModel(com)
             { ValidateCommand = new Command(() => {
                 bill.Add(new BillingLineViewModel(com));
