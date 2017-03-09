@@ -2,23 +2,23 @@ using System.IO;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System.Web.Routing;
+    using System.Linq;
+    using Microsoft.Data.Entity;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Localization;
+    using Microsoft.Extensions.OptionsModel;
+    using System;
+    using System.Security.Claims;
 
 namespace Yavsc.ApiControllers
 {
     using Models;
     using Helpers;
-    using System.Linq;
-    using Microsoft.Data.Entity;
-    using System.Threading.Tasks;
-    using Microsoft.Extensions.Logging;
-    using System;
-    using System.Security.Claims;
-    using Microsoft.Extensions.Localization;
-    using Yavsc.Services;
-    using Yavsc.Models.Messaging;
-    using Yavsc.ViewModels;
-    using Microsoft.Extensions.OptionsModel;
+    using Services;
 
+    using Models.Messaging;
+    using ViewModels.Auth;
     [Route("api/pdfestimate"), Authorize]
     public class PdfEstimateController : Controller
     {

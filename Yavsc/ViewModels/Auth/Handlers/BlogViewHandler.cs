@@ -9,25 +9,26 @@ namespace Yavsc.ViewModels.Auth.Handlers
     {
         protected override void Handle(AuthorizationContext context, ViewRequirement requirement, Blog resource)
         {
-            if (context.User.IsInRole(Constants.BlogModeratorGroupName)
-            || context.User.IsInRole(Constants.AdminGroupName))
-                context.Succeed(requirement);
-            else if (context.User.Identity.IsAuthenticated)
-            if (resource.AuthorId == context.User.GetUserId())
-                context.Succeed(requirement); 
-            else if (resource.Visible) {
+            bool ok=false;
+             if (resource.Visible) {
                 if (resource.ACL==null)
-                    context.Succeed(requirement);
-                else if (resource.ACL.Count>0)
-                    {
-                        var uid = context.User.GetUserId();
-                        if (resource.ACL.Any(a=>a.Allowed!=null && a.Allowed.Members.Any(m=>m.MemberId == uid )))
-                            context.Succeed(requirement); 
-                        else context.Fail();
+                    ok=true;
+                else if (resource.ACL.Count==0) ok=true; 
+                 else   {
+                        if (context.User.IsSignedIn()) {
+                            var uid = context.User.GetUserId();
+                            if (resource.ACL.Any(a=>a.Allowed!=null && a.Allowed.Members.Any(m=>m.MemberId == uid )))
+                                ok=true; 
+                        } 
                     }
-                else context.Succeed(requirement); 
-            }
-            else context.Fail();
+            } 
+            if (ok) context.Succeed(requirement);
+            else {
+                if (context.User.IsInRole(Constants.AdminGroupName) || 
+                context.User.IsInRole(Constants.BlogModeratorGroupName))
+                 context.Succeed(requirement);
+                 else context.Fail();
+             }
         }
     }
 }
