@@ -195,27 +195,32 @@ namespace ZicMoove
 
         }
 
-        BookQueriesPage bQueriesPage;
-        AccountChooserPage accChooserPage;
-        ActivityPage homePage;
+        static BookQueriesPage bQueriesPage;
+        static AccountChooserPage accChooserPage;
+        static ActivityPage homePage;
 
         private static UserProfilePage userProfilePage;
 
         public static UserProfilePage UserProfilePage
         { get { return userProfilePage; } }
 
-        ChatPage chatPage;
-        PinPage pinPage;
+        static ChatPage chatPage;
+        static PinPage pinPage;
 
-        public static void ShowPage(Page page)
+        public static async void ShowPage(Page page)
         {
+            if (page == homePage)
+            {
+                await Navigation.PopToRootAsync();
+                return;
+            }
             if (Navigation.NavigationStack.Contains(page))
             {
                 if (Navigation.NavigationStack.Last() == page) return;
                 Navigation.RemovePage(page);
                 page.Parent = null;
             }
-            Navigation.PushAsync(page);
+            await Navigation.PushAsync(page);
         }
 
         private void BuildMainPage()
@@ -263,7 +268,7 @@ namespace ZicMoove
                 BindingContext = new ChatViewModel()
             };
 
-            pinPage = new PinPage();
+            pinPage = new PinPage { Title = Strings.Carte };
 
             // var mainPage = new NavigationPage(bQueriesPage);
 
@@ -322,6 +327,7 @@ namespace ZicMoove
             masterDetail.ToolbarItems.Add(tiHome);
             masterDetail.ToolbarItems.Add(tiSetts);
             masterDetail.ToolbarItems.Add(tiPubChat);
+            masterDetail.ToolbarItems.Add(tiPinPage);
             this.MainPage = masterDetail;
 
             NavigationService = new NavigationService(Navigation);
