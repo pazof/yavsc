@@ -1,15 +1,16 @@
-﻿using ZicMoove.Attributes;
-using ZicMoove.Interfaces;
-using ZicMoove.Model.Workflow;
-using ZicMoove.ViewModels.Validation;
+﻿
 using System;
 using System.Globalization;
 using System.Windows.Input;
 using System.ComponentModel;
+using YavscLib.Billing;
 
 namespace ZicMoove.ViewModels.EstimateAndBilling
 {
-    public class BillingLineViewModel : EditingViewModel<BillingLine>, IBillingLine
+    using Attributes;
+    using Model.Workflow;
+    using Validation;
+    public class BillingLineViewModel : EditingViewModel<BillingLine>, ICommandLine
     {
         public ICommand RemoveCommand { get; set; }
         public ICommand ValidateCommand { set; get; }
@@ -67,6 +68,34 @@ namespace ZicMoove.ViewModels.EstimateAndBilling
                 Data.Count = count;
             }
         }
+        private long estimateId;
+        public long EstimateId
+        {
+            get
+            {
+                return estimateId;
+            }
+            set
+            {
+                SetProperty<long>(ref estimateId, value);
+                Data.EstimateId = estimateId;
+            }
+        }
+
+        private long id;
+        public long Id
+        {
+            get
+            {
+                return id;
+            }
+            set
+            {
+                SetProperty<long>(ref id, value);
+                Data.Id = id;
+            }
+        }
+
         private string description;
         public string Description
         {
