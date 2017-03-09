@@ -125,7 +125,7 @@ namespace ZicMoove {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à La création a échoué, contenu envoyé: {stringContent} @ Uri: {ControllerUri.AbsoluteUri}: Erreur : {errcontent}.
+        ///   Recherche une chaîne localisée semblable à La création a échoué, contenu envoyé: {0} @ Uri: {1}.
         /// </summary>
         public static string CreationFailed {
             get {
