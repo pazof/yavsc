@@ -6,6 +6,7 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using ZicMoove.Model.Auth.Account;
+using System.IO;
 
 namespace ZicMoove.Droid
 {
@@ -13,13 +14,23 @@ namespace ZicMoove.Droid
 	public static class YavscHelpers
 	{
 		
-        public static void SetRegId(this User user, string regId)
+        public static string GetSpecialFolder(this string specialPath)
         {
-            if (user.YavscTokens == null)
+            if (specialPath == null)
                 throw new InvalidOperationException();
-
+            var appData =
+ System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
+            string imagesFolder = System.IO.Path.Combine(appData, specialPath);
+            DirectoryInfo di = new DirectoryInfo(imagesFolder);
+            // FIXME Create this folder at app startup
+            if (!di.Exists) di.Create();
+            return imagesFolder;
         }
-		
+
+        public static string GetTmpDir ()
+        {
+            return GetSpecialFolder("tmp");
+        }
 	}
 }
 
