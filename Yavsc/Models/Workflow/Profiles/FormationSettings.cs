@@ -14,5 +14,6 @@ namespace Yavsc.Models.Workflow.Profiles
         {
             get; set;
         }
+
     }
 }

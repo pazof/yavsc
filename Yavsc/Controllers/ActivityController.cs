@@ -41,9 +41,9 @@ namespace Yavsc.Controllers
             var items = Startup.ProfileTypes.Select(
                 pt => new SelectListItem
                 {
-                    Text = SR[pt.Key],
-                    Value = pt.Key,
-                    Selected = currentCode == pt.Key
+                    Text = SR[pt.FullName],
+                    Value = pt.FullName,
+                    Selected = currentCode == pt.FullName
                 }).ToList();
             items.Add(new SelectListItem { Text = SR[Constants.NoneCode], Value = Constants.NoneCode, Selected = currentCode == null});
             ViewBag.SettingsClassName = items;

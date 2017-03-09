@@ -71,6 +71,7 @@ namespace Yavsc.Models.Billing
         [ForeignKey("ClientId"),JsonIgnore]
         public virtual ApplicationUser Client { get; set; }
 
+        [Required]
         public string CommandType
         {
             get; set;

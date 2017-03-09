@@ -6,6 +6,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
 
@@ -65,13 +66,13 @@ namespace Yavsc.Controllers
         }
 
         // PUT: api/Estimate/5
-        [HttpPut("{id}")]
+        [HttpPut("{id}"),Produces("application/json")]
         public IActionResult PutEstimate(long id, [FromBody] Estimate estimate)
         {
 
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return new BadRequestObjectResult(ModelState);
             }
 
             if (id != estimate.Id)
@@ -109,13 +110,9 @@ namespace Yavsc.Controllers
         }
 
         // POST: api/Estimate
-        [HttpPost]
+        [HttpPost,Produces("application/json")]
         public IActionResult PostEstimate([FromBody] Estimate estimate)
         {
-            if (!ModelState.IsValid)
-            {
-                return HttpBadRequest(ModelState);
-            }
             var uid = User.GetUserId();
             if (!User.IsInRole(Constants.AdminGroupName))
             {
@@ -127,9 +124,17 @@ namespace Yavsc.Controllers
             }
             if (estimate.CommandId!=null) {
                 var query = _context.RdvQueries.FirstOrDefault(q => q.Id == estimate.CommandId);
-                if (query == null || query.PerformerId!= uid)
-                    throw new InvalidOperationException();
+                if (query == null) {
+                    return HttpBadRequest(ModelState);
+                }
                 query.ValidationDate = DateTime.Now;
+                _context.SaveChanges(User.GetUserId());
+                _context.Entry(query).State = EntityState.Detached;
+            }
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError(JsonConvert.SerializeObject(ModelState));
+                 return Json(ModelState);
             }
             _context.Estimates.Add(estimate);
             

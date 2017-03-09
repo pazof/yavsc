@@ -342,15 +342,15 @@
 
     </dl>
   </fieldset>
-
+    <p>
+        <a asp-action="Edit" >@SR["Edit"]</a> 
+        <a asp-action="Delete" asp-route-id="@Model.UserId">@SR["Delete"]</a>
+    </p>
     }
     else {
+    <p>
         @SR["Aucun profile renseigné"]
+        <a asp-action="Create" class="btn btn-success">@SR["Renseigner ce paramêtrage"]</a> 
+    </p>
     }
 </div>
-<p>
-    <a asp-action="Edit" >@SR["Edit"]</a> 
-    @if (Model!=null) {
-        <a asp-action="Delete" asp-route-id="@Model.UserId">@SR["Delete"]</a> 
-    }
-</p>

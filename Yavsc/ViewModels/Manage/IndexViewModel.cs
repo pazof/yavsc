@@ -25,6 +25,7 @@ namespace Yavsc.ViewModels.Manage
         public List<UserActivity> Activity { get; set; }
 
         public bool HaveProfessionalSettings { get; set; }
+        public bool HaveActivityToConfigure { get; set; }
 
         public long PostsCounter { get; set; }
 

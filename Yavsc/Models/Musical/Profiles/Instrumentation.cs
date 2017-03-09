@@ -17,6 +17,5 @@ namespace Yavsc.Models.Musical.Profiles
 
         [ForeignKeyAttribute("InstrumentId")]
         public virtual Instrument Tool { get; set; }
-        
     }
 }

@@ -7,16 +7,23 @@ using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
+    using Microsoft.Extensions.Logging;
     using Models;
     using Models.Workflow;
+    using Yavsc.Exceptions;
+    using Yavsc.ViewModels.Workflow;
+    using YavscLib;
+
     [Authorize]
     public class DoController : Controller
     {
         private ApplicationDbContext _context;
+        ILogger _logger;
 
-        public DoController(ApplicationDbContext context)
+        public DoController(ApplicationDbContext context,ILogger<DoController> logger)
         {
             _context = context;    
+            _logger = logger;
         }
 
         // GET: /Do/Index
@@ -35,6 +42,7 @@ namespace Yavsc.Controllers
         // GET: Do/Details/5
         public IActionResult Details(string id, string activityCode)
         {
+            
             if (id == null || activityCode == null)
             {
                 return HttpNotFound();
@@ -46,10 +54,23 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.HasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
-            if (ViewBag.HasConfigurableSettings) 
-            ViewBag.SettingsControllerName = Startup.ProfileTypes[userActivity.Does.SettingsClassName].Name;
-            return View(userActivity);
+            
+            bool hasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
+            if (hasConfigurableSettings) {
+                ViewBag.ProfileType = Startup.ProfileTypes.Single(t=>t.FullName==userActivity.Does.SettingsClassName);
+                var dbset = (IQueryable<ISpecializationSettings>) _context.GetDbSet(userActivity.Does.SettingsClassName);
+                if (dbset == null) throw new InvalidWorkflowModelException($"pas de db set pour {userActivity.Does.SettingsClassName}, vous avez peut-être besoin de décorer votre propriété avec l'attribut [ActivitySettings]");
+                return View(new UserActivityViewModel { 
+                    Declaration = userActivity, 
+                    HasSettings = dbset.Any(ua=>ua.UserId==id),
+                    NeedsSettings =  hasConfigurableSettings
+                } );
+            }
+            return View(new UserActivityViewModel { 
+                Declaration = userActivity, 
+                HasSettings = false,
+                NeedsSettings =  hasConfigurableSettings
+                } );
         }
 
         // GET: Do/Create
@@ -152,9 +173,10 @@ namespace Yavsc.Controllers
         // POST: Do/Delete/5
         [HttpPost, ActionName("Delete"),Authorize]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(string id, string activityCode)
+        public IActionResult DeleteConfirmed(UserActivity userActivity)
         {
-            UserActivity userActivity = _context.UserActivities.Single(m => m.UserId == id && m.DoesCode == activityCode);
+            if (!ModelState.IsValid)
+                return new BadRequestObjectResult(ModelState);
             if (!User.IsInRole("Administrator"))
                if (User.GetUserId() != userActivity.UserId) {
                     ModelState.AddModelError("User","You're not admin.");

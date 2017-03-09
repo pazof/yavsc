@@ -1,6 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Microsoft.AspNet.Builder;
+using Microsoft.Extensions.Logging;
+using Yavsc.Exceptions;
+using Yavsc.Models;
+using YavscLib;
 
 namespace Yavsc
 {
@@ -10,15 +16,21 @@ namespace Yavsc
         /// Lists Available user profile classes,
         /// populated at startup, using reflexion.
         /// </summary>
-        public static  Dictionary<string,Type> ProfileTypes = new Dictionary<string,Type>() ;
-        
+        public static List<Type> ProfileTypes = new List<Type>() ;
+        public static List<PropertyInfo> UserSettings = new List<PropertyInfo> ();
+
         /// <summary>
         /// Lists available command forms. 
         /// This is hard coded.
         /// </summary>
         public static readonly string [] Forms = new string [] { "Profiles" , "HairCut" };
 
-        private void ConfigureWorkflow(IApplicationBuilder app, SiteSettings settings)
+        public static PropertyInfo GetUserSettingPropertyInfo(string settingsClassName)
+        {
+            return UserSettings.SingleOrDefault(s => s.PropertyType.GenericTypeArguments[0].FullName == settingsClassName ) ;
+        }
+        
+        private void ConfigureWorkflow(IApplicationBuilder app, SiteSettings settings, ILogger logger)
         {
             System.AppDomain.CurrentDomain.ResourceResolve += OnYavscResourceResolve;
 
@@ -26,10 +38,33 @@ namespace Yavsc
                 foreach (var c in a.GetTypes()) {
                     if (c.IsClass && !c.IsAbstract &&
                         c.GetInterface("ISpecializationSettings")!=null) {
-                        ProfileTypes.Add(c.FullName,c);
+                        ProfileTypes.Add(c);
                     }
                 }
             }
+                foreach (var propinfo in typeof(ApplicationDbContext).GetProperties()) {
+                    foreach (var attr in propinfo.CustomAttributes) {
+                        if (attr.AttributeType == typeof(Yavsc.Attributes.ActivitySettingsAttribute)) {
+                            // bingo
+                            if (typeof(IQueryable<ISpecializationSettings>).IsAssignableFrom(propinfo.PropertyType))
+                            {
+                                logger.LogInformation($"Paramêtres utilisateur déclaré: {propinfo.Name}");
+                                UserSettings.Add(propinfo);
+                            } else 
+                                // Design time error
+                                {
+                                    var msg = 
+$@"La propriété {propinfo.Name} du contexte de la
+base de donnée porte l'attribut [ActivitySetting], 
+mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
+({propinfo.MemberType.GetType()})";
+                                    logger.LogCritical(msg);
+
+                                    throw new InvalidWorkflowModelException(msg);
+                                }
+                        }
+                    }
+                }
         }
         public static System.Reflection.Assembly OnYavscResourceResolve (object sender,  ResolveEventArgs ev)
         {
