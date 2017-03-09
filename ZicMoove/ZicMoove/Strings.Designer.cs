@@ -98,6 +98,15 @@ namespace ZicMoove {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Carte.
+        /// </summary>
+        public static string Carte {
+            get {
+                return ResourceManager.GetString("Carte", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Annonces client.
         /// </summary>
         public static string ClientAnounces {

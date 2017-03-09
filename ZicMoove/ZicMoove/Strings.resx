@@ -248,4 +248,7 @@
   <data name="Street" xml:space="preserve">
     <value>Rue</value>
   </data>
+  <data name="Carte" xml:space="preserve">
+    <value>Carte</value>
+  </data>
 </root>
