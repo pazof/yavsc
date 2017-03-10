@@ -6,8 +6,8 @@ body {
   background-color: #210912;
   color:#999;
 }
-h1,h2,h3{color:#fff;}
-
+h1,h2,h3,h4,h5,h6{color:#fff;}
+.smalltofhol { max-height: 3em; max-width: 3em; float:left; margin:.5em; }
 .price {
     font-weight: bold;
     font-size: x-large;
@@ -32,34 +32,37 @@ h1,h2,h3{color:#fff;}
     padding: 1em;
 }
 .blog a {
-  color: #9f9;
+  color: #FF8;
   font-weight: 900;
 }
 .blog a:active,
 .blog a:hover {
   outline: 0;
-  color: #6C6;
+  color: #FAFA09;
 }
 
-tr.vpost {
-    background-color: #306020;
+tr.visiblepost {
     max-height: 3em;
 }
-tr.ipost {
-    background-color: #303030;
+tr.hiddenpost {
+    background-color: #130414;
     font-size: smaller;
     max-height: 2em;
 }
-tr.vpost a {
+a.bloglink {
     font-weight: bold;
-    color: white;
-    text-shadow: 3px 3px 8px black; 
+    text-shadow: 0px 0px 8px white; 
 }
-tr.ipost a {
-    font-style: bold;
-    color: #b0b0b0;
-    text-shadow: 3px 3px 5px #505050; 
+a {
+  font-weight: 900;
+  color: #FF8;
 }
+a:active,
+a:hover {
+  outline: 0;
+  color: #FAFA09;
+}
+
 .panel{
    float: left;
    padding:1em;
@@ -76,15 +79,6 @@ select,
   color: #333;
 }
 
-a {
-  font-weight: 900;
-  color: #9f9;
-}
-a:active,
-a:hover {
-  outline: 0;
-  color: #6C6;
-}
 .jumbotron {
     background-color: #502020;
     padding: .5em;
