@@ -1,22 +1,7 @@
 @model ApplicationUser
 
-<img src="~/Avatars/@(Model.UserName).xs.png" alt=""> 
+<img src="~/Avatars/@(Model.UserName).s.png" alt="" class="smalltofhol"> 
 @Model.UserName 
-     <ul>
-@if (Model.Posts!=null) {
-<li>  <a asp-controller="Blogspot" asp-action="UserPosts" 
-asp-route-id="@Model.UserName">@SR["His blog"]</a>
-</li>
+@if (Model.Posts!=null) { <a asp-controller="Blogspot" asp-action="UserPosts" 
+asp-route-id="@Model.UserName" class="btn btn-link">@SR["index de ses articles"]</a>
 }
-@if (!string.IsNullOrEmpty(
-    Model.DedicatedGoogleCalendar))
-    {
-<li>   @SR["Exposes his Google calendar!"]
-</li>
-    }
-@if (Model.Devices?.Count>0)
-    {
-<li>   @SR["Uses the mobile application, and receives push notifications"]
-</li>
-    }
-</ul>
