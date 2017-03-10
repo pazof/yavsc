@@ -505,11 +505,7 @@ namespace ZicMoove.Droid
             get
             {
                 if (imagesFolder != null) return imagesFolder;
-                var appData =
- System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
-                imagesFolder = System.IO.Path.Combine(appData, Constants.ImagePath);
-                DirectoryInfo di = new DirectoryInfo(imagesFolder);
-                if (!di.Exists) di.Create();
+                imagesFolder = Constants.ImagePath.GetSpecialFolder();
                 return imagesFolder;
             }
         }
@@ -541,11 +537,11 @@ namespace ZicMoove.Droid
                                 }
                             }
                         }
-                        
+                        var acode = photo[1];
+                        var act = DataManager.Instance.Activities.LocalGet(acode);
+                        act.LocalPhoto = Path.Combine(images, $"{acode}.svg");
                     }
                 }
-                foreach (var act in DataManager.Instance.Activities)
-                { act.LocalPhoto = Path.Combine(images, $"{act.Code}.svg"); }
                 DataManager.Instance.Activities.SaveEntity();
             }
         }

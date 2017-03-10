@@ -124,7 +124,7 @@
     <value>Annuler la validation</value>
   </data>
   <data name="CreationFailed" xml:space="preserve">
-    <value>La création a échoué, contenu envoyé: {stringContent} @ Uri: {ControllerUri.AbsoluteUri}: Erreur : {errcontent}</value>
+    <value>La création a échoué, contenu envoyé: {0} @ Uri: {1}</value>
   </data>
   <data name="DoEstimate" xml:space="preserve">
     <value>Faire un devis</value>
@@ -247,5 +247,8 @@
   </data>
   <data name="Street" xml:space="preserve">
     <value>Rue</value>
+  </data>
+  <data name="Carte" xml:space="preserve">
+    <value>Carte</value>
   </data>
 </root>
