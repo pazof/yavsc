@@ -76,19 +76,19 @@ namespace testOauthClient
                 LoginPath = new PathString("/signin"),
                 LogoutPath = new PathString("/signout")
             });
-
+            var host = "http://dev.pschneider.fr";
             app.UseOAuthAuthentication(
                 options =>
                 {
                     options.AuthenticationScheme = "Yavsc";
-                    options.AuthorizationEndpoint = "http://dev.pschneider.fr/authorize";
-                    options.TokenEndpoint = "http://dev.pschneider.fr/token";
+                    options.AuthorizationEndpoint = $"{host}/authorize";
+                    options.TokenEndpoint = $"{host}/dev.pschneider.fr/token";
                     options.CallbackPath = new PathString("/signin-yavsc");
-                    options.ClientId = "21d8bd1b-4aed-4fcb-9ed9-00b43f6a8169";
+                    options.ClientId = "[Your client Id]";
                     options.ClientSecret = "blih";
                     options.Scope.Add("profile");
                     options.SaveTokensAsClaims = true;
-                    options.UserInformationEndpoint = "http://dev.pschneider.fr/api/me";
+                    options.UserInformationEndpoint = $"{host}/api/me";
                     options.Events = new OAuthEvents
                     {
                         OnCreatingTicket = async context =>
