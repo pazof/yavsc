@@ -15,12 +15,6 @@ namespace ZicMoove.Pages
             InitializeComponent();
             foreach (string du in Enum.GetNames(typeof(BillingLineViewModel.DurationUnits)))
                 picker.Items.Add(du);
-            BindingContext = new BillingLineViewModel(new BillingLine());
-        }
-
-        public EditBillingLinePage()
-        {
-            Initialize();
         }
 
         public EditBillingLinePage(BillingLineViewModel model)

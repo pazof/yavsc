@@ -79,6 +79,7 @@ namespace ZicMoove.Pages
                         ClientId = BookQuery.Client.UserId,
                         CommandId = BookQuery.Id,
                         OwnerId = MainSettings.CurrentUser.Id,
+                        CommandType = "RdvQuery",
                         Id = 0
                     });
                     DataManager.Instance.EstimationCache.Add(editEstimateViewModel);

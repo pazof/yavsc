@@ -9,7 +9,7 @@ namespace ZicMoove.Model.Workflow
 {
     public class CommandForm : ICommandForm
     {
-        public string Action
+        public string ActionName
         {
             get; set;
         }

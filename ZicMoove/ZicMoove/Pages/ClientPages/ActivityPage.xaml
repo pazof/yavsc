@@ -3,8 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ZicMoove.Pages.ClientPages.ActivityPage"
              xmlns:local="clr-namespace:ZicMoove;assembly=ZicMoove"
-              xmlns:views="clr-namespace:ZicMoove.Views;assembly=ZicMoove"
+             xmlns:views="clr-namespace:ZicMoove.Views;assembly=ZicMoove"
+             xmlns:converters="clr-namespace:ZicMoove.Converters;assembly=ZicMoove"
              >
+  <CarouselPage.Resources>
+    <ResourceDictionary>
+      </ResourceDictionary>
+  </CarouselPage.Resources>
   <CarouselPage.ItemTemplate>
     <DataTemplate>
       <ContentPage>
@@ -30,7 +35,7 @@
                     <ViewCell>
                       <ViewCell.View>
                         <StackLayout>
-                          <Button Text="{Binding Title}" CommandParameter="{Binding Action}"/>
+                          <Button Text="{Binding Title}" CommandParameter="{Binding ActionName}"/>
                         </StackLayout>
                       </ViewCell.View>
                     </ViewCell>

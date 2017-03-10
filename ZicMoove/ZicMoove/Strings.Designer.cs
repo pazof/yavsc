@@ -98,6 +98,15 @@ namespace ZicMoove {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Carte.
+        /// </summary>
+        public static string Carte {
+            get {
+                return ResourceManager.GetString("Carte", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Annonces client.
         /// </summary>
         public static string ClientAnounces {
@@ -125,7 +134,7 @@ namespace ZicMoove {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à La création a échoué, contenu envoyé: {stringContent} @ Uri: {ControllerUri.AbsoluteUri}: Erreur : {errcontent}.
+        ///   Recherche une chaîne localisée semblable à La création a échoué, contenu envoyé: {0} @ Uri: {1}.
         /// </summary>
         public static string CreationFailed {
             get {

@@ -37,7 +37,8 @@ namespace ZicMoove.Droid.Services.GCMHandlers
             var client = JsonConvert.DeserializeObject<ClientProviderInfo>(clientJson);
             var estimate = new Estimate
             {
-                Id = eid
+                Id = eid,
+                CommandType = data.GetString("CommandType")
             };
             var dateString = data.GetString("ProviderValidationDate");
             DateTime evDate;

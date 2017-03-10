@@ -48,8 +48,8 @@ namespace ZicMoove.ViewModels.UserProfile
             }
             set
             {
-                MainSettings.AllowGPSUsage = value;
                 SetProperty<bool>(ref allowUseMyPosition, value);
+                MainSettings.AllowGPSUsage = value;
             }
         }
 
@@ -62,8 +62,8 @@ namespace ZicMoove.ViewModels.UserProfile
             }
             set
             {
-                MainSettings.AllowProBookingOnly = value;
                 SetProperty<bool>(ref allowUseMyPosition, value);
+                MainSettings.AllowProBookingOnly = value;
             }
         }
         bool receivePushNotifications = MainSettings.PushNotifications;
@@ -75,8 +75,8 @@ namespace ZicMoove.ViewModels.UserProfile
             }
             set
             {
-                MainSettings.PushNotifications = value;
                 SetProperty<bool>(ref receivePushNotifications, value);
+                MainSettings.PushNotifications = value;
             }
         }
         private long queryCount;

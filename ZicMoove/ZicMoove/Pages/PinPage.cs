@@ -79,7 +79,7 @@ namespace ZicMoove.Pages
 			};
             OnInitMap();
             /*
-			// A "relocate" button : useless, since it yet exists
+			// A "relocate" button : 
 
 			var reLocate = new Button { Text = "Re-centrer" };
 			reLocate.Clicked += async delegate {

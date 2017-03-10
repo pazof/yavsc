@@ -185,8 +185,6 @@
     <Compile Include="Interfaces\IViewFactory.cs" />
     <Compile Include="Model\Workflow\ClientProviderInfo.cs" />
     <Compile Include="Interfaces\IBookQueryData.cs" />
-    <Compile Include="Interfaces\IBillingLine.cs" />
-    <Compile Include="Interfaces\IEstimate.cs" />
     <Compile Include="Pages\BlogPages\BlogPage.cs" />
     <Compile Include="Pages\EstimatePages\BookQueriesPage.xaml.cs">
       <DependentUpon>BookQueriesPage.xaml</DependentUpon>
