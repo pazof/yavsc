@@ -24,7 +24,7 @@
 
 
 <div class="container">
-    <input type="hidden" id="displayname" />
+    <input type="hidden" id="displayname"  />
     <div class="panel">
     <em>Salons</em>
     <ul>
@@ -38,13 +38,13 @@
 </ul>
 <div id="targets">
     <div id="sendmessagebox">
-        <input type="text" id="message" />
-        <input type="button" id="sendmessage" value="@SR["Send"]" />
+        <input type="text" id="message"  class="form-control"/>
+        <input type="button" id="sendmessage" value="@SR["Send"]" class="btn btn-default"/>
     </div>
     @if (ViewBag.IsAuthenticated) {
     <div id="sendpvbox">
-        <input type="text" id="pv" />
-        <button type="submit" id="sendpv">@SR["Send a private message"] @SR["to"] <div id="sendpvdest" /> </button>
+        <input type="text" id="pv"  class="form-control" />
+        <button type="submit" id="sendpv" class="btn btn-default">@SR["Send a private message"] @SR["to"] <div id="sendpvdest" /> </button>
     </div>
     }
     <input type="hidden" id="mySignalRConnectionIdHidden" value="" />
