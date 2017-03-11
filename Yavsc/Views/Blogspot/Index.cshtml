@@ -1,41 +1,41 @@
-@model IEnumerable<Blog>
+@model IEnumerable<IGrouping<string,Blog>>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Blogs, l'index";
 }
 
-<h2>Index</h2>
+<h2>@ViewData["Title"]</h2>
 <p class="text-success">@ViewData["StatusMessage"]</p>
 @if (User.IsSignedIn()) {
-
 <label>
 <input type="checkbox" id="cbv" checked/>Invisibles, posts privés</label>
-    <script>
-        $("#cbv").change(function() {
-            if (this.checked) {
-                $("tr.hiddenpost").removeClass("hidden");
-            } else {
-                $("tr.hiddenpost").addClass("hidden");
-            }
-        });
-        </script>
-}
+<script>
+    $("#cbv").change(function() {
+        if (this.checked) {
+            $("tr.hiddenpost").removeClass("hidden");
+        } else {
+            $("tr.hiddenpost").addClass("hidden");
+        }
+    });
+    </script>
 <p>
     <a asp-action="Create">@SR["Create a new article"]</a>
 </p>
-
+}
 <table class="table">
     <tr>
         <th colspan="3">
-            @SR[Html.DisplayNameFor(model => model.Title)]
+            @SR["Title"]
         </th>
     </tr>
     
-@foreach (var item in Model) {
+@foreach (var group in Model) {
+    var title = group.Key;
+@foreach (var item in group) {
     var trclass = (item.Visible)?"visiblepost":"hiddenpost";
-
     <tr class="@trclass">
         <td><a asp-action="Details" asp-route-id="@item.Id" class="bloglink">
-       <img src="@item.Photo" class="smalltofhol">
+       <img src="@item.Photo" class="smalltofhol"></a>
+           <a asp-action="Title" asp-route-id="@item.Title">
            <markdown>@item.Title</markdown></a>
         </td>
         <td>
@@ -64,6 +64,7 @@
             </ul>
         </td>
     </tr>
+}
 }
 </table>
 
