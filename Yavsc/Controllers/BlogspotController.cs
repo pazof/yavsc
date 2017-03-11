@@ -64,7 +64,7 @@ namespace Yavsc.Controllers
 
             return View(posts
             .OrderByDescending(p => p.DateCreated)
-            .Skip(skip).Take(maxLen));
+            .Skip(skip).Take(maxLen).GroupBy(p=>p.Title));
         }
 
         [Route("/Title/{id?}")]
@@ -72,7 +72,8 @@ namespace Yavsc.Controllers
         public IActionResult Title(string id)
         {
             var uid = User.GetUserId();
-            return View("Index", _context.Blogspot.Include(
+            ViewData["Title"] = id;
+            return View("Title", _context.Blogspot.Include(
                 b => b.Author
             ).Where(x => x.Title == id && (x.Visible || x.AuthorId == uid )).ToList());
         }
@@ -81,17 +82,19 @@ namespace Yavsc.Controllers
         [AllowAnonymous]
         public IActionResult UserPosts(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            return View("Index",_context.Blogspot.Include(
-               b => b.Author
-            ).Where(p => p.Visible));
-            if (User.IsSignedIn())
-                return View("Index", _context.Blogspot.Include(
+
+            if (string.IsNullOrEmpty(id)) return Index(null);
+            var uid = User.GetUserId();
+            long[] usercircles = _context.Circle.Include(c=>c.Members).Where(c=>c.Members.Any(m=>m.MemberId == uid))
+            .Select(c=>c.Id).ToArray();
+            var result = (User.IsSignedIn())?
+                 _context.Blogspot.Include(
                  b => b.Author
-                 ).Where(x => x.Author.UserName == id).ToList());
-            return View("Index", _context.Blogspot.Include(
+                 ).Include(p=>p.ACL).Where(x => x.Author.UserName == id && (x.Visible && (x.ACL.Count==0 || x.ACL.Any(a=> usercircles.Contains(a.CircleId))))):
+             _context.Blogspot.Include(
                 b => b.Author
-                ).Where(x => x.Author.UserName == id && x.Visible).ToList());
+                ).Where(x => x.Author.UserName == id && x.Visible);
+            return View("Index", result.OrderByDescending(p => p.DateCreated).ToList().GroupBy(p=>p.Title));
         }
         // GET: Blog/Details/5
         [AllowAnonymous]
@@ -118,9 +121,10 @@ namespace Yavsc.Controllers
 
         // GET: Blog/Create
         [Authorize()]
-        public IActionResult Create()
+        public IActionResult Create(string title)
         {
-            return View();
+            var result = new Blog{Title=title};
+            return View(result);
         }
 
         // POST: Blog/Create
@@ -130,6 +134,7 @@ namespace Yavsc.Controllers
             blog.Rate = 0;
             blog.AuthorId = User.GetUserId();
             ModelState.ClearValidationState("AuthorId");
+            blog.Id=0;
             if (ModelState.IsValid)
             {
                 _context.Blogspot.Add(blog);
