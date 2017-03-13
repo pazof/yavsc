@@ -1,27 +1,6 @@
 @{ ViewBag.Title = "Chat"; }
 <h2>Chat </h2>
 <label><input type="checkbox" id="mute" />Muet</label>
-<style>
-.discussion {
-  color: white;
-  font-family: monospace;
-}
-.notif {
-  color: #aaf;
-  font-family: monospace;
-}
-.pv {
-  color: yellow;
-  font-family: monospace;
-  font-style: bold;
-}
-
-#targets { 
-    display:inline-block;
-}
-</style>
-
-
 
 <div class="container">
     <input type="hidden" id="displayname"  />
@@ -36,15 +15,26 @@
     </div>
 <ul id="discussion">
 </ul>
-<div id="targets">
+<div id="targets" >
     <div id="sendmessagebox">
-        <input type="text" id="message"  class="form-control"/>
+        <div class="col-md-10">
+            <div class="row">
+                <div class='col-sm-9'> <input type="text" id="message"  class="form-control"/></div>
+                <div class='col-sm-3'>
         <input type="button" id="sendmessage" value="@SR["Send"]" class="btn btn-default"/>
+        </div></div></div>
     </div>
     @if (ViewBag.IsAuthenticated) {
     <div id="sendpvbox">
-        <input type="text" id="pv"  class="form-control" />
-        <button type="submit" id="sendpv" class="btn btn-default">@SR["Send a private message"] @SR["to"] <div id="sendpvdest" /> </button>
+        <div class="col-md-10">
+            <div class="row">
+                <div class='col-sm-9'>
+                    <input type="text" id="pv"  class="form-control" />
+                    </div>
+                <div class='col-sm-3'>
+             <button type="submit" id="sendpv" class="btn btn-default">@SR["Send a private message"] @SR["to"]
+                  <div id="sendpvdest" /> </button>
+                 </div></div></div>
     </div>
     }
     <input type="hidden" id="mySignalRConnectionIdHidden" value="" />
@@ -110,7 +100,7 @@
             chat.client.addMessage = function (name, message) {
                 // Add the message to the page.
                 $('#discussion').append('<li class="discussion"><strong>' + htmlEncode(name)
-                    + '</strong>: ' + htmlEncode(message) + '</li>');
+                    + '</strong>: ' + htmlEncode(message) + '</li>')
             };
             chat.client.addPV = function (name, message) {
                 if (!$("#mute").prop('checked'))
@@ -141,14 +131,14 @@
                 if (connected.length > 0) {
                     var ids = connected.data("cxids");
                     ids.push(cxid);
-                    connected.data("cxids", ids);
+                    connected.data("cxids", ids)
                 } else {
                     var li = $('<li class="user"><img src="/Avatars/' + username + '.xs.png"> ' + username + '</li>');
                     li.data("name", username);
                     li.data("cxids", [cxid]);
                     li.appendTo('#userlist');
                     li.css('cursor', 'pointer');
-                    li.click(function () { setPrivate(this); });
+                    li.click(function () { setPrivate(this); })
                 }
             };
             chat.client.notify = function (tag, message, data) {
@@ -158,16 +148,16 @@
                     if (tag === 'connected') {
                         onUserConnected(message, data);
                         $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
-                            + '</i> ' + htmlEncode(data) + '</li>');
+                            + '</i> ' + htmlEncode(data) + '</li>')
                     }
                     else if (tag === 'disconnected') {
                         onUserDisconnected(message, data);
                         $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
-                            + '</i> ' + htmlEncode(data) + '</li>');
+                            + '</i> ' + htmlEncode(data) + '</li>')
                     }
                     else {
                         $('#discussion').append('<li class="notif"><i>' + htmlEncode(tag)
-                            + '</i> ' + htmlEncode(message) + ' : ' + htmlEncode(data) + '</li>');
+                            + '</i> ' + htmlEncode(message) + ' : ' + htmlEncode(data) + '</li>')
                     }
                 }
             };
@@ -195,7 +185,8 @@
             $.connection.hub.start().done(function () {
                 $('#sendmessage').click(function () {
                     // Call the Send method on the hub.
-                    sendMessage().focus();
+                    sendMessage();
+                    $('#message').focus();
                 });
                 $("#message").keydown(function (event) {
                     if (event.which == 13) {
@@ -214,7 +205,7 @@
                 });
 
                 getUsers();
-            });
+            }).fail(function (e) {console.log(e) });
 
             $("#btnDebug").click(getUsers);
             $.connection.hub.disconnected(function () {

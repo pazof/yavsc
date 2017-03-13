@@ -91,7 +91,7 @@ namespace Yavsc
             {
                 var supportedCultures = new[]
                 {
-                    new CultureInfo("fr")
+                    new CultureInfo("en")
                 };
                 var supportedUICultures = new[]
                 {
@@ -126,7 +126,7 @@ namespace Yavsc
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
-
+            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<RequestLocalizationOptions>), typeof(OptionsManager<RequestLocalizationOptions>)));
             // DataProtection
             ConfigureProtectionServices(services);
 
@@ -223,6 +223,7 @@ namespace Yavsc
             {
                 options.ResourcesPath = "Resources";
             });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -240,7 +241,7 @@ namespace Yavsc
             Startup.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
             Startup.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
             Startup.Temp = siteSettings.Value.TempDir;
-
+            
             // TODO implement an installation & upgrade procedure
             // Create required directories
             foreach (string dir in new string[] { UserFilesDirName, UserBillsDirName, SiteSetup.TempDir })

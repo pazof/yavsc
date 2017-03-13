@@ -49,8 +49,8 @@ gulp.task("min:css", function () {
 
 gulp.task("min", ["min:js", "min:css"]);
 
-gulp.task('watch:web', shell.task(['ASPNET_ENV=Development dnx-watch web --configuration=Debug']));
-gulp.task('watch:lua', shell.task(['ASPNET_ENV=Lua dnx-watch luatest --configuration=Debug']));
+gulp.task('watch', shell.task(['ASPNET_ENV=Development dnx-watch web --configuration=Debug']));
+gulp.task('watchlua', shell.task(['ASPNET_ENV=Lua dnx-watch luatest --configuration=Debug']));
 
 gulp.task('build', shell.task(['dnu build --configuration=Debug']));
 gulp.task('publish', shell.task(['dnu publish']));
@@ -59,12 +59,12 @@ gulp.task("amincss", function () {
     gulp.src([paths.css, "!" + paths.minCss, '!site.css'])
         .pipe(cssmin())
         .pipe(rename({suffix: '.min'}))
-        .pipe(gulp.dest('wwwroot/css'));
+        .pipe(gulp.dest('wwwroot/csslib'));
 });
 gulp.task("aminjs", function () {
   return gulp.src([paths.js, "!" + paths.minJs, '!site.js'])
     .pipe(uglify())
         .pipe(rename({suffix: '.min'}))
-        .pipe(gulp.dest('wwwroot/js'));
+        .pipe(gulp.dest('wwwroot/jslib'));
 });
 gulp.task("default",['amincss','aminjs']);
