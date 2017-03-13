@@ -7,13 +7,17 @@
         <title>@ViewData["Title"] - @SiteSettings.Value.Title</title>
 
         <environment names="Development">
-            <link rel="stylesheet" href="~/css/bootstrap.css" />
-            <link rel="stylesheet" href="~/css/site.css" />
-            <link rel="stylesheet" href="~/css/jquery-ui.css" />
+            <link rel="stylesheet" href="~/css/main/bootstrap.css" />
+            <link rel="stylesheet" href="~/css/main/site.css" />
+            <link rel="stylesheet" href="~/css/main/jquery-ui.css" />
+            <link rel="alternate stylesheet" title="Dark" href="~/css/dark/site.css" asp-append-version="true" />
+            <link rel="alternate stylesheet" title="Clear" href="~/css/clear/site.css" asp-append-version="true" />
         </environment>
+
         <environment names="Staging,Production,yavsc,yavscpre,zicmoove,lua">
-            <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+            <link rel="stylesheet" href="~/csslib/site.min.css" asp-append-version="true" />
         </environment>
+        
         <environment names="Development">
             <script src="~/js/jquery.js"></script>
             <script src="~/js/jquery-ui.js"></script>
@@ -32,6 +36,10 @@
             <script src="~/js/jquery-ui.js"></script>
             <script src="~/js/site.js"></script>
         </environment>
+
+
+
+
             <script src="~/js/jquery.signalR-2.2.1.js"></script>
             <style>
 nav {

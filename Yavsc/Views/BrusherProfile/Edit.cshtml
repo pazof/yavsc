@@ -1,15 +1,15 @@
 @model Yavsc.Models.Haircut.BrusherProfile
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edition du profile coiffeu(se|r)";
 }
 
-<h2>Edit</h2>
+<h1>@ViewData["Title"]</h1>
 
 <form asp-action="Edit">
     <div class="form-horizontal">
-        <h4>BrusherProfile</h4>
         <hr />
+@Html.ValidationSummary()
         <fieldset><legend>Disponibilité</legend>
         <div class="form-group">
             <label asp-for="StartOfTheDay" class="col-md-2 control-label"></label>
@@ -35,8 +35,10 @@
         </fieldset>
 
         <fieldset><legend>Grille tarifaire</legend>
+        <h2>Divers</h2>
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="UserId" />
+        
         <div class="form-group">
             <label asp-for="CarePrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -45,73 +47,22 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="HalfBalayagePrice" class="col-md-2 control-label"></label>
+            <label asp-for="ShampooPrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="HalfBalayagePrice" class="form-control" />
-                <span asp-validation-for="HalfBalayagePrice" class="text-danger" />
+                <input asp-for="ShampooPrice" class="form-control" />
+                <span asp-validation-for="ShampooPrice" class="text-danger" />
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="HalfBrushingPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="HalfBrushingPrice" class="form-control" />
-                <span asp-validation-for="HalfBrushingPrice" class="text-danger" />
-            </div>
-        </div>
+        <h2>Techniques</h2>
+        <h3>Couleurs</h3>
+
+        <h4>Simple</h4>
+        
         <div class="form-group">
             <label asp-for="HalfColorPrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="HalfColorPrice" class="form-control" />
                 <span asp-validation-for="HalfColorPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="HalfDefrisPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="HalfDefrisPrice" class="form-control" />
-                <span asp-validation-for="HalfDefrisPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="HalfMechPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="HalfMechPrice" class="form-control" />
-                <span asp-validation-for="HalfMechPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="HalfMultiColorPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="HalfMultiColorPrice" class="form-control" />
-                <span asp-validation-for="HalfMultiColorPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="HalfPermanentPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="HalfPermanentPrice" class="form-control" />
-                <span asp-validation-for="HalfPermanentPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="KidCutPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="KidCutPrice" class="form-control" />
-                <span asp-validation-for="KidCutPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="LongBalayagePrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="LongBalayagePrice" class="form-control" />
-                <span asp-validation-for="LongBalayagePrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="LongBrushingPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="LongBrushingPrice" class="form-control" />
-                <span asp-validation-for="LongBrushingPrice" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
@@ -122,80 +73,27 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="LongDefrisPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="LongDefrisPrice" class="form-control" />
-                <span asp-validation-for="LongDefrisPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="LongMechPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="LongMechPrice" class="form-control" />
-                <span asp-validation-for="LongMechPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="LongMultiColorPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="LongMultiColorPrice" class="form-control" />
-                <span asp-validation-for="LongMultiColorPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="LongPermanentPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="LongPermanentPrice" class="form-control" />
-                <span asp-validation-for="LongPermanentPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="ManCutPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ManCutPrice" class="form-control" />
-                <span asp-validation-for="ManCutPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="ShampooPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ShampooPrice" class="form-control" />
-                <span asp-validation-for="ShampooPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="ShortBalayagePrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ShortBalayagePrice" class="form-control" />
-                <span asp-validation-for="ShortBalayagePrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="ShortBrushingPrice" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ShortBrushingPrice" class="form-control" />
-                <span asp-validation-for="ShortBrushingPrice" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
             <label asp-for="ShortColorPrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="ShortColorPrice" class="form-control" />
                 <span asp-validation-for="ShortColorPrice" class="text-danger" />
             </div>
         </div>
+
+        <h4>Multi-couleur</h4>
         <div class="form-group">
-            <label asp-for="ShortDefrisPrice" class="col-md-2 control-label"></label>
+            <label asp-for="HalfMultiColorPrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="ShortDefrisPrice" class="form-control" />
-                <span asp-validation-for="ShortDefrisPrice" class="text-danger" />
+                <input asp-for="HalfMultiColorPrice" class="form-control" />
+                <span asp-validation-for="HalfMultiColorPrice" class="text-danger" />
             </div>
         </div>
+
         <div class="form-group">
-            <label asp-for="ShortMechPrice" class="col-md-2 control-label"></label>
+            <label asp-for="LongMultiColorPrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="ShortMechPrice" class="form-control" />
-                <span asp-validation-for="ShortMechPrice" class="text-danger" />
+                <input asp-for="LongMultiColorPrice" class="form-control" />
+                <span asp-validation-for="LongMultiColorPrice" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
@@ -205,34 +103,55 @@
                 <span asp-validation-for="ShortMultiColorPrice" class="text-danger" />
             </div>
         </div>
+
+        <h3>Balayage</h3>
+
         <div class="form-group">
-            <label asp-for="ShortPermanentPrice" class="col-md-2 control-label"></label>
+            <label asp-for="HalfBalayagePrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="ShortPermanentPrice" class="form-control" />
-                <span asp-validation-for="ShortPermanentPrice" class="text-danger" />
+                <input asp-for="HalfBalayagePrice" class="form-control" />
+                <span asp-validation-for="HalfBalayagePrice" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="WomenHalfCutPrice" class="col-md-2 control-label"></label>
+            <label asp-for="LongBalayagePrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="WomenHalfCutPrice" class="form-control" />
-                <span asp-validation-for="WomenHalfCutPrice" class="text-danger" />
+                <input asp-for="LongBalayagePrice" class="form-control" />
+                <span asp-validation-for="LongBalayagePrice" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="WomenLongCutPrice" class="col-md-2 control-label"></label>
+            <label asp-for="ShortBalayagePrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="WomenLongCutPrice" class="form-control" />
-                <span asp-validation-for="WomenLongCutPrice" class="text-danger" />
+                <input asp-for="ShortBalayagePrice" class="form-control" />
+                <span asp-validation-for="ShortBalayagePrice" class="text-danger" />
+            </div>
+        </div>
+<h2>Coiffage</h2>
+        <h3>Brushing</h3>
+        <h4>Pour la femme</h4>
+        <div class="form-group">
+            <label asp-for="HalfBrushingPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="HalfBrushingPrice" class="form-control" />
+                <span asp-validation-for="HalfBrushingPrice" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="WomenShortCutPrice" class="col-md-2 control-label"></label>
+            <label asp-for="LongBrushingPrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="WomenShortCutPrice" class="form-control" />
-                <span asp-validation-for="WomenShortCutPrice" class="text-danger" />
+                <input asp-for="LongBrushingPrice" class="form-control" />
+                <span asp-validation-for="LongBrushingPrice" class="text-danger" />
             </div>
         </div>
+        <div class="form-group">
+            <label asp-for="ShortBrushingPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ShortBrushingPrice" class="form-control" />
+                <span asp-validation-for="ShortBrushingPrice" class="text-danger" />
+            </div>
+        </div>
+        <h4>Pour l'homme</h4>
         <div class="form-group">
             <label asp-for="ManBrushPrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -240,6 +159,9 @@
                 <span asp-validation-for="ManBrushPrice" class="text-danger" />
             </div>
         </div>
+        
+        <h3>Mise en plis</h3>
+
         <div class="form-group">
             <label asp-for="LongFoldingPrice" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -261,6 +183,118 @@
                 <span asp-validation-for="ShortFoldingPrice" class="text-danger" />
             </div>
         </div>
+
+        <h3>Défrisage</h3>
+
+        <div class="form-group">
+            <label asp-for="HalfDefrisPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="HalfDefrisPrice" class="form-control" />
+                <span asp-validation-for="HalfDefrisPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="LongDefrisPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="LongDefrisPrice" class="form-control" />
+                <span asp-validation-for="LongDefrisPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ShortDefrisPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ShortDefrisPrice" class="form-control" />
+                <span asp-validation-for="ShortDefrisPrice" class="text-danger" />
+            </div>
+        </div>
+
+        
+        <h3>Mèches</h3>
+        <div class="form-group">
+            <label asp-for="HalfMechPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="HalfMechPrice" class="form-control" />
+                <span asp-validation-for="HalfMechPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="LongMechPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="LongMechPrice" class="form-control" />
+                <span asp-validation-for="LongMechPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ShortMechPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ShortMechPrice" class="form-control" />
+                <span asp-validation-for="ShortMechPrice" class="text-danger" />
+            </div>
+        </div>
+
+        
+        <h3>Permanentes</h3>
+        <div class="form-group">
+            <label asp-for="HalfPermanentPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="HalfPermanentPrice" class="form-control" />
+                <span asp-validation-for="HalfPermanentPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="LongPermanentPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="LongPermanentPrice" class="form-control" />
+                <span asp-validation-for="LongPermanentPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ShortPermanentPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ShortPermanentPrice" class="form-control" />
+                <span asp-validation-for="ShortPermanentPrice" class="text-danger" />
+            </div>
+        </div>
+
+        <h2>Coupes</h2>
+        <h3>Femme</h3>
+        <div class="form-group">
+            <label asp-for="WomenHalfCutPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="WomenHalfCutPrice" class="form-control" />
+                <span asp-validation-for="WomenHalfCutPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="WomenLongCutPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="WomenLongCutPrice" class="form-control" />
+                <span asp-validation-for="WomenLongCutPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="WomenShortCutPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="WomenShortCutPrice" class="form-control" />
+                <span asp-validation-for="WomenShortCutPrice" class="text-danger" />
+            </div>
+        </div>
+        <h3>Homme et enfant</h3>
+        <div class="form-group">
+            <label asp-for="KidCutPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="KidCutPrice" class="form-control" />
+                <span asp-validation-for="KidCutPrice" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ManCutPrice" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ManCutPrice" class="form-control" />
+                <span asp-validation-for="ManCutPrice" class="text-danger" />
+            </div>
+        </div>
+        <h2>Le forfait</h2>
         <div class="form-group">
             <label asp-for="FlatFeeDiscount" class="col-md-2 control-label"></label>
             <div class="col-md-10">

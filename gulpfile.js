@@ -6,8 +6,8 @@ var gulp = require("gulp"),
   concat = require("gulp-concat"),
   cssmin = require("gulp-cssmin"),
   uglify = require("gulp-uglify"),
-  shell = require("gulp-shell");
-
+  shell = require("gulp-shell"),
+ rename = require('gulp-rename');
 var webroot = "./wwwroot/";
 
 var paths = {
@@ -40,14 +40,20 @@ gulp.task("min:js", function () {
 });
 
 gulp.task("min:css", function () {
-  return gulp.src([paths.css, "!" + paths.minCss])
+  return gulp.src([paths.css, "!" + paths.minCss], {
+    base: "."
+  })
     .pipe(concat(paths.concatCssDest))
     .pipe(cssmin())
     .pipe(gulp.dest("."));
 });
 
-gulp.task("min", ["min:js", "min:css"]);
-
+gulp.task("mindefault", function () {
+    gulp.src('src/**/*.css')
+        .pipe(cssmin())
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest('../dist'));
+});
 
 gulp.task('build', shell.task(['dnu build --configuration=Debug']))
 gulp.task('publish', shell.task(['dnu publish -o ../build']))
