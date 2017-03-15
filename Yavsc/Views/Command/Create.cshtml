@@ -57,8 +57,8 @@
             var pos = loc.geometry.location;
             var lat = new Number(pos.lat);
             var lng = new Number(pos.lng);
-            $('#' + config.latId).val(lat.toLocaleString('fr'));
-            $('#' + config.longId).val(lng.toLocaleString('fr'));
+            $('#' + config.latId).val(lat.toLocaleString('en'));
+            $('#' + config.longId).val(lng.toLocaleString('en'));
             gmap.setCenter(pos);
             if (marker) {
                 marker.setMap(null);

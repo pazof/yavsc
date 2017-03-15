@@ -144,11 +144,11 @@
   "scripts": {
     "prebuild": "echo before building",
     "postbuild": "echo after building",
-    "prepack": "gulp min:css",
+    "prepack": "gulp min",
     "postpack": "echo after packing",
     "prerestore": "echo before restoring packages",
     "postrestore": "echo after restoring packages",
-    "prepublish": "gulp min:css",
+    "prepublish": "gulp min",
     "postpublish": "echo \"  . ./contrib/postPublish.sh # to push in prod.\""
   },
   "embed": "Views/**/*.cshtml",

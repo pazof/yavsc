@@ -7,41 +7,40 @@
         <title>@ViewData["Title"] - @SiteSettings.Value.Title</title>
 
         <environment names="Development">
-            <link rel="stylesheet" href="~/css/main/bootstrap.css" />
-            <link rel="stylesheet" href="~/css/main/site.css" />
-            <link rel="stylesheet" href="~/css/main/jquery-ui.css" />
+            <link rel="stylesheet" href="~/css/main/bootstrap.css" asp-append-version="true"/>
+            <link rel="stylesheet" href="~/css/main/site.css" asp-append-version="true"/>
+            <link rel="stylesheet" href="~/css/main/jquery-ui.css" asp-append-version="true"/>
             <link rel="alternate stylesheet" title="Dark" href="~/css/dark/site.css" asp-append-version="true" />
             <link rel="alternate stylesheet" title="Clear" href="~/css/clear/site.css" asp-append-version="true" />
+            <script src="~/js/jquery.js" asp-append-version="true"></script>
+            <script src="~/js/jquery-ui.js" asp-append-version="true"></script>
+            <script src="~/js/bootstrap.js" asp-append-version="true"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+            <script src="~/js/jquery.signalR-2.2.1.js" asp-append-version="true"></script>
+            <style>
         </environment>
 
-        <environment names="Staging,Production,yavsc,yavscpre,zicmoove,lua">
-            <link rel="stylesheet" href="~/csslib/site.min.css" asp-append-version="true" />
-        </environment>
-        
-        <environment names="Development">
-            <script src="~/js/jquery.js"></script>
-            <script src="~/js/jquery-ui.js"></script>
-            <script src="~/js/bootstrap.js"></script>
-            <script src="~/js/site.js"></script>
-        </environment>
-        <environment names="Staging,Production,yavsc,yavscpre,zicmoove,lua">
+        <environment names="yavsc,yavscpre,zicmoove,lua">
+            <link rel="stylesheet" href="~/css/main/bootstrap.min.css" asp-append-version="true"/>
+            <link rel="stylesheet" href="~/css/main/site.min.css" asp-append-version="true"/>
+            <link rel="stylesheet" href="~/css/main/jquery-ui.min.css" asp-append-version="true"/>
+            <link rel="alternate stylesheet" title="Dark" href="~/css/dark/site.min.css" asp-append-version="true" />
+            <link rel="alternate stylesheet" title="Clear" href="~/css/clear/site.min.css" asp-append-version="true" />
+       
             <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
-                    asp-fallback-src="~/bower_components/jquery/dist/jquery.min.js"
+                    asp-fallback-src="~/jquery.min.js"
                     asp-fallback-test="window.jQuery" >
             </script>
             <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js"
-                    asp-fallback-src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"
+                    asp-fallback-src="~/js/bootstrap.min.js"
                     asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
             </script>
-            <script src="~/js/jquery-ui.js"></script>
-            <script src="~/js/site.js"></script>
+            <script src="~/js/jquery-ui.min.js" asp-append-version="true"></script>
+            <script src="~/js/site.min.js" asp-append-version="true"></script>
+            <script src="~/js/jquery.signalR-2.2.1.min.js" asp-append-version="true"></script>
+            <style>
         </environment>
 
-
-
-
-            <script src="~/js/jquery.signalR-2.2.1.js"></script>
-            <style>
 nav {
     background: url(@Startup.SiteSetup.Banner) 0% 50%;
 }
