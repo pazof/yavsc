@@ -52,6 +52,7 @@
             var audio = new Audio('/sounds/bell.mp3');
 
             var setPrivate = function (li) {
+                console.log("here I am");
                 $("#sendmessagebox").addClass("hidden");
                 $("#sendpvbox").removeClass("hidden");
                 pvuis = { CXs: $(li).data("cxids"), UserName: $(li).data("name") };
@@ -136,9 +137,9 @@
                     var li = $('<li class="user"><img src="/Avatars/' + username + '.xs.png"> ' + username + '</li>');
                     li.data("name", username);
                     li.data("cxids", [cxid]);
-                    li.appendTo('#userlist');
                     li.css('cursor', 'pointer');
-                    li.click(function () { setPrivate(this); })
+                    li.click(function () { console.log('no click?'); setPrivate(this); });
+                    li.appendTo('#userlist');
                 }
             };
             chat.client.notify = function (tag, message, data) {
