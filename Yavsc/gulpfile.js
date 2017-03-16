@@ -36,8 +36,7 @@ gulp.task("clean", ["clean:js", "clean:css"]);
 gulp.task('watch', shell.task(['ASPNET_ENV=Development dnx-watch web --configuration=Debug']));
 gulp.task('watchlua', shell.task(['ASPNET_ENV=Lua dnx-watch luatest --configuration=Debug']));
 
-gulp.task('build', shell.task(['dnu build --configuration=Debug']));
-gulp.task('publish', shell.task(['dnu publish']));
+
 
 gulp.task("min:css", function () {
     gulp.src([paths.css, "!" + paths.minCss, '!site.css'])
@@ -45,6 +44,7 @@ gulp.task("min:css", function () {
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('wwwroot/css'));
 });
+
 gulp.task("min:js", function () {
   return gulp.src([paths.js, "!" + paths.minJs, '!site.js'])
     .pipe(uglify())
@@ -53,6 +53,12 @@ gulp.task("min:js", function () {
 });
 
 gulp.task("min", ["min:js", "min:css"]);
+
+gulp.task('build', shell.task(['dnu build']));
+gulp.task('buildrelease', shell.task(['dnu build --configuration=Release']));
+gulp.task('publish', shell.task(['dnu publish']));
+gulp.task('postpublish', shell.task(['contrib/postPublish.sh']));
+gulp.task('fullpublish', [ 'buildrelease', 'publish', 'postpublish' ] );
 
 gulp.task("default", ["watch"]);
 
