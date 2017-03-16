@@ -97,6 +97,19 @@ select,
 .jumbotron {
     padding: .5em;
 }
+
+.carousel .item .btn {
+      -webkit-transition: -webkit-transform 2s;
+    transition: transform 2s;
+    transform: scale3d(0,0,0);
+    -webkit-transform: scale3d(0,0,0);
+}
+
+.carousel .active .btn {
+    -webkit-transform: initial;
+    transform: initial;
+}
+
 /* Set widths on image and video, since otherwise they use their native resolution */
 
 /* .navbar-reac */
@@ -128,13 +141,15 @@ select,
   padding-bottom: 20px;
   text-align: center;
   text-shadow: 0 4px 8px rgba(0, 0, 0, .6);
-  height: 16em;
+  min-height: 16em;
   overflow: auto;
 }
+
+
 .carousel-inner .item {
     /* background-color: #301010; */
     padding-left:15%; /* la taille du carousel-control */
-    margin-right:15%; /* la taille du carousel-control */
+    padding-right:15%; /* la taille du carousel-control */
 }
 .carousel-indicators {
     position: absolute;
