@@ -100,7 +100,16 @@
                 );
             };
 
-    $(document).ready(function(){
+    </script>
+
+@if (!ViewBag.IsAuthenticated) { // Get the user name and store it to prepend to messages.
+<script>
+                $('#displayname').val(prompt('Enter your name:', ''));
+</script>
+} 
+
+<script>
+
     // Reference the auto-generated proxy for the hub.
             var chat = $.connection.chatHub;
             // Create a function that the hub can call back to display messages.
@@ -222,12 +231,6 @@
                     }, 3000); // Re-start connection after 3 seconds
                 });
             });
-        });
-
     </script>
 
-@if (!ViewBag.IsAuthenticated) { // Get the user name and store it to prepend to messages.
-<script>
-                $('#displayname').val(prompt('Enter your name:', ''));
-</script>
-} }
+}
