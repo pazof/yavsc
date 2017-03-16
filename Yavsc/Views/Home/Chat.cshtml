@@ -46,12 +46,17 @@
 <script src="~/api/signalr/hubs"></script>
 <!--SignalR script to update the chat page and send messages.-->
 <script>
+     var pvuis;
+     
+     var audio = new Audio('/sounds/bell.mp3');
 
-        $(function () {
-            var pvuis;
-            var audio = new Audio('/sounds/bell.mp3');
+        // This optional function html-encodes messages for display in the page.
+     function htmlEncode(value) {
+            var encodedValue = $('<div />').text(value).html();
+            return encodedValue;
+        }
 
-            var setPrivate = function (li) {
+     var setPrivate = function (li) {
                 console.log("here I am");
                 $("#sendmessagebox").addClass("hidden");
                 $("#sendpvbox").removeClass("hidden");
@@ -95,7 +100,8 @@
                 );
             };
 
-            // Reference the auto-generated proxy for the hub.
+    $(document).ready(function(){
+    // Reference the auto-generated proxy for the hub.
             var chat = $.connection.chatHub;
             // Create a function that the hub can call back to display messages.
             chat.client.addMessage = function (name, message) {
@@ -216,20 +222,12 @@
                     }, 3000); // Re-start connection after 3 seconds
                 });
             });
-            
-            $(window).unload(function () { chat.server.abort(); });
         });
-        // This optional function html-encodes messages for display in the page.
-
-        function htmlEncode(value) {
-            var encodedValue = $('<div />').text(value).html();
-            return encodedValue;
-        }
 
     </script>
 
 @if (!ViewBag.IsAuthenticated) { // Get the user name and store it to prepend to messages.
 <script>
                 $('#displayname').val(prompt('Enter your name:', ''));
-            </script>
+</script>
 } }
