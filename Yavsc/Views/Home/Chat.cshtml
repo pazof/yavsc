@@ -66,7 +66,7 @@
 
      function addULI(uname, cxids)
      {
-        $('<li class="user"><img src="/Avatars/' + uname + '.xs.png"> ' + uname + '</li>')
+        $('<li class="user"><button><img src="/Avatars/' + uname + '.xs.png"> ' + uname + '</button></li>')
             .data("name", uname)
             .data("cxids", cxids)
             .css('cursor', 'pointer')
@@ -94,13 +94,13 @@
             };
 
      function onCx() {
-                setTimeout(function () {
-         getUsers();
-                },120),
+        setTimeout(function () {
+             getUsers();
+        },120),
          $('#targets').removeClass('disabled')
      };
      function onDisCx () {
-         $('#targets').addClass('disabled')
+         $('#targets').addClass('disabled');
      };
         // This optional function html-encodes messages for display in the page.
      function htmlEncode(value) {
@@ -186,14 +186,13 @@
                 }
             };
 
-
             var sendMessage = function () {
                 chat.server.send($('#displayname').val(), $('#message').val());
                 // Clear text box and reset focus for next comment.
                 $('#message').val('')
             };
-            var sendPV = function () {
 
+            var sendPV = function () {
                 var msg = $('#pv').val();
                 // Call the Send method on the hub.
                 $.each(pvuis.CXs, function () {
@@ -205,11 +204,9 @@
                 $('#pv').val('');
             }
 
-
             // Start the connection.
             $.connection.hub.start().done(function () {
                 onCx();
-
                 $('#sendmessage').click(function () {
                     // Call the Send method on the hub.
                     sendMessage();
@@ -230,7 +227,6 @@
                     sendPV();
                     $("#sendpv").focus()
                 });
-
             });
 
             $.connection.hub.disconnected(function () {
