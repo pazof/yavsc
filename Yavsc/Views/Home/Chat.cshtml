@@ -15,7 +15,7 @@
     </div>
 <ul id="discussion">
 </ul>
-<div id="targets" >
+<div id="targets" class="disabled" >
     <div id="sendmessagebox">
         <div class="col-md-10">
             <div class="row">
@@ -46,10 +46,62 @@
 <script src="~/api/signalr/hubs"></script>
 <!--SignalR script to update the chat page and send messages.-->
 <script>
-     var pvuis;
+     
+
+            
+
+    </script>
+
+@if (!ViewBag.IsAuthenticated) { // Get the user name and store it to prepend to messages.
+<script>
+                $('#displayname').val(prompt('Enter your name:', ''));
+</script>
+} 
+
+<script>
+
+    var pvuis;
      
      var audio = new Audio('/sounds/bell.mp3');
 
+     function addULI(uname, cxids)
+     {
+        $('<li class="user"><img src="/Avatars/' + uname + '.xs.png"> ' + uname + '</li>')
+            .data("name", uname)
+            .data("cxids", cxids)
+            .css('cursor', 'pointer')
+            .click(function () { setPrivate(this); })
+            .appendTo('#userlist')
+     }
+
+     function getUsers() {
+                $('#userlist').empty();
+                $('#to').empty();
+                $.get("/api/chat/users").done(
+                    function (users) {
+                        $.each(users, function () {
+                            var user = this;
+                            var existent = $('#userlist li').filterByData("name", user.UserName);
+                            if (existent.length > 0) existent.remove();
+                            var cxids = [];
+                            $.each(user.Connections, function () {
+                                cxids.push(this.ConnectionId);
+                            });
+                            addULI(user.UserName,cxids)
+                        });
+                    }
+                );
+            };
+
+     function onCx() {
+                setTimeout(function () {
+         getUsers();
+                },120),
+         $('#targets').removeClass('disabled')
+     };
+     function onDisCx () {
+         $('#targets').addClass('disabled')
+     };
         // This optional function html-encodes messages for display in the page.
      function htmlEncode(value) {
             var encodedValue = $('<div />').text(value).html();
@@ -57,7 +109,6 @@
         }
 
      var setPrivate = function (li) {
-                console.log("here I am");
                 $("#sendmessagebox").addClass("hidden");
                 $("#sendpvbox").removeClass("hidden");
                 pvuis = { CXs: $(li).data("cxids"), UserName: $(li).data("name") };
@@ -72,44 +123,6 @@
             $('#pubChan').css('cursor', 'pointer');
             $('#pubChan').click(setPublic);
             setPublic();
-
-            var getUsers = function () {
-                $('#userlist').empty();
-                $('#to').empty();
-                $.get("/api/chat/users").done(
-                    function (users) {
-                        $.each(users, function () {
-                            var user = this;
-                            var existent = $('#userlist li').filterByData("name", user.UserName);
-                            if (existent.length > 0) existent.remove();
-                            var li = $('<li class="user"><img src="/Avatars/' + user.UserName + '.xs.png"> ' + htmlEncode(user.UserName) + '</li>');
-
-                            var cxids = [];
-                            $.each(user.Connections, function () {
-                                cxids.push(this.ConnectionId);
-                            });
-                            $(li).data("name", user.UserName);
-                            $(li).data("cxids", cxids);
-                            $(li).css('cursor', 'pointer');
-                            $(li).click(function () {
-                                setPrivate(this);
-                            });
-                            li.appendTo('#userlist');
-                        });
-                    }
-                );
-            };
-
-    </script>
-
-@if (!ViewBag.IsAuthenticated) { // Get the user name and store it to prepend to messages.
-<script>
-                $('#displayname').val(prompt('Enter your name:', ''));
-</script>
-} 
-
-<script>
-
     // Reference the auto-generated proxy for the hub.
             var chat = $.connection.chatHub;
             // Create a function that the hub can call back to display messages.
@@ -149,12 +162,7 @@
                     ids.push(cxid);
                     connected.data("cxids", ids)
                 } else {
-                    var li = $('<li class="user"><img src="/Avatars/' + username + '.xs.png"> ' + username + '</li>');
-                    li.data("name", username);
-                    li.data("cxids", [cxid]);
-                    li.css('cursor', 'pointer');
-                    li.click(function () { console.log('no click?'); setPrivate(this); });
-                    li.appendTo('#userlist');
+                    addULI(username, [cxid])
                 }
             };
             chat.client.notify = function (tag, message, data) {
@@ -185,13 +193,14 @@
                 $('#message').val('')
             };
             var sendPV = function () {
+
                 var msg = $('#pv').val();
                 // Call the Send method on the hub.
                 $.each(pvuis.CXs, function () {
                     chat.server.sendPV(this, msg);
                 });
                 $('#discussion').append('<li class="pv">' + htmlEncode(pvuis.UserName)
-                    + '<< ' + htmlEncode(msg) + '</li>');
+                    + '<< ' + htmlEncode(msg) + pvuis.CXs.length +'</li>');
                 // Clear text box and reset focus for next comment.
                 $('#pv').val('');
             }
@@ -199,6 +208,8 @@
 
             // Start the connection.
             $.connection.hub.start().done(function () {
+                onCx();
+
                 $('#sendmessage').click(function () {
                     // Call the Send method on the hub.
                     sendMessage();
@@ -220,17 +231,13 @@
                     $("#sendpv").focus()
                 });
 
-                getUsers();
-            }).fail(function (e) {console.log(e) });
-
-            $("#btnDebug").click(getUsers);
-            $.connection.hub.disconnected(function () {
-                setTimeout(function () {
-                    $.connection.hub.start().done(function () {
-                        $("#mySignalRConnectionIdHidden").val($.connection.hub.id);
-                    }, 3000); // Re-start connection after 3 seconds
-                });
             });
+
+            $.connection.hub.disconnected(function () {
+                onDisCx();
+            });
+
+            $(window).unload(function () { chat.server.abort(); delete chat; });
     </script>
 
 }
