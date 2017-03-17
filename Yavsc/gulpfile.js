@@ -58,7 +58,6 @@ gulp.task('build', shell.task(['dnu build']));
 gulp.task('buildrelease', shell.task(['dnu build --configuration=Release']));
 gulp.task('publish', shell.task(['dnu publish']));
 gulp.task('postpublish', shell.task(['contrib/postPublish.sh']));
-gulp.task('fullpublish', [ 'buildrelease', 'publish', 'postpublish' ] );
 
 gulp.task("default", ["watch"]);
 
