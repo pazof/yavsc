@@ -84,6 +84,7 @@ a:hover {
    padding:1em;
    margin:1em;
    color: black;
+   background-color: inherit;
 }
 /* Set widths on the form inputs since otherwise they're 100% wide */
  input,
@@ -109,7 +110,9 @@ select,
     -webkit-transform: initial;
     transform: initial;
 }
-
+.disabled { 
+    background-color: #555;
+}
 /* Set widths on image and video, since otherwise they use their native resolution */
 
 /* .navbar-reac */
