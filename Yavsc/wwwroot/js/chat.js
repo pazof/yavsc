@@ -1,4 +1,5 @@
-var chatscript = function (){ 
+ var chatinit = function() {
+
     var pvuis;
      
      var audio = new Audio('/sounds/bell.mp3');
@@ -85,7 +86,7 @@ var chatscript = function (){
                 );
             }
 
-            var onUserDisconnected = function (cxid, username) {
+            var onUserDisconnected = function (cxid) {
                 $('#userlist li').filter(function () {
                     var nids = $(this).data("cxids").filter(function () {
                         return $(this) !== cxid
@@ -172,5 +173,7 @@ $.connection.hub.disconnected(function () {
     onDisCx();
 });
 
-$(window).unload(function () { chat.server.abort(); delete chat; });
-}()
+$(window).unload(function () { chat.server.abort(); });
+
+};
+chatinit(this);
