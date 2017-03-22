@@ -4,10 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Relationship;
+using YavscLib.HairCut;
 
 namespace Yavsc.Models.Haircut
 {
-    public class HairCutQuery : NominativeServiceCommand
+    public class HairCutQuery : NominativeServiceCommand, IHairCutQuery
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
@@ -18,13 +19,20 @@ namespace Yavsc.Models.Haircut
         [ForeignKey("PrestationId")]
         public virtual HairPrestation  Prestation { get; set; }
 
-        [Required]
+        [Required][ForeignKey("LocationId")]
 
         public Location Location { get; set; }
 
         public DateTime EventDate
         {
             get;
+            set;
+        }
+
+        public long LocationId
+        {
+            get;
+
             set;
         }
     }
