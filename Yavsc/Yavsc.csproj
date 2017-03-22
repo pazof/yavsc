@@ -19,5 +19,13 @@
     <Content Include="Startup\Startup.cs" />
     <Content Include="Controllers\SIRENExceptionsController.cs" />
     <Content Include="Startup\Startup.OAuth.cs" />
+    <Content Include="ApiControllers\HairCutController.cs" />
+    <Content Include="Models\Haircut\HairCutQuery.cs" />
+    <Content Include="Models\ApplicationDbContext.cs" />
+    <Content Include="Models\Workflow\Query.cs" />
+    <Content Include="Models\Billing\NominativeServiceCommand.cs" />
+    <Content Include="Models\Relationship\Location.cs" />
+    <Content Include="Models\Haircut\HairPrestation.cs" />
+    <Content Include="Models\Haircut\HairLength.cs" />
   </ItemGroup>
 </Project>

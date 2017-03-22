@@ -5,10 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Haircut
 {
-    public class HairPrestation 
-    { 
+    public class HairPrestation
+    {
         // Homme ou enfant => Coupe seule
-        // Couleur => Shampoing 
+        // Couleur => Shampoing
         // Forfaits : Coupe + Technique
         // pas de coupe => technique
 
@@ -16,30 +16,30 @@ namespace Yavsc.Models.Haircut
         public long Id { get; set; }
 
         [Display(Name="Longueur de cheveux")]
-        public HairLength Length { get; set; } 
+        public Haircut.HairLength Length { get; set; }
 
         [Display(Name="Pour qui")]
-        public HairCutGenders Gender { get; set; } 
+        public HairCutGenders Gender { get; set; }
 
         [Display(Name="Coupe")]
-        public bool Cut { get; set; } 
+        public bool Cut { get; set; }
 
         [Display(Name="Coiffage")]
 
-        public HairDressings Dressing { get; set; } 
+        public HairDressings Dressing { get; set; }
 
         [Display(Name="Technique")]
-        public HairTechnos Tech { get; set; } 
+        public HairTechnos Tech { get; set; }
 
         [Display(Name="Shampoing")]
-        public bool Shampoo { get; set; } 
+        public bool Shampoo { get; set; }
 
         [Display(Name="Couleurs")]
-        
-        public virtual List<HairTaint> Taints { get; set; } 
+
+        public virtual List<HairTaint> Taints { get; set; }
 
         [Display(Name="Soins")]
-        public  bool Cares { get; set; } 
-        
+        public  bool Cares { get; set; }
+
     }
 }
