@@ -293,7 +293,9 @@
   <data name="Not Approuved"><value>Non approuvé</value></data>
   <data name="NonValidee"><value>Non validée</value></data>
   <data name="NonValide"><value>Non validé</value></data>
+  <data name="off"><value>inactif</value></data>
   <data name="Offline"><value>Hors ligne</value></data>
+  <data name="on"><value>actif</value></data>
   <data name="Online"><value>En ligne</value></data>
   <data name="OnlyAuthorizedMayContact"><value>Seuls les utilisateurs authorisés peuvent contacter un préstataire par courrier.</value></data>
   <data name="Password"><value>Mot de passe</value></data>

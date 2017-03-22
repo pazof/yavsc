@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161123-03" />
+    <PackageReference Include="xunit" Version="2.2.0-beta4-build3444" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta4-build1194" />
+    <Content Include="Models\Workflow\CommandForm.cs" />
+    <Content Include="Models\Workflow\RdvQuery.cs" />
+    <Content Include="Views\Account\Authorize.cshtml" />
+    <Content Include="Views\Account\Lockout.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="project.lock.json" />
+    <Content Include="project.json" />
+    <Content Include="Controllers\HomeController.cs" />
+    <Content Include="Startup\Startup.cs" />
+    <Content Include="Controllers\SIRENExceptionsController.cs" />
+    <Content Include="Startup\Startup.OAuth.cs" />
+  </ItemGroup>
+</Project>

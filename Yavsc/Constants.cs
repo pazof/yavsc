@@ -42,6 +42,7 @@ namespace Yavsc
             new Scope { Id = "frontoffice" , Description ="Your front office interface" }
         };
 
+        public const string SshHeaderKey = "SSH";
        
         private static readonly string[] GoogleScopes = { "openid", "profile", "email" };
         public static readonly string[] GoogleCalendarScopes =

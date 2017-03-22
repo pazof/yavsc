@@ -114,7 +114,13 @@ select,
     -webkit-transform: initial;
     transform: initial;
 }
+.container {
+    -webkit-transition: background-color 2s color 1s;
+    -moz-transition: background-color 2s color 1s;
+    transition: background-color 2s color 1s;
+}
 .disabled { 
+    color: #999;
     background-color: #555;
 }
 /* Set widths on image and video, since otherwise they use their native resolution */

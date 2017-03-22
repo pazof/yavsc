@@ -51,8 +51,7 @@
         @if (ViewData ["Notify"] != null) {
             foreach (Notification n in ViewData ["Notify"] as IEnumerable<Notification>) {
             <div class="alert alert-info alert-dismissable">
-  <h1>@n.title</h1><em></em>
-  @n.body
+  <h1>@n.title</h1>@n.body
   <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action==null)?SR["Fermer"]:SR[n.click_action])</a>
 </div>
             }
