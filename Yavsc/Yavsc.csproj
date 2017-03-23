@@ -29,5 +29,8 @@
     <Content Include="Models\Haircut\HairLength.cs" />
     <Content Include="gulpfile.js" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Models\Haircut\HairCutGenders.cs" />
+    <Content Include="Models\Haircut\HairTechnos.cs" />
+    <Content Include="Models\Haircut\HairTaint.cs" />
   </ItemGroup>
 </Project>
