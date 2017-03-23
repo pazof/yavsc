@@ -1,7 +1,7 @@
-
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Yavsc.Models.Haircut
 {
@@ -16,7 +16,7 @@ namespace Yavsc.Models.Haircut
         public long Id { get; set; }
 
         [Display(Name="Longueur de cheveux")]
-        public Haircut.HairLength Length { get; set; }
+        public HairLength Length { get; set; }
 
         [Display(Name="Pour qui")]
         public HairCutGenders Gender { get; set; }
@@ -34,12 +34,13 @@ namespace Yavsc.Models.Haircut
         [Display(Name="Shampoing")]
         public bool Shampoo { get; set; }
 
-        [Display(Name="Couleurs")]
+        [Display(Name="Couleurs"),JsonIgnore]
 
         public virtual List<HairTaint> Taints { get; set; }
 
         [Display(Name="Soins")]
         public  bool Cares { get; set; }
+
 
     }
 }
