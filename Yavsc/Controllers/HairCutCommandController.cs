@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
 
     public class HairCutCommandController : CommandController
     {
-        public HairCutCommandController(ApplicationDbContext context, 
+        public HairCutCommandController(ApplicationDbContext context,
         IOptions<GoogleAuthSettings> googleSettings,
         IGoogleCloudMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
@@ -35,15 +35,13 @@ namespace Yavsc.Controllers
           ILoggerFactory loggerFactory) : base(context,googleSettings,GCMSender,userManager,
           localizer,emailSender,smtpSettings,siteSettings,loggerFactory)
         {
-           
+
         }
-        
+
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateHairCutQuery(HairCutQuery command)
         {
-            
-            
             var uid = User.GetUserId();
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
@@ -66,10 +64,10 @@ namespace Yavsc.Controllers
             // ModelState.ClearValidationState("Client.Avatar");
             // ModelState.ClearValidationState("ClientId");
             ModelState.MarkFieldSkipped("ClientId");
-            
+
             if (ModelState.IsValid)
                 {
-                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address 
+                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address
                 && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
 
                 if (existingLocation!=null) {
@@ -112,10 +110,9 @@ namespace Yavsc.Controllers
             ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
             return View(command);
-       
+
         }
 
-        [ValidateAntiForgeryToken]
         public ActionResult HairCut(string performerId, string activityCode)
         {
             HairPrestation pPrestation=null;
@@ -124,14 +121,14 @@ namespace Yavsc.Controllers
                 pPrestation = JsonConvert.DeserializeObject<HairPrestation>(prestaJson);
             }
             else pPrestation = new HairPrestation {};
-           
+
             ViewBag.HairTaints = _context.HairTaint.Include(t=>t.Color);
             ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos),_localizer);
             ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength),_localizer);
             ViewBag.Activity = _context.Activities.First(a => a.Code == activityCode);
             ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders),_localizer);
             ViewBag.HairDressings = EnumExtensions.GetSelectList(typeof(HairDressings),_localizer);
-            ViewBag.ColorsClass = ( pPrestation.Tech == HairTechnos.Color 
+            ViewBag.ColorsClass = ( pPrestation.Tech == HairTechnos.Color
             || pPrestation.Tech == HairTechnos.Mech ) ? "":"hidden";
             ViewBag.TechClass = ( pPrestation.Gender == HairCutGenders.Women ) ? "":"hidden";
             ViewData["PerfPrefs"] = _context.BrusherProfile.Single(p=>p.UserId == performerId);
@@ -151,7 +148,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateHairMultiCutQuery(HairMultiCutQuery command)
         {
-            
+
             var uid = User.GetUserId();
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
@@ -174,10 +171,10 @@ namespace Yavsc.Controllers
             // ModelState.ClearValidationState("Client.Avatar");
             // ModelState.ClearValidationState("ClientId");
             ModelState.MarkFieldSkipped("ClientId");
-            
+
             if (ModelState.IsValid)
                 {
-                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address 
+                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address
                 && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
 
                 if (existingLocation!=null) {
