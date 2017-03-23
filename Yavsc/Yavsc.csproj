@@ -27,5 +27,7 @@
     <Content Include="Models\Relationship\Location.cs" />
     <Content Include="Models\Haircut\HairPrestation.cs" />
     <Content Include="Models\Haircut\HairLength.cs" />
+    <Content Include="gulpfile.js" />
+    <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
 </Project>
