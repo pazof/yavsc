@@ -32,5 +32,8 @@
     <Content Include="Models\Haircut\HairCutGenders.cs" />
     <Content Include="Models\Haircut\HairTechnos.cs" />
     <Content Include="Models\Haircut\HairTaint.cs" />
+    <Content Include="Controllers\HairCutCommandController.cs" />
+    <Content Include="Views\FrontOffice\HairCut.cshtml" />
+    <Content Include="Controllers\FrontOfficeController.cs" />
   </ItemGroup>
 </Project>
