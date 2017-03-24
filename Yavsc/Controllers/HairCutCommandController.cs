@@ -81,20 +81,21 @@ namespace Yavsc.Controllers
                 var yaev = command.CreateEvent(_localizer);
                 MessageWithPayloadResponse grep = null;
 
-                if (pro.AcceptNotifications
-                && pro.AcceptPublicContact)
+                if (pro.AcceptPublicContact)
                 {
-                    if (pro.Performer.Devices.Count > 0) {
-                        var regids = command.PerformerProfile.Performer
-                        .Devices.Select(d => d.GCMRegistrationId);
-                        grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
+                    if (pro.AcceptNotifications) {
+                        if (pro.Performer.Devices.Count > 0) {
+                            var regids = command.PerformerProfile.Performer
+                            .Devices.Select(d => d.GCMRegistrationId);
+                            grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
+                        }
+                        // TODO setup a profile choice to allow notifications
+                        // both on mailbox and mobile
+                        // if (grep==null || grep.success<=0 || grep.failure>0)
+                        ViewBag.GooglePayload=grep;
+                        if (grep!=null)
+                        _logger.LogWarning($"Performer: {command.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
                     }
-                    // TODO setup a profile choice to allow notifications
-                    // both on mailbox and mobile
-                    // if (grep==null || grep.success<=0 || grep.failure>0)
-                    ViewBag.GooglePayload=grep;
-                    if (grep!=null)
-                      _logger.LogWarning($"Performer: {command.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
@@ -103,6 +104,9 @@ namespace Yavsc.Controllers
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
+                else {
+                    // TODO if (AcceptProContact) try & find a bookmaker to send him this query
+                }
                 ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
                 return View("CommandConfirmation",command);
@@ -110,7 +114,6 @@ namespace Yavsc.Controllers
             ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
             return View(command);
-
         }
 
         public ActionResult HairCut(string performerId, string activityCode)
