@@ -3,37 +3,634 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.0</TargetFramework>
+    <RuntimeIdentifiers>debian.8-x64,win10-x64;osx.10.11-x64;ubuntu.16.04-x64</RuntimeIdentifiers>
   </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="YavscLib" Version="1.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161123-03" />
     <PackageReference Include="xunit" Version="2.2.0-beta4-build3444" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta4-build1194" />
-    <Content Include="Models\Workflow\CommandForm.cs" />
-    <Content Include="Models\Workflow\RdvQuery.cs" />
+    <PackageReference Include="EntityFramework.Commands" Version="7.0.0-rc1-final" />
+    <PackageReference Include="EntityFramework.Core" Version="7.0.0-rc1-final" />
+    <PackageReference Include="EntityFramework.MicrosoftSqlServer" Version="7.0.0-rc1-final" />
+    <PackageReference Include="EntityFramework.Relational" Version="7.0.0-rc1-final" />
+    <PackageReference Include="EntityFramework7.Npgsql" Version="3.1.0-rc1-3" />
+    <PackageReference Include="EntityFramework7.Npgsql.Design" Version="3.1.0-rc1-5" />
+    <PackageReference Include="Google.Apis.Core" Version="1.11.1" />
+    <PackageReference Include="Google.Apis" Version="1.11.1" />
+    <PackageReference Include="MailKit" Version="1.12.0" />
+    <PackageReference Include="MarkdownDeep-av.NET" Version="1.5.4" />
+    <PackageReference Include="Microsoft.AspNet.Authentication.Cookies" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Authentication.Facebook" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Authentication.Twitter" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Authorization" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Diagnostics.Entity" Version="7.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Http.Abstractions" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="3.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.IISPlatformHandler" Version="1.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.Localization" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="6.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.Mvc.TagHelpers" Version="6.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.Server.Kestrel" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Server.WebListener" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.2.1" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.2.1" />
+    <PackageReference Include="Microsoft.AspNet.StaticFiles" Version="1.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.Tooling.Razor" Version="1.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.WebSockets.Server" Version="1.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileProviderExtensions" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Globalization.CultureInfoCache" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.CodeGeneration" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.CodeGenerators.Mvc" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Framework.ConfigurationModel.Json" Version="1.0.0-beta4" />
+    <PackageReference Include="Microsoft.Framework.Configuration.Abstractions" Version="1.0.0-beta8" />
+    <PackageReference Include="Microsoft.Framework.Configuration.Binder" Version="1.0.0-beta8" />
+    <PackageReference Include="Microsoft.Framework.Configuration.Json" Version="1.0.0-beta8" />
+    <PackageReference Include="Microsoft.AspNet.Session" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Web.Optimization" Version="1.1.3" />
+    <PackageReference Include="Microsoft.Extensions.WebEncoders.Core" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="0.0.1-alpha" />
+    <PackageReference Include="Microsoft.Extensions.WebEncoders" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.DataProtection" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.DataProtection.SystemWeb" Version="1.0.0-rc1-final" />
+   <PackageReference Include= "Microsoft.AspNet.Authentication.JwtBearer" Version="1.0.0-rc1-final" />
+    <PackageReference Include="PayPalCoreSDK" Version="1.7.1" />
+   <PackageReference Include= "Microsoft.AspNet.Authentication.OAuth" Version="1.0.0-rc1-final" />
+   <PackageReference Include= "Microsoft.AspNet.Mvc.Formatters.Json" Version="6.0.0-rc1-*" />
+   <PackageReference Include= "Microsoft.AspNet.OWin" Version="1.0.0-rc1-final" />
+   <PackageReference Include= "System.Json" Version="4.0.20126.16343" />
+    
     <Content Include="Views\Account\Authorize.cshtml" />
     <Content Include="Views\Account\Lockout.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="project.lock.json" />
     <Content Include="project.json" />
-    <Content Include="Controllers\HomeController.cs" />
-    <Content Include="Startup\Startup.cs" />
-    <Content Include="Controllers\SIRENExceptionsController.cs" />
-    <Content Include="Startup\Startup.OAuth.cs" />
-    <Content Include="ApiControllers\HairCutController.cs" />
-    <Content Include="Models\Haircut\HairCutQuery.cs" />
-    <Content Include="Models\ApplicationDbContext.cs" />
-    <Content Include="Models\Workflow\Query.cs" />
-    <Content Include="Models\Billing\NominativeServiceCommand.cs" />
-    <Content Include="Models\Relationship\Location.cs" />
-    <Content Include="Models\Haircut\HairPrestation.cs" />
-    <Content Include="Models\Haircut\HairLength.cs" />
     <Content Include="gulpfile.js" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Models\Haircut\HairCutGenders.cs" />
-    <Content Include="Models\Haircut\HairTechnos.cs" />
-    <Content Include="Models\Haircut\HairTaint.cs" />
-    <Content Include="Controllers\HairCutCommandController.cs" />
     <Content Include="Views\FrontOffice\HairCut.cshtml" />
-    <Content Include="Controllers\FrontOfficeController.cs" />
+    <Content Include="Views\Command\CommandConfirmation.cshtml" />
+    <Content Include="Views\HairCutCommand\CommandConfirmation.cshtml" />
+    <Content Include="wwwroot\js\jquery.signalR-2.2.1.js" />
+    <Content Include="xunit.runner.json" />
+    <Content Include="package.json" />
+
+
+    <Content Include="Startup\Startup.cs" />
+<Content Include="Startup\Startup.DataProtection.cs" />
+<Content Include="Startup\Startup.OAuthHelpers.cs" />
+<Content Include="Startup\Startup.WebSockets.cs" />
+<Content Include="Startup\Startup.Workflow.cs" />
+<Content Include="Startup\Startup.FileServer.cs" />
+<Content Include="Startup\BundleConfig.cs" />
+<Content Include="Startup\Startup.OAuth.cs" />
+<Content Include="Interfaces\IBookQueryData.cs" />
+<Content Include="Interfaces\ICircleMember.cs" />
+<Content Include="Interfaces\IGoogleCloudMobileDeclaration.cs" />
+<Content Include="Interfaces\IPosition.cs" />
+<Content Include="Interfaces\IBlog.cs" />
+<Content Include="Interfaces\ITitle.cs" />
+<Content Include="Interfaces\ILifeTime.cs" />
+<Content Include="Interfaces\Workflow\IBillingClause.cs" />
+<Content Include="Interfaces\Workflow\IContact.cs" />
+<Content Include="Interfaces\Workflow\QueryStatus.cs" />
+<Content Include="Interfaces\ILocation.cs" />
+<Content Include="ViewComponents\CirclesControlViewComponent.cs" />
+<Content Include="ViewComponents\DirectoryViewComponent.cs" />
+<Content Include="ViewComponents\EstimateViewComponent.cs" />
+<Content Include="ViewComponents\AvatarViewComponent.cs" />
+<Content Include="Controllers\ManageController.cs" />
+<Content Include="Controllers\CommandFormsController.cs" />
+<Content Include="Controllers\DjSettingsController.cs" />
+<Content Include="Controllers\GeneralSettingsController.cs" />
+<Content Include="Controllers\InstrumentationController.cs" />
+<Content Include="Controllers\HairPrestationsController.cs" />
+<Content Include="Controllers\CommandController.cs" />
+<Content Include="Controllers\CircleController.cs" />
+<Content Include="Controllers\ClientController.cs" />
+<Content Include="Controllers\ActivityController.cs" />
+<Content Include="Controllers\CircleMembersController.cs" />
+<Content Include="Controllers\FrontOfficeController.cs" />
+<Content Include="Controllers\BrusherProfileController.cs" />
+<Content Include="Controllers\ColorsController.cs" />
+<Content Include="Controllers\EstimateController.cs" />
+<Content Include="Controllers\SIRENExceptionsController.cs" />
+<Content Include="Controllers\DoController.cs" />
+<Content Include="Controllers\Generic\SettingsController.cs" />
+<Content Include="Controllers\FormationSettingsController.cs" />
+<Content Include="Controllers\BlogspotController.cs" />
+<Content Include="Controllers\AdministrationController.cs" />
+<Content Include="Controllers\HairCutCommandController.cs" />
+<Content Include="Controllers\OAuthController.cs" />
+<Content Include="Controllers\MusicalTendenciesController.cs" />
+<Content Include="Controllers\HomeController.cs" />
+<Content Include="Controllers\CoWorkingController.cs" />
+<Content Include="Controllers\LocationTypesController.cs" />
+<Content Include="Controllers\FormsController.cs" />
+<Content Include="Controllers\AccountController.cs" />
+<Content Include="Controllers\InstrumentsController.cs" />
+<Content Include="Controllers\NotificationsController.cs" />
+<Content Include="Controllers\HairTaintsController.cs" />
+<Content Include="Hubs\ChatHub.cs" />
+<Content Include="Exceptions\InvalidActivityModelException.cs" />
+<Content Include="Formatters\PdfFormatter.cs" />
+<Content Include="GoogleApis\PeopleApi.cs" />
+<Content Include="GoogleApis\MapTracks.cs" />
+<Content Include="GoogleApis\CalendarApi.cs" />
+<Content Include="Constants.cs" />
+<Content Include="ViewModels\FrontOffice\FrontOfficeIndexViewModel.cs" />
+<Content Include="ViewModels\Relationship\CirclesViewModel.cs" />
+<Content Include="ViewModels\Gen\PdfGenerationViewModel.cs" />
+<Content Include="ViewModels\Manage\ConfigureTwoFactorViewModel.cs" />
+<Content Include="ViewModels\Manage\ManageLoginsViewModel.cs" />
+<Content Include="ViewModels\Manage\ChangePasswordViewModel.cs" />
+<Content Include="ViewModels\Manage\FactorViewModel.cs" />
+<Content Include="ViewModels\Manage\VerifyPhoneNumberViewModel.cs" />
+<Content Include="ViewModels\Manage\ChangeUserNameViewModel.cs" />
+<Content Include="ViewModels\Manage\AddPhoneNumberViewModel.cs" />
+<Content Include="ViewModels\Manage\IndexViewModel.cs" />
+<Content Include="ViewModels\Manage\RemoveLoginViewModel.cs" />
+<Content Include="ViewModels\Manage\DoDirectCreditViewModel.cs" />
+<Content Include="ViewModels\Manage\SetActivityViewModel.cs" />
+<Content Include="ViewModels\Manage\SetPasswordViewModel.cs" />
+<Content Include="ViewModels\Manage\AddBankInfoViewModel.cs" />
+<Content Include="ViewModels\Calendar\UpcomingEventsViewModel.cs" />
+<Content Include="ViewModels\Calendar\SetGoogleCalendarViewModel.cs" />
+<Content Include="ViewModels\Chat\ChatUserInfo.cs" />
+<Content Include="ViewModels\Administration\AdminViewModel.cs" />
+<Content Include="ViewModels\Administration\RoleInfo.cs" />
+<Content Include="ViewModels\Administration\RoleUserCollection.cs" />
+<Content Include="ViewModels\UserFiles\UserFileInfo.cs" />
+<Content Include="ViewModels\UserFiles\UserDirectoryInfo.cs" />
+<Content Include="ViewModels\Workflow\UserActivityViewModel.cs" />
+<Content Include="ViewModels\Workflow\EstimateEdition.cs" />
+<Content Include="ViewModels\Account\RegisterViewModel.cs" />
+<Content Include="ViewModels\Account\ExternalLoginConfirmationViewModel.cs" />
+<Content Include="ViewModels\Account\ChangePasswordBindingModel.cs" />
+<Content Include="ViewModels\Account\VerifyCodeViewModel.cs" />
+<Content Include="ViewModels\Account\UnregisterViewModel.cs" />
+<Content Include="ViewModels\Account\ResetPasswordViewModel.cs" />
+<Content Include="ViewModels\Account\LoginViewModel.cs" />
+<Content Include="ViewModels\Account\UserInfo.cs" />
+<Content Include="ViewModels\Account\ForgotPasswordViewModel.cs" />
+<Content Include="ViewModels\Account\SendCodeViewModel.cs" />
+<Content Include="ViewModels\Account\Me.cs" />
+<Content Include="ViewModels\Auth\ViewRequirement.cs" />
+<Content Include="ViewModels\Auth\AuthorisationView.cs" />
+<Content Include="ViewModels\Auth\FileSpotInfo.cs" />
+<Content Include="ViewModels\Auth\PrivateChatEntryRequirement.cs" />
+<Content Include="ViewModels\Auth\ViewFileContext.cs" />
+<Content Include="ViewModels\Auth\ClaimTypes.cs" />
+<Content Include="ViewModels\Auth\EditRequirement.cs" />
+<Content Include="ViewModels\Auth\Handlers\CommandViewHandler.cs" />
+<Content Include="ViewModels\Auth\Handlers\ViewFileHandler.cs" />
+<Content Include="ViewModels\Auth\Handlers\BlogViewHandler.cs" />
+<Content Include="ViewModels\Auth\Handlers\PostUserFileHandler.cs" />
+<Content Include="ViewModels\Auth\Handlers\HasBadgeHandler.cs" />
+<Content Include="ViewModels\Auth\Handlers\CommandEditHandler.cs" />
+<Content Include="ViewModels\Auth\Handlers\BlogEditHandler.cs" />
+<Content Include="ViewModels\Auth\Handlers\HasTemporaryPassHandler.cs" />
+<Content Include="ViewModels\Auth\Handlers\EstimateViewHandler.cs" />
+<Content Include="ViewModels\Controls\AjaxCheckBoxInfo.cs" />
+<Content Include="Services\MessageServices.cs" />
+<Content Include="Services\ISmsSender.cs" />
+<Content Include="Services\IGoogleCloudMessageSender.cs" />
+<Content Include="Services\SIRENCheker.cs" />
+<Content Include="Services\IEmailSender.cs" />
+<Content Include="Models\Haircut\HairLength.cs" />
+<Content Include="Models\Haircut\HairTaint.cs" />
+<Content Include="Models\Haircut\HairMultiCutQuery.cs" />
+<Content Include="Models\Haircut\HairPrestation.cs" />
+<Content Include="Models\Haircut\HairCutQuery.cs" />
+<Content Include="Models\Haircut\HairCutQueryEvent.cs" />
+<Content Include="Models\Haircut\HairTechnos.cs" />
+<Content Include="Models\Haircut\HairDressings.cs" />
+<Content Include="Models\Haircut\BrusherProfile.cs" />
+<Content Include="Models\Haircut\HairCutGenders.cs" />
+<Content Include="Models\Billing\IBillingImpacter.cs" />
+<Content Include="Models\Billing\wrtags.cs" />
+<Content Include="Models\Billing\FixedImpacter.cs" />
+<Content Include="Models\Billing\NominativeServiceCommand.cs" />
+<Content Include="Models\Billing\histoestim.cs" />
+<Content Include="Models\Billing\ProportionalImpacter.cs" />
+<Content Include="Models\Billing\EstimateTemplate.cs" />
+<Content Include="Models\Billing\ExceptionSIREN.cs" />
+<Content Include="Models\Billing\CommandLine.cs" />
+<Content Include="Models\Billing\Estimate.cs" />
+<Content Include="Models\Billing\Contract.cs" />
+<Content Include="Models\Billing\ReductionCode.cs" />
+<Content Include="Models\Billing\writtings.cs" />
+<Content Include="Models\Billing\satisfaction.cs" />
+<Content Include="Models\Billing\Service\ChatBilling.cs" />
+<Content Include="Models\Relationship\Contact.cs" />
+<Content Include="Models\Relationship\CircleMember.cs" />
+<Content Include="Models\Relationship\LocationType.cs" />
+<Content Include="Models\Relationship\Circle.cs" />
+<Content Include="Models\Relationship\Location.cs" />
+<Content Include="Models\Relationship\Tag.cs" />
+<Content Include="Models\Relationship\PostTag.cs" />
+<Content Include="Models\Identity\passwrecovery.cs" />
+<Content Include="Models\Identity\ApplicationUser.cs" />
+<Content Include="Models\Identity\MobileAppDeclaration.cs" />
+<Content Include="Models\Edition\IDocument.cs" />
+<Content Include="Models\societe.com\CompanyInfo.cs" />
+<Content Include="Models\Forms\Validation\Method.cs" />
+<Content Include="Models\Forms\Validation\Required.cs" />
+<Content Include="Models\Forms\Form.cs" />
+<Content Include="Models\Bank\BalanceImpact.cs" />
+<Content Include="Models\Bank\BankIdentity.cs" />
+<Content Include="Models\Bank\AccountBalance.cs" />
+<Content Include="Models\Calendar\ProvidedEvent.cs" />
+<Content Include="Models\Calendar\PositionAndKeyphrase.cs" />
+<Content Include="Models\Calendar\ICalendarManager.cs" />
+<Content Include="Models\Calendar\Period.cs" />
+<Content Include="Models\Calendar\WeekDay.cs" />
+<Content Include="Models\Calendar\OpenDay.cs" />
+<Content Include="Models\Calendar\Periodicity.cs" />
+<Content Include="Models\Calendar\IFreeDateSet.cs" />
+<Content Include="Models\Calendar\Schedule.cs" />
+<Content Include="Models\Chat\Connection.cs" />
+<Content Include="Models\Blog\Blog.cs" />
+<Content Include="Models\Blog\comment.cs" />
+<Content Include="Models\Access\Publishing.cs" />
+<Content Include="Models\Access\BanByEmail.cs" />
+<Content Include="Models\Access\CircleAuthorizationToBlogPost.cs" />
+<Content Include="Models\Access\RuleSet.cs" />
+<Content Include="Models\Access\WhiteCard.cs" />
+<Content Include="Models\Access\Ban.cs" />
+<Content Include="Models\Access\Rule.cs" />
+<Content Include="Models\Access\BlackList.cs" />
+<Content Include="Models\Google\People\People.cs" />
+<Content Include="Models\Google\Tracks\Entity.cs" />
+<Content Include="Models\Google\Tracks\EntityQuery.cs" />
+<Content Include="Models\Google\Resource.cs" />
+<Content Include="Models\Google\Calendar\CalendarListEntry.cs" />
+<Content Include="Models\Google\Calendar\CalendarList.cs" />
+<Content Include="Models\Google\Calendar\CalendarEventList.cs" />
+<Content Include="Models\Google\AuthToken.cs" />
+<Content Include="Models\Google\GDate.cs" />
+<Content Include="Models\Google\Messaging\MessageWithPayLoad.cs" />
+<Content Include="Models\Google\Messaging\MessageWithPayloadResponse.cs" />
+<Content Include="Models\Drawing\Color.cs" />
+<Content Include="Models\ApplicationDbContext.cs" />
+<Content Include="Models\Market\Catalog.cs" />
+<Content Include="Models\Market\Service.cs" />
+<Content Include="Models\Market\Product.cs" />
+<Content Include="Models\Market\BaseProduct.cs" />
+<Content Include="Models\Market\IUnit.cs" />
+<Content Include="Models\Market\Money.cs" />
+<Content Include="Models\Musical\Instrument.cs" />
+<Content Include="Models\Musical\Profiles\FormationPerformerProfile.cs" />
+<Content Include="Models\Musical\Profiles\GeneralSettings.cs" />
+<Content Include="Models\Musical\Profiles\MusicianPerformerProfile.cs" />
+<Content Include="Models\Musical\Profiles\DjSettings.cs" />
+<Content Include="Models\Musical\Profiles\DjPerformerProfile.cs" />
+<Content Include="Models\Musical\Profiles\Instrumentation.cs" />
+<Content Include="Models\Musical\Profiles\StarPerformerProfile.cs" />
+<Content Include="Models\Musical\MusicalPreference.cs" />
+<Content Include="Models\Musical\MusicalTendency.cs" />
+<Content Include="Models\Musical\InstrumentRating.cs" />
+<Content Include="Models\Workflow\wrfiles.cs" />
+<Content Include="Models\Workflow\IRequisition.cs" />
+<Content Include="Models\Workflow\Specialization.cs" />
+<Content Include="Models\Workflow\Profiles\FormationSettings.cs" />
+<Content Include="Models\Workflow\taskdeps.cs" />
+<Content Include="Models\Workflow\CoWorking.cs" />
+<Content Include="Models\Workflow\RdvQuery.cs" />
+<Content Include="Models\Workflow\Query.cs" />
+<Content Include="Models\Workflow\Activity.cs" />
+<Content Include="Models\Workflow\RendezVous.cs" />
+<Content Include="Models\Workflow\Projet.cs" />
+<Content Include="Models\Workflow\UserActivity.cs" />
+<Content Include="Models\Workflow\hr.cs" />
+<Content Include="Models\Workflow\UserSkills.cs" />
+<Content Include="Models\Workflow\Process\InputValue.cs" />
+<Content Include="Models\Workflow\Process\Action.cs" />
+<Content Include="Models\Workflow\Process\NamedRequisition.cs" />
+<Content Include="Models\Workflow\Process\Conjonction.cs" />
+<Content Include="Models\Workflow\Process\Rule.cs" />
+<Content Include="Models\Workflow\Process\Disjonction.cs" />
+<Content Include="Models\Workflow\Process\Negation.cs" />
+<Content Include="Models\Workflow\tasks.cs" />
+<Content Include="Models\Workflow\Skill.cs" />
+<Content Include="Models\Workflow\PerformerProfile.cs" />
+<Content Include="Models\Workflow\CommandForm.cs" />
+<Content Include="Models\Messaging\CircleEvent.cs" />
+<Content Include="Models\Messaging\ProviderClientInfo.cs" />
+<Content Include="Models\Messaging\RdvQueryProviderInfo.cs" />
+<Content Include="Models\Messaging\DimissClicked.cs" />
+<Content Include="Models\Messaging\EstimationEvent.cs" />
+<Content Include="Models\Messaging\Notification.cs" />
+<Content Include="Models\Messaging\YaEvent.cs" />
+<Content Include="Models\Messaging\BaseEvent.cs" />
+<Content Include="Models\Messaging\ClientProviderInfo.cs" />
+<Content Include="Models\Messaging\RdvQueryEvent.cs" />
+<Content Include="Models\Auth\UserCredentials.cs" />
+<Content Include="Models\Auth\RefreshToken.cs" />
+<Content Include="Models\Auth\ExternalViewModel.cs" />
+<Content Include="Models\Auth\Scope.cs" />
+<Content Include="Models\Auth\ApplicationTypes.cs" />
+<Content Include="Models\Auth\Client.cs" />
+<Content Include="Models\Auth\OAuth2Tokens.cs" />
+<Content Include="Models\IT\Fixing\BugStatus.cs" />
+<Content Include="Models\IT\Fixing\Bug.cs" />
+<Content Include="Models\IT\Evolution\Feature.cs" />
+<Content Include="Models\IT\Evolution\FeatureStatus.cs" />
+<Content Include="Models\IT\Modeling\Code.cs" />
+<Content Include="Models\IT\Modeling\Letter.cs" />
+<Content Include="Models\FileSystem\FileRecievedInfo.cs" />
+<Content Include="Migrations\20170117134339_entityTracking.Designer.cs" />
+<Content Include="Migrations\20160506154628_siren.cs" />
+<Content Include="Migrations\20161021153306_estimateLines.cs" />
+<Content Include="Migrations\20160802145351_camelCaseBlog.Designer.cs" />
+<Content Include="Migrations\20161010102616_recontact.cs" />
+<Content Include="Migrations\20160320170252_bank.cs" />
+<Content Include="Migrations\20160322152206_balance.cs" />
+<Content Include="Migrations\20161101234703_chatConnection.cs" />
+<Content Include="Migrations\20170113022807_SettingsClassName.Designer.cs" />
+<Content Include="Migrations\20160515142434_tokenExpiresIn.Designer.cs" />
+<Content Include="Migrations\20170122160343_circlesMemberRefact.Designer.cs" />
+<Content Include="Migrations\20160723164231_GCMRedDate.cs" />
+<Content Include="Migrations\20160405091432_booking.cs" />
+<Content Include="Migrations\20170220144141_hiddenActivity.Designer.cs" />
+<Content Include="Migrations\20160322144500_contact.Designer.cs" />
+<Content Include="Migrations\20170126152454_trackActivity.cs" />
+<Content Include="Migrations\20160901145646_products.Designer.cs" />
+<Content Include="Migrations\20160802143258_bcontentornot.Designer.cs" />
+<Content Include="Migrations\20170228115359_brusherProfile.Designer.cs" />
+<Content Include="Migrations\20170301124608_brusherActiondistance.Designer.cs" />
+<Content Include="Migrations\20170124090324_commandForms.cs" />
+<Content Include="Migrations\20160402135146_calendar.cs" />
+<Content Include="Migrations\20170220102125_notifications.cs" />
+<Content Include="Migrations\20170301132531_manbrushing.Designer.cs" />
+<Content Include="Migrations\20160407112403_dailycost.Designer.cs" />
+<Content Include="Migrations\20170217221646_bookQueryStatus.cs" />
+<Content Include="Migrations\20170227151759_hairPrestations.Designer.cs" />
+<Content Include="Migrations\20170116002541_bookQueryActivityCode.Designer.cs" />
+<Content Include="Migrations\20170106124548_instrumentation.Designer.cs" />
+<Content Include="Migrations\20160726131331_performerIdTypo.cs" />
+<Content Include="Migrations\20170220144141_hiddenActivity.cs" />
+<Content Include="Migrations\20160322152206_balance.Designer.cs" />
+<Content Include="Migrations\20170106235954_weight.cs" />
+<Content Include="Migrations\20160726131331_performerIdTypo.Designer.cs" />
+<Content Include="Migrations\20170102140332_musicalTendencies.cs" />
+<Content Include="Migrations\20161209121035_bookQueryReason.cs" />
+<Content Include="Migrations\20161123235323_estimatesignatures.Designer.cs" />
+<Content Include="Migrations\20170201002133_blacklisted.cs" />
+<Content Include="Migrations\20161020143022_estimateClientApprouval.cs" />
+<Content Include="Migrations\20170217221646_bookQueryStatus.Designer.cs" />
+<Content Include="Migrations\20160529205859_ModeratorGroupName.cs" />
+<Content Include="Migrations\20170113150714_instrumentationReloaded.Designer.cs" />
+<Content Include="Migrations\20160726161530_ExceptionsSIREN.cs" />
+<Content Include="Migrations\20170106235954_weight.Designer.cs" />
+<Content Include="Migrations\20160322144500_contact.cs" />
+<Content Include="Migrations\20160404110708_files.Designer.cs" />
+<Content Include="Migrations\20161020212947_userAddress.Designer.cs" />
+<Content Include="Migrations\20170212005346_haircut.Designer.cs" />
+<Content Include="Migrations\20160418114001_commandCreation.cs" />
+<Content Include="Migrations\20170317213255_cxRequiresUserName.cs" />
+<Content Include="Migrations\20170302122929_brusherProfileDiscount.Designer.cs" />
+<Content Include="Migrations\20160317215718_command.cs" />
+<Content Include="Migrations\20161020143022_estimateClientApprouval.Designer.cs" />
+<Content Include="Migrations\20170106113614_ownerProfile.cs" />
+<Content Include="Migrations\20170228145057_actionName.Designer.cs" />
+<Content Include="Migrations\20160725145306_estimates.cs" />
+<Content Include="Migrations\20160404121446_estimate.Designer.cs" />
+<Content Include="Migrations\20170106144035_activityRate.cs" />
+<Content Include="Migrations\20161104164949_dropEstimateStatus.Designer.cs" />
+<Content Include="Migrations\20160401233357_circle.Designer.cs" />
+<Content Include="Migrations\20170113022807_SettingsClassName.cs" />
+<Content Include="Migrations\20170107004233_userActivitiesValidity.Designer.cs" />
+<Content Include="Migrations\20170303000800_estimateRequireCommandType.Designer.cs" />
+<Content Include="Migrations\20170120122324_queryTraking.cs" />
+<Content Include="Migrations\20170116154735_refactPrproAllowGeo.Designer.cs" />
+<Content Include="Migrations\20170201162847_defaultAvatar.Designer.cs" />
+<Content Include="Migrations\20160529205859_ModeratorGroupName.Designer.cs" />
+<Content Include="Migrations\20160920215459_avatar.cs" />
+<Content Include="Migrations\20160726161530_ExceptionsSIREN.Designer.cs" />
+<Content Include="Migrations\20161130084909_diskQuota.Designer.cs" />
+<Content Include="Migrations\20160407112403_dailycost.cs" />
+<Content Include="Migrations\20161130084909_diskQuota.cs" />
+<Content Include="Migrations\20160702195348_GCMinfos.cs" />
+<Content Include="Migrations\20170102152745_locationTypes.cs" />
+<Content Include="Migrations\20160725145306_estimates.Designer.cs" />
+<Content Include="Migrations\20160726133002_otherOrtho.cs" />
+<Content Include="Migrations\20160317215718_command.Designer.cs" />
+<Content Include="Migrations\20161021153306_estimateLines.Designer.cs" />
+<Content Include="Migrations\20161020212947_userAddress.cs" />
+<Content Include="Migrations\20170124090324_commandForms.Designer.cs" />
+<Content Include="Migrations\20170220102125_notifications.Designer.cs" />
+<Content Include="Migrations\20160418114001_commandCreation.Designer.cs" />
+<Content Include="Migrations\20160427123737_perfoffer.cs" />
+<Content Include="Migrations\20160404110708_files.cs" />
+<Content Include="Migrations\20161010102616_recontact.Designer.cs" />
+<Content Include="Migrations\20170102152745_locationTypes.Designer.cs" />
+<Content Include="Migrations\20170120095258_blogAcl.cs" />
+<Content Include="Migrations\20170227151759_hairPrestations.cs" />
+<Content Include="Migrations\20170120122324_queryTraking.Designer.cs" />
+<Content Include="Migrations\20161231163016_musicalPreferences.cs" />
+<Content Include="Migrations\20160723164231_GCMRedDate.Designer.cs" />
+<Content Include="Migrations\20161104090806_bankUserProfile.Designer.cs" />
+<Content Include="Migrations\20170220125518_dimissclick.Designer.cs" />
+<Content Include="Migrations\20170106122307_Instruments.Designer.cs" />
+<Content Include="Migrations\20161102133253_fix2CxOwner.Designer.cs" />
+<Content Include="Migrations\20170301124608_brusherActiondistance.cs" />
+<Content Include="Migrations\20170106122307_Instruments.cs" />
+<Content Include="Migrations\20170212005346_haircut.cs" />
+<Content Include="Migrations\20161102132129_fixCxOwner.cs" />
+<Content Include="Migrations\20160905095708_tags.Designer.cs" />
+<Content Include="Migrations\20160401233357_circle.cs" />
+<Content Include="Migrations\20170302122929_brusherProfileDiscount.cs" />
+<Content Include="Migrations\20160901145646_products.cs" />
+<Content Include="Migrations\20160802145351_camelCaseBlog.cs" />
+<Content Include="Migrations\20160614010545_bookquery.cs" />
+<Content Include="Migrations\20160427123737_perfoffer.Designer.cs" />
+<Content Include="Migrations\20170317213255_cxRequiresUserName.Designer.cs" />
+<Content Include="Migrations\20170116002541_bookQueryActivityCode.cs" />
+<Content Include="Migrations\20161104164949_dropEstimateStatus.cs" />
+<Content Include="Migrations\20161209121035_bookQueryReason.Designer.cs" />
+<Content Include="Migrations\20160404130359_estimateCommand.cs" />
+<Content Include="Migrations\20160404121446_estimate.cs" />
+<Content Include="Migrations\20160916075415_estimateFreeFromCatalog.Designer.cs" />
+<Content Include="Migrations\20161102133253_fix2CxOwner.cs" />
+<Content Include="Migrations\20160916075415_estimateFreeFromCatalog.cs" />
+<Content Include="Migrations\20161102132129_fixCxOwner.Designer.cs" />
+<Content Include="Migrations\20170301132531_manbrushing.cs" />
+<Content Include="Migrations\20170106144035_activityRate.Designer.cs" />
+<Content Include="Migrations\20160515142434_tokenExpiresIn.cs" />
+<Content Include="Migrations\20170220125518_dimissclick.cs" />
+<Content Include="Migrations\20170126152454_trackActivity.Designer.cs" />
+<Content Include="Migrations\20160402135146_calendar.Designer.cs" />
+<Content Include="Migrations\ApplicationDbContextModelSnapshot.cs" />
+<Content Include="Migrations\20170126152651_renameActViewNameToAction.Designer.cs" />
+<Content Include="Migrations\20160610153353_client.cs" />
+<Content Include="Migrations\20170102140332_musicalTendencies.Designer.cs" />
+<Content Include="Migrations\20160315144017_init.cs" />
+<Content Include="Migrations\20170301211317_folding.cs" />
+<Content Include="Migrations\20170228145057_actionName.cs" />
+<Content Include="Migrations\20160315144017_init.Designer.cs" />
+<Content Include="Migrations\20160702195348_GCMinfos.Designer.cs" />
+<Content Include="Migrations\20170201162847_defaultAvatar.cs" />
+<Content Include="Migrations\20160320170252_bank.Designer.cs" />
+<Content Include="Migrations\20160726133002_otherOrtho.Designer.cs" />
+<Content Include="Migrations\20170106092028_WFActivityParentAndProfiles.cs" />
+<Content Include="Migrations\20161231163016_musicalPreferences.Designer.cs" />
+<Content Include="Migrations\20160917010249_yaev.Designer.cs" />
+<Content Include="Migrations\20170116154735_refactPrproAllowGeo.cs" />
+<Content Include="Migrations\20170107004233_userActivitiesValidity.cs" />
+<Content Include="Migrations\20160614010545_bookquery.Designer.cs" />
+<Content Include="Migrations\20170202102936_defaultDiskQuota.Designer.cs" />
+<Content Include="Migrations\20170201002133_blacklisted.Designer.cs" />
+<Content Include="Migrations\20160905095708_tags.cs" />
+<Content Include="Migrations\20170106113614_ownerProfile.Designer.cs" />
+<Content Include="Migrations\20160917010249_yaev.cs" />
+<Content Include="Migrations\20170202102936_defaultDiskQuota.cs" />
+<Content Include="Migrations\20160613142037_devices.cs" />
+<Content Include="Migrations\20170106124548_instrumentation.cs" />
+<Content Include="Migrations\20160920215459_avatar.Designer.cs" />
+<Content Include="Migrations\20170117134339_entityTracking.cs" />
+<Content Include="Migrations\20161123235323_estimatesignatures.cs" />
+<Content Include="Migrations\20170126152651_renameActViewNameToAction.cs" />
+<Content Include="Migrations\20170301211317_folding.Designer.cs" />
+<Content Include="Migrations\20160405091432_booking.Designer.cs" />
+<Content Include="Migrations\20170303000800_estimateRequireCommandType.cs" />
+<Content Include="Migrations\20160613142037_devices.Designer.cs" />
+<Content Include="Migrations\20160506154628_siren.Designer.cs" />
+<Content Include="Migrations\20160610153353_client.Designer.cs" />
+<Content Include="Migrations\20170113150714_instrumentationReloaded.cs" />
+<Content Include="Migrations\20170122160343_circlesMemberRefact.cs" />
+<Content Include="Migrations\20170120095258_blogAcl.Designer.cs" />
+<Content Include="Migrations\20161104090806_bankUserProfile.cs" />
+<Content Include="Migrations\20170228115359_brusherProfile.cs" />
+<Content Include="Migrations\20160802143258_bcontentornot.cs" />
+<Content Include="Migrations\20160404130359_estimateCommand.Designer.cs" />
+<Content Include="Migrations\20170106092028_WFActivityParentAndProfiles.Designer.cs" />
+<Content Include="Migrations\20161101234703_chatConnection.Designer.cs" />
+<Content Include="ApiControllers\MusicalPreferencesApiController.cs" />
+<Content Include="ApiControllers\ProductApiController.cs" />
+<Content Include="ApiControllers\PostRateApiController.cs" />
+<Content Include="ApiControllers\ActivityApiController.cs" />
+<Content Include="ApiControllers\ApplicationUserApiController.cs" />
+<Content Include="ApiControllers\CircleApiController.cs" />
+<Content Include="ApiControllers\BlogAclApiController.cs" />
+<Content Include="ApiControllers\DimissClicksApiController.cs" />
+<Content Include="ApiControllers\PostTagsApiController.cs" />
+<Content Include="ApiControllers\GCMController.cs" />
+<Content Include="ApiControllers\FileSystemApiController.cs" />
+<Content Include="ApiControllers\ServiceApiController.cs" />
+<Content Include="ApiControllers\ContactsApiController.cs" />
+<Content Include="ApiControllers\TagsApiController.cs" />
+<Content Include="ApiControllers\BookQueryApiController.cs" />
+<Content Include="ApiControllers\MusicalTendenciesApiController.cs" />
+<Content Include="ApiControllers\EstimateTemplatesApiController.cs" />
+<Content Include="ApiControllers\PodcastController.cs" />
+<Content Include="ApiControllers\BlackListApiController.cs" />
+<Content Include="ApiControllers\DjProfileApiController.cs" />
+<Content Include="ApiControllers\ChatApiController.cs" />
+<Content Include="ApiControllers\HairCutController.cs" />
+<Content Include="ApiControllers\AccountController.cs" />
+<Content Include="ApiControllers\PerformersApiController.cs" />
+<Content Include="ApiControllers\ProfileApiController.cs" />
+<Content Include="ApiControllers\BlogApiController.cs" />
+<Content Include="ApiControllers\FrontOfficeApiController.cs" />
+<Content Include="ApiControllers\EstimateApiController.cs" />
+<Content Include="ApiControllers\PdfEstimateController.cs" />
+<Content Include="CustumModelBinder.cs" />
+<Content Include="Settings\EmailEntry.cs" />
+<Content Include="Settings\SiteSettings.cs" />
+<Content Include="Settings\OAuth2AppSettings.cs" />
+<Content Include="Settings\CompanyInfoSettings.cs" />
+<Content Include="Settings\SmtpSettings.cs" />
+<Content Include="Settings\ThirdPartyFiles.cs" />
+<Content Include="Settings\TwilioSettings.cs" />
+<Content Include="Settings\PayPalSettings.cs" />
+<Content Include="Settings\GoogleAuthSettings.cs" />
+<Content Include="Filters\LanguageActionFilter.cs" />
+<Content Include="Attributes\ActivitySettingsAttribute.cs" />
+<Content Include="Resources\YavscLocalisation.cs" />
+<Content Include="Extensions\EnumExtensions.cs" />
+<Content Include="Extensions\OAuthAuthorizationServerExtensions.cs" />
+<Content Include="Extensions\AppBuilderExtensions.cs" />
+<Content Include="Extensions\SignalRBuilderExtension.cs" />
+<Content Include="Auth\GoogleExtensions.cs" />
+<Content Include="Auth\GoogleHandler.cs" />
+<Content Include="Auth\TokenAuthOptions.cs" />
+<Content Include="Auth\GoogleOAuthCreatingTicket.cs" />
+<Content Include="Auth\RSAKeyUtils.cs" />
+<Content Include="Auth\MonoJwtSecurityTokenHandler.cs" />
+<Content Include="Auth\UserTokenProvider.cs" />
+<Content Include="Auth\RequiredScopesMiddleware.cs" />
+<Content Include="Auth\GoogleHelper.cs" />
+<Content Include="Auth\MonoDataProtectionProvider.cs" />
+<Content Include="Auth\GoogleOptions.cs" />
+<Content Include="Auth\GoogleMiddleWare.cs" />
+<Content Include="Auth\MonoDataProtector.cs" />
+<Content Include="Auth\AuthServer\DefaultBehavior.cs" />
+<Content Include="Auth\AuthServer\TokenEndpointRequestRefreshToken.cs" />
+<Content Include="Auth\AuthServer\TokenEndpointRequestClientCredentials.cs" />
+<Content Include="Auth\AuthServer\AuthenticationTokenCreateContext.cs" />
+<Content Include="Auth\AuthServer\OAuthTokenEndpointResponseContext.cs" />
+<Content Include="Auth\AuthServer\OAuthConstants.cs" />
+<Content Include="Auth\AuthServer\BaseValidatingClientContext.cs" />
+<Content Include="Auth\AuthServer\BaseValidatingTicketContext.cs" />
+<Content Include="Auth\AuthServer\BaseValidatingContext.cs" />
+<Content Include="Auth\AuthServer\AuthenticationTokenReceiveContext.cs" />
+<Content Include="Auth\AuthServer\OAuthValidateClientRedirectUriContext.cs" />
+<Content Include="Auth\AuthServer\IOAuthAuthorizationServerProvider.cs" />
+<Content Include="Auth\AuthServer\TokenEndpointRequestAuthorizationCode.cs" />
+<Content Include="Auth\AuthServer\OAuthAuthorizeEndpointResponseContext.cs" />
+<Content Include="Auth\AuthServer\OAuthGrantRefreshTokenContext.cs" />
+<Content Include="Auth\AuthServer\AuthenticationResponseGrant.cs" />
+<Content Include="Auth\AuthServer\AuthorizeEndpointRequest.cs" />
+<Content Include="Auth\AuthServer\OAuthAuthorizationServerHandler.cs" />
+<Content Include="Auth\AuthServer\TokenEndpointRequest.cs" />
+<Content Include="Auth\AuthServer\AuthenticationResponseChallenge.cs" />
+<Content Include="Auth\AuthServer\TokenEndpointRequestResourceOwnerPasswordCredentials.cs" />
+<Content Include="Auth\AuthServer\BaseOAuthEndpointContext.cs" />
+<Content Include="Auth\AuthServer\OAuthGrantAuthorizationCodeContext.cs" />
+<Content Include="Auth\AuthServer\OAuthAuthorizeEndpointContext.cs" />
+<Content Include="Auth\AuthServer\OAuthValidateClientAuthenticationContext.cs" />
+<Content Include="Auth\AuthServer\OAuthAuthorizationServerOptions.cs" />
+<Content Include="Auth\AuthServer\OAuthGrantResourceOwnerCredentialsContext.cs" />
+<Content Include="Auth\AuthServer\AuthenticationTokenProvider.cs" />
+<Content Include="Auth\AuthServer\OAuthAuthorizationServerMiddleware.cs" />
+<Content Include="Auth\AuthServer\IAuthenticationTokenProvider.cs" />
+<Content Include="Auth\AuthServer\OAuthMatchContext.cs" />
+<Content Include="Auth\AuthServer\OAuthAuthorizationServerProvider.cs" />
+<Content Include="Auth\AuthServer\OAuthValidateAuthorizeRequestContext.cs" />
+<Content Include="Auth\AuthServer\Tokens\TicketDataFormatTokenValidator.cs" />
+<Content Include="Auth\AuthServer\OAuthTokenEndpointContext.cs" />
+<Content Include="Auth\AuthServer\OAuthDefaults.cs" />
+<Content Include="Auth\AuthServer\OAuthGrantClientCredentialsContext.cs" />
+<Content Include="Auth\AuthServer\TokenEndpointRequestCustomExtension.cs" />
+<Content Include="Auth\AuthServer\OAuthGrantCustomExtensionContext.cs" />
+<Content Include="Auth\AuthServer\OAuthValidateTokenRequestContext.cs" />
+<Content Include="Auth\XmlEncryptor.cs" />
+<Content Include="Helpers\TeXHelpers.cs" />
+<Content Include="Helpers\EstimateHelpers.cs" />
+<Content Include="Helpers\Tags\MarkDownTagHelper.cs" />
+<Content Include="Helpers\SimpleJsonPostMethod.cs" />
+<Content Include="Helpers\EventHelpers.cs" />
+<Content Include="Helpers\WorkflowHelpers.cs" />
+<Content Include="Helpers\UserHelpers.cs" />
+<Content Include="Helpers\HtmlHelpers.cs" />
+<Content Include="Helpers\FileSystemHelpers.cs" />
+<Content Include="Helpers\GoogleHelpers.cs" />
+<Content Include="Helpers\OAuthHelpers.cs" />
+<Content Include="Helpers\AuthHelpers.cs" />
+<Content Include="Helpers\ListItemHelpers.cs" />
+<Content Include="Helpers\CompanyInfoHelpers.cs" />
+
   </ItemGroup>
 </Project>
