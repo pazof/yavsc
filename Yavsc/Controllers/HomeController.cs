@@ -14,8 +14,8 @@ using System.Threading.Tasks;
 namespace Yavsc.Controllers
 {
     using Models;
-    
-    [ServiceFilter(typeof(LanguageActionFilter)),AllowAnonymous]
+
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         public IHostingEnvironment Hosting { get; set; }

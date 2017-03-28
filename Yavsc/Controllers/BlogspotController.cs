@@ -16,7 +16,6 @@ using Microsoft.AspNet.Mvc.Rendering;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter))]
     public class BlogspotController : Controller
     {
         ILogger _logger;
@@ -114,7 +113,7 @@ namespace Yavsc.Controllers
             }
             if (!await _authorizationService.AuthorizeAsync(User, blog, new ViewRequirement()))
             {
-                return new ChallengeResult();   
+                return new ChallengeResult();
             }
             return View(blog);
         }
@@ -165,11 +164,11 @@ namespace Yavsc.Controllers
                 ViewBag.ACL = _context.Circle.Where(
                 c=>c.OwnerId == blog.AuthorId)
                 .Select(
-                    c => new SelectListItem  
-                    { 
-                        Text = c.Name, 
-                        Value = c.Id.ToString(), 
-                        Selected = blog.AuthorizeCircle(c.Id) 
+                    c => new SelectListItem
+                    {
+                        Text = c.Name,
+                        Value = c.Id.ToString(),
+                        Selected = blog.AuthorizeCircle(c.Id)
                     } 
                 );
                 return View(blog);
@@ -195,7 +194,7 @@ namespace Yavsc.Controllers
                     _context.SaveChanges(User.GetUserId());
                     ViewData["StatusMessage"] = "Post modified";
                     return RedirectToAction("Index");
-                } 
+                }
                 else
                 {
                     ViewData["StatusMessage"] = "Accès restreint";
