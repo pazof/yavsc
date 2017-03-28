@@ -26,7 +26,7 @@ namespace Yavsc.Controllers
     using PayPal.PayPalAPIInterfaceService;
     using PayPal.PayPalAPIInterfaceService.Model;
 
-    [Authorize, ServiceFilter(typeof(LanguageActionFilter))]
+    [Authorize]
     public class ManageController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -372,14 +372,14 @@ namespace Yavsc.Controllers
                 if (result.Succeeded)
                 {
                     /* Obsolete : files are no more prefixed using the user name.
-                      
+
                     var userdirinfo = new DirectoryInfo(
                        Path.Combine(_siteSettings.UserFiles.DirName,
                         oldUserName));
                     var newdir = Path.Combine(_siteSettings.UserFiles.DirName,
                        model.NewUserName);
                     if (userdirinfo.Exists)
-                        userdirinfo.MoveTo(newdir); 
+                        userdirinfo.MoveTo(newdir);
                     */
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -529,7 +529,7 @@ namespace Yavsc.Controllers
             {
                 if (ModelState.IsValid)
                 {
-            
+
                     var exSiren = await _dbContext.ExceptionsSIREN.FirstOrDefaultAsync(
                         ex => ex.SIREN == model.SIREN
                     );
@@ -609,12 +609,12 @@ namespace Yavsc.Controllers
         [HttpGet, Route("/Manage/Credits")]
         public IActionResult Credits()
         {
-           
+
             return View();
         }
         public  Dictionary<string, string> PaypalConfig { 
             get { 
-                var config = 
+                var config =
                 new Dictionary<string, string>();
             config.Add("mode", "sandbox");
             config.Add("account1.apiUsername", _payPalSettings.UserId);
@@ -622,7 +622,7 @@ namespace Yavsc.Controllers
             config.Add("account1.apiSignature", _payPalSettings.Signature);
             return config;
             }
-        } 
+        }
 
 
         protected IActionResult DoDirectCredit(DoDirectCreditViewModel model)
@@ -679,7 +679,7 @@ namespace Yavsc.Controllers
             // Important: The notify URL applies only to DoExpressCheckoutPayment. This value is ignored when set in SetExpressCheckout or GetExpressCheckoutDetails.
             requestDetails.PaymentDetails.NotifyURL = model.IpnNotificationUrl.Trim();
 
-            // (Optional) Buyer's shipping address information. 
+            // (Optional) Buyer's shipping address information.
             AddressType billingAddr = new AddressType();
             if (model.FirstName != string.Empty && model.LastName != string.Empty
                 && model.Street1 != string.Empty && model.Country != string.Empty)
@@ -708,7 +708,7 @@ namespace Yavsc.Controllers
             // Note: You must set the currencyID attribute to one of the 3-character currency codes for any of the supported PayPal currencies.
             CurrencyCodeType currency = (CurrencyCodeType)
                 Enum.Parse(typeof(CurrencyCodeType), model.CurrencyCode);
-            BasicAmountType paymentAmount = new BasicAmountType(currency, model.Amount);            
+            BasicAmountType paymentAmount = new BasicAmountType(currency, model.Amount);
             requestDetails.PaymentDetails.OrderTotal = paymentAmount;
 
             // Invoke the API
@@ -716,17 +716,17 @@ namespace Yavsc.Controllers
             wrapper.DoDirectPaymentRequest = request;
 
             // Configuration map containing signature credentials and other required configuration.
-            // For a full list of configuration parameters refer in wiki page 
+            // For a full list of configuration parameters refer in wiki page
             // [https://github.com/paypal/sdk-core-dotnet/wiki/SDK-Configuration-Parameters]
             //// TODO clean Dictionary<string, string> configurationMap = Configuration.GetAcctAndConfig();
 
             // Create the PayPalAPIInterfaceServiceService service object to make the API call
             PayPalAPIInterfaceServiceService service = new PayPalAPIInterfaceServiceService(PaypalConfig);
 
-            // # API call 
-            // Invoke the DoDirectPayment method in service wrapper object  
+            // # API call
+            // Invoke the DoDirectPayment method in service wrapper object
             DoDirectPaymentResponseType response = service.DoDirectPayment(wrapper);
-         
+
             // Check for API return status
             return setKeyResponseObjects(service, response);
         }
@@ -749,7 +749,7 @@ namespace Yavsc.Controllers
             }
             else
             {
-                HttpContext.Items.Add("Response_error", null);                
+                HttpContext.Items.Add("Response_error", null);
                 responseParams.Add("Transaction Id", response.TransactionID);
                 responseParams.Add("Payment status", response.PaymentStatus.ToString());
                 if(response.PendingReason != null) {
@@ -759,7 +759,7 @@ namespace Yavsc.Controllers
             HttpContext.Items.Add("Response_keyResponseObject", responseParams);
             return View("APIResponse");
         }
-        
+
         #region Helpers
 
         private void AddErrors(IdentityResult result)

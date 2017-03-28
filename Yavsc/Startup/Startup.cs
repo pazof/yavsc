@@ -113,11 +113,16 @@ namespace Yavsc
                 // - QueryStringRequestCultureProvider, sets culture via "culture" and "ui-culture" query string values, useful for testing
                 // - CookieRequestCultureProvider, sets culture via "ASPNET_CULTURE" cookie
                 // - AcceptLanguageHeaderRequestCultureProvider, sets culture via the "Accept-Language" request header
+
                 //options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(async context =>
                 //{
                 //  // My custom request culture logic
-                //  return new ProviderCultureResult("en");
+                //  return new ProviderCultureResult("fr");
                 //}));
+
+                options.RequestCultureProviders.Insert(0, new AcceptLanguageHeaderRequestCultureProvider());
+                options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
+
             });
 
 
@@ -184,7 +189,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
             services.AddSingleton<IAuthorizationHandler, EstimateViewHandler>();
             services.AddSingleton<IAuthorizationHandler, ViewFileHandler>();
-  
+
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -207,7 +212,7 @@ namespace Yavsc
                 options.ResourcesPath = "Resources";
             }).AddDataAnnotationsLocalization();
 
-            services.AddScoped<LanguageActionFilter>();
+            // services.AddScoped<LanguageActionFilter>();
 
             // Inject ticket formatting
             services.AddTransient(typeof(ISecureDataFormat<>), typeof(SecureDataFormat<>));
@@ -223,7 +228,7 @@ namespace Yavsc
             {
                 options.ResourcesPath = "Resources";
             });
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -241,7 +246,7 @@ namespace Yavsc
             Startup.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
             Startup.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
             Startup.Temp = siteSettings.Value.TempDir;
-            
+
             // TODO implement an installation & upgrade procedure
             // Create required directories
             foreach (string dir in new string[] { UserFilesDirName, UserBillsDirName, SiteSetup.TempDir })
@@ -339,14 +344,14 @@ namespace Yavsc
             ConfigureWorkflow(app, SiteSetup, logger);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"fr"));
             app.UseSession();
-  
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            
+
         }
 
         // Entry point for the application.
@@ -354,4 +359,4 @@ namespace Yavsc
     }
 
 }
-// 
+//

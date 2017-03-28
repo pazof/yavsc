@@ -18,8 +18,7 @@ namespace Yavsc.Controllers
     using Models.Relationship;
     using Models.Workflow;
     using Services;
-    
-    [ServiceFilter(typeof(LanguageActionFilter))]
+
     public class CommandController : Controller
     {
         protected UserManager<ApplicationUser> _userManager;
@@ -128,7 +127,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RdvQuery command)
         {
-            
+
             var uid = User.GetUserId();
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
@@ -151,10 +150,10 @@ namespace Yavsc.Controllers
             // ModelState.ClearValidationState("Client.Avatar");
             // ModelState.ClearValidationState("ClientId");
             ModelState.MarkFieldSkipped("ClientId");
-            
+
             if (ModelState.IsValid)
                 {
-                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address 
+                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address
                 && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
 
                 if (existingLocation!=null) {

@@ -13,7 +13,7 @@ using Yavsc.ViewModels.Administration;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)), Authorize()]
+    [Authorize()]
     public class AdministrationController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -55,7 +55,7 @@ namespace Yavsc.Controllers
             }
             return Ok(new { message = "you owned it." });
         }
-        
+
         [Authorize(Roles = Constants.AdminGroupName)]
         [Produces("application/json")]
         public async Task<IActionResult> Index()
@@ -72,7 +72,7 @@ namespace Yavsc.Controllers
                 Name = x.Name,
                 Users = x.Users.Select(u=>u.UserId).ToArray()
             });
-            
+
             return View(new AdminViewModel
             {
                 Roles = roles.ToArray(),
@@ -80,7 +80,7 @@ namespace Yavsc.Controllers
                 YouAreAdmin = youAreAdmin
             });
         }
-        
+
         public IActionResult Role(string id)
         {
             IdentityRole role = _roleManager.Roles
