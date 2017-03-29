@@ -17,20 +17,20 @@ namespace Yavsc.Models
     {
         /// <summary>
         /// Another me, as a byte array.
-        /// This value points a picture that may be used 
-        /// to sign documents.
+        /// This value points a picture that may be used
+        /// to present the user
         /// </summary>
-        /// <returns>the path to an user's image, relative to it's dir<summary>
+        /// <returns>the path to an user's image, relative to it's user dir<summary>
         /// <see>Startup.UserFilesOptions</see>
         /// </summary>
         /// <returns></returns>
-        [MaxLength(512),Required]
+        [MaxLength(512)]
         public string Avatar { get; set; }
 
         [MaxLength(512)]
         public string FullName { get; set; }
 
-        
+
         /// <summary>
         /// WIP Paypal
         /// </summary>
@@ -58,7 +58,7 @@ namespace Yavsc.Models
         /// <returns></returns>
         [InverseProperty("DeviceOwner"),JsonIgnore]
         public virtual List<GoogleCloudMobileDeclaration> Devices { get; set; }
-        
+
         [InverseProperty("Owner"),JsonIgnore]
         public virtual List<Connection> Connections { get; set; }
 
@@ -88,7 +88,7 @@ namespace Yavsc.Models
         }
 
         public BankIdentity BankInfo { get; set; }
-        
+
         public long DiskQuota { get; set; } = 512*1024*1024;
         public long DiskUsage { get; set; } = 0;
 
