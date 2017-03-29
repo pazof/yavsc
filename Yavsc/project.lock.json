@@ -289,7 +289,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.4": {
+      "MarkdownDeep-av.NET/1.5.5": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -3152,7 +3152,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.4": {
+      "MarkdownDeep-av.NET/1.5.5": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -6015,7 +6015,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.4": {
+      "MarkdownDeep-av.NET/1.5.5": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -8884,15 +8884,15 @@
         "MailKit.nuspec"
       ]
     },
-    "MarkdownDeep-av.NET/1.5.4": {
+    "MarkdownDeep-av.NET/1.5.5": {
       "type": "package",
-      "sha512": "89nafNRqR3hqKU0rQzHb+BGpoxjImo7pfOQj8vNALB3MloBye0jqMv9eqpKP+QIDLtMS8gHf7uP1kAIkhsOg+Q==",
+      "sha512": "RVNumZoZCPDq3H83vrudwptPgR0YFb3MsxIAuGZccUIPiwVUyixGanymHOy0H9QPubkYWo8t00iXqVvIjiu2gg==",
       "files": [
         "lib/dnxcore50/MarkdownDeep.dll",
         "lib/MonoAndroid10/MarkdownDeep.dll",
         "lib/net451/MarkdownDeep.dll",
-        "MarkdownDeep-av.NET.1.5.4.nupkg",
-        "MarkdownDeep-av.NET.1.5.4.nupkg.sha512",
+        "MarkdownDeep-av.NET.1.5.5.nupkg",
+        "MarkdownDeep-av.NET.1.5.5.nupkg.sha512",
         "MarkdownDeep-av.NET.nuspec"
       ]
     },
@@ -11550,7 +11550,7 @@
       "Google.Apis.Core >= 1.11.1",
       "Google.Apis >= 1.11.1",
       "MailKit >= 1.12.0",
-      "MarkdownDeep-av.NET >= 1.5.4",
+      "MarkdownDeep-av.NET >= 1.5.5",
       "Microsoft.AspNet.Authentication.Cookies >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Facebook >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Twitter >= 1.0.0-rc1-final",
