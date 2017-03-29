@@ -302,33 +302,6 @@ namespace Yavsc
                     else throw ex;
                 }
             }
-            Task.Run(async () =>
-            {
-                // Creates roles when they don't exist
-                foreach (string roleName in new string[] {Constants.AdminGroupName,
-                Constants.StarGroupName, Constants.PerformerGroupName,
-                Constants.FrontOfficeGroupName,
-                Constants.StarHunterGroupName
-                })
-                    if (!await roleManager.RoleExistsAsync(roleName))
-                    {
-                        var role = new IdentityRole { Name = roleName };
-                        var resultCreate = await roleManager.CreateAsync(role);
-                        if (!resultCreate.Succeeded)
-                        {
-                            throw new Exception("The role '{roleName}' does not exist and could not be created.");
-                        }
-                    }
-                // FIXME In a perfect world, connection records should be dropped at shutdown, but:
-
-                using (var db = new ApplicationDbContext())
-                {
-                    foreach (var c in db.Connections)
-                        db.Connections.Remove(c);
-                    db.SaveChanges();
-                }
-            });
-
 
             app.UseIISPlatformHandler(options =>
             {

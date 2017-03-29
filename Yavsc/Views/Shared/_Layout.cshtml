@@ -17,10 +17,9 @@
             <script src="~/js/bootstrap.js" asp-append-version="true"></script>
             <script src="~/js/jquery.signalR-2.2.1.js" asp-append-version="true"></script>
             <script src="~/js/site.js" asp-append-version="true"></script>
-            <style>
         </environment>
 
-        <environment names="yavsc,yavscpre,zicmoove,lua">
+        <environment names="yavsc,yavscpre,zicmoove,lua,coiffure">
             <link rel="stylesheet" href="~/css/main/bootstrap.min.css" asp-append-version="true"/>
             <link rel="stylesheet" href="~/css/main/site.min.css" asp-append-version="true"/>
             <link rel="stylesheet" href="~/css/main/jquery-ui.min.css" asp-append-version="true"/>
@@ -41,9 +40,7 @@
            
         </environment>
  <style>
-     nav {
-    background: url(@Startup.SiteSetup.Banner) 0% 50%;
-}
+     nav { background: url(@Startup.SiteSetup.Banner) 0% 50% no-repeat; padding-left:3em; }
 </style>
         @RenderSection("header", required: false)
     </head>
