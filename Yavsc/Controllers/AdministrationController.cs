@@ -91,6 +91,8 @@ namespace Yavsc.Controllers
                 Name = x.Name,
                 Users = x.Users.Select(u=>u.UserId).ToArray()
             });
+           ViewBag.ThisAssembly = GetType().Assembly.FullName;
+           ViewBag.RunTimeVersion = GetType().Assembly.ImageRuntimeVersion;
 
             return View(new AdminViewModel
             {

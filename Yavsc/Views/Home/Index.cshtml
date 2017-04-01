@@ -63,15 +63,3 @@
     </a>
 </div>
 }
-@if (!ViewBag.IsFromSecureProx) {
-    <div  class="alert alert-warning alert-dismissable">
-<markdown>
-## Connexion non chiffrée ##
-
-Un accés plus sécurisé est disponible, mais le certificat qui le chiffre n'est pas certifié
-comme il se devrait ...
-</markdown>
-<a data-dismiss="alert" class="btn close ">J'ai compris, et je continue avec cette connexion.</a>
- <a href="@ViewBag.SecureHomeUrl" class="btn alert-link" >Accès sécurisé</a>
- </div>
-}

@@ -40,7 +40,7 @@
            
         </environment>
  <style>
-     nav { background: url(@Startup.SiteSetup.Banner) 0% 50% no-repeat; padding-left:3em; }
+     nav { background: url(@Startup.SiteSetup.Banner) 0% 50% no-repeat; }
 </style>
         @RenderSection("header", required: false)
     </head>
@@ -65,7 +65,18 @@
                         <li><a asp-controller="Home" asp-action="Contact" class="navbar-link">@SR["Contact"]</a></li>
                         <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
                         @if (User.IsInRole(Constants.AdminGroupName)) {
-                         <li><a asp-controller="Administration" asp-action="Index" class="navbar-link">Administration</a> </li>
+                         <li class="dropdown">
+                             <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                 Administration <span class="caret"></span>
+                             </a>
+                             <ul class="dropdown-menu">
+                                <li><a asp-controller="Administration" asp-action="Index">Index</a></li>
+                                <li><a asp-controller="Activity" asp-action="Index">Activités</a></li>
+                                <li><a asp-controller="CommandForms" asp-action="Index">Formulaires</a></li>
+                                <li><a asp-controller="Notifications" asp-action="Index">Notifications</a></li>
+                                <li><a asp-controller="SIRENExceptions" asp-action="Index">Excéptions au numéro de SIREN</a></li>
+                            </ul>
+                        </li>
                            
                         }
                     </ul>
@@ -93,7 +104,7 @@
     <p><em>Site de développement</em></p>
 </environment>
 <i>@SiteSettings.Value.Slogan</i>
-
+<environment names="yavsc,zicmoove,lua,coiffure">
 <script>
   window.fbAsyncInit = function() {
     FB.init({
@@ -119,6 +130,7 @@
   data-show-faces="true"
   data-colorscheme="dark">
 </div>
+</environment>
             <p>Yavsc - Copyright &copy; 2016 - 2017 Paul Schneider</p>
         </footer>
         @RenderSection("scripts", required: false)
