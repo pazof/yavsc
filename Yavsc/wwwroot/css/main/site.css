@@ -115,14 +115,14 @@ select,
 
 .carousel .item .btn {
       -webkit-transition: -webkit-transform 2s;
-    transition: transform 2s;
+    transition: transform 2s background-color 1s color 1s;
     transform: scale3d(0,0,0);
     -webkit-transform: scale3d(0,0,0);
 }
 
 .carousel .active .btn {
-    -webkit-transform: initial;
-    transform: initial;
+    -webkit-transform: inherit;
+    transform: inherit;
 }
 .container {
     -webkit-transition: background-color 2s color 1s;
