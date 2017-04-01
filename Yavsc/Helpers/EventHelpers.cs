@@ -12,7 +12,7 @@ namespace Yavsc.Helpers
         IStringLocalizer SR)
         {
             var yaev = new RdvQueryEvent
-            {   
+            {
                 Sender = query.ClientId,
                 Message = string.Format(SR["RdvToPerf"],
                 query.Client.UserName,
@@ -21,8 +21,8 @@ namespace Yavsc.Helpers
                 query.ActivityCode)+
                 "\n"+query.Reason,
                 Client =  new ClientProviderInfo { 
-                    UserName = query.Client.UserName , 
-                    UserId = query.ClientId, 
+                    UserName = query.Client.UserName ,
+                    UserId = query.ClientId,
                     Avatar = query.Client.Avatar }  ,
                 Previsional = query.Previsional,
                 EventDate = query.EventDate,
@@ -37,22 +37,22 @@ namespace Yavsc.Helpers
         IStringLocalizer SR)
         {
             var yaev = new HairCutQueryEvent
-            {   
+            {
                 Sender = query.ClientId,
                 Message = string.Format(SR["RdvToPerf"],
                 query.Client.UserName,
-                query.EventDate.ToString("dddd dd/MM/yyyy à HH:mm"),
-                query.Location.Address,
+                query.EventDate?.ToString("dddd dd/MM/yyyy à HH:mm")??"[pas de date spécifiée]",
+                query.Location?.Address??"[pas de lieu spécifié]",
                 query.ActivityCode),
                 Client =  new ClientProviderInfo { 
-                    UserName = query.Client.UserName , 
-                    UserId = query.ClientId, 
+                    UserName = query.Client.UserName ,
+                    UserId = query.ClientId,
                     Avatar = query.Client.Avatar }  ,
                 Previsional = query.Previsional,
                 EventDate = query.EventDate,
                 Location = query.Location,
                 Id = query.Id,
-                Reason = "Coupe particulier",
+                Reason = "Coupe pour un particulier",
                 ActivityCode = query.ActivityCode
             };
             return yaev;
@@ -62,7 +62,7 @@ namespace Yavsc.Helpers
         IStringLocalizer SR)
         {
             var yaev = new HairCutQueryEvent
-            {   
+            {
                 Sender = query.ClientId,
                 Message = string.Format(SR["RdvToPerf"],
                 query.Client.UserName,
@@ -70,8 +70,8 @@ namespace Yavsc.Helpers
                 query.Location.Address,
                 query.ActivityCode),
                 Client =  new ClientProviderInfo { 
-                    UserName = query.Client.UserName , 
-                    UserId = query.ClientId, 
+                    UserName = query.Client.UserName ,
+                    UserId = query.ClientId,
                     Avatar = query.Client.Avatar }  ,
                 Previsional = query.Previsional,
                 EventDate = query.EventDate,

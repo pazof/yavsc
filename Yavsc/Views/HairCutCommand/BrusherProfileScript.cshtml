@@ -3,16 +3,16 @@
 var tarifs = 
     [
        { 
-           cut: [ @Model.WomenLongCutPrice, @Model.WomenHalfCutPrice, @Model.WomenShortCutPrice ],
+           cut: [ @Model.WomenHalfCutPrice, @Model.WomenShortCutPrice, @Model.WomenLongCutPrice ],
            tech: [ 
-            [@Model.LongColorPrice, @Model.HalfColorPrice, @Model.ShortColorPrice],
-            [@Model.LongPermanentPrice, @Model.HalfPermanentPrice, @Model.ShortPermanentPrice],
-            [@Model.LongDefrisPrice, @Model.HalfDefrisPrice, @Model.ShortDefrisPrice],
-            [@Model.LongMechPrice, @Model.HalfMechPrice, @Model.ShortMechPrice],
-            [@Model.LongBalayagePrice, @Model.HalfBalayagePrice, @Model.ShortBalayagePrice],
+            [@Model.HalfColorPrice, @Model.ShortColorPrice, @Model.LongColorPrice],
+            [@Model.HalfPermanentPrice, @Model.ShortPermanentPrice, @Model.LongPermanentPrice],
+            [@Model.HalfDefrisPrice, @Model.ShortDefrisPrice, @Model.LongDefrisPrice],
+            [@Model.HalfMechPrice, @Model.ShortMechPrice, @Model.LongMechPrice],
+            [@Model.HalfBalayagePrice, @Model.ShortBalayagePrice, @Model.LongBalayagePrice],
             ],
-            brush: [@Model.LongBrushingPrice, @Model.HalfBrushingPrice, @Model.ShortBrushingPrice],
-            multicolor: [@Model.LongMultiColorPrice, @Model.HalfMultiColorPrice, @Model.ShortMultiColorPrice],
+            brush: [@Model.HalfBrushingPrice, @Model.ShortBrushingPrice, @Model.LongBrushingPrice],
+            multicolor: [@Model.HalfMultiColorPrice, @Model.ShortMultiColorPrice, @Model.LongMultiColorPrice],
             shampoo: @Model.ShampooPrice,
             care: @Model.CarePrice
         },

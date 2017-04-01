@@ -21,6 +21,7 @@ namespace Yavsc.Controllers
     using Microsoft.AspNet.Http;
     using Yavsc.Extensions;
     using Yavsc.Models.Haircut;
+    using System.Globalization;
 
     public class HairCutCommandController : CommandController
     {
@@ -40,10 +41,10 @@ namespace Yavsc.Controllers
 
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateHairCutQuery(HairCutQuery command)
+        public async Task<IActionResult> CreateHairCutQuery(HairCutQuery model)
         {
             var uid = User.GetUserId();
-            var prid = command.PerformerId;
+            var prid = model.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
             || string.IsNullOrWhiteSpace(prid))
                 throw new InvalidOperationException(
@@ -53,39 +54,43 @@ namespace Yavsc.Controllers
                 u => u.Performer
             ).Include(u => u.Performer.Devices)
             .FirstOrDefault(
-                x => x.PerformerId == command.PerformerId
+                x => x.PerformerId == model.PerformerId
             );
-            var user = await _userManager.FindByIdAsync(uid);
-            command.Client = user;
-            command.ClientId = uid;
-            command.PerformerProfile = pro;
+            model.PerformerProfile = pro;
             // FIXME Why!!
             // ModelState.ClearValidationState("PerformerProfile.Avatar");
             // ModelState.ClearValidationState("Client.Avatar");
             // ModelState.ClearValidationState("ClientId");
-            ModelState.MarkFieldSkipped("ClientId");
 
             if (ModelState.IsValid)
                 {
-                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address
-                && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
+                    if (model.Location!=null) {
+                        var existingLocation = await _context.Locations.FirstOrDefaultAsync( x=>x.Address == model.Location.Address
+                        && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude );
 
-                if (existingLocation!=null) {
-                    command.Location=existingLocation;
-                }
-                else _context.Attach<Location>(command.Location);
+                        if (existingLocation!=null) {
+                            model.Location=existingLocation;
+                        }
+                        else _context.Attach<Location>(model.Location);
+                    }
+                    var existingPrestation = await _context.HairPrestation.FirstOrDefaultAsync( x=> model.PrestationId == x.Id );
 
-                _context.HairCutQueries.Add(command, GraphBehavior.IncludeDependents);
-                _context.SaveChanges(User.GetUserId());
+                    if (existingPrestation!=null) {
+                        model.Prestation = existingPrestation;
+                    }
+                    else _context.Attach<HairPrestation>(model.Prestation);
 
-                var yaev = command.CreateEvent(_localizer);
+                _context.HairCutQueries.Add(model);
+                await _context.SaveChangesAsync(User.GetUserId());
+                var brusherProfile = await _context.BrusherProfile.SingleAsync(p=>p.UserId == pro.PerformerId);
+                var yaev = model.CreateEvent(_localizer);
                 MessageWithPayloadResponse grep = null;
 
                 if (pro.AcceptPublicContact)
                 {
                     if (pro.AcceptNotifications) {
                         if (pro.Performer.Devices.Count > 0) {
-                            var regids = command.PerformerProfile.Performer
+                            var regids = model.PerformerProfile.Performer
                             .Devices.Select(d => d.GCMRegistrationId);
                             grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
                         }
@@ -94,12 +99,12 @@ namespace Yavsc.Controllers
                         // if (grep==null || grep.success<=0 || grep.failure>0)
                         ViewBag.GooglePayload=grep;
                         if (grep!=null)
-                        _logger.LogWarning($"Performer: {command.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
+                        _logger.LogWarning($"Performer: {model.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
                     }
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
-                        command.PerformerProfile.Performer.Email,
+                        model.PerformerProfile.Performer.Email,
                         yaev.Topic+" "+yaev.Sender,
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
@@ -107,16 +112,19 @@ namespace Yavsc.Controllers
                 else {
                     // TODO if (AcceptProContact) try & find a bookmaker to send him this query
                 }
-                ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
+                ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
-                return View("CommandConfirmation",command);
+               var addition = model.Prestation.Addition(brusherProfile);
+                  ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
+                return View("CommandConfirmation",model);
             }
-            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
+            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
-            return View(command);
+            SetViewData(model.ActivityCode,model.PerformerId,model.Prestation);
+            return View("HairCut",model);
         }
 
-        public ActionResult HairCut(string performerId, string activityCode)
+        public async Task<ActionResult> HairCut(string performerId, string activityCode)
         {
             HairPrestation pPrestation=null;
             var prestaJson = HttpContext.Session.GetString("HairCutPresta") ;
@@ -125,6 +133,26 @@ namespace Yavsc.Controllers
             }
             else pPrestation = new HairPrestation {};
 
+            var uid = User.GetUserId();
+            var user = await _userManager.FindByIdAsync(uid);
+
+            SetViewData(activityCode,performerId,pPrestation);
+
+            var perfer = _context.Performers.Include(
+                    p=>p.Performer
+                ).Single(p=>p.PerformerId == performerId);
+            var result = new HairCutQuery {
+                PerformerProfile = perfer,
+                PerformerId = perfer.PerformerId,
+                ClientId = uid,
+                Prestation = pPrestation,
+                Client = user
+            };
+
+            return View(result);
+        }
+        private void SetViewData (string activityCode, string performerId, HairPrestation pPrestation )
+        {
             ViewBag.HairTaints = _context.HairTaint.Include(t=>t.Color);
             ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos),_localizer);
             ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength),_localizer);
@@ -135,16 +163,6 @@ namespace Yavsc.Controllers
             || pPrestation.Tech == HairTechnos.Mech ) ? "":"hidden";
             ViewBag.TechClass = ( pPrestation.Gender == HairCutGenders.Women ) ? "":"hidden";
             ViewData["PerfPrefs"] = _context.BrusherProfile.Single(p=>p.UserId == performerId);
-            var perfer = _context.Performers.Include(
-                    p=>p.Performer
-                ).Single(p=>p.PerformerId == performerId);
-            var result = new HairCutQuery {
-                PerformerProfile = perfer,
-                PerformerId = perfer.PerformerId,
-                ClientId = User.GetUserId(),
-                Prestation = pPrestation
-            };
-            return View(result);
         }
 
         [HttpPost, Authorize]
@@ -219,7 +237,7 @@ namespace Yavsc.Controllers
             }
             ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
-            return View(command);
+            return View("HairCut",command);
         }
     }
 }

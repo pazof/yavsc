@@ -16,20 +16,20 @@ namespace Yavsc.Models.Haircut
         [Required]
         public long PrestationId { get; set; }
 
-        [ForeignKey("PrestationId")]
+        [ForeignKey("PrestationId"),Required]
         public virtual HairPrestation  Prestation { get; set; }
 
-        [Required][ForeignKey("LocationId")]
+        [ForeignKey("LocationId")]
 
-        public Location Location { get; set; }
+        public virtual Location Location { get; set; }
 
-        public DateTime EventDate
+        public DateTime? EventDate
         {
             get;
             set;
         }
 
-        public long LocationId
+        public long? LocationId
         {
             get;
 

@@ -127,10 +127,10 @@
 
 @Html.DisplayFor(m=>m.PerformerProfile)
 
-<form asp-controller="HairCutCommand" asp-action="HairCut" id="form">
+<form asp-controller="HairCutCommand" asp-action="CreateHairCutQuery" id="form">
     <div class="form-horizontal">
         <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="Prestation.Gender" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -210,8 +210,9 @@
         </div>
         <span>Total: <span id="Total" class="total"></span>
       </span>
-             <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName, sans préciser ni lieu ni date (pour prendre rendez-vous la prise de contact)"/>
-        <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
+      <input asp-for="ClientId" type="hidden" />
+      <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName, sans préciser ni lieu ni date (pour prendre rendez-vous la prise de contact)"/>
+      <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
     
    </div>
     <input type="hidden" name="performerId" value="@Model.PerformerProfile.PerformerId" />

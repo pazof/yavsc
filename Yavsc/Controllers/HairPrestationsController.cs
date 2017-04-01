@@ -12,7 +12,7 @@ namespace Yavsc.Controllers
 
         public HairPrestationsController(ApplicationDbContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: HairPrestations

@@ -3,7 +3,6 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Web.Optimization;
 using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authorization;
@@ -308,8 +307,6 @@ namespace Yavsc
                 options.AuthenticationDescriptions.Clear();
                 options.AutomaticAuthentication = false;
             });
-
-
 
             ConfigureOAuthApp(app, SiteSetup);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
