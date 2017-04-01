@@ -45,14 +45,7 @@
         @RenderSection("header", required: false)
     </head>
     <body>
-        @if (ViewData ["Notify"] != null) {
-            foreach (Notification n in ViewData ["Notify"] as IEnumerable<Notification>) {
-            <div class="alert alert-info alert-dismissable">
-  <h1>@n.title</h1>@n.body
-  <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action==null)?SR["Fermer"]:SR[n.click_action])</a>
-</div>
-            }
-        }
+        
         <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -71,11 +64,25 @@
                         <li><a asp-controller="Home" asp-action="Chat" class="navbar-link">@SR["Chat"]</a></li>
                         <li><a asp-controller="Home" asp-action="Contact" class="navbar-link">@SR["Contact"]</a></li>
                         <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
+                        @if (User.IsInRole(Constants.AdminGroupName)) {
+                         <li><a asp-controller="Administration" asp-action="Index" class="navbar-link">Administration</a> </li>
+                           
+                        }
                     </ul>
+                     @RenderSection("ctxmenu", required: false)
                     @await Html.PartialAsync("_LoginPartial")
                 </div>
             </div>
         </nav>
+    @if (ViewData ["Notify"] != null) {
+    foreach (Notification n in ViewData ["Notify"] as IEnumerable<Notification>) {
+    <div class="alert alert-info alert-dismissable">
+    <h2 markdown="@n.title"></h2>
+    <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action==null)?SR["Fermer"]:SR[n.click_action])</a>
+    <markdown>@n.body</markdown>
+    </div>
+            }
+        }
         @RenderSection("subbanner", required: false)
         <main class="container body-content" role="main">
             @RenderBody()

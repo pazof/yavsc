@@ -1,8 +1,6 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
-using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
@@ -536,9 +534,9 @@ namespace Yavsc.Migrations
 
                     b.Property<DateTime>("DateModified");
 
-                    b.Property<DateTime>("EventDate");
+                    b.Property<DateTime?>("EventDate");
 
-                    b.Property<long>("LocationId");
+                    b.Property<long?>("LocationId");
 
                     b.Property<string>("PerformerId")
                         .IsRequired();

@@ -1,8 +1,9 @@
+using System;
 using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class avatarMayBeNull : Migration
+    public partial class rdvqueryAndNoLocationNorDate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,7 +23,6 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_Connection_ApplicationUser_ApplicationUserId", table: "Connection");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Activity_ActivityCode", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_ApplicationUser_ClientId", table: "HairCutQuery");
-            migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Location_LocationId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_PerformerProfile_PerformerId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_HairPrestation_PrestationId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_Activity_ActivityCode", table: "HairMultiCutQuery");
@@ -43,11 +43,14 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.AlterColumn<string>(
-                name: "Avatar",
-                table: "AspNetUsers",
-                nullable: true,
-                defaultValue: "/images/Users/icon_user.png");
+            migrationBuilder.AlterColumn<long>(
+                name: "LocationId",
+                table: "HairCutQuery",
+                nullable: true);
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "EventDate",
+                table: "HairCutQuery",
+                nullable: true);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -158,13 +161,6 @@ namespace Yavsc.Migrations
                 table: "HairCutQuery",
                 column: "ClientId",
                 principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-            migrationBuilder.AddForeignKey(
-                name: "FK_HairCutQuery_Location_LocationId",
-                table: "HairCutQuery",
-                column: "LocationId",
-                principalTable: "Location",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
@@ -327,7 +323,6 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_Connection_ApplicationUser_ApplicationUserId", table: "Connection");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Activity_ActivityCode", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_ApplicationUser_ClientId", table: "HairCutQuery");
-            migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Location_LocationId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_PerformerProfile_PerformerId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_HairPrestation_PrestationId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_Activity_ActivityCode", table: "HairMultiCutQuery");
@@ -348,11 +343,14 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.AlterColumn<string>(
-                name: "Avatar",
-                table: "AspNetUsers",
-                nullable: false,
-                defaultValue: "/images/Users/icon_user.png");
+            migrationBuilder.AlterColumn<long>(
+                name: "LocationId",
+                table: "HairCutQuery",
+                nullable: false);
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "EventDate",
+                table: "HairCutQuery",
+                nullable: false);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -463,13 +461,6 @@ namespace Yavsc.Migrations
                 table: "HairCutQuery",
                 column: "ClientId",
                 principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-            migrationBuilder.AddForeignKey(
-                name: "FK_HairCutQuery_Location_LocationId",
-                table: "HairCutQuery",
-                column: "LocationId",
-                principalTable: "Location",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(

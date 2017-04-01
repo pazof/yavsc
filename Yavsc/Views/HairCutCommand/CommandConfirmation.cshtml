@@ -6,11 +6,40 @@
     <div class="form-horizontal">
         <h4>@SR["Your book query"]</h4>
         <hr />
-        <label for="EventDate">@SR["Event date"]</label>: @Html.DisplayFor(m => m.EventDate)
-        <br/>
+        <ul>
+            <li>
+                Votre star de la coiffure:
+                @Html.DisplayFor(m=>m.PerformerProfile)
+            </li>
+            <li>
+                @Html.DisplayFor(m=>m.Prestation)
+<p>
+    Addition minimale 
+    (Compter des frais supplémentaires 
+    en cas de longs déplacements,
+        ou des majorations en cas de weekend et jour férie)
+   <span class="price"> @ViewBag.Addition </span></p>
+            </li>
+            <li>
+        @if (Model.EventDate == null) {
+         <p>Pas de date convenue ...</p>
+        } else {
+        <label for="EventDate">
+            @SR["Event date"]</label>
+           @Html.DisplayFor(m => m.EventDate)
+        }
+            </li>
+            <li>
 
-        <label for="Location">@SR["Location"]</label>: @Html.DisplayFor(m => m.Location)
-        <br/>
+        @if (Model.Location == null) {
+         <p>Pas de lieu convenu ...</p> 
+         } else {
+        <label for="Location">@SR["Location"]</label>
+         @Html.DisplayFor(m => m.Location)  
+
+        }
+        </li>
+        </ul>
 
         @if (ViewBag.GooglePayload !=null) 
         {
@@ -20,10 +49,10 @@
             else {
                 if (ViewBag.GooglePayload.failure>0)
                     {
-                        <h4>@SR["GCM Notification sending failed"]</h4>
+                        <div class="error">@SR["GCM Notification sending failed"]</div>
                     }
                     else {
-                        <!-- email sent -->
+                       <div class="error">@SR["E-mail sent"]</div>
                     }
             }
         }

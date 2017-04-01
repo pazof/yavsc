@@ -2,6 +2,14 @@
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 
+.performer {
+    padding-left: 1em;
+    background-repeat: no-repeat;
+    background-image: url('/images/greenstar.svg');
+}
+.performer ul {
+    margin-left: 2.5em;
+}
 
 .smalltofhol { max-height: 3em; max-width: 3em; float:left; margin:.5em; }
 .price {
@@ -218,7 +226,9 @@ footer {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-stretch: condensed;
     display: inline-flex;
-    color: #444;
+    color: #ff8;
+    padding: .1em;
+    border-radius: .5em;
     background-color: #210912;
 }
 

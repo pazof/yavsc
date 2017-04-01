@@ -7,8 +7,8 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170329075249_avatarMayBeNull")]
-    partial class avatarMayBeNull
+    [Migration("20170331214327_rdvqueryAndNoLocationNorDate")]
+    partial class rdvqueryAndNoLocationNorDate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -536,9 +536,9 @@ namespace Yavsc.Migrations
 
                     b.Property<DateTime>("DateModified");
 
-                    b.Property<DateTime>("EventDate");
+                    b.Property<DateTime?>("EventDate");
 
-                    b.Property<long>("LocationId");
+                    b.Property<long?>("LocationId");
 
                     b.Property<string>("PerformerId")
                         .IsRequired();

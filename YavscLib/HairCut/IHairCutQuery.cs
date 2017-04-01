@@ -5,6 +5,6 @@ namespace YavscLib.HairCut
         long Id { get; set; }
         long PrestationId { get; set; }
 
-        long LocationId { get; set; }
+        long? LocationId { get; set; }
     }
 }

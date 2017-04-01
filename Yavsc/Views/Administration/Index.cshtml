@@ -3,7 +3,15 @@
 @{ 
     ViewBag.Title = SR["Administration"];
 }
-
+@section ctxmenu {
+    <ul class="nav navbar-nav">
+                        <li><a asp-controller="Activity" asp-action="Index" class="navbar-link">Activités</a></li>
+                        <li><a asp-controller="CommandForms" asp-action="Index" class="navbar-link">Formulaires</a></li>
+                        <li><a asp-controller="Notifications" asp-action="Index" class="navbar-link">Notifications</a></li>
+                        <li><a asp-controller="SIRENExceptions" asp-action="Index" class="navbar-link">Excéptions au numéro de SIREN</a> 
+                        </li>
+    </ul>
+}
 <h2>@ViewBag.Title</h2>
 <p>
 Rôles : 
@@ -20,3 +28,4 @@ Nombre d'administrateurs :
 <p>
 Vous êtes administrateur: @(Model.YouAreAdmin?"Oui":"Non")
 </p>
+

@@ -25,6 +25,7 @@ namespace Yavsc.Controllers
     using Models.Relationship;
     using PayPal.PayPalAPIInterfaceService;
     using PayPal.PayPalAPIInterfaceService.Model;
+    using Yavsc.Models.Bank;
 
     [Authorize]
     public class ManageController : Controller
@@ -88,6 +89,8 @@ namespace Yavsc.Controllers
                 : message == ManageMessageId.SetActivitySuccess ? _SR["Your activity was set."]
                 : message == ManageMessageId.AvatarUpdateSuccess ? _SR["Your avatar was updated."]
                 : message == ManageMessageId.IdentityUpdateSuccess ? _SR["Your identity was updated."]
+                : message == ManageMessageId.SetBankInfoSuccess ? _SR["Vos informations bancaires ont bien été enregistrées."]
+                : message == ManageMessageId.SetAddressSuccess ? _SR["Votre adresse a bien été enregistrée."]
                 : "";
 
             var user = await GetCurrentUserAsync();
@@ -265,7 +268,7 @@ namespace Yavsc.Controllers
             return View();
         }
 
-        [HttpGet, Authorize]
+        [HttpGet]
         public async Task<IActionResult> SetGoogleCalendar(string returnUrl)
         {
             var credential = await _userManager.GetCredentialForGoogleApiAsync(
@@ -290,8 +293,7 @@ namespace Yavsc.Controllers
             return View(new SetGoogleCalendarViewModel { ReturnUrl = returnUrl });
         }
 
-        [HttpPost, ValidateAntiForgeryToken,
-        Authorize]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> SetGoogleCalendar(SetGoogleCalendarViewModel model)
         {
             var user = _dbContext.Users.FirstOrDefault(u => u.Id == User.GetUserId());
@@ -302,16 +304,41 @@ namespace Yavsc.Controllers
             else return Redirect(model.ReturnUrl);
         }
 
-        [HttpGet,Authorize]
+        [HttpGet]
         public async Task<IActionResult> AddBankInfo()
         {
-            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            var uid = User.GetUserId();
+            var user = await _dbContext.Users.Include(u=>u.BankInfo).SingleAsync(u=>u.Id==uid);
 
-            return View(new AddBankInfoViewModel(
-                user.BankInfo));
+            return View(user.BankInfo);
         }
 
-        [HttpGet,Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddBankInfo (BankIdentity model)
+        {
+            if (ModelState.IsValid)
+            {
+                // TODO PostBankInfoRequirement & auth
+                var uid = User.GetUserId();
+                var user = _dbContext.Users.Include(u=>u.BankInfo)
+                    .Single(u=>u.Id == uid);
+
+                if (user.BankInfo != null)
+                 {
+                     model.Id = user.BankInfo.Id;
+                     _dbContext.Entry(user.BankInfo).State = EntityState.Detached;
+                     _dbContext.Update(model);
+                 }
+                 else {
+                     user.BankInfo = model;
+                     _dbContext.Update(user);
+                 }
+                 await _dbContext.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetBankInfoSuccess });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> SetFullName()
         {
             var user = await _userManager.FindByIdAsync(User.GetUserId());
@@ -483,13 +510,13 @@ namespace Yavsc.Controllers
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
         }
 
-        [HttpGet, Authorize]
+        [HttpGet]
         public IActionResult SetAvatar()
         {
             return View();
         }
 
-        [HttpGet, Authorize]
+        [HttpGet]
         public IActionResult SetActivity()
         {
             var user = GetCurrentUserAsync().Result;
@@ -520,7 +547,6 @@ namespace Yavsc.Controllers
 
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> SetActivity(PerformerProfile model)
         {
             var user = GetCurrentUserAsync().Result;
@@ -588,7 +614,7 @@ namespace Yavsc.Controllers
             return View(model);
         }
 
-        [HttpPost, Authorize]
+        [HttpPost]
         public async Task<IActionResult> UnsetActivity()
         {
             var user = GetCurrentUserAsync().Result;
@@ -784,6 +810,9 @@ namespace Yavsc.Controllers
             UnsetActivitySuccess,
             AvatarUpdateSuccess,
             IdentityUpdateSuccess,
+            SetBankInfoSuccess,
+
+            SetAddressSuccess,
             Error
         }
 
@@ -794,5 +823,36 @@ namespace Yavsc.Controllers
         }
 
         #endregion
+
+        [HttpGet]
+        public async Task <IActionResult> SetAddress()
+        {
+            var uid = User.GetUserId();
+            var user = await _dbContext.Users.Include(u=>u.PostalAddress).SingleAsync(u=>u.Id==uid);
+            ViewBag.GoogleSettings =  _googleSettings;
+            return View(user.PostalAddress);
+        }
+
+        [HttpPost]
+        public async Task <IActionResult> SetAddress(Location model)
+        {
+            if (ModelState.IsValid) {
+                var uid = User.GetUserId();
+
+                var user = _dbContext.Users.Include(u=>u.PostalAddress).Single(u=>u.Id==uid);
+
+                var existingLocation = _dbContext.Locations.FirstOrDefault( x=>x.Address == model.Address
+                && x.Longitude == model.Longitude && x.Latitude == model.Latitude );
+
+                if (existingLocation!=null) {
+                    user.PostalAddressId = existingLocation.Id;
+                } else _dbContext.Attach<Location>(model);
+                user.PostalAddress = model;
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetAddressSuccess });
+            }
+            ViewBag.GoogleSettings = _googleSettings;
+            return View(model);
+        }
     }
 }

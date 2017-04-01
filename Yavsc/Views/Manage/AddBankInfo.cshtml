@@ -1,4 +1,4 @@
-@model Yavsc.ViewModels.Manage.AddBankInfoViewModel
+@model Yavsc.Models.Bank.BankIdentity
 @{
     ViewData["Title"] = SR["Fill in your Bank Info"];
 }
@@ -12,43 +12,43 @@
 
     <fieldset>
     <div class="form-group">
-        <label asp-for="Data.BIC" class="col-md-2 control-label"></label>
+        <label asp-for="BIC" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="Data.BIC" class="form-control" />
-            <span asp-validation-for="Data.BIC" class="text-danger"></span>
+            <input asp-for="BIC" class="form-control" />
+            <span asp-validation-for="BIC" class="text-danger"></span>
         </div>
-        <label asp-for="Data.IBAN" class="col-md-2 control-label"></label>
+        <label asp-for="IBAN" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="Data.IBAN" class="form-control" />
-            <span asp-validation-for="Data.IBAN" class="text-danger"></span>
+            <input asp-for="IBAN" class="form-control" />
+            <span asp-validation-for="IBAN" class="text-danger"></span>
         </div>
     </div>
     </fieldset>
     <fieldset>
     <div class="form-group">
 
-        <label asp-for="Data.AccountNumber" class="col-md-2 control-label"></label>
+        <label asp-for="AccountNumber" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="Data.AccountNumber" class="form-control" />
-            <span asp-validation-for="Data.AccountNumber" class="text-danger"></span>
+            <input asp-for="AccountNumber" class="form-control" />
+            <span asp-validation-for="AccountNumber" class="text-danger"></span>
         </div>
 
-        <label asp-for="Data.BankCode" class="col-md-2 control-label"></label>
+        <label asp-for="BankCode" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="Data.BankCode" class="form-control" />
-            <span asp-validation-for="Data.BankCode" class="text-danger"></span>
+            <input asp-for="BankCode" class="form-control" />
+            <span asp-validation-for="BankCode" class="text-danger"></span>
         </div>
 
-        <label asp-for="Data.WicketCode" class="col-md-2 control-label"></label>
+        <label asp-for="WicketCode" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="Data.WicketCode" class="form-control" />
-            <span asp-validation-for="Data.WicketCode" class="text-danger"></span>
+            <input asp-for="WicketCode" class="form-control" />
+            <span asp-validation-for="WicketCode" class="text-danger"></span>
         </div>
 
-        <label asp-for="Data.BankedKey" class="col-md-2 control-label"></label>
+        <label asp-for="BankedKey" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="Data.BankedKey" class="form-control" />
-            <span asp-validation-for="Data.BankedKey" class="text-danger"></span>
+            <input asp-for="BankedKey" class="form-control" />
+            <span asp-validation-for="BankedKey" class="text-danger"></span>
         </div>
 
     </div>

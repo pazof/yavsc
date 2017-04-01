@@ -5091,8 +5091,8 @@ a.thumbnail.active {
 .alert-dismissable .close,
 .alert-dismissible .close {
   position: relative;
-  top: -2px;
-  right: -21px;
+  top: 0;
+  right: 0;
   color: inherit;
 }
 .alert-success {

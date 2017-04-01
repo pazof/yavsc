@@ -75,7 +75,9 @@ namespace Yavsc.Models
         /// Billing postal address
         /// </summary>
         /// <returns></returns>
+        [ForeignKeyAttribute("PostalAddressId")]
         public virtual Location PostalAddress { get; set; }
+        public long? PostalAddressId { get; set; }
 
         /// <summary>
         /// User's Google calendar
@@ -92,7 +94,7 @@ namespace Yavsc.Models
         public long DiskQuota { get; set; } = 512*1024*1024;
         public long DiskUsage { get; set; } = 0;
 
-        [JsonIgnore]
+        [JsonIgnore][InverseProperty("Owner")]
         public virtual List<BlackListed> BlackList { get; set; }
     }
 }

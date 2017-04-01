@@ -27,6 +27,7 @@ namespace Yavsc.Models
     using Workflow.Profiles;
     using Drawing;
     using Yavsc.Attributes;
+    using Yavsc.Models.Bank;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -47,12 +48,12 @@ namespace Yavsc.Models
             builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a=> new { a.CircleId, a.BlogPostId});
             builder.Entity<CircleMember>().HasKey(c=> new { MemberId = c.MemberId, CircleId = c.CircleId });
             builder.Entity<DimissClicked>().HasKey(c=>new { uid = c.UserId, notid = c.NotificationId});
-            
+
             foreach (var et in builder.Model.GetEntityTypes()) {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
-                
+
         }
         public DbSet<TSettings> GetDbSet<TSettings>() where TSettings : class,  ISpecializationSettings
 
@@ -75,7 +76,7 @@ namespace Yavsc.Models
         }
 
         public DbSet<Client> Applications { get; set; }
-        
+
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         /// <summary>
         /// Activities referenced on this site
@@ -115,6 +116,7 @@ namespace Yavsc.Models
         /// <returns></returns>
         public DbSet<RdvQuery> RdvQueries { get; set; }
         public DbSet<HairCutQuery> HairCutQueries { get; set; }
+        public DbSet<HairPrestation> HairPrestation { get; set; }
         public DbSet<HairMultiCutQuery> HairMultiCutQueries { get; set; }
         public DbSet<PerformerProfile> Performers { get; set; }
         public DbSet<Estimate> Estimates { get; set; }
@@ -128,7 +130,7 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns>tokens</returns>
         public DbSet<OAuth2Tokens> Tokens { get; set; }
-        
+
         /// <summary>
         /// References all declared external GCM devices
         /// </summary>
@@ -237,24 +239,24 @@ namespace Yavsc.Models
 
         public DbSet<Instrument> Instrument { get; set; }
 
-        [ActivitySettings]   
+        [ActivitySettings]
         public DbSet<DjSettings> DjSettings { get; set; }
-        
+
         [ActivitySettings]
         public DbSet<Instrumentation> Instrumentation { get; set; }
 
         [ActivitySettings]
         public DbSet<FormationSettings> FormationSettings { get; set; }
-        
+
         [ActivitySettings]
         public DbSet<GeneralSettings> GeneralSettings { get; set; }
         public DbSet<CoWorking> WorkflowProviders { get; set; }
 
         private void AddTimestamps(string currentUsername)
     {
-        var entities = 
+        var entities =
         ChangeTracker.Entries()
-        .Where(x => x.Entity.GetType().GetInterface("IBaseTrackedEntity")!=null 
+        .Where(x => x.Entity.GetType().GetInterface("IBaseTrackedEntity")!=null
         && (x.State == EntityState.Added || x.State == EntityState.Modified));
 
 
@@ -279,7 +281,7 @@ namespace Yavsc.Models
             AddTimestamps(userId);
             return await base.SaveChangesAsync();
         }
-        
+
          public DbSet<Circle> Circle { get; set; }
 
          public DbSet<CircleAuthorizationToBlogPost> BlogACL { get; set; }
@@ -298,11 +300,10 @@ namespace Yavsc.Models
 
          public DbSet<DimissClicked> DimissClicked { get; set; }
 
-         public DbSet<HairPrestation> HairPrestation { get; set; }
 
          [ActivitySettings]
          public DbSet<BrusherProfile> BrusherProfile { get; set; }
-         
 
+         public DbSet<BankIdentity> BankIdentity { get; set; }
     }
 }
