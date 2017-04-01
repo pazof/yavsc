@@ -5,7 +5,9 @@
 .performer {
     padding-left: 1em;
     background-repeat: no-repeat;
-    background-image: url('/images/greenstar.svg');
+    background-image: url('/images/lis.svg');
+    background-attachment: local;
+    background-size: contain;
 }
 .performer ul {
     margin-left: 2.5em;
