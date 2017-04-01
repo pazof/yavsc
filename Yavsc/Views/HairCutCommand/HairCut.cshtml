@@ -211,9 +211,10 @@
         <span>Total: <span id="Total" class="total"></span>
       </span>
       <input asp-for="ClientId" type="hidden" />
-      <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName, sans préciser ni lieu ni date (pour prendre rendez-vous la prise de contact)"/>
       <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
-    
+      <environment names="Development">
+      <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName [DEV+Location+Date]"/>
+      </environment>
    </div>
     <input type="hidden" name="performerId" value="@Model.PerformerProfile.PerformerId" />
     <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
