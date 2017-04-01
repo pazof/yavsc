@@ -159,7 +159,7 @@
     "prerestore": "echo before restoring packages",
     "postrestore": "echo after restoring packages",
     "prepublish": "gulp min",
-    "postpublish": "echo \"  . ./contrib/postPublish.sh # to push in prod.\""
+    "postpublish": "echo \"Use contrib/rsync-to-pre.sh # to push in prod.\""
   },
   "embed": "Views/**/*.cshtml"
 }
