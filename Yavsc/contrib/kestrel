@@ -59,9 +59,9 @@ status() {
     setdnxenv "$env"
 	if running;
 	then
-		echo "Service running $DESC (pid: $DNXPID)"
+		echo "Service running $DESC ($NAME; pid: $DNXPID)"
 	else
-		echo "Service stopped ($DESC)"
+		echo "Service stopped $DESC ($NAME)"
 	fi
   done
 }
@@ -73,12 +73,17 @@ start() {
     setdnxenv "$env"
 	if running; then
 		echo "Service already running $DESC" "$NAME"
-		log_end_msg 1  
-	else
-		log_daemon_msg "Starting service $DESC"
-		start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -x $DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME >${ROOT}/kestrel-${NAME}.log
-		log_daemon_msg "Service $DESC started"
 		log_end_msg 0  
+	else
+		log_daemon_msg "Starting service $NAME"
+		start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -x $DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME >${ROOT}/kestrel-${NAME}.log
+    if [ $? ]; then 
+      log_daemon_msg "Could not start $NAME"
+      log_end_msg 2
+    else
+      log_daemon_msg "Service $DESC started ($NAME)"
+      log_end_msg 0  
+    fi
 	fi
   done
 
@@ -88,19 +93,23 @@ stop() {
   for env in $CONFIGS
   do
     setdnxenv "$env"
-	if ! running
+	if running
 	then
-		echo Service not running $DESC
-	    log_end_msg 1  
-	else
-		log_daemon_msg "Stopping service $DESC"
+		log_daemon_msg "Stopping service $NAME"
 		start-stop-daemon -K -p "$PIDFILE"
-		rm -f "$PIDFILE"
-		log_daemon_msg "$DESC stopped."
+		log_daemon_msg "$DESC stopped"
 		log_end_msg 0  
+	else
+		log_daemon_msg "$DESC Service not running"
+	    log_end_msg 1  
 	fi
   done
 }
+
+
+if [ -f /etc/kestrel/$2.webenv ]; then
+	CONFIGS="/etc/kestrel/$2.webenv"
+fi
 
 case "$1" in
   start)
@@ -116,7 +125,7 @@ case "$1" in
   status)
     status
 	;;
-		
+
   *)
     echo "Usage: $0 {start|stop|restart}"
 esac
