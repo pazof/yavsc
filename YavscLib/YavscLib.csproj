@@ -84,8 +84,6 @@
     <Compile Include="IBaseTrackedEntity.cs" />
     <Compile Include="Identity\IApplicationUser.cs" />
     <Compile Include="Identity\IChatUserInfo.cs" />
-    <Compile Include="Identity\ICircle.cs" />
-    <Compile Include="Identity\ICircleMember.cs" />
     <Compile Include="Identity\Security\ICircleAuthorization.cs" />
     <Compile Include="Identity\Security\ICircleAuthorized.cs" />
     <Compile Include="IT\ICode.cs" />
@@ -109,7 +107,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="project.json" />
     <Content Include="HairCut\IHairCutQuery.cs" />
     <Content Include="HairCut\IPrestation.cs" />
     <Content Include="HairCut\HairLength.cs" />
