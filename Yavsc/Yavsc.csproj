@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.0</TargetFramework>
     <RuntimeIdentifiers>debian.8-x64,win10-x64;osx.10.11-x64;ubuntu.16.04-x64</RuntimeIdentifiers>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="YavscLib" Version="1.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161123-03" />
     <PackageReference Include="xunit" Version="2.2.0-beta4-build3444" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta4-build1194" />
@@ -71,6 +70,8 @@
    <PackageReference Include= "Microsoft.AspNet.Mvc.Formatters.Json" Version="6.0.0-rc1-*" />
    <PackageReference Include= "Microsoft.AspNet.OWin" Version="1.0.0-rc1-final" />
    <PackageReference Include= "System.Json" Version="4.0.20126.16343" />
+  </ItemGroup>
+  <ItemGroup>
     
     <Content Include="Views\Account\Authorize.cshtml" />
     <Content Include="Views\Account\Lockout.cshtml" />
@@ -86,6 +87,8 @@
     <Content Include="xunit.runner.json" />
     <Content Include="package.json" />
 
+  </ItemGroup>
+  <ItemGroup>
 
     <Content Include="Startup\Startup.cs" />
 <Content Include="Startup\Startup.DataProtection.cs" />
@@ -110,6 +113,9 @@
 <Content Include="ViewComponents\DirectoryViewComponent.cs" />
 <Content Include="ViewComponents\EstimateViewComponent.cs" />
 <Content Include="ViewComponents\AvatarViewComponent.cs" />
+
+
+
 <Content Include="Controllers\ManageController.cs" />
 <Content Include="Controllers\CommandFormsController.cs" />
 <Content Include="Controllers\DjSettingsController.cs" />
@@ -164,7 +170,6 @@
 <Content Include="ViewModels\Manage\DoDirectCreditViewModel.cs" />
 <Content Include="ViewModels\Manage\SetActivityViewModel.cs" />
 <Content Include="ViewModels\Manage\SetPasswordViewModel.cs" />
-<Content Include="ViewModels\Manage\AddBankInfoViewModel.cs" />
 <Content Include="ViewModels\Calendar\UpcomingEventsViewModel.cs" />
 <Content Include="ViewModels\Calendar\SetGoogleCalendarViewModel.cs" />
 <Content Include="ViewModels\Chat\ChatUserInfo.cs" />
@@ -556,7 +561,6 @@
 <Content Include="Settings\TwilioSettings.cs" />
 <Content Include="Settings\PayPalSettings.cs" />
 <Content Include="Settings\GoogleAuthSettings.cs" />
-<Content Include="Filters\LanguageActionFilter.cs" />
 <Content Include="Attributes\ActivitySettingsAttribute.cs" />
 <Content Include="Resources\YavscLocalisation.cs" />
 <Content Include="Extensions\EnumExtensions.cs" />
@@ -633,4 +637,6 @@
 <Content Include="Helpers\CompanyInfoHelpers.cs" />
 
   </ItemGroup>
+  <Import Project="../YavscLib/YavscLib.csproj" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
 </Project>
