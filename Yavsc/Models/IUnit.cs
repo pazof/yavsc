@@ -1,4 +1,4 @@
-namespace Yavsc.Models.Market {
+namespace Yavsc.Models {
     public interface IUnit<VType> {
           string Name { get; }
           bool CanConvertFrom(IUnit<VType> other);
