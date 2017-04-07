@@ -3,7 +3,13 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+@section scripts {
+    <script>
+        $(document).ready(function(){
+            $("tr[data-hidden=True]").css('background-color','grey')
+        })
+        </script>
+}
 <h2>Index</h2>
 
 <p>
@@ -39,7 +45,7 @@
     </tr>
     
 @foreach (var item in Model) {
-    <tr>
+    <tr data-hidden="@item.Hidden">
         <td>
            <a name="@item.Code" class="btn btn-link"></a> @Html.DisplayFor(modelItem => item.Name)
         </td>
