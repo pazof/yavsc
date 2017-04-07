@@ -4,11 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Relationship;
-using YavscLib.HairCut;
 
 namespace Yavsc.Models.Haircut
 {
-    public class HairCutQuery : NominativeServiceCommand, IHairCutQuery
+    public class HairCutQuery : NominativeServiceCommand
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }

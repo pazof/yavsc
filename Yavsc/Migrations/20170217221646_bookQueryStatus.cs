@@ -1,8 +1,8 @@
 using Microsoft.Data.Entity.Migrations;
-using Yavsc.Interfaces.Workflow;
 
 namespace Yavsc.Migrations
 {
+    using YavscLib;
     public partial class bookQueryStatus : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
