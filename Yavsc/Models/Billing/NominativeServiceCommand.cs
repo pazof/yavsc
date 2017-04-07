@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Billing
 {
-    using Interfaces.Workflow;
     using Newtonsoft.Json;
     using Workflow;
     using YavscLib;

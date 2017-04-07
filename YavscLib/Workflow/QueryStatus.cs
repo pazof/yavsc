@@ -1,9 +1,9 @@
-namespace Yavsc.Interfaces.Workflow
+namespace YavscLib
 {
     /// <summary>
     /// Status,
      /// should be associated to any
-    /// client user query to a provider user or 
+    /// client user query to a provider user or
     /// other external entity.
     /// </summary>
     public enum QueryStatus: int

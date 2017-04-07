@@ -5,13 +5,13 @@ using Microsoft.Extensions.Localization;
 
 namespace Yavsc.ApiControllers
 {
+    using YavscLib;
     using System;
     using System.Linq;
     using System.Security.Claims;
     using Microsoft.Extensions.Logging;
     using Models;
     using Services;
-    using Yavsc.Interfaces.Workflow;
     using Yavsc.Models.Haircut;
     using Yavsc.Resources;
 
@@ -54,8 +54,8 @@ namespace Yavsc.ApiControllers
             var now = DateTime.Now;
             var result = _context.HairCutQueries.Where(
                 q=>q.ClientId == uid
-                && q.EventDate > now 
-                && q.Status == QueryStatus.Inserted 
+                && q.EventDate > now
+                && q.Status == QueryStatus.Inserted
                 );
             return Ok(result);
         }

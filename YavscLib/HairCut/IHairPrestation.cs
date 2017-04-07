@@ -1,6 +1,6 @@
-namespace YavscLib.HairCut
+namespace YavscLib
 {
-    public interface IPrestation
+    public interface IHairPrestation
     {
          long Id { get; set; }
          int Length { get; set; }
