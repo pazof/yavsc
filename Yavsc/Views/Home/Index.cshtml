@@ -2,12 +2,16 @@
 
 @{
     ViewData["Title"] = "Home Page";
+    int i=0;
+    bool multipleact = Model.Count()>1;
 }
 @section subbanner {
+
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
+    @if (multipleact) {
+           
     <ol class="carousel-indicators">
         @{
-            int i=0;
             
             foreach (var act in Model) { 
                 if (i==0) {
@@ -18,14 +22,14 @@
                 i++;
             }
         }
-    </ol>
+    </ol> }
     <div class="carousel-inner" role="listbox"> 
         @{
+            string cls = "item active";
             i=0;
             foreach (var act in Model) { 
-                string cls = (i==0) ? "item active":"item";
         <div class="@cls"  style="background-image: url('@act.Photo'); background-repeat: no-repeat; ">
-          <!-- <img src="@act.Photo" alt="@act.Name" class="img-responsive" />  -->
+         
             <div class="carousel-caption-s" >
 
                 @if (act.Children.Count>0) {
@@ -50,9 +54,12 @@
                 }
             </div>
         </div>
-            i++; }
+            i++;
+            cls = "item";
+            }
         }
     </div>
+    @if (multipleact) {
     <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
         <span class="sr-only">Précédent</span>
@@ -61,5 +68,6 @@
         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
         <span class="sr-only">Suivant</span>
     </a>
+    }
 </div>
 }
