@@ -60,27 +60,14 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
+                        @RenderSection("ctxmenu", required: false)
                         <li><a asp-controller="Blogspot" asp-action="Index" class="navbar-link">@SR["Blogs"]</a></li>
                         <li><a asp-controller="Home" asp-action="Chat" class="navbar-link">@SR["Chat"]</a></li>
                         <li><a asp-controller="Home" asp-action="Contact" class="navbar-link">@SR["Contact"]</a></li>
                         <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
-                        @if (User.IsInRole(Constants.AdminGroupName)) {
-                         <li class="dropdown">
-                             <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                 Administration <span class="caret"></span>
-                             </a>
-                             <ul class="dropdown-menu">
-                                <li><a asp-controller="Administration" asp-action="Index">Index</a></li>
-                                <li><a asp-controller="Activity" asp-action="Index">Activités</a></li>
-                                <li><a asp-controller="CommandForms" asp-action="Index">Formulaires</a></li>
-                                <li><a asp-controller="Notifications" asp-action="Index">Notifications</a></li>
-                                <li><a asp-controller="SIRENExceptions" asp-action="Index">Excéptions au numéro de SIREN</a></li>
-                            </ul>
-                        </li>
-                           
-                        }
                     </ul>
-                     @RenderSection("ctxmenu", required: false)
+                     
+            
                     @await Html.PartialAsync("_LoginPartial")
                 </div>
             </div>

@@ -15,13 +15,15 @@ namespace Yavsc.Models.Haircut
         [Required]
         public long PrestationId { get; set; }
 
-        [ForeignKey("PrestationId"),Required]
+        [ForeignKey("PrestationId"),Required,Display(Name="Préstation")]
         public virtual HairPrestation  Prestation { get; set; }
 
         [ForeignKey("LocationId")]
+        [Display(Name="Lieu du rendez-vous")]
 
         public virtual Location Location { get; set; }
 
+        [Display(Name="Date et heure")]
         public DateTime? EventDate
         {
             get;
@@ -34,5 +36,9 @@ namespace Yavsc.Models.Haircut
 
             set;
         }
+
+        [Display(Name="Informations complémentaires"),
+        StringLengthAttribute(512)]
+        public string AdditionalInfo { get; set; }
     }
 }

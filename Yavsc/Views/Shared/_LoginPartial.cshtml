@@ -2,19 +2,35 @@
 
 @if (User.IsSignedIn())
 {
-    <form asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="navbar-right">
+
         <ul class="nav navbar-nav navbar-right">
             <li>
                 <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">
                    @Component.Invoke("Avatar", User.GetUserId(), ".xs")
                     @SR["Hello"] @User.GetUserName()!</a>
             </li>
+             @if (User.IsInRole(Constants.AdminGroupName)) {
+             <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Administration <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                    <li><a asp-controller="Administration" asp-action="Index">Index</a></li>
+                    <li><a asp-controller="Activity" asp-action="Index">Activités</a></li>
+                    <li><a asp-controller="CommandForms" asp-action="Index">Formulaires</a></li>
+                    <li><a asp-controller="Notifications" asp-action="Index">Notifications</a></li>
+                    <li><a asp-controller="SIRENExceptions" asp-action="Index">Excéptions au numéro de SIREN</a></li>
+                </ul>
+            </li>}
+            
             <li>
-                 <button type="submit" class="btn navbar-btn" >@SR["Logout"]</button>
+                 <form asp-controller="Account" asp-action="LogOff" 
+                 method="post" id="logoutForm">
+                     <button type="submit" class="btn navbar-btn" >@SR["Logout"]</button>
                  <input type="hidden" name="ReturnUrl" value="@Url.Action()" />
+                </form>
             </li>
         </ul>
-    </form>
 }
 else
 {

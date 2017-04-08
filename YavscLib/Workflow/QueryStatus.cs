@@ -14,6 +14,8 @@ namespace YavscLib
         Rejected,
         Accepted,
         InProgress,
+
+        // final states
         Failed,
         Success
     }

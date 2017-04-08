@@ -71,3 +71,10 @@
     }
 </div>
 }
+
+@section ctxmenu {
+    @if ((bool)ViewData["HasHaircutCommand"]) {
+    <li><a asp-controller="HairCutCommand" class="badge" >
+        <img src="~/images/shoppingcart.svg" alt="basket" /></a></li>
+    }
+}

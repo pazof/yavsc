@@ -208,6 +208,13 @@
                 </div>
             </div>
         </div>
+        <div class="form-group">
+                    <label asp-for="AdditionalInfo" class="col-md-2 control-label"></label>
+            <div class="col-md-offset-2 col-md-10">
+                    <textarea asp-for="AdditionalInfo" class="form-control">
+                    </textarea>
+            </div>
+        </div>
         <span>Total: <span id="Total" class="total"></span>
       </span>
       <input asp-for="ClientId" type="hidden" />

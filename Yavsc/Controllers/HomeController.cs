@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 namespace Yavsc.Controllers
 {
     using Models;
+    using YavscLib;
 
     [AllowAnonymous]
     public class HomeController : Controller
@@ -50,6 +51,9 @@ namespace Yavsc.Controllers
                 n=> !clicked.Any(c=>n.Id==c)
             );
             ViewData["Notify"] = notes;
+            ViewData["HasHaircutCommand"] = DbContext.HairCutQueries.Any
+            (q=>q.ClientId == uid && q.Status < QueryStatus.Failed);
+
             return View(DbContext.Activities.Where(a=>a.ParentCode==id && !a.Hidden).Include(a=>a.Forms).Include(a=>a.Children)
             .OrderByDescending(a=>a.Rate));
         }
