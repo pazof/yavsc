@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using Yavsc.Models.Auth;
 using Yavsc.Models.Relationship;
 using YavscLib;
@@ -30,6 +31,7 @@ namespace Yavsc.Models.Haircut.Views
             Status = query.Status;
             Location = query.Location;
             EventDate = query.EventDate;
+            AdditionalInfo = query.AdditionalInfo;
         }
         public long Id { get; set; }
         public HairPrestation Prestation { get; set; }
@@ -43,5 +45,7 @@ namespace Yavsc.Models.Haircut.Views
             set;
         }
 
+        [Display(Name="Informations complémentaires")]
+        public string AdditionalInfo { get; set; }
     }
 }

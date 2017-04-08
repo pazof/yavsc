@@ -6,19 +6,35 @@
     <div class="form-horizontal">
         <h4>@SR["Your book query"]</h4>
         <hr />
-        <ul>
-            <li>
-                Votre star de la coiffure:
+        <dl>
+            <dt>
+                Votre star de la coiffure
+            </dt>
+            <dd>
                 @Html.DisplayFor(m=>m.PerformerProfile)
-            </li>
-            <li>
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(m=>m.Prestation)
+            </dt>
+            <dd>
                 @Html.DisplayFor(m=>m.Prestation)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(m=>m.AdditionalInfo)
+            </dt>
+            <dd>@Html.DisplayFor(m=>m.AdditionalInfo)
+            </dd>
+        </dl>
 <p>
     Addition minimale 
     (Compter des frais supplémentaires 
     en cas de longs déplacements,
         ou des majorations en cas de weekend et jour férie)
    <span class="price"> @ViewBag.Addition </span></p>
+            </li>
+            <li>
+            @Model.AdditionalInfo
+
             </li>
             <li>
         @if (Model.EventDate == null) {

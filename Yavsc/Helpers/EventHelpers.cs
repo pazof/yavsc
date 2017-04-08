@@ -34,32 +34,44 @@ namespace Yavsc.Helpers
             return yaev;
         }
         public static HairCutQueryEvent CreateEvent(this HairCutQuery query,
-        IStringLocalizer SR)
+        IStringLocalizer SR, BrusherProfile bpr)
         {
+            string head = SR["HaircutRdvQuery"];
+            string evdate = query.EventDate?.ToString("dddd dd/MM/yyyy à HH:mm")??"[pas de date spécifiée]";
+            string address = query.Location?.Address??"[pas de lieu spécifié]";
+            var p = query.Prestation;
+            decimal total = query.Prestation.Addition(bpr);
+            string strprestation = $@"Coupe: {p.Cut}, Total: {total}";
+
             var yaev = new HairCutQueryEvent
             {
                 Sender = query.ClientId,
-                Message = string.Format(SR["RdvToPerf"],
-                query.Client.UserName,
-                query.EventDate?.ToString("dddd dd/MM/yyyy à HH:mm")??"[pas de date spécifiée]",
-                query.Location?.Address??"[pas de lieu spécifié]",
-                query.ActivityCode),
-                Client =  new ClientProviderInfo { 
-                    UserName = query.Client.UserName ,
-                    UserId = query.ClientId,
-                    Avatar = query.Client.Avatar }  ,
-                Previsional = query.Previsional,
-                EventDate = query.EventDate,
-                Location = query.Location,
-                Id = query.Id,
-                Reason = "Coupe pour un particulier",
-                ActivityCode = query.ActivityCode
+                Message =  $@"{head}: {query.Client.UserName},
+{evdate},
+{address}
+-----
+{strprestation}
+
+--
+{query.AdditionalInfo}
+" ,
+Client =  new ClientProviderInfo { 
+    UserName = query.Client.UserName ,
+    UserId = query.ClientId,
+    Avatar = query.Client.Avatar }  ,
+Previsional = query.Previsional,
+EventDate = query.EventDate,
+Location = query.Location,
+Id = query.Id,
+Reason = query.AdditionalInfo,
+ActivityCode = query.ActivityCode
+
             };
             return yaev;
         }
 
         public static HairCutQueryEvent CreateEvent(this HairMultiCutQuery query,
-        IStringLocalizer SR)
+        IStringLocalizer SR, BrusherProfile bpr)
         {
             var yaev = new HairCutQueryEvent
             {

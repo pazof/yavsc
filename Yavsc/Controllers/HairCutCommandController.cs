@@ -38,6 +38,70 @@ namespace Yavsc.Controllers
         {
 
         }
+        private async Task<HairCutQuery> GetQuery(long id)
+        {
+            return await _context.HairCutQueries
+            .Include(x => x.Location)
+            .Include(x => x.PerformerProfile)
+            .Include(x => x.Prestation)
+            .Include(x => x.PerformerProfile.Performer)
+            .SingleAsync(m => m.Id == id);
+        }
+        public async Task<IActionResult> ClientCancel(long id)
+        {
+            HairCutQuery command = await GetQuery(id);
+            if (command == null)
+            {
+                return HttpNotFound();
+            }
+            return View (command);
+        }
+        public async Task<IActionResult> ClientCancelConfirm(long id)
+        {
+            var query = await GetQuery(id);if (query == null)
+            {
+                return HttpNotFound();
+            }
+            var uid = User.GetUserId();
+            if (query.ClientId!=uid)
+                return new ChallengeResult();
+            _context.HairCutQueries.Remove(query);
+            await _context.SaveChangesAsync();
+            return await Index();
+        }
+        public override async Task<IActionResult> Index()
+        {
+            var uid = User.GetUserId();
+            return View("Index", await _context.HairCutQueries
+            .Include(x => x.Client)
+            .Include(x => x.PerformerProfile)
+            .Include(x => x.PerformerProfile.Performer)
+            .Include(x => x.Location)
+            .Where(x=> x.ClientId == uid || x.PerformerId == uid)
+            .ToListAsync());
+        }
+
+        public override async Task<IActionResult> Details(long? id)
+        {
+            if (id == null)
+            {
+                return HttpNotFound();
+            }
+
+            HairCutQuery command = await _context.HairCutQueries
+            .Include(x => x.Location)
+            .Include(x => x.PerformerProfile)
+            .Include(x => x.Prestation)
+            .Include(x => x.PerformerProfile.Performer)
+            .SingleAsync(m => m.Id == id);
+            if (command == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(command);
+        }
+
 
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
@@ -81,9 +145,11 @@ namespace Yavsc.Controllers
                     else _context.Attach<HairPrestation>(model.Prestation);
 
                 _context.HairCutQueries.Add(model);
-                await _context.SaveChangesAsync(User.GetUserId());
+                await _context.SaveChangesAsync(uid);
                 var brusherProfile = await _context.BrusherProfile.SingleAsync(p=>p.UserId == pro.PerformerId);
-                var yaev = model.CreateEvent(_localizer);
+                model.Client = await  _context.Users.SingleAsync(u=>u.Id == model.ClientId);
+
+                var yaev = model.CreateEvent(_localizer, brusherProfile);
                 MessageWithPayloadResponse grep = null;
 
                 if (pro.AcceptPublicContact)
@@ -205,8 +271,10 @@ namespace Yavsc.Controllers
 
                 _context.HairMultiCutQueries.Add(command, GraphBehavior.IncludeDependents);
                 _context.SaveChanges(User.GetUserId());
-
-                var yaev = command.CreateEvent(_localizer);
+                var brSettings = await _context.BrusherProfile.SingleAsync(
+                    bp=>bp.UserId == command.PerformerId
+                );
+                var yaev = command.CreateEvent(_localizer,brSettings);
                 MessageWithPayloadResponse grep = null;
 
                 if (pro.AcceptNotifications
