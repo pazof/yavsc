@@ -6,7 +6,7 @@
     <div class="form-horizontal">
         <h4>@SR["Your book query"]</h4>
         <hr />
-        <dl>
+        <dl class="dl-horizontal">
             <dt>
                 Votre star de la coiffure
             </dt>
@@ -22,42 +22,42 @@
             <dt>
                 @Html.DisplayNameFor(m=>m.AdditionalInfo)
             </dt>
-            <dd>@Html.DisplayFor(m=>m.AdditionalInfo)
+            <dd>
+                @if (string.IsNullOrWhiteSpace(Model.AdditionalInfo))
+                {
+                    <span class="info">Aucune information complémentaire n'a
+                        été saisie.</span>
+                }
+                @Html.DisplayFor(m=>m.AdditionalInfo)
             </dd>
-        </dl>
-<p>
-    Addition minimale 
+
+            <dt>Addition minimale 
     (Compter des frais supplémentaires 
     en cas de longs déplacements,
         ou des majorations en cas de weekend et jour férie)
-   <span class="price"> @ViewBag.Addition </span></p>
-            </li>
-            <li>
-            @Model.AdditionalInfo
-
-            </li>
-            <li>
-        @if (Model.EventDate == null) {
+            </dt>
+            <dd> <span class="price"> @ViewBag.Addition </span>
+            </dd>
+            <dt>Date de la prestation</dt>
+            <dd>@if (Model.EventDate == null) {
          <p>Pas de date convenue ...</p>
         } else {
         <label for="EventDate">
             @SR["Event date"]</label>
            @Html.DisplayFor(m => m.EventDate)
-        }
-            </li>
-            <li>
-
-        @if (Model.Location == null) {
+        }</dd>
+        <dt> @Html.DisplayNameFor(m => m.Location)
+        </dt>
+        <dd>@if (Model.Location == null) {
          <p>Pas de lieu convenu ...</p> 
          } else {
         <label for="Location">@SR["Location"]</label>
-         @Html.DisplayFor(m => m.Location)  
-
+         @Html.DisplayFor(m => m.Location)
         }
-        </li>
-        </ul>
-
-        @if (ViewBag.GooglePayload !=null) 
+        </dd>
+        <dt>Motification
+        </dt>
+        <dd>@if (ViewBag.GooglePayload !=null) 
         {
             @if (ViewBag.GooglePayload.success>0) {
                 <h4>@SR["GCM Notifications sent"]</h4>
@@ -68,10 +68,23 @@
                         <div class="error">@SR["GCM Notification sending failed"]</div>
                     }
                     else {
-                       <div class="error">@SR["E-mail sent"]</div>
+                       <div>@SR["E-mail sent"]</div>
                     }
             }
-        }
+        } else {<div>@SR["E-mail sent"]</div>}
+        </dd>
+     </dl>
+           
+            
+
+           
+        
+            
+
+        
+       
+
+        
 </div>
 
 
