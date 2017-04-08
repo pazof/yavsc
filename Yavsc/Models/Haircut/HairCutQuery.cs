@@ -20,11 +20,12 @@ namespace Yavsc.Models.Haircut
 
         [ForeignKey("LocationId")]
         [Display(Name="Lieu du rendez-vous")]
-
+        [DisplayFormat(ConvertEmptyStringToNull = true, NullDisplayText = "[Pas de lieu spécifié]")]
         public virtual Location Location { get; set; }
 
         [Display(Name="Date et heure")]
-        public DateTime? EventDate
+        [DisplayFormat(NullDisplayText = "[Pas de date ni heure]",ApplyFormatInEditMode=true, DataFormatString = "{0:d}")]
+      public DateTime? EventDate
         {
             get;
             set;
@@ -39,6 +40,7 @@ namespace Yavsc.Models.Haircut
 
         [Display(Name="Informations complémentaires"),
         StringLengthAttribute(512)]
+        [DisplayFormat(ConvertEmptyStringToNull = true, NullDisplayText = "[pas d'informations complémentaires]")]
         public string AdditionalInfo { get; set; }
     }
 }

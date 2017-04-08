@@ -260,7 +260,6 @@ footer {
     float: left;
     margin: 1em;
 }
-
-
-
-
+.dl-horizontal dd {
+    margin-left: 20%;
+}
