@@ -20,17 +20,22 @@
         var gen = $("#Prestation_Gender").prop('selectedIndex');
         var tech = $("#Prestation_Tech").prop('selectedIndex');
         var dress = $("#Prestation_Dressing").prop('selectedIndex');
+        var havecut = false;
+        var havetech = false;
         total = 0;
         if ($('#Prestation_Cut').prop('checked')) {
             var cutprice = (gen==0) ? gtarif.cut[len] : gtarif.cut[0];
+            havecut = true;
             total += cutprice;
             displayTarif('CutPrice', cutprice);
+
         } else displayTarif('CutPrice',0);
         if (gen==0) {
             if (tech>0) { 
                 var techprice =  gtarif.tech[tech-1][len]; 
                 total += techprice;
                 displayTarif('TechPrice', techprice);
+                havetech = true;
                 } else displayTarif('TechPrice',0); 
             if (dress>0) { 
                 var dressprice = gtarif.brush[dress-1];
@@ -50,6 +55,10 @@
              total += gtarif.care;
             displayTarif('CaresPrice', gtarif.care);
         } else displayTarif('CaresPrice', 0);
+        if (havetech && havecut) {
+            total -= gtarif.feediscount;
+            $('#discount').html( "Remise au forfait coupe+technique: "+gtarif.feediscount+"€" ).removeClass('hidden');
+        } else $('#discount').addClass('hidden');
         $('.btn-submit').prop('disabled', (total==0));
         $('#Total').html( total+"€" );
     }
@@ -215,7 +224,9 @@
                     </textarea>
             </div>
         </div>
-        <span>Total: <span id="Total" class="total"></span>
+        
+        <span id="discount" class="price"></span>
+        <span>Total : <span id="Total" class="total"></span>
       </span>
       <input asp-for="ClientId" type="hidden" />
       <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
