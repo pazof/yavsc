@@ -120,9 +120,7 @@ namespace Yavsc.Controllers
                 // a Prestation is required
                 model.Prestation.Taints = colors.Select(c =>
                     new HairTaintInstance { Taint = c }).ToList();
-                _logger.LogWarning($"######### Colors!!!!! :: {colors.Count} :: ");
-            } else _logger.LogWarning("#########  no Colors :'(");
-
+            }
             if (string.IsNullOrWhiteSpace(uid)
             || string.IsNullOrWhiteSpace(prid))
                 throw new InvalidOperationException(
