@@ -2,11 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Haircut
 {
-    
+
     public enum HairTechnos
     {
         [Display(Name="Aucune technique spécifique")]
-        None,
+        NoTech,
 
         [Display(Name="Couleur")]
         Color,

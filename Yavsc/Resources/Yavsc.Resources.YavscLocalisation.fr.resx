@@ -167,6 +167,7 @@
   <data name="Circles"><value>Cercles</value></data>
   <data name="Click action"><value>Action sur click</value></data>
   <data name="Click here to log in"><value>Cliquez ici pour vous identifier</value></data>
+  <data name="Color"><value>Couleur</value></data>
   <data name="Command"><value>Commande</value></data>
   <data name="Command confirmation"><value>Confirmation de commande</value></data>
   <data name="Comment"><value>Commentaire</value></data>
@@ -183,6 +184,7 @@
   <data name="DateCreated"><value>Date de création</value></data>
   <data name="DateModified"><value>Date de dernière modification</value></data>
   <data name="DB"><value>Base de données</value></data>
+  <data name="Defris"><value>Défrisage</value></data>
   <data name="Details"><value>Détails</value></data>
   <data name="Delete"><value>Supprimer</value></data>
   <data name="Deposit"><value>Arrhes</value></data>
@@ -239,6 +241,7 @@
   <data name="Google calendar"><value>Agenda Google</value></data>
   <data name="Google error"><value>Erreur Google : {0}</value></data>
   <data name="Google registration id"><value>Identifiant d'enregistrement Google</value></data>
+  <data name="HalfLong"><value>mi-long</value></data>
   <data name="HaircutRdvQuery"><value>Demande de préstation en coiffure à domicile</value></data>
   <data name="Hide source"><value>Cacher le texte source de l'article</value></data>
   <data name="Home"><value>Accueil</value></data>
@@ -248,7 +251,6 @@
   <data name="Icon"><value>Icône</value></data>
   <data name="Icons made by"><value>Les icônes fabriqués par</value></data>
   <data name="Identity"><value>Identité</value></data>
-  
   <data name="ImgLocator"><value>URI de l'image</value></data>
   <data name="ImportException"><value>Exception à l'import</value></data>
   <data name="InternalServerError"><value>Erreur serveur interne</value></data>
@@ -256,17 +258,21 @@
   <data name="is asking you for a date"><value>vous demande un rendez-vous</value></data>
   <data name="is licensed_by"><value>sont sous licence</value></data>
   <data name="Item added to basket"><value>Article ajouté au panier.</value></data>
+  <data name="Kid"><value>Enfant</value></data>
   <data name="Location"><value>Lieu</value></data>
   <data name="Login"><value>Connection</value></data>
   <data name="Log in"><value>Se connecter</value></data>
   <data name="Logout"><value>Déconnection</value></data>
+  <data name="Long"><value>long</value></data>
   <data name="MainActivity"><value>Activité principale</value></data>
+  <data name="Man"><value>Homme</value><comment></comment></data>
   <data name="Manage"><value>Gérer</value></data>
   <data name="Manage your account"><value>Gérez votre inscription</value></data>
   <data name="ManagedSiteSkills"><value>Compétences gérée sur ce site</value></data>
   <data name="MaxDate"><value>Date maximale du rendez-vous</value></data>
   <data name="MaxDailyCost"><value>Coût maximal journalier</value></data>
   <data name="MEACode"><value>Code d'Activité Principalement Exercée</value></data>
+  <data name="Mech"><value>Mêches</value></data>
   <data name="Members"><value>Membres</value></data>
   <data name="Message sent"><value>Votre message a été envoyé</value></data>
   <data name="MinDate"><value>Date minimale du rendez-vous</value></data>
@@ -275,7 +281,6 @@
   <data name="Modified"><value>Modifié</value></data>
   <data name="Modify"><value>Modifier</value></data>
   <data name="Modify settings"><value>Modifier les paramètres</value></data>
-
   <data name="My Estimates"><value>Mes estimations</value></data>
   <data name="Name"><value>Nom</value></data>
   <data name="Needs"><value>Besoins</value></data>
@@ -285,10 +290,11 @@
   <data name="NewPasswordMessageSent"><value>Un e-mail vient de vous être envoyé, il contient le lien à suivre
   pour pouvoir mettre à jour votre mot de passe.</value></data>
   <data name="No"><value>Non</value></data>
+  <data name="NoTech"><value>Pas de technique spécifiée</value></data>
   <data name="No calendar for this user"><value>Le préstataire n'a pas de calendrier associé.</value></data>
   <data name="no content"><value>pas de contenu</value></data>
   <data name="No deposit"><value>Aucune arrhes n'a été prévue</value></data>
-  <data name="none"><value>aucun</value></data>
+  <data name="none"><value>aucun(e)</value></data>
   <data name="Non existent user"><value>Non existent user</value></data>
   <data name="NoSkillforthisactivity"><value>Aucune compétence n'a été enregistrée par aucun préstataire pour cette activité.</value></data>
   <data name="Not Approuved"><value>Non approuvé</value></data>
@@ -306,6 +312,7 @@
   <data name="Performers"><value>Perstataires</value></data>
   <data name="Performer"><value>Préstataire</value></data>
   <data name="PerformerProfile"><value>Profile préstataire</value></data>
+  <data name="Permanent"><value>Permanante</value></data>
   <data name="Person"><value>Personne</value></data>
   <data name="Photo"><value>Photo</value></data>
   <data name="PhotoUpdated"><value>Photo mise à jour</value></data>
@@ -323,7 +330,6 @@
   <data name="Product reference"><value>Référence produit</value></data>
   <data name="prestation"><value>prestation</value></data>
   <data name="Professional settings"><value>Paramètres professionels</value></data>
-
   <data name="Provider"><value>Fournisseur</value></data>
   <data name="ProviderId"><value>Identifiant du fournisseur</value></data>
   <data name="ProviderName"><value>Nom du fournisseur</value></data>
@@ -352,9 +358,9 @@
   <data name="Send a public message"><value>Envoyer un message publique</value></data>
   <data name="Set"><value>Positioner</value></data>
   <data name="SettingsClass"><value>Classe du paramétrage</value></data>
+  <data name="Short"><value>court</value></data>
   <data name="Son blog"><value>Son blog</value></data>
   <data name="Your performer profile"><value>Votre profile professionel</value></data>
-  
   <data name="Setup below your activity parameters"><value>Positionnez ci-après vos les paramêtre de votre activité</value></data>
   <data name="SiteSkills"><value>Talents/Compétences/Spécialités gérés sur ce site</value></data>
   <data name="Skill"><value>Compétence</value></data>
@@ -391,12 +397,12 @@
   <data name="UserSkills"><value>Talents/compétences/spécialités utilisateur</value></data>
   <data name="UserNotInThisRole"><value>Le rôle demandé n'est pas assumé par ce préstataire</value></data>
   <data name="ValidationDate"><value>Date de validation</value></data>
-  
   <data name="View_source"><value>Voir le texte source de l'article</value></data>
   <data name="was_added_to_the_role"><value>a été ajouté au rôle</value></data>
   <data name="was_added_to_the_empty_role"><value>Il n'y avait pas d'utilisateur dans le rôle "{1}". Vous ({0}) avez été ajouté au rôle "{1}".</value></data>
   <data name="WebSite"><value>Site Web</value><comment></comment></data>
   <data name="Welcome"><value>Bienvenue</value><comment></comment></data>
+  <data name="Women"><value>Femme</value><comment></comment></data>
   <data name="XHasBeenNotified"><value>{0} à été notifié de votre demande, vous devriez être contacté rapidement</value></data>
   <data name="Xshouldbeavailable"><value>Au vu de son calendrier,
   {0} devrait être disponible pour ce rendez-vous</value></data>
@@ -405,14 +411,12 @@
   <data name="Yavsc.Models.Workflow.Profiles.FormationSettings"><value>Paramètres formation (les partenaires)</value></data>
   <data name="Yavsc.Models.Musical.Profiles.GeneralSettings"><value>Paramètres généraux (visibilité et présentation)</value></data>
   <data name="Yavsc.Models.Haircut.BrusherProfile"><value>Paramètres coiffeur: tarifs, disponibilité</value></data>
-  
   <data name="Yes"><value>Oui</value></data>
   <data name="YouNeedToBeAuthenticatedIOToContact"><value>Vous devez vous authentifier pour pouvoir demander un devis
       à un préstataire.</value></data>
   <data name="younotadmin"><value>Vous n'êtes pas administrateur</value></data>
   <data name="Your book query"><value>Votre demande de rendez-vous</value></data>
   <data name="Your password has been reset."><value>Votre mote de passe a été mis à jour.</value></data>
-  
   <data name="YourEstimates"><value>Vos Devis</value></data>
   <data name="YourMEACode"><value>Votre activité</value></data>
   <data name="YourNeed"><value>Votre besoin</value></data>
