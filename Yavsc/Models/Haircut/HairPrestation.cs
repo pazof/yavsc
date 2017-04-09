@@ -34,13 +34,24 @@ namespace Yavsc.Models.Haircut
         [Display(Name="Shampoing")]
         public bool Shampoo { get; set; }
 
-        [Display(Name="Couleurs"),JsonIgnore]
+        [Display(Name="Couleurs"),JsonIgnore,InverseProperty("Prestation")]
 
-        public virtual List<HairTaint> Taints { get; set; }
+        public virtual List<HairTaintInstance> Taints { get; set; }
 
         [Display(Name="Soins")]
         public  bool Cares { get; set; }
 
 
+    }
+    public class HairTaintInstance {
+
+        public long TaintId { get; set; }
+
+        [ForeignKey("TaintId")]
+        public virtual HairTaint Taint { get; set; }
+        public long PrestationId { get; set; }
+
+        [ForeignKey("PrestationId")]
+        public virtual HairPrestation Prestation { get; set; }
     }
 }

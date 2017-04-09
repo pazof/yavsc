@@ -9,14 +9,15 @@ set -e
 cd bin/output/
 rsync -ravu wwwroot approot root@localhost:$FSPATH
 
-sleep 1
+sleep 3
 ssh root@localhost service kestrel restart
 )
 
+sleep 10
 echo "Now, go and try <https://yavscpre.pschneider.fr>"
 # wait a little, for the processes to become stable
 sleep 15
 echo "Then, feel free to launch contrib/rsync-to-prod.sh"
-sleep 15
+
 
 
