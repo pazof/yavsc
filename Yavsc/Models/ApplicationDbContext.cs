@@ -48,6 +48,7 @@ namespace Yavsc.Models
             builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a=> new { a.CircleId, a.BlogPostId});
             builder.Entity<CircleMember>().HasKey(c=> new { MemberId = c.MemberId, CircleId = c.CircleId });
             builder.Entity<DimissClicked>().HasKey(c=>new { uid = c.UserId, notid = c.NotificationId});
+            builder.Entity<HairTaintInstance>().HasKey(ti=>new { ti.TaintId, ti.PrestationId } );
 
             foreach (var et in builder.Model.GetEntityTypes()) {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)

@@ -22,6 +22,8 @@ namespace Yavsc.Controllers
     using Yavsc.Extensions;
     using Yavsc.Models.Haircut;
     using System.Globalization;
+    using Microsoft.AspNet.Mvc.Rendering;
+    using System.Collections.Generic;
 
     public class HairCutCommandController : CommandController
     {
@@ -105,10 +107,22 @@ namespace Yavsc.Controllers
 
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateHairCutQuery(HairCutQuery model)
+        public async Task<IActionResult> CreateHairCutQuery(HairCutQuery model, string taintIds)
         {
             var uid = User.GetUserId();
             var prid = model.PerformerId;
+            long[] longtaintIds = null;
+            List<HairTaint> colors = null;
+
+            if (taintIds!=null) {
+                longtaintIds = taintIds.Split(',').Select(s=>long.Parse(s)).ToArray();
+                colors = _context.HairTaint.Where(t=> longtaintIds.Contains(t.Id)).ToList();
+                // a Prestation is required
+                model.Prestation.Taints = colors.Select(c =>
+                    new HairTaintInstance { Taint = c }).ToList();
+                _logger.LogWarning($"######### Colors!!!!! :: {colors.Count} :: ");
+            } else _logger.LogWarning("#########  no Colors :'(");
+
             if (string.IsNullOrWhiteSpace(uid)
             || string.IsNullOrWhiteSpace(prid))
                 throw new InvalidOperationException(
@@ -197,7 +211,9 @@ namespace Yavsc.Controllers
             if (prestaJson!=null) {
                 pPrestation = JsonConvert.DeserializeObject<HairPrestation>(prestaJson);
             }
-            else pPrestation = new HairPrestation {};
+            else {
+                pPrestation = new HairPrestation {};
+            }
 
             var uid = User.GetUserId();
             var user = await _userManager.FindByIdAsync(uid);
@@ -220,6 +236,13 @@ namespace Yavsc.Controllers
         private void SetViewData (string activityCode, string performerId, HairPrestation pPrestation )
         {
             ViewBag.HairTaints = _context.HairTaint.Include(t=>t.Color);
+            ViewBag.HairTaintsItems = _context.HairTaint.Include(t=>t.Color).Select(
+                c=>
+                new SelectListItem {
+                    Text = c.Color.Name+" "+c.Brand,
+                    Value = c.Id.ToString()
+                 }
+            );
             ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos),_localizer);
             ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength),_localizer);
             ViewBag.Activity = _context.Activities.First(a => a.Code == activityCode);

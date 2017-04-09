@@ -32,10 +32,15 @@
         } else displayTarif('CutPrice',0);
         if (gen==0) {
             if (tech>0) { 
-                var techprice =  gtarif.tech[tech-1][len]; 
+                var techi=tech-1;
+                var colors = $("input[name='Prestation.Taints[]']:checked");
+                var colIds=[];
+                colors.each(function(i,item){colIds.push(item.value)});
+                $('#taintIds').val(colIds);
+                var techprice = (techi>0 || colors.length<2) ? gtarif.tech[techi][len] : gtarif.multicolor[len] ; 
                 total += techprice;
-                displayTarif('TechPrice', techprice);
                 havetech = true;
+                displayTarif('TechPrice', techprice);
                 } else displayTarif('TechPrice',0); 
             if (dress>0) { 
                 var dressprice = gtarif.brush[dress-1];
@@ -60,7 +65,7 @@
             $('#discount').html( "Remise au forfait coupe+technique: "+gtarif.feediscount+"€" ).removeClass('hidden');
         } else $('#discount').addClass('hidden');
         $('.btn-submit').prop('disabled', (total==0));
-        $('#Total').html( total+"€" );
+        $('#Total').html( total.toFixed(2)+"€" );
     }
 
     function onTarif(tarif)
@@ -168,11 +173,10 @@
             <div class="col-md-10">
                 <select asp-for="Prestation.Tech" asp-items="@ViewBag.HairTechnos" class="form-control imptarif"></select>
                 <span asp-validation-for="Prestation.Tech" class="text-danger"></span>
-
+                <input name="taintIds" id="taintIds" type="hidden" />
                 <div class="form-group @ViewBag.ColorsClass" id="taintsfs">
                     <label asp-for="Prestation.Taints" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
-
                         @foreach (HairTaint color in ViewBag.HairTaints) {
                         <label>
      <input type="checkbox" value="@color.Id" name="Prestation.Taints[]" class="imptarif"/>
