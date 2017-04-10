@@ -51,6 +51,7 @@ namespace ZicMoove.Droid
     using Java.Math;
     using Org.Json;
     using Xamarin.Forms;
+    using ViewModels.UserProfile;
 
     [Activity(
         Name = Constants.ApplicationName + ".MainActivity",
@@ -107,6 +108,7 @@ namespace ZicMoove.Droid
             {
                 var xfapp = new XFormsCompatAppDroid();
                 this.SetIoc(xfapp);
+
             }
             else
             {
@@ -203,7 +205,8 @@ namespace ZicMoove.Droid
                 .Register<IJsonSerializer, JsonSerializer>()
                 .Register<ICacheProvider>(
                     t => new SQLiteSimpleCache(new SQLitePlatformAndroid(),
-                        new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()));
+                        new SQLiteConnectionString(pathToDatabase, true), t.Resolve<IJsonSerializer>()))
+                .RegisterSingle<UserProfileViewModel,UserProfileViewModel>();
             Resolver.SetResolver(resolverContainer.GetResolver());
             return resolverContainer;
         }
