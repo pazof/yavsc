@@ -6,13 +6,12 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Yavsc.Helpers;
 using Yavsc.Models;
-using Yavsc.Models.FileSystem;
 
 namespace Yavsc.ApiControllers
 {
-
+    using Yavsc.Exceptions;
     public class FSQuotaException : Exception {
-        
+
     }
 
     [Authorize,Route("api/fs")]
@@ -27,7 +26,7 @@ namespace Yavsc.ApiControllers
             AuthorizationService = authorizationService;
             dbContext = context;
         }
-        
+
         [HttpGet()]
         public IActionResult Get()
         {
@@ -46,10 +45,14 @@ namespace Yavsc.ApiControllers
 
 
         [HttpPost]
-        public IEnumerable<FileRecievedInfo> Post(string subdir="")
+        public IEnumerable<IActionResult> Post(string subdir="")
         {
-            var root = User.InitPostToFileSystem(subdir);
-
+            string root = null;
+            try {
+             root = User.InitPostToFileSystem(subdir);
+            } catch (InvalidPathException) {}
+            if (root==null)
+             yield return new BadRequestObjectResult(new { error= "InvalidPathException" });
             var user = dbContext.Users.Single(
                 u => u.Id == User.GetUserId()
             );
@@ -58,7 +61,7 @@ namespace Yavsc.ApiControllers
             {
                 var item = user.ReceiveUserFile(root, f);
                 dbContext.SaveChanges(User.GetUserId());
-                yield return item;
+                yield return Ok(item);
             };
         }
     }

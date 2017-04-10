@@ -9,6 +9,7 @@ using System.Net.Mime;
 using System.Security.Claims;
 using System.Web;
 using Microsoft.AspNet.Http;
+using Yavsc.Exceptions;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
 using Yavsc.ViewModels;
@@ -26,11 +27,11 @@ namespace Yavsc.Helpers
 
             return di;
         }
-        static char[] ValidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_~. ".ToCharArray();
+
 
         public static bool IsValidDirectoryName(this string name)
         {
-            return !name.Any(c => !ValidChars.Contains(c));
+            return !name.Any(c => !Constants.ValidChars.Contains(c));
         }
         public static bool IsValidPath(this string path)
         {
@@ -49,8 +50,6 @@ namespace Yavsc.Helpers
             string subpath)
         {
             var root = Path.Combine(Startup.UserFilesDirName, user.Identity.Name);
-            // TOSO secure this path  
-            // if (subdir!=null) root = Path.Combine(root, subdir);
             var diRoot = new DirectoryInfo(root);
             if (!diRoot.Exists) diRoot.Create();
             if (subpath != null)
@@ -60,6 +59,7 @@ namespace Yavsc.Helpers
                     diRoot = new DirectoryInfo(root);
                     if (!diRoot.Exists) diRoot.Create();
                 }
+                else throw new InvalidPathException();
 
             return root;
         }
@@ -81,7 +81,7 @@ namespace Yavsc.Helpers
                     byte[] buffer = new byte[1024];
                     long len = org.Length;
                     if (len > (user.DiskQuota - usage)) {
-                        
+
                         return item;
                     }
                     usage += len;
@@ -110,7 +110,7 @@ namespace Yavsc.Helpers
         {
             var item = new FileRecievedInfo();
             item.FileName = user.UserName + ".png";
-            
+
             var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Avatars, item.FileName);
 
             var fi = new FileInfo(destFileName);
@@ -179,7 +179,7 @@ namespace Yavsc.Helpers
           SignFileNameFormat = new Func<string,long,string> ((signType,estimateId) => $"estimate-{signType}sign-{estimateId}.png");
 
         public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, long estimateId, IFormFile formFile, string signtype)
-        { 
+        {
             var item = new FileRecievedInfo();
             item.FileName = SignFileNameFormat("pro",estimateId);
             var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Bills, item.FileName);

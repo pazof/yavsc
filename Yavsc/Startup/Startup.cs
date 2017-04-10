@@ -22,13 +22,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Net.Http.Headers;
-using Yavsc.Formatters;
-using Yavsc.Models;
-using Yavsc.Services;
-using Yavsc.ViewModels.Auth.Handlers;
 
 namespace Yavsc
 {
+    using Formatters;
+    using Models;
+    using Services;
+    using ViewModels.Auth.Handlers;
     public partial class Startup
     {
         public static string ConnectionString { get; private set; }
@@ -261,7 +261,24 @@ namespace Yavsc
 
             if (env.IsDevelopment())
             {
-                loggerFactory.MinimumLevel = LogLevel.Verbose;
+                var logenvvar = Environment.GetEnvironmentVariable("ASPNET_LOG_LEVEL");
+                if (logenvvar!=null)
+                switch (logenvvar) {
+                    case "info":
+                        loggerFactory.MinimumLevel = LogLevel.Information;
+                        break;
+                    case "warn":
+                        loggerFactory.MinimumLevel = LogLevel.Warning;
+                        break;
+                    case "err":
+                        loggerFactory.MinimumLevel = LogLevel.Error;
+                        break;
+                    default:
+                        loggerFactory.MinimumLevel = LogLevel.Information;
+                        break;
+                }
+
+
                 app.UseDeveloperExceptionPage();
                 app.UseRuntimeInfoPage();
                 var epo = new ErrorPageOptions();
