@@ -18,18 +18,22 @@ namespace Yavsc.ViewModels.UserFiles
         private DirectoryInfo dInfo;
         public UserDirectoryInfo(string username, string path)
         {
+            if (string.IsNullOrWhiteSpace(username))
+                throw new NotSupportedException("No user name, no user dir.");
             UserName = username;
-            var finalPath = (path==null) ? username : username +  Path.DirectorySeparatorChar + path;
-            if ( !finalPath.IsValidPath() )
+            var finalPath =  username;
+            if (!string.IsNullOrWhiteSpace(path))
+                 finalPath += Path.DirectorySeparatorChar + path;
+            if (!finalPath.IsValidPath())
                 throw new InvalidOperationException(
                     $"File name contains invalid chars, using path {finalPath}");
-            
+
             dInfo = new DirectoryInfo(
-                Path.Combine(Startup.UserFilesDirName,finalPath));
+                Startup.UserFilesDirName+Path.DirectorySeparatorChar+finalPath);
             Files = dInfo.GetFiles().Select
-             ( entry => new DefaultFileInfo { Name = entry.Name, Size = entry.Length, 
+             ( entry => new DefaultFileInfo { Name = entry.Name, Size = entry.Length,
              CreationTime = entry.CreationTime, LastModified = entry.LastWriteTime  }).ToArray();
-             SubDirectories = dInfo.GetDirectories().Select 
+             SubDirectories = dInfo.GetDirectories().Select
              ( d=> d.Name ).ToArray();
         }
     }
