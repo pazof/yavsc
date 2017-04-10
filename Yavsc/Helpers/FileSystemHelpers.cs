@@ -33,16 +33,19 @@ namespace Yavsc.Helpers
         {
             return !name.Any(c => !Constants.ValidChars.Contains(c));
         }
+
+        // Ensure this path is canonical,
+        // No "dirto/./this", neither "dirt/to/that/"
+        // no .. and each char must be listed as valid in constants
         public static bool IsValidPath(this string path)
         {
             if (path == null) return true;
             foreach (var name in path.Split(Path.DirectorySeparatorChar))
             {
-                if (name != null)
-                    if (!IsValidDirectoryName(name)
-                     || name.Equals(".."))
+                if (!IsValidDirectoryName(name) || name.Equals("..") || name.Equals("."))
                         return false;
             }
+            if (path.EndsWith($"{Path.DirectorySeparatorChar}")) return false;
             return true;
         }
         public static string InitPostToFileSystem(
@@ -52,14 +55,13 @@ namespace Yavsc.Helpers
             var root = Path.Combine(Startup.UserFilesDirName, user.Identity.Name);
             var diRoot = new DirectoryInfo(root);
             if (!diRoot.Exists) diRoot.Create();
-            if (subpath != null)
-                if (subpath.IsValidPath())
+            if (!string.IsNullOrWhiteSpace(subpath)) {
+                if (!subpath.IsValidPath())
                 {
-                    root = Path.Combine(root, subpath);
-                    diRoot = new DirectoryInfo(root);
-                    if (!diRoot.Exists) diRoot.Create();
+                    throw new InvalidPathException();
                 }
-                else throw new InvalidPathException();
+                root = Path.Combine(root, subpath);
+            }
 
             return root;
         }
