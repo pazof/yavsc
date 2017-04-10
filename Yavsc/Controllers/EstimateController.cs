@@ -16,7 +16,7 @@ namespace Yavsc.Controllers
     using Models;
     using Models.Billing;
     using Models.Workflow;
-    using ViewModels;
+    using ViewModels.Auth;
     [Authorize]
     public class EstimateController : Controller
     {

@@ -13,7 +13,7 @@ using Yavsc.ViewModels.Administration;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)), Authorize()]
+    [Authorize()]
     public class AdministrationController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -43,6 +43,24 @@ namespace Yavsc.Controllers
             // If some amdin already exists, make this method disapear
             var admins = await _userManager.GetUsersInRoleAsync(Constants.AdminGroupName);
             if (admins != null && admins.Count > 0) return HttpNotFound();
+
+            // ensure all roles existence
+            foreach (string roleName in new string[] {Constants.AdminGroupName,
+                Constants.StarGroupName, Constants.PerformerGroupName,
+                Constants.FrontOfficeGroupName,
+                Constants.StarHunterGroupName
+                })
+                if (!await _roleManager.RoleExistsAsync(roleName))
+                {
+                    var role = new IdentityRole { Name = roleName };
+                    var resultCreate = await _roleManager.CreateAsync(role);
+                    if (!resultCreate.Succeeded)
+                    {
+                        AddErrors(resultCreate);
+                        return new BadRequestObjectResult(ModelState);
+                    }
+                }
+
             var user = await _userManager.FindByIdAsync(User.GetUserId());
 
             IdentityRole adminRole;
@@ -53,9 +71,10 @@ namespace Yavsc.Controllers
                 AddErrors(addToRoleResult);
                 return new BadRequestObjectResult(ModelState);
             }
+
             return Ok(new { message = "you owned it." });
         }
-        
+
         [Authorize(Roles = Constants.AdminGroupName)]
         [Produces("application/json")]
         public async Task<IActionResult> Index()
@@ -72,7 +91,9 @@ namespace Yavsc.Controllers
                 Name = x.Name,
                 Users = x.Users.Select(u=>u.UserId).ToArray()
             });
-            
+           ViewBag.ThisAssembly = GetType().Assembly.FullName;
+           ViewBag.RunTimeVersion = GetType().Assembly.ImageRuntimeVersion;
+
             return View(new AdminViewModel
             {
                 Roles = roles.ToArray(),
@@ -80,7 +101,7 @@ namespace Yavsc.Controllers
                 YouAreAdmin = youAreAdmin
             });
         }
-        
+
         public IActionResult Role(string id)
         {
             IdentityRole role = _roleManager.Roles

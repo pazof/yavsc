@@ -8,7 +8,7 @@ namespace Yavsc.Models.Chat
 
     public class Connection : IConnection
     {
-        [JsonIgnore]
+        [JsonIgnore,Required]
         public string ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId"),JsonIgnore]
         public virtual ApplicationUser Owner { get; set; }

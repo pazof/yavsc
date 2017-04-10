@@ -1,0 +1,50 @@
+@model Location
+
+<style>
+    #map {
+        width: 100%;
+        height: 250px;
+    }
+</style>
+
+  
+<form asp-action="SetAddress">
+<div asp-validation-summary="ValidationSummary.All" class="text-danger" id="ValidationSummary"></div>
+
+    <div class="form-group">
+
+        <label asp-for="Address" class="col-md-2 control-label">@SR["Address"]</label>
+        <div class="col-md-10">
+            <input asp-for="Address" class="form-control" type="text" />
+
+            <span id="AddressError" asp-validation-for="Address" class="text-danger"></span>
+            <ul id="LocationCombo" >
+            </ul>
+            <div id="map"></div>
+        </div>
+    </div>
+    <input type="submit" class="btn btn-success" value="Enregistrer" />
+    
+@Html.HiddenFor(model=>model.Latitude)
+ @Html.HiddenFor(model=>model.Longitude)
+</form>
+
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+@section scripts { 
+    
+<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
+<script src="~/js/google-geoloc.js" asp-append-version="true"></script>
+ <script >
+        $(document).ready(function(){
+        $.validator.setDefaults({
+            messages: {
+                remote:  "Ce lieu n'est pas identifié par les services de géo-localisation Google",
+                required: "Veuillez renseigner ce champ"
+            }
+        });
+        $("#Address").googlegeocode()
+        })
+    </script>
+
+} 

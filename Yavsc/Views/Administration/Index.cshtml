@@ -5,18 +5,30 @@
 }
 
 <h2>@ViewBag.Title</h2>
-<p>
-Rôles : 
+<h3>Rôles</h3>
 <ul>
 @foreach (var role in Model.Roles) {
 <li>@Html.ActionLink(role.Name,"Role",new { id=role.Id }) (@role.Users.Length membres)</li>
 }
 </ul>
-</p>
+<h3>Administrateurs</h3>
+<dl><dt>
+Nombre  </dt><dd> @Model.AdminCount</dd>
+<dt>Êtes-vous administrateur?</dt>
+<dd>@(Model.YouAreAdmin?"Oui":"Non")</dd>
+</dl>
 <p>
-Nombre d'administrateurs :
-@Model.AdminCount
+ 
 </p>
-<p>
-Vous êtes administrateur: @(Model.YouAreAdmin?"Oui":"Non")
-</p>
+<h3>Logiciel</h3>
+<dl>
+    <dt>Cette librairie
+    </dt>
+    <dd>@ViewBag.ThisAssembly
+    </dd>
+    <dt>Version du runtime
+    </dt>
+    <dd>@ViewBag.RunTimeVersion
+    </dd>
+</dl>
+

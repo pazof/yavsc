@@ -21,10 +21,13 @@ namespace Yavsc.Controllers
     using Microsoft.AspNet.Http;
     using Yavsc.Extensions;
     using Yavsc.Models.Haircut;
+    using System.Globalization;
+    using Microsoft.AspNet.Mvc.Rendering;
+    using System.Collections.Generic;
 
     public class HairCutCommandController : CommandController
     {
-        public HairCutCommandController(ApplicationDbContext context, 
+        public HairCutCommandController(ApplicationDbContext context,
         IOptions<GoogleAuthSettings> googleSettings,
         IGoogleCloudMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
@@ -35,17 +38,89 @@ namespace Yavsc.Controllers
           ILoggerFactory loggerFactory) : base(context,googleSettings,GCMSender,userManager,
           localizer,emailSender,smtpSettings,siteSettings,loggerFactory)
         {
-           
+
         }
-        
+        private async Task<HairCutQuery> GetQuery(long id)
+        {
+            return await _context.HairCutQueries
+            .Include(x => x.Location)
+            .Include(x => x.PerformerProfile)
+            .Include(x => x.Prestation)
+            .Include(x => x.PerformerProfile.Performer)
+            .SingleAsync(m => m.Id == id);
+        }
+        public async Task<IActionResult> ClientCancel(long id)
+        {
+            HairCutQuery command = await GetQuery(id);
+            if (command == null)
+            {
+                return HttpNotFound();
+            }
+            return View (command);
+        }
+        public async Task<IActionResult> ClientCancelConfirm(long id)
+        {
+            var query = await GetQuery(id);if (query == null)
+            {
+                return HttpNotFound();
+            }
+            var uid = User.GetUserId();
+            if (query.ClientId!=uid)
+                return new ChallengeResult();
+            _context.HairCutQueries.Remove(query);
+            await _context.SaveChangesAsync();
+            return await Index();
+        }
+        public override async Task<IActionResult> Index()
+        {
+            var uid = User.GetUserId();
+            return View("Index", await _context.HairCutQueries
+            .Include(x => x.Client)
+            .Include(x => x.PerformerProfile)
+            .Include(x => x.PerformerProfile.Performer)
+            .Include(x => x.Location)
+            .Where(x=> x.ClientId == uid || x.PerformerId == uid)
+            .ToListAsync());
+        }
+
+        public override async Task<IActionResult> Details(long? id)
+        {
+            if (id == null)
+            {
+                return HttpNotFound();
+            }
+
+            HairCutQuery command = await _context.HairCutQueries
+            .Include(x => x.Location)
+            .Include(x => x.PerformerProfile)
+            .Include(x => x.Prestation)
+            .Include(x => x.PerformerProfile.Performer)
+            .SingleAsync(m => m.Id == id);
+            if (command == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(command);
+        }
+
+
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateHairCutQuery(HairCutQuery command)
+        public async Task<IActionResult> CreateHairCutQuery(HairCutQuery model, string taintIds)
         {
-            
-            
             var uid = User.GetUserId();
-            var prid = command.PerformerId;
+            var prid = model.PerformerId;
+            long[] longtaintIds = null;
+            List<HairTaint> colors = null;
+
+            if (taintIds!=null) {
+                longtaintIds = taintIds.Split(',').Select(s=>long.Parse(s)).ToArray();
+                colors = _context.HairTaint.Where(t=> longtaintIds.Contains(t.Id)).ToList();
+                // a Prestation is required
+                model.Prestation.Taints = colors.Select(c =>
+                    new HairTaintInstance { Taint = c }).ToList();
+            }
             if (string.IsNullOrWhiteSpace(uid)
             || string.IsNullOrWhiteSpace(prid))
                 throw new InvalidOperationException(
@@ -55,103 +130,133 @@ namespace Yavsc.Controllers
                 u => u.Performer
             ).Include(u => u.Performer.Devices)
             .FirstOrDefault(
-                x => x.PerformerId == command.PerformerId
+                x => x.PerformerId == model.PerformerId
             );
-            var user = await _userManager.FindByIdAsync(uid);
-            command.Client = user;
-            command.ClientId = uid;
-            command.PerformerProfile = pro;
+            model.PerformerProfile = pro;
             // FIXME Why!!
             // ModelState.ClearValidationState("PerformerProfile.Avatar");
             // ModelState.ClearValidationState("Client.Avatar");
             // ModelState.ClearValidationState("ClientId");
-            ModelState.MarkFieldSkipped("ClientId");
-            
+
             if (ModelState.IsValid)
                 {
-                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address 
-                && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
+                    if (model.Location!=null) {
+                        var existingLocation = await _context.Locations.FirstOrDefaultAsync( x=>x.Address == model.Location.Address
+                        && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude );
 
-                if (existingLocation!=null) {
-                    command.Location=existingLocation;
-                }
-                else _context.Attach<Location>(command.Location);
+                        if (existingLocation!=null) {
+                            model.Location=existingLocation;
+                        }
+                        else _context.Attach<Location>(model.Location);
+                    }
+                    var existingPrestation = await _context.HairPrestation.FirstOrDefaultAsync( x=> model.PrestationId == x.Id );
 
-                _context.HairCutQueries.Add(command, GraphBehavior.IncludeDependents);
-                _context.SaveChanges(User.GetUserId());
+                    if (existingPrestation!=null) {
+                        model.Prestation = existingPrestation;
+                    }
+                    else _context.Attach<HairPrestation>(model.Prestation);
 
-                var yaev = command.CreateEvent(_localizer);
+                _context.HairCutQueries.Add(model);
+                await _context.SaveChangesAsync(uid);
+                var brusherProfile = await _context.BrusherProfile.SingleAsync(p=>p.UserId == pro.PerformerId);
+                model.Client = await  _context.Users.SingleAsync(u=>u.Id == model.ClientId);
+
+                var yaev = model.CreateEvent(_localizer, brusherProfile);
                 MessageWithPayloadResponse grep = null;
 
-                if (pro.AcceptNotifications
-                && pro.AcceptPublicContact)
+                if (pro.AcceptPublicContact)
                 {
-                    if (pro.Performer.Devices.Count > 0) {
-                        var regids = command.PerformerProfile.Performer
-                        .Devices.Select(d => d.GCMRegistrationId);
-                        grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
+                    if (pro.AcceptNotifications) {
+                        if (pro.Performer.Devices.Count > 0) {
+                            var regids = model.PerformerProfile.Performer
+                            .Devices.Select(d => d.GCMRegistrationId);
+                            grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
+                        }
+                        // TODO setup a profile choice to allow notifications
+                        // both on mailbox and mobile
+                        // if (grep==null || grep.success<=0 || grep.failure>0)
+                        ViewBag.GooglePayload=grep;
+                        if (grep!=null)
+                        _logger.LogWarning($"Performer: {model.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
                     }
-                    // TODO setup a profile choice to allow notifications
-                    // both on mailbox and mobile
-                    // if (grep==null || grep.success<=0 || grep.failure>0)
-                    ViewBag.GooglePayload=grep;
-                    if (grep!=null)
-                      _logger.LogWarning($"Performer: {command.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
-                        command.PerformerProfile.Performer.Email,
+                        model.PerformerProfile.Performer.Email,
                         yaev.Topic+" "+yaev.Sender,
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
-                ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
+                else {
+                    // TODO if (AcceptProContact) try & find a bookmaker to send him this query
+                }
+                ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
-                return View("CommandConfirmation",command);
+               var addition = model.Prestation.Addition(brusherProfile);
+                  ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
+                return View("CommandConfirmation",model);
             }
-            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
+            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
-            return View(command);
-       
+            SetViewData(model.ActivityCode,model.PerformerId,model.Prestation);
+            return View("HairCut",model);
         }
 
-        [ValidateAntiForgeryToken]
-        public ActionResult HairCut(string performerId, string activityCode)
+        public async Task<ActionResult> HairCut(string performerId, string activityCode)
         {
             HairPrestation pPrestation=null;
             var prestaJson = HttpContext.Session.GetString("HairCutPresta") ;
             if (prestaJson!=null) {
                 pPrestation = JsonConvert.DeserializeObject<HairPrestation>(prestaJson);
             }
-            else pPrestation = new HairPrestation {};
-           
-            ViewBag.HairTaints = _context.HairTaint.Include(t=>t.Color);
-            ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos),_localizer);
-            ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength),_localizer);
-            ViewBag.Activity = _context.Activities.First(a => a.Code == activityCode);
-            ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders),_localizer);
-            ViewBag.HairDressings = EnumExtensions.GetSelectList(typeof(HairDressings),_localizer);
-            ViewBag.ColorsClass = ( pPrestation.Tech == HairTechnos.Color 
-            || pPrestation.Tech == HairTechnos.Mech ) ? "":"hidden";
-            ViewBag.TechClass = ( pPrestation.Gender == HairCutGenders.Women ) ? "":"hidden";
-            ViewData["PerfPrefs"] = _context.BrusherProfile.Single(p=>p.UserId == performerId);
+            else {
+                pPrestation = new HairPrestation {};
+            }
+
+            var uid = User.GetUserId();
+            var user = await _userManager.FindByIdAsync(uid);
+
+            SetViewData(activityCode,performerId,pPrestation);
+
             var perfer = _context.Performers.Include(
                     p=>p.Performer
                 ).Single(p=>p.PerformerId == performerId);
             var result = new HairCutQuery {
                 PerformerProfile = perfer,
                 PerformerId = perfer.PerformerId,
-                ClientId = User.GetUserId(),
-                Prestation = pPrestation
+                ClientId = uid,
+                Prestation = pPrestation,
+                Client = user
             };
+
             return View(result);
+        }
+        private void SetViewData (string activityCode, string performerId, HairPrestation pPrestation )
+        {
+            ViewBag.HairTaints = _context.HairTaint.Include(t=>t.Color);
+            ViewBag.HairTaintsItems = _context.HairTaint.Include(t=>t.Color).Select(
+                c=>
+                new SelectListItem {
+                    Text = c.Color.Name+" "+c.Brand,
+                    Value = c.Id.ToString()
+                 }
+            );
+            ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos),_localizer);
+            ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength),_localizer);
+            ViewBag.Activity = _context.Activities.First(a => a.Code == activityCode);
+            ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders),_localizer);
+            ViewBag.HairDressings = EnumExtensions.GetSelectList(typeof(HairDressings),_localizer);
+            ViewBag.ColorsClass = ( pPrestation.Tech == HairTechnos.Color
+            || pPrestation.Tech == HairTechnos.Mech ) ? "":"hidden";
+            ViewBag.TechClass = ( pPrestation.Gender == HairCutGenders.Women ) ? "":"hidden";
+            ViewData["PerfPrefs"] = _context.BrusherProfile.Single(p=>p.UserId == performerId);
         }
 
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateHairMultiCutQuery(HairMultiCutQuery command)
         {
-            
+
             var uid = User.GetUserId();
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
@@ -174,10 +279,10 @@ namespace Yavsc.Controllers
             // ModelState.ClearValidationState("Client.Avatar");
             // ModelState.ClearValidationState("ClientId");
             ModelState.MarkFieldSkipped("ClientId");
-            
+
             if (ModelState.IsValid)
                 {
-                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address 
+                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address
                 && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
 
                 if (existingLocation!=null) {
@@ -187,8 +292,10 @@ namespace Yavsc.Controllers
 
                 _context.HairMultiCutQueries.Add(command, GraphBehavior.IncludeDependents);
                 _context.SaveChanges(User.GetUserId());
-
-                var yaev = command.CreateEvent(_localizer);
+                var brSettings = await _context.BrusherProfile.SingleAsync(
+                    bp=>bp.UserId == command.PerformerId
+                );
+                var yaev = command.CreateEvent(_localizer,brSettings);
                 MessageWithPayloadResponse grep = null;
 
                 if (pro.AcceptNotifications
@@ -219,7 +326,7 @@ namespace Yavsc.Controllers
             }
             ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
-            return View(command);
+            return View("HairCut",command);
         }
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Metadata;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
@@ -152,7 +154,6 @@ namespace Yavsc.Migrations
                     b.Property<int>("AccessFailedCount");
 
                     b.Property<string>("Avatar")
-                        .IsRequired()
                         .HasAnnotation("MaxLength", 512)
                         .HasAnnotation("Relational:DefaultValue", "/images/Users/icon_user.png")
                         .HasAnnotation("Relational:DefaultValueType", "System.String");
@@ -406,7 +407,8 @@ namespace Yavsc.Migrations
                 {
                     b.Property<string>("ConnectionId");
 
-                    b.Property<string>("ApplicationUserId");
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired();
 
                     b.Property<bool>("Connected");
 
@@ -527,6 +529,9 @@ namespace Yavsc.Migrations
                     b.Property<string>("ActivityCode")
                         .IsRequired();
 
+                    b.Property<string>("AdditionalInfo")
+                        .HasAnnotation("MaxLength", 512);
+
                     b.Property<string>("ClientId")
                         .IsRequired();
 
@@ -534,10 +539,9 @@ namespace Yavsc.Migrations
 
                     b.Property<DateTime>("DateModified");
 
-                    b.Property<DateTime>("EventDate");
+                    b.Property<DateTime?>("EventDate");
 
-                    b.Property<long?>("LocationId")
-                        .IsRequired();
+                    b.Property<long?>("LocationId");
 
                     b.Property<string>("PerformerId")
                         .IsRequired();
@@ -605,13 +609,23 @@ namespace Yavsc.Migrations
 
                     b.Property<int>("Gender");
 
-                    b.Property<long?>("HairMultiCutQueryId");
-
                     b.Property<int>("Length");
 
                     b.Property<bool>("Shampoo");
 
                     b.Property<int>("Tech");
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairPrestationCollectionItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long>("PrestationId");
+
+                    b.Property<long>("QueryId");
 
                     b.HasKey("Id");
                 });
@@ -625,9 +639,16 @@ namespace Yavsc.Migrations
 
                     b.Property<long>("ColorId");
 
-                    b.Property<long?>("HairPrestationId");
-
                     b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairTaintInstance", b =>
+                {
+                    b.Property<long>("TaintId");
+
+                    b.Property<long>("PrestationId");
+
+                    b.HasKey("TaintId", "PrestationId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Identity.GoogleCloudMobileDeclaration", b =>
@@ -920,8 +941,6 @@ namespace Yavsc.Migrations
                 {
                     b.Property<string>("Code")
                         .HasAnnotation("MaxLength", 512);
-
-                    b.Property<string>("ActorDenomination");
 
                     b.Property<DateTime>("DateCreated");
 
@@ -1225,11 +1244,15 @@ namespace Yavsc.Migrations
                         .HasForeignKey("PerformerId");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Haircut.HairPrestation", b =>
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairPrestationCollectionItem", b =>
                 {
+                    b.HasOne("Yavsc.Models.Haircut.HairPrestation")
+                        .WithMany()
+                        .HasForeignKey("PrestationId");
+
                     b.HasOne("Yavsc.Models.Haircut.HairMultiCutQuery")
                         .WithMany()
-                        .HasForeignKey("HairMultiCutQueryId");
+                        .HasForeignKey("QueryId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Haircut.HairTaint", b =>
@@ -1237,10 +1260,17 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.Drawing.Color")
                         .WithMany()
                         .HasForeignKey("ColorId");
+                });
 
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairTaintInstance", b =>
+                {
                     b.HasOne("Yavsc.Models.Haircut.HairPrestation")
                         .WithMany()
-                        .HasForeignKey("HairPrestationId");
+                        .HasForeignKey("PrestationId");
+
+                    b.HasOne("Yavsc.Models.Haircut.HairTaint")
+                        .WithMany()
+                        .HasForeignKey("TaintId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Identity.GoogleCloudMobileDeclaration", b =>

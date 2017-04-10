@@ -5,7 +5,7 @@
     "grunt": "^1.0.1",
     "gulp": "^3.9.0",
     "gulp-concat": "2.5.2",
-    "gulp-cssmin": "0.1.7",
+    "gulp-cssmin": "^0.1.7",
     "gulp-dnx-tasks": "^1.0.0-beta7",
     "gulp-shell": "^0.5.2",
     "gulp-uglify": "1.2.0",

@@ -14,8 +14,9 @@ using System.Threading.Tasks;
 namespace Yavsc.Controllers
 {
     using Models;
-    
-    [ServiceFilter(typeof(LanguageActionFilter)),AllowAnonymous]
+    using YavscLib;
+
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         public IHostingEnvironment Hosting { get; set; }
@@ -34,7 +35,9 @@ namespace Yavsc.Controllers
 
         public async Task<IActionResult> Index(string id)
         {
-
+            ViewBag.IsFromSecureProx = (Request.Headers.ContainsKey(Constants.SshHeaderKey))?  Request.Headers[Constants.SshHeaderKey]=="on" : false ;
+            ViewBag.SecureHomeUrl = "https://"+Request.Headers["X-Forwarded-Host"];
+            ViewBag.SshHeaderKey = Request.Headers[Constants.SshHeaderKey];
             var uid = User.GetUserId();
             long [] clicked=null;
             if (uid==null) {
@@ -48,8 +51,36 @@ namespace Yavsc.Controllers
                 n=> !clicked.Any(c=>n.Id==c)
             );
             ViewData["Notify"] = notes;
-            return View(DbContext.Activities.Where(a=>a.ParentCode==id && !a.Hidden).Include(a=>a.Forms).Include(a=>a.Children)
-            .OrderByDescending(a=>a.Rate));
+            ViewData["HasHaircutCommand"] = DbContext.HairCutQueries.Any
+            (q=>q.ClientId == uid && q.Status < QueryStatus.Failed);
+
+            if (id==null) {
+                // Workaround
+                // NotImplementedException: Remotion.Linq.Clauses.ResultOperators.ConcatResultOperator
+                //
+                // Use Concat()| whatever to do left outer join on ToArray() or ToList(), not on IQueryable
+
+                var legacy = DbContext.Activities
+                .Include(a=>a.Forms).Include(a=>a.Children)
+                .Where(a=> !a.Hidden)
+                .Where(a=> a.ParentCode==null).ToArray();
+                // OMG
+                var hiddenchildren = DbContext.Activities
+                .Include(a=>a.Forms).Include(a=>a.Children)
+                .Where(a=> a.Parent.Hidden && !a.Hidden).ToArray();
+
+                return View(legacy.Concat(hiddenchildren).OrderByDescending(a=>a.Rate));
+            }
+            else {
+                return View(DbContext.Activities
+                .Include(a=>a.Forms).Include(a=>a.Children)
+                .Where(a=>!a.Hidden)
+                .Where(a=> a.ParentCode==id).OrderByDescending(a=>a.Rate));
+
+            }
+
+
+
         }
         public IActionResult About()
         {

@@ -12,25 +12,19 @@
    <hr/>
 
 <div class="meta"> 
-    @SR["Author"] :  @Model.Author.UserName -
+    @Html.DisplayFor(model => model.Author) 
        
-    @SR["Modified"] :
+    @Html.DisplayNameFor(model => model.DateModified) :
 
-    @Html.DisplayFor(model => model.DateModified) -
+    @Html.DisplayFor(model => model.DateModified) 
 
-    @SR["Created"] :
+    @Html.DisplayNameFor(model => model.DateCreated) :
 
     @Html.DisplayFor(model => model.DateCreated) 
  </div>
      
 </div>
-<ul>
 @if (await AuthorizationService.AuthorizeAsync(User, Model, new EditRequirement())) {
-<li>
-<a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a>
-</li>
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">@SR["Edit"]</a>
 }
-<li>
-<a asp-action="Index">@SR["Back to List"]</a>
-</li>
-</ul>
+<a asp-action="Index" class="btn btn-link">@SR["Back to List"]</a>
