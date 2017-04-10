@@ -20,7 +20,7 @@ namespace Yavsc
         public static List<PropertyInfo> UserSettings = new List<PropertyInfo> ();
 
         /// <summary>
-        /// Lists available command forms. 
+        /// Lists available command forms.
         /// This is hard coded.
         /// </summary>
         public static readonly string [] Forms = new string [] { "Profiles" , "HairCut" };
@@ -29,7 +29,7 @@ namespace Yavsc
         {
             return UserSettings.SingleOrDefault(s => s.PropertyType.GenericTypeArguments[0].FullName == settingsClassName ) ;
         }
-        
+
         private void ConfigureWorkflow(IApplicationBuilder app, SiteSettings settings, ILogger logger)
         {
             System.AppDomain.CurrentDomain.ResourceResolve += OnYavscResourceResolve;
@@ -48,14 +48,14 @@ namespace Yavsc
                             // bingo
                             if (typeof(IQueryable<ISpecializationSettings>).IsAssignableFrom(propinfo.PropertyType))
                             {
-                                logger.LogInformation($"Paramêtres utilisateur déclaré: {propinfo.Name}");
+                                logger.LogVerbose($"Paramêtres utilisateur déclaré: {propinfo.Name}");
                                 UserSettings.Add(propinfo);
-                            } else 
+                            } else
                                 // Design time error
                                 {
-                                    var msg = 
+                                    var msg =
 $@"La propriété {propinfo.Name} du contexte de la
-base de donnée porte l'attribut [ActivitySetting], 
+base de donnée porte l'attribut [ActivitySetting],
 mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
 ({propinfo.MemberType.GetType()})";
                                     logger.LogCritical(msg);
@@ -69,7 +69,7 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
         public static System.Reflection.Assembly OnYavscResourceResolve (object sender,  ResolveEventArgs ev)
         {
             return AppDomain.CurrentDomain.GetAssemblies()[0];
-        } 
+        }
     }
-    
+
 }

@@ -74,10 +74,16 @@
 tr.visiblepost {
     max-height: 3em;
 }
+tr.visiblepost img {
+    max-height: 3em;
+}
 tr.hiddenpost {
+    max-height: 2em;
     background-color: #888;
     font-size: smaller;
-    max-height: 2em;
+}
+tr.hiddenpost img {
+    max-height: 3em;
 }
 a.bloglink {
     font-weight: bold;
