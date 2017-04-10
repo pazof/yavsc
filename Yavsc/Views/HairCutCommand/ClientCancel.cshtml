@@ -1,0 +1,16 @@
+@model HairCutQuery
+
+@{
+    ViewData["Title"] = @SR["Annuler votre commande"];
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <hr />
+    @Html.DisplayFor(m=>m)
+</div>
+<p>
+    <a asp-action="ClientCancelConfirm" asp-route-id="@Model.Id" class="btn btn-success">Je confirme, je veux annuler cette commande</a> |
+    <a asp-action="Index" class="btn btn-link">@SR["Back to List"]</a>
+</p>

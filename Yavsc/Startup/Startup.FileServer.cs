@@ -6,7 +6,6 @@ using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.StaticFiles;
-using Yavsc.ViewModels;
 using Yavsc.ViewModels.Auth;
 
 namespace Yavsc

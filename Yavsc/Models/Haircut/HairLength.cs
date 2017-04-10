@@ -1,16 +1,12 @@
-using System.ComponentModel.DataAnnotations;
+
 
 namespace Yavsc.Models.Haircut
 {
     public enum HairLength : int
     {
-        [Display(Name="Mi-longs")]
-        HalfLong,
+        HalfLong=0,
+        Short=1,
 
-        [Display(Name="Courts")]
-        Short = 1,
-
-        [Display(Name="Longs")]
-        Long
+        Long=2
     }
 }

@@ -12,6 +12,15 @@
           "lib/Antlr3.Runtime.dll": {}
         }
       },
+      "BouncyCastle/1.8.1": {
+        "type": "package",
+        "compile": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        },
+        "runtime": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        }
+      },
       "EntityFramework.Commands/7.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -262,10 +271,11 @@
           "lib/net40-full/log4net.dll": {}
         }
       },
-      "MailKit/1.3.0-beta7": {
+      "MailKit/1.12.0": {
         "type": "package",
         "dependencies": {
-          "MimeKit": "1.3.0-beta7"
+          "BouncyCastle": "1.8.1",
+          "MimeKit": "1.12.0"
         },
         "frameworkAssemblies": [
           "System",
@@ -279,7 +289,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.4": {
+      "MarkdownDeep-av.NET/1.5.5": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -1525,6 +1535,9 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
       },
+      "Microsoft.DiaSymReader.Native/1.5.0": {
+        "type": "package"
+      },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -2449,15 +2462,6 @@
           "lib/net451/Microsoft.Net.WebSockets.dll": {}
         }
       },
-      "Microsoft.NETCore.Platforms/1.0.1-beta-23516": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.Targets": "1.0.1-beta-23516"
-        }
-      },
-      "Microsoft.NETCore.Targets/1.0.1-beta-23516": {
-        "type": "package"
-      },
       "Microsoft.Owin/2.1.0": {
         "type": "package",
         "dependencies": {
@@ -2492,8 +2496,11 @@
           "lib/net40/Microsoft.Web.Infrastructure.dll": {}
         }
       },
-      "MimeKit/1.3.0-beta7": {
+      "MimeKit/1.12.0": {
         "type": "package",
+        "dependencies": {
+          "BouncyCastle": "1.8.1"
+        },
         "frameworkAssemblies": [
           "System",
           "System.Core",
@@ -2501,11 +2508,9 @@
           "System.Security"
         ],
         "compile": {
-          "lib/net451/BouncyCastle.dll": {},
           "lib/net451/MimeKit.dll": {}
         },
         "runtime": {
-          "lib/net451/BouncyCastle.dll": {},
           "lib/net451/MimeKit.dll": {}
         }
       },
@@ -2870,6 +2875,15 @@
           "lib/Antlr3.Runtime.dll": {}
         }
       },
+      "BouncyCastle/1.8.1": {
+        "type": "package",
+        "compile": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        },
+        "runtime": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        }
+      },
       "EntityFramework.Commands/7.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -3120,10 +3134,11 @@
           "lib/net40-full/log4net.dll": {}
         }
       },
-      "MailKit/1.3.0-beta7": {
+      "MailKit/1.12.0": {
         "type": "package",
         "dependencies": {
-          "MimeKit": "1.3.0-beta7"
+          "BouncyCastle": "1.8.1",
+          "MimeKit": "1.12.0"
         },
         "frameworkAssemblies": [
           "System",
@@ -3137,7 +3152,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.4": {
+      "MarkdownDeep-av.NET/1.5.5": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -4383,6 +4398,9 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
       },
+      "Microsoft.DiaSymReader.Native/1.5.0": {
+        "type": "package"
+      },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -5307,15 +5325,6 @@
           "lib/net451/Microsoft.Net.WebSockets.dll": {}
         }
       },
-      "Microsoft.NETCore.Platforms/1.0.1-beta-23516": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.Targets": "1.0.1-beta-23516"
-        }
-      },
-      "Microsoft.NETCore.Targets/1.0.1-beta-23516": {
-        "type": "package"
-      },
       "Microsoft.Owin/2.1.0": {
         "type": "package",
         "dependencies": {
@@ -5350,8 +5359,11 @@
           "lib/net40/Microsoft.Web.Infrastructure.dll": {}
         }
       },
-      "MimeKit/1.3.0-beta7": {
+      "MimeKit/1.12.0": {
         "type": "package",
+        "dependencies": {
+          "BouncyCastle": "1.8.1"
+        },
         "frameworkAssemblies": [
           "System",
           "System.Core",
@@ -5359,11 +5371,9 @@
           "System.Security"
         ],
         "compile": {
-          "lib/net451/BouncyCastle.dll": {},
           "lib/net451/MimeKit.dll": {}
         },
         "runtime": {
-          "lib/net451/BouncyCastle.dll": {},
           "lib/net451/MimeKit.dll": {}
         }
       },
@@ -5728,6 +5738,15 @@
           "lib/Antlr3.Runtime.dll": {}
         }
       },
+      "BouncyCastle/1.8.1": {
+        "type": "package",
+        "compile": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        },
+        "runtime": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        }
+      },
       "EntityFramework.Commands/7.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -5978,10 +5997,11 @@
           "lib/net40-full/log4net.dll": {}
         }
       },
-      "MailKit/1.3.0-beta7": {
+      "MailKit/1.12.0": {
         "type": "package",
         "dependencies": {
-          "MimeKit": "1.3.0-beta7"
+          "BouncyCastle": "1.8.1",
+          "MimeKit": "1.12.0"
         },
         "frameworkAssemblies": [
           "System",
@@ -5995,7 +6015,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.4": {
+      "MarkdownDeep-av.NET/1.5.5": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -7241,6 +7261,9 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
       },
+      "Microsoft.DiaSymReader.Native/1.5.0": {
+        "type": "package"
+      },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -8165,15 +8188,6 @@
           "lib/net451/Microsoft.Net.WebSockets.dll": {}
         }
       },
-      "Microsoft.NETCore.Platforms/1.0.1-beta-23516": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.Targets": "1.0.1-beta-23516"
-        }
-      },
-      "Microsoft.NETCore.Targets/1.0.1-beta-23516": {
-        "type": "package"
-      },
       "Microsoft.Owin/2.1.0": {
         "type": "package",
         "dependencies": {
@@ -8208,8 +8222,11 @@
           "lib/net40/Microsoft.Web.Infrastructure.dll": {}
         }
       },
-      "MimeKit/1.3.0-beta7": {
+      "MimeKit/1.12.0": {
         "type": "package",
+        "dependencies": {
+          "BouncyCastle": "1.8.1"
+        },
         "frameworkAssemblies": [
           "System",
           "System.Core",
@@ -8217,11 +8234,9 @@
           "System.Security"
         ],
         "compile": {
-          "lib/net451/BouncyCastle.dll": {},
           "lib/net451/MimeKit.dll": {}
         },
         "runtime": {
-          "lib/net451/BouncyCastle.dll": {},
           "lib/net451/MimeKit.dll": {}
         }
       },
@@ -8593,6 +8608,17 @@
         "lib/Antlr3.Runtime.pdb"
       ]
     },
+    "BouncyCastle/1.8.1": {
+      "type": "package",
+      "sha512": "nH+P67LavO5EcxjKdBxFfRdfdFhivS3Xp3+0br1KcpCI8DM6ksCWy6YYZjk7XFV+VsHGtkUovwIZ/vmCp42geA==",
+      "files": [
+        "BouncyCastle.1.8.1.nupkg",
+        "BouncyCastle.1.8.1.nupkg.sha512",
+        "BouncyCastle.nuspec",
+        "lib/BouncyCastle.Crypto.dll",
+        "Readme.txt"
+      ]
+    },
     "EntityFramework.Commands/7.0.0-rc1-final": {
       "type": "package",
       "sha512": "+wa2VWX3/vDkOpeCeIotMevqpIISimGqeYNTGYRLRhv+8HzsCLeymLzmmYpjav6zYQVvuJiJodapQvijAIfRrA==",
@@ -8833,12 +8859,10 @@
         "log4net.nuspec"
       ]
     },
-    "MailKit/1.3.0-beta7": {
+    "MailKit/1.12.0": {
       "type": "package",
-      "sha512": "LalD+6uE97WdfZ9Ohmz2ZeYbPXzql4VNazGO/e9PLMENKNPwENc4eSr8v/r+mHY3EsRsAH34DCkub8rA4Zwyrw==",
+      "sha512": "6h6PkKAuMSaTEjXMVSgBqqMrhcRgtBfFwJwA0qxqpQ32IvtG4v2vphB3IBRa3UjX4g1GaWRC+tHwivXGlZ0CtA==",
       "files": [
-        "lib/dotnet5.5/MailKit.dll",
-        "lib/dotnet5.5/MailKit.xml",
         "lib/MonoAndroid10/MailKit.dll",
         "lib/MonoAndroid10/MailKit.xml",
         "lib/net40/MailKit.dll",
@@ -8847,26 +8871,28 @@
         "lib/net45/MailKit.xml",
         "lib/net451/MailKit.dll",
         "lib/net451/MailKit.xml",
+        "lib/netstandard1.3/MailKit.dll",
+        "lib/netstandard1.3/MailKit.xml",
         "lib/win81/MailKit.dll",
         "lib/win81/MailKit.xml",
         "lib/wpa81/MailKit.dll",
         "lib/wpa81/MailKit.xml",
         "lib/Xamarin.iOS10/MailKit.dll",
         "lib/Xamarin.iOS10/MailKit.xml",
-        "MailKit.1.3.0-beta7.nupkg",
-        "MailKit.1.3.0-beta7.nupkg.sha512",
+        "MailKit.1.12.0.nupkg",
+        "MailKit.1.12.0.nupkg.sha512",
         "MailKit.nuspec"
       ]
     },
-    "MarkdownDeep-av.NET/1.5.4": {
+    "MarkdownDeep-av.NET/1.5.5": {
       "type": "package",
-      "sha512": "89nafNRqR3hqKU0rQzHb+BGpoxjImo7pfOQj8vNALB3MloBye0jqMv9eqpKP+QIDLtMS8gHf7uP1kAIkhsOg+Q==",
+      "sha512": "RVNumZoZCPDq3H83vrudwptPgR0YFb3MsxIAuGZccUIPiwVUyixGanymHOy0H9QPubkYWo8t00iXqVvIjiu2gg==",
       "files": [
         "lib/dnxcore50/MarkdownDeep.dll",
         "lib/MonoAndroid10/MarkdownDeep.dll",
         "lib/net451/MarkdownDeep.dll",
-        "MarkdownDeep-av.NET.1.5.4.nupkg",
-        "MarkdownDeep-av.NET.1.5.4.nupkg.sha512",
+        "MarkdownDeep-av.NET.1.5.5.nupkg",
+        "MarkdownDeep-av.NET.1.5.5.nupkg.sha512",
         "MarkdownDeep-av.NET.nuspec"
       ]
     },
@@ -9720,6 +9746,22 @@
         "ThirdPartyNotices.rtf"
       ]
     },
+    "Microsoft.DiaSymReader.Native/1.5.0": {
+      "type": "package",
+      "sha512": "Zs1Cm0z1G9QLkKZ/k9O2/z47fN84ZbhWCrdBYv0ArC2lU4H1pOTkjah6RgCm/ZnS8ZdOMFC+We6shG6SCRaXeg==",
+      "files": [
+        "build/Microsoft.DiaSymReader.Native.props",
+        "Microsoft.DiaSymReader.Native.1.5.0.nupkg",
+        "Microsoft.DiaSymReader.Native.1.5.0.nupkg.sha512",
+        "Microsoft.DiaSymReader.Native.nuspec",
+        "runtimes/win/native/Microsoft.DiaSymReader.Native.amd64.dll",
+        "runtimes/win/native/Microsoft.DiaSymReader.Native.arm.dll",
+        "runtimes/win/native/Microsoft.DiaSymReader.Native.x86.dll",
+        "runtimes/win8-arm/native/Microsoft.DiaSymReader.Native.arm.dll",
+        "runtimes/win-x64/native/Microsoft.DiaSymReader.Native.amd64.dll",
+        "runtimes/win-x86/native/Microsoft.DiaSymReader.Native.x86.dll"
+      ]
+    },
     "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "sha512": "kg3kR7H12Bs46TiuF7YT8A3SNXehhBcwsArIMQIH2ecXGkg5MPWDl2OR6bnQu6k0OMu9QUiv1oiwC9yU7rHWfw==",
@@ -9904,6 +9946,7 @@
     },
     "Microsoft.Extensions.Configuration.Abstractions/1.0.0-rc1-final": {
       "type": "package",
+      "serviceable": true,
       "sha512": "xA7ObOlIswcx2qakv69kz0pnBizFJrmwxRxJyjPOHWfevF4W+OdolZsbKOc12kY7y5upqhAvNGWTblffMvADHA==",
       "files": [
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.Abstractions.dll",
@@ -10108,6 +10151,7 @@
     },
     "Microsoft.Extensions.Logging/1.0.0-rc1-final": {
       "type": "package",
+      "serviceable": true,
       "sha512": "anegHH4XHjaCmC557A0uvnJzprT44MOKr669yfiQLtITA+lQrM3aMijxjjdCREnxE8ftXuSz+6wViCvkgcAOhA==",
       "files": [
         "lib/dotnet5.4/Microsoft.Extensions.Logging.dll",
@@ -10168,7 +10212,6 @@
     },
     "Microsoft.Extensions.Logging.TraceSource/1.0.0-rc1-final": {
       "type": "package",
-      "serviceable": true,
       "sha512": "wIxGpFxTKI+xvh/aVNCUh0tUEq24xmRW/OWpOJrE2c3QrIJJ6vSpvwGJ7cmgvMWK2Ul+HDd9Wxrcd0tUa8rHhg==",
       "files": [
         "lib/dotnet5.4/Microsoft.Extensions.Logging.TraceSource.dll",
@@ -10235,7 +10278,6 @@
     },
     "Microsoft.Extensions.Primitives/1.0.0-rc1-final": {
       "type": "package",
-      "serviceable": true,
       "sha512": "oHWqBARJveyM7LctuqQqvsTC58hxoq0gGnHr6Qsxie71LIkZpfE21IklhSLOsqmv4QIpes/G6k1vZbAQ+cC/nw==",
       "files": [
         "lib/dotnet5.4/Microsoft.Extensions.Primitives.dll",
@@ -10277,6 +10319,7 @@
     },
     "Microsoft.Framework.Configuration/1.0.0-beta8": {
       "type": "package",
+      "serviceable": true,
       "sha512": "M2Fg4gBigELMjFow/w44eGZe7VICY6naOe8R6jKbtsXpDTKFsfCuXxpZcUfIgI791hs7Ney88IjxZ3XudsgJeg==",
       "files": [
         "lib/dnx451/Microsoft.Framework.Configuration.dll",
@@ -10294,6 +10337,7 @@
     },
     "Microsoft.Framework.Configuration.Abstractions/1.0.0-beta8": {
       "type": "package",
+      "serviceable": true,
       "sha512": "WH5zC6AkShx6VZzZT37tl0QPROkR6zdffACEIPiDyPyqyf+DtWN5Z6v1q9OD5q6CfAij18EwqWaF1eWtYBigNw==",
       "files": [
         "lib/dnx451/Microsoft.Framework.Configuration.Abstractions.dll",
@@ -10311,6 +10355,7 @@
     },
     "Microsoft.Framework.Configuration.Binder/1.0.0-beta8": {
       "type": "package",
+      "serviceable": true,
       "sha512": "6BWMPvDuy6nTe32z2JWsoiLljVhWagWkDhcN9EbvN4/ihGbnCWzKPIUCJ3a/1s9k/ZsWp4VZtxeuSaZ+60qQbQ==",
       "files": [
         "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll",
@@ -10328,6 +10373,7 @@
     },
     "Microsoft.Framework.Configuration.FileExtensions/1.0.0-beta8": {
       "type": "package",
+      "serviceable": true,
       "sha512": "+hsytl/Puj6Gc6U934Y7n3hfdkJG7lfvasIwY0RnAmsTSxJ6pF54A/mR3d/EwSHyUyMlgSnSHeoTXZ4u8RfJsA==",
       "files": [
         "lib/dnx451/Microsoft.Framework.Configuration.FileExtensions.dll",
@@ -10343,6 +10389,7 @@
     },
     "Microsoft.Framework.Configuration.Json/1.0.0-beta8": {
       "type": "package",
+      "serviceable": true,
       "sha512": "dfA9iuKWri9gVaAY7XEQMXP5C+PMalC+0vDhv9AUuawwuTeQm11JhOwXzdPu/FM4Bbwm33kHlVkLrHRW403XIA==",
       "files": [
         "lib/dnx451/Microsoft.Framework.Configuration.Json.dll",
@@ -10360,6 +10407,7 @@
     },
     "Microsoft.Framework.ConfigurationModel/1.0.0-beta4": {
       "type": "package",
+      "serviceable": true,
       "sha512": "VD5MhmQRhYVfxyDs1fyruPTj3pYwLMV5dXJkPUVg1KKbJ9qr/tEn3frJA1NN1jdeVBt1RrW5FXr+wWG9YoO9Yg==",
       "files": [
         "lib/dnx451/Microsoft.Framework.ConfigurationModel.dll",
@@ -10377,6 +10425,7 @@
     },
     "Microsoft.Framework.ConfigurationModel.Interfaces/1.0.0-beta4": {
       "type": "package",
+      "serviceable": true,
       "sha512": "lU9+gyEz+jSeR+QsZxZtDf0U2DS/pl3I8/m7YeKjHMnjqoxUKFbSOpzegll7bhq0Alw7/8gF2Byrcy+PlzRc/g==",
       "files": [
         "lib/dnx451/Microsoft.Framework.ConfigurationModel.Interfaces.dll",
@@ -10394,6 +10443,7 @@
     },
     "Microsoft.Framework.ConfigurationModel.Json/1.0.0-beta4": {
       "type": "package",
+      "serviceable": true,
       "sha512": "ygdShf5lzRsqe7/pMNSaiq6AcAy0eIhp8WFUtYfqQnsxhMJFcw/VlIFvie8+DkYhacdmGkXTF4OGopjjwfg02A==",
       "files": [
         "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll",
@@ -10409,6 +10459,7 @@
     },
     "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
       "type": "package",
+      "serviceable": true,
       "sha512": "RrZdqvUm8QbgxnZQuafYGo6NezoKx7VqAfAtHVzoKBm3GSV8xlPh90u1fsGhNCv37xJNk5PuRCa4Mq27ko7pLw==",
       "files": [
         "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll",
@@ -10498,26 +10549,6 @@
         "Microsoft.Net.WebSockets.nuspec"
       ]
     },
-    "Microsoft.NETCore.Platforms/1.0.1-beta-23516": {
-      "type": "package",
-      "sha512": "YPVzF1z1qhI3am4/I3EWEjn5hxm1wnIbHTRp6nrfKOoj0NBGtubVTTQmC3l5VZIbwmygiMVbWdbFhzJwWJXNEw==",
-      "files": [
-        "Microsoft.NETCore.Platforms.1.0.1-beta-23516.nupkg",
-        "Microsoft.NETCore.Platforms.1.0.1-beta-23516.nupkg.sha512",
-        "Microsoft.NETCore.Platforms.nuspec",
-        "runtime.json"
-      ]
-    },
-    "Microsoft.NETCore.Targets/1.0.1-beta-23516": {
-      "type": "package",
-      "sha512": "11J+6atPf0UYQnpr8aKy6Xx+O9rAf/46OyODFY8gFbKkW/PVIh7iSHziukpvWZ+hI/ieFklGMopDU1MiUELutQ==",
-      "files": [
-        "Microsoft.NETCore.Targets.1.0.1-beta-23516.nupkg",
-        "Microsoft.NETCore.Targets.1.0.1-beta-23516.nupkg.sha512",
-        "Microsoft.NETCore.Targets.nuspec",
-        "runtime.json"
-      ]
-    },
     "Microsoft.Owin/2.1.0": {
       "type": "package",
       "sha512": "lk0kK64mlmcmtWX8YOYkZsnZKDoGEzMZhe8e1bcP+FFcgD4f2QfKwvu5Z8Bh8WS0VO7Rgk+DJ0hwW0k+S/UGMg==",
@@ -10552,31 +10583,23 @@
         "Microsoft.Web.Infrastructure.nuspec"
       ]
     },
-    "MimeKit/1.3.0-beta7": {
+    "MimeKit/1.12.0": {
       "type": "package",
-      "sha512": "M7F4OnPXfcI4AljQUdvok29vz3DEruiqIBDIn6zGVdFQpNpaVbmrp80YLX9SH2hJO+8fSOX6/k3ScUXqZheFSQ==",
+      "sha512": "RxmmVI5vLiI7q54i5CK3WESv6e/sVI3sEJB2/PXdIbKWfHOkQywGoRkqiSqDRz+m5fU7D1H0RVkjTshONo0ZzA==",
       "files": [
-        "lib/dotnet5.4/MimeKit.dll",
-        "lib/dotnet5.4/MimeKit.xml",
         "lib/MonoAndroid10/BouncyCastle.dll",
         "lib/MonoAndroid10/MimeKit.dll",
         "lib/MonoAndroid10/MimeKit.xml",
-        "lib/net35/BouncyCastle.dll",
-        "lib/net35/BouncyCastle.xml",
         "lib/net35/MimeKit.dll",
         "lib/net35/MimeKit.xml",
-        "lib/net40/BouncyCastle.dll",
-        "lib/net40/BouncyCastle.xml",
         "lib/net40/MimeKit.dll",
         "lib/net40/MimeKit.xml",
-        "lib/net45/BouncyCastle.dll",
-        "lib/net45/BouncyCastle.xml",
         "lib/net45/MimeKit.dll",
         "lib/net45/MimeKit.xml",
-        "lib/net451/BouncyCastle.dll",
-        "lib/net451/BouncyCastle.xml",
         "lib/net451/MimeKit.dll",
         "lib/net451/MimeKit.xml",
+        "lib/netstandard1.3/MimeKit.dll",
+        "lib/netstandard1.3/MimeKit.xml",
         "lib/portable-net45+win+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/MimeKit.dll",
         "lib/portable-net45+win+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/MimeKit.xml",
         "lib/portable-net45+win+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/Portable.Text.Encoding.dll",
@@ -10586,8 +10609,8 @@
         "lib/Xamarin.iOS10/BouncyCastle.dll",
         "lib/Xamarin.iOS10/MimeKit.dll",
         "lib/Xamarin.iOS10/MimeKit.xml",
-        "MimeKit.1.3.0-beta7.nupkg",
-        "MimeKit.1.3.0-beta7.nupkg.sha512",
+        "MimeKit.1.12.0.nupkg",
+        "MimeKit.1.12.0.nupkg.sha512",
         "MimeKit.nuspec"
       ]
     },
@@ -10796,6 +10819,7 @@
     },
     "System.Diagnostics.DiagnosticSource/4.0.0-beta-23516": {
       "type": "package",
+      "serviceable": true,
       "sha512": "0uDR/UOmFCNPDCyHEPHhCrk6c1iRnDp00YqwSZ8Qf5aaaJjm4WXnf4Q9xZw4OoApsSiODSypDMdpQU24IxR16A==",
       "files": [
         "lib/dotnet5.2/System.Diagnostics.DiagnosticSource.dll",
@@ -11020,6 +11044,7 @@
     },
     "System.Numerics.Vectors/4.1.1-beta-23516": {
       "type": "package",
+      "serviceable": true,
       "sha512": "FCYCEjc3BXBTpVZTxMqf2m/sGYyDzLwICy5lNKgZzT8WfshJhsTGjJuETwsh1Cwi6bksw9YiTB6yeeWBBJDnTA==",
       "files": [
         "lib/dotnet5.4/System.Numerics.Vectors.dll",
@@ -11172,7 +11197,6 @@
     },
     "System.Resources.ResourceManager/4.0.0": {
       "type": "package",
-      "serviceable": true,
       "sha512": "qmqeZ4BJgjfU+G2JbrZt4Dk1LsMxO4t+f/9HarNY6w8pBgweO6jT+cknUH7c3qIrGvyUqraBhU45Eo6UtA0fAw==",
       "files": [
         "lib/DNXCore50/System.Resources.ResourceManager.dll",
@@ -11517,21 +11541,21 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "EntityFramework.Commands >= 7.0.0-rc1-*",
-      "EntityFramework.Core >= 7.0.0-rc1-*",
-      "EntityFramework.MicrosoftSqlServer >= 7.0.0-rc1-*",
-      "EntityFramework.Relational >= 7.0.0-rc1-*",
-      "EntityFramework7.Npgsql >= 3.1.0-*",
-      "EntityFramework7.Npgsql.Design >= 3.1.0-*",
+      "EntityFramework.Commands >= 7.0.0-rc1-final",
+      "EntityFramework.Core >= 7.0.0-rc1-final",
+      "EntityFramework.MicrosoftSqlServer >= 7.0.0-rc1-final",
+      "EntityFramework.Relational >= 7.0.0-rc1-final",
+      "EntityFramework7.Npgsql >= 3.1.0-rc1-3",
+      "EntityFramework7.Npgsql.Design >= 3.1.0-rc1-5",
       "Google.Apis.Core >= 1.11.1",
       "Google.Apis >= 1.11.1",
-      "MailKit >= 1.3.0-beta7",
-      "MarkdownDeep-av.NET >= 1.5.4",
-      "Microsoft.AspNet.Authentication.Cookies >= 1.0.0-rc1-*",
+      "MailKit >= 1.12.0",
+      "MarkdownDeep-av.NET >= 1.5.5",
+      "Microsoft.AspNet.Authentication.Cookies >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Facebook >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Twitter >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authorization >= 1.0.0-rc1-final",
-      "Microsoft.AspNet.Diagnostics.Entity >= 7.0.0-rc1-*",
+      "Microsoft.AspNet.Diagnostics.Entity >= 7.0.0-rc1-final",
       "Microsoft.AspNet.Http.Abstractions >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Identity.EntityFramework >= 3.0.0-rc1-*",
       "Microsoft.AspNet.IISPlatformHandler >= 1.0.0-rc1-*",
@@ -11544,11 +11568,11 @@
       "Microsoft.AspNet.SignalR.JS >= 2.2.1",
       "Microsoft.AspNet.StaticFiles >= 1.0.0-rc1-*",
       "Microsoft.AspNet.Tooling.Razor >= 1.0.0-rc1-*",
-      "Microsoft.AspNet.WebSockets.Server >= 1.0.0-rc1-final",
+      "Microsoft.AspNet.WebSockets.Server >= 1.0.0-rc1-*",
       "Microsoft.Extensions.Configuration.Abstractions >= 1.0.0-rc1-final",
-      "Microsoft.Extensions.Configuration.FileProviderExtensions >= 1.0.0-rc1-*",
-      "Microsoft.Extensions.Configuration.Json >= 1.0.0-rc1-*",
-      "Microsoft.Extensions.Configuration.UserSecrets >= 1.0.0-rc1-*",
+      "Microsoft.Extensions.Configuration.FileProviderExtensions >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Configuration.Json >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Configuration.UserSecrets >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Logging >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Logging.Console >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Logging.Debug >= 1.0.0-rc1-final",
@@ -11565,7 +11589,6 @@
       "Microsoft.Framework.Configuration.Binder >= 1.0.0-beta8",
       "Microsoft.Framework.Configuration.Json >= 1.0.0-beta8",
       "Microsoft.AspNet.Session >= 1.0.0-rc1-final",
-      "Microsoft.NETCore.Platforms >= 1.0.1-beta-23516",
       "Microsoft.AspNet.Web.Optimization >= 1.1.3",
       "Microsoft.Extensions.WebEncoders.Core >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Options >= 0.0.1-alpha",
@@ -11578,10 +11601,11 @@
       "Microsoft.AspNet.Mvc.Formatters.Json >= 6.0.0-rc1-final",
       "Microsoft.AspNet.OWin >= 1.0.0-rc1-final",
       "System.Json >= 4.0.20126.16343",
-      "YavscLib >= 1.0.0-*",
+      "YavscLib >= 1.0.0",
       "Extensions.AspNet.Authentication.Instagram >= 1.0.0-t150809211713",
       "PayPalMerchantSDK >= 2.16.204",
-      "Microsoft.AspNet.Http.Extensions >= 1.0.0-rc1-final"
+      "Microsoft.AspNet.Http.Extensions >= 1.0.0-rc1-final",
+      "Microsoft.DiaSymReader.Native >= 1.5.0"
     ],
     "DNX,Version=v4.5.1": [
       "fx/System.Drawing >= 4.0.0"

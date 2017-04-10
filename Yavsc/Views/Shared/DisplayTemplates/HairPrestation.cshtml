@@ -1,0 +1,51 @@
+@model HairPrestation
+@{
+     string[] HairLen = new string[] {SR["HalfLong"],SR["Long"],SR["Short"]};
+}
+<div style="display:block">
+    <dl class="dl-horizontal">
+        <dd>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+        <dd>@SR[Model.Gender.ToString()]</dd>
+        @if ((int)Model.Gender<1) {
+        <dt>
+            @Html.DisplayNameFor(model => model.Length)
+        </dt>
+        <dd>
+            @HairLen[(int)Model.Length]
+        </dd>}
+        <dt>
+            @Html.DisplayNameFor(model => model.Shampoo)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Shampoo)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Cut)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Cut)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Tech)
+        </dt>
+        <dd>
+            @SR[Model.Tech.ToString()]
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Dressing)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Dressing)
+        </dd>
+        <dt>
+             @Html.DisplayNameFor(model => model.Cares)
+        </dt>
+        <dd>
+           @Html.DisplayFor(model => model.Cares)
+        </dd>
+    </dl>
+</div>

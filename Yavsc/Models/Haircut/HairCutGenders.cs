@@ -11,7 +11,7 @@ namespace Yavsc.Models.Haircut
         Man,
 
         [Display(Name="Enfant")]
-        Kid 
-        
+        Kid
+
     }
 }

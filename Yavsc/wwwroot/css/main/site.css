@@ -1,0 +1,265 @@
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.badge img {
+    height: 2em;
+}
+.performer {
+    padding-left: 1em;
+    background-repeat: no-repeat;
+    background-image: url('/images/lis.svg');
+    background-attachment: local;
+    background-size: contain;
+}
+.performer ul {
+    margin-left: 2.5em;
+}
+
+.smalltofhol { max-height: 3em; max-width: 3em; float:left; margin:.5em; }
+.price {
+    font-weight: bold;
+    font-size: x-large;
+    border: solid black 2px;
+    border-radius: 1em;
+    padding: .2em;
+    margin: .2em;
+}
+.total {
+    font-weight: bold;
+    font-size: xx-large;
+    background-color: #f8f;
+    border: solid black 3px;
+    border-radius: 1em;
+    padding: .2em;
+    margin: .2em;
+}
+
+.blog {
+    padding: 1em;
+}
+.blog a {
+  font-weight: 900;
+}
+.blog a:active,
+.blog a:hover {
+  outline: 0;
+}
+
+.discussion {
+  color: black;
+}
+.notif {
+  color: #555;
+}
+.pv {
+  color: #540;
+  font-style: bold;
+}
+.discussion {
+  font-family: monospace;
+}
+.notif {
+  color: #006;
+  font-family: monospace;
+}
+.pv {
+  color: #251;
+  font-family: monospace;
+  font-style: bold;
+}
+
+#targets { 
+    display:block;
+}
+tr.visiblepost {
+    max-height: 3em;
+}
+tr.hiddenpost {
+    background-color: #888;
+    font-size: smaller;
+    max-height: 2em;
+}
+a.bloglink {
+    font-weight: bold;
+    text-shadow: 0px 0px 8px black; 
+}
+a {
+  font-weight: 900;
+}
+a:active,
+a:hover {
+  outline: 0;
+}
+
+.panel{
+   display: inline-block;
+   padding:1em;
+   margin:1em;
+   color: black;
+   background-color: inherit;
+   border: solid black 1px;
+}
+#discussion {
+    float: left;
+}
+/* Set widths on the form inputs since otherwise they're 100% wide */
+ input,
+select,
+ button,
+ textarea {
+  background-color: #bbb;
+  color: #000;
+}
+
+.jumbotron {
+    padding: .5em;
+}
+
+.carousel .item .btn {
+      -webkit-transition: -webkit-transform 2s;
+    transition: transform 2s background-color 1s color 1s;
+    transform: scale3d(0,0,0);
+    -webkit-transform: scale3d(0,0,0);
+}
+
+.carousel .active .btn {
+    -webkit-transform: inherit;
+    transform: inherit;
+}
+.container {
+    -webkit-transition: background-color 2s color 1s;
+    -moz-transition: background-color 2s color 1s;
+    transition: background-color 2s color 1s;
+}
+.disabled { 
+    color: #999;
+    background-color: #555;
+}
+/* Set widths on image and video, since otherwise they use their native resolution */
+
+/* .navbar-reac */
+ 
+/* Carousel */
+
+.carousel-caption-s p {    
+    font-family: "jubilat";
+    font-weight: 600;
+    font-size: large;
+    line-height: 1.1;
+    text-decoration: overline;
+    text-decoration-line: overline;
+    text-shadow: 3px 3px 7px rgb(255, 200, 255);
+    -webkit-text-shadow: inset 0 3px 5px rgb(255, 200, 255);
+    color: black;
+    margin:0.5em;
+    padding:.5em;
+    animation: mymove 3s infinite;
+    background-color: rgba(255,255,255,.6);
+}
+
+.carousel-caption-s {
+  right: 3em;
+  top: 1em;
+  left: 3em;
+  z-index: 10;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  text-align: center;
+  min-height: 16em;
+  overflow: auto;
+}
+
+
+.carousel-inner .item {
+    /* background-color: #301010; */
+    padding-left:15%; /* la taille du carousel-control */
+    padding-right:15%; /* la taille du carousel-control */
+}
+.carousel-indicators {
+    position: absolute;
+    z-index: 15;
+    padding: 0;
+    text-align: center;
+    list-style: none;
+    top: .1em;
+    height: 1em;
+}
+
+main.container {
+    padding-right: 1em;
+    padding-left: 1em;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+
+@-webkit-keyframes mymove {
+    from {text-decoration-color: red;}
+    50% {text-decoration-color: blue;}
+    to {text-decoration-color: red;}
+}
+
+/* Standard syntax */
+@keyframes mymove {
+    from {text-decoration-color: red;}
+    50% {text-decoration-color: blue;}
+    to {text-decoration-color: red;}
+}
+ul.actiongroup li {
+    display:inline;
+}
+
+ul.actiongroup li a:hover {
+    background-color: rgba(200,200,200,.6);
+    color: #400;
+}
+
+footer {
+    vertical-align: bottom;
+    padding: 1.5em;
+}
+
+.display-field {
+    font-kerning: none;
+    display: inline-flex;
+    color: #008;
+}
+
+.display-label {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-stretch: condensed;
+    display: inline-flex;
+    color: #ff8;
+    padding: .1em;
+    border-radius: .5em;
+    background-color: #210912;
+}
+
+footer {
+    color:rgb(128,128,128);
+    font-weight: bolder;
+    font-size: x-small;
+}
+
+.meta { 
+    color : #444;
+    font-style: italic;
+    font-size: smaller;
+}
+
+.activity {
+    font-family: fantasy
+}
+
+.blogtitle  { 
+    display: inline-block;
+    font-size: x-large;
+}
+
+.blogphoto {
+    float: left;
+    margin: 1em;
+}
+.dl-horizontal dd {
+    margin-left: 20%;
+}

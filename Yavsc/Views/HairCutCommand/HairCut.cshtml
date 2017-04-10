@@ -20,16 +20,26 @@
         var gen = $("#Prestation_Gender").prop('selectedIndex');
         var tech = $("#Prestation_Tech").prop('selectedIndex');
         var dress = $("#Prestation_Dressing").prop('selectedIndex');
+        var havecut = false;
+        var havetech = false;
         total = 0;
         if ($('#Prestation_Cut').prop('checked')) {
             var cutprice = (gen==0) ? gtarif.cut[len] : gtarif.cut[0];
+            havecut = true;
             total += cutprice;
             displayTarif('CutPrice', cutprice);
+
         } else displayTarif('CutPrice',0);
         if (gen==0) {
             if (tech>0) { 
-                var techprice =  gtarif.tech[tech-1][len]; 
+                var techi=tech-1;
+                var colors = $("input[name='Prestation.Taints[]']:checked");
+                var colIds=[];
+                colors.each(function(i,item){colIds.push(item.value)});
+                $('#taintIds').val(colIds);
+                var techprice = (techi>0 || colors.length<2) ? gtarif.tech[techi][len] : gtarif.multicolor[len] ; 
                 total += techprice;
+                havetech = true;
                 displayTarif('TechPrice', techprice);
                 } else displayTarif('TechPrice',0); 
             if (dress>0) { 
@@ -50,8 +60,12 @@
              total += gtarif.care;
             displayTarif('CaresPrice', gtarif.care);
         } else displayTarif('CaresPrice', 0);
+        if (havetech && havecut) {
+            total -= gtarif.feediscount;
+            $('#discount').html( "Remise au forfait coupe+technique: "+gtarif.feediscount+"€" ).removeClass('hidden');
+        } else $('#discount').addClass('hidden');
         $('.btn-submit').prop('disabled', (total==0));
-        $('#Total').html( total+"€" );
+        $('#Total').html( total.toFixed(2)+"€" );
     }
 
     function onTarif(tarif)
@@ -114,6 +128,7 @@
                     gtarif=tarifs[1]; 
                     } else gtarif=tarifs[2];
                 } 
+            onTarif(tarifs[0]);
             updateTarif();
 
         });
@@ -126,10 +141,10 @@
 
 @Html.DisplayFor(m=>m.PerformerProfile)
 
-<form asp-controller="HairCutCommand" asp-action="HairCut">
+<form asp-controller="HairCutCommand" asp-action="CreateHairCutQuery" id="form">
     <div class="form-horizontal">
         <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="Prestation.Gender" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -158,11 +173,10 @@
             <div class="col-md-10">
                 <select asp-for="Prestation.Tech" asp-items="@ViewBag.HairTechnos" class="form-control imptarif"></select>
                 <span asp-validation-for="Prestation.Tech" class="text-danger"></span>
-
+                <input name="taintIds" id="taintIds" type="hidden" />
                 <div class="form-group @ViewBag.ColorsClass" id="taintsfs">
                     <label asp-for="Prestation.Taints" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
-
                         @foreach (HairTaint color in ViewBag.HairTaints) {
                         <label>
      <input type="checkbox" value="@color.Id" name="Prestation.Taints[]" class="imptarif"/>
@@ -207,11 +221,22 @@
                 </div>
             </div>
         </div>
-        <span>Total: <span id="Total" class="total"></span>
+        <div class="form-group">
+                    <label asp-for="AdditionalInfo" class="col-md-2 control-label"></label>
+            <div class="col-md-offset-2 col-md-10">
+                    <textarea asp-for="AdditionalInfo" class="form-control">
+                    </textarea>
+            </div>
+        </div>
+        
+        <span id="discount" class="price"></span>
+        <span><img src="~/images/dollars.svg" style="width:2em;" /> Total : <span id="Total" class="total"></span>
       </span>
-             <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName, sans préciser ni lieu ni date (pour prendre rendez-vous la prise de contact)"/>
-        <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
-    
+      <input asp-for="ClientId" type="hidden" />
+      <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
+      <environment names="Development">
+      <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName [DEV+Location+Date]"/>
+      </environment>
    </div>
     <input type="hidden" name="performerId" value="@Model.PerformerProfile.PerformerId" />
     <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />

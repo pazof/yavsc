@@ -20,7 +20,7 @@ using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
-    [ServiceFilter(typeof(LanguageActionFilter)), AllowAnonymous]
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -231,12 +231,12 @@ namespace Yavsc.Controllers
 
             // Sign in the user with this external login provider if the user already has a login.
             info.ProviderDisplayName = info.ExternalPrincipal.Claims.First(c=>c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
-                
+
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (result.Succeeded)
             {
                 _logger.LogInformation(5, $"User logged in with {info.LoginProvider} provider, as {info.ProviderDisplayName} ({info.ProviderKey})." );
-                
+
 
                 var ninfo = _dbContext.UserLogins.First(l=>l.ProviderKey == info.ProviderKey && l.LoginProvider == info.LoginProvider);
                 ninfo.ProviderDisplayName = info.ProviderDisplayName;
@@ -361,7 +361,7 @@ namespace Yavsc.Controllers
                     // Don't reveal that the user does not exist or is not confirmed
                     if (user == null)
                     _logger.LogWarning($"ForgotPassword: Email {model.Email} not found");
-                    else 
+                    else
                     _logger.LogWarning($"ForgotPassword: Email {model.Email} not confirmed");
                     return View("ForgotPasswordConfirmation");
                 }

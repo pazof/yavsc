@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   y="0px"
+   x="0px"
+   viewBox="0 0 947 765"
+   id="svg2"
+   inkscape:version="0.48.5 r10040"
+   width="100%"
+   height="100%"
+   sodipodi:docname="shoppingcart.svg">
+  <defs
+     id="defs21" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1331"
+     inkscape:window-height="946"
+     id="namedview19"
+     showgrid="false"
+     inkscape:zoom="0.921875"
+     inkscape:cx="419.6344"
+     inkscape:cy="324.12273"
+     inkscape:window-x="0"
+     inkscape:window-y="44"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <g
+     id="g3011">
+    <path
+       sodipodi:nodetypes="ccccc"
+       d="m 0,0 0,765 947,0 0,-765 z"
+       id="path5"
+       inkscape:connector-curvature="0"
+       style="fill:#343434" />
+  </g>
+  <g
+     id="g3004">
+    <g
+       id="g3014"
+       transform="matrix(1.5062492,0,0,1.2737607,-317.8928,-111.80805)">
+      <path
+         style="fill:#e0e0e0"
+         inkscape:connector-curvature="0"
+         id="path7"
+         d="m 307,539 0,25 394,0 0,-25 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         style="fill:#e0e0e0"
+         inkscape:connector-curvature="0"
+         id="path9"
+         d="m 307,651 c -30.93,0 -56,-25.07 -56,-56 0,-30.93 25.07,-56 56,-56 30.93,0 56,25.07 56,56 0,30.93 -25.07,56 -56,56 z m -1,-28 c 16.02,0 29,-12.98 29,-29 0,-16.02 -12.98,-29 -29,-29 -16.02,0 -29,12.98 -29,29 0,16.02 12.98,29 29,29 z"
+         sodipodi:nodetypes="ssssssssss" />
+      <path
+         style="fill:#e0e0e0"
+         inkscape:connector-curvature="0"
+         id="path11"
+         d="m 697,651 c -30.93,0 -56,-25.07 -56,-56 0,-30.93 25.07,-56 56,-56 30.93,0 56,25.07 56,56 0,30.93 -25.07,56 -56,56 z m -1,-28 c 16.02,0 29,-12.98 29,-29 0,-16.02 -12.98,-29 -29,-29 -16.02,0 -29,12.98 -29,29 0,16.02 12.98,29 29,29 z"
+         sodipodi:nodetypes="ssssssssss" />
+      <path
+         style="fill:#ffffff"
+         inkscape:connector-curvature="0"
+         id="path13"
+         d="m 699.46051,292.57627 c 19.11602,3.06393 42.26112,40.55101 42.37,46.4 L 744,455.52 c 0.40742,21.88621 -11.84,39.01 -11.84,39.01 0,0 -9.29,15.47 -30.43,15.47 L 334,510 334,234 z M 362,267 l 0,211 28,0 2.16949,-200.15254 z M 420.57627,283.27119 417.32203,478 l 45.35594,0 -1.08475,-188.22034 z M 486.20339,294.66102 482.94915,478 l 42.64407,0.54237 2.16949,-177.37288 z m 64,8.67796 1.62712,175.20339 37.76271,0 -3.25424,-172.49152 z m 58.11865,5.42374 3.7966,169.23728 43.18644,1.08475 10e-6,-162.18644 z M 681,322.32204 681,478 l 28,0 -2.16949,-152.42373 z"
+         sodipodi:nodetypes="ssscsccscccccccccccccccccccccccccccccc" />
+      <path
+         style="fill:#e0e0e0"
+         inkscape:connector-curvature="0"
+         id="path15"
+         d="M 229.49153,196.47458 301,234 l 0,316 33,0 0,-338.44 -79.55932,-45.72949 z"
+         sodipodi:nodetypes="ccccccc" />
+    </g>
+  </g>
+  <metadata
+     id="metadata17">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2013-07-02T06:51:00</dc:date>
+        <dc:description>A shopping cart graphic</dc:description>
+        <dc:source>https://openclipart.org/detail/179939/shopping-cart-by-petersirka-179939</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>petersirka</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>basket</rdf:li>
+            <rdf:li>cart</rdf:li>
+            <rdf:li>eshop</rdf:li>
+            <rdf:li>shopping</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

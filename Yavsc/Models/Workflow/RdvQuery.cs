@@ -35,6 +35,8 @@ namespace Yavsc.Models.Workflow
             set;
             get;
         }
+
+        [Display(Name="GiveAnExplicitReason")]
         public string Reason { get; set; }
 
         public RdvQuery()

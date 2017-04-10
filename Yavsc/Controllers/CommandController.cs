@@ -18,8 +18,7 @@ namespace Yavsc.Controllers
     using Models.Relationship;
     using Models.Workflow;
     using Services;
-    
-    [ServiceFilter(typeof(LanguageActionFilter))]
+
     public class CommandController : Controller
     {
         protected UserManager<ApplicationUser> _userManager;
@@ -54,30 +53,30 @@ namespace Yavsc.Controllers
 
         // GET: Command
         [Authorize]
-        public IActionResult Index()
+        public virtual async Task<IActionResult> Index()
         {
             var uid = User.GetUserId();
-            return View(_context.RdvQueries
+            return View(await _context.RdvQueries
             .Include(x => x.Client)
             .Include(x => x.PerformerProfile)
             .Include(x => x.PerformerProfile.Performer)
             .Include(x => x.Location)
             .Where(x=> x.ClientId == uid || x.PerformerId == uid)
-            .ToList());
+            .ToListAsync());
         }
 
         // GET: Command/Details/5
-        public IActionResult Details(long? id)
+        public virtual async Task<IActionResult> Details(long? id)
         {
             if (id == null)
             {
                 return HttpNotFound();
             }
 
-            RdvQuery command = _context.RdvQueries
+            RdvQuery command = await _context.RdvQueries
             .Include(x => x.Location)
             .Include(x => x.PerformerProfile)
-            .Single(m => m.Id == id);
+            .SingleAsync(m => m.Id == id);
             if (command == null)
             {
                 return HttpNotFound();
@@ -128,7 +127,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RdvQuery command)
         {
-            
+
             var uid = User.GetUserId();
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
@@ -151,10 +150,10 @@ namespace Yavsc.Controllers
             // ModelState.ClearValidationState("Client.Avatar");
             // ModelState.ClearValidationState("ClientId");
             ModelState.MarkFieldSkipped("ClientId");
-            
+
             if (ModelState.IsValid)
                 {
-                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address 
+                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address
                 && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
 
                 if (existingLocation!=null) {

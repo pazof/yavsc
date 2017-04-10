@@ -3,7 +3,6 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Web.Optimization;
 using Microsoft.AspNet.Authentication;
 using Microsoft.AspNet.Authorization;
@@ -91,7 +90,7 @@ namespace Yavsc
             {
                 var supportedCultures = new[]
                 {
-                    new CultureInfo("fr")
+                    new CultureInfo("en")
                 };
                 var supportedUICultures = new[]
                 {
@@ -113,11 +112,16 @@ namespace Yavsc
                 // - QueryStringRequestCultureProvider, sets culture via "culture" and "ui-culture" query string values, useful for testing
                 // - CookieRequestCultureProvider, sets culture via "ASPNET_CULTURE" cookie
                 // - AcceptLanguageHeaderRequestCultureProvider, sets culture via the "Accept-Language" request header
+
                 //options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(async context =>
                 //{
                 //  // My custom request culture logic
-                //  return new ProviderCultureResult("en");
+                //  return new ProviderCultureResult("fr");
                 //}));
+
+                options.RequestCultureProviders.Insert(0, new AcceptLanguageHeaderRequestCultureProvider());
+                options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
+
             });
 
 
@@ -126,7 +130,7 @@ namespace Yavsc
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
-
+            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<RequestLocalizationOptions>), typeof(OptionsManager<RequestLocalizationOptions>)));
             // DataProtection
             ConfigureProtectionServices(services);
 
@@ -184,7 +188,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
             services.AddSingleton<IAuthorizationHandler, EstimateViewHandler>();
             services.AddSingleton<IAuthorizationHandler, ViewFileHandler>();
-  
+
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -207,7 +211,7 @@ namespace Yavsc
                 options.ResourcesPath = "Resources";
             }).AddDataAnnotationsLocalization();
 
-            services.AddScoped<LanguageActionFilter>();
+            // services.AddScoped<LanguageActionFilter>();
 
             // Inject ticket formatting
             services.AddTransient(typeof(ISecureDataFormat<>), typeof(SecureDataFormat<>));
@@ -223,6 +227,7 @@ namespace Yavsc
             {
                 options.ResourcesPath = "Resources";
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -296,33 +301,6 @@ namespace Yavsc
                     else throw ex;
                 }
             }
-            Task.Run(async () =>
-            {
-                // Creates roles when they don't exist
-                foreach (string roleName in new string[] {Constants.AdminGroupName,
-                Constants.StarGroupName, Constants.PerformerGroupName,
-                Constants.FrontOfficeGroupName,
-                Constants.StarHunterGroupName
-                })
-                    if (!await roleManager.RoleExistsAsync(roleName))
-                    {
-                        var role = new IdentityRole { Name = roleName };
-                        var resultCreate = await roleManager.CreateAsync(role);
-                        if (!resultCreate.Succeeded)
-                        {
-                            throw new Exception("The role '{roleName}' does not exist and could not be created.");
-                        }
-                    }
-                // FIXME In a perfect world, connection records should be dropped at shutdown, but:
-
-                using (var db = new ApplicationDbContext())
-                {
-                    foreach (var c in db.Connections)
-                        db.Connections.Remove(c);
-                    db.SaveChanges();
-                }
-            });
-
 
             app.UseIISPlatformHandler(options =>
             {
@@ -330,22 +308,20 @@ namespace Yavsc
                 options.AutomaticAuthentication = false;
             });
 
-
-
             ConfigureOAuthApp(app, SiteSetup);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
             ConfigureWebSocketsApp(app, SiteSetup, env);
             ConfigureWorkflow(app, SiteSetup, logger);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"fr"));
             app.UseSession();
-  
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            
+
         }
 
         // Entry point for the application.
@@ -353,4 +329,4 @@ namespace Yavsc
     }
 
 }
-// 
+//

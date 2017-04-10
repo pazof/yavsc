@@ -7,49 +7,45 @@
         <title>@ViewData["Title"] - @SiteSettings.Value.Title</title>
 
         <environment names="Development">
-            <link rel="stylesheet" href="~/css/bootstrap.css" />
-            <link rel="stylesheet" href="~/css/site.css" />
-            <link rel="stylesheet" href="~/css/jquery-ui.css" />
+            <link rel="stylesheet" href="~/css/main/bootstrap.css" asp-append-version="true"/>
+            <link rel="stylesheet" href="~/css/main/site.css" asp-append-version="true"/>
+            <link rel="stylesheet" href="~/css/main/jquery-ui.css" asp-append-version="true"/>
+            <link rel="alternate stylesheet" title="Dark" href="~/css/dark/site.css" asp-append-version="true" />
+            <link rel="alternate stylesheet" title="Clear" href="~/css/clear/site.css" asp-append-version="true" />
+            <script src="~/js/jquery.js" asp-append-version="true"></script>
+            <script src="~/js/jquery-ui.js" asp-append-version="true"></script>
+            <script src="~/js/bootstrap.js" asp-append-version="true"></script>
+            <script src="~/js/jquery.signalR-2.2.1.js" asp-append-version="true"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
         </environment>
-        <environment names="Staging,Production,yavsc,yavscpre,zicmoove,lua">
-            <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-        </environment>
-        <environment names="Development">
-            <script src="~/js/jquery.js"></script>
-            <script src="~/js/jquery-ui.js"></script>
-            <script src="~/js/bootstrap.js"></script>
-            <script src="~/js/site.js"></script>
-        </environment>
-        <environment names="Staging,Production,yavsc,yavscpre,zicmoove,lua">
+
+        <environment names="yavsc,yavscpre,zicmoove,lua,coiffure">
+            <link rel="stylesheet" href="~/css/main/bootstrap.min.css" asp-append-version="true"/>
+            <link rel="stylesheet" href="~/css/main/site.min.css" asp-append-version="true"/>
+            <link rel="stylesheet" href="~/css/main/jquery-ui.min.css" asp-append-version="true"/>
+            <link rel="alternate stylesheet" title="Dark" href="~/css/dark/site.min.css" asp-append-version="true" />
+            <link rel="alternate stylesheet" title="Clear" href="~/css/clear/site.min.css" asp-append-version="true" />
+       
             <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
-                    asp-fallback-src="~/bower_components/jquery/dist/jquery.min.js"
+                    asp-fallback-src="~/jquery.min.js"
                     asp-fallback-test="window.jQuery" >
             </script>
             <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js"
-                    asp-fallback-src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"
+                    asp-fallback-src="~/js/bootstrap.min.js"
                     asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
             </script>
-            <script src="~/js/jquery-ui.js"></script>
-            <script src="~/js/site.js"></script>
+            <script src="~/js/jquery-ui.min.js" asp-append-version="true"></script>
+            <script src="~/js/jquery.signalR-2.2.1.min.js" asp-append-version="true"></script>
+            <script src="~/js/site.min.js" asp-append-version="true"></script>
+           
         </environment>
-            <script src="~/js/jquery.signalR-2.2.1.js"></script>
-            <style>
-nav {
-    background: url(@Startup.SiteSetup.Banner) 0% 50%;
-}
-            </style>
+ <style>
+     nav { background: url(@Startup.SiteSetup.Banner) 0% 50% no-repeat; }
+</style>
         @RenderSection("header", required: false)
     </head>
     <body>
-        @if (ViewData ["Notify"] != null) {
-            foreach (Notification n in ViewData ["Notify"] as IEnumerable<Notification>) {
-            <div class="alert alert-info alert-dismissable">
-  <h1>@n.title</h1><em></em>
-  @n.body
-  <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action==null)?SR["Fermer"]:SR[n.click_action])</a>
-</div>
-            }
-        }
+        
         <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -64,15 +60,27 @@ nav {
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
+                        @RenderSection("ctxmenu", required: false)
                         <li><a asp-controller="Blogspot" asp-action="Index" class="navbar-link">@SR["Blogs"]</a></li>
                         <li><a asp-controller="Home" asp-action="Chat" class="navbar-link">@SR["Chat"]</a></li>
                         <li><a asp-controller="Home" asp-action="Contact" class="navbar-link">@SR["Contact"]</a></li>
                         <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
                     </ul>
+                     
+            
                     @await Html.PartialAsync("_LoginPartial")
                 </div>
             </div>
         </nav>
+    @if (ViewData ["Notify"] != null) {
+    foreach (Notification n in ViewData ["Notify"] as IEnumerable<Notification>) {
+    <div class="alert alert-info alert-dismissable">
+    <h2 markdown="@n.title"></h2>
+    <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action==null)?SR["Fermer"]:SR[n.click_action])</a>
+    <markdown>@n.body</markdown>
+    </div>
+            }
+        }
         @RenderSection("subbanner", required: false)
         <main class="container body-content" role="main">
             @RenderBody()
@@ -83,7 +91,7 @@ nav {
     <p><em>Site de développement</em></p>
 </environment>
 <i>@SiteSettings.Value.Slogan</i>
-
+<environment names="yavsc,zicmoove,lua,coiffure">
 <script>
   window.fbAsyncInit = function() {
     FB.init({
@@ -109,6 +117,7 @@ nav {
   data-show-faces="true"
   data-colorscheme="dark">
 </div>
+</environment>
             <p>Yavsc - Copyright &copy; 2016 - 2017 Paul Schneider</p>
         </footer>
         @RenderSection("scripts", required: false)

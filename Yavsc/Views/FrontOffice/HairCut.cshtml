@@ -1,18 +1,20 @@
 @model IEnumerable<PerformerProfile>
   
 @{
-    ViewData["Title"] = "Les profiles - " + (ViewBag.Activity?.Name ?? SR["Any"]);
+    ViewData["Title"] = (ViewBag.Activity?.Name ?? SR["Any"])  ;
 }
 <h1>@ViewData["Title"]</h1>
 <em>@ViewBag.Activity.Description</em>
 
 @foreach (var profile in Model) {
     <hr/>
-   @Html.DisplayFor(m=>profile)
-    <form asp-controller="HairCutCommand" asp-action="HairCut">
-        <input type="hidden" name="performerId" value="@profile.PerformerId" />
-        <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
-             <input type="submit" value="@SR["Proposer un rendez-vous à"] @profile.Performer.UserName"/>
-    </form> 
+   @Html.DisplayFor(m=>profile) 
+             <a asp-controller="HairCutCommand" asp-action="HairCut"
+              asp-route-activityCode="@ViewBag.Activity.Code"
+              asp-route-performerId="@profile.Performer.Id" 
+              class="btn btn-success">
+                 @SR["Proposer un rendez-vous à"] @profile.Performer.UserName
+                 </a>
+  
 }
 

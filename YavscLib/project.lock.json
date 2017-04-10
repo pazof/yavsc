@@ -3,20 +3,22 @@
   "version": 2,
   "targets": {
     ".NETFramework,Version=v4.5.1": {},
-    ".NETPortable,Version=v4.5,Profile=Profile111": {}
+    ".NETPortable,Version=v4.5,Profile=Profile111": {},
+    ".NETFramework,Version=v4.5.1/debian.8-x86": {},
+    ".NETFramework,Version=v4.5.1/debian.8-x64": {},
+    ".NETPortable,Version=v4.5,Profile=Profile111/debian.8-x86": {},
+    ".NETPortable,Version=v4.5,Profile=Profile111/debian.8-x64": {}
   },
   "libraries": {},
   "projectFileDependencyGroups": {
     "": [],
     ".NETFramework,Version=v4.5.1": [],
     ".NETPortable,Version=v4.5,Profile=Profile111": [
-      "System.Collections >= 4.0.0",
-      "System.Collections.Generic >= 4.0.0",
-      "System.Globalization >= 4.0.0",
-      "System.Resources.ResourceManager >= 4.0.0",
-      "System.Runtime >= 4.0.0"
+      "fx/System >= 4.0.0",
+      "fx/System.Runtime >= 4.0.0",
+      "fx/System.Globalization >= 4.0.0",
+      "fx/System.Resources.ResourceManager >= 4.0.0",
+      "fx/System.Collections >= 4.0.0"
     ]
-  },
-  "tools": {},
-  "projectFileToolGroups": {}
+  }
 }

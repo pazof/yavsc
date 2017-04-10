@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Billing
 {
-    using Interfaces.Workflow;
     using Newtonsoft.Json;
     using Workflow;
     using YavscLib;
@@ -32,6 +31,7 @@ namespace Yavsc.Models.Billing
              get; set;
         }
 
+        [DisplayAttribute(Name="Status de la requête")]
         public QueryStatus Status { get; set; }
 
     [Required]
@@ -40,7 +40,7 @@ namespace Yavsc.Models.Billing
     /// <summary>
     /// The client
     /// </summary>
-    [ForeignKey("ClientId")]
+    [ForeignKey("ClientId"),Display(Name="Client")]
     public ApplicationUser Client { get; set; }
 
     [Required]
@@ -48,13 +48,13 @@ namespace Yavsc.Models.Billing
     /// <summary>
     /// The performer identifier
     /// </summary>
-    [ForeignKey("PerformerId")]
+    [ForeignKey("PerformerId"),Display(Name="Préstataire")]
     public PerformerProfile PerformerProfile { get; set; }
 
     public DateTime? ValidationDate {get; set;}
 
 
-
+    [Display(Name="Montant prévisionel de la préstation")]
     public decimal? Previsional { get; set; }
     /// <summary>
     /// The bill
@@ -64,7 +64,7 @@ namespace Yavsc.Models.Billing
         [Required]
         public string ActivityCode { get; set; }
 
-        [ForeignKey("ActivityCode"),JsonIgnore]
+        [ForeignKey("ActivityCode"),JsonIgnore,Display(Name="Domaine d'activité")]
         public virtual Activity Context  { get; set ; }
  }
 }
