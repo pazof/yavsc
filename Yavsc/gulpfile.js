@@ -3,7 +3,7 @@
 
 var gulp = require("gulp"),
   rimraf = require("rimraf"),
-  concat = require("gulp-concat"),
+//  concat = require("gulp-concat"),
   cssmin = require("gulp-cssmin"),
   uglify = require("gulp-uglify"),
   shell = require("gulp-shell"),
@@ -54,9 +54,10 @@ gulp.task("min:js", function () {
 
 gulp.task("min", ["min:js", "min:css"]);
 
-gulp.task('build', shell.task(['dnu build']));
+gulp.task('build', shell.task(['dnu build --configuration=Debug']));
+gulp.task('run', shell.task(['ASPNET_ENV=Development dnx web --configuration=Debug']));
 gulp.task('buildrelease', shell.task(['dnu build --configuration=Release']));
-gulp.task('publish', shell.task(['dnu publish']));
+gulp.task('publish', shell.task(['dnu publish --configuration=Release']));
 gulp.task('postpublish', shell.task(['contrib/rsync-to-pre.sh']));
 
 gulp.task("default", ["watch"]);
