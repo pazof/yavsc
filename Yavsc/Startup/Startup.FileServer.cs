@@ -29,13 +29,16 @@ namespace Yavsc
                 FileProvider = new PhysicalFileProvider(UserFilesDirName),
                 RequestPath = new PathString(Constants.UserFilesPath),
                 EnableDirectoryBrowsing = env.IsDevelopment()
+
             };
+            UserFilesOptions.EnableDefaultFiles=true;
+            UserFilesOptions.StaticFileOptions.ServeUnknownFileTypes=true;
 
             UserFilesOptions.StaticFileOptions.OnPrepareResponse += async context =>
              {
                  var uname = context.Context.User.GetUserName();
                  var path = context.Context.Request.Path;
-                 var result = await authorizationService.AuthorizeAsync(context.Context.User, new ViewFileContext 
+                 var result = await authorizationService.AuthorizeAsync(context.Context.User, new ViewFileContext
                  { UserName = uname, File = context.File, Path = path } , new ViewRequirement());
              };
             var avatarsDirInfo = new DirectoryInfo(Startup.SiteSetup.UserFiles.Avatars);
