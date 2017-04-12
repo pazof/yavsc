@@ -63,7 +63,6 @@ namespace ZicMoove
         public void Init()
         {
             var app = Resolver.Resolve<IXFormsApp>();
-
             if (app == null)
             {
                 return;
@@ -172,7 +171,6 @@ namespace ZicMoove
             ViewFactory.Register<EditBillingLinePage, BillingLineViewModel>();
             ViewFactory.Register<EditEstimatePage, EditEstimateViewModel>();
             ViewFactory.Register<UserFiles, DirectoryInfoViewModel>();
-            ViewFactory.Register<UserProfilePage, UserProfileViewModel>();
             ViewFactory.Register<EstimateSigningPage, EditEstimateViewModel>();
             ConfigManager = new GenericConfigSettingsMgr(s =>
            MainSettings.AppSettings.GetValueOrDefault<string>(s, MainSettings.SettingsDefault), null);
@@ -233,7 +231,7 @@ namespace ZicMoove
 
             var bookQueries = new BookQueriesViewModel();
 
-            var userprofile = new UserProfileViewModel();
+            var userprofile = Resolver.Resolve<UserProfileViewModel>();
 
             bQueriesPage = new BookQueriesPage
             {

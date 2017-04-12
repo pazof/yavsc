@@ -15,6 +15,14 @@ namespace ZicMoove.ViewModels.UserProfile
 
     public class UserProfileViewModel : ViewModel
     {
+        public UserProfileViewModel()
+        {
+            Accounts = MainSettings.AccountList;
+            User = MainSettings.CurrentUser;
+            UpdateUserMeta();
+            Rating = 2;
+            MainSettings.UserChanged += MainSettings_UserChanged;
+        }
 
         public bool IsAPerformer
         {
@@ -26,7 +34,7 @@ namespace ZicMoove.ViewModels.UserProfile
             get; set;
         }
         // TODO implementation
-        int rating ;
+        int rating = 0 ;
         public int Rating
         {
             get
@@ -136,22 +144,7 @@ namespace ZicMoove.ViewModels.UserProfile
             }
         }
 
-        public UserProfileViewModel()
-        {
-            Accounts = MainSettings.AccountList;
-            User = MainSettings.CurrentUser;
-            UpdateUserMeta();
-            Rating = 2;
-            UserNameGesture = new RelayGesture((g, x) =>
-            {
-                if (g.GestureType == GestureType.LongPress)
-                {
-                    NavigationService.NavigateTo("accountChooser");
-                }
-            });
-            MainSettings.UserChanged += MainSettings_UserChanged;
-
-        }
+        
 
         private void MainSettings_UserChanged(object sender, System.EventArgs e)
         {
