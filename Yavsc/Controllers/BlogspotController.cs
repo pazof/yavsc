@@ -11,6 +11,7 @@ using Microsoft.Extensions.OptionsModel;
 using Yavsc.Models;
 using Yavsc.ViewModels.Auth;
 using Microsoft.AspNet.Mvc.Rendering;
+using Yavsc.ViewModels.Blogspot;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -47,23 +48,19 @@ namespace Yavsc.Controllers
             .Select(c=>c.Id).ToArray();
             IQueryable<Blog> posts ;
             if (usercircles != null) {
-                posts = _context.Blogspot.Include(
-                            b => b.Author
-                            ).Include(p=>p.ACL).Where(p=> p.AuthorId == uid || p.Visible && (p.ACL.Count == 0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId))));
-               /* posts = _context.Blogspot.Include(
-                            b => b.Author
-                            ).Include(p=>p.ACL).Where(p=>p.Visible || p.ACL.Any(a => usercircles.Contains(a.Allowed)
-                            )); */
+                posts = _context.Blogspot.Include(b => b.Author)
+                .Include(p=>p.ACL)
+                .Where(p=> p.AuthorId == uid || p.Visible &&
+                (p.ACL.Count == 0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId))))
+                            ;
             }
             else {
-                posts = _context.Blogspot.Include(
-                            b => b.Author
-                            ).Include(p=>p.ACL).Where(p=>p.AuthorId == uid || p.Visible && p.ACL.Count == 0);
+                posts = _context.Blogspot.Include(b => b.Author)
+                .Include(p=>p.ACL).Where(p=>p.AuthorId == uid || p.Visible && p.ACL.Count == 0);
             }
 
-            return View(posts
-            .OrderByDescending(p => p.DateCreated)
-            .Skip(skip).Take(maxLen).GroupBy(p=>p.Title));
+            return View(posts.OrderByDescending( p=> p.DateModified)
+            .GroupBy(p=> new BlogIndexKey { Title = p.Title, AuthorId = p.AuthorId } ).Skip(skip).Take(maxLen));
         }
 
         [Route("/Title/{id?}")]
