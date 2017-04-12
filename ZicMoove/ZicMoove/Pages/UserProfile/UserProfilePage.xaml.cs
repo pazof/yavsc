@@ -12,26 +12,19 @@ namespace ZicMoove.Pages.UserProfile
     using System.IO;
     using System.Threading.Tasks;
     using Android.Content.Res;
+    using XLabs.Ioc;
 
     public partial class UserProfilePage
     {
         public UserProfilePage()
         {
             InitializeComponent();
+            BindingContext = Resolver.Resolve<UserProfileViewModel>();
             AvatarButton.Clicked += AvatarButton_Clicked;
             btnPay.Clicked += BtnPay_Clicked;
-
         }
 
-        public UserProfilePage(UserProfileViewModel model)
-        {
-            InitializeComponent();
-            AvatarButton.Clicked += AvatarButton_Clicked;
-            BindingContext = model;
-        }
-
-
-        private async void BtnPay_Clicked(object sender, EventArgs e)
+        private void BtnPay_Clicked(object sender, EventArgs e)
         {
             App.PlatformSpecificInstance.Pay(0.1, Interfaces.PayMethod.Immediate, "test payment");
         }
