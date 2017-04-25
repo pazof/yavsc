@@ -148,17 +148,13 @@ select,
 /* Carousel */
 
 .carousel-caption-s p {    
-    text-decoration: overline;
-    text-decoration-line: overline;
-    -webkit-text-shadow: inset 0 3px 5px rgb(255, 200, 255);
+    -webkit-text-shadow: 3px 3px 7px rgb(0, 0, 0);
     margin:0.5em;
     padding:.5em;
-    animation: mymove 3s infinite;
-    background-color: rgba(255,255,255,.6);
-        font-family: "Arial";
+    animation: mymove 4s infinite;
+    font-family: "Arial";
     font-weight: 800;
-    font-size: xx-large;
-    line-height: 1.1;
+    font-size: x-large;
     text-shadow: 3px 3px 7px rgb(0, 0, 0);
     color: white;
 }
@@ -197,7 +193,26 @@ main.container {
     margin-left: 1em;
     margin-right: 1em;
 }
+@media (max-width: 767px) {
 
+main.container {
+    padding-right: .3em;
+    padding-left: .3em;
+    margin-left: .3em;
+    margin-right: .3em;
+}
+.navbar-brand {
+    float: left;
+    height: 50px;
+    padding: 5px 5px;
+    font-size: 16px;
+    line-height: 18px;
+}
+.carousel-caption-s p {    
+    margin:0.2em;
+    padding:.2em;
+}
+}
 
 @-webkit-keyframes mymove {
     from {text-decoration-color: red;}
