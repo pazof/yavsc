@@ -3121,6 +3121,7 @@ fieldset[disabled] .btn-default.active {
   color: #fff;
   background-color: #337ab7;
   border-color: #2e6da4;
+  transition: color 1s, background-color 1s;
 }
 .btn-primary:focus,
 .btn-primary.focus {
@@ -3182,6 +3183,7 @@ fieldset[disabled] .btn-primary.active {
 .btn-primary .badge {
   color: #337ab7;
   background-color: #fff;
+  transition: color 1s, background-color 1s;
 }
 .btn-success {
   color: #fff;
@@ -3249,6 +3251,7 @@ fieldset[disabled] .btn-success.active {
 .btn-success .badge {
   color: #5cb85c;
   background-color: #fff;
+  transition: color 1s, background-color 1s;
 }
 .btn-info {
   color: #fff;
@@ -6366,6 +6369,7 @@ button.close {
   text-shadow: 0 1px 2px rgba(0, 0, 0, .6);
   filter: alpha(opacity=50);
   opacity: .5;
+  transition: opacity 1s;
 }
 .carousel-control.left {
   background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .0001) 100%);
