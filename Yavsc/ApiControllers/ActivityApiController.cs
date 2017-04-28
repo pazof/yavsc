@@ -13,6 +13,7 @@ namespace Yavsc.Controllers
 {
     [Produces("application/json")]
     [Route("api/activity")]
+    [AllowAnonymous]
     public class ActivityApiController : Controller
     {
         private ApplicationDbContext _context;
