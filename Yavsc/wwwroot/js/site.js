@@ -27,14 +27,9 @@ $('input.Blogcirle[type=checkbox]').on('change',allowCircleToBlog);
 }
 );
 
-var notifClick = function(nid) { $.get('/api/dimiss/click/'+nid).done(function(data) {
-    console.log( "second success" );
-    console.log(data);
-
+var notifClick = function(nid) { $.get('/api/dimiss/click/'+nid).done(function() {
   })
   .fail(function() {
-    console.log( "error" );
   })
   .always(function() {
-    console.log( "finished" );
   }); };

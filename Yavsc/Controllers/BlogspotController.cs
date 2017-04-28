@@ -71,7 +71,9 @@ namespace Yavsc.Controllers
             ViewData["Title"] = id;
             return View("Title", _context.Blogspot.Include(
                 b => b.Author
-            ).Where(x => x.Title == id && (x.Visible || x.AuthorId == uid )).ToList());
+            ).Where(x => x.Title == id && (x.Visible || x.AuthorId == uid )).OrderByDescending(
+                x => x.DateCreated
+            ).ToList());
         }
 
         [Route("/Blog/{id?}")]
@@ -90,7 +92,8 @@ namespace Yavsc.Controllers
              _context.Blogspot.Include(
                 b => b.Author
                 ).Where(x => x.Author.UserName == id && x.Visible);
-            return View("Index", result.OrderByDescending(p => p.DateCreated).ToList().GroupBy(p=>p.Title));
+                // BlogIndexKey
+            return View("Index", result.OrderByDescending(p => p.DateCreated).ToList().GroupBy(p=>new BlogIndexKey { Title = p.Title, AuthorId = p.AuthorId } ));
         }
         // GET: Blog/Details/5
         [AllowAnonymous]

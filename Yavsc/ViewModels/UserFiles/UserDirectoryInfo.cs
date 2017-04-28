@@ -30,6 +30,7 @@ namespace Yavsc.ViewModels.UserFiles
 
             dInfo = new DirectoryInfo(
                 Startup.UserFilesDirName+Path.DirectorySeparatorChar+finalPath);
+            if (!dInfo.Exists) dInfo.Create();
             Files = dInfo.GetFiles().Select
              ( entry => new DefaultFileInfo { Name = entry.Name, Size = entry.Length,
              CreationTime = entry.CreationTime, LastModified = entry.LastWriteTime  }).ToArray();
