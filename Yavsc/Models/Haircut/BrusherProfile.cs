@@ -1,4 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
+using Yavsc.Models.Workflow;
 using YavscLib;
 
 namespace Yavsc.Models.Haircut
@@ -11,6 +14,10 @@ namespace Yavsc.Models.Haircut
            get; set;
         }
 
+        [JsonIgnore,ForeignKey("UserId")]
+        public virtual PerformerProfile BaseProfile { get; set; }
+
+
         [Display(Name="Rayon d'action"),DisplayFormat(DataFormatString="{0} km")]
 
         public int ActionDistance { get; set; }
@@ -19,7 +26,7 @@ namespace Yavsc.Models.Haircut
         /// </summary>
         /// <returns></returns>
         [Display(Name="Début de la journée")]
-        public int StartOfTheDay { get; set;} 
+        public int StartOfTheDay { get; set;}
         /// <summary>
         /// End Of The Day, In munutes
         /// </summary>
@@ -33,7 +40,7 @@ namespace Yavsc.Models.Haircut
 
         [Display(Name="Coupe femme cheveux mi-longs"),DisplayFormat(DataFormatString="{0:C}")]
         public decimal WomenHalfCutPrice { get; set; }
-        
+
         [Display(Name="Coupe femme cheveux courts"),DisplayFormat(DataFormatString="{0:C}")]
         public decimal WomenShortCutPrice { get; set; }
 
