@@ -8,6 +8,8 @@ using Microsoft.Data.Entity;
 namespace Yavsc.Controllers
 {
     using Models;
+    using Yavsc.Helpers;
+
     [Produces("application/json")]
     [Route("api/performers")]
     public class PerformersApiController : Controller
@@ -49,6 +51,12 @@ namespace Yavsc.Controllers
             }
             if (ModelState.IsValid) return Ok(pfr);
             return new BadRequestObjectResult(ModelState);
+        }
+
+        [HttpGet("doing/{id}"),AllowAnonymous]
+        public IActionResult ListPerformers(string id)
+        {
+           return Ok(dbContext.ListPerformers(id));
         }
     }
 }
