@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Yavsc.Models.Workflow 
+namespace Yavsc.Models.Workflow
 {
     using System;
     using Models.Relationship;
@@ -42,7 +42,7 @@ namespace Yavsc.Models.Workflow
 
         [Display(Name="Active")]
         public bool Active { get; set; }
-        
+
         [Obsolete("Implement and use a new specialization setting")]
         [Display(Name="Maximal Daily Cost (euro/day)"),DisplayFormat(DataFormatString="{0:C}")]
         public int? MaxDailyCost { get; set; }
@@ -58,6 +58,6 @@ namespace Yavsc.Models.Workflow
         public bool DoesBlog { get {
             return Performer?.Posts?.Count > 0 ;
         } }
-        
+
     }
 }

@@ -6,6 +6,7 @@ using Yavsc.Models.Market;
 namespace Yavsc.Models.Workflow
 {
     using Models.Relationship;
+
     /// <summary>
     /// A date, between two persons
     /// </summary>

@@ -9,7 +9,7 @@ namespace Yavsc.Models.Haircut.Views
     public class HaircutQueryProviderInfo : HaircutQueryComonInfo {
         public HaircutQueryProviderInfo(HairCutQuery query) : base (query)
         {
-            ClientInfo = new UserInfo(query.Client);
+            ClientInfo = new UserInfo(query.Client.Id, query.Client.UserName, query.Client.Avatar);
         }
         public UserInfo ClientInfo { get; set; }
 
@@ -17,9 +17,10 @@ namespace Yavsc.Models.Haircut.Views
     public class HaircutQueryClientInfo : HaircutQueryComonInfo {
         public HaircutQueryClientInfo(HairCutQuery query) : base (query)
         {
-            ProviderInfo = new UserInfo(query.PerformerProfile.Performer);
+            var user = query.PerformerProfile.Performer;
+            ProviderInfo = new UserInfo(user.Id, user.UserName, user.Avatar);
         }
-           public UserInfo ProviderInfo { get; set; }
+        public UserInfo ProviderInfo { get; set; }
 
     }
     public class HaircutQueryComonInfo

@@ -1,4 +1,4 @@
-namespace Yavsc.Models.Workflow
+namespace YavscLib.Models.Workflow
 {
     using YavscLib;
 

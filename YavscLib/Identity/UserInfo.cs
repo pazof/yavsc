@@ -7,11 +7,11 @@ namespace  Yavsc.Models.Auth
 
         }
 
-        public UserInfo(ApplicationUser user)
+        public UserInfo(string userId, string userName, string avatar)
         {
-            UserId = user.Id;
-            UserName = user.UserName;
-            Avatar = user.Avatar;
+            UserId = userId;
+            UserName = userName;
+            Avatar = avatar;
         }
         public string UserId { get; set; }
 
