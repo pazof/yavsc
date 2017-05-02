@@ -8,6 +8,10 @@ namespace Yavsc.Models.Haircut
 {
     public class BrusherProfile : ISpecializationSettings
     {
+        public BrusherProfile()
+        {
+        }
+
         [Key]
         public string UserId
         {

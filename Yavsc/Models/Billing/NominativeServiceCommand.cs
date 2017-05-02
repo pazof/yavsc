@@ -8,6 +8,7 @@ namespace Yavsc.Models.Billing
     using Newtonsoft.Json;
     using Workflow;
     using YavscLib;
+    using YavscLib.Models.Workflow;
 
     public abstract class NominativeServiceCommand : IBaseTrackedEntity, IQuery
   {

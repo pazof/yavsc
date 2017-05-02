@@ -4,7 +4,6 @@ namespace YavscLib.Billing
     {
          long Id { get; set; }
          string Description { get; set; }
-
          int Count { get; set; }
          decimal UnitaryCost { get; set; }
          long EstimateId { get; set; }

@@ -289,7 +289,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.5": {
+      "MarkdownDeep-av.NET/1.5.6": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -2514,7 +2514,7 @@
           "lib/net451/MimeKit.dll": {}
         }
       },
-      "Newtonsoft.Json/7.0.1": {
+      "Newtonsoft.Json/10.0.2": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -2853,7 +2853,13 @@
       },
       "YavscLib/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1"
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.ComponentModel.DataAnnotations"
+        ]
       },
       "Zlib.Portable.Signed/1.11.0": {
         "type": "package",
@@ -3152,7 +3158,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.5": {
+      "MarkdownDeep-av.NET/1.5.6": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -5377,7 +5383,7 @@
           "lib/net451/MimeKit.dll": {}
         }
       },
-      "Newtonsoft.Json/7.0.1": {
+      "Newtonsoft.Json/10.0.2": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -5716,7 +5722,13 @@
       },
       "YavscLib/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1"
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.ComponentModel.DataAnnotations"
+        ]
       },
       "Zlib.Portable.Signed/1.11.0": {
         "type": "package",
@@ -6015,7 +6027,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.5": {
+      "MarkdownDeep-av.NET/1.5.6": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -8240,7 +8252,7 @@
           "lib/net451/MimeKit.dll": {}
         }
       },
-      "Newtonsoft.Json/7.0.1": {
+      "Newtonsoft.Json/10.0.2": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -8579,7 +8591,13 @@
       },
       "YavscLib/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1"
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "frameworkAssemblies": [
+          "System.ComponentModel.DataAnnotations"
+        ]
       },
       "Zlib.Portable.Signed/1.11.0": {
         "type": "package",
@@ -8884,15 +8902,15 @@
         "MailKit.nuspec"
       ]
     },
-    "MarkdownDeep-av.NET/1.5.5": {
+    "MarkdownDeep-av.NET/1.5.6": {
       "type": "package",
-      "sha512": "RVNumZoZCPDq3H83vrudwptPgR0YFb3MsxIAuGZccUIPiwVUyixGanymHOy0H9QPubkYWo8t00iXqVvIjiu2gg==",
+      "sha512": "/nK/Hzru+vAmNGX5tZtEkKxCqjUS8a/u1vZaQ4pEmlvm6C9IIJ5rWIJephDWVwbzi6eKdEeduU+xmPfLNXrQwQ==",
       "files": [
         "lib/dnxcore50/MarkdownDeep.dll",
         "lib/MonoAndroid10/MarkdownDeep.dll",
         "lib/net451/MarkdownDeep.dll",
-        "MarkdownDeep-av.NET.1.5.5.nupkg",
-        "MarkdownDeep-av.NET.1.5.5.nupkg.sha512",
+        "MarkdownDeep-av.NET.1.5.6.nupkg",
+        "MarkdownDeep-av.NET.1.5.6.nupkg.sha512",
         "MarkdownDeep-av.NET.nuspec"
       ]
     },
@@ -10614,9 +10632,9 @@
         "MimeKit.nuspec"
       ]
     },
-    "Newtonsoft.Json/7.0.1": {
+    "Newtonsoft.Json/10.0.2": {
       "type": "package",
-      "sha512": "q3V4KLetMLnt1gpAVWgtXnHjKs0UG/RalBc29u2ZKxd5t5Ze4JBL5WiiYIklJyK/5CRiIiNwigVQUo0FgbsuWA==",
+      "sha512": "iwElSU2IXmwGvytJsezyDML2ZWDkG2JzTYzlU/BNlmzMdlmRvbnwITsGGY74gwVEpDli1UdOLkMT7/3jxWvXzA==",
       "files": [
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
@@ -10626,12 +10644,17 @@
         "lib/net40/Newtonsoft.Json.xml",
         "lib/net45/Newtonsoft.Json.dll",
         "lib/net45/Newtonsoft.Json.xml",
-        "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.dll",
-        "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
-        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll",
-        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.xml",
-        "Newtonsoft.Json.7.0.1.nupkg",
-        "Newtonsoft.Json.7.0.1.nupkg.sha512",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+win8+wpa81+wp8/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wpa81+wp8/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wpa81+wp8/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wpa81+wp8/Newtonsoft.Json.xml",
+        "LICENSE.md",
+        "Newtonsoft.Json.10.0.2.nupkg",
+        "Newtonsoft.Json.10.0.2.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
         "tools/install.ps1"
       ]
@@ -11550,7 +11573,7 @@
       "Google.Apis.Core >= 1.11.1",
       "Google.Apis >= 1.11.1",
       "MailKit >= 1.12.0",
-      "MarkdownDeep-av.NET >= 1.5.5",
+      "MarkdownDeep-av.NET >= 1.5.6",
       "Microsoft.AspNet.Authentication.Cookies >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Facebook >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Twitter >= 1.0.0-rc1-final",
