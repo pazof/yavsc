@@ -19,8 +19,6 @@
 .price {
     font-weight: bold;
     font-size: x-large;
-    border: solid black 2px;
-    border-radius: 1em;
     padding: .2em;
     margin: .2em;
 }

@@ -2547,6 +2547,18 @@
           "lib/net40/Owin.dll": {}
         }
       },
+      "PayPal/1.8.0": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "7.0.1"
+        },
+        "compile": {
+          "lib/net451/PayPal.dll": {}
+        },
+        "runtime": {
+          "lib/net451/PayPal.dll": {}
+        }
+      },
       "PayPalCoreSDK/1.7.1": {
         "type": "package",
         "dependencies": {
@@ -2557,18 +2569,6 @@
         },
         "runtime": {
           "lib/net451/PayPalCoreSDK.dll": {}
-        }
-      },
-      "PayPalMerchantSDK/2.16.204": {
-        "type": "package",
-        "dependencies": {
-          "PayPalCoreSDK": "1.7.1"
-        },
-        "compile": {
-          "lib/net20/PayPalMerchantSDK.dll": {}
-        },
-        "runtime": {
-          "lib/net20/PayPalMerchantSDK.dll": {}
         }
       },
       "Remotion.Linq/2.0.1": {
@@ -5416,6 +5416,18 @@
           "lib/net40/Owin.dll": {}
         }
       },
+      "PayPal/1.8.0": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "7.0.1"
+        },
+        "compile": {
+          "lib/net451/PayPal.dll": {}
+        },
+        "runtime": {
+          "lib/net451/PayPal.dll": {}
+        }
+      },
       "PayPalCoreSDK/1.7.1": {
         "type": "package",
         "dependencies": {
@@ -5426,18 +5438,6 @@
         },
         "runtime": {
           "lib/net451/PayPalCoreSDK.dll": {}
-        }
-      },
-      "PayPalMerchantSDK/2.16.204": {
-        "type": "package",
-        "dependencies": {
-          "PayPalCoreSDK": "1.7.1"
-        },
-        "compile": {
-          "lib/net20/PayPalMerchantSDK.dll": {}
-        },
-        "runtime": {
-          "lib/net20/PayPalMerchantSDK.dll": {}
         }
       },
       "Remotion.Linq/2.0.1": {
@@ -8285,6 +8285,18 @@
           "lib/net40/Owin.dll": {}
         }
       },
+      "PayPal/1.8.0": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "7.0.1"
+        },
+        "compile": {
+          "lib/net451/PayPal.dll": {}
+        },
+        "runtime": {
+          "lib/net451/PayPal.dll": {}
+        }
+      },
       "PayPalCoreSDK/1.7.1": {
         "type": "package",
         "dependencies": {
@@ -8295,18 +8307,6 @@
         },
         "runtime": {
           "lib/net451/PayPalCoreSDK.dll": {}
-        }
-      },
-      "PayPalMerchantSDK/2.16.204": {
-        "type": "package",
-        "dependencies": {
-          "PayPalCoreSDK": "1.7.1"
-        },
-        "compile": {
-          "lib/net20/PayPalMerchantSDK.dll": {}
-        },
-        "runtime": {
-          "lib/net20/PayPalMerchantSDK.dll": {}
         }
       },
       "Remotion.Linq/2.0.1": {
@@ -10689,6 +10689,21 @@
         "Owin.nuspec"
       ]
     },
+    "PayPal/1.8.0": {
+      "type": "package",
+      "sha512": "r59EIEePqy0yLRbGgJ1Ul86rXGtogC/8ofn9qTdKozN/CsTsotxGZMCzzDIFgnZRAm3zO6xz8tZGAWmKxDFX/Q==",
+      "files": [
+        "lib/net40/PayPal.dll",
+        "lib/net40/PayPal.xml",
+        "lib/net45/PayPal.dll",
+        "lib/net45/PayPal.xml",
+        "lib/net451/PayPal.dll",
+        "lib/net451/PayPal.xml",
+        "PayPal.1.8.0.nupkg",
+        "PayPal.1.8.0.nupkg.sha512",
+        "PayPal.nuspec"
+      ]
+    },
     "PayPalCoreSDK/1.7.1": {
       "type": "package",
       "sha512": "hGOLo3X2vgOpOWJI91+vlBgr/Dchk3xZAF0bdIpKiAwjlRKMjzSC4zuT1eGwmQ8uVL1IaGBZwNGklyRHDniYlQ==",
@@ -10701,17 +10716,6 @@
         "PayPalCoreSDK.1.7.1.nupkg",
         "PayPalCoreSDK.1.7.1.nupkg.sha512",
         "PayPalCoreSDK.nuspec"
-      ]
-    },
-    "PayPalMerchantSDK/2.16.204": {
-      "type": "package",
-      "sha512": "uqn99kb71EYWbdYz3dIXTeTzbh5buhfa7uvSemZXDFW1BRnDi8CGAdbK2AX7ZT1JsH3GuQZqxqC0/KpWKML9Wg==",
-      "files": [
-        "lib/net20/PayPalMerchantSDK.dll",
-        "lib/net20/PayPalMerchantSDK.xml",
-        "PayPalMerchantSDK.2.16.204.nupkg",
-        "PayPalMerchantSDK.2.16.204.nupkg.sha512",
-        "PayPalMerchantSDK.nuspec"
       ]
     },
     "Remotion.Linq/2.0.1": {
@@ -11626,9 +11630,9 @@
       "System.Json >= 4.0.20126.16343",
       "YavscLib >= 1.0.0",
       "Extensions.AspNet.Authentication.Instagram >= 1.0.0-t150809211713",
-      "PayPalMerchantSDK >= 2.16.204",
       "Microsoft.AspNet.Http.Extensions >= 1.0.0-rc1-final",
-      "Microsoft.DiaSymReader.Native >= 1.5.0"
+      "Microsoft.DiaSymReader.Native >= 1.5.0",
+      "PayPal >= 1.8.0"
     ],
     "DNX,Version=v4.5.1": [
       "fx/System.Drawing >= 4.0.0"

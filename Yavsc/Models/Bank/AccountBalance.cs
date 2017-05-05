@@ -12,7 +12,7 @@ namespace Yavsc.Models
         [ForeignKey("UserId")]
         public virtual ApplicationUser Owner { get; set; }
 
-        [Required,Display(Name="Credits in €")]
+        [Required,Display(Name="Credits en €")]
         public decimal Credits { get; set; }
 
         public long ContactCredits { get; set; }

@@ -25,9 +25,8 @@ namespace Yavsc.Controllers
 
 
         // GET: api/HairCutQueriesApi
-        // Get the queries for current
-        // user as a client
-        // To get active queries
+        // Get the active queries for current
+        // user, as a client
         [HttpGet]
         public async Task<IActionResult> GetHairCutQueries()
         {

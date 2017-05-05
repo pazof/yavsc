@@ -1,4 +1,4 @@
-@model Location
+@model SetAddressViewModel
 
 <style>
     #map {
@@ -13,11 +13,11 @@
 
     <div class="form-group">
 
-        <label asp-for="Address" class="col-md-2 control-label">@SR["Address"]</label>
+        <label asp-for="Street1" class="col-md-2 control-label">@SR["Address"]</label>
         <div class="col-md-10">
-            <input asp-for="Address" class="form-control" type="text" />
+            <input asp-for="Street1" class="form-control" type="text" />
 
-            <span id="AddressError" asp-validation-for="Address" class="text-danger"></span>
+            <span id="AddressError" asp-validation-for="Street1" class="text-danger"></span>
             <ul id="LocationCombo" >
             </ul>
             <div id="map"></div>
@@ -25,8 +25,6 @@
     </div>
     <input type="submit" class="btn btn-success" value="Enregistrer" />
     
-@Html.HiddenFor(model=>model.Latitude)
- @Html.HiddenFor(model=>model.Longitude)
 </form>
 
 @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
