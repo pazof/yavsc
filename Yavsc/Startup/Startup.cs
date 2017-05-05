@@ -79,6 +79,8 @@ namespace Yavsc
             services.Configure<OAuth2AppSettings>(oauthLocalAppSettings);
             var oauthFacebookSettings = Configuration.GetSection("Authentication").GetSection("Facebook");
             services.Configure<FacebookOAuth2AppSettings>(oauthFacebookSettings);
+            var paypalSettings = Configuration.GetSection("Authentication").GetSection("PayPal");
+            services.Configure<PayPalSettings>(paypalSettings);
 
             /*    services.Configure<MvcOptions>(options =>
                 {
@@ -143,15 +145,15 @@ namespace Yavsc
             ConfigureOAuthServices(services);
 
             services.AddCors(
-            /*
+
             options =>
             {
                 options.AddPolicy("CorsPolicy", builder =>
                 {
-                    builder.WithOrigins("http://lua.pschneider.fr");
+                    builder.WithOrigins("*");
                 });
             }
-            */
+
             );
             // Add memory cache services
             services.AddCaching();

@@ -48,6 +48,10 @@ namespace Yavsc.ApiControllers
             _localizer = localizer;
             _logger = loggerFactory.CreateLogger<HairCutController>();
         }
+
+        // GET: api/HairCutQueriesApi
+        // Get the active queries for current
+        // user, as a client
         public IActionResult Index()
         {
             var uid = User.GetUserId();

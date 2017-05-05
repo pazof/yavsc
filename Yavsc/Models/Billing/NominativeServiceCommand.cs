@@ -8,10 +8,13 @@ namespace Yavsc.Models.Billing
     using Newtonsoft.Json;
     using Workflow;
     using YavscLib;
+    using YavscLib.Billing;
     using YavscLib.Models.Workflow;
 
-    public abstract class NominativeServiceCommand : IBaseTrackedEntity, IQuery
+    public abstract class NominativeServiceCommand : IBaseTrackedEntity, IQuery, IIdentified<long>
   {
+        public abstract long Id { get; set; }
+        public abstract string Description { get; set; }
         public DateTime DateCreated
         {
             get; set;
@@ -67,5 +70,10 @@ namespace Yavsc.Models.Billing
 
         [ForeignKey("ActivityCode"),JsonIgnore,Display(Name="Domaine d'activité")]
         public virtual Activity Context  { get; set ; }
- }
+
+        public System.Collections.Generic.List<IBillItem> GetBillItems()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

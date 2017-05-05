@@ -5,13 +5,14 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Billing
 {
+    using System;
     using YavscLib.Billing;
 
     public class CommandLine : ICommandLine {
 
      [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
      public long Id { get; set; }
-     
+
      [Required,MaxLength(512)]
      public string Description { get; set; }
 
@@ -21,9 +22,16 @@ namespace Yavsc.Models.Billing
      public decimal UnitaryCost { get; set; }
 
      public long EstimateId { get; set; }
-     
+
      [JsonIgnore,NotMapped,ForeignKey("EstimateId")]
      virtual public Estimate Estimate { get; set; }
- }
+
+        public string Currency
+        {
+            get;
+
+            set;
+        }
+    }
 
 }

@@ -14,5 +14,6 @@ namespace Yavsc.Helpers
                 return (info.BankCode != null && info.WicketCode != null && info.AccountNumber != null && info.BankedKey >0);
 
         }
+
     }
 }

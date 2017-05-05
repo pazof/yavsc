@@ -16,7 +16,7 @@ namespace Yavsc.Models.Workflow
         /// The command identifier
         /// </summary>
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        override public long Id { get; set; }
 
         [Display(Name = "Event date")]
         public DateTime EventDate
@@ -38,6 +38,13 @@ namespace Yavsc.Models.Workflow
 
         [Display(Name="GiveAnExplicitReason")]
         public string Reason { get; set; }
+
+        public override string Description
+        {
+            get;
+
+            set;
+        } = "Rendez-vous";
 
         public RdvQuery()
         {
