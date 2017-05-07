@@ -26,8 +26,9 @@ namespace Yavsc.Models
     using Musical.Profiles;
     using Workflow.Profiles;
     using Drawing;
-    using Yavsc.Attributes;
-    using Yavsc.Models.Bank;
+    using Attributes;
+    using Bank;
+    using Payment;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -306,5 +307,7 @@ namespace Yavsc.Models
          public DbSet<BrusherProfile> BrusherProfile { get; set; }
 
          public DbSet<BankIdentity> BankIdentity { get; set; }
+         
+         public DbSet<PaypalPayment> PaypalPayments { get; set; }
     }
 }
