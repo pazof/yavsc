@@ -1,12 +1,12 @@
-
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using PayPal.Api;
 using Yavsc.Helpers;
 using Yavsc.Models;
+using Yavsc.ViewModels.PayPal;
 
 namespace Yavsc.ApiControllers
 {
@@ -29,7 +29,19 @@ namespace Yavsc.ApiControllers
             _logger = loggerFactory.CreateLogger<PaymentApiController>();
         }
 
+        public async Task<IActionResult> Info(string paymentId)
+        {
+            var result = new PaymentInfo {
+              DbContent = await dbContext.PaypalPayments.SingleAsync(
+                  p=>p.PaypalPaymentId==paymentId)
+            };
+            await Task.Run( () => {
+              var apiContext = paymentSettings.CreateAPIContext();
+              result.FromPaypal = Payment.Get(apiContext,paymentId);
+            });
 
+            return Ok(result);
+        }
 
         [HttpPost("execute")]
         public async Task<IActionResult> Execute(string paymentId, string payerId)
@@ -43,63 +55,12 @@ namespace Yavsc.ApiControllers
             execution.transactions = payment.transactions;
              result = payment.Execute(apiContext,execution);
             });
-            
+
             return Ok(result);
         }
 
-        [HttpPost("create")]
-        public async Task<IActionResult> Create()
-        {
-            var apiContext = paymentSettings.CreateAPIContext();
-            var payment = Payment.Create(apiContext,
-            new Payment
-            {
-                intent = "authorize", // "sale", "order", "authorize"
-                payer = new Payer
-                {
-                    payment_method = "paypal"
-                },
-                transactions = new List<Transaction>
-    {
-        new Transaction
-        {
-            description = "Transaction description.",
-            invoice_number = "001",
-            amount = new Amount
-            {
-                currency = "EUR",
-                total = "0.11",
-                details = new Details
-                {
-                    tax = "0.01",
-                    shipping = "0.02",
-                    subtotal = "0.08"
-                }
-            },
-            item_list = new ItemList
-            {
-                items = new List<Item>
-                {
-                    new Item
-                    {
-                        name = "nah",
-                        currency = "EUR",
-                        price = "0.02",
-                        quantity = "4",
-                        sku = "sku"
-                    }
-                }
-            }
-        }
-    },
-                redirect_urls = new RedirectUrls
-                {
-                    return_url = siteSettings.Audience+ "/Manage/Credit/Return",
-                    cancel_url = siteSettings.Audience+ "/Manage/Credit/Cancel"
-                }
-            });
-            return Json(payment);
-        }
+
+
 
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Relationship;
+using YavscLib.Billing;
 
 namespace Yavsc.Models.Haircut
 {
@@ -43,6 +44,11 @@ namespace Yavsc.Models.Haircut
         {
             get;
             set;
+        }
+
+        public override List<IBillItem> GetBillItems()
+        {
+            throw new NotImplementedException();
         }
     }
 }

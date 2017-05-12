@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class paypal : Migration
+    public partial class hairCutPaypalPayment : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,6 +22,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_Estimate_ApplicationUser_ClientId", table: "Estimate");
             migrationBuilder.DropForeignKey(name: "FK_Estimate_PerformerProfile_OwnerId", table: "Estimate");
             migrationBuilder.DropForeignKey(name: "FK_Connection_ApplicationUser_ApplicationUserId", table: "Connection");
+            migrationBuilder.DropForeignKey(name: "FK_BrusherProfile_PerformerProfile_UserId", table: "BrusherProfile");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Activity_ActivityCode", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_ApplicationUser_ClientId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_PerformerProfile_PerformerId", table: "HairCutQuery");
@@ -36,6 +38,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_DimissClicked_Notification_NotificationId", table: "DimissClicked");
             migrationBuilder.DropForeignKey(name: "FK_DimissClicked_ApplicationUser_UserId", table: "DimissClicked");
             migrationBuilder.DropForeignKey(name: "FK_Instrumentation_Instrument_InstrumentId", table: "Instrumentation");
+            migrationBuilder.DropForeignKey(name: "FK_PaypalPayment_ApplicationUser_ExecutorId", table: "PaypalPayment");
             migrationBuilder.DropForeignKey(name: "FK_CircleMember_Circle_CircleId", table: "CircleMember");
             migrationBuilder.DropForeignKey(name: "FK_CircleMember_ApplicationUser_MemberId", table: "CircleMember");
             migrationBuilder.DropForeignKey(name: "FK_PostTag_Blog_PostId", table: "PostTag");
@@ -47,45 +50,20 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.CreateTable(
-                name: "PaypalPayment",
-                columns: table => new
-                {
-                    PaypalPayerId = table.Column<string>(nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false),
-                    DateModified = table.Column<DateTime>(nullable: false),
-                    ExecutorId = table.Column<string>(nullable: false),
-                    PaypalPaymentId = table.Column<string>(nullable: false),
-                    UserCreated = table.Column<string>(nullable: true),
-                    UserModified = table.Column<string>(nullable: true),
-                    orderReference = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PaypalPayment", x => x.PaypalPayerId);
-                    table.ForeignKey(
-                        name: "FK_PaypalPayment_ApplicationUser_ExecutorId",
-                        column: x => x.ExecutorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.DropPrimaryKey(name: "PK_PaypalPayment", table: "PaypalPayment");
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_PaypalPayment",
+                table: "PaypalPayment",
+                column: "PaypalPaymentId");
             migrationBuilder.AddColumn<string>(
-                name: "Description",
-                table: "RdvQuery",
-                nullable: true);
-            migrationBuilder.AddColumn<string>(
-                name: "Description",
-                table: "HairMultiCutQuery",
-                nullable: true);
-            migrationBuilder.AddColumn<string>(
-                name: "Description",
+                name: "PaymentId",
                 table: "HairCutQuery",
                 nullable: true);
             migrationBuilder.AddColumn<string>(
-                name: "Currency",
+                name: "Name",
                 table: "CommandLine",
-                nullable: true);
+                nullable: false,
+                defaultValue: "");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -206,6 +184,13 @@ namespace Yavsc.Migrations
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
+                name: "FK_HairCutQuery_PaypalPayment_PaymentId",
+                table: "HairCutQuery",
+                column: "PaymentId",
+                principalTable: "PaypalPayment",
+                principalColumn: "PaypalPaymentId",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
                 name: "FK_HairCutQuery_PerformerProfile_PerformerId",
                 table: "HairCutQuery",
                 column: "PerformerId",
@@ -297,6 +282,13 @@ namespace Yavsc.Migrations
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
+                name: "FK_PaypalPayment_ApplicationUser_ExecutorId",
+                table: "PaypalPayment",
+                column: "ExecutorId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
                 name: "FK_CircleMember_Circle_CircleId",
                 table: "CircleMember",
                 column: "CircleId",
@@ -373,6 +365,10 @@ namespace Yavsc.Migrations
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
                 onDelete: ReferentialAction.Cascade);
+            migrationBuilder.RenameColumn(
+                name: "orderReference",
+                table: "PaypalPayment",
+                newName: "OrderReference");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -394,6 +390,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_BrusherProfile_PerformerProfile_UserId", table: "BrusherProfile");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Activity_ActivityCode", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_ApplicationUser_ClientId", table: "HairCutQuery");
+            migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_PaypalPayment_PaymentId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_PerformerProfile_PerformerId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_HairPrestation_PrestationId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_Activity_ActivityCode", table: "HairMultiCutQuery");
@@ -407,6 +404,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_DimissClicked_Notification_NotificationId", table: "DimissClicked");
             migrationBuilder.DropForeignKey(name: "FK_DimissClicked_ApplicationUser_UserId", table: "DimissClicked");
             migrationBuilder.DropForeignKey(name: "FK_Instrumentation_Instrument_InstrumentId", table: "Instrumentation");
+            migrationBuilder.DropForeignKey(name: "FK_PaypalPayment_ApplicationUser_ExecutorId", table: "PaypalPayment");
             migrationBuilder.DropForeignKey(name: "FK_CircleMember_Circle_CircleId", table: "CircleMember");
             migrationBuilder.DropForeignKey(name: "FK_CircleMember_ApplicationUser_MemberId", table: "CircleMember");
             migrationBuilder.DropForeignKey(name: "FK_PostTag_Blog_PostId", table: "PostTag");
@@ -418,11 +416,13 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.DropColumn(name: "Description", table: "RdvQuery");
-            migrationBuilder.DropColumn(name: "Description", table: "HairMultiCutQuery");
-            migrationBuilder.DropColumn(name: "Description", table: "HairCutQuery");
-            migrationBuilder.DropColumn(name: "Currency", table: "CommandLine");
-            migrationBuilder.DropTable("PaypalPayment");
+            migrationBuilder.DropPrimaryKey(name: "PK_PaypalPayment", table: "PaypalPayment");
+            migrationBuilder.DropColumn(name: "PaymentId", table: "HairCutQuery");
+            migrationBuilder.DropColumn(name: "Name", table: "CommandLine");
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_PaypalPayment",
+                table: "PaypalPayment",
+                column: "PaypalPayerId");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -520,6 +520,13 @@ namespace Yavsc.Migrations
                 column: "ApplicationUserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
+                name: "FK_BrusherProfile_PerformerProfile_UserId",
+                table: "BrusherProfile",
+                column: "UserId",
+                principalTable: "PerformerProfile",
+                principalColumn: "PerformerId",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
                 name: "FK_HairCutQuery_Activity_ActivityCode",
@@ -627,6 +634,13 @@ namespace Yavsc.Migrations
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
+                name: "FK_PaypalPayment_ApplicationUser_ExecutorId",
+                table: "PaypalPayment",
+                column: "ExecutorId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
                 name: "FK_CircleMember_Circle_CircleId",
                 table: "CircleMember",
                 column: "CircleId",
@@ -703,6 +717,10 @@ namespace Yavsc.Migrations
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
                 onDelete: ReferentialAction.Restrict);
+            migrationBuilder.RenameColumn(
+                name: "OrderReference",
+                table: "PaypalPayment",
+                newName: "orderReference");
         }
     }
 }

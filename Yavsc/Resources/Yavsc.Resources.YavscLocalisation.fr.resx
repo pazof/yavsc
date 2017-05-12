@@ -234,7 +234,7 @@
   <data name="Forgot Password Confirmation."><value>Confirmation mot de passe perdu.</value></data>
   <data name="from"><value>provenant de</value></data>
   <data name="Full name"><value>Nom complet</value></data>
-  <data name="GCM Notification sending failed"><value>L'envoi du message push a échoué</value></data>
+  <data name="EGCMBUTEMAIL"><value>L'envoi du message push a échoué, mais un e-mail a été envoyé</value></data>
   <data name="GCM Notifications sent"><value>Message push envoyé</value></data>
   <data name="GiveAnExplicitReason"><value>Dites en plus, ci àprès, à propos de cet évennement</value></data>
   <data name="GoogleDidntGeoLocalized"><value>Google n'a pas pu identifier ce lieu</value></data>

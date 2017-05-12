@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Billing
 {
-    using System;
     using YavscLib.Billing;
 
     public class CommandLine : ICommandLine {
@@ -13,10 +12,14 @@ namespace Yavsc.Models.Billing
      [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
      public long Id { get; set; }
 
+     [Required,MaxLength(256)]
+     public string Name { get; set; }
+
      [Required,MaxLength(512)]
      public string Description { get; set; }
 
-     public int Count { get; set; }
+     [Display(Name="Nombre")]
+     public int Count { get; set; } = 1;
 
      [DisplayFormat(DataFormatString="{0:C}")]
      public decimal UnitaryCost { get; set; }
@@ -31,7 +34,15 @@ namespace Yavsc.Models.Billing
             get;
 
             set;
+        } = "EUR";
+
+        [NotMapped]
+        public string Reference {
+            get {
+                return "CL/"+this.Id;
+            }
         }
     }
+
 
 }

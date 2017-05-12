@@ -1,3 +1,5 @@
+using YavscLib.Billing;
+
 namespace Yavsc.Models.Billing   {
 public class FixedImpacter : IBillingImpacter
 {
