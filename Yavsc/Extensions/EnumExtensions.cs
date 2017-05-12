@@ -19,15 +19,15 @@ namespace Yavsc.Extensions
 
             foreach (var value in values)
             {
-                items.Add(new SelectListItem { 
-                    Text = SR[GetDescription(value, typeInfo)], 
-                    Value = value.ToString(), 
+                items.Add(new SelectListItem {
+                    Text = SR[GetDescription(value, typeInfo)],
+                    Value = value.ToString(),
                     Selected = value == valueSelected
                 });
             }
             return items;
         }
-        public static List<SelectListItem> GetSelectList (Type type, IStringLocalizer SR)
+        public static List<SelectListItem> GetSelectList (Type type, IStringLocalizer SR, string selectedValue = null)
         {
             var typeInfo = type.GetTypeInfo();
             var values = Enum.GetValues(type).Cast<Enum>();
@@ -35,9 +35,12 @@ namespace Yavsc.Extensions
 
             foreach (var value in values)
             {
+                var strval = value.ToString();
+
                 items.Add(new SelectListItem {
-                     Text = SR[GetDescription(value, typeInfo)], 
-                     Value = value.ToString()
+                     Text = SR[GetDescription(value, typeInfo)],
+                     Value = strval,
+                     Selected = strval == selectedValue
                 });
             }
             return items;

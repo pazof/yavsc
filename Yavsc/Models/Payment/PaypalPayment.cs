@@ -7,15 +7,18 @@ namespace Yavsc.Models.Payment {
 
     public class PaypalPayment : IBaseTrackedEntity
     {
+        [Required,Key]
+        public string PaypalPaymentId { get; set; }
+
         [Required]
-        public string ExecutorId { get; set; } 
+        public string ExecutorId { get; set; }
         [ForeignKey("ExecutorId")]
         public virtual ApplicationUser Executor { get; set; }
-        [Key,Required]
-        string PaypalPayerId { get; set; }
+
         [Required]
-        string PaypalPaymentId { get; set; }
-        string orderReference { get; set; } 
+        public string PaypalPayerId { get; set; }
+
+        public string OrderReference { get; set; }
         [Display(Name="Date de création")]
         public DateTime DateCreated
         {

@@ -1,9 +1,7 @@
 {
   "projects": [
     "Yavsc",
-    "Yavsc.Api",
-    "Yavsc.Client",
-    "wrap"
+    "YavscLib"
   ],
   "sdk": {
     "version": "1.0.0-rc1-update2",

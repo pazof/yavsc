@@ -14,6 +14,9 @@ namespace Yavsc.ApiControllers
     using Services;
     using Yavsc.Models.Haircut;
     using Yavsc.Resources;
+    using System.Threading.Tasks;
+    using Yavsc.Helpers;
+    using Microsoft.Data.Entity;
 
     [Route("api/haircut")]
     public class HairCutController : Controller
@@ -28,6 +31,7 @@ namespace Yavsc.ApiControllers
         private SmtpSettings _smtpSettings;
         private UserManager<ApplicationUser> _userManager;
 
+        PayPalSettings _paymentSettings;
         public HairCutController(ApplicationDbContext context,
         IOptions<GoogleAuthSettings> googleSettings,
         IGoogleCloudMessageSender GCMSender,
@@ -36,6 +40,7 @@ namespace Yavsc.ApiControllers
           IEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
           IOptions<SiteSettings> siteSettings,
+          IOptions<PayPalSettings> payPalSettings,
           ILoggerFactory loggerFactory)
         {
             _context = context;
@@ -45,6 +50,7 @@ namespace Yavsc.ApiControllers
             _userManager = userManager;
             _smtpSettings = smtpSettings.Value;
             _siteSettings = siteSettings.Value;
+            _paymentSettings = payPalSettings.Value;
             _localizer = localizer;
             _logger = loggerFactory.CreateLogger<HairCutController>();
         }
@@ -76,5 +82,14 @@ namespace Yavsc.ApiControllers
             return Ok();
         }
 
+        [HttpPost("createpayment/{id}")]
+        public async Task<IActionResult> CreatePayment(long id)
+        {
+            var apiContext = _paymentSettings.CreateAPIContext();
+            var query = await _context.HairCutQueries.Include(q=>q.Client).
+            Include(q=>q.Client.PostalAddress).SingleAsync(q=>q.Id == id);
+            var payment = apiContext.CreatePaiment(query,"sale",_logger);
+            return Json(payment);
+        }
     }
 }

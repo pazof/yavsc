@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Logging;
 using PayPal.Api;
 using Yavsc.Models.Billing;
-using Yavsc.Models.Haircut;
 
 namespace Yavsc.Helpers
 {
@@ -18,20 +19,40 @@ namespace Yavsc.Helpers
             return apiContext;
         }
 
-        public static Payment CreatePaiement(this APIContext apiContext, NominativeServiceCommand query, string intent = "sale")
+        public static Payment CreatePaiment(this APIContext apiContext, NominativeServiceCommand query, string intent = "sale", ILogger logger=null)
         {
             var queryType = query.GetType().Name;
             var transaction = new Transaction
             {
-                description = query.Description+"\nVotre commande du "+query.DateCreated.ToLongDateString(),
+                description ="Votre commande du "+query.DateCreated.ToLongDateString()+
+                "\n"+query.Description,
                 invoice_number = $"{query.ActivityCode}/{queryType}/{query.Id}"
             };
-            transaction.item_list.shipping_address.line1 = query.Client.PostalAddress.Address;
+            logger?.LogInformation("transaction: "+transaction.invoice_number);
+            // transaction.item_list.shipping_address.city
+            // country_code default_address id
+            // line1 line2 preferred_address recipient_name state status type
+            transaction.item_list = new ItemList();
+            if (query.Client.PostalAddress!=null) {
+                transaction.item_list.shipping_address = new ShippingAddress();
+                transaction.item_list.shipping_address.line1 = query.Client.PostalAddress.Address;
+            }
             transaction.item_list.shipping_phone_number = query.Client.PhoneNumber;
-            transaction.item_list.items = new List<Item> { };
-            var item = new Item();
+            logger?.LogInformation("client address: "+transaction.item_list.shipping_address.line1);
+            transaction.item_list.items = query.GetBillItems().Select(i => new Item {
+                name = i.Name,
+                description = i.Description,
+                price = i.UnitaryCost.ToString("F2"),
+                currency = "EUR",
+                quantity = i.Count.ToString(),
+                sku = query.ActivityCode
+         /* postback_data=
+            sku=
+            supplementary_data= */
+             }).ToList();
 
-            return new Payment
+
+            return Payment.Create(apiContext, new Payment
             {
                 intent = intent, // "sale", "order", "authorize"
                 payer = new Payer
@@ -39,10 +60,10 @@ namespace Yavsc.Helpers
                     payment_method = "paypal"
                 },
                 transactions = new List<Transaction> { transaction }
-            };
+            });
         }
 
-        public static Payment CreatePaiement(this APIContext apiContext, Estimate estimation)
+        public static Payment CreatePaiment(this APIContext apiContext, Estimate estimation)
         {
             var payment = Payment.Create(apiContext,
             new Payment

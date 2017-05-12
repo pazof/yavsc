@@ -1,6 +1,8 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using YavscLib.Billing;
+
 namespace Yavsc.Models.Billing {
 
 public class ReductionCode : IBillingClause

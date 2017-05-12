@@ -4,8 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Workflow
 {
-  using Yavsc.Models.Billing;
-  using Yavsc.Models.Relationship;
+    using System.Collections.Generic;
+    using Yavsc.Models.Billing;
+    using Yavsc.Models.Relationship;
+    using YavscLib.Billing;
+
     /// <summary>
     /// Query, for a date, with a given perfomer, at this given place.
     /// </summary>
@@ -57,7 +60,9 @@ namespace Yavsc.Models.Workflow
             ActivityCode = activityCode;
         }
 
-
-
+        public override List<IBillItem> GetBillItems()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

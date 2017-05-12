@@ -31,12 +31,13 @@
                 @Html.DisplayFor(m=>m.AdditionalInfo)
             </dd>
 
-            <dt>Addition minimale 
-    (Compter des frais supplémentaires 
-    en cas de longs déplacements,
-        ou des majorations en cas de weekend et jour férie)
+            <dt>Addition minimale
             </dt>
-            <dd> <span class="price"> @ViewBag.Addition </span>
+            <dd> <span class="price"> @ViewBag.Addition </span> <br/>
+
+     (Compter des frais supplémentaires <br/>
+    en cas de longs déplacements,<br/>
+        ou des majorations en cas de weekend et jour férie)
             </dd>
             <dt>Date de la prestation</dt>
             <dd>@if (Model.EventDate == null) {
@@ -65,7 +66,7 @@
             else {
                 if (ViewBag.GooglePayload.failure>0)
                     {
-                        <div class="error">@SR["GCM Notification sending failed"]</div>
+                        <div class="error">@SR["EGCMBUTEMAIL"]</div>
                     }
                     else {
                        <div>@SR["E-mail sent"]</div>
@@ -73,6 +74,18 @@
             }
         } else {<div>@SR["E-mail sent"]</div>}
         </dd>
+        <dt>Numéro identifiant votre commande</dt>
+        <dd>@Model.Id</dd>
+        
+        <environment names="Development">
+
+        <dt>Facture</dt>
+        <dd>TODO</dd>
+
+        </environment>
+        
+<dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
+<dd>@Html.DisplayFor(m=>m.Regularisation,new { PaymentUrl = "/api/haircut/createpayment/"+Model.Id.ToString() })</dd>
      </dl>
            
             

@@ -16,7 +16,6 @@
 
     function updateTarif () {
         var len = $('#Prestation_Length').prop('selectedIndex');
-
         var gen = $("#Prestation_Gender").prop('selectedIndex');
         var tech = $("#Prestation_Tech").prop('selectedIndex');
         var dress = $("#Prestation_Dressing").prop('selectedIndex');
@@ -28,7 +27,6 @@
             havecut = true;
             total += cutprice;
             displayTarif('CutPrice', cutprice);
-
         } else displayTarif('CutPrice',0);
         if (gen==0) {
             if (tech>0) { 
@@ -129,8 +127,6 @@
                     } else gtarif=tarifs[2];
                 } 
             onTarif(tarifs[0]);
-            updateTarif();
-
         });
 </script>
 

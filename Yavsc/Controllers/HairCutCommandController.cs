@@ -192,8 +192,8 @@ namespace Yavsc.Controllers
                 }
                 ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
-               var addition = model.Prestation.Addition(brusherProfile);
-                  ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
+                var addition = model.Addition(brusherProfile);
+                ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
                 return View("CommandConfirmation",model);
             }
             ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);
@@ -244,7 +244,7 @@ namespace Yavsc.Controllers
             ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos),_localizer);
             ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength),_localizer);
             ViewBag.Activity = _context.Activities.First(a => a.Code == activityCode);
-            ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders),_localizer);
+            ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders),_localizer,HairCutGenders.Women);
             ViewBag.HairDressings = EnumExtensions.GetSelectList(typeof(HairDressings),_localizer);
             ViewBag.ColorsClass = ( pPrestation.Tech == HairTechnos.Color
             || pPrestation.Tech == HairTechnos.Mech ) ? "":"hidden";

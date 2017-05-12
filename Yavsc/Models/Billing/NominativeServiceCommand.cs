@@ -9,7 +9,7 @@ namespace Yavsc.Models.Billing
     using Workflow;
     using YavscLib;
     using YavscLib.Billing;
-    using YavscLib.Models.Workflow;
+    using YavscLib.Workflow;
 
     public abstract class NominativeServiceCommand : IBaseTrackedEntity, IQuery, IIdentified<long>
   {
@@ -71,9 +71,6 @@ namespace Yavsc.Models.Billing
         [ForeignKey("ActivityCode"),JsonIgnore,Display(Name="Domaine d'activité")]
         public virtual Activity Context  { get; set ; }
 
-        public System.Collections.Generic.List<IBillItem> GetBillItems()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract System.Collections.Generic.List<IBillItem> GetBillItems();
     }
 }

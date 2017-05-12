@@ -1,5 +1,4 @@
 @model HairCutQuery
-
 <dl class="dl-horizontal">
 <dt>@Html.DisplayNameFor(m=>m.Prestation)
 </dt>
@@ -21,7 +20,8 @@
 </dt>
 <dd>@Html.DisplayFor(m=>m.AdditionalInfo)
 </dd>
-
+<dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
+<dd>@Html.DisplayFor(m=>m.Regularisation,new { PaymentUrl = "/api/haircut/createpayment/"+Model.Id.ToString() })</dd>
 </dl>
 
 
