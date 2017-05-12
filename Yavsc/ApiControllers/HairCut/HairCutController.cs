@@ -17,6 +17,7 @@ namespace Yavsc.ApiControllers
     using System.Threading.Tasks;
     using Yavsc.Helpers;
     using Microsoft.Data.Entity;
+    using Microsoft.AspNet.Authorization;
 
     [Route("api/haircut")]
     public class HairCutController : Controller
@@ -87,8 +88,10 @@ namespace Yavsc.ApiControllers
         {
             var apiContext = _paymentSettings.CreateAPIContext();
             var query = await _context.HairCutQueries.Include(q=>q.Client).
-            Include(q=>q.Client.PostalAddress).SingleAsync(q=>q.Id == id);
-            var payment = apiContext.CreatePaiment(query,"sale",_logger);
+            Include(q=>q.Client.PostalAddress).Include(q=>q.Prestation)
+            .SingleAsync(q=>q.Id == id);
+            query.SelectedProfile = _context.BrusherProfile.Single(p=>p.UserId == query.PerformerId);
+            var payment = apiContext.CreatePayment(query,"authorize",_logger);
             return Json(payment);
         }
     }

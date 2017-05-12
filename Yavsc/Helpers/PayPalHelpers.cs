@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using PayPal.Api;
+using PayPal.Exception;
 using Yavsc.Models.Billing;
 
 namespace Yavsc.Helpers
@@ -19,51 +21,80 @@ namespace Yavsc.Helpers
             return apiContext;
         }
 
-        public static Payment CreatePaiment(this APIContext apiContext, NominativeServiceCommand query, string intent = "sale", ILogger logger=null)
+        public static Payment CreatePayment(this APIContext apiContext, NominativeServiceCommand query, string intent = "sale", ILogger logger=null)
         {
             var queryType = query.GetType().Name;
             var transaction = new Transaction
             {
-                description ="Votre commande du "+query.DateCreated.ToLongDateString()+
-                "\n"+query.Description,
-                invoice_number = $"{query.ActivityCode}/{queryType}/{query.Id}"
+                description = query.Description,
+                invoice_number = query.Id.ToString(),
+                custom = query.GetType().Name + "/"+ query.Id.ToString()
             };
-            logger?.LogInformation("transaction: "+transaction.invoice_number);
             // transaction.item_list.shipping_address.city
             // country_code default_address id
             // line1 line2 preferred_address recipient_name state status type
-            transaction.item_list = new ItemList();
+         /*   transaction.item_list = new ItemList();
             if (query.Client.PostalAddress!=null) {
-                transaction.item_list.shipping_address = new ShippingAddress();
-                transaction.item_list.shipping_address.line1 = query.Client.PostalAddress.Address;
+                var address =  query.Client.PostalAddress?.Address;
+                if (address!=null) {
+                    var parts = new Stack<string> ( address.Split(',') );
+                    var country = parts.Pop().Trim();
+                    var city = parts.Pop().Trim().Split(' ');
+                    var line1 = parts.First().Trim();
+                    var line2 = string.Join(" - ",parts.Skip(1));
+                transaction.item_list.shipping_address = new ShippingAddress {
+                    line1 = line1,
+                    line2 = line2,
+                    city = city[1],
+                    postal_code = city[0],
+                    country_code = country == "France" ? "fr" : country
+                };
+                }
             }
             transaction.item_list.shipping_phone_number = query.Client.PhoneNumber;
-            logger?.LogInformation("client address: "+transaction.item_list.shipping_address.line1);
-            transaction.item_list.items = query.GetBillItems().Select(i => new Item {
+            var items = query.GetBillItems();
+            transaction.item_list.items = items.Select(i => new Item {
                 name = i.Name,
                 description = i.Description,
+                quantity = i.Count.ToString(),
                 price = i.UnitaryCost.ToString("F2"),
                 currency = "EUR",
-                quantity = i.Count.ToString(),
-                sku = query.ActivityCode
-         /* postback_data=
-            sku=
-            supplementary_data= */
+                sku = "sku"
+       //  postback_data=
+          //  supplementary_data=
              }).ToList();
-
-
-            return Payment.Create(apiContext, new Payment
-            {
-                intent = intent, // "sale", "order", "authorize"
-                payer = new Payer
+*/             var total = query.GetBillItems().Addition().ToString("F2");
+             transaction.amount = new Amount {
+                currency = "EUR",
+                total = total
+             };
+             var payment = new Payment
                 {
-                    payment_method = "paypal"
-                },
-                transactions = new List<Transaction> { transaction }
-            });
+                    intent = intent, // "sale", "order", "authorize"
+                    payer = new Payer
+                    {
+                        payment_method = "paypal"
+                    },
+                    transactions = new List<Transaction> { transaction },
+                    redirect_urls = new RedirectUrls
+                    {
+                        return_url = Startup.Audience+ "/api/payment/info/haircut/"+query.Id.ToString(),
+                        cancel_url = Startup.Audience+ "/api/payment/cancel/haircut/"+query.Id.ToString()
+                    }
+                };
+            logger.LogWarning("Sending: "+JsonConvert.SerializeObject(payment));
+            logger.LogWarning("Using: " + JsonConvert.SerializeObject(apiContext));
+            Payment result = null;
+            try {
+                result = Payment.Create(apiContext,payment);
+            }
+            catch (PaymentsException ex) {
+                logger.LogError (ex.Message);
+            }
+            return result;
         }
 
-        public static Payment CreatePaiment(this APIContext apiContext, Estimate estimation)
+        public static Payment CreatePayment(this APIContext apiContext, Estimate estimation)
         {
             var payment = Payment.Create(apiContext,
             new Payment

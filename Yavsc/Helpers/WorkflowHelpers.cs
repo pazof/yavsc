@@ -16,7 +16,8 @@ namespace Yavsc.Helpers
            .Include(p=>p.Performer)
            .Include(p=>p.Performer.Posts)
            .Include(p=>p.Performer.Devices)
-           .Where(p => p.Active && p.Activity.Any(u=>u.DoesCode==actCode)).OrderBy( x => x.Rate ).ToList(); 
+           .Where(p => p.Active && p.Activity.Any(u=>u.DoesCode==actCode)).OrderBy( x => x.Rate ).ToList();
         }
+
     }
 }

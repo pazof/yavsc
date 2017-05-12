@@ -1,8 +1,6 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
-using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
@@ -559,6 +557,8 @@ namespace Yavsc.Migrations
                     b.Property<long>("PrestationId");
 
                     b.Property<decimal?>("Previsional");
+
+                    b.Property<string>("SelectedProfileUserId");
 
                     b.Property<int>("Status");
 
@@ -1271,6 +1271,10 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.Haircut.HairPrestation")
                         .WithMany()
                         .HasForeignKey("PrestationId");
+
+                    b.HasOne("Yavsc.Models.Haircut.BrusherProfile")
+                        .WithMany()
+                        .HasForeignKey("SelectedProfileUserId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Haircut.HairMultiCutQuery", b =>
