@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.OptionsModel;
 using PayPal.Api;
 using Yavsc.Helpers;
 using Yavsc.Models;
+using Yavsc.Models.Billing;
 using Yavsc.ViewModels.PayPal;
 
 namespace Yavsc.ApiControllers
@@ -59,8 +61,13 @@ namespace Yavsc.ApiControllers
             return Ok(result);
         }
 
-
-
+        [HttpPost("create"),AllowAnonymous]
+        public async Task<IActionResult> Create()
+        {
+            var apiContext = paymentSettings.CreateAPIContext();
+            Payment result=apiContext.CreatePayment(new Estimate());
+            return Ok(Payment.Create(apiContext,result));
+        }
 
     }
 }

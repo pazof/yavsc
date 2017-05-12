@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Payment;
 using Yavsc.Models.Relationship;
@@ -70,6 +69,10 @@ namespace Yavsc.Models.Haircut
 
             List<IBillItem> bill = new List<IBillItem>();
 
+#if DEBUG
+    if (this.Prestation==null) throw new InvalidOperationException("Prestation");
+    if (this.SelectedProfile==null) throw new InvalidOperationException("SelectedProfile");
+#endif
             // Le shampoing
             if (this.Prestation.Shampoo)
                 bill.Add(new CommandLine { Name = "Shampoing", UnitaryCost = SelectedProfile.ShampooPrice });
@@ -289,11 +292,11 @@ Prestation.Gender == HairCutGenders.Women ?
                     break;
                 case HairDressings.Coiffage:
                     // est offert
-                    bill.Add(new CommandLine
+         /*           bill.Add(new CommandLine
                         {
                             Name = "Coiffage (offert)",
                             UnitaryCost = 0m
-                        });
+                        }); */
                     break;
                 case HairDressings.Folding:
                 {
@@ -336,9 +339,7 @@ Prestation.Gender == HairCutGenders.Women ?
             return bill;
         }
 
-        [ForeignKeyAttribute("PerformerId")]
         public virtual BrusherProfile SelectedProfile { get; set; }
-        public decimal Addition() => GetBillItems().Aggregate<IBillItem, decimal>(0m, (t, l) => t + l.Count * l.UnitaryCost);
 
     }
 }

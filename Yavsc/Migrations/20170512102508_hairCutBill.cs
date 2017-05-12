@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class hairCutPaypalPayment : Migration
+    public partial class hairCutBill : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,20 +50,10 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.DropPrimaryKey(name: "PK_PaypalPayment", table: "PaypalPayment");
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_PaypalPayment",
-                table: "PaypalPayment",
-                column: "PaypalPaymentId");
             migrationBuilder.AddColumn<string>(
-                name: "PaymentId",
+                name: "SelectedProfileUserId",
                 table: "HairCutQuery",
                 nullable: true);
-            migrationBuilder.AddColumn<string>(
-                name: "Name",
-                table: "CommandLine",
-                nullable: false,
-                defaultValue: "");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -182,13 +174,6 @@ namespace Yavsc.Migrations
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
-                name: "FK_HairCutQuery_PaypalPayment_PaymentId",
-                table: "HairCutQuery",
-                column: "PaymentId",
-                principalTable: "PaypalPayment",
-                principalColumn: "PaypalPaymentId",
-                onDelete: ReferentialAction.Restrict);
-            migrationBuilder.AddForeignKey(
                 name: "FK_HairCutQuery_PerformerProfile_PerformerId",
                 table: "HairCutQuery",
                 column: "PerformerId",
@@ -202,6 +187,13 @@ namespace Yavsc.Migrations
                 principalTable: "HairPrestation",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_HairCutQuery_BrusherProfile_SelectedProfileUserId",
+                table: "HairCutQuery",
+                column: "SelectedProfileUserId",
+                principalTable: "BrusherProfile",
+                principalColumn: "UserId",
+                onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
                 name: "FK_HairMultiCutQuery_Activity_ActivityCode",
                 table: "HairMultiCutQuery",
@@ -363,10 +355,6 @@ namespace Yavsc.Migrations
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
                 onDelete: ReferentialAction.Cascade);
-            migrationBuilder.RenameColumn(
-                name: "orderReference",
-                table: "PaypalPayment",
-                newName: "OrderReference");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -388,9 +376,9 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_BrusherProfile_PerformerProfile_UserId", table: "BrusherProfile");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Activity_ActivityCode", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_ApplicationUser_ClientId", table: "HairCutQuery");
-            migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_PaypalPayment_PaymentId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_PerformerProfile_PerformerId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_HairPrestation_PrestationId", table: "HairCutQuery");
+            migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_BrusherProfile_SelectedProfileUserId", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_Activity_ActivityCode", table: "HairMultiCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_ApplicationUser_ClientId", table: "HairMultiCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairMultiCutQuery_PerformerProfile_PerformerId", table: "HairMultiCutQuery");
@@ -414,13 +402,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.DropPrimaryKey(name: "PK_PaypalPayment", table: "PaypalPayment");
-            migrationBuilder.DropColumn(name: "PaymentId", table: "HairCutQuery");
-            migrationBuilder.DropColumn(name: "Name", table: "CommandLine");
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_PaypalPayment",
-                table: "PaypalPayment",
-                column: "PaypalPayerId");
+            migrationBuilder.DropColumn(name: "SelectedProfileUserId", table: "HairCutQuery");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -715,10 +697,6 @@ namespace Yavsc.Migrations
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
                 onDelete: ReferentialAction.Restrict);
-            migrationBuilder.RenameColumn(
-                name: "OrderReference",
-                table: "PaypalPayment",
-                newName: "orderReference");
         }
     }
 }

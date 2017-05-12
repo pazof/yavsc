@@ -192,7 +192,8 @@ namespace Yavsc.Controllers
                 }
                 ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
-                var addition = model.Addition();
+                var items = model.GetBillItems();
+                var addition = items.Addition();
                 ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
                 return View("CommandConfirmation",model);
             }
