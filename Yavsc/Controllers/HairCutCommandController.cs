@@ -160,7 +160,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync(uid);
                 var brusherProfile = await _context.BrusherProfile.SingleAsync(p=>p.UserId == pro.PerformerId);
                 model.Client = await  _context.Users.SingleAsync(u=>u.Id == model.ClientId);
-
+                model.SelectedProfile = brusherProfile;
                 var yaev = model.CreateEvent(_localizer, brusherProfile);
                 MessageWithPayloadResponse grep = null;
 
@@ -192,7 +192,7 @@ namespace Yavsc.Controllers
                 }
                 ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
-                var addition = model.Addition(brusherProfile);
+                var addition = model.Addition();
                 ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
                 return View("CommandConfirmation",model);
             }

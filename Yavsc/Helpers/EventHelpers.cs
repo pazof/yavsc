@@ -40,7 +40,7 @@ namespace Yavsc.Helpers
             string evdate = query.EventDate?.ToString("dddd dd/MM/yyyy à HH:mm")??"[pas de date spécifiée]";
             string address = query.Location?.Address??"[pas de lieu spécifié]";
             var p = query.Prestation;
-            decimal total = query.Addition(bpr);
+            decimal total = query.Addition();
             string strprestation = $@"Coupe: {p.Cut}, Total: {total}";
 
             var yaev = new HairCutQueryEvent
