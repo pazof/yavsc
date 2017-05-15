@@ -29,6 +29,8 @@ namespace Yavsc.Helpers
                 invoice_number = query.Id.ToString(),
                 custom = query.GetType().Name + "/"+ query.Id.ToString()
             };
+            transaction.order_url = Startup.Audience + "/"  +controllerName + "/Details/" + query.Id;
+
             // transaction.item_list.shipping_address.city
             // country_code default_address id
             // line1 line2 preferred_address recipient_name state status type
@@ -77,14 +79,10 @@ namespace Yavsc.Helpers
                     transactions = new List<Transaction> { transaction },
                     redirect_urls = new RedirectUrls
                     {
-                        // FIXME s/HairCutCommand/{query.DedicatedCommandController}/{query.Id}
-
-                        return_url = Startup.Audience+ $"/{controllerName}/Detail/"+query.Id.ToString(),
+                        return_url = Startup.Audience+ $"/{controllerName}/Details/"+query.Id.ToString(),
                         cancel_url = Startup.Audience+ $"/{controllerName}/ClientCancel/"+query.Id.ToString()
                     }
                 };
-            logger.LogWarning("Sending: "+JsonConvert.SerializeObject(payment));
-            logger.LogWarning("Using: " + JsonConvert.SerializeObject(apiContext));
             Payment result = null;
             try {
                 result = Payment.Create(apiContext,payment);
