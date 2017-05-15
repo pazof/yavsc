@@ -93,7 +93,7 @@ namespace Yavsc.ApiControllers
             Include(q => q.Client.PostalAddress).Include(q => q.Prestation).Include(q=>q.Regularisation)
             .SingleAsync(q => q.Id == id);
             if (query.PaymentId!=null)
-                return new BadRequestObjectResult(new { error = "Already paid" });
+                return new BadRequestObjectResult(new { error = "An existing payment process already exists" });
             query.SelectedProfile = _context.BrusherProfile.Single(p => p.UserId == query.PerformerId);
             var payment = apiContext.CreatePayment(query, "HairCutCommand", "sale", _logger);
 
