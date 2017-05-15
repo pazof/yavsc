@@ -2,35 +2,33 @@
 
 @if (Model!=null && Model.PaypalPaymentId!=null) {
    
-    if (Model.Executor.Id == User.GetUserId()) {
+    @if (Model.Executor.Id == User.GetUserId()) {
         <text>
-            Vous avez payé : 
+           Votre paiment
         </text>
     } else {
         <text>
-            @Html.DisplayFor(m=>m.Executor.UserName) a payé : 
+           Le paiment de @Html.DisplayFor(m=>m.Executor.UserName) 
         </text>
-    }  
-        // Da failback
-        <a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.PaypalPaymentId">@Model.PaypalPaymentId</a>
-   
-    
+    }
+    <text> : 
+    </text><a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.PaypalPaymentId">@Model.PaypalPaymentId</a>
+
 } else {
 
 <div id="paypal-button"></div>
-
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
 <environement names="lua,coiffure,zicmoove,yavsc,yavscpre">
     <script>
         var CREATE_PAYMENT_URL = '@(ViewData["PaymentUrl"])';
-        var EXECUTE_PAYMENT_URL = 'https://lua.pschneider.fr/api/payment/execute';
-        var PAYPAL_ENV = 'sandbox';
+        var EXECUTE_PAYMENT_URL = '@(SiteSettings.Value.Audience)/api/payment/execute';
+        var PAYPAL_ENV = 'production';
     </script>
 </environement>
 <environement names="Development">
     <script>
         var CREATE_PAYMENT_URL = '@(ViewData["PaymentUrl"])';
-        var EXECUTE_PAYMENT_URL = 'https://dev.pschneider.fr/api/payment/execute';
+        var EXECUTE_PAYMENT_URL = '@(SiteSettings.Value.Audience)/api/payment/execute';
         var PAYPAL_ENV = 'sandbox';
     </script>
 </environement>
@@ -53,8 +51,12 @@
             return paypal.request.post(EXECUTE_PAYMENT_URL,
                     { paymentID: data.paymentID, payerID: data.payerID })
                     
-                .then(function(data) { /* Go to a success page */ })
-                .catch(function(err) { /* Go to an error page  */ });
+                .then(function(data) { 
+                    document.location = '@(ViewData["SuccessUrl"])'; 
+                    /* Go to a success page */ })
+                .catch(function(err) { 
+                    document.location = '/Manage/PaymentInfo/'+data.paymentID; 
+                    /* Go to an error page  */ });
         }
 
     }, '#paypal-button');
