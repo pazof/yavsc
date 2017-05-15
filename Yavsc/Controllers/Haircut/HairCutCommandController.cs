@@ -51,6 +51,7 @@ namespace Yavsc.Controllers
             .Include(x => x.PerformerProfile)
             .Include(x => x.Prestation)
             .Include(x => x.PerformerProfile.Performer)
+            .Include(x => x.Regularisation)
             .SingleAsync(m => m.Id == id);
         }
         public async Task<IActionResult> ClientCancel(long id)
