@@ -5,6 +5,7 @@ namespace Yavsc.Helpers
     using Models.Workflow;
     using Models.Messaging;
     using Yavsc.Models.Haircut;
+    using System.Linq;
 
     public static class EventHelpers
     {
@@ -42,6 +43,8 @@ namespace Yavsc.Helpers
             var p = query.Prestation;
             decimal total = query.GetBillItems().Addition();
             string strprestation = $@"Coupe: {p.Cut}, Total: {total}";
+            string bill = string.Join("\n", query.GetBillItems().Select(
+                l=> $"{l.Name} {l.Description} {l.UnitaryCost} {l.Count}"));
 
             var yaev = new HairCutQueryEvent
             {
@@ -50,8 +53,9 @@ namespace Yavsc.Helpers
 {evdate},
 {address}
 -----
-{strprestation}
+{strprestation}:
 
+{bill}
 --
 {query.AdditionalInfo}
 " ,
@@ -63,7 +67,7 @@ Previsional = query.Previsional,
 EventDate = query.EventDate,
 Location = query.Location,
 Id = query.Id,
-Reason = query.AdditionalInfo,
+Reason = $"{query.AdditionalInfo}",
 ActivityCode = query.ActivityCode
 
             };
