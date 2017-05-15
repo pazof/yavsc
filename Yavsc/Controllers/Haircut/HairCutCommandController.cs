@@ -133,11 +133,18 @@ namespace Yavsc.Controllers
 
             return View(command);
         }
-
+        /// <summary>
+        /// Crée une requête en coiffure à domicile
+        ///
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="taintIds"></param>
+        /// <returns></returns>
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateHairCutQuery(HairCutQuery model, string taintIds)
         {
+            // TODO utiliser Markdown-av+tags
             var uid = User.GetUserId();
             var prid = model.PerformerId;
             long[] longtaintIds = null;
