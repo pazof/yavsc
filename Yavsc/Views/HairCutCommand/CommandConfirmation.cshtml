@@ -79,25 +79,14 @@
         
         <environment names="Development">
 
-        <dt>Facture</dt>
-        <dd>TODO</dd>
+        <dt>TODO Facture</dt>
+        <dd>Facture</dd>
 
         </environment>
         
 <dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
-<dd>@Html.DisplayFor(m=>m.Regularisation,new { PaymentUrl = "/api/haircut/createpayment/"+Model.Id.ToString() })</dd>
+<dd>@Html.DisplayFor(m=>m.Regularisation,new { 
+    PaymentUrl = "/api/haircut/createpayment/"+Model.Id.ToString(), 
+    SuccessUrl = "/HairCutCommand/Details/"+Model.Id.ToString() })</dd>
      </dl>
-           
-            
-
-           
-        
-            
-
-        
-       
-
-        
 </div>
-
-
