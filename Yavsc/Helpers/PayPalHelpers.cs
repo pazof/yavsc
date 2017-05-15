@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using PayPal.Api;
@@ -21,7 +20,7 @@ namespace Yavsc.Helpers
             return apiContext;
         }
 
-        public static Payment CreatePayment(this APIContext apiContext, NominativeServiceCommand query, string intent = "sale", ILogger logger=null)
+        public static Payment CreatePayment(this APIContext apiContext, NominativeServiceCommand query, string controllerName, string intent = "sale", ILogger logger=null)
         {
             var queryType = query.GetType().Name;
             var transaction = new Transaction
@@ -78,8 +77,10 @@ namespace Yavsc.Helpers
                     transactions = new List<Transaction> { transaction },
                     redirect_urls = new RedirectUrls
                     {
-                        return_url = Startup.Audience+ "/api/payment/info/haircut/"+query.Id.ToString(),
-                        cancel_url = Startup.Audience+ "/api/payment/cancel/haircut/"+query.Id.ToString()
+                        // FIXME s/HairCutCommand/{query.DedicatedCommandController}/{query.Id}
+
+                        return_url = Startup.Audience+ $"/{controllerName}/Detail/"+query.Id.ToString(),
+                        cancel_url = Startup.Audience+ $"/{controllerName}/ClientCancel/"+query.Id.ToString()
                     }
                 };
             logger.LogWarning("Sending: "+JsonConvert.SerializeObject(payment));

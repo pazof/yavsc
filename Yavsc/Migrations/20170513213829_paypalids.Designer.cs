@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170513213829_paypalids")]
+    partial class paypalids
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -917,19 +918,6 @@ namespace Yavsc.Migrations
                     b.HasKey("OwnerId", "UserId");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Relationship.Link", b =>
-                {
-                    b.Property<string>("HRef");
-
-                    b.Property<string>("Method");
-
-                    b.Property<string>("PaypalPaymentPaypalPaymentId");
-
-                    b.Property<string>("Rel");
-
-                    b.HasKey("HRef", "Method");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Relationship.Location", b =>
                 {
                     b.Property<long>("Id")
@@ -1425,13 +1413,6 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Relationship.Link", b =>
-                {
-                    b.HasOne("Yavsc.Models.Payment.PaypalPayment")
-                        .WithMany()
-                        .HasForeignKey("PaypalPaymentPaypalPaymentId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Relationship.PostTag", b =>

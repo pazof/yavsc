@@ -24,10 +24,12 @@ namespace Yavsc.Controllers
     using System.Globalization;
     using Microsoft.AspNet.Mvc.Rendering;
     using System.Collections.Generic;
+    using PayPal.Api;
 
     public class HairCutCommandController : CommandController
     {
         public HairCutCommandController(ApplicationDbContext context,
+          IOptions<PayPalSettings> payPalSettings,
         IOptions<GoogleAuthSettings> googleSettings,
         IGoogleCloudMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
@@ -38,8 +40,10 @@ namespace Yavsc.Controllers
           ILoggerFactory loggerFactory) : base(context,googleSettings,GCMSender,userManager,
           localizer,emailSender,smtpSettings,siteSettings,loggerFactory)
         {
-
+            this.payPalSettings = payPalSettings.Value;
         }
+        PayPalSettings payPalSettings;
+
         private async Task<HairCutQuery> GetQuery(long id)
         {
             return await _context.HairCutQueries
@@ -71,6 +75,10 @@ namespace Yavsc.Controllers
             await _context.SaveChangesAsync();
             return await Index();
         }
+        /// <summary>
+        /// List client's queries
+        /// </summary>
+        /// <returns></returns>
         public override async Task<IActionResult> Index()
         {
             var uid = User.GetUserId();
@@ -83,18 +91,15 @@ namespace Yavsc.Controllers
             .ToListAsync());
         }
 
-        public override async Task<IActionResult> Details(long? id)
+        public async Task<IActionResult> Details(long id, string paymentId, string token, string PayerID)
         {
-            if (id == null)
-            {
-                return HttpNotFound();
-            }
 
             HairCutQuery command = await _context.HairCutQueries
             .Include(x => x.Location)
             .Include(x => x.PerformerProfile)
             .Include(x => x.Prestation)
             .Include(x => x.PerformerProfile.Performer)
+            .Include(x => x.Regularisation)
             .SingleAsync(m => m.Id == id);
             if (command == null)
             {
@@ -104,6 +109,29 @@ namespace Yavsc.Controllers
             return View(command);
         }
 
+        public async Task<IActionResult> Execute(long id, string paymentId, string token, string PayerID)
+        {
+            HairCutQuery command = await _context.HairCutQueries
+            .Include(x => x.Location)
+            .Include(x => x.PerformerProfile)
+            .Include(x => x.Prestation)
+            .Include(x => x.PerformerProfile.Performer)
+            .Include(x => x.Regularisation)
+            .SingleAsync(m => m.Id == id);
+
+            if (command == null)
+            {
+                return HttpNotFound();
+            }
+             var context =  payPalSettings.CreateAPIContext();
+            var payment = Payment.Get(context,paymentId);
+
+            var execution = new PaymentExecution{ transactions = payment.transactions,
+            payer_id = PayerID };
+            var result = payment.Execute(context,execution);
+
+            return View(command);
+        }
 
         [HttpPost, Authorize]
         [ValidateAntiForgeryToken]
@@ -195,6 +223,7 @@ namespace Yavsc.Controllers
                 var items = model.GetBillItems();
                 var addition = items.Addition();
                 ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
+
                 return View("CommandConfirmation",model);
             }
             ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);

@@ -66,13 +66,8 @@ namespace Yavsc.Controllers
         }
 
         // GET: Command/Details/5
-        public virtual async Task<IActionResult> Details(long? id)
+        public virtual async Task<IActionResult> RdvDetails(long id)
         {
-            if (id == null)
-            {
-                return HttpNotFound();
-            }
-
             RdvQuery command = await _context.RdvQueries
             .Include(x => x.Location)
             .Include(x => x.PerformerProfile)

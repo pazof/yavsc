@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Payment {
     using YavscLib;
+    using Relationship;
 
     public class PaypalPayment : IBaseTrackedEntity
     {
@@ -15,7 +17,6 @@ namespace Yavsc.Models.Payment {
         [ForeignKey("ExecutorId")]
         public virtual ApplicationUser Executor { get; set; }
 
-        [Required]
         public string PaypalPayerId { get; set; }
 
         public string OrderReference { get; set; }
@@ -41,8 +42,9 @@ namespace Yavsc.Models.Payment {
         {
             get; set;
         }
+
+        public string State { get; set; }
+
+        public virtual List<Link> Links { get; set; }
     }
 }
-
-
-
