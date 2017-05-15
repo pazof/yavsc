@@ -21,7 +21,10 @@
 <dd>@Html.DisplayFor(m=>m.AdditionalInfo)
 </dd>
 <dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
-<dd>@Html.DisplayFor(m=>m.Regularisation,new { PaymentUrl = "/api/haircut/createpayment/"+Model.Id.ToString() })</dd>
+<dd>@Html.DisplayFor(m=>m.Regularisation,new { 
+    PaymentUrl = "/api/haircut/createpayment/"+Model.Id.ToString(),
+    SuccessUrl = "/HairCutCommand/Details/"+Model.Id.ToString()
+  })</dd>
 </dl>
 
 
