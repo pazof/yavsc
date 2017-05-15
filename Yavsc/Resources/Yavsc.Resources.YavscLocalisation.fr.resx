@@ -133,6 +133,7 @@
   <data name="AnIMessageHasbeenSent"><value>Un message instantané a été envoyé à {0},
   lui présentant votre demande. Vous devriez être contacté très rapidement.</value></data>
   <data name="aprestation"><value>une prestation</value></data>
+  <data name="approved"><value>Approuvé</value></data>
   <data name="AskForAnEstimate"><value>Demander un devis</value></data>
   <data name="AttachedFiles"><value>Fichiers attachées</value></data>
   <data name="AuthenticatedOnly"><value>Seuls les utilisateurs authentifiés peuvent accèder à cette information.</value></data>

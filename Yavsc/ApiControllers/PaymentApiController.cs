@@ -62,7 +62,7 @@ namespace Yavsc.ApiControllers
         }
 
         [HttpPost("create"),AllowAnonymous]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             var apiContext = paymentSettings.CreateAPIContext();
             Payment result=apiContext.CreatePayment(new Estimate());

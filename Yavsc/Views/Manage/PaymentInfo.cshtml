@@ -1,0 +1,20 @@
+@using PayPal.Api
+@model Payment
+
+<dl>
+    <dt> État du paiment
+    </dt>
+    <dd> @SR[Model.state] @Model.failure_reason
+    </dd>
+    <dt>
+    </dt>
+    <dd>@Model.payment_instruction
+    </dd>
+</dl>
+@if (Model.state=="created") {
+    <a href="@Model.GetApprovalUrl()">Autoriser le paiement</a>
+}
+@{ var refundUrl = Model.GetHateoasLink("refund"); }
+@if (refundUrl!=null) {
+    <a href="@refundUrl">Rembourser ce paiement</a>
+}

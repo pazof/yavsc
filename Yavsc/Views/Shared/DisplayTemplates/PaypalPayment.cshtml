@@ -1,7 +1,20 @@
 @model PaypalPayment
 
-@if (Model!=null && Model.Executor!=null) {
-    @Html.DisplayFor(m=>m.Executor)
+@if (Model!=null && Model.PaypalPaymentId!=null) {
+   
+    if (Model.Executor.Id == User.GetUserId()) {
+        <text>
+            Vous avez payé : 
+        </text>
+    } else {
+        <text>
+            @Html.DisplayFor(m=>m.Executor.UserName) a payé : 
+        </text>
+    }  
+        // Da failback
+        <a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.PaypalPaymentId">@Model.PaypalPaymentId</a>
+   
+    
 } else {
 
 <div id="paypal-button"></div>

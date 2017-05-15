@@ -12,12 +12,13 @@ namespace Yavsc.ApiControllers
     using Microsoft.Extensions.Logging;
     using Models;
     using Services;
-    using Yavsc.Models.Haircut;
-    using Yavsc.Resources;
+    using Models.Haircut;
+    using Resources;
     using System.Threading.Tasks;
-    using Yavsc.Helpers;
+    using Helpers;
     using Microsoft.Data.Entity;
-    using Microsoft.AspNet.Authorization;
+    using Models.Payment;
+    using Models.Relationship;
 
     [Route("api/haircut")]
     public class HairCutController : Controller
@@ -64,7 +65,7 @@ namespace Yavsc.ApiControllers
             var uid = User.GetUserId();
             var now = DateTime.Now;
             var result = _context.HairCutQueries.Where(
-                q=>q.ClientId == uid
+                q => q.ClientId == uid
                 && q.EventDate > now
                 && q.Status == QueryStatus.Inserted
                 );
@@ -72,10 +73,11 @@ namespace Yavsc.ApiControllers
         }
 
         [HttpPost]
-        public IActionResult PostQuery (HairCutQuery query )
+        public IActionResult PostQuery(HairCutQuery query)
         {
             var uid = User.GetUserId();
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 return new BadRequestObjectResult(ModelState);
             }
             _context.HairCutQueries.Add(query);
@@ -87,11 +89,43 @@ namespace Yavsc.ApiControllers
         public async Task<IActionResult> CreatePayment(long id)
         {
             var apiContext = _paymentSettings.CreateAPIContext();
-            var query = await _context.HairCutQueries.Include(q=>q.Client).
-            Include(q=>q.Client.PostalAddress).Include(q=>q.Prestation)
-            .SingleAsync(q=>q.Id == id);
-            query.SelectedProfile = _context.BrusherProfile.Single(p=>p.UserId == query.PerformerId);
-            var payment = apiContext.CreatePayment(query,"authorize",_logger);
+            var query = await _context.HairCutQueries.Include(q => q.Client).
+            Include(q => q.Client.PostalAddress).Include(q => q.Prestation).Include(q=>q.Regularisation)
+            .SingleAsync(q => q.Id == id);
+            if (query.PaymentId!=null)
+                return new BadRequestObjectResult(new { error = "Already paid" });
+            query.SelectedProfile = _context.BrusherProfile.Single(p => p.UserId == query.PerformerId);
+            var payment = apiContext.CreatePayment(query, "HairCutCommand", "sale", _logger);
+
+            switch (payment.state)
+            {
+                case "created":
+                case "approved":
+                    {
+                        var dbinfo = new PaypalPayment
+                        {
+                            ExecutorId = User.GetUserId(),
+                            PaypalPayerId = payment.payer.payer_info?.payer_id,
+                            PaypalPaymentId = payment.id,
+                            State = payment.state
+                        };
+                        var links = payment.links.Select
+                        (
+                            l=> new Link {
+                            HRef = l.href,
+                            Rel = l.rel,
+                            Method = l.method
+                            });
+                        _context.PaypalPayments.Add(dbinfo);
+                        query.PaymentId = payment.id;
+                        await _context.SaveChangesAsync(User.GetUserId());
+                    }
+                    break;
+                case "failed":
+                    return new BadRequestObjectResult(payment);
+                default: throw new NotImplementedException();
+            }
+
             return Json(payment);
         }
     }
