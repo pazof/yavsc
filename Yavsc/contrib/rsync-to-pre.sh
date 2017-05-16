@@ -6,10 +6,13 @@ ssh root@localhost rm -rf $FSPATH/approot/src
 
 (
 set -e
+ssh root@localhost service kestrel stop
 cd bin/output/
 rsync -ravu wwwroot approot root@localhost:$FSPATH
+sleep 1
 ssh root@localhost sync
-ssh root@localhost service kestrel restart
+sleep 1
+ssh root@localhost service kestrel start
 )
 
 echo "Now, go and try <https://yavscpre.pschneider.fr>"
