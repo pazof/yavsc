@@ -76,11 +76,7 @@ namespace Yavsc.Controllers
                 .Include(a=>a.Forms).Include(a=>a.Children)
                 .Where(a=>!a.Hidden)
                 .Where(a=> a.ParentCode==id).OrderByDescending(a=>a.Rate));
-
             }
-
-
-
         }
         public IActionResult About()
         {

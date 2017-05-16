@@ -32,6 +32,8 @@
 @using Yavsc.ViewModels.Relationship;
 @using Yavsc.ViewModels.Workflow;
 @using Yavsc.ViewModels.Blogspot;
+@using Microsoft.AspNet.Hosting;
+@using Microsoft.Extensions.PlatformAbstractions;
 
 @inject IViewLocalizer LocString
 @addTagHelper "*, Microsoft.AspNet.Mvc.TagHelpers"
@@ -41,3 +43,4 @@
 @inject IAuthorizationService  AuthorizationService
 @inject IOptions<GoogleAuthSettings> GoogleSettings
 @inject IOptions<SiteSettings> SiteSettings
+@inject IHostingEnvironment HostingEnvironment

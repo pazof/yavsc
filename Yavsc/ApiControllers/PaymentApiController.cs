@@ -65,7 +65,7 @@ namespace Yavsc.ApiControllers
         public IActionResult Create()
         {
             var apiContext = paymentSettings.CreateAPIContext();
-            Payment result=apiContext.CreatePayment(new Estimate());
+            Payment result= Request.CreatePayment("Command",apiContext,new Estimate());
             return Ok(Payment.Create(apiContext,result));
         }
 
