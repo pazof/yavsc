@@ -2,6 +2,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.Localization;
+using PayPal.Api;
+
 
 namespace Yavsc.ApiControllers
 {
@@ -19,6 +21,7 @@ namespace Yavsc.ApiControllers
     using Microsoft.Data.Entity;
     using Models.Payment;
     using Models.Relationship;
+    using Newtonsoft.Json;
 
     [Route("api/haircut")]
     public class HairCutController : Controller
@@ -88,15 +91,24 @@ namespace Yavsc.ApiControllers
         [HttpPost("createpayment/{id}")]
         public async Task<IActionResult> CreatePayment(long id)
         {
-            var apiContext = PayPalHelpers.CreateAPIContext();
-
-            var query = await _context.HairCutQueries.Include(q => q.Client).
+            APIContext apiContext = null;
+            HairCutQuery query = await _context.HairCutQueries.Include(q => q.Client).
             Include(q => q.Client.PostalAddress).Include(q => q.Prestation).Include(q=>q.Regularisation)
             .SingleAsync(q => q.Id == id);
             if (query.PaymentId!=null)
                 return new BadRequestObjectResult(new { error = "An existing payment process already exists" });
             query.SelectedProfile = _context.BrusherProfile.Single(p => p.UserId == query.PerformerId);
 
+            try {
+                apiContext = PayPalHelpers.CreateAPIContext();
+            }
+            catch (PayPal.IdentityException ex) {
+                _logger.LogError(ex.Response);
+            }
+            if (apiContext==null) {
+                _logger.LogError(JsonConvert.SerializeObject(Startup.PayPalSettings));
+                throw new Exception("No PayPal Api context");
+            }
             var payment = Request.CreatePayment("HairCutCommand",apiContext, query,  "sale", _logger);
             switch (payment.state)
             {
