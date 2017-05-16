@@ -1,165 +1,168 @@
 {
-  "version": "1.0.0-*",
-  "authors": [
-    "pazof"
-  ],
-  "tags": [
-    ""
-  ],
-  "projectUrl": "http://yavsc.pschneider.fr",
-  "licenseUrl": "",
-  "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",
-  "compilationOptions": {
-    "emitEntryPoint": true,
-    "debugType": "portable",
-    "outputName": "Yavsc"
-  },
-  "buildOptions": {
-    "debugType": "portable",
-    "emitEntryPoint": true
-  },
-  "compile": [
-    "*.cs"
-  ],
-  "resource": [
-    "Resources/**/*.resx"
-  ],
-  "namedResource": {},
-  "configurations": {
-    "Debug": {
-      "compilationOptions": {
+    "version": "1.0.0-*",
+    "authors": [
+        "pazof"
+    ],
+    "tags": [
+        ""
+    ],
+    "projectUrl": "http://yavsc.pschneider.fr",
+    "licenseUrl": "",
+    "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",
+    "compilationOptions": {
         "emitEntryPoint": true,
-        "define": [
-          "DEBUG",
-          "TRACE"
-        ],
-        "optimize": false,
-        "debugType": "portable"
-      }
+        "debugType": "portable",
+        "outputName": "Yavsc"
     },
-    "Release": {
-      "compilationOptions": {
-        "define": [
-          "RELEASE",
-          "TRACE"
-        ],
-        "optimize": true
-      }
-    }
-  },
-  "webroot": "wwwroot",
-  "tooling": {
-    "defaultNamespace": "Yavsc"
-  },
-  "dependencies": {
-    "EntityFramework.Commands": "7.0.0-rc1-final",
-    "EntityFramework.Core": "7.0.0-rc1-final",
-    "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
-    "EntityFramework.Relational": "7.0.0-rc1-final",
-    "EntityFramework7.Npgsql": "3.1.0-rc1-3",
-    "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
-    "Google.Apis.Core": "1.11.1",
-    "Google.Apis": "1.11.1",
-    "MailKit": "1.12.0",
-    "MarkdownDeep-av.NET": "1.5.6",
-    "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Authorization": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Diagnostics.Entity": "7.0.0-rc1-final",
-    "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-*",
-    "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-*",
-    "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Mvc": "6.0.0-rc1-*",
-    "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-*",
-    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Server.WebListener": "1.0.0-rc1-final",
-    "Microsoft.AspNet.SignalR.Core": "2.2.1",
-    "Microsoft.AspNet.SignalR.JS": "2.2.1",
-    "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-*",
-    "Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1-*",
-    "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1-*",
-    "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.TraceSource": "1.0.0-rc1-final",
-    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Globalization.CultureInfoCache": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Localization.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
-    "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.CodeGenerators.Mvc": "1.0.0-rc1-final",
-    "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
-    "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta8",
-    "Microsoft.Framework.Configuration.Binder": "1.0.0-beta8",
-    "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
-    "Microsoft.AspNet.Session": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Web.Optimization": "1.1.3",
-    "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Options": "0.0.1-alpha",
-    "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final",
-    "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
-    "Microsoft.AspNet.DataProtection.SystemWeb": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
-    "PayPalCoreSDK": "1.7.1",
-    "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
-    "Microsoft.AspNet.OWin": "1.0.0-rc1-final",
-    "System.Json": "4.0.20126.16343",
-    "YavscLib": {
-      "type": "build",
-      "version": "1.0.0"
+    "buildOptions": {
+        "debugType": "portable",
+        "emitEntryPoint": true
     },
-    "Extensions.AspNet.Authentication.Instagram": "1.0.0-t150809211713",
-    "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
-    "Microsoft.DiaSymReader.Native": "1.5.0",
-    "PayPal": "1.8.0"
-  },
-  "commands": {
-    "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
-    "coiffure": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:88",
-    "lua": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:85",
-    "luatest": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:5001",
-    "kestrel": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
-    "zicmoove": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:87",
-    "yavsc": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:86",
-    "yavscpre": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:84",
-    "ef": "EntityFramework.Commands",
-    "gen": "Microsoft.Extensions.CodeGeneration"
-  },
-  "frameworks": {
-    "dnx451": {
-      "frameworkAssemblies": {
-        "System.Drawing": "4.0.0.0"
-      }
-    }
-  },
-  "exclude": [
-    "wwwroot",
-    "node_modules",
-    "bower_components",
-    "contrib"
-  ],
-  "publishExclude": [
-    "**.user",
-    "**.vspscc",
-    "contrib/**/*.*"
-  ],
-  "scripts": {
-    "prebuild": "echo before building",
-    "postbuild": "echo after building",
-    "prepack": "gulp min",
-    "postpack": "echo after packing",
-    "prerestore": "echo before restoring packages",
-    "postrestore": "echo after restoring packages",
-    "prepublish": "gulp min",
-    "postpublish": "echo \"Use contrib/rsync-to-pre.sh # to push in prod.\""
-  },
-  "embed": "Views/**/*.cshtml"
+    "compile": [
+        "*.cs"
+    ],
+    "resource": [
+        "Resources/**/*.resx"
+    ],
+    "namedResource": {},
+    "configurations": {
+        "Debug": {
+            "compilationOptions": {
+                "emitEntryPoint": true,
+                "define": [
+                    "DEBUG",
+                    "TRACE"
+                ],
+                "optimize": false,
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "compilationOptions": {
+                "define": [
+                    "RELEASE",
+                    "TRACE"
+                ],
+                "optimize": true
+            }
+        }
+    },
+    "webroot": "wwwroot",
+    "tooling": {
+        "defaultNamespace": "Yavsc"
+    },
+    "dependencies": {
+        "EntityFramework.Commands": "7.0.0-rc1-final",
+        "EntityFramework.Core": "7.0.0-rc1-final",
+        "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
+        "EntityFramework.Relational": "7.0.0-rc1-final",
+        "EntityFramework7.Npgsql": "3.1.0-rc1-3",
+        "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
+        "Google.Apis.Core": "1.11.1",
+        "Google.Apis": "1.11.1",
+        "MailKit": "1.12.0",
+        "MarkdownDeep-av.NET": "1.5.6",
+        "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Authorization": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Diagnostics.Entity": "7.0.0-rc1-final",
+        "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-*",
+        "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-*",
+        "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Mvc": "6.0.0-rc1-*",
+        "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-*",
+        "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Server.WebListener": "1.0.0-rc1-final",
+        "Microsoft.AspNet.SignalR.Core": "2.2.1",
+        "Microsoft.AspNet.SignalR.JS": "2.2.1",
+        "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-*",
+        "Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1-*",
+        "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1-*",
+        "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.TraceSource": "1.0.0-rc1-final",
+        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Globalization.CultureInfoCache": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Localization.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
+        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.CodeGenerators.Mvc": "1.0.0-rc1-final",
+        "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
+        "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta8",
+        "Microsoft.Framework.Configuration.Binder": "1.0.0-beta8",
+        "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
+        "Microsoft.AspNet.Session": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Web.Optimization": "1.1.3",
+        "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Options": "0.0.1-alpha",
+        "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final",
+        "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+        "Microsoft.AspNet.DataProtection.SystemWeb": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+        "PayPalCoreSDK": "1.7.1",
+        "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
+        "Microsoft.AspNet.OWin": "1.0.0-rc1-final",
+        "System.Json": "4.0.20126.16343",
+        "YavscLib": {
+            "type": "build",
+            "version": "1.0.0"
+        },
+        "Extensions.AspNet.Authentication.Instagram": "1.0.0-t150809211713",
+        "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+        "Microsoft.DiaSymReader.Native": "1.5.0",
+        "PayPal": "1.8.0"
+    },
+    "commands": {
+        "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
+        "coiffure": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:88",
+        "lua": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:85",
+        "luatest": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:5001",
+        "kestrel": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
+        "zicmoove": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:87",
+        "yavsc": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:86",
+        "yavscpre": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:84",
+        "ef": "EntityFramework.Commands",
+        "gen": "Microsoft.Extensions.CodeGeneration"
+    },
+    "frameworks": {
+        "dnx451": {
+            "frameworkAssemblies": {
+                "System.Drawing": "4.0.0.0",
+                "System.Net": "4.0.0.0",
+                "System.Xml": "4.0.0.0",
+                "System": "4.0.0.0"
+            }
+        }
+    },
+    "exclude": [
+        "wwwroot",
+        "node_modules",
+        "bower_components",
+        "contrib"
+    ],
+    "publishExclude": [
+        "**.user",
+        "**.vspscc",
+        "contrib/**/*.*"
+    ],
+    "scripts": {
+        "prebuild": "echo before building",
+        "postbuild": "echo after building",
+        "prepack": "gulp min",
+        "postpack": "echo after packing",
+        "prerestore": "echo before restoring packages",
+        "postrestore": "echo after restoring packages",
+        "prepublish": "gulp min",
+        "postpublish": "echo \"Use contrib/rsync-to-pre.sh # to push in prod.\""
+    },
+    "embed": "Views/**/*.cshtml"
 }

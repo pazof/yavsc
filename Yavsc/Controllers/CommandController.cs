@@ -250,5 +250,9 @@ namespace Yavsc.Controllers
             _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }
+        public IActionResult CGV()
+        {
+            return View();
+        }
     }
 }

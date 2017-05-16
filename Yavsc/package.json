@@ -10,5 +10,9 @@
     "gulp-shell": "^0.5.2",
     "gulp-uglify": "1.2.0",
     "rimraf": "2.2.8"
+  },
+  "dependencies": {
+    "braintree-web": "^3.15.0",
+    "paypal-permissions-sdk": "^1.0.8"
   }
 }

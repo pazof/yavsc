@@ -35,10 +35,10 @@ namespace Yavsc
         public static string UserBillsDirName { private set; get; }
         public static string AvatarsDirName { private set; get; }
         public static string Authority { get; private set; }
-        public static string Audience { get; private set; }
         public static string Temp { get; set; }
         public static SiteSettings SiteSetup { get; private set; }
 
+        public static PayPalSettings PayPalSettings { get; private set; }
         private static ILogger logger;
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
@@ -239,15 +239,15 @@ namespace Yavsc
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
         RoleManager<IdentityRole> roleManager,
         IAuthorizationService authorizationService,
+        IOptions<PayPalSettings> payPalSettings,
          ILoggerFactory loggerFactory)
         {
             SiteSetup = siteSettings.Value;
             Authority = siteSettings.Value.Authority;
-            Audience = siteSettings.Value.Audience;
             Startup.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
             Startup.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
             Startup.Temp = siteSettings.Value.TempDir;
-
+            PayPalSettings = payPalSettings.Value;
             // TODO implement an installation & upgrade procedure
             // Create required directories
             foreach (string dir in new string[] { UserFilesDirName, UserBillsDirName, SiteSetup.TempDir })

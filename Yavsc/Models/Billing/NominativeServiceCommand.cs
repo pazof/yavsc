@@ -15,6 +15,9 @@ namespace Yavsc.Models.Billing
   {
         public abstract long Id { get; set; }
         public abstract string Description { get; set; }
+
+        [Required()]
+        public bool Consent { get; set; }
         public DateTime DateCreated
         {
             get; set;
