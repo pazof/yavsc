@@ -106,7 +106,9 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-
+            ViewBag.CreatePaymentUrl = Request.ToAbsolute("api/haircut/createpayment/"+id);
+            ViewBag.ExecutePaymentUrl = Request.ToAbsolute("api/payment/execute");
+            ViewBag.Urls=Request.GetPaymentUrls("HairCutCommand",id.ToString());
             return View(command);
         }
 

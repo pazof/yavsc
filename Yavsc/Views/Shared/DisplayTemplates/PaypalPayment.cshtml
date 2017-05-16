@@ -1,5 +1,5 @@
 @model PaypalPayment
-
+@inject IOptions<PayPalSettings> PayPalSettings
 @if (Model!=null && Model.PaypalPaymentId!=null) {
    
     @if (Model.Executor.Id == User.GetUserId()) {
@@ -18,21 +18,11 @@
 
 <div id="paypal-button"></div>
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
-<environement names="lua,coiffure,zicmoove,yavsc,yavscpre">
-    <script>
-        var CREATE_PAYMENT_URL = '@(ViewData["PaymentUrl"])';
-        var EXECUTE_PAYMENT_URL = '@(SiteSettings.Value.Audience)/api/payment/execute';
-        var PAYPAL_ENV = 'production';
-    </script>
-</environement>
-<environement names="Development">
-    <script>
-        var CREATE_PAYMENT_URL = '@(ViewData["PaymentUrl"])';
-        var EXECUTE_PAYMENT_URL = '@(SiteSettings.Value.Audience)/api/payment/execute';
-        var PAYPAL_ENV = 'sandbox';
-    </script>
-</environement>
 <script>
+    var CREATE_PAYMENT_URL = '@ViewBag.CreatePaymentUrl';
+    var EXECUTE_PAYMENT_URL = '@ViewBag.ExecutePaymentUrl';
+    var PAYPAL_ENV = '@PayPalSettings.Value.Mode';
+
     paypal.Button.render({
     
         env: PAYPAL_ENV, // 'production', Optional: specify 'sandbox' environment
@@ -52,7 +42,7 @@
                     { paymentID: data.paymentID, payerID: data.payerID })
                     
                 .then(function(data) { 
-                    document.location = '@(ViewData["SuccessUrl"])'; 
+                    document.location = '@ViewBag.Urls.Details'; 
                     /* Go to a success page */ })
                 .catch(function(err) { 
                     document.location = '/Manage/PaymentInfo/'+data.paymentID; 

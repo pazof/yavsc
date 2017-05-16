@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+
 using Microsoft.Extensions.Logging;
 using PayPal.Api;
 using PayPal.Exception;
 using Yavsc.Models.Billing;
+using Microsoft.AspNet.Http;
 
 namespace Yavsc.Helpers
 {
@@ -18,8 +20,20 @@ namespace Yavsc.Helpers
             var apiContext = new APIContext(accessToken);
             return apiContext;
         }
+        public class PaymentUrls {
+            public string Details { get; set; }
+            public string Cancel { get; set; }
+        }
+        public static PaymentUrls GetPaymentUrls(this HttpRequest request, string controllerName, string id )
+        {
+            var result =new PaymentUrls {
+                Details = request.ToAbsolute($"{controllerName}/Details/{id}") ,
+                Cancel = request.ToAbsolute($"{controllerName}/ClientCancel/{id}")
+                };
+            return result;
+        }
 
-        public static Payment CreatePayment(this APIContext apiContext, NominativeServiceCommand query, string controllerName, string intent = "sale", ILogger logger=null)
+        public static Payment CreatePayment(this HttpRequest request, string controllerName, APIContext apiContext, NominativeServiceCommand query, string intent = "sale", ILogger logger=null)
         {
             var queryType = query.GetType().Name;
             var transaction = new Transaction
@@ -28,7 +42,10 @@ namespace Yavsc.Helpers
                 invoice_number = query.Id.ToString(),
                 custom = query.GetType().Name + "/"+ query.Id.ToString()
             };
-            transaction.order_url = Startup.Audience + "/"  +controllerName + "/Details/" + query.Id;
+
+            var urls = request.GetPaymentUrls(controllerName, query.Id.ToString() );
+
+            transaction.order_url = urls.Details;
 
             // transaction.item_list.shipping_address.city
             // country_code default_address id
@@ -78,8 +95,8 @@ namespace Yavsc.Helpers
                     transactions = new List<Transaction> { transaction },
                     redirect_urls = new RedirectUrls
                     {
-                        return_url = Startup.Audience+ $"/{controllerName}/Details/"+query.Id.ToString(),
-                        cancel_url = Startup.Audience+ $"/{controllerName}/ClientCancel/"+query.Id.ToString()
+                        return_url = urls.Details,
+                        cancel_url = urls.Cancel
                     }
                 };
             Payment result = null;
@@ -92,8 +109,9 @@ namespace Yavsc.Helpers
             return result;
         }
 
-        public static Payment CreatePayment(this APIContext apiContext, Estimate estimation)
+        public static Payment CreatePayment(this HttpRequest request, string controllerName, APIContext apiContext, Estimate estimation)
         {
+            var urls = request.GetPaymentUrls( controllerName, estimation.Id.ToString() );
             var payment = Payment.Create(apiContext,
             new Payment
             {
@@ -137,10 +155,11 @@ namespace Yavsc.Helpers
     },
                 redirect_urls = new RedirectUrls
                 {
-                    return_url = Startup.Audience+ "/Manage/Credit/Return",
-                    cancel_url = Startup.Audience+ "/Manage/Credit/Cancel"
+                    return_url = urls.Details,
+                    cancel_url = urls.Cancel
                 }
             });
+
             return payment;
         }
     }

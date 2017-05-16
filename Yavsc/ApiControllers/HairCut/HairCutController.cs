@@ -95,8 +95,7 @@ namespace Yavsc.ApiControllers
             if (query.PaymentId!=null)
                 return new BadRequestObjectResult(new { error = "An existing payment process already exists" });
             query.SelectedProfile = _context.BrusherProfile.Single(p => p.UserId == query.PerformerId);
-            var payment = apiContext.CreatePayment(query, "HairCutCommand", "sale", _logger);
-
+            var payment = Request.CreatePayment("HairCutCommand",apiContext, query,  "sale", _logger);
             switch (payment.state)
             {
                 case "created":
