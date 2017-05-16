@@ -44,6 +44,7 @@ namespace Yavsc.Controllers
         }
         PayPalSettings payPalSettings;
 
+
         private async Task<HairCutQuery> GetQuery(long id)
         {
             return await _context.HairCutQueries
@@ -130,7 +131,7 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-             var context =  payPalSettings.CreateAPIContext();
+             var context =  PayPalHelpers.CreateAPIContext();
             var payment = Payment.Get(context,paymentId);
 
             var execution = new PaymentExecution{ transactions = payment.transactions,
@@ -179,6 +180,9 @@ namespace Yavsc.Controllers
             // ModelState.ClearValidationState("PerformerProfile.Avatar");
             // ModelState.ClearValidationState("Client.Avatar");
             // ModelState.ClearValidationState("ClientId");
+
+            if (!model.Consent)
+                ModelState.AddModelError("Consent", "Vous devez accepter les conditions générales de vente de ce service");
 
             if (ModelState.IsValid)
                 {
@@ -303,7 +307,6 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateHairMultiCutQuery(HairMultiCutQuery command)
         {
-
             var uid = User.GetUserId();
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)

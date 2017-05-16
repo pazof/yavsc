@@ -719,7 +719,7 @@ namespace Yavsc.Controllers
 
         public IActionResult PaymentInfo(string id)
         {
-            var context = _payPalSettings.CreateAPIContext();
+            var context = PayPalHelpers.CreateAPIContext();
             var payment = Payment.Get(context,id);
             return View (payment);
         }

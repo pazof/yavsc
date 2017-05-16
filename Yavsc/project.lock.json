@@ -11635,7 +11635,10 @@
       "PayPal >= 1.8.0"
     ],
     "DNX,Version=v4.5.1": [
-      "fx/System.Drawing >= 4.0.0"
+      "fx/System.Drawing >= 4.0.0",
+      "fx/System.Net >= 4.0.0",
+      "fx/System.Xml >= 4.0.0",
+      "fx/System >= 4.0.0"
     ]
   }
 }

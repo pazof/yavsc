@@ -38,7 +38,7 @@ namespace Yavsc.ApiControllers
                   p=>p.PaypalPaymentId==paymentId)
             };
             await Task.Run( () => {
-              var apiContext = paymentSettings.CreateAPIContext();
+              var apiContext = PayPalHelpers.CreateAPIContext();
               result.FromPaypal = Payment.Get(apiContext,paymentId);
             });
 
@@ -50,7 +50,7 @@ namespace Yavsc.ApiControllers
         {
             Payment result=null;
             await Task.Run( () => {
-            var apiContext = paymentSettings.CreateAPIContext();
+            var apiContext = PayPalHelpers.CreateAPIContext();
             var payment = Payment.Get(apiContext,paymentId);
             var execution = new PaymentExecution();
             execution.payer_id = payerId;
@@ -64,7 +64,7 @@ namespace Yavsc.ApiControllers
         [HttpPost("create"),AllowAnonymous]
         public IActionResult Create()
         {
-            var apiContext = paymentSettings.CreateAPIContext();
+            var apiContext = PayPalHelpers.CreateAPIContext();
             Payment result= Request.CreatePayment("Command",apiContext,new Estimate());
             return Ok(Payment.Create(apiContext,result));
         }

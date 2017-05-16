@@ -88,13 +88,15 @@ namespace Yavsc.ApiControllers
         [HttpPost("createpayment/{id}")]
         public async Task<IActionResult> CreatePayment(long id)
         {
-            var apiContext = _paymentSettings.CreateAPIContext();
+            var apiContext = PayPalHelpers.CreateAPIContext();
+
             var query = await _context.HairCutQueries.Include(q => q.Client).
             Include(q => q.Client.PostalAddress).Include(q => q.Prestation).Include(q=>q.Regularisation)
             .SingleAsync(q => q.Id == id);
             if (query.PaymentId!=null)
                 return new BadRequestObjectResult(new { error = "An existing payment process already exists" });
             query.SelectedProfile = _context.BrusherProfile.Single(p => p.UserId == query.PerformerId);
+
             var payment = Request.CreatePayment("HairCutCommand",apiContext, query,  "sale", _logger);
             switch (payment.state)
             {

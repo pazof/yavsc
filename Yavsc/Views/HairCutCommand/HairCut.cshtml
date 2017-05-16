@@ -224,16 +224,24 @@
                     </textarea>
             </div>
         </div>
-        
+        <div class="form-group">
         <span id="discount" class="price"></span>
         <span><img src="~/images/dollars.svg" style="width:2em;" /> Total : <span id="Total" class="total"></span>
-      </span>
+      </span><br/>
+      <label>
+      <input type="checkbox" asp-for="Consent" class="imptarif"></input> En cochant cette case, vous acceptez les
+      <a asp-action="CGV" class="btn btn-link">Conditions générales de vente</a> liées à cette commande de service.</label>
+        </div>
       <input asp-for="ClientId" type="hidden" />
+      
+
       <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
       <environment names="Development">
       <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName [DEV+Location+Date]"/>
       </environment>
    </div>
+   
+
     <input type="hidden" name="performerId" value="@Model.PerformerProfile.PerformerId" />
     <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
 </form>

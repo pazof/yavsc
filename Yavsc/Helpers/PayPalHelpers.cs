@@ -10,25 +10,45 @@ namespace Yavsc.Helpers
 {
     public static class PayPalHelpers
     {
-        public static  APIContext CreateAPIContext(this PayPalSettings settings)
+        private static OAuthTokenCredential payPaylCredential=null;
+        public static OAuthTokenCredential PayPaylCredential
         {
-            Dictionary<string,string> config = new Dictionary<string,string>();
-            config.Add("mode",settings.Mode);
-            config.Add("clientId",settings.ClientId);
-            config.Add("clientSecret",settings.Secret);
-            var accessToken = new OAuthTokenCredential(config).GetAccessToken();
+            get
+            {
+                if (payPaylCredential==null)
+                {
+                    Dictionary<string,string> config = new Dictionary<string,string>();
+                    config.Add("mode",Startup.PayPalSettings.Mode);
+                    config.Add("clientId",Startup.PayPalSettings.ClientId);
+                    config.Add("clientSecret",Startup.PayPalSettings.Secret);
+                    config.Add("user",Startup.PayPalSettings.APIUserId);
+                    config.Add("SIGNATURE",Startup.PayPalSettings.APISignature);
+                    config.Add("PWD",Startup.PayPalSettings.APIPassword);
+                    payPaylCredential = new OAuthTokenCredential(config);
+                }
+                return payPaylCredential;
+            }
+        }
+
+        public static  APIContext CreateAPIContext()
+        {
+            var accessToken = PayPaylCredential.GetAccessToken();
             var apiContext = new APIContext(accessToken);
             return apiContext;
         }
+
         public class PaymentUrls {
             public string Details { get; set; }
             public string Cancel { get; set; }
+
+            public string CGV { get; set; }
         }
         public static PaymentUrls GetPaymentUrls(this HttpRequest request, string controllerName, string id )
         {
             var result =new PaymentUrls {
                 Details = request.ToAbsolute($"{controllerName}/Details/{id}") ,
-                Cancel = request.ToAbsolute($"{controllerName}/ClientCancel/{id}")
+                Cancel = request.ToAbsolute($"{controllerName}/ClientCancel/{id}"),
+                CGV = request.ToAbsolute($"{controllerName}/CGV")
                 };
             return result;
         }
