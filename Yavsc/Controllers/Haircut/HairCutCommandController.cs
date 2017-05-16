@@ -233,6 +233,9 @@ namespace Yavsc.Controllers
                 var items = model.GetBillItems();
                 var addition = items.Addition();
                 ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
+            ViewBag.CreatePaymentUrl = Request.ToAbsolute("api/haircut/createpayment/"+model.Id);
+            ViewBag.ExecutePaymentUrl = Request.ToAbsolute("api/payment/execute");
+            ViewBag.Urls=Request.GetPaymentUrls("HairCutCommand",model.Id.ToString());
 
                 return View("CommandConfirmation",model);
             }
