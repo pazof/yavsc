@@ -7,8 +7,8 @@ namespace  Yavsc
         public string ClientId { get; set; }
 
         // NV/SOAP Api - Signature
-        public string APIUserId { get; set; }
-        public string APIPassword { get; set; }
-        public string APISignature { get; set; }
+        public string UserId { get; set; }
+        public string Password { get; set; }
+        public string Signature { get; set; }
     }
 }

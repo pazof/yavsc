@@ -21,9 +21,9 @@ namespace Yavsc.Helpers
                     config.Add("mode",Startup.PayPalSettings.Mode);
                     config.Add("clientId",Startup.PayPalSettings.ClientId);
                     config.Add("clientSecret",Startup.PayPalSettings.Secret);
-                    config.Add("user",Startup.PayPalSettings.APIUserId);
-                    config.Add("SIGNATURE",Startup.PayPalSettings.APISignature);
-                    config.Add("PWD",Startup.PayPalSettings.APIPassword);
+                    config.Add("user",Startup.PayPalSettings.UserId);
+                    config.Add("SIGNATURE",Startup.PayPalSettings.Signature);
+                    config.Add("PWD",Startup.PayPalSettings.Password);
                     payPaylCredential = new OAuthTokenCredential(config);
                 }
                 return payPaylCredential;
