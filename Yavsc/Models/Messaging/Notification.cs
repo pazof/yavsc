@@ -46,5 +46,14 @@ namespace Yavsc.Models.Messaging
         /// </summary>
         [Required, Display(Name = "Label du click")]
         public string click_action { get; set; }
+
+        /// <summary>
+        /// When null, this must be seen by everynone.
+        /// <c>user/{UserId}<c> : it's for this user, and only this one, specified by ID,
+        /// <c>pub/cga</c> : the public "cga" topic
+        /// <c>administration</c> : for admins ...
+        /// </summary>
+        /// <returns></returns>
+        public string Target { get; set; }
     }
 }
