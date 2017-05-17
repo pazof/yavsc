@@ -186,6 +186,9 @@ namespace Yavsc.Controllers
 
             if (ModelState.IsValid)
                 {
+                    // Une prestation pour enfant ou homme inclut toujours la coupe.
+                    if (model.Prestation.Gender != HairCutGenders.Women)
+                        model.Prestation.Cut = true;
                     if (model.Location!=null) {
                         var existingLocation = await _context.Locations.FirstOrDefaultAsync( x=>x.Address == model.Location.Address
                         && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude );
