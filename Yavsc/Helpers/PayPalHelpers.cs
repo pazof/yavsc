@@ -18,12 +18,14 @@ namespace Yavsc.Helpers
                 if (payPaylCredential==null)
                 {
                     Dictionary<string,string> config = new Dictionary<string,string>();
-                    config.Add("mode",Startup.PayPalSettings.Mode);
-                    config.Add("clientId",Startup.PayPalSettings.ClientId);
-                    config.Add("clientSecret",Startup.PayPalSettings.Secret);
-                    config.Add("user",Startup.PayPalSettings.UserId);
-                    config.Add("SIGNATURE",Startup.PayPalSettings.Signature);
-                    config.Add("PWD",Startup.PayPalSettings.Password);
+              //      config.Add("mode",Startup.PayPalSettings.Mode);
+              //      config.Add("clientId",Startup.PayPalSettings.ClientId);
+              //      config.Add("clientSecret",Startup.PayPalSettings.Secret);
+              //      config.Add("user",Startup.PayPalSettings.APIUserId);
+              // https://api-3t.paypal.com/nvp
+                    config.Add("USER",Startup.PayPalSettings.APIUserId);
+                    config.Add("SIGNATURE",Startup.PayPalSettings.APISignature);
+                    config.Add("PWD",Startup.PayPalSettings.APIPassword);
                     payPaylCredential = new OAuthTokenCredential(config);
                 }
                 return payPaylCredential;
