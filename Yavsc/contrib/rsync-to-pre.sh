@@ -2,7 +2,7 @@
 
 FSPATH=/srv/www/yavscpre
 
-ssh root@localhost rm -rf $FSPATH/approot/src
+ssh root@localhost rm -rf $FSPATH/approot
 
 (
 set -e
