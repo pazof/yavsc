@@ -7,6 +7,7 @@ namespace Yavsc.Models.Billing
 {
     using Newtonsoft.Json;
     using Workflow;
+    using Yavsc.Models.Payment;
     using YavscLib;
     using YavscLib.Billing;
     using YavscLib.Workflow;
@@ -75,5 +76,9 @@ namespace Yavsc.Models.Billing
         public virtual Activity Context  { get; set ; }
 
         public abstract System.Collections.Generic.List<IBillItem> GetBillItems();
+        public string PaymentId { get; set; }
+
+        [ForeignKey("PaymentId"), Display(Name = "Acquittement de la facture")]
+        public virtual PaypalPayment Regularisation { get; set; }
     }
 }
