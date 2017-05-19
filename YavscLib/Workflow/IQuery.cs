@@ -6,5 +6,6 @@ namespace YavscLib.Workflow
     public interface IQuery: IBaseTrackedEntity, IBillable
     {
         QueryStatus Status { get; set; }
+        string PaymentId { get; set; }
     }
 }
