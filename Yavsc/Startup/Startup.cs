@@ -25,8 +25,11 @@ using Microsoft.Net.Http.Headers;
 
 namespace Yavsc
 {
+    using System.Net;
     using Formatters;
     using Models;
+    using Newtonsoft.Json;
+    using PayPal.Manager;
     using Services;
     using ViewModels.Auth.Handlers;
     public partial class Startup
@@ -320,6 +323,12 @@ namespace Yavsc
                     else throw ex;
                 }
             }
+            // before fixing the security protocol, let beleive our lib it's done with it.
+            var cxmgr = ConnectionManager.Instance;
+            // then, fix it.
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType) 0xC00;
+
+            logger.LogInformation($"ServicePointManager.SecurityProtocol: {ServicePointManager.SecurityProtocol}");
 
             app.UseIISPlatformHandler(options =>
             {
@@ -340,6 +349,8 @@ namespace Yavsc
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            logger.LogInformation(JsonConvert.SerializeObject(Startup.PayPalSettings));
 
         }
 

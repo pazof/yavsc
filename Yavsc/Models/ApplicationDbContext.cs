@@ -309,7 +309,7 @@ namespace Yavsc.Models
 
          public DbSet<BankIdentity> BankIdentity { get; set; }
 
-         public DbSet<PaypalPayment> PaypalPayments { get; set; }
+         public DbSet<PayPalPayment> PayPalPayments { get; set; }
 
          public DbSet<Link> Links { get; set; }
     }

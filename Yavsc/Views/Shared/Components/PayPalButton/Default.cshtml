@@ -1,0 +1,43 @@
+@model NominativeServiceCommand
+@inject IOptions<PayPalSettings> PayPalSettings
+@Model.PaymentId
+@if (Model!=null && Model.PaymentId!=null) {
+   
+    @if (Model.Regularisation.Executor.Id == User.GetUserId()) {
+        <text>
+           Votre paiment
+        </text>
+    } else {
+        <text>
+           Le paiment de @Html.DisplayFor(m=>m.Regularisation.Executor.UserName) 
+        </text>
+    }
+    <text> : 
+    </text><a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.Regularisation.PaypalPaymentId">@Model.Regularisation.PaypalPaymentId</a>
+
+} else {
+<div id="paypalzone"></div>
+<script>
+var CREATE_PAYMENT_URL = '@ViewBag.CreatePaymentUrl';
+var EXECUTE_PAYMENT_URL = '@ViewBag.ExecutePaymentUrl';
+var PAYPAL_ENV = '@PayPalSettings.Value.Mode';
+var APP_ID = '@PayPalSettings.Value.ApplicationId';
+
+
+paypal.checkout.setup(APP_ID, {
+  environment: PAYPAL_ENV,
+  container: '#paypalzone',
+  click: function () {
+    paypal.checkout.initXO();
+    var action = $.post(CREATE_PAYMENT_URL)
+    .done(function (data) {
+      paypal.checkout.startFlow(data.token)
+    })
+    .fail(function () {
+      paypal.checkout.closeFlow()
+    })
+  }
+});
+
+</script>
+}

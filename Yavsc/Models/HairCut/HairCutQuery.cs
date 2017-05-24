@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Billing;
-using Yavsc.Models.Payment;
 using Yavsc.Models.Relationship;
 using YavscLib.Billing;
 
@@ -56,10 +55,7 @@ namespace Yavsc.Models.Haircut
         [DisplayFormat(ConvertEmptyStringToNull = true, NullDisplayText = "[pas d'informations complémentaires]")]
         public string AdditionalInfo { get; set; }
 
-        public string PaymentId { get; set; }
 
-        [ForeignKey("PaymentId"), Display(Name = "Acquittement de la facture")]
-        public virtual PaypalPayment Regularisation { get; set; }
 
         public override List<IBillItem> GetBillItems()
         {
