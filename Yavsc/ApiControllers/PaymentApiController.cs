@@ -1,14 +1,10 @@
 using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
-using PayPal.Api;
+using Newtonsoft.Json;
 using Yavsc.Helpers;
 using Yavsc.Models;
-using Yavsc.Models.Billing;
-using Yavsc.ViewModels.PayPal;
 
 namespace Yavsc.ApiControllers
 {
@@ -16,57 +12,23 @@ namespace Yavsc.ApiControllers
     public class PaymentApiController : Controller
     {
         private ApplicationDbContext dbContext;
-        PayPalSettings paymentSettings;
         private SiteSettings siteSettings;
         private readonly ILogger _logger;
         public PaymentApiController(
             ApplicationDbContext dbContext,
-            IOptions<PayPalSettings> paypalSettingsReceiver,
             IOptions<SiteSettings> siteSettingsReceiver,
             ILoggerFactory loggerFactory)
         {
             this.dbContext = dbContext;
-            paymentSettings = paypalSettingsReceiver.Value;
             siteSettings = siteSettingsReceiver.Value;
             _logger = loggerFactory.CreateLogger<PaymentApiController>();
         }
 
-        public async Task<IActionResult> Info(string paymentId)
+        public async Task<IActionResult> Info(string paymentId, string token)
         {
-            var result = new PaymentInfo {
-              DbContent = await dbContext.PaypalPayments.SingleAsync(
-                  p=>p.PaypalPaymentId==paymentId)
-            };
-            await Task.Run( () => {
-              var apiContext = PayPalHelpers.CreateAPIContext();
-              result.FromPaypal = Payment.Get(apiContext,paymentId);
-            });
-
-            return Ok(result);
-        }
-
-        [HttpPost("execute")]
-        public async Task<IActionResult> Execute(string paymentId, string payerId)
-        {
-            Payment result=null;
-            await Task.Run( () => {
-            var apiContext = PayPalHelpers.CreateAPIContext();
-            var payment = Payment.Get(apiContext,paymentId);
-            var execution = new PaymentExecution();
-            execution.payer_id = payerId;
-            execution.transactions = payment.transactions;
-             result = payment.Execute(apiContext,execution);
-            });
-
-            return Ok(result);
-        }
-
-        [HttpPost("create"),AllowAnonymous]
-        public IActionResult Create()
-        {
-            var apiContext = PayPalHelpers.CreateAPIContext();
-            Payment result= Request.CreatePayment("Command",apiContext,new Estimate());
-            return Ok(Payment.Create(apiContext,result));
+            var details = await dbContext.GetCheckoutInfo(token);
+            _logger.LogInformation(JsonConvert.SerializeObject(details));
+            return Ok(details);
         }
 
     }

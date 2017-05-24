@@ -2,6 +2,10 @@
 @{
     ViewData["Title"] = SR["Command confirmation"]+" "+ViewBag.Activity.Name;
 }
+@section header {
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+}
+
 <h2>@ViewData["Title"]</h2>
     <div class="form-horizontal">
         <h4>@SR["Your book query"]</h4>
@@ -84,10 +88,9 @@
 
         </environment>
         
-        
-<dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
-<dd>@Html.DisplayFor(m=>m.Regularisation,new { 
-    PaymentUrl = "/api/haircut/createpayment/"+Model.Id.ToString(), 
-    SuccessUrl = "/HairCutCommand/Details/"+Model.Id.ToString() })</dd>
+        <dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
+        <dd> @Component.Invoke("PayPalButton", Model, "haircut", "HairCutCommand" )
+        </dd>
      </dl>
+    
 </div>

@@ -24,7 +24,6 @@ namespace Yavsc.Controllers
     using System.Globalization;
     using Microsoft.AspNet.Mvc.Rendering;
     using System.Collections.Generic;
-    using PayPal.Api;
 
     public class HairCutCommandController : CommandController
     {
@@ -62,11 +61,26 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-                ViewBag.CreatePaymentUrl = Request.ToAbsolute("api/haircut/createpayment/"+id);
-                ViewBag.ExecutePaymentUrl = Request.ToAbsolute("api/payment/execute");
-                ViewBag.Urls=Request.GetPaymentUrls("HairCutCommand",id.ToString());
-
+            SetViewBagPaymentUrls(id);
             return View (command);
+        }
+        public async Task<IActionResult> Confirmation([FromRoute] long id, string token, string PayerID)
+        {
+            HairCutQuery command = await GetQuery(id);
+            if (command == null)
+            {
+                return HttpNotFound();
+            }
+            SetViewBagPaymentUrls(id);
+            var paymentinfo = await _context.ConfirmPayment( User.GetUserId(), PayerID, token );
+            return View (paymentinfo);
+        }
+
+        private void SetViewBagPaymentUrls(long id)
+        {
+            ViewBag.CreatePaymentUrl = Request.ToAbsolute("api/haircut/createpayment/"+id);
+            ViewBag.ExecutePaymentUrl = Request.ToAbsolute("api/payment/execute");
+            ViewBag.Urls=Request.GetPaymentUrls("HairCutCommand",id.ToString());
         }
         public async Task<IActionResult> ClientCancelConfirm(long id)
         {
@@ -97,7 +111,7 @@ namespace Yavsc.Controllers
             .ToListAsync());
         }
 
-        public async Task<IActionResult> Details(long id, string paymentId, string token, string PayerID)
+        public async Task<IActionResult> Details(long id)
         {
 
             HairCutQuery command = await _context.HairCutQueries
@@ -106,40 +120,16 @@ namespace Yavsc.Controllers
             .Include(x => x.Prestation)
             .Include(x => x.PerformerProfile.Performer)
             .Include(x => x.Regularisation)
-            .SingleAsync(m => m.Id == id);
+            .SingleOrDefaultAsync(m => m.Id == id);
             if (command == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CreatePaymentUrl = Request.ToAbsolute("api/haircut/createpayment/"+id);
-            ViewBag.ExecutePaymentUrl = Request.ToAbsolute("api/payment/execute");
-            ViewBag.Urls=Request.GetPaymentUrls("HairCutCommand",id.ToString());
+            SetViewBagPaymentUrls(id);
             return View(command);
         }
 
-        public async Task<IActionResult> Execute(long id, string paymentId, string token, string PayerID)
-        {
-            HairCutQuery command = await _context.HairCutQueries
-            .Include(x => x.Location)
-            .Include(x => x.PerformerProfile)
-            .Include(x => x.Prestation)
-            .Include(x => x.PerformerProfile.Performer)
-            .Include(x => x.Regularisation)
-            .SingleAsync(m => m.Id == id);
 
-            if (command == null)
-            {
-                return HttpNotFound();
-            }
-             var context =  PayPalHelpers.CreateAPIContext();
-            var payment = Payment.Get(context,paymentId);
-
-            var execution = new PaymentExecution{ transactions = payment.transactions,
-            payer_id = PayerID };
-            var result = payment.Execute(context,execution);
-
-            return View(command);
-        }
         /// <summary>
         /// Crée une requête en coiffure à domicile
         ///
@@ -244,9 +234,6 @@ namespace Yavsc.Controllers
                 var items = model.GetBillItems();
                 var addition = items.Addition();
                 ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
-                ViewBag.CreatePaymentUrl = Request.ToAbsolute("api/haircut/createpayment/"+model.Id);
-                ViewBag.ExecutePaymentUrl = Request.ToAbsolute("api/payment/execute");
-                ViewBag.Urls=Request.GetPaymentUrls("HairCutCommand",model.Id.ToString());
 
                 return View("CommandConfirmation",model);
             }
@@ -255,6 +242,7 @@ namespace Yavsc.Controllers
             SetViewData(model.ActivityCode,model.PerformerId,model.Prestation);
             return View("HairCut",model);
         }
+
 
         public async Task<ActionResult> HairCut(string performerId, string activityCode)
         {

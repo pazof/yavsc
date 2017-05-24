@@ -233,7 +233,7 @@
       <a asp-action="CGV" class="btn btn-link">Conditions générales de vente</a> liées à cette commande de service.</label>
         </div>
       <input asp-for="ClientId" type="hidden" />
-      
+      <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" alt="PayPal Acceptance">
 
       <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
       <environment names="Development">

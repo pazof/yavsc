@@ -21,7 +21,8 @@
 <dd>@Html.DisplayFor(m=>m.AdditionalInfo)
 </dd>
 <dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
-<dd>@Html.DisplayFor(m=>m.Regularisation)
+<dd> 
+    @Component.Invoke("PayPalButton", Model, "haircut", "HairCutCommand" )
  </dd>
 </dl>
 

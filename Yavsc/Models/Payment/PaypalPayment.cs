@@ -7,10 +7,10 @@ namespace Yavsc.Models.Payment {
     using YavscLib;
     using Relationship;
 
-    public class PaypalPayment : IBaseTrackedEntity
+    public class PayPalPayment : IBaseTrackedEntity
     {
         [Required,Key]
-        public string PaypalPaymentId { get; set; }
+        public string CreationToken { get; set; }
 
         [Required]
         public string ExecutorId { get; set; }

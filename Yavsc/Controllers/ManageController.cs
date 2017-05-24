@@ -23,7 +23,6 @@ using Yavsc.Models.Identity;
 namespace Yavsc.Controllers
 {
     using Models.Relationship;
-    using PayPal.Api;
     using Yavsc.Models.Bank;
 
     [Authorize]
@@ -716,13 +715,18 @@ namespace Yavsc.Controllers
             ViewBag.GoogleSettings = _googleSettings;
             return View(model);
         }
-
-        public IActionResult PaymentInfo(string id)
+        public IActionResult PaymentInfo (string id)
         {
-            var context = PayPalHelpers.CreateAPIContext();
-            var payment = Payment.Get(context,id);
-            return View (payment);
+            ViewData["id"] = id;
+           var info = PayPalHelpers.GetCheckoutInfo(_dbContext,id);
+            return View(info);
         }
 
+        public IActionResult PaymentError (string id, string error)
+        {
+            ViewData["error"] = error;
+            ViewData["id"] = id;
+            return View();
+        }
     }
 }

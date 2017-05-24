@@ -1,11 +1,14 @@
-using PayPal.Api;
+
+
+using PayPal.PayPalAPIInterfaceService.Model;
 using Yavsc.Models.Payment;
 
 namespace Yavsc.ViewModels.PayPal
 {
     public class PaymentInfo
     {
-        public PaypalPayment DbContent { get; set; }
-        public Payment FromPaypal { get; set; }
+        public PayPalPayment DbContent { get; set; }
+
+        public virtual GetExpressCheckoutDetailsResponseType DetailsFromPayPal { get; set; }
     }
 }
