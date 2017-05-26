@@ -1,8 +1,8 @@
+@{
+    ViewData["Title"] = "Le paiment "+ViewData["id"]+" a échoué";
+}
 
-
-<dl>
-    <dt> Le paiment  @ViewData["id"] a échoué
-    </dt>
-    <dd> @ViewData["error"]
-    </dd>
-</dl>
+<h2>@ViewData["Title"].</h2>
+<p>
+@ViewData["error"]
+</p>

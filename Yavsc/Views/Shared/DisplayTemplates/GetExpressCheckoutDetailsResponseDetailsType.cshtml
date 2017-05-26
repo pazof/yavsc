@@ -1,0 +1,24 @@
+@model GetExpressCheckoutDetailsResponseDetailsType
+
+@Html.DisplayFor(m=>m.PayerInfo)
+@Html.DisplayFor(m=>m.InvoiceID)
+@Html.DisplayFor(m=>m.BillingAgreementAcceptedStatus)
+@Html.DisplayFor(m=>m.BillingAddress)
+
+@Html.DisplayFor(m=>m.ContactPhone)
+@Html.DisplayFor(m=>m.Note)
+@Html.DisplayFor(m=>m.CheckoutStatus)
+@Html.DisplayFor(m=>m.PayPalAdjustment)
+@Html.DisplayFor(m=>m.PaymentDetails)
+@Html.DisplayFor(m=>m.UserSelectedOptions)
+@Html.DisplayFor(m=>m.IncentiveDetails)
+@if (Model.GiftReceiptEnable) 
+  @Html.DispayFor(m=>m.GiftMessage) 
+
+  @Html.DispayFor(m=>m.GiftWrapName) 
+  @Html.DispayFor(m=>m.GiftWrapAmount) 
+  @Html.DispayFor(m=>m.BuyerMarketingEmail) 
+  @Html.DispayFor(m=>m.SurveyQuestion) 
+  @Html.DispayFor(m=>m.SurveyChoiceSelected) 
+  @Html.DispayFor(m=>m.CartChangeTolerance) 
+  @Html.DispayFor(m=>m.InstrumentDetails) 

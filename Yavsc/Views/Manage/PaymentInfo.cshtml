@@ -1,0 +1,31 @@
+@model Yavsc.ViewModels.PayPal.PaymentInfo
+@{
+    ViewData["Title"] = "Informations sur le paiment "+ViewData["id"];
+}
+
+<h2>@ViewData["Title"].</h2>
+<p>
+ @if (Model.DbContent.Executor.Id == User.GetUserId()) {
+        <text>
+           Votre paiment
+        </text>
+    } else {
+        <text>
+           Le paiment de @Html.DisplayFor(m=>m.DbContent.Executor.UserName) 
+        </text>
+    }
+    <text> : 
+        <dl>
+            <dt>
+                
+                [@Model.DbContent.CreationToken]<br/>
+
+                 @Html.DisplayFor(m=>m.DetailsFromPayPal)
+            </dt>
+            <dd>
+            </dd>
+        </dl>
+
+   
+    </text>
+</p>
