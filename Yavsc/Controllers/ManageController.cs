@@ -715,11 +715,11 @@ namespace Yavsc.Controllers
             ViewBag.GoogleSettings = _googleSettings;
             return View(model);
         }
-        public IActionResult PaymentInfo (string id)
+        public async Task<IActionResult> PaymentInfo (string id)
         {
-            ViewData["id"] = id;
-           var info = PayPalHelpers.GetCheckoutInfo(_dbContext,id);
-            return View(info);
+           ViewData["id"] = id;
+           var info = await PayPalHelpers.GetCheckoutInfo(_dbContext,id);
+           return View(info);
         }
 
         public IActionResult PaymentError (string id, string error)
