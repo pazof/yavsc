@@ -130,7 +130,7 @@ namespace Yavsc.Helpers
         {
             var result = new PaymentUrls
             {
-                ReturnUrl = request.ToAbsolute($"{controllerName}/Confirmation/{id}"),
+                ReturnUrl = request.ToAbsolute($"{controllerName}/PaymentConfirmation/{id}"),
                 CancelUrl = request.ToAbsolute($"{controllerName}/ClientCancel/{id}"),
                 CGVUrl = request.ToAbsolute($"{controllerName}/CGV")
             };
