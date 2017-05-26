@@ -239,7 +239,9 @@ OrderDescription = query.Description, CancelURL = urls.CancelUrl, ReturnURL = ur
             string token, GetExpressCheckoutDetailsResponseType fromPayPal)
         {
             return new PaymentInfo {
-              DbContent = await context.PayPalPayments.SingleOrDefaultAsync(
+              DbContent = await context.PayPalPayments
+              .Include(p=>p.Executor)
+              .SingleOrDefaultAsync(
                   p=>p.CreationToken==token),
                   DetailsFromPayPal = fromPayPal
             };
