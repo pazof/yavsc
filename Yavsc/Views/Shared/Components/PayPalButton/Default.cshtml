@@ -1,6 +1,6 @@
 @model NominativeServiceCommand
 @inject IOptions<PayPalSettings> PayPalSettings
-@Model.PaymentId
+
 @if (Model!=null && Model.PaymentId!=null) {
    
     @if (Model.Regularisation.Executor.Id == User.GetUserId()) {
@@ -13,7 +13,7 @@
         </text>
     }
     <text> : 
-    </text><a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.Regularisation.PaypalPaymentId">@Model.Regularisation.PaypalPaymentId</a>
+    </text><a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.Regularisation.CreationToken">@Model.Regularisation.CreationToken</a>
 
 } else {
 <div id="paypalzone"></div>
