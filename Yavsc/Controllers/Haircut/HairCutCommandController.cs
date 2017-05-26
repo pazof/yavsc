@@ -24,6 +24,7 @@ namespace Yavsc.Controllers
     using System.Globalization;
     using Microsoft.AspNet.Mvc.Rendering;
     using System.Collections.Generic;
+    using Yavsc.Models.Messaging;
 
     public class HairCutCommandController : CommandController
     {
@@ -64,16 +65,28 @@ namespace Yavsc.Controllers
             SetViewBagPaymentUrls(id);
             return View (command);
         }
-        public async Task<IActionResult> Confirmation([FromRoute] long id, string token, string PayerID)
+        public async Task<IActionResult> PaymentConfirmation([FromRoute] long id, string token, string PayerID)
         {
             HairCutQuery command = await GetQuery(id);
             if (command == null)
             {
                 return HttpNotFound();
             }
+            var paymentInfo = await _context.ConfirmPayment( User.GetUserId(), PayerID, token );
+            ViewData["paymentinfo"] = paymentInfo;
+            command.Regularisation = paymentInfo.DbContent;
+            command.PaymentId = token;
+            await _context.SaveChangesAsync (User.GetUserId());
+
             SetViewBagPaymentUrls(id);
-            var paymentinfo = await _context.ConfirmPayment( User.GetUserId(), PayerID, token );
-            return View (paymentinfo);
+            ViewData ["Notify"] = new List<Notification> {
+                new Notification {
+                    title= "Paiment PayPal",
+                    body = "Votre paiment a été accépté."
+                }
+            } ;
+
+            return View ("Details",command);
         }
 
         private void SetViewBagPaymentUrls(long id)
