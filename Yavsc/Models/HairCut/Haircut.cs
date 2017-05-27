@@ -1,5 +1,5 @@
 using System;
-namespace YavscLib.Haircut
+namespace Yavsc.Haircut
 {
     public interface IProviderInfo
     {

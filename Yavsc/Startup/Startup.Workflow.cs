@@ -6,7 +6,7 @@ using Microsoft.AspNet.Builder;
 using Microsoft.Extensions.Logging;
 using Yavsc.Exceptions;
 using Yavsc.Models;
-using YavscLib;
+using Yavsc;
 
 namespace Yavsc
 {

@@ -19,10 +19,10 @@ namespace Yavsc.Helpers
 
         public TeXString(string str) : base(str)
         {
-           
-            
+
+
         }
-       
+
 
     }
     public class Replacement
@@ -41,7 +41,7 @@ namespace Yavsc.Helpers
         }
     public static class TeXHelpers
     {
-        public static readonly  Replacement[] SpecialCharsRendering =
+        public static readonly  Replacement[] SpecialCharsDefaultRendering =
         {
             new Replacement("<","\\textless"),
             new Replacement(">","\\textgreater"),
@@ -70,7 +70,7 @@ namespace Yavsc.Helpers
          public static TeXString ToTeX(this string source)
         {
             string result=source;
-            foreach (var r in SpecialCharsRendering)
+            foreach (var r in SpecialCharsDefaultRendering)
             {
                 result = r.Execute(result);
             }

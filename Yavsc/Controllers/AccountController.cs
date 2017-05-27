@@ -20,7 +20,7 @@ using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
-    [AllowAnonymous]
+
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -61,6 +61,13 @@ namespace Yavsc.Controllers
             _dbContext = dbContext;
         }
 
+        [Authorize(Roles=Constants.AdminGroupName)]
+        public async Task<IActionResult> UserList ()
+        {
+            return View(await _dbContext.Users.ToArrayAsync());
+        }
+
+        [AllowAnonymous]
         [HttpGet(Constants.LoginPath)]
         public ActionResult SignIn(string returnUrl = null)
         {
@@ -79,6 +86,7 @@ namespace Yavsc.Controllers
             */
         }
 
+        [AllowAnonymous]
         public ActionResult AccessDenied(string requestUrl = null)
         {
             ViewBag.UserIsSignedIn = User.IsSignedIn();
@@ -89,6 +97,7 @@ namespace Yavsc.Controllers
             return View("AccessDenied",requestUrl);
         }
 
+        [AllowAnonymous]
         [HttpPost(Constants.LoginPath)]
         public async Task<IActionResult> SignIn(SignInViewModel model)
         {
@@ -169,6 +178,7 @@ namespace Yavsc.Controllers
 
         //
         // GET: /Account/Register
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Register()
         {
@@ -178,6 +188,7 @@ namespace Yavsc.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -220,6 +231,7 @@ namespace Yavsc.Controllers
         //
         // GET: /Account/ExternalLoginCallback
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
         {
             var info = await _signInManager.GetExternalLoginInfoAsync();
@@ -285,6 +297,7 @@ namespace Yavsc.Controllers
         // POST: /Account/ExternalLoginConfirmation
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl = null)
         {
             if (User.IsSignedIn())
@@ -324,6 +337,7 @@ namespace Yavsc.Controllers
 
         // GET: /Account/ConfirmEmail
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
@@ -342,6 +356,7 @@ namespace Yavsc.Controllers
         //
         // GET: /Account/ForgotPassword
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult ForgotPassword()
         {
             return View();
@@ -350,6 +365,7 @@ namespace Yavsc.Controllers
         //
         // POST: /Account/ForgotPassword
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
@@ -382,6 +398,7 @@ namespace Yavsc.Controllers
         //
         // GET: /Account/ForgotPasswordConfirmation
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult ForgotPasswordConfirmation()
         {
             return View();
@@ -390,6 +407,7 @@ namespace Yavsc.Controllers
         //
         // GET: /Account/ResetPassword
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult ResetPassword(string UserId, string code = null)
         {
             return code == null ? View("Error") : View();
@@ -398,6 +416,7 @@ namespace Yavsc.Controllers
         //
         // POST: /Account/ResetPassword
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
@@ -423,6 +442,7 @@ namespace Yavsc.Controllers
         //
         // GET: /Account/ResetPasswordConfirmation
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult ResetPasswordConfirmation()
         {
             return View();
@@ -489,6 +509,7 @@ namespace Yavsc.Controllers
         //
         // GET: /Account/VerifyCode
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> VerifyCode(string provider, bool rememberMe, string returnUrl = null)
         {
             // Require that the user has already logged in via username/password or external login
@@ -503,6 +524,7 @@ namespace Yavsc.Controllers
         //
         // POST: /Account/VerifyCode
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyCode(VerifyCodeViewModel model)
         {

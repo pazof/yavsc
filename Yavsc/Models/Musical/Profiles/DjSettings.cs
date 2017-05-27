@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using YavscLib;
+using Yavsc;
 
 namespace Yavsc.Models.Musical.Profiles
 {

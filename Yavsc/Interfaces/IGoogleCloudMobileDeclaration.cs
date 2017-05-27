@@ -1,5 +1,4 @@
-﻿using YavscLib;
-
+﻿
 namespace Yavsc.Interfaces
 {
     public interface IGCMDeclaration

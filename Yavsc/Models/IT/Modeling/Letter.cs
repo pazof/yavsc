@@ -1,5 +1,5 @@
 
-using YavscLib;
+using Yavsc;
 
 namespace Yavsc.Models.IT.Modeling
 {

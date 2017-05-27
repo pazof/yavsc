@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.Windows.Input;
 using System.ComponentModel;
-using YavscLib.Billing;
+using Yavsc.Billing;
 
 namespace ZicMoove.ViewModels.EstimateAndBilling
 {
@@ -163,7 +163,7 @@ pour décrire la quantité de travail associée à ce type de service")]
                 Data.Duration = this.Duration;
             }
         }
-        
+
         public static readonly string unitCostFormat = "0,.00";
         string unitaryCostText;
         public string UnitaryCostText

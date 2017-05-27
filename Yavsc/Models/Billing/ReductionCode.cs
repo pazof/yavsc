@@ -1,7 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using YavscLib.Billing;
+using Yavsc.Billing;
 
 namespace Yavsc.Models.Billing {
 

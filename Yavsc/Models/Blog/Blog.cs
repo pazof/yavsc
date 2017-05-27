@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Newtonsoft.Json;
 using Yavsc.Models.Access;
-using YavscLib;
+using Yavsc;
 
 namespace Yavsc.Models
 {
@@ -27,7 +27,7 @@ namespace Yavsc.Models
         public string AuthorId { get; set; }
 
         [Display(Name="Auteur")]
-        
+
         [ForeignKey("AuthorId"),JsonIgnore]
         public ApplicationUser Author { set; get; }
         [Display(Name="Visible")]
@@ -56,7 +56,7 @@ namespace Yavsc.Models
         {
             get; set;
         }
-        
+
         [InverseProperty("Target")]
         [Display(Name="Liste de contrôle d'accès")]
         public virtual List<CircleAuthorizationToBlogPost> ACL { get; set; }

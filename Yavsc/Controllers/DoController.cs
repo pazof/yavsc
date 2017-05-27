@@ -12,7 +12,7 @@ namespace Yavsc.Controllers
     using Models.Workflow;
     using Yavsc.Exceptions;
     using Yavsc.ViewModels.Workflow;
-    using YavscLib;
+    using Yavsc;
 
     [Authorize]
     public class DoController : Controller
@@ -22,7 +22,7 @@ namespace Yavsc.Controllers
 
         public DoController(ApplicationDbContext context,ILogger<DoController> logger)
         {
-            _context = context;    
+            _context = context;
             _logger = logger;
         }
 
@@ -42,7 +42,7 @@ namespace Yavsc.Controllers
         // GET: Do/Details/5
         public IActionResult Details(string id, string activityCode)
         {
-            
+
             if (id == null || activityCode == null)
             {
                 return HttpNotFound();
@@ -54,20 +54,20 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            
+
             bool hasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
             if (hasConfigurableSettings) {
                 ViewBag.ProfileType = Startup.ProfileTypes.Single(t=>t.FullName==userActivity.Does.SettingsClassName);
                 var dbset = (IQueryable<ISpecializationSettings>) _context.GetDbSet(userActivity.Does.SettingsClassName);
                 if (dbset == null) throw new InvalidWorkflowModelException($"pas de db set pour {userActivity.Does.SettingsClassName}, vous avez peut-être besoin de décorer votre propriété avec l'attribut [ActivitySettings]");
-                return View(new UserActivityViewModel { 
-                    Declaration = userActivity, 
+                return View(new UserActivityViewModel {
+                    Declaration = userActivity,
                     HasSettings = dbset.Any(ua=>ua.UserId==id),
                     NeedsSettings =  hasConfigurableSettings
                 } );
             }
-            return View(new UserActivityViewModel { 
-                Declaration = userActivity, 
+            return View(new UserActivityViewModel {
+                Declaration = userActivity,
                 HasSettings = false,
                 NeedsSettings =  hasConfigurableSettings
                 } );

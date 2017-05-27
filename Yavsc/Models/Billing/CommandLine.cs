@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Billing
 {
-    using YavscLib.Billing;
+    using Yavsc.Billing;
 
     public class CommandLine : ICommandLine {
 

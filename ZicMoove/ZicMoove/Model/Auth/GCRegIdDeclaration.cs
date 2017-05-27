@@ -1,5 +1,5 @@
 ﻿using System;
-using YavscLib;
+using Yavsc;
 
 namespace ZicMoove.Model.Auth
 {

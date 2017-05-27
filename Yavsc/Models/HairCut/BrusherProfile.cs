@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using Yavsc.Models.Workflow;
-using YavscLib;
+using Yavsc;
 
 namespace Yavsc.Models.Haircut
 {

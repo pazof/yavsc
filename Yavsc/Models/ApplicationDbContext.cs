@@ -12,7 +12,7 @@ namespace Yavsc.Models
 {
     using Relationship;
     using Forms;
-    using YavscLib;
+    using Yavsc;
     using Auth;
     using Billing;
     using Musical;

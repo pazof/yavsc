@@ -2,7 +2,7 @@ using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    using YavscLib;
+    using Yavsc;
     public partial class bookQueryStatus : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

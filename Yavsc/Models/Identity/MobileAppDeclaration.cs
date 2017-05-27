@@ -5,19 +5,19 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Identity
 {
-  using YavscLib;
- 
+  using Yavsc;
+
   [JsonObject]
 
-  public class GivenGoogleCloudMobileDeclaration : GoogleCloudMobileDeclaration, IGCMDeclaration {   
+  public class GivenGoogleCloudMobileDeclaration : GoogleCloudMobileDeclaration, IGCMDeclaration {
      public DateTime? LatestActivityUpdate { get; set; }
   }
 
   public class GoogleCloudMobileDeclaration {
-    
+
     [Required]
     public string GCMRegistrationId { get; set; }
-    
+
     [Key,Required]
     public string DeviceId { get; set; }
 
@@ -27,8 +27,8 @@ namespace Yavsc.Models.Identity
     public string DeviceOwnerId { get; set; }
     public DateTime DeclarationDate { get; set; }
     [JsonIgnore,ForeignKey("DeviceOwnerId")]
-    public virtual ApplicationUser DeviceOwner { get; set; } 
-    
+    public virtual ApplicationUser DeviceOwner { get; set; }
+
 
   }
 

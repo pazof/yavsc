@@ -5,7 +5,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Yavsc.Exceptions;
 using Yavsc.Models;
-using YavscLib;
+using Yavsc;
 
 namespace Yavsc.Controllers.Generic
 {
@@ -15,7 +15,7 @@ namespace Yavsc.Controllers.Generic
         protected ApplicationDbContext _context;
         private object dbSet;
 
-        protected DbSet<TSettings> Settings { get { 
+        protected DbSet<TSettings> Settings { get {
             return (DbSet<TSettings>) dbSet;
         } }
 
@@ -47,7 +47,7 @@ namespace Yavsc.Controllers.Generic
 
             return View(profile);
         }
-        
+
 
         // GET: BrusherProfile/Create
         public IActionResult Create()
@@ -71,7 +71,7 @@ namespace Yavsc.Controllers.Generic
             return View(setting);
         }
 
-        
+
 
         // GET: BrusherProfile/Delete/5
         [ActionName("Delete")]
@@ -106,7 +106,7 @@ namespace Yavsc.Controllers.Generic
             }
             return View("Edit",settings);
         }
-        
+
         // POST: FormationSettings/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -115,7 +115,7 @@ namespace Yavsc.Controllers.Generic
             if (settings.UserId == null) {
                 settings.UserId = User.GetUserId();
                 Settings.Add(settings);
-            } else 
+            } else
                 _context.Update(settings);
             if (ModelState.IsValid)
             {
@@ -124,7 +124,7 @@ namespace Yavsc.Controllers.Generic
             }
             return View(settings);
         }
-        
+
         // POST: FormationSettings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

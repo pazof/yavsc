@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations;
 namespace Yavsc.Models.Workflow.Profiles
 {
     using Models.Workflow;
-    using YavscLib;
+    using Yavsc;
     public class FormationSettings : ISpecializationSettings
     {
         public virtual List<CoWorking> CoWorking { get; set; }
-        
+
         [Key]
         public string UserId
         {

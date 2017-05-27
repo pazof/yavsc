@@ -8,9 +8,9 @@ namespace Yavsc.Models.Billing
     using Newtonsoft.Json;
     using Workflow;
     using Yavsc.Models.Payment;
-    using YavscLib;
-    using YavscLib.Billing;
-    using YavscLib.Workflow;
+    using Yavsc;
+    using Yavsc.Billing;
+    using Yavsc.Workflow;
 
     public abstract class NominativeServiceCommand : IBaseTrackedEntity, IQuery, IIdentified<long>
   {

@@ -2,7 +2,7 @@
 
 namespace ZicMoove.Model.Workflow
 {
-    using YavscLib.Billing;
+    using Yavsc.Billing;
     public class BillingLine : ICommandLine
     {
         public long Id { get; set; }

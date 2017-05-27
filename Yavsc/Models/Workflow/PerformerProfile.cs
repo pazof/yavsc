@@ -6,7 +6,7 @@ namespace Yavsc.Models.Workflow
 {
     using System;
     using Models.Relationship;
-    using YavscLib.Workflow;
+    using Yavsc.Workflow;
 
     public class PerformerProfile : IPerformerProfile {
 
