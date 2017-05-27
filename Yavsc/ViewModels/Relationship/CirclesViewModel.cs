@@ -1,4 +1,4 @@
-using YavscLib;
+using Yavsc;
 
 namespace Yavsc.ViewModels.Relationship
 {
