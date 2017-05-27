@@ -1,13 +1,12 @@
 using System.Linq;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
-using Yavsc.Models;
-using Yavsc.ViewModels.Controls;
-using Yavsc.ViewModels.Relationship;
-using Yavsc;
 
 namespace Yavsc.ViewComponents
 {
+    using Models;
+    using ViewModels.Controls;
+    using ViewModels.Relationship;
     public class CirclesControlViewComponent : ViewComponent
     {
         ApplicationDbContext dbContext;

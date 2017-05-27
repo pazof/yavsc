@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Models.Auth;
 using Yavsc.Models.Relationship;
-using Yavsc;
 
 namespace Yavsc.Models.Haircut.Views
 {

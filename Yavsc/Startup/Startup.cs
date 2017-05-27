@@ -28,7 +28,6 @@ namespace Yavsc
     using System.Net;
     using Formatters;
     using Models;
-    using Newtonsoft.Json;
     using PayPal.Manager;
     using Services;
     using ViewModels.Auth.Handlers;

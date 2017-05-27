@@ -4,12 +4,11 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNet.Builder;
 using Microsoft.Extensions.Logging;
-using Yavsc.Exceptions;
-using Yavsc.Models;
-using Yavsc;
 
 namespace Yavsc
 {
+    using Exceptions;
+    using Models;
     public partial class Startup
     {
         /// <summary>
