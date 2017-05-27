@@ -5,6 +5,17 @@
     int i=0;
     bool multipleact = Model.Count()>1;
 }
+@section scripts { 
+    <script>
+        $(document).ready(function(){
+            var fi = $('.item').first();
+            fi.animate({  transform: 'scale3d(1, 1, 1)' },500, "swing", function() {
+                fi.addClass('active');
+            })
+            
+        })
+    </script>
+}
 @section subbanner {
 
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
@@ -25,7 +36,7 @@
     </ol> }
     <div class="carousel-inner" role="listbox"> 
         @{
-            string cls = "item active";
+            string cls = "item";
             i=0;
             foreach (var act in Model) { 
         <div class="@cls"  style="background-image: url('@act.Photo'); background-repeat: no-repeat; ">
