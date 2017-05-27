@@ -350,8 +350,6 @@ namespace Yavsc
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            logger.LogInformation(JsonConvert.SerializeObject(Startup.PayPalSettings));
-
         }
 
         // Entry point for the application.
