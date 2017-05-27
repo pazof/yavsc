@@ -123,25 +123,27 @@ namespace Yavsc.Controllers
         public IActionResult Create(string title)
         {
             var result = new Blog{Title=title};
-            return View(result);
+            ViewData["PostTarget"]="Create";
+            return View("Edit",result);
         }
 
         // POST: Blog/Create
-        [HttpPost, Authorize(), ValidateAntiForgeryToken]
+        [HttpPost, Authorize, ValidateAntiForgeryToken]
         public IActionResult Create(Blog blog)
         {
             blog.Rate = 0;
             blog.AuthorId = User.GetUserId();
-            ModelState.ClearValidationState("AuthorId");
             blog.Id=0;
             if (ModelState.IsValid)
             {
+
                 _context.Blogspot.Add(blog);
                 _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ModelState.AddModelError("Unknown","Invalid Blog posted ...");
-            return View(blog);
+            ViewData["PostTarget"]="Create";
+            return View("Edit",blog);
         }
         [Authorize()]
         // GET: Blog/Edit/5
@@ -152,6 +154,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
+            ViewData["PostTarget"]="Edit";
             Blog blog = _context.Blogspot.Include(x => x.Author).Include(x => x.ACL).Single(m => m.Id == id);
 
 
@@ -201,6 +204,7 @@ namespace Yavsc.Controllers
                     return new ChallengeResult();
                 }
             }
+            ViewData["PostTarget"]="Edit";
             return View(blog);
         }
 

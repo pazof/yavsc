@@ -63,7 +63,7 @@ namespace Yavsc.Models
 
         public bool AuthorizeCircle(long circleId)
         {
-            return ACL.Any( i=>i.CircleId == circleId);
+            return ACL?.Any( i=>i.CircleId == circleId) ?? true;
         }
 
         public string GetOwnerId()
