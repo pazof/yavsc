@@ -1,7 +1,11 @@
 @model ApplicationUser
+
 @if (Model!=null) {
+<div class="userinfo">
+<h3>
 <img src="~/Avatars/@(Model.UserName).s.png" alt="" class="smalltofhol"> 
-@Model.UserName 
-@if (Model.Posts!=null) { <a asp-controller="Blogspot" asp-action="UserPosts" 
-asp-route-id="@Model.UserName" class="btn btn-link">@SR["index de ses articles"]</a>
-}} else { <text>néant</text> }
+@Model.UserName </h3>
+@if (Model.Posts!=null && Model.Posts.Count()>1) { <a asp-controller="Blogspot" asp-action="UserPosts" 
+asp-route-id="@Model.UserName" class="btn btn-primary">@SR["index de ses articles"]</a>
+}
+</div>}
