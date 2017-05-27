@@ -1,4 +1,4 @@
-﻿using Yavsc
+﻿using Yavsc;
 
 namespace Yavsc.Interfaces
 {
