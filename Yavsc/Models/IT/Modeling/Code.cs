@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using YavscLib;
+using Yavsc;
 
 namespace Yavsc.Models.IT.Modeling
 {

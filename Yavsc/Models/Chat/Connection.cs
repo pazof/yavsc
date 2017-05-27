@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Chat
 {
-    using YavscLib; 
+    using Yavsc;
 
     public class Connection : IConnection
     {
@@ -18,5 +18,5 @@ namespace Yavsc.Models.Chat
         public string UserAgent { get; set; }
         public bool Connected { get; set; }
     }
-    
+
 }

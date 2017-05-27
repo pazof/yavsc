@@ -6,7 +6,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Yavsc.ApiControllers
 {
-    using YavscLib;
+    using Yavsc;
     using System;
     using System.Linq;
     using System.Security.Claims;

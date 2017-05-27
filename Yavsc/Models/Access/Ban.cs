@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Access
 {
-  using YavscLib;
+  using Yavsc;
 
     public class Ban : IBaseTrackedEntity
     {
         public DateTime DateCreated
         {
-            get; set; 
+            get; set;
         }
 
         public DateTime DateModified

@@ -1,4 +1,4 @@
-using YavscLib.Billing;
+using Yavsc.Billing;
 
 namespace Yavsc.Models.Billing   {
     public class ProportionalImpacter : IBillingImpacter

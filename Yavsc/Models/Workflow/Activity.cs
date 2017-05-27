@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace Yavsc.Models.Workflow
 {
     using Yavsc.Models.Market;
-    using YavscLib;
+    using Yavsc;
 
     public class Activity : IBaseTrackedEntity, IActivity
     {

@@ -4,7 +4,7 @@ using XLabs.Forms.Mvvm;
 
 namespace ZicMoove.Model.Workflow
 {
-    using YavscLib;
+    using Yavsc;
     public class Activity : ViewModel, IActivity
     {
         public string Code

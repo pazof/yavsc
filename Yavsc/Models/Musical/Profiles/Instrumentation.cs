@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Workflow;
-using YavscLib;
+using Yavsc;
 
 namespace Yavsc.Models.Musical.Profiles
 {
@@ -10,7 +10,7 @@ namespace Yavsc.Models.Musical.Profiles
         {
             get; set;
         }
-        
+
         [ForeignKeyAttribute("UserId")]
         public virtual PerformerProfile User { get; set; }
         public long InstrumentId { get; set; }

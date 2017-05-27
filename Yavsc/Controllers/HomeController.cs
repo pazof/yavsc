@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Yavsc.Controllers
 {
     using Models;
-    using YavscLib;
+    using Yavsc;
 
     [AllowAnonymous]
     public class HomeController : Controller

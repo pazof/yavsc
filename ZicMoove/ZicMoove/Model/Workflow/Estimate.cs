@@ -8,7 +8,7 @@ namespace ZicMoove.Model.Workflow
 {
     using Data;
     using Musical;
-    using YavscLib.Workflow;
+    using Yavsc.Workflow;
 
     public partial class Estimate : IEstimate
     {
@@ -49,7 +49,7 @@ namespace ZicMoove.Model.Workflow
             get { return AttachedFiles == null ? null : string.Join(":", AttachedFiles); }
             set { AttachedFiles = value.Split(':').ToList(); }
         }
-        
+
         public string OwnerId { get; set; }
         [JsonIgnore]
         public ClientProviderInfo Owner

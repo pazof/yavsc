@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Relationship;
-using YavscLib.Billing;
+using Yavsc.Billing;
 
 namespace Yavsc.Models.Haircut
 {

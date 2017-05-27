@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using YavscLib.Billing;
+using Yavsc.Billing;
 
 namespace Yavsc.Helpers
 {

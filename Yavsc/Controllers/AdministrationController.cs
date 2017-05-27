@@ -81,6 +81,7 @@ namespace Yavsc.Controllers
         {
             var adminCount = await _userManager.GetUsersInRoleAsync(
                 Constants.AdminGroupName);
+            var userCount = await context.Users.CountAsync();
             var youAreAdmin = await _userManager.IsInRoleAsync(
                 await _userManager.FindByIdAsync(User.GetUserId()),
                 Constants.AdminGroupName);
@@ -98,7 +99,8 @@ namespace Yavsc.Controllers
             {
                 Roles = roles.ToArray(),
                 AdminCount = adminCount.Count,
-                YouAreAdmin = youAreAdmin
+                YouAreAdmin = youAreAdmin,
+                UserCount = userCount
             });
         }
 

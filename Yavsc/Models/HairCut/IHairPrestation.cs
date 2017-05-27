@@ -1,4 +1,4 @@
-namespace YavscLib
+namespace Yavsc
 {
     public interface IHairPrestation
     {

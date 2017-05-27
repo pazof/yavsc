@@ -40,7 +40,7 @@ namespace ZicMoove
     using System.Net.Http;
     using System.Text;
     using Pages.ClientPages;
-    using YavscLib;
+    using Yavsc;
     using Model.Musical;
 
     public partial class App : Application // superclass new in 1.3
@@ -135,7 +135,7 @@ namespace ZicMoove
         private void OnAppResumed(object sender, EventArgs e)
         {
             StartConnexion();
-            // TODO restore the navigation stack 
+            // TODO restore the navigation stack
             base.OnResume();
             foreach (var pageState in DataManager.Instance.AppState)
             {
@@ -153,7 +153,7 @@ namespace ZicMoove
             DataManager.Instance.AppState.SaveEntity();
         }
 
-        // FIXME Not called? 
+        // FIXME Not called?
         private void OnRotation(object sender, EventArgs<Orientation> e)
         {
 
@@ -179,7 +179,7 @@ namespace ZicMoove
         public App(IPlatform instance)
         {
             // This declaration became obsolete by introduction
-            // of the XLabs App that 
+            // of the XLabs App that
             // refers this instance with
             // its application context property
             // and is obtained using the `Resolver`
@@ -224,7 +224,7 @@ namespace ZicMoove
         private void BuildMainPage()
         {
             // TODO
-            // in case of App resume, 
+            // in case of App resume,
             // do not create new BindingContext's,
             // but use those from the AppState property
             accChooserPage = new AccountChooserPage();
@@ -285,7 +285,7 @@ namespace ZicMoove
             masterDetail.Detail = new NavigationPage(homePage);
             ToolbarItem tiSetts = new ToolbarItem()
             {
-                // FIXME what for? Priority = 0, 
+                // FIXME what for? Priority = 0,
                 Text = "Paramètres",
                 Icon = "ic_corp_icon.png",
                 Command = new Command(

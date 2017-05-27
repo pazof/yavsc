@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Payment {
-    using YavscLib;
+    using Yavsc;
     using Relationship;
 
     public class PayPalPayment : IBaseTrackedEntity

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Xamarin.Forms;
 using XLabs.Forms.Mvvm;
-using YavscLib;
+using Yavsc;
 using System;
 using Newtonsoft.Json;
 using ZicMoove.Model.Social.Messaging;
@@ -187,7 +187,7 @@ namespace ZicMoove.Model.Social.Chat
             if (existentcx != null)
             {
                 this.ObservableConnections.Remove(existentcx);
-                
+
                 if (this.ObservableConnections.Count == 0)
                     NotifyPropertyChanged("IsConnected");
             }

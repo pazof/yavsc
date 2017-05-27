@@ -3,7 +3,7 @@ namespace Yavsc.Models.Access
     using System.ComponentModel.DataAnnotations.Schema;
     using Models.Relationship;
     using Newtonsoft.Json;
-    using YavscLib;
+    using Yavsc;
 
     public class CircleAuthorizationToBlogPost : ICircleAuthorization
     {

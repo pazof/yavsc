@@ -24,7 +24,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Yavsc.Models.Messaging
 {
     using Interfaces.Workflow;
-    using YavscLib;
+    using Yavsc;
 
     /// <summary>
     /// Base event.
