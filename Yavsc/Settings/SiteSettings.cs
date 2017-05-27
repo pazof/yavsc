@@ -7,8 +7,8 @@ namespace Yavsc
 
         public string Banner { get; set; }
         /// <summary>
-        /// Conceptually, 
-        /// This authorisation server only has this present site as unique audience. 
+        /// Conceptually,
+        /// This authorisation server only has this present site as unique audience.
         /// </summary>
         /// <returns></returns>
         public string Audience { get; set; }
@@ -32,18 +32,30 @@ namespace Yavsc
         /// User's files directory
         /// </summary>
         /// <returns></returns>
-        public ThirdPartyFiles UserFiles { get; set; } 
+        public ThirdPartyFiles UserFiles { get; set; }
 
-        public string BusinessName { get; set; } 
-        public string Street { get; set; } 
-        public string PostalCode { get; set; } 
-        public string CountryCode { get; set; } 
+        public string BusinessName { get; set; }
+        public string Street { get; set; }
+        public string PostalCode { get; set; }
+        public string CountryCode { get; set; }
         /// <summary>
-        /// Specifies the directory where should be 
+        /// Specifies the directory where should be
         /// generated pdf files using pandoc
         ///  </summary>
         /// <returns>The temporary directory to use</returns>
         public string TempDir { get; set; } = "Temp";
+
+        /// <summary>
+        /// Only one performer will capture payments
+        /// </summary>
+        /// <returns>user capturing payments id</returns>
+        public string OnlyOnePerformerId { get; set; }
+
+        /// <summary>
+        /// Only one activity will be supported
+        /// </summary>
+        /// <returns>the supported activity code</returns>
+        public string OnlyOneActivityCode { get; set; }
 
     }
 }
