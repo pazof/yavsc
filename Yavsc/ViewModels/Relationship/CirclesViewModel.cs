@@ -1,5 +1,3 @@
-using Yavsc;
-
 namespace Yavsc.ViewModels.Relationship
 {
     public class CirclesViewModel

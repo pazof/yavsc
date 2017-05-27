@@ -65,7 +65,14 @@ namespace Yavsc.Helpers
 
             return root;
         }
-
+        public static void DeleteUserFile(this ApplicationUser user, string fileName)
+        {
+            var root = Path.Combine(Startup.UserFilesDirName, user.UserName);
+            var fi = new FileInfo(Path.Combine(root, fileName));
+            if (!fi.Exists) return ;
+            fi.Delete();
+            user.DiskUsage -= fi.Length;
+        }
         public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f)
         {
             long usage = user.DiskUsage;

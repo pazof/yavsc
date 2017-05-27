@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Workflow;
-using Yavsc;
 
 namespace Yavsc.Models.Musical.Profiles
 {

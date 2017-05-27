@@ -9,6 +9,7 @@ using Yavsc.Models;
 
 namespace Yavsc.ApiControllers
 {
+    using System.Threading.Tasks;
     using Yavsc.Exceptions;
     public class FSQuotaException : Exception {
 
@@ -43,16 +44,20 @@ namespace Yavsc.ApiControllers
             return Ok(files);
         }
 
-
         [HttpPost]
         public IEnumerable<IActionResult> Post(string subdir="")
         {
             string root = null;
+
+            InvalidPathException pathex = null;
             try {
-             root = User.InitPostToFileSystem(subdir);
-            } catch (InvalidPathException) {}
-            if (root==null)
-             yield return new BadRequestObjectResult(new { error= "InvalidPathException" });
+                root = User.InitPostToFileSystem(subdir);
+            } catch (InvalidPathException ex) {
+                pathex = ex;
+            }
+            if (pathex!=null)
+             yield return new BadRequestObjectResult(pathex);
+
             var user = dbContext.Users.Single(
                 u => u.Id == User.GetUserId()
             );
@@ -63,6 +68,26 @@ namespace Yavsc.ApiControllers
                 dbContext.SaveChanges(User.GetUserId());
                 yield return Ok(item);
             };
+        }
+
+        [HttpDelete]
+        public async Task <IActionResult> Delete (string id)
+        {
+            var user = dbContext.Users.Single(
+                u => u.Id == User.GetUserId()
+            );
+            InvalidPathException pathex = null;
+            string root = null;
+            try {
+                root = User.InitPostToFileSystem(id);
+            } catch (InvalidPathException ex) {
+                pathex = ex;
+            }
+            if (pathex!=null)
+              return new BadRequestObjectResult(pathex);
+            user.DeleteUserFile(id);
+            await dbContext.SaveChangesAsync(User.GetUserId());
+             return Ok(new { deleted=id });
         }
     }
 }

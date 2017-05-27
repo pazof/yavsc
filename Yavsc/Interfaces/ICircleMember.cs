@@ -1,6 +1,4 @@
-﻿using Yavsc;
-
-namespace Yavsc.Interfaces
+﻿namespace Yavsc.Interfaces
 {
     public interface ICircleMember: IIdentified<long>
     {

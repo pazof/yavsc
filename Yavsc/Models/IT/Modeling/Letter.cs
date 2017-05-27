@@ -1,6 +1,4 @@
 
-using Yavsc;
-
 namespace Yavsc.Models.IT.Modeling
 {
     public abstract class Letter<T> : ILetter<T>

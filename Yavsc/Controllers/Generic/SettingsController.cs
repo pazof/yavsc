@@ -3,12 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
-using Yavsc.Exceptions;
-using Yavsc.Models;
-using Yavsc;
 
 namespace Yavsc.Controllers.Generic
 {
+    using Exceptions;
+    using Models;
     [Authorize]
     public abstract class SettingsController<TSettings> : Controller where TSettings : class, ISpecializationSettings, new()
     {
