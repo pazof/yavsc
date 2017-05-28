@@ -6,6 +6,7 @@ namespace Yavsc.Helpers
     using Models.Messaging;
     using Yavsc.Models.Haircut;
     using System.Linq;
+    using System.Globalization;
 
     public static class EventHelpers
     {
@@ -41,21 +42,23 @@ namespace Yavsc.Helpers
             string evdate = query.EventDate?.ToString("dddd dd/MM/yyyy à HH:mm")??"[pas de date spécifiée]";
             string address = query.Location?.Address??"[pas de lieu spécifié]";
             var p = query.Prestation;
-            decimal total = query.GetBillItems().Addition();
-            string strprestation = $@"Coupe: {p.Cut}, Total: {total}";
+            string total = query.GetBillItems().Addition().ToString("C",CultureInfo.CurrentUICulture);
+            string strprestation = query.Description;
             string bill = string.Join("\n", query.GetBillItems().Select(
                 l=> $"{l.Name} {l.Description} {l.UnitaryCost} {l.Count}"));
 
             var yaev = new HairCutQueryEvent
             {
-                Sender = query.ClientId,
-                Message =  $@"{head}: {query.Client.UserName},
-{evdate},
-{address}
+                Sender = query.Client.UserName,
+                Message =  $@"{head} pour {query.Client.UserName},
+Date: {evdate},
+Adresse: {address}
 -----
 {strprestation}:
 
 {bill}
+
+{total}
 --
 {query.AdditionalInfo}
 " ,
