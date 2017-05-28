@@ -166,14 +166,14 @@ textarea {
 }
 
 .carousel .item .carousel-caption-s {
-    -webkit-transition: -webkit-transform 2s background-color 1s color 1s;
+    -webkit-transition: -webkit-transform 2s background-color 2s color 2s;
     -moz-transition: transform 2s background-color 2s color 2s;
     transition: transform 2s;
     transform: scale3d(0, 0, 0);
     -webkit-transform: scale3d(0, 0, 0);
 }
 
-.carousel .active .carousel-caption-s {
+.carousel .item.active .carousel-caption-s {
     -webkit-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1);
 }
