@@ -187,6 +187,7 @@ namespace Yavsc.ApiControllers
                 _logger.LogError(ex.Message);
                 return new HttpStatusCodeResult(500);
             }
+
             if (payment==null) {
                 _logger.LogError("Error doing SetExpressCheckout, aborting.");
                 _logger.LogError(JsonConvert.SerializeObject(Startup.PayPalSettings));
@@ -200,9 +201,8 @@ namespace Yavsc.ApiControllers
                         var dbinfo = new PayPalPayment
                         {
                             ExecutorId = User.GetUserId(),
-                            PaypalPayerId = payment.Token,
-                            CreationToken = null,
-                            State = "inserted"
+                            CreationToken = payment.Token,
+                            State = payment.Ack.ToString()
                         };
                         await _context.SaveChangesAsync(User.GetUserId());
                     }
