@@ -8,11 +8,15 @@
 @section scripts { 
     <script>
         $(document).ready(function(){
-            var fi = $('.item').first();
-            fi.animate({  transform: 'scale3d(1, 1, 1)' },500, "swing", function() {
-                fi.addClass('active');
-            })
-            
+           var car = $('.carousel').first();
+           var fi = car.children('.carousel-inner').first()
+           .children('.item').first();
+           var capt = fi.children('.carousel-caption-s');
+         
+            fi.addClass('active');
+           car.animate({'background-color':'rgba(0, 0, 0, .5)'},500,function() {
+               car.animate({'background-color':'rgba(0, 0, 0, 0)'},500)
+           })
         })
     </script>
 }
