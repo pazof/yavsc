@@ -136,10 +136,6 @@ namespace Yavsc.Helpers
             };
             return result;
         }
-
-        private static string MerchantUserId { get {
-            return Startup.PayPalSettings.Accounts[0].ApiUsername;
-        }}
         public static SetExpressCheckoutResponseType CreatePayment(this HttpRequest request, string controllerName, NominativeServiceCommand query, string intent = "sale", ILogger logger = null)
         {
             var items = query.GetBillItems();
@@ -147,6 +143,11 @@ namespace Yavsc.Helpers
             var queryType = query.GetType().Name;
             var coreq = new SetExpressCheckoutReq {};
             var urls = request.GetPaymentUrls(controllerName, query.Id.ToString());
+            // For parallel payments:
+            /* SellerDetailsType sellerDetails = new SellerDetailsType {
+                PayPalAccountID = Startup.PayPalSettings.MerchantAccountUserName,
+                SellerId = Startup.PayPalSettings.MerchantAccountId
+            };
             coreq.SetExpressCheckoutRequest = new SetExpressCheckoutRequestType{
                 DetailLevel = new List<DetailLevelCodeType?> { DetailLevelCodeType.RETURNALL },
                 SetExpressCheckoutRequestDetails = new SetExpressCheckoutRequestDetailsType
@@ -156,13 +157,47 @@ namespace Yavsc.Helpers
                         currencyID = CurrencyCodeType.EUR,
                         value = (i.Count * i.UnitaryCost).ToString("F2")
                          },
+                        SellerDetails = sellerDetails,
                         OrderDescription = i.Description
                     }).ToList(),
                     InvoiceID = queryType +  "/" + query.Id.ToString(),
 OrderDescription = query.Description, CancelURL = urls.CancelUrl, ReturnURL = urls.ReturnUrl
                 }
             };
-            var response = PayPalService.SetExpressCheckout( coreq, MerchantUserId );
+
+            */
+
+            var pitem = new PaymentDetailsItemType {};
+            coreq.SetExpressCheckoutRequest = new SetExpressCheckoutRequestType{
+                    DetailLevel = new List<DetailLevelCodeType?> { DetailLevelCodeType.RETURNALL },
+                    SetExpressCheckoutRequestDetails = new SetExpressCheckoutRequestDetailsType
+                    {
+                        PaymentDetails = new List<PaymentDetailsType>( new [] { new PaymentDetailsType{
+                        OrderDescription = query.Description,
+                        OrderTotal = new BasicAmountType {
+                            currencyID = CurrencyCodeType.EUR,
+                            value = total
+                        },
+                        PaymentDetailsItem = new List <PaymentDetailsItemType> (
+                            items.Select(i =>  new PaymentDetailsItemType {
+                                Amount = new BasicAmountType { currencyID = CurrencyCodeType.EUR, value = i.UnitaryCost.ToString("F2") },
+                                Name = i.Name,
+                                Quantity = i.Count,
+                                Description = i.Description
+                            })
+                        )
+                        }}),
+                        InvoiceID = queryType +  "/" + query.Id.ToString(),
+                     //   OrderDescription = query.Description, // "You cannot pass both the new and deprecated order description.","ErrorCode":"11804
+                        CancelURL = urls.CancelUrl,
+                        ReturnURL = urls.ReturnUrl
+                    }
+                };
+                var t = new PaymentDetailsItemType ();
+
+
+            logger.LogInformation($"Creating express checkout for {Startup.PayPalSettings.MerchantAccountUserName} : "+JsonConvert.SerializeObject(coreq));
+            var response = PayPalService.SetExpressCheckout( coreq, Startup.PayPalSettings.MerchantAccountUserName );
 
             // transaction.item_list.shipping_address.city
             // country_code default_address id
