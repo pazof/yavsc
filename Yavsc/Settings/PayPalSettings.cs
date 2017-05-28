@@ -32,6 +32,13 @@ namespace  Yavsc
         public string MerchantAccountId { get; set; }
 
         /// <summary>
+        /// Merchant PayPal Classic Api user name
+        /// </summary>
+        /// <returns></returns>
+        public string MerchantAccountUserName { get; set; }
+
+
+        /// <summary>
         /// PayPal Classic Api credentials model
         /// </summary>
         public class ClassicPayPalAccountApiCredential  {
