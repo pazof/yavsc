@@ -38,29 +38,34 @@ namespace Yavsc.Helpers
         public static HairCutQueryEvent CreateEvent(this HairCutQuery query,
         IStringLocalizer SR, BrusherProfile bpr)
         {
-            string head = SR["HaircutRdvQuery"];
+
             string evdate = query.EventDate?.ToString("dddd dd/MM/yyyy à HH:mm")??"[pas de date spécifiée]";
             string address = query.Location?.Address??"[pas de lieu spécifié]";
             var p = query.Prestation;
             string total = query.GetBillItems().Addition().ToString("C",CultureInfo.CurrentUICulture);
-            string strprestation = query.Description;
+            string strprestation = query.GetDescription();
             string bill = string.Join("\n", query.GetBillItems().Select(
-                l=> $"{l.Name} {l.Description} {l.UnitaryCost} {l.Count}"));
-
+                l=> $"{l.Name} {l.Description} {l.UnitaryCost} € " +
+                ((l.Count != 1) ? "*"+l.Count.ToString() : "")));
             var yaev = new HairCutQueryEvent
             {
-                Sender = query.Client.UserName,
-                Message =  $@"{head} pour {query.Client.UserName},
-Date: {evdate},
-Adresse: {address}
+                Sender = $"{strprestation} pour {query.Client.UserName}",
+                Message =
+$@"Un client vient de valider une demande de prestation à votre encontre:
+
+ Prestation: {strprestation}
+ Client : {query.Client.UserName}
+ Date: {evdate},
+ Adresse: {address}
+
 -----
-{strprestation}:
+{query.AdditionalInfo}
+
+Facture prévue (non réglée):
 
 {bill}
 
-{total}
---
-{query.AdditionalInfo}
+Total: {total}
 " ,
 Client =  new ClientProviderInfo { 
     UserName = query.Client.UserName ,
