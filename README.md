@@ -34,7 +34,11 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 * Le client peut le faire, en perdant les arrhes.
 * Le prestataire peut déléguer à une équipe de son choix un filtrage des demandes des clients.
 
-## Limitations
+## Limitations temporaires
+
+* à une commande, une prestation, un paiment
+
+## Limitations conceptuelles
 
 * Dans le cas de l'avance, une fois le paiment client autorisé, pour le moment, aucune annulation de la préstation n'est supportée.
 * Une fois passée la date de la prestation, toute reclamation nécessitera l'intervention d'un système auxiliaire (un processus humain?)
