@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-        <link rel="icon" href="/favicon.ico?v2" />
+        <link rel="icon" href="~/favicon.ico" asp-append-version="true" />
         <title>@ViewData["Title"] - @SiteSettings.Value.Title</title>
 
         <environment names="Development">
@@ -41,7 +41,6 @@
         @RenderSection("header", required: false)
     </head>
     <body>
-        
         <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
