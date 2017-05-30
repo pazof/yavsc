@@ -35,7 +35,7 @@
                 @Html.DisplayFor(m=>m.AdditionalInfo)
             </dd>
 
-            <dt>Addition minimale
+            <dt>@SR["Addition minimale"]
             </dt>
             <dd> <span class="price"> @ViewBag.Addition </span> <br/>
 
@@ -60,7 +60,7 @@
          @Html.DisplayFor(m => m.Location)
         }
         </dd>
-        <dt>Motification
+        <dt>@SR["Notification"]
         </dt>
         <dd>@if (ViewBag.GooglePayload !=null) 
         {
