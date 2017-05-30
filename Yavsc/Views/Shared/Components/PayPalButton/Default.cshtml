@@ -21,10 +21,10 @@
 var CREATE_PAYMENT_URL = '@ViewBag.CreatePaymentUrl';
 var EXECUTE_PAYMENT_URL = '@ViewBag.ExecutePaymentUrl';
 var PAYPAL_ENV = '@PayPalSettings.Value.Mode';
-var APP_ID = '@PayPalSettings.Value.ApplicationId';
+var MERCH_ID = '@PayPalSettings.Value.';
 
 
-paypal.checkout.setup(APP_ID, {
+paypal.checkout.setup(MERCH_ID, {
   environment: PAYPAL_ENV,
   container: '#paypalzone',
   click: function () {
