@@ -5444,7 +5444,7 @@ select[multiple].input-group-sm>.input-group-btn>.btn {
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
     color: #5e5e5e;
-    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .navbar-default .navbar-text {
@@ -5458,7 +5458,7 @@ select[multiple].input-group-sm>.input-group-btn>.btn {
 .navbar-default .navbar-nav>li>a:hover,
 .navbar-default .navbar-nav>li>a:focus {
     color: #333;
-    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .navbar-default .navbar-nav>.active>a,
@@ -5472,7 +5472,7 @@ select[multiple].input-group-sm>.input-group-btn>.btn {
 .navbar-default .navbar-nav>.disabled>a:hover,
 .navbar-default .navbar-nav>.disabled>a:focus {
     color: #ccc;
-    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .navbar-default .navbar-toggle {
@@ -5496,8 +5496,8 @@ select[multiple].input-group-sm>.input-group-btn>.btn {
 .navbar-default .navbar-nav>.open>a,
 .navbar-default .navbar-nav>.open>a:hover,
 .navbar-default .navbar-nav>.open>a:focus {
-    color: #555;
-    background-color: #e7e7e7;
+    color: #888;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 @media (max-width: 767px) {
@@ -5559,7 +5559,6 @@ fieldset[disabled] .navbar-default .btn-link:focus {
 .navbar-inverse .navbar-brand:hover,
 .navbar-inverse .navbar-brand:focus {
     color: #fff;
-    background-color: transparent;
 }
 
 .navbar-inverse .navbar-text {
@@ -5628,7 +5627,7 @@ fieldset[disabled] .navbar-default .btn-link:focus {
     .navbar-inverse .navbar-nav .open .dropdown-menu>li>a:hover,
     .navbar-inverse .navbar-nav .open .dropdown-menu>li>a:focus {
         color: #fff;
-        background-color: transparent;
+        background-color: #080808;
     }
     .navbar-inverse .navbar-nav .open .dropdown-menu>.active>a,
     .navbar-inverse .navbar-nav .open .dropdown-menu>.active>a:hover,
@@ -5650,6 +5649,7 @@ fieldset[disabled] .navbar-default .btn-link:focus {
 
 .navbar-inverse .navbar-link:hover {
     color: #fff;
+    background-color: rgba(0, 0, 0, .4);
 }
 
 .navbar-inverse .btn-link {
@@ -5659,13 +5659,15 @@ fieldset[disabled] .navbar-default .btn-link:focus {
 .navbar-inverse .btn-link:hover,
 .navbar-inverse .btn-link:focus {
     color: #fff;
+    background-color: rgba(0, 0, 0, .4);
 }
 
 .navbar-inverse .btn-link[disabled]:hover,
 fieldset[disabled] .navbar-inverse .btn-link:hover,
 .navbar-inverse .btn-link[disabled]:focus,
 fieldset[disabled] .navbar-inverse .btn-link:focus {
-    color: #444;
+    color: #999;
+    background-color: rgba(0, 0, 0, .4);
 }
 
 .breadcrumb {

@@ -1,7 +1,16 @@
-/* Wrapping element */
+.navbar-link,
+.navbar-brand {
+    background-color: rgba(0, 0, 0, .2);
+    border-radius: 2em;
+    vertical-align: center;
+}
 
-
-/* Set some basic padding to keep content from hitting the edges */
+.navbar-link:hover,
+.navbar-brand:hover,
+.navbar-link:focus,
+.navbar-brand:focus {
+    background-color: rgba(0, 0, 0, .4);
+}
 
 .ql-editor {
     border: outset 1em rgb(238, 144, 62);
