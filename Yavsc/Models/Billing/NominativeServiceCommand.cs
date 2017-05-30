@@ -14,8 +14,10 @@ namespace Yavsc.Models.Billing
 
     public abstract class NominativeServiceCommand : IBaseTrackedEntity, IQuery, IIdentified<long>
   {
+        public string GetInvoiceId() { return GetType().Name +  "/" + Id;  }
+
         public abstract long Id { get; set; }
-        public abstract string Description { get; set; }
+        public abstract string GetDescription ();
 
         [Required()]
         public bool Consent { get; set; }

@@ -10,17 +10,17 @@ namespace  Yavsc
         /// <returns></returns>
         public string Mode { get; set; }
         /// <summary>
-        ///
+        /// Client Id using the REST API
         /// </summary>
         public string ClientId { get; set; }
 
         /// <summary>
-        /// For sandbox only?
+        /// Client Secret using the REST API
         /// </summary>
         /// <returns></returns>
         public string ClientSecret { get; set; }
         /// <summary>
-        /// Your application id ...
+        /// Application Id using the REST API
         /// </summary>
         /// <returns></returns>
         public string ApplicationId { get; set; }

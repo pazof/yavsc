@@ -27,6 +27,7 @@ namespace Yavsc
 {
     using System.Net;
     using Formatters;
+    using Microsoft.Extensions.Localization;
     using Models;
     using PayPal.Manager;
     using Services;
@@ -38,6 +39,7 @@ namespace Yavsc
         public static string AvatarsDirName { private set; get; }
         public static string Authority { get; private set; }
         public static string Temp { get; set; }
+        public static string HomeViewName { get; set; } = "Home";
         public static SiteSettings SiteSetup { get; private set; }
 
         public static PayPalSettings PayPalSettings { get; private set; }
@@ -233,7 +235,7 @@ namespace Yavsc
             });
 
         }
-
+        public static IStringLocalizer GlobalLocalizer { get; private set; }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
         IOptions<SiteSettings> siteSettings,
@@ -242,8 +244,10 @@ namespace Yavsc
         RoleManager<IdentityRole> roleManager,
         IAuthorizationService authorizationService,
         IOptions<PayPalSettings> payPalSettings,
+        IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
          ILoggerFactory loggerFactory)
         {
+            GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;
             Authority = siteSettings.Value.Authority;
             Startup.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
