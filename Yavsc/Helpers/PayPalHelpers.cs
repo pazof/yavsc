@@ -1,13 +1,9 @@
 using System.Collections.Generic;
 
 using Microsoft.Extensions.Logging;
-using PayPal.Exception;
 using Yavsc.Models.Billing;
 using Microsoft.AspNet.Http;
 using System.Threading.Tasks;
-using System.Net.Http;
-using System;
-using System.Text;
 using Newtonsoft.Json;
 using PayPal.PayPalAPIInterfaceService.Model;
 using PayPal.PayPalAPIInterfaceService;
@@ -50,19 +46,6 @@ namespace Yavsc.Helpers
             }
             return payPalProperties;
         }
-
-        public class PayPalOAuth2Token
-        {
-            public string scope;
-            public string nonce;
-            public string access_token;
-            public string token_type;
-
-            public string app_id;
-            public string expires_in;
-
-        }
-        private static PayPalOAuth2Token token = null;
         private static PayPalAPIInterfaceServiceService payPalService = null;
         public static PayPalAPIInterfaceServiceService PayPalService {
             get {
@@ -70,55 +53,6 @@ namespace Yavsc.Helpers
              payPalService = new PayPal.PayPalAPIInterfaceService.PayPalAPIInterfaceServiceService(GetPayPalProperties());
             return payPalService;
         }}
-
-        [Obsolete("use the PayPalService property")]
-        internal static async Task<string> GetAccessToken()
-        {
-
-
-            if (token == null)
-            {
-                token = new PayPalOAuth2Token();
-
-                using (HttpClient client = new HttpClient())
-                {
-
-                    var uriString = Startup.PayPalSettings.Mode == "production" ?
-                    "https://api.paypal.com/v1/oauth2/token" : "https://api.sandbox.paypal.com/v1/oauth2/token";
-
-                    client.DefaultRequestHeaders.Add("Accept", "application/json");
-                    client.DefaultRequestHeaders.Add("Accept-Language", "en_US");
-
-
-                    string oAuthCredentials = Convert.ToBase64String(Encoding.Default.GetBytes(Startup.PayPalSettings.ClientId + ":" + Startup.PayPalSettings.ClientSecret));
-
-                    var h_request = new HttpRequestMessage(HttpMethod.Post, uriString);
-
-                    h_request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", oAuthCredentials);
-                    var keyValues = new List<KeyValuePair<string, string>>();
-                    keyValues.Add(new KeyValuePair<string, string>("grant_type", "client_credentials"));
-                    h_request.Content = new FormUrlEncodedContent(keyValues);
-
-                    using (var response = await client.SendAsync(h_request))
-                    {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            Console.WriteLine(content);
-                            token = JsonConvert.DeserializeObject<PayPalOAuth2Token>(content);
-                        }
-                        else
-                        {
-                            throw new PayPalException($"{response.StatusCode}");
-                        }
-                    }
-
-                }
-            }
-            return token?.access_token ?? null;
-                //return PayPalCredential.GetAccessToken();
-
-        }
 
         public class PaymentUrls
         {
@@ -140,61 +74,35 @@ namespace Yavsc.Helpers
         {
             var items = query.GetBillItems();
             var total = items.Addition().ToString("F2");
-            var queryType = query.GetType().Name;
             var coreq = new SetExpressCheckoutReq {};
             var urls = request.GetPaymentUrls(controllerName, query.Id.ToString());
-            // For parallel payments:
-            /* SellerDetailsType sellerDetails = new SellerDetailsType {
-                PayPalAccountID = Startup.PayPalSettings.MerchantAccountUserName,
-                SellerId = Startup.PayPalSettings.MerchantAccountId
-            };
+
+            var pitem = new PaymentDetailsItemType {};
             coreq.SetExpressCheckoutRequest = new SetExpressCheckoutRequestType{
                 DetailLevel = new List<DetailLevelCodeType?> { DetailLevelCodeType.RETURNALL },
                 SetExpressCheckoutRequestDetails = new SetExpressCheckoutRequestDetailsType
                 {
-                    PaymentDetails = items.Select(i => new PaymentDetailsType{
-                         OrderTotal = new BasicAmountType {
+                    PaymentDetails = new List<PaymentDetailsType>( new [] { new PaymentDetailsType{
+                    OrderDescription = query.GetDescription(),
+                    OrderTotal = new BasicAmountType {
                         currencyID = CurrencyCodeType.EUR,
-                        value = (i.Count * i.UnitaryCost).ToString("F2")
-                         },
-                        SellerDetails = sellerDetails,
-                        OrderDescription = i.Description
-                    }).ToList(),
-                    InvoiceID = queryType +  "/" + query.Id.ToString(),
-OrderDescription = query.Description, CancelURL = urls.CancelUrl, ReturnURL = urls.ReturnUrl
+                        value = total
+                    },
+                    PaymentDetailsItem = new List <PaymentDetailsItemType> (
+                        items.Select(i =>  new PaymentDetailsItemType {
+                            Amount = new BasicAmountType { currencyID = CurrencyCodeType.EUR, value = i.UnitaryCost.ToString("F2") },
+                            Name = i.Name,
+                            Quantity = i.Count,
+                            Description = i.Description
+                        })
+                    )
+                    }}),
+                    InvoiceID = query.GetInvoiceId(),
+                    // NOTE don't set OrderDescription : "You cannot pass both the new and deprecated order description.","ErrorCode":"11804
+                    CancelURL = urls.CancelUrl,
+                    ReturnURL = urls.ReturnUrl
                 }
             };
-
-            */
-
-            var pitem = new PaymentDetailsItemType {};
-            coreq.SetExpressCheckoutRequest = new SetExpressCheckoutRequestType{
-                    DetailLevel = new List<DetailLevelCodeType?> { DetailLevelCodeType.RETURNALL },
-                    SetExpressCheckoutRequestDetails = new SetExpressCheckoutRequestDetailsType
-                    {
-                        PaymentDetails = new List<PaymentDetailsType>( new [] { new PaymentDetailsType{
-                        OrderDescription = query.Description,
-                        OrderTotal = new BasicAmountType {
-                            currencyID = CurrencyCodeType.EUR,
-                            value = total
-                        },
-                        PaymentDetailsItem = new List <PaymentDetailsItemType> (
-                            items.Select(i =>  new PaymentDetailsItemType {
-                                Amount = new BasicAmountType { currencyID = CurrencyCodeType.EUR, value = i.UnitaryCost.ToString("F2") },
-                                Name = i.Name,
-                                Quantity = i.Count,
-                                Description = i.Description
-                            })
-                        )
-                        }}),
-                        InvoiceID = queryType +  "/" + query.Id.ToString(),
-                     //   OrderDescription = query.Description, // "You cannot pass both the new and deprecated order description.","ErrorCode":"11804
-                        CancelURL = urls.CancelUrl,
-                        ReturnURL = urls.ReturnUrl
-                    }
-                };
-                var t = new PaymentDetailsItemType ();
-
 
             logger.LogInformation($"Creating express checkout for {Startup.PayPalSettings.MerchantAccountUserName} : "+JsonConvert.SerializeObject(coreq));
             var response = PayPalService.SetExpressCheckout( coreq, Startup.PayPalSettings.MerchantAccountUserName );
@@ -258,13 +166,26 @@ OrderDescription = query.Description, CancelURL = urls.CancelUrl, ReturnURL = ur
              string payerId,
              string token)
         {
-             var details = GetExpressCheckoutDetails(token);
-            var payment = new PayPalPayment{
-                ExecutorId = userId,
-                PaypalPayerId = payerId,
-                CreationToken = token
-            };
-             context.PayPalPayments.Add(payment);
+            var details = GetExpressCheckoutDetails(token);
+            var payment = await context.PayPalPayments.SingleOrDefaultAsync(p=>p.CreationToken == token);
+            if (payment == null)
+                {
+                    payment = new PayPalPayment{
+                            ExecutorId = userId,
+                            PaypalPayerId = payerId,
+                            CreationToken = token,
+                            // NOTE: 1 order <=> 1 bill <=> 1 payment
+                            OrderReference = details.GetExpressCheckoutDetailsResponseDetails.InvoiceID,
+                            State = details.Ack.ToString()
+                        };
+
+                    context.PayPalPayments.Add(payment);
+                }
+                else {
+                    payment.ExecutorId = userId;
+                    payment.PaypalPayerId = payerId;
+                    payment.State = details.Ack.ToString();
+                }
              await context.SaveChangesAsync(userId);
              // GetCheckoutInfo(,token);
              return new PaymentInfo { DbContent = payment, DetailsFromPayPal = details };
