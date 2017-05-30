@@ -24,13 +24,11 @@ namespace Yavsc.Models.Haircut
 
     public class HairMultiCutQuery : NominativeServiceCommand
     {
-                // Bill description
-        public override string Description
+        // Bill description
+        public override string GetDescription()
         {
-            get;
-
-            set;
-        } = "Prestation en coiffure à domicile [commande groupée]";
+            return "Prestation en coiffure à domicile [commande groupée]";
+        }
 
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         override public long Id { get; set; }

@@ -38,6 +38,8 @@ namespace Yavsc
         public string Street { get; set; }
         public string PostalCode { get; set; }
         public string CountryCode { get; set; }
+
+        public string HomeViewName { get; set; }
         /// <summary>
         /// Specifies the directory where should be
         /// generated pdf files using pandoc

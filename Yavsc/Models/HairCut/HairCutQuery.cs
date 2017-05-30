@@ -13,13 +13,13 @@ namespace Yavsc.Models.Haircut
     {
 
         // Bill description
-        public override string Description
+        public override string GetDescription()
         {
-            get;
-
-            set;
+            var type = Startup.GlobalLocalizer[this.GetType().Name];
+            var gender = Startup.GlobalLocalizer[this.Prestation.Gender.ToString()];
+           return  $"{type} ({gender})";
         }
-        = "Prestation en coiffure à domicile";
+
 
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         override public long Id { get; set; }
