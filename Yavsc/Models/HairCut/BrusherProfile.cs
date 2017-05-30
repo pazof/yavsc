@@ -1,10 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
-using Yavsc.Models.Workflow;
+using System.Collections.Generic;
 
 namespace Yavsc.Models.Haircut
 {
+    using Workflow;
+    using Relationship;
+
     public class BrusherProfile : ISpecializationSettings
     {
         public BrusherProfile()
@@ -17,8 +20,12 @@ namespace Yavsc.Models.Haircut
            get; set;
         }
 
+
         [JsonIgnore,ForeignKey("UserId")]
         public virtual PerformerProfile BaseProfile { get; set; }
+
+        [Display(Name="Portfolio")]
+        public virtual List<Link> Links { get; set; }
 
 
         [Display(Name="Rayon d'action"),DisplayFormat(DataFormatString="{0} km")]
