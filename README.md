@@ -45,3 +45,22 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 * Un seul moyen de paiment: PayPal, depuis le Web ou l'application mobile, son interface dite dépréciée NVP/SOAP.
 * Elle ne prendra pas en charge, du moins pas encore, ni la saisie de structures de projets complexes, ni ticketing associé à la prestation.
 * Les professionnels sont tous considérés comme tierces parties, horsmis le propriétaire de l'installation, dont les identifiants PayPal sont utilisés pour collecter tous les paiments. Aucune edition de fiche de paye ni paiment en masse ne sont supportés. Seul les payments unitaires sus-cités le sont.
+
+
+## Développement
+
+## Nouvelle activité
+
+L'impact d'une custo de son activité pourrait à peu près tout concerner, 
+un bon point de départ est la création d'un controller de commande dédié, enrichi des données de profile associées à 
+un nouveau type de profiles prestataire.
+
+## Un nouvel environnement d'execution
+
+L'impact de l'usage d'un nouveau nom d'environement d'execution, à l'heure de cet écrit, ressemble à ceci:
+
+* Ajustement des listes d'environements cités dans les pages:
+  * ~/Views/Shared/_Layout.cshtml
+  * ~/Views/Shared/_ValidationScriptsPartial.cshtml
+  * ~/Views/Home/Index.cshtml
+  * ~/Views/Home/About.cshtml
