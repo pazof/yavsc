@@ -6,6 +6,7 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 
 ## Jalon 1
 
+	☐ Des spécifications détaillées du coeur de l'application
 	✔ Acces (publique) aux Blogs. @done (August 13th 2016, 0:51)
 	✔ Accès aux profiles des intervenants. @done (August 13th 2016, 0:57)
 	✔ Demande de devis, spécifiant une date et un lieu, envers un pro (ou "BookQuery", ou "demande de rendez-vous"). @done (August 13th 2016, 0:57)
@@ -17,7 +18,7 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	✔ Devis au formats TeX et Pdf en ligne à accès restreint. @done (November 6th 2016, 2:10)
 	✔ Idem depuis l'API web. @done (November 10th 2016, 10:00)
 	✔ Signature du devis par le fournisseur (l'arstiste), depuis le mobile. @done (December 7th 2016, 10:45)
-	☐ Au devis validé par le fournisseur pour le client : Envoi d'une notification au client et mise à disposition du devis signé.
+	☐ Au devis validé par le fournisseur pour le client : Envoi d'une notification au client et mise à disposition du devis signé
 	* à l'accord du client sur le devis :
 		☐ Envoi d'une notification au fournisseur et mise à disposition de la signature client et d'un commentaire.
 		☐ Edition de la facture non aquittée depuis le mobile.
@@ -33,10 +34,10 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	✔ Accès Web au chat privé. @done (November 3rd 2016, 14:57)
 	✔ Accès mobile au chat privé. @done (November 3rd 2016, 11:15)
 	✔ Envoi de l'avatar. @done (December 7th 2016, 10:45)
-	☐ Envoi de l'avatar depuis le mobile.
+	✔ Envoi de l'avatar depuis le mobile. @done (May 31st 2017, 3:19)
 	* Gestion du profile utilisateur:
-		☐ Simple [Web]
-		☐ Prestataire [Web]
+		✔ Simple [Web] @done (May 31st 2017, 3:19)
+		✔ Prestataire [Web] @done (May 31st 2017, 3:19)
 		☐ Simple [Android]
 		☐ Prestataire [Android]
 	* Gestion de l'espace de stockage personnel: 
@@ -44,35 +45,42 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 		☐ Depuis l'API web.
 		☐ Depuis le Mobile.
 	☐ Gestion de l'espace de stockage personnel, depuis l'API Web. 
-	☐ Envoi de fichier depuis le mobile, vers l'espace de stockage personnel.
 	✔ Envoi de fichiers depuis de Web. @done (December 7th 2016, 10:45)
 	☐ Évaluation de la prestation.
 	☐ Page d'accueil du mobile: Les alertes, et les derniers événements, donc, les derniers post, les 
 	dernières inscriptions de prestataire, les annonces corporate
-	* La sélection d'une star: pas de notation à afficher + idem chanteur,
-	  les critères : la date, les champs du formulaire de commande: le message, le lieu
-	☐ depuis le mobile
-	☐ depuis le Web
+	* La sélection d'une star: 
+		☐ delegation du traitement des demandes
+		☐ depuis le mobile
+		✔ depuis le Web @done (May 31st 2017, 3:25)
 	* La sélection d'un DJ: (rechercher dans / afficher) les samples + idem chanteur
 	  les critères : la date, les champs du formulaire de commande: le message, le lieu, la tendance musicale
-	☐ depuis le mobile
-	☐ depuis le Web
+		☐ depuis le mobile
+		☐ depuis le Web
 	* La sélection d'un chanteur: (rechercher dans / afficher) les titres du répertoire
-	☐ depuis le mobile
-	☐ depuis le Web
+		☐ depuis le mobile
+		☐ depuis le Web
 	* La sélection d'une formation musicale: idem chanteur + (rechercher/afficher) la taille de la formation
-	☐ depuis le mobile
-	☐ depuis le Web
-	☐ Des spécifications détaillées du coeur de l'application
-	☐ Géocodeur adresse postale
+		☐ depuis le mobile
+		☐ depuis le Web
+	* Géocodeur de lieu
+		✔ Web @done (May 31st 2017, 3:20)
+		☐ Mobile
+	* Géocodeur adresse postale
+		☐ Web
+		☐ Mobile
 	☐ Evaluation des trajets
+	✔ Réactivation des cercles privés (cassé avec vNext) @done (May 31st 2017, 3:22)
+	✔ Support multi-lanque de l'app mobile @done (December 7th 2016, 10:58)
+	✔ Support multi-lanque du web @done (December 7th 2016, 10:58)
 
 ## Jalon 2
 
-	☐ Login Twitter.
-	☐ Login SoundCloud?.
 
-	☐ Réactivation des cercles privés (cassé avec vNext)
+	☐ Interface de gestion des collaborateurs
+	☐ Login with Twitter
+	☐ Login with PayPal
+
 	☐ Contrôle Web du rating
 
 	☐ Paiement client d'un approvisionnement pour une demande de prestation définie.
@@ -100,7 +108,6 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	☐ Eviter la création de fichier TeX inutile à la génération du Pdf
 	
 	### Accessibilité :
-	✔ Support multi-lanque de l'app mobile @done (December 7th 2016, 10:58)
 	☐ Correction des libéllés manquant et/ou en anglais relevés avant le jalon 2 
 	
 	### Sécurité
