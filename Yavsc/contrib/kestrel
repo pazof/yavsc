@@ -1,6 +1,6 @@
 #!/bin/bash 
 ### BEGIN INIT INFO
-# Provides:          kestrel
+# Provides:          kestrel-pre
 # Required-Start:    $local_fs $network $named $time $syslog
 # Required-Stop:     $local_fs $network $named $time $syslog
 # Default-Start:     2 3 4 5
@@ -76,14 +76,14 @@ start() {
 		log_end_msg 0  
 	else
 		log_daemon_msg "Starting service $NAME"
-		start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -x $DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME >${ROOT}/kestrel-${NAME}.log
-    if [ $? ]; then 
-      log_daemon_msg "Could not start $NAME"
-      log_end_msg 2
-    else
-      log_daemon_msg "Service $DESC started ($NAME)"
-      log_end_msg 0  
-    fi
+		if ! start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -x $DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME >${ROOT}/kestrel-${NAME}.log
+        then 
+			log_daemon_msg "Could not start $NAME : $?, see ${ROOT}/kestrel-${NAME}.log"
+			log_end_msg 2
+		else
+			log_daemon_msg "Service $DESC started ($NAME), logs: ${ROOT}/kestrel-${NAME}.log"
+			log_end_msg 0  
+		fi
 	fi
   done
 
@@ -107,10 +107,6 @@ stop() {
 }
 
 
-if [ -f /etc/kestrel/$2.webenv ]; then
-	CONFIGS="/etc/kestrel/$2.webenv"
-fi
-
 case "$1" in
   start)
     start
@@ -120,6 +116,7 @@ case "$1" in
     ;;
   restart)
     stop
+	sleep 1
     start
     ;;
   status)
@@ -129,6 +126,7 @@ case "$1" in
   *)
     echo "Usage: $0 {start|stop|restart}"
 esac
+
 
 export runlevel=$TMP_SAVE_runlevel_VAR
 
