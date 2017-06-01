@@ -7,7 +7,6 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using System.Threading;
 using Yavsc.Models.Haircut;
-using Yavsc.Models.Calendar;
 
 namespace Yavsc.Models
 {
