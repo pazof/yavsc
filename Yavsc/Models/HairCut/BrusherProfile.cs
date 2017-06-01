@@ -25,7 +25,7 @@ namespace Yavsc.Models.Haircut
         public virtual PerformerProfile BaseProfile { get; set; }
 
         [Display(Name="Portfolio")]
-        public virtual List<Link> Links { get; set; }
+        public virtual List<HyperLink> Links { get; set; }
 
 
         [Display(Name="Rayon d'action"),DisplayFormat(DataFormatString="{0} km")]
