@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Relationship
 {
-    public class Link
+    public class HyperLink
     {
         [Display(Name="Hyper référence")]
         public string HRef { get; set; }

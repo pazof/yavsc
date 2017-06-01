@@ -50,7 +50,7 @@ namespace Yavsc.Models
             builder.Entity<CircleMember>().HasKey(c=> new { MemberId = c.MemberId, CircleId = c.CircleId });
             builder.Entity<DimissClicked>().HasKey(c=>new { uid = c.UserId, notid = c.NotificationId});
             builder.Entity<HairTaintInstance>().HasKey(ti=>new { ti.TaintId, ti.PrestationId } );
-            builder.Entity<Link>().HasKey(l=>new { l.HRef, l.Method });
+            builder.Entity<HyperLink>().HasKey(l=>new { l.HRef, l.Method });
 
             foreach (var et in builder.Model.GetEntityTypes()) {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
@@ -311,6 +311,6 @@ namespace Yavsc.Models
 
          public DbSet<PayPalPayment> PayPalPayments { get; set; }
 
-         public DbSet<Link> Links { get; set; }
+         public DbSet<HyperLink> Links { get; set; }
     }
 }
