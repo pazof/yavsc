@@ -45,6 +45,6 @@ namespace Yavsc.Models.Payment {
 
         public string State { get; set; }
 
-        public virtual List<Link> Links { get; set; }
+        public virtual List<HyperLink> Links { get; set; }
     }
 }
