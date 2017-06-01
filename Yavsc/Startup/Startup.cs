@@ -64,7 +64,7 @@ namespace Yavsc
             Configuration = builder.Build();
             ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
         }
-
+        public static GoogleAuthSettings GoogleSettings { get; set; }
         public IConfigurationRoot Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -235,6 +235,8 @@ namespace Yavsc
             });
 
         }
+
+
         public static IStringLocalizer GlobalLocalizer { get; private set; }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
@@ -244,9 +246,11 @@ namespace Yavsc
         RoleManager<IdentityRole> roleManager,
         IAuthorizationService authorizationService,
         IOptions<PayPalSettings> payPalSettings,
+        IOptions<GoogleAuthSettings> googleSettings,
         IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
          ILoggerFactory loggerFactory)
         {
+            GoogleSettings = googleSettings.Value;
             GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;
             Authority = siteSettings.Value.Authority;

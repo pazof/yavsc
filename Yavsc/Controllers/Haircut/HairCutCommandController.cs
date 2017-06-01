@@ -281,9 +281,10 @@ namespace Yavsc.Controllers
                 PerformerId = perfer.PerformerId,
                 ClientId = uid,
                 Prestation = pPrestation,
-                Client = user
+                Client = user,
+                Location = new Location { Address = "" },
+                EventDate = new DateTime()
             };
-
             return View(result);
         }
         private void SetViewData (string activityCode, string performerId, HairPrestation pPrestation )

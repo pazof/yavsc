@@ -1,6 +1,29 @@
 @model HairCutQuery 
 @{ ViewData["Title"] = $"{ViewBag.Activity.Name}: Votre commande"; } 
 @await Html.PartialAsync("BrusherProfileScript",ViewData["PerfPrefs"])
+
+@section header {
+
+<script src="https://maps.googleapis.com/maps/api/js?key=@Startup.GoogleSettings.BrowserApiKey"></script>
+<script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
+
+<style>
+      #map {
+        width: 100%;
+        height: 250px;
+      }
+      #Location_combo li {
+          cursor: pointer;
+      }
+      #Location_combo li:hover {
+          text-decoration: underline;
+          cursor: pointer;
+      }
+    </style>
+} 
+
 @section scripts {
 <script>
     var gtarif=tarifs[0];
@@ -130,6 +153,101 @@
         });
 </script>
 
+  <script>
+    $(document).ready(function () {
+
+        $('#datetimepicker2').datetimepicker({
+            locale: 'fr',
+            format: "YYYY/MM/DD HH:mm"
+        });
+
+        var config = {
+            mapId: 'map',
+            addrId: 'Location_Address',
+            longId: 'Location_Longitude',
+            latId: 'Location_Latitude',
+            addrValidationId: 'valloc',
+            formValidId: 'valsum',
+            locComboId: 'loccomb'
+        };
+        $.validator.setDefaults({
+            messages: {
+                remote: "Ce lieu n'est pas identifié par les services de géo-localisation Google",
+                required: "Veuillez renseigner ce champ"
+            }
+        });
+        var gmap = new google.maps.Map(document.getElementById(config.mapId), {
+            zoom: 16,
+            center: { lat: 48.862854, lng: 2.2056466 }
+        });
+        var marker;
+        function chooseLoc(sender, loc) {
+            if (sender === 'user') $('#' + config.addrId).val(loc.formatted_address);
+            var pos = loc.geometry.location;
+            var lat = new Number(pos.lat);
+            var lng = new Number(pos.lng);
+            $('#' + config.latId).val(lat.toLocaleString('en'));
+            $('#' + config.longId).val(lng.toLocaleString('en'));
+            gmap.setCenter(pos);
+            if (marker) {
+                marker.setMap(null);
+            }
+            marker = new google.maps.Marker({
+                map: gmap,
+                draggable: true,
+                animation: google.maps.Animation.DROP,
+                position: pos
+            });
+            google.maps.event.addListener(marker, 'dragend', function () {
+                // TODO reverse geo code
+                var pos = marker.getPosition();
+                $('#' + config.latId).val(pos.lat);
+                $('#' + config.longId).val(pos.lng);
+            });
+            $('#' + config.addrId).valid();
+            $('#' + config.addrValidationId).empty();
+            $('#' + config.formValidId).empty();
+            return true;
+        }
+
+
+        $('#' + config.addrId).rules("add",
+            {
+                remote: {
+                    url: 'https://maps.googleapis.com/maps/api/geocode/json',
+                    type: 'get',
+                    data: {
+                        sensor: false,
+                        address: function () {  return $('#' + config.addrId).val() }
+                    },
+                    dataType: 'json',
+                    dataFilter: function (datastr, type) {
+                        $('#' + config.locComboId).html("");
+                        var data = JSON.parse(datastr);
+                        data.results.forEach(function (element) {
+                            if (element.formatted_address !== $('#' + config.addrId).val()) {
+                                $('<li>' + element.formatted_address + '</li>')
+                                    .data("geoloc", element)
+                                    .click(function () { chooseLoc('user', $(this).data("geoloc")) })
+                                    .appendTo($('#' + config.locComboId));
+                            }
+                            else { }
+                        });
+                        if ((data.status === 'OK') && (data.results.length == 1)) {
+                            chooseLoc('google', data.results[0]);
+                            return true;
+                        }
+                        return false;
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log('ajax loading error ... ' + textStatus + ' ... ' + errorThrown);
+                        return false;
+                    }
+                }
+            });
+    });
+                    
+</script>
 }
 <em>@ViewBag.Activity.Description</em> 
 
@@ -217,6 +335,52 @@
                 </div>
             </div>
         </div>
+
+        <div class="form-group">
+            <label for="EventDate" class="col-md-2 control-label">
+                @SR["Event date"]
+            </label>
+            <div class="col-md-10">
+                <div class="container">
+                    <div class="row">
+                        <div class='col-sm-6'>
+                            <div class='input-group date' id='datetimepicker2'>
+                                <input class="form-control" name="EventDate" />
+                                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                        <span asp-validation-for="EventDate" class="text-danger">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Location_Address" class="col-md-2 control-label">
+            @SR["Location"]
+            </label>
+            <div class="col-md-10">
+                <div class="container">
+                    <div class="row">
+                        <div class='col-sm-6'>
+                            <div>
+                                <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address" class="form-control" data-val-required=@SR[
+                                    "SpecifyPlace"] data-val-remote=@SR[ "GoogleDidntGeoLocalized"]>
+                                <span asp-validation-for="Location.Address" class="text-danger" id="valloc"></span>
+                                <ul id="loccomb">
+                                </ul>
+                                <div id="map"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <div class="form-group">
                     <label asp-for="AdditionalInfo" class="col-md-2 control-label"></label>
             <div class="col-md-offset-2 col-md-10">
@@ -245,3 +409,4 @@
     <input type="hidden" name="performerId" value="@Model.PerformerProfile.PerformerId" />
     <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
 </form>
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
