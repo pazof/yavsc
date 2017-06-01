@@ -1,0 +1,15 @@
+@model Availability
+
+@if (Model==null || Model.Count <1) {
+    <text>Pas de disponibilité renseignée</text>
+} else {
+<table>
+    <th><td>@Html.DisplayNameFor(m=>m[0].Start)</td>
+    <td>@Html.DisplayNameFor(m=>m[0].End)</td></th>
+    @foreach (var dispo in Model)
+    {
+    <tr><td>@Html.DisplayFor(m=>dispo.Start)</td>
+    <td>@Html.DisplayFor(m=>dispo.End)</td></tr>
+    }
+</table>
+}

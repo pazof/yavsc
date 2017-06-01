@@ -51,9 +51,14 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 
 ## Nouvelle activité
 
-L'impact d'une custo de son activité pourrait à peu près tout concerner, 
-un bon point de départ est la création d'un controller de commande dédié, enrichi des données de profile associées à 
-un nouveau type de profiles prestataire.
+L'impact d'une custo de son activité pourrait à peu près tout concerner.
+Un bon point de départ est la création d'un controller de commande dédié, enrichi des données de profile associées à un nouveau type de profiles prestataire.
+
+Ceci implique:
+
+* Un modèle de donnée, un controleur web, ses vues et son API pour:
+  * Le profile prestataire, dont la donnée est représentée par une classe arbitraire
+  * L'éventuelle commande customisée, dont la donnée réalise l'objet abstrait 'NominativeServiceCommand'
 
 ## Un nouvel environnement d'execution
 

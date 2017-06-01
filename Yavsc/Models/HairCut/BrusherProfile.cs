@@ -7,6 +7,7 @@ namespace Yavsc.Models.Haircut
 {
     using Workflow;
     using Relationship;
+    using Calendar;
 
     public class BrusherProfile : ISpecializationSettings
     {
@@ -19,7 +20,6 @@ namespace Yavsc.Models.Haircut
         {
            get; set;
         }
-
 
         [JsonIgnore,ForeignKey("UserId")]
         public virtual PerformerProfile BaseProfile { get; set; }
@@ -35,14 +35,10 @@ namespace Yavsc.Models.Haircut
         /// StartOfTheDay In munutes
         /// </summary>
         /// <returns></returns>
-        [Display(Name="Début de la journée")]
-        public int StartOfTheDay { get; set;}
-        /// <summary>
-        /// End Of The Day, In munutes
-        /// </summary>
-        /// <returns></returns>
-        [Display(Name="Fin de la journée")]
-        public int EndOfTheDay { get; set;}
+
+        [DisplayFormat(ConvertEmptyStringToNull = true, NullDisplayText = "[Pas de lieu spécifié]")]
+        [Display(Name="Disponibilités")]
+        public virtual Availability Availability { get; set; }
 
         [Display(Name="Coupe femme cheveux longs"),DisplayFormat(DataFormatString="{0:C}")]
 
