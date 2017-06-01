@@ -49,6 +49,9 @@ namespace Yavsc.Helpers
                 ((l.Count != 1) ? "*"+l.Count.ToString() : "")));
             var yaev = new HairCutQueryEvent
             {
+                Topic =
+                string.Format(
+                Startup.GlobalLocalizer["HairCutQueryValidation"],query.Client.UserName),
                 Sender = $"{strprestation} pour {query.Client.UserName}",
                 Message =
 $@"Un client vient de valider une demande de prestation à votre encontre:

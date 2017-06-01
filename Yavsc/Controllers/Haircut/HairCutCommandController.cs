@@ -235,7 +235,7 @@ namespace Yavsc.Controllers
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
                         model.PerformerProfile.Performer.Email,
-                        yaev.Topic+" "+yaev.Sender,
+                        yaev.Topic,
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
