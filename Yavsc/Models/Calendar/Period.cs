@@ -32,13 +32,13 @@ namespace Yavsc.Models.Calendar
 		/// Gets or sets the start.
 		/// </summary>
 		/// <value>The start.</value>
-		[Required]
+		[Required,Display(Name="Début")]
 		public DateTime Start { get; set; }
 		/// <summary>
 		/// Gets or sets the end.
 		/// </summary>
 		/// <value>The end.</value>
-		[Required]
+		[Required,Display(Name="Fin")]
 		public DateTime End { get; set; }
 	}
 

@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using System.Threading;
 using Yavsc.Models.Haircut;
+using Yavsc.Models.Calendar;
 
 namespace Yavsc.Models
 {
@@ -29,6 +30,7 @@ namespace Yavsc.Models
     using Attributes;
     using Bank;
     using Payment;
+    using Yavsc.Models.Calendar;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -51,6 +53,7 @@ namespace Yavsc.Models
             builder.Entity<DimissClicked>().HasKey(c=>new { uid = c.UserId, notid = c.NotificationId});
             builder.Entity<HairTaintInstance>().HasKey(ti=>new { ti.TaintId, ti.PrestationId } );
             builder.Entity<HyperLink>().HasKey(l=>new { l.HRef, l.Method });
+            builder.Entity<Period>().HasKey(l=>new { l.Start, l.End });
 
             foreach (var et in builder.Model.GetEntityTypes()) {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
@@ -312,5 +315,7 @@ namespace Yavsc.Models
          public DbSet<PayPalPayment> PayPalPayments { get; set; }
 
          public DbSet<HyperLink> Links { get; set; }
+
+         public DbSet<Period> Period { get; set; }
     }
 }

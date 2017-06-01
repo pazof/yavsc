@@ -15,16 +15,10 @@
       
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.EndOfTheDay)
+            @Html.DisplayNameFor(model => model.Availability)
         </dt>
         <dd>
-            @Html.Partial("HourFromMinutes", Model.EndOfTheDay)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.StartOfTheDay)
-        </dt>
-        <dd>
-            @Html.Partial("HourFromMinutes", Model.StartOfTheDay)
+            @Html.DisplayFor(model => model.Availability)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.ActionDistance)
