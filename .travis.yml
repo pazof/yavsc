@@ -1,0 +1,7 @@
+language: csharp
+mono:
+- beta
+sudo: false
+install: curl --insecure -sSL https://lua.pschneider.fr/UserFiles/Paul/dnx-install.sh  | bash && . ./dnx/dnvm/dnvm.sh && dnu restore
+script:
+- "dnu build"
