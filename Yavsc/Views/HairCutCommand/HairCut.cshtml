@@ -404,8 +404,8 @@
       <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName [DEV+Location+Date]"/>
       </environment>
    </div>
-   
-
+    @Html.HiddenFor(model=>model.Location.Latitude)
+    @Html.HiddenFor(model=>model.Location.Longitude)
     <input type="hidden" name="performerId" value="@Model.PerformerProfile.PerformerId" />
     <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
 </form>
