@@ -3,11 +3,11 @@
 
 var gulp = require("gulp"),
     rimraf = require("rimraf"),
-    //  concat = require("gulp-concat"),
     cssmin = require("gulp-cssmin"),
     uglify = require("gulp-uglify"),
     shell = require("gulp-shell"),
-    rename = require('gulp-rename');
+    rename = require('gulp-rename'),
+    clean = require('gulp-clean');
 
 var webroot = "./wwwroot/";
 
@@ -30,8 +30,6 @@ gulp.task("clean:css", function(cb) {
 });
 
 gulp.task("clean", ["clean:js", "clean:css"]);
-
-
 
 gulp.task('watch', shell.task(['ASPNET_ENV=Development dnx-watch web --configuration=Debug']));
 gulp.task('watchlua', shell.task(['ASPNET_ENV=lua dnx-watch luatest --configuration=Debug']));
@@ -56,7 +54,22 @@ gulp.task("min", ["min:js", "min:css"]);
 gulp.task('build', shell.task(['dnu build --configuration=Debug']));
 gulp.task('run', shell.task(['ASPNET_ENV=Development dnx web --configuration=Debug']));
 gulp.task('buildrelease', shell.task(['dnu build --configuration=Release']));
-gulp.task('publish', shell.task(['dnu publish --configuration=Release']));
-gulp.task('postpublish', shell.task(['contrib/rsync-to-pre.sh']));
+
+
+
+gulp.task('cleanoutput', () => {
+    gulp.src('bin/output', { read: false }).pipe(clean())
+});
+gulp.task('dnupublish', ['cleanoutput'], () => {
+    shell.task(['dnu publish --configuration=Release',
+        'git log -1 --pretty=format:%h > bin/output/wwwroot/version'
+    ]).apply();
+});
+gulp.task('pushinpre', ['dnupublish'], () => {
+    shell.task('contrib/rsync-to-pre.sh').apply();
+})
+gulp.task('pushinprod', ['dnupublish'], () => {
+    shell.task('contrib/rsync-to-prod.sh').apply();
+})
 
 gulp.task("default", ["watch"]);
