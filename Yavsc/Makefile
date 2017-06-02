@@ -3,6 +3,9 @@ PRODDESTDIR=/srv/www/yavsc
 
 default: pushInPre
 
+watch:
+	ASPNET_ENV=Development dnx-watch web --configuration=Debug
+
 cleanRelease:
 	rm -rf bin/Release
 
