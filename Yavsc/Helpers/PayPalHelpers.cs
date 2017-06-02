@@ -107,41 +107,6 @@ namespace Yavsc.Helpers
             logger.LogInformation($"Creating express checkout for {Startup.PayPalSettings.MerchantAccountUserName} : "+JsonConvert.SerializeObject(coreq));
             var response = PayPalService.SetExpressCheckout( coreq, Startup.PayPalSettings.MerchantAccountUserName );
 
-            // transaction.item_list.shipping_address.city
-            // country_code default_address id
-            // line1 line2 preferred_address recipient_name state status type
-            /*   transaction.item_list = new ItemList();
-               if (query.Client.PostalAddress!=null) {
-                   var address =  query.Client.PostalAddress?.Address;
-                   if (address!=null) {
-                       var parts = new Stack<string> ( address.Split(',') );
-                       var country = parts.Pop().Trim();
-                       var city = parts.Pop().Trim().Split(' ');
-                       var line1 = parts.First().Trim();
-                       var line2 = string.Join(" - ",parts.Skip(1));
-                   transaction.item_list.shipping_address = new ShippingAddress {
-                       line1 = line1,
-                       line2 = line2,
-                       city = city[1],
-                       postal_code = city[0],
-                       country_code = country == "France" ? "fr" : country
-                   };
-                   }
-               }
-               transaction.item_list.shipping_phone_number = query.Client.PhoneNumber;
-               var items = query.GetBillItems();
-               transaction.item_list.items = items.Select(i => new Item {
-                   name = i.Name,
-                   description = i.Description,
-                   quantity = i.Count.ToString(),
-                   price = i.UnitaryCost.ToString("F2"),
-                   currency = "EUR",
-                   sku = "sku"
-          //  postback_data=
-             //  supplementary_data=
-                }).ToList();
-   */
-
             return response;
         }
 
