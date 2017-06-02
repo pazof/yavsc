@@ -56,20 +56,4 @@ gulp.task('run', shell.task(['ASPNET_ENV=Development dnx web --configuration=Deb
 gulp.task('buildrelease', shell.task(['dnu build --configuration=Release']));
 
 
-
-gulp.task('cleanoutput', () => {
-    gulp.src('bin/output', { read: false }).pipe(clean())
-});
-gulp.task('dnupublish', ['cleanoutput'], () => {
-    shell.task(['dnu publish --configuration=Release',
-        'git log -1 --pretty=format:%h > bin/output/wwwroot/version'
-    ]).apply();
-});
-gulp.task('pushinpre', ['dnupublish'], () => {
-    shell.task('contrib/rsync-to-pre.sh').apply();
-})
-gulp.task('pushinprod', ['dnupublish'], () => {
-    shell.task('contrib/rsync-to-prod.sh').apply();
-})
-
 gulp.task("default", ["watch"]);
