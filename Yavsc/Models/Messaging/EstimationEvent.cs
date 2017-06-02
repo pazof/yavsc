@@ -28,7 +28,7 @@ namespace Yavsc.Models.Messaging
             };
            Sender = perfer.Performer.UserName;
            Message = string.Format(SR["EstimationMessageToClient"],perfer.Performer.UserName,
-            estimate.Title,estimate.GetTotal());
+            estimate.Title,estimate.Bill.Addition());
         }
         ProviderClientInfo ProviderInfo { get; set; }
         Estimate Estimation { get; set; }
