@@ -5,15 +5,14 @@ namespace Yavsc.Helpers
     using Models.Workflow;
     using Models.Messaging;
     using Yavsc.Models.Haircut;
-    using System.Linq;
-    using System.Globalization;
+    using Yavsc.Models;
 
     public static class EventHelpers
     {
         public static RdvQueryEvent CreateEvent(this RdvQuery query,
-        IStringLocalizer SR)
+        IStringLocalizer SR, string subtopic)
         {
-            var yaev = new RdvQueryEvent
+            var yaev = new RdvQueryEvent(subtopic)
             {
                 Sender = query.ClientId,
                 Message = string.Format(SR["RdvToPerf"],
@@ -30,30 +29,24 @@ namespace Yavsc.Helpers
                 EventDate = query.EventDate,
                 Location = query.Location,
                 Id = query.Id,
-                Reason = query.Reason,
                 ActivityCode = query.ActivityCode
             };
+
             return yaev;
         }
-        public static HairCutQueryEvent CreateEvent(this HairCutQuery query,
-        IStringLocalizer SR, BrusherProfile bpr)
-        {
 
-            string evdate = query.EventDate?.ToString("dddd dd/MM/yyyy à HH:mm")??"[pas de date spécifiée]";
+
+        public static HairCutQueryEvent CreateNewHairCutQueryEvent(this HairCutQuery query,
+        IStringLocalizer SR)
+        {
+            string evdate = query.EventDate?.ToString("dddd dd/MM/yyyy à hh:mm")??"[pas de date spécifiée]";
             string address = query.Location?.Address??"[pas de lieu spécifié]";
             var p = query.Prestation;
-            string total = query.GetBillItems().Addition().ToString("C",CultureInfo.CurrentUICulture);
             string strprestation = query.GetDescription();
-            string bill = string.Join("\n", query.GetBillItems().Select(
-                l=> $"{l.Name} {l.Description} {l.UnitaryCost} € " +
-                ((l.Count != 1) ? "*"+l.Count.ToString() : "")));
-            var yaev = new HairCutQueryEvent
-            {
-                Topic =
-                string.Format(
-                Startup.GlobalLocalizer["HairCutQueryValidation"],query.Client.UserName),
-                Sender = $"{strprestation} pour {query.Client.UserName}",
-                Message =
+
+            var yaev = query.CreateEvent("NewHairCutQuery",
+             string.Format(Startup.GlobalLocalizer["HairCutQueryValidation"],query.Client.UserName),
+              $"{query.Client.UserName}",
 $@"Un client vient de valider une demande de prestation à votre encontre:
 
  Prestation: {strprestation}
@@ -66,29 +59,19 @@ $@"Un client vient de valider une demande de prestation à votre encontre:
 
 Facture prévue (non réglée):
 
-{bill}
+{query.GetBillText()}
+") ;
 
-Total: {total}
-" ,
-Client =  new ClientProviderInfo { 
-    UserName = query.Client.UserName ,
-    UserId = query.ClientId,
-    Avatar = query.Client.Avatar }  ,
-Previsional = query.Previsional,
-EventDate = query.EventDate,
-Location = query.Location,
-Id = query.Id,
-Reason = $"{query.AdditionalInfo}",
-ActivityCode = query.ActivityCode
-
-            };
             return yaev;
         }
-
+        public static string GetSender(this ApplicationUser user)
+        {
+            return user.UserName+" ["+user.Id+"@"+Startup.Authority+"]";
+        }
         public static HairCutQueryEvent CreateEvent(this HairMultiCutQuery query,
         IStringLocalizer SR, BrusherProfile bpr)
         {
-            var yaev = new HairCutQueryEvent
+            var yaev = new HairCutQueryEvent("newCommand")
             {
                 Sender = query.ClientId,
                 Message = string.Format(SR["RdvToPerf"],

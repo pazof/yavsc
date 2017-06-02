@@ -6,6 +6,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Relationship;
 using Yavsc.Billing;
+using System.Globalization;
+using Yavsc.Helpers;
+using Yavsc.Models.Messaging;
+using System.Linq;
 
 namespace Yavsc.Models.Haircut
 {
@@ -336,6 +340,34 @@ Prestation.Gender == HairCutGenders.Women ?
         }
 
         public virtual BrusherProfile SelectedProfile { get; set; }
+
+        public HairCutQueryEvent CreateEvent(string subTopic, string reason, string sender, string message) {
+
+            string evdate = EventDate?.ToString("dddd dd/MM/yyyy à HH:mm")??"[pas de date spécifiée]";
+            string address = Location?.Address??"[pas de lieu spécifié]";
+            var p = Prestation;
+            string total = GetBillItems().Addition().ToString("C",CultureInfo.CurrentUICulture);
+            string strprestation = GetDescription();
+            string bill = string.Join("\n", GetBillItems().Select(
+                l=> $"{l.Name} {l.Description} {l.UnitaryCost} € " +
+                ((l.Count != 1) ? "*"+l.Count.ToString() : "")));
+            var yaev = new HairCutQueryEvent(subTopic)
+            {
+                Client =  new ClientProviderInfo { 
+                    UserName = Client.UserName ,
+                    UserId =ClientId,
+                    Avatar = Client.Avatar }  ,
+                Previsional = Previsional,
+                EventDate = EventDate,
+                Location = Location,
+                Id = Id,
+                ActivityCode = ActivityCode,
+                Reason = reason,
+                Sender = sender,
+                Message = message
+            };
+            return yaev;
+        }
 
     }
 }

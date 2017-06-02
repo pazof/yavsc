@@ -25,6 +25,7 @@ namespace Yavsc.Controllers
     using Microsoft.AspNet.Mvc.Rendering;
     using System.Collections.Generic;
     using Yavsc.Models.Messaging;
+    using PayPal.PayPalAPIInterfaceService.Model;
 
     public class HairCutCommandController : CommandController
     {
@@ -47,13 +48,16 @@ namespace Yavsc.Controllers
 
         private async Task<HairCutQuery> GetQuery(long id)
         {
-            return await _context.HairCutQueries
+            var query = await _context.HairCutQueries
             .Include(x => x.Location)
             .Include(x => x.PerformerProfile)
             .Include(x => x.Prestation)
             .Include(x => x.PerformerProfile.Performer)
+            .Include(x => x.PerformerProfile.Performer.Devices)
             .Include(x => x.Regularisation)
             .SingleAsync(m => m.Id == id);
+            query.SelectedProfile = await _context.BrusherProfile.SingleAsync(b=>b.UserId == query.PerformerId);
+            return query;
         }
         public async Task<IActionResult> ClientCancel(long id)
         {
@@ -76,16 +80,82 @@ namespace Yavsc.Controllers
             ViewData["paymentinfo"] = paymentInfo;
             command.Regularisation = paymentInfo.DbContent;
             command.PaymentId = token;
+            if (paymentInfo!=null)
+            if (paymentInfo.DetailsFromPayPal!=null)
+             if (paymentInfo.DetailsFromPayPal.Ack == AckCodeType.SUCCESS)
+                if (command.ValidationDate ==null)
+                    command.ValidationDate = DateTime.Now;
             await _context.SaveChangesAsync (User.GetUserId());
-
             SetViewBagPaymentUrls(id);
+             if (command.PerformerProfile.AcceptPublicContact)
+                {
+                    var invoiceId = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.InvoiceID;
+                    var payerName = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Address.Name;
+                    var phone = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Address.Phone;
+                    var payerEmail = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Payer;
+                    var amount = string.Join(", ",
+                        paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PaymentDetails.Select(
+                            p=> $"{p.OrderTotal.value} {p.OrderTotal.currencyID}"));
+                    var gender = command.Prestation.Gender;
+                    var date = command.EventDate?.ToString("dd MM yyyy hh:mm");
+                    var lieu = command.Location.Address;
+                    string clientFinal = (gender == HairCutGenders.Women) ? _localizer["Women"] +
+                       " "+_localizer[command.Prestation.Length.ToString()] : _localizer[gender.ToString()] ;
+                    MessageWithPayloadResponse grep = null;
+                    var yaev = command.CreateEvent("PaymentConfirmation",
+                        this._localizer["PaymentConfirmation"],
+                        command.Client.GetSender(),
+$@"# Paiment confirmé: {amount}
+
+Effectué par : {payerName} [{payerEmail}]
+Identifiant PayPal du paiment: {token}
+Identifiant PayPal du payeur: {PayerID}
+Identifiant de la facture sur site: {invoiceId}
+
+
+# La prestation concernée:
+
+Demandeur: {command.Client.UserName}
+
+Date: {date}
+
+Lieu: {lieu}
+
+Le client final: {clientFinal}
+
+{command.GetBillText()}
+
+");
+
+                    if (command.PerformerProfile.AcceptNotifications) {
+                        if (command.PerformerProfile.Performer.Devices.Count > 0) {
+                            var regids = command.PerformerProfile.Performer
+                            .Devices.Select(d => d.GCMRegistrationId);
+                            grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
+                        }
+                        // TODO setup a profile choice to allow notifications
+                        // both on mailbox and mobile
+                        // if (grep==null || grep.success<=0 || grep.failure>0)
+                        ViewBag.GooglePayload=grep;
+                  }
+
+                    ViewBag.EmailSent = await _emailSender.SendEmailAsync(
+                        _siteSettings, _smtpSettings,
+                        command.PerformerProfile.Performer.Email,
+                        yaev.Reason,
+                        $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
+                    );
+                }
+                else {
+                    // TODO if (AcceptProContact) try & find a bookmaker to send him this query
+                }
+
             ViewData ["Notify"] = new List<Notification> {
                 new Notification {
                     title= "Paiment PayPal",
                     body = "Votre paiment a été accépté."
                 }
             } ;
-
             return View ("Details",command);
         }
 
@@ -213,7 +283,7 @@ namespace Yavsc.Controllers
                 var brusherProfile = await _context.BrusherProfile.SingleAsync(p=>p.UserId == pro.PerformerId);
                 model.Client = await  _context.Users.SingleAsync(u=>u.Id == model.ClientId);
                 model.SelectedProfile = brusherProfile;
-                var yaev = model.CreateEvent(_localizer, brusherProfile);
+                var yaev = model.CreateNewHairCutQueryEvent(_localizer);
                 MessageWithPayloadResponse grep = null;
 
                 if (pro.AcceptPublicContact)
@@ -235,7 +305,7 @@ namespace Yavsc.Controllers
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
                         model.PerformerProfile.Performer.Email,
-                        yaev.Topic,
+                        yaev.Reason,
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }

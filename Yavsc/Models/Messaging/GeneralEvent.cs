@@ -1,10 +1,10 @@
 //
-//  BookQueryEvent.cs
+//  BaseEvent.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015-2016 GNU GPL
+//  Copyright (c) 2015 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -19,34 +19,25 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Yavsc.Models.Messaging
 {
-using Interfaces.Workflow;
-
-
-
-public class RdvQueryEvent: RdvQueryProviderInfo, IEvent
+public class GeneralEvent: BaseEvent, ITitle
 	{
+		/// <summary>
+		/// The title.
+		/// </summary>
+		[Required(ErrorMessageResourceName="ChooseATitle")]
+		[Display(Name="Title")]
+		public string Title { get; set; }
+		/// <summary>
+		/// The description.
+		/// </summary>
+		[Required(ErrorMessageResourceName="ChooseADescription")]
+		[Display(Name="Description")]
+		public string Description { get; set; }
 
-        public RdvQueryEvent(string subTopic)
-        {
-             Topic = GetType().Name+"/"+subTopic;
-        }
-
-        public string Message
-        {
-            get; set;
-        }
-
-        public string Sender
-        {
-            get; set;
-        }
-
-        public string Topic
-        {
-            get; private set;
-        }
-    }
+	}
 
 }
