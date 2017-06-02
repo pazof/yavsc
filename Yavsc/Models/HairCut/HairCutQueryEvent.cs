@@ -4,11 +4,11 @@ namespace Yavsc.Models.Haircut
 {
     public class HairCutQueryEvent : RdvQueryProviderInfo, IEvent
     {
-        public HairCutQueryEvent()
+        public HairCutQueryEvent(string subTopic)
         {
-            Topic = "HairCutQuery";
-        }
 
+            Topic = GetType().Name+"/"+subTopic;
+        }
         public string Message
         {
             get;
@@ -27,9 +27,9 @@ namespace Yavsc.Models.Haircut
         {
             get;
 
-            set;
+            private set;
         }
-        
+
         HairCutQuery Data { get; set; }
     }
 }

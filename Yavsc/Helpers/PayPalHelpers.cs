@@ -104,6 +104,8 @@ namespace Yavsc.Helpers
                 }
             };
 
+            var d = new SetExpressCheckoutRequestDetailsType();
+
             logger.LogInformation($"Creating express checkout for {Startup.PayPalSettings.MerchantAccountUserName} : "+JsonConvert.SerializeObject(coreq));
             var response = PayPalService.SetExpressCheckout( coreq, Startup.PayPalSettings.MerchantAccountUserName );
 

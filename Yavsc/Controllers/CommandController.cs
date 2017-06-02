@@ -158,7 +158,8 @@ namespace Yavsc.Controllers
                 _context.RdvQueries.Add(command, GraphBehavior.IncludeDependents);
                 _context.SaveChanges(User.GetUserId());
 
-                var yaev = command.CreateEvent(_localizer);
+                var yaev = command.CreateEvent(_localizer, "NewCommand");
+
                 MessageWithPayloadResponse grep = null;
 
                 if (pro.AcceptNotifications
@@ -173,13 +174,11 @@ namespace Yavsc.Controllers
                     // both on mailbox and mobile
                     // if (grep==null || grep.success<=0 || grep.failure>0)
                     ViewBag.GooglePayload=grep;
-                    if (grep!=null)
-                      _logger.LogWarning($"Performer: {command.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
                         command.PerformerProfile.Performer.Email,
-                        yaev.Topic+" "+yaev.Sender,
+                         $"{command.Client.UserName} (un client) vous demande un rendez-vous",
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }

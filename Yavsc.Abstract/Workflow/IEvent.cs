@@ -5,14 +5,14 @@ namespace Yavsc.Interfaces.Workflow {
         /// <c>/topic/(bookquery|estimate)</c>
         /// </summary>
         /// <returns></returns>
-        string Topic { get; set ; }
+        string Topic { get; }
         /// <summary>
         /// Should be the user's name
         /// </summary>
         /// <returns></returns>
         string Sender { get; set ; }
         /// <summary>
-        /// The message 
+        /// The message
         /// </summary>
         /// <returns></returns>
         string Message { get; set; }

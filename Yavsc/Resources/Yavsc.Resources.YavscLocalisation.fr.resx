@@ -308,6 +308,7 @@
   <data name="Online"><value>En ligne</value></data>
   <data name="OnlyAuthorizedMayContact"><value>Seuls les utilisateurs authorisés peuvent contacter un préstataire par courrier.</value></data>
   <data name="Password"><value>Mot de passe</value></data>
+  <data name="PaymentConfirmation"><value>Confirmation de paiement</value></data>
   <data name="Pdf version"><value>Version Pdf</value></data>
   <data name="PerformanceDate"><value>Date de la prestation</value></data>
   <data name="PerformancePlace"><value>Lieu de la pestation</value></data>

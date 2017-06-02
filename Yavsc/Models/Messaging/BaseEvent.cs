@@ -19,15 +19,13 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Messaging
 {
     using Interfaces.Workflow;
-    using Yavsc;
 
     /// <summary>
-    /// Base event.
+    /// /// Base event.
     /// </summary>
 
     public class BaseEvent : IEvent {
@@ -37,29 +35,12 @@ namespace Yavsc.Models.Messaging
          }
          public BaseEvent(string topic)
         {
-            Topic = topic;
+            Topic = GetType().Name+"/"+topic;
         }
-        public string Topic { get; set; }
+        public string Topic { get; private set; }
         public string Sender { get; set; }
-
         public string Message { get; set; }
     }
 
-	public class GeneralEvent: BaseEvent, ITitle
-	{
-		/// <summary>
-		/// The title.
-		/// </summary>
-		[Required(ErrorMessageResourceName="ChooseATitle")]
-		[Display(Name="Title")]
-		public string Title { get; set; }
-		/// <summary>
-		/// The description.
-		/// </summary>
-		[Required(ErrorMessageResourceName="ChooseADescription")]
-		[Display(Name="Description")]
-		public string Description { get; set; }
-
-	}
 
 }
