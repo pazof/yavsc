@@ -1,10 +1,12 @@
 {
     "version": "1.0.0-*",
     "authors": [
-        "pazof"
+        "Paul Schneider"
     ],
     "tags": [
-        ""
+        "Blog",
+        "PoS",
+        "Chat"
     ],
     "projectUrl": "http://yavsc.pschneider.fr",
     "licenseUrl": "",
@@ -118,7 +120,7 @@
         "Extensions.AspNet.Authentication.Instagram": "1.0.0-t150809211713",
         "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
         "Microsoft.DiaSymReader.Native": "1.5.0",
-        "MyPayPalMerchantSDK": "1.0.0"
+        "PayPalMerchant-net451": "2.7.109"
     },
     "commands": {
         "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
