@@ -1,4 +1,8 @@
+
+[![Build Status](https://travis-ci.org/pazof/yavsc.svg?branch=vnext)](https://travis-ci.org/pazof/yavsc)
+
 # Bienvenue dans Yavsc
+
 
 C'est une application mettant en oeuvre une prise de contact entre un demandeur de services et son éventuel préstataire associé.
 
