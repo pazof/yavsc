@@ -39,7 +39,7 @@ namespace Yavsc.Controllers
             var uid = User.GetUserId();
             var now = DateTime.Now;
             
-            var result = _context.Commands.Include(c => c.Location).
+            var result = _context.RdvQueries.Include(c => c.Location).
             Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now
             && c.ValidationDate == null).
             Select(c => new RdvQueryProviderInfo
@@ -71,7 +71,7 @@ namespace Yavsc.Controllers
             }
             var uid = User.GetUserId();
 
-            RdvQuery bookQuery = _context.Commands.Where(c => c.ClientId == uid || c.PerformerId == uid).Single(m => m.Id == id);
+            RdvQuery bookQuery = _context.RdvQueries.Where(c => c.ClientId == uid || c.PerformerId == uid).Single(m => m.Id == id);
 
             if (bookQuery == null)
             {
@@ -133,7 +133,7 @@ namespace Yavsc.Controllers
                 ModelState.AddModelError("ClientId", "You must be the client at creating a book query");
                 return new BadRequestObjectResult(ModelState);
             }
-            _context.Commands.Add(bookQuery);
+            _context.RdvQueries.Add(bookQuery);
             try
             {
                 _context.SaveChanges(User.GetUserId());
@@ -162,7 +162,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
             var uid = User.GetUserId();
-            RdvQuery bookQuery = _context.Commands.Single(m => m.Id == id);
+            RdvQuery bookQuery = _context.RdvQueries.Single(m => m.Id == id);
 
             if (bookQuery == null)
             {
@@ -170,7 +170,7 @@ namespace Yavsc.Controllers
             }
             if (bookQuery.ClientId != uid) return HttpNotFound();
 
-            _context.Commands.Remove(bookQuery);
+            _context.RdvQueries.Remove(bookQuery);
             _context.SaveChanges(User.GetUserId());
 
             return Ok(bookQuery);
@@ -187,7 +187,7 @@ namespace Yavsc.Controllers
 
         private bool BookQueryExists(long id)
         {
-            return _context.Commands.Count(e => e.Id == id) > 0;
+            return _context.RdvQueries.Count(e => e.Id == id) > 0;
         }
     }
 }

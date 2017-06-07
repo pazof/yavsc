@@ -10,20 +10,25 @@ namespace Yavsc.Controllers
     using Microsoft.Extensions.Logging;
     using Models;
     using Models.Workflow;
-    using Yavsc.Exceptions;
     using Yavsc.ViewModels.Workflow;
-    using Yavsc;
+    using Yavsc.Services;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
 
     [Authorize]
     public class DoController : Controller
     {
-        private ApplicationDbContext _context;
-        ILogger _logger;
-
-        public DoController(ApplicationDbContext context,ILogger<DoController> logger)
+        private ApplicationDbContext dbContext;
+        ILogger logger;
+        IBillingService billing;
+        public DoController(
+            ApplicationDbContext context,
+            IBillingService billing,
+            ILogger<DoController> logger)
         {
-            _context = context;
-            _logger = logger;
+            dbContext = context;
+            this.billing = billing;
+            this.logger = logger;
         }
 
         // GET: /Do/Index
@@ -33,14 +38,14 @@ namespace Yavsc.Controllers
             if (id == null)
                 id = User.GetUserId();
 
-            var userActivities = _context.UserActivities.Include(u => u.Does)
+            var userActivities = dbContext.UserActivities.Include(u => u.Does)
             .Include(u => u.User).Where(u=> u.UserId == id)
             .OrderByDescending(u => u.Weight);
             return View(userActivities.ToList());
         }
 
         // GET: Do/Details/5
-        public IActionResult Details(string id, string activityCode)
+        public async Task<IActionResult> Details(string id, string activityCode)
         {
 
             if (id == null || activityCode == null)
@@ -48,29 +53,23 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            UserActivity userActivity = _context.UserActivities.Include(m=>m.Does)
+            UserActivity userActivity = dbContext.UserActivities.Include(m=>m.Does)
             .Include(m=>m.User).Single(m => m.DoesCode == activityCode && m.UserId == id);
             if (userActivity == null)
             {
                 return HttpNotFound();
             }
-
             bool hasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
-            if (hasConfigurableSettings) {
-                ViewBag.ProfileType = Startup.ProfileTypes.Single(t=>t.FullName==userActivity.Does.SettingsClassName);
-                var dbset = (IQueryable<ISpecializationSettings>) _context.GetDbSet(userActivity.Does.SettingsClassName);
-                if (dbset == null) throw new InvalidWorkflowModelException($"pas de db set pour {userActivity.Does.SettingsClassName}, vous avez peut-être besoin de décorer votre propriété avec l'attribut [ActivitySettings]");
-                return View(new UserActivityViewModel {
+            var settings = await billing.GetPerformerSettingsAsync(activityCode,id);
+            ViewBag.ProfileType = Startup.ProfileTypes.Single(t=>t.FullName==userActivity.Does.SettingsClassName);
+             
+            var gift = new UserActivityViewModel {
                     Declaration = userActivity,
-                    HasSettings = dbset.Any(ua=>ua.UserId==id),
+                    Settings = settings,
                     NeedsSettings =  hasConfigurableSettings
-                } );
-            }
-            return View(new UserActivityViewModel {
-                Declaration = userActivity,
-                HasSettings = false,
-                NeedsSettings =  hasConfigurableSettings
-                } );
+                };
+            logger.LogInformation(JsonConvert.SerializeObject(gift.Settings));
+            return View (gift);
         }
 
         // GET: Do/Create
@@ -80,9 +79,9 @@ namespace Yavsc.Controllers
             if (userId==null)
                 userId = User.GetUserId();
             var model = new UserActivity { UserId = userId };
-            ViewBag.DoesCode = new SelectList(_context.Activities, "Code", "Name");
+            ViewBag.DoesCode = new SelectList(dbContext.Activities, "Code", "Name");
             //ViewData["UserId"] = userId;
-            ViewBag.UserId = new SelectList(_context.Performers.Include(p=>p.Performer), "PerformerId", "Performer", userId);
+            ViewBag.UserId = new SelectList(dbContext.Performers.Include(p=>p.Performer), "PerformerId", "Performer", userId);
             return View(model);
         }
 
@@ -98,12 +97,12 @@ namespace Yavsc.Controllers
             if (userActivity.UserId == null) userActivity.UserId = uid;
             if (ModelState.IsValid)
             {
-                _context.UserActivities.Add(userActivity);
-                _context.SaveChanges(User.GetUserId());
+                dbContext.UserActivities.Add(userActivity);
+                dbContext.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
-            ViewBag.DoesCode = new SelectList(_context.Activities, "Code", "Name", userActivity.DoesCode);
-            ViewBag.UserId = new SelectList(_context.Performers.Include(p=>p.Performer), "PerformerId", "User", userActivity.UserId);
+            ViewBag.DoesCode = new SelectList(dbContext.Activities, "Code", "Name", userActivity.DoesCode);
+            ViewBag.UserId = new SelectList(dbContext.Performers.Include(p=>p.Performer), "PerformerId", "User", userActivity.UserId);
             return View(userActivity);
         }
 
@@ -116,7 +115,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            UserActivity userActivity = _context.UserActivities.Include(
+            UserActivity userActivity = dbContext.UserActivities.Include(
                 u=>u.Does
             ).Include(
                 u=>u.User
@@ -125,8 +124,8 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            ViewData["DoesCode"] = new SelectList(_context.Activities, "Code", "Does", userActivity.DoesCode);
-            ViewData["UserId"] = new SelectList(_context.Performers, "PerformerId", "User", userActivity.UserId);
+            ViewData["DoesCode"] = new SelectList(dbContext.Activities, "Code", "Does", userActivity.DoesCode);
+            ViewData["UserId"] = new SelectList(dbContext.Performers, "PerformerId", "User", userActivity.UserId);
             return View(userActivity);
         }
 
@@ -140,12 +139,12 @@ namespace Yavsc.Controllers
                     ModelState.AddModelError("User","You're not admin.");
             if (ModelState.IsValid)
             {
-                _context.Update(userActivity);
-                _context.SaveChanges(User.GetUserId());
+                dbContext.Update(userActivity);
+                dbContext.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
-            ViewData["DoesCode"] = new SelectList(_context.Activities, "Code", "Does", userActivity.DoesCode);
-            ViewData["UserId"] = new SelectList(_context.Performers, "PerformerId", "User", userActivity.UserId);
+            ViewData["DoesCode"] = new SelectList(dbContext.Activities, "Code", "Does", userActivity.DoesCode);
+            ViewData["UserId"] = new SelectList(dbContext.Performers, "PerformerId", "User", userActivity.UserId);
             return View(userActivity);
         }
 
@@ -158,7 +157,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            UserActivity userActivity = _context.UserActivities.Single(m => m.UserId == id && m.DoesCode == activityCode);
+            UserActivity userActivity = dbContext.UserActivities.Single(m => m.UserId == id && m.DoesCode == activityCode);
 
             if (userActivity == null)
             {
@@ -182,8 +181,8 @@ namespace Yavsc.Controllers
                     ModelState.AddModelError("User","You're not admin.");
                     return RedirectToAction("Index");
                }
-            _context.UserActivities.Remove(userActivity);
-            _context.SaveChanges(User.GetUserId());
+            dbContext.UserActivities.Remove(userActivity);
+            dbContext.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
         }
     }

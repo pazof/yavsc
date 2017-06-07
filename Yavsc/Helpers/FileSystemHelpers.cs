@@ -184,13 +184,13 @@ namespace Yavsc.Helpers
                     dir, xsmallname), ImageFormat.Png);
             }
         }
-        public static Func<string,long,string>
-          SignFileNameFormat = new Func<string,long,string> ((signType,estimateId) => $"estimate-{signType}sign-{estimateId}.png");
+        public static Func<string,string,long,string>
+          SignFileNameFormat = new Func<string,string,long,string> ((signType,billingCode,estimateId) => $"sign-{billingCode}-{signType}-{estimateId}.png");
 
-        public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, long estimateId, IFormFile formFile, string signtype)
+        public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signtype)
         {
             var item = new FileRecievedInfo();
-            item.FileName = SignFileNameFormat("pro",estimateId);
+            item.FileName = SignFileNameFormat("pro",billingCode,estimateId);
             var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Bills, item.FileName);
 
             var fi = new FileInfo(destFileName);

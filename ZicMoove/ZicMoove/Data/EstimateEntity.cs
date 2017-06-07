@@ -40,7 +40,7 @@ namespace ZicMoove.Data
                     requestContent.Add(content, "file", filename);
                    
                     using (var response = await client.PostAsync(
-                    Constants.YavscApiUrl + $"/pdfestimate/prosign/{estimate.Id}", requestContent))
+                    Constants.YavscApiUrl + $"/pdfbill/prosign/{estimate.Id}", requestContent))
                     {
                         if (!response.IsSuccessStatusCode)
                         {

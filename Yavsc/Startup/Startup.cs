@@ -189,10 +189,9 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, HasTemporaryPassHandler>();
             services.AddSingleton<IAuthorizationHandler, BlogEditHandler>();
             services.AddSingleton<IAuthorizationHandler, BlogViewHandler>();
-            services.AddSingleton<IAuthorizationHandler, CommandEditHandler>();
-            services.AddSingleton<IAuthorizationHandler, CommandViewHandler>();
+            services.AddSingleton<IAuthorizationHandler, BillEditHandler>();
+            services.AddSingleton<IAuthorizationHandler, BillViewHandler>();
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
-            services.AddSingleton<IAuthorizationHandler, EstimateViewHandler>();
             services.AddSingleton<IAuthorizationHandler, ViewFileHandler>();
 
             services.AddMvc(config =>
@@ -227,6 +226,9 @@ namespace Yavsc
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<IGoogleCloudMessageSender, AuthMessageSender>();
+            services.AddTransient<IBillingService, BillingService>((servs) => 
+                new BillingService(servs.GetRequiredService<ILoggerFactory>(), servs.GetService<ApplicationDbContext>())
+            );
             // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
 
             services.AddLocalization(options =>
@@ -333,9 +335,7 @@ namespace Yavsc
             // before fixing the security protocol, let beleive our lib it's done with it.
             var cxmgr = ConnectionManager.Instance;
             // then, fix it.
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType) 0xC00;
-
-            logger.LogInformation($"ServicePointManager.SecurityProtocol: {ServicePointManager.SecurityProtocol}");
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType) 0xC00; // Tls12, required by PayPal
 
             app.UseIISPlatformHandler(options =>
             {

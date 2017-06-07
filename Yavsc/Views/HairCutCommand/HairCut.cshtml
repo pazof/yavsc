@@ -1,4 +1,4 @@
-@model HairCutQuery 
+@model Yavsc.Models.Haircut.HairCutQuery 
 @{ ViewData["Title"] = $"{ViewBag.Activity.Name}: Votre commande"; } 
 @await Html.PartialAsync("BrusherProfileScript",ViewData["PerfPrefs"])
 
@@ -186,8 +186,8 @@
             var pos = loc.geometry.location;
             var lat = new Number(pos.lat);
             var lng = new Number(pos.lng);
-            $('#' + config.latId).val(lat.toLocaleString('en'));
-            $('#' + config.longId).val(lng.toLocaleString('en'));
+            $('#' + config.latId).val(lat);
+            $('#' + config.longId).val(lng);
             gmap.setCenter(pos);
             if (marker) {
                 marker.setMap(null);
@@ -335,7 +335,6 @@
                 </div>
             </div>
         </div>
-
         <div class="form-group">
             <label for="EventDate" class="col-md-2 control-label">
                 @SR["Event date"]

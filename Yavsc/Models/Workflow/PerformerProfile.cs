@@ -6,6 +6,7 @@ namespace Yavsc.Models.Workflow
 {
     using System;
     using Models.Relationship;
+    using Newtonsoft.Json;
     using Yavsc.Workflow;
 
     public class PerformerProfile : IPerformerProfile {
@@ -16,7 +17,7 @@ namespace Yavsc.Models.Workflow
         public virtual ApplicationUser Performer { get; set; }
 
         [InverseProperty("User")]
-        [Display(Name="Activity")]
+        [Display(Name="Activity"), JsonIgnore]
         public virtual List<UserActivity> Activity { get; set; }
 
         [Required,StringLength(14),Display(Name="SIREN"),

@@ -6,14 +6,9 @@ default: pushInPre
 watch:
 	ASPNET_ENV=Development dnx-watch web --configuration=Debug
 
-cleanRelease:
+clean:
 	rm -rf bin/Release
-
-cleanoutput: 
 	rm -rf bin/output
-
-clean: cleanoutput cleanRelease
-	gulp clean
 
 bin/Release:
 	dnu build --configuration=Release
@@ -31,9 +26,13 @@ pushInPre: bin/output/wwwroot/version
 	ssh root@localhost sync
 	ssh root@localhost systemctl start kestrel-pre
 
-push: bin/output/wwwroot/version
+pushInProd: bin/output/wwwroot/version
 	ssh root@localhost systemctl stop kestrel
 	ssh root@localhost rm -rf $(PRODDESTDIR)/approot
 	(cd bin/output && rsync -ravu ./ root@localhost:$(PRODDESTDIR) >/dev/null)
 	ssh root@localhost sync
 	ssh root@localhost systemctl start kestrel
+
+status:
+	git status -s --porcelain
+

@@ -60,21 +60,7 @@ namespace Yavsc.Models
             }
 
         }
-        public DbSet<TSettings> GetDbSet<TSettings>() where TSettings : class,  ISpecializationSettings
 
-        {
-            return (DbSet<TSettings>) GetDbSet(typeof(TSettings).FullName);
-        }
-        public IQueryable<ISpecializationSettings> GetDbSet(string settingsClassName)
-        {
-            var dbSetPropInfo = Startup.GetUserSettingPropertyInfo(settingsClassName);
-            if (dbSetPropInfo == null) return null;
-            // var settingType = dbSetPropInfo.PropertyType;
-            // var dbSetType = typeof(DbSet<>).MakeGenericType(new Type[] { settingType } );
-            // avec une info method Remove et Update, ça le ferait ...
-
-            return (IQueryable<ISpecializationSettings>) dbSetPropInfo.GetValue(this);
-        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(Startup.ConnectionString);
@@ -108,22 +94,17 @@ namespace Yavsc.Models
         public DbSet<CircleMember> CircleMembers { get; set; }
 
         /// <summary>
-        /// Commands, from an user, to a performer
-        /// (A performer is an user who's actived a main activity
-        /// on his profile).
-        /// </summary>
-        /// <returns></returns>
-        public DbSet<RdvQuery> Commands { get; set; }
-        /// <summary>
         /// Special commands, talking about
         /// a given place and date.
         /// </summary>
-        /// <returns></returns>
         public DbSet<RdvQuery> RdvQueries { get; set; }
+
         public DbSet<HairCutQuery> HairCutQueries { get; set; }
         public DbSet<HairPrestation> HairPrestation { get; set; }
+
         public DbSet<HairMultiCutQuery> HairMultiCutQueries { get; set; }
         public DbSet<PerformerProfile> Performers { get; set; }
+
         public DbSet<Estimate> Estimates { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
         public DbSet<BalanceImpact> BankBook { get; set; }

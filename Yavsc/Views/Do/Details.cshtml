@@ -15,10 +15,10 @@
           @if (Model.NeedsSettings) {
               <a asp-controller="@ViewBag.ProfileType.Name" asp-action="Index" class="btn btn-default">
                   @SR[Model.Declaration.Does.SettingsClassName]
-                @if (!Model.HasSettings) {
-                    <span class="badge">Non renseigné: Cliquez vite<br/> ici pour positionner les<br/> paramêtres de cette activité</span>
+                @if (Model.Settings==null) {
+                    <span class="badge">Non renseigné: Cliquez vite<br/> ici pour positionner les<br/>
+                    paramêtres de cette activité</span>
                 }
-
               </a>
             }
         </dd>

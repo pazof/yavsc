@@ -1,0 +1,22 @@
+@using System.Reflection
+@using System.IO
+@using Microsoft.Extensions.WebEncoders
+@using System.Diagnostics
+@using System.Text
+@using Yavsc.Formatters
+@using Yavsc.Helpers
+@model Yavsc.ViewModels.Gen.PdfGenerationViewModel
+
+@{ 
+  Model.GenerateEstimatePdf();
+}
+@if (Model.Generated) {
+  <div>
+  @(Model.BaseFileName).pdf was generated
+  </div>
+} else {
+  <div class="error">
+  @Model.GenerationErrorMessage
+  <p>Something went wrong ...</p>
+  </div>
+}

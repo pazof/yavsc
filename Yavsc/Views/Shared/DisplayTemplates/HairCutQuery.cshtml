@@ -20,6 +20,10 @@
 </dt>
 <dd>@Html.DisplayFor(m=>m.AdditionalInfo)
 </dd>
+<dt>@SR["La facture"]
+</dt>
+<dd>@await Component.InvokeAsync("Bill", "Brush", Model, "html", false, false )
+</dd>
 <dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
 <dd> 
     @Component.Invoke("PayPalButton", Model, "haircut", "HairCutCommand" )

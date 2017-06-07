@@ -13,23 +13,23 @@
             data: JSON.stringify(auth),
             contentType: "application/json;charset=utf-8",
             success: function(data) {
-                console.log('auth ' + allow ? 'POSTed' : 'DELETEd' + ' Successfully');
+                console.log('auth ' + allow ? 'POSTED' : 'DELETED' + data);
             },
             error: function() {
-                console.log('auth not ' + allow ? 'POSTed' : 'DELETEd');
+                console.log('Error @' + allow ? 'POSTed' : 'DELETEd');
             }
         });
         e.preventDefault();
     };
-    $(document).ready(function() {
-        $('input.Blogcirle[type=checkbox]').on('change', allowCircleToBlog);
-    });
 
-    var notifClick = function(nid) {
+    function notifClick(nid) {
         if (nid > 0) { 
             $.get('/api/dimiss/click/' + nid).done(function() {})
                 .fail(function() {})
                 .always(function() {});
         }
-    };
+    }
+    $(document).ready(function() {
+        $('input.Blogcirle[type=checkbox]').on('change', allowCircleToBlog);
+    });
 })(jQuery);
