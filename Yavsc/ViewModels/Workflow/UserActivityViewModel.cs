@@ -6,6 +6,6 @@ namespace Yavsc.ViewModels.Workflow
     {
          public UserActivity Declaration { get; set; }        
          public bool NeedsSettings { get; set; }
-         public bool HasSettings { get; set; }
+         public ISpecializationSettings Settings { get; set; }
     }
 }

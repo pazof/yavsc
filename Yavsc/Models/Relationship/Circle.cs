@@ -16,7 +16,7 @@ namespace Yavsc.Models.Relationship
         [ForeignKey("OwnerId"),JsonIgnore,NotMapped]
         public virtual ApplicationUser Owner { get; set; }
 
-        [InverseProperty("Circle")]
+        [InverseProperty("Circle"),JsonIgnore]
         public virtual List<CircleMember> Members { get; set; }
     }
 }

@@ -191,8 +191,7 @@
 @if (!(Model.ProviderValidationDate==null)) {
     <text>
 \begin{flushright}
-  @(new HtmlString(isestimate?"Devis validé":"Facture validée")) le @TeXHelpers.ToTeX(Model.ProviderValidationDate.ToString("dddd dd MMMM yyyy",
-                  CultureInfo.CreateSpecificCulture("fr-FR")))
+  @(new HtmlString(isestimate?"Devis validé":"Facture validée")) le @TeXHelpers.ToTeX(Model.ProviderValidationDate.ToString("dddd dd MMMM yyyy"))
 \end{flushright}
 @if (prosign.Exists) {
 <text>

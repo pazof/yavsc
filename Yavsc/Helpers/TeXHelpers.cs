@@ -23,6 +23,9 @@ namespace Yavsc.Helpers
 
         }
 
+        public static TeXString operator+ (TeXString a, TeXString b) {
+            return new TeXString(a.ToString()+b.ToString());
+        }
 
     }
     public class Replacement

@@ -3,10 +3,10 @@ using Microsoft.AspNet.Authorization;
 
 namespace Yavsc.ViewModels.Auth.Handlers
 {
-    using Models.Workflow;
-    public class CommandEditHandler : AuthorizationHandler<EditRequirement, RdvQuery>
+    using Billing;
+    public class BillEditHandler : AuthorizationHandler<EditRequirement, IBillable>
     {
-        protected override void Handle(AuthorizationContext context, EditRequirement requirement, RdvQuery resource)
+        protected override void Handle(AuthorizationContext context, EditRequirement requirement, IBillable resource)
         {
             if (context.User.IsInRole("FrontOffice"))
                 context.Succeed(requirement);

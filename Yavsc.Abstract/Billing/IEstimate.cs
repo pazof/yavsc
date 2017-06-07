@@ -1,7 +1,8 @@
 ﻿namespace Yavsc
 {
     using System.Collections.Generic;
-    public interface IEstimate
+
+    public interface IEstimate 
     {
         List<string> AttachedFiles { get; set; }
         List<string> AttachedGraphics { get; }

@@ -19,8 +19,11 @@ namespace Yavsc.ApiControllers
 
     using Models.Messaging;
     using ViewModels.Auth;
-    [Route("api/pdfestimate"), Authorize]
-    public class PdfEstimateController : Controller
+    using Yavsc.ViewComponents;
+    using Newtonsoft.Json;
+
+    [Route("api/bill"), Authorize]
+    public class BillingController : Controller
     {
         ApplicationDbContext dbContext;
         private IStringLocalizer _localizer;
@@ -28,59 +31,64 @@ namespace Yavsc.ApiControllers
         private IGoogleCloudMessageSender _GCMSender;
         private IAuthorizationService authorizationService;
 
-        private ILogger logger;
 
-        public PdfEstimateController(
+        private ILogger logger;
+        private IBillingService billingService;
+
+        public BillingController(
             IAuthorizationService authorizationService,
             ILoggerFactory loggerFactory,
             IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR,
             ApplicationDbContext context,
             IOptions<GoogleAuthSettings> googleSettings,
-            IGoogleCloudMessageSender GCMSender
+            IGoogleCloudMessageSender GCMSender,
+            IBillingService billingService
             )
         {
             _googleSettings=googleSettings.Value;
             this.authorizationService = authorizationService;
             dbContext = context;
-            logger = loggerFactory.CreateLogger<PdfEstimateController>();
+            logger = loggerFactory.CreateLogger<BillingController>();
             this._localizer = SR;
             _GCMSender=GCMSender;
+            this.billingService=billingService;
         }
 
-        [HttpGet("get/{id}", Name = "Get"), Authorize]
-        public async Task<IActionResult> Get(long id)
-        {
-            var estimate = dbContext.Estimates.Include(
-                e=>e.Query
-            ).FirstOrDefault(e=>e.Id == id);
-            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+        [HttpGet("pdf/facture-{billingCode}-{id}.pdf"), Authorize]
+        public async Task<IActionResult> GetPdf(string billingCode, long id)
+        {     
+            var bill = await billingService.GetBillAsync(billingCode, id);
+
+            if (!await authorizationService.AuthorizeAsync(User, bill, new ViewRequirement()))
             {
                 return new ChallengeResult();
             }
  
-            var filename = $"estimate-{id}.pdf";
+            var filename = $"facture-{billingCode}-{id}.pdf";
 
             FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
             if (!fi.Exists) return Ok(new { Error = "Not generated" });
             return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }
 
-        [HttpGet("estimate-{id}.tex", Name = "GetTex"), Authorize]
-        public async Task<IActionResult> GetTex(long id)
+        [HttpGet("tex/{billingCode}-{id}.tex"), Authorize]
+        public async Task<IActionResult> GetTex(string billingCode, long id)
         {
-            var estimate = dbContext.Estimates.Include(
-                e=>e.Query
-            ).FirstOrDefault(e=>e.Id == id);
-            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            var bill = await billingService.GetBillAsync(billingCode, id);
+
+            if (bill==null) return this.HttpNotFound();
+            logger.LogVerbose(JsonConvert.SerializeObject(bill));
+
+            if (!await authorizationService.AuthorizeAsync(User, bill, new ViewRequirement()))
             {
                 return new ChallengeResult();
             }
             Response.ContentType = "text/x-tex";
-            return ViewComponent("Estimate",new object[] { id, "LaTeX" });
+            return ViewComponent("Bill",new object[] {  billingCode, bill , OutputFormat.LaTeX, true, false });
         }
 
-        [HttpPost("gen/{id}")]
-        public async Task<IActionResult> GeneratePdf(long id)
+        [HttpPost("genpdf/{billingCode}/{id}")]
+        public async Task<IActionResult> GeneratePdf(string billingCode, long id)
         {
             var estimate = dbContext.Estimates.Include(
                 e=>e.Query
@@ -89,12 +97,12 @@ namespace Yavsc.ApiControllers
             {
                 return new ChallengeResult();
             }
-            return ViewComponent("Estimate",new object[] { id, "Pdf" } );
+            return ViewComponent("Bill",new object[] { billingCode, id, OutputFormat.Pdf } );
         }
 
 
-        [HttpPost("prosign/{id}")]
-        public async Task<IActionResult> ProSign(long id)
+        [HttpPost("prosign/{billingCode}/{id}")]
+        public async Task<IActionResult> ProSign(string billingCode, long id)
         {
             var estimate = dbContext.Estimates.
             Include(e=>e.Client).Include(e=>e.Client.Devices)
@@ -108,7 +116,7 @@ namespace Yavsc.ApiControllers
             }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            User.ReceiveProSignature(id,Request.Form.Files[0],"pro");
+            User.ReceiveProSignature(billingCode,id,Request.Form.Files[0],"pro");
             estimate.ProviderValidationDate = DateTime.Now;
             dbContext.SaveChanges(User.GetUserId());
             // Notify the client
@@ -125,8 +133,8 @@ namespace Yavsc.ApiControllers
             return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = gcmSent });
         }
 
-        [HttpGet("prosign/{id}")]
-        public async Task<IActionResult> GetProSign(long id)
+        [HttpGet("prosign/{billingCode}/{id}")]
+        public async Task<IActionResult> GetProSign(string billingCode, long id)
         {
             // For authorization purpose
             var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
@@ -135,14 +143,14 @@ namespace Yavsc.ApiControllers
                 return new ChallengeResult();
             }
 
-            var filename = FileSystemHelpers.SignFileNameFormat("pro",id);
+            var filename = FileSystemHelpers.SignFileNameFormat("pro",billingCode,id);
             FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
             if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
             return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }
 
-        [HttpPost("clisign/{id}")]
-        public async Task<IActionResult> CliSign(long id)
+        [HttpPost("clisign/{billingCode}/{id}")]
+        public async Task<IActionResult> CliSign(string billingCode, long id)
         {
             var uid = User.GetUserId();
             var estimate = dbContext.Estimates.Include( e=>e.Query
@@ -154,14 +162,14 @@ namespace Yavsc.ApiControllers
             }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            User.ReceiveProSignature(id,Request.Form.Files[0],"cli");
+            User.ReceiveProSignature(billingCode,id,Request.Form.Files[0],"cli");
             estimate.ClientValidationDate = DateTime.Now;
             dbContext.SaveChanges(User.GetUserId());
             return Ok (new { ClientValidationDate = estimate.ClientValidationDate });
         }
 
-        [HttpGet("clisign/{id}")]
-        public async Task<IActionResult> GetCliSign(long id)
+        [HttpGet("clisign/{billingCode}/{id}")]
+        public async Task<IActionResult> GetCliSign(string billingCode, long id)
         {
             // For authorization purpose
             var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
@@ -170,7 +178,7 @@ namespace Yavsc.ApiControllers
                 return new ChallengeResult();
             }
             
-            var filename = FileSystemHelpers.SignFileNameFormat("pro",id);
+            var filename = FileSystemHelpers.SignFileNameFormat("pro",billingCode,id);
             FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
             if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
             return File(fi.OpenRead(), "application/x-pdf", filename); ;

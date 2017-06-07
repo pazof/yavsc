@@ -6,25 +6,31 @@ using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers.Generic
 {
-    using Exceptions;
     using Models;
+    using Yavsc.Services;
+
     [Authorize]
     public abstract class SettingsController<TSettings> : Controller where TSettings : class, ISpecializationSettings, new()
     {
         protected ApplicationDbContext _context;
-        private object dbSet;
+        IBillingService billing;
+        DbSet<TSettings> dbSet=null;
+
+        protected string activityCode=null;
 
         protected DbSet<TSettings> Settings { get {
-            return (DbSet<TSettings>) dbSet;
+            if (dbSet == null) Task.Run( async () => {
+                dbSet = (DbSet<TSettings>) await billing.GetPerformersSettingsAsync(activityCode);
+            });
+            return dbSet;
         } }
 
-        public SettingsController(ApplicationDbContext context)
+        public SettingsController(ApplicationDbContext context, IBillingService billing)
         {
             _context = context;
-            dbSet=_context.GetDbSet<TSettings>();
-            if (dbSet==null) throw new InvalidWorkflowModelException(this.GetType().Name);
+            this.billing = billing;
         }
-
+        
         public async Task<IActionResult> Index()
         {
             var existing = await this.Settings.SingleOrDefaultAsync(p=>p.UserId == User.GetUserId());
