@@ -80,13 +80,11 @@
         </dd>
         <dt>Numéro identifiant votre commande</dt>
         <dd>@Model.Id</dd>
-        
-        <environment names="Development">
 
-        <dt>TODO Facture</dt>
-        <dd>Facture</dd>
-
-        </environment>
+        <dt>@SR["La facture"]
+        </dt>
+        <dd>@await Component.InvokeAsync("Bill", "Brush", Model, OutputFormat.Html, false, false )
+        </dd>
         
         <dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
         <dd> @Component.Invoke("PayPalButton", Model, "haircut", "HairCutCommand" )

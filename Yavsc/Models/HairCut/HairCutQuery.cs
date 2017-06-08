@@ -19,8 +19,9 @@ namespace Yavsc.Models.Haircut
         // Bill description
         public override string GetDescription()
         {
-            var type = Startup.GlobalLocalizer[this.GetType().Name];
-            var gender = Startup.GlobalLocalizer[this.Prestation.Gender.ToString()];
+            string type = Startup.GlobalLocalizer[this.GetType().Name];
+            string gender = Startup.GlobalLocalizer[this.Prestation.Gender.ToString()];
+           
            return  $"{type} ({gender})";
         }
 
@@ -75,7 +76,7 @@ namespace Yavsc.Models.Haircut
 #endif
             // Le shampoing
             if (this.Prestation.Shampoo)
-                bill.Add(new CommandLine { Name = "Shampoing", UnitaryCost = SelectedProfile.ShampooPrice });
+                bill.Add(new CommandLine { Name = "Shampoing", Description="Shampoing", UnitaryCost = SelectedProfile.ShampooPrice });
 
             // la coupe
             if (Prestation.Cut) {
@@ -110,7 +111,8 @@ Prestation.Gender == HairCutGenders.Women ?
                             case HairLength.Long:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + longhairsuffix,
+                                    Name = name,
+                                    Description = name + longhairsuffix,
                                     UnitaryCost = multicolor ? SelectedProfile.LongMultiColorPrice :
                 SelectedProfile.LongColorPrice
                                 });
@@ -118,7 +120,8 @@ Prestation.Gender == HairCutGenders.Women ?
                             case HairLength.HalfLong:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + halflonghairsuffix,
+                                    Name = name,
+                                    Description = name + halflonghairsuffix,
                                     UnitaryCost = multicolor ? SelectedProfile.HalfMultiColorPrice : SelectedProfile.HalfColorPrice
                                 });
                                 break;
@@ -126,7 +129,8 @@ Prestation.Gender == HairCutGenders.Women ?
 
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + shorthairsuffix,
+                                    Name = name,
+                                    Description = name = name + shorthairsuffix,
                                     UnitaryCost = multicolor ? SelectedProfile.ShortMultiColorPrice : SelectedProfile.ShortColorPrice
                                 });
 
@@ -142,21 +146,24 @@ Prestation.Gender == HairCutGenders.Women ?
                             case HairLength.Long:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + longhairsuffix,
+                                    Name = name,
+                                    Description = name + longhairsuffix,
                                     UnitaryCost = SelectedProfile.LongBalayagePrice
                                 });
                                 break;
                             case HairLength.HalfLong:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + halflonghairsuffix,
+                                    Name = name,
+                                    Description = name + halflonghairsuffix,
                                     UnitaryCost = SelectedProfile.HalfBalayagePrice
                                 });
                                 break;
                             default:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + shorthairsuffix,
+                                    Name = name,
+                                    Description = name + shorthairsuffix,
                                     UnitaryCost = SelectedProfile.ShortBalayagePrice
                                 });
                                 break;
@@ -171,21 +178,24 @@ Prestation.Gender == HairCutGenders.Women ?
                             case HairLength.Long:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + longhairsuffix,
+                                    Name = name,
+                                    Description = name + longhairsuffix,
                                     UnitaryCost = SelectedProfile.LongDefrisPrice
                                 });
                                 break;
                             case HairLength.HalfLong:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + halflonghairsuffix,
+                                    Name = name,
+                                    Description = name + halflonghairsuffix,
                                     UnitaryCost = SelectedProfile.HalfDefrisPrice
                                 });
                                 break;
                             default:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + shorthairsuffix,
+                                    Name = name,
+                                    Description = name + shorthairsuffix,
                                     UnitaryCost = SelectedProfile.ShortDefrisPrice
                                 });
                                 break;
@@ -200,21 +210,24 @@ Prestation.Gender == HairCutGenders.Women ?
                             case HairLength.Long:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + longhairsuffix,
+                                    Name = name,
+                                    Description = name + longhairsuffix,
                                     UnitaryCost = SelectedProfile.LongMechPrice
                                 });
                                 break;
                             case HairLength.HalfLong:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + halflonghairsuffix,
+                                    Name = name,
+                                    Description = name + halflonghairsuffix,
                                     UnitaryCost = SelectedProfile.HalfMechPrice
                                 });
                                 break;
                             default:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + shorthairsuffix,
+                                    Name = name,
+                                    Description = name + shorthairsuffix,
                                     UnitaryCost = SelectedProfile.ShortMechPrice
                                 });
                                 break;
@@ -229,21 +242,24 @@ Prestation.Gender == HairCutGenders.Women ?
                             case HairLength.Long:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + longhairsuffix,
+                                    Name = name,
+                                    Description = name + longhairsuffix,
                                     UnitaryCost = SelectedProfile.LongPermanentPrice
                                 });
                                 break;
                             case HairLength.HalfLong:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + halflonghairsuffix,
+                                    Name = name,
+                                    Description = name + halflonghairsuffix,
                                     UnitaryCost = SelectedProfile.HalfPermanentPrice
                                 });
                                 break;
                             default:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + shorthairsuffix,
+                                    Name = name,
+                                    Description = name + shorthairsuffix,
                                     UnitaryCost = SelectedProfile.ShortPermanentPrice
                                 });
                                 break;
@@ -268,21 +284,24 @@ Prestation.Gender == HairCutGenders.Women ?
                                 case HairLength.Long:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + longhairsuffix,
+                                    Name = name,
+                                    Description = name + longhairsuffix,
                                     UnitaryCost = SelectedProfile.LongBrushingPrice
                                 });
                                     break;
                                 case HairLength.HalfLong:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + halflonghairsuffix,
+                                    Name = name,
+                                    Description = name + halflonghairsuffix,
                                     UnitaryCost = SelectedProfile.HalfBrushingPrice
                                 });
                                     break;
                                 default:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + shorthairsuffix,
+                                    Name = name,
+                                    Description = name + shorthairsuffix,
                                     UnitaryCost = SelectedProfile.ShortBrushingPrice
                                 });
                                     break;
@@ -291,7 +310,8 @@ Prestation.Gender == HairCutGenders.Women ?
                         case HairCutGenders.Man:
                             bill.Add(new CommandLine
                                 {
-                                    Name = name + shorthairsuffix,
+                                    Name = name,
+                                    Description = name + shorthairsuffix,
                                     UnitaryCost = SelectedProfile.ManBrushPrice
                                 });
                             break;
@@ -315,21 +335,24 @@ Prestation.Gender == HairCutGenders.Women ?
                         case HairLength.Long:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + longhairsuffix,
+                                    Name = name,
+                                    Description = name + longhairsuffix,
                                     UnitaryCost = SelectedProfile.LongFoldingPrice
                                 });
                             break;
                         case HairLength.HalfLong:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + halflonghairsuffix,
+                                    Name = name,
+                                    Description = name + halflonghairsuffix,
                                     UnitaryCost = SelectedProfile.HalfFoldingPrice
                                 });
                             break;
                         default:
                                 bill.Add(new CommandLine
                                 {
-                                    Name = name + shorthairsuffix,
+                                    Name = name,
+                                    Description = name + shorthairsuffix,
                                     UnitaryCost = SelectedProfile.ShortFoldingPrice
                                 });
                             break;
@@ -341,6 +364,7 @@ Prestation.Gender == HairCutGenders.Women ?
             // les soins
             if (Prestation.Cares) {
                 bill.Add(new CommandLine { Name = "Soins",
+                                    Description = "Soins",
                       UnitaryCost = SelectedProfile.CarePrice });
 
             }

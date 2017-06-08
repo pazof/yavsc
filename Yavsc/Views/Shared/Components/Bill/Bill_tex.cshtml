@@ -9,7 +9,6 @@
     var to = ViewBag.Client;
     var PostalAddress = ViewBag.ClientAddress;
     var proaddr = ViewBag.PerformerOrganizationAddress;
-    var proaddrm = proaddr;
     var isestimate = !ViewBag.AsBill;
     var prosign = new FileInfo($"{ViewBag.BillsDir}/sign-{ViewBag.BillingCode}-{Model.Id}.png");
     var clisign = new FileInfo($"{ViewBag.BillsDir}/sign-{ViewBag.BillingCode}-{Model.Id}.png");
@@ -72,8 +71,8 @@
 %%%%%%%%%%%%%%%%%%%%% A MODIFIER DANS LA FACTURE %%%%%%%%%%%%%%%%%%%%%
 
 \def\FactureNum            {@Model.Id.ToString()}    % Numéro de facture
-\def\FactureAcquittee    {@ViewBag.Acquitted?"oui":"non"}        % Facture acquittée : oui/non
-\def\FactureLieu    {@proaddrm}    % Lieu de l'édition de la facture
+\def\FactureAcquittee    {@(ViewBag.Acquitted?"oui":"non")}        % Facture acquittée : oui/non
+\def\FactureLieu    {@proaddr}    % Lieu de l'édition de la facture
 \def\FactureObjet    {@(new HtmlString(isestimate?"Devis":"Facture")) en @TeXHelpers.ToTeX(activity)}    % Objet du document
 % Description de la facture
 \def\FactureDescr    {
@@ -85,8 +84,7 @@
 
 \def\ClientAdresse{                    
 % Adresse du client
-@PostalAddress
-@if (!string.IsNullOrWhiteSpace(to.PhoneNumber)) {<text>\\
+@PostalAddress @if (!string.IsNullOrWhiteSpace(to.PhoneNumber)) {<text>\\
     @TeXHelpers.ToTeX(to.PhoneNumber)
    </text>}\\
    E-mail:  @TeXHelpers.ToTeX(to.Email)
@@ -110,8 +108,8 @@
 \setlength{\parindent}{0pt}
 
 \renewcommand{\headrulewidth}{0pt}
-\cfoot{   @TeXHelpers.ToTeX(from.UserName)  @if (proaddrm!=null) { <text> - @proaddrm </text> } \newline
-    \small{ E-mail:  @TeXHelpers.ToTeX(from.Email) @if (!string.IsNullOrWhiteSpace(from.PhoneNumber)) {  <text> - Téléphone fixe:  @TeXHelpers.ToTeX(from.PhoneNumber) </text>  } 
+\cfoot{   @TeXHelpers.ToTeX(from.UserName) - @ViewBag.FooterPerformerOrganizationAddress \\
+    \small{ E-mail:  @TeXHelpers.ToTeX(from.Email) @if (!string.IsNullOrWhiteSpace(from.PhoneNumber)) {  <text> - Téléphone :  @TeXHelpers.ToTeX(from.PhoneNumber) </text>  } 
     }
 }
 
@@ -164,8 +162,7 @@
 \end{flushright}
 ~\\
 @if (ViewBag.AsBill) {
-
-} else if (ViewBag.Acquitted) {
+    if (ViewBag.Acquitted) {
 <text>
 \ifthenelse{\equal{\FactureAcquittee}{oui}}{
     Facture acquittée.
@@ -173,7 +170,11 @@
 </text>
 } else {
     var bi = from.BankInfo;
-    if (bi!=null) {
+    if (bi==null){
+    <text>À régler sur site, en utilisant le paiment PayPal:\\
+        Le relevé d'identité bancaire de ce prestaire n'est pas renseigné.
+    </text>
+    } else {
         <text>À régler par chèque ou par virement bancaire :
 
     \begin{center}
@@ -195,6 +196,7 @@
     \end{center}</text>
     }
 }
+}
 
 
 @if (validationDate!=null) {
@@ -207,10 +209,20 @@
 <text>
 \begin{center}
 	\hspace{263pt}
-    \includegraphics[height=60pt]{@(ViewBag.BillsDir)/estimate-prosign-@(Model.Id).png}
+    \includegraphics[height=60pt]{@(ViewBag.BillsDir)/{ViewBag.BillingCode}-prosign-@(Model.Id).png}
 \end{center}
 </text>
 }
+
+@if (clisign.Exists) {
+<text>
+\begin{center}
+	\hspace{263pt}
+    \includegraphics[height=60pt]{@(ViewBag.BillsDir)/{ViewBag.BillingCode}-clisign-@(Model.Id).png}
+\end{center}
+</text>
+}
+
     </text>
 }
 \end{document}

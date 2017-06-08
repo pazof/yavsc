@@ -22,12 +22,12 @@ namespace Yavsc
         /// Owner's email
         /// </summary>
         /// <returns></returns>
-        public EmailEntry Owner { get; set; }
+        public Contact Owner { get; set; }
         /// <summary>
         /// Administrator's email
         /// </summary>
         /// <returns></returns>
-        public EmailEntry Admin { get; set; }
+        public Contact Admin { get; set; }
         /// <summary>
         /// User's files directory
         /// </summary>

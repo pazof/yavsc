@@ -1,4 +1,15 @@
 @model HairCutQuery
+@{
+    var paid = false;
+    if (Model.PaymentId!=null) {
+        if (Model.Regularisation!=null) {
+            if (Model.Regularisation.IsSuccess()) {
+                paid=true;
+            } 
+        }
+    }
+    
+}
 <dl class="dl-horizontal">
 <dt>@Html.DisplayNameFor(m=>m.Prestation)
 </dt>
@@ -22,7 +33,7 @@
 </dd>
 <dt>@SR["La facture"]
 </dt>
-<dd>@await Component.InvokeAsync("Bill", "Brush", Model, OutputFormat.Html, false, false )
+<dd>@await Component.InvokeAsync("Bill", "Brush", Model, OutputFormat.Html, true, paid )
 </dd>
 <dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
 <dd> 
