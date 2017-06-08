@@ -78,10 +78,16 @@ namespace Yavsc.Models.Haircut
                 bill.Add(new CommandLine { Name = "Shampoing", UnitaryCost = SelectedProfile.ShampooPrice });
 
             // la coupe
-            if (Prestation.Cut)
-                bill.Add(new CommandLine
+            if (Prestation.Cut) {
+                 bill.Add(new CommandLine
                 {
+
                     Name = "Coupe",
+                    Description = $"Coupe "+Startup.GlobalLocalizer[Prestation.Gender.ToString()]+ " "+
+                   (Prestation.Gender == HairCutGenders.Women ?
+        Prestation.Length == HairLength.Long ? longhairsuffix :
+        Prestation.Length == HairLength.HalfLong ? halflonghairsuffix :
+        shorthairsuffix: null),
                     UnitaryCost =
 Prestation.Gender == HairCutGenders.Women ?
         Prestation.Length == HairLength.Long ? SelectedProfile.WomenLongCutPrice :
@@ -90,6 +96,8 @@ Prestation.Gender == HairCutGenders.Women ?
         SelectedProfile.ManCutPrice : SelectedProfile.KidCutPrice
                 });
 
+            }
+               
             // Les techniques
             switch (Prestation.Tech)
             {

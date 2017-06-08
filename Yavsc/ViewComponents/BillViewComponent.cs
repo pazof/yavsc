@@ -7,15 +7,12 @@ using Yavsc.Billing;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Services;
+using Yavsc.ViewModels;
 using Yavsc.ViewModels.Gen;
 
 namespace Yavsc.ViewComponents
 {
-    public enum OutputFormat { 
-        Html,
-        LaTeX,
-        Pdf
-    }
+
     public class BillViewComponent : ViewComponent
     {
         ApplicationDbContext dbContext;
