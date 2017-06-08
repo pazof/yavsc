@@ -1,9 +1,13 @@
+using Yavsc.Models.Relationship;
+
 namespace  Yavsc
 {
-    public class EmailEntry
+    public class Contact
     {
         public string Name { get; set; }
-        public string Address { get; set; }
+        public string EMail { get; set; }
+
+        public PostalAddress PostalAddress { get; set; }
 
     }
 

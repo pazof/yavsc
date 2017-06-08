@@ -63,7 +63,7 @@ namespace Yavsc.Services
                 MimeMessage msg = new MimeMessage();
                 msg.From.Add(new MailboxAddress(
                     siteSettings.Owner.Name,
-                siteSettings.Owner.Address));
+                siteSettings.Owner.EMail));
                 msg.To.Add(new MailboxAddress("", email));
                 msg.Body = new TextPart("plain")
                 {

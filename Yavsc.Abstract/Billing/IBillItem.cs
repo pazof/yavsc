@@ -1,6 +1,7 @@
 namespace Yavsc.Billing
 {
     public interface IBillItem {
+        
         string Name { get; set; }
         string Description { get; set; }
         int Count { get; set; }

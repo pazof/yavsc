@@ -39,7 +39,7 @@ namespace Yavsc.Models
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
-            builder.Entity<Contact>().HasKey(x => new { x.OwnerId, x.UserId });
+            builder.Entity<Relationship.Contact>().HasKey(x => new { x.OwnerId, x.UserId });
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
             builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
@@ -209,7 +209,7 @@ namespace Yavsc.Models
 
         public DbSet<EstimateTemplate> EstimateTemplates { get; set; }
 
-        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Relationship.Contact> Contacts { get; set; }
 
         public DbSet<ClientProviderInfo> ClientProviderInfo { get; set; }
 

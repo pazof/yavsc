@@ -74,11 +74,10 @@ namespace Yavsc.ApiControllers
         [HttpGet("facture-{billingCode}-{id}.tex"), Authorize]
         public async Task<IActionResult> GetTex(string billingCode, long id)
         {
-            logger.LogWarning ( $"################################\n# Searching for bill {id} in {billingCode}");
             var bill = await billingService.GetBillAsync(billingCode, id);
 
             if (bill==null) {
-               logger.LogCritical ( $"# not found !! ##########\n################################");
+               logger.LogCritical ( $"# not found !! {id} in {billingCode}");
                return this.HttpNotFound();
             }
             logger.LogVerbose(JsonConvert.SerializeObject(bill));
@@ -94,14 +93,13 @@ namespace Yavsc.ApiControllers
         [HttpPost("genpdf/{billingCode}/{id}")]
         public async Task<IActionResult> GeneratePdf(string billingCode, long id)
         {
-            var estimate = dbContext.Estimates.Include(
-                e=>e.Query
-            ).FirstOrDefault(e=>e.Id == id);
-            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
-            {
-                return new ChallengeResult();
+            var bill = await billingService.GetBillAsync(billingCode, id);
+
+            if (bill==null) {
+               logger.LogCritical ( $"# not found !! {id} in {billingCode}");
+               return this.HttpNotFound();
             }
-            return ViewComponent("Bill",new object[] { billingCode, id, OutputFormat.Pdf } );
+            return ViewComponent("Bill",new object[] { billingCode, bill, OutputFormat.Pdf, true, false } );
         }
 
 

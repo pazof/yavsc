@@ -243,7 +243,8 @@
   <data name="Google error"><value>Erreur Google : {0}</value></data>
   <data name="Google registration id"><value>Identifiant d'enregistrement Google</value></data>
   <data name="HalfLong"><value>mi-long</value></data>
-  <data name="HairCutQuery"><value>Demande de préstation en coiffure à domicile</value></data>
+  <data name="MobileHairCut"><value>Coiffure à domicile</value></data>
+  <data name="HairCutQuery"><value>Préstation en coiffure à domicile</value></data>
   <data name="HairCutQueryValidation"><value>Une demande (de {0}) en coiffure à domicile vient d'être validée</value></data>
   <data name="Hide source"><value>Cacher le texte source de l'article</value></data>
   <data name="Home"><value>Accueil</value></data>

@@ -5,7 +5,7 @@
 <a class="btn btn-default" href="~/api/bill/facture-@(ViewBag.BillingCode)-@(Model.Id).tex" >Export au format LaTeX</a>
 
 
-<form action="~/api/bill/genpdf/@ViewBag.BillingCode-@Model.Id" method="POST">
+<form action="~/api/bill/genpdf/@ViewBag.BillingCode/@Model.Id" method="POST">
     <input class="btn btn-default" type="submit" value="Générer le Pdf"/>
 </form>
 

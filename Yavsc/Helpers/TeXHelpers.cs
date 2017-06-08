@@ -70,8 +70,9 @@ namespace Yavsc.Helpers
             new Replacement("–","\\textendash")
         };
 
-         public static TeXString ToTeX(this string source)
+         public static TeXString ToTeX(this string source, string defaultValue="\\textit{néant}")
         {
+            if (source==null) return new TeXString(defaultValue);
             string result=source;
             foreach (var r in SpecialCharsDefaultRendering)
             {
@@ -80,8 +81,9 @@ namespace Yavsc.Helpers
             return new TeXString(result);
         }
 
-         public static TeXString ToTeXCell(this string source)
+        public static TeXString ToTeXCell(this string source, string defaultValue="\\textit{néant}")
         {
+            if (source==null) return new TeXString(defaultValue);
             string result=source;
             foreach (var r in SpecialCharsDefaultRendering)
             {
@@ -100,17 +102,18 @@ namespace Yavsc.Helpers
             return string.Join(separator, items);
         }
 
-        public static TeXString ToTeX(this string target, string lineSeparator = "\n\\\\")
+        public static TeXString ToTeXLines(this string source, string defaultValue, string lineSeparator = "\n\\\\")
         {
-            if (target == null) return null;
-            return new TeXString( target.ToTeX().ToString().NewLinesWith(lineSeparator) );
+            if (source == null) return new TeXString(defaultValue);
+            return new TeXString( source.ToTeX().ToString().NewLinesWith(lineSeparator) );
         }
 
-        public static TeXString SplitAddressToTeX (this string target)
+        public static TeXString SplitAddressToTeX (this string source, string lineSeparator = "\n\\\\", string defaultValue = "\\textit{pas d'adresse postale}")
         {
-            var alines = target.Split(',');
+            if (string.IsNullOrWhiteSpace(source)) return new TeXString(defaultValue);
+            var alines = source.Split(',');
             var texlines = alines.Select(l=>l.ToTeX().ToString());
-            return new TeXString(string.Join("\\\\\n",texlines));
+            return new TeXString(string.Join(lineSeparator,texlines));
         }
 
         public static bool GenerateEstimatePdf(this PdfGenerationViewModel Model)
@@ -173,6 +176,7 @@ namespace Yavsc.Helpers
                 // try to find the specified view
                 controller.TryValidateModel(model);
                 ViewEngineResult viewResult = engine.FindPartialView(controller.ActionContext, viewName);
+
                 // create the associated context
                 ViewContext viewContext = new ViewContext();
                 viewContext.ActionDescriptor = controller.ActionContext.ActionDescriptor;
