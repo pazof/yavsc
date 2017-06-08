@@ -6,17 +6,14 @@ using Microsoft.Extensions.Localization;
 using Yavsc.Billing;
 using Yavsc.Helpers;
 using Yavsc.Models;
-using Yavsc.Services;
 using Yavsc.ViewModels;
 using Yavsc.ViewModels.Gen;
 
 namespace Yavsc.ViewComponents
 {
-
     public class BillViewComponent : ViewComponent
     {
         ApplicationDbContext dbContext;
-        IBillingService billingService;
         IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer;
 
         public BillViewComponent(ApplicationDbContext dbContext, 
@@ -25,24 +22,6 @@ namespace Yavsc.ViewComponents
             this.dbContext = dbContext;
             this.localizer = localizer;
         }
-        /*
-        public async Task<IViewComponentResult> InvokeAsync(string code, long id)
-        {
-            return await InvokeAsync(code, id, OutputFormat.Html);
-        }
-        public async Task<IViewComponentResult> InvokeAsync(string code, long id, OutputFormat outputFormat)
-        {
-            return await InvokeAsync(code,id,outputFormat,false,false);
-        }
-        public async Task<IViewComponentResult> InvokeAsync(string code, long id, OutputFormat outputFormat, bool asBill, bool acquitted)
-        {
-            var billable = await Task.Run( () => billingService.GetBillAsync(code,id));
-
-            if (billable == null)
-                throw new Exception("No data");
-            return await InvokeAsync(code, billable, outputFormat,asBill,acquitted);
-
-        } */
 
         public async Task<IViewComponentResult> InvokeAsync(string code, IBillable billable, OutputFormat format, bool asBill, bool acquitted)
         {
