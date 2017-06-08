@@ -19,8 +19,8 @@ namespace Yavsc.ApiControllers
 
     using Models.Messaging;
     using ViewModels.Auth;
-    using Yavsc.ViewComponents;
     using Newtonsoft.Json;
+    using Yavsc.ViewModels;
 
     [Route("api/bill"), Authorize]
     public class BillingController : Controller
@@ -54,7 +54,7 @@ namespace Yavsc.ApiControllers
             this.billingService=billingService;
         }
 
-        [HttpGet("pdf/facture-{billingCode}-{id}.pdf"), Authorize]
+        [HttpGet("facture-{billingCode}-{id}.pdf"), Authorize]
         public async Task<IActionResult> GetPdf(string billingCode, long id)
         {     
             var bill = await billingService.GetBillAsync(billingCode, id);
@@ -71,12 +71,16 @@ namespace Yavsc.ApiControllers
             return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }
 
-        [HttpGet("tex/{billingCode}-{id}.tex"), Authorize]
+        [HttpGet("facture-{billingCode}-{id}.tex"), Authorize]
         public async Task<IActionResult> GetTex(string billingCode, long id)
         {
+            logger.LogWarning ( $"################################\n# Searching for bill {id} in {billingCode}");
             var bill = await billingService.GetBillAsync(billingCode, id);
 
-            if (bill==null) return this.HttpNotFound();
+            if (bill==null) {
+               logger.LogCritical ( $"# not found !! ##########\n################################");
+               return this.HttpNotFound();
+            }
             logger.LogVerbose(JsonConvert.SerializeObject(bill));
 
             if (!await authorizationService.AuthorizeAsync(User, bill, new ViewRequirement()))
