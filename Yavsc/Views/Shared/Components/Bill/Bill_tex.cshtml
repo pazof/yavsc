@@ -21,12 +21,12 @@
 }
 \documentclass[french,11pt]{article}
 \usepackage{eurosym}
+\usepackage{textcomp}
 \usepackage{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[a4paper]{geometry}
 \usepackage{units}
-\usepackage{bera}
 \usepackage{graphicx}
 \usepackage{fancyhdr}
 \usepackage{fp}
@@ -127,7 +127,7 @@
  @TeXHelpers.ToTeX(from.UserName) \\
  @proaddr
 
-@(isestimate?"Devis":"Facture") n°\FactureNum
+@(isestimate?"Devis":"Facture") n\textdegree\FactureNum
 
 
 {\addtolength{\leftskip}{10.5cm} %in ERT
@@ -181,13 +181,13 @@
         \begin{tabular}{|c c c c|}
 @if (!string.IsNullOrWhiteSpace(bi.BankCode) && !string.IsNullOrWhiteSpace(bi.WicketCode)
         && !string.IsNullOrWhiteSpace(bi.AccountNumber) ) { 
-<text>\hline \textbf{Code banque} & \textbf{Code guichet} & \textbf{N° de Compte} & \textbf{Clé RIB} \\
+<text>\hline \textbf{Code banque} & \textbf{Code guichet} & \textbf{N\textdegree de Compte} & \textbf{Clé RIB} \\
 @bi.BankCode                      &  @bi.WicketCode       & @bi.AccountNumber     & @bi.BankedKey   \\
 </text>
          }
         @if (!string.IsNullOrWhiteSpace(@bi.IBAN) && !string.IsNullOrWhiteSpace(@bi.BIC)) { 
             <text>
-               \hline     \textbf{IBAN N°}        & \multicolumn{3}{|l|}{  @bi.IBAN  }         \\
+               \hline     \textbf{IBAN N\textdegree}        & \multicolumn{3}{|l|}{  @bi.IBAN  }         \\
             \hline     \textbf{Code BIC}        & \multicolumn{3}{|l|}{  @bi.BIC  }
             </text>
          }          \\
