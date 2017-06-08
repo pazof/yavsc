@@ -34,7 +34,7 @@ pushInProd: bin/output/wwwroot/version
 	ssh root@localhost systemctl start kestrel
 
 status:
-ifeq ($(git status -s --porcelain |wc -l),'0')
+ifeq ($(git status -s --porcelain |wc -l),0)
 		@echo oui
 else
 		@echo non
