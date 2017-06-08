@@ -41,12 +41,12 @@ pushInPre: bin/output/wwwroot/version
 
 pushInProd: bin/output/wwwroot/version
 ifeq ($(git_status),0)
-	@ssh root@localhost systemctl stop kestrel
-	@ssh root@localhost rm -rf $(PRODDESTDIR)/approot
-	@(cd bin/output && rsync -ravu ./ root@localhost:$(PRODDESTDIR) >/dev/null)
-	@ssh root@localhost sync
-	@ssh root@localhost systemctl start kestrel
+	ssh root@localhost systemctl stop kestrel
+	ssh root@localhost rm -rf $(PRODDESTDIR)/approot
+	(cd bin/output && rsync -ravu ./ root@localhost:$(PRODDESTDIR) >/dev/null)
+	ssh root@localhost sync
+	ssh root@localhost systemctl start kestrel
 else
 	@echo Err! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.
-	@git status
+	git status
 endif
