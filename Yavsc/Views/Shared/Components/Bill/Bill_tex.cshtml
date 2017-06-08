@@ -86,15 +86,15 @@
 \def\ClientAdresse{                    
 % Adresse du client
 @PostalAddress
-@if (PostalAddress!=null) {<text>@PostalAddress</text>}
-@if (!string.IsNullOrWhiteSpace(to.PhoneNumber)) {<text>@TeXHelpers.ToTeX(to.PhoneNumber)<text>\\</text>
-   </text>} 
-  E-mail:  @TeXHelpers.ToTeX(to.Email)
+@if (!string.IsNullOrWhiteSpace(to.PhoneNumber)) {<text>\\
+    @TeXHelpers.ToTeX(to.PhoneNumber)
+   </text>}\\
+   E-mail:  @TeXHelpers.ToTeX(to.Email)
 }
 
 % Liste des produits facturés : Désignation, prix
 @foreach (var line in bill) {
-<text>\AjouterService{@TeXHelpers.ToTeX(line.Description)}{@line.Count}{@line.UnitaryCost.ToString("F2",CultureInfo.InvariantCulture)}
+<text>\AjouterService{@TeXHelpers.ToTeXCell(line.Description)}{@line.Count}{@line.UnitaryCost.ToString("F2",CultureInfo.InvariantCulture)}
 </text>}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

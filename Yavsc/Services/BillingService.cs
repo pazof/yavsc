@@ -42,8 +42,7 @@ namespace Yavsc.Services
         public async Task<IBillable> GetBillAsync(string billingCode, long queryId)
         {
             var dbFunc = Startup.Billing[billingCode];
-            IBillable query = null;
-            await Task.Run(()=> dbFunc(DbContext, queryId));
+            IBillable query = await Task.Run(()=> dbFunc(DbContext, queryId));
             return query;
         }
 
