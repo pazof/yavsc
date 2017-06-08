@@ -6,29 +6,29 @@ using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers.Generic
 {
+    using System.Linq;
     using Models;
-    using Yavsc.Services;
 
     [Authorize]
     public abstract class SettingsController<TSettings> : Controller where TSettings : class, ISpecializationSettings, new()
     {
         protected ApplicationDbContext _context;
-        IBillingService billing;
         DbSet<TSettings> dbSet=null;
 
         protected string activityCode=null;
 
         protected DbSet<TSettings> Settings { get {
-            if (dbSet == null) Task.Run( async () => {
-                dbSet = (DbSet<TSettings>) await billing.GetPerformersSettingsAsync(activityCode);
-            });
+            if (dbSet == null)  {
+                dbSet = (DbSet<TSettings>) Startup.UserSettings.Single(s=>s.Name == typeof(TSettings).Name).GetValue(_context);
+            }
+               
+           
             return dbSet;
         } }
 
-        public SettingsController(ApplicationDbContext context, IBillingService billing)
+        public SettingsController(ApplicationDbContext context)
         {
             _context = context;
-            this.billing = billing;
         }
         
         public async Task<IActionResult> Index()
