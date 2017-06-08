@@ -39,7 +39,7 @@ namespace Yavsc.Helpers
             }
             public string Execute(string source)
             {
-                return source.Replace(target, replacement);
+                return source?.Replace(target, replacement) ?? null;
             }
         }
     public static class TeXHelpers
@@ -79,6 +79,19 @@ namespace Yavsc.Helpers
             }
             return new TeXString(result);
         }
+
+         public static TeXString ToTeXCell(this string source)
+        {
+            string result=source;
+            foreach (var r in SpecialCharsDefaultRendering)
+            {
+                result = r.Execute(result);
+            }
+            result = result.Replace("\n","\\tabularnewline ");
+            return new TeXString(result);
+        }
+        
+
         public static string NewLinesWith(this string target, string separator)
         {
             var items = target.Split(new char[] { '\n' }).Where(
