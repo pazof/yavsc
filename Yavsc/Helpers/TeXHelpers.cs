@@ -67,7 +67,8 @@ namespace Yavsc.Helpers
             new Replacement("&","\\&"),
             new Replacement("¡","\\textexclamdown"),
             new Replacement("†","\\dag"),
-            new Replacement("–","\\textendash")
+            new Replacement("–","\\textendash"),
+            new Replacement("°","\\textdegree")
         };
 
          public static TeXString ToTeX(this string source, string defaultValue="\\textit{néant}")
