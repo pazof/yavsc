@@ -4,9 +4,9 @@
     ViewData["Title"]=Model.Title;
 }
 
-<div>
-<img class="blogphoto" alt="" src="@Model.Photo" >
+<div class="blogpost">
 <h1 class="blogtitle" ismarkdown>@Model.Title</h1>
+<img class="blogphoto" alt="" src="@Model.Photo" >
    
     <div markdown="@Model.Content" class="blog"></div>
    <hr/>
