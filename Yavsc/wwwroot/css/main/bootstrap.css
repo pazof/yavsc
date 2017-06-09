@@ -3711,8 +3711,9 @@ fieldset[disabled] a.btn {
 
 .btn-default {
     color: #fff;
-    background-color: #222;
     border-color: #aaa;
+    background-color: #7f1cb8;
+    transition: color 1s, background-color 1s;
 }
 
 .btn-default:focus,
@@ -3780,7 +3781,8 @@ fieldset[disabled] .btn-default.active {
 
 .btn-default .badge {
     color: #fff;
-    background-color: #333;
+    background-color: #7f1cb8;
+    transition: color 1s, background-color 1s;
 }
 
 .btn-primary {
@@ -4091,6 +4093,7 @@ fieldset[disabled] .btn-warning.active {
     color: #fff;
     background-color: #9b2a27;
     border-color: #d43f3a;
+    transition: color 1s, background-color 1s;
 }
 
 .btn-danger:focus,
@@ -4205,6 +4208,7 @@ fieldset[disabled] .btn-link:focus {
     font-size: 18px;
     line-height: 1.3333333;
     border-radius: 6px;
+    transition: color 1s, background-color 1s;
 }
 
 .btn-sm,
