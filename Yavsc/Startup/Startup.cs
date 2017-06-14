@@ -32,6 +32,9 @@ namespace Yavsc
     using PayPal.Manager;
     using Services;
     using ViewModels.Auth.Handlers;
+    using Yavsc.Models.Calendar;
+    using Yavsc.Models.Google.Calendar;
+
     public partial class Startup
     {
         public static string ConnectionString { get; private set; }
@@ -226,9 +229,9 @@ namespace Yavsc
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<IGoogleCloudMessageSender, AuthMessageSender>();
-            services.AddTransient<IBillingService, BillingService>((servs) => 
-                new BillingService(servs.GetRequiredService<ILoggerFactory>(), servs.GetService<ApplicationDbContext>())
-            );
+            services.AddTransient<IBillingService, BillingService>();
+            services.AddTransient<ICalendarManager, CalendarManager>();
+             
             // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
 
             services.AddLocalization(options =>

@@ -101,6 +101,25 @@ public static class GoogleHelper
             return null;
         }
 
+#if  GoogleApisAuthOAuth2
+        public static ServiceAccountCredential GetGoogleApiCredentials (string[] scopes)
+        {
+            String serviceAccountEmail = "SERVICE_ACCOUNT_EMAIL_HERE";
+
+            string private_key = Startup.GoogleSettings.Account.private_key;
+            
+            string secret = Startup.GoogleSettings.ClientSecret;
+
+
+            var certificate = new X509Certificate2(@"key.p12", secret, X509KeyStorageFlags.Exportable);
+
+            return new ServiceAccountCredential(
+               new ServiceAccountCredential.Initializer(serviceAccountEmail)
+               {
+                   Scopes = scopes
+               }.FromCertificate(certificate));
+        }
+#endif
         // Get the given subProperty from a list property.
         private static string TryGetFirstValue(JObject user, string propertyName, string subProperty)
         {

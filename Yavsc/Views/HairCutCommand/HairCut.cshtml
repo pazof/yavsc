@@ -156,11 +156,6 @@
   <script>
     $(document).ready(function () {
 
-        $('#datetimepicker2').datetimepicker({
-            locale: 'fr',
-            format: "YYYY/MM/DD HH:mm"
-        });
-
         var config = {
             mapId: 'map',
             addrId: 'Location_Address',
@@ -343,12 +338,13 @@
                 <div class="container">
                     <div class="row">
                         <div class='col-sm-6'>
-                            <div class='input-group date' id='datetimepicker2'>
-                                <input class="form-control" name="EventDate" />
-                                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
+                            @await Component.InvokeAsync(
+                                "Calendar",
+                                "Default", 
+                                "EventDate",
+                                 Model.PerformerProfile.PerformerId, 
+                                 Model.PerformerProfile.Performer.DedicatedGoogleCalendar)
+                            
                         </div>
                         <span asp-validation-for="EventDate" class="text-danger">
                         </span>

@@ -1,10 +1,10 @@
 //
-//  ICalendarManager.cs
+//  IScheduledEvent.cs
 //
 //  Author:
-//       Paul Schneider <paul@pschneider.fr>
+//       Paul Schneider <paulschneider@free.fr>
 //
-//  Copyright (c) 2015 GNU GPL
+//  Copyright (c) 2015 - 2017 Paul Schneider
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -19,28 +19,16 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 namespace Yavsc.Models.Calendar
 {
-	using Models.Workflow;
-	using Models.Messaging;
-	/// <summary>
-	/// I calendar manager.
-	/// </summary>
-	public interface ICalendarManager {
+    public interface IScheduledEvent
+    {
 		/// <summary>
-		/// Gets the free dates.
+		/// Gets or sets the period.
 		/// </summary>
-		/// <returns>The free dates.</returns>
-		/// <param name="username">Username.</param>
-		/// <param name="req">Req.</param>
-		IFreeDateSet GetFreeDates(string username, RdvQuery req);
-		/// <summary>
-		/// Book the specified username and ev.
-		/// </summary>
-		/// <param name="username">Username.</param>
-		/// <param name="ev">Ev.</param>
-		bool Book(string username, YaEvent ev);
-	}
+		/// <value>The period.</value>
+		 Periodicity Reccurence { get; set; }
+         Period Period { get; set; }
+         
+    }
 }
