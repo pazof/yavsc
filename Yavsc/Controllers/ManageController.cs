@@ -6,15 +6,10 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Logging;
-using Yavsc.Models;
-using Yavsc.Services;
-using Yavsc.ViewModels.Manage;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Data.Entity;
 using System;
 using System.Collections.Generic;
-using Yavsc.Helpers;
-using Yavsc.ViewModels.Calendar;
 using System.Net;
 using Microsoft.Extensions.Localization;
 using Yavsc.Models.Workflow;
@@ -22,8 +17,14 @@ using Yavsc.Models.Identity;
 
 namespace Yavsc.Controllers
 {
+    using Yavsc.Helpers;
     using Models.Relationship;
-    using Yavsc.Models.Bank;
+    using Models.Bank;
+    using ViewModels.Calendar;
+    using Yavsc.Models;
+    using Yavsc.Services;
+    using Yavsc.ViewModels.Manage;
+    using Yavsc.Models.Calendar;
 
     [Authorize]
     public class ManageController : Controller
@@ -43,6 +44,8 @@ namespace Yavsc.Controllers
         private SIRENChecker _cchecker;
         private IStringLocalizer _SR;
         private CompanyInfoSettings _cinfoSettings;
+        ICalendarManager _calendarManager;
+
 
         public ManageController(
             ApplicationDbContext context,
@@ -55,6 +58,7 @@ namespace Yavsc.Controllers
         IOptions<PayPalSettings> paypalSettings,
         IOptions<CompanyInfoSettings> cinfoSettings,
         IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR,
+        ICalendarManager calendarManager,
         ILoggerFactory loggerFactory)
         {
             _dbContext = context;
@@ -68,6 +72,7 @@ namespace Yavsc.Controllers
             _cinfoSettings = cinfoSettings.Value;
             _cchecker = new SIRENChecker(cinfoSettings.Value);
             _SR = SR;
+            _calendarManager = calendarManager;
             _logger = loggerFactory.CreateLogger<ManageController>();
         }
 
@@ -269,15 +274,9 @@ namespace Yavsc.Controllers
         [HttpGet]
         public async Task<IActionResult> SetGoogleCalendar(string returnUrl)
         {
-            var credential = await _userManager.GetCredentialForGoogleApiAsync(
-                _dbContext, User.GetUserId());
-            if (credential == null)
-                return RedirectToAction("LinkLogin", new { provider = "Google" });
-
             try
             {
-                ViewBag.Calendars = new GoogleApis.CalendarApi(_googleSettings.ApiKey)
-                .GetCalendars(credential);
+                ViewBag.Calendars = await _calendarManager.GetCalendarsAsync(User.GetUserId());
             }
             catch (WebException ex)
             {

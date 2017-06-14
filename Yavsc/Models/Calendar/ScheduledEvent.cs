@@ -1,10 +1,10 @@
 //
-//  CalendarList.cs
+//  ScheduledEvent.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
 //
-//  Copyright (c) 2014 Paul Schneider
+//  Copyright (c) 2015 - 2017 Paul Schneider
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -19,33 +19,27 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace Yavsc.Models.Google.Calendar
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Yavsc.Models.Calendar
 {
-	/// <summary>
-	/// Calendar list.
-	/// </summary>
-	public class CalendarList {
-		/// <summary>
-		/// Gets or sets the kind.
-		/// </summary>
-		/// <value>The kind.</value>
-		public string kind { get; set;}
-		/// <summary>
-		/// Gets or sets the etag.
-		/// </summary>
-		/// <value>The etag.</value>
-		public string etag { get; set; }
-		/// <summary>
-		/// Gets or sets the next sync token.
-		/// </summary>
-		/// <value>The next sync token.</value>
-		public string nextSyncToken { get; set; }
-		/// <summary>
-		/// Gets or sets the items.
-		/// </summary>
-		/// <value>The items.</value>
-		public CalendarListEntry[] items { get; set; }
-	}
+    public class ScheduledEvent : IScheduledEvent
+    {
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Id { get; set; }
+        public Period Period
+        {
+            get;
 
+            set;
+        }
 
+        public Periodicity Reccurence
+        {
+            get;
+
+            set;
+        }
+    }
 }

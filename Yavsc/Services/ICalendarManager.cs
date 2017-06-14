@@ -1,11 +1,10 @@
-
 //
-//  FileRecievedInfo.cs
+//  ICalendarManager.cs
 //
 //  Author:
-//       Paul Schneider <paulschneider@free.fr>
+//       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2015 - 2017 Paul Schneider
+//  Copyright (c) 2015 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -21,13 +20,20 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-namespace Yavsc.Models.FileSystem
+
+using System;
+
+namespace Yavsc.Models.Calendar
 {
-        public class FileRecievedInfo
-        {
-            public bool Success { get; set; }
-            public string DestDir { get; set; }
-            public string FileName { get; set; }
-            public bool Overriden { get; set; }
-        }
+    using System.Threading.Tasks;
+    using Yavsc.Models.Google.Calendar;
+    using Yavsc.Models.Google;
+
+    /// <summary>
+    /// I calendar manager.
+    /// </summary>
+    public interface ICalendarManager {
+		Task<CalendarList> GetCalendarsAsync (string userId);
+		Task<CalendarEventList> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate, string userId);
+	}
 }

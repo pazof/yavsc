@@ -24,6 +24,7 @@
 @using Yavsc.Models.Haircut;
 @using Yavsc.Models.Payment;
 @using Yavsc.Models.Calendar;
+@using Yavsc.Models.Google.Calendar
 @using Yavsc.Billing;
 
 @using Yavsc.ViewModels;
@@ -48,3 +49,4 @@
 @inject IOptions<GoogleAuthSettings> GoogleSettings
 @inject IOptions<SiteSettings> SiteSettings
 @inject IHostingEnvironment HostingEnvironment
+@inject ICalendarManager CalendarManager;

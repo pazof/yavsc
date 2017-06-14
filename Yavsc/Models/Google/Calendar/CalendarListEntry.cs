@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace Yavsc.Models.Google
+namespace Yavsc.Models.Google.Calendar
 {
 	/// <summary>
 	/// Calendar list entry.
@@ -105,17 +105,6 @@ namespace Yavsc.Models.Google
 	/// <summary>
 	/// Reminder.
 	/// </summary>
-public class Reminder {
-	/// <summary>
-	/// Gets or sets the method.
-	/// </summary>
-	/// <value>The method.</value>
-	public string method { get; set; }
-	/// <summary>
-	/// Gets or sets the minutes.
-	/// </summary>
-	/// <value>The minutes.</value>
-	public int minutes { get; set; }
-}
+
 
 }

@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
+
 namespace Yavsc.Helpers
 {
     using Models.Auth;
@@ -30,7 +31,8 @@ namespace Yavsc.Helpers
     using Models.Messaging;
     using Models;
     using Interfaces.Workflow;
-
+    using Yavsc.Models.Google;
+    using Yavsc.Models.Calendar;
 
     /// <summary>
     /// Google helpers.
@@ -109,12 +111,29 @@ namespace Yavsc.Helpers
         {
             var user = await userManager.FindByIdAsync(uid);
             var googleId = context.UserLogins.FirstOrDefault(
-                x => x.UserId == uid
+                x => x.UserId == uid && x.LoginProvider == "Google"
             ).ProviderKey;
             if (string.IsNullOrEmpty(googleId))
                 throw new InvalidOperationException("No Google login");
             var token = await context.GetTokensAsync(googleId);
             return new UserCredential(uid, token);
+        }
+        static string evStatusDispo = "Dispo";
+
+        public static async Task<Period[]> GetFreeTime (this ICalendarManager manager, string userId, string calId, DateTime startDate, DateTime endDate) 
+        {
+            CalendarEventList evlist = await manager.GetCalendarAsync(calId, startDate, endDate, userId) ;
+            var result = evlist.items
+            .Where(
+                ev => ev.status == evStatusDispo
+            )
+            .Select( 
+                ev => new Period {
+                     Start = ev.start.datetime,
+                     End = ev.end.datetime
+                  }
+            );
+            return result.ToArray();
         }
 
     }

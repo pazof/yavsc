@@ -1,10 +1,10 @@
 //
-//  Calendar.cs
+//  CalendarApi.cs
 //
 //  Author:
 //       Paul Schneider <paulschneider@free.fr>
 //
-//  Copyright (c) 2015 Paul Schneider
+//  Copyright (c) 2015 - 2017 Paul Schneider
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -23,24 +23,46 @@ using System;
 using System.Net;
 using System.IO;
 using System.Web;
-using Yavsc.Models.Google;
 using Yavsc.Models.Auth;
 using Newtonsoft.Json;
 
-namespace Yavsc.GoogleApis
+namespace Yavsc.Models.Google.Calendar
 {
-	/// <summary>
-	/// Google Calendar API client.
-	/// </summary>
-	public class CalendarApi
+    using System.Threading.Tasks;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.OptionsModel;
+    using Models.Google;
+    using Yavsc.Helpers;
+    using Yavsc.Models.Calendar;
+    using Yavsc.ViewModels.Calendar;
+
+
+
+    /// <summary>
+    /// Google Calendar API client.
+    /// </summary>
+    public class CalendarManager : ICalendarManager
 	{
-        protected static string scopeCalendar = "https://www.googleapis.com/auth/calendar";
+        // protected static string scopeCalendar = "https://www.googleapis.com/auth/calendar";
         private string _ApiKey;
 
-		public CalendarApi(string ApiKey)
+		private readonly UserManager<ApplicationUser> _userManager;
+
+		ApplicationDbContext _dbContext;
+		ILogger _logger;
+
+		public CalendarManager(IOptions<GoogleAuthSettings> settings,
+		UserManager<ApplicationUser> userManager,
+		ApplicationDbContext dbContext,
+		ILoggerFactory loggerFactory)
 		{
-            _ApiKey = ApiKey;
+            _ApiKey = settings.Value.ApiKey;
+			_userManager = userManager;
+			_dbContext = dbContext;
+			_logger = loggerFactory.CreateLogger<CalendarManager>();
 		}
+
 		/// <summary>
 		/// The get cal list URI.
 		/// </summary>
@@ -65,8 +87,10 @@ namespace Yavsc.GoogleApis
 		/// </summary>
 		/// <returns>The calendars.</returns>
 		/// <param name="cred">Cred.</param>
-		public CalendarList GetCalendars (UserCredential creds)
+		public async Task<CalendarList> GetCalendarsAsync (string userId)
 		{
+			UserCredential creds = await _userManager.GetCredentialForGoogleApiAsync(
+                _dbContext, userId);
             if (creds==null)
               throw new InvalidOperationException("No credential");
 			CalendarList res = null;
@@ -95,8 +119,12 @@ namespace Yavsc.GoogleApis
 		/// <param name="mindate">Mindate.</param>
 		/// <param name="maxdate">Maxdate.</param>
 		/// <param name="cred">credential string.</param>
-		public CalendarEventList GetCalendar  (string calid, DateTime mindate, DateTime maxdate,string cred)
+		public async Task<CalendarEventList> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate,string userId)
 		{
+			UserCredential creds = await _userManager.GetCredentialForGoogleApiAsync(
+                _dbContext, userId);
+            if (creds==null)
+              throw new InvalidOperationException("No credential");
 			if (string.IsNullOrWhiteSpace (calid))
 				throw new Exception ("the calendar identifier is not specified");
 
@@ -108,16 +136,18 @@ namespace Yavsc.GoogleApis
 
 			HttpWebRequest webreq = WebRequest.CreateHttp (uri);
 
-			webreq.Headers.Add (HttpRequestHeader.Authorization, cred);
+			webreq.Headers.Add (HttpRequestHeader.Authorization, creds.GetHeader());
 			webreq.Method = "GET";
 			webreq.ContentType = "application/http";
 			CalendarEventList res = null;
 			try {
-				using (WebResponse resp = webreq.GetResponse ()) {
+				using (WebResponse resp = await webreq.GetResponseAsync ()) {
 					using (Stream respstream = resp.GetResponseStream ()) {
 						try {
 							using (var rdr = new StreamReader(respstream)) {
-								res= JsonConvert.DeserializeObject<CalendarEventList>(rdr.ReadToEnd());
+								string json = rdr.ReadToEnd();
+								_logger.LogVerbose(">> Calendar: "+json);
+								res= JsonConvert.DeserializeObject<CalendarEventList>(json);
 							}
 						} catch (Exception ) {
 							respstream.Close ();
@@ -135,6 +165,18 @@ namespace Yavsc.GoogleApis
 			webreq.Abort ();
 			return res;
 		}
-
+		public async Task<DateTimeChooserViewModel> CreateViewModel(
+			string inputId,
+			string calid, DateTime mindate, DateTime maxdate, string userId)
+		{
+			var eventList = await GetCalendarAsync(calid, mindate, maxdate, userId);
+			
+			return new DateTimeChooserViewModel {
+				InputId = inputId,
+				MinDate  = mindate,
+				MaxDate = maxdate,
+				DisabledTimeIntervals = null
+			};
+		}
 	}
 }

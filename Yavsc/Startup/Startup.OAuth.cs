@@ -86,8 +86,10 @@ namespace Yavsc
             //  .AddTokenProvider<UserTokenProvider>(Constants.AppFactor)
             //
         }
-        private void ConfigureOAuthApp(IApplicationBuilder app, SiteSettings settings)
+        private void ConfigureOAuthApp(IApplicationBuilder app,
+         SiteSettings settingsOptions)
         {
+
             app.UseIdentity();
             app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
                branch =>
@@ -128,6 +130,9 @@ namespace Yavsc
                        ClientId = Configuration["Authentication:Google:ClientId"],
                        ClientSecret = Configuration["Authentication:Google:ClientSecret"],
                        AccessType = "offline",
+                       Scope = { "profile", "https://www.googleapis.com/auth/plus.login", 
+                       "https://www.googleapis.com/auth/admin.directory.resource.calendar",
+                       "https://www.googleapis.com/auth/calendar" },
                        SaveTokensAsClaims = true,
                        UserInformationEndpoint = "https://www.googleapis.com/plus/v1/people/me",
                        Events = new OAuthEvents
@@ -146,19 +151,10 @@ namespace Yavsc
                            }
                        }
                    };
-                   YavscGoogleAppOptions.Scope.Add("https://www.googleapis.com/auth/calendar");
+                   
                    branch.UseMiddleware<Yavsc.Auth.GoogleMiddleware>(YavscGoogleAppOptions);
 
-                   // Facebook
-                   branch.UseFacebookAuthentication(options =>
-                       {
-                           FacebookAppOptions = options;
-                           options.AppId = Configuration["Authentication:Facebook:ClientId"];
-                           options.AppSecret = Configuration["Authentication:Facebook:ClientSecret"];
-                           options.Scope.Add("email");
-                           options.UserInformationEndpoint = "https://graph.facebook.com/v2.5/me?fields=id,name,email,first_name,last_name";
-                       });
-                
+                  
                 branch.UseTwitterAuthentication(options=>
                 {
                         TwitterAppOptions = options;
