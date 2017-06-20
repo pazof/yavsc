@@ -18,6 +18,13 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Net;
+using System.Web;
+using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,41 +46,7 @@ namespace Yavsc.Helpers
     /// </summary>
     public static class GoogleHelpers
     {
-/* WAZA
-        /// <summary>
-        /// Notifies the event.
-        /// </summary>
-        /// <returns>The event.</returns>
-        /// <param name="evpub">Evpub.</param>
-        public static async Task<MessageWithPayloadResponse> NotifyEvent
-        (this HttpClient channel, GoogleAuthSettings googleSettings, CircleEvent evpub)
-        {
-            // ASSERT ModelState.IsValid implies evpub.Circles != null
-            //send a  MessageWithPayload<YaEvent> to circle members
-            // receive MessageWithPayloadResponse
-            // "https://gcm-http.googleapis.com/gcm/send"
-
-            var regids = new List<string>();
-            foreach (var c in evpub.Circles)
-                foreach (var u in c.Members)
-                {
-                    regids.AddRange(u.Member.Devices.Select(d => d.GCMRegistrationId));
-                }
-            if (regids.Count > 0) return null;
-            var request = new HttpRequestMessage(HttpMethod.Get, Constants.GCMNotificationUrl);
-            request.Headers.Authorization = new AuthenticationHeaderValue("key", googleSettings.ApiKey);
-            var msg = new MessageWithPayload<YaEvent>()
-            {
-                notification = new Notification() { title = evpub.Title, body = evpub.Description, icon = "icon" },
-                data = evpub,
-                registration_ids = regids.ToArray()
-            };
-            var response = await channel.SendAsync(request);
-            var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
-            return payload.Value<MessageWithPayloadResponse>();
-        }
-*/
-        public static MessageWithPayloadResponse NotifyEvent<Event>
+        public static async Task <MessageWithPayloadResponse> NotifyEvent<Event>
          (this GoogleAuthSettings googleSettings, IEnumerable<string> regids, Event ev)
            where Event : IEvent
         {
@@ -99,9 +72,9 @@ namespace Yavsc.Helpers
                 registration_ids = regids.ToArray()
             };
             try {
-            using (var m = new SimpleJsonPostMethod("https://gcm-http.googleapis.com/gcm/send",$"key={googleSettings.ApiKey}")) {
-                return m.Invoke<MessageWithPayloadResponse>(msg);
-            }
+                using (var m = new SimpleJsonPostMethod("https://gcm-http.googleapis.com/gcm/send",$"key={googleSettings.ApiKey}")) {
+                    return await m.Invoke<MessageWithPayloadResponse>(msg);
+                }
             }
             catch (Exception ex) {
                 throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
@@ -134,6 +107,53 @@ namespace Yavsc.Helpers
                   }
             );
             return result.ToArray();
+        }
+
+        const string jwtHeader="{\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+        const string tokenEndPoint = "https://www.googleapis.com/oauth2/v4/token";
+
+        static long GetTimeSpan(long seconds) {
+            var zero = new DateTime(1970,1,1);
+            return zero.AddSeconds(seconds).ToFileTimeUtc();
+        }
+
+        static object CreateGoogleServiceClaimSet(string scope, int expiresInSeconds) {
+            return new { 
+                iss = Startup.GoogleSettings.Account.client_email,
+                scope = scope,
+                aud = "https://www.googleapis.com/oauth2/v4/token",
+                exp = GetTimeSpan(expiresInSeconds),
+                iat = DateTime.Now.ToFileTimeUtc()
+            };
+        } 
+
+        public static async Task<string> GetJsonTokenAsync(string scope)
+        {
+            var claimSet = CreateGoogleServiceClaimSet(scope, 3600);
+            string jsonClaims =  JsonConvert.SerializeObject(claimSet);
+            string encClaims =  Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(jsonClaims));
+            string tokenHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(jwtHeader))+"."+encClaims;
+
+            X509Certificate2 cert = new X509Certificate2();
+            cert.Import(Convert.FromBase64String(Startup.GoogleSettings.Account.private_key));
+            RSACryptoServiceProvider key = new RSACryptoServiceProvider();
+            key.FromXmlString(cert.PrivateKey.ToXmlString(true));
+            byte[] sig = key.SignData(Encoding.UTF8.GetBytes(tokenHeader), CryptoConfig.MapNameToOID("SHA256"));
+            string assertion = tokenHeader+"."+Convert.ToBase64String(sig);
+            HttpWebRequest webreq = WebRequest.CreateHttp ("https://www.googleapis.com/oauth2/v4/token");
+            webreq.ContentType = "application/x-www-form-urlencoded";
+            using (var inputstream = await webreq.GetRequestStreamAsync()) {
+                var content = Encoding.UTF8.GetBytes( "grant_type="+ HttpUtility.UrlEncode(" urn:ietf:params:oauth:grant-type:jwt-bearer")+
+                "&assertion="+HttpUtility.UrlEncode(assertion));
+                await inputstream.WriteAsync(content,0,content.Length);
+            }
+            using (WebResponse resp = await webreq.GetResponseAsync ()) {
+                using (Stream respstream = resp.GetResponseStream ()) {
+                        using (var rdr = new StreamReader(respstream)) {
+                            return await rdr.ReadToEndAsync();
+                    }
+                }
+            }
         }
 
     }
