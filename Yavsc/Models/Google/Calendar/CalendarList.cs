@@ -39,6 +39,8 @@ namespace Yavsc.Models.Google.Calendar
 		/// Gets or sets the next sync token.
 		/// </summary>
 		/// <value>The next sync token.</value>
+		public string description { get; set; }
+		public string summpary { get; set; }
 		public string nextSyncToken { get; set; }
 		/// <summary>
 		/// Gets or sets the items.

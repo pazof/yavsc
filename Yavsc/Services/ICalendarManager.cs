@@ -34,6 +34,6 @@ namespace Yavsc.Models.Calendar
     /// </summary>
     public interface ICalendarManager {
 		Task<CalendarList> GetCalendarsAsync (string userId);
-		Task<CalendarEventList> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate, string userId);
+		Task<CalendarEventList> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate);
 	}
 }

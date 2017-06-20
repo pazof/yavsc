@@ -31,6 +31,15 @@ namespace Yavsc.Models.Google
 		public GDate start;
 		public GDate end;
 		public string recurence;
+
+		public string description;
+
+		public string summary;
+
+		/// <summary>
+		/// Avaible <=> transparency == "transparent"
+		/// </summary>
+		public string transparency;
 	}
 
 }

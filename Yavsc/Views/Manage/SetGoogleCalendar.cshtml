@@ -5,7 +5,7 @@
 }
 <form asp-action="SetGoogleCalendar">
 @{ var entryNum=0; }
-@foreach (var calendar in ViewBag.Calendars.items)
+@foreach (var calendar in ViewBag.Calendars?.items)
 {
     entryNum++;
     @if (calendar.accessRole=="owner") {

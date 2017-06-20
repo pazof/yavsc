@@ -30,30 +30,18 @@ namespace Yavsc.Services
         /// </returns>
         public async Task<MessageWithPayloadResponse> NotifyBookQueryAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, RdvQueryEvent ev)
         {
-            MessageWithPayloadResponse response = null;
-            await Task.Run(()=>{
-                response = googleSettings.NotifyEvent<RdvQueryEvent>(registrationIds, ev);
-            });
-            return response;
+            return await googleSettings.NotifyEvent<RdvQueryEvent>(registrationIds, ev);
         }
 
         public async Task<MessageWithPayloadResponse> NotifyEstimateAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, EstimationEvent ev)
         {
-            MessageWithPayloadResponse response = null;
-            await Task.Run(()=>{
-                response = googleSettings.NotifyEvent<EstimationEvent>(registrationIds, ev);
-            });
-            return response;
+            return await googleSettings.NotifyEvent<EstimationEvent>(registrationIds, ev);
         }
 
         public async Task<MessageWithPayloadResponse> NotifyHairCutQueryAsync(GoogleAuthSettings googleSettings,
          IEnumerable<string> registrationIds, HairCutQueryEvent ev)
         {
-            MessageWithPayloadResponse response = null;
-            await Task.Run(()=>{
-                response = googleSettings.NotifyEvent<HairCutQueryEvent>(registrationIds, ev);
-            });
-            return response;
+            return await googleSettings.NotifyEvent<HairCutQueryEvent>(registrationIds, ev);
         }
 
         public Task<bool> SendEmailAsync(SiteSettings siteSettings, SmtpSettings smtpSettings, string email, string subject, string message)

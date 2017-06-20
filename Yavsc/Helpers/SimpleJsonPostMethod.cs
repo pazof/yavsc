@@ -59,16 +59,16 @@ namespace Yavsc.Helpers
         /// Invoke the specified query.
         /// </summary>
         /// <param name="query">Query.</param>
-        public TAnswer Invoke<TAnswer>(object query)
+        public async Task<TAnswer> Invoke<TAnswer>(object query)
 		{
 
-			using (Stream streamQuery = request.GetRequestStream()) {
+			using (Stream streamQuery = await request.GetRequestStreamAsync()) {
 				using (StreamWriter writer = new StreamWriter(streamQuery)) {
 					writer.Write (JsonConvert.SerializeObject(query));
 				}}
 			TAnswer ans = default (TAnswer);
-			using (WebResponse response = request.GetResponse ()) {
-				using (Stream responseStream = response.GetResponseStream ()) {
+			using (WebResponse response = await request.GetResponseAsync ()) {
+				using (Stream responseStream =  response.GetResponseStream ()) {
 					using (StreamReader rdr = new StreamReader (responseStream)) {
 						ans = (TAnswer) JsonConvert.DeserializeObject<TAnswer> (rdr.ReadToEnd ());
 					}

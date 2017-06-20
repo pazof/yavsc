@@ -23,28 +23,27 @@ using System;
 using System.Net;
 using System.IO;
 using System.Web;
-using Yavsc.Models.Auth;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.OptionsModel;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Util.Store;
 
 namespace Yavsc.Models.Google.Calendar
 {
-    using System.Threading.Tasks;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.OptionsModel;
     using Models.Google;
     using Yavsc.Helpers;
     using Yavsc.Models.Calendar;
     using Yavsc.ViewModels.Calendar;
-
-
 
     /// <summary>
     /// Google Calendar API client.
     /// </summary>
     public class CalendarManager : ICalendarManager
 	{
-        // protected static string scopeCalendar = "https://www.googleapis.com/auth/calendar";
+        protected static string scopeCalendar = "https://www.googleapis.com/auth/calendar";
         private string _ApiKey;
 
 		private readonly UserManager<ApplicationUser> _userManager;
@@ -82,26 +81,34 @@ namespace Yavsc.Models.Google.Calendar
 		/// </summary>
 		private string timeZone = "+01:00";
 
+        private readonly IDataStore dataStore = new FileDataStore(GoogleWebAuthorizationBroker.Folder);
+
+
+
 		/// <summary>
 		/// Gets the calendar list.
 		/// </summary>
 		/// <returns>The calendars.</returns>
-		/// <param name="cred">Cred.</param>
+		/// <param name="userId">Yavsc user id</param>
 		public async Task<CalendarList> GetCalendarsAsync (string userId)
 		{
-			UserCredential creds = await _userManager.GetCredentialForGoogleApiAsync(
-                _dbContext, userId);
-            if (creds==null)
-              throw new InvalidOperationException("No credential");
+			
 			CalendarList res = null;
-			HttpWebRequest webreq = WebRequest.CreateHttp (getCalListUri);
-			webreq.Headers.Add (HttpRequestHeader.Authorization, creds.GetHeader());
+			var login = await _userManager.GetGoogleUserLoginAsync(_dbContext,userId);
+			var token = await _dbContext.GetTokensAsync(login.ProviderKey);
+            if (token==null)
+              throw new InvalidOperationException("No Google token");
+
+			HttpWebRequest webreq = WebRequest.CreateHttp(getCalListUri);
+			webreq.Headers.Add("Authorization", "Bearer "+ token.AccessToken);
 			webreq.Method = "GET";
 			webreq.ContentType = "application/http";
 			using (WebResponse resp = webreq.GetResponse ()) {
 				using (Stream respstream = resp.GetResponseStream ()) {
 					using (var rdr = new StreamReader(respstream)) {
-						res = JsonConvert.DeserializeObject<CalendarList>(rdr.ReadToEnd());
+						string json = rdr.ReadToEnd();
+						_logger.LogInformation(">> Json calendar list : "+json);
+						res = JsonConvert.DeserializeObject<CalendarList>(json);
 					}
 				}
 				resp.Close ();
@@ -119,12 +126,14 @@ namespace Yavsc.Models.Google.Calendar
 		/// <param name="mindate">Mindate.</param>
 		/// <param name="maxdate">Maxdate.</param>
 		/// <param name="cred">credential string.</param>
-		public async Task<CalendarEventList> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate,string userId)
+		public async Task<CalendarEventList> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate)
 		{
-			UserCredential creds = await _userManager.GetCredentialForGoogleApiAsync(
-                _dbContext, userId);
+		//	ServiceAccountCredential screds = new ServiceAccountCredential(init);
+			
+			var creds = GoogleHelpers.GetCredentialForApi(new string[]{scopeCalendar});
             if (creds==null)
               throw new InvalidOperationException("No credential");
+
 			if (string.IsNullOrWhiteSpace (calid))
 				throw new Exception ("the calendar identifier is not specified");
 
@@ -136,7 +145,7 @@ namespace Yavsc.Models.Google.Calendar
 
 			HttpWebRequest webreq = WebRequest.CreateHttp (uri);
 
-			webreq.Headers.Add (HttpRequestHeader.Authorization, creds.GetHeader());
+			webreq.Headers.Add (HttpRequestHeader.Authorization, "Bearer "+ await creds.GetAccessTokenForRequestAsync());
 			webreq.Method = "GET";
 			webreq.ContentType = "application/http";
 			CalendarEventList res = null;
@@ -169,7 +178,7 @@ namespace Yavsc.Models.Google.Calendar
 			string inputId,
 			string calid, DateTime mindate, DateTime maxdate, string userId)
 		{
-			var eventList = await GetCalendarAsync(calid, mindate, maxdate, userId);
+			var eventList = await GetCalendarAsync(calid, mindate, maxdate);
 			
 			return new DateTimeChooserViewModel {
 				InputId = inputId,

@@ -18,6 +18,7 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using System.Threading.Tasks;
 using Yavsc.Helpers;
 using Yavsc.Models.Google;
 
@@ -53,13 +54,13 @@ namespace Yavsc.GoogleApis
 		/// </summary>
 		/// <returns>The entity.</returns>
 		/// <param name="entities">Entities.</param>
-		public static string [] CreateEntity( Entity[] entities ) {
+		public static async Task<string []> CreateEntity( Entity[] entities ) {
 			string [] ans = null;
             
 			using (SimpleJsonPostMethod wr =
 				new SimpleJsonPostMethod (googleMapTracksPath + "entities/create"))
 			{
-				ans =  wr.Invoke<string[]> (entities);
+				ans = await wr.Invoke<string[]> (entities); 
 			}
 			return ans;
 		}
@@ -69,13 +70,13 @@ namespace Yavsc.GoogleApis
 		/// </summary>
 		/// <returns>The entities.</returns>
 		/// <param name="eq">Eq.</param>
-		static Entity[] ListEntities (EntityQuery eq)
+		static async Task <Entity[]> ListEntities (EntityQuery eq)
 		{
 			Entity [] ans = null;
 			using (SimpleJsonPostMethod wr =
 				new SimpleJsonPostMethod (googleMapTracksPath + "entities/create"))
 				{
-					ans = wr.Invoke <Entity[]> (eq);
+					ans = await wr.Invoke <Entity[]> (eq);
 				}
 				return ans;
 		}

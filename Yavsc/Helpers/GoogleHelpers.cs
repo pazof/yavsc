@@ -33,13 +33,18 @@ using Microsoft.AspNet.Identity;
 
 namespace Yavsc.Helpers
 {
-    using Models.Auth;
     using Models.Google.Messaging;
     using Models.Messaging;
     using Models;
     using Interfaces.Workflow;
     using Yavsc.Models.Google;
     using Yavsc.Models.Calendar;
+    using Google.Apis.Auth.OAuth2;
+    using Google.Apis.Auth.OAuth2.Responses;
+    using Microsoft.Data.Entity;
+    using Google.Apis.Auth.OAuth2.Flows;
+    using Microsoft.AspNet.Identity.EntityFramework;
+
 
     /// <summary>
     /// Google helpers.
@@ -80,22 +85,40 @@ namespace Yavsc.Helpers
                 throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
             }
         }
-        public static async Task<UserCredential> GetCredentialForGoogleApiAsync(this UserManager<ApplicationUser> userManager, ApplicationDbContext context, string uid)
+        public  static ServiceAccountCredential GetCredentialForApi(IEnumerable<string> scopes)
         {
-            var user = await userManager.FindByIdAsync(uid);
-            var googleId = context.UserLogins.FirstOrDefault(
-                x => x.UserId == uid && x.LoginProvider == "Google"
-            ).ProviderKey;
+			var initializer = new ServiceAccountCredential.Initializer(Startup.GoogleSettings.Account.client_email);
+            initializer = initializer.FromPrivateKey(Startup.GoogleSettings.Account.private_key);
+            initializer.Scopes = scopes;
+            var credential = new ServiceAccountCredential(initializer);
+            return credential;
+        }
+
+        public static async Task<IdentityUserLogin<string>> GetGoogleUserLoginAsync(
+            this UserManager<ApplicationUser> userManager, 
+            ApplicationDbContext context, 
+            string yavscUserId)
+        {
+            var user = await userManager.FindByIdAsync(yavscUserId);
+            var googleLogin = await context.UserLogins.FirstOrDefaultAsync(
+                x => x.UserId == yavscUserId && x.LoginProvider == "Google"
+            );
+            return googleLogin;
+        }
+        public static UserCredential GetGoogleCredential(IdentityUserLogin<string> googleUserLogin)
+        {
+            var googleId = googleUserLogin.ProviderKey;
             if (string.IsNullOrEmpty(googleId))
                 throw new InvalidOperationException("No Google login");
-            var token = await context.GetTokensAsync(googleId);
-            return new UserCredential(uid, token);
+            TokenResponse resp = null;
+            var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer());
+            return new UserCredential(flow, googleId, resp);
         }
         static string evStatusDispo = "Dispo";
 
-        public static async Task<Period[]> GetFreeTime (this ICalendarManager manager, string userId, string calId, DateTime startDate, DateTime endDate) 
+        public static async Task<Period[]> GetFreeTime (this ICalendarManager manager, string calId, DateTime startDate, DateTime endDate) 
         {
-            CalendarEventList evlist = await manager.GetCalendarAsync(calId, startDate, endDate, userId) ;
+            CalendarEventList evlist = await manager.GetCalendarAsync(calId, startDate, endDate) ;
             var result = evlist.items
             .Where(
                 ev => ev.status == evStatusDispo
@@ -129,6 +152,7 @@ namespace Yavsc.Helpers
 
         public static async Task<string> GetJsonTokenAsync(string scope)
         {
+
             var claimSet = CreateGoogleServiceClaimSet(scope, 3600);
             string jsonClaims =  JsonConvert.SerializeObject(claimSet);
             string encClaims =  Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(jsonClaims));
