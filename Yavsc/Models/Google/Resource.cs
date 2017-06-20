@@ -37,7 +37,7 @@ namespace Yavsc.Models.Google
 		public string summary;
 
 		/// <summary>
-		/// Avaible <=> transparency == "transparent"
+		/// Available <=> transparency == "transparent"
 		/// </summary>
 		public string transparency;
 	}
