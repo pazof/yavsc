@@ -120,6 +120,8 @@ namespace Yavsc.Controllers
         }
          public IActionResult Todo()
          {
+            User.GetUserId();
+
              return View();
          }
 

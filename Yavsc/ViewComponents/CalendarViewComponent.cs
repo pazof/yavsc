@@ -29,14 +29,14 @@ Google.Apis Google.Apis.Core
 
         public async Task<IViewComponentResult> InvokeAsync (
             string templateName,
-            string htmlFieldName, 
-            string userId, string calId )
+            string htmlFieldName,
+            string calId)
         {
             var minDate = DateTime.Now;
             var maxDate = minDate.AddDays(20);
 
             var cal = await _manager.GetCalendarAsync(
-                calId, minDate, maxDate, userId
+                calId, minDate, maxDate
             );
 
             ViewData["Calendar"] = cal;
