@@ -19,13 +19,6 @@ namespace Yavsc.ViewComponents
             _manager = manager;
             _dbContext = dbContext;
         }
-/* ,
-Google.Apis Google.Apis.Core
-        "Google.Apis.Auth": "1.27.1",
-        "Google.Apis.Calendar.v3": "1.27.1.878"
-        
-         */
-
 
         public async Task<IViewComponentResult> InvokeAsync (
             string templateName,
