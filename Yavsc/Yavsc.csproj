@@ -1224,6 +1224,8 @@
     <Content Include="GoogleApiSupport\Google.Apis\Requests\ClientServiceRequest.cs" />
     <Content Include="GoogleApiSupport\Google.Apis.Core\Util\Store\IDataStore.cs" />
     <Content Include="Views\Manage\SetGoogleCalendar.cshtml" />
+    <Content Include="Views\Shared\Components\Calendar\Default.cshtml" />
+    <Content Include="wwwroot\js\site.js" />
   </ItemGroup>
   <Import Project="../YavscLib/YavscLib.csproj" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
