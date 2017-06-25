@@ -2825,7 +2825,7 @@
         ]
       }
     },
-    "DNX,Version=v4.5.1/debian.8-x86": {
+    "DNX,Version=v4.5.1/debian.9-x86": {
       "Antlr/3.4.1.9004": {
         "type": "package",
         "compile": {
@@ -5648,7 +5648,7 @@
         ]
       }
     },
-    "DNX,Version=v4.5.1/debian.8-x64": {
+    "DNX,Version=v4.5.1/debian.9-x64": {
       "Antlr/3.4.1.9004": {
         "type": "package",
         "compile": {
