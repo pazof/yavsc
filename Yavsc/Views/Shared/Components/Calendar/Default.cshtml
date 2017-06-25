@@ -1,11 +1,12 @@
 @model DateTimeChooserViewModel
 
-
-@Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["Calendar"])
+<script> 
+var events = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["Calendar"]));
+</script>
 
 <div class='input-group date'>
     <input class="form-control" name="@Model.InputId" />
-                                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
+    <span class="input-group-addon">
+         <span class="glyphicon glyphicon-calendar"></span>
+    </span>
+</div>
