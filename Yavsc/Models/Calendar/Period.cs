@@ -40,6 +40,13 @@ namespace Yavsc.Models.Calendar
 		/// <value>The end.</value>
 		[Required,Display(Name="Fin")]
 		public DateTime End { get; set; }
+
+		public static Period operator ^ (Period foo, Period bar) {
+			var min = ( DateTime.Compare(foo.Start, bar.Start) > 0 ) ? foo.Start : bar.Start;
+			var max = ( DateTime.Compare(bar.End, foo.End) > 0 ) ? foo.End : bar.End;
+			if (DateTime.Compare(max, min)>0) return new Period { Start = min, End = max };
+			return null;
+		}
 	}
 
 }
