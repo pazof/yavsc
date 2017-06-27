@@ -1,6 +1,6 @@
 #!/bin/bash 
 ### BEGIN INIT INFO
-# Provides:          kestrel
+# Provides:          kestrel-pre
 # Required-Start:    $local_fs $network $named $time $syslog $postgresql
 # Required-Stop:     $local_fs $network $named $time $syslog $postgresql
 # Default-Start:     2 3 4 5
@@ -15,7 +15,7 @@
 . /lib/lsb/init-functions
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-CONFIGS="/etc/kestrel/*.webenv"
+CONFIGS="/etc/kestrel/*.prewebenv"
 DNX_USER_HOME=/srv/www/dnx
 DNXRUNTIMEVERSION=$(cat /srv/www/dnx/alias/default.alias)
 
@@ -45,7 +45,7 @@ setdnxenv() {
 	DNXRUNTIME=${DNX_USER_HOME}/runtimes/${DNXRUNTIMEVERSION}/bin/Microsoft.Dnx.Host.Mono.dll
 	PROJECT=approot/Web
 	CONFIGURATION=Release
-	ROOT=/srv/www/yavsc
+	ROOT=/srv/www/yavscpre
     DESC="$NAME"
     PIDFILE=/var/run/kestrel-${NAME}.pid
 	export MONO_OPTIONS="--server"
