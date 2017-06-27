@@ -80,7 +80,21 @@ namespace Google.Apis.Util.Store
                 }
                 return Path.Combine(xdgDataHome, XdgDataHomeSubdirectory);
             }
+            string cwd = System.IO.Directory.GetCurrentDirectory();
+            if (!string.IsNullOrEmpty(cwd)) // ahem.
+            {
+                // This is almost certainly Linux or MacOS.
+                // Follow the XDG Base Directory Specification: https://specifications.freedesktop.org/basedir-spec/latest/index.html
+                // Store data in subdirectory of $XDG_DATA_HOME if it exists, defaulting to $HOME/.local/share if not set.
+                string xdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+                if (string.IsNullOrEmpty(xdgDataHome))
+                {
+                    xdgDataHome = Path.Combine(cwd, "AppData");
+                }
+                return Path.Combine(xdgDataHome, XdgDataHomeSubdirectory);
+            }
             throw new PlatformNotSupportedException("Relative FileDataStore paths not supported on this platform.");
+
         }
 
         /// <summary>
