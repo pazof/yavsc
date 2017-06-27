@@ -19,8 +19,6 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 using System;
 
 namespace Yavsc.Models.Calendar
@@ -28,6 +26,8 @@ namespace Yavsc.Models.Calendar
     using System.Threading.Tasks;
     using Yavsc.Models.Google.Calendar;
     using Yavsc.Models.Google;
+    using Yavsc.ViewModels.Calendar;
+
 
     /// <summary>
     /// I calendar manager.
@@ -35,5 +35,8 @@ namespace Yavsc.Models.Calendar
     public interface ICalendarManager {
 		Task<CalendarList> GetCalendarsAsync (string userId);
 		Task<CalendarEventList> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate);
+    Task<DateTimeChooserViewModel> CreateViewModel(
+			string inputId,
+			string calid, DateTime mindate, DateTime maxdate);
 	}
 }
