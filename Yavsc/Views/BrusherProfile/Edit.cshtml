@@ -26,15 +26,8 @@
         <hr />
 @Html.ValidationSummary()
 
-<environment names="Development">
         <fieldset><legend>Disponibilité</legend>
-        <div class="form-group">
-            <label asp-for="Availability" class="col-md-2 control-label"></label> 
 
-            <div class="col-md-10" id="datepair">
-                @Html.EditorFor(m=>m.Availability)
-           </div>
-        </div>
         <div class="form-group">
             <label asp-for="ActionDistance" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -43,7 +36,6 @@
             </div>
         </div>
         </fieldset>
-</environment>
 
         <fieldset><legend>Grille tarifaire</legend>
         <h2>Divers</h2>
