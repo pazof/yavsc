@@ -1,7 +1,7 @@
 DESTDIR=/srv/www/yavscpre
 PRODDESTDIR=/srv/www/yavsc
 ASPNET_ENV=Development
-CONFIGURATION=Debug
+CONFIGURATION=Release
 
 all: bin/$(CONFIGURATION)
 
