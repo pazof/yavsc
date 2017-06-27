@@ -1,9 +1,9 @@
 DESTDIR=/srv/www/yavscpre
 PRODDESTDIR=/srv/www/yavsc
 ASPNET_ENV=Development
+CONFIGURATION=Debug
 
-all: project.lock.json
-	dnu build
+all: bin/$(CONFIGURATION)
 
 git_status := $(shell git status -s --porcelain |wc -l)
 
@@ -11,6 +11,7 @@ status:
 ifeq ($(git_status),0)
 		@echo Nothing to be done.
 else
+    @echo There are pending changes:
 		@git status
 endif
 
@@ -20,22 +21,22 @@ project.lock.json: project.json
 	dnu restore
 
 watch: project.lock.json
-	@ASPNET_ENV=$(ASPNET_ENV) dnx-watch web --configuration=Debug
+	ASPNET_ENV=$(ASPNET_ENV) dnx-watch web --configuration=$(CONFIGURATION)
 
 run:
-	@ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=Debug
+	ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION)
 
 clean:
 	rm -rf bin obj
 
 cleanoutput:
-	@rm -rf bin/Release
-	@rm -rf bin/output
+	rm -rf bin/$(CONFIGURATION)
+	rm -rf bin/output
 
-bin/Release:
-	@dnu build --configuration=Release
+bin/$(CONFIGURATION): project.lock.json
+	dnu build --configuration=$(CONFIGURATION)
 
-bin/output: bin/Release
+bin/output: bin/$(CONFIGURATION)
 	@dnu publish
 
 bin/output/wwwroot/version: bin/output
