@@ -34,6 +34,7 @@ namespace Yavsc
     using ViewModels.Auth.Handlers;
     using Yavsc.Models.Calendar;
     using Yavsc.Models.Google.Calendar;
+    using static System.Environment;
 
     public partial class Startup
     {
@@ -238,7 +239,7 @@ namespace Yavsc
             {
                 options.ResourcesPath = "Resources";
             });
-
+            CheckServices(services);
         }
 
 
@@ -359,7 +360,9 @@ namespace Yavsc
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
+            logger.LogInformation("LocalApplicationData: "+Environment.GetFolderPath(SpecialFolder.LocalApplicationData, SpecialFolderOption.DoNotVerify));
+           
+            CheckApp(app, SiteSetup, env, loggerFactory);
         }
 
         // Entry point for the application.
