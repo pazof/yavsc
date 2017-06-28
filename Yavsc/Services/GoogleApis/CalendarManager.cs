@@ -33,6 +33,8 @@ using Google.Apis.Util.Store;
 
 namespace Yavsc.Models.Google.Calendar
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using Models.Google;
     using Yavsc.Helpers;
     using Yavsc.Models.Calendar;
@@ -176,15 +178,35 @@ namespace Yavsc.Models.Google.Calendar
 		}
 		public async Task<DateTimeChooserViewModel> CreateViewModel(
 			string inputId,
-			string calid, DateTime mindate, DateTime maxdate, string userId)
+			string calid, DateTime mindate, DateTime maxdate)
 		{
+			if (calid ==null) return new DateTimeChooserViewModel {
+				InputId = inputId,
+				MinDate  = mindate,
+				MaxDate = maxdate
+			};
+
 			var eventList = await GetCalendarAsync(calid, mindate, maxdate);
-			
+			List<Period> free = new List<Period> ();
+            List<Period> busy = new List<Period> ();
+            
+            foreach (var ev in eventList.items)
+            {
+                if (ev.transparency == "transparent" )
+                {
+                    free.Add(new Period { Start =  ev.start.datetime, End = ev.end.datetime });
+                }
+                else busy.Add(new Period { Start =  ev.start.datetime, End = ev.end.datetime });
+            }
+
 			return new DateTimeChooserViewModel {
 				InputId = inputId,
 				MinDate  = mindate,
 				MaxDate = maxdate,
-				DisabledTimeIntervals = null
+				Free = free.ToArray(),
+				Busy = busy.ToArray(),
+				FreeDates = free.SelectMany( p => new string [] { p.Start.ToString("DD/mm/yyyy"), p.End.ToString("DD/mm/yyyy") }).Distinct().ToArray(),
+				BusyDates = busy.SelectMany( p => new string [] { p.Start.ToString("DD/mm/yyyy"), p.End.ToString("DD/mm/yyyy") }).Distinct().ToArray()
 			};
 		}
 	}

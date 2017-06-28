@@ -9,6 +9,11 @@ namespace Yavsc.ViewModels.Calendar
         public string InputId { get; set; }
         public DateTime MinDate { get; set; }
         public DateTime MaxDate { get; set; }
-        public Period [] DisabledTimeIntervals { get; set; }
+        public Period [] Busy { get; set; }
+        public Period [] Free { get; set; }
+
+        public string [] FreeDates { get ; set; }
+        public string [] BusyDates { get ; set; }
+
     }
 }

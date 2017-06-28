@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Yavsc.Models;
 using Yavsc.Models.Calendar;
-using Yavsc.ViewModels.Calendar;
 
 namespace Yavsc.ViewComponents
 {
@@ -21,24 +20,31 @@ namespace Yavsc.ViewComponents
         }
 
         public async Task<IViewComponentResult> InvokeAsync (
-            string templateName,
             string htmlFieldName,
-            string calId)
+            string calId = null)
         {
             var minDate = DateTime.Now;
             var maxDate = minDate.AddDays(20);
 
-            var cal = await _manager.GetCalendarAsync(
+            var model = await _manager.CreateViewModel(
+                htmlFieldName,
                 calId, minDate, maxDate
             );
 
-            ViewData["Calendar"] = cal;
+            return View(model);
+        }
+        public async Task<IViewComponentResult> InvokeAsync (
+            string htmlFieldName)
+        {
+            var minDate = DateTime.Now;
+            var maxDate = minDate.AddDays(20);
 
-            return View(templateName, new DateTimeChooserViewModel {
-                InputId = htmlFieldName,
-                MinDate = minDate,
-                MaxDate = maxDate
-            });
+            var model = await _manager.CreateViewModel(
+                htmlFieldName,
+                null, minDate, maxDate
+            );
+
+            return View(model);
         }
     }
 }
