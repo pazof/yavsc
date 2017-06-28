@@ -1,11 +1,14 @@
 @model DateTimeChooserViewModel
 
 <script> 
-var events = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewData["Calendar"]));
+var free = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.FreeDates));
+var busy = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BusyDates));
 </script>
 
-<div class='input-group date'>
-    <input class="form-control" name="@Model.InputId" />
+<div class='input-group date'  >
+    <input data-date-min-date="@Model.MinDate.ToString("MM/dd/yyyy")"
+    data-date-max-date="@Model.MaxDate.ToString("MM/dd/yyyy")" data-date-enable-dates="free"
+    class="form-control " name="@Model.InputId" id="@Model.InputId" />
     <span class="input-group-addon">
          <span class="glyphicon glyphicon-calendar"></span>
     </span>

@@ -338,11 +338,7 @@
                 <div class="container">
                     <div class="row">
                         <div class='col-sm-6'>
-                            @await Component.InvokeAsync(
-                                "Calendar",
-                                "Default", 
-                                "EventDate",
-                                 Model.PerformerProfile.Performer.DedicatedGoogleCalendar)
+                            @await Component.InvokeAsync("Calendar","EventDate", Model.PerformerProfile.Performer.DedicatedGoogleCalendar)
                             
                         </div>
                         <span asp-validation-for="EventDate" class="text-danger">
