@@ -35,8 +35,11 @@ namespace Yavsc.Models.Calendar
     public interface ICalendarManager {
 		Task<CalendarList> GetCalendarsAsync (string userId);
 		Task<CalendarEventList> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate);
-    Task<DateTimeChooserViewModel> CreateViewModel(
+    Task<DateTimeChooserViewModel> CreateViewModelAsync(
 			string inputId,
 			string calid, DateTime mindate, DateTime maxdate);
+    Task<Resource> CreateResourceAsync(string calid, 
+    DateTime startDate, int lengthInSeconds, string summary, 
+    string description, string location, bool available);
 	}
 }
