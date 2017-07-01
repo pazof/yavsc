@@ -38,10 +38,10 @@ namespace Yavsc.Helpers
 		/// Initializes a new instance of the Yavsc.Helpers.SimpleJsonPostMethod class.
 		/// </summary>
 		/// <param name="pathToMethod">Path to method.</param>
-		public SimpleJsonPostMethod (string pathToMethod, string authorizationHeader = null)
+		public SimpleJsonPostMethod (string pathToMethod, string authorizationHeader = null, string method = "POST")
 		{
 			request = (HttpWebRequest) WebRequest.Create (pathToMethod);
-			request.Method = "POST";
+			request.Method = method;
 			request.Accept = "application/json";
 			request.ContentType = "application/json";
 			request.SendChunked = true;
