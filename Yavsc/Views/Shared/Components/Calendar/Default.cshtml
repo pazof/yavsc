@@ -1,15 +1,21 @@
 @model DateTimeChooserViewModel
+@{
+    var dtpid = $"dtpckr{Model.InputId}";
+}
 
-<script> 
-var free = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.FreeDates));
-var busy = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BusyDates));
-</script>
-
-<div class='input-group date'  >
-    <input data-date-min-date="@Model.MinDate.ToString("MM/dd/yyyy")"
-    data-date-max-date="@Model.MaxDate.ToString("MM/dd/yyyy")" data-date-enable-dates="free"
-    class="form-control " name="@Model.InputId" id="@Model.InputId" />
+<div class='input-group date' id=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(dtpid))>
+    <input class="form-control " name="@Model.InputId" id="@Model.InputId" />
     <span class="input-group-addon">
          <span class="glyphicon glyphicon-calendar"></span>
     </span>
 </div>
+<script type="text/javascript">
+    $(function () {
+        $(@Html.Raw("'#"+dtpid+"'")).datetimepicker({
+            locale: 'fr',
+            disabledDates: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BusyDates)),
+            maxDate: '@Model.MaxDate.ToString("MM/dd/yyyy")',
+            minDate: '@Model.MinDate.ToString("MM/dd/yyyy")'
+        });
+    });
+</script>

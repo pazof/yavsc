@@ -26,7 +26,7 @@ namespace Yavsc.ViewComponents
             var minDate = DateTime.Now;
             var maxDate = minDate.AddDays(20);
 
-            var model = await _manager.CreateViewModel(
+            var model = await _manager.CreateViewModelAsync(
                 htmlFieldName,
                 calId, minDate, maxDate
             );
@@ -39,7 +39,7 @@ namespace Yavsc.ViewComponents
             var minDate = DateTime.Now;
             var maxDate = minDate.AddDays(20);
 
-            var model = await _manager.CreateViewModel(
+            var model = await _manager.CreateViewModelAsync(
                 htmlFieldName,
                 null, minDate, maxDate
             );
