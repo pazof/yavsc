@@ -13,7 +13,7 @@
         }
       }
     },
-    ".NETFramework,Version=v4.5.1/debian.8-x86": {
+    ".NETFramework,Version=v4.5.1/debian.9-x86": {
       "Newtonsoft.Json/10.0.2": {
         "type": "package",
         "compile": {
@@ -24,7 +24,7 @@
         }
       }
     },
-    ".NETFramework,Version=v4.5.1/debian.8-x64": {
+    ".NETFramework,Version=v4.5.1/debian.9-x64": {
       "Newtonsoft.Json/10.0.2": {
         "type": "package",
         "compile": {
