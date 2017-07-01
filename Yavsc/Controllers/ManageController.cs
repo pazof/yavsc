@@ -25,6 +25,7 @@ namespace Yavsc.Controllers
     using Yavsc.Services;
     using Yavsc.ViewModels.Manage;
     using Yavsc.Models.Calendar;
+    using System.IO;
 
     [Authorize]
     public class ManageController : Controller
@@ -339,7 +340,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> SetFullName()
         {
             var user = await _userManager.FindByIdAsync(User.GetUserId());
-            return View(user.FullName);
+            return View(user);
         }
         //
         // POST: /Manage/ChangePassword
@@ -367,20 +368,13 @@ namespace Yavsc.Controllers
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
         }
 
-        //
-        // GET: /Manage/ChangeUserName
         public IActionResult ChangeUserName()
         {
             return View(new ChangeUserNameViewModel() { NewUserName = User.Identity.Name });
         }
 
-        public IActionResult CHUN()
-        {
-            return View(new ChangeUserNameViewModel() { NewUserName = User.Identity.Name });
-        }
-
         [HttpPost]
-        public async Task<IActionResult> CHUN(ChangeUserNameViewModel model)
+        public async Task<IActionResult> ChangeUserName(ChangeUserNameViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -395,17 +389,24 @@ namespace Yavsc.Controllers
 
                 if (result.Succeeded)
                 {
-                    /* Obsolete : files are no more prefixed using the user name.
-
+                    // Renames the blog files
                     var userdirinfo = new DirectoryInfo(
-                       Path.Combine(_siteSettings.UserFiles.DirName,
+                       Path.Combine(_siteSettings.UserFiles.Blog,
                         oldUserName));
-                    var newdir = Path.Combine(_siteSettings.UserFiles.DirName,
+                    var newdir = Path.Combine(_siteSettings.UserFiles.Blog,
                        model.NewUserName);
                     if (userdirinfo.Exists)
                         userdirinfo.MoveTo(newdir);
-                    */
-
+                    // Renames the Avatars
+                    foreach (string s in new string [] { ".png", ".s.png", ".xs.png" })
+                    {
+                        FileInfo fi = new FileInfo(
+                            Path.Combine(_siteSettings.UserFiles.Avatars,
+                            oldUserName+s));
+                        if (fi.Exists)
+                            fi.MoveTo(Path.Combine(_siteSettings.UserFiles.Avatars,
+                            model.NewUserName+s));
+                    }
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User changed his user name successfully.");
                     return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangeNameSuccess });
