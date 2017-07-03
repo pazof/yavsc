@@ -28,6 +28,8 @@ namespace Yavsc
         /// </summary>
         /// <returns></returns>
         public Contact Admin { get; set; }
+
+        public string DataDir { get; set; }
         /// <summary>
         /// User's files directory
         /// </summary>
