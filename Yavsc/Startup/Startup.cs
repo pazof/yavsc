@@ -65,6 +65,7 @@ namespace Yavsc
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
             ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
+
         }
         public static GoogleAuthSettings GoogleSettings { get; set; }
         public IConfigurationRoot Configuration { get; set; }
@@ -262,6 +263,7 @@ namespace Yavsc
             Startup.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
             Startup.Temp = siteSettings.Value.TempDir;
             PayPalSettings = payPalSettings.Value;
+
             // TODO implement an installation & upgrade procedure
             // Create required directories
             foreach (string dir in new string[] { UserFilesDirName, UserBillsDirName, SiteSetup.TempDir })

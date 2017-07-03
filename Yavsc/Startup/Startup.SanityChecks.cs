@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
@@ -21,7 +22,26 @@ namespace Yavsc
                 ILoggerFactory loggerFactory
                 )
         {
+
             var logger = loggerFactory.CreateLogger<Startup>();
+
+            var appData = Environment.GetEnvironmentVariable("APPDATA");
+            if (appData == null)
+            {
+                if (SiteSetup.DataDir == null) {
+                    SiteSetup.DataDir = "AppData";
+                } else logger.LogWarning("existing setting: "+SiteSetup.DataDir);
+                    DirectoryInfo di = new DirectoryInfo(SiteSetup.DataDir);
+                if (!di.Exists)
+                {
+                    di.Create();
+                    logger.LogWarning("Created dir : "+di.FullName);
+                } else logger.LogWarning("existing: "+di.Name);
+                SiteSetup.DataDir = Path.Combine(Directory.GetCurrentDirectory(),di.Name);
+                Environment.SetEnvironmentVariable("APPDATA", SiteSetup.DataDir);
+                logger.LogWarning("AppData was not found in env vars, it has been set to : "+
+                Environment.GetEnvironmentVariable("APPDATA"));
+            }
 
             var creds = GoogleSettings?.Account?.private_key;
             if (creds==null)
