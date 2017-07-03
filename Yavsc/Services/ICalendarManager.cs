@@ -20,25 +20,23 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using Google.Apis.Calendar.v3.Data;
 
-namespace Yavsc.Models.Calendar
+namespace Yavsc.Services
 {
     using System.Threading.Tasks;
-    using Yavsc.Models.Google.Calendar;
-    using Yavsc.Models.Google;
     using Yavsc.ViewModels.Calendar;
-
 
     /// <summary>
     /// I calendar manager.
     /// </summary>
     public interface ICalendarManager {
 		Task<CalendarList> GetCalendarsAsync (string userId);
-		Task<CalendarEventList> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate);
+		Task<Events> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate);
     Task<DateTimeChooserViewModel> CreateViewModelAsync(
 			string inputId,
 			string calid, DateTime mindate, DateTime maxdate);
-    Task<Resource> CreateResourceAsync(string calid, 
+    Task<Event> CreateEventAsync(string calid, 
     DateTime startDate, int lengthInSeconds, string summary, 
     string description, string location, bool available);
 	}

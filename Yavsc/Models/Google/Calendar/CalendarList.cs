@@ -19,11 +19,14 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System;
+
 namespace Yavsc.Models.Google.Calendar
 {
 	/// <summary>
 	/// Calendar list.
 	/// </summary>
+	[Obsolete("use Google.Apis")]
 	public class CalendarList {
 		/// <summary>
 		/// Gets or sets the kind.

@@ -29,11 +29,11 @@ namespace Yavsc.Models.Google
 		/// <summary>
 		/// The date.
 		/// </summary>
-		public DateTime date;
+		public DateTime? date;
 		/// <summary>
 		/// The datetime.
 		/// </summary>
-		public DateTime datetime;
+		public DateTime? datetime;
 		/// <summary>
 		/// The time zone.
 		/// </summary>

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Yavsc.Models;
-using Yavsc.Models.Calendar;
+using Yavsc.Services;
 
 namespace Yavsc.ViewComponents
 {

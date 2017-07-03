@@ -24,7 +24,6 @@ namespace Yavsc.Controllers
     using Yavsc.Models;
     using Yavsc.Services;
     using Yavsc.ViewModels.Manage;
-    using Yavsc.Models.Calendar;
     using System.IO;
 
     [Authorize]
@@ -123,7 +122,7 @@ namespace Yavsc.Controllers
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
             var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id);
 
-            model.HaveActivityToConfigure = usrActs.Any( a=> a.Settings == null && a.Does.SettingsClassName!=null );
+            model.HaveActivityToConfigure = usrActs.Where( a => ( a.Does.SettingsClassName != null )).Count( a => a.Settings == null)>0;
             model.Activity = _dbContext.UserActivities.Include(a=>a.Does).Where(u=>u.UserId == user.Id).ToList();
             return View(model);
         }
@@ -282,11 +281,9 @@ namespace Yavsc.Controllers
             catch (WebException ex)
             {
                 // a bug
-                _logger.LogError("Google token, an Forbidden calendar");
-                if (ex.HResult == (int)HttpStatusCode.Forbidden)
-                {
-                    return RedirectToAction("LinkLogin", new { provider = "Google" });
-                }
+                _logger.LogError("Google Api error");
+                    _logger.LogError("Code: "+ex.HResult+"\n"+ ex.Message);
+                return RedirectToAction("LinkLogin", new { provider = "Google" });
             }
             return View(new SetGoogleCalendarViewModel { ReturnUrl = returnUrl });
         }

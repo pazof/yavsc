@@ -30,10 +30,13 @@ namespace Yavsc.Controllers
         protected SiteSettings _siteSettings;
         protected SmtpSettings _smtpSettings;
 
+        protected ICalendarManager _calendarManager;
+
         protected readonly ILogger _logger;
         public CommandController(ApplicationDbContext context, IOptions<GoogleAuthSettings> googleSettings,
         IGoogleCloudMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
+          ICalendarManager calendarManager,
           IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
           IEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
@@ -47,6 +50,7 @@ namespace Yavsc.Controllers
             _userManager = userManager;
             _smtpSettings = smtpSettings.Value;
             _siteSettings = siteSettings.Value;
+            _calendarManager = calendarManager;
             _localizer = localizer;
             _logger = loggerFactory.CreateLogger<CommandController>();
         }

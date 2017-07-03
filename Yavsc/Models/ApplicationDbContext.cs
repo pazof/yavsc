@@ -158,6 +158,8 @@ namespace Yavsc.Models
             using (var context = new ApplicationDbContext())
             {
                 var item = this.Tokens.FirstOrDefault(x => x.UserId == googleUserId);
+                // TODO Refresh token
+                
                 return Task.FromResult(item);
             }
         }

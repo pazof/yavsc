@@ -2,6 +2,7 @@ DESTDIR=/srv/www/yavscpre
 PRODDESTDIR=/srv/www/yavsc
 ASPNET_ENV=Development
 CONFIGURATION=Release
+ASPNET_LOG_LEVEL=warn
 
 all: bin/$(CONFIGURATION)
 
@@ -21,7 +22,7 @@ project.lock.json: project.json
 	dnu restore
 
 watch: project.lock.json
-	ASPNET_ENV=$(ASPNET_ENV) dnx-watch web --configuration=$(CONFIGURATION)
+	ASPNET_ENV=$(ASPNET_ENV) ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) dnx-watch web --configuration=$(CONFIGURATION)
 
 run:
 	ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION)
