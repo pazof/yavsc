@@ -1,6 +1,9 @@
+using System;
+
 namespace Yavsc.Models.Google.Calendar
 {
-    public class Reminder {
+    [Obsolete("use GoogleUse.Apis")]
+	public class Reminder {
 	/// <summary>
 	/// Gets or sets the method.
 	/// </summary>

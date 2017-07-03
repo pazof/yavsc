@@ -18,13 +18,6 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using Newtonsoft.Json;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Net;
-using System.Web;
-using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,15 +30,13 @@ namespace Yavsc.Helpers
     using Models.Messaging;
     using Models;
     using Interfaces.Workflow;
-    using Yavsc.Models.Google;
     using Yavsc.Models.Calendar;
     using Google.Apis.Auth.OAuth2;
-    using Google.Apis.Auth.OAuth2.Responses;
     using Microsoft.Data.Entity;
     using Google.Apis.Auth.OAuth2.Flows;
     using Microsoft.AspNet.Identity.EntityFramework;
-
-
+    using Yavsc.Services;
+    
     /// <summary>
     /// Google helpers.
     /// </summary>
@@ -105,79 +96,30 @@ namespace Yavsc.Helpers
             );
             return googleLogin;
         }
-        public static UserCredential GetGoogleCredential(IdentityUserLogin<string> googleUserLogin)
+        public static UserCredential GetGoogleCredential(string googleUserLoginKey)
         {
-            var googleId = googleUserLogin.ProviderKey;
-            if (string.IsNullOrEmpty(googleId))
+            if (string.IsNullOrEmpty(googleUserLoginKey))
                 throw new InvalidOperationException("No Google login");
-            TokenResponse resp = null;
             var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer());
-            return new UserCredential(flow, googleId, resp);
+            throw new NotImplementedException();
+            // TokenResponse resp = flow. ;
+            // return new UserCredential(flow, googleUserLoginKey, resp);
         }
-        static string evStatusDispo = "Dispo";
 
         public static async Task<Period[]> GetFreeTime (this ICalendarManager manager, string calId, DateTime startDate, DateTime endDate) 
         {
-            CalendarEventList evlist = await manager.GetCalendarAsync(calId, startDate, endDate) ;
-            var result = evlist.items
+            var evlist = await manager.GetCalendarAsync(calId, startDate, endDate) ;
+            var result = evlist.Items
             .Where(
-                ev => ev.status == evStatusDispo
-            )
+                ev => ev.Transparency == "transparent"
+                         )
             .Select( 
                 ev => new Period {
-                     Start = ev.start.datetime,
-                     End = ev.end.datetime
+                     Start = ev.Start.DateTime.Value,
+                     End = ev.End.DateTime.Value
                   }
             );
             return result.ToArray();
-        }
-
-        const string jwtHeader="{\"alg\":\"RS256\",\"typ\":\"JWT\"}";
-        const string tokenEndPoint = "https://www.googleapis.com/oauth2/v4/token";
-
-        static long GetTimeSpan(long seconds) {
-            var zero = new DateTime(1970,1,1);
-            return zero.AddSeconds(seconds).ToFileTimeUtc();
-        }
-
-        static object CreateGoogleServiceClaimSet(string scope, int expiresInSeconds) {
-            return new { 
-                iss = Startup.GoogleSettings.Account.client_email,
-                scope = scope,
-                aud = "https://www.googleapis.com/oauth2/v4/token",
-                exp = GetTimeSpan(expiresInSeconds),
-                iat = DateTime.Now.ToFileTimeUtc()
-            };
-        } 
-
-        public static async Task<string> GetJsonTokenAsync(string scope)
-        {
-
-            var claimSet = CreateGoogleServiceClaimSet(scope, 3600);
-            string jsonClaims =  JsonConvert.SerializeObject(claimSet);
-            string encClaims =  Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(jsonClaims));
-            string tokenHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes(jwtHeader))+"."+encClaims;
-
-            X509Certificate2 cert = new X509Certificate2();
-            cert.Import(Convert.FromBase64String(Startup.GoogleSettings.Account.private_key));
-            RSACryptoServiceProvider key = new RSACryptoServiceProvider();
-            key.FromXmlString(cert.PrivateKey.ToXmlString(true));
-            byte[] sig = key.SignData(Encoding.UTF8.GetBytes(tokenHeader), CryptoConfig.MapNameToOID("SHA256"));
-            string assertion = tokenHeader+"."+Convert.ToBase64String(sig);
-            HttpWebRequest webreq = WebRequest.CreateHttp ("https://www.googleapis.com/oauth2/v4/token");
-            webreq.ContentType = "application/x-www-form-urlencoded";
-            using (var inputstream = await webreq.GetRequestStreamAsync()) {
-                var content = Encoding.UTF8.GetBytes( "grant_type="+ HttpUtility.UrlEncode(" urn:ietf:params:oauth:grant-type:jwt-bearer")+
-                "&assertion="+HttpUtility.UrlEncode(assertion));
-                await inputstream.WriteAsync(content,0,content.Length);
-            }
-            using (WebResponse resp = await webreq.GetResponseAsync ()) {
-                using (Stream respstream = resp.GetResponseStream ()) {
-                        using (var rdr = new StreamReader(respstream)) {
-                            return await rdr.ReadToEndAsync();
-                    }
-                }
-            }
         }
 
     }

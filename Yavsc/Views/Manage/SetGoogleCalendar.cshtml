@@ -9,8 +9,9 @@
 {
     entryNum++;
     @if (calendar.accessRole=="owner") {
+        <label >
     <input type="radio" name="GoogleCalendarId" value="@calendar.id" id="cal@entryNum">
-    <label for="cal@entryNum">
+    
         <span style="background-color: @calendar.backgroundColor; foreground-color: @calendar.foregroundColor;">
             @calendar.summary </span>
         <i>"@calendar.description"</i>

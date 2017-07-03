@@ -32,8 +32,6 @@ namespace Yavsc
     using PayPal.Manager;
     using Services;
     using ViewModels.Auth.Handlers;
-    using Yavsc.Models.Calendar;
-    using Yavsc.Models.Google.Calendar;
     using static System.Environment;
 
     public partial class Startup

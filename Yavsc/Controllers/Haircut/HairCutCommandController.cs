@@ -38,14 +38,13 @@ namespace Yavsc.Controllers
           IEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
           IOptions<SiteSettings> siteSettings,
-          ILoggerFactory loggerFactory) : base(context,googleSettings,GCMSender,userManager,
-          localizer,emailSender,smtpSettings,siteSettings,loggerFactory)
+          ICalendarManager calManager,
+          ILoggerFactory loggerFactory) : base(context, googleSettings, GCMSender, userManager,
+          calManager, localizer, emailSender, smtpSettings, siteSettings, loggerFactory)
         {
             this.payPalSettings = payPalSettings.Value;
         }
         PayPalSettings payPalSettings;
-
-
         private async Task<HairCutQuery> GetQuery(long id)
         {
             var query = await _context.HairCutQueries
@@ -288,6 +287,7 @@ Le client final: {clientFinal}
 
                 if (pro.AcceptPublicContact)
                 {
+
                     if (pro.AcceptNotifications) {
                         if (pro.Performer.Devices.Count > 0) {
                             var regids = model.PerformerProfile.Performer
@@ -301,6 +301,19 @@ Le client final: {clientFinal}
                         if (grep!=null)
                         _logger.LogWarning($"Performer: {model.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
                     }
+                    // TODO if pro.AllowCalendarEventInsert
+                    if (pro.Performer.DedicatedGoogleCalendar != null && yaev.EventDate != null) {
+                        _logger.LogInformation("Inserting an event in the calendar");
+                        DateTime evdate  = yaev.EventDate ?? new DateTime();
+                        var result = await _calendarManager.CreateEventAsync(
+                            pro.Performer.DedicatedGoogleCalendar,
+                            evdate, 3600, yaev.Topic, yaev.Message,
+                            yaev.Location?.Address, false
+                        );
+                        if (result.Id == null)
+                            _logger.LogWarning("Something went wrong, calendar event not created");
+                    } 
+                    else _logger.LogWarning($"Calendar: {pro.Performer.DedicatedGoogleCalendar != null}\nEventDate: {yaev.EventDate != null}");
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
@@ -432,11 +445,22 @@ Le client final: {clientFinal}
                         grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
                     }
                     // TODO setup a profile choice to allow notifications
-                    // both on mailbox and mobile
+                    // both on mailbox and mobile, and to allow calendar event insertion.
                     // if (grep==null || grep.success<=0 || grep.failure>0)
                     ViewBag.GooglePayload=grep;
                     if (grep!=null)
                       _logger.LogWarning($"Performer: {command.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
+                    
+                    
+                    if (pro.Performer.DedicatedGoogleCalendar != null && yaev.EventDate != null) {
+                        DateTime evdate  = yaev.EventDate ?? new DateTime();
+                    await _calendarManager.CreateEventAsync(
+                            pro.Performer.DedicatedGoogleCalendar,
+                            evdate, 3600, yaev.Topic, yaev.Message,
+                            yaev.Location?.ToString(), false
+                    );
+
+                    }
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
