@@ -16,15 +16,14 @@ using Microsoft.Extensions.WebEncoders;
 using OAuth.AspNet.AuthServer;
 using OAuth.AspNet.Tokens;
 using Google.Apis.Util.Store;
-using Yavsc.Auth;
-using Yavsc.Extensions;
-using Yavsc.Models;
-using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using Google.Apis.Auth.OAuth2.Responses;
 
 namespace Yavsc
 {
+    using Auth;
+    using Extensions;
+    using Models;
     public partial class Startup
     {
         public static CookieAuthenticationOptions ExternalCookieAppOptions { get; private set; }
@@ -214,7 +213,7 @@ namespace Yavsc
                    );
                });
 
-
+               Environment.SetEnvironmentVariable ("GOOGLE_APPLICATION_CREDENTIALS", "google-secret.json");
 
 
         }

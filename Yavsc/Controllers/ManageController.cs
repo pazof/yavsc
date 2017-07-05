@@ -116,7 +116,8 @@ namespace Yavsc.Controllers
                 Avatar = user.Avatar,
                 BankInfo = user.BankInfo,
                 DiskUsage = user.DiskUsage,
-                DiskQuota = user.DiskQuota
+                DiskQuota = user.DiskQuota,
+                DedicatedCalendarId = user.DedicatedGoogleCalendar
             };
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
             var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id);
@@ -275,7 +276,7 @@ namespace Yavsc.Controllers
         {
             return View(new SetGoogleCalendarViewModel { 
                 ReturnUrl = returnUrl, 
-                Calendars = await _calendarManager.GetCalendarsAsync(User.GetUserId(), pageToken) 
+                Calendars = await _calendarManager.GetCalendarsAsync(User.GetUserId(), pageToken)
                 });
         }
 

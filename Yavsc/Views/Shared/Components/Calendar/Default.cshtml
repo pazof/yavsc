@@ -16,7 +16,7 @@
             disabledDates: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BusyDates)),
             maxDate: '@Model.MaxDate.ToString("MM/dd/yyyy")',
             minDate: '@Model.MinDate.ToString("MM/dd/yyyy")',
-            format: 'MM/DD/YYYY hh:mm'
+            format: 'MM/DD/YYYY HH:mm'
         });
     });
 </script>

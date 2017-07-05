@@ -30,10 +30,7 @@ using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using System.Collections.Generic;
 using System.Linq;
-using Google.Apis.Http;
 using Google.Apis.Services;
-using Microsoft.AspNet.Authentication.OAuth;
-using Microsoft.Data.Entity;
 
 namespace Yavsc.Services
 {
@@ -48,7 +45,7 @@ namespace Yavsc.Services
     /// <summary>
     /// Google Calendar API client.
     /// </summary>
-    public class CalendarManager : ICalendarManager
+    public class CalendarManager : ICalendarManager 
     {
         public class ExpiredTokenException : Exception { }
         protected static string scopeCalendar = "https://www.googleapis.com/auth/calendar";
@@ -118,15 +115,7 @@ namespace Yavsc.Services
 			calListReq.PageToken = pageToken;
 			return calListReq.Execute ();
         }
-
-
-        private ServiceAccountCredential GetServiceAccountCredential()
-        {
-            var creds = GoogleHelpers.GetCredentialForApi(new string[] { scopeCalendar });
-            if (creds == null)
-                throw new InvalidOperationException("No credential");
-            return creds;
-        }
+        
         /// <summary>
         /// Gets a calendar event list, between the given dates.
         /// </summary>
@@ -135,10 +124,14 @@ namespace Yavsc.Services
         /// <param name="mindate">Mindate.</param>
         /// <param name="maxdate">Maxdate.</param>
         /// <param name="cred">credential string.</param>
-        public async Task<Events> GetCalendarAsync(string calid, DateTime mindate, DateTime maxdate)
+        public async Task<Events> GetCalendarAsync(string calid, DateTime minDate, DateTime maxDate, string pageToken)
         {
             var service =  await GetServiceAsync();
             var listRequest = service.Events.List(calid);
+            listRequest.PageToken = pageToken;
+            listRequest.TimeMin = minDate;
+            listRequest.TimeMax = maxDate;
+            listRequest.SingleEvents = true;
             return await listRequest.ExecuteAsync();
         }
         public async Task<DateTimeChooserViewModel> CreateViewModelAsync(
@@ -153,12 +146,13 @@ namespace Yavsc.Services
                     MaxDate = maxdate
                 };
 
-            var eventList = await GetCalendarAsync(calid, mindate, maxdate);
+            var eventList = await GetCalendarAsync(calid, mindate, maxdate, null);
             List<Period> free = new List<Period>();
             List<Period> busy = new List<Period>();
 
             foreach (var ev in eventList.Items)
             {
+                if (ev.Start.DateTime.HasValue && ev.End.DateTime.HasValue ) {
                 DateTime start = ev.Start.DateTime.Value;
                 DateTime end = ev.End.DateTime.Value;
 
@@ -168,6 +162,7 @@ namespace Yavsc.Services
                     free.Add(new Period { Start = start, End = end });
                 }
                 else busy.Add(new Period { Start = start, End = end });
+                }
             }
 
             return new DateTimeChooserViewModel
@@ -177,8 +172,8 @@ namespace Yavsc.Services
                 MaxDate = maxdate,
                 Free = free.ToArray(),
                 Busy = busy.ToArray(),
-                FreeDates = free.SelectMany(p => new string[] { p.Start.ToString("DD/mm/yyyy"), p.End.ToString("DD/mm/yyyy") }).Distinct().ToArray(),
-                BusyDates = busy.SelectMany(p => new string[] { p.Start.ToString("DD/mm/yyyy"), p.End.ToString("DD/mm/yyyy") }).Distinct().ToArray()
+                FreeDates = free.SelectMany(p => new string[] { p.Start.ToString("dd/MM/yyyy HH:mm"), p.End.ToString("dd/MM/yyyy HH:mm") }).Distinct().ToArray(),
+                BusyDates = busy.SelectMany(p => new string[] { p.Start.ToString("dd/MM/yyyy HH:mm"), p.End.ToString("dd/MM/yyyy HH:mm") }).Distinct().ToArray()
             };
         }
 
@@ -194,21 +189,19 @@ namespace Yavsc.Services
         /// <param name="location"></param>
         /// <param name="available"></param>
         /// <returns></returns>
-        public async Task<Event> CreateEventAsync(string calid, DateTime startDate, int lengthInSeconds, string summary, string description, string location, bool available)
+        public async Task<Event> CreateEventAsync(string userId, string calid, DateTime startDate, int lengthInSeconds, string summary, string description, string location, bool available)
         {
 
             if (string.IsNullOrWhiteSpace(calid))
                 throw new Exception("the calendar identifier is not specified");
-            GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
-            var computeService = new BaseClientService.Initializer()
+            /* var computeService = new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential
             };
             computeService.ApiKey = Startup.GoogleSettings.ApiKey;
-            computeService.ApplicationName = "Yavsc";
-            computeService.Validate();
-
-            var service = new CalendarService();
+            computeService.ApplicationName = "Yavsc"; */
+            
+            var service = await CreateUserCalendarServiceAsync(userId);
             Event ev = new Event
             {
                 Start = new EventDateTime { DateTime = startDate },
@@ -221,15 +214,22 @@ namespace Yavsc.Services
 
             return inserted;
         }
-
+        CalendarService _service = null;
         public async Task<CalendarService> GetServiceAsync()
         {
-            GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
-            return new CalendarService(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = "Yavsc"
-            });
+            if (_service==null) {
+                GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
+                if (credential.IsCreateScopedRequired)
+                {
+                    credential = credential.CreateScoped(scopeCalendar);
+                }
+                _service = new CalendarService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "Yavsc"
+                });
+            }
+            return _service;
         }
 
 		/// <summary>
