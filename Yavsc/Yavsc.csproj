@@ -1241,7 +1241,6 @@
     <Content Include="GoogleApiSupport\Google.Apis\Requests\HttpRequestMessageExtenstions.cs" />
     <Content Include="GoogleApiSupport\Google.Apis.Core\Requests\RequestBuilder.cs" />
     <Content Include="GoogleApiSupport\Google.Apis.Core\Testing\VisibleForTestOnly.cs" />
-    <Content Include="Services\GoogleApis\CalendarClient.cs" />
     <Content Include="GoogleApiSupport\Google.Apis.Core\Json\NewtonsoftJsonSerializer.cs" />
     <Content Include="GoogleApiSupport\Google.Apis.Core\Json\IJsonSerializer.cs" />
     <Content Include="GoogleApiSupport\Google.Apis.Core\Discovery\Features.cs" />
@@ -1249,6 +1248,13 @@
     <Content Include="GoogleApiSupport\Google.Apis.Core\Http\ConfigurableHttpClient.cs" />
     <Content Include="GoogleApiSupport\Google.Apis.Core\Http\IHttpClientFactory.cs" />
     <Content Include="Services\GoogleApis\Google.Apis.Calendar.v3.cs" />
+    <Content Include="GoogleApiSupport\Google.Apis.Auth\OAuth2\Requests\RefreshTokenRequest.cs" />
+    <Content Include="GoogleApiSupport\Google.Apis.Auth\OAuth2\AuthorizationCodeInstalledApp.cs" />
+    <Content Include="GoogleApiSupport\Google.Apis.Auth\OAuth2\Responses\TokenResponse.cs" />
+    <Content Include="GoogleApiSupport\Google.Apis.Auth\OAuth2\UserCredential.cs" />
+    <Content Include="GoogleApiSupport\Google.Apis.Auth\OAuth2\Web\AuthWebUtility.cs" />
+    <Content Include="GoogleApiSupport\Google.Apis.Auth\OAuth2\Web\AuthorizationCodeWebApp.cs" />
+    <Content Include="GoogleApiSupport\Google.Apis.Auth\OAuth2\Flows\IAuthorizationCodeFlow.cs" />
   </ItemGroup>
   <Import Project="../Yavsc.Abstract/Yavsc.Abstract.csproj" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

@@ -28,12 +28,18 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Util.Store;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
+using System.Collections.Generic;
+using System.Linq;
+using Google.Apis.Http;
+using Google.Apis.Services;
+using Microsoft.AspNet.Authentication.OAuth;
+using Microsoft.Data.Entity;
 
 namespace Yavsc.Services
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using Google.Apis.Services;
+    using System.Threading;
+    using Google.Apis.Auth.OAuth2.Flows;
+    using Newtonsoft.Json;
     using Yavsc.Helpers;
     using Yavsc.Models;
     using Yavsc.Models.Calendar;
@@ -43,164 +49,204 @@ namespace Yavsc.Services
     /// Google Calendar API client.
     /// </summary>
     public class CalendarManager : ICalendarManager
-	{
-        public class ExpiredTokenException : Exception {}
+    {
+        public class ExpiredTokenException : Exception { }
         protected static string scopeCalendar = "https://www.googleapis.com/auth/calendar";
         private string _ApiKey;
+        private IAuthorizationCodeFlow _flow;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-		private readonly UserManager<ApplicationUser> _userManager;
+        ApplicationDbContext _dbContext;
 
-		ApplicationDbContext _dbContext;
-		ILogger _logger;
+        IDataStore _dataStore;
+        ILogger _logger;
 
-		public CalendarManager(IOptions<GoogleAuthSettings> settings,
-		UserManager<ApplicationUser> userManager,
-		ApplicationDbContext dbContext,
-		ILoggerFactory loggerFactory)
-		{
+        public CalendarManager(IOptions<GoogleAuthSettings> settings,
+        UserManager<ApplicationUser> userManager,
+        ApplicationDbContext dbContext,
+        IDataStore dataStore,
+        ILoggerFactory loggerFactory)
+        {
             _ApiKey = settings.Value.ApiKey;
-			_userManager = userManager;
-			_dbContext = dbContext;
-			_logger = loggerFactory.CreateLogger<CalendarManager>();
-		}
+            _userManager = userManager;
+            _dbContext = dbContext;
+            _logger = loggerFactory.CreateLogger<CalendarManager>();
+            _dataStore = dataStore;
+            _flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+                {
+                    ClientSecrets = new ClientSecrets
+                    {
+                        ClientId = Startup.GoogleSettings.ClientId,
+                        ClientSecret = Startup.GoogleSettings.ClientSecret
+                    },
+                    Scopes = new[] { scopeCalendar },
+                    DataStore = dataStore
+                });
+			_logger.LogWarning($"Using Google data store from "+JsonConvert.SerializeObject(_dataStore));
+        }
 
-		/// <summary>
-		/// The get cal list URI.
-		/// </summary>
-		protected static string getCalListUri = "https://www.googleapis.com/calendar/v3/users/me/calendarList";
-		/// <summary>
-		/// The get cal entries URI.
-		/// </summary>
-		protected static string getCalEntriesUri = "https://www.googleapis.com/calendar/v3/calendars/{0}/events";
+        /// <summary>
+        /// The get cal list URI.
+        /// </summary>
+        protected static string getCalListUri = "https://www.googleapis.com/calendar/v3/users/me/calendarList";
+        /// <summary>
+        /// The get cal entries URI.
+        /// </summary>
+        protected static string getCalEntriesUri = "https://www.googleapis.com/calendar/v3/calendars/{0}/events";
 
-		/// <summary>
-		/// The date format.
-		/// </summary>
-		private static string dateFormat = "yyyy-MM-ddTHH:mm:ss";
+        /// <summary>
+        /// The date format.
+        /// </summary>
+        private static string dateFormat = "yyyy-MM-ddTHH:mm:ss";
 
-		/// <summary>
-		/// The time zone. TODO Fixme with machine time zone
-		/// </summary>
-		private string timeZone = "+01:00";
+        /// <summary>
+        /// The time zone. TODO Fixme with machine time zone
+        /// </summary>
+        private string timeZone = "+01:00";
 
-        private readonly IDataStore dataStore = new FileDataStore(GoogleWebAuthorizationBroker.Folder);
-
-
-
-		/// <summary>
-		/// Gets the calendar list.
-		/// </summary>
-		/// <returns>The calendars.</returns>
-		/// <param name="userId">Yavsc user id</param>
-		public async Task<CalendarList> GetCalendarsAsync (string userId)
-		{
-			var service = new CalendarService();
-
-            var listRequest = service.CalendarList.List();
-
-            return await listRequest.ExecuteAsync();
-		}
+        /// <summary>
+        /// Gets the calendar list.
+        /// </summary>
+        /// <returns>The calendars.</returns>
+        /// <param name="userId">Yavsc user id</param>
+        public async Task<CalendarList> GetCalendarsAsync(string userId, string pageToken)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new Exception("the user id is not specified");
+			var service = await CreateUserCalendarServiceAsync(userId);
+			CalendarListResource.ListRequest calListReq = service.CalendarList.List ();
+			calListReq.PageToken = pageToken;
+			return calListReq.Execute ();
+        }
 
 
-		private ServiceAccountCredential GetServiceAccountCredential()
-		{
-			var creds = GoogleHelpers.GetCredentialForApi(new string[]{scopeCalendar});
-            if (creds==null)
-              throw new InvalidOperationException("No credential");
-
-			return creds;
-		}
-		/// <summary>
-		/// Gets a calendar event list, between the given dates.
-		/// </summary>
-		/// <returns>The calendar.</returns>
-		/// <param name="calid">Calendar identifier.</param>
-		/// <param name="mindate">Mindate.</param>
-		/// <param name="maxdate">Maxdate.</param>
-		/// <param name="cred">credential string.</param>
-		public async Task<Events> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate)
-		{
-            var service = new CalendarService();
-
+        private ServiceAccountCredential GetServiceAccountCredential()
+        {
+            var creds = GoogleHelpers.GetCredentialForApi(new string[] { scopeCalendar });
+            if (creds == null)
+                throw new InvalidOperationException("No credential");
+            return creds;
+        }
+        /// <summary>
+        /// Gets a calendar event list, between the given dates.
+        /// </summary>
+        /// <returns>The calendar.</returns>
+        /// <param name="calid">Calendar identifier.</param>
+        /// <param name="mindate">Mindate.</param>
+        /// <param name="maxdate">Maxdate.</param>
+        /// <param name="cred">credential string.</param>
+        public async Task<Events> GetCalendarAsync(string calid, DateTime mindate, DateTime maxdate)
+        {
+            var service =  await GetServiceAsync();
             var listRequest = service.Events.List(calid);
             return await listRequest.ExecuteAsync();
-		}
-		public async Task<DateTimeChooserViewModel> CreateViewModelAsync(
-			string inputId,
-			string calid, DateTime mindate, DateTime maxdate)
-		{
-			if (calid ==null) return new DateTimeChooserViewModel {
-				InputId = inputId,
-				MinDate  = mindate,
-				MaxDate = maxdate
-			};
+        }
+        public async Task<DateTimeChooserViewModel> CreateViewModelAsync(
+            string inputId,
+            string calid, DateTime mindate, DateTime maxdate)
+        {
+            if (calid == null)
+                return new DateTimeChooserViewModel
+                {
+                    InputId = inputId,
+                    MinDate = mindate,
+                    MaxDate = maxdate
+                };
 
-			var eventList = await GetCalendarAsync(calid, mindate, maxdate);
-			List<Period> free = new List<Period> ();
-            List<Period> busy = new List<Period> ();
-            
+            var eventList = await GetCalendarAsync(calid, mindate, maxdate);
+            List<Period> free = new List<Period>();
+            List<Period> busy = new List<Period>();
+
             foreach (var ev in eventList.Items)
             {
                 DateTime start = ev.Start.DateTime.Value;
                 DateTime end = ev.End.DateTime.Value;
 
-                if (ev.Transparency == "transparent" )
+                if (ev.Transparency == "transparent")
                 {
 
-                    free.Add(new Period { Start =  start, End = end });
+                    free.Add(new Period { Start = start, End = end });
                 }
                 else busy.Add(new Period { Start = start, End = end });
             }
 
-			return new DateTimeChooserViewModel {
-				InputId = inputId,
-				MinDate  = mindate,
-				MaxDate = maxdate,
-				Free = free.ToArray(),
-				Busy = busy.ToArray(),
-				FreeDates = free.SelectMany( p => new string [] { p.Start.ToString("DD/mm/yyyy"), p.End.ToString("DD/mm/yyyy") }).Distinct().ToArray(),
-				BusyDates = busy.SelectMany( p => new string [] { p.Start.ToString("DD/mm/yyyy"), p.End.ToString("DD/mm/yyyy") }).Distinct().ToArray()
-			};
-		}
+            return new DateTimeChooserViewModel
+            {
+                InputId = inputId,
+                MinDate = mindate,
+                MaxDate = maxdate,
+                Free = free.ToArray(),
+                Busy = busy.ToArray(),
+                FreeDates = free.SelectMany(p => new string[] { p.Start.ToString("DD/mm/yyyy"), p.End.ToString("DD/mm/yyyy") }).Distinct().ToArray(),
+                BusyDates = busy.SelectMany(p => new string[] { p.Start.ToString("DD/mm/yyyy"), p.End.ToString("DD/mm/yyyy") }).Distinct().ToArray()
+            };
+        }
 
-/// <summary>
-/// Creates a event in a calendar
-/// <c>calendar.events.insert</c>
-/// </summary>
-/// <param name="calid"></param>
-/// <param name="startDate"></param>
-/// <param name="lengthInSeconds"></param>
-/// <param name="summary"></param>
-/// <param name="description"></param>
-/// <param name="location"></param>
-/// <param name="available"></param>
-/// <returns></returns>
+        /// <summary>
+        /// Creates a event in a calendar
+        /// <c>calendar.events.insert</c>
+        /// </summary>
+        /// <param name="calid"></param>
+        /// <param name="startDate"></param>
+        /// <param name="lengthInSeconds"></param>
+        /// <param name="summary"></param>
+        /// <param name="description"></param>
+        /// <param name="location"></param>
+        /// <param name="available"></param>
+        /// <returns></returns>
         public async Task<Event> CreateEventAsync(string calid, DateTime startDate, int lengthInSeconds, string summary, string description, string location, bool available)
-        {	
-			
-			if (string.IsNullOrWhiteSpace (calid))
-				throw new Exception ("the calendar identifier is not specified");
-			var creds = GetServiceAccountCredential();
-GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
-var computeService = new BaseClientService.Initializer()
-{
-        HttpClientInitializer = credential
-};
-computeService.ApiKey = Startup.GoogleSettings.ApiKey;
-computeService.ApplicationName = "Yavsc";
-computeService.Validate();
+        {
+
+            if (string.IsNullOrWhiteSpace(calid))
+                throw new Exception("the calendar identifier is not specified");
+            GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
+            var computeService = new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential
+            };
+            computeService.ApiKey = Startup.GoogleSettings.ApiKey;
+            computeService.ApplicationName = "Yavsc";
+            computeService.Validate();
 
             var service = new CalendarService();
-            Event ev = new Event {
+            Event ev = new Event
+            {
                 Start = new EventDateTime { DateTime = startDate },
                 End = new EventDateTime { DateTime = startDate.AddSeconds(lengthInSeconds) },
                 Summary = summary,
                 Description = description
             };
-            var insert = service.Events.Insert(ev,calid);
+            var insert = service.Events.Insert(ev, calid);
             var inserted = await insert.ExecuteAsync();
-            
+
             return inserted;
+        }
+
+        public async Task<CalendarService> GetServiceAsync()
+        {
+            GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
+            return new CalendarService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "Yavsc"
+            });
+        }
+
+		/// <summary>
+		/// Creates Google User Credential
+		/// </summary>
+		/// <param name="userId">Yavsc use id</param>
+		/// <returns></returns>
+        public async Task<CalendarService> CreateUserCalendarServiceAsync(string userId)
+        {
+            var login = await _dbContext.GetGoogleUserLoginAsync(userId);
+            var token = await _flow.LoadTokenAsync(login.ProviderKey, CancellationToken.None);
+            UserCredential cred = new UserCredential(_flow,login.ProviderKey,token);
+			return  new CalendarService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = cred,
+                ApplicationName = "Yavsc"
+            });
 		}
     }
 }

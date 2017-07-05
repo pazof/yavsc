@@ -27,6 +27,7 @@ namespace Yavsc
 {
     using System.Net;
     using Formatters;
+    using Google.Apis.Util.Store;
     using Microsoft.Extensions.Localization;
     using Models;
     using PayPal.Manager;
@@ -230,6 +231,7 @@ namespace Yavsc
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<IGoogleCloudMessageSender, AuthMessageSender>();
             services.AddTransient<IBillingService, BillingService>();
+            services.AddTransient<IDataStore, FileDataStore>( (sp) => new FileDataStore("googledatastore",false) );
             services.AddTransient<ICalendarManager, CalendarManager>();
              
             // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
@@ -347,7 +349,7 @@ namespace Yavsc
                 options.AutomaticAuthentication = false;
             });
 
-            ConfigureOAuthApp(app, SiteSetup);
+            ConfigureOAuthApp(app, SiteSetup, logger);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
             ConfigureWebSocketsApp(app, SiteSetup, env);
             ConfigureWorkflow(app, SiteSetup, logger);

@@ -33,10 +33,9 @@ namespace Yavsc.Helpers
     using Yavsc.Models.Calendar;
     using Google.Apis.Auth.OAuth2;
     using Microsoft.Data.Entity;
-    using Google.Apis.Auth.OAuth2.Flows;
     using Microsoft.AspNet.Identity.EntityFramework;
     using Yavsc.Services;
-    
+
     /// <summary>
     /// Google helpers.
     /// </summary>
@@ -86,24 +85,15 @@ namespace Yavsc.Helpers
         }
 
         public static async Task<IdentityUserLogin<string>> GetGoogleUserLoginAsync(
-            this UserManager<ApplicationUser> userManager, 
-            ApplicationDbContext context, 
+            this ApplicationDbContext context, 
             string yavscUserId)
         {
-            var user = await userManager.FindByIdAsync(yavscUserId);
+            var user = context.Users.FirstOrDefaultAsync(u=>u.Id==yavscUserId);
+            if (user==null) return null;
             var googleLogin = await context.UserLogins.FirstOrDefaultAsync(
                 x => x.UserId == yavscUserId && x.LoginProvider == "Google"
             );
             return googleLogin;
-        }
-        public static UserCredential GetGoogleCredential(string googleUserLoginKey)
-        {
-            if (string.IsNullOrEmpty(googleUserLoginKey))
-                throw new InvalidOperationException("No Google login");
-            var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer());
-            throw new NotImplementedException();
-            // TokenResponse resp = flow. ;
-            // return new UserCredential(flow, googleUserLoginKey, resp);
         }
 
         public static async Task<Period[]> GetFreeTime (this ICalendarManager manager, string calId, DateTime startDate, DateTime endDate) 
