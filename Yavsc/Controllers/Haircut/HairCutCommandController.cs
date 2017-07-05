@@ -248,10 +248,6 @@ Le client final: {clientFinal}
                 x => x.PerformerId == model.PerformerId
             );
             model.PerformerProfile = pro;
-            // FIXME Why!!
-            // ModelState.ClearValidationState("PerformerProfile.Avatar");
-            // ModelState.ClearValidationState("Client.Avatar");
-            // ModelState.ClearValidationState("ClientId");
 
             if (!model.Consent)
                 ModelState.AddModelError("Consent", "Vous devez accepter les conditions générales de vente de ce service");
@@ -259,29 +255,29 @@ Le client final: {clientFinal}
             if (ModelState.IsValid)
                 {
                     // Une prestation pour enfant ou homme inclut toujours la coupe.
-                    if (model.Prestation.Gender != HairCutGenders.Women)
-                        model.Prestation.Cut = true;
-                    if (model.Location!=null) {
-                        var existingLocation = await _context.Locations.FirstOrDefaultAsync( x=>x.Address == model.Location.Address
-                        && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude );
+                if (model.Prestation.Gender != HairCutGenders.Women)
+                    model.Prestation.Cut = true;
+                if (model.Location!=null) {
+                    var existingLocation = await _context.Locations.FirstOrDefaultAsync( x=>x.Address == model.Location.Address
+                    && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude );
 
-                        if (existingLocation!=null) {
-                            model.Location=existingLocation;
-                        }
-                        else _context.Attach<Location>(model.Location);
+                    if (existingLocation!=null) {
+                        model.Location=existingLocation;
                     }
-                    var existingPrestation = await _context.HairPrestation.FirstOrDefaultAsync( x=> model.PrestationId == x.Id );
+                    else _context.Attach<Location>(model.Location);
+                }
+                var existingPrestation = await _context.HairPrestation.FirstOrDefaultAsync( x=> model.PrestationId == x.Id );
 
-                    if (existingPrestation!=null) {
-                        model.Prestation = existingPrestation;
-                    }
-                    else _context.Attach<HairPrestation>(model.Prestation);
+                if (existingPrestation!=null) {
+                    model.Prestation = existingPrestation;
+                }
+                else _context.Attach<HairPrestation>(model.Prestation);
 
                 _context.HairCutQueries.Add(model);
-                await _context.SaveChangesAsync(uid);
                 var brusherProfile = await _context.BrusherProfile.SingleAsync(p=>p.UserId == pro.PerformerId);
                 model.Client = await  _context.Users.SingleAsync(u=>u.Id == model.ClientId);
                 model.SelectedProfile = brusherProfile;
+                await _context.SaveChangesAsync(uid);
                 var yaev = model.CreateNewHairCutQueryEvent(_localizer);
                 MessageWithPayloadResponse grep = null;
 

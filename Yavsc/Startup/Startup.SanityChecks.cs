@@ -29,7 +29,7 @@ namespace Yavsc
             if (appData == null)
             {
                 if (SiteSetup.DataDir == null) {
-                    SiteSetup.DataDir = "AppData";
+                    SiteSetup.DataDir = "AppData"+env.EnvironmentName;
                 } else logger.LogWarning("existing setting: "+SiteSetup.DataDir);
                     DirectoryInfo di = new DirectoryInfo(SiteSetup.DataDir);
                 if (!di.Exists)
