@@ -106,7 +106,10 @@
       </dd>
        <dt>@SR["Calendar"]</dt> 
       <dd> 
-          @SR[Model.HasDedicatedCalendar?"Yes":"No"]
+          @SR[Model.HasDedicatedCalendar?"Yes":"No"] 
+          @if (Model.HasDedicatedCalendar) { 
+             <text> : @Model.DedicatedCalendarId </text>
+          }
               [<a asp-action="SetGoogleCalendar">@SR["Select a Google calendar"]</a>]
       </dd>
        <dt>Credits:</dt> 

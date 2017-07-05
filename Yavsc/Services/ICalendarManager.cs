@@ -32,11 +32,11 @@ namespace Yavsc.Services
     /// </summary>
     public interface ICalendarManager {
 		Task<CalendarList> GetCalendarsAsync (string userId, string pageToken);
-		Task<Events> GetCalendarAsync  (string calid, DateTime mindate, DateTime maxdate);
+		Task<Events> GetCalendarAsync  (string calid, DateTime minDate, DateTime maxDate, string pageToken);
     Task<DateTimeChooserViewModel> CreateViewModelAsync(
 			string inputId,
 			string calid, DateTime mindate, DateTime maxdate);
-    Task<Event> CreateEventAsync(string calid, 
+    Task<Event> CreateEventAsync(string userId, string calid, 
     DateTime startDate, int lengthInSeconds, string summary, 
     string description, string location, bool available);
 	}

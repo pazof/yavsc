@@ -305,7 +305,7 @@ Le client final: {clientFinal}
                     if (pro.Performer.DedicatedGoogleCalendar != null && yaev.EventDate != null) {
                         _logger.LogInformation("Inserting an event in the calendar");
                         DateTime evdate  = yaev.EventDate ?? new DateTime();
-                        var result = await _calendarManager.CreateEventAsync(
+                        var result = await _calendarManager.CreateEventAsync(pro.Performer.Id,
                             pro.Performer.DedicatedGoogleCalendar,
                             evdate, 3600, yaev.Topic, yaev.Message,
                             yaev.Location?.Address, false
@@ -454,12 +454,12 @@ Le client final: {clientFinal}
                     
                     if (pro.Performer.DedicatedGoogleCalendar != null && yaev.EventDate != null) {
                         DateTime evdate  = yaev.EventDate ?? new DateTime();
-                    await _calendarManager.CreateEventAsync(
+                        await _calendarManager.CreateEventAsync(
+                            pro.Performer.Id,
                             pro.Performer.DedicatedGoogleCalendar,
                             evdate, 3600, yaev.Topic, yaev.Message,
                             yaev.Location?.ToString(), false
-                    );
-
+                        );
                     }
 
                     await _emailSender.SendEmailAsync(

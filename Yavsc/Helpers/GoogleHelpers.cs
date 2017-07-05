@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
 
 namespace Yavsc.Helpers
 {
@@ -35,6 +34,12 @@ namespace Yavsc.Helpers
     using Microsoft.Data.Entity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using Yavsc.Services;
+    using Newtonsoft.Json;
+    using Google.Apis.Services;
+    using Google.Apis.Compute.v1;
+
+
+
 
     /// <summary>
     /// Google helpers.
@@ -75,7 +80,7 @@ namespace Yavsc.Helpers
                 throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
             }
         }
-        public  static ServiceAccountCredential GetCredentialForApi(IEnumerable<string> scopes)
+        public  static ServiceAccountCredential OupsGetCredentialForApi(IEnumerable<string> scopes)
         {
 			var initializer = new ServiceAccountCredential.Initializer(Startup.GoogleSettings.Account.client_email);
             initializer = initializer.FromPrivateKey(Startup.GoogleSettings.Account.private_key);
@@ -84,6 +89,24 @@ namespace Yavsc.Helpers
             return credential;
         }
 
+        public static async Task<GoogleCredential> GetCredentialForApi(IEnumerable<string> scopes)
+        {
+            GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
+			var baseClientService = new BaseClientService.Initializer()
+				{
+					HttpClientInitializer = credential
+				};
+			Console.WriteLine (JsonConvert.SerializeObject (baseClientService));
+			var compute = new ComputeService(new BaseClientService.Initializer()
+				{
+					HttpClientInitializer = credential
+				});
+			if (credential.IsCreateScopedRequired)
+			{
+				credential = credential.CreateScoped(scopes);
+			}
+            return credential;
+        }
         public static async Task<IdentityUserLogin<string>> GetGoogleUserLoginAsync(
             this ApplicationDbContext context, 
             string yavscUserId)
@@ -98,7 +121,7 @@ namespace Yavsc.Helpers
 
         public static async Task<Period[]> GetFreeTime (this ICalendarManager manager, string calId, DateTime startDate, DateTime endDate) 
         {
-            var evlist = await manager.GetCalendarAsync(calId, startDate, endDate) ;
+            var evlist = await manager.GetCalendarAsync(calId, startDate, endDate, null) ;
             var result = evlist.Items
             .Where(
                 ev => ev.Transparency == "transparent"
