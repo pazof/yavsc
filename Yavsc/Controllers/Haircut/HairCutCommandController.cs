@@ -439,7 +439,7 @@ Le client final: {clientFinal}
                 if (pro.AcceptNotifications
                 && pro.AcceptPublicContact)
                 {
-                    if (pro.Performer.Devices.Count > 0) {
+                    if (pro.Performer.Devices?.Count > 0) {
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
                         grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
