@@ -125,28 +125,7 @@ namespace Yavsc.Models
 
         public DbSet<Service> Services { get; set; }
         public DbSet<Product> Products { get; set; }
-        public Task ClearTokensAsync()
-        {
-            Tokens.RemoveRange(this.Tokens);
-            SaveChanges(null);
-            return Task.FromResult(0);
-        }
-
-        public Task DeleteTokensAsync(string email)
-        {
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new ArgumentException("email MUST have a value");
-            }
-
-            var item = this.Tokens.FirstOrDefault(x => x.UserId == email);
-            if (item != null)
-            {
-                Tokens.Remove(item);
-                SaveChanges(email);
-            }
-            return Task.FromResult(0);
-        }
+        
 
         public Task<OAuth2Tokens> GetTokensAsync(string googleUserId)
         {

@@ -5,16 +5,16 @@
 }
 <form asp-action="SetGoogleCalendar">
 @{ var entryNum=0; }
-@foreach (var calendar in ViewBag.Calendars?.items)
+@foreach (var calendar in Model.Calendars.Items)
 {
     entryNum++;
-    @if (calendar.accessRole=="owner") {
+    @if (calendar.AccessRole=="owner") {
         <label >
-    <input type="radio" name="GoogleCalendarId" value="@calendar.id" id="cal@entryNum">
+    <input type="radio" name="GoogleCalendarId" value="@calendar.Id" id="cal@entryNum">
     
-        <span style="background-color: @calendar.backgroundColor; foreground-color: @calendar.foregroundColor;">
-            @calendar.summary </span>
-        <i>"@calendar.description"</i>
+        <span style="background-color: @calendar.BackgroundColor; foreground-color: @calendar.ForegroundColor;">
+            @calendar.Summary </span>
+        <i>"@calendar.Description"</i>
     </label>
     
     }

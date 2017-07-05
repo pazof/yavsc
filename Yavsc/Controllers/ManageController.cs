@@ -10,7 +10,6 @@ using Microsoft.Extensions.OptionsModel;
 using Microsoft.Data.Entity;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using Microsoft.Extensions.Localization;
 using Yavsc.Models.Workflow;
 using Yavsc.Models.Identity;
@@ -272,20 +271,12 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SetGoogleCalendar(string returnUrl)
+        public async Task<IActionResult> SetGoogleCalendar(string returnUrl, string pageToken)
         {
-            try
-            {
-                ViewBag.Calendars = await _calendarManager.GetCalendarsAsync(User.GetUserId());
-            }
-            catch (WebException ex)
-            {
-                // a bug
-                _logger.LogError("Google Api error");
-                    _logger.LogError("Code: "+ex.HResult+"\n"+ ex.Message);
-                return RedirectToAction("LinkLogin", new { provider = "Google" });
-            }
-            return View(new SetGoogleCalendarViewModel { ReturnUrl = returnUrl });
+            return View(new SetGoogleCalendarViewModel { 
+                ReturnUrl = returnUrl, 
+                Calendars = await _calendarManager.GetCalendarsAsync(User.GetUserId(), pageToken) 
+                });
         }
 
         [HttpPost, ValidateAntiForgeryToken]

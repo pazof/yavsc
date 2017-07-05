@@ -15,9 +15,13 @@ using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.WebEncoders;
 using OAuth.AspNet.AuthServer;
 using OAuth.AspNet.Tokens;
+using Google.Apis.Util.Store;
 using Yavsc.Auth;
 using Yavsc.Extensions;
 using Yavsc.Models;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using Google.Apis.Auth.OAuth2.Responses;
 
 namespace Yavsc
 {
@@ -87,7 +91,7 @@ namespace Yavsc
             //
         }
         private void ConfigureOAuthApp(IApplicationBuilder app,
-         SiteSettings settingsOptions)
+         SiteSettings settingsOptions, ILogger logger)
         {
 
             app.UseIdentity();
@@ -144,9 +148,18 @@ namespace Yavsc
                                {
                                    var gcontext = context as GoogleOAuthCreatingTicketContext;
                                    context.Identity.AddClaim(new Claim(YavscClaimTypes.GoogleUserId, gcontext.GoogleUserId));
-                                   var service =
-                                   serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-                                   await service.StoreTokenAsync(gcontext.GoogleUserId, context.TokenResponse);
+                                   var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                                   await dbContext.StoreTokenAsync(gcontext.GoogleUserId, context.TokenResponse);
+                                   var store = serviceScope.ServiceProvider.GetService<IDataStore>();
+
+                                   await store.StoreAsync(gcontext.GoogleUserId, new TokenResponse { 
+                                       AccessToken = gcontext.TokenResponse.AccessToken,
+                                       RefreshToken = gcontext.TokenResponse.RefreshToken,
+                                       TokenType = gcontext.TokenResponse.TokenType,
+                                        ExpiresInSeconds = int.Parse(gcontext.TokenResponse.ExpiresIn), 
+                                        IssuedUtc = DateTime.Now
+                                       });
+                                   
                                }
                            }
                        }
