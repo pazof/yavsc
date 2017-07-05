@@ -112,11 +112,14 @@
           }
               [<a asp-action="SetGoogleCalendar">@SR["Select a Google calendar"]</a>]
       </dd>
+      <environment names="Development">
        <dt>Credits:</dt> 
       <dd> 
           @(Model.Balance?.Credits ?? 0) &euro;
               [<a asp-action="Credits">@SR["Manage"]</a>]
       </dd>
+      </environment>
+
       <dt>Usage disque</dt>
       <dd>
           @if (Model.DiskQuota>0)
