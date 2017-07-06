@@ -45,6 +45,7 @@ namespace Yavsc.Models.Payment {
 
         public string State { get; set; }
 
+        public bool IsOk() { return State == "SUCCESS"; }
         public virtual List<HyperLink> Links { get; set; }
     }
 }

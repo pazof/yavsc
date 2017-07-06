@@ -20,9 +20,10 @@ namespace Yavsc.Helpers
             return bill;
          }
 
-         public static FileInfo GetBillInfo(string billingcode, long id)
+         public static FileInfo GetBillInfo(string billingcode, long id, bool acquitted = false)
          {
-             var filename = $"facture-{billingcode}-{id}.pdf";
+             var suffix = acquitted ? "-ack":null;
+             var filename = $"facture-{billingcode}-{id}{suffix}.pdf";
             return new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
          }
     }

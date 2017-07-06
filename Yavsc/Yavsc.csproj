@@ -1202,6 +1202,11 @@
     <Content Include="Helpers\BillingHelpers.cs" />
     <Content Include="ApiControllers\BillingController.cs" />
     <Content Include="Models\Payment\PaypalPayment.cs" />
+    <Content Include="ViewModels\PayPal\PaymentInfo.cs" />
+    <Content Include="Helpers\PayPalHelpers.cs" />
+    <Content Include="Views\Shared\DisplayTemplates\HairCutQuery.cshtml" />
+    <Content Include="Views\Shared\Components\PayPalButton\Default.cshtml" />
+    <Content Include="wwwroot\fonts\glyphicons-halflings-regular.svg" />
   </ItemGroup>
   <Import Project="../Yavsc.Abstract/Yavsc.Abstract.csproj" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
