@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using Yavsc.Billing;
 using Yavsc.Models.Billing;
@@ -17,6 +18,12 @@ namespace Yavsc.Helpers
             string bill = string.Join("\n", query.GetBillItems().Select(l=> $"{l.Name} {l.Description} : {l.UnitaryCost} € " + ((l.Count != 1) ? "*"+l.Count.ToString() : ""))) +
                 $"\n\nTotal: {total}";
             return bill;
+         }
+
+         public static FileInfo GetBillInfo(string billingcode, long id)
+         {
+             var filename = $"facture-{billingcode}-{id}.pdf";
+            return new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
          }
     }
 }

@@ -64,11 +64,9 @@ namespace Yavsc.ApiControllers
                 return new ChallengeResult();
             }
  
-            var filename = $"facture-{billingCode}-{id}.pdf";
-
-            FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
+            var fi = BillingHelpers.GetBillInfo(billingCode,id);
             if (!fi.Exists) return Ok(new { Error = "Not generated" });
-            return File(fi.OpenRead(), "application/x-pdf", filename); ;
+            return File(fi.OpenRead(), "application/x-pdf", fi.Name); 
         }
 
         [HttpGet("facture-{billingCode}-{id}.tex"), Authorize]
