@@ -13,7 +13,12 @@
         </text>
     }
     <text> : 
-    </text><a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.Regularisation.CreationToken">@Model.Regularisation.CreationToken</a>
+
+    </text>
+      <label>
+      <input type="checkbox" checked="@Model.Regularisation.IsOk()" disabled/> 
+      <a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.Regularisation.CreationToken">@Model.Regularisation.CreationToken</a>
+      </label>
 
 } else {
 <div id="paypalzone"></div>

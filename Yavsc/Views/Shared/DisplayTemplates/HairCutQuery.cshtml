@@ -3,7 +3,7 @@
     var paid = false;
     if (Model.PaymentId!=null) {
         if (Model.Regularisation!=null) {
-            if (Model.Regularisation.IsSuccess()) {
+            if (Model.Regularisation.IsOk()) {
                 paid=true;
             } 
         }

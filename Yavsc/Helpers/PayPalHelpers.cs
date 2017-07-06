@@ -170,8 +170,5 @@ namespace Yavsc.Helpers
             };
         }
 
-        public static bool IsSuccess(this PayPalPayment info) {
-            return info.State == PayPal.PayPalAPIInterfaceService.Model.PaymentStatusCodeType.COMPLETED.ToString();
-         }
     }
 }
