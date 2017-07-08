@@ -1207,6 +1207,8 @@
     <Content Include="Views\Shared\DisplayTemplates\HairCutQuery.cshtml" />
     <Content Include="Views\Shared\Components\PayPalButton\Default.cshtml" />
     <Content Include="wwwroot\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Views\Shared\Components\Bill\Bill_tex.cshtml" />
+    <Content Include="ViewComponents\BillViewComponent.cs" />
   </ItemGroup>
   <Import Project="../Yavsc.Abstract/Yavsc.Abstract.csproj" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
