@@ -18,6 +18,7 @@ namespace Yavsc
         /// </summary>
         public static List<Type> ProfileTypes = new List<Type>();
         public static List<PropertyInfo> UserSettings = new List<PropertyInfo>();
+
         public static Dictionary<string,Func<ApplicationDbContext,long,IBillable>> Billing =
         new Dictionary<string,Func<ApplicationDbContext,long,IBillable>> ();
 
@@ -73,15 +74,15 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
             Billing.Add("Brush", new Func<ApplicationDbContext,long,IBillable>
             ( ( db, id) => 
             {
-              var query = db.HairCutQueries.Include(q=>q.Prestation).Single(q=>q.Id == id)  ; 
+              var query = db.HairCutQueries.Include(q=>q.Prestation).Include(q=>q.Regularisation).Single(q=>q.Id == id)  ; 
               query.SelectedProfile = db.BrusherProfile.Single(b=>b.UserId == query.PerformerId);
               return query;
             })) ;
 
             Billing.Add("MBrush",new Func<ApplicationDbContext,long,IBillable>
-            ( (db, id) =>  db.HairMultiCutQueries.Single(q=>q.Id == id)));
+            ( (db, id) =>  db.HairMultiCutQueries.Include(q=>q.Regularisation).Single(q=>q.Id == id)));
             Billing.Add("Rdv", new Func<ApplicationDbContext,long,IBillable>
-            ( (db, id) =>  db.RdvQueries.Single(q=>q.Id == id)));
+            ( (db, id) =>  db.RdvQueries.Include(q=>q.Regularisation).Single(q=>q.Id == id)));
         }
         public static System.Reflection.Assembly OnYavscResourceResolve(object sender, ResolveEventArgs ev)
         {

@@ -15,12 +15,14 @@
     <text> : 
 
     </text>
-      <label>
-      <input type="checkbox" checked="@Model.Regularisation.IsOk()" disabled/> 
+      <label>@Model.GetIsAcquitted()
+      <input type="checkbox" checked="@Model.GetIsAcquitted()" disabled/> 
       <a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.Regularisation.CreationToken">@Model.Regularisation.CreationToken</a>
       </label>
 
-} else {
+} 
+
+@if (!Model.GetIsAcquitted()) {
 <div id="paypalzone"></div>
 <script>
 var CREATE_PAYMENT_URL = '@ViewBag.CreatePaymentUrl';

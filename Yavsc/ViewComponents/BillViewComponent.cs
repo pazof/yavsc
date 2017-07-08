@@ -27,14 +27,14 @@ namespace Yavsc.ViewComponents
             logger = loggerFactory.CreateLogger<BillViewComponent>();
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string code, IBillable billable, OutputFormat format, bool asBill, bool acquitted)
+        public async Task<IViewComponentResult> InvokeAsync(string code, IBillable billable, OutputFormat format, bool asBill)
         {
             var di = new DirectoryInfo(Startup.SiteSetup.UserFiles.Bills); 
             var dia = new DirectoryInfo(Startup.SiteSetup.UserFiles.Avatars); 
             ViewBag.BillsDir = di.FullName;
             ViewBag.AvatarsDir = dia.FullName;
             ViewBag.AsBill = asBill; // vrai pour une facture, sinon, c'est un devis
-            ViewBag.Acquitted = acquitted;
+            ViewBag.Acquitted = billable.GetIsAcquitted();
 
             ViewBag.BillingCode = code;
             var client = await dbContext.Users
@@ -81,9 +81,10 @@ namespace Yavsc.ViewComponents
                             Temp = Startup.Temp,
                             TeXSource = tex, 
                             DestDir = Startup.UserBillsDirName,
-                            BaseFileName = $"facture-{code}-{billable.Id}"
+                            BaseFileName = billable.GetFileBaseName()
                         } );
             }
+            ViewBag.BillFileInfo =  billable.GetBillInfo();
             return View("Default",billable);
            
         }
