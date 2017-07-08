@@ -19,5 +19,9 @@ namespace Yavsc.Billing
 
         DateTime? ValidationDate { get; }
 
+        bool GetIsAcquitted ();
+
+        string GetFileBaseName ();
+
     }
 }

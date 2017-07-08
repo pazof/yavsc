@@ -1,8 +1,7 @@
 
 @model IBillable
 <div class="bill">
-@{ var fi = BillingHelpers.GetBillInfo(ViewBag.BillingCode,Model.Id); }
-@if (fi.Exists) {
+@if (ViewBag.BillFileInfo.Exists) {
 <a class="btn btn-link" href="~/api/bill/facture-@(ViewBag.BillingCode)-@(Model.Id).pdf" >La facture au format Pdf</a>
 } else {
 <form action="~/api/bill/genpdf/@ViewBag.BillingCode/@Model.Id" method="POST">

@@ -78,6 +78,19 @@ namespace Yavsc.Models.Billing
         public virtual Activity Context  { get; set ; }
 
         public abstract System.Collections.Generic.List<IBillItem> GetBillItems();
+
+        public bool GetIsAcquitted()
+        {
+            return Regularisation?.IsOk() ?? false;
+        }
+
+        public string GetFileBaseName()
+        {
+            string type = GetType().Name;
+            string ack = GetIsAcquitted() ? "-ack" : null;
+            return $"facture-{ActivityCode}-{type}-{Id}{ack}";
+        }
+
         public string PaymentId { get; set; }
 
         [ForeignKey("PaymentId"), Display(Name = "Acquittement de la facture")]

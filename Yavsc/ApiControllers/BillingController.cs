@@ -64,7 +64,8 @@ namespace Yavsc.ApiControllers
                 return new ChallengeResult();
             }
  
-            var fi = BillingHelpers.GetBillInfo(billingCode,id);
+            var fi = bill.GetBillInfo();
+
             if (!fi.Exists) return Ok(new { Error = "Not generated" });
             return File(fi.OpenRead(), "application/x-pdf", fi.Name); 
         }
@@ -85,19 +86,20 @@ namespace Yavsc.ApiControllers
                 return new ChallengeResult();
             }
             Response.ContentType = "text/x-tex";
-            return ViewComponent("Bill",new object[] {  billingCode, bill , OutputFormat.LaTeX, true, false });
+            return ViewComponent("Bill",new object[] {  billingCode, bill , OutputFormat.LaTeX, true });
         }
 
         [HttpPost("genpdf/{billingCode}/{id}")]
         public async Task<IActionResult> GeneratePdf(string billingCode, long id)
         {
             var bill = await billingService.GetBillAsync(billingCode, id);
-
+           
             if (bill==null) {
                logger.LogCritical ( $"# not found !! {id} in {billingCode}");
                return this.HttpNotFound();
             }
-            return ViewComponent("Bill",new object[] { billingCode, bill, OutputFormat.Pdf, true, false } );
+             logger.LogWarning("Got bill ack:"+bill.GetIsAcquitted().ToString());
+            return ViewComponent("Bill",new object[] { billingCode, bill, OutputFormat.Pdf, true } );
         }
 
 
