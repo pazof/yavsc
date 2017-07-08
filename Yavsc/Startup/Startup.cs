@@ -205,6 +205,8 @@ namespace Yavsc
                     .Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
                 config.Filters.Add(new ProducesAttribute("application/json"));
+                config.ModelBinders.Add(new MyDateTimeModelBinder());
+                config.ModelBinders.Add(new MyDecimalModelBinder());
                 config.OutputFormatters.Add(new PdfFormatter());
 
             }).AddFormatterMappings(
@@ -245,6 +247,7 @@ namespace Yavsc
 
 
         public static IStringLocalizer GlobalLocalizer { get; private set; }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
         IOptions<SiteSettings> siteSettings,
@@ -338,6 +341,7 @@ namespace Yavsc
                     else throw ex;
                 }
             }
+          
             // before fixing the security protocol, let beleive our lib it's done with it.
             var cxmgr = ConnectionManager.Instance;
             // then, fix it.
@@ -361,6 +365,7 @@ namespace Yavsc
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
             });
             logger.LogInformation("LocalApplicationData: "+Environment.GetFolderPath(SpecialFolder.LocalApplicationData, SpecialFolderOption.DoNotVerify));
            
