@@ -92,16 +92,6 @@ namespace Yavsc.Services
         protected static string getCalEntriesUri = "https://www.googleapis.com/calendar/v3/calendars/{0}/events";
 
         /// <summary>
-        /// The date format.
-        /// </summary>
-        private static string dateFormat = "yyyy-MM-ddTHH:mm:ss";
-
-        /// <summary>
-        /// The time zone. TODO Fixme with machine time zone
-        /// </summary>
-        private string timeZone = "+01:00";
-
-        /// <summary>
         /// Gets the calendar list.
         /// </summary>
         /// <returns>The calendars.</returns>
