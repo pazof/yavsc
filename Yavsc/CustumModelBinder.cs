@@ -11,7 +11,6 @@ namespace Yavsc
 
         public async Task<ModelBindingResult> BindModelAsync(ModelBindingContext bindingContext)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(bindingContext));
             ValueProviderResult valueResult = bindingContext.ValueProvider
             .GetValue(bindingContext.ModelName);
             decimal actualValue ;
@@ -29,10 +28,8 @@ namespace Yavsc
     {
         public async Task<ModelBindingResult> BindModelAsync(ModelBindingContext bindingContext)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(bindingContext.ValueProvider));
            ValueProviderResult valueResult = bindingContext.ValueProvider
             .GetValue(bindingContext.ModelName);
-            Console.WriteLine(JsonConvert.SerializeObject(valueResult));
             DateTime actualValue ;
             ModelStateEntry modelState = new ModelStateEntry();
             CultureInfo[] cultures = { new CultureInfo("en-US"), 
