@@ -181,8 +181,8 @@
             var pos = loc.geometry.location;
             var lat = new Number(pos.lat);
             var lng = new Number(pos.lng);
-            $('#' + config.latId).val(lat);
-            $('#' + config.longId).val(lng);
+            $('#' + config.latId).val(lat.toLocaleString('en'));
+            $('#' + config.longId).val(lng.toLocaleString('en'));
             gmap.setCenter(pos);
             if (marker) {
                 marker.setMap(null);
@@ -196,8 +196,8 @@
             google.maps.event.addListener(marker, 'dragend', function () {
                 // TODO reverse geo code
                 var pos = marker.getPosition();
-                $('#' + config.latId).val(pos.lat);
-                $('#' + config.longId).val(pos.lng);
+                $('#' + config.latId).val(pos.lat.toLocaleString('en'));
+                $('#' + config.longId).val(pos.lng.toLocaleString('en'));
             });
             $('#' + config.addrId).valid();
             $('#' + config.addrValidationId).empty();

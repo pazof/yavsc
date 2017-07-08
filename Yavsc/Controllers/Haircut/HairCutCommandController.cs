@@ -254,30 +254,36 @@ Le client final: {clientFinal}
 
             if (ModelState.IsValid)
                 {
-                    // Une prestation pour enfant ou homme inclut toujours la coupe.
-                if (model.Prestation.Gender != HairCutGenders.Women)
-                    model.Prestation.Cut = true;
-                if (model.Location!=null) {
-                    var existingLocation = await _context.Locations.FirstOrDefaultAsync( x=>x.Address == model.Location.Address
-                    && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude );
 
-                    if (existingLocation!=null) {
-                        model.Location=existingLocation;
+                using (var trans = _context.Database.BeginTransaction()) {
+                                        // Une prestation pour enfant ou homme inclut toujours la coupe.
+                    if (model.Prestation.Gender != HairCutGenders.Women)
+                        model.Prestation.Cut = true;
+                    if (model.Location!=null) {
+                        var existingLocation = await _context.Locations.FirstOrDefaultAsync( x=>x.Address == model.Location.Address
+                        && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude );
+
+                        if (existingLocation!=null) {
+                            model.Location=existingLocation;
+                        }
+                        else _context.Attach<Location>(model.Location);
                     }
-                    else _context.Attach<Location>(model.Location);
-                }
-                var existingPrestation = await _context.HairPrestation.FirstOrDefaultAsync( x=> model.PrestationId == x.Id );
+                    var existingPrestation = await _context.HairPrestation.FirstOrDefaultAsync( x=> model.PrestationId == x.Id );
 
-                if (existingPrestation!=null) {
-                    model.Prestation = existingPrestation;
-                }
-                else _context.Attach<HairPrestation>(model.Prestation);
+                    if (existingPrestation!=null) {
+                        model.Prestation = existingPrestation;
+                    }
+                    else _context.Attach<HairPrestation>(model.Prestation);
 
-                _context.HairCutQueries.Add(model);
-                var brusherProfile = await _context.BrusherProfile.SingleAsync(p=>p.UserId == pro.PerformerId);
-                model.Client = await  _context.Users.SingleAsync(u=>u.Id == model.ClientId);
-                model.SelectedProfile = brusherProfile;
-                await _context.SaveChangesAsync(uid);
+                    _context.HairCutQueries.Add(model);
+                    var brusherProfile = await _context.BrusherProfile.SingleAsync(p=>p.UserId == pro.PerformerId);
+                    model.Client = await  _context.Users.SingleAsync(u=>u.Id == model.ClientId);
+                    model.SelectedProfile = brusherProfile;
+                
+                    await _context.SaveChangesAsync(uid);
+                    trans.Commit();
+                }
+
                 var yaev = model.CreateNewHairCutQueryEvent(_localizer);
                 MessageWithPayloadResponse grep = null;
 
@@ -326,7 +332,6 @@ Le client final: {clientFinal}
                 var items = model.GetBillItems();
                 var addition = items.Addition();
                 ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
-
                 return View("CommandConfirmation",model);
             }
             ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);

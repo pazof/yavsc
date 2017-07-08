@@ -36,7 +36,6 @@ namespace Yavsc.Services
 {
     using System.Threading;
     using Google.Apis.Auth.OAuth2.Flows;
-    using Newtonsoft.Json;
     using Yavsc.Helpers;
     using Yavsc.Models;
     using Yavsc.Models.Calendar;
@@ -79,7 +78,6 @@ namespace Yavsc.Services
                     Scopes = new[] { scopeCalendar },
                     DataStore = dataStore
                 });
-			_logger.LogWarning($"Using Google data store from "+JsonConvert.SerializeObject(_dataStore));
         }
 
         /// <summary>
