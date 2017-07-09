@@ -14,6 +14,7 @@ namespace Yavsc
             ValueProviderResult valueResult = bindingContext.ValueProvider
             .GetValue(bindingContext.ModelName);
             decimal actualValue ;
+
             try {
                 actualValue = Decimal.Parse(valueResult.FirstValue,  System.Globalization.NumberStyles.AllowDecimalPoint);
                 return await ModelBindingResult.SuccessAsync(bindingContext.ModelName,actualValue);
@@ -32,7 +33,7 @@ namespace Yavsc
             .GetValue(bindingContext.ModelName);
             DateTime actualValue ;
             ModelStateEntry modelState = new ModelStateEntry();
-            
+                // DateTime are sent in the french format
                 if (DateTime.TryParse(valueResult.FirstValue,new CultureInfo("fr-FR"), DateTimeStyles.AllowInnerWhite, out actualValue))
                 {
                     return await ModelBindingResult.SuccessAsync(bindingContext.ModelName,actualValue);
