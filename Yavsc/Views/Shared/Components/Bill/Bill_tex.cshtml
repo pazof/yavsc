@@ -117,7 +117,7 @@
 
 % Logo de la société
 @if (from.Avatar != null) {
-<text>\includegraphics[height=60pt]{@(ViewBag.AvatarsDir)/@(from.UserName).png}  
+<text>\includegraphics[height=60pt]{@(ViewBag.AvatarsDir)/@(from.UserName.Replace(" ","\\ ")).png}  
 </text>
 } else { 
 <text>%\includegraphics{logo.png}

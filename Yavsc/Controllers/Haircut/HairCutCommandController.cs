@@ -262,8 +262,6 @@ Le client final: {clientFinal}
                             new HairTaintInstance { Taint = c }).ToList();
                     }
 
-
-
                     // Une prestation pour enfant ou homme inclut toujours la coupe.
                     if (model.Prestation.Gender != HairCutGenders.Women)
                         model.Prestation.Cut = true;
