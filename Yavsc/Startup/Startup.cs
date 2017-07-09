@@ -131,6 +131,7 @@ namespace Yavsc
 
                 options.RequestCultureProviders.Insert(0, new AcceptLanguageHeaderRequestCultureProvider());
                 options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
+                
 
             });
 
@@ -205,8 +206,8 @@ namespace Yavsc
                     .Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
                 config.Filters.Add(new ProducesAttribute("application/json"));
-                config.ModelBinders.Add(new MyDateTimeModelBinder());
-                config.ModelBinders.Add(new MyDecimalModelBinder());
+               // config.ModelBinders.Insert(0,new MyDateTimeModelBinder());
+               // config.ModelBinders.Insert(0,new MyDecimalModelBinder());
                 config.OutputFormatters.Add(new PdfFormatter());
 
             }).AddFormatterMappings(
@@ -357,7 +358,7 @@ namespace Yavsc
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
             ConfigureWebSocketsApp(app, SiteSetup, env);
             ConfigureWorkflow(app, SiteSetup, logger);
-            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"fr"));
+            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"en-US"));
             app.UseSession();
 
             app.UseMvc(routes =>

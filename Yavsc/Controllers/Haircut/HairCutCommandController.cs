@@ -55,7 +55,7 @@ namespace Yavsc.Controllers
             .Include(x => x.PerformerProfile.Performer.Devices)
             .Include(x => x.Regularisation)
             .SingleAsync(m => m.Id == id);
-            query.SelectedProfile = await _context.BrusherProfile.SingleAsync(b=>b.UserId == query.PerformerId);
+            query.SelectedProfile = await _context.BrusherProfile.SingleAsync(b => b.UserId == query.PerformerId);
             return query;
         }
         public async Task<IActionResult> ClientCancel(long id)
@@ -66,7 +66,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
             SetViewBagPaymentUrls(id);
-            return View (command);
+            return View(command);
         }
         public async Task<IActionResult> PaymentConfirmation([FromRoute] long id, string token, string PayerID)
         {
@@ -75,35 +75,35 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            var paymentInfo = await _context.ConfirmPayment( User.GetUserId(), PayerID, token );
+            var paymentInfo = await _context.ConfirmPayment(User.GetUserId(), PayerID, token);
             ViewData["paymentinfo"] = paymentInfo;
             command.Regularisation = paymentInfo.DbContent;
             command.PaymentId = token;
-            if (paymentInfo!=null)
-            if (paymentInfo.DetailsFromPayPal!=null)
-             if (paymentInfo.DetailsFromPayPal.Ack == AckCodeType.SUCCESS)
-                if (command.ValidationDate ==null)
-                    command.ValidationDate = DateTime.Now;
-            await _context.SaveChangesAsync (User.GetUserId());
+            if (paymentInfo != null)
+                if (paymentInfo.DetailsFromPayPal != null)
+                    if (paymentInfo.DetailsFromPayPal.Ack == AckCodeType.SUCCESS)
+                        if (command.ValidationDate == null)
+                            command.ValidationDate = DateTime.Now;
+            await _context.SaveChangesAsync(User.GetUserId());
             SetViewBagPaymentUrls(id);
-             if (command.PerformerProfile.AcceptPublicContact)
-                {
-                    var invoiceId = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.InvoiceID;
-                    var payerName = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Address.Name;
-                    var phone = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Address.Phone;
-                    var payerEmail = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Payer;
-                    var amount = string.Join(", ",
-                        paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PaymentDetails.Select(
-                            p=> $"{p.OrderTotal.value} {p.OrderTotal.currencyID}"));
-                    var gender = command.Prestation.Gender;
-                    var date = command.EventDate?.ToString("dd MM yyyy hh:mm");
-                    var lieu = command.Location.Address;
-                    string clientFinal = (gender == HairCutGenders.Women) ? _localizer["Women"] +
-                       " "+_localizer[command.Prestation.Length.ToString()] : _localizer[gender.ToString()] ;
-                    MessageWithPayloadResponse grep = null;
-                    var yaev = command.CreateEvent("PaymentConfirmation",
-                        this._localizer["PaymentConfirmation"],
-                        command.Client.GetSender(),
+            if (command.PerformerProfile.AcceptPublicContact)
+            {
+                var invoiceId = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.InvoiceID;
+                var payerName = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Address.Name;
+                var phone = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Address.Phone;
+                var payerEmail = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Payer;
+                var amount = string.Join(", ",
+                    paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PaymentDetails.Select(
+                        p => $"{p.OrderTotal.value} {p.OrderTotal.currencyID}"));
+                var gender = command.Prestation.Gender;
+                var date = command.EventDate?.ToString("dd MM yyyy hh:mm");
+                var lieu = command.Location.Address;
+                string clientFinal = (gender == HairCutGenders.Women) ? _localizer["Women"] +
+                   " " + _localizer[command.Prestation.Length.ToString()] : _localizer[gender.ToString()];
+                MessageWithPayloadResponse grep = null;
+                var yaev = command.CreateEvent("PaymentConfirmation",
+                    this._localizer["PaymentConfirmation"],
+                    command.Client.GetSender(),
 $@"# Paiment confirmé: {amount}
 
 Effectué par : {payerName} [{payerEmail}]
@@ -126,52 +126,55 @@ Le client final: {clientFinal}
 
 ");
 
-                    if (command.PerformerProfile.AcceptNotifications) {
-                        if (command.PerformerProfile.Performer.Devices.Count > 0) {
-                            var regids = command.PerformerProfile.Performer
-                            .Devices.Select(d => d.GCMRegistrationId);
-                            grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
-                        }
-                        // TODO setup a profile choice to allow notifications
-                        // both on mailbox and mobile
-                        // if (grep==null || grep.success<=0 || grep.failure>0)
-                        ViewBag.GooglePayload=grep;
-                  }
-
-                    ViewBag.EmailSent = await _emailSender.SendEmailAsync(
-                        _siteSettings, _smtpSettings,
-                        command.PerformerProfile.Performer.Email,
-                        yaev.Reason,
-                        $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
-                    );
-                }
-                else {
-                    // TODO if (AcceptProContact) try & find a bookmaker to send him this query
+                if (command.PerformerProfile.AcceptNotifications)
+                {
+                    if (command.PerformerProfile.Performer.Devices.Count > 0)
+                    {
+                        var regids = command.PerformerProfile.Performer
+                        .Devices.Select(d => d.GCMRegistrationId);
+                        grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings, regids, yaev);
+                    }
+                    // TODO setup a profile choice to allow notifications
+                    // both on mailbox and mobile
+                    // if (grep==null || grep.success<=0 || grep.failure>0)
+                    ViewBag.GooglePayload = grep;
                 }
 
-            ViewData ["Notify"] = new List<Notification> {
+                ViewBag.EmailSent = await _emailSender.SendEmailAsync(
+                    _siteSettings, _smtpSettings,
+                    command.PerformerProfile.Performer.Email,
+                    yaev.Reason,
+                    $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
+                );
+            }
+            else
+            {
+                // TODO if (AcceptProContact) try & find a bookmaker to send him this query
+            }
+
+            ViewData["Notify"] = new List<Notification> {
                 new Notification {
                     title= "Paiment PayPal",
                     body = "Votre paiment a été accépté."
                 }
-            } ;
-            return View ("Details",command);
+            };
+            return View("Details", command);
         }
 
         private void SetViewBagPaymentUrls(long id)
         {
-            ViewBag.CreatePaymentUrl = Request.ToAbsolute("api/haircut/createpayment/"+id);
+            ViewBag.CreatePaymentUrl = Request.ToAbsolute("api/haircut/createpayment/" + id);
             ViewBag.ExecutePaymentUrl = Request.ToAbsolute("api/payment/execute");
-            ViewBag.Urls=Request.GetPaymentUrls("HairCutCommand",id.ToString());
+            ViewBag.Urls = Request.GetPaymentUrls("HairCutCommand", id.ToString());
         }
         public async Task<IActionResult> ClientCancelConfirm(long id)
         {
-            var query = await GetQuery(id);if (query == null)
+            var query = await GetQuery(id); if (query == null)
             {
                 return HttpNotFound();
             }
             var uid = User.GetUserId();
-            if (query.ClientId!=uid)
+            if (query.ClientId != uid)
                 return new ChallengeResult();
             _context.HairCutQueries.Remove(query);
             await _context.SaveChangesAsync();
@@ -189,7 +192,7 @@ Le client final: {clientFinal}
             .Include(x => x.PerformerProfile)
             .Include(x => x.PerformerProfile.Performer)
             .Include(x => x.Location)
-            .Where(x=> x.ClientId == uid || x.PerformerId == uid)
+            .Where(x => x.ClientId == uid || x.PerformerId == uid)
             .ToListAsync());
         }
 
@@ -229,57 +232,65 @@ Le client final: {clientFinal}
             long[] longtaintIds = null;
             List<HairTaint> colors = null;
 
-            if (taintIds!=null) {
-                longtaintIds = taintIds.Split(',').Select(s=>long.Parse(s)).ToArray();
-                colors = _context.HairTaint.Where(t=> longtaintIds.Contains(t.Id)).ToList();
-                // a Prestation is required
-                model.Prestation.Taints = colors.Select(c =>
-                    new HairTaintInstance { Taint = c }).ToList();
-            }
             if (string.IsNullOrWhiteSpace(uid)
             || string.IsNullOrWhiteSpace(prid))
                 throw new InvalidOperationException(
                     "This method needs a PerformerId"
                 );
-            var pro = _context.Performers.Include(
-                u => u.Performer
-            ).Include(u => u.Performer.Devices)
-            .FirstOrDefault(
-                x => x.PerformerId == model.PerformerId
-            );
-            model.PerformerProfile = pro;
+
 
             if (!model.Consent)
                 ModelState.AddModelError("Consent", "Vous devez accepter les conditions générales de vente de ce service");
 
             if (ModelState.IsValid)
+            {
+                var pro = _context.Performers.Include(
+                               u => u.Performer
+                           ).Include(u => u.Performer.Devices)
+                           .FirstOrDefault(
+                               x => x.PerformerId == model.PerformerId
+                           );
+                using (var trans = _context.Database.BeginTransaction())
                 {
 
-                using (var trans = _context.Database.BeginTransaction()) {
-                                        // Une prestation pour enfant ou homme inclut toujours la coupe.
+                    if (taintIds != null)
+                    {
+                        longtaintIds = taintIds.Split(',').Select(s => long.Parse(s)).ToArray();
+                        colors = _context.HairTaint.Where(t => longtaintIds.Contains(t.Id)).ToList();
+                        // a Prestation is required
+                        model.Prestation.Taints = colors.Select(c =>
+                            new HairTaintInstance { Taint = c }).ToList();
+                    }
+
+
+
+                    // Une prestation pour enfant ou homme inclut toujours la coupe.
                     if (model.Prestation.Gender != HairCutGenders.Women)
                         model.Prestation.Cut = true;
-                    if (model.Location!=null) {
-                        var existingLocation = await _context.Locations.FirstOrDefaultAsync( x=>x.Address == model.Location.Address
-                        && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude );
+                    if (model.Location != null)
+                    {
+                        var existingLocation = await _context.Locations.FirstOrDefaultAsync(x => x.Address == model.Location.Address
+                       && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude);
 
-                        if (existingLocation!=null) {
-                            model.Location=existingLocation;
+                        if (existingLocation != null)
+                        {
+                            model.Location = existingLocation;
                         }
                         else _context.Attach<Location>(model.Location);
                     }
-                    var existingPrestation = await _context.HairPrestation.FirstOrDefaultAsync( x=> model.PrestationId == x.Id );
+                    var existingPrestation = await _context.HairPrestation.FirstOrDefaultAsync(x => model.PrestationId == x.Id);
 
-                    if (existingPrestation!=null) {
+                    if (existingPrestation != null)
+                    {
                         model.Prestation = existingPrestation;
                     }
                     else _context.Attach<HairPrestation>(model.Prestation);
 
                     _context.HairCutQueries.Add(model);
-                    var brusherProfile = await _context.BrusherProfile.SingleAsync(p=>p.UserId == pro.PerformerId);
-                    model.Client = await  _context.Users.SingleAsync(u=>u.Id == model.ClientId);
+                    var brusherProfile = await _context.BrusherProfile.SingleAsync(p => p.UserId == pro.PerformerId);
+                    model.Client = await _context.Users.SingleAsync(u => u.Id == model.ClientId);
                     model.SelectedProfile = brusherProfile;
-                
+
                     await _context.SaveChangesAsync(uid);
                     trans.Commit();
                 }
@@ -290,23 +301,25 @@ Le client final: {clientFinal}
                 if (pro.AcceptPublicContact)
                 {
 
-                    if (pro.AcceptNotifications) {
-                        if (pro.Performer.Devices.Count > 0) {
-                            var regids = model.PerformerProfile.Performer
-                            .Devices.Select(d => d.GCMRegistrationId);
-                            grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
+                    if (pro.AcceptNotifications)
+                    {
+                        if (pro.Performer.Devices.Count > 0)
+                        {
+                            var regids = pro.Performer.Devices.Select(d => d.GCMRegistrationId);
+                            grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings, regids, yaev);
                         }
                         // TODO setup a profile choice to allow notifications
                         // both on mailbox and mobile
                         // if (grep==null || grep.success<=0 || grep.failure>0)
-                        ViewBag.GooglePayload=grep;
-                        if (grep!=null)
-                        _logger.LogWarning($"Performer: {model.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
+                        ViewBag.GooglePayload = grep;
+                        if (grep != null)
+                            _logger.LogWarning($"Performer: {pro.Performer.UserName} success: {grep.success} failure: {grep.failure}");
                     }
                     // TODO if pro.AllowCalendarEventInsert
-                    if (pro.Performer.DedicatedGoogleCalendar != null && yaev.EventDate != null) {
+                    if (pro.Performer.DedicatedGoogleCalendar != null && yaev.EventDate != null)
+                    {
                         _logger.LogInformation("Inserting an event in the calendar");
-                        DateTime evdate  = yaev.EventDate ?? new DateTime();
+                        DateTime evdate = yaev.EventDate ?? new DateTime();
                         var result = await _calendarManager.CreateEventAsync(pro.Performer.Id,
                             pro.Performer.DedicatedGoogleCalendar,
                             evdate, 3600, yaev.Topic, yaev.Message,
@@ -314,53 +327,57 @@ Le client final: {clientFinal}
                         );
                         if (result.Id == null)
                             _logger.LogWarning("Something went wrong, calendar event not created");
-                    } 
+                    }
                     else _logger.LogWarning($"Calendar: {pro.Performer.DedicatedGoogleCalendar != null}\nEventDate: {yaev.EventDate != null}");
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
-                        model.PerformerProfile.Performer.Email,
+                        pro.Performer.Email,
                         yaev.Reason,
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
-                else {
+                else
+                {
                     // TODO if (AcceptProContact) try & find a bookmaker to send him this query
                 }
-                ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);
+                ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == model.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
                 var items = model.GetBillItems();
                 var addition = items.Addition();
-                ViewBag.Addition = addition.ToString("C",CultureInfo.CurrentUICulture);
-                return View("CommandConfirmation",model);
+                ViewBag.Addition = addition.ToString("C", CultureInfo.CurrentUICulture);
+                return View("CommandConfirmation", model);
             }
-            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == model.ActivityCode);
+            ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == model.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
-            SetViewData(model.ActivityCode,model.PerformerId,model.Prestation);
-            return View("HairCut",model);
+            SetViewData(model.ActivityCode, model.PerformerId, model.Prestation);
+            return View("HairCut", model);
         }
 
 
         public async Task<ActionResult> HairCut(string performerId, string activityCode)
         {
-            HairPrestation pPrestation=null;
-            var prestaJson = HttpContext.Session.GetString("HairCutPresta") ;
-            if (prestaJson!=null) {
+            HairPrestation pPrestation = null;
+            var prestaJson = HttpContext.Session.GetString("HairCutPresta");
+            if (prestaJson != null)
+            {
                 pPrestation = JsonConvert.DeserializeObject<HairPrestation>(prestaJson);
             }
-            else {
-                pPrestation = new HairPrestation {};
+            else
+            {
+                pPrestation = new HairPrestation { };
             }
 
             var uid = User.GetUserId();
             var user = await _userManager.FindByIdAsync(uid);
 
-            SetViewData(activityCode,performerId,pPrestation);
+            SetViewData(activityCode, performerId, pPrestation);
 
             var perfer = _context.Performers.Include(
-                    p=>p.Performer
-                ).Single(p=>p.PerformerId == performerId);
-            var result = new HairCutQuery {
+                    p => p.Performer
+                ).Single(p => p.PerformerId == performerId);
+            var result = new HairCutQuery
+            {
                 PerformerProfile = perfer,
                 PerformerId = perfer.PerformerId,
                 ClientId = uid,
@@ -371,25 +388,26 @@ Le client final: {clientFinal}
             };
             return View(result);
         }
-        private void SetViewData (string activityCode, string performerId, HairPrestation pPrestation )
+        private void SetViewData(string activityCode, string performerId, HairPrestation pPrestation)
         {
-            ViewBag.HairTaints = _context.HairTaint.Include(t=>t.Color);
-            ViewBag.HairTaintsItems = _context.HairTaint.Include(t=>t.Color).Select(
-                c=>
-                new SelectListItem {
-                    Text = c.Color.Name+" "+c.Brand,
+            ViewBag.HairTaints = _context.HairTaint.Include(t => t.Color);
+            ViewBag.HairTaintsItems = _context.HairTaint.Include(t => t.Color).Select(
+                c =>
+                new SelectListItem
+                {
+                    Text = c.Color.Name + " " + c.Brand,
                     Value = c.Id.ToString()
-                 }
+                }
             );
-            ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos),_localizer);
-            ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength),_localizer);
+            ViewBag.HairTechnos = EnumExtensions.GetSelectList(typeof(HairTechnos), _localizer);
+            ViewBag.HairLength = EnumExtensions.GetSelectList(typeof(HairLength), _localizer);
             ViewBag.Activity = _context.Activities.First(a => a.Code == activityCode);
-            ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders),_localizer,HairCutGenders.Women);
-            ViewBag.HairDressings = EnumExtensions.GetSelectList(typeof(HairDressings),_localizer);
-            ViewBag.ColorsClass = ( pPrestation.Tech == HairTechnos.Color
-            || pPrestation.Tech == HairTechnos.Mech ) ? "":"hidden";
-            ViewBag.TechClass = ( pPrestation.Gender == HairCutGenders.Women ) ? "":"hidden";
-            ViewData["PerfPrefs"] = _context.BrusherProfile.Single(p=>p.UserId == performerId);
+            ViewBag.Gender = EnumExtensions.GetSelectList(typeof(HairCutGenders), _localizer, HairCutGenders.Women);
+            ViewBag.HairDressings = EnumExtensions.GetSelectList(typeof(HairDressings), _localizer);
+            ViewBag.ColorsClass = (pPrestation.Tech == HairTechnos.Color
+            || pPrestation.Tech == HairTechnos.Mech) ? "" : "hidden";
+            ViewBag.TechClass = (pPrestation.Gender == HairCutGenders.Women) ? "" : "hidden";
+            ViewData["PerfPrefs"] = _context.BrusherProfile.Single(p => p.UserId == performerId);
         }
 
         [HttpPost, Authorize]
@@ -420,41 +438,44 @@ Le client final: {clientFinal}
             ModelState.MarkFieldSkipped("ClientId");
 
             if (ModelState.IsValid)
-                {
-                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address
-                && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
+            {
+                var existingLocation = _context.Locations.FirstOrDefault(x => x.Address == command.Location.Address
+               && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude);
 
-                if (existingLocation!=null) {
-                    command.Location=existingLocation;
+                if (existingLocation != null)
+                {
+                    command.Location = existingLocation;
                 }
                 else _context.Attach<Location>(command.Location);
 
                 _context.HairMultiCutQueries.Add(command, GraphBehavior.IncludeDependents);
                 _context.SaveChanges(User.GetUserId());
                 var brSettings = await _context.BrusherProfile.SingleAsync(
-                    bp=>bp.UserId == command.PerformerId
+                    bp => bp.UserId == command.PerformerId
                 );
-                var yaev = command.CreateEvent(_localizer,brSettings);
+                var yaev = command.CreateEvent(_localizer, brSettings);
                 MessageWithPayloadResponse grep = null;
 
                 if (pro.AcceptNotifications
                 && pro.AcceptPublicContact)
                 {
-                    if (pro.Performer.Devices?.Count > 0) {
+                    if (pro.Performer.Devices?.Count > 0)
+                    {
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
-                        grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings,regids,yaev);
+                        grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings, regids, yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile, and to allow calendar event insertion.
                     // if (grep==null || grep.success<=0 || grep.failure>0)
-                    ViewBag.GooglePayload=grep;
-                    if (grep!=null)
-                      _logger.LogWarning($"Performer: {command.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
-                    
-                    
-                    if (pro.Performer.DedicatedGoogleCalendar != null && yaev.EventDate != null) {
-                        DateTime evdate  = yaev.EventDate ?? new DateTime();
+                    ViewBag.GooglePayload = grep;
+                    if (grep != null)
+                        _logger.LogWarning($"Performer: {command.PerformerProfile.Performer.UserName} success: {grep.success} failure: {grep.failure}");
+
+
+                    if (pro.Performer.DedicatedGoogleCalendar != null && yaev.EventDate != null)
+                    {
+                        DateTime evdate = yaev.EventDate ?? new DateTime();
                         await _calendarManager.CreateEventAsync(
                             pro.Performer.Id,
                             pro.Performer.DedicatedGoogleCalendar,
@@ -466,17 +487,17 @@ Le client final: {clientFinal}
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
                         command.PerformerProfile.Performer.Email,
-                        yaev.Topic+" "+yaev.Sender,
+                        yaev.Topic + " " + yaev.Sender,
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
-                ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
+                ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == command.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
-                return View("CommandConfirmation",command);
+                return View("CommandConfirmation", command);
             }
-            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
+            ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == command.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
-            return View("HairCut",command);
+            return View("HairCut", command);
         }
     }
 }
