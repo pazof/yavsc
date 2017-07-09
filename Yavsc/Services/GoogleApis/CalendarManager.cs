@@ -114,7 +114,8 @@ namespace Yavsc.Services
         /// <param name="cred">credential string.</param>
         public async Task<Events> GetCalendarAsync(string calid, DateTime minDate, DateTime maxDate, string pageToken)
         {
-            var service =  await GetServiceAsync();
+            var service = await GetServiceAsync();
+
             var listRequest = service.Events.List(calid);
             listRequest.PageToken = pageToken;
             listRequest.TimeMin = minDate;
@@ -207,6 +208,15 @@ namespace Yavsc.Services
         {
             if (_service==null) {
                 GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
+                var baseClientService = new BaseClientService.Initializer()
+                    {
+                        HttpClientInitializer = credential
+                    };
+                if (credential.IsCreateScopedRequired)
+                {
+                    credential = credential.CreateScoped(new string [] { scopeCalendar });
+                }/* 
+                var credential = await GoogleHelpers.GetCredentialForApi(new string [] { scopeCalendar });
                 if (credential.IsCreateScopedRequired)
                 {
                     credential = credential.CreateScoped(scopeCalendar);
@@ -216,6 +226,12 @@ namespace Yavsc.Services
                     HttpClientInitializer = credential,
                     ApplicationName = "Yavsc"
                 });
+                }*/
+                _service = new CalendarService(new BaseClientService.Initializer()
+                    {
+                        HttpClientInitializer = credential,
+                        ApplicationName = "Yavsc"
+                    });
             }
             return _service;
         }
