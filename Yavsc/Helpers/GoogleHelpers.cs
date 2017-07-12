@@ -34,7 +34,6 @@ namespace Yavsc.Helpers
     using Microsoft.Data.Entity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using Yavsc.Services;
-    using Newtonsoft.Json;
     using Google.Apis.Services;
     using Google.Apis.Compute.v1;
 

@@ -244,14 +244,14 @@ Le client final: {clientFinal}
 
             if (ModelState.IsValid)
             {
+                _logger.LogInformation("le Model _est_ valide.");
                 var pro = _context.Performers.Include(
                                u => u.Performer
                            ).Include(u => u.Performer.Devices)
                            .FirstOrDefault(
                                x => x.PerformerId == model.PerformerId
                            );
-                using (var trans = _context.Database.BeginTransaction())
-                {
+                
 
                     if (taintIds != null)
                     {
@@ -286,19 +286,15 @@ Le client final: {clientFinal}
 
                     _context.HairCutQueries.Add(model);
                     var brusherProfile = await _context.BrusherProfile.SingleAsync(p => p.UserId == pro.PerformerId);
-                    model.Client = await _context.Users.SingleAsync(u => u.Id == model.ClientId);
-                    model.SelectedProfile = brusherProfile;
 
                     await _context.SaveChangesAsync(uid);
-                    trans.Commit();
-                }
+                _logger.LogInformation("la donnée _est_ sauvée.");
 
                 var yaev = model.CreateNewHairCutQueryEvent(_localizer);
                 MessageWithPayloadResponse grep = null;
 
                 if (pro.AcceptPublicContact)
                 {
-
                     if (pro.AcceptNotifications)
                     {
                         if (pro.Performer.Devices.Count > 0)
