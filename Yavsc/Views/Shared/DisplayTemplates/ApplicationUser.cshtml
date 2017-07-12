@@ -2,8 +2,7 @@
 
 @if (Model!=null) {
 <div class="userinfo">
-<h3>
-<img src="~/Avatars/@(Model.UserName).s.png" alt="" class="smalltofhol"> 
+<h3>@Component.Invoke("Avatar", Model.Id, ".s")
 @Model.UserName </h3>
 @if (Model.Posts!=null && Model.Posts.Count()>1) { <a asp-controller="Blogspot" asp-action="UserPosts" 
 asp-route-id="@Model.UserName" class="btn btn-primary">@SR["index de ses articles"]</a>
