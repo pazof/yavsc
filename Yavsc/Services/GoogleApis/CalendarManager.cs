@@ -183,14 +183,8 @@ namespace Yavsc.Services
 
             if (string.IsNullOrWhiteSpace(calid))
                 throw new Exception("the calendar identifier is not specified");
-            /* var computeService = new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential
-            };
-            computeService.ApiKey = Startup.GoogleSettings.ApiKey;
-            computeService.ApplicationName = "Yavsc"; */
             
-            var service = await CreateUserCalendarServiceAsync(userId);
+            var service = await GetServiceAsync();
             Event ev = new Event
             {
                 Start = new EventDateTime { DateTime = startDate },
