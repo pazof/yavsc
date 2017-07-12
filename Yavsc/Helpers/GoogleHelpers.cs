@@ -96,7 +96,6 @@ namespace Yavsc.Helpers
 				{
 					HttpClientInitializer = credential
 				};
-			Console.WriteLine (JsonConvert.SerializeObject (baseClientService));
 			var compute = new ComputeService(new BaseClientService.Initializer()
 				{
 					HttpClientInitializer = credential
