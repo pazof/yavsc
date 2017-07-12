@@ -154,10 +154,14 @@ namespace Yavsc.Helpers
                     {
                         errorMsg = $"Pdf generation failed with exit code: {p.ExitCode}";
                     }
+                    else 
+                    {
+                      fi.Delete();
+                      var di = new DirectoryInfo(Path.Combine(tempdir,$"{Model.BaseFileName}.t2d"));
+                      di.Delete(true);
+
+                    }
                 }
-                fi.Delete();
-                var di = new DirectoryInfo(Path.Combine(tempdir,$"{Model.BaseFileName}.t2d"));
-                di.Delete(true);
             }
             Model.Generated = fo.Exists;
             Model.GenerationErrorMessage = new HtmlString(errorMsg);
