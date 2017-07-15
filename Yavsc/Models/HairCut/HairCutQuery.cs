@@ -70,10 +70,8 @@ namespace Yavsc.Models.Haircut
 
             List<IBillItem> bill = new List<IBillItem>();
 
-#if DEBUG
-    if (this.Prestation==null) throw new InvalidOperationException("Prestation");
-    if (this.SelectedProfile==null) throw new InvalidOperationException("SelectedProfile");
-#endif
+    if (this.Prestation==null) throw new InvalidOperationException("Prestation property is null");
+    if (this.SelectedProfile==null) throw new InvalidOperationException("SelectedProfile property is null");
             // Le shampoing
             if (this.Prestation.Shampoo)
                 bill.Add(new CommandLine { Name = "Shampoing", Description="Shampoing", UnitaryCost = SelectedProfile.ShampooPrice });

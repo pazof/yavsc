@@ -229,6 +229,7 @@ Le client final: {clientFinal}
             // TODO utiliser Markdown-av+tags
             var uid = User.GetUserId();
             var prid = model.PerformerId;
+            var brusherProfile = await _context.BrusherProfile.SingleAsync(p => p.UserId == prid);
             long[] longtaintIds = null;
             List<HairTaint> colors = null;
 
@@ -246,52 +247,52 @@ Le client final: {clientFinal}
             {
                 _logger.LogInformation("le Model _est_ valide.");
                 var pro = _context.Performers.Include(
-                               u => u.Performer
-                           ).Include(u => u.Performer.Devices)
-                           .FirstOrDefault(
-                               x => x.PerformerId == model.PerformerId
-                           );
-                
+                     u => u.Performer
+                 ).Include(u => u.Performer.Devices)
+                 .FirstOrDefault(
+                     x => x.PerformerId == model.PerformerId
+                 );
+              
 
-                    if (taintIds != null)
-                    {
-                        longtaintIds = taintIds.Split(',').Select(s => long.Parse(s)).ToArray();
-                        colors = _context.HairTaint.Where(t => longtaintIds.Contains(t.Id)).ToList();
-                        // a Prestation is required
-                        model.Prestation.Taints = colors.Select(c =>
-                            new HairTaintInstance { Taint = c }).ToList();
-                    }
+                  if (taintIds != null)
+                  {
+                      longtaintIds = taintIds.Split(',').Select(s => long.Parse(s)).ToArray();
+                      colors = _context.HairTaint.Where(t => longtaintIds.Contains(t.Id)).ToList();
+                      // a Prestation is required
+                      model.Prestation.Taints = colors.Select(c =>
+                          new HairTaintInstance { Taint = c }).ToList();
+                  }
 
-                    // Une prestation pour enfant ou homme inclut toujours la coupe.
-                    if (model.Prestation.Gender != HairCutGenders.Women)
-                        model.Prestation.Cut = true;
-                    if (model.Location != null)
-                    {
-                        var existingLocation = await _context.Locations.FirstOrDefaultAsync(x => x.Address == model.Location.Address
-                       && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude);
+                  // Une prestation pour enfant ou homme inclut toujours la coupe.
+                  if (model.Prestation.Gender != HairCutGenders.Women)
+                      model.Prestation.Cut = true;
+                  if (model.Location != null)
+                  {
+                      var existingLocation = await _context.Locations.FirstOrDefaultAsync(x => x.Address == model.Location.Address
+                     && x.Longitude == model.Location.Longitude && x.Latitude == model.Location.Latitude);
 
-                        if (existingLocation != null)
-                        {
-                            model.Location = existingLocation;
-                        }
-                        else _context.Attach<Location>(model.Location);
-                    }
-                    var existingPrestation = await _context.HairPrestation.FirstOrDefaultAsync(x => model.PrestationId == x.Id);
+                      if (existingLocation != null)
+                      {
+                          model.Location = existingLocation;
+                      }
+                      else _context.Attach<Location>(model.Location);
+                  }
+                  var existingPrestation = await _context.HairPrestation.FirstOrDefaultAsync(x => model.PrestationId == x.Id);
 
-                    if (existingPrestation != null)
-                    {
-                        model.Prestation = existingPrestation;
-                    }
-                    else _context.Attach<HairPrestation>(model.Prestation);
+                  if (existingPrestation != null)
+                  {
+                      model.Prestation = existingPrestation;
+                  }
+                  else _context.Attach<HairPrestation>(model.Prestation);
 
-                    _context.HairCutQueries.Add(model);
-                    var brusherProfile = await _context.BrusherProfile.SingleAsync(p => p.UserId == pro.PerformerId);
+                  _context.HairCutQueries.Add(model);
 
-                    await _context.SaveChangesAsync(uid);
+                await _context.SaveChangesAsync(uid);
                 _logger.LogInformation("la donnée _est_ sauvée.");
 
-                var yaev = model.CreateNewHairCutQueryEvent(_localizer);
                 MessageWithPayloadResponse grep = null;
+                model.SelectedProfile = brusherProfile;
+                var yaev = model.CreateNewHairCutQueryEvent(_localizer);
 
                 if (pro.AcceptPublicContact)
                 {
@@ -344,6 +345,7 @@ Le client final: {clientFinal}
             }
             ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == model.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
+            model.SelectedProfile = brusherProfile;
             SetViewData(model.ActivityCode, model.PerformerId, model.Prestation);
             return View("HairCut", model);
         }
