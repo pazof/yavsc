@@ -2,7 +2,7 @@ DESTDIR=/srv/www/yavscpre
 PRODDESTDIR=/srv/www/yavsc
 ASPNET_ENV=Development
 CONFIGURATION=Release
-ASPNET_LOG_LEVEL=warn
+ASPNET_LOG_LEVEL=info #warn
 
 all: bin/$(CONFIGURATION)
 
