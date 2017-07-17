@@ -261,7 +261,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.6.3": {
+      "MarkdownDeep-av.NET/1.5.6": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -2834,7 +2834,7 @@
         ]
       }
     },
-    "DNX,Version=v4.5.1/win7-x86": {
+    "DNX,Version=v4.5.1/debian.9-x86": {
       "Antlr/3.4.1.9004": {
         "type": "package",
         "compile": {
@@ -3093,7 +3093,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.6.3": {
+      "MarkdownDeep-av.NET/1.5.6": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -4136,9 +4136,6 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
-        },
-        "native": {
-          "runtimes/win7-x86/native/libuv.dll": {}
         }
       },
       "Microsoft.AspNet.Server.WebListener/1.0.0-rc1-final": {
@@ -4343,12 +4340,7 @@
         }
       },
       "Microsoft.DiaSymReader.Native/1.5.0": {
-        "type": "package",
-        "native": {
-          "runtimes/win/native/Microsoft.DiaSymReader.Native.amd64.dll": {},
-          "runtimes/win/native/Microsoft.DiaSymReader.Native.arm.dll": {},
-          "runtimes/win/native/Microsoft.DiaSymReader.Native.x86.dll": {}
-        }
+        "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
@@ -5674,7 +5666,7 @@
         ]
       }
     },
-    "DNX,Version=v4.5.1/win7-x64": {
+    "DNX,Version=v4.5.1/debian.9-x64": {
       "Antlr/3.4.1.9004": {
         "type": "package",
         "compile": {
@@ -5933,7 +5925,7 @@
           "lib/net451/MailKit.dll": {}
         }
       },
-      "MarkdownDeep-av.NET/1.5.6.3": {
+      "MarkdownDeep-av.NET/1.5.6": {
         "type": "package",
         "compile": {
           "lib/net451/MarkdownDeep.dll": {}
@@ -6976,9 +6968,6 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
-        },
-        "native": {
-          "runtimes/win7-x64/native/libuv.dll": {}
         }
       },
       "Microsoft.AspNet.Server.WebListener/1.0.0-rc1-final": {
@@ -7183,12 +7172,7 @@
         }
       },
       "Microsoft.DiaSymReader.Native/1.5.0": {
-        "type": "package",
-        "native": {
-          "runtimes/win/native/Microsoft.DiaSymReader.Native.amd64.dll": {},
-          "runtimes/win/native/Microsoft.DiaSymReader.Native.arm.dll": {},
-          "runtimes/win/native/Microsoft.DiaSymReader.Native.x86.dll": {}
-        }
+        "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
@@ -8743,15 +8727,15 @@
         "MailKit.nuspec"
       ]
     },
-    "MarkdownDeep-av.NET/1.5.6.3": {
+    "MarkdownDeep-av.NET/1.5.6": {
       "type": "package",
-      "sha512": "ToMBBut9I6k5WV3lv42D7NTwqL67+JS5CNVgc89+3gVk8n1Y2faSbNOKv1qfYQ0Dt9591iAZyIGhBdnptxzX5A==",
+      "sha512": "/nK/Hzru+vAmNGX5tZtEkKxCqjUS8a/u1vZaQ4pEmlvm6C9IIJ5rWIJephDWVwbzi6eKdEeduU+xmPfLNXrQwQ==",
       "files": [
         "lib/dnxcore50/MarkdownDeep.dll",
+        "lib/MonoAndroid10/MarkdownDeep.dll",
         "lib/net451/MarkdownDeep.dll",
-        "lib/portable-net45+win8+wpa81+wp8/MarkdownDeep.dll",
-        "MarkdownDeep-av.NET.1.5.6.3.nupkg",
-        "MarkdownDeep-av.NET.1.5.6.3.nupkg.sha512",
+        "MarkdownDeep-av.NET.1.5.6.nupkg",
+        "MarkdownDeep-av.NET.1.5.6.nupkg.sha512",
         "MarkdownDeep-av.NET.nuspec"
       ]
     },
@@ -11014,7 +10998,7 @@
     "System.Reflection.Metadata/1.1.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "RLIE4sSt2zngMLuqM6YmxBH99mTumtT4DNZE4+msfEaInUP5iCLQT+BHPl+2cjSAP1pdALyAjLB8RtCB+WGGWQ==",
+      "sha512": "a8VsRm/B0Ik1o5FumSMWmpwbG7cvIIajAYhzTTy9VB9XItByJDQHGZkQTIAdsvVJ6MI5O3uH/lb0izgQDlDIWA==",
       "files": [
         "lib/dotnet5.2/System.Reflection.Metadata.dll",
         "lib/dotnet5.2/System.Reflection.Metadata.xml",
