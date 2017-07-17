@@ -36,6 +36,9 @@ namespace Yavsc.Helpers
     using Yavsc.Services;
     using Google.Apis.Services;
     using Google.Apis.Compute.v1;
+    using Google.Apis.Auth.OAuth2.Flows;
+    using Google.Apis.Util.Store;
+    using Google.Apis.Auth.OAuth2.Responses;
 
 
 
@@ -116,7 +119,14 @@ namespace Yavsc.Helpers
             );
             return googleLogin;
         }
-
+ public static async Task<UserCredential> GetGoogleCredential(IDataStore store, string googleUserLoginKey)
+       {
+           if (string.IsNullOrEmpty(googleUserLoginKey))
+               throw new InvalidOperationException("No Google login");
+            var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer());
+            var token = await store.GetAsync<TokenResponse>(googleUserLoginKey);
+            return new UserCredential(flow, googleUserLoginKey, token);
+        }
         public static async Task<Period[]> GetFreeTime (this ICalendarManager manager, string calId, DateTime startDate, DateTime endDate) 
         {
             var evlist = await manager.GetCalendarAsync(calId, startDate, endDate, null) ;
