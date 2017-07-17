@@ -273,10 +273,14 @@ namespace Yavsc.Controllers
 
         [HttpGet]
         public async Task<IActionResult> SetGoogleCalendar(string returnUrl, string pageToken)
+
         {
+            var calendar = await _calendarManager.GetCalendarsAsync(User.GetUserId(), pageToken);
+            if (calendar == null)
+              return new ChallengeResult();
             return View(new SetGoogleCalendarViewModel { 
                 ReturnUrl = returnUrl, 
-                Calendars = await _calendarManager.GetCalendarsAsync(User.GetUserId(), pageToken)
+                Calendars = calendar
                 });
         }
 

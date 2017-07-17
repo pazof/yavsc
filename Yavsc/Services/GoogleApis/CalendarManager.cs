@@ -238,6 +238,7 @@ namespace Yavsc.Services
         public async Task<CalendarService> CreateUserCalendarServiceAsync(string userId)
         {
             var login = await _dbContext.GetGoogleUserLoginAsync(userId);
+            if (login == null) return null;
             var token = await _flow.LoadTokenAsync(login.ProviderKey, CancellationToken.None);
             UserCredential cred = new UserCredential(_flow,login.ProviderKey,token);
 			return  new CalendarService(new BaseClientService.Initializer()
