@@ -228,6 +228,8 @@ Le client final: {clientFinal}
         {
             // TODO utiliser Markdown-av+tags
             var uid = User.GetUserId();
+            model.ClientId = uid;
+
             var prid = model.PerformerId;
             var brusherProfile = await _context.BrusherProfile.SingleAsync(p => p.UserId == prid);
             long[] longtaintIds = null;
@@ -288,10 +290,11 @@ Le client final: {clientFinal}
                   _context.HairCutQueries.Add(model);
 
                 await _context.SaveChangesAsync(uid);
-                _logger.LogInformation("la donnée _est_ sauvée.");
-
+                _logger.LogInformation("la donnée _est_ sauvée:");
                 MessageWithPayloadResponse grep = null;
                 model.SelectedProfile = brusherProfile;
+                model.Client = await _userManager.FindByIdAsync(uid);
+                _logger.LogInformation(JsonConvert.SerializeObject(model));
                 var yaev = model.CreateNewHairCutQueryEvent(_localizer);
 
                 if (pro.AcceptPublicContact)
@@ -346,6 +349,7 @@ Le client final: {clientFinal}
             ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == model.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
             model.SelectedProfile = brusherProfile;
+
             SetViewData(model.ActivityCode, model.PerformerId, model.Prestation);
             return View("HairCut", model);
         }
