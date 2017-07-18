@@ -39,6 +39,8 @@ namespace Yavsc.Helpers
     using Google.Apis.Auth.OAuth2.Flows;
     using Google.Apis.Util.Store;
     using Google.Apis.Auth.OAuth2.Responses;
+    using Google.Apis.Util;
+
 
 
 
@@ -125,6 +127,11 @@ namespace Yavsc.Helpers
                throw new InvalidOperationException("No Google login");
             var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer());
             var token = await store.GetAsync<TokenResponse>(googleUserLoginKey);
+            // token != null
+            var c = SystemClock.Default;
+            if (token.IsExpired(c)) {
+                token = await RefreshToken(token);
+            }
             return new UserCredential(flow, googleUserLoginKey, token);
         }
         public static async Task<Period[]> GetFreeTime (this ICalendarManager manager, string calId, DateTime startDate, DateTime endDate) 
