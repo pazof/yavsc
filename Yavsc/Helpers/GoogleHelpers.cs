@@ -143,6 +143,23 @@ namespace Yavsc.Helpers
             return result.ToArray();
         }
 
+        public static async Task<TokenResponse> RefreshToken(TokenResponse oldResponse)
+        {
+            string ep = " https://www.googleapis.com/oauth2/v4/token";
+            // refresh_token client_id client_secret grant_type=refresh_token
+            try {
+                using (var m = new SimpleJsonPostMethod(ep)) {
+                    return await m.Invoke<TokenResponse>(
+                        new { refresh_token= oldResponse.RefreshToken, client_id=Startup.GoogleSettings.ClientId,
+                         client_secret=Startup.GoogleSettings.ClientSecret,
+                          grant_type="refresh_token" }
+                    );
+                }
+            }
+            catch (Exception ex) {
+                throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
+            }
+        }
     }
 }
 
