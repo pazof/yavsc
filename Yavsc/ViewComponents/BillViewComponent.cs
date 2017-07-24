@@ -76,13 +76,17 @@ namespace Yavsc.ViewComponents
                     }
                     ViewComponentContext.ViewContext.Writer = oldWriter;
                     
-                    return this.View("Bill_pdf", 
-                        new PdfGenerationViewModel{ 
+                    var genrtrData = new PdfGenerationViewModel{ 
                             Temp = Startup.Temp,
                             TeXSource = tex, 
                             DestDir = Startup.UserBillsDirName,
                             BaseFileName = billable.GetFileBaseName()
-                        } );
+                        };
+                    if (genrtrData.GenerateEstimatePdf()) {
+                        return Json(new { Generated = genrtrData.BaseFileName+".pdf" });
+                    } else {
+                        return Json(new { Error = genrtrData.GenerationErrorMessage } );
+                    }
             }
             ViewBag.BillFileInfo =  billable.GetBillInfo();
             return View("Default",billable);

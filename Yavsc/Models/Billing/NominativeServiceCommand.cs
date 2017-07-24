@@ -88,7 +88,8 @@ namespace Yavsc.Models.Billing
         {
             string type = GetType().Name;
             string ack = GetIsAcquitted() ? "-ack" : null;
-            return $"facture-{ActivityCode}-{type}-{Id}{ack}";
+            var bcode = Startup.BillingMap[type];
+            return $"facture-{bcode}-{Id}{ack}";
         }
 
         public string PaymentId { get; set; }

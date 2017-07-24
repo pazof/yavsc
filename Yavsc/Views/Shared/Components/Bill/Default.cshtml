@@ -4,8 +4,30 @@
 @if (ViewBag.BillFileInfo.Exists) {
 <a class="btn btn-link" href="~/api/bill/facture-@(ViewBag.BillingCode)-@(Model.Id).pdf" >La facture au format Pdf</a>
 } else {
-<form action="~/api/bill/genpdf/@ViewBag.BillingCode/@Model.Id" method="POST">
-    <input class="btn btn-default" type="submit" value="Générer la facture au format Pdf"/>
+<script>
+var onGenerate = function () {
+    var _btn = this;
+    $.post('/api/bill/genpdf/@ViewBag.BillingCode/@Model.Id')
+    .done(function(data){
+        var res = JSON.parse(data);
+        window.location.href = '/api/bill/' + res.Generated;
+        _btn.disabled = true;
+    })
+    .fail(function( jqXHR, textStatus, errorThrown ) {
+        $('#billgenerr').html('<em>La génération a échoué</em><p>'+textStatus+'</p>')
+    })
+};
+
+$(document).ready(function(){$('#btnGen').on('click',onGenerate)})
+
+</script>
+<div id="billgen">
+<form action= method="POST">
+    <input id="btnGen" class="btn btn-default" type="button" onclick="onGenerate" value="Générer la facture au format Pdf" />
+
+<div id="billgenerr" class="error">
+</div>
 </form>
+</div>
 }
 </div>
