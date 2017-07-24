@@ -10,6 +10,9 @@ namespace Yavsc
     using Microsoft.Data.Entity;
     using Models;
     using Yavsc.Billing;
+    using Yavsc.Models.Haircut;
+    using Yavsc.Models.Workflow;
+
     public partial class Startup
     {
         /// <summary>
@@ -22,6 +25,8 @@ namespace Yavsc
         public static Dictionary<string,Func<ApplicationDbContext,long,IBillable>> Billing =
         new Dictionary<string,Func<ApplicationDbContext,long,IBillable>> ();
 
+        public static Dictionary<string,string> BillingMap =
+          new Dictionary<string,string>();
         /// <summary>
         /// Lists available command forms.
         /// This is hard coded.
@@ -71,7 +76,7 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
                 }
             }
 
-            Billing.Add("Brush", new Func<ApplicationDbContext,long,IBillable>
+            RegisterBilling<HairCutQuery>("Brush", new Func<ApplicationDbContext,long,IBillable>
             ( ( db, id) => 
             {
               var query = db.HairCutQueries.Include(q=>q.Prestation).Include(q=>q.Regularisation).Single(q=>q.Id == id)  ; 
@@ -79,14 +84,20 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
               return query;
             })) ;
 
-            Billing.Add("MBrush",new Func<ApplicationDbContext,long,IBillable>
+            RegisterBilling<HairMultiCutQuery>("MBrush",new Func<ApplicationDbContext,long,IBillable>
             ( (db, id) =>  db.HairMultiCutQueries.Include(q=>q.Regularisation).Single(q=>q.Id == id)));
-            Billing.Add("Rdv", new Func<ApplicationDbContext,long,IBillable>
+            RegisterBilling<RdvQuery>("Rdv", new Func<ApplicationDbContext,long,IBillable>
             ( (db, id) =>  db.RdvQueries.Include(q=>q.Regularisation).Single(q=>q.Id == id)));
         }
         public static System.Reflection.Assembly OnYavscResourceResolve(object sender, ResolveEventArgs ev)
         {
             return AppDomain.CurrentDomain.GetAssemblies()[0];
+        }
+
+        public static void RegisterBilling<T>(string code, Func<ApplicationDbContext,long,IBillable> getter) where T : IBillable
+        {
+            Billing.Add(code,getter) ;
+            BillingMap.Add(typeof(T).Name,code);
         }
     }
 
