@@ -2,8 +2,6 @@
 
 <div class="performer @(Model.Active?"active":"inactive")">
      @Html.DisplayFor(m=>m.Performer)
-
-        @if (Model.Rate > 80) { <p> @SR["Rating"]: @Model.Rate % </p> }
         @if (Model.WebSite!=null) { 
             <a target="yaext" href="@Model.WebSite" class="btn btn-info">@SR["WebSite"]: @Model.WebSite</a>
         }
