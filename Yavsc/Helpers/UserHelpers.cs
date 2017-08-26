@@ -20,14 +20,8 @@ namespace Yavsc.Helpers
             var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
             if (user==null) return Constants.AnonAvatar;
             if (user.Avatar==null) return Constants.DefaultAvatar;
-            if (user.Avatar.StartsWith("/"))
-                {
-                    FileInfo fi = new FileInfo(user.Avatar);
-                    var ext = fi.Extension;
-                    var avatar = user.Avatar.Substring(0,  user.Avatar.Length - ext.Length );
-                    return $"{avatar}{imgFmt}{ext}";
-                }
-            return user.Avatar;
+            var avatar = user.UserName;
+            return $"/Avatars/{avatar}{imgFmt}.png";
         }
     }
 }
