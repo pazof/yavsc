@@ -1,0 +1,76 @@
+@{ ViewBag.Title = "video Chat"; }
+
+
+
+<input type="file" accept="video/*;capture=camcorder" id="cam">
+<!-- <input type="file" accept="image/*;capture=camera" >
+ <input type="file" accept="audio/*;capture=microphone"> -->
+<video autoplay id="localvideo">
+</video>
+@section scripts  
+{
+    <script>
+
+        function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#localvideo').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$("#cam").change(function(){
+    readURL(this);
+});
+
+  var errorCallback = function(e) {
+    console.log('Reeeejected!', e);
+  };
+
+  navigator.getUserMedia  = navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mediaDevices.getUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia;
+
+  // Not showing vendor prefixes.
+  navigator.mediaDevices.getUserMedia({video: true, audio: true},
+   function(localMediaStream) {
+    var video = document.querySelector('video');
+    video.src = window.URL.createObjectURL(localMediaStream);
+
+    // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+    // See crbug.com/110938.
+    video.onloadedmetadata = function(e) {
+      // Ready to go. Do some stuff.
+    };
+  }, errorCallback);
+
+
+    if (navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({audio: true, video: false}, function(stream) {
+        if ("srcObject" in video) {
+    video.srcObject = stream;
+  } else {
+    // Avoid using this in new browsers, as it is going away.
+    video.src = window.URL.createObjectURL(stream);
+  }
+    }, errorCallback);
+    } else {
+    video.src = $("#cam").attr('src'); // fallback.
+    }
+
+        $(document).ready(
+            function () {
+
+            }
+        );
+
+        
+        </script>
+
+}
