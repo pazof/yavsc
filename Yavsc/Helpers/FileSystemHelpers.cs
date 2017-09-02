@@ -62,7 +62,8 @@ namespace Yavsc.Helpers
                 }
                 root = Path.Combine(root, subpath);
             }
-
+            var di = new DirectoryInfo(root);
+            if (!di.Exists) di.Create();
             return root;
         }
         public static void DeleteUserFile(this ApplicationUser user, string fileName)
