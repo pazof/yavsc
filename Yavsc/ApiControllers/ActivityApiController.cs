@@ -28,7 +28,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<Activity> GetActivities()
         {
-            return _context.Activities.Include(a=>a.Forms);
+            return _context.Activities.Include(a=>a.Forms).Where( a => !a.Hidden );
         }
 
         // GET: api/ActivityApi/5
@@ -46,7 +46,8 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-
+            // Also return hidden ones
+            // hidden doesn't mean disabled
             return Ok(activity);
         }
 
