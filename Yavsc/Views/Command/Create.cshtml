@@ -1,7 +1,5 @@
 @model RdvQuery 
-@{ ViewData["Title"] = "Proposition de rendez-vous "+
-@SR["to"]+" "+ Model.PerformerProfile.Performer.UserName
-+" ["+SR[ViewBag.Activity.Code]+"]"; } 
+@{ ViewData["Title"] = $"Proposition de rendez-vous à {Model.PerformerProfile.Performer.UserName} [{ViewBag.Activity.Name}]"; } 
 
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
 <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
@@ -124,14 +122,14 @@
 <h2>@ViewData["Title"]</h2>
 <form asp-action="Create" id="FrmComCre" role="form">
     <div class="form-horizontal">
-        <h4>@SR["Fill in your book query"]</h4>
+        <h4>Saisissez votre demande de rendez-vous</h4>
         <hr />
         <div asp-validation-summary="ValidationSummary.All" class="text-danger" id="valsum"></div>
         <div class="form-group" has-feedback>
             <fieldset>
                 <legend>Votre évennement</legend>
                 <label for="EventDate" class="col-md-2 control-label">
-                    @SR["Event date"]
+                    Date de l'évennement
                 </label>
                 <div class="col-md-10">
                     <div class="container">
@@ -151,15 +149,15 @@
     </div>
 </div>
 <label for="Location_Address" class="col-md-2 control-label">
-                @SR["Location"]
+                 Lieu
                 </label>
 <div class="col-md-10">
                     <div class="container">
                         <div class="row">
                             <div class='col-sm-6'>
                                 <div  >
-    <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address" class="form-control" data-val-required=@SR[
-        "SpecifyPlace"] data-val-remote=@SR[ "GoogleDidntGeoLocalized"]>
+    <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address" class="form-control" 
+    data-val-required="Spécifier un lieu" data-val-remote="Google n'a pas pu identifier ce lieu">
     <span asp-validation-for="Location.Address" class="text-danger" id="valloc"></span>
     <ul id="loccomb">
     </ul>
@@ -171,7 +169,7 @@
 
 </div>
 <label asp-for="Reason" class="col-md-2 control-label">
-    @SR["GiveAnExplicitReason"]
+   Donnez ici une raison à cette demande
 </label>
                 <div class="col-md-10">
                     <div class="container">
@@ -191,7 +189,7 @@
 </div>
 <div class="form-group">
     <div class="col-md-offset-2 col-md-10">
-        <input type="submit" value="@SR[" Create "]" class="btn btn-default" />
+        <input type="submit" value="Créer" class="btn btn-default" />
     </div>
 </div>
 @Html.HiddenFor(model=>model.ClientId) 
