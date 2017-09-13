@@ -81,7 +81,6 @@ namespace Yavsc.Controllers
         }
         public async Task<IActionResult> About()
         {
-            // TODO show the version tag
             FileInfo fi = new FileInfo("wwwroot/version");
             return View("About",fi.Exists ? _localizer["Version logicielle: "] + await fi.OpenText().ReadToEndAsync() : _localizer["Aucune information sur la version logicielle n'est publiée."]);
         }
