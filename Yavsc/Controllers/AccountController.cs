@@ -216,6 +216,15 @@ namespace Yavsc.Controllers
             return View(model);
         }
 
+        [Authorize,HttpPost,ValidateAntiForgeryToken]
+        public async Task <IActionResult> SendEMailForConfirm () {
+           var user = await _userManager.FindByIdAsync( User.GetUserId() );
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, user.Email, "Confirm your account",
+                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+            return View("ConfirmEmailSent");
+        }
         //
         // POST: /Account/LogOff
         [HttpPost(Constants.LogoutPath)]

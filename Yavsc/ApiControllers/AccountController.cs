@@ -15,7 +15,7 @@ namespace Yavsc.WebApi.Controllers
     using System;
     using System.Linq;
 
-    [Authorize(),Route("~/api/account"),Obsolete]
+    [Authorize(),Route("~/api/account")]
     public class ApiAccountController : Controller
     {
         

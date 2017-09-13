@@ -18,6 +18,23 @@
             asp-action="CHUN">@SR["Change"]</a>]
         </dd>
 
+        <dt>@SR["EMail"]:</dt>
+      
+        <dd> 
+            @Model.EMail
+
+            @if (Model.EmailConfirmed) {
+                <text>(@SR["Adresse E-mail confirmée"])</text>
+            }else {
+                <text>
+                  <i>  (@SR["Adresse non confirmée."])</i>
+            <form asp-action="SendEMailForConfirm" asp-controller="Account" enctype="multipart/form-data">
+                <input type="submit" value="@SR["Confirmer cette adresse"]"/>
+            </form>
+                </text>
+            }
+        </dd>
+
         @if (Model.Roles.Count()>0) {
         <dt>@SR["Roles"]:</dt>
         <dd> 
