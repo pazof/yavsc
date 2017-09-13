@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Yavsc.Controllers
 {
+    using System.IO;
     using Models;
     using Yavsc;
 
@@ -78,9 +79,11 @@ namespace Yavsc.Controllers
                 .Where(a=> a.ParentCode==id).OrderByDescending(a=>a.Rate));
             }
         }
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
-            return View();
+            // TODO show the version tag
+            FileInfo fi = new FileInfo("wwwroot/version");
+            return View("About",fi.Exists ? _localizer["Version logicielle: "] + await fi.OpenText().ReadToEndAsync() : _localizer["Aucune information sur la version logicielle n'est publiée."]);
         }
         public IActionResult Privacy()
         {
