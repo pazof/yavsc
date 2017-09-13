@@ -46,5 +46,9 @@ namespace Yavsc.ViewModels.Manage
         public long DiskUsage { get; set; }
 
         public string DedicatedCalendarId { get; set; }
+
+        public string EMail { get; set; }
+        public bool EmailConfirmed { get; set; }
+        
     }
 }

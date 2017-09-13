@@ -117,7 +117,9 @@ namespace Yavsc.Controllers
                 BankInfo = user.BankInfo,
                 DiskUsage = user.DiskUsage,
                 DiskQuota = user.DiskQuota,
-                DedicatedCalendarId = user.DedicatedGoogleCalendar
+                DedicatedCalendarId = user.DedicatedGoogleCalendar,
+                EMail = user.Email,
+                EmailConfirmed = await _userManager.IsEmailConfirmedAsync(user)
             };
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
             var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id);

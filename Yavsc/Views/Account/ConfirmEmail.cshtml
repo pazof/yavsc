@@ -1,10 +1,15 @@
 @{
-    ViewData["Title"] = "Confirm Email";
+    ViewData["Title"] = "Confirmation de votre adresse e-mail";
 }
 
 <h2>@ViewData["Title"].</h2>
 <div>
     <p>
-        Thank you for confirming your email. Please <a asp-controller="Account" asp-action="Login">Click here to Log in</a>.
+        Merci d'avoir confirmé votre e-mail. 
+        @if (User.GetUserId()==null) {
+         <text>S'il vous plait, 
+        <a asp-controller="Account" asp-action="Login">Cliquez ici pour vous connecter</a>.
+        </text>
+        }
     </p>
 </div>
