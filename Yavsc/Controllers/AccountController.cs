@@ -17,6 +17,7 @@ using Yavsc.ViewModels.Account;
 using Yavsc.Helpers;
 using Microsoft.Extensions.Localization;
 using Microsoft.Data.Entity;
+using Newtonsoft.Json;
 
 namespace Yavsc.Controllers
 {
@@ -107,6 +108,19 @@ namespace Yavsc.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        /*
+                        var user = await _userManager.FindByNameAsync(model.UserName);
+                        if (user != null)
+                        {
+                            if (!await _userManager.IsEmailConfirmedAsync(user))
+                            {
+                                ModelState.AddModelError(string.Empty, 
+                                            "You must have a confirmed email to log in.");
+                                return View(model);
+                            }
+                        }
+                         */
+
                         // This doesn't count login failures towards account lockout
                         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                         var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
@@ -207,6 +221,9 @@ namespace Yavsc.Controllers
                         "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
                     // await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password.");
+                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.EMail, 
+                     $"[{_siteSettings.Title}] Inscription avec mot de passe: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
+
                     return RedirectToAction(nameof(HomeController.Index), "Home");
                 }
                 AddErrors(result);
@@ -258,7 +275,6 @@ namespace Yavsc.Controllers
             {
                 _logger.LogInformation(5, $"User logged in with {info.LoginProvider} provider, as {info.ProviderDisplayName} ({info.ProviderKey})." );
 
-
                 var ninfo = _dbContext.UserLogins.First(l=>l.ProviderKey == info.ProviderKey && l.LoginProvider == info.LoginProvider);
                 ninfo.ProviderDisplayName = info.ProviderDisplayName;
                 _dbContext.Entry(ninfo).State = EntityState.Modified;
@@ -276,6 +292,7 @@ namespace Yavsc.Controllers
             }
             else
             {
+                ViewData["jsonres"] = JsonConvert.SerializeObject(result);
                 // If the user does not have an account, then ask the user to create an account.
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["LoginProvider"] = info.LoginProvider;
@@ -332,6 +349,11 @@ namespace Yavsc.Controllers
                     if (result.Succeeded)
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+
+
+                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.EMail, 
+                     $"[{_siteSettings.Title}] Inscription via {info.LoginProvider}: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
+
                         _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
 
                         return Redirect(returnUrl);
@@ -380,14 +402,22 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
-                {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    if (user == null)
-                    _logger.LogWarning($"ForgotPassword: Email {model.Email} not found");
-                    else
-                    _logger.LogWarning($"ForgotPassword: Email {model.Email} not confirmed");
+                var user = await _userManager.FindByEmailAsync(model.LoginOrEmail);
+
+                // Don't reveal that the user does not exist or is not confirmed
+                if (user == null) {
+                    user = await _userManager.FindByNameAsync(model.LoginOrEmail);
+                    if (user == null) 
+                    {
+                        _logger.LogWarning($"ForgotPassword: Email or User name {model.LoginOrEmail} not found");
+                        return View("ForgotPasswordConfirmation");
+                    }
+                }
+                // user != null
+                // We want him to have a confirmed e-mail, and prevent this script
+                // to be used to send e-mail to any arbitrary person
+                if (!await _userManager.IsEmailConfirmedAsync(user)) {
+                    _logger.LogWarning($"ForgotPassword: Email {model.LoginOrEmail} not confirmed");
                     return View("ForgotPasswordConfirmation");
                 }
 
@@ -395,7 +425,7 @@ namespace Yavsc.Controllers
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                await _emailSender.SendEmailAsync(_siteSettings,_smtpSettings,model.Email, _localizer["Reset Password"],
+                await _emailSender.SendEmailAsync(_siteSettings,_smtpSettings,model.LoginOrEmail, _localizer["Reset Password"],
                    _localizer["Please reset your password by following this link:"] +" <"+ callbackUrl +">" );
                 return View("ForgotPasswordConfirmation");
             }
@@ -604,9 +634,7 @@ namespace Yavsc.Controllers
         {
             return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
         }
-
-
-
+        
         #endregion
     }
 }

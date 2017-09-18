@@ -26,7 +26,7 @@ namespace Yavsc.ViewModels.Account
         /// When true, asks for a two-factor identification
         /// </summary>
         /// <returns></returns>
-        [Display(Name = "Remember me?")]
+        [Display(Name = "Se souvenir de moi?")]
         public bool RememberMe { get; set; }
 
         /// <summary>

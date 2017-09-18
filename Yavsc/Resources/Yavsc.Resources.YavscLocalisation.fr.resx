@@ -124,7 +124,7 @@
   <data name="AcceptNotifications"><value>Accepter la notification d'une demande de rendez-vous</value></data>
   <data name="AcceptPublicContact"><value>Accepter les prises de contact de la part de particuliers</value></data>
   <data name="AccountBalance"><value>Balance du compte</value></data>
-  <data name="ActivateMyProSettings"><value>Activer mon profile professionnel</value></data>
+  <data name="ActivateMyProSettings"><value>Activer mon profil professionnel</value></data>
   <data name="Activity"><value>Activité</value></data>
   <data name="Activities"><value>Activités</value></data>
   <data name="additionally"><value>de plus</value></data>
@@ -195,7 +195,7 @@
   <data name="DoNotPublishMyActivity"><value>Ne pas publier mon activité</value></data>
   <data name="DoSpecifyCircles"><value>S'il vous plait, spécifiez ceux de vos cercles à qui est destiné ce contenu</value></data>
   <data name="DocTemplateException"><value>Une erreur est survenue à la génération de votre document</value></data>
-   <data name="DisplayName"><value>Nom affiché</value></data>
+  <data name="DisplayName"><value>Nom affiché</value></data>
   <data name="Disable"><value>Désactiver</value></data>
   <data name="Disabled"><value>Désactivé</value></data>
   <data name="DoPost"><value>Poster</value></data>
@@ -209,6 +209,7 @@
   <data name="EndHour"><value>Heure de fin</value></data>
   <data name="email"><value>e-mail</value></data>
   <data name="Enter your email."><value>Saisissez votre email.</value></data>
+  <data name="Enter your user name or e-mail."><value>Saisissez votre nom d'utilisateur ou email.</value></data>
   <data name="entries"><value>entrées</value></data>
   <data name="Estimate"><value>Estimer</value></data>
   <data name="Estimate_not_found"><value>Devis non trouvé</value></data>
@@ -221,7 +222,7 @@
   
   <data name="BillToSignAsPro"><value>Factures à produire</value></data>
   <data name="BillToSignAsCli"><value>Factures à honnorer</value></data>
-  <data name="PayementsDone"><value>Paiements effectués</value></data>
+  
   <data name="EstimateWanted"><value>Demande de devis</value></data>
   <data name="Event date"><value>Date de l'évennement</value></data>
   <data name="EventWebPage"><value>Page web de l'événement</value></data>
@@ -264,6 +265,8 @@
   <data name="Kid"><value>Enfant</value></data>
   <data name="Location"><value>Lieu</value></data>
   <data name="Login"><value>Connection</value></data>
+  <data name="LoginOrEmail"><value>Nom d'utilisateur ou e-mail</value></data>
+  
   <data name="Log in"><value>Se connecter</value></data>
   <data name="Logout"><value>Déconnection</value></data>
   <data name="Long"><value>long</value></data>
@@ -310,6 +313,7 @@
   <data name="OnlyAuthorizedMayContact"><value>Seuls les utilisateurs authorisés peuvent contacter un préstataire par courrier.</value></data>
   <data name="Password"><value>Mot de passe</value></data>
   <data name="PaymentConfirmation"><value>Confirmation de paiement</value></data>
+  <data name="PayementsDone"><value>Paiements effectués</value></data>
   <data name="Pdf version"><value>Version Pdf</value></data>
   <data name="PerformanceDate"><value>Date de la prestation</value></data>
   <data name="PerformancePlace"><value>Lieu de la pestation</value></data>
@@ -330,7 +334,7 @@
   <data name="PreferedDate"><value>Date souhaitée</value></data>
   <data name="PresationLocation"><value>Lieu de la présation: {0}.\n</value></data>
   <data name="Preview"><value>Prévisualiser</value><comment>Prévisualiser le document</comment></data>
-  <data name="Profile edition"><value>Édition du profile</value></data>
+  <data name="Profile edition"><value>Édition du profil</value></data>
   <data name="Product reference"><value>Référence produit</value></data>
   <data name="prestation"><value>prestation</value></data>
   <data name="Professional settings"><value>Paramètres professionels</value></data>
@@ -348,7 +352,7 @@
   Veuillez pardonner la gêne occasionnée</value></data>
   <data name="Remember me"><value>Se souvenir du mot de passe</value></data>
   <data name="Remove"><value>Supprimer</value></data>
-  <data name="Remove my professional profile"><value>Supprimer mon profile professionnel</value></data>
+  <data name="Remove my professional profile"><value>Supprimer mon profil professionnel</value></data>
   <data name="Role"><value>Rôle</value></data>
   <data name="Reset Password"><value>Ré-initialiser votre mot de passe</value></data>
   <data name="Reset password confirmation"><value>Confirmation de ré-initialiser du mot de passe</value></data>
@@ -364,7 +368,7 @@
   <data name="SettingsClass"><value>Classe du paramétrage</value></data>
   <data name="Short"><value>court</value></data>
   <data name="Son blog"><value>Son blog</value></data>
-  <data name="Your performer profile"><value>Votre profile professionel</value></data>
+  <data name="Your performer profile"><value>Votre profil professionel</value></data>
   <data name="Setup below your activity parameters"><value>Positionnez ci-après vos les paramêtre de votre activité</value></data>
   <data name="SiteSkills"><value>Talents/Compétences/Spécialités gérés sur ce site</value></data>
   <data name="Skill"><value>Compétence</value></data>
@@ -427,8 +431,8 @@
   <data name="yourquerytransmitted"><value>Votre demande a été transmise</value></data>
   <data name="YourSkills"><value>Vos talents, vos spécialités, le domaine de vos activités</value></data>
   <data name="Your posts"><value>Vos publications</value></data>
-  <data name="Your profile"><value>Votre profile</value></data>
+  <data name="Your profile"><value>Votre profil</value></data>
   <data name="YourMessageHasBeenSent"><value>Votre messge a été envoyé</value></data>
   <data name="Tell more, below, about your query"><value>Dites en plus, ci àprès, à propos de cet évennement</value></data>
-  <data name="UnsetActivity"><value>Supprimer mon profile professionel</value></data>
+  <data name="UnsetActivity"><value>Supprimer mon profil professionel</value></data>
 </root>
