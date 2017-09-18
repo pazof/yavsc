@@ -82,12 +82,13 @@ namespace Yavsc
                      */
                 }
             ).AddEntityFrameworkStores<ApplicationDbContext>()
-                 .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.DefaultFactor);
+                 .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.DefaultFactor)
                 // .AddTokenProvider<UserTokenProvider>(Constants.DefaultFactor)
             //  .AddTokenProvider<UserTokenProvider>(Constants.SMSFactor)
             //  .AddTokenProvider<UserTokenProvider>(Constants.EMailFactor)
             //  .AddTokenProvider<UserTokenProvider>(Constants.AppFactor)
-            //
+            // .AddDefaultTokenProviders()
+            ;
         }
         private void ConfigureOAuthApp(IApplicationBuilder app,
          SiteSettings settingsOptions, ILogger logger)
