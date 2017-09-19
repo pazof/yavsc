@@ -2,7 +2,6 @@ using Yavsc.Models;
 using Yavsc.Models.Haircut;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Controllers.Generic;
-using Microsoft.Extensions.Localization;
 
 namespace Yavsc.Controllers
 {

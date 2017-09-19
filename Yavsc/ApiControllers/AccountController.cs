@@ -12,7 +12,6 @@ namespace Yavsc.WebApi.Controllers
     using ViewModels.Account;
     using Models.Auth;
     using Yavsc.Helpers;
-    using System;
     using System.Linq;
 
     [Authorize(),Route("~/api/account")]
