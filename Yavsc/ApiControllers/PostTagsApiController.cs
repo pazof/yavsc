@@ -23,7 +23,7 @@ namespace Yavsc.Controllers
 
         // GET: api/PostTagsApi
         [HttpGet]
-        public IEnumerable<PostTag> GetTagsDomain()
+        public IEnumerable<BlogTag> GetTagsDomain()
         {
             return _context.TagsDomain;
         }
@@ -37,7 +37,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            PostTag postTag = _context.TagsDomain.Single(m => m.PostId == id);
+            BlogTag postTag = _context.TagsDomain.Single(m => m.PostId == id);
 
             if (postTag == null)
             {
@@ -49,7 +49,7 @@ namespace Yavsc.Controllers
 
         // PUT: api/PostTagsApi/5
         [HttpPut("{id}")]
-        public IActionResult PutPostTag(long id, [FromBody] PostTag postTag)
+        public IActionResult PutPostTag(long id, [FromBody] BlogTag postTag)
         {
             if (!ModelState.IsValid)
             {
@@ -84,7 +84,7 @@ namespace Yavsc.Controllers
 
         // POST: api/PostTagsApi
         [HttpPost]
-        public IActionResult PostPostTag([FromBody] PostTag postTag)
+        public IActionResult PostPostTag([FromBody] BlogTag postTag)
         {
             if (!ModelState.IsValid)
             {
@@ -120,7 +120,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            PostTag postTag = _context.TagsDomain.Single(m => m.PostId == id);
+            BlogTag postTag = _context.TagsDomain.Single(m => m.PostId == id);
             if (postTag == null)
             {
                 return HttpNotFound();

@@ -41,7 +41,7 @@ namespace Yavsc.Models
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.Entity<Relationship.Contact>().HasKey(x => new { x.OwnerId, x.UserId });
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
-            builder.Entity<PostTag>().HasKey(x=>new { x.PostId, x.TagId});
+            builder.Entity<BlogTag>().HasKey(x=>new { x.PostId, x.TagId});
             builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
             builder.Entity<ApplicationUser>().Property(u=>u.Avatar).HasDefaultValue(Constants.DefaultAvatar);
             builder.Entity<ApplicationUser>().Property(u=>u.DiskQuota).HasDefaultValue(Constants.DefaultFSQ);
@@ -186,7 +186,7 @@ namespace Yavsc.Models
 
         public DbSet<Tag> Tags { get; set; }
 
-        public DbSet<PostTag> TagsDomain { get; set; }
+        public DbSet<BlogTag> TagsDomain { get; set; }
 
         public DbSet<EstimateTemplate> EstimateTemplates { get; set; }
 
@@ -278,5 +278,7 @@ namespace Yavsc.Models
          public DbSet<HyperLink> Links { get; set; }
 
          public DbSet<Period> Period { get; set; }
+
+         public DbSet<BlogTag> BlogTags { get; set; }
     }
 }
