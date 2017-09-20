@@ -4,6 +4,8 @@ ASPNET_ENV=Development
 CONFIGURATION=Release
 ASPNET_LOG_LEVEL=info #warn
 
+deploy: clean pushInPre pushInProd
+
 all: bin/$(CONFIGURATION)
 
 git_status := $(shell git status -s --porcelain |wc -l)
