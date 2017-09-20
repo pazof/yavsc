@@ -366,7 +366,6 @@ namespace Yavsc
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
-
             });
             logger.LogInformation("LocalApplicationData: "+Environment.GetFolderPath(SpecialFolder.LocalApplicationData, SpecialFolderOption.DoNotVerify));
            
