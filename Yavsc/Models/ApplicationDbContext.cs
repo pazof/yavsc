@@ -280,5 +280,7 @@ namespace Yavsc.Models
          public DbSet<Period> Period { get; set; }
 
          public DbSet<BlogTag> BlogTags { get; set; }
+
+         public DbSet<ApplicationUser> ApplicationUser { get; set; }
     }
 }
