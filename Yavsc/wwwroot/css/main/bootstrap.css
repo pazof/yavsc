@@ -5571,6 +5571,7 @@ fieldset[disabled] .navbar-default .btn-link:focus {
 
 .navbar-inverse .navbar-nav>li>a {
     color: #9d9d9d;
+    background-color: #333;
 }
 
 .navbar-inverse .navbar-nav>li>a:hover,

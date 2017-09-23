@@ -1,5 +1,6 @@
 .navbar-link,
-.navbar-brand {
+.navbar-brand,
+.navbar-nav .dropdown>a {
     background-color: rgba(0, 0, 0, .2);
     border-radius: 2em;
     vertical-align: center;
