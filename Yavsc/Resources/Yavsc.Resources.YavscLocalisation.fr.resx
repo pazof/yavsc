@@ -435,4 +435,6 @@
   <data name="YourMessageHasBeenSent"><value>Votre messge a été envoyé</value></data>
   <data name="Tell more, below, about your query"><value>Dites en plus, ci àprès, à propos de cet évennement</value></data>
   <data name="UnsetActivity"><value>Supprimer mon profil professionel</value></data>
+  <data name="Français"><value>Français</value></data>
+  <data name="Anglais"><value>Anglais</value></data>
 </root>
