@@ -89,9 +89,18 @@ h6 {
                         <li><a asp-controller="Home" asp-action="Chat" class="navbar-link">@SR["Chat"]</a></li>
                         <li><a asp-controller="Home" asp-action="Contact" class="navbar-link">@SR["Contact"]</a></li>
                         <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="badge"> @System.Globalization.CultureInfo.CurrentUICulture.DisplayName </span> <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a onclick="setUiCult('fr')" >FR</a></li>
+                                <li><a onclick="setUiCult('en')" >EN</a></li>
+                            </ul>
+                        </li>
                     </ul>
-                     
-            
+           
+
                     @await Html.PartialAsync("_LoginPartial")
                 </div>
             </div>
