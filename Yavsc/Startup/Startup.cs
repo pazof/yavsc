@@ -25,6 +25,7 @@ using Microsoft.Net.Http.Headers;
 
 namespace Yavsc
 {
+    using System.Collections.Generic;
     using System.Net;
     using Formatters;
     using Google.Apis.Util.Store;
@@ -129,13 +130,13 @@ namespace Yavsc
                 //  return new ProviderCultureResult("fr");
                 //}));
 
-                options.RequestCultureProviders.Insert(0, new AcceptLanguageHeaderRequestCultureProvider());
-                options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
-                
-
+                options.RequestCultureProviders = new List<IRequestCultureProvider>
+                    {
+                        new QueryStringRequestCultureProvider { Options = options },
+                        new CookieRequestCultureProvider { Options = options, CookieName="ASPNET_CULTURE" },
+                        new AcceptLanguageHeaderRequestCultureProvider { Options = options }
+                    };
             });
-
-
 
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SiteSettings>), typeof(OptionsManager<SiteSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
