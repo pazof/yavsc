@@ -341,4 +341,10 @@ contact a performer</value></data>
   <data name="Longueur de cheveux"><value>Hair Length</value></data>
   <data name="Français"><value>French</value></data>
   <data name="Anglais"><value>English</value></data>
+    <data name="RequiredField"><value>This field is required.</value></data>
+    <data name="PasswordTooShort"><value>Passwords must be at least {0} characters.</value></data>
+  <data name="PasswordRequiresNonLetterAndDigit"><value>Passwords must have at least one non letter and non digit character.</value></data>
+  <data name="PasswordRequiresDigit"><value>Passwords must have at least one digit ('0'-'9').</value></data>
+  <data name="PasswordRequiresUpper"><value>Passwords must have at least one uppercase ('A'-'Z').</value></data>
+  
 </root>
