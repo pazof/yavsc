@@ -438,7 +438,7 @@
   <data name="Français"><value>Français</value></data>
   <data name="Anglais"><value>Anglais</value></data>
   <data name="InvalidUserName"><value>Nom d'utilisateur invalide.
-  Les valides sont: le souligné '_', le titret '-', de 'a' à 'z', de 'A' à 'Z', de 0 à 9, l'espace et le point.</value></data>
+  Les caratères valides sont: le souligné (_), le petit titret (-), l'apostrohe ('), les minuscules et majuscules de a à z, les chiffres de 0 à 9, l'espace et le point.</value></data>
   <data name="RequiredField"><value>Ce champ est obligatoire.</value></data>
   <data name="validationError"><value>Champ invalide ...</value></data>
   <data name="PasswordTooShort"><value>Le Mot de passe doit contenir au moins 6 caractères.</value></data>

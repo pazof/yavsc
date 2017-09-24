@@ -349,6 +349,6 @@ contact a performer</value></data>
   <data name="PassAndConfirmDontMach"><value>Passwords and confirmation are not the same.</value></data>
 <data name="PasswordConfirm"><value>Password confirmation</value></data>
  <data name="InvalidUserName"><value>Invalid user name.
-Valid caracters are: underscore '_',  '-',  'a' - 'z', 'A' - 'Z',  '0' - '9', the space and the dot.</value></data>
+Valid caracters are: underscore '_',  '-',  'a' - 'z', 'A' - 'Z',  '0' - '9', the single quote ('), the space and the dot.</value></data>
  
 </root>

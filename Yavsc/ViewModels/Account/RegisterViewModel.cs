@@ -10,7 +10,7 @@ namespace Yavsc.ViewModels.Account
 
         [Display(ResourceType = typeof(Yavsc.Resources.YavscLocalisation), Name = "UserName")]
         [StringLength(102)]
-        [YaRegularExpression(@"[a-zA-Z0-9 ._-]+", ErrorMessageResourceName="InvalidUserName", ErrorMessageResourceType = typeof(Yavsc.Resources.YavscLocalisation))]
+        [YaRegularExpression(@"[a-zA-Z0-9 .'_-]+", ErrorMessageResourceName="InvalidUserName", ErrorMessageResourceType = typeof(Yavsc.Resources.YavscLocalisation))]
         public string UserName { get; set; }
 
         [YaRequired()]
