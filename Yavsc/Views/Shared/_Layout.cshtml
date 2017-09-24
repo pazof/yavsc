@@ -100,8 +100,6 @@ h6 {
                             </ul>
                         </li>
                     </ul>
-           
-
                     @await Html.PartialAsync("_LoginPartial")
                 </div>
             </div>
@@ -112,8 +110,7 @@ h6 {
     <h2 markdown="@n.title"></h2>
     <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action==null)?SR["Fermer"]:SR[n.click_action])</a>
     <markdown>@n.body</markdown>
-    </div>
-            }
+    </div>}
         }
         @RenderSection("subbanner", required: false)
         <main class="container body-content" role="main">
