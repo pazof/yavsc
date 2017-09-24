@@ -107,7 +107,7 @@ h6 {
     @if (ViewData ["Notify"] != null) {
     foreach (Notification n in ViewData ["Notify"] as IEnumerable<Notification>) {
     <div class="alert alert-info alert-dismissable">
-    <h2 markdown="@n.title"></h2>
+    <img src="~/images/Notifications/@(n.icon).png" style="max-height:3em; float: left; margin:1em;"/> <h2 markdown="@n.title"></h2>
     <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action==null)?SR["Fermer"]:SR[n.click_action])</a>
     <markdown>@n.body</markdown>
     </div>}

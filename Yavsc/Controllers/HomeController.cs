@@ -16,6 +16,7 @@ namespace Yavsc.Controllers
     using System.IO;
     using Models;
     using Yavsc;
+    using Yavsc.Helpers;
 
     [AllowAnonymous]
     public class HomeController : Controller
@@ -51,7 +52,7 @@ namespace Yavsc.Controllers
             var notes = DbContext.Notification.Where(
                 n=> !clicked.Any(c=>n.Id==c)
             );
-            ViewData["Notify"] = notes;
+            this.Notify(notes);
             ViewData["HasHaircutCommand"] = DbContext.HairCutQueries.Any
             (q=>q.ClientId == uid && q.Status < QueryStatus.Failed);
 

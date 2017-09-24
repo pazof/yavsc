@@ -442,11 +442,12 @@
   <data name="RequiredField"><value>Ce champ est obligatoire.</value></data>
   <data name="validationError"><value>Champ invalide ...</value></data>
   <data name="PasswordTooShort"><value>Le Mot de passe doit contenir au moins 6 caractères.</value></data>
-  <data name="PasswordRequiresNonLetterAndDigit"><value>Mot de passe doit contenir au moins a caractère spécial (ni un chiffre, ni une lettre).</value></data>
+  <data name="PasswordRequiresNonLetterAndDigit"><value>Mot de passe doit contenir au moins un caractère spécial (ni un chiffre, ni une lettre).</value></data>
   <data name="PasswordRequiresDigit"><value>Les mots de passe doivent contenir au moins un chiffre ('0' à '9').</value></data>
   <data name="PasswordRequiresUpper"><value>Les mots de passe doivent contenir au moins une lettre majuscule ('A' à 'Z').</value></data>
   <data name="PassAndConfirmDontMach"><value>Le mot de passe et sa confirmation ne sont pas les mêmes.</value></data>
   <data name="PasswordConfirm"><value>Confirmation du mot de passe</value></data>
-  
+  <data name="ErrorSendingEmailForConfirm"><value>L'envoi de de courrier pour confirmation de l'adresse e-mail a échoué.</value></data>
+  <data name="EmailSentForConfirm"><value>Un courrier a été envoyé pour confirmation de l'adresse e-mail .</value></data>
 
 </root>

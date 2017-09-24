@@ -13,19 +13,7 @@
     Example:
     
     ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
+    <resheader name="resmimetype">text/microsoft-resx</resheader><resheader name="version">2.0</resheader><resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader><resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader><data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data><data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data><data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64"><value>[base64 mime encoded serialized .NET Framework object]</value></data><data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64"><value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value><comment>This is a comment</comment></data>
                 
     There are any number of "resheader" rows that contain simple 
     name/value pairs.
@@ -59,7 +47,10 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root" 
+    xmlns="" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -117,238 +108,670 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="About"><value>About</value></data>
-  <data name="About_BookAStar"><value>About BookAStar</value></data>
-  <data name="About_Message"><value>Welcome by your stars.</value></data>
-  <data name="access_denied"><value>Access denied</value></data>
-  <data name="AccountBalance"><value>Account Balance</value></data>
-  <data name="Activity"><value>Activity</value></data>
-  <data name="Activities"><value>Activities</value></data>
-  <data name="additionally"><value>additionally</value></data>
-  <data name="Allow my geolocatisation, nearby my clients"><value>Allow my geolocatisation, nearby my clients</value></data>
-  <data name="AnIMessageHasbeenSent"><value>An instant message has been sent to {0}, 
-  showing to him your query. You should be contacted very soon.</value></data>
-  <data name="aprestation"><value>a prestation</value></data>
-  <data name="AskForAnEstimate"><value>Ask for an estimate</value></data>
-  <data name="AttachedFiles"><value>Attached files</value></data>
-  <data name="AuthenticatedOnly"><value>You must be authenticated in order to access this information</value></data>
-  <data name="Author"><value>Author</value></data>
-  <data name="available"><value>available</value></data>
-  <data name="Basket"><value>Basket</value></data>
-  <data name="Bill_edition"><value>Bill edition</value></data>
-  <data name="Bill_removal"><value>Bill removal</value></data>
-  <data name="BillAccessControl"><value>Bill access control</value></data>
-  <data name="BillCreated"><value>Bill created</value></data>
-  <data name="BillSourceCode"><value>Bill source code</value></data>
-  <data name="BillUpdated"><value>Bill updated</value></data>
-  <data name="body"><value>body</value></data>
-  <data name="Book A Star"><value>Book an artist</value></data>
-  <data name="Book IT"><value>Book a performer in information technology</value></data>
-  <data name="BookingTitleArtiste"><value>Book an artiste</value></data>
-  <data name="BookingTitle6829C"><value>Book a software editor</value></data>
-  <data name="Catalog"><value>Catalog</value></data>
-  <data name="Change user name form"><value>Change user name form</value></data>
-  <data name="Change your account settings"><value>Change your account settings</value></data>
-  <data name="ChooseADescription"><value>Please, choose a description</value></data>
-  <data name="ChooseATitle"><value>Please, choose a title</value></data>
-  <data name="ChooseADateInTheFutur"><value>Please, Choose A Date In The Futur</value></data>
-  <data name="ChooseAnEventDate"><value>Please, choose a date for this event </value></data>
-  <data name="Ciffer"><value>Ciffer</value></data>
-  <data name="Circles"><value>Circles</value></data>
-  <data name="Click action"><value>Click action</value></data>
-  <data name="Color"><value>Color</value></data>
-  <data name="Comment"><value>Comment</value></data>
-  <data name="Consultant"><value>Consultant</value></data>
-  <data name="ContactAPerformer"><value>Contact a performer</value></data>
-  <data name="CouldNotConvertVToDouble"><value>Could not convert '{0}' to double.</value></data>
-  <data name="Count"><value>Count</value></data>
-  <data name="Create"><value>Créer</value></data>
-  <data name="Credits"><value>Credits</value></data>
-  <data name="Date_search"><value>Date search</value></data>
-  <data name="DB"><value>Data base</value></data>
-  <data name="Description"><value>Description</value></data>
-  <data name="Disable"><value>Disable</value></data>
-  <data name="DisplayName"><value>Display Name</value></data>
-  <data name="DoAnEstimate"><value>Do an estimate</value></data>
-  <data name="DoComment"><value>Commenter</value></data>
-  <data name="DocTemplateException"><value>Une erreur est survenue à la génération de votre document</value></data>
-  <data name="DoNotPublishMyActivity"><value>Ne pas publier mon activité</value></data>
-  <data name="DoPost"><value>Do post</value></data>
-  <data name="DoSpecifyCircles"><value>S'il vous plait, spécifiez ceux de vos cercles à qui est destiné ce contenu</value></data>
-  <data name="DoTag"><value>Tagger</value></data>
-  <data name="DuplicateEmail"><value>This email adress is already used ({0}).</value></data>
-  <data name="DuplicateUserName"><value>This user name is already used ({0}).</value></data>
-  <data name="Edit"><value>Edit</value></data>
-  <data name="Edited"><value>Edited</value></data>
-  <data name="EditRelatedSkills"><value>Edit related skills</value></data>
-  <data name="EndDate"><value>Date de fin</value></data>
-  <data name="EndHour"><value>Heure de fin</value></data>
-  <data name="email"><value>e-mail</value></data>
-  <data name="EMailToPerformerFooter"><value>
-  Generated e-mail from {0}, because of your perfomer profile publication, 
-  and your email usage agreement.
-  Visit {1} to modify your profile, unsubscribe or unregister.</value></data>
-  <data name="entries"><value>entries</value></data>
-  <data name="Estimate not found"><value>Estimate not found</value></data>
-  <data name="EstimateWanted"><value>Estimate wanted</value></data>
-  <data name="EventWebPage"><value>Event Web page</value></data>
-  <data name="ExistantDB"><value>Existant data base</value></data>
-  <data name="External Logins"><value>External Logins</value></data>
-  <data name="FillInAFutureDate"><value>Please, use a date in the future as starting date.</value></data>
-  <data name="Forbidden"><value>Restricted area</value></data>
-  <data name="from"><value>from</value></data>
-  <data name="GiveAnExplicitReason"><value>Tell more, below, about your query</value></data>
-  <data name="GoogleDidntGeoLocalized"><value>Google could'nt identify this place</value></data>
-  <data name="Google calendar"><value>Google calendar</value></data>
-  <data name="Google error"><value>Google error : {0}</value></data>
-  <data name="Google registration id"><value>Google registration id</value></data>
-  <data name="Home"><value>Home</value></data>
-  <data name="Hide"><value>Hide</value></data>
-  <data name="hidden"><value>hidden</value></data>
-  <data name="Hide source"><value>Hide the bill source text</value></data>
-  <data name="I understood"><value>I understood</value></data>
-  <data name="Icons made by"><value>Icons made by</value></data>
-  <data name="ImgLocator"><value>Image URI</value></data>
-  <data name="ImportException"><value>Exception at importing</value></data>
-  <data name="InternalServerError"><value>Internal Server Error</value></data>
-  <data name="is licensed by"><value>is licensed by</value></data>
-  <data name="Item added to basket"><value>Item added to basket</value></data>
-  <data name="Location"><value>Location</value></data>
-  <data name="Login"><value>Login</value></data>
-  <data name="Logout"><value>Logout</value></data>
-  <data name="MainActivity"><value>Main activity</value></data>
-  <data name="Manage"><value>Manage</value></data>
-  <data name="ManagedSiteSkills"><value>Site skills</value></data>
-  <data name="MaxDate"><value>Maximal date for the rendez-vous</value></data>
-  <data name="MEACode"><value>Mainly Exerted Activity code</value></data>
-  <data name="Manage your account"><value>Manage your account</value></data>
-  <data name="Members"><value>Members</value></data>
-  <data name="Message sent"><value>Your message has been sent.</value></data>
-  <data name="MinDate"><value>Minimal date for the rendez-vous</value></data>
-  <data name="Modify"><value>Modify</value></data>
-  <data name="My Estimates"><value>My estimates</value></data>
-  <data name="Name"><value>Name</value></data>
-  <data name="Needs"><value>Needs</value></data>
-  <data name="Need"><value>Need</value></data>
-  <data name="nouvel instrument"><value>new instrument</value></data>
-  
-  <data name="UserName"><value>New display name</value></data>
-  <data name="New user name"><value>New display name</value></data>
-  <data name="New Tag"><value>New Tag</value></data>
-  <data name="NewPasswordMessageSent"><value>A message had been sent, containing a link to follow in order 
-  to update your password.</value></data>
-  <data name="no content"><value>no content</value></data>
-  <data name="NoSkillforthisactivity"><value>No skill was informed by any performer for this activity</value></data>
-  <data name="none"><value>none</value></data>
-  <data name="Non existent user"><value>Non existent user</value></data>
-  <data name="Not Approuved"><value>Not Approuved</value></data>
-  <data name="No calendar for this user"><value>No calendar was associated to this user.</value></data>
-  <data name="Offline"><value>Offline</value></data>
-  <data name="Online"><value>Online</value></data>
-  <data name="OnlyAuthorizedMayContact"><value>Only authorized users may contact a performer by mail.</value></data>
-  <data name="Pdf version"><value>Pdf version</value></data>
-  <data name="PerformanceDate"><value>Performance date</value></data>
-  <data name="PerformancePlace"><value>Performance place</value></data>
-  <data name="Performers"><value>Performers</value></data>
-  <data name="Performer"><value>Performer</value></data>
-  <data name="Person"><value>Person</value></data>
-  <data name="Photo"><value>Photo</value></data>
-  <data name="PhotoUpdated"><value>Photo updated</value></data>
-  <data name="PleaseCheckYourEmail"><value>Please check your email to reset your password.</value></data>
-  <data name="PleaseConfirmYourNewPassword"><value>Please confirm your new password</value></data>
-  <data name="PleaseFillInABody"><value>Please fill in a body</value></data>
-  <data name="PleaseFillInAReason"><value>Please, fill in a reason</value></data>
-  
-  <data name="Posted"><value>Posted</value></data>
-  <data name="PreferedDate"><value>Prefered date</value></data>
-  <data name="prestation"><value>prestation</value></data>
-  <data name="PresationLocation"><value>Presation location:{0}.\n</value></data>
-  <data name="Preview"><value>Preview</value><comment>comment on preview</comment></data>
-  <data name="Profile edition"><value>Profile edition</value></data>
-  <data name="Private circle"><value>Private circle</value></data>
-  <data name="ProviderId"><value>Provider identifier</value></data>
-  <data name="ProviderName"><value>Provider name</value></data>
-  <data name="Product reference"><value>Product_reference</value></data>
-  <data name="ReadMore"><value>Read more ...</value></data>
-  <data name="reason"><value>reason</value></data>
-  <data name="Register"><value>Register</value></data>
-  <data name="RegistrationUnexpectedError"><value>Registration: unexpected error occured:
-  "{0}".
-  Please forgive for troubles</value></data>
-  <data name="Remember me"><value>Remember me</value></data>
-  <data name="Remove"><value>Remove</value></data>
-  <data name="ResetPassword"><value>Reset your password</value></data>
-  <data name="Role"><value>Role</value></data>
-  <data name="role created"><value>role created</value></data>
-  <data name="RoleName"><value>Role name</value></data>
-  <data name="Save these settings"><value>Save these settings</value></data>
-  <data name="Search"><value>Search</value></data>
-  <data name="SiteSkills"><value>Talents/Compétences/Spécialités gérés sur ce site</value></data>
-  <data name="Skill"><value>Skill</value></data>
-  <data name="Skills"><value>Skills</value></data>
-  <data name="Specifyavalidlatitude"><value>Please, specify a valid latitude</value></data>
-  <data name="Specifyavalidlongitude"><value>Please, specify a valid longitude</value></data>
-  <data name="SpecifyLatitude"><value>Specify a latitude</value></data>
-  <data name="SpecifyLongitude"><value>Specify a longitude</value></data>
-  <data name="SpecifyPlace"><value>Please, specify a place</value></data>
-  <data name="SomeoneAskingYouForAnEstimate"><value>{0} would want you to establish an estimate concerning {1}</value></data>
-  <data name="Sound"><value>Sound</value></data>
-  <data name="StartDate"><value>Start date</value></data>
-  <data name="StartDateAfterEndDate"><value>The ending date must be later than the starting one.</value></data>
-  <data name="StartHour"><value>Start hour</value></data>
-  <data name="Submit"><value>Submit</value></data>
-  <data name="SubmitChanges"><value>Submit changes</value></data>
-  <data name="Tag"><value>Tag</value></data>
-  <data name="Tag name"><value>Tag name</value></data>
-  <data name="Tex version"><value>LaTeX version</value></data>
-  <data name="ThisSiteUsesCookies"><value>This site uses cookies</value></data>
-  <data name="ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailableThis"><value>ThisPerformer Gives access to his calendar and seems to be available this</value></data>
-  <data name="ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis"><value>This performer gives access to his calendar and it appears he should not be available this</value></data>
-  <data name="ThisPerformerDoesntGiveAccessToHisCalendar"><value>ThisPerformerDoesntGiveAccessToHisCalendar</value></data>
-  <data name="Title"><value>Title</value></data>
-  <data name="to"><value>to</value></data>
-  <data name="TwoFactorAuthentication"><value>Two-Factor authentication</value></data>
-  
-  <data name="Unitary_cost"><value>Unitary_cost</value></data>
-  <data name="Unregister"><value>Unregister</value></data>
-  <data name="User List"><value>User List</value></data>
-  <data name="User name"><value>User name</value></data>
-  <data name="UsersInRole"><value>List of users assuming the role "{0}"</value></data>
-  <data name="UserNotInThisRole"><value>This user is not in this role</value></data>
-  <data name="UserSkills"><value>User skills</value></data>
-  <data name="View source"><value>View source</value></data>
-  <data name="was added to_the_role"><value>was added to the role</value></data>
-  <data name="was_added_to_the_empty_role"><value>There was no user in the "{1}" role. You ({0}) was just added as firt user in the "{1}" role.</value></data>
-  <data name="Welcome"><value>Welcome</value><comment></comment></data>
-  <data name="XHasBeenNotified"><value>{0} has been notified of your query, you should be fast contacted</value></data>
-  <data name="Xshouldbeavailable"><value>regarding his calendar, 
-{0} should be available for this booking</value></data>
-  <data name="Yavsc.Models.Musical.Profiles.Instrumentation"><value>Paramètres musicien (l'instrument)</value></data>
-  <data name="Yavsc.Models.Musical.Profiles.DjSettings"><value>Paramètres Dj (le compte SoundCloud.com)</value></data>
-  <data name="Yavsc.Models.Musical.Profiles.FormationSettings"><value>Paramètres formation (les partenaires)</value></data>
-  <data name="Yavsc.Models.Musical.Profiles.GeneralSettings"><value>Paramètres généraux: une couleur musicale</value></data>
-  <data name="YouNeedToBeAuthenticatedIOToContact"><value>You need to be authenticated in order to 
-contact a performer</value></data>
-  <data name="younotadmin"><value>You're not administrator</value></data>
-  <data name="YourEstimates"><value>Your estimates</value></data>
-  <data name="YourMEACode"><value>Your activity</value></data>
-  <data name="YourNeed"><value>Your need</value></data>
-  <data name="yourquerytransmitted"><value>your query has been transmitted</value></data>
-  <data name="YourSkills"><value>Your skills, your special fields, the scope of your activities</value></data>
-  <data name="YourPosts"><value>You posts</value></data>
-  <data name="YourProfile"><value>Your profile</value></data>
-  <data name="YourMessageHasBeenSent"><value>Your message has been sent</value></data>
-  <data name="Longueur de cheveux"><value>Hair Length</value></data>
-  <data name="Français"><value>French</value></data>
-  <data name="Anglais"><value>English</value></data>
-    <data name="RequiredField"><value>This field is required.</value></data>
-    <data name="PasswordTooShort"><value>Passwords must be at least {0} characters.</value></data>
-  <data name="PasswordRequiresNonLetterAndDigit"><value>Passwords must have at least one non letter and non digit character.</value></data>
-  <data name="PasswordRequiresDigit"><value>Passwords must have at least one digit ('0'-'9').</value></data>
-  <data name="PasswordRequiresUpper"><value>Passwords must have at least one uppercase ('A'-'Z').</value></data>
-  <data name="PassAndConfirmDontMach"><value>Passwords and confirmation are not the same.</value></data>
-<data name="PasswordConfirm"><value>Password confirmation</value></data>
- <data name="InvalidUserName"><value>Invalid user name.
-Valid caracters are: underscore '_',  '-',  'a' - 'z', 'A' - 'Z',  '0' - '9', the single quote ('), the space and the dot.</value></data>
- 
+  <data name="About">
+    <value>About</value>
+  </data>
+  <data name="About_BookAStar">
+    <value>About BookAStar</value>
+  </data>
+  <data name="About_Message">
+    <value>Welcome by your stars.</value>
+  </data>
+  <data name="access_denied">
+    <value>Access denied</value>
+  </data>
+  <data name="AccountBalance">
+    <value>Account Balance</value>
+  </data>
+  <data name="Activity">
+    <value>Activity</value>
+  </data>
+  <data name="Activities">
+    <value>Activities</value>
+  </data>
+  <data name="additionally">
+    <value>additionally</value>
+  </data>
+  <data name="Allow my geolocatisation, nearby my clients">
+    <value>Allow my geolocatisation, nearby my clients</value>
+  </data>
+  <data name="AnIMessageHasbeenSent">
+    <value>An instant message has been sent to {0},   showing to him your query. You should be contacted very soon.</value>
+  </data>
+  <data name="aprestation">
+    <value>a prestation</value>
+  </data>
+  <data name="AskForAnEstimate">
+    <value>Ask for an estimate</value>
+  </data>
+  <data name="AttachedFiles">
+    <value>Attached files</value>
+  </data>
+  <data name="AuthenticatedOnly">
+    <value>You must be authenticated in order to access this information</value>
+  </data>
+  <data name="Author">
+    <value>Author</value>
+  </data>
+  <data name="available">
+    <value>available</value>
+  </data>
+  <data name="Basket">
+    <value>Basket</value>
+  </data>
+  <data name="Bill_edition">
+    <value>Bill edition</value>
+  </data>
+  <data name="Bill_removal">
+    <value>Bill removal</value>
+  </data>
+  <data name="BillAccessControl">
+    <value>Bill access control</value>
+  </data>
+  <data name="BillCreated">
+    <value>Bill created</value>
+  </data>
+  <data name="BillSourceCode">
+    <value>Bill source code</value>
+  </data>
+  <data name="BillUpdated">
+    <value>Bill updated</value>
+  </data>
+  <data name="body">
+    <value>body</value>
+  </data>
+  <data name="Book A Star">
+    <value>Book an artist</value>
+  </data>
+  <data name="Book IT">
+    <value>Book a performer in information technology</value>
+  </data>
+  <data name="BookingTitleArtiste">
+    <value>Book an artiste</value>
+  </data>
+  <data name="BookingTitle6829C">
+    <value>Book a software editor</value>
+  </data>
+  <data name="Catalog">
+    <value>Catalog</value>
+  </data>
+  <data name="Change user name form">
+    <value>Change user name form</value>
+  </data>
+  <data name="Change your account settings">
+    <value>Change your account settings</value>
+  </data>
+  <data name="ChooseADescription">
+    <value>Please, choose a description</value>
+  </data>
+  <data name="ChooseATitle">
+    <value>Please, choose a title</value>
+  </data>
+  <data name="ChooseADateInTheFutur">
+    <value>Please, Choose A Date In The Futur</value>
+  </data>
+  <data name="ChooseAnEventDate">
+    <value>Please, choose a date for this event </value>
+  </data>
+  <data name="Ciffer">
+    <value>Ciffer</value>
+  </data>
+  <data name="Circles">
+    <value>Circles</value>
+  </data>
+  <data name="Click action">
+    <value>Click action</value>
+  </data>
+  <data name="Color">
+    <value>Color</value>
+  </data>
+  <data name="Comment">
+    <value>Comment</value>
+  </data>
+  <data name="Consultant">
+    <value>Consultant</value>
+  </data>
+  <data name="ContactAPerformer">
+    <value>Contact a performer</value>
+  </data>
+  <data name="CouldNotConvertVToDouble">
+    <value>Could not convert '{0}' to double.</value>
+  </data>
+  <data name="Count">
+    <value>Count</value>
+  </data>
+  <data name="Create">
+    <value>Créer</value>
+  </data>
+  <data name="Credits">
+    <value>Credits</value>
+  </data>
+  <data name="Date_search">
+    <value>Date search</value>
+  </data>
+  <data name="DB">
+    <value>Data base</value>
+  </data>
+  <data name="Description">
+    <value>Description</value>
+  </data>
+  <data name="Disable">
+    <value>Disable</value>
+  </data>
+  <data name="DisplayName">
+    <value>Display Name</value>
+  </data>
+  <data name="DoAnEstimate">
+    <value>Do an estimate</value>
+  </data>
+  <data name="DoComment">
+    <value>Commenter</value>
+  </data>
+  <data name="DocTemplateException">
+    <value>Une erreur est survenue à la génération de votre document</value>
+  </data>
+  <data name="DoNotPublishMyActivity">
+    <value>Ne pas publier mon activité</value>
+  </data>
+  <data name="DoPost">
+    <value>Do post</value>
+  </data>
+  <data name="DoSpecifyCircles">
+    <value>S'il vous plait, spécifiez ceux de vos cercles à qui est destiné ce contenu</value>
+  </data>
+  <data name="DoTag">
+    <value>Tagger</value>
+  </data>
+  <data name="DuplicateEmail">
+    <value>This email adress is already used ({0}).</value>
+  </data>
+  <data name="DuplicateUserName">
+    <value>This user name is already used ({0}).</value>
+  </data>
+  <data name="Edit">
+    <value>Edit</value>
+  </data>
+  <data name="Edited">
+    <value>Edited</value>
+  </data>
+  <data name="EditRelatedSkills">
+    <value>Edit related skills</value>
+  </data>
+  <data name="EndDate">
+    <value>Date de fin</value>
+  </data>
+  <data name="EndHour">
+    <value>Heure de fin</value>
+  </data>
+  <data name="email">
+    <value>e-mail</value>
+  </data>
+  <data name="EMailToPerformerFooter">
+    <value>  Generated e-mail from {0}, because of your perfomer profile publication,   and your email usage agreement.  Visit {1} to modify your profile, unsubscribe or unregister.</value>
+  </data>
+  <data name="entries">
+    <value>entries</value>
+  </data>
+  <data name="Estimate not found">
+    <value>Estimate not found</value>
+  </data>
+  <data name="EstimateWanted">
+    <value>Estimate wanted</value>
+  </data>
+  <data name="EventWebPage">
+    <value>Event Web page</value>
+  </data>
+  <data name="ExistantDB">
+    <value>Existant data base</value>
+  </data>
+  <data name="External Logins">
+    <value>External Logins</value>
+  </data>
+  <data name="FillInAFutureDate">
+    <value>Please, use a date in the future as starting date.</value>
+  </data>
+  <data name="Forbidden">
+    <value>Restricted area</value>
+  </data>
+  <data name="from">
+    <value>from</value>
+  </data>
+  <data name="GiveAnExplicitReason">
+    <value>Tell more, below, about your query</value>
+  </data>
+  <data name="GoogleDidntGeoLocalized">
+    <value>Google could'nt identify this place</value>
+  </data>
+  <data name="Google calendar">
+    <value>Google calendar</value>
+  </data>
+  <data name="Google error">
+    <value>Google error : {0}</value>
+  </data>
+  <data name="Google registration id">
+    <value>Google registration id</value>
+  </data>
+  <data name="Home">
+    <value>Home</value>
+  </data>
+  <data name="Hide">
+    <value>Hide</value>
+  </data>
+  <data name="hidden">
+    <value>hidden</value>
+  </data>
+  <data name="Hide source">
+    <value>Hide the bill source text</value>
+  </data>
+  <data name="I understood">
+    <value>I understood</value>
+  </data>
+  <data name="Icons made by">
+    <value>Icons made by</value>
+  </data>
+  <data name="ImgLocator">
+    <value>Image URI</value>
+  </data>
+  <data name="ImportException">
+    <value>Exception at importing</value>
+  </data>
+  <data name="InternalServerError">
+    <value>Internal Server Error</value>
+  </data>
+  <data name="is licensed by">
+    <value>is licensed by</value>
+  </data>
+  <data name="Item added to basket">
+    <value>Item added to basket</value>
+  </data>
+  <data name="Location">
+    <value>Location</value>
+  </data>
+  <data name="Login">
+    <value>Login</value>
+  </data>
+  <data name="Logout">
+    <value>Logout</value>
+  </data>
+  <data name="MainActivity">
+    <value>Main activity</value>
+  </data>
+  <data name="Manage">
+    <value>Manage</value>
+  </data>
+  <data name="ManagedSiteSkills">
+    <value>Site skills</value>
+  </data>
+  <data name="MaxDate">
+    <value>Maximal date for the rendez-vous</value>
+  </data>
+  <data name="MEACode">
+    <value>Mainly Exerted Activity code</value>
+  </data>
+  <data name="Manage your account">
+    <value>Manage your account</value>
+  </data>
+  <data name="Members">
+    <value>Members</value>
+  </data>
+  <data name="Message sent">
+    <value>Your message has been sent.</value>
+  </data>
+  <data name="MinDate">
+    <value>Minimal date for the rendez-vous</value>
+  </data>
+  <data name="Modify">
+    <value>Modify</value>
+  </data>
+  <data name="My Estimates">
+    <value>My estimates</value>
+  </data>
+  <data name="Name">
+    <value>Name</value>
+  </data>
+  <data name="Needs">
+    <value>Needs</value>
+  </data>
+  <data name="Need">
+    <value>Need</value>
+  </data>
+  <data name="nouvel instrument">
+    <value>new instrument</value>
+  </data>
+  <data name="UserName">
+    <value>New display name</value>
+  </data>
+  <data name="New user name">
+    <value>New display name</value>
+  </data>
+  <data name="New Tag">
+    <value>New Tag</value>
+  </data>
+  <data name="NewPasswordMessageSent">
+    <value>A message had been sent, containing a link to follow in order   to update your password.</value>
+  </data>
+  <data name="no content">
+    <value>no content</value>
+  </data>
+  <data name="NoSkillforthisactivity">
+    <value>No skill was informed by any performer for this activity</value>
+  </data>
+  <data name="none">
+    <value>none</value>
+  </data>
+  <data name="Non existent user">
+    <value>Non existent user</value>
+  </data>
+  <data name="Not Approuved">
+    <value>Not Approuved</value>
+  </data>
+  <data name="No calendar for this user">
+    <value>No calendar was associated to this user.</value>
+  </data>
+  <data name="Offline">
+    <value>Offline</value>
+  </data>
+  <data name="Online">
+    <value>Online</value>
+  </data>
+  <data name="OnlyAuthorizedMayContact">
+    <value>Only authorized users may contact a performer by mail.</value>
+  </data>
+  <data name="Pdf version">
+    <value>Pdf version</value>
+  </data>
+  <data name="PerformanceDate">
+    <value>Performance date</value>
+  </data>
+  <data name="PerformancePlace">
+    <value>Performance place</value>
+  </data>
+  <data name="Performers">
+    <value>Performers</value>
+  </data>
+  <data name="Performer">
+    <value>Performer</value>
+  </data>
+  <data name="Person">
+    <value>Person</value>
+  </data>
+  <data name="Photo">
+    <value>Photo</value>
+  </data>
+  <data name="PhotoUpdated">
+    <value>Photo updated</value>
+  </data>
+  <data name="PleaseCheckYourEmail">
+    <value>Please check your email to reset your password.</value>
+  </data>
+  <data name="PleaseConfirmYourNewPassword">
+    <value>Please confirm your new password</value>
+  </data>
+  <data name="PleaseFillInABody">
+    <value>Please fill in a body</value>
+  </data>
+  <data name="PleaseFillInAReason">
+    <value>Please, fill in a reason</value>
+  </data>
+  <data name="Posted">
+    <value>Posted</value>
+  </data>
+  <data name="PreferedDate">
+    <value>Prefered date</value>
+  </data>
+  <data name="prestation">
+    <value>prestation</value>
+  </data>
+  <data name="PresationLocation">
+    <value>Presation location:{0}.\n</value>
+  </data>
+  <data name="Preview">
+    <value>Preview</value>
+    <comment>comment on preview</comment>
+  </data>
+  <data name="Profile edition">
+    <value>Profile edition</value>
+  </data>
+  <data name="Private circle">
+    <value>Private circle</value>
+  </data>
+  <data name="ProviderId">
+    <value>Provider identifier</value>
+  </data>
+  <data name="ProviderName">
+    <value>Provider name</value>
+  </data>
+  <data name="Product reference">
+    <value>Product_reference</value>
+  </data>
+  <data name="ReadMore">
+    <value>Read more ...</value>
+  </data>
+  <data name="reason">
+    <value>reason</value>
+  </data>
+  <data name="Register">
+    <value>Register</value>
+  </data>
+  <data name="RegistrationUnexpectedError">
+    <value>Registration: unexpected error occured:  "{0}".  Please forgive for troubles</value>
+  </data>
+  <data name="Remember me">
+    <value>Remember me</value>
+  </data>
+  <data name="Remove">
+    <value>Remove</value>
+  </data>
+  <data name="ResetPassword">
+    <value>Reset your password</value>
+  </data>
+  <data name="Role">
+    <value>Role</value>
+  </data>
+  <data name="role created">
+    <value>role created</value>
+  </data>
+  <data name="RoleName">
+    <value>Role name</value>
+  </data>
+  <data name="Save these settings">
+    <value>Save these settings</value>
+  </data>
+  <data name="Search">
+    <value>Search</value>
+  </data>
+  <data name="SiteSkills">
+    <value>Talents/Compétences/Spécialités gérés sur ce site</value>
+  </data>
+  <data name="Skill">
+    <value>Skill</value>
+  </data>
+  <data name="Skills">
+    <value>Skills</value>
+  </data>
+  <data name="Specifyavalidlatitude">
+    <value>Please, specify a valid latitude</value>
+  </data>
+  <data name="Specifyavalidlongitude">
+    <value>Please, specify a valid longitude</value>
+  </data>
+  <data name="SpecifyLatitude">
+    <value>Specify a latitude</value>
+  </data>
+  <data name="SpecifyLongitude">
+    <value>Specify a longitude</value>
+  </data>
+  <data name="SpecifyPlace">
+    <value>Please, specify a place</value>
+  </data>
+  <data name="SomeoneAskingYouForAnEstimate">
+    <value>{0} would want you to establish an estimate concerning {1}</value>
+  </data>
+  <data name="Sound">
+    <value>Sound</value>
+  </data>
+  <data name="StartDate">
+    <value>Start date</value>
+  </data>
+  <data name="StartDateAfterEndDate">
+    <value>The ending date must be later than the starting one.</value>
+  </data>
+  <data name="StartHour">
+    <value>Start hour</value>
+  </data>
+  <data name="Submit">
+    <value>Submit</value>
+  </data>
+  <data name="SubmitChanges">
+    <value>Submit changes</value>
+  </data>
+  <data name="Tag">
+    <value>Tag</value>
+  </data>
+  <data name="Tag name">
+    <value>Tag name</value>
+  </data>
+  <data name="Tex version">
+    <value>LaTeX version</value>
+  </data>
+  <data name="ThisSiteUsesCookies">
+    <value>This site uses cookies</value>
+  </data>
+  <data name="ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailableThis">
+    <value>ThisPerformer Gives access to his calendar and seems to be available this</value>
+  </data>
+  <data name="ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis">
+    <value>This performer gives access to his calendar and it appears he should not be available this</value>
+  </data>
+  <data name="ThisPerformerDoesntGiveAccessToHisCalendar">
+    <value>ThisPerformerDoesntGiveAccessToHisCalendar</value>
+  </data>
+  <data name="Title">
+    <value>Title</value>
+  </data>
+  <data name="to">
+    <value>to</value>
+  </data>
+  <data name="TwoFactorAuthentication">
+    <value>Two-Factor authentication</value>
+  </data>
+  <data name="Unitary_cost">
+    <value>Unitary_cost</value>
+  </data>
+  <data name="Unregister">
+    <value>Unregister</value>
+  </data>
+  <data name="User List">
+    <value>User List</value>
+  </data>
+  <data name="User name">
+    <value>User name</value>
+  </data>
+  <data name="UsersInRole">
+    <value>List of users assuming the role "{0}"</value>
+  </data>
+  <data name="UserNotInThisRole">
+    <value>This user is not in this role</value>
+  </data>
+  <data name="UserSkills">
+    <value>User skills</value>
+  </data>
+  <data name="View source">
+    <value>View source</value>
+  </data>
+  <data name="was added to_the_role">
+    <value>was added to the role</value>
+  </data>
+  <data name="was_added_to_the_empty_role">
+    <value>There was no user in the "{1}" role. You ({0}) was just added as firt user in the "{1}" role.</value>
+  </data>
+  <data name="Welcome">
+    <value>Welcome</value>
+    <comment></comment>
+  </data>
+  <data name="XHasBeenNotified">
+    <value>{0} has been notified of your query, you should be fast contacted</value>
+  </data>
+  <data name="Xshouldbeavailable">
+    <value>regarding his calendar, {0} should be available for this booking</value>
+  </data>
+  <data name="Yavsc.Models.Musical.Profiles.Instrumentation">
+    <value>Paramètres musicien (l'instrument)</value>
+  </data>
+  <data name="Yavsc.Models.Musical.Profiles.DjSettings">
+    <value>Paramètres Dj (le compte SoundCloud.com)</value>
+  </data>
+  <data name="Yavsc.Models.Musical.Profiles.FormationSettings">
+    <value>Paramètres formation (les partenaires)</value>
+  </data>
+  <data name="Yavsc.Models.Musical.Profiles.GeneralSettings">
+    <value>Paramètres généraux: une couleur musicale</value>
+  </data>
+  <data name="YouNeedToBeAuthenticatedIOToContact">
+    <value>You need to be authenticated in order to contact a performer</value>
+  </data>
+  <data name="younotadmin">
+    <value>You're not administrator</value>
+  </data>
+  <data name="YourEstimates">
+    <value>Your estimates</value>
+  </data>
+  <data name="YourMEACode">
+    <value>Your activity</value>
+  </data>
+  <data name="YourNeed">
+    <value>Your need</value>
+  </data>
+  <data name="yourquerytransmitted">
+    <value>your query has been transmitted</value>
+  </data>
+  <data name="YourSkills">
+    <value>Your skills, your special fields, the scope of your activities</value>
+  </data>
+  <data name="YourPosts">
+    <value>You posts</value>
+  </data>
+  <data name="YourProfile">
+    <value>Your profile</value>
+  </data>
+  <data name="YourMessageHasBeenSent">
+    <value>Your message has been sent</value>
+  </data>
+  <data name="Longueur de cheveux">
+    <value>Hair Length</value>
+  </data>
+  <data name="Français">
+    <value>French</value>
+  </data>
+  <data name="Anglais">
+    <value>English</value>
+  </data>
+  <data name="RequiredField">
+    <value>This field is required.</value>
+  </data>
+  <data name="PasswordTooShort">
+    <value>Passwords must be at least {0} characters.</value>
+  </data>
+  <data name="PasswordRequiresNonLetterAndDigit">
+    <value>Passwords must have at least one non letter and non digit character.</value>
+  </data>
+  <data name="PasswordRequiresDigit">
+    <value>Passwords must have at least one digit ('0'-'9').</value>
+  </data>
+  <data name="PasswordRequiresUpper">
+    <value>Passwords must have at least one uppercase ('A'-'Z').</value>
+  </data>
+  <data name="PassAndConfirmDontMach">
+    <value>Passwords and confirmation are not the same.</value>
+  </data>
+  <data name="PasswordConfirm">
+    <value>Password confirmation</value>
+  </data>
+  <data name="InvalidUserName">
+    <value>Invalid user name.
+Valid caracters are: underscore '_',  '-',  'a' - 'z', 'A' - 'Z',  '0' - '9', the single quote ('), the space and the dot.</value>
+  </data>
+  <data name="EmailSentForConfirm">
+    <value>An email has been sent to confirm your addresse.</value>
+  </data>
 </root>
