@@ -1,4 +1,5 @@
 using System;
+using System.Resources;
 
 namespace Yavsc.Attributes.Validation
 {
@@ -50,9 +51,11 @@ namespace Yavsc.Attributes.Validation
         {
             this.ErrorMessage = pattern;
         }
+
+
         public override string FormatErrorMessage(string name)
         {
-            return Startup.GlobalLocalizer[name];
+            return Startup.GlobalLocalizer[this.ErrorMessageResourceName];
         }
     }
 }
