@@ -8,27 +8,27 @@ namespace Yavsc.ViewModels.Account
         // ErrorMessage = "",
          
 
-        [Display(Name = "Nom d'utilisateur")]
+        [Display(ResourceType = typeof(Yavsc.Resources.YavscLocalisation), Name = "UserName")]
         [StringLength(102)]
-        [YaRegularExpression(@"[a-zA-Z0-9 ._-]+",
-         ErrorMessage = "Caratères autorisés: lettres, chiffres, espace point tiret et souligné.")]
+        [YaRegularExpression(@"[a-zA-Z0-9 ._-]+", ErrorMessageResourceName="InvalidUserName", ErrorMessageResourceType = typeof(Yavsc.Resources.YavscLocalisation))]
         public string UserName { get; set; }
 
-        [YaRequired("Ce champ est requis.")]
+        [YaRequired()]
    //    [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-       [YaRequired(ErrorMessage="Spécifiez un mot de passe.")]
-      //  [StringLength(100, ErrorMessage = "Le {0} doit être long d'au moins {1} caractères.", MinimumLength = 6)]
-        [DataType(DataType.Password,
-         ErrorMessage = "Les mots de passe doivent contenir au moins un caractère spécial, qui ne soit ni une lettre ni un chiffre.")]
+        [StringLength(100, MinimumLength = 6)]
+        [DataType(DataType.Password)]
+
+        // ErrorMessage = "Les mots de passe doivent contenir au moins un caractère spécial, qui ne soit ni une lettre ni un chiffre.")]
         
-        [Display(Name = "Mot de passe")]
+        [Display(ResourceType = typeof(Yavsc.Resources.YavscLocalisation), Name = "Password")]
         public string Password { get; set; }
 
-        [Display(Name = "Confirmer le mot de passe")]
-        [Compare("Password", ErrorMessage = "Le mot de passe et sa confirmation ne sont pas les mêmes.")]
+        [DataType(DataType.Password)]
+        [Display(ResourceType = typeof(Yavsc.Resources.YavscLocalisation), Name = "PasswordConfirm")]
+        [Compare("Password", ErrorMessageResourceName = "PassAndConfirmDontMach", ErrorMessageResourceType = typeof(Yavsc.Resources.YavscLocalisation) )]
         public string ConfirmPassword { get; set; }
 
         public string GoogleRegId { get; set; }

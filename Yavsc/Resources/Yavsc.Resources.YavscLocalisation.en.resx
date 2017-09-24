@@ -346,5 +346,9 @@ contact a performer</value></data>
   <data name="PasswordRequiresNonLetterAndDigit"><value>Passwords must have at least one non letter and non digit character.</value></data>
   <data name="PasswordRequiresDigit"><value>Passwords must have at least one digit ('0'-'9').</value></data>
   <data name="PasswordRequiresUpper"><value>Passwords must have at least one uppercase ('A'-'Z').</value></data>
-  
+  <data name="PassAndConfirmDontMach"><value>Passwords and confirmation are not the same.</value></data>
+<data name="PasswordConfirm"><value>Password confirmation</value></data>
+ <data name="InvalidUserName"><value>Invalid user name.
+Valid caracters are: underscore '_',  '-',  'a' - 'z', 'A' - 'Z',  '0' - '9', the space and the dot.</value></data>
+ 
 </root>

@@ -437,7 +437,7 @@
   <data name="UnsetActivity"><value>Supprimer mon profil professionel</value></data>
   <data name="Français"><value>Français</value></data>
   <data name="Anglais"><value>Anglais</value></data>
-  <data name="invalidUserName"><value>Nom d'utilisateur invalide.
+  <data name="InvalidUserName"><value>Nom d'utilisateur invalide.
   Les valides sont: le souligné '_', le titret '-', de 'a' à 'z', de 'A' à 'Z', de 0 à 9, l'espace et le point.</value></data>
   <data name="RequiredField"><value>Ce champ est obligatoire.</value></data>
   <data name="validationError"><value>Champ invalide ...</value></data>
@@ -445,5 +445,8 @@
   <data name="PasswordRequiresNonLetterAndDigit"><value>Mot de passe doit contenir au moins a caractère spécial (ni un chiffre, ni une lettre).</value></data>
   <data name="PasswordRequiresDigit"><value>Les mots de passe doivent contenir au moins un chiffre ('0' à '9').</value></data>
   <data name="PasswordRequiresUpper"><value>Les mots de passe doivent contenir au moins une lettre majuscule ('A' à 'Z').</value></data>
+  <data name="PassAndConfirmDontMach"><value>Le mot de passe et sa confirmation ne sont pas les mêmes.</value></data>
+  <data name="PasswordConfirm"><value>Confirmation du mot de passe</value></data>
   
+
 </root>
