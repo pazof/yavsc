@@ -54,7 +54,7 @@ namespace Yavsc.Models
             builder.Entity<HyperLink>().HasKey(l=>new { l.HRef, l.Method });
             builder.Entity<Period>().HasKey(l=>new { l.Start, l.End });
             builder.Entity<Models.Cratie.Option>().HasKey( o => new { o.Code, o.CodeScrutin });
-
+            builder.Entity<Notification>().Property(n=> n.icon).HasDefaultValue("exclam");
             foreach (var et in builder.Model.GetEntityTypes()) {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;

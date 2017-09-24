@@ -25,7 +25,7 @@ namespace Yavsc.Models.Messaging
         /// The icon.
         /// </summary>
         [Display(Name = "Icône")]
-        public string icon { get; set; }
+        public string icon { get; set; } 
         /// <summary>
         /// The sound.
         /// </summary>
@@ -55,5 +55,10 @@ namespace Yavsc.Models.Messaging
         /// </summary>
         /// <returns></returns>
         public string Target { get; set; }
+
+        public Notification()
+        {
+            icon = "exclam";
+        }
     }
 }

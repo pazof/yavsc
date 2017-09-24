@@ -18,9 +18,12 @@ using Yavsc.Helpers;
 using Microsoft.Extensions.Localization;
 using Microsoft.Data.Entity;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using Yavsc.Models.Messaging;
 
 namespace Yavsc.Controllers
 {
+    using Yavsc.Helpers;
 
     public class AccountController : Controller
     {
@@ -212,19 +215,30 @@ namespace Yavsc.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    user.DiskQuota = Startup.SiteSetup.UserFiles.Quota;
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-                    // Send an email with this link
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.Email, "Confirm your account",
-                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
-                    // await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password.");
                     await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.EMail, 
                      $"[{_siteSettings.Title}] Inscription avec mot de passe: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
 
-                    return RedirectToAction(nameof(HomeController.Index), "Home");
+                    // TODO user.DiskQuota = Startup.SiteSetup.UserFiles.Quota;
+                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+                    // Send an email with this link
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                    var emailSent = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.Email, "Confirm your account",
+                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                     await _signInManager.SignInAsync(user, isPersistent: false);
+                     if (!emailSent) {
+                        _logger.LogWarning("User created with error sending email confirmation request");
+                        this.NotifyWarning (
+                                "E-mail confirmation",
+                                _localizer["ErrorSendingEmailForConfirm"]
+                         ) ;
+                    } else this.NotifyInfo (
+                                "E-mail confirmation",
+                                _localizer["EmailSentForConfirm"]
+                         ) ;
+                    
+                    return View("AccountCreated");
                 }
                 AddErrors(result);
             }
