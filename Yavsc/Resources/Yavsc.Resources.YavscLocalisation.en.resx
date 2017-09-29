@@ -774,4 +774,13 @@ Valid caracters are: underscore '_',  '-',  'a' - 'z', 'A' - 'Z',  '0' - '9', th
   <data name="EmailSentForConfirm">
     <value>An email has been sent to confirm your addresse.</value>
   </data>
+    <data name="ConfirmYourAccountTitle"><value>Please, confirm your e-mail</value></data>
+  <data name="ConfirmYourAccountBody"><value>You successfully created your {0} account,
+but your e-mail address is not yet confirmed.
+Please, in order to validate it, follow this link &lt;{1}&gt;.
+
+Thanks.
+-- 
+{0} - {2} &lt;https://{3}&gt;</value>
+  </data>
 </root>

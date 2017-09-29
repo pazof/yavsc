@@ -14,12 +14,9 @@ using Microsoft.AspNet.Http;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.ViewModels.Account;
-using Yavsc.Helpers;
 using Microsoft.Extensions.Localization;
 using Microsoft.Data.Entity;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using Yavsc.Models.Messaging;
 
 namespace Yavsc.Controllers
 {
@@ -49,7 +46,7 @@ namespace Yavsc.Controllers
         IOptions<SiteSettings> siteSettings,
        IOptions<SmtpSettings> smtpSettings,
             ILoggerFactory loggerFactory, IOptions<TwilioSettings> twilioSettings,
-            IStringLocalizer<Yavsc.Resources.YavscLocalisation>  localizer,
+            IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
             ApplicationDbContext dbContext)
         {
             _userManager = userManager;
@@ -65,8 +62,8 @@ namespace Yavsc.Controllers
             _dbContext = dbContext;
         }
 
-        [Authorize(Roles=Constants.AdminGroupName)]
-        public async Task<IActionResult> UserList ()
+        [Authorize(Roles = Constants.AdminGroupName)]
+        public async Task<IActionResult> UserList()
         {
             return View(await _dbContext.Users.ToArrayAsync());
         }
@@ -95,10 +92,10 @@ namespace Yavsc.Controllers
         {
             ViewBag.UserIsSignedIn = User.IsSignedIn();
             if (string.IsNullOrWhiteSpace(requestUrl))
-            if (string.IsNullOrWhiteSpace(Request.Headers["Referer"]))
-                requestUrl = "/";
+                if (string.IsNullOrWhiteSpace(Request.Headers["Referer"]))
+                    requestUrl = "/";
                 else requestUrl = Request.Headers["Referer"];
-            return View("AccessDenied",requestUrl);
+            return View("AccessDenied", requestUrl);
         }
 
         [AllowAnonymous]
@@ -216,7 +213,7 @@ namespace Yavsc.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(3, "User created a new account with password.");
-                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.EMail, 
+                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.EMail,
                      $"[{_siteSettings.Title}] Inscription avec mot de passe: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
 
                     // TODO user.DiskQuota = Startup.SiteSetup.UserFiles.Quota;
@@ -224,20 +221,23 @@ namespace Yavsc.Controllers
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    var emailSent = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.Email, "Confirm your account",
-                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
-                     await _signInManager.SignInAsync(user, isPersistent: false);
-                     if (!emailSent) {
+                    var emailSent = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.Email, _localizer["ConfirmYourAccountTitle"],
+                      string.Format(_localizer["ConfirmYourAccountBody"], _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    if (!emailSent)
+                    {
                         _logger.LogWarning("User created with error sending email confirmation request");
-                        this.NotifyWarning (
+                        this.NotifyWarning(
                                 "E-mail confirmation",
                                 _localizer["ErrorSendingEmailForConfirm"]
-                         ) ;
-                    } else this.NotifyInfo (
-                                "E-mail confirmation",
-                                _localizer["EmailSentForConfirm"]
-                         ) ;
-                    
+                         );
+                    }
+                    else
+                        this.NotifyInfo(
+                             "E-mail confirmation",
+                             _localizer["EmailSentForConfirm"]
+                      );
+
                     return View("AccountCreated");
                 }
                 AddErrors(result);
@@ -247,14 +247,21 @@ namespace Yavsc.Controllers
             return View(model);
         }
 
-        [Authorize,HttpPost,ValidateAntiForgeryToken]
-        public async Task <IActionResult> SendEMailForConfirm () {
-           var user = await _userManager.FindByIdAsync( User.GetUserId() );
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, user.Email, "Confirm your account",
-                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+        [Authorize, HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendEMailForConfirm()
+        {
+            var user = await _userManager.FindByIdAsync(User.GetUserId());
+            ViewBag.EmailSent = SendEMailForConfirm(user);
             return View("ConfirmEmailSent");
+        }
+
+        private async Task<bool> SendEMailForConfirm(ApplicationUser user)
+        {
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+            var res = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, user.Email, "Confirm your account",
+                   "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+            return res;
         }
         //
         // POST: /Account/LogOff
@@ -282,14 +289,14 @@ namespace Yavsc.Controllers
             }
 
             // Sign in the user with this external login provider if the user already has a login.
-            info.ProviderDisplayName = info.ExternalPrincipal.Claims.First(c=>c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+            info.ProviderDisplayName = info.ExternalPrincipal.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
 
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (result.Succeeded)
             {
-                _logger.LogInformation(5, $"User logged in with {info.LoginProvider} provider, as {info.ProviderDisplayName} ({info.ProviderKey})." );
+                _logger.LogInformation(5, $"User logged in with {info.LoginProvider} provider, as {info.ProviderDisplayName} ({info.ProviderKey}).");
 
-                var ninfo = _dbContext.UserLogins.First(l=>l.ProviderKey == info.ProviderKey && l.LoginProvider == info.LoginProvider);
+                var ninfo = _dbContext.UserLogins.First(l => l.ProviderKey == info.ProviderKey && l.LoginProvider == info.LoginProvider);
                 ninfo.ProviderDisplayName = info.ProviderDisplayName;
                 _dbContext.Entry(ninfo).State = EntityState.Modified;
                 _dbContext.SaveChanges(User.GetUserId());
@@ -357,7 +364,7 @@ namespace Yavsc.Controllers
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    info.ProviderDisplayName = info.ExternalPrincipal.Claims.First(c=>c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+                    info.ProviderDisplayName = info.ExternalPrincipal.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
 
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
@@ -365,8 +372,8 @@ namespace Yavsc.Controllers
                         await _signInManager.SignInAsync(user, isPersistent: false);
 
 
-                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.EMail, 
-                     $"[{_siteSettings.Title}] Inscription via {info.LoginProvider}: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
+                        await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.EMail,
+                         $"[{_siteSettings.Title}] Inscription via {info.LoginProvider}: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
 
                         _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
 
@@ -419,9 +426,10 @@ namespace Yavsc.Controllers
                 var user = await _userManager.FindByEmailAsync(model.LoginOrEmail);
 
                 // Don't reveal that the user does not exist or is not confirmed
-                if (user == null) {
+                if (user == null)
+                {
                     user = await _userManager.FindByNameAsync(model.LoginOrEmail);
-                    if (user == null) 
+                    if (user == null)
                     {
                         _logger.LogWarning($"ForgotPassword: Email or User name {model.LoginOrEmail} not found");
                         return View("ForgotPasswordConfirmation");
@@ -430,7 +438,8 @@ namespace Yavsc.Controllers
                 // user != null
                 // We want him to have a confirmed e-mail, and prevent this script
                 // to be used to send e-mail to any arbitrary person
-                if (!await _userManager.IsEmailConfirmedAsync(user)) {
+                if (!await _userManager.IsEmailConfirmedAsync(user))
+                {
                     _logger.LogWarning($"ForgotPassword: Email {model.LoginOrEmail} not confirmed");
                     return View("ForgotPasswordConfirmation");
                 }
@@ -439,8 +448,8 @@ namespace Yavsc.Controllers
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                await _emailSender.SendEmailAsync(_siteSettings,_smtpSettings,model.LoginOrEmail, _localizer["Reset Password"],
-                   _localizer["Please reset your password by following this link:"] +" <"+ callbackUrl +">" );
+                await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.LoginOrEmail, _localizer["Reset Password"],
+                   _localizer["Please reset your password by following this link:"] + " <" + callbackUrl + ">");
                 return View("ForgotPasswordConfirmation");
             }
 
@@ -640,7 +649,7 @@ namespace Yavsc.Controllers
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, _localizer[ error.Code ]);
+                ModelState.AddModelError(string.Empty, _localizer[error.Code]);
             }
         }
 
@@ -648,7 +657,7 @@ namespace Yavsc.Controllers
         {
             return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
         }
-        
+
         #endregion
     }
 }
