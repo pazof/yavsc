@@ -47,8 +47,11 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	☐ Gestion de l'espace de stockage personnel, depuis l'API Web. 
 	✔ Envoi de fichiers depuis de Web. @done (December 7th 2016, 10:45)
 	☐ Évaluation de la prestation.
+	☐ Creation d'une annonce
+	☐ Transformation d'une annonce en demande nominative, et inversement
+
 	☐ Page d'accueil du mobile: Les alertes, et les derniers événements, donc, les derniers post, les 
-	dernières inscriptions de prestataire, les annonces corporate
+	dernières inscriptions de prestataire, les annonces
 	* La sélection d'une star: 
 		☐ delegation du traitement des demandes
 		☐ depuis le mobile
@@ -56,13 +59,13 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	* La sélection d'un DJ: (rechercher dans / afficher) les samples + idem chanteur
 	  les critères : la date, les champs du formulaire de commande: le message, le lieu, la tendance musicale
 		☐ depuis le mobile
-		☐ depuis le Web
+		✔ depuis le Web @done (September 25th 2017, 17:31)
 	* La sélection d'un chanteur: (rechercher dans / afficher) les titres du répertoire
 		☐ depuis le mobile
-		☐ depuis le Web
+		✔ depuis le Web @done (September 25th 2017, 17:31)
 	* La sélection d'une formation musicale: idem chanteur + (rechercher/afficher) la taille de la formation
 		☐ depuis le mobile
-		☐ depuis le Web
+		✔ depuis le Web @done (September 25th 2017, 17:31)
 	* Géocodeur de lieu
 		✔ Web @done (May 31st 2017, 3:20)
 		☐ Mobile
