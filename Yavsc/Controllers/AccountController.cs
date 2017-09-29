@@ -224,8 +224,8 @@ namespace Yavsc.Controllers
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    var emailSent = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.Email, "Confirm your account",
-                        "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                    var emailSent = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.Email, _localizer["ConfirmYourAccountTitle"],
+                      string.Format(_localizer["ConfirmYourAccountBody"] , _siteSettings.Title,  callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
                      await _signInManager.SignInAsync(user, isPersistent: false);
                      if (!emailSent) {
                         _logger.LogWarning("User created with error sending email confirmation request");
@@ -250,11 +250,16 @@ namespace Yavsc.Controllers
         [Authorize,HttpPost,ValidateAntiForgeryToken]
         public async Task <IActionResult> SendEMailForConfirm () {
            var user = await _userManager.FindByIdAsync( User.GetUserId() );
+             return View("ConfirmEmailSent");
+        }
+
+        private async Task<bool> SendEMailForConfirm(ApplicationUser user)
+        {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                     await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, user.Email, "Confirm your account",
                         "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
-            return View("ConfirmEmailSent");
+           
         }
         //
         // POST: /Account/LogOff
