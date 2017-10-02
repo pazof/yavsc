@@ -1,5 +1,4 @@
 using System;
-using System.Resources;
 
 namespace Yavsc.Attributes.Validation
 {
