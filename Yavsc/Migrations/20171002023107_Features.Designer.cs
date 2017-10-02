@@ -8,9 +8,10 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171002023107_Features")]
+    partial class Features
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -736,18 +737,6 @@ namespace Yavsc.Migrations
                     b.Property<string>("Version");
 
                     b.HasKey("DeviceId");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.IT.Fixing.Bug", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<long>("FeatureId");
-
-                    b.Property<int>("Status");
-
-                    b.HasKey("Id");
                 });
 
             modelBuilder.Entity("Yavsc.Models.IT.Maintaining.Feature", b =>

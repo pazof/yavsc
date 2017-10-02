@@ -423,17 +423,19 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.LoginOrEmail);
+                ApplicationUser user;
+                if (model.LoginOrEmail.Contains('@')) {
+                    user = await _userManager.FindByEmailAsync(model.LoginOrEmail);
+                }
+                else {
+                    user = await _userManager.FindByNameAsync(model.LoginOrEmail);
+                }
 
                 // Don't reveal that the user does not exist or is not confirmed
                 if (user == null)
                 {
-                    user = await _userManager.FindByNameAsync(model.LoginOrEmail);
-                    if (user == null)
-                    {
-                        _logger.LogWarning($"ForgotPassword: Email or User name {model.LoginOrEmail} not found");
-                        return View("ForgotPasswordConfirmation");
-                    }
+                    _logger.LogWarning($"ForgotPassword: Email or User name {model.LoginOrEmail} not found");
+                    return View("ForgotPasswordConfirmation");
                 }
                 // user != null
                 // We want him to have a confirmed e-mail, and prevent this script

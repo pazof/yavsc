@@ -12,8 +12,6 @@ namespace Yavsc.Models.IT.Fixing
         Confirmed,
         Rejected,
         Feature,
-        FeatureRequest,
-        Fixed,
-        Implemented
+        Fixed
     }
 }
