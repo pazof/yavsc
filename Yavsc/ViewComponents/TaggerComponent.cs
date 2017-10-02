@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
