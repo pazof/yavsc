@@ -4,11 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Newtonsoft.Json;
+using Yavsc.Interfaces;
 using Yavsc.Models.Access;
+using Yavsc.Models.Relationship;
 
 namespace Yavsc.Models
 {
-    public partial class Blog : IBlog, ICircleAuthorized
+    public partial class Blog : IBlog, ICircleAuthorized, ITaggable<long>, IIdentified<long>
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name="Identifiant du post")]
@@ -74,5 +76,25 @@ namespace Yavsc.Models
         {
             return ACL.ToArray();
         }
+
+        public void Tag(Tag tag)
+        {
+           var existent = Tags.SingleOrDefault(t => t.PostId == Id && t.TagId == tag.Id);
+            if (existent==null) Tags.Add(new BlogTag { PostId = Id, Tag = tag } );
+        }
+
+        public  void Detag(Tag tag)
+        {
+            var existent = Tags.SingleOrDefault(t => (( t.TagId == tag.Id) && t.PostId == Id));
+            if (existent!=null) Tags.Remove(existent);
+        }
+
+        public string[] GetTags()
+        {
+            return Tags.Select(t=>t.Tag.Name).ToArray();
+        }
+
+        [JsonIgnore][InverseProperty("Post")]
+        public virtual List<BlogTag> Tags { get; set; }
     }
 }

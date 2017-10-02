@@ -1,5 +1,4 @@
 @model Blog
-
 @{
     ViewData["Title"]=Model.Title;
 }
@@ -21,6 +20,8 @@
     @Html.DisplayNameFor(model => model.DateCreated) :
 
     @Html.DisplayFor(model => model.DateCreated) 
+
+    @Component.Invoke("Tagger",Model)
  </div>
      
 </div>
