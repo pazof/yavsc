@@ -106,7 +106,9 @@ namespace Yavsc.Controllers
 
             Blog blog = _context.Blogspot.Include(
                b => b.Author
-           ).Include(p => p.ACL).Single(m => m.Id == id);
+           )
+           .Include(p=>p.Tags)
+           .Include(p => p.ACL).Single(m => m.Id == id);
             if (blog == null)
             {
                 return HttpNotFound();
