@@ -10,11 +10,8 @@ namespace Yavsc.Models.IT.Maintaining
     /// </summary>
     public enum FeatureStatus: int
     {
-        Ko,
-        Ok,
-        ToDoInterface,
-        ToDoImplementation,
-        ToDoModel,
-        ToDoSpecifications
+        Requested,
+        Accepted,
+        Implemented
     }
 }
