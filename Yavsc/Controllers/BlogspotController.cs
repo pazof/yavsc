@@ -12,7 +12,7 @@ using Yavsc.Models;
 using Yavsc.ViewModels.Auth;
 using Microsoft.AspNet.Mvc.Rendering;
 using Yavsc.ViewModels.Blogspot;
-
+using Yavsc.Models.Blog;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Yavsc.Controllers
@@ -46,9 +46,11 @@ namespace Yavsc.Controllers
             string uid = User.GetUserId();
             long[] usercircles = _context.Circle.Include(c=>c.Members).Where(c=>c.Members.Any(m=>m.MemberId == uid))
             .Select(c=>c.Id).ToArray();
-            IQueryable<Blog> posts ;
+            IQueryable<BlogPost> posts ;
             if (usercircles != null) {
                 posts = _context.Blogspot.Include(b => b.Author)
+                .Include(p=>p.Tags)
+                .Include(p=>p.Comments)
                 .Include(p=>p.ACL)
                 .Where(p=> p.AuthorId == uid || p.Visible &&
                 (p.ACL.Count == 0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId))))
@@ -104,10 +106,11 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Blog blog = _context.Blogspot.Include(
+            BlogPost blog = _context.Blogspot.Include(
                b => b.Author
            )
            .Include(p=>p.Tags)
+           .Include(p=>p.Comments)
            .Include(p => p.ACL).Single(m => m.Id == id);
             if (blog == null)
             {
@@ -117,6 +120,7 @@ namespace Yavsc.Controllers
             {
                 return new ChallengeResult();
             }
+            ViewData["apicmtctlr"] = "/api/blogcomments";
             return View(blog);
         }
 
@@ -124,14 +128,14 @@ namespace Yavsc.Controllers
         [Authorize()]
         public IActionResult Create(string title)
         {
-            var result = new Blog{Title=title};
+            var result = new BlogPost{Title=title};
             ViewData["PostTarget"]="Create";
             return View("Edit",result);
         }
 
         // POST: Blog/Create
         [HttpPost, Authorize, ValidateAntiForgeryToken]
-        public IActionResult Create(Blog blog)
+        public IActionResult Create(Models.Blog.BlogPost blog)
         {
             blog.Rate = 0;
             blog.AuthorId = User.GetUserId();
@@ -157,7 +161,7 @@ namespace Yavsc.Controllers
             }
 
             ViewData["PostTarget"]="Edit";
-            Blog blog = _context.Blogspot.Include(x => x.Author).Include(x => x.ACL).Single(m => m.Id == id);
+            BlogPost blog = _context.Blogspot.Include(x => x.Author).Include(x => x.ACL).Single(m => m.Id == id);
 
 
             if (blog == null)
@@ -187,7 +191,7 @@ namespace Yavsc.Controllers
         // POST: Blog/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken,Authorize()]
-        public IActionResult Edit(Blog blog)
+        public IActionResult Edit(BlogPost blog)
         {
             if (ModelState.IsValid)
             {
@@ -219,7 +223,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Blog blog = _context.Blogspot.Include(
+            BlogPost blog = _context.Blogspot.Include(
                b => b.Author
            ).Single(m => m.Id == id);
             if (blog == null)
@@ -235,7 +239,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(long id)
         {
-            Blog blog = _context.Blogspot.Single(m => m.Id == id);
+            BlogPost blog = _context.Blogspot.Single(m => m.Id == id);
             var auth = _authorizationService.AuthorizeAsync(User, blog, new EditRequirement());
             if (auth.Result)
             {

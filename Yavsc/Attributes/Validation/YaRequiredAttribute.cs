@@ -2,20 +2,8 @@ using System;
 
 namespace Yavsc.Attributes.Validation
 {
-    public class YaValidationAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
-    {
-        public YaValidationAttribute() : base(()=> Startup.GlobalLocalizer["validationError"])
-        {
-
-        }
-        public override string FormatErrorMessage(string name)
-        {
-            return Startup.GlobalLocalizer[name];
-        }
-    }
-    
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-       public class YaRequiredAttribute : YaValidationAttribute
+    public class YaRequiredAttribute : YaValidationAttribute
     {
 
         /// <summary>
@@ -45,16 +33,5 @@ namespace Yavsc.Attributes.Validation
             return true;
         }
     }
-    public class YaRegularExpression : System.ComponentModel.DataAnnotations.RegularExpressionAttribute { 
-        public YaRegularExpression(string pattern): base (pattern)
-        {
-            this.ErrorMessage = pattern;
-        }
-
-
-        public override string FormatErrorMessage(string name)
-        {
-            return Startup.GlobalLocalizer[this.ErrorMessageResourceName];
-        }
-    }
+    
 }

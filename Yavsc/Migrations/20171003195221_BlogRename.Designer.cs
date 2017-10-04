@@ -1,14 +1,16 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171003195221_BlogRename")]
+    partial class BlogRename
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -417,29 +419,6 @@ namespace Yavsc.Migrations
                     b.Property<long>("TagId");
 
                     b.HasKey("PostId", "TagId");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Blog.Comment", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Content")
-                        .HasAnnotation("MaxLength", 1024);
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<DateTime>("DateModified");
-
-                    b.Property<long>("PostId");
-
-                    b.Property<string>("UserCreated");
-
-                    b.Property<string>("UserModified");
-
-                    b.Property<bool>("Visible");
-
-                    b.HasKey("Id");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Calendar.Period", b =>
@@ -1368,13 +1347,6 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.Relationship.Tag")
                         .WithMany()
                         .HasForeignKey("TagId");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Blog.Comment", b =>
-                {
-                    b.HasOne("Yavsc.Models.Blog.BlogPost")
-                        .WithMany()
-                        .HasForeignKey("PostId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Calendar.Schedule", b =>

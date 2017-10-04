@@ -192,6 +192,8 @@
   <data name="Description"><value>Description</value></data>
   <data name="DoAnEstimate"><value>Faire un devis</value></data>
   <data name="DoComment"><value>Commenter</value></data>
+  
+  <data name="DoCommentPlaceHolder"><value>Votre commentaire</value></data>
   <data name="DoNotPublishMyActivity"><value>Ne pas publier mon activité</value></data>
   <data name="DoSpecifyCircles"><value>S'il vous plait, spécifiez ceux de vos cercles à qui est destiné ce contenu</value></data>
   <data name="DocTemplateException"><value>Une erreur est survenue à la génération de votre document</value></data>
@@ -456,4 +458,10 @@ Pour ce faire, suivez le lien suivant : &lt;{1}&gt;.
 
 -- 
 {0} - {2} &lt;{3}&gt;</value></data>
+  <data name="BadStringLength"><value>Taille maximale: {0} caractère.</value></data>
+<data name="DetailledMinMaxStringLength"><value>Ce champ est 
+d'au moins {0} et d'au plus {1} caractère(s). </value></data>
+<data name="DetailledMaxStringLength"><value>Ce champ est 
+d'au plus {0} caractère(s) ({1} en excès). </value></data>
+
 </root>

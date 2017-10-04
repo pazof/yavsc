@@ -26,7 +26,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            Blog blogpost = _context.Blogspot.Single(x=>x.Id == id);
+            Models.Blog.BlogPost blogpost = _context.Blogspot.Single(x=>x.Id == id);
 
             if (blogpost == null)
             {

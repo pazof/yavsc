@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Models.Relationship;
 
-namespace Yavsc.Models.Relationship
+namespace Yavsc.Models.Blog
 {
     public partial class BlogTag
     {
         [ForeignKey("PostId")]
-        public virtual Blog Post { get; set; }
+        public virtual BlogPost Post { get; set; }
         public long PostId { get; set; }
 
         [ForeignKey("TagId")]

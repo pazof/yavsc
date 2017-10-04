@@ -1,4 +1,4 @@
-@model IEnumerable<IGrouping<BlogIndexKey,Blog>>
+@model IEnumerable<IGrouping<BlogIndexKey,BlogPost>>
 @{
     ViewData["Title"] = "Blogs, l'index";
     // Regroup!?!
@@ -16,6 +16,9 @@
         }
         td {
             transition: height 1s;
+        }
+        [class*="col-"] {
+            border: solid 1px blue;
         }
         </style>
 }
@@ -50,28 +53,24 @@
     <a asp-action="Create">@SR["Create a new article"]</a>
 </p>
 }
-<table class="table">
-    <tr>
-        <th>
-            @SR["Title"]
-        </th>
-        <th>
-            aperçu
-        </th>
-    </tr>
+
+<div class="container">
+
+
    
 @foreach (var group in Model) {
     var title = group.Key.Title;
     string secondclass="";
     var first = group.First();
     string trclass = (first.Visible) ? "visiblepost" : "hiddenpost";
- <tr class="@trclass">
-        <td><a asp-action="Details" asp-route-id="@first.Id" class="bloglink">
-       <img src="@first.Photo" class="smalltofhol"></a>
-           <a asp-action="Title" asp-route-id="@title">
-           <markdown>@first.Title</markdown></a>
-        </td>
-        <td>
+    <div class="row @trclass">
+        <div class="col-xs-10"> 
+           
+            <a asp-action="Details" asp-route-id="@first.Id" class="bloglink">
+                <img src="@first.Photo" class="smalltofhol"></a>
+            <a asp-action="Title" asp-route-id="@title">
+                <markdown>@first.Title</markdown></a>
+        
             <markdown>@((first.Content?.Length > 120) ? first.Content.Substring(0, 120) + " ..." : first.Content)</markdown>
             <span style="font-size:x-small;">(@first.Author.UserName </span>,
             <span style="font-size:xx-small;">
@@ -81,23 +80,9 @@
              })
             </span>
             
-   @if (group.Count()>1) {
-       <div class="sametitle">
-       Au même titre:
-       <table> 
-          
-    @foreach (var item in group.Skip(1)) {
-     trclass = ((item.Visible)?"visiblepost":"hiddenpost");
-
-<tr class="@trclass"><td>le @item.DateModified.ToString("dddd d MMM yyyy à H:mm")</td>
-<td><markdown>@((item.Content?.Length > 120) ? item.Content.Substring(0, 120) + " ..." : item.Content)</markdown>
-</td>
-<td> <a asp-action="Details" asp-route-id="@item.Id"  class="btn btn-lg">Details</a>
-</td></tr>
-    }  </table></div>
-    }
-        </td>
-        <td> 
+   
+        </div>
+        <div class="col-xs-2"> 
             <ul class="actiongroup">
                 @if (await AuthorizationService.AuthorizeAsync(User, first, new ViewRequirement())) {
                 <li>
@@ -111,9 +96,31 @@
             </li>
             }
             </ul>
-        </td>
-    </tr>
+        </div>
+    </div>
+   long gcount = group.Count();  
+    @if (gcount>1) {
+       <div class="sametitle">
+       @(gcount-1) autre@(gcount>2?"s":"") au même titre:
+          
+    @foreach (var item in group.Skip(1)) {
+     trclass = ((item.Visible)?"visiblepost":"hiddenpost");
+    <div class="row @trclass">
+        <div class="col-xs-10"> 
+            <markdown>
+                @((item.Content?.Length > 120) ? item.Content.Substring(0, 120) + "..." : item.Content)
+            </markdown>
+        </div>
+        <div class="col-xs-2"> 
+            <a asp-action="Details" asp-route-id="@item.Id"  class="btn btn-lg">
+                le @item.DateModified.ToString("dddd d MMM yyyy à H:mm")
+            </a>
+        </div>
+    </div>
+    } 
+    </div>
+    }
 }
-</table>
+    </div>
 
 

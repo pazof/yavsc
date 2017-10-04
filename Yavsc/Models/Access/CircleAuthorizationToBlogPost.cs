@@ -4,6 +4,7 @@ namespace Yavsc.Models.Access
     using Models.Relationship;
     using Newtonsoft.Json;
     using Yavsc;
+    using Blog;
 
     public class CircleAuthorizationToBlogPost : ICircleAuthorization
     {
@@ -12,7 +13,7 @@ namespace Yavsc.Models.Access
 
         [JsonIgnore]
         [ForeignKey("BlogPostId")]
-        public virtual Blog Target { get; set; }
+        public virtual BlogPost Target { get; set; }
 
         [JsonIgnore]
         [ForeignKey("CircleId")]

@@ -58,8 +58,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <!-- 
-    route name for the api controller used to tag the 'BlogPost' entity
-   -->
-  <data name="apiRouteTagBlogPost"><value>blogtags</value></data>
+  <data name="CommmentId"><value>Commment Identifier</value></data>
+  <data name="Comment"><value>Comment</value></data>
+  <data name="LastModificationDate"><value>Last Modification Date</value></data>
+  <data name="CreationDate"><value>Creation Date</value></data>
+  <data name="PostId"><value>Post Identifier</value></data>
+  <data name="UserCreated"><value>Author</value></data>
+  <data name="UserModified"><value>Last Modification Author</value></data>
+  
 </root>

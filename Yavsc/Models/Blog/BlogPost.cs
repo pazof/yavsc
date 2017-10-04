@@ -8,29 +8,33 @@ using Yavsc.Interfaces;
 using Yavsc.Models.Access;
 using Yavsc.Models.Relationship;
 
-namespace Yavsc.Models
+namespace Yavsc.Models.Blog
 {
-    public partial class Blog : IBlog, ICircleAuthorized, ITaggable<long>, IIdentified<long>
+    public class BlogPost : IBlogPost, ICircleAuthorized, ITaggable<long>, IIdentified<long>
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name="Identifiant du post")]
         public long Id { get; set; }
 
-        [Display(Name="Contenu")]
+        [Display(Name="Contenu")][StringLength(56224)]
         public string Content { get; set; }
-        [Display(Name="Photo")]
+
+        [Display(Name="Photo")][StringLength(1024)]
         public string Photo { get; set; }
+
         [Display(Name="Indice de qualité")]
         public int Rate { get; set; }
-        [Display(Name="Titre")]
+
+        [Display(Name="Titre")][StringLength(1024)]
         public string Title { get; set; }
+
         [Display(Name="Identifiant de l'auteur")]
         public string AuthorId { get; set; }
 
         [Display(Name="Auteur")]
-
         [ForeignKey("AuthorId"),JsonIgnore]
         public ApplicationUser Author { set; get; }
+
         [Display(Name="Visible")]
         public bool Visible { get; set; }
 
@@ -66,7 +70,7 @@ namespace Yavsc.Models
         {
             return ACL?.Any( i=>i.CircleId == circleId) ?? true;
         }
-
+        
         public string GetOwnerId()
         {
             return AuthorId;
@@ -94,7 +98,10 @@ namespace Yavsc.Models
             return Tags.Select(t=>t.Tag.Name).ToArray();
         }
 
-        [JsonIgnore][InverseProperty("Post")]
+        [InverseProperty("Post")]
         public virtual List<BlogTag> Tags { get; set; }
+
+        [InverseProperty("Post")]
+        public virtual List<Comment> Comments { get; set; }
     }
 }

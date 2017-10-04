@@ -6,60 +6,61 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
+
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/blogtags")]
-    public class BlogTagsApiController : Controller
+    [Route("api/blogcomments")]
+    public class CommentsApiController : Controller
     {
         private ApplicationDbContext _context;
 
-        public BlogTagsApiController(ApplicationDbContext context)
+        public CommentsApiController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/BlogTagsApi
+        // GET: api/CommentsApi
         [HttpGet]
-        public IEnumerable<BlogTag> GetTagsDomain()
+        public IEnumerable<Comment> GetComment()
         {
-            return _context.TagsDomain;
+            return _context.Comment;
         }
 
-        // GET: api/BlogTagsApi/5
-        [HttpGet("{id}", Name = "GetBlogTag")]
-        public async Task<IActionResult> GetBlogTag([FromRoute] long id)
+        // GET: api/CommentsApi/5
+        [HttpGet("{id}", Name = "GetComment")]
+        public async Task<IActionResult> GetComment([FromRoute] long id)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            BlogTag blogTag = await _context.TagsDomain.SingleAsync(m => m.PostId == id);
+            Comment comment = await _context.Comment.SingleAsync(m => m.Id == id);
 
-            if (blogTag == null)
+            if (comment == null)
             {
                 return HttpNotFound();
             }
 
-            return Ok(blogTag);
+            return Ok(comment);
         }
 
-        // PUT: api/BlogTagsApi/5
+        // PUT: api/CommentsApi/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBlogTag([FromRoute] long id, [FromBody] BlogTag blogTag)
+        public async Task<IActionResult> PutComment([FromRoute] long id, [FromBody] Comment comment)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            if (id != blogTag.PostId)
+            if (id != comment.Id)
             {
                 return HttpBadRequest();
             }
 
-            _context.Entry(blogTag).State = EntityState.Modified;
+            _context.Entry(comment).State = EntityState.Modified;
 
             try
             {
@@ -67,7 +68,7 @@ namespace Yavsc.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BlogTagExists(id))
+                if (!CommentExists(id))
                 {
                     return HttpNotFound();
                 }
@@ -80,23 +81,23 @@ namespace Yavsc.Controllers
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
         }
 
-        // POST: api/BlogTagsApi
+        // POST: api/CommentsApi
         [HttpPost]
-        public async Task<IActionResult> PostBlogTag([FromBody] BlogTag blogTag)
+        public async Task<IActionResult> PostComment([FromBody] Comment comment)
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return new BadRequestObjectResult(ModelState);
             }
 
-            _context.TagsDomain.Add(blogTag);
+            _context.Comment.Add(comment);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (BlogTagExists(blogTag.PostId))
+                if (CommentExists(comment.Id))
                 {
                     return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -106,28 +107,28 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return CreatedAtRoute("GetBlogTag", new { id = blogTag.PostId }, blogTag);
+            return CreatedAtRoute("GetComment", new { id = comment.Id }, comment);
         }
 
-        // DELETE: api/BlogTagsApi/5
+        // DELETE: api/CommentsApi/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBlogTag([FromRoute] long id)
+        public async Task<IActionResult> DeleteComment([FromRoute] long id)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            BlogTag blogTag = await _context.TagsDomain.SingleAsync(m => m.PostId == id);
-            if (blogTag == null)
+            Comment comment = await _context.Comment.SingleAsync(m => m.Id == id);
+            if (comment == null)
             {
                 return HttpNotFound();
             }
 
-            _context.TagsDomain.Remove(blogTag);
+            _context.Comment.Remove(comment);
             await _context.SaveChangesAsync();
 
-            return Ok(blogTag);
+            return Ok(comment);
         }
 
         protected override void Dispose(bool disposing)
@@ -139,9 +140,9 @@ namespace Yavsc.Controllers
             base.Dispose(disposing);
         }
 
-        private bool BlogTagExists(long id)
+        private bool CommentExists(long id)
         {
-            return _context.TagsDomain.Count(e => e.PostId == id) > 0;
+            return _context.Comment.Count(e => e.Id == id) > 0;
         }
     }
 }
