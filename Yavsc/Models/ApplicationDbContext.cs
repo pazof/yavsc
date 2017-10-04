@@ -32,6 +32,7 @@ namespace Yavsc.Models
     using Bank;
     using Payment;
     using Yavsc.Models.Calendar;
+    using Blog;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -82,7 +83,7 @@ namespace Yavsc.Models
         /// Users posts
         /// </summary>
         /// <returns></returns>
-        public DbSet<Blog> Blogspot { get; set; }
+        public DbSet<Blog.BlogPost> Blogspot { get; set; }
 
         /// <summary>
         /// Skills propulsed by this site
@@ -289,5 +290,7 @@ namespace Yavsc.Models
          public DbSet<Feature> Feature { get; set; }
 
          public DbSet<Bug> Bug { get; set; }
+
+         public DbSet<Comment> Comment { get; set; }
     }
 }

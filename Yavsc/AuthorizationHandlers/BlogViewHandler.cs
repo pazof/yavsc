@@ -1,13 +1,13 @@
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
-using Yavsc.Models;
+using Yavsc.Models.Blog;
 
 namespace Yavsc.ViewModels.Auth.Handlers
 {
-    public class BlogViewHandler : AuthorizationHandler<ViewRequirement, Blog>
+    public class BlogViewHandler : AuthorizationHandler<ViewRequirement, BlogPost>
     {
-        protected override void Handle(AuthorizationContext context, ViewRequirement requirement, Blog resource)
+        protected override void Handle(AuthorizationContext context, ViewRequirement requirement, BlogPost resource)
         {
             bool ok=false;
              if (resource.Visible) {

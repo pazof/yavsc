@@ -3,10 +3,10 @@ using Microsoft.AspNet.Authorization;
 namespace Yavsc.ViewModels.Auth.Handlers
 {
     using System.Security.Claims;
-    using Models;
-    public class BlogEditHandler : AuthorizationHandler<EditRequirement, Blog>
+    using Models.Blog;
+    public class BlogEditHandler : AuthorizationHandler<EditRequirement, BlogPost>
     {
-        protected override void Handle(AuthorizationContext context, EditRequirement requirement, Blog resource)
+        protected override void Handle(AuthorizationContext context, EditRequirement requirement, BlogPost resource)
         {
             if (context.User.IsInRole(Constants.BlogModeratorGroupName))
                 context.Succeed(requirement);

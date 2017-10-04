@@ -7,8 +7,8 @@ using Microsoft.Data.Entity;
 namespace Yavsc.Controllers
 {
     using System.Security.Claims;
-    using Models;
-    using Models.Relationship;
+    using Models;    
+    using Yavsc.Models.Blog;
 
     [Produces("application/json")]
     [Route("~/api/PostTagsApi")]

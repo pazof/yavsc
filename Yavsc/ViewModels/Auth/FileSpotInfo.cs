@@ -1,7 +1,7 @@
 
 using System.IO;
 using Microsoft.AspNet.Authorization;
-using Yavsc.Models;
+using Yavsc.Models.Blog;
 
 namespace Yavsc.ViewModel.Auth {
 
@@ -9,7 +9,7 @@ namespace Yavsc.ViewModel.Auth {
     {
         public DirectoryInfo PathInfo { get; private set; }
 
-        public FileSpotInfo(string path, Blog b) {
+        public FileSpotInfo(string path, BlogPost b) {
             PathInfo = new DirectoryInfo(path);
             AuthorId = b.AuthorId;
             BlogEntryId = b.Id;

@@ -5,6 +5,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
+using Yavsc.Models.Blog;
 
 namespace Yavsc.Controllers
 {
@@ -21,7 +22,7 @@ namespace Yavsc.Controllers
 
         // GET: api/BlogApi
         [HttpGet]
-        public IEnumerable<Blog> GetBlogspot()
+        public IEnumerable<BlogPost> GetBlogspot()
         {
             return _context.Blogspot.Where(b=>b.Visible).OrderByDescending(b=>b.UserModified);
         }
@@ -35,7 +36,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            Blog blog = _context.Blogspot.Single(m => m.Id == id);
+            BlogPost blog = _context.Blogspot.Single(m => m.Id == id);
 
             if (blog == null)
             {
@@ -47,7 +48,7 @@ namespace Yavsc.Controllers
 
         // PUT: api/BlogApi/5
         [HttpPut("{id}")]
-        public IActionResult PutBlog(long id, [FromBody] Blog blog)
+        public IActionResult PutBlog(long id, [FromBody] BlogPost blog)
         {
             if (!ModelState.IsValid)
             {
@@ -82,7 +83,7 @@ namespace Yavsc.Controllers
 
         // POST: api/BlogApi
         [HttpPost]
-        public IActionResult PostBlog([FromBody] Blog blog)
+        public IActionResult PostBlog([FromBody] Models.Blog.BlogPost blog)
         {
             if (!ModelState.IsValid)
             {
@@ -118,7 +119,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            Blog blog = _context.Blogspot.Single(m => m.Id == id);
+            BlogPost blog = _context.Blogspot.Single(m => m.Id == id);
             if (blog == null)
             {
                 return HttpNotFound();

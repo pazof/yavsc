@@ -1,11 +1,59 @@
-@model Blog
+@model BlogPost
 @{
     ViewData["Title"]=Model.Title;
 }
+@section header {  
+    <script>
+        $(document).ready(function() {
+            $('#cmtBtn').click(function() {
+                var receiverid = $(this).data('receiverid');
+                
+                var comment = $('#Comment').val();
+                var data = { 
+                    Id:0,
+                    Content: comment, 
+                    PostId: receiverid,
+                    UserCreated: '@User.GetUserId()',
+                    Visible:true 
+                };
+                console.log('sending:');
+                console.log(data);
 
-<div class="blogpost">
+                $.ajax({
+                    async: true,
+                    cache: false,
+                    type: 'POST',
+                    method: 'POST',
+                    contentType:  "application/json",
+                    data: JSON.stringify(data),
+                    error: function(xhr,data) {
+                        if (xhr.status=400)
+                        {
+                            console.log(xhr.responseJSON);
+                            $('span.field-validation-valid[data-valmsg-for="Content"]').html(
+                                xhr.responseJSON.Content);
+                        } else {
+$('span.field-validation-valid[data-valmsg-for="Content"]').html(
+                            "Une erreur est survenue : "+xhr.status+"<br/>"+
+                            "<code><pre>"+xhr.responseText+"</pre></code>"
+                        )
+                        }
+                        
+                    },
+                    success: function () {
+                        $('#Comment').val("");
+                        $('span.field-validation-valid[data-valmsg-for="Content"]').empty();
+                    },
+                    url:'@ViewData["apicmtctlr"]'
+                    });
+            });
+        })
+    </script>
+}
+<div class="container">
 <h1 class="blogtitle" ismarkdown>@Model.Title</h1>
 <img class="blogphoto" alt="" src="@Model.Photo" >
+<div class="blogpost">
    
     <div markdown="@Model.Content" class="blog"></div>
    <hr/>
@@ -24,8 +72,30 @@
     @Component.Invoke("Tagger",Model)
  </div>
      
+<div class="comments">
+   @foreach (Comment comment in Model.Comments) {
+    <div markdown="@comment.Content" class="blogcomment">
+    </div>
+    } 
+    
+<form>
+    <div class="form-horizontal">
+        <div class="input-group" >
+            <input id="Comment" class="form-control" placeholder="@SR["DoCommentPlaceHolder"]"/>
+            <span class="input-group-btn">
+                <input type="button" value="@SR["DoComment"]" class="btn btn-secondary"
+                data-receiverid="@Model.Id" id="cmtBtn"
+                 />
+            </span> 
+        </div>
+        <span asp-validation-for="Content" class="text-danger" >
+            </span>
+    </div>
+</form>
+ </div>
 </div>
 @if (await AuthorizationService.AuthorizeAsync(User, Model, new EditRequirement())) {
 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">@SR["Edit"]</a>
 }
 <a asp-action="Index" class="btn btn-link">@SR["Back to List"]</a>
+</div>

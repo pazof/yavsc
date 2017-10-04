@@ -3,7 +3,7 @@
 
 namespace Yavsc
 {
-    public interface IBlog : IBaseTrackedEntity, IIdentified<long>, IRating<long>, ITitle
+    public interface IBlogPost : IBaseTrackedEntity, IIdentified<long>, IRating<long>, ITitle
     {
         string AuthorId { get; set; }
         string Content { get; set; }

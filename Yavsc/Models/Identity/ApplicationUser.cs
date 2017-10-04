@@ -12,7 +12,7 @@ namespace Yavsc.Models
     using Models.Bank;
     using Models.Access;
     using Newtonsoft.Json;
-
+    
     public class ApplicationUser : IdentityUser
     {
         /// <summary>
@@ -43,7 +43,7 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         [InverseProperty("Author"),JsonIgnore]
-        public virtual List<Blog> Posts { get; set; }
+        public virtual List<Blog.BlogPost> Posts { get; set; }
 
         /// <summary>
         /// User's contact list
