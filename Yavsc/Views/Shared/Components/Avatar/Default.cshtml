@@ -1,2 +1,5 @@
-@model string
-<img src="@Model" alt="" />
+@model ShortUserInfo
+<div style="display: inline-block;">
+<img src="@Model.Avatar" alt="@Model.UserName" class="smalltofhol" /> 
+<div >@Model.UserName</div>
+</div>

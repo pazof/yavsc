@@ -71,10 +71,17 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
 
     @Component.Invoke("Tagger",Model)
  </div>
-     
+     @if (Model.Comments.Count>0) {
 <div class="comments">
    @foreach (Comment comment in Model.Comments) {
-    <div markdown="@comment.Content" class="blogcomment">
+       <div class="blogcomment" >
+           
+    <div class="commentmeta" style="display: inline-block">
+       @Html.DisplayFor(c=>c.Author,"ApplicationUserLink","cmtauth",comment)
+      <div><i>@Html.DisplayFor(c=>c.DateCreated,null,"dteCmt",comment)</i></div>  
+    </div>
+    <div markdown="@comment.Content" style="display: inline-block;">
+    </div>
     </div>
     } 
     
@@ -93,6 +100,7 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
     </div>
 </form>
  </div>
+     }
 </div>
 @if (await AuthorizationService.AuthorizeAsync(User, Model, new EditRequirement())) {
 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">@SR["Edit"]</a>

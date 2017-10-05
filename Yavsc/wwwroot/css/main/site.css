@@ -50,7 +50,15 @@
 
 .smalltofhol {
     align-self: left;
-    padding: 1em;
+    padding: .5em;
+    border-radius: 32px;
+}
+
+.commentmeta {
+    margin: .5em;
+    padding: .5em;
+    border-right: #444 dashed 1px;
+    border-top: #444 solid 1px;
 }
 
 .price {

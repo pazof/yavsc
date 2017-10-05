@@ -1,6 +1,8 @@
+using System.Linq;
 using Microsoft.AspNet.Mvc;
 using Yavsc.Helpers;
 using Yavsc.Models;
+using Yavsc.ViewModels.Account;
 
 namespace Yavsc.ViewComponents
 {
@@ -14,7 +16,14 @@ namespace Yavsc.ViewComponents
 
         public IViewComponentResult Invoke ( string userId, string imgFmt )
         {
-            return View ( "Default", dbContext.AvatarUri(userId, imgFmt));
+            var user = dbContext.Users.Single(u=>u.Id == userId);
+
+            return View ( "Default", new ShortUserInfo
+            {
+                Avatar = dbContext.AvatarUri(userId, imgFmt),
+                UserName = user.UserName,
+                UserId = userId
+            } );
         }
         
     }

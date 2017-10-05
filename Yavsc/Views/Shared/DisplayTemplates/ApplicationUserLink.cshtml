@@ -1,0 +1,5 @@
+@model ApplicationUser
+
+@if (Model!=null) {
+@Component.Invoke("Avatar", Model.Id, ".xs")
+}
