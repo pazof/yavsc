@@ -62,7 +62,6 @@ namespace Yavsc.Models
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
