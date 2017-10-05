@@ -7,7 +7,7 @@
             <li>
                 <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">
                    @Component.Invoke("Avatar", User.GetUserId(), ".xs")
-                    @SR["Hello"] @User.GetUserName()!</a>
+                </a>
             </li>
              @if (User.IsInRole(Constants.AdminGroupName)) {
              <li class="dropdown">
