@@ -1,9 +1,6 @@
-@model IEnumerable<IGrouping<BlogIndexKey,BlogPost>>
+@model IEnumerable<IGrouping<string,BlogPost>>
 @{
     ViewData["Title"] = "Blogs, l'index";
-    // Regroup!?!
-    @foreach (var group in Model) {
-    }
 }
 @section header {
     <style>
@@ -63,24 +60,24 @@
 
    
 @foreach (var group in Model) {
-    var title = group.Key.Title;
+    var title = group.Key;
     string secondclass="";
     var first = group.First();
     string trclass = (first.Visible) ? "visiblepost" : "hiddenpost";
     <div class="row @trclass">
         <div class="col-xs-10"> 
-           
-            <a asp-action="Details" asp-route-id="@first.Id" class="bloglink">
-                <img src="@first.Photo" class="smalltofhol"></a>
-            <a asp-action="Title" asp-route-id="@title">
-                <markdown>@first.Title</markdown></a>
+           <a asp-action="Title" asp-route-id="@title" >
+@if (first.Photo==null) {  }
+else {<img src="@first.Photo" class="smallphoto" alt="@first.Title">} 
+<markdown>@first.Title</markdown>
+</a>
         
             <markdown>@((first.Content?.Length > 120) ? first.Content.Substring(0, 120) + " ..." : first.Content)</markdown>
             <span style="font-size:x-small;">(@first.Author.UserName </span>,
             <span style="font-size:xx-small;">
             posté le @first.DateCreated.ToString("dddd d MMM yyyy à H:mm")
             @if ((first.DateModified - first.DateCreated).Minutes > 0){ 
-                @:- Modifié le @first.DateModified.ToString("dddd d MMM yyyy à H:mm")
+                @:- Modifié le @first.DateModified.ToString("dddd d MMM yyyy à H:mm",System.Globalization.CultureInfo.CurrentUICulture)
              })
             </span>
             
@@ -118,7 +115,7 @@
         </div>
         <div class="col-xs-2"> 
             <a asp-action="Details" asp-route-id="@item.Id"  class="btn btn-lg">
-                le @item.DateModified.ToString("dddd d MMM yyyy à H:mm")
+                le @item.DateModified.ToString("dddd d MMM yyyy à H:mm",System.Globalization.CultureInfo.CurrentUICulture)
             </a>
         </div>
     </div>

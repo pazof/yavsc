@@ -204,6 +204,10 @@ textarea {
 
 /* Set widths on image and video, since otherwise they use their native resolution */
 
+.smallphoto {
+    max-height: 4em;
+}
+
 
 /* .navbar-reac */
 
