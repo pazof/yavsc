@@ -27,7 +27,7 @@
 
     <tr class="@trclass">
         <td><a asp-action="Details" asp-route-id="@item.Id" class="bloglink">
-       <img src="@item.Photo" class="smalltofhol"></a>
+       <img src="@item.Photo" class="smallphoto"></a>
         </td>
         <td>
             <markdown>@((item.Content?.Length > 120) ? item.Content.Substring(0, 122) + " ..." : item.Content)</markdown>

@@ -61,8 +61,9 @@ namespace Yavsc.Controllers
                 .Include(p=>p.ACL).Where(p=>p.AuthorId == uid || p.Visible && p.ACL.Count == 0);
             }
 
-            return View(posts.OrderByDescending( p=> p.DateModified)
-            .GroupBy(p=> new BlogIndexKey { Title = p.Title, AuthorId = p.AuthorId } ).Skip(skip).Take(maxLen));
+            return View(posts.OrderByDescending( p=> p.DateCreated)
+         
+            .GroupBy(p=> p.Title).Skip(skip).Take(maxLen));
         }
 
         [Route("/Title/{id?}")]
