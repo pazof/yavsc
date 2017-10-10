@@ -89,8 +89,13 @@
 }
 
 @section ctxmenu {
-    @if ((bool)ViewData["HasHaircutCommand"]) {
+    @if (ViewData["Announces"]!=null) {
     <li><a asp-controller="HairCutCommand" class="badge" >
-        <img src="~/images/shoppingcart.svg" alt="basket" /></a></li>
+        <img src="@SiteSettings.Value.Icon" alt="basket" title="Annonces @SiteSettings.Value.Title" /></a></li>
     }
+    @if ((int)ViewData["HaircutCommandCount"]>0) {
+    <li><a asp-controller="HairCutCommand" class="badge" >
+        <img src="~/images/shoppingcart.svg" alt="basket" title="Vos commandes en coiffure à domicile" />(@ViewData["HaircutCommandCount"])</a></li>
+    }
+
 }

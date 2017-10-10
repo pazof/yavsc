@@ -121,6 +121,7 @@ namespace Yavsc.Controllers
                 return new ChallengeResult();
             }
             ViewData["apicmtctlr"] = "/api/blogcomments";
+            ViewData["moderatoFlag"] = User.IsInRole(Constants.BlogModeratorGroupName);
             return View(blog);
         }
 

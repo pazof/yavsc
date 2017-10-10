@@ -10,6 +10,10 @@
         .collapsed {
             height: 1em;
         }
+        .sametitlegrip {
+            text-decoration: underline;
+            cursor: pointer;
+        }
         .sametitle {
             overflow: hidden;
             transition: height 1s;
@@ -17,8 +21,8 @@
         td {
             transition: height 1s;
         }
-        [class*="col-"] {
-            border: solid 1px blue;
+        div.row {
+            border-bottom: dashed black 1px;
         }
         </style>
 }
@@ -101,7 +105,8 @@
    long gcount = group.Count();  
     @if (gcount>1) {
        <div class="sametitle">
-       @(gcount-1) autre@(gcount>2?"s":"") au même titre:
+       <div class="sametitlegrip">@(gcount-1) autre@(gcount>2?"s":"") au même titre:</div>
+       
           
     @foreach (var item in group.Skip(1)) {
      trclass = ((item.Visible)?"visiblepost":"hiddenpost");

@@ -1,0 +1,54 @@
+@model Yavsc.Models.Messaging.Announce
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit</h2>
+
+<form asp-action="Edit">
+    <div class="form-horizontal">
+        <h4>Announce</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="For" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="For" class="form-control"></select>
+                <span asp-validation-for="For" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Message" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Message" class="form-control" />
+                <span asp-validation-for="Message" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Sender" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Sender" class="form-control" />
+                <span asp-validation-for="Sender" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Topic" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Topic" class="form-control" />
+                <span asp-validation-for="Topic" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

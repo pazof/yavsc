@@ -1,14 +1,16 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171008184908_annouce")]
+    partial class annouce
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -846,8 +848,6 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("Message");
 
-                    b.Property<string>("OwnerId");
-
                     b.Property<string>("Sender");
 
                     b.Property<string>("Topic");
@@ -1530,13 +1530,6 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.Workflow.Activity")
                         .WithMany()
                         .HasForeignKey("ContextId");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Messaging.Announce", b =>
-                {
-                    b.HasOne("Yavsc.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Messaging.ClientProviderInfo", b =>

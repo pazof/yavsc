@@ -6,6 +6,8 @@ namespace Yavsc
         public string Slogan { get; set; }
 
         public string Banner { get; set; }
+        public string FavIcon { get; set; }
+        public string Icon { get; set; }
         /// <summary>
         /// Conceptually,
         /// This authorisation server only has this present site as unique audience.

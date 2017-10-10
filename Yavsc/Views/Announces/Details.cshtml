@@ -1,0 +1,42 @@
+@model Yavsc.Models.Messaging.Announce
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Announce</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.For)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.For)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Message)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Message)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Sender)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Sender)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Topic)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Topic)
+        </dd>
+    </dl>
+</div>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</p>
