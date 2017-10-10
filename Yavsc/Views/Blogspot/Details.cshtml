@@ -4,10 +4,11 @@
 }
 @section header {  
     <script>
+        $.psc.blogcomment.prototype.options.lang = '@System.Globalization.CultureInfo.CurrentUICulture.Name';
+        $.psc.blogcomment.prototype.options.apictrlr = '@ViewData["apicmtctlr"]';
         $(document).ready(function() {
             $('#cmtBtn').click(function() {
                 var receiverid = $(this).data('receiverid');
-                
                 var comment = $('#Comment').val();
                 var data = { 
                     Id:0,
@@ -16,8 +17,6 @@
                     UserCreated: '@User.GetUserId()',
                     Visible:true 
                 };
-                console.log('sending:');
-                console.log(data);
 
                 $.ajax({
                     async: true,
@@ -29,7 +28,6 @@
                     error: function(xhr,data) {
                         if (xhr.status=400)
                         {
-                            console.log(xhr.responseJSON);
                             $('span.field-validation-valid[data-valmsg-for="Content"]').html(
                                 xhr.responseJSON.Content);
                         } else {
@@ -40,15 +38,25 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
                         }
                         
                     },
-                    success: function () {
-                        $('#Comment').val("");
+                    success: function (data) {
+                        var comment = $('#Comment').val();
+                        $('#Comment').val('');
                         $('span.field-validation-valid[data-valmsg-for="Content"]').empty();
+                        var htmlcmt = htmlize(comment);
+                        var nnode = '<div data-type="blogcomment" data-id="'+data.Id+'" data-allow-edit="True" data-allow-moderate="@ViewData["moderatoFlag"]" data-date="'+data.DateCreated+'" data-username="@User.GetUserName()">'+htmlcmt+'</div>';
+                        
+                        $('#comments').append($(nnode).blogcomment())
                     },
                     url:'@ViewData["apicmtctlr"]'
                     });
             });
         })
     </script>
+    <style>
+        .avatar, .commentmeta, .blogcomment p , .blogcomment {
+            display: inline-block;
+        }
+    </style>
 }
 <div class="container">
 <h1 class="blogtitle" ismarkdown>@Model.Title</h1>
@@ -71,21 +79,15 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
 
     @Component.Invoke("Tagger",Model)
  </div>
-     @if (Model.Comments.Count>0) {
-<div class="comments">
-   @foreach (Comment comment in Model.Comments) {
-       <div class="blogcomment" >
-           
-    <div class="commentmeta" style="display: inline-block">
-       @Html.DisplayFor(c=>c.Author,"ApplicationUserLink","cmtauth",comment)
-      <div><i>@Html.DisplayFor(c=>c.DateCreated,null,"dteCmt",comment)</i></div>  
-    </div>
-    <div markdown="@comment.Content" style="display: inline-block;">
-    </div>
-    </div>
-    } 
     
-<form>
+<div id="comments">
+     @if (Model.Comments.Count>0) { foreach (Comment comment in Model.Comments) {
+       <div data-type="blogcomment" data-id="@comment.Id" data-allow-edit="@(User.GetUserId()==comment.UserCreated?"true":"false")" data-allow-moderate="@ViewData["moderatoFlag"]"
+       data-date="@Html.Raw(comment.DateCreated)" data-username="@comment.Author.UserName" markdown="@comment.Content"
+       >
+        </div>
+    } }
+    </div>
     <div class="form-horizontal">
         <div class="input-group" >
             <input id="Comment" class="form-control" placeholder="@SR["DoCommentPlaceHolder"]"/>
@@ -95,12 +97,8 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
                  />
             </span> 
         </div>
-        <span asp-validation-for="Content" class="text-danger" >
-            </span>
+        <span asp-validation-for="Content" class="text-danger" ></span>
     </div>
-</form>
- </div>
-     }
 </div>
 @if (await AuthorizationService.AuthorizeAsync(User, Model, new EditRequirement())) {
 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">@SR["Edit"]</a>

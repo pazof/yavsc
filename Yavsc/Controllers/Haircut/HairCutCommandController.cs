@@ -181,7 +181,7 @@ Le client final: {clientFinal}
             return await Index();
         }
         /// <summary>
-        /// List client's queries
+        /// List client's queries (and only client's ones)
         /// </summary>
         /// <returns></returns>
         public override async Task<IActionResult> Index()
@@ -192,7 +192,7 @@ Le client final: {clientFinal}
             .Include(x => x.PerformerProfile)
             .Include(x => x.PerformerProfile.Performer)
             .Include(x => x.Location)
-            .Where(x => x.ClientId == uid || x.PerformerId == uid)
+            .Where(x => x.ClientId == uid)
             .ToListAsync());
         }
 

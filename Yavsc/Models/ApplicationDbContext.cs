@@ -291,5 +291,7 @@ namespace Yavsc.Models
          public DbSet<Bug> Bug { get; set; }
 
          public DbSet<Comment> Comment { get; set; }
+
+         public DbSet<Announce> Announce { get; set; }
     }
 }

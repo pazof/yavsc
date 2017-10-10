@@ -30,6 +30,29 @@ namespace Yavsc.Controllers
             this.context = context;
         }
 
+        private async Task<bool> CreateRoles () {
+            // ensure all roles existence
+            foreach (string roleName in new string[] {
+                Constants.AdminGroupName,
+                Constants.StarGroupName, 
+                Constants.PerformerGroupName,
+                Constants.FrontOfficeGroupName,
+                Constants.StarHunterGroupName,
+                Constants.BlogModeratorGroupName
+                })
+                if (!await _roleManager.RoleExistsAsync(roleName))
+                {
+                    var role = new IdentityRole { Name = roleName };
+                    var resultCreate = await _roleManager.CreateAsync(role);
+                    if (!resultCreate.Succeeded)
+                    {
+                        AddErrors(resultCreate);
+                        return false;
+                    }
+                }
+                return true;
+        
+        }
         /// <summary>
         /// Gives the (new if was not existing) administrator role
         /// to current authenticated user, when no existing
@@ -42,25 +65,18 @@ namespace Yavsc.Controllers
         {
             // If some amdin already exists, make this method disapear
             var admins = await _userManager.GetUsersInRoleAsync(Constants.AdminGroupName);
-            if (admins != null && admins.Count > 0) return HttpNotFound();
-
-            // ensure all roles existence
-            foreach (string roleName in new string[] {Constants.AdminGroupName,
-                Constants.StarGroupName, Constants.PerformerGroupName,
-                Constants.FrontOfficeGroupName,
-                Constants.StarHunterGroupName
-                })
-                if (!await _roleManager.RoleExistsAsync(roleName))
+            if (admins != null && admins.Count > 0) 
+            {
+                if (User.IsInRole(Constants.AdminGroupName))
                 {
-                    var role = new IdentityRole { Name = roleName };
-                    var resultCreate = await _roleManager.CreateAsync(role);
-                    if (!resultCreate.Succeeded)
-                    {
-                        AddErrors(resultCreate);
+                    // check all user groups exist
+                    if (!await CreateRoles())
                         return new BadRequestObjectResult(ModelState);
-                    }
+                    return Ok(new { message = "you checked the role list." });
                 }
-
+                return HttpNotFound();
+            }
+            
             var user = await _userManager.FindByIdAsync(User.GetUserId());
 
             IdentityRole adminRole;

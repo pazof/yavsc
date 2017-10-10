@@ -53,15 +53,14 @@ namespace Yavsc.Controllers
                 n=> !clicked.Any(c=>n.Id==c)
             );
             this.Notify(notes);
-            ViewData["HasHaircutCommand"] = DbContext.HairCutQueries.Any
-            (q=>q.ClientId == uid && q.Status < QueryStatus.Failed);
-
+            ViewData["HaircutCommandCount"] =  DbContext.HairCutQueries.Where(
+                q=>q.ClientId == uid && q.Status < QueryStatus.Failed                                                                 
+            ).Count();
             if (id==null) {
                 // Workaround
                 // NotImplementedException: Remotion.Linq.Clauses.ResultOperators.ConcatResultOperator
                 //
                 // Use Concat()| whatever to do left outer join on ToArray() or ToList(), not on IQueryable
-
                 var legacy = DbContext.Activities
                 .Include(a=>a.Forms).Include(a=>a.Children)
                 .Where(a=> !a.Hidden)
