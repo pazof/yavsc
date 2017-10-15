@@ -13,10 +13,12 @@ using System.Threading.Tasks;
 
 namespace Yavsc.Controllers
 {
+    using System.Collections.Generic;
     using System.IO;
     using Models;
     using Yavsc;
     using Yavsc.Helpers;
+    using Yavsc.Models.Workflow;
 
     [AllowAnonymous]
     public class HomeController : Controller
@@ -56,28 +58,32 @@ namespace Yavsc.Controllers
             ViewData["HaircutCommandCount"] =  DbContext.HairCutQueries.Where(
                 q=>q.ClientId == uid && q.Status < QueryStatus.Failed                                                                 
             ).Count();
-            if (id==null) {
+             var toShow = DbContext.Activities
+                .Include(a=>a.Forms)
+                .Include(a=>a.Parent)
+                .Include(a=>a.Children)
+                .Where(a=>!a.Hidden)
+                .Where(a=>a.ParentCode==id)
+                .OrderByDescending(a=>a.Rate).ToList();
+            
+            foreach (var a in toShow) {
+               a.Children=a.Children.Where(c => !c.Hidden).ToList();
+            } 
+            return View(toShow);
+
+            //if (id==null) {
                 // Workaround
                 // NotImplementedException: Remotion.Linq.Clauses.ResultOperators.ConcatResultOperator
                 //
                 // Use Concat()| whatever to do left outer join on ToArray() or ToList(), not on IQueryable
-                var legacy = DbContext.Activities
-                .Include(a=>a.Forms).Include(a=>a.Children)
-                .Where(a=> !a.Hidden)
-                .Where(a=> a.ParentCode==null).ToArray();
+                // var legacy = DbContext.Activities.Include(a=>a.Forms).Include(a=>a.Children).Where(a=> !a.Hidden).Where(a=> a.ParentCode==null).ToArray();
                 // OMG
-                var hiddenchildren = DbContext.Activities
-                .Include(a=>a.Forms).Include(a=>a.Children)
-                .Where(a=> a.Parent.Hidden && !a.Hidden).ToArray();
+              //  var hiddenchildren = DbContext.Activities
+              //  .Include(a=>a.Forms).Include(a=>a.Children)
+              //  .Where(a=> a.Parent.Hidden && !a.Hidden).ToArray();
 
-                return View(legacy.Concat(hiddenchildren).OrderByDescending(a=>a.Rate));
-            }
-            else {
-                return View(DbContext.Activities
-                .Include(a=>a.Forms).Include(a=>a.Children)
-                .Where(a=>!a.Hidden)
-                .Where(a=> a.ParentCode==id).OrderByDescending(a=>a.Rate));
-            }
+              //  return View(legacy.Concat(hiddenchildren).OrderByDescending(a=>a.Rate));
+            // }
         }
         public async Task<IActionResult> About()
         {
