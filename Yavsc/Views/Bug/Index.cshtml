@@ -11,11 +11,17 @@
 </p>
 <table class="table">
     <tr>
+        <td>
+            @Html.DisplayNameFor(model => model.Id)
+        </td>
         <th>
             @Html.DisplayNameFor(model => model.FeatureId)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
         </th>
         <th></th>
     </tr>
@@ -23,10 +29,16 @@
 @foreach (var item in Model) {
     <tr>
         <td>
+            @Html.DisplayFor(model => item.Id)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.FeatureId)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
         </td>
         <td>
             <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

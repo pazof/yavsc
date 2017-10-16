@@ -1,8 +1,13 @@
 using System.Threading.Tasks;
+using System.Linq;
+
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
 using Yavsc.Models.IT.Maintaining;
+using System;
+using System.Collections.Generic;
 
 namespace Yavsc.Controllers
 {
@@ -71,6 +76,13 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
+            var featureStatusEnumType = typeof(FeatureStatus);
+            var fsstatuses = new List<SelectListItem>();
+            foreach (var v in featureStatusEnumType.GetEnumValues())
+             {
+                 fsstatuses.Add(new SelectListItem { Value = v.ToString(), Text = featureStatusEnumType.GetEnumName(v) });
+             }
+            ViewBag.Statuses =  fsstatuses;
             return View(feature);
         }
 
