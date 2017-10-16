@@ -12,6 +12,7 @@ namespace Yavsc.Models.IT.Maintaining
     {
         Requested,
         Accepted,
+        Rejected,
         Implemented
     }
 }

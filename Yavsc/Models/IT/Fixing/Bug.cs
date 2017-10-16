@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.IT.Fixing
 {
@@ -7,8 +8,12 @@ namespace Yavsc.Models.IT.Fixing
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
+
         public long FeatureId { get; set; }
 
+        [YaStringLength(2048)]
+        public string Description { get; set; }
+        
         public BugStatus Status { get; set; }
         
     }
