@@ -90,7 +90,13 @@ namespace Yavsc.Controllers
             {
                 return new BadRequestObjectResult(ModelState);
             }
-
+            if (!User.IsInRole(Constants.AdminGroupName))
+            {
+                if (User.GetUserId()!=comment.AuthorId) {
+                    ModelState.AddModelError("Content","Vous ne pouvez pas poster au nom d'un autre.");
+                    return new BadRequestObjectResult(ModelState);
+                }
+            }
             _context.Comment.Add(comment);
             try
             {
@@ -107,7 +113,6 @@ namespace Yavsc.Controllers
                     throw;
                 }
             }
-
             return CreatedAtRoute("GetComment", new { id = comment.Id }, comment);
         }
 
@@ -126,12 +131,19 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            _context.Comment.Remove(comment);
+            RemoveRecursive(comment);
             await _context.SaveChangesAsync(User.GetUserId());
 
             return Ok(comment);
         }
-
+        private void RemoveRecursive (Comment comment)
+        {
+            var children = _context.Comment.Where(c=>c.ParentId==comment.Id).ToList();
+            foreach (var child in children) {
+                RemoveRecursive(child);
+            }
+            _context.Comment.Remove(comment);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

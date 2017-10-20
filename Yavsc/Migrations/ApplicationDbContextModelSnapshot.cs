@@ -426,16 +426,20 @@ namespace Yavsc.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AuthorId")
+                        .IsRequired();
+
                     b.Property<string>("Content");
 
                     b.Property<DateTime>("DateCreated");
 
                     b.Property<DateTime>("DateModified");
 
+                    b.Property<long?>("ParentId");
+
                     b.Property<long>("PostId");
 
-                    b.Property<string>("UserCreated")
-                        .IsRequired();
+                    b.Property<string>("UserCreated");
 
                     b.Property<string>("UserModified");
 
@@ -1394,13 +1398,17 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Blog.Comment", b =>
                 {
+                    b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("Yavsc.Models.Blog.Comment")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
+
                     b.HasOne("Yavsc.Models.Blog.BlogPost")
                         .WithMany()
                         .HasForeignKey("PostId");
-
-                    b.HasOne("Yavsc.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("UserCreated");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Calendar.Schedule", b =>

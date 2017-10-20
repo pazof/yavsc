@@ -3,9 +3,12 @@
     ViewData["Title"]=Model.Title;
 }
 @section header {  
+    <script src="~/js/comment.js" asp-append-version="true"></script>
     <script>
         $.psc.blogcomment.prototype.options.lang = '@System.Globalization.CultureInfo.CurrentUICulture.Name';
         $.psc.blogcomment.prototype.options.apictrlr = '@ViewData["apicmtctlr"]';
+        $.psc.blogcomment.prototype.options.authorId = '@User.GetUserId()';
+        $.psc.blogcomment.prototype.options.authorName = '@User.GetUserName()';
         $(document).ready(function() {
             $('#cmtBtn').click(function() {
                 var receiverid = $(this).data('receiverid');
@@ -14,7 +17,7 @@
                     Id:0,
                     Content: comment, 
                     PostId: receiverid,
-                    UserCreated: '@User.GetUserId()',
+                    AuthorId: '@User.GetUserId()',
                     Visible:true 
                 };
 
@@ -53,8 +56,12 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
         })
     </script>
     <style>
-        .avatar, .commentmeta, .blogcomment p , .blogcomment {
+        .avatar, .commentmeta, .blogcomment p ,  .subcomments {
             display: inline-block;
+        }
+        .blogcomment {
+            display: inline-block;
+            margin:.3em;
         }
     </style>
 }
@@ -78,16 +85,16 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
     @Html.DisplayFor(model => model.DateCreated) 
 
     @Component.Invoke("Tagger",Model)
- </div>
-    
+</div>
+
 <div id="comments">
-     @if (Model.Comments.Count>0) { foreach (Comment comment in Model.Comments) {
-       <div data-type="blogcomment" data-id="@comment.Id" data-allow-edit="@(User.GetUserId()==comment.UserCreated?"true":"false")" data-allow-moderate="@ViewData["moderatoFlag"]"
-       data-date="@Html.Raw(comment.DateCreated)" data-username="@comment.Author.UserName" markdown="@comment.Content"
-       >
-        </div>
-    } }
-    </div>
+    @if (Model.Comments!=null) {
+        foreach (var comment in Model.Comments.Where(c=>c.ParentId==null)) {
+            @Html.DisplayFor(model=>comment,"Comment","Comment")
+        }
+    }
+</div>
+@if (User.GetUserId()!=null) {
     <div class="form-horizontal">
         <div class="input-group" >
             <input id="Comment" class="form-control" placeholder="@SR["DoCommentPlaceHolder"]"/>
@@ -99,6 +106,11 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
         </div>
         <span asp-validation-for="Content" class="text-danger" ></span>
     </div>
+    }
+    else {
+        <p><i>Vous devez être identifié pour commenter.</i> </p>
+    }
+    
 </div>
 @if (await AuthorizationService.AuthorizeAsync(User, Model, new EditRequirement())) {
 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">@SR["Edit"]</a>

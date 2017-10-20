@@ -3,28 +3,15 @@
 @model ITaggable<long>
 
 <div class="container">
-<environment names="Development">
-
    
 <div class="row">
-<div class="col-xs-1">
-    <dl>
-        <dt></dt>
-        <dd> @ViewData["apictlr"]</dd>
-
-        <dt></dt>
-        <dd>@ViewData["at"]</dd>
-    </dl>
-</div>
-<div class="col-xs-11">
+<div class="col-xs-12">
     <ul>
     @foreach (string tag in (string[]) ViewData["Tags"]) {
         <li>@tag</li>
     }
     </ul>
 </div>
-
 </div>
 
-</environment>
    </div>
