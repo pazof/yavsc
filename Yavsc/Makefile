@@ -3,6 +3,8 @@ PRODDESTDIR=/srv/www/yavsc
 ASPNET_ENV=Development
 CONFIGURATION=Release
 ASPNET_LOG_LEVEL=info #warn
+HOSTING=localhost
+HOSTADMIN=root
 
 deploy: clean pushInPre pushInProd
 
@@ -46,20 +48,20 @@ bin/output/wwwroot/version: bin/output
 	@git log -1 --pretty=format:%h > bin/output/wwwroot/version
 
 pushInPre: cleanoutput bin/output/wwwroot/version
-	ssh root@localhost systemctl stop kestrel-pre
-	ssh root@localhost rm -rf $(DESTDIR)/approot
-	(cd bin/output && rsync -ravu ./ root@localhost:$(DESTDIR) >/dev/null)
-	ssh root@localhost sync
-	ssh root@localhost systemctl start kestrel-pre
+	ssh $(HOSTADMIN)@$(HOSTING) service kestrel-pre stop
+	ssh $(HOSTADMIN)@$(HOSTING) rm -rf $(DESTDIR)/approot
+	(cd bin/output && rsync -ravu ./ $(HOSTADMIN)@$(HOSTING):$(DESTDIR) >/dev/null)
+	ssh $(HOSTADMIN)@$(HOSTING) sync
+	ssh $(HOSTADMIN)@$(HOSTING) service kestrel-pre start
 
 pushInProd: cleanoutput bin/output/wwwroot/version
 ifeq ($(git_status),0)
-	ssh root@localhost systemctl stop kestrel
-	ssh root@localhost rm -rf $(PRODDESTDIR)/approot
-	(cd bin/output && rsync -ravu ./ root@localhost:$(PRODDESTDIR) >/dev/null)
-	ssh root@localhost sync
-	ssh root@localhost systemctl start kestrel
+	ssh $(HOSTADMIN)@$(HOSTING) service kestrel stop
+	ssh $(HOSTADMIN)@$(HOSTING) rm -rf $(PRODDESTDIR)/approot
+	(cd bin/output && rsync -ravu ./ $(HOSTADMIN)@$(HOSTING):$(PRODDESTDIR) >/dev/null)
+	ssh $(HOSTADMIN)@$(HOSTING) sync
+	ssh $(HOSTADMIN)@$(HOSTING) service kestrel start
 else
-	@echo Err! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.
+	@echo EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.
 	git status
 endif
