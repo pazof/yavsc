@@ -30,6 +30,10 @@
     height: 2em;
 }
 
+.row img {
+    max-width: 100%;
+}
+
 .userinfo {
     display: block;
     padding: .8em;
