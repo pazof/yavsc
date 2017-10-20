@@ -107,12 +107,12 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            BlogPost blog = _context.Blogspot.Include(
-               b => b.Author
-            )
-            .Include(p=>p.Tags)
-            .Include(p=>p.Comments)
-            .Include(p => p.ACL).Single(m => m.Id == id);
+            BlogPost blog = _context.Blogspot
+            .Include(p => p.Author)
+            .Include(p => p.Tags)
+            .Include(p => p.Comments)
+            .Include(p => p.ACL)
+            .Single(m => m.Id == id);
             if (blog == null)
             {
                 return HttpNotFound();
@@ -120,6 +120,9 @@ namespace Yavsc.Controllers
             if (!await _authorizationService.AuthorizeAsync(User, blog, new ViewRequirement()))
             {
                 return new ChallengeResult();
+            }
+            foreach (var c in blog.Comments) {
+                c.Author = _context.Users.First(u=>u.Id==c.AuthorId);
             }
             ViewData["apicmtctlr"] = "/api/blogcomments";
             ViewData["moderatoFlag"] = User.IsInRole(Constants.BlogModeratorGroupName);
