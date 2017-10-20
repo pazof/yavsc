@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -7,7 +8,7 @@ using Yavsc.Interfaces;
 
 namespace Yavsc.Models.Blog
 {
-    public partial class Comment : IComment<long>, IBaseTrackedEntity
+    public class Comment : IComment<long>, IBaseTrackedEntity
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
@@ -22,17 +23,21 @@ namespace Yavsc.Models.Blog
         public long PostId { get; set; }
         public bool Visible { get; set; }
 
-        [ForeignKeyAttribute("UserCreated")][JsonIgnore]
+        [ForeignKeyAttribute("AuthorId")][JsonIgnore]
         public virtual ApplicationUser Author {
             get; set;
         }
 
         [Required]
-        public string UserCreated
+        public string AuthorId
         {
            get; set;
         }
 
+        public string UserCreated
+        {
+           get; set;
+        }
         public DateTime DateModified
         {
             get; set;
@@ -56,5 +61,14 @@ namespace Yavsc.Models.Blog
         {
              PostId = rid;
         }
+
+        public long? ParentId { get; set; }
+
+        [ForeignKeyAttribute("ParentId")]
+        public virtual Comment Parent { get; set; }
+
+        [InversePropertyAttribute("Parent")]
+
+        public virtual List<Comment> Children { get; set; }
     }
 }
