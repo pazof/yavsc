@@ -48,19 +48,19 @@ bin/output/wwwroot/version: bin/output
 	@git log -1 --pretty=format:%h > bin/output/wwwroot/version
 
 pushInPre: cleanoutput bin/output/wwwroot/version
-	ssh $(HOSTADMIN)@$(HOSTING) service kestrel-pre stop
-	ssh $(HOSTADMIN)@$(HOSTING) rm -rf $(DESTDIR)/approot
+	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel-pre stop
+	ssh $(HOSTADMIN)@$(HOSTING) sudo rm -rf $(DESTDIR)/approot
 	(cd bin/output && rsync -ravu ./ $(HOSTADMIN)@$(HOSTING):$(DESTDIR) >/dev/null)
-	ssh $(HOSTADMIN)@$(HOSTING) sync
-	ssh $(HOSTADMIN)@$(HOSTING) service kestrel-pre start
+	ssh $(HOSTADMIN)@$(HOSTING) sudo sync
+	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel-pre start
 
 pushInProd: cleanoutput bin/output/wwwroot/version
 ifeq ($(git_status),0)
-	ssh $(HOSTADMIN)@$(HOSTING) service kestrel stop
-	ssh $(HOSTADMIN)@$(HOSTING) rm -rf $(PRODDESTDIR)/approot
+	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel stop
+	ssh $(HOSTADMIN)@$(HOSTING) sudo rm -rf $(PRODDESTDIR)/approot
 	(cd bin/output && rsync -ravu ./ $(HOSTADMIN)@$(HOSTING):$(PRODDESTDIR) >/dev/null)
-	ssh $(HOSTADMIN)@$(HOSTING) sync
-	ssh $(HOSTADMIN)@$(HOSTING) service kestrel start
+	ssh $(HOSTADMIN)@$(HOSTING) sudo sync
+	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel start
 else
 	@echo EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.
 	git status
