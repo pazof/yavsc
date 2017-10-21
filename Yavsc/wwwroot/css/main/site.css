@@ -13,10 +13,6 @@
     background-color: rgba(0, 0, 0, .4);
 }
 
-.blogcomment {
-    border: outset .2em grey;
-}
-
 .ql-editor {
     border: outset 1em rgb(238, 144, 62);
     padding: 1em;
