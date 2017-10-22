@@ -1,0 +1,40 @@
+@model Yavsc.ViewModels.Test.CalendarViewModel
+@{
+    ViewData["Title"] = @SR["Page d'accueil"];
+    int i=0;
+}
+@section header {
+    <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
+}
+<h2>@ViewData["Title"]</h2>
+<form asp-action="Create" id="FrmComCre" role="form">
+    <div class="form-horizontal">
+        <h4>Saisissez votre demande de rendez-vous</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.All" class="text-danger" id="valsum"></div>
+        <div class="form-group" has-feedback>
+            <fieldset>
+                <legend>Votre évennement</legend>
+                <label for="EventDate" class="col-md-2 control-label">
+                    Date de l'évennement
+                </label>
+                <div class="col-md-10">
+                    <div class="container">
+                        <div class="row">
+                            <div class='col-sm-6'>
+                               @await Component.InvokeAsync("Calendar","EventDate")
+                            </div>
+                            <span asp-validation-for="EventDate" class="text-danger">
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <input type="submit" class="btn"/>
+    </div>
+</form>
+
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
