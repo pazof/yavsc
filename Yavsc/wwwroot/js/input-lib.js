@@ -23,6 +23,5 @@
     };
     $(document).ready(function() {
         $('input.Blogcirle[type=checkbox]').on('change', allowCircleToBlog);
-        $('.input-group.date').datetimepicker();
     });
 })(jQuery);
