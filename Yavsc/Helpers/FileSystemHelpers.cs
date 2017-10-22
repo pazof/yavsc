@@ -82,6 +82,7 @@ namespace Yavsc.Helpers
             // form-data; name="file"; filename="capt0008.jpg"
             ContentDisposition contentDisposition = new ContentDisposition(f.ContentDisposition);
             item.FileName = contentDisposition.FileName;
+            item.MimeType = contentDisposition.DispositionType;
             var fi = new FileInfo(Path.Combine(root, item.FileName));
             if (fi.Exists) item.Overriden = true;
             using (var dest = fi.OpenWrite())
@@ -105,7 +106,6 @@ namespace Yavsc.Helpers
                     }
                     dest.Close();
                     org.Close();
-                    item.Success=true;
                 }
             }
             user.DiskUsage = usage;
@@ -159,7 +159,6 @@ namespace Yavsc.Helpers
             }
             item.DestDir = Startup.AvatarsOptions.RequestPath.ToUriComponent();
             user.Avatar = $"{item.DestDir}/{item.FileName}";
-            item.Success = true;
             return item;
         }
 
@@ -192,6 +191,8 @@ namespace Yavsc.Helpers
         {
             var item = new FileRecievedInfo();
             item.FileName = SignFileNameFormat("pro",billingCode,estimateId);
+            item.MimeType = formFile.ContentDisposition;
+            
             var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Bills, item.FileName);
 
             var fi = new FileInfo(destFileName);
@@ -205,7 +206,6 @@ namespace Yavsc.Helpers
                     source.Save(destFileName, ImageFormat.Png);
                 }
             }
-            item.Success=true;
             return item;
         }
     }
