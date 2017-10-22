@@ -68,6 +68,14 @@ h6 {
  <style>
      nav { background: url(@Startup.SiteSetup.Banner) 0% 50% no-repeat; }
 </style>
+<script>
+    $(document).ready(function() {
+        if (typeof allowCircleToBlog !== "undefined") {
+            $('input.Blogcirle[type=checkbox]').on('change', allowCircleToBlog);
+        }
+    });
+</script>
+
         @RenderSection("header", required: false)
     </head>
     <body>
