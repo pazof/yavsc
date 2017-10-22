@@ -1,9 +1,10 @@
 @model DateTimeChooserViewModel
 @{
     var dtpid = $"dtpckr{Model.InputId}";
+    var currentUICulture = System.Globalization.CultureInfo.CurrentUICulture;
 }
 
-<div class='input-group date' data-provide="datepicker-inline" id=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(dtpid))>
+<div class='input-group date' data-provide="datepicker-inline" id="@dtpid">
     <input class="form-control " name="@Model.InputId" id="@Model.InputId" />
     <span class="input-group-addon">
          <span class="glyphicon glyphicon-calendar"></span>
@@ -12,10 +13,10 @@
 <script type="text/javascript">
     $(function () {
         $(@Html.Raw("'#"+dtpid+"'")).datetimepicker({
-            locale: @CultureInfo.CurrentUICulture.Name,
+            locale: '@currentUICulture.Name',
             disabledDates: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BusyDates)),
-            maxDate: '@Model.MaxDate.ToString("MM/DD/yyyy",CurrentUICulture)',
-            minDate: '@Model.MinDate.ToString("MM/DD/yyyy",CurrentUICulture)',
+            maxDate: '@Model.MaxDate.ToString("MM/dd/yyyy",currentUICulture)',
+            minDate: '@Model.MinDate.ToString("MM/dd/yyyy",currentUICulture)',
             format: 'MM/DD/YYYY HH:mm'
         });
     });
