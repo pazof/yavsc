@@ -3,7 +3,7 @@
     var dtpid = $"dtpckr{Model.InputId}";
 }
 
-<div class='input-group date' id=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(dtpid))>
+<div class='input-group date' data-provide="datepicker-inline" id=@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(dtpid))>
     <input class="form-control " name="@Model.InputId" id="@Model.InputId" />
     <span class="input-group-addon">
          <span class="glyphicon glyphicon-calendar"></span>
