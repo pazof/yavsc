@@ -43,7 +43,6 @@
         var nv = $(this).val();
         var tid = $(this).data('from');
        $('#'+tid).html(htmlize(nv));
-        initQuill();
     };
     $("#Content").change(onchange);
     $("#Title").change(onchange);
@@ -78,7 +77,7 @@
         editortitre.on('text-change',function(delta,source){
             if (source=='user')
             {
-                updateMD('Title',$('#titleview').html())
+                updateMD('Title',$('#ql-editor-1').html())
             }
         });
         editorcontenu.on('selection-change', function(range) {
@@ -90,7 +89,7 @@
         editorcontenu.on('text-change',function(delta,source){
             if (source=='user')
             {
-                updateMD('Content',$('#contentview').html())
+                updateMD('Content',$('#ql-editor-2').html())
             }
         });
     };
@@ -101,9 +100,21 @@
   autoProcessQueue: true,
   accept: function(file, done) {
     if (file.name == "justinbieber.jpg") {
-      done("Naha, you don't.");
+      done("Naha, you don't.")
     }
-    else { done(); }
+    else { done() }
+  },
+  success: function (file, response, ev) {
+      console.log('response:');
+      console.log(response);
+      for(i=0;i<response.length;i++) {
+          var file = response[i].Value;
+          console.log('response item:');
+          console.log(file);
+
+          $('<p><a href="/UserFiles/@User.GetUserName()/'+file.FileName+'">'+file.FileName+'</a></p>').appendTo('#ql-editor-2');
+          updateMD('Content',$('#contentview').html())
+      }
   },
   url: "/api/fs"
 };
@@ -156,7 +167,7 @@
 </span>
 </div>
 
-<div title="Contenu textuel du post" class="blogtext" markdown="@Model.Content" base="~/@Model.Id" site="SiteSettings.Value" id="contentview" ></div>
+<div title="Contenu du post" id="contentview" markdown="@Model.Content"></div>
 
 <hr>
 <form asp-action="@ViewData["PostTarget"]">
