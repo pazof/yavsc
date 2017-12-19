@@ -28,16 +28,13 @@ namespace Yavsc.Controllers
         }
 
         // GET: CircleMembers/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(long id)
         {
             var uid = User.GetUserId();
-            if (id == null)
-            {
-                return HttpNotFound();
-            }
 
             CircleMember circleMember = await _context.CircleMembers
-            .Where(c=>c.Circle.OwnerId == uid).SingleAsync(m => m.MemberId == id);
+            .Include(m=>m.Circle)
+            .FirstOrDefaultAsync(c=>c.CircleId == id);
             if (circleMember == null)
             {
                 return HttpNotFound();
@@ -77,20 +74,16 @@ namespace Yavsc.Controllers
         }
 
         // GET: CircleMembers/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(long id)
         {
-            if (id == null)
-            {
-                return HttpNotFound();
-            }
-
-            CircleMember circleMember = await _context.CircleMembers.SingleAsync(m => m.MemberId == id);
+            var uid = User.GetUserId();
+            CircleMember circleMember = await _context.CircleMembers
+            .Include(m=>m.Member)
+            .SingleOrDefaultAsync(m => m.CircleId == id && m.MemberId == uid);
             if (circleMember == null)
             {
                 return HttpNotFound();
             }
-            ViewData["CircleId"] = new SelectList(_context.Circle, "Id", "Circle", circleMember.CircleId);
-            ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Member", circleMember.MemberId);
             return View(circleMember);
         }
 
@@ -112,14 +105,14 @@ namespace Yavsc.Controllers
 
         // GET: CircleMembers/Delete/5
         [ActionName("Delete")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(long id)
         {
-            if (id == null)
-            {
-                return HttpNotFound();
-            }
+            var uid = User.GetUserId();
 
-            CircleMember circleMember = await _context.CircleMembers.SingleAsync(m => m.MemberId == id);
+            CircleMember circleMember = await _context.CircleMembers
+            .Include(m=>m.Circle)
+            .Include(m=>m.Member)
+            .SingleOrDefaultAsync(m => m.CircleId == id && m.MemberId == uid);
             if (circleMember == null)
             {
                 return HttpNotFound();
@@ -131,9 +124,9 @@ namespace Yavsc.Controllers
         // POST: CircleMembers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            CircleMember circleMember = await _context.CircleMembers.SingleAsync(m => m.MemberId == id);
+            CircleMember circleMember = await _context.CircleMembers.SingleAsync(m => m.CircleId == id);
             _context.CircleMembers.Remove(circleMember);
             await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
