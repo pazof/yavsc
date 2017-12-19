@@ -17,6 +17,10 @@
     </tr>
     
 @foreach (var item in Model) {
+ 
+        var itemKey = new { Id = item.CircleId } ;
+
+  
     <tr>
         <td>
         @Html.DisplayFor(m=>item.Circle) 
@@ -26,9 +30,7 @@
         </td>
 
         <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            @Html.ActionLink("Delete", "Delete", itemKey)
         </td>
     </tr>
 }

@@ -6,17 +6,27 @@
 
 <h2>Delete</h2>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Supprimer cette appartenance au cercle?</h3>
 <div>
-    <h4>CircleMember</h4>
     <hr />
-    <dl class="dl-horizontal">
+    <dl>
+        <dt>
+Cercle
+        </dt>
+        <dd>
+@Html.DisplayFor(m=>m.Circle)
+        </dd>
+        <dt>
+Membre
+        </dt>
+        <dd>
+@Html.DisplayFor(m=>m.Member)
+        </dd>
     </dl>
-    
-    <form asp-action="Delete">
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            <a asp-action="Index">Back to List</a>
-        </div>
-    </form>
 </div>
+<form asp-action="Delete">
+    <div class="form-actions no-color">
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Back to List</a>
+    </div>
+</form>
