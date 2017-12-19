@@ -22,9 +22,8 @@ Nombre  </dt><dd> @Model.AdminCount</dd>
 </p>
 
 <h3>Utilisateurs</h3>
-<span class="badge">
     <a asp-action="UserList" asp-controller="Account">
-    @Model.UserCount</a></span>
+    @Model.UserCount utilisateurs enregistrés</a>
 
 <h3>Logiciel</h3>
 <dl>
@@ -32,9 +31,14 @@ Nombre  </dt><dd> @Model.AdminCount</dd>
     </dt>
     <dd>@ViewBag.ThisAssembly
     </dd>
-    <dt>Version du runtime
+    <dt>Version du runtime 
     </dt>
-    <dd>@ViewBag.RunTimeVersion
+    <dd>@ViewBag.RunTimeVersion 
+    </dd>
+
+    <dt>Hôte 
+    </dt>
+    <dd>@ViewBag.HostContextFullName
     </dd>
 </dl>
 

@@ -108,9 +108,10 @@ namespace Yavsc.Controllers
                 Name = x.Name,
                 Users = x.Users.Select(u=>u.UserId).ToArray()
             });
-           ViewBag.ThisAssembly = GetType().Assembly.FullName;
-           ViewBag.RunTimeVersion = GetType().Assembly.ImageRuntimeVersion;
-
+            var assembly = GetType().Assembly;
+           ViewBag.ThisAssembly = assembly.FullName;
+           ViewBag.RunTimeVersion = assembly.ImageRuntimeVersion;
+            ViewBag.HostContextFullName = Startup.HostingFullName;
             return View(new AdminViewModel
             {
                 Roles = roles.ToArray(),
