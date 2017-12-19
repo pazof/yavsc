@@ -43,13 +43,19 @@ namespace Yavsc
         public static string AvatarsDirName { private set; get; }
         public static string Authority { get; private set; }
         public static string Temp { get; set; }
-        public static string HomeViewName { get; set; } = "Home";
         public static SiteSettings SiteSetup { get; private set; }
+
+        public static string HostingFullName { get; set; }
 
         public static PayPalSettings PayPalSettings { get; private set; }
         private static ILogger logger;
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
+            var devtag = env.IsDevelopment()?"D":"";
+            var prodtag = env.IsProduction()?"P":"";
+            var stagetag = env.IsStaging()?"S":"";
+
+            HostingFullName = $"{appEnv.RuntimeFramework.FullName} [{env.EnvironmentName}:{prodtag}{devtag}{stagetag}]";
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
