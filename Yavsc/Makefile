@@ -6,9 +6,10 @@ ASPNET_LOG_LEVEL=info #warn
 HOSTING=localhost
 HOSTADMIN=root
 
-deploy: clean pushInPre pushInProd
 
 all: bin/$(CONFIGURATION)
+
+deploy: clean pushInPre pushInProd
 
 git_status := $(shell git status -s --porcelain |wc -l)
 
