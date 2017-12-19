@@ -1,16 +1,13 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
-
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
-using Yavsc.Models;
-using Yavsc.Models.IT.Maintaining;
-using System;
-using System.Collections.Generic;
 
 namespace Yavsc.Controllers
 {
+    using Models;
+    using Models.IT.Maintaining;
     public class FeatureController : Controller
     {
         private ApplicationDbContext _context;
