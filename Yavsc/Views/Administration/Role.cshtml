@@ -7,7 +7,7 @@
 
 <ul>
 @foreach (var user in Model.Users) {
-   <li> <img src="~/Avatars/@(user.UserName).xs.png" alt="avatar"/>
+   <li> <img src="~/avatars/@(user.UserName).xs.png" alt="avatar"/>
     @user.UserName
    </li>
 }

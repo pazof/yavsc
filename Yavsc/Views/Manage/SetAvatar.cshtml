@@ -8,7 +8,7 @@
 <script>
 $(document).ready(function() {
     Dropzone.options.postavatar= {
-        maxFilesize: 2, // MB
+        maxFilesize: 2, // MB (an avatar)
         autoProcessQueue: true,
         accept: function(file, done) {
             if (file.name == "justinbieber.jpg") {
@@ -21,7 +21,7 @@ $(document).ready(function() {
   });
 </script>
 }
-<img src="~/Avatars/@(User.Identity.Name).png">
+<img src="~/avatars/@(User.Identity.Name).png">
 
 <form id="postavatar" class="dropzone" method="post" enctype="multipart/form-data">
     <div class="fallback">

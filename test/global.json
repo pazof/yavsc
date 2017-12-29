@@ -1,0 +1,7 @@
+{
+  "sdk": {
+    "version": "2.0.4",
+    "runtime": "mono",
+    "architecture": "x64"
+  }
+}
