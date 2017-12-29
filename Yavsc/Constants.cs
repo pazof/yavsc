@@ -26,8 +26,8 @@ namespace Yavsc
             FrontOfficeGroupName = "FrontOffice",
             GCMNotificationUrl = "https://gcm-http.googleapis.com/gcm/send",
         	KeyProtectorPurpose = "OAuth.AspNet.AuthServer",
-            UserFilesPath = "/UserFiles",
-            AvatarsPath = "/Avatars",
+            UserFilesPath = "/files",
+            AvatarsPath = "/avatars",
             DefaultAvatar = "/images/Users/icon_user.png",
             AnonAvatar = "/images/Users/icon_anon_user.png";
         public static char[] ValidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. ".ToCharArray();
