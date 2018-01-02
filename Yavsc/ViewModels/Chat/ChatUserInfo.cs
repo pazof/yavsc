@@ -5,7 +5,7 @@ namespace Yavsc.ViewModels.Chat { 
 public class ChatUserInfo : IChatUserInfo
         {
 
-            public List<Connection> Connections { get; set; }
+            public List<ChatConnection> Connections { get; set; }
 
             public string UserId { get; set; }
 
@@ -19,7 +19,7 @@ public class ChatUserInfo : IChatUserInfo
 
     public interface IChatUserInfo
     {
-        List<Connection> Connections { get; set; }
+        List<ChatConnection> Connections { get; set; }
         string UserId { get; set; }
 
         string UserName { get; set; }

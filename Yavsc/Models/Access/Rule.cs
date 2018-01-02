@@ -1,10 +1,14 @@
-using Microsoft.AspNet.Authorization;
+
 
 namespace Yavsc.Models.Access
 {
-    public abstract class Rule<TResource> where TResource : IAuthorizationRequirement
+    public abstract class Rule<TResource,TRequirement> 
     {
-        public virtual bool Mandatory { get; set; }
-        public abstract bool Allow(ApplicationUser user);
+        public Rule()
+        {
+            
+        }
+        // Abstract method to compute any authorization on a resource
+        public abstract bool Allow(ApplicationDbContext context, string userId, TResource resource, TRequirement requirement);
     }
 }

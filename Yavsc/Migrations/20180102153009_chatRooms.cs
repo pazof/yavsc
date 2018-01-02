@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class commentAuthorId : Migration
+    public partial class chatRooms : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -24,7 +26,6 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_Comment_ApplicationUser_AuthorId", table: "Comment");
             migrationBuilder.DropForeignKey(name: "FK_Comment_BlogPost_PostId", table: "Comment");
             migrationBuilder.DropForeignKey(name: "FK_Schedule_ApplicationUser_OwnerId", table: "Schedule");
-            migrationBuilder.DropForeignKey(name: "FK_Connection_ApplicationUser_ApplicationUserId", table: "Connection");
             migrationBuilder.DropForeignKey(name: "FK_BrusherProfile_PerformerProfile_UserId", table: "BrusherProfile");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Activity_ActivityCode", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_ApplicationUser_ClientId", table: "HairCutQuery");
@@ -52,8 +53,77 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.Sql("update \"Comment\" set \"AuthorId\"=\"UserModified\" where \"AuthorId\" is null");
-            migrationBuilder.Sql("update \"Comment\" set \"AuthorId\"=\"UserCreated\" where \"AuthorId\" is null");
+            migrationBuilder.DropTable("Connection");
+            migrationBuilder.CreateTable(
+                name: "ChatConnection",
+                columns: table => new
+                {
+                    ConnectionId = table.Column<string>(nullable: false),
+                    ApplicationUserId = table.Column<string>(nullable: false),
+                    Connected = table.Column<bool>(nullable: false),
+                    UserAgent = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatConnection", x => x.ConnectionId);
+                    table.ForeignKey(
+                        name: "FK_ChatConnection_ApplicationUser_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+            migrationBuilder.CreateTable(
+                name: "ChatRoom",
+                columns: table => new
+                {
+                    Name = table.Column<string>(nullable: false),
+                    ApplicationUserId = table.Column<string>(nullable: true),
+                    Topic = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatRoom", x => x.Name);
+                    table.ForeignKey(
+                        name: "FK_ChatRoom_ApplicationUser_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+            migrationBuilder.CreateTable(
+                name: "ChatRoomPresence",
+                columns: table => new
+                {
+                    ChannelName = table.Column<string>(nullable: false),
+                    ChatUserConnectionId = table.Column<string>(nullable: false),
+                    Level = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatRoomPresence", x => new { x.ChannelName, x.ChatUserConnectionId });
+                    table.ForeignKey(
+                        name: "FK_ChatRoomPresence_ChatRoom_ChannelName",
+                        column: x => x.ChannelName,
+                        principalTable: "ChatRoom",
+                        principalColumn: "Name",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ChatRoomPresence_ChatConnection_ChatUserConnectionId",
+                        column: x => x.ChatUserConnectionId,
+                        principalTable: "ChatConnection",
+                        principalColumn: "ConnectionId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+            migrationBuilder.AlterColumn<long>(
+                name: "FeatureId",
+                table: "Bug",
+                nullable: true);
+            migrationBuilder.AddColumn<long>(
+                name: "MaxFileSize",
+                table: "AspNetUsers",
+                nullable: false,
+                defaultValue: 0L);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -181,13 +251,6 @@ namespace Yavsc.Migrations
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
-                name: "FK_Connection_ApplicationUser_ApplicationUserId",
-                table: "Connection",
-                column: "ApplicationUserId",
-                principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-            migrationBuilder.AddForeignKey(
                 name: "FK_BrusherProfile_PerformerProfile_UserId",
                 table: "BrusherProfile",
                 column: "UserId",
@@ -278,6 +341,13 @@ namespace Yavsc.Migrations
                 principalTable: "HairTaint",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_Bug_Feature_FeatureId",
+                table: "Bug",
+                column: "FeatureId",
+                principalTable: "Feature",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
                 name: "FK_DimissClicked_Notification_NotificationId",
                 table: "DimissClicked",
@@ -398,7 +468,6 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_Comment_ApplicationUser_AuthorId", table: "Comment");
             migrationBuilder.DropForeignKey(name: "FK_Comment_BlogPost_PostId", table: "Comment");
             migrationBuilder.DropForeignKey(name: "FK_Schedule_ApplicationUser_OwnerId", table: "Schedule");
-            migrationBuilder.DropForeignKey(name: "FK_Connection_ApplicationUser_ApplicationUserId", table: "Connection");
             migrationBuilder.DropForeignKey(name: "FK_BrusherProfile_PerformerProfile_UserId", table: "BrusherProfile");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_Activity_ActivityCode", table: "HairCutQuery");
             migrationBuilder.DropForeignKey(name: "FK_HairCutQuery_ApplicationUser_ClientId", table: "HairCutQuery");
@@ -412,6 +481,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_HairTaint_Color_ColorId", table: "HairTaint");
             migrationBuilder.DropForeignKey(name: "FK_HairTaintInstance_HairPrestation_PrestationId", table: "HairTaintInstance");
             migrationBuilder.DropForeignKey(name: "FK_HairTaintInstance_HairTaint_TaintId", table: "HairTaintInstance");
+            migrationBuilder.DropForeignKey(name: "FK_Bug_Feature_FeatureId", table: "Bug");
             migrationBuilder.DropForeignKey(name: "FK_DimissClicked_Notification_NotificationId", table: "DimissClicked");
             migrationBuilder.DropForeignKey(name: "FK_DimissClicked_ApplicationUser_UserId", table: "DimissClicked");
             migrationBuilder.DropForeignKey(name: "FK_Instrumentation_Instrument_InstrumentId", table: "Instrumentation");
@@ -426,6 +496,33 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
+            migrationBuilder.DropColumn(name: "MaxFileSize", table: "AspNetUsers");
+            migrationBuilder.DropTable("ChatRoomPresence");
+            migrationBuilder.DropTable("ChatRoom");
+            migrationBuilder.DropTable("ChatConnection");
+            migrationBuilder.CreateTable(
+                name: "Connection",
+                columns: table => new
+                {
+                    ConnectionId = table.Column<string>(nullable: false),
+                    ApplicationUserId = table.Column<string>(nullable: false),
+                    Connected = table.Column<bool>(nullable: false),
+                    UserAgent = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Connection", x => x.ConnectionId);
+                    table.ForeignKey(
+                        name: "FK_Connection_ApplicationUser_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+            migrationBuilder.AlterColumn<long>(
+                name: "FeatureId",
+                table: "Bug",
+                nullable: false);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -549,13 +646,6 @@ namespace Yavsc.Migrations
                 name: "FK_Schedule_ApplicationUser_OwnerId",
                 table: "Schedule",
                 column: "OwnerId",
-                principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-            migrationBuilder.AddForeignKey(
-                name: "FK_Connection_ApplicationUser_ApplicationUserId",
-                table: "Connection",
-                column: "ApplicationUserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);

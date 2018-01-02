@@ -1,0 +1,302 @@
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:47.566, 417227774463507, vstest.console.dll, TestPluginCache: Discovering the extensions using extension path.
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:48.128, 417228012973520, vstest.console.dll, AssemblyResolver: Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger: Resolving assembly.
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:48.389, 417228274423953, vstest.console.dll, AssemblyResolver: Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger: Resolved assembly. 
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:48.440, 417228325609796, vstest.console.dll, TestPluginCache: Discovered the extensions using extension path ''.
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:48.442, 417228326977638, vstest.console.dll, TestPluginCache: Discoverers are ''.
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:48.442, 417228327052028, vstest.console.dll, TestPluginCache: Executors are ''.
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:48.442, 417228327086012, vstest.console.dll, TestPluginCache: Setting providers are ''.
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:48.442, 417228327125454, vstest.console.dll, TestPluginCache: Loggers are 'logger://Microsoft/TestPlatform/TrxLogger/v2'.
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:49.364, 417229249391571, vstest.console.dll, Trying to connect to server on port : 34383
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:49.560, 417229444923336, vstest.console.dll, Trying to connect to server on port : 34383
+TpTrace Information: 0 : 11428, 4, 2017/12/29, 12:13:49.683, 417229567699840, vstest.console.dll, Connected to the server successfully 
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:50.723, 417230607881241, vstest.console.dll, DesignModeClient: Processing Message of message type: Extensions.Initialize
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:50.739, 417230623851395, vstest.console.dll, TestRequestManager.InitializeExtensions: Initialize extensions started.
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:50.741, 417230626266995, vstest.console.dll, TestPluginCache: Updating loadOnlyWellKnownExtensions from False to False.
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:50.741, 417230626368976, vstest.console.dll, TestRequestManager.InitializeExtensions: Initialize extensions completed.
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:50.743, 417230628185325, vstest.console.dll, DesignModeClient: Processing Message of message type: ProtocolVersion
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:55.683, 417235567660792, vstest.console.dll, DesignModeClient: Processing Message of message type: TestDiscovery.Start
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:55.688, 417235573411295, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests started.
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:56.201, 417236086280801, vstest.console.dll, TestEngine: Initializing Parallel Execution as MaxCpuCount is set to: 1
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:56.208, 417236092961850, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Starting.
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:56.210, 417236095444924, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Started.
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:56.211, 417236095879318, vstest.console.dll, DiscoveryRequest.WaitForCompletion: Waiting with timeout -1.
+TpTrace Information: 0 : 11428, 5, 2017/12/29, 12:13:56.211, 417236096603217, vstest.console.dll, ProxyParallelDiscoveryManager: Triggering test discovery for next source: /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll
+TpTrace Information: 0 : 11428, 5, 2017/12/29, 12:13:56.216, 417236101472675, vstest.console.dll, Listening on port : 40475
+TpTrace Verbose: 0 : 11428, 5, 2017/12/29, 12:13:56.356, 417236241550686, vstest.console.dll, DotnetTestHostmanager: Full path of dotnet.exe is /home/paul/.dotnet/dotnet
+TpTrace Verbose: 0 : 11428, 5, 2017/12/29, 12:13:56.357, 417236241737053, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.runtimeconfig.json, doesnot exist
+TpTrace Verbose: 0 : 11428, 5, 2017/12/29, 12:13:56.357, 417236241808532, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.deps.json, doesnot exist
+TpTrace Verbose: 0 : 11428, 5, 2017/12/29, 12:13:56.360, 417236244772988, vstest.console.dll, DotnetTestHostManager: Assume published test project, with test host path = /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/testhost.dll.
+TpTrace Information: 0 : 11428, 5, 2017/12/29, 12:13:56.360, 417236245337888, vstest.console.dll, AssemblyResolver: Microsoft.TestPlatform.CrossPlatEngine.resources: Resolving assembly.
+TpTrace Verbose: 0 : 11428, 5, 2017/12/29, 12:13:56.551, 417236436436103, vstest.console.dll, DotnetTestHostmanager: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+TpTrace Information: 0 : 11428, 5, 2017/12/29, 12:13:56.791, 417236676444773, vstest.console.dll, AssemblyResolver: System.Core: Resolving assembly.
+TpTrace Error: 0 : 11428, 5, 2017/12/29, 12:13:56.927, 417236812153322, vstest.console.dll, ProxyDiscoveryManager.DiscoverTests: Failed to discover tests: System.IO.FileNotFoundException: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.GetTestHostProcessStartInfo(IEnumerable`1 sources, IDictionary`2 environmentVariables, TestRunnerConnectionInfo connectionInfo)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyOperationManager.SetupChannel(IEnumerable`1 sources)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyDiscoveryManager.DiscoverTests(DiscoveryCriteria discoveryCriteria, ITestDiscoveryEventsHandler eventHandler)
+TpTrace Verbose: 0 : 11428, 5, 2017/12/29, 12:13:56.928, 417236813035599, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Starting.
+TpTrace Information: 0 : 11428, 5, 2017/12/29, 12:13:56.930, 417236815003667, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Completed.
+TpTrace Verbose: 0 : 11428, 5, 2017/12/29, 12:13:56.944, 417236828875258, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Starting.
+TpTrace Information: 0 : 11428, 5, 2017/12/29, 12:13:56.944, 417236828980382, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Completed.
+TpTrace Verbose: 0 : 11428, 5, 2017/12/29, 12:13:56.952, 417236836979672, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Starting. Aborted:False, TotalTests:0
+TpTrace Verbose: 0 : 11428, 5, 2017/12/29, 12:13:56.952, 417236837087287, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Notified the discovery complete event.
+TpTrace Information: 0 : 11428, 5, 2017/12/29, 12:13:56.953, 417236837981091, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Completed.
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 12:13:56.954, 417236839068168, vstest.console.dll, DiscoveryRequest.Dispose: Starting.
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:56.954, 417236839145130, vstest.console.dll, DiscoveryRequest.Dispose: Completed.
+TpTrace Information: 0 : 11428, 1, 2017/12/29, 12:13:56.954, 417236839173351, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests completed, sucessful: True.
+TpTrace Error: 0 : 11428, 1, 2017/12/29, 13:07:18.501, 420438385809171, vstest.console.dll, DesignModeClient: Error processing request: System.IO.EndOfStreamException: Unable to read beyond the end of the stream.
+   at System.IO.BinaryReader.ReadByte()
+   at System.IO.BinaryReader.Read7BitEncodedInt()
+   at System.IO.BinaryReader.ReadString()
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.ReceiveMessage()
+   at Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.ProcessRequests(ITestRequestManager testRequestManager)
+TpTrace Error: 0 : 11428, 1, 2017/12/29, 13:07:19.047, 420438932491334, vstest.console.dll, ExecuteArgumentProcessor: failed to execute argument process: Microsoft.VisualStudio.TestPlatform.CommandLine.CommandLineException: Aucun fichier source de test n'a été spécifié.
+   at Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.RunTestsArgumentExecutor.Execute()
+   at Microsoft.VisualStudio.TestPlatform.CommandLine.Executor.ExecuteArgumentProcessor(IArgumentProcessor processor, Int32& exitCode)
+TpTrace Verbose: 0 : 11428, 1, 2017/12/29, 13:07:19.078, 420438963120290, vstest.console.dll, Executor.Execute: Exiting with exit code of 1
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:00:55.043, 423654929304739, vstest.console.dll, TestPluginCache: Discovering the extensions using extension path.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:00:59.877, 423659762163810, vstest.console.dll, AssemblyResolver: Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger: Resolving assembly.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:00:59.929, 423659814508273, vstest.console.dll, AssemblyResolver: Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger: Resolved assembly. 
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:00.089, 423659974199910, vstest.console.dll, TestPluginCache: Discovered the extensions using extension path ''.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:00.090, 423659975452400, vstest.console.dll, TestPluginCache: Discoverers are ''.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:00.090, 423659975506597, vstest.console.dll, TestPluginCache: Executors are ''.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:00.090, 423659975542110, vstest.console.dll, TestPluginCache: Setting providers are ''.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:00.090, 423659975572911, vstest.console.dll, TestPluginCache: Loggers are 'logger://Microsoft/TestPlatform/TrxLogger/v2'.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:00.667, 423660551799584, vstest.console.dll, Trying to connect to server on port : 38145
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:00.792, 423660677143991, vstest.console.dll, Trying to connect to server on port : 38145
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:00.858, 423660742944693, vstest.console.dll, Connected to the server successfully 
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:01.919, 423661804583841, vstest.console.dll, DesignModeClient: Processing Message of message type: Extensions.Initialize
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:01.939, 423661824183265, vstest.console.dll, TestRequestManager.InitializeExtensions: Initialize extensions started.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:01.941, 423661826514659, vstest.console.dll, TestPluginCache: Updating loadOnlyWellKnownExtensions from False to False.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:01.942, 423661826643669, vstest.console.dll, TestRequestManager.InitializeExtensions: Initialize extensions completed.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:01.943, 423661828522705, vstest.console.dll, DesignModeClient: Processing Message of message type: ProtocolVersion
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:06.718, 423666603333181, vstest.console.dll, DesignModeClient: Processing Message of message type: TestDiscovery.Start
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:06.723, 423666608417445, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests started.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:07.159, 423667044178757, vstest.console.dll, TestEngine: Initializing Parallel Execution as MaxCpuCount is set to: 1
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:07.166, 423667050861129, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Starting.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:07.168, 423667052813172, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Started.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:07.168, 423667053246602, vstest.console.dll, DiscoveryRequest.WaitForCompletion: Waiting with timeout -1.
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:07.169, 423667053974332, vstest.console.dll, ProxyParallelDiscoveryManager: Triggering test discovery for next source: /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:07.174, 423667058925979, vstest.console.dll, Listening on port : 49597
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:08.331, 423668216066333, vstest.console.dll, DotnetTestHostmanager: Full path of dotnet.exe is /home/paul/.dotnet/dotnet
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:08.331, 423668216244902, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.runtimeconfig.json, doesnot exist
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:08.331, 423668216286099, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.deps.json, doesnot exist
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:08.349, 423668234392129, vstest.console.dll, DotnetTestHostManager: Assume published test project, with test host path = /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/testhost.dll.
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:08.350, 423668234960562, vstest.console.dll, AssemblyResolver: Microsoft.TestPlatform.CrossPlatEngine.resources: Resolving assembly.
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:08.475, 423668360558768, vstest.console.dll, DotnetTestHostmanager: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:08.907, 423668792223205, vstest.console.dll, AssemblyResolver: System.Core: Resolving assembly.
+TpTrace Error: 0 : 20412, 4, 2017/12/29, 14:01:08.975, 423668860248587, vstest.console.dll, ProxyDiscoveryManager.DiscoverTests: Failed to discover tests: System.IO.FileNotFoundException: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.GetTestHostProcessStartInfo(IEnumerable`1 sources, IDictionary`2 environmentVariables, TestRunnerConnectionInfo connectionInfo)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyOperationManager.SetupChannel(IEnumerable`1 sources)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyDiscoveryManager.DiscoverTests(DiscoveryCriteria discoveryCriteria, ITestDiscoveryEventsHandler eventHandler)
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:08.976, 423668861347012, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Starting.
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:08.978, 423668863274642, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Completed.
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:08.992, 423668877243976, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Starting.
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:08.992, 423668877349961, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Completed.
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:09.000, 423668885503787, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Starting. Aborted:False, TotalTests:0
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:09.001, 423668885895392, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Notified the discovery complete event.
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:09.002, 423668886784563, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Completed.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:09.003, 423668887644121, vstest.console.dll, DiscoveryRequest.Dispose: Starting.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:09.003, 423668887703712, vstest.console.dll, DiscoveryRequest.Dispose: Completed.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:09.003, 423668887732356, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests completed, sucessful: True.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:38.008, 423697892858219, vstest.console.dll, DesignModeClient: Processing Message of message type: TestDiscovery.Start
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:38.008, 423697893475539, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests started.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:38.009, 423697893987363, vstest.console.dll, TestEngine: Initializing Parallel Execution as MaxCpuCount is set to: 1
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:38.011, 423697896032435, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Starting.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:38.011, 423697896173947, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Started.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:38.011, 423697896261610, vstest.console.dll, DiscoveryRequest.WaitForCompletion: Waiting with timeout -1.
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:38.011, 423697896278576, vstest.console.dll, ProxyParallelDiscoveryManager: Triggering test discovery for next source: /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:38.011, 423697896546157, vstest.console.dll, Listening on port : 39001
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:38.014, 423697898941523, vstest.console.dll, DotnetTestHostmanager: Full path of dotnet.exe is /home/paul/.dotnet/dotnet
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:38.014, 423697899052406, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.runtimeconfig.json, doesnot exist
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:38.014, 423697899121664, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.deps.json, doesnot exist
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:38.014, 423697899200446, vstest.console.dll, DotnetTestHostManager: Assume published test project, with test host path = /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/testhost.dll.
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:38.014, 423697899289010, vstest.console.dll, DotnetTestHostmanager: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+TpTrace Error: 0 : 20412, 4, 2017/12/29, 14:01:38.015, 423697900214576, vstest.console.dll, ProxyDiscoveryManager.DiscoverTests: Failed to discover tests: System.IO.FileNotFoundException: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.GetTestHostProcessStartInfo(IEnumerable`1 sources, IDictionary`2 environmentVariables, TestRunnerConnectionInfo connectionInfo)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyOperationManager.SetupChannel(IEnumerable`1 sources)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyDiscoveryManager.DiscoverTests(DiscoveryCriteria discoveryCriteria, ITestDiscoveryEventsHandler eventHandler)
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:38.015, 423697900315473, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Starting.
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:38.015, 423697900416647, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Completed.
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:38.015, 423697900594204, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Starting.
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:38.016, 423697900651581, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Completed.
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:38.016, 423697900808810, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Starting. Aborted:False, TotalTests:0
+TpTrace Verbose: 0 : 20412, 4, 2017/12/29, 14:01:38.016, 423697900890334, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Notified the discovery complete event.
+TpTrace Information: 0 : 20412, 4, 2017/12/29, 14:01:38.016, 423697900945568, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Completed.
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:01:38.016, 423697900958967, vstest.console.dll, DiscoveryRequest.Dispose: Starting.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:38.016, 423697901054710, vstest.console.dll, DiscoveryRequest.Dispose: Completed.
+TpTrace Information: 0 : 20412, 1, 2017/12/29, 14:01:38.016, 423697901115945, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests completed, sucessful: True.
+TpTrace Error: 0 : 20412, 1, 2017/12/29, 14:02:54.797, 423774682630081, vstest.console.dll, DesignModeClient: Error processing request: System.IO.EndOfStreamException: Unable to read beyond the end of the stream.
+   at System.IO.BinaryReader.ReadByte()
+   at System.IO.BinaryReader.Read7BitEncodedInt()
+   at System.IO.BinaryReader.ReadString()
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.ReceiveMessage()
+   at Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.ProcessRequests(ITestRequestManager testRequestManager)
+TpTrace Error: 0 : 20412, 1, 2017/12/29, 14:02:54.813, 423774698233199, vstest.console.dll, ExecuteArgumentProcessor: failed to execute argument process: Microsoft.VisualStudio.TestPlatform.CommandLine.CommandLineException: Aucun fichier source de test n'a été spécifié.
+   at Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.RunTestsArgumentExecutor.Execute()
+   at Microsoft.VisualStudio.TestPlatform.CommandLine.Executor.ExecuteArgumentProcessor(IArgumentProcessor processor, Int32& exitCode)
+TpTrace Verbose: 0 : 20412, 1, 2017/12/29, 14:02:54.814, 423774698642880, vstest.console.dll, Executor.Execute: Exiting with exit code of 1
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:02:57.908, 423777794281601, vstest.console.dll, TestPluginCache: Discovering the extensions using extension path.
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:02:57.947, 423777832020777, vstest.console.dll, AssemblyResolver: Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger: Resolving assembly.
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:02:57.949, 423777833764959, vstest.console.dll, AssemblyResolver: Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger: Resolved assembly. 
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:02:57.969, 423777853871094, vstest.console.dll, TestPluginCache: Discovered the extensions using extension path ''.
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:02:57.970, 423777855197445, vstest.console.dll, TestPluginCache: Discoverers are ''.
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:02:57.970, 423777855270660, vstest.console.dll, TestPluginCache: Executors are ''.
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:02:57.970, 423777855316089, vstest.console.dll, TestPluginCache: Setting providers are ''.
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:02:57.970, 423777855348979, vstest.console.dll, TestPluginCache: Loggers are 'logger://Microsoft/TestPlatform/TrxLogger/v2'.
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:02:58.025, 423777909719261, vstest.console.dll, Trying to connect to server on port : 33315
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:02:58.027, 423777912462699, vstest.console.dll, Trying to connect to server on port : 33315
+TpTrace Information: 0 : 20786, 5, 2017/12/29, 14:02:58.041, 423777925816270, vstest.console.dll, Connected to the server successfully 
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:02:58.392, 423778276882059, vstest.console.dll, DesignModeClient: Processing Message of message type: Extensions.Initialize
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:02:58.413, 423778297937223, vstest.console.dll, TestRequestManager.InitializeExtensions: Initialize extensions started.
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:02:58.416, 423778301412022, vstest.console.dll, TestPluginCache: Updating loadOnlyWellKnownExtensions from False to False.
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:02:58.416, 423778301516190, vstest.console.dll, TestRequestManager.InitializeExtensions: Initialize extensions completed.
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:02:58.418, 423778303216648, vstest.console.dll, DesignModeClient: Processing Message of message type: ProtocolVersion
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:03:03.325, 423783210000741, vstest.console.dll, DesignModeClient: Processing Message of message type: TestDiscovery.Start
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:03:03.330, 423783215036302, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests started.
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:03:03.414, 423783299199742, vstest.console.dll, TestEngine: Initializing Parallel Execution as MaxCpuCount is set to: 1
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:03:03.420, 423783305166568, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Starting.
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:03:03.422, 423783306955847, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Started.
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:03:03.422, 423783307335384, vstest.console.dll, DiscoveryRequest.WaitForCompletion: Waiting with timeout -1.
+TpTrace Information: 0 : 20786, 5, 2017/12/29, 14:03:03.423, 423783308007016, vstest.console.dll, ProxyParallelDiscoveryManager: Triggering test discovery for next source: /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll
+TpTrace Information: 0 : 20786, 5, 2017/12/29, 14:03:03.428, 423783312721221, vstest.console.dll, Listening on port : 48453
+TpTrace Verbose: 0 : 20786, 5, 2017/12/29, 14:03:03.479, 423783364040327, vstest.console.dll, DotnetTestHostmanager: Full path of dotnet.exe is /home/paul/.dotnet/dotnet
+TpTrace Verbose: 0 : 20786, 5, 2017/12/29, 14:03:03.479, 423783364396494, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.runtimeconfig.json, doesnot exist
+TpTrace Verbose: 0 : 20786, 5, 2017/12/29, 14:03:03.479, 423783364443620, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.deps.json, doesnot exist
+TpTrace Verbose: 0 : 20786, 5, 2017/12/29, 14:03:03.505, 423783390595229, vstest.console.dll, DotnetTestHostManager: Assume published test project, with test host path = /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/testhost.dll.
+TpTrace Information: 0 : 20786, 5, 2017/12/29, 14:03:03.506, 423783391238622, vstest.console.dll, AssemblyResolver: Microsoft.TestPlatform.CrossPlatEngine.resources: Resolving assembly.
+TpTrace Verbose: 0 : 20786, 5, 2017/12/29, 14:03:03.540, 423783425131692, vstest.console.dll, DotnetTestHostmanager: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+TpTrace Information: 0 : 20786, 5, 2017/12/29, 14:03:03.606, 423783491390943, vstest.console.dll, AssemblyResolver: System.Core: Resolving assembly.
+TpTrace Error: 0 : 20786, 5, 2017/12/29, 14:03:03.642, 423783527594772, vstest.console.dll, ProxyDiscoveryManager.DiscoverTests: Failed to discover tests: System.IO.FileNotFoundException: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.GetTestHostProcessStartInfo(IEnumerable`1 sources, IDictionary`2 environmentVariables, TestRunnerConnectionInfo connectionInfo)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyOperationManager.SetupChannel(IEnumerable`1 sources)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyDiscoveryManager.DiscoverTests(DiscoveryCriteria discoveryCriteria, ITestDiscoveryEventsHandler eventHandler)
+TpTrace Verbose: 0 : 20786, 5, 2017/12/29, 14:03:03.644, 423783528698552, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Starting.
+TpTrace Information: 0 : 20786, 5, 2017/12/29, 14:03:03.646, 423783530648051, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Completed.
+TpTrace Verbose: 0 : 20786, 5, 2017/12/29, 14:03:03.664, 423783548669780, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Starting.
+TpTrace Information: 0 : 20786, 5, 2017/12/29, 14:03:03.664, 423783549384648, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Completed.
+TpTrace Verbose: 0 : 20786, 5, 2017/12/29, 14:03:03.674, 423783559486444, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Starting. Aborted:False, TotalTests:0
+TpTrace Verbose: 0 : 20786, 5, 2017/12/29, 14:03:03.674, 423783559627764, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Notified the discovery complete event.
+TpTrace Information: 0 : 20786, 5, 2017/12/29, 14:03:03.675, 423783559979878, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Completed.
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 14:03:03.676, 423783561361950, vstest.console.dll, DiscoveryRequest.Dispose: Starting.
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:03:03.676, 423783561448222, vstest.console.dll, DiscoveryRequest.Dispose: Completed.
+TpTrace Information: 0 : 20786, 1, 2017/12/29, 14:03:03.676, 423783561479133, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests completed, sucessful: True.
+TpTrace Error: 0 : 20786, 1, 2017/12/29, 17:24:19.705, 435859590386777, vstest.console.dll, DesignModeClient: Error processing request: System.IO.EndOfStreamException: Unable to read beyond the end of the stream.
+   at System.IO.BinaryReader.ReadByte()
+   at System.IO.BinaryReader.Read7BitEncodedInt()
+   at System.IO.BinaryReader.ReadString()
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.ReceiveMessage()
+   at Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.ProcessRequests(ITestRequestManager testRequestManager)
+TpTrace Error: 0 : 20786, 1, 2017/12/29, 17:24:21.113, 435860998286396, vstest.console.dll, ExecuteArgumentProcessor: failed to execute argument process: Microsoft.VisualStudio.TestPlatform.CommandLine.CommandLineException: Aucun fichier source de test n'a été spécifié.
+   at Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.RunTestsArgumentExecutor.Execute()
+   at Microsoft.VisualStudio.TestPlatform.CommandLine.Executor.ExecuteArgumentProcessor(IArgumentProcessor processor, Int32& exitCode)
+TpTrace Verbose: 0 : 20786, 1, 2017/12/29, 17:24:21.132, 435861017529715, vstest.console.dll, Executor.Execute: Exiting with exit code of 1
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:49.373, 435889258548043, vstest.console.dll, TestPluginCache: Discovering the extensions using extension path.
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:49.961, 435889846308724, vstest.console.dll, AssemblyResolver: Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger: Resolving assembly.
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:50.164, 435890048643206, vstest.console.dll, AssemblyResolver: Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger: Resolved assembly. 
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:50.240, 435890125342271, vstest.console.dll, TestPluginCache: Discovered the extensions using extension path ''.
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:50.242, 435890127340842, vstest.console.dll, TestPluginCache: Discoverers are ''.
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:50.242, 435890127443438, vstest.console.dll, TestPluginCache: Executors are ''.
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:50.242, 435890127500518, vstest.console.dll, TestPluginCache: Setting providers are ''.
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:50.242, 435890127545554, vstest.console.dll, TestPluginCache: Loggers are 'logger://Microsoft/TestPlatform/TrxLogger/v2'.
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:51.214, 435891099435135, vstest.console.dll, Trying to connect to server on port : 41921
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:51.294, 435891179061392, vstest.console.dll, Trying to connect to server on port : 41921
+TpTrace Information: 0 : 1033, 4, 2017/12/29, 17:24:51.424, 435891309501015, vstest.console.dll, Connected to the server successfully 
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:52.399, 435892283740896, vstest.console.dll, DesignModeClient: Processing Message of message type: Extensions.Initialize
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:52.418, 435892303540936, vstest.console.dll, TestRequestManager.InitializeExtensions: Initialize extensions started.
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:52.421, 435892305925134, vstest.console.dll, TestPluginCache: Updating loadOnlyWellKnownExtensions from False to False.
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:52.421, 435892306044799, vstest.console.dll, TestRequestManager.InitializeExtensions: Initialize extensions completed.
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:52.423, 435892308538769, vstest.console.dll, DesignModeClient: Processing Message of message type: ProtocolVersion
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:57.344, 435897228773600, vstest.console.dll, DesignModeClient: Processing Message of message type: TestDiscovery.Start
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:57.349, 435897234198168, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests started.
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:57.417, 435897302443625, vstest.console.dll, TestEngine: Initializing Parallel Execution as MaxCpuCount is set to: 1
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:57.423, 435897308570159, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Starting.
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:57.425, 435897310384823, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Started.
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:57.426, 435897311063201, vstest.console.dll, DiscoveryRequest.WaitForCompletion: Waiting with timeout -1.
+TpTrace Information: 0 : 1033, 9, 2017/12/29, 17:24:57.427, 435897312252788, vstest.console.dll, ProxyParallelDiscoveryManager: Triggering test discovery for next source: /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll
+TpTrace Information: 0 : 1033, 9, 2017/12/29, 17:24:57.432, 435897317268355, vstest.console.dll, Listening on port : 43697
+TpTrace Verbose: 0 : 1033, 9, 2017/12/29, 17:24:57.463, 435897347836438, vstest.console.dll, DotnetTestHostmanager: Full path of dotnet.exe is /home/paul/.dotnet/dotnet
+TpTrace Verbose: 0 : 1033, 9, 2017/12/29, 17:24:57.463, 435897347992930, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.runtimeconfig.json, doesnot exist
+TpTrace Verbose: 0 : 1033, 9, 2017/12/29, 17:24:57.463, 435897348054622, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.deps.json, doesnot exist
+TpTrace Verbose: 0 : 1033, 9, 2017/12/29, 17:24:57.484, 435897369143557, vstest.console.dll, DotnetTestHostManager: Assume published test project, with test host path = /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/testhost.dll.
+TpTrace Information: 0 : 1033, 9, 2017/12/29, 17:24:57.485, 435897369650335, vstest.console.dll, AssemblyResolver: Microsoft.TestPlatform.CrossPlatEngine.resources: Resolving assembly.
+TpTrace Verbose: 0 : 1033, 9, 2017/12/29, 17:24:57.526, 435897410929624, vstest.console.dll, DotnetTestHostmanager: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+TpTrace Information: 0 : 1033, 9, 2017/12/29, 17:24:57.649, 435897534079561, vstest.console.dll, AssemblyResolver: System.Core: Resolving assembly.
+TpTrace Error: 0 : 1033, 9, 2017/12/29, 17:24:57.676, 435897561036792, vstest.console.dll, ProxyDiscoveryManager.DiscoverTests: Failed to discover tests: System.IO.FileNotFoundException: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.GetTestHostProcessStartInfo(IEnumerable`1 sources, IDictionary`2 environmentVariables, TestRunnerConnectionInfo connectionInfo)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyOperationManager.SetupChannel(IEnumerable`1 sources)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyDiscoveryManager.DiscoverTests(DiscoveryCriteria discoveryCriteria, ITestDiscoveryEventsHandler eventHandler)
+TpTrace Verbose: 0 : 1033, 9, 2017/12/29, 17:24:57.677, 435897561891548, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Starting.
+TpTrace Information: 0 : 1033, 9, 2017/12/29, 17:24:57.679, 435897563885420, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Completed.
+TpTrace Verbose: 0 : 1033, 9, 2017/12/29, 17:24:57.694, 435897579612023, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Starting.
+TpTrace Information: 0 : 1033, 9, 2017/12/29, 17:24:57.695, 435897579741713, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Completed.
+TpTrace Verbose: 0 : 1033, 9, 2017/12/29, 17:24:57.704, 435897588892907, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Starting. Aborted:False, TotalTests:0
+TpTrace Verbose: 0 : 1033, 9, 2017/12/29, 17:24:57.704, 435897589007677, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Notified the discovery complete event.
+TpTrace Information: 0 : 1033, 9, 2017/12/29, 17:24:57.704, 435897589603938, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Completed.
+TpTrace Verbose: 0 : 1033, 1, 2017/12/29, 17:24:57.706, 435897590907084, vstest.console.dll, DiscoveryRequest.Dispose: Starting.
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:57.706, 435897590966497, vstest.console.dll, DiscoveryRequest.Dispose: Completed.
+TpTrace Information: 0 : 1033, 1, 2017/12/29, 17:24:57.706, 435897590997134, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests completed, sucessful: True.
+TpTrace Error: 0 : 1033, 1, 2017/12/30, 19:47:45.499, 530865383883064, vstest.console.dll, DesignModeClient: Error processing request: System.IO.EndOfStreamException: Unable to read beyond the end of the stream.
+   at System.IO.BinaryReader.ReadByte()
+   at System.IO.BinaryReader.Read7BitEncodedInt()
+   at System.IO.BinaryReader.ReadString()
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.ReceiveMessage()
+   at Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.ProcessRequests(ITestRequestManager testRequestManager)
+TpTrace Error: 0 : 1033, 1, 2017/12/30, 19:47:46.285, 530866170548682, vstest.console.dll, ExecuteArgumentProcessor: failed to execute argument process: Microsoft.VisualStudio.TestPlatform.CommandLine.CommandLineException: Aucun fichier source de test n'a été spécifié.
+   at Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.RunTestsArgumentExecutor.Execute()
+   at Microsoft.VisualStudio.TestPlatform.CommandLine.Executor.ExecuteArgumentProcessor(IArgumentProcessor processor, Int32& exitCode)
+TpTrace Verbose: 0 : 1033, 1, 2017/12/30, 19:47:46.330, 530866214801961, vstest.console.dll, Executor.Execute: Exiting with exit code of 1
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:36.419, 530916304497091, vstest.console.dll, TestPluginCache: Discovering the extensions using extension path.
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:36.732, 530916617600839, vstest.console.dll, AssemblyResolver: Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger: Resolving assembly.
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:36.819, 530916703741140, vstest.console.dll, AssemblyResolver: Microsoft.VisualStudio.TestPlatform.Extensions.TrxLogger: Resolved assembly. 
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:36.878, 530916763634879, vstest.console.dll, TestPluginCache: Discovered the extensions using extension path ''.
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:36.880, 530916765601339, vstest.console.dll, TestPluginCache: Discoverers are ''.
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:36.881, 530916765713420, vstest.console.dll, TestPluginCache: Executors are ''.
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:36.881, 530916765765412, vstest.console.dll, TestPluginCache: Setting providers are ''.
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:36.881, 530916765803391, vstest.console.dll, TestPluginCache: Loggers are 'logger://Microsoft/TestPlatform/TrxLogger/v2'.
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:37.559, 530917443639247, vstest.console.dll, Trying to connect to server on port : 43631
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:37.740, 530917624780895, vstest.console.dll, Trying to connect to server on port : 43631
+TpTrace Information: 0 : 11330, 4, 2017/12/30, 19:48:37.887, 530917772536718, vstest.console.dll, Connected to the server successfully 
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:40.916, 530920800904960, vstest.console.dll, DesignModeClient: Processing Message of message type: Extensions.Initialize
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:40.935, 530920820428686, vstest.console.dll, TestRequestManager.InitializeExtensions: Initialize extensions started.
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:40.938, 530920823173613, vstest.console.dll, TestPluginCache: Updating loadOnlyWellKnownExtensions from False to False.
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:40.938, 530920823352180, vstest.console.dll, TestRequestManager.InitializeExtensions: Initialize extensions completed.
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:40.941, 530920826591159, vstest.console.dll, DesignModeClient: Processing Message of message type: ProtocolVersion
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:45.865, 530925749648328, vstest.console.dll, DesignModeClient: Processing Message of message type: TestDiscovery.Start
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:45.870, 530925755093616, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests started.
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:46.407, 530926292143442, vstest.console.dll, TestEngine: Initializing Parallel Execution as MaxCpuCount is set to: 1
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:46.413, 530926298019081, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Starting.
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:46.415, 530926299803616, vstest.console.dll, DiscoveryRequest.DiscoverAsync: Started.
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:46.415, 530926300196424, vstest.console.dll, DiscoveryRequest.WaitForCompletion: Waiting with timeout -1.
+TpTrace Information: 0 : 11330, 4, 2017/12/30, 19:48:46.416, 530926301170915, vstest.console.dll, ProxyParallelDiscoveryManager: Triggering test discovery for next source: /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll
+TpTrace Information: 0 : 11330, 4, 2017/12/30, 19:48:46.421, 530926306087421, vstest.console.dll, Listening on port : 50181
+TpTrace Verbose: 0 : 11330, 4, 2017/12/30, 19:48:48.580, 530928464820347, vstest.console.dll, DotnetTestHostmanager: Full path of dotnet.exe is /home/paul/.dotnet/dotnet
+TpTrace Verbose: 0 : 11330, 4, 2017/12/30, 19:48:48.580, 530928465394285, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.runtimeconfig.json, doesnot exist
+TpTrace Verbose: 0 : 11330, 4, 2017/12/30, 19:48:48.580, 530928465467089, vstest.console.dll, DotnetTestHostmanager: File /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.deps.json, doesnot exist
+TpTrace Verbose: 0 : 11330, 4, 2017/12/30, 19:48:48.822, 530928706763906, vstest.console.dll, DotnetTestHostManager: Assume published test project, with test host path = /home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/testhost.dll.
+TpTrace Information: 0 : 11330, 4, 2017/12/30, 19:48:48.822, 530928707419074, vstest.console.dll, AssemblyResolver: Microsoft.TestPlatform.CrossPlatEngine.resources: Resolving assembly.
+TpTrace Verbose: 0 : 11330, 4, 2017/12/30, 19:48:48.847, 530928732536220, vstest.console.dll, DotnetTestHostmanager: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+TpTrace Information: 0 : 11330, 4, 2017/12/30, 19:48:48.954, 530928839162449, vstest.console.dll, AssemblyResolver: System.Core: Resolving assembly.
+TpTrace Error: 0 : 11330, 4, 2017/12/30, 19:48:48.996, 530928881575291, vstest.console.dll, ProxyDiscoveryManager.DiscoverTests: Failed to discover tests: System.IO.FileNotFoundException: testhost.dll est introuvable pour la source '/home/paul/workspace/yavsc/Yavsc/bin/Debug/netcoreapp1.0/UnitTest.dll'. Vérifiez que le projet de test a une référence nuget du package "microsoft.testplatform.testhost".
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Hosting.DotnetTestHostManager.GetTestHostProcessStartInfo(IEnumerable`1 sources, IDictionary`2 environmentVariables, TestRunnerConnectionInfo connectionInfo)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyOperationManager.SetupChannel(IEnumerable`1 sources)
+   at Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.Client.ProxyDiscoveryManager.DiscoverTests(DiscoveryCriteria discoveryCriteria, ITestDiscoveryEventsHandler eventHandler)
+TpTrace Verbose: 0 : 11330, 4, 2017/12/30, 19:48:48.997, 530928882452448, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Starting.
+TpTrace Information: 0 : 11330, 4, 2017/12/30, 19:48:48.999, 530928884345886, vstest.console.dll, DiscoveryRequest.SendDiscoveryMessage: Completed.
+TpTrace Verbose: 0 : 11330, 4, 2017/12/30, 19:48:49.014, 530928899018159, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Starting.
+TpTrace Information: 0 : 11330, 4, 2017/12/30, 19:48:49.014, 530928899128657, vstest.console.dll, DiscoveryRequest.SendDiscoveredTests: Completed.
+TpTrace Verbose: 0 : 11330, 4, 2017/12/30, 19:48:49.022, 530928906912396, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Starting. Aborted:False, TotalTests:0
+TpTrace Verbose: 0 : 11330, 4, 2017/12/30, 19:48:49.022, 530928907171990, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Notified the discovery complete event.
+TpTrace Information: 0 : 11330, 4, 2017/12/30, 19:48:49.022, 530928907527746, vstest.console.dll, DiscoveryRequest.DiscoveryComplete: Completed.
+TpTrace Verbose: 0 : 11330, 1, 2017/12/30, 19:48:49.024, 530928909601348, vstest.console.dll, DiscoveryRequest.Dispose: Starting.
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:49.025, 530928909676373, vstest.console.dll, DiscoveryRequest.Dispose: Completed.
+TpTrace Information: 0 : 11330, 1, 2017/12/30, 19:48:49.025, 530928909706027, vstest.console.dll, TestRequestManager.DiscoverTests: Discovery tests completed, sucessful: True.
+TpTrace Error: 0 : 11330, 1, 2017/12/31, 22:29:28.872, 626968757362599, vstest.console.dll, DesignModeClient: Error processing request: System.IO.EndOfStreamException: Unable to read beyond the end of the stream.
+   at System.IO.BinaryReader.ReadByte()
+   at System.IO.BinaryReader.Read7BitEncodedInt()
+   at System.IO.BinaryReader.ReadString()
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.SocketCommunicationManager.ReceiveMessage()
+   at Microsoft.VisualStudio.TestPlatform.Client.DesignMode.DesignModeClient.ProcessRequests(ITestRequestManager testRequestManager)
+TpTrace Error: 0 : 11330, 1, 2017/12/31, 22:29:29.011, 626968896518450, vstest.console.dll, ExecuteArgumentProcessor: failed to execute argument process: Microsoft.VisualStudio.TestPlatform.CommandLine.CommandLineException: Aucun fichier source de test n'a été spécifié.
+   at Microsoft.VisualStudio.TestPlatform.CommandLine.Processors.RunTestsArgumentExecutor.Execute()
+   at Microsoft.VisualStudio.TestPlatform.CommandLine.Executor.ExecuteArgumentProcessor(IArgumentProcessor processor, Int32& exitCode)
+TpTrace Verbose: 0 : 11330, 1, 2017/12/31, 22:29:29.012, 626968897530782, vstest.console.dll, Executor.Execute: Exiting with exit code of 1
