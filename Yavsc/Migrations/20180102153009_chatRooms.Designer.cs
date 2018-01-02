@@ -1,14 +1,15 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20171020090944_commentAuthor")]
-    partial class commentAuthor
+    [Migration("20180102153009_chatRooms")]
+    partial class chatRooms
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -182,6 +183,8 @@ namespace Yavsc.Migrations
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
+
+                    b.Property<long>("MaxFileSize");
 
                     b.Property<string>("NormalizedEmail")
                         .HasAnnotation("MaxLength", 256);
@@ -480,7 +483,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Chat.Connection", b =>
+            modelBuilder.Entity("Yavsc.Models.Chat.ChatConnection", b =>
                 {
                     b.Property<string>("ConnectionId");
 
@@ -492,6 +495,30 @@ namespace Yavsc.Migrations
                     b.Property<string>("UserAgent");
 
                     b.HasKey("ConnectionId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Chat.ChatRoom", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasAnnotation("MaxLength", 255);
+
+                    b.Property<string>("ApplicationUserId");
+
+                    b.Property<string>("Topic")
+                        .HasAnnotation("MaxLength", 1023);
+
+                    b.HasKey("Name");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Chat.ChatRoomPresence", b =>
+                {
+                    b.Property<string>("ChannelName");
+
+                    b.Property<string>("ChatUserConnectionId");
+
+                    b.Property<int>("Level");
+
+                    b.HasKey("ChannelName", "ChatUserConnectionId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Cratie.Option", b =>
@@ -784,7 +811,7 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<long>("FeatureId");
+                    b.Property<long?>("FeatureId");
 
                     b.Property<int>("Status");
 
@@ -1429,11 +1456,29 @@ namespace Yavsc.Migrations
                         .HasForeignKey("PeriodStart", "PeriodEnd");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Chat.Connection", b =>
+            modelBuilder.Entity("Yavsc.Models.Chat.ChatConnection", b =>
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Chat.ChatRoom", b =>
+                {
+                    b.HasOne("Yavsc.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Chat.ChatRoomPresence", b =>
+                {
+                    b.HasOne("Yavsc.Models.Chat.ChatRoom")
+                        .WithMany()
+                        .HasForeignKey("ChannelName");
+
+                    b.HasOne("Yavsc.Models.Chat.ChatConnection")
+                        .WithMany()
+                        .HasForeignKey("ChatUserConnectionId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Haircut.BrusherProfile", b =>
@@ -1535,6 +1580,13 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("DeviceOwnerId");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.IT.Fixing.Bug", b =>
+                {
+                    b.HasOne("Yavsc.Models.IT.Maintaining.Feature")
+                        .WithMany()
+                        .HasForeignKey("FeatureId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Market.Service", b =>

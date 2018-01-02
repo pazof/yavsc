@@ -1,11 +1,12 @@
 {
-  "projects": [
-    "Yavsc",
-    "Yavsc.Abstract"
-  ],
-  "sdk": {
-    "version": "1.0.0-rc1-update2",
-    "runtime": "mono",
-    "architecture": "x64"
-  }
+    "projects": [
+        "Yavsc",
+        "Yavsc.Abstract",
+        "YaDaemon"
+    ],
+    "sdk": {
+        "version": "1.0.0-rc1-update2",
+        "runtime": "mono",
+        "architecture": "x64"
+    }
 }

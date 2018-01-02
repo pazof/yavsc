@@ -48,8 +48,8 @@ namespace Yavsc
                     using (var db = new ApplicationDbContext()) {
                         var user = db.Users.Single(u => u.UserName == userName);
                         if (user.Connections==null)
-                            user.Connections = new List<Connection>();
-                        user.Connections.Add(new Connection
+                            user.Connections = new List<ChatConnection>();
+                        user.Connections.Add(new ChatConnection
                         {
                             ConnectionId = Context.ConnectionId,
                             UserAgent = Context.Request.Headers["User-Agent"],
@@ -103,7 +103,7 @@ namespace Yavsc
                 using (var db = new ApplicationDbContext()) {
                     var user = db.Users.Single(u => u.UserName == userName);
 
-                    if (user.Connections==null) user.Connections = new List<Connection>();
+                    if (user.Connections==null) user.Connections = new List<ChatConnection>();
 
                     
                         var cx = user.Connections.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
@@ -112,7 +112,7 @@ namespace Yavsc
                             cx.Connected = true;
                             db.SaveChanges();
                         }
-                        else cx = new Connection { ConnectionId = Context.ConnectionId,
+                        else cx = new ChatConnection { ConnectionId = Context.ConnectionId,
                             UserAgent = Context.Request.Headers["User-Agent"],
                             Connected = true };
                 }

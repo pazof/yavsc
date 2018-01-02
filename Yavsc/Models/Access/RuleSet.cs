@@ -1,16 +1,10 @@
-using System;
 using System.Collections.Generic;
-using Microsoft.AspNet.Authorization;
 
 namespace Yavsc.Models.Access
 {
+    public abstract class RuleSet <TResource,TRequirement>:List<Rule<TResource,TRequirement>> {
 
-    public class RuleSet <TResource>:List<Rule<TResource>> where TResource : IAuthorizationRequirement{
-
-        bool Allow(ApplicationUser user)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract bool Allow(ApplicationDbContext context, string userId, TResource resource, TRequirement requirement);
 
     }
 }

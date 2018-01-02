@@ -45,7 +45,7 @@ namespace Yavsc.Models
             builder.Entity<Relationship.Contact>().HasKey(x => new { x.OwnerId, x.UserId });
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x=>x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<BlogTag>().HasKey(x=>new { x.PostId, x.TagId});
-            builder.Entity<ApplicationUser>().HasMany<Connection>( c=>c.Connections );
+            builder.Entity<ApplicationUser>().HasMany<ChatConnection>( c=>c.Connections );
             builder.Entity<ApplicationUser>().Property(u=>u.Avatar).HasDefaultValue(Constants.DefaultAvatar);
             builder.Entity<ApplicationUser>().Property(u=>u.DiskQuota).HasDefaultValue(Constants.DefaultFSQ);
             builder.Entity<UserActivity>().HasKey(u=> new { u.DoesCode, u.UserId});
@@ -58,6 +58,7 @@ namespace Yavsc.Models
             builder.Entity<Period>().HasKey(l=>new { l.Start, l.End });
             builder.Entity<Models.Cratie.Option>().HasKey( o => new { o.Code, o.CodeScrutin });
             builder.Entity<Notification>().Property(n=> n.icon).HasDefaultValue("exclam");
+            builder.Entity<ChatRoomPresence>().HasKey(p=>new { room = p.ChannelName, user = p.ChatUserConnectionId });
             foreach (var et in builder.Model.GetEntityTypes()) {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
@@ -197,7 +198,7 @@ namespace Yavsc.Models
 
         public DbSet<ClientProviderInfo> ClientProviderInfo { get; set; }
 
-        public DbSet<Connection> Connections { get; set; }
+        public DbSet<ChatConnection> Connections { get; set; }
 
         public DbSet<BlackListed> BlackListed { get; set; }
 
@@ -293,5 +294,10 @@ namespace Yavsc.Models
          public DbSet<Comment> Comment { get; set; }
 
          public DbSet<Announce> Announce { get; set; }
+
+         public DbSet<ChatConnection> ChatConnection { get; set; }
+         public DbSet<ChatRoom> ChatRoom { get; set; }
+
+        
     }
 }

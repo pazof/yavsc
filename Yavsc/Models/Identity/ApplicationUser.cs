@@ -60,7 +60,7 @@ namespace Yavsc.Models
         public virtual List<GoogleCloudMobileDeclaration> Devices { get; set; }
 
         [InverseProperty("Owner"),JsonIgnore]
-        public virtual List<Connection> Connections { get; set; }
+        public virtual List<ChatConnection> Connections { get; set; }
 
 
         /// <summary>
@@ -93,6 +93,8 @@ namespace Yavsc.Models
 
         public long DiskQuota { get; set; } = 512*1024*1024;
         public long DiskUsage { get; set; } = 0;
+
+        public long MaxFileSize { get; set; } = 512*1024*1024;
 
         [JsonIgnore][InverseProperty("Owner")]
         public virtual List<BlackListed> BlackList { get; set; }

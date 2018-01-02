@@ -35,6 +35,9 @@ namespace Yavsc
                            if (webSocket != null && webSocket.State == WebSocketState.Open)
                            {
                                // TODO: Handle the socket here.
+                               // Find receivers: others in the chat room
+                               // send them the flow
+                               
                                byte[] buffer = new byte[1024];
                                WebSocketReceiveResult received = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
                                while (received.MessageType != WebSocketMessageType.Close)

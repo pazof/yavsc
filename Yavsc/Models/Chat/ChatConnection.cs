@@ -19,25 +19,32 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
 
 namespace Yavsc.Models.Chat
 {
-    using Yavsc;
-
-    public class Connection : IConnection
+    public class ChatConnection : Abstract.Streaming.IChatConnection<ChatRoomPresence>
     {
         [JsonIgnore,Required]
         public string ApplicationUserId { get; set; }
+
         [ForeignKey("ApplicationUserId"),JsonIgnore]
         public virtual ApplicationUser Owner { get; set; }
 
         [Key]
         public string ConnectionId { get; set; }
+
         public string UserAgent { get; set; }
+
         public bool Connected { get; set; }
+
+        [InverseProperty("ChatUserConnection")]
+        public virtual List<ChatRoomPresence> Rooms { get; set; }
+
+
     }
 
 }
