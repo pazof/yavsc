@@ -67,9 +67,9 @@
     <div class="row @trclass">
         <div class="col-xs-10"> 
            <a asp-action="Title" asp-route-id="@title" >
-@if (first.Photo==null) {  }
-else {<img src="@first.Photo" class="smallphoto" alt="@first.Title">} 
 <markdown>@first.Title</markdown>
+@if (first.Photo==null) {  }
+else {<img src="@first.Photo" class="blogphoto" alt="@first.Title">} 
 </a>
         
             <markdown>@((first.Content?.Length > 120) ? first.Content.Substring(0, 120) + " ..." : first.Content)</markdown>
