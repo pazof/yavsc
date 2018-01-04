@@ -90,8 +90,6 @@ namespace Yavsc
             services.Configure<GoogleAuthSettings>(googleSettings);
             var cinfoSettings = Configuration.GetSection("Authentication").GetSection("Societeinfo");
             services.Configure<CompanyInfoSettings>(cinfoSettings);
-            var oauthLocalAppSettings = Configuration.GetSection("Authentication").GetSection("OAuth2LocalApp");
-            services.Configure<OAuth2AppSettings>(oauthLocalAppSettings);
             var oauthFacebookSettings = Configuration.GetSection("Authentication").GetSection("Facebook");
             services.Configure<FacebookOAuth2AppSettings>(oauthFacebookSettings);
             var paypalSettings = Configuration.GetSection("Authentication").GetSection("PayPal");
