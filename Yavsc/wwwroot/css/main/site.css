@@ -374,6 +374,8 @@ footer {
 .blogphoto {
     float: left;
     margin: 1em;
+    max-width: 100em;
+    max-height: 100em;
 }
 
 .dl-horizontal dd {
