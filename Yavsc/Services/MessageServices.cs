@@ -44,7 +44,7 @@ namespace Yavsc.Services
             return await googleSettings.NotifyEvent<HairCutQueryEvent>(registrationIds, ev);
         }
 
-        public Task<bool> SendEmailAsync(SiteSettings siteSettings, SmtpSettings smtpSettings, string email, string subject, string message)
+        public Task<bool> SendEmailAsync(SiteSettings siteSettings, SmtpSettings smtpSettings, string username, string email, string subject, string message)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Yavsc.Services
                 msg.From.Add(new MailboxAddress(
                     siteSettings.Owner.Name,
                 siteSettings.Owner.EMail));
-                msg.To.Add(new MailboxAddress("", email));
+                msg.To.Add(new MailboxAddress(username, email));
                 msg.Body = new TextPart("plain")
                 {
                     Text = message

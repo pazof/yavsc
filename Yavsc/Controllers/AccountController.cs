@@ -11,6 +11,7 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.AspNet.Http;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.ViewModels.Account;
@@ -78,10 +79,11 @@ namespace Yavsc.Controllers
             // party identity provider.
             return View(new SignInViewModel
             {
-                ReturnUrl = returnUrl,
+                ReturnUrl = returnUrl ?? "/",
                 ExternalProviders = HttpContext.GetExternalProviders()
             });
-            /* Note: When using an external login provider, redirect the query  :
+            /* 
+            Note: When using an external login provider, redirect the query  :
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(OpenIdConnectDefaults.AuthenticationScheme, returnUrl);
             return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme, properties);
             */
@@ -104,11 +106,10 @@ namespace Yavsc.Controllers
         {
             if (Request.Method == "POST")
             {
-                if (model.Provider == "LOCAL")
+                if (model.Provider ==null || model.Provider == "LOCAL")
                 {
                     if (ModelState.IsValid)
                     {
-                        /*
                         var user = await _userManager.FindByNameAsync(model.UserName);
                         if (user != null)
                         {
@@ -119,7 +120,6 @@ namespace Yavsc.Controllers
                                 return View(model);
                             }
                         }
-                         */
 
                         // This doesn't count login failures towards account lockout
                         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
@@ -127,7 +127,7 @@ namespace Yavsc.Controllers
 
                         if (result.Succeeded)
                         {
-                            return Redirect(model.ReturnUrl);
+                            return Redirect(model.ReturnUrl ?? "/");
                         }
                         if (result.RequiresTwoFactor)
                         {
@@ -136,13 +136,13 @@ namespace Yavsc.Controllers
                         if (result.IsLockedOut)
                         {
                             _logger.LogWarning(2, "User account locked out.");
-                            return View("Lockout");
+                            return this.ViewOk("Lockout");
                         }
                         else
                         {
                             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                             model.ExternalProviders = HttpContext.GetExternalProviders();
-                            return View(model);
+                            return this.ViewOk(model);
                         }
                     }
 
@@ -213,7 +213,7 @@ namespace Yavsc.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(3, "User created a new account with password.");
-                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.EMail,
+                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.Name, Startup.SiteSetup.Owner.EMail,
                      $"[{_siteSettings.Title}] Inscription avec mot de passe: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
 
                     // TODO user.DiskQuota = Startup.SiteSetup.UserFiles.Quota;
@@ -221,7 +221,7 @@ namespace Yavsc.Controllers
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    var emailSent = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.Email, _localizer["ConfirmYourAccountTitle"],
+                    var emailSent = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.UserName, model.Email, _localizer["ConfirmYourAccountTitle"],
                       string.Format(_localizer["ConfirmYourAccountBody"], _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     if (!emailSent)
@@ -259,7 +259,7 @@ namespace Yavsc.Controllers
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-            var res = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, user.Email, "Confirm your account",
+            var res = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, user.UserName, user.Email, "Confirm your account",
                    "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
             return res;
         }
@@ -372,7 +372,7 @@ namespace Yavsc.Controllers
                         await _signInManager.SignInAsync(user, isPersistent: false);
 
 
-                        await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.EMail,
+                        await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.Name, Startup.SiteSetup.Owner.EMail,
                          $"[{_siteSettings.Title}] Inscription via {info.LoginProvider}: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
 
                         _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
@@ -424,11 +424,12 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 ApplicationUser user;
+                // Username should not contain any '@'
                 if (model.LoginOrEmail.Contains('@')) {
                     user = await _userManager.FindByEmailAsync(model.LoginOrEmail);
                 }
                 else {
-                    user = await _userManager.FindByNameAsync(model.LoginOrEmail);
+                    user = await _dbContext.Users.FirstOrDefaultAsync( u => u.UserName == model.LoginOrEmail);
                 }
 
                 // Don't reveal that the user does not exist or is not confirmed
@@ -450,7 +451,7 @@ namespace Yavsc.Controllers
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.LoginOrEmail, _localizer["Reset Password"],
+                await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, user.UserName, user.Email, _localizer["Reset Password"],
                    _localizer["Please reset your password by following this link:"] + " <" + callbackUrl + ">");
                 return View("ForgotPasswordConfirmation");
             }
@@ -565,7 +566,7 @@ namespace Yavsc.Controllers
             }
             else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
             {
-                await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, await _userManager.GetEmailAsync(user), "Security Code", message);
+                await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings,user.UserName, await _userManager.GetEmailAsync(user), "Security Code", message);
             }
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }

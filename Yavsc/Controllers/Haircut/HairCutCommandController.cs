@@ -142,6 +142,7 @@ Le client final: {clientFinal}
 
                 ViewBag.EmailSent = await _emailSender.SendEmailAsync(
                     _siteSettings, _smtpSettings,
+                    command.PerformerProfile.Performer.UserName,
                     command.PerformerProfile.Performer.Email,
                     yaev.Reason,
                     $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
@@ -330,6 +331,7 @@ Le client final: {clientFinal}
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
+                         pro.Performer.UserName,
                         pro.Performer.Email,
                         yaev.Reason,
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
@@ -486,6 +488,7 @@ Le client final: {clientFinal}
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
+                        command.PerformerProfile.Performer.UserName,
                         command.PerformerProfile.Performer.Email,
                         yaev.Topic + " " + yaev.Sender,
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
