@@ -12,20 +12,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.Primitives;
 using OAuth.AspNet.AuthServer;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Auth;
+using Yavsc.ViewModels.Account;
 
 namespace Yavsc.Controllers
 {
-    public class TokenResponse
-    {
-        public string access_token { get; set; }
-        public int expires_in { get; set; }
-        public string grant_type { get; set; }
-
-        public int entity_id { get; set; }
-    }
-
     [AllowAnonymous]
     public class OAuthController : Controller
     {
@@ -93,7 +86,7 @@ namespace Yavsc.Controllers
             }
             return new { authenticated = false };
         } */
-
+        
 
         [HttpGet("~/api/getclaims"), Produces("application/json")]
 
@@ -152,7 +145,7 @@ namespace Yavsc.Controllers
 
             var model = new AuthorisationView { 
                 Scopes = Constants.SiteScopes.Where(s=> scopes.Contains(s.Id)).ToArray(),
-                Message = "Welcome."
+                Message = "Bienvenue."
                 } ;
 
             if (Request.Method == "POST")
@@ -184,6 +177,13 @@ namespace Yavsc.Controllers
                 }
             }
 
+            if (Request.Headers.Keys.Contains("Accept")) {
+                var accepted = Request.Headers["Accept"];
+                if (accepted == "application/json")
+                {
+                    return Ok(model);
+                }
+            }
             return View(model);
         }
 

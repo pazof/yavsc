@@ -181,6 +181,7 @@ namespace Yavsc.Controllers
 
                     await _emailSender.SendEmailAsync(
                         _siteSettings, _smtpSettings,
+                        command.PerformerProfile.Performer.UserName,
                         command.PerformerProfile.Performer.Email,
                          $"{command.Client.UserName} (un client) vous demande un rendez-vous",
                         $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"

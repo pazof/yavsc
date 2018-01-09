@@ -31,5 +31,42 @@ namespace Yavsc.Helpers
             return notifs;
         }
 
+        /// <summary>
+        /// If Json is accepted, serve json, 
+        /// if not, serve a web page.
+        /// </summary>
+        /// <param name="controller"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static IActionResult ViewOk(this Controller controller, object model)
+        {
+            IActionResult result;
+            if (JsonResponse(controller, model, out result)) return result;
+            else return controller.View(model);
+        }
+        
+        static bool JsonResponse(this Controller controller, object model, out IActionResult result){
+
+            if (controller.Request.Headers.Keys.Contains("Accept")) {
+                var accepted = controller.Request.Headers["Accept"];
+                if (accepted == "application/json")
+                {
+                    if (controller.ModelState.ErrorCount>0) 
+                       result = controller.HttpBadRequest(controller.ModelState);
+                    else 
+                       result = controller.Ok(model);
+                    return true;
+                }
+            }
+            result = null;
+            return false;
+        }
+
+        public static IActionResult ViewOk(this Controller controller, string viewname, object model = null)
+        {
+            IActionResult result;
+            if (JsonResponse(controller, model, out result)) return result;
+            else return controller.View(viewname, model);
+        }
     }
 }
