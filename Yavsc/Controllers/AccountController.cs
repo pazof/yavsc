@@ -117,7 +117,7 @@ namespace Yavsc.Controllers
                             {
                                 ModelState.AddModelError(string.Empty, 
                                             "You must have a confirmed email to log in.");
-                                return View(model);
+                                return this.ViewOk(model);
                             }
                         }
 
