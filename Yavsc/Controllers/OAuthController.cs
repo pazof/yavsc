@@ -138,14 +138,15 @@ namespace Yavsc.Controllers
                  queryStringComponents = QueryHelpers.ParseQuery(Request.QueryString.Value);
 
                 if (queryStringComponents.ContainsKey("scope"))
-                    scopes = queryStringComponents["scope"];
+                    scopes = ((string)queryStringComponents["scope"]).Split(' ');
                 if (queryStringComponents.ContainsKey("redirect_uri"))
                     redirect_uri = queryStringComponents["redirect_uri"];
             }
+            var username = User.GetUserName();
 
             var model = new AuthorisationView { 
-                Scopes = Constants.SiteScopes.Where(s=> scopes.Contains(s.Id)).ToArray(),
-                Message = "Bienvenue."
+                Scopes = (Constants.SiteScopes.Where(s=> scopes.Contains(s.Id))).ToArray(),
+                Message = $"Bienvenue {username}."
                 } ;
 
             if (Request.Method == "POST")
