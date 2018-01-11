@@ -1,25 +1,26 @@
 {
-  "version": "1.0.0-*",
-  "description": "Yavsc Client Api",
-  "authors": [
-    "Paul Schneider"
-  ],
-  "tags": [
-    ""
-  ],
-  "projectUrl": "",
-  "licenseUrl": "",
-  "tooling": {
-    "defaultNamespace": "Yavsc"
-  },
-  "dependencies": {
-    "Newtonsoft.Json": "10.0.2"
-  },
-  "frameworks": {
-    "net451": {
-      "frameworkAssemblies": {
-        "System.ComponentModel.DataAnnotations": "4.0.0"
-      }
+    "version": "1.0.0-*",
+    "description": "Yavsc Client Api",
+    "authors": [
+        "Paul Schneider"
+    ],
+    "tags": [
+        ""
+    ],
+    "projectUrl": "",
+    "licenseUrl": "",
+    "tooling": {
+        "defaultNamespace": "Yavsc"
+    },
+    "dependencies": {
+        "Newtonsoft.Json": "10.0.2"
+    },
+    "frameworks": {
+        "net451": {
+            "frameworkAssemblies": {
+                "System.ComponentModel.DataAnnotations": "4.0.0",
+                "System.Json": "4.0.0"
+            }
+        }
     }
-  }
 }
