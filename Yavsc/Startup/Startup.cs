@@ -95,11 +95,6 @@ namespace Yavsc
             var paypalSettings = Configuration.GetSection("Authentication").GetSection("PayPal");
             services.Configure<PayPalSettings>(paypalSettings);
 
-            /*    services.Configure<MvcOptions>(options =>
-                {
-                    options.Filters.Add(new ProducesAttribute("text/x-tex"));
-                    options.Filters.Add(new ProducesAttribute("text/pdf"));
-                });*/
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
