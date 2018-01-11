@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -43,50 +44,7 @@ namespace Yavsc.Controllers
             _logger = loggerFactory.CreateLogger<OAuthController>();
         }
 
-        /*
-        private async Task<string> GetToken(string purpose, string userid, DateTime? expires)
-        {
-            // Here, you should create or look up an identity for the user which is being authenticated.
-            // For now, just creating a simple generic identity.
-            var identuser = await _userManager.FindByIdAsync(userid);
-
-            return await _tokenProvider.GenerateAsync(purpose, _userManager, identuser);
-        }
-
-        /// <summary>
-        /// Check if currently authenticated. Will throw an exception of some sort which shoudl be caught by a general
-        /// exception handler and returned to the user as a 401, if not authenticated. Will return a fresh token if
-        /// the user is authenticated, which will reset the expiry.
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet, HttpPost, Authorize]
-        [Route("~/oauth/token")]
-        public async Task<dynamic> Get()
-        {
-            bool authenticated = false;
-            string user = null;
-            int entityId = -1;
-            string token = null;
-            DateTime? tokenExpires = default(DateTime?);
-            var currentUser = User;
-            if (currentUser != null)
-            {
-                authenticated = currentUser.Identity.IsAuthenticated;
-                if (authenticated)
-                {
-                    user = User.GetUserId();
-                    _logger.LogInformation($"authenticated user:{user}");
-
-                    foreach (Claim c in currentUser.Claims) if (c.Type == "EntityID") entityId = Convert.ToInt32(c.Value);
-
-                    tokenExpires = DateTime.UtcNow.AddMinutes(2);
-                    token = await GetToken("id_token", user, tokenExpires);
-                    return new TokenResponse { access_token = token, expires_in = 3400, entity_id = entityId };
-                }
-            }
-            return new { authenticated = false };
-        } */
-        
+       
 
         [HttpGet("~/api/getclaims"), Produces("application/json")]
 
