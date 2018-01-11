@@ -2,7 +2,8 @@
     "projects": [
         "Yavsc",
         "Yavsc.Abstract",
-        "YaDaemon"
+        "YaDaemon",
+        "testOauthClient"
     ],
     "sdk": {
         "version": "1.0.0-rc1-update2",
