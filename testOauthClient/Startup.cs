@@ -65,7 +65,11 @@ namespace testOauthClient
                 options.AuthenticationDescriptions.Clear();
             });
             app.UseStaticFiles();
-
+            var authConf = Configuration.GetSection("Authentication").GetSection("Yavsc");
+            var clientId = authConf.GetSection("ClientId").Value;
+            var clientSecret = authConf.GetSection("ClientSecret").Value;
+            var logger = loggerFactory.CreateLogger<Startup>();
+            logger.LogInformation($"## ClientId: {clientId} ClientSecret: {clientSecret}");
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AutomaticAuthenticate = true,
@@ -82,13 +86,15 @@ namespace testOauthClient
                 {
                     options.AuthenticationScheme = "Yavsc";
                     options.AuthorizationEndpoint = $"{host}/authorize";
-                    options.TokenEndpoint = $"{host}/dev.pschneider.fr/token";
+                    options.TokenEndpoint = $"{host}/token";
                     options.CallbackPath = new PathString("/signin-yavsc");
-                    options.ClientId = "[Your client Id]";
-                    options.ClientSecret = "blih";
+                    options.DisplayName = "Yavsc dev";
+                    options.ClientId = clientId;
+                    options.ClientSecret = clientSecret;
                     options.Scope.Add("profile");
                     options.SaveTokensAsClaims = true;
                     options.UserInformationEndpoint = $"{host}/api/me";
+                    
                     options.Events = new OAuthEvents
                     {
                         OnCreatingTicket = async context =>
