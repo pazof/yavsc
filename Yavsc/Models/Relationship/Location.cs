@@ -27,7 +27,7 @@ namespace Yavsc.Models.Relationship
 
 	}
 
-    public class Location : Position {
+    public class Location : Position, ILocation {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         [Required(),

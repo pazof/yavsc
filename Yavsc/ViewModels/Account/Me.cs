@@ -1,33 +1,43 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace  Yavsc.Models.Auth
 {
-    public class Me {
-        public Me(string useruserid, 
-        string username, 
-        IEnumerable<string> emails, 
-        IEnumerable<string> roles,
-        string avatar,
-        string address)
+    public class Me : IApplicationUser {
+        public Me(ApplicationUser user)
         {
-           Id = useruserid;
-           UserName = username;
-           EMails = emails.ToArray();
-           Roles = roles.ToArray();
-           Avatar = avatar;
-           Address = address;
+           Id = user.Id;
+           UserName = user.UserName;
+           EMail = user.Email;
+           Avatar = user.Avatar;
+           PostalAddress = user.PostalAddress;
+           DedicatedGoogleCalendar = user.DedicatedGoogleCalendar;
         }
         public string Id { get;  set; }
         public string UserName { get; set; }
-        public string[] EMails { get; set; }
+        public string EMail { get; set; }
         public string[] Roles { get; set; }
         /// <summary>
         /// Known as profile, could point to an avatar
         /// </summary>
         /// <returns></returns>
         public string Avatar { get; set; }
-        public string Address { get; set; }
+
+        public IAccountBalance AccountBalance
+        {
+            get; set; 
+        }
+
+        public string DedicatedGoogleCalendar
+        {
+            get; set; 
+        }
+
+        public ILocation PostalAddress
+        {
+            get; set; 
+        }
     }
 
 }

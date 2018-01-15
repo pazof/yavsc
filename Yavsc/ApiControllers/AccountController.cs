@@ -13,6 +13,8 @@ namespace Yavsc.WebApi.Controllers
     using Models.Auth;
     using Yavsc.Helpers;
     using System.Linq;
+    using Microsoft.Data.Entity;
+    using Microsoft.AspNet.Identity.EntityFramework;
 
     [Authorize(),Route("~/api/account")]
     public class ApiAccountController : Controller
@@ -21,14 +23,16 @@ namespace Yavsc.WebApi.Controllers
         private UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
+        ApplicationDbContext _dbContext;
         private ILogger _logger;
 
         public ApiAccountController(UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager, ILoggerFactory loggerFactory)
+        SignInManager<ApplicationUser> signInManager, ILoggerFactory loggerFactory, ApplicationDbContext dbContext)
         {
             UserManager = userManager;
             _signInManager = signInManager;
             _logger = loggerFactory.CreateLogger("ApiAuth");
+            _dbContext = dbContext;
         }
 
         public UserManager<ApplicationUser> UserManager
@@ -131,13 +135,20 @@ namespace Yavsc.WebApi.Controllers
                     new { error = "user not found" });
             var uid = User.GetUserId();
 
-            var iduser = await UserManager.FindByIdAsync(uid);
+            var userData = await _dbContext.Users
+                .Include(u=>u.PostalAddress)
+                .Include(u=>u.AccountBalance)
+                .Include(u=>u.Roles)
+                .FirstAsync(u=>u.Id == uid);
 
-            var user = new Me(iduser.Id,iduser.UserName,
-                new string [] { iduser.Email },
-                await UserManager.GetRolesAsync(iduser),
-                iduser.Avatar, iduser.PostalAddress?.Address
-            );
+            var user = new Me(userData);
+
+            var userRoles = _dbContext.UserRoles.Where(u=>u.UserId == uid).ToArray();
+
+            IdentityRole [] roles = _dbContext.Roles.Where(r=>userRoles.Any(ur=>ur.RoleId==r.Id)).ToArray();
+            
+            user.Roles = roles.Select(r=>r.Name).ToArray();
+
             return Ok(user);
         }
 
