@@ -2830,7 +2830,8 @@
           "Newtonsoft.Json": "10.0.2"
         },
         "frameworkAssemblies": [
-          "System.ComponentModel.DataAnnotations"
+          "System.ComponentModel.DataAnnotations",
+          "System.Json"
         ]
       }
     },
@@ -5662,7 +5663,8 @@
           "Newtonsoft.Json": "10.0.2"
         },
         "frameworkAssemblies": [
-          "System.ComponentModel.DataAnnotations"
+          "System.ComponentModel.DataAnnotations",
+          "System.Json"
         ]
       }
     },
@@ -8494,7 +8496,8 @@
           "Newtonsoft.Json": "10.0.2"
         },
         "frameworkAssemblies": [
-          "System.ComponentModel.DataAnnotations"
+          "System.ComponentModel.DataAnnotations",
+          "System.Json"
         ]
       }
     }
