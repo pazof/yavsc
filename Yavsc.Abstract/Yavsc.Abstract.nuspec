@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+		<id>Yavsc.Abstract</id>
+		<title>Yavsc:Abstract</title>
+		<version>$version$</version>
+		<authors>Paul Schneider</authors>
+		<owners>Paul Schneider</owners>
+		<licenseUrl>https://github.com/pazof/yavsc/blob/vnext/Yavsc/License.md</licenseUrl>
+		<projectUrl>https://github.com/pazof/yavsc/README.md</projectUrl>
+		<iconUrl>https://github.com/pazof/yavsc/blob/vnext/Yavsc/wwwroot/images/yavsc.png</iconUrl>
+		<requireLicenseAcceptance>true</requireLicenseAcceptance>
+		<description>
+      A shared model for a little client/sever app
+		</description>
+		<summary>
+		</summary>
+		<tags>yavsc</tags>
+	</metadata>
+	<files>
+		<file src="bin/Release/net451/Yavsc.Abstract.dll" target="lib/net451" />
+		<file src="bin/Release/net451/Yavsc.Abstract.dll" target="lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10" />
+	</files>
+</package>
