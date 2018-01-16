@@ -7,8 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Security.Claims;
+using System.Text;
 using System.Web;
 using Microsoft.AspNet.Http;
+using Yavsc.Abstract.FileSystem;
 using Yavsc.Exceptions;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
@@ -20,33 +22,30 @@ namespace Yavsc.Helpers
     public static class FileSystemHelpers
     {
 
+
         public static UserDirectoryInfo GetUserFiles(this ClaimsPrincipal user, string subdir)
         {
 
-            UserDirectoryInfo di = new UserDirectoryInfo(user.Identity.Name, subdir);
+            UserDirectoryInfo di = new UserDirectoryInfo(Startup.UserFilesDirName, user.Identity.Name, subdir);
 
             return di;
-        }
-
-
-        public static bool IsValidDirectoryName(this string name)
-        {
-            return !name.Any(c => !Constants.ValidChars.Contains(c));
         }
 
         // Ensure this path is canonical,
         // No "dirto/./this", neither "dirt/to/that/"
         // no .. and each char must be listed as valid in constants
-        public static bool IsValidPath(this string path)
+
+        public static string FilterFileName(string fileName)
         {
-            if (path == null) return true;
-            foreach (var name in path.Split(Path.DirectorySeparatorChar))
+            if (fileName==null) return null;
+            StringBuilder sb = new StringBuilder();
+            foreach (var c in fileName)
             {
-                if (!IsValidDirectoryName(name) || name.Equals("..") || name.Equals("."))
-                        return false;
+                if (FileSystemConstants.ValidFileNameChars.Contains(c))
+                    sb.Append(c);
+                else sb.Append('_');
             }
-            if (path.EndsWith($"{Path.DirectorySeparatorChar}")) return false;
-            return true;
+           return sb.ToString();
         }
         public static string InitPostToFileSystem(
             this ClaimsPrincipal user,
@@ -56,7 +55,7 @@ namespace Yavsc.Helpers
             var diRoot = new DirectoryInfo(root);
             if (!diRoot.Exists) diRoot.Create();
             if (!string.IsNullOrWhiteSpace(subpath)) {
-                if (!subpath.IsValidPath())
+                if (!subpath.IsValidYavscPath())
                 {
                     throw new InvalidPathException();
                 }
@@ -66,6 +65,7 @@ namespace Yavsc.Helpers
             if (!di.Exists) di.Create();
             return root;
         }
+
         public static void DeleteUserFile(this ApplicationUser user, string fileName)
         {
             var root = Path.Combine(Startup.UserFilesDirName, user.UserName);
@@ -74,14 +74,14 @@ namespace Yavsc.Helpers
             fi.Delete();
             user.DiskUsage -= fi.Length;
         }
-        public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f)
+        public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f, string destFileName = null)
         {
             long usage = user.DiskUsage;
 
             var item = new FileRecievedInfo();
             // form-data; name="file"; filename="capt0008.jpg"
             ContentDisposition contentDisposition = new ContentDisposition(f.ContentDisposition);
-            item.FileName = contentDisposition.FileName;
+            item.FileName = FilterFileName (destFileName ?? contentDisposition.FileName);
             item.MimeType = contentDisposition.DispositionType;
             var fi = new FileInfo(Path.Combine(root, item.FileName));
             if (fi.Exists) item.Overriden = true;
@@ -111,7 +111,7 @@ namespace Yavsc.Helpers
             user.DiskUsage = usage;
             return item;
         }
-        public static HtmlString FileLink(this DefaultFileInfo info, string username, string subpath)
+        public static HtmlString FileLink(this RemoteFileInfo info, string username, string subpath)
         {
             return new HtmlString( Startup.UserFilesOptions.RequestPath+"/"+ username + "/" + subpath + "/" +
              HttpUtility.UrlEncode(info.Name) );

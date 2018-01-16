@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace  Yavsc.Models.Auth
+namespace Yavsc.Models.Auth
 {
     public class Me : IApplicationUser {
         public Me(ApplicationUser user)

@@ -11,7 +11,6 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.AspNet.Http;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.ViewModels.Account;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -13,10 +12,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.Primitives;
 using OAuth.AspNet.AuthServer;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Auth;
-using Yavsc.ViewModels.Account;
 
 namespace Yavsc.Controllers
 {

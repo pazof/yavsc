@@ -12,7 +12,7 @@ namespace Yavsc.ViewComponents
             IViewComponentResult result = null;
             await Task.Run(() =>
             {
-                result = View(new UserDirectoryInfo(User.Identity.Name, dirname));
+                result = View(new UserDirectoryInfo(Startup.UserFilesDirName, User.Identity.Name, dirname));
             });
             return result;
         }

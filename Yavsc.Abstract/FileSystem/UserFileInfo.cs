@@ -2,7 +2,7 @@ using System;
 
 namespace Yavsc.ViewModels
 {
-    public class DefaultFileInfo 
+    public class RemoteFileInfo 
     {
         public string Name { get; set; }
 

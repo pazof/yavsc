@@ -10,6 +10,7 @@ using Yavsc.Models;
 namespace Yavsc.ApiControllers
 {
     using System.Threading.Tasks;
+    using Yavsc.Abstract.FileSystem;
     using Yavsc.Exceptions;
     public class FSQuotaException : Exception {
 
@@ -38,16 +39,17 @@ namespace Yavsc.ApiControllers
         public IActionResult GetDir(string subdir="")
         {
             if (subdir !=null)
-                if (!FileSystemHelpers.IsValidPath(subdir))
+                if (!subdir.IsValidYavscPath())
                     return new BadRequestResult();
             var files = User.GetUserFiles(subdir);
             return Ok(files);
         }
 
         [HttpPost]
-        public IEnumerable<IActionResult> Post(string subdir="")
+        public IEnumerable<IActionResult> Post(string subdir="", string names = null)
         {
             string root = null;
+            string [] destinationFileNames = names?.Split('/');
 
             InvalidPathException pathex = null;
             try {
@@ -61,10 +63,12 @@ namespace Yavsc.ApiControllers
             var user = dbContext.Users.Single(
                 u => u.Id == User.GetUserId()
             );
-
+            int i=0;
             foreach (var f in Request.Form.Files)
             {
-                var item = user.ReceiveUserFile(root, f);
+                var destFileName = destinationFileNames?.Length >i ? destinationFileNames[i] : null;
+
+                var item = user.ReceiveUserFile(root, f, destFileName);
                 dbContext.SaveChanges(User.GetUserId());
                 yield return Ok(item);
             };
