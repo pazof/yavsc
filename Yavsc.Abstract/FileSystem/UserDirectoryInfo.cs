@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using Yavsc.Helpers;
+using Yavsc.Abstract.FileSystem;
 
 namespace Yavsc.ViewModels.UserFiles
 {
@@ -9,14 +9,14 @@ namespace Yavsc.ViewModels.UserFiles
     {
         public string UserName { get; private set; }
         public string SubPath { get; private set; }
-        public DefaultFileInfo [] Files {
+        public RemoteFileInfo [] Files {
             get; private set;
         }
         public string [] SubDirectories { 
             get; private set;
         }
         private DirectoryInfo dInfo;
-        public UserDirectoryInfo(string username, string path)
+        public UserDirectoryInfo(string userReposPath, string username, string path)
         {
             if (string.IsNullOrWhiteSpace(username))
                 throw new NotSupportedException("No user name, no user dir.");
@@ -24,15 +24,15 @@ namespace Yavsc.ViewModels.UserFiles
             var finalPath =  username;
             if (!string.IsNullOrWhiteSpace(path))
                  finalPath += Path.DirectorySeparatorChar + path;
-            if (!finalPath.IsValidPath())
+            if (!finalPath.IsValidYavscPath())
                 throw new InvalidOperationException(
                     $"File name contains invalid chars, using path {finalPath}");
 
             dInfo = new DirectoryInfo(
-                Startup.UserFilesDirName+Path.DirectorySeparatorChar+finalPath);
+                userReposPath+FileSystemConstants.RemoteDirectorySeparator+finalPath);
             if (!dInfo.Exists) dInfo.Create();
             Files = dInfo.GetFiles().Select
-             ( entry => new DefaultFileInfo { Name = entry.Name, Size = entry.Length,
+             ( entry => new RemoteFileInfo { Name = entry.Name, Size = entry.Length,
              CreationTime = entry.CreationTime, LastModified = entry.LastWriteTime  }).ToArray();
              SubDirectories = dInfo.GetDirectories().Select
              ( d=> d.Name ).ToArray();

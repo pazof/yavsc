@@ -30,7 +30,7 @@ namespace Yavsc
             AvatarsPath = "/avatars",
             DefaultAvatar = "/images/Users/icon_user.png",
             AnonAvatar = "/images/Users/icon_anon_user.png";
-        public static char[] ValidChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. ".ToCharArray();
+        
         public static readonly long DefaultFSQ = 1024*1024*500;
 
         public static readonly Scope[] SiteScopes = { 
