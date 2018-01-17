@@ -1,15 +1,17 @@
+CONFIG=Release
+VERSION=1.0.2
+PRJNAME=Yavsc.Abstract
+PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
+DESTPATH=.
+PACKAGE=$(DESTPATH)/$(PKGFILENAME)
 
+$(PACKAGE):
+	nuget pack $(PRJNAME).nuspec -Version $(VERSION)
 
-TARGET=bin/Debug/Yavsc.Abstract.1.0.0.nupkg
-
-publish: $(TARGET)
-	cp $(TARGET) ~/Nupkgs
-
-
-$(TARGET):
-	dnu pack
+publish: $(PACKAGE)
+	cp $(PACKAGE) ~/Nupkgs
 
 clean:
-	rm $(TARGET)
+	rm $(PACKAGE)
 
 
