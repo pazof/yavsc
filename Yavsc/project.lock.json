@@ -2823,7 +2823,7 @@
           "lib/WebGrease.dll": {}
         }
       },
-      "Yavsc.Abstract/1.0.0": {
+      "Yavsc.Abstract/1.0.2": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
         "dependencies": {
@@ -5656,7 +5656,7 @@
           "lib/WebGrease.dll": {}
         }
       },
-      "Yavsc.Abstract/1.0.0": {
+      "Yavsc.Abstract/1.0.2": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
         "dependencies": {
@@ -8489,7 +8489,7 @@
           "lib/WebGrease.dll": {}
         }
       },
-      "Yavsc.Abstract/1.0.0": {
+      "Yavsc.Abstract/1.0.2": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
         "dependencies": {
@@ -8503,7 +8503,7 @@
     }
   },
   "libraries": {
-    "Yavsc.Abstract/1.0.0": {
+    "Yavsc.Abstract/1.0.2": {
       "type": "project",
       "path": "../Yavsc.Abstract/project.json"
     },
@@ -11437,7 +11437,7 @@
       "Microsoft.AspNet.Mvc.Formatters.Json >= 6.0.0-rc1-final",
       "Microsoft.AspNet.OWin >= 1.0.0-rc1-final",
       "System.Json >= 4.0.20126.16343",
-      "Yavsc.Abstract >= 1.0.0",
+      "Yavsc.Abstract >= 1.0.2",
       "Extensions.AspNet.Authentication.Instagram >= 1.0.0-t150809211713",
       "Microsoft.AspNet.Http.Extensions >= 1.0.0-rc1-final",
       "Microsoft.DiaSymReader.Native >= 1.5.0",
