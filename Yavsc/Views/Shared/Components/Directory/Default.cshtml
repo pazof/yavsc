@@ -3,8 +3,8 @@
 <div class="dirinfo">
 <strong>@Model.UserName / @Model.SubPath</strong>
 <div class="subdirs">
-@foreach (string subdir in Model.SubDirectories) {
-<a href="@subdir" class="subdir">@subdir</a> 
+@foreach (var subdir in Model.SubDirectories) {
+<a href="@subdir" class="subdir">@subdir.Name</a> 
 }
 </div>
 <style> 

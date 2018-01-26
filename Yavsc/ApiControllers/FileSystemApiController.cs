@@ -10,8 +10,11 @@ using Yavsc.Models;
 namespace Yavsc.ApiControllers
 {
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
     using Yavsc.Abstract.FileSystem;
     using Yavsc.Exceptions;
+    using Yavsc.Models.FileSystem;
+
     public class FSQuotaException : Exception {
 
     }
@@ -21,12 +24,16 @@ namespace Yavsc.ApiControllers
     {
         ApplicationDbContext dbContext;
         private IAuthorizationService AuthorizationService;
+        private ILogger logger;
+
         public FileSystemApiController(ApplicationDbContext context,
-        IAuthorizationService authorizationService)
+        IAuthorizationService authorizationService, 
+        ILoggerFactory loggerFactory)
 
         {
             AuthorizationService = authorizationService;
             dbContext = context;
+            logger = loggerFactory.CreateLogger<FileSystemApiController>();
         }
 
         [HttpGet()]
@@ -46,11 +53,11 @@ namespace Yavsc.ApiControllers
         }
 
         [HttpPost]
-        public IEnumerable<IActionResult> Post(string subdir="", string names = null)
+        public IActionResult Post(string subdir="", string names = null)
         {
             string root = null;
             string [] destinationFileNames = names?.Split('/');
-
+            List<FileRecievedInfo> received = new List<FileRecievedInfo>();
             InvalidPathException pathex = null;
             try {
                 root = User.InitPostToFileSystem(subdir);
@@ -58,20 +65,26 @@ namespace Yavsc.ApiControllers
                 pathex = ex;
             }
             if (pathex!=null)
-             yield return new BadRequestObjectResult(pathex);
-
+              return new BadRequestObjectResult(pathex);
+            var uid = User.GetUserId();
             var user = dbContext.Users.Single(
-                u => u.Id == User.GetUserId()
+                u => u.Id == uid
             );
             int i=0;
+            logger.LogInformation($"Recieving {Request.Form.Files.Count} files.");
             foreach (var f in Request.Form.Files)
             {
                 var destFileName = destinationFileNames?.Length >i ? destinationFileNames[i] : null;
 
                 var item = user.ReceiveUserFile(root, f, destFileName);
                 dbContext.SaveChanges(User.GetUserId());
-                yield return Ok(item);
+                received.Add(item);
+                logger.LogInformation($"Recieved  '{item.FileName}'.");
+                if (item.QuotaOffensed)
+                    break;
+                i++;
             };
+            return Ok(received);
         }
 
         [HttpDelete]

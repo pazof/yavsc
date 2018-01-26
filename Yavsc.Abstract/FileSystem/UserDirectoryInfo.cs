@@ -7,15 +7,21 @@ namespace Yavsc.ViewModels.UserFiles
 {
     public class UserDirectoryInfo
     {
-        public string UserName { get; private set; }
-        public string SubPath { get; private set; }
+        public string UserName { get; set; }
+        public string SubPath { get; set; }
         public RemoteFileInfo [] Files {
-            get; private set;
+            get; set;
         }
-        public string [] SubDirectories { 
-            get; private set;
+        public DirectoryShortInfo [] SubDirectories { 
+            get; set;
         }
         private DirectoryInfo dInfo;
+
+        // for deserialization
+        public UserDirectoryInfo()
+        {
+
+        }
         public UserDirectoryInfo(string userReposPath, string username, string path)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -35,7 +41,12 @@ namespace Yavsc.ViewModels.UserFiles
              ( entry => new RemoteFileInfo { Name = entry.Name, Size = entry.Length,
              CreationTime = entry.CreationTime, LastModified = entry.LastWriteTime  }).ToArray();
              SubDirectories = dInfo.GetDirectories().Select
-             ( d=> d.Name ).ToArray();
+             ( d=> new DirectoryShortInfo { Name= d.Name, IsEmpty=false } ).ToArray();
         }
+    }
+
+    public class DirectoryShortInfo: IDirectoryShortInfo {
+        public string Name { get; set; }
+        public bool IsEmpty { get; set; }
     }
 }

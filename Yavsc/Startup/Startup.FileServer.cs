@@ -28,7 +28,8 @@ namespace Yavsc
             {
                 FileProvider = new PhysicalFileProvider(UserFilesDirName),
                 RequestPath = new PathString(Constants.UserFilesPath),
-                EnableDirectoryBrowsing = env.IsDevelopment()
+                EnableDirectoryBrowsing = env.IsDevelopment(),
+
 
             };
             UserFilesOptions.EnableDefaultFiles=true;

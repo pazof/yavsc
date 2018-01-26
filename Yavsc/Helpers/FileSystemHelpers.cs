@@ -4,10 +4,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Net.Mime;
 using System.Security.Claims;
-using System.Text;
 using System.Web;
 using Microsoft.AspNet.Http;
 using Yavsc.Abstract.FileSystem;
@@ -31,22 +29,7 @@ namespace Yavsc.Helpers
             return di;
         }
 
-        // Ensure this path is canonical,
-        // No "dirto/./this", neither "dirt/to/that/"
-        // no .. and each char must be listed as valid in constants
 
-        public static string FilterFileName(string fileName)
-        {
-            if (fileName==null) return null;
-            StringBuilder sb = new StringBuilder();
-            foreach (var c in fileName)
-            {
-                if (FileSystemConstants.ValidFileNameChars.Contains(c))
-                    sb.Append(c);
-                else sb.Append('_');
-            }
-           return sb.ToString();
-        }
         public static string InitPostToFileSystem(
             this ClaimsPrincipal user,
             string subpath)
@@ -81,10 +64,14 @@ namespace Yavsc.Helpers
             var item = new FileRecievedInfo();
             // form-data; name="file"; filename="capt0008.jpg"
             ContentDisposition contentDisposition = new ContentDisposition(f.ContentDisposition);
-            item.FileName = FilterFileName (destFileName ?? contentDisposition.FileName);
+            item.FileName = Yavsc.Abstract.FileSystem.FileSystemHelpers.FilterFileName (destFileName ?? contentDisposition.FileName);
             item.MimeType = contentDisposition.DispositionType;
             var fi = new FileInfo(Path.Combine(root, item.FileName));
-            if (fi.Exists) item.Overriden = true;
+            if (fi.Exists)
+            {
+                item.Overriden = true;
+                usage -= fi.Length;
+            } 
             using (var dest = fi.OpenWrite())
             {
                 using (var org = f.OpenReadStream())
@@ -92,7 +79,7 @@ namespace Yavsc.Helpers
                     byte[] buffer = new byte[1024];
                     long len = org.Length;
                     if (len > (user.DiskQuota - usage)) {
-
+                        item.QuotaOffensed = true;
                         return item;
                     }
                     usage += len;

@@ -114,7 +114,7 @@
         "System.Json": "4.0.20126.16343",
         "Yavsc.Abstract": {
             "type": "build",
-            "version": "1.0.2"
+            "version": "1.0.5"
         },
         "Extensions.AspNet.Authentication.Instagram": "1.0.0-t150809211713",
         "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",

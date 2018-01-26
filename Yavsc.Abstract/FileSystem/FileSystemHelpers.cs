@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text;
 
 namespace Yavsc.Abstract.FileSystem
 {
@@ -6,20 +7,35 @@ namespace Yavsc.Abstract.FileSystem
     {
         public static bool IsValidYavscPath(this string path)
         {
-            if (path == null) return true;
+            if (string.IsNullOrEmpty(path)) return true;
             foreach (var name in path.Split('/'))
             {
                 if (!IsValidDirectoryName(name) || name.Equals("..") || name.Equals("."))
                         return false;
             }
-            if (path[path.Length]==FileSystemConstants.RemoteDirectorySeparator) return false;
+            if (path[path.Length-1]==FileSystemConstants.RemoteDirectorySeparator) return false;
             return true;
         }
         public static bool IsValidDirectoryName(this string name)
         {
             return !name.Any(c => !FileSystemConstants.ValidFileNameChars.Contains(c));
         }
+        // Ensure this path is canonical,
+        // No "dirto/./this", neither "dirt/to/that/"
+        // no .. and each char must be listed as valid in constants
 
+        public static string FilterFileName(string fileName)
+        {
+            if (fileName==null) return null;
+            StringBuilder sb = new StringBuilder();
+            foreach (var c in fileName)
+            {
+                if (FileSystemConstants.ValidFileNameChars.Contains(c))
+                    sb.Append(c);
+                else sb.Append('_');
+            }
+           return sb.ToString();
+        }
     }
 
     public static  class FileSystemConstants

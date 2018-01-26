@@ -67,21 +67,17 @@
     <div class="row @trclass">
         <div class="col-xs-10"> 
            <a asp-action="Title" asp-route-id="@title" >
-<markdown>@first.Title</markdown>
+<h3 markdown="@first.Title"></h3>
 @if (first.Photo==null) {  }
 else {<img src="@first.Photo" class="blogphoto" alt="@first.Title">} 
 </a>
         
-            <markdown>@((first.Content?.Length > 120) ? first.Content.Substring(0, 120) + " ..." : first.Content)</markdown>
-            <span style="font-size:x-small;">(@first.Author.UserName </span>,
-            <span style="font-size:xx-small;">
-            posté le @first.DateCreated.ToString("dddd d MMM yyyy à H:mm")
+        <div class="smalltext" markdown="@((first.Content?.Length > 256) ? first.Content.Substring(0, 256) + "..." : first.Content)"></div>
+         <div class="smalltext">  @first.Author.UserName ,
+            (posté le @first.DateCreated.ToString("dddd d MMM yyyy à H:mm")
             @if ((first.DateModified - first.DateCreated).Minutes > 0){ 
                 @:- Modifié le @first.DateModified.ToString("dddd d MMM yyyy à H:mm",System.Globalization.CultureInfo.CurrentUICulture)
-             })
-            </span>
-            
-   
+             })</div> 
         </div>
         <div class="col-xs-2"> 
             <ul class="actiongroup">
