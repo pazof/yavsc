@@ -390,6 +390,10 @@ p.small {
     font-size: 16px;
 }
 
+.smalltext {
+    font-size: 10px;
+}
+
 h1,
 h2,
 h3,

@@ -21,13 +21,23 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+using Yavsc.Abstract.FileSystem;
+
 namespace Yavsc.Models.FileSystem
 {
-        public class FileRecievedInfo
+    public class FileRecievedInfo : IFileRecievedInfo
+    {
+        public FileRecievedInfo()
         {
-            public string MimeType { get; set; }
-            public string DestDir { get; set; }
-            public string FileName { get; set; }
-            public bool Overriden { get; set; }
+            QuotaOffensed = Overriden = false;
+            MimeType = DestDir = FileName = null;
         }
+
+        public string MimeType { get; set; }
+        public string DestDir { get; set; }
+        public string FileName { get; set; }
+        public bool Overriden { get; set; }
+
+        public bool QuotaOffensed { get; set; }
+    }
 }

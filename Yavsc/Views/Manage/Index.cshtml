@@ -142,7 +142,7 @@
           @if (Model.DiskQuota>0)
           {
             <text>
-                @((Model.DiskUsage/Model.DiskQuota).ToString("%#0")) : 
+                @(((double)Model.DiskUsage/Model.DiskQuota).ToString("%#0")) : 
             </text>
           } 
           <text>
