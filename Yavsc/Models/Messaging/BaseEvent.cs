@@ -28,7 +28,7 @@ namespace Yavsc.Models.Messaging
     /// /// Base event.
     /// </summary>
 
-    public class BaseEvent : IEvent {
+    public abstract class BaseEvent : IEvent {
          public BaseEvent()
          {
              Topic = GetType().Name;
@@ -39,7 +39,8 @@ namespace Yavsc.Models.Messaging
         }
         public string Topic { get; private set; }
         public string Sender { get; set; }
-        public string Message { get; set; }
+
+        abstract public string CreateBody();
     }
 
 

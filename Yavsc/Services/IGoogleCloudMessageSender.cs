@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Yavsc.Interfaces.Workflow;
 using Yavsc.Models.Google.Messaging;
 using Yavsc.Models.Haircut;
 using Yavsc.Models.Messaging;
@@ -23,7 +24,9 @@ namespace Yavsc.Services
             GoogleAuthSettings googlesettings, 
             IEnumerable<string> registrationId, 
             HairCutQueryEvent ev);
-
-
+        Task<MessageWithPayloadResponse> NotifyAsync(
+            GoogleAuthSettings _googleSettings, 
+            IEnumerable<string> regids, 
+            IEvent yaev);
     }
 }

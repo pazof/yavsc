@@ -15,12 +15,7 @@ namespace Yavsc.Helpers
             var yaev = new RdvQueryEvent(subtopic)
             {
                 Sender = query.ClientId,
-                Message = string.Format(SR["RdvToPerf"],
-                query.Client.UserName,
-                query.EventDate.ToString("dddd dd/MM/yyyy à HH:mm"),
-                query.Location.Address,
-                query.ActivityCode)+
-                "\n"+query.Reason,
+                Reason = query.Reason,
                 Client =  new ClientProviderInfo { 
                     UserName = query.Client.UserName ,
                     UserId = query.ClientId,
@@ -46,21 +41,7 @@ namespace Yavsc.Helpers
 
             var yaev = query.CreateEvent("NewHairCutQuery",
              string.Format(Startup.GlobalLocalizer["HairCutQueryValidation"],query.Client.UserName),
-              $"{query.Client.UserName}",
-$@"Un client vient de valider une demande de prestation à votre encontre:
-
- Prestation: {strprestation}
- Client : {query.Client.UserName}
- Date: {evdate},
- Adresse: {address}
-
------
-{query.AdditionalInfo}
-
-Facture prévue (non réglée):
-
-{query.GetBillText()}
-") ;
+              $"{query.Client.UserName}") ;
 
             return yaev;
         }
@@ -74,11 +55,7 @@ Facture prévue (non réglée):
             var yaev = new HairCutQueryEvent("newCommand")
             {
                 Sender = query.ClientId,
-                Message = string.Format(SR["RdvToPerf"],
-                query.Client.UserName,
-                query.EventDate.ToString("dddd dd/MM/yyyy à HH:mm"),
-                query.Location.Address,
-                query.ActivityCode),
+                
                 Client =  new ClientProviderInfo { 
                     UserName = query.Client.UserName ,
                     UserId = query.ClientId,

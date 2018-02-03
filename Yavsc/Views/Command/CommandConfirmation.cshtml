@@ -22,12 +22,14 @@
                 if (ViewBag.GooglePayload.failure>0)
                     {
                         <h4>@SR["GCM Notification sending failed"]</h4>
-                    }
-                    else {
-                        <!-- email sent -->
+                        <pre><code>@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.GooglePayload)</code></pre>
                     }
             }
         }
+        @if (ViewBag.EmailSent)
+         {
+                <h4>@SR["EmailSentToPerformer"]</h4>
+         }
 </div>
 
 

@@ -28,19 +28,20 @@ namespace Yavsc
             var appData = Environment.GetEnvironmentVariable("APPDATA");
             if (appData == null)
             {
+                logger.LogWarning("AppData was not found in environment variables");
                 if (SiteSetup.DataDir == null) {
                     SiteSetup.DataDir = "AppData"+env.EnvironmentName;
-                } else logger.LogWarning("existing setting: "+SiteSetup.DataDir);
+                    logger.LogInformation("Using: "+SiteSetup.DataDir);
+                } else logger.LogInformation("Using value from settings: "+SiteSetup.DataDir);
                     DirectoryInfo di = new DirectoryInfo(SiteSetup.DataDir);
                 if (!di.Exists)
                 {
                     di.Create();
                     logger.LogWarning("Created dir : "+di.FullName);
-                } else logger.LogWarning("existing: "+di.Name);
+                } else logger.LogInformation("Using existing directory: "+di.Name);
                 SiteSetup.DataDir = Path.Combine(Directory.GetCurrentDirectory(),di.Name);
                 Environment.SetEnvironmentVariable("APPDATA", SiteSetup.DataDir);
-                logger.LogWarning("AppData was not found in env vars, it has been set to : "+
-                Environment.GetEnvironmentVariable("APPDATA"));
+                logger.LogWarning("It has been set to : "+Environment.GetEnvironmentVariable("APPDATA"));
             }
 
             var creds = GoogleSettings?.Account?.private_key;

@@ -29,12 +29,17 @@ namespace Yavsc.Models.Calendar
 	/// <summary>
 	/// Provided event.
 	/// </summary>
-	public class ProvidedEvent : YaEvent {
+	public class ProvidedEvent : BaseEvent {
 		/// <summary>
 		/// The privacy.
 		/// </summary>
 		[Required]
 		public Publishing Privacy;
-	}
+
+        public override string CreateBody()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 
 }

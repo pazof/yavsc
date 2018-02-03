@@ -10,6 +10,9 @@ using System.Globalization;
 using Yavsc.Helpers;
 using Yavsc.Models.Messaging;
 using System.Linq;
+using Microsoft.Extensions.Localization;
+using Yavsc.ViewModels.PayPal;
+using Yavsc.Models.HairCut;
 
 namespace Yavsc.Models.Haircut
 {
@@ -369,9 +372,15 @@ Prestation.Gender == HairCutGenders.Women ?
             return bill;
         }
 
+        public HairCutPayementEvent CreatePaymentEvent(PaymentInfo info, IStringLocalizer localizer)
+        {
+            
+            return new HairCutPayementEvent(Client.UserName,info,this, localizer);
+        }
+
         public virtual BrusherProfile SelectedProfile { get; set; }
 
-        public HairCutQueryEvent CreateEvent(string subTopic, string reason, string sender, string message) {
+        public HairCutQueryEvent CreateEvent(string subTopic, string reason, string sender) {
 
             string evdate = EventDate?.ToString("dddd dd/MM/yyyy à HH:mm")??"[pas de date spécifiée]";
             string address = Location?.Address??"[pas de lieu spécifié]";
@@ -393,8 +402,7 @@ Prestation.Gender == HairCutGenders.Women ?
                 Id = Id,
                 ActivityCode = ActivityCode,
                 Reason = reason,
-                Sender = sender,
-                Message = message
+                Sender = Client.GetSender()
             };
             return yaev;
         }

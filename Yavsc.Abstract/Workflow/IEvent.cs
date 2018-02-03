@@ -11,11 +11,8 @@ namespace Yavsc.Interfaces.Workflow {
         /// </summary>
         /// <returns></returns>
         string Sender { get; set ; }
-        /// <summary>
-        /// The message
-        /// </summary>
-        /// <returns></returns>
-        string Message { get; set; }
+
+        string CreateBody();
     }
 
 

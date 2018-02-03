@@ -114,14 +114,16 @@ namespace Yavsc.Controllers
         public IActionResult PostEstimate([FromBody] Estimate estimate)
         {
             var uid = User.GetUserId();
-            if (!User.IsInRole(Constants.AdminGroupName))
-            {
+            if (estimate.OwnerId==null) estimate.OwnerId = uid;
+        
+            if (!User.IsInRole(Constants.AdminGroupName)) {
                 if (uid != estimate.OwnerId)
                 {
                     ModelState.AddModelError("OwnerId","You can only create your own estimates");
                     return HttpBadRequest(ModelState);
                 }
             }
+            
             if (estimate.CommandId!=null) {
                 var query = _context.RdvQueries.FirstOrDefault(q => q.Id == estimate.CommandId);
                 if (query == null) {

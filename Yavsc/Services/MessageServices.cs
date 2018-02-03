@@ -11,6 +11,10 @@ using Yavsc.Models;
 using Yavsc.Models.Google.Messaging;
 using System.Collections.Generic;
 using Yavsc.Models.Haircut;
+using Yavsc.Interfaces.Workflow;
+using System.Linq;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Yavsc.Services
 {
@@ -19,6 +23,49 @@ namespace Yavsc.Services
     // For more details see this link http://go.microsoft.com/fwlink/?LinkID=532713
     public class AuthMessageSender : IEmailSender, IGoogleCloudMessageSender
     {
+        private ILogger _logger;
+
+        public AuthMessageSender(ILoggerFactory loggerFactory)
+        {
+            _logger = loggerFactory.CreateLogger<AuthMessageSender>();
+        }
+        public  async Task <MessageWithPayloadResponse> NotifyEvent<Event>
+         ( GoogleAuthSettings googleSettings, IEnumerable<string> regids, Event ev)
+           where Event : IEvent
+        {
+            if (ev == null)
+                throw new Exception("Spécifier un évènement");
+
+            if (ev.Sender == null)
+                throw new Exception("Spécifier un expéditeur");
+
+            if (regids == null )
+                throw new NotImplementedException("Notify & No GCM reg ids");
+            var raa = regids.ToArray();
+            if (raa.Length<1)
+                 throw new NotImplementedException("No GCM reg ids");
+            var msg = new MessageWithPayload<Event>()
+            {
+                notification = new Notification()
+                {
+                    title = ev.Topic+" "+ev.Sender,
+                    body =  ev.CreateBody(),
+                    icon = "icon"
+                },
+                data = ev,
+                registration_ids = regids.ToArray()
+            };
+            _logger.LogInformation("Sendding to Google : "+JsonConvert.SerializeObject(msg));
+            try {
+                using (var m = new SimpleJsonPostMethod("https://gcm-http.googleapis.com/gcm/send",$"key={googleSettings.ApiKey}")) {
+                    return await m.Invoke<MessageWithPayloadResponse>(msg);
+                }
+            }
+            catch (Exception ex) {
+                throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
+            }
+        }
+        
         /// <summary>
         ///
         /// </summary>
@@ -30,18 +77,18 @@ namespace Yavsc.Services
         /// </returns>
         public async Task<MessageWithPayloadResponse> NotifyBookQueryAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, RdvQueryEvent ev)
         {
-            return await googleSettings.NotifyEvent<RdvQueryEvent>(registrationIds, ev);
+            return await NotifyEvent<RdvQueryEvent>(googleSettings,registrationIds, ev);
         }
 
         public async Task<MessageWithPayloadResponse> NotifyEstimateAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, EstimationEvent ev)
         {
-            return await googleSettings.NotifyEvent<EstimationEvent>(registrationIds, ev);
+            return await NotifyEvent<EstimationEvent>(googleSettings,registrationIds, ev);
         }
 
         public async Task<MessageWithPayloadResponse> NotifyHairCutQueryAsync(GoogleAuthSettings googleSettings,
          IEnumerable<string> registrationIds, HairCutQueryEvent ev)
         {
-            return await googleSettings.NotifyEvent<HairCutQueryEvent>(registrationIds, ev);
+            return await NotifyEvent<HairCutQueryEvent>(googleSettings, registrationIds, ev);
         }
 
         public Task<bool> SendEmailAsync(SiteSettings siteSettings, SmtpSettings smtpSettings, string username, string email, string subject, string message)
@@ -78,16 +125,21 @@ namespace Yavsc.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task<MessageWithPayloadResponse> NotifyAsync(GoogleAuthSettings _googleSettings, IEnumerable<string> regids, IEvent yaev)
+        {
+            throw new NotImplementedException();
+        }
         /* SMS with Twilio:
 public Task SendSmsAsync(TwilioSettings twilioSettigns, string number, string message)
 {
-   var Twilio = new TwilioRestClient(twilioSettigns.AccountSID, twilioSettigns.Token);
-   var result = Twilio.SendMessage( twilioSettigns.SMSAccountFrom, number, message);
-   // Status is one of Queued, Sending, Sent, Failed or null if the number is not valid
-   Trace.TraceInformation(result.Status);
-   // Twilio doesn't currently have an async API, so return success.
+var Twilio = new TwilioRestClient(twilioSettigns.AccountSID, twilioSettigns.Token);
+var result = Twilio.SendMessage( twilioSettigns.SMSAccountFrom, number, message);
+// Status is one of Queued, Sending, Sent, Failed or null if the number is not valid
+Trace.TraceInformation(result.Status);
+// Twilio doesn't currently have an async API, so return success.
 
-   return Task.FromResult(result.Status != "Failed");
+return Task.FromResult(result.Status != "Failed");
 
 }  */
     }

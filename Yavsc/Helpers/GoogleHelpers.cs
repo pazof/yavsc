@@ -23,67 +23,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.Data.Entity;
+using Microsoft.AspNet.Identity.EntityFramework;
+
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
+using Google.Apis.Compute.v1;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Util.Store;
+using Google.Apis.Auth.OAuth2.Responses;
+using Google.Apis.Util;
+
 namespace Yavsc.Helpers
 {
-    using Models.Google.Messaging;
-    using Models.Messaging;
     using Models;
-    using Interfaces.Workflow;
-    using Yavsc.Models.Calendar;
-    using Google.Apis.Auth.OAuth2;
-    using Microsoft.Data.Entity;
-    using Microsoft.AspNet.Identity.EntityFramework;
-    using Yavsc.Services;
-    using Google.Apis.Services;
-    using Google.Apis.Compute.v1;
-    using Google.Apis.Auth.OAuth2.Flows;
-    using Google.Apis.Util.Store;
-    using Google.Apis.Auth.OAuth2.Responses;
-    using Google.Apis.Util;
-
-
-
-
+    using Models.Calendar;
+    using Services;
 
     /// <summary>
     /// Google helpers.
     /// </summary>
     public static class GoogleHelpers
     {
-        public static async Task <MessageWithPayloadResponse> NotifyEvent<Event>
-         (this GoogleAuthSettings googleSettings, IEnumerable<string> regids, Event ev)
-           where Event : IEvent
-        {
-            if (ev == null)
-                throw new Exception("Spécifier un évènement");
-            if (ev.Message == null)
-                throw new Exception("Spécifier un message");
-            if (ev.Sender == null)
-                throw new Exception("Spécifier un expéditeur");
-
-            if (regids == null)
-                throw new NotImplementedException("Notify & No GCM reg ids");
-
-            var msg = new MessageWithPayload<Event>()
-            {
-                notification = new Notification()
-                {
-                    title = ev.Topic+" "+ev.Sender,
-                    body =  ev.Message,
-                    icon = "icon"
-                },
-                data = ev,
-                registration_ids = regids.ToArray()
-            };
-            try {
-                using (var m = new SimpleJsonPostMethod("https://gcm-http.googleapis.com/gcm/send",$"key={googleSettings.ApiKey}")) {
-                    return await m.Invoke<MessageWithPayloadResponse>(msg);
-                }
-            }
-            catch (Exception ex) {
-                throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
-            }
-        }
+        
         public  static ServiceAccountCredential OupsGetCredentialForApi(IEnumerable<string> scopes)
         {
 			var initializer = new ServiceAccountCredential.Initializer(Startup.GoogleSettings.Account.client_email);

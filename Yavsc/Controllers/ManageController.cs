@@ -122,9 +122,10 @@ namespace Yavsc.Controllers
                 EmailConfirmed = await _userManager.IsEmailConfirmedAsync(user)
             };
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
-            var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id);
+            var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id).ToArray();
 
-            model.HaveActivityToConfigure = usrActs.Where( a => ( a.Does.SettingsClassName != null )).Count( a => a.Settings == null)>0;
+            var usrActToSet = usrActs.Where( a => ( a.Settings == null && a.Does.SettingsClassName != null )).ToArray();
+            model.HaveActivityToConfigure = usrActToSet .Count()>0;
             model.Activity = _dbContext.UserActivities.Include(a=>a.Does).Where(u=>u.UserId == user.Id).ToList();
             return View(model);
         }

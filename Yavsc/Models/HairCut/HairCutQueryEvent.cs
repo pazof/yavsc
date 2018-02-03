@@ -6,14 +6,20 @@ namespace Yavsc.Models.Haircut
     {
         public HairCutQueryEvent(string subTopic)
         {
-
-            Topic = GetType().Name+"/"+subTopic;
+            Topic = "/topic/HairCutQuery";
+            if (subTopic!=null) Topic+="/"+subTopic;
         }
-        public string Message
+        public string CreateBody()
         {
-            get;
+            return $"{Reason}\r\n-- \r\n{Previsional}\r\n{EventDate}\r\n";
+        }
 
-            set;
+        public string CreateBoby()
+        {
+            return string.Format(Startup.GlobalLocalizer["RdvToPerf"], Client.UserName,
+            EventDate?.ToString("dddd dd/MM/yyyy à HH:mm"),
+            Location.Address,
+            ActivityCode);
         }
 
         public string Sender

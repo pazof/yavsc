@@ -4,7 +4,7 @@ using Yavsc.Interfaces;
 
 namespace Yavsc.Models.Messaging
 {
-    public enum Reason { 
+    public enum Reason: byte { 
             Private,
             Corporate,
             SearchingAPro,
@@ -23,6 +23,12 @@ namespace Yavsc.Models.Messaging
         public string OwnerId { get; set; }
 
         [ForeignKey("OwnerId")]
-        public virtual ApplicationUser Owner { get; set; } 
+        public virtual ApplicationUser Owner { get; set; }
+
+        public string Message { get; set; }
+        public override string CreateBody()
+        {
+            return $"Annonce de {Owner.UserName}: {For}\n\n{Message}";
+        }
     }
 }

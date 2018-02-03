@@ -11,7 +11,7 @@
 		<iconUrl>https://github.com/pazof/yavsc/blob/vnext/Yavsc/wwwroot/images/yavsc.png</iconUrl>
 		<requireLicenseAcceptance>true</requireLicenseAcceptance>
 		<description>
-      A shared model for a little client/sever app
+      A shared model for a little client/server app, dealing about establishing some contract, between some human client and provider.
 		</description>
 		<summary>
 		</summary>

@@ -7,6 +7,7 @@ namespace Yavsc.Models.Messaging
     using Interfaces.Workflow;
     using Billing;
     using Yavsc.Helpers;
+    using Yavsc.Models.Workflow;
 
     public class EstimationEvent: IEvent
     {
@@ -14,7 +15,7 @@ namespace Yavsc.Models.Messaging
         {
             Topic = "Estimation";
             Estimation = estimate;
-            var perfer = context.Performers.Include(
+             perfer = context.Performers.Include(
                 p=>p.Performer
             ).FirstOrDefault(
                 p => p.PerformerId == estimate.OwnerId
@@ -27,11 +28,15 @@ namespace Yavsc.Models.Messaging
                 UserId = perfer.PerformerId
             };
            Sender = perfer.Performer.UserName;
-           Message = string.Format(SR["EstimationMessageToClient"],perfer.Performer.UserName,
-            estimate.Title,estimate.Bill.Addition());
+            _localizer = SR;
         }
+          // TODO via e-mail only: Message = string.Format(
+              // SR["EstimationMessageToClient"],perfer.Performer.UserName, estimate.Title,estimate.Bill.Addition());
+              //
         ProviderClientInfo ProviderInfo { get; set; }
         Estimate Estimation { get; set; }
+
+        private PerformerProfile perfer;
 
         public string Topic
         {
@@ -43,9 +48,11 @@ namespace Yavsc.Models.Messaging
             get; set;
         }
 
-        public string Message
+        private IStringLocalizer _localizer;
+
+        public string CreateBody()
         {
-             get; set;
+            return string.Format(_localizer["EstimationMessageToClient"], perfer.Performer.UserName, this.Estimation.Bill.Addition());
         }
     }
 }

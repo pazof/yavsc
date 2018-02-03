@@ -59,7 +59,6 @@ namespace Yavsc.Models.Billing
             set { AttachedFiles = value.Split(':').ToList(); }
         }
 
-        [Required]
         public string OwnerId { get; set; }
 
         [ForeignKey("OwnerId"),JsonIgnore]

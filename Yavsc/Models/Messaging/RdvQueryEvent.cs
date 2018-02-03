@@ -22,20 +22,19 @@
 namespace Yavsc.Models.Messaging
 {
 using Interfaces.Workflow;
+    using Yavsc.Abstract.Messaging;
 
-
-
-public class RdvQueryEvent: RdvQueryProviderInfo, IEvent
+    public class RdvQueryEvent: RdvQueryProviderInfo, IEvent
 	{
+        public string SubTopic        
+        {
+            get; private set;
+        }
 
         public RdvQueryEvent(string subTopic)
         {
-             Topic = GetType().Name+"/"+subTopic;
-        }
-
-        public string Message
-        {
-            get; set;
+             Topic = MessagingConstants.TopicRdvQuery;
+             SubTopic = subTopic;
         }
 
         public string Sender
@@ -46,6 +45,14 @@ public class RdvQueryEvent: RdvQueryProviderInfo, IEvent
         public string Topic
         {
             get; private set;
+        }
+
+        public string CreateBody()
+        {
+            return string.Format(Startup.GlobalLocalizer["RdvToPerf"], Client.UserName,
+            EventDate?.ToString("dddd dd/MM/yyyy à HH:mm"),
+            Location.Address,
+            ActivityCode);
         }
     }
 
