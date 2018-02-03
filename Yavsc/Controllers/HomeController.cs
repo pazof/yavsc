@@ -50,7 +50,7 @@ namespace Yavsc.Controllers
             }
             else clicked = DbContext.DimissClicked.Where(d=>d.UserId == uid).Select(d=>d.NotificationId).ToArray();
             var notes = DbContext.Notification.Where(
-                n=> !clicked.Any(c=>n.Id==c)
+                n=> !clicked.Contains(n.Id)
             );
             this.Notify(notes);
             ViewData["HaircutCommandCount"] =  DbContext.HairCutQueries.Where(

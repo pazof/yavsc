@@ -47,23 +47,25 @@ namespace Yavsc.Controllers
             long[] usercircles = _context.Circle.Include(c=>c.Members).Where(c=>c.Members.Any(m=>m.MemberId == uid))
             .Select(c=>c.Id).ToArray();
             IQueryable<BlogPost> posts ;
-            if (usercircles != null) {
-                posts = _context.Blogspot.Include(b => b.Author)
+            var allposts = _context.Blogspot
+                .Include(b => b.Author)
+                .Include(p=>p.ACL)
                 .Include(p=>p.Tags)
                 .Include(p=>p.Comments)
-                .Include(p=>p.ACL)
-                .Where(p=> p.AuthorId == uid || p.Visible &&
-                (p.ACL.Count == 0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId))))
-                            ;
+                .Where(p=>p.AuthorId == uid || p.Visible);
+
+            if (usercircles != null) {
+                posts = allposts.Where(p=> p.ACL.Count==0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId)))
+                ;
             }
             else {
-                posts = _context.Blogspot.Include(b => b.Author)
-                .Include(p=>p.ACL).Where(p=>p.AuthorId == uid || p.Visible && p.ACL.Count == 0);
+                posts = allposts.Where(p => p.ACL.Count == 0);
             }
 
-            return View(posts.OrderByDescending( p=> p.DateCreated)
-         
-            .GroupBy(p=> p.Title).Skip(skip).Take(maxLen));
+            var data = posts.OrderByDescending( p=> p.DateCreated).ToArray();
+            var grouped = data.GroupBy(p=> p.Title).Skip(skip).Take(maxLen);
+
+            return View(grouped);
         }
 
         [Route("/Title/{id?}")]

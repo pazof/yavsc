@@ -1,0 +1,52 @@
+@model IEnumerable<Yavsc.Models.Identity.GoogleCloudMobileDeclaration>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DeclarationDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GCMRegistrationId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Model)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Platform)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Version)
+        </th>
+        <th></th>
+    </tr>
+    
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.DeclarationDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GCMRegistrationId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Model)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Platform)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Version)
+        </td>
+        <td>
+            <a asp-action="Details" asp-route-id="@item.DeviceId">Details</a> |
+            <a asp-action="Delete" asp-route-id="@item.DeviceId">Delete</a>
+        </td>
+    </tr>
+}
+</table>

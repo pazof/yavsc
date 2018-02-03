@@ -79,60 +79,30 @@ namespace Yavsc.Controllers
             ViewData["paymentinfo"] = paymentInfo;
             command.Regularisation = paymentInfo.DbContent;
             command.PaymentId = token;
-            if (paymentInfo != null)
-                if (paymentInfo.DetailsFromPayPal != null)
-                    if (paymentInfo.DetailsFromPayPal.Ack == AckCodeType.SUCCESS)
-                        if (command.ValidationDate == null)
-                            command.ValidationDate = DateTime.Now;
+            bool paymentOk = false;
+            if (paymentInfo.DetailsFromPayPal != null)
+                if (paymentInfo.DetailsFromPayPal.Ack == AckCodeType.SUCCESS) 
+                {
+                    // FIXME Assert (command.ValidationDate == null)
+                    if (command.ValidationDate == null) {
+                        paymentOk = true;
+                        command.ValidationDate = DateTime.Now;
+                    }
+                }
             await _context.SaveChangesAsync(User.GetUserId());
             SetViewBagPaymentUrls(id);
-            if (command.PerformerProfile.AcceptPublicContact)
+            if (command.PerformerProfile.AcceptPublicContact && paymentOk)
             {
-                var invoiceId = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.InvoiceID;
-                var payerName = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Address.Name;
-                var phone = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Address.Phone;
-                var payerEmail = paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PayerInfo.Payer;
-                var amount = string.Join(", ",
-                    paymentInfo.DetailsFromPayPal.GetExpressCheckoutDetailsResponseDetails.PaymentDetails.Select(
-                        p => $"{p.OrderTotal.value} {p.OrderTotal.currencyID}"));
-                var gender = command.Prestation.Gender;
-                var date = command.EventDate?.ToString("dd MM yyyy hh:mm");
-                var lieu = command.Location.Address;
-                string clientFinal = (gender == HairCutGenders.Women) ? _localizer["Women"] +
-                   " " + _localizer[command.Prestation.Length.ToString()] : _localizer[gender.ToString()];
                 MessageWithPayloadResponse grep = null;
-                var yaev = command.CreateEvent("PaymentConfirmation",
-                    this._localizer["PaymentConfirmation"],
-                    command.Client.GetSender(),
-$@"# Paiment confirmé: {amount}
-
-Effectué par : {payerName} [{payerEmail}]
-Identifiant PayPal du paiment: {token}
-Identifiant PayPal du payeur: {PayerID}
-Identifiant de la facture sur site: {invoiceId}
-
-
-# La prestation concernée:
-
-Demandeur: {command.Client.UserName}
-
-Date: {date}
-
-Lieu: {lieu}
-
-Le client final: {clientFinal}
-
-{command.GetBillText()}
-
-");
-
+                var yaev = command.CreatePaymentEvent(paymentInfo,  _localizer);
                 if (command.PerformerProfile.AcceptNotifications)
                 {
                     if (command.PerformerProfile.Performer.Devices.Count > 0)
                     {
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
-                        grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings, regids, yaev);
+                        
+                        grep = await _GCMSender.NotifyAsync(_googleSettings, regids, yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile
@@ -144,8 +114,8 @@ Le client final: {clientFinal}
                     _siteSettings, _smtpSettings,
                     command.PerformerProfile.Performer.UserName,
                     command.PerformerProfile.Performer.Email,
-                    yaev.Reason,
-                    $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
+                    yaev.Topic,
+                    yaev.CreateBody()
                 );
             }
             else
@@ -321,7 +291,7 @@ Le client final: {clientFinal}
                         DateTime evdate = yaev.EventDate ?? new DateTime();
                         var result = await _calendarManager.CreateEventAsync(pro.Performer.Id,
                             pro.Performer.DedicatedGoogleCalendar,
-                            evdate, 3600, yaev.Topic, yaev.Message,
+                            evdate, 3600, yaev.Topic, yaev.Client.UserName + " : " + yaev.Reason,
                             yaev.Location?.Address, false
                         );
                         if (result.Id == null)
@@ -333,8 +303,8 @@ Le client final: {clientFinal}
                         _siteSettings, _smtpSettings,
                          pro.Performer.UserName,
                         pro.Performer.Email,
-                        yaev.Reason,
-                        $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
+                        $"{yaev.Client.UserName}: {yaev.Reason}",
+                        $"{yaev.Reason}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
                 else
@@ -456,6 +426,7 @@ Le client final: {clientFinal}
                     bp => bp.UserId == command.PerformerId
                 );
                 var yaev = command.CreateEvent(_localizer, brSettings);
+                string msg = yaev.CreateBoby();
                 MessageWithPayloadResponse grep = null;
 
                 if (pro.AcceptNotifications
@@ -481,7 +452,7 @@ Le client final: {clientFinal}
                         await _calendarManager.CreateEventAsync(
                             pro.Performer.Id,
                             pro.Performer.DedicatedGoogleCalendar,
-                            evdate, 3600, yaev.Topic, yaev.Message,
+                            evdate, 3600, yaev.Topic, msg,
                             yaev.Location?.ToString(), false
                         );
                     }
@@ -491,7 +462,7 @@ Le client final: {clientFinal}
                         command.PerformerProfile.Performer.UserName,
                         command.PerformerProfile.Performer.Email,
                         yaev.Topic + " " + yaev.Sender,
-                        $"{yaev.Message}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
+                        $"{msg}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
                 }
                 ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == command.ActivityCode);

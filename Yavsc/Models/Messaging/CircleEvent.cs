@@ -28,7 +28,7 @@ namespace Yavsc.Models.Messaging
 	/// <summary>
 	/// Event pub.
 	/// </summary>
-	public class CircleEvent: YaEvent
+	public class CircleEvent: BaseEvent
 	{
 		/// <summary>
 		/// Gets or sets the circles.
@@ -37,7 +37,12 @@ namespace Yavsc.Models.Messaging
 		[Required(ErrorMessageResourceName="DoSpecifyCircles"),
 			Display(Name="Circles")]
 		public virtual List<Circle> Circles{ get; set; }
-	}
+
+        public override string CreateBody()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 
 }
 

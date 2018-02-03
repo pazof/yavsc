@@ -240,6 +240,7 @@
   <data name="Full name"><value>Nom complet</value></data>
   <data name="EGCMBUTEMAIL"><value>L'envoi du message push a échoué, mais un e-mail a été envoyé</value></data>
   <data name="GCM Notifications sent"><value>Message push envoyé</value></data>
+  <data name="GCM Notification sending failed"><value>L'evoi du message Google Cloud a échoué ...</value></data>
   <data name="GiveAnExplicitReason"><value>Dites en plus, ci àprès, à propos de cet évennement</value></data>
   <data name="GoogleDidntGeoLocalized"><value>Google n'a pas pu identifier ce lieu</value></data>
   <data name="Google calendar"><value>Agenda Google</value></data>
@@ -463,5 +464,27 @@ Pour ce faire, suivez le lien suivant : &lt;{1}&gt;.
 d'au moins {0} et d'au plus {1} caractère(s). </value></data>
 <data name="DetailledMaxStringLength"><value>Ce champ est 
 d'au plus {0} caractère(s) ({1} en excès). </value></data>
+<data name="EmailSentToPerformer"><value>Un message éléctronique a été envoyé au préstataire.</value></data>
+<data name="QueryValidatedNonReg"><value>Un client vient de valider une demande de prestation à votre encontre:
 
+ Prestation: {0}
+ Client : {1}
+ Date: {2},
+ Adresse: {3}
+
+-----
+{4}
+
+Facture prévue (non réglée): {5}</value></data>
+<data name="QueryValidatedRegular"><value>Un client vient de valider une demande de prestation à votre encontre:
+
+ Prestation: {0}
+ Client : {1}
+ Date: {2},
+ Adresse: {3}
+
+-----
+{4}
+
+Facture réglée: {5}</value></data>
 </root>

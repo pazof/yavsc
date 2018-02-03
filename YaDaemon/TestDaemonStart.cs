@@ -1,6 +1,5 @@
 namespace YaDaemon
 {
-    using YaDaemon;
     
     public class TestDaemonStart
     {

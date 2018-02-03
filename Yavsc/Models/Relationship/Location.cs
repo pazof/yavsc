@@ -7,7 +7,7 @@ namespace Yavsc.Models.Relationship
     /// <summary>
     /// Position.
     /// </summary>
-    public class Position
+    public class Position: IPosition
 	{
 		/// <summary>
 		/// The longitude.
