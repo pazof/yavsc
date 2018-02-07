@@ -91,7 +91,7 @@ namespace Yavsc.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public IActionResult Create(string id, string activityCode)
+        public IActionResult Create(string id, string activityCode, string billingCode)
         {
             if (string.IsNullOrWhiteSpace(id))
                 throw new InvalidOperationException(
@@ -117,7 +117,8 @@ namespace Yavsc.Controllers
                 PerformerId = pro.PerformerId,
                 ClientId = userid,
                 Client = user,
-                ActivityCode = activityCode
+                ActivityCode = activityCode,
+                BillingCode = billingCode
             });
         }
 
@@ -126,7 +127,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RdvQuery command)
         {
-
+            // TODO validate BillingCode value
             var uid = User.GetUserId();
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
