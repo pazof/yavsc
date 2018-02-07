@@ -7,5 +7,10 @@ all: $(SUBDIRS)
 $(SUBDIRS):
 	$(MAKE) -C $@
 
+deploy:
+	$(MAKE) -C Yavsc.Abstract deploy
+	$(MAKE) -C Yavsc deploy
+
 .PHONY: all $(SUBDIRS)
+
 
