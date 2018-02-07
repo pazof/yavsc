@@ -24,7 +24,8 @@ namespace Yavsc.Helpers
                 EventDate = query.EventDate,
                 Location = query.Location,
                 Id = query.Id,
-                ActivityCode = query.ActivityCode
+                ActivityCode = query.ActivityCode,
+                BillingCode = query.BillingCode
             };
 
             return yaev;
@@ -65,7 +66,8 @@ namespace Yavsc.Helpers
                 Location = query.Location,
                 Id = query.Id,
                 Reason = "Commande groupée!",
-                ActivityCode = query.ActivityCode
+                ActivityCode = query.ActivityCode,
+                BillingCode = query.BillingCode
             };
             return yaev;
         }

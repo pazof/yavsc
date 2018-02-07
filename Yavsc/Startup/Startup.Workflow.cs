@@ -10,6 +10,7 @@ namespace Yavsc
     using Microsoft.Data.Entity;
     using Models;
     using Yavsc.Billing;
+    using Yavsc.Models.Billing;
     using Yavsc.Models.Haircut;
     using Yavsc.Models.Workflow;
 
@@ -76,7 +77,7 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
                 }
             }
 
-            RegisterBilling<HairCutQuery>("Brush", new Func<ApplicationDbContext,long,IBillable>
+            RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext,long,IBillable>
             ( ( db, id) => 
             {
               var query = db.HairCutQueries.Include(q=>q.Prestation).Include(q=>q.Regularisation).Single(q=>q.Id == id)  ; 
@@ -84,9 +85,9 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
               return query;
             })) ;
 
-            RegisterBilling<HairMultiCutQuery>("MBrush",new Func<ApplicationDbContext,long,IBillable>
+            RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush,new Func<ApplicationDbContext,long,IBillable>
             ( (db, id) =>  db.HairMultiCutQueries.Include(q=>q.Regularisation).Single(q=>q.Id == id)));
-            RegisterBilling<RdvQuery>("Rdv", new Func<ApplicationDbContext,long,IBillable>
+            RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext,long,IBillable>
             ( (db, id) =>  db.RdvQueries.Include(q=>q.Regularisation).Single(q=>q.Id == id)));
         }
         public static System.Reflection.Assembly OnYavscResourceResolve(object sender, ResolveEventArgs ev)

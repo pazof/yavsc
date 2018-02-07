@@ -11,6 +11,7 @@
    @Html.DisplayFor(m=>profile)
     <form action="~/Command/Create" >
         <input type="hidden" name="id" value="@profile.PerformerId" />
+        <input type="hidden" name="billingCode" value="Profiles" />
         <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
              <input type="submit" class="btn btn-success" value="@SR["Proposer un rendez-vous à"] @profile.Performer.UserName"/>
     </form> 
