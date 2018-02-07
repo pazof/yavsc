@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace Yavsc.Billing
 {
     public interface IBillable {
+        string BillingCode { get; set; }
         string GetDescription ();
         List<IBillItem> GetBillItems();
         long Id { get; set; }
