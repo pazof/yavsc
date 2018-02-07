@@ -46,12 +46,6 @@ namespace Yavsc.Services
                  throw new NotImplementedException("No GCM reg ids");
             var msg = new MessageWithPayload<Event>()
             {
-                notification = new Notification()
-                {
-                    title = ev.Topic+" "+ev.Sender,
-                    body =  ev.CreateBody(),
-                    icon = "icon"
-                },
                 data = ev,
                 registration_ids = regids.ToArray()
             };

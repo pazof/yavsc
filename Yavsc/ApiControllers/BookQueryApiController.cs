@@ -53,7 +53,8 @@ namespace Yavsc.Controllers
                 Id = c.Id,
                 Previsional = c.Previsional,
                 Reason = c.Reason,
-                ActivityCode = c.ActivityCode
+                ActivityCode = c.ActivityCode,
+                BillingCode = c.BillingCode
             }).
             OrderBy(c=>c.Id).
             Take(25);

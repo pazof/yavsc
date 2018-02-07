@@ -5,9 +5,14 @@ CONFIGURATION=Release
 ASPNET_LOG_LEVEL=info #warn
 HOSTING=localhost
 HOSTADMIN=root
+FRMWRK=dnx451
+BINTARGET=Yavsc.dll
+BINTARGETPATH=bin/$(CONFIGURATION)/$(FRMWRK)/$(BINTARGET)
 
+all: $(BINTARGETPATH)
 
-all: bin/$(CONFIGURATION)
+$(BINTARGETPATH):
+	dnu build
 
 deploy: clean pushInPre pushInProd
 
