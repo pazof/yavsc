@@ -3,8 +3,7 @@
     "description": "MyDnxService Console Application",
     "dependencies": {
         "Yavsc": {
-            "type": "build",
-            "version": "1.0.0"
+            "type": "build"
         }
     },
     "frameworks": {

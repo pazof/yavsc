@@ -6,6 +6,7 @@ namespace Yavsc.Helpers
     using Models.Messaging;
     using Yavsc.Models.Haircut;
     using Yavsc.Models;
+    using Yavsc.Models.Billing;
 
     public static class EventHelpers
     {
@@ -25,7 +26,7 @@ namespace Yavsc.Helpers
                 Location = query.Location,
                 Id = query.Id,
                 ActivityCode = query.ActivityCode,
-                BillingCode = query.BillingCode
+                BillingCode = BillingCodes.Rdv
             };
 
             return yaev;
@@ -42,7 +43,8 @@ namespace Yavsc.Helpers
 
             var yaev = query.CreateEvent("NewHairCutQuery",
              string.Format(Startup.GlobalLocalizer["HairCutQueryValidation"],query.Client.UserName),
-              $"{query.Client.UserName}") ;
+              $"{query.Client.Id}");
+              
 
             return yaev;
         }
@@ -67,7 +69,7 @@ namespace Yavsc.Helpers
                 Id = query.Id,
                 Reason = "Commande groupée!",
                 ActivityCode = query.ActivityCode,
-                BillingCode = query.BillingCode
+                BillingCode = BillingCodes.MBrush
             };
             return yaev;
         }

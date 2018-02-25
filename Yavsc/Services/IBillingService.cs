@@ -2,7 +2,8 @@ namespace Yavsc.Services
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using Billing;
+    using Yavsc.Abstract.Workflow;
+
     public interface IBillingService
     {
         /// <summary>
@@ -17,7 +18,7 @@ namespace Yavsc.Services
         /// <param name="billingCode">Identifiant du type de facturation</param>
         /// <param name="queryId">Identifiant de la demande du client</param>
         /// <returns>La facture</returns>
-         Task<IBillable> GetBillAsync(string billingCode, long queryId);
+         Task<INominativeQuery> GetBillAsync(string billingCode, long queryId);
          Task<IQueryable<ISpecializationSettings>>  GetPerformersSettingsAsync(string activityCode);
          
          Task<ISpecializationSettings> GetPerformerSettingsAsync(string activityCode, string userId);

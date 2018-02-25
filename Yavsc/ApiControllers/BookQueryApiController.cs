@@ -13,6 +13,7 @@ namespace Yavsc.Controllers
     using Yavsc.Models.Messaging;
     using Yavsc.Models;
     using Yavsc.Models.Workflow;
+    using Yavsc.Models.Billing;
 
     [Produces("application/json")]
     [Route("api/bookquery"), Authorize(Roles = "Performer,Administrator")]
@@ -54,7 +55,7 @@ namespace Yavsc.Controllers
                 Previsional = c.Previsional,
                 Reason = c.Reason,
                 ActivityCode = c.ActivityCode,
-                BillingCode = c.BillingCode
+                BillingCode = BillingCodes.Rdv
             }).
             OrderBy(c=>c.Id).
             Take(25);
