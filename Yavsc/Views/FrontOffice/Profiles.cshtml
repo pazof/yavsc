@@ -9,11 +9,9 @@
 @foreach (var profile in Model) {
     <hr/>
    @Html.DisplayFor(m=>profile)
-    <form action="~/Command/Create" >
-        <input type="hidden" name="id" value="@profile.PerformerId" />
-        <input type="hidden" name="billingCode" value="Profiles" />
-        <input type="hidden" name="activityCode" value="@ViewBag.Activity.Code" />
-             <input type="submit" class="btn btn-success" value="@SR["Proposer un rendez-vous à"] @profile.Performer.UserName"/>
-    </form> 
+    <a class="btn btn-success" asp-controller="Command" asp-action="Create" asp-route-proId="@profile.PerformerId"
+    asp-route-billingCode="Profiles" asp-route-activityCode="@ViewBag.Activity.Code"  >
+    @SR["Proposer un rendez-vous à"] @profile.Performer.UserName
+    </a>
 }
 

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Yavsc.Abstract.Workflow;
 using Yavsc.Billing;
 using Yavsc.Models;
 
@@ -19,11 +20,9 @@ namespace Yavsc.Services
             DbContext = dbContext;
         }
 
-        public async Task<IBillable> GetBillAsync(string billingCode, long queryId)
+        public Task<INominativeQuery> GetBillAsync(string billingCode, long queryId)
         {
-            var dbFunc = Startup.Billing[billingCode];
-            IBillable query = await Task.Run(()=> dbFunc(DbContext, queryId));
-            return query;
+            return Task.FromResult(Startup.GetBillable(DbContext,billingCode,queryId));
         }
 
         public async Task<ISpecializationSettings> GetPerformerSettingsAsync(string activityCode, string userId)

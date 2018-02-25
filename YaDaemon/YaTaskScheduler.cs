@@ -42,6 +42,7 @@ namespace YaDaemon
              using (var prog = new YaDaemon()) {
                  try {
                     await prog.StartAsync(args);
+                    prog.MainLoop(args);
                  
                  } catch (Exception ex)
                  {

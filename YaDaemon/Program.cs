@@ -5,12 +5,11 @@ using System.ServiceProcess;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Hosting.Internal;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Framework.Configuration;
 using Microsoft.Framework.ConfigurationModel;
 using Yavsc;
-
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNet.Hosting.Internal;
 
 public class Program : ServiceBase
 {
@@ -32,24 +31,6 @@ public class Program : ServiceBase
 
     // public static void Main(string[] args) =>  Console.WriteLine("Hello World!");
 
-    public void OldMain(string[] args)
-    {
-        Microsoft.Extensions.PlatformAbstractions.IApplicationEnvironment iappenv;
-        IHostingEnvironment env = new Microsoft.AspNet.Hosting.HostingEnvironment();
-        iappenv = null;// new HostingEnvironmentExtensions();
-        Console.WriteLine("HW");
-         
-        _log.WriteEntry("Test from MyDnxService.", EventLogEntryType.Information, 1);
-        
-        
-
-        #if DEBUG
-
-          OnStart(null);
-        #else 
-        Run(this);
-        #endif
-    }
 
     protected override void OnStart(string[] args)
     {
@@ -61,7 +42,7 @@ public class Program : ServiceBase
         var configBuilder = new ConfigurationBuilder();
         configBuilder.AddInMemoryCollection();
         configBuilder.SetBasePath("../Yavsc/");
-        configBuilder.AddJsonFile("../Yavsc/project.json");
+        configBuilder.AddJsonFile("../Yavsc/appsettings.Development.json");
         var config = configBuilder.Build();
          
         var builder = new WebHostBuilder();

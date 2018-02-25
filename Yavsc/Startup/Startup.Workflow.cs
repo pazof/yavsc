@@ -9,6 +9,7 @@ namespace Yavsc
 {
     using Microsoft.Data.Entity;
     using Models;
+    using Yavsc.Abstract.Workflow;
     using Yavsc.Billing;
     using Yavsc.Models.Billing;
     using Yavsc.Models.Haircut;
@@ -23,9 +24,10 @@ namespace Yavsc
         public static List<Type> ProfileTypes = new List<Type>();
         public static List<PropertyInfo> UserSettings = new List<PropertyInfo>();
 
-        public static Dictionary<string,Func<ApplicationDbContext,long,IBillable>> Billing =
-        new Dictionary<string,Func<ApplicationDbContext,long,IBillable>> ();
+        public static Dictionary<string,Func<ApplicationDbContext,long,INominativeQuery>> Billing =
+        new Dictionary<string,Func<ApplicationDbContext,long,INominativeQuery>> ();
 
+        public static INominativeQuery GetBillable(ApplicationDbContext context, string billingCode, long queryId ) =>  Billing[billingCode](context, queryId);
         public static Dictionary<string,string> BillingMap =
           new Dictionary<string,string>();
         /// <summary>
@@ -77,7 +79,7 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
                 }
             }
 
-            RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext,long,IBillable>
+            RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext,long,INominativeQuery>
             ( ( db, id) => 
             {
               var query = db.HairCutQueries.Include(q=>q.Prestation).Include(q=>q.Regularisation).Single(q=>q.Id == id)  ; 
@@ -85,9 +87,9 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
               return query;
             })) ;
 
-            RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush,new Func<ApplicationDbContext,long,IBillable>
+            RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush,new Func<ApplicationDbContext,long,INominativeQuery>
             ( (db, id) =>  db.HairMultiCutQueries.Include(q=>q.Regularisation).Single(q=>q.Id == id)));
-            RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext,long,IBillable>
+            RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext,long,INominativeQuery>
             ( (db, id) =>  db.RdvQueries.Include(q=>q.Regularisation).Single(q=>q.Id == id)));
         }
         public static System.Reflection.Assembly OnYavscResourceResolve(object sender, ResolveEventArgs ev)
@@ -95,7 +97,7 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
             return AppDomain.CurrentDomain.GetAssemblies()[0];
         }
 
-        public static void RegisterBilling<T>(string code, Func<ApplicationDbContext,long,IBillable> getter) where T : IBillable
+        public static void RegisterBilling<T>(string code, Func<ApplicationDbContext,long,INominativeQuery> getter) where T : IBillable
         {
             Billing.Add(code,getter) ;
             BillingMap.Add(typeof(T).Name,code);

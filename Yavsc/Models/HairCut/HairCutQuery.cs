@@ -402,7 +402,8 @@ Prestation.Gender == HairCutGenders.Women ?
                 Id = Id,
                 ActivityCode = ActivityCode,
                 Reason = reason,
-                Sender = Client.GetSender()
+                Sender = sender,
+                BillingCode = BillingCodes.Brush
             };
             return yaev;
         }

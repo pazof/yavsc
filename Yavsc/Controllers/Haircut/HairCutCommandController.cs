@@ -45,6 +45,7 @@ namespace Yavsc.Controllers
             this.payPalSettings = payPalSettings.Value;
         }
         PayPalSettings payPalSettings;
+        
         private async Task<HairCutQuery> GetQuery(long id)
         {
             var query = await _context.HairCutQueries

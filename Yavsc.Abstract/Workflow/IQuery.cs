@@ -1,4 +1,4 @@
-namespace Yavsc.Workflow
+namespace Yavsc.Abstract.Workflow
 {
     using Yavsc;
     using Yavsc.Billing;

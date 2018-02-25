@@ -70,7 +70,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: Command/Details/5
-        public virtual async Task<IActionResult> RdvDetails(long id)
+        public virtual async Task<IActionResult> Details(long id)
         {
             RdvQuery command = await _context.RdvQueries
             .Include(x => x.Location)
@@ -84,18 +84,18 @@ namespace Yavsc.Controllers
             return View(command);
         }
 
-        [Authorize]
         /// <summary>
         /// Gives a view on
         /// Creating a command for a specified performer
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public IActionResult Create(string id, string activityCode, string billingCode)
+        [HttpGet]
+        public IActionResult Create(string proId, string activityCode, string billingCode)
         {
-            if (string.IsNullOrWhiteSpace(id))
+            if (string.IsNullOrWhiteSpace(proId))
                 throw new InvalidOperationException(
-                    "This method needs a performer id"
+                    "This method needs a performer id (from parameter proId)"
                 );
              if (string.IsNullOrWhiteSpace(activityCode))
                 throw new InvalidOperationException(
@@ -103,7 +103,7 @@ namespace Yavsc.Controllers
                 );
             var pro = _context.Performers.Include(
                 x => x.Performer).FirstOrDefault(
-                x => x.PerformerId == id
+                x => x.PerformerId == proId
             );
             if (pro == null)
                 return HttpNotFound();
@@ -111,19 +111,18 @@ namespace Yavsc.Controllers
             ViewBag.GoogleSettings = _googleSettings;
             var userid = User.GetUserId();
             var user = _userManager.FindByIdAsync(userid).Result;
-            return View(new RdvQuery(activityCode,new Location(),DateTime.Now.AddHours(4))
+            return View("Create",new RdvQuery(activityCode,new Location(),DateTime.Now.AddHours(4))
             {
                 PerformerProfile = pro,
                 PerformerId = pro.PerformerId,
                 ClientId = userid,
                 Client = user,
-                ActivityCode = activityCode,
-                BillingCode = billingCode
+                ActivityCode = activityCode
             });
         }
 
         // POST: Command/Create
-        [HttpPost, Authorize]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RdvQuery command)
         {

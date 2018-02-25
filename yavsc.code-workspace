@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "Yavsc.Abstract"
+		},
+		{
+			"path": "YaDaemon"
 		}
 	],
 	"settings": {

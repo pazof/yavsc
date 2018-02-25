@@ -2889,7 +2889,7 @@
           "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
           "PayPalMerchant-net451": "2.7.109",
           "System.Json": "4.0.20126.16343",
-          "Yavsc.Abstract": "1.0.0"
+          "Yavsc.Abstract": null
         },
         "frameworkAssemblies": [
           "System",
@@ -2898,14 +2898,15 @@
           "System.Xml"
         ]
       },
-      "Yavsc.Abstract/1.0.0": {
+      "Yavsc.Abstract/1.0.5": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
         "dependencies": {
           "Newtonsoft.Json": "10.0.2"
         },
         "frameworkAssemblies": [
-          "System.ComponentModel.DataAnnotations"
+          "System.ComponentModel.DataAnnotations",
+          "System.Json"
         ]
       }
     },
@@ -5796,7 +5797,7 @@
           "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
           "PayPalMerchant-net451": "2.7.109",
           "System.Json": "4.0.20126.16343",
-          "Yavsc.Abstract": "1.0.0"
+          "Yavsc.Abstract": null
         },
         "frameworkAssemblies": [
           "System",
@@ -5805,14 +5806,15 @@
           "System.Xml"
         ]
       },
-      "Yavsc.Abstract/1.0.0": {
+      "Yavsc.Abstract/1.0.5": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
         "dependencies": {
           "Newtonsoft.Json": "10.0.2"
         },
         "frameworkAssemblies": [
-          "System.ComponentModel.DataAnnotations"
+          "System.ComponentModel.DataAnnotations",
+          "System.Json"
         ]
       }
     },
@@ -8703,7 +8705,7 @@
           "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
           "PayPalMerchant-net451": "2.7.109",
           "System.Json": "4.0.20126.16343",
-          "Yavsc.Abstract": "1.0.0"
+          "Yavsc.Abstract": null
         },
         "frameworkAssemblies": [
           "System",
@@ -8712,14 +8714,15 @@
           "System.Xml"
         ]
       },
-      "Yavsc.Abstract/1.0.0": {
+      "Yavsc.Abstract/1.0.5": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
         "dependencies": {
           "Newtonsoft.Json": "10.0.2"
         },
         "frameworkAssemblies": [
-          "System.ComponentModel.DataAnnotations"
+          "System.ComponentModel.DataAnnotations",
+          "System.Json"
         ]
       }
     }
@@ -8729,7 +8732,7 @@
       "type": "project",
       "path": "../Yavsc/project.json"
     },
-    "Yavsc.Abstract/1.0.0": {
+    "Yavsc.Abstract/1.0.5": {
       "type": "project",
       "path": "../Yavsc.Abstract/project.json"
     },
@@ -11713,7 +11716,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Yavsc >= 1.0.0"
+      "Yavsc "
     ],
     "DNX,Version=v4.5.1": [
       "fx/System.ServiceProcess >= 4.0.0"
