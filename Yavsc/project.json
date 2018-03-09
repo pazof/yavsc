@@ -3,30 +3,42 @@
     "authors": [
         "Paul Schneider"
     ],
-    "tags": [
-        "Blog",
-        "PoS",
-        "Chat"
-    ],
-    "projectUrl": "http://yavsc.pschneider.fr",
-    "licenseUrl": "",
-    "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",
-    "compilationOptions": {
-        "emitEntryPoint": true,
-        "debugType": "full",
-        "outputName": "Yavsc"
+    "packOptions": {
+        "repository": {
+            "type": "git",
+            "url": "https://github.com/pazof/yavsc"
+        },
+        "licenseUrl": "https://github.com/pazof/yavsc/blob/vnext/LICENSE",
+        "requireLicenseAcceptance": true,
+        "owners": [
+            "Paul Schneider <paul@pschneider.fr>"
+        ],
+        "summary": "Yet another very small company",
+        "projectUrl": "http://yavsc.pschneider.fr",
+        "tags": [
+            "Blog",
+            "PoS",
+            "Chat"
+        ]
     },
+    "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",
     "buildOptions": {
         "debugType": "full",
-        "emitEntryPoint": true
+        "emitEntryPoint": true,
+        "outputName": "Yavsc",
+        "compile": {
+            "include": "*.cs",
+            "exclude": [
+                "wwwroot",
+                "node_modules",
+                "bower_components",
+                "contrib"
+            ]
+        },
+        "embed": [
+            "Resources/**/*.resx"
+        ]
     },
-    "compile": [
-        "*.cs"
-    ],
-    "resource": [
-        "Resources/**/*.resx"
-    ],
-    "namedResource": {},
     "configurations": {
         "Debug": {
             "compilationOptions": {
@@ -143,26 +155,16 @@
             }
         }
     },
-    "exclude": [
-        "wwwroot",
-        "node_modules",
-        "bower_components",
-        "contrib"
-    ],
-    "publishExclude": [
-        "**.user",
-        "**.vspscc",
-        "contrib/**/*.*"
-    ],
+    "publishOptions": {
+        "exclude": [
+            "**.user",
+            "**.vspscc",
+            "contrib/**/*.*"
+        ]
+    },
+
     "scripts": {
-        "prebuild": "echo before building",
-        "postbuild": "echo after building",
-        "prepack": "gulp min",
-        "postpack": "echo after packing",
-        "prerestore": "echo before restoring packages",
-        "postrestore": "echo after restoring packages",
-        "prepublish": "gulp min",
-        "postpublish": "echo after publish"
+        "prepublish": "gulp min"
     },
     "embed": "Views/**/*.cshtml"
 }

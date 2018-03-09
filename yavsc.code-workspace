@@ -7,7 +7,7 @@
 			"path": "Yavsc.Abstract"
 		},
 		{
-			"path": "YaDaemon"
+			"path": "cli"
 		}
 	],
 	"settings": {

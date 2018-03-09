@@ -1715,6 +1715,15 @@
           "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll": {}
         }
       },
+      "Microsoft.Extensions.CommandLineUtils/1.1.1": {
+        "type": "package",
+        "compile": {
+          "lib/net451/Microsoft.Extensions.CommandLineUtils.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.CommandLineUtils.dll": {}
+        }
+      },
       "Microsoft.Extensions.Configuration/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -4621,6 +4630,15 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CommandLineUtils/1.1.1": {
+        "type": "package",
+        "compile": {
+          "lib/net451/Microsoft.Extensions.CommandLineUtils.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.CommandLineUtils.dll": {}
         }
       },
       "Microsoft.Extensions.Configuration/1.0.0-rc1-final": {
@@ -7531,6 +7549,15 @@
           "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll": {}
         }
       },
+      "Microsoft.Extensions.CommandLineUtils/1.1.1": {
+        "type": "package",
+        "compile": {
+          "lib/net451/Microsoft.Extensions.CommandLineUtils.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.CommandLineUtils.dll": {}
+        }
+      },
       "Microsoft.Extensions.Configuration/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -10076,6 +10103,20 @@
         "THIRDPARTYNOTICE ASP.NET_Preview.rtf"
       ]
     },
+    "Microsoft.Extensions.CommandLineUtils/1.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "vsI1L6Bx602aQ/8051nrRbAWGxCQQX7IKT/9XApnEYfzLPBX7LcCZuwnDyD1bHTm2D8GcMweVSPr1H2rAfAgbA==",
+      "files": [
+        "lib/net451/Microsoft.Extensions.CommandLineUtils.dll",
+        "lib/net451/Microsoft.Extensions.CommandLineUtils.xml",
+        "lib/netstandard1.3/Microsoft.Extensions.CommandLineUtils.dll",
+        "lib/netstandard1.3/Microsoft.Extensions.CommandLineUtils.xml",
+        "Microsoft.Extensions.CommandLineUtils.1.1.1.nupkg",
+        "Microsoft.Extensions.CommandLineUtils.1.1.1.nupkg.sha512",
+        "Microsoft.Extensions.CommandLineUtils.nuspec"
+      ]
+    },
     "Microsoft.Extensions.Configuration/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
@@ -11716,7 +11757,9 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Yavsc "
+      "Yavsc ",
+      "Microsoft.Extensions.CommandLineUtils >= 1.1.1",
+      "Microsoft.Extensions.Configuration.UserSecrets >= 1.0.0-rc1-final"
     ],
     "DNX,Version=v4.5.1": [
       "fx/System.ServiceProcess >= 4.0.0"

@@ -187,7 +187,7 @@ namespace Yavsc
                     .RequireAuthenticatedUser().Build());
                 // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
                 // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
-                // options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
+                options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
             });
 
             services.AddSingleton<IAuthorizationHandler, HasBadgeHandler>();
@@ -231,8 +231,8 @@ namespace Yavsc
             services.AddTransient<ISecureDataFormat<AuthenticationTicket>, TicketDataFormat>();
 
             // Add application services.
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<IGoogleCloudMessageSender, AuthMessageSender>();
+            services.AddTransient<IEmailSender, MessageSender>();
+            services.AddTransient<IGoogleCloudMessageSender, MessageSender>();
             services.AddTransient<IBillingService, BillingService>();
             services.AddTransient<IDataStore, FileDataStore>( (sp) => new FileDataStore("googledatastore",false) );
             services.AddTransient<ICalendarManager, CalendarManager>();

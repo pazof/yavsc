@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2A8C2BD7-B1B6-4D74-A3FC-3F5DB3BE325E}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
@@ -42,7 +40,8 @@
     <JavaMaximumHeapSize>1100m</JavaMaximumHeapSize>
     <Debugger>Xamarin</Debugger>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
-    <CodeAnalysisRuleSet />
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
     <AotAssemblies>False</AotAssemblies>
     <EnableLLVM>False</EnableLLVM>
     <EnableProguard>False</EnableProguard>
@@ -65,8 +64,8 @@
     <EnableLLVM>False</EnableLLVM>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <EnableProguard>False</EnableProguard>
-    <DebugSymbols>False</DebugSymbols>
-    <CodeAnalysisRuleSet />
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Lua|AnyCPU'">
     <OutputPath>bin\Lua\</OutputPath>
@@ -74,7 +73,6 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
@@ -88,7 +86,6 @@
     <EnableLLVM>False</EnableLLVM>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <EnableProguard>False</EnableProguard>
-    <DebugSymbols>False</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ZicMoove|AnyCPU'">
     <OutputPath>bin\ZicMoove\</OutputPath>
@@ -96,7 +93,6 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
@@ -110,7 +106,6 @@
     <EnableLLVM>False</EnableLLVM>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <EnableProguard>False</EnableProguard>
-    <DebugSymbols>False</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Yavsc|AnyCPU'">
     <OutputPath>bin\Yavsc\</OutputPath>
@@ -118,7 +113,6 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
@@ -132,7 +126,6 @@
     <EnableLLVM>False</EnableLLVM>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <EnableProguard>False</EnableProguard>
-    <DebugSymbols>False</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'WinDev|AnyCPU'">
     <DebugSymbols>True</DebugSymbols>
@@ -141,7 +134,6 @@
     <WarningLevel>0</WarningLevel>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
@@ -535,64 +527,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <XamarinComponentReference Include="ConnectivityPlugin">
-      <Visible>False</Visible>
-      <Version>1.0.3</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="DeviceInfoPlugin">
-      <Visible>False</Visible>
-      <Version>1.0.0.2</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="GeolocatorPlugin">
-      <Visible>False</Visible>
-      <Version>1.0.3</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="GoogleMediaFramework">
-      <Visible>False</Visible>
-      <Version>1.0</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="googleplayservices">
-      <Visible>False</Visible>
-      <Version>22.0.0.0</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="googleplayservices-appinvite">
-      <Visible>False</Visible>
-      <Version>29.0.0.2</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="json.net">
-      <Visible>False</Visible>
-      <Version>7.0.1</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="MediaPlugin">
-      <Visible>False</Visible>
-      <Version>1.0.1</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="SettingsPlugin">
-      <Visible>False</Visible>
-      <Version>1.5.2</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="SharePlugin">
-      <Visible>False</Visible>
-      <Version>3.0.1</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="signature-pad">
-      <Visible>False</Visible>
-      <Version>1.4.0.0</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="xamandroidsupportv4-18">
-      <Visible>False</Visible>
-      <Version>23.4.0.1</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="xamandroidsupportv7appcompat">
-      <Visible>False</Visible>
-      <Version>24.2.1.0</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="xamarin.auth">
-      <Visible>False</Visible>
-      <Version>1.2.3.1</Version>
-    </XamarinComponentReference>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidAsset Include="Assets\bootstrap.js" />
     <AndroidAsset Include="Assets\jquery.js" />
     <AndroidAsset Include="Assets\jquery-ui.js" />
@@ -624,11 +558,6 @@
     <AndroidResource Include="Resources\drawable\visuel_sexion.jpg" />
     <AndroidResource Include="Resources\values\values-21\styles.xml" />
     <AndroidResource Include="Resources\drawable\icon_anon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\drawable-hdpi\" />
-    <Folder Include="Resources\drawable-xhdpi\" />
-    <Folder Include="Resources\drawable-xxhdpi\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\chat_icon_s.png" />

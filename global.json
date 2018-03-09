@@ -2,11 +2,11 @@
     "projects": [
         "Yavsc",
         "Yavsc.Abstract",
-        "YaDaemon",
+        "YaTask",
         "testOauthClient"
     ],
     "sdk": {
-        "version": "1.0.0-rc1-update2",
+        "version": "2.0.0",
         "runtime": "mono",
         "architecture": "x64"
     }
