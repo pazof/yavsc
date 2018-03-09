@@ -168,9 +168,8 @@ namespace Yavsc.Controllers
             .ToListAsync());
         }
 
-        public async Task<IActionResult> Details(long id)
+        public override async Task<IActionResult> Details(long id)
         {
-
             HairCutQuery command = await _context.HairCutQueries
             .Include(x => x.Location)
             .Include(x => x.PerformerProfile)
