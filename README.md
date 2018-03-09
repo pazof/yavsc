@@ -1,10 +1,23 @@
 
 [![Build Status](https://travis-ci.org/pazof/yavsc.svg?branch=vnext)](https://travis-ci.org/pazof/yavsc)
 
-# Bienvenue dans Yavsc
-
+# Yavsc
 
 C'est une application mettant en oeuvre une prise de contact entre un demandeur de services et son éventuel préstataire associé.
+
+# Construction et Installation
+
+## La construction
+
+Le code est du c sharp, dont les librairies sont restorées et le tout compilé avec les librairies DNX de M$, téléchargeable en executant le script d'installation suivant (c.f. /.travis.yml):
+
+    curl --insecure -sSL https://lua.pschneider.fr/files/Paul/dnx-install.sh | bash && DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh && cd Yavsc && dnu restore
+
+Une fois l'environnement ainsi pollué, executer, depuis le sous dossier `Yavsc`:
+
+    dnu build
+    dnx web # (pour execution en environement de développement, c.f. project.json)
+
 
 ## Fonctionalités
 
@@ -48,12 +61,11 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 * Une fois passée la date de la prestation, toute reclamation nécessitera l'intervention d'un système auxiliaire (un processus humain?)
 * Un seul moyen de paiment: PayPal, depuis le Web ou l'application mobile, son interface dite dépréciée NVP/SOAP.
 * Elle ne prendra pas en charge, du moins pas encore, ni la saisie de structures de projets complexes, ni ticketing associé à la prestation.
-* Les professionnels sont tous considérés comme tierces parties, horsmis le propriétaire de l'installation, dont les identifiants PayPal sont utilisés pour collecter tous les paiments. Aucune edition de fiche de paye ni paiment en masse ne sont supportés. Seul les payments unitaires sus-cités le sont.
-
+* Les professionnels sont tous considérés comme tierces parties, horsmis le propriétaire de l'installation, dont les identifiants PayPal sont utilisés pour collecter tous les paiments. TODO Aucune edition de fiche de paye ni paiment en masse ne sont supportés pour l'instant. Seul les payments unitaires sus-cités le sont.
 
 ## Développement
 
-## Nouvelle activité
+## Une nouvelle activité
 
 L'impact d'une custo de son activité pourrait à peu près tout concerner.
 Un bon point de départ est la création d'un controller de commande dédié, enrichi des données de profile associées à un nouveau type de profiles prestataire.
@@ -73,3 +85,5 @@ L'impact de l'usage d'un nouveau nom d'environement d'execution, à l'heure de c
   * ~/Views/Shared/_ValidationScriptsPartial.cshtml
   * ~/Views/Home/Index.cshtml
   * ~/Views/Home/About.cshtml
+
+... et beaucoup plus si affinité!
