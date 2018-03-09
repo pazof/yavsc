@@ -37,25 +37,7 @@ namespace YaDaemon
         {
 
         }
-        public async static void Main(string[] args)
-        {
-             using (var prog = new YaDaemon()) {
-                 try {
-                    await prog.StartAsync(args);
-                    prog.MainLoop(args);
-                 
-                 } catch (Exception ex)
-                 {
-                    prog.OnContinue();
-                 }
-                 finally {
-                    prog.OnShutdown();
-                 }
-
-                
-             }
-             
-        }
+        
         async Task StartAsync(string[] args)
         {
             await Task.Run(() => {

@@ -21,13 +21,13 @@ namespace Yavsc.Services
     // This class is used by the application to send Email and SMS
     // when you turn on two-factor authentication in ASP.NET Identity.
     // For more details see this link http://go.microsoft.com/fwlink/?LinkID=532713
-    public class AuthMessageSender : IEmailSender, IGoogleCloudMessageSender
+    public class MessageSender : IEmailSender, IGoogleCloudMessageSender
     {
         private ILogger _logger;
 
-        public AuthMessageSender(ILoggerFactory loggerFactory)
+        public MessageSender(ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger<AuthMessageSender>();
+            _logger = loggerFactory.CreateLogger<MessageSender>();
         }
         public  async Task <MessageWithPayloadResponse> NotifyEvent<Event>
          ( GoogleAuthSettings googleSettings, IEnumerable<string> regids, Event ev)

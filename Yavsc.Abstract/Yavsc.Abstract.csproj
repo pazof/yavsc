@@ -9,12 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Yavsc</RootNamespace>
     <AssemblyName>Yavsc.Abstract</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -84,7 +84,7 @@
     <Compile Include="Workflow\IRating.cs" />
     <Compile Include="Blogspot\IBlog.cs" />
     <Compile Include="Identity\IApplicationUser.cs" />
-    <Compile Include="Identity\IChatUserInfo.cs" />
+    <Compile Include="Identity\UserInfo.cs" />
     <Compile Include="Identity\Security\ICircleAuthorization.cs" />
     <Compile Include="Identity\Security\ICircleAuthorized.cs" />
     <Compile Include="IT\ICode.cs" />
