@@ -3,11 +3,13 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.OptionsModel;
-using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Framework.Configuration;
 using Newtonsoft.Json;
 using Yavsc;
 using Yavsc.Models;
+using Yavsc.Auth;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity;
 
 namespace cli
 {
@@ -20,6 +22,8 @@ namespace cli
         public static SmtpSettings SmtpSettup { get; private set; }
         public IConfigurationRoot Configuration { get; set; }
         public string ConnectionString { get; private set; }
+		public static MonoDataProtectionProvider ProtectionProvider { get; private set; }
+		public static IdentityOptions AppIdentityOptions { get; private set; }
 
         // Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -37,6 +41,13 @@ namespace cli
            
             services.Configure<SiteSettings>((o)=> JsonConvert.PopulateObject(Configuration["Site"],o));
             services.Configure<SmtpSettings>((o)=> JsonConvert.PopulateObject(Configuration["Smtp"],o));
+
+			ProtectionProvider = new MonoDataProtectionProvider(Configuration["Site:Title"]); ;
+			services.AddInstance<MonoDataProtectionProvider>
+			(ProtectionProvider);
+
+
+			
     }
 
 
@@ -48,7 +59,7 @@ namespace cli
         SmtpSettup = smtpSettingsOptions.Value;
     }
 
-    public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
+		public Startup(IHostingEnvironment env, IApplicationBuilder app)
         {
             var devtag = env.IsDevelopment()?"D":"";
             var prodtag = env.IsProduction()?"P":"";
