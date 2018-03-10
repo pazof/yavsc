@@ -8,6 +8,8 @@
     <RootNamespace>cli</RootNamespace>
     <AssemblyName>cli</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,9 +33,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Microsoft.Extensions.CommandLineUtils">
-      <HintPath>..\packages\Microsoft.Extensions.CommandLineUtils.1.1.1\lib\net451\Microsoft.Extensions.CommandLineUtils.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -55,56 +54,8 @@
     <Reference Include="Microsoft.CodeAnalysis">
       <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Dnx.ApplicationHost">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.ApplicationHost.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation.Abstractions">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation.CSharp.Abstractions">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.CSharp.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation.CSharp.Common">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.CSharp.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation.CSharp">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation.DesignTime">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.DesignTime.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.DesignTimeHost.Abstractions">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.DesignTimeHost.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Host">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Host.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Host.Mono">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Host.Mono.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Loader">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Loader.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Runtime">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Runtime.Internals">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Runtime.Internals.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.PlatformAbstractions">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Extensions.PlatformAbstractions.dll</HintPath>
-    </Reference>
     <Reference Include="System.Collections.Immutable">
       <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reflection.Metadata">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\System.Reflection.Metadata.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Hosting">
       <HintPath>..\..\..\..\..\srv\www\dnx\packages\Microsoft.AspNet.Hosting\1.0.0-rc1-final\lib\net451\Microsoft.AspNet.Hosting.dll</HintPath>
@@ -222,6 +173,93 @@
     <Reference Include="Microsoft.Extensions.Configuration">
       <HintPath>..\..\..\..\..\srv\www\dnx\packages\Microsoft.Extensions.Configuration\1.0.0-rc1-final\lib\net451\Microsoft.Extensions.Configuration.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Framework.Configuration.FileExtensions">
+      <HintPath>..\..\..\..\..\srv\www\dnx\packages\Microsoft.Framework.Configuration.FileExtensions\1.0.0-beta8\lib\net45\Microsoft.Framework.Configuration.FileExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Caching.Abstractions">
+      <HintPath>packages\Microsoft.Extensions.Caching.Abstractions.1.0.0-rc1-final\lib\net451\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Caching.Memory">
+      <HintPath>packages\Microsoft.Extensions.Caching.Memory.1.0.0-rc1-final\lib\net451\Microsoft.Extensions.Caching.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Linq">
+      <HintPath>packages\Remotion.Linq.2.0.1\lib\net45\Remotion.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource">
+      <HintPath>..\..\..\..\..\srv\www\dnx\packages\System.Diagnostics.DiagnosticSource\4.0.0-beta-23516\lib\portable-net45+win8+wp8+wpa81\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Localization.Abstractions">
+      <HintPath>packages\Microsoft.Extensions.Localization.Abstractions.1.0.0-rc1-final\lib\net451\Microsoft.Extensions.Localization.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Authentication.Cookies">
+      <HintPath>packages\Microsoft.AspNet.Authentication.Cookies.1.0.0-rc1-final\lib\net451\Microsoft.AspNet.Authentication.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.DataProtection">
+      <HintPath>packages\Microsoft.AspNet.DataProtection.1.0.0-rc1-final\lib\net451\Microsoft.AspNet.DataProtection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.DataProtection.Abstractions">
+      <HintPath>packages\Microsoft.AspNet.DataProtection.Abstractions.1.0.0-rc1-final\lib\net451\Microsoft.AspNet.DataProtection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin">
+      <HintPath>packages\Microsoft.Owin.4.0.0\lib\net451\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.PlatformAbstractions">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Extensions.PlatformAbstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Runtime.Internals">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Runtime.Internals.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Runtime">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Loader">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Loader.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Host">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Host.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.DesignTimeHost.Abstractions">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.DesignTimeHost.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Compilation">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Compilation.DesignTime">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.DesignTime.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Compilation.CSharp">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Compilation.CSharp.Common">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.CSharp.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Compilation.CSharp.Abstractions">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.CSharp.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Compilation.Abstractions">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.ApplicationHost">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.ApplicationHost.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.DesignTimeHost">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\lib\Microsoft.Dnx.DesignTimeHost\Microsoft.Dnx.DesignTimeHost.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dnx.Host.Mono">
+      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\Microsoft.Dnx.Host.Mono.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.CommandLineUtils">
+      <HintPath>packages\Microsoft.Extensions.CommandLineUtils.1.1.1\lib\net451\Microsoft.Extensions.CommandLineUtils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -231,5 +269,11 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

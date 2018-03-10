@@ -2,14 +2,15 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Hosting.Server;
 using Microsoft.AspNet.Identity;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.PlatformAbstractions;
 using Yavsc.Models;
 using Yavsc.Services;
+using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Builder.Internal;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace cli
 {
@@ -77,23 +78,31 @@ public class Program
         Console.WriteLine(greeting);
         IServiceCollection services = new ServiceCollection();
         // Startup.cs finally :)
+
+		//EntryPoint.Main(new string[] {});
+
         IHostingEnvironment hosting = new HostingEnvironment{ EnvironmentName = environmentName };
-		var test = PlatformServices.Create (null);
+
 			var basePath = AppDomain.CurrentDomain.BaseDirectory;
 			// FIXME null ref var appName = AppDomain.CurrentDomain.ApplicationIdentity.FullName;
 
-			PlatformServices.SetDefault (test);
+			// var rtdcontext = new System.Runtime.DesignerServices.WindowsRuntimeDesignerContext (new string { "." }, "nonname");
+
+			// hosting.Initialize("approot", config);
+
+			// ApplicationHostContext apphostcontext = new ApplicationHostContext ();
+			IServiceProvider serviceProvider = services.BuildServiceProvider();
+			IApplicationBuilder iappbuilder = new ApplicationBuilder(serviceProvider);
+			iappbuilder.ApplicationServices = serviceProvider;
 
 
-        Startup startup = new Startup(hosting, null);
-        startup.ConfigureServices(services);
-        IServiceProvider serviceProvider = services.BuildServiceProvider();
+			Startup startup = new Startup(hosting, PlatformServices.Default.Application);
 
         //configure console logging
         serviceProvider
             .GetService<ILoggerFactory>()
             .AddConsole(LogLevel.Debug);
-
+		
         var logger = serviceProvider.GetService<ILoggerFactory>()
             .CreateLogger<Program>();
 
@@ -102,7 +111,7 @@ public class Program
         var userManager = serviceProvider.GetService<UserManager<ApplicationUser> >();
         var emailSender = serviceProvider.GetService<IEmailSender>();
 
-        foreach (var user in userManager.Users)
+        foreach (var user in userManager?.Users)
         {
             Task.Run(async () => 
             await emailSender.SendEmailAsync(Startup.SiteSetup, Startup.SmtpSettup, Startup.SiteSetup.Owner.Name, Startup.SiteSetup.Owner.EMail,
