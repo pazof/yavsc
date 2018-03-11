@@ -2,7 +2,7 @@
     ViewData["Title"] = @SR["About"]+" "+@SiteSettings.Value.Title;
 }
 <h1>@ViewData["Title"]</h1>
-<environment names="zicmoove">
+<environment names="zicmoove,Development">
 
 <markdown>
 
@@ -91,32 +91,37 @@ L'opération est annulable, jusqu'à deux semaines après sa programmation.
 </markdown>
 </environment>
 
-<environment names="Lua">
+<environment names="Lua,Development">
 <markdown>
 C'est mon site pérso, une configuration de _Yavsc_ (encore une autre très petite entreprise).
 
-En voici d'autres: 
+* [README](https://github.com/pazof/yavsc/blob/vnext/README.md)
+* [license: GNU FPL v3](https://github.com/pazof/yavsc/blob/vnext/LICENSE)
+
+Autres installations: 
 </markdown>
-</environment>
-<environment names="Lua">
 <markdown>
 * [Coiffure](https://coiffure.pschneider.fr)
 * [ZicMoove](https://zicmoove.pschneider.fr)
-* [Lua](https://lua.pschneider.fr)
 * [Yavsc](https://yavsc.pschneider.fr)
-
 </markdown>
 </environment>
 
-<environment names="Yavsc">
+<environment names="Yavsc,Development">
 <markdown>
    Yet Another Very Small Company ...
+
+* [README](https://github.com/pazof/yavsc/blob/vnext/README.md)
+* [license: GNU FPL v3](https://github.com/pazof/yavsc/blob/vnext/LICENSE)
+
 </markdown>
 </environment>
 
-<environment names="YavscPre">
+<environment names="YavscPre,Development">
 <markdown>
 ## Yet Another Very Small Company : 
+* [README](https://github.com/pazof/yavsc/blob/vnext/README.md)
+* [license: GNU FPL v3](https://github.com/pazof/yavsc/blob/vnext/LICENSE)
 
 En production:
    
@@ -129,7 +134,7 @@ En production:
 </environment>
 
 
-<environment names="coiffure">
+<environment names="coiffure,Development">
 <markdown>
 Vous êtes sur le site de commande en coiffure à domicile de Soraya Boudjouraf, 
 un as de la coiffure, qui oeuvre en région parisienne.
