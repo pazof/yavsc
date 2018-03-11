@@ -1,12 +1,28 @@
 {
-    "version": "1.0.5",
+    "version": "1.0.5-*",
     "description": "Yavsc Client Api",
     "authors": [
-        "Paul Schneider"
+        "Paul Schneider <paul@pschneider.fr>"
     ],
-    "tags": [
-        ""
-    ],
+    "packOptions": {
+        "repository": {
+            "type": "git",
+            "url": "https://github.com/pazof/yavsc"
+        },
+        "licenseUrl": "https://github.com/pazof/yavsc/blob/vnext/LICENSE",
+        "requireLicenseAcceptance": true,
+        "owners": [
+            "Paul Schneider <paul@pschneider.fr>"
+        ],
+        "summary": "Yet another very small company",
+        "projectUrl": "http://yavsc.pschneider.fr",
+        "tags": [
+            "Blog",
+            "Blog",
+            "PoS",
+            "Chat"
+        ]
+    },
     "projectUrl": "",
     "licenseUrl": "",
     "tooling": {
