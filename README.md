@@ -16,7 +16,35 @@ Le code est du c sharp, dont les librairies sont restorées et le tout compilé 
 Une fois l'environnement ainsi pollué, executer, depuis le sous dossier `Yavsc`:
 
     dnu build
-    dnx web # (pour execution en environement de développement, c.f. project.json)
+
+L'execution, avec un runtime Mono, echoura dans ses version récentes.
+Celui ci convient:
+
+    [monoperso] ~/workspace/yavsc/Yavsc @ mono --version
+    Mono JIT compiler version 4.6.2 (Stable 4.6.2.7/08fd525 jeudi 18 janvier 2018, 13:10:54 (UTC+0100))
+        TLS:           __thread
+        SIGSEGV:       altstack
+        Notifications: epoll
+        Architecture:  amd64
+        Disabled:      none
+        Misc:          softdebug 
+        LLVM:          supported, not enabled.
+        GC:            sgen
+
+
+et, pour execution en environement de développement
+
+    [monoperso] ~/workspace/yavsc/Yavsc @ ASPNET_ENV=Development dnx web
+    warn: Yavsc.Startup[0]
+      AppData was not found in environment variables
+    warn: Yavsc.Startup[0]
+      It has been set to : /home/paul/workspace/yavsc/Yavsc/AppDataDevelopment
+    Hosting environment: Development
+    Now listening on: http://*:5000
+    Application started. Press Ctrl+C to shut down.
+
+Si vous êtes arrivé jusqu'ici, vous devriez pouvoir visiter la home page 
+ [ici](http://localhost:5000).
 
 
 ## Fonctionalités
