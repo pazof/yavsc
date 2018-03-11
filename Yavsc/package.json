@@ -1,19 +1,25 @@
 {
-  "name": "yavsc",
-  "version": "0.0.0",
-  "devDependencies": {
-    "grunt": "^1.0.1",
-    "gulp": "^3.9.0",
-    "gulp-clean": "^0.3.2",
-    "gulp-concat": "2.5.2",
-    "gulp-cssmin": "^0.1.7",
-    "gulp-dnx-tasks": "^1.0.0-beta7",
-    "gulp-shell": "^0.5.2",
-    "gulp-uglify": "1.2.0",
-    "rimraf": "2.2.8"
-  },
-  "dependencies": {
-    "braintree-web": "^3.15.0",
-    "paypal-permissions-sdk": "^1.0.8"
-  }
+    "name": "yavsc",
+    "version": "1.0.1",
+    "description": "Yet Another Very Small Company",
+    "repository": {
+        "type": "Git",
+        "url": "https://github.com/pazof/yavsc"
+    },
+    "license": "GPL-3.0",
+    "devDependencies": {
+        "grunt": "^1.0.2",
+        "gulp": "^3.9.1",
+        "gulp-clean": "^0.4.0",
+        "gulp-concat": "2.6.1",
+        "gulp-cssmin": "^0.2.0",
+        "gulp-dnx-tasks": "^1.0.0-beta7",
+        "gulp-shell": "^0.6.5",
+        "gulp-uglify": "^3.0.0",
+        "rimraf": "^2.6.2"
+    },
+    "dependencies": {
+        "braintree-web": "^3.31.0",
+        "paypal-permissions-sdk": "^1.0.10"
+    }
 }
