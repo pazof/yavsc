@@ -1,10 +1,10 @@
 CONFIG=Release
-VERSION=1.0.5-rc7
+VERSION=1.0.5-rc8
 PRJNAME=Yavsc.Abstract
 PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
 DESTPATH=.
 PACKAGE=$(DESTPATH)/$(PKGFILENAME)
-BINARY=bin/$(CONFIG)/net45/Yavsc.Abstract.dll
+BINARY=bin/$(CONFIG)/net451/Yavsc.Abstract.dll
 NUGETSOURCE=$(HOME)/Nupkgs/
 
 $(PACKAGE): $(BINARY)
