@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0-*",
+    "version": "1.0.1-*",
     "authors": [
         "Paul Schneider"
     ],
@@ -105,9 +105,7 @@
         "Microsoft.Extensions.Globalization.CultureInfoCache": "1.0.0-rc1-final",
         "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
         "Microsoft.Extensions.Localization.Abstractions": "1.0.0-rc1-final",
-        "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
         "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
-        "Microsoft.Extensions.CodeGenerators.Mvc": "1.0.0-rc1-final",
         "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
         "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta8",
         "Microsoft.Framework.Configuration.Binder": "1.0.0-beta8",
@@ -119,7 +117,6 @@
         "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final",
         "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
         "Microsoft.AspNet.DataProtection.SystemWeb": "1.0.0-rc1-final",
-        "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
         "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
         "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
         "Microsoft.AspNet.OWin": "1.0.0-rc1-final",
@@ -127,11 +124,11 @@
         "Yavsc.Abstract": {
             "type": "build"
         },
-        "Extensions.AspNet.Authentication.Instagram": "1.0.0-t150809211713",
         "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
         "Microsoft.DiaSymReader.Native": "1.5.0",
         "PayPalMerchant-net451": "2.7.109",
-        "Gapi.net45": "1.0.0"
+        "Gapi.net45": "1.0.0",
+        "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final"
     },
     "commands": {
         "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
@@ -162,7 +159,6 @@
             "contrib/**/*.*"
         ]
     },
-
     "scripts": {
         "prepublish": "gulp min"
     },
