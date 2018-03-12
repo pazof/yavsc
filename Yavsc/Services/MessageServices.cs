@@ -5,7 +5,6 @@ using MimeKit;
 using MailKit.Security;
 using System;
 using Yavsc.Models.Messaging;
-using Yavsc.Helpers;
 using Microsoft.AspNet.Identity;
 using Yavsc.Models;
 using Yavsc.Models.Google.Messaging;
@@ -15,6 +14,7 @@ using Yavsc.Interfaces.Workflow;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Services
 {

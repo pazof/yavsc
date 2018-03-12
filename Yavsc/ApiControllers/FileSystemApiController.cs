@@ -52,18 +52,18 @@ namespace Yavsc.ApiControllers
             return Ok(files);
         }
 
-        [HttpPost]
-        public IActionResult Post(string subdir="", string names = null)
+        [HttpPost("{subdir}")]
+        public IActionResult Post(string subdir="")
         {
-            string root = null;
-            string [] destinationFileNames = names?.Split('/');
+            string destDir = null;
             List<FileRecievedInfo> received = new List<FileRecievedInfo>();
             InvalidPathException pathex = null;
             try {
-                root = User.InitPostToFileSystem(subdir);
+                destDir = User.InitPostToFileSystem(subdir);
             } catch (InvalidPathException ex) {
                 pathex = ex;
             }
+            logger.LogInformation($"Recieving files, saved in '{destDir}' (specified ad '{subdir}').");
             if (pathex!=null)
               return new BadRequestObjectResult(pathex);
             var uid = User.GetUserId();
@@ -72,11 +72,11 @@ namespace Yavsc.ApiControllers
             );
             int i=0;
             logger.LogInformation($"Recieving {Request.Form.Files.Count} files.");
+            
             foreach (var f in Request.Form.Files)
             {
-                var destFileName = destinationFileNames?.Length >i ? destinationFileNames[i] : null;
-
-                var item = user.ReceiveUserFile(root, f, destFileName);
+                
+                var item = user.ReceiveUserFile(destDir, f);
                 dbContext.SaveChanges(User.GetUserId());
                 received.Add(item);
                 logger.LogInformation($"Recieved  '{item.FileName}'.");

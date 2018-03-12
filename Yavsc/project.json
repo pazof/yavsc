@@ -122,6 +122,11 @@
         "Microsoft.AspNet.OWin": "1.0.0-rc1-final",
         "System.Json": "4.0.20126.16343",
         "Yavsc.Abstract": {
+            "target": "project",
+            "type": "build"
+        },
+        "Yavsc.Server": {
+            "target": "project",
             "type": "build"
         },
         "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",

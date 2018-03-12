@@ -46,7 +46,7 @@ namespace Yavsc.Helpers
             }
             var di = new DirectoryInfo(root);
             if (!di.Exists) di.Create();
-            return root;
+            return di.FullName;
         }
 
         public static void DeleteUserFile(this ApplicationUser user, string fileName)
@@ -66,6 +66,7 @@ namespace Yavsc.Helpers
             ContentDisposition contentDisposition = new ContentDisposition(f.ContentDisposition);
             item.FileName = Yavsc.Abstract.FileSystem.FileSystemHelpers.FilterFileName (destFileName ?? contentDisposition.FileName);
             item.MimeType = contentDisposition.DispositionType;
+            item.DestDir = root;
             var fi = new FileInfo(Path.Combine(root, item.FileName));
             if (fi.Exists)
             {

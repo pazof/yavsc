@@ -112,12 +112,15 @@ namespace testOauthClient
                                 string email = null;
                                 if (emails !=null)
                                   email = emails.First?.Value<string>();
-                                context.Identity.AddClaim(
-                                    new Claim( ClaimTypes.NameIdentifier,identifier));
-                                context.Identity.AddClaim(
-                                    new Claim( ClaimTypes.Name,givenName));
-                                context.Identity.AddClaim(
-                                    new Claim( ClaimTypes.Email,email));
+                                if (identifier!=null)
+                                    context.Identity.AddClaim(
+                                        new Claim( ClaimTypes.NameIdentifier,identifier));
+                                if (givenName!=null)
+                                    context.Identity.AddClaim(
+                                        new Claim( ClaimTypes.Name,givenName));
+                                if (email!=null)
+                                    context.Identity.AddClaim(
+                                        new Claim( ClaimTypes.Email,email));
                                     // TODO add all emails and roles
 
                             }
