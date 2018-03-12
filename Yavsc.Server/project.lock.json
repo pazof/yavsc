@@ -11,6 +11,17 @@
         "runtime": {
           "lib/net45/Newtonsoft.Json.dll": {}
         }
+      },
+      "Yavsc.Abstract/1.0.5": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "Newtonsoft.Json": "9.0.1"
+        },
+        "frameworkAssemblies": [
+          "System.ComponentModel.DataAnnotations",
+          "System.Json"
+        ]
       }
     },
     ".NETFramework,Version=v4.5.1/debian.9-x86": {
@@ -22,6 +33,17 @@
         "runtime": {
           "lib/net45/Newtonsoft.Json.dll": {}
         }
+      },
+      "Yavsc.Abstract/1.0.5": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "Newtonsoft.Json": "9.0.1"
+        },
+        "frameworkAssemblies": [
+          "System.ComponentModel.DataAnnotations",
+          "System.Json"
+        ]
       }
     },
     ".NETFramework,Version=v4.5.1/debian.9-x64": {
@@ -33,10 +55,25 @@
         "runtime": {
           "lib/net45/Newtonsoft.Json.dll": {}
         }
+      },
+      "Yavsc.Abstract/1.0.5": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "Newtonsoft.Json": "9.0.1"
+        },
+        "frameworkAssemblies": [
+          "System.ComponentModel.DataAnnotations",
+          "System.Json"
+        ]
       }
     }
   },
   "libraries": {
+    "Yavsc.Abstract/1.0.5": {
+      "type": "project",
+      "path": "../Yavsc.Abstract/project.json"
+    },
     "Newtonsoft.Json/9.0.1": {
       "type": "package",
       "sha512": "U82mHQSKaIk+lpSVCbWYKNavmNH1i5xrExDEquU1i6I5pV6UMOqRnJRSlKO3cMPfcpp0RgDY+8jUXHdQ4IfXvw==",
@@ -64,11 +101,15 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Newtonsoft.Json >= 9.0.1"
+      "Newtonsoft.Json >= 9.0.1",
+      "Yavsc.Abstract "
     ],
     ".NETFramework,Version=v4.5.1": [
       "fx/System.ComponentModel.DataAnnotations >= 4.0.0",
-      "fx/System.Json >= 4.0.0"
+      "fx/System.Json >= 4.0.0",
+      "fx/System.Net >= 4.0.0",
+      "fx/System.Xml >= 4.0.0",
+      "fx/System >= 4.0.0"
     ]
   }
 }

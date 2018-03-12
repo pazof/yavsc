@@ -25,7 +25,7 @@ using Newtonsoft.Json;
 using System;
 using System.Json;
 
-namespace Yavsc.Helpers
+namespace Yavsc.Server.Helpers
 {
     /// <summary>
     /// Simple json post method.

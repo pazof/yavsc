@@ -8,6 +8,12 @@
 		},
 		{
 			"path": "cli"
+		},
+		{
+			"path": "testOauthClient"
+		},
+		{
+			"path": "Yavsc.Server"
 		}
 	],
 	"settings": {

@@ -2,7 +2,7 @@
     "projects": [
         "Yavsc",
         "Yavsc.Abstract",
-        "YaTask",
+        "Yavsc.Server",
         "testOauthClient"
     ],
     "sdk": {

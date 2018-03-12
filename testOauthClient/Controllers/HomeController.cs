@@ -1,18 +1,24 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Json;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Logging;
-using Yavsc.Helpers;
+using Yavsc.Server.Helpers;
+using Yavsc.Server.Model;
 
 namespace testOauthClient.Controllers
 {
     public class HomeController : Controller
     {
         ILogger _logger;
+
         public HomeController(ILoggerFactory loggerFactory)
         {
             _logger=loggerFactory.CreateLogger<HomeController>();
@@ -36,6 +42,45 @@ namespace testOauthClient.Controllers
 
                 return View("Index", model: await response.Content.ReadAsStringAsync());
             }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostFiles(string subdir)
+        {
+            string results = null;
+            _logger.LogInformation($"{Request.Form.Files.Count} file(s) to send");
+            
+                // TODO better uri construction in production environment
+                    List<FormFile> args = new List<FormFile>();
+                    foreach (var formFile in Request.Form.Files)
+                    {
+                        _logger.LogWarning($"Treating {formFile.ContentDisposition}");
+                        var memStream = new MemoryStream();
+                        const int sz = 1024*64;
+                        byte [] buffer = new byte[sz];
+                        using (var innerStream = formFile.OpenReadStream()) {
+                            int szRead = 0;
+                            do {
+                                szRead = innerStream.Read(buffer,0,sz);
+                                memStream.Write(buffer,0,szRead);
+                            } while (szRead>0);
+                        }
+                        memStream.Seek(0,SeekOrigin.Begin);
+                        args.Add(
+                        new FormFile {
+                            ContentDisposition = formFile.ContentDisposition,
+                            ContentType = formFile.ContentType,
+                            Stream = memStream
+                        });
+                    }
+                    string uri = "http://dev.pschneider.fr/api/fs/"+System.Uri.EscapeDataString(subdir);
+                    _logger.LogInformation($"Posting data to '{uri}'...");
+                    
+                    results = await RequestHelper.PostMultipart(uri, args.ToArray(), AccessToken);
+                    _logger.LogInformation("Data posted.");
+            
+            return View("Index", model: results);
 
         }
 

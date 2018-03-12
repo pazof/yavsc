@@ -1,6 +1,6 @@
 {
-    "version": "1.0.5-*",
-    "description": "Yavsc Client Api",
+    "version": "1.0.0-*",
+    "description": "Yavsc server common library",
     "authors": [
         "Paul Schneider <paul@pschneider.fr>"
     ],
@@ -27,13 +27,21 @@
         "defaultNamespace": "Yavsc"
     },
     "dependencies": {
-        "Newtonsoft.Json": "9.0.1"
+        "Newtonsoft.Json": "9.0.1",
+        "Yavsc.Abstract": {
+            "target": "project",
+            "type": "build"
+        }
     },
     "frameworks": {
         "net451": {
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0",
-                "System.Json": "4.0.0"
+                "System.Json": "4.0.0",
+                "System.Net": "4.0.0.0",
+                "System.Net.Http": "4.0.0.0",
+                "System.Xml": "4.0.0.0",
+                "System": "4.0.0.0"
             }
         }
     }
