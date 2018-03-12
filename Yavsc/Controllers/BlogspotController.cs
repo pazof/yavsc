@@ -98,7 +98,7 @@ namespace Yavsc.Controllers
                 b => b.Author
                 ).Where(x => x.Author.UserName == id && x.Visible);
                 // BlogIndexKey
-            return View("Index", result.OrderByDescending(p => p.DateCreated).ToList().GroupBy(p=>new BlogIndexKey { Title = p.Title, AuthorId = p.AuthorId } ));
+            return View("Index", result.OrderByDescending(p => p.DateCreated).ToList().GroupBy(p=> p.Title ));
         }
         // GET: Blog/Details/5
         [AllowAnonymous]
