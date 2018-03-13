@@ -26,7 +26,7 @@ namespace Yavsc
             FrontOfficeGroupName = "FrontOffice",
             GCMNotificationUrl = "https://gcm-http.googleapis.com/gcm/send",
         	KeyProtectorPurpose = "OAuth.AspNet.AuthServer",
-            UserFilesPath = "/files",
+            UserFilesPath = "/UserFiles",
             AvatarsPath = "/avatars",
             DefaultAvatar = "/images/Users/icon_user.png",
             AnonAvatar = "/images/Users/icon_anon_user.png";
