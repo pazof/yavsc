@@ -7,21 +7,21 @@ using System.Text.RegularExpressions;
 
 namespace OAuth.AspNet.Tokens
 {
-
+    [Obsolete]
     public class TicketDataFormatTokenValidator : ISecurityTokenValidator
     {
         #region Constructors
 
-        public TicketDataFormatTokenValidator() : this(null) { }
+        public TicketDataFormatTokenValidator() : this(null, "AccessToken", new string [] { "v1" }) { }
 
-        public TicketDataFormatTokenValidator(IDataProtectionProvider dataProtectionProvider)
+        public TicketDataFormatTokenValidator(IDataProtectionProvider dataProtectionProvider, string purpose, string [] subPurposes)
         {
             if (dataProtectionProvider == null)
             {
                 dataProtectionProvider = new MonoDataProtectionProvider(System.AppDomain.CurrentDomain.FriendlyName)
                 .CreateProtector("profile");
             }
-            _ticketDataFormat = new TicketDataFormat(dataProtectionProvider.CreateProtector("Access_Token", "v1"));
+            _ticketDataFormat = new TicketDataFormat(dataProtectionProvider.CreateProtector(purpose, subPurposes));
         }
 
         #endregion
