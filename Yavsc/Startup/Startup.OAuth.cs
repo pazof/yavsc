@@ -98,6 +98,7 @@ namespace Yavsc
             app.UseWhen(context => context.Request.Path.StartsWithSegments("/api"),
                branch =>
                {
+                  
                    branch.UseJwtBearerAuthentication(
                                                 options =>
                                                 {
