@@ -129,6 +129,10 @@
             "target": "project",
             "type": "build"
         },
+        "OAuth.AspNet.AuthServer": {
+            "target": "project",
+            "type": "build"
+        },
         "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
         "Microsoft.DiaSymReader.Native": "1.5.0",
         "PayPalMerchant-net451": "2.7.109",

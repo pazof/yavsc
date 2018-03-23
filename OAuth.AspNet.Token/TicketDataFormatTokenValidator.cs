@@ -4,8 +4,6 @@ using System;
 using System.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
-using Yavsc.Auth;
-using Yavsc;
 
 namespace OAuth.AspNet.Tokens
 {
@@ -20,8 +18,8 @@ namespace OAuth.AspNet.Tokens
         {
             if (dataProtectionProvider == null)
             {
-                dataProtectionProvider = new MonoDataProtectionProvider(Constants.ApplicationName)
-                .CreateProtector(Constants.KeyProtectorPurpose);
+                dataProtectionProvider = new MonoDataProtectionProvider(System.AppDomain.CurrentDomain.FriendlyName)
+                .CreateProtector("profile");
             }
             _ticketDataFormat = new TicketDataFormat(dataProtectionProvider.CreateProtector("Access_Token", "v1"));
         }

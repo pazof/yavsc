@@ -130,10 +130,16 @@ namespace Yavsc.Controllers
 
              return View();
          }
+
          public IActionResult VideoChat() 
          {
              return View();
          }
 
-    }
+         public IActionResult Audio() 
+         {
+             return View();
+         }
+
+    }   
 }

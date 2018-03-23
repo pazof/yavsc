@@ -3,7 +3,9 @@
         "Yavsc",
         "Yavsc.Abstract",
         "Yavsc.Server",
-        "testOauthClient"
+        "testOauthClient",
+        "OAuth.AspNet.Token",
+        "OAuth.AspNet.Server"
     ],
     "sdk": {
         "version": "1.0.0-rc1-update2",

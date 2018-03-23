@@ -14,6 +14,12 @@
 		},
 		{
 			"path": "Yavsc.Server"
+		},
+		{
+			"path": "OAuth.AspNet.AuthServer"
+		},
+		{
+			"path": "OAuth.AspNet.Token"
 		}
 	],
 	"settings": {

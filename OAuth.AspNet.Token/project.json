@@ -1,0 +1,38 @@
+{
+    "version": "1.0.5-*",
+    "description": "OAuth AspNet Token",
+    "authors": [
+        "Paul Schneider <paul@pschneider.fr>"
+    ],
+    "packOptions": {
+        "repository": {
+            "type": "git",
+            "url": "https://github.com/pazof/yavsc"
+        },
+        "licenseUrl": "https://github.com/pazof/yavsc/blob/vnext/LICENSE",
+        "requireLicenseAcceptance": true,
+        "owners": [
+            "Paul Schneider <paul@pschneider.fr>"
+        ],
+        "summary": "Yet another very small company",
+        "projectUrl": "http://yavsc.pschneider.fr",
+        "tags": [
+            "Authorization server",
+            "OAuth",
+            "Web API"
+        ]
+    },
+    "tooling": {
+        "defaultNamespace": "Yavsc"
+    },
+    "dependencies": {
+        "Newtonsoft.Json": "9.0.1",
+        "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+        "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final"
+    },
+    "frameworks": {
+        "dnx451": {
+            "frameworkAssemblies": {}
+        }
+    }
+}

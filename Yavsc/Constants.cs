@@ -25,7 +25,6 @@ namespace Yavsc
             BlogModeratorGroupName = "Moderator",
             FrontOfficeGroupName = "FrontOffice",
             GCMNotificationUrl = "https://gcm-http.googleapis.com/gcm/send",
-        	KeyProtectorPurpose = "OAuth.AspNet.AuthServer",
             UserFilesPath = "/UserFiles",
             AvatarsPath = "/avatars",
             DefaultAvatar = "/images/Users/icon_user.png",
