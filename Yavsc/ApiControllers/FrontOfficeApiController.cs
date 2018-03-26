@@ -4,6 +4,7 @@ using Microsoft.AspNet.Mvc;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
+using Yavsc.Services;
 
 namespace Yavsc.ApiControllers
 {
@@ -27,7 +28,7 @@ namespace Yavsc.ApiControllers
         {
             if (billingCode==null) return HttpBadRequest("billingCode");
             if (queryId==0) return HttpBadRequest("queryId");
-            var billing =  Startup.GetBillable(dbContext, billingCode, queryId);
+            var billing =  BillingService.GetBillable(dbContext, billingCode, queryId);
             if (billing==null) return HttpBadRequest();
             billing.Rejected = true;
             billing.RejectedAt = DateTime.Now;

@@ -1,10 +1,17 @@
+using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
+using Yavsc.ViewModels.UserFiles;
 
 namespace Yavsc.Abstract.FileSystem
 {
-    public static class FileSystemHelpers
+    public static class AbstractFileSystemHelpers
     {
+
+        public static string UserBillsDirName {  set; get; }
+        public static string UserFilesDirName {  set; get; }
+        
         public static bool IsValidYavscPath(this string path)
         {
             if (string.IsNullOrEmpty(path)) return true;
@@ -36,6 +43,16 @@ namespace Yavsc.Abstract.FileSystem
             }
            return sb.ToString();
         }
+  
+        public static UserDirectoryInfo GetUserFiles(this ClaimsPrincipal user, string subdir)
+        {
+
+            UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, user.Identity.Name, subdir);
+
+            return di;
+        }
+        
+        
     }
 
     public static  class FileSystemConstants

@@ -34,12 +34,13 @@ namespace Yavsc
     using PayPal.Manager;
     using Services;
     using ViewModels.Auth.Handlers;
+    using Yavsc.Abstract.FileSystem;
+    using Yavsc.Helpers;
     using static System.Environment;
 
     public partial class Startup
     {
         public static string ConnectionString { get; private set; }
-        public static string UserBillsDirName { private set; get; }
         public static string AvatarsDirName { private set; get; }
         public static string Authority { get; private set; }
         public static string Temp { get; set; }
@@ -265,14 +266,14 @@ namespace Yavsc
             GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;
             Authority = siteSettings.Value.Authority;
-            Startup.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
-            Startup.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
+            AbstractFileSystemHelpers.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
+            AbstractFileSystemHelpers.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
             Startup.Temp = siteSettings.Value.TempDir;
             PayPalSettings = payPalSettings.Value;
 
             // TODO implement an installation & upgrade procedure
             // Create required directories
-            foreach (string dir in new string[] { UserFilesDirName, UserBillsDirName, SiteSetup.TempDir })
+            foreach (string dir in new string[] { UserFilesDirName, AbstractFileSystemHelpers.UserBillsDirName, SiteSetup.TempDir })
             {
                 DirectoryInfo di = new DirectoryInfo(dir);
                 if (!di.Exists) di.Create();

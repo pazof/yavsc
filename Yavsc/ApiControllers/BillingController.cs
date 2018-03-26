@@ -21,6 +21,7 @@ namespace Yavsc.ApiControllers
     using ViewModels.Auth;
     using Newtonsoft.Json;
     using Yavsc.ViewModels;
+    using Yavsc.Abstract.FileSystem;
 
     [Route("api/bill"), Authorize]
     public class BillingController : Controller
@@ -146,7 +147,7 @@ namespace Yavsc.ApiControllers
             }
 
             var filename = FileSystemHelpers.SignFileNameFormat("pro",billingCode,id);
-            FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
+            FileInfo fi = new FileInfo(Path.Combine(AbstractFileSystemHelpers.UserBillsDirName, filename));
             if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
             return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }
@@ -181,7 +182,7 @@ namespace Yavsc.ApiControllers
             }
             
             var filename = FileSystemHelpers.SignFileNameFormat("pro",billingCode,id);
-            FileInfo fi = new FileInfo(Path.Combine(Startup.UserBillsDirName, filename));
+            FileInfo fi = new FileInfo(Path.Combine(AbstractFileSystemHelpers.UserBillsDirName, filename));
             if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
             return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }

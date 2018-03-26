@@ -6,7 +6,6 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Yavsc.Models;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Builder.Internal;
 using Microsoft.Extensions.PlatformAbstractions;

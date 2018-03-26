@@ -23,6 +23,24 @@
             "Chat"
         ]
     },
+    "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",
+    "buildOptions": {
+        "debugType": "full",
+        "emitEntryPoint": true,
+        "outputName": "Yavsc",
+        "compile": {
+            "include": "*.cs",
+            "exclude": [
+                "wwwroot",
+                "node_modules",
+                "bower_components",
+                "contrib"
+            ]
+        },
+        "embed": [
+            "Resources/**/*.resx"
+        ]
+    },
     "tooling": {
         "defaultNamespace": "Yavsc"
     },
@@ -31,7 +49,21 @@
         "Yavsc.Abstract": {
             "target": "project",
             "type": "build"
-        }
+        },
+        "Microsoft.AspNet.Identity": "3.0.0-rc1-final",
+        "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
+        "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
+        "Gapi.net45": "1.0.0",
+        "PayPalMerchant-net451": "2.7.109",
+        "MailKit": "2.0.2",
+        "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
+        "EntityFramework7.Npgsql": "3.1.0-rc1-3",
+        "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
+        "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
+        "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final"
     },
     "frameworks": {
         "net451": {
