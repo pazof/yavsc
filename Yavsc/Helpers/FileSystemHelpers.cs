@@ -89,7 +89,7 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
 
         public static void DeleteUserFile(this ApplicationUser user, string fileName)
         {
-            var root = Path.Combine(Startup.UserFilesDirName, user.UserName);
+            var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
             var fi = new FileInfo(Path.Combine(root, fileName));
             if (!fi.Exists) return ;
             fi.Delete();
