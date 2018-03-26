@@ -16,8 +16,7 @@ namespace Yavsc.Models.Haircut
 
         public string CreateBoby()
         {
-            return string.Format(ResourcesHelpers.DefaultResourceManager
-            .GetString("RdvToPerf"), Client.UserName,
+            return string.Format(ResourcesHelpers.GlobalLocalizer["RdvToPerf"], Client.UserName,
             EventDate?.ToString("dddd dd/MM/yyyy à HH:mm"),
             Location.Address,
             ActivityCode);

@@ -6,7 +6,7 @@ namespace Yavsc.Attributes.Validation
         private long maxLen;
         public YaStringLength(long maxLen) : base(
             ()=>string.Format(
-                ResourcesHelpers.DefaultResourceManager.GetString("BadStringLength"),
+                ResourcesHelpers.GlobalLocalizer["BadStringLength"],
                 maxLen))
         {
             this.maxLen = maxLen;
@@ -43,12 +43,12 @@ namespace Yavsc.Attributes.Validation
             if (MinLen<0) {
                 // DetailledMaxStringLength
                 return string.Format(
-                ResourcesHelpers.DefaultResourceManager.GetString("DetailledMaxStringLength"),
+                ResourcesHelpers.GlobalLocalizer["DetailledMaxStringLength"],
                 maxLen,
                 excedent);
             } else 
                 return string.Format(
-                ResourcesHelpers.DefaultResourceManager.GetString("DetailledMinMaxStringLength"),
+                ResourcesHelpers.GlobalLocalizer["DetailledMinMaxStringLength"],
                 MinLen,
                 maxLen,
                 manquant,

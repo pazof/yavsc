@@ -1,5 +1,4 @@
 using System.Resources;
-using Yavsc.Resources;
 
 namespace Yavsc.Attributes.Validation
 {
@@ -11,7 +10,7 @@ namespace Yavsc.Attributes.Validation
 
         public override string FormatErrorMessage(string name)
         {
-            return ResourcesHelpers.DefaultResourceManager.GetString(this.ErrorMessageResourceName);
+            return ResourcesHelpers.GlobalLocalizer[this.ErrorMessageResourceName];
         }
     }
 }

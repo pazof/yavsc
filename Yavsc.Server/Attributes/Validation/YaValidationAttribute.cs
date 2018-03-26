@@ -4,7 +4,7 @@ namespace Yavsc.Attributes.Validation
 {
     public class YaValidationAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
     {
-        public YaValidationAttribute() : base(()=> ResourcesHelpers.DefaultResourceManager.GetString("validationError"))
+        public YaValidationAttribute() : base(()=> ResourcesHelpers.GlobalLocalizer["validationError"])
         {
 
         }
@@ -16,7 +16,7 @@ namespace Yavsc.Attributes.Validation
 
         public override string FormatErrorMessage(string name)
         {
-            return ResourcesHelpers.DefaultResourceManager.GetString(name);
+            return ResourcesHelpers.GlobalLocalizer[name];
         }
     }
 }

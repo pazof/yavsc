@@ -37,7 +37,7 @@
                 "contrib"
             ]
         },
-        "embed": [
+        "copyToOutput": [
             "Resources/**/*.resx"
         ]
     },

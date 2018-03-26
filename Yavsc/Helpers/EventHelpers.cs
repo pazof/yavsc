@@ -42,7 +42,7 @@ namespace Yavsc.Helpers
             string strprestation = query.GetDescription();
 
             var yaev = query.CreateEvent("NewHairCutQuery",
-             string.Format(Startup.GlobalLocalizer["HairCutQueryValidation"],query.Client.UserName),
+             string.Format(ResourcesHelpers.GlobalLocalizer["HairCutQueryValidation"],query.Client.UserName),
               $"{query.Client.Id}");
               
 

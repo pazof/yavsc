@@ -22,10 +22,8 @@ namespace Yavsc.Models.Haircut
         // Bill description
         public override string GetDescription()
         {
-            string type = ResourcesHelpers.DefaultResourceManager
-            .GetString(this.GetType().Name);
-            string gender = ResourcesHelpers.DefaultResourceManager
-            .GetString(this.Prestation.Gender.ToString());
+            string type = ResourcesHelpers.GlobalLocalizer[this.GetType().Name];
+            string gender = ResourcesHelpers.GlobalLocalizer[this.Prestation.Gender.ToString()];
            
            return  $"{type} ({gender})";
         }
@@ -88,8 +86,7 @@ namespace Yavsc.Models.Haircut
 
                     Name = "Coupe",
                     Description = $"Coupe "+
-                    ResourcesHelpers.DefaultResourceManager
-            .GetString(Prestation.Gender.ToString())+ " "+
+                    ResourcesHelpers.GlobalLocalizer[Prestation.Gender.ToString()]+ " "+
                    (Prestation.Gender == HairCutGenders.Women ?
         Prestation.Length == HairLength.Long ? longhairsuffix :
         Prestation.Length == HairLength.HalfLong ? halflonghairsuffix :
