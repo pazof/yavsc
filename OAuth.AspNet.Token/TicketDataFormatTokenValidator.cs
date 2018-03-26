@@ -7,12 +7,11 @@ using System.Text.RegularExpressions;
 
 namespace OAuth.AspNet.Tokens
 {
-    [Obsolete]
     public class TicketDataFormatTokenValidator : ISecurityTokenValidator
     {
         #region Constructors
 
-        public TicketDataFormatTokenValidator() : this(null, "AccessToken", new string [] { "v1" }) { }
+        public TicketDataFormatTokenValidator(IDataProtectionProvider dataProtectionProvider, string purpose = "AccessToken") : this(dataProtectionProvider, purpose , new string [] { "v1" }) { }
 
         public TicketDataFormatTokenValidator(IDataProtectionProvider dataProtectionProvider, string purpose, string [] subPurposes)
         {

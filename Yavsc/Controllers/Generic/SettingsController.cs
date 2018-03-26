@@ -8,6 +8,7 @@ namespace Yavsc.Controllers.Generic
 {
     using System.Linq;
     using Models;
+    using Yavsc.Services;
 
     [Authorize]
     public abstract class SettingsController<TSettings> : Controller where TSettings : class, ISpecializationSettings, new()
@@ -19,7 +20,7 @@ namespace Yavsc.Controllers.Generic
 
         protected DbSet<TSettings> Settings { get {
             if (dbSet == null)  {
-                dbSet = (DbSet<TSettings>) Startup.UserSettings.Single(s=>s.Name == typeof(TSettings).Name).GetValue(_context);
+                dbSet = (DbSet<TSettings>) BillingService.UserSettings.Single(s=>s.Name == typeof(TSettings).Name).GetValue(_context);
             }
                
            

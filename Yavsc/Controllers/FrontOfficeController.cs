@@ -13,6 +13,8 @@ namespace Yavsc.Controllers
     using Microsoft.Extensions.Localization;
     using Models;
     using ViewModels.FrontOffice;
+    using Yavsc.Abstract.FileSystem;
+    using Yavsc.Services;
 
     public class FrontOfficeController : Controller
     {
@@ -93,7 +95,7 @@ namespace Yavsc.Controllers
         public IActionResult EstimatePdf(long id)
         {
             ViewBag.TempDir = Startup.SiteSetup.TempDir;
-            ViewBag.BillsDir = Startup.UserBillsDirName;
+            ViewBag.BillsDir =  AbstractFileSystemHelpers.UserBillsDirName;
             var estimate = _context.Estimates.Include(x => x.Query)
             .Include(x => x.Query.Client)
             .Include(x => x.Query.PerformerProfile)

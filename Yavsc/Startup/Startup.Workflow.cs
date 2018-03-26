@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.AspNet.Builder;
 using Microsoft.Extensions.Logging;
 
@@ -14,6 +13,7 @@ namespace Yavsc
     using Yavsc.Models.Billing;
     using Yavsc.Models.Haircut;
     using Yavsc.Models.Workflow;
+    using Yavsc.Services;
 
     public partial class Startup
     {
@@ -22,14 +22,10 @@ namespace Yavsc
         /// populated at startup, using reflexion.
         /// </summary>
         public static List<Type> ProfileTypes = new List<Type>();
-        public static List<PropertyInfo> UserSettings = new List<PropertyInfo>();
 
-        public static Dictionary<string,Func<ApplicationDbContext,long,INominativeQuery>> Billing =
-        new Dictionary<string,Func<ApplicationDbContext,long,INominativeQuery>> ();
+        
 
-        public static INominativeQuery GetBillable(ApplicationDbContext context, string billingCode, long queryId ) =>  Billing[billingCode](context, queryId);
-        public static Dictionary<string,string> BillingMap =
-          new Dictionary<string,string>();
+        
         /// <summary>
         /// Lists available command forms.
         /// This is hard coded.
@@ -63,7 +59,7 @@ namespace Yavsc
                         if (typeof(IQueryable<ISpecializationSettings>).IsAssignableFrom(propinfo.PropertyType))
                         {// double-bingo 
                             logger.LogVerbose($"Pro: {propinfo.Name}");
-                            UserSettings.Add(propinfo);
+                            BillingService.UserSettings.Add(propinfo);
                         }
                         else
                         // Design time error
@@ -99,8 +95,8 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
 
         public static void RegisterBilling<T>(string code, Func<ApplicationDbContext,long,INominativeQuery> getter) where T : IBillable
         {
-            Billing.Add(code,getter) ;
-            BillingMap.Add(typeof(T).Name,code);
+            BillingService.Billing.Add(code,getter) ;
+            BillingService.BillingMap.Add(typeof(T).Name,code);
         }
     }
 

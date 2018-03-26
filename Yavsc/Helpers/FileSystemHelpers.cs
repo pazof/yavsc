@@ -19,22 +19,60 @@ namespace Yavsc.Helpers
 {
     public static class FileSystemHelpers
     {
+        public static Func<string,string,long,string>
+          SignFileNameFormat = new Func<string,string,long,string> ((signType,billingCode,estimateId) => $"sign-{billingCode}-{signType}-{estimateId}.png");
 
 
-        public static UserDirectoryInfo GetUserFiles(this ClaimsPrincipal user, string subdir)
+public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signtype)
         {
+            var item = new FileRecievedInfo();
+            item.FileName = SignFileNameFormat("pro",billingCode,estimateId);
+            item.MimeType = formFile.ContentDisposition;
+            
+            var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Bills, item.FileName);
 
-            UserDirectoryInfo di = new UserDirectoryInfo(Startup.UserFilesDirName, user.Identity.Name, subdir);
+            var fi = new FileInfo(destFileName);
+            if (fi.Exists) item.Overriden = true;
 
-            return di;
+            using (var org = formFile.OpenReadStream())
+            {
+                Image i = Image.FromStream(org);
+                using (Bitmap source = new Bitmap(i))
+                {
+                    source.Save(destFileName, ImageFormat.Png);
+                }
+            }
+            return item;
         }
 
+        private static void CreateAvatars(this ApplicationUser user, Bitmap source)
+        {
+            var dir = Startup.SiteSetup.UserFiles.Avatars;
+            var name = user.UserName + ".png";
+            var smallname = user.UserName + ".s.png";
+            var xsmallname = user.UserName + ".xs.png";
+            using (Bitmap newBMP = new Bitmap(source, 128, 128))
+            {
+                newBMP.Save(Path.Combine(
+                    dir, name), ImageFormat.Png);
+            }
+            using (Bitmap newBMP = new Bitmap(source, 64, 64))
+            {
+                newBMP.Save(Path.Combine(
+                    dir, smallname), ImageFormat.Png);
+            }
+            using (Bitmap newBMP = new Bitmap(source, 32, 32))
+            {
+                newBMP.Save(Path.Combine(
+                    dir, xsmallname), ImageFormat.Png);
+            }
+        }
 
         public static string InitPostToFileSystem(
             this ClaimsPrincipal user,
             string subpath)
         {
-            var root = Path.Combine(Startup.UserFilesDirName, user.Identity.Name);
+            var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.Identity.Name);
             var diRoot = new DirectoryInfo(root);
             if (!diRoot.Exists) diRoot.Create();
             if (!string.IsNullOrWhiteSpace(subpath)) {
@@ -64,7 +102,7 @@ namespace Yavsc.Helpers
             var item = new FileRecievedInfo();
             // form-data; name="file"; filename="capt0008.jpg"
             ContentDisposition contentDisposition = new ContentDisposition(f.ContentDisposition);
-            item.FileName = Yavsc.Abstract.FileSystem.FileSystemHelpers.FilterFileName (destFileName ?? contentDisposition.FileName);
+            item.FileName = Yavsc.Abstract.FileSystem.AbstractFileSystemHelpers.FilterFileName (destFileName ?? contentDisposition.FileName);
             item.MimeType = contentDisposition.DispositionType;
             item.DestDir = root;
             var fi = new FileInfo(Path.Combine(root, item.FileName));
@@ -150,51 +188,6 @@ namespace Yavsc.Helpers
             return item;
         }
 
-        private static void CreateAvatars(this ApplicationUser user, Bitmap source)
-        {
-            var dir = Startup.SiteSetup.UserFiles.Avatars;
-            var name = user.UserName + ".png";
-            var smallname = user.UserName + ".s.png";
-            var xsmallname = user.UserName + ".xs.png";
-            using (Bitmap newBMP = new Bitmap(source, 128, 128))
-            {
-                newBMP.Save(Path.Combine(
-                    dir, name), ImageFormat.Png);
-            }
-            using (Bitmap newBMP = new Bitmap(source, 64, 64))
-            {
-                newBMP.Save(Path.Combine(
-                    dir, smallname), ImageFormat.Png);
-            }
-            using (Bitmap newBMP = new Bitmap(source, 32, 32))
-            {
-                newBMP.Save(Path.Combine(
-                    dir, xsmallname), ImageFormat.Png);
-            }
-        }
-        public static Func<string,string,long,string>
-          SignFileNameFormat = new Func<string,string,long,string> ((signType,billingCode,estimateId) => $"sign-{billingCode}-{signType}-{estimateId}.png");
 
-        public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signtype)
-        {
-            var item = new FileRecievedInfo();
-            item.FileName = SignFileNameFormat("pro",billingCode,estimateId);
-            item.MimeType = formFile.ContentDisposition;
-            
-            var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Bills, item.FileName);
-
-            var fi = new FileInfo(destFileName);
-            if (fi.Exists) item.Overriden = true;
-
-            using (var org = formFile.OpenReadStream())
-            {
-                Image i = Image.FromStream(org);
-                using (Bitmap source = new Bitmap(i))
-                {
-                    source.Save(destFileName, ImageFormat.Png);
-                }
-            }
-            return item;
-        }
     }
 }

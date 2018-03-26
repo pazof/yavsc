@@ -203,48 +203,6 @@
     <Reference Include="Microsoft.Owin">
       <HintPath>packages\Microsoft.Owin.4.0.0\lib\net451\Microsoft.Owin.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reflection.Metadata">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\System.Reflection.Metadata.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.PlatformAbstractions">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Extensions.PlatformAbstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Runtime.Internals">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Runtime.Internals.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Runtime">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Loader">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Loader.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Host">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Host.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.DesignTimeHost.Abstractions">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.DesignTimeHost.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation.DesignTime">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.DesignTime.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation.CSharp">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation.CSharp.Common">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.CSharp.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation.CSharp.Abstractions">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.CSharp.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.Compilation.Abstractions">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.Compilation.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Dnx.ApplicationHost">
-      <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-coreclr-linux-x64.1.0.0-rc1-update2\bin\Microsoft.Dnx.ApplicationHost.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Dnx.DesignTimeHost">
       <HintPath>..\..\..\..\..\srv\www\dnx\runtimes\dnx-mono.1.0.0-rc1-update2\bin\lib\Microsoft.Dnx.DesignTimeHost\Microsoft.Dnx.DesignTimeHost.dll</HintPath>
     </Reference>
@@ -259,6 +217,9 @@
     </Reference>
     <Reference Include="Yavsc.Abstract">
       <HintPath>packages\Yavsc.Abstract.1.0.5-rc7\lib\portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Yavsc.Abstract.dll</HintPath>
+    </Reference>
+    <Reference Include="Yavsc.Server">
+      <HintPath>packages\Yavsc.Server.1.0.1-rc1\lib\portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Yavsc.Server.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

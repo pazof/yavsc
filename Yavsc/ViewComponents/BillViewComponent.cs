@@ -4,6 +4,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Yavsc.Abstract.FileSystem;
 using Yavsc.Billing;
 using Yavsc.Helpers;
 using Yavsc.Models;
@@ -79,7 +80,7 @@ namespace Yavsc.ViewComponents
                     var genrtrData = new PdfGenerationViewModel{ 
                             Temp = Startup.Temp,
                             TeXSource = tex, 
-                            DestDir = Startup.UserBillsDirName,
+                            DestDir = AbstractFileSystemHelpers.UserBillsDirName,
                             BaseFileName = billable.GetFileBaseName()
                         };
                     if (genrtrData.GenerateEstimatePdf()) {
