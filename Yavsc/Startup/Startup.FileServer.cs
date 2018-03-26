@@ -6,13 +6,13 @@ using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.StaticFiles;
+using Yavsc.Abstract.FileSystem;
 using Yavsc.ViewModels.Auth;
 
 namespace Yavsc
 {
     public partial class Startup
     {
-        public static string UserFilesDirName { get; private set; }
         public static FileServerOptions UserFilesOptions { get; private set; }
 
         public static FileServerOptions AvatarsOptions { get; set; }
@@ -20,13 +20,13 @@ namespace Yavsc
                 SiteSettings siteSettings, IHostingEnvironment env, IAuthorizationService authorizationService)
         {
             var userFilesDirInfo = new DirectoryInfo( siteSettings.UserFiles.Blog );
-            UserFilesDirName =  userFilesDirInfo.FullName;
+            AbstractFileSystemHelpers.UserFilesDirName =  userFilesDirInfo.FullName;
 
             if (!userFilesDirInfo.Exists) userFilesDirInfo.Create();
 
             UserFilesOptions = new FileServerOptions()
             {
-                FileProvider = new PhysicalFileProvider(UserFilesDirName),
+                FileProvider = new PhysicalFileProvider(AbstractFileSystemHelpers.UserFilesDirName),
                 RequestPath = new PathString(Constants.UserFilesPath),
                 EnableDirectoryBrowsing = env.IsDevelopment(),
 

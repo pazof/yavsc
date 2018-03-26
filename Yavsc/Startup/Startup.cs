@@ -36,11 +36,11 @@ namespace Yavsc
     using ViewModels.Auth.Handlers;
     using Yavsc.Abstract.FileSystem;
     using Yavsc.Helpers;
+    using Yavsc.Server.Helpers;
     using static System.Environment;
 
     public partial class Startup
     {
-        public static string ConnectionString { get; private set; }
         public static string AvatarsDirName { private set; get; }
         public static string Authority { get; private set; }
         public static string Temp { get; set; }
@@ -73,7 +73,12 @@ namespace Yavsc
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
-            ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
+            
+            var auth = Configuration["Site:Authority"];
+            var cxstr = Configuration["Data:DefaultConnection:ConnectionString"];
+            DbHelpers.ConnectionString = cxstr;
+
+            Console.WriteLine($"# {auth} ConnectionString: {cxstr}");
 
         }
         public static GoogleAuthSettings GoogleSettings { get; set; }
@@ -82,6 +87,9 @@ namespace Yavsc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // Database connection
+            
             services.AddOptions();
             var siteSettings = Configuration.GetSection("Site");
             services.Configure<SiteSettings>(siteSettings);
@@ -146,10 +154,11 @@ namespace Yavsc
             // DataProtection
             ConfigureProtectionServices(services);
 
+            
             // Add framework services.
             services.AddEntityFramework()
               .AddNpgsql()
-              .AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(ConnectionString))
+              .AddDbContext<ApplicationDbContext>()
               ;
 
             ConfigureOAuthServices(services);
@@ -255,7 +264,6 @@ namespace Yavsc
         IOptions<SiteSettings> siteSettings,
         IOptions<RequestLocalizationOptions> localizationOptions,
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
-        RoleManager<IdentityRole> roleManager,
         IAuthorizationService authorizationService,
         IOptions<PayPalSettings> payPalSettings,
         IOptions<GoogleAuthSettings> googleSettings,
@@ -266,15 +274,22 @@ namespace Yavsc
             GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;
             Authority = siteSettings.Value.Authority;
-            AbstractFileSystemHelpers.UserFilesDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Blog).FullName;
-            AbstractFileSystemHelpers.UserBillsDirName =  new DirectoryInfo(siteSettings.Value.UserFiles.Bills).FullName;
-            Startup.Temp = siteSettings.Value.TempDir;
+            var blogsDir = siteSettings.Value.UserFiles.Blog;
+            if (blogsDir==null) throw new Exception ("blogsDir==null");
+            var billsDir = siteSettings.Value.UserFiles.Bills;
+            if (billsDir==null) throw new Exception ("billsDir==null");
+
+            AbstractFileSystemHelpers.UserFilesDirName =  new DirectoryInfo(blogsDir).FullName;
+            AbstractFileSystemHelpers.UserBillsDirName =  new DirectoryInfo(billsDir).FullName;
+            Temp = siteSettings.Value.TempDir;
             PayPalSettings = payPalSettings.Value;
 
             // TODO implement an installation & upgrade procedure
             // Create required directories
-            foreach (string dir in new string[] { UserFilesDirName, AbstractFileSystemHelpers.UserBillsDirName, SiteSetup.TempDir })
+            foreach (string dir in new string[] { AbstractFileSystemHelpers.UserFilesDirName, AbstractFileSystemHelpers.UserBillsDirName, SiteSetup.TempDir })
             {
+            if (dir==null) throw new Exception (nameof(dir));
+
                 DirectoryInfo di = new DirectoryInfo(dir);
                 if (!di.Exists) di.Create();
             }
