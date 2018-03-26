@@ -58,7 +58,7 @@
         "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
         "Gapi.net45": "1.0.0",
         "PayPalMerchant-net451": "2.7.109",
-        "MailKit": "2.0.2",
+        "MailKit": "1.12.0",
         "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
         "EntityFramework7.Npgsql": "3.1.0-rc1-3",
         "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
