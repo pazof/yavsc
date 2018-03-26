@@ -50,7 +50,7 @@ using Interfaces.Workflow;
         public string CreateBody()
         {
             return string.Format(
-                ResourcesHelpers.DefaultResourceManager.GetString("RdvToPerf"),
+               ResourcesHelpers.GlobalLocalizer["RdvToPerf"],
              Client.UserName,
             EventDate?.ToString("dddd dd/MM/yyyy à HH:mm"),
             Location.Address,

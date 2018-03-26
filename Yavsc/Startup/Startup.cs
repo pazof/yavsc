@@ -50,6 +50,7 @@ namespace Yavsc
 
         public static PayPalSettings PayPalSettings { get; private set; }
         private static ILogger logger;
+
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             var devtag = env.IsDevelopment()?"D":"";
@@ -256,9 +257,6 @@ namespace Yavsc
             CheckServices(services);
         }
 
-
-        public static IStringLocalizer GlobalLocalizer { get; private set; }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
         IOptions<SiteSettings> siteSettings,
@@ -271,7 +269,7 @@ namespace Yavsc
          ILoggerFactory loggerFactory)
         {
             GoogleSettings = googleSettings.Value;
-            GlobalLocalizer = localizer;
+            ResourcesHelpers.GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;
             Authority = siteSettings.Value.Authority;
             var blogsDir = siteSettings.Value.UserFiles.Blog;

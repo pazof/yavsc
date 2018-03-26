@@ -16,7 +16,7 @@ namespace Yavsc.Attributes.Validation
          } 
         public YaRequiredAttribute () 
         {
-            this.ErrorMessage = ResourcesHelpers.DefaultResourceManager.GetString("RequiredField");
+            this.ErrorMessage = ResourcesHelpers.GlobalLocalizer["RequiredField"];
             
         }
         public override bool IsValid(object value) {

@@ -1,14 +1,8 @@
+using System;
 using System.Resources;
-using Yavsc.Resources;
+using Microsoft.Extensions.Localization;
 
 public static class ResourcesHelpers {
-
-    static ResourceManager _defaultResourceManager 
-    = ResourceManager.CreateFileBasedResourceManager("Yavsc.Localization",".",typeof(YavscLocalisation));
-
-    public static ResourceManager DefaultResourceManager
-    { 
-        get { return _defaultResourceManager; }
-        set { _defaultResourceManager = value; }
-    }
+    public static IStringLocalizer GlobalLocalizer = null ;
+    
 }
