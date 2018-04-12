@@ -35,7 +35,6 @@ namespace Yavsc
     using Services;
     using ViewModels.Auth.Handlers;
     using Yavsc.Abstract.FileSystem;
-    using Yavsc.Helpers;
     using Yavsc.Server.Helpers;
     using static System.Environment;
 
@@ -105,7 +104,12 @@ namespace Yavsc
             var paypalSettings = Configuration.GetSection("Authentication").GetSection("PayPal");
             services.Configure<PayPalSettings>(paypalSettings);
 
-
+            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SiteSettings>), typeof(OptionsManager<SiteSettings>)));
+            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
+            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
+            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
+            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<RequestLocalizationOptions>), typeof(OptionsManager<RequestLocalizationOptions>)));
+            
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 var supportedCultures = new[]
@@ -147,11 +151,6 @@ namespace Yavsc
                     };
             });
 
-            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SiteSettings>), typeof(OptionsManager<SiteSettings>)));
-            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
-            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
-            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
-            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<RequestLocalizationOptions>), typeof(OptionsManager<RequestLocalizationOptions>)));
             // DataProtection
             ConfigureProtectionServices(services);
 
@@ -268,6 +267,7 @@ namespace Yavsc
         IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
          ILoggerFactory loggerFactory)
         {
+
             GoogleSettings = googleSettings.Value;
             ResourcesHelpers.GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;
