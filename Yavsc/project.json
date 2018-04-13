@@ -1,7 +1,7 @@
 {
     "version": "1.0.1-*",
     "authors": [
-        "Paul Schneider"
+        "Paul Schneider <paul@pschneider.fr>"
     ],
     "packOptions": {
         "repository": {

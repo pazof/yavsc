@@ -37,7 +37,7 @@
                 "contrib"
             ]
         },
-        "copyToOutput": [
+        "embed": [
             "Resources/**/*.resx"
         ]
     },
@@ -66,6 +66,7 @@
         "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final"
     },
     "frameworks": {
+        "dnx451": {},
         "net451": {
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0",
@@ -76,5 +77,7 @@
                 "System": "4.0.0.0"
             }
         }
+    },
+    "commands": {
     }
 }
