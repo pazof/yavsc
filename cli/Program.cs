@@ -3,22 +3,24 @@
 
 
 using System;
-using Microsoft.Extensions.Logging;
 using System.Runtime.Versioning;
-using Microsoft.AspNet.Builder.Internal;
-using Yavsc.Services;
 using Google.Apis.Util.Store;
-using cli_2;
-using Microsoft.Extensions.PlatformAbstractions;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNet.Builder.Internal;
 using Microsoft.AspNet.Hosting;
-using Yavsc.Models;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Extensions.OptionsModel;
 using Microsoft.AspNet.Hosting.Builder;
-
-using Yavsc;
 using Microsoft.AspNet.Hosting.Internal;
+using Microsoft.AspNet.Server;
+
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.PlatformAbstractions;
+using Yavsc;
+using Yavsc.Models;
+
+using Yavsc.Services;
+using cli_2;
 
 public class Program 
 {
@@ -26,14 +28,20 @@ public class Program
     private static Startup startup;
 
     public Program()
-    {        
+    {
+
         ConfigureServices(new ServiceCollection());
+
     } 
 
     private void ConfigureServices(IServiceCollection services, string environmentName="Development")
     {
 
         IHostingEnvironment hosting = new HostingEnvironment{ EnvironmentName = environmentName };
+        
+        services.Add(new ServiceDescriptor(typeof(IHostingEnvironment), hosting ));
+        
+
             services.AddLogging();
 
             services.AddOptions();
@@ -55,11 +63,11 @@ public class Program
             
             services.AddIdentity<ApplicationUser,IdentityRole>();
 			var basePath = AppDomain.CurrentDomain.BaseDirectory;
-			// FIXME null ref var appName = AppDomain.CurrentDomain.ApplicationIdentity.FullName;
+			// FIXME null ref  var appName = AppDomain.CurrentDomain.ApplicationIdentity.FullName;
 
-			// var rtdcontext = new System.Runtime.DesignerServices.WindowsRuntimeDesignerContext (new string { "." }, "nonname");
+			// var rtdcontext = new WindowsRuntimeDesignerContext (new string [] { "../Yavsc" }, "Yavsc");
             
-
+            
 			 serviceProvider = services.BuildServiceProvider();
 
             var projectRoot = "/home/paul/workspace/yavsc/Yavsc";
@@ -75,23 +83,24 @@ public class Program
             // needs a logger factory ...
 			var loggerFactory = serviceProvider
 				.GetService<ILoggerFactory>()
-				.AddConsole(LogLevel.Debug);
-
-		    startup = new Startup (hosting, appEnv);
-            startup.ConfigureServices(services);
+				.AddConsole(LogLevel.Verbose);
+  startup = new Startup (hosting, appEnv);
+         
 
 
         ApplicationBuilderFactory applicationBuilderFactory
          = new ApplicationBuilderFactory(serviceProvider);
     
         var builder = applicationBuilderFactory.CreateBuilder(null);
+        
+        startup.ConfigureServices(services);
 
-
-            IOptions<SiteSettings> siteSettings = serviceProvider.GetService(typeof(IOptions<SiteSettings>)) as IOptions<SiteSettings>;
+        builder.ApplicationServices = serviceProvider;
+           IOptions<SiteSettings> siteSettings = serviceProvider.GetService(typeof(IOptions<SiteSettings>)) as IOptions<SiteSettings>;
             IOptions<SmtpSettings> smtpSettings = serviceProvider.GetService(typeof(IOptions<SmtpSettings>)) as IOptions<SmtpSettings>;
-
-            startup.Configure(builder,siteSettings,smtpSettings);
-
+          
+           startup.Configure(builder, loggerFactory,  siteSettings, smtpSettings);
+        
     }
 
 

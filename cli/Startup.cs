@@ -13,6 +13,8 @@ using Microsoft.Extensions.PlatformAbstractions;
 using System;
 using System.Threading;
 using Yavsc.Server.Helpers;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNet.Http;
 
 public class Startup
 {
@@ -30,7 +32,9 @@ public class Startup
     public static SiteSettings SiteSetup { get; private set; }
     public static SmtpSettings SmtpSettup { get; private set; }
     public IConfigurationRoot Configuration { get; set; }
-    public string ConnectionString { get; private set; }
+    public string ConnectionString { 
+        get { return DbHelpers.ConnectionString; }
+        private set {  DbHelpers.ConnectionString = value; } }
     public static IdentityOptions AppIdentityOptions { get; private set; }
 
     public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
@@ -61,8 +65,7 @@ public class Startup
     // Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        System.Console.WriteLine("Configuring services ...");
-
+        services.AddLogging();
         var siteSettings = Configuration.GetSection("Site");
         services.Configure<SiteSettings>(siteSettings);
         var smtpSettings = Configuration.GetSection("Smtp");
@@ -116,15 +119,18 @@ public class Startup
 
 
     // Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder builder, IOptions<SiteSettings> siteSettingsOptions, IOptions<SmtpSettings> smtpSettingsOptions)
+    public void Configure(IApplicationBuilder builder, ILoggerFactory loggerFactory,  IOptions<SiteSettings> siteSettingsOptions, IOptions<SmtpSettings> smtpSettingsOptions)
     {
-        System.Console.WriteLine("Configuring application ...");
+        
 
-        app = builder.UseIdentity().UseMiddleware<InteractiveConsoleMiddleWare>().Build();
+        var logger = loggerFactory.CreateLogger<Startup>();
+        logger.LogInformation("Configuring application startup ...");
 
         SiteSetup = siteSettingsOptions.Value;
         SmtpSettup = smtpSettingsOptions.Value;
         DbHelpers.ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
+        
+logger.LogInformation("done");
     }
 
     public void Main(string[] args)
@@ -132,11 +138,8 @@ public class Startup
         var dbContext = new ApplicationDbContext();
          foreach (var user in dbContext.Users) {
             Console.WriteLine($"UserName/{user.UserName} FullName/{user.FullName} Email/{user.Email} ");
-        } /**/
-
+        }
     }
-
-
 }
 
 
