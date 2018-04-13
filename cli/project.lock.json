@@ -1969,7 +1969,7 @@
       },
       "Yavsc.Server/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "EntityFramework7.Npgsql": "3.1.0-rc1-3",
           "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
@@ -1987,15 +1987,7 @@
           "Newtonsoft.Json": "9.0.1",
           "PayPalMerchant-net451": "2.7.109",
           "Yavsc.Abstract": null
-        },
-        "frameworkAssemblies": [
-          "System",
-          "System.ComponentModel.DataAnnotations",
-          "System.Json",
-          "System.Net",
-          "System.Net.Http",
-          "System.Xml"
-        ]
+        }
       }
     },
     ".NETFramework,Version=v4.5.1": {
@@ -5917,7 +5909,7 @@
       },
       "Yavsc.Server/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "EntityFramework7.Npgsql": "3.1.0-rc1-3",
           "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
@@ -5935,15 +5927,7 @@
           "Newtonsoft.Json": "9.0.1",
           "PayPalMerchant-net451": "2.7.109",
           "Yavsc.Abstract": null
-        },
-        "frameworkAssemblies": [
-          "System",
-          "System.ComponentModel.DataAnnotations",
-          "System.Json",
-          "System.Net",
-          "System.Net.Http",
-          "System.Xml"
-        ]
+        }
       }
     },
     "DNX,Version=v4.5.1/debian.9-x64": {
@@ -7913,7 +7897,7 @@
       },
       "Yavsc.Server/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "EntityFramework7.Npgsql": "3.1.0-rc1-3",
           "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
@@ -7931,15 +7915,7 @@
           "Newtonsoft.Json": "9.0.1",
           "PayPalMerchant-net451": "2.7.109",
           "Yavsc.Abstract": null
-        },
-        "frameworkAssemblies": [
-          "System",
-          "System.ComponentModel.DataAnnotations",
-          "System.Json",
-          "System.Net",
-          "System.Net.Http",
-          "System.Xml"
-        ]
+        }
       }
     },
     ".NETFramework,Version=v4.5.1/debian.9-x86": {
