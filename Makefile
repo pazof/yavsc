@@ -1,6 +1,6 @@
 
 MAKE=make
-SUBDIRS=Yavsc.Abstract Yavsc
+SUBDIRS=Yavsc.Abstract Yavsc.Server Yavsc
 
 all: $(SUBDIRS)
 
