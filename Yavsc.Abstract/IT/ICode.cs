@@ -1,22 +1,24 @@
 using System.Collections.Generic;
 
-namespace Yavsc
+namespace Yavsc.Abstract.IT
 {
-    public interface ILetter<T> : IEqualityComparer<T> {
-    }
-    public interface IWord<TLetter> where TLetter : ILetter<TLetter>
-    {
-        IWord<TLetter> Aggregate(TLetter other);
-    }
+    // un code est, parmis les ensembles de suites de signes,
+    // ceux qui n'ont qu'une seule suite de suites pouvant représenter toute suite de suite de signes
 
-    public interface ICode<TLetter> : IEnumerable<TLetter> where TLetter : ILetter<TLetter>
+    public interface ICode<TSign> : IEnumerable<IEnumerable<TSign>>
     {
         /// <summary>
-        /// Checks that (b!=c) => a.b != a.c
+        /// Checks false that a letter list combinaison correspond to another one
         /// </summary>
         /// <returns></returns>
         bool Validate();
 
-        IWord<TLetter> CreateWord(TLetter letter);
+        /// <summary>
+        /// Defines a new letter in this code, 
+        /// as an enumerable of <c>TLetter</c>
+        /// </summary>
+        /// <param name="letter"></param>
+        /// <returns></returns>
+        void AddLetter(IEnumerable<TSign> letter);
     }
 }
