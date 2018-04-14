@@ -81,6 +81,8 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 
 
 	☐ Interface de gestion des collaborateurs
+	☐ Migration de l'identifiant utilisateur, de la chaine de caractère ala GUID vers l'entier long auto incrémenté par Npgsql 
+
 	☐ Login with Twitter
 	☐ Login with PayPal
 
