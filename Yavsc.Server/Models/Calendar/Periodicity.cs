@@ -25,6 +25,11 @@ namespace Yavsc.Models.Calendar
 	/// Periodicity.
 	/// </summary>
 	public enum Periodicity {
+
+		/// <summary>
+		/// On Demand.
+		/// </summary>
+		OnDemand=-1,
 		/// <summary>
 		/// The daily.
 		/// </summary>
