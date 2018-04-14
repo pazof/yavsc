@@ -4,6 +4,6 @@ namespace Yavsc.Abstract.Workflow
 {
     public interface ITaskRunner
     {
-        Task Run(string [] args);
+        IExecutionData Run( ITaskMetaData taskMetaData, string [] args);
     }
 }
