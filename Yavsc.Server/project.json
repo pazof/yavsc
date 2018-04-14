@@ -52,6 +52,8 @@
         },
         "Microsoft.AspNet.Identity": "3.0.0-rc1-final",
         "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
+
+
         "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
         "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
         "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
@@ -63,7 +65,8 @@
         "EntityFramework7.Npgsql": "3.1.0-rc1-3",
         "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
         "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
-        "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final"
+        "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final"
     },
     "frameworks": {
         "dnx451": {},
