@@ -79,5 +79,7 @@
         }
     },
     "commands": {
+        "ef": "EntityFramework.Commands",
+        "gen": "Microsoft.Extensions.CodeGeneration"
     }
 }
