@@ -83,6 +83,7 @@ namespace Yavsc.Models
         /// User's Google calendar
         /// </summary>
         /// <returns></returns>
+        [MaxLength(512)]
         public string DedicatedGoogleCalendar { get; set; }
 
         public override string ToString() {
