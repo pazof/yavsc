@@ -1,22 +1,12 @@
-
-
-
-
 using System;
 using System.Runtime.Versioning;
 using Google.Apis.Util.Store;
-using Microsoft.AspNet.Builder.Internal;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Hosting.Builder;
-using Microsoft.AspNet.Hosting.Internal;
-using Microsoft.AspNet.Server;
 
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
-using Microsoft.Extensions.PlatformAbstractions;
 using Yavsc;
 using Yavsc.Models;
 
@@ -25,17 +15,24 @@ using cli_2;
 using Yavsc.Server.Helpers;
 using Microsoft.AspNet.Identity;
 using Microsoft.Data.Entity;
-using Newtonsoft.Json;
+using cli.Modules;
+using RazorEngine.Configuration;
+using RazorEngine.Templating;
+using System.Security.Policy;
+using System.Security;
+using System.Security.Permissions;
+using System.Reflection;
+using System.Collections;
+using RazorEngine;
 
 public class Program
 {
-    private IServiceProvider serviceProvider;
+    private static IServiceProvider serviceProvider;
     public string ConnectionString
     {
         get { return DbHelpers.ConnectionString; }
         private set { DbHelpers.ConnectionString = value; }
     }
-
 
     public static SiteSettings SiteSetup { get; private set; }
     public static SmtpSettings SmtpSettup { get; private set; }
@@ -52,30 +49,23 @@ public class Program
 
 
 
-        IHostingEnvironment hosting = new HostingEnvironment { EnvironmentName = environmentName };
-        if (hosting.IsDevelopment())
-        {
-            // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-            // builder.AddUserSecrets();
-        }
-
         var confbuilder = new ConfigurationBuilder()
                    .AddJsonFile("appsettings.json")
-                   .AddJsonFile($"appsettings.{hosting.EnvironmentName}.json", optional: true);
-                
-        confbuilder.AddEnvironmentVariables();
+                   .AddJsonFile($"appsettings.{environmentName}.json", optional: true);
+
         Configuration = confbuilder.Build();
 
 
-            var siteSettingsconf = Configuration.GetSection("Site");
-            services.Configure<SiteSettings>(siteSettingsconf);
-            var smtpSettingsconf = Configuration.GetSection("Smtp");
-            services.Configure<SmtpSettings>(smtpSettingsconf);
+        var siteSettingsconf = Configuration.GetSection("Site");
+        services.Configure<SiteSettings>(siteSettingsconf);
+        var smtpSettingsconf = Configuration.GetSection("Smtp");
+        services.Configure<SmtpSettings>(smtpSettingsconf);
 
-
-        services.Add(new ServiceDescriptor(typeof(IHostingEnvironment), hosting));
-
+        services.AddTransient(typeof(IModule), typeof(MonthlyEMailGenerator));
+        // services.AddTransient( typeof(Microsoft.AspNet.Mvc.Razor.Compilation.ICompilationService), typeof (Microsoft.AspNet.Mvc.Razor.Compilation.RazorCompilationService) );
         services.AddLogging();
+
+        // services.AddTransient(typeof(Microsoft.AspNet.Mvc.Razor.Compilation.IRazorCompilationService), typeof(Microsoft.AspNet.Mvc.Razor.Compilation.RazorCompilationService));
 
 
         services.AddEntityFramework()
@@ -140,12 +130,24 @@ public class Program
         });
 
         services.AddIdentity<ApplicationUser, IdentityRole>();
+
+        // Razor
+
         var basePath = AppDomain.CurrentDomain.BaseDirectory;
         // FIXME null ref  var appName = AppDomain.CurrentDomain.ApplicationIdentity.FullName;
 
-        // var rtdcontext = new WindowsRuntimeDesignerContext (new string [] { "../Yavsc" }, "Yavsc");
 
+        var config = new TemplateServiceConfiguration();
+        // TODO .. configure your instance
+        
+        // config.DisableTempFileLocking = true; // loads the files in-memory (gives the templates full-trust permissions)
+        // config.CachingProvider = new DefaultCachingProvider(t => { }); //disables the warnings
+                                                                       // Use the config
+        var razorService = RazorEngineService.Create(config);
+        Engine.Razor = razorService;
+        services.AddInstance(typeof(IRazorEngineService), razorService);
 
+        // Razor.SetTemplateService(new TemplateService(config)); // legacy API
         serviceProvider = services.BuildServiceProvider();
 
         //configure console logging
@@ -158,7 +160,6 @@ public class Program
 
         var projectRoot = "/home/paul/workspace/yavsc/Yavsc";
 
-        hosting.Initialize(projectRoot, null);
 
         var targetFramework = new FrameworkName("dnx", new Version(4, 5, 1));
         //  
@@ -168,15 +169,11 @@ public class Program
 
 
 
-        ApplicationBuilderFactory applicationBuilderFactory
-         = new ApplicationBuilderFactory(serviceProvider);
 
-        var builder = applicationBuilderFactory.CreateBuilder(null);
-        
         ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
 
 
-        logger.LogInformation($"cx: {ConnectionString} ({hosting.EnvironmentName})");
+        logger.LogInformation($"cx: {ConnectionString} ({environmentName})");
 
         var sitesetupjson = Configuration.GetSection("Site");
         services.Configure<SiteSettings>(sitesetupjson);
@@ -184,27 +181,28 @@ public class Program
         var smtpsetupjson = Configuration.GetSection("Smtp");
         services.Configure<SmtpSettings>(smtpsetupjson);
 
-        builder.ApplicationServices = serviceProvider;
-
- logger.LogInformation(Configuration["Site:Title"]);
-//logger.LogInformation(Configuration["Smtp"]);
         IOptions<SiteSettings> siteSettings = serviceProvider.GetService(typeof(IOptions<SiteSettings>)) as IOptions<SiteSettings>;
-         IOptions<SmtpSettings> smtpSettings = serviceProvider.GetService(typeof(IOptions<SmtpSettings>)) as IOptions<SmtpSettings>;
+        IOptions<SmtpSettings> smtpSettings = serviceProvider.GetService(typeof(IOptions<SmtpSettings>)) as IOptions<SmtpSettings>;
 
 
         SiteSetup = siteSettings.Value;
         SmtpSettup = smtpSettings.Value;
 
-        logger.LogInformation($"done with {SiteSetup.Title}");
-
-
-
+        logger.LogInformation($"done with {SiteSetup.Title} config.");
     }
 
 
     public static void Main(string[] args)
     {
 
+        ILoggerFactory loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+        var logger = loggerFactory.CreateLogger<Program>();
+        logger.LogInformation("Hello.");
+        var mods = serviceProvider.GetServices<IModule>();
+        foreach (var mod in mods) {
+            logger.LogInformation($"running {mod.GetType().Name}");
+            mod.Run(args);
+        }
     }
 }
 
