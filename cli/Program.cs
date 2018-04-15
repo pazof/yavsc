@@ -24,6 +24,9 @@ using System.Security.Permissions;
 using System.Reflection;
 using System.Collections;
 using RazorEngine;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
+using RazorEngine.Compilation;
 
 public class Program
 {
@@ -136,17 +139,22 @@ public class Program
         var basePath = AppDomain.CurrentDomain.BaseDirectory;
         // FIXME null ref  var appName = AppDomain.CurrentDomain.ApplicationIdentity.FullName;
 
-
         var config = new TemplateServiceConfiguration();
         // TODO .. configure your instance
         
         // config.DisableTempFileLocking = true; // loads the files in-memory (gives the templates full-trust permissions)
         // config.CachingProvider = new DefaultCachingProvider(t => { }); //disables the warnings
                                                                        // Use the config
+       
+        var mcso = new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+        var compilerServiceFactory = config.CompilerServiceFactory.CreateCompilerService(Language.CSharp);
+
         var razorService = RazorEngineService.Create(config);
         Engine.Razor = razorService;
-        services.AddInstance(typeof(IRazorEngineService), razorService);
 
+        services.AddInstance(typeof(ICompilerService), compilerServiceFactory);
+        services.AddInstance(typeof(IRazorEngineService), razorService);
+        services.AddInstance<CSharpCompilationOptions>(mcso);
         // Razor.SetTemplateService(new TemplateService(config)); // legacy API
         serviceProvider = services.BuildServiceProvider();
 
