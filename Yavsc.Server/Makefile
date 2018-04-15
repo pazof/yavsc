@@ -1,5 +1,4 @@
 CONFIG=Release
-VERSION=1.0.5-rc8
 PRJNAME=Yavsc.Server
 
 PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
