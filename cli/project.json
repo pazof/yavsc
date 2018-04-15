@@ -1,41 +1,37 @@
 {
-    "version": "1.0.0-*",
-    "commands": {
-        "run": "cli"
+  "version": "1.0.0-*",
+  "commands": {
+    "run": "cli"
+  },
+  "resource": "Resources/**/*.resx",
+  "buildOptions": {
+    "debugType": "full",
+    "emitEntryPoint": true,
+    "compile": {
+      "include": "*.cs",
+      "exclude": [
+        "contrib"
+      ]
     },
-    "resource": "Resources/**/*.resx",
-    "buildOptions": {
-        "debugType": "full",
-        "emitEntryPoint": true,
-        "compile": {
-            "include": "*.cs",
-            "exclude": [
-                "contrib"
-            ]
-        },
-        "embed": [
-            "Resources/**/*.resx"
-        ]
+    "embed": [
+      "Resources/**/*.resx"
+    ]
+  },
+  "dependencies": {
+    "Yavsc.Server": {
+      "target": "project",
+      "type": "build"
     },
-    "dependencies": {
-        "Yavsc.Server": {
-            "target": "project",
-            "type": "build"
-        },
-        "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
-        "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
-        "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
-        "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-*",
-        "Microsoft.AspNet.Hosting": "1.0.0-rc1-*",
-        "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
-        "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final"
-    },
-    "frameworks": {
-        "dnx451": {
-
-        },
-        "net451": {
-            "dependencies": {}
-        }
-    }
+    "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
+    "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+    "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+    "RazorEngine": "4.5.1-alpha001",
+    "Microsoft.CodeAnalysis.CSharp": "2.8.0-beta3"
+  },
+  "frameworks": {
+    "dnx451": {},
+    "net451": {}
+  }
 }
