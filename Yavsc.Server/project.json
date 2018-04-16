@@ -58,6 +58,7 @@
         "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
         "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
         "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
         "Gapi.net45": "1.0.0",
         "PayPalMerchant-net451": "2.7.109",
         "MailKit": "1.12.0",
@@ -65,7 +66,8 @@
         "EntityFramework7.Npgsql": "3.1.0-rc1-3",
         "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
         "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
-        "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final"
+        "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+        "Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1"
     },
     "frameworks": {
         "dnx451": {},
