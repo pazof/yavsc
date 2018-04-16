@@ -466,6 +466,38 @@
           "lib/net451/Microsoft.AspNet.FileProviders.Physical.dll": {}
         }
       },
+      "Microsoft.AspNet.Hosting/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Server.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "System.Diagnostics.DiagnosticSource": "4.0.0-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Hosting.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Hosting.dll": {}
+        }
+      },
       "Microsoft.AspNet.Hosting.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -483,6 +515,25 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Hosting.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Features": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
         }
       },
       "Microsoft.AspNet.Html.Abstractions/1.0.0-rc1-final": {
@@ -951,12 +1002,13 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0, 1.2.0)",
+          "Microsoft.CodeAnalysis.Analyzers": "1.0.0",
+          "Microsoft.DiaSymReader.Native": "1.2.0-rc",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.1.0"
+          "System.Reflection.Metadata": "1.1.0-beta-23413"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -965,10 +1017,10 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1-20151109-01]"
+          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -976,6 +1028,9 @@
         "runtime": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
+      },
+      "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+        "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
@@ -1125,6 +1180,80 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Configuration.Binder.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.CommandLine/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.EnvironmentVariables/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.FileExtensions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
         }
       },
       "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -2102,6 +2231,37 @@
           "lib/net451/Microsoft.AspNet.FileProviders.Physical.dll": {}
         }
       },
+      "Microsoft.AspNet.Hosting/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Server.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "System.Diagnostics.DiagnosticSource": "4.0.0-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Hosting.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Hosting.dll": {}
+        }
+      },
       "Microsoft.AspNet.Hosting.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -2119,6 +2279,25 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Hosting.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Features": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
         }
       },
       "Microsoft.AspNet.Html.Abstractions/1.0.0-rc1-final": {
@@ -2587,12 +2766,13 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0, 1.2.0)",
+          "Microsoft.CodeAnalysis.Analyzers": "1.0.0",
+          "Microsoft.DiaSymReader.Native": "1.2.0-rc",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.1.0"
+          "System.Reflection.Metadata": "1.1.0-beta-23413"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -2601,10 +2781,10 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1-20151109-01]"
+          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -2612,6 +2792,9 @@
         "runtime": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
+      },
+      "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+        "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
@@ -2761,6 +2944,80 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Configuration.Binder.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.CommandLine/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.EnvironmentVariables/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.FileExtensions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
         }
       },
       "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -3765,6 +4022,38 @@
           "lib/net451/Microsoft.AspNet.FileProviders.Physical.dll": {}
         }
       },
+      "Microsoft.AspNet.Hosting/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Server.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "System.Diagnostics.DiagnosticSource": "4.0.0-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Hosting.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Hosting.dll": {}
+        }
+      },
       "Microsoft.AspNet.Hosting.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -3782,6 +4071,25 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Hosting.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Features": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
         }
       },
       "Microsoft.AspNet.Html.Abstractions/1.0.0-rc1-final": {
@@ -4250,12 +4558,13 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0, 1.2.0)",
+          "Microsoft.CodeAnalysis.Analyzers": "1.0.0",
+          "Microsoft.DiaSymReader.Native": "1.2.0-rc",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.1.0"
+          "System.Reflection.Metadata": "1.1.0-beta-23413"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -4264,10 +4573,10 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1-20151109-01]"
+          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -4275,6 +4584,9 @@
         "runtime": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
+      },
+      "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+        "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
@@ -4424,6 +4736,80 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Configuration.Binder.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.CommandLine/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.EnvironmentVariables/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.FileExtensions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
         }
       },
       "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -5428,6 +5814,38 @@
           "lib/net451/Microsoft.AspNet.FileProviders.Physical.dll": {}
         }
       },
+      "Microsoft.AspNet.Hosting/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Server.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "System.Diagnostics.DiagnosticSource": "4.0.0-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Hosting.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Hosting.dll": {}
+        }
+      },
       "Microsoft.AspNet.Hosting.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -5445,6 +5863,25 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Hosting.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Features": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
         }
       },
       "Microsoft.AspNet.Html.Abstractions/1.0.0-rc1-final": {
@@ -5913,12 +6350,13 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0, 1.2.0)",
+          "Microsoft.CodeAnalysis.Analyzers": "1.0.0",
+          "Microsoft.DiaSymReader.Native": "1.2.0-rc",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.1.0"
+          "System.Reflection.Metadata": "1.1.0-beta-23413"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -5927,10 +6365,10 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1-20151109-01]"
+          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -5938,6 +6376,9 @@
         "runtime": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
+      },
+      "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+        "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
@@ -6087,6 +6528,80 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Configuration.Binder.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.CommandLine/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.EnvironmentVariables/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.FileExtensions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
         }
       },
       "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -7064,6 +7579,37 @@
           "lib/net451/Microsoft.AspNet.FileProviders.Physical.dll": {}
         }
       },
+      "Microsoft.AspNet.Hosting/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Server.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "System.Diagnostics.DiagnosticSource": "4.0.0-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Hosting.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Hosting.dll": {}
+        }
+      },
       "Microsoft.AspNet.Hosting.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -7081,6 +7627,25 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Hosting.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Features": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
         }
       },
       "Microsoft.AspNet.Html.Abstractions/1.0.0-rc1-final": {
@@ -7549,12 +8114,13 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0, 1.2.0)",
+          "Microsoft.CodeAnalysis.Analyzers": "1.0.0",
+          "Microsoft.DiaSymReader.Native": "1.2.0-rc",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.1.0"
+          "System.Reflection.Metadata": "1.1.0-beta-23413"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -7563,10 +8129,10 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1-20151109-01]"
+          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -7574,6 +8140,9 @@
         "runtime": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
+      },
+      "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+        "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
@@ -7723,6 +8292,80 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Configuration.Binder.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.CommandLine/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.EnvironmentVariables/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.FileExtensions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
         }
       },
       "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -8700,6 +9343,37 @@
           "lib/net451/Microsoft.AspNet.FileProviders.Physical.dll": {}
         }
       },
+      "Microsoft.AspNet.Hosting/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Server.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.CommandLine": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "System.Diagnostics.DiagnosticSource": "4.0.0-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Hosting.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Hosting.dll": {}
+        }
+      },
       "Microsoft.AspNet.Hosting.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -8717,6 +9391,25 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Hosting.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Features": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
         }
       },
       "Microsoft.AspNet.Html.Abstractions/1.0.0-rc1-final": {
@@ -9185,12 +9878,13 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0, 1.2.0)",
+          "Microsoft.CodeAnalysis.Analyzers": "1.0.0",
+          "Microsoft.DiaSymReader.Native": "1.2.0-rc",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.1.0"
+          "System.Reflection.Metadata": "1.1.0-beta-23413"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -9199,10 +9893,10 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
+      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1-20151109-01]"
+          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -9210,6 +9904,9 @@
         "runtime": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
+      },
+      "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+        "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
@@ -9359,6 +10056,80 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Configuration.Binder.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.CommandLine/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.EnvironmentVariables/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.FileExtensions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
         }
       },
       "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -10246,6 +11017,24 @@
         "Microsoft.AspNet.FileProviders.Physical.nuspec"
       ]
     },
+    "Microsoft.AspNet.Hosting/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "6ZVZK5Ql+z6UeVOBcXCRLahcAd/NKdMAK17JBZWGZqqmxKO0LtQMdb6drb9H4nBM3/a8vbhd+23wxzyIfoCLQQ==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Hosting.dll",
+        "lib/dnx451/Microsoft.AspNet.Hosting.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Hosting.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Hosting.xml",
+        "lib/dotnet5.4/Microsoft.AspNet.Hosting.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Hosting.xml",
+        "lib/net451/Microsoft.AspNet.Hosting.dll",
+        "lib/net451/Microsoft.AspNet.Hosting.xml",
+        "Microsoft.AspNet.Hosting.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Hosting.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Hosting.nuspec"
+      ]
+    },
     "Microsoft.AspNet.Hosting.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
@@ -10258,6 +11047,20 @@
         "Microsoft.AspNet.Hosting.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Hosting.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Hosting.Abstractions.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "55ovPKPLsLvXsZ2xxtCOkQXmLwrE5iMUXe1y3A3Y/DCcI2u9VBJezu1y2EPYmZCM+uP/Y/BaQm68AWg2r8RV5w==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.Hosting.Server.Abstractions.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Hosting.Server.Abstractions.xml",
+        "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.dll",
+        "lib/net451/Microsoft.AspNet.Hosting.Server.Abstractions.xml",
+        "Microsoft.AspNet.Hosting.Server.Abstractions.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Hosting.Server.Abstractions.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Hosting.Server.Abstractions.nuspec"
       ]
     },
     "Microsoft.AspNet.Html.Abstractions/1.0.0-rc1-final": {
@@ -10598,32 +11401,47 @@
         "tools/uninstall.ps1"
       ]
     },
-    "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
+    "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
       "type": "package",
-      "sha512": "gC9zpQARTjIOht1dZM5Bp0fbOKA40yh0wHBMG2psLGquche0URbfdB9i1pnCusLospEsRIrNvYl75647BcBVug==",
+      "sha512": "KLQcpe9KgrnDqinW1nX4ovd5HoPCMGtoCL8jf1NmXZBwYP9rOGGlQDovkxBUeRxMTEwV0mMXh+NK0D3dRWScwA==",
       "files": [
         "lib/net45/Microsoft.CodeAnalysis.dll",
         "lib/net45/Microsoft.CodeAnalysis.xml",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.dll",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.xml",
-        "Microsoft.CodeAnalysis.Common.1.1.0-rc1-20151109-01.nupkg",
-        "Microsoft.CodeAnalysis.Common.1.1.0-rc1-20151109-01.nupkg.sha512",
+        "Microsoft.CodeAnalysis.Common.1.1.0-rc1.nupkg",
+        "Microsoft.CodeAnalysis.Common.1.1.0-rc1.nupkg.sha512",
         "Microsoft.CodeAnalysis.Common.nuspec",
         "ThirdPartyNotices.rtf"
       ]
     },
-    "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
+    "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
       "type": "package",
-      "sha512": "BFhSWMMlp0xLN/ogn71ULN7N0yy/yqJf/wu63x3KjV497n+8OlyiX7ZnbaQiUeafjW5P2vLzvZH99+5s+dH3Dg==",
+      "sha512": "yol50E2N6gfB3S5Pt5ew7Sj7ikrj87WMSARycAq44JRIaR3re3pyUBXHeohLkDdEEVheY9+qbnclVeCEQ7CWYA==",
       "files": [
         "lib/net45/Microsoft.CodeAnalysis.CSharp.dll",
         "lib/net45/Microsoft.CodeAnalysis.CSharp.xml",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.dll",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.xml",
-        "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1-20151109-01.nupkg",
-        "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1-20151109-01.nupkg.sha512",
+        "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1.nupkg",
+        "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1.nupkg.sha512",
         "Microsoft.CodeAnalysis.CSharp.nuspec",
         "ThirdPartyNotices.rtf"
+      ]
+    },
+    "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+      "type": "package",
+      "sha512": "dSk3ln9b2MMOFnXVB47HVbdjl3r7EcikC2qTCmVrfGDJiMyLt2F3kumxICbRTuQhEGNvPnVH9p9lWKIQlNjd+w==",
+      "files": [
+        "Microsoft.DiaSymReader.Native.1.2.0-rc.nupkg",
+        "Microsoft.DiaSymReader.Native.1.2.0-rc.nupkg.sha512",
+        "Microsoft.DiaSymReader.Native.nuspec",
+        "runtimes/win/native/Microsoft.DiaSymReader.Native.amd64.dll",
+        "runtimes/win/native/Microsoft.DiaSymReader.Native.arm.dll",
+        "runtimes/win/native/Microsoft.DiaSymReader.Native.x86.dll",
+        "runtimes/win8-arm/native/Microsoft.DiaSymReader.Native.arm.dll",
+        "runtimes/win-x64/native/Microsoft.DiaSymReader.Native.amd64.dll",
+        "runtimes/win-x86/native/Microsoft.DiaSymReader.Native.x86.dll"
       ]
     },
     "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
@@ -10746,6 +11564,70 @@
         "Microsoft.Extensions.Configuration.Binder.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.Configuration.Binder.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.Configuration.Binder.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Configuration.CommandLine/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "k+kXsefuLV5WkkG6X8GFn9zf9ZrMyC3dddgm6I6scpbanDyoKUYrRUP2VhW0ViO6TIva0soh6jJy3pFPCrNx9Q==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.CommandLine.dll",
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.CommandLine.xml",
+        "lib/net451/Microsoft.Extensions.Configuration.CommandLine.dll",
+        "lib/net451/Microsoft.Extensions.Configuration.CommandLine.xml",
+        "lib/netcore50/Microsoft.Extensions.Configuration.CommandLine.dll",
+        "lib/netcore50/Microsoft.Extensions.Configuration.CommandLine.xml",
+        "Microsoft.Extensions.Configuration.CommandLine.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.Configuration.CommandLine.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.Configuration.CommandLine.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Configuration.EnvironmentVariables/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "CaNirkiOycy0L6ptGxmpDkHZ2lzqcHKDbQJBfEhobnEt43pqKGKgAPC5dW3DfnsMpuK+inypm5iht9t6tq4vjg==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.EnvironmentVariables.dll",
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.EnvironmentVariables.xml",
+        "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.dll",
+        "lib/net451/Microsoft.Extensions.Configuration.EnvironmentVariables.xml",
+        "lib/netcore50/Microsoft.Extensions.Configuration.EnvironmentVariables.dll",
+        "lib/netcore50/Microsoft.Extensions.Configuration.EnvironmentVariables.xml",
+        "Microsoft.Extensions.Configuration.EnvironmentVariables.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.Configuration.EnvironmentVariables.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.Configuration.EnvironmentVariables.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Configuration.FileExtensions/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "w2x8nqrp2YUgNBJuZ3SUmexBtjaoZFzCQtObRTjrE4GWceFEmaLZtXFvs4n9IgRQkOqqCza7Fv7NXnD9m2emjQ==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.FileExtensions.dll",
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.FileExtensions.xml",
+        "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll",
+        "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.xml",
+        "lib/netcore50/Microsoft.Extensions.Configuration.FileExtensions.dll",
+        "lib/netcore50/Microsoft.Extensions.Configuration.FileExtensions.xml",
+        "Microsoft.Extensions.Configuration.FileExtensions.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.Configuration.FileExtensions.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.Configuration.FileExtensions.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "9v+RpswnXEpAP5mx8J1w1yZZT2pPtMBTnOAauNh2c9ju5Dhq3ljxvbm0S9j6o5F/EFSLlbfN/brxTJN3qa/upw==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.Json.dll",
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.Json.xml",
+        "lib/net451/Microsoft.Extensions.Configuration.Json.dll",
+        "lib/net451/Microsoft.Extensions.Configuration.Json.xml",
+        "lib/netcore50/Microsoft.Extensions.Configuration.Json.dll",
+        "lib/netcore50/Microsoft.Extensions.Configuration.Json.xml",
+        "Microsoft.Extensions.Configuration.Json.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.Configuration.Json.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.Configuration.Json.nuspec"
       ]
     },
     "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -11846,6 +12728,7 @@
       "Microsoft.AspNet.Authentication.Twitter >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.OAuth >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Cookies >= 1.0.0-rc1-final",
+      "Microsoft.AspNet.Hosting >= 1.0.0-rc1-final",
       "Gapi.net45 >= 1.0.0",
       "PayPalMerchant-net451 >= 2.7.109",
       "MailKit >= 1.12.0",
@@ -11853,7 +12736,8 @@
       "EntityFramework7.Npgsql >= 3.1.0-rc1-3",
       "EntityFramework7.Npgsql.Design >= 3.1.0-rc1-5",
       "Microsoft.AspNet.Mvc.TagHelpers >= 6.0.0-rc1-final",
-      "Microsoft.AspNet.Http.Extensions >= 1.0.0-rc1-final"
+      "Microsoft.AspNet.Http.Extensions >= 1.0.0-rc1-final",
+      "Microsoft.CodeAnalysis.CSharp >= 1.1.0-rc1"
     ],
     "DNX,Version=v4.5.1": [],
     ".NETFramework,Version=v4.5.1": [
