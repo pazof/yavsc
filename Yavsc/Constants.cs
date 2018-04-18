@@ -25,7 +25,7 @@ namespace Yavsc
             BlogModeratorGroupName = "Moderator",
             FrontOfficeGroupName = "FrontOffice",
             GCMNotificationUrl = "https://gcm-http.googleapis.com/gcm/send",
-            UserFilesPath = "/UserFiles",
+            UserFilesPath = "/files",
             AvatarsPath = "/avatars",
             DefaultAvatar = "/images/Users/icon_user.png",
             AnonAvatar = "/images/Users/icon_anon_user.png";
