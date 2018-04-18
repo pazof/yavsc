@@ -62,6 +62,7 @@
         "Gapi.net45": "1.0.0",
         "PayPalMerchant-net451": "2.7.109",
         "MailKit": "1.12.0",
+        "EntityFramework.Commands": "7.0.0-rc1-final",
         "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
         "EntityFramework7.Npgsql": "3.1.0-rc1-3",
         "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",

@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models;
 using Yavsc.Models.Calendar;
 
-namespace Yavsc.Server.Models.EMailling
+namespace Yavsc.Server.Models.EMailing
 {
-    public class MaillingTemplate : IBaseTrackedEntity
+    public class MailingTemplate : IBaseTrackedEntity
     {
         /// <summary>
         /// Date Created
