@@ -67,8 +67,7 @@
       "Newtonsoft.Json >= 9.0.1"
     ],
     ".NETFramework,Version=v4.5.1": [
-      "fx/System.ComponentModel.DataAnnotations >= 4.0.0",
-      "fx/System.Json >= 4.0.0"
+      "fx/System.ComponentModel.DataAnnotations >= 4.0.0"
     ]
   }
 }
