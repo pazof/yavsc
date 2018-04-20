@@ -9,8 +9,8 @@ $(SUBDIRS):
 	$(MAKE) -C $@ VERSION=$(VERSION)
 
 deploy:
-	$(MAKE) -C Yavsc.Abstract deploy
-	$(MAKE) -C Yavsc deploy
+	$(MAKE) -C Yavsc.Abstract deploy VERSION=$(VERSION)
+	$(MAKE) -C Yavsc deploy-pkg VERSION=$(VERSION)
 
 .PHONY: all $(SUBDIRS)
 

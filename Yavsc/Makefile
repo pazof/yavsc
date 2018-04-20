@@ -1,3 +1,4 @@
+PRJNAME=Yavsc
 DESTDIR=/srv/www/yavscpre
 PRODDESTDIR=/srv/www/yavsc
 ASPNET_ENV=Development
@@ -8,6 +9,11 @@ HOSTADMIN=root
 FRMWRK=dnx451
 BINTARGET=Yavsc.dll
 BINTARGETPATH=bin/$(CONFIGURATION)/$(FRMWRK)/$(BINTARGET)
+
+PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
+DESTPATH=.
+PACKAGE=$(DESTPATH)/$(PKGFILENAME)
+NUGETSOURCE=$(HOME)/Nupkgs/
 
 all: $(BINTARGETPATH)
 
@@ -71,3 +77,22 @@ else
 	@echo EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.
 	git status
 endif
+
+
+$(PACKAGE): $(BINTARGETPATH)
+	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION)
+
+clean:
+	rm $(PACKAGE)
+
+$(BINARY): project.lock.json
+	dnu build --configuration $(CONFIGURATION)
+
+project.lock.json: project.json
+	dnu restore
+
+deploy-pkg: $(PACKAGE)
+	cp $(PACKAGE) $(NUGETSOURCE)
+
+
+

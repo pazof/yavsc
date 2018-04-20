@@ -3,6 +3,15 @@
   "version": 2,
   "targets": {
     "DNX,Version=v4.5.1": {
+      "Antlr/3.4.1.9004": {
+        "type": "package",
+        "compile": {
+          "lib/Antlr3.Runtime.dll": {}
+        },
+        "runtime": {
+          "lib/Antlr3.Runtime.dll": {}
+        }
+      },
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -10,6 +19,26 @@
         },
         "runtime": {
           "lib/BouncyCastle.Crypto.dll": {}
+        }
+      },
+      "EntityFramework.Commands/7.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Relational.Design": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/EntityFramework.Commands.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/EntityFramework.Commands.dll": {}
         }
       },
       "EntityFramework.Core/7.0.0-rc1-final": {
@@ -52,6 +81,24 @@
         },
         "runtime": {
           "lib/dnx451/EntityFramework.Core.dll": {}
+        }
+      },
+      "EntityFramework.MicrosoftSqlServer/7.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Relational": "7.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/EntityFramework.MicrosoftSqlServer.dll": {}
+        },
+        "runtime": {
+          "lib/net451/EntityFramework.MicrosoftSqlServer.dll": {}
         }
       },
       "EntityFramework.Relational/7.0.0-rc1-final": {
@@ -175,6 +222,9 @@
           "lib/net45/System.Interactive.Async.dll": {}
         }
       },
+      "jQuery/1.6.4": {
+        "type": "package"
+      },
       "MailKit/1.12.0": {
         "type": "package",
         "dependencies": {
@@ -191,6 +241,15 @@
         },
         "runtime": {
           "lib/net451/MailKit.dll": {}
+        }
+      },
+      "MarkdownDeep-av.NET/1.5.6": {
+        "type": "package",
+        "compile": {
+          "lib/net451/MarkdownDeep.dll": {}
+        },
+        "runtime": {
+          "lib/net451/MarkdownDeep.dll": {}
         }
       },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
@@ -279,6 +338,26 @@
           "lib/net451/Microsoft.AspNet.Authentication.Facebook.dll": {}
         }
       },
+      "Microsoft.AspNet.Authentication.JwtBearer/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "2.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.JwtBearer.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.JwtBearer.dll": {}
+        }
+      },
       "Microsoft.AspNet.Authentication.OAuth/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -336,6 +415,27 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Authorization.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Cors/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Cors.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Cors.dll": {}
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-final": {
@@ -415,6 +515,55 @@
           "lib/net451/Microsoft.AspNet.DataProtection.Abstractions.dll": {}
         }
       },
+      "Microsoft.AspNet.DataProtection.SystemWeb/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Configuration",
+          "System.Core",
+          "System.Security",
+          "System.Web"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.DataProtection.SystemWeb.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.DataProtection.SystemWeb.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Diagnostics/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Diagnostics.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.WebUtilities": "1.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
+          "System.Diagnostics.DiagnosticSource": "4.0.0-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.dll": {}
+        }
+      },
       "Microsoft.AspNet.Diagnostics.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -428,6 +577,27 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Diagnostics.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Diagnostics.Entity/7.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Relational": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Diagnostics": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Configuration",
+          "System.Core",
+          "System.Threading.Tasks"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.Entity.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.Entity.dll": {}
         }
       },
       "Microsoft.AspNet.FileProviders.Abstractions/1.0.0-rc1-final": {
@@ -672,6 +842,25 @@
           "lib/net451/Microsoft.AspNet.Identity.EntityFramework.dll": {}
         }
       },
+      "Microsoft.AspNet.IISPlatformHandler/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.IISPlatformHandler.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.IISPlatformHandler.dll": {}
+        }
+      },
       "Microsoft.AspNet.JsonPatch/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -710,6 +899,32 @@
           "lib/net451/Microsoft.AspNet.Localization.dll": {}
         }
       },
+      "Microsoft.AspNet.Mvc/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Mvc.ApiExplorer": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Cors": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.DataAnnotations": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Localization": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Razor": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.ViewFeatures": "6.0.0-rc1-final",
+          "Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.dll": {}
+        }
+      },
       "Microsoft.AspNet.Mvc.Abstractions/6.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -726,6 +941,24 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Mvc.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Mvc.ApiExplorer/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Mvc.Core": "6.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.ApiExplorer.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.ApiExplorer.dll": {}
         }
       },
       "Microsoft.AspNet.Mvc.Core/6.0.0-rc1-final": {
@@ -752,6 +985,25 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Mvc.Core.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Mvc.Cors/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Cors": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Core": "6.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.Cors.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.Cors.dll": {}
         }
       },
       "Microsoft.AspNet.Mvc.DataAnnotations/6.0.0-rc1-final": {
@@ -792,6 +1044,27 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Mvc.Formatters.Json.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Mvc.Localization/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Razor": "6.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Localization": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.Localization.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.Localization.dll": {}
         }
       },
       "Microsoft.AspNet.Mvc.Razor/6.0.0-rc1-final": {
@@ -886,6 +1159,24 @@
           "lib/net451/Microsoft.AspNet.Mvc.ViewFeatures.dll": {}
         }
       },
+      "Microsoft.AspNet.OWin/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Owin.dll": {}
+        }
+      },
       "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -977,6 +1268,176 @@
           "lib/net451/Microsoft.AspNet.Routing.dll": {}
         }
       },
+      "Microsoft.AspNet.Server.Kestrel/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "System.Numerics.Vectors": "4.1.1-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Server.WebListener/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+          "Microsoft.Net.Http.Headers": "1.0.0-rc1-final",
+          "Microsoft.Net.Http.Server": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Session/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Session.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Session.dll": {}
+        }
+      },
+      "Microsoft.AspNet.SignalR.Core/2.2.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "2.1.0",
+          "Microsoft.Owin.Security": "2.1.0",
+          "Newtonsoft.Json": "6.0.4",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.AspNet.SignalR.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.AspNet.SignalR.Core.dll": {}
+        }
+      },
+      "Microsoft.AspNet.SignalR.JS/2.2.1": {
+        "type": "package",
+        "dependencies": {
+          "jQuery": "1.6.4"
+        }
+      },
+      "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.StaticFiles.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.StaticFiles.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Tooling.Razor/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Razor.Runtime": "4.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Tooling.Razor.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Tooling.Razor.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Web.Optimization/1.1.3": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Web.Infrastructure": "1.0.0",
+          "WebGrease": "1.5.2"
+        },
+        "compile": {
+          "lib/net40/System.Web.Optimization.dll": {}
+        },
+        "runtime": {
+          "lib/net40/System.Web.Optimization.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebSockets.Protocol/1.0.0-rc1-final": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Protocol.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Protocol.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebSockets.Server/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.WebSockets.Protocol": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Server.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Server.dll": {}
+        }
+      },
       "Microsoft.AspNet.WebUtilities/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -1002,13 +1463,12 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
+      "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "1.0.0",
-          "Microsoft.DiaSymReader.Native": "1.2.0-rc",
+          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0, 1.2.0)",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.1.0-beta-23413"
+          "System.Reflection.Metadata": "1.1.0"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -1017,10 +1477,10 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
+      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1]"
+          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1-20151109-01]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -1029,7 +1489,7 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
       },
-      "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+      "Microsoft.DiaSymReader.Native/1.5.0": {
         "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
@@ -1236,6 +1696,26 @@
           "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
         }
       },
+      "Microsoft.Extensions.Configuration.FileProviderExtensions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.dll": {}
+        }
+      },
       "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -1254,6 +1734,24 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.UserSecrets/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll": {}
         }
       },
       "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -1428,6 +1926,25 @@
           "lib/net451/Microsoft.Extensions.Logging.Debug.dll": {}
         }
       },
+      "Microsoft.Extensions.Logging.TraceSource/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Collections.Concurrent",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Logging.TraceSource.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Logging.TraceSource.dll": {}
+        }
+      },
       "Microsoft.Extensions.MemoryPool/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -1442,6 +1959,9 @@
         "runtime": {
           "lib/net451/Microsoft.Extensions.MemoryPool.dll": {}
         }
+      },
+      "Microsoft.Extensions.Options/0.0.1-alpha": {
+        "type": "package"
       },
       "Microsoft.Extensions.OptionsModel/1.0.0-rc1-final": {
         "type": "package",
@@ -1561,6 +2081,24 @@
           "lib/dnx451/Microsoft.Framework.Configuration.Abstractions.dll": {}
         }
       },
+      "Microsoft.Framework.Configuration.Binder/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.Configuration": "1.0.0-beta8"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll": {}
+        }
+      },
       "Microsoft.Framework.Configuration.FileExtensions/1.0.0-beta8": {
         "type": "package",
         "dependencies": {
@@ -1667,6 +2205,58 @@
           "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll": {}
         }
       },
+      "Microsoft.IdentityModel.Logging/1.0.0-rc1-211161024": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.IdentityModel.Logging.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.IdentityModel.Logging.dll": {}
+        }
+      },
+      "Microsoft.IdentityModel.Protocols/2.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "System.IdentityModel.Tokens.Jwt": "5.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.dll": {}
+        }
+      },
+      "Microsoft.IdentityModel.Protocols.OpenIdConnect/2.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols": "2.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {}
+        }
+      },
       "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -1680,6 +2270,75 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Net.Http.Headers.dll": {}
+        }
+      },
+      "Microsoft.Net.Http.Server/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Primitives": "1.0.0-rc1-final",
+          "Microsoft.Net.WebSockets": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Net.Http.Server.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Net.Http.Server.dll": {}
+        }
+      },
+      "Microsoft.Net.WebSockets/1.0.0-rc1-final": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Net.WebSockets.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Net.WebSockets.dll": {}
+        }
+      },
+      "Microsoft.Owin/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        }
+      },
+      "Microsoft.Owin.Security/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "2.1.0",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        }
+      },
+      "Microsoft.Web.Infrastructure/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Web.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Web.Infrastructure.dll": {}
         }
       },
       "MimeKit/1.12.0": {
@@ -1722,6 +2381,33 @@
         },
         "runtime": {
           "lib/net45/Npgsql.dll": {}
+        }
+      },
+      "OAuth.AspNet.AuthServer/1.0.5": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1",
+          "Newtonsoft.Json": "9.0.1",
+          "OAuth.AspNet.Token": null
+        }
+      },
+      "OAuth.AspNet.Token/1.0.5": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "9.0.1"
+        }
+      },
+      "Owin/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Owin.dll": {}
         }
       },
       "PayPalCoreSDK/1.7.1": {
@@ -1826,6 +2512,44 @@
           "lib/net45/_._": {}
         }
       },
+      "System.IdentityModel.Tokens/5.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Logging": "1.0.0-rc1-211161024",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Xml"
+        ],
+        "compile": {
+          "lib/net451/System.IdentityModel.Tokens.dll": {}
+        },
+        "runtime": {
+          "lib/net451/System.IdentityModel.Tokens.dll": {}
+        }
+      },
+      "System.IdentityModel.Tokens.Jwt/5.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "System.IdentityModel.Tokens": "5.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/System.IdentityModel.Tokens.Jwt.dll": {}
+        },
+        "runtime": {
+          "lib/net451/System.IdentityModel.Tokens.Jwt.dll": {}
+        }
+      },
       "System.IO/4.0.0": {
         "type": "package",
         "compile": {
@@ -1835,6 +2559,15 @@
           "lib/net45/_._": {}
         }
       },
+      "System.Json/4.0.20126.16343": {
+        "type": "package",
+        "compile": {
+          "lib/net40/System.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net40/System.Json.dll": {}
+        }
+      },
       "System.Linq/4.0.0": {
         "type": "package",
         "compile": {
@@ -1842,6 +2575,15 @@
         },
         "runtime": {
           "lib/net45/_._": {}
+        }
+      },
+      "System.Numerics.Vectors/4.1.1-beta-23516": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net45+win8/System.Numerics.Vectors.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8/System.Numerics.Vectors.dll": {}
         }
       },
       "System.Reflection/4.0.0": {
@@ -1959,6 +2701,93 @@
           "lib/net45/_._": {}
         }
       },
+      "WebGrease/1.5.2": {
+        "type": "package",
+        "dependencies": {
+          "Antlr": "3.4.1.9004",
+          "Newtonsoft.Json": "5.0.4"
+        },
+        "compile": {
+          "lib/WebGrease.dll": {}
+        },
+        "runtime": {
+          "lib/WebGrease.dll": {}
+        }
+      },
+      "Yavsc/1.0.1": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "EntityFramework.Commands": "7.0.0-rc1-final",
+          "EntityFramework.Core": "7.0.0-rc1-final",
+          "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
+          "EntityFramework.Relational": "7.0.0-rc1-final",
+          "EntityFramework7.Npgsql": "3.1.0-rc1-3",
+          "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
+          "Gapi.net45": "1.0.0",
+          "MailKit": "1.12.0",
+          "MarkdownDeep-av.NET": "1.5.6",
+          "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authorization": "1.0.0-rc1-final",
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Microsoft.AspNet.DataProtection.SystemWeb": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Diagnostics.Entity": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1",
+          "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1",
+          "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc": "6.0.0-rc1",
+          "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1",
+          "Microsoft.AspNet.OWin": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Server.WebListener": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Session": "1.0.0-rc1-final",
+          "Microsoft.AspNet.SignalR.Core": "2.2.1",
+          "Microsoft.AspNet.SignalR.JS": "2.2.1",
+          "Microsoft.AspNet.StaticFiles": "1.0.0-rc1",
+          "Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1",
+          "Microsoft.AspNet.Web.Optimization": "1.1.3",
+          "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1",
+          "Microsoft.DiaSymReader.Native": "1.5.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Globalization.CultureInfoCache": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Localization.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.TraceSource": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Options": "0.0.1-alpha",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
+          "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta8",
+          "Microsoft.Framework.Configuration.Binder": "1.0.0-beta8",
+          "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
+          "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
+          "OAuth.AspNet.AuthServer": null,
+          "OAuth.AspNet.Token": null,
+          "PayPalMerchant-net451": "2.7.109",
+          "System.Json": "4.0.20126.16343",
+          "Yavsc.Abstract": null
+        },
+        "frameworkAssemblies": [
+          "System",
+          "System.Drawing",
+          "System.Net",
+          "System.Xml"
+        ]
+      },
       "Yavsc.Abstract/1.0.5": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
@@ -1966,36 +2795,20 @@
           "Newtonsoft.Json": "9.0.1"
         },
         "frameworkAssemblies": [
-          "System.ComponentModel.DataAnnotations",
-          "System.Json"
+          "System.ComponentModel.DataAnnotations"
         ]
-      },
-      "Yavsc.Server/1.0.0": {
-        "type": "project",
-        "framework": "DNX,Version=v4.5.1",
-        "dependencies": {
-          "EntityFramework7.Npgsql": "3.1.0-rc1-3",
-          "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
-          "Gapi.net45": "1.0.0",
-          "MailKit": "1.12.0",
-          "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Identity": "3.0.0-rc1-final",
-          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
-          "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
-          "Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1",
-          "Newtonsoft.Json": "9.0.1",
-          "PayPalMerchant-net451": "2.7.109",
-          "Yavsc.Abstract": null
-        }
       }
     },
     "DNX,Version=v4.5.1/debian.9-x86": {
+      "Antlr/3.4.1.9004": {
+        "type": "package",
+        "compile": {
+          "lib/Antlr3.Runtime.dll": {}
+        },
+        "runtime": {
+          "lib/Antlr3.Runtime.dll": {}
+        }
+      },
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -2003,6 +2816,26 @@
         },
         "runtime": {
           "lib/BouncyCastle.Crypto.dll": {}
+        }
+      },
+      "EntityFramework.Commands/7.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Relational.Design": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/EntityFramework.Commands.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/EntityFramework.Commands.dll": {}
         }
       },
       "EntityFramework.Core/7.0.0-rc1-final": {
@@ -2045,6 +2878,24 @@
         },
         "runtime": {
           "lib/dnx451/EntityFramework.Core.dll": {}
+        }
+      },
+      "EntityFramework.MicrosoftSqlServer/7.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Relational": "7.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/EntityFramework.MicrosoftSqlServer.dll": {}
+        },
+        "runtime": {
+          "lib/net451/EntityFramework.MicrosoftSqlServer.dll": {}
         }
       },
       "EntityFramework.Relational/7.0.0-rc1-final": {
@@ -2168,6 +3019,9 @@
           "lib/net45/System.Interactive.Async.dll": {}
         }
       },
+      "jQuery/1.6.4": {
+        "type": "package"
+      },
       "MailKit/1.12.0": {
         "type": "package",
         "dependencies": {
@@ -2184,6 +3038,15 @@
         },
         "runtime": {
           "lib/net451/MailKit.dll": {}
+        }
+      },
+      "MarkdownDeep-av.NET/1.5.6": {
+        "type": "package",
+        "compile": {
+          "lib/net451/MarkdownDeep.dll": {}
+        },
+        "runtime": {
+          "lib/net451/MarkdownDeep.dll": {}
         }
       },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
@@ -2272,6 +3135,26 @@
           "lib/net451/Microsoft.AspNet.Authentication.Facebook.dll": {}
         }
       },
+      "Microsoft.AspNet.Authentication.JwtBearer/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "2.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.JwtBearer.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.JwtBearer.dll": {}
+        }
+      },
       "Microsoft.AspNet.Authentication.OAuth/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -2329,6 +3212,27 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Authorization.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Cors/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Cors.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Cors.dll": {}
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-final": {
@@ -2408,6 +3312,55 @@
           "lib/net451/Microsoft.AspNet.DataProtection.Abstractions.dll": {}
         }
       },
+      "Microsoft.AspNet.DataProtection.SystemWeb/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Configuration",
+          "System.Core",
+          "System.Security",
+          "System.Web"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.DataProtection.SystemWeb.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.DataProtection.SystemWeb.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Diagnostics/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Diagnostics.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.WebUtilities": "1.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
+          "System.Diagnostics.DiagnosticSource": "4.0.0-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.dll": {}
+        }
+      },
       "Microsoft.AspNet.Diagnostics.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -2421,6 +3374,27 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Diagnostics.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Diagnostics.Entity/7.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Relational": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Diagnostics": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Configuration",
+          "System.Core",
+          "System.Threading.Tasks"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.Entity.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.Entity.dll": {}
         }
       },
       "Microsoft.AspNet.FileProviders.Abstractions/1.0.0-rc1-final": {
@@ -2665,6 +3639,25 @@
           "lib/net451/Microsoft.AspNet.Identity.EntityFramework.dll": {}
         }
       },
+      "Microsoft.AspNet.IISPlatformHandler/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.IISPlatformHandler.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.IISPlatformHandler.dll": {}
+        }
+      },
       "Microsoft.AspNet.JsonPatch/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -2703,6 +3696,32 @@
           "lib/net451/Microsoft.AspNet.Localization.dll": {}
         }
       },
+      "Microsoft.AspNet.Mvc/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Mvc.ApiExplorer": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Cors": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.DataAnnotations": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Localization": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Razor": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.ViewFeatures": "6.0.0-rc1-final",
+          "Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.dll": {}
+        }
+      },
       "Microsoft.AspNet.Mvc.Abstractions/6.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -2719,6 +3738,24 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Mvc.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Mvc.ApiExplorer/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Mvc.Core": "6.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.ApiExplorer.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.ApiExplorer.dll": {}
         }
       },
       "Microsoft.AspNet.Mvc.Core/6.0.0-rc1-final": {
@@ -2745,6 +3782,25 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Mvc.Core.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Mvc.Cors/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Cors": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Core": "6.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.Cors.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.Cors.dll": {}
         }
       },
       "Microsoft.AspNet.Mvc.DataAnnotations/6.0.0-rc1-final": {
@@ -2785,6 +3841,27 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Mvc.Formatters.Json.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Mvc.Localization/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Razor": "6.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Localization": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.Localization.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.Localization.dll": {}
         }
       },
       "Microsoft.AspNet.Mvc.Razor/6.0.0-rc1-final": {
@@ -2879,6 +3956,24 @@
           "lib/net451/Microsoft.AspNet.Mvc.ViewFeatures.dll": {}
         }
       },
+      "Microsoft.AspNet.OWin/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Owin.dll": {}
+        }
+      },
       "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -2970,6 +4065,176 @@
           "lib/net451/Microsoft.AspNet.Routing.dll": {}
         }
       },
+      "Microsoft.AspNet.Server.Kestrel/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "System.Numerics.Vectors": "4.1.1-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Server.WebListener/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+          "Microsoft.Net.Http.Headers": "1.0.0-rc1-final",
+          "Microsoft.Net.Http.Server": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Session/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Session.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Session.dll": {}
+        }
+      },
+      "Microsoft.AspNet.SignalR.Core/2.2.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "2.1.0",
+          "Microsoft.Owin.Security": "2.1.0",
+          "Newtonsoft.Json": "6.0.4",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.AspNet.SignalR.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.AspNet.SignalR.Core.dll": {}
+        }
+      },
+      "Microsoft.AspNet.SignalR.JS/2.2.1": {
+        "type": "package",
+        "dependencies": {
+          "jQuery": "1.6.4"
+        }
+      },
+      "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.StaticFiles.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.StaticFiles.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Tooling.Razor/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Razor.Runtime": "4.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Tooling.Razor.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Tooling.Razor.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Web.Optimization/1.1.3": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Web.Infrastructure": "1.0.0",
+          "WebGrease": "1.5.2"
+        },
+        "compile": {
+          "lib/net40/System.Web.Optimization.dll": {}
+        },
+        "runtime": {
+          "lib/net40/System.Web.Optimization.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebSockets.Protocol/1.0.0-rc1-final": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Protocol.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Protocol.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebSockets.Server/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.WebSockets.Protocol": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Server.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Server.dll": {}
+        }
+      },
       "Microsoft.AspNet.WebUtilities/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -2995,13 +4260,12 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
+      "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "1.0.0",
-          "Microsoft.DiaSymReader.Native": "1.2.0-rc",
+          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0, 1.2.0)",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.1.0-beta-23413"
+          "System.Reflection.Metadata": "1.1.0"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -3010,10 +4274,10 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
+      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1]"
+          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1-20151109-01]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -3022,7 +4286,7 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
       },
-      "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+      "Microsoft.DiaSymReader.Native/1.5.0": {
         "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
@@ -3229,6 +4493,26 @@
           "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
         }
       },
+      "Microsoft.Extensions.Configuration.FileProviderExtensions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.dll": {}
+        }
+      },
       "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -3247,6 +4531,24 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.UserSecrets/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll": {}
         }
       },
       "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -3421,6 +4723,25 @@
           "lib/net451/Microsoft.Extensions.Logging.Debug.dll": {}
         }
       },
+      "Microsoft.Extensions.Logging.TraceSource/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Collections.Concurrent",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Logging.TraceSource.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Logging.TraceSource.dll": {}
+        }
+      },
       "Microsoft.Extensions.MemoryPool/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -3435,6 +4756,9 @@
         "runtime": {
           "lib/net451/Microsoft.Extensions.MemoryPool.dll": {}
         }
+      },
+      "Microsoft.Extensions.Options/0.0.1-alpha": {
+        "type": "package"
       },
       "Microsoft.Extensions.OptionsModel/1.0.0-rc1-final": {
         "type": "package",
@@ -3554,6 +4878,24 @@
           "lib/dnx451/Microsoft.Framework.Configuration.Abstractions.dll": {}
         }
       },
+      "Microsoft.Framework.Configuration.Binder/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.Configuration": "1.0.0-beta8"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll": {}
+        }
+      },
       "Microsoft.Framework.Configuration.FileExtensions/1.0.0-beta8": {
         "type": "package",
         "dependencies": {
@@ -3660,6 +5002,58 @@
           "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll": {}
         }
       },
+      "Microsoft.IdentityModel.Logging/1.0.0-rc1-211161024": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.IdentityModel.Logging.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.IdentityModel.Logging.dll": {}
+        }
+      },
+      "Microsoft.IdentityModel.Protocols/2.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "System.IdentityModel.Tokens.Jwt": "5.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.dll": {}
+        }
+      },
+      "Microsoft.IdentityModel.Protocols.OpenIdConnect/2.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols": "2.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {}
+        }
+      },
       "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -3673,6 +5067,75 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Net.Http.Headers.dll": {}
+        }
+      },
+      "Microsoft.Net.Http.Server/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Primitives": "1.0.0-rc1-final",
+          "Microsoft.Net.WebSockets": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Net.Http.Server.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Net.Http.Server.dll": {}
+        }
+      },
+      "Microsoft.Net.WebSockets/1.0.0-rc1-final": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Net.WebSockets.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Net.WebSockets.dll": {}
+        }
+      },
+      "Microsoft.Owin/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        }
+      },
+      "Microsoft.Owin.Security/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "2.1.0",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        }
+      },
+      "Microsoft.Web.Infrastructure/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Web.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Web.Infrastructure.dll": {}
         }
       },
       "MimeKit/1.12.0": {
@@ -3715,6 +5178,33 @@
         },
         "runtime": {
           "lib/net45/Npgsql.dll": {}
+        }
+      },
+      "OAuth.AspNet.AuthServer/1.0.5": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1",
+          "Newtonsoft.Json": "9.0.1",
+          "OAuth.AspNet.Token": null
+        }
+      },
+      "OAuth.AspNet.Token/1.0.5": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "9.0.1"
+        }
+      },
+      "Owin/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Owin.dll": {}
         }
       },
       "PayPalCoreSDK/1.7.1": {
@@ -3819,6 +5309,44 @@
           "lib/net45/_._": {}
         }
       },
+      "System.IdentityModel.Tokens/5.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Logging": "1.0.0-rc1-211161024",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Xml"
+        ],
+        "compile": {
+          "lib/net451/System.IdentityModel.Tokens.dll": {}
+        },
+        "runtime": {
+          "lib/net451/System.IdentityModel.Tokens.dll": {}
+        }
+      },
+      "System.IdentityModel.Tokens.Jwt/5.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "System.IdentityModel.Tokens": "5.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/System.IdentityModel.Tokens.Jwt.dll": {}
+        },
+        "runtime": {
+          "lib/net451/System.IdentityModel.Tokens.Jwt.dll": {}
+        }
+      },
       "System.IO/4.0.0": {
         "type": "package",
         "compile": {
@@ -3828,6 +5356,15 @@
           "lib/net45/_._": {}
         }
       },
+      "System.Json/4.0.20126.16343": {
+        "type": "package",
+        "compile": {
+          "lib/net40/System.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net40/System.Json.dll": {}
+        }
+      },
       "System.Linq/4.0.0": {
         "type": "package",
         "compile": {
@@ -3835,6 +5372,15 @@
         },
         "runtime": {
           "lib/net45/_._": {}
+        }
+      },
+      "System.Numerics.Vectors/4.1.1-beta-23516": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net45+win8/System.Numerics.Vectors.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8/System.Numerics.Vectors.dll": {}
         }
       },
       "System.Reflection/4.0.0": {
@@ -3952,6 +5498,93 @@
           "lib/net45/_._": {}
         }
       },
+      "WebGrease/1.5.2": {
+        "type": "package",
+        "dependencies": {
+          "Antlr": "3.4.1.9004",
+          "Newtonsoft.Json": "5.0.4"
+        },
+        "compile": {
+          "lib/WebGrease.dll": {}
+        },
+        "runtime": {
+          "lib/WebGrease.dll": {}
+        }
+      },
+      "Yavsc/1.0.1": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "EntityFramework.Commands": "7.0.0-rc1-final",
+          "EntityFramework.Core": "7.0.0-rc1-final",
+          "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
+          "EntityFramework.Relational": "7.0.0-rc1-final",
+          "EntityFramework7.Npgsql": "3.1.0-rc1-3",
+          "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
+          "Gapi.net45": "1.0.0",
+          "MailKit": "1.12.0",
+          "MarkdownDeep-av.NET": "1.5.6",
+          "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authorization": "1.0.0-rc1-final",
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Microsoft.AspNet.DataProtection.SystemWeb": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Diagnostics.Entity": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1",
+          "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1",
+          "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc": "6.0.0-rc1",
+          "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1",
+          "Microsoft.AspNet.OWin": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Server.WebListener": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Session": "1.0.0-rc1-final",
+          "Microsoft.AspNet.SignalR.Core": "2.2.1",
+          "Microsoft.AspNet.SignalR.JS": "2.2.1",
+          "Microsoft.AspNet.StaticFiles": "1.0.0-rc1",
+          "Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1",
+          "Microsoft.AspNet.Web.Optimization": "1.1.3",
+          "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1",
+          "Microsoft.DiaSymReader.Native": "1.5.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Globalization.CultureInfoCache": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Localization.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.TraceSource": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Options": "0.0.1-alpha",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
+          "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta8",
+          "Microsoft.Framework.Configuration.Binder": "1.0.0-beta8",
+          "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
+          "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
+          "OAuth.AspNet.AuthServer": null,
+          "OAuth.AspNet.Token": null,
+          "PayPalMerchant-net451": "2.7.109",
+          "System.Json": "4.0.20126.16343",
+          "Yavsc.Abstract": null
+        },
+        "frameworkAssemblies": [
+          "System",
+          "System.Drawing",
+          "System.Net",
+          "System.Xml"
+        ]
+      },
       "Yavsc.Abstract/1.0.5": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
@@ -3959,36 +5592,20 @@
           "Newtonsoft.Json": "9.0.1"
         },
         "frameworkAssemblies": [
-          "System.ComponentModel.DataAnnotations",
-          "System.Json"
+          "System.ComponentModel.DataAnnotations"
         ]
-      },
-      "Yavsc.Server/1.0.0": {
-        "type": "project",
-        "framework": "DNX,Version=v4.5.1",
-        "dependencies": {
-          "EntityFramework7.Npgsql": "3.1.0-rc1-3",
-          "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
-          "Gapi.net45": "1.0.0",
-          "MailKit": "1.12.0",
-          "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Identity": "3.0.0-rc1-final",
-          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
-          "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
-          "Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1",
-          "Newtonsoft.Json": "9.0.1",
-          "PayPalMerchant-net451": "2.7.109",
-          "Yavsc.Abstract": null
-        }
       }
     },
     "DNX,Version=v4.5.1/debian.9-x64": {
+      "Antlr/3.4.1.9004": {
+        "type": "package",
+        "compile": {
+          "lib/Antlr3.Runtime.dll": {}
+        },
+        "runtime": {
+          "lib/Antlr3.Runtime.dll": {}
+        }
+      },
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -3996,6 +5613,26 @@
         },
         "runtime": {
           "lib/BouncyCastle.Crypto.dll": {}
+        }
+      },
+      "EntityFramework.Commands/7.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Relational.Design": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/EntityFramework.Commands.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/EntityFramework.Commands.dll": {}
         }
       },
       "EntityFramework.Core/7.0.0-rc1-final": {
@@ -4038,6 +5675,24 @@
         },
         "runtime": {
           "lib/dnx451/EntityFramework.Core.dll": {}
+        }
+      },
+      "EntityFramework.MicrosoftSqlServer/7.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Relational": "7.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/EntityFramework.MicrosoftSqlServer.dll": {}
+        },
+        "runtime": {
+          "lib/net451/EntityFramework.MicrosoftSqlServer.dll": {}
         }
       },
       "EntityFramework.Relational/7.0.0-rc1-final": {
@@ -4161,6 +5816,9 @@
           "lib/net45/System.Interactive.Async.dll": {}
         }
       },
+      "jQuery/1.6.4": {
+        "type": "package"
+      },
       "MailKit/1.12.0": {
         "type": "package",
         "dependencies": {
@@ -4177,6 +5835,15 @@
         },
         "runtime": {
           "lib/net451/MailKit.dll": {}
+        }
+      },
+      "MarkdownDeep-av.NET/1.5.6": {
+        "type": "package",
+        "compile": {
+          "lib/net451/MarkdownDeep.dll": {}
+        },
+        "runtime": {
+          "lib/net451/MarkdownDeep.dll": {}
         }
       },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
@@ -4265,6 +5932,26 @@
           "lib/net451/Microsoft.AspNet.Authentication.Facebook.dll": {}
         }
       },
+      "Microsoft.AspNet.Authentication.JwtBearer/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication": "1.0.0-rc1-final",
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "2.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.JwtBearer.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.JwtBearer.dll": {}
+        }
+      },
       "Microsoft.AspNet.Authentication.OAuth/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -4322,6 +6009,27 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Authorization.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Cors/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Cors.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Cors.dll": {}
         }
       },
       "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-final": {
@@ -4401,6 +6109,55 @@
           "lib/net451/Microsoft.AspNet.DataProtection.Abstractions.dll": {}
         }
       },
+      "Microsoft.AspNet.DataProtection.SystemWeb/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Configuration",
+          "System.Core",
+          "System.Security",
+          "System.Web"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.DataProtection.SystemWeb.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.DataProtection.SystemWeb.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Diagnostics/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Diagnostics.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.WebUtilities": "1.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
+          "System.Diagnostics.DiagnosticSource": "4.0.0-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Runtime"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.dll": {}
+        }
+      },
       "Microsoft.AspNet.Diagnostics.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -4414,6 +6171,27 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Diagnostics.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Diagnostics.Entity/7.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Relational": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Diagnostics": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Configuration",
+          "System.Core",
+          "System.Threading.Tasks"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.Entity.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Diagnostics.Entity.dll": {}
         }
       },
       "Microsoft.AspNet.FileProviders.Abstractions/1.0.0-rc1-final": {
@@ -4658,6 +6436,25 @@
           "lib/net451/Microsoft.AspNet.Identity.EntityFramework.dll": {}
         }
       },
+      "Microsoft.AspNet.IISPlatformHandler/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.IISPlatformHandler.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.IISPlatformHandler.dll": {}
+        }
+      },
       "Microsoft.AspNet.JsonPatch/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -4696,6 +6493,32 @@
           "lib/net451/Microsoft.AspNet.Localization.dll": {}
         }
       },
+      "Microsoft.AspNet.Mvc/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Mvc.ApiExplorer": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Cors": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.DataAnnotations": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Localization": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Razor": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.ViewFeatures": "6.0.0-rc1-final",
+          "Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.dll": {}
+        }
+      },
       "Microsoft.AspNet.Mvc.Abstractions/6.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -4712,6 +6535,24 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Mvc.Abstractions.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Mvc.ApiExplorer/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Mvc.Core": "6.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.ApiExplorer.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.ApiExplorer.dll": {}
         }
       },
       "Microsoft.AspNet.Mvc.Core/6.0.0-rc1-final": {
@@ -4738,6 +6579,25 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Mvc.Core.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Mvc.Cors/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Cors": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Core": "6.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.Cors.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.Cors.dll": {}
         }
       },
       "Microsoft.AspNet.Mvc.DataAnnotations/6.0.0-rc1-final": {
@@ -4778,6 +6638,27 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNet.Mvc.Formatters.Json.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Mvc.Localization/6.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.Razor": "6.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Localization": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Mvc.Localization.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Mvc.Localization.dll": {}
         }
       },
       "Microsoft.AspNet.Mvc.Razor/6.0.0-rc1-final": {
@@ -4872,6 +6753,24 @@
           "lib/net451/Microsoft.AspNet.Mvc.ViewFeatures.dll": {}
         }
       },
+      "Microsoft.AspNet.OWin/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Owin.dll": {}
+        }
+      },
       "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -4963,6 +6862,176 @@
           "lib/net451/Microsoft.AspNet.Routing.dll": {}
         }
       },
+      "Microsoft.AspNet.Server.Kestrel/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "System.Numerics.Vectors": "4.1.1-beta-23516"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Server.WebListener/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+          "Microsoft.Net.Http.Headers": "1.0.0-rc1-final",
+          "Microsoft.Net.Http.Server": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Session/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Session.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Session.dll": {}
+        }
+      },
+      "Microsoft.AspNet.SignalR.Core/2.2.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "2.1.0",
+          "Microsoft.Owin.Security": "2.1.0",
+          "Newtonsoft.Json": "6.0.4",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.AspNet.SignalR.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.AspNet.SignalR.Core.dll": {}
+        }
+      },
+      "Microsoft.AspNet.SignalR.JS/2.2.1": {
+        "type": "package",
+        "dependencies": {
+          "jQuery": "1.6.4"
+        }
+      },
+      "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.StaticFiles.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.StaticFiles.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Tooling.Razor/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Razor.Runtime": "4.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.Tooling.Razor.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.Tooling.Razor.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Web.Optimization/1.1.3": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Web.Infrastructure": "1.0.0",
+          "WebGrease": "1.5.2"
+        },
+        "compile": {
+          "lib/net40/System.Web.Optimization.dll": {}
+        },
+        "runtime": {
+          "lib/net40/System.Web.Optimization.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebSockets.Protocol/1.0.0-rc1-final": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Protocol.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Protocol.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebSockets.Server/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.WebSockets.Protocol": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Server.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.WebSockets.Server.dll": {}
+        }
+      },
       "Microsoft.AspNet.WebUtilities/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -4988,13 +7057,12 @@
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
+      "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "1.0.0",
-          "Microsoft.DiaSymReader.Native": "1.2.0-rc",
+          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0, 1.2.0)",
           "System.Collections.Immutable": "1.1.37",
-          "System.Reflection.Metadata": "1.1.0-beta-23413"
+          "System.Reflection.Metadata": "1.1.0"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -5003,10 +7071,10 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
+      "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
         "type": "package",
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1]"
+          "Microsoft.CodeAnalysis.Common": "[1.1.0-rc1-20151109-01]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -5015,7 +7083,7 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
       },
-      "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+      "Microsoft.DiaSymReader.Native/1.5.0": {
         "type": "package"
       },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
@@ -5222,6 +7290,26 @@
           "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll": {}
         }
       },
+      "Microsoft.Extensions.Configuration.FileProviderExtensions/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.dll": {}
+        }
+      },
       "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -5240,6 +7328,24 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Configuration.Json.dll": {}
+        }
+      },
+      "Microsoft.Extensions.Configuration.UserSecrets/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll": {}
         }
       },
       "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -5414,6 +7520,25 @@
           "lib/net451/Microsoft.Extensions.Logging.Debug.dll": {}
         }
       },
+      "Microsoft.Extensions.Logging.TraceSource/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Collections.Concurrent",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Extensions.Logging.TraceSource.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Extensions.Logging.TraceSource.dll": {}
+        }
+      },
       "Microsoft.Extensions.MemoryPool/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -5428,6 +7553,9 @@
         "runtime": {
           "lib/net451/Microsoft.Extensions.MemoryPool.dll": {}
         }
+      },
+      "Microsoft.Extensions.Options/0.0.1-alpha": {
+        "type": "package"
       },
       "Microsoft.Extensions.OptionsModel/1.0.0-rc1-final": {
         "type": "package",
@@ -5547,6 +7675,24 @@
           "lib/dnx451/Microsoft.Framework.Configuration.Abstractions.dll": {}
         }
       },
+      "Microsoft.Framework.Configuration.Binder/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.Configuration": "1.0.0-beta8"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll": {}
+        }
+      },
       "Microsoft.Framework.Configuration.FileExtensions/1.0.0-beta8": {
         "type": "package",
         "dependencies": {
@@ -5653,6 +7799,58 @@
           "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll": {}
         }
       },
+      "Microsoft.IdentityModel.Logging/1.0.0-rc1-211161024": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.IdentityModel.Logging.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.IdentityModel.Logging.dll": {}
+        }
+      },
+      "Microsoft.IdentityModel.Protocols/2.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "System.IdentityModel.Tokens.Jwt": "5.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.dll": {}
+        }
+      },
+      "Microsoft.IdentityModel.Protocols.OpenIdConnect/2.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols": "2.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {}
+        }
+      },
       "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -5666,6 +7864,75 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Net.Http.Headers.dll": {}
+        }
+      },
+      "Microsoft.Net.Http.Server/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Primitives": "1.0.0-rc1-final",
+          "Microsoft.Net.WebSockets": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Net.Http.Server.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Net.Http.Server.dll": {}
+        }
+      },
+      "Microsoft.Net.WebSockets/1.0.0-rc1-final": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/Microsoft.Net.WebSockets.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.Net.WebSockets.dll": {}
+        }
+      },
+      "Microsoft.Owin/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        }
+      },
+      "Microsoft.Owin.Security/2.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "2.1.0",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        }
+      },
+      "Microsoft.Web.Infrastructure/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Web.Infrastructure.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Web.Infrastructure.dll": {}
         }
       },
       "MimeKit/1.12.0": {
@@ -5708,6 +7975,33 @@
         },
         "runtime": {
           "lib/net45/Npgsql.dll": {}
+        }
+      },
+      "OAuth.AspNet.AuthServer/1.0.5": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1",
+          "Newtonsoft.Json": "9.0.1",
+          "OAuth.AspNet.Token": null
+        }
+      },
+      "OAuth.AspNet.Token/1.0.5": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "9.0.1"
+        }
+      },
+      "Owin/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Owin.dll": {}
         }
       },
       "PayPalCoreSDK/1.7.1": {
@@ -5812,6 +8106,44 @@
           "lib/net45/_._": {}
         }
       },
+      "System.IdentityModel.Tokens/5.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Logging": "1.0.0-rc1-211161024",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Xml"
+        ],
+        "compile": {
+          "lib/net451/System.IdentityModel.Tokens.dll": {}
+        },
+        "runtime": {
+          "lib/net451/System.IdentityModel.Tokens.dll": {}
+        }
+      },
+      "System.IdentityModel.Tokens.Jwt/5.0.0-rc1-211161024": {
+        "type": "package",
+        "dependencies": {
+          "System.IdentityModel.Tokens": "5.0.0-rc1-211161024"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/net451/System.IdentityModel.Tokens.Jwt.dll": {}
+        },
+        "runtime": {
+          "lib/net451/System.IdentityModel.Tokens.Jwt.dll": {}
+        }
+      },
       "System.IO/4.0.0": {
         "type": "package",
         "compile": {
@@ -5821,6 +8153,15 @@
           "lib/net45/_._": {}
         }
       },
+      "System.Json/4.0.20126.16343": {
+        "type": "package",
+        "compile": {
+          "lib/net40/System.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net40/System.Json.dll": {}
+        }
+      },
       "System.Linq/4.0.0": {
         "type": "package",
         "compile": {
@@ -5828,6 +8169,15 @@
         },
         "runtime": {
           "lib/net45/_._": {}
+        }
+      },
+      "System.Numerics.Vectors/4.1.1-beta-23516": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net45+win8/System.Numerics.Vectors.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8/System.Numerics.Vectors.dll": {}
         }
       },
       "System.Reflection/4.0.0": {
@@ -5945,6 +8295,93 @@
           "lib/net45/_._": {}
         }
       },
+      "WebGrease/1.5.2": {
+        "type": "package",
+        "dependencies": {
+          "Antlr": "3.4.1.9004",
+          "Newtonsoft.Json": "5.0.4"
+        },
+        "compile": {
+          "lib/WebGrease.dll": {}
+        },
+        "runtime": {
+          "lib/WebGrease.dll": {}
+        }
+      },
+      "Yavsc/1.0.1": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "EntityFramework.Commands": "7.0.0-rc1-final",
+          "EntityFramework.Core": "7.0.0-rc1-final",
+          "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
+          "EntityFramework.Relational": "7.0.0-rc1-final",
+          "EntityFramework7.Npgsql": "3.1.0-rc1-3",
+          "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
+          "Gapi.net45": "1.0.0",
+          "MailKit": "1.12.0",
+          "MarkdownDeep-av.NET": "1.5.6",
+          "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Authorization": "1.0.0-rc1-final",
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Microsoft.AspNet.DataProtection.SystemWeb": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Diagnostics.Entity": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1",
+          "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1",
+          "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc": "6.0.0-rc1",
+          "Microsoft.AspNet.Mvc.Formatters.Json": "6.0.0-rc1-final",
+          "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1",
+          "Microsoft.AspNet.OWin": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Server.WebListener": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Session": "1.0.0-rc1-final",
+          "Microsoft.AspNet.SignalR.Core": "2.2.1",
+          "Microsoft.AspNet.SignalR.JS": "2.2.1",
+          "Microsoft.AspNet.StaticFiles": "1.0.0-rc1",
+          "Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1",
+          "Microsoft.AspNet.Web.Optimization": "1.1.3",
+          "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1",
+          "Microsoft.DiaSymReader.Native": "1.5.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Globalization.CultureInfoCache": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Localization.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.TraceSource": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Options": "0.0.1-alpha",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final",
+          "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
+          "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta8",
+          "Microsoft.Framework.Configuration.Binder": "1.0.0-beta8",
+          "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
+          "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
+          "OAuth.AspNet.AuthServer": null,
+          "OAuth.AspNet.Token": null,
+          "PayPalMerchant-net451": "2.7.109",
+          "System.Json": "4.0.20126.16343",
+          "Yavsc.Abstract": null
+        },
+        "frameworkAssemblies": [
+          "System",
+          "System.Drawing",
+          "System.Net",
+          "System.Xml"
+        ]
+      },
       "Yavsc.Abstract/1.0.5": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1",
@@ -5952,44 +8389,38 @@
           "Newtonsoft.Json": "9.0.1"
         },
         "frameworkAssemblies": [
-          "System.ComponentModel.DataAnnotations",
-          "System.Json"
+          "System.ComponentModel.DataAnnotations"
         ]
-      },
-      "Yavsc.Server/1.0.0": {
-        "type": "project",
-        "framework": "DNX,Version=v4.5.1",
-        "dependencies": {
-          "EntityFramework7.Npgsql": "3.1.0-rc1-3",
-          "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
-          "Gapi.net45": "1.0.0",
-          "MailKit": "1.12.0",
-          "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Identity": "3.0.0-rc1-final",
-          "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
-          "Microsoft.AspNet.Localization": "1.0.0-rc1-final",
-          "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
-          "Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1",
-          "Newtonsoft.Json": "9.0.1",
-          "PayPalMerchant-net451": "2.7.109",
-          "Yavsc.Abstract": null
-        }
       }
     }
   },
   "libraries": {
+    "OAuth.AspNet.AuthServer/1.0.5": {
+      "type": "project",
+      "path": "../OAuth.AspNet.AuthServer/project.json"
+    },
+    "OAuth.AspNet.Token/1.0.5": {
+      "type": "project",
+      "path": "../OAuth.AspNet.Token/project.json"
+    },
+    "Yavsc/1.0.1": {
+      "type": "project",
+      "path": "../Yavsc/project.json"
+    },
     "Yavsc.Abstract/1.0.5": {
       "type": "project",
       "path": "../Yavsc.Abstract/project.json"
     },
-    "Yavsc.Server/1.0.0": {
-      "type": "project",
-      "path": "../Yavsc.Server/project.json"
+    "Antlr/3.4.1.9004": {
+      "type": "package",
+      "sha512": "c1S+HBE+KYA5EBxtn25LEK02hHPH/tDQ6RviUTTCJpZIPoputtn8ArsQJy9lVJWZOnw37ufByO2Fmf1M8wpr8Q==",
+      "files": [
+        "Antlr.3.4.1.9004.nupkg",
+        "Antlr.3.4.1.9004.nupkg.sha512",
+        "Antlr.nuspec",
+        "lib/Antlr3.Runtime.dll",
+        "lib/Antlr3.Runtime.pdb"
+      ]
     },
     "BouncyCastle/1.8.1": {
       "type": "package",
@@ -6000,6 +8431,33 @@
         "BouncyCastle.nuspec",
         "lib/BouncyCastle.Crypto.dll",
         "Readme.txt"
+      ]
+    },
+    "EntityFramework.Commands/7.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "+wa2VWX3/vDkOpeCeIotMevqpIISimGqeYNTGYRLRhv+8HzsCLeymLzmmYpjav6zYQVvuJiJodapQvijAIfRrA==",
+      "files": [
+        "app/ef",
+        "app/ef.cmd",
+        "app/project.json",
+        "build/netcore50/EntityFramework.Commands.props",
+        "EntityFramework.Commands.7.0.0-rc1-final.nupkg",
+        "EntityFramework.Commands.7.0.0-rc1-final.nupkg.sha512",
+        "EntityFramework.Commands.nuspec",
+        "lib/dnx451/EntityFramework.Commands.dll",
+        "lib/dnx451/EntityFramework.Commands.xml",
+        "lib/dnxcore50/EntityFramework.Commands.dll",
+        "lib/dnxcore50/EntityFramework.Commands.xml",
+        "lib/net451/EntityFramework.Commands.dll",
+        "lib/net451/EntityFramework.Commands.xml",
+        "lib/netcore50/_._",
+        "tools/about_EntityFramework.help.txt",
+        "tools/EntityFramework.psd1",
+        "tools/EntityFramework.psm1",
+        "tools/init.ps1",
+        "tools/install.ps1",
+        "tools/OperationHandlers.cs"
       ]
     },
     "EntityFramework.Core/7.0.0-rc1-final": {
@@ -6018,6 +8476,22 @@
         "lib/net451/EntityFramework.Core.xml",
         "lib/netcore50/EntityFramework.Core.dll",
         "lib/netcore50/EntityFramework.Core.xml"
+      ]
+    },
+    "EntityFramework.MicrosoftSqlServer/7.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "FMB2MgT5aXMF7qGMwf5AGcmpNFoT4s1w0QJ5h+L8W4gyMxWpYamGp9hms7rOSAWY44ZDl5ZMpxiTfu3nY3Nqeg==",
+      "files": [
+        "EntityFramework.MicrosoftSqlServer.7.0.0-rc1-final.nupkg",
+        "EntityFramework.MicrosoftSqlServer.7.0.0-rc1-final.nupkg.sha512",
+        "EntityFramework.MicrosoftSqlServer.nuspec",
+        "lib/dotnet5.4/EntityFramework.MicrosoftSqlServer.dll",
+        "lib/dotnet5.4/EntityFramework.MicrosoftSqlServer.xml",
+        "lib/net451/EntityFramework.MicrosoftSqlServer.dll",
+        "lib/net451/EntityFramework.MicrosoftSqlServer.xml",
+        "lib/netcore50/EntityFramework.MicrosoftSqlServer.dll",
+        "lib/netcore50/EntityFramework.MicrosoftSqlServer.xml"
       ]
     },
     "EntityFramework.Relational/7.0.0-rc1-final": {
@@ -6111,6 +8585,21 @@
         "lib/portable-windows8+net45+wp8/System.Interactive.Async.XML"
       ]
     },
+    "jQuery/1.6.4": {
+      "type": "package",
+      "sha512": "8RzoZQFeFYL/cINRXksLWyl8D5TKctZ/2G8hrlOLLM5OgFNI9h3t3l5tB+BBbsBUxaPUageVe0p9ruU5jrFeow==",
+      "files": [
+        "Content/Scripts/jquery-1.6.4.js",
+        "Content/Scripts/jquery-1.6.4.min.js",
+        "Content/Scripts/jquery-1.6.4-vsdoc.js",
+        "jQuery.1.6.4.nupkg",
+        "jQuery.1.6.4.nupkg.sha512",
+        "jQuery.nuspec",
+        "Tools/install.ps1",
+        "Tools/jquery-1.6.4-vsdoc-para.js",
+        "Tools/uninstall.ps1"
+      ]
+    },
     "MailKit/1.12.0": {
       "type": "package",
       "sha512": "6h6PkKAuMSaTEjXMVSgBqqMrhcRgtBfFwJwA0qxqpQ32IvtG4v2vphB3IBRa3UjX4g1GaWRC+tHwivXGlZ0CtA==",
@@ -6134,6 +8623,18 @@
         "MailKit.1.12.0.nupkg",
         "MailKit.1.12.0.nupkg.sha512",
         "MailKit.nuspec"
+      ]
+    },
+    "MarkdownDeep-av.NET/1.5.6": {
+      "type": "package",
+      "sha512": "/nK/Hzru+vAmNGX5tZtEkKxCqjUS8a/u1vZaQ4pEmlvm6C9IIJ5rWIJephDWVwbzi6eKdEeduU+xmPfLNXrQwQ==",
+      "files": [
+        "lib/dnxcore50/MarkdownDeep.dll",
+        "lib/MonoAndroid10/MarkdownDeep.dll",
+        "lib/net451/MarkdownDeep.dll",
+        "MarkdownDeep-av.NET.1.5.6.nupkg",
+        "MarkdownDeep-av.NET.1.5.6.nupkg.sha512",
+        "MarkdownDeep-av.NET.nuspec"
       ]
     },
     "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
@@ -6192,6 +8693,20 @@
         "Microsoft.AspNet.Authentication.Facebook.nuspec"
       ]
     },
+    "Microsoft.AspNet.Authentication.JwtBearer/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "pkgJ9xKl2RY5j6alvpnLWNGpnM7qpFpcdQSSxjOFI0yWDYxkqagwghdisC/lVgRiSDzh3tm1asjpMbt+6+sNOg==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Authentication.JwtBearer.dll",
+        "lib/dnx451/Microsoft.AspNet.Authentication.JwtBearer.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.JwtBearer.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.JwtBearer.xml",
+        "Microsoft.AspNet.Authentication.JwtBearer.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Authentication.JwtBearer.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Authentication.JwtBearer.nuspec"
+      ]
+    },
     "Microsoft.AspNet.Authentication.OAuth/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
@@ -6232,6 +8747,20 @@
         "Microsoft.AspNet.Authorization.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Authorization.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Authorization.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Cors/6.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "3wfAJBFtBgtYI03Oo2MHXn1bH4PgRjGjHtZ6onjuT7QevAfAgvxuqEw59r8mhW9rBz3abrgcbBwndEFef0DbCg==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.Cors.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Cors.xml",
+        "lib/net451/Microsoft.AspNet.Cors.dll",
+        "lib/net451/Microsoft.AspNet.Cors.xml",
+        "Microsoft.AspNet.Cors.6.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Cors.6.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Cors.nuspec"
       ]
     },
     "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-final": {
@@ -6290,6 +8819,33 @@
         "Microsoft.AspNet.DataProtection.Abstractions.nuspec"
       ]
     },
+    "Microsoft.AspNet.DataProtection.SystemWeb/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "SMCq4lwr8Vf9rMJ0HSdXux5dWILKGzmN0XuL6Uu2+aqofSeFlDhlTRg/QyiThYeFzREllLZ+iw/0P3GAhhgB0w==",
+      "files": [
+        "content/net451/web.config.transform",
+        "lib/net451/Microsoft.AspNet.DataProtection.SystemWeb.dll",
+        "lib/net451/Microsoft.AspNet.DataProtection.SystemWeb.xml",
+        "Microsoft.AspNet.DataProtection.SystemWeb.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.DataProtection.SystemWeb.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.DataProtection.SystemWeb.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Diagnostics/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "PlLhXpe74DUMEanyFNvo+A96zD465usPOxu2iAqREnfcpagNJY4dn6uQxDE04BY6XcqPaYAYcrZYyKRfn/pTIg==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.Diagnostics.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Diagnostics.xml",
+        "lib/net451/Microsoft.AspNet.Diagnostics.dll",
+        "lib/net451/Microsoft.AspNet.Diagnostics.xml",
+        "Microsoft.AspNet.Diagnostics.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Diagnostics.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Diagnostics.nuspec"
+      ]
+    },
     "Microsoft.AspNet.Diagnostics.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
@@ -6302,6 +8858,20 @@
         "Microsoft.AspNet.Diagnostics.Abstractions.1.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Diagnostics.Abstractions.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Diagnostics.Abstractions.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Diagnostics.Entity/7.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "hlOWYlYXpVSEM4wcTzNwZKvJWGUgkZQjOG12FkJFIEMyd8qT8jS20kp92kT2XeU8SBxb1kUAnTBdtOr5VRI+hQ==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.Diagnostics.Entity.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Diagnostics.Entity.xml",
+        "lib/net451/Microsoft.AspNet.Diagnostics.Entity.dll",
+        "lib/net451/Microsoft.AspNet.Diagnostics.Entity.xml",
+        "Microsoft.AspNet.Diagnostics.Entity.7.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Diagnostics.Entity.7.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Diagnostics.Entity.nuspec"
       ]
     },
     "Microsoft.AspNet.FileProviders.Abstractions/1.0.0-rc1-final": {
@@ -6458,6 +9028,19 @@
         "Microsoft.AspNet.Identity.EntityFramework.nuspec"
       ]
     },
+    "Microsoft.AspNet.IISPlatformHandler/1.0.0-rc1-final": {
+      "type": "package",
+      "sha512": "scDY0KQZnOvQTYDd6InIFhn4QnF5UxLtV7VoQXOlpsaEUQ0c6jDVoHvL4ylUy5zcKJkjRDUy/B7Q8TDk05kl2w==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.IISPlatformHandler.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.IISPlatformHandler.xml",
+        "lib/net451/Microsoft.AspNet.IISPlatformHandler.dll",
+        "lib/net451/Microsoft.AspNet.IISPlatformHandler.xml",
+        "Microsoft.AspNet.IISPlatformHandler.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.IISPlatformHandler.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.IISPlatformHandler.nuspec"
+      ]
+    },
     "Microsoft.AspNet.JsonPatch/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
@@ -6486,6 +9069,20 @@
         "Microsoft.AspNet.Localization.nuspec"
       ]
     },
+    "Microsoft.AspNet.Mvc/6.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "gKQUI2L58PibL4v/BCsML5RvpcAWQ7gNCn2xQVhLvt2fGDfRAYIr2SnalRJ0M8m+hdHDNtWydfaVrOC799zKtQ==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.Mvc.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Mvc.xml",
+        "lib/net451/Microsoft.AspNet.Mvc.dll",
+        "lib/net451/Microsoft.AspNet.Mvc.xml",
+        "Microsoft.AspNet.Mvc.6.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Mvc.6.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.nuspec"
+      ]
+    },
     "Microsoft.AspNet.Mvc.Abstractions/6.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
@@ -6500,6 +9097,20 @@
         "Microsoft.AspNet.Mvc.Abstractions.nuspec"
       ]
     },
+    "Microsoft.AspNet.Mvc.ApiExplorer/6.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "cFXQLFGtg8Dv8ngf42zxkqZq9jt0eV73bSFcRlyJENP+M7exk1ebCHjPt5J1wXZQkSsAmzj7JieHBEad5G3TxQ==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.Mvc.ApiExplorer.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Mvc.ApiExplorer.xml",
+        "lib/net451/Microsoft.AspNet.Mvc.ApiExplorer.dll",
+        "lib/net451/Microsoft.AspNet.Mvc.ApiExplorer.xml",
+        "Microsoft.AspNet.Mvc.ApiExplorer.6.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Mvc.ApiExplorer.6.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.ApiExplorer.nuspec"
+      ]
+    },
     "Microsoft.AspNet.Mvc.Core/6.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
@@ -6512,6 +9123,20 @@
         "Microsoft.AspNet.Mvc.Core.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.Core.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Core.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Mvc.Cors/6.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "HGAda11lbt59OxaFjYtzy3DOEL6VoOH4vrMJ7dGnSUbrv8hk+lbk5EUebhFxv7KcKPuoka4pdZB3CPH/TTnahg==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.Mvc.Cors.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Mvc.Cors.xml",
+        "lib/net451/Microsoft.AspNet.Mvc.Cors.dll",
+        "lib/net451/Microsoft.AspNet.Mvc.Cors.xml",
+        "Microsoft.AspNet.Mvc.Cors.6.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Mvc.Cors.6.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.Cors.nuspec"
       ]
     },
     "Microsoft.AspNet.Mvc.DataAnnotations/6.0.0-rc1-final": {
@@ -6540,6 +9165,20 @@
         "Microsoft.AspNet.Mvc.Formatters.Json.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.Formatters.Json.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Formatters.Json.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Mvc.Localization/6.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "G5omyQF/PJZmUrhnuaXxvIpfkp8OgU1fwwBZfsnlaaJd7h8gOhkQspdbXQB+UP5lGO1J/ypFUOYuYmVRKmEjyg==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.Mvc.Localization.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Mvc.Localization.xml",
+        "lib/net451/Microsoft.AspNet.Mvc.Localization.dll",
+        "lib/net451/Microsoft.AspNet.Mvc.Localization.xml",
+        "Microsoft.AspNet.Mvc.Localization.6.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Mvc.Localization.6.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.Localization.nuspec"
       ]
     },
     "Microsoft.AspNet.Mvc.Razor/6.0.0-rc1-final": {
@@ -6596,6 +9235,20 @@
         "Microsoft.AspNet.Mvc.ViewFeatures.6.0.0-rc1-final.nupkg",
         "Microsoft.AspNet.Mvc.ViewFeatures.6.0.0-rc1-final.nupkg.sha512",
         "Microsoft.AspNet.Mvc.ViewFeatures.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.OWin/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "6lkzV/uEYORT1GQDddWVjsm/zRtEZHnIcWmBR4H6tqjsv1q2rWFmDy8rEckPvxUVn1iNTWKpn6s4UJglbdTgtg==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.Owin.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Owin.xml",
+        "lib/net451/Microsoft.AspNet.Owin.dll",
+        "lib/net451/Microsoft.AspNet.Owin.xml",
+        "Microsoft.AspNet.OWin.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.OWin.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.OWin.nuspec"
       ]
     },
     "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-rc1-final": {
@@ -6668,6 +9321,154 @@
         "Microsoft.AspNet.Routing.nuspec"
       ]
     },
+    "Microsoft.AspNet.Server.Kestrel/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "4fuGqW9K2PaxLwQsyRZaoO2Eu+GT5nv8WeYWpD8EqHLzY9GVEW25jy1iW2+1Tf5BwQJLN2e9QxY2K7OPlM9iRg==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll",
+        "lib/dnx451/Microsoft.AspNet.Server.Kestrel.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Server.Kestrel.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Server.Kestrel.xml",
+        "lib/dotnet5.4/Microsoft.AspNet.Server.Kestrel.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Server.Kestrel.xml",
+        "lib/net451/Microsoft.AspNet.Server.Kestrel.dll",
+        "lib/net451/Microsoft.AspNet.Server.Kestrel.xml",
+        "Microsoft.AspNet.Server.Kestrel.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Server.Kestrel.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Server.Kestrel.nuspec",
+        "runtimes/osx/native/libuv.dylib",
+        "runtimes/win10-arm/native/libuv.dll",
+        "runtimes/win7-x64/native/libuv.dll",
+        "runtimes/win7-x86/native/libuv.dll",
+        "thirdpartynotices.txt"
+      ]
+    },
+    "Microsoft.AspNet.Server.WebListener/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "U1S48H06oKFHVth/1xUtylpa0E4tBDYtxpzfELeZ1aNW3fdOqcd20dlh6bapOP78R+axSY1DI/FR8dGGgn+84Q==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll",
+        "lib/dnx451/Microsoft.AspNet.Server.WebListener.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Server.WebListener.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Server.WebListener.xml",
+        "lib/dotnet5.4/Microsoft.AspNet.Server.WebListener.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Server.WebListener.xml",
+        "lib/net451/Microsoft.AspNet.Server.WebListener.dll",
+        "lib/net451/Microsoft.AspNet.Server.WebListener.xml",
+        "Microsoft.AspNet.Server.WebListener.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Server.WebListener.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Server.WebListener.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Session/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "nMImkPMx/z4YL/bCBaTywQZD28sg6IvWMRckzY4hMZuhhRWr4z3HHYgORCaKbJQH3nJkfL6rb+TpmWobN9gKpw==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.Session.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Session.xml",
+        "lib/net451/Microsoft.AspNet.Session.dll",
+        "lib/net451/Microsoft.AspNet.Session.xml",
+        "Microsoft.AspNet.Session.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Session.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Session.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.SignalR.Core/2.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "EUZlRTmUZ3di6hxCiyyhnUld/8AKTOuX1DAGhNLv+ocTfmnOJyS42AEzgxdIk1jRAlEpUEuoicVBBI07A2FU2g==",
+      "files": [
+        "lib/net45/Microsoft.AspNet.SignalR.Core.dll",
+        "lib/net45/Microsoft.AspNet.SignalR.Core.xml",
+        "Microsoft.AspNet.SignalR.Core.2.2.1.nupkg",
+        "Microsoft.AspNet.SignalR.Core.2.2.1.nupkg.sha512",
+        "Microsoft.AspNet.SignalR.Core.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.SignalR.JS/2.2.1": {
+      "type": "package",
+      "sha512": "IKzTOfXjhN7kaGX47BATuTqP/mjVCDb9ivAVvBBrJoaomLT0Puj4f7fnHepByRkT7IGpm6hLbPO3afws5rlFdw==",
+      "files": [
+        "content/Scripts/jquery.signalR-2.2.1.js",
+        "content/Scripts/jquery.signalR-2.2.1.min.js",
+        "Microsoft.AspNet.SignalR.JS.2.2.1.nupkg",
+        "Microsoft.AspNet.SignalR.JS.2.2.1.nupkg.sha512",
+        "Microsoft.AspNet.SignalR.JS.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "JKFrKL6iwGzG+DO9vwP8fEbz3gHA9K6SoCE/Th/oIwxDEENNF2TAYjjAag5c0iJcaK3+X8+s2RkA/zZ+vWHOTg==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.StaticFiles.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.StaticFiles.xml",
+        "lib/net451/Microsoft.AspNet.StaticFiles.dll",
+        "lib/net451/Microsoft.AspNet.StaticFiles.xml",
+        "Microsoft.AspNet.StaticFiles.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.StaticFiles.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.StaticFiles.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Tooling.Razor/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "ZWDxJ4sqrZyrtmlRKeBYrxguRNBnTGV2LNgyZrSyVQ8DcQjPkSqFwu18BeER+j6Od2mgV5aOCdCLDN0QnjYI7Q==",
+      "files": [
+        "app/project.json",
+        "app/razor-tooling",
+        "app/razor-tooling.cmd",
+        "lib/dotnet5.4/Microsoft.AspNet.Tooling.Razor.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.Tooling.Razor.xml",
+        "lib/net451/Microsoft.AspNet.Tooling.Razor.dll",
+        "lib/net451/Microsoft.AspNet.Tooling.Razor.xml",
+        "Microsoft.AspNet.Tooling.Razor.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.Tooling.Razor.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.Tooling.Razor.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Web.Optimization/1.1.3": {
+      "type": "package",
+      "sha512": "TWKKpTWEdB8jXp2Vl2TXNKW30GBQg6nnh0y8iZWmGY5c1XY4f649vfDslNHsCsvk9JZxc1Rkm/UGDdfq4gjWRQ==",
+      "files": [
+        "lib/net40/System.Web.Optimization.dll",
+        "lib/net40/system.web.optimization.xml",
+        "Microsoft.AspNet.Web.Optimization.1.1.3.nupkg",
+        "Microsoft.AspNet.Web.Optimization.1.1.3.nupkg.sha512",
+        "Microsoft.AspNet.Web.Optimization.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.WebSockets.Protocol/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "dc/e2uVh/J9dQ9DuXh0hlTSS5lID2Kr+O+EFgf9NgrvP1sFS8EWDGHoUv9RS/owVfFtd956bnRjMX2jD/5NBPA==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.WebSockets.Protocol.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.WebSockets.Protocol.xml",
+        "lib/net451/Microsoft.AspNet.WebSockets.Protocol.dll",
+        "lib/net451/Microsoft.AspNet.WebSockets.Protocol.xml",
+        "Microsoft.AspNet.WebSockets.Protocol.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.WebSockets.Protocol.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.WebSockets.Protocol.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.WebSockets.Server/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "hVPS2eewqM8S5cpFK62+d10WCaPBQb9pnP3ahEYP/wMlycv0nAmsQ5sMeaI06zI12cZTAXWnwf3aUgN7/2yuFA==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.AspNet.WebSockets.Server.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.WebSockets.Server.xml",
+        "lib/net451/Microsoft.AspNet.WebSockets.Server.dll",
+        "lib/net451/Microsoft.AspNet.WebSockets.Server.xml",
+        "Microsoft.AspNet.WebSockets.Server.1.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.WebSockets.Server.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.WebSockets.Server.nuspec"
+      ]
+    },
     "Microsoft.AspNet.WebUtilities/1.0.0-rc1-final": {
       "type": "package",
       "sha512": "0D80xroAEiWlB9X5eR/JUya1H2saIYnt4d7bPru5RRf5L/66X+9WWhf3hFkLUF3W13K6g6K9Is9dCTaEfFFKTA==",
@@ -6696,40 +9497,41 @@
         "tools/uninstall.ps1"
       ]
     },
-    "Microsoft.CodeAnalysis.Common/1.1.0-rc1": {
+    "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
       "type": "package",
-      "sha512": "KLQcpe9KgrnDqinW1nX4ovd5HoPCMGtoCL8jf1NmXZBwYP9rOGGlQDovkxBUeRxMTEwV0mMXh+NK0D3dRWScwA==",
+      "sha512": "gC9zpQARTjIOht1dZM5Bp0fbOKA40yh0wHBMG2psLGquche0URbfdB9i1pnCusLospEsRIrNvYl75647BcBVug==",
       "files": [
         "lib/net45/Microsoft.CodeAnalysis.dll",
         "lib/net45/Microsoft.CodeAnalysis.xml",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.dll",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.xml",
-        "Microsoft.CodeAnalysis.Common.1.1.0-rc1.nupkg",
-        "Microsoft.CodeAnalysis.Common.1.1.0-rc1.nupkg.sha512",
+        "Microsoft.CodeAnalysis.Common.1.1.0-rc1-20151109-01.nupkg",
+        "Microsoft.CodeAnalysis.Common.1.1.0-rc1-20151109-01.nupkg.sha512",
         "Microsoft.CodeAnalysis.Common.nuspec",
         "ThirdPartyNotices.rtf"
       ]
     },
-    "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1": {
+    "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
       "type": "package",
-      "sha512": "yol50E2N6gfB3S5Pt5ew7Sj7ikrj87WMSARycAq44JRIaR3re3pyUBXHeohLkDdEEVheY9+qbnclVeCEQ7CWYA==",
+      "sha512": "BFhSWMMlp0xLN/ogn71ULN7N0yy/yqJf/wu63x3KjV497n+8OlyiX7ZnbaQiUeafjW5P2vLzvZH99+5s+dH3Dg==",
       "files": [
         "lib/net45/Microsoft.CodeAnalysis.CSharp.dll",
         "lib/net45/Microsoft.CodeAnalysis.CSharp.xml",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.dll",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.xml",
-        "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1.nupkg",
-        "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1.nupkg.sha512",
+        "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1-20151109-01.nupkg",
+        "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1-20151109-01.nupkg.sha512",
         "Microsoft.CodeAnalysis.CSharp.nuspec",
         "ThirdPartyNotices.rtf"
       ]
     },
-    "Microsoft.DiaSymReader.Native/1.2.0-rc": {
+    "Microsoft.DiaSymReader.Native/1.5.0": {
       "type": "package",
-      "sha512": "dSk3ln9b2MMOFnXVB47HVbdjl3r7EcikC2qTCmVrfGDJiMyLt2F3kumxICbRTuQhEGNvPnVH9p9lWKIQlNjd+w==",
+      "sha512": "Zs1Cm0z1G9QLkKZ/k9O2/z47fN84ZbhWCrdBYv0ArC2lU4H1pOTkjah6RgCm/ZnS8ZdOMFC+We6shG6SCRaXeg==",
       "files": [
-        "Microsoft.DiaSymReader.Native.1.2.0-rc.nupkg",
-        "Microsoft.DiaSymReader.Native.1.2.0-rc.nupkg.sha512",
+        "build/Microsoft.DiaSymReader.Native.props",
+        "Microsoft.DiaSymReader.Native.1.5.0.nupkg",
+        "Microsoft.DiaSymReader.Native.1.5.0.nupkg.sha512",
         "Microsoft.DiaSymReader.Native.nuspec",
         "runtimes/win/native/Microsoft.DiaSymReader.Native.amd64.dll",
         "runtimes/win/native/Microsoft.DiaSymReader.Native.arm.dll",
@@ -6897,6 +9699,22 @@
         "microsoft.extensions.configuration.fileextensions.nuspec"
       ]
     },
+    "Microsoft.Extensions.Configuration.FileProviderExtensions/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "OhIrGyCmuWalr0WEAtoRarpTTxP/hb4CHHvv15KYjzgB91T5In2PMaBX65Y0pBxvhKqPdocvo8iNOh2Sk+abNw==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.FileProviderExtensions.dll",
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.FileProviderExtensions.xml",
+        "lib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.dll",
+        "lib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.xml",
+        "lib/netcore50/Microsoft.Extensions.Configuration.FileProviderExtensions.dll",
+        "lib/netcore50/Microsoft.Extensions.Configuration.FileProviderExtensions.xml",
+        "Microsoft.Extensions.Configuration.FileProviderExtensions.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.Configuration.FileProviderExtensions.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.Configuration.FileProviderExtensions.nuspec"
+      ]
+    },
     "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
       "type": "package",
       "sha512": "9v+RpswnXEpAP5mx8J1w1yZZT2pPtMBTnOAauNh2c9ju5Dhq3ljxvbm0S9j6o5F/EFSLlbfN/brxTJN3qa/upw==",
@@ -6909,6 +9727,20 @@
         "lib/netcore50/Microsoft.Extensions.Configuration.Json.xml",
         "microsoft.extensions.configuration.json.1.0.0-rc1-final.nupkg.sha512",
         "microsoft.extensions.configuration.json.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Configuration.UserSecrets/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "m2WaXGNWRrbpWquen8PS1oB8GdG5tCSWhXAmFbhacj1mhz3ojFy0TDUZPbx87TX2ZQNNp6MYfzO5Z73hlM47Bw==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.UserSecrets.dll",
+        "lib/dotnet5.4/Microsoft.Extensions.Configuration.UserSecrets.xml",
+        "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll",
+        "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.xml",
+        "Microsoft.Extensions.Configuration.UserSecrets.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.Configuration.UserSecrets.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.Configuration.UserSecrets.nuspec"
       ]
     },
     "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
@@ -7057,6 +9889,22 @@
         "Microsoft.Extensions.Logging.Debug.nuspec"
       ]
     },
+    "Microsoft.Extensions.Logging.TraceSource/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "wIxGpFxTKI+xvh/aVNCUh0tUEq24xmRW/OWpOJrE2c3QrIJJ6vSpvwGJ7cmgvMWK2Ul+HDd9Wxrcd0tUa8rHhg==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.Extensions.Logging.TraceSource.dll",
+        "lib/dotnet5.4/Microsoft.Extensions.Logging.TraceSource.xml",
+        "lib/net451/Microsoft.Extensions.Logging.TraceSource.dll",
+        "lib/net451/Microsoft.Extensions.Logging.TraceSource.xml",
+        "lib/netcore50/Microsoft.Extensions.Logging.TraceSource.dll",
+        "lib/netcore50/Microsoft.Extensions.Logging.TraceSource.xml",
+        "Microsoft.Extensions.Logging.TraceSource.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.Logging.TraceSource.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.Logging.TraceSource.nuspec"
+      ]
+    },
     "Microsoft.Extensions.MemoryPool/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
@@ -7069,6 +9917,16 @@
         "Microsoft.Extensions.MemoryPool.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.MemoryPool.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.MemoryPool.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.Options/0.0.1-alpha": {
+      "type": "package",
+      "sha512": "5zH0KTUqMzt66T9dcJy2x7imjsAHgqctudJGWDKHtNtyKsedyv0xAc7PLStFfrkZQjlqtn/X8QpHnsGEl+fMwQ==",
+      "files": [
+        "content/Readme.txt",
+        "Microsoft.Extensions.Options.0.0.1-alpha.nupkg",
+        "Microsoft.Extensions.Options.0.0.1-alpha.nupkg.sha512",
+        "Microsoft.Extensions.Options.nuspec"
       ]
     },
     "Microsoft.Extensions.OptionsModel/1.0.0-rc1-final": {
@@ -7175,6 +10033,24 @@
         "Microsoft.Framework.Configuration.Abstractions.nuspec"
       ]
     },
+    "Microsoft.Framework.Configuration.Binder/1.0.0-beta8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "6BWMPvDuy6nTe32z2JWsoiLljVhWagWkDhcN9EbvN4/ihGbnCWzKPIUCJ3a/1s9k/ZsWp4VZtxeuSaZ+60qQbQ==",
+      "files": [
+        "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll",
+        "lib/dnx451/Microsoft.Framework.Configuration.Binder.xml",
+        "lib/dnxcore50/Microsoft.Framework.Configuration.Binder.dll",
+        "lib/dnxcore50/Microsoft.Framework.Configuration.Binder.xml",
+        "lib/dotnet/Microsoft.Framework.Configuration.Binder.dll",
+        "lib/dotnet/Microsoft.Framework.Configuration.Binder.xml",
+        "lib/net45/Microsoft.Framework.Configuration.Binder.dll",
+        "lib/net45/Microsoft.Framework.Configuration.Binder.xml",
+        "Microsoft.Framework.Configuration.Binder.1.0.0-beta8.nupkg",
+        "Microsoft.Framework.Configuration.Binder.1.0.0-beta8.nupkg.sha512",
+        "Microsoft.Framework.Configuration.Binder.nuspec"
+      ]
+    },
     "Microsoft.Framework.Configuration.FileExtensions/1.0.0-beta8": {
       "type": "package",
       "serviceable": true,
@@ -7275,6 +10151,48 @@
         "Microsoft.Framework.Runtime.Interfaces.nuspec"
       ]
     },
+    "Microsoft.IdentityModel.Logging/1.0.0-rc1-211161024": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "creXwpCysjVpRx+IsZSf8mxCT9lZ/VY1T6wR6zFFulPXV1UZysVURmLd/IgJg/p9pAtcrU5yIbRC9Az3j73+nA==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.IdentityModel.Logging.dll",
+        "lib/dotnet5.4/Microsoft.IdentityModel.Logging.xml",
+        "lib/net451/Microsoft.IdentityModel.Logging.dll",
+        "lib/net451/Microsoft.IdentityModel.Logging.xml",
+        "Microsoft.IdentityModel.Logging.1.0.0-rc1-211161024.nupkg",
+        "Microsoft.IdentityModel.Logging.1.0.0-rc1-211161024.nupkg.sha512",
+        "Microsoft.IdentityModel.Logging.nuspec"
+      ]
+    },
+    "Microsoft.IdentityModel.Protocols/2.0.0-rc1-211161024": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "1/I4nkZCKjNg9jIASv2sNIi8RvdsYLi/efbylZEw+zvtBgNfNEvdCeAsIVyX3A4pR0yQwtIdz+kTYRTs2diSEQ==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.IdentityModel.Protocols.dll",
+        "lib/dotnet5.4/Microsoft.IdentityModel.Protocols.xml",
+        "lib/net451/Microsoft.IdentityModel.Protocols.dll",
+        "lib/net451/Microsoft.IdentityModel.Protocols.xml",
+        "Microsoft.IdentityModel.Protocols.2.0.0-rc1-211161024.nupkg",
+        "Microsoft.IdentityModel.Protocols.2.0.0-rc1-211161024.nupkg.sha512",
+        "Microsoft.IdentityModel.Protocols.nuspec"
+      ]
+    },
+    "Microsoft.IdentityModel.Protocols.OpenIdConnect/2.0.0-rc1-211161024": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "4xW6TBJ4ys3p+KtHwzddq8pkdxFoUtRlHYcHECK9YtZxkp4omLA9NUGrHRZ57RGN31vPdSzX3u1ujiA2Bqpo+A==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
+        "lib/dotnet5.4/Microsoft.IdentityModel.Protocols.OpenIdConnect.xml",
+        "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll",
+        "lib/net451/Microsoft.IdentityModel.Protocols.OpenIdConnect.xml",
+        "Microsoft.IdentityModel.Protocols.OpenIdConnect.2.0.0-rc1-211161024.nupkg",
+        "Microsoft.IdentityModel.Protocols.OpenIdConnect.2.0.0-rc1-211161024.nupkg.sha512",
+        "Microsoft.IdentityModel.Protocols.OpenIdConnect.nuspec"
+      ]
+    },
     "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
       "type": "package",
       "sha512": "Y10hkmHQZLieW3J6J+vTiq86vifmJ7Vc2zrwNR349oAaUGjTHL0ws6rqHn0JDIcawBna4AE3OBNsL9vuZuE8bw==",
@@ -7285,6 +10203,70 @@
         "lib/net451/Microsoft.Net.Http.Headers.xml",
         "microsoft.net.http.headers.1.0.0-rc1-final.nupkg.sha512",
         "microsoft.net.http.headers.nuspec"
+      ]
+    },
+    "Microsoft.Net.Http.Server/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "XQMZUf0SbVzjTX0vyiVr0LP3Cygy1wCPDZmDla9Yeqc07HvSZ02Sg4qTSKiNV2h85yY3Dka+MNmL3XoYmnsEAA==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.Net.Http.Server.dll",
+        "lib/dotnet5.4/Microsoft.Net.Http.Server.xml",
+        "lib/net451/Microsoft.Net.Http.Server.dll",
+        "lib/net451/Microsoft.Net.Http.Server.xml",
+        "Microsoft.Net.Http.Server.1.0.0-rc1-final.nupkg",
+        "Microsoft.Net.Http.Server.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Net.Http.Server.nuspec"
+      ]
+    },
+    "Microsoft.Net.WebSockets/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "DIzmA7s2sNBEq+Wz5cCPFAYKx1WGiLE7iCVrA7Lvhxf/+EzPWeaKlCYvjSHTPNViZsX/eUI5vsiDmqK/5tZjQA==",
+      "files": [
+        "lib/dotnet5.4/Microsoft.Net.WebSockets.dll",
+        "lib/dotnet5.4/Microsoft.Net.WebSockets.xml",
+        "lib/net451/Microsoft.Net.WebSockets.dll",
+        "lib/net451/Microsoft.Net.WebSockets.xml",
+        "Microsoft.Net.WebSockets.1.0.0-rc1-final.nupkg",
+        "Microsoft.Net.WebSockets.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Net.WebSockets.nuspec"
+      ]
+    },
+    "Microsoft.Owin/2.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "lk0kK64mlmcmtWX8YOYkZsnZKDoGEzMZhe8e1bcP+FFcgD4f2QfKwvu5Z8Bh8WS0VO7Rgk+DJ0hwW0k+S/UGMg==",
+      "files": [
+        "lib/net40/Microsoft.Owin.dll",
+        "lib/net40/Microsoft.Owin.XML",
+        "lib/net45/Microsoft.Owin.dll",
+        "lib/net45/Microsoft.Owin.XML",
+        "Microsoft.Owin.2.1.0.nupkg",
+        "Microsoft.Owin.2.1.0.nupkg.sha512",
+        "Microsoft.Owin.nuspec"
+      ]
+    },
+    "Microsoft.Owin.Security/2.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "4n1V0p+O6W1L0xHUM8Cjp2Y+MmmUkiCZv6PvRNIDCJD9zlerBJa2HECo9lUiWC+KuasQJ3QxB1FmipNBxdXXIQ==",
+      "files": [
+        "lib/net45/Microsoft.Owin.Security.dll",
+        "lib/net45/Microsoft.Owin.Security.XML",
+        "Microsoft.Owin.Security.2.1.0.nupkg",
+        "Microsoft.Owin.Security.2.1.0.nupkg.sha512",
+        "Microsoft.Owin.Security.nuspec"
+      ]
+    },
+    "Microsoft.Web.Infrastructure/1.0.0": {
+      "type": "package",
+      "sha512": "FNmvLn5m2LTU/Rs2KWVo0SIIh9Ek+U0ojex7xeDaSHw/zgEP77A8vY5cVWgUtBGS8MJfDGNn8rpXJWEIQaPwTg==",
+      "files": [
+        "lib/net40/Microsoft.Web.Infrastructure.dll",
+        "Microsoft.Web.Infrastructure.1.0.0.nupkg",
+        "Microsoft.Web.Infrastructure.1.0.0.nupkg.sha512",
+        "Microsoft.Web.Infrastructure.nuspec"
       ]
     },
     "MimeKit/1.12.0": {
@@ -7360,6 +10342,16 @@
         "Npgsql.3.1.0-alpha6.nupkg",
         "Npgsql.3.1.0-alpha6.nupkg.sha512",
         "Npgsql.nuspec"
+      ]
+    },
+    "Owin/1.0.0": {
+      "type": "package",
+      "sha512": "OseTFniKmyp76mEzOBwIKGBRS5eMoYNkMKaMXOpxx9jv88+b6mh1rSaw43vjBOItNhaLFG3d0a20PfHyibH5sw==",
+      "files": [
+        "lib/net40/Owin.dll",
+        "Owin.1.0.0.nupkg",
+        "Owin.1.0.0.nupkg.sha512",
+        "Owin.nuspec"
       ]
     },
     "PayPalCoreSDK/1.7.1": {
@@ -7618,6 +10610,34 @@
         "System.Globalization.nuspec"
       ]
     },
+    "System.IdentityModel.Tokens/5.0.0-rc1-211161024": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "UbFu6NIPI8pDL/lZlajUQ06OQNJvkpUWYBDIZr+HaqiXseE0Jja1kXTFg2gxKpjuruRinR7e7+/qnAAE3/BPcw==",
+      "files": [
+        "lib/dotnet5.4/System.IdentityModel.Tokens.dll",
+        "lib/dotnet5.4/System.IdentityModel.Tokens.xml",
+        "lib/net451/System.IdentityModel.Tokens.dll",
+        "lib/net451/System.IdentityModel.Tokens.xml",
+        "System.IdentityModel.Tokens.5.0.0-rc1-211161024.nupkg",
+        "System.IdentityModel.Tokens.5.0.0-rc1-211161024.nupkg.sha512",
+        "System.IdentityModel.Tokens.nuspec"
+      ]
+    },
+    "System.IdentityModel.Tokens.Jwt/5.0.0-rc1-211161024": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "A/mqsC0pFbFnsZ6OR17PPkNz4OEu0Xt8wK83FNDLvsoWMhvKS2DDFnn9dqzUxKDLEIZUXwWWCJQJritmvXsf1g==",
+      "files": [
+        "lib/dotnet5.4/System.IdentityModel.Tokens.Jwt.dll",
+        "lib/dotnet5.4/System.IdentityModel.Tokens.Jwt.xml",
+        "lib/net451/System.IdentityModel.Tokens.Jwt.dll",
+        "lib/net451/System.IdentityModel.Tokens.Jwt.xml",
+        "System.IdentityModel.Tokens.Jwt.5.0.0-rc1-211161024.nupkg",
+        "System.IdentityModel.Tokens.Jwt.5.0.0-rc1-211161024.nupkg.sha512",
+        "System.IdentityModel.Tokens.Jwt.nuspec"
+      ]
+    },
     "System.IO/4.0.0": {
       "type": "package",
       "sha512": "MoCHQ0u5n0OMwUS8OX4Gl48qKiQziSW5cXvt82d+MmAcsLq9OL90+ihnu/aJ1h6OOYcBswrZAEuApfZha9w2lg==",
@@ -7666,6 +10686,17 @@
         "System.IO.nuspec"
       ]
     },
+    "System.Json/4.0.20126.16343": {
+      "type": "package",
+      "sha512": "iFfVzUyuvd5YcTw8NcP62mJ0F+JQ2dDLRArxYk+t6JKdb00mW/uaU3JyO1OuXC3RUsB6ITRYN4FCnxff89Hn4g==",
+      "files": [
+        "lib/net40/System.Json.dll",
+        "lib/net40/System.Json.xml",
+        "System.Json.4.0.20126.16343.nupkg",
+        "System.Json.4.0.20126.16343.nupkg.sha512",
+        "System.Json.nuspec"
+      ]
+    },
     "System.Linq/4.0.0": {
       "type": "package",
       "serviceable": true,
@@ -7697,6 +10728,31 @@
         "System.Linq.4.0.0.nupkg",
         "System.Linq.4.0.0.nupkg.sha512",
         "System.Linq.nuspec"
+      ]
+    },
+    "System.Numerics.Vectors/4.1.1-beta-23516": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "FCYCEjc3BXBTpVZTxMqf2m/sGYyDzLwICy5lNKgZzT8WfshJhsTGjJuETwsh1Cwi6bksw9YiTB6yeeWBBJDnTA==",
+      "files": [
+        "lib/dotnet5.4/System.Numerics.Vectors.dll",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net46/_._",
+        "lib/net46/System.Numerics.Vectors.dll",
+        "lib/portable-net45+win8/System.Numerics.Vectors.dll",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "ref/dotnet5.4/System.Numerics.Vectors.dll",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net46/_._",
+        "ref/net46/System.Numerics.Vectors.dll",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "System.Numerics.Vectors.4.1.1-beta-23516.nupkg",
+        "System.Numerics.Vectors.4.1.1-beta-23516.nupkg.sha512",
+        "System.Numerics.Vectors.nuspec"
       ]
     },
     "System.Reflection/4.0.0": {
@@ -8146,6 +11202,19 @@
         "system.threading.4.0.0.nupkg.sha512",
         "system.threading.nuspec"
       ]
+    },
+    "WebGrease/1.5.2": {
+      "type": "package",
+      "sha512": "VoyDSOOugLx3q5IyOgEcjeYZQOqV9VWZQT57UtN4szlYhAmOcEjVfKWXbtRqBuX43pgyL9E7nMSIPoryC8Cu1Q==",
+      "files": [
+        "lib/WebGrease.dll",
+        "tools/install.ps1",
+        "tools/uninstall.ps1",
+        "tools/WG.exe",
+        "WebGrease.1.5.2.nupkg",
+        "WebGrease.1.5.2.nupkg.sha512",
+        "WebGrease.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
@@ -8157,7 +11226,7 @@
       "Microsoft.Extensions.PlatformAbstractions >= 1.0.0-rc1-final",
       "Microsoft.Framework.Configuration.Json >= 1.0.0-*",
       "Microsoft.Framework.ConfigurationModel.Json >= 1.0.0-*",
-      "Yavsc.Server >= 1.0.5-rc9",
+      "Yavsc ",
       "Microsoft.Extensions.DependencyInjection.Abstractions >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Logging.Debug >= 1.0.0-rc1-final"
     ],
