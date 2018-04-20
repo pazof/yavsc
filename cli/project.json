@@ -25,7 +25,7 @@
         "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
         "Microsoft.Framework.Configuration.Json": "1.0.0-*",
         "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-*",
-        "Yavsc.Server": "1.0.5-rc9",
+        "Yavsc": "1.0.5-rc9",
         "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
         "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final"
     },
