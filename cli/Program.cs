@@ -16,7 +16,7 @@ using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-// using Microsoft.AspNet.Localization;
+using Microsoft.AspNet.Localization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.AspNet.Mvc.Razor;
@@ -35,15 +35,13 @@ namespace cli
             var host = new WebHostBuilder();
 
             var hostengnine = host.UseEnvironment("Develpment")
-            .UseServer("Yavsc.Server")
+            .UseServer("cli")
             .UseStartup<Startup>()
-            /* 
+             
             .UseServices(services => {
-Console.WriteLine($"> Using {services.Count} services:");
-
-foreach (var s in services) Console.WriteLine($"> * {s.ServiceType}");
-            }  )
-            */
+              Console.WriteLine($"> Using {services.Count} services:");
+              foreach (var s in services) Console.WriteLine($"> * {s.ServiceType}");
+            })
             .Build();
 
             var app = hostengnine.Start();
@@ -93,7 +91,6 @@ namespace cli
             services.Configure<SiteSettings>(siteSettingsconf);
             var smtpSettingsconf = Configuration.GetSection("Smtp");
             services.Configure<SmtpSettings>(smtpSettingsconf);
-
             services.AddInstance(typeof(ILoggerFactory), new LoggerFactory());
             services.AddTransient(typeof(IEmailSender), typeof(MessageSender));
             services.AddTransient(typeof(RazorEngineHost), typeof(YaRazorEngineHost));
@@ -107,6 +104,10 @@ namespace cli
             services.AddLogging();
             services.AddTransient<EMailer>();
 
+            services.AddLocalization(options =>
+            {
+                options.ResourcesPath = "Resources";
+            });
         }
 
         public void Configure (IApplicationBuilder app, IHostingEnvironment env,

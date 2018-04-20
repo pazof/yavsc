@@ -125,10 +125,6 @@
             "target": "project",
             "type": "build"
         },
-        "Yavsc.Server": {
-            "target": "project",
-            "type": "build"
-        },
         "OAuth.AspNet.Token": {
             "target": "project",
             "type": "build"
