@@ -2,7 +2,6 @@
     "projects": [
         "Yavsc",
         "Yavsc.Abstract",
-        "Yavsc.Server",
         "cli",
         "testOauthClient",
         "OAuth.AspNet.Token",
