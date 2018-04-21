@@ -1,0 +1,59 @@
+@model Yavsc.Server.Models.EMailing.MailingTemplate
+
+@{
+    ViewData["Title"] = SR["Create"];
+}
+
+<h2>@SR["Create"]</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>MailingTemplate</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Body" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Body" class="form-control" />
+                <span asp-validation-for="Body" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ManagerId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="ManagerId" class ="form-control" asp-items="@ViewBag.ManagerId" ></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ReplyToAddress" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ReplyToAddress" class="form-control" />
+                <span asp-validation-for="ReplyToAddress" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ShortName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ShortName" class="form-control" />
+                <span asp-validation-for="ShortName" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ToSend" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="ToSend" asp-items="@ViewBag.ToSend" class="form-control"></select>
+                <span asp-validation-for="ToSend" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

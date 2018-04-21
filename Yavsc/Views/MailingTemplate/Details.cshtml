@@ -1,0 +1,66 @@
+@model Yavsc.Server.Models.EMailing.MailingTemplate
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>MailingTemplate</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Body)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Body)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DateCreated)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DateModified)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DateModified)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ReplyToAddress)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReplyToAddress)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ShortName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ShortName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ToSend)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ToSend)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UserCreated)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserCreated)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UserModified)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserModified)
+        </dd>
+    </dl>
+</div>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</p>
