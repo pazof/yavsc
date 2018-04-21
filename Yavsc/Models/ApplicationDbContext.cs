@@ -9,6 +9,7 @@ using System.Threading;
 using Yavsc.Models.Haircut;
 using Yavsc.Models.IT.Maintaining;
 using Yavsc.Models.IT.Fixing;
+using Yavsc.Server.Models.EMailing;
 
 namespace Yavsc.Models
 {
@@ -296,8 +297,10 @@ namespace Yavsc.Models
          public DbSet<Announce> Announce { get; set; }
 
          public DbSet<ChatConnection> ChatConnection { get; set; }
+
          public DbSet<ChatRoom> ChatRoom { get; set; }
 
+         public DbSet<MailingTemplate> MailingTemplate { get; set; }
         
     }
 }
