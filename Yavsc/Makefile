@@ -16,8 +16,6 @@ PACKAGE=$(DESTPATH)/$(PKGFILENAME)
 NUGETSOURCE=$(HOME)/Nupkgs/
 
 all: $(BINTARGETPATH)
-
-$(BINTARGETPATH):
 	dnu build
 
 deploy: clean pushInPre pushInProd
@@ -40,7 +38,7 @@ project.lock.json: project.json
 watch: project.lock.json
 	ASPNET_ENV=$(ASPNET_ENV) ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) dnx-watch web --configuration=$(CONFIGURATION)
 
-run:
+run: project.lock.json
 	ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION)
 
 clean:

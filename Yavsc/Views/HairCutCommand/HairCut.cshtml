@@ -223,7 +223,7 @@
                             if (element.formatted_address !== $('#' + config.addrId).val()) {
                                 $('<li>' + element.formatted_address + '</li>')
                                     .data("geoloc", element)
-                                    .click(function () { chooseLoc('user', $(this).data("geoloc")) })
+                                    .click(function () { chooseLoc('user') })
                                     .appendTo($('#' + config.locComboId));
                             }
                             else { }
