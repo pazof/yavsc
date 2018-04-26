@@ -1457,6 +1457,13 @@
           "lib/net451/Microsoft.AspNet.WebUtilities.dll": {}
         }
       },
+      "Microsoft.CodeAnalysis/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[1.0.0-rc1]",
+          "Microsoft.CodeAnalysis.VisualBasic.Workspaces": "[1.0.0-rc1]"
+        }
+      },
       "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
         "type": "package",
         "frameworkAssemblies": [
@@ -1487,6 +1494,82 @@
         },
         "runtime": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.CSharp.Workspaces/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp": "[1.0.0-rc1]",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.0.0-rc1]"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.VisualBasic/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.Common": "1.0.0-rc1"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.VisualBasic.Workspaces/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.VisualBasic": "[1.0.0-rc1]",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.0.0-rc1]"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.Workspaces.Common/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.Common": "[1.0.0-rc1]",
+          "Microsoft.Composition": "1.0.27"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.dll": {}
+        }
+      },
+      "Microsoft.Composition/1.0.27": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.AttributedModel.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Convention.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Hosting.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Runtime.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.TypedParts.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.AttributedModel.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Convention.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Hosting.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Runtime.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.TypedParts.dll": {}
         }
       },
       "Microsoft.DiaSymReader.Native/1.5.0": {
@@ -1586,6 +1669,115 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Caching.Memory.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.CodeGeneration.Core": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.EntityFramework": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration.Core/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Dnx.Compilation.CSharp.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration.EntityFramework/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Core": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Core": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Text.Encoding"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration.Templating/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Razor": "4.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.CSharp.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.IO",
+          "System.Runtime",
+          "System.Text.Encoding",
+          "System.Threading.Tasks"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGenerators.Mvc/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.EntityFramework": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll": {}
         }
       },
       "Microsoft.Extensions.Configuration/1.0.0-rc1-final": {
@@ -2714,7 +2906,7 @@
           "lib/WebGrease.dll": {}
         }
       },
-      "Yavsc/1.0.1": {
+      "Yavsc/1.0.5-rc11": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
@@ -2755,6 +2947,8 @@
           "Microsoft.AspNet.Web.Optimization": "1.1.3",
           "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1",
           "Microsoft.DiaSymReader.Native": "1.5.0",
+          "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGenerators.Mvc": "1.0.0-rc1-final",
           "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
           "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
           "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
@@ -2790,7 +2984,7 @@
       },
       "Yavsc.Abstract/1.0.5": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "Newtonsoft.Json": "9.0.1"
         },
@@ -4254,6 +4448,13 @@
           "lib/net451/Microsoft.AspNet.WebUtilities.dll": {}
         }
       },
+      "Microsoft.CodeAnalysis/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[1.0.0-rc1]",
+          "Microsoft.CodeAnalysis.VisualBasic.Workspaces": "[1.0.0-rc1]"
+        }
+      },
       "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
         "type": "package",
         "frameworkAssemblies": [
@@ -4284,6 +4485,82 @@
         },
         "runtime": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.CSharp.Workspaces/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp": "[1.0.0-rc1]",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.0.0-rc1]"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.VisualBasic/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.Common": "1.0.0-rc1"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.VisualBasic.Workspaces/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.VisualBasic": "[1.0.0-rc1]",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.0.0-rc1]"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.Workspaces.Common/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.Common": "[1.0.0-rc1]",
+          "Microsoft.Composition": "1.0.27"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.dll": {}
+        }
+      },
+      "Microsoft.Composition/1.0.27": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.AttributedModel.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Convention.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Hosting.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Runtime.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.TypedParts.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.AttributedModel.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Convention.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Hosting.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Runtime.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.TypedParts.dll": {}
         }
       },
       "Microsoft.DiaSymReader.Native/1.5.0": {
@@ -4383,6 +4660,115 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Caching.Memory.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.CodeGeneration.Core": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.EntityFramework": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration.Core/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Dnx.Compilation.CSharp.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration.EntityFramework/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Core": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Core": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Text.Encoding"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration.Templating/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Razor": "4.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.CSharp.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.IO",
+          "System.Runtime",
+          "System.Text.Encoding",
+          "System.Threading.Tasks"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGenerators.Mvc/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.EntityFramework": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll": {}
         }
       },
       "Microsoft.Extensions.Configuration/1.0.0-rc1-final": {
@@ -5511,7 +5897,7 @@
           "lib/WebGrease.dll": {}
         }
       },
-      "Yavsc/1.0.1": {
+      "Yavsc/1.0.5-rc11": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
@@ -5552,6 +5938,8 @@
           "Microsoft.AspNet.Web.Optimization": "1.1.3",
           "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1",
           "Microsoft.DiaSymReader.Native": "1.5.0",
+          "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGenerators.Mvc": "1.0.0-rc1-final",
           "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
           "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
           "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
@@ -5587,7 +5975,7 @@
       },
       "Yavsc.Abstract/1.0.5": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "Newtonsoft.Json": "9.0.1"
         },
@@ -7051,6 +7439,13 @@
           "lib/net451/Microsoft.AspNet.WebUtilities.dll": {}
         }
       },
+      "Microsoft.CodeAnalysis/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[1.0.0-rc1]",
+          "Microsoft.CodeAnalysis.VisualBasic.Workspaces": "[1.0.0-rc1]"
+        }
+      },
       "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
         "type": "package",
         "frameworkAssemblies": [
@@ -7081,6 +7476,82 @@
         },
         "runtime": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.CSharp.Workspaces/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp": "[1.0.0-rc1]",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.0.0-rc1]"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.VisualBasic/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.Common": "1.0.0-rc1"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.VisualBasic.Workspaces/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.VisualBasic": "[1.0.0-rc1]",
+          "Microsoft.CodeAnalysis.Workspaces.Common": "[1.0.0-rc1]"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll": {}
+        }
+      },
+      "Microsoft.CodeAnalysis.Workspaces.Common/1.0.0-rc1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.Common": "[1.0.0-rc1]",
+          "Microsoft.Composition": "1.0.27"
+        },
+        "compile": {
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.Desktop.dll": {},
+          "lib/net45/Microsoft.CodeAnalysis.Workspaces.dll": {}
+        }
+      },
+      "Microsoft.Composition/1.0.27": {
+        "type": "package",
+        "compile": {
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.AttributedModel.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Convention.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Hosting.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Runtime.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.TypedParts.dll": {}
+        },
+        "runtime": {
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.AttributedModel.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Convention.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Hosting.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.Runtime.dll": {},
+          "lib/portable-net45+win8+wp8+wpa81/System.Composition.TypedParts.dll": {}
         }
       },
       "Microsoft.DiaSymReader.Native/1.5.0": {
@@ -7180,6 +7651,115 @@
         },
         "runtime": {
           "lib/net451/Microsoft.Extensions.Caching.Memory.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.CodeGeneration.Core": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.EntityFramework": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration.Core/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Dnx.Compilation.CSharp.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final",
+          "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration.EntityFramework/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "EntityFramework.Core": "7.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Core": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Text.Encoding"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGeneration.Templating/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Razor": "4.0.0-rc1-final",
+          "Microsoft.Dnx.Compilation.CSharp.Abstractions": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.IO",
+          "System.Runtime",
+          "System.Text.Encoding",
+          "System.Threading.Tasks"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.dll": {}
+        }
+      },
+      "Microsoft.Extensions.CodeGenerators.Mvc/1.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.EntityFramework": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGeneration.Templating": "1.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll": {}
         }
       },
       "Microsoft.Extensions.Configuration/1.0.0-rc1-final": {
@@ -8308,7 +8888,7 @@
           "lib/WebGrease.dll": {}
         }
       },
-      "Yavsc/1.0.1": {
+      "Yavsc/1.0.5-rc11": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
@@ -8349,6 +8929,8 @@
           "Microsoft.AspNet.Web.Optimization": "1.1.3",
           "Microsoft.AspNet.WebSockets.Server": "1.0.0-rc1",
           "Microsoft.DiaSymReader.Native": "1.5.0",
+          "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
+          "Microsoft.Extensions.CodeGenerators.Mvc": "1.0.0-rc1-final",
           "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
           "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
           "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
@@ -8384,7 +8966,7 @@
       },
       "Yavsc.Abstract/1.0.5": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1",
+        "framework": "DNX,Version=v4.5.1",
         "dependencies": {
           "Newtonsoft.Json": "9.0.1"
         },
@@ -8403,7 +8985,7 @@
       "type": "project",
       "path": "../OAuth.AspNet.Token/project.json"
     },
-    "Yavsc/1.0.1": {
+    "Yavsc/1.0.5-rc11": {
       "type": "project",
       "path": "../Yavsc/project.json"
     },
@@ -9481,6 +10063,16 @@
         "microsoft.aspnet.webutilities.nuspec"
       ]
     },
+    "Microsoft.CodeAnalysis/1.0.0-rc1": {
+      "type": "package",
+      "sha512": "i5QbaTnnL6PQzWNTKi4P4LNeUCbtvzFENj/rosXUSgMP9f9GmbpKeH+iXBqBP70NUu4rbBiEFIYtBv3ZZXGYPQ==",
+      "files": [
+        "Microsoft.CodeAnalysis.1.0.0-rc1.nupkg",
+        "Microsoft.CodeAnalysis.1.0.0-rc1.nupkg.sha512",
+        "Microsoft.CodeAnalysis.nuspec",
+        "ThirdPartyNotices.rtf"
+      ]
+    },
     "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
       "type": "package",
       "sha512": "E7VdmGw6xO3VHWapC+pNLZmo6yncS53UY3bmb5WZm9wliJBB1A6brgzKA4fcqiLrmJFx71r0M2zEbRDphRLUNg==",
@@ -9523,6 +10115,91 @@
         "Microsoft.CodeAnalysis.CSharp.1.1.0-rc1-20151109-01.nupkg.sha512",
         "Microsoft.CodeAnalysis.CSharp.nuspec",
         "ThirdPartyNotices.rtf"
+      ]
+    },
+    "Microsoft.CodeAnalysis.CSharp.Workspaces/1.0.0-rc1": {
+      "type": "package",
+      "sha512": "Ak7qSezyQnbjoe9ZPz0Y10owUBnxuovBHw0AN/e9NqUcRIpSPLfjDAVM+ozuFuCej/YlniS8LBJfuuHAlglsZg==",
+      "files": [
+        "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.Desktop.dll",
+        "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.Desktop.xml",
+        "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
+        "lib/net45/Microsoft.CodeAnalysis.CSharp.Workspaces.xml",
+        "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.Workspaces.dll",
+        "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.Workspaces.xml",
+        "Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.0-rc1.nupkg",
+        "Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.0-rc1.nupkg.sha512",
+        "Microsoft.CodeAnalysis.CSharp.Workspaces.nuspec",
+        "ThirdPartyNotices.rtf"
+      ]
+    },
+    "Microsoft.CodeAnalysis.VisualBasic/1.0.0-rc1": {
+      "type": "package",
+      "sha512": "pzbO5XIVU6s7QNi7jKXj2oQOi+nqAqifABQsxm2nOT8hoNXV6/S8IpBV8SxjMJjbVKDaFyAeLcD8/UF/Io+uPA==",
+      "files": [
+        "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Desktop.dll",
+        "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Desktop.xml",
+        "lib/net45/Microsoft.CodeAnalysis.VisualBasic.dll",
+        "lib/net45/Microsoft.CodeAnalysis.VisualBasic.xml",
+        "lib/portable-net45+win8/Microsoft.CodeAnalysis.VisualBasic.dll",
+        "lib/portable-net45+win8/Microsoft.CodeAnalysis.VisualBasic.xml",
+        "Microsoft.CodeAnalysis.VisualBasic.1.0.0-rc1.nupkg",
+        "Microsoft.CodeAnalysis.VisualBasic.1.0.0-rc1.nupkg.sha512",
+        "Microsoft.CodeAnalysis.VisualBasic.nuspec",
+        "ThirdPartyNotices.rtf"
+      ]
+    },
+    "Microsoft.CodeAnalysis.VisualBasic.Workspaces/1.0.0-rc1": {
+      "type": "package",
+      "sha512": "wRhbk66zlEoR6Jho+jd8988KnTYkwyYXh1lGTdeOab43WySSTjAfCooJNHezFnI0l4T8HQe2ayMJo7BsI4U6fw==",
+      "files": [
+        "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.Desktop.dll",
+        "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.Desktop.xml",
+        "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll",
+        "lib/net45/Microsoft.CodeAnalysis.VisualBasic.Workspaces.xml",
+        "lib/portable-net45+win8/Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll",
+        "lib/portable-net45+win8/Microsoft.CodeAnalysis.VisualBasic.Workspaces.xml",
+        "Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.0.0-rc1.nupkg",
+        "Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.0.0-rc1.nupkg.sha512",
+        "Microsoft.CodeAnalysis.VisualBasic.Workspaces.nuspec",
+        "ThirdPartyNotices.rtf"
+      ]
+    },
+    "Microsoft.CodeAnalysis.Workspaces.Common/1.0.0-rc1": {
+      "type": "package",
+      "sha512": "zOC18yyIlg5pLXR+KiVwqBEhP/BetFj6qdZwUZPP/Zc3atYoLWsXTJhh8BPv3xjX56aLWyZIUIYzGXbaN1tsIA==",
+      "files": [
+        "lib/net45/Microsoft.CodeAnalysis.Workspaces.Desktop.dll",
+        "lib/net45/Microsoft.CodeAnalysis.Workspaces.Desktop.xml",
+        "lib/net45/Microsoft.CodeAnalysis.Workspaces.dll",
+        "lib/net45/Microsoft.CodeAnalysis.Workspaces.xml",
+        "lib/portable-net45+win8/Microsoft.CodeAnalysis.Workspaces.dll",
+        "lib/portable-net45+win8/Microsoft.CodeAnalysis.Workspaces.xml",
+        "Microsoft.CodeAnalysis.Workspaces.Common.1.0.0-rc1.nupkg",
+        "Microsoft.CodeAnalysis.Workspaces.Common.1.0.0-rc1.nupkg.sha512",
+        "Microsoft.CodeAnalysis.Workspaces.Common.nuspec",
+        "ThirdPartyNotices.rtf"
+      ]
+    },
+    "Microsoft.Composition/1.0.27": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "pwu80Ohe7SBzZ6i69LVdzowp6V+LaVRzd5F7A6QlD42vQkX0oT7KXKWWPlM/S00w1gnMQMRnEdbtOV12z6rXdQ==",
+      "files": [
+        "lib/portable-net45+win8+wp8+wpa81/System.Composition.AttributedModel.dll",
+        "lib/portable-net45+win8+wp8+wpa81/System.Composition.AttributedModel.XML",
+        "lib/portable-net45+win8+wp8+wpa81/System.Composition.Convention.dll",
+        "lib/portable-net45+win8+wp8+wpa81/System.Composition.Convention.xml",
+        "lib/portable-net45+win8+wp8+wpa81/System.Composition.Hosting.dll",
+        "lib/portable-net45+win8+wp8+wpa81/System.Composition.Hosting.XML",
+        "lib/portable-net45+win8+wp8+wpa81/System.Composition.Runtime.dll",
+        "lib/portable-net45+win8+wp8+wpa81/System.Composition.Runtime.XML",
+        "lib/portable-net45+win8+wp8+wpa81/System.Composition.TypedParts.dll",
+        "lib/portable-net45+win8+wp8+wpa81/System.Composition.TypedParts.XML",
+        "License-Stable.rtf",
+        "Microsoft.Composition.1.0.27.nupkg",
+        "Microsoft.Composition.1.0.27.nupkg.sha512",
+        "Microsoft.Composition.nuspec"
       ]
     },
     "Microsoft.DiaSymReader.Native/1.5.0": {
@@ -9613,6 +10290,108 @@
         "Microsoft.Extensions.Caching.Memory.nuspec"
       ]
     },
+    "Microsoft.Extensions.CodeGeneration/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "Mkld1xqSkU1CuMtMlbKMPwzoXMXBzC/SdOiRLutd632mGrQCDwhBgrxiBDfFDD63OxWt24TjMZkqlxmRRTm7zQ==",
+      "files": [
+        "lib/dnx451/Microsoft.Extensions.CodeGeneration.dll",
+        "lib/dnx451/Microsoft.Extensions.CodeGeneration.xml",
+        "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.dll",
+        "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.xml",
+        "Microsoft.Extensions.CodeGeneration.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.CodeGeneration.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.CodeGeneration.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.CodeGeneration.Core/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "uQe19xMM4ymoC9uU/rLZTkbSH8n/CVKEjw4jbLfoFq179+LH4IxDRqPqidEMQUF6ON4jYVwhexuAMPJdQ5ewjQ==",
+      "files": [
+        "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.dll",
+        "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.xml",
+        "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Core.dll",
+        "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Core.xml",
+        "Microsoft.Extensions.CodeGeneration.Core.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.CodeGeneration.Core.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.CodeGeneration.Core.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.CodeGeneration.EntityFramework/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "Bs5bPxbPlTYAB5d1+bPjnAZqQyQMueg0orED8boIlwb66he5pFO7LuQ3Q+BNTUB4x3M1q1U7L1L469tllVtGZg==",
+      "files": [
+        "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.dll",
+        "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.xml",
+        "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.EntityFramework.dll",
+        "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.EntityFramework.xml",
+        "Microsoft.Extensions.CodeGeneration.EntityFramework.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.CodeGeneration.EntityFramework.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.CodeGeneration.EntityFramework.nuspec",
+        "Templates/DbContext/NewLocalDbContext.cshtml"
+      ]
+    },
+    "Microsoft.Extensions.CodeGeneration.Templating/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "d20Suo15M+sNS5QBYMfJpBgSUFclVSeIU06Y/snnmKdNjAiQfbKkW0bG8ryBw8zn29KXHcK39DwUpkrFvphQIg==",
+      "files": [
+        "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.dll",
+        "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.xml",
+        "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Templating.dll",
+        "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Templating.xml",
+        "Microsoft.Extensions.CodeGeneration.Templating.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.CodeGeneration.Templating.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.CodeGeneration.Templating.nuspec"
+      ]
+    },
+    "Microsoft.Extensions.CodeGenerators.Mvc/1.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "rkec5T1UW17vRb6rPWEDOq4WHj7+mu8IKWuea9I05YKDACo/EBgDhqp4aoZrOsNzoEH6k+NlL0FRa3o5s9vglA==",
+      "files": [
+        "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.dll",
+        "lib/dnx451/Microsoft.Extensions.CodeGenerators.Mvc.xml",
+        "lib/dnxcore50/Microsoft.Extensions.CodeGenerators.Mvc.dll",
+        "lib/dnxcore50/Microsoft.Extensions.CodeGenerators.Mvc.xml",
+        "Microsoft.Extensions.CodeGenerators.Mvc.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.CodeGenerators.Mvc.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.CodeGenerators.Mvc.nuspec",
+        "Templates/ControllerGenerator/ApiControllerWithContext.cshtml",
+        "Templates/ControllerGenerator/EmptyController.cshtml",
+        "Templates/ControllerGenerator/MvcControllerWithContext.cshtml",
+        "Templates/MvcLayout/_Layout.cshtml",
+        "Templates/MvcLayout/Error.cshtml",
+        "Templates/Startup/ReadMe.cshtml",
+        "Templates/Startup/Startup.cshtml",
+        "Templates/StaticFiles/Content/bootstrap.css",
+        "Templates/StaticFiles/Content/bootstrap.min.css",
+        "Templates/StaticFiles/Content/Scripts/_references.js",
+        "Templates/StaticFiles/Content/Scripts/bootstrap.js",
+        "Templates/StaticFiles/Content/Scripts/bootstrap.min.js",
+        "Templates/StaticFiles/Content/Scripts/jquery.validate.js",
+        "Templates/StaticFiles/Content/Scripts/jquery.validate.min.js",
+        "Templates/StaticFiles/Content/Scripts/jquery.validate.unobtrusive.js",
+        "Templates/StaticFiles/Content/Scripts/jquery.validate.unobtrusive.min.js",
+        "Templates/StaticFiles/Content/Scripts/jquery.validate-vsdoc.js",
+        "Templates/StaticFiles/Content/Scripts/jquery-1.10.2.intellisense.js",
+        "Templates/StaticFiles/Content/Scripts/jquery-1.10.2.js",
+        "Templates/StaticFiles/Content/Scripts/jquery-1.10.2.min.js",
+        "Templates/StaticFiles/Content/Scripts/jquery-1.10.2.min.map",
+        "Templates/StaticFiles/Content/Scripts/modernizr-2.6.2.js",
+        "Templates/StaticFiles/Content/Scripts/respond.js",
+        "Templates/StaticFiles/Content/Scripts/respond.min.js",
+        "Templates/StaticFiles/Content/Site.css",
+        "Templates/ViewGenerator/Create.cshtml",
+        "Templates/ViewGenerator/Delete.cshtml",
+        "Templates/ViewGenerator/Details.cshtml",
+        "Templates/ViewGenerator/Edit.cshtml",
+        "Templates/ViewGenerator/List.cshtml",
+        "THIRDPARTYNOTICE ASP.NET_Preview.rtf"
+      ]
+    },
     "Microsoft.Extensions.Configuration/1.0.0-rc1-final": {
       "type": "package",
       "sha512": "2ayWzqMVGWjr8o8bOSnIsyQbi9sLz9Ya8+YM+9tM/ivSnLHuN7TNHNfJv4jTyRZvoOafdh5Ivlc/OdmsZPXlQQ==",
@@ -9687,6 +10466,7 @@
     },
     "Microsoft.Extensions.Configuration.FileExtensions/1.0.0-rc1-final": {
       "type": "package",
+      "serviceable": true,
       "sha512": "w2x8nqrp2YUgNBJuZ3SUmexBtjaoZFzCQtObRTjrE4GWceFEmaLZtXFvs4n9IgRQkOqqCza7Fv7NXnD9m2emjQ==",
       "files": [
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.FileExtensions.dll",
@@ -9695,8 +10475,9 @@
         "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.xml",
         "lib/netcore50/Microsoft.Extensions.Configuration.FileExtensions.dll",
         "lib/netcore50/Microsoft.Extensions.Configuration.FileExtensions.xml",
-        "microsoft.extensions.configuration.fileextensions.1.0.0-rc1-final.nupkg.sha512",
-        "microsoft.extensions.configuration.fileextensions.nuspec"
+        "Microsoft.Extensions.Configuration.FileExtensions.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.Configuration.FileExtensions.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.Configuration.FileExtensions.nuspec"
       ]
     },
     "Microsoft.Extensions.Configuration.FileProviderExtensions/1.0.0-rc1-final": {
@@ -9717,6 +10498,7 @@
     },
     "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
       "type": "package",
+      "serviceable": true,
       "sha512": "9v+RpswnXEpAP5mx8J1w1yZZT2pPtMBTnOAauNh2c9ju5Dhq3ljxvbm0S9j6o5F/EFSLlbfN/brxTJN3qa/upw==",
       "files": [
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.Json.dll",
@@ -9725,8 +10507,9 @@
         "lib/net451/Microsoft.Extensions.Configuration.Json.xml",
         "lib/netcore50/Microsoft.Extensions.Configuration.Json.dll",
         "lib/netcore50/Microsoft.Extensions.Configuration.Json.xml",
-        "microsoft.extensions.configuration.json.1.0.0-rc1-final.nupkg.sha512",
-        "microsoft.extensions.configuration.json.nuspec"
+        "Microsoft.Extensions.Configuration.Json.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.Configuration.Json.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.Configuration.Json.nuspec"
       ]
     },
     "Microsoft.Extensions.Configuration.UserSecrets/1.0.0-rc1-final": {
@@ -9861,6 +10644,7 @@
     },
     "Microsoft.Extensions.Logging.Console/1.0.0-rc1-final": {
       "type": "package",
+      "serviceable": true,
       "sha512": "zUklTASL2my5gp291VZuK6YMLit9ECmU7gDNN/gDwqO3EB1CDyKQtGQBtABNNgJw/0In8mFFNbsiGYhZ8xFUJA==",
       "files": [
         "lib/dotnet5.4/Microsoft.Extensions.Logging.Console.dll",
@@ -9869,8 +10653,9 @@
         "lib/net451/Microsoft.Extensions.Logging.Console.xml",
         "lib/netcore50/Microsoft.Extensions.Logging.Console.dll",
         "lib/netcore50/Microsoft.Extensions.Logging.Console.xml",
-        "microsoft.extensions.logging.console.1.0.0-rc1-final.nupkg.sha512",
-        "microsoft.extensions.logging.console.nuspec"
+        "Microsoft.Extensions.Logging.Console.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.Logging.Console.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.Logging.Console.nuspec"
       ]
     },
     "Microsoft.Extensions.Logging.Debug/1.0.0-rc1-final": {
@@ -11220,15 +12005,29 @@
   "projectFileDependencyGroups": {
     "": [
       "Microsoft.AspNet.Hosting >= 1.0.0-rc1-final",
-      "Microsoft.Extensions.Configuration.Json >= 1.0.0-rc1-final",
       "Microsoft.Extensions.DependencyInjection >= 1.0.0-rc1-final",
+      "Microsoft.Framework.Configuration.Json >= 1.0.0-beta8",
+      "Microsoft.Framework.ConfigurationModel.Json >= 1.0.0-beta4",
+      "Microsoft.Extensions.Configuration.Abstractions >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Configuration.FileProviderExtensions >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Configuration.UserSecrets >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Logging >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Logging.TraceSource >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Globalization.CultureInfoCache >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Localization >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Localization.Abstractions >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.WebEncoders.Core >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.Options >= 0.0.1-alpha",
+      "Microsoft.Extensions.WebEncoders >= 1.0.0-rc1-final",
+      "Microsoft.Extensions.CodeGeneration >= 1.0.0-rc1-final",
+      "Microsoft.AspNet.Mvc >= 6.0.0-rc1-*",
       "Microsoft.Extensions.Logging.Console >= 1.0.0-rc1-final",
-      "Microsoft.Extensions.PlatformAbstractions >= 1.0.0-rc1-final",
-      "Microsoft.Framework.Configuration.Json >= 1.0.0-*",
-      "Microsoft.Framework.ConfigurationModel.Json >= 1.0.0-*",
-      "Yavsc ",
+      "Microsoft.AspNet.Identity.EntityFramework >= 3.0.0-rc1-*",
+      "Microsoft.AspNet.Identity >= 3.0.0-rc1-*",
+      "Yavsc >= 1.0.5-rc11",
       "Microsoft.Extensions.DependencyInjection.Abstractions >= 1.0.0-rc1-final",
-      "Microsoft.Extensions.Logging.Debug >= 1.0.0-rc1-final"
+      "Microsoft.Extensions.Logging.Debug >= 1.0.0-rc1-final",
+      "Microsoft.CodeAnalysis >= 1.0.0-rc1"
     ],
     "DNX,Version=v4.5.1": []
   }

@@ -8,8 +8,9 @@
         "OAuth.AspNet.Server"
     ],
     "sdk": {
-        "version": "1.0.0-rc1-update2",
+        "version": "2.1.4",
         "runtime": "mono",
         "architecture": "x64"
     }
+
 }

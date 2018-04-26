@@ -2,10 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Yavsc;
-using Yavsc.Models;
-using Yavsc.Server.Helpers;
-using Yavsc.Services;
 using Microsoft.Extensions.OptionsModel;
 
 using System.Globalization;
@@ -25,6 +21,11 @@ using Microsoft.AspNet.Razor;
 using Microsoft.Extensions.DependencyInjection.Abstractions;
 using Microsoft.Extensions.PlatformAbstractions;
 using cli.Services;
+using Yavsc;
+using Yavsc.Models;
+using Yavsc.Server.Helpers;
+using Yavsc.Services;
+using Yavsc.Templates;
 
 namespace cli
 {
@@ -32,9 +33,11 @@ namespace cli
     {
         public static void Main(string[] args)
         {
+
             var host = new WebHostBuilder();
 
-            var hostengnine = host.UseEnvironment("Develpment")
+            var hostengnine = host
+            .UseEnvironment("Development")
             .UseServer("cli")
             .UseStartup<Startup>()
              
@@ -45,8 +48,8 @@ namespace cli
             .Build();
 
             var app = hostengnine.Start();
-            app.Services.GetService<EMailer>();
-            
+            var mailer = app.Services.GetService<EMailer>();
+            mailer.AllUserGen(2);
         }
     }
 }
@@ -78,12 +81,13 @@ namespace cli
             // Set up configuration sources.
         
             var builder = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-            builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
         }
+
         public void ConfigureServices (IServiceCollection services)
         {
             services.AddOptions();
@@ -116,7 +120,9 @@ namespace cli
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             logger = loggerFactory.CreateLogger<Startup>();
-            logger.LogInformation("Hello World from Configure ...");
+            logger.LogInformation(env.EnvironmentName);
+            var cxstr = Configuration["Data:DefaultConnection:ConnectionString"];
+            DbHelpers.ConnectionString = cxstr;
 
         }
 
