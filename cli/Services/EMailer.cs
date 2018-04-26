@@ -147,7 +147,8 @@ namespace cli.Services
                       logger.LogInformation(user.ToString()); 
 
                       generatedtemplate.User = user;
-                      generatedtemplate.ExecuteAsync();
+                      generatedtemplate.ExecuteAsync().Wait();
+                      
                       logger.LogInformation (generatedtemplate.GeneratedText);
                     } 
 

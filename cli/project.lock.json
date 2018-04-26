@@ -2906,7 +2906,7 @@
           "lib/WebGrease.dll": {}
         }
       },
-      "Yavsc/1.0.5-rc11": {
+      "Yavsc/1.0.5-rc12": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
@@ -5897,7 +5897,7 @@
           "lib/WebGrease.dll": {}
         }
       },
-      "Yavsc/1.0.5-rc11": {
+      "Yavsc/1.0.5-rc12": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
@@ -8888,7 +8888,7 @@
           "lib/WebGrease.dll": {}
         }
       },
-      "Yavsc/1.0.5-rc11": {
+      "Yavsc/1.0.5-rc12": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
@@ -8985,7 +8985,7 @@
       "type": "project",
       "path": "../OAuth.AspNet.Token/project.json"
     },
-    "Yavsc/1.0.5-rc11": {
+    "Yavsc/1.0.5-rc12": {
       "type": "project",
       "path": "../Yavsc/project.json"
     },
@@ -12024,7 +12024,7 @@
       "Microsoft.Extensions.Logging.Console >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Identity.EntityFramework >= 3.0.0-rc1-*",
       "Microsoft.AspNet.Identity >= 3.0.0-rc1-*",
-      "Yavsc >= 1.0.5-rc11",
+      "Yavsc >= 1.0.5-rc12",
       "Microsoft.Extensions.DependencyInjection.Abstractions >= 1.0.0-rc1-final",
       "Microsoft.Extensions.Logging.Debug >= 1.0.0-rc1-final",
       "Microsoft.CodeAnalysis >= 1.0.0-rc1"
