@@ -32,7 +32,7 @@ namespace cli.Services
     ILogger logger;
     ApplicationDbContext dbContext;
 
-    const string DefaultClassName = "ATemplate";
+    const string DefaultBaseClassName = "ATemplate";
     const string DefaultBaseClass = nameof(UserOrientedTemplate);
     const string DefaultNamespace =  "CompiledRazorTemplates";
 
@@ -47,7 +47,7 @@ namespace cli.Services
       
       host = new RazorEngineHost(language) {
         DefaultBaseClass = DefaultBaseClass,
-        DefaultClassName = DefaultClassName,
+        DefaultClassName = DefaultBaseClassName,
         DefaultNamespace = DefaultNamespace
       };
 
@@ -66,7 +66,7 @@ namespace cli.Services
       
       
     }
-    public void AllUserGen(long templateCode, string baseclassName = DefaultClassName)
+    public void AllUserGen(long templateCode, string baseclassName = DefaultBaseClassName)
     {
       string className = "Generated"+baseclassName;
 
