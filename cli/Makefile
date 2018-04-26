@@ -11,4 +11,4 @@ bin/output/approot/run: project.lock.json
 	dnu restore
 
 run: bin/output/approot/run
-	ASPNET_ENV=Development dnx run
+	ASPNET_ENV=Development ASPNET_LOG_LEVEL=Debug dnx run
