@@ -8,7 +8,8 @@ namespace Yavsc.Templates
     {
         public ApplicationUser User { get; set; }
         
-        public override Task ExecuteAsync ()
+            
+        public override async Task ExecuteAsync ()
         {
           throw new System.NotImplementedException();
         }

@@ -27,7 +27,7 @@ namespace Yavsc.Server.Models.EMailing
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        [MaxLengthAttribute(128)]
+        [MaxLengthAttribute(128),MinLength(3)]
         public string ShortName { get; set; }
 
         /// <summary>
