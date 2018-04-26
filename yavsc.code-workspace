@@ -20,6 +20,9 @@
 		},
 		{
 			"path": "OAuth.AspNet.Token"
+		},
+		{
+			"path": "."
 		}
 	],
 	"settings": {
