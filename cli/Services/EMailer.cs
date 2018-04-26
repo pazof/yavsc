@@ -66,9 +66,10 @@ namespace cli.Services
       
       
     }
-    public void AllUserGen(long templateCode)
+    public void AllUserGen(long templateCode, string baseclassName = DefaultClassName)
     {
-      string className = DefaultClassName;
+      string className = "Generated"+baseclassName;
+
       string subtemp = stringLocalizer["MonthlySubjectTemplate"].Value;
 
       logger.LogInformation($"Generating {subtemp}[{className}]");
@@ -131,6 +132,7 @@ namespace cli.Services
                     foreach (Diagnostic diagnostic in failures)
                     {
                         logger.LogCritical("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+                        logger.LogDebug("{0}: {1}", diagnostic.Id, diagnostic.Location.GetLineSpan());
                     }
                 }
                 else

@@ -49,7 +49,7 @@ namespace cli
 
             var app = hostengnine.Start();
             var mailer = app.Services.GetService<EMailer>();
-            mailer.AllUserGen(2);
+            mailer.AllUserGen(2, nameof(UserOrientedTemplate));
         }
     }
 }
