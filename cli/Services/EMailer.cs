@@ -138,7 +138,7 @@ namespace cli.Services
                     ms.Seek(0, SeekOrigin.Begin);
                     Assembly assembly = Assembly.Load(ms.ToArray());
 
-                    Type type = assembly.GetType(className);
+                    Type type = assembly.GetType(DefaultNamespace+"."+className);
                     var generatedtemplate = (UserOrientedTemplate) Activator.CreateInstance(type);
                     logger.LogInformation(generatedtemplate.ToString());     
                     foreach (var user in dbContext.ApplicationUser) {
