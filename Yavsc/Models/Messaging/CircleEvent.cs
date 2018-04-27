@@ -34,7 +34,7 @@ namespace Yavsc.Models.Messaging
 		/// Gets or sets the circles.
 		/// </summary>
 		/// <value>The circles.</value>
-		[Required(ErrorMessageResourceName="DoSpecifyCircles"),
+		[Required(ErrorMessageResourceName="Circles"),
 			Display(Name="Circles")]
 		public virtual List<Circle> Circles{ get; set; }
 
