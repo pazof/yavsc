@@ -5,6 +5,11 @@ all: build
 build: project.lock.json
 	dnu build
 
+
+restore:
+	touch project.json
+	dnu restore
+	
 project.lock.json: project.json
 	dnu restore
 
