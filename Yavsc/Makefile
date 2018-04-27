@@ -17,7 +17,7 @@ NUGETSOURCE=$(HOME)/Nupkgs/
 
 all: $(BINTARGETPATH)
 
-$(BINTARGETPATH):
+$(BINTARGETPATH): 
 	dnu build
 
 deploy: clean pushInPre pushInProd
@@ -33,6 +33,10 @@ else
 endif
 
 default: pushInPre
+
+restore:
+	touch project.json
+	dnu restore
 
 project.lock.json: project.json
 	dnu restore
@@ -95,5 +99,4 @@ deploy-pkg: $(PACKAGE)
 	cp $(PACKAGE) $(NUGETSOURCE)
 
 .PHONY: $(PACKAGE) $(BINTARGETPATH)
-
 
