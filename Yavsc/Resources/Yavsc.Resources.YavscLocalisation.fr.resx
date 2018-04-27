@@ -160,10 +160,10 @@
   <data name="Change your account settings"><value>Modifiez les paramètres de votre compte</value></data>
   <data name="Connect using"><value>Se connecter en utilisant</value></data>
   <data name="Choose below your main activity"><value>Choisissez ci-après votre activité principale</value></data>
-  <data name="ChooseADescription"><value>S'il vous plait, choisissez une description.</value></data>
-  <data name="ChooseATitle"><value>S'il vous plait, choisissez un titre.</value></data>
-  <data name="ChooseADateInTheFutur"><value>S'il vous plait, choisissez une date dans le futur.</value></data>
-  <data name="ChooseAnEventDate"><value>S'il vous plait, choisissez une date pour cette prestation.</value></data>
+  <data name="ChooseADescription"><value>S'il vous plait, une description est requise.</value></data>
+  <data name="ChooseATitle"><value>S'il vous plait, un titre est requis.</value></data>
+  <data name="ChooseADateInTheFutur"><value>S'il vous plait, une date dans le futur est requise.</value></data>
+  <data name="ChooseAnEventDate"><value>S'il vous plait, une date pour cette prestation est requise.</value></data>
   <data name="Ciffer"><value>Chiffre</value></data>
   <data name="Circles"><value>Cercles</value></data>
   <data name="Click action"><value>Action sur click</value></data>
@@ -181,7 +181,7 @@
   <data name="Create a new article"><value>Créer un nouvel article</value></data>
   <data name="Create a new account"><value>Créer un nouveau compte</value></data>
   <data name="Credits"><value>Crédits</value></data>
-  <data name="Date search"><value>Demande de rendez-vous</value></data>
+  <data name="Date search"><value>Recherche d'une date</value></data>
   <data name="DateCreated"><value>Date de création</value></data>
   <data name="DateModified"><value>Date de dernière modification</value></data>
   <data name="DB"><value>Base de données</value></data>
@@ -195,7 +195,6 @@
   
   <data name="DoCommentPlaceHolder"><value>Votre commentaire</value></data>
   <data name="DoNotPublishMyActivity"><value>Ne pas publier mon activité</value></data>
-  <data name="DoSpecifyCircles"><value>S'il vous plait, spécifiez ceux de vos cercles à qui est destiné ce contenu</value></data>
   <data name="DocTemplateException"><value>Une erreur est survenue à la génération de votre document</value></data>
   <data name="DisplayName"><value>Nom affiché</value></data>
   <data name="Disable"><value>Désactiver</value></data>
@@ -345,14 +344,15 @@
   <data name="ProviderId"><value>Identifiant du fournisseur</value></data>
   <data name="ProviderName"><value>Nom du fournisseur</value></data>
   <data name="Rate"><value>Cote</value></data>
-  <data name="RdvToPerf"><value>{0} vous demande une intervention le {1} à {2} ({3})</value></data>
+  <data name="RdvToPerf"><value>{0} vous oppose un rendez-vous!!! le {1} à {2} ({3}/da scandale .5-rc12.)</value></data>
   <data name="ReadMore"><value>Lire la suite ...</value></data>
   <data name="reason"><value>raison</value></data>
   <data name="Register"><value>S'inscrire</value></data>
   <data name="Register as a new user"><value>S'inscrire comme nouvel utilisateur</value></data>
-  <data name="RegistrationUnexpectedError"><value>Une erreur inattendue s'est produite:
+  <data name="RegistrationUnexpectedError"><value>Une erreur inattendue s'est produite, SCANDALE.!$%:
   "{0}".
-  Veuillez pardonner la gêne occasionnée</value></data>
+
+  Veuillez pardonner la gêne occasionnée, mille millards de milles saborts.</value></data>
   <data name="Remember me"><value>Se souvenir du mot de passe</value></data>
   <data name="Remove"><value>Supprimer</value></data>
   <data name="Remove my professional profile"><value>Supprimer mon profil professionnel</value></data>
@@ -380,7 +380,7 @@
   <data name="Sound"><value>Son</value></data>
   <data name="SpecifyLatitude"><value>Specify a latitude</value></data>
   <data name="SpecifyLongitude"><value>Specify a longitude</value></data>
-  <data name="SpecifyPlace"><value>S'il vous plait, veuillez spécifier un lieu.</value></data>
+  <data name="SpecifyPlace"><value>L'endroit ainsi renseigné ne semble pas convenir ...</value></data>
   <data name="Specifyavalidlatitude"><value>Please, specify a valid latitude.</value></data>
   <data name="StartDate"><value>Date de début</value></data>
   <data name="StartDateAfterEndDate"><value>La date de fin doit être postérieure à la date de début.</value></data>
