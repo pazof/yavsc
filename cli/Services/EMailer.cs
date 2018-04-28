@@ -122,17 +122,21 @@ namespace cli.Services
             using (var ms = new MemoryStream())
             {
                 EmitResult result = compilation.Emit(ms);
-
+                foreach (Diagnostic diagnostic in result.Diagnostics.Where(diagnostic => 
+                        diagnostic.Severity < DiagnosticSeverity.Error && !diagnostic.IsWarningAsError))
+                    {
+                        logger.LogWarning("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+                        logger.LogWarning("{0}: {1}", diagnostic.Id, diagnostic.Location.GetLineSpan());
+                    }
                 if (!result.Success)
                 {
                     IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => 
                         diagnostic.IsWarningAsError || 
                         diagnostic.Severity == DiagnosticSeverity.Error);
-
                     foreach (Diagnostic diagnostic in failures)
                     {
                         logger.LogCritical("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
-                        logger.LogDebug("{0}: {1}", diagnostic.Id, diagnostic.Location.GetLineSpan());
+                        logger.LogCritical("{0}: {1}", diagnostic.Id, diagnostic.Location.GetLineSpan());
                     }
                 }
                 else
@@ -142,12 +146,10 @@ namespace cli.Services
 
                     Type type = assembly.GetType(DefaultNamespace+"."+className);
                     var generatedtemplate = (UserOrientedTemplate) Activator.CreateInstance(type);
-                    logger.LogInformation(generatedtemplate.ToString());     
                     foreach (var user in dbContext.ApplicationUser) {
-                      logger.LogInformation(user.ToString()); 
-
+                      logger.LogInformation ("Generation for "+user.UserName);
+                      generatedtemplate.Init();  
                       generatedtemplate.User = user;
-                      generatedtemplate.ExecuteAsync().Wait();
                       
                       logger.LogInformation (generatedtemplate.GeneratedText);
                     } 
