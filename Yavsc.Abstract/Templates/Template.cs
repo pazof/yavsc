@@ -10,8 +10,7 @@ namespace Yavsc.Abstract.Templates
   public abstract class Template
   {
 
-    StringBuilder _buffer = new StringBuilder();
-
+    StringBuilder _buffer ;
 
     public virtual void Write(object value)
     { WriteLiteral(value); }
@@ -25,7 +24,9 @@ namespace Yavsc.Abstract.Templates
       }
     }
 
-    public abstract Task ExecuteAsync();
+    public virtual void Init() {
+       _buffer = new StringBuilder();
+    }
 
   }
 }
