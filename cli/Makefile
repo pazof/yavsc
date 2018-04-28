@@ -5,6 +5,8 @@ all: build
 build: project.lock.json
 	dnu build
 
+deploy-pkg:
+
 
 restore:
 	touch project.json
@@ -13,10 +15,8 @@ restore:
 project.lock.json: project.json
 	dnu restore
 
-run: ../Yavsc/bin/Debug/dnx451/Yavsc.dll
+run: project.lock.json
 	ASPNET_ENV=Development ASPNET_LOG_LEVEL=Debug dnx run
 
-../Yavsc/bin/Debug/dnx451/Yavsc.dll:
-	make -C ../Yavsc
 
 
