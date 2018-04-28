@@ -51,9 +51,7 @@ namespace cli.Services
                 DefaultClassName = DefaultBaseClassName,
                 DefaultNamespace = DefaultNamespace
             };
-
-
-            // Everyone needs the System namespace, right?
+            
             host.NamespaceImports.Add("System");
             host.NamespaceImports.Add("Yavsc.Templates");
             host.NamespaceImports.Add("Yavsc.Models");
