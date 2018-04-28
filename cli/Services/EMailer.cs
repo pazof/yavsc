@@ -51,7 +51,7 @@ namespace cli.Services
                 DefaultClassName = DefaultBaseClassName,
                 DefaultNamespace = DefaultNamespace
             };
-            
+
             host.NamespaceImports.Add("System");
             host.NamespaceImports.Add("Yavsc.Templates");
             host.NamespaceImports.Add("Yavsc.Models");
