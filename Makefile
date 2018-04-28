@@ -14,7 +14,7 @@ $(SUBDIRS):
 Yavsc.Abstract-deploy:
 	$(MAKE) -C Yavsc.Abstract deploy-pkg VERSION=$(VERSION)
 
-Yavsc.Abstract-deploy: Yavsc
+Yavsc-deploy: Yavsc
 	$(MAKE) -C Yavsc deploy-pkg VERSION=$(VERSION)
 
 Yavsc: Yavsc.Abstract-deploy
