@@ -464,7 +464,7 @@ Pour ce faire, suivez le lien suivant : &lt;{1}&gt;.
 d'au moins {0} et d'au plus {1} caractère(s). </value></data>
 <data name="DetailledMaxStringLength"><value>Ce champ est 
 d'au plus {0} caractère(s) ({1} en excès). </value></data>
-<data name="EmailSentToPerformer"><value>Un message éléctronique a été envoyé au préstataire.</value></data>
+<data name="EmailSentToPerformer"><value>Un message éléctronique a été envoyé à {0}.</value></data>
 <data name="QueryValidatedNonReg"><value>Un client vient de valider une demande de prestation à votre encontre:
 
  Prestation: {0}

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E7C9D6BF-54DC-4E18-8F25-C4BD4BE71ACC}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>cli</RootNamespace>
+    <AssemblyName>cli</AssemblyName>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+   <!--   <AllowUnsafeBlocks>true</AllowUnsafeBlocks> -->
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="Mono.Security">
+      <HintPath>packages\Npgsql.2.2.0-rc1\lib\net45\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="EntityFramework7.Npgsql">
+      <HintPath>..\packages\EntityFramework7.Npgsql.3.1.0-rc1-3\lib\net451\EntityFramework7.Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.Core">
+      <HintPath>..\packages\EntityFramework.Core.7.0.0-rc1-final\lib\net451\EntityFramework.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Yavsc.Server">
+      <HintPath>..\packages\Yavsc.Server.1.0.5-rc9\lib\portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Yavsc.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="Yavsc.Abstract">
+      <HintPath>..\packages\Yavsc.Abstract.1.0.5-rc9\lib\portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Yavsc.Abstract.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Interactive.Async">
+      <HintPath>..\packages\Ix-Async.1.2.5\lib\net45\System.Interactive.Async.dll</HintPath>
+    </Reference>
+    <Reference Include="CommandLine">
+      <HintPath>..\packages\Machine.Specifications.Runner.Console.0.9.0\tools\CommandLine.dll</HintPath>
+    </Reference>
+    <Reference Include="Machine.Specifications.Reporting">
+      <HintPath>..\packages\Machine.Specifications.Runner.Console.0.9.0\tools\Machine.Specifications.Reporting.dll</HintPath>
+    </Reference>
+    <Reference Include="Machine.Specifications.Reporting.Templates">
+      <HintPath>..\packages\Machine.Specifications.Runner.Console.0.9.0\tools\Machine.Specifications.Reporting.Templates.dll</HintPath>
+    </Reference>
+    <Reference Include="Machine.Specifications.Runner.Utility">
+      <HintPath>..\packages\Machine.Specifications.Runner.Console.0.9.0\tools\Machine.Specifications.Runner.Utility.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+</Project>

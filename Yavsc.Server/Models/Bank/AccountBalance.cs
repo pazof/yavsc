@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Yavsc.Models
 {
   using Yavsc;
-
+    
     public partial class AccountBalance: IAccountBalance {
+
         [Key]
         public string UserId { get; set; }
 

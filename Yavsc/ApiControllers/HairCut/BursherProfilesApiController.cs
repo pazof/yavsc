@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
@@ -59,7 +60,11 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest();
             }
-
+            
+            if (id != User.GetUserId())
+            {
+                return HttpBadRequest();
+            }
             _context.Entry(brusherProfile).State = EntityState.Modified;
 
             try

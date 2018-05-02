@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yaxwtui.Gtk2", "yaxwtui.Gtk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yaxwtui.Gtk3", "yaxwtui.Gtk3\yaxwtui.Gtk3.csproj", "{48B63113-0CC3-4324-8DE7-E10C4EBD2C11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cli", "cli\cli.csproj", "{E7C9D6BF-54DC-4E18-8F25-C4BD4BE71ACC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
