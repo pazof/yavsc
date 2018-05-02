@@ -23,6 +23,27 @@
 		},
 		{
 			"path": "."
+		},
+		{
+			"path": "yaxwtui"
+		},
+		{
+			"path": "yaxwtui.Gtk2"
+		},
+		{
+			"path": "yaxwtui.Gtk3"
+		},
+		{
+			"path": "yaxwtui.Mac"
+		},
+		{
+			"path": "yaxwtui.Wpf"
+		},
+		{
+			"path": "yaxwtui.XamMac"
+		},
+		{
+			"path": "ZicMoove"
 		}
 	],
 	"settings": {
