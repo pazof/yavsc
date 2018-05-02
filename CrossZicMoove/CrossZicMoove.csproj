@@ -8,6 +8,8 @@
     <RootNamespace>CrossZicMoove</RootNamespace>
     <AssemblyName>CrossZicMoove</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <PackageId>CrossZicMoove</PackageId>
+    <AppxPackageAllowDebugFrameworkReferencesInManifest>true</AppxPackageAllowDebugFrameworkReferencesInManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,22 +41,19 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Reference Include="Eto">
-      <HintPath>..\..\..\.config\NuGet\packages\Eto.Forms.2.2.0\lib\net45\Eto.dll</HintPath>
+      <HintPath>..\packages\Eto.Forms.2.2.0\lib\net45\Eto.dll</HintPath>
     </Reference>
     <Reference Include="Portable.Xaml">
-      <HintPath>..\..\..\.config\NuGet\packages\Portable.Xaml.0.6.1\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\Portable.Xaml.dll</HintPath>
+      <HintPath>..\NuGet\packages\Portable.Xaml.0.6.1\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\Portable.Xaml.dll</HintPath>
     </Reference>
     <Reference Include="Eto.Serialization.Xaml">
-      <HintPath>..\..\..\.config\NuGet\packages\Eto.Serialization.Xaml.2.2.0\lib\net45\Eto.Serialization.Xaml.dll</HintPath>
+      <HintPath>..\packages\Eto.Serialization.Xaml.2.2.0\lib\net45\Eto.Serialization.Xaml.dll</HintPath>
     </Reference>
+    <PackageReference Include="Eto.Forms" Version="2.2.0" />
+    <PackageReference Include="Portable.Xaml" Version="0.6.1" />
+    <PackageReference Include="Eto.Serialization.Xaml" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\YavscLib\YavscLib.csproj">
-      <Project>{67F9D3A8-F71E-4428-913F-C37AE82CDB24}</Project>
-      <Name>YavscLib</Name>
-    </ProjectReference>
   </ItemGroup>
 </Project>
