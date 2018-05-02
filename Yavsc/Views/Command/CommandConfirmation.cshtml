@@ -28,7 +28,7 @@
         }
         @if (ViewBag.EmailSent)
          {
-                <h4>@SR["EmailSentToPerformer"]</h4>
+                <h4>@String.Format(SR["EmailSentToPerformer"],User.GetUserName())</h4>
          }
 </div>
 
