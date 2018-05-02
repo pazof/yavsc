@@ -28,7 +28,7 @@ public class GCMController : Controller
     /// <returns></returns>
     [Authorize, HttpPost("register")]
     public IActionResult Register(
-        [FromBody] GivenGoogleCloudMobileDeclaration declaration)
+        [FromBody] GoogleCloudMobileDeclaration declaration)
     {
         var uid = User.GetUserId();
         

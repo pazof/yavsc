@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cli", "cli\cli.csproj", "{9580B70F-0C6F-4C5A-868D-97517BD51D55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cli", "cli\cli.csproj", "{DC25DCD0-19CB-4458-923A-40CE069A56BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9580B70F-0C6F-4C5A-868D-97517BD51D55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9580B70F-0C6F-4C5A-868D-97517BD51D55}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9580B70F-0C6F-4C5A-868D-97517BD51D55}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9580B70F-0C6F-4C5A-868D-97517BD51D55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC25DCD0-19CB-4458-923A-40CE069A56BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC25DCD0-19CB-4458-923A-40CE069A56BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC25DCD0-19CB-4458-923A-40CE069A56BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC25DCD0-19CB-4458-923A-40CE069A56BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

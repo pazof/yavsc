@@ -1,0 +1,52 @@
+{
+    "version": "1.0.5-*",
+    "commands": {
+        "run": "cli"
+    },
+    "resource": "Resources/**/*.resx",
+    "buildOptions": {
+        "debugType": "full",
+        "emitEntryPoint": true,
+        "compile": {
+            "include": "*.cs",
+            "exclude": [
+                "contrib"
+            ]
+        },
+        "embed": [
+            "Resources/**/*.resx"
+        ]
+    },
+    "dependencies": {
+        "EntityFramework7.Npgsql": "3.1.0-rc1-3",
+        "MailKit": "1.12.0",
+        "Microsoft.CodeAnalysis": "1.0.0-rc1",
+        "Microsoft.AspNet.Mvc": "6.0.0-rc1-*",
+        "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-*",
+        "Microsoft.AspNet.Identity": "3.0.0-rc1-*",
+        "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
+        "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
+        "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.TraceSource": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Globalization.CultureInfoCache": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Localization.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Options": "0.0.1-alpha",
+        "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final",
+        "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+        "Yavsc.Abstract": { "version": "1.0.5-rc14", "target": "package" },
+        "Yavsc": { "version": "1.0.5-rc14", "target": "package" }
+    },
+    "frameworks": {
+        "dnx451": {}
+    }
+}

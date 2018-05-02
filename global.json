@@ -2,13 +2,14 @@
     "projects": [
         "Yavsc",
         "Yavsc.Abstract",
+        "Yavsc.Server",
         "cli",
         "testOauthClient",
         "OAuth.AspNet.Token",
         "OAuth.AspNet.Server"
     ],
     "sdk": {
-        "version": "2.1.4",
+        "version": "1.0.0-rc1-update2",
         "runtime": "mono",
         "architecture": "x64"
     }

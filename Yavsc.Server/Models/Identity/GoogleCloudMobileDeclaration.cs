@@ -9,10 +9,6 @@ namespace Yavsc.Models.Identity
 
   [JsonObject]
 
-  public class GivenGoogleCloudMobileDeclaration : GoogleCloudMobileDeclaration, IGCMDeclaration {
-     public DateTime? LatestActivityUpdate { get; set; }
-  }
-
   public class GoogleCloudMobileDeclaration {
 
     [Required]
@@ -26,6 +22,21 @@ namespace Yavsc.Models.Identity
     public string Version { get; set; }
     public string DeviceOwnerId { get; set; }
     public DateTime DeclarationDate { get; set; }
+
+    /// <summary>
+    /// Latest Activity Update
+    /// 
+    /// Let's says, 
+    /// the latest time this device downloaded functional info from server 
+    /// activity list, let's say, promoted ones, those thar are at index, and
+    /// all others, that are not listed as unsupported ones (not any more, after 
+    /// has been annonced as obsolete a decent laps of time).
+    /// 
+    /// In order to say, is any activity has changed here.
+    /// </summary>
+    /// <returns></returns>
+    public DateTime LatestActivityUpdate { get; set; }
+
     [JsonIgnore,ForeignKey("DeviceOwnerId")]
     public virtual ApplicationUser DeviceOwner { get; set; }
 

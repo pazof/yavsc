@@ -28,7 +28,7 @@ namespace Yavsc.Server.Models.EMailing
         public long Id { get; set; }
 
         [MaxLengthAttribute(128),MinLength(3)]
-        public string ShortName { get; set; }
+        public string Topic { get; set; }
 
         /// <summary>
         /// Markdown template to process
