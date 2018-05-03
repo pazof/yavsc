@@ -72,15 +72,13 @@
     },
     "frameworks": {
         "dnx451": {
-          "frameworkAssemblies": {
-          "System.Json": "4.0.0"
-          }
+            "frameworkAssemblies": {
+                "System.Json": "4.0.0"
+            }
         },
         "net451": {
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0",
-  
-                "System.Drawing": "4.0.0",
                 "System.Json": "4.0.0",
                 "System.Net": "4.0.0.0",
                 "System.Net.Http": "4.0.0.0",
