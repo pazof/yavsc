@@ -1,26 +1,28 @@
 ﻿using System;
-using System.Linq;
 using System.IO;
-using System.Text;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
-
 using Microsoft.AspNet.Razor;
 using Microsoft.AspNet.Razor.Generator;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.CSharp;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Newtonsoft.Json;
+
 using Yavsc.Models;
 using Yavsc.Models.Identity;
-using System.Reflection;
 using Yavsc.Templates;
 using Yavsc.Abstract.Templates;
-using Microsoft.AspNet.Identity.EntityFramework;
+
 
 namespace cli.Services
 {
@@ -102,7 +104,6 @@ namespace cli.Services
                 };
 
                 var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-                    .WithModuleName("Yavsc.Absctract").WithModuleName("Yavsc")
                     .WithAllowUnsafe(true).WithOptimizationLevel(OptimizationLevel.Release)
                     .WithOutputKind(OutputKind.DynamicallyLinkedLibrary).WithPlatform(Platform.AnyCpu);
 
@@ -111,9 +112,6 @@ namespace cli.Services
                     syntaxTrees: new[] { syntaxTree },
                     references: references,
                     options: compilationOptions);
-
-
-                foreach (var mref in references) logger.LogInformation($"ctor used ref to {mref.Display}[{mref.Properties.Kind}]");
 
 
                 using (var ms = new MemoryStream())
@@ -152,7 +150,6 @@ namespace cli.Services
                             generatedtemplate.User = user;
                             generatedtemplate.ExecuteAsync(); 
                             logger.LogInformation(generatedtemplate.GeneratedText);
-                            
                         }
 
                         /* ... type.InvokeMember("Write",
