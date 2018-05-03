@@ -1,12 +1,7 @@
 
+include common.mk
 
-MAKE=make
-SUBDIRS=Yavsc.Abstract Yavsc cli
-git_status := $(shell git status -s --porcelain |wc -l)
-rc_num := $(shell cat rc-num.txt)
-VERSION=1.0.5-rc$(rc_num)
-
-all: $(SUBDIRS)
+all: Yavsc
 
 $(SUBDIRS):
 	$(MAKE) -C $@ VERSION=$(VERSION)
@@ -14,20 +9,25 @@ $(SUBDIRS):
 Yavsc.Abstract:
 	$(MAKE) -C Yavsc.Abstract VERSION=$(VERSION)
 
-Yavsc.Abstract-deploy:
-	$(MAKE) -C Yavsc.Abstract deploy-pkg VERSION=$(VERSION)
+%-deploy-pkg:
+	$(MAKE) -C $(basename $@ -deploy-pkg) deploy-pkg VERSION=$(VERSION)
 
-Yavsc-deploy: Yavsc
-	$(MAKE) -C Yavsc deploy-pkg VERSION=$(VERSION)
+Yavsc.Server: Yavsc.Abstract
 
-Yavsc: Yavsc.Abstract Yavsc.Abstract-deploy
+Yavsc: Yavsc.Server Yavsc.Server-deploy-pkg
 	make -C Yavsc restore
 	make -C Yavsc VERSION=$(VERSION)
 
-cli-:
+cli-deploy-pkg:
 	make -C cli deploy-pkg VERSION=$(VERSION)
 
 cli: Yavsc
+
+%:
+	make -C $@
+
+memo:
+		vim ~/TODO.md
 
 .PHONY: all $(SUBDIRS)
 

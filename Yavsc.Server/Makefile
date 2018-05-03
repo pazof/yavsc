@@ -1,11 +1,9 @@
-CONFIG=Release
-PRJNAME=Yavsc.Server
+include ../common.mk
 
-PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
-DESTPATH=.
-PACKAGE=$(DESTPATH)/$(PKGFILENAME)
-BINARY=bin/$(CONFIG)/net451/$(PRJNAME).dll
-NUGETSOURCE=$(HOME)/Nupkgs/
+
+# Useless, defaults to the directory name.
+#
+PRJNAME=Yavsc.Server
 
 $(PACKAGE): $(BINARY)
 	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIG)
@@ -19,7 +17,7 @@ $(BINARY): project.lock.json
 project.lock.json: project.json
 	dnu restore
 
-deploy: $(PACKAGE)
+deploy-pkg: $(PACKAGE)
 	cp $(PACKAGE) $(NUGETSOURCE)
 
 .PHONY: $(BINARY)
