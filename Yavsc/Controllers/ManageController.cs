@@ -93,6 +93,7 @@ namespace Yavsc.Controllers
                 : message == ManageMessageId.IdentityUpdateSuccess ? _SR["Your identity was updated."]
                 : message == ManageMessageId.SetBankInfoSuccess ? _SR["Vos informations bancaires ont bien été enregistrées."]
                 : message == ManageMessageId.SetAddressSuccess ? _SR["Votre adresse a bien été enregistrée."]
+                : message == ManageMessageId.SetMonthlyEmailSuccess ? _SR["Vos préférences concernant la lettre mensuelle ont été sauvegardées."]
                 : "";
 
             var user = await GetCurrentUserAsync();
@@ -668,8 +669,8 @@ namespace Yavsc.Controllers
             AvatarUpdateSuccess,
             IdentityUpdateSuccess,
             SetBankInfoSuccess,
-
             SetAddressSuccess,
+            SetMonthlyEmailSuccess,
             Error
         }
 

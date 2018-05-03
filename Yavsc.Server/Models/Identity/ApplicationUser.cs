@@ -99,5 +99,7 @@ namespace Yavsc.Models
 
         [JsonIgnore][InverseProperty("Owner")]
         public virtual List<BlackListed> BlackList { get; set; }
+
+        public bool AllowMonthlyEmail { get; set; } = false;
     }
 }
