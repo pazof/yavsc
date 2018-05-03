@@ -13,7 +13,7 @@
 		<projectUrl>https://github.com/pazof/yavsc/README.md</projectUrl>
 		<iconUrl>https://github.com/pazof/yavsc/blob/vnext/Yavsc/wwwroot/images/yavsc.png</iconUrl>
 		<requireLicenseAcceptance>true</requireLicenseAcceptance>
-		<description>      Some common server side bytes 		</description>
+		<description>Some common server side code</description>
 		<summary></summary>
 		<tags>yavsc</tags>
 		<dependencies>
