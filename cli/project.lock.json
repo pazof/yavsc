@@ -7165,51 +7165,59 @@
     },
     "Microsoft.Extensions.CodeGeneration/1.0.0-rc1-final": {
       "type": "package",
+      "serviceable": true,
       "sha512": "Mkld1xqSkU1CuMtMlbKMPwzoXMXBzC/SdOiRLutd632mGrQCDwhBgrxiBDfFDD63OxWt24TjMZkqlxmRRTm7zQ==",
       "files": [
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.dll",
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.xml",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.dll",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.xml",
-        "microsoft.extensions.codegeneration.1.0.0-rc1-final.nupkg.sha512",
-        "microsoft.extensions.codegeneration.nuspec"
+        "Microsoft.Extensions.CodeGeneration.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.CodeGeneration.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.CodeGeneration.nuspec"
       ]
     },
     "Microsoft.Extensions.CodeGeneration.Core/1.0.0-rc1-final": {
       "type": "package",
+      "serviceable": true,
       "sha512": "uQe19xMM4ymoC9uU/rLZTkbSH8n/CVKEjw4jbLfoFq179+LH4IxDRqPqidEMQUF6ON4jYVwhexuAMPJdQ5ewjQ==",
       "files": [
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.dll",
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.Core.xml",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Core.dll",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Core.xml",
-        "microsoft.extensions.codegeneration.core.1.0.0-rc1-final.nupkg.sha512",
-        "microsoft.extensions.codegeneration.core.nuspec"
+        "Microsoft.Extensions.CodeGeneration.Core.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.CodeGeneration.Core.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.CodeGeneration.Core.nuspec"
       ]
     },
     "Microsoft.Extensions.CodeGeneration.EntityFramework/1.0.0-rc1-final": {
       "type": "package",
+      "serviceable": true,
       "sha512": "Bs5bPxbPlTYAB5d1+bPjnAZqQyQMueg0orED8boIlwb66he5pFO7LuQ3Q+BNTUB4x3M1q1U7L1L469tllVtGZg==",
       "files": [
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.dll",
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.EntityFramework.xml",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.EntityFramework.dll",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.EntityFramework.xml",
-        "microsoft.extensions.codegeneration.entityframework.1.0.0-rc1-final.nupkg.sha512",
-        "microsoft.extensions.codegeneration.entityframework.nuspec",
+        "Microsoft.Extensions.CodeGeneration.EntityFramework.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.CodeGeneration.EntityFramework.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.CodeGeneration.EntityFramework.nuspec",
         "Templates/DbContext/NewLocalDbContext.cshtml"
       ]
     },
     "Microsoft.Extensions.CodeGeneration.Templating/1.0.0-rc1-final": {
       "type": "package",
+      "serviceable": true,
       "sha512": "d20Suo15M+sNS5QBYMfJpBgSUFclVSeIU06Y/snnmKdNjAiQfbKkW0bG8ryBw8zn29KXHcK39DwUpkrFvphQIg==",
       "files": [
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.dll",
         "lib/dnx451/Microsoft.Extensions.CodeGeneration.Templating.xml",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Templating.dll",
         "lib/dnxcore50/Microsoft.Extensions.CodeGeneration.Templating.xml",
-        "microsoft.extensions.codegeneration.templating.1.0.0-rc1-final.nupkg.sha512",
-        "microsoft.extensions.codegeneration.templating.nuspec"
+        "Microsoft.Extensions.CodeGeneration.Templating.1.0.0-rc1-final.nupkg",
+        "Microsoft.Extensions.CodeGeneration.Templating.1.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.Extensions.CodeGeneration.Templating.nuspec"
       ]
     },
     "Microsoft.Extensions.Configuration/1.0.0-rc1-final": {

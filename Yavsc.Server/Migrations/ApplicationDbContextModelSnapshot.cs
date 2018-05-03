@@ -153,6 +153,8 @@ namespace Yavsc.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
+                    b.Property<bool>("AllowMonthlyEmail");
+
                     b.Property<string>("Avatar")
                         .HasAnnotation("MaxLength", 512)
                         .HasAnnotation("Relational:DefaultValue", "/images/Users/icon_user.png")
@@ -802,6 +804,8 @@ namespace Yavsc.Migrations
                     b.Property<string>("GCMRegistrationId")
                         .IsRequired();
 
+                    b.Property<DateTime>("LatestActivityUpdate");
+
                     b.Property<string>("Model");
 
                     b.Property<string>("Platform");
@@ -1331,10 +1335,10 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("ReplyToAddress");
 
-                    b.Property<string>("ShortName")
-                        .HasAnnotation("MaxLength", 128);
-
                     b.Property<int>("ToSend");
+
+                    b.Property<string>("Topic")
+                        .HasAnnotation("MaxLength", 128);
 
                     b.Property<string>("UserCreated");
 

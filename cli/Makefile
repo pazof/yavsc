@@ -1,5 +1,8 @@
 include ../common.mk
 
+MSBUILD=msbuild
+
+
 all: build
 
 build: project.lock.json
@@ -8,7 +11,10 @@ build: project.lock.json
 restore:
 	touch project.json
 	dnu restore
-	
+
+msbuild-restore:
+	$(MSBUILD) cli.csproj /t:Restore
+
 project.lock.json: project.json
 	dnu restore
 
