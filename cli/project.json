@@ -1,58 +1,59 @@
 ﻿{
-  "version": "1.0.5-*",
-  "commands": {
-    "run": "cli"
-  },
-  "resource": "Resources/**/*.resx",
-  "buildOptions": {
-    "debugType": "full",
-    "emitEntryPoint": true,
-    "compile": {
-      "include": "*.cs",
-      "exclude": [
-        "contrib"
-      ]
+    "version": "1.0.5-*",
+    "commands": {
+        "run": "cli"
     },
-    "embed": [
-      "Resources/**/*.resx"
-    ]
-  },
-  "dependencies": {
-    "EntityFramework7.Npgsql": "3.1.0-rc1-3",
-    "MailKit": "1.12.0",
-    "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Identity": "3.0.0-rc1-*",
-    "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-*",
-    "Microsoft.AspNet.Mvc": "6.0.0-rc1-*",
-    "Microsoft.CodeAnalysis": "1.1.0-rc1-20151109-01",
-    "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
-    "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
-    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Globalization.CultureInfoCache": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Localization.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.TraceSource": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Options": "0.0.1-alpha",
-    "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final",
-    "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
-    "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
-    "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
-    "Yavsc": {
-      "version": "1.0.5-rc14",
-      "target": "package"
+    "resource": "Resources/**/*.resx",
+    "buildOptions": {
+        "debugType": "full",
+        "emitEntryPoint": true,
+        "compile": {
+            "include": "*.cs",
+            "exclude": [
+                "contrib"
+            ]
+        },
+        "embed": [
+            "Resources/**/*.resx"
+        ]
     },
-    "Yavsc.Abstract": {
-      "version": "1.0.5-rc14",
-      "target": "package"
+    "dependencies": {
+        "EntityFramework7.Npgsql": "3.1.0-rc1-3",
+        "MailKit": "1.12.0",
+        "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Identity": "3.0.0-rc1-*",
+        "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-*",
+        "Microsoft.AspNet.Mvc": "6.0.0-rc1-*",
+        "Microsoft.CodeAnalysis": "1.1.0-rc1-20151109-01",
+        "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
+        "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Globalization.CultureInfoCache": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Localization.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.TraceSource": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Options": "0.0.1-alpha",
+        "Microsoft.Extensions.WebEncoders": "1.0.0-rc1-final",
+        "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
+        "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
+        "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
+        "Newtonsoft.Json": "9.0.1",
+        "Yavsc": {
+            "version": "1.0.5-rc14",
+            "target": "package"
+        },
+        "Yavsc.Abstract": {
+            "version": "1.0.5-rc14",
+            "target": "package"
+        }
+    },
+    "frameworks": {
+        "dnx451": {}
     }
-  },
-  "frameworks": {
-    "dnx451": {}
-  }
 }
