@@ -487,4 +487,7 @@ Facture prévue (non réglée): {5}</value></data>
 {4}
 
 Facture réglée: {5}</value></data>
+
+<data name="AllowMonthlyEmail"><value>Recevoir la lettre mensuelle d'information</value></data>
+
 </root>

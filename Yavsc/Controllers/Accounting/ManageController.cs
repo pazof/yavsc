@@ -120,7 +120,8 @@ namespace Yavsc.Controllers
                 DiskQuota = user.DiskQuota,
                 DedicatedCalendarId = user.DedicatedGoogleCalendar,
                 EMail = user.Email,
-                EmailConfirmed = await _userManager.IsEmailConfirmedAsync(user)
+                EmailConfirmed = await _userManager.IsEmailConfirmedAsync(user),
+                AllowMonthlyEmail = user.AllowMonthlyEmail
             };
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
             var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id).ToArray();
@@ -128,9 +129,31 @@ namespace Yavsc.Controllers
             var usrActToSet = usrActs.Where( a => ( a.Settings == null && a.Does.SettingsClassName != null )).ToArray();
             model.HaveActivityToConfigure = usrActToSet .Count()>0;
             model.Activity = _dbContext.UserActivities.Include(a=>a.Does).Where(u=>u.UserId == user.Id).ToList();
+            
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ProfileEMailUsage ()
+        {
+            var user = await GetCurrentUserAsync();
+            return View("ProfileEMailUsage", new ProfileEMailUsageViewModel(user));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ProfileEMailUsage (ProfileEMailUsageViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            // Generate the token and send it
+            var user = await GetCurrentUserAsync();
+            user.AllowMonthlyEmail = model.Allow;
+            await this._dbContext.SaveChangesAsync(User.GetUserId());
+           
+            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetMonthlyEmailSuccess });
+        }
 
         //
         // POST: /Manage/RemoveLogin
@@ -581,10 +604,10 @@ namespace Yavsc.Controllers
             {
                 if (uid == model.PerformerId)
                 {
-                    bool addrexists = _dbContext.Map.Any(x => model.OrganizationAddress.Id == x.Id);
+                    bool addrexists = _dbContext.Locations.Any(x => model.OrganizationAddress.Id == x.Id);
                     if (!addrexists)
                     {
-                        _dbContext.Map.Add(model.OrganizationAddress);
+                        _dbContext.Locations.Add(model.OrganizationAddress);
                     }
 
                     if (_dbContext.Performers.Any(p=>p.PerformerId == uid))

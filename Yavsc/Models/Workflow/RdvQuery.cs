@@ -33,7 +33,7 @@ namespace Yavsc.Models.Workflow
             set;
         }
 
-        public LocationType LocationType
+        public LocationKind LocationType
         {
             set;
             get;

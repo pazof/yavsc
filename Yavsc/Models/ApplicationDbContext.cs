@@ -113,7 +113,6 @@ namespace Yavsc.Models
         public DbSet<Estimate> Estimates { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
         public DbSet<BalanceImpact> BankBook { get; set; }
-        public DbSet<Location> Map { get; set; }
 
         /// <summary>
         /// Google Calendar offline
@@ -206,8 +205,6 @@ namespace Yavsc.Models
         public DbSet<MusicalPreference> MusicalPreferences { get; set; }
 
         public DbSet<MusicalTendency> MusicalTendency { get; set; }
-
-        public DbSet<LocationType> LocationType { get; set; }
 
         public DbSet<Instrument> Instrument { get; set; }
 

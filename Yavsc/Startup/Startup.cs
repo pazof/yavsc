@@ -77,9 +77,7 @@ namespace Yavsc
             var auth = Configuration["Site:Authority"];
             var cxstr = Configuration["Data:DefaultConnection:ConnectionString"];
             DbHelpers.ConnectionString = cxstr;
-
-            Console.WriteLine($"# {auth} ConnectionString: {cxstr}");
-
+           
         }
         public static GoogleAuthSettings GoogleSettings { get; set; }
         public IConfigurationRoot Configuration { get; set; }

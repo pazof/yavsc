@@ -49,6 +49,7 @@ namespace Yavsc.ViewModels.Manage
 
         public string EMail { get; set; }
         public bool EmailConfirmed { get; set; }
+        public bool AllowMonthlyEmail { get; set; }
         
     }
 }

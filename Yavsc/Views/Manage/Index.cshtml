@@ -35,6 +35,14 @@
             }
         </dd>
 
+        <dd>
+            <dt>@SR["AllowMonthlyEmail"]:</dt>
+            <dl>
+                <a asp-action="ProfileEMailUsage"> @Html.DisplayFor(m=>m.AllowMonthlyEmail) [modifier]
+                </a>
+            </dl>
+        </dd>
+
         @if (Model.Roles.Count()>0) {
         <dt>@SR["Roles"]:</dt>
         <dd> 
