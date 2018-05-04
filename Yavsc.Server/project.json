@@ -63,7 +63,7 @@
         "EntityFramework7.Npgsql": "3.1.0-rc1-3",
         "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
         "Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01",
-        "Yavsc.Abstract": "1.0.5-rc17"
+        "Yavsc.Abstract": { "version": "1.0.5-rc18-alpha1", "target": "package" }
     },
     "frameworks": {
         "dnx451": {
