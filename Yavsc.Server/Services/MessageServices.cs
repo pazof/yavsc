@@ -15,6 +15,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Yavsc.Server.Helpers;
+using Microsoft.Extensions.OptionsModel;
 
 namespace Yavsc.Services
 {
@@ -24,13 +25,25 @@ namespace Yavsc.Services
     public class MessageSender : IEmailSender, IGoogleCloudMessageSender
     {
         private ILogger _logger;
+        SiteSettings siteSettings;
+        SmtpSettings smtpSettings;
+        GoogleAuthSettings googleSettings;
 
-        public MessageSender(ILoggerFactory loggerFactory)
+        public MessageSender(
+            ILoggerFactory loggerFactory, 
+            IOptions<SiteSettings> sitesOptions, 
+            IOptions<SmtpSettings> smtpOptions,
+            IOptions<GoogleAuthSettings> googleOptions
+            )
         {
             _logger = loggerFactory.CreateLogger<MessageSender>();
+            siteSettings = sitesOptions.Value;
+            smtpSettings = smtpOptions.Value;
+            googleSettings = googleOptions.Value;
         }
+
         public  async Task <MessageWithPayloadResponse> NotifyEvent<Event>
-         ( GoogleAuthSettings googleSettings, IEnumerable<string> regids, Event ev)
+         (  IEnumerable<string> regids, Event ev)
            where Event : IEvent
         {
             if (ev == null)
@@ -69,23 +82,23 @@ namespace Yavsc.Services
         /// <returns>a MessageWithPayloadResponse,
         /// <c>bool somethingsent = (response.failure == 0 &amp;&amp; response.success > 0)</c>
         /// </returns>
-        public async Task<MessageWithPayloadResponse> NotifyBookQueryAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, RdvQueryEvent ev)
+        public async Task<MessageWithPayloadResponse> NotifyBookQueryAsync( IEnumerable<string> registrationIds, RdvQueryEvent ev)
         {
-            return await NotifyEvent<RdvQueryEvent>(googleSettings,registrationIds, ev);
+            return await NotifyEvent<RdvQueryEvent>(registrationIds, ev);
         }
 
-        public async Task<MessageWithPayloadResponse> NotifyEstimateAsync(GoogleAuthSettings googleSettings, IEnumerable<string> registrationIds, EstimationEvent ev)
+        public async Task<MessageWithPayloadResponse> NotifyEstimateAsync(IEnumerable<string> registrationIds, EstimationEvent ev)
         {
-            return await NotifyEvent<EstimationEvent>(googleSettings,registrationIds, ev);
+            return await NotifyEvent<EstimationEvent>(registrationIds, ev);
         }
 
-        public async Task<MessageWithPayloadResponse> NotifyHairCutQueryAsync(GoogleAuthSettings googleSettings,
+        public async Task<MessageWithPayloadResponse> NotifyHairCutQueryAsync(
          IEnumerable<string> registrationIds, HairCutQueryEvent ev)
         {
-            return await NotifyEvent<HairCutQueryEvent>(googleSettings, registrationIds, ev);
+            return await NotifyEvent<HairCutQueryEvent>(registrationIds, ev);
         }
 
-        public Task<bool> SendEmailAsync(SiteSettings siteSettings, SmtpSettings smtpSettings, string username, string email, string subject, string message)
+        public Task<bool> SendEmailAsync(string username, string email, string subject, string message)
         {
             try
             {
@@ -120,7 +133,8 @@ namespace Yavsc.Services
             throw new NotImplementedException();
         }
 
-        public Task<MessageWithPayloadResponse> NotifyAsync(GoogleAuthSettings _googleSettings, IEnumerable<string> regids, IEvent yaev)
+        public Task<MessageWithPayloadResponse> NotifyAsync(
+            IEnumerable<string> regids, IEvent yaev)
         {
             throw new NotImplementedException();
         }

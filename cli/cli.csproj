@@ -107,6 +107,10 @@
     <PackageReference Include="Microsoft.Dnx.Compilation.Abstractions" Version="1.0.0-rc1-final" />
     <PackageReference Include="Microsoft.Dnx.Compilation.CSharp.Abstractions" Version="1.0.0-rc1-final" />
     <PackageReference Include="Microsoft.Dnx.Compilation.CSharp.Common" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Dnx.Compilation.CSharp.Common" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Yavsc.Server" Version="1.0.5-rc17" />
+    <PackageReference Include="Yavsc.Abstract" Version="1.0.5-rc17" />
+    
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />

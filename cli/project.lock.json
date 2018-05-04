@@ -2108,25 +2108,29 @@
           "lib/net45/_._": {}
         }
       },
-      "Yavsc/1.0.5-rc14": {
+      "Yavsc.Abstract/1.0.5-rc17": {
         "type": "package",
-        "dependencies": {
-          "Yavsc.Abstract": "1.0.5-rc14"
-        },
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
+          "lib/dnx451/Yavsc.Abstract.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
+          "lib/dnx451/Yavsc.Abstract.dll": {}
         }
       },
-      "Yavsc.Abstract/1.0.5-rc14": {
+      "Yavsc.Server/1.0.5-rc17": {
         "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+          "Yavsc.Abstract": "1.0.5-rc17"
+        },
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Abstract.dll": {}
+          "lib/dnx451/Yavsc.Server.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Abstract.dll": {}
+          "lib/dnx451/Yavsc.Server.dll": {}
         }
       }
     },
@@ -4236,25 +4240,29 @@
           "lib/net45/_._": {}
         }
       },
-      "Yavsc/1.0.5-rc14": {
+      "Yavsc.Abstract/1.0.5-rc17": {
         "type": "package",
-        "dependencies": {
-          "Yavsc.Abstract": "1.0.5-rc14"
-        },
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
+          "lib/dnx451/Yavsc.Abstract.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
+          "lib/dnx451/Yavsc.Abstract.dll": {}
         }
       },
-      "Yavsc.Abstract/1.0.5-rc14": {
+      "Yavsc.Server/1.0.5-rc17": {
         "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+          "Yavsc.Abstract": "1.0.5-rc17"
+        },
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Abstract.dll": {}
+          "lib/dnx451/Yavsc.Server.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Abstract.dll": {}
+          "lib/dnx451/Yavsc.Server.dll": {}
         }
       }
     },
@@ -6364,25 +6372,29 @@
           "lib/net45/_._": {}
         }
       },
-      "Yavsc/1.0.5-rc14": {
+      "Yavsc.Abstract/1.0.5-rc17": {
         "type": "package",
-        "dependencies": {
-          "Yavsc.Abstract": "1.0.5-rc14"
-        },
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
+          "lib/dnx451/Yavsc.Abstract.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
+          "lib/dnx451/Yavsc.Abstract.dll": {}
         }
       },
-      "Yavsc.Abstract/1.0.5-rc14": {
+      "Yavsc.Server/1.0.5-rc17": {
         "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+          "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+          "Yavsc.Abstract": "1.0.5-rc17"
+        },
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Abstract.dll": {}
+          "lib/dnx451/Yavsc.Server.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Abstract.dll": {}
+          "lib/dnx451/Yavsc.Server.dll": {}
         }
       }
     }
@@ -8509,24 +8521,26 @@
         "system.threading.nuspec"
       ]
     },
-    "Yavsc/1.0.5-rc14": {
+    "Yavsc.Abstract/1.0.5-rc17": {
       "type": "package",
-      "sha512": "qh7XoqBfHICTJuu7nwwOh9Wu7D8vntKvbpKPyiV9F61cXxssRBU0mlhmAfWfVmMeDOadTJMePXP43RDDjSxWpA==",
+      "sha512": "/uGlH4QFDBlr7wrmZERcuhKaGhRS+SEONqI+zWpwKXctWkMSbX/QauqIsrrWLWke/6JiC2yxSfo5HWpETy3L0w==",
       "files": [
-        "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll",
-        "Yavsc.1.0.5-rc14.nupkg",
-        "Yavsc.1.0.5-rc14.nupkg.sha512",
-        "Yavsc.nuspec"
+        "lib/dnx451/Yavsc.Abstract.dll",
+        "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Abstract.dll",
+        "Yavsc.Abstract.1.0.5-rc17.nupkg",
+        "Yavsc.Abstract.1.0.5-rc17.nupkg.sha512",
+        "Yavsc.Abstract.nuspec"
       ]
     },
-    "Yavsc.Abstract/1.0.5-rc14": {
+    "Yavsc.Server/1.0.5-rc17": {
       "type": "package",
-      "sha512": "89rsGd4JcnNZkiEQEZU1hYj4YqxrPsDgePE+7U9XZJf28lmhCyFU86bOQHJiAoTow3q4dbVP/Wp2lDxNpMKuLA==",
+      "sha512": "QSqJadauqDNl7JwdKIjUiBGjRRGhgD5EP8uH1O/E9O0yk86xUnpdNDdCYybkM5DsWnQROUjmtTn0IrTb1eZegg==",
       "files": [
-        "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Abstract.dll",
-        "Yavsc.Abstract.1.0.5-rc14.nupkg",
-        "Yavsc.Abstract.1.0.5-rc14.nupkg.sha512",
-        "Yavsc.Abstract.nuspec"
+        "lib/dnx451/Yavsc.Server.dll",
+        "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Server.dll",
+        "Yavsc.Server.1.0.5-rc17.nupkg",
+        "Yavsc.Server.1.0.5-rc17.nupkg.sha512",
+        "Yavsc.Server.nuspec"
       ]
     }
   },
@@ -8558,8 +8572,8 @@
       "Microsoft.Framework.Configuration.Json >= 1.0.0-beta8",
       "Microsoft.Framework.ConfigurationModel.Json >= 1.0.0-beta4",
       "Newtonsoft.Json >= 9.0.1",
-      "Yavsc >= 1.0.5-rc14",
-      "Yavsc.Abstract >= 1.0.5-rc14"
+      "Yavsc.Abstract >= 1.0.5-rc17",
+      "Yavsc.Server >= 1.0.5-rc17"
     ],
     "DNX,Version=v4.5.1": []
   }

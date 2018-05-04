@@ -7,14 +7,14 @@
         "type": "package",
         "compile": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         },
         "runtime": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         }
       }
@@ -24,14 +24,14 @@
         "type": "package",
         "compile": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         },
         "runtime": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         }
       }
@@ -41,14 +41,14 @@
         "type": "package",
         "compile": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         },
         "runtime": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         }
       }
@@ -58,14 +58,14 @@
         "type": "package",
         "compile": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         },
         "runtime": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         }
       }
@@ -75,14 +75,14 @@
         "type": "package",
         "compile": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         },
         "runtime": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         }
       }
@@ -92,14 +92,14 @@
         "type": "package",
         "compile": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         },
         "runtime": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         }
       }
@@ -109,14 +109,14 @@
         "type": "package",
         "compile": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         },
         "runtime": {
           "lib/uap10.0/Xamarin.Forms.Core.dll": {},
-          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Platform.dll": {},
+          "lib/uap10.0/Xamarin.Forms.Platform.UAP.dll": {},
           "lib/uap10.0/Xamarin.Forms.Xaml.dll": {}
         }
       }

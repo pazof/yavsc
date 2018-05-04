@@ -172,7 +172,7 @@ namespace Yavsc.Controllers
                     if (pro.Performer.Devices.Count > 0) {
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
-                        grep = await _GCMSender.NotifyBookQueryAsync(_googleSettings,regids,yaev);
+                        grep = await _GCMSender.NotifyBookQueryAsync(regids,yaev);
                     }
                     
                     // TODO setup a profile choice to allow notifications
@@ -181,7 +181,6 @@ namespace Yavsc.Controllers
                     ViewBag.GooglePayload=grep;
 
                     ViewBag.EmailSent = await _emailSender.SendEmailAsync(
-                        _siteSettings, _smtpSettings,
                         command.PerformerProfile.Performer.UserName,
                         command.PerformerProfile.Performer.Email,
                          $"{command.Client.UserName} (un client) vous demande un rendez-vous",

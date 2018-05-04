@@ -7,7 +7,7 @@ using Yavsc.Models;
 
 namespace Yavsc.Server
 {
-    public class YavscServerFactory : IServerFactory
+    public class cliServerFactory : IServerFactory
     {
         public IFeatureCollection Initialize(IConfiguration configuration)
         {
