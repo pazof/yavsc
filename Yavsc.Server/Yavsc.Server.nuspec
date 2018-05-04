@@ -18,10 +18,6 @@
 		<tags>yavsc</tags>
 		<dependencies>
 			<dependency id="Yavsc.Abstract" version="$version$" />
-			<dependency id="Microsoft.Extensions.Logging" version="1.0.0-rc1-final" />
-			<dependency id="Microsoft.Extensions.Logging.Console" version="1.0.0-rc1-final" />
-			<dependency id="Microsoft.Extensions.Logging.Debug" version="1.0.0-rc1-final" />
-			<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="1.0.0-rc1-final" />
 		</dependencies>
 	</metadata>
 	<files>

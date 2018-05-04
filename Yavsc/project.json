@@ -125,12 +125,6 @@
         "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
         "Microsoft.Extensions.CodeGenerators.Mvc": "1.0.0-rc1-final",
         "System.Json": "4.0.20126.16343",
-        "Yavsc.Abstract": {
-            "type": "default"
-        },
-        "Yavsc.Server": {
-            "type": "default"
-        },
         "OAuth.AspNet.Token": {
             "type": "build"
         },
@@ -140,7 +134,9 @@
         "PayPalMerchant-net451": {
             "version": "2.7.109"
         },
-        "Gapi.net45": "1.0.0"
+        "Gapi.net45": "1.0.0",
+        "Yavsc.Abstract": {},
+        "Yavsc.Server": {}
     },
     "commands": {
         "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",

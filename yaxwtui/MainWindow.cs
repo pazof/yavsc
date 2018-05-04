@@ -21,7 +21,7 @@ namespace yaxwtui
 			file.SubMenu.Items.Add (mi);
 			menu.Items.Add (file);
 			MainMenu = menu;
-
+			
 			var sampleLabel = new Label ("yaxwtui");
 			Content = sampleLabel;
 		}

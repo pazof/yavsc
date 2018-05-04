@@ -41,4 +41,8 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>      
+  
+    <PackageReference Include="Yavsc.Abstract" Version="1.0.5-rc19" />
+  </ItemGroup>
 </Project>

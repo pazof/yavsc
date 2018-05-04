@@ -1,0 +1,29 @@
+@model Yavsc.ViewModels.Manage.ProfileEMailUsageViewModel
+
+
+
+<form asp-action="ProfileEMailUsage" >
+    
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="checkbox">
+                    <input asp-for="Allow" />
+                    <label asp-for="Allow"></label>
+                </div>
+            </div>
+        </div>
+      
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+</body>
+</html>
