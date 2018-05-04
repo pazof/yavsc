@@ -9,6 +9,7 @@ ASPNET_LOG_LEVEL=Debug
 HOSTING=localhost
 HOSTADMIN=root
 FRAMEWORKALIAS=dnx451
+# nuget package destination, at generation time
 BINTARGET=$(PRJNAME).dll
 BINTARGETPATH=bin/$(CONFIGURATION)/$(FRAMEWORKALIAS)/$(BINTARGET)
 
