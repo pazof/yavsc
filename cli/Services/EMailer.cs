@@ -22,6 +22,7 @@ using Yavsc.Models;
 using Yavsc.Models.Identity;
 using Yavsc.Templates;
 using Yavsc.Abstract.Templates;
+using Yavsc.Services;
 
 
 namespace cli.Services
@@ -29,19 +30,21 @@ namespace cli.Services
 
     public class EMailer
     {
-        RazorTemplateEngine razorEngine;
-        IStringLocalizer<EMailer> stringLocalizer;
-        ILogger logger;
-        ApplicationDbContext dbContext;
-
         const string DefaultBaseClassName = "ATemplate";
         const string DefaultBaseClass = nameof(UserOrientedTemplate);
         const string DefaultNamespace = "CompiledRazorTemplates";
 
+        RazorTemplateEngine razorEngine;
+        IStringLocalizer<EMailer> stringLocalizer;
+        ILogger logger;
+        ApplicationDbContext dbContext;
+        IEmailSender mailSender;
         RazorEngineHost host;
-        public EMailer(ApplicationDbContext context, IStringLocalizer<EMailer> localizer, ILoggerFactory loggerFactory)
+
+        public EMailer(ApplicationDbContext context, IEmailSender sender, IStringLocalizer<EMailer> localizer, ILoggerFactory loggerFactory)
         {
             stringLocalizer = localizer;
+            mailSender = sender;
 
             logger = loggerFactory.CreateLogger<EMailer>();
 
@@ -62,8 +65,7 @@ namespace cli.Services
             host.InstrumentedSourceFilePath = "bin/output/approot/src/";
             host.StaticHelpers = true;
             dbContext = context;
-
-            this.razorEngine = new RazorTemplateEngine(host);
+            razorEngine = new RazorTemplateEngine(host);
         }
 
         public string GenerateTemplateObject(string baseclassName = DefaultBaseClassName)
