@@ -30,7 +30,6 @@ namespace Yavsc.Controllers
         // private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
         SiteSettings _siteSettings;
-        SmtpSettings _smtpSettings;
         TwilioSettings _twilioSettings;
 
         IStringLocalizer _localizer;
@@ -43,8 +42,7 @@ namespace Yavsc.Controllers
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
-        IOptions<SiteSettings> siteSettings,
-       IOptions<SmtpSettings> smtpSettings,
+            IOptions<SiteSettings> siteSettings,
             ILoggerFactory loggerFactory, IOptions<TwilioSettings> twilioSettings,
             IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
             ApplicationDbContext dbContext)
@@ -55,7 +53,6 @@ namespace Yavsc.Controllers
             // _userManager.RegisterTokenProvider("Phone", new UserTokenProvider());
             _emailSender = emailSender;
             _siteSettings = siteSettings.Value;
-            _smtpSettings = smtpSettings.Value;
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
             _localizer = localizer;
@@ -212,7 +209,7 @@ namespace Yavsc.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(3, "User created a new account with password.");
-                    await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.Name, Startup.SiteSetup.Owner.EMail,
+                    await _emailSender.SendEmailAsync(Startup.SiteSetup.Owner.Name, Startup.SiteSetup.Owner.EMail,
                      $"[{_siteSettings.Title}] Inscription avec mot de passe: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
 
                     // TODO user.DiskQuota = Startup.SiteSetup.UserFiles.Quota;
@@ -220,7 +217,7 @@ namespace Yavsc.Controllers
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    var emailSent = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, model.UserName, model.Email, _localizer["ConfirmYourAccountTitle"],
+                    var emailSent = await _emailSender.SendEmailAsync(model.UserName, model.Email, _localizer["ConfirmYourAccountTitle"],
                       string.Format(_localizer["ConfirmYourAccountBody"], _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     if (!emailSent)
@@ -258,7 +255,7 @@ namespace Yavsc.Controllers
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-            var res = await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, user.UserName, user.Email, "Confirm your account",
+            var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, "Confirm your account",
                    "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
             return res;
         }
@@ -371,7 +368,7 @@ namespace Yavsc.Controllers
                         await _signInManager.SignInAsync(user, isPersistent: false);
 
 
-                        await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, Startup.SiteSetup.Owner.Name, Startup.SiteSetup.Owner.EMail,
+                        await _emailSender.SendEmailAsync(Startup.SiteSetup.Owner.Name, Startup.SiteSetup.Owner.EMail,
                          $"[{_siteSettings.Title}] Inscription via {info.LoginProvider}: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
 
                         _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
@@ -450,7 +447,7 @@ namespace Yavsc.Controllers
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings, user.UserName, user.Email, _localizer["Reset Password"],
+                await _emailSender.SendEmailAsync(user.UserName, user.Email, _localizer["Reset Password"],
                    _localizer["Please reset your password by following this link:"] + " <" + callbackUrl + ">");
                 return View("ForgotPasswordConfirmation");
             }
@@ -565,7 +562,7 @@ namespace Yavsc.Controllers
             }
             else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
             {
-                await _emailSender.SendEmailAsync(_siteSettings, _smtpSettings,user.UserName, await _userManager.GetEmailAsync(user), "Security Code", message);
+                await _emailSender.SendEmailAsync(user.UserName, await _userManager.GetEmailAsync(user), "Security Code", message);
             }
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }

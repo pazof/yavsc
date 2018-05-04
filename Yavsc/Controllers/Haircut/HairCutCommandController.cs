@@ -103,7 +103,7 @@ namespace Yavsc.Controllers
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
                         
-                        grep = await _GCMSender.NotifyAsync(_googleSettings, regids, yaev);
+                        grep = await _GCMSender.NotifyAsync(regids, yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile
@@ -112,7 +112,6 @@ namespace Yavsc.Controllers
                 }
 
                 ViewBag.EmailSent = await _emailSender.SendEmailAsync(
-                    _siteSettings, _smtpSettings,
                     command.PerformerProfile.Performer.UserName,
                     command.PerformerProfile.Performer.Email,
                     yaev.Topic,
@@ -275,7 +274,7 @@ namespace Yavsc.Controllers
                         if (pro.Performer.Devices.Count > 0)
                         {
                             var regids = pro.Performer.Devices.Select(d => d.GCMRegistrationId);
-                            grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings, regids, yaev);
+                            grep = await _GCMSender.NotifyHairCutQueryAsync(regids, yaev);
                         }
                         // TODO setup a profile choice to allow notifications
                         // both on mailbox and mobile
@@ -300,7 +299,6 @@ namespace Yavsc.Controllers
                     else _logger.LogWarning($"Calendar: {pro.Performer.DedicatedGoogleCalendar != null}\nEventDate: {yaev.EventDate != null}");
 
                     await _emailSender.SendEmailAsync(
-                        _siteSettings, _smtpSettings,
                          pro.Performer.UserName,
                         pro.Performer.Email,
                         $"{yaev.Client.UserName}: {yaev.Reason}",
@@ -436,7 +434,7 @@ namespace Yavsc.Controllers
                     {
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
-                        grep = await _GCMSender.NotifyHairCutQueryAsync(_googleSettings, regids, yaev);
+                        grep = await _GCMSender.NotifyHairCutQueryAsync(regids, yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile, and to allow calendar event insertion.
@@ -458,7 +456,6 @@ namespace Yavsc.Controllers
                     }
 
                     await _emailSender.SendEmailAsync(
-                        _siteSettings, _smtpSettings,
                         command.PerformerProfile.Performer.UserName,
                         command.PerformerProfile.Performer.Email,
                         yaev.Topic + " " + yaev.Sender,

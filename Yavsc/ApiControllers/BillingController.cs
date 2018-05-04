@@ -130,7 +130,7 @@ namespace Yavsc.ApiControllers
             var regids = estimate.Client.Devices.Select(d => d.GCMRegistrationId).ToArray();
             bool gcmSent = false;
             if (regids.Length>0) {
-                var grep = await _GCMSender.NotifyEstimateAsync(_googleSettings,regids,yaev);
+                var grep = await _GCMSender.NotifyEstimateAsync(regids,yaev);
                 gcmSent = grep.success>0;
             }
             return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = gcmSent });

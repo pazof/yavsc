@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0-*",
+    "version": "1.0.5-*",
     "description": "Yavsc server common library",
     "authors": [
         "Paul Schneider <paul@pschneider.fr>"
@@ -63,10 +63,7 @@
         "EntityFramework7.Npgsql": "3.1.0-rc1-3",
         "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
         "Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01",
-        "Yavsc.Abstract": {
-            "target": "project",
-            "type": "build"
-        }
+        "Yavsc.Abstract": "1.0.5-rc17"
     },
     "frameworks": {
         "dnx451": {
@@ -79,9 +76,9 @@
                 "System.ComponentModel.DataAnnotations": "4.0.0",
                 "System.Json": "4.0.0",
                 "System.Net": "4.0.0.0",
-                "System.Net.Http": "4.0.0.0",
-                "System.Xml": "4.0.0.0",
-                "System": "4.0.0.0"
+                "System.Net.Http": "4.0.0",
+                "System.Xml": "4.0.0",
+                "System": "4.0.0"
             }
         }
     },

@@ -1,6 +1,6 @@
+include versioning.mk
 
-
-all: Yavsc
+all: deploy-pkgs
 
 Yavsc.Abstract:
 	$(MAKE) -C Yavsc.Abstract VERSION=$(VERSION)
@@ -12,13 +12,29 @@ Yavsc: Yavsc.Server
 	make -C Yavsc restore
 	make -C Yavsc VERSION=$(VERSION)
 
-cli-deploy-pkg:
-	make -C cli deploy-pkg VERSION=$(VERSION)
+Yavsc.Server-deploy-pkg:
+	make -C Yavsc.Server deploy-pkg
 
-cli: Yavsc
+Yavsc.Abstract-deploy-pkg:
+	make -C Yavsc.Abstract deploy-pkg
+
+cli-deploy-pkg:
+	make -C cli deploy-pkg
+
+cli: Yavsc.Server-deploy-pkg Yavsc.Abstract-deploy-pkg
+	make -C cli restore
+	make -C cli
+
+deploy-pkgs: cli-deploy-pkg
 
 memo:
-		vim ~/TODO.md
+	vim ~/TODO.md
+
+
+rc-num:
+	@echo echo 1-alpha1  < $<  ^ $^  @ $@
+
 
 .PHONY: all $(SUBDIRS)
+
 

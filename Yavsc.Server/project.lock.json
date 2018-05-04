@@ -12816,15 +12816,16 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Newtonsoft.Json >= 9.0.1",
-      "Yavsc.Abstract ",
-      "Microsoft.AspNet.Identity >= 3.0.0-rc1-final",
-      "Microsoft.AspNet.Identity.EntityFramework >= 3.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Facebook >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Twitter >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.OAuth >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Cookies >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Hosting >= 1.0.0-rc1-final",
+      "Microsoft.AspNet.Http.Extensions >= 1.0.0-rc1-final",
+      "Microsoft.AspNet.Identity >= 3.0.0-rc1-final",
+      "Microsoft.AspNet.Identity.EntityFramework >= 3.0.0-rc1-final",
+      "Microsoft.AspNet.Mvc.TagHelpers >= 6.0.0-rc1-final",
+      "Newtonsoft.Json >= 9.0.1",
       "Gapi.net45 >= 1.0.0",
       "PayPalMerchant-net451 >= 2.7.109",
       "MailKit >= 1.12.0",
@@ -12832,9 +12833,8 @@
       "Microsoft.AspNet.Localization >= 1.0.0-rc1-final",
       "EntityFramework7.Npgsql >= 3.1.0-rc1-3",
       "EntityFramework7.Npgsql.Design >= 3.1.0-rc1-5",
-      "Microsoft.AspNet.Mvc.TagHelpers >= 6.0.0-rc1-final",
-      "Microsoft.AspNet.Http.Extensions >= 1.0.0-rc1-final",
-      "Microsoft.CodeAnalysis.CSharp >= 1.1.0-rc1-20151109-01"
+      "Microsoft.CodeAnalysis.CSharp >= 1.1.0-rc1-20151109-01",
+      "Yavsc.Abstract >= 1.0.5-rc17"
     ],
     "DNX,Version=v4.5.1": [
       "fx/System.Json >= 4.0.0"

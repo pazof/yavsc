@@ -3,7 +3,13 @@ PRODDESTDIR=/srv/www/yavsc
 HOSTING=localhost
 HOSTADMIN=root
 
-include ../common.mk
+include ../versioning.mk
+include ../dnx.mk
+
+all: $(BINTARGETPATH)
+
+web: project.lock.json
+	ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION)
 
 status:
 ifeq ($(git_status),0)
@@ -32,7 +38,7 @@ ifeq ($(git_status),0)
 	ssh $(HOSTADMIN)@$(HOSTING) sudo sync
 	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel start
 else
-	@echo EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.
+	$(error EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.)
 	git status
 endif
 

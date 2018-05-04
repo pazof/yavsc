@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 
 namespace Yavsc.Templates
 {
-    public class UserOrientedTemplate: Template
+    public abstract class UserOrientedTemplate: Template
     {
         public ApplicationUser User { get; set; }
+
     }
 }
