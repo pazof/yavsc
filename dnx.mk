@@ -20,8 +20,6 @@ BINTARGETPATH=bin/$(CONFIGURATION)/$(FRAMEWORKALIAS)/$(BINTARGET)
 
 git_status := $(shell git status -s --porcelain |wc -l)
 
-all: $(BINTARGETPATH)
-
 rc-num.txt-check:
 ifndef rc_num
 	@echo no rc num ... please, could you try and run 'make rc-num.txt' ?. 
@@ -47,7 +45,7 @@ cleanoutput:
 	rm -rf bin/$(CONFIGURATION)
 	rm -rf bin/output
 
-$(BINTARGETPATH): project.json rc-num.txt-check
+$(BINTARGETPATH): project.lock.json rc-num.txt-check
 	dnu build --configuration=$(CONFIGURATION)
 
 # Default target, from one level sub dirs
