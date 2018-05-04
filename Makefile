@@ -12,6 +12,9 @@ Yavsc: Yavsc.Server
 	make -C Yavsc restore
 	make -C Yavsc VERSION=$(VERSION)
 
+Yavsc-deploy-pkg:
+	make -C Yavsc deploy-pkg
+
 Yavsc.Server-deploy-pkg:
 	make -C Yavsc.Server deploy-pkg
 
@@ -21,11 +24,19 @@ Yavsc.Abstract-deploy-pkg:
 cli-deploy-pkg:
 	make -C cli deploy-pkg
 
-cli: Yavsc.Server-deploy-pkg Yavsc.Abstract-deploy-pkg
+Yavsc.Abstract-deploy-pkg: Yavsc.Abstract
+
+Yavsc-Server: Yavsc.Abstract-deploy-pkg
+
+Yavsc.Server-deploy-pkg: Yavsc-Server
+
+cli: Yavsc.Server-deploy-pkg
 	make -C cli restore
 	make -C cli
 
-deploy-pkgs: cli-deploy-pkg
+cli-deploy-pkg: cli
+
+deploy-pkgs: Yavsc-deploy-pkg cli-deploy-pkg 
 
 memo:
 	vim ~/TODO.md
