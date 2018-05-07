@@ -45,6 +45,7 @@
         "defaultNamespace": "Yavsc"
     },
     "dependencies": {
+        "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
         "Newtonsoft.Json": "9.0.1",
         "Gapi.net45": "1.0.0",
         "PayPalMerchant-net451": "2.7.109",
