@@ -1,5 +1,7 @@
 include versioning.mk
 
+SUBDIRS=Yavsc Yavsc.Server Yavsc.Abstract cli
+
 all: deploy-pkgs
 
 Yavsc.Abstract:
@@ -47,5 +49,4 @@ rc-num:
 
 
 .PHONY: all $(SUBDIRS)
-
 
