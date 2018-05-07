@@ -8,7 +8,7 @@ Yavsc.Abstract:
 Yavsc.Server: Yavsc.Abstract
 	$(MAKE) -C Yavsc.Server VERSION=$(VERSION)
 
-Yavsc: Yavsc.Server
+Yavsc: 
 	make -C Yavsc restore
 	make -C Yavsc VERSION=$(VERSION)
 
@@ -30,7 +30,7 @@ Yavsc-Server: Yavsc.Abstract-deploy-pkg
 
 Yavsc.Server-deploy-pkg: Yavsc-Server
 
-cli: Yavsc.Server-deploy-pkg
+cli: Yavsc.Abstract-deploy-pkg Yavsc.Server-deploy-pkg
 	make -C cli restore
 	make -C cli
 
