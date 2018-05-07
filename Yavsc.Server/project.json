@@ -45,6 +45,22 @@
         "defaultNamespace": "Yavsc"
     },
     "dependencies": {
+
+        
+        "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
+        "Microsoft.Extensions.DependencyInjection": "1.0.0-rc1-final",
+        "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Globalization.CultureInfoCache": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Localization.Abstractions": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Logging.TraceSource": "1.0.0-rc1-final",
+        "Microsoft.Extensions.Options": "0.0.1-alpha",
+
+
         "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
         "Newtonsoft.Json": "9.0.1",
         "Gapi.net45": "1.0.0",
