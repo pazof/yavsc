@@ -135,8 +135,8 @@
             "version": "2.7.109"
         },
         "Gapi.net45": "1.0.0",
-        "Yavsc.Abstract": {},
-        "Yavsc.Server": {}
+        "Yavsc.Abstract": { "type": "build" },
+        "Yavsc.Server": { "type": "build" }
     },
     "commands": {
         "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",

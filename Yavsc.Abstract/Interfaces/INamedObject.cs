@@ -1,4 +1,4 @@
-namespace Yavsc.Server.Interfaces
+namespace Yavsc.Interfaces
 {
     public interface INamedObject
     {

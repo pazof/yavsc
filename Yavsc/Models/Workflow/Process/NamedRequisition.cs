@@ -1,4 +1,4 @@
-using Yavsc.Server.Interfaces;
+using Yavsc.Interfaces;
 
 namespace Yavsc.Models.Process
 {
