@@ -2,7 +2,9 @@
 # assumes SOLUTIONDIR already defined
 #
 
+ifndef PRJNAME
 PRJNAME := $(shell basename `pwd -P`)
+endif
 FRAMEWORK=dnx451
 ASPNET_ENV=Development
 ASPNET_LOG_LEVEL=Debug
@@ -12,6 +14,7 @@ FRAMEWORKALIAS=dnx451
 # nuget package destination, at generation time
 BINTARGET=$(PRJNAME).dll
 BINTARGETPATH=bin/$(CONFIGURATION)/$(FRAMEWORKALIAS)/$(BINTARGET)
+PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
 
 # OBS SUBDIRS=Yavsc.Server Yavsc.Abstract Yavsc cli
 #
@@ -57,13 +60,14 @@ bin/output:
 bin/output/wwwroot/version: bin/output
 	@git log -1 --pretty=format:%h > bin/output/wwwroot/version
 
-$(NUGETSOURCE)/$(PRJNAME)/$(PKGFILENAME): $(NUGETSOURCE)/$(PRJNAME) $(BINTARGETPATH) $(SOLUTIONDIR)/rc-num.txt
+$(NUGETSOURCE)/$(PKGFILENAME): $(BINTARGETPATH) $(SOLUTIONDIR)/rc-num.txt
+ifeq ($(git_status),0)
 	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory $(NUGETSOURCE)/$(PRJNAME)
+else
+	$(error Please, commit your changes before publishing your NuGet packages)
+endif
 
-$(NUGETSOURCE)/$(PRJNAME):
-	mkdir -p $@
-
-deploy-pkg: $(NUGETSOURCE)/$(PRJNAME)/$(PKGFILENAME)
+deploy-pkg: $(NUGETSOURCE)/$(PKGFILENAME)
 
 .PHONY: rc-num.txt-check $(BINTARGETPATH)
 
