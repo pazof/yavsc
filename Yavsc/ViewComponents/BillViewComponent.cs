@@ -10,19 +10,23 @@ using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.ViewModels;
 using Yavsc.ViewModels.Gen;
+using Yavsc.Services;
 
 namespace Yavsc.ViewComponents
 {
     public class BillViewComponent : ViewComponent
     {
         ApplicationDbContext dbContext;
+        IBillingService billing;
         IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer;
         ILogger logger ;
 
         public BillViewComponent(ApplicationDbContext dbContext, 
             IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
+            IBillingService billing,
             ILoggerFactory loggerFactory)
         {
+            this.billing = billing;
             this.dbContext = dbContext;
             this.localizer = localizer;
             logger = loggerFactory.CreateLogger<BillViewComponent>();
@@ -81,7 +85,7 @@ namespace Yavsc.ViewComponents
                             Temp = Startup.Temp,
                             TeXSource = tex, 
                             DestDir = AbstractFileSystemHelpers.UserBillsDirName,
-                            BaseFileName = billable.GetFileBaseName()
+                            BaseFileName = billable.GetFileBaseName(billing)
                         };
                     if (genrtrData.GenerateEstimatePdf()) {
                         return Json(new { Generated = genrtrData.BaseFileName+".pdf" });
@@ -89,7 +93,7 @@ namespace Yavsc.ViewComponents
                         return Json(new { Error = genrtrData.GenerationErrorMessage } );
                     }
             }
-            ViewBag.BillFileInfo =  billable.GetBillInfo();
+            ViewBag.BillFileInfo =  billable.GetBillInfo(billing);
             return View("Default",billable);
            
         }

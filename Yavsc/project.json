@@ -1,7 +1,8 @@
 {
     "version": "1.0.5-*",
+    "description": "encore une très petite entreprise",
     "authors": [
-        "Paul Schneider"
+        "Paul Schneider <paul@pschneider.fr>"
     ],
     "packOptions": {
         "repository": {

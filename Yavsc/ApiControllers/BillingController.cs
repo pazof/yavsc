@@ -65,7 +65,7 @@ namespace Yavsc.ApiControllers
                 return new ChallengeResult();
             }
  
-            var fi = bill.GetBillInfo();
+            var fi = bill.GetBillInfo(billingService);
 
             if (!fi.Exists) return Ok(new { Error = "Not generated" });
             return File(fi.OpenRead(), "application/x-pdf", fi.Name); 

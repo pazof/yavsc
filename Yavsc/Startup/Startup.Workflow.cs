@@ -96,7 +96,7 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
         public static void RegisterBilling<T>(string code, Func<ApplicationDbContext,long,INominativeQuery> getter) where T : IBillable
         {
             BillingService.Billing.Add(code,getter) ;
-            BillingService.BillingMap.Add(typeof(T).Name,code);
+            BillingService.GlobalBillingMap.Add(typeof(T).Name,code);
         }
     }
 
