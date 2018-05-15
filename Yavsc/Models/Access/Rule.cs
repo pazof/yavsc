@@ -9,6 +9,6 @@ namespace Yavsc.Models.Access
             
         }
         // Abstract method to compute any authorization on a resource
-        public abstract bool Allow(ApplicationDbContext context, string userId, TResource resource, TRequirement requirement);
+        public abstract bool Allow(string userId, TResource resource, TRequirement requirement);
     }
 }
