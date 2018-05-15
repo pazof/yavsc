@@ -125,7 +125,7 @@ namespace Yavsc.ApiControllers
             // Notify the client
             var locstr = _localizer["EstimationMessageToClient"];
 
-            var yaev = new EstimationEvent(dbContext,estimate,_localizer);
+            var yaev = new EstimationEvent(estimate,_localizer);
             
             var regids = estimate.Client.Devices.Select(d => d.GCMRegistrationId).ToArray();
             bool gcmSent = false;

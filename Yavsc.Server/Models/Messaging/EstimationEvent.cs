@@ -11,16 +11,12 @@ namespace Yavsc.Models.Messaging
 
     public class EstimationEvent: IEvent
     {
-        public EstimationEvent(ApplicationDbContext context, Estimate estimate, IStringLocalizer SR)
+        public EstimationEvent( Estimate estimate, IStringLocalizer SR)
         {
             Topic = "Estimation";
             Estimation = estimate;
-             perfer = context.Performers.Include(
-                p=>p.Performer
-            ).FirstOrDefault(
-                p => p.PerformerId == estimate.OwnerId
-            );
-            // Use estimate.OwnerId;
+            perfer = estimate.Owner;
+
             ProviderInfo = new ProviderClientInfo {
                 Rate = perfer.Rate,
                 UserName = perfer.Performer.UserName,
@@ -52,7 +48,7 @@ namespace Yavsc.Models.Messaging
 
         public string CreateBody()
         {
-            return string.Format(_localizer["EstimationMessageToClient"], perfer.Performer.UserName, this.Estimation.Bill.Addition());
+            return string.Format( _localizer["EstimationMessageToClient"], perfer.Performer.UserName, this.Estimation.Bill.Addition());
         }
     }
 }
