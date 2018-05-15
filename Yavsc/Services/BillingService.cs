@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Models;
+using Microsoft.Data.Entity;
 
 namespace Yavsc.Services
 {
@@ -18,8 +18,13 @@ namespace Yavsc.Services
         public static Dictionary<string,Func<ApplicationDbContext,long,INominativeQuery>> Billing =
         new Dictionary<string,Func<ApplicationDbContext,long,INominativeQuery>> ();
         public static List<PropertyInfo> UserSettings = new List<PropertyInfo>();
-        public static Dictionary<string,string> BillingMap =
+        
+        public static Dictionary<string,string> GlobalBillingMap =
           new Dictionary<string,string>();
+
+        public Dictionary<string,string> BillingMap {
+          get { return GlobalBillingMap; }
+        }
 
         public BillingService(ILoggerFactory loggerFactory, ApplicationDbContext dbContext)
         {

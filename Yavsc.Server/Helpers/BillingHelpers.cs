@@ -5,6 +5,7 @@ using System.Linq;
 using Yavsc.Abstract.FileSystem;
 using Yavsc.Billing;
 using Yavsc.Models.Billing;
+using Yavsc.Services;
 
 namespace Yavsc.Helpers
 {
@@ -21,10 +22,10 @@ namespace Yavsc.Helpers
             return bill;
          }
 
-         public static FileInfo GetBillInfo(this IBillable bill)
+         public static FileInfo GetBillInfo(this IBillable bill, IBillingService service)
          {
              var suffix = bill.GetIsAcquitted() ? "-ack":null;
-             var filename = bill.GetFileBaseName()+".pdf";
+             var filename = bill.GetFileBaseName(service)+".pdf";
             return new FileInfo(Path.Combine(AbstractFileSystemHelpers.UserBillsDirName, filename));
          }
     }

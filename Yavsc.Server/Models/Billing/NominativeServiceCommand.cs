@@ -89,11 +89,11 @@ namespace Yavsc.Models.Billing
             return Regularisation?.IsOk() ?? false;
         }
 
-        public string GetFileBaseName()
+        public string GetFileBaseName(IBillingService billingService)
         {
             string type = GetType().Name;
             string ack = GetIsAcquitted() ? "-ack" : null;
-            var bcode = BillingService.BillingMap[type];
+            var bcode = billingService.BillingMap[type];
             return $"facture-{bcode}-{Id}{ack}";
         }
         
