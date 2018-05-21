@@ -102,18 +102,24 @@ namespace cli.Services
                 MetadataReference.CreateFromFile( typeof(Enumerable).Assembly.Location),
                 MetadataReference.CreateFromFile( typeof(IdentityUser).Assembly.Location),
                 MetadataReference.CreateFromFile( typeof(ApplicationUser).Assembly.Location),
-                MetadataReference.CreateFromFile( typeof(Template).Assembly.Location)
+                MetadataReference.CreateFromFile( typeof(Template).Assembly.Location),
+                MetadataReference.CreateFromFile( typeof(UserOrientedTemplate).Assembly.Location)
                 };
+                logger.LogInformation("typeof(Template).Assembly.Location: "+typeof(Template).Assembly.Location);
+                
 
                 var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                     .WithAllowUnsafe(true).WithOptimizationLevel(OptimizationLevel.Release)
-                    .WithOutputKind(OutputKind.DynamicallyLinkedLibrary).WithPlatform(Platform.AnyCpu);
+                    .WithOutputKind(OutputKind.DynamicallyLinkedLibrary).WithPlatform(Platform.AnyCpu)
+                    .WithUsings("Yavsc.Templates")
+                    ;
 
                 CSharpCompilation compilation = CSharpCompilation.Create(
                     assemblyName,
                     syntaxTrees: new[] { syntaxTree },
                     references: references,
-                    options: compilationOptions);
+                    options: compilationOptions
+                    );
 
 
                 using (var ms = new MemoryStream())

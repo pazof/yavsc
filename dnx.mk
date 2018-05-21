@@ -62,7 +62,7 @@ bin/output/wwwroot/version: bin/output
 
 $(NUGETSOURCE)/$(PKGFILENAME): $(BINTARGETPATH) $(SOLUTIONDIR)/rc-num.txt
 ifeq ($(git_status),0)
-	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory $(NUGETSOURCE)/$(PRJNAME)
+	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory $(NUGETSOURCE)
 else
 	$(error Please, commit your changes before publishing your NuGet packages)
 endif
