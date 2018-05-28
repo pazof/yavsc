@@ -2,12 +2,19 @@ namespace Yavsc.Services
 {
   using System.Linq;
   using System.Threading.Tasks;
-  using Yavsc.Abstract.Workflow;
   using System.Collections.Generic;
+    using Yavsc.Abstract.Workflow;
 
-  public interface IBillingService
+    public interface IBillingService
   {
+    // TODO ensure a default value at using this:
     /// <summary>
+    /// maps a command type name to a bolling code, used to get bill assets
+    /// </summary>
+    /// <returns></returns>
+    Dictionary<string,string> BillingMap { get; }
+
+        /// <summary>
     /// Renvoye la facture associée à une clé de facturation,
     /// à partir du couple suivant :
     /// 
@@ -19,10 +26,21 @@ namespace Yavsc.Services
     /// <param name="billingCode">Identifiant du type de facturation</param>
     /// <param name="queryId">Identifiant de la demande du client</param>
     /// <returns>La facture</returns>
-    Dictionary<string,string> BillingMap { get; }
     Task<INominativeQuery> GetBillAsync(string billingCode, long queryId);
+    
+    /// <summary>
+    /// All performer setting in this activity
+    /// </summary>
+    /// <param name="activityCode"></param>
+    /// <returns></returns>
     Task<IQueryable<ISpecializationSettings>>  GetPerformersSettingsAsync(string activityCode);
 
+    /// <summary>
+    /// Perfomer settings for the specified performer in the activity 
+    /// </summary>
+    /// <param name="activityCode">activityCode</param>
+    /// <param name="userId">performer uid</param>
+    /// <returns></returns>
     Task<ISpecializationSettings> GetPerformerSettingsAsync(string activityCode, string userId);
 
   }
