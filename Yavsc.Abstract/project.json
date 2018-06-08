@@ -37,6 +37,11 @@
 
             }
         },
+        "net46": {
+            "frameworkAssemblies": {
+                "System.ComponentModel.DataAnnotations": "4.0.0"
+            }
+        },
         "net451": {
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0"
