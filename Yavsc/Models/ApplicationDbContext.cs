@@ -10,6 +10,7 @@ using Yavsc.Models.Haircut;
 using Yavsc.Models.IT.Maintaining;
 using Yavsc.Models.IT.Fixing;
 using Yavsc.Server.Models.EMailing;
+using Yavsc.Server.Models.IT.SourceCode;
 
 namespace Yavsc.Models
 {
@@ -65,7 +66,9 @@ namespace Yavsc.Models
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
+            builder.Entity<GitRepositoryReference>().HasKey(r => new { r.Path, r.Url, r.Branch });
         }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(DbHelpers.ConnectionString);
@@ -298,6 +301,8 @@ namespace Yavsc.Models
          public DbSet<ChatRoom> ChatRoom { get; set; }
 
          public DbSet<MailingTemplate> MailingTemplate { get; set; }
+
+         public DbSet<GitRepositoryReference> GitRepositoryReference { get; set; }
         
     }
 }

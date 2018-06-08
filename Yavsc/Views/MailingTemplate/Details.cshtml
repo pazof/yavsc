@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Details";
 }
+@section scripts { 
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+}
 
 <h2>Details</h2>
 
@@ -14,7 +17,7 @@
             @Html.DisplayNameFor(model => model.Body)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Body)
+            <code><pre class="prettyprint">@Model.Body</pre></code>
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.DateCreated)
@@ -35,10 +38,10 @@
             @Html.DisplayFor(model => model.ReplyToAddress)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.ShortName)
+            @Html.DisplayNameFor(model => model.Topic)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ShortName)
+            @Html.DisplayFor(model => model.Topic)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.ToSend)
