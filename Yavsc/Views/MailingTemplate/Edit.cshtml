@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
+@section scripts { 
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+}
 <h2>@SR["Edit"]</h2>
 
 <form asp-action="Edit">
@@ -15,7 +17,9 @@
         <div class="form-group">
             <label asp-for="Body" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <textarea asp-for="Body" class="form-control" />
+                <code><pre class="prettyprint">@Model.Body</pre>
+                <textarea  Id="Body" Name="Body" class="form-control" >@Model.Body</textarea>
+                </code>
                 <span asp-validation-for="Body" class="text-danger" ></span>
             </div>
         </div>
