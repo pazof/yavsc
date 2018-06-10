@@ -29,7 +29,7 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
             item.FileName = SignFileNameFormat("pro",billingCode,estimateId);
             item.MimeType = formFile.ContentDisposition;
             
-            var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Bills, item.FileName);
+            var destFileName = Path.Combine(Startup.SiteSetup.Bills, item.FileName);
 
             var fi = new FileInfo(destFileName);
             if (fi.Exists) item.Overriden = true;
@@ -47,7 +47,7 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
 
         private static void CreateAvatars(this ApplicationUser user, Bitmap source)
         {
-            var dir = Startup.SiteSetup.UserFiles.Avatars;
+            var dir = Startup.SiteSetup.Avatars;
             var name = user.UserName + ".png";
             var smallname = user.UserName + ".s.png";
             var xsmallname = user.UserName + ".xs.png";
@@ -147,7 +147,7 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
             var item = new FileRecievedInfo();
             item.FileName = user.UserName + ".png";
 
-            var destFileName = Path.Combine(Startup.SiteSetup.UserFiles.Avatars, item.FileName);
+            var destFileName = Path.Combine(Startup.SiteSetup.Avatars, item.FileName);
 
             var fi = new FileInfo(destFileName);
             if (fi.Exists) item.Overriden = true;

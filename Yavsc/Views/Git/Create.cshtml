@@ -1,0 +1,49 @@
+@model Yavsc.Server.Models.IT.SourceCode.GitRepositoryReference
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>GitRepositoryReference</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Url" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Url" class ="form-control"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Path" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Path" class ="form-control"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Branch" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Branch" class ="form-control"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="OwnerId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="OwnerId" class ="form-control"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

@@ -23,6 +23,11 @@ default: pushInPre
 
 deploy: pushInPre pushInProd
 
+../Yavsc.Server/bin/$(CONFIGURATION)/Yavsc.Server.dll: 
+	make -C ../Yavsc.Server CONFIGURATION=$(CONFIGURATION)
+
+project.json: ../Yavsc.Server/bin/$(CONFIGURATION)/Yavsc.Server.dll
+
 pushInPre: cleanoutput bin/output/wwwroot/version
 	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel-pre stop
 	ssh $(HOSTADMIN)@$(HOSTING) sudo rm -rf $(DESTDIR)/approot
