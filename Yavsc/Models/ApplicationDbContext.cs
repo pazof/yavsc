@@ -2,7 +2,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Authentication.OAuth;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using System.Threading;
@@ -36,6 +35,7 @@ namespace Yavsc.Models
     using Yavsc.Models.Calendar;
     using Blog;
     using Yavsc.Server.Helpers;
+    using Newtonsoft.Json.Linq;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -67,11 +67,6 @@ namespace Yavsc.Models
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
             builder.Entity<GitRepositoryReference>().HasKey(r => new { r.Path, r.Url, r.Branch });
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql(DbHelpers.ConnectionString);
         }
 
         public DbSet<Client> Applications { get; set; }
@@ -150,7 +145,9 @@ namespace Yavsc.Models
             }
         }
 
-        public Task StoreTokenAsync(string googleUserId, OAuthTokenResponse value)
+        public Task StoreTokenAsync(string googleUserId, JObject response, string accessToken,
+        string tokenType, string refreshToken, string expiresIn
+        )
         {
             if (string.IsNullOrEmpty(googleUserId))
             {
@@ -163,18 +160,18 @@ namespace Yavsc.Models
                 Tokens.Add(new OAuth2Tokens
                 {
                     TokenType = "Bearer", // FIXME why value.TokenType would be null?
-                    AccessToken = value.AccessToken,
-                    RefreshToken = value.RefreshToken,
-                    Expiration = DateTime.Now.AddSeconds(int.Parse(value.ExpiresIn)),
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken,
+                    Expiration = DateTime.Now.AddSeconds(int.Parse(expiresIn)),
                     UserId = googleUserId
                 });
             }
             else
             {
-                item.AccessToken = value.AccessToken;
-                item.Expiration = DateTime.Now.AddMinutes(int.Parse(value.ExpiresIn));
-                if (value.RefreshToken != null)
-                    item.RefreshToken = value.RefreshToken;
+                item.AccessToken = accessToken;
+                item.Expiration = DateTime.Now.AddMinutes(int.Parse(expiresIn));
+                if (refreshToken != null)
+                    item.RefreshToken = refreshToken;
                 Tokens.Update(item);
             }
             SaveChanges(googleUserId);

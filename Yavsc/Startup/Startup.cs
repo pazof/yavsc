@@ -41,6 +41,7 @@ namespace Yavsc
     public partial class Startup
     {
         public static string AvatarsDirName { private set; get; }
+        public static string GitDirName { private set; get; }
         public static string Authority { get; private set; }
         public static string Temp { get; set; }
         public static SiteSettings SiteSetup { get; private set; }
@@ -155,10 +156,11 @@ namespace Yavsc
             
             // Add framework services.
             services.AddEntityFramework()
-              .AddNpgsql()
-              .AddDbContext<ApplicationDbContext>()
-              ;
-
+              .AddNpgsql() 
+              .AddDbContext<ApplicationDbContext>(
+                  db => db.UseNpgsql(DbHelpers.ConnectionString)
+              );
+     
             ConfigureOAuthServices(services);
 
             services.AddCors(
@@ -270,9 +272,9 @@ namespace Yavsc
             ResourcesHelpers.GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;
             Authority = siteSettings.Value.Authority;
-            var blogsDir = siteSettings.Value.UserFiles.Blog;
+            var blogsDir = siteSettings.Value.Blog;
             if (blogsDir==null) throw new Exception ("blogsDir==null");
-            var billsDir = siteSettings.Value.UserFiles.Bills;
+            var billsDir = siteSettings.Value.Bills;
             if (billsDir==null) throw new Exception ("billsDir==null");
 
             AbstractFileSystemHelpers.UserFilesDirName =  new DirectoryInfo(blogsDir).FullName;
@@ -354,7 +356,6 @@ namespace Yavsc
                     else throw ex;
                 }
             }
-          
             // before fixing the security protocol, let beleive our lib it's done with it.
             var cxmgr = ConnectionManager.Instance;
             // then, fix it.

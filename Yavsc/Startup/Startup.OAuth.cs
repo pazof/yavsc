@@ -150,16 +150,21 @@ namespace Yavsc
                                    var gcontext = context as GoogleOAuthCreatingTicketContext;
                                    context.Identity.AddClaim(new Claim(YavscClaimTypes.GoogleUserId, gcontext.GoogleUserId));
                                    var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-                                   await dbContext.StoreTokenAsync(gcontext.GoogleUserId, context.TokenResponse);
+                                  
                                    var store = serviceScope.ServiceProvider.GetService<IDataStore>();
-
-                                   await store.StoreAsync(gcontext.GoogleUserId, new TokenResponse { 
+                                    await store.StoreAsync(gcontext.GoogleUserId, new TokenResponse { 
                                        AccessToken = gcontext.TokenResponse.AccessToken,
                                        RefreshToken = gcontext.TokenResponse.RefreshToken,
                                        TokenType = gcontext.TokenResponse.TokenType,
                                         ExpiresInSeconds = int.Parse(gcontext.TokenResponse.ExpiresIn), 
                                         IssuedUtc = DateTime.Now
                                        });
+                                   await dbContext.StoreTokenAsync (gcontext.GoogleUserId,
+                                   gcontext.TokenResponse.Response,
+                                      gcontext.TokenResponse.AccessToken,
+                                      gcontext.TokenResponse.TokenType,
+                                        gcontext.TokenResponse.RefreshToken,
+                                       gcontext.TokenResponse.ExpiresIn);
                                    
                                }
                            }

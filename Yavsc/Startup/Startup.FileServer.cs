@@ -14,12 +14,13 @@ namespace Yavsc
     public partial class Startup
     {
         public static FileServerOptions UserFilesOptions { get; private set; }
+        public static FileServerOptions GitOptions { get; private set; }
 
         public static FileServerOptions AvatarsOptions { get; set; }
         public void ConfigureFileServerApp(IApplicationBuilder app,
                 SiteSettings siteSettings, IHostingEnvironment env, IAuthorizationService authorizationService)
         {
-            var userFilesDirInfo = new DirectoryInfo( siteSettings.UserFiles.Blog );
+            var userFilesDirInfo = new DirectoryInfo( siteSettings.Blog );
             AbstractFileSystemHelpers.UserFilesDirName =  userFilesDirInfo.FullName;
 
             if (!userFilesDirInfo.Exists) userFilesDirInfo.Create();
@@ -42,7 +43,7 @@ namespace Yavsc
                  var result = await authorizationService.AuthorizeAsync(context.Context.User, new ViewFileContext
                  { UserName = uname, File = context.File, Path = path } , new ViewRequirement());
              };
-            var avatarsDirInfo = new DirectoryInfo(Startup.SiteSetup.UserFiles.Avatars);
+            var avatarsDirInfo = new DirectoryInfo(Startup.SiteSetup.Avatars);
             if (!avatarsDirInfo.Exists) avatarsDirInfo.Create();
             AvatarsDirName = avatarsDirInfo.FullName;
 
@@ -52,6 +53,14 @@ namespace Yavsc
                 RequestPath = new PathString(Constants.AvatarsPath),
                 EnableDirectoryBrowsing = env.IsDevelopment()
             };
+            var gitdirinfo = new DirectoryInfo(Startup.SiteSetup.GitRepository);
+            GitOptions = new FileServerOptions()
+            {
+                FileProvider = new PhysicalFileProvider(GitDirName),
+                RequestPath = new PathString(Constants.GitPath),
+                EnableDirectoryBrowsing = env.IsDevelopment()
+            };
+
 
             app.UseFileServer(UserFilesOptions);
 

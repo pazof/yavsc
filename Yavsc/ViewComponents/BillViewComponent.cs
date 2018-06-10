@@ -34,8 +34,8 @@ namespace Yavsc.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync(string code, IBillable billable, OutputFormat format, bool asBill)
         {
-            var di = new DirectoryInfo(Startup.SiteSetup.UserFiles.Bills); 
-            var dia = new DirectoryInfo(Startup.SiteSetup.UserFiles.Avatars); 
+            var di = new DirectoryInfo(Startup.SiteSetup.Bills); 
+            var dia = new DirectoryInfo(Startup.SiteSetup.Avatars); 
             ViewBag.BillsDir = di.FullName;
             ViewBag.AvatarsDir = dia.FullName;
             ViewBag.AsBill = asBill; // vrai pour une facture, sinon, c'est un devis

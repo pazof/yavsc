@@ -118,7 +118,7 @@ namespace Yavsc.Controllers
                 );
 
                 var billsdir = Path.Combine(
-                    _site.UserFiles.Bills,
+                    _site.Bills,
                     perfomerProfile.Performer.UserName
                );
 

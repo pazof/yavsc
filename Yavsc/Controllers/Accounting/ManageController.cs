@@ -411,9 +411,9 @@ namespace Yavsc.Controllers
                 {
                     // Renames the blog files
                     var userdirinfo = new DirectoryInfo(
-                       Path.Combine(_siteSettings.UserFiles.Blog,
+                       Path.Combine(_siteSettings.Blog,
                         oldUserName));
-                    var newdir = Path.Combine(_siteSettings.UserFiles.Blog,
+                    var newdir = Path.Combine(_siteSettings.Blog,
                        model.NewUserName);
                     if (userdirinfo.Exists)
                         userdirinfo.MoveTo(newdir);
@@ -421,10 +421,10 @@ namespace Yavsc.Controllers
                     foreach (string s in new string [] { ".png", ".s.png", ".xs.png" })
                     {
                         FileInfo fi = new FileInfo(
-                            Path.Combine(_siteSettings.UserFiles.Avatars,
+                            Path.Combine(_siteSettings.Avatars,
                             oldUserName+s));
                         if (fi.Exists)
-                            fi.MoveTo(Path.Combine(_siteSettings.UserFiles.Avatars,
+                            fi.MoveTo(Path.Combine(_siteSettings.Avatars,
                             model.NewUserName+s));
                     }
                     await _signInManager.SignInAsync(user, isPersistent: false);

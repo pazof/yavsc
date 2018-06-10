@@ -32,11 +32,11 @@ namespace Yavsc
         public Contact Admin { get; set; }
 
         public string DataDir { get; set; }
-        /// <summary>
-        /// User's files directory
-        /// </summary>
-        /// <returns></returns>
-        public ThirdPartyFiles UserFiles { get; set; }
+            public string Avatars { get; set; }
+            public long Quota { get; set; }
+            public string Blog { get; set; }
+            public string Bills { get; set; }
+        public string GitRepository { get; set; }
 
         public string BusinessName { get; set; }
         public string Street { get; set; }
