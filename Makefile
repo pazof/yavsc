@@ -20,7 +20,7 @@ Yavsc-deploy-pkg:
 Yavsc.Server-deploy-pkg:
 	make -C Yavsc.Server deploy-pkg
 
-Yavsc.Abstract-deploy-pkg:
+Yavsc.Abstract-deploy-pkg: Yavsc
 	make -C Yavsc.Abstract deploy-pkg
 
 cli-deploy-pkg:
