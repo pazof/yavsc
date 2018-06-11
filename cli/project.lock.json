@@ -2108,11 +2108,11 @@
           "lib/net45/_._": {}
         }
       },
-      "Yavsc/1.0.5-rc20-alpha4": {
+      "Yavsc/1.0.5-rc20-alpha5": {
         "type": "package",
         "dependencies": {
-          "Yavsc.Abstract": "1.0.5-rc20-alpha4",
-          "Yavsc.Server": "1.0.5-rc20-alpha4"
+          "Yavsc.Abstract": "1.0.5-rc20-alpha5",
+          "Yavsc.Server": "1.0.5-rc20-alpha5"
         },
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
@@ -2121,7 +2121,7 @@
           "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
         }
       },
-      "Yavsc.Abstract/1.0.5-rc20-alpha4": {
+      "Yavsc.Abstract/1.0.5-rc20-alpha5": {
         "type": "package",
         "compile": {
           "lib/dnx451/Yavsc.Abstract.dll": {}
@@ -2130,10 +2130,10 @@
           "lib/dnx451/Yavsc.Abstract.dll": {}
         }
       },
-      "Yavsc.Server/1.0.5-rc20-alpha4": {
+      "Yavsc.Server/1.0.5-rc20-alpha5": {
         "type": "package",
         "dependencies": {
-          "Yavsc.Abstract": "1.0.5-rc20-alpha4"
+          "Yavsc.Abstract": "1.0.5-rc20-alpha5"
         },
         "compile": {
           "lib/dnx451/Yavsc.Server.dll": {}
@@ -4249,11 +4249,11 @@
           "lib/net45/_._": {}
         }
       },
-      "Yavsc/1.0.5-rc20-alpha4": {
+      "Yavsc/1.0.5-rc20-alpha5": {
         "type": "package",
         "dependencies": {
-          "Yavsc.Abstract": "1.0.5-rc20-alpha4",
-          "Yavsc.Server": "1.0.5-rc20-alpha4"
+          "Yavsc.Abstract": "1.0.5-rc20-alpha5",
+          "Yavsc.Server": "1.0.5-rc20-alpha5"
         },
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
@@ -4262,7 +4262,7 @@
           "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
         }
       },
-      "Yavsc.Abstract/1.0.5-rc20-alpha4": {
+      "Yavsc.Abstract/1.0.5-rc20-alpha5": {
         "type": "package",
         "compile": {
           "lib/dnx451/Yavsc.Abstract.dll": {}
@@ -4271,10 +4271,10 @@
           "lib/dnx451/Yavsc.Abstract.dll": {}
         }
       },
-      "Yavsc.Server/1.0.5-rc20-alpha4": {
+      "Yavsc.Server/1.0.5-rc20-alpha5": {
         "type": "package",
         "dependencies": {
-          "Yavsc.Abstract": "1.0.5-rc20-alpha4"
+          "Yavsc.Abstract": "1.0.5-rc20-alpha5"
         },
         "compile": {
           "lib/dnx451/Yavsc.Server.dll": {}
@@ -6390,11 +6390,11 @@
           "lib/net45/_._": {}
         }
       },
-      "Yavsc/1.0.5-rc20-alpha4": {
+      "Yavsc/1.0.5-rc20-alpha5": {
         "type": "package",
         "dependencies": {
-          "Yavsc.Abstract": "1.0.5-rc20-alpha4",
-          "Yavsc.Server": "1.0.5-rc20-alpha4"
+          "Yavsc.Abstract": "1.0.5-rc20-alpha5",
+          "Yavsc.Server": "1.0.5-rc20-alpha5"
         },
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
@@ -6403,7 +6403,7 @@
           "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll": {}
         }
       },
-      "Yavsc.Abstract/1.0.5-rc20-alpha4": {
+      "Yavsc.Abstract/1.0.5-rc20-alpha5": {
         "type": "package",
         "compile": {
           "lib/dnx451/Yavsc.Abstract.dll": {}
@@ -6412,10 +6412,10 @@
           "lib/dnx451/Yavsc.Abstract.dll": {}
         }
       },
-      "Yavsc.Server/1.0.5-rc20-alpha4": {
+      "Yavsc.Server/1.0.5-rc20-alpha5": {
         "type": "package",
         "dependencies": {
-          "Yavsc.Abstract": "1.0.5-rc20-alpha4"
+          "Yavsc.Abstract": "1.0.5-rc20-alpha5"
         },
         "compile": {
           "lib/dnx451/Yavsc.Server.dll": {}
@@ -8548,35 +8548,35 @@
         "system.threading.nuspec"
       ]
     },
-    "Yavsc/1.0.5-rc20-alpha4": {
+    "Yavsc/1.0.5-rc20-alpha5": {
       "type": "package",
-      "sha512": "l/ill88DnIP2OeWDOSZJMTCx/pB1JPrQrFvQIwcNi4ya/kLRG22LUIQbGuU77fEuwZjB7rfBzEZkgoI1wf1oNw==",
+      "sha512": "3yPqHjRZ6XqDtRkOZu6Adovqczu/0oIpii1uMAD/E6AJTiRduJ6LVEj6+HfnVwErSnJBFRW8frRAPudN8+Eiuw==",
       "files": [
         "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.dll",
-        "Yavsc.1.0.5-rc20-alpha4.nupkg",
-        "Yavsc.1.0.5-rc20-alpha4.nupkg.sha512",
+        "Yavsc.1.0.5-rc20-alpha5.nupkg",
+        "Yavsc.1.0.5-rc20-alpha5.nupkg.sha512",
         "Yavsc.nuspec"
       ]
     },
-    "Yavsc.Abstract/1.0.5-rc20-alpha4": {
+    "Yavsc.Abstract/1.0.5-rc20-alpha5": {
       "type": "package",
-      "sha512": "raNWJLbT+Nti3orI0BcUFlsgP3jakLPzpT+5mozlJJ7B6hDIbpDRSWKe++8cslHzrq2EY1NHC8U3LtAkP5rQgA==",
+      "sha512": "O+50CGpnOGhwMs9LIMDBv4m5VUTnE1bJ0XgMuxWPI0+7k7Jaf3eEb+rodj39zgSUNJZvc179XIIsCgFgVEOsyg==",
       "files": [
         "lib/dnx451/Yavsc.Abstract.dll",
         "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Abstract.dll",
-        "Yavsc.Abstract.1.0.5-rc20-alpha4.nupkg",
-        "Yavsc.Abstract.1.0.5-rc20-alpha4.nupkg.sha512",
+        "Yavsc.Abstract.1.0.5-rc20-alpha5.nupkg",
+        "Yavsc.Abstract.1.0.5-rc20-alpha5.nupkg.sha512",
         "Yavsc.Abstract.nuspec"
       ]
     },
-    "Yavsc.Server/1.0.5-rc20-alpha4": {
+    "Yavsc.Server/1.0.5-rc20-alpha5": {
       "type": "package",
-      "sha512": "kiKsUo0MBg88ZDHOHEtZHGlMObyiwKqwtLWh1ZwXcUqNpEcK/46AJpRzCt9uXNc0UEdLQ8Bna/9FzYQfZA8RKg==",
+      "sha512": "nMn1jIgs9z8XbxNHjTThf7hru82BQZFpK7aRPZPw3EZ88D/85lHq0eq/vHzcSFaWUBUaIdghAeLz47PvJnmvwQ==",
       "files": [
         "lib/dnx451/Yavsc.Server.dll",
         "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Yavsc.Server.dll",
-        "Yavsc.Server.1.0.5-rc20-alpha4.nupkg",
-        "Yavsc.Server.1.0.5-rc20-alpha4.nupkg.sha512",
+        "Yavsc.Server.1.0.5-rc20-alpha5.nupkg",
+        "Yavsc.Server.1.0.5-rc20-alpha5.nupkg.sha512",
         "Yavsc.Server.nuspec"
       ]
     }
@@ -8609,9 +8609,9 @@
       "Microsoft.Framework.Configuration.Json >= 1.0.0-beta8",
       "Microsoft.Framework.ConfigurationModel.Json >= 1.0.0-beta4",
       "Newtonsoft.Json >= 9.0.1",
-      "Yavsc.Abstract >= 1.0.5-rc20-alpha4",
-      "Yavsc.Server >= 1.0.5-rc20-alpha4",
-      "Yavsc >= 1.0.5-rc20-alpha4"
+      "Yavsc.Abstract >= 1.0.5-rc20-alpha5",
+      "Yavsc.Server >= 1.0.5-rc20-alpha5",
+      "Yavsc >= 1.0.5-rc20-alpha5"
     ],
     "DNX,Version=v4.5.1": []
   }
