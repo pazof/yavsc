@@ -2,7 +2,7 @@ namespace Yavsc.Abstract.Workflow
 {
     public interface ITaskRunnerProvider
     {
-         ITaskRunner FindRunner(string runnerName);
+         ITaskRunner[] FindRunner(string runnerName);
          
     }
 }

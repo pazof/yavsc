@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Process
@@ -5,13 +6,13 @@ namespace Yavsc.Models.Process
     /// <summary>
     /// An abstract, identified rule
     /// </summary>
-    public class Rule<TResult,TInput>
+    public abstract class Rule<TResult,TInput> 
     {
         [Key]
         public string Id { get; set; }
 
         /// <summary>
-        /// Left part for this rule, a conjonction.
+        /// Left part for this class of rule, a conjonction.
         /// All of these requisitions must be true
         /// in order to begin any related process.
         /// </summary>
@@ -28,7 +29,7 @@ namespace Yavsc.Models.Process
 
         public string Description { get; set; }
 
-        public Action<TResult,TInput> Execution { get; set; }
+        public abstract TResult Execute(TInput inputData);
 
     }
 }

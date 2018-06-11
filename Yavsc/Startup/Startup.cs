@@ -77,9 +77,9 @@ namespace Yavsc
             
             var auth = Configuration["Site:Authority"];
             var cxstr = Configuration["Data:DefaultConnection:ConnectionString"];
-            DbHelpers.ConnectionString = cxstr;
-           
+            ConnectionString = cxstr;
         }
+        public static string ConnectionString { get; set; }
         public static GoogleAuthSettings GoogleSettings { get; set; }
         public IConfigurationRoot Configuration { get; set; }
 
@@ -158,7 +158,7 @@ namespace Yavsc
             services.AddEntityFramework()
               .AddNpgsql() 
               .AddDbContext<ApplicationDbContext>(
-                  db => db.UseNpgsql(DbHelpers.ConnectionString)
+                  db => db.UseNpgsql(ConnectionString)
               );
      
             ConfigureOAuthServices(services);
