@@ -27,7 +27,7 @@ namespace Yavsc
             GCMNotificationUrl = "https://gcm-http.googleapis.com/gcm/send",
             UserFilesPath = "/files",
             AvatarsPath = "/avatars",
-            GitPath = "/git",
+            GitPath = "/sources",
             DefaultAvatar = "/images/Users/icon_user.png",
             AnonAvatar = "/images/Users/icon_anon_user.png";
         
