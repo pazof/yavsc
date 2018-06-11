@@ -9,5 +9,3 @@ MAKE=make
 NUGETSOURCE=$(HOME)/Nupkgs
 VERSION=1.0.5-rc$(rc_num)
 CONFIGURATION=Release
-
-

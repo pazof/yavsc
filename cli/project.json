@@ -45,8 +45,7 @@
         "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
         "Newtonsoft.Json": "9.0.1",
         "Yavsc.Abstract": { "version": "1.0.5-rc20-alpha5", "target": "package" },
-        "Yavsc.Server": { "version": "1.0.5-rc20-alpha5", "target": "package" },
-        "Yavsc": { "version": "1.0.5-rc20-alpha5", "target": "package" }
+        "Yavsc.Server": { "version": "1.0.5-rc20-alpha5", "target": "package" }
     },
     "frameworks": {
         "dnx451": {}

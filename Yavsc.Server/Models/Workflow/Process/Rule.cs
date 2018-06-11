@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Process
@@ -5,7 +6,7 @@ namespace Yavsc.Models.Process
     /// <summary>
     /// An abstract, identified rule
     /// </summary>
-    public class Rule<TResult,TInput>
+    public abstract class Rule<TResult,TInput>
     {
         [Key]
         public string Id { get; set; }
@@ -28,7 +29,7 @@ namespace Yavsc.Models.Process
 
         public string Description { get; set; }
 
-        public Action<TResult,TInput> Execution { get; set; }
+        public abstract TResult Execute(TInput inputData);
 
     }
 }
