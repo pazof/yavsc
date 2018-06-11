@@ -53,7 +53,12 @@ namespace Yavsc
                 RequestPath = new PathString(Constants.AvatarsPath),
                 EnableDirectoryBrowsing = env.IsDevelopment()
             };
+
+
             var gitdirinfo = new DirectoryInfo(Startup.SiteSetup.GitRepository);
+            GitDirName = gitdirinfo.FullName;
+            if (!gitdirinfo.Exists) gitdirinfo.Create();
+
             GitOptions = new FileServerOptions()
             {
                 FileProvider = new PhysicalFileProvider(GitDirName),
@@ -61,11 +66,11 @@ namespace Yavsc
                 EnableDirectoryBrowsing = env.IsDevelopment()
             };
 
-
             app.UseFileServer(UserFilesOptions);
 
             app.UseFileServer(AvatarsOptions);
 
+            app.UseFileServer(GitOptions);
             app.UseStaticFiles();
         }
     }

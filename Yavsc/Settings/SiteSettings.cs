@@ -36,7 +36,7 @@ namespace Yavsc
             public long Quota { get; set; }
             public string Blog { get; set; }
             public string Bills { get; set; }
-        public string GitRepository { get; set; }
+        public string GitRepository { get; set; } = "sources";
 
         public string BusinessName { get; set; }
         public string Street { get; set; }
