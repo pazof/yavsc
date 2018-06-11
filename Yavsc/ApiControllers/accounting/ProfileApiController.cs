@@ -32,5 +32,13 @@ namespace Yavsc.ApiControllers.accounting
             _dbContext.SaveChanges(User.GetUserId());
             return Ok(new { monthlyEmailPrefSaved = allow });
         }
+
+        [HttpGet("userhint/{name}")]
+        public UserInfo[] GetUserHint(string name)
+        {
+            return _dbContext.Users.Where(u=>u.UserName.IndexOf(name)>0)
+            .Select(u=>new UserInfo(u.Id, u.UserName, u.Avatar))
+            .Take(10).ToArray();
+        }
     }
 }
