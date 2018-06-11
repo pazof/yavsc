@@ -8,8 +8,8 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180611003253_gitKey")]
-    partial class gitKey
+    [Migration("20180614160254_projectRepo")]
+    partial class projectRepo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1342,11 +1342,14 @@ namespace Yavsc.Migrations
                 {
                     b.Property<string>("Path");
 
-                    b.Property<string>("Branch");
+                    b.Property<string>("Branch")
+                        .HasAnnotation("MaxLength", 512);
 
-                    b.Property<string>("OwnerId");
+                    b.Property<string>("OwnerId")
+                        .HasAnnotation("MaxLength", 1024);
 
-                    b.Property<string>("Url");
+                    b.Property<string>("Url")
+                        .HasAnnotation("MaxLength", 2048);
 
                     b.HasKey("Path");
                 });

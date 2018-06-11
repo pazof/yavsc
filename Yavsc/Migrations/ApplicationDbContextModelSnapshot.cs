@@ -1341,11 +1341,14 @@ namespace Yavsc.Migrations
                 {
                     b.Property<string>("Path");
 
-                    b.Property<string>("Branch");
+                    b.Property<string>("Branch")
+                        .HasAnnotation("MaxLength", 512);
 
-                    b.Property<string>("OwnerId");
+                    b.Property<string>("OwnerId")
+                        .HasAnnotation("MaxLength", 1024);
 
-                    b.Property<string>("Url");
+                    b.Property<string>("Url")
+                        .HasAnnotation("MaxLength", 2048);
 
                     b.HasKey("Path");
                 });

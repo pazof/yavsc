@@ -66,7 +66,6 @@ namespace Yavsc.Models
                 if (et.ClrType.GetInterface("IBaseTrackedEntity")!=null)
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
-            builder.Entity<GitRepositoryReference>().HasKey(r =>  r.Path );
         }
 
         public DbSet<Client> Applications { get; set; }

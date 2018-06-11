@@ -26,6 +26,7 @@ using Yavsc.Models;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
 using Yavsc.Templates;
+using Microsoft.Data.Entity;
 
 namespace cli
 {
@@ -33,8 +34,7 @@ namespace cli
     {
         public string ConnectionString
         {
-            get { return DbHelpers.ConnectionString; }
-            private set { DbHelpers.ConnectionString = value; }
+            get ; set;
         }
 
         public static SiteSettings SiteSetup { get; private set; }
@@ -79,6 +79,13 @@ namespace cli
             {
                 options.ResourcesPath = "Resources";
             });
+            ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
+           
+            services.AddEntityFramework()
+              .AddNpgsql() 
+              .AddDbContext<ApplicationDbContext>(
+                  db => db.UseNpgsql(ConnectionString)
+              );
         }
 
         public void Configure (IApplicationBuilder app, IHostingEnvironment env,
@@ -88,8 +95,6 @@ namespace cli
             loggerFactory.AddDebug();
             logger = loggerFactory.CreateLogger<Startup>();
             logger.LogInformation(env.EnvironmentName);
-            var cxstr = Configuration["Data:DefaultConnection:ConnectionString"];
-            DbHelpers.ConnectionString = cxstr;
 
         }
 
