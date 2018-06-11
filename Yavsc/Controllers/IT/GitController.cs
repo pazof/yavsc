@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
@@ -8,6 +10,7 @@ using Yavsc.Server.Models.IT.SourceCode;
 
 namespace Yavsc.Controllers
 {
+    [Authorize("AdministratorOnly")]
     public class GitController : Controller
     {
         private ApplicationDbContext _context;
@@ -44,7 +47,6 @@ namespace Yavsc.Controllers
         // GET: Git/Create
         public IActionResult Create()
         {
-            ViewData["OwnerId"] = new SelectList(_context.ApplicationUser, "Id", "Owner");
             return View();
         }
 
@@ -53,6 +55,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(GitRepositoryReference gitRepositoryReference)
         {
+            gitRepositoryReference.OwnerId = User.GetUserId();
             if (ModelState.IsValid)
             {
                 _context.GitRepositoryReference.Add(gitRepositoryReference);

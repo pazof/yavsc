@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
@@ -11,6 +12,7 @@ namespace Yavsc.Controllers
 {
     [Produces("application/json")]
     [Route("api/GitRefsApi")]
+    [Authorize("AdministratorOnly")]
     public class GitRefsApiController : Controller
     {
         private ApplicationDbContext _context;
