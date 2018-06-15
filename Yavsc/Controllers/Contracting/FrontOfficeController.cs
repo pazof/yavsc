@@ -24,8 +24,11 @@ namespace Yavsc.Controllers
         ILogger _logger;
 
         IStringLocalizer _SR;
+        private IBillingService _billing;
+
         public FrontOfficeController(ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
+            IBillingService billing,
             ILoggerFactory loggerFactory,
         IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR)
         {
@@ -33,6 +36,7 @@ namespace Yavsc.Controllers
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<FrontOfficeController>();
             _SR = SR;
+            _billing = billing;
         }
         public ActionResult Index()
         {
@@ -61,7 +65,7 @@ namespace Yavsc.Controllers
                 throw new NotImplementedException("No Activity code");
             }
             ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == id);
-            var result = _context.ListPerformers(id);
+            var result = _context.ListPerformers(_billing, id);
             return View(result);
         }
         [AllowAnonymous]
@@ -72,7 +76,7 @@ namespace Yavsc.Controllers
                 throw new NotImplementedException("No Activity code");
             }
             ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == id);
-            var result = _context.ListPerformers(id);
+            var result = _context.ListPerformers(_billing, id);
             return View(result);
         }
         
