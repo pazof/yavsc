@@ -1,4 +1,4 @@
-@model IEnumerable<PerformerProfile>
+@model IEnumerable<PerformerProfileViewModel>
   
 @{
     ViewData["Title"] = (ViewBag.Activity?.Name ?? SR["Any"]) ;
@@ -11,7 +11,7 @@
    @Html.DisplayFor(m=>profile)
     <a class="btn btn-success" asp-controller="Command" asp-action="Create" asp-route-proId="@profile.PerformerId"
     asp-route-billingCode="Profiles" asp-route-activityCode="@ViewBag.Activity.Code"  >
-    @SR["Proposer un rendez-vous à"] @profile.Performer.UserName
+    @SR["Proposer un rendez-vous à"] @profile.UserName
     </a>
 }
 

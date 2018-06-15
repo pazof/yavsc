@@ -5,6 +5,7 @@ using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
 using Yavsc.Services;
+using Yavsc.ViewModels.FrontOffice;
 
 namespace Yavsc.ApiControllers
 {
@@ -12,18 +13,21 @@ namespace Yavsc.ApiControllers
     public class FrontOfficeApiController: Controller
     {
         ApplicationDbContext dbContext;
-        public FrontOfficeApiController(ApplicationDbContext context)
+        private IBillingService billing;
+
+        public FrontOfficeApiController(ApplicationDbContext context, IBillingService billing)
         {
             dbContext = context;
+            this.billing = billing;
         }
 
-	[HttpGet,Route("profiles/{actCode}")]
-        IEnumerable<PerformerProfile> Profiles (string actCode)
+	    [HttpGet("profiles/{actCode}")]
+        IEnumerable<PerformerProfileViewModel> Profiles (string actCode)
         {
-            return dbContext.ListPerformers(actCode);
+            return dbContext.ListPerformers(billing, actCode);
         }
 
-        [HttpPost,Route("query/reject")]
+        [HttpPost("query/reject")]
         public IActionResult RejectQuery (string billingCode, long queryId)
         {
             if (billingCode==null) return HttpBadRequest("billingCode");

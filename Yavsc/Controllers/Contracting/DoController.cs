@@ -68,7 +68,6 @@ namespace Yavsc.Controllers
                     Settings = settings,
                     NeedsSettings =  hasConfigurableSettings
                 };
-            logger.LogInformation(JsonConvert.SerializeObject(gift.Settings));
             return View (gift);
         }
 

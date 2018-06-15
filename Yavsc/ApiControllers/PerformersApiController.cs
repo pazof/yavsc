@@ -9,15 +9,19 @@ namespace Yavsc.Controllers
 {
     using Models;
     using Yavsc.Helpers;
+    using Yavsc.Services;
 
     [Produces("application/json")]
     [Route("api/performers")]
     public class PerformersApiController : Controller
     {
         ApplicationDbContext dbContext;
-        public PerformersApiController(ApplicationDbContext context)
+        private IBillingService billing;
+
+        public PerformersApiController(ApplicationDbContext context, IBillingService billing)
         {
             dbContext = context;
+            this.billing = billing;
         }
 
         /// <summary>
@@ -56,7 +60,7 @@ namespace Yavsc.Controllers
         [HttpGet("doing/{id}"),AllowAnonymous]
         public IActionResult ListPerformers(string id)
         {
-           return Ok(dbContext.ListPerformers(id));
+           return Ok(dbContext.ListPerformers(billing, id));
         }
     }
 }

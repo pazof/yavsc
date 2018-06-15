@@ -125,7 +125,7 @@ namespace Yavsc.Controllers
             };
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
             var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id).ToArray();
-
+// TODO remember me who this magical a.Settings is built
             var usrActToSet = usrActs.Where( a => ( a.Settings == null && a.Does.SettingsClassName != null )).ToArray();
             model.HaveActivityToConfigure = usrActToSet .Count()>0;
             model.Activity = _dbContext.UserActivities.Include(a=>a.Does).Where(u=>u.UserId == user.Id).ToList();

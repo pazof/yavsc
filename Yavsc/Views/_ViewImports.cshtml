@@ -1,10 +1,14 @@
 
+@using Microsoft.AspNet.Authorization;
+@using Microsoft.AspNet.Hosting;
 @using Microsoft.AspNet.Identity;
 @using Microsoft.AspNet.Mvc;
-@using Microsoft.Extensions.Localization;
 @using Microsoft.AspNet.Mvc.Localization;
-@using Microsoft.AspNet.Authorization;
+@using Microsoft.Extensions.Localization;
 @using Microsoft.Extensions.OptionsModel;
+@using Microsoft.Extensions.PlatformAbstractions;
+@using Newtonsoft.Json;
+
 @using System.Security.Claims;
 @using System.Web.Optimization;
 @using Yavsc;
@@ -12,6 +16,7 @@
 @using Yavsc.Models;
 @using Yavsc.Models.Access;
 @using Yavsc.Models.Auth;
+
 @using Yavsc.Models.Google;
 @using Yavsc.Models.Messaging;
 @using Yavsc.Models.Musical;
@@ -19,26 +24,26 @@
 @using Yavsc.Models.Market;
 @using Yavsc.Models.Billing;
 @using Yavsc.Models.Workflow;
-@using Yavsc.Models.Relationship
+@using Yavsc.Models.Relationship;
 @using Yavsc.Models.Drawing;
 @using Yavsc.Models.Haircut;
 @using Yavsc.Models.Payment;
 @using Yavsc.Models.Calendar;
-@using Yavsc.Models.Google.Calendar
+@using Yavsc.Models.Google.Calendar;
 @using Yavsc.Billing;
 @using Yavsc.Models.Blog;
 
 @using Yavsc.ViewModels;
 @using Yavsc.ViewModels.Account;
+@using Yavsc.ViewModels.Blogspot;
+@using Yavsc.ViewModels.Administration;
+@using Yavsc.ViewModels.Auth;
 @using Yavsc.ViewModels.Manage;
 @using Yavsc.ViewModels.Calendar;
-@using Yavsc.ViewModels.Auth;
-@using Yavsc.ViewModels.Administration;
+@using Yavsc.ViewModels.FrontOffice;
 @using Yavsc.ViewModels.Relationship;
 @using Yavsc.ViewModels.Workflow;
-@using Yavsc.ViewModels.Blogspot;
-@using Microsoft.AspNet.Hosting;
-@using Microsoft.Extensions.PlatformAbstractions;
+
 @using PayPal.PayPalAPIInterfaceService.Model;
 
 
