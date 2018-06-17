@@ -14,14 +14,27 @@ namespace Yavsc.Server.Models.IT
         public string OwnerId { get; set; }
         
         public string LocalRepo { get; set; }
+        
+        public string Name { get; set; }
+        public string Version { get; set; }
 
+        public string[] Configurations { get; set; }
+        
         [ForeignKey("LocalRepo")]
         public virtual GitRepositoryReference Repository { get; set; }
 
+        List<IBillItem> bill = new List<IBillItem> ();
+        public void AddBillItem(IBillItem item)
+        {
+            bill.Add(item);
+            
+        }
         public override List<IBillItem> GetBillItems()
         {
-            throw new System.NotImplementedException();
+            return bill;
         }
+
+
 
         public string Description { get; set; }
 
@@ -29,6 +42,8 @@ namespace Yavsc.Server.Models.IT
         {
             return Description;
         }
+
+
 
         public Project()
         {

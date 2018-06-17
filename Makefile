@@ -25,7 +25,7 @@ Yavsc.Abstract-deploy-pkg: Yavsc.Abstract
 cli-deploy-pkg: cli
 	make -C cli deploy-pkg
 
-cli: Yavsc.Abstract-deploy-pkg Yavsc.Server-deploy-pkg
+cli: Yavsc-deploy-pkg
 	make -C cli restore
 	make -C cli
 
