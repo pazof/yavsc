@@ -23,5 +23,6 @@
 	</metadata>
 	<files>
 		<file src="bin/$config$/dnx451/Yavsc.dll" target="lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10" />
+		<file src="bin/$config$/dnx451/Yavsc.dll" target="lib/net46" />
 	</files>
 </package>
