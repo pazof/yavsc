@@ -38,7 +38,8 @@
             ]
         },
         "embed": [
-            "Resources/**/*.resx"
+            "Resources/**/*.resx",
+            "Resources/ansi2html.sh"
         ]
     },
     "tooling": {
