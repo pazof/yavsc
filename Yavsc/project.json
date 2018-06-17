@@ -158,7 +158,9 @@
                 "System.Net": "4.0.0.0",
                 "System.Xml": "4.0.0.0",
                 "System": "4.0.0.0"
-            }
+            },
+            "net451": {},
+            "net46": {}
         }
     },
     "publishOptions": {
