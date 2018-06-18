@@ -98,8 +98,9 @@ namespace Yavsc.Services
             return await NotifyEvent<HairCutQueryEvent>(registrationIds, ev);
         }
 
-        public Task<bool> SendEmailAsync(string username, string email, string subject, string message)
+        public Task<string> SendEmailAsync(string username, string email, string subject, string message)
         {
+            string messageId=null;
             try
             {
                 MimeMessage msg = new MimeMessage();
@@ -112,6 +113,9 @@ namespace Yavsc.Services
                     Text = message
                 };
                 msg.Subject = subject;
+                msg.MessageId = MimeKit.Utils.MimeUtils.GenerateMessageId(
+                    siteSettings.Authority
+                );
                 using (SmtpClient sc = new SmtpClient())
                 {
                     sc.Connect(
@@ -119,13 +123,14 @@ namespace Yavsc.Services
                         smtpSettings.Port,
                         SecureSocketOptions.None);
                     sc.Send(msg);
+                    messageId = msg.MessageId;
                 }
             }
             catch (Exception)
             {
-                return Task.FromResult(false);
+                return Task.FromResult<string>(null);
             }
-            return Task.FromResult(true);
+            return Task.FromResult(messageId);
         }
 
         public Task<bool> ValidateAsync(string purpose, string token, UserManager<ApplicationUser> manager, ApplicationUser user)

@@ -220,7 +220,7 @@ namespace Yavsc.Controllers
                     var emailSent = await _emailSender.SendEmailAsync(model.UserName, model.Email, _localizer["ConfirmYourAccountTitle"],
                       string.Format(_localizer["ConfirmYourAccountBody"], _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    if (!emailSent)
+                    if (emailSent==null)
                     {
                         _logger.LogWarning("User created with error sending email confirmation request");
                         this.NotifyWarning(
@@ -255,9 +255,11 @@ namespace Yavsc.Controllers
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-            var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, "Confirm your account",
-                   "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
-            return res;
+            var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, 
+            this._localizer["ConfirmYourAccountTitle"],
+            string.Format(this._localizer["ConfirmYourAccountBody"],
+                  _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
+            return res!=null;
         }
         //
         // POST: /Account/LogOff

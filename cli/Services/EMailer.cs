@@ -62,7 +62,7 @@ namespace cli.Services
             host.NamespaceImports.Add("Yavsc.Models");
             host.NamespaceImports.Add("Yavsc.Models.Identity");
             host.NamespaceImports.Add("Microsoft.AspNet.Identity.EntityFramework");
-            host.InstrumentedSourceFilePath = "bin/output/approot/src/";
+            host.InstrumentedSourceFilePath = ".";
             host.StaticHelpers = true;
             dbContext = context;
             razorEngine = new RazorTemplateEngine(host);
@@ -73,7 +73,7 @@ namespace cli.Services
             throw new NotImplementedException();
         }
 
-        public void AllUserGen(long templateCode, string baseclassName = DefaultBaseClassName)
+        public void SendMonthlyEmail(long templateCode, string baseclassName = DefaultBaseClassName)
         {
             string className = "Generated" + baseclassName;
 
@@ -83,37 +83,47 @@ namespace cli.Services
 
             var templateInfo = dbContext.MailingTemplate.FirstOrDefault(t => t.Id == templateCode);
 
-            logger.LogInformation($"Using code: {templateCode} and subject: {subtemp} ");
-
+            logger.LogInformation($"Using code: {templateCode},  subject: {subtemp} ");
+            logger.LogInformation("And body:\n"+templateInfo.Body);
             using (StringReader reader = new StringReader(templateInfo.Body))
             {
-
+                
                 // Generate code for the template
-                var razorResult = razorEngine.GenerateCode(reader, className, DefaultNamespace, "fakeFileName.cs");
+                var razorResult = razorEngine.GenerateCode(reader, className, DefaultNamespace, DefaultNamespace+".cs");
 
                 logger.LogInformation("Razor exited " + (razorResult.Success ? "Ok" : "Ko") + ".");
 
+                logger.LogInformation(razorResult.GeneratedCode);
                 SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(razorResult.GeneratedCode);
+                logger.LogInformation("CSharp parsed");
+                List<MetadataReference> references = new List<MetadataReference>();
 
-                string assemblyName = Path.GetRandomFileName();
-                MetadataReference[] references = new MetadataReference[]
+                foreach (var type in new Type[] { 
+                    typeof(object),
+                    typeof(Enumerable),
+                    typeof(IdentityUser), 
+                    typeof(ApplicationUser), 
+                    typeof(Template), 
+                    typeof(UserOrientedTemplate)
+                 } )
                 {
-                MetadataReference.CreateFromFile( typeof(object).Assembly.Location),
-                MetadataReference.CreateFromFile( typeof(Enumerable).Assembly.Location),
-                MetadataReference.CreateFromFile( typeof(IdentityUser).Assembly.Location),
-                MetadataReference.CreateFromFile( typeof(ApplicationUser).Assembly.Location),
-                MetadataReference.CreateFromFile( typeof(Template).Assembly.Location),
-                MetadataReference.CreateFromFile( typeof(UserOrientedTemplate).Assembly.Location)
-                };
-                logger.LogInformation("typeof(Template).Assembly.Location: "+typeof(Template).Assembly.Location);
-                
+                    var location = type.Assembly.Location;
+                    if (!string.IsNullOrWhiteSpace(location)) {
+                        references.Add(
+                            MetadataReference.CreateFromFile(location)
+                        );
+                        logger.LogInformation($"Assembly for {type.Name} found at {location}");
+                    } else logger.LogWarning($"Assembly Not found for {type.Name}");
+                }
+
+                logger.LogInformation("Compilation creation ...");
 
                 var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-                    .WithAllowUnsafe(true).WithOptimizationLevel(OptimizationLevel.Release)
+                    .WithAllowUnsafe(true).WithOptimizationLevel(OptimizationLevel.Debug)
                     .WithOutputKind(OutputKind.DynamicallyLinkedLibrary).WithPlatform(Platform.AnyCpu)
                     .WithUsings("Yavsc.Templates")
                     ;
-
+                string assemblyName = DefaultNamespace;
                 CSharpCompilation compilation = CSharpCompilation.Create(
                     assemblyName,
                     syntaxTrees: new[] { syntaxTree },
@@ -121,9 +131,9 @@ namespace cli.Services
                     options: compilationOptions
                     );
 
-
                 using (var ms = new MemoryStream())
                 {
+                    logger.LogInformation("Emitting result ...");
                     EmitResult result = compilation.Emit(ms);
                     foreach (Diagnostic diagnostic in result.Diagnostics.Where(diagnostic =>
                             diagnostic.Severity < DiagnosticSeverity.Error && !diagnostic.IsWarningAsError))
@@ -151,7 +161,9 @@ namespace cli.Services
 
                         Type type = assembly.GetType(DefaultNamespace + "." + className);
                         var generatedtemplate = (UserOrientedTemplate)Activator.CreateInstance(type);
-                        foreach (var user in dbContext.ApplicationUser)
+                        foreach (var user in dbContext.ApplicationUser.Where(
+                            u => u.AllowMonthlyEmail
+                        ))
                         {
                             logger.LogInformation("Generation for " + user.UserName);
                             generatedtemplate.Init();
@@ -159,13 +171,6 @@ namespace cli.Services
                             generatedtemplate.ExecuteAsync(); 
                             logger.LogInformation(generatedtemplate.GeneratedText);
                         }
-
-                        /* ... type.InvokeMember("Write",
-                            BindingFlags.Default | BindingFlags.InvokeMethod,
-                            null,
-                            model,
-                            new object[] { "Hello World" }); */
-
 
                     }
                 }
