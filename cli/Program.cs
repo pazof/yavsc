@@ -40,9 +40,8 @@ namespace cli
             var mailer = app.Services.GetService<EMailer>();
             var loggerFactory = app.Services.GetService<ILoggerFactory>();
             var logger = loggerFactory.CreateLogger<Program>();
-            mailer.AllUserGen(2,"UserOrientedTemplate");
+            mailer.SendMonthlyEmail(2,"UserOrientedTemplate");
             logger.LogInformation("Finished");
-            
         }
     }
 }

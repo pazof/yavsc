@@ -22,18 +22,22 @@ Yavsc.Server-deploy-pkg: Yavsc.Server
 Yavsc.Abstract-deploy-pkg: Yavsc.Abstract
 	make -C Yavsc.Abstract deploy-pkg
 
-cli-deploy-pkg: cli
+cli-deploy-pkg: cli check
 	make -C cli deploy-pkg
 
-cli: Yavsc-deploy-pkg
+cli: Yavsc-deploy-pkg Yavsc.Server-deploy-pkg Yavsc.Abstract-deploy-pkg
 	make -C cli restore
 	make -C cli
 
 undoLocalYavscNugetDeploy:
-	rm -rf ~/.dnx/packages/Yavsc.Abstract/$(VERSION)
-	rm -rf ~/.dnx/packages/Yavsc.Server/$(VERSION)
+	rm -rf ~/.dnx/packages/Yavsc.Abstract.$(VERSION).nupkg
+	rm -rf ~/.dnx/packages/Yavsc.Server.$(VERSION).nupkg
+	rm -rf ~/.dnx/packages/Yavsc.$(VERSION).nupkg
 
-deploy-pkgs: Yavsc-deploy-pkg cli-deploy-pkg 
+check: cli
+	make -C cli check
+
+deploy-pkgs: Yavsc-deploy-pkg Yavsc.Server-deploy-pkg Yavsc.Abstract-deploy-pkg cli-deploy-pkg
 
 memo:
 	vim ~/TODO.md

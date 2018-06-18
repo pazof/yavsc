@@ -1,7 +1,7 @@
 ﻿{
     "version": "1.0.5-*",
     "commands": {
-        "run": "cli"
+        "run": "run"
     },
     "resource": "Resources/**/*.resx",
     "buildOptions": {
@@ -44,9 +44,13 @@
         "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
         "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
         "Newtonsoft.Json": "9.0.1",
-        "Yavsc": { "version": "1.0.5-rc20-alpha7", "target": "package" }
+        "Yavsc": { "version": "1.0.5-rc20-alpha8", "target": "package" },
+        "Yavsc.Abstract": { "version": "1.0.5-rc20-alpha8", "target": "package" },
+        "Yavsc.Server": { "version": "1.0.5-rc20-alpha8", "target": "package" }
     },
     "frameworks": {
-        "dnx451": {}
+        "dnx451": {
+            "System.Net": "4.0.0"
+        }
     }
 }
