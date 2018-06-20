@@ -1,6 +1,9 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System;
+using System.Diagnostics;
+using System.IO;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
@@ -18,6 +21,32 @@ namespace Yavsc.Controllers
         public GitController(ApplicationDbContext context)
         {
             _context = context;    
+        }
+
+        [Route("~/Git/sources/{*path}")]
+        public IActionResult Sources (string path)
+        {
+            if (path == null)
+            {
+                return HttpNotFound();
+            }
+
+           /*
+            GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Path == path);
+            if (gitRepositoryReference == null)
+            {
+                return HttpNotFound();
+            } 
+            */
+            var info = Startup.GitOptions.FileProvider.GetFileInfo(path);
+            if (!info.Exists)
+                return HttpNotFound();
+            var stream = info.CreateReadStream();
+            if (path.EndsWith(".log")) return File(stream,"text/html");
+            if (path.EndsWith(".html")) return File(stream,"text/html");
+            if (path.EndsWith(".cshtml")) return File(stream,"text/razor-csharp");
+            if (path.EndsWith(".cs")) return File(stream,"text/csharp");
+            return File(stream,"application/octet-stream");
         }
 
         // GET: Git
@@ -49,6 +78,7 @@ namespace Yavsc.Controllers
         {
             return View();
         }
+
 
         // POST: Git/Create
         [HttpPost]

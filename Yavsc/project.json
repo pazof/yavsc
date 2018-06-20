@@ -28,13 +28,13 @@
         "emitEntryPoint": true,
         "outputName": "Yavsc",
         "compile": {
-            "include": "*.cs",
             "exclude": [
                 "wwwroot",
                 "node_modules",
                 "bower_components",
                 "contrib"
-            ]
+            ],
+            "include": "*.cs"
         },
         "embed": [
             "Resources/**/*.resx"
