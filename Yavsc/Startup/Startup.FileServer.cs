@@ -6,6 +6,7 @@ using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.StaticFiles;
+using Microsoft.Extensions.Logging;
 using Yavsc.Abstract.FileSystem;
 using Yavsc.ViewModels.Auth;
 
@@ -30,8 +31,6 @@ namespace Yavsc
                 FileProvider = new PhysicalFileProvider(AbstractFileSystemHelpers.UserFilesDirName),
                 RequestPath = new PathString(Constants.UserFilesPath),
                 EnableDirectoryBrowsing = env.IsDevelopment(),
-
-
             };
             UserFilesOptions.EnableDefaultFiles=true;
             UserFilesOptions.StaticFileOptions.ServeUnknownFileTypes=true;
@@ -58,13 +57,16 @@ namespace Yavsc
             var gitdirinfo = new DirectoryInfo(Startup.SiteSetup.GitRepository);
             GitDirName = gitdirinfo.FullName;
             if (!gitdirinfo.Exists) gitdirinfo.Create();
-
             GitOptions = new FileServerOptions()
             {
                 FileProvider = new PhysicalFileProvider(GitDirName),
                 RequestPath = new PathString(Constants.GitPath),
-                EnableDirectoryBrowsing = env.IsDevelopment()
+                EnableDirectoryBrowsing = env.IsDevelopment(),
             };
+            GitOptions.DefaultFilesOptions.DefaultFileNames.Add("index.md");
+            GitOptions.StaticFileOptions.ServeUnknownFileTypes = true;
+            logger.LogInformation( $"{GitDirName}");
+            GitOptions.StaticFileOptions.OnPrepareResponse+= OnPrepareGitRepoResponse;
 
             app.UseFileServer(UserFilesOptions);
 
@@ -72,6 +74,15 @@ namespace Yavsc
 
             app.UseFileServer(GitOptions);
             app.UseStaticFiles();
+        }
+
+        static void OnPrepareGitRepoResponse(StaticFileResponseContext context)
+        {
+
+            if (context.File.Name.EndsWith(".ansi.log"))
+            {
+                context.Context.Response.Redirect("/Git"+context.Context.Request.Path);
+            }
         }
     }
 }
