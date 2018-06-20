@@ -19,6 +19,7 @@
         "rimraf": "^2.6.2"
     },
     "dependencies": {
+        "ansi-to-html": "^0.6.4",
         "braintree-web": "^3.31.0",
         "paypal-permissions-sdk": "^1.0.10"
     }

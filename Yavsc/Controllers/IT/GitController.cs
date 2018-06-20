@@ -10,6 +10,7 @@ using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
 using Yavsc.Server.Models.IT.SourceCode;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -42,9 +43,17 @@ namespace Yavsc.Controllers
             if (!info.Exists)
                 return HttpNotFound();
             var stream = info.CreateReadStream();
-            if (path.EndsWith(".log")) return File(stream,"text/html");
+            if (path.EndsWith(".ansi.log")) 
+            {
+                var accept = Request.Headers["Accept"];
+                if (accept.Any(v => v.Split(',').Contains("text/html")))
+                {
+                     return File(AnsiToHtmlEncoder.GetStream(stream),"text/html");
+                }
+                return File(stream,"text/text");
+            }
             if (path.EndsWith(".html")) return File(stream,"text/html");
-            if (path.EndsWith(".cshtml")) return File(stream,"text/razor-csharp");
+            if (path.EndsWith(".cshtml")) return File(stream,"text/razor-html-csharp");
             if (path.EndsWith(".cs")) return File(stream,"text/csharp");
             return File(stream,"application/octet-stream");
         }
