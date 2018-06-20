@@ -78,7 +78,6 @@ namespace Yavsc
 
         static void OnPrepareGitRepoResponse(StaticFileResponseContext context)
         {
-
             if (context.File.Name.EndsWith(".ansi.log"))
             {
                 context.Context.Response.Redirect("/Git"+context.Context.Request.Path);
