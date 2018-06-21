@@ -10,6 +10,7 @@ using Yavsc.Models.IT.Maintaining;
 using Yavsc.Models.IT.Fixing;
 using Yavsc.Server.Models.EMailing;
 using Yavsc.Server.Models.IT.SourceCode;
+using Yavsc.Server.Models.IT;
 
 namespace Yavsc.Models
 {
@@ -299,6 +300,8 @@ namespace Yavsc.Models
          public DbSet<MailingTemplate> MailingTemplate { get; set; }
 
          public DbSet<GitRepositoryReference> GitRepositoryReference { get; set; }
+
+         public DbSet<Project> Projects { get; set; }
         
     }
 }
