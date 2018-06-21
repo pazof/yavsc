@@ -7,6 +7,26 @@ using Yavsc.Server.Models.IT.SourceCode;
 
 namespace Yavsc.Server.Models.IT
 {
+
+    public class ProjectBuildConfiguration  
+    { 
+            [Key]
+            public long Id { get; set; }
+
+            [Required]
+            public string Name { get; set; }
+            
+            [Required]
+            public string ProjectName { get; set;}
+
+            [ForeignKey("ProjectName")]
+            public virtual Project TargetProject { get; set; }
+
+    }
+
+
+
+
     public class Project : NominativeServiceCommand
     {
         [Key]
@@ -15,12 +35,23 @@ namespace Yavsc.Server.Models.IT
         
         public string LocalRepo { get; set; }
         
+        /// <summary>
+        /// This field is something like a key,
+        /// since it is required non null,
+        /// and is the key of the foreign GitRepositoryReference entity.
+        /// 
+        /// As a side effect, there's no project without valid git reference in db. 
+        /// </summary>
+        /// <returns></returns>
+        [Required]
         public string Name { get; set; }
+
         public string Version { get; set; }
 
-        public string[] Configurations { get; set; }
-        
-        [ForeignKey("LocalRepo")]
+        [InverseProperty("TargetProject")]
+        public virtual List<ProjectBuildConfiguration> Configurations { get; set; }
+
+        [ForeignKey("Name")]
         public virtual GitRepositoryReference Repository { get; set; }
 
         List<IBillItem> bill = new List<IBillItem> ();
@@ -51,3 +82,5 @@ namespace Yavsc.Server.Models.IT
         }
     }
 }
+
+
