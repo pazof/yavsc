@@ -44,13 +44,11 @@ namespace Yavsc.Server.Models.IT.SourceCode
         }
         bool Pull (GitRepositoryReference input)
         {
-            HtmlLogPath = Path.Combine( WorkingDir, "git.log");
+            LogPath = Path.Combine( WorkingDir, "git.log");
             var pStart = new ProcessStartInfo("git", "pull");
 
             pStart.WorkingDirectory = Path.Combine(WorkingDir,input.Path);
             pStart.RedirectStandardOutput = true;
-
-            HtmlLogPath = Path.Combine( WorkingDir, "git.log");
             
             using (var mem = new MemoryStream())
             {
