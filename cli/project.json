@@ -44,9 +44,9 @@
         "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
         "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
         "Newtonsoft.Json": "9.0.1",
-        "Yavsc": { "version": "1.0.5-rc21-beta1", "target": "package" },
-        "Yavsc.Abstract": { "version": "1.0.5-rc21-beta1", "target": "package" },
-        "Yavsc.Server": { "version": "1.0.5-rc21-beta1", "target": "package" }
+        "Yavsc": { "version": "1.0.5-rc21-beta2", "target": "package" },
+        "Yavsc.Abstract": { "version": "1.0.5-rc21-beta2", "target": "package" },
+        "Yavsc.Server": { "version": "1.0.5-rc21-beta2", "target": "package" }
     },
     "frameworks": {
         "dnx451": {

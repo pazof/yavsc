@@ -8,6 +8,6 @@ namespace Yavsc.Abstract.Interfaces
 
         Action<TOutput> ResultHandler { get; }
         void Launch(TInput Input);
-        string HtmlLogPath { get; set; }
+        string LogPath { get; set; }
     }
 }
