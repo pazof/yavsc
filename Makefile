@@ -1,6 +1,6 @@
 include versioning.mk
 
-SUBDIRS=Yavsc Yavsc.Server Yavsc.Abstract cli
+SUBDIRS=Yavsc Yavsc.Server Yavsc.Abstract cli test
 
 all: deploy-pkgs
 
@@ -36,6 +36,7 @@ undoLocalYavscNugetDeploy:
 
 check: cli
 	make -C cli check
+	make -C test test
 
 deploy-pkgs: Yavsc-deploy-pkg Yavsc.Server-deploy-pkg Yavsc.Abstract-deploy-pkg cli-deploy-pkg
 
