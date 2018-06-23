@@ -11,39 +11,17 @@
         <h4>Project</h4>
         <hr />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
-        <div class="form-group">
+      <div class="form-group">
             <label asp-for="ActivityCode" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="ActivityCode" class ="form-control"></select>
+               <select asp-for="ActivityCode" class ="form-control" asp-items="@ViewBag.ActivityCodeItems" ></select> 
             </div>
-        </div>
-        <div class="form-group">
+        </div> 
+         <div class="form-group">
             <label asp-for="ClientId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="ClientId" class ="form-control"></select>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <div class="checkbox">
-                    <input asp-for="Consent" />
-                    <label asp-for="Consent"></label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="DateCreated" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="DateCreated" class="form-control" />
-                <span asp-validation-for="DateCreated" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="DateModified" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="DateModified" class="form-control" />
-                <span asp-validation-for="DateModified" class="text-danger" />
-            </div>
+             <select asp-for="ClientId" class ="form-control"  asp-items="@ViewBag.ClientIdItems"></select>
+         </div>
         </div>
         <div class="form-group">
             <label asp-for="Description" class="col-md-2 control-label"></label>
@@ -53,37 +31,25 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="LocalRepo" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="LocalRepo" class="form-control" />
-                <span asp-validation-for="LocalRepo" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
             <label asp-for="Name" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="Name" class ="form-control"></select>
+                <input asp-for="Name" class ="form-control"  aria-required="true" ></input>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="OwnerId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="OwnerId" class="form-control" />
+                <select asp-for="OwnerId" asp-items="@ViewBag.OwnerIdItems" class="form-control" >
+                    </select>
                 <span asp-validation-for="OwnerId" class="text-danger" />
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="PaymentId" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select asp-for="PaymentId" class ="form-control"></select>
-            </div>
-        </div>
-        <div class="form-group">
+      <div class="form-group">
             <label asp-for="PerformerId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="PerformerId" class ="form-control"></select>
+                 <select asp-for="PerformerId" class ="form-control"  asp-items="@ViewBag.PerformerId"></select>
             </div>
-        </div>
+        </div> 
         <div class="form-group">
             <label asp-for="Previsional" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -91,47 +57,11 @@
                 <span asp-validation-for="Previsional" class="text-danger" />
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <div class="checkbox">
-                    <input asp-for="Rejected" />
-                    <label asp-for="Rejected"></label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="RejectedAt" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="RejectedAt" class="form-control" />
-                <span asp-validation-for="RejectedAt" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
+       <div class="form-group">
             <label asp-for="Status" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <select asp-for="Status" class="form-control"></select>
-                <span asp-validation-for="Status" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="UserCreated" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="UserCreated" class="form-control" />
-                <span asp-validation-for="UserCreated" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="UserModified" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="UserModified" class="form-control" />
-                <span asp-validation-for="UserModified" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="ValidationDate" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ValidationDate" class="form-control" />
-                <span asp-validation-for="ValidationDate" class="text-danger" />
+                 <select asp-for="Status" class="form-control" asp-items="@ViewBag.Status" ></select>
+              <span asp-validation-for="Status" class="text-danger" />
             </div>
         </div>
         <div class="form-group">

@@ -19,7 +19,7 @@ namespace Yavsc.Server.Models.IT
             [Required]
             public string ProjectName { get; set;}
 
-            [ForeignKey("ProjectName")]
+            [ForeignKey("Name")]
             public virtual Project TargetProject { get; set; }
 
     }
@@ -32,8 +32,6 @@ namespace Yavsc.Server.Models.IT
         [Key]
         public override long Id { get; set ; }
         public string OwnerId { get; set; }
-        
-        public string LocalRepo { get; set; }
         
         /// <summary>
         /// This field is something like a key,
@@ -64,8 +62,6 @@ namespace Yavsc.Server.Models.IT
         {
             return bill;
         }
-
-
 
         public string Description { get; set; }
 
