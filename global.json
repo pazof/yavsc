@@ -9,9 +9,9 @@
         "OAuth.AspNet.Server"
     ],
     "sdk": {
-        "version": "2.1.300-preview2-008533",
-        "runtime": "dotnet",
+      "version": "1.0.0-rc1-update2",  
+        "runtime": "mono",
         "architecture": "x64"
-    }
-
+    },
+    "packages": "packages"
 }

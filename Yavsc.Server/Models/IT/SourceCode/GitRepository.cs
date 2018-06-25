@@ -20,5 +20,10 @@ namespace Yavsc.Server.Models.IT.SourceCode
         
         [ForeignKey("OwnerId")]
         public virtual ApplicationUser Owner { get; set; }
+
+        public override string ToString()
+        {
+            return $"[Git ref {Path} {Branch} {Url}]";
+        }
     }
 }

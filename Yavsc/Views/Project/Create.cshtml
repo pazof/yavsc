@@ -11,6 +11,13 @@
         <h4>Project</h4>
         <hr />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Repository" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+               <select asp-for="Repository" class ="form-control"  asp-items="@ViewBag.RepositoryItems"></select>
+                <span asp-validation-for="Repository" class="text-danger" />
+            </div>
+        </div>
       <div class="form-group">
             <label asp-for="ActivityCode" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -34,6 +41,7 @@
             <label asp-for="Name" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Name" class ="form-control"  aria-required="true" ></input>
+                <span asp-validation-for="Name" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
@@ -47,7 +55,7 @@
       <div class="form-group">
             <label asp-for="PerformerId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                 <select asp-for="PerformerId" class ="form-control"  asp-items="@ViewBag.PerformerId"></select>
+                 <select asp-for="PerformerId" class ="form-control"  asp-items="@ViewBag.PerformerIdItems"></select>
             </div>
         </div> 
         <div class="form-group">

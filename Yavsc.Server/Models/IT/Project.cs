@@ -15,11 +15,10 @@ namespace Yavsc.Server.Models.IT
 
             [Required]
             public string Name { get; set; }
-            
-            [Required]
-            public string ProjectName { get; set;}
 
-            [ForeignKey("Name")]
+            public long ProjectId { get; set; }
+            
+            [ForeignKey("ProjectId")]
             public virtual Project TargetProject { get; set; }
 
     }
