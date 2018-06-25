@@ -51,31 +51,9 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_PerformerProfile_ApplicationUser_PerformerId", table: "PerformerProfile");
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_Activity_ActivityCode", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_ApplicationUser_ClientId", table: "RdvQuery");
-            migrationBuilder.DropForeignKey(name: "FK_RdvQuery_LocationType_LocationTypeId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.DropColumn(name: "LocationTypeId", table: "RdvQuery");
-            migrationBuilder.DropTable("LocationType");
-            migrationBuilder.CreateTable(
-                name: "GitRepositoryReference",
-                columns: table => new
-                {
-                    Path = table.Column<string>(nullable: false),
-                    Branch = table.Column<string>(nullable: true),
-                    OwnerId = table.Column<string>(nullable: true),
-                    Url = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GitRepositoryReference", x => x.Path);
-                    table.ForeignKey(
-                        name: "FK_GitRepositoryReference_ApplicationUser_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
             migrationBuilder.CreateTable(
                 name: "Project",
                 columns: table => new
@@ -154,11 +132,6 @@ namespace Yavsc.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-            migrationBuilder.AddColumn<int>(
-                name: "LocationType",
-                table: "RdvQuery",
-                nullable: false,
-                defaultValue: LocationKind.PostalAddress);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -523,26 +496,9 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.DropColumn(name: "LocationType", table: "RdvQuery");
             migrationBuilder.DropTable("ProjectBuildConfiguration");
             migrationBuilder.DropTable("Project");
             migrationBuilder.DropTable("GitRepositoryReference");
-            migrationBuilder.CreateTable(
-                name: "LocationType",
-                columns: table => new
-                {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:Serial", true),
-                    Name = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LocationType", x => x.Id);
-                });
-            migrationBuilder.AddColumn<long>(
-                name: "LocationTypeId",
-                table: "RdvQuery",
-                nullable: true);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -835,13 +791,6 @@ namespace Yavsc.Migrations
                 table: "RdvQuery",
                 column: "ClientId",
                 principalTable: "AspNetUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-            migrationBuilder.AddForeignKey(
-                name: "FK_RdvQuery_LocationType_LocationTypeId",
-                table: "RdvQuery",
-                column: "LocationTypeId",
-                principalTable: "LocationType",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(

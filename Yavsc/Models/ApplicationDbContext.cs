@@ -68,6 +68,11 @@ namespace Yavsc.Models
                 et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+                {
+                    optionsBuilder.UseNpgsql(Startup.ConnectionString);
+             }
+
 
         public DbSet<Client> Applications { get; set; }
 
