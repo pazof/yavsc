@@ -36,7 +36,7 @@ undoLocalYavscNugetDeploy:
 
 check: cli
 	make -C cli check
-	make -C test test
+	make -C test 
 
 deploy-pkgs: Yavsc-deploy-pkg Yavsc.Server-deploy-pkg Yavsc.Abstract-deploy-pkg cli-deploy-pkg
 
