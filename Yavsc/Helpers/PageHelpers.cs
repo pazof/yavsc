@@ -28,7 +28,7 @@ namespace Yavsc.Server.Helpers
 
         }
 
-        public static List<SelectListItem> CreateSelectListItems<T> (this DbSet<T>data,
+        public static List<SelectListItem> CreateSelectListItems<T> (this IEnumerable<T>data,
          Func<T,string> dataField,
         Func<T,string> displayField = null, object selectedValue =null) where T : class
         {

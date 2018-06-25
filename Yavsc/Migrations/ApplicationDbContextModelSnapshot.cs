@@ -1356,8 +1356,6 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("LocalRepo");
-
                     b.Property<string>("Name")
                         .IsRequired();
 
@@ -1369,9 +1367,6 @@ namespace Yavsc.Migrations
                         .IsRequired();
 
                     b.Property<decimal?>("Previsional");
-
-                    b.Property<string>("ProjectName")
-                        .IsRequired();
 
                     b.Property<bool>("Rejected");
 
@@ -1398,8 +1393,7 @@ namespace Yavsc.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<string>("ProjectName")
-                        .IsRequired();
+                    b.Property<long>("ProjectId");
 
                     b.HasKey("Id");
                 });
@@ -1903,8 +1897,7 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Server.Models.IT.Project")
                         .WithMany()
-                        .HasForeignKey("ProjectName")
-                        .HasPrincipalKey("ProjectName");
+                        .HasForeignKey("ProjectId");
                 });
 
             modelBuilder.Entity("Yavsc.Server.Models.IT.SourceCode.GitRepositoryReference", b =>

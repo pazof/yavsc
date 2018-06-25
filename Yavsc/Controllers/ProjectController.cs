@@ -10,6 +10,7 @@ using Microsoft.AspNet.Authorization;
 using Yavsc.Server.Helpers;
 using Yavsc.Models.Workflow;
 using Yavsc.Models.Payment;
+using Yavsc.Server.Models.IT.SourceCode;
 
 namespace Yavsc.Controllers
 {
@@ -52,18 +53,19 @@ namespace Yavsc.Controllers
         // GET: Project/Create
         public IActionResult Create()
         {
-
             ViewBag.ClientIdItems = _context.ApplicationUser.CreateSelectListItems<ApplicationUser>(
                 u => u.Id, u => u.UserName);
             ViewBag.OwnerIdItems = _context.ApplicationUser.CreateSelectListItems<ApplicationUser>(
                 u => u.Id, u => u.UserName);
             ViewBag.ActivityCodeItems = _context.Activities.CreateSelectListItems<Activity>(
                 a => a.Code, a => a.Name);
-            ViewBag.PerformerIdItems = _context.Performers.CreateSelectListItems<PerformerProfile>(p => p.PerformerId, p => p.Performer.UserName);
+            ViewBag.PerformerIdItems = _context.Performers.Include(p=>p.Performer).CreateSelectListItems<PerformerProfile>(p => p.PerformerId, p => p.Performer.UserName);
             ViewBag.PaymentIdItems = _context.PayPalPayments.CreateSelectListItems<PayPalPayment>
             (p => p.OrderReference, p => $"{p.Executor.UserName} {p.PaypalPayerId} {p.OrderReference}");
 
             ViewBag.Status = typeof(Yavsc.QueryStatus).CreateSelectListItems(null);
+            ViewBag.RepositoryItems = _context.GitRepositoryReference.CreateSelectListItems<GitRepositoryReference>(
+                u => u.Path, u => u.ToString());
 
             return View();
         }
@@ -79,19 +81,15 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.ClientIdItems = _context.ApplicationUser.CreateSelectListItems<ApplicationUser>(
-                 u => u.Id, u => u.UserName);
+           ViewBag.ClientIdItems = _context.ApplicationUser.CreateSelectListItems<ApplicationUser>(
+                u => u.Id, u => u.UserName, project.ClientId);
             ViewBag.OwnerIdItems = _context.ApplicationUser.CreateSelectListItems<ApplicationUser>(
-            u => u.Id, u => u.UserName);
+                u => u.Id, u => u.UserName, project.OwnerId);
             ViewBag.ActivityCodeItems = _context.Activities.CreateSelectListItems<Activity>(
-                a => a.Code, a => a.Name);
-            ViewBag.PerformerIdItems = _context.Performers.CreateSelectListItems<PerformerProfile>(p => p.PerformerId, p => p.Performer.UserName);
+                a => a.Code, a => a.Name, project.ActivityCode);
+            ViewBag.PerformerIdItems = _context.Performers.Include(p=>p.Performer).CreateSelectListItems<PerformerProfile>(p => p.PerformerId, p => p.Performer.UserName, project.PerformerId);
             ViewBag.PaymentIdItems = _context.PayPalPayments.CreateSelectListItems<PayPalPayment>
-            (p => p.OrderReference, p => $"{p.Executor.UserName} {p.PaypalPayerId} {p.OrderReference}");
-
-            ViewBag.Status = typeof(Yavsc.QueryStatus).CreateSelectListItems(null);
-
-
+            (p => p.OrderReference, p => $"{p.Executor.UserName} {p.PaypalPayerId} {p.OrderReference}", project.PaymentId);
             return View(project);
         }
 
