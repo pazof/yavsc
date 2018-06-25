@@ -1,11 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.DNX.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.DNX.props')" />
 
   <PropertyGroup>
     <Description>Yavsc Client&amp;Server Api</Description>
     <AssemblyTitle>Yavsc - l'abstrait</AssemblyTitle>
     <VersionPrefix>1.0.5</VersionPrefix>
     <Authors>Paul Schneider &lt;paul@pschneider.fr&gt;</Authors>
-    <TargetFrameworks>dnx451;net46;net451</TargetFrameworks>
+    <TargetFrameworkProfiles>dnx451,net46,Profile111</TargetFrameworkProfiles> 
+    <TargetFrameworks>net46;net45;net451;net452;net461;net462</TargetFrameworks>
     <AssemblyName>Yavsc.Abstract</AssemblyName>
     <PackageId>Yavsc.Abstract</PackageId>
     <PackageTags>Blog;Blog;PoS;Chat</PackageTags>

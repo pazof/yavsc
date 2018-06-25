@@ -58,7 +58,8 @@ namespace cli
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
             Configuration = builder.Build();
-
+            ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
+            AppDomain.CurrentDomain.SetData("YAVSC_CONNECTION", ConnectionString);
         }
 
         public void ConfigureServices (IServiceCollection services)
@@ -79,7 +80,6 @@ namespace cli
             {
                 options.ResourcesPath = "Resources";
             });
-            ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
            
             services.AddEntityFramework()
               .AddNpgsql() 
