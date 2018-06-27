@@ -40,7 +40,8 @@
                 "System.Json": "4.0.20126.16343"
             }
         },
-        "net451": {}
+        "net451": {},
+        ".NETFramework,Version=v4.5.1": {}
     },
     "exclude": [
         "wwwroot",
