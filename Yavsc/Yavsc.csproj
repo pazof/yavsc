@@ -1,5 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <Description>encore une très petite entreprise</Description>
     <VersionPrefix>1.0.5</VersionPrefix>
@@ -17,7 +17,6 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="wwwroot\**\*;node_modules\**\*;bower_components\**\*;contrib\**\*" />
     <EmbeddedResource Include="Resources\**\*.resx" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
@@ -25,14 +24,12 @@
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../OAuth.AspNet.Token/OAuth.AspNet.Token.csproj" />
     <ProjectReference Include="../OAuth.AspNet.AuthServer/OAuth.AspNet.AuthServer.csproj" />
     <ProjectReference Include="../Yavsc.Abstract/Yavsc.Abstract.csproj" />
     <ProjectReference Include="../Yavsc.Server/Yavsc.Server.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="EntityFramework.Commands" Version="7.0.0-rc1-final" />
     <PackageReference Include="EntityFramework.Core" Version="7.0.0-rc1-final" />
@@ -95,17 +92,20 @@
     <PackageReference Include="PayPalMerchant-net451" Version="2.7.109" />
     <PackageReference Include="Gapi.net45" Version="1.0.0" />
   </ItemGroup>
-
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <Exec Command="gulp min" />
   </Target>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'dnx451' ">
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Xml" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
+    <Content Include="Controllers\ProjectController.cs" />
+    <Content Include="Controllers\PeriodController.cs" />
+    <Content Include="Views\Project\Index.cshtml" />
+    <Content Include="Views\Project\Create.cshtml" />
+    <Content Include="Helpers\PageHelpers.cs" />
+    <Content Include="Migrations\20180625113528_Git.cs" />
   </ItemGroup>
-
 </Project>

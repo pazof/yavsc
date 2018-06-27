@@ -97,7 +97,6 @@
         "Microsoft.AspNet.Session": "1.0.0-rc1-final",
         "Microsoft.AspNet.Web.Optimization": "1.1.3",
         "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
-        "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
         "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
         "Microsoft.AspNet.DataProtection.SystemWeb": "1.0.0-rc1-final",
         "Microsoft.AspNet.Authentication.OAuth": "1.0.0-rc1-final",
@@ -158,9 +157,7 @@
                 "System.Net": "4.0.0.0",
                 "System.Xml": "4.0.0.0",
                 "System": "4.0.0.0"
-            },
-            "net451": {},
-            "net46": {}
+            }
         }
     },
     "publishOptions": {
