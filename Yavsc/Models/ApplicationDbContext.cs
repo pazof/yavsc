@@ -71,7 +71,8 @@ namespace Yavsc.Models
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql((string) AppDomain.CurrentDomain.GetData("YAVSC_CONNECTION"));
+            var appSetup = (string)AppDomain.CurrentDomain.GetData(Constants.YavscConnectionStringEnvName);
+            if (appSetup!=null) optionsBuilder.UseNpgsql(appSetup);
         }
 
         public DbSet<Client> Applications { get; set; }

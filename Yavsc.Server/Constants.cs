@@ -29,7 +29,8 @@ namespace Yavsc
             AvatarsPath = "/avatars",
             GitPath = "/sources",
             DefaultAvatar = "/images/Users/icon_user.png",
-            AnonAvatar = "/images/Users/icon_anon_user.png";
+            AnonAvatar = "/images/Users/icon_anon_user.png",
+            YavscConnectionStringEnvName = "YAVSC_DB_CONNECTION";
         
         public static readonly long DefaultFSQ = 1024*1024*500;
 

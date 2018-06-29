@@ -78,7 +78,7 @@ namespace Yavsc
             var auth = Configuration["Site:Authority"];
             var cxstr = Configuration["Data:DefaultConnection:ConnectionString"];
             ConnectionString = cxstr;
-            AppDomain.CurrentDomain.SetData("YAVSC_CONNECTION", ConnectionString);
+            AppDomain.CurrentDomain.SetData(Constants.YavscConnectionStringEnvName, ConnectionString);
         }
         public static string ConnectionString { get; set; }
         public static GoogleAuthSettings GoogleSettings { get; set; }
