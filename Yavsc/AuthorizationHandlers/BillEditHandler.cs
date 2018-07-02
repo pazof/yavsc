@@ -8,6 +8,7 @@ namespace Yavsc.ViewModels.Auth.Handlers
     {
         protected override void Handle(AuthorizationContext context, EditRequirement requirement, IBillable resource)
         {
+
             if (context.User.IsInRole("FrontOffice"))
                 context.Succeed(requirement);
             else if (context.User.Identity.IsAuthenticated)
