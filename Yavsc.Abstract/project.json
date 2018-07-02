@@ -1,61 +1,60 @@
 {
-    "version": "1.0.5-*",
-    "title": "Yavsc - l'abstrait",
-    "description": "Yavsc Client&Server Api",
-    "authors": [
-        "Paul Schneider <paul@pschneider.fr>"
+  "version": "1.0.5-*",
+  "title": "Yavsc - l'abstrait",
+  "description": "Yavsc Client&Server Api",
+  "authors": [
+    "Paul Schneider <paul@pschneider.fr>"
+  ],
+  "packOptions": {
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/pazof/yavsc"
+    },
+    "licenseUrl": "https://github.com/pazof/yavsc/blob/vnext/LICENSE",
+    "requireLicenseAcceptance": true,
+    "owners": [
+      "Paul Schneider <paul@pschneider.fr>"
     ],
-    "packOptions": {
-        "repository": {
-            "type": "git",
-            "url": "https://github.com/pazof/yavsc"
-        },
-        "licenseUrl": "https://github.com/pazof/yavsc/blob/vnext/LICENSE",
-        "requireLicenseAcceptance": true,
-        "owners": [
-            "Paul Schneider <paul@pschneider.fr>"
-        ],
-        "summary": "Yet another very small company",
-        "projectUrl": "http://yavsc.pschneider.fr",
-        "tags": [
-            "Blog",
-            "Blog",
-            "PoS",
-            "Chat"
-        ]
+    "summary": "Yet another very small company",
+    "projectUrl": "http://yavsc.pschneider.fr",
+    "tags": [
+      "Blog",
+      "Blog",
+      "PoS",
+      "Chat"
+    ]
+  },
+  "tooling": {
+    "defaultNamespace": "Yavsc"
+  },
+  "dependencies": {
+    "Newtonsoft.Json": "9.0.1"
+  },
+  "frameworks": {
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.ComponentModel.DataAnnotations": "4.0.0"
+      }
     },
-    "tooling": {
-        "defaultNamespace": "Yavsc"
+    "net46": {
+      "frameworkAssemblies": {
+        "System.ComponentModel.DataAnnotations": "4.0.0"
+      }
     },
-    "dependencies": {
-        "Newtonsoft.Json": "9.0.1"
+    "net461": {
+      "frameworkAssemblies": {
+        "System.ComponentModel.DataAnnotations": "4.0.0"
+      }
     },
-    "frameworks": {
-        "dnx451": {
-            "frameworkAssemblies": {
-                "System.ComponentModel.DataAnnotations": "4.0.0"
-
-            }
-        },
-        "net46": {
-            "frameworkAssemblies": {
-                "System.ComponentModel.DataAnnotations": "4.0.0"
-            }
-        },
-        "net461": {
-            "frameworkAssemblies": {
-                "System.ComponentModel.DataAnnotations": "4.0.0"
-            }
-        },
-        "net452": {
-            "frameworkAssemblies": {
-                "System.ComponentModel.DataAnnotations": "4.0.0"
-            }
-        },
-        "net451": {
-            "frameworkAssemblies": {
-                "System.ComponentModel.DataAnnotations": "4.0.0"
-            }
-        }
+    "net452": {
+      "frameworkAssemblies": {
+        "System.ComponentModel.DataAnnotations": "4.0.0"
+      }
+    },
+    "net451": {
+      "frameworkAssemblies": {
+        "System.ComponentModel.DataAnnotations": "4.0.0"
+      }
     }
+  }
 }
