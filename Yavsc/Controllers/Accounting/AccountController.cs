@@ -247,19 +247,21 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> SendEMailForConfirm()
         {
             var user = await _userManager.FindByIdAsync(User.GetUserId());
-            ViewBag.EmailSent = SendEMailForConfirm(user);
-            return View("ConfirmEmailSent");
+            ViewBag.EmailSent = await SendEMailForConfirmAsync(user);
+            return View("ConfirmEmailSent",user.Email);
         }
 
-        private async Task<bool> SendEMailForConfirm(ApplicationUser user)
+        private async Task<string> SendEMailForConfirmAsync(ApplicationUser user)
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+             new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
             var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, 
             this._localizer["ConfirmYourAccountTitle"],
             string.Format(this._localizer["ConfirmYourAccountBody"],
-                  _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
-            return res!=null;
+                  _siteSettings.Title, callbackUrl, _siteSettings.Slogan,
+                   _siteSettings.Audience));
+            return res;
         }
         //
         // POST: /Account/LogOff
