@@ -21,6 +21,11 @@ endif
 
 default: pushInPre
 
+publish:
+	ASPNET_ENV=$(ASPNET_ENV) dnu publish
+
+deploy-pkg: publish
+
 deploy: pushInPre pushInProd
 
 ../Yavsc.Server/bin/$(CONFIGURATION)/Yavsc.Server.dll: 
