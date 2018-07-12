@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Yavsc.Server.Helpers;
 using Microsoft.Extensions.OptionsModel;
+using Yavsc.Abstract.Manage;
 
 namespace Yavsc.Services
 {
@@ -98,9 +99,9 @@ namespace Yavsc.Services
             return await NotifyEvent<HairCutQueryEvent>(registrationIds, ev);
         }
 
-        public Task<string> SendEmailAsync(string username, string email, string subject, string message)
+        public Task<EmailSentViewModel> SendEmailAsync(string username, string email, string subject, string message)
         {
-            string messageId=null;
+            EmailSentViewModel model = new EmailSentViewModel{ EMail = email };
             try
             {
                 MimeMessage msg = new MimeMessage();
@@ -123,14 +124,16 @@ namespace Yavsc.Services
                         smtpSettings.Port,
                         SecureSocketOptions.None);
                     sc.Send(msg);
-                    messageId = msg.MessageId;
+                    model.MessageId = msg.MessageId;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Task.FromResult<string>(null);
+                model.Sent = false;
+                model.ErrorMessage = ex.Message;
+                return Task.FromResult<EmailSentViewModel>(model);
             }
-            return Task.FromResult(messageId);
+            return Task.FromResult(model);
         }
 
         public Task<bool> ValidateAsync(string purpose, string token, UserManager<ApplicationUser> manager, ApplicationUser user)

@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Controllers
 {
+    using Yavsc.Abstract.Manage;
     using Yavsc.Helpers;
 
     public class AccountController : Controller
@@ -247,11 +248,11 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> SendEMailForConfirm()
         {
             var user = await _userManager.FindByIdAsync(User.GetUserId());
-            ViewBag.EmailSent = await SendEMailForConfirmAsync(user);
-            return View("ConfirmEmailSent",user.Email);
+            var model = await SendEMailForConfirmAsync(user);
+            return View("ConfirmEmailSent",model);
         }
 
-        private async Task<string> SendEMailForConfirmAsync(ApplicationUser user)
+        private async Task<EmailSentViewModel> SendEMailForConfirmAsync(ApplicationUser user)
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action("ConfirmEmail", "Account",

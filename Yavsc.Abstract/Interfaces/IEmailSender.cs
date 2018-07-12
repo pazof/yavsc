@@ -1,5 +1,6 @@
 
 using System.Threading.Tasks;
+using Yavsc.Abstract.Manage;
 
 namespace Yavsc.Services
 {
@@ -13,6 +14,6 @@ namespace Yavsc.Services
         /// <param name="subject">email subject</param>
         /// <param name="message">message</param>
         /// <returns>the message id</returns>
-        Task<string> SendEmailAsync(string username, string email, string subject, string message);
+        Task<EmailSentViewModel> SendEmailAsync(string username, string email, string subject, string message);
     }
 }
