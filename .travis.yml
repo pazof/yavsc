@@ -8,6 +8,7 @@ script:
 - "dnu build"
 - "cd ../test"
 - "dnu restore"
+- "npm install ansi-to-html"  
 - "dnu build" 
 - "dnx test"
 
