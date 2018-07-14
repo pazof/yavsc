@@ -38,9 +38,9 @@ namespace Yavsc.Services
             )
         {
             _logger = loggerFactory.CreateLogger<MessageSender>();
-            siteSettings = sitesOptions.Value;
-            smtpSettings = smtpOptions.Value;
-            googleSettings = googleOptions.Value;
+            siteSettings = sitesOptions?.Value;
+            smtpSettings = smtpOptions?.Value;
+            googleSettings = googleOptions?.Value;
         }
 
         public  async Task <MessageWithPayloadResponse> NotifyEvent<Event>
