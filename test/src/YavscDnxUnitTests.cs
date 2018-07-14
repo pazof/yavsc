@@ -12,7 +12,7 @@ namespace tests
         [Fact]
         void TestNodeJsForAnsitohtml ()
         {
-            var procStart = new ProcessStartInfo("env", "/usr/bin/nodejs node_modules/ansi-to-html/bin/ansi-to-html");
+            var procStart = new ProcessStartInfo("nodejs", "node_modules/ansi-to-html/bin/ansi-to-html");
             procStart.UseShellExecute = false;
             procStart.RedirectStandardInput = true;
             procStart.RedirectStandardOutput = true;
