@@ -80,7 +80,7 @@ namespace testOauthClient
                 LoginPath = new PathString("/signin"),
                 LogoutPath = new PathString("/signout")
             });
-            var host = "http://dev.pschneider.fr";
+            var host =  "http://dev.pschneider.fr";
             app.UseOAuthAuthentication(
                 options =>
                 {

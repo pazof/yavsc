@@ -1,33 +1,38 @@
-﻿using System;
-using System.IO;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
+﻿// // Coding.cs
+// /*
+// paul  26/06/2018 12:18 20182018 6 26
+// */
+using System;
 using Microsoft.AspNet.Razor;
-using Microsoft.AspNet.Razor.Generator;
+using Yavsc.Templates;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.CSharp;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Newtonsoft.Json;
-
+using Microsoft.AspNet.Razor.Parser;
+               
 using Yavsc.Models;
 using Yavsc.Models.Identity;
-using Yavsc.Templates;
-using Yavsc.Abstract.Templates;
 using Yavsc.Services;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Reflection;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+using Microsoft.Extensions.Logging.Console;
+using Yavsc.Abstract.Templates;
 
-
-namespace cli.Services
+namespace Yavsc.Lib
 {
-
+    public class YaRazorEngineHost : RazorEngineHost
+    {
+        public YaRazorEngineHost() : base()
+        {
+        }
+    }
     public class EMailer
     {
         const string DefaultBaseClassName = "ATemplate";
@@ -36,12 +41,15 @@ namespace cli.Services
 
         RazorTemplateEngine razorEngine;
         IStringLocalizer<EMailer> stringLocalizer;
-        ILogger logger;
+
         ApplicationDbContext dbContext;
         IEmailSender mailSender;
         RazorEngineHost host;
+        ILogger logger;
 
-        public EMailer(ApplicationDbContext context, IEmailSender sender, IStringLocalizer<EMailer> localizer, ILoggerFactory loggerFactory)
+        public EMailer(ApplicationDbContext context, IEmailSender sender, 
+                       IStringLocalizer<EMailer> localizer, 
+                       ILoggerFactory loggerFactory)
         {
             stringLocalizer = localizer;
             mailSender = sender;
@@ -68,6 +76,10 @@ namespace cli.Services
             razorEngine = new RazorTemplateEngine(host);
         }
 
+        public string GenerateTemplateObject(string baseclassName = DefaultBaseClassName)
+        {
+            throw new NotImplementedException();
+        }
 
         public void SendMonthlyEmail(long templateCode, string baseclassName = DefaultBaseClassName)
         {
@@ -76,17 +88,17 @@ namespace cli.Services
             string subtemp = stringLocalizer["MonthlySubjectTemplate"].Value;
 
             logger.LogInformation($"Generating {subtemp}[{className}]");
-
+          
+          
             var templateInfo = dbContext.MailingTemplate.FirstOrDefault(t => t.Id == templateCode);
 
-            if (templateInfo==null) throw new Exception($"No template found under id {templateCode}.");  
             logger.LogInformation($"Using code: {templateCode},  subject: {subtemp} ");
-            logger.LogInformation("And body:\n"+templateInfo.Body);
+            logger.LogInformation("And body:\n" + templateInfo.Body);
             using (StringReader reader = new StringReader(templateInfo.Body))
             {
-                
+
                 // Generate code for the template
-                var razorResult = razorEngine.GenerateCode(reader, className, DefaultNamespace, DefaultNamespace+".cs");
+                var razorResult = razorEngine.GenerateCode(reader, className, DefaultNamespace, DefaultNamespace + ".cs");
 
                 logger.LogInformation("Razor exited " + (razorResult.Success ? "Ok" : "Ko") + ".");
 
@@ -95,23 +107,25 @@ namespace cli.Services
                 logger.LogInformation("CSharp parsed");
                 List<MetadataReference> references = new List<MetadataReference>();
 
-                foreach (var type in new Type[] { 
+                foreach (var type in new Type[] {
                     typeof(object),
                     typeof(Enumerable),
-                    typeof(IdentityUser), 
-                    typeof(ApplicationUser), 
-                    typeof(Template), 
+                    typeof(IdentityUser),
+                    typeof(ApplicationUser),
+                    typeof(Template),
                     typeof(UserOrientedTemplate),
                     typeof(System.Threading.Tasks.TaskExtensions)
-                 } )
+                 })
                 {
                     var location = type.Assembly.Location;
-                    if (!string.IsNullOrWhiteSpace(location)) {
+                    if (!string.IsNullOrWhiteSpace(location))
+                    {
                         references.Add(
                             MetadataReference.CreateFromFile(location)
                         );
                         logger.LogInformation($"Assembly for {type.Name} found at {location}");
-                    } else logger.LogWarning($"Assembly Not found for {type.Name}");
+                    }
+                    else logger.LogWarning($"Assembly Not found for {type.Name}");
                 }
 
                 logger.LogInformation("Compilation creation ...");
@@ -158,11 +172,7 @@ namespace cli.Services
                         Assembly assembly = Assembly.Load(ms.ToArray());
 
                         Type type = assembly.GetType(DefaultNamespace + "." + className);
-                        var generatedtemplate = (UserOrientedTemplate) Activator.CreateInstance(type);
-                        if (generatedtemplate==null) {
-                            logger.LogError("No generated template ... exiting.");
-                            throw new InvalidOperationException("No generated template");
-                        }
+                        var generatedtemplate = (UserOrientedTemplate)Activator.CreateInstance(type);
                         foreach (var user in dbContext.ApplicationUser.Where(
                             u => u.AllowMonthlyEmail
                         ))
@@ -170,15 +180,8 @@ namespace cli.Services
                             logger.LogInformation("Generation for " + user.UserName);
                             generatedtemplate.Init();
                             generatedtemplate.User = user;
-                            generatedtemplate.ExecuteAsync(); 
+                            generatedtemplate.ExecuteAsync();
                             logger.LogInformation(generatedtemplate.GeneratedText);
-                            var mailSentInfo = this.mailSender.SendEmailAsync
-                            (user.UserName, user.Email, $"monthly email", generatedtemplate.GeneratedText).Result;
-                            if (!mailSentInfo.Sent)
-                                logger.LogError($"{mailSentInfo.ErrorMessage}");
-                            else 
-                                logger.LogInformation($"mailId:{mailSentInfo.MessageId} \nto:{user.UserName}");
-
                         }
 
                     }

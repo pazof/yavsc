@@ -3,34 +3,21 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
-
-using System.Globalization;
-using System.Reflection;
-// using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
-// using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Localization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Filters;
-using Microsoft.AspNet.Mvc.Razor;
-using Microsoft.Net.Http.Headers;
 using Microsoft.AspNet.Razor;
-using Microsoft.Extensions.DependencyInjection.Abstractions;
 using Microsoft.Extensions.PlatformAbstractions;
 using cli.Services;
 using Yavsc;
 using Yavsc.Models;
-using Yavsc.Server.Helpers;
 using Yavsc.Services;
-using Yavsc.Templates;
 using Microsoft.Data.Entity;
+using Microsoft.AspNet.Authentication;
+using Microsoft.Extensions.WebEncoders;
 
 namespace cli
 {
-     public class Startup
+    public class Startup
     {
         public string ConnectionString
         {
@@ -86,6 +73,15 @@ namespace cli
               .AddDbContext<ApplicationDbContext>(
                   db => db.UseNpgsql(ConnectionString)
               );
+              services.Configure<SharedAuthenticationOptions>(options =>
+            {
+                options.SignInScheme = "Bearer";
+            });
+
+            services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
+
+            services.AddAuthentication();
+
         }
 
         public void Configure (IApplicationBuilder app, IHostingEnvironment env,
@@ -95,6 +91,9 @@ namespace cli
             loggerFactory.AddDebug();
             logger = loggerFactory.CreateLogger<Startup>();
             logger.LogInformation(env.EnvironmentName);
+            var authConf = Configuration.GetSection("Authentication").GetSection("Yavsc");
+            var clientId = authConf.GetSection("ClientId").Value;
+            var clientSecret = authConf.GetSection("ClientSecret").Value;
 
         }
 
