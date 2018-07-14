@@ -6,9 +6,4 @@ sudo: false
 install: curl --insecure -sSL https://lua.pschneider.fr/files/Paul/dnx-install.sh  | bash && DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh && cd Yavsc && dnu restore
 script:
 - "dnu build"
-- "cd ../test"
-- "dnu restore"
-- "npm install ansi-to-html"  
-- "dnu build" 
-- "dnx test"
 
