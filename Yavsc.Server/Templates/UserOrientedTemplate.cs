@@ -7,6 +7,5 @@ namespace Yavsc.Templates
     public abstract class UserOrientedTemplate: Template
     {
         public ApplicationUser User { get; set; }
-
     }
 }
