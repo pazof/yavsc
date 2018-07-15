@@ -65,7 +65,7 @@ namespace Yavsc.Models.Billing
     public DateTime? ValidationDate {get; set;}
 
 
-    [Display(Name="Montant prévisionel de la préstation")]
+    [Display(Name="Previsional")]
     public decimal? Previsional { get; set; }
     /// <summary>
     /// The bill

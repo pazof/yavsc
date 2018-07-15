@@ -336,6 +336,7 @@
   <data name="PreferedDate"><value>Date souhaitée</value></data>
   <data name="PresationLocation"><value>Lieu de la présation: {0}.\n</value></data>
   <data name="Preview"><value>Prévisualiser</value><comment>Prévisualiser le document</comment></data>
+  <data name="Previsional"><value>Montant prévisionel de la préstation</value></data>
   <data name="Profile edition"><value>Édition du profil</value></data>
   <data name="Product reference"><value>Référence produit</value></data>
   <data name="prestation"><value>prestation</value></data>

@@ -141,7 +141,9 @@ namespace Yavsc.WebApi.Controllers
                 .Include(u=>u.Roles)
                 .FirstAsync(u=>u.Id == uid);
 
-            var user = new Me(userData);
+            var user = new Me(userData.Id, userData.UserName, userData.Email, 
+            userData.Avatar , 
+            userData.PostalAddress, userData.DedicatedGoogleCalendar );
 
             var userRoles = _dbContext.UserRoles.Where(u=>u.UserId == uid).ToArray();
 

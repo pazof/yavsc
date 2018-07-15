@@ -1,7 +1,6 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNet.Http.Authentication;
 
 namespace Yavsc.ViewModels.Account
 {
@@ -49,6 +48,13 @@ namespace Yavsc.ViewModels.Account
         /// Lists external identity provider descriptions.
         /// </summary>
         /// <returns>an enumeration of the descriptions.</returns>
-        public IEnumerable<AuthenticationDescription> ExternalProviders { get; set; }
+        public IEnumerable<YaAuthenticationDescription> ExternalProviders { get; set; }
+    }
+
+    public class YaAuthenticationDescription {
+        public string DisplayName { get; set; }
+        public string AuthenticationScheme { get; set; }
+
+        public IDictionary<string,object> Items { get; set; }
     }
 }

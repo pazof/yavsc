@@ -242,8 +242,8 @@ namespace Yavsc
             services.AddTransient<ISecureDataFormat<AuthenticationTicket>, TicketDataFormat>();
 
             // Add application services.
-            services.AddTransient<IEmailSender, MessageSender>();
-            services.AddTransient<IGoogleCloudMessageSender, MessageSender>();
+            services.AddTransient<IEmailSender, MailSender>();
+            services.AddTransient<IGoogleCloudMessageSender, GCMSender>();
             services.AddTransient<IBillingService, BillingService>();
             services.AddTransient<IDataStore, FileDataStore>( (sp) => new FileDataStore("googledatastore",false) );
             services.AddTransient<ICalendarManager, CalendarManager>();
