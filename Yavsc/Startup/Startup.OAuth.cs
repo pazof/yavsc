@@ -172,14 +172,14 @@ namespace Yavsc
                    };
                    
                    branch.UseMiddleware<Yavsc.Auth.GoogleMiddleware>(YavscGoogleAppOptions);
-
+/* FIXME 403
                   
                 branch.UseTwitterAuthentication(options=>
                 {
                         TwitterAppOptions = options;
                         options.ConsumerKey = Configuration["Authentication:Twitter:ClientId"];
                         options.ConsumerSecret = Configuration["Authentication:Twitter:ClientSecret"];
-                });
+                }); */
                 
 
                    branch.UseOAuthAuthorizationServer(

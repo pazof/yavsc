@@ -7,15 +7,15 @@ using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Razor;
 using Microsoft.Extensions.PlatformAbstractions;
-using cli.Services;
 using Yavsc;
 using Yavsc.Models;
 using Yavsc.Services;
 using Microsoft.Data.Entity;
 using Microsoft.AspNet.Authentication;
 using Microsoft.Extensions.WebEncoders;
+using Yavsc.Lib;
 
-namespace cli
+namespace test
 {
     public class Startup
     {
@@ -58,7 +58,6 @@ namespace cli
             services.Configure<SmtpSettings>(smtpSettingsconf);
             services.AddInstance(typeof(ILoggerFactory), new LoggerFactory());
             services.AddTransient(typeof(IEmailSender), typeof(MailSender));
-            services.AddTransient(typeof(RazorEngineHost), typeof(YaRazorEngineHost));
             services.AddEntityFramework().AddNpgsql().AddDbContext<ApplicationDbContext>();
             services.AddTransient((s) => new RazorTemplateEngine(s.GetService<RazorEngineHost>()));
             services.AddLogging();

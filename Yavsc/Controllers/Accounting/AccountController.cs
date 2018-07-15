@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Controllers
 {
+    using Microsoft.AspNet.Http.Authentication;
     using Yavsc.Abstract.Manage;
     using Yavsc.Helpers;
 
@@ -84,6 +85,7 @@ namespace Yavsc.Controllers
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(OpenIdConnectDefaults.AuthenticationScheme, returnUrl);
             return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme, properties);
             */
+
         }
 
         [AllowAnonymous]

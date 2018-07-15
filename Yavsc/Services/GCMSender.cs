@@ -1,48 +1,36 @@
-
-using System.Threading.Tasks;
-using MailKit.Net.Smtp;
-using MimeKit;
-using MailKit.Security;
 using System;
-using Yavsc.Models.Messaging;
-using Microsoft.AspNet.Identity;
-using Yavsc.Models;
-using Yavsc.Models.Google.Messaging;
 using System.Collections.Generic;
-using Yavsc.Models.Haircut;
-using Yavsc.Interfaces.Workflow;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Yavsc.Server.Helpers;
 using Microsoft.Extensions.OptionsModel;
-using Yavsc.Abstract.Manage;
+using Newtonsoft.Json;
+using Yavsc.Interfaces.Workflow;
+using Yavsc.Models.Google.Messaging;
+using Yavsc.Models.Haircut;
+using Yavsc.Models.Messaging;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Services
 {
-    // This class is used by the application to send Email and SMS
-    // when you turn on two-factor authentication in ASP.NET Identity.
-    // For more details see this link http://go.microsoft.com/fwlink/?LinkID=532713
-    public class MessageSender : IEmailSender, IGoogleCloudMessageSender
+    public class GCMSender : IGoogleCloudMessageSender
     {
         private ILogger _logger;
         SiteSettings siteSettings;
-        SmtpSettings smtpSettings;
         GoogleAuthSettings googleSettings;
 
-        public MessageSender(
+        public GCMSender(
+
             ILoggerFactory loggerFactory, 
             IOptions<SiteSettings> sitesOptions, 
             IOptions<SmtpSettings> smtpOptions,
             IOptions<GoogleAuthSettings> googleOptions
-            )
-        {
-            _logger = loggerFactory.CreateLogger<MessageSender>();
+        )
+        { _logger = loggerFactory.CreateLogger<MailSender>();
             siteSettings = sitesOptions?.Value;
-            smtpSettings = smtpOptions?.Value;
             googleSettings = googleOptions?.Value;
-        }
 
+        }
         public  async Task <MessageWithPayloadResponse> NotifyEvent<Event>
          (  IEnumerable<string> regids, Event ev)
            where Event : IEvent
@@ -74,15 +62,7 @@ namespace Yavsc.Services
             }
         }
         
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="googleSettings"></param>
-        /// <param name="registrationId"></param>
-        /// <param name="ev"></param>
-        /// <returns>a MessageWithPayloadResponse,
-        /// <c>bool somethingsent = (response.failure == 0 &amp;&amp; response.success > 0)</c>
-        /// </returns>
+
         public async Task<MessageWithPayloadResponse> NotifyBookQueryAsync( IEnumerable<string> registrationIds, RdvQueryEvent ev)
         {
             return await NotifyEvent<RdvQueryEvent>(registrationIds, ev);
@@ -99,53 +79,11 @@ namespace Yavsc.Services
             return await NotifyEvent<HairCutQueryEvent>(registrationIds, ev);
         }
 
-        public Task<EmailSentViewModel> SendEmailAsync(string username, string email, string subject, string message)
+        public async Task<MessageWithPayloadResponse> NotifyAsync(IEnumerable<string> regids, IEvent yaev)
         {
-            EmailSentViewModel model = new EmailSentViewModel{ EMail = email };
-            try
-            {
-                MimeMessage msg = new MimeMessage();
-                msg.From.Add(new MailboxAddress(
-                    siteSettings.Owner.Name,
-                siteSettings.Owner.EMail));
-                msg.To.Add(new MailboxAddress(username, email));
-                msg.Body = new TextPart("plain")
-                {
-                    Text = message
-                };
-                msg.Subject = subject;
-                msg.MessageId = MimeKit.Utils.MimeUtils.GenerateMessageId(
-                    siteSettings.Authority
-                );
-                using (SmtpClient sc = new SmtpClient())
-                {
-                    sc.Connect(
-                        smtpSettings.Host,
-                        smtpSettings.Port,
-                        SecureSocketOptions.None);
-                    sc.Send(msg);
-                    model.MessageId = msg.MessageId;
-                }
-            }
-            catch (Exception ex)
-            {
-                model.Sent = false;
-                model.ErrorMessage = ex.Message;
-                return Task.FromResult<EmailSentViewModel>(model);
-            }
-            return Task.FromResult(model);
+            return await NotifyEvent<IEvent>(regids, yaev);
         }
-
-        public Task<bool> ValidateAsync(string purpose, string token, UserManager<ApplicationUser> manager, ApplicationUser user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MessageWithPayloadResponse> NotifyAsync(
-            IEnumerable<string> regids, IEvent yaev)
-        {
-            throw new NotImplementedException();
-        }
+        
         /* SMS with Twilio:
 public Task SendSmsAsync(TwilioSettings twilioSettigns, string number, string message)
 {
