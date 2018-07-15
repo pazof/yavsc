@@ -1,29 +1,23 @@
 ﻿using System;
 using System.IO;
-using System.CodeDom;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using System.Threading.Tasks;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.AspNet.Razor;
-using Microsoft.AspNet.Razor.Generator;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using Microsoft.CSharp;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Newtonsoft.Json;
 
 using Yavsc.Models;
-using Yavsc.Models.Identity;
 using Yavsc.Templates;
 using Yavsc.Abstract.Templates;
 using Yavsc.Services;
-
+using Yavsc.Abstract.Manage;
 
 namespace cli.Services
 {
@@ -172,13 +166,17 @@ namespace cli.Services
                             generatedtemplate.User = user;
                             generatedtemplate.ExecuteAsync(); 
                             logger.LogInformation(generatedtemplate.GeneratedText);
-                            var mailSentInfo = this.mailSender.SendEmailAsync
-                            (user.UserName, user.Email, $"monthly email", generatedtemplate.GeneratedText).Result;
-                            if (!mailSentInfo.Sent)
+                            EmailSentViewModel mailSentInfo = this.mailSender.SendEmailAsync
+                                (user.UserName, user.Email, $"monthly email", generatedtemplate.GeneratedText).Result;
+                            if (mailSentInfo==null) 
+                                logger.LogError("No info on sending");
+                            else if (!mailSentInfo.Sent)
                                 logger.LogError($"{mailSentInfo.ErrorMessage}");
                             else 
                                 logger.LogInformation($"mailId:{mailSentInfo.MessageId} \nto:{user.UserName}");
 
+
+                            
                         }
 
                     }

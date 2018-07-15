@@ -1,14 +1,14 @@
 namespace Yavsc.Models.Auth
 {
     public class Me : IApplicationUser {
-        public Me(ApplicationUser user)
+        public Me(string userId, string userName, string email, string avatar, ILocation address, string gCalId)
         {
-           Id = user.Id;
-           UserName = user.UserName;
-           EMail = user.Email;
-           Avatar = user.Avatar;
-           PostalAddress = user.PostalAddress;
-           DedicatedGoogleCalendar = user.DedicatedGoogleCalendar;
+           Id = userId;
+           UserName = userName;
+           EMail = email;
+           Avatar = avatar;
+           PostalAddress = address;
+           DedicatedGoogleCalendar = gCalId;
         }
         public string Id { get;  set; }
         public string UserName { get; set; }

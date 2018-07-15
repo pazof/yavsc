@@ -1,5 +1,4 @@
 using System.Linq;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Yavsc.ViewModels.Administration
 {
@@ -9,11 +8,11 @@ namespace Yavsc.ViewModels.Administration
             {
                 
             }
-            public RoleInfo ( IdentityRole role)
+            public RoleInfo ( string roleName, string roleId, string[] users)
             {
-                Name = role.Name;
-                  Id = role.Id;
-                  Users = role.Users.Select(u => u.UserId).ToArray();
+                Name = roleName; // role.Name;
+                  Id = roleId; // role.Id;
+                  Users = users ; // role.Users.Select(u => u.UserId).ToArray();
             }
             public string Id { get; set; }
             public string Name { get; set; }

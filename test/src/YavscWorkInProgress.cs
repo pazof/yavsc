@@ -24,7 +24,6 @@ namespace Test
     public class YavscWorkInProgress : BaseTestContext
     {
 
-        [Fact]
         public void GitClone()
         {
             

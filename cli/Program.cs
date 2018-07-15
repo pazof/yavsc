@@ -1,25 +1,8 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
-
-using System.Globalization;
-using System.Reflection;
 // using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Builder;
 // using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Localization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Filters;
-using Microsoft.AspNet.Mvc.Razor;
-using Microsoft.Net.Http.Headers;
-using Microsoft.AspNet.Razor;
-using Microsoft.Extensions.DependencyInjection.Abstractions;
-using Microsoft.Extensions.PlatformAbstractions;
 using cli.Services;
 
 namespace cli
