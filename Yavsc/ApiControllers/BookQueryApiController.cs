@@ -10,10 +10,10 @@ using Microsoft.Extensions.Logging;
 namespace Yavsc.Controllers
 {
     using System;
-    using Yavsc.Models.Messaging;
     using Yavsc.Models;
     using Yavsc.Models.Workflow;
     using Yavsc.Models.Billing;
+    using Yavsc.Abstract.Identity;
 
     [Produces("application/json")]
     [Route("api/bookquery"), Authorize(Roles = "Performer,Administrator")]

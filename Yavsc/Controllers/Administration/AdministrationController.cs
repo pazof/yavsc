@@ -7,8 +7,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
+using Yavsc.Abstract.Identity;
 using Yavsc.Models;
-using Yavsc.Models.Auth;
 using Yavsc.ViewModels.Administration;
 
 namespace Yavsc.Controllers

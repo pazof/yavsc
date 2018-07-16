@@ -1,6 +1,4 @@
 using Microsoft.AspNet.Authorization;
-using System.Security.Claims;
-using Yavsc.Models.IT;
 using Yavsc.Server.Models.IT.SourceCode;
 using Yavsc.ViewModels.Auth;
 

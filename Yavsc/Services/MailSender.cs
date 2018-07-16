@@ -62,7 +62,7 @@ namespace Yavsc.Services
                         smtpSettings.Host,
                         smtpSettings.Port,
                         SecureSocketOptions.None);
-                    sc.Send(msg);
+                    await sc.SendAsync(msg);
                     model.MessageId = msg.MessageId;
                 }
             }

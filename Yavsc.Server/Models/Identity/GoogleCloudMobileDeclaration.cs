@@ -5,8 +5,6 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Identity
 {
-  using Yavsc;
-
   [JsonObject]
 
   public class GoogleCloudMobileDeclaration {

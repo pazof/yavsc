@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace Yavsc.ViewModels.Administration
 {
     public class RoleInfo

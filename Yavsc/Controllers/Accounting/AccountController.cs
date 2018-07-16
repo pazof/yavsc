@@ -20,7 +20,6 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Controllers
 {
-    using Microsoft.AspNet.Http.Authentication;
     using Yavsc.Abstract.Manage;
     using Yavsc.Helpers;
 

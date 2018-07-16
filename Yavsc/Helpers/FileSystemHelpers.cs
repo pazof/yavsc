@@ -13,7 +13,6 @@ using Yavsc.Exceptions;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
 using Yavsc.ViewModels;
-using Yavsc.ViewModels.UserFiles;
 
 namespace Yavsc.Helpers
 {

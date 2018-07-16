@@ -3,7 +3,6 @@ namespace Yavsc.Models.Access
     using System.ComponentModel.DataAnnotations.Schema;
     using Models.Relationship;
     using Newtonsoft.Json;
-    using Yavsc;
     using Blog;
     using Yavsc.Abstract.Identity.Security;
 

@@ -15,6 +15,7 @@ namespace Yavsc.WebApi.Controllers
     using System.Linq;
     using Microsoft.Data.Entity;
     using Microsoft.AspNet.Identity.EntityFramework;
+    using Yavsc.Abstract.Identity;
 
     [Authorize(),Route("~/api/account")]
     public class ApiAccountController : Controller
