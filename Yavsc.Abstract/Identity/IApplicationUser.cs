@@ -1,4 +1,4 @@
-﻿namespace Yavsc
+﻿namespace Yavsc.Abstract.Identity
 {
     public interface IApplicationUser
     {

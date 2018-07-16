@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Newtonsoft.Json;
+using Yavsc.Abstract.Identity.Security;
 using Yavsc.Interfaces;
 using Yavsc.Models.Access;
 using Yavsc.Models.Relationship;

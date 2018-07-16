@@ -1,6 +1,7 @@
+using System;
+
 namespace Yavsc.Abstract.Identity
 {
-    using System;
     public class TokenInfo
     {
         public string AccessToken { get; set; }

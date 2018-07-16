@@ -1,4 +1,5 @@
 using System;
+using Yavsc.Abstract.Identity;
 
 namespace Yavsc.Models
 {

@@ -1,4 +1,4 @@
-namespace  Yavsc.Models.Auth
+namespace  Yavsc.Abstract.Identity
 {
     public class UserInfo {
 

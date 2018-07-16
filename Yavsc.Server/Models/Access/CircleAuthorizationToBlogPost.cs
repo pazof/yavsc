@@ -5,6 +5,7 @@ namespace Yavsc.Models.Access
     using Newtonsoft.Json;
     using Yavsc;
     using Blog;
+    using Yavsc.Abstract.Identity.Security;
 
     public class CircleAuthorizationToBlogPost : ICircleAuthorization
     {
