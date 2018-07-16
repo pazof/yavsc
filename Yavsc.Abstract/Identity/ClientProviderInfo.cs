@@ -1,6 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
-namespace Yavsc.Models.Messaging
+namespace Yavsc.Abstract.Identity
 {
     public class ClientProviderInfo
     {

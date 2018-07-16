@@ -8,11 +8,11 @@ using Yavsc.Models.Relationship;
 using Yavsc.Billing;
 using System.Globalization;
 using Yavsc.Helpers;
-using Yavsc.Models.Messaging;
 using System.Linq;
 using Microsoft.Extensions.Localization;
 using Yavsc.ViewModels.PayPal;
 using Yavsc.Models.HairCut;
+using Yavsc.Abstract.Identity;
 
 namespace Yavsc.Models.Haircut
 {

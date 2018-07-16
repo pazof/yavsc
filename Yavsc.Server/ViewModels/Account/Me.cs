@@ -1,3 +1,5 @@
+using Yavsc.Abstract.Identity;
+
 namespace Yavsc.Models.Auth
 {
     public class Me : IApplicationUser {

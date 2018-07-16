@@ -1,4 +1,6 @@
 ﻿
+using Yavsc.Abstract.Identity;
+
 namespace Yavsc.Interfaces
 {
     public interface IGCMDeclaration

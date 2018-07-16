@@ -1,5 +1,5 @@
 ﻿using System;
-using Yavsc.Models.Messaging;
+using Yavsc.Abstract.Identity;
 
 namespace Yavsc.Interfaces
 {
