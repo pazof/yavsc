@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Data.Entity.Migrations;
-using Yavsc.Models.Relationship;
 
 namespace Yavsc.Migrations
 {

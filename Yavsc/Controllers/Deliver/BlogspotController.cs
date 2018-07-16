@@ -11,7 +11,6 @@ using Microsoft.Extensions.OptionsModel;
 using Yavsc.Models;
 using Yavsc.ViewModels.Auth;
 using Microsoft.AspNet.Mvc.Rendering;
-using Yavsc.ViewModels.Blogspot;
 using Yavsc.Models.Blog;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 

@@ -8,21 +8,16 @@ using Yavsc.Templates;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using Microsoft.CSharp;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Newtonsoft.Json;
-using Microsoft.AspNet.Razor.Parser;
-               
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+
 using Yavsc.Models;
-using Yavsc.Models.Identity;
 using Yavsc.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Reflection;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Emit;
-using Microsoft.Extensions.Logging.Console;
 using Yavsc.Abstract.Templates;
 
 namespace Yavsc.Lib

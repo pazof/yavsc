@@ -35,8 +35,8 @@ namespace Yavsc.Models
     using Payment;
     using Yavsc.Models.Calendar;
     using Blog;
-    using Yavsc.Server.Helpers;
     using Newtonsoft.Json.Linq;
+    using Yavsc.Abstract.Identity;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

@@ -7,6 +7,8 @@ namespace Yavsc.ViewComponents
     using Models;
     using ViewModels.Controls;
     using ViewModels.Relationship;
+    using Yavsc.Abstract.Identity.Security;
+
     public class CirclesControlViewComponent : ViewComponent
     {
         ApplicationDbContext dbContext;

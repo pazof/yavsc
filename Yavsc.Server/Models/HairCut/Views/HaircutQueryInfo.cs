@@ -23,8 +23,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Abstract.Identity;
-using Yavsc.Abstract.Identity;
-using Yavsc.Models.Auth;
 using Yavsc.Models.Relationship;
 
 namespace Yavsc.Models.Haircut.Views

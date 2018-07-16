@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.AspNet.Mvc;
 using Yavsc.Helpers;
 using Yavsc.Models;
-using Yavsc.Models.Workflow;
 using Yavsc.Services;
 using Yavsc.ViewModels.FrontOffice;
 

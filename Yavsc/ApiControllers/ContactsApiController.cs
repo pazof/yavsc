@@ -3,8 +3,8 @@ using System.Security.Claims;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
+using Yavsc.Abstract.Identity;
 using Yavsc.Models;
-using Yavsc.Models.Messaging;
 
 namespace Yavsc.Controllers
 {

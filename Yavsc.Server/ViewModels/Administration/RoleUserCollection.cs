@@ -1,6 +1,4 @@
 using Yavsc.Abstract.Identity;
-using Yavsc.Abstract.Identity;
-using Yavsc.Models.Auth;
 
 namespace Yavsc.ViewModels.Administration
 {

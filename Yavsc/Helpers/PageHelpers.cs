@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
 
 namespace Yavsc.Server.Helpers
 {

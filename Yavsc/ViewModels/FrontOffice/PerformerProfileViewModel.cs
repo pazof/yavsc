@@ -1,6 +1,4 @@
-using System;
 using System.Linq;
-using Yavsc.Models;
 using Yavsc.Models.Workflow;
 
 namespace Yavsc.ViewModels.FrontOffice

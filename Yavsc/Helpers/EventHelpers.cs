@@ -7,6 +7,7 @@ namespace Yavsc.Helpers
     using Yavsc.Models.Haircut;
     using Yavsc.Models;
     using Yavsc.Models.Billing;
+    using Yavsc.Abstract.Identity;
 
     public static class EventHelpers
     {

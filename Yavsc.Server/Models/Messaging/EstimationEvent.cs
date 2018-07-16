@@ -1,5 +1,3 @@
-using System.Linq;
-using Microsoft.Data.Entity;
 using Microsoft.Extensions.Localization;
 
 namespace Yavsc.Models.Messaging

@@ -3,7 +3,6 @@ using Yavsc.Abstract.Identity;
 
 namespace Yavsc.Models
 {
-    using Models.Messaging;
 
     public class RdvQueryProviderInfo
     {

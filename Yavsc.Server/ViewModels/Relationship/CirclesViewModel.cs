@@ -1,3 +1,5 @@
+using Yavsc.Abstract.Identity.Security;
+
 namespace Yavsc.ViewModels.Relationship
 {
     public class CirclesViewModel

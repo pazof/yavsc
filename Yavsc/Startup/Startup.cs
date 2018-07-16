@@ -9,8 +9,6 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Localization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
@@ -35,7 +33,6 @@ namespace Yavsc
     using Services;
     using ViewModels.Auth.Handlers;
     using Yavsc.Abstract.FileSystem;
-    using Yavsc.Server.Helpers;
     using static System.Environment;
 
     public partial class Startup

@@ -1,9 +1,6 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System;
-using System.Diagnostics;
-using System.IO;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
