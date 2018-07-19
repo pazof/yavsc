@@ -15,7 +15,7 @@ using Microsoft.AspNet.Authentication;
 using Microsoft.Extensions.WebEncoders;
 using Yavsc.Lib;
 
-namespace Yavsc.test
+namespace test
 {
     public class Startup
     {
