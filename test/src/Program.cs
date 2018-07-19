@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Yavsc.Lib;
 using Yavsc.Services;
 
-namespace Yavsc.test
+namespace test
 {
     public class Program
     {
@@ -14,7 +14,7 @@ namespace Yavsc.test
             var hostengnine = host
             .UseEnvironment("Development")
             .UseServer("test")
-            .UseStartup<Startup>()
+            .UseStartup<test.Startup>()
             .Build();
 
             var app = hostengnine.Start();

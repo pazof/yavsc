@@ -72,14 +72,9 @@ namespace test
               .AddDbContext<ApplicationDbContext>(
                   db => db.UseNpgsql(ConnectionString)
               );
-              services.Configure<SharedAuthenticationOptions>(options =>
-            {
-                options.SignInScheme = "Bearer";
-            });
 
             services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
 
-            services.AddAuthentication();
 
         }
 
