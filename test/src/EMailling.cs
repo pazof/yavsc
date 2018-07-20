@@ -9,7 +9,7 @@ using Yavsc.Abstract.Manage;
 using Yavsc.Lib;
 using Yavsc.Services;
 
-namespace Yavsc.test
+namespace test
 {
 
     [Collection("EMaillingTeststCollection")]

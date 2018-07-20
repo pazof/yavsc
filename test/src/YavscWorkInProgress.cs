@@ -18,7 +18,7 @@ using Yavsc;
 using Yavsc.Lib;
 using Yavsc.Models;
 
-namespace Test
+namespace test
 {
     [Collection("Yavsc Work In Progress")]
     public class YavscWorkInProgress : BaseTestContext

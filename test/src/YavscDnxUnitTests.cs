@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Yavsc.Helpers;
 
-namespace tests
+namespace test
 {
     public class YavscDnxUnitTests
     {

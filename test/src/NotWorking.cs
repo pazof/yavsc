@@ -15,7 +15,7 @@ using Microsoft.AspNet.Builder.Internal;
 using Yavsc;
 using Microsoft.Extensions.Logging;
 
-namespace Test
+namespace test
 {
     [Collection("Yavsc dropped intents")]
     public class NotWorking : BaseTestContext
