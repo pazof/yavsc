@@ -21,7 +21,7 @@ using Microsoft.Data.Entity;
 using Xunit.Abstractions;
 using System.IO;
 
-namespace Test
+namespace test
 {
     public class BaseTestContext {
         protected IApplicationEnvironment applicationEnvironment = null;

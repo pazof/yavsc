@@ -5,8 +5,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Yavsc.Lib;
 using Yavsc.Services;
+using Yavsc;
 
-namespace Yavsc.test
+namespace test
 {
     public class ServerSideFixture : IDisposable { 
         public SiteSettings _siteSetup;
@@ -22,6 +23,8 @@ namespace Yavsc.test
             _logger = _loggerFactory.CreateLogger<ServerSideFixture> ();
             _logger.LogInformation("ServerSideFixture");
         }
+
+
         void InitServices()
         {
             var host = new WebHostBuilder();
@@ -29,7 +32,7 @@ namespace Yavsc.test
             var hostengnine = host
             .UseEnvironment("Development")
             .UseServer("test")
-            .UseStartup<Startup>()
+            .UseStartup<test.Startup>()
             .Build();
 
             _app = hostengnine.Start();
@@ -46,3 +49,5 @@ namespace Yavsc.test
         }
     }
 }
+
+

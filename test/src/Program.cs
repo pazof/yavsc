@@ -2,6 +2,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Logging;
 using Yavsc.Lib;
 using Yavsc.Services;
+using Yavsc;
 
 namespace test
 {
