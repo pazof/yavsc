@@ -14,6 +14,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.PlatformAbstractions;
 using Xunit;
+using Xunit.Abstractions;
 using Yavsc;
 using Yavsc.Lib;
 using Yavsc.Models;
@@ -24,21 +25,25 @@ namespace test
     public class YavscWorkInProgress : BaseTestContext
     {
 
+        ServerSideFixture _serverFixture;
+        ITestOutputHelper output;
+        public YavscWorkInProgress(ServerSideFixture serverFixture, ITestOutputHelper output)
+        {
+            this.output = output;
+            _serverFixture = serverFixture;
+        }
+        
+        [Fact]
         public void GitClone()
         {
             
-            AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", "Server=localhost;Port=5432;Database=YavscDev;Username=yavscdev;Password=admin;");
-            ServiceCollection services = new ServiceCollection();
+          var dbc =  _serverFixture._app.Services.GetService(typeof(ApplicationDbContext)) as  ApplicationDbContext;
 
-            YavscMandatory.ConfigureServices(services, testprojectAssetPath, out configuration, out provider);
-
-            var siteConfig = provider.GetRequiredService<IOptions<SiteSettings>>().Value;
-            var dbc = provider.GetRequiredService<ApplicationDbContext>();
           
             var firstProject = dbc.Projects.FirstOrDefault();
             Assert.NotNull (firstProject);
 
-            var clone = new GitClone(siteConfig.GitRepository);
+            var clone = new GitClone(_serverFixture._siteSetup.GitRepository);
             clone.Launch(firstProject);
         }
     }

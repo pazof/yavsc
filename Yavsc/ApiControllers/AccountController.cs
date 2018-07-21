@@ -142,7 +142,7 @@ namespace Yavsc.WebApi.Controllers
                 .Include(u=>u.Roles)
                 .FirstAsync(u=>u.Id == uid);
 
-            var user = new Me(userData.Id, userData.UserName, userData.Email, 
+            var user = new Yavsc.Models.Auth.Me(userData.Id, userData.UserName, userData.Email, 
             userData.Avatar , 
             userData.PostalAddress, userData.DedicatedGoogleCalendar );
 
