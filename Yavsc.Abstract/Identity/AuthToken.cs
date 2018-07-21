@@ -20,7 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-namespace Yavsc.Models.Google
+namespace Yavsc.Abstract.Identity
 {
 	/// <summary>
 	/// Auth token, as they are received.
