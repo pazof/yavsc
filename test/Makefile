@@ -7,11 +7,11 @@ project.lock.json: project.json
 	dnu restore
 
 $(BINTARGET): project.lock.json
-	dnu build
+	dnu build --configuration $(CONFIGURATION)
 
 
 test: $(BINTARGET)
-	dnx test
+	ASPNET_ENV=Development dnx test -maxthreads 1
 
 .PHONY: test
 
