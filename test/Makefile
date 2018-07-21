@@ -10,6 +10,10 @@ $(BINTARGET): project.lock.json
 	dnu build --configuration $(CONFIGURATION)
 
 
+breaking:
+	dnx test -class test.YavscWorkInProgress.GitClone
+
+
 test: $(BINTARGET)
 	ASPNET_ENV=Development dnx test -maxthreads 1
 
