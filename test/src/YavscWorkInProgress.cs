@@ -22,7 +22,7 @@ using Yavsc.Models;
 namespace test
 {
     [Collection("Yavsc Work In Progress")]
-    public class YavscWorkInProgress : BaseTestContext
+    public class YavscWorkInProgress : BaseTestContext, IClassFixture<ServerSideFixture>
     {
 
         ServerSideFixture _serverFixture;
@@ -39,7 +39,6 @@ namespace test
             
           var dbc =  _serverFixture._app.Services.GetService(typeof(ApplicationDbContext)) as  ApplicationDbContext;
 
-          
             var firstProject = dbc.Projects.FirstOrDefault();
             Assert.NotNull (firstProject);
 

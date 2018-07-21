@@ -72,7 +72,6 @@
     "frameworks": {
         "dnx451": {
             "frameworkAssemblies": {
-                "System.Json": "4.0.0",
                 "System.ComponentModel.DataAnnotations": "4.0.0",
                 "System.Linq": "4.0.0",
                 "System.Net": "4.0.0.0",
@@ -83,7 +82,6 @@
         "net451": {
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0",
-                "System.Json": "4.0.0",
                 "System.Net": "4.0.0.0",
                 "System.Net.Http": "4.0.0",
                 "System.Xml": "4.0.0",
@@ -93,7 +91,6 @@
         "net452": {
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0",
-                "System.Json": "4.0.0",
                 "System.Net": "4.0.0.0",
                 "System.Net.Http": "4.0.0",
                 "System.Xml": "4.0.0",
@@ -103,7 +100,6 @@
         "net46": {
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0",
-                "System.Json": "4.0.0",
                 "System.Net": "4.0.0.0",
                 "System.Net.Http": "4.0.0",
                 "System.Xml": "4.0.0",
@@ -113,7 +109,6 @@
         "net461": {
             "frameworkAssemblies": {
                 "System.ComponentModel.DataAnnotations": "4.0.0",
-                "System.Json": "4.0.0",
                 "System.Net": "4.0.0.0",
                 "System.Net.Http": "4.0.0",
                 "System.Xml": "4.0.0",

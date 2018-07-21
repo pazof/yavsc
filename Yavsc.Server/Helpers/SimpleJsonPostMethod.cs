@@ -23,7 +23,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
-using System.Json;
 
 namespace Yavsc.Server.Helpers
 {
@@ -77,23 +76,7 @@ namespace Yavsc.Server.Helpers
 			}
 			return ans;
 		}
-
-		public async Task<JsonValue> InvokeJson(object query)
-		{
-            JsonValue jsonDoc=null;
-			using (Stream streamQuery = request.GetRequestStream()) {
-				using (StreamWriter writer = new StreamWriter(streamQuery)) {
-					writer.Write (JsonConvert.SerializeObject(query));
-				}}
-			using (WebResponse response = request.GetResponse ()) {
-				using (Stream stream = response.GetResponseStream ()) {
-                    if (stream.Length>0)
-		      jsonDoc = await Task.Run (() => JsonObject.Load (stream));			
-				}
-				response.Close();
-			}
-			return jsonDoc;
-		}
+		
 	}
 }
 

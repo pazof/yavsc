@@ -6026,7 +6026,7 @@
         ]
       }
     },
-    "DNX,Version=v4.5.1/debian.9-x86": {
+    "DNX,Version=v4.5.1/win7-x86": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -7246,7 +7246,7 @@
         ]
       }
     },
-    "DNX,Version=v4.5.1/debian.9-x64": {
+    "DNX,Version=v4.5.1/win7-x64": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -8466,7 +8466,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.5.1/debian.9-x86": {
+    ".NETFramework,Version=v4.5.1/win7-x86": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -9667,7 +9667,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.5.1/debian.9-x64": {
+    ".NETFramework,Version=v4.5.1/win7-x64": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -10868,7 +10868,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.5.2/debian.9-x86": {
+    ".NETFramework,Version=v4.5.2/win7-x86": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -12069,7 +12069,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.5.2/debian.9-x64": {
+    ".NETFramework,Version=v4.5.2/win7-x64": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -13270,7 +13270,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.6/debian.9-x86": {
+    ".NETFramework,Version=v4.6/win7-x86": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -14471,7 +14471,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.6/debian.9-x64": {
+    ".NETFramework,Version=v4.6/win7-x64": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -15672,7 +15672,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.6.1/debian.9-x86": {
+    ".NETFramework,Version=v4.6.1/win7-x86": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -16873,7 +16873,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.6.1/debian.9-x64": {
+    ".NETFramework,Version=v4.6.1/win7-x64": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -18172,7 +18172,7 @@
     },
     "Gapi.net45/1.0.0": {
       "type": "package",
-      "sha512": "9CdY4Bpoh5KyKjalhY/KpD31vV4zgLA3ocAJsWr8mGB12f3Ttr+CgyR0m4Z5baMG2d5p7UXT8h6KmRpx5LtMUw==",
+      "sha512": "ZA31xhTPss1akMMgT3PvDNkqI46t9dvkxgyKVnjXKP9OFSNSSxvSomev5Srvq1tXyadCP0cFBM1GkS0qLwTtUg==",
       "files": [
         "Gapi.net45.1.0.0.nupkg",
         "Gapi.net45.1.0.0.nupkg.sha512",
@@ -18815,7 +18815,7 @@
     "Microsoft.Extensions.PlatformAbstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "0b65CFB9nCxENPDjoOGeNaQBK1jhKfjQVcHg2KTWvPr+GaaBNyqmAo+7H+1ZoH6hmEYYl63aEbB1HXPRD4eQlQ==",
+      "sha512": "26HS4c6MBisN+D7XUr8HObOI/JJvSJQYQR//Bfw/hi9UqhqK3lFpNKjOuYHI+gTxYdXT46HqZiz4D+k7d+ob3A==",
       "files": [
         "lib/dotnet5.4/Microsoft.Extensions.PlatformAbstractions.dll",
         "lib/dotnet5.4/Microsoft.Extensions.PlatformAbstractions.xml",
@@ -19755,7 +19755,6 @@
       "Yavsc.Abstract "
     ],
     "DNX,Version=v4.5.1": [
-      "fx/System.Json >= 4.0.0",
       "fx/System.ComponentModel.DataAnnotations >= 4.0.0",
       "fx/System.Linq >= 4.0.0",
       "fx/System.Net >= 4.0.0",
@@ -19764,7 +19763,6 @@
     ],
     ".NETFramework,Version=v4.5.1": [
       "fx/System.ComponentModel.DataAnnotations >= 4.0.0",
-      "fx/System.Json >= 4.0.0",
       "fx/System.Net >= 4.0.0",
       "fx/System.Net.Http >= 4.0.0",
       "fx/System.Xml >= 4.0.0",
@@ -19772,7 +19770,6 @@
     ],
     ".NETFramework,Version=v4.5.2": [
       "fx/System.ComponentModel.DataAnnotations >= 4.0.0",
-      "fx/System.Json >= 4.0.0",
       "fx/System.Net >= 4.0.0",
       "fx/System.Net.Http >= 4.0.0",
       "fx/System.Xml >= 4.0.0",
@@ -19780,7 +19777,6 @@
     ],
     ".NETFramework,Version=v4.6": [
       "fx/System.ComponentModel.DataAnnotations >= 4.0.0",
-      "fx/System.Json >= 4.0.0",
       "fx/System.Net >= 4.0.0",
       "fx/System.Net.Http >= 4.0.0",
       "fx/System.Xml >= 4.0.0",
@@ -19788,7 +19784,6 @@
     ],
     ".NETFramework,Version=v4.6.1": [
       "fx/System.ComponentModel.DataAnnotations >= 4.0.0",
-      "fx/System.Json >= 4.0.0",
       "fx/System.Net >= 4.0.0",
       "fx/System.Net.Http >= 4.0.0",
       "fx/System.Xml >= 4.0.0",
