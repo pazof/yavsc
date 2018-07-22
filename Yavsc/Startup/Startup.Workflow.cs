@@ -24,8 +24,6 @@ namespace Yavsc
         public static List<Type> ProfileTypes = new List<Type>();
 
         
-
-        
         /// <summary>
         /// Lists available command forms.
         /// This is hard coded.
@@ -34,9 +32,10 @@ namespace Yavsc
 
         private void ConfigureWorkflow(IApplicationBuilder app, SiteSettings settings, ILogger logger)
         {
-            System.AppDomain.CurrentDomain.ResourceResolve += OnYavscResourceResolve;
+          //  System.AppDomain.CurrentDomain.ResourceResolve += OnYavscResourceResolve;
 
-            foreach (var a in System.AppDomain.CurrentDomain.GetAssemblies())
+            try {
+                foreach (var a in System.AppDomain.CurrentDomain.GetAssemblies())
             {
                 foreach (var c in a.GetTypes())
                 {
@@ -47,6 +46,13 @@ namespace Yavsc
                     }
                 }
             }
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.TargetSite.Name);
+            }
+            
 
             foreach (var propinfo in typeof(ApplicationDbContext).GetProperties())
             {

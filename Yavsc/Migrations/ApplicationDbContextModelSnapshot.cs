@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Metadata;
+using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
@@ -93,6 +95,23 @@ namespace Yavsc.Migrations
                     b.HasKey("UserId", "RoleId");
 
                     b.HasAnnotation("Relational:TableName", "AspNetUserRoles");
+                });
+
+            modelBuilder.Entity("Yavsc.Abstract.Identity.ClientProviderInfo", b =>
+                {
+                    b.Property<string>("UserId");
+
+                    b.Property<string>("Avatar");
+
+                    b.Property<long>("BillingAddressId");
+
+                    b.Property<string>("EMail");
+
+                    b.Property<string>("Phone");
+
+                    b.Property<string>("UserName");
+
+                    b.HasKey("UserId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Access.Ban", b =>
@@ -897,23 +916,6 @@ namespace Yavsc.Migrations
                     b.Property<string>("Topic");
 
                     b.HasKey("Id");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Messaging.ClientProviderInfo", b =>
-                {
-                    b.Property<string>("UserId");
-
-                    b.Property<string>("Avatar");
-
-                    b.Property<long>("BillingAddressId");
-
-                    b.Property<string>("EMail");
-
-                    b.Property<string>("Phone");
-
-                    b.Property<string>("UserName");
-
-                    b.HasKey("UserId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Messaging.DimissClicked", b =>
