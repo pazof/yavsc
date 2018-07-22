@@ -115,7 +115,7 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            ViewData["OwnerId"] = new SelectList(_context.ApplicationUser, "Id", "Owner", gitRepositoryReference.OwnerId);
+            ViewBag.OwnerId = new SelectList(_context.ApplicationUser, "Id", "Owner", gitRepositoryReference.OwnerId);
             return View(gitRepositoryReference);
         }
 
