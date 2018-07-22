@@ -10,6 +10,8 @@ using Yavsc.Server.Helpers;
 using Yavsc.Models.Workflow;
 using Yavsc.Models.Payment;
 using Yavsc.Server.Models.IT.SourceCode;
+using Microsoft.AspNet.Mvc.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace Yavsc.Controllers
 {
@@ -18,11 +20,17 @@ namespace Yavsc.Controllers
     {
         private ApplicationDbContext _context;
         ILogger _logger;
+        IStringLocalizer<ProjectController> _localizer;
 
-        public ProjectController(ApplicationDbContext context, ILoggerFactory loggerFactory)
+        public ProjectController(ApplicationDbContext context, 
+        ILoggerFactory loggerFactory,
+        IStringLocalizer<ProjectController> localizer
+        )
         {
             _context = context;
+            _localizer = localizer;
             _logger = loggerFactory.CreateLogger<ProjectController>();
+
         }
 
         // GET: Project
@@ -105,11 +113,14 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            ViewData["ClientId"] = new SelectList(_context.ApplicationUser, "Id", "Client", project.ClientId);
-            ViewData["ActivityCode"] = new SelectList(_context.Activities, "Code", "Context", project.ActivityCode);
-            ViewData["PerformerId"] = new SelectList(_context.Performers, "PerformerId", "PerformerProfile", project.PerformerId);
-            ViewData["PaymentId"] = new SelectList(_context.PayPalPayments, "CreationToken", "Regularisation", project.PaymentId);
-            ViewData["Name"] = new SelectList(_context.GitRepositoryReference, "Path", "Repository", project.Name);
+         /*   ViewBag.ClientId = new SelectList(_context.ApplicationUser, "Id", "Client", project.ClientId);
+            ViewBag.ActivityCodeItems = new SelectList(_context.Activities, "Code", "Context", project.ActivityCode);
+            ViewBag.PerformerId = new SelectList(_context.Performers, "PerformerId", "PerformerProfile", project.PerformerId);
+            ViewBag.PaymentId = new SelectList(_context.PayPalPayments, "CreationToken", "Regularisation", project.PaymentId);
+            ViewBag.Name = new SelectList(_context.GitRepositoryReference, "Path", "Repository", project.Name);
+          */
+           ViewBag.Status = Yavsc.Extensions.EnumExtensions.GetSelectList(typeof(QueryStatus), _localizer, project.Status);
+         
             return View(project);
         }
 
@@ -124,11 +135,6 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["ClientId"] = new SelectList(_context.ApplicationUser, "Id", "Client", project.ClientId);
-            ViewData["ActivityCode"] = new SelectList(_context.Activities, "Code", "Context", project.ActivityCode);
-            ViewData["PerformerId"] = new SelectList(_context.Performers, "PerformerId", "PerformerProfile", project.PerformerId);
-            ViewData["PaymentId"] = new SelectList(_context.PayPalPayments, "CreationToken", "Regularisation", project.PaymentId);
-            ViewData["Name"] = new SelectList(_context.GitRepositoryReference, "Path", "Repository", project.Name);
             return View(project);
         }
 
