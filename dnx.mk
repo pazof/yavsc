@@ -15,6 +15,8 @@ FRAMEWORKALIAS=dnx451
 BINTARGET=$(PRJNAME).dll
 BINTARGETPATH=bin/$(CONFIGURATION)/$(FRAMEWORKALIAS)/$(BINTARGET)
 PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
+dnu=dnu
+dnx=dnx
 
 # OBS SUBDIRS=Yavsc.Server Yavsc.Abstract Yavsc cli
 #
@@ -34,10 +36,10 @@ endif
 
 restore:
 	touch project.json
-	dnu restore
+	$(dnu) restore
 
 project.lock.json: project.json
-	dnu restore
+	$(dnu) restore
 
 watch: project.lock.json
 	ASPNET_ENV=$(ASPNET_ENV) ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) dnx-watch web --configuration=$(CONFIGURATION)
@@ -50,12 +52,12 @@ cleanoutput:
 	rm -rf bin/output
 
 $(BINTARGETPATH): project.lock.json rc-num.txt-check
-	dnu build --configuration=$(CONFIGURATION)
+	$(dnu) build --configuration=$(CONFIGURATION)
 
 # Default target, from one level sub dirs
 
 bin/output:
-	@dnu publish
+	@$(dnu) publish
 
 bin/output/wwwroot/version: bin/output
 	@git log -1 --pretty=format:%h > bin/output/wwwroot/version
