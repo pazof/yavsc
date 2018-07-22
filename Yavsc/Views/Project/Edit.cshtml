@@ -29,7 +29,9 @@
         <div class="form-group">
             <label asp-for="Repository" class="col-md-2 control-label">Repository</label>
             <div class="col-md-10">
-                <input asp-for="Repository" class="form-control" />
+                <select asp-for="Repository" class="form-control"
+                asp-items="@ViewBag.Repository" >
+                    </select>
                 <span asp-validation-for="Repository" class="text-danger" ></span>
             </div>
         </div>

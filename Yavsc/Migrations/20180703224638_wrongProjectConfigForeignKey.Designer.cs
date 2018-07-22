@@ -1401,21 +1401,7 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Yavsc.Server.Models.IT.SourceCode.GitRepositoryReference", b =>
-                {
-                    b.Property<string>("Path");
-
-                    b.Property<string>("Branch")
-                        .HasAnnotation("MaxLength", 512);
-
-                    b.Property<string>("OwnerId")
-                        .HasAnnotation("MaxLength", 1024);
-
-                    b.Property<string>("Url")
-                        .HasAnnotation("MaxLength", 2048);
-
-                    b.HasKey("Path");
-                });
+           
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
                 {
@@ -1883,9 +1869,7 @@ namespace Yavsc.Migrations
                         .WithMany()
                         .HasForeignKey("ClientId");
 
-                    b.HasOne("Yavsc.Server.Models.IT.SourceCode.GitRepositoryReference")
-                        .WithMany()
-                        .HasForeignKey("Name");
+
 
                     b.HasOne("Yavsc.Models.Payment.PayPalPayment")
                         .WithMany()
@@ -1904,12 +1888,7 @@ namespace Yavsc.Migrations
                         .HasPrincipalKey("ProjectId");
                 });
 
-            modelBuilder.Entity("Yavsc.Server.Models.IT.SourceCode.GitRepositoryReference", b =>
-                {
-                    b.HasOne("Yavsc.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
-                });
+           
         }
     }
 }

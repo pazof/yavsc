@@ -53,7 +53,6 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_Project_Activity_ActivityCode", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_Project_ApplicationUser_ClientId", table: "Project");
-            migrationBuilder.DropForeignKey(name: "FK_Project_GitRepositoryReference_Name", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_Project_PerformerProfile_PerformerId", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_ProjectBuildConfiguration_Project_ProjectId", table: "ProjectBuildConfiguration");
             migrationBuilder.DropUniqueConstraint(name: "AK_Project_ProjectId", table: "Project");
@@ -392,13 +391,7 @@ namespace Yavsc.Migrations
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
-            migrationBuilder.AddForeignKey(
-                name: "FK_Project_GitRepositoryReference_Name",
-                table: "Project",
-                column: "Name",
-                principalTable: "GitRepositoryReference",
-                principalColumn: "Path",
-                onDelete: ReferentialAction.Cascade);
+          
             migrationBuilder.AddForeignKey(
                 name: "FK_Project_PerformerProfile_PerformerId",
                 table: "Project",
@@ -464,7 +457,6 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_Project_Activity_ActivityCode", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_Project_ApplicationUser_ClientId", table: "Project");
-            migrationBuilder.DropForeignKey(name: "FK_Project_GitRepositoryReference_Name", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_Project_PerformerProfile_PerformerId", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_ProjectBuildConfiguration_Project_ProjectId", table: "ProjectBuildConfiguration");
             migrationBuilder.AlterColumn<string>(
@@ -808,13 +800,6 @@ namespace Yavsc.Migrations
                 column: "ClientId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-            migrationBuilder.AddForeignKey(
-                name: "FK_Project_GitRepositoryReference_Name",
-                table: "Project",
-                column: "Name",
-                principalTable: "GitRepositoryReference",
-                principalColumn: "Path",
                 onDelete: ReferentialAction.Restrict);
             migrationBuilder.AddForeignKey(
                 name: "FK_Project_PerformerProfile_PerformerId",

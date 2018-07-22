@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class Git : Migration
+    public partial class gitrepo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,77 +53,28 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
+            migrationBuilder.DropForeignKey(name: "FK_Project_Activity_ActivityCode", table: "Project");
+            migrationBuilder.DropForeignKey(name: "FK_Project_ApplicationUser_ClientId", table: "Project");
+            migrationBuilder.DropForeignKey(name: "FK_Project_PerformerProfile_PerformerId", table: "Project");
+            migrationBuilder.DropForeignKey(name: "FK_ProjectBuildConfiguration_Project_ProjectId", table: "ProjectBuildConfiguration");
             migrationBuilder.CreateTable(
-                name: "Project",
+                name: "GitRepositoryReference",
                 columns: table => new
                 {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:Serial", true),
-                    ActivityCode = table.Column<string>(nullable: false),
-                    ClientId = table.Column<string>(nullable: false),
-                    Consent = table.Column<bool>(nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false),
-                    DateModified = table.Column<DateTime>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: false),
+                    Path = table.Column<string>(nullable: false),
+                    Branch = table.Column<string>(nullable: true),
                     OwnerId = table.Column<string>(nullable: true),
-                    PaymentId = table.Column<string>(nullable: true),
-                    PerformerId = table.Column<string>(nullable: false),
-                    Previsional = table.Column<decimal>(nullable: true),
-                    Rejected = table.Column<bool>(nullable: false),
-                    RejectedAt = table.Column<DateTime>(nullable: false),
-                    Status = table.Column<int>(nullable: false),
-                    UserCreated = table.Column<string>(nullable: true),
-                    UserModified = table.Column<string>(nullable: true),
-                    ValidationDate = table.Column<DateTime>(nullable: true),
-                    Version = table.Column<string>(nullable: true)
+                    Url = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Project", x => x.Id);
+                    table.PrimaryKey("PK_GitRepositoryReference", x => x.Path);
                     table.ForeignKey(
-                        name: "FK_Project_Activity_ActivityCode",
-                        column: x => x.ActivityCode,
-                        principalTable: "Activity",
-                        principalColumn: "Code",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Project_ApplicationUser_ClientId",
-                        column: x => x.ClientId,
+                        name: "FK_GitRepositoryReference_ApplicationUser_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Project_PayPalPayment_PaymentId",
-                        column: x => x.PaymentId,
-                        principalTable: "PayPalPayment",
-                        principalColumn: "CreationToken",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Project_PerformerProfile_PerformerId",
-                        column: x => x.PerformerId,
-                        principalTable: "PerformerProfile",
-                        principalColumn: "PerformerId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-            migrationBuilder.CreateTable(
-                name: "ProjectBuildConfiguration",
-                columns: table => new
-                {
-                    Id = table.Column<long>(nullable: false)
-                        .Annotation("Npgsql:Serial", true),
-                    Name = table.Column<string>(nullable: false),
-                    ProjectId = table.Column<long>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProjectBuildConfiguration", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProjectBuildConfiguration_Project_ProjectId",
-                        column: x => x.ProjectId,
-                        principalTable: "Project",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
@@ -438,6 +390,41 @@ namespace Yavsc.Migrations
                 column: "UserId",
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
+                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_Project_Activity_ActivityCode",
+                table: "Project",
+                column: "ActivityCode",
+                principalTable: "Activity",
+                principalColumn: "Code",
+                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_Project_ApplicationUser_ClientId",
+                table: "Project",
+                column: "ClientId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_Project_GitRepositoryReference_Name",
+                table: "Project",
+                column: "Name",
+                principalTable: "GitRepositoryReference",
+                principalColumn: "Path",
+                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_Project_PerformerProfile_PerformerId",
+                table: "Project",
+                column: "PerformerId",
+                principalTable: "PerformerProfile",
+                principalColumn: "PerformerId",
+                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_ProjectBuildConfiguration_Project_ProjectId",
+                table: "ProjectBuildConfiguration",
+                column: "ProjectId",
+                principalTable: "Project",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }
 
@@ -488,8 +475,12 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_RdvQuery_PerformerProfile_PerformerId", table: "RdvQuery");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_Activity_DoesCode", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
-            migrationBuilder.DropTable("ProjectBuildConfiguration");
-            migrationBuilder.DropTable("Project");
+            migrationBuilder.DropForeignKey(name: "FK_Project_Activity_ActivityCode", table: "Project");
+            migrationBuilder.DropForeignKey(name: "FK_Project_ApplicationUser_ClientId", table: "Project");
+            migrationBuilder.DropForeignKey(name: "FK_Project_GitRepositoryReference_Name", table: "Project");
+            migrationBuilder.DropForeignKey(name: "FK_Project_PerformerProfile_PerformerId", table: "Project");
+            migrationBuilder.DropForeignKey(name: "FK_ProjectBuildConfiguration_Project_ProjectId", table: "ProjectBuildConfiguration");
+            migrationBuilder.DropTable("GitRepositoryReference");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -804,6 +795,34 @@ namespace Yavsc.Migrations
                 column: "UserId",
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
+                name: "FK_Project_Activity_ActivityCode",
+                table: "Project",
+                column: "ActivityCode",
+                principalTable: "Activity",
+                principalColumn: "Code",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
+                name: "FK_Project_ApplicationUser_ClientId",
+                table: "Project",
+                column: "ClientId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
+                name: "FK_Project_PerformerProfile_PerformerId",
+                table: "Project",
+                column: "PerformerId",
+                principalTable: "PerformerProfile",
+                principalColumn: "PerformerId",
+                onDelete: ReferentialAction.Restrict);
+            migrationBuilder.AddForeignKey(
+                name: "FK_ProjectBuildConfiguration_Project_ProjectId",
+                table: "ProjectBuildConfiguration",
+                column: "ProjectId",
+                principalTable: "Project",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
         }
     }

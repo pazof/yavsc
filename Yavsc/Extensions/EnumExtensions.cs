@@ -11,12 +11,19 @@ namespace Yavsc.Extensions
 {
     public static class EnumExtensions
     {
+        /// <summary>
+        /// Builds select items from an enum type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="SR"></param>
+        /// <param name="valueSelected"></param>
+        /// <returns></returns>
         public static List<SelectListItem> GetSelectList (Type type, IStringLocalizer SR, Enum valueSelected)
         {
             var typeInfo = type.GetTypeInfo();
             var values = Enum.GetValues(type).Cast<Enum>();
             var items = new List<SelectListItem>();
-
+            
             foreach (var value in values)
             {
                 items.Add(new SelectListItem {
