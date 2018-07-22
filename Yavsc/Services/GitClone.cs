@@ -6,6 +6,7 @@ using Yavsc.Server.Models.IT.SourceCode;
 using Yavsc.Server.Models.IT;
 using System.Diagnostics;
 using System.IO;
+using System;
 
 namespace Yavsc.Lib
 {
@@ -20,6 +21,7 @@ namespace Yavsc.Lib
 
         public override void Launch(Project input)
         {
+            if (input==null) throw new ArgumentNullException("input");
             WorkingDir = _repositoryRootPath;
             LogPath = $"{input.Name}.git-clone.ansi.log";
             // TODO honor Args property
