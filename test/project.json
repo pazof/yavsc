@@ -24,7 +24,14 @@
       "Chat"
     ]
   },
-  "tooling": {
+            "exclude": [
+		"testingrepo",
+                "wwwroot",
+                "node_modules",
+                "bower_components",
+                "contrib"
+            ],
+	 "tooling": {
     "defaultNamespace": "test"
   },
   "dependencies": {

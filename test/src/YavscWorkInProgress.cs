@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Builder.Internal;
+using Microsoft.Data.Entity;
 using Microsoft.Dnx.Compilation.CSharp;
 using Microsoft.Dnx.Runtime;
 using Microsoft.Extensions.Configuration;
@@ -39,7 +40,7 @@ namespace test
             
           var dbc =  _serverFixture._app.Services.GetService(typeof(ApplicationDbContext)) as  ApplicationDbContext;
 
-            var firstProject = dbc.Projects.FirstOrDefault();
+            var firstProject = dbc.Projects.Include(p=>p.Repository).FirstOrDefault();
             Assert.NotNull (firstProject);
 
             var clone = new GitClone(_serverFixture._siteSetup.GitRepository);

@@ -13,6 +13,7 @@ namespace Yavsc.Lib
     public class GitClone : Batch<Project>
     {
         string _repositoryRootPath;
+        string gitPath="git";
 
         public GitClone(string repoRoot)
         {
@@ -28,10 +29,10 @@ namespace Yavsc.Lib
             // Model annotations => input.Repository!=null => input.Name == input.Repository.Path
             var prjPath = Path.Combine(WorkingDir, input.Name);
             var repoInfo = new DirectoryInfo(prjPath);
-            var gitCmd = repoInfo.Exists ? "pull" : "clone";
+            var gitCmd = repoInfo.Exists ? "pull" : "clone --depth=1";
 
             var cloneStart = new ProcessStartInfo
-            ( gitCmd, $"{gitCmd} {input.Repository.Url} {input.Repository.Path}" )
+            ( gitPath, $"{gitCmd} {input.Repository.Url} {input.Repository.Path}" )
             {
                 WorkingDirectory = WorkingDir,
                 RedirectStandardOutput = true,
@@ -52,7 +53,7 @@ namespace Yavsc.Lib
                         writer.WriteLine(process.StandardOutput.ReadLine());
                 }
             }
-            ResultHandler(true);
+            if (ResultHandler!=null) ResultHandler(true);
         }
     }
 }

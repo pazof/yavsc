@@ -23,17 +23,17 @@
         ]
     },
     "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",
+    "exclude": [
+        "wwwroot",
+        "node_modules",
+        "bower_components",
+        "contrib"
+    ],
     "buildOptions": {
         "debugType": "full",
         "emitEntryPoint": true,
         "outputName": "Yavsc",
         "compile": {
-            "exclude": [
-                "wwwroot",
-                "node_modules",
-                "bower_components",
-                "contrib"
-            ],
             "include": "*.cs"
         },
         "embed": [

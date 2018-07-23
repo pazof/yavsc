@@ -12,7 +12,7 @@ namespace test
         [Fact]
         void TestNodeJsForAnsitohtml ()
         {
-            var procStart = new ProcessStartInfo("nodejs", "node_modules/ansi-to-html/bin/ansi-to-html");
+            var procStart = new ProcessStartInfo("node", "node_modules/ansi-to-html/bin/ansi-to-html");
             procStart.UseShellExecute = false;
             procStart.RedirectStandardInput = true;
             procStart.RedirectStandardOutput = true;
@@ -37,6 +37,7 @@ namespace test
             var encoded = GetStream(proc.StandardOutput); 
             var reader = new StreamReader(encoded);
             var txt = reader.ReadToEnd();
+            
             Console.WriteLine(txt);
         }
 

@@ -57,6 +57,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_Project_ApplicationUser_ClientId", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_Project_PerformerProfile_PerformerId", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_ProjectBuildConfiguration_Project_ProjectId", table: "ProjectBuildConfiguration");
+                   
             migrationBuilder.CreateTable(
                 name: "GitRepositoryReference",
                 columns: table => new
