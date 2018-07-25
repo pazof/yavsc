@@ -20,6 +20,8 @@ using Yavsc.Helpers;
 using Microsoft.Data.Entity;
 using Xunit.Abstractions;
 using System.IO;
+using Yavsc.Lib;
+using System.Linq;
 
 namespace test
 {
@@ -35,33 +37,30 @@ namespace test
     }
 
     [Collection("Yavsc mandatory success story")]
-    public class YavscMandatory: BaseTestContext
+    [Trait("noregres", "yes")]
+    public class YavscMandatory: BaseTestContext, IClassFixture<ServerSideFixture>
     {
-        private readonly ITestOutputHelper output;
-        public YavscMandatory(ITestOutputHelper output)
+        private readonly ITestOutputHelper _output;
+        ServerSideFixture _serverFixture;
+        public YavscMandatory(ITestOutputHelper output, ServerSideFixture serverFixture)
         {
-            this.output = output;
+            this._output = output;
+            this._serverFixture = serverFixture;
         }
 
         [Fact]
-        void TestStartNodeJsansitohtml()
+        public void GitClone()
         {
-            var procStart = new ProcessStartInfo("env", "/usr/bin/nodejs node_modules/ansi-to-html/bin/ansi-to-html");
-            procStart.UseShellExecute = false;
-            procStart.RedirectStandardInput = true;
-            procStart.RedirectStandardOutput = true;
-            procStart.RedirectStandardError = true;
-            var proc = Process.Start(procStart);
+            
+          var dbc =  _serverFixture._app.Services.GetService(typeof(ApplicationDbContext)) as  ApplicationDbContext;
 
-            proc.StandardInput.WriteLine("\x001b[30mblack\x1b[37mwhite");
-            proc.StandardInput.Close();
-            while (!proc.StandardOutput.EndOfStream)
-            {
-                output.WriteLine(proc.StandardOutput.ReadLine());
-            }
+            var firstProject = dbc.Projects.Include(p=>p.Repository).FirstOrDefault();
+            Assert.NotNull (firstProject);
+
+            var clone = new GitClone(_serverFixture._siteSetup.GitRepository);
+            clone.Launch(firstProject);
         }
 
-        // actually uses node's ansi-to-html
         [Fact]
         void AnsiToHtml()
         {
@@ -74,7 +73,7 @@ namespace test
             using (var reader = new StreamReader(encoded))
             {
                 var txt = reader.ReadToEnd();
-                output.WriteLine(txt);
+                _output.WriteLine(txt);
             }
         }
 
@@ -109,8 +108,8 @@ namespace test
         public void AConfigurationRoot()
         {
             var builder = new ConfigurationBuilder();
-            builder.AddJsonFile(Path.Combine(testprojectAssetPath, "appsettings.json"), false);
-            builder.AddJsonFile(Path.Combine(testprojectAssetPath, "appsettings.Development.json"), true);
+            builder.AddJsonFile( "appsettings.json", false);
+            builder.AddJsonFile( "appsettings.Development.json", true);
             configurationRoot = builder.Build();
         }
 

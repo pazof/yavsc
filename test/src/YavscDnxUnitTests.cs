@@ -7,6 +7,8 @@ using Yavsc.Helpers;
 
 namespace test
 {
+    
+    [Trait("noregres", "yes")]
     public class YavscDnxUnitTests
     {
         [Fact]
@@ -43,7 +45,7 @@ namespace test
 
         public static Stream GetStream(StreamReader reader)
         {
-            var procStart = new ProcessStartInfo("/usr/bin/nodejs", "node_modules/ansi-to-html/bin/ansi-to-html");
+            var procStart = new ProcessStartInfo("node", "node_modules/ansi-to-html/bin/ansi-to-html");
             procStart.UseShellExecute = false;
             procStart.RedirectStandardInput = true;
             procStart.RedirectStandardOutput = true;
