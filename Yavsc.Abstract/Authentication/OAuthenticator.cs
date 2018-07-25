@@ -8,17 +8,14 @@ using System.Net;
 using System.Text;
 using GetUsernameAsyncFunc=System.Func<System.Collections.Generic.IDictionary<string,string>, System.Threading.Tasks.Task<string>>;
 using System.IO;
-using Microsoft.Extensions.WebEncoders;
 using Newtonsoft.Json;
 
-namespace cli.Authentication
+namespace Yavsc.Authentication
 {
     public class OAuthenticator
     {
-        UrlEncoder _urlEncoder;
-        public OAuthenticator(UrlEncoder urlEncoder)
+        public OAuthenticator()
         {
-            _urlEncoder = urlEncoder;
            
         }
         string clientId;
@@ -378,12 +375,12 @@ namespace cli.Authentication
         /// </summary>
         /// <param name="queryValues">The parameters to make the request with.</param>
         /// <returns>The data provided in the response to the access token request.</returns>
-        protected async Task<IDictionary<string, string>> RequestAccessTokenAsync(IDictionary<string, string> queryValues)
+        public async Task<IDictionary<string, string>> RequestAccessTokenAsync(IDictionary<string, string> queryValues)
         {
             StringBuilder postData = new StringBuilder();
             foreach (string key in queryValues.Keys)
             {
-                postData.Append(_urlEncoder.UrlEncode($"{key}={queryValues[key]}&"));
+                postData.Append($"{key}="+Uri.EscapeDataString($"{queryValues[key]}")+"&");
             }
             var req = WebRequest.Create(accessTokenUrl);
             (req as HttpWebRequest).Accept = "application/json";
@@ -391,11 +388,8 @@ namespace cli.Authentication
             var body = Encoding.UTF8.GetBytes(postData.ToString());
             req.ContentLength = body.Length;
             req.ContentType = "application/x-www-form-urlencoded";
-            using (var s = req.GetRequestStream())
-            {
-                s.Write(body, 0, body.Length);
-                s.Close();
-            }
+            var s = req.GetRequestStream();
+            s.Write(body, 0, body.Length);
 
             var auth = await req.GetResponseAsync();
             var repstream = auth.GetResponseStream();
@@ -410,7 +404,7 @@ namespace cli.Authentication
 
             if (data.ContainsKey("error"))
             {
-                throw new AuthException("Error authenticating: " + data["error"]);
+                OnError("Error authenticating: " + data["error"]);
             }
             else if (data.ContainsKey("access_token"))
             {
@@ -418,8 +412,9 @@ namespace cli.Authentication
             }
             else
             {
-                throw new AuthException("Expected access_token in access token response, but did not receive one.");
+                OnError("Expected access_token in access token response, but did not receive one.");
             }
+            return data;
         }
 
         private IDictionary<string,string> FormDecode(string text)

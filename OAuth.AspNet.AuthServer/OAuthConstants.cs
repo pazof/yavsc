@@ -2,7 +2,7 @@
 
 namespace OAuth.AspNet.AuthServer
 {
-    internal static class Constants
+    public static class Constants
     {
         public static class Parameters
         {

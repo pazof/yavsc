@@ -27,6 +27,7 @@ namespace Yavsc
     using System.Net;
     using Formatters;
     using Google.Apis.Util.Store;
+    using Microsoft.AspNet.Identity;
     using Microsoft.Extensions.Localization;
     using Models;
     using PayPal.Manager;
@@ -263,9 +264,10 @@ namespace Yavsc
         IOptions<PayPalSettings> payPalSettings,
         IOptions<GoogleAuthSettings> googleSettings,
         IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
+        UserManager<ApplicationUser> usermanager,
          ILoggerFactory loggerFactory)
         {
-
+            _usermanager = usermanager;
             GoogleSettings = googleSettings.Value;
             ResourcesHelpers.GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;

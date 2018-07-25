@@ -61,6 +61,7 @@ namespace cli
             services.AddTransient(typeof(RazorEngineHost), typeof(YaRazorEngineHost));
             services.AddEntityFramework().AddNpgsql().AddDbContext<ApplicationDbContext>();
             services.AddTransient((s) => new RazorTemplateEngine(s.GetService<RazorEngineHost>()));
+       //     services.AddTransient<,>()
             services.AddLogging();
             services.AddTransient<EMailer>();
             services.AddLocalization(options =>

@@ -18,9 +18,10 @@ namespace Yavsc
     {
         private Client GetApplication(string clientId)
         {
-            Client app=null;
-            using (var dbContext = new ApplicationDbContext()) {
-             app = dbContext.Applications.FirstOrDefault(x => x.Id == clientId);
+            Client app = null;
+            using (var dbContext = new ApplicationDbContext())
+            {
+                app = dbContext.Applications.FirstOrDefault(x => x.Id == clientId);
             }
             return app;
         }
@@ -39,7 +40,7 @@ namespace Yavsc
         private Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             string clientId, clientSecret;
-            
+
             if (context.TryGetBasicCredentials(out clientId, out clientSecret) ||
                 context.TryGetFormCredentials(out clientId, out clientSecret))
             {
@@ -54,9 +55,9 @@ namespace Yavsc
                     }
                     else
                     {
-                       //  if (client.Secret != Helper.GetHash(clientSecret))
-                       // TODO store a hash in db, not the pass
-                       if (client.Secret != clientSecret)
+                        //  if (client.Secret != Helper.GetHash(clientSecret))
+                        // TODO store a hash in db, not the pass
+                        if (client.Secret != clientSecret)
                         {
                             context.SetError("invalid_clientId", "Client secret is invalid.");
                             return Task.FromResult<object>(null);
@@ -80,38 +81,36 @@ namespace Yavsc
             else Startup.logger.LogWarning($"ValidateClientAuthentication: neither Basic nor Form credential were found");
             return Task.FromResult(0);
         }
-
+        UserManager<ApplicationUser> _usermanager;
+           
         private async Task<Task> GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             logger.LogWarning($"GrantResourceOwnerCredentials task ... {context.UserName}");
 
             ApplicationUser user = null;
-             using (var usermanager = context.HttpContext.ApplicationServices.GetRequiredService<UserManager<ApplicationUser>>())
-                    {
-                        user = await usermanager.FindByNameAsync(context.UserName);
-                        if (await usermanager.CheckPasswordAsync(user,context.Password))
-                        {
+            user = await _usermanager.FindByNameAsync(context.UserName);
+            if (await _usermanager.CheckPasswordAsync(user, context.Password))
+            {
 
-            var claims = new List<Claim>(
-                    context.Scope.Select(x => new Claim("urn:oauth:scope", x))
-            );
-            claims.Add(new Claim(ClaimTypes.NameIdentifier,user.Id));
-            claims.Add(new Claim(ClaimTypes.Email,user.Email));
-            claims.AddRange((await usermanager.GetRolesAsync(user)).Select(
-                r => new Claim(ClaimTypes.Role,r)
-            ) );
-            ClaimsPrincipal principal = new ClaimsPrincipal(
-                new ClaimsIdentity(
-                    new GenericIdentity(context.UserName, OAuthDefaults.AuthenticationType), 
-                    claims)
-                    );
-            // TODO set a NameIdentifier, roles and scopes claims
-            context.HttpContext.User = principal;
+                var claims = new List<Claim>(
+                        context.Scope.Select(x => new Claim("urn:oauth:scope", x))
+                );
+                claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
+                claims.Add(new Claim(ClaimTypes.Email, user.Email));
+                claims.AddRange((await _usermanager.GetRolesAsync(user)).Select(
+                    r => new Claim(ClaimTypes.Role, r)
+                ));
+                ClaimsPrincipal principal = new ClaimsPrincipal(
+                    new ClaimsIdentity(
+                        new GenericIdentity(context.UserName, OAuthDefaults.AuthenticationType),
+                        claims)
+                        );
+                // TODO set a NameIdentifier, roles and scopes claims
+                context.HttpContext.User = principal;
 
-            context.Validated(principal);
-                        }
-                    }
-             
+                context.Validated(principal);
+            }
+
             return Task.FromResult(0);
         }
 

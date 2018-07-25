@@ -31,10 +31,6 @@ gulp.task("clean:css", function(cb) {
 
 gulp.task("clean", ["clean:js", "clean:css"]);
 
-gulp.task('watch', shell.task(['ASPNET_ENV=Development dnx-watch web --configuration=Debug']));
-gulp.task('watchlua', shell.task(['ASPNET_ENV=lua dnx-watch luatest --configuration=Debug']));
-gulp.task('watchpre', shell.task(['ASPNET_ENV=yavscpre dnx-watch web --configuration=Debug']));
-
 gulp.task("min:css", function() {
     gulp.src([paths.css, "!" + paths.minCss, '!site.css'])
         .pipe(cssmin())
@@ -56,4 +52,4 @@ gulp.task('run', shell.task(['ASPNET_ENV=Development dnx web --configuration=Deb
 gulp.task('buildrelease', shell.task(['dnu build --configuration=Release']));
 
 
-gulp.task("default", ["watch"]);
+gulp.task("default", ["min"]);
