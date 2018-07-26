@@ -134,7 +134,7 @@
         "PayPalMerchant-net451": {
             "version": "2.7.109"
         },
-        "Gapi.net45": "1.0.0",
+        "Gapi.net45": "1.0.1",
         "Yavsc.Abstract": { "type": "build" },
         "Yavsc.Server": { "type": "build" }
     },
