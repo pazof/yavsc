@@ -61,7 +61,7 @@
         "Microsoft.Extensions.Options": "0.0.1-alpha",
         "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
         "Newtonsoft.Json": "9.0.1",
-        "Gapi.net45": "1.0.0",
+        "Gapi.net45": "1.0.1",
         "PayPalMerchant-net451": "2.7.109",
         "MailKit": "1.12.0",
         "Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01",

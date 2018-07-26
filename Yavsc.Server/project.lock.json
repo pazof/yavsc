@@ -117,13 +117,13 @@
           "lib/dnx451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
-          "lib/net451/gapi.dll": {}
+          "lib/dnx451/gapi.dll": {}
         },
         "runtime": {
-          "lib/net451/gapi.dll": {}
+          "lib/dnx451/gapi.dll": {}
         }
       },
       "Ix-Async/1.2.5": {
@@ -1318,7 +1318,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -2519,7 +2519,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -3720,7 +3720,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -4921,7 +4921,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -6141,13 +6141,13 @@
           "lib/dnx451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
-          "lib/net451/gapi.dll": {}
+          "lib/dnx451/gapi.dll": {}
         },
         "runtime": {
-          "lib/net451/gapi.dll": {}
+          "lib/dnx451/gapi.dll": {}
         }
       },
       "Ix-Async/1.2.5": {
@@ -7361,13 +7361,13 @@
           "lib/dnx451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
-          "lib/net451/gapi.dll": {}
+          "lib/dnx451/gapi.dll": {}
         },
         "runtime": {
-          "lib/net451/gapi.dll": {}
+          "lib/dnx451/gapi.dll": {}
         }
       },
       "Ix-Async/1.2.5": {
@@ -8562,7 +8562,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -9763,7 +9763,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -10964,7 +10964,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -12165,7 +12165,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -13366,7 +13366,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -14567,7 +14567,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -15768,7 +15768,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -16969,7 +16969,7 @@
           "lib/net451/EntityFramework.Relational.Design.dll": {}
         }
       },
-      "Gapi.net45/1.0.0": {
+      "Gapi.net45/1.0.1": {
         "type": "package",
         "compile": {
           "lib/net451/gapi.dll": {}
@@ -18170,13 +18170,14 @@
         "lib/netcore50/_._"
       ]
     },
-    "Gapi.net45/1.0.0": {
+    "Gapi.net45/1.0.1": {
       "type": "package",
-      "sha512": "ZA31xhTPss1akMMgT3PvDNkqI46t9dvkxgyKVnjXKP9OFSNSSxvSomev5Srvq1tXyadCP0cFBM1GkS0qLwTtUg==",
+      "sha512": "1CzHMJRGh1wtRGGV6ZkFbdzYv7JTn80f43xpubyIWMravjLBN3TsuhAN8jC9YKzSxNQzINZccyoKY0ap87O65g==",
       "files": [
-        "Gapi.net45.1.0.0.nupkg",
-        "Gapi.net45.1.0.0.nupkg.sha512",
+        "Gapi.net45.1.0.1.nupkg",
+        "Gapi.net45.1.0.1.nupkg.sha512",
         "Gapi.net45.nuspec",
+        "lib/dnx451/gapi.dll",
         "lib/dnxcore50/gapi.dll",
         "lib/net451/gapi.dll",
         "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/gapi.dll"
@@ -19748,7 +19749,7 @@
       "Microsoft.Extensions.Options >= 0.0.1-alpha",
       "Microsoft.Extensions.Localization >= 1.0.0-rc1-final",
       "Newtonsoft.Json >= 9.0.1",
-      "Gapi.net45 >= 1.0.0",
+      "Gapi.net45 >= 1.0.1",
       "PayPalMerchant-net451 >= 2.7.109",
       "MailKit >= 1.12.0",
       "Microsoft.CodeAnalysis.CSharp >= 1.1.0-rc1-20151109-01",
