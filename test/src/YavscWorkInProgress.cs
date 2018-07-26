@@ -49,15 +49,11 @@ namespace test
             )
         {
            try {
-           var r = new Uri(redirectUrl);
            var oauthor =new OAuthenticator( clientId,  clientSecret,  scope, 
            new Uri( authorizeUrl) , new Uri(redirectUrl) , new Uri(accessTokenUrl));
            var query = new Dictionary<string,string>();
            query[Parameters.Username]=login;
            query[Parameters.Password]=pass;
-           query[Parameters.ClientId]=clientId;
-           query[Parameters.ClientSecret]=clientSecret;
-           query[Parameters.Scope]=scope;
            query[Parameters.GrantType]=GrantTypes.Password;
            var result = await oauthor.RequestAccessTokenAsync(query);
            Console.WriteLine(">> Got an output");
