@@ -67,8 +67,6 @@ namespace Yavsc
                 var val = JsonConvert.SerializeObject(prop.Value);
                  logger.LogInformation( $"#Property {prop.Key}: {val}" );
             }
-
-            var bot = await this._usermanager.GetUserByNameAsync(botName);
         }
     }
 }

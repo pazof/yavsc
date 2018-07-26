@@ -62,14 +62,17 @@ bin/output:
 bin/output/wwwroot/version: bin/output
 	@git log -1 --pretty=format:%h > bin/output/wwwroot/version
 
+pack: $(NUGETSOURCE)/$(PKGFILENAME)
+
 $(NUGETSOURCE)/$(PKGFILENAME): $(BINTARGETPATH) $(SOLUTIONDIR)/rc-num.txt
 ifeq ($(git_status),0)
-	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory $(NUGETSOURCE)
+	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
 else
 	$(error Please, commit your changes before publishing your NuGet packages)
 endif
 
-deploy-pkg: $(NUGETSOURCE)/$(PKGFILENAME)
+deploy-pkg: pack
+	@mv bin/$(PKGFILENAME) $(NUGETSOURCE)
 
 .PHONY: rc-num.txt-check $(BINTARGETPATH)
 

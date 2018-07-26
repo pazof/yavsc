@@ -378,6 +378,18 @@ namespace Yavsc.Authentication
         public async Task<IDictionary<string, string>> RequestAccessTokenAsync(IDictionary<string, string> queryValues)
         {
             StringBuilder postData = new StringBuilder();
+            if (!queryValues.ContainsKey("client_id"))
+            {
+                postData.Append("client_id="+Uri.EscapeDataString($"{this.clientId}")+"&");
+            }
+            if (!queryValues.ContainsKey("client_secret"))
+            {
+                postData.Append("client_secret="+Uri.EscapeDataString($"{this.clientSecret}")+"&");
+            }
+            if (!queryValues.ContainsKey("scope"))
+            {
+                postData.Append("scope="+Uri.EscapeDataString($"{this.scope}")+"&");
+            }
             foreach (string key in queryValues.Keys)
             {
                 postData.Append($"{key}="+Uri.EscapeDataString($"{queryValues[key]}")+"&");
