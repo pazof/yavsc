@@ -10,6 +10,9 @@ using Newtonsoft.Json;
 
 namespace Yavsc
 {
+    // ensures we may count on :
+    // * Google credentials
+    // * an AppData folder
     public partial class Startup
     {
         public void CheckServices(IServiceCollection services)
@@ -38,7 +41,8 @@ namespace Yavsc
                 {
                     di.Create();
                     logger.LogWarning("Created dir : "+di.FullName);
-                } else logger.LogInformation("Using existing directory: "+di.Name);
+                }
+                else logger.LogInformation("Using existing directory: "+di.Name);
                 SiteSetup.DataDir = Path.Combine(Directory.GetCurrentDirectory(),di.Name);
                 Environment.SetEnvironmentVariable("APPDATA", SiteSetup.DataDir);
                 logger.LogWarning("It has been set to : "+Environment.GetEnvironmentVariable("APPDATA"));
@@ -56,13 +60,15 @@ namespace Yavsc
             foreach (var feature in app.ServerFeatures) 
             {
                 var val = JsonConvert.SerializeObject(feature.Value);
-                 logger.LogInformation( $"#Feature _{feature.Key}_: {val}" );
+                 logger.LogInformation( $"#Feature {feature.Key}: {val}" );
             }
             foreach (var prop in app.Properties) 
             {
                 var val = JsonConvert.SerializeObject(prop.Value);
-                 logger.LogInformation( $"#Property _{prop.Key}_: {val}" );
+                 logger.LogInformation( $"#Property {prop.Key}: {val}" );
             }
+
+            var bot = await this._usermanager.GetUserByNameAsync(botName);
         }
     }
 }
