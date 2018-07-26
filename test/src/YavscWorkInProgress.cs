@@ -4,26 +4,11 @@
 // */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Builder.Internal;
-using Microsoft.Data.Entity;
-using Microsoft.Dnx.Compilation.CSharp;
-using Microsoft.Dnx.Runtime;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.OptionsModel;
-using Microsoft.Extensions.PlatformAbstractions;
-using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
-using Yavsc;
 using Yavsc.Authentication;
-using Yavsc.Lib;
-using Yavsc.Models;
 using static OAuth.AspNet.AuthServer.Constants;
 
 namespace test
