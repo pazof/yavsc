@@ -7,15 +7,13 @@
 <h2>@ViewData["Title"]</h2>
 <p class="text-success">@ViewData["StatusMessage"]</p>
 <div>
-    <h4>@SR["Change your account settings"]</h4>
+    <h4>@SR["Your account settings"]</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>@SR["UserName"]:</dt>
       
         <dd> 
             @Model.UserName
-            [<a asp-controller="Manage" 
-            asp-action="CHUN">@SR["Change"]</a>]
         </dd>
 
         <dt>@SR["EMail"]:</dt>
