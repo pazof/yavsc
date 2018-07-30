@@ -5,11 +5,9 @@ namespace Yavsc.ViewModels.Account
 {
     public class RegisterViewModel
     {
-        // ErrorMessage = "",
-         
 
         [StringLength(102)]
-        [YaRegularExpression(@"[a-zA-Z0-9 .'_-]+", ErrorMessageResourceName="InvalidUserName", ErrorMessageResourceType = typeof(RegisterViewModel))]
+        [YaRegularExpression(Constants.UserNameRegExp, ErrorMessageResourceName="InvalidUserName", ErrorMessageResourceType = typeof(RegisterViewModel))]
         public string UserName { get; set; }
 
         [YaRequired()]
