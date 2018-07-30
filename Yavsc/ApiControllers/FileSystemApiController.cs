@@ -42,7 +42,7 @@ namespace Yavsc.ApiControllers
             return GetDir(null);
         }
 
-        [HttpGet("{subdir}")]
+        [HttpGet("{*subdir}")]
         public IActionResult GetDir(string subdir="")
         {
             if (subdir !=null)
@@ -52,7 +52,7 @@ namespace Yavsc.ApiControllers
             return Ok(files);
         }
 
-        [HttpPost("{subdir}")]
+        [HttpPost("{*subdir}")]
         public IActionResult Post(string subdir="")
         {
             string destDir = null;
@@ -63,9 +63,12 @@ namespace Yavsc.ApiControllers
             } catch (InvalidPathException ex) {
                 pathex = ex;
             }
+            if (pathex!=null) {
+                logger.LogError($"invalid sub path: '{subdir}'.");
+                return HttpBadRequest(pathex);
+            }
             logger.LogInformation($"Recieving files, saved in '{destDir}' (specified ad '{subdir}').");
-            if (pathex!=null)
-              return new BadRequestObjectResult(pathex);
+            
             var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
