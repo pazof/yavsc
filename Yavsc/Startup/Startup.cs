@@ -311,8 +311,9 @@ namespace Yavsc
                     case "err":
                         loggerFactory.MinimumLevel = LogLevel.Error;
                         break;
+                    case "debug":
                     default:
-                        loggerFactory.MinimumLevel = LogLevel.Information;
+                        loggerFactory.MinimumLevel = LogLevel.Debug;
                         break;
                 }
 
