@@ -108,11 +108,11 @@
       console.log('response:');
       console.log(response);
       for(i=0;i<response.length;i++) {
-          var file = response[i].Value;
+          var file = response[i];
           console.log('response item:');
           console.log(file);
 
-          $('<p><a href="/UserFiles/@User.GetUserName()/'+file.FileName+'">'+file.FileName+'</a></p>').appendTo('#ql-editor-2');
+          $('<p><a href="/files/@User.GetUserName()/'+file.FileName+'">'+file.FileName+'</a></p>').appendTo('#ql-editor-2');
           updateMD('Content',$('#contentview').html())
       }
   },
