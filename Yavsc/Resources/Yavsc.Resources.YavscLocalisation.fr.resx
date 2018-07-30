@@ -427,6 +427,7 @@
   <data name="YouNeedToBeAuthenticatedIOToContact"><value>Vous devez vous authentifier pour pouvoir demander un devis
       à un préstataire.</value></data>
   <data name="younotadmin"><value>Vous n'êtes pas administrateur</value></data>
+  <data name="Your account settings"><value>Les paramètres de votre compte</value></data>
   <data name="Your book query"><value>Votre demande de rendez-vous</value></data>
   <data name="Your password has been reset."><value>Votre mote de passe a été mis à jour.</value></data>
   <data name="YourEstimates"><value>Vos Devis</value></data>
@@ -436,6 +437,7 @@
   <data name="YourSkills"><value>Vos talents, vos spécialités, le domaine de vos activités</value></data>
   <data name="Your posts"><value>Vos publications</value></data>
   <data name="Your profile"><value>Votre profil</value></data>
+
   <data name="YourMessageHasBeenSent"><value>Votre messge a été envoyé</value></data>
   <data name="Tell more, below, about your query"><value>Dites en plus, ci àprès, à propos de cet évennement</value></data>
   <data name="UnsetActivity"><value>Supprimer mon profil professionel</value></data>
