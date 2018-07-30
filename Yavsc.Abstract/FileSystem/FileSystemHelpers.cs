@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Yavsc.Abstract.FileSystem
         public static bool IsValidYavscPath(this string path)
         {
             if (string.IsNullOrEmpty(path)) return true;
-            foreach (var name in path.Split('/'))
+            foreach (var name in path.Split(Path.DirectorySeparatorChar))
             {
                 if (!IsValidDirectoryName(name) || name.Equals("..") || name.Equals("."))
                         return false;
