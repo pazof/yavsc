@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 public class CiBuildSettings
 {
@@ -9,20 +10,28 @@ public class CiBuildSettings
     public class Command
     {
         [Required]
+        [JsonPropertyAttribute("path")]
         public string Path { get; set; }
+
+        [JsonPropertyAttribute("args")]
         public string[] Args { get; set; }
 
         /// <summary>
         /// Specific variables to this process
         /// </summary>
         /// <value></value>
+        /// 
+        [JsonPropertyAttribute("env")]
         public string[] Environment { get; set; }
+        
+        [JsonPropertyAttribute("working_dir")]
         public string WorkingDir { get; set; }
     }
     /// <summary>
     /// The global process environment variables
     /// </summary>
     /// <value></value>
+    [JsonPropertyAttribute("env")]
     public string[] Environment { get; set; }
 
     /// <summary>
@@ -30,6 +39,7 @@ public class CiBuildSettings
     /// </summary>
     /// <value></value>
     [Required]
+    [JsonPropertyAttribute("build")]
     public Command Build { get; set; }
 
     /// <summary>
@@ -38,6 +48,7 @@ public class CiBuildSettings
     /// must end ok in order to launch the build.
     /// </summary>
     /// <value></value>
+    [JsonPropertyAttribute("prepare")]
     public Command Prepare { get; set; }
 
     /// <summary>
@@ -47,12 +58,14 @@ public class CiBuildSettings
     /// only fired on successful build.
     /// </summary>
     /// <value></value>
-    public Command PostProduction { get; set; }
+    [JsonPropertyAttribute("post_build")]
+    public Command PostBuild { get; set; }
 
     /// <summary>
     /// Additional emails, as dest of notifications
     /// </summary>
     /// <value></value>
+    [JsonPropertyAttribute("emails")]
     public string[] Emails { get; set; }
 
 }
