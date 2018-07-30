@@ -36,12 +36,15 @@ namespace Yavsc.ViewModels.UserFiles
 
             dInfo = new DirectoryInfo(
                 userReposPath+FileSystemConstants.RemoteDirectorySeparator+finalPath);
-            if (!dInfo.Exists) dInfo.Create();
-            Files = dInfo.GetFiles().Select
-             ( entry => new RemoteFileInfo { Name = entry.Name, Size = entry.Length,
-             CreationTime = entry.CreationTime, LastModified = entry.LastWriteTime  }).ToArray();
-             SubDirectories = dInfo.GetDirectories().Select
-             ( d=> new DirectoryShortInfo { Name= d.Name, IsEmpty=false } ).ToArray();
+            if (dInfo.Exists) {
+
+                Files = dInfo.GetFiles().Select
+                    ( entry => new RemoteFileInfo { Name = entry.Name, Size = entry.Length,
+                    CreationTime = entry.CreationTime, LastModified = entry.LastWriteTime  }).ToArray();
+                SubDirectories = dInfo.GetDirectories().Select
+                    ( d=> new DirectoryShortInfo { Name= d.Name, IsEmpty=false } ).ToArray();
+
+            }
         }
     }
 
