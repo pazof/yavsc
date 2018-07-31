@@ -15,7 +15,7 @@ project.lock.json: project.json
 	sed 's/System.XML/System.Xml/' project.lock.json > project.lock.json.new && mv project.lock.json.new project.lock.json
 
 run: project.lock.json
-	ASPNET_ENV=$(ASPNET_ENV) dnx run --configuration=$(CONFIGURATION)
+	ASPNET_ENV=$(ASPNET_ENV) dnx --configuration=$(CONFIGURATION) run send monthly
 
 info:
 	@echo $(PRJNAME)
