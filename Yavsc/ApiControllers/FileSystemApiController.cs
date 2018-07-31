@@ -67,14 +67,14 @@ namespace Yavsc.ApiControllers
                 logger.LogError($"invalid sub path: '{subdir}'.");
                 return HttpBadRequest(pathex);
             }
-            logger.LogInformation($"Recieving files, saved in '{destDir}' (specified ad '{subdir}').");
+            logger.LogInformation($"Receiving files, saved in '{destDir}' (specified as '{subdir}').");
             
             var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
             int i=0;
-            logger.LogInformation($"Recieving {Request.Form.Files.Count} files.");
+            logger.LogInformation($"Receiving {Request.Form.Files.Count} files.");
             
             foreach (var f in Request.Form.Files)
             {
@@ -82,7 +82,7 @@ namespace Yavsc.ApiControllers
                 var item = user.ReceiveUserFile(destDir, f);
                 dbContext.SaveChanges(User.GetUserId());
                 received.Add(item);
-                logger.LogInformation($"Recieved  '{item.FileName}'.");
+                logger.LogInformation($"Received  '{item.FileName}'.");
                 if (item.QuotaOffensed)
                     break;
                 i++;
