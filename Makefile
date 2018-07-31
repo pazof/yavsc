@@ -26,8 +26,7 @@ cli-deploy-pkg: cli check
 	make -C cli deploy-pkg
 
 cli: Yavsc-deploy-pkg Yavsc.Server-deploy-pkg Yavsc.Abstract-deploy-pkg
-	make -C cli restore
-	make -C cli
+	make -C cli 
 
 undoLocalYavscNugetDeploy:
 	rm -rf ~/.dnx/packages/Yavsc.Abstract.$(VERSION).nupkg
