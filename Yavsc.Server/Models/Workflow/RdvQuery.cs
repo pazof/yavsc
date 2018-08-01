@@ -42,10 +42,7 @@ namespace Yavsc.Models.Workflow
         [Display(Name="GiveAnExplicitReason")]
         public string Reason { get; set; }
 
-        public override string GetDescription ()
-        {
-            return "Rendez-vous";
-        }
+        public override string Description => "Rendez-vous";
 
         public RdvQuery()
         {

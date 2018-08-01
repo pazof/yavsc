@@ -10,7 +10,6 @@ namespace Yavsc.WebApi.Controllers
     using Models;
     using Models.Account;
     using ViewModels.Account;
-    using Models.Auth;
     using Yavsc.Helpers;
     using System.Linq;
     using Microsoft.Data.Entity;
