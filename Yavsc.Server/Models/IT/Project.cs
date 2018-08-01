@@ -51,7 +51,11 @@ namespace Yavsc.Server.Models.IT
         }
 
         string description;
-        public override string Description => description;
+        public override string Description 
+        { 
+            get { return description; } 
+            set { description = value; }
+        }
 
         public Project()
         {

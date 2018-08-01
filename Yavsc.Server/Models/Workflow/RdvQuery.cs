@@ -42,7 +42,19 @@ namespace Yavsc.Models.Workflow
         [Display(Name="GiveAnExplicitReason")]
         public string Reason { get; set; }
 
-        public override string Description => "Rendez-vous";
+        string _description = "Rendez-vous";
+        public override string Description
+        {
+            get
+            {
+                string type = ResourcesHelpers.GlobalLocalizer[this.GetType().Name];
+                return $"{_description} {type}";
+            }
+            set
+            {
+                _description = value;
+            }
+        }
 
         public RdvQuery()
         {

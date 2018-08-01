@@ -453,6 +453,7 @@
   <data name="PasswordRequiresUpper"><value>Les mots de passe doivent contenir au moins une lettre majuscule ('A' à 'Z').</value></data>
   <data name="PassAndConfirmDontMach"><value>Le mot de passe et sa confirmation ne sont pas les mêmes.</value></data>
   <data name="PasswordConfirm"><value>Confirmation du mot de passe</value></data>
+  <data name="ConfirmPassword"><value>Confirmation du mot de passe</value></data>
   <data name="ErrorSendingEmailForConfirm"><value>L'envoi de de courrier pour confirmation de l'adresse e-mail a échoué.</value></data>
   <data name="EmailSentForConfirm"><value>Un courrier a été envoyé pour confirmation de l'adresse e-mail .</value></data>
   <data name="ConfirmYourAccountTitle"><value>S'il vous plait, confirmez votre addresse e-mail</value></data>

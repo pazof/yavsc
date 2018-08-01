@@ -3,11 +3,12 @@ using Yavsc.Attributes.Validation;
 
 namespace Yavsc.ViewModels.Account
 {
+    using Yavsc;
     public class RegisterViewModel
     {
 
         [StringLength(102)]
-        [YaRegularExpression(Constants.UserNameRegExp, ErrorMessageResourceName="InvalidUserName", ErrorMessageResourceType = typeof(RegisterViewModel))]
+        [YaRegularExpression(Constants.UserNameRegExp)]
         public string UserName { get; set; }
 
         [YaRequired()]
@@ -23,9 +24,10 @@ namespace Yavsc.ViewModels.Account
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessageResourceName = "PassAndConfirmDontMach", ErrorMessageResourceType = typeof(RegisterViewModel) )]
+        [Compare("Password")]
         public string ConfirmPassword { get; set; }
 
         public string GoogleRegId { get; set; }
+
     }
 }

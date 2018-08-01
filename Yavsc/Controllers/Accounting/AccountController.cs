@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Controllers
 {
+    using System.Text;
     using Yavsc.Abstract.Manage;
     using Yavsc.Helpers;
 
@@ -60,10 +61,28 @@ namespace Yavsc.Controllers
             _dbContext = dbContext;
         }
 
+        const string  nextPageTokenKey = "nextPageTokenKey";
+        const int defaultLen = 10;
+
         [Authorize(Roles = Constants.AdminGroupName)]
-        public async Task<IActionResult> UserList()
+        [Route("Account/UserList/{page?}/{len?}")]
+        public async Task<IActionResult> UserList(string page, string len)
         {
-            return View(await _dbContext.Users.ToArrayAsync());
+            int pageNum = page!=null ? int.Parse(page) : 0;
+            int pageLen = len!=null ? int.Parse(len) : defaultLen;
+
+            var users =  _dbContext.Users.OrderBy(u=>u.UserName);
+            var shown = pageNum * pageLen;
+            var toShow = users.Skip(shown).Take(pageLen);
+
+            ViewBag.page = pageNum;
+            ViewBag.hasNext = await users.CountAsync() > (toShow.Count() + shown);
+            ViewBag.nextpage = pageNum+1;
+            ViewBag.pageLen = pageLen;
+            return View(toShow.ToArray());
+        }
+        string GeneratePageToken() {
+            return System.Guid.NewGuid().ToString();
         }
 
         [AllowAnonymous]
