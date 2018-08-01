@@ -20,12 +20,19 @@ namespace Yavsc.Models.Haircut
     {
 
         // Bill description
-        public override string Description { get
+        string _description = null;
+        public override string Description
         {
-            string type = ResourcesHelpers.GlobalLocalizer[this.GetType().Name];
-            string gender = ResourcesHelpers.GlobalLocalizer[this.Prestation.Gender.ToString()];
-           return  $"{type} ({gender})";
-        }
+            get
+            {
+                string type = ResourcesHelpers.GlobalLocalizer[this.GetType().Name];
+                string gender = ResourcesHelpers.GlobalLocalizer[this.Prestation.Gender.ToString()];
+                return $"{_description} {type} ({gender})";
+            }
+            set
+            {
+                _description = value;
+            }
         }
 
 
@@ -73,34 +80,35 @@ namespace Yavsc.Models.Haircut
 
             List<IBillItem> bill = new List<IBillItem>();
 
-    if (this.Prestation==null) throw new InvalidOperationException("Prestation property is null");
-    if (this.SelectedProfile==null) throw new InvalidOperationException("SelectedProfile property is null");
+            if (this.Prestation == null) throw new InvalidOperationException("Prestation property is null");
+            if (this.SelectedProfile == null) throw new InvalidOperationException("SelectedProfile property is null");
             // Le shampoing
             if (this.Prestation.Shampoo)
-                bill.Add(new CommandLine { Name = "Shampoing", Description="Shampoing", UnitaryCost = SelectedProfile.ShampooPrice });
+                bill.Add(new CommandLine { Name = "Shampoing", Description = "Shampoing", UnitaryCost = SelectedProfile.ShampooPrice });
 
             // la coupe
-            if (Prestation.Cut) {
-                 bill.Add(new CommandLine
+            if (Prestation.Cut)
+            {
+                bill.Add(new CommandLine
                 {
 
                     Name = "Coupe",
-                    Description = $"Coupe "+
-                    ResourcesHelpers.GlobalLocalizer[Prestation.Gender.ToString()]+ " "+
-                   (Prestation.Gender == HairCutGenders.Women ?
-        Prestation.Length == HairLength.Long ? longhairsuffix :
-        Prestation.Length == HairLength.HalfLong ? halflonghairsuffix :
-        shorthairsuffix: null),
+                    Description = $"Coupe " +
+                   ResourcesHelpers.GlobalLocalizer[Prestation.Gender.ToString()] + " " +
+                  (Prestation.Gender == HairCutGenders.Women ?
+       Prestation.Length == HairLength.Long ? longhairsuffix :
+       Prestation.Length == HairLength.HalfLong ? halflonghairsuffix :
+       shorthairsuffix : null),
                     UnitaryCost =
 Prestation.Gender == HairCutGenders.Women ?
-        Prestation.Length == HairLength.Long ? SelectedProfile.WomenLongCutPrice :
-        Prestation.Length == HairLength.HalfLong ? SelectedProfile.WomenHalfCutPrice :
-        SelectedProfile.WomenShortCutPrice : Prestation.Gender == HairCutGenders.Man ?
-        SelectedProfile.ManCutPrice : SelectedProfile.KidCutPrice
+       Prestation.Length == HairLength.Long ? SelectedProfile.WomenLongCutPrice :
+       Prestation.Length == HairLength.HalfLong ? SelectedProfile.WomenHalfCutPrice :
+       SelectedProfile.WomenShortCutPrice : Prestation.Gender == HairCutGenders.Man ?
+       SelectedProfile.ManCutPrice : SelectedProfile.KidCutPrice
                 });
 
             }
-               
+
             // Les techniques
             switch (Prestation.Tech)
             {
@@ -274,100 +282,104 @@ Prestation.Gender == HairCutGenders.Women ?
             switch (Prestation.Dressing)
             {
                 case HairDressings.Brushing:
-                {
-                    string name = "Brushing";
-
-
-                    switch (Prestation.Gender)
                     {
-                        case HairCutGenders.Women:
-                            switch (Prestation.Length)
-                            {
-                                case HairLength.Long:
-                                bill.Add(new CommandLine
+                        string name = "Brushing";
+
+
+                        switch (Prestation.Gender)
+                        {
+                            case HairCutGenders.Women:
+                                switch (Prestation.Length)
                                 {
-                                    Name = name,
-                                    Description = name + longhairsuffix,
-                                    UnitaryCost = SelectedProfile.LongBrushingPrice
-                                });
-                                    break;
-                                case HairLength.HalfLong:
+                                    case HairLength.Long:
+                                        bill.Add(new CommandLine
+                                        {
+                                            Name = name,
+                                            Description = name + longhairsuffix,
+                                            UnitaryCost = SelectedProfile.LongBrushingPrice
+                                        });
+                                        break;
+                                    case HairLength.HalfLong:
+                                        bill.Add(new CommandLine
+                                        {
+                                            Name = name,
+                                            Description = name + halflonghairsuffix,
+                                            UnitaryCost = SelectedProfile.HalfBrushingPrice
+                                        });
+                                        break;
+                                    default:
+                                        bill.Add(new CommandLine
+                                        {
+                                            Name = name,
+                                            Description = name + shorthairsuffix,
+                                            UnitaryCost = SelectedProfile.ShortBrushingPrice
+                                        });
+                                        break;
+                                }
+                                break;
+                            case HairCutGenders.Man:
                                 bill.Add(new CommandLine
-                                {
-                                    Name = name,
-                                    Description = name + halflonghairsuffix,
-                                    UnitaryCost = SelectedProfile.HalfBrushingPrice
-                                });
-                                    break;
-                                default:
-                                bill.Add(new CommandLine
-                                {
-                                    Name = name,
-                                    Description = name + shorthairsuffix,
-                                    UnitaryCost = SelectedProfile.ShortBrushingPrice
-                                });
-                                    break;
-                            }
-                            break;
-                        case HairCutGenders.Man:
-                            bill.Add(new CommandLine
                                 {
                                     Name = name,
                                     Description = name + shorthairsuffix,
                                     UnitaryCost = SelectedProfile.ManBrushPrice
                                 });
-                            break;
+                                break;
                         }
                     }
                     break;
                 case HairDressings.Coiffage:
                     // est offert
-         /*           bill.Add(new CommandLine
-                        {
-                            Name = "Coiffage (offert)",
-                            UnitaryCost = 0m
-                        }); */
+                    /*           bill.Add(new CommandLine
+                                   {
+                                       Name = "Coiffage (offert)",
+                                       UnitaryCost = 0m
+                                   }); */
                     break;
                 case HairDressings.Folding:
-                {
-                    string name = "Mise en plis";
-
-                    switch (Prestation.Length)
                     {
-                        case HairLength.Long:
+                        string name = "Mise en plis";
+
+                        switch (Prestation.Length)
+                        {
+                            case HairLength.Long:
                                 bill.Add(new CommandLine
                                 {
                                     Name = name,
                                     Description = name + longhairsuffix,
                                     UnitaryCost = SelectedProfile.LongFoldingPrice
                                 });
-                            break;
-                        case HairLength.HalfLong:
+                                break;
+                            case HairLength.HalfLong:
                                 bill.Add(new CommandLine
                                 {
                                     Name = name,
                                     Description = name + halflonghairsuffix,
                                     UnitaryCost = SelectedProfile.HalfFoldingPrice
                                 });
-                            break;
-                        default:
+                                break;
+                            default:
                                 bill.Add(new CommandLine
                                 {
                                     Name = name,
                                     Description = name + shorthairsuffix,
                                     UnitaryCost = SelectedProfile.ShortFoldingPrice
                                 });
-                            break;
+                                break;
                         }
                     }
                     break;
-                }
+            }
 
             // les soins
-            if (Prestation.Cares) {
-                bill.Add(new CommandLine { Name = "Soins",
-                                    Description = "Soins",
-                      UnitaryCost = SelectedProfile.CarePrice });
+            if (Prestation.Cares)
+            {
+                bill.Add(new CommandLine
+                {
+                    Name = "Soins",
+                    Description = "Soins",
+                    UnitaryCost = SelectedProfile.CarePrice
+                });
 
             }
             return bill;
@@ -375,28 +387,31 @@ Prestation.Gender == HairCutGenders.Women ?
 
         public HairCutPayementEvent CreatePaymentEvent(PaymentInfo info, IStringLocalizer localizer)
         {
-            
-            return new HairCutPayementEvent(Client.UserName,info,this, localizer);
+
+            return new HairCutPayementEvent(Client.UserName, info, this, localizer);
         }
 
         public virtual BrusherProfile SelectedProfile { get; set; }
 
-        public HairCutQueryEvent CreateEvent(string subTopic, string reason, string sender) {
+        public HairCutQueryEvent CreateEvent(string subTopic, string reason, string sender)
+        {
 
-            string evdate = EventDate?.ToString("dddd dd/MM/yyyy à HH:mm")??"[pas de date spécifiée]";
-            string address = Location?.Address??"[pas de lieu spécifié]";
+            string evdate = EventDate?.ToString("dddd dd/MM/yyyy à HH:mm") ?? "[pas de date spécifiée]";
+            string address = Location?.Address ?? "[pas de lieu spécifié]";
             var p = Prestation;
-            string total = GetBillItems().Addition().ToString("C",CultureInfo.CurrentUICulture);
+            string total = GetBillItems().Addition().ToString("C", CultureInfo.CurrentUICulture);
             string strprestation = Description;
             string bill = string.Join("\n", GetBillItems().Select(
-                l=> $"{l.Name} {l.Description} {l.UnitaryCost} € " +
-                ((l.Count != 1) ? "*"+l.Count.ToString() : "")));
+                l => $"{l.Name} {l.Description} {l.UnitaryCost} € " +
+                ((l.Count != 1) ? "*" + l.Count.ToString() : "")));
             var yaev = new HairCutQueryEvent(subTopic)
             {
-                Client =  new ClientProviderInfo { 
-                    UserName = Client.UserName ,
-                    UserId =ClientId,
-                    Avatar = Client.Avatar }  ,
+                Client = new ClientProviderInfo
+                {
+                    UserName = Client.UserName,
+                    UserId = ClientId,
+                    Avatar = Client.Avatar
+                },
                 Previsional = Previsional,
                 EventDate = EventDate,
                 Location = Location,

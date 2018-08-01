@@ -4,5 +4,61 @@
 }
 
 <h2>@ViewData["Title"].</h2>
+<table>
+    <thead>
+    <th>
+        @SR["Public info"]
+    </th>
+    <th>
+        @SR["AdminOnly"]
+    </th>
+        
+    </thead>
+@foreach (var user in Model)
+{
+    <tr>
+    <td>
+        @Html.DisplayFor(m=>user) 
+    </td>
+    <td>
+        <dl>
+            <dt>
+                UserName
+            </dt>
+            <dd>
+                @Html.DisplayFor(m=>user.UserName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                FullName
+            </dt>
+            <dd>
+                @Html.DisplayFor(m=>user.FullName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @SR["PostalAddress"]
+            </dt>
+            <dd>
+                @Html.DisplayFor(m=>user.PostalAddress)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                Email
+            </dt>
+            <dd>
+                @Html.DisplayFor(m=>user.Email)
+            </dd>
+        </dl>
+    </td>
+    </tr>
+}
+</table>
 
-@Html.DisplayFor(m=>m)
+@if (ViewBag.hasNext)
+{
+    <a asp-route-page="@ViewBag.nextpage" asp-route-len="@ViewBag.pageLen">Next page</a>
+}

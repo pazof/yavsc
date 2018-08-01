@@ -15,28 +15,28 @@
     <hr />
     <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
     <div class="form-group">
-        <label asp-for="UserName" class="col-md-2 control-label"></label>
+        <label asp-for="UserName" class="col-md-2 control-label">@SR["UserName"]</label>
         <div class="col-md-10">
             <input asp-for="UserName" class="form-control" placeholder="Votre nom"/>
             <span asp-validation-for="UserName" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <label asp-for="Email" class="col-md-2 control-label"></label>
+        <label asp-for="Email" class="col-md-2 control-label">@SR["Email"]</label>
         <div class="col-md-10">
             <input asp-for="Email" class="form-control" placeholder="votre@@email" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <label asp-for="Password" class="col-md-2 control-label"></label>
+        <label asp-for="Password" class="col-md-2 control-label">@SR["Password"]</label>
         <div class="col-md-10">
             <input asp-for="Password" class="form-control" />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
-        <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
+        <label asp-for="ConfirmPassword" class="col-md-2 control-label">@SR["ConfirmPassword"]</label>
         <div class="col-md-10">
             <input asp-for="ConfirmPassword" class="form-control" />
             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>

@@ -19,11 +19,11 @@ $(BINTARGET): project.lock.json ../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll .
 	dnu build --configuration $(CONFIGURATION)
 
 breaking:
-	dnx test -trait noregres=no
+	dnx test -trait regres=yes
 
 
 test: $(BINTARGET)
-	ASPNET_ENV=Development dnx test -maxthreads 1 -trait noregres=yes
+	ASPNET_ENV=Development dnx test -maxthreads 1 -trait regres=no
 
 .PHONY: test
 
