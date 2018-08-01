@@ -83,7 +83,7 @@ namespace Yavsc.Helpers
                 SetExpressCheckoutRequestDetails = new SetExpressCheckoutRequestDetailsType
                 {
                     PaymentDetails = new List<PaymentDetailsType>( new [] { new PaymentDetailsType{
-                    OrderDescription = query.GetDescription(),
+                    OrderDescription = query.Description,
                     OrderTotal = new BasicAmountType {
                         currencyID = CurrencyCodeType.EUR,
                         value = total

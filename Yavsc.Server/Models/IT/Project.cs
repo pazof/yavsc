@@ -61,15 +61,8 @@ namespace Yavsc.Server.Models.IT
         {
             return bill;
         }
-
-        public string Description { get; set; }
-
-        public override string GetDescription()
-        {
-            return Description;
-        }
-
-
+        string description;
+        public override string Description => description;
 
         public Project()
         {

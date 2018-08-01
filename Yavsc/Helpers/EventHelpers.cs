@@ -40,7 +40,7 @@ namespace Yavsc.Helpers
             string evdate = query.EventDate?.ToString("dddd dd/MM/yyyy à hh:mm")??"[pas de date spécifiée]";
             string address = query.Location?.Address??"[pas de lieu spécifié]";
             var p = query.Prestation;
-            string strprestation = query.GetDescription();
+            string strprestation = query.Description;
 
             var yaev = query.CreateEvent("NewHairCutQuery",
              string.Format(ResourcesHelpers.GlobalLocalizer["HairCutQueryValidation"],query.Client.UserName),

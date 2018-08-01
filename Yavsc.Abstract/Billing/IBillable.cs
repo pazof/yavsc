@@ -5,7 +5,7 @@ using Yavsc.Services;
 namespace Yavsc.Billing
 {
     public interface IBillable {
-        string GetDescription ();
+        string Description { get; }
         List<IBillItem> GetBillItems();
         long Id { get; set; }
 

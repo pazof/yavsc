@@ -10,7 +10,6 @@ using Yavsc.Server.Helpers;
 using Yavsc.Models.Workflow;
 using Yavsc.Models.Payment;
 using Yavsc.Server.Models.IT.SourceCode;
-using Microsoft.AspNet.Mvc.Localization;
 using Microsoft.Extensions.Localization;
 
 namespace Yavsc.Controllers

@@ -20,12 +20,12 @@ namespace Yavsc.Models.Haircut
     {
 
         // Bill description
-        public override string GetDescription()
+        public override string Description { get
         {
             string type = ResourcesHelpers.GlobalLocalizer[this.GetType().Name];
             string gender = ResourcesHelpers.GlobalLocalizer[this.Prestation.Gender.ToString()];
-           
            return  $"{type} ({gender})";
+        }
         }
 
 
@@ -387,7 +387,7 @@ Prestation.Gender == HairCutGenders.Women ?
             string address = Location?.Address??"[pas de lieu spécifié]";
             var p = Prestation;
             string total = GetBillItems().Addition().ToString("C",CultureInfo.CurrentUICulture);
-            string strprestation = GetDescription();
+            string strprestation = Description;
             string bill = string.Join("\n", GetBillItems().Select(
                 l=> $"{l.Name} {l.Description} {l.UnitaryCost} € " +
                 ((l.Count != 1) ? "*"+l.Count.ToString() : "")));

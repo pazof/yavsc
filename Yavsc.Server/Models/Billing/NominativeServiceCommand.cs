@@ -18,7 +18,7 @@ namespace Yavsc.Models.Billing
         public string GetInvoiceId() { return GetType().Name +  "/" + Id;  }
 
         public abstract long Id { get; set; }
-        public abstract string GetDescription ();
+        public abstract string Description { get; }
 
         [Required()]
         public bool Consent { get; set; }
