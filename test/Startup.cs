@@ -11,7 +11,6 @@ using Yavsc;
 using Yavsc.Models;
 using Yavsc.Services;
 using Microsoft.Data.Entity;
-using Microsoft.AspNet.Authentication;
 using Microsoft.Extensions.WebEncoders;
 using Yavsc.Lib;
 

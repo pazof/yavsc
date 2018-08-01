@@ -1,18 +1,13 @@
-using System;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Hosting.Internal;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
 using Xunit;
 using Xunit.Abstractions;
 using Yavsc.Abstract.Manage;
-using Yavsc.Lib;
-using Yavsc.Services;
 
 namespace test
 {
 
     [Collection("EMaillingTeststCollection")]
+    [Trait("regres", "no")]
     public class EMaillingTests : IClassFixture<ServerSideFixture>
 
     {

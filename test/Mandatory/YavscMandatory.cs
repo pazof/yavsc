@@ -25,29 +25,17 @@ using System.Linq;
 
 namespace test
 {
-    public class BaseTestContext {
-        protected IApplicationEnvironment applicationEnvironment = null;
-        protected IServiceProvider serviceProvider = null;
-        protected IConfigurationRoot configurationRoot;
-        protected BeforeCompileContext beforeCompileContext;
-        protected string testprojectAssetPath = "/home/paul/workspace/yavsc/Yavsc";
 
-        protected IServiceProvider provider;
-        protected IConfigurationRoot configuration;
-    }
 
     [Collection("Yavsc mandatory success story")]
-    [Trait("noregres", "yes")]
+    [Trait("regres", "no")]
     public class YavscMandatory: BaseTestContext, IClassFixture<ServerSideFixture>
     {
-        private readonly ITestOutputHelper _output;
-        ServerSideFixture _serverFixture;
-        public YavscMandatory(ITestOutputHelper output, ServerSideFixture serverFixture)
+        
+        public  YavscMandatory(ITestOutputHelper output, ServerSideFixture fixture) : base (output, fixture)
         {
-            this._output = output;
-            this._serverFixture = serverFixture;
-        }
 
+        }
         [Fact]
         public void GitClone()
         {

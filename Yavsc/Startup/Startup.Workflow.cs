@@ -81,7 +81,7 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
                 }
             }
 
-            RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext,long,INominativeQuery>
+            RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext,long,IDecidableQuery>
             ( ( db, id) => 
             {
               var query = db.HairCutQueries.Include(q=>q.Prestation).Include(q=>q.Regularisation).Single(q=>q.Id == id)  ; 
@@ -89,9 +89,9 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
               return query;
             })) ;
 
-            RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush,new Func<ApplicationDbContext,long,INominativeQuery>
+            RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush,new Func<ApplicationDbContext,long,IDecidableQuery>
             ( (db, id) =>  db.HairMultiCutQueries.Include(q=>q.Regularisation).Single(q=>q.Id == id)));
-            RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext,long,INominativeQuery>
+            RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext,long,IDecidableQuery>
             ( (db, id) =>  db.RdvQueries.Include(q=>q.Regularisation).Single(q=>q.Id == id)));
         }
         public static System.Reflection.Assembly OnYavscResourceResolve(object sender, ResolveEventArgs ev)
@@ -99,7 +99,7 @@ mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
             return AppDomain.CurrentDomain.GetAssemblies()[0];
         }
 
-        public static void RegisterBilling<T>(string code, Func<ApplicationDbContext,long,INominativeQuery> getter) where T : IBillable
+        public static void RegisterBilling<T>(string code, Func<ApplicationDbContext,long,IDecidableQuery> getter) where T : IBillable
         {
             BillingService.Billing.Add(code,getter) ;
             BillingService.GlobalBillingMap.Add(typeof(T).Name,code);

@@ -1,15 +1,13 @@
 using System;
 using Xunit;
 using System.IO;
-using System.Threading.Tasks;
 using System.Diagnostics;
-using Yavsc.Helpers;
 
 namespace test
 {
-    
-    [Trait("noregres", "yes")]
-    public class YavscDnxUnitTests
+
+    [Trait("regres", "no")]
+    public class NodeTests
     {
         [Fact]
         void TestNodeJsForAnsitohtml ()
