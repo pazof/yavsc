@@ -14,19 +14,13 @@ using static OAuth.AspNet.AuthServer.Constants;
 namespace test
 {
     [Collection("Yavsc Work In Progress")]
-    [Trait("noregres", "no")]
+    [Trait("regres", "yes")]
     public class YavscWorkInProgress : BaseTestContext, IClassFixture<ServerSideFixture>
     {
-
-        ServerSideFixture _serverFixture;
-        ITestOutputHelper output;
         public YavscWorkInProgress(ServerSideFixture serverFixture, ITestOutputHelper output)
+        : base (output, serverFixture)
         {
-            this.output = output;
-            _serverFixture = serverFixture;
         }
-        
-        
 
         [Theory]
         [InlineData("d9be5e97-c19d-42e4-b444-0e65863b19e1","blouh","profile",

@@ -14,8 +14,8 @@ namespace Yavsc.Services
     {
         public ApplicationDbContext DbContext { get; private set; }
         private ILogger logger;
-        public static Dictionary<string,Func<ApplicationDbContext,long,INominativeQuery>> Billing =
-        new Dictionary<string,Func<ApplicationDbContext,long,INominativeQuery>> ();
+        public static Dictionary<string,Func<ApplicationDbContext,long,IDecidableQuery>> Billing =
+        new Dictionary<string,Func<ApplicationDbContext,long,IDecidableQuery>> ();
         public static List<PropertyInfo> UserSettings = new List<PropertyInfo>();
         
         public static Dictionary<string,string> GlobalBillingMap =
@@ -31,12 +31,12 @@ namespace Yavsc.Services
             DbContext = dbContext;
         }
 
-        public Task<INominativeQuery> GetBillAsync(string billingCode, long queryId)
+        public Task<IDecidableQuery> GetBillAsync(string billingCode, long queryId)
         {
             return Task.FromResult(GetBillable(DbContext,billingCode,queryId));
         }
 
-        public static INominativeQuery GetBillable(ApplicationDbContext context, string billingCode, long queryId ) =>  Billing[billingCode](context, queryId);
+        public static IDecidableQuery GetBillable(ApplicationDbContext context, string billingCode, long queryId ) =>  Billing[billingCode](context, queryId);
         public async Task<ISpecializationSettings> GetPerformerSettingsAsync(string activityCode, string userId)
         {
             return await (await GetPerformersSettingsAsync(activityCode)).SingleOrDefaultAsync(s=> s.UserId == userId);

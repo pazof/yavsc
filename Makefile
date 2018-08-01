@@ -2,7 +2,7 @@ include versioning.mk
 
 SUBDIRS=Yavsc Yavsc.Server Yavsc.Abstract cli test
 
-all: deploy-pkgs
+all: $(SUBDIRS)
 
 Yavsc.Abstract:
 	$(MAKE) -C Yavsc.Abstract VERSION=$(VERSION)

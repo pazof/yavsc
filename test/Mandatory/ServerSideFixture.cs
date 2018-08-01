@@ -6,9 +6,11 @@ using Microsoft.Extensions.OptionsModel;
 using Yavsc.Lib;
 using Yavsc.Services;
 using Yavsc;
+using Xunit;
 
 namespace test
 {
+    [Trait("regres", "no")]
     public class ServerSideFixture : IDisposable { 
         public SiteSettings _siteSetup;
         public ILogger _logger;
@@ -19,13 +21,13 @@ namespace test
 
         public ServerSideFixture()
         {
-            InitServices();
+            InitTestHost();
             _logger = _loggerFactory.CreateLogger<ServerSideFixture> ();
             _logger.LogInformation("ServerSideFixture");
         }
 
-
-        void InitServices()
+        [Fact]
+        void InitTestHost()
         {
             var host = new WebHostBuilder();
 

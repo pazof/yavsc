@@ -26,7 +26,7 @@ namespace Yavsc.Services
     /// <param name="billingCode">Identifiant du type de facturation</param>
     /// <param name="queryId">Identifiant de la demande du client</param>
     /// <returns>La facture</returns>
-    Task<INominativeQuery> GetBillAsync(string billingCode, long queryId);
+    Task<IDecidableQuery> GetBillAsync(string billingCode, long queryId);
     
     /// <summary>
     /// All performer setting in this activity

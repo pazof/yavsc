@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Hosting.Server;
 using Microsoft.AspNet.Http.Features;
 using Microsoft.Extensions.Configuration;
-using Yavsc.Models;
 
 namespace Yavsc.Server
 {
