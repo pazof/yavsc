@@ -24,8 +24,7 @@
       "Chat"
     ]
   },
-            "exclude": [
-		"testingrepo",
+  "exclude": [
                 "wwwroot",
                 "node_modules",
                 "bower_components",
