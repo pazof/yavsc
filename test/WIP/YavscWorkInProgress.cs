@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -67,31 +69,50 @@ namespace test
                 throw;
             }
         }
-        public struct LoginIntentData
+        public static string GetPassword()
         {
-            public string clientId;
-            public string clientSecret;
-            public string scope;
-            public string authorizeUrl;
-            public string redirectUrl;
-            public string accessTokenUrl;
-            public string login;
-            public string pass;
+            var pwd = new StringBuilder();
+            while (true)
+            {
+                var len = pwd.ToString().Length;
+                ConsoleKeyInfo i = Console.ReadKey(true);
+                if (i.Key == ConsoleKey.Enter)
+                {
+                    break;
+                }
+                else if (i.Key == ConsoleKey.Backspace)
+                {
+                    if (pwd.Length > 0)
+                    {
+                        pwd.Remove(len - 1, 1);
+                        Console.Write("\b \b");
+                    }
+                }
+                else
+                {
+                    pwd.Append(i.KeyChar);
+                    Console.Write("*");
+                }
+            }
+            return pwd.ToString();
         }
         public static IEnumerable<object[]> GetLoginIntentData(int numTests)
         {
 
-            var allData = new List<object[]>
-            {
-                new object[] {"d9be5e97-c19d-42e4-b444-0e65863b19e1", "blouh", "profile",
-                "http://localhost:5000/authorize", "http://localhost:5000/oauth/success",
-                    "http://localhost:5000/token","joe", "badpass"
-                },
-                new object[] { -4, -6, -10 },
-                new object[] { -2, 2, 0 },
-                new object[] { int.MinValue, -1, int.MaxValue },
-            };
+            var allData = new List<object[]>();
+            Console.WriteLine($"Please, enter {numTests}:");
 
+            for (int iTest=0; iTest<numTests; iTest++)
+            {
+                Console.Write("Please, enter a login:");
+                var login = Console.ReadLine();
+                Console.Write("Please, enter a pass:");
+                var pass = GetPassword();
+
+                allData.Add(new object[] { ServerSideFixture.ApiKey, "blouh", "profile",
+                "http://localhost:5000/authorize", "http://localhost:5000/oauth/success",
+                    "http://localhost:5000/token",login, pass });
+            }
             return allData.Take(numTests);
 
         }

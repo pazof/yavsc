@@ -17,11 +17,11 @@ namespace Yavsc
     {
         private Client GetApplication(string clientId)
         {
-            Client app = null;
-            using (var dbContext = new ApplicationDbContext())
-            {
-                app = dbContext.Applications.FirstOrDefault(x => x.Id == clientId);
-            }
+            if (_dbContext==null)
+              logger.LogError("no db!");
+            Client app =  _dbContext.Applications.FirstOrDefault(x => x.Id == clientId);
+            if (app==null)
+              logger.LogError("no app!");
             return app;
         }
         private readonly ConcurrentDictionary<string, string> _authenticationCodes = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
@@ -43,12 +43,18 @@ namespace Yavsc
             if (context.TryGetBasicCredentials(out clientId, out clientSecret) ||
                 context.TryGetFormCredentials(out clientId, out clientSecret))
             {
-                logger.LogInformation($"ValidateClientAuthentication: Got id&secret: ({clientId} {clientSecret})");
+                logger.LogInformation($"ValidateClientAuthentication: Got id: ({clientId} secret: {clientSecret})");
                 var client = GetApplication(clientId);
+                if (client==null) {
+                    context.SetError("invalid_clientId", "Client secret is invalid.");
+                    return Task.FromResult<object>(null);
+                } else 
                 if (client.Type == ApplicationTypes.NativeConfidential)
                 {
+                    logger.LogInformation($"NativeConfidential key");
                     if (string.IsNullOrWhiteSpace(clientSecret))
                     {
+                        logger.LogInformation($"invalid_clientId: Client secret should be sent.");
                         context.SetError("invalid_clientId", "Client secret should be sent.");
                         return Task.FromResult<object>(null);
                     }
@@ -59,6 +65,7 @@ namespace Yavsc
                         if (client.Secret != clientSecret)
                         {
                             context.SetError("invalid_clientId", "Client secret is invalid.");
+                            logger.LogInformation($"invalid_clientId: Client secret is invalid.");
                             return Task.FromResult<object>(null);
                         }
                     }
@@ -67,6 +74,7 @@ namespace Yavsc
                 if (!client.Active)
                 {
                     context.SetError("invalid_clientId", "Client is inactive.");
+                    logger.LogInformation($"invalid_clientId: Client is inactive.");
                     return Task.FromResult<object>(null);
                 }
 
@@ -75,9 +83,9 @@ namespace Yavsc
                     logger.LogInformation($"\\o/ ValidateClientAuthentication: Validated ({clientId})");
                     context.Validated();
                 }
-                else Startup.logger.LogInformation($":'( ValidateClientAuthentication: KO ({clientId})");
+                else logger.LogInformation($":'( ValidateClientAuthentication: KO ({clientId})");
             }
-            else Startup.logger.LogWarning($"ValidateClientAuthentication: neither Basic nor Form credential were found");
+            else logger.LogWarning($"ValidateClientAuthentication: neither Basic nor Form credential were found");
             return Task.FromResult(0);
         }
         UserManager<ApplicationUser> _usermanager;

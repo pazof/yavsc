@@ -254,10 +254,12 @@ namespace Yavsc
             });
             CheckServices(services);
         }
+        static ApplicationDbContext _dbContext;
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
-        IOptions<SiteSettings> siteSettings,
+        public void Configure(
+            IApplicationBuilder app, IHostingEnvironment env,
+            ApplicationDbContext dbContext, IOptions<SiteSettings> siteSettings,
         IOptions<RequestLocalizationOptions> localizationOptions,
         IOptions<OAuth2AppSettings> oauth2SettingsContainer,
         IAuthorizationService authorizationService,
@@ -267,6 +269,7 @@ namespace Yavsc
         UserManager<ApplicationUser> usermanager,
          ILoggerFactory loggerFactory)
         {
+            _dbContext = dbContext;
             _usermanager = usermanager;
             GoogleSettings = googleSettings.Value;
             ResourcesHelpers.GlobalLocalizer = localizer;
