@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Data.Entity.Migrations;
 
 namespace Yavsc.Migrations
 {
-    public partial class gitrepo : Migration
+    public partial class gitprojectref : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -54,20 +56,20 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_Project_Activity_ActivityCode", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_Project_ApplicationUser_ClientId", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_Project_PerformerProfile_PerformerId", table: "Project");
-            migrationBuilder.DropForeignKey(name: "FK_ProjectBuildConfiguration_Project_ProjectId", table: "ProjectBuildConfiguration");
-                   
             migrationBuilder.CreateTable(
                 name: "GitRepositoryReference",
                 columns: table => new
                 {
-                    Path = table.Column<string>(nullable: false),
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:Serial", true),
                     Branch = table.Column<string>(nullable: true),
                     OwnerId = table.Column<string>(nullable: true),
+                    Path = table.Column<string>(nullable: false),
                     Url = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GitRepositoryReference", x => x.Path);
+                    table.PrimaryKey("PK_GitRepositoryReference", x => x.Id);
                     table.ForeignKey(
                         name: "FK_GitRepositoryReference_ApplicationUser_OwnerId",
                         column: x => x.OwnerId,
@@ -75,6 +77,23 @@ namespace Yavsc.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+            migrationBuilder.AddColumn<long>(
+                name: "GitId",
+                table: "Project",
+                nullable: false,
+                defaultValue: 0L);
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "RdvQuery",
+                nullable: true);
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "HairMultiCutQuery",
+                nullable: true);
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "HairCutQuery",
+                nullable: true);
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",
                 table: "AspNetRoleClaims",
@@ -405,11 +424,11 @@ namespace Yavsc.Migrations
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
-                name: "FK_Project_GitRepositoryReference_Name",
+                name: "FK_Project_GitRepositoryReference_GitId",
                 table: "Project",
-                column: "Name",
+                column: "GitId",
                 principalTable: "GitRepositoryReference",
-                principalColumn: "Path",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
             migrationBuilder.AddForeignKey(
                 name: "FK_Project_PerformerProfile_PerformerId",
@@ -417,13 +436,6 @@ namespace Yavsc.Migrations
                 column: "PerformerId",
                 principalTable: "PerformerProfile",
                 principalColumn: "PerformerId",
-                onDelete: ReferentialAction.Cascade);
-            migrationBuilder.AddForeignKey(
-                name: "FK_ProjectBuildConfiguration_Project_ProjectId",
-                table: "ProjectBuildConfiguration",
-                column: "ProjectId",
-                principalTable: "Project",
-                principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }
 
@@ -476,9 +488,13 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(name: "FK_UserActivity_PerformerProfile_UserId", table: "UserActivity");
             migrationBuilder.DropForeignKey(name: "FK_Project_Activity_ActivityCode", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_Project_ApplicationUser_ClientId", table: "Project");
-            migrationBuilder.DropForeignKey(name: "FK_Project_GitRepositoryReference_Name", table: "Project");
+            migrationBuilder.DropForeignKey(name: "FK_Project_GitRepositoryReference_GitId", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_Project_PerformerProfile_PerformerId", table: "Project");
             migrationBuilder.DropForeignKey(name: "FK_ProjectBuildConfiguration_Project_ProjectId", table: "ProjectBuildConfiguration");
+            migrationBuilder.DropColumn(name: "GitId", table: "Project");
+            migrationBuilder.DropColumn(name: "Description", table: "RdvQuery");
+            migrationBuilder.DropColumn(name: "Description", table: "HairMultiCutQuery");
+            migrationBuilder.DropColumn(name: "Description", table: "HairCutQuery");
             migrationBuilder.DropTable("GitRepositoryReference");
             migrationBuilder.AddForeignKey(
                 name: "FK_IdentityRoleClaim<string>_IdentityRole_RoleId",

@@ -5,8 +5,11 @@ using Yavsc.Models;
 namespace Yavsc.Server.Models.IT.SourceCode
 {
     public class GitRepositoryReference
-    {        
-        [Key]
+    {       
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Id { get; set; }
+
+        [Required]
         public string Path { get; set; }
 
         [StringLength(2048)]

@@ -31,14 +31,14 @@ namespace Yavsc.Controllers
 
         // GET: api/GitRefsApi/5
         [HttpGet("{id}", Name = "GetGitRepositoryReference")]
-        public async Task<IActionResult> GetGitRepositoryReference([FromRoute] string id)
+        public async Task<IActionResult> GetGitRepositoryReference([FromRoute] long id)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Path == id);
+            GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Id == id);
 
             if (gitRepositoryReference == null)
             {
@@ -50,16 +50,11 @@ namespace Yavsc.Controllers
 
         // PUT: api/GitRefsApi/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGitRepositoryReference([FromRoute] string id, [FromBody] GitRepositoryReference gitRepositoryReference)
+        public async Task<IActionResult> PutGitRepositoryReference([FromRoute] long id, [FromBody] GitRepositoryReference gitRepositoryReference)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
-            }
-
-            if (id != gitRepositoryReference.Path)
-            {
-                return HttpBadRequest();
             }
 
             _context.Entry(gitRepositoryReference).State = EntityState.Modified;
@@ -99,7 +94,7 @@ namespace Yavsc.Controllers
             }
             catch (DbUpdateException)
             {
-                if (GitRepositoryReferenceExists(gitRepositoryReference.Path))
+                if (GitRepositoryReferenceExists(gitRepositoryReference.Id))
                 {
                     return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -114,14 +109,14 @@ namespace Yavsc.Controllers
 
         // DELETE: api/GitRefsApi/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGitRepositoryReference([FromRoute] string id)
+        public async Task<IActionResult> DeleteGitRepositoryReference([FromRoute] long id)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Path == id);
+            GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Id == id);
             if (gitRepositoryReference == null)
             {
                 return HttpNotFound();
@@ -142,9 +137,9 @@ namespace Yavsc.Controllers
             base.Dispose(disposing);
         }
 
-        private bool GitRepositoryReferenceExists(string id)
+        private bool GitRepositoryReferenceExists(long id)
         {
-            return _context.GitRepositoryReference.Count(e => e.Path == id) > 0;
+            return _context.GitRepositoryReference.Count(e => e.Id == id) > 0;
         }
     }
 }
