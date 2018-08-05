@@ -25,6 +25,7 @@
     ]
   },
   "exclude": [
+    "bin",
                 "wwwroot",
                 "node_modules",
                 "bower_components",

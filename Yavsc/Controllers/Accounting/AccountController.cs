@@ -225,7 +225,7 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -240,7 +240,8 @@ namespace Yavsc.Controllers
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                     var emailSent = await _emailSender.SendEmailAsync(model.UserName, model.Email, _localizer["ConfirmYourAccountTitle"],
                       string.Format(_localizer["ConfirmYourAccountBody"], _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
-                    await _signInManager.SignInAsync(user, isPersistent: false);
+                   // No, wait for more than a login pass submission:
+                   // do not await _signInManager.SignInAsync(user, isPersistent: false);
                     if (emailSent==null)
                     {
                         _logger.LogWarning("User created with error sending email confirmation request");
@@ -249,7 +250,7 @@ namespace Yavsc.Controllers
                                 _localizer["ErrorSendingEmailForConfirm"]
                          );
                     }
-                    else
+                    else   
                         this.NotifyInfo(
                              "E-mail confirmation",
                              _localizer["EmailSentForConfirm"]

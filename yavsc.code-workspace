@@ -23,6 +23,9 @@
 		},
 		{
 			"path": "test"
+		},
+		{
+			"path": ".vscode"
 		}
 	],
 	"settings": {

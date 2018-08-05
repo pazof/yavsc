@@ -24,6 +24,7 @@
     },
     "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",
     "exclude": [
+        "bin",
         "wwwroot",
         "node_modules",
         "bower_components",

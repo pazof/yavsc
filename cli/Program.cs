@@ -1,9 +1,7 @@
 ﻿
 using System;
-using System.IO;
-using System.Threading.Tasks;
+using cli.Commands;
 using Microsoft.Extensions.CommandLineUtils;
-using NJsonSchema;
 
 namespace cli
 {
@@ -21,10 +19,11 @@ namespace cli
             cliapp.ShortVersionGetter = () => "v1.0";
             cliapp.LongVersionGetter = () => "version 1.0 (stable)";
             rootCommandHelpOption = cliapp.HelpOption("-? | -h | --help");
-            var command = new SendMailCommandProvider();
-            command.Integrates(cliapp);
-            var gencmd = new GenerateJsonSchema();
-            gencmd.Integrates(cliapp);
+
+            (new SendMailCommandProvider()).Integrate(cliapp);
+            (new GenerateJsonSchema()).Integrate(cliapp);
+            (new AuthCommander()).Integrate(cliapp);
+            (new CiBuildCommand()).Integrate(cliapp);
 
             if (args.Length == 0)
             {

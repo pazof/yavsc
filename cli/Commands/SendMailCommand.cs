@@ -4,11 +4,12 @@ using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using cli.Services;
+using cli.Model;
 
 namespace cli {
     
-public class SendMailCommandProvider : ICliCommand {
-        public CommandLineApplication Integrates(CommandLineApplication rootApp)
+public class SendMailCommandProvider : ICommander {
+        public CommandLineApplication Integrate(CommandLineApplication rootApp)
         {
          CommandArgument sendMailCommandArg = null;
          CommandOption sendHelpOption = null;
