@@ -58,7 +58,8 @@
       "version": "1.0.5-rc22",
       "target": "package"
     },
-    "Yavsc.Lib.Portable": "1.0.2"
+    "Yavsc.Lib.Portable": "1.0.2",
+    "OAuth.AspNet.AuthServer": { "target": "project" }
   },
   "frameworks": {
     "dnx451": {

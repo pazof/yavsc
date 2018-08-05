@@ -1,19 +1,18 @@
-using System;
+using Microsoft.AspNet.Authentication;
+using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Razor;
+using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Razor;
 using Microsoft.Extensions.PlatformAbstractions;
-using cli.Services;
+using Microsoft.Extensions.WebEncoders;
 using Yavsc;
 using Yavsc.Models;
 using Yavsc.Services;
-using Microsoft.Data.Entity;
-using Microsoft.AspNet.Authentication;
-using Microsoft.Extensions.WebEncoders;
+using cli.Services;
 
 namespace cli
 {
@@ -24,8 +23,7 @@ namespace cli
             get ; set;
         }
 
-        public static SiteSettings SiteSetup { get; private set; }
-        public static SmtpSettings SmtpSettup { get; private set; }
+        public static ConnectionSettings Settings { get; private set; }
         public static IConfiguration Configuration { get; set; }
 
         public static string HostingFullName { get; private set; }
@@ -44,24 +42,24 @@ namespace cli
                 .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+            
             Configuration = builder.Build();
             ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
-            AppDomain.CurrentDomain.SetData("YAVSC_CONNECTION", ConnectionString);
         }
 
         public void ConfigureServices (IServiceCollection services)
         {
             services.AddOptions();
-            var siteSettingsconf = Configuration.GetSection("Site");
-            services.Configure<SiteSettings>(siteSettingsconf);
+            var cxSettings = Configuration.GetSection("Connection");
+            services.Configure<ConnectionSettings>(cxSettings);
             var smtpSettingsconf = Configuration.GetSection("Smtp");
+
             services.Configure<SmtpSettings>(smtpSettingsconf);
             services.AddInstance(typeof(ILoggerFactory), new LoggerFactory());
             services.AddTransient(typeof(IEmailSender), typeof(MailSender));
             services.AddTransient(typeof(RazorEngineHost), typeof(YaRazorEngineHost));
             services.AddEntityFramework().AddNpgsql().AddDbContext<ApplicationDbContext>();
             services.AddTransient((s) => new RazorTemplateEngine(s.GetService<RazorEngineHost>()));
-       //     services.AddTransient<,>()
             services.AddLogging();
             services.AddTransient<EMailer>();
             services.AddLocalization(options =>

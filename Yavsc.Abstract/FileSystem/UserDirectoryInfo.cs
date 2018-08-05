@@ -35,7 +35,7 @@ namespace Yavsc.ViewModels.UserFiles
                     $"File name contains invalid chars, using path {finalPath}");
 
             dInfo = new DirectoryInfo(
-                userReposPath+FileSystemConstants.RemoteDirectorySeparator+finalPath);
+                userReposPath+Path.DirectorySeparatorChar+finalPath);
             if (dInfo.Exists) {
 
                 Files = dInfo.GetFiles().Select
@@ -43,7 +43,11 @@ namespace Yavsc.ViewModels.UserFiles
                     CreationTime = entry.CreationTime, LastModified = entry.LastWriteTime  }).ToArray();
                 SubDirectories = dInfo.GetDirectories().Select
                     ( d=> new DirectoryShortInfo { Name= d.Name, IsEmpty=false } ).ToArray();
-
+            }
+            else {
+                // don't return null, but empty arrays
+                Files = new RemoteFileInfo[0];
+                SubDirectories = new DirectoryShortInfo[0];
             }
         }
     }

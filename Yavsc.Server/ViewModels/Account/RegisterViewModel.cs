@@ -27,7 +27,6 @@ namespace Yavsc.ViewModels.Account
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
 
-        public string GoogleRegId { get; set; }
 
     }
 }

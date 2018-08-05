@@ -1,19 +1,15 @@
-
-using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.CommandLineUtils;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using cli.Services;
 using System.Threading.Tasks;
 using NJsonSchema;
 using System.IO;
+using cli.Model;
 
 namespace cli
 {
 
-    public class GenerateJsonSchema
+    public class GenerateJsonSchema : ICommander
     {
-        public CommandLineApplication Integrates(CommandLineApplication rootApp)
+        public CommandLineApplication Integrate(CommandLineApplication rootApp)
         {
             CommandArgument genargclass = null;
             CommandArgument genargjson = null;
