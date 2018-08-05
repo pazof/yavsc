@@ -37,6 +37,12 @@ check: cli
 	make -C cli check
 	make -C test 
 
+pushInPre: 
+	make -C Yavsc pushInPre
+
+pushInProd:
+	make -C Yavsc pushInProd
+
 deploy-pkgs: Yavsc-deploy-pkg Yavsc.Server-deploy-pkg Yavsc.Abstract-deploy-pkg cli-deploy-pkg
 
 memo:
