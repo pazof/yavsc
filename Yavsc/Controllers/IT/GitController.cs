@@ -63,14 +63,10 @@ namespace Yavsc.Controllers
         }
 
         // GET: Git/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(long id)
         {
-            if (id == null)
-            {
-                return HttpNotFound();
-            }
 
-            GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Path == id);
+            GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Id == id);
             if (gitRepositoryReference == null)
             {
                 return HttpNotFound();
@@ -103,14 +99,9 @@ namespace Yavsc.Controllers
         }
 
         // GET: Git/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(long id)
         {
-            if (id == null)
-            {
-                return HttpNotFound();
-            }
-
-            GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Path == id);
+            GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Id == id);
             if (gitRepositoryReference == null)
             {
                 return HttpNotFound();

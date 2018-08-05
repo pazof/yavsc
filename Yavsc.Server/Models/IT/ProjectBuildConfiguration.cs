@@ -9,7 +9,7 @@ namespace Yavsc.Server.Models.IT
         /// A Numerical Id
         /// </summary>
         /// <value></value>
-        [Key]
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
         [Required]

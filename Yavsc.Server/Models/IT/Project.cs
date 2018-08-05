@@ -11,8 +11,8 @@ namespace Yavsc.Server.Models.IT
 {
     public class Project : NominativeServiceCommand, IProject
     {
-        [Key]
-        public override long Id { get; set; }
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public override long Id { get; set; }
         public string OwnerId { get; set; }
 
         /// <summary>
@@ -31,7 +31,11 @@ namespace Yavsc.Server.Models.IT
         [InverseProperty("TargetProject")]
         public virtual List<ProjectBuildConfiguration> Configurations { get; set; }
 
-        [ForeignKey("Name")]
+
+        [Required]
+        public long GitId { get; set; }
+
+        [ForeignKey("GitId")]
         public virtual GitRepositoryReference Repository { get; set; }
 
         List<IBillItem> bill = new List<IBillItem>();
@@ -57,10 +61,6 @@ namespace Yavsc.Server.Models.IT
             set { description = value; }
         }
 
-        public Project()
-        {
-
-        }
     }
 }
 

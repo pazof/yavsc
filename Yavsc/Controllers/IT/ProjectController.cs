@@ -71,7 +71,7 @@ namespace Yavsc.Controllers
 
             ViewBag.Status = typeof(Yavsc.QueryStatus).CreateSelectListItems(null);
             ViewBag.RepositoryItems = _context.GitRepositoryReference.CreateSelectListItems<GitRepositoryReference>(
-                u => u.Path, u => u.ToString());
+                u => u.Id.ToString(), u => u.ToString());
 
             return View();
         }

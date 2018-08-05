@@ -1,14 +1,15 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180722232456_gitrepo")]
-    partial class gitrepo
+    [Migration("20180805122812_gitprojectref")]
+    partial class gitprojectref
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -680,6 +681,8 @@ namespace Yavsc.Migrations
 
                     b.Property<DateTime>("DateModified");
 
+                    b.Property<string>("Description");
+
                     b.Property<DateTime?>("EventDate");
 
                     b.Property<long?>("LocationId");
@@ -726,6 +729,8 @@ namespace Yavsc.Migrations
                     b.Property<DateTime>("DateCreated");
 
                     b.Property<DateTime>("DateModified");
+
+                    b.Property<string>("Description");
 
                     b.Property<DateTime>("EventDate");
 
@@ -1268,6 +1273,8 @@ namespace Yavsc.Migrations
 
                     b.Property<DateTime>("DateModified");
 
+                    b.Property<string>("Description");
+
                     b.Property<DateTime>("EventDate");
 
                     b.Property<long?>("LocationId");
@@ -1356,6 +1363,8 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<long>("GitId");
+
                     b.Property<string>("Name")
                         .IsRequired();
 
@@ -1400,7 +1409,8 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Server.Models.IT.SourceCode.GitRepositoryReference", b =>
                 {
-                    b.Property<string>("Path");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Branch")
                         .HasAnnotation("MaxLength", 512);
@@ -1408,10 +1418,13 @@ namespace Yavsc.Migrations
                     b.Property<string>("OwnerId")
                         .HasAnnotation("MaxLength", 1024);
 
+                    b.Property<string>("Path")
+                        .IsRequired();
+
                     b.Property<string>("Url")
                         .HasAnnotation("MaxLength", 2048);
 
-                    b.HasKey("Path");
+                    b.HasKey("Id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
@@ -1882,7 +1895,7 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Server.Models.IT.SourceCode.GitRepositoryReference")
                         .WithMany()
-                        .HasForeignKey("Name");
+                        .HasForeignKey("GitId");
 
                     b.HasOne("Yavsc.Models.Payment.PayPalPayment")
                         .WithMany()
