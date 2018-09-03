@@ -18,7 +18,7 @@ namespace test
 {
     public class Startup
     {
-        public string ConnectionString
+        public static string ConnectionString
         {
             get ; set;
         }
