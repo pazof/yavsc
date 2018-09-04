@@ -7,6 +7,9 @@ using Yavsc.Lib;
 using Yavsc.Services;
 using Yavsc;
 using Xunit;
+using Npgsql;
+using Microsoft.Data.Entity.Migrations;
+using Microsoft.Data.Entity.Storage.Internal;
 
 namespace test
 {
@@ -59,6 +62,12 @@ namespace test
             }
         }
 
+        internal void UpgradeDb()
+        {
+            Microsoft.Data.Entity.Commands.Program.Main(
+                new string [] { "database", "update" });
+        }
+
         public ILogger Logger
         {
             get
@@ -72,20 +81,19 @@ namespace test
             }
         }
 
-
-
+        public bool DbCreated { get; private set; }
 
         // 
         public ServerSideFixture()
         {
             InitTestHost();
-            Logger = _loggerFactory.CreateLogger<ServerSideFixture> ();
             Logger.LogInformation("ServerSideFixture created.");
         }
 
         [Fact]
         void InitTestHost()
         {
+
             var host = new WebHostBuilder();
 
             var hostengnine = host
@@ -97,11 +105,60 @@ namespace test
             App = hostengnine.Start();
             _mailer = App.Services.GetService(typeof(EMailer)) as EMailer;
             _loggerFactory = App.Services.GetService(typeof(ILoggerFactory)) as ILoggerFactory;
+           
+            Logger = _loggerFactory.CreateLogger<ServerSideFixture> ();
             var siteSetup = App.Services.GetService(typeof(IOptions<SiteSettings>)) as IOptions<SiteSettings>;
             SiteSetup = siteSetup.Value;
             MailSender = App.Services.GetService(typeof(IEmailSender)) as IEmailSender;
+            CheckDbExistence();
+            if (!DbCreated)
+                CreateTestDb();
         }
 
+        public void CreateTestDb()
+        {
+            if (!DbCreated)
+            using (
+            NpgsqlConnection cx = new NpgsqlConnection(Startup.DevDbSettings.ConnectionString))
+            {
+                cx.Open();
+                var command = cx.CreateCommand();
+                command.CommandText = $"create database \"{Startup.TestDbSettings.Database}\";";
+                command.ExecuteNonQuery();
+
+                _logger.LogInformation($"database created.");
+                cx.Close();
+            }
+        }
+
+        public void CheckDbExistence()
+        {
+            using (
+            NpgsqlConnection cx = new NpgsqlConnection(Startup.DevDbSettings.ConnectionString))
+            {
+                cx.Open();
+                var command = cx.CreateCommand();
+                command.CommandText = $"SELECT 1 FROM pg_database WHERE datname='{Startup.TestDbSettings.Database}';";
+                DbCreated = (command.ExecuteScalar()!=null);
+
+                _logger.LogInformation($"DbCreated:{DbCreated}");
+                cx.Close();
+            }
+        }
+        public void DropTestDb()
+        {
+            if (DbCreated)
+            using (
+            NpgsqlConnection cx = new NpgsqlConnection(Startup.DevDbSettings.ConnectionString))
+            {
+                cx.Open();
+                var command = cx.CreateCommand();
+                command.CommandText = $"drop database \"{Startup.TestDbSettings.Database}\";";
+                command.ExecuteNonQuery();
+                _logger.LogInformation($"database dropped");
+                cx.Close();
+            }
+        }
         public void Dispose()
         {
             Logger.LogInformation("Disposing");

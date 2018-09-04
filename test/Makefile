@@ -21,6 +21,9 @@ $(BINTARGET): project.lock.json ../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll .
 breaking:
 	dnx test -trait regres=yes
 
+testdev: $(BINTARGET)
+	ASPNET_ENV=Development dnx test -maxthreads 1 -trait dev=wip 
+
 
 test: $(BINTARGET)
 	ASPNET_ENV=Development dnx test -maxthreads 1 -trait regres=no
