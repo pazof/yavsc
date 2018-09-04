@@ -13,22 +13,19 @@ using Yavsc.Services;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.WebEncoders;
 using Yavsc.Lib;
+using test.Settings;
 
 namespace test
 {
     public class Startup
     {
-        public static string ConnectionString
-        {
-            get ; set;
-        }
 
-        public static SiteSettings SiteSetup { get; private set; }
-        public static SmtpSettings SmtpSettup { get; private set; }
         public static IConfiguration Configuration { get; set; }
 
         public static string HostingFullName { get; private set; }
-        
+        public static DbConnectionSettings DevDbSettings { get; private set; }
+        public static DbConnectionSettings TestDbSettings { get; private set; }
+
         ILogger logger;
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
@@ -44,8 +41,6 @@ namespace test
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
             Configuration = builder.Build();
-            ConnectionString = Configuration["Data:DefaultConnection:ConnectionString"];
-            AppDomain.CurrentDomain.SetData("YAVSC_CONNECTION", ConnectionString);
         }
 
         public void ConfigureServices (IServiceCollection services)
@@ -55,6 +50,12 @@ namespace test
             services.Configure<SiteSettings>(siteSettingsconf);
             var smtpSettingsconf = Configuration.GetSection("Smtp");
             services.Configure<SmtpSettings>(smtpSettingsconf);
+            var devCx = Configuration.GetSection("Data:DevConnection");
+            services.Configure<DevConnectionSettings>(devCx);
+            var testCx = Configuration.GetSection("Data:TestConnection");
+            services.Configure<TestConnectionSettings>(testCx);
+
+            
             services.AddInstance(typeof(ILoggerFactory), new LoggerFactory());
             services.AddTransient(typeof(IEmailSender), typeof(MailSender));
             services.AddEntityFramework().AddNpgsql().AddDbContext<ApplicationDbContext>();
@@ -69,21 +70,29 @@ namespace test
             services.AddEntityFramework()
               .AddNpgsql() 
               .AddDbContext<ApplicationDbContext>(
-                  db => db.UseNpgsql(ConnectionString)
+                  db => db.UseNpgsql(Startup.TestDbSettings.ConnectionString)
               );
 
             services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
 
-
         }
 
         public void Configure (IApplicationBuilder app, IHostingEnvironment env,
-        IOptions<SiteSettings> siteSettings, ILoggerFactory loggerFactory)
+        IOptions<SiteSettings> siteSettings,
+        IOptions<TestConnectionSettings> testCxOptions,
+        IOptions<DevConnectionSettings> devCxOptions,
+         ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             logger = loggerFactory.CreateLogger<Startup>();
             logger.LogInformation(env.EnvironmentName);
+
+            TestDbSettings = testCxOptions.Value;
+            DevDbSettings = devCxOptions.Value;
+            logger.LogInformation($"test db : {TestDbSettings.ConnectionString}");
+            AppDomain.CurrentDomain.SetData("YAVSC_CONNECTION", TestDbSettings.ConnectionString);
+        
             var authConf = Configuration.GetSection("Authentication").GetSection("Yavsc");
             var clientId = authConf.GetSection("ClientId").Value;
             var clientSecret = authConf.GetSection("ClientSecret").Value;

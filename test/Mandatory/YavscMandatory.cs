@@ -40,12 +40,12 @@ namespace test
         public void GitClone()
         {
             
-          var dbc =  _serverFixture._app.Services.GetService(typeof(ApplicationDbContext)) as  ApplicationDbContext;
+          var dbc =  _serverFixture.App.Services.GetService(typeof(ApplicationDbContext)) as  ApplicationDbContext;
 
             var firstProject = dbc.Projects.Include(p=>p.Repository).FirstOrDefault();
             Assert.NotNull (firstProject);
 
-            var clone = new GitClone(_serverFixture._siteSetup.GitRepository);
+            var clone = new GitClone(_serverFixture.SiteSetup.GitRepository);
             clone.Launch(firstProject);
         }
 
