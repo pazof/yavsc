@@ -8,8 +8,6 @@ using Yavsc.Services;
 using Yavsc;
 using Xunit;
 using Npgsql;
-using Microsoft.Data.Entity.Migrations;
-using Microsoft.Data.Entity.Storage.Internal;
 
 namespace test
 {

@@ -1,40 +1,30 @@
-﻿// // GitClone.cs
-// /*
-// paul  21/06/2018 11:27 20182018 6 21
-// */
-using Yavsc.Server.Models.IT.SourceCode;
-using Yavsc.Server.Models.IT;
+using System;
 using System.Diagnostics;
 using System.IO;
-using System;
 
-namespace Yavsc.Lib
+namespace Yavsc.Server.Models.IT.SourceCode
 {
-    public class GitClone : Batch<Project>
+    public class ProjectBuild : SingleCmdProjectBatch
     {
-        string _repositoryRootPath;
-        string gitPath="git";
-
-        public GitClone(string repoRoot)
+        public ProjectBuild(string repoRoot): base(repoRoot, "make")
         {
-            _repositoryRootPath = repoRoot;
         }
 
         public override void Launch(Project input)
         {
             if (input==null) throw new ArgumentNullException("input");
-            WorkingDir = _repositoryRootPath;
-            LogPath = $"{input.Name}.git-clone.ansi.log";
+            LogPath = $"{input.Name}.{_cmdPath}.ansi.log";
+            
             // TODO honor Args property
             // Model annotations => input.Repository!=null => input.Name == input.Repository.Path
             var prjPath = Path.Combine(WorkingDir, input.Name);
             var repoInfo = new DirectoryInfo(prjPath);
-            var gitCmd = repoInfo.Exists ? "pull" : "clone --depth=1";
+            var args = string.Join(" ", Args);
 
             var cloneStart = new ProcessStartInfo
-            ( gitPath, $"{gitCmd} {input.Repository.Url} {input.Repository.Path}" )
+            ( _cmdPath, args )
             {
-                WorkingDirectory = WorkingDir,
+                WorkingDirectory = prjPath,
                 RedirectStandardOutput = true,
                 UseShellExecute = false
             };
@@ -55,5 +45,6 @@ namespace Yavsc.Lib
             }
             if (ResultHandler!=null) ResultHandler(true);
         }
+        
     }
 }
