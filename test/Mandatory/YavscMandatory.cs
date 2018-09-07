@@ -20,8 +20,8 @@ using Yavsc.Helpers;
 using Microsoft.Data.Entity;
 using Xunit.Abstractions;
 using System.IO;
-using Yavsc.Lib;
 using System.Linq;
+using Yavsc.Server.Models.IT.SourceCode;
 
 namespace test
 {
