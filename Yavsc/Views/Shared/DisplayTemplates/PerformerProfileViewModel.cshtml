@@ -2,14 +2,10 @@
 
 <div class="performer @(Model.Active?"active":"inactive")">
     @Html.DisplayFor(m=>m.UserName)
-
-   @{ await Html.RenderPartialAsync(Model.SettingsClassName,Model.Settings); }
+    @if (Model.SettingsClassName!=null)
+      {  await Html.RenderPartialAsync( Model.SettingsClassName,Model.Settings); }
     
     @if (Model.WebSite!=null) { 
         <a target="yaext" href="@Model.WebSite" class="btn btn-info">@SR["WebSite"]: @Model.WebSite</a>
     }
-
-    <environment names="Development">
-@Html.Raw(JsonConvert.SerializeObject(Model.Context.Settings))
-    </environment>
 </div>
