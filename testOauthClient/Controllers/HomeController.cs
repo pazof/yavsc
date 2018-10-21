@@ -18,7 +18,15 @@ namespace testOauthClient.Controllers
     public class HomeController : Controller
     {
         ILogger _logger;
-
+                   
+        public class GCMRegistrationRecord {
+                     public string   GCMRegistrationId { get; set; } = "testGoogleRegistrationIdValue";
+                     public string   DeviceId { get; set; }= "TestDeviceId";
+                     public string   Model { get; set; }= "TestModel";
+                      public string  Platform { get; set; }= "External Web";
+                     public string   Version { get; set; }= "0.0.1-rc1";
+                    }
+        
         public HomeController(ILoggerFactory loggerFactory)
         {
             _logger=loggerFactory.CreateLogger<HomeController>();
@@ -100,7 +108,7 @@ namespace testOauthClient.Controllers
 
                    return View("Index", model: await response.Content.ReadAsStringAsync());
                }*/
-            JsonValue result = null;
+            GCMRegistrationRecord result = null;
             var authHeader = $"Bearer {AccessToken}";
             _logger.LogWarning($"using authorization Header {authHeader}");
             try {
@@ -109,8 +117,8 @@ namespace testOauthClient.Controllers
                 using (var request = new SimpleJsonPostMethod(
                     "http://dev.pschneider.fr/api/gcm/register", authHeader))
                 {
-                    result = await request.InvokeJson(new
-                    {
+                    result = await request.Invoke<GCMRegistrationRecord>(new
+                   GCMRegistrationRecord {
                         GCMRegistrationId = "testGoogleRegistrationIdValue",
                         DeviceId = "TestDeviceId",
                         Model = "TestModel",
