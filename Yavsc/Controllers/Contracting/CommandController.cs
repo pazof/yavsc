@@ -169,23 +169,38 @@ namespace Yavsc.Controllers
                 if (pro.AcceptNotifications
                 && pro.AcceptPublicContact)
                 {
+
+                  try {
                     if (pro.Performer.Devices.Count > 0) {
                         var regids = command.PerformerProfile.Performer
                         .Devices.Select(d => d.GCMRegistrationId);
                         grep = await _GCMSender.NotifyBookQueryAsync(regids,yaev);
                     }
-                    
+
+                    _logger.LogError("sending GCM");
+
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile
                     // if (grep==null || grep.success<=0 || grep.failure>0)
                     ViewBag.GooglePayload=grep;
+                  }
+                  catch (Exception ex)
+                  {
+                    _logger.LogError(ex.Message);
+                  }
 
+                  try {
                     ViewBag.EmailSent = await _emailSender.SendEmailAsync(
                         command.PerformerProfile.Performer.UserName,
                         command.PerformerProfile.Performer.Email,
                          $"{command.Client.UserName} (un client) vous demande un rendez-vous",
                         $"{yaev.CreateBody()}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
                     );
+                  }
+                  catch (Exception ex)
+                  {
+                    _logger.LogError(ex.Message);
+                  }
                 }
                 ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;

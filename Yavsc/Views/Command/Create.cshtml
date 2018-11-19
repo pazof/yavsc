@@ -1,25 +1,18 @@
 @model RdvQuery 
 @{ ViewData["Title"] = $"Proposition de rendez-vous à {Model.PerformerProfile.Performer.UserName} [{ViewBag.Activity.Name}]"; } 
 
-<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
 <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
 @section header {
 <style>
-      #map {
-        width: 100%;
-        height: 250px;
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
       }
-      #Location_combo li {
-          cursor: pointer;
-      }
-      #Location_combo li:hover {
-          text-decoration: underline;
-          cursor: pointer;
-      }
-    </style>
-} 
+</style>
+}
 @section scripts {
 <script>
     $(document).ready(function () {
@@ -29,102 +22,18 @@
             format: "YYYY/MM/DD HH:mm"
         });
 
+       initMap(); 
 
-        var config = {
-            mapId: 'map',
-            addrId: 'Location_Address',
-            longId: 'Location_Longitude',
-            latId: 'Location_Latitude',
-            addrValidationId: 'valloc',
-            formValidId: 'valsum',
-            locComboId: 'loccomb'
-        };
-
-        $.validator.setDefaults({
-            messages: {
-                remote: "Ce lieu n'est pas identifié par les services de géo-localisation Google",
-                required: "Veuillez renseigner ce champ"
-            }
-        });
-        var gmap = new google.maps.Map(document.getElementById(config.mapId), {
-            zoom: 16,
-            center: { lat: 48.862854, lng: 2.2056466 }
-        });
-        var marker;
-        function chooseLoc(sender, loc) {
-            if (sender === 'user') $('#' + config.addrId).val(loc.formatted_address);
-            var pos = loc.geometry.location;
-            var lat = new Number(pos.lat);
-            var lng = new Number(pos.lng);
-            $('#' + config.latId).val(lat.toLocaleString('en'));
-            $('#' + config.longId).val(lng.toLocaleString('en'));
-            gmap.setCenter(pos);
-            if (marker) {
-                marker.setMap(null);
-            }
-            marker = new google.maps.Marker({
-                map: gmap,
-                draggable: true,
-                animation: google.maps.Animation.DROP,
-                position: pos
-            });
-            google.maps.event.addListener(marker, 'dragend', function () {
-                // TODO reverse geo code
-                var pos = marker.getPosition();
-                $('#' + config.latId).val(pos.lat);
-                $('#' + config.longId).val(pos.lng);
-            });
-            $('#' + config.addrId).valid();
-            $('#' + config.addrValidationId).empty();
-            $('#' + config.formValidId).empty();
-            return true;
-        }
-
-
-        $('#' + config.addrId).rules("add",
-            {
-                remote: {
-                    url: 'https://maps.googleapis.com/maps/api/geocode/json',
-                    type: 'get',
-                    data: {
-                        sensor: false,
-                        address: function () {  return $('#' + config.addrId).val() }
-                    },
-                    dataType: 'json',
-                    dataFilter: function (datastr, type) {
-                        $('#' + config.locComboId).html("");
-                        var data = JSON.parse(datastr);
-                        data.results.forEach(function (element) {
-                            if (element.formatted_address !== $('#' + config.addrId).val()) {
-                                $('<li>' + element.formatted_address + '</li>')
-                                    .data("geoloc", element)
-                                    .click(function () { chooseLoc('user', $(this).data("geoloc")) })
-                                    .appendTo($('#' + config.locComboId));
-                            }
-                            else { }
-                        });
-                        if ((data.status === 'OK') && (data.results.length == 1)) {
-                            chooseLoc('google', data.results[0]);
-                            return true;
-                        }
-                        return false;
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.log('ajax loading error ... ' + textStatus + ' ... ' + errorThrown);
-                        return false;
-                    }
-                }
-            });
     });
                     
 </script>
 }
 <h2>@ViewData["Title"]</h2>
-<form asp-action="Create" id="FrmComCre" role="form">
+<form asp-action="Create" method="post">
     <div class="form-horizontal">
         <h4>Saisissez votre demande de rendez-vous</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.All" class="text-danger" id="valsum"></div>
+        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
         <div class="form-group" has-feedback>
             <fieldset>
                 <legend>Votre évennement</legend>
@@ -157,12 +66,12 @@
                             <div class='col-sm-6'>
                                 <div  >
     <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address" class="form-control" 
-    data-val-required="Spécifier un lieu" data-val-remote="Google n'a pas pu identifier ce lieu">
-    <span asp-validation-for="Location.Address" class="text-danger" id="valloc"></span>
+    data-val-required="Spécifier un lieu" >
+    <span asp-validation-for="Location.Address" class="text-danger"></span>
     <ul id="loccomb">
     </ul>
-    <div id="map"></div>
         </div>
+
         </div>
         </div>
         </div>
@@ -190,8 +99,10 @@
 </div>
 <div class="form-group">
     <div class="col-md-offset-2 col-md-10">
-        <input type="submit" value="Créer" class="btn btn-default" />
-    </div>
+  
+  <input type="submit" class="btn btn-default" value="Créer"></input>
+ 
+  </div>
 </div>
 @Html.HiddenFor(model=>model.ClientId) 
 @Html.HiddenFor(model=>model.PerformerId) 
