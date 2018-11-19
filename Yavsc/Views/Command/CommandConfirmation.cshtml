@@ -26,9 +26,21 @@
                     }
             }
         }
-        @if (ViewBag.EmailSent.Sent)
+        @if (ViewBag.EmailSent!=null)
          {
+if (ViewBag.EmailSent.Sent) {
                 <h4>@String.Format(SR["EmailSentToPerformer"],User.GetUserName())</h4>
+} else {
+  var sent = ViewBag.EmailSent;
+
+<h4>Une erreur est survenue à lenvoi de l'e-mail au préstataire ...</h4>
+ <environment names="Development"> 
+ <text>Mail:</text> @sent.EMail;
+ <text>MsgId:</text> @sent.MessageId;
+ <text>Sent:</text> @sent.Sent;
+ <text>Error:</text> @sent.ErrorMessage;
+</environment>
+}
          }
 </div>
 

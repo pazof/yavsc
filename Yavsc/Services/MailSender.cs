@@ -64,6 +64,7 @@ namespace Yavsc.Services
                         SecureSocketOptions.None);
                     await sc.SendAsync(msg);
                     model.MessageId = msg.MessageId;
+                    model.Sent = true; // a duplicate info to remove from the view model, that equals to MessageId == null
                 }
             }
             catch (Exception ex)
