@@ -2,6 +2,7 @@ DESTDIR=/srv/www/yavscpre
 PRODDESTDIR=/srv/www/yavsc
 HOSTING=localhost
 HOSTADMIN=root
+ASPNET_LOG_LEVEL=warn
 
 include ../versioning.mk
 include ../dnx.mk
@@ -9,7 +10,7 @@ include ../dnx.mk
 all: $(BINTARGETPATH)
 
 web: project.lock.json
-	ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION)
+	ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION)
 
 status:
 ifeq ($(git_status),0)
