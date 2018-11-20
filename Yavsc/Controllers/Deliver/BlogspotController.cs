@@ -12,6 +12,7 @@ using Yavsc.Models;
 using Yavsc.ViewModels.Auth;
 using Microsoft.AspNet.Mvc.Rendering;
 using Yavsc.Models.Blog;
+using Yavsc.Helpers;
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Yavsc.Controllers
@@ -20,8 +21,6 @@ namespace Yavsc.Controllers
     {
         ILogger _logger;
         private ApplicationDbContext _context;
-
-        private SiteSettings _siteSettings;
         private IAuthorizationService _authorizationService;
         public BlogspotController(
             ApplicationDbContext context,
@@ -33,15 +32,14 @@ namespace Yavsc.Controllers
             _context = context;
             _logger = loggerFactory.CreateLogger<AccountController>();
             _authorizationService = authorizationService;
-            _siteSettings = siteSettings.Value;
         }
 
         // GET: Blog
         [AllowAnonymous]
-        public IActionResult Index(string id, int skip=0, int maxLen=25)
+        public async Task<IActionResult> Index(string id, int skip=0, int maxLen=25)
         {
             if (!string.IsNullOrEmpty(id))
-                return UserPosts(id);
+                return await UserPosts(id);
             string uid = User.GetUserId();
             long[] usercircles = _context.Circle.Include(c=>c.Members).Where(c=>c.Members.Any(m=>m.MemberId == uid))
             .Select(c=>c.Id).ToArray();
@@ -82,21 +80,10 @@ namespace Yavsc.Controllers
 
         [Route("/Blog/{id?}")]
         [AllowAnonymous]
-        public IActionResult UserPosts(string id)
+        public async Task<IActionResult> UserPosts(string id)
         {
-
-            if (string.IsNullOrEmpty(id)) return Index(null);
-            var uid = User.GetUserId();
-            long[] usercircles = _context.Circle.Include(c=>c.Members).Where(c=>c.Members.Any(m=>m.MemberId == uid))
-            .Select(c=>c.Id).ToArray();
-            var result = (User.IsSignedIn())?
-                 _context.Blogspot.Include(
-                 b => b.Author
-                 ).Include(p=>p.ACL).Where(x => x.Author.UserName == id && (x.Visible && (x.ACL.Count==0 || x.ACL.Any(a=> usercircles.Contains(a.CircleId))))):
-             _context.Blogspot.Include(
-                b => b.Author
-                ).Where(x => x.Author.UserName == id && x.Visible);
-                // BlogIndexKey
+            string posterId = (await _context.Users.SingleOrDefaultAsync(u=>u.UserName == id))?.Id ?? null ;
+            var result = _context.UserPosts(posterId, User.Identity.Name);
             return View("Index", result.OrderByDescending(p => p.DateCreated).ToList().GroupBy(p=> p.Title ));
         }
         // GET: Blog/Details/5
