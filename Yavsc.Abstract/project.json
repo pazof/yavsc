@@ -1,7 +1,7 @@
 {
   "version": "1.0.5-*",
   "title": "Yavsc - l'abstrait",
-  "description": "Yavsc Client&Server Api",
+  "description": "Yavsc common objects",
   "authors": [
     "Paul Schneider <paul@pschneider.fr>"
   ],
