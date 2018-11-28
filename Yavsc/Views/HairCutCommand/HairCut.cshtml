@@ -4,15 +4,15 @@
 
 @section header {
 
-<script src="https://maps.googleapis.com/maps/api/js?key=@Startup.GoogleSettings.BrowserApiKey"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3&key=@Startup.GoogleSettings.BrowserApiKey"></script>
 <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
 
 <style>
       #map {
-        width: 100%;
-        height: 250px;
+        height: 30em;
+        width: 30em;
       }
       #Location_combo li {
           cursor: pointer;
@@ -212,6 +212,7 @@
                     url: 'https://maps.googleapis.com/maps/api/geocode/json',
                     type: 'get',
                     data: {
+                        key: '@Startup.GoogleSettings.BrowserApiKey',
                         sensor: false,
                         address: function () {  return $('#' + config.addrId).val() }
                     },
