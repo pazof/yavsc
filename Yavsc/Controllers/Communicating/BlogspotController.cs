@@ -13,6 +13,7 @@ using Yavsc.ViewModels.Auth;
 using Microsoft.AspNet.Mvc.Rendering;
 using Yavsc.Models.Blog;
 using Yavsc.Helpers;
+
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Yavsc.Controllers
@@ -78,13 +79,13 @@ namespace Yavsc.Controllers
             ).ToList());
         }
 
-        [Route("/Blog/{id?}")]
+        [Route("/Blog/{userName}/{pageLen?}/{pageNum?}")]
         [AllowAnonymous]
-        public async Task<IActionResult> UserPosts(string id)
+        public async Task<IActionResult> UserPosts(string userName, int pageLen=10, int pageNum=0)
         {
-            string posterId = (await _context.Users.SingleOrDefaultAsync(u=>u.UserName == id))?.Id ?? null ;
+            string posterId = (await _context.Users.SingleOrDefaultAsync(u=>u.UserName == userName))?.Id ?? null ;
             var result = _context.UserPosts(posterId, User.Identity.Name);
-            return View("Index", result.OrderByDescending(p => p.DateCreated).ToList().GroupBy(p=> p.Title ));
+            return View("Index", result.OrderByDescending(p => p.DateCreated).ToList().Skip(pageLen*pageNum).Take(pageLen).GroupBy(p=> p.Title ));
         }
         // GET: Blog/Details/5
         [AllowAnonymous]
