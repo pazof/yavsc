@@ -37,6 +37,9 @@ check: cli
 	make -C cli check
 	make -C test 
 
+test: 
+	make -C test
+
 pushInPre: 
 	make -C Yavsc pushInPre
 
