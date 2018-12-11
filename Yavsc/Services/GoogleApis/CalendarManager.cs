@@ -21,7 +21,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Google.Apis.Auth.OAuth2;
@@ -53,8 +52,6 @@ namespace Yavsc.Services
         protected static string scopeCalendar = "https://www.googleapis.com/auth/calendar";
         private string _ApiKey;
         private IAuthorizationCodeFlow _flow;
-        private readonly UserManager<ApplicationUser> _userManager;
-
         ApplicationDbContext _dbContext;
 
         IDataStore _dataStore;
@@ -63,14 +60,12 @@ namespace Yavsc.Services
         GoogleAuthSettings _googleSettings ;
 
         public CalendarManager(IOptions<GoogleAuthSettings> settings,
-        UserManager<ApplicationUser> userManager,
         ApplicationDbContext dbContext,
         IDataStore dataStore,
         ILoggerFactory loggerFactory,
         IOptions<GoogleAuthSettings> googleSettingsOptions)
         {
             _ApiKey = settings.Value.ApiKey;
-            _userManager = userManager;
             _dbContext = dbContext;
             _logger = loggerFactory.CreateLogger<CalendarManager>();
             _dataStore = dataStore;
