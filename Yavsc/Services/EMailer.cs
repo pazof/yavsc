@@ -1,4 +1,4 @@
-﻿// // Coding.cs
+﻿// // EMailer.cs
 // /*
 // paul  26/06/2018 12:18 20182018 6 26
 // */
@@ -22,12 +22,6 @@ using Yavsc.Abstract.Templates;
 
 namespace Yavsc.Lib
 {
-    public class YaRazorEngineHost : RazorEngineHost
-    {
-        public YaRazorEngineHost() : base()
-        {
-        }
-    }
     public class EMailer
     {
         const string DefaultBaseClassName = "ATemplate";
