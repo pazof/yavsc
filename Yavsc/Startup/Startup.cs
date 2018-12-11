@@ -112,12 +112,16 @@ namespace Yavsc
             {
                 var supportedCultures = new[]
                 {
-                    new CultureInfo("en")
+                    new CultureInfo("en"),
+                    new CultureInfo("fr"),
+                    new CultureInfo("pt")
                 };
+                
                 var supportedUICultures = new[]
                 {
                     new CultureInfo("fr"),
-                    new CultureInfo("en")
+                    new CultureInfo("en"),
+                    new CultureInfo("pt")
                 };
 
                 // You must explicitly state which cultures your application supports.
