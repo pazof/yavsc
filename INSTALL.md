@@ -19,3 +19,10 @@ The database must be created, and we need its connection string, allowed to modi
 
 You'll need to send e-mail ... using smtp and the provider of your choice.
 
+### Google
+
+I'll have to make with it, a least a moment, it needs a *service account*, and some setup, 
+in the `appsettings.*.json` file, and 
+the execution environment variable GOOGLE_APPLICATION_CREDENTIALS to a value pointing the json description file for the Google Service account.
+
+
