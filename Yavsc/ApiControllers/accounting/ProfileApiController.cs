@@ -19,7 +19,7 @@ namespace Yavsc.ApiControllers.accounting
             _userManager = userManager;
         }
 
-        [HttpGet("memail/{allow}")]
+        [HttpGet("{allow}",Name ="setmonthlyemail")]
         public async Task<object> SetMonthlyEmail(bool allow)
         {
             var user = await _userManager.FindByIdAsync(User.GetUserId());
