@@ -58,6 +58,6 @@ namespace Yavsc.Abstract.FileSystem
     public static  class FileSystemConstants
     {
         public const char RemoteDirectorySeparator = '/';
-        public static char[] ValidFileNameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~.".ToCharArray();
+        public static char[] ValidFileNameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. ".ToCharArray();
     }
 }
