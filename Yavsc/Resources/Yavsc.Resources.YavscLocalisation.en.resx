@@ -746,6 +746,7 @@
   <data name="Anglais">
     <value>English</value>
   </data>
+  <data name="Portugais"><value>Portugese</value></data>
   <data name="RequiredField">
     <value>This field is required.</value>
   </data>

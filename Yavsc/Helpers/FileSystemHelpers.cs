@@ -138,8 +138,9 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
         }
         public static HtmlString FileLink(this RemoteFileInfo info, string username, string subpath)
         {
-            return new HtmlString( Startup.UserFilesOptions.RequestPath+"/"+ username + "/" + subpath + "/" +
-             HttpUtility.UrlEncode(info.Name) );
+            return new HtmlString( Startup.UserFilesOptions.RequestPath+"/"+ username + 
+                "/" + (( subpath == null ) ? "" : "/" + subpath ) +
+             info.Name );
         }
         public static FileRecievedInfo ReceiveAvatar(this ApplicationUser user, IFormFile formFile)
         {
