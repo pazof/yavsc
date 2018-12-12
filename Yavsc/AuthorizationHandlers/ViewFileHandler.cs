@@ -10,6 +10,7 @@ namespace Yavsc.ViewModels.Auth.Handlers
             if (fileContext.Path.StartsWith("/pub/"))
                 context.Succeed(requirement);
             else {
+                // TODO use "/blog/{num}/" path to link to blog access list
                 context.Succeed(requirement);
             }
         }
