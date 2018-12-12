@@ -285,7 +285,6 @@
   <data name="Message sent"><value>Votre message a été envoyé</value></data>
   <data name="MinDate"><value>Date minimale du rendez-vous</value></data>
   <data name="MinDailyCost"><value>Coût minimal journalier</value></data>
-  MinDailyCost
   <data name="Modified"><value>Modifié</value></data>
   <data name="Modify"><value>Modifier</value></data>
   <data name="Modify settings"><value>Modifier les paramètres</value></data>
@@ -359,7 +358,7 @@
   <data name="Remove my professional profile"><value>Supprimer mon profil professionnel</value></data>
   <data name="Role"><value>Rôle</value></data>
   <data name="Reset Password"><value>Ré-initialiser votre mot de passe</value></data>
-  <data name="Reset password confirmation"><value>Confirmation de ré-initialiser du mot de passe</value></data>
+  <data name="Reset password confirmation"><value>Confirmation de ré-initialisation du mot de passe</value></data>
   <data name="role created"><value>Rôle créé</value></data>
   <data name="RoleName"><value>Nom du rôle </value></data>
   <data name="Save these settings"><value>Enregistrer ces paramètres</value></data>
@@ -443,6 +442,7 @@
   <data name="UnsetActivity"><value>Supprimer mon profil professionel</value></data>
   <data name="Français"><value>Français</value></data>
   <data name="Anglais"><value>Anglais</value></data>
+  <data name="Portugais"><value>Portugais</value></data>
   <data name="InvalidUserName"><value>Nom d'utilisateur invalide.
   Les caratères valides sont: le souligné (_), le petit titret (-), l'apostrohe ('), les minuscules et majuscules de a à z, les chiffres de 0 à 9, l'espace et le point.</value></data>
   <data name="RequiredField"><value>Ce champ est obligatoire.</value></data>

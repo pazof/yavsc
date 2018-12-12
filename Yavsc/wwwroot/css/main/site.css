@@ -372,10 +372,12 @@ footer {
 }
 
 .blogphoto {
-    float: left;
     margin: 1em;
-    max-width: 100em;
-    max-height: 100em;
+    max-width: 100%;
+    max-height: 100%;
+    image-orientation: from-image; /* Utilise les données EXIF 
+                                  de l'image */
+
 }
 
 body {

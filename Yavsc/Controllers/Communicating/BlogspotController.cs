@@ -39,31 +39,10 @@ namespace Yavsc.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index(string id, int skip=0, int maxLen=25)
         {
-            if (!string.IsNullOrEmpty(id))
+            if (!string.IsNullOrEmpty(id)) {
                 return await UserPosts(id);
-            string uid = User.GetUserId();
-            long[] usercircles = _context.Circle.Include(c=>c.Members).Where(c=>c.Members.Any(m=>m.MemberId == uid))
-            .Select(c=>c.Id).ToArray();
-            IQueryable<BlogPost> posts ;
-            var allposts = _context.Blogspot
-                .Include(b => b.Author)
-                .Include(p=>p.ACL)
-                .Include(p=>p.Tags)
-                .Include(p=>p.Comments)
-                .Where(p=>p.AuthorId == uid || p.Visible);
-
-            if (usercircles != null) {
-                posts = allposts.Where(p=> p.ACL.Count==0 || p.ACL.Any(a=> usercircles.Contains(a.CircleId)))
-                ;
             }
-            else {
-                posts = allposts.Where(p => p.ACL.Count == 0);
-            }
-
-            var data = posts.OrderByDescending( p=> p.DateCreated).ToArray();
-            var grouped = data.GroupBy(p=> p.Title).Skip(skip).Take(maxLen);
-
-            return View(grouped);
+            return View();
         }
 
         [Route("/Title/{id?}")]

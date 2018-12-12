@@ -37,6 +37,7 @@ namespace Yavsc.Models
     using Blog;
     using Newtonsoft.Json.Linq;
     using Yavsc.Abstract.Identity;
+    using Yavsc.Server.Models.Blog;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -63,11 +64,13 @@ namespace Yavsc.Models
             builder.Entity<Models.Cratie.Option>().HasKey(o => new { o.Code, o.CodeScrutin });
             builder.Entity<Notification>().Property(n => n.icon).HasDefaultValue("exclam");
             builder.Entity<ChatRoomPresence>().HasKey(p => new { room = p.ChannelName, user = p.ChatUserConnectionId });
+            
             foreach (var et in builder.Model.GetEntityTypes())
             {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity") != null)
                     et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
+            builder.Entity<BlogTrad>().HasKey(tr => new { post = tr.PostId, lang = tr.Lang });
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -309,7 +312,9 @@ namespace Yavsc.Models
 
         public DbSet<GitRepositoryReference> GitRepositoryReference { get; set; }
 
-        public DbSet<Project> Projects { get; set; }
+        public DbSet<Project> Projects { get; set; }        
+        
+        public DbSet<BlogTrad> BlogTrad { get; set; }
 
     }
 }

@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="About"><value>Sobre</value></data>
+  <data name="access denied"><value>Accesso rechazado</value></data>
+  <data name="AcceptNotifications"><value>aceitar notificaçãoes de pedidos de compromisso</value></data>
+  <data name="AcceptPublicContact"><value>Aceitar entres em contacto</value></data>
+  <data name="AccountBalance"><value>saldo da conta</value></data>
+  <data name="ActivateMyProSettings"><value>Ativar meu perfil profissional</value></data>
+  <data name="Activity"><value>Actividade</value></data>
+  <data name="Activities"><value>Actividades</value></data>
+  <data name="additionally"><value>Mais</value></data>
+  <data name="Address"><value>Morada</value></data>
+  <data name="Allow my geolocatisation, nearby the clients"><value>Aceitar a minha geolocatisaçao, a critério de meus clientes</value></data>
+  <data name="AnIMessageHasbeenSent"><value>Um messagem instantâneo fui mandado à {0},
+  apresentando-lhe o seu pedido. Você deve ser contatado muito rapidamente.</value></data>
+  <data name="aprestation"><value>uma prestação</value></data>
+  <data name="approved"><value>Aprovado</value></data>
+  <data name="AskForAnEstimate"><value>Pedir uma cotação</value></data>
+  <data name="AttachedFiles"><value>Arquivos anexados</value></data>
+  <data name="AuthenticatedOnly"><value>Apenas usuários autenticados podem acessar essas informações.</value></data>
+  <data name="Author"><value>Autor</value></data>
+  <data name="available"><value>disponível</value></data>
+  <data name="Back to List"><value>De volta à lista</value></data>
+  <data name="Basket"><value>cesta</value></data>
+  <data name="Bill edition"><value>edição de fatura</value></data>
+  <data name="Bill removal"><value>supressão factura</value></data>
+  <data name="BillAccessControl"><value>Controle de acesso</value></data>
+  <data name="BillCreated"><value>Fatura criada</value></data>
+  <data name="BillSourceCode"><value>Codigo fonte</value></data>
+  <data name="BillUpdated"><value>Atualizado</value></data>
+  <data name="Blog post edition"><value>Editando o artigo</value></data>
+  <data name="body"><value>corpo de texte</value></data>
+  <data name="Book AStar"><value>propor um compromisso para o seu artista</value></data>
+  <data name="Book IT"><value>propor um compromisso ao seu provedor de serviços digitais</value></data>
+  <data name="BookingTitleArtiste"><value>Reserve os serviços de um artista</value></data>
+  <data name="BookingTitle6829C"><value>Reserve os serviços de um editor de software</value></data>
+  <data name="Calendar"><value>calendário</value></data>
+  <data name="Catalog"><value>catálogo</value></data>
+  <data name="Change"><value>Mudar</value></data>
+  <data name="Change user name form"><value>Formulário de mudança de apelido (avatar, o nome público desta conta de usuário aqui)</value></data>
+  <data name="Change your account settings"><value>Alterar as configurações da sua conta</value></data>
+  <data name="Connect using"><value>Entre usando</value></data>
+  <data name="Choose below your main activity"><value>Escolha sua atividade principal abaixo</value></data>
+  <data name="ChooseADescription"><value>Por favor, uma descrição é necessária.</value></data>
+  <data name="ChooseATitle"><value>Por favor, um título é necessário.</value></data>
+  <data name="ChooseADateInTheFutur"><value>Por favor, uma data no futuro é necessária.</value></data>
+  <data name="ChooseAnEventDate"><value>Por favor, uma data para este serviço é necessária.</value></data>
+  <data name="Ciffer"><value>figura</value></data>
+  <data name="Circles"><value>círculos</value></data>
+  <data name="Click action"><value>Ação ao clicar</value></data>
+  <data name="Click here to log in"><value>Clique aqui para entrar</value></data>
+  <data name="Color"><value>Cor</value></data>
+  <data name="Command"><value>ordem</value></data>
+  <data name="Command confirmation"><value>Confirmação de Pedido</value></data>
+  <data name="Comment"><value>comentário</value></data>
+  <data name="Consultant"><value>consultor</value></data>
+  <data name="ContactAPerformer"><value>Entre em contato com um inquilino</value></data>
+  <data name="Content"><value>conteúdo</value></data>
+  <data name="Count"><value>número</value></data>
+  <data name="CouldNotConvertVToDouble"><value>A conversão de '{0}' para 'double' era impossível.</value></data>
+  <data name="Create"><value>criar</value></data>
+  <data name="Create a new article"><value>Crie um novo artigo</value></data>
+  <data name="Create a new account"><value>Crie uma nova conta</value></data>
+  <data name="Credits"><value>créditos</value></data>
+  <data name="Date search"><value>Pesquisar por uma data</value></data>
+  <data name="DateCreated"><value>Data de criação</value></data>
+  <data name="DateModified"><value>Data da última modificação</value></data>
+  <data name="DB"><value>Banco de dados</value></data>
+  <data name="Details"><value>detalhes</value></data>
+  <data name="Delete"><value>remover</value></data>
+  <data name="Deposit"><value>depósito</value></data>
+  <data name="Description"><value>descrição</value></data>
+  <data name="DoAnEstimate"><value>Faça uma cotação</value></data>
+  <data name="DoComment"><value>Commentar</value></data>
+  <data name="DoCommentPlaceHolder"><value>Seu comentário</value></data>
+  <data name="DoNotPublishMyActivity"><value>Não publique minha atividade</value></data>
+  <data name="DocTemplateException"><value>Ocorreu um erro ao gerar seu documento</value></data>
+  <data name="DisplayName"><value>Nome de exibição</value></data>
+  <data name="Disable"><value>desativar</value></data>
+  <data name="Disabled"><value>desativado</value></data>
+  <data name="DoPost"><value>Poster</value></data>
+  <data name="DoTag"><value>etiquetar</value></data>
+  <data name="Edit"><value>Editar</value></data>
+  <data name="Edited"><value>editado</value></data>
+  <data name="EditRelatedSkills"><value>Editar habilidades relacionadas</value></data>
+  <data name="Enabled"><value>ativado</value></data>
+  <data name="Enable"><value>ativar</value></data>
+  <data name="EndDate"><value>Data final</value></data>
+  <data name="EndHour"><value>Hora de término</value></data>
+  <data name="email"><value>e-mail</value></data>
+  <data name="Enter your email."><value>Digite seu email.</value></data>
+  <data name="Enter your user name or e-mail."><value>Digite seu nome de usuário ou email.</value></data>
+  <data name="entries"><value>entradas</value></data>
+  <data name="Estimate"><value>estimar</value></data>
+  <data name="Estimate_not_found"><value>Cotação não encontrada</value></data>
+  <data name="EstimateToProduce"><value>Pedidos pendente de cotação</value></data>
+  <data name="EstimateToSignAsPro"><value>Cotação para validar</value></data>
+  <data name="EstimateToSignAsCli"><value>Cotação para aceder ou recusar</value></data>
+  <data name="EstimationMessageToClient"><value>{0} validou e avaliou sua solicitação, com uma cotação para {1: C}</value></data>
+  <data name="EventDate"><value>Data do evento</value></data>
+  <data name="BillToSignAsPro"><value>Faturas para produzir</value></data>
+  <data name="BillToSignAsCli"><value>Faturas para honrar</value></data>
+  <data name="EstimateWanted"><value>Pedido de cotação</value></data>
+  <data name="Event date"><value>Data do evento</value></data>
+  <data name="EventWebPage"><value>Página da web do evento</value></data>
+  <data name="ExistantDB"><value>Banco de dados existente</value></data>
+  <data name="External Logins"><value>Registros externos</value></data>
+  <data name="FillInAFutureDate"><value>Por favor, use uma data futura.</value></data>
+  <data name="Fill in your Bank Info"><value>Insira seus dados bancários</value></data>
+  <data name="Fill in your book query"><value>Digite seu pedido de compromisso</value></data>
+  <data name="Forbidden"><value>Conteúdo com acesso restrito</value></data>
+  <data name="Forgot your password?"><value>Senha perdida?</value></data>
+  <data name="Forgot Password Confirmation."><value>confirmação de Senha perdida.</value></data>
+  <data name="from"><value>de</value></data>
+  <data name="Full name"><value>Nome completo</value></data>
+  <data name="EGCMBUTEMAIL"><value>O envio da mensagem 'Google Cloud' falhou, mas um email foi enviado</value></data>
+  <data name="GCM Notifications sent"><value>mensagem push enviado</value></data>
+  <data name="GCM Notification sending failed"><value>O envio da mensagem Google Cloud a échoué ...</value></data>
+  <data name="GiveAnExplicitReason"><value>Também fale sobre esse evento</value></data>
+  <data name="GoogleDidntGeoLocalized"><value>O Google não conseguiu identificar este lugar</value></data>
+  <data name="Google calendar"><value>Google Calendar</value></data>
+  <data name="Google error"><value>erro Google : {0}</value></data>
+  <data name="Google registration id"><value>ID de registro Google</value></data>
+  <data name="Hide source"><value>Ocultar o texto de origem do artigo</value></data>
+  <data name="Home"><value>bem-vindo</value></data>
+  <data name="Hide"><value>Ocultar</value></data>
+  <data name="hidden"><value>Ocultado</value></data>
+  <data name="I understood"><value>Eu entendi</value></data>
+  <data name="Icon"><value>ícone</value></data>
+  <data name="Icons made by"><value>Ícones feitos por</value></data>
+  <data name="Identity"><value>identidade</value></data>
+  <data name="ImgLocator"><value>Imagem URI</value></data>
+  <data name="ImportException"><value>Exceção à importação</value></data>
+  <data name="InternalServerError"><value>Erro interno do servidor</value></data>
+  <data name="Invalid company number"><value>Número inválido</value></data>
+  <data name="is asking you for a date"><value>lhe pede uma consulta</value></data>
+  <data name="is licensed_by"><value>estão licenciados</value></data>
+  <data name="Item added to basket"><value>Item adicionado ao carrinho.</value></data>
+  <data name="Location"><value>lugar</value></data>
+  <data name="Login"><value>conexão</value></data>
+  <data name="LoginOrEmail"><value>Nome de usuário ou e-mail</value></data>
+  <data name="Log in"><value>Login</value></data>
+  <data name="Logout"><value>desconexão</value></data>
+  <data name="Long"><value>longo</value></data>
+  <data name="MainActivity"><value>Atividade principal</value></data>
+  <data name="Man"><value>homem</value><comment></comment></data>
+  <data name="Manage"><value>gerir</value></data>
+  <data name="Manage your account"><value>gerir seu registro</value></data>
+  <data name="ManagedSiteSkills"><value>Habilidades gerenciadas neste site</value></data>
+  <data name="MaxDate"><value>Data máxima do compromisso</value></data>
+  <data name="MaxDailyCost"><value>Custo diário máximo</value></data>
+  <data name="MEACode"><value>Código de atividade principalmente exercitado</value></data>
+  <data name="Members"><value>membros</value></data>
+  <data name="Message sent"><value>Sua mensagem foi enviada</value></data>
+  <data name="MinDate"><value>Data mínima do compromisso</value></data>
+  <data name="MinDailyCost"><value>Custo Mínimo Diário</value></data>
+  <data name="Modified"><value>Alterado</value></data>
+  <data name="Modify"><value>Alterar</value></data>
+  <data name="Modify settings"><value>Alterar configurações</value></data>
+  <data name="My Estimates"><value>Minhas estimativas</value></data>
+  <data name="Name"><value>Nome</value></data>
+  <data name="Needs"><value>necessidades</value></data>
+  <data name="Need"><value>necessidade</value></data>
+  <data name="New user name"><value>Novo nome de usuário (avatar)</value></data>
+  <data name="New Tag"><value>Nova tag</value></data>
+  <data name="NewPasswordMessageSent"><value>Um e-mail acaba de ser enviado para você, ele contém o link a seguir
+   para poder atualizar sua senha.</value></data>
+  <data name="No"><value>não</value></data>
+  <data name="NoTech"><value>Nenhuma técnica especificada</value></data>
+  <data name="No calendar for this user"><value>O inquilino não possui um calendário associado.</value></data>
+  <data name="no content"><value>sem conteúdo</value></data>
+  <data name="No deposit"><value>Nenhum depósito foi planejado</value></data>
+  <data name="none"><value>não</value></data>
+  <data name="Non existent user"><value>Usuário inexistente</value></data>
+  <data name="NoSkillforthisactivity"><value>Nenhuma competência foi registrada por nenhum presbítero para esta atividade.</value></data>
+  <data name="Not Approuved"><value>Não aprovado</value></data>
+  <data name="NonValidee"><value>Não validada</value></data>
+  <data name="NonValide"><value>Não validado</value></data>
+  <data name="off"><value>inativo</value></data>
+  <data name="Offline"><value>Off-line</value></data>
+  <data name="on"><value>ativo</value></data>
+  <data name="Online"><value>On-line</value></data>
+  <data name="OnlyAuthorizedMayContact"><value>Somente usuários autorizados podem entrar em contato com um provedor por email.</value></data>
+  <data name="Password"><value>Senha</value></data>
+  <data name="PaymentConfirmation"><value>Confirmação de pagamento</value></data>
+  <data name="PayementsDone"><value>Pagamentos feitos</value></data>
+  <data name="Pdf version"><value>Versão em pdf</value></data>
+  <data name="PerformanceDate"><value>Data do serviço</value></data>
+  <data name="PerformancePlace"><value>Lugar do serviço</value></data>
+  <data name="Performers"><value>provedores</value></data>
+  <data name="Performer"><value>provedor</value></data>
+  <data name="PerformerProfile"><value>perfil provedor</value></data>
+  <data name="Permanent"><value>Permanante</value></data>
+  <data name="Person"><value>Pessoa</value></data>
+  <data name="Photo"><value>foto</value></data>
+  <data name="PhotoUpdated"><value>foto atualizada</value></data>
+  <data name="Please"><value>Por favor</value></data>
+  <data name="PleaseCheckYourEmail"><value>por favor, verifique sua caixa de correio, para poder redefinir sua senha</value></data>
+  <data name="PleaseConfirmYourNewPassword"><value>por favor confirme sua nova senha.</value></data>
+  <data name="PleaseFillInABody"><value>Por favor, insira um corpo da mensagem</value></data>
+  <data name="PleaseFillInAReason"><value>Por favor, insira um reson, um assunto para sua mensagem</value></data>
+  <data name="Please reset your password by following this link:"><value>Por favor use o seguinte link para redefinir sua senha:</value></data>
+  <data name="Posted"><value>afixado</value></data>
+  <data name="PreferedDate"><value>Data desejada</value></data>
+  <data name="PresationLocation"><value>Lugar de Presença: {0}.\n</value></data>
+  <data name="Preview"><value>Prévisualiser</value><comment>Prévisualiser le document</comment></data>
+  <data name="Previsional"><value>Quantia provisória de renda</value></data>
+  <data name="Profile edition"><value>edição do perfil</value></data>
+  <data name="Product reference"><value>Referência do produto</value></data>
+  <data name="prestation"><value>benefício</value></data>
+  <data name="Professional settings"><value>Configurações profissionais</value></data>
+  <data name="Provider"><value>provedor</value></data>
+  <data name="ProviderId"><value>ID de provedor</value></data>
+  <data name="ProviderName"><value>Nome do provedor</value></data>
+  <data name="Rate"><value>Cote</value></data>
+  <data name="RdvToPerf"><value>{0} está fazendo uma consulta!!! le {1} à {2} ({3}/da scandale .5-rc12.)</value></data>
+  <data name="ReadMore"><value>Ler mais ...</value></data>
+  <data name="reason"><value>razão</value></data>
+  <data name="Register"><value>registrar</value></data>
+  <data name="Register as a new user"><value>Registre-se como um novo usuário</value></data>
+  <data name="RegistrationUnexpectedError"><value>Ocorreu um erro inesperado, SCANDALE.! $%:
+   "{0}".
+
+   Por favor, perdoe o inconveniente, mil mil e mil saborts.</value></data>
+  <data name="Remember me"><value>Lembre-se da senha</value></data>
+  <data name="Remove"><value>remover</value></data>
+
+  <data name="Remove my professional profile"><value>Excluir meu perfil profissional</value></data>
+  <data name="Role"><value>função</value></data>
+  <data name="Reset Password"><value>Redefinir sua senha</value></data>
+  <data name="Reset password confirmation"><value>Confirmação de reinicialização da senha</value></data>
+  <data name="role created"><value>função creada</value></data>
+  <data name="RoleName"><value>Nome da função </value></data>
+  <data name="Save these settings"><value>Salve essas configurações</value></data>
+  <data name="Search"><value>procurar</value></data>
+  <data name="Select a Google calendar"><value>Selecione um calendário do Google</value></data>
+  <data name="Send"><value>Enviar</value></data>
+  <data name="Send a private message"><value>Enviar un messagem privado</value></data>
+  <data name="Send a public message"><value>Enviar un messagem publico</value></data>
+  <data name="Set"><value>posicionador</value></data>
+  <data name="SettingsClass"><value>Classe de ajuste</value></data>
+  <data name="Short"><value>curto</value></data>
+  <data name="Son blog"><value>O blog dele</value></data>
+  <data name="Your performer profile"><value>Seu perfil profissional</value></data>
+  <data name="Setup below your activity parameters"><value>Posicione abaixo dos parâmetros de sua atividade</value></data>
+  <data name="SiteSkills"><value>Talentos / Competências / Especialidades geridas neste site</value></data>
+  <data name="Skill"><value>Competência</value></data>
+  <data name="Skills"><value>Talentos / Competências / Especialidades</value></data>
+  <data name="SomeoneAskingYouForAnEstimate"><value>{0} gostaria de receber uma cotação para {1}</value></data>
+  <data name="Sound"><value>Som</value></data>
+  <data name="StartDate"><value>Data de início</value></data>
+  <data name="StartDateAfterEndDate"><value>A data final deve ser depois da data de início.</value></data>
+  <data name="StartHour"><value>Hora de início</value></data>
+  <data name="Submit"><value>submeter</value></data>
+  <data name="SubmitChanges"><value>Envie as alterações</value></data>
+  <data name="Tag"><value>Tag</value></data>
+  <data name="Tag name"><value>Nome do tag</value></data>
+  <data name="Tex version"><value>Versão LaTeX</value></data>
+  <data name="ThisSiteUsesCookies"><value>Este site usa cookies</value></data>
+  <data name="ThisPerformerGivesAccessToHisCalendarAndSeemsToBeAvailableThis"><value>De acordo com seu calendário do Google, este provedor está disponível neste</value></data>
+  <data name="ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis"><value>De acordo com seu calendário do Google, esse provedor pode não estar disponível neste</value></data>
+  <data name="ThisPerformerDoesntGiveAccessToHisCalendar"><value>Este provedor não tem um calendário disponível.</value></data>
+  <data name="Title"><value>título</value></data>
+  <data name="to"><value>para</value></data>
+  <data name="TwoFactorAuthentication"><value>identificação de fator duplo</value></data>
+  <data name="Unitary_cost"><value>Custo unitário</value></data>
+  <data name="Unregister"><value>Cancelar inscrição</value></data>
+  <data name="Use a local account to log in"><value>Use uma conta local para efetuar login</value></data>
+  <data name="Use another service to log in"><value>Use outro serviço para conectar</value></data>
+  <data name="UseGeoLocalizationToReduceDistanceWithClients"><value>Use minha localização para ter clientes mais próximos</value></data>
+  <data name="User List"><value>Lista de usuários</value><comment></comment></data>
+  <data name="UserName"><value>Nome de usuário</value></data>
+  <data name="UsersInRole"><value>Lista de usuários assumindo o papel "{0}"</value></data>
+  <data name="UserSkills"><value>Talentos / habilidades / especialidades do usuário</value></data>
+  <data name="UserNotInThisRole"><value>A função solicitada não é assumida por este usuário</value></data>
+  <data name="ValidationDate"><value>Data de validação</value></data>
+  <data name="View_source"><value>Veja o texto de origem do artigo</value></data>
+  <data name="was_added_to_the_role"><value>foi adicionado ao papel</value></data>
+  <data name="was_added_to_the_empty_role"><value>Não havia nenhum usuário na função "{1}". Você ({0}) foi adicionado à função "{1}".</value></data>
+  <data name="WebSite"><value>Site Web</value><comment></comment></data>
+  <data name="Welcome"><value>bem-vindo</value><comment></comment></data>
+  <data name="Women"><value>mulher</value><comment></comment></data>
+  <data name="XHasBeenNotified"><value>{0} foi notificado da sua solicitação, você deve ser contatado rapidamente</value></data>
+  <data name="Xshouldbeavailable"><value>Dada a sua agenda,
+   {0} deve estar disponível para este compromisso</value></data>
+  <data name="Yavsc.Models.Musical.Profiles.Instrumentation"><value>Configurações do músico (o instrumento)</value></data>
+  <data name="Yavsc.Models.Musical.Profiles.DjSettings"><value>Configurações de DJ</value></data>
+  <data name="Yavsc.Models.Workflow.Profiles.FormationSettings"><value>Parâmetros de treinamento (parceiros)</value></data>
+  <data name="Yavsc.Models.Musical.Profiles.GeneralSettings"><value>Configurações gerais (visibilidade e apresentação)</value></data>
+  <data name="Yavsc.Models.Haircut.BrusherProfile"><value>Configurações do barbeiro: tarifas, disponibilidade</value></data>
+  <data name="Yes"><value>Sim</value></data>
+  <data name="YouNeedToBeAuthenticatedIOToContact"><value>Você deve autenticar para poder solicitar uma cotação para um provedor.</value></data>
+  <data name="younotadmin"><value>Você não é um administrador</value></data>
+  <data name="Your account settings"><value>As configurações da sua conta</value></data>
+  <data name="Your book query"><value>Seu pedido de compromisso</value></data>
+  <data name="Your password has been reset."><value>Sua senha foi atualizada.</value></data>
+  <data name="YourEstimates"><value>Suas citações</value></data>
+  <data name="YourMEACode"><value>Sua atividade</value></data>
+  <data name="YourNeed"><value>Sua necessidade</value></data>
+  <data name="yourquerytransmitted"><value>Seu pedido foi enviado</value></data>
+  <data name="YourSkills"><value>Seus talentos, suas especialidades, o campo de suas atividades</value></data>
+  <data name="Your posts"><value>Suas publicações</value></data>
+  <data name="Your profile"><value>Seu perfil</value></data>
+  <data name="YourMessageHasBeenSent"><value>Sua mensagem foi enviada</value></data>
+  <data name="Tell more, below, about your query"><value>Também fale sobre esse evento</value></data>
+  <data name="UnsetActivity"><value>Excluir meu perfil profissional</value></data>
+  <data name="Français"><value>Francês</value></data>
+  <data name="Anglais"><value>Inglês</value></data>
+  <data name="Portugais"><value>Português</value></data>
+  <data name="InvalidUserName"><value>Nome de usuário inválido. 
+  Os caracteres válidos são: o sublinhado (_), o pequeno título (-), o apóstrofo ('), as letras minúsculas e maiúsculas de a a z, os números de 0 a 9, o espaço e o ponto.</value></data>
+  <data name="RequiredField"><value>Este campo é obrigatório.</value></data>
+  <data name="validationError"><value>Campo inválido ...</value></data>
+  <data name="PasswordTooShort"><value>A senha deve conter pelo menos 6 caracteres.</value></data>
+  <data name="PasswordRequiresNonLetterAndDigit"><value>A senha deve conter pelo menos um caractere especial (nem um número nem uma letra).</value></data>
+  <data name="PasswordRequiresDigit"><value>As senhas devem conter pelo menos um número ('0' à '9').</value></data>
+  <data name="PasswordRequiresUpper"><value>As senhas devem conter pelo menos uma letra maiúscula ('A' à 'Z').</value></data>
+  <data name="PassAndConfirmDontMach"><value>A senha e sua confirmação não são as mesmas.</value></data>
+  <data name="PasswordConfirm"><value>Confirmação de senha</value></data>
+  <data name="ConfirmPassword"><value>Confirme sua senha</value></data>
+  <data name="ErrorSendingEmailForConfirm"><value>O envio de e-mail para confirmação do endereço de e-mail falhou.</value></data>
+  <data name="EmailSentForConfirm"><value>Um e-mail foi enviado para confirmação do endereço de e-mail.</value></data>
+  <data name="ConfirmYourAccountTitle"><value>Por favor, confirme seu endereço de e-mail</value></data>
+  <data name="ConfirmYourAccountBody"><value>Você criou sua conta {0} com sucesso,
+mas o seu endereço de e-mail tem que ser confirmado.
+Para fazer isso, siga o seguinte link : &lt;{1}&gt;.
+
+-- 
+{0} - {2} &lt;{3}&gt;</value></data>
+  <data name="BadStringLength"><value>Tamanho máximo: {0} caractere.</value></data>
+<data name="DetailledMinMaxStringLength"><value>Este campo é
+pelo menos {0} e no máximo {1} caractere (s).</value></data>
+<data name="DetailledMaxStringLength"><value>Este campo é
+no máximo {0} caracter (es) ({1} em excesso). </value></data>
+<data name="EmailSentToPerformer"><value>Um e-mail foi enviado para {0}.</value></data>
+<data name="QueryValidatedNonReg"><value>Um cliente acabou de validar uma solicitação de serviço contra você:
+
+  Benefício: {0}
+  Cliente: {1}
+  Data: {2}
+  Endereço: {3}
+
+-----
+{4}
+
+Fatura esperada (não liquidada): {5}</value></data>
+<data name="QueryValidatedRegular"><value>Um cliente acabou de validar uma solicitação de serviço contra você:
+
+  Benefício: {0}
+  Cliente: {1}
+  Data: {2}
+  Endereço: {3}
+
+-----
+{4}
+
+Conjunto de faturas: {5}</value></data>
+
+<data name="AllowMonthlyEmail"><value>Receba a newsletter mensal</value></data>
+
+  <!-- Coiffure -->
+  <data name="Defris"><value>alisamento</value></data>
+  <data name="HalfLong"><value>meio-longo</value></data>
+  <data name="MobileHairCut"><value>Cabeleireiro em casa</value></data>
+  <data name="HairCutQuery"><value>benefício en Cabeleireiro em casa</value></data>
+  <data name="HairCutQueryValidation"><value>Um pedido (de {0}) em cabeleireiro em casa acaba de ser validado</value></data>
+  <data name="Kid"><value>criança</value></data>
+  <data name="Mech"><value>Meches</value></data>
+
+</root>

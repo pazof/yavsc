@@ -23,6 +23,9 @@ namespace Yavsc.Models.Blog
         [Display(Name="Photo")][StringLength(1024)]
         public string Photo { get; set; }
 
+        [StringLength(8)]
+        public string Lang { get; set; }
+
         [Display(Name="Indice de qualité")]
         public int Rate { get; set; }
 

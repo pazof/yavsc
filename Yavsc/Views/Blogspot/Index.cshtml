@@ -39,17 +39,6 @@
 <h2>@ViewData["Title"]</h2>
 <p class="text-success">@ViewData["StatusMessage"]</p>
 @if (User.IsSignedIn()) {
-<label>
-<input type="checkbox" id="cbv" checked/>Invisibles, posts privés</label>
-<script>
-    $("#cbv").change(function() {
-        if (this.checked) {
-            $("tr.hiddenpost").removeClass("hidden");
-        } else {
-            $("tr.hiddenpost").addClass("hidden");
-        }
-    });
-    </script>
 <p>
     <a asp-action="Create">@SR["Create a new article"]</a>
 </p>
@@ -57,68 +46,6 @@
 
 <div class="container">
 
-
+@await Component.InvokeAsync("BlogIndex",User.GetUserId(),0,25)
    
-@foreach (var group in Model) {
-    var title = group.Key;
-    string secondclass="";
-    var first = group.First();
-    string trclass = (first.Visible) ? "visiblepost" : "hiddenpost";
-    <div class="row @trclass">
-        <div class="col-xs-10"> 
-           <a asp-action="Title" asp-route-id="@title" >
-<h3 markdown="@first.Title"></h3>
-@if (first.Photo==null) {  }
-else {<img src="@first.Photo" class="blogphoto" alt="@first.Title">} 
-</a>
-        
-        <div class="smalltext" markdown="@((first.Content?.Length > 256) ? first.Content.Substring(0, 256) + "..." : first.Content)"></div>
-         <div class="smalltext">  @first.Author.UserName ,
-            (posté le @first.DateCreated.ToString("dddd d MMM yyyy à H:mm")
-            @if ((first.DateModified - first.DateCreated).Minutes > 0){ 
-                @:- Modifié le @first.DateModified.ToString("dddd d MMM yyyy à H:mm",System.Globalization.CultureInfo.CurrentUICulture)
-             })</div> 
-        </div>
-        <div class="col-xs-2"> 
-            <ul class="actiongroup">
-                @if (await AuthorizationService.AuthorizeAsync(User, first, new ViewRequirement())) {
-                <li>
-                    <a asp-action="Details" asp-route-id="@first.Id"  class="btn btn-lg">Details</a>
-            </li>
-                }
-            @if (await AuthorizationService.AuthorizeAsync(User, first, new EditRequirement())) {
-            <li><a asp-action="Edit" asp-route-id="@first.Id" class="btn btn-default">@SR["Edit"]</a>
-            </li>
-            <li><a asp-action="Delete" asp-route-id="@first.Id" class="btn btn-danger">@SR["Delete"]</a>
-            </li>
-            }
-            </ul>
-        </div>
-    </div>
-   long gcount = group.Count();  
-    @if (gcount>1) {
-       <div class="sametitle">
-       <div class="sametitlegrip">@(gcount-1) autre@(gcount>2?"s":"") au même titre:</div>
-       
-          
-    @foreach (var item in group.Skip(1)) {
-     trclass = ((item.Visible)?"visiblepost":"hiddenpost");
-    <div class="row @trclass">
-        <div class="col-xs-10"> 
-            <markdown>
-                @((item.Content?.Length > 120) ? item.Content.Substring(0, 120) + "..." : item.Content)
-            </markdown>
-        </div>
-        <div class="col-xs-2"> 
-            <a asp-action="Details" asp-route-id="@item.Id"  class="btn btn-lg">
-                le @item.DateModified.ToString("dddd d MMM yyyy à H:mm",System.Globalization.CultureInfo.CurrentUICulture)
-            </a>
-        </div>
-    </div>
-    } 
-    </div>
-    }
-}
-    </div>
-
-
+</div>
