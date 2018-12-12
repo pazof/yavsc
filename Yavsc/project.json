@@ -145,16 +145,15 @@
     "GoogleTranslate": "1.0.5"
   },
   "commands": {
-    "web": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
-    "coiffure": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:88",
-    "lua": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:85",
-    "luatest": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:5001",
-    "kestrel": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000",
-    "linkmuse": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:87",
-    "yavsc": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:86",
-    "yavscpre": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:84",
     "ef": "EntityFramework.Commands",
-    "gen": "Microsoft.Extensions.CodeGeneration"
+    "gen": "Microsoft.Extensions.CodeGeneration",
+    "yavscpre": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:84",
+    "lua": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:85",
+    "yavsc": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:86",
+    "linkmuse": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:87",
+    "coiffure": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:88",
+    "freefield": "Microsoft.AspNet.Server.Kestrel --server.urls http://*:89",
+    "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls http://*:5000"
   },
   "frameworks": {
     "dnx451": {
