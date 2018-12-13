@@ -5,11 +5,11 @@
 
 C'est une application mettant en oeuvre une prise de contact entre un demandeur de services et son éventuel préstataire associé.
 
-# Construction et Installation
+# Construction et déploimenent
 
-## La construction
+## Construction
 
-Le code est du c sharp, dont les librairies sont restorées et le tout compilé avec les librairies DNX de M$, téléchargeable en executant le script d'installation suivant (c.f. /.travis.yml):
+Le code est du c sharp, dont les librairies sont restorées et le tout compilé avec les librairies DNX de M$, téléchargeable en executant le script d'installation suivant (c.f. `/.travis.yml`):
 
     curl --insecure -sSL https://lua.pschneider.fr/files/Paul/dnx-install.sh | bash && DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh && cd Yavsc && dnu restore
 
@@ -46,6 +46,41 @@ et, pour execution en environement de développement
 Si vous êtes arrivé jusqu'ici, vous devriez pouvoir visiter la home page 
  [ici](http://localhost:5000).
 
+## Tests
+
+Utilisez GNU/Makefile (et visitez le code, dans le dossier `test` ):
+
+
+Depuis le répertoire racine:
+
+``` 
+make test
+```
+
+
+## Installation / Déploiment / Développement
+
+### les services kestrel et kestrel-pre
+
+[TODO]
+
+### la configuration Apache 2
+
+[TODO]
+
+### la mise en pré-production
+
+Pour déployer le tout en production, on peut d'abord déployer en "pré-production",
+Afin de pouvoir tester manuellement quelque dernier développement :
+
+
+```
+cd Yavsc
+make pushInPre # arrete kestrel-pre, pousse tout dans DESTDIR=/srv/www/yavscpre avec rsync,
+               # et redemarre kestrel-pre 
+```
+
+Une fois sûr de vous, et une fois que Git dit propre votre copie de travail, depuis le répertoire `Yavsc`, lancez `make pushInProd`.
 
 ## Fonctionalités
 
