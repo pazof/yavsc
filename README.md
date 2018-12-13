@@ -17,8 +17,9 @@ Une fois l'environnement ainsi pollué, executer, depuis le sous dossier `Yavsc`
 
     dnu build
 
-L'execution, avec un runtime Mono, echoura dans ses version récentes.
-Celui ci convient:
+L'utilisation du serveur web, avec un runtime Mono, échoura dans ses version récentes (à peu près supérieure ou égale à 4.7).
+
+La version 4.6.2 de mono convient:
 
     [monoperso] ~/workspace/yavsc/Yavsc @ mono --version
     Mono JIT compiler version 4.6.2 (Stable 4.6.2.7/08fd525 jeudi 18 janvier 2018, 13:10:54 (UTC+0100))
@@ -50,13 +51,11 @@ Si vous êtes arrivé jusqu'ici, vous devriez pouvoir visiter la home page
 
 Utilisez GNU/Makefile (et visitez le code, dans le dossier `test` ):
 
-
 Depuis le répertoire racine:
 
 ``` 
 make test
 ```
-
 
 ## Installation / Déploiment / Développement
 
@@ -72,7 +71,6 @@ make test
 
 Pour déployer le tout en production, on peut d'abord déployer en "pré-production",
 Afin de pouvoir tester manuellement quelque dernier développement :
-
 
 ```
 cd Yavsc
