@@ -35,13 +35,15 @@ namespace Yavsc
             UserFilesOptions.EnableDefaultFiles=true;
             UserFilesOptions.StaticFileOptions.ServeUnknownFileTypes=true;
 
-            UserFilesOptions.StaticFileOptions.OnPrepareResponse += async context =>
+            /* TODO needs a better design, at implementation time (don't use database, but in memory data) 
+             UserFilesOptions.StaticFileOptions.OnPrepareResponse += async context =>
              {
                  var uname = context.Context.User.GetUserName();
                  var path = context.Context.Request.Path;
                  var result = await authorizationService.AuthorizeAsync(context.Context.User, new ViewFileContext
                  { UserName = uname, File = context.File, Path = path } , new ViewRequirement());
              };
+             */
             var avatarsDirInfo = new DirectoryInfo(Startup.SiteSetup.Avatars);
             if (!avatarsDirInfo.Exists) avatarsDirInfo.Create();
             AvatarsDirName = avatarsDirInfo.FullName;
