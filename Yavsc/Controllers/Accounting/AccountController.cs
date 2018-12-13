@@ -517,10 +517,13 @@ namespace Yavsc.Controllers
                 return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
             }
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+
             if (result.Succeeded)
             {
+            _logger.LogInformation($"Password reset for {user.UserName}:{model.Password}");
                 return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
             }
+            _logger.LogInformation($"Password reset failed for {user.UserName}:{model.Password}");
             AddErrors(result);
             return View();
         }
