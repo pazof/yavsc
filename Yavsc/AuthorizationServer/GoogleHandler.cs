@@ -26,6 +26,7 @@ namespace Yavsc.Auth
         AuthenticationProperties properties, OAuthTokenResponse tokens
 )
         {
+            _logger.LogInformation("Getting user info from Google ...");
             // Get the Google user
             var request = new HttpRequestMessage(HttpMethod.Get, Options.UserInformationEndpoint);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokens.AccessToken);
@@ -80,16 +81,30 @@ namespace Yavsc.Auth
 
             return ticket;
         }
+        protected override Task<OAuthTokenResponse> ExchangeCodeAsync(string code, string ruri)
+        {
+            var redirectUri =  $"https://{Startup.Authority}{Options.CallbackPath}";
+            return base.ExchangeCodeAsync(code,redirectUri);
+        }
 
         // TODO: Abstract this properties override pattern into the base class?
         protected override string BuildChallengeUrl(AuthenticationProperties properties, string redirectUri)
         {
+            
             var scope = FormatScope();
             var queryStrings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             queryStrings.Add("response_type", "code");
             queryStrings.Add("client_id", Options.ClientId);
+            // this runtime may not known this value, 
+            // it should be get from config,
+            // And always be using a secure sheme ... since Google won't support anymore insecure ones.
+            _logger.LogInformation ($"Redirect uri was : {redirectUri}");
+            
+            redirectUri = $"https://{Startup.Authority}{Options.CallbackPath}";
             queryStrings.Add("redirect_uri", redirectUri);
 
+            _logger.LogInformation ($"Using redirect uri {redirectUri}");
+            
             AddQueryString(queryStrings, properties, "scope", scope);
 
             AddQueryString(queryStrings, properties, "access_type", Options.AccessType);
@@ -102,6 +117,8 @@ namespace Yavsc.Auth
             var authorizationEndpoint = QueryHelpers.AddQueryString(Options.AuthorizationEndpoint, queryStrings);
             return authorizationEndpoint;
         }
+
+        
 
         private static void AddQueryString(IDictionary<string, string> queryStrings, AuthenticationProperties properties,
             string name, string defaultValue = null)
