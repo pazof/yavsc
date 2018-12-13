@@ -30,7 +30,7 @@ namespace Yavsc.Controllers
             this.context = context;
         }
 
-        private async Task<bool> CreateRoles () {
+        private async Task<bool> EnsureRoleList () {
             // ensure all roles existence
             foreach (string roleName in new string[] {
                 Constants.AdminGroupName,
@@ -67,20 +67,25 @@ namespace Yavsc.Controllers
             var admins = await _userManager.GetUsersInRoleAsync(Constants.AdminGroupName);
             if (admins != null && admins.Count > 0) 
             {
+                // All is ok, nothing to do here.
                 if (User.IsInRole(Constants.AdminGroupName))
                 {
-                    // check all user groups exist
-                    if (!await CreateRoles())
-                        return new BadRequestObjectResult(ModelState);
-                    return Ok(new { message = "you checked the role list." });
+                    
+                    return Ok(new { message = "you already got it." });
                 }
                 return HttpNotFound();
             }
             
             var user = await _userManager.FindByIdAsync(User.GetUserId());
+            // check all user groups exist
+            if (!await EnsureRoleList()) {
+                ModelState.AddModelError(null, "Could not ensure role list existence. aborting.");
+                return new BadRequestObjectResult(ModelState);
+            }
 
             IdentityRole adminRole;
             adminRole = await _roleManager.FindByNameAsync(Constants.AdminGroupName);
+
             var addToRoleResult = await _userManager.AddToRoleAsync(user, Constants.AdminGroupName);
             if (!addToRoleResult.Succeeded)
             {
