@@ -78,9 +78,11 @@ make pushInPre # arrete kestrel-pre, pousse tout dans DESTDIR=/srv/www/yavscpre 
                # et redemarre kestrel-pre 
 ```
 
+### La Prod
+
 Une fois sûr de vous, et une fois que Git dit propre votre copie de travail, depuis le répertoire `Yavsc`, lancez `make pushInProd`.
 
-## Fonctionalités
+## Fonctionalités (encore en cours de développement)
 
 Elle est censée aboutir à une prise commande,
 un payement du client, à une collecte du retour du client, et à un paiment du prestataire de services.
@@ -112,30 +114,29 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 * Le client peut le faire, en perdant les arrhes.
 * Le prestataire peut déléguer à une équipe de son choix un filtrage des demandes des clients.
 
-## Limitations temporaires
+## Limitations 
 
-* à une commande, une prestation, un paiment
-
-## Limitations conceptuelles
-
+* à une commande, une prestation
 * Dans le cas de l'avance, une fois le paiment client autorisé, pour le moment, aucune annulation de la préstation n'est supportée.
 * Une fois passée la date de la prestation, toute reclamation nécessitera l'intervention d'un système auxiliaire (un processus humain?)
 * Un seul moyen de paiment: PayPal, depuis le Web ou l'application mobile, son interface dite dépréciée NVP/SOAP.
 * Elle ne prendra pas en charge, du moins pas encore, ni la saisie de structures de projets complexes, ni ticketing associé à la prestation.
 * Les professionnels sont tous considérés comme tierces parties, horsmis le propriétaire de l'installation, dont les identifiants PayPal sont utilisés pour collecter tous les paiments. TODO Aucune edition de fiche de paye ni paiment en masse ne sont supportés pour l'instant. Seul les payments unitaires sus-cités le sont.
 
-## Développement
+## Paramétrage
+
+### Administration
+
+Une fois le service disponible, s'enregistrer, et
+Visiter `/Administration/Take` 
 
 ## Une nouvelle activité
 
-L'impact d'une custo de son activité pourrait à peu près tout concerner.
-Un bon point de départ est la création d'un controller de commande dédié, enrichi des données de profile associées à un nouveau type de profiles prestataire.
+On gère les activité en faisant partie du groupe des commericiaux (`FrontOffice`), 
+on crée des activités en y associant des formulaires de commande et une
+classe de paramétrage de profiles proféssionnels.
 
-Ceci implique:
-
-* Un modèle de donnée, un controleur web, ses vues et son API pour:
-  * Le profile prestataire, dont la donnée est représentée par une classe arbitraire
-  * L'éventuelle commande customisée, dont la donnée réalise l'objet abstrait 'NominativeServiceCommand'
+# Développement
 
 ## Un nouvel environnement d'execution
 
