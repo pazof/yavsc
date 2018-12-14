@@ -20,8 +20,6 @@ else
 		@git status
 endif
 
-default: pushInPre
-
 publish:
 	ASPNET_ENV=$(ASPNET_ENV) dnu publish
 
