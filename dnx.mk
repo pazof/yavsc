@@ -74,8 +74,6 @@ endif
 deploy-pkg: pack
 	@mv bin/$(PKGFILENAME) $(NUGETSOURCE)
 
-.PHONY: rc-num.txt-check $(BINTARGETPATH)
+.PHONY: rc-num.txt-check 
 
-.DEFAULT_GOAL :=
-
-
+.DEFAULT_GOAL := $(BINTARGETPATH)
