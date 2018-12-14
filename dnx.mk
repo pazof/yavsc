@@ -26,6 +26,8 @@ dnx=dnx
 
 git_status := $(shell git status -s --porcelain |wc -l)
 
+all: $(BINTARGETPATH)
+
 rc-num.txt-check:
 ifndef rc_num
 	@echo no rc num ... please, could you try and run 'make rc-num.txt' ?. 
@@ -76,4 +78,4 @@ deploy-pkg: pack
 
 .PHONY: rc-num.txt-check 
 
-.DEFAULT_GOAL := $(BINTARGETPATH)
+# .DEFAULT_GOAL := $(BINTARGETPATH)

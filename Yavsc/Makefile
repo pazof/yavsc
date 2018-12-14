@@ -7,8 +7,6 @@ ASPNET_LOG_LEVEL=warn
 include ../versioning.mk
 include ../dnx.mk
 
-all: $(BINTARGETPATH)
-
 web: project.lock.json
 	ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION)
 
@@ -26,11 +24,6 @@ publish:
 deploy-pkg: publish
 
 deploy: pushInPre pushInProd
-
-../Yavsc.Server/bin/$(CONFIGURATION)/Yavsc.Server.dll: 
-	make -C ../Yavsc.Server CONFIGURATION=$(CONFIGURATION)
-
-project.json: ../Yavsc.Server/bin/$(CONFIGURATION)/Yavsc.Server.dll
 
 pushInPre: cleanoutput bin/output/wwwroot/version
 	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel-pre stop
