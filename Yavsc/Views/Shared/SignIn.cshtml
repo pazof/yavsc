@@ -55,7 +55,7 @@
 
     <hr/>
     <h2 class="lead text-left">@SR["Use another service to log in"]:</h2>
-    @if (Model.ExternalProviders.Count() == 0)
+    @if (Model.ExternalProviders==null || Model.ExternalProviders.Count() == 0)
     {
         <div>
             <p>
@@ -74,5 +74,6 @@
             @Html.AntiForgeryToken()
         </form>
         }
-    }
+    } }
+
 </div>
