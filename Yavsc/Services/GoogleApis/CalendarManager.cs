@@ -101,8 +101,21 @@ namespace Yavsc.Services
             if (string.IsNullOrWhiteSpace(userId))
                 throw new Exception("the user id is not specified");
 			var service = await CreateUserCalendarServiceAsync(userId);
+#if Debug
+      if (service==null) throw new Exception("Could not get service");
+#endif
+      _logger.LogInformation("Got a service");
+
+#if Debug
+      if (service.CalendarList==null) throw new Exception("Could not get calendar list");
+#endif
 			CalendarListResource.ListRequest calListReq = service.CalendarList.List ();
-			calListReq.PageToken = pageToken;
+
+#if Debug
+      if (calListReq==null) throw new Exception ("list is null");
+#endif
+
+      calListReq.PageToken = pageToken;
 			return calListReq.Execute ();
         }
         
@@ -241,12 +254,15 @@ namespace Yavsc.Services
         {
             var login = await _dbContext.GetGoogleUserLoginAsync(userId);
             if (login == null) return null;
+            _logger.LogInformation("Got a Google login");
             var token = await _flow.LoadTokenAsync(login.ProviderKey, CancellationToken.None);
+            _logger.LogInformation("Got a Google token");
             var c = SystemClock.Default;
             if (token.IsExpired(c)) {
                 token = await RefreshToken(token);
             }
             UserCredential cred = new UserCredential(_flow,login.ProviderKey,token);
+            _logger.LogInformation("Got creadential");
 			return  new CalendarService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = cred,
