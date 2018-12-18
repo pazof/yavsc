@@ -100,8 +100,7 @@
         <dd>@Html.DisplayFor(m => m.BankInfo)  [<a asp-controller="Manage" asp-action="AddBankInfo"
             >@SR[@Model.BankInfo==null?"Set":"Modify"]</a>]</dd>
 
-        <dt><a asp-controller="Blogspot" asp-action="UserPosts" 
-            asp-route-id="@Model.UserName">@SR["Your posts"]:</a></dt>
+        <dt><a href="/Blog/@Model.UserName">@SR["Your posts"]:</a></dt>
         <dd>@Model.PostsCounter</dd>
        
       <dt>@SR["TwoFactorAuthentication"]:</dt> 
