@@ -714,7 +714,7 @@ namespace Yavsc.Controllers
             var uid = User.GetUserId();
             var user = await _dbContext.Users.Include(u=>u.PostalAddress).SingleAsync(u=>u.Id==uid);
             ViewBag.GoogleSettings =  _googleSettings;
-            return View(user.PostalAddress);
+            return View (new Yavsc.ViewModels.Manage.SetAddressViewModel { Street1 = user.PostalAddress?.Address } );
         }
 
         [HttpPost]
@@ -736,7 +736,7 @@ namespace Yavsc.Controllers
                 return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetAddressSuccess });
             }
             ViewBag.GoogleSettings = _googleSettings;
-            return View(model);
+            return View(new Yavsc.ViewModels.Manage.SetAddressViewModel { Street1 = model.Address});
         }
         public async Task<IActionResult> PaymentInfo (string id)
         {
