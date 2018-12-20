@@ -54,5 +54,11 @@ memo:
 rc-num:
 	@echo echo 1-alpha1  < $<  ^ $^  @ $@
 
+clean: 
+	for subdir in $(SUBDIRS) ; do \
+		make -C $${subdir} clean ; \
+	done
+
+
 .PHONY: all $(SUBDIRS)
 

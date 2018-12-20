@@ -28,5 +28,8 @@ testdev: $(BINTARGET)
 test: $(BINTARGET)
 	ASPNET_ENV=Development dnx test -maxthreads 1 -trait regres=no
 
+clean:
+	rm -rf bin obj
+
 .PHONY: test
 
