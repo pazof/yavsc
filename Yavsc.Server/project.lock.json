@@ -6026,7 +6026,7 @@
         ]
       }
     },
-    "DNX,Version=v4.5.1/win7-x86": {
+    "DNX,Version=v4.5.1/debian.9-x86": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -7246,7 +7246,7 @@
         ]
       }
     },
-    "DNX,Version=v4.5.1/win7-x64": {
+    "DNX,Version=v4.5.1/debian.9-x64": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -8466,7 +8466,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.5.1/win7-x86": {
+    ".NETFramework,Version=v4.5.1/debian.9-x86": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -9667,7 +9667,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.5.1/win7-x64": {
+    ".NETFramework,Version=v4.5.1/debian.9-x64": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -10868,7 +10868,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.5.2/win7-x86": {
+    ".NETFramework,Version=v4.5.2/debian.9-x86": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -12069,7 +12069,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.5.2/win7-x64": {
+    ".NETFramework,Version=v4.5.2/debian.9-x64": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -13270,7 +13270,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.6/win7-x86": {
+    ".NETFramework,Version=v4.6/debian.9-x86": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -14471,7 +14471,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.6/win7-x64": {
+    ".NETFramework,Version=v4.6/debian.9-x64": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -15672,7 +15672,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.6.1/win7-x86": {
+    ".NETFramework,Version=v4.6.1/debian.9-x86": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -16873,7 +16873,7 @@
         ]
       }
     },
-    ".NETFramework,Version=v4.6.1/win7-x64": {
+    ".NETFramework,Version=v4.6.1/debian.9-x64": {
       "BouncyCastle/1.8.1": {
         "type": "package",
         "compile": {
@@ -18094,8 +18094,9 @@
     "EntityFramework.Commands/7.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "+wa2VWX3/vDkOpeCeIotMevqpIISimGqeYNTGYRLRhv+8HzsCLeymLzmmYpjav6zYQVvuJiJodapQvijAIfRrA==",
+      "sha512": "4Hv7YX9/FXRBSrdUgXLMFpFRXkpBllBP6tBjv2A3T0cOwFRyGxBY2pxl9JBKi2Zz/AIArSQXOP/2BxRarpCkCA==",
       "files": [
+        ".signature.p7s",
         "app/ef",
         "app/ef.cmd",
         "app/project.json",
@@ -18121,8 +18122,9 @@
     "EntityFramework.Core/7.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "afwsjOF4xM5KiwAxKMz9R0H8TigWE/jX0FwGBO/QtuA1ElEVLqlQVH4+7PyZaA35HguYRm0wOCmUq9RVTmiAfA==",
+      "sha512": "t+9tLADxFo7YwqFZWsOCBeEYpuVuXFbzfGxUv0DDKZRa98s2IKCbYmladaegaPQazVr/KIymAAQFUm5KLBdjXw==",
       "files": [
+        ".signature.p7s",
         "EntityFramework.Core.7.0.0-rc1-final.nupkg",
         "EntityFramework.Core.7.0.0-rc1-final.nupkg.sha512",
         "EntityFramework.Core.nuspec",
@@ -18139,8 +18141,9 @@
     "EntityFramework.Relational/7.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "0Feoct9mtKOIjovUgfESfVDL/odvxNXsIgK3bdlkx7Fsiqp5/tx8oiMx+qO7oNRYWsXN6XDlGKHLOzWEdUssKA==",
+      "sha512": "zjYkK+dKkehV2qsdypFYknC4gsMQRLt52Ddu5Fqwc7f1qZOKiLxFrjJWBLhR5RGGMXwP22NJl6M3qdtq83GN9g==",
       "files": [
+        ".signature.p7s",
         "EntityFramework.Relational.7.0.0-rc1-final.nupkg",
         "EntityFramework.Relational.7.0.0-rc1-final.nupkg.sha512",
         "EntityFramework.Relational.nuspec",
@@ -18155,8 +18158,9 @@
     "EntityFramework.Relational.Design/7.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sXAqOxpHmbqOELC21vAzKlsjqgNCrk3jEjyJxjGnn1+j4hazxiqgSBTl8ZofqYzLO6ias9WfeXJy8HcXOl7waw==",
+      "sha512": "EGQk+lz0o8Kxi76P83eyB/hj+Gsy3nqTRS0EHeESZq7SUY0a4r2Ndo+o01w/X16+O+yo6H9wwmlviUruOK6GJw==",
       "files": [
+        ".signature.p7s",
         "build/netcore50/EntityFramework.Relational.Design.props",
         "EntityFramework.Relational.Design.7.0.0-rc1-final.nupkg",
         "EntityFramework.Relational.Design.7.0.0-rc1-final.nupkg.sha512",
@@ -18185,8 +18189,9 @@
     },
     "Ix-Async/1.2.5": {
       "type": "package",
-      "sha512": "8EXO8q7cpDUH9G2q+UOPOO/6uZ9aN7mx/4xjFIfkp+qLWVJiYuglkRhjY8Ggs2CucXzHR8GHnovJKB5yQoYaJg==",
+      "sha512": "X2KsPlaqrei/y03OHCSPF8xAvVJJT9wogAQ+afo7gUxtzw5/xaOzkv8PO7CEFr87OhDWEj+iyVniMM057x9EtA==",
       "files": [
+        ".signature.p7s",
         "Ix-Async.1.2.5.nupkg",
         "Ix-Async.1.2.5.nupkg.sha512",
         "Ix-Async.nuspec",
@@ -18200,8 +18205,9 @@
     },
     "MailKit/1.12.0": {
       "type": "package",
-      "sha512": "6h6PkKAuMSaTEjXMVSgBqqMrhcRgtBfFwJwA0qxqpQ32IvtG4v2vphB3IBRa3UjX4g1GaWRC+tHwivXGlZ0CtA==",
+      "sha512": "I/l1TvcDjVP02e0eh8ySeBqNR3exNb+7RSHkZbcYkwcsE6XIkWnkdRysz3cjIkba03smKjiyRXD897a6t2/KqQ==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/MailKit.dll",
         "lib/MonoAndroid10/MailKit.xml",
         "lib/net40/MailKit.dll",
@@ -18226,8 +18232,9 @@
     "Microsoft.AspNet.Authentication/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sdFCeQlwkJXZ1KHsRvf7ewNEWkEeKYNpcEKKC0D+WNUvLliziLc7cMH+6sjNmTU3FgGjGrSk4WjGQMhsOHCrDQ==",
+      "sha512": "XXC4My+GE1Zz/l09uhzBzE7h5UKAEVh0nBvNKd5Yqdbl/stMBBoX9AhuX9B8rHFvAiiXabb2ISp//uUafl+Jrg==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.Authentication.dll",
         "lib/dotnet5.4/Microsoft.AspNet.Authentication.xml",
         "lib/net451/Microsoft.AspNet.Authentication.dll",
@@ -18240,8 +18247,9 @@
     "Microsoft.AspNet.Authentication.Cookies/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "vjeSG8Z5i5Kqo1nC7wW1BO+YMk+gs/AVVJlmyF7EGgiUBtAAPkrgjxSabQqvFhPgpEFledUQ6gkhKXgr4WrMtw==",
+      "sha512": "3sdCB+pkM+kT8uOir5eorysdV7Srvcu3AZ+lXKeuVrCR1rHuM5IgodAcZaKfrfB4otuVimaNzxtIf8mE9NSB+w==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.Authentication.Cookies.dll",
         "lib/dotnet5.4/Microsoft.AspNet.Authentication.Cookies.xml",
         "lib/net451/Microsoft.AspNet.Authentication.Cookies.dll",
@@ -18254,8 +18262,9 @@
     "Microsoft.AspNet.Cryptography.Internal/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "gQBLMaEd0ZRntSBjuWFJ6Qu3BKO6SORWA3Iv/Rhd4oEB1O8Mzdk3nHAyWyo/i8GhE740sajdwT8yXZTm3fzglg==",
+      "sha512": "BtDWKjLsyrGa97oUiMziSr9UaAUdngSk2EQB7Y9KYfnRPflQitMCMbS0MuYT72QXzptMO2V13OBehN08mwMYLQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.Cryptography.Internal.dll",
         "lib/dotnet5.4/Microsoft.AspNet.Cryptography.Internal.xml",
         "lib/net451/Microsoft.AspNet.Cryptography.Internal.dll",
@@ -18268,8 +18277,9 @@
     "Microsoft.AspNet.Cryptography.KeyDerivation/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "a0HOA+i0gEY5SIzJZX4QXuj+hY6C7NT3t60EwreWYPAy/rruoxlkarU8H9oHwtatT2/FjC8kdMNQS72y1I/5KQ==",
+      "sha512": "nO0MNnHO4IGHeHt7vd/gw00YA6Q5GDv/DMcPWoPPLUNSAeh5rYS61Cdf7KkyipDNXVS6OaQRVx9+pPqTbI5FkA==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.Cryptography.KeyDerivation.dll",
         "lib/dotnet5.4/Microsoft.AspNet.Cryptography.KeyDerivation.xml",
         "lib/net451/Microsoft.AspNet.Cryptography.KeyDerivation.dll",
@@ -18282,8 +18292,9 @@
     "Microsoft.AspNet.DataProtection/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "HKcaIDRCz5KWkhmRiRs9mjZupJbdP3+Z3RQKdqwa6ZsXsO0ZUnmfpdYp6IFG69rTznmoSKjKJpcnvRA7w6psyA==",
+      "sha512": "r384qEJ+ZCIbIUry+9Urs5m4zHBhqfw5bdIFqGGFblqJ9EH9OTmUm/AAu1jCjXBs/mq753+APVl0AcNi3DKfBw==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.DataProtection.dll",
         "lib/dotnet5.4/Microsoft.AspNet.DataProtection.xml",
         "lib/net451/Microsoft.AspNet.DataProtection.dll",
@@ -18296,8 +18307,9 @@
     "Microsoft.AspNet.DataProtection.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "rNCftGtK32L1R8Y3JDl31fPtYI/wppN3xngBtcQ5R8DZBfSKzabDWre95feBIKWjcPqE+P/Y7n6ax8oGFcVSZw==",
+      "sha512": "1CdhjNj9ZfV4vuJrv/IMiJM5di0ZNmn/QbZwVqpfnxWAR5yieW3JobFfO1zHU/frqslVtNY8bQQ+O2DW8IewmA==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.DataProtection.Abstractions.dll",
         "lib/dotnet5.4/Microsoft.AspNet.DataProtection.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.DataProtection.Abstractions.dll",
@@ -18310,8 +18322,9 @@
     "Microsoft.AspNet.FileProviders.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "Tv6YJk78cH+gFipRNjeMpzzUg3t4BQiS0xYVlv/8gVNl4sI6ytAMYYfIbx8pCacIRH5Nx/Tw9GVn28eyw+JZfA==",
+      "sha512": "htPmMi1qG1iLcf3qH0vDyE4ZSDk1Rzpie2snSmbHELGz/BGOdYITJI+FUPbUi8lYDFYx/0VidDWgWGq3xV1SRg==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.FileProviders.Abstractions.dll",
         "lib/dotnet5.4/Microsoft.AspNet.FileProviders.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.FileProviders.Abstractions.dll",
@@ -18324,8 +18337,9 @@
     "Microsoft.AspNet.FileProviders.Physical/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "Ni5o7X21cN97krdkg3F77F5app0KpLwdpHbxdpwqaMjhMKYcmNDcyZB8Ke/qgbSMqHRwT3aQVhgEp/iJTbgl6g==",
+      "sha512": "Xj8e1lyFQEisrbOdkV4/ktrGSsJjK676SLSvts4AaIymIgRmLQc362f8qVljBFwC+B0S+pKMdSGq8WwAWt49Sg==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.FileProviders.Physical.dll",
         "lib/dotnet5.4/Microsoft.AspNet.FileProviders.Physical.xml",
         "lib/net451/Microsoft.AspNet.FileProviders.Physical.dll",
@@ -18338,8 +18352,9 @@
     "Microsoft.AspNet.Hosting.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "07N5rzYcsjkLgwoI923FcAvvf7167qhLgCExXwYYkdZUIJQzneRG0DqZJTm6qpnaD5igf4FM9F+eh2m7y5NFbg==",
+      "sha512": "EGOK8ZOzmkV23jBWC+0FRclGG0w0N3USNdIFgWOyb1/PVD+P53mENQ60yeYlJmDMxR6jXFjuLEpO/nhkYcC15A==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.Hosting.Abstractions.dll",
         "lib/dotnet5.4/Microsoft.AspNet.Hosting.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.Hosting.Abstractions.dll",
@@ -18352,8 +18367,9 @@
     "Microsoft.AspNet.Http/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "2vVd6xlfDKxl7pln5VOSczVo5bdJK6VLF6LR62Tb+le6e0COju7diAPHujFcXQlX/eLq2GrctN5vbIMeQ6vRTg==",
+      "sha512": "L7sr8j9VSl/lW7M33uV+cv9g0Q04TPbqOy6f6Ccc2XSt6ikoLwlKxyNkMA9zly/MQ2QB+1zGN/Qd6dH54OXRqA==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.Http.dll",
         "lib/dotnet5.4/Microsoft.AspNet.Http.xml",
         "lib/net451/Microsoft.AspNet.Http.dll",
@@ -18366,8 +18382,9 @@
     "Microsoft.AspNet.Http.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sfzc1WJMl8wGCF+rChVfJ7otT6tTv24RNXUej2r8tlQ2RDNnAozYyGb0SCW2mxpHrC31On99Wt0rksgF0c2WUw==",
+      "sha512": "QhPYD93pUqdkyTD5i21pAseuiRgxw0zjORuP1OleCN0062yn/ntqQrIjJoRQuY9ENo3QNV/p0yDLnXut9MB3lA==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.Http.Abstractions.dll",
         "lib/dotnet5.4/Microsoft.AspNet.Http.Abstractions.xml",
         "lib/net451/Microsoft.AspNet.Http.Abstractions.dll",
@@ -18380,8 +18397,9 @@
     "Microsoft.AspNet.Http.Extensions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "rsjbxD9W6NfqP0WNHMRyetIh6ZoKRbK1ea0V5xWdVAx53WdvgBy0HmkSwXt506+xU65jjZP19F4Ua4YjZdPHfQ==",
+      "sha512": "dMu0ywccFN8WRtatyXdhvthwJEc7CqrkRQIlgfJFek1ySxj1CaBRkWD3F4O5kER8qeX3UnUpc6aI5/RcDFXsyw==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.Http.Extensions.dll",
         "lib/dotnet5.4/Microsoft.AspNet.Http.Extensions.xml",
         "lib/net451/Microsoft.AspNet.Http.Extensions.dll",
@@ -18394,8 +18412,9 @@
     "Microsoft.AspNet.Http.Features/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "WlscfdAvN8XaaK1iv1Iewp5emei7+0SlXNkUh7kMJpeaS6K0GhwNmwqZR6VrT1oN+Maw98nEONHS34/suqQwOA==",
+      "sha512": "Oyk5QIOxEfpU8J/3ZGISlnRIygC6muEmXEFje1lZE/I3hIJE3lsOXTxdGm9n47NvI+OMuOQ66uHvXpY3KZEZUQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.Http.Features.dll",
         "lib/dotnet5.4/Microsoft.AspNet.Http.Features.xml",
         "lib/net451/Microsoft.AspNet.Http.Features.dll",
@@ -18408,8 +18427,9 @@
     "Microsoft.AspNet.Identity/3.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "ACPci5zUktgGFqdZ48dWexty24lROTEW/MK3LxIDe88zssLiqMhHrIndp4G/1vafmUfL+9lTw7oda6GRD53cEg==",
+      "sha512": "2af/CSk0LvJftufL6bxJZ3HPl+aNElBdGZBcSEZ2Er+7SWuH0ANgGkbNelnRG+EvwD6emniPfiGhFVnnWwsRdw==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.Identity.dll",
         "lib/dotnet5.4/Microsoft.AspNet.Identity.xml",
         "lib/net451/Microsoft.AspNet.Identity.dll",
@@ -18436,8 +18456,9 @@
     "Microsoft.AspNet.WebUtilities/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "0D80xroAEiWlB9X5eR/JUya1H2saIYnt4d7bPru5RRf5L/66X+9WWhf3hFkLUF3W13K6g6K9Is9dCTaEfFFKTA==",
+      "sha512": "E554HYLfkrj8/QdnW7PZILOXAbnQzUuXXMmBB5hKC33p3u2NamWt16JHRX4VhOT+zSs1YcjD5ODVj2kBHBp67A==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.AspNet.WebUtilities.dll",
         "lib/dotnet5.4/Microsoft.AspNet.WebUtilities.xml",
         "lib/net451/Microsoft.AspNet.WebUtilities.dll",
@@ -18449,8 +18470,9 @@
     },
     "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
       "type": "package",
-      "sha512": "E7VdmGw6xO3VHWapC+pNLZmo6yncS53UY3bmb5WZm9wliJBB1A6brgzKA4fcqiLrmJFx71r0M2zEbRDphRLUNg==",
+      "sha512": "8bI9EFuEIt+iaa/BXIxaAcP0sQ0IfqelTME9c5IaUkS5BIx52A/SjrdPqG7r4nLIOLjROZfrDFBEwZbNpA7//A==",
       "files": [
+        ".signature.p7s",
         "analyzers/dotnet/cs/Microsoft.CodeAnalysis.Analyzers.dll",
         "analyzers/dotnet/cs/Microsoft.CodeAnalysis.CSharp.Analyzers.dll",
         "analyzers/dotnet/vb/Microsoft.CodeAnalysis.Analyzers.dll",
@@ -18465,8 +18487,9 @@
     },
     "Microsoft.CodeAnalysis.Common/1.1.0-rc1-20151109-01": {
       "type": "package",
-      "sha512": "gC9zpQARTjIOht1dZM5Bp0fbOKA40yh0wHBMG2psLGquche0URbfdB9i1pnCusLospEsRIrNvYl75647BcBVug==",
+      "sha512": "cp8zvYTiSIQwYz4Zb3LUPWvAxU57vH8H5ttfV0Jk58Te4faS+TeShFcB0nCkg7VH4P8Zhb7ytxHpWOadSPDT7A==",
       "files": [
+        ".signature.p7s",
         "lib/net45/Microsoft.CodeAnalysis.dll",
         "lib/net45/Microsoft.CodeAnalysis.xml",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.dll",
@@ -18479,8 +18502,9 @@
     },
     "Microsoft.CodeAnalysis.CSharp/1.1.0-rc1-20151109-01": {
       "type": "package",
-      "sha512": "BFhSWMMlp0xLN/ogn71ULN7N0yy/yqJf/wu63x3KjV497n+8OlyiX7ZnbaQiUeafjW5P2vLzvZH99+5s+dH3Dg==",
+      "sha512": "w5Qz2+XO65BZir6MuI9AHelXK3lAltA8iopEyqtyD+1X1pHrzB5KlfiscARXgS9o8btqKYiac3Th+PfOfZOY+Q==",
       "files": [
+        ".signature.p7s",
         "lib/net45/Microsoft.CodeAnalysis.CSharp.dll",
         "lib/net45/Microsoft.CodeAnalysis.CSharp.xml",
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.dll",
@@ -18494,8 +18518,9 @@
     "Microsoft.Extensions.Caching.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "WlNfPuf/8Q7DzMiOHjiT9Ha2IYdguLGfHT/2C/p9KzviCKXaqfrIdI6X9w5MmCuiYRucqK+iM5cIWKHQ1mmZrg==",
+      "sha512": "lIc2g7CAc6RVcI7X7IrS2js/QQjitVzofWPrEH1OpgPJCz3U1UkR23bQgoXxUQRHKEexyEmBqJcHovZWIdzTQg==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Caching.Abstractions.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Caching.Abstractions.xml",
         "lib/net451/Microsoft.Extensions.Caching.Abstractions.dll",
@@ -18510,8 +18535,9 @@
     "Microsoft.Extensions.Caching.Memory/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "KQFkXdBieLObHr1+ld0FVOLQLgVFcrhn6qIixsmP09TyEw2VaGPrzIiBVJSzyKfaE2MVJlshDvfdvcfSE/zl3g==",
+      "sha512": "rzNEPwhwpmDPtUA8y5owCb2gT/5G3Fd8Q+UgFCKJajvlCk5mJ7l/q+HTATaZrQnUGAyqWZuOQKkGjcpquleDyw==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Caching.Memory.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Caching.Memory.xml",
         "lib/net451/Microsoft.Extensions.Caching.Memory.dll",
@@ -18526,8 +18552,9 @@
     "Microsoft.Extensions.Configuration/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "2ayWzqMVGWjr8o8bOSnIsyQbi9sLz9Ya8+YM+9tM/ivSnLHuN7TNHNfJv4jTyRZvoOafdh5Ivlc/OdmsZPXlQQ==",
+      "sha512": "7Sc/JEbs1Qa+wtGE/If3fAdu38/34qUnbIDbcF/tDSrZQ/9y+mRuRe0Xh6hHjJjWXNlEtHGJ/nrpECkebzUltg==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.xml",
         "lib/net451/Microsoft.Extensions.Configuration.dll",
@@ -18542,8 +18569,9 @@
     "Microsoft.Extensions.Configuration.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "xA7ObOlIswcx2qakv69kz0pnBizFJrmwxRxJyjPOHWfevF4W+OdolZsbKOc12kY7y5upqhAvNGWTblffMvADHA==",
+      "sha512": "InFUMUTsZFB3dDwca0WruJaNhLDioRlW5povx/MWomF+nS1hY2mltGPYaCdJhf18rfKEdZSPuq3JQ9OLbAVHPQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.Abstractions.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.Abstractions.xml",
         "lib/net451/Microsoft.Extensions.Configuration.Abstractions.dll",
@@ -18558,8 +18586,9 @@
     "Microsoft.Extensions.Configuration.Binder/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "tuIi7cRq6lbpCybL+z9vamz/KbM+nN9nyJ2Id5bKCdxKDNMnKb9PdMxJ+0DHc8p6fP00PyQucYuN5EpxsYrX6Q==",
+      "sha512": "4+q8/RCvI/8PiRbTlo6Wrm93FlhOipbCG19qJM5COijriynKMJP4am5a2KTvA16hWbqCmJjI45VdxOHn5Vwb7A==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.Binder.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.Binder.xml",
         "lib/net451/Microsoft.Extensions.Configuration.Binder.dll",
@@ -18574,8 +18603,9 @@
     "Microsoft.Extensions.Configuration.FileExtensions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "w2x8nqrp2YUgNBJuZ3SUmexBtjaoZFzCQtObRTjrE4GWceFEmaLZtXFvs4n9IgRQkOqqCza7Fv7NXnD9m2emjQ==",
+      "sha512": "BR/17jkbNxUCSBgDTKu5+f3HvhhzOPwYKJd/a9nz6KipQfvqsTxGVWd4ub0s3Wv4yudVdoUF/HZ7ws2c0qOA0A==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.FileExtensions.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.FileExtensions.xml",
         "lib/net451/Microsoft.Extensions.Configuration.FileExtensions.dll",
@@ -18590,8 +18620,9 @@
     "Microsoft.Extensions.Configuration.FileProviderExtensions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "OhIrGyCmuWalr0WEAtoRarpTTxP/hb4CHHvv15KYjzgB91T5In2PMaBX65Y0pBxvhKqPdocvo8iNOh2Sk+abNw==",
+      "sha512": "NG0lJJqrrNzjvtjddxS5w4XfHrZJ9DdqsU7c1Y79jza75JlMW7Bv00EuYwiRqALXUODtE4H1eJPLU+TWuhZKjQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.FileProviderExtensions.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.FileProviderExtensions.xml",
         "lib/net451/Microsoft.Extensions.Configuration.FileProviderExtensions.dll",
@@ -18606,8 +18637,9 @@
     "Microsoft.Extensions.Configuration.Json/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "9v+RpswnXEpAP5mx8J1w1yZZT2pPtMBTnOAauNh2c9ju5Dhq3ljxvbm0S9j6o5F/EFSLlbfN/brxTJN3qa/upw==",
+      "sha512": "U+1SHAi+kcNenSQjiLr8kqKta6MCho5pzkoTHXDyiovFRmhQSN4T24lScfxxYJJUYsFTez5alLXf/1ctTezMJQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.Json.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.Json.xml",
         "lib/net451/Microsoft.Extensions.Configuration.Json.dll",
@@ -18622,8 +18654,9 @@
     "Microsoft.Extensions.Configuration.UserSecrets/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "m2WaXGNWRrbpWquen8PS1oB8GdG5tCSWhXAmFbhacj1mhz3ojFy0TDUZPbx87TX2ZQNNp6MYfzO5Z73hlM47Bw==",
+      "sha512": "WdJWsT5aQKqLnstfRAkYjgtgp+8XrrZwko2YcVONcNmkL7s7pDEPwVj/Pn33i+JT9G+dkRXhLkI8SIO5NoUDQg==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.UserSecrets.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Configuration.UserSecrets.xml",
         "lib/net451/Microsoft.Extensions.Configuration.UserSecrets.dll",
@@ -18636,8 +18669,9 @@
     "Microsoft.Extensions.DependencyInjection/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "S/+s3fq85j21H5nYOvh1fIt1arl8F5lZ7Ryiw/qend83yHQwIQbBs+dip9FhqiPmAn6Dz3UhW0likQQurfEsLQ==",
+      "sha512": "Qa2s8PN2DPrtcJu21K8cI/cfCoU1x/0+SGQPK+zAAO3xsjDCS9WadwHZ+2VhFrXVAsjW+XFleVw2jkPGMwYNMw==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.DependencyInjection.dll",
         "lib/dotnet5.4/Microsoft.Extensions.DependencyInjection.xml",
         "lib/net451/Microsoft.Extensions.DependencyInjection.dll",
@@ -18652,8 +18686,9 @@
     "Microsoft.Extensions.DependencyInjection.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "MUKexXAsRZ55C7YZ26ShePZgBeW+6FbasxeIVmZ/BZIgiG4uw6yPOdfl9WvTaUL9SFK2sEPcYLatWmLfTpsOAA==",
+      "sha512": "jgtb39oFtssTPbHHtZkBQAcD//juI4pygGUnwR5pfuhliOAWOKLYjoCTxHrq83XK0EZLhocdiJW24XyyxazaQQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
         "lib/dotnet5.4/Microsoft.Extensions.DependencyInjection.Abstractions.xml",
         "lib/net451/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
@@ -18668,8 +18703,9 @@
     "Microsoft.Extensions.Globalization.CultureInfoCache/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "HZggxvkQz5r5Dp36eCdnV8A/fmuhlK2xxmSnUKPES4w3l0C8mzbRLoJlPVdxyd9xy00odSlS5tz8w2IegZcqBQ==",
+      "sha512": "FipZLl2nRDxUt2/zfwNjYIzAC49l2zBo2Tvg0nXgja5rao/S+SQB9q3lB7S2kEPSMgD8PHASiMVMHF4MVS1gUA==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Globalization.CultureInfoCache.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Globalization.CultureInfoCache.xml",
         "lib/net451/Microsoft.Extensions.Globalization.CultureInfoCache.dll",
@@ -18682,8 +18718,9 @@
     "Microsoft.Extensions.Localization/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "nt1CcD9lUXyYl0Y+ecAr2DtPI3rRCs5f1zUKRl5rN8SFOXHXK21V6kycFVP+VckUD39jsTTLuxKSKGCuBZ/9+Q==",
+      "sha512": "SvDP5AahH0kV/5Rm0xMe8FSaONtt4qyvnzVTiW8fkNt1EWw0DYv94hzowOpGfzhtRqcJx8WUHtIQQntR2VdZmQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Localization.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Localization.xml",
         "lib/net451/Microsoft.Extensions.Localization.dll",
@@ -18696,8 +18733,9 @@
     "Microsoft.Extensions.Localization.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "0Z6Knet4Re5ZLIpixjLX9w8TrTPjsB3F/b9EIN1RdX5inXkdOrnpgiT6j/PzcgUcCNlCXe1dTqutVSDE6+26ig==",
+      "sha512": "A9e2Iul+7+vvHMb5AmB4A4OhiZOpeYnbV2SBBf8PmFDIyKXcFPDkI+rZKVoYlek0dqXr4txgvolhdiuAc0Vqdg==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Localization.Abstractions.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Localization.Abstractions.xml",
         "lib/net451/Microsoft.Extensions.Localization.Abstractions.dll",
@@ -18710,8 +18748,9 @@
     "Microsoft.Extensions.Logging/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "anegHH4XHjaCmC557A0uvnJzprT44MOKr669yfiQLtITA+lQrM3aMijxjjdCREnxE8ftXuSz+6wViCvkgcAOhA==",
+      "sha512": "eusJnjF+tcp9idGJHQQiCd6/kD/rnusL3gP4BGfJxIxpm6ES6ok4fRLuqW5aEXOaEXCsWWRPFAM97vRJdlMsOw==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Logging.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Logging.xml",
         "lib/net451/Microsoft.Extensions.Logging.dll",
@@ -18726,8 +18765,9 @@
     "Microsoft.Extensions.Logging.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "ejGO1JhPXMsCCSyH12xwkOYsb9oBv2gHc3LLaT2jevrD//xuQizWaxpVk0/rHGdORkWdp+kT2Qmuz/sLyNWW/g==",
+      "sha512": "MxcntGKrdN/eDp3VDuBrZr49NZHBA8Y7nM2VjVNhZzD7OwZpmwdvpPDDgMCv1wV1HmeeV8wk+bZj46JlXxkMdw==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Logging.Abstractions.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Logging.Abstractions.xml",
         "lib/net451/Microsoft.Extensions.Logging.Abstractions.dll",
@@ -18742,8 +18782,9 @@
     "Microsoft.Extensions.Logging.Console/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "zUklTASL2my5gp291VZuK6YMLit9ECmU7gDNN/gDwqO3EB1CDyKQtGQBtABNNgJw/0In8mFFNbsiGYhZ8xFUJA==",
+      "sha512": "JUpgOE36f6sub2iQS9Enxi42UEzVg1kbJhULeRw8Jb4FOOL8IyJBjhLfGszfFyZW4LYpvgRPmHG8ZHR+u5sm5A==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Logging.Console.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Logging.Console.xml",
         "lib/net451/Microsoft.Extensions.Logging.Console.dll",
@@ -18758,8 +18799,9 @@
     "Microsoft.Extensions.Logging.Debug/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "MBBASQ1nP6TeQndLQIr2iBYicVwZB64T14cnsvTuiWsV/aj5nFtR23hLYOJL2JJkrkU25/1/knxDpfH+0vG96g==",
+      "sha512": "cR1Jpy3JySRIlMUSpdxbiR02ewZqtoC5wdaIt+r44AUZiobQemn/dknbmlrFEtEszUJIoqS2IBHQvwoFyBSxuQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Logging.Debug.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Logging.Debug.xml",
         "lib/net451/Microsoft.Extensions.Logging.Debug.dll",
@@ -18774,8 +18816,9 @@
     "Microsoft.Extensions.Logging.TraceSource/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "wIxGpFxTKI+xvh/aVNCUh0tUEq24xmRW/OWpOJrE2c3QrIJJ6vSpvwGJ7cmgvMWK2Ul+HDd9Wxrcd0tUa8rHhg==",
+      "sha512": "CGSOSaJw7tQvPlARxFKFZ36GcH7MtahMA9by1CgYQd+NjVyoGOH6azXaAiq0dbt3OJ7pwHPTb5ib5HDHknqSKQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Logging.TraceSource.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Logging.TraceSource.xml",
         "lib/net451/Microsoft.Extensions.Logging.TraceSource.dll",
@@ -18789,8 +18832,9 @@
     },
     "Microsoft.Extensions.Options/0.0.1-alpha": {
       "type": "package",
-      "sha512": "5zH0KTUqMzt66T9dcJy2x7imjsAHgqctudJGWDKHtNtyKsedyv0xAc7PLStFfrkZQjlqtn/X8QpHnsGEl+fMwQ==",
+      "sha512": "evUnTCyDfngB5VGTsZsQ9BB+CegzhcIbsRFfX3e6Q0aEoLNBrg9e9tp8QAhpA7/7FcwS0J5cMlIsb6sKt5KzOw==",
       "files": [
+        ".signature.p7s",
         "content/Readme.txt",
         "Microsoft.Extensions.Options.0.0.1-alpha.nupkg",
         "Microsoft.Extensions.Options.0.0.1-alpha.nupkg.sha512",
@@ -18800,8 +18844,9 @@
     "Microsoft.Extensions.OptionsModel/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "IhK5pNqRgakrwiv5OrB6hv7e6+TZzYqfJr40Qri0Xgi+oXJklNgbA5eHvzZrghdHfqfSqcvLWtWD0ri6e8Eo1w==",
+      "sha512": "i6vIEEe3j4P8WNgSZnmk8zodpULMtqv0EYio8ajZ7uigMqFrH3nTxLxorp7yOrNSKe8AIEGv7pixJBcNoXaueA==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.OptionsModel.dll",
         "lib/dotnet5.4/Microsoft.Extensions.OptionsModel.xml",
         "lib/net451/Microsoft.Extensions.OptionsModel.dll",
@@ -18816,7 +18861,7 @@
     "Microsoft.Extensions.PlatformAbstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "26HS4c6MBisN+D7XUr8HObOI/JJvSJQYQR//Bfw/hi9UqhqK3lFpNKjOuYHI+gTxYdXT46HqZiz4D+k7d+ob3A==",
+      "sha512": "0b65CFB9nCxENPDjoOGeNaQBK1jhKfjQVcHg2KTWvPr+GaaBNyqmAo+7H+1ZoH6hmEYYl63aEbB1HXPRD4eQlQ==",
       "files": [
         "lib/dotnet5.4/Microsoft.Extensions.PlatformAbstractions.dll",
         "lib/dotnet5.4/Microsoft.Extensions.PlatformAbstractions.xml",
@@ -18830,8 +18875,9 @@
     "Microsoft.Extensions.Primitives/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "oHWqBARJveyM7LctuqQqvsTC58hxoq0gGnHr6Qsxie71LIkZpfE21IklhSLOsqmv4QIpes/G6k1vZbAQ+cC/nw==",
+      "sha512": "6XcebLk08hxSuY6e3MdB71vLer8ozF2dygtx3pkKg313crBlq8g9b5wlNxeK4+/w/g6xfa8F6a8QpPN4u8Jpog==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.Primitives.dll",
         "lib/dotnet5.4/Microsoft.Extensions.Primitives.xml",
         "lib/net451/Microsoft.Extensions.Primitives.dll",
@@ -18846,8 +18892,9 @@
     "Microsoft.Extensions.WebEncoders/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "wzBnlP/2tFePKvM+DNyRuf6mWt9BxCRjdQBFi+9xUz0DhFdhMzLKN97ZE9/fd36rUVjd2JwlGqHUOSYQURNhfw==",
+      "sha512": "6HeXKYRLa4/GwSfgqG7gwrccFkQh/WH8RQT6DfBHZEemxyBGP4jg6BxLpPAB1hM5YzjX6WKDugXLjBmwjUl8xw==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.WebEncoders.dll",
         "lib/dotnet5.4/Microsoft.Extensions.WebEncoders.xml",
         "lib/net451/Microsoft.Extensions.WebEncoders.dll",
@@ -18860,8 +18907,9 @@
     "Microsoft.Extensions.WebEncoders.Core/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "wt47w3Zu7JvuD7CfRSCaz0IZL5EzpuzicRm6Qcidteb2TVeB98Psg7YGiwIBeYB1b52YFTBgqC+ySKk/GRhy2A==",
+      "sha512": "FSzUOZAIk9Vq8bJeg97aIzvkQhEZh42anFAX9f4Cqogub2SBfv7agsfQmbc0K4y/q3e8r1DXY8i1eTJnW2L7aQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Extensions.WebEncoders.Core.dll",
         "lib/dotnet5.4/Microsoft.Extensions.WebEncoders.Core.xml",
         "lib/net451/Microsoft.Extensions.WebEncoders.Core.dll",
@@ -18874,8 +18922,9 @@
     "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
-      "sha512": "Y10hkmHQZLieW3J6J+vTiq86vifmJ7Vc2zrwNR349oAaUGjTHL0ws6rqHn0JDIcawBna4AE3OBNsL9vuZuE8bw==",
+      "sha512": "QLe+VTigAqcV++w23QWRSIoybatI7BWS29GXsVAmqwt8cVCKgBDIM4n/YyWA++kiryHPsDtdnT3qrKtp8U8VlA==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.4/Microsoft.Net.Http.Headers.dll",
         "lib/dotnet5.4/Microsoft.Net.Http.Headers.xml",
         "lib/net451/Microsoft.Net.Http.Headers.dll",
@@ -18887,8 +18936,9 @@
     },
     "MimeKit/1.12.0": {
       "type": "package",
-      "sha512": "RxmmVI5vLiI7q54i5CK3WESv6e/sVI3sEJB2/PXdIbKWfHOkQywGoRkqiSqDRz+m5fU7D1H0RVkjTshONo0ZzA==",
+      "sha512": "kBPM8jjM9uPmsM6UJnDXKRVAuH1fadiRzQZAoNmXJjUQBzEyktShEv1E96SZBBhS3yzM2nHbybnHXv6glkirrg==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/BouncyCastle.dll",
         "lib/MonoAndroid10/MimeKit.dll",
         "lib/MonoAndroid10/MimeKit.xml",
@@ -18918,8 +18968,9 @@
     },
     "Newtonsoft.Json/9.0.1": {
       "type": "package",
-      "sha512": "U82mHQSKaIk+lpSVCbWYKNavmNH1i5xrExDEquU1i6I5pV6UMOqRnJRSlKO3cMPfcpp0RgDY+8jUXHdQ4IfXvw==",
+      "sha512": "2okXpTRwUcgQb06put5LwwCjtgoFo74zkPksjcvOpnIjx7TagGW5IoBCAA4luZx1+tfiIhoNqoiI7Y7zwWGyKA==",
       "files": [
+        ".signature.p7s",
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
         "lib/net35/Newtonsoft.Json.dll",
@@ -18942,8 +18993,9 @@
     },
     "PayPalCoreSDK/1.7.1": {
       "type": "package",
-      "sha512": "hGOLo3X2vgOpOWJI91+vlBgr/Dchk3xZAF0bdIpKiAwjlRKMjzSC4zuT1eGwmQ8uVL1IaGBZwNGklyRHDniYlQ==",
+      "sha512": "6SKLaBZXOJPIJw/jKhLqrEcfGadRlgGFTqxc3omu0f3BOGPrpRLxp/kAUbVS2qlokZW1M6m1p3p6yp3CHSBLdg==",
       "files": [
+        ".signature.p7s",
         "lib/net20/PayPalCoreSDK.dll",
         "lib/net35/PayPalCoreSDK.dll",
         "lib/net40/PayPalCoreSDK.dll",
@@ -18956,8 +19008,9 @@
     },
     "PayPalMerchant-net451/2.7.109": {
       "type": "package",
-      "sha512": "T4GeSn/Odvx8VVyZ6e5emsR1bULftOwYnKGRrv6QotKR9UlIGkrybtuuBiB7tTGfkV/zUohFVimAS3gDPEtNvg==",
+      "sha512": "AAbJl0hA3bgZPJR3GKAiVUpaf030OakI7S131kG83Trhrf1ipaHiQtjkmrKgbXtvemoA4j7HMM2LZOleVf6RbQ==",
       "files": [
+        ".signature.p7s",
         "lib/net451/PayPalMerchantSDK.dll",
         "PayPalMerchant-net451.2.7.109.nupkg",
         "PayPalMerchant-net451.2.7.109.nupkg.sha512",
@@ -18966,8 +19019,9 @@
     },
     "Remotion.Linq/2.0.1": {
       "type": "package",
-      "sha512": "SIO6HDH6CU9GC2IZGBrc6q5X5vRhfatXrg9cVavCEG9W6v5e88b+vXjmLGQEorch4sYEIImRr+ODyUMyrmrqAg==",
+      "sha512": "nWTh/UgipQzJ66sFlaGX+OsJVOP14kSo8OYaNdtJ/2OPcp2t4n810JMbcNR9rwyEO+lllodpje9GquQQ2jtDTw==",
       "files": [
+        ".signature.p7s",
         "lib/net35/Remotion.Linq.dll",
         "lib/net35/Remotion.Linq.XML",
         "lib/net40/Remotion.Linq.dll",
@@ -18983,8 +19037,9 @@
     },
     "System.Collections/4.0.0": {
       "type": "package",
-      "sha512": "i2vsGDIEbWdHcUSNDPKZP/ZWod6o740el7mGTCy0dqbCxQh74W4QoC+klUwPEtGEFuvzJ7bJgvwJqscosVNyZQ==",
+      "sha512": "GguP01PQmdqIj7wa55V+k/pEWyh/nHKfyjQhcWxl0gHwyu7NNWCpOdUu18/vsCg6wwI6KBeUswieF9fPO7aB2w==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19032,8 +19087,9 @@
     "System.Collections.Immutable/1.1.37": {
       "type": "package",
       "serviceable": true,
-      "sha512": "fTpqwZYBzoklTT+XjTRK8KxvmrGkYHzBiylCcKyQcxiOM8k+QvhNBxRvFHDWzy4OEP5f8/9n+xQ9mEgEXY+muA==",
+      "sha512": "aK+7V4KG3GgbHqy6jUKZ7rIJnyXGPmhSMoYcbdoWHN7RGaMjfYLBB5yeqglJQL5gsH53bY/wAt22kOli+vWPpg==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet/System.Collections.Immutable.dll",
         "lib/dotnet/System.Collections.Immutable.xml",
         "lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll",
@@ -19045,8 +19101,9 @@
     },
     "System.Diagnostics.Debug/4.0.0": {
       "type": "package",
-      "sha512": "AYJsLLGDVTC/nyURjgAo7Lpye0+HuSkcQujUf+NgQVdC/C/ky5NyamQHCforHJzgqspitMMtBe8B4UBdGXy1zQ==",
+      "sha512": "GIwf+lZ7d4a6LTY5UkpcubNBPch4uowkJjJRXv4lPk8ckw4XBoLQU58yMIDEWes+U3adoT7BETBglU5mIaWrpw==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19094,8 +19151,9 @@
     "System.Diagnostics.DiagnosticSource/4.0.0-beta-23516": {
       "type": "package",
       "serviceable": true,
-      "sha512": "0uDR/UOmFCNPDCyHEPHhCrk6c1iRnDp00YqwSZ8Qf5aaaJjm4WXnf4Q9xZw4OoApsSiODSypDMdpQU24IxR16A==",
+      "sha512": "yD7SejHO2veOgu8DwFegL/x7iikylULr9EWTSySCpNJnKhLgGVMH/YijCtJhq5TUBkS88Of58fShvRebfG3Cag==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.2/System.Diagnostics.DiagnosticSource.dll",
         "lib/dotnet5.2/System.Diagnostics.DiagnosticSource.xml",
         "lib/portable-net45+win8+wp8+wpa81/System.Diagnostics.DiagnosticSource.dll",
@@ -19107,8 +19165,9 @@
     },
     "System.Diagnostics.Tracing/4.0.0": {
       "type": "package",
-      "sha512": "tzqQJPgD4bKs0eE5Gx9HEsxiHSBGcL42PImkjhwXTQK6iQbLTTB9mi+G7mUyEjlH8LUcm7F5QHEs+O+LpruOrQ==",
+      "sha512": "MEwAL+MgjL8BurIUkRqwEqBxsOftyonhhR7IBrbuG0VbOqq34lKYi2HdTkSX2mb9SSEqFBNw8m8f5VdcxJhF4A==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19153,8 +19212,9 @@
     },
     "System.Globalization/4.0.0": {
       "type": "package",
-      "sha512": "IBJyTo1y7ZtzzoJUA60T1XPvNTyw/wfFmjFoBFtlYfkekIOtD/AzDDIg0YdUa7eNtFEfliED2R7HdppTdU4t5A==",
+      "sha512": "sMmuC9uH7JuVLRqLve8KZOpGk5EJhjBOh0BvGraJP97qKkhHFnAuLhDEOBEcVd9RzFhTuPyaEe3yvs0CHkujCQ==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19201,8 +19261,9 @@
     },
     "System.IO/4.0.0": {
       "type": "package",
-      "sha512": "MoCHQ0u5n0OMwUS8OX4Gl48qKiQziSW5cXvt82d+MmAcsLq9OL90+ihnu/aJ1h6OOYcBswrZAEuApfZha9w2lg==",
+      "sha512": "muSGASj17Jpgm7an/goZ2Yf1+gHYVJzObliOGDNbvxuO+HoYie6W3Udt6lq7Q+wSuY1c1xRllQg+GVIcupsiqg==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19250,8 +19311,9 @@
     "System.Linq/4.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "r6Hlc+ytE6m/9UBr+nNRRdoJEWjoeQiT3L3lXYFDHoXk3VYsRBCDNXrawcexw7KPLaH0zamQLiAb6avhZ50cGg==",
+      "sha512": "bEZbXndclOyzNobbP4oB3Nsz14Ogg9UYr0HmtE16pMeMIeApRVmzxr4RBXZ1tcNYnMNUMWxBcbOCAHtY2df+EQ==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet/System.Linq.dll",
         "lib/net45/_._",
         "lib/netcore50/System.Linq.dll",
@@ -19282,8 +19344,9 @@
     },
     "System.Reflection/4.0.0": {
       "type": "package",
-      "sha512": "g96Rn8XuG7y4VfxPj/jnXroRJdQ8L3iN3k3zqsuzk4k3Nq4KMXARYiIO4BLW4GwX06uQpuYwRMcAC/aF117knQ==",
+      "sha512": "M/WUtXCrmrJLqfDlYK1AqlfmWTDpoVv+EwOBwu0LXjyyVCnDHB22LB7RW5UCJI6zIFzSzj1BhdnnHvX2w4hxxQ==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19331,8 +19394,9 @@
     "System.Reflection.Extensions/4.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "dbYaZWCyFAu1TGYUqR2n+Q+1casSHPR2vVW0WVNkXpZbrd2BXcZ7cpvpu9C98CTHtNmyfMWCLpCclDqly23t6A==",
+      "sha512": "wpU0EJ1Gua4I3KpLNNRL2YexP7oJQubXAQZlAS6FhIDfkKHp6u+mUUwUZvLuge5hgfBlgiHrNAH6rTCBW41D+A==",
       "files": [
+        ".signature.p7s",
         "lib/DNXCore50/System.Reflection.Extensions.dll",
         "lib/net45/_._",
         "lib/netcore50/System.Reflection.Extensions.dll",
@@ -19365,8 +19429,9 @@
     "System.Reflection.Metadata/1.1.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "RLIE4sSt2zngMLuqM6YmxBH99mTumtT4DNZE4+msfEaInUP5iCLQT+BHPl+2cjSAP1pdALyAjLB8RtCB+WGGWQ==",
+      "sha512": "9iF8v0dZaiFyeXEr+aO7TO7GZcPI2gqPGRKBYlQ/XnFrgUVnqyfmcuCQmi0UFCajWStxeRZdi5izDp98iKCE9g==",
       "files": [
+        ".signature.p7s",
         "lib/dotnet5.2/System.Reflection.Metadata.dll",
         "lib/dotnet5.2/System.Reflection.Metadata.xml",
         "lib/portable-net45+win8/System.Reflection.Metadata.dll",
@@ -19379,8 +19444,9 @@
     "System.Reflection.Primitives/4.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "n9S0XpKv2ruc17FSnaiX6nV47VfHTZ1wLjKZlAirUZCvDQCH71mVp+Ohabn0xXLh5pK2PKp45HCxkqu5Fxn/lA==",
+      "sha512": "fLfDMKJgXmt4ov430/vzO4HfDBz6qWM5r38OLsEkolBVfJskviCKZfWMUwPNf2IUuZ7W4hj8XY9hCtABzIxE4A==",
       "files": [
+        ".signature.p7s",
         "lib/DNXCore50/System.Reflection.Primitives.dll",
         "lib/net45/_._",
         "lib/netcore50/System.Reflection.Primitives.dll",
@@ -19413,8 +19479,9 @@
     "System.Resources.ResourceManager/4.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "qmqeZ4BJgjfU+G2JbrZt4Dk1LsMxO4t+f/9HarNY6w8pBgweO6jT+cknUH7c3qIrGvyUqraBhU45Eo6UtA0fAw==",
+      "sha512": "ggdLHkoqUrFe6NavHIzpoRcw0EMMv4mS5CbWi2b3RV5YlaqdWWbXZlUPbNF1Nqx+DyD0BFlBthPOFm3zpWdBbw==",
       "files": [
+        ".signature.p7s",
         "lib/DNXCore50/System.Resources.ResourceManager.dll",
         "lib/net45/_._",
         "lib/netcore50/System.Resources.ResourceManager.dll",
@@ -19446,8 +19513,9 @@
     },
     "System.Runtime/4.0.0": {
       "type": "package",
-      "sha512": "Uq9epame8hEqJlj4KaWb67dDJvj4IM37jRFGVeFbugRdPz48bR0voyBhrbf3iSa2tAmlkg4lsa6BUOL9iwlMew==",
+      "sha512": "XFATFq18dKpBEthct4ed1ZwJRqGdvClav8H0cCONsgTRpnzUCljCsUGs4VVvf6/b879dUydAxn55V/NqkF9Zzw==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19494,8 +19562,9 @@
     },
     "System.Runtime.Extensions/4.0.0": {
       "type": "package",
-      "sha512": "zPzwoJcA7qar/b5Ihhzfcdr3vBOR8FIg7u//Qc5mqyAriasXuMFVraBZ5vOQq5asfun9ryNEL8Z2BOlUK5QRqA==",
+      "sha512": "E3U6OscJsHLQ02FIUkSmq2XyYbkYvMTFTsPuWi82BnCbUQmAsZTT8GjmrKS2r0n1dql0VpcYNyVo0lw6/EWACQ==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19542,8 +19611,9 @@
     },
     "System.Runtime.InteropServices/4.0.0": {
       "type": "package",
-      "sha512": "J8GBB0OsVuKJXR412x6uZdoyNi4y9OMjjJRHPutRHjqujuvthus6Xdxn/i8J1lL2PK+2jWCLpZp72h8x73hkLg==",
+      "sha512": "gubyhtYVJv/u/edGyi+8ptzqVG+uv52Jc3zC9n/FvPEYlkQ983XDhoGymZWPo68RxBhryvtV8xwOyfnw3ig2yA==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19588,8 +19658,9 @@
     },
     "System.Text.Encoding/4.0.0": {
       "type": "package",
-      "sha512": "AMxFNOXpA6Ab8swULbXuJmoT2K5w6TnV3ObF5wsmEcIHQUJghoZtDVfVHb08O2wW15mOSI1i9Wg0Dx0pY13o8g==",
+      "sha512": "c9iigyiO/CGTNHmbWi9gwWEHzfN5jqo43juvskC1C2dXtgpAe65K3T64gA2couzEDlqLEUIjy2Pg/8mvzyDndw==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19636,8 +19707,9 @@
     },
     "System.Text.Encoding.Extensions/4.0.0": {
       "type": "package",
-      "sha512": "FktA77+2DC0S5oRhgM569pbzFrcA45iQpYiI7+YKl68B6TfI2N5TQbXqSWlh2YXKoFXHi2RFwPMha2lxiFJZ6A==",
+      "sha512": "DpRSRzJlfYijZ1ezsrsACtf5qgKhtd/tpvKElpnKUcM6hT0OvwveIrC/QYGLwNvnxLBrFUJFXR9MezeKquHd4w==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
@@ -19684,8 +19756,9 @@
     },
     "System.Threading/4.0.0": {
       "type": "package",
-      "sha512": "H6O/9gUrjPDNYanh/7OFGAZHjVXvEuITD0RcnjfvIV04HOGrOPqUBU0kmz9RIX/7YGgCQn1o1S2DX6Cuv8kVGQ==",
+      "sha512": "CnrIlJ22EwiLkt5DofCaEJux+rmT502fMwWMsZTqhN0aJe7CaxcGjZX32Fc+8VpkT4L6jIHg//lcaP9zzikuEg==",
       "files": [
+        ".signature.p7s",
         "lib/MonoAndroid10/_._",
         "lib/MonoTouch10/_._",
         "lib/net45/_._",
