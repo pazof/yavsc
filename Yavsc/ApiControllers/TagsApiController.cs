@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
 
@@ -14,10 +15,13 @@ namespace Yavsc.Controllers
     public class TagsApiController : Controller
     {
         private ApplicationDbContext _context;
+        ILogger _logger;
 
-        public TagsApiController(ApplicationDbContext context)
+        public TagsApiController(ApplicationDbContext context,
+            ILoggerFactory loggerFactory)
         {
             _context = context;
+            _logger = loggerFactory.CreateLogger<TagsApiController>();
         }
 
         // GET: api/TagsApi
@@ -65,6 +69,7 @@ namespace Yavsc.Controllers
             try
             {
                 _context.SaveChanges(User.GetUserId());
+                _logger.LogInformation("Tag created");
             }
             catch (DbUpdateConcurrencyException)
             {
