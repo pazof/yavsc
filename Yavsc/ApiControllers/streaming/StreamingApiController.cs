@@ -18,6 +18,11 @@ namespace Yavsc {
 
     public async Task<IActionResult> GetStreamingToken()
     {
+      _logger.LogInformation("Token asked");
+      throw new NotImplementedException();
+    }
+    public async Task<IActionResult> GetLiveStreamingInde()
+    {
       throw new NotImplementedException();
     }
 
