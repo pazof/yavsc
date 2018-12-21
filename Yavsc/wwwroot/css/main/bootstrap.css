@@ -3653,7 +3653,6 @@ select[multiple].input-lg {
     line-height: 1.42857143;
     text-align: center;
     white-space: normal;
-    max-width: 100%;
     vertical-align: middle;
     -ms-touch-action: manipulation;
     touch-action: manipulation;
