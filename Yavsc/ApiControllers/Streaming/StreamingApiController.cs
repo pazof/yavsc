@@ -14,6 +14,8 @@ namespace Yavsc {
     public StreamingApiController (LoggerFactory loggerFactory)
     {
       _logger = loggerFactory.CreateLogger<StreamingApiController>();
+      _logger.LogInformation
+        ("created logger");
     }
 
     public async Task<IActionResult> GetStreamingToken()
@@ -21,8 +23,9 @@ namespace Yavsc {
       _logger.LogInformation("Token asked");
       throw new NotImplementedException();
     }
-    public async Task<IActionResult> GetLiveStreamingInde()
+    public async Task<IActionResult> GetLiveStreamingIndex()
     {
+      _logger.LogInformation("GetLiveStreamingIndex");
       throw new NotImplementedException();
     }
 
