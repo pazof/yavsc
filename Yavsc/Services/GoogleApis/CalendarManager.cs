@@ -49,7 +49,10 @@ namespace Yavsc.Services
     public class CalendarManager : ICalendarManager 
     {
         public class ExpiredTokenException : Exception { }
-        protected static string scopeCalendar = "https://www.googleapis.com/auth/calendar";
+        protected static string [] scopesCalendar = 
+        { "https://www.googleapis.com/auth/calendar",
+          "https://www.googleapis.com/auth/calendar.events"
+        };
         private string _ApiKey;
         private IAuthorizationCodeFlow _flow;
         ApplicationDbContext _dbContext;
@@ -77,7 +80,7 @@ namespace Yavsc.Services
                         ClientId = _googleSettings.ServiceAccount.client_id,
                         ClientSecret = _googleSettings.ServiceAccount.client_secret
                     },
-                    Scopes = new[] { scopeCalendar },
+                    Scopes = scopesCalendar ,
                     DataStore = dataStore
                 });
         }
@@ -223,7 +226,7 @@ namespace Yavsc.Services
                     };
                 if (credential.IsCreateScopedRequired)
                 {
-                    credential = credential.CreateScoped(new string [] { scopeCalendar });
+                    credential = credential.CreateScoped( scopesCalendar );
                 }/* 
                 var credential = await GoogleHelpers.GetCredentialForApi(new string [] { scopeCalendar });
                 if (credential.IsCreateScopedRequired)
@@ -252,28 +255,21 @@ namespace Yavsc.Services
 		/// <returns></returns>
         public async Task<CalendarService> CreateUserCalendarServiceAsync(string userId)
         {
-            var login = await _dbContext.GetGoogleUserLoginAsync(userId);
-            if (login == null) return null;
-            _logger.LogInformation("Got a Google login");
-            var token = await _flow.LoadTokenAsync(login.ProviderKey, CancellationToken.None);
-            _logger.LogInformation("Got a Google token");
-            var c = SystemClock.Default;
-            if (token.IsExpired(c)) {
-                if (string.IsNullOrWhiteSpace(token.RefreshToken))
-                {
-                  _logger.LogError("no refresh token to exploit and actual one expired : {}");
-                }
-                else {
-                  token = await RefreshToken(token);
-                }
-            }
-            UserCredential cred = new UserCredential(_flow,login.ProviderKey,token);
-            _logger.LogInformation("Got creadential");
-			return  new CalendarService(new BaseClientService.Initializer()
+            GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
+
+            if (credential.IsCreateScopedRequired)
             {
-                HttpClientInitializer = cred,
-                ApplicationName = "Yavsc"
+                credential = credential.CreateScoped( scopesCalendar);
+            }
+
+
+            var service = new CalendarService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "yavsc-001"
             });
+
+			return service; 
 		}
 
         public async Task<TokenResponse> RefreshToken(TokenResponse oldResponse)
