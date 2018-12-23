@@ -133,11 +133,12 @@ namespace Yavsc
                    YavscGoogleAppOptions = new YavscGoogleOptions
                    {
                        ClientId = Configuration["Authentication:Google:ServiceAccount:client_id"],
-                       ClientSecret = Configuration["Authentication:Google:SerivceAccount:client_secret"],
+                       ClientSecret = Configuration["Authentication:Google:ServiceAccount:client_secret"],
                        AccessType = "offline",
                        Scope = { "profile", "https://www.googleapis.com/auth/plus.login", 
                        "https://www.googleapis.com/auth/admin.directory.resource.calendar",
-                       "https://www.googleapis.com/auth/calendar" },
+                       "https://www.googleapis.com/auth/calendar",
+                       "https://www.googleapis.com/auth/calendar.events"},
                        SaveTokensAsClaims = true,
                        UserInformationEndpoint = "https://www.googleapis.com/plus/v1/people/me",
                        Events = new OAuthEvents
@@ -150,7 +151,7 @@ namespace Yavsc
                                    var gcontext = context as GoogleOAuthCreatingTicketContext;
                                    context.Identity.AddClaim(new Claim(YavscClaimTypes.GoogleUserId, gcontext.GoogleUserId));
                                    var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-                                  /* 
+                                   
                                    var store = serviceScope.ServiceProvider.GetService<IDataStore>();
                                     await store.StoreAsync(gcontext.GoogleUserId, new TokenResponse { 
                                        AccessToken = gcontext.TokenResponse.AccessToken,
@@ -158,7 +159,7 @@ namespace Yavsc
                                        TokenType = gcontext.TokenResponse.TokenType,
                                         ExpiresInSeconds = int.Parse(gcontext.TokenResponse.ExpiresIn), 
                                         IssuedUtc = DateTime.Now
-                                       }); */
+                                       });
                                    await dbContext.StoreTokenAsync (gcontext.GoogleUserId,
                                    gcontext.TokenResponse.Response,
                                       gcontext.TokenResponse.AccessToken,
