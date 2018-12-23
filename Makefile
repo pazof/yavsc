@@ -59,6 +59,8 @@ clean:
 		make -C $${subdir} clean ; \
 	done
 
+watch:
+	make -C Yavsc watch
 
 .PHONY: all $(SUBDIRS)
 
