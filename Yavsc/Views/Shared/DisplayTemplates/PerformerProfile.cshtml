@@ -1,7 +1,7 @@
 @model PerformerProfile
 
 <div class="performer @(Model.Active?"active":"inactive")">
-     @Html.DisplayFor(m=>m.Performer)
+     @if (Model.Performer!=null) { Html.DisplayFor(m=>m.Performer); } 
         @if (Model.WebSite!=null) { 
             <a target="yaext" href="@Model.WebSite" class="btn btn-info">@SR["WebSite"]: @Model.WebSite</a>
         }
