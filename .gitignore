@@ -1,7 +1,7 @@
 *.pfx
 *.userprefs
 *.Private.cs
-*.secret.json
+*-secret.json
 
 .gitignore
 .paket/
