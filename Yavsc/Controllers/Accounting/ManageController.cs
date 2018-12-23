@@ -302,11 +302,13 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> SetGoogleCalendar(string returnUrl, string pageToken)
 
         {
-            var calendars = await _calendarManager.GetCalendarsAsync(User.GetUserId(), pageToken);
-            return View(new SetGoogleCalendarViewModel { 
-                ReturnUrl = returnUrl, 
-                Calendars = calendars
-                });
+          var uid = User.GetUserId();
+
+          var calendars = await _calendarManager.GetCalendarsAsync(uid, pageToken);
+          return View(new SetGoogleCalendarViewModel { 
+              ReturnUrl = returnUrl, 
+              Calendars = calendars
+              });
         }
 
         [HttpPost, ValidateAntiForgeryToken]
