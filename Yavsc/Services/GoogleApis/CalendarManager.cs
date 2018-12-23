@@ -74,8 +74,8 @@ namespace Yavsc.Services
                 {
                     ClientSecrets = new ClientSecrets
                     {
-                        ClientId = _googleSettings.ClientId,
-                        ClientSecret = _googleSettings.ClientSecret
+                        ClientId = _googleSettings.ServiceAccount.client_id,
+                        ClientSecret = _googleSettings.ServiceAccount.client_secret
                     },
                     Scopes = new[] { scopeCalendar },
                     DataStore = dataStore
@@ -259,7 +259,13 @@ namespace Yavsc.Services
             _logger.LogInformation("Got a Google token");
             var c = SystemClock.Default;
             if (token.IsExpired(c)) {
-                token = await RefreshToken(token);
+                if (string.IsNullOrWhiteSpace(token.RefreshToken))
+                {
+                  _logger.LogError("no refresh token to exploit and actual one expired : {}");
+                }
+                else {
+                  token = await RefreshToken(token);
+                }
             }
             UserCredential cred = new UserCredential(_flow,login.ProviderKey,token);
             _logger.LogInformation("Got creadential");
@@ -273,12 +279,13 @@ namespace Yavsc.Services
         public async Task<TokenResponse> RefreshToken(TokenResponse oldResponse)
         {
             string ep = " https://www.googleapis.com/oauth2/v4/token";
+            _logger.LogInformation($"rt:{oldResponse.RefreshToken}");
             // refresh_token client_id client_secret grant_type=refresh_token
             try {
                 using (var m = new SimpleJsonPostMethod(ep)) {
                     return await m.Invoke<TokenResponse>(
-                        new { refresh_token= oldResponse.RefreshToken, client_id=_googleSettings.ClientId,
-                         client_secret=_googleSettings.ClientSecret,
+                        new { refresh_token= oldResponse.RefreshToken, client_id=_googleSettings.ServiceAccount.client_id,
+                         client_secret=_googleSettings.ServiceAccount.client_secret,
                           grant_type="refresh_token" }
                     );
                 }

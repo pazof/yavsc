@@ -114,14 +114,14 @@ namespace Yavsc.Helpers
             try {
                 using (var m = new SimpleJsonPostMethod(ep)) {
                     return await m.Invoke<TokenResponse>(
-                        new { refresh_token= oldResponse.RefreshToken, client_id=settings.ClientId,
-                         client_secret=settings.ClientSecret,
+                        new { refresh_token= oldResponse.RefreshToken, client_id=settings.ServiceAccount.client_id,
+                         client_secret=settings.ServiceAccount.client_secret,
                           grant_type="refresh_token" }
                     );
                 }
             }
             catch (Exception ex) {
-                throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
+                throw new Exception ("No refresh token for Google service account",ex);
             }
         }
     }

@@ -4,6 +4,7 @@
         "Yavsc.Abstract",
         "Yavsc.Server",
         "cli",
+        "test",
         "testOauthClient",
         "OAuth.AspNet.Token",
         "OAuth.AspNet.Server"

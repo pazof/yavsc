@@ -302,15 +302,10 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> SetGoogleCalendar(string returnUrl, string pageToken)
 
         {
-#if Debug
-          if (_calendarManager==null) throw new Exception("No service!");
-#endif
-            var calendar = await _calendarManager.GetCalendarsAsync(User.GetUserId(), pageToken);
-            if (calendar == null)
-              return new ChallengeResult();
+            var calendars = await _calendarManager.GetCalendarsAsync(User.GetUserId(), pageToken);
             return View(new SetGoogleCalendarViewModel { 
                 ReturnUrl = returnUrl, 
-                Calendars = calendar
+                Calendars = calendars
                 });
         }
 
