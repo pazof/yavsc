@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 
 namespace Yavsc
 {
@@ -43,6 +44,7 @@ namespace Yavsc
         public static string Authority { get; private set; }
         public static string Temp { get; set; }
         public static SiteSettings SiteSetup { get; private set; }
+        public static GoogleServiceAccount GServiceAccount { get; private set; }
 
         public static string HostingFullName { get; set; }
 
@@ -76,11 +78,20 @@ namespace Yavsc
             var auth = Configuration["Site:Authority"];
             var cxstr = Configuration["Data:DefaultConnection:ConnectionString"];
             ConnectionString = cxstr;
+
             AppDomain.CurrentDomain.SetData(Constants.YavscConnectionStringEnvName, ConnectionString);
+
+            var googleClientFile = Configuration["Authentication:Google:GoogleWebClientJson"]; 
+            var googleServiceAccountJsonFile = Configuration["Authentication:Google:GoogleServiceAccountJson"]; 
+            GoogleWebClientConfiguration = new ConfigurationBuilder().AddJsonFile(googleClientFile).Build();
+            var safile = new FileInfo(googleServiceAccountJsonFile);
+            GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
         }
+
         public static string ConnectionString { get; set; }
         public static GoogleAuthSettings GoogleSettings { get; set; }
         public IConfigurationRoot Configuration { get; set; }
+        public static IConfigurationRoot GoogleWebClientConfiguration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)

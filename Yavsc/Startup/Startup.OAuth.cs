@@ -127,13 +127,12 @@ namespace Yavsc
                        options.AccessDeniedPath = new PathString(Constants.LoginPath.Substring(1));
                    });
 
-                  
 
-                   var gvents = new OAuthEvents();
+
                    YavscGoogleAppOptions = new YavscGoogleOptions
                    {
-                       ClientId = Configuration["Authentication:Google:ServiceAccount:client_id"],
-                       ClientSecret = Configuration["Authentication:Google:ServiceAccount:client_secret"],
+                       ClientId = GoogleWebClientConfiguration ["web:client_id"],
+                       ClientSecret = GoogleWebClientConfiguration ["web:client_secret"],
                        AccessType = "offline",
                        Scope = { "profile", "https://www.googleapis.com/auth/plus.login", 
                        "https://www.googleapis.com/auth/admin.directory.resource.calendar",
