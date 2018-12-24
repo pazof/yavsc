@@ -114,8 +114,8 @@ namespace Yavsc.Helpers
             try {
                 using (var m = new SimpleJsonPostMethod(ep)) {
                     return await m.Invoke<TokenResponse>(
-                        new { refresh_token= oldResponse.RefreshToken, client_id=settings.ServiceAccount.client_id,
-                         client_secret=settings.ServiceAccount.client_secret,
+                        new { refresh_token= oldResponse.RefreshToken, client_id=Startup.GoogleWebClientConfiguration["web:client_id"],
+                         client_secret=Startup.GoogleWebClientConfiguration["web:client_secret"],
                           grant_type="refresh_token" }
                     );
                 }

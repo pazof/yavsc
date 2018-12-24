@@ -48,19 +48,6 @@ namespace Yavsc
                 logger.LogWarning("It has been set to : "+Environment.GetEnvironmentVariable("APPDATA"));
             }
 
-            var creds = GoogleSettings?.ServiceAccount?.private_key;
-            if (creds==null)
-              throw new InvalidOperationException("No Google API credential");
-            foreach (var feature in app.ServerFeatures) 
-            {
-                var val = JsonConvert.SerializeObject(feature.Value);
-                 logger.LogInformation( $"#Feature {feature.Key}: {val}" );
-            }
-            foreach (var prop in app.Properties) 
-            {
-                var val = JsonConvert.SerializeObject(prop.Value);
-                 logger.LogInformation( $"#Property {prop.Key}: {val}" );
-            }
         }
     }
 }

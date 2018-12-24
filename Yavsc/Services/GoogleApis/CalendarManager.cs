@@ -59,26 +59,28 @@ namespace Yavsc.Services
 
         IDataStore _dataStore;
         ILogger _logger;
+        string _client_id;
+        string _client_secret; 
 
-        GoogleAuthSettings _googleSettings ;
-
-        public CalendarManager(IOptions<GoogleAuthSettings> settings,
+        public CalendarManager(
         ApplicationDbContext dbContext,
         IDataStore dataStore,
         ILoggerFactory loggerFactory,
-        IOptions<GoogleAuthSettings> googleSettingsOptions)
+        IOptions<GoogleAuthSettings> settings)
         {
+          _client_id = Startup.GoogleWebClientConfiguration["web:cient_id"];
+          _client_secret = Startup.GoogleWebClientConfiguration["web:cient_secret"];
+
             _ApiKey = settings.Value.ApiKey;
             _dbContext = dbContext;
             _logger = loggerFactory.CreateLogger<CalendarManager>();
             _dataStore = dataStore;
-            _googleSettings = googleSettingsOptions.Value;
             _flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
                 {
                     ClientSecrets = new ClientSecrets
                     {
-                        ClientId = _googleSettings.ServiceAccount.client_id,
-                        ClientSecret = _googleSettings.ServiceAccount.client_secret
+                        ClientId = _client_id,
+                        ClientSecret = _client_secret
                     },
                     Scopes = scopesCalendar ,
                     DataStore = dataStore
@@ -280,8 +282,8 @@ namespace Yavsc.Services
             try {
                 using (var m = new SimpleJsonPostMethod(ep)) {
                     return await m.Invoke<TokenResponse>(
-                        new { refresh_token= oldResponse.RefreshToken, client_id=_googleSettings.ServiceAccount.client_id,
-                         client_secret=_googleSettings.ServiceAccount.client_secret,
+                        new { refresh_token= oldResponse.RefreshToken, client_id=_client_id,
+                         client_secret=_client_secret,
                           grant_type="refresh_token" }
                     );
                 }
