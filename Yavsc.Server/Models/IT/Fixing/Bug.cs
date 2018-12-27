@@ -15,7 +15,10 @@ namespace Yavsc.Models.IT.Fixing
 
         public long? FeatureId { get; set; }
 
-        [YaStringLength(2048)]
+        [YaStringLength(1024)]
+        public string Title { get; set; }
+
+        [YaStringLength(4096)]
         public string Description { get; set; }
         
         public BugStatus Status { get; set; }

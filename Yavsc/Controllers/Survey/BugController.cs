@@ -3,6 +3,9 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
 using Yavsc.Models.IT.Fixing;
+using Yavsc.Models.IT.Evolution;
+using System.Linq;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -41,6 +44,7 @@ namespace Yavsc.Controllers
         // GET: Bug/Create
         public IActionResult Create()
         {
+            ViewBag.FeaturesIds = _context.Feature.CreateSelectListItems<Feature>(f=>f.Id.ToString(),f=>f.ShortName,null).AddNull("none");
             return View();
         }
 
