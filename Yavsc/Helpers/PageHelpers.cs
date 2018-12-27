@@ -25,6 +25,12 @@ namespace Yavsc.Server.Helpers
 
         }
 
+        public static List<SelectListItem> AddNull(this List<SelectListItem> selectList, string displayNull)
+        {
+          selectList.Add(new SelectListItem { Text = displayNull });
+          return selectList;
+        }
+
         public static List<SelectListItem> CreateSelectListItems<T> (this IEnumerable<T>data,
          Func<T,string> dataField,
         Func<T,string> displayField = null, object selectedValue =null) where T : class
