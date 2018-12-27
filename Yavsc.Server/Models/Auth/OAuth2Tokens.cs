@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Models.OAuth
+namespace Yavsc.Models.Auth
 {
     /// <summary>
     /// OffLine OAuth2 Token

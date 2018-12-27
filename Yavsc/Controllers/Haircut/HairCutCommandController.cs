@@ -89,10 +89,12 @@ namespace Yavsc.Controllers
                         paymentOk = true;
                         command.ValidationDate = DateTime.Now;
                     }
+                    else _logger.LogError
+                      ("This Command were yet validated, and is now paied one more ...");
                 }
             await _context.SaveChangesAsync(User.GetUserId());
             SetViewBagPaymentUrls(id);
-            if (command.PerformerProfile.AcceptPublicContact && paymentOk)
+            if (paymentOk)
             {
                 MessageWithPayloadResponse grep = null;
                 var yaev = command.CreatePaymentEvent(paymentInfo,  _localizer);
@@ -117,10 +119,6 @@ namespace Yavsc.Controllers
                     yaev.Topic,
                     yaev.CreateBody()
                 );
-            }
-            else
-            {
-                // TODO if (AcceptProContact) try & find a bookmaker to send him this query
             }
 
             ViewData["Notify"] = new List<Notification> {

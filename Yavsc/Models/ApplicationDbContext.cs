@@ -64,7 +64,7 @@ namespace Yavsc.Models
             builder.Entity<Models.Cratie.Option>().HasKey(o => new { o.Code, o.CodeScrutin });
             builder.Entity<Notification>().Property(n => n.icon).HasDefaultValue("exclam");
             builder.Entity<ChatRoomPresence>().HasKey(p => new { room = p.ChannelName, user = p.ChatUserConnectionId });
-            
+             
             foreach (var et in builder.Model.GetEntityTypes())
             {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity") != null)
@@ -136,56 +136,6 @@ namespace Yavsc.Models
 
         public DbSet<Service> Services { get; set; }
         public DbSet<Product> Products { get; set; }
-
-
-        public Task<OAuth2Tokens> GetTokensAsync(string googleUserId)
-        {
-            if (string.IsNullOrEmpty(googleUserId))
-            {
-                throw new ArgumentException("email MUST have a value");
-            }
-
-            using (var context = new ApplicationDbContext())
-            {
-                var item = this.Tokens.FirstOrDefault(x => x.UserId == googleUserId);
-                // TODO Refresh token
-
-                return Task.FromResult(item);
-            }
-        }
-
-        public Task StoreTokenAsync(string googleUserId, JObject response, string accessToken,
-        string tokenType, string refreshToken, string expiresIn
-        )
-        {
-            if (string.IsNullOrEmpty(googleUserId))
-            {
-                throw new ArgumentException("googleUserId MUST have a value");
-            }
-
-            var item = this.Tokens.SingleOrDefaultAsync(x => x.UserId == googleUserId).Result;
-            if (item == null)
-            {
-                Tokens.Add(new OAuth2Tokens
-                {
-                    TokenType = "Bearer", // FIXME why value.TokenType would be null?
-                    AccessToken = accessToken,
-                    RefreshToken = refreshToken,
-                    Expiration = DateTime.Now.AddSeconds(int.Parse(expiresIn)),
-                    UserId = googleUserId
-                });
-            }
-            else
-            {
-                item.AccessToken = accessToken;
-                item.Expiration = DateTime.Now.AddMinutes(int.Parse(expiresIn));
-                if (refreshToken != null)
-                    item.RefreshToken = refreshToken;
-                Tokens.Update(item);
-            }
-            SaveChanges(googleUserId);
-            return Task.FromResult(0);
-        }
 
         Client FindApplication(string clientId)
         {

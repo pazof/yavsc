@@ -24,6 +24,8 @@ namespace Yavsc
     using Auth;
     using Extensions;
     using Models;
+    using Helpers.Google;
+
     public partial class Startup
     {
         public static CookieAuthenticationOptions ExternalCookieAppOptions { get; private set; }
