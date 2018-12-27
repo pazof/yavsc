@@ -12,6 +12,7 @@ namespace Yavsc.Models.IT.Fixing
 
         [ForeignKey("FeatureId")]
         public virtual Feature False { get; set; }
+
         public long? FeatureId { get; set; }
 
         [YaStringLength(2048)]
