@@ -5555,7 +5555,8 @@ fieldset[disabled] .navbar-default .btn-link:focus {
 }
 
 .navbar-inverse .navbar-brand {
-    color: #9d9d9d;
+    color: #000;
+    background-color: #fff8;
 }
 
 .navbar-inverse .navbar-brand:hover,

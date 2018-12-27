@@ -1,19 +1,16 @@
 @model RdvQuery 
 @{ ViewData["Title"] = $"Proposition de rendez-vous à {Model.PerformerProfile.Performer.UserName} [{ViewBag.Activity.Name}]"; } 
-
+@section scripts {
 <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
-@section header {
+<link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
 <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
+    #map {
+        width: 100%;
+        height: 250px;
+    }
 </style>
-}
-@section scripts {
 <script>
     $(document).ready(function () {
 
@@ -21,8 +18,6 @@
             locale: 'fr',
             format: "YYYY/MM/DD HH:mm"
         });
-
-       initMap(); 
 
     });
                     
@@ -70,11 +65,12 @@
     <span asp-validation-for="Location.Address" class="text-danger"></span>
     <ul id="loccomb">
     </ul>
-        </div>
+    </div>
 
         </div>
         </div>
         </div>
+        <div id="map" class="map" data-val="valloc" data-addr="Location_Address" data-loccombo="loccomb" data-lat="Location_Latitude" data-lon="Location_Longitude" ></div>
 
 </div>
 <label asp-for="Reason" class="col-md-2 control-label">
@@ -113,3 +109,5 @@
 </form>
 
 @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+@{ await Html.RenderPartialAsync("_MapScriptsPartial"); }
+
