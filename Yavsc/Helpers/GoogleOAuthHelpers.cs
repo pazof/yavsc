@@ -47,9 +47,6 @@ namespace Yavsc.Helpers
     /// </summary>
     public static class GoogleHelpers
     {
-        
-        
-
         public static async Task<GoogleCredential> GetCredentialForApi(IEnumerable<string> scopes)
         {
             GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();

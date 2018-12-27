@@ -280,9 +280,6 @@
       <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" alt="PayPal Acceptance">
 
       <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
-      <environment names="Development">
-      <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName [DEV+Location+Date]"/>
-      </environment>
    </div>
     @Html.HiddenFor(model=>model.Location.Latitude)
     @Html.HiddenFor(model=>model.Location.Longitude)
