@@ -3,16 +3,22 @@
 <script>
      $(document).ready(function(){
 
+
+   function setCoord(config, pos)
+   {
+        var culture = '@System.Globalization.CultureInfo.CurrentCulture.Name';
+        var lat = new Number(pos.lat);
+        var lng = new Number(pos.lng);
+        $('#'+config.latId).val(lat.toLocaleString(culture));
+        $('#'+config.lonId).val(lng.toLocaleString(culture));
+   }
    function chooseLoc(config, sender, loc) {
         if (sender === 'user') $('#'+config.addrId).val(loc.formatted_address);
         var pos = loc.geometry.location;
-        var lat = new Number(pos.lat);
-        var lng = new Number(pos.lng);
         var mapid = '#'+config.addrId;
         var gmap = config.gmap;
         gmap.setCenter(pos);
-        $('#'+config.latId).val(pos.lat);
-        $('#'+config.longId).val(pos.lng);
+        setCoord(config, pos);
         var marker = new google.maps.Marker({
             map: gmap,
             draggable: true,
@@ -21,8 +27,7 @@
             });
         google.maps.event.addListener(marker, 'dragend', function() {
             var pos = marker.getPosition();
-                $('#'+config.latId).val(pos.lat);
-                $('#'+config.longId).val(pos.lng);
+            setCoord(config, { lat: pos.lat(), lng: pos.lng() });
         });
         $('#'+config.addrId).valid();
         $('#'+config.valId).empty();
@@ -39,7 +44,6 @@
           valId: $(mapDiv).data('val'),
           locComboId: $(mapDiv).data('loccombo') 
         };
-console.log(config);
  
     var input = '#'+config.addrId;
     $(input).data("val-required", '@SR["SpecifyPlace"]') ;
