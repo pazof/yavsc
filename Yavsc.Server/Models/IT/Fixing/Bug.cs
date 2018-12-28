@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Attributes.Validation;
-using Yavsc.Models.IT.Maintaining;
+using Yavsc.Models.IT.Evolution;
 
 namespace Yavsc.Models.IT.Fixing
 {
