@@ -1,6 +1,12 @@
 {
     "dotnet": {
-        "projects": "*/project.json",
-        "enablePackageRestore": false
+        "enable": false,
+        "projects": ".",
+        "enablePackageRestore": false,
+        "script": {
+          "enableScriptNuGetReferences": true,
+          "defaultTargetFramework": "dnx451"
+        }
+
     }
 }
