@@ -291,9 +291,9 @@ namespace Yavsc
             SiteSetup = siteSettings.Value;
             Authority = siteSettings.Value.Authority;
             var blogsDir = siteSettings.Value.Blog;
-            if (blogsDir==null) throw new Exception ("blogsDir==null");
+            if (blogsDir==null) throw new Exception ("blogsDir is not set.");
             var billsDir = siteSettings.Value.Bills;
-            if (billsDir==null) throw new Exception ("billsDir==null");
+            if (billsDir==null) throw new Exception ("billsDir is not set.");
 
             AbstractFileSystemHelpers.UserFilesDirName =  new DirectoryInfo(blogsDir).FullName;
             AbstractFileSystemHelpers.UserBillsDirName =  new DirectoryInfo(billsDir).FullName;
