@@ -1,0 +1,113 @@
+@model RdvQuery 
+@{ ViewData["Title"] = $"Proposition de rendez-vous à {Model.PerformerProfile.Performer.UserName} [{ViewBag.Activity.Name}]"; } 
+@section scripts {
+<script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
+<style>
+    #map {
+        width: 100%;
+        height: 250px;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+
+        $('#datetimepicker2').datetimepicker({
+            locale: 'fr',
+            format: "YYYY/MM/DD HH:mm"
+        });
+
+    });
+                    
+</script>
+}
+<h2>@ViewData["Title"]</h2>
+<form asp-action="Create" method="post">
+    <div class="form-horizontal">
+        <h4>Saisissez votre demande de rendez-vous</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+        <div class="form-group" has-feedback>
+            <fieldset>
+                <legend>Votre évennement</legend>
+                <label for="EventDate" class="col-md-2 control-label">
+                    Date de l'évennement
+                </label>
+                <div class="col-md-10">
+                    <div class="container">
+                        <div class="row">
+                            <div class='col-sm-6'>
+                                <div class='input-group date' id='datetimepicker2'>
+                                    <input class="form-control" name="EventDate" />
+                                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+
+        <span asp-validation-for="EventDate" class="text-danger">
+                </span>
+        </div>
+    </div>
+</div>
+<label for="Location_Address" class="col-md-2 control-label">
+                 Lieu
+                </label>
+<div class="col-md-10">
+                    <div class="container">
+                        <div class="row">
+                            <div class='col-sm-6'>
+                                <div  >
+    <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address" class="form-control" 
+    data-val-required="Spécifier un lieu" >
+    <span asp-validation-for="Location.Address" class="text-danger"></span>
+    <ul id="loccomb">
+    </ul>
+    </div>
+
+        </div>
+        </div>
+        </div>
+        <div id="map" class="map" data-val="valloc" data-addr="Location_Address" data-loccombo="loccomb" data-lat="Location_Latitude" data-lon="Location_Longitude" ></div>
+
+</div>
+<label asp-for="Reason" class="col-md-2 control-label">
+   Donnez ici une raison à cette demande
+</label>
+                <div class="col-md-10">
+                    <div class="container">
+                        <div class="row">
+                            <div class='col-sm-6'>
+                                <div id='reason1'>
+<textarea rows="15" asp-for="Reason" type="text" name="Reason" id="Reason" maxlength="4096" class="form-control"></textarea>
+<span asp-validation-for="Reason" class="text-danger"></span> 
+@Html.HiddenFor(model=>model.Location.Latitude)
+ @Html.HiddenFor(model=>model.Location.Longitude)
+ 
+</div>
+        </div>
+        </div>
+        </div>
+        </div>
+</fieldset>
+</div>
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+  
+  <input type="submit" class="btn btn-default" value="Créer"></input>
+ 
+  </div>
+</div>
+@Html.HiddenFor(model=>model.ClientId) 
+@Html.HiddenFor(model=>model.PerformerId) 
+@Html.HiddenFor(model=>model.ActivityCode)
+</div>
+
+
+</form>
+
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+@{ await Html.RenderPartialAsync("_MapScriptsPartial"); }
+

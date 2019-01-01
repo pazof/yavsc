@@ -1,0 +1,24 @@
+@model UserActivity
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>UserActivity</h4>
+    <hr />
+    <dl class="dl-horizontal">
+    </dl>
+     @Html.DisplayFor(m=>m)
+    <form asp-action="Delete">
+         <input type="hidden" asp-for="UserId" />
+          <input type="hidden" asp-for="DoesCode" />
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-success" /> 
+            <a asp-action="Index"  class="btn btn-link">Back to List</a>
+        </div>
+    </form>
+</div>

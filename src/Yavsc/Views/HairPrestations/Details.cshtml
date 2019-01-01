@@ -1,0 +1,60 @@
+@model Yavsc.Models.Haircut.HairPrestation
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>HairPrestation</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Cares)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Cares)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Cut)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Cut)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Dressing)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Dressing)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Gender)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Length)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Length)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Shampoo)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Shampoo)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Tech)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tech)
+        </dd>
+    </dl>
+</div>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</p>

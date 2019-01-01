@@ -1,0 +1,19 @@
+@model Yavsc.Models.Workflow.Profiles.FormationSettings
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+@if (Model == null) {
+    <a asp-action="Create" class="btn btn-default">Positionner les paramêtres</a>
+} else {
+            <a asp-action="Edit" class="btn btn-default">Edit</a> 
+            <a asp-action="Delete" asp-route-id="@Model.UserId" class="btn btn-default">Delete</a>
+<div>
+    <h4>FormationSettings</h4>
+    <hr />
+</div>
+}
+

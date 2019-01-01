@@ -1,0 +1,19 @@
+@model HairCutQuery
+@section header {
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+}
+
+@{
+    ViewData["Title"] = @SR["Le detail de votre commande de prestation en coiffure à domicile"];
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <hr />
+    @Html.DisplayFor(m=>m)
+</div>
+<p>
+    <a asp-action="ClientCancel" asp-route-id="@Model.Id" class="btn btn-primary">Annuler cette commande</a> |
+    <a asp-action="Index" class="btn btn-link">@SR["Back to List"]</a>
+</p>

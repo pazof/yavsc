@@ -1,0 +1,64 @@
+@model Yavsc.Models.Messaging.Notification
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Notification</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.body)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.body)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.click_action)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.click_action)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.color)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.color)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.icon)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.icon)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.sound)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.sound)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.tag)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.tag)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.title)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            <a asp-action="Index">Back to List</a>
+        </div>
+    </form>
+</div>
