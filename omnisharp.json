@@ -1,11 +1,11 @@
 {
   "DotNet": {
-    "projectskjad": "src/*/project.json;test/*/project.json;scripts/*/project.json",
     "enabled": true,
     "enablePackageRestore": false,
     "script": {
       "enableScriptNuGetReferences": true,
       "defaultTargetFramework": "dnx451"
     }
-  }
+  },
+  "packages": "packages"
 }
