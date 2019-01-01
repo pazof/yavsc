@@ -33,7 +33,7 @@ namespace Yavsc.ViewComponents
         {
             long[] usercircles = await _context.Circle.Include(c=>c.Members).
             Where(c=>c.Members.Any(m=>m.MemberId == viewerId))
-            .Select(c=>c.Id).ToArray();
+            .Select(c=>c.Id).ToArrayAsync();
             IQueryable<BlogPost> posts ;
             var allposts = _context.Blogspot
                 .Include(b => b.Author)
