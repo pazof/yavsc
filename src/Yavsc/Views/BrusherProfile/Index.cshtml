@@ -1,0 +1,25 @@
+@model Yavsc.Models.Haircut.BrusherProfile
+
+@{
+    ViewData["Title"] = "Profile coiffeur";
+}
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <hr />
+    @if (Model!=null) {
+
+      @Html.DisplayFor(model => model)
+
+    <p>
+        <a asp-action="Edit" >@SR["Edit"]</a> 
+        <a asp-action="Delete" asp-route-id="@Model.UserId">@SR["Delete"]</a>
+    </p>
+    }
+    else {
+    <p>
+        @SR["Aucun profile renseigné"]
+        <a asp-action="Create" class="btn btn-success">@SR["Renseigner ce paramêtrage"]</a> 
+    </p>
+    }
+</div>

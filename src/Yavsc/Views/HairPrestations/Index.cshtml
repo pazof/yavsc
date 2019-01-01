@@ -1,0 +1,68 @@
+@model IEnumerable<Yavsc.Models.Haircut.HairPrestation>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Cares)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Cut)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Dressing)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Gender)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Length)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Shampoo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Tech)
+        </th>
+        <th></th>
+    </tr>
+    
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Cares)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Cut)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Dressing)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Gender)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Length)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Shampoo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Tech)
+        </td>
+        <td>
+            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+        </td>
+    </tr>
+}
+</table>

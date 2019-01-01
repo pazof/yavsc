@@ -1,0 +1,30 @@
+@model UserActivity 
+@{ ViewData["Title"] = "Edit"; }
+
+<h2>Edit</h2>
+
+<form asp-action="Edit">
+    <div class="form-horizontal">
+        <h4>UserActivity</h4>
+        <hr />
+        <input type="hidden" asp-for="UserId" />
+        <input type="hidden" asp-for="DoesCode" />
+        <div class="text-danger"> @Html.ValidationSummary()
+        </div>
+        <div class="form-group">
+            <label asp-for="Weight" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Weight" class="form-control"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
