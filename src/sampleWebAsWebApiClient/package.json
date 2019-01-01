@@ -1,0 +1,12 @@
+{
+    "licence": "GNU GPL v3",
+    "name": "test-oauth-client",
+    "version": "0.0.0",
+    "devDependencies": {
+        "gulp": "^3.9.1",
+        "gulp-concat": "^2.6.1",
+        "gulp-cssmin": "^0.2.0",
+        "gulp-uglify": "^3.0.0",
+        "rimraf": "^2.6.2"
+    }
+}
