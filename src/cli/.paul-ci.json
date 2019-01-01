@@ -1,5 +1,16 @@
 {
-    "build": {
-        
+    "tools": {
+        "make": {}
+    },
+    "projects": {
+        "yavsc": {
+          "type": "make",
+          "source" : {
+            "github": "pazof/yavsc",
+            "branch": "vnext"
+          },
+          "env": [],
+          "args": []
+        }
     }
 }
