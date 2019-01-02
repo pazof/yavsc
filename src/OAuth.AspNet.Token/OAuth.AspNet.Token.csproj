@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>OAuth AspNet Token</Description>
+    <VersionPrefix>1.0.5</VersionPrefix>
+    <Authors>Paul Schneider &lt;paul@pschneider.fr&gt;</Authors>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <AssemblyName>OAuth.AspNet.Token</AssemblyName>
+    <PackageId>OAuth.AspNet.Token</PackageId>
+    <PackageTags>Authorization server;OAuth;Web API</PackageTags>
+    <PackageProjectUrl>http://yavsc.pschneider.fr</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/pazof/yavsc/blob/vnext/LICENSE</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNet.Authentication.JwtBearer" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.DataProtection" Version="1.0.0-rc1-final" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'dnx451' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>
