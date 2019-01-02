@@ -4,7 +4,9 @@
     <Description>encore une très petite entreprise</Description>
     <VersionPrefix>1.0.5</VersionPrefix>
     <Authors>Paul Schneider &lt;paul@pschneider.fr&gt;</Authors>
-    <TargetFramework>netstandard1.1</TargetFramework>
+    <TargetFramework>dnx451</TargetFramework>
+    <TargetFrameworkIdentifier>DNX</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>4.5.1</TargetFrameworkVersion>
     <DebugType>full</DebugType>
     <AssemblyName>Yavsc</AssemblyName>
     <OutputType>Exe</OutputType>
