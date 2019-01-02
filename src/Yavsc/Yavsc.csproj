@@ -1,0 +1,110 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>encore une très petite entreprise</Description>
+    <VersionPrefix>1.0.5</VersionPrefix>
+    <Authors>Paul Schneider &lt;paul@pschneider.fr&gt;</Authors>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <DebugType>full</DebugType>
+    <AssemblyName>Yavsc</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>Yavsc</PackageId>
+    <UserSecretsId>aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f</UserSecretsId>
+    <PackageTags>Blog;PoS;Chat</PackageTags>
+    <PackageProjectUrl>http://yavsc.pschneider.fr</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/pazof/yavsc/blob/vnext/LICENSE</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\**\*.resx" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <None Update="**.user;**.vspscc;contrib\**\*.*">
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="bin/output/approot/src/OAuth.AspNet.Token/OAuth.AspNet.Token.csproj" />
+    <ProjectReference Include="bin/output/approot/src/OAuth.AspNet.AuthServer/OAuth.AspNet.AuthServer.csproj" />
+    <ProjectReference Include="bin/output/approot/src/Yavsc.Abstract/Yavsc.Abstract.csproj" />
+    <ProjectReference Include="bin/output/approot/src/Yavsc.Server/Yavsc.Server.csproj" />
+    <ProjectReference Include="../GoogleCode/GoogleTranslate/GoogleTranslate.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EntityFramework.Commands" Version="7.0.0-rc1-final" />
+    <PackageReference Include="EntityFramework.Core" Version="7.0.0-rc1-final" />
+    <PackageReference Include="EntityFramework.MicrosoftSqlServer" Version="7.0.0-rc1-final" />
+    <PackageReference Include="EntityFramework.Relational" Version="7.0.0-rc1-final" />
+    <PackageReference Include="EntityFramework7.Npgsql" Version="3.1.0-rc1-3" />
+    <PackageReference Include="EntityFramework7.Npgsql.Design" Version="3.1.0-rc1-5" />
+    <PackageReference Include="MailKit" Version="1.12.0" />
+    <PackageReference Include="MarkdownDeep-av.NET" Version="1.5.6" />
+    <PackageReference Include="Microsoft.AspNet.Authentication.Cookies" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Authentication.Facebook" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Authentication.Twitter" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Authorization" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Diagnostics.Entity" Version="7.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Http.Abstractions" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="3.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.IISPlatformHandler" Version="1.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.Localization" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="6.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.Mvc.TagHelpers" Version="6.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.Server.Kestrel" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Server.WebListener" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.2.1" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.JS" Version="2.2.1" />
+    <PackageReference Include="Microsoft.AspNet.StaticFiles" Version="1.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.Tooling.Razor" Version="1.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.WebSockets.Server" Version="1.0.0-rc1-*" />
+    <PackageReference Include="Microsoft.AspNet.Session" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Web.Optimization" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNet.Http.Extensions" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.DataProtection" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.DataProtection.SystemWeb" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Authentication.OAuth" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.Mvc.Formatters.Json" Version="6.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.AspNet.OWin" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Framework.ConfigurationModel.Json" Version="1.0.0-beta4" />
+    <PackageReference Include="Microsoft.Framework.Configuration.Abstractions" Version="1.0.0-beta8" />
+    <PackageReference Include="Microsoft.Framework.Configuration.Binder" Version="1.0.0-beta8" />
+    <PackageReference Include="Microsoft.Framework.Configuration.Json" Version="1.0.0-beta8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileProviderExtensions" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Globalization.CultureInfoCache" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.WebEncoders.Core" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.WebEncoders" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.CodeGeneration" Version="1.0.0-rc1-final" />
+    <PackageReference Include="Microsoft.Extensions.CodeGenerators.Mvc" Version="1.0.0-rc1-final" />
+    <PackageReference Include="System.Json" Version="4.0.20126.16343" />
+    <PackageReference Include="PayPalMerchant-net451" Version="2.7.109" />
+    <PackageReference Include="Gapi.net45" Version="1.0.1" />
+  </ItemGroup>
+
+  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+    <Exec Command="gulp min" />
+  </Target>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'dnx451' ">
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>
