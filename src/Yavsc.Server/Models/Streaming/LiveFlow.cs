@@ -1,9 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Models;
 
 namespace Yavsc.ViewModels.Streaming
 {
 
-    public class LiveAnnouce {
+    public class LiveFlow {
 
+      [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+      [Display(Name="FlowId")]
       // set by the server, unique
       long Id { get; set; }
 
@@ -18,6 +23,12 @@ namespace Yavsc.ViewModels.Streaming
 
       // A name where to save this stream, relative to user's files root
       string DifferedFileName { get; set; }
+
+      [Required]
+      public string OwnerId {get; set; }
+
+      [ForeignKey("OwnerId")]
+      public virtual ApplicationUser Owner { get; set; }
 
     }
 }     
