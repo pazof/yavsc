@@ -11,6 +11,7 @@ using Yavsc.Models.IT.Fixing;
 using Yavsc.Server.Models.EMailing;
 using Yavsc.Server.Models.IT.SourceCode;
 using Yavsc.Server.Models.IT;
+using Yavsc.Models.Streaming;
 
 namespace Yavsc.Models
 {
@@ -76,6 +77,11 @@ namespace Yavsc.Models
         {
             var appSetup = (string)AppDomain.CurrentDomain.GetData(Constants.YavscConnectionStringEnvName);
             if (appSetup!=null) optionsBuilder.UseNpgsql(appSetup);
+            else {
+              var envSetup = Environment.GetEnvironmentVariable(Constants.YavscConnectionStringEnvName);
+              if (envSetup!=null) optionsBuilder.UseNpgsql(envSetup);
+            }
+
         }
 
         public DbSet<Client> Applications { get; set; }
@@ -265,6 +271,8 @@ namespace Yavsc.Models
         public DbSet<Project> Projects { get; set; }        
         
         public DbSet<BlogTrad> BlogTrad { get; set; }
+
+        public DbSet<LiveFlow> LiveFlow { get; set; }
 
     }
 }

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models;
 
-namespace Yavsc.ViewModels.Streaming
+namespace Yavsc.Models.Streaming
 {
 
     public class LiveFlow {
