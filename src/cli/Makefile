@@ -13,6 +13,7 @@ msbuild-restore:
 check: run
 
 project.lock.json: 
+	dnu restore
 	@# fixing package id reference case, to System.Xml, from package NJsonSchema.CodeGeneration.CSharp
 	sed 's/System.XML/System.Xml/' project.lock.json > project.lock.json.new && mv project.lock.json.new project.lock.json
 
