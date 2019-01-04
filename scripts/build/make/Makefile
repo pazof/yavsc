@@ -1,50 +1,56 @@
 include versioning.mk
 
+
+REPO_ROOT=../../../src
+
 SUBDIRS=Yavsc Yavsc.Server Yavsc.Abstract cli test
 
 all: $(SUBDIRS)
 
 Yavsc.Abstract:
-	$(MAKE) -C Yavsc.Abstract VERSION=$(VERSION)
+	$(MAKE) -C $(REPO_ROOT)/Yavsc.Abstract VERSION=$(VERSION)
 
 Yavsc.Server: Yavsc.Abstract
-	$(MAKE) -C Yavsc.Server VERSION=$(VERSION)
+	$(MAKE) -C $(REPO_ROOT)/Yavsc.Server VERSION=$(VERSION)
 
 Yavsc: Yavsc.Server
-	make -C Yavsc VERSION=$(VERSION)
+	make -C $(REPO_ROOT)/Yavsc VERSION=$(VERSION)
 
 Yavsc-deploy-pkg: Yavsc
-	make -C Yavsc deploy-pkg
+	make -C $(REPO_ROOT)/Yavsc deploy-pkg
 
 Yavsc.Server-deploy-pkg: Yavsc.Server
-	make -C Yavsc.Server deploy-pkg
+	make -C $(REPO_ROOT)/Yavsc.Server deploy-pkg
 
 Yavsc.Abstract-deploy-pkg: Yavsc.Abstract
-	make -C Yavsc.Abstract deploy-pkg
+	make -C $(REPO_ROOT)/Yavsc.Abstract deploy-pkg
 
 cli-deploy-pkg: cli check
-	make -C cli deploy-pkg
+	make -C $(REPO_ROOT)/cli deploy-pkg
 
 cli: Yavsc-deploy-pkg Yavsc.Server-deploy-pkg Yavsc.Abstract-deploy-pkg
-	make -C cli 
+	make -C $(REPO_ROOT)/cli 
 
 undoLocalYavscNugetDeploy:
-	rm -rf ~/.dnx/packages/Yavsc.Abstract.$(VERSION).nupkg
-	rm -rf ~/.dnx/packages/Yavsc.Server.$(VERSION).nupkg
-	rm -rf ~/.dnx/packages/Yavsc.$(VERSION).nupkg
+	rm -rf ../../../packages/Yavsc.Abstract
+	rm -rf ../../../packages/Yavsc.Server
+	rm -rf ../../../packages/Yavsc
+	rm -rf ~/.dnx/packages/Yavsc.Abstract
+	rm -rf ~/.dnx/packages/Yavsc.Server
+	rm -rf ~/.dnx/packages/Yavsc
 
 check: cli
-	make -C cli check
-	make -C test 
+	make -C $(REPO_ROOT)/cli check
+	make -C $(REPO_ROOT)/test 
 
 test: 
-	make -C test
+	make -C $(REPO_ROOT)/test
 
 pushInPre: 
-	make -C Yavsc pushInPre
+	make -C $(REPO_ROOT)/Yavsc pushInPre
 
 pushInProd:
-	make -C Yavsc pushInProd
+	make -C $(REPO_ROOT)/Yavsc pushInProd
 
 deploy-pkgs: Yavsc-deploy-pkg Yavsc.Server-deploy-pkg Yavsc.Abstract-deploy-pkg cli-deploy-pkg
 
@@ -56,11 +62,11 @@ rc-num:
 
 clean: 
 	for subdir in $(SUBDIRS) ; do \
-		make -C $${subdir} clean ; \
+		make -C $(REPO_ROOT)/$${subdir} clean ; \
 	done
 
 watch:
-	make -C Yavsc watch
+	make -C $(REPO_ROOT)/Yavsc watch
 
 .PHONY: all $(SUBDIRS)
 
