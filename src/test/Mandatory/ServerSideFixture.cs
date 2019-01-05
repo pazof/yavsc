@@ -1,4 +1,5 @@
 using System;
+using System.Data.Common;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Hosting.Internal;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.OptionsModel;
 using Yavsc.Lib;
 using Yavsc.Services;
 using Yavsc;
+using Yavsc.Models;
 using Xunit;
 using Npgsql;
 
@@ -22,6 +24,7 @@ namespace test
         
         public static string ApiKey  => "53f4d5da-93a9-4584-82f9-b8fdf243b002" ;
 
+        public ApplicationDbContext DbContext { get; private set;  } 
         public SiteSettings SiteSetup
         {
             get
@@ -109,38 +112,49 @@ namespace test
             var siteSetup = App.Services.GetService(typeof(IOptions<SiteSettings>)) as IOptions<SiteSettings>;
             SiteSetup = siteSetup.Value;
             MailSender = App.Services.GetService(typeof(IEmailSender)) as IEmailSender;
+
+            var builder = new DbConnectionStringBuilder();
+            builder.ConnectionString = Startup.DbSettings.Testing;
+            Logger.LogInformation("testing database:" +builder["Database"]);
+            TestingDatabase = (string) builder["Database"];
+
             CheckDbExistence();
             if (!DbCreated)
                 CreateTestDb();
+            DbContext = App.Services.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;
+
         }
+
+        public string TestingDatabase { get; private set; }
+
+        public void CheckDbExistence()
+        {
+            using (
+            NpgsqlConnection cx = new NpgsqlConnection(Startup.DbSettings.DatabaseCtor))
+            {
+                cx.Open();
+                var command = cx.CreateCommand();
+                command.CommandText = $"SELECT 1 FROM pg_database WHERE datname='{TestingDatabase}';";
+                DbCreated = (command.ExecuteScalar()!=null);
+
+                _logger.LogInformation($"DbCreated:{DbCreated}");
+                cx.Close();
+            }
+        }
+        /* Needs a connection string parsing */
 
         public void CreateTestDb()
         {
             if (!DbCreated)
             using (
-            NpgsqlConnection cx = new NpgsqlConnection(Startup.DevDbSettings.ConnectionString))
+            NpgsqlConnection cx = new NpgsqlConnection(Startup.DbSettings.DatabaseCtor))
             {
                 cx.Open();
                 var command = cx.CreateCommand();
-                command.CommandText = $"create database \"{Startup.TestDbSettings.Database}\";";
+                command.CommandText = $"create database \"{TestingDatabase}\";";
                 command.ExecuteNonQuery();
 
                 _logger.LogInformation($"database created.");
-                cx.Close();
-            }
-        }
-
-        public void CheckDbExistence()
-        {
-            using (
-            NpgsqlConnection cx = new NpgsqlConnection(Startup.DevDbSettings.ConnectionString))
-            {
-                cx.Open();
-                var command = cx.CreateCommand();
-                command.CommandText = $"SELECT 1 FROM pg_database WHERE datname='{Startup.TestDbSettings.Database}';";
-                DbCreated = (command.ExecuteScalar()!=null);
-
-                _logger.LogInformation($"DbCreated:{DbCreated}");
                 cx.Close();
             }
         }
@@ -148,16 +162,16 @@ namespace test
         {
             if (DbCreated)
             using (
-            NpgsqlConnection cx = new NpgsqlConnection(Startup.DevDbSettings.ConnectionString))
+            NpgsqlConnection cx = new NpgsqlConnection(Startup.DbSettings.DatabaseCtor))
             {
                 cx.Open();
                 var command = cx.CreateCommand();
-                command.CommandText = $"drop database \"{Startup.TestDbSettings.Database}\";";
+                command.CommandText = $"drop database \"{TestingDatabase}\"";
                 command.ExecuteNonQuery();
                 _logger.LogInformation($"database dropped");
                 cx.Close();
             }
-        }
+        } 
         public void Dispose()
         {
             Logger.LogInformation("Disposing");
