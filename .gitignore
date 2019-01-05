@@ -17,9 +17,9 @@ project.lock.json
 node_modules/
 private/
 
-/*/DataProtection-Keys/
-/*/RSA-Params.json
-/*/appsettings.*.json
+DataProtection-Keys/
+RSA-Params.json
+appsettings.*.json
 
 /packages/
 /Yavsc/Avatars-*/
