@@ -3,17 +3,23 @@ include versioning.mk
 
 REPO_ROOT=../../../src
 
-SUBDIRS=Yavsc Yavsc.Server Yavsc.Abstract cli test
+SUBDIRS=Yavsc Yavsc.Server Yavsc.Abstract OAuth.AspNet.AuthServer OAuth.AspNet.Token cli test
 
 all: $(SUBDIRS)
 
 Yavsc.Abstract:
 	$(MAKE) -C $(REPO_ROOT)/Yavsc.Abstract VERSION=$(VERSION)
 
+OAuth.AspNet.Token:
+	$(MAKE) -C $(REPO_ROOT)/OAuth.AspNet.Token VERSION=$(VERSION)
+
+OAuth.AspNet.AuthServer: OAuth.AspNet.Token
+	$(MAKE) -C $(REPO_ROOT)/OAuth.AspNet.AuthServer VERSION=$(VERSION)
+
 Yavsc.Server: Yavsc.Abstract
 	$(MAKE) -C $(REPO_ROOT)/Yavsc.Server VERSION=$(VERSION)
 
-Yavsc: Yavsc.Server
+Yavsc: Yavsc.Server OAuth.AspNet.AuthServer OAuth.AspNet.Token
 	make -C $(REPO_ROOT)/Yavsc VERSION=$(VERSION)
 
 Yavsc-deploy-pkg: Yavsc
