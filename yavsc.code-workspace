@@ -1,34 +1,13 @@
 {
 	"folders": [
 		{
-			"path": "Yavsc"
-		},
-		{
-			"path": "Yavsc.Abstract"
-		},
-		{
-			"path": "cli"
-		},
-		{
-			"path": "testOauthClient"
-		},
-		{
-			"path": "Yavsc.Server"
-		},
-		{
-			"path": "OAuth.AspNet.AuthServer"
-		},
-		{
-			"path": "OAuth.AspNet.Token"
-		},
-		{
-			"path": "test"
-		},
-		{
 			"path": ".vscode"
 		},
 		{
 			"path": "."
+		},
+		{
+			"path": "src/test"
 		}
 	],
 	"settings": {
