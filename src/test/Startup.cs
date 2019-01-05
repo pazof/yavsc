@@ -91,7 +91,7 @@ namespace test
             TestDbSettings = testCxOptions.Value;
             DevDbSettings = devCxOptions.Value;
             logger.LogInformation($"test db : {TestDbSettings.ConnectionString}");
-            AppDomain.CurrentDomain.SetData("YAVSC_CONNECTION", TestDbSettings.ConnectionString);
+            AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", TestDbSettings.ConnectionString);
         
             var authConf = Configuration.GetSection("Authentication").GetSection("Yavsc");
             var clientId = authConf.GetSection("ClientId").Value;
