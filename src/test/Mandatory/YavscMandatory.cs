@@ -95,10 +95,10 @@ namespace test
         {
             var projectContext = new ProjectContext();
             projectContext.Name = "Yavsc";
-            projectContext.ProjectDirectory = "/home/paul/workspace/yavsc/Yavsc";
-            projectContext.ProjectFilePath = "/home/paul/workspace/yavsc/Yavsc/project.json";
+            projectContext.ProjectDirectory = "../Yavsc";
+            projectContext.ProjectFilePath = "../Yavsc/project.json";
             projectContext.TargetFramework = new FrameworkName("DNX", new Version(4, 5, 1));
-            projectContext.Configuration = "Development";
+            projectContext.Configuration = Environment.GetEnvironmentVariable("ASPNET_ENV");
 
             return new BeforeCompileContext(
                 null, projectContext, () => null, () => null, () => null);
@@ -108,7 +108,7 @@ namespace test
         {
             var builder = new ConfigurationBuilder();
 
-            builder.AddJsonFile(Path.Combine(prjDir, "appsettings.json"), true);
+            builder.AddJsonFile(Path.Combine(prjDir, "appsettings.json"), false);
             builder.AddJsonFile(Path.Combine(prjDir, "appsettings.Development.json"), true);
             return builder.Build();
         }
@@ -176,9 +176,9 @@ namespace test
             services.AddTransient<IRuntimeEnvironment>(
                 svs => PlatformServices.Default.Runtime
             );
-            beforeCompileContext = YavscMandatory.CreateYavscCompilationContext();
+            beforeCompileContext = CreateYavscCompilationContext();
             var prjDir = beforeCompileContext.ProjectContext.ProjectDirectory;
-            YavscMandatory.ConfigureServices(services, prjDir, out configuration, out provider);
+            ConfigureServices(services, prjDir, out configuration, out provider);
 
             IApplicationBuilder app = new ApplicationBuilder(provider);
             app.UseMvc();
