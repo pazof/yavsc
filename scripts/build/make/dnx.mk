@@ -48,6 +48,7 @@ watch: project.lock.json
 
 clean:
 	rm -rf bin obj
+	rm project.lock.json
 
 cleanoutput:
 	rm -rf bin/$(CONFIGURATION)
