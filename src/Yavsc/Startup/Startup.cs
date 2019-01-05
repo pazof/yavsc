@@ -76,7 +76,7 @@ namespace Yavsc
             Configuration = builder.Build();
             
             var auth = Configuration["Site:Authority"];
-            var cxstr = Configuration["Data:DefaultConnection:ConnectionString"];
+            var cxstr = Configuration["ConnectionStrings:Default"];
             ConnectionString = cxstr;
 
             AppDomain.CurrentDomain.SetData(Constants.YavscConnectionStringEnvName, ConnectionString);
