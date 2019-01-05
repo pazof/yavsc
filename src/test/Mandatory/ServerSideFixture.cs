@@ -19,6 +19,7 @@ namespace test
         EMailer _mailer;
         ILoggerFactory _loggerFactory;
         IEmailSender _mailSender;
+        
         public static string ApiKey  => "53f4d5da-93a9-4584-82f9-b8fdf243b002" ;
 
         public SiteSettings SiteSetup
