@@ -3,7 +3,7 @@ using Xunit.Abstractions;
 
 namespace test.Mandatory
 {
-    [Collection("EMaillingTeststCollection")]
+    [Collection("Database")]
     [Trait("regres", "no")]
     [Trait("dev", "wip")]
     public class Database: IClassFixture<ServerSideFixture>
