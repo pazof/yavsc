@@ -31,19 +31,21 @@ namespace test
     [Trait("regres", "no")]
     public class YavscMandatory: BaseTestContext, IClassFixture<ServerSideFixture>
     {
-        
+
+        ApplicationDbContext _dbContext;
+
         public  YavscMandatory(ITestOutputHelper output, ServerSideFixture fixture) : base (output, fixture)
         {
-
+          _dbContext = fixture.DbContext;
         }
+
         [Fact]
         public void GitClone()
         {
-            
-          var dbc =  _serverFixture.App.Services.GetService(typeof(ApplicationDbContext)) as  ApplicationDbContext;
-
-            var firstProject = dbc.Projects.Include(p=>p.Repository).FirstOrDefault();
+            var firstProject = _dbContext.Projects.Include(p=>p.Repository).FirstOrDefault();
             Assert.NotNull (firstProject);
+            var di = new DirectoryInfo(_serverFixture.SiteSetup.GitRepository);
+            if (!di.Exists) di.Create();
 
             var clone = new GitClone(_serverFixture.SiteSetup.GitRepository);
             clone.Launch(firstProject);
@@ -65,12 +67,6 @@ namespace test
             }
         }
 
-        [Fact]
-        public void ApplicationDbContextExists()
-        {
-            var dbc = new ApplicationDbContext();
-            Assert.NotNull(dbc.GCMDevices);
-        }
 
         [Fact]
         public void MvcRazorHostAndParser()
@@ -78,12 +74,6 @@ namespace test
             string cache = System.IO.Directory.GetCurrentDirectory();
             MvcRazorHost host = new MvcRazorHost(cache);
             var parser = host.CreateMarkupParser();
-        }
-
-        [Fact]
-        void HaveDependecyInjection()
-        {
-            var services = new ServiceCollection();
         }
 
         [Fact]
@@ -149,7 +139,7 @@ namespace test
             {
                 options.ResourcesPath = "Resources";
             });
-            var connectionString = configuration["Data:DefaultConnection:ConnectionString"];
+            var connectionString = configuration["ConnectionStrings:Default"];
             AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", connectionString);
             serviceCollection.AddEntityFramework()
               .AddNpgsql()
@@ -178,29 +168,9 @@ namespace test
             
         }
 
-
-        [Fact]
-        public void MessageSenderFromLib()
-        {
-            ARequestAppDelegate();
-            ILoggerFactory factory = ActivatorUtilities.GetServiceOrCreateInstance<ILoggerFactory>(serviceProvider);
-            var dbc = new ApplicationDbContext();
-          
-            IOptions<SiteSettings> siteOptions = 
-                ActivatorUtilities.GetServiceOrCreateInstance<IOptions<SiteSettings>>(serviceProvider);
-           ;
-            IOptions<SmtpSettings> smtpOptions = ActivatorUtilities.GetServiceOrCreateInstance<IOptions<SmtpSettings>>(serviceProvider);
-            ;
-            IOptions<GoogleAuthSettings> googleOptions = ActivatorUtilities.GetServiceOrCreateInstance<IOptions<GoogleAuthSettings>>(serviceProvider);
-            ;
-               IEmailSender eSender = new MailSender
-                (factory, siteOptions, smtpOptions, googleOptions);
-        }
-
         [Fact]
         public void InitApplicationBuilder()
         {
-
             var services = new ServiceCollection();
 
             services.AddTransient<IRuntimeEnvironment>(

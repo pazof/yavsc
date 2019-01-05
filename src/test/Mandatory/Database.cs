@@ -15,7 +15,7 @@ namespace test.Mandatory
             this.output = output;
             _serverFixture = serverFixture;
             
-            output.WriteLine($"Startup.TestDbSettings.Database was {Startup.TestDbSettings.Database}");
+            output.WriteLine($"Startup.DbSettings.Testing is {Startup.DbSettings.Testing}");
         }
 
         /// <summary>
