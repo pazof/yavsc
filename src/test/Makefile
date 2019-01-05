@@ -24,8 +24,10 @@ breaking:
 testdev: $(BINTARGET)
 	ASPNET_ENV=Development dnx test -maxthreads 1 -trait dev=wip 
 
+node_modules/ansi-to-html: 
+	npm install ansi-to-html
 
-test: $(BINTARGET)
+test: $(BINTARGET) node_modules/ansi-to-html
 	ASPNET_ENV=Development dnx test -maxthreads 1 -trait regres=no
 
 clean:
