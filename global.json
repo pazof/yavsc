@@ -1,13 +1,8 @@
 {
     "projects": [
-        "src/Yavsc",
-        "src/Yavsc.Abstract",
-        "src/Yavsc.Server",
-        "src/cli",
-        "src/test",
-        "src/testOauthClient",
-        "src/OAuth.AspNet.Token",
-        "src/OAuth.AspNet.Server"
+        "src",
+        "scripts",
+        "tests"
     ],
     "sdk": {
       "version": "1.0.0-rc1-update2",  

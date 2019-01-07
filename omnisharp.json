@@ -1,7 +1,7 @@
 {
   "DotNet": {
     "enabled": true,
-    "enablePackageRestore": false,
+    "enablePackageRestore": true,
     "script": {
       "enableScriptNuGetReferences": true,
       "defaultTargetFramework": "dnx451"
