@@ -46,6 +46,7 @@ public class SendMailCommandProvider : ICommander {
                 else
                 {
                     sendMailCommandApp.ShowHelp();
+                    return 1;
                 }
                 return 0;
             });

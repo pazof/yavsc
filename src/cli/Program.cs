@@ -1,6 +1,7 @@
 ﻿
 using System;
 using cli.Commands;
+using cli.Services;
 using Microsoft.Extensions.CommandLineUtils;
 
 namespace cli
@@ -24,6 +25,7 @@ namespace cli
             (new GenerateJsonSchema()).Integrate(cliapp);
             (new AuthCommander()).Integrate(cliapp);
             (new CiBuildCommand()).Integrate(cliapp);
+            (new GenerationCommander()).Integrate(cliapp);
 
             if (args.Length == 0)
             {
