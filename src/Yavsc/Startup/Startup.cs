@@ -83,9 +83,13 @@ namespace Yavsc
 
             var googleClientFile = Configuration["Authentication:Google:GoogleWebClientJson"]; 
             var googleServiceAccountJsonFile = Configuration["Authentication:Google:GoogleServiceAccountJson"]; 
-            GoogleWebClientConfiguration = new ConfigurationBuilder().AddJsonFile(googleClientFile).Build();
-            var safile = new FileInfo(googleServiceAccountJsonFile);
-            GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
+            if (googleClientFile!=null)
+              GoogleWebClientConfiguration = new ConfigurationBuilder().AddJsonFile(googleClientFile).Build();
+            if (googleServiceAccountJsonFile!=null)
+             { 
+              var safile = new FileInfo(googleServiceAccountJsonFile);
+              GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
+             }
         }
 
         public static string ConnectionString { get; set; }
