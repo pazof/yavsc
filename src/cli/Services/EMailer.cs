@@ -172,7 +172,7 @@ namespace cli.Services
                             else if (!mailSentInfo.Sent)
                                 logger.LogError($"{mailSentInfo.ErrorMessage}");
                             else 
-                                logger.LogInformation($"mailId:{mailSentInfo.MessageId} \nto:{user.UserName}");
+                                logger.LogInformation($"mailId:{mailSentInfo?.MessageId} \nto:{user.UserName}");
 
 
                             

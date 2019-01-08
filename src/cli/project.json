@@ -26,7 +26,8 @@
     "Microsoft.AspNet.Mvc": "6.0.0-rc1-*",
     "Microsoft.AspNet.SignalR.Client": "2.2.1",
     "Microsoft.CodeAnalysis": "1.1.0-rc1-20151109-01",
-    "Microsoft.Extensions.CodeGeneration": "1.0.0-rc1-final",
+    "Microsoft.Extensions.CodeGeneration": "1.0.0-beta5",
+    "Microsoft.Extensions.CodeGenerators.Mvc": "1.0.0-rc1-final",
     "Microsoft.Extensions.Configuration.Abstractions": "1.0.0-rc1-final",
     "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc1-final",
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
@@ -58,12 +59,14 @@
       "version": "1.0.5-rc22",
       "target": "package"
     },
-    "Yavsc.Lib.Portable": "1.0.2",
-    "OAuth.AspNet.AuthServer": { "target": "project" }
+    "Microsoft.Dnx.Host": "1.0.0-rc1-final",
+    "Microsoft.Dnx.Runtime": "1.0.0-rc1-final",
+    "Microsoft.Dnx.DesignTimeHost": "1.0.0-rc1-final"
   },
   "frameworks": {
     "dnx451": {
-      "System.Net": "4.0.0"
+      "System.Net": "4.0.0.0",
+      "System.Xml": "4.0.0.0"
     }
   }
 }

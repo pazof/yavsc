@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using cli.Model;
 using Microsoft.Extensions.CommandLineUtils;
 using Yavsc.Authentication;
-using static OAuth.AspNet.AuthServer.Constants;
 
 namespace cli.Helpers
 {
@@ -31,6 +28,7 @@ namespace cli.Helpers
             settings.Scope,
             new Uri(settings.AuthorizeUrl), new Uri(settings.RedirectUrl), new Uri(settings.AccessTokenUrl));
         }
+        /* TODO add OAut console client
 
         public static async Task<IDictionary<string, string>> GetAuthFromPass(
             string login,
@@ -41,7 +39,7 @@ namespace cli.Helpers
             query[Parameters.Password] = pass;
             query[Parameters.GrantType] = GrantTypes.Password;
             return await OAuthorInstance.RequestAccessTokenAsync(query);
-        }
+        }  */
 
         public static string GetPassword()
         {
