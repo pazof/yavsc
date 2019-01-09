@@ -71,12 +71,21 @@ namespace cli
             var cxSettings = Configuration.GetSection("Connection");
             services.Configure<ConnectionSettings>(cxSettings);
             var smtpSettingsconf = Configuration.GetSection("Smtp");
+            Microsoft.Extensions.CodeGenerators.Mvc.View.ViewGeneratorTemplateModel v;
 
             services.Configure<SmtpSettings>(smtpSettingsconf);
             services.Configure<GenMvcSettings>(Configuration.GetSection("gen_mvc"));
             services.AddInstance(typeof(ILoggerFactory), new LoggerFactory());
             services.AddTransient(typeof(IEmailSender), typeof(MailSender));
-            services.AddTransient(typeof(RazorEngineHost), typeof(YaRazorEngineHost));
+            services.AddTransient(typeof(RazorEngineHost), 
+             svs => { 
+                 var settings = svs.GetService<GenMvcSettings>();
+
+                 return new YaRazorEngineHost {
+                DefaultBaseClass = "Microsoft.Extensions.CodeGenerators.Mvc.View.ViewGeneratorTemplateModel",
+                DefaultClassName = settings.ControllerName,
+                DefaultNamespace = settings.NameSpace }; }
+            );
             services.AddTransient(typeof(MvcGenerator), typeof(MvcGenerator));
             services.AddEntityFramework().AddNpgsql().AddDbContext<ApplicationDbContext>(
                   db => db.UseNpgsql(ConnectionString)
@@ -203,7 +212,7 @@ Microsoft.Extensions.CodeGeneration.ICodeGeneratorActionsService),
                     var libraries = ApplicationHostContext.GetRuntimeLibraries(applicationHostContext, throwOnInvalidLockFile: true);
                     var projects = libraries.Where(p => p.Type == LibraryTypes.Project)
                                             .ToDictionary(p => p.Identity.Name, p => (ProjectDescription)p);
-
+                    logger.LogInformation($"Found {projects?.Count} projects");
                     return new CompilerOptionsProvider(projects);
                 });
             services.AddMvc();
