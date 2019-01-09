@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.CodeGenerators.Mvc.Controller;
+using Microsoft.Extensions.Logging;
 
 namespace cli.Services
 {
@@ -7,9 +8,11 @@ namespace cli.Services
     public class MvcGenerator  : CommandLineGenerator
     {
         CommandLineGeneratorModel _model;
-        public MvcGenerator (IServiceProvider services): base (services)
+        ILogger _logger;
+        public MvcGenerator (IServiceProvider services, ILoggerFactory loggerFactory): base (services)
         {
             _model = new CommandLineGeneratorModel();
+            _logger = loggerFactory.CreateLogger<MvcGenerator>();
         }
 
         public async void Generate(
@@ -24,6 +27,9 @@ namespace cli.Services
             _model.ModelClass = modelClass;
             _model.DataContextClass = dbContextFullName;
             _model.RelativeFolderPath = relativeFolderPath;
+
+            _logger.LogInformation($"Generation for {_model.ModelClass} @ {_model.RelativeFolderPath}");
+
             await GenerateCode(_model);
         }
     }
