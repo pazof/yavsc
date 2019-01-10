@@ -8,6 +8,9 @@ using Yavsc.Models.Blog;
 
 namespace Yavsc.Controllers
 {
+    /// <summary>
+    /// Comment some post.
+    /// </summary>
     public class CommentsController : Controller
     {
         private ApplicationDbContext _context;
