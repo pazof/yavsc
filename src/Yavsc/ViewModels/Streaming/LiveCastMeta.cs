@@ -8,6 +8,11 @@ namespace Yavsc.ViewModels.Streaming
         public WebSocket Socket { get; set; }
     }
 
+    public class LiveEntryViewModel {
+        public string UserName { get; set; }
+        public string FlowId { get; set; }
+    }
+
     public class LiveCastMeta
     {
         public WebSocket Socket { get; set; }
