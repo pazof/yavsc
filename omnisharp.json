@@ -1,6 +1,10 @@
 {
-  "DotNet": {
+  "Dnx": {
     "enabled": true,
+        "enablePackageRestore": true
+  },
+  "DotNet": {
+    "enabled": false,
     "enablePackageRestore": true,
     "script": {
       "enableScriptNuGetReferences": true,
