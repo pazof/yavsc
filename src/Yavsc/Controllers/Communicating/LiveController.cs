@@ -8,21 +8,47 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Logging;
 using Yavsc.ViewModels.Streaming;
+using Yavsc.Models;
+using System.Linq;
 
 namespace Yavsc.Controllers.Communicating
 {
     public class LiveController : Controller
     {
         ILogger _logger;
+        ApplicationDbContext _dbContext;
         public static ConcurrentDictionary<string, LiveCastMeta> Casters = new ConcurrentDictionary<string, LiveCastMeta>();
-        public LiveController(LoggerFactory loggerFactory)
+
+        /// <summary>
+        /// Controls the live !!!
+        /// </summary>
+        /// <param name="loggerFactory"></param>
+        /// <param name="dbContext"></param>
+        public LiveController(LoggerFactory loggerFactory, 
+        ApplicationDbContext dbContext)
         {
             _logger = loggerFactory.CreateLogger<LiveController>();
+            _dbContext = dbContext;
+        }
+        
+        [Route("get/{?id}")]
+        public IActionResult Index(long? id)
+        {
+            if (id==null)
+            return View("Index", Casters.Select(c=> new { UserName = c.Key, Listenning = c.Value.Listeners.Count }));
+
+            var flow = _dbContext.LiveFlow.SingleOrDefault(f=>f.Id == id);
+            if (flow == null) return HttpNotFound();
+
+            return View("Flow", flow);
+
         }
 
         public async Task<IActionResult> Cast()
         {
             var uname = User.GetUserName();
+            // get some setup from user
+            
             // ensure this request is for a websocket
             if (!HttpContext.WebSockets.IsWebSocketRequest) return new BadRequestResult();
             // ensure uniqueness of casting stream from this user
