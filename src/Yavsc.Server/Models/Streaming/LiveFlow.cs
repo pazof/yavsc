@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Abstract.Streaming;
 using Yavsc.Models;
 
 namespace Yavsc.Models.Streaming
 {
 
-    public class LiveFlow {
+    public class LiveFlow : ILiveFlow {
 
       [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
       [Display(Name="FlowId")]
