@@ -18,4 +18,5 @@ namespace Yavsc.ViewModels.Streaming
         public WebSocket Socket { get; set; }
         public ConcurrentDictionary<string, WebSocket> Listeners { get; set; } = new ConcurrentDictionary<string, WebSocket>();
     }
+
 }

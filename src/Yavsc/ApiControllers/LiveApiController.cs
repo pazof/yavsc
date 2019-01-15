@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -59,12 +60,18 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest();
             }
-
+            var uid = User.GetUserId();
+            if (liveFlow.OwnerId!=uid)
+            {
+                ModelState.AddModelError("id","This flow isn't yours.");
+                return HttpBadRequest(ModelState);
+            }
+            
             _context.Entry(liveFlow).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(uid);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -89,11 +96,14 @@ namespace Yavsc.Controllers
             {
                 return HttpBadRequest(ModelState);
             }
+            
+            var uid = User.GetUserId();
+            liveFlow.OwnerId=uid;
 
             _context.LiveFlow.Add(liveFlow);
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(uid);
             }
             catch (DbUpdateException)
             {
@@ -125,8 +135,15 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
+            var uid = User.GetUserId();
+            if (liveFlow.OwnerId!=uid)
+            {
+                ModelState.AddModelError("id","This flow isn't yours.");
+                return HttpBadRequest(ModelState);
+            }
+
             _context.LiveFlow.Remove(liveFlow);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(uid);
 
             return Ok(liveFlow);
         }

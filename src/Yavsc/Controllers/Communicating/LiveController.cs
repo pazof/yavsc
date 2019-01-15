@@ -6,10 +6,10 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using Microsoft.Extensions.Logging;
 using Yavsc.ViewModels.Streaming;
 using Yavsc.Models;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Yavsc.Controllers.Communicating
 {
@@ -24,17 +24,15 @@ namespace Yavsc.Controllers.Communicating
         /// </summary>
         /// <param name="loggerFactory"></param>
         /// <param name="dbContext"></param>
-        public LiveController(LoggerFactory loggerFactory, 
+        public LiveController(ILoggerFactory loggerFactory, 
         ApplicationDbContext dbContext)
         {
             _logger = loggerFactory.CreateLogger<LiveController>();
             _dbContext = dbContext;
         }
-        
-        [Route("get/{?id}")]
         public IActionResult Index(long? id)
         {
-            if (id==null)
+            if (id==0)
             return View("Index", Casters.Select(c=> new { UserName = c.Key, Listenning = c.Value.Listeners.Count }));
 
             var flow = _dbContext.LiveFlow.SingleOrDefault(f=>f.Id == id);
@@ -44,18 +42,37 @@ namespace Yavsc.Controllers.Communicating
 
         }
 
-        public async Task<IActionResult> Cast()
+
+        public async Task<IActionResult> GetLive(string id)
         {
-            var uname = User.GetUserName();
-            // get some setup from user
-            
+            if (!HttpContext.WebSockets.IsWebSocketRequest) return new BadRequestResult();
+            var uid = User.GetUserId();
+            var existent = Casters[id];
+            var socket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+            if (existent.Listeners.TryAdd(uid,socket)) {
+                 return Ok();
+            }
+            else {
+                await socket.CloseAsync(WebSocketCloseStatus.EndpointUnavailable,"Listeners.TryAdd failed",CancellationToken.None);
+            }
+            return HttpBadRequest("Listeners.TryAdd returned false");
+        }
+
+        public async Task<IActionResult> Cast(long id)
+        {
             // ensure this request is for a websocket
             if (!HttpContext.WebSockets.IsWebSocketRequest) return new BadRequestResult();
+
+            var uname = User.GetUserName();
             // ensure uniqueness of casting stream from this user
             var existent = Casters[uname];
             if (existent != null) return new BadRequestObjectResult("not supported, you already casting, there's support for one live streaming only");
+            var uid = User.GetUserId();
+            // get some setup from user
+            var flow = _dbContext.LiveFlow.SingleOrDefault(f=> (f.OwnerId==uid && f.Id == id));
+            // Accept the socket
             var meta = new LiveCastMeta { Socket = await HttpContext.WebSockets.AcceptWebSocketAsync() };
-
+            // Dispatch the flow
             using (meta.Socket)
             {
                 if (meta.Socket != null && meta.Socket.State == WebSocketState.Open)
