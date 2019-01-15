@@ -1,7 +1,11 @@
 {
   "Dnx": {
     "enabled": true,
-        "enablePackageRestore": true
+    "enablePackageRestore": true,
+    "projects": "**/project.json"
+  },
+  "MSBuild": {
+    "enabled": false
   },
   "DotNet": {
     "enabled": false,
