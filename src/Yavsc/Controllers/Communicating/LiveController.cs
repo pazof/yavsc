@@ -66,10 +66,20 @@ namespace Yavsc.Controllers.Communicating
             var uname = User.GetUserName();
             // ensure uniqueness of casting stream from this user
             var existent = Casters[uname];
-            if (existent != null) return new BadRequestObjectResult("not supported, you already casting, there's support for one live streaming only");
+            if (existent != null)  
+            { 
+                ModelState.AddModelError("error","not supported, you already casting, there's support for one live streaming only");
+                return new BadRequestObjectResult(ModelState);
+            }
             var uid = User.GetUserId();
             // get some setup from user
             var flow = _dbContext.LiveFlow.SingleOrDefault(f=> (f.OwnerId==uid && f.Id == id));
+            if (flow == null)
+            {
+                ModelState.AddModelError("error",$"You don't own any flow with the id {id}");
+                return new BadRequestObjectResult (ModelState);
+            }
+              
             // Accept the socket
             var meta = new LiveCastMeta { Socket = await HttpContext.WebSockets.AcceptWebSocketAsync() };
             // Dispatch the flow
