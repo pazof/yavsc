@@ -7,7 +7,8 @@ var gulp = require("gulp"),
     uglify = require("gulp-uglify"),
     shell = require("gulp-shell"),
     rename = require('gulp-rename'),
-    clean = require('gulp-clean');
+    clean = require('gulp-clean'),
+    dnx = require("gulp-dnx-tasks");
 
 var webroot = "./wwwroot/";
 
@@ -50,6 +51,5 @@ gulp.task("min", ["min:js", "min:css"]);
 gulp.task('build', shell.task(['dnu build --configuration=Debug']));
 gulp.task('run', shell.task(['ASPNET_ENV=Development dnx web --configuration=Debug']));
 gulp.task('buildrelease', shell.task(['dnu build --configuration=Release']));
-
 
 gulp.task("default", ["min"]);
