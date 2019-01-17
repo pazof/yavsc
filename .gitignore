@@ -29,5 +29,6 @@ appsettings.*.json
 /src/Yavsc/Temp-*/
 /src/Yavsc/*-Avatars/
 /src/Yavsc/bower_components/
+/src/Yavsc/AppData*/
 /src/test/testingrepo/
 
