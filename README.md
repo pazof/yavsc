@@ -1,7 +1,7 @@
 
 [![Build Status](https://travis-ci.org/pazof/yavsc.svg?branch=vnext)](https://travis-ci.org/pazof/yavsc)
 
-# Yavsc
+# [Yavsc](https://yavsc.pschneider.fr)
 
 C'est une application mettant en oeuvre une prise de contact entre un demandeur de services et son éventuel préstataire associé.
 
@@ -128,7 +128,7 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 ### Administration
 
 Une fois le service disponible, s'enregistrer, et
-Visiter `/Administration/Take` 
+Visiter l'url `/Administration/Take` 
 
 ## Une nouvelle activité
 
