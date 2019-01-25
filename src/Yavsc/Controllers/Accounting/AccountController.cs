@@ -430,8 +430,13 @@ namespace Yavsc.Controllers
         // GET: /Account/ForgotPassword
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ForgotPassword()
+        public async Task<IActionResult> ForgotPassword()
         {
+            if (User.Identity.IsAuthenticated)
+              ViewBag.UserEmail = ( await _dbContext.Users.SingleAsync(
+                  u => u.Id == User.GetUserId()
+              ) ).Email;
+              
             return View();
         }
 
