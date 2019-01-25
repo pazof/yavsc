@@ -30,5 +30,17 @@ namespace Yavsc.Models.Access
         {
             get; set;
         }
+
+        [Required]
+        public string TargetId
+        {
+            get; set;
+        }
+
+        [ForeignKey("TargetId")]
+        public virtual ApplicationUser TargetUser {
+            get; set;
+        }
+
     }
 }
