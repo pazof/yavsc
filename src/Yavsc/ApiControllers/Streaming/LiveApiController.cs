@@ -130,7 +130,11 @@ namespace Yavsc.Controllers
         }
 
 
-
+        /// <summary>
+        /// Lists user's live castings
+        /// </summary>
+        /// <param name="id">user id</param>
+        /// <returns></returns>
         public IActionResult Index(long? id)
         {
             if (id==0)
