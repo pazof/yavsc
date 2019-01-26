@@ -22,14 +22,32 @@ using Microsoft.AspNet.SignalR;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Yavsc
 {
+    using System;
+    using System.Threading;
+    using Microsoft.AspNet.Authorization;
+    using Microsoft.Data.Entity;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
     using Models;
     using Models.Chat;
+    using Yavsc.ViewModels.Auth;
 
-    public class ChatHub : Hub
+    public class ChatHub : Hub, IDisposable
     {
+        ApplicationDbContext _dbContext;
+        ILogger _logger;
+
+        public ChatHub()
+        { 
+            var scope = Startup.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            _dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
+            var loggerFactory = scope.ServiceProvider.GetService<ILoggerFactory>();
+            _logger = loggerFactory.CreateLogger<ChatHub>();
+        }
 
         public override Task OnConnected()
         {
@@ -45,19 +63,17 @@ namespace Yavsc
                 Groups.Add(Context.ConnectionId, group);
                 if (isAuth)
                 {
-                    using (var db = new ApplicationDbContext()) {
-                        var user = db.Users.Single(u => u.UserName == userName);
-                        if (user.Connections==null)
-                            user.Connections = new List<ChatConnection>();
-                        user.Connections.Add(new ChatConnection
-                        {
-                            ConnectionId = Context.ConnectionId,
-                            UserAgent = Context.Request.Headers["User-Agent"],
-                            Connected = true
-                        });
-                        db.SaveChanges();
-                    }
                     
+                    var user = _dbContext.Users.Single(u => u.UserName == userName);
+                    if (user.Connections==null)
+                        user.Connections = new List<ChatConnection>();
+                    user.Connections.Add(new ChatConnection
+                    {
+                        ConnectionId = Context.ConnectionId,
+                        UserAgent = Context.Request.Headers["User-Agent"],
+                        Connected = true
+                    });
+                    _dbContext.SaveChanges();
                 }
             }
             else Groups.Add(Context.ConnectionId, "anonymous");
@@ -100,22 +116,21 @@ namespace Yavsc
             string userName = Context.User?.Identity.Name;
             if (userName != null)
             {
-                using (var db = new ApplicationDbContext()) {
-                    var user = db.Users.Single(u => u.UserName == userName);
+                
+                var user = _dbContext.Users.Single(u => u.UserName == userName);
 
-                    if (user.Connections==null) user.Connections = new List<ChatConnection>();
+                if (user.Connections==null) user.Connections = new List<ChatConnection>();
 
-                    
-                        var cx = user.Connections.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
-                        if (cx != null)
-                        {
-                            cx.Connected = true;
-                            db.SaveChanges();
-                        }
-                        else cx = new ChatConnection { ConnectionId = Context.ConnectionId,
-                            UserAgent = Context.Request.Headers["User-Agent"],
-                            Connected = true };
-                }
+                
+                    var cx = user.Connections.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
+                    if (cx != null)
+                    {
+                        cx.Connected = true;
+                        _dbContext.SaveChanges();
+                    }
+                    else cx = new ChatConnection { ConnectionId = Context.ConnectionId,
+                        UserAgent = Context.Request.Headers["User-Agent"],
+                        Connected = true };
             }
 
             return base.OnReconnected();
@@ -130,8 +145,49 @@ namespace Yavsc
         }
 
 
+
         [Authorize]
-        public void SendPV(string connectionId, string message)
+        public async void SendPV(string connectionId, string message)
+        {
+            var sender = Context.User.Identity.Name;
+            // TODO personal black|white list +
+            // Contact list allowed only + 
+            // only pro
+            string destUserId = (await _dbContext.ChatConnection.SingleAsync (c=>c.ConnectionId == connectionId)).ApplicationUserId;
+            
+            var allow = await AllowPv(sender, connectionId);
+            if (!allow) {
+                Clients.Caller.addPV(sender, "[private message was refused]");
+                return;
+                }
+
+            var hubCxContext = Clients.User(connectionId);
+            
+            var cli = Clients.Client(connectionId);
+            cli.addPV(sender, message);
+        }
+
+        private async Task<bool> AllowPv(string senderName, string destConnectionId)
+        {
+            if (Context.User.IsInRole(Constants.BlogModeratorGroupName))
+
+            if (Context.User.IsInRole(Constants.BlogModeratorGroupName)
+            || Context.User.IsInRole(Constants.AdminGroupName))
+                return true;
+            if (!Context.User.Identity.IsAuthenticated)
+                return false;
+            string senderId = (await _dbContext.ChatConnection.SingleAsync (c=>c.ConnectionId == Context.ConnectionId)).ApplicationUserId;
+            
+             
+            if (_dbContext.Banlist.Any(b=>b.TargetId == senderId)) return false;
+            var destChatUser = await _dbContext.ChatConnection.SingleAsync (c=>c.ConnectionId == destConnectionId);
+
+            if (_dbContext.BlackListed.Any(b=>b.OwnerId == destChatUser.ApplicationUserId && b.UserId == senderId)) return false;
+            var destUser = await _dbContext.Performers.FirstOrDefaultAsync( u=> u.PerformerId == destChatUser.ApplicationUserId);
+            return destUser?.AcceptPublicContact ?? true;
+        }
+
+        public void SendStream(string connectionId, long streamId, string message)
         {
             var sender = Context.User.Identity.Name;
             // TODO personal black|white list +
@@ -139,19 +195,16 @@ namespace Yavsc
             // only pro
             var hubCxContext = Clients.User(connectionId);
             var cli = Clients.Client(connectionId);
-            cli.addPV(sender, message);
-        }
-        public void Abort()
-        {
-            using (var db = new ApplicationDbContext()) {
-                var cx = db.Connections.SingleOrDefault(c=>c.ConnectionId == Context.ConnectionId);
-                if (cx!=null) {
-                    db.Connections.Remove(cx);
-                    db.SaveChanges(); 
-                }
-            }
-                
+            cli.addStreamInfo(sender, streamId, message);
         }
 
+        public void Abort()
+        {
+            var cx = _dbContext .Connections.SingleOrDefault(c=>c.ConnectionId == Context.ConnectionId);
+            if (cx!=null) {
+                _dbContext.Connections.Remove(cx);
+                _dbContext.SaveChanges(); 
+            }
+        }
     }
 }

@@ -2,8 +2,9 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Models.Blog;
+using Yavsc.ViewModels.Auth;
 
-namespace Yavsc.ViewModels.Auth.Handlers
+namespace Yavsc.AuthorizationHandlers
 {
     public class BlogViewHandler : AuthorizationHandler<ViewRequirement, BlogPost>
     {

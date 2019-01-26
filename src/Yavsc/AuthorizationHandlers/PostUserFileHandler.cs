@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
-using Yavsc.ViewModel.Auth;
+using Yavsc.ViewModels.Auth;
 
-namespace Yavsc.ViewModels.Auth.Handlers
+namespace Yavsc.AuthorizationHandlers
 {
     public class PostUserFileHandler : AuthorizationHandler<EditRequirement, FileSpotInfo>
     {

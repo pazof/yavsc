@@ -3,7 +3,7 @@ using System.IO;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Models.Blog;
 
-namespace Yavsc.ViewModel.Auth {
+namespace Yavsc.ViewModels.Auth {
 
     public class FileSpotInfo : IAuthorizationRequirement
     {

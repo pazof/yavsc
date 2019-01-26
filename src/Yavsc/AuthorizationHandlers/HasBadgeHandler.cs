@@ -1,6 +1,7 @@
 using Microsoft.AspNet.Authorization;
+using Yavsc.ViewModels.Auth;
 
-namespace Yavsc.ViewModels.Auth.Handlers
+namespace Yavsc.AuthorizationHandlers
 {
     public class HasBadgeHandler : AuthorizationHandler<PrivateChatEntryRequirement>
     {
