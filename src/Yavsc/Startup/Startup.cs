@@ -33,8 +33,8 @@ namespace Yavsc
     using Models;
     using PayPal.Manager;
     using Services;
-    using ViewModels.Auth.Handlers;
     using Yavsc.Abstract.FileSystem;
+    using Yavsc.AuthorizationHandlers;
     using static System.Environment;
 
     public partial class Startup
@@ -226,6 +226,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, BillViewHandler>();
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
             services.AddSingleton<IAuthorizationHandler, ViewFileHandler>();
+            services.AddSingleton<IAuthorizationHandler, SendMessageHandler>();
 
             services.AddMvc(config =>
             {
@@ -274,6 +275,7 @@ namespace Yavsc
             CheckServices(services);
         }
         static ApplicationDbContext _dbContext;
+        public static IServiceProvider Services { get; private set; }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
@@ -288,6 +290,8 @@ namespace Yavsc
         UserManager<ApplicationUser> usermanager,
          ILoggerFactory loggerFactory)
         {
+            Services = app.ApplicationServices;
+
             _dbContext = dbContext;
             _usermanager = usermanager;
             GoogleSettings = googleSettings.Value;

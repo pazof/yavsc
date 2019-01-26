@@ -3,8 +3,9 @@
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Interfaces;
+using Yavsc.ViewModels.Auth;
 
-namespace Yavsc.ViewModels.Auth.Handlers
+namespace Yavsc.AuthorizationHandlers
 {
     public class AnnouceEditHandler : AuthorizationHandler<EditRequirement, IOwned>
     {
