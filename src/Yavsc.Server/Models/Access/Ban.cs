@@ -4,8 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Access
 {
-  using Yavsc;
-
+    using Yavsc;
     public class Ban : IBaseTrackedEntity
     {
         public DateTime DateCreated
@@ -41,6 +40,9 @@ namespace Yavsc.Models.Access
         public virtual ApplicationUser TargetUser {
             get; set;
         }
+
+        [Required]
+        public string Reason { get; set; }
 
     }
 }
