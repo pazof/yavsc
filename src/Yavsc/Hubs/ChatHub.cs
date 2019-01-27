@@ -149,13 +149,13 @@ namespace Yavsc
         [Authorize]
         public async void SendPV(string connectionId, string message)
         {
-            var sender = Context.User.Identity.Name;
             // TODO personal black|white list +
             // Contact list allowed only + 
             // only pro
             string destUserId = (await _dbContext.ChatConnection.SingleAsync (c=>c.ConnectionId == connectionId)).ApplicationUserId;
             
-            var allow = await AllowPv(sender, connectionId);
+            var sender = Context.User.Identity.Name;
+            var allow = await AllowPv(connectionId);
             if (!allow) {
                 Clients.Caller.addPV(sender, "[private message was refused]");
                 return;
@@ -167,7 +167,7 @@ namespace Yavsc
             cli.addPV(sender, message);
         }
 
-        private async Task<bool> AllowPv(string senderName, string destConnectionId)
+        private async Task<bool> AllowPv(string destConnectionId)
         {
             if (Context.User.IsInRole(Constants.BlogModeratorGroupName))
 
