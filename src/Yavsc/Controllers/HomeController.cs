@@ -21,26 +21,22 @@ namespace Yavsc.Controllers
     [AllowAnonymous]
     public class HomeController : Controller
     {
-        public IHostingEnvironment Hosting { get; set; }
+         IHostingEnvironment _hosting;
 
-        private ApplicationDbContext DbContext;
+         ApplicationDbContext _dbContext;
 
-        private readonly IHtmlLocalizer _localizer;
-
+         readonly IHtmlLocalizer _localizer;
         public HomeController(IHtmlLocalizer<Startup> localizer, IHostingEnvironment hosting,
         ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _localizer = localizer;
-            Hosting = hosting;
-            DbContext = context;
+            _hosting = hosting;
+            _dbContext = context;
         }
 
         public async Task<IActionResult> Index(string id)
         {
-         /* 
-         
-         
-          */   ViewBag.IsFromSecureProx = (Request.Headers.ContainsKey(Constants.SshHeaderKey))?  Request.Headers[Constants.SshHeaderKey]=="on" : false ;
+            ViewBag.IsFromSecureProx = (Request.Headers.ContainsKey(Constants.SshHeaderKey))?  Request.Headers[Constants.SshHeaderKey]=="on" : false ;
             ViewBag.SecureHomeUrl = "https://"+Request.Headers["X-Forwarded-Host"];
             ViewBag.SshHeaderKey = Request.Headers[Constants.SshHeaderKey];
             var uid = User.GetUserId();
@@ -51,15 +47,15 @@ namespace Yavsc.Controllers
                 if (strclicked!=null) clicked = strclicked.Split(':').Select(c=>long.Parse(c)).ToArray();
               if (clicked==null) clicked = new long [0];
             }
-            else clicked = DbContext.DimissClicked.Where(d=>d.UserId == uid).Select(d=>d.NotificationId).ToArray();
-            var notes = DbContext.Notification.Where(
+            else clicked = _dbContext.DimissClicked.Where(d=>d.UserId == uid).Select(d=>d.NotificationId).ToArray();
+            var notes = _dbContext.Notification.Where(
                 n=> !clicked.Contains(n.Id)
             );
             this.Notify(notes);
-            ViewData["HaircutCommandCount"] =  DbContext.HairCutQueries.Where(
+            ViewData["HaircutCommandCount"] =  _dbContext.HairCutQueries.Where(
                 q=>q.ClientId == uid && q.Status < QueryStatus.Failed                                                                 
             ).Count();
-             var toShow = DbContext.Activities
+             var toShow = _dbContext.Activities
                 .Include(a=>a.Forms)
                 .Include(a=>a.Parent)
                 .Include(a=>a.Children)
@@ -71,20 +67,6 @@ namespace Yavsc.Controllers
                a.Children=a.Children.Where(c => !c.Hidden).ToList();
             } 
             return View(toShow);
-
-            //if (id==null) {
-                // Workaround
-                // NotImplementedException: Remotion.Linq.Clauses.ResultOperators.ConcatResultOperator
-                //
-                // Use Concat()| whatever to do left outer join on ToArray() or ToList(), not on IQueryable
-                // var legacy = DbContext.Activities.Include(a=>a.Forms).Include(a=>a.Children).Where(a=> !a.Hidden).Where(a=> a.ParentCode==null).ToArray();
-                // OMG
-              //  var hiddenchildren = DbContext.Activities
-              //  .Include(a=>a.Forms).Include(a=>a.Children)
-              //  .Where(a=> a.Parent.Hidden && !a.Hidden).ToArray();
-
-              //  return View(legacy.Concat(hiddenchildren).OrderByDescending(a=>a.Rate));
-            // }
         }
         public async Task<IActionResult> About()
         {
@@ -110,7 +92,7 @@ namespace Yavsc.Controllers
             if (User.Identity.IsAuthenticated) {
                 ViewBag.IsAuthenticated=true;
                 string uid = User.GetUserId();
-                ViewBag.Contacts = DbContext.Contacts.Where(c=>c.OwnerId == uid)
+                ViewBag.Contacts = _dbContext.Contacts.Where(c=>c.OwnerId == uid)
                 ;
             } else ViewBag.IsAuthenticated=false;
             return View();
