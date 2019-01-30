@@ -4,7 +4,11 @@ namespace Yavsc.Controllers
 {
     public class TestController: Controller
     {
-        public IActionResult Index()
+        public IActionResult CalendarEventDateComponent()
+        {
+            return View();
+        }
+        public IActionResult MarkdownForms()
         {
             return View();
         }
