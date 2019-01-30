@@ -60,7 +60,6 @@ namespace Yavsc
                 await Groups.Add(Context.ConnectionId, group);
                 if (isAuth)
                 {
-                    /* 
                     var user = _dbContext.Users.Include(u=>u.Connections).Single(u => u.UserName == userName);
                     if (user.Connections==null)
                         user.Connections = new List<ChatConnection>();
@@ -78,14 +77,14 @@ namespace Yavsc
                     _dbContext.SaveChanges(); 
 
                     Clients.CallerState.BlackListedBy = await _dbContext.BlackListed.Where(r=>r.UserId == user.Id).Select(r=>r.OwnerId).ToArrayAsync();
-                    */
+                    
                 }
             }
             else await Groups.Add(Context.ConnectionId, "anonymous");
 
             Clients.Group("authenticated").notify("connected", Context.ConnectionId, userName);
 
-            await OnConnected();
+            await base.OnConnected();
         }
 
         public override Task OnDisconnected(bool stopCalled)
