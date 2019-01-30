@@ -9,7 +9,7 @@ namespace Yavsc
                 SiteSettings siteSettings, IHostingEnvironment env)
         {
             app.UseWebSockets();
-            app.UseSignalR("/api/signalr");
+            app.UseSignalR(Constants.SignalRPath);
         }
     }
 }

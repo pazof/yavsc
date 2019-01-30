@@ -8,15 +8,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Streaming;
 using Yavsc.ViewModels.Streaming;
 
 namespace Yavsc.Controllers
 {
-    [Route("api/LiveApi")]
+    [Route("api/live")]
     public class LiveApiController : Controller
     {
         public static ConcurrentDictionary<string, LiveCastMeta> Casters = new ConcurrentDictionary<string, LiveCastMeta>();
@@ -37,7 +39,10 @@ namespace Yavsc.Controllers
             _dbContext = context;
             _logger = loggerFactory.CreateLogger<LiveApiController>();
         }
-
+        public async Task<string[]> GetFileNameHint(string id)
+        {
+            return await _dbContext.Tags.Where( t=> t.Name.StartsWith(id)).Select(t=>t.Name).Take(25).ToArrayAsync();
+        }
         
         public async Task<IActionResult> GetLive(string id)
         {
@@ -69,7 +74,7 @@ namespace Yavsc.Controllers
             }
             var uid = User.GetUserId();
             // get some setup from user
-            var flow = _dbContext.LiveFlow.SingleOrDefault(f=> (f.OwnerId==uid && f.Id == id));
+            var flow = _dbContext.LiveFlow.Include(f=>f.Owner).SingleOrDefault(f=> (f.OwnerId==uid && f.Id == id));
             if (flow == null)
             {
                 ModelState.AddModelError("error",$"You don't own any flow with the id {id}");
@@ -91,6 +96,11 @@ namespace Yavsc.Controllers
                     byte[] buffer = new byte[1024];
                     WebSocketReceiveResult received = await meta.Socket.ReceiveAsync
                     (new ArraySegment<byte>(buffer), CancellationToken.None);
+
+                    var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+                    
+                    hubContext.Clients.All.addPublicStream(new { id = flow.Id, sender = flow.Owner.UserName, title = flow.Title, url = flow.GetFileUrl(), 
+                        mediaType = flow.MediaType }, $"{flow.Owner.UserName} is starting a stream!");
 
                     // FIXME do we really need to close those one in invalid state ?
                     Stack<string> ToClose = new Stack<string>();
@@ -148,7 +158,6 @@ namespace Yavsc.Controllers
         }
 
 
-        // GET: api/LiveApi/5
         [HttpGet("{id}", Name = "GetLiveFlow")]
         public async Task<IActionResult> GetLiveFlow([FromRoute] long id)
         {
@@ -167,7 +176,6 @@ namespace Yavsc.Controllers
             return Ok(liveFlow);
         }
 
-        // PUT: api/LiveApi/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLiveFlow([FromRoute] long id, [FromBody] LiveFlow liveFlow)
         {
@@ -208,7 +216,6 @@ namespace Yavsc.Controllers
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
         }
 
-        // POST: api/LiveApi
         [HttpPost]
         public async Task<IActionResult> PostLiveFlow([FromBody] LiveFlow liveFlow)
         {

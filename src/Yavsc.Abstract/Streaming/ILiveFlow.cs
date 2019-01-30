@@ -23,6 +23,8 @@ namespace Yavsc.Abstract.Streaming
       // A name where to save this stream, relative to user's files root
        string DifferedFileName { get; set; }
 
+       int SequenceNumber { get; set; }
+
       [Required]
        string OwnerId {get; set; }
 

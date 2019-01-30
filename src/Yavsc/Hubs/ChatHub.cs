@@ -22,19 +22,16 @@ using Microsoft.AspNet.SignalR;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 
 namespace Yavsc
 {
     using System;
-    using System.Threading;
     using Microsoft.AspNet.Authorization;
     using Microsoft.Data.Entity;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Models;
     using Models.Chat;
-    using Yavsc.ViewModels.Auth;
 
     public class ChatHub : Hub, IDisposable
     {
@@ -49,7 +46,7 @@ namespace Yavsc
             _logger = loggerFactory.CreateLogger<ChatHub>();
         }
 
-        public override Task OnConnected()
+        public override async Task OnConnected()
         {
             bool isAuth = false;
             string userName = null;
@@ -60,27 +57,35 @@ namespace Yavsc
                 var group = isAuth ?
                   "authenticated" : "anonymous";
                 // Log ("Cx: " + group);
-                Groups.Add(Context.ConnectionId, group);
+                await Groups.Add(Context.ConnectionId, group);
                 if (isAuth)
                 {
-                    
-                    var user = _dbContext.Users.Single(u => u.UserName == userName);
+                    /* 
+                    var user = _dbContext.Users.Include(u=>u.Connections).Single(u => u.UserName == userName);
                     if (user.Connections==null)
                         user.Connections = new List<ChatConnection>();
-                    user.Connections.Add(new ChatConnection
-                    {
-                        ConnectionId = Context.ConnectionId,
-                        UserAgent = Context.Request.Headers["User-Agent"],
-                        Connected = true
-                    });
-                    _dbContext.SaveChanges();
+                    var ucx = user.Connections.FirstOrDefault(c=>c.ConnectionId == Context.ConnectionId);
+                    if (ucx==null)
+                        user.Connections.Add(new ChatConnection
+                        {
+                            ConnectionId = Context.ConnectionId,
+                            UserAgent = Context.Request.Headers["User-Agent"],
+                            Connected = true
+                        });
+                    else {
+                        ucx.Connected = true;
+                    }
+                    _dbContext.SaveChanges(); 
+
+                    Clients.CallerState.BlackListedBy = await _dbContext.BlackListed.Where(r=>r.UserId == user.Id).Select(r=>r.OwnerId).ToArrayAsync();
+                    */
                 }
             }
-            else Groups.Add(Context.ConnectionId, "anonymous");
+            else await Groups.Add(Context.ConnectionId, "anonymous");
 
             Clients.Group("authenticated").notify("connected", Context.ConnectionId, userName);
 
-            return base.OnConnected();
+            await OnConnected();
         }
 
         public override Task OnDisconnected(bool stopCalled)
@@ -140,7 +145,7 @@ namespace Yavsc
         {
             string uname = (Context.User != null) ?
               $"[{Context.User.Identity.Name}]" :
-              $"({name})";
+              $"?{name}";
             Clients.All.addMessage(uname, message);
         }
 
@@ -149,22 +154,18 @@ namespace Yavsc
         [Authorize]
         public async void SendPV(string connectionId, string message)
         {
-            // TODO personal black|white list +
-            // Contact list allowed only + 
-            // only pro
-            string destUserId = (await _dbContext.ChatConnection.SingleAsync (c=>c.ConnectionId == connectionId)).ApplicationUserId;
-            
-            var sender = Context.User.Identity.Name;
-            var allow = await AllowPv(connectionId);
-            if (!allow) {
-                Clients.Caller.addPV(sender, "[private message was refused]");
-                return;
+            if (Clients.CallerState.BlackListedBy!=null) 
+                foreach (string destId in Clients.CallerState.BlackListedBy)
+                {
+                    if (_dbContext.ChatConnection.Any(c => c.ConnectionId == connectionId && c.ApplicationUserId == destId ))
+                    {
+                        _logger.LogInformation($"PV aborted by black list");
+                        Clients.Caller.send("denied");
+                        return ;
+                    }
                 }
-
-            var hubCxContext = Clients.User(connectionId);
-            
             var cli = Clients.Client(connectionId);
-            cli.addPV(sender, message);
+            cli.addPV(Context.User.Identity.Name, message);
         }
 
         private async Task<bool> AllowPv(string destConnectionId)

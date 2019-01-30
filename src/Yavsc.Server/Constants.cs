@@ -11,6 +11,9 @@ namespace Yavsc
         	TokenPath = "~/token",
             LoginPath = "~/signin",
             LogoutPath = "~/signout", UserInfoPath = "~/api/me",
+
+            SignalRPath = "/api/signalr",
+
             ApplicationAuthenticationSheme = "ServerCookie",
             ExternalAuthenticationSheme= "ExternalCookie",
             CompanyInfoUrl = " https://societeinfo.com/app/rest/api/v1/company/json?registration_number={0}&key={1}",
