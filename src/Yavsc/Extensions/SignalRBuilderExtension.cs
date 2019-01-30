@@ -37,8 +37,9 @@ namespace Yavsc
             app.UseAppBuilder(appBuilder => appBuilder.MapSignalR(
                 path,
                new HubConfiguration() {
-                  EnableDetailedErrors = false,
-                  EnableJSONP = false
+                  EnableDetailedErrors = true,
+                  EnableJSONP = true,
+                  EnableJavaScriptProxies = true
                }
             ));
         }

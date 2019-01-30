@@ -12,6 +12,7 @@ using Yavsc.Abstract.FileSystem;
 using Yavsc.Exceptions;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
+using Yavsc.Models.Streaming;
 using Yavsc.ViewModels;
 
 namespace Yavsc.Helpers
@@ -188,6 +189,16 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
             return item;
         }
 
-
+        public static string GetFileUrl (this LiveFlow flow)
+        {
+            if (flow.DifferedFileName==null) 
+            // no server-side backup for this stream
+            return null;
+            var fileInfo = new FileInfo(flow.DifferedFileName);
+            var ext = fileInfo.Extension;
+            var namelen = flow.DifferedFileName.Length - ext.Length;
+            var basename =  flow.DifferedFileName.Substring(0,namelen);
+            return $"{Startup.UserFilesOptions.RequestPath}/{flow.Owner.UserName}/live/{basename}-{flow.SequenceNumber}{ext}";
+        }
     }
 }

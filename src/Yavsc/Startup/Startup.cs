@@ -392,14 +392,15 @@ namespace Yavsc
             {
                 options.AuthenticationDescriptions.Clear();
                 options.AutomaticAuthentication = false;
-            });
+            });            
+            app.UseSession();
 
             ConfigureOAuthApp(app, SiteSetup, logger);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
             ConfigureWebSocketsApp(app, SiteSetup, env);
             ConfigureWorkflow(app, SiteSetup, logger);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"en-US"));
-            app.UseSession();
+
 
             app.UseMvc(routes =>
             {
