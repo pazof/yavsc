@@ -1,0 +1,68 @@
+@model Yavsc.Models.Streaming.LiveFlow
+
+@{
+    ViewData["Title"] = SR["Edit"];
+}
+
+<h2>Edit</h2>
+
+<form asp-action="AdminEdit">
+    <div class="form-horizontal">
+        <h4>LiveFlow</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="DifferedFileName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="DifferedFileName" class="form-control" />
+                <span asp-validation-for="DifferedFileName" class="text-danger" ></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="MediaType" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="MediaType" class="form-control" />
+                <span asp-validation-for="MediaType" class="text-danger" ></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="OwnerId" class="control-label col-md-2">OwnerId</label>
+            <div class="col-md-10">
+                <select asp-for="OwnerId" class="form-control" asp-items="@ViewBag.OwnerId"></select>
+                <span asp-validation-for="OwnerId" class="text-danger" ></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Pitch" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Pitch" class="form-control" />
+                <span asp-validation-for="Pitch" class="text-danger" ></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="SequenceNumber" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="SequenceNumber" class="form-control" />
+                <span asp-validation-for="SequenceNumber" class="text-danger" ></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Title" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger" ></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

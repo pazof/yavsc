@@ -90,7 +90,8 @@ namespace Yavsc {
             SiteSettings settingsOptions, ILogger logger) {
 
             app.UseIdentity ();
-            app.UseWhen (context => context.Request.Path.StartsWithSegments ("/api"),
+            app.UseWhen (context => context.Request.Path.StartsWithSegments ("/api")
+            || context.Request.Path.StartsWithSegments ("/live"),
                 branch => {
                     branch.UseJwtBearerAuthentication (
                         options => {
@@ -104,7 +105,7 @@ namespace Yavsc {
                     );
 
                 });
-            app.UseWhen (context => !context.Request.Path.StartsWithSegments ("/api"),
+            app.UseWhen (context => !context.Request.Path.StartsWithSegments ("/api") && !context.Request.Path.StartsWithSegments ("/live"),
                 branch => {
                     // External authentication shared cookie:
                     branch.UseCookieAuthentication (options => {

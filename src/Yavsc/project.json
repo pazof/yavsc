@@ -151,7 +151,7 @@
     "yavsc": "Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:86",
     "coiffure": "Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:88",
     "freefield": "Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:89",
-    "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls https://localhost:5000"
+    "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls https://*:5000"
   },
   "frameworks": {
     "dnx451": {
