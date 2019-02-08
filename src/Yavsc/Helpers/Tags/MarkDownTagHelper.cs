@@ -6,7 +6,7 @@ using MarkdownDeep;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.AspNet.Razor.TagHelpers;
 
-namespace Yavsc.Helpers
+namespace Yavsc.TagHelpers
 {
     [HtmlTargetElement("div", Attributes = MarkdownContentAttributeName)]
     [HtmlTargetElement("h1", Attributes = MarkdownContentAttributeName)]
