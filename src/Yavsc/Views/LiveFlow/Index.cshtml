@@ -1,0 +1,56 @@
+@model IEnumerable<Yavsc.Models.Streaming.LiveFlow>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DifferedFileName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MediaType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Pitch)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SequenceNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th></th>
+    </tr>
+    
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.DifferedFileName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MediaType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Pitch)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SequenceNumber)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+        </td>
+    </tr>
+}
+</table>

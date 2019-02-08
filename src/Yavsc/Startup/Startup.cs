@@ -16,7 +16,6 @@ using Microsoft.AspNet.Mvc.Razor;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Net.Http.Headers;
@@ -25,16 +24,26 @@ using Newtonsoft.Json;
 namespace Yavsc
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
+    using System.Net.WebSockets;
+    using System.Security.Claims;
+    using System.Threading;
     using Formatters;
     using Google.Apis.Util.Store;
+    using Microsoft.AspNet.Http;
     using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.SignalR;
     using Microsoft.Extensions.Localization;
+    using Microsoft.Extensions.Logging;
     using Models;
     using PayPal.Manager;
     using Services;
     using Yavsc.Abstract.FileSystem;
     using Yavsc.AuthorizationHandlers;
+    using Yavsc.Controllers;
+    using Yavsc.Helpers;
+    using Yavsc.ViewModels.Streaming;
     using static System.Environment;
 
     public partial class Startup
@@ -50,6 +59,10 @@ namespace Yavsc
 
         public static PayPalSettings PayPalSettings { get; private set; }
         private static ILogger logger;
+
+        // leave the final slash
+
+        PathString liveCastingPath = "/live/cast";
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
@@ -397,11 +410,10 @@ namespace Yavsc
 
             ConfigureOAuthApp(app, SiteSetup, logger);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
-            ConfigureWebSocketsApp(app, SiteSetup, env);
+             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"en-US"));
+
             ConfigureWorkflow(app, SiteSetup, logger);
-            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture) new RequestCulture((string)"en-US"));
-
-
+            ConfigureWebSocketsApp(app, SiteSetup, env);
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -409,7 +421,105 @@ namespace Yavsc
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
             logger.LogInformation("LocalApplicationData: "+Environment.GetFolderPath(SpecialFolder.LocalApplicationData, SpecialFolderOption.DoNotVerify));
+            app.Use(async (context, next) =>
+                {
+                    var liveCasting = context.Request.Path.StartsWithSegments(liveCastingPath);
+                    if (liveCasting)
+                    {
+
+                        // ensure this request is for a websocket
+                        if (context.WebSockets.IsWebSocketRequest)
+                        {
+                            if (!context.User.Identity.IsAuthenticated)
+                                context.Response.StatusCode = 403;
+                            else {
+                                // get the flow id from request path
+                                var castid = long.Parse(context.Request.Path.Value.Substring(liveCastingPath.Value.Length+1));
+                                
            
+            var uname = context.User.GetUserName();
+            // ensure uniqueness of casting stream from this user
+            if (LiveApiController.Casters.ContainsKey(uname))  
+            { 
+                logger.LogWarning("already casting: "+uname);
+                context.Response.StatusCode = 400;
+            }
+            else {
+                
+            var uid = context.User.GetUserId();
+            // get some setup from user
+            var flow = _dbContext.LiveFlow.Include(f=>f.Owner).SingleOrDefault(f=> (f.OwnerId==uid && f.Id == castid));
+            if (flow == null)
+            {
+                context.Response.StatusCode = 400;
+            }
+            else {
+                 // Accept the socket
+                var meta = new LiveCastMeta { Socket = await context.WebSockets.AcceptWebSocketAsync() };
+                logger.LogInformation("Accepted web socket");
+                // Dispatch the flow
+                
+                    if (meta.Socket != null && meta.Socket.State == WebSocketState.Open)
+                    {
+                        LiveApiController.Casters[uname] = meta;
+                        // TODO: Handle the socket here.
+                        // Find receivers: others in the chat room
+                        // send them the flow
+
+                        var sBuffer = System.Net.WebSockets.WebSocket.CreateServerBuffer(1024);
+                        logger.LogInformation("Receiving bytes...");
+
+                        WebSocketReceiveResult received = await meta.Socket.ReceiveAsync(sBuffer, CancellationToken.None);
+                        logger.LogInformation("Received bytes!!!!");
+
+                        var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+                        
+                        hubContext.Clients.All.addPublicStream(new { id = flow.Id, sender = flow.Owner.UserName, title = flow.Title, url = flow.GetFileUrl(), 
+                            mediaType = flow.MediaType }, $"{flow.Owner.UserName} is starting a stream!");
+
+                        // FIXME do we really need to close those one in invalid state ?
+                        Stack<string> ToClose = new Stack<string>();
+
+                        while (received.MessageType != WebSocketMessageType.Close)
+                        {
+                            logger.LogInformation($"Echoing {received.Count} bytes received in a {received.MessageType} message; Fin={received.EndOfMessage}");
+                            // Echo anything we receive
+                            // and send to all listner found
+                            foreach (var cliItem in meta.Listeners)
+                            {
+                                var listenningSocket = cliItem.Value;
+                                if (listenningSocket.State == WebSocketState.Open)
+                                    await listenningSocket.SendAsync(
+                                    sBuffer, received.MessageType, received.EndOfMessage, CancellationToken.None);
+                                else ToClose.Push(cliItem.Key);
+                            }
+                            received = await meta.Socket.ReceiveAsync(sBuffer, CancellationToken.None);
+
+                            string no;
+                            do
+                            {
+                                no = ToClose.Pop();
+                                WebSocket listenningSocket;
+                                if (meta.Listeners.TryRemove(no, out listenningSocket))
+                                    await listenningSocket.CloseAsync(WebSocketCloseStatus.EndpointUnavailable, "State != WebSocketState.Open", CancellationToken.None);
+
+                            } while (no != null);
+                        }
+                        await meta.Socket.CloseAsync(received.CloseStatus.Value, received.CloseStatusDescription, CancellationToken.None);
+                        LiveApiController.Casters[uname] = null;
+                    }
+                    else { // not meta.Socket != null && meta.Socket.State == WebSocketState.Open
+                        if (meta.Socket != null)
+                        logger.LogError($"meta.Socket.State: {meta.Socket.State.ToString()} ");
+                        else logger.LogError("socket object is null");
+                    }
+                    }}}}}
+                    else
+                    {
+                        await next();
+                    }
+
+                });
             CheckApp(app, SiteSetup, env, loggerFactory);
         }
 

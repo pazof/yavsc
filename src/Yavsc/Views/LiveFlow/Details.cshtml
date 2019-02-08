@@ -1,0 +1,48 @@
+@model Yavsc.Models.Streaming.LiveFlow
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>LiveFlow</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DifferedFileName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DifferedFileName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.MediaType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MediaType)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Pitch)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Pitch)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SequenceNumber)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SequenceNumber)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+    </dl>
+</div>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</p>
