@@ -22,9 +22,6 @@ namespace Yavsc
             };
             app.UseWebSockets(webSocketOptions);
             app.UseSignalR(Constants.SignalRPath);
-            
-
-
         }
 
         private async Task Echo(HttpContext context, WebSocket webSocket)

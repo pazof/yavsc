@@ -1,0 +1,12 @@
+@model Yavsc.Abstract.Manage.EmailSentViewModel
+
+@{
+    ViewData["Title"] = "S'il vous plait, veuillez confirmer votre adresse e-mail";
+}
+
+<h2>@ViewData["Title"].</h2>
+<div>
+    <p>
+        Un message vient d' être envoyé à l'adresse e-mail ( @Model.EMail , id:@Model.MessageId ).
+    </p>
+</div>

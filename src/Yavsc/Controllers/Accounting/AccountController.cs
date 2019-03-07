@@ -78,6 +78,8 @@ namespace Yavsc.Controllers
             ViewBag.hasNext = await users.CountAsync() > (toShow.Count() + shown);
             ViewBag.nextpage = pageNum+1;
             ViewBag.pageLen = pageLen;
+            // ApplicationUser user;
+            // user.EmailConfirmed
             return View(toShow.ToArray());
         }
         string GeneratePageToken() {
@@ -257,7 +259,14 @@ namespace Yavsc.Controllers
 
                     return View("AccountCreated");
                 }
-                AddErrors(result);
+                else {
+                    _logger.LogError("Error registering from a valid model.");
+                    foreach (var error in result.Errors)
+                    {
+                        _logger.LogError($"{error.Code} {error.Description}");
+                    }
+                    AddErrors(result);
+                }
             }
 
             // If we got this far, something failed, redisplay form
@@ -265,11 +274,19 @@ namespace Yavsc.Controllers
         }
 
         [Authorize, HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> SendEMailForConfirm()
+        public async Task<IActionResult> SendConfirationEmail()
         {
             var user = await _userManager.FindByIdAsync(User.GetUserId());
             var model = await SendEMailForConfirmAsync(user);
-            return View("ConfirmEmailSent",model);
+            return View(model);
+        }
+
+        [Authorize("AdministratorOnly")]
+        public async Task<IActionResult> AdminSendConfirationEmail(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            var model = await SendEMailForConfirmAsync(user);
+            return View(model);
         }
 
         private async Task<EmailSentViewModel> SendEMailForConfirmAsync(ApplicationUser user)
@@ -422,7 +439,15 @@ namespace Yavsc.Controllers
             {
                 return View("Error");
             }
-            var result = await _userManager.ConfirmEmailAsync(user, code);
+            IdentityResult result=null;
+            try { 
+                result = await _userManager.ConfirmEmailAsync(user, code);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                _logger.LogError(ex.Message);
+            }
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
@@ -645,7 +670,7 @@ namespace Yavsc.Controllers
             }
             else
             {
-                ModelState.AddModelError("", "Code invalide ");
+                ModelState.AddModelError("Code", "Code invalide ");
                 return View(model);
             }
         }
@@ -656,6 +681,12 @@ namespace Yavsc.Controllers
             return View();
         }
 
+        [HttpGet, Authorize("AdministratorOnly")]
+        public IActionResult AdminDelete(string id)
+        {
+            return View(new UnregisterViewModel { UserId = id });
+        }
+
         [HttpPost, Authorize]
         public async Task<IActionResult> Delete(UnregisterViewModel model)
         {
@@ -663,8 +694,8 @@ namespace Yavsc.Controllers
             {
                 return View(model);
             }
-            var user = await _userManager.FindByIdAsync(User.GetUserId());
-            var result = await _userManager.DeleteAsync(user);
+            var result = await DeleteUser(model.UserId);
+            
             if (!result.Succeeded)
             {
                 AddErrors(result);
@@ -673,6 +704,28 @@ namespace Yavsc.Controllers
             await _signInManager.SignOutAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+        async Task<IdentityResult> DeleteUser(string userId)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+            _dbContext.GCMDevices.RemoveRange( _dbContext.GCMDevices.Where(g => g.DeviceOwnerId == userId ));
+            // TODO add an owner to maillings
+            _dbContext.MailingTemplate.RemoveRange(_dbContext.MailingTemplate.Where( t=>t.ManagerId == userId ));
+
+            return await _userManager.DeleteAsync(user);
+        }
+
+        [HttpPost, Authorize("AdministratorOnly")]
+        public async Task<IActionResult> AdminDelete(UnregisterViewModel model)
+        {
+            var result = await DeleteUser(model.UserId);
+
+            if (!result.Succeeded)
+            {
+                AddErrors(result);
+                return new BadRequestObjectResult(ModelState);
+            }
+            return View();
         }
 
         #region Helpers
@@ -687,7 +740,11 @@ namespace Yavsc.Controllers
 
         private async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
+            return await GetCurrentUserAsync(HttpContext.User.GetUserId());
+        }
+        private async Task<ApplicationUser> GetCurrentUserAsync(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
         }
 
         #endregion
