@@ -65,7 +65,7 @@ namespace Yavsc.Services
                         SecureSocketOptions.Auto);
                     if (smtpSettings.UserName!=null) {
                         NetworkCredential creds = new NetworkCredential(
-	                    smtpSettings.UserName, smtpSettings.Password, smtpSettings.Host);
+	                    smtpSettings.UserName, smtpSettings.Password, smtpSettings.Domain);
                         await sc.AuthenticateAsync(System.Text.Encoding.UTF8, creds, System.Threading.CancellationToken.None);
                       }
                    
