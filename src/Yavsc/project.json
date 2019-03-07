@@ -146,11 +146,11 @@
   "commands": {
     "ef": "EntityFramework.Commands",
     "gen": "Microsoft.Extensions.CodeGeneration",
-    "yavscpre": "Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:84",
-    "lua": "Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:85",
-    "yavsc": "Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:86",
-    "coiffure": "Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:88",
-    "freefield": "Microsoft.AspNet.Server.Kestrel --server.urls http://localhost:89",
+    "yavscpre": "Microsoft.AspNet.Server.Kestrel --server.urls https://*:84",
+    "lua": "Microsoft.AspNet.Server.Kestrel --server.urls https://*:85",
+    "yavsc": "Microsoft.AspNet.Server.Kestrel --server.urls https://*:86",
+    "coiffure": "Microsoft.AspNet.Server.Kestrel --server.urls https://*:88",
+    "freefield": "Microsoft.AspNet.Server.Kestrel --server.urls https://*:89",
     "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls https://*:5000"
   },
   "frameworks": {
