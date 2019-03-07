@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -61,7 +62,13 @@ namespace Yavsc.Services
                     sc.Connect(
                         smtpSettings.Host,
                         smtpSettings.Port,
-                        SecureSocketOptions.None);
+                        SecureSocketOptions.Auto);
+                    if (smtpSettings.UserName!=null) {
+                        NetworkCredential creds = new NetworkCredential(
+	                    smtpSettings.UserName, smtpSettings.Password, smtpSettings.Host);
+                        await sc.AuthenticateAsync(System.Text.Encoding.UTF8, creds, System.Threading.CancellationToken.None);
+                      }
+                   
                     await sc.SendAsync(msg);
                     model.MessageId = msg.MessageId;
                     model.Sent = true; // a duplicate info to remove from the view model, that equals to MessageId == null

@@ -124,7 +124,6 @@ namespace Yavsc {
                             AccessType = "offline",
                             Scope = {
                                 "profile",
-                                "https://www.googleapis.com/auth/plus.login",
                                 "https://www.googleapis.com/auth/admin.directory.resource.calendar",
                                 "https://www.googleapis.com/auth/calendar",
                                 "https://www.googleapis.com/auth/calendar.events"

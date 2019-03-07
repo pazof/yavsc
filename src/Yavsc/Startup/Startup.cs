@@ -439,12 +439,7 @@ namespace Yavsc
            
             var uname = context.User.GetUserName();
             // ensure uniqueness of casting stream from this user
-            if (LiveApiController.Casters.ContainsKey(uname))  
-            { 
-                logger.LogWarning("already casting: "+uname);
-                context.Response.StatusCode = 400;
-            }
-            else {
+            
                 
             var uid = context.User.GetUserId();
             // get some setup from user
@@ -454,10 +449,30 @@ namespace Yavsc
                 context.Response.StatusCode = 400;
             }
             else {
-                 // Accept the socket
-                var meta = new LiveCastMeta { Socket = await context.WebSockets.AcceptWebSocketAsync() };
+                LiveCastMeta meta=null;
+                if (LiveApiController.Casters.ContainsKey(uname))  
+                { 
+                    meta = LiveApiController.Casters[uname];
+                    if (meta.Socket.State != WebSocketState.Closed) {
+                        // FIXME loosed connexion should be detected & disposed else where
+                        meta.Socket.Dispose();
+                        meta.Socket = await context.WebSockets.AcceptWebSocketAsync();
+                    } else {
+                        meta.Socket.Dispose();
+                    // Accept the socket
+                        meta.Socket = await context.WebSockets.AcceptWebSocketAsync();
+                    }
+                }
+                else 
+                {
+                    // Accept the socket
+                    meta = new LiveCastMeta { Socket = await context.WebSockets.AcceptWebSocketAsync() };
+                }
                 logger.LogInformation("Accepted web socket");
                 // Dispatch the flow
+                try {
+
+                
                 
                     if (meta.Socket != null && meta.Socket.State == WebSocketState.Open)
                     {
@@ -466,7 +481,7 @@ namespace Yavsc
                         // Find receivers: others in the chat room
                         // send them the flow
 
-                        var sBuffer = System.Net.WebSockets.WebSocket.CreateServerBuffer(1024);
+                        var sBuffer = new ArraySegment<byte>(new byte[1024]);
                         logger.LogInformation("Receiving bytes...");
 
                         WebSocketReceiveResult received = await meta.Socket.ReceiveAsync(sBuffer, CancellationToken.None);
@@ -479,41 +494,70 @@ namespace Yavsc
 
                         // FIXME do we really need to close those one in invalid state ?
                         Stack<string> ToClose = new Stack<string>();
-
-                        while (received.MessageType != WebSocketMessageType.Close)
-                        {
-                            logger.LogInformation($"Echoing {received.Count} bytes received in a {received.MessageType} message; Fin={received.EndOfMessage}");
-                            // Echo anything we receive
-                            // and send to all listner found
-                            foreach (var cliItem in meta.Listeners)
+                        
+                        try {
+                            while (received.MessageType != WebSocketMessageType.Close)
                             {
-                                var listenningSocket = cliItem.Value;
-                                if (listenningSocket.State == WebSocketState.Open)
-                                    await listenningSocket.SendAsync(
-                                    sBuffer, received.MessageType, received.EndOfMessage, CancellationToken.None);
-                                else ToClose.Push(cliItem.Key);
+                                logger.LogInformation($"Echoing {received.Count} bytes received in a {received.MessageType} message; Fin={received.EndOfMessage}");
+                                // Echo anything we receive
+                                // and send to all listner found
+                                foreach (var cliItem in meta.Listeners)
+                                {
+                                    var listenningSocket = cliItem.Value;
+                                    if (listenningSocket.State == WebSocketState.Open)
+                                        await listenningSocket.SendAsync(
+                                        sBuffer, received.MessageType, received.EndOfMessage, CancellationToken.None);
+                                    else 
+                                    if (listenningSocket.State == WebSocketState.CloseReceived || listenningSocket.State == WebSocketState.CloseSent)
+                                    {
+                                        ToClose.Push(cliItem.Key);
+                                    }
+                                }
+                                received = await meta.Socket.ReceiveAsync(sBuffer, CancellationToken.None);
+
+                                string no;
+                                do
+                                {
+                                    no = ToClose.Pop();
+                                    WebSocket listenningSocket;
+                                    if (meta.Listeners.TryRemove(no, out listenningSocket))
+                                        await listenningSocket.CloseAsync(WebSocketCloseStatus.EndpointUnavailable, "State != WebSocketState.Open", CancellationToken.None);
+
+                                } while (no != null);
                             }
-                            received = await meta.Socket.ReceiveAsync(sBuffer, CancellationToken.None);
-
-                            string no;
-                            do
-                            {
-                                no = ToClose.Pop();
-                                WebSocket listenningSocket;
-                                if (meta.Listeners.TryRemove(no, out listenningSocket))
-                                    await listenningSocket.CloseAsync(WebSocketCloseStatus.EndpointUnavailable, "State != WebSocketState.Open", CancellationToken.None);
-
-                            } while (no != null);
+                            await meta.Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "eof", CancellationToken.None);
+                            LiveApiController.Casters[uname] = null;
+                        } catch (Exception ex)
+                        {
+                            logger.LogError($"Exception occured : {ex.Message}");
+                            logger.LogError(ex.StackTrace);
+                            meta.Socket.Dispose();
+                            LiveApiController.Casters[uname] = null;
                         }
-                        await meta.Socket.CloseAsync(received.CloseStatus.Value, received.CloseStatusDescription, CancellationToken.None);
-                        LiveApiController.Casters[uname] = null;
                     }
                     else { // not meta.Socket != null && meta.Socket.State == WebSocketState.Open
-                        if (meta.Socket != null)
-                        logger.LogError($"meta.Socket.State: {meta.Socket.State.ToString()} ");
-                        else logger.LogError("socket object is null");
+                        if (meta.Socket != null) {
+                            logger.LogError($"meta.Socket.State not Open: {meta.Socket.State.ToString()} ");
+                            meta.Socket.Dispose();
+                        }
+                        else 
+                        logger.LogError("socket object is null");
                     }
-                    }}}}}
+                }
+                catch (IOException ex)
+                {
+                    if (ex.Message == "Unexpected end of stream")
+                    {
+                        logger.LogError($"Unexpected end of stream");
+                    }
+                    else {
+                        logger.LogError($"Really unexpected end of stream");
+                    }
+                    await meta.Socket?.CloseAsync(WebSocketCloseStatus.EndpointUnavailable, ex.Message, CancellationToken.None);
+                        meta.Socket?.Dispose();
+                        LiveApiController.Casters[uname] = null;
+                }
+                    }}}}
                     else
                     {
                         await next();

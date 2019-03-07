@@ -6,6 +6,8 @@ test:
 web:
 	make -C scripts/build/make watch
 
-push:
+pushInProd:
 	make -C src/Yavsc pushInProd
 
+pushInPre:
+	make -C src/Yavsc pushInPre

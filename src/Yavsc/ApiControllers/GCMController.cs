@@ -30,41 +30,43 @@ public class GCMController : Controller
     public IActionResult Register(
         [FromBody] GoogleCloudMobileDeclaration declaration)
     {
-        var uid = User.GetUserId();
-        
-        _logger.LogInformation($"Registering device with id:{declaration.DeviceId} for {uid}");
-        if (ModelState.IsValid)
-        {
-            var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
-            var deviceAlreadyRegistered = (alreadyRegisteredDevice!=null);
-            if (deviceAlreadyRegistered)
-            {
-                 _logger.LogInformation($"deviceAlreadyRegistered");
-                // Override an exiting owner
-                alreadyRegisteredDevice.DeclarationDate = DateTime.Now;
-                alreadyRegisteredDevice.DeviceOwnerId = uid;
-                alreadyRegisteredDevice.GCMRegistrationId = declaration.GCMRegistrationId;
-                alreadyRegisteredDevice.Model = declaration.Model;
-                alreadyRegisteredDevice.Platform = declaration.Platform;
-                alreadyRegisteredDevice.Version = declaration.Version;
-                _context.Update(alreadyRegisteredDevice);
-                _context.SaveChanges(User.GetUserId());
-            }
-            else
-            {
-                 _logger.LogInformation($"new device");
-                declaration.DeclarationDate = DateTime.Now;
-                declaration.DeviceOwnerId = uid;
-                _context.GCMDevices.Add(declaration as GoogleCloudMobileDeclaration);
-                _context.SaveChanges(User.GetUserId());
-            }
-            var latestActivityUpdate = _context.Activities.Max(a=>a.DateModified);
-            return Json(new { 
-                IsAnUpdate = deviceAlreadyRegistered, 
-                UpdateActivities = (latestActivityUpdate != declaration.LatestActivityUpdate)
-                });
-        }
+      var uid = User.GetUserId();
+
+      if (!ModelState.IsValid)
+      {
+        _logger.LogError("Invalid model for GCMD");
         return new BadRequestObjectResult(ModelState);
+      }
+
+      _logger.LogInformation($"Registering device with id:{declaration.DeviceId} for {uid}");
+      var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
+      var deviceAlreadyRegistered = (alreadyRegisteredDevice!=null);
+      if (deviceAlreadyRegistered)
+      {
+        _logger.LogInformation($"deviceAlreadyRegistered");
+        // Override an exiting owner
+        alreadyRegisteredDevice.DeclarationDate = DateTime.Now;
+        alreadyRegisteredDevice.DeviceOwnerId = uid;
+        alreadyRegisteredDevice.GCMRegistrationId = declaration.GCMRegistrationId;
+        alreadyRegisteredDevice.Model = declaration.Model;
+        alreadyRegisteredDevice.Platform = declaration.Platform;
+        alreadyRegisteredDevice.Version = declaration.Version;
+        _context.Update(alreadyRegisteredDevice);
+        _context.SaveChanges(User.GetUserId());
+      }
+      else
+      {
+        _logger.LogInformation($"new device");
+        declaration.DeclarationDate = DateTime.Now;
+        declaration.DeviceOwnerId = uid;
+        _context.GCMDevices.Add(declaration as GoogleCloudMobileDeclaration);
+        _context.SaveChanges(User.GetUserId());
+      }
+      var latestActivityUpdate = _context.Activities.Max(a=>a.DateModified);
+      return Json(new { 
+          IsAnUpdate = deviceAlreadyRegistered, 
+          UpdateActivities = (latestActivityUpdate != declaration.LatestActivityUpdate)
+          });
     }
 
 }

@@ -12,7 +12,7 @@ namespace Yavsc
         public void ConfigureProtectionServices(IServiceCollection services)
         {
 
-             services.AddDataProtection();
+            services.AddDataProtection();
             services.Add(ServiceDescriptor.Singleton(typeof(IApplicationDiscriminator),
                 typeof(SystemWebApplicationDiscriminator)));
 
@@ -23,7 +23,6 @@ namespace Yavsc
                 configure.PersistKeysToFileSystem(
                      new DirectoryInfo(Configuration["DataProtection:Keys:Dir"]));
             });
-
         }
         private sealed class SystemWebApplicationDiscriminator : IApplicationDiscriminator
         {
