@@ -4,7 +4,6 @@ using Microsoft.Data.Entity;
 using Yavsc.Models;
 using Yavsc.Models.IT.Fixing;
 using Yavsc.Models.IT.Evolution;
-using System.Linq;
 using Yavsc.Server.Helpers;
 using System.Collections.Generic;
 using Microsoft.AspNet.Mvc.Rendering;

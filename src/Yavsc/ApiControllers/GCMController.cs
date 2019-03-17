@@ -37,6 +37,7 @@ public class GCMController : Controller
         _logger.LogError("Invalid model for GCMD");
         return new BadRequestObjectResult(ModelState);
       }
+      declaration.LatestActivityUpdate = DateTime.Now;
 
       _logger.LogInformation($"Registering device with id:{declaration.DeviceId} for {uid}");
       var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);

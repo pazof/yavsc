@@ -7,7 +7,7 @@ namespace Yavsc.Models.Identity
 {
   [JsonObject]
 
-  public class GoogleCloudMobileDeclaration {
+  public class GoogleCloudMobileDeclaration : IGCMDeclaration {
 
     [Required]
     public string GCMRegistrationId { get; set; }
@@ -33,7 +33,7 @@ namespace Yavsc.Models.Identity
     /// In order to say, is any activity has changed here.
     /// </summary>
     /// <returns></returns>
-    public DateTime LatestActivityUpdate { get; set; }
+    public DateTime ? LatestActivityUpdate { get; set; }
 
     [JsonIgnore,ForeignKey("DeviceOwnerId")]
     public virtual ApplicationUser DeviceOwner { get; set; }

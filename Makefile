@@ -11,3 +11,7 @@ pushInProd:
 
 pushInPre:
 	make -C src/Yavsc pushInPre
+
+packages:
+	make -C src/Yavsc.Abstract pack
+

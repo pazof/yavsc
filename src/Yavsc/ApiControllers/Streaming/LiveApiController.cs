@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Security.Claims;
@@ -8,10 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.SignalR;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Streaming;
 using Yavsc.ViewModels.Streaming;

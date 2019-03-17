@@ -21,7 +21,6 @@ namespace Yavsc.Models
     using Auth;
     using Billing;
     using Musical;
-    using OAuth;
     using Workflow;
     using Identity;
     using Market;
@@ -36,7 +35,6 @@ namespace Yavsc.Models
     using Payment;
     using Yavsc.Models.Calendar;
     using Blog;
-    using Newtonsoft.Json.Linq;
     using Yavsc.Abstract.Identity;
     using Yavsc.Server.Models.Blog;
 

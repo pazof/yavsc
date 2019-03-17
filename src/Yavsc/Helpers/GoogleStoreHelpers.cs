@@ -1,15 +1,14 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
-using System.Threading;
 using Newtonsoft.Json.Linq;
 
-namespace Yavsc.Helpers.Google {
+namespace Yavsc.Helpers.Google
+{
     using Yavsc.Models;
     using Yavsc.Models.Auth;
-  public static class GoogleStoreHelper {
+    public static class GoogleStoreHelper {
 
         public static Task<OAuth2Tokens> GetTokensAsync(this ApplicationDbContext context, string googleUserId)
         {
