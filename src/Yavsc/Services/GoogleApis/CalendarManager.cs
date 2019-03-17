@@ -30,14 +30,11 @@ using Google.Apis.Calendar.v3.Data;
 using System.Collections.Generic;
 using System.Linq;
 using Google.Apis.Services;
-using System.Threading;
 using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Auth.OAuth2.Responses;
-using Google.Apis.Util;
 
 namespace Yavsc.Services
 {
-    using Yavsc.Helpers;
     using Yavsc.Models;
     using Yavsc.Models.Calendar;
     using Yavsc.Server.Helpers;

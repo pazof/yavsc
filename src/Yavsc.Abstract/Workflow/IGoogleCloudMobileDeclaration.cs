@@ -17,7 +17,6 @@
 //
 
 using System;
-using Yavsc.Abstract.Identity;
 
 namespace Yavsc
 {
@@ -29,11 +28,7 @@ namespace Yavsc
         string Platform { get; set; }
         string Version { get; set; }
         DateTime? LatestActivityUpdate { get; set; }
-    }
-
-    public interface IGoogleCloudMobileDeclaration: IGCMDeclaration
-    {
-        IApplicationUser DeviceOwner { get; set; }
         string DeviceOwnerId { get; set; }
     }
+
 }

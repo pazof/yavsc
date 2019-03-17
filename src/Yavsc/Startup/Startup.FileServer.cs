@@ -1,5 +1,4 @@
 using System.IO;
-using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.FileProviders;
@@ -8,7 +7,6 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.StaticFiles;
 using Microsoft.Extensions.Logging;
 using Yavsc.Abstract.FileSystem;
-using Yavsc.ViewModels.Auth;
 
 namespace Yavsc
 {

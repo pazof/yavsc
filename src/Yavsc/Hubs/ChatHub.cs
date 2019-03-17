@@ -151,7 +151,7 @@ namespace Yavsc
 
 
         [Authorize]
-        public async void SendPV(string connectionId, string message)
+        public void SendPV(string connectionId, string message)
         {
             if (Clients.CallerState.BlackListedBy!=null) 
                 foreach (string destId in Clients.CallerState.BlackListedBy)

@@ -1,11 +1,9 @@
 using System;
 using System.IO;
-using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 
 namespace Yavsc
