@@ -43,7 +43,10 @@
         </environment>
 
  <style>
-     nav { background: url(@Startup.SiteSetup.Banner) 0% 50% no-repeat; }
+     nav { background: url(@Startup.SiteSetup.Banner);
+       background-size: contain;
+       background-repeat: no-repeat;
+     }
 </style>
 <script>
     $(document).ready(function() {
