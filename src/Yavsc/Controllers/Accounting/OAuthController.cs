@@ -65,6 +65,14 @@ namespace Yavsc.Controllers
         {
             if (Response.StatusCode != 200)
             {
+                if (Request.Headers.Keys.Contains("Accept")) {
+                    var accepted = Request.Headers["Accept"];
+                    if (accepted.Contains("application/json"))
+                    {
+                        return new BadRequestObjectResult(new { error = this.HttpContext.Items } );
+                    }
+                }
+
                 return View("AuthorizeError");
             }
 
@@ -135,7 +143,7 @@ namespace Yavsc.Controllers
 
             if (Request.Headers.Keys.Contains("Accept")) {
                 var accepted = Request.Headers["Accept"];
-                if (accepted == "application/json")
+                if (accepted.Contains("application/json"))
                 {
                     return Ok(model);
                 }
