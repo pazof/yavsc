@@ -150,7 +150,7 @@
     "lua": "Microsoft.AspNet.Server.Kestrel --server.urls https://*:85",
     "yavsc": "Microsoft.AspNet.Server.Kestrel --server.urls https://*:86",
     "coiffure": "Microsoft.AspNet.Server.Kestrel --server.urls https://*:88",
-    "freefield": "Microsoft.AspNet.Server.Kestrel --server.urls https://*:89",
+    "freespeech": "Microsoft.AspNet.Server.Kestrel --server.urls https://*:89",
     "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls https://*:5000"
   },
   "frameworks": {
