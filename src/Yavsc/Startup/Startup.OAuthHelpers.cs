@@ -21,7 +21,7 @@ namespace Yavsc
               logger.LogError("no db!");
             Client app =  _dbContext.Applications.FirstOrDefault(x => x.Id == clientId);
             if (app==null)
-              logger.LogError("no app!");
+              logger.LogError($"no app for <{clientId}>");
             return app;
         }
         private readonly ConcurrentDictionary<string, string> _authenticationCodes = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
