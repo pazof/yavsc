@@ -367,7 +367,7 @@ namespace OAuth.AspNet.AuthServer
 
             if (!clientContext.IsValidated)
             {
-                Logger.LogVerbose("Unable to validate client information");
+                Logger.LogVerbose("Unable to validate client information (redirect_uri)");
 
                 return await SendErrorRedirectAsync(clientContext, clientContext);
             }
