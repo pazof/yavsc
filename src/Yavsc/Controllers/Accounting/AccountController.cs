@@ -158,7 +158,7 @@ namespace Yavsc.Controllers
                         }
                         else
                         {
-                            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                            ModelState.AddModelError(string.Empty, $"Invalid login attempt. ({model.UserName}, {model.Password})");
                             model.ExternalProviders = HttpContext.GetExternalProviders();
                             return this.ViewOk(model);
                         }
