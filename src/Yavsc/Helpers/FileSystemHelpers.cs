@@ -87,6 +87,13 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
             return di.FullName;
         }
 
+        /// <summary>
+        /// Deletes user file.
+        /// User info is modified, but not save in db.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="fileName"></param>
+
         public static void DeleteUserFile(this ApplicationUser user, string fileName)
         {
             var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
@@ -97,6 +104,8 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
         }
         public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f, string destFileName = null)
         {
+            // TODO lock user's disk usage for this scope,
+            // this process is not safe at concurrent access.
             long usage = user.DiskUsage;
 
             var item = new FileRecievedInfo();
