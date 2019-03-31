@@ -78,7 +78,6 @@ namespace Yavsc.ApiControllers
             
             foreach (var f in Request.Form.Files)
             {
-                
                 var item = user.ReceiveUserFile(destDir, f);
                 dbContext.SaveChanges(User.GetUserId());
                 received.Add(item);
@@ -88,6 +87,19 @@ namespace Yavsc.ApiControllers
                 i++;
             };
             return Ok(received);
+        }
+
+        [Route("/api/addquota/{len}")]
+        [Authorize("AdministratorOnly")]
+        public IActionResult AddQuota(int len)
+        {
+            var uid = User.GetUserId();
+            var user = dbContext.Users.Single(
+                u => u.Id == uid
+            );
+            user.AddQuota(len);
+            dbContext.SaveChanges(uid);
+            return Ok(len);
         }
 
         [HttpDelete]
