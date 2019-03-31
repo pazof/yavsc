@@ -20,6 +20,7 @@ using OAuth.AspNet.AuthServer;
 using OAuth.AspNet.Tokens;
 
 namespace Yavsc {
+    using System.Threading.Tasks;
     using Auth;
     using Extensions;
     using Helpers.Google;
@@ -101,6 +102,19 @@ namespace Yavsc {
                             options.SecurityTokenValidators.Add (new TicketDataFormatTokenValidator (
                                 ProtectionProvider
                             ));
+                            options.Events = new JwtBearerEvents
+                    {
+                        OnReceivingToken = async context =>
+                        {
+                            var signalRTokenHeader = context.Request.Query["signalRTokenHeader"];
+
+                            if (!string.IsNullOrEmpty(signalRTokenHeader) &&
+                                (context.HttpContext.WebSockets.IsWebSocketRequest || context.Request.Headers["Accept"] == "text/event-stream"))
+                            {
+                                context.Token = context.Request.Query["signalRTokenHeader"];
+                            }
+                        }
+};
                         }
                     );
 
