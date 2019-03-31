@@ -102,6 +102,12 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
             fi.Delete();
             user.DiskUsage -= fi.Length;
         }
+
+        public static void AddQuota(this ApplicationUser user, int quota)
+        {
+            user.DiskQuota += quota;
+        }
+        
         public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f, string destFileName = null)
         {
             // TODO lock user's disk usage for this scope,
@@ -130,18 +136,24 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
                         item.QuotaOffensed = true;
                         return item;
                     }
-                    usage += len;
+                    
 
-                    while (len > 0)
+                    while (len > 0 && usage < user.DiskQuota)
                     {
                         int blen = len > 1024 ? 1024 : (int)len;
                         org.Read(buffer, 0, blen);
                         dest.Write(buffer, 0, blen);
                         len -= blen;
+                        usage += blen;
                     }
+                    user.DiskUsage = usage;
                     dest.Close();
                     org.Close();
                 }
+            }
+            if (usage >= user.DiskQuota) {
+                item.QuotaOffensed = true;
+
             }
             user.DiskUsage = usage;
             return item;
