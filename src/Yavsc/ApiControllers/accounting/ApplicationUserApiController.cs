@@ -5,6 +5,7 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
+using Yavsc.Abstract.Identity;
 using Yavsc.Models;
 
 namespace Yavsc.Controllers
@@ -22,9 +23,12 @@ namespace Yavsc.Controllers
 
         // GET: api/ApplicationUserApi
         [HttpGet]
-        public IEnumerable<ApplicationUser> GetApplicationUser()
+        public IEnumerable<UserInfo> GetApplicationUser()
         {
-            return _context.Users.Include(u=>u.Roles).Include(u=>u.Logins).Include(u=>u.Claims);
+            return _context.Users.Select(u=> new UserInfo { 
+            UserId = u.Id,
+            UserName = u.UserName,
+            Avatar = u.Avatar   });
         }
 
         // GET: api/ApplicationUserApi/5
@@ -36,7 +40,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            ApplicationUser applicationUser = _context.Users.Single(m => m.Id == id);
+            ApplicationUser applicationUser = _context.Users.Include(u=>u.Roles).Include(u=>u.Logins).Include(u=>u.Claims).Single(m => m.Id == id);
 
             if (applicationUser == null)
             {
