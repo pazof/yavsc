@@ -58,7 +58,9 @@ namespace Yavsc.Services
                 }
             }
             catch (Exception ex) {
-                throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
+              _logger.LogError(ex.Message);  
+              throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
+
             }
         }
         
