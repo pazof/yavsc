@@ -65,7 +65,7 @@ namespace Yavsc.Controllers
             .Include(x => x.PerformerProfile)
             .Include(x => x.PerformerProfile.Performer)
             .Include(x => x.Location)
-            .Where(x=> x.ClientId == uid || x.PerformerId == uid)
+            .Where(x => x.ClientId == uid || x.PerformerId == uid)
             .ToListAsync());
         }
 
@@ -97,7 +97,7 @@ namespace Yavsc.Controllers
                 throw new InvalidOperationException(
                     "This method needs a performer id (from parameter proId)"
                 );
-             if (string.IsNullOrWhiteSpace(activityCode))
+            if (string.IsNullOrWhiteSpace(activityCode))
                 throw new InvalidOperationException(
                     "This method needs an activity code"
                 );
@@ -107,11 +107,11 @@ namespace Yavsc.Controllers
             );
             if (pro == null)
                 return HttpNotFound();
-            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == activityCode);
+            ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == activityCode);
             ViewBag.GoogleSettings = _googleSettings;
             var userid = User.GetUserId();
             var user = _userManager.FindByIdAsync(userid).Result;
-            return View("Create",new RdvQuery(activityCode,new Location(),DateTime.Now.AddHours(4))
+            return View("Create", new RdvQuery(activityCode, new Location(), DateTime.Now.AddHours(4))
             {
                 PerformerProfile = pro,
                 PerformerId = pro.PerformerId,
@@ -151,12 +151,13 @@ namespace Yavsc.Controllers
             ModelState.MarkFieldSkipped("ClientId");
 
             if (ModelState.IsValid)
-                {
-                var existingLocation = _context.Locations.FirstOrDefault( x=>x.Address == command.Location.Address
-                && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude );
+            {
+                var existingLocation = _context.Locations.FirstOrDefault(x => x.Address == command.Location.Address
+               && x.Longitude == command.Location.Longitude && x.Latitude == command.Location.Latitude);
 
-                if (existingLocation!=null) {
-                    command.Location=existingLocation;
+                if (existingLocation != null)
+                {
+                    command.Location = existingLocation;
                 }
                 else _context.Attach<Location>(command.Location);
                 _context.RdvQueries.Add(command, GraphBehavior.IncludeDependents);
@@ -170,43 +171,46 @@ namespace Yavsc.Controllers
                 && pro.AcceptPublicContact)
                 {
 
-                  try {
-                    if (pro.Performer.Devices.Count > 0) {
-                        var regids = command.PerformerProfile.Performer
-                        .Devices.Select(d => d.GCMRegistrationId);
-                        grep = await _GCMSender.NotifyBookQueryAsync(regids,yaev);
+                    try
+                    {
+                        _logger.LogInformation("sending GCM");
+                        if (pro.Performer.Devices.Count > 0)
+                        {
+                            var regids = command.PerformerProfile.Performer
+                            .Devices.Select(d => d.GCMRegistrationId);
+                            grep = await _GCMSender.NotifyBookQueryAsync(regids, yaev);
+                        }
+
+
+                        // TODO setup a profile choice to allow notifications
+                        // both on mailbox and mobile
+                        // if (grep==null || grep.success<=0 || grep.failure>0)
+                        ViewBag.GooglePayload = grep;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex.Message);
                     }
 
-                    _logger.LogError("sending GCM");
-
-                    // TODO setup a profile choice to allow notifications
-                    // both on mailbox and mobile
-                    // if (grep==null || grep.success<=0 || grep.failure>0)
-                    ViewBag.GooglePayload=grep;
-                  }
-                  catch (Exception ex)
-                  {
-                    _logger.LogError(ex.Message);
-                  }
-
-                  try {
-                    ViewBag.EmailSent = await _emailSender.SendEmailAsync(
-                        command.PerformerProfile.Performer.UserName,
-                        command.PerformerProfile.Performer.Email,
-                         $"{command.Client.UserName} (un client) vous demande un rendez-vous",
-                        $"{yaev.CreateBody()}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
-                    );
-                  }
-                  catch (Exception ex)
-                  {
-                    _logger.LogError(ex.Message);
-                  }
+                    try
+                    {
+                        ViewBag.EmailSent = await _emailSender.SendEmailAsync(
+                            command.PerformerProfile.Performer.UserName,
+                            command.PerformerProfile.Performer.Email,
+                             $"{command.Client.UserName} (un client) vous demande un rendez-vous",
+                            $"{yaev.CreateBody()}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex.Message);
+                    }
                 }
-                ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
+                ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == command.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
-                return View("CommandConfirmation",command);
+                return View("CommandConfirmation", command);
             }
-            ViewBag.Activity =  _context.Activities.FirstOrDefault(a=>a.Code == command.ActivityCode);
+            ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == command.ActivityCode);
             ViewBag.GoogleSettings = _googleSettings;
             return View(command);
         }
