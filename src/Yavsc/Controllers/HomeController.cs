@@ -5,6 +5,7 @@ using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Builder;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.Data.Entity;
