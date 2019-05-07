@@ -25,7 +25,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<CircleAuthorizationToBlogPost> GetBlogACL()
         {
-            return _context.BlogACL;
+            return _context.CircleAuthorizationToBlogPost;
         }
 
         // GET: api/BlogAclApi/5
@@ -37,7 +37,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
             var uid = User.GetUserId();
-            CircleAuthorizationToBlogPost circleAuthorizationToBlogPost = await _context.BlogACL.SingleAsync(
+            CircleAuthorizationToBlogPost circleAuthorizationToBlogPost = await _context.CircleAuthorizationToBlogPost.SingleAsync(
                 m => m.CircleId == id && m.Allowed.OwnerId == uid );
 
             if (circleAuthorizationToBlogPost == null)
@@ -106,7 +106,7 @@ namespace Yavsc.Controllers
             {
                 return new ChallengeResult();
             }
-            _context.BlogACL.Add(circleAuthorizationToBlogPost);
+            _context.CircleAuthorizationToBlogPost.Add(circleAuthorizationToBlogPost);
             try
             {
                 await _context.SaveChangesAsync(User.GetUserId());
@@ -136,7 +136,7 @@ namespace Yavsc.Controllers
             }
             var uid = User.GetUserId();
 
-            CircleAuthorizationToBlogPost circleAuthorizationToBlogPost = await _context.BlogACL.Include(
+            CircleAuthorizationToBlogPost circleAuthorizationToBlogPost = await _context.CircleAuthorizationToBlogPost.Include(
                 a=>a.Allowed
             ).SingleAsync(m => m.CircleId == id
             && m.Allowed.OwnerId == uid);
@@ -144,7 +144,7 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            _context.BlogACL.Remove(circleAuthorizationToBlogPost);
+            _context.CircleAuthorizationToBlogPost.Remove(circleAuthorizationToBlogPost);
             await _context.SaveChangesAsync(User.GetUserId());
 
             return Ok(circleAuthorizationToBlogPost);
@@ -161,7 +161,7 @@ namespace Yavsc.Controllers
 
         private bool CircleAuthorizationToBlogPostExists(long id)
         {
-            return _context.BlogACL.Count(e => e.CircleId == id) > 0;
+            return _context.CircleAuthorizationToBlogPost.Count(e => e.CircleId == id) > 0;
         }
     }
 }

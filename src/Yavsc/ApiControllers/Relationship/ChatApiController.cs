@@ -25,7 +25,7 @@ namespace Yavsc.Controllers
         public IEnumerable<ChatUserInfo> GetUserList()
         {
             List<ChatUserInfo> result = new List<ChatUserInfo>();
-            var cxsQuery = dbContext.Connections?.Include(c=>c.Owner).GroupBy( c => c.ApplicationUserId );
+            var cxsQuery = dbContext.ChatConnection?.Include(c=>c.Owner).GroupBy( c => c.ApplicationUserId );
 
             // List<ChatUserInfo> result = new List<ChatUserInfo>();
             if (cxsQuery!=null)

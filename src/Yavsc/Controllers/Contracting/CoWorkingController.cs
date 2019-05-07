@@ -21,7 +21,7 @@ namespace Yavsc.Controllers
         // GET: CoWorking
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.WorkflowProviders.Include(c => c.Performer).Include(c => c.WorkingFor);
+            var applicationDbContext = _context.CoWorking.Include(c => c.Performer).Include(c => c.WorkingFor);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -33,7 +33,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            CoWorking coWorking = await _context.WorkflowProviders.SingleAsync(m => m.Id == id);
+            CoWorking coWorking = await _context.CoWorking.SingleAsync(m => m.Id == id);
             if (coWorking == null)
             {
                 return HttpNotFound();
@@ -57,7 +57,7 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.WorkflowProviders.Add(coWorking);
+                _context.CoWorking.Add(coWorking);
                 await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
@@ -74,7 +74,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            CoWorking coWorking = await _context.WorkflowProviders.SingleAsync(m => m.Id == id);
+            CoWorking coWorking = await _context.CoWorking.SingleAsync(m => m.Id == id);
             if (coWorking == null)
             {
                 return HttpNotFound();
@@ -109,7 +109,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            CoWorking coWorking = await _context.WorkflowProviders.SingleAsync(m => m.Id == id);
+            CoWorking coWorking = await _context.CoWorking.SingleAsync(m => m.Id == id);
             if (coWorking == null)
             {
                 return HttpNotFound();
@@ -123,8 +123,8 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            CoWorking coWorking = await _context.WorkflowProviders.SingleAsync(m => m.Id == id);
-            _context.WorkflowProviders.Remove(coWorking);
+            CoWorking coWorking = await _context.CoWorking.SingleAsync(m => m.Id == id);
+            _context.CoWorking.Remove(coWorking);
             await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");
         }

@@ -12,6 +12,12 @@ namespace Yavsc.Models.Relationship
         [Required()]
         public string OwnerId { get; set; }
 
+        public string Name { get; set; }
+        public string EMail { get; set; }
+
+        public PostalAddress PostalAddress { get; set; }
+
+
         [ForeignKeyAttribute("OwnerId"),NotMapped]
         public virtual ApplicationUser Owner { get; set; }
 

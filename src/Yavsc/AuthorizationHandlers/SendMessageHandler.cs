@@ -25,7 +25,7 @@ namespace Yavsc.AuthorizationHandlers
                 context.Fail();
             else if (destUserId == uid)
                 context.Succeed(requirement);
-            else if (_dbContext.Banlist.Any(b=>b.TargetId == uid)) context.Fail();
+            else if (_dbContext.Ban.Any(b=>b.TargetId == uid)) context.Fail();
             else if (_dbContext.BlackListed.Any(b=>b.OwnerId == destUserId && b.UserId == uid)) context.Fail();
             else context.Succeed(requirement); 
         }

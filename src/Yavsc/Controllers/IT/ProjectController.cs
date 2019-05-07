@@ -35,7 +35,7 @@ namespace Yavsc.Controllers
         // GET: Project
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Projects.Include(p => p.Client).Include(p => p.Context).Include(p => p.PerformerProfile).Include(p => p.Regularisation).Include(p => p.Repository);
+            var applicationDbContext = _context.Project.Include(p => p.Client).Include(p => p.Context).Include(p => p.PerformerProfile).Include(p => p.Regularisation).Include(p => p.Repository);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -47,7 +47,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Project project = await _context.Projects.SingleAsync(m => m.Id == id);
+            Project project = await _context.Project.SingleAsync(m => m.Id == id);
             if (project == null)
             {
                 return HttpNotFound();
@@ -66,7 +66,7 @@ namespace Yavsc.Controllers
             ViewBag.ActivityCodeItems = _context.Activities.CreateSelectListItems<Activity>(
                 a => a.Code, a => a.Name);
             ViewBag.PerformerIdItems = _context.Performers.Include(p=>p.Performer).CreateSelectListItems<PerformerProfile>(p => p.PerformerId, p => p.Performer.UserName);
-            ViewBag.PaymentIdItems = _context.PayPalPayments.CreateSelectListItems<PayPalPayment>
+            ViewBag.PaymentIdItems = _context.PayPalPayment.CreateSelectListItems<PayPalPayment>
             (p => p.OrderReference, p => $"{p.Executor.UserName} {p.PaypalPayerId} {p.OrderReference}");
 
             ViewBag.Status = typeof(Yavsc.QueryStatus).CreateSelectListItems(null);
@@ -83,7 +83,7 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Projects.Add(project);
+                _context.Project.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -94,7 +94,7 @@ namespace Yavsc.Controllers
             ViewBag.ActivityCodeItems = _context.Activities.CreateSelectListItems<Activity>(
                 a => a.Code, a => a.Name, project.ActivityCode);
             ViewBag.PerformerIdItems = _context.Performers.Include(p=>p.Performer).CreateSelectListItems<PerformerProfile>(p => p.PerformerId, p => p.Performer.UserName, project.PerformerId);
-            ViewBag.PaymentIdItems = _context.PayPalPayments.CreateSelectListItems<PayPalPayment>
+            ViewBag.PaymentIdItems = _context.PayPalPayment.CreateSelectListItems<PayPalPayment>
             (p => p.OrderReference, p => $"{p.Executor.UserName} {p.PaypalPayerId} {p.OrderReference}", project.PaymentId);
             return View(project);
         }
@@ -107,7 +107,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Project project = await _context.Projects.SingleAsync(m => m.Id == id);
+            Project project = await _context.Project.SingleAsync(m => m.Id == id);
             if (project == null)
             {
                 return HttpNotFound();
@@ -146,7 +146,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            Project project = await _context.Projects.SingleAsync(m => m.Id == id);
+            Project project = await _context.Project.SingleAsync(m => m.Id == id);
             if (project == null)
             {
                 return HttpNotFound();
@@ -160,8 +160,8 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            Project project = await _context.Projects.SingleAsync(m => m.Id == id);
-            _context.Projects.Remove(project);
+            Project project = await _context.Project.SingleAsync(m => m.Id == id);
+            _context.Project.Remove(project);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }

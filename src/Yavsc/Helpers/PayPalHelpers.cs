@@ -134,7 +134,7 @@ namespace Yavsc.Helpers
              string token)
         {
             var details = GetExpressCheckoutDetails(token);
-            var payment = await context.PayPalPayments.SingleOrDefaultAsync(p=>p.CreationToken == token);
+            var payment = await context.PayPalPayment.SingleOrDefaultAsync(p=>p.CreationToken == token);
             if (payment == null)
                 {
                     payment = new PayPalPayment{
@@ -146,7 +146,7 @@ namespace Yavsc.Helpers
                             State = details.Ack.ToString()
                         };
 
-                    context.PayPalPayments.Add(payment);
+                    context.PayPalPayment.Add(payment);
                 }
                 else {
                     payment.ExecutorId = userId;
@@ -162,7 +162,7 @@ namespace Yavsc.Helpers
             string token, GetExpressCheckoutDetailsResponseType fromPayPal)
         {
             return new PaymentInfo {
-              DbContent = await context.PayPalPayments
+              DbContent = await context.PayPalPayment
               .Include(p=>p.Executor)
               .SingleOrDefaultAsync(
                   p=>p.CreationToken==token),

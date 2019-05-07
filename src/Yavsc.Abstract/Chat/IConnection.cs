@@ -1,4 +1,4 @@
-namespace Yavsc.Abstract.Streaming
+namespace Yavsc.Abstract.Chat
 {
     public interface IConnection
     {

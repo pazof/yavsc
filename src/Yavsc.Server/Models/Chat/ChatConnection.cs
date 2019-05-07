@@ -26,9 +26,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Yavsc.Models.Chat
 {
-    public class ChatConnection : Abstract.Streaming.IChatConnection<ChatRoomPresence>
+    public class ChatConnection
     {
-        [JsonIgnore,Required]
+        [Required]
         public string ApplicationUserId { get; set; }
 
         [ForeignKey("ApplicationUserId"),JsonIgnore]

@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<HyperLink> GetLinks()
         {
-            return _context.Links;
+            return _context.HyperLink;
         }
 
         // GET: api/HyperLinkApi/5
@@ -36,7 +36,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            HyperLink hyperLink = await _context.Links.SingleAsync(m => m.HRef == id);
+            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
 
             if (hyperLink == null)
             {
@@ -90,7 +90,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            _context.Links.Add(hyperLink);
+            _context.HyperLink.Add(hyperLink);
             try
             {
                 await _context.SaveChangesAsync();
@@ -119,13 +119,13 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            HyperLink hyperLink = await _context.Links.SingleAsync(m => m.HRef == id);
+            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
             if (hyperLink == null)
             {
                 return HttpNotFound();
             }
 
-            _context.Links.Remove(hyperLink);
+            _context.HyperLink.Remove(hyperLink);
             await _context.SaveChangesAsync();
 
             return Ok(hyperLink);
@@ -142,7 +142,7 @@ namespace Yavsc.Controllers
 
         private bool HyperLinkExists(string id)
         {
-            return _context.Links.Count(e => e.HRef == id) > 0;
+            return _context.HyperLink.Count(e => e.HRef == id) > 0;
         }
     }
 }
