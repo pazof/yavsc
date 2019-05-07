@@ -1,3 +1,5 @@
+using Yavsc.Models.Relationship;
+
 namespace Yavsc
 {
     public class SiteSettings

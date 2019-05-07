@@ -18,7 +18,7 @@ namespace Yavsc.Controllers
         // GET: HyperLink
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Links.ToListAsync());
+            return View(await _context.HyperLink.ToListAsync());
         }
 
         // GET: HyperLink/Details/5
@@ -29,7 +29,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            HyperLink hyperLink = await _context.Links.SingleAsync(m => m.HRef == id);
+            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
             if (hyperLink == null)
             {
                 return HttpNotFound();
@@ -51,7 +51,7 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Links.Add(hyperLink);
+                _context.HyperLink.Add(hyperLink);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -66,7 +66,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            HyperLink hyperLink = await _context.Links.SingleAsync(m => m.HRef == id);
+            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
             if (hyperLink == null)
             {
                 return HttpNotFound();
@@ -97,7 +97,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            HyperLink hyperLink = await _context.Links.SingleAsync(m => m.HRef == id);
+            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
             if (hyperLink == null)
             {
                 return HttpNotFound();
@@ -111,8 +111,8 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            HyperLink hyperLink = await _context.Links.SingleAsync(m => m.HRef == id);
-            _context.Links.Remove(hyperLink);
+            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
+            _context.HyperLink.Remove(hyperLink);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }

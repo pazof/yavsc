@@ -91,10 +91,11 @@ namespace Yavsc {
             SiteSettings settingsOptions, ILogger logger) {
 
             app.UseIdentity ();
-            app.UseWhen (context => context.Request.Path.StartsWithSegments ("/api")
-            || context.Request.Path.StartsWithSegments ("/live"),
-                branch => {
-                    branch.UseJwtBearerAuthentication (
+            app.UseWhen  ( context => context.Request.Path.StartsWithSegments ("/api")
+                || context.Request.Path.StartsWithSegments ("/live") ,
+                branchLiveOrApi => 
+                {
+                    branchLiveOrApi.UseJwtBearerAuthentication (
                         options => {
                             options.AuthenticationScheme = JwtBearerDefaults.AuthenticationScheme;
                             options.AutomaticAuthenticate = true;
@@ -103,21 +104,21 @@ namespace Yavsc {
                                 ProtectionProvider
                             ));
                             options.Events = new JwtBearerEvents
-                    {
-                        OnReceivingToken = async context =>
-                        {
-                            var signalRTokenHeader = context.Request.Query["signalRTokenHeader"];
-
-                            if (!string.IsNullOrEmpty(signalRTokenHeader) &&
-                                (context.HttpContext.WebSockets.IsWebSocketRequest || context.Request.Headers["Accept"] == "text/event-stream"))
                             {
-                                context.Token = context.Request.Query["signalRTokenHeader"];
-                            }
-                        }
-};
-                        }
-                    );
+                                OnReceivingToken =  context =>
+                                {
+                                    return Task.Run( () => {
+                                        var signalRTokenHeader = context.Request.Query["signalRTokenHeader"];
 
+                                        if (!string.IsNullOrEmpty(signalRTokenHeader) &&
+                                            (context.HttpContext.WebSockets.IsWebSocketRequest || context.Request.Headers["Accept"] == "text/event-stream"))
+                                        {
+                                            context.Token = context.Request.Query["signalRTokenHeader"];
+                                        }
+                                    });
+                                }
+                            };
+                        });
                 });
             app.UseWhen (context => !context.Request.Path.StartsWithSegments ("/api") && !context.Request.Path.StartsWithSegments ("/live"),
                 branch => {

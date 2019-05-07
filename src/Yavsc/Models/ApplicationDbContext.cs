@@ -46,7 +46,7 @@ namespace Yavsc.Models
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
-            builder.Entity<Relationship.Contact>().HasKey(x => new { x.OwnerId, x.UserId });
+            builder.Entity<Contact>().HasKey(x => new { x.OwnerId, x.UserId });
             builder.Entity<GoogleCloudMobileDeclaration>().Property(x => x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<BlogTag>().HasKey(x => new { x.PostId, x.TagId });
             builder.Entity<ApplicationUser>().HasMany<ChatConnection>(c => c.Connections);
@@ -157,15 +157,13 @@ namespace Yavsc.Models
 
         public DbSet<EstimateTemplate> EstimateTemplates { get; set; }
 
-        public DbSet<Relationship.Contact> Contacts { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
 
         public DbSet<ClientProviderInfo> ClientProviderInfo { get; set; }
 
-        public DbSet<ChatConnection> Connections { get; set; }
-
         public DbSet<BlackListed> BlackListed { get; set; }
 
-        public DbSet<MusicalPreference> MusicalPreferences { get; set; }
+        public DbSet<MusicalPreference> MusicalPreference { get; set; }
 
         public DbSet<MusicalTendency> MusicalTendency { get; set; }
 
@@ -182,7 +180,7 @@ namespace Yavsc.Models
 
         [ActivitySettings]
         public DbSet<GeneralSettings> GeneralSettings { get; set; }
-        public DbSet<CoWorking> WorkflowProviders { get; set; }
+        public DbSet<CoWorking> CoWorking { get; set; }
 
         private void AddTimestamps(string currentUsername)
         {
@@ -218,13 +216,13 @@ namespace Yavsc.Models
 
         public DbSet<Circle> Circle { get; set; }
 
-        public DbSet<CircleAuthorizationToBlogPost> BlogACL { get; set; }
+        public DbSet<CircleAuthorizationToBlogPost> CircleAuthorizationToBlogPost { get; set; }
 
         public DbSet<CommandForm> CommandForm { get; set; }
 
         public DbSet<Form> Form { get; set; }
 
-        public DbSet<Ban> Banlist { get; set; }
+        public DbSet<Ban> Ban { get; set; }
 
         public DbSet<HairTaint> HairTaint { get; set; }
 
@@ -240,13 +238,13 @@ namespace Yavsc.Models
 
         public DbSet<BankIdentity> BankIdentity { get; set; }
 
-        public DbSet<PayPalPayment> PayPalPayments { get; set; }
+        public DbSet<PayPalPayment> PayPalPayment { get; set; }
 
-        public DbSet<HyperLink> Links { get; set; }
+        public DbSet<HyperLink> HyperLink { get; set; }
 
         public DbSet<Period> Period { get; set; }
 
-        public DbSet<BlogTag> BlogTags { get; set; }
+        public DbSet<BlogTag> BlogTag { get; set; }
 
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
 
@@ -266,7 +264,7 @@ namespace Yavsc.Models
 
         public DbSet<GitRepositoryReference> GitRepositoryReference { get; set; }
 
-        public DbSet<Project> Projects { get; set; }        
+        public DbSet<Project> Project { get; set; }        
         
         public DbSet<BlogTrad> BlogTrad { get; set; }
 

@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<MusicalPreference> GetMusicalPreferences()
         {
-            return _context.MusicalPreferences;
+            return _context.MusicalPreference;
         }
 
         // GET: api/MusicalPreferencesApi/5
@@ -36,7 +36,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            MusicalPreference musicalPreference = _context.MusicalPreferences.Single(m => m.OwnerProfileId == id);
+            MusicalPreference musicalPreference = _context.MusicalPreference.Single(m => m.OwnerProfileId == id);
 
             if (musicalPreference == null)
             {
@@ -89,7 +89,7 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            _context.MusicalPreferences.Add(musicalPreference);
+            _context.MusicalPreference.Add(musicalPreference);
             try
             {
                 _context.SaveChanges(User.GetUserId());
@@ -118,13 +118,13 @@ namespace Yavsc.Controllers
                 return HttpBadRequest(ModelState);
             }
 
-            MusicalPreference musicalPreference = _context.MusicalPreferences.Single(m => m.OwnerProfileId == id);
+            MusicalPreference musicalPreference = _context.MusicalPreference.Single(m => m.OwnerProfileId == id);
             if (musicalPreference == null)
             {
                 return HttpNotFound();
             }
 
-            _context.MusicalPreferences.Remove(musicalPreference);
+            _context.MusicalPreference.Remove(musicalPreference);
             _context.SaveChanges(User.GetUserId());
 
             return Ok(musicalPreference);
@@ -141,7 +141,7 @@ namespace Yavsc.Controllers
 
         private bool MusicalPreferenceExists(string id)
         {
-            return _context.MusicalPreferences.Count(e => e.OwnerProfileId == id) > 0;
+            return _context.MusicalPreference.Count(e => e.OwnerProfileId == id) > 0;
         }
     }
 }

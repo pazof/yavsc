@@ -95,7 +95,7 @@ namespace Yavsc
             if (userName != null)
             {
                 using (var db = new ApplicationDbContext()) {
-                    var cx = db.Connections.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
+                    var cx = db.ChatConnection.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
                     if (cx != null)
                     {
                         if (stopCalled)
@@ -179,7 +179,7 @@ namespace Yavsc
             string senderId = (await _dbContext.ChatConnection.SingleAsync (c=>c.ConnectionId == Context.ConnectionId)).ApplicationUserId;
             
              
-            if (_dbContext.Banlist.Any(b=>b.TargetId == senderId)) return false;
+            if (_dbContext.Ban.Any(b=>b.TargetId == senderId)) return false;
             var destChatUser = await _dbContext.ChatConnection.SingleAsync (c=>c.ConnectionId == destConnectionId);
 
             if (_dbContext.BlackListed.Any(b=>b.OwnerId == destChatUser.ApplicationUserId && b.UserId == senderId)) return false;
@@ -200,9 +200,9 @@ namespace Yavsc
 
         public void Abort()
         {
-            var cx = _dbContext .Connections.SingleOrDefault(c=>c.ConnectionId == Context.ConnectionId);
+            var cx = _dbContext .ChatConnection.SingleOrDefault(c=>c.ConnectionId == Context.ConnectionId);
             if (cx!=null) {
-                _dbContext.Connections.Remove(cx);
+                _dbContext.ChatConnection.Remove(cx);
                 _dbContext.SaveChanges(); 
             }
         }
