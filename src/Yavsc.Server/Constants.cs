@@ -57,7 +57,13 @@ namespace Yavsc
         { "openid", "profile", "email", "https://www.googleapis.com/auth/calendar" };
 
         public static readonly string NoneCode = "none";
-
+        public const string HubGroupAuthenticated = "authenticated";
+        public const string HubGroupAnonymous = "anonymous";
+        public const string HubGroupCops= "cops";
         public const int MaxChanelName = 255;
+    }
+    public static class NotificationTypes {
+        public const string Connected = "connected";
+        public const string DisConnected = "disconnected";
     }
 }
