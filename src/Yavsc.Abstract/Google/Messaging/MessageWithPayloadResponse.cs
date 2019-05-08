@@ -28,10 +28,6 @@ namespace Yavsc.Models.Google.Messaging
 	/// </summary>
 	public class MessageWithPayloadResponse {
 		/// <summary>
-		/// The multicast identifier.
-		/// </summary>
-		public string multicast_id;
-		/// <summary>
 		/// The success count.
 		/// </summary>
 		public int success;

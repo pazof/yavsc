@@ -37,9 +37,11 @@ namespace Yavsc
     {
         ApplicationDbContext _dbContext;
         ILogger _logger;
+        IUserIdProvider _userIdProvider;
 
-        public ChatHub()
+        public ChatHub(IUserIdProvider userIdProvider)
         { 
+            _userIdProvider = userIdProvider;
             var scope = Startup.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
             _dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
             var loggerFactory = scope.ServiceProvider.GetService<ILoggerFactory>();
@@ -54,35 +56,39 @@ namespace Yavsc
             {
                 isAuth = Context.User.Identity.IsAuthenticated;
                 userName = Context.User.Identity.Name;
+
                 var group = isAuth ?
-                  "authenticated" : "anonymous";
+                 Constants.HubGroupAuthenticated : Constants.HubGroupAnonymous;
                 // Log ("Cx: " + group);
                 await Groups.Add(Context.ConnectionId, group);
                 if (isAuth)
                 {
-                    var user = _dbContext.Users.Include(u=>u.Connections).Single(u => u.UserName == userName);
-                    if (user.Connections==null)
-                        user.Connections = new List<ChatConnection>();
-                    var ucx = user.Connections.FirstOrDefault(c=>c.ConnectionId == Context.ConnectionId);
-                    if (ucx==null)
-                        user.Connections.Add(new ChatConnection
+                    var userHadConnections = _dbContext.ChatConnection.Any(accx => accx.ConnectionId == Context.ConnectionId);
+                    
+                    if (userHadConnections) {
+                        var ccx = _dbContext.ChatConnection.First(c=> c.ConnectionId == Context.ConnectionId);
+                        ccx.Connected=true;
+                    }
+                    else
+                        _dbContext.ChatConnection.Add(new ChatConnection
                         {
                             ConnectionId = Context.ConnectionId,
                             UserAgent = Context.Request.Headers["User-Agent"],
                             Connected = true
                         });
-                    else {
-                        ucx.Connected = true;
-                    }
                     _dbContext.SaveChanges(); 
-
-                    Clients.CallerState.BlackListedBy = await _dbContext.BlackListed.Where(r=>r.UserId == user.Id).Select(r=>r.OwnerId).ToArrayAsync();
-                    
+                    var userId =  _userIdProvider.GetUserId(this.Context.Request);
+                    Clients.CallerState.BlackListedBy = await _dbContext.BlackListed.Where(r=>r.UserId == userId).Select(r=>r.OwnerId).ToArrayAsync();
+                    // TODO ChatHubConnectioinFlags
                 }
+                else
+                // FIXME is this line reached ?
+                 await Groups.Add(Context.ConnectionId, Constants.HubGroupAnonymous);
             }
-            else await Groups.Add(Context.ConnectionId, "anonymous");
+            else await Groups.Add(Context.ConnectionId, Constants.HubGroupAnonymous);
 
-            Clients.Group("authenticated").notify("connected", Context.ConnectionId, userName);
+            // TODO only notify followers
+            Clients.Group(Constants.HubGroupAuthenticated).notify(NotificationTypes.Connected, Context.ConnectionId, userName);
 
             await base.OnConnected();
         }
@@ -200,7 +206,7 @@ namespace Yavsc
 
         public void Abort()
         {
-            var cx = _dbContext .ChatConnection.SingleOrDefault(c=>c.ConnectionId == Context.ConnectionId);
+            var cx = _dbContext.ChatConnection.SingleOrDefault(c=>c.ConnectionId == Context.ConnectionId);
             if (cx!=null) {
                 _dbContext.ChatConnection.Remove(cx);
                 _dbContext.SaveChanges(); 
