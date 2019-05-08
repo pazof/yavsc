@@ -1,47 +1,47 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using Newtonsoft.Json.Linq;
 
-namespace Yavsc.Helpers.Google
+namespace Yavsc.Helpers.Auth
 {
     using Yavsc.Models;
     using Yavsc.Models.Auth;
-    public static class GoogleStoreHelper {
+    public static class ExternalAuthStoreHelper {
 
-        public static Task<OAuth2Tokens> GetTokensAsync(this ApplicationDbContext context, string googleUserId)
+        public static Task<OAuth2Tokens> GetTokensAsync(this ApplicationDbContext context, string externalUserId)
         {
-            if (string.IsNullOrEmpty(googleUserId))
+            if (string.IsNullOrEmpty(externalUserId))
             {
-                throw new ArgumentException("email MUST have a value");
+                throw new ArgumentException("externalUserId MUST have a value");
             }
 
-            var item = context.Tokens.FirstOrDefault(x => x.UserId == googleUserId);
+            var item = context.OAuth2Tokens.FirstOrDefault(x => x.UserId == externalUserId);
             // TODO Refresh token
 
             return Task.FromResult(item);
         }
 
-        public static Task StoreTokenAsync(this ApplicationDbContext context, string googleUserId, JObject response, string accessToken,
+        public static Task StoreTokenAsync(this ApplicationDbContext context, string externalUserId, JObject response, string accessToken,
         string tokenType, string refreshToken, string expiresIn
         )
         {
-            if (string.IsNullOrEmpty(googleUserId))
+            if (string.IsNullOrEmpty(externalUserId))
             {
                 throw new ArgumentException("googleUserId MUST have a value");
             }
 
-            var item = context.Tokens.SingleOrDefaultAsync(x => x.UserId == googleUserId).Result;
+            var item = context.OAuth2Tokens.SingleOrDefaultAsync(x => x.UserId == externalUserId).Result;
             if (item == null)
             {
-                context.Tokens.Add(new OAuth2Tokens
+                context.OAuth2Tokens.Add(new OAuth2Tokens
                 {
                     TokenType = "Bearer",
                     AccessToken = accessToken,
                     RefreshToken = refreshToken,
                     Expiration = DateTime.Now.AddSeconds(int.Parse(expiresIn)),
-                    UserId = googleUserId
+                    UserId = externalUserId
                 });
             }
             else
@@ -50,9 +50,9 @@ namespace Yavsc.Helpers.Google
                 item.Expiration = DateTime.Now.AddMinutes(int.Parse(expiresIn));
                 if (refreshToken != null)
                     item.RefreshToken = refreshToken;
-                context.Tokens.Update(item);
+                context.OAuth2Tokens.Update(item);
             }
-            context.SaveChanges(googleUserId);
+            context.SaveChanges(externalUserId);
             return Task.FromResult(0);
         }
   }

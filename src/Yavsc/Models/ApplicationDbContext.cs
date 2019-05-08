@@ -33,7 +33,7 @@ namespace Yavsc.Models
     using Attributes;
     using Bank;
     using Payment;
-    using Yavsc.Models.Calendar;
+    using Calendar;
     using Blog;
     using Yavsc.Abstract.Identity;
     using Yavsc.Server.Models.Blog;
@@ -130,7 +130,7 @@ namespace Yavsc.Models
         /// open auth tokens
         /// </summary>
         /// <returns>tokens</returns>
-        public DbSet<OAuth2Tokens> Tokens { get; set; }
+        public DbSet<OAuth2Tokens> OAuth2Tokens { get; set; }
 
         /// <summary>
         /// References all declared external NativeConfidential devices
@@ -255,7 +255,8 @@ namespace Yavsc.Models
         public DbSet<Comment> Comment { get; set; }
 
         public DbSet<Announce> Announce { get; set; }
-
+        
+        // TODO useless, to drop
         public DbSet<ChatConnection> ChatConnection { get; set; }
 
         public DbSet<ChatRoom> ChatRoom { get; set; }
@@ -269,6 +270,8 @@ namespace Yavsc.Models
         public DbSet<BlogTrad> BlogTrad { get; set; }
 
         public DbSet<LiveFlow> LiveFlow { get; set; }
+
+        public DbSet<ChatRoomAccess> ChatRoomAccess { get; set; }
 
     }
 }
