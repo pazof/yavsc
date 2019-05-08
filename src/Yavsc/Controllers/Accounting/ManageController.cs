@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Localization;
 using Yavsc.Models.Workflow;
-using Yavsc.Models.Identity;
 
 namespace Yavsc.Controllers
 {
@@ -39,7 +38,7 @@ namespace Yavsc.Controllers
         private GoogleAuthSettings _googleSettings;
 
         private PayPalSettings _payPalSettings;
-        private IGoogleCloudMessageSender _GCMSender;
+        private IYavscMessageSender _GCMSender;
         private SIRENChecker _cchecker;
         private IStringLocalizer _SR;
         private CompanyInfoSettings _cinfoSettings;
@@ -51,7 +50,7 @@ namespace Yavsc.Controllers
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IEmailSender emailSender,
-        IGoogleCloudMessageSender GCMSender,
+        IYavscMessageSender GCMSender,
         IOptions<SiteSettings> siteSettings,
         IOptions<GoogleAuthSettings> googleSettings,
         IOptions<PayPalSettings> paypalSettings,
@@ -289,11 +288,6 @@ namespace Yavsc.Controllers
         // GET: /Manage/ChangePassword
         [HttpGet]
         public IActionResult ChangePassword()
-        {
-            return View();
-        }
-        [HttpGet]
-        public IActionResult AddMobileApp(GoogleCloudMobileDeclaration model)
         {
             return View();
         }

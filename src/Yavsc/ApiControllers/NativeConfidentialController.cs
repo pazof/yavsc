@@ -1,4 +1,4 @@
-
+﻿
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -9,15 +9,15 @@ using Yavsc.Models;
 using Yavsc.Models.Identity;
 
 [Authorize, Route("~/api/gcm")]
-public class GCMController : Controller
+public class NativeConfidentialController : Controller
 {
     ILogger _logger;
     ApplicationDbContext _context;
 
-    public GCMController(ApplicationDbContext context,
+    public NativeConfidentialController(ApplicationDbContext context,
      ILoggerFactory loggerFactory)
     {
-        _logger = loggerFactory.CreateLogger<GCMController>();
+        _logger = loggerFactory.CreateLogger<NativeConfidentialController>();
         _context = context;
     }
     /// <summary>
@@ -28,7 +28,7 @@ public class GCMController : Controller
     /// <returns></returns>
     [Authorize, HttpPost("register")]
     public IActionResult Register(
-        [FromBody] GoogleCloudMobileDeclaration declaration)
+        [FromBody] DeviceDeclaration declaration)
     {
       var uid = User.GetUserId();
 
@@ -40,15 +40,13 @@ public class GCMController : Controller
       declaration.LatestActivityUpdate = DateTime.Now;
 
       _logger.LogInformation($"Registering device with id:{declaration.DeviceId} for {uid}");
-      var alreadyRegisteredDevice = _context.GCMDevices.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
+      var alreadyRegisteredDevice = _context.DeviceDeclaration.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
       var deviceAlreadyRegistered = (alreadyRegisteredDevice!=null);
       if (deviceAlreadyRegistered)
       {
         _logger.LogInformation($"deviceAlreadyRegistered");
         // Override an exiting owner
-        alreadyRegisteredDevice.DeclarationDate = DateTime.Now;
         alreadyRegisteredDevice.DeviceOwnerId = uid;
-        alreadyRegisteredDevice.GCMRegistrationId = declaration.GCMRegistrationId;
         alreadyRegisteredDevice.Model = declaration.Model;
         alreadyRegisteredDevice.Platform = declaration.Platform;
         alreadyRegisteredDevice.Version = declaration.Version;
@@ -60,7 +58,7 @@ public class GCMController : Controller
         _logger.LogInformation($"new device");
         declaration.DeclarationDate = DateTime.Now;
         declaration.DeviceOwnerId = uid;
-        _context.GCMDevices.Add(declaration as GoogleCloudMobileDeclaration);
+        _context.DeviceDeclaration.Add(declaration as DeviceDeclaration);
         _context.SaveChanges(User.GetUserId());
       }
       var latestActivityUpdate = _context.Activities.Max(a=>a.DateModified);

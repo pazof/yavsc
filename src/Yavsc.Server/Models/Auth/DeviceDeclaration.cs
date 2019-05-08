@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -7,10 +7,8 @@ namespace Yavsc.Models.Identity
 {
   [JsonObject]
 
-  public class GoogleCloudMobileDeclaration : IGCMDeclaration {
+  public class DeviceDeclaration : IMobileDeviceDeclaration {
 
-    [Required]
-    public string GCMRegistrationId { get; set; }
 
     [Key,Required]
     public string DeviceId { get; set; }

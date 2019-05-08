@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Relationship
 {
-    public class Contact
+    public class Contact: IContact
     {
         [Required()]
         public string UserId { get; set; }
@@ -15,7 +15,10 @@ namespace Yavsc.Models.Relationship
         public string Name { get; set; }
         public string EMail { get; set; }
 
-        public PostalAddress PostalAddress { get; set; }
+        public long AddressId { get ; set; }
+
+        [ForeignKey("AddressId")]
+        public virtual PostalAddress PostalAddress { get; set; }
 
 
         [ForeignKeyAttribute("OwnerId"),NotMapped]

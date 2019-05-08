@@ -8,9 +8,11 @@ namespace Yavsc.Abstract.Chat
         [RegularExpression(@"^#?[a-zA-Z0-9'-']{3,10}$", ErrorMessage = "chan name cannot be validated.")]
         string Name { get; }
 
-        [RegularExpression(@"^#?[a-zA-Z0-9'-']{3,10}$", ErrorMessage = "topic cannot be validated.")]
+        [RegularExpression(@"^#?[a-zA-Z0-9'-']{3,255}$", ErrorMessage = "topic cannot be validated.")]
         string Topic { get ; set; }
 
-        List<TMod> Administration { get; }
+        string OwnerId { get ; }
+
+        List<TMod> Moderation { get; }
     }
 }

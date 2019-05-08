@@ -2,26 +2,25 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Abstract.Streaming;
+using Yavsc.Abstract.Chat;
 
 namespace Yavsc.Models.Chat
 {
-    public class ChatRoom: IChatRoom<ChatRoomPresence>
+    public class ChatRoom: IChatRoom<ChatRoomAccess>
     {
-        [StringLengthAttribute(1023,MinimumLength=1)]
         public string Topic { get; set; }
 
         [Key]
-        [StringLengthAttribute(255,MinimumLength=1)]
+        [StringLengthAttribute(Constants.MaxChanelName, MinimumLength=3)]
         public string Name { get; set;}
 
-        public string ApplicationUserId { get; set; }
+        public string OwnerId { get; set; }
 
-        [ForeignKey("ApplicationUserId")]
+        [ForeignKey("OwnerId")]
         public virtual ApplicationUser Owner { get; set; }
 
         [InverseProperty("Room")]
-        public virtual List<ChatRoomPresence> UserList { get; set;}
+        public virtual List<ChatRoomAccess> Moderation { get; set; }
 
     }
 }

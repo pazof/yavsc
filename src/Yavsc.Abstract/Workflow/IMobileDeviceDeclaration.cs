@@ -20,10 +20,9 @@ using System;
 
 namespace Yavsc
 {
-    public interface IGCMDeclaration
+    public interface IMobileDeviceDeclaration
     {
         string DeviceId { get; set; }
-        string GCMRegistrationId { get; set; }
         string Model { get; set; }
         string Platform { get; set; }
         string Version { get; set; }

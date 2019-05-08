@@ -34,6 +34,8 @@ namespace Yavsc
             DefaultAvatar = "/images/Users/icon_user.png",
             AnonAvatar = "/images/Users/icon_anon_user.png",
             YavscConnectionStringEnvName = "YAVSC_DB_CONNECTION";
+
+
         
         public static readonly long DefaultFSQ = 1024*1024*500;
 
@@ -55,5 +57,7 @@ namespace Yavsc
         { "openid", "profile", "email", "https://www.googleapis.com/auth/calendar" };
 
         public static readonly string NoneCode = "none";
+
+        public const int MaxChanelName = 255;
     }
 }

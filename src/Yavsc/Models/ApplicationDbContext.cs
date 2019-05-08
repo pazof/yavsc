@@ -47,7 +47,7 @@ namespace Yavsc.Models
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.Entity<Contact>().HasKey(x => new { x.OwnerId, x.UserId });
-            builder.Entity<GoogleCloudMobileDeclaration>().Property(x => x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
+            builder.Entity<DeviceDeclaration>().Property(x => x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<BlogTag>().HasKey(x => new { x.PostId, x.TagId });
             builder.Entity<ApplicationUser>().HasMany<ChatConnection>(c => c.Connections);
             builder.Entity<ApplicationUser>().Property(u => u.Avatar).HasDefaultValue(Constants.DefaultAvatar);
@@ -62,7 +62,7 @@ namespace Yavsc.Models
             builder.Entity<Period>().HasKey(l => new { l.Start, l.End });
             builder.Entity<Models.Cratie.Option>().HasKey(o => new { o.Code, o.CodeScrutin });
             builder.Entity<Notification>().Property(n => n.icon).HasDefaultValue("exclam");
-            builder.Entity<ChatRoomPresence>().HasKey(p => new { room = p.ChannelName, user = p.ChatUserConnectionId });
+            builder.Entity<ChatRoomAccess>().HasKey(p => new { room = p.ChannelName, user = p.UserId });
              
             foreach (var et in builder.Model.GetEntityTypes())
             {
@@ -133,10 +133,10 @@ namespace Yavsc.Models
         public DbSet<OAuth2Tokens> Tokens { get; set; }
 
         /// <summary>
-        /// References all declared external GCM devices
+        /// References all declared external NativeConfidential devices
         /// </summary>
         /// <returns></returns>
-        public DbSet<GoogleCloudMobileDeclaration> GCMDevices { get; set; }
+        public DbSet<DeviceDeclaration> DeviceDeclaration { get; set; }
 
         public DbSet<Service> Services { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -157,7 +157,7 @@ namespace Yavsc.Models
 
         public DbSet<EstimateTemplate> EstimateTemplates { get; set; }
 
-        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Contact> Contact { get; set; }
 
         public DbSet<ClientProviderInfo> ClientProviderInfo { get; set; }
 

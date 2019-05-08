@@ -13,7 +13,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Services
 {
-    public class GCMSender : IGoogleCloudMessageSender
+    public class GCMSender : IYavscMessageSender
     {
         private ILogger _logger;
         SiteSettings siteSettings;

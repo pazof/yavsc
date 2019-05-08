@@ -1,9 +1,8 @@
-namespace Yavsc.Abstract.Streaming
+namespace Yavsc.Abstract.Chat
 {
 
     public interface IChatUserInfo
     {
-        IConnection[] Connections { get; set; }
         string UserId { get; set; }
 
         string UserName { get; set; }

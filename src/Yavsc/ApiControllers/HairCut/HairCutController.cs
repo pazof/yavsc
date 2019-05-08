@@ -29,7 +29,7 @@ namespace Yavsc.ApiControllers
     {
         private ApplicationDbContext _context;
         private IEmailSender _emailSender;
-        private IGoogleCloudMessageSender _GCMSender;
+        private IYavscMessageSender _GCMSender;
         private GoogleAuthSettings _googleSettings;
         private IStringLocalizer<YavscLocalisation> _localizer;
         private ILogger _logger;
@@ -40,7 +40,7 @@ namespace Yavsc.ApiControllers
         PayPalSettings _paymentSettings;
         public HairCutController(ApplicationDbContext context,
         IOptions<GoogleAuthSettings> googleSettings,
-        IGoogleCloudMessageSender GCMSender,
+        IYavscMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
           IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
           IEmailSender emailSender,
