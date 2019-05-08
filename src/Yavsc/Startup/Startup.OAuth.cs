@@ -23,8 +23,8 @@ namespace Yavsc {
     using System.Threading.Tasks;
     using Auth;
     using Extensions;
-    using Helpers.Google;
     using Models;
+    using Yavsc.Helpers.Auth;
 
     public partial class Startup {
         public static CookieAuthenticationOptions ExternalCookieAppOptions { get; private set; }
