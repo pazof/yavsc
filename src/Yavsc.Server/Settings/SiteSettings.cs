@@ -7,7 +7,7 @@ namespace Yavsc
         public string Title { get; set; }
         public string Slogan { get; set; }
 
-        public string Banner { get; set; }
+        public string StyleSheet { get; set; }
         public string FavIcon { get; set; }
         public string Icon { get; set; }
         /// <summary>
