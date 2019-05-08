@@ -17,7 +17,6 @@ namespace Yavsc.Server.Models.EMailing
             get;
             set;
         }
-
         public DateTime DateModified
         {
             get;
@@ -44,11 +43,23 @@ namespace Yavsc.Server.Models.EMailing
         public virtual ApplicationUser Manager { get; set; }
 
         public Periodicity ToSend { get; set; }
+        
+        [Required]
         public string ManagerId
         {
             get;
             set;
         }
+
+        [Required]
+        public string SuccessorId
+        {
+            get;
+            set;
+        }
+
+        [ForeignKey("SuccessorId")]
+        public virtual ApplicationUser Successor { get; set; }
 
         public string UserCreated
         {

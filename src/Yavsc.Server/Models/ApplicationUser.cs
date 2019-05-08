@@ -57,7 +57,7 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         [InverseProperty("DeviceOwner"),JsonIgnore]
-        public virtual List<GoogleCloudMobileDeclaration> Devices { get; set; }
+        public virtual List<DeviceDeclaration> DeviceDeclarations { get; set; }
 
         [InverseProperty("Owner"),JsonIgnore]
         public virtual List<ChatConnection> Connections { get; set; }
@@ -101,5 +101,12 @@ namespace Yavsc.Models
         public virtual List<BlackListed> BlackList { get; set; }
 
         public bool AllowMonthlyEmail { get; set; } = false;
+
+        [JsonIgnore][InverseProperty("Owner")]
+        public virtual List<ChatRoom> Rooms { get; set; }
+
+        [JsonIgnore][InverseProperty("User")]
+        public virtual List<ChatRoomAccess> RoomAccess { get; set; }
+
     }
 }

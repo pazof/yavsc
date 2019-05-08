@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -10,12 +10,11 @@ namespace Yavsc.Controllers
 {
     using Models;
     using Models.Identity;
-    
-    public class GCMDevicesController : Controller
+    public class DevicesController : Controller
     {
         private ApplicationDbContext _context;
 
-        public GCMDevicesController(ApplicationDbContext context)
+        public DevicesController(ApplicationDbContext context)
         {
             _context = context;    
         }
@@ -25,7 +24,7 @@ namespace Yavsc.Controllers
         {
             var uid = User.GetUserId();
 
-            var applicationDbContext = _context.GCMDevices.Include(g => g.DeviceOwner).Where(d=>d.DeviceOwnerId == uid);
+            var applicationDbContext = _context.DeviceDeclaration.Include(g => g.DeviceOwner).Where(d=>d.DeviceOwnerId == uid);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -37,7 +36,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            GoogleCloudMobileDeclaration googleCloudMobileDeclaration = await _context.GCMDevices.SingleAsync(m => m.DeviceId == id);
+            DeviceDeclaration googleCloudMobileDeclaration = await _context.DeviceDeclaration.SingleAsync(m => m.DeviceId == id);
             if (googleCloudMobileDeclaration == null)
             {
                 return HttpNotFound();
@@ -55,7 +54,7 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
 
-            GoogleCloudMobileDeclaration googleCloudMobileDeclaration = await _context.GCMDevices.SingleAsync(m => m.DeviceId == id);
+            DeviceDeclaration googleCloudMobileDeclaration = await _context.DeviceDeclaration.SingleAsync(m => m.DeviceId == id);
             if (googleCloudMobileDeclaration == null)
             {
                 return HttpNotFound();
@@ -69,8 +68,8 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            GoogleCloudMobileDeclaration googleCloudMobileDeclaration = await _context.GCMDevices.SingleAsync(m => m.DeviceId == id);
-            _context.GCMDevices.Remove(googleCloudMobileDeclaration);
+            DeviceDeclaration googleCloudMobileDeclaration = await _context.DeviceDeclaration.SingleAsync(m => m.DeviceId == id);
+            _context.DeviceDeclaration.Remove(googleCloudMobileDeclaration);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }

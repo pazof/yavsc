@@ -29,7 +29,7 @@ namespace Yavsc.ApiControllers
         ApplicationDbContext dbContext;
         private IStringLocalizer _localizer;
         private GoogleAuthSettings _googleSettings;
-        private IGoogleCloudMessageSender _GCMSender;
+        private IYavscMessageSender _GCMSender;
         private IAuthorizationService authorizationService;
 
 
@@ -42,7 +42,7 @@ namespace Yavsc.ApiControllers
             IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR,
             ApplicationDbContext context,
             IOptions<GoogleAuthSettings> googleSettings,
-            IGoogleCloudMessageSender GCMSender,
+            IYavscMessageSender GCMSender,
             IBillingService billingService
             )
         {
@@ -108,7 +108,7 @@ namespace Yavsc.ApiControllers
         public async Task<IActionResult> ProSign(string billingCode, long id)
         {
             var estimate = dbContext.Estimates.
-            Include(e=>e.Client).Include(e=>e.Client.Devices)
+            Include(e=>e.Client).Include(e=>e.Client.DeviceDeclarations)
             .Include(e=>e.Bill).Include(e=>e.Owner).Include(e=>e.Owner.Performer)
             .FirstOrDefault(e=>e.Id == id);
             if (estimate == null)
@@ -127,7 +127,7 @@ namespace Yavsc.ApiControllers
 
             var yaev = new EstimationEvent(estimate,_localizer);
             
-            var regids = estimate.Client.Devices.Select(d => d.GCMRegistrationId).ToArray();
+            var regids = estimate.Client.DeviceDeclarations.Select(d => d.DeviceId).ToArray();
             bool gcmSent = false;
             if (regids.Length>0) {
                 var grep = await _GCMSender.NotifyEstimateAsync(regids,yaev);

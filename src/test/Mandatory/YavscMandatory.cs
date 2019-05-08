@@ -42,7 +42,7 @@ namespace test
         [Fact]
         public void GitClone()
         {
-            var firstProject = _dbContext.Projects.Include(p=>p.Repository).FirstOrDefault();
+            var firstProject = _dbContext.Project.Include(p=>p.Repository).FirstOrDefault();
             Assert.NotNull (firstProject);
             var di = new DirectoryInfo(_serverFixture.SiteSetup.GitRepository);
             if (!di.Exists) di.Create();

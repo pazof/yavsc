@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
         protected UserManager<ApplicationUser> _userManager;
         protected ApplicationDbContext _context;
         protected GoogleAuthSettings _googleSettings;
-        protected IGoogleCloudMessageSender _GCMSender;
+        protected IYavscMessageSender _GCMSender;
         protected IEmailSender _emailSender;
         protected IStringLocalizer _localizer;
         protected SiteSettings _siteSettings;
@@ -34,7 +34,7 @@ namespace Yavsc.Controllers
 
         protected readonly ILogger _logger;
         public CommandController(ApplicationDbContext context, IOptions<GoogleAuthSettings> googleSettings,
-        IGoogleCloudMessageSender GCMSender,
+        IYavscMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
           ICalendarManager calendarManager,
           IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
@@ -136,7 +136,7 @@ namespace Yavsc.Controllers
                 );
             var pro = _context.Performers.Include(
                 u => u.Performer
-            ).Include(u => u.Performer.Devices)
+            ).Include(u => u.Performer.DeviceDeclarations)
             .FirstOrDefault(
                 x => x.PerformerId == command.PerformerId
             );
@@ -174,10 +174,10 @@ namespace Yavsc.Controllers
                     try
                     {
                         _logger.LogInformation("sending GCM");
-                        if (pro.Performer.Devices.Count > 0)
+                        if (pro.Performer.DeviceDeclarations.Count > 0)
                         {
                             var regids = command.PerformerProfile.Performer
-                            .Devices.Select(d => d.GCMRegistrationId);
+                            .DeviceDeclarations.Select(d => d.DeviceId);
                             grep = await _GCMSender.NotifyBookQueryAsync(regids, yaev);
                         }
 

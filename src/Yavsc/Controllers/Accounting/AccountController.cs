@@ -708,9 +708,13 @@ namespace Yavsc.Controllers
         async Task<IdentityResult> DeleteUser(string userId)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
-            _dbContext.GCMDevices.RemoveRange( _dbContext.GCMDevices.Where(g => g.DeviceOwnerId == userId ));
-            // TODO add an owner to maillings
-            _dbContext.MailingTemplate.RemoveRange(_dbContext.MailingTemplate.Where( t=>t.ManagerId == userId ));
+
+            _dbContext.DeviceDeclaration.RemoveRange( _dbContext.DeviceDeclaration.Where(g => g.DeviceOwnerId == userId ));
+            
+            foreach (var template in _dbContext.MailingTemplate.Where( t=>t.ManagerId == userId )) 
+            {
+                template.ManagerId = template.SuccessorId;
+            }
 
             return await _userManager.DeleteAsync(user);
         }

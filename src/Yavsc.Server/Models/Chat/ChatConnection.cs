@@ -20,7 +20,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -40,9 +39,6 @@ namespace Yavsc.Models.Chat
         public string UserAgent { get; set; }
 
         public bool Connected { get; set; }
-
-        [InverseProperty("ChatUserConnection")]
-        public virtual List<ChatRoomPresence> Rooms { get; set; }
 
 
     }

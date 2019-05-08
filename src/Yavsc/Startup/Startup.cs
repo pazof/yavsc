@@ -274,7 +274,7 @@ namespace Yavsc
 
             // Add application services.
             services.AddTransient<IEmailSender, MailSender>();
-            services.AddTransient<IGoogleCloudMessageSender, GCMSender>();
+            services.AddTransient<IYavscMessageSender, GCMSender>();
             services.AddTransient<IBillingService, BillingService>();
             services.AddTransient<IDataStore, FileDataStore>( (sp) => new FileDataStore("googledatastore",false) );
             services.AddTransient<ICalendarManager, CalendarManager>();

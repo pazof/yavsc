@@ -1,16 +1,16 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190507142752_chatAccess")]
+    partial class chatAccess
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
@@ -840,7 +840,7 @@ namespace Yavsc.Migrations
                     b.HasKey("TaintId", "PrestationId");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Identity.DeviceDeclaration", b =>
+            modelBuilder.Entity("Yavsc.Models.Identity.GoogleCloudMobileDeclaration", b =>
                 {
                     b.Property<string>("DeviceId");
 
@@ -849,6 +849,9 @@ namespace Yavsc.Migrations
                         .HasAnnotation("Relational:GeneratedValueSql", "LOCALTIMESTAMP");
 
                     b.Property<string>("DeviceOwnerId");
+
+                    b.Property<string>("GCMRegistrationId")
+                        .IsRequired();
 
                     b.Property<DateTime?>("LatestActivityUpdate");
 
@@ -1104,13 +1107,13 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("UserId");
 
-                    b.Property<long>("AddressId");
-
                     b.Property<string>("ApplicationUserId");
 
                     b.Property<string>("EMail");
 
                     b.Property<string>("Name");
+
+                    b.Property<long?>("PostalAddressId");
 
                     b.HasKey("OwnerId", "UserId");
                 });
@@ -1405,13 +1408,9 @@ namespace Yavsc.Migrations
 
                     b.Property<DateTime>("DateModified");
 
-                    b.Property<string>("ManagerId")
-                        .IsRequired();
+                    b.Property<string>("ManagerId");
 
                     b.Property<string>("ReplyToAddress");
-
-                    b.Property<string>("SuccessorId")
-                        .IsRequired();
 
                     b.Property<int>("ToSend");
 
@@ -1786,7 +1785,7 @@ namespace Yavsc.Migrations
                         .HasForeignKey("TaintId");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Identity.DeviceDeclaration", b =>
+            modelBuilder.Entity("Yavsc.Models.Identity.GoogleCloudMobileDeclaration", b =>
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
@@ -1874,13 +1873,13 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Relationship.Contact", b =>
                 {
-                    b.HasOne("Yavsc.Models.Relationship.PostalAddress")
-                        .WithMany()
-                        .HasForeignKey("AddressId");
-
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("Yavsc.Models.Relationship.PostalAddress")
+                        .WithMany()
+                        .HasForeignKey("PostalAddressId");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Relationship.HyperLink", b =>
@@ -1987,10 +1986,6 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ManagerId");
-
-                    b.HasOne("Yavsc.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("SuccessorId");
                 });
 
             modelBuilder.Entity("Yavsc.Server.Models.IT.Project", b =>

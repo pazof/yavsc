@@ -8,10 +8,10 @@ using Yavsc.Models.Messaging;
 
 namespace Yavsc.Services
 {
-    public interface IGoogleCloudMessageSender
+    public interface IYavscMessageSender
     {
         Task<MessageWithPayloadResponse> NotifyBookQueryAsync(
-            IEnumerable<string> registrationId, 
+            IEnumerable<string> DeviceIds, 
             RdvQueryEvent ev);
 
         Task<MessageWithPayloadResponse> NotifyEstimateAsync(
