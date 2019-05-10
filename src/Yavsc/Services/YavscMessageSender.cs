@@ -47,13 +47,13 @@ namespace Yavsc.Services
                 throw new Exception("Spécifier un expéditeur");
 
             if (userIds == null )
-                throw new NotImplementedException("Notify e No user id");
+                throw new Exception("Notify e No user id");
 
             MessageWithPayloadResponse response = new MessageWithPayloadResponse();
 
             var raa = userIds.ToArray();
             if (raa.Length<1)
-                 throw new NotImplementedException("No GCM reg ids");
+                 throw new Exception("No dest id");
             
             try {
                 _logger.LogInformation($"Sending to {string.Join(" ",raa)} using signalR : "+JsonConvert.SerializeObject(ev));
@@ -68,30 +68,44 @@ namespace Yavsc.Services
                         var user = _dbContext.Users.FirstOrDefault(u=> u.Id == clientId);
                         if (user==null)
                         {
+                            response.failure++;
                             result.error = "no such user.";
                             continue;
                         }
                         if (!user.EmailConfirmed){
+                            response.failure++;
                             result.error = "user has not confirmed his email address.";
                             continue;
                         }
                         var body = ev.CreateBody();
+
+                        var mailSent = await _emailSender.SendEmailAsync(
+                            user.UserName,
+                            user.Email,
+                             $"{ev.Sender} (un client) vous demande un rendez-vous",
+                            $"{ev.CreateBody()}\r\n"
+                        );
+
                         var sent = await _emailSender.SendEmailAsync(ev.Sender, user.Email,
                             ev.Topic, body
                         );
-                        result.message_id = sent.MessageId;
                         if (!sent.Sent) {
+                            result.message_id = sent.MessageId;
                             result.error = sent.ErrorMessage;
                             response.failure++;
                         }
                         else 
+                        {
+                            result.message_id = mailSent.MessageId;
                             response.success++;
+                        }
                     }
                     else {
                         // we assume that each hub connected client will handle this signal
-                        hubClient.notify(ev);
+                        result.message_id=hubClient.notify(ev);
                         response.success++;
                     }
+                    results.Add(result);
                 }
                 response.results = results.ToArray();
                 return response;

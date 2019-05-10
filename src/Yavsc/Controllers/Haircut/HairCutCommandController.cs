@@ -104,7 +104,7 @@ namespace Yavsc.Controllers
                     {
                         var regids = command.PerformerProfile.Performer
                         .DeviceDeclarations.Select(d => d.DeviceId);
-                        grep = await _GCMSender.NotifyAsync(regids, yaev);
+                        grep = await _MessageSender.NotifyAsync(regids, yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile
@@ -271,7 +271,7 @@ namespace Yavsc.Controllers
                         if (pro.Performer.DeviceDeclarations.Count > 0)
                         {
                             var regids = pro.Performer.DeviceDeclarations.Select(d => d.DeviceId);
-                            grep = await _GCMSender.NotifyHairCutQueryAsync(regids, yaev);
+                            grep = await _MessageSender.NotifyHairCutQueryAsync(regids, yaev);
                         }
                         // TODO setup a profile choice to allow notifications
                         // both on mailbox and mobile
@@ -431,7 +431,7 @@ namespace Yavsc.Controllers
                     {
                         var regids = command.PerformerProfile.Performer
                         .DeviceDeclarations.Select(d => d.DeviceId);
-                        grep = await _GCMSender.NotifyHairCutQueryAsync(regids, yaev);
+                        grep = await _MessageSender.NotifyHairCutQueryAsync(regids, yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile, and to allow calendar event insertion.

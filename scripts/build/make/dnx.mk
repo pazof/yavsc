@@ -44,7 +44,7 @@ project.lock.json: project.json
 	$(dnu) restore
 
 watch: project.lock.json
-	MONO_MANAGED_WATCHER=enabled ASPNET_ENV=$(ASPNET_ENV) ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) dnx-watch web --configuration=$(CONFIGURATION)
+	MONO_OPTIONS=--debug MONO_MANAGED_WATCHER=enabled ASPNET_ENV=$(ASPNET_ENV) ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) dnx-watch web --configuration=$(CONFIGURATION)
 
 clean:
 	rm -rf bin obj

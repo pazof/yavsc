@@ -63,7 +63,9 @@ namespace Yavsc.Models
             builder.Entity<Models.Cratie.Option>().HasKey(o => new { o.Code, o.CodeScrutin });
             builder.Entity<Notification>().Property(n => n.icon).HasDefaultValue("exclam");
             builder.Entity<ChatRoomAccess>().HasKey(p => new { room = p.ChannelName, user = p.UserId });
-             
+            builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.User);
+            builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.Owner);
+
             foreach (var et in builder.Model.GetEntityTypes())
             {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity") != null)

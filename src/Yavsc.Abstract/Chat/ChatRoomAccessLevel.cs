@@ -1,7 +1,9 @@
 namespace Yavsc.Abstract.Chat
 {
     public enum ChatRoomAccessLevel: int {
-            Op=1,
-            HalfOp=2
+        None=0,
+        Voice,
+            Op,
+            HalfOp
     }
 }
