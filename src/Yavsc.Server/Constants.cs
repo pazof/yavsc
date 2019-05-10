@@ -61,9 +61,8 @@ namespace Yavsc
         public const string HubGroupAnonymous = "anonymous";
         public const string HubGroupCops= "cops";
         public const int MaxChanelName = 255;
-    }
-    public static class NotificationTypes {
-        public const string Connected = "connected";
-        public const string DisConnected = "disconnected";
+
+        public const string AnonymousUserNamePrefix = "?";
+        public const string KeyParamChatUserName = "username";
     }
 }

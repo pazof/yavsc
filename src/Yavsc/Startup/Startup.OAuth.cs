@@ -129,7 +129,6 @@ namespace Yavsc {
                         options.AutomaticAuthenticate = true;
                         options.ExpireTimeSpan = TimeSpan.FromMinutes (5);
                         options.LoginPath = new PathString (Constants.LoginPath.Substring (1));
-                        // TODO implement an access denied page
                         options.AccessDeniedPath = new PathString (Constants.LoginPath.Substring (1));
                     });
 

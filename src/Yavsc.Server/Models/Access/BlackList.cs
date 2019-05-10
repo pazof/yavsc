@@ -15,8 +15,11 @@ namespace Yavsc.Models.Access
         [Required]
         public string OwnerId { get; set; }
 
-        [ForeignKey("OwnerId"),JsonIgnore]
+        [ForeignKey("OwnerId"), JsonIgnore]
         public virtual ApplicationUser Owner { get; set; }
+
+        [ForeignKey("UserId"), JsonIgnore]
+        public virtual ApplicationUser User { get; set; }
     }
    
 }

@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
         protected UserManager<ApplicationUser> _userManager;
         protected ApplicationDbContext _context;
         protected GoogleAuthSettings _googleSettings;
-        protected IYavscMessageSender _GCMSender;
+        protected IYavscMessageSender _MessageSender;
         protected IEmailSender _emailSender;
         protected IStringLocalizer _localizer;
         protected SiteSettings _siteSettings;
@@ -44,7 +44,7 @@ namespace Yavsc.Controllers
           ILoggerFactory loggerFactory)
         {
             _context = context;
-            _GCMSender = GCMSender;
+            _MessageSender = GCMSender;
             _emailSender = emailSender;
             _googleSettings = googleSettings.Value;
             _userManager = userManager;
@@ -165,47 +165,39 @@ namespace Yavsc.Controllers
 
                 var yaev = command.CreateEvent(_localizer, "NewCommand");
 
-                MessageWithPayloadResponse grep = null;
+                MessageWithPayloadResponse nrep = null;
 
                 if (pro.AcceptNotifications
                 && pro.AcceptPublicContact)
                 {
-
                     try
                     {
-                        _logger.LogInformation("sending GCM");
-                        if (pro.Performer.DeviceDeclarations.Count > 0)
-                        {
-                            var regids = command.PerformerProfile.Performer
-                            .DeviceDeclarations.Select(d => d.DeviceId);
-                            grep = await _GCMSender.NotifyBookQueryAsync(regids, yaev);
-                        }
-
-
+                        _logger.LogInformation("sending message");
+                        var regids = new [] { command.PerformerProfile.Performer.Id };
+                        nrep = await _MessageSender.NotifyBookQueryAsync(regids, yaev);
                         // TODO setup a profile choice to allow notifications
                         // both on mailbox and mobile
                         // if (grep==null || grep.success<=0 || grep.failure>0)
-                        ViewBag.GooglePayload = grep;
+                        ViewBag.MessagingResponsePayload = nrep;
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex.Message);
+                        _logger.LogError("Message sending failed with: "+ex.Message);
+                        throw;
                     }
 
-                    try
-                    {
-                        ViewBag.EmailSent = await _emailSender.SendEmailAsync(
-                            command.PerformerProfile.Performer.UserName,
-                            command.PerformerProfile.Performer.Email,
-                             $"{command.Client.UserName} (un client) vous demande un rendez-vous",
-                            $"{yaev.CreateBody()}\r\n-- \r\n{yaev.Previsional}\r\n{yaev.EventDate}\r\n"
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex.Message);
-                    }
                 }
+                else {
+                    nrep = new MessageWithPayloadResponse { failure=1, results = new MessageWithPayloadResponse.Result[] {
+                        new MessageWithPayloadResponse.Result 
+                        { 
+                            error=ErrorMessages.ContactRefused, 
+                            registration_id= pro.PerformerId 
+                        }
+                    } };
+                    _logger.LogInformation("Command.Create && ( !pro.AcceptNotifications || |pro.AcceptPublicContact ) ");
+                }
+                ViewBag.MessagingResponsePayload = nrep;
                 ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == command.ActivityCode);
                 ViewBag.GoogleSettings = _googleSettings;
                 return View("CommandConfirmation", command);

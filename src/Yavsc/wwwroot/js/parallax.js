@@ -26,6 +26,9 @@ $(document).ready(function($){
 	var $stheight = $(window).height();
 
 	var onPos = function (bgobj,ax,ay) {
+		// save pos for scrolling
+		tiltLR=ax;
+		titleFB=ay;
 	  	var speed = bgobj.data('speed');
 		var dx=($window.scrollLeft()+ax-$stwidth/2)/speed;
 		var dy=($window.scrollTop()+ay-$stheight/2)/speed;
@@ -83,13 +86,9 @@ $(document).ready(function($){
 		if (window.DeviceOrientationEvent) {
 		if ($stwidth>320 && $stheight>320) {
 		  window.addEventListener('deviceorientation', function(event) {
-		  tiltLR = $stwidth*Math.sin(event.gamma*Math.PI/180);
-		  	titleFB = $stheight*Math.sin(event.beta*Math.PI/90);
-			onPos($bgobj,tiltLR,titleFB);
+			onPos($bgobj,$stwidth*Math.sin(event.gamma*Math.PI/180),$stheight*Math.sin(event.beta*Math.PI/90));
 		  },false); }
 		  $(window).mousemove(function(e) {
-		  	tiltLR = e.pageX;
-		  	titleFB = e.pageY;
 			onPos($bgobj,e.pageX,e.pageY);
 			});
 		}  

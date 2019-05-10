@@ -25,8 +25,6 @@ namespace Yavsc.Models.Chat
             get; set;
         }
 
-
-
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; }
     }

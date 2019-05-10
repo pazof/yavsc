@@ -1,12 +1,14 @@
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using Yavsc.Abstract.Chat;
 
 namespace Yavsc.Models.Chat
 {
-    public class ChatRoom: IChatRoom<ChatRoomAccess>
+    public class ChatRoom: IChatRoom<ChatRoomAccess>, IBaseTrackedEntity
     {
         public string Topic { get; set; }
 
@@ -16,11 +18,17 @@ namespace Yavsc.Models.Chat
 
         public string OwnerId { get; set; }
 
-        [ForeignKey("OwnerId")]
+        [ForeignKey("OwnerId")][JsonIgnore]
         public virtual ApplicationUser Owner { get; set; }
 
-        [InverseProperty("Room")]
+        [InverseProperty("Room")][JsonIgnore]
         public virtual List<ChatRoomAccess> Moderation { get; set; }
+        public DateTime LatestJoinPart { get; set;}
 
+        public DateTime DateCreated { get; set; }
+
+        public string UserCreated { get; set; }
+        public DateTime DateModified { get; set;}
+        public string UserModified { get; set; }
     }
 }
