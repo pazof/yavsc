@@ -32,7 +32,6 @@
   {
 
     if (!full) throw "not implemented";
-
     var chat = $.connection.chatHub
     // Create a function that the hub can call back to display messages.
     chat.client.addMessage = function (name, room, message) {
@@ -72,8 +71,7 @@
     chat.client.onJoined =  function (rinfo) 
     {
         console.log(rinfo);
-        $('#inp_'+rinfo.Name).prop('enable',true)
-        
+        setActiveRoom(rinfo.Name);
     }
 
     $.fn.filterByData = function (prop, val) {
@@ -82,44 +80,54 @@
       )
     }
 
-    var roomlist = $("<div class='roomlist' border='dashed'></div>");
+    var activeRoom;
+    var activeRoomName;
+    var setActiveRoom = function(room) {
+      if (activeRoom) {
+        // TODO animate
+        activeRoom.addClass("hidden");
+        $("sel_"+activeRoomName).addClass("btn-primary");
+      } 
+      activeRoom=$("#vroom_"+room);
+      activeRoomName=room;
+      activeRoom.removeClass("hidden");
+    }
 
+    var roomlist = $('<div class="roomlist"></div>');
     roomlist.appendTo($view);
+    var chatlist = $('<div class="chatlist" ></div>');
+    chatlist.appendTo($view);
   
     var buildRoom = function (room)
     {
-      console.log('building:'+room);
-
-      var roomTag =  $("<a>"+room+"</a>");
-      roomTag.addClass('btn').addClass('default')
+      var roomTag =  $("<a>"+room+"</a>").addClass("btn").addClass("btn-primary");
+      roomTag.prop("id","sel_"+room)
       .click(function(){
-        setRoom(room)
+        setActiveRoom(room);
+        $(this).removeClass("btn-primary");
       });
-
-      var roomview = $("<div></div>");
-
       roomTag.appendTo(roomlist);
+      var roomview = $("<div></div>").addClass("container");
+      roomview.appendTo(chatlist);
       roomview.prop('id',"vroom_"+room);
-      var msglist = $("<ul class=\"mesglist\"></ul>");
+      var msglist = $("<ul></ul>").addClass("mesglist");
       msglist.prop('id',"room_"+room);
       msglist.appendTo(roomview);
-      
       $("<input type=\"text\">")
       .prop('id','inp_'+room)
       .prop('enable',false)
       .prop('hint','hello')
       .prop('title','send to '+room)
-      .keydown(function(ev){
+      .addClass('form-control')
+      .keydown(function(ev) {
         if (ev.which == 13) {
-          console.log('sending:'+room+' '+this.value);
-          chat.server.send(room, this.value)
-          this.value=""
-        } 
-      }).appendTo(roomview);
+          if (this.value.length==0) return;
+          console.log("sending to "+room+" "+this.value)
+          chat.server.send(room, this.value);
+          this.value="";
+        }}).appendTo(roomview);
       chans.push(room);
-      roomview.appendTo($view);
-      console.log('done with built:');
-      console.log(chans);
+      setActiveRoom(room);
     }
 
     // build a channel list
@@ -151,6 +159,7 @@
     })
 
     $.connection.hub.disconnected(function () {
+
       onDisCx()
       setTimeout(function () {
         $.connection.hub.start().done(function () {
@@ -160,16 +169,19 @@
       })
     })
     
+    
+
     $("<label for=\"channame\">&gt;&nbsp;</label>")
     .appendTo($view);
     var chanName = $("<input name=\"channame\" title=\"channel name\" hint=\"yavsc\">");
     chanName.appendTo($view);
     
-    
     chanName.keydown(
       function (event) {
       if (event.which == 13) {
+        if (this.value.length==0) return;
         buildRoom(this.value);
+        chat.server.join(this.value);
         this.value=""
       } else {
        // TODO showRoomInfo(this.value);
@@ -180,15 +192,7 @@
 
     ulist.appendTo($view);
 
-    var activeRoom;
-    var setRoom = function(room) {
-      if (activeRoom) {
-        // TODO animate
-        activeRoom.addClass("hidden");
-      } 
-      activeRoom=$("#vroom_"+room);
-      activeRoom.removeClass("hidden")
-    }
+    
     var pvuis
     // TODO get this data from the chatview element
     var audio = new Audio('/sounds/bell.mp3')
