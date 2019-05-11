@@ -19,19 +19,17 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hosting;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using System.Collections.Concurrent;
+using Microsoft.Data.Entity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Yavsc
 {
-    using System;
-    using System.Collections.Concurrent;
-    using Microsoft.AspNet.WebUtilities;
-    using Microsoft.Data.Entity;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
     using Models;
     using Models.Chat;
 
@@ -113,7 +111,12 @@ namespace Yavsc
                     return Context.User.Identity.Name;
                 }
             anonymousSequence++;
-            var aname = $"{Constants.AnonymousUserNamePrefix}{anonymousSequence}";
+            var reqKeys = Context.Request.QueryString.Select(pv => pv.Key);
+            _logger.LogInformation(string.Join(" ", reqKeys));
+            
+            var queryUname = Context.Request.QueryString[Constants.KeyParamChatUserName] ;
+            
+            var aname = $"{Constants.AnonymousUserNamePrefix}{queryUname}{anonymousSequence}";
             ChatUserNames[Context.ConnectionId]=aname;
              _logger.LogInformation($"Anonymous chat user name set to : {aname}");
              return aname;
