@@ -28,7 +28,6 @@ namespace Yavsc.Controllers
             var cxsQuery = dbContext.ChatConnection?.Include(c=>c.Owner)
             .Where(cx => cx.Connected).GroupBy( c => c.ApplicationUserId );
 
-            // List<ChatUserInfo> result = new List<ChatUserInfo>();
             if (cxsQuery!=null)
             foreach (var g in cxsQuery) {
 
