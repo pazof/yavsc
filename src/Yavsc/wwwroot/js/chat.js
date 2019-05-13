@@ -68,7 +68,7 @@
       }
     }
     
-    chat.client.onJoined =  function (rinfo) 
+    chat.client.joint =  function (rinfo) 
     {
         console.log(rinfo);
         setActiveRoom(rinfo.Name);
