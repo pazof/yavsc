@@ -39,8 +39,8 @@ namespace Yavsc
         ILogger _logger;
 
         public ChatHub()
-        { 
-            
+        {
+
             var scope = Startup.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
             _dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
@@ -55,7 +55,7 @@ namespace Yavsc
             if (Context.User != null)
             {
                 isAuth = Context.User.Identity.IsAuthenticated;
-                
+
                 var group = isAuth ?
                  Constants.HubGroupAuthenticated : Constants.HubGroupAnonymous;
                 // Log ("Cx: " + group);
@@ -64,13 +64,14 @@ namespace Yavsc
                 {
                     _logger.LogInformation("Authenticated chat user");
 
-                    var userId = _dbContext.Users.First(u=>u.UserName == userName).Id;
-                    
+                    var userId = _dbContext.Users.First(u => u.UserName == userName).Id;
+
                     var userHadConnections = _dbContext.ChatConnection.Any(accx => accx.ConnectionId == Context.ConnectionId);
-                    
-                    if (userHadConnections) {
-                        var ccx = _dbContext.ChatConnection.First(c=> c.ConnectionId == Context.ConnectionId);
-                        ccx.Connected=true;
+
+                    if (userHadConnections)
+                    {
+                        var ccx = _dbContext.ChatConnection.First(c => c.ConnectionId == Context.ConnectionId);
+                        ccx.Connected = true;
                     }
                     else
                         _dbContext.ChatConnection.Add(new ChatConnection
@@ -80,49 +81,50 @@ namespace Yavsc
                             UserAgent = Context.Request.Headers["User-Agent"],
                             Connected = true
                         });
-                    _dbContext.SaveChanges(); 
-                     // TODO ChatHubConnectioinFlags
+                    _dbContext.SaveChanges();
+                    // TODO ChatHubConnectioinFlags
                 }
                 else
                 {
-                // FIXME is this line reached ?
+                    // FIXME is this line reached ?
                     _logger.LogInformation("Anonymous chat user (first use case)");
                     throw new NotSupportedException();
                 }
             }
-            else {
+            else
+            {
                 // TODO var uname = Context.Request.QueryString[Constants.KeyParamChatUserName] ?? "anon";
-                
+
                 await Groups.Add(Context.ConnectionId, Constants.HubGroupAnonymous);
             }
             // TODO only notify followers
             Clients.Group(Constants.HubGroupAuthenticated).notify(NotificationTypes.Connected, Context.ConnectionId, userName);
             await base.OnConnected();
         }
-        static ConcurrentDictionary <string,string> ChatUserNames 
+        static ConcurrentDictionary<string, string> ChatUserNames
         = new ConcurrentDictionary<string, string>();
         string setUserName()
         {
-            if (Context.User!=null)
+            if (Context.User != null)
                 if (Context.User.Identity.IsAuthenticated)
                 {
-                    ChatUserNames[Context.ConnectionId]=Context.User.Identity.Name;
+                    ChatUserNames[Context.ConnectionId] = Context.User.Identity.Name;
                     _logger.LogInformation($"chat user name set to : {Context.User.Identity.Name}");
                     return Context.User.Identity.Name;
                 }
             anonymousSequence++;
             var reqKeys = Context.Request.QueryString.Select(pv => pv.Key);
             _logger.LogInformation(string.Join(" ", reqKeys));
-            
-            var queryUname = Context.Request.QueryString[Constants.KeyParamChatUserName] ;
-            
+
+            var queryUname = Context.Request.QueryString[Constants.KeyParamChatUserName];
+
             var aname = $"{Constants.AnonymousUserNamePrefix}{queryUname}{anonymousSequence}";
-            ChatUserNames[Context.ConnectionId]=aname;
-             _logger.LogInformation($"Anonymous chat user name set to : {aname}");
-             return aname;
+            ChatUserNames[Context.ConnectionId] = aname;
+            _logger.LogInformation($"Anonymous chat user name set to : {aname}");
+            return aname;
         }
 
-        static long anonymousSequence=0;
+        static long anonymousSequence = 0;
 
         public override Task OnDisconnected(bool stopCalled)
         {
@@ -151,66 +153,71 @@ namespace Yavsc
         public override Task OnReconnected()
         {
             if (Context.User != null) if (Context.User.Identity.IsAuthenticated)
-            {
-                var userName = Context.User.Identity.Name;
-                var user = _dbContext.Users.FirstOrDefault(u=>u.UserName == userName);
-                if (user == null)
-                    _logger.LogWarning($"null user with <{userName}> & Context.User.Identity.IsAuthenticated");
-                var userId = user.Id;
-                var userHadConnections = _dbContext.ChatConnection.Any(accx => accx.ConnectionId == Context.ConnectionId);
-                
-                if (userHadConnections) {
-                    var ccx = _dbContext.ChatConnection.First(c=> c.ConnectionId == Context.ConnectionId);
-                    ccx.Connected=true;
-                }
-                else
-                    _dbContext.ChatConnection.Add(new ChatConnection
+                {
+                    var userName = Context.User.Identity.Name;
+                    var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
+                    if (user == null)
+                        _logger.LogWarning($"null user with <{userName}> & Context.User.Identity.IsAuthenticated");
+                    var userId = user.Id;
+                    var userHadConnections = _dbContext.ChatConnection.Any(accx => accx.ConnectionId == Context.ConnectionId);
+
+                    if (userHadConnections)
                     {
-                        ApplicationUserId = userId,
-                        ConnectionId = Context.ConnectionId,
-                        UserAgent = Context.Request.Headers["User-Agent"],
-                        Connected = true
-                    });
-                _dbContext.SaveChanges(); 
-                Clients.Group("authenticated").notify(NotificationTypes.Reconnected, Context.ConnectionId, userName);
-            }
+                        var ccx = _dbContext.ChatConnection.First(c => c.ConnectionId == Context.ConnectionId);
+                        ccx.Connected = true;
+                    }
+                    else
+                        _dbContext.ChatConnection.Add(new ChatConnection
+                        {
+                            ApplicationUserId = userId,
+                            ConnectionId = Context.ConnectionId,
+                            UserAgent = Context.Request.Headers["User-Agent"],
+                            Connected = true
+                        });
+                    _dbContext.SaveChanges();
+                    Clients.Group("authenticated").notify(NotificationTypes.Reconnected, Context.ConnectionId, userName);
+                }
             return base.OnReconnected();
         }
 
         static ConcurrentDictionary<string, ChatRoomInfo> Channels = new ConcurrentDictionary<string, ChatRoomInfo>();
 
-        public class ChatRoomInfo {
-            public string Name ;
-            public Dictionary<string,string> Users = new Dictionary<string, string>();
+        public class ChatRoomInfo
+        {
+            public string Name;
+            public Dictionary<string, string> Users = new Dictionary<string, string>();
             public string Topic;
         }
 
         public void Join(string roomName)
         {
-            _logger.LogInformation("a client for "+roomName);
+            _logger.LogInformation("a client for " + roomName);
             var userName = ChatUserNames[Context.ConnectionId];
             _logger.LogInformation($" chat user : {userName}");
-            var roomGroupName = "room_"+roomName;
+            var roomGroupName = "room_" + roomName;
 
             ChatRoomInfo chanInfo;
             if (Channels.ContainsKey(roomName))
             {
-                if (Channels.TryGetValue(roomName, out chanInfo)) {
+                if (Channels.TryGetValue(roomName, out chanInfo))
+                {
                     _logger.LogInformation("room is avaible.");
                     if (chanInfo.Users.ContainsKey(Context.ConnectionId))
-                        _logger.LogWarning("user already joined.");
-                    else {
-                        chanInfo.Users.Add(Context.ConnectionId, userName); 
-                        
-                        Groups.Add(Context.ConnectionId,roomGroupName);
+                        _logger.LogWarning("user already joint.");
+                    else
+                    {
+                        chanInfo.Users.Add(Context.ConnectionId, userName);
+
+                        Groups.Add(Context.ConnectionId, roomGroupName);
                     }
-                    Clients.Caller.onJoined(chanInfo);
-                    Clients.Group("room_"+roomName).notify( NotificationTypes.UserJoin, Context.ConnectionId, Clients.Caller.UserName);
-                    
+                    Clients.Caller.joint(chanInfo);
+                    Clients.Group("room_" + roomName).notify(NotificationTypes.UserJoin, Context.ConnectionId, Clients.Caller.UserName);
+
                     _logger.LogInformation("exiting ok.");
                     return;
                 }
-                else {
+                else
+                {
                     _logger.LogInformation("room seemd to be avaible ... but we could get no info on it.");
                     Clients.Caller.notify(NotificationTypes.Error, "join get chan failed ...");
                     return;
@@ -220,17 +227,18 @@ namespace Yavsc
             _logger.LogInformation("joining empty chan.");
 
             var room = _dbContext.ChatRoom.FirstOrDefault(r => r.Name == roomName);
-           
+
             chanInfo = new ChatRoomInfo();
             chanInfo.Users.Add(Context.ConnectionId, userName);
 
-            if (room!=null)
+            if (room != null)
             {
                 _logger.LogInformation("existent room.");
                 chanInfo.Topic = room.Topic;
                 chanInfo.Name = room.Name;
             }
-            else { // a first join, we create it.
+            else
+            { // a first join, we create it.
                 _logger.LogInformation("room creation.");
                 chanInfo.Name = roomName;
                 chanInfo.Topic = "<just created>";
@@ -245,15 +253,16 @@ namespace Yavsc
         }
 
         [Authorize]
-        public void Register (string room )
+        public void Register(string room)
         {
             var existent = _dbContext.ChatRoom.Any(r => r.Name == room);
-            if (existent) {
+            if (existent)
+            {
                 Clients.Caller.notify(NotificationTypes.Error, "already registered.");
                 return;
             }
             string userName = Context.User.Identity.Name;
-            var user = _dbContext.Users.FirstOrDefault(u=>u.UserName == userName);
+            var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
             var newroom = new ChatRoom { Name = room, OwnerId = user.Id };
             ChatRoomInfo chanInfo;
             if (Channels.TryGetValue(room, out chanInfo))
@@ -267,29 +276,29 @@ namespace Yavsc
             _dbContext.SaveChanges(user.Id);
         }
 
-         /** TODO chan register on server command 
-                room = new ChatRoom { Name = roomName, OwnerId = uid  };
-                _dbContext.ChatRoom.Add(room);
-                _dbContext.SaveChanges(uid);
-                room.LatestJoinPart = DateTime.Now;
-                chanInfo.Topic = room.Topic;
-                 */
+        /** TODO chan register on server command 
+               room = new ChatRoom { Name = roomName, OwnerId = uid  };
+               _dbContext.ChatRoom.Add(room);
+               _dbContext.SaveChanges(uid);
+               room.LatestJoinPart = DateTime.Now;
+               chanInfo.Topic = room.Topic;
+                */
 
 
-        public void Part (string roomName, string reason)
+        public void Part(string roomName, string reason)
         {
             ChatRoomInfo chanInfo;
             if (Channels.TryGetValue(roomName, out chanInfo))
             {
-                var roomGroupName = "room_"+roomName;
+                var roomGroupName = "room_" + roomName;
                 Groups.Remove(Context.ConnectionId, roomGroupName);
                 var group = Clients.Group(roomGroupName);
                 var username = ChatUserNames[Context.ConnectionId];
-                group.notify( NotificationTypes.UserPart, Context.ConnectionId,  new { username, reason } );
+                group.notify(NotificationTypes.UserPart, Context.ConnectionId, new { username, reason });
 
                 chanInfo.Users.Remove(Context.ConnectionId);
                 ChatRoomInfo deadchanInfo;
-                if (chanInfo.Users.Count==0)
+                if (chanInfo.Users.Count == 0)
                     if (Channels.TryRemove(roomName, out deadchanInfo))
                     {
                         var room = _dbContext.ChatRoom.FirstOrDefault(r => r.Name == roomName);
@@ -297,7 +306,8 @@ namespace Yavsc
                         _dbContext.SaveChanges();
                     }
             }
-            else {
+            else
+            {
                 Clients.Caller.notify(NotificationTypes.Error, "not joint");
             }
         }
@@ -305,15 +315,16 @@ namespace Yavsc
 
         public void Send(string roomName, string message)
         {
-            var groupname = "room_"+roomName;
+            var groupname = "room_" + roomName;
             ChatRoomInfo chanInfo;
             if (Channels.TryGetValue(roomName, out chanInfo))
             {
-                if (!chanInfo.Users.ContainsKey(Context.ConnectionId)){
+                if (!chanInfo.Users.ContainsKey(Context.ConnectionId))
+                {
                     Clients.Caller.notify(NotificationTypes.Error, $"could not join channel ({roomName})");
                     return;
                 }
-                string uname =  ChatUserNames[Context.ConnectionId];
+                string uname = ChatUserNames[Context.ConnectionId];
                 Clients.Group(groupname).addMessage(uname, roomName, message);
             }
             else
@@ -321,7 +332,7 @@ namespace Yavsc
                 Clients.Caller.notify(NotificationTypes.Error, $"could not join channel ({roomName})");
                 return;
             }
-            
+
         }
 
         [Authorize]
@@ -329,17 +340,17 @@ namespace Yavsc
         {
             if (!Context.User.IsInRole(Constants.AdminGroupName))
             {
-                var bl =  _dbContext.BlackListed
+                var bl = _dbContext.BlackListed
                 .Include(r => r.User)
-                .Where(r=>r.User.UserName == Context.User.Identity.Name)
-                .Select(r=>r.OwnerId);
+                .Where(r => r.User.UserName == Context.User.Identity.Name)
+                .Select(r => r.OwnerId);
 
-                if (bl!=null) foreach (string uid in bl)
-                {
-                    if (_dbContext.ChatConnection.Any(cx => cx.ApplicationUserId==uid && cx.Connected))
-                        Clients.Caller.notify(NotificationTypes.PrivateMessageDenied, connectionId);
-                        return ;
-                }
+                if (bl != null) foreach (string uid in bl)
+                    {
+                        if (_dbContext.ChatConnection.Any(cx => cx.ApplicationUserId == uid && cx.Connected))
+                            Clients.Caller.notify(NotificationTypes.PrivateMessageDenied, connectionId);
+                        return;
+                    }
             }
             var cli = Clients.Client(connectionId);
             cli.addPV(Context.User.Identity.Name, message);
@@ -356,10 +367,11 @@ namespace Yavsc
 
         public void Abort()
         {
-            var cx = _dbContext.ChatConnection.SingleOrDefault(c=>c.ConnectionId == Context.ConnectionId);
-            if (cx!=null) {
+            var cx = _dbContext.ChatConnection.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
+            if (cx != null)
+            {
                 _dbContext.ChatConnection.Remove(cx);
-                _dbContext.SaveChanges(); 
+                _dbContext.SaveChanges();
             }
         }
     }
