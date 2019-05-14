@@ -258,7 +258,9 @@ namespace Yavsc.Models
 
         public DbSet<Announce> Announce { get; set; }
         
-        // TODO useless, to drop
+        // TODO remove and opt for for memory only storing,
+        // as long as it must be set empty each time the service is restarted,
+        // and that chatting should be kept as must as possible independent from db context
         public DbSet<ChatConnection> ChatConnection { get; set; }
 
         public DbSet<ChatRoom> ChatRoom { get; set; }

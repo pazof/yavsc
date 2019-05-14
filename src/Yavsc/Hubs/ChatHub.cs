@@ -189,7 +189,7 @@ namespace Yavsc
             public string Topic;
         }
 
-        public void Join(string roomName)
+        public ChatRoomInfo Join(string roomName)
         {
             _logger.LogInformation("a client for " + roomName);
             var userName = ChatUserNames[Context.ConnectionId];
@@ -214,13 +214,13 @@ namespace Yavsc
                     Clients.Group("room_" + roomName).notify(NotificationTypes.UserJoin, Context.ConnectionId, Clients.Caller.UserName);
 
                     _logger.LogInformation("exiting ok.");
-                    return;
+                    return chanInfo;
                 }
                 else
                 {
                     _logger.LogInformation("room seemd to be avaible ... but we could get no info on it.");
                     Clients.Caller.notify(NotificationTypes.Error, "join get chan failed ...");
-                    return;
+                    return null;
                 }
             }
             // chan was almost empty
@@ -247,9 +247,10 @@ namespace Yavsc
             if (Channels.TryAdd(roomName, chanInfo))
             {
                 Groups.Add(Context.ConnectionId, roomGroupName);
-                Clients.Caller.onJoined(chanInfo);
+                return(chanInfo);
             }
             else _logger.LogError("Chan create failed unexpectly...");
+            return null;
         }
 
         [Authorize]
