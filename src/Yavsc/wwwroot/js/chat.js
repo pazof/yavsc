@@ -68,12 +68,6 @@
       }
     }
     
-    chat.client.joint =  function (rinfo) 
-    {
-        console.log(rinfo);
-        setActiveRoom(rinfo.Name);
-    }
-
     $.fn.filterByData = function (prop, val) {
       return this.filter(
         function () { return $(this).data(prop) == val; }
@@ -145,7 +139,10 @@
       $('#chatview').removeClass('disabled');
 
       chans.forEach(function(room) {
-        chat.server.join(room);
+        chat.server.join(room).done(function(chatInfo)
+        {console.log(chatInfo);
+          setActiveRoom(chatInfo.Name);
+        });
       })
     }
 
@@ -181,7 +178,10 @@
       if (event.which == 13) {
         if (this.value.length==0) return;
         buildRoom(this.value);
-        chat.server.join(this.value);
+        chat.server.join(this.value).done(function(chatInfo)
+        {console.log(chatInfo);
+          setActiveRoom(chatInfo.Name);
+        });
         this.value=""
       } else {
        // TODO showRoomInfo(this.value);
