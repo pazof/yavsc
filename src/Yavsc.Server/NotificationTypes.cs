@@ -9,5 +9,7 @@ namespace Yavsc
         public const string PrivateMessageDenied = "deniedpv";
 
         public const string Error = "error";
+
+        public const string BookQuery = "bookQuery";
     }
 }

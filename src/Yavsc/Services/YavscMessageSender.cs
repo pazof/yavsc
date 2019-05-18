@@ -57,42 +57,47 @@ namespace Yavsc.Services
                  throw new Exception("No dest id");
             
             try {
-                _logger.LogInformation($"Sending to {string.Join(" ",raa)} using signalR : "+JsonConvert.SerializeObject(ev));
                 List<MessageWithPayloadResponse.Result> results = new List<MessageWithPayloadResponse.Result>();
                 foreach(var clientId in raa) {
                     MessageWithPayloadResponse.Result result = new MessageWithPayloadResponse.Result();
                     result.registration_id = clientId;
 
+                    var user = _dbContext.Users.FirstOrDefault(u=> u.Id == clientId);
+                    if (user==null)
+                    {
+                        response.failure++;
+                        result.error = "no such user.";
+                        continue;
+                    }
+                    if (!user.EmailConfirmed){
+                        response.failure++;
+                        result.error = "user has not confirmed his email address.";
+                        continue;
+                    }
+                    if (user.Email==null){
+                        response.failure++;
+                        result.error = "user has no legacy email address.";
+                        continue;
+                    }
+
+                    var body = ev.CreateBody();
+                    
+                    
+                    
                     var hubClient = hubContext.Clients.User(clientId);
                     if (hubClient == null)
                     {
-                        var user = _dbContext.Users.FirstOrDefault(u=> u.Id == clientId);
-                        if (user==null)
-                        {
-                            response.failure++;
-                            result.error = "no such user.";
-                            continue;
-                        }
-                        if (!user.EmailConfirmed){
-                            response.failure++;
-                            result.error = "user has not confirmed his email address.";
-                            continue;
-                        }
-                        var body = ev.CreateBody();
-
-                        var mailSent = await _emailSender.SendEmailAsync(
+                        _logger.LogDebug($"Sending to {user.UserName} <{user.Email}> : {body}");
+                            var mailSent = await _emailSender.SendEmailAsync(
                             user.UserName,
                             user.Email,
-                             $"{ev.Sender} (un client) vous demande un rendez-vous",
-                            $"{ev.CreateBody()}\r\n"
+                                $"{ev.Sender} (un client) vous demande un rendez-vous",
+                            body+Environment.NewLine
                         );
 
-                        var sent = await _emailSender.SendEmailAsync(ev.Sender, user.Email,
-                            ev.Topic, body
-                        );
-                        if (!sent.Sent) {
-                            result.message_id = sent.MessageId;
-                            result.error = sent.ErrorMessage;
+                        if (!mailSent.Sent) {
+                            result.message_id = mailSent.MessageId;
+                            result.error = mailSent.ErrorMessage;
                             response.failure++;
                         }
                         else 
@@ -102,8 +107,16 @@ namespace Yavsc.Services
                         }
                     }
                     else {
+                        _logger.LogDebug($"Sending signal to {string.Join(" ",raa)}  : "+JsonConvert.SerializeObject(ev));
                         // we assume that each hub connected client will handle this signal
-                        result.message_id=hubClient.notify(ev);
+                        
+                        hubClient.notify(NotificationTypes.BookQuery,
+                          $"# {ev.Sender} (un client) vous demande un rendez-vous\n"+body);
+                        
+                        result.message_id=MimeKit.Utils.MimeUtils.GenerateMessageId(
+                            siteSettings.Authority
+                        );
+                        
                         response.success++;
                     }
                     results.Add(result);
