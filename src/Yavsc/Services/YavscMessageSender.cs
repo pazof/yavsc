@@ -34,6 +34,7 @@ namespace Yavsc.Services
             _emailSender = emailSender;
             siteSettings = sitesOptions?.Value;
             hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+            _dbContext = dbContext;
         }
         public async Task <MessageWithPayloadResponse> NotifyEvent<Event>
          (IEnumerable<string> userIds, Event ev)

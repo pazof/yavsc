@@ -3,7 +3,6 @@
 .navbar-nav .dropdown>a {
     background-color: rgba(0, 0, 0, .2);
     border-radius: 2em;
-    vertical-align: center;
 }
 
 .navbar-link:hover,
@@ -279,13 +278,6 @@ main.container {
         padding-left: .3em;
         margin-left: .3em;
         margin-right: .3em;
-    }
-    .navbar-brand {
-        float: left;
-        height: 50px;
-        padding: 5px 5px;
-        font-size: 16px;
-        line-height: 18px;
     }
     .carousel-caption-s p {
         margin: 0.2em;

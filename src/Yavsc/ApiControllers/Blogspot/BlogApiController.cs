@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
@@ -11,6 +12,8 @@ namespace Yavsc.Controllers
 {
     [Produces("application/json")]
     [Route("api/blog")]
+    [AllowAnonymous]
+
     public class BlogApiController : Controller
     {
         private ApplicationDbContext _context;
@@ -24,7 +27,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<BlogPost> GetBlogspot()
         {
-            return _context.Blogspot.Where(b=>b.Visible).OrderByDescending(b=>b.UserModified);
+            return _context.Blogspot.Where(b => b.Visible).OrderByDescending(b => b.UserModified);
         }
 
         // GET: api/BlogApi/5

@@ -189,6 +189,12 @@ namespace Yavsc
             public string Topic;
         }
 
+        public void JoinAsync(string roomName)
+        {
+          var info = Join(roomName);
+          Clients.Caller.joint(info);
+        }
+
         public ChatRoomInfo Join(string roomName)
         {
             _logger.LogInformation("a client for " + roomName);
