@@ -31,7 +31,13 @@
   var ChatView = function ($view, full)
   {
 
+
     if (!full) throw "not implemented";
+
+    // build a channel list
+    var chans = Array();
+    var frontRoomName;
+
     var chat = $.connection.chatHub
     // Create a function that the hub can call back to display messages.
     chat.client.addMessage = function (name, room, message) {
@@ -74,17 +80,18 @@
       )
     }
 
-    var activeRoom;
-    var activeRoomName;
     var setActiveRoom = function(room) {
-      if (activeRoom) {
+      var frontRoom;
+      if (frontRoomName!=='') {
+        frontRoom=$("#vroom_"+frontRoomName);
         // TODO animate
-        activeRoom.addClass("hidden");
-        $("sel_"+activeRoomName).addClass("btn-primary");
-      } 
-      activeRoom=$("#vroom_"+room);
-      activeRoomName=room;
-      activeRoom.removeClass("hidden");
+        frontRoom.addClass("hidden");
+        $("#sel_"+frontRoomName).addClass("btn-primary");
+      }
+      frontRoomName = room;
+      frontRoom=$("#vroom_"+room);
+      $("#sel_"+room).removeClass("btn-primary");
+      frontRoom.removeClass("hidden");
     }
 
     var roomlist = $('<div class="roomlist"></div>');
@@ -94,7 +101,7 @@
   
     var buildRoom = function (room)
     {
-      var roomTag =  $("<a>"+room+"</a>").addClass("btn").addClass("btn-primary");
+      var roomTag =  $("<a>"+room+"</a>").addClass("btn");
       roomTag.prop("id","sel_"+room)
       .click(function(){
         setActiveRoom(room);
@@ -123,9 +130,6 @@
       chans.push(room);
       setActiveRoom(room);
     }
-
-    // build a channel list
-    var chans = Array();
 
     $view.data("chans").split(",").forEach(function(chan) {
       buildRoom(chan)
