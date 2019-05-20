@@ -189,6 +189,17 @@ namespace Yavsc
             public string Topic;
         }
 
+        public void Nick(string nickName)
+        {
+            var candidate =  "?"+nickName;
+            if (ChatUserNames.Any(u=> u.Value == candidate ))
+            {
+                Clients.Caller.notify(NotificationTypes.ExistingUserName, "name already used:"+nickName);
+                return ;
+            }
+            ChatUserNames[ Context.ConnectionId ] = "?"+nickName;
+        }
+
         public void JoinAsync(string roomName)
         {
           var info = Join(roomName);
