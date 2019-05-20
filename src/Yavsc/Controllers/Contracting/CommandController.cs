@@ -191,7 +191,7 @@ namespace Yavsc.Controllers
                     nrep = new MessageWithPayloadResponse { failure=1, results = new MessageWithPayloadResponse.Result[] {
                         new MessageWithPayloadResponse.Result 
                         { 
-                            error=ErrorMessages.ContactRefused, 
+                            error=NotificationTypes.ContactRefused, 
                             registration_id= pro.PerformerId 
                         }
                     } };
