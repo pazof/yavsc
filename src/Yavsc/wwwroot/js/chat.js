@@ -27,16 +27,28 @@
 * btn btn-default
 
 */
+  $.fn.filterByData = function (prop, val) {
+      return this.filter(
+        function () { return $(this).data(prop) == val; }
+      )
+    }
+
   
   var ChatView = function ($view, full)
   {
-
 
     if (!full) throw "not implemented";
 
     // build a channel list
     var chans = Array();
+    var users = Array();
     var frontRoomName;
+
+    var ulist = $("<ul></ul>").addClass('userlist');
+    var notifications = $("<ul></ul>").addClass('notifs');
+
+    ulist.appendTo($view);
+    notifications.appendTo($view);
 
     var chat = $.connection.chatHub
     // Create a function that the hub can call back to display messages.
@@ -54,32 +66,18 @@
       $('#pv_'+name).append('<li class="pv"><strong>' + htmlEncode(name)
         + '</strong>: ' + htmlEncode(message) + '</li>')
     }
-    chat.client.notify = function (tag, message, data) {
-      if (data) {
+    chat.client.notify = function (tag, message) {
         // Add the notification to the page.
-        if (tag === 'connected') {
-          onUserConnected(ulist, message, data)
-          $('#notifications').append('<li class="notif"><i>' + htmlEncode(tag)
-            + '</i> ' + htmlEncode(data) + '</li>')
+        if (tag === 'connected' || tag === "reconnected") {
+          onUserConnected(message);
         } 
         else if (tag === 'disconnected') {
-          onUserDisconnected(ulist, message, data)
-          $('#notifications').append('<li class="notif"><i>' + htmlEncode(tag)
-            + '</i> ' + htmlEncode(data) + '</li>')
+          onUserDisconnected(message)
         } // reconnected userpart userjoin deniedpv
-        else {
-          $('#notifications').append('<li class="notif"><i>' + htmlEncode(tag)
-            + '</i> ' + htmlEncode(message) + ' : <code>' + htmlEncode(data) + '</code></li>')
-        }
-      }
+        $("<li></li>").append(tag+": ").append(message).addClass(tag).
+           appendTo(notifications);
     }
     
-    $.fn.filterByData = function (prop, val) {
-      return this.filter(
-        function () { return $(this).data(prop) == val; }
-      )
-    }
-
     var setActiveRoom = function(room) {
       var frontRoom;
       if (frontRoomName!=='') {
@@ -93,9 +91,19 @@
       $("#sel_"+room).removeClass("btn-primary");
       frontRoom.removeClass("hidden");
     }
+    var chatbar = $('<div class="chatbar"></div>');
+
+    var roomjoin = $('<div class="chatctl" class=\"form-control\"></div>');
 
     var roomlist = $('<div class="roomlist"></div>');
-    roomlist.appendTo($view);
+    roomlist.appendTo(chatbar);
+    $("<label for=\"channame\">Join&nbsp;:</label>")
+    .appendTo(roomjoin);
+    var chanName = $("<input id=\"channame\" title=\"channel name\" hint=\"yavsc\"  >");
+    chanName.appendTo(roomjoin);
+    roomjoin.appendTo(chatbar);
+
+    chatbar.appendTo($view);
     var chatlist = $('<div class="chatlist" ></div>');
     chatlist.appendTo($view);
   
@@ -123,7 +131,7 @@
       .keydown(function(ev) {
         if (ev.which == 13) {
           if (this.value.length==0) return;
-          console.log("sending to "+room+" "+this.value)
+          
           chat.server.send(room, this.value);
           this.value="";
         }}).appendTo(roomview);
@@ -144,7 +152,7 @@
 
       chans.forEach(function(room) {
         chat.server.join(room).done(function(chatInfo)
-        {console.log(chatInfo);
+        {
           setActiveRoom(chatInfo.Name);
         });
       })
@@ -170,20 +178,13 @@
       })
     })
     
-    
-
-    $("<label for=\"channame\">&gt;&nbsp;</label>")
-    .appendTo($view);
-    var chanName = $("<input name=\"channame\" title=\"channel name\" hint=\"yavsc\">");
-    chanName.appendTo($view);
-    
     chanName.keydown(
       function (event) {
       if (event.which == 13) {
         if (this.value.length==0) return;
         buildRoom(this.value);
         chat.server.join(this.value).done(function(chatInfo)
-        {console.log(chatInfo);
+        {
           setActiveRoom(chatInfo.Name);
         });
         this.value=""
@@ -191,10 +192,6 @@
        // TODO showRoomInfo(this.value);
       }
     });
-
-    var ulist = $("<ul></ul>").addClass('userlist');
-
-    ulist.appendTo($view);
 
     
     var pvuis
@@ -225,30 +222,25 @@
       }
     })
 
-    function addChatUser (ulist, uname, cxids) {
+    var addChatUser = function (uname) {
+
+      $("#u_"+uname).remove();
+      // ulist.remove("li.user[data='"+uname+"']");
+
       $('<li class="user"><img src="/Avatars/' + uname + '.xs.png"> ' + uname + '</li>')
-        .data('name', uname)
-        .data('cxids', cxids)
+        .prop('id', 'u_'+uname)
         .css('cursor', 'pointer')
         .click(function () { setPrivateTarget(this); })
         .appendTo(ulist)
     }
 
 
-    function getUsers (ulist) {
-      $('#userlist').empty()
-      $('#to').empty()
+    var getUsers = function () {
       $.get('/api/chat/users').done(
         function (users) {
           $.each(users, function () {
             var user = this
-            var existent = $('#userlist li').filterByData('name', user.UserName)
-            if (existent.length > 0) existent.remove()
-            var cxids = []
-            $.each(user.Connections, function () {
-              cxids.push(this.ConnectionId)
-            })
-            addChatUser(ulist,user.UserName, cxids)
+            addChatUser(user.UserName)
           })
         }
       )
@@ -276,28 +268,13 @@
     $('#pubChan').css('cursor', 'pointer')
     $('#pubChan').click(setPublic)
     setPublic()
-    // Reference the auto-generated proxy for the hub.
-    
 
-    var onUserDisconnected = function (cxid) {
-      $('#userlist li').filter(function () {
-        var nids = $(this).data('cxids').filter(function () {
-          return $(this) !== cxid
-        });
-        if (nids.length==0) $(this).remove()
-        else $(this).data('cxids', nids)
-      })
+    var onUserDisconnected = function (uname) {
+      $("#u_"+uname).remove();
     }
 
-    var onUserConnected = function (ulist, cxid, username) {
-      var connected = $('#userlist li').filterByData('name', username)
-      if (connected.length > 0) {
-        var ids = connected.data('cxids')
-        ids.push(cxid)
-        connected.data('cxids', ids)
-      } else {
-        addChatUser(ulist, username, [cxid])
-      }
+    var onUserConnected = function (username) {
+        addChatUser(username)
     }
     
     $(window).unload(function () { chat.server.abort(); })

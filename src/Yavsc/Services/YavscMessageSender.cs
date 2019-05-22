@@ -110,7 +110,7 @@ namespace Yavsc.Services
                         _logger.LogDebug($"Sending signal to {string.Join(" ",raa)}  : "+JsonConvert.SerializeObject(ev));
                         // we assume that each hub connected client will handle this signal
                         
-                        hubClient.notify(NotificationTypes.BookQuery,
+                        hubClient.notify(NotificationTypes.ServerMessage,
                           $"# {ev.Sender} (un client) vous demande un rendez-vous\n"+body);
                         
                         result.message_id=MimeKit.Utils.MimeUtils.GenerateMessageId(
