@@ -8,9 +8,8 @@ namespace Yavsc
         public const string UserJoin = "userjoin";
         public const string PrivateMessageDenied = "deniedpv";
         public const string Error = "error";
-        public const string BookQuery = "bookQuery";
         public const string ContactRefused = "contact refused";
         public const string ExistingUserName ="existing user name";
-
+        public const string ServerMessage = "server message";
     }
 }

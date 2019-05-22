@@ -1,10 +1,10 @@
 //
-//  MyHub.cs
+//  ChatHub.cs
 //
 //  Author:
 //       Paul Schneider <paul@pschneider.fr>
 //
-//  Copyright (c) 2016 GNU GPL
+//  Copyright (c) 2016-2019 GNU GPL
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -98,7 +98,7 @@ namespace Yavsc
                 await Groups.Add(Context.ConnectionId, Constants.HubGroupAnonymous);
             }
             // TODO only notify followers
-            Clients.Group(Constants.HubGroupAuthenticated).notify(NotificationTypes.Connected, Context.ConnectionId, userName);
+            Clients.Group(Constants.HubGroupAuthenticated).notify(NotificationTypes.Connected, userName);
             await base.OnConnected();
         }
         static ConcurrentDictionary<string, string> ChatUserNames
@@ -113,8 +113,6 @@ namespace Yavsc
                     return Context.User.Identity.Name;
                 }
             anonymousSequence++;
-            var reqKeys = Context.Request.QueryString.Select(pv => pv.Key);
-            _logger.LogInformation(string.Join(" ", reqKeys));
 
             var queryUname = Context.Request.QueryString[Constants.KeyParamChatUserName];
 
@@ -129,7 +127,7 @@ namespace Yavsc
         public override Task OnDisconnected(bool stopCalled)
         {
             string userName = Context.User?.Identity.Name;
-            Clients.Group("authenticated").notify(NotificationTypes.DisConnected, Context.ConnectionId, userName);
+            Clients.Group("authenticated").notify(NotificationTypes.DisConnected, userName);
             if (userName != null)
             {
                 var cx = _dbContext.ChatConnection.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
@@ -139,6 +137,7 @@ namespace Yavsc
                     {
                         var user = _dbContext.Users.Single(u => u.UserName == userName);
                         user.Connections.Remove(cx);
+                        ChatUserNames[Context.ConnectionId]=null;
                     }
                     else
                     {
@@ -175,7 +174,7 @@ namespace Yavsc
                             Connected = true
                         });
                     _dbContext.SaveChanges();
-                    Clients.Group("authenticated").notify(NotificationTypes.Reconnected, Context.ConnectionId, userName);
+                    Clients.Group("authenticated").notify(NotificationTypes.Reconnected, userName);
                 }
             return base.OnReconnected();
         }
@@ -194,7 +193,7 @@ namespace Yavsc
             var candidate =  "?"+nickName;
             if (ChatUserNames.Any(u=> u.Value == candidate ))
             {
-                Clients.Caller.notify(NotificationTypes.ExistingUserName, "name already used:"+nickName);
+                Clients.Caller.notify(NotificationTypes.ExistingUserName, nickName);
                 return ;
             }
             ChatUserNames[ Context.ConnectionId ] = "?"+nickName;
@@ -228,7 +227,7 @@ namespace Yavsc
                         Groups.Add(Context.ConnectionId, roomGroupName);
                     }
                     Clients.Caller.joint(chanInfo);
-                    Clients.Group("room_" + roomName).notify(NotificationTypes.UserJoin, Context.ConnectionId, Clients.Caller.UserName);
+                    Clients.Group("room_" + roomName).notify(NotificationTypes.UserJoin, userName);
 
                     _logger.LogInformation("exiting ok.");
                     return chanInfo;
@@ -312,7 +311,7 @@ namespace Yavsc
                 Groups.Remove(Context.ConnectionId, roomGroupName);
                 var group = Clients.Group(roomGroupName);
                 var username = ChatUserNames[Context.ConnectionId];
-                group.notify(NotificationTypes.UserPart, Context.ConnectionId, new { username, reason });
+                group.notify( NotificationTypes.UserPart, $"{roomName} {username} ({reason})");
 
                 chanInfo.Users.Remove(Context.ConnectionId);
                 ChatRoomInfo deadchanInfo;
@@ -326,8 +325,13 @@ namespace Yavsc
             }
             else
             {
-                Clients.Caller.notify(NotificationTypes.Error, "not joint");
+                NotifyNotJoint(roomName, "no such room");
             }
+        }
+
+        void NotifyNotJoint(string room, string reason)
+        {
+            Clients.Caller.notify(NotificationTypes.Error, $"{room} not joint: {reason}");
         }
 
 
@@ -339,39 +343,52 @@ namespace Yavsc
             {
                 if (!chanInfo.Users.ContainsKey(Context.ConnectionId))
                 {
-                    Clients.Caller.notify(NotificationTypes.Error, $"could not join channel ({roomName})");
+                    var notSentMsg =$"could not send to channel ({roomName}) (not joint)"; 
+                    Clients.Caller.notify(NotificationTypes.Error, notSentMsg);
                     return;
                 }
                 string uname = ChatUserNames[Context.ConnectionId];
                 Clients.Group(groupname).addMessage(uname, roomName, message);
+                _logger.LogInformation($"{uname} sent message {message} to {roomName}");
             }
             else
             {
-                Clients.Caller.notify(NotificationTypes.Error, $"could not join channel ({roomName})");
+                var noChanMsg = $"could not send to channel ({roomName}) (no such chan)";
+                Clients.Caller.notify(NotificationTypes.Error, noChanMsg);
+                _logger.LogWarning(noChanMsg);
                 return;
             }
 
         }
 
         [Authorize]
-        public void SendPV(string connectionId, string message)
+        public void SendPV(string userName, string message)
         {
-            if (!Context.User.IsInRole(Constants.AdminGroupName))
-            {
-                var bl = _dbContext.BlackListed
-                .Include(r => r.User)
-                .Where(r => r.User.UserName == Context.User.Identity.Name)
-                .Select(r => r.OwnerId);
+          if (string.IsNullOrWhiteSpace(userName))
+            return;
 
-                if (bl != null) foreach (string uid in bl)
-                    {
-                        if (_dbContext.ChatConnection.Any(cx => cx.ApplicationUserId == uid && cx.Connected))
-                            Clients.Caller.notify(NotificationTypes.PrivateMessageDenied, connectionId);
-                        return;
-                    }
-            }
+          if (userName[0]!='?')
+          if (!Context.User.IsInRole(Constants.AdminGroupName))
+          {
+              var bl = _dbContext.BlackListed
+              .Include(r => r.User)
+              .Include(r => r.Owner)
+              .Where(r => r.User.UserName == Context.User.Identity.Name && r.Owner.UserName == userName)
+              .Select(r => r.OwnerId);
+
+              if (bl.Count()>0)
+                  {
+                      Clients.Caller.notify(NotificationTypes.PrivateMessageDenied, userName);
+                      return;
+                  }
+          }
+          var cxIds = ChatUserNames.Where(name => name.Value == userName ).Select( name => name.Key );
+
+          foreach (var connectionId in cxIds) 
+          {
             var cli = Clients.Client(connectionId);
             cli.addPV(Context.User.Identity.Name, message);
+          }
         }
 
         [Authorize]

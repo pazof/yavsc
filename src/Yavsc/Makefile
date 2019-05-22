@@ -2,7 +2,7 @@ DESTDIR=/srv/www/yavscpre
 PRODDESTDIR=/srv/www/yavsc
 HOSTING=localhost
 HOSTADMIN=root
-ASPNET_LOG_LEVEL=warn
+ASPNET_LOG_LEVEL=debug
 SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
 include $(MAKEFILE_DIR)/versioning.mk
