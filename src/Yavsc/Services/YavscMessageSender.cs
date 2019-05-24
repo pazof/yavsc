@@ -11,6 +11,7 @@ using Yavsc.Models;
 using Yavsc.Models.Google.Messaging;
 using Yavsc.Models.Haircut;
 using Yavsc.Models.Messaging;
+using Yavsc.Services;
 
 namespace Yavsc.Services
 {
@@ -58,11 +59,11 @@ namespace Yavsc.Services
             
             try {
                 List<MessageWithPayloadResponse.Result> results = new List<MessageWithPayloadResponse.Result>();
-                foreach(var clientId in raa) {
+                foreach(var userId in raa) {
                     MessageWithPayloadResponse.Result result = new MessageWithPayloadResponse.Result();
-                    result.registration_id = clientId;
+                    result.registration_id = userId;
 
-                    var user = _dbContext.Users.FirstOrDefault(u=> u.Id == clientId);
+                    var user = _dbContext.Users.FirstOrDefault(u=> u.Id == userId);
                     if (user==null)
                     {
                         response.failure++;
@@ -82,10 +83,9 @@ namespace Yavsc.Services
 
                     var body = ev.CreateBody();
                     
+                    var cxids = ChatHub.ChatUserNames.Where (kv=>kv.Value == user.UserName).Select(kv => kv.Key).ToArray();                    
                     
-                    
-                    var hubClient = hubContext.Clients.User(clientId);
-                    if (hubClient == null)
+                    if (cxids.Length==0)
                     {
                         _logger.LogDebug($"Sending to {user.UserName} <{user.Email}> : {body}");
                             var mailSent = await _emailSender.SendEmailAsync(
@@ -107,11 +107,15 @@ namespace Yavsc.Services
                         }
                     }
                     else {
-                        _logger.LogDebug($"Sending signal to {string.Join(" ",raa)}  : "+JsonConvert.SerializeObject(ev));
-                        // we assume that each hub connected client will handle this signal
+                        _logger.LogDebug($"Sending signal to {string.Join(" ",cxids)}  : "+JsonConvert.SerializeObject(ev));
                         
-                        hubClient.notify(NotificationTypes.ServerMessage,
-                          $"# {ev.Sender} (un client) vous demande un rendez-vous\n"+body);
+                        foreach( var cxid in cxids) {
+                          var hubClient = hubContext.Clients.User(cxid);
+                         var data = new Dictionary<string,object>();
+                         data["event"] = ev;
+
+                          hubClient.push(ev.Topic,  data );
+                        } 
                         
                         result.message_id=MimeKit.Utils.MimeUtils.GenerateMessageId(
                             siteSettings.Authority
@@ -130,25 +134,25 @@ namespace Yavsc.Services
             }
         }
         
-        public async Task<MessageWithPayloadResponse> NotifyBookQueryAsync( IEnumerable<string> registrationIds, RdvQueryEvent ev)
+        public async Task<MessageWithPayloadResponse> NotifyBookQueryAsync( IEnumerable<string> userIds, RdvQueryEvent ev)
         {
-            return await NotifyEvent<RdvQueryEvent>(registrationIds, ev);
+            return await NotifyEvent<RdvQueryEvent>(userIds, ev);
         }
 
-        public async Task<MessageWithPayloadResponse> NotifyEstimateAsync(IEnumerable<string> registrationIds, EstimationEvent ev)
+        public async Task<MessageWithPayloadResponse> NotifyEstimateAsync(IEnumerable<string> userIds, EstimationEvent ev)
         {
-            return await NotifyEvent<EstimationEvent>(registrationIds, ev);
+            return await NotifyEvent<EstimationEvent>(userIds, ev);
         }
 
         public async Task<MessageWithPayloadResponse> NotifyHairCutQueryAsync(
-         IEnumerable<string> registrationIds, HairCutQueryEvent ev)
+         IEnumerable<string> userIds, HairCutQueryEvent ev)
         {
-            return await NotifyEvent<HairCutQueryEvent>(registrationIds, ev);
+            return await NotifyEvent<HairCutQueryEvent>(userIds, ev);
         }
 
-        public async Task<MessageWithPayloadResponse> NotifyAsync(IEnumerable<string> regids, IEvent yaev)
+        public async Task<MessageWithPayloadResponse> NotifyAsync(IEnumerable<string> userIds, IEvent yaev)
         {
-            return await NotifyEvent<IEvent>(regids, yaev);
+            return await NotifyEvent<IEvent>(userIds, yaev);
         }
         
         /* SMS with Twilio:

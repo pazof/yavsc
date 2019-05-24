@@ -15,7 +15,7 @@ namespace Yavsc.Controllers
 
         public CommandFormsController(ApplicationDbContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: CommandForms
@@ -48,9 +48,10 @@ namespace Yavsc.Controllers
             SetViewBag();
             return View();
         }
-        private void SetViewBag(CommandForm commandForm=null) {
+        private void SetViewBag(CommandForm commandForm = null)
+        {
             ViewBag.ActivityCode = new SelectList(_context.Activities, "Code", "Name", commandForm?.ActivityCode);
-            ViewBag.ActionName = Startup.Forms.Select( c => new SelectListItem { Value = c, Text = c, Selected = (commandForm?.ActionName == c) } );
+            ViewBag.ActionName = Startup.Forms.Select(c => new SelectListItem { Value = c, Text = c, Selected = (commandForm?.ActionName == c) });
         }
         // POST: CommandForms/Create
         [HttpPost]
