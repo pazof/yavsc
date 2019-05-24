@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -6,7 +7,7 @@ namespace test.Mandatory
     [Collection("Database")]
     [Trait("regres", "no")]
     [Trait("dev", "wip")]
-    public class Database: IClassFixture<ServerSideFixture>
+    public class Database: IClassFixture<ServerSideFixture>, IDisposable
     {
         ServerSideFixture _serverFixture;
         ITestOutputHelper output;
@@ -14,6 +15,8 @@ namespace test.Mandatory
         {
             this.output = output;
             _serverFixture = serverFixture;
+            if (_serverFixture.DbCreated)
+                _serverFixture.DropTestDb();
             
             output.WriteLine($"Startup.DbSettings.Testing is {Startup.DbSettings.Testing}");
         }
@@ -25,11 +28,15 @@ namespace test.Mandatory
         [Fact]
         public void InstallFromScratchUsingPoweredNpgsqlUser()
         {
-            if (_serverFixture.DbCreated)
-                _serverFixture.DropTestDb();
-            
             _serverFixture.CreateTestDb();
             _serverFixture.UpgradeDb();
+        }
+
+        public void Dispose()
+        {
+            if (_serverFixture.DbCreated)
+                _serverFixture.DropTestDb();
+
         }
     }
 }
