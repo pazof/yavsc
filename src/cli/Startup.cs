@@ -71,7 +71,7 @@ namespace cli
             var cxSettings = Configuration.GetSection("Connection");
             services.Configure<ConnectionSettings>(cxSettings);
             var smtpSettingsconf = Configuration.GetSection("Smtp");
-            Microsoft.Extensions.CodeGenerators.Mvc.View.ViewGeneratorTemplateModel v;
+            // TODO give it a look : Microsoft.Extensions.CodeGenerators.Mvc.View.ViewGeneratorTemplateModel v;
 
             services.Configure<SmtpSettings>(smtpSettingsconf);
             services.Configure<GenMvcSettings>(Configuration.GetSection("gen_mvc"));
