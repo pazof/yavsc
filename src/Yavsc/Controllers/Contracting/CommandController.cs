@@ -29,12 +29,11 @@ namespace Yavsc.Controllers
         protected IStringLocalizer _localizer;
         protected SiteSettings _siteSettings;
         protected SmtpSettings _smtpSettings;
-
         protected ICalendarManager _calendarManager;
 
         protected readonly ILogger _logger;
         public CommandController(ApplicationDbContext context, IOptions<GoogleAuthSettings> googleSettings,
-        IYavscMessageSender GCMSender,
+        IYavscMessageSender messageSender,
           UserManager<ApplicationUser> userManager,
           ICalendarManager calendarManager,
           IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
@@ -44,7 +43,7 @@ namespace Yavsc.Controllers
           ILoggerFactory loggerFactory)
         {
             _context = context;
-            _MessageSender = GCMSender;
+            _MessageSender = messageSender;
             _emailSender = emailSender;
             _googleSettings = googleSettings.Value;
             _userManager = userManager;
@@ -136,7 +135,7 @@ namespace Yavsc.Controllers
                 );
             var pro = _context.Performers.Include(
                 u => u.Performer
-            ).Include(u => u.Performer.DeviceDeclarations)
+            ).Include(u => u.Performer.DeviceDeclaration)
             .FirstOrDefault(
                 x => x.PerformerId == command.PerformerId
             );
@@ -145,9 +144,6 @@ namespace Yavsc.Controllers
             command.ClientId = uid;
             command.PerformerProfile = pro;
             // FIXME Why!!
-            // ModelState.ClearValidationState("PerformerProfile.Avatar");
-            // ModelState.ClearValidationState("Client.Avatar");
-            // ModelState.ClearValidationState("ClientId");
             ModelState.MarkFieldSkipped("ClientId");
 
             if (ModelState.IsValid)
@@ -173,8 +169,8 @@ namespace Yavsc.Controllers
                     try
                     {
                         _logger.LogInformation("sending message");
-                        var regids = new [] { command.PerformerProfile.Performer.Id };
-                        nrep = await _MessageSender.NotifyBookQueryAsync(regids, yaev);
+                        var uids = new[] { command.PerformerProfile.PerformerId };
+                        nrep = await _MessageSender.NotifyBookQueryAsync(uids, yaev);
                         // TODO setup a profile choice to allow notifications
                         // both on mailbox and mobile
                         // if (grep==null || grep.success<=0 || grep.failure>0)
@@ -182,19 +178,24 @@ namespace Yavsc.Controllers
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError("Message sending failed with: "+ex.Message);
+                        _logger.LogError("Message sending failed with: " + ex.Message);
                         throw;
                     }
 
                 }
-                else {
-                    nrep = new MessageWithPayloadResponse { failure=1, results = new MessageWithPayloadResponse.Result[] {
-                        new MessageWithPayloadResponse.Result 
-                        { 
-                            error=NotificationTypes.ContactRefused, 
-                            registration_id= pro.PerformerId 
+                else
+                {
+                    nrep = new MessageWithPayloadResponse
+                    {
+                        failure = 1,
+                        results = new MessageWithPayloadResponse.Result[] {
+                        new MessageWithPayloadResponse.Result
+                        {
+                            error=NotificationTypes.ContactRefused,
+                            registration_id= pro.PerformerId
                         }
-                    } };
+                    }
+                    };
                     _logger.LogInformation("Command.Create && ( !pro.AcceptNotifications || |pro.AcceptPublicContact ) ");
                 }
                 ViewBag.MessagingResponsePayload = nrep;

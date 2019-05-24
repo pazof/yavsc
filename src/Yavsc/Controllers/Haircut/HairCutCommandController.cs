@@ -31,8 +31,8 @@ namespace Yavsc.Controllers
     {
         public HairCutCommandController(ApplicationDbContext context,
           IOptions<PayPalSettings> payPalSettings,
-        IOptions<GoogleAuthSettings> googleSettings,
-        IYavscMessageSender GCMSender,
+          IOptions<GoogleAuthSettings> googleSettings,
+          IYavscMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
           IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
           IEmailSender emailSender,
@@ -53,7 +53,7 @@ namespace Yavsc.Controllers
             .Include(x => x.PerformerProfile)
             .Include(x => x.Prestation)
             .Include(x => x.PerformerProfile.Performer)
-            .Include(x => x.PerformerProfile.Performer.DeviceDeclarations)
+            .Include(x => x.PerformerProfile.Performer.DeviceDeclaration)
             .Include(x => x.Regularisation)
             .SingleAsync(m => m.Id == id);
             query.SelectedProfile = await _context.BrusherProfile.SingleAsync(b => b.UserId == query.PerformerId);
@@ -100,11 +100,10 @@ namespace Yavsc.Controllers
                 var yaev = command.CreatePaymentEvent(paymentInfo,  _localizer);
                 if (command.PerformerProfile.AcceptNotifications)
                 {
-                    if (command.PerformerProfile.Performer.DeviceDeclarations.Count > 0)
+                    if (command.PerformerProfile.Performer.DeviceDeclaration.Count > 0)
                     {
-                        var regids = command.PerformerProfile.Performer
-                        .DeviceDeclarations.Select(d => d.DeviceId);
-                        grep = await _MessageSender.NotifyAsync(regids, yaev);
+                        var regid = command.PerformerProfile.PerformerId;
+                        grep = await _MessageSender.NotifyAsync(new [] {regid}, yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile
@@ -217,7 +216,7 @@ namespace Yavsc.Controllers
                 _logger.LogInformation("le Model _est_ valide.");
                 var pro = _context.Performers.Include(
                      u => u.Performer
-                 ).Include(u => u.Performer.DeviceDeclarations)
+                 ).Include(u => u.Performer.DeviceDeclaration)
                  .FirstOrDefault(
                      x => x.PerformerId == model.PerformerId
                  );
@@ -268,10 +267,10 @@ namespace Yavsc.Controllers
                 {
                     if (pro.AcceptNotifications)
                     {
-                        if (pro.Performer.DeviceDeclarations.Count > 0)
+                        if (pro.Performer.DeviceDeclaration.Count > 0)
                         {
-                            var regids = pro.Performer.DeviceDeclarations.Select(d => d.DeviceId);
-                            grep = await _MessageSender.NotifyHairCutQueryAsync(regids, yaev);
+                            var uids = new[] { pro.PerformerId };
+                            grep = await _MessageSender.NotifyHairCutQueryAsync(uids, yaev);
                         }
                         // TODO setup a profile choice to allow notifications
                         // both on mailbox and mobile
@@ -390,7 +389,7 @@ namespace Yavsc.Controllers
                 );
             var pro = _context.Performers.Include(
                 u => u.Performer
-            ).Include(u => u.Performer.DeviceDeclarations)
+            ).Include(u => u.Performer.DeviceDeclaration)
             .FirstOrDefault(
                 x => x.PerformerId == command.PerformerId
             );
@@ -427,11 +426,10 @@ namespace Yavsc.Controllers
                 if (pro.AcceptNotifications
                 && pro.AcceptPublicContact)
                 {
-                    if (pro.Performer.DeviceDeclarations?.Count > 0)
+                    if (pro.Performer.DeviceDeclaration?.Count > 0)
                     {
-                        var regids = command.PerformerProfile.Performer
-                        .DeviceDeclarations.Select(d => d.DeviceId);
-                        grep = await _MessageSender.NotifyHairCutQueryAsync(regids, yaev);
+                        var uids = new [] { command.PerformerProfile.PerformerId };
+                        grep = await _MessageSender.NotifyHairCutQueryAsync(uids, yaev);
                     }
                     // TODO setup a profile choice to allow notifications
                     // both on mailbox and mobile, and to allow calendar event insertion.

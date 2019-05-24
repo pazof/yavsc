@@ -21,7 +21,7 @@ namespace Yavsc.Helpers
            .Include(p=>p.Activity)
            .Include(p=>p.Performer)
            .Include(p=>p.Performer.Posts)
-           .Include(p=>p.Performer.DeviceDeclarations)
+           .Include(p=>p.Performer.DeviceDeclaration)
            .Where(p => p.Active && p.Activity.Any(u=>u.DoesCode==actCode)).OrderBy( x => x.Rate )
            .ToArray();
            List<PerformerProfileViewModel> result = new List<PerformerProfileViewModel> ();

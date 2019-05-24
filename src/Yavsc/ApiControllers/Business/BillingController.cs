@@ -108,7 +108,7 @@ namespace Yavsc.ApiControllers
         public async Task<IActionResult> ProSign(string billingCode, long id)
         {
             var estimate = dbContext.Estimates.
-            Include(e=>e.Client).Include(e=>e.Client.DeviceDeclarations)
+            Include(e=>e.Client).Include(e=>e.Client.DeviceDeclaration)
             .Include(e=>e.Bill).Include(e=>e.Owner).Include(e=>e.Owner.Performer)
             .FirstOrDefault(e=>e.Id == id);
             if (estimate == null)
@@ -127,12 +127,10 @@ namespace Yavsc.ApiControllers
 
             var yaev = new EstimationEvent(estimate,_localizer);
             
-            var regids = estimate.Client.DeviceDeclarations.Select(d => d.DeviceId).ToArray();
+            var regids = new [] { estimate.Client.Id };
             bool gcmSent = false;
-            if (regids.Length>0) {
                 var grep = await _GCMSender.NotifyEstimateAsync(regids,yaev);
                 gcmSent = grep.success>0;
-            }
             return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = gcmSent });
         }
 

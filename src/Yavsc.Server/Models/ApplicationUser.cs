@@ -57,7 +57,7 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         [InverseProperty("DeviceOwner"),JsonIgnore]
-        public virtual List<DeviceDeclaration> DeviceDeclarations { get; set; }
+        public virtual List<DeviceDeclaration> DeviceDeclaration { get; set; }
 
         [InverseProperty("Owner"),JsonIgnore]
         public virtual List<ChatConnection> Connections { get; set; }

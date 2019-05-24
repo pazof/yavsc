@@ -10,6 +10,5 @@ namespace Yavsc
         public const string Error = "error";
         public const string ContactRefused = "contact refused";
         public const string ExistingUserName ="existing user name";
-        public const string ServerMessage = "server message";
     }
 }

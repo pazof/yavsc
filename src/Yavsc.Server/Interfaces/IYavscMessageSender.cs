@@ -1,4 +1,4 @@
-
+﻿
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Yavsc.Interfaces.Workflow;
@@ -11,18 +11,18 @@ namespace Yavsc.Services
     public interface IYavscMessageSender
     {
         Task<MessageWithPayloadResponse> NotifyBookQueryAsync(
-            IEnumerable<string> DeviceIds, 
+            IEnumerable<string> connectionIds, 
             RdvQueryEvent ev);
 
         Task<MessageWithPayloadResponse> NotifyEstimateAsync(
-            IEnumerable<string> registrationId, 
+            IEnumerable<string> connectionIds, 
             EstimationEvent ev);
 
         Task<MessageWithPayloadResponse> NotifyHairCutQueryAsync(
-            IEnumerable<string> registrationId, 
+            IEnumerable<string> connectionIds, 
             HairCutQueryEvent ev);
         Task<MessageWithPayloadResponse> NotifyAsync(
-            IEnumerable<string> regids, 
+            IEnumerable<string> connectionIds, 
             IEvent yaev);
     }
 }
