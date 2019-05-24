@@ -18,6 +18,7 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 using Microsoft.AspNet.SignalR;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -37,10 +38,10 @@ namespace Yavsc
     {
         ApplicationDbContext _dbContext;
         ILogger _logger;
+        public static ConcurrentDictionary<string, string> ChatUserNames = new ConcurrentDictionary<string, string>();
 
         public ChatHub()
         {
-
             var scope = Startup.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
             _dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
@@ -93,7 +94,6 @@ namespace Yavsc
             }
             else
             {
-                // TODO var uname = Context.Request.QueryString[Constants.KeyParamChatUserName] ?? "anon";
 
                 await Groups.Add(Context.ConnectionId, Constants.HubGroupAnonymous);
             }
@@ -101,8 +101,6 @@ namespace Yavsc
             Clients.Group(Constants.HubGroupAuthenticated).notify(NotificationTypes.Connected, userName);
             await base.OnConnected();
         }
-        static ConcurrentDictionary<string, string> ChatUserNames
-        = new ConcurrentDictionary<string, string>();
         string setUserName()
         {
             if (Context.User != null)
@@ -137,7 +135,7 @@ namespace Yavsc
                     {
                         var user = _dbContext.Users.Single(u => u.UserName == userName);
                         user.Connections.Remove(cx);
-                        ChatUserNames[Context.ConnectionId]=null;
+                        ChatUserNames[Context.ConnectionId] = null;
                     }
                     else
                     {
@@ -190,19 +188,19 @@ namespace Yavsc
 
         public void Nick(string nickName)
         {
-            var candidate =  "?"+nickName;
-            if (ChatUserNames.Any(u=> u.Value == candidate ))
+            var candidate = "?" + nickName;
+            if (ChatUserNames.Any(u => u.Value == candidate))
             {
                 Clients.Caller.notify(NotificationTypes.ExistingUserName, nickName);
-                return ;
+                return;
             }
-            ChatUserNames[ Context.ConnectionId ] = "?"+nickName;
+            ChatUserNames[Context.ConnectionId] = "?" + nickName;
         }
 
         public void JoinAsync(string roomName)
         {
-          var info = Join(roomName);
-          Clients.Caller.joint(info);
+            var info = Join(roomName);
+            Clients.Caller.joint(info);
         }
 
         public ChatRoomInfo Join(string roomName)
@@ -263,7 +261,7 @@ namespace Yavsc
             if (Channels.TryAdd(roomName, chanInfo))
             {
                 Groups.Add(Context.ConnectionId, roomGroupName);
-                return(chanInfo);
+                return (chanInfo);
             }
             else _logger.LogError("Chan create failed unexpectly...");
             return null;
@@ -311,7 +309,7 @@ namespace Yavsc
                 Groups.Remove(Context.ConnectionId, roomGroupName);
                 var group = Clients.Group(roomGroupName);
                 var username = ChatUserNames[Context.ConnectionId];
-                group.notify( NotificationTypes.UserPart, $"{roomName} {username} ({reason})");
+                group.notify(NotificationTypes.UserPart, $"{roomName} {username} ({reason})");
 
                 chanInfo.Users.Remove(Context.ConnectionId);
                 ChatRoomInfo deadchanInfo;
@@ -343,7 +341,7 @@ namespace Yavsc
             {
                 if (!chanInfo.Users.ContainsKey(Context.ConnectionId))
                 {
-                    var notSentMsg =$"could not send to channel ({roomName}) (not joint)"; 
+                    var notSentMsg = $"could not send to channel ({roomName}) (not joint)";
                     Clients.Caller.notify(NotificationTypes.Error, notSentMsg);
                     return;
                 }
@@ -364,31 +362,31 @@ namespace Yavsc
         [Authorize]
         public void SendPV(string userName, string message)
         {
-          if (string.IsNullOrWhiteSpace(userName))
-            return;
+            if (string.IsNullOrWhiteSpace(userName))
+                return;
 
-          if (userName[0]!='?')
-          if (!Context.User.IsInRole(Constants.AdminGroupName))
-          {
-              var bl = _dbContext.BlackListed
-              .Include(r => r.User)
-              .Include(r => r.Owner)
-              .Where(r => r.User.UserName == Context.User.Identity.Name && r.Owner.UserName == userName)
-              .Select(r => r.OwnerId);
+            if (userName[0] != '?')
+                if (!Context.User.IsInRole(Constants.AdminGroupName))
+                {
+                    var bl = _dbContext.BlackListed
+                    .Include(r => r.User)
+                    .Include(r => r.Owner)
+                    .Where(r => r.User.UserName == Context.User.Identity.Name && r.Owner.UserName == userName)
+                    .Select(r => r.OwnerId);
 
-              if (bl.Count()>0)
-                  {
-                      Clients.Caller.notify(NotificationTypes.PrivateMessageDenied, userName);
-                      return;
-                  }
-          }
-          var cxIds = ChatUserNames.Where(name => name.Value == userName ).Select( name => name.Key );
+                    if (bl.Count() > 0)
+                    {
+                        Clients.Caller.notify(NotificationTypes.PrivateMessageDenied, userName);
+                        return;
+                    }
+                }
+            var cxIds = ChatUserNames.Where(name => name.Value == userName).Select(name => name.Key);
 
-          foreach (var connectionId in cxIds) 
-          {
-            var cli = Clients.Client(connectionId);
-            cli.addPV(Context.User.Identity.Name, message);
-          }
+            foreach (var connectionId in cxIds)
+            {
+                var cli = Clients.Client(connectionId);
+                cli.addPV(Context.User.Identity.Name, message);
+            }
         }
 
         [Authorize]
