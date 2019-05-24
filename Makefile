@@ -1,10 +1,10 @@
 
 
 test:
-	make -C scripts/build/make test
+	make -C src/test
 
 web:
-	make -C scripts/build/make watch
+	make -C src/Yavsc web
 
 pushInProd:
 	make -C src/Yavsc pushInProd
