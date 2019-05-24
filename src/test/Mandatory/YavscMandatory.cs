@@ -29,14 +29,18 @@ namespace test
 
     [Collection("Yavsc mandatory success story")]
     [Trait("regres", "no")]
-    public class YavscMandatory: BaseTestContext, IClassFixture<ServerSideFixture>
+    public class YavscMandatory: BaseTestContext, IClassFixture<ServerSideFixture>, IDisposable
     {
 
         ApplicationDbContext _dbContext;
+        ServerSideFixture _fixture;
 
         public  YavscMandatory(ITestOutputHelper output, ServerSideFixture fixture) : base (output, fixture)
         {
           _dbContext = fixture.DbContext;
+          _fixture = fixture;
+            if (!_fixture.DbCreated)
+                _fixture.CreateTestDb();
         }
 
         [Fact]
@@ -47,9 +51,12 @@ namespace test
             var di = new DirectoryInfo(_serverFixture.SiteSetup.GitRepository);
             if (!di.Exists) di.Create();
 
+
             var clone = new GitClone(_serverFixture.SiteSetup.GitRepository);
             clone.Launch(firstProject);
+            gitRepo = di.FullName;
         }
+        string gitRepo=null;
 
         [Fact]
         void AnsiToHtml()
@@ -67,7 +74,6 @@ namespace test
             }
         }
 
-
         [Fact]
         public void MvcRazorHostAndParser()
         {
@@ -80,6 +86,7 @@ namespace test
         void HaveHost()
         {
             beforeCompileContext = CreateYavscCompilationContext();
+            
         }
 
         [Fact]
@@ -184,6 +191,17 @@ namespace test
             app.UseMvc();
             var rtd = app.Build();
             IOptions<LocalizationOptions> localOptions = ActivatorUtilities.GetServiceOrCreateInstance<IOptions<LocalizationOptions>>(provider); ;
+
+        }
+
+        public void Dispose()
+        {
+            if (gitRepo!=null)
+            {
+                Directory.Delete(Path.Combine(gitRepo,"yavsc"), true);
+            }
+            if (_fixture.DbCreated)
+                _fixture.DropTestDb();
 
         }
     }

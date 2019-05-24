@@ -82,8 +82,8 @@ namespace test
                 _logger = value;
             }
         }
-
         public bool DbCreated { get; private set; }
+
 
         // 
         public ServerSideFixture()
@@ -141,8 +141,6 @@ namespace test
                 cx.Close();
             }
         }
-        /* Needs a connection string parsing */
-
         public void CreateTestDb()
         {
             if (!DbCreated)
@@ -157,6 +155,7 @@ namespace test
                 _logger.LogInformation($"database created.");
                 cx.Close();
             }
+            DbCreated=true;
         }
         public void DropTestDb()
         {
@@ -171,7 +170,9 @@ namespace test
                 _logger.LogInformation($"database dropped");
                 cx.Close();
             }
+            DbCreated=false;
         } 
+          
         public void Dispose()
         {
             Logger.LogInformation("Disposing");
