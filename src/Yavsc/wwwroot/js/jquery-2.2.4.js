@@ -1,3 +1,5 @@
+/* eslint-disable sort-vars */
+/* eslint-disable no-tabs */
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -12,30 +14,28 @@
  * Date: 2016-05-20T17:23Z
  */
 
-(function( global, factory ) {
-
-	if ( typeof module === "object" && typeof module.exports === "object" ) {
-		// For CommonJS and CommonJS-like environments where a proper `window`
-		// is present, execute the factory and get jQuery.
-		// For environments that do not have a `window` with a `document`
-		// (such as Node.js), expose a factory as module.exports.
-		// This accentuates the need for the creation of a real `window`.
-		// e.g. var jQuery = require("jquery")(window);
-		// See ticket #14549 for more info.
-		module.exports = global.document ?
-			factory( global, true ) :
-			function( w ) {
-				if ( !w.document ) {
-					throw new Error( "jQuery requires a window with a document" );
-				}
-				return factory( w );
-			};
-	} else {
-		factory( global );
-	}
+(function(global, factory) {
+  if (typeof module === 'object' && typeof module.exports === 'object') {
+// For CommonJS and CommonJS-like environments where a proper `window`
+// is present, execute the factory and get jQuery.
+// For environments that do not have a `window` with a `document`
+// (such as Node.js), expose a factory as module.exports.
+// This accentuates the need for the creation of a real `window`.
+// e.g. var jQuery = require("jquery")(window);
+// See ticket #14549 for more info.
+    module.exports = global.document ? factory(global, true) : function(w) {
+     if (!w.document) {
+      throw new Error('jQuery requires a window with a document');
+     }
+     return factory(w);
+    };
+   } else {
+   factory(global);
+}
 
 // Pass this if window is not defined yet
-}(typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
+// eslint-disable-next-line no-negated-condition
+}(typeof window !== 'undefined' ? window : this, function(window, noGlobal) {
 
 // Support: Firefox 18+
 // Can't be in strict mode, several libs including ASP.NET trace
@@ -62,29 +62,25 @@ var hasOwn = class2type.hasOwnProperty;
 
 var support = {};
 
+var version = '2.2.4';
 
+// Define a local copy of jQuery
+var jQuery = function(selector, contexts) {
+// The jQuery object is actually just the init constructor 'enhanced'
+// Need init if jQuery is called (just allow error to be thrown if not included)
+return new jQuery.fn.init(selector, contexts);
+};
 
-var
-	version = "2.2.4",
+// Support: Android<4.1
+// Make sure we trim BOM and NBSP
+var	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
 
-	// Define a local copy of jQuery
-	jQuery = function( selector, context ) {
-
-		// The jQuery object is actually just the init constructor 'enhanced'
-		// Need init if jQuery is called (just allow error to be thrown if not included)
-		return new jQuery.fn.init( selector, context );
-	},
-
-	// Support: Android<4.1
-	// Make sure we trim BOM and NBSP
-	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,
-
-	// Matches dashed string for camelizing
-	rmsPrefix = /^-ms-/,
-	rdashAlpha = /-([\da-z])/gi,
+// Matches dashed string for camelizing
+var	rmsPrefix = /^-ms-/;
+var	rdashAlpha = /-([\da-z])/gi;
 
 	// Used by jQuery.camelCase as callback to replace()
-	fcamelCase = function( all, letter ) {
+var	fcamelCase = function(all, letter) {
 		return letter.toUpperCase();
 	};
 
@@ -96,33 +92,33 @@ jQuery.fn = jQuery.prototype = {
 	constructor: jQuery,
 
 	// Start with an empty selector
-	selector: "",
+	selector: '',
 
 	// The default length of a jQuery object is 0
 	length: 0,
 
 	toArray: function() {
-		return slice.call( this );
+		return slice.call(this);
 	},
 
 	// Get the Nth element in the matched element set OR
 	// Get the whole matched element set as a clean array
-	get: function( num ) {
-		return num != null ?
+	get: function(num) {
+		return num ?
 
 			// Return just the one element from the set
-			( num < 0 ? this[ num + this.length ] : this[ num ] ) :
+			(num < 0 ? this[num + this.length] : this[num]) :
 
 			// Return all the elements in a clean array
-			slice.call( this );
+			slice.call(this);
 	},
 
 	// Take an array of elements and push it onto the stack
 	// (returning the new matched element set)
-	pushStack: function( elems ) {
+	pushStack: function(elems) {
 
 		// Build a new jQuery matched element set
-		var ret = jQuery.merge( this.constructor(), elems );
+		var ret = jQuery.merge(this.constructor(), elems);
 
 		// Add the old object onto the stack (as a reference)
 		ret.prevObject = this;
@@ -133,32 +129,32 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	// Execute a callback for every element in the matched set.
-	each: function( callback ) {
-		return jQuery.each( this, callback );
+	each: function(callback) {
+		return jQuery.each(this, callback);
 	},
 
-	map: function( callback ) {
-		return this.pushStack( jQuery.map( this, function( elem, i ) {
-			return callback.call( elem, i, elem );
-		} ) );
+	map: function(callback) {
+		return this.pushStack(jQuery.map(this, function(elem, i) {
+			return callback.call(elem, i, elem);
+		}));
 	},
 
 	slice: function() {
-		return this.pushStack( slice.apply( this, arguments ) );
+		return this.pushStack(slice.apply(this, arguments));
 	},
 
 	first: function() {
-		return this.eq( 0 );
+		return this.eq(0);
 	},
 
 	last: function() {
-		return this.eq( -1 );
+		return this.eq(-1);
 	},
 
-	eq: function( i ) {
-		var len = this.length,
-			j = +i + ( i < 0 ? len : 0 );
-		return this.pushStack( j >= 0 && j < len ? [ this[ j ] ] : [] );
+	eq: function(i) {
+		var len = this.length;
+		var j = +i + (i < 0 ? len : 0);
+		return this.pushStack(j >= 0 && j < len ? [this[j]] : []);
 	},
 
 	end: function() {
@@ -174,38 +170,38 @@ jQuery.fn = jQuery.prototype = {
 
 jQuery.extend = jQuery.fn.extend = function() {
 	var options, name, src, copy, copyIsArray, clone,
-		target = arguments[ 0 ] || {},
+		target = arguments[0] || {},
 		i = 1,
 		length = arguments.length,
 		deep = false;
 
 	// Handle a deep copy situation
-	if ( typeof target === "boolean" ) {
+	if (typeof target === 'boolean') {
 		deep = target;
 
 		// Skip the boolean and the target
-		target = arguments[ i ] || {};
+		target = arguments[i] || {};
 		i++;
 	}
 
 	// Handle case when target is a string or something (possible in deep copy)
-	if ( typeof target !== "object" && !jQuery.isFunction( target ) ) {
+	if (typeof target !== 'object' && !jQuery.isFunction(target)) {
 		target = {};
 	}
 
 	// Extend jQuery itself if only one argument is passed
-	if ( i === length ) {
+	if (i === length) {
 		target = this;
 		i--;
 	}
 
-	for ( ; i < length; i++ ) {
+	for (; i < length; i++) {
 
 		// Only deal with non-null/undefined values
-		if ( ( options = arguments[ i ] ) != null ) {
+		if ((options = arguments[i]) != null) {
 
 			// Extend the base object
-			for ( name in options ) {
+			for (name in options) {
 				src = target[ name ];
 				copy = options[ name ];
 
@@ -3078,7 +3074,7 @@ jQuery.each( {
 	contents: function( elem ) {
 		return elem.contentDocument || jQuery.merge( [], elem.childNodes );
 	}
-}, function( name, fn ) {
+}, function(name, fn) {
 	jQuery.fn[ name ] = function( until, selector ) {
 		var matched = jQuery.map( this, fn, until );
 
@@ -3093,17 +3089,17 @@ jQuery.each( {
 		if ( this.length > 1 ) {
 
 			// Remove duplicates
-			if ( !guaranteedUnique[ name ] ) {
-				jQuery.uniqueSort( matched );
+			if ( !guaranteedUnique[name] ) {
+				jQuery.uniqueSort(matched);
 			}
 
 			// Reverse order for parents* and prev-derivatives
-			if ( rparentsprev.test( name ) ) {
+			if ( rparentsprev.test(name) ) {
 				matched.reverse();
 			}
 		}
 
-		return this.pushStack( matched );
+		return this.pushStack(matched);
 	};
 } );
 var rnotwhite = ( /\S+/g );
@@ -3267,7 +3263,7 @@ jQuery.Callbacks = function( options ) {
 
 			// Check if a given callback is in the list.
 			// If no argument is given, return whether or not list has callbacks attached.
-			has: function( fn ) {
+			has: function(fn) {
 				return fn ?
 					jQuery.inArray( fn, list ) > -1 :
 					list.length > 0;
