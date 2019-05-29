@@ -83,22 +83,20 @@ namespace Yavsc
                             Connected = true
                         });
                     _dbContext.SaveChanges();
-                    // TODO ChatHubConnectioinFlags
                 }
                 else
                 {
-                    // FIXME is this line reached ?
+                    // this line isn't reached: Context.User != null <=> Context.User.Identity.IsAuthenticated
                     _logger.LogInformation("Anonymous chat user (first use case)");
                     throw new NotSupportedException();
                 }
             }
             else
             {
-
                 await Groups.Add(Context.ConnectionId, Constants.HubGroupAnonymous);
             }
             // TODO only notify followers
-            Clients.Group(Constants.HubGroupAuthenticated).notify(NotificationTypes.Connected, userName);
+            Clients.Group(Constants.HubGroupAuthenticated).notifyuser(NotificationTypes.Connected, userName, "");
             await base.OnConnected();
         }
         string setUserName()
@@ -125,7 +123,7 @@ namespace Yavsc
         public override Task OnDisconnected(bool stopCalled)
         {
             string userName = Context.User?.Identity.Name;
-            Clients.Group("authenticated").notify(NotificationTypes.DisConnected, userName);
+            Clients.Group("authenticated").notifyUser(NotificationTypes.DisConnected, userName);
             if (userName != null)
             {
                 var cx = _dbContext.ChatConnection.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
@@ -172,7 +170,7 @@ namespace Yavsc
                             Connected = true
                         });
                     _dbContext.SaveChanges();
-                    Clients.Group("authenticated").notify(NotificationTypes.Reconnected, userName);
+                    Clients.Group("authenticated").notifyUser(NotificationTypes.Reconnected, userName);
                 }
             return base.OnReconnected();
         }
@@ -191,7 +189,7 @@ namespace Yavsc
             var candidate = "?" + nickName;
             if (ChatUserNames.Any(u => u.Value == candidate))
             {
-                Clients.Caller.notify(NotificationTypes.ExistingUserName, nickName);
+                Clients.Caller.notifyUser(NotificationTypes.ExistingUserName, nickName, "aborting");
                 return;
             }
             ChatUserNames[Context.ConnectionId] = "?" + nickName;
@@ -221,19 +219,17 @@ namespace Yavsc
                     else
                     {
                         chanInfo.Users.Add(Context.ConnectionId, userName);
-
                         Groups.Add(Context.ConnectionId, roomGroupName);
+                        Clients.Caller.joint(chanInfo);
+                        Clients.Group("room_" + roomName).notifyRoom(NotificationTypes.UserJoin, roomName, userName);
+                        return chanInfo;
                     }
-                    Clients.Caller.joint(chanInfo);
-                    Clients.Group("room_" + roomName).notify(NotificationTypes.UserJoin, userName);
-
-                    _logger.LogInformation("exiting ok.");
-                    return chanInfo;
+                    return null;
                 }
                 else
                 {
                     _logger.LogInformation("room seemd to be avaible ... but we could get no info on it.");
-                    Clients.Caller.notify(NotificationTypes.Error, "join get chan failed ...");
+                    Clients.Caller.notifyRoom(NotificationTypes.Error, roomName, "join get chan failed ...");
                     return null;
                 }
             }
@@ -273,7 +269,7 @@ namespace Yavsc
             var existent = _dbContext.ChatRoom.Any(r => r.Name == room);
             if (existent)
             {
-                Clients.Caller.notify(NotificationTypes.Error, "already registered.");
+                Clients.Caller.notifyUser(NotificationTypes.Error, room, "already registered.");
                 return;
             }
             string userName = Context.User.Identity.Name;
@@ -306,10 +302,15 @@ namespace Yavsc
             if (Channels.TryGetValue(roomName, out chanInfo))
             {
                 var roomGroupName = "room_" + roomName;
+                if (!chanInfo.Users.ContainsKey(Context.ConnectionId))
+                {
+                    NotifyRoomError(roomName, "you didn't join.");
+                    return;
+                }
                 Groups.Remove(Context.ConnectionId, roomGroupName);
                 var group = Clients.Group(roomGroupName);
                 var username = ChatUserNames[Context.ConnectionId];
-                group.notify(NotificationTypes.UserPart, $"{roomName} {username} ({reason})");
+                group.notifyRoom(NotificationTypes.UserPart, roomName, $"{username}: {reason}");
 
                 chanInfo.Users.Remove(Context.ConnectionId);
                 ChatRoomInfo deadchanInfo;
@@ -323,13 +324,13 @@ namespace Yavsc
             }
             else
             {
-                NotifyNotJoint(roomName, "no such room");
+                NotifyRoomError(roomName, $"could not join: no such room");
             }
         }
 
-        void NotifyNotJoint(string room, string reason)
+        void NotifyRoomError(string room, string reason)
         {
-            Clients.Caller.notify(NotificationTypes.Error, $"{room} not joint: {reason}");
+            Clients.Caller.notifyUser(NotificationTypes.Error, room, reason);
         }
 
 
@@ -342,7 +343,7 @@ namespace Yavsc
                 if (!chanInfo.Users.ContainsKey(Context.ConnectionId))
                 {
                     var notSentMsg = $"could not send to channel ({roomName}) (not joint)";
-                    Clients.Caller.notify(NotificationTypes.Error, notSentMsg);
+                    Clients.Caller.notifyUser(NotificationTypes.Error, roomName, notSentMsg);
                     return;
                 }
                 string uname = ChatUserNames[Context.ConnectionId];
@@ -352,7 +353,7 @@ namespace Yavsc
             else
             {
                 var noChanMsg = $"could not send to channel ({roomName}) (no such chan)";
-                Clients.Caller.notify(NotificationTypes.Error, noChanMsg);
+                Clients.Caller.notifyUser(NotificationTypes.Error, roomName, noChanMsg);
                 _logger.LogWarning(noChanMsg);
                 return;
             }
@@ -376,7 +377,7 @@ namespace Yavsc
 
                     if (bl.Count() > 0)
                     {
-                        Clients.Caller.notify(NotificationTypes.PrivateMessageDenied, userName);
+                        Clients.Caller.notifyUser(NotificationTypes.PrivateMessageDenied, userName, "you are black listed.");
                         return;
                     }
                 }
