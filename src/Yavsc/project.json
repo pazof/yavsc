@@ -171,7 +171,7 @@
     ]
   },
   "scripts": {
-    "prepublish": "gulp min"
+    "prepublish": "make minify"
   },
   "embed": "Views/**/*.cshtml"
 }

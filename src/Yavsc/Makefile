@@ -5,8 +5,13 @@ HOSTADMIN=root
 ASPNET_LOG_LEVEL=debug
 SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
+
 include $(MAKEFILE_DIR)/versioning.mk
 include $(MAKEFILE_DIR)/dnx.mk
+
+MINJS=wwwroot/js/bootstrap.min.js      wwwroot/js/input-lib.min.js             wwwroot/js/jquery.signalR-2.2.1.min.js  wwwroot/js/quill.min.js wwwroot/js/chat.min.js           wwwroot/js/jquery-2.2.4.min.js          wwwroot/js/jquery-ui.min.js             wwwroot/js/showdown.min.js wwwroot/js/comment.min.js        wwwroot/js/jquery-3.2.1.min.js          wwwroot/js/md-helpers.min.js            wwwroot/js/site.min.js wwwroot/js/dropzone.min.js       wwwroot/js/jquery-migrate-3.0.0.min.js  wwwroot/js/parallax.min.js              wwwroot/js/str.min.js wwwroot/js/google-geoloc.min.js  wwwroot/js/jquery.min.js                wwwroot/js/paypalbutton.min.js          wwwroot/js/to-markdown.min.js
+
+MINCSS=wwwroot/css/coiffure.min.css  wwwroot/css/dev.min.css           wwwroot/css/freespeech.min.css  wwwroot/css/yavsc.min.css wwwroot/css/default.min.css   wwwroot/css/font-awesome.min.css  wwwroot/css/lua.min.css         wwwroot/css/yavscpre.min.css wwwroot/css/clear/site.min.css  wwwroot/css/main/bootstrap.min.css  wwwroot/css/main/jquery-ui.min.css   wwwroot/css/main/site.min.css wwwroot/css/dark/site.min.css   wwwroot/css/main/dropzone.min.css   wwwroot/css/main/quill.snow.min.css
 
 web: project.lock.json
 	ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION)
@@ -44,4 +49,16 @@ else
 	$(error EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.)
 	git status
 endif
+
+%.min.js: %.js
+	jsmin < $^ > $@
+
+%.min.css: %.css
+	jsmin < $^ > $@
+
+minJs: $(MINJS)
+
+minCss: $(MINCSS)
+
+minify: minCss minJs
 

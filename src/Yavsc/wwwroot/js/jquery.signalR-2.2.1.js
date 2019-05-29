@@ -2796,7 +2796,7 @@
 
         // Wire up the received handler
         connection.received(function (minData) {
-            var data, proxy, dataCallbackId, callback, hubName, eventName;
+            var  callback, data, dataCallbackId, eventName, hubName, proxy;
             if (!minData) {
                 return;
             }
@@ -2804,14 +2804,16 @@
             // We have to handle progress updates first in order to ensure old clients that receive
             // progress updates enter the return value branch and then no-op when they can't find
             // the callback in the map (because the minData.I value will not be a valid callback ID)
-            if (typeof (minData.P) !== "undefined") {
+            // eslint-disable-next-line no-negated-condition
+            if (typeof (minData.P) !== 'undefined') {
                 // Process progress notification
                 dataCallbackId = minData.P.I.toString();
                 callback = connection._.invocationCallbacks[dataCallbackId];
                 if (callback) {
                     callback.method.call(callback.scope, minData);
                 }
-            } else if (typeof (minData.I) !== "undefined") {
+                // eslint-disable-next-line no-negated-condition
+            } else if (typeof (minData.I) !== 'undefined') {
                 // We received the return value from a server method invocation, look up callback by id and call it
                 dataCallbackId = minData.I.toString();
                 callback = connection._.invocationCallbacks[dataCallbackId];
@@ -2827,7 +2829,7 @@
                 data = this._maximizeClientHubInvocation(minData);
 
                 // We received a client invocation request, i.e. broadcast from server hub
-                connection.log("Triggering client hub event '" + data.Method + "' on hub '" + data.Hub + "'.");
+                connection.log('Triggering client hub event \'' + data.Method + '\' on hub \'' + data.Hub + '\'.');
 
                 // Normalize the names to lowercase
                 hubName = data.Hub.toLowerCase();
@@ -2840,10 +2842,11 @@
                 $.extend(proxy.state, data.State);
                 $(proxy).triggerHandler(makeEventName(eventName), [data.Args]);
             }
+            
         });
 
         connection.error(function (errData, origData) {
-            var callbackId, callback;
+            var callback, callbackId;
 
             if (!origData) {
                 // No original data passed so this is not a send error
@@ -2865,13 +2868,13 @@
         });
 
         connection.reconnecting(function () {
-            if (connection.transport && connection.transport.name === "webSockets") {
-                clearInvocationCallbacks(connection, "Connection started reconnecting before invocation result was received.");
+            if (connection.transport && connection.transport.name === 'webSockets') {
+                clearInvocationCallbacks(connection, 'Connection started reconnecting before invocation result was received.');
             }
         });
 
         connection.disconnected(function () {
-            clearInvocationCallbacks(connection, "Connection was disconnected before invocation result was received.");
+            clearInvocationCallbacks(connection, 'Connection was disconnected before invocation result was received.');
         });
     };
 
@@ -2942,6 +2945,7 @@
     $.hubConnection = hubConnection;
 
 }(window.jQuery, window));
+
 /* jquery.signalR.version.js */
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
@@ -2949,6 +2953,6 @@
 
 /*global window:false */
 /// <reference path="jquery.signalR.core.js" />
-(function ($, undefined) {
-    $.signalR.version = "2.2.1";
+(function ($) {
+    $.signalR.version = '2.2.1';
 }(window.jQuery));
