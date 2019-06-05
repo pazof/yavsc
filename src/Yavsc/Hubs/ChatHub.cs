@@ -21,7 +21,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,7 +34,7 @@ namespace Yavsc
     using Models;
     using Models.Chat;
 
-    public class ChatHub : Hub, IDisposable
+    public partial class ChatHub : Hub, IDisposable
     {
         ApplicationDbContext _dbContext;
         private IStringLocalizer _localizer;
@@ -183,14 +182,6 @@ namespace Yavsc
                     Clients.Group("authenticated").notifyUser(NotificationTypes.Reconnected, userName, "reconnected");
                 }
             return base.OnReconnected();
-        }
-
-        
-        public class ChatRoomInfo
-        {
-            public string Name;
-            public Dictionary<string, string> Users = new Dictionary<string, string>();
-            public string Topic;
         }
 
         public void Nick(string nickName)
