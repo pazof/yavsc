@@ -60,9 +60,12 @@ namespace Yavsc
         public const string HubGroupAuthenticated = "authenticated";
         public const string HubGroupAnonymous = "anonymous";
         public const string HubGroupCops= "cops";
+        public const string HubGroupRomsPrefix = "room_";
         public const int MaxChanelName = 255;
 
+        public const string HubGroupFollowingPrefix = "fol ";
         public const string AnonymousUserNamePrefix = "?";
         public const string KeyParamChatUserName = "username";
+        public const string LabAuthChatUser  = "Authenticated chat user";
     }
 }
