@@ -6,9 +6,9 @@ namespace Yavsc
         public const string Reconnected = "reconnected";
         public const string UserPart = "userpart";
         public const string UserJoin = "userjoin";
-        public const string PrivateMessageDenied = "deniedpv";
+        public const string PrivateMessageDenied = "denied_pv";
         public const string Error = "error";
-        public const string ContactRefused = "contact refused";
-        public const string ExistingUserName ="existing user name";
+        public const string ContactRefused = "contact_refused";
+        public const string ExistingUserName ="existing_user_name";
     }
 }
