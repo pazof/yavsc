@@ -1,36 +1,36 @@
 window.ChatHubHandler = (function ($) {
 
-/*
-# chat control ids
-
-## inputs
-
-* msg_<rname> : input providing a room message
-* pv_<uname>  : input providing a private message
-* command : input providing server command
-* roomname : input (hidden or not) providing a room name
-
-## persistent containers
-
-* chatview : the global container
-* rooms : container from room displays
-* pvs : container from pv displays
-* server : container for server messages
-
-## temporary containers
-
-* room_<rname> : room message list
-* pv_<uname> : private discussion display
-
-## css classes
-
-* form-control
-* btn btn-default
-
-*/
+  /*
+  # chat control ids
+  
+  ## inputs
+  
+  * msg_<rname> : input providing a room message
+  * pv_<uname>  : input providing a private message
+  * command : input providing server command
+  * roomname : input (hidden or not) providing a room name
+  
+  ## persistent containers
+  
+  * chatview : the global container
+  * rooms : container from room displays
+  * pvs : container from pv displays
+  * server : container for server messages
+  
+  ## temporary containers
+  
+  * room_<rname> : room message list
+  * pv_<uname> : private discussion display
+  
+  ## css classes
+  
+  * form-control
+  * btn btn-default
+  
+  */
   $.fn.filterByData = function (prop, val) {
-      return this.filter(function () { return $(this).data(prop) == val; });
-    };
+    return this.filter(function () { return $(this).data(prop) == val; });
+  };
   var ChatView = function ($view, full) {
 
     if (!full) throw new Error('not implemented');
@@ -61,24 +61,24 @@ window.ChatHubHandler = (function ($) {
     };
 
     chat.client.notifyRoom = function (tag, targetid, message) {
-        // Add the notification to the page.
-        if (tag === 'connected' || tag === 'reconnected') onUserConnected(targetid, message);
-        else if (tag === 'disconnected')  onUserDisconnected(targetid, message);
-        // eslint-disable-next-line no-warning-comments
-        // TODO reconnected userpart userjoin deniedpv
-        $('<li></li>').addClass(tag).append(tag + ': ' + targetid + ' ').append(message).addClass(tag).appendTo($('#room_' + targetid));
+      // Add the notification to the page.
+      if (tag === 'connected' || tag === 'reconnected') onUserConnected(targetid, message);
+      else if (tag === 'disconnected') onUserDisconnected(targetid, message);
+      // eslint-disable-next-line no-warning-comments
+      // TODO reconnected userpart userjoin deniedpv
+      $('<li></li>').addClass(tag).append(tag + ': ' + targetid + ' ').append(message).addClass(tag).appendTo($('#room_' + targetid));
     };
 
     chat.client.notifyUser = function (tag, targetid, message) {
-        // Add the notification to the page.
-        if (tag === 'connected' || tag === 'reconnected') onUserConnected(targetid, message);
-        else if (tag === 'disconnected')  onUserDisconnected(targetid, message);
-        // eslint-disable-next-line no-warning-comments
-        // TODO reconnected userpart userjoin deniedpv
-        $('<li></li>').append(tag + ': ' + targetid).append(message).addClass(tag).appendTo(notifications);
+      // Add the notification to the page.
+      if (tag === 'connected' || tag === 'reconnected') onUserConnected(targetid, message);
+      else if (tag === 'disconnected') onUserDisconnected(targetid, message);
+      // eslint-disable-next-line no-warning-comments
+      // TODO reconnected userpart userjoin deniedpv
+      $('<li></li>').append(tag + ': ' + targetid).append(message).addClass(tag).appendTo(notifications);
     };
 
-    var setActiveRoom = function(room) {
+    var setActiveRoom = function (room) {
       var frontRoom;
       if (frontRoomName !== '') {
         frontRoom = $('#vroom_' + frontRoomName);
@@ -100,7 +100,7 @@ window.ChatHubHandler = (function ($) {
     var roomlist = $('<div class="roomlist"></div>');
     roomlist.appendTo(chatbar);
     $('<label for="channame">Join&nbsp;:</label>')
-    .appendTo(roomjoin);
+      .appendTo(roomjoin);
     var chanName = $('<input id="channame" title="channel name" hint="yavsc"  >');
     chanName.appendTo(roomjoin);
     roomjoin.appendTo(chatbar);
@@ -109,8 +109,8 @@ window.ChatHubHandler = (function ($) {
     var chatlist = $('<div class="chatlist" ></div>');
     chatlist.appendTo($view);
     var buildRoom = function (room) {
-      var roomTag =  $('<a>' + room + '</a>').addClass('btn');
-      roomTag.prop('id', 'sel_' + room).click(function() {
+      var roomTag = $('<a>' + room + '</a>').addClass('btn');
+      roomTag.prop('id', 'sel_' + room).click(function () {
         setActiveRoom(room);
         $(this).removeClass('btn-primary');
       });
@@ -123,41 +123,41 @@ window.ChatHubHandler = (function ($) {
       msglist.prop('id', 'room_' + room);
       msglist.appendTo(roomview);
       $('<input type="text">')
-      .prop('id', 'inp_' + room)
-      .prop('enable', false)
-      .prop('hint', 'hello')
-      .prop('title', 'send to ' + room)
-      .addClass('form-control')
-      .keydown(function(ev) {
-        if (ev.which == 13) {
-          if (this.value.length == 0) return;
-          chat.server.send(room, this.value);
-          this.value = '';
-        }
-      }).appendTo(roomview);
+        .prop('id', 'inp_' + room)
+        .prop('enable', false)
+        .prop('hint', 'hello')
+        .prop('title', 'send to ' + room)
+        .addClass('form-control')
+        .keydown(function (ev) {
+          if (ev.which == 13) {
+            if (this.value.length == 0) return;
+            chat.server.send(room, this.value);
+            this.value = '';
+          }
+        }).appendTo(roomview);
       chans.push(room);
       setActiveRoom(room);
     };
 
-    $view.data('chans').split(',').forEach(function(chan) {
+    $view.data('chans').split(',').forEach(function (chan) {
       buildRoom(chan);
     });
 
-    function onCx () {
+    function onCx() {
       setTimeout(function () {
         getUsers();
       }, 120);
 
       $('#chatview').removeClass('disabled');
 
-      chans.forEach(function(room) {
-        chat.server.join(room).done(function(chatInfo) {
+      chans.forEach(function (room) {
+        chat.server.join(room).done(function (chatInfo) {
           setActiveRoom(chatInfo.Name);
         });
       });
     }
 
-    function onDisCx () {
+    function onDisCx() {
       $('#chatview').addClass('disabled');
     }
 
@@ -181,12 +181,12 @@ window.ChatHubHandler = (function ($) {
       if (event.which == 13) {
         if (this.value.length == 0) return;
         buildRoom(this.value);
-        chat.server.join(this.value).done(function(chatInfo) {
+        chat.server.join(this.value).done(function (chatInfo) {
           setActiveRoom(chatInfo.Name);
         });
         this.value = '';
       }
-       // else TODO showRoomInfo(this.value);
+      // else TODO showRoomInfo(this.value);
     });
 
     var pvuis;
@@ -232,15 +232,15 @@ window.ChatHubHandler = (function ($) {
 
     var getUsers = function () {
       $.get('/api/chat/users').done(function (users) {
-          $.each(users, function () {
-            var user = this;
-            addChatUser(user.UserName);
-          });
+        $.each(users, function () {
+          var user = this;
+          addChatUser(user.UserName);
         });
-      };
+      });
+    };
 
     // This optional function html-encodes messages for display in the page.
-    function htmlEncode (value) {
+    function htmlEncode(value) {
       var encodedValue = $('<div />').text(value).html();
       return encodedValue;
     }
@@ -268,14 +268,14 @@ window.ChatHubHandler = (function ($) {
     };
 
     var onUserConnected = function (username) {
-        addChatUser(username);
+      addChatUser(username);
     };
 
     $(window).unload(function () { chat.server.abort(); });
 
   };
 
-  $(document).ready(function($) {
+  $(document).ready(function ($) {
     ChatView($('#chatview'), true);
   });
 
