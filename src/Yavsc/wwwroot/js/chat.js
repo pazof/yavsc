@@ -2,31 +2,30 @@ window.ChatHubHandler = (function ($) {
 
   /*
   # chat control ids
-  
   ## inputs
-  
-  * msg_<rname> : input providing a room message
-  * pv_<uname>  : input providing a private message
-  * command : input providing server command
-  * roomname : input (hidden or not) providing a room name
-  
+
+   * msg_<rname> : input providing a room message
+   * pv_<uname>  : input providing a private message
+   * command : input providing server command
+   * roomname : input (hidden or not) providing a room name
+
   ## persistent containers
-  
-  * chatview : the global container
-  * rooms : container from room displays
-  * pvs : container from pv displays
-  * server : container for server messages
-  
+
+   * chatview : the global container
+   * rooms : container from room displays
+   * pvs : container from pv displays
+   * server : container for server messages
+
   ## temporary containers
-  
+
   * room_<rname> : room message list
   * pv_<uname> : private discussion display
-  
+
   ## css classes
-  
+
   * form-control
   * btn btn-default
-  
+
   */
   $.fn.filterByData = function (prop, val) {
     return this.filter(function () { return $(this).data(prop) == val; });
@@ -35,9 +34,14 @@ window.ChatHubHandler = (function ($) {
 
     if (!full) throw new Error('not implemented');
 
-    // build a channel list
+    // the channel list
     var chans = [];
-    var frontRoomName;
+    // authencitated flagf from server
+    var is_auth = $view.data('is_auth');
+    // private chat list
+    var userlist = [];
+
+    var frontChanId;
 
     var ulist = $('<ul></ul>').addClass('userlist');
     var notifications = $('<ul></ul>').addClass('notifs');
@@ -49,15 +53,22 @@ window.ChatHubHandler = (function ($) {
     // Create a function that the hub can call back to display messages.
     chat.client.addMessage = function (name, room, message) {
       // Add the message to the page.
-      $('#room_' + room).append('<li class="discussion"><strong>' + htmlEncode(name) + '</strong>: ' + htmlEncode(message) + '</li>');
+      var $userTag = $("<a>" + htmlEncode(name) + "</a>").click(function(){
+        buildPv(name);
+      });
+      var $li = $('<li class="discussion"></li>');
+      $userTag.appendTo($li)
+      $li.append(' '+ htmlEncode(message));
+      $li.appendTo($('#r' + room));
     };
 
     chat.client.addPV = function (name, message) {
       if (!$('#mute').prop('checked')) {
         audio.play();
       }
+      buildPv(name);
       // Add the pv to the page.
-      $('#pv_' + name).append('<li class="pv"><strong>' + htmlEncode(name) + '</strong>: ' + htmlEncode(message) + '</li>');
+      $('#u' + name).append('<li class="pv"><strong>' + htmlEncode(name) + '</strong>: ' + htmlEncode(message) + '</li>');
     };
 
     chat.client.notifyRoom = function (tag, targetid, message) {
@@ -78,19 +89,15 @@ window.ChatHubHandler = (function ($) {
       $('<li></li>').append(tag + ': ' + targetid).append(message).addClass(tag).appendTo(notifications);
     };
 
-    var setActiveRoom = function (room) {
-      var frontRoom;
-      if (frontRoomName !== '') {
-        frontRoom = $('#vroom_' + frontRoomName);
-        // eslint-disable-next-line no-warning-comments
-        // TODO animate
-        frontRoom.addClass('hidden');
-        $('#sel_' + frontRoomName).addClass('btn-primary');
+    var setActiveChan = function (chanId) {
+      if (frontChanId != chanId) {
+        $('#sel_' + frontChanId).addClass('btn-primary');
+        $('#v' + frontChanId).addClass('hidden');
       }
-      frontRoomName = room;
-      frontRoom = $('#vroom_' + room);
-      $('#sel_' + room).removeClass('btn-primary');
-      frontRoom.removeClass('hidden');
+      frontChanId = chanId;
+      $('#sel_' + chanId).removeClass('btn-primary');
+      $('#v' + chanId).removeClass('hidden');
+      $('#inp_' + chanId).focus();
     };
 
     var chatbar = $('<div class="chatbar"></div>');
@@ -108,36 +115,53 @@ window.ChatHubHandler = (function ($) {
     chatbar.appendTo($view);
     var chatlist = $('<div class="chatlist" ></div>');
     chatlist.appendTo($view);
-    var buildRoom = function (room) {
-      var roomTag = $('<a>' + room + '</a>').addClass('btn');
-      roomTag.prop('id', 'sel_' + room).click(function () {
-        setActiveRoom(room);
+
+    var buildChan = function (chdp, chanType, chanName, sendCmd) {
+      var chanId = chanType + chanName;
+    //  if ($('#' + chanId)) return;
+      var roomTag = $('<a>' + chdp + chanName + '</a>').addClass('btn');
+      roomTag.prop('id', 'sel_' + chanId).click(function () {
+        setActiveChan(chanId);
         $(this).removeClass('btn-primary');
       });
 
       roomTag.appendTo(roomlist);
       var roomview = $('<div></div>').addClass('container');
       roomview.appendTo(chatlist);
-      roomview.prop('id', 'vroom_' + room);
+      roomview.prop('id', 'v' + chanId);
       var msglist = $('<ul></ul>').addClass('mesglist');
-      msglist.prop('id', 'room_' + room);
+      msglist.prop('id', chanId);
       msglist.appendTo(roomview);
       $('<input type="text">')
-        .prop('id', 'inp_' + room)
+        .prop('id', 'inp_' + chanId)
         .prop('enable', false)
         .prop('hint', 'hello')
-        .prop('title', 'send to ' + room)
+        .prop('title', 'send to ' + chanName)
         .addClass('form-control')
         .keydown(function (ev) {
           if (ev.which == 13) {
             if (this.value.length == 0) return;
-            chat.server.send(room, this.value);
+              sendCmd(chanName, this.value);
+            // chat.server.send(chanName, this.value);
             this.value = '';
           }
         }).appendTo(roomview);
-      chans.push(room);
-      setActiveRoom(room);
+        if (chanType == 'r')
+          chans.push(chanName);
+        else if (chanType == 'u')
+          userlist.push(chanName);
+      setActiveChan(chanId);
     };
+    var buildRoom = function (roomName) { 
+      if (chans.some(function(cname){ return cname == roomName ; }))
+        setActiveChan('r' + roomName);
+      else 
+      buildChan('#', 'r', roomName, chat.server.send); };
+    var buildPv = function (userName) {
+      if (userlist.some(function(uname){ return uname == userName ; }))
+        setActiveChan('u' + userName);
+      else 
+        buildChan('@', 'u', userName, chat.server.sendPV); };
 
     $view.data('chans').split(',').forEach(function (chan) {
       buildRoom(chan);
@@ -145,20 +169,19 @@ window.ChatHubHandler = (function ($) {
 
     function onCx() {
       setTimeout(function () {
-        getUsers();
+        if (is_auth) getUsers();
+        chans.forEach(function (room) {
+          chat.server.join(room).done(function (chatInfo) {
+            setActiveChan('r' + chatInfo.Name);
+          });
+        });
       }, 120);
 
-      $('#chatview').removeClass('disabled');
-
-      chans.forEach(function (room) {
-        chat.server.join(room).done(function (chatInfo) {
-          setActiveRoom(chatInfo.Name);
-        });
-      });
+      $view.removeClass('disabled');
     }
 
     function onDisCx() {
-      $('#chatview').addClass('disabled');
+      $view.addClass('disabled');
     }
 
     // Start the connection.
@@ -171,7 +194,6 @@ window.ChatHubHandler = (function ($) {
       onDisCx();
       setTimeout(function () {
         $.connection.hub.start().done(function () {
-          // $('#mySignalRConnectionIdHidden').val($.connection.hub.id)
           onCx();
         }, 30000); // Re-start connection after 30 seconds
       });
@@ -182,35 +204,15 @@ window.ChatHubHandler = (function ($) {
         if (this.value.length == 0) return;
         buildRoom(this.value);
         chat.server.join(this.value).done(function (chatInfo) {
-          setActiveRoom(chatInfo.Name);
+          setActiveChan('r' + chatInfo.Name);
         });
         this.value = '';
       }
       // else TODO showRoomInfo(this.value);
     });
-
-    var pvuis;
     // eslint-disable-next-line no-warning-comments
     // TODO get this data from the chatview element
     var audio = new Audio('/sounds/bell.mp3');
-
-    var sendPV = function () {
-      var msg = $('#pv').val();
-      // Call the Send method on the hub.
-      $.each(pvuis.CXs, function () {
-        chat.server.sendPV(this, msg);
-      });
-      $('#discussion').append('<li class="pv">' + htmlEncode(pvuis.UserName) + '<< ' + htmlEncode(msg) + '</li>');
-      // Clear text box and reset focus for next comment.
-      $('#pv').val('');
-    };
-
-    $('#pv').keydown(function (event) {
-      if (event.which == 13) {
-        sendPV();
-      }
-    });
-
     $('#command').keydown(function (event) {
       if (event.which == 13) {
         // eslint-disable-next-line no-warning-comments
@@ -220,13 +222,15 @@ window.ChatHubHandler = (function ($) {
 
     var addChatUser = function (uname) {
 
-      $('#u_' + uname).remove();
+      $('#u' + uname).remove();
       // ulist.remove("li.user[data='"+uname+"']");
 
       $('<li class="user"><img src="/Avatars/' + uname + '.xs.png"> ' + uname + '</li>')
         .prop('id', 'u_' + uname)
         .css('cursor', 'pointer')
-        .click(function () { setPrivateTarget(this); })
+        .click(function () {
+           buildPv(uname);
+          })
         .appendTo(ulist);
     };
 
@@ -245,26 +249,8 @@ window.ChatHubHandler = (function ($) {
       return encodedValue;
     }
 
-    var setPrivateTarget = function (li) {
-      $('#rooms').addClass('hidden');
-      $('#sendpvbox').removeClass('hidden');
-      pvuis = { CXs: $(li).data('cxids'), UserName: $(li).data('name') };
-      $('#sendpvdest').html(pvuis.UserName);
-      $('#pvs').focus();
-    };
-
-    var setPublic = function () {
-      $('#rooms').removeClass('hidden');
-      $('#sendpvbox').addClass('hidden');
-      $('#message').focus();
-    };
-
-    $('#pubChan').css('cursor', 'pointer');
-    $('#pubChan').click(setPublic);
-    setPublic();
-
     var onUserDisconnected = function (uname) {
-      $('#u_' + uname).remove();
+      $('#u' + uname).remove();
     };
 
     var onUserConnected = function (username) {
