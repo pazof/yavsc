@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.Entity;
-using System.Threading.Tasks;
 using System.Security.Claims;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Identity;
@@ -12,7 +11,6 @@ using Yavsc.ViewModels.Chat;
 
 namespace Yavsc.Controllers
 {
-    using System.Threading.Tasks;
 
     [Route("api/chat")]
     public class ChatApiController : Controller
@@ -65,7 +63,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: api/chat/userName
-        [HttpGet("{userName}", Name = "uinfo")]
+        [HttpGet("user/{userName}", Name = "uinfo")]
         public IActionResult GetUserInfo([FromRoute] string userName)
         {
             if (!ModelState.IsValid)
@@ -86,6 +84,35 @@ namespace Yavsc.Controllers
                 Connections = user.Connections,
                 Roles = (userManager.GetRolesAsync(user)).Result.ToArray()
             });
+        }
+
+        public class ChannelShortInfo {
+            public string RoomName {get; set;}
+            public string Topic { get; set; }
+        }
+
+        /// <summary>
+        /// Get firsts 10 biggest channels having
+        /// a name starting with given prefix.
+        /// </summary>
+        /// <param name="chanNamePrefix">chan Name Prefix</param>
+        /// <returns></returns>
+        [HttpGet("chanlist/{chanNamePrefix}")]
+        public IActionResult GetChanList([FromRoute] string chanNamePrefix)
+        {
+            var list = ChatHub.Channels.Where(c => c.Key.StartsWith(chanNamePrefix)).OrderByDescending(c=>c.Value.Users.Count).Select(c=>new ChannelShortInfo { RoomName= c.Key, Topic = c.Value.Topic }).Take(10);
+            return Ok(list);
+        }
+
+        /// <summary>
+        /// Get firsts 10 biggest channels
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("chanlist")]
+        public IActionResult GetChanList()
+        {
+            return Ok(ChatHub.Channels.OrderByDescending(c=>c.Value.Users.Count).Select(c=> new ChannelShortInfo { RoomName= c.Key, Topic = c.Value.Topic })
+                .Take(10));
         }
 
     }

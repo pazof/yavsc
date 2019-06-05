@@ -19,15 +19,16 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using Microsoft.AspNet.SignalR;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
 
 namespace Yavsc
 {
@@ -37,8 +38,10 @@ namespace Yavsc
     public class ChatHub : Hub, IDisposable
     {
         ApplicationDbContext _dbContext;
+        private IStringLocalizer _localizer;
         ILogger _logger;
         public static ConcurrentDictionary<string, string> ChatUserNames = new ConcurrentDictionary<string, string>();
+        public static ConcurrentDictionary<string, ChatRoomInfo> Channels = new ConcurrentDictionary<string, ChatRoomInfo>();
 
         public ChatHub()
         {
@@ -46,6 +49,9 @@ namespace Yavsc
 
             _dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
             var loggerFactory = scope.ServiceProvider.GetService<ILoggerFactory>();
+             
+            var stringLocFactory = scope.ServiceProvider.GetService<IStringLocalizerFactory>();
+            _localizer = stringLocFactory.Create(typeof(ChatHub));
             _logger = loggerFactory.CreateLogger<ChatHub>();
         }
 
@@ -63,7 +69,7 @@ namespace Yavsc
                 await Groups.Add(Context.ConnectionId, group);
                 if (isAuth)
                 {
-                    _logger.LogInformation("Authenticated chat user");
+                    _logger.LogInformation(_localizer.GetString(Constants.LabAuthChatUser));
 
                     var userId = _dbContext.Users.First(u => u.UserName == userName).Id;
 
@@ -83,6 +89,12 @@ namespace Yavsc
                             Connected = true
                         });
                     _dbContext.SaveChanges();
+                    Clients.Group(Constants.HubGroupFollowingPrefix+userId).notifyuser(NotificationTypes.Connected, userName, null);
+       
+                    foreach (var uid in _dbContext.CircleMembers.Select(m => m.MemberId))
+                    {
+                        await Groups.Add(Context.ConnectionId, Constants.HubGroupFollowingPrefix+uid);
+                    }
                 }
                 else
                 {
@@ -95,9 +107,7 @@ namespace Yavsc
             {
                 await Groups.Add(Context.ConnectionId, Constants.HubGroupAnonymous);
             }
-            // TODO only notify followers
-            Clients.Group(Constants.HubGroupAuthenticated).notifyuser(NotificationTypes.Connected, userName, "");
-            await base.OnConnected();
+             await base.OnConnected();
         }
         string setUserName()
         {
@@ -123,7 +133,6 @@ namespace Yavsc
         public override Task OnDisconnected(bool stopCalled)
         {
             string userName = Context.User?.Identity.Name;
-            Clients.Group("authenticated").notifyUser(NotificationTypes.DisConnected, userName);
             if (userName != null)
             {
                 var cx = _dbContext.ChatConnection.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
@@ -142,6 +151,7 @@ namespace Yavsc
                     _dbContext.SaveChanges();
                 }
             }
+            Clients.Group("authenticated").notifyUser(NotificationTypes.DisConnected, userName, "disconnected");
             return base.OnDisconnected(stopCalled);
         }
 
@@ -170,13 +180,12 @@ namespace Yavsc
                             Connected = true
                         });
                     _dbContext.SaveChanges();
-                    Clients.Group("authenticated").notifyUser(NotificationTypes.Reconnected, userName);
+                    Clients.Group("authenticated").notifyUser(NotificationTypes.Reconnected, userName, "reconnected");
                 }
             return base.OnReconnected();
         }
 
-        static ConcurrentDictionary<string, ChatRoomInfo> Channels = new ConcurrentDictionary<string, ChatRoomInfo>();
-
+        
         public class ChatRoomInfo
         {
             public string Name;
@@ -206,7 +215,7 @@ namespace Yavsc
             _logger.LogInformation("a client for " + roomName);
             var userName = ChatUserNames[Context.ConnectionId];
             _logger.LogInformation($" chat user : {userName}");
-            var roomGroupName = "room_" + roomName;
+            var roomGroupName = Constants.HubGroupRomsPrefix + roomName;
 
             ChatRoomInfo chanInfo;
             if (Channels.ContainsKey(roomName))
@@ -221,7 +230,7 @@ namespace Yavsc
                         chanInfo.Users.Add(Context.ConnectionId, userName);
                         Groups.Add(Context.ConnectionId, roomGroupName);
                         Clients.Caller.joint(chanInfo);
-                        Clients.Group("room_" + roomName).notifyRoom(NotificationTypes.UserJoin, roomName, userName);
+                        Clients.Group(Constants.HubGroupRomsPrefix + roomName).notifyRoom(NotificationTypes.UserJoin, roomName, userName);
                         return chanInfo;
                     }
                     return null;
@@ -301,7 +310,7 @@ namespace Yavsc
             ChatRoomInfo chanInfo;
             if (Channels.TryGetValue(roomName, out chanInfo))
             {
-                var roomGroupName = "room_" + roomName;
+                var roomGroupName = Constants.HubGroupRomsPrefix + roomName;
                 if (!chanInfo.Users.ContainsKey(Context.ConnectionId))
                 {
                     NotifyRoomError(roomName, "you didn't join.");
@@ -336,7 +345,7 @@ namespace Yavsc
 
         public void Send(string roomName, string message)
         {
-            var groupname = "room_" + roomName;
+            var groupname = Constants.HubGroupRomsPrefix + roomName;
             ChatRoomInfo chanInfo;
             if (Channels.TryGetValue(roomName, out chanInfo))
             {
