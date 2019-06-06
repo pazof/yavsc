@@ -363,8 +363,7 @@ namespace Yavsc
         [Authorize]
         public void SendPV(string userName, string message)
         {
-            if (string.IsNullOrWhiteSpace(userName))
-                return;
+            if (string.IsNullOrWhiteSpace(userName)) return;
 
             if (userName[0] != '?')
                 if (!Context.User.IsInRole(Constants.AdminGroupName))
