@@ -98,8 +98,7 @@ namespace Yavsc
                 else
                 {
                     // this line isn't reached: Context.User != null <=> Context.User.Identity.IsAuthenticated
-                    _logger.LogInformation("Anonymous chat user (first use case)");
-                    throw new NotSupportedException();
+                    throw new NotSupportedException("Context.User != null && no auth");
                 }
             }
             else
@@ -114,7 +113,6 @@ namespace Yavsc
                 if (Context.User.Identity.IsAuthenticated)
                 {
                     ChatUserNames[Context.ConnectionId] = Context.User.Identity.Name;
-                    _logger.LogInformation($"chat user name set to : {Context.User.Identity.Name}");
                     return Context.User.Identity.Name;
                 }
             anonymousSequence++;
@@ -123,7 +121,6 @@ namespace Yavsc
 
             var aname = $"{Constants.AnonymousUserNamePrefix}{queryUname}{anonymousSequence}";
             ChatUserNames[Context.ConnectionId] = aname;
-            _logger.LogInformation($"Anonymous chat user name set to : {aname}");
             return aname;
         }
 
@@ -160,8 +157,6 @@ namespace Yavsc
                 {
                     var userName = Context.User.Identity.Name;
                     var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
-                    if (user == null)
-                        _logger.LogWarning($"null user with <{userName}> & Context.User.Identity.IsAuthenticated");
                     var userId = user.Id;
                     var userHadConnections = _dbContext.ChatConnection.Any(accx => accx.ConnectionId == Context.ConnectionId);
 
@@ -203,9 +198,7 @@ namespace Yavsc
 
         public ChatRoomInfo Join(string roomName)
         {
-            _logger.LogInformation("a client for " + roomName);
             var userName = ChatUserNames[Context.ConnectionId];
-            _logger.LogInformation($" chat user : {userName}");
             var roomGroupName = Constants.HubGroupRomsPrefix + roomName;
 
             ChatRoomInfo chanInfo;
@@ -213,7 +206,6 @@ namespace Yavsc
             {
                 if (Channels.TryGetValue(roomName, out chanInfo))
                 {
-                    _logger.LogInformation("room is avaible.");
                     if (chanInfo.Users.ContainsKey(Context.ConnectionId))
                         _logger.LogWarning("user already joint.");
                     else
@@ -228,28 +220,22 @@ namespace Yavsc
                 }
                 else
                 {
-                    _logger.LogInformation("room seemd to be avaible ... but we could get no info on it.");
+                    _logger.LogError("room seemd to be avaible ... but we could get no info on it.");
                     Clients.Caller.notifyRoom(NotificationTypes.Error, roomName, "join get chan failed ...");
                     return null;
                 }
             }
-            // chan was almost empty
-            _logger.LogInformation("joining empty chan.");
-
             var room = _dbContext.ChatRoom.FirstOrDefault(r => r.Name == roomName);
-
             chanInfo = new ChatRoomInfo();
             chanInfo.Users.Add(Context.ConnectionId, userName);
 
             if (room != null)
             {
-                _logger.LogInformation("existent room.");
                 chanInfo.Topic = room.Topic;
                 chanInfo.Name = room.Name;
             }
             else
             { // a first join, we create it.
-                _logger.LogInformation("room creation.");
                 chanInfo.Name = roomName;
                 chanInfo.Topic = "<just created>";
             }
@@ -348,13 +334,11 @@ namespace Yavsc
                 }
                 string uname = ChatUserNames[Context.ConnectionId];
                 Clients.Group(groupname).addMessage(uname, roomName, message);
-                _logger.LogInformation($"{uname} sent message {message} to {roomName}");
             }
             else
             {
                 var noChanMsg = $"could not send to channel ({roomName}) (no such chan)";
                 Clients.Caller.notifyUser(NotificationTypes.Error, roomName, noChanMsg);
-                _logger.LogWarning(noChanMsg);
                 return;
             }
 
