@@ -36,8 +36,6 @@ window.ChatHubHandler = (function ($) {
 
     // the channel list
     var chans = [];
-    // authencitated flagf from server
-    var is_auth = $view.data('is_auth');
     // private chat list
     var userlist = [];
 
@@ -62,12 +60,12 @@ window.ChatHubHandler = (function ($) {
     // Create a function that the hub can call back to display messages.
     chat.client.addMessage = function (name, room, message) {
       // Add the message to the page.
-      var $userTag = $("<a>" + htmlEncode(name) + "</a>").click(function(){
+      var $userTag = $('<a>' + htmlEncode(name) + '</a>').click(function() {
         buildPv(name);
       });
       var $li = $('<li class="discussion"></li>');
-      $userTag.appendTo($li)
-      $li.append(' '+ htmlEncode(message));
+      $userTag.appendTo($li);
+      $li.append(' ' + htmlEncode(message));
       $li.appendTo($('#r' + room));
     };
 
@@ -82,8 +80,13 @@ window.ChatHubHandler = (function ($) {
 
     chat.client.notifyRoom = function (tag, targetid, message) {
       // Add the notification to the page.
-      if (tag === 'connected' || tag === 'reconnected') onUserConnected(targetid, message);
-      else if (tag === 'disconnected') onUserDisconnected(targetid, message);
+      if (tag === 'connected' || tag === 'reconnected') {
+        onUserConnected(targetid, message);
+        return;
+      } else if (tag === 'disconnected') {
+        onUserDisconnected(targetid, message);
+        return;
+      }
       // eslint-disable-next-line no-warning-comments
       // TODO reconnected userpart userjoin deniedpv
       $('<li></li>').addClass(tag).append(tag + ': ' + targetid + ' ').append(message).addClass(tag).appendTo($('#room_' + targetid));
@@ -127,7 +130,6 @@ window.ChatHubHandler = (function ($) {
 
     var buildChan = function (chdp, chanType, chanName, sendCmd) {
       var chanId = chanType + chanName;
-    //  if ($('#' + chanId)) return;
       var roomTag = $('<a>' + chdp + chanName + '</a>').addClass('btn');
       roomTag.prop('id', 'sel_' + chanId).click(function () {
         setActiveChan(chanId);
@@ -155,37 +157,36 @@ window.ChatHubHandler = (function ($) {
             this.value = '';
           }
         }).appendTo(roomview);
-        if (chanType == 'r')
-          chans.push(chanName);
-        else if (chanType == 'u' || chanType == 'a')
-          userlist.push(chanName);
+        if (chanType == 'r') chans.push(chanName);
+        else if (chanType == 'u' || chanType == 'a') userlist.push(chanName);
       setActiveChan(chanId);
     };
-    var buildRoom = function (roomName) { 
-      if (chans.some(function(cname){ return cname == roomName ; }))
-        setActiveChan('r' + roomName);
-      else 
-      buildChan('#', 'r', roomName, chat.server.send); };
+    var buildRoom = function (roomName) {
+      if (chans.some(function(cname) { return cname == roomName; })) setActiveChan('r' + roomName);
+      else buildChan('#', 'r', roomName, chat.server.send);
+    };
     var buildPv = function (userName) {
-      if (userlist.some(function(uname){ return uname == userName ; }))
-        setActiveChan('u' + userName);
-      else 
-        if (userName[0]=='?') buildChan('@?', 'a', userName.slice(1), chat.server.sendPV); 
+      if (userlist.some(function(uname) { return uname == userName; })) setActiveChan('u' + userName);
+      else
+        if (userName[0] == '?') buildChan('@?', 'a', userName.slice(1), chat.server.sendPV);
         else buildChan('@', 'u', userName, chat.server.sendPV);
     };
 
     $view.data('chans').split(',').forEach(function (chan) {
       buildRoom(chan);
     });
-    var getUsers = function () {
+
+    /*var getUsers = function () {
       $.get('/api/chat/users').done(function (users) {
         $.each(users, function () {
           var user = this;
           addChatUser(user.UserName);
         });
       });
-    };
-    function onCx(recting) {
+    };*/
+    // eslint-disable-next-line no-warning-comments
+    // TODO only query user list for a given channel, and only for a participant
+    function onCx() {
       setTimeout(function () {
         chans.forEach(function (room) {
           chat.server.join(room).done(function (chatInfo) {
@@ -203,17 +204,16 @@ window.ChatHubHandler = (function ($) {
 
     // Start the connection.
     $.connection.hub.start().done(function () {
-      onCx(false);
+      onCx();
     });
 
     $.connection.hub.disconnected(function () {
-
       onDisCx();
       setTimeout(function () {
-        $.connection.hub.start().done(function () {
-          onCx(true);
-        }); }
-        , 30000); // Re-start connection after 30 seconds
+          $.connection.hub.start().done(function () {
+            onCx();
+          });
+        }, 30000); // Re-start connection after 30 seconds
     });
 
     chanName.keydown(function (event) {
@@ -250,8 +250,6 @@ window.ChatHubHandler = (function ($) {
           })
         .appendTo(ulist);
     };
-
-    
 
     // This optional function html-encodes messages for display in the page.
     function htmlEncode(value) {
