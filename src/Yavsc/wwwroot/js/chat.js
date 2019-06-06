@@ -94,11 +94,17 @@ window.ChatHubHandler = (function ($) {
 
     chat.client.notifyUser = function (tag, targetid, message) {
       // Add the notification to the page.
-      if (tag === 'connected' || tag === 'reconnected') onUserConnected(targetid, message);
-      else if (tag === 'disconnected') onUserDisconnected(targetid, message);
+      if (tag === 'connected' || tag === 'reconnected') {
+        onUserConnected(targetid, message);
+        return;
+      } else if (tag === 'disconnected') {
+        onUserDisconnected(targetid, message);
+        return;
+      }
+
       // eslint-disable-next-line no-warning-comments
-      // TODO reconnected userpart userjoin deniedpv
-      $('<li></li>').append(tag + ': ' + targetid).append(message).addClass(tag).appendTo(notifications);
+      // TODO userpart userjoin deniedpv
+      $('<li></li>').append(tag + ': ' + targetid + ': ').append(message).addClass(tag).appendTo(notifications);
     };
 
     var setActiveChan = function (chanId) {
