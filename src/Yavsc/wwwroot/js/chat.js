@@ -49,6 +49,15 @@ window.ChatHubHandler = (function ($) {
     ulist.appendTo($view);
     notifications.appendTo($view);
 
+
+    var onUserDisconnected = function (uname) {
+      $('#u' + uname).remove();
+    };
+
+    var onUserConnected = function (username) {
+      addChatUser(username);
+    };
+
     var chat = $.connection.chatHub;
     // Create a function that the hub can call back to display messages.
     chat.client.addMessage = function (name, room, message) {
@@ -148,7 +157,7 @@ window.ChatHubHandler = (function ($) {
         }).appendTo(roomview);
         if (chanType == 'r')
           chans.push(chanName);
-        else if (chanType == 'u')
+        else if (chanType == 'u' || chanType == 'a')
           userlist.push(chanName);
       setActiveChan(chanId);
     };
@@ -161,15 +170,23 @@ window.ChatHubHandler = (function ($) {
       if (userlist.some(function(uname){ return uname == userName ; }))
         setActiveChan('u' + userName);
       else 
-        buildChan('@', 'u', userName, chat.server.sendPV); };
+        if (userName[0]=='?') buildChan('@?', 'a', userName.slice(1), chat.server.sendPV); 
+        else buildChan('@', 'u', userName, chat.server.sendPV);
+    };
 
     $view.data('chans').split(',').forEach(function (chan) {
       buildRoom(chan);
     });
-
-    function onCx() {
+    var getUsers = function () {
+      $.get('/api/chat/users').done(function (users) {
+        $.each(users, function () {
+          var user = this;
+          addChatUser(user.UserName);
+        });
+      });
+    };
+    function onCx(recting) {
       setTimeout(function () {
-        if (is_auth) getUsers();
         chans.forEach(function (room) {
           chat.server.join(room).done(function (chatInfo) {
             setActiveChan('r' + chatInfo.Name);
@@ -186,7 +203,7 @@ window.ChatHubHandler = (function ($) {
 
     // Start the connection.
     $.connection.hub.start().done(function () {
-      onCx();
+      onCx(false);
     });
 
     $.connection.hub.disconnected(function () {
@@ -194,9 +211,9 @@ window.ChatHubHandler = (function ($) {
       onDisCx();
       setTimeout(function () {
         $.connection.hub.start().done(function () {
-          onCx();
-        }, 30000); // Re-start connection after 30 seconds
-      });
+          onCx(true);
+        }); }
+        , 30000); // Re-start connection after 30 seconds
     });
 
     chanName.keydown(function (event) {
@@ -234,14 +251,7 @@ window.ChatHubHandler = (function ($) {
         .appendTo(ulist);
     };
 
-    var getUsers = function () {
-      $.get('/api/chat/users').done(function (users) {
-        $.each(users, function () {
-          var user = this;
-          addChatUser(user.UserName);
-        });
-      });
-    };
+    
 
     // This optional function html-encodes messages for display in the page.
     function htmlEncode(value) {
@@ -249,13 +259,6 @@ window.ChatHubHandler = (function ($) {
       return encodedValue;
     }
 
-    var onUserDisconnected = function (uname) {
-      $('#u' + uname).remove();
-    };
-
-    var onUserConnected = function (username) {
-      addChatUser(username);
-    };
 
     $(window).unload(function () { chat.server.abort(); });
 
