@@ -1,0 +1,1 @@
+["-s","/home/paul/workspace/yavsc/src/Yavsc","--hostPID","21136","DotNet:enablePackageRestore=false","--encoding","utf-8","--loglevel","trace","MsBuild:LoadProjectsOnDemand=true","RoslynExtensionsOptions:EnableAnalyzersSupport=true"]
