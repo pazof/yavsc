@@ -129,25 +129,21 @@ namespace Yavsc
         public override Task OnDisconnected(bool stopCalled)
         {
             string userName = Context.User?.Identity.Name;
-            if (userName != null)
-            {
+            if (userName!=null) {
+                var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
+                var userId = user.Id;
+                Clients.Group(Constants.HubGroupFollowingPrefix+userId).notifyuser(NotificationTypes.DisConnected, userName, null);
+
                 var cx = _dbContext.ChatConnection.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
                 if (cx != null)
                 {
-                    if (stopCalled)
-                    {
-                        var user = _dbContext.Users.Single(u => u.UserName == userName);
-                        user.Connections.Remove(cx);
-                        ChatUserNames[Context.ConnectionId] = null;
-                    }
-                    else
-                    {
-                        cx.Connected = false;
-                    }
+                    _dbContext.ChatConnection.Remove(cx);
                     _dbContext.SaveChanges();
                 }
-            }
-            Clients.Group("authenticated").notifyUser(NotificationTypes.DisConnected, userName, "disconnected");
+                else 
+                    _logger.LogError($"Could not remove user cx {Context.ConnectionId}");
+            } 
+            Abort();
             return base.OnDisconnected(stopCalled);
         }
 
@@ -382,14 +378,12 @@ namespace Yavsc
             cli.addStreamInfo(sender, streamId, message);
         }
 
-        public void Abort()
+        void Abort()
         {
-            var cx = _dbContext.ChatConnection.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
-            if (cx != null)
-            {
-                _dbContext.ChatConnection.Remove(cx);
-                _dbContext.SaveChanges();
-            }
+           string cxId;
+            if (!ChatUserNames.TryRemove(Context.ConnectionId, out cxId ))
+                _logger.LogError($"Could not remove user cx {Context.ConnectionId}");
+            
         }
     }
 }

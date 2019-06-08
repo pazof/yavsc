@@ -10,8 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Logging;
-using Yavsc.Server.Helpers;
-using Yavsc.Server.Model;
 
 namespace testOauthClient.Controllers
 {
@@ -36,6 +34,7 @@ namespace testOauthClient.Controllers
         {
             return View();
         }
+        
         [HttpPost]
         public async Task<IActionResult> GetUserInfo(CancellationToken cancellationToken)
         {
