@@ -1,5 +1,3 @@
-using System;
-
 namespace test.Settings
 {
     public class DbConnectionSettings

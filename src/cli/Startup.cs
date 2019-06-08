@@ -25,7 +25,6 @@ using System.Runtime.Versioning;
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.CodeGeneration.EntityFramework;
-using Microsoft.Extensions.CodeGeneration.Templating.Compilation;
 using System.Linq;
 
 namespace cli
