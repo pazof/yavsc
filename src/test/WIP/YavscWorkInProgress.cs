@@ -16,10 +16,10 @@ using static OAuth.AspNet.AuthServer.Constants;
 namespace test
 {
     [Collection("Yavsc Work In Progress")]
-    [Trait("regres", "yes")]
-    public class YavscWorkInProgress : BaseTestContext, IClassFixture<ServerSideFixture>
+    [Trait("regres", "no")]
+    public class Remoting : BaseTestContext, IClassFixture<ServerSideFixture>
     {
-        public YavscWorkInProgress(ServerSideFixture serverFixture, ITestOutputHelper output)
+        public Remoting(ServerSideFixture serverFixture, ITestOutputHelper output)
         : base(output, serverFixture)
         {
         }
