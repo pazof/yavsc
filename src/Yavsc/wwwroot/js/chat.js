@@ -263,8 +263,8 @@ window.ChatHubHandler = (function ($) {
       return encodedValue;
     }
 
-
-    $(window).unload(function () { chat.server.abort(); });
+    // FIXME cx clean shutdown
+    // $(window).unload(function () {  });
 
   };
 
