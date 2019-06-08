@@ -1,7 +1,6 @@
 ﻿
 using System;
 using cli.Commands;
-using cli.Services;
 using Microsoft.Extensions.CommandLineUtils;
 
 namespace cli

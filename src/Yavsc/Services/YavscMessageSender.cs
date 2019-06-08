@@ -11,7 +11,6 @@ using Yavsc.Models;
 using Yavsc.Models.Google.Messaging;
 using Yavsc.Models.Haircut;
 using Yavsc.Models.Messaging;
-using Yavsc.Services;
 
 namespace Yavsc.Services
 {

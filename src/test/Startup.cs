@@ -12,7 +12,6 @@ using Yavsc.Models;
 using Yavsc.Services;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.WebEncoders;
-using Yavsc.Lib;
 using test.Settings;
 
 namespace test
@@ -62,7 +61,7 @@ namespace test
             services.AddEntityFramework().AddNpgsql().AddDbContext<ApplicationDbContext>();
             services.AddTransient((s) => new RazorTemplateEngine(s.GetService<RazorEngineHost>()));
             services.AddLogging();
-            services.AddTransient<EMailer>();
+            services.AddTransient<MailSender>();
             services.AddLocalization(options =>
             {
                 options.ResourcesPath = "Resources";
