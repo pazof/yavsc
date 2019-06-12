@@ -12,7 +12,6 @@
 bin
 obj
 bower_components
-node_modules
 project.lock.json
 node_modules/
 private/
