@@ -48,7 +48,7 @@ namespace Yavsc
 
             _dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
             var loggerFactory = scope.ServiceProvider.GetService<ILoggerFactory>();
-             
+
             var stringLocFactory = scope.ServiceProvider.GetService<IStringLocalizerFactory>();
             _localizer = stringLocFactory.Create(typeof(ChatHub));
             _logger = loggerFactory.CreateLogger<ChatHub>();
@@ -88,11 +88,11 @@ namespace Yavsc
                             Connected = true
                         });
                     _dbContext.SaveChanges();
-                    Clients.Group(Constants.HubGroupFollowingPrefix+userId).notifyuser(NotificationTypes.Connected, userName, null);
-       
+                    Clients.Group(Constants.HubGroupFollowingPrefix + userId).notifyuser(NotificationTypes.Connected, userName, null);
+
                     foreach (var uid in _dbContext.CircleMembers.Select(m => m.MemberId))
                     {
-                        await Groups.Add(Context.ConnectionId, Constants.HubGroupFollowingPrefix+uid);
+                        await Groups.Add(Context.ConnectionId, Constants.HubGroupFollowingPrefix + uid);
                     }
                 }
                 else
@@ -105,7 +105,7 @@ namespace Yavsc
             {
                 await Groups.Add(Context.ConnectionId, Constants.HubGroupAnonymous);
             }
-             await base.OnConnected();
+            await base.OnConnected();
         }
         string setUserName()
         {
@@ -129,10 +129,11 @@ namespace Yavsc
         public override Task OnDisconnected(bool stopCalled)
         {
             string userName = Context.User?.Identity.Name;
-            if (userName!=null) {
+            if (userName != null)
+            {
                 var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
                 var userId = user.Id;
-                Clients.Group(Constants.HubGroupFollowingPrefix+userId).notifyuser(NotificationTypes.DisConnected, userName, null);
+                Clients.Group(Constants.HubGroupFollowingPrefix + userId).notifyuser(NotificationTypes.DisConnected, userName, null);
 
                 var cx = _dbContext.ChatConnection.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
                 if (cx != null)
@@ -140,9 +141,9 @@ namespace Yavsc
                     _dbContext.ChatConnection.Remove(cx);
                     _dbContext.SaveChanges();
                 }
-                else 
+                else
                     _logger.LogError($"Could not remove user cx {Context.ConnectionId}");
-            } 
+            }
             Abort();
             return base.OnDisconnected(stopCalled);
         }
@@ -343,7 +344,11 @@ namespace Yavsc
         [Authorize]
         public void SendPV(string userName, string message)
         {
-            if (string.IsNullOrWhiteSpace(userName)) return;
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                Clients.Caller.notifyUser(NotificationTypes.Error, "none!", "specify an user.");
+                return;
+            }
 
             if (userName[0] != '?')
                 if (!Context.User.IsInRole(Constants.AdminGroupName))
@@ -380,10 +385,10 @@ namespace Yavsc
 
         void Abort()
         {
-           string cxId;
-            if (!ChatUserNames.TryRemove(Context.ConnectionId, out cxId ))
+            string cxId;
+            if (!ChatUserNames.TryRemove(Context.ConnectionId, out cxId))
                 _logger.LogError($"Could not remove user cx {Context.ConnectionId}");
-            
+
         }
     }
 }
