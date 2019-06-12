@@ -1,0 +1,19 @@
+{
+  "Dnx": {
+    "enabled": true,
+    "enablePackageRestore": false,
+    "projects": "../../src/**/project.json;../../test/**/project.json" 
+  },
+  "MSBuild": {
+    "enabled": false
+  },
+  "DotNet": {
+    "enabled": false,
+    "enablePackageRestore": false,
+    "script": {
+      "enableScriptNuGetReferences": true,
+      "defaultTargetFramework": "dnx451"
+    }
+  },
+  "packages": "packages"
+}
