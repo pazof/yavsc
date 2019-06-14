@@ -185,7 +185,6 @@ namespace Yavsc.Services
                 {
                     string msg = "room seemd to be avaible ... but we could get no info on it.";
                     _errorHandler(roomName, msg);
-                    _logger.LogError(msg);
                     return null;
                 }
             }
@@ -216,7 +215,6 @@ namespace Yavsc.Services
             {
                 string msg = "Chan create failed unexpectly...";
                 _errorHandler(roomName, msg);
-                _logger.LogError(msg);
                 return null;
             }
         }
