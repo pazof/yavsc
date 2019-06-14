@@ -400,14 +400,23 @@ h6 {
 
 
 div.chatbar {
-
     border-bottom: rgb(24, 24, 167) solid 2px;
   }
  
- div.roomlist {
+div.roomlist {
     display:inline-block;
-    
   }
-div.chatctl {
-    float:right;
+div.chatlist {
+    color: #008;
+    background-color:  rgb(231, 229, 199);
+    
+}
+#chatview ul.notifs li.error {
+    color: #a94442;
+    background-color: white;
+    font-style: italic;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    border-bottom-style: ridge;
+    border-bottom-width: 1pt;
+
 }
