@@ -245,7 +245,7 @@ window.ChatHubHandler = (function ($) {
 
     var addChatUser = function (uname) {
 
-      $('#u' + uname).remove();
+      $('#u_' + uname).remove();
       // ulist.remove("li.user[data='"+uname+"']");
 
       $('<li class="user"><img src="/Avatars/' + uname + '.xs.png"> ' + uname + '</li>')

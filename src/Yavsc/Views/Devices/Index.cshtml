@@ -1,4 +1,4 @@
-@model IEnumerable<Yavsc.Models.Identity.GoogleCloudMobileDeclaration>
+@model IEnumerable<Yavsc.Models.Identity.DeviceDeclaration>
 
 @{
     ViewData["Title"] = "Index";
@@ -10,9 +10,6 @@
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.DeclarationDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.GCMRegistrationId)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Model)
@@ -30,9 +27,6 @@
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.DeclarationDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.GCMRegistrationId)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Model)

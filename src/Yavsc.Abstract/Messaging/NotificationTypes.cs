@@ -6,6 +6,10 @@ namespace Yavsc
         public const string Reconnected = "reconnected";
         public const string UserPart = "userpart";
         public const string UserJoin = "userjoin";
+        public const string Kick = "kick";       
+        public const string Ban = "ban";
+        public const string KickBan = "kickban";
+        public const string Gline = "gline";
         public const string PrivateMessageDenied = "denied_pv";
         public const string Error = "error";
         public const string ContactRefused = "contact_refused";

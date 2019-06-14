@@ -13,7 +13,7 @@ namespace Yavsc.Models.Chat
         public string Topic { get; set; }
 
         [Key]
-        [StringLengthAttribute(Constants.MaxChanelName, MinimumLength=3)]
+        [StringLengthAttribute(ChatHubConstants.MaxChanelName, MinimumLength=3)]
         public string Name { get; set;}
 
         public string OwnerId { get; set; }

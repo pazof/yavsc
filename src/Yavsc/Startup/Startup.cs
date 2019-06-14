@@ -135,7 +135,8 @@ namespace Yavsc
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<RequestLocalizationOptions>), typeof(OptionsManager<RequestLocalizationOptions>)));
-
+            
+           
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 var supportedCultures = new[]
@@ -240,6 +241,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
             services.AddSingleton<IAuthorizationHandler, ViewFileHandler>();
             services.AddSingleton<IAuthorizationHandler, SendMessageHandler>();
+            services.AddSingleton<IConnexionManager, HubConnectionManager>();
 
             services.AddMvc(config =>
             {
@@ -398,7 +400,7 @@ namespace Yavsc
                 }
             }
             // before fixing the security protocol, let beleive our lib it's done with it.
-            var cxmgr = ConnectionManager.Instance;
+            var cxmgr = PayPal.Manager.ConnectionManager.Instance;
             // then, fix it.
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xC00; // Tls12, required by PayPal
 
