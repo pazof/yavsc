@@ -23,13 +23,12 @@ using System.Collections.Generic;
 
 namespace Yavsc
 {
-    public partial class ChatHub
+    public class ChatRoomInfo
     {
-        public class ChatRoomInfo
-        {
-            public string Name;
-            public Dictionary<string, string> Users = new Dictionary<string, string>();
-            public string Topic;
-        }
+        public string Name;
+        public List<string> Users = new List<string>();
+        public List<string> Ops = new List<string>();
+        public List<string> Hops = new List<string>();
+        public string Topic;
     }
 }

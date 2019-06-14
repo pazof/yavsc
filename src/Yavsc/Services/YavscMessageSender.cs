@@ -22,12 +22,15 @@ namespace Yavsc.Services
         private IHubContext hubContext;
         ApplicationDbContext _dbContext;
 
+        IConnexionManager _cxManager;
+
         public YavscMessageSender(
             ILoggerFactory loggerFactory, 
             IOptions<SiteSettings> sitesOptions, 
             IOptions<SmtpSettings> smtpOptions,
             IEmailSender emailSender,
-            ApplicationDbContext dbContext
+            ApplicationDbContext dbContext,
+            IConnexionManager cxManager
         )
         { 
             _logger = loggerFactory.CreateLogger<MailSender>();
@@ -35,7 +38,9 @@ namespace Yavsc.Services
             siteSettings = sitesOptions?.Value;
             hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
             _dbContext = dbContext;
+            _cxManager = cxManager;
         }
+
         public async Task <MessageWithPayloadResponse> NotifyEvent<Event>
          (IEnumerable<string> userIds, Event ev)
            where Event : IEvent
@@ -82,7 +87,7 @@ namespace Yavsc.Services
 
                     var body = ev.CreateBody();
                     
-                    var cxids = ChatHub.ChatUserNames.Where (kv=>kv.Value == user.UserName).Select(kv => kv.Key).ToArray();                    
+                    var cxids = _cxManager.GetConnexionIds(user.UserName).ToArray();                    
                     
                     if (cxids.Length==0)
                     {

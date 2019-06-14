@@ -2,6 +2,12 @@ using System.Collections.Generic;
 using Yavsc.Models.Chat;
 
 namespace Yavsc.ViewModels.Chat { 
+
+        public class ChannelShortInfo {
+            public string RoomName {get; set;}
+            public string Topic { get; set; }
+        }
+        
 public class ChatUserInfo : IChatUserInfo
         {
 

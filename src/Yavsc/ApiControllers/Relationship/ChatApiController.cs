@@ -7,7 +7,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Identity;
 using Yavsc.Models;
 using Yavsc.ViewModels.Chat;
-
+using Yavsc.Services;
 
 namespace Yavsc.Controllers
 {
@@ -17,11 +17,14 @@ namespace Yavsc.Controllers
     {
         ApplicationDbContext dbContext;
         UserManager<ApplicationUser> userManager;
+        private IConnexionManager _cxManager;
         public ChatApiController(ApplicationDbContext dbContext,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager, 
+        IConnexionManager cxManager)
         {
             this.dbContext = dbContext;
             this.userManager = userManager;
+            _cxManager = cxManager;
         }
 
         [HttpGet("users")]
@@ -86,10 +89,6 @@ namespace Yavsc.Controllers
             });
         }
 
-        public class ChannelShortInfo {
-            public string RoomName {get; set;}
-            public string Topic { get; set; }
-        }
 
         /// <summary>
         /// Get firsts 10 biggest channels having
@@ -100,7 +99,7 @@ namespace Yavsc.Controllers
         [HttpGet("chanlist/{chanNamePrefix}")]
         public IActionResult GetChanList([FromRoute] string chanNamePrefix)
         {
-            var list = ChatHub.Channels.Where(c => c.Key.StartsWith(chanNamePrefix)).OrderByDescending(c=>c.Value.Users.Count).Select(c=>new ChannelShortInfo { RoomName= c.Key, Topic = c.Value.Topic }).Take(10);
+            var list = _cxManager.ListChannels(chanNamePrefix);
             return Ok(list);
         }
 
@@ -111,8 +110,7 @@ namespace Yavsc.Controllers
         [HttpGet("chanlist")]
         public IActionResult GetChanList()
         {
-            return Ok(ChatHub.Channels.OrderByDescending(c=>c.Value.Users.Count).Select(c=> new ChannelShortInfo { RoomName= c.Key, Topic = c.Value.Topic })
-                .Take(10));
+            return Ok(_cxManager.ListChannels(null));
         }
 
     }

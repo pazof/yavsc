@@ -19,6 +19,7 @@ private/
 DataProtection-Keys/
 RSA-Params.json
 appsettings.*.json
+omnisharp.json
 
 /packages/
 /src/Yavsc/Avatars-*/
@@ -30,4 +31,3 @@ appsettings.*.json
 /src/Yavsc/bower_components/
 /src/Yavsc/AppData*/
 /src/test/testingrepo/
-
