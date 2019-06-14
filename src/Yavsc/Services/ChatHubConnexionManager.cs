@@ -39,7 +39,8 @@ namespace Yavsc.Services
         static ConcurrentDictionary<string, List<string>> ChatCxIds = new ConcurrentDictionary<string, List<string>>();
 
         /// <summary>
-        /// by user  name
+        /// by user  name,
+        /// the list of its chat rooms
         /// </summary>
         /// <returns></returns>
         static ConcurrentDictionary<string, List<string>> ChatRoomPresence = new ConcurrentDictionary<string, List<string>>();
@@ -208,6 +209,7 @@ namespace Yavsc.Services
 
             if (Channels.TryAdd(roomName, chanInfo))
             {
+                ChatRoomPresence[userName].Add(roomName);
                 _logger.LogInformation("new room joint");
                 return (chanInfo);
             }
