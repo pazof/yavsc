@@ -402,6 +402,10 @@ h6 {
 div.chatbar {
     border-bottom: rgb(24, 24, 167) solid 2px;
   }
+
+div.chatctl {
+    float: right;
+}
  
 div.roomlist {
     display:inline-block;

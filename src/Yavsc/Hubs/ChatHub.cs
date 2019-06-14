@@ -326,7 +326,6 @@ namespace Yavsc
             _logger.LogError($"NotifyErrorToCallerInRoom: {room}, {reason}");
         }
 
-        
         public void Send([Required] string roomName, [Required]  string message)
         {
             var groupname = ChatHubConstants.HubGroupRomsPrefix + roomName;

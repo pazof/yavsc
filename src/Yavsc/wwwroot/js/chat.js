@@ -113,20 +113,22 @@ window.ChatHubHandler = (function ($) {
 
     var setActiveChan = function (chanId) {
       if (frontChanId != chanId) {
-        $('#sel_' + frontChanId).addClass('btn-primary');
-        $('#v' + frontChanId).addClass('hidden');
+        if (frontChanId) {
+          $('#sel_' + frontChanId).addClass('btn-primary');
+          $('#v' + frontChanId).addClass('hidden');
+        }
+        frontChanId = chanId;
+        $('#sel_' + chanId).removeClass('btn-primary');
+        $('#v' + chanId).removeClass('hidden');
+        $('#inp_' + chanId).focus();
       }
-      frontChanId = chanId;
-      $('#sel_' + chanId).removeClass('btn-primary');
-      $('#v' + chanId).removeClass('hidden');
-      $('#inp_' + chanId).focus();
     };
 
     function join(roomName)
     {
       chat.server.join(roomName).done(function (chatInfo) {
         setChanInfo(chatInfo);
-        setActiveChan(chatInfo.Name);
+        setActiveChan('r'+chatInfo.Name);
       });
     }
 

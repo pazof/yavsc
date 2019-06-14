@@ -308,6 +308,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> LogOff(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
+            HttpContext.Session.Clear();
             _logger.LogInformation(4, "User logged out.");
             if (returnUrl == null) return RedirectToAction(nameof(HomeController.Index), "Home");
             return Redirect(returnUrl);

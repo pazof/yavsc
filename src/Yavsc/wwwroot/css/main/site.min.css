@@ -22,5 +22,6 @@ p{font-size:20px;}
 p.small{font-size:16px;}.smalltext{font-size:10px;}
 h1,h2,h3,h4,h5,h6{font-family:"Montserrat","Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:700;}
 div.chatbar{border-bottom:rgb(24,24,167)solid 2px;}
+div.chatctl{float:right;}
 div.roomlist{display:inline-block;}
 div.chatlist{color:#008;background-color:rgb(231,229,199);}#chatview ul.notifs li.error{color:#a94442;background-color:white;font-style:italic;font-family:Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif;border-bottom-style:ridge;border-bottom-width:1pt;}
