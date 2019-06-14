@@ -104,8 +104,12 @@ window.ChatHubHandler = (function ($) {
 
       // eslint-disable-next-line no-warning-comments
       // TODO userpart userjoin deniedpv
-      $('<li></li>').append(tag + ': ' + targetid + ': ').append(message).addClass(tag).appendTo(notifications);
+      $('<li></li>').append(tag + ': ' + targetid + ': ').append(message.Value).addClass(tag).appendTo(notifications);
     };
+    var setChanInfo = function (chanInfo) {
+      var chanId = 'r' + chanInfo.Name;
+      $('#tv_' + chanId).replaceWith(chanInfo.Topic);
+    }
 
     var setActiveChan = function (chanId) {
       if (frontChanId != chanId) {
@@ -117,6 +121,14 @@ window.ChatHubHandler = (function ($) {
       $('#v' + chanId).removeClass('hidden');
       $('#inp_' + chanId).focus();
     };
+
+    function join(roomName)
+    {
+      chat.server.join(roomName).done(function (chatInfo) {
+        setChanInfo(chatInfo);
+        setActiveChan(chatInfo.Name);
+      });
+    }
 
     var chatbar = $('<div class="chatbar"></div>');
 
@@ -146,6 +158,7 @@ window.ChatHubHandler = (function ($) {
       var roomview = $('<div></div>').addClass('container');
       roomview.appendTo(chatlist);
       roomview.prop('id', 'v' + chanId);
+      $('<div></div>').prop('id', 'tv_' + chanId).appendTo(roomview);
       var msglist = $('<ul></ul>').addClass('mesglist');
       msglist.prop('id', chanId);
       msglist.appendTo(roomview);
@@ -178,10 +191,6 @@ window.ChatHubHandler = (function ($) {
         else buildChan('@', 'u', userName, chat.server.sendPV);
     };
 
-    $view.data('chans').split(',').forEach(function (chan) {
-      buildRoom(chan);
-    });
-
     /*var getUsers = function () {
       $.get('/api/chat/users').done(function (users) {
         $.each(users, function () {
@@ -190,23 +199,23 @@ window.ChatHubHandler = (function ($) {
         });
       });
     };*/
-    // eslint-disable-next-line no-warning-comments
-    // TODO only query user list for a given channel, and only for a participant
-    function onCx() {
-      setTimeout(function () {
-        chans.forEach(function (room) {
-          chat.server.join(room).done(function (chatInfo) {
-            setActiveChan('r' + chatInfo.Name);
-          });
-        });
-      }, 120);
+    $view.data('chans').split(',').forEach(function (chan){
+      buildRoom(chan);
+    });
 
+    function onCx() {
       $view.removeClass('disabled');
+      setTimeout(function () {
+        chans.forEach(function (chan) {
+            join(chan);
+          });
+      }, 120);
     }
 
     function onDisCx() {
       $view.addClass('disabled');
     }
+
 
     // Start the connection.
     $.connection.hub.start().done(function () {
@@ -221,14 +230,12 @@ window.ChatHubHandler = (function ($) {
           });
         }, 30000); // Re-start connection after 30 seconds
     });
-
+    
     chanName.keydown(function (event) {
       if (event.which == 13) {
         if (this.value.length == 0) return;
         buildRoom(this.value);
-        chat.server.join(this.value).done(function (chatInfo) {
-          setActiveChan('r' + chatInfo.Name);
-        });
+        join(this.value);
         this.value = '';
       }
       // else TODO showRoomInfo(this.value);
