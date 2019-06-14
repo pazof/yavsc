@@ -338,7 +338,7 @@ namespace Yavsc
                 return;
             }
             var userName = _cxManager.GetUserName(Context.ConnectionId);
-            if (!chanInfo.Users.Contains(userName))
+            if (!_cxManager.IsPresent(roomName, userName))
             {
                 var notSentMsg = _localizer.GetString(ChatHubConstants.LabnoJoinNoSend);
                 Clients.Caller.notifyUser(NotificationTypes.Error, roomName, notSentMsg);
