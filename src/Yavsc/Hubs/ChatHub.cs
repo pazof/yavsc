@@ -323,6 +323,7 @@ namespace Yavsc
         void NotifyErrorToCallerInRoom(string room, string reason)
         {
             Clients.Caller.notifyUser(NotificationTypes.Error, room, reason);
+            _logger.LogError($"NotifyErrorToCallerInRoom: {room}, {reason}");
         }
 
         
