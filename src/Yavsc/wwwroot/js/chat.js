@@ -104,7 +104,7 @@ window.ChatHubHandler = (function ($) {
 
       // eslint-disable-next-line no-warning-comments
       // TODO userpart userjoin deniedpv
-      $('<li></li>').append(tag + ': ' + targetid + ': ').append(message.Value).addClass(tag).appendTo(notifications);
+      $('<li></li>').append(tag + ': ' + targetid + ': ').append(message).addClass(tag).appendTo(notifications);
     };
     var setChanInfo = function (chanInfo) {
       var chanId = 'r' + chanInfo.Name;
