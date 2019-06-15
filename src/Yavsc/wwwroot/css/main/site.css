@@ -173,10 +173,6 @@ a:hover {
     border: solid #306cc6 1px;
 }
 
-#discussion {
-    float: left;
-}
-
 
 /* Set widths on the form inputs since otherwise they're 100% wide */
 
@@ -401,10 +397,12 @@ h6 {
 
 div.chatbar {
     border-bottom: rgb(24, 24, 167) solid 2px;
+    display: flex;
+    justify-content: space-between;
   }
 
 div.chatctl {
-    float: right;
+  display: inline;
 }
  
 div.roomlist {
@@ -413,8 +411,14 @@ div.roomlist {
 div.chatlist {
     color: #008;
     background-color:  rgb(231, 229, 199);
-    
+  overflow: auto;
+  max-height: 16em;
 }
+
+.chatlist {
+  max-height: 100%;
+}
+
 #chatview ul.notifs li.error {
     color: #a94442;
     background-color: white;
