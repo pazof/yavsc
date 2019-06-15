@@ -280,13 +280,13 @@ namespace Yavsc.Services
             ChatRoomInfo chanInfo;
             if (!Channels.ContainsKey(roomName))
             {
-                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchChan));
+                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchChan).ToString());
                 return false;
             }
 
             if (!Channels.TryGetValue(roomName, out chanInfo)) 
             {
-                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchChan));
+                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchChan).ToString());
                 return false;
             }
             
@@ -294,24 +294,24 @@ namespace Yavsc.Services
             if (!chanInfo.Ops.Contains(kickerName))
             if (!chanInfo.Hops.Contains(kickerName))
             {
-                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabYouNotOp));
+                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabYouNotOp).ToString());
                 return false;
             }
 
             if (!IsPresent(roomName, userName))
             {
-                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchUser));
+                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchUser).ToString());
                 return false;
             }
             if (chanInfo.Hops.Contains(kickerName))
             if (chanInfo.Ops.Contains(userName))
             {
-                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.HopWontKickOp));
+                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.HopWontKickOp).ToString());
                 return false;
             }
             if (isCop(userName))
             {
-                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.NoKickOnCop));
+                _errorHandler(roomName, _localizer.GetString(ChatHubConstants.NoKickOnCop).ToString());
                 return false;
             }
 

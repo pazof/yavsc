@@ -62,5 +62,5 @@
     route name for the api controller used to tag the 'BlogPost' entity
    -->
   <data name="Authenticated chat user"><value>Authenticated chat user</value></data>
-  <data name="LabnoJoinNoSend">could not send to channel (not joint)</data>
+  <data name="LabnoJoinNoSend"><value>could not send to channel (not joint)</value></data>
 </root>

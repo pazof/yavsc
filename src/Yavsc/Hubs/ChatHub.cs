@@ -210,11 +210,6 @@ namespace Yavsc
             _cxManager.SetUserName( Context.ConnectionId,  candidate);
         }
 
-        public void JoinAsync(string roomName)
-        {
-            var info = Join(roomName);
-            Clients.Caller.joint(info);
-        }
         bool IsPresent(string roomName, string userName)
         {
             return _cxManager.IsPresent(roomName, userName);
@@ -237,9 +232,6 @@ namespace Yavsc
                 _cxManager.TryGetChanInfo(roomName, out chanInfo);
             } 
 
-            // FIXME useless : Mobiles should also reveive the returned value
-            Clients.Caller.joint(chanInfo);
-           
             return chanInfo;
         }
 
@@ -332,14 +324,14 @@ namespace Yavsc
             ChatRoomInfo chanInfo ;
             if (!_cxManager.TryGetChanInfo(roomName, out chanInfo))
             {
-                var noChanMsg = _localizer.GetString(ChatHubConstants.LabNoSuchChan);
+                var noChanMsg = _localizer.GetString(ChatHubConstants.LabNoSuchChan).ToString();
                 Clients.Caller.notifyUser(NotificationTypes.Error, roomName, noChanMsg);
                 return;
             }
             var userName = _cxManager.GetUserName(Context.ConnectionId);
             if (!_cxManager.IsPresent(roomName, userName))
             {
-                var notSentMsg = _localizer.GetString(ChatHubConstants.LabnoJoinNoSend);
+                var notSentMsg = _localizer.GetString(ChatHubConstants.LabnoJoinNoSend).ToString();
                 Clients.Caller.notifyUser(NotificationTypes.Error, roomName, notSentMsg);
                 return;
             }
