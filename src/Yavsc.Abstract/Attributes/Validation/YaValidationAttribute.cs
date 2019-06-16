@@ -15,18 +15,32 @@ namespace Yavsc.Attributes.Validation
 
         }
 
+        /// <summary>
+        /// Get given string from resources
+        /// specified by ErrorMessageResourceType
+        /// </summary>
+        /// <param name="stringName"></param>
+        /// <returns></returns>
+        public virtual string GetResourceString(string stringName)
+        {
+            var prop = this.ErrorMessageResourceType.GetProperty(stringName);
+            if (prop==null)
+            {
+                return " !e! noprop "+stringName+" in "+ErrorMessageResourceType.Name;
+            }
+            else {
+                return (string) prop.GetValue(null, null);
+            }
+        }
+
         public override string FormatErrorMessage(string name)
         {
             if (ErrorMessageResourceType == null) // failed :/
-                return name;
+                return base.FormatErrorMessage(name);
             if (ErrorMessageResourceName == null) // re failed :/
-                return name;
+                return base.FormatErrorMessage(name);
 
-            var prop = this.ErrorMessageResourceType.GetProperty(ErrorMessageResourceName);
-            if (prop==null) // re re failed :/
-                return "noprop "+ErrorMessageResourceName+" in "+ErrorMessageResourceType.Name;
-            return (string) prop.GetValue(null, null);
-            
+            return GetResourceString(ErrorMessageResourceName);
         }
     }
 }

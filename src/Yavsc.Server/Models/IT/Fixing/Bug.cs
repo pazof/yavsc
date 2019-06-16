@@ -15,10 +15,14 @@ namespace Yavsc.Models.IT.Fixing
 
         public long? FeatureId { get; set; }
 
-        [StringLength(240, ErrorMessageResourceType=typeof(Yavsc.Models.IT.Fixing.Bug), ErrorMessageResourceName="TitleTooLong")]
+        [YaStringLength(240, MinimumLength=4 , 
+        ErrorMessageResourceType=typeof(Yavsc.Models.IT.Fixing.Bug), 
+        ErrorMessageResourceName="TitleSizeError")]
         public string Title { get; set; }
 
-        [StringLength(4096)]
+        [YaStringLength(4096, 
+        ErrorMessageResourceType=typeof(Yavsc.Models.IT.Fixing.Bug), 
+        ErrorMessageResourceName="DescSizeError")]
         public string Description { get; set; }
         
         public BugStatus Status { get; set; }
