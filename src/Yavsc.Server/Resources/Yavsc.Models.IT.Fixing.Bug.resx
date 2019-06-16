@@ -58,5 +58,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="TitleTooLong" comment="bug title validation"><value>The title is too long</value></data>
+  <data name="TitleSizeError" comment="bug title validation"><value>Le titre est trop court ou trop long (sa taille va de {0} à {1})</value></data>
+  <data name="DescSizeError" comment="bug title validation"><value>Le champ description est trop court ou trop long (sa taille va de {0} à {1})</value></data>
+ 
 </root>
