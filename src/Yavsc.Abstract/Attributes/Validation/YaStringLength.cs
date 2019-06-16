@@ -1,3 +1,5 @@
+using System;
+
 namespace Yavsc.Attributes.Validation
 {
     public class YaStringLength: YaValidationAttribute
@@ -5,20 +7,22 @@ namespace Yavsc.Attributes.Validation
         public long MinLen { get; set; } = -1;
         private long maxLen;
         public YaStringLength(long maxLen) : base(
-            ()=>string.Format(
-                ResourcesHelpers.GlobalLocalizer["BadStringLength"],
-                maxLen))
+            ()=>
+                "BadStringLength")
         {
             this.maxLen = maxLen;
         }
 
-        private long excedent;
-        private long manquant;
+        private long excedent=0;
+        private long manquant=0;
 
         public override bool IsValid(object value) {
+            
             if (value == null) {
                 return false;
             }
+            Console.WriteLine("Validating string length for "+value.ToString());
+            
             string stringValue = value as string;
             if (stringValue==null) return false;
             if (MinLen>=0) 
@@ -38,21 +42,6 @@ namespace Yavsc.Attributes.Validation
                 }
             return true;
         }
-        public override string FormatErrorMessage(string name)
-        {
-            if (MinLen<0) {
-                // DetailledMaxStringLength
-                return string.Format(
-                ResourcesHelpers.GlobalLocalizer["DetailledMaxStringLength"],
-                maxLen,
-                excedent);
-            } else 
-                return string.Format(
-                ResourcesHelpers.GlobalLocalizer["DetailledMinMaxStringLength"],
-                MinLen,
-                maxLen,
-                manquant,
-                excedent);
-        }
+
     }
 }

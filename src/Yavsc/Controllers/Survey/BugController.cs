@@ -70,6 +70,8 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
+            ViewBag.Features = Features(_context);
+            ViewBag.Statuses = Statuses(default(BugStatus));
             return View(bug);
         }
 

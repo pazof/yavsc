@@ -15,7 +15,7 @@ namespace Yavsc.Models.IT.Fixing
 
         public long? FeatureId { get; set; }
 
-        [YaStringLength(1024)]
+        [YaStringLength(240, ErrorMessageResourceType=typeof(BugResources), ErrorMessageResourceName="TitleTooLong")]
         public string Title { get; set; }
 
         [YaStringLength(4096)]

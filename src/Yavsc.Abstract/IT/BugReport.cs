@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.ApiControllers
 {
@@ -7,7 +8,7 @@ namespace Yavsc.ApiControllers
         public string ApiKey { get ; set; }
         [Required]
         public string Component { get ; set; }
-        [Required][StringLength(1024)]
+        [Required][YaStringLength(1024)]
         public string ExceptionObjectJson { get ; set; }
     }
 }
