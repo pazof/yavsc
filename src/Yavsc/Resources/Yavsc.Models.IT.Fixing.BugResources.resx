@@ -61,5 +61,6 @@
   <!-- 
     route name for the api controller used to tag the 'BlogPost' entity
    -->
-  <data name="TitleTooLong"><value>Le titre est trop long</value></data>
+  <data name="TooLong"><value>Too Long ({MaxLen} at maximum, {ecart} in excess))</value></data>
+  <data name="TitleTooLong"><value>Too Short ({MinLen} at minus, {ecart} missing)</value></data>
 </root>

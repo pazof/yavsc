@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Builder.Internal;
 using Microsoft.AspNet.Razor;
@@ -29,13 +29,13 @@ namespace test
 
     [Collection("Yavsc mandatory success story")]
     [Trait("regres", "no")]
-    public class YavscMandatory: BaseTestContext, IClassFixture<ServerSideFixture>, IDisposable
+    public class BatchTests: BaseTestContext, IClassFixture<ServerSideFixture>, IDisposable
     {
 
         ApplicationDbContext _dbContext;
         ServerSideFixture _fixture;
 
-        public  YavscMandatory(ITestOutputHelper output, ServerSideFixture fixture) : base (output, fixture)
+        public  BatchTests(ITestOutputHelper output, ServerSideFixture fixture) : base (output, fixture)
         {
           _dbContext = fixture.DbContext;
           _fixture = fixture;

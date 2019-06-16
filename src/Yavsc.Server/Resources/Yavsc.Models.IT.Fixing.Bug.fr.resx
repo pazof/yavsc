@@ -61,7 +61,5 @@
   <!-- 
     route name for the api controller used to tag the 'BlogPost' entity
    -->
-  <data name="TitleTooLong"><value>Le titre est trop court ou trop long ({MaxLen} au maximum, {ecart} en trop))</value></data>
-  <data name="TooLong"><value>Le titre est trop court ou trop long ({MaxLen} au maximum, {ecart} en trop))</value></data>
-  <data name="TooShort"><value>Le titre est trop court ({MinLen} au minimum, {ecart} manquant)</value></data>
+  <data name="TitleTooLong" comment="validation du titre d'un bug"><value>Le titre est trop long</value></data>
 </root>
