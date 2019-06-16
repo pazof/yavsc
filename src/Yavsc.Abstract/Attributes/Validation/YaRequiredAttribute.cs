@@ -10,13 +10,12 @@ namespace Yavsc.Attributes.Validation
         /// Gets or sets a flag indicating whether the attribute should allow empty strings.
         /// </summary>
         public bool AllowEmptyStrings { get; set; }
-         public YaRequiredAttribute (string msg) : base()
+         public YaRequiredAttribute (string msg) : base(msg)
          {
              ErrorMessage = msg;
          } 
-        public YaRequiredAttribute () 
+        public YaRequiredAttribute () : base("RequiredField")
         {
-            this.ErrorMessage = ResourcesHelpers.GlobalLocalizer["RequiredField"];
             
         }
         public override bool IsValid(object value) {

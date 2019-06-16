@@ -465,7 +465,7 @@ Pour ce faire, suivez le lien suivant : &lt;{1}&gt;.
 {0} - {2} &lt;{3}&gt;</value></data>
   <data name="BadStringLength"><value>Taille maximale: {0} caractère.</value></data>
 <data name="DetailledMinMaxStringLength"><value>Ce champ est 
-d'au moins {0} et d'au plus {1} caractère(s). </value></data>
+d'au moins {0} et d'au plus {1} caractère(s) (manquent {2}) ou ({3} en trop).</value></data>
 <data name="DetailledMaxStringLength"><value>Ce champ est 
 d'au plus {0} caractère(s) ({1} en excès). </value></data>
 <data name="EmailSentToPerformer"><value>Un message éléctronique a été envoyé à {0}.</value></data>

@@ -9,10 +9,13 @@ namespace Yavsc.Controllers
 {
     using Models;
     using Models.IT.Evolution;
+    using Yavsc.Server.Helpers;
+
     public class FeatureController : Controller
     {
         private ApplicationDbContext _context;
-
+        IEnumerable<SelectListItem> Statuses(FeatureStatus ?status) =>
+            typeof(FeatureStatus).CreateSelectListItems(status);
         public FeatureController(ApplicationDbContext context)
         {
             _context = context;    
@@ -44,6 +47,7 @@ namespace Yavsc.Controllers
         // GET: Feature/Create
         public IActionResult Create()
         {
+            ViewBag.FeatureStatus = Statuses(default(FeatureStatus));
             return View();
         }
 
@@ -58,6 +62,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
+            ViewBag.FeatureStatus = Statuses(default(FeatureStatus));
             return View(feature);
         }
 

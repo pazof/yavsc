@@ -35,7 +35,13 @@
     "emitEntryPoint": true,
     "outputName": "Yavsc",
     "compile": {
-      "include": "*.cs"
+      "include": "*.cs",
+      "exclude": [
+          "wwwroot",
+          "node_modules",
+          "bower_components",
+          "contrib"
+      ]
     },
     "embed": [
       "Resources/**/*.resx"

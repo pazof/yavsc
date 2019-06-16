@@ -26,8 +26,8 @@
     "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",
     "buildOptions": {
         "debugType": "full",
-        "emitEntryPoint": true,
-        "outputName": "Yavsc",
+        "emitEntryPoint": false,
+        "outputName": "Yavsc.Server",
         "compile": {
             "include": "*.cs",
             "exclude": [
@@ -38,8 +38,10 @@
             ]
         },
         "embed": [
-            "Resources/**/*.resx"
-        ]
+          "Resources/**/*.resx"
+        ],
+        "publicSign": false,
+        "keyFile": "../../../sgKey.snk"
     },
     "tooling": {
         "defaultNamespace": "Yavsc"

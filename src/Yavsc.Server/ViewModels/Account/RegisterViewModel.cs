@@ -11,7 +11,7 @@ namespace Yavsc.ViewModels.Account
         [YaRegularExpression(Constants.UserNameRegExp)]
         public string UserName { get; set; }
 
-        [YaRequired()]
+        [Required()]
    //    [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }

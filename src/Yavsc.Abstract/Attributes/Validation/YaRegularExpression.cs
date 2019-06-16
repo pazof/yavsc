@@ -1,4 +1,7 @@
 
+using System;
+using System.Reflection;
+
 namespace Yavsc.Attributes.Validation
 {
     public class YaRegularExpression : System.ComponentModel.DataAnnotations.RegularExpressionAttribute { 
@@ -9,7 +12,9 @@ namespace Yavsc.Attributes.Validation
 
         public override string FormatErrorMessage(string name)
         {
-            return ResourcesHelpers.GlobalLocalizer[this.ErrorMessageResourceName];
+            var prop = this.ErrorMessageResourceType.GetProperty(ErrorMessageResourceName);
+            return (string) prop.GetValue(null, BindingFlags.Static, null, null, System.Globalization.CultureInfo.CurrentUICulture);
+
         }
     }
 }
