@@ -5,7 +5,7 @@ using Yavsc.Models.IT.Evolution;
 
 namespace Yavsc.Models.IT.Fixing
 {
-    public class Bug
+    public partial class Bug
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
@@ -15,10 +15,10 @@ namespace Yavsc.Models.IT.Fixing
 
         public long? FeatureId { get; set; }
 
-        [YaStringLength(240, ErrorMessageResourceType=typeof(BugResources), ErrorMessageResourceName="TitleTooLong")]
+        [StringLength(240, ErrorMessageResourceType=typeof(Yavsc.Models.IT.Fixing.Bug), ErrorMessageResourceName="TitleTooLong")]
         public string Title { get; set; }
 
-        [YaStringLength(4096)]
+        [StringLength(4096)]
         public string Description { get; set; }
         
         public BugStatus Status { get; set; }

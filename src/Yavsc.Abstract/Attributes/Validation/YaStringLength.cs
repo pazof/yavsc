@@ -21,7 +21,6 @@ namespace Yavsc.Attributes.Validation
             if (value == null) {
                 return false;
             }
-            Console.WriteLine("Validating string length for "+value.ToString());
             
             string stringValue = value as string;
             if (stringValue==null) return false;
