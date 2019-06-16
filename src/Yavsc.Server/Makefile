@@ -13,3 +13,7 @@ $(BINTARGETPATH): ../OAuth.AspNet.AuthServer/bin/$(CONFIGURATION)/OAuth.AspNet.A
 ../Yavsc.Abstract/bin/$(CONFIGURATION)/Yavsc.Abstract.dll:
 	make -C ../Yavsc.Abstract
 
+Resources/Yavsc.Models.IT.Fixing.Bug.Designer.cs: Resources/Yavsc.Models.IT.Fixing.Bug.resx
+	strotygen -p -t -l -r "Yavsc.Server.Resources." $^
+
+prepare_code: Resources/Yavsc.Models.IT.Fixing.Bug.Designer.cs
