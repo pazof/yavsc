@@ -65,4 +65,5 @@
   <data name="LabnoJoinNoSend"><value>could not send to channel (not joint)</value></data>
   <data name="InvalidRoomName"><value>Invalid room name</value></data>
   <data name="InvalidUserName"><value>Invalid user name</value></data>
+  <data name="InvalidReason"><value>invalid Reason</value></data>
 </root>

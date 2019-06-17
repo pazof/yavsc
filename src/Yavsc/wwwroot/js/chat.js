@@ -110,8 +110,10 @@ window.ChatHubHandler = (function ($) {
     };
 
     var setChanInfo = function (chanInfo) {
-      var chanId = 'r' + chanInfo.Name;
-      $('#tv_' + chanId).replaceWith(chanInfo.Topic);
+      if (chanInfo) {
+        var chanId = 'r' + chanInfo.Name;
+        $('#tv_' + chanId).replaceWith(chanInfo.Topic);
+      } 
     }
 
     var setActiveChan = function (chanId) {
@@ -130,8 +132,10 @@ window.ChatHubHandler = (function ($) {
     function join(roomName)
     {
       chat.server.join(roomName).done(function (chatInfo) {
-        setChanInfo(chatInfo);
-        setActiveChan('r'+chatInfo.Name);
+        if (chatInfo) {
+          setChanInfo(chatInfo);
+          setActiveChan('r'+chatInfo.Name);
+        }
       });
     }
 

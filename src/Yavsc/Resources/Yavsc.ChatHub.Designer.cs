@@ -66,5 +66,17 @@ namespace Yavsc {
                 return ResourceManager.GetString("InvalidUserName", resourceCulture);
             }
         }
+        
+        public static string InvalidMessage {
+            get {
+                return ResourceManager.GetString("InvalidMessage", resourceCulture);
+            }
+        }
+        
+        public static string InvalidReason {
+            get {
+                return ResourceManager.GetString("InvalidReason", resourceCulture);
+            }
+        }
     }
 }

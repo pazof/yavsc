@@ -65,5 +65,7 @@
   <data name="LabnoJoinNoSend"><value>Envoi impossible: vous devez joindre le canal pour y contribuer.</value></data>
   <data name="InvalidRoomName"><value>Nom de salon invalide</value></data>
   <data name="InvalidUserName"><value>Nom d'utilisateur invalide</value></data>
+  <data name="InvalidMessage"><value>Message invalide</value></data>
+  <data name="InvalidReason"><value>Raison invalide</value></data>
   
 </root>
