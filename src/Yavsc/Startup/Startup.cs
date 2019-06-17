@@ -301,7 +301,7 @@ namespace Yavsc
         IAuthorizationService authorizationService,
         IOptions<PayPalSettings> payPalSettings,
         IOptions<GoogleAuthSettings> googleSettings,
-        IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
+        IStringLocalizer<Yavsc.YavscLocalisation> localizer,
         UserManager<ApplicationUser> usermanager,
          ILoggerFactory loggerFactory)
         {

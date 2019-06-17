@@ -58,5 +58,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="apiRouteCommentBlogPost"><value>blogcomments</value></data>
+  
+  <data name="apiRouteCommentBlogPost" comment="don't localize it!"><value>blogcomments</value></data>
+
+  <data name="CommmentId"><value>Identifiant du commentaire</value></data>
+  <data name="Comment"><value>Commentaire</value></data>
+  <data name="LastModificationDate"><value>Date de dernière modification</value></data>
+  <data name="CreationDate"><value>Date de création</value></data>
+  <data name="PostId"><value>Identifiant du billet</value></data>
+  <data name="UserCreated"><value>Auteur</value></data>
+  <data name="UserModified"><value>Auteur de la dernière modification</value></data>
+
 </root>

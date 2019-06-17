@@ -36,12 +36,11 @@ namespace Yavsc
     using Models;
     using Models.Chat;
     using Yavsc.Abstract.Chat;
+    using Yavsc.Attributes.Validation;
     using Yavsc.Services;
 
     public partial class ChatHub : Hub, IDisposable
     {
-        // TODO externalize connexion and room presence management
-
         ApplicationDbContext _dbContext;
         private IConnexionManager _cxManager;
         private IStringLocalizer _localizer;
@@ -60,9 +59,10 @@ namespace Yavsc
             _cxManager =  scope.ServiceProvider.GetService<IConnexionManager>();
              _cxManager.SetErrorHandler ((context, error) => 
              {
-                 Clients.Caller.notifyUser(NotificationTypes.Error, context, error);
+                 NotifyUser(NotificationTypes.Error, context, error);
              });
             _logger = loggerFactory.CreateLogger<ChatHub>();
+            
         }
 
         void SetUserName(string cxId, string userName)
@@ -105,7 +105,7 @@ namespace Yavsc
                             Connected = true
                         });
                     _dbContext.SaveChanges();
-                    Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).notifyuser(NotificationTypes.Connected, userName, null);
+                    Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).notifyUser(NotificationTypes.Connected, userName, null);
                     isCop = Context.User.IsInRole(Constants.AdminGroupName) ;
                     if (isCop)
                     {
@@ -156,7 +156,7 @@ namespace Yavsc
             {
                 var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
                 var userId = user.Id;
-                Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).notifyuser(NotificationTypes.DisConnected, userName, null);
+                Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).notifyUser(NotificationTypes.DisConnected, userName, null);
 
                 var cx = _dbContext.ChatConnection.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
                 if (cx != null)
@@ -201,10 +201,15 @@ namespace Yavsc
 
         public void Nick(string nickName)
         {
+            if (!ValidateStringLength(nickName, 1,12))
+                {
+                    NotifyUser(NotificationTypes.Error, "user", InvalidUserName);
+                }
+
             var candidate = "?" + nickName;
             if (_cxManager.IsConnected(candidate))
             {
-                Clients.Caller.notifyUser(NotificationTypes.ExistingUserName, nickName, "aborting");
+                NotifyUser(NotificationTypes.ExistingUserName, nickName, "aborting");
                 return;
             }
             _cxManager.SetUserName( Context.ConnectionId,  candidate);
@@ -215,8 +220,28 @@ namespace Yavsc
             return _cxManager.IsPresent(roomName, userName);
         }
 
+        bool ValidateStringLength(string str, int minLen, int maxLen)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                if (minLen<=0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            if (str.Length>maxLen||str.Length<minLen) return false;
+            return true;
+        }
+
         public ChatRoomInfo Join(string roomName)
         {
+            if (!ValidateStringLength(roomName,1,25)) 
+            {
+                NotifyUser(NotificationTypes.Error, "room", InvalidRoomName);
+                    return null;
+            }   
+
             var roomGroupName = ChatHubConstants.HubGroupRomsPrefix + roomName;
             var user = _cxManager.GetUserName(Context.ConnectionId);
             Groups.Add(Context.ConnectionId, roomGroupName);
@@ -241,7 +266,7 @@ namespace Yavsc
             var existent = _dbContext.ChatRoom.Any(r => r.Name == room);
             if (existent)
             {
-                Clients.Caller.notifyUser(NotificationTypes.Error, room, "already registered.");
+                NotifyUserInRoom(NotificationTypes.Error, room, "already registered.");
                 return;
             }
             string userName = Context.User.Identity.Name;
@@ -296,7 +321,6 @@ namespace Yavsc
             throw new NotImplementedException();
         }
        
-
         public void Part([Required] string roomName, [Required]  string reason)
         {
             if (_cxManager.Part(Context.ConnectionId,  roomName,   reason))
@@ -314,7 +338,7 @@ namespace Yavsc
 
         void NotifyErrorToCallerInRoom(string room, string reason)
         {
-            Clients.Caller.notifyUser(NotificationTypes.Error, room, reason);
+            NotifyUserInRoom(NotificationTypes.Error, room, reason);
             _logger.LogError($"NotifyErrorToCallerInRoom: {room}, {reason}");
         }
 
@@ -325,17 +349,25 @@ namespace Yavsc
             if (!_cxManager.TryGetChanInfo(roomName, out chanInfo))
             {
                 var noChanMsg = _localizer.GetString(ChatHubConstants.LabNoSuchChan).ToString();
-                Clients.Caller.notifyUser(NotificationTypes.Error, roomName, noChanMsg);
+                NotifyUserInRoom(NotificationTypes.Error, roomName, noChanMsg);
                 return;
             }
             var userName = _cxManager.GetUserName(Context.ConnectionId);
             if (!_cxManager.IsPresent(roomName, userName))
             {
                 var notSentMsg = _localizer.GetString(ChatHubConstants.LabnoJoinNoSend).ToString();
-                Clients.Caller.notifyUser(NotificationTypes.Error, roomName, notSentMsg);
+                NotifyUserInRoom(NotificationTypes.Error, roomName, notSentMsg);
                 return;
             }
             Clients.Group(groupname).addMessage(userName, roomName, message);
+        }
+        void NotifyUser(string type, string targetId, string message)
+        {
+            Clients.Caller.notifyUser(type, targetId, message);
+        }
+        void NotifyUserInRoom(string type, string room, string message)
+        {
+            Clients.Caller.notifyUserInRoom(type, room, message);
         }
 
         [Authorize]
@@ -343,7 +375,7 @@ namespace Yavsc
         {
             if (string.IsNullOrWhiteSpace(userName))
             {
-                Clients.Caller.notifyUser(NotificationTypes.Error, "none!", "specify an user.");
+                NotifyUser(NotificationTypes.Error, "none!", "specify an user.");
                 return;
             }
 
@@ -358,7 +390,7 @@ namespace Yavsc
 
                     if (bl.Count() > 0)
                     {
-                        Clients.Caller.notifyUser(NotificationTypes.PrivateMessageDenied, userName, "you are black listed.");
+                        NotifyUser(NotificationTypes.PrivateMessageDenied, userName, "you are black listed.");
                         return;
                     }
                 }

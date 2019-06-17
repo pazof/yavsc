@@ -3,7 +3,7 @@ using Yavsc.Models.Workflow;
 
 namespace Yavsc.ViewModels.FrontOffice
 {
-    public class PerformerProfileViewModel
+    public partial class PerformerProfileViewModel
     {
         public string UserName { get; set; }
         public string PerformerId { get; set; }

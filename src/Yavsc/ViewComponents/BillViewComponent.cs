@@ -18,11 +18,11 @@ namespace Yavsc.ViewComponents
     {
         ApplicationDbContext dbContext;
         IBillingService billing;
-        IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer;
+        IStringLocalizer<Yavsc.YavscLocalisation> localizer;
         ILogger logger ;
 
         public BillViewComponent(ApplicationDbContext dbContext, 
-            IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
+            IStringLocalizer<Yavsc.YavscLocalisation> localizer,
             IBillingService billing,
             ILoggerFactory loggerFactory)
         {

@@ -61,6 +61,9 @@
   <!-- 
     route name for the api controller used to tag the 'BlogPost' entity
    -->
-  <data name="Authenticated chat user"><value>Authenticated chat user</value></data>
-  <data name="LabnoJoinNoSend"><value>could not send to channel (not joint)</value></data>
+  <data name="Authenticated chat user"><value>Utilisateur de chat authentifié</value></data>
+  <data name="LabnoJoinNoSend"><value>Envoi impossible: vous devez joindre le canal pour y contribuer.</value></data>
+  <data name="InvalidRoomName"><value>Nom de salon invalide</value></data>
+  <data name="InvalidUserName"><value>Nom d'utilisateur invalide</value></data>
+  
 </root>

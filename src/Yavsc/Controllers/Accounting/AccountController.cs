@@ -45,7 +45,7 @@ namespace Yavsc.Controllers
             IEmailSender emailSender,
             IOptions<SiteSettings> siteSettings,
             ILoggerFactory loggerFactory, IOptions<TwilioSettings> twilioSettings,
-            IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
+            IStringLocalizer<Yavsc.YavscLocalisation> localizer,
             ApplicationDbContext dbContext)
         {
             _userManager = userManager;
