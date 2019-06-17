@@ -5,7 +5,7 @@ HOSTADMIN=root
 ASPNET_LOG_LEVEL=debug
 SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
-
+BASERESXGEN=Resources/Yavsc.Resources.ChatHub.Designer.cs   Resources/Yavsc.ViewComponents.CommentViewComponent.Designer.cs
 include $(MAKEFILE_DIR)/versioning.mk
 include $(MAKEFILE_DIR)/dnx.mk
 
@@ -55,6 +55,16 @@ endif
 
 %.min.css: %.css
 	jsmin < $^ > $@
+
+%.Designer.cs: %.resx
+	strotygen -p -t -r "Yavsc.Resources." $^
+
+prepare_code: $(BASERESXGEN)
+
+web_rebuild: 
+	make -C ../Yavsc.Abstract
+	make -C ../Yavsc.Server
+	make bin/Debug/dnx451/Yavsc.dll
 
 minJs: $(MINJS)
 
