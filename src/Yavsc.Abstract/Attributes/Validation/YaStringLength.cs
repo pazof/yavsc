@@ -4,16 +4,12 @@ namespace Yavsc.Attributes.Validation
 {
     public class YaStringLength: YaValidationAttribute
     {
-        public long MinimumLength { get; set; } = -1;
+        public long MinimumLength { get; set; } = 0;
         private long maxLen;
         public YaStringLength(long maxLen) : base( ()=> "BadStringLength")
         {
             this.maxLen = maxLen;
         }
-
-        // hugly ... 
-        static long excedent=0;
-        static long manquant=0;
 
         public override bool IsValid(object value) {
             
@@ -25,8 +21,10 @@ namespace Yavsc.Attributes.Validation
             if (stringValue==null) return false;
             if (MinimumLength>=0) 
                 {
-                    if (stringValue.Length< MinimumLength) 
-                    return false;
+                    if (stringValue.Length< MinimumLength) {
+                        return false;
+
+                    }
                 }
             if (maxLen>=0)
                 {
