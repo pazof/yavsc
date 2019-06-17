@@ -199,12 +199,50 @@ namespace Yavsc
             return base.OnReconnected();
         }
 
+        static bool IsLetterOrDigit(string s)
+        {
+            foreach (var c in s)
+                if (!char.IsLetterOrDigit(c))
+                    return false;
+            return true;
+        }
+
+        bool ValidateRoomName (string roomName)
+        {
+            bool valid = ValidateStringLength(roomName,1,25);
+            if (valid) valid = IsLetterOrDigit(roomName);
+            if (!valid) NotifyUser(NotificationTypes.Error, "roomName", InvalidRoomName);
+            return valid;
+        }
+        bool ValidateUserName (string userName)
+        {
+            bool valid = ValidateStringLength(userName, 1,12);
+            if (valid) valid = IsLetterOrDigit(userName);
+            NotifyUser(NotificationTypes.Error, "char:"+userName.First (c => !char.IsLetterOrDigit(c)), InvalidUserName);
+            return valid;
+        }
+        bool ValidateMessage (string message)
+        {
+            if (!ValidateStringLength(message, 1,240))
+            {
+                NotifyUser(NotificationTypes.Error, "message", InvalidMessage);
+                return false;
+            }
+            return true;
+        }
+        bool ValidateReason (string reason)
+        {
+            if (!ValidateStringLength(reason, 1,240))
+            {
+                NotifyUser(NotificationTypes.Error, "reason", InvalidReason);
+                return false;
+            }
+            return true;
+        }
+
         public void Nick(string nickName)
         {
-            if (!ValidateStringLength(nickName, 1,12))
-                {
-                    NotifyUser(NotificationTypes.Error, "user", InvalidUserName);
-                }
+            if (!ValidateUserName(nickName)) return;
 
             var candidate = "?" + nickName;
             if (_cxManager.IsConnected(candidate))
@@ -234,13 +272,10 @@ namespace Yavsc
             return true;
         }
 
+
         public ChatRoomInfo Join(string roomName)
         {
-            if (!ValidateStringLength(roomName,1,25)) 
-            {
-                NotifyUser(NotificationTypes.Error, "room", InvalidRoomName);
-                    return null;
-            }   
+            if (!ValidateRoomName(roomName)) return null;
 
             var roomGroupName = ChatHubConstants.HubGroupRomsPrefix + roomName;
             var user = _cxManager.GetUserName(Context.ConnectionId);
@@ -261,8 +296,9 @@ namespace Yavsc
         }
 
         [Authorize]
-        public void Register([Required] string room)
+        public void Register(string room)
         {
+            if (!ValidateRoomName(room)) return ;
             var existent = _dbContext.ChatRoom.Any(r => r.Name == room);
             if (existent)
             {
@@ -284,13 +320,19 @@ namespace Yavsc
             _dbContext.ChatRoom.Add(newroom);
             _dbContext.SaveChanges(user.Id);
         }
-        public void KickBan([Required] string roomName, [Required]  string userName, [Required] string reason)
+        public void KickBan(string roomName,  string userName, string reason)
         {
+            if (!ValidateRoomName(roomName)) return ;
+            if (!ValidateUserName(userName)) return ;
+            if (!ValidateReason(reason)) return;
             Kick(roomName, userName, reason);
             Ban(roomName, userName, reason);
         }
-        public void Kick([Required] string roomName, [Required]  string userName, [Required]  string reason)
+        public void Kick(string roomName,  string userName,  string reason)
         {
+            if (!ValidateRoomName(roomName)) return ;
+            if (!ValidateUserName(userName)) return ;
+            if (!ValidateReason(reason)) return;
             ChatRoomInfo chanInfo;
             var roomGroupName = ChatHubConstants.HubGroupRomsPrefix + roomName;
             if (_cxManager.TryGetChanInfo(roomName, out chanInfo))
@@ -311,18 +353,25 @@ namespace Yavsc
             Clients.Group(roomGroupName).notifyRoom(NotificationTypes.Kick, roomName, $"{userName}: {reason}");
         }
 
-        public void Ban([Required] string roomName, [Required]  string userName, [Required]  string reason)
+        public void Ban(string roomName,  string userName,  string reason)
         {
+            if (!ValidateRoomName(roomName)) return ;
+            if (!ValidateUserName(userName)) return ;
+            if (!ValidateReason(reason)) return;
             var cxIds = _cxManager.GetConnexionIds(userName);
             throw new NotImplementedException();
         }
-        public void Gline([Required] string userName, [Required]  string reason)
+        public void Gline(string userName,  string reason)
         {
+            if (!ValidateUserName(userName)) return ;
+            if (!ValidateReason(reason)) return;
             throw new NotImplementedException();
         }
        
-        public void Part([Required] string roomName, [Required]  string reason)
+        public void Part(string roomName,  string reason)
         {
+            if (!ValidateRoomName(roomName)) return ;
+            if (!ValidateReason(reason)) return;
             if (_cxManager.Part(Context.ConnectionId,  roomName,   reason))
              {
                 var roomGroupName = ChatHubConstants.HubGroupRomsPrefix + roomName;
@@ -342,8 +391,11 @@ namespace Yavsc
             _logger.LogError($"NotifyErrorToCallerInRoom: {room}, {reason}");
         }
 
-        public void Send([Required] string roomName, [Required]  string message)
+        public void Send(string roomName,  string message)
         {
+            if (!ValidateRoomName(roomName)) return ;
+            if (!ValidateMessage(message)) return ;
+            
             var groupname = ChatHubConstants.HubGroupRomsPrefix + roomName;
             ChatRoomInfo chanInfo ;
             if (!_cxManager.TryGetChanInfo(roomName, out chanInfo))
@@ -371,13 +423,10 @@ namespace Yavsc
         }
 
         [Authorize]
-        public void SendPV([Required] string userName, [Required]  string message)
+        public void SendPV(string userName,  string message)
         {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                NotifyUser(NotificationTypes.Error, "none!", "specify an user.");
-                return;
-            }
+            if (!ValidateUserName(userName)) return ;
+            if (!ValidateMessage(message)) return ;
 
             if (userName[0] != '?')
                 if (!Context.User.IsInRole(Constants.AdminGroupName))
@@ -405,8 +454,9 @@ namespace Yavsc
 
         [Authorize]
 
-        public void SendStream([Required] string connectionId, long streamId, [Required]  string message)
+        public void SendStream(string connectionId, long streamId,  string message)
         {
+            if (!ValidateMessage(message)) return;
             var sender = Context.User.Identity.Name;
             var cli = Clients.Client(connectionId);
             cli.addStreamInfo(sender, streamId, message);
