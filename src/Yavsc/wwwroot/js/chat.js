@@ -30,6 +30,7 @@ window.ChatHubHandler = (function ($) {
   $.fn.filterByData = function (prop, val) {
     return this.filter(function () { return $(this).data(prop) == val; });
   };
+
   var ChatView = function ($view, full) {
 
     if (!full) throw new Error('not implemented');
@@ -89,7 +90,7 @@ window.ChatHubHandler = (function ($) {
       }
       // eslint-disable-next-line no-warning-comments
       // TODO reconnected userpart userjoin deniedpv
-      $('<li></li>').addClass(tag).append(tag + ': ' + targetid + ' ').append(message).addClass(tag).appendTo($('#room_' + targetid));
+      $('<li></li>').addClass(tag).append(tag + ': ').append(message).addClass(tag).appendTo($('#room_' + targetid));
     };
 
     chat.client.notifyUser = function (tag, targetid, message) {
@@ -101,11 +102,13 @@ window.ChatHubHandler = (function ($) {
         onUserDisconnected(targetid, message);
         return;
       }
-
-      // eslint-disable-next-line no-warning-comments
-      // TODO userpart userjoin deniedpv
       $('<li></li>').append(tag + ': ' + targetid + ': ').append(message).addClass(tag).appendTo(notifications);
     };
+    
+    chat.client.notifyUserInRoom = function (tag, room, message) {
+      $('<li></li>').append(tag + ': ' ).append(message).addClass(tag).appendTo($('#room_' + room));
+    };
+
     var setChanInfo = function (chanInfo) {
       var chanId = 'r' + chanInfo.Name;
       $('#tv_' + chanId).replaceWith(chanInfo.Topic);
@@ -132,16 +135,19 @@ window.ChatHubHandler = (function ($) {
       });
     }
 
-    var chatbar = $('<div class="chatbar"></div>');
+    var chatbar = $('<div class="chatbar form-group"></div>');
 
-    var roomjoin = $('<div class="chatctl" class="form-control"></div>');
+    var roomjoin = $('<div class="chatctl" ></div>');
 
     var roomlist = $('<div class="roomlist"></div>');
     roomlist.appendTo(chatbar);
+    var ptc = $('<img src="/images/ptcroix.png" >').addClass('ptcroix');
+    
     $('<label for="channame">Join&nbsp;:</label>')
       .appendTo(roomjoin);
     var chanName = $('<input id="channame" title="channel name" hint="yavsc"  >');
     chanName.appendTo(roomjoin);
+    ptc.appendTo(roomjoin);
     roomjoin.appendTo(chatbar);
 
     chatbar.appendTo($view);
@@ -182,15 +188,25 @@ window.ChatHubHandler = (function ($) {
         else if (chanType == 'u' || chanType == 'a') userlist.push(chanName);
       setActiveChan(chanId);
     };
+
     var buildRoom = function (roomName) {
-      if (chans.some(function(cname) { return cname == roomName; })) setActiveChan('r' + roomName);
-      else buildChan('#', 'r', roomName, chat.server.send);
+      if (!chans.some(function(cname) { return cname == roomName; })) 
+        buildChan('#', 'r', roomName, chat.server.send);
     };
+
+    var DestroyRoom = function () {
+      if (frontChanId) {
+        $('#v' + frontChanId).remove();
+        $('#sel_' + frontChanId).remove();
+        frontChanId=null;
+      }
+    }
+
     var buildPv = function (userName) {
-      if (userlist.some(function(uname) { return uname == userName; })) setActiveChan('u' + userName);
-      else
+      if (!userlist.some(function(uname) { return uname == userName; })) {
         if (userName[0] == '?') buildChan('@?', 'a', userName.slice(1), chat.server.sendPV);
         else buildChan('@', 'u', userName, chat.server.sendPV);
+      }
     };
 
     /*var getUsers = function () {
@@ -242,6 +258,11 @@ window.ChatHubHandler = (function ($) {
       }
       // else TODO showRoomInfo(this.value);
     });
+
+    ptc.click(function(){
+      DestroyRoom();
+    });
+
     // eslint-disable-next-line no-warning-comments
     // TODO get this data from the chatview element
     var audio = new Audio('/sounds/bell.mp3');

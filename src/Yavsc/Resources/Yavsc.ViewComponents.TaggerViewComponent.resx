@@ -59,7 +59,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <!-- 
-    route name for the api controller used to tag the 'BlogPost' entity
+    route name for the api controller used to tag the 'BlogPost' entity,
+    don't localize it.
    -->
-  <data name="apiRouteTagBlogPost"><value>blogtags</value></data>
+  <data name="apiRouteTagBlogPost" comment="don't localize it!" ><value>blogtags</value></data>
 </root>

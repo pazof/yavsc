@@ -47,8 +47,8 @@ namespace Yavsc.Services
         static ConcurrentDictionary<string, bool> _isCop = new ConcurrentDictionary<string, bool>();
 
         public static ConcurrentDictionary<string, ChatRoomInfo> Channels = new ConcurrentDictionary<string, ChatRoomInfo>();
-        private ApplicationDbContext _dbContext;
-        private IStringLocalizer _localizer;
+        ApplicationDbContext _dbContext;
+        IStringLocalizer _localizer;
 
         public HubConnectionManager()
         {

@@ -5,7 +5,7 @@ HOSTADMIN=root
 ASPNET_LOG_LEVEL=debug
 SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
-BASERESXGEN=Resources/Yavsc.Resources.ChatHub.Designer.cs   Resources/Yavsc.ViewComponents.CommentViewComponent.Designer.cs
+BASERESXGEN=Resources/Yavsc.ChatHub.Designer.cs Resources/Yavsc.ViewComponents.CommentViewComponent.Designer.cs Resources/Yavsc.ViewModels.FrontOffice.PerformerProfileViewModel.Designer.cs Resources/Yavsc.YavscLocalisation.Designer.cs 
 include $(MAKEFILE_DIR)/versioning.mk
 include $(MAKEFILE_DIR)/dnx.mk
 
@@ -57,7 +57,7 @@ endif
 	jsmin < $^ > $@
 
 %.Designer.cs: %.resx
-	strotygen -p -t -r "Yavsc.Resources." $^
+	strotygen -l -p -t -r "Yavsc.Resources." $^
 
 prepare_code: $(BASERESXGEN)
 

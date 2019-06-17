@@ -58,5 +58,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="at"><value>a test</value></data>
+  <!-- 
+    route name for the api controller used to tag the 'BlogPost' entity
+   -->
+  <data name="Authenticated chat user"><value>Authenticated chat user</value></data>
+  <data name="LabnoJoinNoSend"><value>could not send to channel (not joint)</value></data>
+  <data name="InvalidRoomName"><value>Invalid room name</value></data>
+  <data name="InvalidUserName"><value>Invalid user name</value></data>
 </root>

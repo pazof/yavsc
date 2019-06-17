@@ -14,7 +14,6 @@ namespace Yavsc.ApiControllers
     using Models;
     using Services;
     using Models.Haircut;
-    using Resources;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.Data.Entity;
@@ -42,7 +41,7 @@ namespace Yavsc.ApiControllers
         IOptions<GoogleAuthSettings> googleSettings,
         IYavscMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
-          IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
+          IStringLocalizer<Yavsc.YavscLocalisation> localizer,
           IEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
           IOptions<SiteSettings> siteSettings,

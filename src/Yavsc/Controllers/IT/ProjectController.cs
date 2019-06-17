@@ -19,11 +19,11 @@ namespace Yavsc.Controllers
     {
         private ApplicationDbContext _context;
         ILogger _logger;
-        IStringLocalizer<Yavsc.Resources.YavscLocalisation> _localizer;
+        IStringLocalizer<Yavsc.YavscLocalisation> _localizer;
           
         public ProjectController(ApplicationDbContext context, 
         ILoggerFactory loggerFactory,
-        IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer
+        IStringLocalizer<Yavsc.YavscLocalisation> localizer
         )
         {
             _context = context;

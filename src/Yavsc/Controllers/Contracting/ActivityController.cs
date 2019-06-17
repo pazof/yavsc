@@ -17,11 +17,11 @@ namespace Yavsc.Controllers
     public class ActivityController : Controller
     {
         private ApplicationDbContext _context;
-        IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR;
+        IStringLocalizer<Yavsc.YavscLocalisation> SR;
         ILogger logger;
 
         public ActivityController(ApplicationDbContext context, 
-        IStringLocalizer<Yavsc.Resources.YavscLocalisation> SR,
+        IStringLocalizer<Yavsc.YavscLocalisation> SR,
         ILoggerFactory loggerFactory)
         {
             _context = context;

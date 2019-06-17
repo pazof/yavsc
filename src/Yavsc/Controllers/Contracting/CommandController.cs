@@ -36,7 +36,7 @@ namespace Yavsc.Controllers
         IYavscMessageSender messageSender,
           UserManager<ApplicationUser> userManager,
           ICalendarManager calendarManager,
-          IStringLocalizer<Yavsc.Resources.YavscLocalisation> localizer,
+          IStringLocalizer<Yavsc.YavscLocalisation> localizer,
           IEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
           IOptions<SiteSettings> siteSettings,
