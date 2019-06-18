@@ -5,7 +5,9 @@ HOSTADMIN=root
 ASPNET_LOG_LEVEL=debug
 SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
-BASERESXGEN=Resources/Yavsc.ChatHub.Designer.cs Resources/Yavsc.ViewComponents.CommentViewComponent.Designer.cs Resources/Yavsc.ViewModels.FrontOffice.PerformerProfileViewModel.Designer.cs Resources/Yavsc.YavscLocalisation.Designer.cs 
+BASERESX=Resources/Yavsc.ChatHub.resx Resources/Yavsc.ViewComponents.CommentViewComponent.resx Resources/Yavsc.ViewModels.FrontOffice.PerformerProfileViewModel.resx Resources/Yavsc.YavscLocalisation.resx 
+BASERESXGEN=$(BASERESX:.resx=.Designer.cs)
+
 include $(MAKEFILE_DIR)/versioning.mk
 include $(MAKEFILE_DIR)/dnx.mk
 
@@ -71,4 +73,6 @@ minJs: $(MINJS)
 minCss: $(MINCSS)
 
 minify: minCss minJs
+
+$(BINTARGETPATH): $(BASERESXGEN)
 
