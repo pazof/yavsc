@@ -85,6 +85,7 @@ namespace cli
                 DefaultClassName = settings.ControllerName,
                 DefaultNamespace = settings.NameSpace }; }
             );
+            // Well ... I'll perhaps have, one day, enough trust to use it ...
             services.AddTransient(typeof(MvcGenerator), typeof(MvcGenerator));
             services.AddEntityFramework().AddNpgsql().AddDbContext<ApplicationDbContext>(
                   db => db.UseNpgsql(ConnectionString)
