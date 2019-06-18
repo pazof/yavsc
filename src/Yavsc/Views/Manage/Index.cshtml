@@ -160,7 +160,9 @@
       </dd>
     </dl>
     <h4>
-      <a asp-controller="GCMDevices" asp-action="Index" >@SR["Gérer mes terminaux autorisés"]</a>
+    <environment names="Development">
+      <a asp-controller="Devices" asp-action="Index" >@SR["Gérer mes terminaux autorisés"]</a>
+      </environment>
     </h4>
     <h4>
       <a asp-controller="Account" asp-action="Delete" >@SR["Unregister"]</a>
