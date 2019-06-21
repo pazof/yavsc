@@ -1,15 +1,27 @@
 @model Yavsc.Models.Relationship.HyperLink
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = @SR["Details"];
 }
 
-<h2>Details</h2>
+<h2>@SR["Details"]</h2>
 
 <div>
     <h4>HyperLink</h4>
     <hr />
     <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.HRef)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Href)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Method)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Method)
+        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.ContentType)
         </dt>
@@ -26,5 +38,5 @@
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@SR["Back to List"]</a>
 </p>
