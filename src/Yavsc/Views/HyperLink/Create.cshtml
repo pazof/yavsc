@@ -1,28 +1,42 @@
 @model Yavsc.Models.Relationship.HyperLink
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = @SR["Create"];
 }
 
-<h2>Create</h2>
+<h2>@SR["Create"]</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
-        <h4>HyperLink</h4>
+        <h4>@SR["HyperLink"]</h4>
         <hr />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="HRef" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="HRef" class="form-control" />
+                <span asp-validation-for="HRef" class="text-danger" ></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Method" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Method" class="form-control" />
+                <span asp-validation-for="Method" class="text-danger" ></span>
+            </div>
+        </div>
         <div class="form-group">
             <label asp-for="ContentType" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="ContentType" class="form-control" />
-                <span asp-validation-for="ContentType" class="text-danger" />
+                <span asp-validation-for="ContentType" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="Rel" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Rel" class="form-control" />
-                <span asp-validation-for="Rel" class="text-danger" />
+                <span asp-validation-for="Rel" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
@@ -34,6 +48,6 @@
 </form>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@SR["Back to List"]</a>
 </div>
 

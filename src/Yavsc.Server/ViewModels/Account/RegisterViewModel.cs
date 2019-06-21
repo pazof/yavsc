@@ -7,16 +7,17 @@ namespace Yavsc.ViewModels.Account
     public class RegisterViewModel
     {
 
-        [StringLength(102)]
+        [YaStringLength(2,Constants.MaxUserNameLength)]
         [YaRegularExpression(Constants.UserNameRegExp)]
         public string UserName { get; set; }
 
         [Required()]
+        [YaStringLength(2,102)]
    //    [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [StringLength(100, MinimumLength = 6)]
+        [YaStringLength(6,100)]
         [DataType(DataType.Password)]
 
         // ErrorMessage = "Les mots de passe doivent contenir au moins un caractère spécial, qui ne soit ni une lettre ni un chiffre.")]

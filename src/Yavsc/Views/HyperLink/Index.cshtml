@@ -1,16 +1,22 @@
 @model IEnumerable<Yavsc.Models.Relationship.HyperLink>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = @SR["Index"];
 }
 
-<h2>Index</h2>
+<h2>@SR["Index"]</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">@SR["Create New"]</a>
 </p>
 <table class="table">
     <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.HRef)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Method)
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.ContentType)
         </th>
@@ -23,15 +29,21 @@
 @foreach (var item in Model) {
     <tr>
         <td>
+            @Html.DisplayFor(modelItem => item.HRef)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Method)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.ContentType)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Rel)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            @Html.ActionLink("Edit", SR["Edit"], new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", SR["Details"], new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", SR["Delete"], new { /* id=item.PrimaryKey */ })
         </td>
     </tr>
 }

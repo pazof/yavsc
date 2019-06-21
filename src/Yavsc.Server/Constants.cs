@@ -36,6 +36,8 @@ namespace Yavsc
             YavscConnectionStringEnvName = "YAVSC_DB_CONNECTION";
 
 
+
+
         
         public static readonly long DefaultFSQ = 1024*1024*500;
 
@@ -57,6 +59,8 @@ namespace Yavsc
         { "openid", "profile", "email", "https://www.googleapis.com/auth/calendar" };
 
         public static readonly string NoneCode = "none";
+
+        public const int MaxUserNameLength = 26;
 
     }
 }

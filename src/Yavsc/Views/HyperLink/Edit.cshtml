@@ -1,15 +1,29 @@
 @model Yavsc.Models.Relationship.HyperLink
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = @SR["Edit"];
 }
 
-<h2>Edit</h2>
+<h2>@SR["Edit"]</h2>
 
 <form asp-action="Edit">
     <div class="form-horizontal">
         <h4>HyperLink</h4>
         <hr />
+        <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.HRef)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Href)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Method)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Method)
+        </dd>
+        </dl>
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="HRef" />
         <input type="hidden" asp-for="Method" />
@@ -17,14 +31,14 @@
             <label asp-for="ContentType" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="ContentType" class="form-control" />
-                <span asp-validation-for="ContentType" class="text-danger" />
+                <span asp-validation-for="ContentType" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="Rel" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Rel" class="form-control" />
-                <span asp-validation-for="Rel" class="text-danger" />
+                <span asp-validation-for="Rel" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
@@ -36,6 +50,6 @@
 </form>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@SR["Back to List"]</a>
 </div>
 
