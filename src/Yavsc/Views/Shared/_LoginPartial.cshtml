@@ -15,8 +15,9 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a asp-controller="Bug" asp-action="Index">Bugs</a></li>
-                        <li><a asp-controller="Bug" asp-action="Index">Bugs</a></li>
-                        <li><a asp-controller="Feature" asp-action="Index">Features</a></li>
+                        <li><a asp-controller="HyperLink" asp-action="Index">@SR["HyperLink"]</a></li>
+                        <li><a asp-controller="LiveFlow" asp-action="Index">@SR["LiveFlow"]</a></li>
+                        <li><a asp-controller="Feature" asp-action="Index">@SR["Features"]</a></li>
                     </ul>
              @if (User.IsInRole(Constants.AdminGroupName)) {
              <li class="dropdown">
