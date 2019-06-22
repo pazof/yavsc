@@ -1,0 +1,23 @@
+@model Yavsc.ViewModels.NewAdminViewModel
+
+@{ 
+    ViewBag.Title = SR["GiveAdmin"];
+}
+
+<form asp-action="GiveAdmin">
+    <div class="form-horizontal">
+        <h4>@ViewBag.Title</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="NewAdminId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="NewAdminId" asp-items=@ViewBag.NewAdminId class="form-control" >
+                </select>
+                <span asp-validation-for="NewAdminId" class="text-danger" ></span>
+            </div>
+        </div>
+
+    </div>
+</form>

@@ -16,21 +16,21 @@
             <label asp-for="Description" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger" />
+                <span asp-validation-for="Description" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="ShortName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="ShortName" class="form-control" />
-                <span asp-validation-for="ShortName" class="text-danger" />
+                <span asp-validation-for="ShortName" class="text-danger"  ></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="Status" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <select asp-for="Status" class="form-control" asp-items="@ViewBag.Statuses"></select>
-                <span asp-validation-for="Status" class="text-danger" />
+                <span asp-validation-for="Status" class="text-danger"  ></span>
             </div>
         </div>
         <div class="form-group">

@@ -8,14 +8,14 @@
 
 <form asp-action="Edit">
     <div class="form-horizontal">
-        <h4>HyperLink</h4>
+        <h4>@SR["HyperLink"]</h4>
         <hr />
         <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.HRef)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Href)
+            @Html.DisplayFor(model => model.HRef)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Method)

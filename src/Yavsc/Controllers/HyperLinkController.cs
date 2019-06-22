@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Yavsc.Models;
@@ -6,6 +7,7 @@ using Yavsc.Models.Relationship;
 
 namespace Yavsc.Controllers
 {
+    [Authorize("AdministratorOnly")]
     public class HyperLinkController : Controller
     {
         private ApplicationDbContext _context;
@@ -22,14 +24,14 @@ namespace Yavsc.Controllers
         }
 
         // GET: HyperLink/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string href, string method)
         {
-            if (id == null)
+            if (href == null || method ==null)
             {
                 return HttpNotFound();
             }
 
-            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
+            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == href && m.Method == method);
             if (hyperLink == null)
             {
                 return HttpNotFound();
@@ -59,14 +61,14 @@ namespace Yavsc.Controllers
         }
 
         // GET: HyperLink/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string href, string method)
         {
-            if (id == null)
+            if (href == null || method ==null)
             {
                 return HttpNotFound();
             }
 
-            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
+            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == href && m.Method == method);
             if (hyperLink == null)
             {
                 return HttpNotFound();
@@ -90,14 +92,15 @@ namespace Yavsc.Controllers
 
         // GET: HyperLink/Delete/5
         [ActionName("Delete")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(string href, string method)
         {
-            if (id == null)
+            if (href == null || method ==null)
             {
                 return HttpNotFound();
             }
 
-            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
+            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == href && m.Method == method);
+
             if (hyperLink == null)
             {
                 return HttpNotFound();
@@ -109,9 +112,15 @@ namespace Yavsc.Controllers
         // POST: HyperLink/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(string HRef, string Method)
         {
-            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
+            if (HRef == null || Method ==null)
+            {
+                return HttpNotFound();
+            }
+
+            HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == HRef && m.Method == Method);
+
             _context.HyperLink.Remove(hyperLink);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");

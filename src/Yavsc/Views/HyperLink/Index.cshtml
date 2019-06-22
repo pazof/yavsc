@@ -4,7 +4,7 @@
     ViewData["Title"] = @SR["Index"];
 }
 
-<h2>@SR["Index"]</h2>
+<h2>@SR["HyperLink"] - @SR["Index"]</h2>
 
 <p>
     <a asp-action="Create">@SR["Create New"]</a>
@@ -41,9 +41,9 @@
             @Html.DisplayFor(modelItem => item.Rel)
         </td>
         <td>
-            @Html.ActionLink("Edit", SR["Edit"], new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", SR["Details"], new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", SR["Delete"], new { /* id=item.PrimaryKey */ })
+            @Html.ActionLink(SR["Edit"], "Edit", new { hRef=item.HRef, method = item.Method }) |
+            @Html.ActionLink(SR["Details"], "Details", new { hRef=item.HRef, method = item.Method }) |
+            @Html.ActionLink(SR["Delete"], "Delete", new { hRef=item.HRef, method = item.Method })
         </td>
     </tr>
 }

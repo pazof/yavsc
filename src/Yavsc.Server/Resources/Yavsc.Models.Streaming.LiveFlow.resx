@@ -58,9 +58,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MethodDisplayName" ><value>Methode Http attendue coté serveur</value></data>
-  <data name="ContentTypeDisplayName"><value>Type mime du contenu attendu côté client</value></data>
-  <data name="RelDisplayName" comment="'href' ou 'css' ou 'extplug' ... igonoré"><value>Type de lien</value></data>
-  <data name="HRefDisplayName"><value>Valeur du lien</value></data>
- 
+  <!-- 
+    route name for the api controller used to tag the 'BlogPost' entity
+   -->
+  <data name="DifferedFileNameLabel"><value>Nom de fichier pour le différé</value></data>
+  <data name="MediaTypeLabel"><value>Type de média</value></data>
+  <data name="PitchLabel"><value>Le pitch</value></data>
+  <data name="SequenceNumberLabel"><value>Numéro de séauence</value></data>
+  <data name="TitleLabel"><value>Titre</value></data>
+  <data name="FlowIdLabel"><value>Identifiant du flux</value></data>
+  <data name="OwnerIdLabel"><value>Identifiant du propriétaire</value></data>
+  <data name="OwnerLabel"><value>Propriétaire</value></data>
+
 </root>

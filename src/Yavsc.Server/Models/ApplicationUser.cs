@@ -12,8 +12,9 @@ namespace Yavsc.Models
     using Models.Bank;
     using Models.Access;
     using Newtonsoft.Json;
-    
-    public class ApplicationUser : IdentityUser
+    using System;
+
+    public class ApplicationUser : IdentityUser, IBaseTrackedEntity
     {
         /// <summary>
         /// Another me, as a byte array.
@@ -108,5 +109,24 @@ namespace Yavsc.Models
         [JsonIgnore][InverseProperty("User")]
         public virtual List<ChatRoomAccess> RoomAccess { get; set; }
 
+        public DateTime DateCreated
+        {
+            get; set;
+        }
+
+        public string UserCreated
+        {
+            get; set;
+        }        
+        
+        public DateTime DateModified 
+        {
+            get; set;
+        }        
+        
+        public string UserModified
+        {
+            get; set;
+        }
     }
 }

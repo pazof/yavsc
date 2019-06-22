@@ -15,7 +15,7 @@
             <label asp-for="Code" class="col-md-2 control-label">@SR["Code"]</label>
             <div class="col-md-10">
                 <input asp-for="Code" class="form-control" />
-                <span asp-validation-for="Code" class="text-danger" />
+                <span asp-validation-for="Code" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
@@ -23,7 +23,7 @@
                 @SR["Name"]</label>
             <div class="col-md-10">
                 <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger" />
+                <span asp-validation-for="Name" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
@@ -32,7 +32,7 @@
             <div class="col-md-10">
                 <select asp-for="ParentCode" asp-items=@ViewBag.ParentCode class="form-control" >
                 </select>
-                <span asp-validation-for="ParentCode" class="text-danger" />
+                <span asp-validation-for="ParentCode" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
@@ -40,7 +40,7 @@
                 @SR["Description"]</label>
             <div class="col-md-10">
                 <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger" />
+                <span asp-validation-for="Description" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
@@ -49,7 +49,7 @@
             </label>
             <div class="col-md-10">
                 <input asp-for="Photo" class="form-control" />
-                <span asp-validation-for="Photo" class="text-danger" />
+                <span asp-validation-for="Photo" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
@@ -59,7 +59,7 @@
             <div class="col-md-10">
                 <select asp-for="SettingsClassName" class="form-control" asp-items="@ViewBag.SettingsClassName">
                 </select>
-                <span asp-validation-for="SettingsClassName" class="text-danger" />
+                <span asp-validation-for="SettingsClassName" class="text-danger" ></span>
             </div>
         </div>
         

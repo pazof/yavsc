@@ -6,19 +6,15 @@
 		<version>$version$</version>
 		<authors>Paul Schneider</authors>
 		<owners>Paul Schneider</owners>
-		<licenseUrl>https://github.com/pazof/yavsc/blob/vnext/Yavsc/License.md</licenseUrl>
-		<projectUrl>https://github.com/pazof/yavsc/README.md</projectUrl>
-		<iconUrl>https://github.com/pazof/yavsc/blob/vnext/Yavsc/wwwroot/images/yavsc.png</iconUrl>
+		<License>https://github.com/pazof/yavsc/blob/vnext/LICENSE</License>
+		<projectUrl>https://github.com/pazof/yavsc/blob/vnext/README.md</projectUrl>
+		<iconUrl>http://yavsc.pschneider.fr/images/yavsc.png</iconUrl>
 		<requireLicenseAcceptance>true</requireLicenseAcceptance>
-		<description>
-      A command line interface to Yavsc server runtime
-		</description>
-		<summary>
-		</summary>
-		<tags>Blog, POS, Web API</tags>
+		<description>A command line interface to Yavsc server API's</description>
+		<tags></tags>
 		<dependencies>
 			<dependency id="Yavsc.Server" version="$version$"></dependency>
-    </dependencies>
+    	</dependencies>
 	</metadata>
 	<files>
 		<file src="bin/$config$/dnx451/cli.dll" target="lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10" />

@@ -25,7 +25,19 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<UserInfo> GetApplicationUser()
         {
-            return _context.Users.Select(u=> new UserInfo { 
+            return _context.Users.OrderByDescending(u => u.DateModified).Take(25)
+            .Select(u=> new UserInfo { 
+            UserId = u.Id,
+            UserName = u.UserName,
+            Avatar = u.Avatar   });
+        }
+
+        [HttpGet("search/{pattern}")]
+        public IEnumerable<UserInfo> SearchApplicationUser(string pattern)
+        {
+            return _context.Users.Where(u => u.UserName.Contains(pattern))
+            .OrderByDescending(u => u.DateModified).Take(25)
+            .Select(u=> new UserInfo { 
             UserId = u.Id,
             UserName = u.UserName,
             Avatar = u.Avatar   });

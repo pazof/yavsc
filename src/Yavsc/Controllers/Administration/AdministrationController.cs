@@ -6,9 +6,11 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Data.Entity;
 using Yavsc.Abstract.Identity;
 using Yavsc.Models;
+using Yavsc.ViewModels;
 using Yavsc.ViewModels.Administration;
 
 namespace Yavsc.Controllers
@@ -83,9 +85,6 @@ namespace Yavsc.Controllers
                 return new BadRequestObjectResult(ModelState);
             }
 
-            IdentityRole adminRole;
-            adminRole = await _roleManager.FindByNameAsync(Constants.AdminGroupName);
-
             var addToRoleResult = await _userManager.AddToRoleAsync(user, Constants.AdminGroupName);
             if (!addToRoleResult.Succeeded)
             {
@@ -145,6 +144,32 @@ namespace Yavsc.Controllers
                 .ToArray()
             };
             return result;
+        }
+
+        [Authorize("AdministratorOnly")]
+        public IActionResult GiveAdmin()
+        {
+            ViewBag.NewAdminId = new SelectList(context.Users, "Id", "UserName");
+            return View();
+        }
+
+        [Authorize("AdministratorOnly")]
+        [HttpPost()]
+        public async Task<IActionResult> GiveAdmin(NewAdminViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var newAdmin  = await context.Users.FirstOrDefaultAsync(u=>u.Id==model.NewAdminId);
+                if (newAdmin==null) return HttpNotFound();
+                var addToRoleResult = await _userManager.AddToRoleAsync(newAdmin, Constants.AdminGroupName);
+                if (!addToRoleResult.Succeeded)
+                {
+                    return View("Index"); 
+                }
+                AddErrors(addToRoleResult);
+            }
+            ViewBag.NewAdminId = new SelectList(context.Users, "Id", "UserName");
+            return View();
         }
         private void AddErrors(IdentityResult result)
         {

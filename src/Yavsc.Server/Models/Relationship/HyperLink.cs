@@ -10,11 +10,11 @@ namespace Yavsc.Models.Relationship
         Prompt="http://some.web.site")]
         public string HRef { get; set; }
 
-        [YaStringLength(5,1024)]
+        [YaStringLength(0,12)]
         [Display(Name="MethodDisplayName", ResourceType=typeof(HyperLink), Prompt="GET")]
         public string Method { get; set; }
 
-        [YaStringLength(5,25)]
+        [YaStringLength(0,25)]
         [Display(Name="RelDisplayName",  ResourceType=typeof(HyperLink), 
         Prompt="href")]
         public string Rel { get; set; }
