@@ -21,7 +21,7 @@ namespace Yavsc.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        private readonly ApplicationDbContext context;
+        private readonly ApplicationDbContext _dbContext;
 
         public AdministrationController(UserManager<ApplicationUser> userManager,
          RoleManager<IdentityRole> roleManager,
@@ -29,7 +29,7 @@ namespace Yavsc.Controllers
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            this.context = context;
+            this._dbContext = context;
         }
 
         private async Task<bool> EnsureRoleList () {
@@ -101,7 +101,7 @@ namespace Yavsc.Controllers
         {
             var adminCount = await _userManager.GetUsersInRoleAsync(
                 Constants.AdminGroupName);
-            var userCount = await context.Users.CountAsync();
+            var userCount = await _dbContext.Users.CountAsync();
             var youAreAdmin = await _userManager.IsInRoleAsync(
                 await _userManager.FindByIdAsync(User.GetUserId()),
                 Constants.AdminGroupName);
@@ -139,7 +139,7 @@ namespace Yavsc.Controllers
             var result = new RoleUserCollection {
                 Id = role.Id,
                 Name = role.Name,
-                Users = context.Users.Where(u=>role.Users.Any(ru => u.Id == ru.UserId))
+                Users = _dbContext.Users.Where(u=>role.Users.Any(ru => u.Id == ru.UserId))
                 .Select( u => new UserInfo { UserName = u.UserName, Avatar = u.Avatar, UserId = u.Id } )
                 .ToArray()
             };
@@ -147,29 +147,57 @@ namespace Yavsc.Controllers
         }
 
         [Authorize("AdministratorOnly")]
-        public IActionResult GiveAdmin()
+        public IActionResult Enroll(string roleName)
         {
-            ViewBag.NewAdminId = new SelectList(context.Users, "Id", "UserName");
-            return View();
+            ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "UserName");
+            return View(new EnrolerViewModel{ RoleName = roleName });
         }
 
         [Authorize("AdministratorOnly")]
         [HttpPost()]
-        public async Task<IActionResult> GiveAdmin(NewAdminViewModel model)
+        public async Task<IActionResult> Enroll(EnrolerViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var newAdmin  = await context.Users.FirstOrDefaultAsync(u=>u.Id==model.NewAdminId);
+                var newAdmin  = await _dbContext.Users.FirstOrDefaultAsync(u=>u.Id==model.EnroledUserId);
                 if (newAdmin==null) return HttpNotFound();
-                var addToRoleResult = await _userManager.AddToRoleAsync(newAdmin, Constants.AdminGroupName);
-                if (!addToRoleResult.Succeeded)
+                var addToRoleResult = await _userManager.AddToRoleAsync(newAdmin, model.RoleName);
+                if (addToRoleResult.Succeeded)
                 {
-                    return View("Index"); 
+                    return RedirectToAction("Index");
                 }
                 AddErrors(addToRoleResult);
             }
-            ViewBag.NewAdminId = new SelectList(context.Users, "Id", "UserName");
-            return View();
+            ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "UserName");
+            return View(model);
+        }
+
+        [Authorize("AdministratorOnly")]
+        public async Task<IActionResult> Fire(string roleName, string userId)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u=>u.Id==userId);
+            if (user == null) return HttpNotFound();
+
+            return View(new FireViewModel{ RoleName = roleName, EnroledUserId = userId, EnroledUserName = user.UserName });
+        }
+
+        [Authorize("AdministratorOnly")]
+        [HttpPost()]
+        public async Task<IActionResult> Fire(FireViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var oldEnroled  = await _dbContext.Users.FirstOrDefaultAsync(u=>u.Id==model.EnroledUserId);
+                if (oldEnroled==null) return HttpNotFound();
+                var removeFromRole = await _userManager.RemoveFromRoleAsync(oldEnroled, model.RoleName);
+                if (removeFromRole.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+                AddErrors(removeFromRole);
+            }
+            ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "UserName");
+            return View(model);
         }
         private void AddErrors(IdentityResult result)
         {

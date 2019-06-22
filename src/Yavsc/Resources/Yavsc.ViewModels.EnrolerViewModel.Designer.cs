@@ -16,7 +16,7 @@ namespace Yavsc.ViewModels {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class NewAdminViewModel {
+    public partial class EnrolerViewModel {
         
         private static System.Resources.ResourceManager resourceMan;
         
@@ -26,7 +26,7 @@ namespace Yavsc.ViewModels {
         public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager(("Yavsc.Resources." + "Yavsc.ViewModels.NewAdminViewModel"), typeof(NewAdminViewModel).GetTypeInfo().Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager(("Yavsc.Resources." + "Yavsc.ViewModels.EnrolerViewModel"), typeof(EnrolerViewModel).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -43,9 +43,15 @@ namespace Yavsc.ViewModels {
             }
         }
         
-        public static string NewAdminLabel {
+        public static string EnroledLabel {
             get {
-                return ResourceManager.GetString("NewAdminLabel", resourceCulture);
+                return ResourceManager.GetString("EnroledLabel", resourceCulture);
+            }
+        }
+        
+        public static string RoleNameLabel {
+            get {
+                return ResourceManager.GetString("RoleNameLabel", resourceCulture);
             }
         }
     }

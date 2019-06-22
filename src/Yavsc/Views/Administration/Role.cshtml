@@ -4,13 +4,17 @@
 }
 
 <h2>@ViewBag.Title</h2>
+<p>
+<a asp-action="Enroll" asp-route-RoleName="@Model.Name" class="btn btn-default" >@SR["Enroll"]</a>
+</p>
 
 <ul>
 @foreach (var user in Model.Users) {
    <li> <img src="~/avatars/@(user.UserName).xs.png" alt="avatar"/>
     @user.UserName
+
+<a asp-action="Fire" asp-route-RoleName="@Model.Name" asp-route-UserId="@user.UserId" class="btn btn-success" >
+<img src="~/images/ptcroix.png" /> @SR["Fire"]</a>
    </li>
 }
 </ul>
-
-<a asp-action="GiveAdmin">@SR["GiveAdmin"]</a>

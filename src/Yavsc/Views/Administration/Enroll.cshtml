@@ -1,0 +1,29 @@
+@model Yavsc.ViewModels.EnrolerViewModel
+
+@{ 
+    ViewBag.Title = SR["Enroll"]+" : "+Model.RoleName;
+}
+
+<form asp-action="Enroll">
+    <div class="form-horizontal">
+        <h4>@ViewBag.Title</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="EnroledUserId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="EnroledUserId" asp-items=@ViewBag.UserId class="form-control" >
+                </select>
+                <span asp-validation-for="EnroledUserId" class="text-danger" ></span>
+            </div>
+        </div>
+                <input type="hidden" asp-for="RoleName" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SR["Submit"]" class="btn btn-default" />
+            </div>
+        </div>
+
+    </div>
+</form>
