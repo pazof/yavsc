@@ -1,10 +1,10 @@
 @model CoWorking
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = @SR["Create"];
 }
 
-<h2>Create</h2>
+<h2>@SR["Create"]</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
@@ -32,7 +32,7 @@
 </form>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@SR["Back to List"]</a>
 </div>
 
 @section Scripts {

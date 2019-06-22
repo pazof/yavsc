@@ -1711,6 +1711,12 @@ namespace Yavsc {
             }
         }
         
+        public static string User {
+            get {
+                return ResourceManager.GetString("User", resourceCulture);
+            }
+        }
+        
         public static string User_List {
             get {
                 return ResourceManager.GetString("User List", resourceCulture);
@@ -2080,6 +2086,12 @@ namespace Yavsc {
         public static string Fire {
             get {
                 return ResourceManager.GetString("Fire", resourceCulture);
+            }
+        }
+        
+        public static string LiveFlow {
+            get {
+                return ResourceManager.GetString("LiveFlow", resourceCulture);
             }
         }
     }

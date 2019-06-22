@@ -405,6 +405,7 @@
   <data name="Use a local account to log in"><value>Utiliser un compte local pour se connecter</value></data>
   <data name="Use another service to log in"><value>Utiliser un autre service pour se connecter</value></data>
   <data name="UseGeoLocalizationToReduceDistanceWithClients"><value>Utiliser ma position pour avoir des clients plus proches</value></data>
+  <data name="User"><value>Utilisateur</value><comment></comment></data>
   <data name="User List"><value>Liste des utilisateurs</value><comment></comment></data>
   <data name="UserName"><value>Nom d'utilisateur</value></data>
   <data name="UsersInRole"><value>Liste des utilisateurs assumant le rôle "{0}"</value></data>
@@ -499,4 +500,5 @@ Facture réglée: {5}</value></data>
 <data name="Join"><value>joindre</value></data>
 <data name="Enroll"><value>Enrôler</value></data>
 <data name="Fire"><value>Licencier</value></data>
+<data name="LiveFlow"><value>Flux live</value></data>
 </root>

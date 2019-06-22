@@ -64,7 +64,7 @@
   <data name="DifferedFileNameLabel"><value>Nom de fichier pour le différé</value></data>
   <data name="MediaTypeLabel"><value>Type de média</value></data>
   <data name="PitchLabel"><value>Le pitch</value></data>
-  <data name="SequenceNumberLabel"><value>Numéro de séauence</value></data>
+  <data name="SequenceNumberLabel"><value>Numéro de séquence</value></data>
   <data name="TitleLabel"><value>Titre</value></data>
   <data name="FlowIdLabel"><value>Identifiant du flux</value></data>
   <data name="OwnerIdLabel"><value>Identifiant du propriétaire</value></data>

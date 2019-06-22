@@ -9,12 +9,25 @@
 </p>
 
 <ul>
-@foreach (var user in Model.Users) {
-   <li> <img src="~/avatars/@(user.UserName).xs.png" alt="avatar"/>
-    @user.UserName
+<table class="table">
+    <tr>
+        <th>
+            @SR["User"]
+        </th>
+        <th>
+        </th>
+    </tr>
 
-<a asp-action="Fire" asp-route-RoleName="@Model.Name" asp-route-UserId="@user.UserId" class="btn btn-success" >
-<img src="~/images/ptcroix.png" /> @SR["Fire"]</a>
-   </li>
+@foreach (var user in Model.Users) {
+    <tr>
+        <td>
+            <img src="~/avatars/@(user.UserName).xs.png" alt="avatar"/>
+            <span> @user.UserName </span>
+        </td>
+            <td>
+            <a asp-action="Fire" asp-route-RoleName="@Model.Name" asp-route-UserId="@user.UserId" class="btn btn-success" >
+            <img src="~/images/ptcroix.png" /> @SR["Fire"] </a>
+            </td>
+    </tr>
 }
-</ul>
+</table>
