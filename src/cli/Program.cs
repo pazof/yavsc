@@ -7,7 +7,6 @@ namespace cli
 {
     public partial class Program
     {
-
         public static void Main(string[] args)
         {
             CommandOption rootCommandHelpOption = null;

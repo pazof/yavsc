@@ -16,7 +16,7 @@
             <div class="col-md-10">
                 <textarea asp-for="Body" class="form-control" >
                     </textarea>
-                <span asp-validation-for="Body" class="text-danger" />
+                <span asp-validation-for="Body" class="text-danger"  ></span>
             </div>
         </div>
         <div class="form-group">
@@ -29,21 +29,21 @@
             <label asp-for="ReplyToAddress" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="ReplyToAddress" class="form-control" />
-                <span asp-validation-for="ReplyToAddress" class="text-danger" />
+                <span asp-validation-for="ReplyToAddress" class="text-danger"  ></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="Topic" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Topic" class="form-control" />
-                <span asp-validation-for="Topic" class="text-danger" />
+                <span asp-validation-for="Topic" class="text-danger"  ></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="ToSend" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <select asp-for="ToSend" asp-items="@ViewBag.ToSend" class="form-control"></select>
-                <span asp-validation-for="ToSend" class="text-danger" />
+                <span asp-validation-for="ToSend" class="text-danger"  ></span>
             </div>
         </div>
         <div class="form-group">

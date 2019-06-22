@@ -1,16 +1,20 @@
 {
-    "tools": {
+  "env": [],
+    "build" :{
+
+    },
+    "prepare": {
         "make": {}
     },
-    "projects": {
+    "post_build": {
         "yavsc": {
           "type": "make",
           "source" : {
             "github": "pazof/yavsc",
             "branch": "vnext"
           },
-          "env": [],
           "args": []
         }
-    }
+    },
+    "emails": []
 }

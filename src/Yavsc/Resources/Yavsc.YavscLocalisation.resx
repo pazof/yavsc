@@ -134,6 +134,7 @@
   lui présentant votre demande. Vous devriez être contacté très rapidement.</value></data>
   <data name="aprestation"><value>une prestation</value></data>
   <data name="approved"><value>Approuvé</value></data>
+  <data name="AreYourSureYouWantToDeleteThis"><value>Êtes-vous sûr de vouloir supprimer ceci?</value></data>
   <data name="AskForAnEstimate"><value>Demander un devis</value></data>
   <data name="AttachedFiles"><value>Fichiers attachées</value></data>
   <data name="AuthenticatedOnly"><value>Seuls les utilisateurs authentifiés peuvent accèder à cette information.</value></data>
@@ -178,6 +179,8 @@
   <data name="Count"><value>Nombre</value></data>
   <data name="CouldNotConvertVToDouble"><value>La convertion de '{0}' en 'double' a été impossible.</value></data>
   <data name="Create"><value>Créer</value></data>
+  <data name="Create New"><value>Créer</value></data>
+  <data name="HyperLink"><value>lien hyper</value></data>
   <data name="Create a new article"><value>Créer un nouvel article</value></data>
   <data name="Create a new account"><value>Créer un nouveau compte</value></data>
   <data name="Credits"><value>Crédits</value></data>
@@ -494,4 +497,5 @@ Facture réglée: {5}</value></data>
 
 <data name="AllowMonthlyEmail"><value>Recevoir la lettre mensuelle d'information</value></data>
 <data name="Join"><value>joindre</value></data>
+<data name="GiveAdmin"><value>Compromettre l'administration</value></data>
 </root>

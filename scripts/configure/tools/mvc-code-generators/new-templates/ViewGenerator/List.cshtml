@@ -77,9 +77,9 @@
     else
     {
         <td>
-            @@Html.ActionLink("Edit", SR["Edit"], new { /* id=item.PrimaryKey */ }) |
-            @@Html.ActionLink("Details", SR["Details"], new { /* id=item.PrimaryKey */ }) |
-            @@Html.ActionLink("Delete", SR["Delete"], new { /* id=item.PrimaryKey */ })
+            @@Html.ActionLink(SR["Edit"], "Edit",new { /* id=item.PrimaryKey */ }) |
+            @@Html.ActionLink(SR["Details"], "Details", new { /* id=item.PrimaryKey */ }) |
+            @@Html.ActionLink(SR["Delete"], "Delete", new { /* id=item.PrimaryKey */ })
         </td>
     }
     @:</tr>

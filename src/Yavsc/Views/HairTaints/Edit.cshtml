@@ -16,14 +16,14 @@
             <label asp-for="Brand" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Brand" class="form-control" />
-                <span asp-validation-for="Brand" class="text-danger" />
+                <span asp-validation-for="Brand" class="text-danger"  ></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="ColorId" class="control-label col-md-2">ColorId</label>
             <div class="col-md-10">
                 <select asp-for="ColorId" asp-items=@ViewBag.ColorId class="form-control"></select>
-                <span asp-validation-for="ColorId" class="text-danger" />
+                <span asp-validation-for="ColorId" class="text-danger"  ></span>
             </div>
         </div>
         <div class="form-group">

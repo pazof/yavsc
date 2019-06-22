@@ -1,32 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
+
 public class CiBuildSettings
 {
-    /// <summary>
-    /// A command specification (a system command),
-    /// in order to reference some trusted server-side process
-    /// </summary>
-    public class Command
-    {
-        [Required]
-        [JsonPropertyAttribute("path")]
-        public string Path { get; set; }
-
-        [JsonPropertyAttribute("args")]
-        public string[] Args { get; set; }
-
-        /// <summary>
-        /// Specific variables to this process
-        /// </summary>
-        /// <value></value>
-        /// 
-        [JsonPropertyAttribute("env")]
-        public string[] Environment { get; set; }
-        
-        [JsonPropertyAttribute("working_dir")]
-        public string WorkingDir { get; set; }
-    }
+   
     /// <summary>
     /// The global process environment variables
     /// </summary>
@@ -40,7 +18,7 @@ public class CiBuildSettings
     /// <value></value>
     [Required]
     [JsonPropertyAttribute("build")]
-    public Command Build { get; set; }
+    public CommandPipe Build { get; set; }
 
     /// <summary>
     /// A preparing command.
@@ -49,7 +27,7 @@ public class CiBuildSettings
     /// </summary>
     /// <value></value>
     [JsonPropertyAttribute("prepare")]
-    public Command Prepare { get; set; }
+    public CommandPipe Prepare { get; set; }
 
     /// <summary>
     /// A post-production command,
@@ -59,7 +37,7 @@ public class CiBuildSettings
     /// </summary>
     /// <value></value>
     [JsonPropertyAttribute("post_build")]
-    public Command PostBuild { get; set; }
+    public CommandPipe PostBuild { get; set; }
 
     /// <summary>
     /// Additional emails, as dest of notifications

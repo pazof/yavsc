@@ -5,7 +5,8 @@ include $(MAKEFILE_DIR)/dnx.mk
 
 default: all
 
-$(BINTARGETPATH): ../OAuth.AspNet.AuthServer/bin/$(CONFIGURATION)/OAuth.AspNet.AuthServer.dll ../Yavsc.Abstract/bin/$(CONFIGURATION)/Yavsc.Abstract.dll prepare_code
+$(BINTARGETPATH): ../OAuth.AspNet.AuthServer/bin/$(CONFIGURATION)/OAuth.AspNet.AuthServer.dll \
+  ../Yavsc.Abstract/bin/$(CONFIGURATION)/Yavsc.Abstract.dll prepare_code
 
 ../OAuth.AspNet.AuthServer/bin/$(CONFIGURATION)/OAuth.AspNet.AuthServer.dll:
 	make -C ../OAuth.AspNet.AuthServer 
@@ -13,9 +14,11 @@ $(BINTARGETPATH): ../OAuth.AspNet.AuthServer/bin/$(CONFIGURATION)/OAuth.AspNet.A
 ../Yavsc.Abstract/bin/$(CONFIGURATION)/Yavsc.Abstract.dll:
 	make -C ../Yavsc.Abstract
 
-%.Designer.cs: Resources/%.resx
+%.Designer.cs: %.resx
 	strotygen -l -p -t -r "Yavsc.Server.Resources." $^
 
-prepare_code: Resources/Yavsc.Models.IT.Fixing.Bug.Designer.cs Yavsc.Models.Relationship.HyperLink.Designer.cs
+prepare_code: Resources/Yavsc.Models.IT.Fixing.Bug.Designer.cs \
+  Resources/Yavsc.Models.Relationship.HyperLink.Designer.cs \
+  Resources/Yavsc.Models.Streaming.LiveFlow.Designer.cs
 
 all: $(BINTARGETPATH)

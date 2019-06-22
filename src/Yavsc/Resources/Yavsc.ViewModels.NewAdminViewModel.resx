@@ -58,9 +58,5 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MethodDisplayName" ><value>Methode Http attendue coté serveur</value></data>
-  <data name="ContentTypeDisplayName"><value>Type mime du contenu attendu côté client</value></data>
-  <data name="RelDisplayName" comment="'href' ou 'css' ou 'extplug' ... igonoré"><value>Type de lien</value></data>
-  <data name="HRefDisplayName"><value>Valeur du lien</value></data>
- 
+  <data name="NewAdminLabel"><value>Nouvel administrateur</value></data>
 </root>

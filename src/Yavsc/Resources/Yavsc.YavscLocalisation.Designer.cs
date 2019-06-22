@@ -139,6 +139,12 @@ namespace Yavsc {
             }
         }
         
+        public static string AreYourSureYouWantToDeleteThis {
+            get {
+                return ResourceManager.GetString("AreYourSureYouWantToDeleteThis", resourceCulture);
+            }
+        }
+        
         public static string AskForAnEstimate {
             get {
                 return ResourceManager.GetString("AskForAnEstimate", resourceCulture);
@@ -400,6 +406,18 @@ namespace Yavsc {
         public static string Create {
             get {
                 return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
+        public static string Create_New {
+            get {
+                return ResourceManager.GetString("Create New", resourceCulture);
+            }
+        }
+        
+        public static string HyperLink {
+            get {
+                return ResourceManager.GetString("HyperLink", resourceCulture);
             }
         }
         
@@ -2050,6 +2068,12 @@ namespace Yavsc {
         public static string Join {
             get {
                 return ResourceManager.GetString("Join", resourceCulture);
+            }
+        }
+        
+        public static string GiveAdmin {
+            get {
+                return ResourceManager.GetString("GiveAdmin", resourceCulture);
             }
         }
     }
