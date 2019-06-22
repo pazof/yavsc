@@ -1,10 +1,10 @@
 @model Yavsc.Models.ApplicationUser
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = @SR["Details"];
 }
 
-<h2>Details</h2>
+<h2>@SR["Details"]</h2>
 
 <div>
     <h4>ApplicationUser</h4>
@@ -127,6 +127,6 @@
     </dl>
 </div>
 <p>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a> |
+    <a asp-action="Index">@SR["Back to List"]</a>
 </p>

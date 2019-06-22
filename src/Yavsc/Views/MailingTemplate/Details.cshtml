@@ -1,13 +1,13 @@
 @model Yavsc.Server.Models.EMailing.MailingTemplate
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = @SR["Details"];
 }
 @section scripts { 
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 }
 
-<h2>Details</h2>
+<h2>@SR["Details"]</h2>
 
 <div>
     <h4>MailingTemplate</h4>
@@ -64,6 +64,6 @@
     </dl>
 </div>
 <p>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a> |
+    <a asp-action="Index">@SR["Back to List"]</a>
 </p>

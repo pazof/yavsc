@@ -8,7 +8,7 @@
 @{
     bool existingInstrument = Model.
 }
-<h2>Details</h2>
+<h2>@SR["Details"]</h2>
 
 <div>
     <h4>MusicianSettings</h4>
@@ -20,5 +20,5 @@
 </div>
 <p>
     <a asp-action="Edit" asp-route-id="@Model.UserId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@SR["Back to List"]</a>
 </p>
