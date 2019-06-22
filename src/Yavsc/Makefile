@@ -8,7 +8,7 @@ MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
 BASERESX= Resources/Yavsc.ChatHub.resx\
 	Resources/Yavsc.ViewComponents.CommentViewComponent.resx\
 	Resources/Yavsc.ViewModels.FrontOffice.PerformerProfileViewModel.resx\
-	Resources/Yavsc.ViewModels.NewAdminViewModel.resx\
+	Resources/Yavsc.ViewModels.EnrolerViewModel.resx\
 	Resources/Yavsc.YavscLocalisation.resx
 BASERESXGEN=$(BASERESX:.resx=.Designer.cs)
 

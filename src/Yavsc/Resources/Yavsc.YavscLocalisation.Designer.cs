@@ -2071,9 +2071,15 @@ namespace Yavsc {
             }
         }
         
-        public static string GiveAdmin {
+        public static string Enroll {
             get {
-                return ResourceManager.GetString("GiveAdmin", resourceCulture);
+                return ResourceManager.GetString("Enroll", resourceCulture);
+            }
+        }
+        
+        public static string Fire {
+            get {
+                return ResourceManager.GetString("Fire", resourceCulture);
             }
         }
     }

@@ -1,0 +1,33 @@
+@model Yavsc.ViewModels.FireViewModel
+
+@{ 
+    ViewBag.Title = SR["Fire"]+" : "+Model.RoleName;
+}
+
+<form asp-action="Fire">
+    <div class="form-horizontal">
+        <h4>@ViewBag.Title</h4>
+        <hr />
+                <span asp-validation-for="RoleName" class="text-danger" ></span>
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="EnroledUserName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+            <p  class="col-md-7">
+            @Html.DisplayFor(model => model.EnroledUserName)
+            </p>
+     
+                <span asp-validation-for="EnroledUserId" class="text-danger" ></span>
+            </div>
+        </div>
+                <input type="hidden" asp-for="RoleName" />
+                <input type="hidden" asp-for="EnroledUserId" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@SR["Submit"]" class="btn btn-default" />
+            </div>
+        </div>
+
+    </div>
+</form>
