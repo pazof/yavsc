@@ -178,8 +178,7 @@
   },
   "scripts": {
     "prepublish": "make minify",
-    "prepare": "make prepare_code",
-    "postrestore": "make prepare_mvc_templates"
+    "prepare": "make prepare_code prepare_mvc_templates"
   },
   "embed": "Views/**/*.cshtml"
 }
