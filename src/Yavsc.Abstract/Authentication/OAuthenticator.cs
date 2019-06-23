@@ -81,7 +81,7 @@ namespace Yavsc.Authentication
         }
 
         /// <summary>
-        /// Initializes a new <see cref="ZicMoove.Droid.OAuth.YaOAuth2WebAuthenticator"/>
+        /// Initializes a new <see cref="Yavsc.Authentication.YaOAuth2WebAuthenticator"/>
         /// that authenticates using implicit granting (token).
         /// </summary>
         /// <param name='clientId'>
