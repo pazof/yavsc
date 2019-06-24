@@ -14,4 +14,7 @@ pushInPre:
 
 packages:
 	make -C src/Yavsc.Abstract pack
+	make -C src/Yavsc.Server pack
+	make -C src/Yavsc pack
 
+.PHONY: packages

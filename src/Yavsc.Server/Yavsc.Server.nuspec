@@ -9,7 +9,7 @@
 		<version>$version$</version>
 		<authors>Paul Schneider</authors>
 		<owners>Paul Schneider</owners>
-		<licenseUrl>https://github.com/pazof/yavsc/blob/vnext/Yavsc/License.md</licenseUrl>
+		<license type="expression">GPL-3.0-or-later</license>
 		<projectUrl>https://github.com/pazof/yavsc/README.md</projectUrl>
 		<iconUrl>https://github.com/pazof/yavsc/blob/vnext/Yavsc/wwwroot/images/yavsc.png</iconUrl>
 		<requireLicenseAcceptance>true</requireLicenseAcceptance>
