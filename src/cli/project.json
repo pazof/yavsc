@@ -51,14 +51,6 @@
       "version": "1.0.6-rc03",
       "target": "package"
     },
-    "Yavsc.Abstract": {
-      "version": "1.0.6-rc03",
-      "target": "package"
-    },
-    "Yavsc.Server": {
-      "version": "1.0.6-rc03",
-      "target": "package"
-    },
     "Microsoft.Dnx.Host": "1.0.0-rc1-final",
     "Microsoft.Dnx.Runtime": "1.0.0-rc1-final",
     "Microsoft.Dnx.DesignTimeHost": "1.0.0-rc1-final"
