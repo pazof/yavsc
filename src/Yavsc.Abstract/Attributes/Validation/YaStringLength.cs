@@ -26,8 +26,6 @@ namespace Yavsc.Attributes.Validation
             }
         }
 
-        string errorMessageResourceName;
-
         public override bool IsValid(object value) {
             
             if (value == null) {
