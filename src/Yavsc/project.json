@@ -177,8 +177,7 @@
     ]
   },
   "scripts": {
-    "prepublish": "make minify",
-    "prepare": "make prepare_code prepare_mvc_templates"
+    "prepublish": "make minify"
   },
   "embed": "Views/**/*.cshtml"
 }
