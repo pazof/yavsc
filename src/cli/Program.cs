@@ -105,6 +105,8 @@ namespace cli
             // calling a Startup sequence
             var appBuilder = ConfigureApplication();
             var loggerFactory = appBuilder.ApplicationServices.GetRequiredService<ILoggerFactory>();
+            var cxSettings = appBuilder.ApplicationServices.GetRequiredService<IOptions<ConnectionSettings>>();
+            var usercxSettings = appBuilder.ApplicationServices.GetRequiredService<IOptions<UserConnectionSettings>>();
 
             CommandOption rootCommandHelpOption = cliapp.HelpOption("-? | -h | --help");
 
@@ -113,6 +115,7 @@ namespace cli
             (new AuthCommander(loggerFactory)).Integrate(cliapp);
             (new CiBuildCommand()).Integrate(cliapp);
             (new GenerationCommander()).Integrate(cliapp);
+            (new Streamer(loggerFactory, cxSettings, usercxSettings )).Integrate(cliapp);
 
             if (args.Length == 0)
             {

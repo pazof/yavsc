@@ -49,6 +49,7 @@ namespace cli {
 
         private async Task <int> DoExecute()
         {
+            
             if (_fileOption.HasValue()){
                 var fi = new FileInfo(_fileOption.Value());
                 if (!fi.Exists) {
@@ -57,6 +58,7 @@ namespace cli {
                 }
                 using (var stream = fi.OpenRead())
                 {
+                    _logger.LogInformation("DoExecute from given file");
                     await DoStream(stream);
                 }
                 return 0;
@@ -65,6 +67,7 @@ namespace cli {
             {
                 using(var stream = Console.OpenStandardInput())
                 {
+                    _logger.LogInformation("DoExecute from standard input");
                     await DoStream(stream);
                 }
                 return 0;
@@ -72,20 +75,39 @@ namespace cli {
         }
         async Task DoStream (Stream stream)
         {
+
             _tokenSource = new CancellationTokenSource();
-            await _client.ConnectAsync(
-                new Uri(_cxSettings.StreamingUrl+"/"+_flowIdArg.Value),
-                _tokenSource.Token);
+            var url = _cxSettings.StreamingUrl+"/"+_flowIdArg.Value;
+
+            _logger.LogInformation("Connecting to "+url);
+            await _client.ConnectAsync(new Uri(url), _tokenSource.Token);
+            _logger.LogInformation("Connected");
             const int bufLen = Constants.WebSocketsMaxBufLen;
             byte [] buffer = new byte[bufLen];
             const int offset=0;
             int read = 0;
+            /* 
+            var reciving = Task.Run(async ()=> {
+                 byte [] readbuffer = new byte[bufLen];
+                 var rb = new ArraySegment<byte>(readbuffer, 0, bufLen);
+                 bool continueReading = false;
+                 do {
+                    var result = await _client.ReceiveAsync(rb, _tokenSource.Token);
+                    _logger.LogInformation($"received {result.Count} bytes");
+                    continueReading = !result.CloseStatus.HasValue;
+                 } while (continueReading);
+            } ); */
+
             do {
                 read = await stream.ReadAsync(buffer, offset, bufLen);
                 var segment = new ArraySegment<byte>(buffer, offset, read);
-                await _client.SendAsync(new ArraySegment<byte>(buffer),  
-                WebSocketMessageType.Binary, false, _tokenSource.Token);
-            } while (read>0);
+                bool end = read < bufLen;
+                await _client.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, end, _tokenSource.Token);
+                _logger.LogInformation($"sent {read} bytes end:{end} ");
+                
+            } while (read>0 && stream.CanRead  );
+            // reciving.Wait();
+             await _client.CloseAsync(WebSocketCloseStatus.NormalClosure, "EOF", _tokenSource.Token);
         }
     }  
 }

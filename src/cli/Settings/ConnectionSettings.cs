@@ -3,6 +3,7 @@ namespace cli
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Runtime.Serialization;
     using Newtonsoft.Json;
+    using Yavsc;
 
     public class ConnectionSettings
     {
@@ -38,8 +39,8 @@ namespace cli
         [NotMapped]
         [JsonIgnore]
         public string StreamingUrl { get {
-            return Port==0 ? $"{SiteAccessSheme}://{Authority}/ws":
-            $"{SiteAccessSheme}://{Authority}:{Port}/ws";
+            return Port==0 ? $"ws://{Authority}"+Constants.LivePath:
+            $"ws://{Authority}:{Port}"+Constants.LivePath;
         } }
     }
 }
