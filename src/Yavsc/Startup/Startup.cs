@@ -66,6 +66,8 @@ namespace Yavsc
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
+            AppDomain.CurrentDomain.UnhandledException += OnUnHandledException;
+            
             var devtag = env.IsDevelopment() ? "D" : "";
             var prodtag = env.IsProduction() ? "P" : "";
             var stagetag = env.IsStaging() ? "S" : "";
@@ -103,6 +105,13 @@ namespace Yavsc
                 var safile = new FileInfo(googleServiceAccountJsonFile);
                 GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
             }
+        }
+        
+        // never hit ...
+        private void OnUnHandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            logger.LogError(sender.ToString());
+            logger.LogError(JsonConvert.SerializeObject(e.ExceptionObject));
         }
 
         public static string ConnectionString { get; set; }
