@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.CodeGeneration.EntityFramework;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace cli
 {
@@ -36,39 +37,66 @@ namespace cli
             get; set;
         }
 
-        public static ConnectionSettings Settings { get; private set; }
+        public static ConnectionSettings ConnectionSettings { get; set; }
+
+        public static UserConnectionSettings UserConnectionSettings { get; set; }
+        
         public static IConfiguration Configuration { get; set; }
 
         public static string HostingFullName { get; private set; }
 
         public static IServiceCollection Services { get; private set; }
 
-
-
-        Microsoft.Extensions.Logging.ILogger logger;
+        public static string EnvironmentName { get; private set; }
+        public static Microsoft.Extensions.Logging.ILogger Logger { get; private set; }
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             var devtag = env.IsDevelopment() ? "D" : "";
             var prodtag = env.IsProduction() ? "P" : "";
             var stagetag = env.IsStaging() ? "S" : "";
+            EnvironmentName = env.EnvironmentName;
 
             HostingFullName = $"{appEnv.RuntimeFramework.FullName} [{env.EnvironmentName}:{prodtag}{devtag}{stagetag}]";
+           
             // Set up configuration sources.
-
+            UserConnectionsettingsFileName = $"connectionsettings.{env.EnvironmentName}.json";
             var builder = new ConfigurationBuilder()
                 .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile(UserConnectionsettingsFileName, optional: true);
 
             Configuration = builder.Build();
             ConnectionString = Configuration["ConnectionStrings:Default"];
         }
+
+        public static void SaveCredentials(string fileName, bool condensed=false) {
+            var cf = new FileInfo(fileName);
+            using (var writer = cf.OpenWrite())
+            {
+                using (var textWriter = new StreamWriter(writer))
+                {
+                    var data = new { UserConnection = UserConnectionSettings, Connection = ConnectionSettings };
+                    var json = JsonConvert.SerializeObject(data, condensed ? Formatting.None : Formatting.Indented);
+                    textWriter.Write(json);
+                    textWriter.Close();
+                }
+                writer.Close();
+            }
+        }
+
+        public static string UserConnectionsettingsFileName { get ; private set;}
+
+        const string userCxKey = "UserConnection";
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
             var cxSettings = Configuration.GetSection("Connection");
             services.Configure<ConnectionSettings>(cxSettings);
+            var cxUserSettings = Configuration.GetSection(userCxKey);
+            services.Configure<UserConnectionSettings>(cxUserSettings);
+
             var smtpSettingsconf = Configuration.GetSection("Smtp");
             // TODO give it a look : Microsoft.Extensions.CodeGenerators.Mvc.View.ViewGeneratorTemplateModel v;
 
@@ -212,7 +240,7 @@ Microsoft.Extensions.CodeGeneration.ICodeGeneratorActionsService),
                     var libraries = ApplicationHostContext.GetRuntimeLibraries(applicationHostContext, throwOnInvalidLockFile: true);
                     var projects = libraries.Where(p => p.Type == LibraryTypes.Project)
                                             .ToDictionary(p => p.Identity.Name, p => (ProjectDescription)p);
-                    logger.LogInformation($"Found {projects?.Count} projects");
+                    Logger.LogInformation($"Found {projects?.Count} projects");
                     return new CompilerOptionsProvider(projects);
                 });
             services.AddMvc();
@@ -220,21 +248,23 @@ Microsoft.Extensions.CodeGeneration.ICodeGeneratorActionsService),
             services.AddTransient(typeof(Microsoft.Extensions.CodeGeneration.ILogger),typeof(Microsoft.Extensions.CodeGeneration.ConsoleLogger));
 
             Services = services;
-
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
-        IOptions<SiteSettings> siteSettings, ILoggerFactory loggerFactory)
+        IOptions<SiteSettings> siteSettings, 
+        IOptions<ConnectionSettings> cxSettings,
+        IOptions<UserConnectionSettings> useCxSettings,
+        ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-            logger = loggerFactory.CreateLogger<Startup>();
-            logger.LogInformation(env.EnvironmentName);
+            Logger = loggerFactory.CreateLogger<Startup>();
             var authConf = Configuration.GetSection("Authentication").GetSection("Yavsc");
             var clientId = authConf.GetSection("ClientId").Value;
             var clientSecret = authConf.GetSection("ClientSecret").Value;
-
+            ConnectionSettings = cxSettings?.Value ?? new ConnectionSettings();
+            UserConnectionSettings = useCxSettings?.Value ?? new UserConnectionSettings();
+            Logger.LogInformation($"Configuration ended, with hosting Full Name: {HostingFullName}");
         }
-
     }
 }

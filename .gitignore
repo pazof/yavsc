@@ -31,3 +31,5 @@ omnisharp.json
 /src/Yavsc/bower_components/
 /src/Yavsc/AppData*/
 /src/test/testingrepo/
+connectionsettings.Development.json
+appsettings.Development.json
