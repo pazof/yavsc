@@ -399,9 +399,11 @@ namespace Yavsc.Authentication
             req.ContentLength = body.Length;
             req.ContentType = "application/x-www-form-urlencoded";
             var s = req.GetRequestStream();
+            
             s.Write(body, 0, body.Length);
 
             var auth = await req.GetResponseAsync();
+            
             var repstream = auth.GetResponseStream();
 
             var respReader = new StreamReader(repstream);
