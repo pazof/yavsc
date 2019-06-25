@@ -1,6 +1,7 @@
 namespace cli
 {
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.Runtime.Serialization;
     using Newtonsoft.Json;
 
     public class ConnectionSettings
@@ -10,25 +11,35 @@ namespace cli
         public string Authority { get; set; }
         public string Audience { get; set; }
         public string SiteAccessSheme { get; set; } = "http";
+        public int Port { get; set; }
         public string Scope { get; set; } = "profile";
 
         [NotMapped]
         [JsonIgnore]
         public string AuthorizeUrl {get {
-            return $"{SiteAccessSheme}://{Authority}/authorize";
+            return Port==0 ? $"{SiteAccessSheme}://{Authority}/authorize" :
+            $"{SiteAccessSheme}://{Authority}:{Port}/authorize" ;
         } }
         
         [NotMapped]
         [JsonIgnore]
         public string RedirectUrl  {get {
-            return $"{SiteAccessSheme}://{Authority}/oauth/success";
+            return Port==0 ? $"{SiteAccessSheme}://{Authority}/oauth/success" :
+            $"{SiteAccessSheme}://{Authority}:{Port}/oauth/success" ;
         } }
         
         [NotMapped]
         [JsonIgnore]
-        public string AccessTokenUrl  {get {
-            return $"{SiteAccessSheme}://{Authority}/token";
+        public string AccessTokenUrl  { get {
+            return Port==0 ? $"{SiteAccessSheme}://{Authority}/token":
+            $"{SiteAccessSheme}://{Authority}:{Port}/token";
         } }
-        
+
+        [NotMapped]
+        [JsonIgnore]
+        public string StreamingUrl { get {
+            return Port==0 ? $"{SiteAccessSheme}://{Authority}/ws":
+            $"{SiteAccessSheme}://{Authority}:{Port}/ws";
+        } }
     }
 }
