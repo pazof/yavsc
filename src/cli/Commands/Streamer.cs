@@ -7,6 +7,7 @@ using cli.Model;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
+using Yavsc;
 
 namespace cli {
   
@@ -75,7 +76,7 @@ namespace cli {
             await _client.ConnectAsync(
                 new Uri(_cxSettings.StreamingUrl+"/"+_flowIdArg.Value),
                 _tokenSource.Token);
-            const int bufLen = 56*1024;
+            const int bufLen = Constants.WebSocketsMaxBufLen;
             byte [] buffer = new byte[bufLen];
             const int offset=0;
             int read = 0;
