@@ -48,7 +48,7 @@
     "Newtonsoft.Json": "9.0.1",
     "NJsonSchema.CodeGeneration.CSharp": "9.10.65",
     "Yavsc": {
-      "version": "1.0.6-rc03",
+      "version": "1.0.6-rc04",
       "target": "package"
     },
     "Microsoft.Dnx.Host": "1.0.0-rc1-final",
