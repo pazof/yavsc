@@ -1,5 +1,6 @@
 namespace Yavsc
 {
+    using Microsoft.AspNet.Http;
     using Yavsc.Models.Auth;
 
     public static class Constants
@@ -36,7 +37,7 @@ namespace Yavsc
             YavscConnectionStringEnvName = "YAVSC_DB_CONNECTION";
 
 
-        public const int WebSocketsMaxBufLen = 6*1024;
+        public const int WebSocketsMaxBufLen = 4*1024;
 
         
         public static readonly long DefaultFSQ = 1024*1024*500;
@@ -62,5 +63,6 @@ namespace Yavsc
 
         public const int MaxUserNameLength = 26;
 
+        public const string LivePath = "/live/cast";
     }
 }

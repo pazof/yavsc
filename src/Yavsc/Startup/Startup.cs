@@ -62,7 +62,7 @@ namespace Yavsc
 
         // leave the final slash
 
-        PathString liveCastingPath = "/live/cast";
+        PathString liveCastingPath = Constants.LivePath;
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
@@ -451,26 +451,28 @@ namespace Yavsc
                         if (context.WebSockets.IsWebSocketRequest)
                         {
                             if (!context.User.Identity.IsAuthenticated)
-                                context.Response.StatusCode = 403;
+                                context.Abort();
                             else
                             {
                                 // get the flow id from request path
                                 var castid = long.Parse(context.Request.Path.Value.Substring(liveCastingPath.Value.Length + 1));
 
-
+                                logger.LogInformation("Cast id : "+castid);
                                 var uname = context.User.GetUserName();
                                 // ensure uniqueness of casting stream from this user
-
 
                                 var uid = context.User.GetUserId();
                                 // get some setup from user
                                 var flow = _dbContext.LiveFlow.Include(f => f.Owner).SingleOrDefault(f => (f.OwnerId == uid && f.Id == castid));
                                 if (flow == null)
                                 {
-                                    context.Response.StatusCode = 400;
+                                    logger.LogWarning("Aborting. Flow info was not found.");
+                                    var socket = await context.WebSockets.AcceptWebSocketAsync();
+                                    await socket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "flow id invalid", CancellationToken.None);
                                 }
                                 else
                                 {
+                                    logger.LogInformation("flow : "+flow.Title+" for "+uname);
                                     LiveCastMeta meta = null;
                                     if (LiveApiController.Casters.ContainsKey(uname))
                                     {
@@ -478,6 +480,7 @@ namespace Yavsc
                                         if (meta.Socket.State != WebSocketState.Closed)
                                         {
                                             // FIXME loosed connexion should be detected & disposed else where
+                                            await meta.Socket.CloseAsync( WebSocketCloseStatus.EndpointUnavailable, "one by user", CancellationToken.None);
                                             meta.Socket.Dispose();
                                             meta.Socket = await context.WebSockets.AcceptWebSocketAsync();
                                         }
@@ -497,22 +500,20 @@ namespace Yavsc
                                     // Dispatch the flow
                                     try
                                     {
-
-
-
                                         if (meta.Socket != null && meta.Socket.State == WebSocketState.Open)
                                         {
                                             LiveApiController.Casters[uname] = meta;
                                             // TODO: Handle the socket here.
                                             // Find receivers: others in the chat room
                                             // send them the flow
-
-                                            var sBuffer = new ArraySegment<byte>(new byte[1024]);
+                                            var buffer = new byte[Constants.WebSocketsMaxBufLen];
+                                            var sBuffer = new ArraySegment<byte>(buffer);
                                             logger.LogInformation("Receiving bytes...");
 
                                             WebSocketReceiveResult received = await meta.Socket.ReceiveAsync(sBuffer, CancellationToken.None);
-                                            logger.LogInformation("Received bytes!!!!");
-
+                                            logger.LogInformation($"Received bytes : {received.Count}");
+                                            logger.LogInformation($"Is the end : {received.EndOfMessage}");
+/* TODO
                                             var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
 
                                             hubContext.Clients.All.addPublicStream(new
@@ -523,42 +524,59 @@ namespace Yavsc
                                                 url = flow.GetFileUrl(),
                                                 mediaType = flow.MediaType
                                             }, $"{flow.Owner.UserName} is starting a stream!");
-
+*/
                                             // FIXME do we really need to close those one in invalid state ?
-                                            Stack<string> ToClose = new Stack<string>();
+                                            // Stack<string> ToClose = new Stack<string>();
 
                                             try
                                             {
-                                                while (received.MessageType != WebSocketMessageType.Close)
-                                                {
+                                                    /* 
                                                     logger.LogInformation($"Echoing {received.Count} bytes received in a {received.MessageType} message; Fin={received.EndOfMessage}");
                                                     // Echo anything we receive
                                                     // and send to all listner found
                                                     foreach (var cliItem in meta.Listeners)
                                                     {
                                                         var listenningSocket = cliItem.Value;
-                                                        if (listenningSocket.State == WebSocketState.Open)
+                                                        if (listenningSocket.State == WebSocketState.Open) {
                                                             await listenningSocket.SendAsync(
                                                             sBuffer, received.MessageType, received.EndOfMessage, CancellationToken.None);
+
+                                                        }
                                                         else
                                                         if (listenningSocket.State == WebSocketState.CloseReceived || listenningSocket.State == WebSocketState.CloseSent)
                                                         {
                                                             ToClose.Push(cliItem.Key);
                                                         }
                                                     }
-                                                    received = await meta.Socket.ReceiveAsync(sBuffer, CancellationToken.None);
-
-                                                    string no;
-                                                    do
+                                                    */
+                                                    // logger.LogInformation("replying...");
+                                                    while (!received.CloseStatus.HasValue)
                                                     {
-                                                        no = ToClose.Pop();
+                                                        
+
+                                                        // await meta.Socket.SendAsync(new ArraySegment<byte>(buffer), received.MessageType, received.EndOfMessage, CancellationToken.None);
+                                                                                    
+                                                        logger.LogInformation("Receiving new bytes...");             
+                                                                                                    
+                                                        received = await meta.Socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                                                        
+                                                        logger.LogInformation($"Received new bytes : {received.Count}");
+                                                        logger.LogInformation($"Is the end : {received.EndOfMessage}");
+                                                    }
+                                                logger.LogInformation("Closing connection");
+                                                    await meta.Socket.CloseAsync(received.CloseStatus.Value, received.CloseStatusDescription, CancellationToken.None);
+
+
+                                           
+                                                  /* while (ToClose.Count >0)
+                                                    {
+                                                        string no = ToClose.Pop();
                                                         WebSocket listenningSocket;
                                                         if (meta.Listeners.TryRemove(no, out listenningSocket))
                                                             await listenningSocket.CloseAsync(WebSocketCloseStatus.EndpointUnavailable, "State != WebSocketState.Open", CancellationToken.None);
 
-                                                    } while (no != null);
-                                                }
-                                                await meta.Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "eof", CancellationToken.None);
+                                                    } */  
+                                                
                                                 LiveApiController.Casters[uname] = null;
                                             }
                                             catch (Exception ex)
@@ -596,6 +614,9 @@ namespace Yavsc
                                     }
                                 }
                             }
+                        }
+                        else {
+                            context.Response.StatusCode = 400;
                         }
                     }
                     else
