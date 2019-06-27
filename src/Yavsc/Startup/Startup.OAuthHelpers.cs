@@ -18,10 +18,10 @@ namespace Yavsc
         private Client GetApplication(string clientId)
         {
             if (_dbContext==null)
-              logger.LogError("no db!");
+              _logger.LogError("no db!");
             Client app =  _dbContext.Applications.FirstOrDefault(x => x.Id == clientId);
             if (app==null)
-              logger.LogError($"no app for <{clientId}>");
+              _logger.LogError($"no app for <{clientId}>");
             return app;
         }
         private readonly ConcurrentDictionary<string, string> _authenticationCodes = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
@@ -31,7 +31,7 @@ namespace Yavsc
             if (context == null) throw new InvalidOperationException("context == null");
             var app = GetApplication(context.ClientId);
             if (app == null) return Task.FromResult(0);
-            Startup.logger.LogInformation($"ValidateClientRedirectUri: Validated ({app.RedirectUri})");
+            Startup._logger.LogInformation($"ValidateClientRedirectUri: Validated ({app.RedirectUri})");
             context.Validated(app.RedirectUri);
             return Task.FromResult(0);
         }
@@ -43,7 +43,7 @@ namespace Yavsc
             if (context.TryGetBasicCredentials(out clientId, out clientSecret) ||
                 context.TryGetFormCredentials(out clientId, out clientSecret))
             {
-                logger.LogInformation($"ValidateClientAuthentication: Got id: ({clientId} secret: {clientSecret})");
+                _logger.LogInformation($"ValidateClientAuthentication: Got id: ({clientId} secret: {clientSecret})");
                 var client = GetApplication(clientId);
                 if (client==null) {
                     context.SetError("invalid_clientId", "Client secret is invalid.");
@@ -51,10 +51,10 @@ namespace Yavsc
                 } else 
                 if (client.Type == ApplicationTypes.NativeConfidential)
                 {
-                    logger.LogInformation($"NativeConfidential key");
+                    _logger.LogInformation($"NativeConfidential key");
                     if (string.IsNullOrWhiteSpace(clientSecret))
                     {
-                        logger.LogInformation($"invalid_clientId: Client secret should be sent.");
+                        _logger.LogInformation($"invalid_clientId: Client secret should be sent.");
                         context.SetError("invalid_clientId", "Client secret should be sent.");
                         return Task.FromResult<object>(null);
                     }
@@ -65,7 +65,7 @@ namespace Yavsc
                         if (client.Secret != clientSecret)
                         {
                             context.SetError("invalid_clientId", "Client secret is invalid.");
-                            logger.LogInformation($"invalid_clientId: Client secret is invalid.");
+                            _logger.LogInformation($"invalid_clientId: Client secret is invalid.");
                             return Task.FromResult<object>(null);
                         }
                     }
@@ -74,25 +74,25 @@ namespace Yavsc
                 if (!client.Active)
                 {
                     context.SetError("invalid_clientId", "Client is inactive.");
-                    logger.LogInformation($"invalid_clientId: Client is inactive.");
+                    _logger.LogInformation($"invalid_clientId: Client is inactive.");
                     return Task.FromResult<object>(null);
                 }
 
                 if (client != null && client.Secret == clientSecret)
                 {
-                    logger.LogInformation($"\\o/ ValidateClientAuthentication: Validated ({clientId})");
+                    _logger.LogInformation($"\\o/ ValidateClientAuthentication: Validated ({clientId})");
                     context.Validated();
                 }
-                else logger.LogInformation($":'( ValidateClientAuthentication: KO ({clientId})");
+                else _logger.LogInformation($":'( ValidateClientAuthentication: KO ({clientId})");
             }
-            else logger.LogWarning($"ValidateClientAuthentication: neither Basic nor Form credential were found");
+            else _logger.LogWarning($"ValidateClientAuthentication: neither Basic nor Form credential were found");
             return Task.FromResult(0);
         }
         UserManager<ApplicationUser> _usermanager;
            
         private async Task<Task> GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            logger.LogWarning($"GrantResourceOwnerCredentials task ... {context.UserName}");
+            _logger.LogWarning($"GrantResourceOwnerCredentials task ... {context.UserName}");
 
             ApplicationUser user = null;
             user = await _usermanager.FindByNameAsync(context.UserName);
@@ -132,7 +132,7 @@ namespace Yavsc
 
         private void CreateAuthenticationCode(AuthenticationTokenCreateContext context)
         {
-            logger.LogInformation("CreateAuthenticationCode");
+            _logger.LogInformation("CreateAuthenticationCode");
             context.SetToken(Guid.NewGuid().ToString("n") + Guid.NewGuid().ToString("n"));
             _authenticationCodes[context.Token] = context.SerializeTicket();
         }
@@ -143,16 +143,16 @@ namespace Yavsc
             if (_authenticationCodes.TryRemove(context.Token, out value))
             {
                 context.DeserializeTicket(value);
-                logger.LogInformation("ReceiveAuthenticationCode: Success");
+                _logger.LogInformation("ReceiveAuthenticationCode: Success");
             }
         }
 
         private void CreateRefreshToken(AuthenticationTokenCreateContext context)
         {
             var uid = context.Ticket.Principal.GetUserId();
-            logger.LogInformation($"CreateRefreshToken for {uid}");
+            _logger.LogInformation($"CreateRefreshToken for {uid}");
             foreach (var c in context.Ticket.Principal.Claims)
-                logger.LogInformation($"| User claim: {c.Type} {c.Value}");
+                _logger.LogInformation($"| User claim: {c.Type} {c.Value}");
 
             context.SetToken(context.SerializeTicket());
         }
@@ -160,9 +160,9 @@ namespace Yavsc
         private void ReceiveRefreshToken(AuthenticationTokenReceiveContext context)
         {
             var uid = context.Ticket.Principal.GetUserId();
-            logger.LogInformation($"ReceiveRefreshToken for {uid}");
+            _logger.LogInformation($"ReceiveRefreshToken for {uid}");
             foreach (var c in context.Ticket.Principal.Claims)
-                logger.LogInformation($"| User claim: {c.Type} {c.Value}");
+                _logger.LogInformation($"| User claim: {c.Type} {c.Value}");
             context.DeserializeTicket(context.Token);
         }
     }

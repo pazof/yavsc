@@ -48,11 +48,8 @@ namespace Yavsc.Abstract.FileSystem
         {
 
             UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, user.Identity.Name, subdir);
-
             return di;
         }
-        
-        
     }
 
     public static  class FileSystemConstants

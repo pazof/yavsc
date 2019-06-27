@@ -1,11 +1,14 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net.Mime;
 using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.Http;
 using Yavsc.Abstract.FileSystem;
@@ -107,18 +110,20 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
         {
             user.DiskQuota += quota;
         }
-        
         public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f, string destFileName = null)
         {
-            // TODO lock user's disk usage for this scope,
+            return ReceiveUserFile(user, root, f.OpenReadStream(), destFileName ?? f.ContentDisposition, f.ContentType, CancellationToken.None);
+        }
+        
+         public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, Queue<ArraySegment<byte>> queue, string destFileName, string contentType, CancellationToken token)
+       {
+           // TODO lock user's disk usage for this scope,
             // this process is not safe at concurrent access.
             long usage = user.DiskUsage;
 
             var item = new FileRecievedInfo();
-            // form-data; name="file"; filename="capt0008.jpg"
-            ContentDisposition contentDisposition = new ContentDisposition(f.ContentDisposition);
-            item.FileName = Yavsc.Abstract.FileSystem.AbstractFileSystemHelpers.FilterFileName (destFileName ?? contentDisposition.FileName);
-            item.MimeType = contentDisposition.DispositionType;
+            item.FileName = Yavsc.Abstract.FileSystem.AbstractFileSystemHelpers.FilterFileName (destFileName);
+            item.MimeType = contentType;
             item.DestDir = root;
             var fi = new FileInfo(Path.Combine(root, item.FileName));
             if (fi.Exists)
@@ -128,36 +133,66 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
             } 
             using (var dest = fi.OpenWrite())
             {
-                using (var org = f.OpenReadStream())
-                {
-                    byte[] buffer = new byte[1024];
-                    long len = org.Length;
-                    if (len > (user.DiskQuota - usage)) {
-                        item.QuotaOffensed = true;
-                        return item;
-                    }
-                    
-
-                    while (len > 0 && usage < user.DiskQuota)
+                    while (!token.IsCancellationRequested)
                     {
-                        int blen = len > 1024 ? 1024 : (int)len;
-                        org.Read(buffer, 0, blen);
-                        dest.Write(buffer, 0, blen);
-                        len -= blen;
-                        usage += blen;
+                        if (queue.Count==0) Task.Delay(300);
+                        else {
+                            var buffer = queue.Dequeue();
+                            dest.Write(buffer.Array,buffer.Offset, buffer.Count);
+                            usage += buffer.Count;
+                        }
+                        if (usage >= user.DiskQuota) break;
                     }
                     user.DiskUsage = usage;
                     dest.Close();
-                    org.Close();
+            }
+            if (usage >= user.DiskQuota) {
+                item.QuotaOffensed = true;
+            }
+            user.DiskUsage = usage;
+            return item;
+       }
+        public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, Stream inputStream, string destFileName, string contentType, CancellationToken token)
+        {
+            // TODO lock user's disk usage for this scope,
+            // this process is not safe at concurrent access.
+            long usage = user.DiskUsage;
+
+            var item = new FileRecievedInfo();
+            item.FileName = Yavsc.Abstract.FileSystem.AbstractFileSystemHelpers.FilterFileName (destFileName);
+            item.MimeType = contentType;
+            item.DestDir = root;
+            var fi = new FileInfo(Path.Combine(root, item.FileName));
+            if (fi.Exists)
+            {
+                item.Overriden = true;
+                usage -= fi.Length;
+            } 
+            using (var dest = fi.OpenWrite())
+            {
+                using (inputStream)
+                {
+                    const int blen = 1024;
+                    byte[] buffer = new byte[blen];
+                    int len = 0;
+                    while (!token.IsCancellationRequested && (len=inputStream.Read(buffer, 0, blen))>0)
+                    {
+                        dest.Write(buffer, 0, len);
+                        usage += len;
+                        if (usage >= user.DiskQuota) break;
+                    }
+                    user.DiskUsage = usage;
+                    dest.Close();
+                    inputStream.Close();
                 }
             }
             if (usage >= user.DiskQuota) {
                 item.QuotaOffensed = true;
-
             }
             user.DiskUsage = usage;
             return item;
         }
+
         public static HtmlString FileLink(this RemoteFileInfo info, string username, string subpath)
         {
             return new HtmlString( Startup.UserFilesOptions.RequestPath+"/"+ username + 
