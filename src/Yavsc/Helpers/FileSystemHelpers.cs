@@ -247,14 +247,17 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
 
         public static string GetFileUrl (this LiveFlow flow)
         {
-            if (flow.DifferedFileName==null) 
+            if (flow.DifferedFileName==null) return null;
             // no server-side backup for this stream
-            return null;
+            return $"{Startup.UserFilesOptions.RequestPath}/{flow.Owner.UserName}/live/"+GetFileName(flow);
+        }
+        public static string GetFileName (this LiveFlow flow)
+        {
             var fileInfo = new FileInfo(flow.DifferedFileName);
             var ext = fileInfo.Extension;
             var namelen = flow.DifferedFileName.Length - ext.Length;
             var basename =  flow.DifferedFileName.Substring(0,namelen);
-            return $"{Startup.UserFilesOptions.RequestPath}/{flow.Owner.UserName}/live/{basename}-{flow.SequenceNumber}{ext}";
+            return $"{basename}-{flow.SequenceNumber}{ext}";
         }
     }
 }
