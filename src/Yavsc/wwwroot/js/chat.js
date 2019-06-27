@@ -109,6 +109,12 @@ window.ChatHubHandler = (function ($) {
       $('<li></li>').append(tag + ': ' ).append(message).addClass(tag).appendTo($('#room_' + room));
     };
 
+    chat.client.addPublicStream = function (pubStrInfo)
+    {
+      $('<li></li>').append(pubStrInfo.sender + ': ')
+      .append('<a href="'+pubStrInfo.url+'">'+pubStrInfo.title+'</a>').append('['+pubStrInfo.mediaType+']').addClass('streaminfo').appendTo(notifications);
+    };
+
     var setChanInfo = function (chanInfo) {
       if (chanInfo) {
         var chanId = 'r' + chanInfo.Name;

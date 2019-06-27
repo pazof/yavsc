@@ -10,6 +10,7 @@ using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
 using Yavsc.Models;
 using Yavsc.Models.Streaming;
+using Yavsc.Services;
 using Yavsc.ViewModels.Streaming;
 
 namespace Yavsc.Controllers
@@ -17,8 +18,8 @@ namespace Yavsc.Controllers
     [Route("api/live")]
     public class LiveApiController : Controller
     {
-        public static ConcurrentDictionary<string, LiveCastMeta> Casters = new ConcurrentDictionary<string, LiveCastMeta>();
-
+        
+        ILiveProcessor _liveProcessor;
         private ApplicationDbContext _dbContext;
         ILogger _logger;
 
@@ -30,11 +31,14 @@ namespace Yavsc.Controllers
 
         public LiveApiController(
             ILoggerFactory loggerFactory,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            ILiveProcessor liveProcessor)
         {
+            _liveProcessor = liveProcessor;
             _dbContext = context;
             _logger = loggerFactory.CreateLogger<LiveApiController>();
         }
+
         [HttpGet("filenamehint/{id}")]
         public async Task<string[]> GetFileNameHint(string id)
         {
@@ -46,7 +50,7 @@ namespace Yavsc.Controllers
         {
             if (!HttpContext.WebSockets.IsWebSocketRequest) return new BadRequestResult();
             var uid = User.GetUserId();
-            var existent = Casters[id];
+            var existent = _liveProcessor.Casters[id];
             var socket = await HttpContext.WebSockets.AcceptWebSocketAsync();
             if (existent.Listeners.TryAdd(uid,socket)) {
                  return Ok();
@@ -65,7 +69,7 @@ namespace Yavsc.Controllers
         public IActionResult Index(long? id)
         {
             if (id==0)
-            return View("Index", Casters.Select(c=> new { UserName = c.Key, Listenning = c.Value.Listeners.Count }));
+            return View("Index", _liveProcessor.Casters.Select(c=> new { UserName = c.Key, Listenning = c.Value.Listeners.Count }));
 
             var flow = _dbContext.LiveFlow.SingleOrDefault(f=>f.Id == id);
             if (flow == null) return HttpNotFound();

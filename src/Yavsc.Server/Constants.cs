@@ -14,6 +14,7 @@ namespace Yavsc
             LogoutPath = "~/signout", UserInfoPath = "~/api/me",
 
             SignalRPath = "/api/signalr",
+            LiveUserPath = "live",
 
             ApplicationAuthenticationSheme = "ServerCookie",
             ExternalAuthenticationSheme= "ExternalCookie",

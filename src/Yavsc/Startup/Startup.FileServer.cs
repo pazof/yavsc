@@ -65,7 +65,7 @@ namespace Yavsc
             };
             GitOptions.DefaultFilesOptions.DefaultFileNames.Add("index.md");
             GitOptions.StaticFileOptions.ServeUnknownFileTypes = true;
-            logger.LogInformation( $"{GitDirName}");
+            _logger.LogInformation( $"{GitDirName}");
             GitOptions.StaticFileOptions.OnPrepareResponse+= OnPrepareGitRepoResponse;
 
             app.UseFileServer(UserFilesOptions);
