@@ -83,7 +83,7 @@ namespace cli {
             await _client.ConnectAsync(new Uri(url), _tokenSource.Token);
             _logger.LogInformation("Connected");
             const int bufLen = Constants.WebSocketsMaxBufLen;
-            byte [] buffer = new byte[bufLen];
+            byte [] buffer = new byte[bufLen+4*sizeof(int)];
             const int offset=0;
             int read = 0;
             /* 
@@ -99,13 +99,24 @@ namespace cli {
             } ); */
 
             do {
-                read = await stream.ReadAsync(buffer, offset, bufLen);
-                var segment = new ArraySegment<byte>(buffer, offset, read);
-                bool end = read < bufLen;
-                await _client.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, end, _tokenSource.Token);
-                _logger.LogInformation($"sent {read} bytes end:{end} ");
+                read = await stream.ReadAsync(buffer, offset + sizeof(int), bufLen);
+                if (read>0) {
+                    // assert sizeof(int)==4
+                    buffer[3]= (byte) (read % 256);
+                    var left = read / 256;
+                    buffer[2]=  (byte) (left % 256);
+                    left = left / 256;
+                    buffer[1] = (byte) (left % 256);
+                    left = left /256;
+                    buffer[0]=(byte) (byte) (left % 256);
+                    var segment = new ArraySegment<byte>(buffer, offset, read+4);
                 
-            } while (read>0 && stream.CanRead  );
+
+                    await _client.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, _tokenSource.Token);
+                     _logger.LogInformation($"sent {segment.Count} ");
+                 }
+                
+            } while (read>0);
             // reciving.Wait();
              await _client.CloseAsync(WebSocketCloseStatus.NormalClosure, "EOF", _tokenSource.Token);
         }

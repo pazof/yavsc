@@ -16,10 +16,9 @@ namespace Yavsc
         {
             var webSocketOptions = new WebSocketOptions()
             {
-                KeepAliveInterval = TimeSpan.FromSeconds(320),
-                ReceiveBufferSize = Constants.WebSocketsMaxBufLen,
-                ReplaceFeature = false
-
+                KeepAliveInterval = TimeSpan.FromSeconds(30),
+                ReceiveBufferSize = Constants.WebSocketsMaxBufLen+4*sizeof(int),
+                ReplaceFeature = true
             };
             
             app.UseWebSockets(webSocketOptions);

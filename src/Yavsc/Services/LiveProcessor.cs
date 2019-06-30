@@ -52,56 +52,71 @@ namespace Yavsc.Services
                 return false;
             }
             _logger.LogInformation("flow : "+flow.Title+" for "+uname);
-            LiveCastHandler meta = null;
+            
+
+            LiveCastHandler liveHandler = null;
             if (Casters.ContainsKey(uname))
             {
                 _logger.LogWarning($"Casters.ContainsKey({uname})");
-                meta = Casters[uname];
-                if (meta.Socket.State == WebSocketState.Open || meta.Socket.State == WebSocketState.Connecting )
+                liveHandler = Casters[uname];
+                if (liveHandler.Socket.State == WebSocketState.Open || liveHandler.Socket.State == WebSocketState.Connecting )
                 {
                 _logger.LogWarning($"Closing cx");
                     // FIXME loosed connexion should be detected & disposed else where
-                    await meta.Socket.CloseAsync( WebSocketCloseStatus.EndpointUnavailable, "one by user", CancellationToken.None);
+                    await liveHandler.Socket.CloseAsync( WebSocketCloseStatus.EndpointUnavailable, "one by user", CancellationToken.None);
                     
                 }
-                if (!meta.TokenSource.IsCancellationRequested) {
-                    meta.TokenSource.Cancel();
+                if (!liveHandler.TokenSource.IsCancellationRequested) {
+                    liveHandler.TokenSource.Cancel();
                 }
-                meta.Socket.Dispose();
-                meta.Socket = await context.WebSockets.AcceptWebSocketAsync();
-                meta.TokenSource = new CancellationTokenSource();
+                liveHandler.Socket.Dispose();
+                liveHandler.Socket = await context.WebSockets.AcceptWebSocketAsync();
+                liveHandler.TokenSource = new CancellationTokenSource();
             }
             else
             {
                 _logger.LogInformation($"new caster");
                 // Accept the socket
-                meta = new LiveCastHandler { Socket = await context.WebSockets.AcceptWebSocketAsync() };
+                liveHandler = new LiveCastHandler { Socket = await context.WebSockets.AcceptWebSocketAsync() };
             }
             _logger.LogInformation("Accepted web socket");
             // Dispatch the flow
             
             try
             {
-                if (meta.Socket != null && meta.Socket.State == WebSocketState.Open)
+                if (liveHandler.Socket != null && liveHandler.Socket.State == WebSocketState.Open)
                 {
-                    Casters[uname] = meta;
+                    Casters[uname] = liveHandler;
                     // TODO: Handle the socket here.
                     // Find receivers: others in the chat room
                     // send them the flow
-                    var buffer = new byte[Constants.WebSocketsMaxBufLen];
+                    var buffer = new byte[Constants.WebSocketsMaxBufLen+16];
                     var sBuffer = new ArraySegment<byte>(buffer);
                     _logger.LogInformation("Receiving bytes...");
 
-                    WebSocketReceiveResult received = await meta.Socket.ReceiveAsync(sBuffer, meta.TokenSource.Token);
-                    _logger.LogInformation($"Received bytes : {received.Count}");
+                    WebSocketReceiveResult received = await liveHandler.Socket.ReceiveAsync(sBuffer, liveHandler.TokenSource.Token);
+                    int count = (received.Count<4)? 0 : buffer[0]*256*1024 +buffer[1]*1024+buffer[2]*256 + buffer[3];
+
+                    _logger.LogInformation($"Received bytes : {count}");
                     _logger.LogInformation($"Is the end : {received.EndOfMessage}");
                     const string livePath = "live";
 
                     string destDir = context.User.InitPostToFileSystem(livePath);
                     _logger.LogInformation($"Saving flow to {destDir}");
+                    
                     string fileName =  flow.GetFileName();
+                    FileInfo destFileInfo = new FileInfo(Path.Combine(destDir, fileName));
+                    // this should end :-)
+                    while (destFileInfo.Exists) {
+                        flow.SequenceNumber++;
+                        fileName =  flow.GetFileName();
+                        destFileInfo = new FileInfo(Path.Combine(destDir, fileName));
+                    }
                     var fsInputQueue = new Queue<ArraySegment<byte>>();
-                    var taskWritingToFs = Task<FileRecievedInfo>.Run( ()=>  user.ReceiveUserFile(destDir, fsInputQueue, fileName, flow.MediaType, meta.TokenSource.Token));
+                   
+                    bool endOfInput=false;
+                    fsInputQueue.Enqueue(sBuffer);
+                    var taskWritingToFs = liveHandler.ReceiveUserFile(user, _logger, destDir, fsInputQueue, fileName, flow.MediaType, ()=> endOfInput);
                     var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
 
                     hubContext.Clients.All.addPublicStream(new PublicStreamInfo
@@ -117,80 +132,70 @@ namespace Yavsc.Services
 
                     try
                     {
+                        do {
                             
-                        _logger.LogInformation($"Echoing {received.Count} bytes received in a {received.MessageType} message; Fin={received.EndOfMessage}");
-                        // Echo anything we receive
-                        // and send to all listner found
-                        foreach (var cliItem in meta.Listeners)
-                        {
-                            var listenningSocket = cliItem.Value;
-                            if (listenningSocket.State == WebSocketState.Open) {
-                                await listenningSocket.SendAsync(
-                                sBuffer, received.MessageType, received.EndOfMessage, meta.TokenSource.Token);
-
-                            }
-                            else
-                            if (listenningSocket.State == WebSocketState.CloseReceived || listenningSocket.State == WebSocketState.CloseSent)
-                            {
-                                ToClose.Push(cliItem.Key);
-                            }
-                        }
-                        fsInputQueue.Enqueue(sBuffer);
-                        // logger.LogInformation("replying...");
-                        while (!received.CloseStatus.HasValue)
-                        {
-                            // reply echo
-                            // await meta.Socket.SendAsync(new ArraySegment<byte>(buffer), received.MessageType, received.EndOfMessage, meta.TokenSource.Token);
-                                                        
-                            _logger.LogInformation("Receiving new bytes...");   
-                            buffer = new byte[Constants.WebSocketsMaxBufLen];
-                            sBuffer = new ArraySegment<byte>(buffer);
-                                                                        
-                            received = await meta.Socket.ReceiveAsync(sBuffer, meta.TokenSource.Token);
-                            foreach (var cliItem in meta.Listeners)
+                            _logger.LogInformation($"Echoing {received.Count} bytes received in a {received.MessageType} message; Fin={received.EndOfMessage}");
+                            // Echo anything we receive
+                            // and send to all listner found
+                            foreach (var cliItem in liveHandler.Listeners)
                             {
                                 var listenningSocket = cliItem.Value;
                                 if (listenningSocket.State == WebSocketState.Open) {
+                                    _logger.LogInformation(cliItem.Key);
                                     await listenningSocket.SendAsync(
-                                    sBuffer, received.MessageType, received.EndOfMessage, meta.TokenSource.Token);
+                                    sBuffer, received.MessageType, received.EndOfMessage, liveHandler.TokenSource.Token);
                                 }
-                                else
-                                if (listenningSocket.State == WebSocketState.CloseReceived || listenningSocket.State == WebSocketState.CloseSent)
+                                else if (listenningSocket.State == WebSocketState.CloseReceived || listenningSocket.State == WebSocketState.CloseSent)
                                 {
                                     ToClose.Push(cliItem.Key);
                                 }
                             }
-                            fsInputQueue.Enqueue(sBuffer);
-                            _logger.LogInformation($"Received new bytes : {received.Count}");
+                            buffer = new byte[Constants.WebSocketsMaxBufLen+16];
+                            sBuffer = new ArraySegment<byte>(buffer);
+                            received = await liveHandler.Socket.ReceiveAsync(sBuffer, liveHandler.TokenSource.Token);
+
+                            count = (received.Count<4)? 0 : buffer[0]*256*1024 +buffer[1]*1024+buffer[2]*256 + buffer[3];
+
+                            _logger.LogInformation($"Received bytes : {count}");
                             _logger.LogInformation($"Is the end : {received.EndOfMessage}");
-                             while (ToClose.Count >0)
+                            if (received.Count<=4 || count > Constants.WebSocketsMaxBufLen) {
+                                if (received.CloseStatus.HasValue) {
+                                    _logger.LogInformation($"received a close status: {received.CloseStatus.Value.ToString()}: {received.CloseStatusDescription}");
+                                }
+                                else {
+                                    _logger.LogError("Wrong packet size: "+count.ToString());
+                                    _logger.LogError(JsonConvert.SerializeObject(received));
+                                }
+                            }
+                            else fsInputQueue.Enqueue(sBuffer);
+                            while (ToClose.Count >0)
                             {
                                 string no = ToClose.Pop();
                                 _logger.LogInformation("Closing follower connection");
                                 WebSocket listenningSocket;
-                                if (meta.Listeners.TryRemove(no, out listenningSocket)) {
+                                if (liveHandler.Listeners.TryRemove(no, out listenningSocket)) {
                                     await listenningSocket.CloseAsync(WebSocketCloseStatus.EndpointUnavailable,
                                      "State != WebSocketState.Open", CancellationToken.None);
                                     listenningSocket.Dispose();
                                 }
                             }
                         }
+                        while (!received.CloseStatus.HasValue);
                         _logger.LogInformation("Closing connection");
-                        await meta.Socket.CloseAsync(received.CloseStatus.Value, received.CloseStatusDescription, CancellationToken.None);
-                        meta.Socket.Dispose();
-
-                        meta.TokenSource.Cancel();
+                        endOfInput=true;
                         taskWritingToFs.Wait();
+                        await liveHandler.Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, received.CloseStatusDescription,liveHandler.TokenSource.Token );
+                        
+                        liveHandler.TokenSource.Cancel();
+                        liveHandler.Dispose();
                         _logger.LogInformation("Resulting file : " +JsonConvert.SerializeObject(taskWritingToFs.Result));
-
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError($"Exception occured : {ex.Message}");
                         _logger.LogError(ex.StackTrace);
-                        await meta.Socket.CloseAsync(received.CloseStatus.Value, "exception occured", CancellationToken.None);
-                        meta.Socket.Dispose();
-                        meta.TokenSource.Cancel();
+                        liveHandler.TokenSource.Cancel();
+                        throw;
                     }
                     taskWritingToFs.Dispose();
                 }
@@ -198,15 +203,14 @@ namespace Yavsc.Services
                 {
                     // Socket was not accepted open ...
                      // not (meta.Socket != null && meta.Socket.State == WebSocketState.Open)
-                    if (meta.Socket != null)
+                    if (liveHandler.Socket != null)
                     {
-                        _logger.LogError($"meta.Socket.State not Open: {meta.Socket.State.ToString()} ");
-                        meta.Socket.Dispose();
+                        _logger.LogError($"meta.Socket.State not Open: {liveHandler.Socket.State.ToString()} ");
+                        liveHandler.Socket.Dispose();
                     }
                     else
                         _logger.LogError("socket object is null");
                 }
-                
                 
                 RemoveLiveInfo(uname);
             }
@@ -219,10 +223,9 @@ namespace Yavsc.Services
                 else
                 {
                     _logger.LogError($"Really unexpected end of stream");
-                    await meta.Socket?.CloseAsync(WebSocketCloseStatus.EndpointUnavailable, ex.Message, CancellationToken.None);
-                 }
-                 meta.Socket?.Dispose();
-                
+                    await liveHandler.Socket?.CloseAsync(WebSocketCloseStatus.EndpointUnavailable, ex.Message, CancellationToken.None);
+                }
+                liveHandler.Socket?.Dispose();
                 RemoveLiveInfo(uname);
             }
             return true;

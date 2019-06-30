@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.Http;
+using Microsoft.Extensions.Logging;
 using Yavsc.Abstract.FileSystem;
 using Yavsc.Exceptions;
 using Yavsc.Models;
@@ -115,43 +116,7 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
             return ReceiveUserFile(user, root, f.OpenReadStream(), destFileName ?? f.ContentDisposition, f.ContentType, CancellationToken.None);
         }
         
-         public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, Queue<ArraySegment<byte>> queue, string destFileName, string contentType, CancellationToken token)
-       {
-           // TODO lock user's disk usage for this scope,
-            // this process is not safe at concurrent access.
-            long usage = user.DiskUsage;
-
-            var item = new FileRecievedInfo();
-            item.FileName = Yavsc.Abstract.FileSystem.AbstractFileSystemHelpers.FilterFileName (destFileName);
-            item.MimeType = contentType;
-            item.DestDir = root;
-            var fi = new FileInfo(Path.Combine(root, item.FileName));
-            if (fi.Exists)
-            {
-                item.Overriden = true;
-                usage -= fi.Length;
-            } 
-            using (var dest = fi.OpenWrite())
-            {
-                    while (!token.IsCancellationRequested)
-                    {
-                        if (queue.Count==0) Task.Delay(300);
-                        else {
-                            var buffer = queue.Dequeue();
-                            dest.Write(buffer.Array,buffer.Offset, buffer.Count);
-                            usage += buffer.Count;
-                        }
-                        if (usage >= user.DiskQuota) break;
-                    }
-                    user.DiskUsage = usage;
-                    dest.Close();
-            }
-            if (usage >= user.DiskQuota) {
-                item.QuotaOffensed = true;
-            }
-            user.DiskUsage = usage;
-            return item;
-       }
+        
         public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, Stream inputStream, string destFileName, string contentType, CancellationToken token)
         {
             // TODO lock user's disk usage for this scope,
