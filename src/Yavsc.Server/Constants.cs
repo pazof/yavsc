@@ -37,10 +37,9 @@ namespace Yavsc
             AnonAvatar = "/images/Users/icon_anon_user.png",
             YavscConnectionStringEnvName = "YAVSC_DB_CONNECTION";
 
+        // at the end, let 4*4 bytes in peace
+        public const int WebSocketsMaxBufLen = 4*1020;
 
-        public const int WebSocketsMaxBufLen = 4*1024;
-
-        
         public static readonly long DefaultFSQ = 1024*1024*500;
 
         public static readonly Scope[] SiteScopes = { 

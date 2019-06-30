@@ -178,9 +178,7 @@ namespace Yavsc
             // Add framework services.
             services.AddEntityFramework()
               .AddNpgsql()
-              .AddDbContext<ApplicationDbContext>(
-                  db => db.UseNpgsql(ConnectionString)
-              );
+              .AddDbContext<ApplicationDbContext>();
 
             ConfigureOAuthServices(services);
 
