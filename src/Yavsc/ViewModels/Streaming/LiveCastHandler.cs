@@ -51,13 +51,12 @@ namespace Yavsc.ViewModels.Streaming
                 usage -= fi.Length;
             } 
             logger.LogInformation("Opening the file");
-            using (var dest = fi.OpenWrite())
+            using (var dest = fi.Open(FileMode.Create, FileAccess.Write, FileShare.Read))
             {
                 logger.LogInformation("Appening to file");
-                    while (queue.Count>0)
+                    while (!isEndOfInput() || queue.Count>0)
                     {
-                        while (queue.Count>0) 
-                        {
+                        if (queue.Count>0) {
                             var buffer = queue.Dequeue();
                             int count = buffer.Array[0]*256*1024 +buffer.Array[1]*1024+buffer.Array[2]*256 + buffer.Array[3];
                             
@@ -72,14 +71,14 @@ namespace Yavsc.ViewModels.Streaming
                             else {
                                 var packetInfo = JsonConvert.SerializeObject(buffer);
                                 logger.LogError($"didn´t wrote {count} bytes from {buffer.Array.Length}!\n{packetInfo}");
-                            } 
-                            if (usage >= user.DiskQuota) break;
+                            }  
                         }
-                        if (isEndOfInput()) break;
                         if (usage >= user.DiskQuota) break;
-                        logger.LogInformation($"Waitting 200ms.");
-                        await Task.Delay(100);
-                        logger.LogInformation($"Done waiting");
+                        if (queue.Count==0 && !isEndOfInput()) {
+                            logger.LogInformation($"Waitting 200ms.");
+                            await Task.Delay(100);
+                            logger.LogInformation($"Done waiting");
+                        }
                     }
                     user.DiskUsage = usage;
                     dest.Close();
