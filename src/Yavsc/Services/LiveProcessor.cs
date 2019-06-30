@@ -153,9 +153,7 @@ namespace Yavsc.Services
                             buffer = new byte[Constants.WebSocketsMaxBufLen+16];
                             sBuffer = new ArraySegment<byte>(buffer);
                             received = await liveHandler.Socket.ReceiveAsync(sBuffer, liveHandler.TokenSource.Token);
-
                             count = (received.Count<4)? 0 : buffer[0]*256*1024 +buffer[1]*1024+buffer[2]*256 + buffer[3];
-
                             _logger.LogInformation($"Received bytes : {count}");
                             _logger.LogInformation($"Is the end : {received.EndOfMessage}");
                             if (received.Count<=4 || count > Constants.WebSocketsMaxBufLen) {
