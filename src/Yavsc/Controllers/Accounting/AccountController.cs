@@ -496,7 +496,9 @@ namespace Yavsc.Controllers
                 if (!await _userManager.IsEmailConfirmedAsync(user))
                 {
                     _logger.LogWarning($"ForgotPassword: Email {model.LoginOrEmail} not confirmed");
-                    return View("ForgotPasswordConfirmation");
+                    // don't break this recovery process here ...
+                    // or else e-mail won't ever be validated, since user lost his password.
+                    // don't return View("ForgotPasswordConfirmation");
                 }
 
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
