@@ -490,9 +490,9 @@ namespace Yavsc.Controllers
                     _logger.LogWarning($"ForgotPassword: Email or User name {model.LoginOrEmail} not found");
                     return View("ForgotPasswordConfirmation");
                 }
-                // user != null
-                // We want him to have a confirmed e-mail, and prevent this script
-                // to be used to send e-mail to any arbitrary person
+                // We cannot require the email to be confimed,
+                // or a lot of non confirmed email never be able to finalyze
+                // registration.
                 if (!await _userManager.IsEmailConfirmedAsync(user))
                 {
                     _logger.LogWarning($"ForgotPassword: Email {model.LoginOrEmail} not confirmed");
@@ -523,16 +523,17 @@ namespace Yavsc.Controllers
             return View();
         }
 
-        //
         // GET: /Account/ResetPassword
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPassword(string UserId, string code = null)
+        public async Task<IActionResult> ResetPassword(string UserId, string code = null)
         {
-            return code == null ? View("Error") : View();
+            var user = await _userManager.FindByIdAsync(UserId);
+            if (user==null) return new BadRequestResult();
+            // We just serve the form to reset here.
+            return  View();
         }
 
-        //
         // POST: /Account/ResetPassword
         [HttpPost]
         [AllowAnonymous]
