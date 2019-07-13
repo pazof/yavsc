@@ -54,8 +54,10 @@ namespace Yavsc
 
         static ILiveProcessor _liveProcessor;
 
-        // leave the final slash
-
+        /// <summary>
+        /// generating reset password and confirmation tokens
+        /// </summary>
+        public IUserTokenProvider<ApplicationUser> UserTokenProvider { get; set; }
         
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
