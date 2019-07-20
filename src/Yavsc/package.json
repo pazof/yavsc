@@ -9,7 +9,6 @@
   "license": "GPL-3.0",
   "devDependencies": {},
   "dependencies": {
-    "ansi-to-html": "^0.6.4",
     "paypal-permissions-sdk": "^1.0.10"
   }
 }
