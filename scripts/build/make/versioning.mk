@@ -3,8 +3,8 @@ ifndef PRJNAME
 PRJNAME := $(shell basename `pwd -P`)
 endif
 SOLUTIONDIR=$(HOME)/workspace/yavsc
-rc_num := $(shell cat $(SOLUTIONDIR)/rc-num.txt)
+version := $(shell cat $(SOLUTIONDIR)/version.txt)
 MAKE=make
 NUGETSOURCE=$(HOME)/Nupkgs
-VERSION=1.0.6-rc$(rc_num)
+VERSION=$(version)
 CONFIGURATION=Debug
