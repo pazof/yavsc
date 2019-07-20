@@ -554,6 +554,11 @@ namespace Yavsc.Controllers
 
             if (result.Succeeded)
             {
+                // when ok, the e-mail become validated.
+                if (!user.EmailConfirmed) {
+                    user.EmailConfirmed=true;
+                    await _dbContext.SaveChangesAsync(nameof(ResetPassword));
+                }
             _logger.LogInformation($"Password reset for {user.UserName}:{model.Password}");
                 return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
             }
