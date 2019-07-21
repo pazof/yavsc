@@ -1,7 +1,6 @@
-DESTDIR=/srv/www/yavscpre
-PRODDESTDIR=/srv/www/yavsc
+DESTDIR=/var/www/yavscpre
+PRODDESTDIR=/var/www/yavsc
 HOSTING=localhost
-HOSTADMIN=root
 ASPNET_LOG_LEVEL=debug
 SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
@@ -22,6 +21,13 @@ MINCSS=wwwroot/css/coiffure.min.css  wwwroot/css/dev.min.css           wwwroot/c
 web: project.lock.json
 	ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION)
 
+showConfig:
+	@echo HOSTING: $(USER)@$(HOSTING)
+	@echo ENV: $(ASPNET_ENV)
+	@echo CONFIGURATION: $(CONFIGURATION)
+	@echo DESTDIR: $(DESTDIR)
+	@echo PRODDESTDIR: $(PRODDESTDIR)
+
 status:
 ifeq ($(git_status),0)
 		@echo Nothing to be done.
@@ -38,19 +44,19 @@ deploy-pkg: publish
 deploy: pushInPre pushInProd
 
 pushInPre: cleanoutput bin/output/wwwroot/version
-	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel-pre stop
-	ssh $(HOSTADMIN)@$(HOSTING) sudo rm -rf $(DESTDIR)/approot
-	(cd bin/output && rsync -ravu ./ $(HOSTADMIN)@$(HOSTING):$(DESTDIR) >/dev/null)
-	ssh $(HOSTADMIN)@$(HOSTING) sudo sync
-	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel-pre start
+	ssh $(USER)@$(HOSTING) sudo service kestrel-pre stop
+	ssh $(USER)@$(HOSTING) sudo rm -rf $(DESTDIR)/approot
+	(cd bin/output && rsync -ravu ./ $(USER)@$(HOSTING):$(DESTDIR) >/dev/null)
+	ssh $(USER)@$(HOSTING) sudo sync
+	ssh $(USER)@$(HOSTING) sudo service kestrel-pre start
 
 pushInProd: cleanoutput bin/output/wwwroot/version
 ifeq ($(git_status),0)
-	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel stop
-	ssh $(HOSTADMIN)@$(HOSTING) sudo rm -rf $(PRODDESTDIR)/approot
-	(cd bin/output && rsync -ravu ./ $(HOSTADMIN)@$(HOSTING):$(PRODDESTDIR) >/dev/null)
-	ssh $(HOSTADMIN)@$(HOSTING) sudo sync
-	ssh $(HOSTADMIN)@$(HOSTING) sudo service kestrel start
+	ssh $(USER)@$(HOSTING) sudo service kestrel stop
+	ssh $(USER)@$(HOSTING) sudo rm -rf $(PRODDESTDIR)/approot
+	(cd bin/output && rsync -ravu ./ $(USER)@$(HOSTING):$(PRODDESTDIR) >/dev/null)
+	ssh $(USER)@$(HOSTING) sudo sync
+	ssh $(USER)@$(HOSTING) sudo service kestrel start
 else
 	$(error EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.)
 	git status

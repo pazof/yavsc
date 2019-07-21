@@ -36,7 +36,9 @@ namespace Yavsc.Attributes.Validation
         public override string FormatErrorMessage(string name)
         {
             if (ErrorMessageResourceType == null) // failed :/
+            {
                 return base.FormatErrorMessage(name);
+            }
             if (ErrorMessageResourceName == null) // re failed :/
                 return base.FormatErrorMessage(name);
 
