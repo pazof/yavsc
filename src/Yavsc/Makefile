@@ -44,22 +44,21 @@ deploy-pkg: publish
 deploy: pushInPre pushInProd
 
 pushInPre: cleanoutput bin/output/wwwroot/version
-	ssh $(USER)@$(HOSTING) sudo service kestrel-pre stop
-	ssh $(USER)@$(HOSTING) sudo rm -rf $(DESTDIR)/approot
-	(cd bin/output && rsync -ravu ./ $(USER)@$(HOSTING):$(DESTDIR) >/dev/null)
-	ssh $(USER)@$(HOSTING) sudo sync
-	ssh $(USER)@$(HOSTING) sudo service kestrel-pre start
+	sudo service kestrel-pre stop
+	sudo rm -rf $(DESTDIR)/approot
+	sudo cp -a bin/output/* $(DESTDIR)
+	sudo sync
+	sudo service kestrel-pre start
 
 pushInProd: cleanoutput bin/output/wwwroot/version
 ifeq ($(git_status),0)
-	ssh $(USER)@$(HOSTING) sudo service kestrel stop
-	ssh $(USER)@$(HOSTING) sudo rm -rf $(PRODDESTDIR)/approot
-	(cd bin/output && rsync -ravu ./ $(USER)@$(HOSTING):$(PRODDESTDIR) >/dev/null)
-	ssh $(USER)@$(HOSTING) sudo sync
-	ssh $(USER)@$(HOSTING) sudo service kestrel start
+	sudo service kestrel stop
+	sudo rm -rf $(PRODDESTDIR)/approot
+	sudo cp -a bin/output/* $(PRODDESTDIR) 
+	sudo sync
+	sudo service kestrel start
 else
 	$(error EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.)
-	git status
 endif
 
 %.min.js: %.js
