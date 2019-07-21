@@ -51,7 +51,6 @@ namespace Yavsc.Attributes.Validation
         }
         public override string FormatErrorMessage(string name)
         {
-            
             var temp  = base.FormatErrorMessage(name);
             return string.Format(temp, MinimumLength, maxLen);
         }

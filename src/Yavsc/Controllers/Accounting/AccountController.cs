@@ -504,7 +504,10 @@ namespace Yavsc.Controllers
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol:  "https");
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, 
+                protocol:  "https", host: Startup.Authority);
+                
+              
                 await _emailSender.SendEmailAsync(user.UserName, user.Email, _localizer["Reset Password"],
                    _localizer["Please reset your password by following this link:"] + " <" + callbackUrl + ">");
                 return View("ForgotPasswordConfirmation");
