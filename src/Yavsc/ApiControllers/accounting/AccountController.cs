@@ -154,22 +154,10 @@ namespace Yavsc.WebApi.Controllers
             return Ok(user);
         }
 
-        [HttpGet("~/api/myip"),Authorize]
-        public IActionResult MyIp ()
+        [HttpGet("~/api/myhost"),Authorize]
+        public IActionResult MyHost ()
         {
-            string ip = null;
-
-            ip = Request.Headers["X-Forwarded-For"];
-
-            if (string.IsNullOrEmpty(ip)) {
-                ip = Request.Host.Value;
-            } else { // Using X-Forwarded-For last address
-                ip = ip.Split(',')
-                    .Last()
-                    .Trim();
-            }
-
-            return Ok(ip);
+            return Ok(new { host = Request.ForHost() });
         }
 
         /// <summary>
