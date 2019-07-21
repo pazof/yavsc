@@ -687,7 +687,7 @@ namespace Yavsc.Controllers
         [HttpGet, Authorize]
         public IActionResult Delete()
         {
-            return View();
+            return View(new UnregisterViewModel { UserId = User.GetUserId() });
         }
 
         [HttpGet, Authorize("AdministratorOnly")]

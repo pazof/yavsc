@@ -8,6 +8,7 @@
 <form asp-controller="Account" asp-action="Delete" method="post" class="form-horizontal" role="form">
 
     @Html.Hidden("ReturnUrl")
+    @Html.Hidden("UserId")
     <input type="submit" value="@SR["Unregister"]" class="btn btn-default"/>
 </form>
 
