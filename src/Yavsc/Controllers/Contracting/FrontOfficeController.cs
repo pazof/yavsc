@@ -68,6 +68,7 @@ namespace Yavsc.Controllers
             var result = _context.ListPerformers(_billing, id);
             return View(result);
         }
+
         [AllowAnonymous]
         public ActionResult HairCut(string id)
         {
@@ -79,7 +80,6 @@ namespace Yavsc.Controllers
             var result = _context.ListPerformers(_billing, id);
             return View(result);
         }
-        
 
 
         [Produces("text/x-tex"), Authorize, Route("estimate-{id}.tex")]

@@ -16,7 +16,6 @@ namespace Yavsc.Attributes.Validation
             this.maxLen = maxLen;
             this.MinimumLength=minLen;
             UseDefaultErrorMessage();
-            
         }
         void UseDefaultErrorMessage()
         {

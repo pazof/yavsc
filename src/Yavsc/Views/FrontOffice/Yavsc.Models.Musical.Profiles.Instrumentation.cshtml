@@ -1,0 +1,20 @@
+@model Yavsc.Models.Musical.Profiles.Instrumentation
+
+
+@if (Model == null) {
+<p>@SR["NoInstrument"]</p>
+}
+@if (Model != null) {
+<fieldset>
+<legend>@SR["Instrumentation"]</legend>
+      
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Tool)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tool)
+        </dd>
+    </dl>
+  </fieldset>
+}
