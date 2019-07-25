@@ -5,7 +5,7 @@
 
 C'est une application mettant en oeuvre une prise de contact entre un demandeur de services et son éventuel préstataire associé.
 
-# Construction et déploimenent
+# Construction et déploiemenent
 
 ## Construction
 
