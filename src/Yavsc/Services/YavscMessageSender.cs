@@ -25,14 +25,14 @@ namespace Yavsc.Services
         IConnexionManager _cxManager;
 
         public YavscMessageSender(
-            ILoggerFactory loggerFactory, 
-            IOptions<SiteSettings> sitesOptions, 
+            ILoggerFactory loggerFactory,
+            IOptions<SiteSettings> sitesOptions,
             IOptions<SmtpSettings> smtpOptions,
             IEmailSender emailSender,
             ApplicationDbContext dbContext,
             IConnexionManager cxManager
         )
-        { 
+        {
             _logger = loggerFactory.CreateLogger<MailSender>();
             _emailSender = emailSender;
             siteSettings = sitesOptions?.Value;
@@ -41,7 +41,7 @@ namespace Yavsc.Services
             _cxManager = cxManager;
         }
 
-        public async Task <MessageWithPayloadResponse> NotifyEvent<Event>
+        public async Task<MessageWithPayloadResponse> NotifyEvent<Event>
          (IEnumerable<string> userIds, Event ev)
            where Event : IEvent
         {
@@ -52,79 +52,87 @@ namespace Yavsc.Services
             if (ev.Sender == null)
                 throw new Exception("Spécifier un expéditeur");
 
-            if (userIds == null )
+            if (userIds == null)
                 throw new Exception("Notify e No user id");
 
             MessageWithPayloadResponse response = new MessageWithPayloadResponse();
 
             var raa = userIds.ToArray();
-            if (raa.Length<1)
-                 throw new Exception("No dest id");
-            
-            try {
+            if (raa.Length < 1)
+                throw new Exception("No dest id");
+
+            try
+            {
                 List<MessageWithPayloadResponse.Result> results = new List<MessageWithPayloadResponse.Result>();
-                foreach(var userId in raa) {
+                foreach (var userId in raa)
+                {
                     MessageWithPayloadResponse.Result result = new MessageWithPayloadResponse.Result();
                     result.registration_id = userId;
 
-                    var user = _dbContext.Users.FirstOrDefault(u=> u.Id == userId);
-                    if (user==null)
+                    var user = _dbContext.Users.FirstOrDefault(u => u.Id == userId);
+                    if (user == null)
                     {
                         response.failure++;
                         result.error = "no such user.";
                         continue;
                     }
-                    if (!user.EmailConfirmed){
+                    if (!user.EmailConfirmed)
+                    {
                         response.failure++;
                         result.error = "user has not confirmed his email address.";
                         continue;
                     }
-                    if (user.Email==null){
+                    if (user.Email == null)
+                    {
                         response.failure++;
                         result.error = "user has no legacy email address.";
                         continue;
                     }
 
                     var body = ev.CreateBody();
-                    
-                    var cxids = _cxManager.GetConnexionIds(user.UserName).ToArray();                    
-                    
-                    if (cxids.Length==0)
+
+
+                    _logger.LogDebug($"Sending to {user.UserName} <{user.Email}> : {body}");
+                    var mailSent = await _emailSender.SendEmailAsync(
+                    user.UserName,
+                    user.Email,
+                        $"{ev.Sender} (un client) vous demande un rendez-vous",
+                    body + Environment.NewLine
+                );
+
+                    if (!mailSent.Sent)
                     {
-                        _logger.LogDebug($"Sending to {user.UserName} <{user.Email}> : {body}");
-                            var mailSent = await _emailSender.SendEmailAsync(
-                            user.UserName,
-                            user.Email,
-                                $"{ev.Sender} (un client) vous demande un rendez-vous",
-                            body+Environment.NewLine
-                        );
-
-                        if (!mailSent.Sent) {
-                            result.message_id = mailSent.MessageId;
-                            result.error = mailSent.ErrorMessage;
-                            response.failure++;
-                        }
-                        else 
-                        {
-                            result.message_id = mailSent.MessageId;
-                            response.success++;
-                        }
+                        result.message_id = mailSent.MessageId;
+                        result.error = mailSent.ErrorMessage;
+                        response.failure++;
                     }
-                    else {
-                        _logger.LogDebug($"Sending signal to {string.Join(" ",cxids)}  : "+JsonConvert.SerializeObject(ev));
-                        
-                        foreach( var cxid in cxids) {
-                          var hubClient = hubContext.Clients.User(cxid);
-                         var data = new Dictionary<string,object>();
-                         data["event"] = ev;
+                    else
+                    {
+                        result.message_id = mailSent.MessageId;
+                        response.success++;
+                    }
+                    var cxids = _cxManager.GetConnexionIds(user.UserName).ToArray();
+                    if (cxids.Length == 0)
+                    {
+                        _logger.LogDebug($"no cx to {user.UserName} <{user.Email}> ");
+                    }
+                    else
+                    {
+                        _logger.LogDebug($"Sending signal to {string.Join(" ", cxids)}  : " + JsonConvert.SerializeObject(ev));
 
-                          hubClient.push(ev.Topic,  data );
-                        } 
-                        
-                        result.message_id=MimeKit.Utils.MimeUtils.GenerateMessageId(
+                        foreach (var cxid in cxids)
+                        {
+                            var hubClient = hubContext.Clients.User(cxid);
+                            var data = new Dictionary<string, object>();
+                            data["event"] = ev;
+
+                            hubClient.push(ev.Topic, data);
+                        }
+
+                        result.message_id = MimeKit.Utils.MimeUtils.GenerateMessageId(
                             siteSettings.Authority
                         );
-                        
+
                         response.success++;
                     }
                     results.Add(result);
@@ -132,13 +140,14 @@ namespace Yavsc.Services
                 response.results = results.ToArray();
                 return response;
             }
-            catch (Exception ex) {
-              _logger.LogError("Quelque chose s'est mal passé à l'envoi: "+ex.Message);  
-              throw;
+            catch (Exception ex)
+            {
+                _logger.LogError("Quelque chose s'est mal passé à l'envoi: " + ex.Message);
+                throw;
             }
         }
-        
-        public async Task<MessageWithPayloadResponse> NotifyBookQueryAsync( IEnumerable<string> userIds, RdvQueryEvent ev)
+
+        public async Task<MessageWithPayloadResponse> NotifyBookQueryAsync(IEnumerable<string> userIds, RdvQueryEvent ev)
         {
             return await NotifyEvent<RdvQueryEvent>(userIds, ev);
         }
@@ -158,7 +167,7 @@ namespace Yavsc.Services
         {
             return await NotifyEvent<IEvent>(userIds, yaev);
         }
-        
+
         /* SMS with Twilio:
 public Task SendSmsAsync(TwilioSettings twilioSettigns, string number, string message)
 {
