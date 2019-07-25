@@ -115,12 +115,18 @@ window.ChatHubHandler = (function ($) {
       .append('<a href="'+pubStrInfo.url+'">'+pubStrInfo.title+'</a>').append('['+pubStrInfo.mediaType+']').addClass('streaminfo').appendTo(notifications);
     };
 
+    chat.client.push = function (what, data)
+    {
+      $('<li></li>').append(what + ': ')
+      .append(data.event).addClass('event').appendTo(notifications);
+    };
+
     var setChanInfo = function (chanInfo) {
       if (chanInfo) {
         var chanId = 'r' + chanInfo.Name;
         $('#tv_' + chanId).replaceWith(chanInfo.Topic);
       } 
-    }
+    };
 
     var setActiveChan = function (chanId) {
       if (frontChanId != chanId) {
@@ -135,7 +141,7 @@ window.ChatHubHandler = (function ($) {
       }
     };
 
-    function join(roomName)
+    var join = function (roomName)
     {
       chat.server.join(roomName).done(function (chatInfo) {
         if (chatInfo) {
@@ -143,7 +149,7 @@ window.ChatHubHandler = (function ($) {
           setActiveChan('r'+chatInfo.Name);
         }
       });
-    }
+    };
 
     var chatbar = $('<div class="chatbar form-group"></div>');
 
