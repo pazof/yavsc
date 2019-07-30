@@ -7,8 +7,11 @@ using Newtonsoft.Json;
 namespace Yavsc.Models.Relationship
 {
     public class Circle {
+        
         [Key, DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
+
+        public bool Public { get; set; }
 
         public string Name { get; set; }
         public string OwnerId { get; set; }

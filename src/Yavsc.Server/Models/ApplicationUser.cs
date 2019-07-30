@@ -109,6 +109,9 @@ namespace Yavsc.Models
         [JsonIgnore][InverseProperty("User")]
         public virtual List<ChatRoomAccess> RoomAccess { get; set; }
 
+        [JsonIgnore][InverseProperty("Member")]
+        public virtual List<CircleMember> Membership { get; set; }
+
         public DateTime DateCreated
         {
             get; set;

@@ -19,14 +19,16 @@ using Microsoft.Extensions.WebEncoders;
 using OAuth.AspNet.AuthServer;
 using OAuth.AspNet.Tokens;
 
-namespace Yavsc {
+namespace Yavsc
+{
     using System.Threading.Tasks;
     using Auth;
     using Extensions;
     using Models;
     using Yavsc.Helpers.Auth;
 
-    public partial class Startup {
+    public partial class Startup
+    {
         public static CookieAuthenticationOptions ExternalCookieAppOptions { get; private set; }
 
         public static IdentityOptions IdentityAppOptions { get; set; }
@@ -40,23 +42,26 @@ namespace Yavsc {
 
         //  public static CookieAuthenticationOptions BearerCookieOptions { get; private set; }
 
-        private void ConfigureOAuthServices (IServiceCollection services) {
-            services.Configure<SharedAuthenticationOptions> (options => options.SignInScheme = Constants.ApplicationAuthenticationSheme);
+        private void ConfigureOAuthServices(IServiceCollection services)
+        {
+            services.Configure<SharedAuthenticationOptions>(options => options.SignInScheme = Constants.ApplicationAuthenticationSheme);
 
-            services.Add (ServiceDescriptor.Singleton (typeof (IOptions<OAuth2AppSettings>), typeof (OptionsManager<OAuth2AppSettings>)));
+            services.Add(ServiceDescriptor.Singleton(typeof(IOptions<OAuth2AppSettings>), typeof(OptionsManager<OAuth2AppSettings>)));
             // used by the YavscGoogleOAuth middelware (TODO drop it)
-            services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder> ();
+            services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
 
-            services.AddAuthentication (options => {
+            services.AddAuthentication(options =>
+            {
                 options.SignInScheme = Constants.ExternalAuthenticationSheme;
             });
 
-            ProtectionProvider = new MonoDataProtectionProvider (Configuration["Site:Title"]);;
+            ProtectionProvider = new MonoDataProtectionProvider(Configuration["Site:Title"]); ;
             services.AddInstance<MonoDataProtectionProvider>
                 (ProtectionProvider);
 
-            services.AddIdentity<ApplicationUser, IdentityRole> (
-                    option => {
+            services.AddIdentity<ApplicationUser, IdentityRole>(
+                    option =>
+                    {
                         IdentityAppOptions = option;
                         option.User.AllowedUserNameCharacters += " ";
                         option.User.RequireUniqueEmail = true;
@@ -78,8 +83,8 @@ namespace Yavsc {
                          option.Cookies.ExternalCookie.DataProtectionProvider = protector;
                          */
                     }
-                ).AddEntityFrameworkStores<ApplicationDbContext> ()
-                .AddTokenProvider<EmailTokenProvider<ApplicationUser>> (Constants.DefaultFactor)
+                ).AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.DefaultFactor)
             // .AddTokenProvider<UserTokenProvider>(Constants.DefaultFactor)
             //  .AddTokenProvider<UserTokenProvider>(Constants.SMSFactor)
             //  .AddTokenProvider<UserTokenProvider>(Constants.EMailFactor)
@@ -87,92 +92,103 @@ namespace Yavsc {
             // .AddDefaultTokenProviders()
             ;
         }
-        private void ConfigureOAuthApp (IApplicationBuilder app,
-            SiteSettings settingsOptions, ILogger logger) {
+        private void ConfigureOAuthApp(IApplicationBuilder app,
+            SiteSettings settingsOptions, ILogger logger)
+        {
 
-            app.UseIdentity ();
-            app.UseWhen  ( context => context.Request.Path.StartsWithSegments ("/api")
-                || context.Request.Path.StartsWithSegments ("/live") ,
-                branchLiveOrApi => 
+            app.UseIdentity();
+            app.UseWhen(context => context.Request.Path.StartsWithSegments("/api")
+             || context.Request.Path.StartsWithSegments("/live"),
+                branchLiveOrApi =>
                 {
-                    branchLiveOrApi.UseJwtBearerAuthentication (
-                        options => {
+                    branchLiveOrApi.UseJwtBearerAuthentication(
+                        options =>
+                        {
                             options.AuthenticationScheme = JwtBearerDefaults.AuthenticationScheme;
                             options.AutomaticAuthenticate = true;
-                            options.SecurityTokenValidators.Clear ();
-                            options.SecurityTokenValidators.Add (new TicketDataFormatTokenValidator (
+                            options.SecurityTokenValidators.Clear();
+                            var tickeDataProtector = new TicketDataFormatTokenValidator(
                                 ProtectionProvider
-                            ));
+                            );
+                            options.SecurityTokenValidators.Add(tickeDataProtector);
                             options.Events = new JwtBearerEvents
                             {
-                                OnReceivingToken =  context =>
-                                {
-                                    return Task.Run( () => {
-                                        var signalRTokenHeader = context.Request.Query["signalRTokenHeader"];
+                                OnReceivingToken = context =>
+                               {
+                                   return Task.Run(() =>
+                                   {
+                                       var signalRTokenHeader = context.Request.Query["signalRTokenHeader"];
 
-                                        if (!string.IsNullOrEmpty(signalRTokenHeader) &&
-                                            (context.HttpContext.WebSockets.IsWebSocketRequest || context.Request.Headers["Accept"] == "text/event-stream"))
-                                        {
-                                            context.Token = context.Request.Query["signalRTokenHeader"];
-                                        }
-                                    });
-                                }
+                                       if (!string.IsNullOrEmpty(signalRTokenHeader) &&
+                                           (context.HttpContext.WebSockets.IsWebSocketRequest || context.Request.Headers["Accept"] == "text/event-stream"))
+                                       {
+                                           context.Token = context.Request.Query["signalRTokenHeader"];
+                                       }
+                                   });
+                               }
                             };
                         });
                 });
-            app.UseWhen (context => !context.Request.Path.StartsWithSegments ("/api") && !context.Request.Path.StartsWithSegments ("/live"),
-                branch => {
+            app.UseWhen(context => !context.Request.Path.StartsWithSegments("/api") && !context.Request.Path.StartsWithSegments("/live"),
+                branch =>
+                {
                     // External authentication shared cookie:
-                    branch.UseCookieAuthentication (options => {
+                    branch.UseCookieAuthentication(options =>
+                    {
                         ExternalCookieAppOptions = options;
                         options.AuthenticationScheme = Constants.ExternalAuthenticationSheme;
                         options.AutomaticAuthenticate = true;
-                        options.ExpireTimeSpan = TimeSpan.FromMinutes (5);
-                        options.LoginPath = new PathString (Constants.LoginPath.Substring (1));
-                        options.AccessDeniedPath = new PathString (Constants.LoginPath.Substring (1));
+                        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                        options.LoginPath = new PathString(Constants.LoginPath.Substring(1));
+                        options.AccessDeniedPath = new PathString(Constants.LoginPath.Substring(1));
                     });
 
-                    YavscGoogleAppOptions = new YavscGoogleOptions {
+                    YavscGoogleAppOptions = new YavscGoogleOptions
+                    {
                         ClientId = GoogleWebClientConfiguration["web:client_id"],
-                            ClientSecret = GoogleWebClientConfiguration["web:client_secret"],
-                            AccessType = "offline",
-                            Scope = {
+                        ClientSecret = GoogleWebClientConfiguration["web:client_secret"],
+                        AccessType = "offline",
+                        Scope = {
                                 "profile",
                                 "https://www.googleapis.com/auth/admin.directory.resource.calendar",
                                 "https://www.googleapis.com/auth/calendar",
                                 "https://www.googleapis.com/auth/calendar.events"
                             },
-                            SaveTokensAsClaims = true,
-                            UserInformationEndpoint = "https://www.googleapis.com/plus/v1/people/me",
-                            Events = new OAuthEvents {
-                                OnCreatingTicket = async context => {
-                                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory> ()
-                                        .CreateScope ()) {
-                                        var gcontext = context as GoogleOAuthCreatingTicketContext;
-                                        context.Identity.AddClaim (new Claim (YavscClaimTypes.GoogleUserId, gcontext.GoogleUserId));
-                                        var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext> ();
+                        SaveTokensAsClaims = true,
+                        UserInformationEndpoint = "https://www.googleapis.com/plus/v1/people/me",
+                        Events = new OAuthEvents
+                        {
+                            OnCreatingTicket = async context =>
+                            {
+                                using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
+                                    .CreateScope())
+                                {
+                                    var gcontext = context as GoogleOAuthCreatingTicketContext;
+                                    context.Identity.AddClaim(new Claim(YavscClaimTypes.GoogleUserId, gcontext.GoogleUserId));
+                                    var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
 
-                                        var store = serviceScope.ServiceProvider.GetService<IDataStore> ();
-                                        await store.StoreAsync (gcontext.GoogleUserId, new TokenResponse {
-                                            AccessToken = gcontext.TokenResponse.AccessToken,
-                                                RefreshToken = gcontext.TokenResponse.RefreshToken,
-                                                TokenType = gcontext.TokenResponse.TokenType,
-                                                ExpiresInSeconds = int.Parse (gcontext.TokenResponse.ExpiresIn),
-                                                IssuedUtc = DateTime.Now
-                                        });
-                                        await dbContext.StoreTokenAsync (gcontext.GoogleUserId,
-                                            gcontext.TokenResponse.Response,
-                                            gcontext.TokenResponse.AccessToken,
-                                            gcontext.TokenResponse.TokenType,
-                                            gcontext.TokenResponse.RefreshToken,
-                                            gcontext.TokenResponse.ExpiresIn);
+                                    var store = serviceScope.ServiceProvider.GetService<IDataStore>();
+                                    await store.StoreAsync(gcontext.GoogleUserId, new TokenResponse
+                                    {
+                                        AccessToken = gcontext.TokenResponse.AccessToken,
+                                        RefreshToken = gcontext.TokenResponse.RefreshToken,
+                                        TokenType = gcontext.TokenResponse.TokenType,
+                                        ExpiresInSeconds = int.Parse(gcontext.TokenResponse.ExpiresIn),
+                                        IssuedUtc = DateTime.Now
+                                    });
+                                    await dbContext.StoreTokenAsync(gcontext.GoogleUserId,
+                                        gcontext.TokenResponse.Response,
+                                        gcontext.TokenResponse.AccessToken,
+                                        gcontext.TokenResponse.TokenType,
+                                        gcontext.TokenResponse.RefreshToken,
+                                        gcontext.TokenResponse.ExpiresIn);
 
-                                    }
                                 }
                             }
+                        }
                     };
 
-                    branch.UseMiddleware<Yavsc.Auth.GoogleMiddleware> (YavscGoogleAppOptions);
+                    branch.UseMiddleware<Yavsc.Auth.GoogleMiddleware>(YavscGoogleAppOptions);
                     /* FIXME 403
                                       
                                     branch.UseTwitterAuthentication(options=>
@@ -182,30 +198,34 @@ namespace Yavsc {
                                             options.ConsumerSecret = Configuration["Authentication:Twitter:ClientSecret"];
                                     }); */
 
-                    branch.UseOAuthAuthorizationServer (
+                    branch.UseOAuthAuthorizationServer(
 
-                        options => {
+                        options =>
+                        {
                             OAuthServerAppOptions = options;
-                            options.AuthorizeEndpointPath = new PathString (Constants.AuthorizePath.Substring (1));
-                            options.TokenEndpointPath = new PathString (Constants.TokenPath.Substring (1));
+                            options.AuthorizeEndpointPath = new PathString(Constants.AuthorizePath.Substring(1));
+                            options.TokenEndpointPath = new PathString(Constants.TokenPath.Substring(1));
                             options.ApplicationCanDisplayErrors = true;
                             options.AllowInsecureHttp = true;
                             options.AuthenticationScheme = OAuthDefaults.AuthenticationType;
-                            options.TokenDataProtector = ProtectionProvider.CreateProtector ("Bearer protection");
+                            options.TokenDataProtector = ProtectionProvider.CreateProtector("Bearer protection");
 
-                            options.Provider = new OAuthAuthorizationServerProvider {
+                            options.Provider = new OAuthAuthorizationServerProvider
+                            {
                                 OnValidateClientRedirectUri = ValidateClientRedirectUri,
                                 OnValidateClientAuthentication = ValidateClientAuthentication,
                                 OnGrantResourceOwnerCredentials = GrantResourceOwnerCredentials,
                                 OnGrantClientCredentials = GrantClientCredetails
                             };
 
-                            options.AuthorizationCodeProvider = new AuthenticationTokenProvider {
+                            options.AuthorizationCodeProvider = new AuthenticationTokenProvider
+                            {
                                 OnCreate = CreateAuthenticationCode,
                                 OnReceive = ReceiveAuthenticationCode,
                             };
 
-                            options.RefreshTokenProvider = new AuthenticationTokenProvider {
+                            options.RefreshTokenProvider = new AuthenticationTokenProvider
+                            {
                                 OnCreate = CreateRefreshToken,
                                 OnReceive = ReceiveRefreshToken,
                             };
@@ -216,7 +236,7 @@ namespace Yavsc {
                     );
                 });
 
-            Environment.SetEnvironmentVariable ("GOOGLE_APPLICATION_CREDENTIALS", "google-secret.json");
+            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "google-secret.json");
 
         }
     }
