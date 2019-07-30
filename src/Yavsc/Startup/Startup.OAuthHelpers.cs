@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
+using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
 using OAuth.AspNet.AuthServer;
 using Yavsc.Models;
@@ -24,6 +25,7 @@ namespace Yavsc
               _logger.LogError($"no app for <{clientId}>");
             return app;
         }
+        
         private readonly ConcurrentDictionary<string, string> _authenticationCodes = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
 
         private Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
@@ -88,6 +90,7 @@ namespace Yavsc
             else _logger.LogWarning($"ValidateClientAuthentication: neither Basic nor Form credential were found");
             return Task.FromResult(0);
         }
+        
         UserManager<ApplicationUser> _usermanager;
            
         private async Task<Task> GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
@@ -95,7 +98,8 @@ namespace Yavsc
             _logger.LogWarning($"GrantResourceOwnerCredentials task ... {context.UserName}");
 
             ApplicationUser user = null;
-            user = await _usermanager.FindByNameAsync(context.UserName);
+            user = _dbContext.Users.Include(u=>u.Membership).First(u=>u.UserName == context.UserName);
+           
             if (await _usermanager.CheckPasswordAsync(user, context.Password))
             {
 
@@ -106,15 +110,16 @@ namespace Yavsc
                 claims.Add(new Claim(ClaimTypes.Email, user.Email));
                 claims.AddRange((await _usermanager.GetRolesAsync(user)).Select(
                     r => new Claim(ClaimTypes.Role, r)
-                ));
+                    ));
+                claims.AddRange(user.Membership.Select(
+                    m => new Claim(YavscClaimTypes.CircleMembership, m.CircleId.ToString())
+                    ));
                 ClaimsPrincipal principal = new ClaimsPrincipal(
                     new ClaimsIdentity(
                         new GenericIdentity(context.UserName, OAuthDefaults.AuthenticationType),
                         claims)
                         );
-                // TODO set a NameIdentifier, roles and scopes claims
                 context.HttpContext.User = principal;
-
                 context.Validated(principal);
             }
 
@@ -123,7 +128,10 @@ namespace Yavsc
 
         private Task GrantClientCredetails(OAuthGrantClientCredentialsContext context)
         {
-            ClaimsPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity(new GenericIdentity(context.ClientId, OAuthDefaults.AuthenticationType), context.Scope.Select(x => new Claim("urn:oauth:scope", x))));
+            var id = new GenericIdentity(context.ClientId, OAuthDefaults.AuthenticationType);
+            var claims = context.Scope.Select(x => new Claim("urn:oauth:scope", x));
+            var cid = new ClaimsIdentity(id, claims);
+            ClaimsPrincipal principal = new ClaimsPrincipal(cid);
 
             context.Validated(principal);
 

@@ -20,13 +20,17 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Controllers
 {
+    using System.Collections.Generic;
     using Yavsc.Abstract.Manage;
+    using Yavsc.Auth;
     using Yavsc.Helpers;
 
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        const string  nextPageTokenKey = "nextPageTokenKey";
+        const int defaultLen = 10;
         private readonly IEmailSender _emailSender;
         // private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
@@ -38,6 +42,7 @@ namespace Yavsc.Controllers
         //  TwilioSettings _twilioSettings;
 
         ApplicationDbContext _dbContext;
+        
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -49,7 +54,13 @@ namespace Yavsc.Controllers
             ApplicationDbContext dbContext)
         {
             _userManager = userManager;
+            
             _signInManager = signInManager;
+            var emailUserTokenProvider = new UserTokenProvider();
+            _userManager.RegisterTokenProvider("EmailConfirmation", emailUserTokenProvider);
+            
+            _userManager.RegisterTokenProvider("ResetPassword", emailUserTokenProvider);
+            
             // _userManager.RegisterTokenProvider("SMS",new UserTokenProvider());
             // _userManager.RegisterTokenProvider("Phone", new UserTokenProvider());
             _emailSender = emailSender;
@@ -60,8 +71,13 @@ namespace Yavsc.Controllers
             _dbContext = dbContext;
         }
 
-        const string  nextPageTokenKey = "nextPageTokenKey";
-        const int defaultLen = 10;
+
+        [Authorize(Roles = Constants.AdminGroupName)]
+        public IActionResult Index(string page, string len)
+        {
+            
+            return View();
+        }
 
         [Authorize(Roles = Constants.AdminGroupName)]
         [Route("Account/UserList/{page?}/{len?}")]
@@ -128,7 +144,9 @@ namespace Yavsc.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        var user = await _userManager.FindByNameAsync(model.UserName);
+                        var user = _dbContext.Users.Include(u=>u.Membership).FirstOrDefault(
+                            u=>u.UserName == model.UserName);
+                       
                         if (user != null)
                         {
                             if (!await _userManager.IsEmailConfirmedAsync(user))
@@ -145,8 +163,12 @@ namespace Yavsc.Controllers
 
                         if (result.Succeeded)
                         {
+                            await _userManager.AddClaimsAsync(user, user.Membership.Select(
+                                m => new Claim(YavscClaimTypes.CircleMembership, m.CircleId.ToString())
+                             ));
                             return Redirect(model.ReturnUrl ?? "/");
                         }
+
                         if (result.RequiresTwoFactor)
                         {
                             return RedirectToAction(nameof(SendCode), new { ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });

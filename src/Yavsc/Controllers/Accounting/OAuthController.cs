@@ -69,7 +69,8 @@ namespace Yavsc.Controllers
                     var accepted = Request.Headers["Accept"];
                     if (accepted.Contains("application/json"))
                     {
-                        return new BadRequestObjectResult(new { error = this.HttpContext.Items } );
+                        _logger.LogError("Invalid http status at authorisation");
+                        return new BadRequestObjectResult(new { error = Response.StatusCode} );
                     }
                 }
 
@@ -145,6 +146,7 @@ namespace Yavsc.Controllers
                 var accepted = Request.Headers["Accept"];
                 if (accepted.Contains("application/json"))
                 {
+                    _logger.LogInformation("serving available scopes");
                     return Ok(model);
                 }
             }

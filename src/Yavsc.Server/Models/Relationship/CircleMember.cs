@@ -13,6 +13,7 @@ namespace Yavsc.Models.Relationship
 
         [ForeignKey("CircleId")]
         public virtual Circle Circle { get; set; }
+        
         [Required]
         public string MemberId { get; set; }
 
