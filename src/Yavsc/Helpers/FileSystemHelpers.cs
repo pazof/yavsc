@@ -49,6 +49,11 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
             return item;
         }
 
+        /// <summary>
+        /// Create avatars
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="source"></param>
         private static void CreateAvatars(this ApplicationUser user, Bitmap source)
         {
             var dir = Startup.SiteSetup.Avatars;
@@ -216,6 +221,7 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
             // no server-side backup for this stream
             return $"{Startup.UserFilesOptions.RequestPath}/{flow.Owner.UserName}/live/"+GetFileName(flow);
         }
+        
         public static string GetFileName (this LiveFlow flow)
         {
             var fileInfo = new FileInfo(flow.DifferedFileName);
