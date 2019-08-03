@@ -37,6 +37,7 @@ namespace Yavsc.Models
     using Blog;
     using Yavsc.Abstract.Identity;
     using Yavsc.Server.Models.Blog;
+    using Yavsc.Server.Models.Access;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -65,13 +66,15 @@ namespace Yavsc.Models
             builder.Entity<ChatRoomAccess>().HasKey(p => new { room = p.ChannelName, user = p.UserId });
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.User);
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.Owner);
+            builder.Entity<BlogTrad>().HasKey(tr => new { post = tr.PostId, lang = tr.Lang });
+            builder.Entity<CircleAuthorizationToFile>().HasKey(a => new { cid=a.CircleId, path=a.FullPath });
+
 
             foreach (var et in builder.Model.GetEntityTypes())
             {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity") != null)
                     et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
-            builder.Entity<BlogTrad>().HasKey(tr => new { post = tr.PostId, lang = tr.Lang });
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -276,6 +279,8 @@ namespace Yavsc.Models
         public DbSet<LiveFlow> LiveFlow { get; set; }
 
         public DbSet<ChatRoomAccess> ChatRoomAccess { get; set; }
+
+        public DbSet<CircleAuthorizationToFile> CircleAuthorizationToFile { get; set; }
 
     }
 }
