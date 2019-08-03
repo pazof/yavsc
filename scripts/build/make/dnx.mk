@@ -28,13 +28,6 @@ git_status := $(shell git status -s --porcelain |wc -l)
 
 all: $(BINTARGETPATH)
 
-rc-num.txt-check:
-ifndef rc_num
-	@echo no rc num ... please, could you try and run 'make rc-num.txt' ?. 
-else
-	@echo 'Got rc num : $(rc_num)'
-endif
-
 
 restore:
 	touch project.json
@@ -67,7 +60,7 @@ bin/output/wwwroot/version: bin/output
 
 pack: $(NUGETSOURCE)/$(PKGFILENAME)
 
-$(NUGETSOURCE)/$(PKGFILENAME): $(BINTARGETPATH) $(SOLUTIONDIR)/rc-num.txt
+$(NUGETSOURCE)/$(PKGFILENAME): $(BINTARGETPATH) $(SOLUTIONDIR)/version.txt
 ifeq ($(git_status),0)
 	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
 else
