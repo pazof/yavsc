@@ -1,4 +1,5 @@
 using System.IO;
+using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.FileProviders;
@@ -7,6 +8,8 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.StaticFiles;
 using Microsoft.Extensions.Logging;
 using Yavsc.Abstract.FileSystem;
+using Yavsc.Services;
+using Yavsc.ViewModels.Auth;
 
 namespace Yavsc
 {
@@ -17,7 +20,8 @@ namespace Yavsc
 
         public static FileServerOptions AvatarsOptions { get; set; }
         public void ConfigureFileServerApp(IApplicationBuilder app,
-                SiteSettings siteSettings, IHostingEnvironment env, IAuthorizationService authorizationService)
+                SiteSettings siteSettings, IHostingEnvironment env,
+                 IAuthorizationService authorizationService)
         {
             var userFilesDirInfo = new DirectoryInfo( siteSettings.Blog );
             AbstractFileSystemHelpers.UserFilesDirName =  userFilesDirInfo.FullName;
@@ -33,15 +37,18 @@ namespace Yavsc
             UserFilesOptions.EnableDefaultFiles=true;
             UserFilesOptions.StaticFileOptions.ServeUnknownFileTypes=true;
 
-            /* TODO needs a better design, at implementation time (don't use database, but in memory data) 
+            /* TODO needs a better design, at implementation time (don't use database, but in memory data) */
              UserFilesOptions.StaticFileOptions.OnPrepareResponse += async context =>
              {
                  var uname = context.Context.User.GetUserName();
                  var path = context.Context.Request.Path;
                  var result = await authorizationService.AuthorizeAsync(context.Context.User, new ViewFileContext
                  { UserName = uname, File = context.File, Path = path } , new ViewRequirement());
+                 if (!result) {
+                     context.Context.Response.StatusCode = 403;
+                     context.Context.Abort();
+                 }
              };
-             */
             var avatarsDirInfo = new DirectoryInfo(Startup.SiteSetup.Avatars);
             if (!avatarsDirInfo.Exists) avatarsDirInfo.Create();
             AvatarsDirName = avatarsDirInfo.FullName;
