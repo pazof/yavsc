@@ -146,6 +146,7 @@ namespace Yavsc.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCircleAuthorizationToFile([FromRoute] long id)
         {
+            
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
