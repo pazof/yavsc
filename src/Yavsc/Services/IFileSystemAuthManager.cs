@@ -1,8 +1,9 @@
 using System;
+using System.Security.Claims;
 using System.Security.Principal;
-using Yavsc.Models;
 
-namespace Yavsc.Services {
+namespace Yavsc.Services
+{
     [Flags]
     public enum FileAccessRight {
         None = 0,
@@ -22,34 +23,9 @@ namespace Yavsc.Services {
         /// <param name="user"></param>
         /// <param name="normalizedFullPath"></param>
         /// <returns></returns>
-        FileAccessRight GetFilePathAccess(IPrincipal user, string normalizedFullPath);
+        FileAccessRight GetFilePathAccess(ClaimsPrincipal user, string normalizedFullPath);
 
         void SetAccess (long circleId, string normalizedFullPath, FileAccessRight access);
 
-    }
-
-    public class FileSystemAuthManager : IFileSystemAuthManager
-    {
-        ApplicationDbContext _dbContext;
-
-        public FileSystemAuthManager(ApplicationDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
-        public FileAccessRight GetFilePathAccess(IPrincipal user, string normalizedFullPath)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string NormalizePath(string path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetAccess(long circleId, string normalizedFullPath, FileAccessRight access)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

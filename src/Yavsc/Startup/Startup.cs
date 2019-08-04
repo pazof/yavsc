@@ -232,6 +232,7 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, SendMessageHandler>();
             services.AddSingleton<IConnexionManager, HubConnectionManager>();
             services.AddSingleton<ILiveProcessor, LiveProcessor>();
+            services.AddSingleton<IFileSystemAuthManager, FileSystemAuthManager>();
 
             services.AddMvc(config =>
             {
