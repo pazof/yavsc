@@ -1,4 +1,5 @@
 
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
@@ -20,7 +21,7 @@ namespace Yavsc.Controllers
         // GET: Circle
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Circle.ToListAsync());
+            return View(await _context.Circle.Where(c=>c.OwnerId==User.GetUserId()).ToListAsync());
         }
 
         // GET: Circle/Details/5
@@ -36,14 +37,15 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-
+            var uid = User.GetUserId();
+            if (uid != circle.OwnerId) return this.HttpUnauthorized();
             return View(circle);
         }
 
         // GET: Circle/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new Circle { OwnerId = User.GetUserId() } );
         }
 
         // POST: Circle/Create
@@ -51,10 +53,14 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Circle circle)
         {
+            var uid = User.GetUserId();
             if (ModelState.IsValid)
             {
+                if (uid != circle.OwnerId)
+                    return this.HttpUnauthorized();
+
                 _context.Circle.Add(circle);
-                await _context.SaveChangesAsync(User.GetUserId());
+                await _context.SaveChangesAsync(uid);
                 return RedirectToAction("Index");
             }
             return View(circle);
@@ -69,10 +75,14 @@ namespace Yavsc.Controllers
             }
 
             Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
+            
             if (circle == null)
             {
                 return HttpNotFound();
             }
+            var uid = User.GetUserId();
+            if (uid != circle.OwnerId)
+                return this.HttpUnauthorized();
             return View(circle);
         }
 
@@ -81,10 +91,13 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Circle circle)
         {
+
             if (ModelState.IsValid)
             {
+                var uid = User.GetUserId();
+                if (uid != circle.OwnerId) return this.HttpUnauthorized();
                 _context.Update(circle);
-                await _context.SaveChangesAsync(User.GetUserId());
+                await _context.SaveChangesAsync(uid);
                 return RedirectToAction("Index");
             }
             return View(circle);
@@ -100,11 +113,13 @@ namespace Yavsc.Controllers
             }
 
             Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
-            if (circle == null)
+             if (circle == null)
             {
                 return HttpNotFound();
             }
-
+             var uid = User.GetUserId();
+             if (uid != circle.OwnerId) return this.HttpUnauthorized();
+            
             return View(circle);
         }
 
@@ -114,8 +129,10 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
+             var uid = User.GetUserId();
+             if (uid != circle.OwnerId) return this.HttpUnauthorized();
             _context.Circle.Remove(circle);
-            await _context.SaveChangesAsync(User.GetUserId());
+            await _context.SaveChangesAsync(uid);
             return RedirectToAction("Index");
         }
     }

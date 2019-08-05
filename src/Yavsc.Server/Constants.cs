@@ -8,6 +8,7 @@ namespace Yavsc
         public const string ApplicationName = "Yavsc",
             CompanyClaimType = "https://schemas.pschneider.fr/identity/claims/Company",
             UserNameRegExp = @"^[a-zA-Z][a-zA-Z0-9._-]*$",
+            UserFileNamePatternRegExp = @"^([a-zA-Z0-9._-]*/)*[a-zA-Z0-9._-]+$",
             AuthorizePath = "~/authorize",
         	TokenPath = "~/token",
             LoginPath = "~/signin",
