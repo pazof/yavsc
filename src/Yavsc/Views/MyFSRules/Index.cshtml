@@ -1,0 +1,29 @@
+@model IEnumerable<Yavsc.Server.Models.Access.CircleAuthorizationToFile>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <tr>
+        <th>@SR["Circle"]</th>
+        <th>@SR["Path"]</th>
+        <th></th>
+    </tr>
+    
+@foreach (var item in Model) {
+    <tr>
+    <td>@item.Circle.Name</td>
+    <td>@item.FullPath</td>
+        <td>
+            @Html.ActionLink("Details", "Details", new { circleId=item.CircleId, fullPath=item.FullPath }) |
+            @Html.ActionLink("Delete", "Delete",  new { circleId=item.CircleId, fullPath=item.FullPath })
+        </td>
+    </tr>
+}
+</table>
