@@ -1,5 +1,5 @@
-DESTDIR=/var/www/yavscpre
-PRODDESTDIR=/var/www/yavsc
+DESTDIR=/srv/www/yavscpre
+PRODDESTDIR=/srv/www/yavsc
 HOSTING=localhost
 ASPNET_LOG_LEVEL=debug
 SOURCE_DIR=$(HOME)/workspace/yavsc
