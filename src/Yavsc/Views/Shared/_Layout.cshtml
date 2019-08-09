@@ -65,7 +65,8 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a asp-controller="Home" asp-action="Index" asp-route-id="" class="navbar-brand">@SiteSettings.Value.Title</a>
+                    <a asp-controller="Home" asp-action="Index" asp-route-id="" class="navbar-brand">
+                    <img src="@SiteSettings.Value.Logo" alt="@SiteSettings.Value.Title"/></a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">

@@ -9,7 +9,7 @@ namespace Yavsc
 
         public string StyleSheet { get; set; }
         public string FavIcon { get; set; }
-        public string Icon { get; set; }
+        public string Logo { get; set; }
         /// <summary>
         /// Conceptually,
         /// This authorisation server only has this present site as unique audience.
