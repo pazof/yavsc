@@ -32,6 +32,7 @@
 		}
 	],
 	"settings": {
-		"mocha.enabled": true
+		"mocha.enabled": true,
+		"git.ignoreLimitWarning": true
 	}
 }
