@@ -1,19 +1,17 @@
 .navbar-link,
-.navbar-brand,
 .navbar-nav .dropdown>a {
     background-color: rgba(0, 0, 0, .2);
     border-radius: 2em;
 }
 
 .navbar-link:hover,
-.navbar-brand:hover,
-.navbar-link:focus,
-.navbar-brand:focus {
+.navbar-link:focus {
     background-color: rgba(0, 0, 0, .4);
 }
 
-.navbar-inverse .navbar-brand {
-    background-color: unset
+
+.navbar-brand:focus {
+    background-color: unset;
 }
 
 .ql-editor {
