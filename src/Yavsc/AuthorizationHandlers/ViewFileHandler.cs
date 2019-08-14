@@ -20,7 +20,7 @@ namespace Yavsc.AuthorizationHandlers {
                 if (!fileContext.Path.StartsWith ("/"))
                     context.Fail ();
                 else {
-                    var rights = _authManager.GetFilePathAccess (context.User, fileContext.Path.Substring (1));
+                    var rights = _authManager.GetFilePathAccess (context.User, fileContext.Path);
                     if ((rights & FileAccessRight.Read) > 0)
                         context.Succeed (requirement);
                     else context.Fail ();
