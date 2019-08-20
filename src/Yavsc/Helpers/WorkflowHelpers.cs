@@ -24,14 +24,11 @@ namespace Yavsc.Helpers
            .Include(p=>p.Performer.DeviceDeclaration)
            .Where(p => p.Active && p.Activity.Any(u=>u.DoesCode==actCode)).OrderBy( x => x.Rate )
            .ToArray();
-           List<PerformerProfileViewModel> result = new List<PerformerProfileViewModel> ();
+            List<PerformerProfileViewModel> result = new List<PerformerProfileViewModel> ();
+            result.AddRange(
+                    actors.Select(a=> new PerformerProfileViewModel(a, actCode, settings?.FirstOrDefault(s =>   s.UserId == a.PerformerId))));
 
-           foreach (var perfer in actors)
-           {
-                var view = new PerformerProfileViewModel(perfer, actCode, settings?.FirstOrDefault(s => s.UserId == perfer.PerformerId));
-                result.Add(view);
-           }
-           return result;
+            return result;
         }
 
     }

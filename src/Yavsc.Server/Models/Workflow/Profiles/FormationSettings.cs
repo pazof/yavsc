@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Workflow.Profiles
 {
@@ -14,6 +15,9 @@ namespace Yavsc.Models.Workflow.Profiles
         {
             get; set;
         }
+
+        [YaStringLength(1024)]
+        public string DisplayName { get; set; }
 
     }
 }

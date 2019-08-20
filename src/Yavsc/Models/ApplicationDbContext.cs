@@ -12,6 +12,7 @@ using Yavsc.Server.Models.EMailing;
 using Yavsc.Server.Models.IT.SourceCode;
 using Yavsc.Server.Models.IT;
 using Yavsc.Models.Streaming;
+using Yavsc.Models.Musical;
 
 namespace Yavsc.Models
 {
@@ -68,7 +69,7 @@ namespace Yavsc.Models
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.Owner);
             builder.Entity<BlogTrad>().HasKey(tr => new { post = tr.PostId, lang = tr.Lang });
             builder.Entity<CircleAuthorizationToFile>().HasKey(a => new { cid=a.CircleId, path=a.FullPath });
-
+            builder.Entity<InstrumentRating>().HasAlternateKey(i => new { Instrument= i.InstrumentId, owner = i.OwnerId });
 
             foreach (var et in builder.Model.GetEntityTypes())
             {
@@ -281,6 +282,8 @@ namespace Yavsc.Models
         public DbSet<ChatRoomAccess> ChatRoomAccess { get; set; }
 
         public DbSet<CircleAuthorizationToFile> CircleAuthorizationToFile { get; set; }
+
+        public DbSet<InstrumentRating> InstrumentRating { get; set; }
 
     }
 }

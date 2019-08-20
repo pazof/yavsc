@@ -163,6 +163,7 @@ namespace Yavsc.Controllers
 
                         if (result.Succeeded)
                         {
+                            // FIXME should be done at granting resources
                             await _userManager.AddClaimsAsync(user, user.Membership.Select(
                                 m => new Claim(YavscClaimTypes.CircleMembership, m.CircleId.ToString())
                              ));

@@ -1,0 +1,30 @@
+@model Yavsc.Models.Musical.InstrumentRating
+
+@{
+    ViewData["Title"] = @SR["Details"];
+}
+
+<h2>@SR["Details"]</h2>
+
+<div>
+    <h4>InstrumentRating</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Rate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Rate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Instrument.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Instrument.Name)
+        </dd>
+    </dl>
+</div>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a> |
+    <a asp-action="Index">@SR["Back to List"]</a>
+</p>

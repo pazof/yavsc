@@ -4,7 +4,6 @@
 <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
-<link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
 <style>
     #map {
         width: 100%;
@@ -83,8 +82,16 @@
                                 <div id='reason1'>
 <textarea rows="15" asp-for="Reason" type="text" name="Reason" id="Reason" maxlength="4096" class="form-control"></textarea>
 <span asp-validation-for="Reason" class="text-danger"></span> 
-@Html.HiddenFor(model=>model.Location.Latitude)
- @Html.HiddenFor(model=>model.Location.Longitude)
+
+<dl>
+<dt>@SR["Coordonées GPS"]
+</dt>
+<dd>
+ <input class="text-box" id="Location_Latitude" name="Location.Latitude" type="text" value="@Model.Location.Latitude" readonly/>
+ <input class="text-box" id="Location_Longitude" name="Location.Longitude" type="text" value="@Model.Location.Longitude" readonly/>
+</dd>
+</dl>
+
  
 </div>
         </div>
@@ -96,7 +103,7 @@
 <div class="form-group">
     <div class="col-md-offset-2 col-md-10">
   
-  <input type="submit" class="btn btn-default" value="Créer"></input>
+  <input type="submit" class="btn btn-default" value="Créer" />
  
   </div>
 </div>

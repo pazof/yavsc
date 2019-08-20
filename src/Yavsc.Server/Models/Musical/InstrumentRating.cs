@@ -8,7 +8,14 @@ namespace Yavsc.Models.Musical
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id {get; set; }
-        public Instrument Instrument { get; set; }
+
+        [Required]
+        public long InstrumentId { get; set; }
+       
+        [ForeignKey("InstrumentId")]
+        public virtual Instrument Instrument { get; set; }
+
+        [Range(-100,100)]
         public int Rate { get; set; }
 
         public string OwnerId { get; set; }

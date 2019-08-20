@@ -502,4 +502,6 @@ Facture réglée: {5}</value></data>
 <data name="Enroll"><value>Enrôler</value></data>
 <data name="Fire"><value>Licencier</value></data>
 <data name="LiveFlow"><value>Flux live</value></data>
+<data name="Instrumentation"><value>Instrumentation</value></data>
+
 </root>
