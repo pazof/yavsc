@@ -7,99 +7,8 @@
         height: 250px;
     }
 </style>
-} 
-@section scripts {
-<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
-<script>
-     $(document).ready(function(){
-         var config = {
-        mapId: 'map',
-        addrId: 'OrganizationAddress_Address',
-        longId: 'OrganizationAddress_Longitude',
-        latId: 'OrganizationAddress_Latitude',
-        addrValidationId: 'AddressError',
-        formValidId: 'valsum',
-        locComboId: 'loccomb'
-    };
-     $.validator.setDefaults({
-       messages: {
-        remote:  "Ce lieu n'est pas identifié par les services de géo-localisation Google",
-        required: "Veuillez renseigner ce champ"
-       }
-   });
-
-    var gmap = new google.maps.Map(document.getElementById('map'), {
-	    zoom: 16,
-	    center: { lat: 48.862854, lng: 2.2056466 }
-	  });
-    var marker;
-
-   function chooseLoc(sender,loc) {
-        if (sender === 'user') $('#'+config.addrId).val(loc.formatted_address);
-        var pos = loc.geometry.location;
-        var lat = new Number(pos.lat);
-        var lng = new Number(pos.lng);
-        gmap.setCenter(pos);
-        if (marker) { 
-            marker.setMap(null);
-        }
-        marker = new google.maps.Marker({
-            map: gmap,
-            draggable: true,
-            animation: google.maps.Animation.DROP,
-            position: pos
-            });
-        google.maps.event.addListener(marker, 'dragend', function() {
-            // TODO reverse geo code
-            var pos = marker.getPosition();
-                $('#'+config.latId).val(pos.lat);
-                $('#'+config.longId).val(pos.lng);
-        });
-        $('#'+config.addrId).valid();
-        $('#'+config.addrValidationId).empty();
-        $('#'+config.formValidId).empty();
-        return true;
-    }
-
-    $('#'+config.addrId).rules("add",
-    {
-        remote: {
-            url: 'https://maps.googleapis.com/maps/api/geocode/json',
-            type: 'get',
-            data: {
-                key: '@Startup.GoogleSettings.BrowserApiKey',
-                sensor: false,
-                address: function () { return $('#'+config.addrId).val() }
-                },
-            dataType: 'json',
-            dataFilter: function(datastr,type) {
-                $('#'+config.locComboId).html("");
-                var data = JSON.parse(datastr);
-                data.results.forEach(function(element) {
-                    if (element.formatted_address !== $('#'+config.addrId).val()) {
-                        $('<li>'+element.formatted_address+'</li>')
-                        .data("geoloc",element)
-                        .click(function() { chooseLoc('user',$(this).data("geoloc")) })
-                        .appendTo($('#'+config.locComboId));}
-                    else {  }
-                });
-               if  ((data.status === 'OK') && (data.results.length == 1))
-                { 
-                    chooseLoc('google',data.results[0]);
-                    return true;
-                } 
-                return false;
-                },
-            error: function(xhr, textStatus, errorThrown)
-                {
-                console.log('ajax loading error ... '+textStatus+' ... '+ errorThrown);
-                return false;
-                }
-         }
-        });
-    });
-    </script>
 }
+
 <h2>@ViewData["Title"]</h2>
 
 @Html.DisplayFor(model => model)
@@ -192,19 +101,25 @@
             <span id="AddressError" asp-validation-for="OrganizationAddress.Address" class="text-danger"></span>
             <ul id="loccomb" >
             </ul>
-            <div id="map"></div>
+           <div id="map" class="map" data-val="valloc" data-addr="OrganizationAddress_Address" data-loccombo="loccomb" data-lat="OrganizationAddress_Latitude" data-lon="OrganizationAddress_Longitude" data-val-slat="@Model.OrganizationAddress.Latitude" data-val-slon="@Model.OrganizationAddress.Longitude" ></div>
+
         </div>
     </div>
-    @Html.Hidden("OrganizationAddress.Latitude") @Html.Hidden("OrganizationAddress.Longitude") @Html.Hidden("PerformerId")
+    @Html.Hidden("OrganizationAddress.Latitude") 
+    @Html.Hidden("OrganizationAddress.Longitude") 
+    @Html.Hidden("PerformerId")
     <button type="submit" class="btn btn-default">@SR["Save these settings"]</button>
 
 </form>
+
+<a asp-controller="InstrumentRating" asp-action="Index">@SR["Instrumentation"]</a>
 
 <form asp-controller="Manage" asp-action="UnsetActivity" method="post" class="form-horizontal" role="form">
     @Html.Hidden("PerfomerId")
     <button type="submit" class="btn btn-default">@SR["UnsetActivity"]</button>
 </form>
 
- @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+@{ await Html.RenderPartialAsync("_MapScriptsPartial"); }
 

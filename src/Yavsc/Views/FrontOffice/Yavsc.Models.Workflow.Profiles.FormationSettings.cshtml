@@ -1,0 +1,26 @@
+@model Yavsc.Models.Musical.Profiles.FormationSettings
+
+
+@if (Model == null) {
+<p>@SR["ENOFORMATIONSETTINGS"]</p>
+}
+@if (Model != null) {
+<fieldset>
+<legend>@SR["Formation"] @Model.DisplayName</legend>
+    <p>@Model.Summary</p>
+
+    <h2>
+
+    @foreach(var inst in Model.Instruments) {
+        @Html.DisplayNameFor(model => model.Tool)
+    }
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Tool)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tool)
+        </dd>
+    </dl>
+  </fieldset>
+}
