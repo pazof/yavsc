@@ -124,7 +124,7 @@ namespace Yavsc.ApiControllers
             return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
         }
 
-        // POST: api/BugApi
+        // POST: api/bug
         [HttpPost]
         public async Task<IActionResult> PostBug([FromBody] Bug bug)
         {
