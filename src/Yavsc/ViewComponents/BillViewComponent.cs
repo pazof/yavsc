@@ -81,7 +81,8 @@ namespace Yavsc.ViewComponents
                     }
                     ViewComponentContext.ViewContext.Writer = oldWriter;
                     
-                    var genrtrData = new PdfGenerationViewModel{ 
+                    var genrtrData = new PdfGenerationViewModel
+                    { 
                             Temp = Startup.Temp,
                             TeXSource = tex, 
                             DestDir = AbstractFileSystemHelpers.UserBillsDirName,

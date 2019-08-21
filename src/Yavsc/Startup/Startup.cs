@@ -36,6 +36,7 @@ namespace Yavsc
     using Services;
     using Yavsc.Abstract.FileSystem;
     using Yavsc.AuthorizationHandlers;
+    using Yavsc.Helpers;
     using static System.Environment;
 
     public partial class Startup

@@ -1,14 +1,17 @@
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using Yavsc.ViewModels.UserFiles;
 
-namespace Yavsc.Abstract.FileSystem
+using System;
+using System.Threading;
+using Yavsc.ViewModels;
+
+namespace Yavsc.Helpers
 {
     public static class AbstractFileSystemHelpers
     {
-
         public static string UserBillsDirName {  set; get; }
         public static string UserFilesDirName {  set; get; }
         
@@ -20,12 +23,12 @@ namespace Yavsc.Abstract.FileSystem
                 if (!IsValidDirectoryName(name) || name.Equals("..") || name.Equals("."))
                         return false;
             }
-            if (path[path.Length-1]==FileSystemConstants.RemoteDirectorySeparator) return false;
+            if (path[path.Length-1]==RemoteDirectorySeparator) return false;
             return true;
         }
         public static bool IsValidDirectoryName(this string name)
         {
-            return !name.Any(c => !FileSystemConstants.ValidFileNameChars.Contains(c));
+            return !name.Any(c => !ValidFileNameChars.Contains(c));
         }
         // Ensure this path is canonical,
         // No "dirto/./this", neither "dirt/to/that/"
@@ -37,24 +40,27 @@ namespace Yavsc.Abstract.FileSystem
             StringBuilder sb = new StringBuilder();
             foreach (var c in fileName)
             {
-                if (FileSystemConstants.ValidFileNameChars.Contains(c))
+                if (ValidFileNameChars.Contains(c))
                     sb.Append(c);
                 else sb.Append('_');
             }
            return sb.ToString();
         }
   
-        public static UserDirectoryInfo GetUserFiles(this ClaimsPrincipal user, string subdir)
+        public static UserDirectoryInfo GetUserFiles(string userName, string subdir)
         {
 
-            UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, user.Identity.Name, subdir);
+            UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, userName, subdir);
             return di;
         }
-    }
-
-    public static  class FileSystemConstants
-    {
         public const char RemoteDirectorySeparator = '/';
         public static char[] ValidFileNameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. ".ToCharArray();
+   
+
+        public static Func<string,string,long,string>
+          SignFileNameFormat = new Func<string,string,long,string> ((signType,billingCode,estimateId) => $"sign-{billingCode}-{signType}-{estimateId}.png");
+
+
+        
     }
 }

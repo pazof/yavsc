@@ -48,10 +48,12 @@
     "Microsoft.Dnx.Runtime": "1.0.0-rc1-final",
     "xunit.runner.dnx": "2.1.0-rc1-build204",
     "Yavsc.Server": { 
-       "target": "project"
+       "target": "project",
+       "type": "build"
            },
     "Yavsc": {
-      "target": "project"
+      "target": "project",
+      "type": "build"
     }
   },
   "frameworks": {

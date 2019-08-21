@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
 
@@ -41,7 +42,7 @@ namespace Yavsc.ViewModels.Streaming
             long usage = user.DiskUsage;
 
             var item = new FileRecievedInfo();
-            item.FileName = Yavsc.Abstract.FileSystem.AbstractFileSystemHelpers.FilterFileName (destFileName);
+            item.FileName = AbstractFileSystemHelpers.FilterFileName (destFileName);
             item.MimeType = contentType;
             item.DestDir = root;
             var fi = new FileInfo(Path.Combine(root, item.FileName));

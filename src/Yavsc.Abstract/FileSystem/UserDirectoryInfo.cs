@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Yavsc.Abstract.FileSystem;
+using Yavsc.Helpers;
 
 namespace Yavsc.ViewModels.UserFiles
 {
@@ -48,10 +49,5 @@ namespace Yavsc.ViewModels.UserFiles
                 SubDirectories = new DirectoryShortInfo[0];
             }
         }
-    }
-
-    public class DirectoryShortInfo: IDirectoryShortInfo {
-        public string Name { get; set; }
-        public bool IsEmpty { get; set; }
     }
 }

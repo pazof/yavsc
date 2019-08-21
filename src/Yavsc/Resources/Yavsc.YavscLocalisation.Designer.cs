@@ -2094,5 +2094,11 @@ namespace Yavsc {
                 return ResourceManager.GetString("LiveFlow", resourceCulture);
             }
         }
+        
+        public static string Instrumentation {
+            get {
+                return ResourceManager.GetString("Instrumentation", resourceCulture);
+            }
+        }
     }
 }

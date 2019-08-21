@@ -9,6 +9,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.OptionsModel;
+ using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -16,7 +17,6 @@ namespace Yavsc.Controllers
     using Models.Billing;
     using Models.Workflow;
     using ViewModels.Auth;
-    using Yavsc.Abstract.FileSystem;
 
     [Authorize]
     public class EstimateController : Controller
@@ -163,7 +163,9 @@ namespace Yavsc.Controllers
                 return HttpNotFound();
             }
             
-            ViewBag.Files = User.GetUserFiles(null);
+            ViewBag.Files =  Yavsc.Helpers.FileSystemHelpers.GetFileName(null);
+            
+            // Yavsc.Helpers.GetUserFiles(User, null);
 
             return View(estimate);
         }
