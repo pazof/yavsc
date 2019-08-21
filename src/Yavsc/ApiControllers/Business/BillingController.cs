@@ -2,26 +2,25 @@ using System.IO;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using System.Web.Routing;
-    using System.Linq;
-    using Microsoft.Data.Entity;
-    using System.Threading.Tasks;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Localization;
-    using Microsoft.Extensions.OptionsModel;
-    using System;
-    using System.Security.Claims;
+using System.Linq;
+using Microsoft.Data.Entity;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.OptionsModel;
+using Newtonsoft.Json;
+using System;
+using System.Security.Claims;
+using Yavsc.Helpers;
+using Yavsc.ViewModels;
 
 namespace Yavsc.ApiControllers
 {
     using Models;
-    using Helpers;
     using Services;
 
     using Models.Messaging;
     using ViewModels.Auth;
-    using Newtonsoft.Json;
-    using Yavsc.ViewModels;
-    using Yavsc.Abstract.FileSystem;
 
     [Route("api/bill"), Authorize]
     public class BillingController : Controller
@@ -144,7 +143,7 @@ namespace Yavsc.ApiControllers
                 return new ChallengeResult();
             }
 
-            var filename = FileSystemHelpers.SignFileNameFormat("pro",billingCode,id);
+            var filename = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, id);
             FileInfo fi = new FileInfo(Path.Combine(AbstractFileSystemHelpers.UserBillsDirName, filename));
             if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
             return File(fi.OpenRead(), "application/x-pdf", filename); ;
@@ -179,7 +178,7 @@ namespace Yavsc.ApiControllers
                 return new ChallengeResult();
             }
             
-            var filename = FileSystemHelpers.SignFileNameFormat("pro",billingCode,id);
+            var filename = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, id);
             FileInfo fi = new FileInfo(Path.Combine(AbstractFileSystemHelpers.UserBillsDirName, filename));
             if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
             return File(fi.OpenRead(), "application/x-pdf", filename); ;

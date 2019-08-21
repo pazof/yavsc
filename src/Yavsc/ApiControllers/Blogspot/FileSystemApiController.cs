@@ -11,7 +11,7 @@ namespace Yavsc.ApiControllers
 {
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
-    using Yavsc.Abstract.FileSystem;
+    using Yavsc.Helpers;
     using Yavsc.Exceptions;
     using Yavsc.Models.FileSystem;
 
@@ -48,7 +48,7 @@ namespace Yavsc.ApiControllers
             if (subdir !=null)
                 if (!subdir.IsValidYavscPath())
                     return new BadRequestResult();
-            var files = User.GetUserFiles(subdir);
+            var files = AbstractFileSystemHelpers.GetUserFiles(User.Identity.Name, subdir);
             return Ok(files);
         }
 
@@ -89,7 +89,7 @@ namespace Yavsc.ApiControllers
             return Ok(received);
         }
 
-        [Route("/api/addquota/{len}")]
+        [Route("/api/fs/addquota/{len}")]
         [Authorize("AdministratorOnly")]
         public IActionResult AddQuota(int len)
         {
@@ -101,6 +101,19 @@ namespace Yavsc.ApiControllers
             dbContext.SaveChanges(uid);
             return Ok(len);
         }
+
+        [Route("/api/fs/move")]
+        [Authorize()]
+        public IActionResult Move(string from, string to)
+        {
+            var uid = User.GetUserId();
+            var user = dbContext.Users.Single(
+                u => u.Id == uid
+            );
+
+            return Ok();
+        }
+
 
         [HttpDelete]
         public async Task <IActionResult> Delete (string id)

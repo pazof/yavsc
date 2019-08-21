@@ -1,10 +1,10 @@
 using Microsoft.AspNet.Mvc;
+using System.Threading.Tasks;
+using Yavsc.Helpers;
+using Yavsc.ViewModels.UserFiles;
 
 namespace Yavsc.ViewComponents
 {
-    using System.Threading.Tasks;
-    using Yavsc.Abstract.FileSystem;
-    using Yavsc.ViewModels.UserFiles;
 
     public class DirectoryViewComponent : ViewComponent
     {

@@ -99,7 +99,7 @@ namespace Yavsc.Controllers
         public IActionResult EstimatePdf(long id)
         {
             ViewBag.TempDir = Startup.SiteSetup.TempDir;
-            ViewBag.BillsDir =  AbstractFileSystemHelpers.UserBillsDirName;
+            ViewBag.BillsDir = AbstractFileSystemHelpers.UserBillsDirName;
             var estimate = _context.Estimates.Include(x => x.Query)
             .Include(x => x.Query.Client)
             .Include(x => x.Query.PerformerProfile)

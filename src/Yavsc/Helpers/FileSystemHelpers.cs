@@ -1,18 +1,13 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Net.Mime;
 using System.Security.Claims;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.Http;
-using Microsoft.Extensions.Logging;
-using Yavsc.Abstract.FileSystem;
 using Yavsc.Exceptions;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
@@ -21,16 +16,12 @@ using Yavsc.ViewModels;
 
 namespace Yavsc.Helpers
 {
-    public static class FileSystemHelpers
+    public static class FileSystemHelpers 
     {
-        public static Func<string,string,long,string>
-          SignFileNameFormat = new Func<string,string,long,string> ((signType,billingCode,estimateId) => $"sign-{billingCode}-{signType}-{estimateId}.png");
-
-
-public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signtype)
+        public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signtype)
         {
             var item = new FileRecievedInfo();
-            item.FileName = SignFileNameFormat("pro",billingCode,estimateId);
+            item.FileName = AbstractFileSystemHelpers.SignFileNameFormat("pro",billingCode,estimateId);
             item.MimeType = formFile.ContentDisposition;
             
             var destFileName = Path.Combine(Startup.SiteSetup.Bills, item.FileName);
@@ -129,7 +120,7 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
             long usage = user.DiskUsage;
 
             var item = new FileRecievedInfo();
-            item.FileName = Yavsc.Abstract.FileSystem.AbstractFileSystemHelpers.FilterFileName (destFileName);
+            item.FileName = AbstractFileSystemHelpers.FilterFileName (destFileName);
             item.MimeType = contentType;
             item.DestDir = root;
             var fi = new FileInfo(Path.Combine(root, item.FileName));
@@ -165,9 +156,8 @@ public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, st
 
         public static HtmlString FileLink(this RemoteFileInfo info, string username, string subpath)
         {
-            return new HtmlString( Startup.UserFilesOptions.RequestPath+"/"+ username + 
-                "/" + (( subpath == null ) ? "" : "/" + subpath ) +
-             info.Name );
+            return new HtmlString( 
+                $"{Startup.UserFilesOptions.RequestPath}/{username}/{subpath}/{info.Name}" );
         }
         public static FileRecievedInfo ReceiveAvatar(this ApplicationUser user, IFormFile formFile)
         {
