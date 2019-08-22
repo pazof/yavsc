@@ -89,28 +89,40 @@ namespace Yavsc.ApiControllers
             return Ok(received);
         }
 
-        [Route("/api/fs/addquota/{len}")]
+        [Route("/api/fsquota/add/{uname}/{len}")]
         [Authorize("AdministratorOnly")]
-        public IActionResult AddQuota(int len)
+        public IActionResult AddQuota(string uname, int len)
         {
             var uid = User.GetUserId();
             var user = dbContext.Users.Single(
-                u => u.Id == uid
+                u => u.UserName == uname
             );
             user.AddQuota(len);
             dbContext.SaveChanges(uid);
             return Ok(len);
         }
 
-        [Route("/api/fs/move")]
+        [Route("/api/movefile")]
         [Authorize()]
-        public IActionResult Move(string from, string to)
+        public IActionResult MoveFile(string from, string to)
         {
             var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
+            throw new NotImplementedException();
+            return Ok();
+        }
 
+        [Route("/api/movedir")]
+        [Authorize()]
+        public IActionResult MoveDir(string from, string to)
+        {
+            var uid = User.GetUserId();
+            var user = dbContext.Users.Single(
+                u => u.Id == uid
+            );
+            throw new NotImplementedException();
             return Ok();
         }
 
