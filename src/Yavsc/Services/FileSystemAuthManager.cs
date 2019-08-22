@@ -24,13 +24,27 @@ namespace Yavsc.Services
             // Assert (normalizedFullPath!=null)
             var parts = normalizedFullPath.Split('/');
 
+            // below 4 parts, no file name.
             if (parts.Length<4) return FileAccessRight.None;
-            var funame = parts[2];
+            
             var filePath = string.Join("/",parts.Skip(3));
 
-            _logger.LogInformation($"{normalizedFullPath} from {funame}");
+            var firstFileNamePart = parts[3];
+            if (firstFileNamePart == "pub") 
+                {
+                    _logger.LogInformation("Serving public file.");
+                    return FileAccessRight.Read;
+                }
 
-            if (funame == user?.GetUserName()) return FileAccessRight.Read | FileAccessRight.Write;
+            var funame = parts[2];
+            _logger.LogInformation($"{normalizedFullPath} from {funame}");
+           
+            if (funame == user?.GetUserName()) 
+                {
+                    _logger.LogInformation("Serving file to owner.");
+                    return FileAccessRight.Read | FileAccessRight.Write;
+                }
+
 
             var ucl = user.Claims.Where(c => c.Type == YavscClaimTypes.CircleMembership).Select(c => long.Parse(c.Value)).Distinct().ToArray();
             
