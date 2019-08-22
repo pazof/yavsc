@@ -1,19 +1,22 @@
 {
-  "Dnx": {
-    "enabled": true,
-    "enablePackageRestore": false,
-    "projects": "src/*/project.json" 
-  },
-  "MSBuild": {
-    "enabled": false
-  },
-  "DotNet": {
-    "enabled": false,
-    "enablePackageRestore": false,
-    "script": {
-      "enableScriptNuGetReferences": true,
-      "defaultTargetFramework": "dnx451"
-    }
-  },
-  "packages": "packages"
+	"dotnet": {
+		"enabled": false
+	},
+	"msbuild": {
+		"enabled": false
+	},
+	"Dnx": {
+		"enabled": true,
+		"enablePackageRestore": true,
+		"projects": "src/*/project.json;*/project.json;project.json;test/*/project.json" 
+	},
+	"fileOptions": {
+    "systemExcludeSearchPatterns": [
+      "**/bin/**/*",
+      "**/obj/**/*",
+      "**/node_modules/**/*"
+    ],
+    "userExcludeSearchPatterns": []
+  }
+
 }
