@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
-using Yavsc.Helpers;
 using Yavsc.Models;
 
 namespace Yavsc.ApiControllers
@@ -44,7 +43,7 @@ namespace Yavsc.ApiControllers
 
         [HttpGet("{*subdir}")]
         public IActionResult GetDir(string subdir="")
-        {
+        { 
             if (subdir !=null)
                 if (!subdir.IsValidYavscPath())
                     return new BadRequestResult();
