@@ -104,19 +104,17 @@ window.ChatHubHandler = (function ($) {
       }
       $('<li></li>').append(tag + ': ' + targetid + ': ').append(message).addClass(tag).appendTo(notifications);
     };
-    
+
     chat.client.notifyUserInRoom = function (tag, room, message) {
-      $('<li></li>').append(tag + ': ' ).append(message).addClass(tag).appendTo($('#room_' + room));
+      $('<li></li>').append(tag + ': ').append(message).addClass(tag).appendTo($('#room_' + room));
     };
 
-    chat.client.addPublicStream = function (pubStrInfo)
-    {
+    chat.client.addPublicStream = function (pubStrInfo) {
       $('<li></li>').append(pubStrInfo.sender + ': ')
-      .append('<a href="'+pubStrInfo.url+'">'+pubStrInfo.title+'</a>').append('['+pubStrInfo.mediaType+']').addClass('streaminfo').appendTo(notifications);
+      .append('<a href="' + pubStrInfo.url + '">' + pubStrInfo.title + '</a>').append('[' + pubStrInfo.mediaType + ']').addClass('streaminfo').appendTo(notifications);
     };
 
-    chat.client.push = function (what, data)
-    {
+    chat.client.push = function (what, data) {
       $('<li></li>').append(what + ': ')
       .append(data.event).addClass('event').appendTo(notifications);
     };
@@ -125,7 +123,7 @@ window.ChatHubHandler = (function ($) {
       if (chanInfo) {
         var chanId = 'r' + chanInfo.Name;
         $('#tv_' + chanId).replaceWith(chanInfo.Topic);
-      } 
+      }
     };
 
     var setActiveChan = function (chanId) {
@@ -141,12 +139,11 @@ window.ChatHubHandler = (function ($) {
       }
     };
 
-    var join = function (roomName)
-    {
+    var join = function (roomName) {
       chat.server.join(roomName).done(function (chatInfo) {
         if (chatInfo) {
           setChanInfo(chatInfo);
-          setActiveChan('r'+chatInfo.Name);
+          setActiveChan('r' + chatInfo.Name);
         }
       });
     };
@@ -158,7 +155,6 @@ window.ChatHubHandler = (function ($) {
     var roomlist = $('<div class="roomlist"></div>');
     roomlist.appendTo(chatbar);
     var ptc = $('<img src="/images/ptcroix.png" >').addClass('ptcroix');
-    
     $('<label for="channame">Join&nbsp;:</label>')
       .appendTo(roomjoin);
     var chanName = $('<input id="channame" title="channel name" hint="yavsc"  >');
@@ -206,15 +202,16 @@ window.ChatHubHandler = (function ($) {
     };
 
     var buildRoom = function (roomName) {
-      if (!chans.some(function(cname) { return cname == roomName; })) 
+      if (!chans.some(function(cname) { return cname == roomName; })) {
         buildChan('#', 'r', roomName, chat.server.send);
+      }
     };
 
     var DestroyRoom = function () {
       if (frontChanId) {
         $('#v' + frontChanId).remove();
         $('#sel_' + frontChanId).remove();
-        frontChanId=null;
+        frontChanId = null;
       }
     }
 
@@ -233,7 +230,7 @@ window.ChatHubHandler = (function ($) {
         });
       });
     };*/
-    $view.data('chans').split(',').forEach(function (chan){
+    $view.data('chans').split(',').forEach(function (chan) {
       buildRoom(chan);
     });
 
@@ -264,7 +261,7 @@ window.ChatHubHandler = (function ($) {
           });
         }, 30000); // Re-start connection after 30 seconds
     });
-    
+
     chanName.keydown(function (event) {
       if (event.which == 13) {
         if (this.value.length == 0) return;
@@ -275,7 +272,7 @@ window.ChatHubHandler = (function ($) {
       // else TODO showRoomInfo(this.value);
     });
 
-    ptc.click(function(){
+    ptc.click(function() {
       DestroyRoom();
     });
 
@@ -309,8 +306,7 @@ window.ChatHubHandler = (function ($) {
       return encodedValue;
     }
 
-    // FIXME cx clean shutdown
-    // $(window).unload(function () {  });
+    $(window).unload(function () { $.connection.hub.abort() });
 
   };
 
