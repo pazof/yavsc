@@ -9,8 +9,20 @@
     background-color: rgba(0, 0, 0, .4);
 }
 
+.navbar .navbar-brand {
+    background-color: unset;
+}
 
-.navbar-brand:focus {
+.navbar .navbar-brand:focus {
+    background-color: unset;
+}
+
+
+.navbar-inverse .navbar-brand {
+    background-color: unset;
+}
+
+.navbar-inverse .navbar-brand:focus {
     background-color: unset;
 }
 
