@@ -1,12 +1,9 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using Yavsc.ViewModels.UserFiles;
 
 using System;
-using System.Threading;
-using Yavsc.ViewModels;
 
 namespace Yavsc.Helpers
 {
@@ -26,14 +23,15 @@ namespace Yavsc.Helpers
             if (path[path.Length-1]==RemoteDirectorySeparator) return false;
             return true;
         }
+
         public static bool IsValidDirectoryName(this string name)
         {
             return !name.Any(c => !ValidFileNameChars.Contains(c));
         }
+        
         // Ensure this path is canonical,
         // No "dirto/./this", neither "dirt/to/that/"
         // no .. and each char must be listed as valid in constants
-
         public static string FilterFileName(string fileName)
         {
             if (fileName==null) return null;
@@ -53,14 +51,16 @@ namespace Yavsc.Helpers
             UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, userName, subdir);
             return di;
         }
+
+        // Server side only supports POSIX file systems
         public const char RemoteDirectorySeparator = '/';
+
+        // Only accept descent remote file names
         public static char[] ValidFileNameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. ".ToCharArray();
    
-
+        // Estimate signature file name format
         public static Func<string,string,long,string>
           SignFileNameFormat = new Func<string,string,long,string> ((signType,billingCode,estimateId) => $"sign-{billingCode}-{signType}-{estimateId}.png");
-
-
         
     }
 }
