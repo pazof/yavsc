@@ -28,7 +28,7 @@ namespace Yavsc.ViewModels.UserFiles
             if (string.IsNullOrWhiteSpace(username))
                 throw new NotSupportedException("No user name, no user dir.");
             UserName = username;
-            var finalPath =  username;
+            var finalPath = path == null ? username : Path.Combine(username, path);
             if (!finalPath.IsValidYavscPath())
                 throw new InvalidOperationException(
                     $"File name contains invalid chars ({finalPath})");

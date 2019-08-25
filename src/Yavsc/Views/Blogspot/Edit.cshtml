@@ -35,6 +35,7 @@
 <script src="~/js/dropzone.js"></script>
 <script src="~/js/quill.js"></script>
 <script src="~/js/to-markdown.js"></script>
+@{ await Html.RenderPartialAsync("_FSScriptsPartial"); }
 <script>
  $(document).ready(function() {
     $(".mdcoding").addClass('hidden');
@@ -95,29 +96,7 @@
     };
  initQuill();
 
- Dropzone.options.postfiles= {
-  maxFilesize: 20, // MB   TODO: let sell it.
-  autoProcessQueue: true,
-  accept: function(file, done) {
-    if (file.name == "justinbieber.jpg") {
-      done("Naha, you don't.")
-    }
-    else { done() }
-  },
-  success: function (file, response, ev) {
-      console.log('response:');
-      console.log(response);
-      for(i=0;i<response.length;i++) {
-          var file = response[i];
-          console.log('response item:');
-          console.log(file);
-
-          $('<p><a href="/files/@User.GetUserName()/'+file.FileName+'">'+file.FileName+'</a></p>').appendTo('#ql-editor-2');
-          updateMD('Content',$('#contentview').html())
-      }
-  },
-  url: "/api/fs"
-};
+ 
 
   });
 </script>
@@ -230,13 +209,7 @@
 </div>
 @await Component.InvokeAsync("Directory","")
 <div >
-    <form id="postfiles" class="dropzone" method="post" enctype="multipart/form-data">
-  <div class="fallback">
-    <input name="File[]" type="file" id="filesinput"/>
-  </div>
-    <input type="hidden" name="postId" value="@Model.Id" />
-        @Html.AntiForgeryToken()
-    </form>
+    @{ await Html.RenderPartialAsync("_PostFilesPartial"); }
    </div>
 <div>
     <a asp-action="Index">@SR["Back to List"]</a>

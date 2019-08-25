@@ -103,15 +103,23 @@ namespace Yavsc.Helpers
             user.DiskUsage -= fi.Length;
         }
 
+        static string ParseFileNameFromDisposition(string disposition)
+        {
+            // form-data_ name=_file__ filename=_Constants.Private.cs_
+            var parts = disposition.Split(' ');
+            var filename = parts[2].Split('=')[1];
+            filename = filename.Substring(1,filename.Length-2);
+            return filename;
+        }
+
         public static void AddQuota(this ApplicationUser user, int quota)
         {
             user.DiskQuota += quota;
         }
         public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f, string destFileName = null)
         {
-            return ReceiveUserFile(user, root, f.OpenReadStream(), destFileName ?? f.ContentDisposition, f.ContentType, CancellationToken.None);
+            return ReceiveUserFile(user, root, f.OpenReadStream(), destFileName ?? ParseFileNameFromDisposition(f.ContentDisposition), f.ContentType, CancellationToken.None);
         }
-        
         
         public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, Stream inputStream, string destFileName, string contentType, CancellationToken token)
         {
