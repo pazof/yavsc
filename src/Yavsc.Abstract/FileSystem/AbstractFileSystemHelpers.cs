@@ -47,7 +47,6 @@ namespace Yavsc.Helpers
   
         public static UserDirectoryInfo GetUserFiles(string userName, string subdir)
         {
-
             UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, userName, subdir);
             return di;
         }

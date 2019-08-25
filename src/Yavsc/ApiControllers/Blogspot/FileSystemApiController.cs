@@ -47,6 +47,7 @@ namespace Yavsc.ApiControllers
             if (subdir !=null)
                 if (!subdir.IsValidYavscPath())
                     return new BadRequestResult();
+            // _logger.LogInformation($"listing files from {User.Identity.Name}{subdir}");
             var files = AbstractFileSystemHelpers.GetUserFiles(User.Identity.Name, subdir);
             return Ok(files);
         }

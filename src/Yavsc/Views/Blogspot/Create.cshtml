@@ -52,7 +52,10 @@
     <a asp-action="Index">@SR["Back to List"]</a>
 </div>
 
+    @{ await Html.RenderPartialAsync("_PostFilesPartial"); }
 
 @section Scripts {
+<script src="~/js/dropzone.js"></script>
+    @{ await Html.RenderPartialAsync("_FSScriptsPartial"); }
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }
