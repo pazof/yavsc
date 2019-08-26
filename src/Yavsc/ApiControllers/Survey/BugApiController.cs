@@ -12,7 +12,7 @@ using Yavsc.Models.IT.Fixing;
 namespace Yavsc.ApiControllers
 {
     [Produces("application/json")]
-    [Route("api/bug")]
+    [Route("~/api/bug")]
     public class BugApiController : Controller
     {
         private ApplicationDbContext _context;
@@ -24,7 +24,9 @@ namespace Yavsc.ApiControllers
             _context = context;
         }
 
-        [HttpPost("signal")]
+        [HttpPost]
+        [Route("~/api/bugsignal")]
+        [Produces("application/json")]
         IActionResult Signal(BugReport report)
         {
             // TODO check ApiKey, check duplicate, and save report
