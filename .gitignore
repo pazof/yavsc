@@ -33,3 +33,4 @@ omnisharp.json
 /src/test/testingrepo/
 connectionsettings.Development.json
 appsettings.Development.json
+/src/Yavsc/web.log
