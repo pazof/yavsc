@@ -20,7 +20,7 @@ namespace Yavsc.Models.IT.Fixing
         ErrorMessageResourceName="TitleSizeError")]
         public string Title { get; set; }
 
-        [YaStringLength(4096, 
+        [YaStringLength(10240, 
         ErrorMessageResourceType=typeof(Yavsc.Models.IT.Fixing.Bug), 
         ErrorMessageResourceName="DescSizeError")]
         public string Description { get; set; }
