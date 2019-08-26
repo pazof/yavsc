@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
+namespace Yavsc.Abstract.IT {
 
 public class CiBuildSettings
 {
@@ -46,4 +47,5 @@ public class CiBuildSettings
     [JsonPropertyAttribute("emails")]
     public string[] Emails { get; set; }
 
+}
 }
