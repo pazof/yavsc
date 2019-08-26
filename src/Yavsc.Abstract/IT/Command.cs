@@ -2,6 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Newtonsoft.Json;
+
+namespace Yavsc.Abstract.IT
+{
+
 /// <summary>
 /// A command specification (a system command),
 /// in order to reference some trusted server-side process
@@ -34,3 +38,5 @@ public class Command
         }
 
     }
+}
+
