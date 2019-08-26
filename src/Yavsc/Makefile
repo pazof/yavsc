@@ -21,7 +21,7 @@ MINJS=wwwroot/js/bootstrap.min.js      wwwroot/js/input-lib.min.js             w
 MINCSS=wwwroot/css/coiffure.min.css  wwwroot/css/dev.min.css           wwwroot/css/freespeech.min.css  wwwroot/css/yavsc.min.css wwwroot/css/default.min.css   wwwroot/css/font-awesome.min.css  wwwroot/css/lua.min.css         wwwroot/css/yavscpre.min.css wwwroot/css/clear/site.min.css  wwwroot/css/main/bootstrap.min.css  wwwroot/css/main/jquery-ui.min.css   wwwroot/css/main/site.min.css wwwroot/css/dark/site.min.css   wwwroot/css/main/dropzone.min.css   wwwroot/css/main/quill.snow.min.css
 
 web: project.lock.json
-	MCS_OPTIONS=$(MCS_OPTIONS) MONO_OPTIONS=$(MONO_OPTIONS) ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION)
+	MCS_OPTIONS=$(MCS_OPTIONS) MONO_OPTIONS=$(MONO_OPTIONS) ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION) |tee web.log
 
 showConfig:
 	@echo HOSTING: $(USER)@$(HOSTING)

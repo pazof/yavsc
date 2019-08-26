@@ -4,11 +4,11 @@ using Yavsc.Attributes.Validation;
 namespace Yavsc.ApiControllers
 {
     public class BugReport {
-        [Required]
+        [Required,YaStringLength(1024)]
         public string ApiKey { get ; set; }
-        [Required]
+        [Required,YaStringLength(512)]
         public string Component { get ; set; }
-        [Required][YaStringLength(1024)]
+        [Required][YaStringLength(10240)]
         public string ExceptionObjectJson { get ; set; }
     }
 }
