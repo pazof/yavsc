@@ -7,8 +7,7 @@
         <title>@ViewData["Title"] - @SiteSettings.Value.Title</title>
 
         
-        <environment names="Development">
-        <script src="~/js/jquery-2.2.4.js" ></script>
+            <script src="~/js/jquery-2.2.4.js" ></script>
             <script src="~/js/showdown.js"></script>
             <script src="~/js/md-helpers.js"></script>
             
@@ -22,25 +21,6 @@
            
             <script src="~/js/jquery.signalR-2.2.1.js" asp-append-version="true"></script>
             <script src="~/js/site.js" asp-append-version="true"></script>
-        </environment>
-
-        <environment names="yavsc,yavscpre,zicmoove,lua,coiffure,freefiled,freespeech">
-            
-            <link rel="stylesheet" href="~/css/main/bootstrap.min.css" />
-            <script src="~/js/jquery-2.2.4.min.js" ></script>
-            <script src="~/js/bootstrap.min.js"></script>
-            <script src="~/js/showdown.min.js"></script>
-            <script src="~/js/md-helpers.min.js"></script>
-            <link rel="stylesheet" href="~/css/main/site.min.css" asp-append-version="true"/>
-            <link rel="stylesheet" href="~/css/main/jquery-ui.min.css" asp-append-version="true"/>
-            <link rel="alternate stylesheet" title="Dark" href="~/css/dark/site.min.css" asp-append-version="true" />
-            <link rel="alternate stylesheet" title="Clear" href="~/css/clear/site.min.css" asp-append-version="true" />
-       
-            <script src="~/js/jquery-ui.min.js" asp-append-version="true"></script>
-            <script src="~/js/jquery.signalR-2.2.1.min.js" asp-append-version="true"></script>
-            <script src="~/js/site.min.js" asp-append-version="true"></script>
-           
-        </environment>
 
         <link rel="stylesheet" href="@Startup.SiteSetup.StyleSheet" asp-append-version="true"/>
 
