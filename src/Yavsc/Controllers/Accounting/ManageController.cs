@@ -93,6 +93,7 @@ namespace Yavsc.Controllers
                 : message == ManageMessageId.SetBankInfoSuccess ? _SR["Vos informations bancaires ont bien été enregistrées."]
                 : message == ManageMessageId.SetAddressSuccess ? _SR["Votre adresse a bien été enregistrée."]
                 : message == ManageMessageId.SetMonthlyEmailSuccess ? _SR["Vos préférences concernant la lettre mensuelle ont été sauvegardées."]
+                : message == ManageMessageId.SetFullNameSuccess ? _SR["Votre nom complet a été renseigné."]
                 : "";
 
             var user = await GetCurrentUserAsync();
@@ -120,7 +121,8 @@ namespace Yavsc.Controllers
                 DedicatedCalendarId = user.DedicatedGoogleCalendar,
                 EMail = user.Email,
                 EmailConfirmed = await _userManager.IsEmailConfirmedAsync(user),
-                AllowMonthlyEmail = user.AllowMonthlyEmail
+                AllowMonthlyEmail = user.AllowMonthlyEmail,
+                Address = user.PostalAddress.Address
             };
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
             var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id).ToArray();
@@ -354,8 +356,22 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> SetFullName()
         {
             var user = await _userManager.FindByIdAsync(User.GetUserId());
-            return View(user);
+            return View(new SetFullNameViewModel { FullName = user.FullName });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SetFullName(SetFullNameViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(User.GetUserId());
+                user.FullName = model.FullName;
+                await _userManager.UpdateAsync(user);
+                return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetFullNameSuccess });
+            }
+            return View(model);
+        }
+
         //
         // POST: /Manage/ChangePassword
         [HttpPost]
@@ -688,13 +704,14 @@ namespace Yavsc.Controllers
             SetBankInfoSuccess,
             SetAddressSuccess,
             SetMonthlyEmailSuccess,
+            SetFullNameSuccess,
             Error
         }
 
 
         private async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
+            return await _dbContext.Users.Include(u => u.PostalAddress).FirstOrDefaultAsync(u => u.Id == User.GetUserId());
         }
 
         #endregion

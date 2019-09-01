@@ -10,7 +10,8 @@ namespace Yavsc.ViewModels.Manage
     {
         public string UserName {get; set; }
 
-        public string Avatar { get; set; }
+        public string Avatar { get; set; }       
+        public string Address { get; set; }
 
         public bool HasPassword { get; set; }
 
