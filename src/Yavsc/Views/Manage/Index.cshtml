@@ -34,11 +34,19 @@
         </dd>
 
         <dd>
-            <dt>@SR["AllowMonthlyEmail"]:</dt>
             <dl>
-                <a asp-action="ProfileEMailUsage"> @Html.DisplayFor(m=>m.AllowMonthlyEmail) [modifier]
-                </a>
+                <dt>@SR["AllowMonthlyEmail"]:</dt>
+                <dd>
+                    <a asp-action="ProfileEMailUsage"> @Html.DisplayFor(m=>m.AllowMonthlyEmail) [modifier]
+                    </a>
+                </dd>
             </dl>
+        </dd>
+
+
+        <dt>@SR["FullName"]:</dt>
+        <dd> 
+            @Html.DisplayFor(m=>m.FullName)  <a asp-action="SetFullName">[modifier]</a>
         </dd>
 
         @if (Model.Roles.Count()>0) {
