@@ -99,7 +99,7 @@
             <input asp-for="OrganizationAddress.Address" class="form-control" type="text" />
 
             <span id="AddressError" asp-validation-for="OrganizationAddress.Address" class="text-danger"></span>
-            <ul id="loccomb" >
+            <ul id="LocationCombo" >
             </ul>
            <div id="map" class="map" data-val="valloc" data-addr="OrganizationAddress_Address" data-loccombo="loccomb" data-lat="OrganizationAddress_Latitude" data-lon="OrganizationAddress_Longitude" data-val-slat="@Model.OrganizationAddress.Latitude" data-val-slon="@Model.OrganizationAddress.Longitude" ></div>
 
@@ -118,8 +118,20 @@
     @Html.Hidden("PerfomerId")
     <button type="submit" class="btn btn-default">@SR["UnsetActivity"]</button>
 </form>
-
-
+@section scripts { 
 @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 @{ await Html.RenderPartialAsync("_MapScriptsPartial"); }
-
+<script>
+    $(document).ready(function(){
+    $("#OrganizationAddress_Address").googlegeocode({
+        culture: '@System.Globalization.CultureInfo.CurrentCulture.Name',
+        mapsApiKey: '@Startup.GoogleSettings.BrowserApiKey',
+        mapId: 'map',
+        longId: 'OrganizationAddress_Longitude',
+        latId: 'OrganizationAddress_Latitude',
+        addrValidationId: 'AddressError',
+        formValidId: 'ValidationSummary',
+        locComboId: 'LocationCombo'})
+    })
+</script>
+}

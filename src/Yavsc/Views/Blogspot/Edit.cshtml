@@ -4,7 +4,7 @@
    ViewData["Title"] = SR["Blog post edition"];
 }
 
-@section header{
+@section header {
 
 <link href="~/css/main/quill.snow.css" rel="stylesheet">
 <link href="~/css/main/dropzone.css" rel="stylesheet">
@@ -35,9 +35,18 @@
 <script src="~/js/dropzone.js"></script>
 <script src="~/js/quill.js"></script>
 <script src="~/js/to-markdown.js"></script>
+
+
 @{ await Html.RenderPartialAsync("_FSScriptsPartial"); }
+     
+}
+
+@section scripts {
 <script>
  $(document).ready(function() {
+    if (typeof(allowCircleToBlog) !== 'undefined') {
+        $('input.Blogcirle[type=checkbox]').on('change', allowCircleToBlog);
+    }
     $(".mdcoding").addClass('hidden');
 
     var onchange = function(){
@@ -101,6 +110,7 @@
   });
 </script>
     @Html.Partial("_ValidationScriptsPartial")
+
 }
 <h2 > @SR["Blog post edition"] </h2>
                 <label><input type="checkbox" id="vcbtn" />Editer le code source Markdown</label>

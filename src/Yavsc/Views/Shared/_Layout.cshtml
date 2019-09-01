@@ -24,14 +24,6 @@
 
         <link rel="stylesheet" href="@Startup.SiteSetup.StyleSheet" asp-append-version="true"/>
 
-        <script>
-            $(document).ready(function() {
-                if (typeof(allowCircleToBlog) !== 'undefined') {
-                    $('input.Blogcirle[type=checkbox]').on('change', allowCircleToBlog);
-                }
-            });
-        </script>
-
         @RenderSection("header", required: false)
     </head>
     <body>

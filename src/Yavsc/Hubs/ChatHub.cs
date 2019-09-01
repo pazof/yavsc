@@ -303,8 +303,7 @@ namespace Yavsc
                 if (!_cxManager.Kick(Context.ConnectionId, userName, roomName, reason)) return;
             }
             var ukeys = _cxManager.GetConnexionIds(userName);
-            
-            foreach(var ukey in ukeys)
+            if (ukeys!=null) foreach(var ukey in ukeys)
                 Groups.Remove(ukey, roomGroupName);
             Clients.Group(roomGroupName).notifyRoom(NotificationTypes.Kick, roomName, $"{userName}: {reason}");
         }
@@ -403,7 +402,7 @@ namespace Yavsc
                     }
                 }
             var cxIds = _cxManager.GetConnexionIds(userName);
-
+            if (cxIds!=null)
             foreach (var connectionId in cxIds)
             {
                 var cli = Clients.Client(connectionId);

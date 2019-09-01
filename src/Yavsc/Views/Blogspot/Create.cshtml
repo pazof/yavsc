@@ -58,4 +58,11 @@
 <script src="~/js/dropzone.js"></script>
     @{ await Html.RenderPartialAsync("_FSScriptsPartial"); }
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+            <script>
+            $(document).ready(function() {
+                if (typeof(allowCircleToBlog) !== 'undefined') {
+                    $('input.Blogcirle[type=checkbox]').on('change', allowCircleToBlog);
+                }
+            });
+        </script>
 }
