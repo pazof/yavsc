@@ -263,7 +263,7 @@ namespace Yavsc.Services
 
         public IEnumerable<string> GetConnexionIds(string userName)
         {
-            return ChatCxIds[userName];
+            return ChatCxIds.ContainsKey(userName) ? ChatCxIds[userName] : null;
         }
 
         /// <summary>

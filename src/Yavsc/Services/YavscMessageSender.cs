@@ -111,8 +111,8 @@ namespace Yavsc.Services
                         result.message_id = mailSent.MessageId;
                         response.success++;
                     }
-                    var cxids = _cxManager.GetConnexionIds(user.UserName).ToArray();
-                    if (cxids.Length == 0)
+                    var cxids = _cxManager.GetConnexionIds(user.UserName);
+                    if (cxids == null)
                     {
                         _logger.LogDebug($"no cx to {user.UserName} <{user.Email}> ");
                     }
