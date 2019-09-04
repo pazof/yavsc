@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Relationship
 {
@@ -13,10 +14,10 @@ namespace Yavsc.Models.Relationship
 
         public bool Public { get; set; }
 
-        [Required]
+        [YaRequired]
         public string Name { get; set; }
         
-        [Required]
+        [YaRequired]
         public string OwnerId { get; set; }
 
         [ForeignKey("OwnerId"),JsonIgnore,NotMapped]

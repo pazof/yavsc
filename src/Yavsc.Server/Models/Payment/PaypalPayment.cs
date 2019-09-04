@@ -6,13 +6,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Yavsc.Models.Payment {
     using Yavsc;
     using Relationship;
+    using Yavsc.Attributes.Validation;
 
     public class PayPalPayment : IBaseTrackedEntity
     {
-        [Required,Key]
+        [YaRequired,Key]
         public string CreationToken { get; set; }
 
-        [Required]
+        [YaRequired]
         public string ExecutorId { get; set; }
         [ForeignKey("ExecutorId")]
         public virtual ApplicationUser Executor { get; set; }

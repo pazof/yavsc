@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 namespace Yavsc.Models.Workflow
 {
         using Yavsc;
+    using Yavsc.Attributes.Validation;
+
     public class CommandForm : ICommandForm
     {
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,7 +16,7 @@ namespace Yavsc.Models.Workflow
 
         public string Title { get; set; }
 
-        [Required]
+        [YaRequired]
         public string ActivityCode { get; set; }
 
         [ForeignKey("ActivityCode"),JsonIgnore]

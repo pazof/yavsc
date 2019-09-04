@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Yavsc.ViewModels
 {
@@ -11,7 +11,6 @@ namespace Yavsc.ViewModels
         public DateTime CreationTime { get; set; }
 
         public DateTime LastModified { get; set; }
-
        
     }
 

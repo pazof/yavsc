@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Attributes.Validation;
 using Yavsc.Models;
 
 namespace Yavsc.Server.Models.IT.SourceCode
@@ -9,16 +10,16 @@ namespace Yavsc.Server.Models.IT.SourceCode
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        [Required]
+        [YaRequired]
         public string Path { get; set; }
 
-        [StringLength(2048)]
+        [YaStringLength(2048)]
         public string Url { get; set; }
 
-        [StringLength(512)]
+        [YaStringLength(512)]
         public string Branch { get; set; }
 
-        [StringLength(1024)]
+        [YaStringLength(1024)]
         public string OwnerId { get; set; }
         
         [ForeignKey("OwnerId")]

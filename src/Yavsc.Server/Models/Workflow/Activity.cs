@@ -9,22 +9,23 @@ namespace Yavsc.Models.Workflow
 {
     using Yavsc.Models.Market;
     using Yavsc;
+    using Yavsc.Attributes.Validation;
 
     public class Activity : IBaseTrackedEntity, IActivity
     {
 
-        [StringLength(512), Required, Key]
+        [YaStringLength(512), YaRequired, Key]
         [Display(Name = "Code")]
         public string Code { get; set; }
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
-        [StringLength(512), Required()]
+        [YaStringLength(512), YaRequired()]
         [Display(Name = "Nom")]
         public string Name { get; set; }
 
-        [StringLength(512)]
+        [YaStringLength(512)]
         [Display(Name = "Code du parent")]
         public string ParentCode { get; set; }
 

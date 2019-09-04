@@ -1,6 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Relationship
 {
@@ -8,7 +9,7 @@ namespace Yavsc.Models.Relationship
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
-        [Required()]
+        [YaRequired()]
         public string Name { get; set; }
     }
 }

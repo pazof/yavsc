@@ -1,16 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Mvc.Rendering;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.ViewModels.Gen
 {
     public class PdfGenerationViewModel
     {
         
-        [Required]
+        [YaRequired]
         public string TeXSource { get; set; }
-        [Required]
+        [YaRequired]
         public string BaseFileName { get; set; }
-        [Required]
+        [YaRequired]
         public string DestDir { get; set; }
         public bool Generated { get; set; }
         public HtmlString GenerationErrorMessage { get; set; }

@@ -13,10 +13,7 @@ namespace Yavsc.ApiControllers
     using Yavsc.Helpers;
     using Yavsc.Exceptions;
     using Yavsc.Models.FileSystem;
-
-    public class FSQuotaException : Exception {
-
-    }
+    using System.ComponentModel.DataAnnotations;
 
     [Authorize,Route("api/fs")]
     public class FileSystemApiController : Controller
@@ -55,6 +52,7 @@ namespace Yavsc.ApiControllers
         [HttpPost("{*subdir}")]
         public IActionResult Post(string subdir="")
         {
+            
             string destDir = null;
             List<FileRecievedInfo> received = new List<FileRecievedInfo>();
             InvalidPathException pathex = null;
@@ -89,7 +87,7 @@ namespace Yavsc.ApiControllers
             return Ok(received);
         }
 
-        [Route("/api/fsquota/add/{uname}/{len}")]
+        [Route("/api/fsc/addquota/{uname}/{len}")]
         [Authorize("AdministratorOnly")]
         public IActionResult AddQuota(string uname, int len)
         {
@@ -102,7 +100,7 @@ namespace Yavsc.ApiControllers
             return Ok(len);
         }
 
-        [Route("/api/movefile")]
+        [Route("/api/fsc/movefile")]
         [Authorize()]
         public IActionResult MoveFile(string from, string to)
         {
@@ -110,11 +108,14 @@ namespace Yavsc.ApiControllers
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
-            throw new NotImplementedException();
+            var info = user.MoveUserFile(from, to);
+            if (!info.Done)
+            return new BadRequestObjectResult(info);
             return Ok();
         }
 
-        [Route("/api/movedir")]
+        [HttpPatch]
+        [Route("/api/fsc/movedir")]
         [Authorize()]
         public IActionResult MoveDir(string from, string to)
         {
@@ -122,29 +123,67 @@ namespace Yavsc.ApiControllers
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
-            throw new NotImplementedException();
+            try {
+                var result = user.MoveUserDir(from, to);
+                if (!result.Done)
+                    return new BadRequestObjectResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    new FsOperationInfo {
+                        Done = false,
+                        Error = ex.Message
+                });
+            }
             return Ok();
         }
 
 
         [HttpDelete]
+        [Route("/api/fsc/rm/{*id}")]
         public async Task <IActionResult> Delete (string id)
         {
             var user = dbContext.Users.Single(
                 u => u.Id == User.GetUserId()
             );
-            InvalidPathException pathex = null;
-            string root = null;
             try {
-                root = User.InitPostToFileSystem(id);
-            } catch (InvalidPathException ex) {
-                pathex = ex;
-            }
-            if (pathex!=null)
-              return new BadRequestObjectResult(pathex);
             user.DeleteUserFile(id);
             await dbContext.SaveChangesAsync(User.GetUserId());
-             return Ok(new { deleted=id });
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    new FsOperationInfo {
+                        Done = false,
+                        Error = ex.Message
+                });
+            }
+            return Ok(new { deleted=id });
+        }
+
+        [HttpDelete]
+        [Route("/api/fsc/rmdir/{*id}")]
+        public IActionResult RemoveDir (string id)
+        {
+            var user = dbContext.Users.Single(
+                u => u.Id == User.GetUserId()
+            );
+            try {
+                var result = user.DeleteUserDir(id);
+                if (!result.Done)
+                    return new BadRequestObjectResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(
+                    new FsOperationInfo {
+                        Done = false,
+                        Error = ex.Message
+                });
+            }
+            return Ok(new { deleted=id });
         }
     }
+
 }

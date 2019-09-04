@@ -1,15 +1,16 @@
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.ViewModels.Account
 {
     public class ResetPasswordViewModel
     {
-        [Required]
+        [YaRequired]
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "Le {0} doit être long d'au moins {2} caractères.", MinimumLength = 6)]
+        [YaRequired]
+        [YaStringLength(100, ErrorMessage = "Le {0} doit être long d'au moins {2} caractères.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

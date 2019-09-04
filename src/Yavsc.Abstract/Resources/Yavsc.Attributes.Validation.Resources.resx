@@ -61,6 +61,6 @@
   <!-- 
     route name for the api controller used to tag the 'BlogPost' entity
    -->
+  <data name="FieldRequired"><value>Veuillez renseigner ce champ</value></data>
   <data name="InvalidStringLength"><value>Longueur de chaine invalide ({0}..{1})</value></data>
-  
 </root>

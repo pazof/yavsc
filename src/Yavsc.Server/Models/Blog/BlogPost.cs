@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Newtonsoft.Json;
 using Yavsc.Abstract.Identity.Security;
+using Yavsc.Attributes.Validation;
 using Yavsc.Interfaces;
 using Yavsc.Models.Access;
 using Yavsc.Models.Relationship;
@@ -17,19 +18,19 @@ namespace Yavsc.Models.Blog
         [Display(Name="Identifiant du post")]
         public long Id { get; set; }
 
-        [Display(Name="Contenu")][StringLength(56224)]
+        [Display(Name="Contenu")][YaStringLength(56224)]
         public string Content { get; set; }
 
-        [Display(Name="Photo")][StringLength(1024)]
+        [Display(Name="Photo")][YaStringLength(1024)]
         public string Photo { get; set; }
 
-        [StringLength(8)]
+        [YaStringLength(8)]
         public string Lang { get; set; }
 
         [Display(Name="Indice de qualité")]
         public int Rate { get; set; }
 
-        [Display(Name="Titre")][StringLength(1024)]
+        [Display(Name="Titre")][YaStringLength(1024)]
         public string Title { get; set; }
 
         [Display(Name="Identifiant de l'auteur")]

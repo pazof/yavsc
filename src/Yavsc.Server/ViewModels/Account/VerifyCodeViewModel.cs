@@ -1,13 +1,14 @@
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.ViewModels.Account
 {
     public class VerifyCodeViewModel
     {
-        [Required]
+        [YaRequired]
         public string Provider { get; set; }
 
-        [Required]
+        [YaRequired]
         public string Code { get; set; }
 
         public string ReturnUrl { get; set; }

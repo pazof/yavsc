@@ -20,7 +20,7 @@ namespace Yavsc.Attributes.Validation
         void UseDefaultErrorMessage()
         {
             if (ErrorMessageResourceType==null)  {
-                ErrorMessageResourceType = typeof(YaStringLength);
+                ErrorMessageResourceType = typeof(Yavsc.Attributes.Validation.Resources);
                 ErrorMessageResourceName = "InvalidStringLength"; 
             }
         }

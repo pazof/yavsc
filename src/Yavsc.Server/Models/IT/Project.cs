@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Yavsc.Abstract.IT;
+using Yavsc.Attributes.Validation;
 using Yavsc.Billing;
 using Yavsc.Models.Billing;
 using Yavsc.Server.Models.IT.SourceCode;
@@ -23,7 +24,7 @@ namespace Yavsc.Server.Models.IT
         /// As a side effect, there's no project without valid git reference in db. 
         /// </summary>
         /// <returns></returns>
-        [Required]
+        [YaRequired]
         public string Name { get; set; }
 
         public string Version { get; set; }
@@ -32,7 +33,7 @@ namespace Yavsc.Server.Models.IT
         public virtual List<ProjectBuildConfiguration> Configurations { get; set; }
 
 
-        [Required]
+        [YaRequired]
         public long GitId { get; set; }
 
         [ForeignKey("GitId")]

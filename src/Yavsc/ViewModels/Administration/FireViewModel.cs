@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.ViewModels
 {
@@ -7,12 +8,12 @@ namespace Yavsc.ViewModels
         [Display(Name="EnroledLabel", ResourceType=typeof(EnrolerViewModel))]
         public string EnroledUserName { get; set; }
 
-        [Required]
+        [YaRequired]
         public string EnroledUserId { get; set; }
 
 
         [Display(Name="RoleNameLabel", ResourceType=typeof(EnrolerViewModel))]
-        [Required]
+        [YaRequired]
         public string RoleName { get; set; }
     }
 }
