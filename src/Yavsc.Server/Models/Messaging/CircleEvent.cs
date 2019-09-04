@@ -25,17 +25,18 @@ using System.ComponentModel.DataAnnotations;
 namespace Yavsc.Models.Messaging
 {
     using Models.Relationship;
-	/// <summary>
-	/// Event pub.
-	/// </summary>
-	public class CircleEvent: BaseEvent
+    using Yavsc.Attributes.Validation;
+
+    /// <summary>
+    /// Event pub.
+    /// </summary>
+    public class CircleEvent: BaseEvent
 	{
 		/// <summary>
 		/// Gets or sets the circles.
 		/// </summary>
 		/// <value>The circles.</value>
-		[Required(ErrorMessageResourceName="Circles"),
-			Display(Name="Circles")]
+		[YaRequired, Display(Name="Circles")]
 		public virtual List<Circle> Circles{ get; set; }
 
         public override string CreateBody()

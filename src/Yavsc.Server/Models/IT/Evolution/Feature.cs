@@ -9,10 +9,10 @@ namespace Yavsc.Models.IT.Evolution
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        [StringLength(256)]
+        [YaStringLength(256)]
         public string ShortName { get; set; }
         
-        [StringLength(10*1024)]
+        [YaStringLength(10*1024)]
         public string Description { get; set; }
 
         public FeatureStatus Status { get; set; }

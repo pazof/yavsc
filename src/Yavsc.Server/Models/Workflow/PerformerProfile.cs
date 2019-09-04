@@ -7,6 +7,7 @@ namespace Yavsc.Models.Workflow
     using System;
     using Models.Relationship;
     using Newtonsoft.Json;
+    using Yavsc.Attributes.Validation;
     using Yavsc.Workflow;
 
     public class PerformerProfile : IPerformerProfile {
@@ -20,13 +21,13 @@ namespace Yavsc.Models.Workflow
         [Display(Name="Activity"), JsonIgnore]
         public virtual List<UserActivity> Activity { get; set; }
 
-        [Required,StringLength(14),Display(Name="SIREN"),
+        [YaRequired,YaStringLength(14),Display(Name="SIREN"),
         RegularExpression(@"^[0-9]{9,14}$", ErrorMessage = "Only numbers are allowed here")]
         public string SIREN { get; set; }
 
         public long OrganizationAddressId { get; set; }
 
-        [Required,Display(Name="Organization address"),ForeignKey("OrganizationAddressId")]
+        [YaRequired,Display(Name="Organization address"),ForeignKey("OrganizationAddressId")]
         public virtual Location OrganizationAddress { get; set; }
 
         [Display(Name="Accept notifications on client query")]

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Bank
 {
@@ -14,7 +15,7 @@ namespace Yavsc.Models.Bank
         /// </summary> 
         /// <value>The BI.</value> 
         [DisplayName("Code BIC")]
-        [StringLength(15)]
+        [YaStringLength(15)]
         public string BIC { get; set; }
 
         /// <summary> 
@@ -22,7 +23,7 @@ namespace Yavsc.Models.Bank
         /// </summary> 
         /// <value>The IBA.</value> 
         [DisplayName("Code IBAN")]
-        [StringLength(33)]
+        [YaStringLength(33)]
         public string IBAN { get; set; }
 
 
@@ -31,7 +32,7 @@ namespace Yavsc.Models.Bank
         /// </summary> 
         /// <value>The bank code.</value> 
         [DisplayName("Code Banque")]
-        [StringLength(5)]
+        [YaStringLength(5)]
         public string BankCode { get; set; }
 
         /// <summary> 
@@ -39,7 +40,7 @@ namespace Yavsc.Models.Bank
         /// </summary> 
         /// <value>The wicket code.</value> 
         [DisplayName("Code Guichet")]
-        [StringLength(5)]
+        [YaStringLength(5)]
         public string WicketCode { get; set; }
 
         /// <summary> 
@@ -47,7 +48,7 @@ namespace Yavsc.Models.Bank
         /// </summary> 
         /// <value>The account number.</value> 
         [DisplayName("Numéro de compte")]
-        [StringLength(15)]
+        [YaStringLength(15)]
         public string AccountNumber { get; set; }
 
         /// <summary> 

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Musical
 {
@@ -9,7 +10,7 @@ namespace Yavsc.Models.Musical
     [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id {get; set; }
     
-    [MaxLength(255),Required]
+    [MaxLength(255), YaRequired]
     public string Name { get ; set; }
     }
 }

@@ -1,6 +1,6 @@
 SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
-BASERESX=Resources/Yavsc.Attributes.Validation.YaStringLength.resx 
+BASERESX=Resources/Yavsc.Attributes.Validation.Resources.resx
 BASERESXGEN=$(BASERESX:.resx=.Designer.cs)
 include $(MAKEFILE_DIR)/versioning.mk
 include $(MAKEFILE_DIR)/dnx.mk

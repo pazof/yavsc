@@ -6,6 +6,7 @@ using Yavsc.Models.Market;
 namespace Yavsc.Models.Workflow
 {
     using Models.Relationship;
+    using Yavsc.Attributes.Validation;
 
     /// <summary>
     /// A date, between two persons
@@ -17,21 +18,21 @@ namespace Yavsc.Models.Workflow
         /// Event date
         /// </summary>
         /// <returns></returns>
-        [Required(),Display(Name="EventDate")]
+        [YaRequired(),Display(Name="EventDate")]
         public DateTime EventDate { get; set; }
 
         /// <summary>
         /// Location identifier
         /// </summary>
         /// <returns></returns>
-        [Required]
+        [YaRequired]
         public long LocationId { get; set; }
 
         /// <summary>
         /// A Location for this event
         /// </summary>
         /// <returns></returns>
-        [Required(ErrorMessage="SpecifyPlace"),Display(Name="Location"),ForeignKey("LocationId")]
+        [YaRequired(ErrorMessage="SpecifyPlace"),Display(Name="Location"),ForeignKey("LocationId")]
         public Location Location { get; set; }
 
     }

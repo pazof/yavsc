@@ -14,10 +14,12 @@ namespace Yavsc.Attributes.Validation
          {
              ErrorMessage = msg;
          } 
-        public YaRequiredAttribute () : base("RequiredField")
+        public YaRequiredAttribute () : base("Required Field")
         {
-            
+            ErrorMessageResourceType = typeof(Yavsc.Attributes.Validation.Resources);
+            ErrorMessageResourceName = "FieldRequired";
         }
+        
         public override bool IsValid(object value) {
             if (value == null) {
                 return false;

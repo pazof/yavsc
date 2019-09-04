@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using NJsonSchema;
 using System.IO;
 using cli.Model;
+using Yavsc.Abstract.IT;
 
 namespace cli
 {

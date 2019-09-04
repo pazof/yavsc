@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using Yavsc.Abstract.Chat;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Chat
 {
@@ -13,7 +14,7 @@ namespace Yavsc.Models.Chat
         public string Topic { get; set; }
 
         [Key]
-        [StringLengthAttribute(ChatHubConstants.MaxChanelName, MinimumLength=3)]
+        [YaStringLength(ChatHubConstants.MaxChanelName, MinimumLength=3)]
         public string Name { get; set;}
 
         public string OwnerId { get; set; }

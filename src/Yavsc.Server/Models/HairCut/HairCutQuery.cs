@@ -13,6 +13,7 @@ using Microsoft.Extensions.Localization;
 using Yavsc.ViewModels.PayPal;
 using Yavsc.Models.HairCut;
 using Yavsc.Abstract.Identity;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Haircut
 {
@@ -65,8 +66,7 @@ namespace Yavsc.Models.Haircut
             set;
         }
 
-        [Display(Name = "Informations complémentaires"),
-        StringLengthAttribute(512)]
+        [Display(Name = "Informations complémentaires"), YaStringLength(512)]
         [DisplayFormat(ConvertEmptyStringToNull = true, NullDisplayText = "[pas d'informations complémentaires]")]
         public string AdditionalInfo { get; set; }
 

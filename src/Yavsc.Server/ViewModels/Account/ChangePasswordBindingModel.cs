@@ -1,18 +1,19 @@
 
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Account { 
     public class ChangePasswordBindingModel {
-        [Required]
+        [YaRequired]
         [DataType(DataType.Password)]
         public string OldPassword { get; set; }
 
-        [Required]
+        [YaRequired]
         [DataType(DataType.Password)]
         public string NewPassword { get; set; }
     }
     public class SetPasswordBindingModel {
-        [Required]
+        [YaRequired]
         [DataType(DataType.Password)]
         public string NewPassword { get; set; }
 

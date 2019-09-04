@@ -13,7 +13,7 @@ namespace Yavsc.Models.Blog
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        [StringLength(1024)] 
+        [YaStringLength(1024)] 
         public string Content { get; set; }
         
         [ForeignKeyAttribute("PostId")][JsonIgnore]

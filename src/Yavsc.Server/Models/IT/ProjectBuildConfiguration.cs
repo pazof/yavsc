@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Server.Models.IT
 {
@@ -12,7 +13,7 @@ namespace Yavsc.Server.Models.IT
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        [Required]
+        [YaRequired]
         public string Name { get; set; }
 
         public long ProjectId { get; set; }

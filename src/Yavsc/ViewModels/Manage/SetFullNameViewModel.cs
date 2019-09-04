@@ -6,7 +6,7 @@ namespace Yavsc.ViewModels.Manage
 {
     public class SetFullNameViewModel
     {
-        [Required]
+        [YaRequired]
         [Display(Name = "Your full name"), YaStringLength(512)]
         public string FullName { get; set; }
     }

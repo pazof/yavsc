@@ -12,14 +12,24 @@ namespace Yavsc.Helpers
         public static string UserBillsDirName {  set; get; }
         public static string UserFilesDirName {  set; get; }
         
+        /// <summary>
+        /// Is Valid this Path?
+        /// Return true when given value is a valid user file sub-path,
+        /// regarding chars used to specify it.
+        /// </summary>
+        /// <param name="path">Path to validate</param>
+        /// <returns></returns>
         public static bool IsValidYavscPath(this string path)
         {
             if (string.IsNullOrEmpty(path)) return true;
+            // disallow full path specification
+            if (path[0]==Path.DirectorySeparatorChar) return false;
             foreach (var name in path.Split(Path.DirectorySeparatorChar))
             {
                 if (!IsValidDirectoryName(name) || name.Equals("..") || name.Equals("."))
                         return false;
             }
+            // disallow trailling slash
             if (path[path.Length-1]==RemoteDirectorySeparator) return false;
             return true;
         }

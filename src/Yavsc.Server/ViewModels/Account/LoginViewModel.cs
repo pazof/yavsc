@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Yavsc.Attributes.Validation;
 
 namespace Yavsc.ViewModels.Account
 {
@@ -10,14 +11,14 @@ namespace Yavsc.ViewModels.Account
         /// Local user's name.
         /// </summary>
         /// <returns></returns>
-        [Required]
+        [YaRequired]
         public string UserName { get; set; }
 
         /// <summary>
         /// Local user's password .
         /// </summary>
         /// <returns></returns>
-        [Required]
+        [YaRequired]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
