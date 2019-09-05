@@ -2100,5 +2100,11 @@ namespace Yavsc {
                 return ResourceManager.GetString("Instrumentation", resourceCulture);
             }
         }
+        
+        public static string Partenariat {
+            get {
+                return ResourceManager.GetString("Partenariat", resourceCulture);
+            }
+        }
     }
 }
