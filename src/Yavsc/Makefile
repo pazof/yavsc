@@ -63,6 +63,9 @@ else
 	$(error EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.)
 endif
 
+cleanPublish: pushInPre pushInProd 
+	rm -rf bin/output/
+
 %.min.js: %.js
 	jsmin < $^ > $@
 
