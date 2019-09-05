@@ -63,4 +63,5 @@
    -->
   <data name="FieldRequired"><value>Please, fill in this field</value></data>
   <data name="InvalidStringLength"><value>Invalid string length ({0}..{1})</value></data>
+  <data name="InvalidPath"><value>Invalid file path</value></data>
 </root>

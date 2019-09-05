@@ -63,5 +63,6 @@
    -->
   <data name="FieldRequired"><value>Por favor, preencha este campo</value></data>
   <data name="InvalidStringLength"><value>comprimento inválido da corrente ({0}..{1})</value></data>
+  <data name="InvalidPath"><value>Camino de arquivo invalido</value></data>
   
 </root>
