@@ -63,4 +63,5 @@
    -->
   <data name="FieldRequired"><value>Veuillez renseigner ce champ</value></data>
   <data name="InvalidStringLength"><value>Longueur de chaine invalide ({0}..{1})</value></data>
+  <data name="InvalidPath"><value>Chemin de fichier invalide</value></data>
 </root>
