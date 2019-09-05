@@ -483,6 +483,6 @@ Conjunto de faturas: {5}</value></data>
   <data name="HairCutQueryValidation"><value>Um pedido (de {0}) em cabeleireiro em casa acaba de ser validado</value></data>
   <data name="Kid"><value>criança</value></data>
   <data name="Mech"><value>Meches</value></data>
-<data name="Instrumentation"><value>Instrumentação</value></data>
-
+  <data name="Instrumentation"><value>Instrumentação</value></data>
+  <data name="Partenariat"><value>Parceria</value></data>
 </root>

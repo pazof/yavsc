@@ -7,7 +7,6 @@ namespace Yavsc.ApiControllers
     {
         public DjProfileApiController(ApplicationDbContext context) : base(context)
         {
-            
         }
     }
 }
