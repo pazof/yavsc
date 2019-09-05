@@ -1,12 +1,12 @@
 // requires DropZone ª toMarkdown
 if (typeof jQuery === 'undefined') {
-  throw new Error('YavscRemoteFs script requires jQuery');
+  throw new Error('yavsc-remote-fs script requires jQuery');
 }
 if (typeof Dropzone === 'undefined') {
-  throw new Error('YavscRemoteFs requires Dropzone');
+  throw new Error('yavsc-remote-fs requires Dropzone');
 }
 if (typeof updateMD === 'undefined') {
-  throw new Error('YavscRemoteFs requires md-helpers.js');
+  throw new Error('yavsc-remote-fs requires md-helpers.js');
 }
 
 (function($, Dropzone, updateMD) {
@@ -24,12 +24,29 @@ if (typeof updateMD === 'undefined') {
       $view.data('path', sub);
       InitDir($view);
     };
+    var root;
+    var selection = [];
+
+    var SetItemSelected = function (name, selected) {
+      if (selected) selection.push(name);
+      else selection = selection.filter(function(ele) {
+        return ele != name;
+      });
+    };
+
+    var RemoveSelectedFiles = function () {
+      var xmlhttp = new XMLHttpRequest();
+      $.each(selection, function() {
+        xmlhttp.open('DELETE', '/api/fs/' + this, true);
+        xmlhttp.send();
+      });
+    };
 
     var InitDir = function ($view) {
 
-      var path = $view.data('path');
+      root = $view.data('path');
       var owner = $view.data('owner');
-      var fsiourl = path ? '/api/fs/' + path : '/api/fs';
+      var fsiourl = root ? '/api/fs/' + root : '/api/fs';
 
       $view.empty();
 
@@ -40,29 +57,41 @@ if (typeof updateMD === 'undefined') {
 
         var npath = null;
 
-        if (path) $.each(path.split('/'), function () {
+        if (root) $.each(root.split('/'), function () {
           var part = this;
-          if (npath) npath = npath + '/' + part;
-          else npath = part;
-          $('<button>').append(part).click(function() {
+          if (npath == null) npath = part;
+          else npath = npath + '/' + part;
+          $('<button/>').append(part).click(function() {
             OpenDir($view, npath);
           }).appendTo($view);
         });
 
         $.each(data.SubDirectories, function () {
           var item = this;
-          var spath = (path) ? path + '/' + item.Name : item.Name;
-          $('<button>').append(item.Name).click(function() {
+          var spath = (root) ? root + '/' + item.Name : item.Name;
+          $('<button/>').append(item.Name).click(function() {
             OpenDir($view, spath);
           }).appendTo($view);
         });
-        var $ftable = $('<table>').append('<tr class="fileheaders"><th>Nom</th><th>Taille</th><th>Modification</th></tr>');
+        var $divedit = $('<div></div>');
+        $('<button>&#xe083;</button>').addClass('glyphicon').append().click(function() {
+          RemoveSelectedFiles();
+        }).appendTo($divedit);
+        $divedit.appendTo($view);
+        var $ftable = $('<table border="1">').css('border-spacing', '6px')
+        .css('border-collapse', 'separate')
+        .append('<tr class="fileheaders"><th>Nom</th><th>Taille</th><th>Modification</th></tr>');
         $.each(data.Files, function () {
           var item = this;
-          var $tr = $('<tr></tr>');
+          var $tr = $('<tr class="fileentry"></tr>');
           var $td = $('<td></td>');
+          $('<input type="checkbox" />').addClass('check-box').click(function() {
+            SetItemSelected(item.Name, this.checked)
+          }).appendTo($td);
+          $td.append('&nbsp;');
           $('<a></a>').append(item.Name).click(function() {
-            document.location = '/' + owner + '/' + npath + '/' + item.Name;
+            if (root) document.location = '/' + owner + '/' + root + '/' + item.Name;
+            else document.location = '/files/' + owner + '/' + item.Name;
           }).appendTo($td);
           $td.appendTo($tr);
           $('<td>' + item.Size + '</td>').appendTo($tr);
@@ -95,6 +124,5 @@ if (typeof updateMD === 'undefined') {
     },
     url: '/api/fs'
   };
-
 })($, Dropzone, updateMD);
 
