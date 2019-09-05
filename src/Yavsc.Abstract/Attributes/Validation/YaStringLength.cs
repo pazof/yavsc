@@ -27,17 +27,12 @@ namespace Yavsc.Attributes.Validation
 
         public override bool IsValid(object value) {
             
-            if (value == null) {
-                return false;
-            }
-            
             string stringValue = value as string;
-            if (stringValue==null) return false;
+            if (stringValue==null) return MinimumLength <= 0;
             if (MinimumLength>=0) 
                 {
                     if (stringValue.Length< MinimumLength) {
                         return false;
-
                     }
                 }
             if (maxLen>=0)
