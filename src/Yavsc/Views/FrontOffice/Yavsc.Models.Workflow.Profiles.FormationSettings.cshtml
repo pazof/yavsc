@@ -1,26 +1,13 @@
-@model Yavsc.Models.Musical.Profiles.FormationSettings
-
-
-@if (Model == null) {
-<p>@SR["ENOFORMATIONSETTINGS"]</p>
-}
-@if (Model != null) {
-<fieldset>
-<legend>@SR["Formation"] @Model.DisplayName</legend>
-    <p>@Model.Summary</p>
-
-    <h2>
-
-    @foreach(var inst in Model.Instruments) {
-        @Html.DisplayNameFor(model => model.Tool)
-    }
+@model Yavsc.Models.Workflow.Profiles.FormationSettings
+@if (Model != null && Model.CoWorking != null) {
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Tool)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Tool)
-        </dd>
+    <dt>@SR["Partenariat"]</dt>
+    <dd>@Model.DisplayName</dd>
+    <dt></dt>
+    <dd><ul>
+    @foreach(var memb in Model.CoWorking) {
+        <li>@Html.Display("PerformerProfile","", "", memb.Performer)</li>
+    }
+    </ul></dd>
     </dl>
-  </fieldset>
 }
