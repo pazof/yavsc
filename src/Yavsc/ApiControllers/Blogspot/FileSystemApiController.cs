@@ -14,6 +14,7 @@ namespace Yavsc.ApiControllers
     using Yavsc.Exceptions;
     using Yavsc.Models.FileSystem;
     using System.ComponentModel.DataAnnotations;
+    using Yavsc.Attributes.Validation;
 
     [Authorize,Route("api/fs")]
     public class FileSystemApiController : Controller
@@ -39,20 +40,18 @@ namespace Yavsc.ApiControllers
         }
 
         [HttpGet("{*subdir}")]
-        public IActionResult GetDir(string subdir="")
+        public IActionResult GetDir([ValidRemoteUserFilePath] string subdir="")
         { 
-            if (subdir !=null)
-                if (!subdir.IsValidYavscPath())
-                    return new BadRequestResult();
+            if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             // _logger.LogInformation($"listing files from {User.Identity.Name}{subdir}");
             var files = AbstractFileSystemHelpers.GetUserFiles(User.Identity.Name, subdir);
             return Ok(files);
         }
 
         [HttpPost("{*subdir}")]
-        public IActionResult Post(string subdir="")
+        public IActionResult Post([ValidRemoteUserFilePath] string subdir="")
         {
-            
+            if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             string destDir = null;
             List<FileRecievedInfo> received = new List<FileRecievedInfo>();
             InvalidPathException pathex = null;
@@ -92,9 +91,10 @@ namespace Yavsc.ApiControllers
         public IActionResult AddQuota(string uname, int len)
         {
             var uid = User.GetUserId();
-            var user = dbContext.Users.Single(
+            var user = dbContext.Users.FirstOrDefault(
                 u => u.UserName == uname
             );
+            if (user==null) return new BadRequestObjectResult(new { error = "no such use" });
             user.AddQuota(len);
             dbContext.SaveChanges(uid);
             return Ok(len);
@@ -102,8 +102,9 @@ namespace Yavsc.ApiControllers
 
         [Route("/api/fsc/movefile")]
         [Authorize()]
-        public IActionResult MoveFile(string from, string to)
+        public IActionResult MoveFile([ValidRemoteUserFilePath] string from, [ValidRemoteUserFilePath] string to)
         {
+            if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
@@ -117,8 +118,9 @@ namespace Yavsc.ApiControllers
         [HttpPatch]
         [Route("/api/fsc/movedir")]
         [Authorize()]
-        public IActionResult MoveDir(string from, string to)
+        public IActionResult MoveDir([ValidRemoteUserFilePath] string from,[ValidRemoteUserFilePath] string to)
         {
+            if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
@@ -142,8 +144,9 @@ namespace Yavsc.ApiControllers
 
         [HttpDelete]
         [Route("/api/fsc/rm/{*id}")]
-        public async Task <IActionResult> Delete (string id)
+        public async Task <IActionResult> Delete ([ValidRemoteUserFilePath] string id)
         {
+            if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             var user = dbContext.Users.Single(
                 u => u.Id == User.GetUserId()
             );
@@ -164,8 +167,9 @@ namespace Yavsc.ApiControllers
 
         [HttpDelete]
         [Route("/api/fsc/rmdir/{*id}")]
-        public IActionResult RemoveDir (string id)
+        public IActionResult RemoveDir ([ValidRemoteUserFilePath] string id)
         {
+            if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             var user = dbContext.Users.Single(
                 u => u.Id == User.GetUserId()
             );
