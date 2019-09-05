@@ -13,6 +13,7 @@ using Yavsc.ViewModels.Auth;
 using Microsoft.AspNet.Mvc.Rendering;
 using Yavsc.Models.Blog;
 using Yavsc.Helpers;
+using Microsoft.AspNet.Localization;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,16 +24,19 @@ namespace Yavsc.Controllers
         ILogger _logger;
         private ApplicationDbContext _context;
         private IAuthorizationService _authorizationService;
+
+        RequestLocalizationOptions _localisationOptions;
+
         public BlogspotController(
             ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
             ILoggerFactory loggerFactory,
             IAuthorizationService authorizationService,
-            IOptions<SiteSettings> siteSettings)
+            IOptions<RequestLocalizationOptions> localisationOptions)
         {
             _context = context;
             _logger = loggerFactory.CreateLogger<AccountController>();
             _authorizationService = authorizationService;
+            _localisationOptions = localisationOptions.Value;
         }
 
         // GET: Blog
@@ -96,6 +100,13 @@ namespace Yavsc.Controllers
             ViewData["moderatoFlag"] = User.IsInRole(Constants.BlogModeratorGroupName);
             return View(blog);
         }
+        void SetLangItems()
+        {
+            ViewBag.LangItems = _localisationOptions.SupportedUICultures.Select
+            (
+                sc => new SelectListItem { Value = sc.IetfLanguageTag, Text = sc.NativeName, Selected = System.Globalization.CultureInfo.CurrentUICulture == sc }
+            );
+        }
 
         // GET: Blog/Create
         [Authorize()]
@@ -103,6 +114,7 @@ namespace Yavsc.Controllers
         {
             var result = new BlogPost{Title=title};
             ViewData["PostTarget"]="Create";
+            SetLangItems();
             return View("Edit",result);
         }
 
@@ -153,6 +165,7 @@ namespace Yavsc.Controllers
                         Selected = blog.AuthorizeCircle(c.Id)
                     } 
                 );
+                SetLangItems();
                 return View(blog);
             }
             else
