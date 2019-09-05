@@ -104,17 +104,24 @@ namespace Yavsc.Helpers
             user.DiskUsage -= fi.Length;
         }
         
-        public static FsOperationInfo DeleteUserDir(this ApplicationUser user, string dirName)
+        public static FsOperationInfo DeleteUserDirOrFile(this ApplicationUser user, string dirName)
         {
             var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
             if (string.IsNullOrEmpty(dirName)) 
-                return new FsOperationInfo { Done = false, Error = "specify a dir name"} ;
+                return new FsOperationInfo { Done = false, Error = "specify a directory or file name"} ;
 
             var di = new DirectoryInfo(Path.Combine(root, dirName));
-            if (!di.Exists) return new FsOperationInfo { Done = false, Error = "non existent"} ;
-            if (di.GetDirectories().Length>0 || di.GetFiles().Length>0) 
-                return new FsOperationInfo { Done = false, Error = "not eñpty"} ;
-            di.Delete();
+            if (!di.Exists) {
+                var fi = new FileInfo(Path.Combine(root, dirName));
+                if (!fi.Exists) return new FsOperationInfo { Done = false, Error = "non existent"} ;
+                fi.Delete();
+                user.DiskUsage -= fi.Length;
+            }
+            else {
+                if (di.GetDirectories().Length>0 || di.GetFiles().Length>0) 
+                    return new FsOperationInfo { Done = false, Error = "not eñpty"} ;
+                di.Delete();
+            }
             return new FsOperationInfo { Done = true };
         }
         

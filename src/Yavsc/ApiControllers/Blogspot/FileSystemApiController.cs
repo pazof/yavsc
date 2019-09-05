@@ -141,43 +141,21 @@ namespace Yavsc.ApiControllers
             return Ok();
         }
 
-
-        [HttpDelete]
-        [Route("/api/fsc/rm/{*id}")]
-        public async Task <IActionResult> Delete ([ValidRemoteUserFilePath] string id)
+        [HttpDelete("{*id}")]
+        public IActionResult RemoveDirOrFile ([ValidRemoteUserFilePath] string id)
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
+
             var user = dbContext.Users.Single(
                 u => u.Id == User.GetUserId()
             );
-            try {
-            user.DeleteUserFile(id);
-            await dbContext.SaveChangesAsync(User.GetUserId());
-            }
-            catch (Exception ex)
-            {
-                return new BadRequestObjectResult(
-                    new FsOperationInfo {
-                        Done = false,
-                        Error = ex.Message
-                });
-            }
-            return Ok(new { deleted=id });
-        }
 
-        [HttpDelete]
-        [Route("/api/fsc/rmdir/{*id}")]
-        public IActionResult RemoveDir ([ValidRemoteUserFilePath] string id)
-        {
-            if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
-            var user = dbContext.Users.Single(
-                u => u.Id == User.GetUserId()
-            );
             try {
-                var result = user.DeleteUserDir(id);
+                var result = user.DeleteUserDirOrFile(id);
                 if (!result.Done)
                     return new BadRequestObjectResult(result);
             }
+
             catch (Exception ex)
             {
                 return new BadRequestObjectResult(
