@@ -1,1 +1,24 @@
 <script src="/js/yavsc-remote-fs.js" asp-append-version="true"></script>
+<script>
+    $(document).ready(function () {
+      $('.dirinfo').yarfs();
+    });
+
+  Dropzone.options.postfiles = {
+    maxFilesize: 20, // MB   TODO: let sell it.
+    autoProcessQueue: true,
+    accept: function(file, done) {
+      if (file.name == 'justinbieber.jpg') {
+        done('Naha, you don\'t.');
+      } else { done(); }
+    },
+    success: function (file, response) {
+        for (var i = 0; i < response.length; i++) {
+            var filer = response[i];
+            $('<p><a href="/files/@User.GetUserName()/' + filer.FileName + '">' + filer.FileName + '</a></p>').appendTo('#ql-editor-2');
+            updateMD('Content', $('#contentview').html());
+        }
+    },
+    url: '/api/fs'
+  };
+</script>
