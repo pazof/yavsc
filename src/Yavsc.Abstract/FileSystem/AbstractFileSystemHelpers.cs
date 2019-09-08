@@ -60,6 +60,12 @@ namespace Yavsc.Helpers
             UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, userName, subdir);
             return di;
         }
+        public static bool IsRegularFile(string userName, string subdir)
+        {
+            FileInfo fi = new FileInfo( Path.Combine(Path.Combine(UserFilesDirName, userName), subdir));
+            return fi.Exists;
+        }
+
 
         // Server side only supports POSIX file systems
         public const char RemoteDirectorySeparator = '/';
