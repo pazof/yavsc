@@ -245,7 +245,6 @@ namespace Yavsc
                 // config.ModelBinders.Insert(0,new MyDateTimeModelBinder());
                 // config.ModelBinders.Insert(0,new MyDecimalModelBinder());
                 config.OutputFormatters.Add(new PdfFormatter());
-
             }).AddFormatterMappings(
                 config => config.SetMediaTypeMappingForFormat("text/pdf",
                 new MediaTypeHeaderValue("text/pdf"))
