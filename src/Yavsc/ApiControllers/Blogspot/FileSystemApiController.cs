@@ -15,13 +15,14 @@ namespace Yavsc.ApiControllers
     using Yavsc.Models.FileSystem;
     using System.ComponentModel.DataAnnotations;
     using Yavsc.Attributes.Validation;
+    using System.IO;
 
     [Authorize,Route("api/fs")]
-    public class FileSystemApiController : Controller
+    public partial class FileSystemApiController : Controller
     {
         ApplicationDbContext dbContext;
         private IAuthorizationService AuthorizationService;
-        private ILogger logger;
+        private ILogger _logger;
 
         public FileSystemApiController(ApplicationDbContext context,
         IAuthorizationService authorizationService, 
@@ -30,7 +31,7 @@ namespace Yavsc.ApiControllers
         {
             AuthorizationService = authorizationService;
             dbContext = context;
-            logger = loggerFactory.CreateLogger<FileSystemApiController>();
+            _logger = loggerFactory.CreateLogger<FileSystemApiController>();
         }
 
         [HttpGet()]
@@ -61,24 +62,24 @@ namespace Yavsc.ApiControllers
                 pathex = ex;
             }
             if (pathex!=null) {
-                logger.LogError($"invalid sub path: '{subdir}'.");
+                _logger.LogError($"invalid sub path: '{subdir}'.");
                 return HttpBadRequest(pathex);
             }
-            logger.LogInformation($"Receiving files, saved in '{destDir}' (specified as '{subdir}').");
+            _logger.LogInformation($"Receiving files, saved in '{destDir}' (specified as '{subdir}').");
             
             var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
             int i=0;
-            logger.LogInformation($"Receiving {Request.Form.Files.Count} files.");
+            _logger.LogInformation($"Receiving {Request.Form.Files.Count} files.");
             
             foreach (var f in Request.Form.Files)
             {
                 var item = user.ReceiveUserFile(destDir, f);
                 dbContext.SaveChanges(User.GetUserId());
                 received.Add(item);
-                logger.LogInformation($"Received  '{item.FileName}'.");
+                _logger.LogInformation($"Received  '{item.FileName}'.");
                 if (item.QuotaOffensed)
                     break;
                 i++;
@@ -100,42 +101,54 @@ namespace Yavsc.ApiControllers
             return Ok(len);
         }
 
-        [Route("/api/fsc/movefile")]
+        [HttpPost]
+        [Route("/api/fsc/mvftd")]
         [Authorize()]
-        public IActionResult MoveFile([ValidRemoteUserFilePath] string from, [ValidRemoteUserFilePath] string to)
+        public IActionResult MoveFile([FromBody] RenameFileQuery query)
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
-            var info = user.MoveUserFile(from, to);
-            if (!info.Done)
-            return new BadRequestObjectResult(info);
+            var info = user.MoveUserFileToDir(query.id, query.to);
+            if (!info.Done) return new BadRequestObjectResult(info);
             return Ok();
         }
 
-        [HttpPatch]
-        [Route("/api/fsc/movedir")]
+        [HttpPost]
+        [Route("/api/fsc/mvf")]
         [Authorize()]
-        public IActionResult MoveDir([ValidRemoteUserFilePath] string from,[ValidRemoteUserFilePath] string to)
+        public IActionResult RenameFile([FromBody] RenameFileQuery query)
         {
-            if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
+            if (!ModelState.IsValid) {
+                var idvr = new ValidRemoteUserFilePathAttribute();
+
+                return this.HttpBadRequest(new { id = idvr.IsValid(query.id), to = idvr.IsValid(query.to), errors = ModelState });
+            }
+            _logger.LogInformation($"Valid move query: {query.id} => {query.to}");
             var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
             try {
-                var result = user.MoveUserDir(from, to);
-                if (!result.Done)
-                    return new BadRequestObjectResult(result);
+                if (Startup.UserFilesOptions.FileProvider.GetFileInfo(Path.Combine(user.UserName, query.id)).Exists)
+                {
+                    var result = user.MoveUserFile(query.id, query.to);
+                    if (!result.Done) return new BadRequestObjectResult(result);
+                }
+                else {
+                    var result = user.MoveUserDir(query.id, query.to);
+                    if (!result.Done) return new BadRequestObjectResult(result);
+                }
             }
             catch (Exception ex)
             {
                 return new BadRequestObjectResult(
                     new FsOperationInfo {
                         Done = false,
-                        Error = ex.Message
+                        ErrorCode = ErrorCode.InternalError,
+                        ErrorMessage = ex.Message
                 });
             }
             return Ok();
@@ -161,7 +174,8 @@ namespace Yavsc.ApiControllers
                 return new BadRequestObjectResult(
                     new FsOperationInfo {
                         Done = false,
-                        Error = ex.Message
+                        ErrorCode = ErrorCode.InternalError,
+                        ErrorMessage = ex.Message
                 });
             }
             return Ok(new { deleted=id });

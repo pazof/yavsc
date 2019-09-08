@@ -108,18 +108,18 @@ namespace Yavsc.Helpers
         {
             var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
             if (string.IsNullOrEmpty(dirName)) 
-                return new FsOperationInfo { Done = false, Error = "specify a directory or file name"} ;
+                return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.InvalidRequest, ErrorMessage = "specify a directory or file name"} ;
 
             var di = new DirectoryInfo(Path.Combine(root, dirName));
             if (!di.Exists) {
                 var fi = new FileInfo(Path.Combine(root, dirName));
-                if (!fi.Exists) return new FsOperationInfo { Done = false, Error = "non existent"} ;
+                if (!fi.Exists) return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.NotFound, ErrorMessage = "non existent"} ;
                 fi.Delete();
                 user.DiskUsage -= fi.Length;
             }
             else {
                 if (di.GetDirectories().Length>0 || di.GetFiles().Length>0) 
-                    return new FsOperationInfo { Done = false, Error = "not eñpty"} ;
+                    return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.InvalidRequest, ErrorMessage = "dir is not empty, refusing to remove it"} ;
                 di.Delete();
             }
             return new FsOperationInfo { Done = true };
@@ -129,36 +129,49 @@ namespace Yavsc.Helpers
         {
             var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
             if (string.IsNullOrEmpty(fromDirName)) 
-                return new FsOperationInfo { Done = false, Error = "fromDirName: specify a dir name "} ;
+                return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.InvalidRequest , ErrorMessage = "specify a dir name "} ;
 
             var di = new DirectoryInfo(Path.Combine(root, fromDirName));
-            if (!di.Exists) return new FsOperationInfo { Done = false, Error = "fromDirName: non existent"} ;
+            if (!di.Exists) return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.NotFound,  ErrorMessage = "fromDirName: non existent"} ;
             
 
-            if (string.IsNullOrEmpty(toDirName)) 
-                return new FsOperationInfo { Done = false, Error = "toDirName: specify a dir name to move"} ;
-
+            if (string.IsNullOrEmpty(toDirName)) toDirName = ".";
             var destPath = Path.Combine(root, toDirName);
 
-            var fo = new FileInfo(destPath);
+
+            var fout = new FileInfo(destPath);
+            if (fout.Exists) return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.InvalidRequest, ErrorMessage = "destination is a regular file" } ;
+
+
             var dout = new DirectoryInfo(destPath);
-
-            if (fo.Exists) return new FsOperationInfo { Done = false, Error = "toDirName: yet a regular file" } ;
-
-
             if (dout.Exists) {
-                destPath = Path.Combine(destPath, fo.Name);
+                destPath = Path.Combine(destPath, dout.Name);
             }
             di.MoveTo(destPath); 
+            return new FsOperationInfo { Done = true };
+        }
+        public static FsOperationInfo MoveUserFileToDir(this ApplicationUser user, string fileNameFrom, string fileNameDest)
+        {
+            var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
+            var fi = new FileInfo(Path.Combine(root, fileNameFrom));
+            if (!fi.Exists) return new FsOperationInfo { ErrorCode = ErrorCode.NotFound, ErrorMessage = "no file to move" } ;
+            string dest;
+            if (!string.IsNullOrEmpty(fileNameDest)) dest = Path.Combine(root, fileNameDest);
+            else dest = root;
+            var fo = new FileInfo(dest);
+            if (fo.Exists) return new FsOperationInfo { ErrorCode = ErrorCode.DestExists , ErrorMessage = "destination file name is an existing file" } ;
+            var dout = new DirectoryInfo(dest);
+            if (!dout.Exists) dout.Create();
+            fi.MoveTo(Path.Combine(dout.FullName, fi.Name));
             return new FsOperationInfo { Done = true };
         }
         public static FsOperationInfo MoveUserFile(this ApplicationUser user, string fileNameFrom, string fileNameDest)
         {
             var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
             var fi = new FileInfo(Path.Combine(root, fileNameFrom));
-            if (!fi.Exists) return new FsOperationInfo { Error = "no file to move" } ;
+            if (!fi.Exists) return new FsOperationInfo { ErrorCode = ErrorCode.NotFound, ErrorMessage = "no file to move" } ;
             var fo = new FileInfo(Path.Combine(root, fileNameDest));
-            if (fo.Exists) return new FsOperationInfo { Error = "destination file name is an existing file" } ;
+            if (fo.Exists) return new FsOperationInfo { ErrorCode = ErrorCode.DestExists , ErrorMessage = "destination file name is an existing file" } ;
             fi.MoveTo(fo.FullName);
             return new FsOperationInfo { Done = true };
         }
