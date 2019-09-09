@@ -113,7 +113,7 @@ namespace Yavsc.ApiControllers
             );
             var info = user.MoveUserFileToDir(query.id, query.to);
             if (!info.Done) return new BadRequestObjectResult(info);
-            return Ok();
+            return Ok(new { moved = query.id });
         }
 
         [HttpPost]
