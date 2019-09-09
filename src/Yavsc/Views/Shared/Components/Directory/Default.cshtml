@@ -1,44 +1,18 @@
 @using Yavsc.ViewModels.UserFiles
 @model UserDirectoryInfo
-<div class="dirinfo" data-owner="@Model.UserName" data-path="@Model.SubPath">
-<strong>@Model.UserName / @Model.SubPath</strong>
-<div class="subdirs">
-@foreach (var subdir in Model.SubDirectories) {
-<a href="@subdir" class="subdir">@subdir.Name</a> 
-}
-</div>
+
 <style> 
 tr.fileheaders th {
     border-bottom: 1px solid #ddd; 
     font-style: italic;
 }
 tr.fileinfo td {
-    padding: 1em;
+    padding: .5em;
     border-bottom: 1px solid #ddd;
 }
-  tr.fileinfo:nth-child(even) {background-color: #f2f2f2}
-  tr.fileinfo:hover {background-color: #f5f5f5}
-
+tr.fileinfo:nth-child(even) {background-color: #f2f2f2}
+tr.fileinfo:hover {background-color: #f5f5f5}
+.curdir button { font-weigth: bold; }
+.subdirs button { font-weigth: bold; color: #385) }
 </style>
-<table>
-    <tr class="fileheaders">
-        <th>Nom
-        </th>
-        <th>Taille
-        </th>
-        <th>Modification
-        </th>
-   </tr>
-@foreach (var fileinfo in Model.Files) {
-<tr class="fileinfo">
-    <td class="filename">
-        <a href="@fileinfo.FileLink(Model.UserName,Model.SubPath)">
-        @fileinfo.Name
-        </a></td> 
-    <td class="filesize">@fileinfo.Size</td> 
-    <td class="filemdate">@fileinfo.LastModified</td> 
-</tr>
-}
-</table>
-</div>
-
+<div class="dirinfo" data-owner="@Model.UserName" data-path="@Model.SubPath">
