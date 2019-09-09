@@ -17,8 +17,10 @@ if (typeof XMLHttpRequest === 'undefined') {
     rmDialog: null,
     mvDialog: null,
     flist: null,
+    fmlist: null,
     selection: [],
-    dirBar: null,
+    curDirBar: null,
+    subDirsBar: null,
     destination: null,
     rootDisplay: null,
     setRoot: function(sub) {
@@ -35,12 +37,13 @@ if (typeof XMLHttpRequest === 'undefined') {
       this.setRoot(sub);
       var owner = this.element.data('owner');
       this.selection = [];
-      this.dirBar.empty();
+      this.curDirBar.empty();
+      this.subDirsBar.empty();
       $('<button>' + owner + '</button>')
         .click(function () {
           _this.openDir(null);
         })
-        .appendTo(this.dirBar);
+        .appendTo(this.curDirBar);
       var npath = null
 
       if (_this.root) {
@@ -52,49 +55,71 @@ if (typeof XMLHttpRequest === 'undefined') {
           $('<button/>')
             .append(part)
             .click(function () {
-              _this.OpenDir(npath);
+              _this.openDir(npath);
             })
-            .appendTo(this.dirBar);
+            .appendTo(_this.curDirBar);
         });
       }
+
 
       this.ftable.find('tr.fileinfo').remove();
       var fsiourl = this.root ? '/api/fs/' + this.root : '/api/fs';
       $.get(fsiourl, function (data) {
-        $.each(data.SubDirectories, function () {
-          var item = this;
-          var spath = _this.root ? _this.root + '/' + item.Name : item.Name;
-          $('<button/>')
-            .append(item.Name)
-            .click(function () {
-              _this.openDir(spath);
-            })
-            .appendTo(_this.dirBar);
-        });
+        if (data.SubDirectories.length == 0 && data.Files.length == 0)
+        {
+          $('<button class="glyphicon">&#xe014; remove this empty directory</button>').click(
+            function() {
+              var xmlhttp = new XMLHttpRequest();
+              xmlhttp.open('DELETE', '/api/fs/' + _this.root, true);
+              xmlhttp.send();
 
-        $.each(data.Files, function () {
-          var item = this;
-          var $tr = $('<tr class="fileinfo"></tr>');
-          var $td = $('<td></td>');
-          $td.appendTo($tr);
-          $('<input type="checkbox" />')
-            .addClass('check-box')
-            .click(function () {
-              _this.SetItemSelected(item.Name, this.checked);
-            })
-            .appendTo($td);
-
-          $('<td></td>')
-            .append($('<a></a>')
+              xmlhttp.onreadystatechange = function(event) {
+                // XMLHttpRequest.DONE === 4
+                if (this.readyState === XMLHttpRequest.DONE) {
+                  if (this.status === 200) {
+                    var dnames = _this.root.split('/');
+                    var dcnt = dnames.length;
+                    var nroot = dnames.slice(0,dcnt-1).join('/');
+                    _this.openDir(nroot);
+                  }
+                }
+              }
+            }).appendTo(_this.subDirsBar);
+        }
+        else 
+        {
+          $.each(data.SubDirectories, function () {
+            var item = this;
+            var spath = _this.root ? _this.root + '/' + item.Name : item.Name;
+            $('<button/>')
               .append(item.Name)
               .click(function () {
-                if (_this.root) document.location = '/' + owner + '/' + _this.root + '/' + item.Name;
-                else document.location = '/files/' + owner + '/' + item.Name;
-              })).appendTo($tr);
-          $('<td>' + item.Size + '</td>').appendTo($tr);
-          $('<td>' + item.LastModified + '</td>').appendTo($tr);
-          $tr.appendTo(_this.ftable);
-        });
+                _this.openDir(spath);
+              })
+              .appendTo(_this.subDirsBar);
+          });
+
+          $.each(data.Files, function () {
+            var item = this;
+            var $tr = $('<tr class="fileinfo"></tr>');
+            var $td = $('<td></td>');
+            $td.appendTo($tr);
+            $('<input type="checkbox" />')
+              .addClass('check-box')
+              .click(function () {
+                _this.SetItemSelected(item.Name, this.checked);
+              })
+              .appendTo($td);
+              var furl =  (_this.root) ? '/files/' + owner + '/' + _this.root + '/' + item.Name
+                : '/files/' + owner + '/' + item.Name;
+            $('<td class="filename"></td>')
+              .append($('<a></a>').attr('href',furl)
+                .append(item.Name)).appendTo($tr);
+            $('<td class="filesize">' + item.Size + '</td>').appendTo($tr);
+            $('<td class="filemdate">' + item.LastModified + '</td>').appendTo($tr);
+            $tr.appendTo(_this.ftable);
+          });
+        }
       });
     },
     SetItemSelected: function (name, selected) {
@@ -106,26 +131,43 @@ if (typeof XMLHttpRequest === 'undefined') {
         });
       }
     },
-    RemoveSelectedFiles: function () {
-      $.each(this.selection, function () {
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open('DELETE', '/api/fs/' + this, true);
-        xmlhttp.send();
+    setFileAway: function(fname)
+    {
+      this.selection = this.selection.filter(function (ele) {
+        return ele !== fname;
       });
-      this.selection = [];
-      // FIXME this could fail for a very long list of big files
-      setTimeout(500, function () {
-        this.openDir(this.root);
+      this.ftable.find('tr.fileinfo').filter(function () {
+        return $(this).children('td:nth-child(2)').text() == fname;
+      }).remove();
+    },
+    RemoveSelectedFiles: function () {
+      var _this = this;
+      $.each(this.selection, function () {
+        var dfile = this;
+        var dfilep = _this.root ? _this.root + '/' + this : this; 
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function(event) {
+          if (this.readyState === XMLHttpRequest.DONE) {
+            if (this.status === 200) {
+              _this.setFileAway(dfile);
+            }
+            else {
+              alert( 'deletion of : ' + dfile + 'failed : '+ this.statusText );
+            }
+          }
+        };
+        xmlhttp.open('DELETE', '/api/fs/' + dfilep, true);
+        xmlhttp.send();
       });
     },
     moveSelectedFiles: function () {
       var _this = this;
       var dest = this.destination;
       $.each(this.selection, function () {
+        var mfile = this;
         var data = {};
-        data['id'] = _this.root ? _this.root + '/' + this : this;
+        data['id'] = _this.root ? _this.root + '/' + mfile : mfile;
         data['to'] = dest;
-        console.log(data);
         var request = $.ajax({
           url: '/api/fsc/mvftd',
           type: 'POST',
@@ -133,19 +175,13 @@ if (typeof XMLHttpRequest === 'undefined') {
           contentType: 'application/json;charset=utf-8'
         });
 
-        request.done(function( msg ) {
-          $( "#log" ).html( msg );
+        request.done(function() {
+          _this.setFileAway(mfile);
         });
          
         request.fail(function( jqXHR, textStatus, msg ) {
-          alert( 'Request failed: ' + textStatus );
-          $( '#log' ).html( msg );
+          alert( 'Failed to move : ' + mfile + ' : ' + textStatus );
         });
-      });
-      this.selection = [];
-      // FIXME this could fail for a very long list of big files
-      setTimeout(500, function () {
-        this.openDir(this.root);
       });
     },
     askForRemoval: function () {
@@ -157,10 +193,10 @@ if (typeof XMLHttpRequest === 'undefined') {
       this.rmDialog.modal({ show: true });
     },
     askForMoving: function () {
-      this.flist.empty();
+      this.fmlist.empty();
       var _this = this;
       $.each(this.selection, function () {
-        _this.flist.append('<li>' + this + '</li>');
+        _this.fmlist.append('<li>' + this + '</li>');
       });
       this.mvDialog.modal({ show: true });
     },
@@ -212,8 +248,8 @@ if (typeof XMLHttpRequest === 'undefined') {
       mdCnt.append(mdHeader);
       var mdBody = $('<div class="modal-body"></div>');
       mdBody.append('<p>You´re about to move these files :</p>');
-      this.flist = $('<ul></ul>');
-      mdBody.append(this.flist);
+      this.fmlist = $('<ul></ul>');
+      mdBody.append(this.fmlist);
       var inputDest = $('<input type="text" class="form-control" hint="dest/dir">').on('change', function() { _this.onDestinationChanged(this); });
       this.rootDisplay = $('<p></p>');
       this.rootDisplay.addClass('hidden');
@@ -236,9 +272,11 @@ if (typeof XMLHttpRequest === 'undefined') {
     _create: function () {
       var $view = this.element;
       var _this = this;
-      this.dirBar = $('<div></div>');
-      this.dirBar.appendTo($view);
-      this.ftable = $('<table border="1">')
+      this.curDirBar = $('<div class="curdir"></div>');
+      this.curDirBar.appendTo($view);
+      this.subDirsBar = $('<div class="subdirs"></div>');
+      this.subDirsBar.appendTo($view);
+      this.ftable = $('<table>')
         .css('border-spacing', '6px')
         .css('border-collapse', 'separate');
       var btnRm = $('<button class="glyphicon">&#xe014;</button>').click(function () {
@@ -251,7 +289,6 @@ if (typeof XMLHttpRequest === 'undefined') {
       _this.ftable.append(tr);
       tr.append($('<th></th>').append(btnRm).append(btnMv)).append('<th>Nom</th><th>Taille</th><th>Modification</th>');
       _this.ftable.appendTo($view);
-      $('<div id="log">Logs<br/></div>').appendTo($view);
       this.createRmDialog();
       this.createMvDialog();
       this.openDir($view.data('path'));
