@@ -16,6 +16,7 @@
 .box__error {
   display: none;
 }
+
 .box.has-advanced-upload {
   background-color: white;
   outline: 2px dashed black;
@@ -42,6 +43,8 @@
 }
 
 @section scripts {
+<script src="~/js/showdown.js" asp-append-version="true"></script>
+<script src="~/js/md-helpers.js" asp-append-version="true"></script>
 <script>
 
     $(document).ready(function() {
@@ -122,12 +125,10 @@
 
 
 <div id="Titletoolbar" class="hidden ql-snow ql-toolbar">
-  <button class="ql-format-button ql-bold"></button>
   <button class="ql-format-button ql-italic"></button>
   <button class="ql-format-button ql-underline"></button>
   <button class="ql-format-button ql-strike"></button>
 </div>
-
 
 <img class="blogphoto" alt="" src="@Model.Photo" title="Photo associée au post">
 <h2 title="Titre du post" class="blogtitle" id="titleview" ismarkdown>@Model.Title</h2>
