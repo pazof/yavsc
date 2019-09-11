@@ -168,7 +168,7 @@ namespace Yavsc.Controllers
                 {
                     try
                     {
-                        _logger.LogInformation("sending message");
+                        _logger.LogInformation("sending push message");
                         var uids = new[] { command.PerformerProfile.PerformerId };
                         nrep = await _MessageSender.NotifyBookQueryAsync(uids, yaev);
                         // TODO setup a profile choice to allow notifications
