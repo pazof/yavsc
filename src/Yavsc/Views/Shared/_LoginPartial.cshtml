@@ -6,7 +6,7 @@
         <ul class="nav navbar-nav navbar-right">
             <li>
                 <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">
-                   <img src="@(User.GetUserName()+".xs").png" asp-append-version="true" />
+                   <img src="/Avatars/@(User.GetUserName()+".xs").png" asp-append-version="true" class="smalltofhol" />
                 </a>
             </li>
             <li class="dropdown">
